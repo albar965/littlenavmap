@@ -26,7 +26,6 @@ A big thank you to all who reported bugs and issues!
 ## Changes from 2.8.10 to 2.8.11
 
 >>>>>>>>>>>>> TODO installer
->>>>>>>>>>>>> TODO Update manual
 
 ### Flight Plan and Export
 
@@ -35,7 +34,7 @@ A big thank you to all who reported bugs and issues!
 * Now resolving SID and STAR transitions when loading MSFS PLN flight plan files. This also works
   for the SimBrief exported plans where the STAR name is omitted on the first waypoint. Note that
   this is not 100 percent reliable due to deficits in the MSFS PLN file format design.
-* Trying to resolve approach transitions for matching STAR waypoint similar as MSFS if an approach 
+* Trying to resolve approach transitions for matching STAR waypoint similar as MSFS if an approach
   procedure is selected when importing MSFS PLN files.
 * Improved X-Plane FMS export. Airports with procedures are now always saved with keywords `ADEP` or
   `ADES` to allow manual departure or arrival procedure selection in the GPS or FMS.
@@ -43,14 +42,14 @@ A big thank you to all who reported bugs and issues!
   exporting X-Plane FMS files to avoid departure and destination exported with the wrong keywords.
   As a result no procedures could be selected in the GPS or FMS:
 * Fixed wrong error message when calculating elevation profile due to required vertical angle
-  conflicting with an altitude restriction. Example: Airport LTFM with approach I17LX and other 
+  conflicting with an altitude restriction. Example: Airport LTFM with approach I17LX and other
   ILS at LTFM. Vertical angle is now ignored in such cases.
 
 ### Scenery Library
 
 * Added optional automatic navdata selection depending on simulator and AIRAC cycle. The new option in
   menu `Scenery Library` -> `Navigraph` -> `Select Automatically` is enabled per default and selects
-  the right navdata mode when switching between simulators or after compiling the database. The
+  the right navdata mode when switching between simulators or after compiling the database. The automatically
   selected mode can be seen in the disabled menu items in menu `Navigraph` or in the window title bar.
 * The mode `Use Navigraph for all Features` is now enabled per default to have airports available if
   the simulator database is empty. This happens after a fresh installation, for example. This is
@@ -83,7 +82,7 @@ A big thank you to all who reported bugs and issues!
   with the airport labels.
 * Added cleanup function for userpoints to remove empty or duplicates by several criteria. See menu
   `Userpoints` -> `Cleanup Userpoints` or the context menu in the userpoint search result table.
-* Userpoint CSV import is now one undo step for all selected files to avoid confusion after 
+* Userpoint CSV import is now one undo step for all selected files to avoid confusion after
   selecting more than one file for import.
 
 ### Logbook
