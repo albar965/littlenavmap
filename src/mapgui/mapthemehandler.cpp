@@ -789,3 +789,26 @@ void MapThemeHandler::optionsChanged()
   // Check the theme action
   changeMapThemeActions(currentThemeId);
 }
+
+QString MapThemeHandler::getStatusTextForDir(const QString& path)
+{
+  QString message = atools::checkDirMsg(path);
+
+  if(message.isEmpty())
+  {
+    int numThemes = 0;
+    QDir dir(path);
+    for(const QFileInfo& themeDir : dir.entryInfoList(QDir::Dirs | QDir::NoDotAndDotDot))
+    {
+      if(atools::checkFile(Q_FUNC_INFO, themeDir.absoluteFilePath() + QDir::separator() + themeDir.fileName() + ".dgml"))
+        numThemes++;
+    }
+
+    if(numThemes == 0)
+      message = tr("Directory is valid. No map themes found inside.");
+    else
+      message = tr("Directory is valid. %1 %2 found.").arg(numThemes).arg(numThemes > 1 ? tr("map themes") : tr("map theme"));
+  }
+  return message;
+
+}

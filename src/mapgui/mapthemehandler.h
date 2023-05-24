@@ -248,6 +248,9 @@ public:
   /* Reload themes and rebuild menu */
   void optionsChanged();
 
+  /* Check path if it is a directory and counts map themes in it */
+  static QString getStatusTextForDir(const QString& path);
+
 private:
   /* Get theme by internal index */
   const MapTheme& themeByIndex(int themeIndex) const;

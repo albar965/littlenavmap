@@ -2408,19 +2408,7 @@ void OptionsDialog::mapThemeDirSelectClicked()
 
 void OptionsDialog::updateCacheMapThemeDir()
 {
-  const QString& path = ui->lineEditCacheMapThemeDir->text();
-  if(!path.isEmpty())
-  {
-    QFileInfo fileinfo(path);
-    if(!fileinfo.exists())
-      ui->labelCacheMapThemeDir->setText(HtmlBuilder::errorMessage(tr("Directory does not exist.")));
-    else if(!fileinfo.isDir())
-      ui->labelCacheMapThemeDir->setText(HtmlBuilder::errorMessage(tr(("Is not a directory."))));
-    else
-      ui->labelCacheMapThemeDir->setText(tr("Directory is valid."));
-  }
-  else
-    ui->labelCacheMapThemeDir->setText(tr("No directory selected."));
+  ui->labelCacheMapThemeDir->setText(MapThemeHandler::getStatusTextForDir(ui->lineEditCacheMapThemeDir->text()));
 }
 
 void OptionsDialog::offlineDataSelectClicked()
