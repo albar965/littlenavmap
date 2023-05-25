@@ -2,7 +2,6 @@
 ;Written by Harvey Walker
 
 
-
 ;--------------------------------
 ;Include Modern UI & uninstall log
 
@@ -21,7 +20,7 @@
     !define REG_APP_PATH "SOFTWARE\appname"
  
   ;Uninstall log file missing.
-    LangString UninstLogMissing ${LANG_ENGLISH} "${UninstLog} not found!$\r$\nUninstallation cannot proceed!"
+    LangString UninstLogMissing 1033 "${UninstLog} not found!$\r$\nUninstallation cannot proceed!"
  
   ;AddItem macro
     !define AddItem "!insertmacro AddItem"
@@ -151,12 +150,12 @@ Section "Little Navmap" SecDummy
   ; Create start menu shortcuts
   ; C:\Users\USERNAME\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Little Navmap
   ${CreateDirectory} "$SMPROGRAMS\Little Navmap"
-  ${CreateShortcut} "$SMPROGRAMS\Little Navmap\Little Navmap.lnk"  "$INSTDIR\littlenavmap.exe"
-  ${CreateShortcut} "$SMPROGRAMS\Little Navmap\Little Navconnect.lnk" "$INSTDIR\Little Navconnect\littlenavconnect.exe"
-  ${CreateShortcut} "$SMPROGRAMS\Little Navmap\Little Navmap User Manual Online.lnk" "$INSTDIR\help\Little Navmap User Manual Online.url"
-  ${CreateShortcut} "$SMPROGRAMS\Little Navmap\Little Navmap User Manual Local PDF.lnk" "$INSTDIR\help\little-navmap-user-manual-en.pdf"
-  ${CreateShortcut} "$SMPROGRAMS\Little Navmap\Little Navmap Changelog.lnk" "$INSTDIR\CHANGELOG.txt"
-  ${CreateShortcut} "$SMPROGRAMS\Little Navmap\Uninstall Little Navmap.lnk" "$INSTDIR\uninstall.exe"
+  ${CreateShortcut} "$SMPROGRAMS\Little Navmap\Little Navmap.lnk" "$INSTDIR\littlenavmap.exe" "" "" ""
+  ${CreateShortcut} "$SMPROGRAMS\Little Navmap\Little Navconnect.lnk" "$INSTDIR\Little Navconnect\littlenavconnect.exe" "" "" ""
+  ${CreateShortcut} "$SMPROGRAMS\Little Navmap\Little Navmap User Manual Online.lnk" "$INSTDIR\help\Little Navmap User Manual Online.url" "" "" ""
+  ${CreateShortcut} "$SMPROGRAMS\Little Navmap\Little Navmap User Manual Local PDF.lnk" "$INSTDIR\help\little-navmap-user-manual-en.pdf" "" "" ""
+  ${CreateShortcut} "$SMPROGRAMS\Little Navmap\Little Navmap Changelog.lnk" "$INSTDIR\CHANGELOG.txt" "" "" "" 
+  ${CreateShortcut} "$SMPROGRAMS\Little Navmap\Uninstall Little Navmap.lnk" "$INSTDIR\uninstall.exe" "" "" ""
 
   !insertmacro MUI_STARTMENU_WRITE_END
 
@@ -209,16 +208,16 @@ Section Uninstall
     Pop $R0
  
     IfFileExists "$R0\*.*" 0 +3
-      RMDir $R0  #is dir
+      RMDir $R0 
     Goto +9
     IfFileExists $R0 0 +3
-      Delete $R0 #is file
+      Delete $R0 
     Goto +6
     StrCmp $R0 "${REG_ROOT} ${REG_APP_PATH}" 0 +3
-      DeleteRegKey ${REG_ROOT} "${REG_APP_PATH}" #is Reg Element
+      DeleteRegKey ${REG_ROOT} "${REG_APP_PATH}"
     Goto +3
-    StrCmp $R0 "${REG_ROOT} ${UNINSTALL_PATH}" 0 +2
-      DeleteRegKey ${REG_ROOT} "${UNINSTALL_PATH}" #is Reg Element
+    StrCmp $R0 "${REG_ROOT} Software\Microsoft\Windows\CurrentVersion\Uninstall\Little Navmap" 0 +3
+      DeleteRegKey ${REG_ROOT} "Software\Microsoft\Windows\CurrentVersion\Uninstall\Little Navmap" 
  
     IntOp $R1 $R1 - 1
     Goto LoopRead
