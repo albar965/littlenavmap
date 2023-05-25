@@ -1401,8 +1401,10 @@ void DatabaseManager::checkSceneryOptions(bool manualCheck)
   {
     case navdb::CORRECT_NONE:
       if(manualCheck)
-        QMessageBox::information(mainWindow, tr("%1 - Validate Scenery Library Settings").arg(QApplication::applicationName()),
-                                 tr("No issues found."));
+        QMessageBox::information(mainWindow, tr("%1 - Validate scenery library mode").arg(QApplication::applicationName()),
+                                 navDbActionAuto->isChecked() ?
+                                 tr("Scenery library mode is correct. Mode is set automatically.") :
+                                 tr("No issues found. Scenery library mode is correct."));
       break;
 
     case navdb::CORRECT_EMPTY:
