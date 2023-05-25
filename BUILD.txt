@@ -1,3 +1,9 @@
+Note: These build instructions are outdated.
+Look at the Little Navmap Github Wiki for constantly updated instructions:
+https://github.com/albar965/littlenavmap/wiki/Compiling
+
+==============================================================================
+
 # Build Instructions
 
 The atools static library is required. Clone atools (`git clone https://github.com/albar965/atools.git`)

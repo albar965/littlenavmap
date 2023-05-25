@@ -19,13 +19,18 @@ The updated online user manual is available here:
 See here for user manual downloads:
 [User Manuals - Stable Releases](https://albar965.github.io/manuals.html#stable).
 
+Thanks a lot to [Harvey Walker](https://github.com/harveywalker500) for making the installer!
+
 A big thank you to all who reported bugs and issues!
 
 # Version 2.8.11
 
 ## Changes from 2.8.10 to 2.8.11
 
->>>>>>>>>>>>> TODO installer
+
+### Installation
+
+* Added installer for Windows 64 bit version.
 
 ### Flight Plan and Export
 
@@ -73,6 +78,8 @@ A big thank you to all who reported bugs and issues!
   This change will appear with future Navigraph navdata updates.
 * X-Plane 12 manually corrected localizers file is now read.
 * Updated included Navigraph cycle 1801 to include database changes.
+* Corrected overzealous filter for MSFS airport dummy structures which removed add-on helipads or
+  airports. Example add-on: `willicopta-spital-la-chaux-de-fonds-lsh9` which did not show up.
 
 ### Userpoints
 
