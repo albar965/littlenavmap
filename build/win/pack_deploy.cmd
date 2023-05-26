@@ -1,5 +1,7 @@
 @echo off
 
+setlocal enableextensions
+
 if defined APROJECTS ( echo %APROJECTS% ) else ( echo APROJECTS not set && exit /b 1 )
 if defined WINARCH ( echo %WINARCH% ) else ( echo WINARCH not set && exit /b 1 )
 

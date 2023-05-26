@@ -1,5 +1,7 @@
 @echo off
 
+setlocal enableextensions
+
 if defined APROJECTS ( echo %APROJECTS% ) else ( echo APROJECTS not set && exit /b 1 )
 
 rem === Pull from atools, littlenavconnect, littlexpconnect and littlenavmap repositories =============================

@@ -1,8 +1,5 @@
 @echo off
 
-set APROJECTS=C:\Projects
-set WINARCH=win64
-
 setlocal enableextensions
 
 if defined APROJECTS ( echo %APROJECTS% ) else ( echo APROJECTS not set && exit /b 1 )

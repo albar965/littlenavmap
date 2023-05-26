@@ -1,5 +1,7 @@
 @echo off
 
+setlocal enableextensions
+
 if defined APROJECTS ( echo %APROJECTS% ) else ( echo APROJECTS not set && exit /b 1 )
 
 rem === Pull, build and deploy atools, littlenavconnect and littlenavmap =============================
@@ -15,9 +17,8 @@ IF ERRORLEVEL 1 goto :err
 call build_release_xpconnect.cmd nopause
 IF ERRORLEVEL 1 goto :err
 
-rem TODO keep disabled until problems are solved
-rem call build_installer.cmd nopause
-rem IF ERRORLEVEL 1 goto :err
+call build_installer.cmd nopause
+IF ERRORLEVEL 1 goto :err
 
 call pack_deploy.cmd nopause
 IF ERRORLEVEL 1 goto :err
