@@ -22988,8 +22988,8 @@ If this field is empty, the default Active Sky weather file path will be used wh
         <location filename="src/options/options.ui" line="5941"/>
         <location filename="src/options/options.ui" line="6014"/>
         <location filename="src/options/options.ui" line="6677"/>
-        <location filename="src/options/options.ui" line="6977"/>
-        <location filename="src/options/options.ui" line="7063"/>
+        <location filename="src/options/options.ui" line="6967"/>
+        <location filename="src/options/options.ui" line="7076"/>
         <source>Valid</source>
         <translation>有效的</translation>
     </message>
@@ -23216,8 +23216,9 @@ Font size is limited to 30 points/pixels.</source>
     </message>
     <message>
         <location filename="src/options/options.ui" line="769"/>
-        <source>&lt;b&gt;A restart is required after changing high DPI support&lt;/b&gt;</source>
-        <translation>&lt;b&gt;更改高 DPI 支持后需要重新启动&lt;/b&gt;</translation>
+        <source>&lt;b&gt;A restart is required after changing high DPI support.&lt;/b&gt;</source>
+        <oldsource>&lt;b&gt;A restart is required after changing high DPI support&lt;/b&gt;</oldsource>
+        <translation type="unfinished">&lt;b&gt;更改高 DPI 支持后需要重新启动&lt;/b&gt;</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="806"/>
@@ -23414,8 +23415,9 @@ Note that some fonts, especially large fonts, can result in display errors on th
     </message>
     <message>
         <location filename="src/options/options.ui" line="1394"/>
-        <source>&lt;b&gt;A restart is recommended after changing units&lt;/b&gt;</source>
-        <translation>&lt;b&gt;改变单位后建议重新打开此程序&lt;/b&gt;</translation>
+        <source>&lt;b&gt;A restart is recommended after changing units.&lt;/b&gt;</source>
+        <oldsource>&lt;b&gt;A restart is recommended after changing units&lt;/b&gt;</oldsource>
+        <translation type="unfinished">&lt;b&gt;改变单位后建议重新打开此程序&lt;/b&gt;</translation>
     </message>
     <message>
         <source>&amp;Allow scrolling and zooming in the map and jump back to aircraft after time below</source>
@@ -23995,7 +23997,13 @@ Little Navmap GIT repository.
         <translation>使用加密链接(&amp;HTTP/SSL)</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="7044"/>
+        <location filename="src/options/options.ui" line="6990"/>
+        <source>&lt;b&gt;A restart is required to detect new map themes after changing the path or after installing new map themes.&lt;/b&gt;</source>
+        <oldsource>&lt;b&gt;A restart is required after changing the map display theme path.&lt;/b&gt;</oldsource>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/options/options.ui" line="7057"/>
         <source>&lt;p&gt;&lt;a href=&quot;https://www.ngdc.noaa.gov/mgg/topo/gltiles.html&quot;&gt;&lt;b&gt;Click here to open the download page for the GLOBE data in your browser&lt;/b&gt;&lt;/a&gt;&lt;br/&gt;
 Download the file &lt;b&gt;&lt;i&gt;All Tiles in One .zip (all10g.zip)&lt;/i&gt;&lt;/b&gt; from the page and extract the archive to an arbitrary place, e.g in &lt;i&gt;Documents&lt;/i&gt;. Then click &lt;i&gt;Select GLOBE Directory ...&lt;/i&gt; above and select the directory with the extracted files.&lt;/p&gt;
 
@@ -24003,17 +24011,17 @@ Download the file &lt;b&gt;&lt;i&gt;All Tiles in One .zip (all10g.zip)&lt;/i&gt;
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="7167"/>
+        <location filename="src/options/options.ui" line="7180"/>
         <source>Scenery library directories or files to exclude from loading</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="7375"/>
+        <location filename="src/options/options.ui" line="7388"/>
         <source>Scenery library directories to include when loading</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="7405"/>
+        <location filename="src/options/options.ui" line="7418"/>
         <source>All add-ons in this list will be included in the scenery library when the Little Navmap 
 database is loaded, regardless of whether they are included the simulator or not.
 These paths apply to all Flight Simulators like MSFS (extending the directory &quot;Community&quot;) and 
@@ -24089,42 +24097,42 @@ You have to reload the scenery library so that the changes take effect.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="6950"/>
+        <location filename="src/options/options.ui" line="6980"/>
         <source>Select a directoy to search for additional map themes.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="6953"/>
+        <location filename="src/options/options.ui" line="6983"/>
         <source>No themes directory selected.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="6960"/>
+        <location filename="src/options/options.ui" line="6957"/>
         <source>Directory for additional &amp;map themes:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="6970"/>
+        <location filename="src/options/options.ui" line="6950"/>
         <source>Select &amp;Themes Directory ...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="6993"/>
+        <location filename="src/options/options.ui" line="7006"/>
         <source>Flight Plan Elevation Profile</source>
         <translation>飞行计划纵剖图</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="7014"/>
+        <location filename="src/options/options.ui" line="7027"/>
         <source>&amp;Select GLOBE Directory ...</source>
         <translation>选择 GLOBE 目录(&amp;S) ...</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="7021"/>
+        <location filename="src/options/options.ui" line="7034"/>
         <source>Select the directoy that contains the files &quot;a10g&quot; to &quot;p10g&quot;.</source>
         <translation>选择包含文件“a10g”到“p10g”的目录。</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="7024"/>
+        <location filename="src/options/options.ui" line="7037"/>
         <source>No elevation data directory selected.</source>
         <translation>没有选择海拔数据目录。</translation>
     </message>
@@ -24139,7 +24147,7 @@ Download the file &lt;b&gt;&lt;i&gt;All Tiles in One .zip (all10g.zip)&lt;/i&gt;
 &lt;p&gt;&lt;a href=&quot;%1&quot;&gt;&lt;b&gt;点击这里在 &lt;i&gt;Little Navmap&lt;/i&gt; 在线手册中查看更多信息&lt;/b&gt;&lt;/a&gt;&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="7076"/>
+        <location filename="src/options/options.ui" line="7089"/>
         <source>Use online elevation data to display ground in flight plan elevation profile.
 Has a higher resolution than the offline data source but updates are slow.
 Source data has many errors.</source>
@@ -24148,12 +24156,12 @@ Source data has many errors.</source>
 源数据有很多错误。</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="7081"/>
+        <location filename="src/options/options.ui" line="7094"/>
         <source>Use Online Elevation Data</source>
         <translation>使用在线海拔数据</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="7031"/>
+        <location filename="src/options/options.ui" line="7044"/>
         <source>Recommended.
 Use Offline GLOBE Elevation Data. Can be downloaded for free.
 Resolution is lower than the online source but updates are very fast.
@@ -24164,7 +24172,7 @@ Has a 30 arc second grid (approximately 900 meter near the equator).</source>
 有 30 个弧形网格（大概距离赤道 900 米）。</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="7037"/>
+        <location filename="src/options/options.ui" line="7050"/>
         <source>Use Offline GLOBE Elevation Data</source>
         <translation>使用离线 GLOBE 海拔数据</translation>
     </message>
@@ -24217,13 +24225,13 @@ Little Navmap 当前只能读取 OpenAir 文件。 </translation>
         <translation type="vanished">移除(&amp;E)</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="7237"/>
-        <location filename="src/options/options.ui" line="7449"/>
+        <location filename="src/options/options.ui" line="7250"/>
+        <location filename="src/options/options.ui" line="7462"/>
         <source>&amp;Add Directory ...</source>
         <translation>添加目录(&amp;A)...</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="7244"/>
+        <location filename="src/options/options.ui" line="7257"/>
         <source>&amp;Add Files ...</source>
         <translation>添加文件(&amp;A)...</translation>
     </message>
@@ -24232,7 +24240,7 @@ Little Navmap 当前只能读取 OpenAir 文件。 </translation>
         <translation type="vanished">移除(&amp;R)</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="7194"/>
+        <location filename="src/options/options.ui" line="7207"/>
         <source>All directories including sub-directories and files in this list will be omitted when loading the scenery library into the Little Navmap database.
 You can also use this list to speed up database loading if you exclude directories that do not contain airports or navaids.
 These paths apply to all Flight Simulators (FSX, Prepar3D, MSFS and X-Plane).
@@ -24247,7 +24255,7 @@ You have to reload the scenery library so that the changes take effect.</oldsour
 您需要重新载入地景库以使更改生效。</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="7301"/>
+        <location filename="src/options/options.ui" line="7314"/>
         <source>All airports found outside the default &quot;scenery&quot; directory will be considered add-ons.
 You can use this list to modify this behavior.
 Any airports found in these directories and their sub-directories will not be considered add-ons.
@@ -24273,28 +24281,28 @@ You have to reload the scenery library so that the changes take effect.</oldsour
         <translation type="vanished">选择插件识别时排除的路径(&amp;P)：</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="7251"/>
-        <location filename="src/options/options.ui" line="7456"/>
+        <location filename="src/options/options.ui" line="7264"/>
+        <location filename="src/options/options.ui" line="7469"/>
         <source>&amp;Remove Selected</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="7274"/>
+        <location filename="src/options/options.ui" line="7287"/>
         <source>Scenery library directories to exclude from add-on recognition</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="7345"/>
+        <location filename="src/options/options.ui" line="7358"/>
         <source>A&amp;dd Directory ...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="7352"/>
+        <location filename="src/options/options.ui" line="7365"/>
         <source>R&amp;emove Selected</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="7154"/>
+        <location filename="src/options/options.ui" line="7167"/>
         <source>&lt;b&gt;You have to reload the scenery library for the changes to take effect.&lt;/b&gt;</source>
         <oldsource>&lt;b&gt;You have to re-import the scenery library for the changes to take effect.&lt;/b&gt;</oldsource>
         <translation>&lt;b&gt;您必须重新加载地景库才能使更改生效。&lt;/b&gt;</translation>

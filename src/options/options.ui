@@ -61,8 +61,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>582</width>
-             <height>452</height>
+             <width>597</width>
+             <height>451</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_21">
@@ -402,8 +402,8 @@ This is the file on top of the list &quot;Recent Window Layouts&quot;.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>499</width>
-             <height>394</height>
+             <width>514</width>
+             <height>422</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_22">
@@ -643,8 +643,8 @@ opening files, modifying the flight plan and other operations.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>408</width>
-             <height>517</height>
+             <width>419</width>
+             <height>553</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_23">
@@ -766,7 +766,7 @@ This will scale the Little Navmap map graphics and icons for better visibility i
                <item>
                 <widget class="QLabel" name="labelOptionsGuiHighDpiNote">
                  <property name="text">
-                  <string>&lt;b&gt;A restart is required after changing high DPI support&lt;/b&gt;</string>
+                  <string>&lt;b&gt;A restart is required after changing high DPI support.&lt;/b&gt;</string>
                  </property>
                  <property name="wordWrap">
                   <bool>true</bool>
@@ -1145,8 +1145,8 @@ This does not affect the map window which can be changed separately on the optio
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>535</width>
-             <height>346</height>
+             <width>543</width>
+             <height>366</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_36">
@@ -1391,7 +1391,7 @@ also define the order when reading coordinates in the user interface if enabled.
                   </font>
                  </property>
                  <property name="text">
-                  <string>&lt;b&gt;A restart is recommended after changing units&lt;/b&gt;</string>
+                  <string>&lt;b&gt;A restart is recommended after changing units.&lt;/b&gt;</string>
                  </property>
                  <property name="wordWrap">
                   <bool>true</bool>
@@ -1458,8 +1458,8 @@ Also affects labels at holds and traffic patterns.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>542</width>
-             <height>514</height>
+             <width>564</width>
+             <height>552</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_12">
@@ -1920,8 +1920,8 @@ Use &quot;Window&quot; -&gt; &quot;Reset Window Layout&quot; in the main menu to
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>565</width>
-             <height>300</height>
+             <width>586</width>
+             <height>324</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_13">
@@ -2253,8 +2253,8 @@ Smaller values will allow a finer selection.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>472</width>
-             <height>534</height>
+             <width>485</width>
+             <height>572</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_20">
@@ -3007,8 +3007,8 @@ Also used in the elevation profile.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>413</width>
-             <height>315</height>
+             <width>424</width>
+             <height>337</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_35">
@@ -3412,8 +3412,8 @@ Also used in the elevation profile.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>494</width>
-             <height>526</height>
+             <width>509</width>
+             <height>568</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_35">
@@ -4327,8 +4327,8 @@ Do not show this information publicly in forums on screenshots.&lt;/b&gt;&lt;/p&
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>316</width>
-             <height>353</height>
+             <width>328</width>
+             <height>379</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_39">
@@ -4765,8 +4765,8 @@ airspace filename has to match the callsign of the online center.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>552</width>
-             <height>528</height>
+             <width>572</width>
+             <height>566</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_25">
@@ -5250,8 +5250,8 @@ Lower this value to avoid too long tracks and avoid stutters in map display.</st
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>457</width>
-             <height>324</height>
+             <width>471</width>
+             <height>348</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_26">
@@ -5529,8 +5529,8 @@ Note that this value does not affect flight plan calculation or saving of flight
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>266</width>
-             <height>442</height>
+             <width>272</width>
+             <height>478</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_27">
@@ -5751,8 +5751,8 @@ Note that this value does not affect flight plan calculation or saving of flight
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>356</width>
-             <height>641</height>
+             <width>360</width>
+             <height>687</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_28">
@@ -6317,8 +6317,8 @@ Entering a wrong value will cause errors when downloading weather reports.</stri
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>378</width>
-             <height>349</height>
+             <width>389</width>
+             <height>375</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_29">
@@ -6619,8 +6619,8 @@ Entering a wrong value will cause errors when downloading weather reports.</stri
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>420</width>
-             <height>228</height>
+             <width>430</width>
+             <height>240</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_37">
@@ -6806,8 +6806,8 @@ Little Navmap GIT repository.
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>471</width>
-             <height>436</height>
+             <width>583</width>
+             <height>503</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_30">
@@ -6944,13 +6944,10 @@ Little Navmap GIT repository.
                <property name="spacing">
                 <number>2</number>
                </property>
-               <item row="1" column="1">
-                <widget class="QLineEdit" name="lineEditCacheMapThemeDir">
-                 <property name="toolTip">
-                  <string>Select a directoy to search for additional map themes.</string>
-                 </property>
-                 <property name="placeholderText">
-                  <string>No themes directory selected.</string>
+               <item row="1" column="2">
+                <widget class="QPushButton" name="pushButtonCacheMapThemeDir">
+                 <property name="text">
+                  <string>Select &amp;Themes Directory ...</string>
                  </property>
                 </widget>
                </item>
@@ -6964,13 +6961,6 @@ Little Navmap GIT repository.
                  </property>
                 </widget>
                </item>
-               <item row="1" column="2">
-                <widget class="QPushButton" name="pushButtonCacheMapThemeDir">
-                 <property name="text">
-                  <string>Select &amp;Themes Directory ...</string>
-                 </property>
-                </widget>
-               </item>
                <item row="2" column="1">
                 <widget class="QLabel" name="labelCacheMapThemeDir">
                  <property name="text">
@@ -6981,6 +6971,29 @@ Little Navmap GIT repository.
                  </property>
                  <property name="margin">
                   <number>5</number>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="1">
+                <widget class="QLineEdit" name="lineEditCacheMapThemeDir">
+                 <property name="toolTip">
+                  <string>Select a directoy to search for additional map themes.</string>
+                 </property>
+                 <property name="placeholderText">
+                  <string>No themes directory selected.</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="3" column="0" colspan="3">
+                <widget class="QLabel" name="labelOptionsMapThemeDirRestart">
+                 <property name="text">
+                  <string>&lt;b&gt;A restart is required to detect new map themes after changing the path or after installing new map themes.&lt;/b&gt;</string>
+                 </property>
+                 <property name="wordWrap">
+                  <bool>true</bool>
+                 </property>
+                 <property name="textInteractionFlags">
+                  <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
                  </property>
                 </widget>
                </item>
@@ -7134,8 +7147,8 @@ Source data has many errors.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>582</width>
-             <height>452</height>
+             <width>583</width>
+             <height>470</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_38">

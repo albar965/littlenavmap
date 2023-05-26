@@ -22581,8 +22581,9 @@ O tamanho da fonte é limitado a 30 pontos/pixels.</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="769"/>
-        <source>&lt;b&gt;A restart is required after changing high DPI support&lt;/b&gt;</source>
-        <translation>&lt;b&gt;É necessário reiniciar após alterar o suporte de alto DPI&lt;/b&gt;</translation>
+        <source>&lt;b&gt;A restart is required after changing high DPI support.&lt;/b&gt;</source>
+        <oldsource>&lt;b&gt;A restart is required after changing high DPI support&lt;/b&gt;</oldsource>
+        <translation type="unfinished">&lt;b&gt;É necessário reiniciar após alterar o suporte de alto DPI&lt;/b&gt;</translation>
     </message>
     <message>
         <source>Disables display of tooltips for the whole application.
@@ -23041,8 +23042,9 @@ também definem a ordem ao ler as coordenadas na interface do usuário, se habil
     </message>
     <message>
         <location filename="src/options/options.ui" line="1394"/>
-        <source>&lt;b&gt;A restart is recommended after changing units&lt;/b&gt;</source>
-        <translation>&lt;b&gt;Recomenda-se reiniciar após a troca de unidades&lt;/b&gt;</translation>
+        <source>&lt;b&gt;A restart is recommended after changing units.&lt;/b&gt;</source>
+        <oldsource>&lt;b&gt;A restart is recommended after changing units&lt;/b&gt;</oldsource>
+        <translation type="unfinished">&lt;b&gt;Recomenda-se reiniciar após a troca de unidades&lt;/b&gt;</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="1414"/>
@@ -23343,12 +23345,18 @@ Também usado no perfil de elevação.</translatorcomment>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="7375"/>
+        <location filename="src/options/options.ui" line="6990"/>
+        <source>&lt;b&gt;A restart is required to detect new map themes after changing the path or after installing new map themes.&lt;/b&gt;</source>
+        <oldsource>&lt;b&gt;A restart is required after changing the map display theme path.&lt;/b&gt;</oldsource>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/options/options.ui" line="7388"/>
         <source>Scenery library directories to include when loading</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="7405"/>
+        <location filename="src/options/options.ui" line="7418"/>
         <source>All add-ons in this list will be included in the scenery library when the Little Navmap 
 database is loaded, regardless of whether they are included the simulator or not.
 These paths apply to all Flight Simulators like MSFS (extending the directory &quot;Community&quot;) and 
@@ -24148,7 +24156,7 @@ Altere isso se você receber uma mensagem de erro como &quot;Endereço vinculado
         <translation type="vanished">&amp;Use uma conexão criptografada (HTTPS / SSL)</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="7014"/>
+        <location filename="src/options/options.ui" line="7027"/>
         <source>&amp;Select GLOBE Directory ...</source>
         <translation>&amp;Selecione o Diretório do GLOBE ...</translation>
     </message>
@@ -24199,18 +24207,18 @@ Atualmente, apenas o OpenAir é suportado (* .txt). </translation>
         <translation type="vanished">&amp;Extensões de arquivo:</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="7237"/>
-        <location filename="src/options/options.ui" line="7449"/>
+        <location filename="src/options/options.ui" line="7250"/>
+        <location filename="src/options/options.ui" line="7462"/>
         <source>&amp;Add Directory ...</source>
         <translation>&amp;Adicionar Diretório ...</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="7244"/>
+        <location filename="src/options/options.ui" line="7257"/>
         <source>&amp;Add Files ...</source>
         <translation>&amp;Adicionar Arquivos ...</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="7194"/>
+        <location filename="src/options/options.ui" line="7207"/>
         <source>All directories including sub-directories and files in this list will be omitted when loading the scenery library into the Little Navmap database.
 You can also use this list to speed up database loading if you exclude directories that do not contain airports or navaids.
 These paths apply to all Flight Simulators (FSX, Prepar3D, MSFS and X-Plane).
@@ -24564,7 +24572,7 @@ fornecer um botão na barra de ferramentas para desabilitá-los se esta caixa de
 juntos vão &quot;Tratar dos aeroportos especiais&quot;.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="7301"/>
+        <location filename="src/options/options.ui" line="7314"/>
         <source>All airports found outside the default &quot;scenery&quot; directory will be considered add-ons.
 You can use this list to modify this behavior.
 Any airports found in these directories and their sub-directories will not be considered add-ons.
@@ -25075,7 +25083,7 @@ forneça um botão da barra de ferramentas para desativá-los se esta caixa de s
         <translation>Cálculo do Plano de Voo</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="6993"/>
+        <location filename="src/options/options.ui" line="7006"/>
         <source>Flight Plan Elevation Profile</source>
         <translation>Perfil de Elevação do Plano de Voo</translation>
     </message>
@@ -25319,27 +25327,27 @@ Inserir um valor errado causará erros ao baixar boletins meteorológicos.</tran
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="6950"/>
+        <location filename="src/options/options.ui" line="6980"/>
         <source>Select a directoy to search for additional map themes.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="6953"/>
+        <location filename="src/options/options.ui" line="6983"/>
         <source>No themes directory selected.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="6960"/>
+        <location filename="src/options/options.ui" line="6957"/>
         <source>Directory for additional &amp;map themes:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="6970"/>
+        <location filename="src/options/options.ui" line="6950"/>
         <source>Select &amp;Themes Directory ...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="7024"/>
+        <location filename="src/options/options.ui" line="7037"/>
         <source>No elevation data directory selected.</source>
         <translation>Nenhum diretório de dados de elevação selecionado.</translation>
     </message>
@@ -25433,7 +25441,7 @@ quando haver uma transição do aeroporto para uma aerovia.</translation>
         <translation type="vanished">R&amp;emover</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="7031"/>
+        <location filename="src/options/options.ui" line="7044"/>
         <source>Recommended.
 Use Offline GLOBE Elevation Data. Can be downloaded for free.
 Resolution is lower than the online source but updates are very fast.
@@ -25444,7 +25452,7 @@ A resolução é menor do que a fonte online, mas as atualizações são muito r
 Tem uma grade de 30 segundos de arco (aproximadamente 900 metros perto do equador).</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="7044"/>
+        <location filename="src/options/options.ui" line="7057"/>
         <source>&lt;p&gt;&lt;a href=&quot;https://www.ngdc.noaa.gov/mgg/topo/gltiles.html&quot;&gt;&lt;b&gt;Click here to open the download page for the GLOBE data in your browser&lt;/b&gt;&lt;/a&gt;&lt;br/&gt;
 Download the file &lt;b&gt;&lt;i&gt;All Tiles in One .zip (all10g.zip)&lt;/i&gt;&lt;/b&gt; from the page and extract the archive to an arbitrary place, e.g in &lt;i&gt;Documents&lt;/i&gt;. Then click &lt;i&gt;Select GLOBE Directory ...&lt;/i&gt; above and select the directory with the extracted files.&lt;/p&gt;
 
@@ -25452,33 +25460,33 @@ Download the file &lt;b&gt;&lt;i&gt;All Tiles in One .zip (all10g.zip)&lt;/i&gt;
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="7167"/>
+        <location filename="src/options/options.ui" line="7180"/>
         <source>Scenery library directories or files to exclude from loading</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="7251"/>
-        <location filename="src/options/options.ui" line="7456"/>
+        <location filename="src/options/options.ui" line="7264"/>
+        <location filename="src/options/options.ui" line="7469"/>
         <source>&amp;Remove Selected</source>
         <translation>&amp;Remover selecionado</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="7274"/>
+        <location filename="src/options/options.ui" line="7287"/>
         <source>Scenery library directories to exclude from add-on recognition</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="7345"/>
+        <location filename="src/options/options.ui" line="7358"/>
         <source>A&amp;dd Directory ...</source>
         <translation>A&amp;dicionar Diretório ...</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="7352"/>
+        <location filename="src/options/options.ui" line="7365"/>
         <source>R&amp;emove Selected</source>
         <translation>R&amp;emover selecionado</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="7154"/>
+        <location filename="src/options/options.ui" line="7167"/>
         <source>&lt;b&gt;You have to reload the scenery library for the changes to take effect.&lt;/b&gt;</source>
         <oldsource>&lt;b&gt;You have to re-import the scenery library for the changes to take effect.&lt;/b&gt;</oldsource>
         <translation>&lt;b&gt;Você precisa recarregar a biblioteca de cenários para que as alterações tenham efeito.&lt;/b&gt;</translation>
@@ -25540,7 +25548,7 @@ logbook e outras guias de pesquisa</translation>
         <translation>Selecione o arquivo &quot;current_wx_snapshot.txt.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="7021"/>
+        <location filename="src/options/options.ui" line="7034"/>
         <source>Select the directoy that contains the files &quot;a10g&quot; to &quot;p10g&quot;.</source>
         <translation>Selecione o diretório que contém os arquivos &quot;a10g&quot; para &quot;p10g&quot;.</translation>
     </message>
@@ -25875,12 +25883,12 @@ Se este campo estiver vazio, será utilizado o caminho padrão do arquivo do cli
         <translation type="vanished">Use formatos de &amp;número e data em inglês independente das configurações atuais do computador (reinicialização necessária após a mudança)</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="7037"/>
+        <location filename="src/options/options.ui" line="7050"/>
         <source>Use Offline GLOBE Elevation Data</source>
         <translation>Usar dados offline de elevação GLOBE</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="7081"/>
+        <location filename="src/options/options.ui" line="7094"/>
         <source>Use Online Elevation Data</source>
         <translation>Use dados de elevação on-line</translation>
     </message>
@@ -25900,7 +25908,7 @@ Se este campo estiver vazio, será utilizado o caminho padrão do arquivo do cli
         <translation>Use um endereço da Web personalizado para o arquivo &quot;whazzup.txt&quot;</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="7076"/>
+        <location filename="src/options/options.ui" line="7089"/>
         <source>Use online elevation data to display ground in flight plan elevation profile.
 Has a higher resolution than the offline data source but updates are slow.
 Source data has many errors.</source>
@@ -25938,8 +25946,8 @@ Os dados originais têm muitos erros.</translation>
         <location filename="src/options/options.ui" line="5941"/>
         <location filename="src/options/options.ui" line="6014"/>
         <location filename="src/options/options.ui" line="6677"/>
-        <location filename="src/options/options.ui" line="6977"/>
-        <location filename="src/options/options.ui" line="7063"/>
+        <location filename="src/options/options.ui" line="6967"/>
+        <location filename="src/options/options.ui" line="7076"/>
         <source>Valid</source>
         <translation>Válido</translation>
     </message>

@@ -112,8 +112,6 @@ A big thank you to all who reported bugs and issues!
   directly to the folders using menu `Tools` -> `Files and directories` -> `Show map cache`.
   Delete folders for related map themes there to clear the cache. #619
 * Added airport filter to hide military airports. Airport filters are reset on update.
-* Smoother aircraft movement when zoomed in close to an airport and increased precision when
-  drawing aircraft and track.
 * Fixed potential issue with steps effect when drawing lines like the aircraft trail.
 * Now adding runway true heading to labels if declination is excessive as in Antarctica.
 * Now rounding the entry altitude for destination runways to nearest 10 feet or meter to avoid

@@ -23631,8 +23631,8 @@ Se questo campo è vuoto, sarà usato il file di Active Sky di default che è di
         <location filename="src/options/options.ui" line="5941"/>
         <location filename="src/options/options.ui" line="6014"/>
         <location filename="src/options/options.ui" line="6677"/>
-        <location filename="src/options/options.ui" line="6977"/>
-        <location filename="src/options/options.ui" line="7063"/>
+        <location filename="src/options/options.ui" line="6967"/>
+        <location filename="src/options/options.ui" line="7076"/>
         <source>Valid</source>
         <translation>Valido</translation>
     </message>
@@ -24103,8 +24103,9 @@ La dimensione del carattere è limitata a 30 punti/pixel.</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="769"/>
-        <source>&lt;b&gt;A restart is required after changing high DPI support&lt;/b&gt;</source>
-        <translation>&lt;b&gt;È necessario riavviare dopo aver modificato il supporto DPI alti&lt;/b&gt;</translation>
+        <source>&lt;b&gt;A restart is required after changing high DPI support.&lt;/b&gt;</source>
+        <oldsource>&lt;b&gt;A restart is required after changing high DPI support&lt;/b&gt;</oldsource>
+        <translation type="unfinished">&lt;b&gt;È necessario riavviare dopo aver modificato il supporto DPI alti&lt;/b&gt;</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="806"/>
@@ -24906,8 +24907,9 @@ definisce anche l&apos;ordine quando si leggono le coordinate nell&apos;interfac
     </message>
     <message>
         <location filename="src/options/options.ui" line="1394"/>
-        <source>&lt;b&gt;A restart is recommended after changing units&lt;/b&gt;</source>
-        <translation>&lt;b&gt;Si consiglia un riavvio dopo aver cambiato unità&lt;/b&gt;</translation>
+        <source>&lt;b&gt;A restart is recommended after changing units.&lt;/b&gt;</source>
+        <oldsource>&lt;b&gt;A restart is recommended after changing units&lt;/b&gt;</oldsource>
+        <translation type="unfinished">&lt;b&gt;Si consiglia un riavvio dopo aver cambiato unità&lt;/b&gt;</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="1414"/>
@@ -25434,7 +25436,13 @@ Spunta questo se fai affidamento sul GPS quando voli.</translation>
         <translation>&amp;Formato:</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="7044"/>
+        <location filename="src/options/options.ui" line="6990"/>
+        <source>&lt;b&gt;A restart is required to detect new map themes after changing the path or after installing new map themes.&lt;/b&gt;</source>
+        <oldsource>&lt;b&gt;A restart is required after changing the map display theme path.&lt;/b&gt;</oldsource>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/options/options.ui" line="7057"/>
         <source>&lt;p&gt;&lt;a href=&quot;https://www.ngdc.noaa.gov/mgg/topo/gltiles.html&quot;&gt;&lt;b&gt;Click here to open the download page for the GLOBE data in your browser&lt;/b&gt;&lt;/a&gt;&lt;br/&gt;
 Download the file &lt;b&gt;&lt;i&gt;All Tiles in One .zip (all10g.zip)&lt;/i&gt;&lt;/b&gt; from the page and extract the archive to an arbitrary place, e.g in &lt;i&gt;Documents&lt;/i&gt;. Then click &lt;i&gt;Select GLOBE Directory ...&lt;/i&gt; above and select the directory with the extracted files.&lt;/p&gt;
 
@@ -25442,17 +25450,17 @@ Download the file &lt;b&gt;&lt;i&gt;All Tiles in One .zip (all10g.zip)&lt;/i&gt;
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="7167"/>
+        <location filename="src/options/options.ui" line="7180"/>
         <source>Scenery library directories or files to exclude from loading</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="7375"/>
+        <location filename="src/options/options.ui" line="7388"/>
         <source>Scenery library directories to include when loading</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="7405"/>
+        <location filename="src/options/options.ui" line="7418"/>
         <source>All add-ons in this list will be included in the scenery library when the Little Navmap 
 database is loaded, regardless of whether they are included the simulator or not.
 These paths apply to all Flight Simulators like MSFS (extending the directory &quot;Community&quot;) and 
@@ -25490,7 +25498,7 @@ You have to reload the scenery library so that the changes take effect.</source>
         <translation type="vanished">Cancella la cache del disco. Questo processo verrà eseguito in background e richiederà un po &apos;di tempo.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="7076"/>
+        <location filename="src/options/options.ui" line="7089"/>
         <source>Use online elevation data to display ground in flight plan elevation profile.
 Has a higher resolution than the offline data source but updates are slow.
 Source data has many errors.</source>
@@ -25499,7 +25507,7 @@ Ha una risoluzione maggiore rispetto ai dati offline ma gli aggiornamenti sono l
 I dati di origine hanno molti errori.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="7031"/>
+        <location filename="src/options/options.ui" line="7044"/>
         <source>Recommended.
 Use Offline GLOBE Elevation Data. Can be downloaded for free.
 Resolution is lower than the online source but updates are very fast.
@@ -26015,42 +26023,42 @@ Little Navmap GIT repository.
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="6950"/>
+        <location filename="src/options/options.ui" line="6980"/>
         <source>Select a directoy to search for additional map themes.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="6953"/>
+        <location filename="src/options/options.ui" line="6983"/>
         <source>No themes directory selected.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="6960"/>
+        <location filename="src/options/options.ui" line="6957"/>
         <source>Directory for additional &amp;map themes:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="6970"/>
+        <location filename="src/options/options.ui" line="6950"/>
         <source>Select &amp;Themes Directory ...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="6993"/>
+        <location filename="src/options/options.ui" line="7006"/>
         <source>Flight Plan Elevation Profile</source>
         <translation>Profilo di Elevazione del Piano di Volo</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="7014"/>
+        <location filename="src/options/options.ui" line="7027"/>
         <source>&amp;Select GLOBE Directory ...</source>
         <translation>&amp;Seleziona la Cartella GLOBE ...</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="7021"/>
+        <location filename="src/options/options.ui" line="7034"/>
         <source>Select the directoy that contains the files &quot;a10g&quot; to &quot;p10g&quot;.</source>
         <translation>Seleziona la cartella che contiene i files &quot;a10g&quot; to &quot;p10g&quot;.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="7024"/>
+        <location filename="src/options/options.ui" line="7037"/>
         <source>No elevation data directory selected.</source>
         <translation>Nessuna cartella di dati di elevazione selezionata.</translation>
     </message>
@@ -26065,12 +26073,12 @@ Scarica il file &lt;b&gt;&lt;i&gt; Tutti i riquadri in uno .zip (all10g.zip)&lt;
 &lt;p&gt;&lt;a href=&quot;%1&quot;&gt;&lt;b&gt; Fare clic qui per ulteriori informazioni nel manuale in linea di &lt;i&gt;Little Navmap&lt;/i&gt;&lt;/b&gt;&lt;/a&gt;&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="7081"/>
+        <location filename="src/options/options.ui" line="7094"/>
         <source>Use Online Elevation Data</source>
         <translation>Utilizza i Dati di Elevazione Online</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="7037"/>
+        <location filename="src/options/options.ui" line="7050"/>
         <source>Use Offline GLOBE Elevation Data</source>
         <translation>Utilizza Dati di Elevazione GLOBE Offline</translation>
     </message>
@@ -26093,18 +26101,18 @@ Scarica dal link &lt;b&gt; &lt;i&gt; Tutte le Zone in Uno .zip (all10g.zip) &lt;
         <translation type="vanished">&amp;Rimuovi</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="7237"/>
-        <location filename="src/options/options.ui" line="7449"/>
+        <location filename="src/options/options.ui" line="7250"/>
+        <location filename="src/options/options.ui" line="7462"/>
         <source>&amp;Add Directory ...</source>
         <translation>&amp;Aggiungi Cartella ...</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="7244"/>
+        <location filename="src/options/options.ui" line="7257"/>
         <source>&amp;Add Files ...</source>
         <translation>&amp;Aggiungi Files ...</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="7194"/>
+        <location filename="src/options/options.ui" line="7207"/>
         <source>All directories including sub-directories and files in this list will be omitted when loading the scenery library into the Little Navmap database.
 You can also use this list to speed up database loading if you exclude directories that do not contain airports or navaids.
 These paths apply to all Flight Simulators (FSX, Prepar3D, MSFS and X-Plane).
@@ -26127,7 +26135,7 @@ Devi ricaricare la libreria degli scenari in modo che le modifiche abbiano effet
         <translation type="vanished">Database delle Librerie Scenari</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="7301"/>
+        <location filename="src/options/options.ui" line="7314"/>
         <source>All airports found outside the default &quot;scenery&quot; directory will be considered add-ons.
 You can use this list to modify this behavior.
 Any airports found in these directories and their sub-directories will not be considered add-ons.
@@ -26258,29 +26266,29 @@ L&apos;inserimento di un valore errato causerà errori durante il download dei b
         <translation type="vanished">Seleziona i &amp;percorsi da escludere dal riconoscimento componenti aggiuntivi:</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="7251"/>
-        <location filename="src/options/options.ui" line="7456"/>
+        <location filename="src/options/options.ui" line="7264"/>
+        <location filename="src/options/options.ui" line="7469"/>
         <source>&amp;Remove Selected</source>
         <translatorcomment>&amp;Rimuovi Selezionati</translatorcomment>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="7274"/>
+        <location filename="src/options/options.ui" line="7287"/>
         <source>Scenery library directories to exclude from add-on recognition</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="7345"/>
+        <location filename="src/options/options.ui" line="7358"/>
         <source>A&amp;dd Directory ...</source>
         <translation>A&amp;ggiungi Cartella ...</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="7352"/>
+        <location filename="src/options/options.ui" line="7365"/>
         <source>R&amp;emove Selected</source>
         <translation>R&amp;imuovi Selezionati</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="7154"/>
+        <location filename="src/options/options.ui" line="7167"/>
         <source>&lt;b&gt;You have to reload the scenery library for the changes to take effect.&lt;/b&gt;</source>
         <oldsource>&lt;b&gt;You have to re-import the scenery library for the changes to take effect.&lt;/b&gt;</oldsource>
         <translation>&lt;b&gt;Devi reimportare la libreria degli scenari affinché le modifiche abbiano effetto.&lt;/b&gt;</translation>
