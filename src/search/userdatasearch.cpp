@@ -188,6 +188,13 @@ void UserdataSearch::restoreState()
     // distance search and avoid saving of wrong view widget state)
     widgetState.setBlockSignals(true);
     widgetState.restore({ui->horizontalLayoutUserdata, ui->horizontalLayoutUserdataMore});
+
+    if(!widgetState.contains(ui->comboBoxUserdataType))
+    {
+      // Have to reset to invalid and empty text on first startup to avoid index 0 ("Addon")
+      ui->comboBoxUserdataType->clearEditText();
+      ui->comboBoxUserdataType->setCurrentIndex(-1);
+    }
   }
   else
   {
