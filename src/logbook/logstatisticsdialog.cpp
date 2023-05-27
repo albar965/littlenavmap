@@ -534,11 +534,11 @@ void LogStatisticsDialog::initQueries()
           "cast(sum(max(strftime('%s', destination_time_sim) - strftime('%s', departure_time_sim), 0) / 3600.) as double) as simtime, "
           "aircraft_registration from logbook group by simulator, aircraft_registration"),
 
-    Query(tr("Aircraft hours flown"),
-          {tr("Hours flown"), tr("Aircraft name"), tr("Aircraft type")},
-          {RIGHT, LEFT, LEFT},
-          {"total_hours", "aircraft_name", "aircraft_type"}, 0, Qt::DescendingOrder,
-          "select sum(hours_flown) as total_hours, aircraft_name, aircraft_type from ("
+    Query(tr("Aircraft hours and number of flights flown"),
+          {tr("Hours flown"), tr("Total Flights"), tr("Aircraft name"), tr("Aircraft type")},
+          {RIGHT, RIGHT, LEFT, LEFT},
+          {"total_hours", "total_flights", "aircraft_name", "aircraft_type"}, 0, Qt::DescendingOrder,
+          "select sum(hours_flown) as total_hours, COUNT(*) AS total_flights, aircraft_name, aircraft_type from ("
           "select logbook_id, aircraft_name, aircraft_type, "
           "  cast ((julianday(destination_time) - julianday(departure_time)) * 24 AS REAL) as hours_flown "
           "from logbook where departure_time is not null and destination_time is not null) "
