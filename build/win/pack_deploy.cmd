@@ -1,9 +1,13 @@
 @echo off
 
+echo ============================================================================================
+echo ======== pack_deploy.cmd ===================================================================
+echo ============================================================================================
+
 setlocal enableextensions
 
-if defined APROJECTS ( echo %APROJECTS% ) else ( echo APROJECTS not set && exit /b 1 )
-if defined WINARCH ( echo %WINARCH% ) else ( echo WINARCH not set && exit /b 1 )
+if defined APROJECTS ( echo APROJECTS=%APROJECTS% ) else ( echo APROJECTS not set && exit /b 1 )
+if defined WINARCH ( echo WINARCH=%WINARCH% ) else ( echo WINARCH not set && exit /b 1 )
 
 rem Override by envrionment variable for another target or leave empty for no copying - needs putty tools in path
 rem set SSH_DEPLOY_TARGET=user@host:/data/alex/Public/Releases
@@ -24,17 +28,24 @@ xcopy /i /s /e /f /y "%APROJECTS%\deploy\Little Navmap %WINARCH%" "%APROJECTS%\d
 IF ERRORLEVEL 1 goto :err
 
 rem ===========================================================================
-rem Copy navconnect =======================================================
+rem Copy navconnect ===========================================================
 xcopy /i /s /e /f /y "%APROJECTS%\deploy\Little Navconnect %WINARCH%" "%APROJECTS%\deploy\%FILENAME_LNM_RELEASE%\Little Navconnect"
 IF ERRORLEVEL 1 goto :err
 
 rem ===========================================================================
-rem Copy xpconnect =======================================================
+rem Copy xpconnect ============================================================
 xcopy /i /s /e /f /y "%APROJECTS%\deploy\Little Xpconnect" "%APROJECTS%\deploy\%FILENAME_LNM_RELEASE%\Little Xpconnect"
 IF ERRORLEVEL 1 goto :err
 
 rem ===========================================================================
-rem ==== Pack Little Navmap ===================================================================
+rem ==== Build installer ======================================================
+popd
+call build_installer.cmd nopause
+IF ERRORLEVEL 1 goto :err
+pushd "%APROJECTS%\deploy"
+
+rem ===========================================================================
+rem ==== Pack Little Navmap ===================================================
 del "%APROJECTS%\deploy\%FILENAME_LNM_RELEASE%.zip"
 
 "C:\Program Files\7-Zip\7z.exe" a "%APROJECTS%\deploy\%FILENAME_LNM_RELEASE%.zip" "%APROJECTS%\deploy\%FILENAME_LNM_RELEASE%"
@@ -43,11 +54,15 @@ IF ERRORLEVEL 1 goto :err
 "C:\Program Files\Windows Defender\MpCmdRun.exe" -Scan -ScanType 3 -DisableRemediation -File "%APROJECTS%\deploy\%FILENAME_LNM_RELEASE%.zip"
 IF ERRORLEVEL 1 goto :err
 
+"C:\Program Files\Windows Defender\MpCmdRun.exe" -Scan -ScanType 3 -DisableRemediation -File "%APROJECTS%\deploy\%FILENAME_LNM_RELEASE%-Install.exe"
+IF ERRORLEVEL 1 goto :err
+
 rem ===========================================================================
 rem ==== Copy all =============================================================
 
 if defined SSH_DEPLOY_TARGET (
 pscp -i %HOMEDRIVE%\%HOMEPATH%\.ssh\id_rsa "%APROJECTS%\deploy\%FILENAME_LNM_RELEASE%.zip" %SSH_DEPLOY_TARGET%/%FILENAME_LNM_RELEASE%.zip
+pscp -i %HOMEDRIVE%\%HOMEPATH%\.ssh\id_rsa "%APROJECTS%\deploy\%FILENAME_LNM_RELEASE%-Install.exe" %SSH_DEPLOY_TARGET%/%FILENAME_LNM_RELEASE%-Install.exe
 )
 
 popd

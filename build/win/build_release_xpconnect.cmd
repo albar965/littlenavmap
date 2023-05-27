@@ -1,8 +1,12 @@
 @echo off
 
+echo ============================================================================================
+echo ======== build_release_xpconnect.cmd =======================================================
+echo ============================================================================================
+
 setlocal enableextensions
 
-if defined APROJECTS ( echo %APROJECTS% ) else ( echo APROJECTS not set && exit /b 1 )
+if defined APROJECTS ( echo APROJECTS=%APROJECTS% ) else ( echo APROJECTS not set && exit /b 1 )
 
 rem =============================================================================
 rem Set the required environment variable APROJECTS to the base directory for
@@ -19,17 +23,17 @@ rem set PATH_STATIC=C:\msys64\mingw64\bin;C:\msys64\mingw64\bin
 rem set XPSDK_BASE="C:\X-Plane SDK"
 rem
 
-if defined CONF_TYPE ( echo %CONF_TYPE% ) else ( set CONF_TYPE=release)
-if defined ATOOLS_INC_PATH ( echo %ATOOLS_INC_PATH% ) else ( set ATOOLS_INC_PATH=%APROJECTS%\atools\src)
-if defined ATOOLS_LIB_PATH ( echo %ATOOLS_LIB_PATH% ) else ( set ATOOLS_LIB_PATH=%APROJECTS%\build-atools-%CONF_TYPE%)
-if defined DEPLOY_BASE ( echo %DEPLOY_BASE% ) else ( set DEPLOY_BASE=%APROJECTS%\deploy)
-if defined ATOOLS_GIT_PATH ( echo %ATOOLS_GIT_PATH% ) else ( set ATOOLS_GIT_PATH=C:\Git\bin\git)
+if defined CONF_TYPE ( echo CONF_TYPE=%CONF_TYPE% ) else ( set CONF_TYPE=release)
+if defined ATOOLS_INC_PATH ( echo ATOOLS_INC_PATH=%ATOOLS_INC_PATH% ) else ( set ATOOLS_INC_PATH=%APROJECTS%\atools\src)
+if defined ATOOLS_LIB_PATH ( echo ATOOLS_LIB_PATH=%ATOOLS_LIB_PATH% ) else ( set ATOOLS_LIB_PATH=%APROJECTS%\build-atools-%CONF_TYPE%)
+if defined DEPLOY_BASE ( echo DEPLOY_BASE=%DEPLOY_BASE% ) else ( set DEPLOY_BASE=%APROJECTS%\deploy)
+if defined ATOOLS_GIT_PATH ( echo ATOOLS_GIT_PATH=%ATOOLS_GIT_PATH% ) else ( set ATOOLS_GIT_PATH=C:\Git\bin\git)
 
 rem Windows/qmake cannot deal with paths containing spaces/quotes - defines these variables in the Windows GUI
 rem if defined XPSDK_BASE ( echo %XPSDK_BASE% ) else ( set XPSDK_BASE="%APROJECTS%\X-Plane SDK")
 
 rem Defines the used Qt for Xpconnect
-if defined PATH_STATIC ( echo %PATH_STATIC% ) else ( set PATH_STATIC=C:\msys64\mingw64\qt5-static\bin;C:\msys64\mingw64\bin)
+if defined PATH_STATIC ( echo PATH_STATIC=%PATH_STATIC% ) else ( set PATH_STATIC=C:\msys64\mingw64\qt5-static\bin;C:\msys64\mingw64\bin)
 
 rem === Build littlexpconnect =============================
 

@@ -1,9 +1,13 @@
 @echo off
 
+echo ============================================================================================
+echo ======== build_clean.cmd ===================================================================
+echo ============================================================================================
+
 setlocal enableextensions
 
-if defined APROJECTS ( echo %APROJECTS% ) else ( echo APROJECTS not set && exit /b 1 )
-if defined CONF_TYPE ( echo %CONF_TYPE% ) else ( set CONF_TYPE=release)
+if defined APROJECTS ( echo APROJECTS=%APROJECTS% ) else ( echo APROJECTS not set && exit /b 1 )
+if defined CONF_TYPE ( echo CONF_TYPE=%CONF_TYPE% ) else ( set CONF_TYPE=release)
 
 setlocal
 

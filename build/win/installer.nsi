@@ -5,6 +5,7 @@
 ;--------------------------------
 ;Include Modern UI & uninstall log
 
+  !verbose 4
   !include "MUI2.nsh"
   !include "UnInstallLog.nsh"
 
@@ -134,6 +135,8 @@ Section "Little Navmap" SecDummy
   ${SetOutPath} "$INSTDIR"
 
   File /r "$%INSTALLER_SOURCE%\*"
+  
+  ;!system 'dir /S /B "$%INSTALLER_SOURCE%" > C:\Users\alex\files.log'
 
   ;Create uninstaller
   ${WriteUninstaller} "$INSTDIR\uninstall.exe"
@@ -141,7 +144,7 @@ Section "Little Navmap" SecDummy
   ;Registry keys for uninstaller
   ${WriteRegStr} HKCU "Software\Microsoft\Windows\CurrentVersion\Uninstall\Little Navmap" "DisplayName" "Little Navmap"
   ${WriteRegStr} HKCU "Software\Microsoft\Windows\CurrentVersion\Uninstall\Little Navmap" "DisplayIcon" "$INSTDIR\littlenavmap.exe"
-  ${WriteRegStr} HKCU "Software\Microsoft\Windows\CurrentVersion\Uninstall\Little Navmap" "DisplayVersion" "2.8.10"
+  ${WriteRegStr} HKCU "Software\Microsoft\Windows\CurrentVersion\Uninstall\Little Navmap" "DisplayVersion" "$%INSTALLER_VERSION%"
   ${WriteRegStr} HKCU "Software\Microsoft\Windows\CurrentVersion\Uninstall\Little Navmap" "Publisher" "Alexander Barthel"
   ${WriteRegStr} HKCU "Software\Microsoft\Windows\CurrentVersion\Uninstall\Little Navmap" "UninstallString" "$INSTDIR\uninstall.exe"
 

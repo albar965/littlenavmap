@@ -1,9 +1,13 @@
 @echo off
 
+echo ============================================================================================
+echo ======== build_release_base.cmd ============================================================
+echo ============================================================================================
+
 setlocal enableextensions
 
-if defined APROJECTS ( echo %APROJECTS% ) else ( echo APROJECTS not set && exit /b 1 )
-if defined WINARCH ( echo %WINARCH% ) else ( echo WINARCH not set && exit /b 1 )
+if defined APROJECTS ( echo APROJECTS=%APROJECTS% ) else ( echo APROJECTS not set && exit /b 1 )
+if defined WINARCH ( echo WINARCH=%WINARCH% ) else ( echo WINARCH not set && exit /b 1 )
 
 rem === Build atools, littlenavconnect and littlenavmap =============================
 
