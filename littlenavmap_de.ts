@@ -5505,8 +5505,9 @@ Zeit Stunden</translation>
     </message>
     <message>
         <location filename="src/logbook/logstatisticsdialog.cpp" line="537"/>
-        <source>Aircraft hours flown</source>
-        <translation>Geflogene Stunden nach Flugzeug</translation>
+        <source>Aircraft hours and number of flights flown</source>
+        <oldsource>Aircraft hours flown</oldsource>
+        <translation>Geflogene Stunden und Anzahl Flüge nach Flugzeug</translation>
     </message>
     <message>
         <location filename="src/logbook/logstatisticsdialog.cpp" line="538"/>
@@ -5522,6 +5523,11 @@ Zeit Stunden</translation>
         <location filename="src/logbook/logstatisticsdialog.cpp" line="538"/>
         <source>Aircraft type</source>
         <translation>Flugzeugtyp</translation>
+    </message>
+    <message>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="538"/>
+        <source>Total Flights</source>
+        <translation>Flüge</translation>
     </message>
 </context>
 <context>

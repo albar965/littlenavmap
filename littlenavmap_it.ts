@@ -5478,7 +5478,8 @@ ore</translation>
     </message>
     <message>
         <location filename="src/logbook/logstatisticsdialog.cpp" line="537"/>
-        <source>Aircraft hours flown</source>
+        <source>Aircraft hours and number of flights flown</source>
+        <oldsource>Aircraft hours flown</oldsource>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -5494,6 +5495,11 @@ ore</translation>
     <message>
         <location filename="src/logbook/logstatisticsdialog.cpp" line="538"/>
         <source>Aircraft type</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="538"/>
+        <source>Total Flights</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
