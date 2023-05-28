@@ -51,12 +51,14 @@ A big thank you to all who reported bugs and issues!
   menu `Scenery Library` -> `Navigraph` -> `Select Automatically` is enabled per default and selects
   the right navdata mode when switching between simulators or after compiling the database. The automatically
   selected mode can be seen in the disabled menu items in menu `Navigraph` or in the window title bar.
+  [Little Navmap User Manual - Navigraph](https://www.littlenavmap.org/manuals/littlenavmap/release/2.8/en/MENUS.html#navigraph)
 * The mode `Use Navigraph for all Features` is now enabled per default to have airports available if
   the simulator database is empty. This happens after a fresh installation, for example. This is
   independent of the AIRAC cycle.
 * Added option to include extra directories for scenery library scanning. Extra folders extending
-  MSFS `Community` or X-Plane `Custom Scenery` can be added in options on page `Scenery Library
-  Database` in the top list. #959
+  MSFS ``Community``, X-Plane ``Custom Scenery`` or FSX/P3D ``Addon Scenery`` can be added in
+  options on page `Scenery Library Database` in the top list. #959
+  [Little Navmap User Manual - Scenery Library Database](https://www.littlenavmap.org/manuals/littlenavmap/release/2.8/en/OPTIONS.html#scenery-library-database)
 * Added message in dialog window `Load Scenery Library` indicating excluded folders. This is a
   hint since wrong and unintended exclusions can often cause issues.
 * More cleanup for MSFS airport names. Now removing leading and trailing space from all names to
@@ -82,8 +84,10 @@ A big thank you to all who reported bugs and issues!
   table and airport search result table. This inserts a userpoint of type `Addon` without additional
   editing. The labels of this userpoint type (yellow ring) are not shown on map to avoid overlap
   with the airport labels.
+  [Little Navmap User Manual - Mark Airport as Add-on](https://www.littlenavmap.org/manuals/littlenavmap/release/2.8/en/MAPDISPLAY.html#mark-airport-as-addon)
 * Added cleanup function for userpoints to remove empty or duplicates by several criteria. See menu
   `Userpoints` -> `Cleanup Userpoints` or the context menu in the userpoint search result table.
+  [Little Navmap User Manual - Cleanup Userpoints](https://www.littlenavmap.org/manuals/littlenavmap/release/2.8/en/USERPOINT.html#cleanup-userpoints)
 * Userpoint CSV import is now one undo step for all selected files to avoid confusion after
   selecting more than one file for import.
 
@@ -103,9 +107,11 @@ A big thank you to all who reported bugs and issues!
   disabled per default. Put the map folders like `google-maps-sat` or `us-vfr-sectionals` directly
   into the selected folder and restart Little Navmap to detect the new map themes.
   This helps to avoid the re-installation of map themes after each update.
+  [Little Navmap User Manual - Map Themes](https://www.littlenavmap.org/manuals/littlenavmap/release/2.8/en/MAPTHEMES.html)
 * Removed not working `Clear Cache` from page `Cache and Files`. Clear the map cache by going
   directly to the folders using menu `Tools` -> `Files and directories` -> `Show map cache`.
   Delete folders for related map themes there to clear the cache. #619
+  [Little Navmap User Manual - Cache and Files / Map Display](https://www.littlenavmap.org/manuals/littlenavmap/release/2.8/en/OPTIONS.html#cache-map-display)
 * Added airport filter to hide military airports. Airport filters are reset on update.
 * Fixed potential issue with steps effect when drawing lines like the aircraft trail.
 * Now adding runway true heading to labels if declination is excessive as in Antarctica.
@@ -134,12 +140,14 @@ A big thank you to all who reported bugs and issues!
   `User aircraft type "BE58" in simulator is not equal to type "EPIC" used in performance file`.
   Adapt performance and menu `Aircraft` -> `Edit Aircraft Performance`. Change the field `Aircraft type`
   on the tab `Aircraft` accordingly.
+  [Little Navmap User Manual - Aircraft Type]https://www.littlenavmap.org/manuals/littlenavmap/release/2.8/en/AIRCRAFTPERFEDIT.html#aircraft-type)
 * Fixed several issues in dialog window and when creating folder structure for user files from
   menu `Tools` -> `Create Directory Structure for saving Files`.
 * The web server is now only restarted on parameter change in options. This avoids the hanging due
   to unneeded restart on exit or cancel. #1019
 * Now allowing comma separated coordinates for decimal coordinate formats like `50,07477,8,54053` or
   `50.07477,8.54053`. Spaces before and after the comma are allowed.
+  [Little Navmap User Manual - Coordinates](https://www.littlenavmap.org/manuals/littlenavmap/release/2.8/en/COORDINATES.html)
 * Fixed issue where a search for userpoint type was not applied on startup.
 
 ### User Manual
