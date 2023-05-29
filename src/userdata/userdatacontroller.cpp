@@ -366,7 +366,9 @@ void UserdataController::addUserpointFromMap(const map::MapResult& result, atool
 
       if(airportAddon)
         // Addon type to highlight add-on airports
-        prefillRec.appendFieldAndValue("type", "Addon").appendFieldAndValue("visible_from", 5000);
+        prefillRec.appendFieldAndValue("type", "Addon").
+        appendFieldAndValue("visible_from", 5000).
+        appendFieldAndValueIf("tags", NavApp::getCurrentSimulatorShortName());
       else
         prefillRec.appendFieldAndValue("type", "Airport");
 

@@ -1603,15 +1603,13 @@ void MainWindow::connectAllSlots()
   connect(connectClient, &ConnectClient::disconnectedFromSimulator,
           NavApp::getAircraftPerfController(), &AircraftPerfController::disconnectedFromSimulator);
 
-  connect(connectClient, &ConnectClient::disconnectedFromSimulator, routeController,
-          &RouteController::disconnectedFromSimulator);
+  connect(connectClient, &ConnectClient::disconnectedFromSimulator, routeController, &RouteController::disconnectedFromSimulator);
 
   connect(connectClient, &ConnectClient::disconnectedFromSimulator, this, &MainWindow::sunShadingTimeChanged);
 
   // Map widget needs to clear track first
   connect(connectClient, &ConnectClient::connectedToSimulator, mapWidget, &MapPaintWidget::connectedToSimulator);
-  connect(connectClient, &ConnectClient::disconnectedFromSimulator, mapWidget,
-          &MapPaintWidget::disconnectedFromSimulator);
+  connect(connectClient, &ConnectClient::disconnectedFromSimulator, mapWidget, &MapPaintWidget::disconnectedFromSimulator);
 
   connect(connectClient, &ConnectClient::connectedToSimulator, this, &MainWindow::updateActionStates);
   connect(connectClient, &ConnectClient::disconnectedFromSimulator, this, &MainWindow::updateActionStates);
@@ -1621,12 +1619,10 @@ void MainWindow::connectAllSlots()
   connect(connectClient, &ConnectClient::disconnectedFromSimulator, NavApp::getUpdateHandler(), &UpdateHandler::enableUpdateCheck);
 
   connect(connectClient, &ConnectClient::connectedToSimulator, infoController, &InfoController::connectedToSimulator);
-  connect(connectClient, &ConnectClient::disconnectedFromSimulator, infoController,
-          &InfoController::disconnectedFromSimulator);
+  connect(connectClient, &ConnectClient::disconnectedFromSimulator, infoController, &InfoController::disconnectedFromSimulator);
 
   connect(connectClient, &ConnectClient::connectedToSimulator, profileWidget, &ProfileWidget::connectedToSimulator);
-  connect(connectClient, &ConnectClient::disconnectedFromSimulator, profileWidget,
-          &ProfileWidget::disconnectedFromSimulator);
+  connect(connectClient, &ConnectClient::disconnectedFromSimulator, profileWidget, &ProfileWidget::disconnectedFromSimulator);
 
   connect(connectClient, &ConnectClient::connectedToSimulator, routeController, &RouteController::updateFooterErrorLabel);
   connect(connectClient, &ConnectClient::disconnectedFromSimulator, routeController, &RouteController::updateFooterErrorLabel);
