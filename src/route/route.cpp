@@ -3302,7 +3302,8 @@ void Route::updateAirwaysAndAltitude(bool adjustRouteAltitude)
   if(isEmpty())
     return;
 
-  int minAltitudeFt = 0, maxAltitudeFt = 100000;
+  int minAltitudeFt = static_cast<int>(atools::fs::pln::FLIGHTPLAN_ALTITUDE_MIN),
+      maxAltitudeFt = static_cast<int>(atools::fs::pln::FLIGHTPLAN_ALTITUDE_MAX);
   for(int i = 1; i < size(); i++)
   {
     RouteLeg& routeLeg = (*this)[i];
@@ -3322,17 +3323,27 @@ void Route::updateAirwaysAndAltitude(bool adjustRouteAltitude)
       QList<map::MapAirway> airways;
       NavApp::getAirwayTrackQueryGui()->getAirwaysByNameAndWaypoint(airways, routeLeg.getAirwayName(), prevLeg.getIdent(),
                                                                     routeLeg.getIdent());
-      map::MapAirway airway = airways.value(0);
-      routeLeg.setAirway(airway);
 
-      if(adjustRouteAltitude)
+      if(!airways.isEmpty())
       {
-        minAltitudeFt = std::max(airway.minAltitude, minAltitudeFt);
-        if(airway.maxAltitude > 0)
-          maxAltitudeFt = std::min(airway.maxAltitude, maxAltitudeFt);
+        // There is only one airway with the given between waypoints
+        const map::MapAirway& airway = airways.constFirst();
+
+        if(airway.isValid())
+        {
+          routeLeg.setAirway(airway);
+
+          if(adjustRouteAltitude)
+          {
+            minAltitudeFt = std::max(airway.minAltitude, minAltitudeFt);
+            if(airway.maxAltitude > 0)
+              maxAltitudeFt = std::min(airway.maxAltitude, maxAltitudeFt);
+          }
+        }
       }
     }
     else
+      // No airway - clear it in the route leg
       routeLeg.setAirway(map::MapAirway());
 
     if(adjustRouteAltitude)
@@ -3364,7 +3375,8 @@ void Route::updateAirwaysAndAltitude(bool adjustRouteAltitude)
     }
   }
 
-  if(adjustRouteAltitude)
+  // Adjust if needed but only if values do not exceed maximum ==================================
+  if(adjustRouteAltitude && (minAltitudeFt > 0 || maxAltitudeFt < map::MapAirway::MAX_ALTITUDE_LIMIT))
   {
     if(minAltitudeFt > maxAltitudeFt)
       maxAltitudeFt = minAltitudeFt;

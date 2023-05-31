@@ -37,7 +37,7 @@ void messages::resetAllMessages()
   settings.setValue(lnm::ACTIONS_SHOW_INSTALL_DIRS, true);
   settings.setValue(lnm::ACTIONS_SHOW_INSTALL_GLOBE, true);
   settings.setValue(lnm::ACTIONS_SHOW_LOAD_FLP_WARN, true);
-  settings.setValue(lnm::ACTIONS_SHOW_LOAD_FMS_ALT_WARN, true);
+  settings.setValue(lnm::ACTIONS_SHOW_LOAD_ALT_WARN, true);
   settings.setValue(lnm::ACTIONS_SHOW_LOGBOOK_CONVERSION, true);
   settings.setValue(lnm::ACTIONS_SHOW_QUIT, true);
   settings.setValue(lnm::ACTIONS_SHOW_QUIT_LOADING, true);

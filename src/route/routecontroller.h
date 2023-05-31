@@ -88,7 +88,7 @@ public:
    * and emits routeChanged. Uses file name as new current name  */
   bool loadFlightplan(const QString& filename);
   void loadFlightplan(atools::fs::pln::Flightplan flightplan, atools::fs::pln::FileFormat format,
-                      const QString& filename, bool changed, bool adjustAltitude, bool undo);
+                      const QString& filename, bool changed, bool adjustAltitude, bool undo, bool warnAltitude);
 
   /* Load the plan from a string in LNMPLN format */
   bool loadFlightplanLnmStr(const QString& string);

@@ -527,12 +527,10 @@ void MapTypesFactory::fillAirwayOrTrack(const SqlRecord& record, map::MapAirway&
     if(record.contains("airway_maximum_altitude"))
       airway.maxAltitude = record.valueInt("airway_maximum_altitude");
     else
-      airway.maxAltitude = 99999;
+      airway.maxAltitude = map::MapAirway::MAX_ALTITUDE_LIMIT;
 
-    airway.altitudeLevelsEast =
-      atools::io::readVector<quint16, quint16>(record.value("altitude_levels_east").toByteArray());
-    airway.altitudeLevelsWest =
-      atools::io::readVector<quint16, quint16>(record.value("altitude_levels_west").toByteArray());
+    airway.altitudeLevelsEast = atools::io::readVector<quint16, quint16>(record.value("altitude_levels_east").toByteArray());
+    airway.altitudeLevelsWest = atools::io::readVector<quint16, quint16>(record.value("altitude_levels_west").toByteArray());
 
     // from_waypoint_name varchar(15),      -- Original name - also for coordinate formats
     // to_waypoint_name varchar(15),        -- "
@@ -548,7 +546,7 @@ void MapTypesFactory::fillAirwayOrTrack(const SqlRecord& record, map::MapAirway&
     if(record.contains("maximum_altitude") && record.valueInt("maximum_altitude") > 0)
       airway.maxAltitude = record.valueInt("maximum_altitude");
     else
-      airway.maxAltitude = 99999;
+      airway.maxAltitude = map::MapAirway::MAX_ALTITUDE_LIMIT;
 
     if(record.contains("direction"))
     {

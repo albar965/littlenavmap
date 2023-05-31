@@ -1067,7 +1067,8 @@ void RouteController::restoreState()
         {
           Flightplan fp;
           atools::fs::pln::FileFormat format = flightplanIO->load(fp, flightplanToLoad);
-          loadFlightplan(fp, format, flightplanToLoad, changed, false /* adjustAltitude */, false /* undo */);
+          // Do not warn on missing altitude after loading
+          loadFlightplan(fp, format, flightplanToLoad, changed, false /* adjustAltitude */, false /* undo */, false /* warnAltitude */);
 
           routeFilename = lastUsedFlightplanFile;
         }
@@ -1144,7 +1145,7 @@ void RouteController::newFlightplan()
 }
 
 void RouteController::loadFlightplan(atools::fs::pln::Flightplan flightplan, atools::fs::pln::FileFormat format,
-                                     const QString& filename, bool changed, bool adjustAltitude, bool undo)
+                                     const QString& filename, bool changed, bool adjustAltitude, bool undo, bool warnAltitude)
 {
   qDebug() << Q_FUNC_INFO << filename;
 
@@ -1158,6 +1159,7 @@ void RouteController::loadFlightplan(atools::fs::pln::Flightplan flightplan, ato
   if(undo)
     undoCommand = preChange(tr("Flight Plan Changed"));
 
+  bool adjustAltAfterLoad = false;
   if(format == atools::fs::pln::FLP || format == atools::fs::pln::GARMIN_GFP)
   {
     // FLP and GFP are a sort of route string
@@ -1197,22 +1199,37 @@ void RouteController::loadFlightplan(atools::fs::pln::Flightplan flightplan, ato
 
     // Copy speed, type and altitude from GUI
     updateFlightplanFromWidgets(flightplan);
-    adjustAltitude = true; // Change altitude based on airways and procedures later
+    adjustAltAfterLoad = true; // Change altitude based on airways and procedures later
   }
   else if(format == atools::fs::pln::FMS11 || format == atools::fs::pln::FMS3 || format == atools::fs::pln::FSC_PLN ||
           format == atools::fs::pln::FLIGHTGEAR || format == atools::fs::pln::GARMIN_FPL)
   {
-    // Save altitude
+    // Save altitude from plan
     int cruiseAlt = flightplan.getCruisingAltitude();
 
     // Set type cruise altitude and speed since FMS and FSC do not support this
     updateFlightplanFromWidgets(flightplan);
 
-    // Reset altitude after update from widgets
-    if(cruiseAlt > 0)
-      flightplan.setCruisingAltitude(cruiseAlt);
+    if(flightplan.getEntries().size() <= 2 && (format == atools::fs::pln::FMS3 || format == atools::fs::pln::FMS11))
+      // FMS with only two waypoints cannot determine altitude - adjust later
+      adjustAltAfterLoad = true; // Change altitude based on airways and procedures later
     else
-      adjustAltitude = true; // Change altitude based on airways and procedures later
+    {
+      // Reset altitude after update from widgets
+      if(cruiseAlt > 0)
+        flightplan.setCruisingAltitude(cruiseAlt);
+      else
+        adjustAltAfterLoad = true; // Change altitude based on airways and procedures later
+    }
+  }
+
+  if(adjustAltAfterLoad && warnAltitude)
+  {
+    NavApp::closeSplashScreen();
+    atools::gui::Dialog(mainWindow).showInfoMsgBox(lnm::ACTIONS_SHOW_LOAD_ALT_WARN,
+                                                   tr("Can not determine the cruising altitude from this flight plan.<br/>"
+                                                      "Applying best guess for cruising altitude.<br/>"
+                                                      "Adjust it manually as needed."), tr("Do not &show this dialog again."));
   }
 
   if(undo)
@@ -1248,15 +1265,19 @@ void RouteController::loadFlightplan(atools::fs::pln::Flightplan flightplan, ato
 
   // test and error after undo/redo and switch
 
-  loadProceduresFromFlightplan(false /* clearOldProcedureProperties */, false /* cleanupRoute */,
-                               format == atools::fs::pln::MSFS_PLN /* autoresolveTransition */);
+  // These formats have transtion waypoints which might match or not on import and require a cleanup
+  bool specialProcedureHandling = format == atools::fs::pln::MSFS_PLN || format == atools::fs::pln::FSC_PLN;
+
+  loadProceduresFromFlightplan(false /* clearOldProcedureProperties */, specialProcedureHandling /* cleanupRoute */,
+                               specialProcedureHandling /* autoresolveTransition */);
   loadAlternateFromFlightplan();
   route.updateAll(); // Removes alternate property if not resolvable
 
   // Keep property also in case alternates were not added
   route.getFlightplan().getProperties().insert(atools::fs::pln::ALTERNATES, alternates);
 
-  route.updateAirwaysAndAltitude(adjustAltitude);
+  // Update cruise altitude based on procedures and airway restriction
+  route.updateAirwaysAndAltitude(adjustAltitude || adjustAltAfterLoad);
 
   // Save values for checking filename match when doing save
   fileDepartureIdent = route.getFlightplan().getDepartureIdent();
@@ -1365,7 +1386,8 @@ bool RouteController::loadFlightplanLnmStr(const QString& string)
     // Convert altitude to local unit
     fp.setCruisingAltitude(atools::roundToInt(Unit::altFeetF(fp.getCruisingAltitude())));
 
-    loadFlightplan(fp, atools::fs::pln::LNM_PLN, QString(), false /*changed*/, false /* adjustAltitude */, false /* undo */);
+    loadFlightplan(fp, atools::fs::pln::LNM_PLN, QString(),
+                   false /*changed*/, false /* adjustAltitude */, false /* undo */, false /* warnAltitude */);
   }
   catch(atools::Exception& e)
   {
@@ -1396,7 +1418,8 @@ void RouteController::loadFlightplanRouteStr(const QString& routeString)
 
   // Use settings from dialog
   if(reader.createRouteFromString(routeString, RouteStringDialog::getOptionsFromSettings(), &fp, nullptr, nullptr, &altIncluded))
-    loadFlightplan(fp, atools::fs::pln::LNM_PLN, QString(), false /* changed */, !altIncluded /* adjustAltitude */, false /* undo */);
+    loadFlightplan(fp, atools::fs::pln::LNM_PLN, QString(),
+                   false /* changed */, !altIncluded /* adjustAltitude */, false /* undo */, false /* warnAltitude */);
 
   if(reader.hasErrorMessages() || reader.hasWarningMessages())
     QMessageBox::warning(mainWindow, QApplication::applicationName(),
@@ -1413,23 +1436,7 @@ bool RouteController::loadFlightplan(const QString& filename)
     qDebug() << Q_FUNC_INFO << "loadFlightplan" << filename;
     // Will throw an exception if something goes wrong
     atools::fs::pln::FileFormat format = flightplanIO->load(fp, filename);
-    // qDebug() << "Flight plan custom data" << newFlightplan.getProperties();
-
-    if(fp.getEntries().size() <= 2 && (format == atools::fs::pln::FMS3 || format == atools::fs::pln::FMS11))
-    {
-      NavApp::closeSplashScreen();
-      atools::gui::Dialog(mainWindow).showInfoMsgBox(lnm::ACTIONS_SHOW_LOAD_FMS_ALT_WARN,
-                                                     tr("FMS flight plan has no intermediate waypoints.<br/><br/>"
-                                                        "Can therefore not determine the cruising altitude.<br/>"
-                                                        "Adjust it manually."),
-                                                     tr("Do not &show this dialog again."));
-      fp.setCruisingAltitude(atools::roundToInt(Unit::altFeetF(10000.f)));
-    }
-    else
-      // Convert altitude to local unit
-      fp.setCruisingAltitude(atools::roundToInt(Unit::altFeetF(fp.getCruisingAltitude())));
-
-    loadFlightplan(fp, format, filename, false /*changed*/, false /* adjustAltitude */, false /* undo */);
+    loadFlightplan(fp, format, filename, false /*changed*/, false /* adjustAltitude */, false /* undo */, true /* warnAltitude */);
   }
   catch(atools::Exception& e)
   {

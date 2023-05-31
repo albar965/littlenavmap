@@ -1091,6 +1091,9 @@ struct MapAirway
   atools::geo::Rect bounding; /* pre calculated using from and to */
   bool eastCourse, westCourse;
 
+  /* Any maximum value equal or above is treated as unlimited */
+  static const int MAX_ALTITUDE_LIMIT = 60000;
+
   const QString& getIdent() const
   {
     return name;

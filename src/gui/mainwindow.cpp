@@ -2198,7 +2198,8 @@ void MainWindow::routeFromFlightplan(const atools::fs::pln::Flightplan& flightpl
   // Check for changes and show question dialog unless undo stack is used
   if(undo || routeCheckForChanges())
   {
-    routeController->loadFlightplan(flightplan, atools::fs::pln::LNM_PLN, QString(), changed, adjustAltitude, undo);
+    routeController->loadFlightplan(flightplan, atools::fs::pln::LNM_PLN, QString(),
+                                    changed, adjustAltitude, undo, false /* warnAltitude */);
     if(OptionData::instance().getFlags() & opts::GUI_CENTER_ROUTE)
       routeCenter();
     showFlightPlan();
