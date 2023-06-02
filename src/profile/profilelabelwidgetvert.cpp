@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -91,7 +91,7 @@ void ProfileLabelWidgetVert::paintEvent(QPaintEvent *)
       QPoint offset = scrollArea->getOffset();
       int safeAltY = profileWidget->getMinSafeAltitudeY() - offset.y();
       int flightplanY = profileWidget->getFlightplanAltY() - offset.y();
-      float routeAlt = NavApp::getRouteConst().getCruisingAltitudeFeet();
+      float routeAlt = NavApp::getRouteConst().getCruiseAltitudeFt();
 
       // Draw labels on left side widget ========================================================
 

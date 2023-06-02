@@ -601,7 +601,8 @@ void NavApp::updateRouteCycleMetadata()
 
 QString NavApp::getRouteStringDefaultOpts()
 {
-  return RouteStringWriter().createStringForRoute(getRouteConst(), NavApp::getRouteCruiseSpeedKts(), rs::DEFAULT_OPTIONS);
+  return RouteStringWriter().createStringForRoute(getRouteConst(), NavApp::getRouteCruiseSpeedKts(),
+                                                  rs::DEFAULT_OPTIONS | rs::ALT_AND_SPEED_METRIC);
 }
 
 const atools::geo::Rect& NavApp::getRouteRect()
@@ -627,9 +628,9 @@ float NavApp::getRouteCruiseSpeedKts()
   return aircraftPerfController->getRouteCruiseSpeedKts();
 }
 
-float NavApp::getRouteCruiseAltFt()
+float NavApp::getRouteCruiseAltitudeFt()
 {
-  return getRoute().getCruisingAltitudeFeet();
+  return getRoute().getCruiseAltitudeFt();
 }
 
 float NavApp::getRouteCruiseAltFtWidget()

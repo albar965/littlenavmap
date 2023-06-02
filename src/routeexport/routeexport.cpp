@@ -1187,7 +1187,7 @@ RouteExportData RouteExport::createRouteExportData(re::RouteExportType routeExpo
   exportData.setDestination(route.getFlightplan().getDestinationIdent());
   exportData.setDepartureTime(QDateTime::currentDateTimeUtc().time());
   exportData.setDepartureTimeActual(QDateTime::currentDateTimeUtc().time());
-  exportData.setCruiseAltitude(atools::roundToInt(route.getCruisingAltitudeFeet()));
+  exportData.setCruiseAltitude(atools::roundToInt(route.getCruiseAltitudeFt()));
 
   QStringList alternates = route.getAlternateIdents();
   if(alternates.size() > 0)
@@ -1807,10 +1807,10 @@ bool RouteExport::exportFlighplan(const QString& filename, rf::RouteAdjustOption
 bool RouteExport::exportFlighplanAsCorteIn(const QString& filename)
 {
   qDebug() << Q_FUNC_INFO << filename;
-  QString txt = RouteStringWriter().createStringForRoute(
-    buildAdjustedRoute(rf::DEFAULT_OPTS | rf::REMOVE_RUNWAY_PROC), 0.f,
-    rs::DCT | rs::NO_FINAL_DCT | rs::START_AND_DEST | rs::SID_STAR | rs::SID_STAR_SPACE |
-    rs::RUNWAY /*| rs::APPROACH unreliable */ | rs::FLIGHTLEVEL);
+  QString txt = RouteStringWriter().
+                createStringForRoute(buildAdjustedRoute(rf::DEFAULT_OPTS | rf::REMOVE_RUNWAY_PROC), 0.f,
+                                     rs::DCT | rs::NO_FINAL_DCT | rs::START_AND_DEST | rs::SID_STAR | rs::SID_STAR_SPACE |
+                                     rs::RUNWAY /*| rs::APPROACH unreliable */ | rs::FLIGHTLEVEL);
 
   const atools::fs::pln::Flightplan& flightplan = NavApp::getRouteConst().getFlightplan();
 
@@ -1979,7 +1979,7 @@ bool RouteExport::exportFlightplanAsGpx(const QString& filename)
   {
     FlightplanIO().saveGpx(buildAdjustedRoute(rf::DEFAULT_OPTS_GPX).getFlightplan(), filename,
                            NavApp::getAircraftTrack().getLineStrings(), NavApp::getAircraftTrack().getTimestampsMs(),
-                           static_cast<int>(NavApp::getRouteConst().getCruisingAltitudeFeet()));
+                           static_cast<int>(NavApp::getRouteConst().getCruiseAltitudeFt()));
   }
   catch(atools::Exception& e)
   {
@@ -2005,11 +2005,6 @@ QString RouteExport::buildDefaultFilename(const RouteExportFormat& format, bool 
 
 Route RouteExport::buildAdjustedRoute(rf::RouteAdjustOptions options)
 {
-  return buildAdjustedRoute(NavApp::getRoute(), options);
-}
-
-Route RouteExport::buildAdjustedRoute(const Route& route, rf::RouteAdjustOptions options)
-{
   // Do not convert procedures for LNMPLN - no matter how it is saved
   if(!options.testFlag(rf::SAVE_LNMPLN))
   {
@@ -2021,12 +2016,15 @@ Route RouteExport::buildAdjustedRoute(const Route& route, rf::RouteAdjustOptions
       options |= rf::SAVE_AIRWAY_WP;
   }
 
-  Route rt = route.updatedAltitudes().adjustedToOptions(options);
+  Route adjustedRoute = NavApp::getRouteConst().updatedAltitudes().adjustedToOptions(options);
 
   // Update airway structures
-  rt.updateAirwaysAndAltitude(false /* adjustRouteAltitude */);
+  adjustedRoute.updateAirwaysAndAltitude(false /* adjustRouteAltitude */);
 
-  return rt;
+  atools::fs::pln::Flightplan& routeFlightplan = adjustedRoute.getFlightplan();
+  routeFlightplan.setCruiseAltitudeFt(adjustedRoute.getCruiseAltitudeFt());
+
+  return adjustedRoute;
 }
 
 QString RouteExport::minToHourMinStr(int minutes)

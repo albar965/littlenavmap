@@ -47,10 +47,20 @@ A big thank you to all who reported bugs and issues!
 * Fixed issue with excessive fight plan altitude on loading causing program freeze and crash.
   This can happen when importing a flight plan using a format which does not provide cruise altitude
   information like FMS in some cases or FSC PLN.
-* Now using best guess to set cruise altitude automatically after loading flight plan without cruise
-  altitude. This guess is based on procedure and airway restrictions.
-* Added warning dialog if cruise altitude cannot be loaded from flight plan.
+* Now using best guess to set cruise altitude automatically after loading flight plan format without
+  support for cruise altitude. This is based on procedure and airway restrictions.
+* Added warning dialog if cruise altitude cannot be loaded from flight plan and has to be estimated.
+* Applying best guess now for flight plan type (IFR/VFR) when loading flight plan formats not
+  supporting this.
 * Now attempting to load SID, STAR and respective transitions from FSC PLN files.
+* Added workaround for broken X-Plane FMS flight plans without valid altitude information.
+* Rounding error related procedure altitude violations corrected when using metric altitude.
+* Fixed issues with wrong flight plan cruise altitude when using metric altitude.
+  Rounding errors in cruise altitude when loading and saving plans with metric altitude are minimized now.
+* Added new optional CruisingAltF element to LNMPLN file format to avoid rounding errors when using
+  metric units.
+* Now using metric speed and altitude designators in route description string if units are set accordingly
+  in options.
 
 ### Scenery Library
 

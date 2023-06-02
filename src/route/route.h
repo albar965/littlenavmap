@@ -270,7 +270,7 @@ public:
   }
 
   /* Value in flight plan is stored in local unit */
-  float getCruisingAltitudeFeet() const;
+  float getCruiseAltitudeFt() const;
 
   void setFlightplan(const atools::fs::pln::Flightplan& value)
   {
@@ -615,7 +615,9 @@ public:
   /* Fetch airways by waypoint and name and adjust route altititude if needed */
   /* Uses airway by name cache in query which is called often. */
   void updateAirwaysAndAltitude(bool adjustRouteAltitude);
-  int getAdjustedAltitude(int newAltitude) const;
+
+  /* Apply simplified east/west or north/south rule. Return in local units */
+  float getAdjustedAltitude(float altitudeLocal) const;
 
   /* Get a position along the route. Pos is invalid if not along. distFromStart in nm */
   atools::geo::Pos getPositionAtDistance(float distFromStartNm) const;
@@ -769,6 +771,9 @@ private:
 
   /* Update waypoint numbers with prefix "WP" automatically in order of plan */
   void updateWaypointNames();
+
+  /* Updates airway objects in route legs and returns min and max altitude defined by airways and flight plan restrictions */
+  void updateAirways(float& minAltitudeFt, float& maxAltitudeFt, bool adjustRouteAltitude);
 
   atools::geo::Rect boundingRect;
 

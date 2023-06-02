@@ -278,7 +278,7 @@ void LogdataController::createTakeoffLanding(const atools::fs::sc::SimConnectUse
       record.setValue("aircraft_type", aircraft.getAirplaneModel()); // varchar(250),
       record.setValue("aircraft_registration", aircraft.getAirplaneRegistration()); // varchar(50),
       record.setValue("flightplan_number", aircraft.getAirplaneFlightnumber()); // varchar(100),
-      record.setValue("flightplan_cruise_altitude", NavApp::getRouteCruiseAltFt()); // integer,
+      record.setValue("flightplan_cruise_altitude", NavApp::getRouteCruiseAltitudeFt()); // integer,
       record.setValue("flightplan_file", NavApp::getCurrentRouteFilepath()); // varchar(1024),
       record.setValue("performance_file", NavApp::getCurrentAircraftPerfFilepath()); // varchar(1024),
       record.setValue("block_fuel", NavApp::getAltitudeLegs().getBlockFuel(NavApp::getAircraftPerformance())); // integer,
@@ -372,7 +372,7 @@ void LogdataController::createTakeoffLanding(const atools::fs::sc::SimConnectUse
                                                  getFlightplan(),
                                                  NavApp::getAircraftTrackLogbook().getLineStrings(),
                                                  NavApp::getAircraftTrackLogbook().getTimestampsMs(),
-                                                 static_cast<int>(NavApp::getRouteConst().getCruisingAltitudeFeet()))); // blob
+                                                 static_cast<int>(NavApp::getRouteConst().getCruiseAltitudeFt()))); // blob
 
         // Clear separate logbook track =========================
         NavApp::deleteAircraftTrackLogbook();
@@ -566,7 +566,7 @@ void LogdataController::prefillLogEntry(atools::sql::SqlRecord& rec)
   rec.setValue("aircraft_type", NavApp::getAircraftPerformance().getAircraftType());
   rec.setValue("simulator", NavApp::getCurrentSimulatorName());
   rec.setValue("route_string", NavApp::getRouteStringDefaultOpts());
-  rec.setValue("flightplan_cruise_altitude", NavApp::getRouteCruiseAltFt());
+  rec.setValue("flightplan_cruise_altitude", NavApp::getRouteCruiseAltitudeFt());
   rec.setValue("block_fuel", NavApp::getAircraftPerfController()->getBlockFuel());
   rec.setValue("trip_fuel", NavApp::getAircraftPerfController()->getTripFuel());
   rec.setValue("is_jetfuel", NavApp::getAircraftPerfController()->getAircraftPerformance().isJetFuel());
@@ -1092,7 +1092,7 @@ void LogdataController::gpxAttach(atools::sql::SqlRecord *record, QWidget *paren
                        FlightplanIO().saveGpxGz(NavApp::getRouteConst().
                                                 updatedAltitudes().adjustedToOptions(rf::DEFAULT_OPTS_GPX).
                                                 getFlightplan(), track.getLineStrings(), track.getTimestampsMs(),
-                                                static_cast<int>(NavApp::getRouteConst().getCruisingAltitudeFeet()))); // blob
+                                                static_cast<int>(NavApp::getRouteConst().getCruiseAltitudeFt()))); // blob
     else
       record->setNull("aircraft_trail");
 
@@ -1164,7 +1164,7 @@ QString LogdataController::buildFilename(const atools::sql::SqlRecord *record,
                                                            record->valueStr("departure_ident"),
                                                            record->valueStr("destination_name"),
                                                            record->valueStr("destination_ident"), suffix,
-                                                           atools::roundToInt(route.getCruisingAltitudeFeet()),
+                                                           atools::roundToInt(route.getCruiseAltitudeFt()),
                                                            false /* clean */);
   }
 

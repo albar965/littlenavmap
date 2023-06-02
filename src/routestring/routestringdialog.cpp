@@ -315,7 +315,8 @@ void RouteStringDialog::showHelpButtonToggled(bool checked)
 
 void RouteStringDialog::updateButtonClicked()
 {
-  plainTextEditRouteStringSet(routeStringWriter->createStringForRoute(NavApp::getRouteConst(), NavApp::getRouteCruiseSpeedKts(), options));
+  plainTextEditRouteStringSet(routeStringWriter->createStringForRoute(NavApp::getRouteConst(), NavApp::getRouteCruiseSpeedKts(),
+                                                                      options | rs::ALT_AND_SPEED_METRIC));
 }
 
 void RouteStringDialog::toolButtonOptionTriggered(QAction *action)

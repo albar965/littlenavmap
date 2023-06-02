@@ -3795,9 +3795,9 @@ void MapWidget::debugMovingPlane(QMouseEvent *event)
       if(!(projectionDistance < map::INVALID_DISTANCE_VALUE))
         projectionDistance = route.getDistanceFromStart(pos);
 
-      float alt = 0.f;
+      float altFt = 0.f;
       if(projectionDistance < map::INVALID_DISTANCE_VALUE)
-        alt = NavApp::getAltitudeLegs().getAltitudeForDistance(route.getTotalDistance() - projectionDistance);
+        altFt = NavApp::getAltitudeLegs().getAltitudeForDistance(route.getTotalDistance() - projectionDistance);
 
       const atools::fs::perf::AircraftPerf& perf = NavApp::getAircraftPerformance();
       bool ground = false;
@@ -3805,7 +3805,7 @@ void MapWidget::debugMovingPlane(QMouseEvent *event)
       float ice = 0.f;
       if(route.size() <= 2)
       {
-        alt = NavApp::getRouteController()->getCruiseAltitudeWidget();
+        altFt = NavApp::getRouteController()->getCruiseAltitudeWidget();
         tas = perf.getCruiseSpeed();
         fuelflow = perf.getCruiseFuelFlowLbs();
       }
@@ -3824,7 +3824,7 @@ void MapWidget::debugMovingPlane(QMouseEvent *event)
           {
             tas = perf.getAlternateSpeed();
             fuelflow = perf.getAlternateFuelFlowLbs();
-            alt = NavApp::getRouteController()->getCruiseAltitudeWidget() / 2.f;
+            altFt = NavApp::getRouteController()->getCruiseAltitudeWidget() / 2.f;
           }
           else
           {
@@ -3861,12 +3861,12 @@ void MapWidget::debugMovingPlane(QMouseEvent *event)
       if(atools::almostEqual(fuelflow, 0.f) && !ground)
         fuelflow = 100.f;
 
-      if(!(alt < map::INVALID_ALTITUDE_VALUE))
-        alt = route.getCruisingAltitudeFeet();
+      if(!(altFt < map::INVALID_ALTITUDE_VALUE))
+        altFt = route.getCruiseAltitudeFt();
 
-      pos.setAltitude(alt);
+      pos.setAltitude(altFt);
       SimConnectData data = SimConnectData::buildDebugForPosition(pos, lastPos, ground, vertSpeed, tas, fuelflow, totalFuel, ice,
-                                                                  route.getCruisingAltitudeFeet(), NavApp::getMagVar(pos),
+                                                                  route.getCruiseAltitudeFt(), NavApp::getMagVar(pos),
                                                                   perf.isJetFuel(), helicopter);
       data.setPacketId(packetId++);
 

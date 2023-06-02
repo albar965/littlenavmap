@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -527,7 +527,7 @@ void MapTypesFactory::fillAirwayOrTrack(const SqlRecord& record, map::MapAirway&
     if(record.contains("airway_maximum_altitude"))
       airway.maxAltitude = record.valueInt("airway_maximum_altitude");
     else
-      airway.maxAltitude = map::MapAirway::MAX_ALTITUDE_LIMIT;
+      airway.maxAltitude = map::MapAirway::MAX_ALTITUDE_LIMIT_FT;
 
     airway.altitudeLevelsEast = atools::io::readVector<quint16, quint16>(record.value("altitude_levels_east").toByteArray());
     airway.altitudeLevelsWest = atools::io::readVector<quint16, quint16>(record.value("altitude_levels_west").toByteArray());
@@ -546,7 +546,7 @@ void MapTypesFactory::fillAirwayOrTrack(const SqlRecord& record, map::MapAirway&
     if(record.contains("maximum_altitude") && record.valueInt("maximum_altitude") > 0)
       airway.maxAltitude = record.valueInt("maximum_altitude");
     else
-      airway.maxAltitude = map::MapAirway::MAX_ALTITUDE_LIMIT;
+      airway.maxAltitude = map::MapAirway::MAX_ALTITUDE_LIMIT_FT;
 
     if(record.contains("direction"))
     {

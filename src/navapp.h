@@ -230,7 +230,7 @@ public:
   static float getGroundBufferForLegFt(int legIndex);
 
   static float getRouteCruiseSpeedKts();
-  static float getRouteCruiseAltFt();
+  static float getRouteCruiseAltitudeFt();
   static float getRouteCruiseAltFtWidget();
 
   static bool isRouteEmpty();

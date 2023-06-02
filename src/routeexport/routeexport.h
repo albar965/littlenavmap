@@ -223,7 +223,6 @@ public:
 
   /* Return a copy of the route that has procedures replaced with waypoints depending on selected options in the menu.
    *  Also sets altitude into FlightplanEntry position. */
-  static Route buildAdjustedRoute(const Route& route, rf::RouteAdjustOptions options);
   Route buildAdjustedRoute(rf::RouteAdjustOptions options);
 
   /* true if any formats are selected for multiexport */

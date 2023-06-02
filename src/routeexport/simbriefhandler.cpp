@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2022 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -68,7 +68,7 @@ void SimBriefHandler::sendRouteToSimBrief()
                              "<tr><td>Cruise altitide:</td><td>%2</td></tr>"
                                "<tr><td>Aircraft type:</td><td>%3</td></tr></tbody></table>"
                                  "<p>Open your web browser and log into SimBrief before exporting the flight plan.</p>").
-                    arg(routeString).arg(Unit::altFeet(route.getCruisingAltitudeFeet())).arg(aircraftType);
+                    arg(routeString).arg(Unit::altFeet(route.getCruiseAltitudeFt())).arg(aircraftType);
 
   int result = atools::gui::Dialog(mainWindow).showQuestionMsgBox(lnm::ACTIONS_SHOW_SEND_SIMBRIEF, message,
                                                                   tr("Do not &show this dialog again and "
@@ -78,7 +78,7 @@ void SimBriefHandler::sendRouteToSimBrief()
   // Build URL ================================
   QUrl url = sendRouteUrl(route.getDepartureAirportLeg().getIdent(), route.getDestinationAirportLeg().getIdent(),
                           route.getAlternateIdents().value(0), // Send only first alternate
-                          routeString, aircraftType, route.getCruisingAltitudeFeet());
+                          routeString, aircraftType, route.getCruiseAltitudeFt());
 
   qDebug() << Q_FUNC_INFO << "Encoded full URL" << url.toEncoded();
 

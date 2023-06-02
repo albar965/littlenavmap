@@ -306,7 +306,7 @@ QVector<float> RouteAltitude::getAltitudes() const
       else if(i == destinationAirportLegIndex)
         retval.append(leg.getAltitude());
       else
-        retval.append(route->getCruisingAltitudeFeet());
+        retval.append(route->getCruiseAltitudeFt());
     }
   }
 

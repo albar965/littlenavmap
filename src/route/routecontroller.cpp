@@ -606,7 +606,7 @@ void RouteController::flightplanTableAsTextTable(QTextCursor& cursor, const QBit
                                    mapcolors::routeProcedureTableColor);
         else if((logicalCol == rcol::IDENT && leg.getMapObjectType() == map::INVALID) ||
                 (logicalCol == rcol::AIRWAY_OR_LEGTYPE && leg.isRoute() &&
-                 leg.isAirwaySetAndInvalid(route.getCruisingAltitudeFeet())))
+                 leg.isAirwaySetAndInvalid(route.getCruiseAltitudeFt())))
           textFormat.setForeground(Qt::red);
         else
           textFormat.setForeground(Qt::black);
@@ -770,7 +770,7 @@ QString RouteController::getFlightplanTableAsHtml(float iconSizePixel, bool prin
                     mapcolors::routeProcedureTableColor;
           else if((logicalCol == rcol::IDENT && leg.getMapObjectType() == map::INVALID) ||
                   (logicalCol == rcol::AIRWAY_OR_LEGTYPE && leg.isRoute() &&
-                   leg.isAirwaySetAndInvalid(route.getCruisingAltitudeFeet())))
+                   leg.isAirwaySetAndInvalid(route.getCruiseAltitudeFt())))
             color = Qt::red;
 
           atools::util::html::Flags flags = atools::util::html::NONE;
@@ -807,7 +807,7 @@ void RouteController::routeStringToClipboard() const
   qDebug() << Q_FUNC_INFO;
 
   QString str = RouteStringWriter().createStringForRoute(route, NavApp::getRouteCruiseSpeedKts(),
-                                                         RouteStringDialog::getOptionsFromSettings());
+                                                         RouteStringDialog::getOptionsFromSettings() | rs::ALT_AND_SPEED_METRIC);
 
   qDebug() << "route string" << str;
   if(!str.isEmpty())
@@ -873,7 +873,7 @@ void RouteController::routeAltChanged()
   updateFlightplanFromWidgets();
 
   // Transfer cruise altitude from flight plan window to calculation window
-  routeCalcDialog->setCruisingAltitudeFt(route.getCruisingAltitudeFeet());
+  routeCalcDialog->setCruisingAltitudeFt(route.getCruiseAltitudeFt());
 
   postChange(undoCommand);
 
@@ -899,7 +899,7 @@ void RouteController::routeAltChangedDelayed()
   routeLabel->updateFooterSelectionLabel();
 
   // Delay change to avoid hanging spin box when profile updates
-  emit routeAltitudeChanged(route.getCruisingAltitudeFeet());
+  emit routeAltitudeChanged(route.getCruiseAltitudeFt());
 }
 
 /* Combo box route type has value changed */
@@ -1153,11 +1153,17 @@ void RouteController::loadFlightplan(atools::fs::pln::Flightplan flightplan, ato
   qDebug() << flightplan;
 #endif
 
+  // Input flight plan needs cruise altitude in feet
+  // Stored plan uses local unit (meter or feet)
+
   clearAllErrors();
 
   RouteCommand *undoCommand = nullptr;
   if(undo)
     undoCommand = preChange(tr("Flight Plan Changed"));
+
+  // Keep this since it is overwritten by widgets later
+  pln::FlightplanType loadedFlightplanType = flightplan.getFlightplanType();
 
   bool adjustAltAfterLoad = false;
   if(format == atools::fs::pln::FLP || format == atools::fs::pln::GARMIN_GFP)
@@ -1197,30 +1203,17 @@ void RouteController::loadFlightplan(atools::fs::pln::Flightplan flightplan, ato
                                                      rs.getMessages().join("<br/>"),
                                                      tr("Do not &show this dialog again."));
 
-    // Copy speed, type and altitude from GUI
-    updateFlightplanFromWidgets(flightplan);
     adjustAltAfterLoad = true; // Change altitude based on airways and procedures later
   }
   else if(format == atools::fs::pln::FMS11 || format == atools::fs::pln::FMS3 || format == atools::fs::pln::FSC_PLN ||
           format == atools::fs::pln::FLIGHTGEAR || format == atools::fs::pln::GARMIN_FPL)
   {
-    // Save altitude from plan
-    int cruiseAlt = flightplan.getCruisingAltitude();
-
-    // Set type cruise altitude and speed since FMS and FSC do not support this
-    updateFlightplanFromWidgets(flightplan);
-
-    if(flightplan.getEntries().size() <= 2 && (format == atools::fs::pln::FMS3 || format == atools::fs::pln::FMS11))
+    if( // Cruise either too low or ...
+      atools::almostEqual(flightplan.getCruiseAltitudeFt(), 0.f) || // Still in ft
+      // ... X-Plane with not enough waypoints
+      ((format == atools::fs::pln::FMS3 || format == atools::fs::pln::FMS11) && flightplan.getEntries().size() <= 2))
       // FMS with only two waypoints cannot determine altitude - adjust later
       adjustAltAfterLoad = true; // Change altitude based on airways and procedures later
-    else
-    {
-      // Reset altitude after update from widgets
-      if(cruiseAlt > 0)
-        flightplan.setCruisingAltitude(cruiseAlt);
-      else
-        adjustAltAfterLoad = true; // Change altitude based on airways and procedures later
-    }
   }
 
   if(adjustAltAfterLoad && warnAltitude)
@@ -1239,10 +1232,6 @@ void RouteController::loadFlightplan(atools::fs::pln::Flightplan flightplan, ato
     // Clear everything for a new plan
     clearRouteAndUndo();
 
-  // Update
-  if(flightplan.getFlightplanType() == atools::fs::pln::NO_TYPE)
-    flightplan.setFlightplanType(NavApp::getMainUi()->comboBoxRouteType->currentIndex() == 0 ? atools::fs::pln::IFR : atools::fs::pln::VFR);
-
   if(changed)
     // No clean state in stack
     undoIndexClean = -1;
@@ -1255,11 +1244,12 @@ void RouteController::loadFlightplan(atools::fs::pln::Flightplan flightplan, ato
   if(format == atools::fs::pln::MSFS_PLN)
     flightplan.setDepartureParkingName(atools::fs::util::runwayNamePrefixZero(flightplan.getDepartureParkingName()));
 
-  // assignFlightplanPerfProperties(flightplan);
+  // Assign plan to route and get reference to it
   route.setFlightplan(flightplan);
+  Flightplan& routeFlightplan = route.getFlightplan();
 
   // Remove alternates - will be added later again once resolved
-  QString alternates = route.getFlightplan().getProperties().value(atools::fs::pln::ALTERNATES);
+  QString alternates = routeFlightplan.getProperties().value(atools::fs::pln::ALTERNATES);
 
   route.createRouteLegsFromFlightplan();
 
@@ -1271,22 +1261,33 @@ void RouteController::loadFlightplan(atools::fs::pln::Flightplan flightplan, ato
   loadProceduresFromFlightplan(false /* clearOldProcedureProperties */, specialProcedureHandling /* cleanupRoute */,
                                specialProcedureHandling /* autoresolveTransition */);
   loadAlternateFromFlightplan();
+
+  // Update type if loaded file does not support a type
+  if(loadedFlightplanType == atools::fs::pln::NO_TYPE)
+  {
+    if(route.hasAirways() || route.hasAnyProcedure())
+      routeFlightplan.setFlightplanType(atools::fs::pln::IFR);
+    else
+      routeFlightplan.setFlightplanType(atools::fs::pln::VFR);
+    updateComboBoxFromFlightplanType();
+  }
+
   route.updateAll(); // Removes alternate property if not resolvable
 
   // Keep property also in case alternates were not added
-  route.getFlightplan().getProperties().insert(atools::fs::pln::ALTERNATES, alternates);
+  routeFlightplan.getProperties().insert(atools::fs::pln::ALTERNATES, alternates);
 
-  // Update cruise altitude based on procedures and airway restriction
+  // Update cruise altitude in local units based on procedures and airway restriction
+  // Corrects cruise altitude if adjustRouteAltitude is true
   route.updateAirwaysAndAltitude(adjustAltitude || adjustAltAfterLoad);
 
   // Save values for checking filename match when doing save
-  fileDepartureIdent = route.getFlightplan().getDepartureIdent();
-  fileDestinationIdent = route.getFlightplan().getDestinationIdent();
-  fileIfrVfr = route.getFlightplan().getFlightplanType();
-  fileCruiseAltFt = route.getCruisingAltitudeFeet();
+  fileDepartureIdent = routeFlightplan.getDepartureIdent();
+  fileDestinationIdent = routeFlightplan.getDestinationIdent();
+  fileIfrVfr = routeFlightplan.getFlightplanType();
+  fileCruiseAltFt = route.getCruiseAltitudeFt();
 
   route.updateLegAltitudes();
-  // route.updateRouteCycleMetadata();
 
   // Get number from user waypoint from user defined waypoint in fs flight plan
   entryBuilder->setCurUserpointNumber(route.getNextUserWaypointNumber());
@@ -1294,7 +1295,7 @@ void RouteController::loadFlightplan(atools::fs::pln::Flightplan flightplan, ato
   remarksFlightPlanToWidget();
   updateTableModel();
   updateMoveAndDeleteActions();
-  routeCalcDialog->setCruisingAltitudeFt(route.getCruisingAltitudeFeet());
+  routeCalcDialog->setCruisingAltitudeFt(route.getCruiseAltitudeFt());
 
 #ifdef DEBUG_INFORMATION
   qDebug() << Q_FUNC_INFO << route;
@@ -1383,9 +1384,6 @@ bool RouteController::loadFlightplanLnmStr(const QString& string)
     // Will throw an exception if something goes wrong
     flightplanIO->loadLnmStr(fp, string);
 
-    // Convert altitude to local unit
-    fp.setCruisingAltitude(atools::roundToInt(Unit::altFeetF(fp.getCruisingAltitude())));
-
     loadFlightplan(fp, atools::fs::pln::LNM_PLN, QString(),
                    false /*changed*/, false /* adjustAltitude */, false /* undo */, false /* warnAltitude */);
   }
@@ -1463,10 +1461,6 @@ bool RouteController::insertFlightplan(const QString& filename, int insertBefore
   {
     // Will throw an exception if something goes wrong
     flightplanIO->load(flightplan, filename);
-
-    // Convert altitude to local unit
-    flightplan.setCruisingAltitude(atools::roundToInt(Unit::altFeetF(flightplan.getCruisingAltitude())));
-
     RouteCommand *undoCommand = preChange(insertBefore >= route.getDestinationAirportLegIndex() ?
                                           tr("Insert") : tr("Append"));
 
@@ -1498,14 +1492,11 @@ bool RouteController::insertFlightplan(const QString& filename, int insertBefore
       routePlan.setDestinationPosition(flightplan.getDestinationPosition());
 
       // Copy any STAR and arrival procedure properties from the loaded plan
-      atools::fs::pln::copyArrivalProcedureProperties(routePlan.getProperties(),
-                                                      flightplan.getProperties());
-      atools::fs::pln::copyStarProcedureProperties(routePlan.getProperties(),
-                                                   flightplan.getProperties());
+      atools::fs::pln::copyArrivalProcedureProperties(routePlan.getProperties(), flightplan.getProperties());
+      atools::fs::pln::copyStarProcedureProperties(routePlan.getProperties(), flightplan.getProperties());
 
       // Load alternates from appended plan if any
-      atools::fs::pln::copyAlternateProperties(routePlan.getProperties(),
-                                               flightplan.getProperties());
+      atools::fs::pln::copyAlternateProperties(routePlan.getProperties(), flightplan.getProperties());
     }
     else
     {
@@ -1521,8 +1512,7 @@ bool RouteController::insertFlightplan(const QString& filename, int insertBefore
         // Added before departure airport
         routePlan.setDepartureName(flightplan.getDepartureName());
         routePlan.setDepartureIdent(flightplan.getDepartureIdent());
-        routePlan.setDeparturePosition(flightplan.getDeparturePosition(),
-                                       flightplan.getEntries().constFirst().getAltitude());
+        routePlan.setDeparturePosition(flightplan.getDeparturePosition(), flightplan.getEntries().constFirst().getAltitude());
         routePlan.setDepartureParkingPosition(flightplan.getDepartureParkingPosition(),
                                               flightplan.getDepartureParkingPosition().getAltitude(),
                                               flightplan.getDepartureParkingHeading());
@@ -1530,8 +1520,7 @@ bool RouteController::insertFlightplan(const QString& filename, int insertBefore
         routePlan.setDepartureParkingType(flightplan.getDepartureParkingType());
 
         // Copy SID properties from source
-        atools::fs::pln::copySidProcedureProperties(routePlan.getProperties(),
-                                                    flightplan.getProperties());
+        atools::fs::pln::copySidProcedureProperties(routePlan.getProperties(), flightplan.getProperties());
 
         route.eraseAirway(1);
       }
@@ -1628,7 +1617,7 @@ void RouteController::saveFlightplanLnmExported(const QString& filename)
   fileDepartureIdent = route.getFlightplan().getDepartureIdent();
   fileDestinationIdent = route.getFlightplan().getDestinationIdent();
   fileIfrVfr = route.getFlightplan().getFlightplanType();
-  fileCruiseAltFt = route.getCruisingAltitudeFeet();
+  fileCruiseAltFt = route.getCruiseAltitudeFt();
 
   // Set format to original route since it is saved as LNM now
   route.getFlightplan().setLnmFormat(true);
@@ -1733,6 +1722,7 @@ bool RouteController::saveFlightplanLnmSelectionAs(const QString& filename, int 
 bool RouteController::saveFlightplanLnmInternal(const QString& filename, bool silent)
 {
   qDebug() << Q_FUNC_INFO << filename << silent;
+
   try
   {
     // Remember to send out signal
@@ -1797,12 +1787,12 @@ bool RouteController::saveFlightplanLnmInternal(const QString& filename, bool si
 
     // Remember type, departure and destination for filename checking (save/saveAs)
     fileIfrVfr = flightplanCopy.getFlightplanType();
-    fileCruiseAltFt = route.getCruisingAltitudeFeet();
+    fileCruiseAltFt = route.getCruiseAltitudeFt();
     fileDepartureIdent = flightplanCopy.getDepartureIdent();
     fileDestinationIdent = flightplanCopy.getDestinationIdent();
 
     // Set cruise altitude on plan copy in feet instead of local units
-    flightplanCopy.setCruisingAltitude(atools::roundToInt(route.getCruisingAltitudeFeet()));
+    flightplanCopy.setCruiseAltitudeFt(route.getCruiseAltitudeFt());
 
     // Save LNMPLN - Will throw an exception if something goes wrong
     flightplanIO->saveLnm(flightplanCopy, filename);
@@ -1868,7 +1858,7 @@ void RouteController::calculateRouteWindowSelection()
 {
   qDebug() << Q_FUNC_INFO;
   routeCalcDialog->showForSelectionCalculation();
-  routeCalcDialog->setCruisingAltitudeFt(route.getCruisingAltitudeFeet());
+  routeCalcDialog->setCruisingAltitudeFt(route.getCruiseAltitudeFt());
   calculateRouteWindowShow();
 }
 
@@ -1876,7 +1866,7 @@ void RouteController::calculateRouteWindowFull()
 {
   qDebug() << Q_FUNC_INFO;
   routeCalcDialog->showForFullCalculation();
-  routeCalcDialog->setCruisingAltitudeFt(route.getCruisingAltitudeFeet());
+  routeCalcDialog->setCruisingAltitudeFt(route.getCruiseAltitudeFt());
   calculateRouteWindowShow();
 }
 
@@ -1890,7 +1880,7 @@ void RouteController::calculateRouteWindowShow()
   routeCalcDialog->activateWindow();
 
   // Transfer cruise altitude from flight plan window to calculation window
-  routeCalcDialog->setCruisingAltitudeFt(route.getCruisingAltitudeFeet());
+  routeCalcDialog->setCruisingAltitudeFt(route.getCruiseAltitudeFt());
 }
 
 void RouteController::calculateRoute()
@@ -2136,7 +2126,7 @@ bool RouteController::calculateRouteInternal(atools::routing::RouteFinder *route
       route.updateAll();
 
       // Set altitude in local units
-      flightplan.setCruisingAltitude(atools::roundToInt(Unit::altFeetF(altitudeFt)));
+      flightplan.setCruiseAltitudeFt(altitudeFt);
 
       route.updateAirwaysAndAltitude(false /* adjustRouteAltitude */);
 
@@ -2193,16 +2183,17 @@ void RouteController::adjustFlightplanAltitude()
   if(route.isEmpty())
     return;
 
-  Flightplan& fp = route.getFlightplan();
-  int alt = route.getAdjustedAltitude(fp.getCruisingAltitude());
+  Flightplan& flightplan = route.getFlightplan();
+  // Convert feet to local unit for adjusting
+  float adjustedAltitudeLocal = route.getAdjustedAltitude(Unit::altFeetF(flightplan.getCruiseAltitudeFt()));
 
-  if(alt != fp.getCruisingAltitude())
+  if(atools::almostNotEqual(adjustedAltitudeLocal, Unit::altFeetF(flightplan.getCruiseAltitudeFt())))
   {
     RouteCommand *undoCommand = nullptr;
 
-    // if(route.getFlightplan().canSaveAltitude())
     undoCommand = preChange(tr("Adjust altitude"), rctype::ALTITUDE);
-    fp.setCruisingAltitude(alt);
+    // Convert local unit back to feet
+    flightplan.setCruiseAltitudeFt(Unit::rev(adjustedAltitudeLocal, Unit::altFeetF));
 
     updateTableModel();
 
@@ -2215,7 +2206,7 @@ void RouteController::adjustFlightplanAltitude()
     NavApp::updateErrorLabel();
 
     if(!route.isEmpty())
-      emit routeAltitudeChanged(route.getCruisingAltitudeFeet());
+      emit routeAltitudeChanged(route.getCruiseAltitudeFt());
 
     NavApp::setStatusMessage(tr("Adjusted flight plan altitude."));
   }
@@ -3353,7 +3344,7 @@ bool RouteController::doesLnmFilenameMatchRoute()
       ok &= fileIfrVfr == route.getFlightplan().getFlightplanType();
 
     if(pattern.contains(atools::fs::pln::pattern::CRUISEALT))
-      ok &= atools::almostEqual(fileCruiseAltFt, route.getCruisingAltitudeFeet(), 10.f);
+      ok &= atools::almostEqual(fileCruiseAltFt, route.getCruiseAltitudeFt(), 10.f);
 
     if(pattern.contains(atools::fs::pln::pattern::DEPARTIDENT))
       ok &= fileDepartureIdent == route.getFlightplan().getDepartureIdent();
@@ -4396,7 +4387,7 @@ void RouteController::updateFlightplanFromWidgets(Flightplan& flightplan)
 {
   Ui::MainWindow *ui = NavApp::getMainUi();
   flightplan.setFlightplanType(ui->comboBoxRouteType->currentIndex() == 0 ? atools::fs::pln::IFR : atools::fs::pln::VFR);
-  flightplan.setCruisingAltitude(ui->spinBoxRouteAlt->value());
+  flightplan.setCruiseAltitudeFt(Unit::rev(ui->spinBoxRouteAlt->value(), Unit::altFeetF));
 }
 
 QIcon RouteController::iconForLeg(const RouteLeg& leg, int size) const
@@ -4653,16 +4644,10 @@ void RouteController::updateTableModel()
     // Set spin box and block signals to avoid recursive call
     {
       QSignalBlocker blocker(ui->spinBoxRouteAlt);
-      ui->spinBoxRouteAlt->setValue(flightplan.getCruisingAltitude());
+      ui->spinBoxRouteAlt->setValue(atools::roundToInt(Unit::altFeetF(flightplan.getCruiseAltitudeFt())));
     }
 
-    { // Set combo box and block signals to avoid recursive call
-      QSignalBlocker blocker(ui->comboBoxRouteType);
-      if(flightplan.getFlightplanType() == atools::fs::pln::IFR)
-        ui->comboBoxRouteType->setCurrentIndex(0);
-      else if(flightplan.getFlightplanType() == atools::fs::pln::VFR)
-        ui->comboBoxRouteType->setCurrentIndex(1);
-    }
+    updateComboBoxFromFlightplanType();
   }
 
   // Update header tooltips
@@ -4679,6 +4664,19 @@ void RouteController::updateTableModel()
 
   // Value from ui file is ignored
   tableViewRoute->horizontalHeader()->setMinimumSectionSize(3);
+}
+
+void RouteController::updateComboBoxFromFlightplanType()
+{
+  Ui::MainWindow *ui = NavApp::getMainUi();
+  Flightplan& flightplan = route.getFlightplan();
+
+  // Set combo box and block signals to avoid recursive call
+  QSignalBlocker blocker(ui->comboBoxRouteType);
+  if(flightplan.getFlightplanType() == atools::fs::pln::IFR)
+    ui->comboBoxRouteType->setCurrentIndex(0);
+  else if(flightplan.getFlightplanType() == atools::fs::pln::VFR)
+    ui->comboBoxRouteType->setCurrentIndex(1);
 }
 
 void RouteController::updateModelTimeFuelWindAlt()
@@ -5090,7 +5088,7 @@ void RouteController::updateModelHighlights()
         {
           QStringList airwayErrors;
           bool trackError = false;
-          if(leg.isAirwaySetAndInvalid(route.getCruisingAltitudeFeet(), &airwayErrors, &trackError))
+          if(leg.isAirwaySetAndInvalid(route.getCruiseAltitudeFt(), &airwayErrors, &trackError))
           {
             // Has airway but errors
             item->setForeground(invalidColor);

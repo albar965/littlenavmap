@@ -17,6 +17,7 @@
 
 #include "routestring/routestringwriter.h"
 
+#include "common/unit.h"
 #include "fs/util/coordinates.h"
 #include "fs/util/fsutil.h"
 #include "route/route.h"
@@ -32,7 +33,7 @@ RouteStringWriter::~RouteStringWriter()
 {
 }
 
-QString RouteStringWriter::createStringForRoute(const Route& route, float speed, rs::RouteStringOptions options) const
+QString RouteStringWriter::createStringForRoute(const Route& route, float speedKts, rs::RouteStringOptions options) const
 {
   if(route.isEmpty())
     return QString();
@@ -46,13 +47,12 @@ QString RouteStringWriter::createStringForRoute(const Route& route, float speed,
          "GFP UWP:\n" + createGfpStringForRouteInternal(route, true);
 
 #else
-  return createStringForRouteInternal(route, speed, options).join(" ").simplified().toUpper();
+  return createStringForRouteInternal(route, speedKts, options).join(" ").simplified().toUpper();
 
 #endif
 }
 
-QStringList RouteStringWriter::createStringListForRoute(const Route& route, float speed,
-                                                        rs::RouteStringOptions options) const
+QStringList RouteStringWriter::createStringListForRoute(const Route& route, float speedKts, rs::RouteStringOptions options) const
 {
   if(route.isEmpty())
     return QStringList();
@@ -66,7 +66,7 @@ QStringList RouteStringWriter::createStringListForRoute(const Route& route, floa
          "GFP UWP:\n" + createGfpStringForRouteInternal(route, true);
 
 #else
-  return createStringForRouteInternal(route, speed, options);
+  return createStringForRouteInternal(route, speedKts, options);
 
 #endif
 }
@@ -274,7 +274,7 @@ QString RouteStringWriter::createGfpStringForRouteInternal(const Route& route, b
   return retval.toUpper();
 }
 
-QStringList RouteStringWriter::createStringForRouteInternal(const Route& routeParam, float speed, rs::RouteStringOptions options) const
+QStringList RouteStringWriter::createStringForRouteInternal(const Route& routeParam, float speedKts, rs::RouteStringOptions options) const
 {
   Route route = routeParam.adjustedToOptions(rf::DEFAULT_OPTS_ROUTESTRING);
 
@@ -437,7 +437,12 @@ QStringList RouteStringWriter::createStringForRouteInternal(const Route& routePa
 
   // Add speed and altitude
   if(!items.isEmpty() && options.testFlag(rs::ALT_AND_SPEED))
-    items.insert(insertPosition, atools::fs::util::createSpeedAndAltitude(speed, route.getCruisingAltitudeFeet()));
+  {
+    bool metric = options.testFlag(rs::ALT_AND_SPEED_METRIC);
+    items.insert(insertPosition, atools::fs::util::createSpeedAndAltitude(speedKts, route.getCruiseAltitudeFt(),
+                                                                          metric && Unit::getUnitSpeed() == opts::SPEED_KMH,
+                                                                          metric && Unit::getUnitAlt() == opts::ALT_METER));
+  }
 
   // Add STAR
   if(options.testFlag(rs::SID_STAR) && !star.isEmpty())
@@ -501,7 +506,7 @@ QStringList RouteStringWriter::createStringForRouteInternal(const Route& routePa
     items.append(route.getAlternateDisplayIdents()); // Internal ident or ICAO
 
   if(options.testFlag(rs::FLIGHTLEVEL))
-    items.append(QString("FL%1").arg(static_cast<int>(route.getCruisingAltitudeFeet()) / 100));
+    items.append(QString("FL%1").arg(static_cast<int>(route.getCruiseAltitudeFt()) / 100));
 
   qDebug() << Q_FUNC_INFO << items;
 

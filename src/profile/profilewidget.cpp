@@ -442,9 +442,9 @@ void ProfileWidget::updateScreenCoords()
   minSafeAltitudeFt = calcGroundBufferFt(legList->maxElevationFt);
 
   if(profileOptions->getDisplayOptions().testFlag(optsp::PROFILE_SAFE_ALTITUDE) && minSafeAltitudeFt < map::INVALID_ALTITUDE_VALUE)
-    maxWindowAlt = std::max(minSafeAltitudeFt, legList->route.getCruisingAltitudeFeet());
+    maxWindowAlt = std::max(minSafeAltitudeFt, legList->route.getCruiseAltitudeFt());
   else
-    maxWindowAlt = legList->route.getCruisingAltitudeFeet();
+    maxWindowAlt = legList->route.getCruiseAltitudeFt();
 
   if(simData.getUserAircraftConst().isValid() && (showAircraft || showAircraftTrack) && !NavApp::getRouteConst().isFlightplanEmpty())
     maxWindowAlt = std::max(maxWindowAlt, aircraftAlt(simData.getUserAircraftConst()));
@@ -545,7 +545,7 @@ int ProfileWidget::getMinSafeAltitudeY() const
 
 int ProfileWidget::getFlightplanAltY() const
 {
-  return altitudeY(legList->route.getCruisingAltitudeFeet());
+  return altitudeY(legList->route.getCruiseAltitudeFt());
 }
 
 bool ProfileWidget::hasValidRouteForDisplay() const
@@ -1005,7 +1005,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
     {
       // Set all points to flight plan cruise altitude if no TOD and TOC wanted
       for(QPointF& pt : geo)
-        pt.setY(legList->route.getCruisingAltitudeFeet());
+        pt.setY(legList->route.getCruiseAltitudeFt());
     }
     altLegs.append(toScreen(geo));
   }

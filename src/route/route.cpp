@@ -712,9 +712,9 @@ int Route::getTopOfDescentLegIndex() const
   return altitude->getTopOfDescentLegIndex();
 }
 
-float Route::getCruisingAltitudeFeet() const
+float Route::getCruiseAltitudeFt() const
 {
-  return Unit::rev(flightplan.getCruisingAltitude(), Unit::altFeetF);
+  return flightplan.getCruiseAltitudeFt();
 }
 
 float Route::getAltitudeForDistance(float currentDistToDest) const
@@ -2135,7 +2135,7 @@ void Route::updateMagvar()
 void Route::updateLegAltitudes()
 {
   // Calculate also with empty route to allow updating of error messages
-  altitude->calculateAll(NavApp::getAircraftPerformance(), getCruisingAltitudeFeet());
+  altitude->calculateAll(NavApp::getAircraftPerformance(), getCruiseAltitudeFt());
 }
 
 /* Update the bounding rect using marble functions to catch anti meridian overlap */
@@ -3161,7 +3161,7 @@ Route Route::adjustedToOptions(const Route& origRoute, rf::RouteAdjustOptions op
   else
   {
     // Use an estimated difference for high/low
-    if(route.getCruisingAltitudeFeet() < 18000.f)
+    if(route.getCruiseAltitudeFt() < 18000.f)
       plan.setRouteType(atools::fs::pln::LOW_ALTITUDE);
     else
       plan.setRouteType(atools::fs::pln::HIGH_ALTITUDE);
@@ -3297,13 +3297,11 @@ bool Route::hasValidParking() const
     return false;
 }
 
-void Route::updateAirwaysAndAltitude(bool adjustRouteAltitude)
+void Route::updateAirways(float& minAltitudeFt, float& maxAltitudeFt, bool adjustRouteAltitude)
 {
-  if(isEmpty())
-    return;
+  minAltitudeFt = atools::fs::pln::FLIGHTPLAN_ALTITUDE_FT_MIN;
+  maxAltitudeFt = atools::fs::pln::FLIGHTPLAN_ALTITUDE_FT_MAX;
 
-  int minAltitudeFt = static_cast<int>(atools::fs::pln::FLIGHTPLAN_ALTITUDE_MIN),
-      maxAltitudeFt = static_cast<int>(atools::fs::pln::FLIGHTPLAN_ALTITUDE_MAX);
   for(int i = 1; i < size(); i++)
   {
     RouteLeg& routeLeg = (*this)[i];
@@ -3335,9 +3333,9 @@ void Route::updateAirwaysAndAltitude(bool adjustRouteAltitude)
 
           if(adjustRouteAltitude)
           {
-            minAltitudeFt = std::max(airway.minAltitude, minAltitudeFt);
+            minAltitudeFt = std::max(static_cast<float>(airway.minAltitude), minAltitudeFt);
             if(airway.maxAltitude > 0)
-              maxAltitudeFt = std::min(airway.maxAltitude, maxAltitudeFt);
+              maxAltitudeFt = std::min(static_cast<float>(airway.maxAltitude), maxAltitudeFt);
           }
         }
       }
@@ -3357,12 +3355,12 @@ void Route::updateAirwaysAndAltitude(bool adjustRouteAltitude)
         {
           case proc::MapAltRestriction::AT: // At alt1
           case proc::MapAltRestriction::AT_OR_ABOVE: // At or above alt1
-            minAltitudeFt = std::max(atools::roundToInt(altRestr.alt1), minAltitudeFt);
+            minAltitudeFt = std::max(altRestr.alt1, minAltitudeFt);
             break;
 
           case proc::MapAltRestriction::BETWEEN:
             // At or above alt2 and at or below alt1
-            minAltitudeFt = std::max(atools::roundToInt(altRestr.alt2), minAltitudeFt);
+            minAltitudeFt = std::max(altRestr.alt2, minAltitudeFt);
             break;
 
           case proc::MapAltRestriction::AT_OR_BELOW:
@@ -3374,56 +3372,99 @@ void Route::updateAirwaysAndAltitude(bool adjustRouteAltitude)
       }
     }
   }
+}
+
+void Route::updateAirwaysAndAltitude(bool adjustRouteAltitude)
+{
+  if(isEmpty())
+    return;
+
+  float minAltitudeFt, maxAltitudeFt;
+  updateAirways(minAltitudeFt, maxAltitudeFt, adjustRouteAltitude); // Returns ft
+
+  // Local units are ft or meter depending on options
+  // Convert ft to local unit
+  float minAltitudeLocal = Unit::altFeetF(minAltitudeFt);
+  float maxAltitudeLocal = Unit::altFeetF(maxAltitudeFt);
 
   // Adjust if needed but only if values do not exceed maximum ==================================
-  if(adjustRouteAltitude && (minAltitudeFt > 0 || maxAltitudeFt < map::MapAirway::MAX_ALTITUDE_LIMIT))
+  // This is only used after loading or importing a flight plan
+  if(adjustRouteAltitude)
   {
-    if(minAltitudeFt > maxAltitudeFt)
-      maxAltitudeFt = minAltitudeFt;
+    if(minAltitudeLocal <= 0 && maxAltitudeLocal >= Unit::altFeetI(map::MapAirway::MAX_ALTITUDE_LIMIT_FT))
+    {
+      opts::UnitAlt unitAlt = Unit::getUnitAlt();
+      // No valid information from airways or procedures - fall back to fixed values based on type
+      if(flightplan.getFlightplanType() == atools::fs::pln::IFR)
+      {
+        minAltitudeLocal = unitAlt == opts::ALT_FT ? 20000.f : 5000.f;
+        maxAltitudeLocal = unitAlt == opts::ALT_FT ? 24000.f : 7000.f;
+      }
+      else
+      {
+        minAltitudeLocal = unitAlt == opts::ALT_FT ? 8000.f : 2500.f;
+        maxAltitudeLocal = unitAlt == opts::ALT_FT ? 10000.f : 3000.f;
+      }
+
+      // Increase values for high elevation airports
+      float airportAltFt = 0.f;
+      if(getDestinationAirportLeg().getAirport().isValid())
+        airportAltFt = getDestinationAirportLeg().getAirport().getAltitude();
+
+      if(getDepartureAirportLeg().getAirport().isValid())
+        airportAltFt = std::max(getDepartureAirportLeg().getAirport().getAltitude(), airportAltFt);
+
+      float airportAltLocal = Unit::altFeetF(airportAltFt);
+      if(airportAltLocal >= minAltitudeLocal)
+      {
+        minAltitudeLocal = static_cast<int>(std::ceil(airportAltLocal / 1000.f) * 1000.f) + 1000.f;
+        maxAltitudeLocal = minAltitudeLocal + (unitAlt == opts::ALT_FT ? 2000.f : 500.f);
+      }
+    }
+
+    if(minAltitudeLocal > maxAltitudeLocal)
+      maxAltitudeLocal = minAltitudeLocal;
 
     // Convert feet to local unit
-    minAltitudeFt = Unit::altFeetI(minAltitudeFt);
-    maxAltitudeFt = Unit::altFeetI(maxAltitudeFt);
+    float cruisingAltitudeLocal = Unit::altFeetF(flightplan.getCruiseAltitudeFt());
 
     // Check airway limits after calculation ===========================
-
+    // First do basic aligment - round to next 1000 and add 500 for VFR
     // Add 500 ft/m for VFR
     float offset = flightplan.getFlightplanType() == atools::fs::pln::IFR ? 0.f : 500.f;
-    int cruisingAltitude = flightplan.getCruisingAltitude();
 
-    // First round up to next rule adhering altitude independent of flight direction
-    // cruisingAltitude = static_cast<int>(std::ceil((cruisingAltitude - offset) / 1000.f) * 1000.f + offset);
-
-    if(cruisingAltitude < minAltitudeFt)
+    if(cruisingAltitudeLocal < minAltitudeLocal)
       // Below min altitude - use min altitude and round up to next valid level
-      cruisingAltitude = static_cast<int>(std::ceil((minAltitudeFt - offset) / 1000.f) * 1000.f + offset);
+      cruisingAltitudeLocal = static_cast<int>(std::ceil((minAltitudeLocal - offset) / 1000.f) * 1000.f + offset);
 
-    if(cruisingAltitude > maxAltitudeFt)
+    if(cruisingAltitudeLocal > maxAltitudeLocal)
       // Above max altitude - use max altitude and round down
-      cruisingAltitude = static_cast<int>(std::floor((maxAltitudeFt - offset) / 1000.f) * 1000.f + offset);
+      cruisingAltitudeLocal = static_cast<int>(std::floor((maxAltitudeLocal - offset) / 1000.f) * 1000.f + offset);
 
-    // Adjust altitude after route calculation ===========================
-    if(OptionData::instance().getFlags() & opts::ROUTE_ALTITUDE_RULE)
+    // Adjust altitude after route calculation for East/West or other rules ===========================
+    if(OptionData::instance().getFlags().testFlag(opts::ROUTE_ALTITUDE_RULE))
     {
       // Apply simplified east/west or other rule - always rounds up =============================
-      int adjusted = getAdjustedAltitude(cruisingAltitude);
+      float adjusted = getAdjustedAltitude(cruisingAltitudeLocal);
 
-      if(adjusted > maxAltitudeFt)
-        adjusted = getAdjustedAltitude(cruisingAltitude - 1000);
-      cruisingAltitude = adjusted;
+      if(adjusted > maxAltitudeLocal)
+        adjusted = getAdjustedAltitude(cruisingAltitudeLocal) - 1000.f;
+      cruisingAltitudeLocal = adjusted;
     }
+
+    // Convert local unit back to feet
+    flightplan.setCruiseAltitudeFt(Unit::rev(cruisingAltitudeLocal, Unit::altFeetF));
 
 #ifdef DEBUG_INFORMATION
     qDebug() << Q_FUNC_INFO << "Updating flight plan altitude"
-             << "minAltitude" << minAltitudeFt << "maxAltitude" << maxAltitudeFt << "cruisingAltitude" << cruisingAltitude;
+             << "minAltitudeLocal" << minAltitudeLocal << "maxAltitudeLocal" << maxAltitudeLocal
+             << "cruisingAltitudeLocal" << cruisingAltitudeLocal;
 #endif
-
-    flightplan.setCruisingAltitude(cruisingAltitude);
-  }
+  } // if(adjustRouteAltitude)
 }
 
 /* Apply simplified east/west or north/south rule */
-int Route::getAdjustedAltitude(int newAltitude) const
+float Route::getAdjustedAltitude(float altitudeLocal) const
 {
   if(getSizeWithoutAlternates() > 1)
   {
@@ -3437,7 +3478,7 @@ int Route::getAdjustedAltitude(int newAltitude) const
 
     if(fpDir < Pos::INVALID_VALUE)
     {
-      qDebug() << Q_FUNC_INFO << "minAltitude" << newAltitude << "fp dir" << fpDir;
+      qDebug() << Q_FUNC_INFO << "minAltitude" << altitudeLocal << "fp dir" << fpDir;
 
       // East / West: Rounds up  cruise altitude to nearest odd thousand feet for eastward flight plans
       // and nearest even thousand feet for westward flight plans.
@@ -3460,26 +3501,24 @@ int Route::getAdjustedAltitude(int newAltitude) const
         // IFR - 1000
         if(odd)
           // round up to the next odd value
-          newAltitude = static_cast<int>(std::ceil((newAltitude - 1000.f) / 2000.f) * 2000.f + 1000.f);
+          altitudeLocal = std::ceil((altitudeLocal - 1000.f) / 2000.f) * 2000.f + 1000.f;
         else
           // round up to the next even value
-          newAltitude = static_cast<int>(std::ceil(newAltitude / 2000.f) * 2000.f);
+          altitudeLocal = std::ceil(altitudeLocal / 2000.f) * 2000.f;
       }
       else
       {
         // VFR - 500
         if(odd)
           // round up to the next odd value + 500
-          newAltitude = static_cast<int>(std::ceil((newAltitude - 1500.f) / 2000.f) * 2000.f + 1500.f);
+          altitudeLocal = std::ceil((altitudeLocal - 1500.f) / 2000.f) * 2000.f + 1500.f;
         else
           // round up to the next even value + 500
-          newAltitude = static_cast<int>(std::ceil((newAltitude - 500.f) / 2000.f) * 2000.f + 500.f);
+          altitudeLocal = std::ceil((altitudeLocal - 500.f) / 2000.f) * 2000.f + 500.f;
       }
-
-      qDebug() << "corrected minAltitude" << newAltitude;
     }
   }
-  return newAltitude;
+  return altitudeLocal;
 }
 
 bool Route::isTooFarToFlightPlan() const
@@ -3536,7 +3575,7 @@ QString Route::buildDefaultFilename(QString pattern, QString suffix, bool clean)
     suffix.clear();
 
   return Flightplan::getFilenamePattern(pattern, type, departName, departIdent, destName, destIdent, suffix,
-                                        flightplan.getCruisingAltitude(), clean);
+                                        atools::roundToInt(flightplan.getCruiseAltitudeFt()), clean);
 }
 
 QString Route::buildDefaultFilenameShort(const QString& separator, const QString& suffix) const

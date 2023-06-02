@@ -534,7 +534,7 @@ void RouteLabel::buildHeaderRunwayLand(atools::util::HtmlBuilder& html)
 
 void RouteLabel::buildHeaderTocTod(atools::util::HtmlBuilder& html)
 {
-  html.p().b(tr("Cruising altitude ")).text(Unit::altFeet(route.getCruisingAltitudeFeet()));
+  html.p().b(tr("Cruising altitude ")).text(Unit::altFeet(route.getCruiseAltitudeFt()));
 
   if(route.getTopOfClimbDistance() < map::INVALID_DISTANCE_VALUE || route.getTopOfDescentFromDestination() < map::INVALID_DISTANCE_VALUE)
   {

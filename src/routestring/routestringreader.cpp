@@ -127,20 +127,14 @@ bool RouteStringReader::createRouteFromString(const QString& routeString, rs::Ro
 
   // Remove all unneeded adornment like speed and times and also combine waypoint coordinate pairs
   // Also extracts speed, altitude, SID and STAR
-  float altitude;
-  QStringList cleanItems = cleanItemList(items, speedKts, &altitude);
+  float altitudeFt;
+  QStringList cleanItems = cleanItemList(items, speedKts, &altitudeFt);
 
-  if(altitude > 0.f)
-  {
-    if(altIncluded != nullptr)
-      *altIncluded = true;
-    fp->setCruisingAltitude(atools::roundToInt(Unit::altFeetF(altitude)));
-  }
-  else
-  {
-    if(altIncluded != nullptr)
-      *altIncluded = false;
-  }
+  if(altIncluded != nullptr)
+    *altIncluded = altitudeFt > 0.f;
+
+  if(altitudeFt > 0.f)
+    fp->setCruiseAltitudeFt(altitudeFt);
 
 #ifdef DEBUG_INFORMATION
   qDebug() << "clean items" << cleanItems;
@@ -196,8 +190,8 @@ bool RouteStringReader::createRouteFromString(const QString& routeString, rs::Ro
     lastPos = fp->getDeparturePosition();
   }
 
-  if(altitude > 0.f && options.testFlag(rs::REPORT))
-    appendMessage(tr("Using cruise altitude <b>%1</b> for flight plan.").arg(Unit::altFeet(altitude)));
+  if(altitudeFt > 0.f && options.testFlag(rs::REPORT))
+    appendMessage(tr("Using cruise altitude <b>%1</b> for flight plan.").arg(Unit::altFeet(altitudeFt)));
 
   if(speedKts != nullptr && *speedKts > 0.f)
   {
@@ -206,8 +200,7 @@ bool RouteStringReader::createRouteFromString(const QString& routeString, rs::Ro
       appendWarning(tr("Ignoring speed instruction %1.").arg(Unit::speedKts(*speedKts)));
     else
       appendWarning(tr("Ignoring speed instruction %1 in favor of aircraft performance (%2 true airspeed).").
-                    arg(Unit::speedKts(*speedKts)).
-                    arg(Unit::speedKts(NavApp::getRouteCruiseSpeedKts())));
+                    arg(Unit::speedKts(*speedKts)).arg(Unit::speedKts(NavApp::getRouteCruiseSpeedKts())));
   }
 
   // Do not get any navaids that are too far away

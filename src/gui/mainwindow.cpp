@@ -2392,7 +2392,7 @@ void MainWindow::routeSaveLnmExported(const QString& filename)
 bool MainWindow::routeSaveLnm()
 {
   // Show a simple warning for the rare case that altitude is null ===============
-  if(atools::almostEqual(NavApp::getRouteConst().getCruisingAltitudeFeet(), 0.f, 10.f))
+  if(atools::almostEqual(NavApp::getRouteConst().getCruiseAltitudeFt(), 0.f, 10.f))
     dialog->showInfoMsgBox(lnm::ACTIONS_SHOW_CRUISE_ZERO_WARNING,
                            tr("Flight plan cruise altitude is zero.\n"
                               "A simulator might not be able to load the flight plan."),

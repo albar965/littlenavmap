@@ -62,7 +62,7 @@ void MapPainterAirspace::render()
   {
     bool overflow = false;
     controller->getAirspaces(airspaces, curBox, context->mapLayer, context->airspaceFilterByLayer,
-                             context->route->getCruisingAltitudeFeet(),
+                             context->route->getCruiseAltitudeFt(),
                              context->viewContext == Marble::Animation, map::AIRSPACE_SRC_ALL, overflow);
     context->setQueryOverflow(overflow);
   }

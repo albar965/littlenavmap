@@ -1341,7 +1341,7 @@ void HtmlInfoBuilder::windText(const atools::grib::WindPosList& windStack, HtmlB
 
   float windbarbAltitude = windReporter->getDisplayAltitudeFt();
   float manualAltitude = windReporter->getManualAltitudeFt();
-  float cruiseAltitude = NavApp::getRouteCruiseAltFt();
+  float cruiseAltitude = NavApp::getRouteCruiseAltitudeFt();
   QString source = windReporter->getSourceText();
 
   const static int WIND_LAYERS_AT_WAYPOINT = 4;

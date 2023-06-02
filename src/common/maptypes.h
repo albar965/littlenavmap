@@ -1092,7 +1092,7 @@ struct MapAirway
   bool eastCourse, westCourse;
 
   /* Any maximum value equal or above is treated as unlimited */
-  static const int MAX_ALTITUDE_LIMIT = 60000;
+  static const int MAX_ALTITUDE_LIMIT_FT = 60000;
 
   const QString& getIdent() const
   {

@@ -1622,13 +1622,13 @@ QString airwayAltText(const MapAirway& airway)
   QString altTxt;
   if(airway.minAltitude > 0)
   {
-    if(airway.maxAltitude > 0 && airway.maxAltitude < map::MapAirway::MAX_ALTITUDE_LIMIT)
+    if(airway.maxAltitude > 0 && airway.maxAltitude < map::MapAirway::MAX_ALTITUDE_LIMIT_FT)
       altTxt = Unit::altFeet(airway.minAltitude);
     else
       altTxt = QObject::tr("Min ") % Unit::altFeet(airway.minAltitude);
   }
 
-  if(airway.maxAltitude > 0 && airway.maxAltitude < map::MapAirway::MAX_ALTITUDE_LIMIT)
+  if(airway.maxAltitude > 0 && airway.maxAltitude < map::MapAirway::MAX_ALTITUDE_LIMIT_FT)
   {
     if(airway.minAltitude > 0)
       altTxt += QObject::tr(" to ") % Unit::altFeet(airway.maxAltitude);
@@ -1640,7 +1640,7 @@ QString airwayAltText(const MapAirway& airway)
 
 QString airwayAltTextShort(const MapAirway& airway, bool addUnit, bool narrow)
 {
-  if(airway.maxAltitude > 0 && airway.maxAltitude < map::MapAirway::MAX_ALTITUDE_LIMIT)
+  if(airway.maxAltitude > 0 && airway.maxAltitude < map::MapAirway::MAX_ALTITUDE_LIMIT_FT)
     return QObject::tr("%1-%2").
            arg(Unit::altFeet(airway.minAltitude, false /*addUnit*/, narrow)).
            arg(Unit::altFeet(airway.maxAltitude, addUnit, narrow));

@@ -508,6 +508,8 @@ private:
   /* Clear all names and other properties */
   void clearFlightplan();
 
+  void updateComboBoxFromFlightplanType();
+
   /* Selected rows in table. Updated on selection change. */
   QList<int> selectedRows;
 

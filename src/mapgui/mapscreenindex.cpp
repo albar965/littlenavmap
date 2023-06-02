@@ -144,7 +144,7 @@ void MapScreenIndex::updateAirspaceScreenGeometryInternal(QSet<map::MapAirspaceI
     bool overflow = false;
     if(!highlights && paintLayer->getShownMapTypes().testFlag(map::AIRSPACE))
       controller->getAirspaces(airspaces, curBox, paintLayer->getMapLayer(), mapWidget->getShownAirspaceTypesByLayer(),
-                               NavApp::getRouteConst().getCruisingAltitudeFeet(), false, source, overflow);
+                               NavApp::getRouteConst().getCruiseAltitudeFt(), false, source, overflow);
 
     // Get highlighted airspaces from info window ================================
     for(const map::MapAirspace& airspace : airspaceHighlights)
