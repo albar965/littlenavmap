@@ -68,7 +68,8 @@ void RouteExportFormatMap::setDebugOptions(rexp::RouteExportFormatType type)
   if(format.isAppendToFile())
     atools::strToFile(format.getPath() + "/" + format.getPattern(), " XXX  ");
 
-  format.setFlag(rexp::SELECTED, true);
+  if(format.getCategory() != "Online" && format.getCategory() != "Little Navmap")
+    format.setFlag(rexp::SELECTED, true);
 }
 
 #endif
