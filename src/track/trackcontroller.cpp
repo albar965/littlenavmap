@@ -105,9 +105,12 @@ void TrackController::preDatabaseLoad()
 
 void TrackController::postDatabaseLoad()
 {
-  emit preTrackLoad();
-  trackManager->loadTracks(trackVector, downloadOnlyValid);
-  emit postTrackLoad();
+  if(!trackVector.isEmpty())
+  {
+    emit preTrackLoad();
+    trackManager->loadTracks(trackVector, downloadOnlyValid);
+    emit postTrackLoad();
+  }
 }
 
 void TrackController::startDownload()
