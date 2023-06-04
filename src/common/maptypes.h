@@ -791,7 +791,7 @@ struct MapWaypoint
                              *  Indicates navaid is a recommended fix */
 
   bool hasVictorAirways = false, hasJetAirways = false, hasTracks = false;
-  int artificial = 0;
+  map::MapWaypointArtificial artificial;
 
   const QString& getIdent() const
   {

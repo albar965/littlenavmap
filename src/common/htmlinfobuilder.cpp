@@ -2256,7 +2256,7 @@ void HtmlInfoBuilder::vorText(const MapVor& vor, HtmlBuilder& html) const
   html.tableEnd();
 
   MapWaypoint wp = NavApp::getWaypointTrackQueryGui()->getWaypointByNavId(vor.id, map::VOR);
-  if(wp.artificial)
+  if(wp.artificial != map::WAYPOINT_ARTIFICIAL_NONE)
     // Artificial waypoints are not shown - display airway list here
     waypointAirwayText(wp, html);
 
@@ -2331,7 +2331,7 @@ void HtmlInfoBuilder::ndbText(const MapNdb& ndb, HtmlBuilder& html) const
   html.tableEnd();
 
   MapWaypoint wp = NavApp::getWaypointTrackQueryGui()->getWaypointByNavId(ndb.id, map::NDB);
-  if(wp.artificial)
+  if(wp.artificial != map::WAYPOINT_ARTIFICIAL_NONE)
     // Artificial waypoints are not shown - display airway list here
     waypointAirwayText(wp, html);
 

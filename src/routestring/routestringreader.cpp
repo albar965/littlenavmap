@@ -44,6 +44,26 @@ namespace coords = atools::fs::util;
 namespace ageo = atools::geo;
 namespace plnentry = atools::fs::pln::entry;
 
+struct TypeDist
+{
+  TypeDist(const ageo::Pos& posParam, const ageo::Pos& lastPosParam, const ageo::Pos& destPosParam, map::MapTypes typeParam,
+           map::MapWaypointArtificial artificialParam = map::WAYPOINT_ARTIFICIAL_NONE)
+    : pos(posParam), type(typeParam), artificial(artificialParam)
+  {
+    // From last point to this one
+    distMeter = lastPosParam.distanceMeterTo(posParam);
+
+    if(destPosParam.isValid())
+      // From this point to destination
+      distMeter += posParam.distanceMeterTo(destPosParam);
+  }
+
+  float distMeter;
+  Pos pos;
+  map::MapTypes type;
+  map::MapWaypointArtificial artificial;
+};
+
 // Maximum distance to previous waypoint - everything above will be sorted out
 const static float MAX_WAYPOINT_DISTANCE_NM = 5000.f;
 
@@ -1207,6 +1227,12 @@ void RouteStringReader::extractWaypoints(const QList<map::MapAirwayWaypoint>& al
 void RouteStringReader::filterWaypoints(MapResult& result, atools::geo::Pos& lastPos, const atools::geo::Pos& destPos,
                                         const MapResult *lastResult, const QString& item, float maxDistance)
 {
+  // Remove artificial waypoints which were created for procedures only
+  result.waypoints.erase(std::remove_if(result.waypoints.begin(), result.waypoints.end(),
+                                        [ = ](const map::MapWaypoint& wp) -> bool {
+    return wp.artificial == map::WAYPOINT_ARTIFICIAL_PROCEDURES;
+  }), result.waypoints.end());
+
   if(lastPos.isValid())
   {
     maptools::sortByDistance(result.airports, lastPos);
@@ -1272,64 +1298,48 @@ void RouteStringReader::filterWaypoints(MapResult& result, atools::geo::Pos& las
     // Get the nearest position only if there is no match with an airway
     if(updateNearestPos && lastPos.isValid())
     {
-      struct Dist
-      {
-        Dist(const ageo::Pos& posParam, const ageo::Pos& lastPosParam, const ageo::Pos& destPosParam,
-             map::MapTypes typeParam)
-          : pos(posParam), type(typeParam)
-        {
-          // From last point to this one
-          distMeter = lastPosParam.distanceMeterTo(posParam);
-
-          if(destPosParam.isValid())
-            // From this point to destination
-            distMeter += posParam.distanceMeterTo(destPosParam);
-        }
-
-        float distMeter;
-        Pos pos;
-        map::MapTypes type;
-      };
-
       ageo::Pos pos;
       map::MapTypes type;
 
       // Find something whatever is nearest and use that for the last position
-      QVector<Dist> dists;
+      QVector<TypeDist> dists;
       if(result.hasAirports())
-        dists.append(Dist(result.airports.constFirst().position, lastPos, destPos, map::AIRPORT));
+        dists.append(TypeDist(result.airports.constFirst().position, lastPos, destPos, map::AIRPORT));
 
       if(result.hasWaypoints())
-        dists.append(Dist(result.waypoints.constFirst().position, lastPos, destPos, map::WAYPOINT));
+        dists.append(TypeDist(result.waypoints.constFirst().position, lastPos, destPos, map::WAYPOINT,
+                              result.waypoints.constFirst().artificial));
 
       if(result.hasVor())
-        dists.append(Dist(result.vors.constFirst().position, lastPos, destPos, map::VOR));
+        dists.append(TypeDist(result.vors.constFirst().position, lastPos, destPos, map::VOR));
 
       if(result.hasNdb())
-        dists.append(Dist(result.ndbs.constFirst().position, lastPos, destPos, map::NDB));
+        dists.append(TypeDist(result.ndbs.constFirst().position, lastPos, destPos, map::NDB));
 
       // Sort by distance from last plus distance to destination similar to A*
       if(dists.size() > 1)
-        std::sort(dists.begin(), dists.end(), [](const Dist& p1, const Dist& p2) -> bool {
+        std::sort(dists.begin(), dists.end(), [](const TypeDist& p1, const TypeDist& p2) -> bool {
           return p1.distMeter < p2.distMeter;
         });
 
       if(!dists.isEmpty())
       {
+        // Do selection between two first closest candidates
         if(dists.size() >= 2)
         {
-          const Dist& first = dists.constFirst();
-          const Dist& second = dists.at(1);
+          const TypeDist& first = dists.constFirst();
+          const TypeDist& second = dists.at(1);
 
           // Check for special case where a NDB and a VOR or waypoint with the same name are nearby.
           // Prefer VOR or waypoint in this case.
-          if(first.type == map::NDB && (second.type == map::VOR || second.type == map::WAYPOINT) &&
-             first.pos.distanceMeterTo(second.pos) < ageo::nmToMeter(MAX_CLOSE_NAVAIDS_DISTANCE_NM))
+          if(first.pos.distanceMeterTo(second.pos) < 2000.f)
           {
-            dists.removeFirst();
-
-            if(result.hasNdb())
-              result.ndbs.removeFirst();
+            if(first.type == map::NDB && (second.type == map::VOR || second.type == map::WAYPOINT))
+            {
+              dists.removeFirst();
+              if(result.hasNdb())
+                result.ndbs.removeFirst();
+            }
           }
         }
 

@@ -1070,7 +1070,7 @@ void MapScreenIndex::nearestProcedureHighlightsInternal(int xs, int ys, int maxD
       // Remove artificial waypoints which were created to procedures or airways
       result.waypoints.erase(std::remove_if(result.waypoints.begin(), result.waypoints.end(),
                                             [ = ](const map::MapWaypoint& wp) -> bool {
-        return wp.artificial != 0;
+        return wp.artificial != map::WAYPOINT_ARTIFICIAL_NONE;
       }), result.waypoints.end());
     }
   }

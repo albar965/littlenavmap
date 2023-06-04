@@ -441,6 +441,14 @@ enum MapAirportType
   AP_TYPE_HELIPORT = 17,
 };
 
+/* X-Plane airport type. Matches values in apt.dat */
+enum MapWaypointArtificial
+{
+  WAYPOINT_ARTIFICIAL_NONE = 0, /* Normal waypoint */
+  WAYPOINT_ARTIFICIAL_AIRWAYS = 1, /* Dummy waypoint created for airways or airways and procedures */
+  WAYPOINT_ARTIFICIAL_PROCEDURES = 2/* Dummy waypoint created for procedures only */
+};
+
 /* Sun shading sub menu actions.
  * Values are saved in settings do not change */
 enum MapSunShading

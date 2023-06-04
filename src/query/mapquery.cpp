@@ -235,7 +235,7 @@ void MapQuery::resolveWaypointNavaids(const QList<MapWaypoint>& allWaypoints, QH
     if(normalWaypoints || (wp.hasJetAirways && jetWaypoints) || (wp.hasVictorAirways && victorWaypoints) ||
        (wp.hasTracks && trackWaypoints))
     {
-      if(wp.isVor() && wp.artificial > 0)
+      if(wp.isVor() && wp.artificial != map::WAYPOINT_ARTIFICIAL_NONE)
       {
         // Get related VOR for artificial waypoint
         MapVor vor;
@@ -243,7 +243,7 @@ void MapQuery::resolveWaypointNavaids(const QList<MapWaypoint>& allWaypoints, QH
         if(vor.isValid())
           vors.insert(vor.id, vor);
       }
-      else if(wp.isNdb() && wp.artificial > 0)
+      else if(wp.isNdb() && wp.artificial != map::WAYPOINT_ARTIFICIAL_NONE)
       {
         // Get related NDB for artificial waypoint
         MapNdb ndb;
@@ -784,7 +784,7 @@ void MapQuery::getNearestScreenObjects(const CoordinateConverter& conv, const Ma
     result.waypointIds.clear();
     for(const map::MapWaypoint& wp : waypoints)
     {
-      if(wp.artificial == 0)
+      if(wp.artificial == map::WAYPOINT_ARTIFICIAL_NONE)
         insertSortedByDistance(conv, result.waypoints, &result.waypointIds, xs, ys, wp);
     }
 

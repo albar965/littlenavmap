@@ -171,7 +171,7 @@ const QList<map::MapWaypoint> *WaypointQuery::getWaypoints(const GeoDataLatLonBo
         mapTypesFactory->fillWaypoint(waypointsByRectQuery->record(), wp, trackDatabase);
 
         // Avoid artificial waypoints created only for procedure or airway resolution
-        if(wp.artificial == 0)
+        if(wp.artificial == map::WAYPOINT_ARTIFICIAL_NONE)
           waypointCache.list.append(wp);
       }
     }
