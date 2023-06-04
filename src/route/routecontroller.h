@@ -117,7 +117,7 @@ public:
   void restoreState();
 
   /* Get the route only */
-  const Route& getRoute() const
+  const Route& getRouteConst() const
   {
     return route;
   }

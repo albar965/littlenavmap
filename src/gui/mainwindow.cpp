@@ -2107,7 +2107,7 @@ bool MainWindow::routeCheckForChanges()
 
   QMessageBox msgBox(this);
   msgBox.setWindowTitle(QApplication::applicationName());
-  msgBox.setText(routeController->getRoute().isEmpty() ?
+  msgBox.setText(routeController->getRouteConst().isEmpty() ?
                  tr("Flight Plan has been changed.\n"
                     "There are changes which can be restored by using undo.") :
                  tr("Flight Plan has been changed."));
@@ -2198,8 +2198,11 @@ void MainWindow::routeFromFlightplan(const atools::fs::pln::Flightplan& flightpl
   // Check for changes and show question dialog unless undo stack is used
   if(undo || routeCheckForChanges())
   {
+    // Transfer flag to new flightplan to avoid silently overwriting non LNMPLN files with own format
+    bool lnmpln = routeController->getRouteConst().getFlightplanConst().isLnmFormat();
     routeController->loadFlightplan(flightplan, atools::fs::pln::LNM_PLN, QString(),
                                     changed, adjustAltitude, undo, false /* warnAltitude */);
+    routeController->getRoute().getFlightplan().setLnmFormat(lnmpln);
     if(OptionData::instance().getFlags() & opts::GUI_CENTER_ROUTE)
       routeCenter();
     showFlightPlan();
@@ -2316,7 +2319,7 @@ void MainWindow::routeAppend()
   if(!routeFile.isEmpty())
   {
     if(routeController->insertFlightplan(routeFile,
-                                         routeController->getRoute().getDestinationAirportLegIndex() + 1 /* append */))
+                                         routeController->getRouteConst().getDestinationAirportLegIndex() + 1 /* append */))
     {
       routeFileHistory->addFile(routeFile);
       if(OptionData::instance().getFlags() & opts::GUI_CENTER_ROUTE)
@@ -2756,7 +2759,7 @@ void MainWindow::mapSaveImageAviTab()
       {
         QString defaultFileName;
 
-        if(routeController->getRoute().isEmpty())
+        if(routeController->getRouteConst().isEmpty())
           defaultFileName = tr("LittleNavmap_%1.png").arg(QDateTime::currentDateTime().toString("yyyyMMddHHmm"));
         else
           defaultFileName = NavApp::getRouteConst().buildDefaultFilenameShort("_", ".jpg");

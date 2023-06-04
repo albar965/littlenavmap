@@ -586,7 +586,7 @@ ProcedureQuery *NavApp::getProcedureQuery()
 
 const Route& NavApp::getRouteConst()
 {
-  return mainWindow->getRouteController()->getRoute();
+  return mainWindow->getRouteController()->getRouteConst();
 }
 
 Route& NavApp::getRoute()
@@ -607,12 +607,12 @@ QString NavApp::getRouteStringDefaultOpts()
 
 const atools::geo::Rect& NavApp::getRouteRect()
 {
-  return mainWindow->getRouteController()->getRoute().getBoundingRect();
+  return mainWindow->getRouteController()->getRouteConst().getBoundingRect();
 }
 
 const RouteAltitude& NavApp::getAltitudeLegs()
 {
-  return mainWindow->getRouteController()->getRoute().getAltitudeLegs();
+  return mainWindow->getRouteController()->getRouteConst().getAltitudeLegs();
 }
 
 float NavApp::getGroundBufferForLegFt(int legIndex)

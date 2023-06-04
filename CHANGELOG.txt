@@ -61,6 +61,8 @@ A big thank you to all who reported bugs and issues!
   metric units.
 * Now using metric speed and altitude designators in route description string if units are set accordingly
   in options.
+* Fixed issue where imported flight plan (for example in FMS or PLN format) could be overwritten with the
+  LNMPLN format after creating the plan from a route string.
 
 ### Scenery Library
 
