@@ -259,7 +259,7 @@ public:
   }
 
   /* The flight plan has dummy entries for procedure points that are flagged as no save */
-  const atools::fs::pln::Flightplan& getFlightplan() const
+  const atools::fs::pln::Flightplan& getFlightplanConst() const
   {
     return flightplan;
   }
@@ -523,63 +523,27 @@ public:
   /* Returns empty object if index is invalid */
   const RouteLeg& value(int i) const;
 
-  int size() const
-  {
-    return QList::size();
-  }
+  using QList::isEmpty;
+  using QList::append;
+  using QList::prepend;
+  using QList::insert;
+  using QList::replace;
+  using QList::move;
+  using QList::clear;
+  using QList::size;
+  using QList::removeAt;
 
   int getSizeWithoutAlternates() const;
-
-  bool isEmpty() const
-  {
-    return QList::isEmpty();
-  }
-
-  void append(const RouteLeg& leg)
-  {
-    QList::append(leg);
-  }
-
-  void prepend(const RouteLeg& leg)
-  {
-    QList::prepend(leg);
-  }
-
-  void insert(int before, const RouteLeg& leg)
-  {
-    QList::insert(before, leg);
-  }
-
-  void replace(int i, const RouteLeg& leg)
-  {
-    QList::replace(i, leg);
-  }
-
-  void move(int from, int to)
-  {
-    QList::move(from, to);
-  }
-
-  void removeAt(int i)
-  {
-    QList::removeAt(i);
-  }
 
   /* Removes the shadowed flight plan entry too */
   void removeAllAt(int i)
   {
     QList::removeAt(i);
-    flightplan.getEntries().removeAt(i);
+    flightplan.removeAt(i);
   }
 
   /* Removes all entries in route and flightplan except the ones in the range (including) */
   void removeAllExceptRange(int from, int to);
-
-  /* Removes only route legs and does not touch the flight plan copy */
-  void clear()
-  {
-    QList::clear();
-  }
 
   /* Removes all legs, procedure information and flight plan legs */
   void clearAll();
@@ -674,15 +638,12 @@ public:
   /* Assign index and pointer to flight plan for all objects and also update all procedure and alternate offsets */
   void updateIndicesAndOffsets();
 
-  void clearFlightplanAlternateProperties();
-
   /* Get idents of all alternates */
   QStringList getAlternateIdents() const;
 
   /* Get display idents (ICAO, IATA, FAA or local) of all alternates */
   QStringList getAlternateDisplayIdents() const;
 
-  void updateAlternateProperties();
   QVector<map::MapAirport> getAlternateAirports() const;
 
   /* Get a bit array which indicates high/low airways - needed for some export formats.

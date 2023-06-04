@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2022 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -29,20 +29,17 @@ FlightplanEntryBuilder::FlightplanEntryBuilder()
 }
 
 /* Copy airport attributes to flight plan entry */
-void FlightplanEntryBuilder::buildFlightplanEntry(const map::MapAirport& airport, FlightplanEntry& entry,
-                                                  bool alternate) const
+void FlightplanEntryBuilder::buildFlightplanEntry(const map::MapAirport& airport, FlightplanEntry& entry, bool alternate) const
 {
   entryFromAirport(airport, entry, alternate);
 }
 
 /* create a flight plan entry from object id/type or user position */
-void FlightplanEntryBuilder::buildFlightplanEntry(int id, const atools::geo::Pos& userPos,
-                                                  map::MapTypes type, FlightplanEntry& entry,
+void FlightplanEntryBuilder::buildFlightplanEntry(int id, const atools::geo::Pos& userPos, map::MapTypes type, FlightplanEntry& entry,
                                                   bool resolveWaypoints)
 {
   map::MapResult result;
-  NavApp::getMapQueryGui()->getMapObjectById(result, type, map::AIRSPACE_SRC_NONE, id,
-                                             false /* airport from nav database */);
+  NavApp::getMapQueryGui()->getMapObjectById(result, type, map::AIRSPACE_SRC_NONE, id, false /* airport from nav database */);
   buildFlightplanEntry(userPos, result, entry, resolveWaypoints, map::NONE);
 }
 

@@ -474,14 +474,14 @@ bool RouteExport::routeExportInternalFlp(const RouteExportFormat& format, bool c
     {
       using namespace std::placeholders;
       auto exportFunc = &FlightplanIO::saveFlp;
-      rf::RouteAdjustOptions options = rf::DEFAULT_OPTS | rf::REMOVE_RUNWAY_PROC;
+      rf::RouteAdjustOptions options = rf::DEFAULT_OPTS_FLP;
       if(crj)
       {
         // Adapt to the format changes between the different aircraft (not sure if these are real)
         if(msfs)
         {
           exportFunc = &FlightplanIO::saveMsfsCrjFlp;
-          options = rf::DEFAULT_OPTS_MSFS_CRJ | rf::REMOVE_RUNWAY_PROC;
+          options = rf::DEFAULT_OPTS_FLP_MSFS_CRJ;
         }
         else
           exportFunc = &FlightplanIO::saveCrjFlp;
@@ -969,7 +969,7 @@ bool RouteExport::routeExportTfdiMulti(const RouteExportFormat& format)
       try
       {
         Route route = buildAdjustedRoute(rf::DEFAULT_OPTS_NO_PROC | rf::REMOVE_RUNWAY_PROC);
-        flightplanIO->saveTfdi(route.getFlightplan(), routeFile, route.getJetAirwayFlags());
+        flightplanIO->saveTfdi(route.getFlightplanConst(), routeFile, route.getJetAirwayFlags());
       }
       catch(atools::Exception& e)
       {
@@ -1003,7 +1003,7 @@ bool RouteExport::routeExportIflyMulti(const RouteExportFormat& format)
     {
       try
       {
-        flightplanIO->saveIfly(buildAdjustedRoute(rf::DEFAULT_OPTS_NO_PROC | rf::REMOVE_RUNWAY_PROC).getFlightplan(), routeFile);
+        flightplanIO->saveIfly(buildAdjustedRoute(rf::DEFAULT_OPTS_NO_PROC | rf::REMOVE_RUNWAY_PROC).getFlightplanConst(), routeFile);
       }
       catch(atools::Exception& e)
       {
@@ -1035,7 +1035,7 @@ bool RouteExport::routeExportPms50Multi(const RouteExportFormat& format)
     {
       try
       {
-        flightplanIO->savePlnMsfs(buildAdjustedRoute(rf::DEFAULT_OPTS_MSFS | rf::REMOVE_RUNWAY_PROC).getFlightplan(), routeFile);
+        flightplanIO->savePlnMsfs(buildAdjustedRoute(rf::DEFAULT_OPTS_MSFS | rf::REMOVE_RUNWAY_PROC).getFlightplanConst(), routeFile);
       }
       catch(atools::Exception& e)
       {
@@ -1068,7 +1068,7 @@ bool RouteExport::routeExportIsgMulti(const RouteExportFormat& format)
       try
       {
         Route route = buildAdjustedRoute(rf::DEFAULT_OPTS | rf::ISG_USER_WP_NAMES);
-        flightplanIO->savePlnIsg(route.getFlightplan(), routeFile);
+        flightplanIO->savePlnIsg(route.getFlightplanConst(), routeFile);
       }
       catch(atools::Exception& e)
       {
@@ -1183,8 +1183,8 @@ RouteExportData RouteExport::createRouteExportData(re::RouteExportType routeExpo
   RouteExportData exportData;
 
   const Route& route = NavApp::getRouteConst();
-  exportData.setDeparture(route.getFlightplan().getDepartureIdent());
-  exportData.setDestination(route.getFlightplan().getDestinationIdent());
+  exportData.setDeparture(route.getFlightplanConst().getDepartureIdent());
+  exportData.setDestination(route.getFlightplanConst().getDestinationIdent());
   exportData.setDepartureTime(QDateTime::currentDateTimeUtc().time());
   exportData.setDepartureTimeActual(QDateTime::currentDateTimeUtc().time());
   exportData.setCruiseAltitude(atools::roundToInt(route.getCruiseAltitudeFt()));
@@ -1195,7 +1195,7 @@ RouteExportData RouteExport::createRouteExportData(re::RouteExportType routeExpo
   if(alternates.size() > 1)
     exportData.setAlternate2(alternates.at(1));
 
-  atools::fs::pln::FlightplanType flightplanType = route.getFlightplan().getFlightplanType();
+  atools::fs::pln::FlightplanType flightplanType = route.getFlightplanConst().getFlightplanType();
   switch(routeExportType)
   {
     case re::UNKNOWN:
@@ -1530,7 +1530,7 @@ bool RouteExport::exportFlighplanAsRxpGns(const QString& filename, bool saveAsUs
   {
     // Regions are required for the export
     NavApp::getRoute().updateAirportRegions();
-    FlightplanIO().saveGarminFpl(buildAdjustedRoute(rf::DEFAULT_OPTS_NO_PROC).getFlightplan(), filename,
+    FlightplanIO().saveGarminFpl(buildAdjustedRoute(rf::DEFAULT_OPTS_NO_PROC).getFlightplanConst(), filename,
                                  saveAsUserWaypoints);
   }
   catch(atools::Exception& e)
@@ -1787,7 +1787,7 @@ bool RouteExport::exportFlighplan(const QString& filename, rf::RouteAdjustOption
 {
   try
   {
-    exportFunc(buildAdjustedRoute(options).getFlightplan(), filename);
+    exportFunc(buildAdjustedRoute(options).getFlightplanConst(), filename);
   }
   catch(atools::Exception& e)
   {
@@ -1812,7 +1812,7 @@ bool RouteExport::exportFlighplanAsCorteIn(const QString& filename)
                                      rs::DCT | rs::NO_FINAL_DCT | rs::START_AND_DEST | rs::SID_STAR | rs::SID_STAR_SPACE |
                                      rs::RUNWAY /*| rs::APPROACH unreliable */ | rs::FLIGHTLEVEL);
 
-  const atools::fs::pln::Flightplan& flightplan = NavApp::getRouteConst().getFlightplan();
+  const atools::fs::pln::Flightplan& flightplan = NavApp::getRouteConst().getFlightplanConst();
 
   QSet<QString> routeNames;
   QFile file(filename);
@@ -1977,7 +1977,7 @@ bool RouteExport::exportFlightplanAsGpx(const QString& filename)
 
   try
   {
-    FlightplanIO().saveGpx(buildAdjustedRoute(rf::DEFAULT_OPTS_GPX).getFlightplan(), filename,
+    FlightplanIO().saveGpx(buildAdjustedRoute(rf::DEFAULT_OPTS_GPX).getFlightplanConst(), filename,
                            NavApp::getAircraftTrack().getLineStrings(), NavApp::getAircraftTrack().getTimestampsMs(),
                            static_cast<int>(NavApp::getRouteConst().getCruiseAltitudeFt()));
   }

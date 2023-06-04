@@ -153,6 +153,8 @@ bool RouteStringReader::createRouteFromString(const QString& routeString, rs::Ro
   qDebug() << Q_FUNC_INFO << "after prepare" << timer.restart();
 #endif
 
+  QList<atools::fs::pln::FlightplanEntry> alternates;
+
   if(readNoAirports)
     // Try to get first position by various queries if no airports are given
     lastPos = findFirstCoordinate(cleanItems);
@@ -170,7 +172,7 @@ bool RouteStringReader::createRouteFromString(const QString& routeString, rs::Ro
 
     // Append last as destination
     QString starTransWp; // Item which was consumed as a STAR transition in space separated notation "TRANS STAR"
-    if(!addDestination(fp, mapObjectRefs, cleanItems, starTransWp, options))
+    if(!addDestination(fp, &alternates, mapObjectRefs, cleanItems, starTransWp, options))
       return false;
 
 #ifdef DEBUG_INFORMATION
@@ -301,7 +303,6 @@ bool RouteStringReader::createRouteFromString(const QString& routeString, rs::Ro
   // Either append (if no airports) or append before destination
   int insertOffset = readNoAirports ? 0 : 1;
 
-  atools::fs::pln::FlightplanEntryListType& entries = fp->getEntries();
   map::MapObjectRefExt lastRef;
   for(int i = 0; i < resultList.size(); i++)
   {
@@ -329,7 +330,7 @@ bool RouteStringReader::createRouteFromString(const QString& routeString, rs::Ro
           {
             entry.setAirway(item);
             entry.setFlag(atools::fs::pln::entry::TRACK, result.airways.constFirst().isTrack());
-            entries.insert(entries.size() - insertOffset, entry);
+            fp->insert(fp->size() - insertOffset, entry);
 
             // Build reference list if required
             if(mapObjectRefs != nullptr)
@@ -415,7 +416,7 @@ bool RouteStringReader::createRouteFromString(const QString& routeString, rs::Ro
 
         if(parseEntry.result.hasAirways())
           entry.setFlag(atools::fs::pln::entry::TRACK, parseEntry.result.airways.constFirst().isTrack());
-        entries.insert(entries.size() - insertOffset, entry);
+        fp->insert(fp->size() - insertOffset, entry);
       }
       else
         appendWarning(tr("No navaid found for %1. Ignoring.").arg(item));
@@ -424,7 +425,7 @@ bool RouteStringReader::createRouteFromString(const QString& routeString, rs::Ro
     }
 
     // Remember position for distance calculation
-    lastPos = entries.at(entries.size() - 1 - insertOffset).getPosition();
+    lastPos = fp->at(fp->size() - 1 - insertOffset).getPosition();
   }
 
 #ifdef DEBUG_INFORMATION
@@ -432,18 +433,19 @@ bool RouteStringReader::createRouteFromString(const QString& routeString, rs::Ro
 #endif
 
   // Update departure and destination if no airports are used ==============================
-  if(readNoAirports && !entries.isEmpty())
+  if(readNoAirports && !fp->isEmpty())
   {
-    fp->setDepartureName(entries.constFirst().getIdent());
-    fp->setDepartureIdent(entries.constFirst().getIdent());
-    fp->setDeparturePosition(entries.constFirst().getPosition());
-    fp->setDepartureParkingPosition(entries.constFirst().getPosition(),
-                                    atools::fs::pln::INVALID_ALTITUDE, atools::fs::pln::INVALID_HEADING);
+    fp->setDepartureName(fp->constFirst().getIdent());
+    fp->setDepartureIdent(fp->constFirst().getIdent());
+    fp->setDeparturePosition(fp->constFirst().getPosition());
+    fp->setDepartureParkingPosition(fp->constFirst().getPosition(), atools::fs::pln::INVALID_ALTITUDE, atools::fs::pln::INVALID_HEADING);
 
-    fp->setDestinationName(entries.constLast().getIdent());
-    fp->setDestinationIdent(entries.constLast().getIdent());
-    fp->setDestinationPosition(entries.constLast().getPosition());
+    fp->setDestinationName(fp->constLast().getIdent());
+    fp->setDestinationIdent(fp->constLast().getIdent());
+    fp->setDestinationPosition(fp->constLast().getPosition());
   }
+
+  fp->append(alternates);
 
   if(options.testFlag(rs::REPORT))
     addReport(fp, routeString);
@@ -494,7 +496,7 @@ void RouteStringReader::addReport(atools::fs::pln::Flightplan *flightplan, const
   insertMessage(tr("Distance without procedures: <b>%1</b>.").arg(Unit::distNm(flightplan->getDistanceNm())), insertIndex++);
 
   QStringList idents;
-  for(atools::fs::pln::FlightplanEntry& entry : flightplan->getEntries())
+  for(atools::fs::pln::FlightplanEntry& entry : *flightplan)
   {
     if(entry.getWaypointType() == atools::fs::pln::entry::AIRPORT)
       idents.append(airportQuery->getDisplayIdent(entry.getIdent()));
@@ -508,11 +510,11 @@ void RouteStringReader::addReport(atools::fs::pln::Flightplan *flightplan, const
                   arg(idents.size() == 1 ? tr("waypoint") : tr("waypoints")).
                   arg(atools::elideTextShortMiddle(idents.join(tr(" ")), 150)), insertIndex++);
 
-  QString sid = ProcedureQuery::getSidAndTransition(flightplan->getProperties());
+  QString sid = ProcedureQuery::getSidAndTransition(flightplan->getPropertiesConst());
   if(!sid.isEmpty())
     insertMessage(tr("Found SID: <b>%1</b>.").arg(sid), insertIndex++);
 
-  QString star = ProcedureQuery::getStarAndTransition(flightplan->getProperties());
+  QString star = ProcedureQuery::getStarAndTransition(flightplan->getPropertiesConst());
   if(!star.isEmpty())
     insertMessage(tr("Found STAR: <b>%1</b>.").arg(star), insertIndex++);
 }
@@ -751,7 +753,7 @@ bool RouteStringReader::addDeparture(atools::fs::pln::Flightplan *flightplan, ma
 
     FlightplanEntry entry;
     entryBuilder->buildFlightplanEntry(departure, entry, false /* alternate */);
-    flightplan->getEntries().append(entry);
+    flightplan->append(entry);
     if(mapObjectRefs != nullptr)
       mapObjectRefs->append(map::MapObjectRefExt(departure.id, departure.position, map::AIRPORT, departure.ident));
 
@@ -793,8 +795,9 @@ bool RouteStringReader::addDeparture(atools::fs::pln::Flightplan *flightplan, ma
   }
 }
 
-bool RouteStringReader::addDestination(atools::fs::pln::Flightplan *flightplan, map::MapObjectRefExtVector *mapObjectRefs,
-                                       QStringList& items, QString& starTransWp, rs::RouteStringOptions options)
+bool RouteStringReader::addDestination(atools::fs::pln::Flightplan *flightplan, QList<atools::fs::pln::FlightplanEntry> *alternates,
+                                       map::MapObjectRefExtVector *mapObjectRefs, QStringList& items, QString& starTransWp,
+                                       rs::RouteStringOptions options)
 {
   if(options & rs::READ_ALTERNATES)
   {
@@ -874,7 +877,7 @@ bool RouteStringReader::addDestination(atools::fs::pln::Flightplan *flightplan, 
 
       FlightplanEntry entry;
       entryBuilder->buildFlightplanEntry(dest, entry, false /* alternate */);
-      flightplan->getEntries().append(entry);
+      flightplan->append(entry);
       if(mapObjectRefs != nullptr)
         mapObjectRefs->append(map::MapObjectRefExt(dest.id, dest.position, map::AIRPORT, dest.ident));
 
@@ -891,18 +894,19 @@ bool RouteStringReader::addDestination(atools::fs::pln::Flightplan *flightplan, 
       }
 
       // Collect remaining alternates ========================
-      QStringList alternateIdents, alternateDisplayIdents;
-      for(const map::MapAirport& alt : airports)
+      if(alternates != nullptr)
       {
-        alternateIdents.prepend(alt.ident);
-        alternateDisplayIdents.prepend(airportQuerySim->getDisplayIdent(alt.ident));
-      }
+        QStringList alternateDisplayIdents;
+        for(const map::MapAirport& altAirport : airports)
+        {
+          FlightplanEntry altEntry;
+          entryBuilder->buildFlightplanEntry(altAirport, altEntry, true /* alternate */);
+          alternates->prepend(altEntry);
 
-      if(!alternateIdents.isEmpty())
-      {
-        flightplan->getProperties().insert(atools::fs::pln::ALTERNATES, alternateIdents.join(atools::fs::pln::PROPERTY_LIST_SEP));
+          alternateDisplayIdents.prepend(airportQuerySim->getDisplayIdent(altAirport.ident));
+        }
 
-        if(options.testFlag(rs::REPORT))
+        if(!alternateDisplayIdents.isEmpty() && options.testFlag(rs::REPORT))
           appendMessage(tr("Found alternate %1 <b>%2</b>.").
                         arg(alternateDisplayIdents.size() == 1 ? tr("airport") : tr("airports")).
                         arg(alternateDisplayIdents.join(tr(", "))));
@@ -932,7 +936,7 @@ bool RouteStringReader::addDestination(atools::fs::pln::Flightplan *flightplan, 
 
       FlightplanEntry entry;
       entryBuilder->buildFlightplanEntry(dest, entry, false /* alternate */);
-      flightplan->getEntries().append(entry);
+      flightplan->append(entry);
       if(mapObjectRefs != nullptr)
         mapObjectRefs->append(map::MapObjectRefExt(dest.id, dest.position, map::AIRPORT, dest.ident));
 

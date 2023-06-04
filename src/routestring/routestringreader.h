@@ -150,7 +150,8 @@ private:
                     QString& sidTransWp);
 
   /* Fetch destination airport as well as STAR */
-  bool addDestination(atools::fs::pln::Flightplan *flightplan, map::MapObjectRefExtVector *mapObjectRefs, QStringList& items,
+  bool addDestination(atools::fs::pln::Flightplan *flightplan, QList<atools::fs::pln::FlightplanEntry>* alternates,
+                      map::MapObjectRefExtVector *mapObjectRefs, QStringList& items,
                       QString& starTransWp, rs::RouteStringOptions options);
   void destinationInternal(map::MapAirport& destination, proc::MapProcedureLegs& starLegs, QStringList& items, QString& starTransWp,
                            int& consume, int index);

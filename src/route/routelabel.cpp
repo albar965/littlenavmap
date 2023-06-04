@@ -184,7 +184,7 @@ void RouteLabel::buildPrintText(atools::util::HtmlBuilder& html, bool titleOnly)
 
 void RouteLabel::buildHeaderAirports(atools::util::HtmlBuilder& html, bool widget)
 {
-  const Flightplan& flightplan = route.getFlightplan();
+  const Flightplan& flightplan = route.getFlightplanConst();
   QString departureAirport, departureParking, destinationAirport;
 
   // Add departure to text ==============================================================
@@ -210,8 +210,8 @@ void RouteLabel::buildHeaderAirports(atools::util::HtmlBuilder& html, bool widge
   else
   {
     departureAirport = tr("%1 (%2)").
-                       arg(flightplan.getEntries().constFirst().getIdent()).
-                       arg(flightplan.getEntries().constFirst().getWaypointTypeAsDisplayString());
+                       arg(flightplan.constFirst().getIdent()).
+                       arg(flightplan.constFirst().getWaypointTypeAsDisplayString());
   }
 
   // Add destination to text ==============================================================

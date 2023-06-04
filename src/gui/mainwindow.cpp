@@ -623,7 +623,7 @@ void MainWindow::debugActionTriggered2()
 {
   qDebug() << "======================================================================================";
   qDebug() << Q_FUNC_INFO;
-  qDebug() << NavApp::getRouteConst().getFlightplan();
+  qDebug() << NavApp::getRouteConst().getFlightplanConst();
   qDebug() << "======================================================================================";
 }
 

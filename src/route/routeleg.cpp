@@ -207,13 +207,13 @@ void RouteLeg::createFromDatabaseByEntry(int entryIndex, const RouteLeg *prevLeg
 
     // ====================== Create for airport and assign parking position
     case atools::fs::pln::entry::AIRPORT:
+      // Set alternate flight also for probably invalid legs to allow correct sorting
+      alternate = flightplanEntry->isAlternate();
       mapQuery->getMapObjectByIdent(mapobjectResult, map::AIRPORT, flightplanEntry->getIdent(), QString(),
                                     QString(), flightplanEntry->getPosition(), MAX_AIRPORT_DISTANCE_METER);
       if(!mapobjectResult.airports.isEmpty())
       {
         assignAirport(mapobjectResult, flightplanEntry);
-
-        alternate = flightplanEntry->getFlags() & atools::fs::pln::entry::ALTERNATE;
 
         validWaypoint = true;
 
@@ -425,13 +425,12 @@ void RouteLeg::updateDistanceAndCourse(int entryIndex, const RouteLeg *prevLeg)
   if(!isAnyProcedure())
   {
     // Update the altitude in the flight plan entry
-    const atools::fs::pln::FlightplanEntryListType& entries = flightplan->getEntries();
 
-    if(!entries.isEmpty())
+    if(!flightplan->isEmpty())
     {
       // Find destination airport by counting backwards until entry is no alternate
-      int destIndex = entries.size() - 1;
-      while(entries.at(destIndex).getFlags().testFlag(atools::fs::pln::entry::ALTERNATE) && destIndex > 0)
+      int destIndex = flightplan->size() - 1;
+      while(flightplan->at(destIndex).getFlags().testFlag(atools::fs::pln::entry::ALTERNATE) && destIndex > 0)
         destIndex--;
 
       // Update altitude for departure and destination entries
@@ -982,7 +981,7 @@ atools::fs::pln::FlightplanEntry *RouteLeg::getFlightplanEntry()
   if(index >= 0)
   {
     // if(isRoute())
-    return &flightplan->getEntries()[index];
+    return &(*flightplan)[index];
   }
   else
     qWarning() << Q_FUNC_INFO << "invalid index" << index;

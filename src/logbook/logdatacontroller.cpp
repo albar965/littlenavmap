@@ -369,7 +369,7 @@ void LogdataController::createTakeoffLanding(const atools::fs::sc::SimConnectUse
         record.setValue("aircraft_trail",
                         FlightplanIO().saveGpxGz(NavApp::getRouteConst().
                                                  updatedAltitudes().adjustedToOptions(rf::DEFAULT_OPTS_GPX).
-                                                 getFlightplan(),
+                                                 getFlightplanConst(),
                                                  NavApp::getAircraftTrackLogbook().getLineStrings(),
                                                  NavApp::getAircraftTrackLogbook().getTimestampsMs(),
                                                  static_cast<int>(NavApp::getRouteConst().getCruiseAltitudeFt()))); // blob
@@ -424,7 +424,7 @@ void LogdataController::logChanged(bool loadAll, bool keepSelection)
 void LogdataController::recordFlightplanAndPerf(atools::sql::SqlRecord& record)
 {
   atools::fs::pln::Flightplan fp = NavApp::getRouteConst().
-                                   updatedAltitudes().adjustedToOptions(rf::DEFAULT_OPTS_LNMPLN).getFlightplan();
+                                   updatedAltitudes().adjustedToOptions(rf::DEFAULT_OPTS_LNMPLN).getFlightplanConst();
 
   if(fp.isEmpty())
     record.setNull("flightplan"); // no plan
@@ -1091,7 +1091,7 @@ void LogdataController::gpxAttach(atools::sql::SqlRecord *record, QWidget *paren
       record->setValue("aircraft_trail",
                        FlightplanIO().saveGpxGz(NavApp::getRouteConst().
                                                 updatedAltitudes().adjustedToOptions(rf::DEFAULT_OPTS_GPX).
-                                                getFlightplan(), track.getLineStrings(), track.getTimestampsMs(),
+                                                getFlightplanConst(), track.getLineStrings(), track.getTimestampsMs(),
                                                 static_cast<int>(NavApp::getRouteConst().getCruiseAltitudeFt()))); // blob
     else
       record->setNull("aircraft_trail");
@@ -1158,7 +1158,7 @@ QString LogdataController::buildFilename(const atools::sql::SqlRecord *record,
   {
     // No flight plan - extract name from SQL record and values currently set in the GUI
     const Route& route = NavApp::getRouteConst();
-    QString type = route.getFlightplan().getFlightplanTypeStr();
+    QString type = route.getFlightplanConst().getFlightplanTypeStr();
     return atools::fs::pln::Flightplan::getFilenamePattern(OptionData::instance().getFlightplanPattern(), type,
                                                            record->valueStr("departure_name"),
                                                            record->valueStr("departure_ident"),

@@ -195,7 +195,7 @@ void FetchRouteDialog::downloadFinished(const QByteArray& data, QString)
   qDebug() << Q_FUNC_INFO;
 
   routeString.clear();
-  flightplan->clear();
+  flightplan->clearAll();
 
   // Read downloaded XML ==================================================================
   atools::util::XmlStream xmlStream(atools::zip::gzipDecompressIf(data, Q_FUNC_INFO));
@@ -328,7 +328,7 @@ void FetchRouteDialog::downloadFinished(const QByteArray& data, QString)
 
   if(!ok)
     // Parsing failed clear plan
-    flightplan->clear();
+    flightplan->clearAll();
 
   ui->textEditResult->setText(message);
 

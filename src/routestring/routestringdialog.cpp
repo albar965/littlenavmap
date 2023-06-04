@@ -403,7 +403,7 @@ void RouteStringDialog::textChangedDelayed()
 {
   qDebug() << Q_FUNC_INFO;
 
-  flightplan->clear();
+  flightplan->clearAll();
   flightplan->setFlightplanType(atools::fs::pln::NO_TYPE); // Set type to none to take it from GUI when creating plan
 
   QString errorString, routeString(ui->plainTextEditRouteString->toPlainText());
@@ -474,9 +474,14 @@ void RouteStringDialog::plainTextEditRouteStringSet(const QString& text)
 
     // Select whole document and replace text - this keeps the undo stack
     QTextCursor cursor(doc);
+    cursor.movePosition(QTextCursor::Start);
     cursor.beginEditBlock();
+#ifdef DEBUG_INFORMATION
+    cursor.insertText(text + "\n");
+#else
     cursor.select(QTextCursor::Document);
     cursor.insertText(text);
+#endif
     cursor.endEditBlock();
 
     // Restore cursor position
@@ -487,7 +492,7 @@ void RouteStringDialog::plainTextEditRouteStringSet(const QString& text)
 void RouteStringDialog::updateButtonState()
 {
   ui->pushButtonRouteStringUpdate->setEnabled(!NavApp::getRouteConst().isEmpty());
-  ui->buttonBoxRouteString->button(QDialogButtonBox::Ok)->setDisabled(flightplan->getEntries().isEmpty());
+  ui->buttonBoxRouteString->button(QDialogButtonBox::Ok)->setDisabled(flightplan->isEmpty());
   ui->pushButtonRouteStringToClipboard->setDisabled(ui->plainTextEditRouteString->toPlainText().isEmpty());
   ui->pushButtonRouteStringFromClipboard->setDisabled(QGuiApplication::clipboard()->text().simplified().isEmpty());
 

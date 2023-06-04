@@ -78,6 +78,7 @@
 #include <QPlainTextEdit>
 #include <QProgressDialog>
 #include <QScrollBar>
+#include <QStringBuilder>
 
 namespace rcol {
 // Route table column indexes
@@ -646,11 +647,11 @@ void RouteController::flightplanHeaderPrint(atools::util::HtmlBuilder& html, boo
 {
   routeLabel->buildPrintText(html, titleOnly);
 
-  if(!route.getFlightplan().getComment().isEmpty())
+  if(!route.getFlightplanConst().getComment().isEmpty())
   {
     html.p().b(tr("Flight Plan Remarks")).pEnd();
     html.table(1, 2, 0, 0, html.getRowBackColor());
-    html.tr().td().text(atools::elideTextLinesShort(route.getFlightplan().getComment(), MAX_REMARK_LINES_HTML_AND_PRINT,
+    html.tr().td().text(atools::elideTextLinesShort(route.getFlightplanConst().getComment(), MAX_REMARK_LINES_HTML_AND_PRINT,
                                                     MAX_REMARK_COLS_HTML_AND_PRINT, true, true),
                         atools::util::html::SMALL).tdEnd().trEnd();
     html.tableEnd().br();
@@ -700,11 +701,11 @@ QString RouteController::getFlightplanTableAsHtml(float iconSizePixel, bool prin
 
   routeLabel->buildHtmlText(html);
 
-  if(print && !route.getFlightplan().getComment().isEmpty())
+  if(print && !route.getFlightplanConst().getComment().isEmpty())
   {
     html.p().b(tr("Flight Plan Remarks")).pEnd();
     html.table(1, 2, 0, 0, html.getRowBackColor());
-    html.tr().td().text(atools::elideTextLinesShort(route.getFlightplan().getComment(), MAX_REMARK_LINES_HTML_AND_PRINT,
+    html.tr().td().text(atools::elideTextLinesShort(route.getFlightplanConst().getComment(), MAX_REMARK_LINES_HTML_AND_PRINT,
                                                     MAX_REMARK_COLS_HTML_AND_PRINT, true, true),
                         atools::util::html::SMALL).tdEnd().trEnd();
     html.tableEnd().br();
@@ -1173,7 +1174,7 @@ void RouteController::loadFlightplan(atools::fs::pln::Flightplan flightplan, ato
 
     // Create a route string
     QStringList routeString;
-    for(int i = 0; i < flightplan.getEntries().size(); i++)
+    for(int i = 0; i < flightplan.size(); i++)
     {
       const FlightplanEntry& entry = flightplan.at(i);
       if(!entry.getAirway().isEmpty())
@@ -1183,7 +1184,7 @@ void RouteController::loadFlightplan(atools::fs::pln::Flightplan flightplan, ato
     qInfo() << "FLP/GFP generated route string" << routeString;
 
     // All is valid except the waypoint entries
-    flightplan.getEntries().clear();
+    flightplan.clearAll();
 
     // Use route string to overwrite the current incomplete flight plan object
     RouteStringReader rs(entryBuilder);
@@ -1193,13 +1194,13 @@ void RouteController::loadFlightplan(atools::fs::pln::Flightplan flightplan, ato
 
     if(!ok)
     {
-      atools::gui::Dialog::warning(mainWindow, tr("Loading of FLP flight plan failed:<br/><br/>") + rs.getMessages().join("<br/>"));
+      atools::gui::Dialog::warning(mainWindow, tr("Loading of FLP flight plan failed:<br/><br/>") % rs.getMessages().join("<br/>"));
       return;
 
     }
     else if(!rs.getMessages().isEmpty())
       atools::gui::Dialog(mainWindow).showInfoMsgBox(lnm::ACTIONS_SHOW_LOAD_FLP_WARN,
-                                                     tr("Warnings while loading FLP flight plan file:<br/><br/>") +
+                                                     tr("Warnings while loading FLP flight plan file:<br/><br/>") %
                                                      rs.getMessages().join("<br/>"),
                                                      tr("Do not &show this dialog again."));
 
@@ -1211,7 +1212,7 @@ void RouteController::loadFlightplan(atools::fs::pln::Flightplan flightplan, ato
     if( // Cruise either too low or ...
       atools::almostEqual(flightplan.getCruiseAltitudeFt(), 0.f) || // Still in ft
       // ... X-Plane with not enough waypoints
-      ((format == atools::fs::pln::FMS3 || format == atools::fs::pln::FMS11) && flightplan.getEntries().size() <= 2))
+      ((format == atools::fs::pln::FMS3 || format == atools::fs::pln::FMS11) && flightplan.size() <= 2))
       // FMS with only two waypoints cannot determine altitude - adjust later
       adjustAltAfterLoad = true; // Change altitude based on airways and procedures later
   }
@@ -1248,9 +1249,6 @@ void RouteController::loadFlightplan(atools::fs::pln::Flightplan flightplan, ato
   route.setFlightplan(flightplan);
   Flightplan& routeFlightplan = route.getFlightplan();
 
-  // Remove alternates - will be added later again once resolved
-  QString alternates = routeFlightplan.getProperties().value(atools::fs::pln::ALTERNATES);
-
   route.createRouteLegsFromFlightplan();
 
   // test and error after undo/redo and switch
@@ -1260,7 +1258,6 @@ void RouteController::loadFlightplan(atools::fs::pln::Flightplan flightplan, ato
 
   loadProceduresFromFlightplan(false /* clearOldProcedureProperties */, specialProcedureHandling /* cleanupRoute */,
                                specialProcedureHandling /* autoresolveTransition */);
-  loadAlternateFromFlightplan();
 
   // Update type if loaded file does not support a type
   if(loadedFlightplanType == atools::fs::pln::NO_TYPE)
@@ -1273,9 +1270,6 @@ void RouteController::loadFlightplan(atools::fs::pln::Flightplan flightplan, ato
   }
 
   route.updateAll(); // Removes alternate property if not resolvable
-
-  // Keep property also in case alternates were not added
-  routeFlightplan.getProperties().insert(atools::fs::pln::ALTERNATES, alternates);
 
   // Update cruise altitude in local units based on procedures and airway restriction
   // Corrects cruise altitude if adjustRouteAltitude is true
@@ -1307,50 +1301,6 @@ void RouteController::loadFlightplan(atools::fs::pln::Flightplan flightplan, ato
   emit routeChanged(true /* geometry changed */, true /* new flight plan */);
 }
 
-/* Appends alternates to the end of the flight plan */
-void RouteController::loadAlternateFromFlightplan()
-{
-  if(route.isEmpty())
-    return;
-
-  atools::fs::pln::Flightplan& fp = route.getFlightplan();
-  QHash<QString, QString>& props = fp.getProperties();
-
-  QStringList alternates = props.value(pln::ALTERNATES).split(atools::fs::pln::PROPERTY_LIST_SEP);
-  QStringList notFound;
-
-  const RouteLeg *lastLeg = route.isEmpty() ? nullptr : &route.getLastLeg();
-  for(const QString& ident : alternates)
-  {
-    if(ident.isEmpty())
-      continue;
-
-    map::MapAirport ap;
-    airportQuery->getAirportByIdent(ap, ident);
-
-    if(ap.isValid())
-    {
-      FlightplanEntry entry;
-      entryBuilder->entryFromAirport(ap, entry, true /* alternate */);
-      fp.getEntries().append(entry);
-
-      RouteLeg leg(&fp);
-      leg.createFromDatabaseByEntry(route.size(), lastLeg);
-
-      if(leg.getMapObjectType() == map::INVALID)
-        // Not found in database
-        qWarning() << "Entry for ident" << ident << "is not valid";
-
-      route.append(leg);
-      lastLeg = &route.getLastLeg();
-    }
-    else
-      notFound.append(ident);
-  }
-
-  alternateErrors = notFound;
-}
-
 void RouteController::loadProceduresFromFlightplan(bool clearOldProcedureProperties, bool cleanupRoute, bool autoresolveTransition)
 {
   if(route.isEmpty())
@@ -1360,7 +1310,7 @@ void RouteController::loadProceduresFromFlightplan(bool clearOldProcedurePropert
 
   QStringList errors;
   proc::MapProcedureLegs arrival, departure, star;
-  NavApp::getProcedureQuery()->getLegsForFlightplanProperties(route.getFlightplan().getProperties(),
+  NavApp::getProcedureQuery()->getLegsForFlightplanProperties(route.getFlightplanConst().getPropertiesConst(),
                                                               route.getDepartureAirportLeg().getAirport(),
                                                               route.getDestinationAirportLeg().getAirport(),
                                                               arrival, star, departure, errors, autoresolveTransition);
@@ -1477,14 +1427,13 @@ bool RouteController::insertFlightplan(const QString& filename, int insertBefore
 
       // Remove alternates and properties
       route.removeAlternateLegs();
-      route.clearFlightplanAlternateProperties();
 
       // Start of selection without arrival procedures
       insertPosSelection = route.size();
 
       // Append flight plan to current flightplan object - route is updated later
-      for(const FlightplanEntry& entry : flightplan.getEntries())
-        routePlan.getEntries().append(entry);
+      for(const FlightplanEntry& entry : flightplan)
+        routePlan.append(entry);
 
       // Appended after destination airport
       routePlan.setDestinationName(flightplan.getDestinationName());
@@ -1492,11 +1441,8 @@ bool RouteController::insertFlightplan(const QString& filename, int insertBefore
       routePlan.setDestinationPosition(flightplan.getDestinationPosition());
 
       // Copy any STAR and arrival procedure properties from the loaded plan
-      atools::fs::pln::copyArrivalProcedureProperties(routePlan.getProperties(), flightplan.getProperties());
-      atools::fs::pln::copyStarProcedureProperties(routePlan.getProperties(), flightplan.getProperties());
-
-      // Load alternates from appended plan if any
-      atools::fs::pln::copyAlternateProperties(routePlan.getProperties(), flightplan.getProperties());
+      atools::fs::pln::copyArrivalProcedureProperties(routePlan.getProperties(), flightplan.getPropertiesConst());
+      atools::fs::pln::copyStarProcedureProperties(routePlan.getProperties(), flightplan.getPropertiesConst());
     }
     else
     {
@@ -1512,7 +1458,7 @@ bool RouteController::insertFlightplan(const QString& filename, int insertBefore
         // Added before departure airport
         routePlan.setDepartureName(flightplan.getDepartureName());
         routePlan.setDepartureIdent(flightplan.getDepartureIdent());
-        routePlan.setDeparturePosition(flightplan.getDeparturePosition(), flightplan.getEntries().constFirst().getAltitude());
+        routePlan.setDeparturePosition(flightplan.getDeparturePosition(), flightplan.constFirst().getAltitude());
         routePlan.setDepartureParkingPosition(flightplan.getDepartureParkingPosition(),
                                               flightplan.getDepartureParkingPosition().getAltitude(),
                                               flightplan.getDepartureParkingHeading());
@@ -1520,7 +1466,7 @@ bool RouteController::insertFlightplan(const QString& filename, int insertBefore
         routePlan.setDepartureParkingType(flightplan.getDepartureParkingType());
 
         // Copy SID properties from source
-        atools::fs::pln::copySidProcedureProperties(routePlan.getProperties(), flightplan.getProperties());
+        atools::fs::pln::copySidProcedureProperties(routePlan.getProperties(), flightplan.getPropertiesConst());
 
         route.eraseAirway(1);
       }
@@ -1550,12 +1496,12 @@ bool RouteController::insertFlightplan(const QString& filename, int insertBefore
       }
 
       // Copy new legs to the flightplan object only - update route later
-      for(auto it = flightplan.getEntries().rbegin(); it != flightplan.getEntries().rend(); ++it)
-        routePlan.getEntries().insert(insertBefore, *it);
+      for(auto it = flightplan.rbegin(); it != flightplan.rend(); ++it)
+        routePlan.insert(insertBefore, *it);
     }
 
     // Clear procedure legs from the flightplan object
-    routePlan.removeNoSaveEntries();
+    routePlan.removeIsNoSaveEntries();
 
     // Clear procedure structures
     route.clearProcedures(proc::PROCEDURE_ALL);
@@ -1568,7 +1514,6 @@ bool RouteController::insertFlightplan(const QString& filename, int insertBefore
 
     // Load procedures and add legs
     loadProceduresFromFlightplan(true /* clearOldProcedureProperties */, false /* cleanupRoute */, false /* autoresolveTransition */);
-    loadAlternateFromFlightplan();
     route.updateAll();
     route.updateAirwaysAndAltitude(false /* adjustRouteAltitude */);
     route.updateLegAltitudes();
@@ -1582,11 +1527,11 @@ bool RouteController::insertFlightplan(const QString& filename, int insertBefore
     if(afterDestAppend)
       selectRange(insertPosSelection, route.size() - 1);
     else if(beforeDepartPrepend)
-      selectRange(0, flightplan.getEntries().size() + route.getLastIndexOfDepartureProcedure() - 1);
+      selectRange(0, flightplan.size() + route.getLastIndexOfDepartureProcedure() - 1);
     else if(beforeDestInsert)
       selectRange(insertPosSelection, route.size() - 2 - route.getNumAlternateLegs());
     else if(middleInsert)
-      selectRange(insertPosSelection, insertPosSelection + flightplan.getEntries().size() - 1);
+      selectRange(insertPosSelection, insertPosSelection + flightplan.size() - 1);
 
     updateMoveAndDeleteActions();
 
@@ -1614,9 +1559,9 @@ void RouteController::saveFlightplanLnmExported(const QString& filename)
   // Change name to exported filename
   routeFilename = filename;
 
-  fileDepartureIdent = route.getFlightplan().getDepartureIdent();
-  fileDestinationIdent = route.getFlightplan().getDestinationIdent();
-  fileIfrVfr = route.getFlightplan().getFlightplanType();
+  fileDepartureIdent = route.getFlightplanConst().getDepartureIdent();
+  fileDestinationIdent = route.getFlightplanConst().getDestinationIdent();
+  fileIfrVfr = route.getFlightplanConst().getFlightplanType();
   fileCruiseAltFt = route.getCruiseAltitudeFt();
 
   // Set format to original route since it is saved as LNM now
@@ -1692,7 +1637,7 @@ bool RouteController::saveFlightplanLnmSelectionAs(const QString& filename, int 
     saveRoute.removeProcedureLegs();
 
     // Get plan without alternates and all altitude values erased
-    Flightplan saveplan = saveRoute.zeroedAltitudes().adjustedToOptions(rf::DEFAULT_OPTS_LNMPLN_SAVE_SELECTED).getFlightplan();
+    Flightplan saveplan = saveRoute.zeroedAltitudes().adjustedToOptions(rf::DEFAULT_OPTS_LNMPLN_SAVE_SELECTED).getFlightplanConst();
     saveplan.adjustDepartureAndDestination(true /* force */);
 
     // Remove original comment
@@ -1757,7 +1702,7 @@ bool RouteController::saveFlightplanLnmInternal(const QString& filename, bool si
           return false;
         else if(result == QMessageBox::Help)
         {
-          atools::gui::HelpHandler::openHelpUrlWeb(mainWindow, lnm::helpOnlineUrl + "FLIGHTPLANSAVE.html", lnm::helpLanguageOnline());
+          atools::gui::HelpHandler::openHelpUrlWeb(mainWindow, lnm::helpOnlineUrl % "FLIGHTPLANSAVE.html", lnm::helpLanguageOnline());
           return false;
         }
       }
@@ -1783,7 +1728,7 @@ bool RouteController::saveFlightplanLnmInternal(const QString& filename, bool si
 
     // Create a copy which allows to change altitude
     // Copy altitudes to flight plan entries
-    Flightplan flightplanCopy = route.updatedAltitudes().adjustedToOptions(rf::DEFAULT_OPTS_LNMPLN).getFlightplan();
+    Flightplan flightplanCopy = route.updatedAltitudes().adjustedToOptions(rf::DEFAULT_OPTS_LNMPLN).getFlightplanConst();
 
     // Remember type, departure and destination for filename checking (save/saveAs)
     fileIfrVfr = flightplanCopy.getFlightplanType();
@@ -2081,17 +2026,15 @@ bool RouteController::calculateRouteInternal(atools::routing::RouteFinder *route
       RouteCommand *undoCommand = preChange(commandName);
       int numAlternateLegs = route.getNumAlternateLegs();
 
-      QList<FlightplanEntry>& entries = flightplan.getEntries();
-
       if(calcRange)
       {
-        entries[toIndex].setAirway(QString());
-        entries[toIndex].setFlag(atools::fs::pln::entry::TRACK, false);
-        entries.erase(flightplan.getEntries().begin() + fromIndex + 1, flightplan.getEntries().begin() + toIndex);
+        flightplan[toIndex].setAirway(QString());
+        flightplan[toIndex].setFlag(atools::fs::pln::entry::TRACK, false);
+        flightplan.erase(flightplan.begin() + fromIndex + 1, flightplan.begin() + toIndex);
       }
       else
         // Erase all but start and destination
-        entries.erase(flightplan.getEntries().begin() + 1, entries.end() - numAlternateLegs - 1);
+        flightplan.erase(flightplan.begin() + 1, flightplan.end() - numAlternateLegs - 1);
 
       int idx = 1;
       // Create flight plan entries - will be copied later to the route map objects
@@ -2105,21 +2048,20 @@ bool RouteController::calculateRouteInternal(atools::routing::RouteFinder *route
           updateFlightplanEntryAirway(routeEntry.airwayId, flightplanEntry);
 
         if(calcRange)
-          entries.insert(flightplan.getEntries().begin() + fromIndex + idx, flightplanEntry);
+          flightplan.insert(flightplan.begin() + fromIndex + idx, flightplanEntry);
         else
-          entries.insert(entries.end() - numAlternateLegs - 1, flightplanEntry);
+          flightplan.insert(flightplan.end() - numAlternateLegs - 1, flightplanEntry);
         idx++;
       }
 
       // Remove procedure points from flight plan
-      flightplan.removeNoSaveEntries();
+      flightplan.removeProcedureEntries();
 
       // Copy flight plan to route object
       route.createRouteLegsFromFlightplan();
 
       // Reload procedures from properties
       loadProceduresFromFlightplan(true /* clearOldProcedureProperties */, false /* cleanupRoute */, false /* autoresolveTransition */);
-      loadAlternateFromFlightplan();
       QGuiApplication::restoreOverrideCursor();
 
       // Remove duplicates in flight plan and route
@@ -2223,8 +2165,7 @@ void RouteController::reverseRoute()
   route.removeAlternateLegs();
 
   atools::fs::pln::Flightplan& flightplan = route.getFlightplan();
-  auto& entries = route.getFlightplan().getEntries();
-  std::reverse(entries.begin(), entries.end());
+  std::reverse(flightplan.begin(), flightplan.end());
 
   QString depName = flightplan.getDepartureName();
   QString depIdent = flightplan.getDepartureIdent();
@@ -2235,15 +2176,15 @@ void RouteController::reverseRoute()
   flightplan.setDestinationIdent(depIdent);
 
   // Overwrite parking position with airport position
-  flightplan.setDeparturePosition(entries.constFirst().getPosition());
-  flightplan.setDepartureParkingPosition(entries.constFirst().getPosition(),
+  flightplan.setDeparturePosition(flightplan.constFirst().getPosition());
+  flightplan.setDepartureParkingPosition(flightplan.constFirst().getPosition(),
                                          atools::fs::pln::INVALID_ALTITUDE, atools::fs::pln::INVALID_HEADING);
   flightplan.setDepartureParkingName(QString());
   flightplan.setDepartureParkingType(atools::fs::pln::NO_POS);
 
   // Erase all airways to avoid wrong direction travel against one way
-  for(int i = 0; i < entries.size(); i++)
-    entries[i].setAirway(QString());
+  for(int i = 0; i < flightplan.size(); i++)
+    flightplan[i].setAirway(QString());
   flightplan.getProperties().remove(atools::fs::pln::PROCAIRWAY);
 
   route.createRouteLegsFromFlightplan();
@@ -2269,6 +2210,14 @@ void RouteController::preDatabaseLoad()
   route.resetActive();
   highlightNextWaypoint(route.getActiveLegIndex());
 
+  tempFlightplanStr.clear();
+  Flightplan flightplan = route.updatedAltitudes().adjustedToOptions(rf::DEFAULT_OPTS_LNMPLN).getFlightplanConst();
+  if(!flightplan.isEmpty())
+    tempFlightplanStr = flightplanIO->saveLnmStr(flightplan);
+
+#ifdef DEBUG_INFORMATION
+  atools::strToFile(atools::settings::Settings::getConfigFilename("_debug.lnmpln"), tempFlightplanStr);
+#endif
   routeCalcDialog->preDatabaseLoad();
 }
 
@@ -2277,38 +2226,36 @@ void RouteController::postDatabaseLoad()
   // Clear routing caches
   routeNetworkRadio->clear();
   routeNetworkAirway->clear();
-
-  // Remove error messages
   clearAllErrors();
 
-  // Remove alternates - will be added later again once resolved
-  QString alternates = route.getFlightplan().getProperties().value(atools::fs::pln::ALTERNATES);
-  route.removeAlternateLegs();
+  Flightplan flightplan;
 
-  // Remove the legs but keep the properties
-  route.clearProcedures(proc::PROCEDURE_ALL);
-  route.clearProcedureLegs(proc::PROCEDURE_ALL);
+  if(!tempFlightplanStr.isEmpty())
+  {
+    flightplanIO->loadLnmStr(flightplan, tempFlightplanStr);
+    flightplan.setLnmFormat(route.getFlightplan().isLnmFormat());
+  }
 
+  // Assign plan to route and get reference to it
+  route.setFlightplan(flightplan);
   route.createRouteLegsFromFlightplan();
   loadProceduresFromFlightplan(false /* clearOldProcedureProperties */, false /* cleanupRoute */, false /* autoresolveTransition */);
-  loadAlternateFromFlightplan(); // Alternate dummy legs already removed above
-  route.updateAll(); // Removes alternate property if it cannot be resolved
+  route.updateAll(); // Removes alternate property if not resolvable
+  route.updateRouteCycleMetadata();
+  route.updateAircraftPerfMetadata();
 
-  // Keep property also in case alternates were not added
-  route.getFlightplan().getProperties().insert(atools::fs::pln::ALTERNATES, alternates);
-
-  route.updateAirwaysAndAltitude(false /* adjustRouteAltitude */);
+  // Update cruise altitude in local units based on procedures and airway restriction
+  // Corrects cruise altitude if adjustRouteAltitude is true
+  route.updateAirwaysAndAltitude(false);
   route.updateLegAltitudes();
-
   updateActiveLeg();
 
-  // Need to update model to reflect the flight plan changes before other methods call updateModelHighlights
+  // Get number from user waypoint from user defined waypoint in fs flight plan
+  entryBuilder->setCurUserpointNumber(route.getNextUserWaypointNumber());
+
   updateTableModel();
   updateMoveAndDeleteActions();
-
   NavApp::updateErrorLabel();
-  routeAltChangedDelayed();
-  // route.updateRouteCycleMetadata();
 
   routeCalcDialog->postDatabaseLoad();
 
@@ -2483,7 +2430,7 @@ void RouteController::routeTableOptions()
 {
   qDebug() << Q_FUNC_INFO;
 
-  atools::gui::TreeDialog treeDialog(mainWindow, QApplication::applicationName() + tr(" - Flight Plan Table"),
+  atools::gui::TreeDialog treeDialog(mainWindow, QApplication::applicationName() % tr(" - Flight Plan Table"),
                                      tr("Select header lines and flight plan table columns to show.\n"
                                         "You can move and resize columns by clicking into the flight plan column headers."),
                                      lnm::ROUTE_FLIGHTPLAN_COLUMS_DIALOG, "FLIGHTPLAN.html#flight-plan-table-columns",
@@ -2573,7 +2520,7 @@ void RouteController::activateLegTriggered()
 
 void RouteController::helpClicked()
 {
-  atools::gui::HelpHandler::openHelpUrlWeb(mainWindow, lnm::helpOnlineUrl + "FLIGHTPLAN.html", lnm::helpLanguageOnline());
+  atools::gui::HelpHandler::openHelpUrlWeb(mainWindow, lnm::helpOnlineUrl % "FLIGHTPLAN.html", lnm::helpLanguageOnline());
 }
 
 void RouteController::selectAllTriggered()
@@ -3087,7 +3034,7 @@ void RouteController::editUserWaypointName(int index)
       // if(route.getFlightplan().canSaveUserWaypointName())
       undoCommand = preChange(tr("Waypoint Change"));
 
-      route.getFlightplan().getEntries()[index] = dialog.getEntry();
+      route.getFlightplan()[index] = dialog.getEntry();
 
       route.updateAll();
       route.updateLegAltitudes();
@@ -3261,7 +3208,6 @@ void RouteController::changeRouteUndoRedo(const atools::fs::pln::Flightplan& new
   // Change format in plan according to last saved format
   route.createRouteLegsFromFlightplan();
   loadProceduresFromFlightplan(false /* clearOldProcedureProperties */, false /* cleanupRoute */, false /* autoresolveTransition */);
-  loadAlternateFromFlightplan();
   route.updateAll();
   route.updateAirwaysAndAltitude(false /* adjustRouteAltitude */);
   route.updateLegAltitudes();
@@ -3273,8 +3219,8 @@ void RouteController::changeRouteUndoRedo(const atools::fs::pln::Flightplan& new
   if(currentRow == -1 || currentRow > tableViewRoute->model()->rowCount() - 1)
     currentRow = tableViewRoute->model()->rowCount() - 1;
 
-  tableViewRoute->selectionModel()->setCurrentIndex(model->index(currentRow,
-                                                                 0), QItemSelectionModel::SelectCurrent | QItemSelectionModel::Rows);
+  tableViewRoute->selectionModel()->setCurrentIndex(
+    model->index(currentRow, 0), QItemSelectionModel::SelectCurrent | QItemSelectionModel::Rows);
 
   emit routeChanged(true);
 }
@@ -3323,12 +3269,12 @@ float RouteController::getCruiseAltitudeWidget() const
   return Unit::rev(static_cast<float>(NavApp::getMainUi()->spinBoxRouteAlt->value()), Unit::altFeetF);
 }
 
-bool RouteController::isLnmFormatFlightplan()
+bool RouteController::isLnmFormatFlightplan() const
 {
-  return route.getFlightplan().isLnmFormat();
+  return route.getFlightplanConst().isLnmFormat();
 }
 
-bool RouteController::doesLnmFilenameMatchRoute()
+bool RouteController::doesLnmFilenameMatchRoute() const
 {
   if(!routeFilename.isEmpty())
   {
@@ -3341,16 +3287,16 @@ bool RouteController::doesLnmFilenameMatchRoute()
     const QString pattern = OptionData::instance().getFlightplanPattern();
 
     if(pattern.contains(atools::fs::pln::pattern::PLANTYPE))
-      ok &= fileIfrVfr == route.getFlightplan().getFlightplanType();
+      ok &= fileIfrVfr == route.getFlightplanConst().getFlightplanType();
 
     if(pattern.contains(atools::fs::pln::pattern::CRUISEALT))
       ok &= atools::almostEqual(fileCruiseAltFt, route.getCruiseAltitudeFt(), 10.f);
 
     if(pattern.contains(atools::fs::pln::pattern::DEPARTIDENT))
-      ok &= fileDepartureIdent == route.getFlightplan().getDepartureIdent();
+      ok &= fileDepartureIdent == route.getFlightplanConst().getDepartureIdent();
 
     if(pattern.contains(atools::fs::pln::pattern::DESTIDENT))
-      ok &= fileDestinationIdent == route.getFlightplan().getDestinationIdent();
+      ok &= fileDestinationIdent == route.getFlightplanConst().getDestinationIdent();
 
     return ok;
   }
@@ -3393,7 +3339,7 @@ void RouteController::moveSelectedLegsInternal(MoveDirection direction)
     for(int row : rows)
     {
       // Change flight plan
-      route.getFlightplan().getEntries().move(row, row + direction);
+      route.getFlightplan().move(row, row + direction);
       route.move(row, row + direction);
 
       // Move row
@@ -3482,7 +3428,7 @@ void RouteController::deleteSelectedLegsInternal(const QList<int>& rows)
 
     for(int row : rows)
     {
-      route.getFlightplan().getEntries().removeAt(row);
+      route.getFlightplan().removeAt(row);
 
       route.eraseAirway(row);
 
@@ -3508,7 +3454,7 @@ void RouteController::deleteSelectedLegsInternal(const QList<int>& rows)
     {
       // Remove alternates too if last leg was deleted
       route.clear();
-      route.getFlightplan().getEntries().clear();
+      route.getFlightplan().clearAll();
     }
 
     route.updateAll();
@@ -3766,14 +3712,14 @@ void RouteController::routeSetDepartureInternal(const map::MapAirport& airport)
   if(route.getSizeWithoutAlternates() > 1)
   {
     // Replace current departure
-    const FlightplanEntry& first = flightplan.getEntries().constFirst();
+    const FlightplanEntry& first = flightplan.constFirst();
     if(first.getWaypointType() == pln::entry::AIRPORT &&
        flightplan.getDepartureIdent() == first.getIdent())
     {
       // Replace first airport
       FlightplanEntry entry;
       entryBuilder->buildFlightplanEntry(airport, entry, false /* alternate */);
-      flightplan.getEntries().replace(0, entry);
+      flightplan.replace(0, entry);
 
       RouteLeg routeLeg(&flightplan);
       routeLeg.createFromAirport(0, airport, nullptr);
@@ -3787,7 +3733,7 @@ void RouteController::routeSetDepartureInternal(const map::MapAirport& airport)
     // Default is prepend
     FlightplanEntry entry;
     entryBuilder->buildFlightplanEntry(airport, entry, false /* alternate */);
-    flightplan.getEntries().prepend(entry);
+    flightplan.prepend(entry);
 
     RouteLeg routeLeg(&flightplan);
     routeLeg.createFromAirport(0, airport, nullptr);
@@ -3843,15 +3789,15 @@ void RouteController::routeAddAlternate(map::MapAirport airport)
   entryBuilder->buildFlightplanEntry(airport, entry, true /* alternate */);
 
   Flightplan& flightplan = route.getFlightplan();
-  flightplan.getEntries().append(entry);
+  flightplan.append(entry);
 
   const RouteLeg *lastLeg = nullptr;
-  if(flightplan.getEntries().size() > 1)
+  if(flightplan.size() > 1)
     // Set predecessor if route has entries
     lastLeg = &route.value(route.size() - 1);
 
   RouteLeg routeLeg(&flightplan);
-  routeLeg.createFromAirport(flightplan.getEntries().size() - 1, airport, lastLeg);
+  routeLeg.createFromAirport(flightplan.size() - 1, airport, lastLeg);
   routeLeg.setAlternate();
   route.append(routeLeg);
 
@@ -3883,14 +3829,14 @@ void RouteController::routeSetDestinationInternal(const map::MapAirport& airport
     if(destIdx != map::INVALID_INDEX_VALUE)
     {
       // Remove current destination
-      const FlightplanEntry& last = flightplan.getEntries().at(destIdx);
+      const FlightplanEntry& last = flightplan.at(destIdx);
       if(last.getWaypointType() == pln::entry::AIRPORT &&
          flightplan.getDestinationIdent() == last.getIdent())
       {
         // Replace destination airport
         FlightplanEntry entry;
         entryBuilder->buildFlightplanEntry(airport, entry, false /* alternate */);
-        flightplan.getEntries().replace(destIdx, entry);
+        flightplan.replace(destIdx, entry);
 
         RouteLeg routeLeg(&flightplan);
         const RouteLeg *lastLeg = destIdx > 1 ? &route.value(destIdx - 1) : nullptr;
@@ -3908,7 +3854,7 @@ void RouteController::routeSetDestinationInternal(const map::MapAirport& airport
 
     FlightplanEntry entry;
     entryBuilder->buildFlightplanEntry(airport, entry, false /* alternate */);
-    flightplan.getEntries().insert(insertPos, entry);
+    flightplan.insert(insertPos, entry);
 
     RouteLeg routeLeg(&flightplan);
     const RouteLeg *lastLeg = insertPos > 1 ? &route.value(insertPos - 1) : nullptr;
@@ -4038,7 +3984,7 @@ void RouteController::updateRouteTabChangedStatus()
     if(hasChanged())
     {
       if(!ui->tabWidgetRoute->tabText(idxRoute).endsWith(tr(" *")))
-        ui->tabWidgetRoute->setTabText(idxRoute, ui->tabWidgetRoute->tabText(idxRoute) + tr(" *"));
+        ui->tabWidgetRoute->setTabText(idxRoute, ui->tabWidgetRoute->tabText(idxRoute) % tr(" *"));
     }
     else
       ui->tabWidgetRoute->setTabText(idxRoute, ui->tabWidgetRoute->tabText(idxRoute).replace(tr(" *"), QString()));
@@ -4052,7 +3998,7 @@ void RouteController::updateRouteTabChangedStatus()
     if(hasChanged() && !ui->plainTextEditRouteRemarks->toPlainText().isEmpty())
     {
       if(!ui->tabWidgetRoute->tabText(idxRemark).endsWith(tr(" *")))
-        ui->tabWidgetRoute->setTabText(idxRemark, ui->tabWidgetRoute->tabText(idxRemark) + tr(" *"));
+        ui->tabWidgetRoute->setTabText(idxRemark, ui->tabWidgetRoute->tabText(idxRemark) % tr(" *"));
     }
     else
       ui->tabWidgetRoute->setTabText(idxRemark, ui->tabWidgetRoute->tabText(idxRemark).replace(tr(" *"), QString()));
@@ -4172,7 +4118,7 @@ void RouteController::routeAddProcedure(proc::MapProcedureLegs legs)
 
   postChange(undoCommand);
 
-  qDebug() << Q_FUNC_INFO << route.getFlightplan().getProperties();
+  qDebug() << Q_FUNC_INFO << route.getFlightplanConst().getProperties();
 
   emit routeChanged(true);
 
@@ -4197,7 +4143,7 @@ void RouteController::routeAdd(int id, atools::geo::Pos userPos, map::MapTypes t
     NavApp::showFlightPlan();
 
   Flightplan& flightplan = route.getFlightplan();
-  flightplan.getEntries().insert(insertIndex, entry);
+  flightplan.insert(insertIndex, entry);
   route.eraseAirway(insertIndex);
   route.eraseAirway(insertIndex + 1);
 
@@ -4247,7 +4193,7 @@ void RouteController::routeReplace(int id, atools::geo::Pos userPos, map::MapTyp
 {
   qDebug() << Q_FUNC_INFO << "user pos" << userPos << "id" << id
            << "type" << type << "leg index" << legIndex;
-  const FlightplanEntry oldEntry = route.getFlightplan().getEntries().at(legIndex);
+  const FlightplanEntry oldEntry = route.getFlightplanConst().at(legIndex);
   bool alternate = oldEntry.getFlags() & atools::fs::pln::entry::ALTERNATE;
 
   if(alternate && !(type & map::AIRPORT))
@@ -4273,7 +4219,7 @@ void RouteController::routeReplace(int id, atools::geo::Pos userPos, map::MapTyp
 
   Flightplan& flightplan = route.getFlightplan();
 
-  flightplan.getEntries().replace(legIndex, entry);
+  flightplan.replace(legIndex, entry);
 
   const RouteLeg *lastLeg = nullptr;
   if(alternate)
@@ -4325,7 +4271,7 @@ int RouteController::calculateInsertIndex(const atools::geo::Pos& pos, int legIn
     if(flightplan.isEmpty())
       // First is  departure
       insertIndex = 0;
-    else if(flightplan.getEntries().size() == 1)
+    else if(flightplan.size() == 1)
       // Keep first as departure
       insertIndex = 1;
     else
@@ -5230,8 +5176,8 @@ void RouteController::clearRoute()
 RouteCommand *RouteController::preChange(const QString& text, rctype::RouteCmdType rcType)
 {
   // Clean the flight plan from any procedure entries
-  Flightplan flightplan = route.getFlightplan();
-  flightplan.removeNoSaveEntries();
+  Flightplan flightplan = route.getFlightplanConst();
+  flightplan.removeProcedureEntries();
   return new RouteCommand(this, flightplan, text, rcType);
 }
 
@@ -5242,8 +5188,8 @@ void RouteController::postChange(RouteCommand *undoCommand)
     return;
 
   // Clean the flight plan from any procedure entries
-  Flightplan flightplan = route.getFlightplan();
-  flightplan.removeNoSaveEntries();
+  Flightplan flightplan = route.getFlightplanConst();
+  flightplan.removeProcedureEntries();
   undoCommand->setFlightplanAfter(flightplan);
 
   if(undoIndex < undoIndexClean)
@@ -5323,7 +5269,7 @@ void RouteController::remarksFlightPlanToWidget()
 
   // Block signals to avoid recursion
   ui->plainTextEditRouteRemarks->blockSignals(true);
-  ui->plainTextEditRouteRemarks->setPlainText(route.getFlightplan().getComment());
+  ui->plainTextEditRouteRemarks->setPlainText(route.getFlightplanConst().getComment());
   ui->plainTextEditRouteRemarks->blockSignals(false);
 }
 
@@ -5361,7 +5307,7 @@ void RouteController::updateRemarkHeader()
     // <Name>JustFlight BAe 146 100</Name>
     // </AircraftPerformance>
 
-    const QHash<QString, QString>& props = route.getFlightplan().getProperties();
+    const QHash<QString, QString>& props = route.getFlightplanConst().getProperties();
 
     atools::util::HtmlBuilder html;
 

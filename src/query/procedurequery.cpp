@@ -2513,7 +2513,7 @@ QString ProcedureQuery::runwayErrorString(const QString& runway)
   return runway.isEmpty() ? tr("no runway") : tr("runway %1").arg(runway);
 }
 
-void ProcedureQuery::getLegsForFlightplanProperties(const QHash<QString, QString> properties,
+void ProcedureQuery::getLegsForFlightplanProperties(const QHash<QString, QString>& properties,
                                                     const map::MapAirport& departure, const map::MapAirport& destination,
                                                     proc::MapProcedureLegs& approachLegs,
                                                     proc::MapProcedureLegs& starLegs, proc::MapProcedureLegs& sidLegs,
@@ -2832,7 +2832,7 @@ bool ProcedureQuery::procedureValid(const proc::MapProcedureLegs *legs, QStringL
   return false;
 }
 
-QString ProcedureQuery::getSidAndTransition(QHash<QString, QString>& properties)
+QString ProcedureQuery::getSidAndTransition(const QHash<QString, QString>& properties)
 {
   QString retval;
   if(properties.contains(pln::SID))
@@ -2843,7 +2843,7 @@ QString ProcedureQuery::getSidAndTransition(QHash<QString, QString>& properties)
   return retval;
 }
 
-QString ProcedureQuery::getStarAndTransition(QHash<QString, QString>& properties)
+QString ProcedureQuery::getStarAndTransition(const QHash<QString, QString>& properties)
 {
   QString retval;
   if(properties.contains(pln::STAR))

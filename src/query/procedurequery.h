@@ -93,14 +93,14 @@ public:
 
   /* Resolves all procedures based on given properties and loads them from the database.
    * Procedures are partially resolved in a fuzzy way. */
-  void getLegsForFlightplanProperties(const QHash<QString, QString> properties,
+  void getLegsForFlightplanProperties(const QHash<QString, QString>& properties,
                                       const map::MapAirport& departure, const map::MapAirport& destination,
                                       proc::MapProcedureLegs& approachLegs, proc::MapProcedureLegs& starLegs,
                                       proc::MapProcedureLegs& sidLegs, QStringList& errors, bool autoresolveTransition);
 
   /* Get dot-separated SID/STAR and the respective transition from the properties */
-  static QString getSidAndTransition(QHash<QString, QString>& properties);
-  static QString getStarAndTransition(QHash<QString, QString>& properties);
+  static QString getSidAndTransition(const QHash<QString, QString>& properties);
+  static QString getStarAndTransition(const QHash<QString, QString>& properties);
 
   /* Populate the property list for given procedures */
   static void fillFlightplanProcedureProperties(QHash<QString, QString>& properties,

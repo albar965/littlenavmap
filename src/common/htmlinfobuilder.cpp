@@ -192,7 +192,7 @@ void HtmlInfoBuilder::flightplanWaypointRemarks(HtmlBuilder& html, int index) co
 {
   if(index >= 0)
     html.row2If(tr("Flight Plan Pos. Remarks:"),
-                atools::elideTextLinesShort(NavApp::getRouteConst().getFlightplan().at(index).getComment(), 5, 40));
+                atools::elideTextLinesShort(NavApp::getRouteConst().getFlightplanConst().at(index).getComment(), 5, 40));
 }
 
 void HtmlInfoBuilder::airportText(const MapAirport& airport, const map::WeatherContext& weatherContext,

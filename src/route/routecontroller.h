@@ -147,7 +147,7 @@ public:
   /* get altitude in feet as set in the widget */
   float getCruiseAltitudeWidget() const;
 
-  bool  doesLnmFilenameMatchRoute();
+  bool  doesLnmFilenameMatchRoute() const;
 
   /* Clear routing network cache and disconnect all queries */
   void preDatabaseLoad();
@@ -294,7 +294,7 @@ public:
 #endif
 
   /* true if flight plan was loaded in LNMPLN format. Otherwise imported from PLN, FMS, etc. */
-  bool isLnmFormatFlightplan();
+  bool isLnmFormatFlightplan() const;
 
   /* Get error messages from route parsing */
   bool hasErrors() const;
@@ -458,8 +458,6 @@ private:
   /* Fill the route procedure legs structures with data based on the procedure properties in the flight plan */
   void loadProceduresFromFlightplan(bool clearOldProcedureProperties, bool cleanupRoute, bool autoresolveTransition);
 
-  void loadAlternateFromFlightplan();
-
   void beforeRouteCalc();
   void updateFlightplanEntryAirway(int airwayId, atools::fs::pln::FlightplanEntry& entry);
   QIcon iconForLeg(const RouteLeg& leg, int size) const;
@@ -580,6 +578,9 @@ private:
 
   // Errors collected when parsing route for model
   QStringList flightplanErrors, procedureErrors, alternateErrors;
+
+  // String to save flight plan temporarily in LNMPLN format when switching databases
+  QString tempFlightplanStr;
   bool trackErrors = false;
 };
 

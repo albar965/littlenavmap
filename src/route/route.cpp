@@ -153,8 +153,7 @@ void Route::clearAll()
 {
   removeProcedureLegs();
   removeAlternateLegs();
-  getFlightplan().clear();
-  getFlightplan().getProperties().clear();
+  getFlightplan().clearAll();
   resetActive();
   clear();
 
@@ -172,7 +171,7 @@ int Route::getNextUserWaypointNumber() const
   /* Get number from user waypoint from user defined waypoint in fs flight plan */
   int nextNum = 0;
 
-  for(const FlightplanEntry& entry : flightplan.getEntries())
+  for(const FlightplanEntry& entry : flightplan)
   {
     if(entry.getWaypointType() == atools::fs::pln::entry::USER && entry.getIdent().startsWith("WP"))
       nextNum = std::max(QString(USER_WP_ID.match(entry.getIdent()).captured(1)).toInt(), nextNum);
@@ -1370,12 +1369,12 @@ bool Route::hasDepartureStart() const
 
 bool Route::isFlightplanEmpty() const
 {
-  return getFlightplan().isEmpty();
+  return getFlightplanConst().isEmpty();
 }
 
 void Route::eraseAirway(int row)
 {
-  if(0 <= row && row < getFlightplan().getEntries().size())
+  if(0 <= row && row < getFlightplanConst().size())
   {
     getFlightplan()[row].setAirway(QString());
     getFlightplan()[row].setFlag(atools::fs::pln::entry::TRACK, false);
@@ -1426,7 +1425,7 @@ bool Route::hasValidDestinationAndRunways() const
 
 bool Route::hasEntries() const
 {
-  return getFlightplan().getEntries().size() > 2;
+  return getFlightplanConst().size() > 2;
 }
 
 bool Route::canCalcRoute() const
@@ -1450,7 +1449,7 @@ void Route::removeAlternateLegs()
   for(int i = 0; i < indexes.size(); i++)
   {
     removeAt(indexes.at(i));
-    flightplan.getEntries().removeAt(indexes.at(i));
+    flightplan.removeAt(indexes.at(i));
   }
   alternateLegsOffset = map::INVALID_INDEX_VALUE;
   numAlternateLegs = 0;
@@ -1472,7 +1471,7 @@ void Route::removeMissedLegs()
   for(int i = 0; i < indexes.size(); i++)
   {
     removeAt(indexes.at(i));
-    flightplan.getEntries().removeAt(indexes.at(i));
+    flightplan.removeAt(indexes.at(i));
   }
   alternateLegsOffset = map::INVALID_INDEX_VALUE;
   numAlternateLegs = 0;
@@ -1535,26 +1534,6 @@ void Route::removeProcedureLegs(proc::MapProcedureTypes type)
 void Route::clearFlightplanProcedureProperties(proc::MapProcedureTypes type)
 {
   ProcedureQuery::clearFlightplanProcedureProperties(flightplan.getProperties(), type);
-}
-
-void Route::clearFlightplanAlternateProperties()
-{
-  flightplan.getProperties().remove(atools::fs::pln::ALTERNATES);
-}
-
-void Route::updateAlternateProperties()
-{
-  int offset = getAlternateLegsOffset();
-  if(offset != map::INVALID_INDEX_VALUE)
-  {
-    QStringList alternates = getAlternateIdents();
-    if(!alternates.isEmpty())
-      getFlightplan().getProperties().insert(atools::fs::pln::ALTERNATES, alternates.join(atools::fs::pln::PROPERTY_LIST_SEP));
-    else
-      getFlightplan().getProperties().remove(atools::fs::pln::ALTERNATES);
-  }
-  else
-    getFlightplan().getProperties().remove(atools::fs::pln::ALTERNATES);
 }
 
 QStringList Route::getAlternateIdents() const
@@ -1698,7 +1677,6 @@ void Route::updateProcedureLegs(FlightplanEntryBuilder *entryBuilder, bool clear
     // Starts always after departure airport
     sidLegsOffset = 1;
 
-  QList<FlightplanEntry>& entries = flightplan.getEntries();
   for(int i = 0; i < sidLegs.size(); i++)
   {
     int insertIndex = 1 + i;
@@ -1708,7 +1686,7 @@ void Route::updateProcedureLegs(FlightplanEntryBuilder *entryBuilder, bool clear
 
     FlightplanEntry entry;
     entryBuilder->buildFlightplanEntry(sidLegs.at(insertIndex - 1), entry, true);
-    entries.insert(insertIndex, entry);
+    flightplan.insert(insertIndex, entry);
   }
 
   // Create route legs and flight plan entries from STAR
@@ -1726,7 +1704,7 @@ void Route::updateProcedureLegs(FlightplanEntryBuilder *entryBuilder, bool clear
 
     FlightplanEntry entry;
     entryBuilder->buildFlightplanEntry(starLegs.at(i), entry, true);
-    entries.insert(entries.size() - insertOffset, entry);
+    flightplan.insert(flightplan.size() - insertOffset, entry);
   }
 
   // Create route legs and flight plan entries from arrival
@@ -1743,7 +1721,7 @@ void Route::updateProcedureLegs(FlightplanEntryBuilder *entryBuilder, bool clear
 
     FlightplanEntry entry;
     entryBuilder->buildFlightplanEntry(approachLegs.at(i), entry, true);
-    entries.insert(entries.size() - insertOffset, entry);
+    flightplan.insert(flightplan.size() - insertOffset, entry);
   }
 
   // Leave procedure information in the PLN file
@@ -1767,7 +1745,7 @@ void Route::removeLegs(int from, int to)
   for(int i = to; i >= from; i--)
   {
     removeAt(i);
-    flightplan.getEntries().removeAt(i);
+    flightplan.removeAt(i);
   }
 }
 
@@ -1787,7 +1765,7 @@ void Route::removeRouteLegs()
   for(int i = 0; i < indexes.size(); i++)
   {
     removeAt(indexes.at(i));
-    flightplan.getEntries().removeAt(indexes.at(i));
+    flightplan.removeAt(indexes.at(i));
   }
 }
 
@@ -1809,7 +1787,7 @@ void Route::clearProcedureLegs(proc::MapProcedureTypes type, bool clearRoute, bo
     if(clearRoute)
       removeAt(indexes.at(i));
     if(clearFlightplan)
-      flightplan.getEntries().removeAt(indexes.at(i));
+      flightplan.removeAt(indexes.at(i));
   }
 }
 
@@ -1865,7 +1843,7 @@ void Route::updateDepartureAndDestination()
     flightplan.setDestinationPosition(destination.getPosition());
   }
   else
-    flightplan.clear();
+    flightplan.clearAll();
 }
 
 void Route::updateAll()
@@ -1873,7 +1851,6 @@ void Route::updateAll()
   updateIndicesAndOffsets();
   removeDuplicateRouteLegs();
   validateAirways();
-  updateAlternateProperties();
   updateMagvar();
   updateDistancesAndCourse();
   updateBoundingRect();
@@ -1885,7 +1862,7 @@ void Route::updateAll()
 void Route::updateWaypointNames()
 {
   int num = 1;
-  for(FlightplanEntry& entry : flightplan.getEntries())
+  for(FlightplanEntry& entry : flightplan)
   {
     if(entry.getWaypointType() == atools::fs::pln::entry::USER && entry.getIdent().startsWith("WP"))
     {
@@ -1904,7 +1881,7 @@ void Route::updateAirportRegions()
     if(leg.getMapObjectType() == map::AIRPORT)
     {
       NavApp::getAirportQuerySim()->getAirportRegion(leg.getAirport());
-      flightplan.getEntries()[i].setRegion(leg.getAirport().region);
+      flightplan[i].setRegion(leg.getAirport().region);
     }
     i++;
   }
@@ -2515,7 +2492,7 @@ void Route::validateAirways()
 
     QString airway = arrivalLeg.getAirwayName();
     if(airway.isEmpty())
-      airway = flightplan.getProperties().value(atools::fs::pln::PROCAIRWAY);
+      airway = flightplan.getPropertiesConst().value(atools::fs::pln::PROCAIRWAY);
     if(NavApp::getAirwayTrackQueryGui()->hasAirwayForNameAndWaypoint(airway, routeLeg.getIdent(), arrivalLeg.getIdent()))
     {
       // Airway is valid - set into procedure leg and property
@@ -2556,7 +2533,7 @@ void Route::validateAirways()
     if(!NavApp::getAirwayTrackQueryGui()->hasAirwayForNameAndWaypoint(routeLeg.getAirwayName(), departureLeg.getIdent(),
                                                                       routeLeg.getIdent()))
       // Airway not valid for changed waypoints - erase
-      flightplan.getEntries()[startIndexAfterProcedure].setAirway(QString());
+      flightplan[startIndexAfterProcedure].setAirway(QString());
   }
 }
 
@@ -2581,7 +2558,7 @@ void Route::removeDuplicateRouteLegs()
       qDebug() << "removing duplicate leg at" << (arrivaLegsOffset - 1) << routeLeg;
 
       // Copy airway name from the route leg to be deleted into the first procedure leg
-      flightplan.getEntries()[arrivaLegsOffset].setAirway(flightplan.getEntries().at(arrivaLegsOffset - 1).getAirway());
+      flightplan[arrivaLegsOffset].setAirway(flightplan.at(arrivaLegsOffset - 1).getAirway());
 
       // Remove the route leg before the procedure
       removeAllAt(arrivaLegsOffset - 1);
@@ -2656,15 +2633,14 @@ void Route::createRouteLegsFromFlightplan()
   const RouteLeg *lastLeg = nullptr;
 
   // Create map objects first and calculate total distance
-  for(int i = 0; i < flightplan.getEntries().size(); i++)
+  for(int i = 0; i < flightplan.size(); i++)
   {
     RouteLeg leg(&flightplan);
     leg.createFromDatabaseByEntry(i, lastLeg);
 
     if(leg.getMapObjectType() == map::INVALID)
       // Not found in database
-      qWarning() << "Entry for ident" << flightplan.at(i).getIdent()
-                 << "region" << flightplan.at(i).getRegion() << "is not valid";
+      qWarning() << "Entry for ident" << flightplan.at(i).getIdent() << "region" << flightplan.at(i).getRegion() << "is not valid";
 
     append(leg);
     lastLeg = &constLast();
@@ -2675,13 +2651,13 @@ void Route::assignAltitudes()
 {
   QVector<float> altVector = altitude->getAltitudes();
   for(int i = 0; i < size(); i++)
-    flightplan.getEntries()[i].setAltitude(altVector.at(i));
+    flightplan[i].setAltitude(altVector.at(i));
 }
 
 void Route::zeroAltitudes()
 {
   for(int i = 0; i < size(); i++)
-    flightplan.getEntries()[i].setAltitude(0.f);
+    flightplan[i].setAltitude(0.f);
 }
 
 Route Route::updatedAltitudes() const
@@ -2726,7 +2702,6 @@ Route Route::adjustedToOptions(const Route& origRoute, rf::RouteAdjustOptions op
   // Create copy which allows to modify the plan ==============
   Route route(origRoute);
   atools::fs::pln::Flightplan& plan = route.getFlightplan();
-  atools::fs::pln::FlightplanEntryListType& entries = plan.getEntries();
   FlightplanEntryBuilder entryBuilder;
 
   route.updateDepartureAndDestination();
@@ -2746,7 +2721,7 @@ Route Route::adjustedToOptions(const Route& origRoute, rf::RouteAdjustOptions op
       {
         QString airway = arrivalLeg.getAirwayName();
         if(airway.isEmpty())
-          airway = plan.getProperties().value(atools::fs::pln::PROCAIRWAY);
+          airway = plan.getPropertiesConst().value(atools::fs::pln::PROCAIRWAY);
 
         const RouteLeg& routeLeg = route.value(arrivaLegsOffset - 1);
         if((!airway.isEmpty() || options.testFlag(rf::FIX_PROC_ENTRY_EXIT_ALWAYS)) &&
@@ -2764,7 +2739,7 @@ Route Route::adjustedToOptions(const Route& origRoute, rf::RouteAdjustOptions op
           newLeg.setAirway(arrivalLeg.getAirway());
 
           route.insert(arrivaLegsOffset, newLeg);
-          entries.insert(arrivaLegsOffset, entry);
+          plan.insert(arrivaLegsOffset, entry);
           plan.getProperties().remove(atools::fs::pln::PROCAIRWAY);
           route.updateIndicesAndOffsets();
         }
@@ -2796,7 +2771,7 @@ Route Route::adjustedToOptions(const Route& origRoute, rf::RouteAdjustOptions op
           newLeg.setAirway(map::MapAirway());
 
           route.insert(startIndexAfterProcedure, newLeg);
-          entries.insert(startIndexAfterProcedure, entry);
+          plan.insert(startIndexAfterProcedure, entry);
           route.updateIndicesAndOffsets();
         }
       }
@@ -2882,12 +2857,12 @@ Route Route::adjustedToOptions(const Route& origRoute, rf::RouteAdjustOptions op
   // Remove track names from airway field but keep waypoints =========================================
   if(options.testFlag(rf::REMOVE_TRACKS))
   {
-    for(int i = 0; i < entries.size(); i++)
+    for(int i = 0; i < plan.size(); i++)
     {
       if(route.value(i).isTrack())
       {
         route[i].clearAirwayOrTrack();
-        entries[i].setAirway(QString());
+        plan[i].setAirway(QString());
       }
     }
   }
@@ -2895,12 +2870,12 @@ Route Route::adjustedToOptions(const Route& origRoute, rf::RouteAdjustOptions op
   // Remove airway names but keep waypoints =========================================
   if(options.testFlag(rf::SAVE_AIRWAY_WP))
   {
-    for(int i = 0; i < entries.size(); i++)
+    for(int i = 0; i < plan.size(); i++)
     {
       if(route.value(i).isAirway())
       {
         route[i].clearAirwayOrTrack();
-        entries[i].setAirway(QString());
+        plan[i].setAirway(QString());
       }
     }
     plan.getProperties().remove(atools::fs::pln::PROCAIRWAY);
@@ -2913,9 +2888,9 @@ Route Route::adjustedToOptions(const Route& origRoute, rf::RouteAdjustOptions op
 
     // Replace procedures with waypoints =======================================================================
     // Now replace all entries with either valid waypoints or user defined waypoints
-    for(int i = 0; i < entries.size(); i++)
+    for(int i = 0; i < plan.size(); i++)
     {
-      FlightplanEntry& entry = entries[i];
+      FlightplanEntry& entry = plan[i];
       const RouteLeg& leg = route.value(i);
       const proc::MapProcedureLeg& procedureLeg = leg.getProcedureLeg();
 
@@ -3047,29 +3022,29 @@ Route Route::adjustedToOptions(const Route& origRoute, rf::RouteAdjustOptions op
     } // for(int i = 0; i < entries.size(); i++)
 
     // Now remove of all procedure legs in the flight plan =====================
-    entries.erase(std::remove_if(entries.begin(), entries.end(), [](const FlightplanEntry& type) -> bool
+    plan.erase(std::remove_if(plan.begin(), plan.end(), [](const FlightplanEntry& type) -> bool
     {
       return type.getFlags() & atools::fs::pln::entry::PROCEDURE;
-    }), entries.end());
+    }), plan.end());
 
     if(!msfs)
     {
       // Delete same consecutive =======================
-      for(int i = entries.size() - 1; i > 0; i--)
+      for(int i = plan.size() - 1; i > 0; i--)
       {
-        const FlightplanEntry& entry = entries.at(i);
-        const FlightplanEntry& prev = entries.at(i - 1);
+        const FlightplanEntry& entry = plan.at(i);
+        const FlightplanEntry& prev = plan.at(i - 1);
 
         if(entry.getIdent() == prev.getIdent() &&
            entry.getRegion() == prev.getRegion() &&
            entry.getPosition().almostEqual(prev.getPosition(), Pos::POS_EPSILON_100M))
-          entries.removeAt(i);
+          plan.removeAt(i);
       }
     }
     else
     {
       // MSFS: Remove airway information for STAR entry waypoints ==============================
-      for(FlightplanEntry& entry : entries)
+      for(FlightplanEntry& entry : plan)
       {
         if(!entry.getStar().isEmpty())
           entry.setAirway(QString());
@@ -3081,7 +3056,7 @@ Route Route::adjustedToOptions(const Route& origRoute, rf::RouteAdjustOptions op
       if(!appr.isEmpty())
       {
         // Can use last since alternates are already stripped off
-        FlightplanEntry& entry = entries.last();
+        FlightplanEntry& entry = plan.last();
         int number = 0;
         QString designator;
 
@@ -3103,7 +3078,7 @@ Route Route::adjustedToOptions(const Route& origRoute, rf::RouteAdjustOptions op
     {
       MapQuery *mapQuery = NavApp::getMapQueryGui();
       bool found = false;
-      for(FlightplanEntry& entry : entries)
+      for(FlightplanEntry& entry : plan)
       {
         // Get airport for every navaid
         QString airportIdent;
@@ -3143,9 +3118,9 @@ Route Route::adjustedToOptions(const Route& origRoute, rf::RouteAdjustOptions op
     // Check for a circle-to-land approach without runway - add a random (best) runway from the airport to
     // satisfy the X-Plane GPS/FMC/G1000
     if(route.getDestinationAirportLeg().isAirport() &&
-       plan.getProperties().value(atools::fs::pln::APPROACHRW).isEmpty() &&
-       (!plan.getProperties().value(atools::fs::pln::APPROACH).isEmpty() ||
-        !plan.getProperties().value(atools::fs::pln::APPROACH_ARINC).isEmpty()))
+       plan.getPropertiesConst().value(atools::fs::pln::APPROACHRW).isEmpty() &&
+       (!plan.getPropertiesConst().value(atools::fs::pln::APPROACH).isEmpty() ||
+        !plan.getPropertiesConst().value(atools::fs::pln::APPROACH_ARINC).isEmpty()))
     {
       // Get best runway - longest with probably hard surface
       const QList<map::MapRunway> *runways = NavApp::getAirportQuerySim()->
@@ -3155,7 +3130,7 @@ Route Route::adjustedToOptions(const Route& origRoute, rf::RouteAdjustOptions op
     }
   }
 
-  if(plan.getEntries().size() <= 2 || plan.getFlightplanType() == atools::fs::pln::VFR)
+  if(plan.size() <= 2 || plan.getFlightplanType() == atools::fs::pln::VFR)
     // Use only real direct without procedures or VFR - MSFS accepts only VFR if direct
     plan.setRouteType(atools::fs::pln::DIRECT);
   else
@@ -3173,12 +3148,19 @@ Route Route::adjustedToOptions(const Route& origRoute, rf::RouteAdjustOptions op
   // Reset airport name to display name for LNMPLN (allow to exchange plans without the internal XP names) and X-Plane FMS
   if(options.testFlag(rf::SAVE_LNMPLN) || options.testFlag(rf::XPLANE_REPLACE_AIRPORT_IDENTS))
   {
-    for(int i = 0; i < entries.size(); i++)
+    for(int i = 0; i < plan.size(); i++)
     {
-      FlightplanEntry& entry = entries[i];
+      FlightplanEntry& entry = plan[i];
       if(entry.getWaypointType() == atools::fs::pln::entry::AIRPORT)
+      {
         // Use display ident in legs to avoid user confusion
-        entry.setIdent(route.getLegAt(i).getAirport().displayIdent());
+        QString displayIdent = route.getLegAt(i).getAirport().displayIdent();
+        if(displayIdent.isEmpty())
+          // Fall back to flight plan if RouteLeg is invalid or empty (not resolved against database)
+          displayIdent = route.getFlightplanConst().at(i).getIdent();
+
+        entry.setIdent(displayIdent);
+      }
     }
   }
 
@@ -3186,14 +3168,14 @@ Route Route::adjustedToOptions(const Route& origRoute, rf::RouteAdjustOptions op
   {
     // Replace X-Plane waypoint idents with official ones for airports
     // XP accepts only internal codes in departure and destination fields
-    for(int i = 0; i < entries.size(); i++)
+    for(int i = 0; i < plan.size(); i++)
     {
-      FlightplanEntry& entry = entries[i];
+      FlightplanEntry& entry = plan[i];
       const map::MapAirport& airport = route.getLegAt(i).getAirport();
       if(entry.getWaypointType() == atools::fs::pln::entry::AIRPORT)
       {
         // All airport idents will be truncated to six characters on export
-        if(i == 0 || i == entries.size() - 1)
+        if(i == 0 || i == plan.size() - 1)
         {
           // Determine ident for departure or destination
 
@@ -3224,7 +3206,7 @@ Route Route::adjustedToOptions(const Route& origRoute, rf::RouteAdjustOptions op
           // Use ADEP/ADES if there are any procedures in the flight plan or airport has procedures in general - X-Plane can load this
           if(airport.procedure() || // By XP database
              NavApp::getMapQueryGui()->hasProcedures(airport) || // Checks navdatabase
-             (i == 0 && route.hasAnySidProcedure()) || (i == entries.size() - 1 && route.hasAnyArrivalProcedure()))
+             (i == 0 && route.hasAnySidProcedure()) || (i == plan.size() - 1 && route.hasAnyArrivalProcedure()))
             useAirportKeys = true;
 
           if(i == 0)
@@ -3241,7 +3223,7 @@ Route Route::adjustedToOptions(const Route& origRoute, rf::RouteAdjustOptions op
               // DEP
               plan.getProperties().insert(atools::fs::pln::AIRPORT_DEPARTURE_NO_AIRPORT, QString());
           }
-          else if(i == entries.size() - 1)
+          else if(i == plan.size() - 1)
           {
             // Set for destination
             plan.setDestinationIdent(ident);
@@ -3260,14 +3242,14 @@ Route Route::adjustedToOptions(const Route& origRoute, rf::RouteAdjustOptions op
 
   if(options.testFlag(rf::ISG_USER_WP_NAMES))
   {
-    for(int i = 0; i < entries.size(); i++)
+    for(int i = 0; i < plan.size(); i++)
     {
       // <ATCWaypoint id="3924N11657W">
       // <ATCWaypointType>User</ATCWaypointType>
       // <WorldPosition>N39° 24' 0.01",W116° 57' 0.00",+010000.00</WorldPosition>
       // </ATCWaypoint>
 
-      FlightplanEntry& entry = entries[i];
+      FlightplanEntry& entry = plan[i];
       if(entry.getWaypointType() == atools::fs::pln::entry::USER)
         entry.setIdent(atools::fs::util::toDegMinFormat(entry.getPosition()));
     }
@@ -3496,7 +3478,7 @@ float Route::getAdjustedAltitude(float altitudeLocal) const
       else if(OptionData::instance().getAltitudeRuleType() == opts::SOUTH_NORTH)
         odd = !(fpDir >= 90.f && fpDir <= 270.f);
 
-      if(getFlightplan().getFlightplanType() == atools::fs::pln::IFR)
+      if(getFlightplanConst().getFlightplanType() == atools::fs::pln::IFR)
       {
         // IFR - 1000
         if(odd)
@@ -3593,7 +3575,7 @@ QDebug operator<<(QDebug out, const Route& route)
 {
   QDebugStateSaver saver(out);
   out << endl << "Route ==================================================================" << endl;
-  out << route.getFlightplan().getProperties() << endl << endl;
+  out << route.getFlightplanConst().getProperties() << endl << endl;
   for(int i = 0; i < route.size(); ++i)
     out << "===" << i << route.value(i) << endl;
   out << endl << "Departure ===========" << endl;
