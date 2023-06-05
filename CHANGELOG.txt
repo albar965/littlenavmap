@@ -66,6 +66,8 @@ A big thank you to all who reported bugs and issues!
 * Fixed issues with default filename generation having `CRUISEALT` parameter. Now using local altitude
   unit as set in options.
 * Adjusted route string reader to prefer a close VOR or waypoint before NDB.
+* Fixed flight plan export and save functions to avoid suggesting invalid filenames containing `/`, `\`
+  or other invalid characters.
 
 ### Scenery Library
 

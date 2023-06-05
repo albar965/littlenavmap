@@ -664,11 +664,11 @@ public:
   void updateDepartureAndDestination();
 
   /* Get file name pattern based on route values */
-  QString buildDefaultFilename(const QString& suffix, bool clean = true) const;
+  QString buildDefaultFilename(const QString& suffix) const;
   QString buildDefaultFilenameShort(const QString& separator, const QString& suffix) const;
 
   /* Uses pattern from options if empty */
-  QString buildDefaultFilename(QString pattern, QString suffix, bool clean = true) const;
+  QString buildDefaultFilename(QString pattern, QString suffix) const;
 
   /* Get all missing (i.e. not loaded) procedures where property values are present
    * but procedure structs are not loaded/resolved */

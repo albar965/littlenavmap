@@ -3534,12 +3534,12 @@ QString Route::getProcedureLegText(proc::MapProcedureTypes mapType, bool include
     return QString();
 }
 
-QString Route::buildDefaultFilename(const QString& suffix, bool clean) const
+QString Route::buildDefaultFilename(const QString& suffix) const
 {
-  return buildDefaultFilename(QString(), suffix, clean);
+  return buildDefaultFilename(QString(), suffix);
 }
 
-QString Route::buildDefaultFilename(QString pattern, QString suffix, bool clean) const
+QString Route::buildDefaultFilename(QString pattern, QString suffix) const
 {
   if(isEmpty())
     return tr("Empty Flightplan") + suffix;
@@ -3557,7 +3557,7 @@ QString Route::buildDefaultFilename(QString pattern, QString suffix, bool clean)
     suffix.clear();
 
   return Flightplan::getFilenamePattern(pattern, type, departName, departIdent, destName, destIdent, suffix,
-                                        atools::roundToInt(Unit::altFeetF(flightplan.getCruiseAltitudeFt())), clean);
+                                        atools::roundToInt(Unit::altFeetF(flightplan.getCruiseAltitudeFt())));
 }
 
 QString Route::buildDefaultFilenameShort(const QString& separator, const QString& suffix) const
@@ -3569,7 +3569,7 @@ QString Route::buildDefaultFilenameShort(const QString& separator, const QString
 
   return Flightplan::getFilenamePattern(atools::fs::pln::pattern::DEPARTIDENT % separator % atools::fs::pln::pattern::DESTIDENT,
                                         QString(), QString(), departIdent, QString(), destIdent, suffix,
-                                        atools::roundToInt(Unit::altFeetF(flightplan.getCruiseAltitudeFt())), false);
+                                        atools::roundToInt(Unit::altFeetF(flightplan.getCruiseAltitudeFt())));
 }
 
 QDebug operator<<(QDebug out, const Route& route)
