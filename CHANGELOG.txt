@@ -63,6 +63,8 @@ A big thank you to all who reported bugs and issues!
   in options.
 * Fixed issue where imported flight plan (for example in FMS or PLN format) could be overwritten with the
   LNMPLN format after creating the plan from a route string.
+* Fixed issues with default filename generation having `CRUISEALT` parameter. Now using local altitude
+  unit as set in options.
 * Adjusted route string reader to prefer a close VOR or waypoint before NDB.
 
 ### Scenery Library
