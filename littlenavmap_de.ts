@@ -5101,146 +5101,146 @@ Wählen Sie dann den Simulator und klicken Sie auf &quot;Verbinden&quot;.
         <translation>Gruppierte Abfragen</translation>
     </message>
     <message>
-        <location filename="src/logbook/logstatisticsdialog.cpp" line="201"/>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="203"/>
         <source>&amp;Copy to Clipboard</source>
         <translation>In die &amp;Zwischenablage kopieren</translation>
     </message>
     <message>
-        <location filename="src/logbook/logstatisticsdialog.cpp" line="202"/>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="204"/>
         <source>Copies overview as formatted text or table as CSV to clipboard</source>
         <translation>Kopiert die Übersicht als formatierten Text oder die Tabelle als CSV in die Zwischenablage</translation>
     </message>
     <message>
-        <location filename="src/logbook/logstatisticsdialog.cpp" line="276"/>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="278"/>
         <source>Copied text to clipboard.</source>
         <translation>Text in die Zwischenablage kopiert.</translation>
     </message>
     <message>
-        <location filename="src/logbook/logstatisticsdialog.cpp" line="289"/>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="291"/>
         <source>Copied %1 rows from table as CSV to clipboard.</source>
         <translation>%1 Einträge als CSV aus der Tabelle in die Zwischenablage kopiert.</translation>
     </message>
     <message>
-        <location filename="src/logbook/logstatisticsdialog.cpp" line="424"/>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="426"/>
         <source>Departure Times</source>
         <translation>Startzeiten</translation>
     </message>
     <message>
-        <location filename="src/logbook/logstatisticsdialog.cpp" line="428"/>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="430"/>
         <source>Earliest:</source>
         <translation>Früheste:</translation>
     </message>
     <message>
-        <location filename="src/logbook/logstatisticsdialog.cpp" line="428"/>
-        <location filename="src/logbook/logstatisticsdialog.cpp" line="431"/>
-        <location filename="src/logbook/logstatisticsdialog.cpp" line="434"/>
-        <location filename="src/logbook/logstatisticsdialog.cpp" line="437"/>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="430"/>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="433"/>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="436"/>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="439"/>
         <source>%1 %2</source>
         <translation>%1 %2</translation>
     </message>
     <message>
-        <location filename="src/logbook/logstatisticsdialog.cpp" line="431"/>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="433"/>
         <source>Earliest in Simulator:</source>
         <translation>Früheste im Simulator:</translation>
     </message>
     <message>
-        <location filename="src/logbook/logstatisticsdialog.cpp" line="434"/>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="436"/>
         <source>Latest:</source>
         <translation>Späteste:</translation>
     </message>
     <message>
-        <location filename="src/logbook/logstatisticsdialog.cpp" line="437"/>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="439"/>
         <source>Latest in Simulator:</source>
         <translation>Späteste im Simulator:</translation>
     </message>
     <message>
-        <location filename="src/logbook/logstatisticsdialog.cpp" line="386"/>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="388"/>
         <source>Flight Plan Distances</source>
         <translation>Flugplandistanzen</translation>
     </message>
     <message>
-        <location filename="src/logbook/logstatisticsdialog.cpp" line="373"/>
-        <location filename="src/logbook/logstatisticsdialog.cpp" line="380"/>
-        <location filename="src/logbook/logstatisticsdialog.cpp" line="390"/>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="375"/>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="382"/>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="392"/>
         <source>Total:</source>
         <translation>Gesamt:</translation>
     </message>
     <message>
-        <location filename="src/logbook/logstatisticsdialog.cpp" line="375"/>
-        <location filename="src/logbook/logstatisticsdialog.cpp" line="382"/>
-        <location filename="src/logbook/logstatisticsdialog.cpp" line="391"/>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="377"/>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="384"/>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="393"/>
         <source>Maximum:</source>
         <translation>Maximum:</translation>
     </message>
     <message>
-        <location filename="src/logbook/logstatisticsdialog.cpp" line="374"/>
-        <location filename="src/logbook/logstatisticsdialog.cpp" line="381"/>
-        <location filename="src/logbook/logstatisticsdialog.cpp" line="392"/>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="376"/>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="383"/>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="394"/>
         <source>Average:</source>
         <translation>Durchschnitt:</translation>
     </message>
     <message>
-        <location filename="src/logbook/logstatisticsdialog.cpp" line="371"/>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="373"/>
         <source>Flight Time Real</source>
         <translation>Wirkliche Flugzeit</translation>
     </message>
     <message>
-        <location filename="src/logbook/logstatisticsdialog.cpp" line="378"/>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="380"/>
         <source>Flight Time Simulator</source>
         <translation>Flugzeit im Simulator</translation>
     </message>
     <message>
-        <location filename="src/logbook/logstatisticsdialog.cpp" line="395"/>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="397"/>
         <source>Simulators</source>
         <translation>Simulatoren</translation>
     </message>
     <message>
-        <location filename="src/logbook/logstatisticsdialog.cpp" line="400"/>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="402"/>
         <source>%1:</source>
         <translation>%1:</translation>
     </message>
     <message>
-        <location filename="src/logbook/logstatisticsdialog.cpp" line="400"/>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="402"/>
         <source>Unknown</source>
         <translation>Unbekannt</translation>
     </message>
     <message>
-        <location filename="src/logbook/logstatisticsdialog.cpp" line="401"/>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="403"/>
         <source>%1 flights</source>
         <translation>%1 Flüge</translation>
     </message>
     <message>
-        <location filename="src/logbook/logstatisticsdialog.cpp" line="405"/>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="407"/>
         <source>Used Aircraft</source>
         <translation>Benutztes Flugzeug</translation>
     </message>
     <message>
-        <location filename="src/logbook/logstatisticsdialog.cpp" line="409"/>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="411"/>
         <source>Number of distinct types:</source>
         <translation>Anzahl der unterschiedlichen Typen:</translation>
     </message>
     <message>
-        <location filename="src/logbook/logstatisticsdialog.cpp" line="410"/>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="412"/>
         <source>Number of distinct registrations:</source>
         <translation>Anzahl der unterschiedlichen Registrierungen:</translation>
     </message>
     <message>
-        <location filename="src/logbook/logstatisticsdialog.cpp" line="411"/>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="413"/>
         <source>Number of distinct names:</source>
         <translation>Anzahl der unterschiedlichen Namen:</translation>
     </message>
     <message>
-        <location filename="src/logbook/logstatisticsdialog.cpp" line="415"/>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="417"/>
         <source>Visited Airports</source>
         <translation>Besuchte Flugplätze</translation>
     </message>
     <message>
-        <location filename="src/logbook/logstatisticsdialog.cpp" line="419"/>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="421"/>
         <source>Distinct departures:</source>
         <translation>Unterschiedliche Abflüge:</translation>
     </message>
     <message>
-        <location filename="src/logbook/logstatisticsdialog.cpp" line="420"/>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="422"/>
         <source>Distinct destinations:</source>
         <translation>Unterschiedliche Ankünfte:</translation>
     </message>
@@ -5257,277 +5257,310 @@ Wählen Sie dann den Simulator und klicken Sie auf &quot;Verbinden&quot;.
         <translation type="vanished">Durchschnitt im Simulator</translation>
     </message>
     <message>
-        <location filename="src/logbook/logstatisticsdialog.cpp" line="452"/>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="454"/>
         <source>Top airports</source>
         <translation>Beliebteste Flugplätze</translation>
     </message>
     <message>
-        <location filename="src/logbook/logstatisticsdialog.cpp" line="453"/>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="455"/>
         <source>Number of
 visits</source>
         <translation>Anzahl
 Besuche</translation>
     </message>
     <message>
-        <location filename="src/logbook/logstatisticsdialog.cpp" line="453"/>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="455"/>
         <source>ICAO</source>
         <translation>ICAO</translation>
     </message>
     <message>
-        <location filename="src/logbook/logstatisticsdialog.cpp" line="453"/>
-        <location filename="src/logbook/logstatisticsdialog.cpp" line="464"/>
-        <location filename="src/logbook/logstatisticsdialog.cpp" line="470"/>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="455"/>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="466"/>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="472"/>
         <source>Name</source>
         <translation>Name</translation>
     </message>
     <message>
-        <location filename="src/logbook/logstatisticsdialog.cpp" line="463"/>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="465"/>
         <source>Top departure airports</source>
         <translation>Beliebteste Startflugplätze</translation>
     </message>
     <message>
-        <location filename="src/logbook/logstatisticsdialog.cpp" line="464"/>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="466"/>
         <source>Number of
 departures</source>
         <translation>Anzahl der
 Abflüge</translation>
     </message>
     <message>
-        <location filename="src/logbook/logstatisticsdialog.cpp" line="464"/>
-        <location filename="src/logbook/logstatisticsdialog.cpp" line="470"/>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="466"/>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="472"/>
         <source>Ident</source>
         <translation>Kennung</translation>
     </message>
     <message>
-        <location filename="src/logbook/logstatisticsdialog.cpp" line="469"/>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="471"/>
         <source>Top destination airports</source>
         <translation>Beliebteste Zielflugplätze</translation>
     </message>
     <message>
-        <location filename="src/logbook/logstatisticsdialog.cpp" line="470"/>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="472"/>
         <source>Number of
 destinations</source>
         <translation>Anzahl der
 Ankünfte</translation>
     </message>
     <message>
-        <location filename="src/logbook/logstatisticsdialog.cpp" line="475"/>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="477"/>
         <source>Longest flights by distance</source>
         <translation>Längste Flüge nach Distanz</translation>
     </message>
     <message>
-        <location filename="src/logbook/logstatisticsdialog.cpp" line="476"/>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="478"/>
         <source>Flight Plan
 Distance %dist%</source>
         <translation>Flugplan
 Distanz %dist%</translation>
     </message>
     <message>
-        <location filename="src/logbook/logstatisticsdialog.cpp" line="476"/>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="478"/>
         <source>From ICAO</source>
         <translation>Von ICAO</translation>
     </message>
     <message>
-        <location filename="src/logbook/logstatisticsdialog.cpp" line="476"/>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="478"/>
         <source>From Name</source>
         <translation>Von Name</translation>
     </message>
     <message>
-        <location filename="src/logbook/logstatisticsdialog.cpp" line="476"/>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="478"/>
         <source>To ICAO</source>
         <translation>Ziel ICAO</translation>
     </message>
     <message>
-        <location filename="src/logbook/logstatisticsdialog.cpp" line="476"/>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="478"/>
         <source>To Name</source>
         <translation>Ziel Name</translation>
     </message>
     <message>
-        <location filename="src/logbook/logstatisticsdialog.cpp" line="477"/>
-        <location filename="src/logbook/logstatisticsdialog.cpp" line="486"/>
-        <location filename="src/logbook/logstatisticsdialog.cpp" line="497"/>
-        <location filename="src/logbook/logstatisticsdialog.cpp" line="506"/>
-        <location filename="src/logbook/logstatisticsdialog.cpp" line="518"/>
-        <location filename="src/logbook/logstatisticsdialog.cpp" line="528"/>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="479"/>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="488"/>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="499"/>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="508"/>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="520"/>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="530"/>
         <source>Simulator</source>
         <translation>Simulator</translation>
     </message>
     <message>
-        <location filename="src/logbook/logstatisticsdialog.cpp" line="477"/>
-        <location filename="src/logbook/logstatisticsdialog.cpp" line="486"/>
-        <location filename="src/logbook/logstatisticsdialog.cpp" line="497"/>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="479"/>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="488"/>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="499"/>
         <source>Aircraft
 Model</source>
         <translation>Flugzeug-
 modell</translation>
     </message>
     <message>
-        <location filename="src/logbook/logstatisticsdialog.cpp" line="477"/>
-        <location filename="src/logbook/logstatisticsdialog.cpp" line="486"/>
-        <location filename="src/logbook/logstatisticsdialog.cpp" line="497"/>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="479"/>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="488"/>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="499"/>
         <source>Aircraft
 Type</source>
         <translation>Flugzeug-
 typ</translation>
     </message>
     <message>
-        <location filename="src/logbook/logstatisticsdialog.cpp" line="477"/>
-        <location filename="src/logbook/logstatisticsdialog.cpp" line="486"/>
-        <location filename="src/logbook/logstatisticsdialog.cpp" line="497"/>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="479"/>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="488"/>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="499"/>
         <source>Aircraft
 Registration</source>
         <translation>Flugzeug-
 registrierung</translation>
     </message>
     <message>
-        <location filename="src/logbook/logstatisticsdialog.cpp" line="484"/>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="486"/>
         <source>Longest flights by simulator time</source>
         <translation>Längste Flüge nach Simulatorzeit</translation>
     </message>
     <message>
-        <location filename="src/logbook/logstatisticsdialog.cpp" line="485"/>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="487"/>
         <source>Simulator time
 hours</source>
         <translation>Simulatorzeit
 Stunden</translation>
     </message>
     <message>
-        <location filename="src/logbook/logstatisticsdialog.cpp" line="485"/>
-        <location filename="src/logbook/logstatisticsdialog.cpp" line="495"/>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="487"/>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="497"/>
         <source>From Airport
 ICAO</source>
         <translation>Vom Flugplatz
 ICAO</translation>
     </message>
     <message>
-        <location filename="src/logbook/logstatisticsdialog.cpp" line="485"/>
-        <location filename="src/logbook/logstatisticsdialog.cpp" line="495"/>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="487"/>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="497"/>
         <source>From Airport
 Name</source>
         <translation>Vom Flugplatz
 Name</translation>
     </message>
     <message>
-        <location filename="src/logbook/logstatisticsdialog.cpp" line="485"/>
-        <location filename="src/logbook/logstatisticsdialog.cpp" line="496"/>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="487"/>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="498"/>
         <source>To Airport
 ICAO</source>
         <translation>Zielflugplatz
 ICAO</translation>
     </message>
     <message>
-        <location filename="src/logbook/logstatisticsdialog.cpp" line="485"/>
-        <location filename="src/logbook/logstatisticsdialog.cpp" line="496"/>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="487"/>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="498"/>
         <source>To Airport
 Name</source>
         <translation>Zielflugplatz
 Name</translation>
     </message>
     <message>
-        <location filename="src/logbook/logstatisticsdialog.cpp" line="494"/>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="496"/>
         <source>Longest flights by real time</source>
         <translation>Längste Flüge nach wirklicher Zeit</translation>
     </message>
     <message>
-        <location filename="src/logbook/logstatisticsdialog.cpp" line="495"/>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="497"/>
         <source>Real time
 hours</source>
         <translation>Stunden
 wirkliche Zeit</translation>
     </message>
     <message>
-        <location filename="src/logbook/logstatisticsdialog.cpp" line="505"/>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="507"/>
         <source>Aircraft usage</source>
         <translation>Flugzeugnutzung</translation>
     </message>
     <message>
-        <location filename="src/logbook/logstatisticsdialog.cpp" line="506"/>
-        <location filename="src/logbook/logstatisticsdialog.cpp" line="518"/>
-        <location filename="src/logbook/logstatisticsdialog.cpp" line="528"/>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="508"/>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="520"/>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="530"/>
         <source>Number of
 flights</source>
         <translation>Anzahl
 Flüge</translation>
     </message>
     <message>
-        <location filename="src/logbook/logstatisticsdialog.cpp" line="506"/>
-        <location filename="src/logbook/logstatisticsdialog.cpp" line="518"/>
-        <location filename="src/logbook/logstatisticsdialog.cpp" line="528"/>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="508"/>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="520"/>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="530"/>
         <source>Total flight
 plan distance %dist%</source>
         <translation>Gesamte Flugplan
 Distanz %dist%</translation>
     </message>
     <message>
-        <location filename="src/logbook/logstatisticsdialog.cpp" line="507"/>
-        <location filename="src/logbook/logstatisticsdialog.cpp" line="519"/>
-        <location filename="src/logbook/logstatisticsdialog.cpp" line="529"/>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="509"/>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="521"/>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="531"/>
         <source>Total simulator time
 hours</source>
         <translation>Gesamte Simulator-
 zeit Stunden</translation>
     </message>
     <message>
-        <location filename="src/logbook/logstatisticsdialog.cpp" line="507"/>
-        <location filename="src/logbook/logstatisticsdialog.cpp" line="518"/>
-        <location filename="src/logbook/logstatisticsdialog.cpp" line="528"/>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="509"/>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="520"/>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="530"/>
         <source>Total realtime
 hours</source>
         <translation>Gesamte wirkliche
 Zeit Stunden</translation>
     </message>
     <message>
-        <location filename="src/logbook/logstatisticsdialog.cpp" line="507"/>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="509"/>
         <source>Model</source>
         <translation>Modell</translation>
     </message>
     <message>
-        <location filename="src/logbook/logstatisticsdialog.cpp" line="507"/>
-        <location filename="src/logbook/logstatisticsdialog.cpp" line="519"/>
-        <location filename="src/logbook/logstatisticsdialog.cpp" line="529"/>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="509"/>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="521"/>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="531"/>
         <source>Type</source>
         <translation>Typ</translation>
     </message>
     <message>
-        <location filename="src/logbook/logstatisticsdialog.cpp" line="507"/>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="509"/>
         <source>Registration</source>
         <translation>Registrierung</translation>
     </message>
     <message>
-        <location filename="src/logbook/logstatisticsdialog.cpp" line="517"/>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="519"/>
         <source>Aircraft usage by type</source>
         <translation>Flugzeugnutzung nach Typ</translation>
     </message>
     <message>
-        <location filename="src/logbook/logstatisticsdialog.cpp" line="527"/>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="529"/>
         <source>Aircraft usage by registration</source>
         <translation>Flugzeugnutzung nach Registrierung</translation>
     </message>
     <message>
-        <location filename="src/logbook/logstatisticsdialog.cpp" line="537"/>
-        <source>Aircraft hours and number of flights flown</source>
-        <oldsource>Aircraft hours flown</oldsource>
-        <translation>Geflogene Stunden und Anzahl Flüge nach Flugzeug</translation>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="539"/>
+        <source>Aircraft hours, distance, number of flights flown and more</source>
+        <translation>Flugstunden, Entfernung, Anzahl der geflogenen Flüge und mehr</translation>
     </message>
     <message>
-        <location filename="src/logbook/logstatisticsdialog.cpp" line="538"/>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="540"/>
+        <source>Total flights</source>
+        <translation>Flüge</translation>
+    </message>
+    <message>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="540"/>
+        <source>Average hours flown</source>
+        <translation>Durchnittliche Flugzeit in Stunden</translation>
+    </message>
+    <message>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="541"/>
+        <source>Total distance</source>
+        <translation>Gesamtentfernung</translation>
+    </message>
+    <message>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="541"/>
+        <source>Average distance</source>
+        <translation>Durchschnittsentfernung</translation>
+    </message>
+    <message>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="541"/>
+        <source>First flight</source>
+        <translation>Erster Flug</translation>
+    </message>
+    <message>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="541"/>
+        <source>Last flight</source>
+        <translation>Letzter Flug</translation>
+    </message>
+    <message>
+        <source>Aircraft hours and number of flights flown</source>
+        <oldsource>Aircraft hours flown</oldsource>
+        <translation type="vanished">Geflogene Stunden und Anzahl Flüge nach Flugzeug</translation>
+    </message>
+    <message>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="540"/>
         <source>Hours flown</source>
         <translation>Geflogene Stunden</translation>
     </message>
     <message>
-        <location filename="src/logbook/logstatisticsdialog.cpp" line="538"/>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="540"/>
         <source>Aircraft name</source>
         <translation>Flugzeugname</translation>
     </message>
     <message>
-        <location filename="src/logbook/logstatisticsdialog.cpp" line="538"/>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="540"/>
         <source>Aircraft type</source>
         <translation>Flugzeugtyp</translation>
     </message>
     <message>
-        <location filename="src/logbook/logstatisticsdialog.cpp" line="538"/>
         <source>Total Flights</source>
-        <translation>Flüge</translation>
+        <translation type="vanished">Flüge</translation>
     </message>
 </context>
 <context>
@@ -5802,7 +5835,7 @@ Die Spalten sind beim Export leer, wenn deaktiviert.</translation>
     </message>
     <message>
         <location filename="src/logbook/logdatacontroller.cpp" line="1119"/>
-        <location filename="src/logbook/logdatacontroller.cpp" line="1196"/>
+        <location filename="src/logbook/logdatacontroller.cpp" line="1195"/>
         <source>GPX Files %1;;All Files (*)</source>
         <translation>GPX-Dateien %1;;Alle Dateien (*)</translation>
     </message>
@@ -5812,17 +5845,17 @@ Die Spalten sind beim Export leer, wenn deaktiviert.</translation>
         <translation>Kann Datei nicht laden.</translation>
     </message>
     <message>
-        <location filename="src/logbook/logdatacontroller.cpp" line="1171"/>
+        <location filename="src/logbook/logdatacontroller.cpp" line="1170"/>
         <source>Empty Flightplan</source>
         <translation>Leerer Flugplan</translation>
     </message>
     <message>
-        <location filename="src/logbook/logdatacontroller.cpp" line="1195"/>
+        <location filename="src/logbook/logdatacontroller.cpp" line="1194"/>
         <source>Save GPX</source>
         <translation>GPX Speichern</translation>
     </message>
     <message>
-        <location filename="src/logbook/logdatacontroller.cpp" line="1211"/>
+        <location filename="src/logbook/logdatacontroller.cpp" line="1210"/>
         <source>Cannot save file.</source>
         <translation>Kann Datei nicht speichern.</translation>
     </message>
@@ -14388,12 +14421,12 @@ in Relation zum angezeigten Flugplatz</translation>
         <translation type="vanished">Fehler beim Öffnen der Webadresse &quot;%1&quot;</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="1853"/>
+        <location filename="src/gui/mainwindow.cpp" line="1849"/>
         <source>%1/%2</source>
         <translation>%1/%2</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="1858"/>
+        <location filename="src/gui/mainwindow.cpp" line="1854"/>
         <source>Simulator:
 %1
 
@@ -14406,7 +14439,7 @@ Online Netzwerk:
 %2</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="1879"/>
+        <location filename="src/gui/mainwindow.cpp" line="1875"/>
         <source>Too many objects</source>
         <translation>Zu viele Kartenobjekte</translation>
     </message>
@@ -14419,22 +14452,22 @@ Online Netzwerk:
         <translation type="vanished">Offline</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="1921"/>
+        <location filename="src/gui/mainwindow.cpp" line="1917"/>
         <source>Done</source>
         <translation>Fertig</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="1924"/>
+        <location filename="src/gui/mainwindow.cpp" line="1920"/>
         <source>Updating</source>
         <translation>Aktualisiere</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="1927"/>
+        <location filename="src/gui/mainwindow.cpp" line="1923"/>
         <source>Loading</source>
         <translation>Lade</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="1930"/>
+        <location filename="src/gui/mainwindow.cpp" line="1926"/>
         <source>Incomplete</source>
         <translation>Unvollständig</translation>
     </message>
@@ -14479,42 +14512,42 @@ Online Netzwerk:
         <translation type="vanished">Zurücksetzen des Logbuches, um Start und Landung für neue Logbucheinträge zu erkennen</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2014"/>
-        <location filename="src/gui/mainwindow.cpp" line="2027"/>
-        <location filename="src/gui/mainwindow.cpp" line="2040"/>
+        <location filename="src/gui/mainwindow.cpp" line="2010"/>
+        <location filename="src/gui/mainwindow.cpp" line="2023"/>
+        <location filename="src/gui/mainwindow.cpp" line="2036"/>
         <source> %1</source>
         <translation> %1</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2016"/>
+        <location filename="src/gui/mainwindow.cpp" line="2012"/>
         <source> %1 (%2)</source>
         <translation> %1 (%2)</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2021"/>
+        <location filename="src/gui/mainwindow.cpp" line="2017"/>
         <source> - (%1)</source>
         <translation> - (%1)</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2024"/>
-        <location filename="src/gui/mainwindow.cpp" line="2059"/>
+        <location filename="src/gui/mainwindow.cpp" line="2020"/>
+        <location filename="src/gui/mainwindow.cpp" line="2055"/>
         <source> - %1</source>
         <translation> - %1</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2032"/>
-        <location filename="src/gui/mainwindow.cpp" line="2034"/>
+        <location filename="src/gui/mainwindow.cpp" line="2028"/>
+        <location filename="src/gui/mainwindow.cpp" line="2030"/>
         <source> / N</source>
         <translation> / N</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2036"/>
+        <location filename="src/gui/mainwindow.cpp" line="2032"/>
         <source> / (N)</source>
         <translation> / (N)</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2044"/>
-        <location filename="src/gui/mainwindow.cpp" line="2052"/>
+        <location filename="src/gui/mainwindow.cpp" line="2040"/>
+        <location filename="src/gui/mainwindow.cpp" line="2048"/>
         <source> - %1%2</source>
         <translation> - %1%2</translation>
     </message>
@@ -14613,7 +14646,7 @@ Online Netzwerk:
         <translation type="vanished">Flugzeugpfad löschen?</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2101"/>
+        <location filename="src/gui/mainwindow.cpp" line="2097"/>
         <source>Aircraft track removed from map.</source>
         <translation>Flugzeugpfad von der Karte gelöscht.</translation>
     </message>
@@ -14659,7 +14692,7 @@ Online Netzwerk:
         <translation type="vanished">Unvollständig.</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="1956"/>
+        <location filename="src/gui/mainwindow.cpp" line="1952"/>
         <source>Flight plan shown on map.</source>
         <translation>Flugplan auf der Karte angezeigt.</translation>
     </message>
@@ -14682,8 +14715,8 @@ Der Simulator kann den Flugplan eventuell nicht laden.</translation>
         <translation type="vanished">Speichern%1%3%2</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2046"/>
-        <location filename="src/gui/mainwindow.cpp" line="2054"/>
+        <location filename="src/gui/mainwindow.cpp" line="2042"/>
+        <location filename="src/gui/mainwindow.cpp" line="2050"/>
         <source> *</source>
         <oldsource> as</oldsource>
         <translation> *</translation>
@@ -14729,7 +14762,7 @@ Der Simulator kann den Flugplan eventuell nicht laden.</translation>
         <translation type="vanished"> &amp;FLP</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="1970"/>
+        <location filename="src/gui/mainwindow.cpp" line="1966"/>
         <source> / </source>
         <translation> / </translation>
     </message>
@@ -14740,13 +14773,13 @@ Der Simulator kann den Flugplan eventuell nicht laden.</translation>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="991"/>
         <location filename="src/gui/mainwindow.cpp" line="995"/>
-        <location filename="src/gui/mainwindow.cpp" line="1990"/>
-        <location filename="src/gui/mainwindow.cpp" line="1992"/>
+        <location filename="src/gui/mainwindow.cpp" line="1986"/>
+        <location filename="src/gui/mainwindow.cpp" line="1988"/>
         <source>—</source>
         <translation>—</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="1829"/>
+        <location filename="src/gui/mainwindow.cpp" line="1825"/>
         <source>
 
 Set the path to additional map themes in options on page &quot;Cache and Files&quot;</source>
@@ -14755,18 +14788,18 @@ Set the path to additional map themes in options on page &quot;Cache and Files&q
 Den Pfad für zusätzliche Kartenthemen in den Einstellungen auf der Seite &quot;Zwischenspeicher und Dateien&quot; setzen</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2048"/>
-        <location filename="src/gui/mainwindow.cpp" line="2056"/>
+        <location filename="src/gui/mainwindow.cpp" line="2044"/>
+        <location filename="src/gui/mainwindow.cpp" line="2052"/>
         <source> - *</source>
         <translation> - *</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2117"/>
+        <location filename="src/gui/mainwindow.cpp" line="2113"/>
         <source>Flight Plan has been changed.</source>
         <translation>Flugplan verändert.</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2118"/>
+        <location filename="src/gui/mainwindow.cpp" line="2114"/>
         <source>Save changes?</source>
         <translation>Änderungen speichern?</translation>
     </message>
@@ -15184,7 +15217,7 @@ Die geladene Fensteranordnung trotzdem anwenden?</translation>
         <translation type="vanished">Fehler beim Öffnen des Kartenzwischenspeicherverzeichnisses &quot;%1&quot;</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="1880"/>
+        <location filename="src/gui/mainwindow.cpp" line="1876"/>
         <source>Too many objects to show on map.
 Display might be incomplete.
 Reduce map details in the &quot;View&quot; menu.</source>
@@ -15194,18 +15227,18 @@ Die Anzeige könnte unvollständig sein.
 Kartendetails im Menü &quot;Ansicht&quot; reduzieren.</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2005"/>
+        <location filename="src/gui/mainwindow.cpp" line="2001"/>
         <source> 64-bit</source>
         <translation> 64-Bit</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2007"/>
+        <location filename="src/gui/mainwindow.cpp" line="2003"/>
         <source> 32-bit</source>
         <translation> 32-Bit</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2093"/>
-        <location filename="src/gui/mainwindow.cpp" line="2155"/>
+        <location filename="src/gui/mainwindow.cpp" line="2089"/>
+        <location filename="src/gui/mainwindow.cpp" line="2151"/>
         <location filename="src/gui/mainwindow.cpp" line="2402"/>
         <location filename="src/gui/mainwindow.cpp" line="3176"/>
         <location filename="src/gui/mainwindow.cpp" line="3309"/>
@@ -15214,19 +15247,19 @@ Kartendetails im Menü &quot;Ansicht&quot; reduzieren.</translation>
         <translation>Diesen Dialog &amp;nicht mehr anzeigen.</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2093"/>
+        <location filename="src/gui/mainwindow.cpp" line="2089"/>
         <source>Delete user aircraft trail?</source>
         <translation>Pfad des Nutzerflugzeuges löschen?</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2115"/>
+        <location filename="src/gui/mainwindow.cpp" line="2111"/>
         <source>Flight Plan has been changed.
 There are changes which can be restored by using undo.</source>
         <translation>Der Flugplan wurde geändert.
 Es gibt Änderungen, die mit der Funktion Rückgängig wiederhergestellt werden können.</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2153"/>
+        <location filename="src/gui/mainwindow.cpp" line="2149"/>
         <source>Note that you can put the flight plan route description window in the background and modify the flight plan on the map or flight plan table in parallel.</source>
         <translation>Beachten Sie, dass Sie das Fenster der Routenbeschreibung in den Hintergrund stellen und parallel dazu den Flugplan auf der Karte oder in der Flugplantabelle ändern können.</translation>
     </message>
@@ -22081,12 +22114,12 @@ Bitte sicherstellen, dass das Fenster komplett abgedeckt ist.</translation>
         <translation>Während des Lesens der magnetischen Missweisung aus der Datenbank:</translation>
     </message>
     <message>
-        <location filename="src/navapp.cpp" line="1306"/>
+        <location filename="src/navapp.cpp" line="1307"/>
         <source> 64-bit</source>
         <translation> 64-Bit</translation>
     </message>
     <message>
-        <location filename="src/navapp.cpp" line="1308"/>
+        <location filename="src/navapp.cpp" line="1309"/>
         <source> 32-bit</source>
         <translation> 32-Bit</translation>
     </message>
@@ -22713,7 +22746,7 @@ Nutzerpunkt und Logbuchsuche wiederherstellen</translation>
         <translation type="vanished">Textgröße für den &amp;Flugzeugleistungsbericht:</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="5004"/>
+        <location filename="src/options/options.ui" line="5009"/>
         <source>The map will stop following the aircraft for the given time if the user does any interaction with the map like scrolling or zooming.
 This setting is also used in the elevation profile.
 See notes in the manual for details of this setting and how to move around in the map.</source>
@@ -22726,17 +22759,17 @@ Diese Einstellung wird auch im Höhenprofil verwendet.
 Siehe Anmerkungen in der Anleitung für Details.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="5322"/>
+        <location filename="src/options/options.ui" line="5327"/>
         <source>Loading, Saving and Export</source>
         <translation>Laden, Speichern und Export</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="5408"/>
+        <location filename="src/options/options.ui" line="5413"/>
         <source>Center &amp;flight plan on map after loading</source>
         <translation>&amp;Flugplan nach dem Laden zentrieren</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="5380"/>
+        <location filename="src/options/options.ui" line="5385"/>
         <source>Check this option to avoid overwriting flight plans with a new departure or destination after changing these.
 The &quot;Save as&quot; dialog will show up instead of overwriting the current flight plan when you reverse the route for example.</source>
         <translation>Diese Option wählen, um zu verhindern, dass Flugpläne mit einem neuen Abflug- oder Zielort überschrieben werden, wenn diese geändert wurden.
@@ -22778,41 +22811,41 @@ Das Programm muss neu gestartet werden, damit die Änderungen aktiv werden.</tra
         <location filename="src/options/options.ui" line="996"/>
         <location filename="src/options/options.ui" line="1018"/>
         <location filename="src/options/options.ui" line="1070"/>
-        <location filename="src/options/options.ui" line="2010"/>
-        <location filename="src/options/options.ui" line="2352"/>
-        <location filename="src/options/options.ui" line="2390"/>
-        <location filename="src/options/options.ui" line="2422"/>
-        <location filename="src/options/options.ui" line="2457"/>
-        <location filename="src/options/options.ui" line="2516"/>
-        <location filename="src/options/options.ui" line="2554"/>
-        <location filename="src/options/options.ui" line="2599"/>
-        <location filename="src/options/options.ui" line="2637"/>
-        <location filename="src/options/options.ui" line="2662"/>
-        <location filename="src/options/options.ui" line="2713"/>
-        <location filename="src/options/options.ui" line="2758"/>
-        <location filename="src/options/options.ui" line="2783"/>
-        <location filename="src/options/options.ui" line="2903"/>
-        <location filename="src/options/options.ui" line="3043"/>
-        <location filename="src/options/options.ui" line="3069"/>
-        <location filename="src/options/options.ui" line="3147"/>
-        <location filename="src/options/options.ui" line="3327"/>
-        <location filename="src/options/options.ui" line="3352"/>
-        <location filename="src/options/options.ui" line="3531"/>
-        <location filename="src/options/options.ui" line="3563"/>
-        <location filename="src/options/options.ui" line="3596"/>
-        <location filename="src/options/options.ui" line="3621"/>
-        <location filename="src/options/options.ui" line="3646"/>
-        <location filename="src/options/options.ui" line="3671"/>
-        <location filename="src/options/options.ui" line="3723"/>
-        <location filename="src/options/options.ui" line="3748"/>
-        <location filename="src/options/options.ui" line="3774"/>
-        <location filename="src/options/options.ui" line="3815"/>
-        <location filename="src/options/options.ui" line="3840"/>
-        <location filename="src/options/options.ui" line="3872"/>
-        <location filename="src/options/options.ui" line="3921"/>
-        <location filename="src/options/options.ui" line="3977"/>
-        <location filename="src/options/options.ui" line="4895"/>
-        <location filename="src/options/options.ui" line="4918"/>
+        <location filename="src/options/options.ui" line="2015"/>
+        <location filename="src/options/options.ui" line="2357"/>
+        <location filename="src/options/options.ui" line="2395"/>
+        <location filename="src/options/options.ui" line="2427"/>
+        <location filename="src/options/options.ui" line="2462"/>
+        <location filename="src/options/options.ui" line="2521"/>
+        <location filename="src/options/options.ui" line="2559"/>
+        <location filename="src/options/options.ui" line="2604"/>
+        <location filename="src/options/options.ui" line="2642"/>
+        <location filename="src/options/options.ui" line="2667"/>
+        <location filename="src/options/options.ui" line="2718"/>
+        <location filename="src/options/options.ui" line="2763"/>
+        <location filename="src/options/options.ui" line="2788"/>
+        <location filename="src/options/options.ui" line="2908"/>
+        <location filename="src/options/options.ui" line="3048"/>
+        <location filename="src/options/options.ui" line="3074"/>
+        <location filename="src/options/options.ui" line="3152"/>
+        <location filename="src/options/options.ui" line="3332"/>
+        <location filename="src/options/options.ui" line="3357"/>
+        <location filename="src/options/options.ui" line="3536"/>
+        <location filename="src/options/options.ui" line="3568"/>
+        <location filename="src/options/options.ui" line="3601"/>
+        <location filename="src/options/options.ui" line="3626"/>
+        <location filename="src/options/options.ui" line="3651"/>
+        <location filename="src/options/options.ui" line="3676"/>
+        <location filename="src/options/options.ui" line="3728"/>
+        <location filename="src/options/options.ui" line="3753"/>
+        <location filename="src/options/options.ui" line="3779"/>
+        <location filename="src/options/options.ui" line="3820"/>
+        <location filename="src/options/options.ui" line="3845"/>
+        <location filename="src/options/options.ui" line="3877"/>
+        <location filename="src/options/options.ui" line="3926"/>
+        <location filename="src/options/options.ui" line="3982"/>
+        <location filename="src/options/options.ui" line="4900"/>
+        <location filename="src/options/options.ui" line="4923"/>
         <source> %</source>
         <translation> %</translation>
     </message>
@@ -22832,13 +22865,13 @@ Das Programm muss neu gestartet werden, damit die Änderungen aktiv werden.</tra
         <translation>Textgröße für &amp;Informationsfenster:</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="1523"/>
+        <location filename="src/options/options.ui" line="1528"/>
         <source>Show information for airports when clicking on the map</source>
         <oldsource>A restart is recommended after changing the style.</oldsource>
         <translation>Nach dem Ändern des Stils wird ein Neustart empfohlen</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="5405"/>
+        <location filename="src/options/options.ui" line="5410"/>
         <source>Does not apply to the flight plan loaded after startup.</source>
         <translation>Wirkt sich nicht auf den Flugplan aus, der beim Start geladen wurde.</translation>
     </message>
@@ -22867,24 +22900,24 @@ Das Programm muss neu gestartet werden, damit die Änderungen aktiv werden.</tra
         <translation>Textgröße für das Informationsfenster des &amp;Simulatorflugzeuges:</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="5384"/>
+        <location filename="src/options/options.ui" line="5389"/>
         <source>&amp;Avoid overwriting Flight Plan with not matching departure and destination</source>
         <oldsource>&amp;Avoid overwriting Flight Plan with non matching departure and destination</oldsource>
         <translation>Das &amp;Überschreiben von Flugplänen mit veränderten Start oder Ziel vermeiden</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="4117"/>
+        <location filename="src/options/options.ui" line="4122"/>
         <source>Darken the map and the flight plan elevation profile for the style &quot;Night&quot;. Lower values result in a darker display.</source>
         <translation>Karte und Höhenprofile im &quot;Nacht&quot; Stil verdunkeln. Niedrigere Werte ergeben eine dunklere Anzeige.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="4078"/>
-        <location filename="src/options/options.ui" line="4123"/>
+        <location filename="src/options/options.ui" line="4083"/>
+        <location filename="src/options/options.ui" line="4128"/>
         <source> % Brightness</source>
         <translation> % Helligkeit</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="4107"/>
+        <location filename="src/options/options.ui" line="4112"/>
         <source>Map &amp;dimming in night style:</source>
         <translation>Karte im Nachtstil &amp;verdunkeln:</translation>
     </message>
@@ -22911,7 +22944,7 @@ Für jeden Wert wird ein Ring hinzugefügt.</translation>
         <translation type="vanished">&amp;Radien für rote Distanzkreise (%dist%):</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="1775"/>
+        <location filename="src/options/options.ui" line="1780"/>
         <source>Empty airports are not add-ons, have no taxiways, no parking and no aprons.
 These are displayed underneath all other airports and use a gray symbol.
 The aiports toolbar button can be used to disable them if this checkbox is enabled.</source>
@@ -22923,7 +22956,7 @@ Diese werden unter allen anderen Flugplätzen in Form eines grauen Symbols angez
 Die Flugplatz-Schaltfläche auf der Werkzeugleiste kann benutzt werden, um diese Plätze auszublenden.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="1780"/>
+        <location filename="src/options/options.ui" line="1785"/>
         <source>&amp;Treat empty airports special</source>
         <translation>&amp;Leere Flugplätze besonders behandeln</translation>
     </message>
@@ -22973,37 +23006,37 @@ das Öffnen von Dateien, Ändern des Flugplans und anderer Operationen.</transla
 Dies zeigt z.B. die Flugplantabelle nach dem Öffnen an</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="1698"/>
+        <location filename="src/options/options.ui" line="1703"/>
         <source>Show tooltips for waypoints, VOR, NDB, ILS, airways,
 userpoints and logbook entries when hovering the cursor over the map</source>
         <translation>Zeige Kurzinfos für Wegpunkte, VOR, NDB, ILS, Luftstraßen,
 Nutzerpunkte und Logbucheinträge unter dem Mauszeiger auf der Karte</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="1566"/>
-        <location filename="src/options/options.ui" line="1702"/>
+        <location filename="src/options/options.ui" line="1571"/>
+        <location filename="src/options/options.ui" line="1707"/>
         <source>&amp;Navaids, airways, userpoints and logbook</source>
         <translation>&amp;Navigationshilfen, Luftstraßen, Nutzerpunkte
 und Logbuch</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="1725"/>
+        <location filename="src/options/options.ui" line="1730"/>
         <source>Show a tooltip for high altitude winds when hovering the cursor over a wind barb.</source>
         <translation>Zeigt eine Kurzinfo für die Höhenwindsymbole.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="1547"/>
+        <location filename="src/options/options.ui" line="1552"/>
         <source>Show procedures in procedure search tab on airport click</source>
         <translation>Zeige Prozeduren im Reiter Prozedursuche beim Klick auf Flugplätze</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="1550"/>
+        <location filename="src/options/options.ui" line="1555"/>
         <source>Show &amp;procedures on airport click</source>
         <oldsource>Update &amp;procedures on airport click</oldsource>
         <translation>Beim Klick auf Flugplätze &amp;Prozeduren anzeigen</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="1562"/>
+        <location filename="src/options/options.ui" line="1567"/>
         <source>Show information for waypoints, VOR, NDB, airways,
 userpoints and logbook entries when clicking on the map</source>
         <translation>Zeige Informationen für Wegpunkte, VOR, NDB, ILS und Luftstraßen
@@ -23026,7 +23059,7 @@ Nutzerpunkte und Logbucheinträge bei Klick in die Karte</translation>
         <translation type="vanished">Keine - Zeige keine Flugplätze und Navigationshilfen während des Rollens</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="1944"/>
+        <location filename="src/options/options.ui" line="1949"/>
         <source>Navigation</source>
         <translation>Navigation</translation>
     </message>
@@ -23037,7 +23070,7 @@ Enable &quot;Navigation Aids&quot;, &quot;Screen Areas&quot; on options page &qu
 Aktivieren Sie &quot;Navigationshilfen&quot;, &quot;Kartenregionen&quot; auf der Einstellungsseite &quot;Kartenanzeige 2&quot;, um Hinweise auf der Karte anzuzeigen.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="1969"/>
+        <location filename="src/options/options.ui" line="1974"/>
         <source>Use map &amp;areas for navigation. Useful when using touchscreens.</source>
         <oldsource>Use map &amp;areas for easier navigation. Useful when using touchscreens.</oldsource>
         <translation>Benutze &amp;aktive Kartenregionen für die Navigation. Nützlich für Touchscreens.</translation>
@@ -23054,60 +23087,60 @@ options page &quot;Map Display 2&quot; to display a screen center hint.</oldsour
         <translation type="vanished">Aktivieren Sie &quot;Navigationshilfen&quot;, &quot;Kartenmitte&quot; auf der Einstellungsseite &quot;Kartenanzeige 2&quot;, um Hinweise auf der Karte anzuzeigen.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="1990"/>
+        <location filename="src/options/options.ui" line="1995"/>
         <source>Click &amp;map to center position. Mouse wheel zooms to the map center position.</source>
         <translation>Klicken, &amp;um Position zu zentrieren. Das Mausrad zoomt auf die mittlere Position der Karte.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="1997"/>
+        <location filename="src/options/options.ui" line="2002"/>
         <source>&amp;Click and drag map to move. Mouse wheel zooms to cursor position.</source>
         <translation>&amp;Klicken und Verschieben um die Karte zu bewegen. Das Mausrad zoomt zur Mauszeigerposition.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="2007"/>
+        <location filename="src/options/options.ui" line="2012"/>
         <source>Size of a screen area (virtual button) in percent of screen size.</source>
         <translation>Größe der aktiven Regionen in Prozent der Kartengröße.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="2032"/>
+        <location filename="src/options/options.ui" line="2037"/>
         <source>Zoom and Click</source>
         <translation>Vergrößern und Klicken</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="2053"/>
+        <location filename="src/options/options.ui" line="2058"/>
         <source>&amp;Zoom distance for double click on object:</source>
         <translation>&amp;Zoomdistanz für Doppelklick auf ein Objekt:</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="2063"/>
+        <location filename="src/options/options.ui" line="2068"/>
         <source>Viewpoint distance above earth surface when zooming after double clicking on an object in a table or in the map..
 Smaller values will zoom in closer to an airport or navaid. </source>
         <translation>Sichtpunktabstand über der Erdoberfläche bei dem Vergrößern und Verkleinern nach einem Doppelklick in einer Tabelle oder auf der Karte.
 Kleinere Werte vergrößern den Flugplatz oder die Navigationshilfe stärker. </translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="2067"/>
-        <location filename="src/options/options.ui" line="2101"/>
-        <location filename="src/options/options.ui" line="4454"/>
-        <location filename="src/options/options.ui" line="4470"/>
-        <location filename="src/options/options.ui" line="4499"/>
-        <location filename="src/options/options.ui" line="4538"/>
-        <location filename="src/options/options.ui" line="4554"/>
-        <location filename="src/options/options.ui" line="4636"/>
-        <location filename="src/options/options.ui" line="4662"/>
-        <location filename="src/options/options.ui" line="4721"/>
-        <location filename="src/options/options.ui" line="4972"/>
-        <location filename="src/options/options.ui" line="5055"/>
+        <location filename="src/options/options.ui" line="2072"/>
+        <location filename="src/options/options.ui" line="2106"/>
+        <location filename="src/options/options.ui" line="4459"/>
+        <location filename="src/options/options.ui" line="4475"/>
+        <location filename="src/options/options.ui" line="4504"/>
+        <location filename="src/options/options.ui" line="4543"/>
+        <location filename="src/options/options.ui" line="4559"/>
+        <location filename="src/options/options.ui" line="4641"/>
+        <location filename="src/options/options.ui" line="4667"/>
+        <location filename="src/options/options.ui" line="4726"/>
+        <location filename="src/options/options.ui" line="4977"/>
+        <location filename="src/options/options.ui" line="5060"/>
         <source> %dist%</source>
         <translation> %dist%</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="2086"/>
+        <location filename="src/options/options.ui" line="2091"/>
         <source>&amp;Zoom distance for &quot;Show on Map&quot; menu item:</source>
         <translation>&amp;Zoomdistanz für &quot;Auf der Karte zeigen&quot; Menüeintrag:</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="2096"/>
+        <location filename="src/options/options.ui" line="2101"/>
         <source>Viewpoint distance above earth surface when zooming after selecting &quot;Show on map&quot; or clicking the map links in the information windows.
 Smaller values will zoom in closer to an airport or navaid.
 </source>
@@ -23118,12 +23151,12 @@ Smaller values will zoom in closer to an airport or navaid.
 Kleinere Werte vergrößern den Flugplatz oder die Navigationshilfe stärker.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="2139"/>
+        <location filename="src/options/options.ui" line="2144"/>
         <source>Click Sensitivity</source>
         <translation>Klickempfindlichkeit</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="2193"/>
+        <location filename="src/options/options.ui" line="2198"/>
         <source>Tool tip &amp;sensitivity on map:</source>
         <translation>&amp;Empfindlichkeit für Kurzinfos auf der Karte:</translation>
     </message>
@@ -23132,18 +23165,18 @@ Kleinere Werte vergrößern den Flugplatz oder die Navigationshilfe stärker.</t
         <translation type="vanished">Größere Werte führen zu mehr Tooltips.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="2174"/>
-        <location filename="src/options/options.ui" line="2206"/>
+        <location filename="src/options/options.ui" line="2179"/>
+        <location filename="src/options/options.ui" line="2211"/>
         <source> pixels</source>
         <translation> Pixel</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="2160"/>
+        <location filename="src/options/options.ui" line="2165"/>
         <source>&amp;Click sensitivity when selecting objects on map:</source>
         <translation>&amp;Klickempfindlichkeit beim Auswählen eines Objekts auf der Karte:</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="2170"/>
+        <location filename="src/options/options.ui" line="2175"/>
         <source>Larger values will catch more objects.
 Smaller values will allow a finer selection.</source>
         <translation>Größere Werte erfassen mehr Objekte.
@@ -23188,7 +23221,7 @@ Dadurch werden die Grafiken und Symbole skaliert, um die Sichtbarkeit zu verbess
         <translation type="vanished">Aktiviere &amp;Unterstützung für Monitore mit hoher Auflösung</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="1685"/>
+        <location filename="src/options/options.ui" line="1690"/>
         <source>Show tooltips for airports, parking, towers and helipads when hovering the cursor over the map</source>
         <translation>Zeige Kurzinfos für Flugplätze, Parkpositionen, Kontrolltürme und Helikopterlandeplätze unter dem Mauszeiger auf der Karte</translation>
     </message>
@@ -23205,7 +23238,7 @@ Dadurch werden die Grafiken und Symbole skaliert, um die Sichtbarkeit zu verbess
         <translation type="vanished">Zeige für Navigationshilfen und Luftstraßen</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="1712"/>
+        <location filename="src/options/options.ui" line="1717"/>
         <source>Show tooltips for airspaces when hovering the cursor over the map</source>
         <translation>Zeige Kurzinfos für Lufträume unter dem Mauszeiger auf der Karte</translation>
     </message>
@@ -23214,7 +23247,7 @@ Dadurch werden die Grafiken und Symbole skaliert, um die Sichtbarkeit zu verbess
         <translation type="vanished">Zeige für &amp;Lufträume</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="5783"/>
+        <location filename="src/options/options.ui" line="5788"/>
         <source>This file &quot;global_winds.grib&quot; will be used to get wind aloft data if X-Plane is selected.
 The default X-Plane wind file in the X-Plane base path will be used if this field is empty.</source>
         <oldsource>This file &quot;global_winds.grib&quot; will be used only if X-Plane is selected.
@@ -23231,7 +23264,7 @@ In der Regel ist es nicht notwendig, diese URL zu ändern.
 Die Eingabe eines falschen Wertes führt zu Fehlern beim Download.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="6661"/>
+        <location filename="src/options/options.ui" line="6666"/>
         <source>Base directory of the web server. This is the directory containing the &quot;index.html&quot; file.
 There is usually no need to change this value.
 Use this to serve your own modifed Little Navmap web page.</source>
@@ -23240,7 +23273,7 @@ In der Regel ist es nicht notwendig, diesen Wert zu ändern.
 Verwenden Sie dies, um Ihre eigene, modifizierte Little Navmap-Webseite zu erstellen.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="6727"/>
+        <location filename="src/options/options.ui" line="6732"/>
         <source>Use a so-called self-signed example certificate for an encrypted connection.
 Browsers will show a warning when using such a connection and you have to add an security exception in the browser.
 You have to use &quot;https//...&quot; instead of &quot;http://...&quot; when accessing the page. Otherwise you will get an error in the web browser.
@@ -23254,7 +23287,7 @@ Beachten Sie, dass das verwendete Beispielzertifikat keine Sicherheit bietet, da
 Little Navmap GIT-Repository öffentlich ist.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="6817"/>
+        <location filename="src/options/options.ui" line="6822"/>
         <source>Map Display Cache</source>
         <oldsource>Map Display</oldsource>
         <translation>Zwischenspeicher der Kartenanzeige</translation>
@@ -23268,28 +23301,28 @@ Little Navmap GIT-Repository öffentlich ist.</translation>
         <translation type="vanished">Farbe für Flugzeugpfad setzen.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="2935"/>
+        <location filename="src/options/options.ui" line="2940"/>
         <source>Color</source>
         <translation>Farbe</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="2425"/>
-        <location filename="src/options/options.ui" line="2460"/>
-        <location filename="src/options/options.ui" line="2640"/>
-        <location filename="src/options/options.ui" line="2665"/>
-        <location filename="src/options/options.ui" line="2716"/>
-        <location filename="src/options/options.ui" line="3072"/>
-        <location filename="src/options/options.ui" line="3534"/>
-        <location filename="src/options/options.ui" line="3624"/>
-        <location filename="src/options/options.ui" line="3649"/>
-        <location filename="src/options/options.ui" line="3674"/>
-        <location filename="src/options/options.ui" line="3751"/>
-        <location filename="src/options/options.ui" line="3843"/>
+        <location filename="src/options/options.ui" line="2430"/>
+        <location filename="src/options/options.ui" line="2465"/>
+        <location filename="src/options/options.ui" line="2645"/>
+        <location filename="src/options/options.ui" line="2670"/>
+        <location filename="src/options/options.ui" line="2721"/>
+        <location filename="src/options/options.ui" line="3077"/>
+        <location filename="src/options/options.ui" line="3539"/>
+        <location filename="src/options/options.ui" line="3629"/>
+        <location filename="src/options/options.ui" line="3654"/>
+        <location filename="src/options/options.ui" line="3679"/>
+        <location filename="src/options/options.ui" line="3756"/>
+        <location filename="src/options/options.ui" line="3848"/>
         <source>Text </source>
         <translation>Text </translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="2493"/>
+        <location filename="src/options/options.ui" line="2498"/>
         <source>&amp;Airports:</source>
         <translation>&amp;Flugplätze:</translation>
     </message>
@@ -23298,18 +23331,18 @@ Little Navmap GIT-Repository öffentlich ist.</translation>
         <translation type="vanished">Breite </translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="2576"/>
+        <location filename="src/options/options.ui" line="2581"/>
         <source>&amp;User aircraft:</source>
         <translation>&amp;Nutzerflugzeug:</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="2355"/>
-        <location filename="src/options/options.ui" line="2519"/>
-        <location filename="src/options/options.ui" line="2557"/>
-        <location filename="src/options/options.ui" line="2602"/>
-        <location filename="src/options/options.ui" line="2761"/>
-        <location filename="src/options/options.ui" line="2786"/>
-        <location filename="src/options/options.ui" line="3566"/>
+        <location filename="src/options/options.ui" line="2360"/>
+        <location filename="src/options/options.ui" line="2524"/>
+        <location filename="src/options/options.ui" line="2562"/>
+        <location filename="src/options/options.ui" line="2607"/>
+        <location filename="src/options/options.ui" line="2766"/>
+        <location filename="src/options/options.ui" line="2791"/>
+        <location filename="src/options/options.ui" line="3571"/>
         <source>Symbol </source>
         <translation>Symbol </translation>
     </message>
@@ -23324,32 +23357,32 @@ airways:</source>
 Luftstraßen:</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="2697"/>
+        <location filename="src/options/options.ui" line="2702"/>
         <source>AI or &amp;multiplayer aircraft:</source>
         <translation>KI- oder &amp;Mehrspielerflugzeug:</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="2946"/>
+        <location filename="src/options/options.ui" line="2951"/>
         <source>Dashed</source>
         <translation>Gestrichelt</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="2951"/>
+        <location filename="src/options/options.ui" line="2956"/>
         <source>Dotted</source>
         <translation>Gepunktet</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="2956"/>
+        <location filename="src/options/options.ui" line="2961"/>
         <source>Solid</source>
         <translation>Durchgezogen</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="3105"/>
+        <location filename="src/options/options.ui" line="3110"/>
         <source>&amp;Flight plan:</source>
         <translation>&amp;Flugplan:</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="2888"/>
+        <location filename="src/options/options.ui" line="2893"/>
         <source>User aircraft &amp;trail:</source>
         <translation>&amp;Pfad des Nutzerflugzeuges:</translation>
     </message>
@@ -23388,7 +23421,7 @@ Luftstraßen:</translation>
         <translation>Fuß (ft)</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="2745"/>
+        <location filename="src/options/options.ui" line="2750"/>
         <source>Airport &amp;Weather:</source>
         <translation>Flugplatz&amp;wetter:</translation>
     </message>
@@ -23410,17 +23443,17 @@ Afftects map and elevation profile.</source>
 Betrifft die Karte und das Höhenprofil.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="2755"/>
+        <location filename="src/options/options.ui" line="2760"/>
         <source>Size of airport weather symbols</source>
         <translation>Größe der Flugplatzwettersymbole</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="2513"/>
+        <location filename="src/options/options.ui" line="2518"/>
         <source>Size of high altitude wind barbs</source>
         <translation>Größe der Höhenwindsymbole</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="3837"/>
+        <location filename="src/options/options.ui" line="3842"/>
         <source>Text size for labels</source>
         <translation>Textgröße für Beschriftungen</translation>
     </message>
@@ -23444,12 +23477,12 @@ Warteschleifen und
 Logbucheinträge:</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="3745"/>
+        <location filename="src/options/options.ui" line="3750"/>
         <source>Text size of the MORA altitude labels</source>
         <translation>Textgröße der Beschriftung für die Minimale Flughöhe (MORA)</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="3770"/>
+        <location filename="src/options/options.ui" line="3775"/>
         <source>Transparency of the MORA text and grid.
 Value 0 is opaque and 90 is most transparent.</source>
         <oldsource>Text size of the MORA text and grid.
@@ -23458,15 +23491,15 @@ Value 0 is opaque and 90 is most transparent.</oldsource>
 0 ist undurchsichtig und 90 entspricht maximaler Transparenz.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="3150"/>
-        <location filename="src/options/options.ui" line="3599"/>
-        <location filename="src/options/options.ui" line="3777"/>
-        <location filename="src/options/options.ui" line="3924"/>
+        <location filename="src/options/options.ui" line="3155"/>
+        <location filename="src/options/options.ui" line="3604"/>
+        <location filename="src/options/options.ui" line="3782"/>
+        <location filename="src/options/options.ui" line="3929"/>
         <source>Transparency </source>
         <translation>Transparenz </translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="3460"/>
+        <location filename="src/options/options.ui" line="3465"/>
         <source>&amp;Minimum altitude grid
 (MORA):</source>
         <translation>&amp;Minimale Flughöhe (MORA) Gitter:</translation>
@@ -23557,37 +23590,37 @@ Value 0 is opaque and 90 is most transparent.</oldsource>
         <translation type="vanished">Simulatorflugzeug</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="4776"/>
+        <location filename="src/options/options.ui" line="4781"/>
         <source>Simulator Aircraft Updates</source>
         <translation>Aktualisierungen des Simulatorflugzeuges</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="4797"/>
+        <location filename="src/options/options.ui" line="4802"/>
         <source>&amp;Low - Aircraft position and label is updated rarely, only for large course or altitude changes.</source>
         <translation>&amp;Niedrig - Flugzeugposition und Beschreibung wird selten aktualisiert, nur bei größeren Kurs- oder Höhenänderungen.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="4804"/>
+        <location filename="src/options/options.ui" line="4809"/>
         <source>&amp;Medium</source>
         <translation>&amp;Mittel</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="4814"/>
+        <location filename="src/options/options.ui" line="4819"/>
         <source>&amp;High - Aircraft position and label is updated often, even for small course or altitude changes.</source>
         <translation>&amp;Hoch - Flugzeugposition und Beschreibung wird oft aktualisiert, auch bei kleinen Kurs- oder Höhenänderungen.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="4849"/>
+        <location filename="src/options/options.ui" line="4854"/>
         <source>&amp;Do not use box mode for following the aircraft. Move the map constantly.</source>
         <translation>&amp;Boxmodus nicht zum Folgen des Flugzeuges verwenden. Karte konstant bewegen.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="4856"/>
+        <location filename="src/options/options.ui" line="4861"/>
         <source>&amp;Simulator aircraft scroll box size (percent of map window size):</source>
         <translation>&amp;Größe der Scrollbox für das Simulatorflugzeug (Prozent von Kartenfenstergröße):</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="5196"/>
+        <location filename="src/options/options.ui" line="5201"/>
         <source>The user aircraft trail will be pruned if it contains more than this number of points. 
 Lower this value to avoid too long tracks and avoid stutters in map display.</source>
         <oldsource>The user aircraft trail will be pruned if it contains more than this number of points. Lower this value to avoid too long tracks and save performance.</oldsource>
@@ -23595,7 +23628,7 @@ Lower this value to avoid too long tracks and avoid stutters in map display.</so
 Reduzieren Sie diesen Wert um zu lange Pfade zu vermeiden und Stottern in der Kartendarstellung zu vermeiden.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="5203"/>
+        <location filename="src/options/options.ui" line="5208"/>
         <source> points</source>
         <translation> Punkte</translation>
     </message>
@@ -23634,7 +23667,7 @@ Reduzieren Sie diesen Wert um zu lange Pfade zu vermeiden und Stottern in der Ka
         <translation type="vanished">&amp;Exportiere Wegpunkte und Flugplätze als Benutzerdefinierte für Garmin GTN und GNS, um gesperrte Wegpunkte zu vermeiden</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="5261"/>
+        <location filename="src/options/options.ui" line="5266"/>
         <source>Flight Plan Calculation</source>
         <translation>Flugplanberechnung</translation>
     </message>
@@ -23649,7 +23682,7 @@ von Flugplatz zu Luftstraße bevorzugen.</translation>
         <translation type="vanished">&amp;VOR Stationen beim Übergang zu Luftstraßen bei der Flugplanberechnung bevorzugen. </translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="5468"/>
+        <location filename="src/options/options.ui" line="5473"/>
         <source>&amp;Minimum altitude buffer to ground in elevation profile (red line):</source>
         <translation>&amp;Minimaler Höhenpuffer zum Grund im Höhenprofil (rote Linie):</translation>
     </message>
@@ -23662,12 +23695,12 @@ von Flugplatz zu Luftstraße bevorzugen.</translation>
         <translation type="vanished">Startpunkt des Sinkflugs auf der Karte und im Höhenprofil anzeigen</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="5306"/>
+        <location filename="src/options/options.ui" line="5311"/>
         <source>Rounds up flight plan cruise altitude according to selected rule.</source>
         <translation>Reiseflughöhe des Flugplanes anhand der ausgewählten Regel aufrunden.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="5309"/>
+        <location filename="src/options/options.ui" line="5314"/>
         <source>&amp;Use simplified rule to determine cruise altitude</source>
         <translation>&amp;Vereinfachte Regel für Reiseflughöhe nutzen</translation>
     </message>
@@ -23680,14 +23713,14 @@ von Flugplatz zu Luftstraße bevorzugen.</translation>
         <translation type="vanished">&amp;Faustregel für Berechnung vom Startpunkt des Sinkflugs:</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="5478"/>
+        <location filename="src/options/options.ui" line="5483"/>
         <source>The red line value is always rounded up to the next 500 ft.
 Note that this value does not affect flight plan calculation or saving of flight plans.</source>
         <translation>Der Wert der roten Linie wird immer auf die nächsten 500 ft aufgerundet.
 Beachten Sie, dass dieser Wert keine Auswirkung auf die Flugplanberechnung oder auf die Speicherung von Flugplänen hat.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="5485"/>
+        <location filename="src/options/options.ui" line="5490"/>
         <source> %alt%</source>
         <translation> %alt%</translation>
     </message>
@@ -23702,7 +23735,7 @@ von Flugplatz zu Luftstraße bevorzugen.</translation>
         <translation type="vanished">&amp;NDB Stationen beim Übergang zu Luftstraßen bei der Flugplanberechnung bevorzugen.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="5282"/>
+        <location filename="src/options/options.ui" line="5287"/>
         <source>East / West: Rounds up  cruise altitude to nearest odd thousand feet for eastward flight plans and nearest even thousand feet for westward flight plans.
 North / South: Rounds up  cruise altitude to nearest odd thousand feet for southward flight plans and nearest even thousand feet for northward flight plans.
 South / North: Same as North / South but reverses odd and even.</source>
@@ -23711,17 +23744,17 @@ Nord / Süd: Reiseflughöhe wird auf die nächste ungerade tausend-Fuß Höhe f�
 Süd / Nord: Wie Nord / Süd, nur sind gerade und ungerade vertauscht.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="5288"/>
+        <location filename="src/options/options.ui" line="5293"/>
         <source>East / West</source>
         <translation>Ost / West</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="5293"/>
+        <location filename="src/options/options.ui" line="5298"/>
         <source>North / South (e.g. Italy, France and Portugal)</source>
         <translation>Nord / Süd (z.B. Italien, Frankreich und Portugal)</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="5298"/>
+        <location filename="src/options/options.ui" line="5303"/>
         <source>South / North (e.g. New Zealand)</source>
         <translation>Süd / Nord (z.B. Neuseeland)</translation>
     </message>
@@ -23741,8 +23774,8 @@ Süd / Nord: Wie Nord / Süd, nur sind gerade und ungerade vertauscht.</translat
         <translation type="obsolete">http://tgftp.nws.noaa.gov/data/observations/metar/stations/%1.TXT</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="6126"/>
-        <location filename="src/options/options.ui" line="6178"/>
+        <location filename="src/options/options.ui" line="6131"/>
+        <location filename="src/options/options.ui" line="6183"/>
         <source>No URL set. NOAA weather reports are disabled.</source>
         <translation>Keine Webadresse gesetzt. NOAA Wetterbericht deaktiviert.</translation>
     </message>
@@ -23758,22 +23791,22 @@ Süd / Nord: Wie Nord / Süd, nur sind gerade und ungerade vertauscht.</translat
         <translation type="vanished">https://metar.vatsim.net/metar.php?id=%1</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="6105"/>
+        <location filename="src/options/options.ui" line="6110"/>
         <source>No URL set. VATSIM weather reports are disabled.</source>
         <translation>Keine Webadresse gesetzt. VATSIM Wetterbericht deaktiviert.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="6248"/>
+        <location filename="src/options/options.ui" line="6253"/>
         <source>Send a test request to the NOAA weather service.</source>
         <translation>Testanfrage an NOAA Wetterdienst senden.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="6087"/>
-        <location filename="src/options/options.ui" line="6231"/>
-        <location filename="src/options/options.ui" line="6241"/>
-        <location filename="src/options/options.ui" line="6251"/>
-        <location filename="src/options/options.ui" line="6469"/>
-        <location filename="src/options/options.ui" line="6509"/>
+        <location filename="src/options/options.ui" line="6092"/>
+        <location filename="src/options/options.ui" line="6236"/>
+        <location filename="src/options/options.ui" line="6246"/>
+        <location filename="src/options/options.ui" line="6256"/>
+        <location filename="src/options/options.ui" line="6474"/>
+        <location filename="src/options/options.ui" line="6514"/>
         <source>&amp;Test</source>
         <translation>&amp;Test</translation>
     </message>
@@ -23782,7 +23815,7 @@ Süd / Nord: Wie Nord / Süd, nur sind gerade und ungerade vertauscht.</translat
         <translation type="vanished">Testanfrage an VATSIM Wetterdienst senden.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="6033"/>
+        <location filename="src/options/options.ui" line="6038"/>
         <source>This file (usually &quot;current_wx_snapshot.txt&quot;) will be used for all simulators if set here.
 If this field is empty, the default Active Sky weather file path will be used which is different for each flight simulator.</source>
         <translation>Diese Datei (normalerweise &quot;current_wx_snapshot.txt&quot;) wird für alle Simulatoren benutzt, wenn sie hier gesetzt wird.
@@ -23793,15 +23826,15 @@ Wenn das Feld leer ist, wird der Standardpfad zur Wetterdatei von Active Sky ver
         <translation type="vanished">Keine &quot;current_wx_snapshot.txt&quot; Datei ausgewählt. Verwende Standardpfad.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="5856"/>
-        <location filename="src/options/options.ui" line="6047"/>
+        <location filename="src/options/options.ui" line="5861"/>
+        <location filename="src/options/options.ui" line="6052"/>
         <source>Select the &quot;current_wx_snapshot.txt&quot; file.</source>
         <translation>Datei &quot;current_wx_snapshot.txt&quot; auswählen.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="5859"/>
-        <location filename="src/options/options.ui" line="5869"/>
-        <location filename="src/options/options.ui" line="6050"/>
+        <location filename="src/options/options.ui" line="5864"/>
+        <location filename="src/options/options.ui" line="5874"/>
+        <location filename="src/options/options.ui" line="6055"/>
         <source>&amp;Select File ...</source>
         <translation>&amp;Datei auswählen ...</translation>
     </message>
@@ -23810,28 +23843,28 @@ Wenn das Feld leer ist, wird der Standardpfad zur Wetterdatei von Active Sky ver
         <translation type="vanished">Active Sky Wetter&amp;datei:</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="5813"/>
-        <location filename="src/options/options.ui" line="5882"/>
-        <location filename="src/options/options.ui" line="5941"/>
-        <location filename="src/options/options.ui" line="6014"/>
-        <location filename="src/options/options.ui" line="6677"/>
-        <location filename="src/options/options.ui" line="6967"/>
-        <location filename="src/options/options.ui" line="7076"/>
+        <location filename="src/options/options.ui" line="5818"/>
+        <location filename="src/options/options.ui" line="5887"/>
+        <location filename="src/options/options.ui" line="5946"/>
+        <location filename="src/options/options.ui" line="6019"/>
+        <location filename="src/options/options.ui" line="6682"/>
+        <location filename="src/options/options.ui" line="6972"/>
+        <location filename="src/options/options.ui" line="7081"/>
         <source>Valid</source>
         <translation>Gültig</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="6146"/>
+        <location filename="src/options/options.ui" line="6151"/>
         <source>&amp;VATSIM Weather Service URL:</source>
         <translation>&amp;VATSIM Wetterdienst Webadresse:</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="6136"/>
+        <location filename="src/options/options.ui" line="6141"/>
         <source>&amp;NOAA Weather Service URL:</source>
         <translation>&amp;NOAA Wetterdienst Webadresse:</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="5657"/>
+        <location filename="src/options/options.ui" line="5662"/>
         <source>Define which weather service METARs are to be shown in the map tooltip of an airport.</source>
         <translation>Legt fest, welche Wetterdienste für METAR-Daten in der Kurzinfo eines Flugplatzes auf der Karte gezeigt werden sollen.</translation>
     </message>
@@ -23849,8 +23882,8 @@ Wenn das Feld leer ist, wird der Standardpfad zur Wetterdatei von Active Sky ver
         <translation type="vanished">Informationsklicks</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="1526"/>
-        <location filename="src/options/options.ui" line="1688"/>
+        <location filename="src/options/options.ui" line="1531"/>
+        <location filename="src/options/options.ui" line="1693"/>
         <source>&amp;Airports</source>
         <translation>&amp;Flugplätze</translation>
     </message>
@@ -23863,12 +23896,12 @@ Wenn das Feld leer ist, wird der Standardpfad zur Wetterdatei von Active Sky ver
         <translation type="vanished">&amp;Navigationshilfen und Luftstraßen</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="1576"/>
+        <location filename="src/options/options.ui" line="1581"/>
         <source>Show information for airspaces when clicking on the map</source>
         <translation>Informationen zu Lufträumen anzeigen, wenn in die Karte geklickt wird</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="1579"/>
+        <location filename="src/options/options.ui" line="1584"/>
         <source>&amp;Airspaces</source>
         <translation>&amp;Lufträume</translation>
     </message>
@@ -23877,13 +23910,13 @@ Wenn das Feld leer ist, wird der Standardpfad zur Wetterdatei von Active Sky ver
         <translation type="vanished">Zeige für Höhen&amp;windsymbole</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="2125"/>
+        <location filename="src/options/options.ui" line="2130"/>
         <source>&amp;Avoid blurred map display by zooming out
 to next best step</source>
         <translation>&amp;Unscharfe Kartenanzeige vermeiden</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="1790"/>
+        <location filename="src/options/options.ui" line="1795"/>
         <source>All X-Plane airports which are not 3D and not add-on
 will be displayed underneath all other airports and use a gray symbol.
 The aiports toolbar button can be used to disable them if this checkbox is enabled.</source>
@@ -23896,7 +23929,7 @@ werden unterhalb aller anderen Flugplätze mit einen grauen Symbol dargestellt.
 Die Flugplatz-Schaltfläche auf der Werkzeugleiste kann benutzt werden, um diese Plätze auszublenden.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="1795"/>
+        <location filename="src/options/options.ui" line="1800"/>
         <source>&amp;Consider all X-Plane airports not being 3D empty</source>
         <translation>&amp;Alle X-Plane-Flugplätze, die nicht 3D sind, als leere Flugplätze behandeln</translation>
     </message>
@@ -23905,7 +23938,7 @@ Die Flugplatz-Schaltfläche auf der Werkzeugleiste kann benutzt werden, um diese
         <translation type="vanished">Symbol, Textgrößen und Farben für die Karte und das Höhenprofil</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="2735"/>
+        <location filename="src/options/options.ui" line="2740"/>
         <source>Wind &amp;Barbs:</source>
         <translation>Wind&amp;symbole:</translation>
     </message>
@@ -23926,13 +23959,13 @@ Die Flugplatz-Schaltfläche auf der Werkzeugleiste kann benutzt werden, um diese
         <translation type="vanished">Zeichne einen hellgelben Hintergrund für Flugplanbezeichnungen</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="2377"/>
-        <location filename="src/options/options.ui" line="2447"/>
-        <location filename="src/options/options.ui" line="2687"/>
-        <location filename="src/options/options.ui" line="2822"/>
-        <location filename="src/options/options.ui" line="2832"/>
-        <location filename="src/options/options.ui" line="3095"/>
-        <location filename="src/options/options.ui" line="3713"/>
+        <location filename="src/options/options.ui" line="2382"/>
+        <location filename="src/options/options.ui" line="2452"/>
+        <location filename="src/options/options.ui" line="2692"/>
+        <location filename="src/options/options.ui" line="2827"/>
+        <location filename="src/options/options.ui" line="2837"/>
+        <location filename="src/options/options.ui" line="3100"/>
+        <location filename="src/options/options.ui" line="3718"/>
         <source>Text &amp;Background</source>
         <translation>Text&amp;hintergrund</translation>
     </message>
@@ -23966,7 +23999,7 @@ Farbe mit der &quot;Farbe für zurückgelegte Streckenteile&quot; ändern.</tran
         <translation type="vanished">Zurückgelegte Streckenteile &amp;abdunkeln</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="2829"/>
+        <location filename="src/options/options.ui" line="2834"/>
         <source>Draw white background for airport labels</source>
         <translation>Zeichne weißen Hintergrund für Flugplatzbezeichnungen</translation>
     </message>
@@ -23983,7 +24016,7 @@ Farbe mit der &quot;Farbe für zurückgelegte Streckenteile&quot; ändern.</tran
         <translation type="vanished">&amp;Distanzkreise und Linien zur Distanzmessung:</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="3720"/>
+        <location filename="src/options/options.ui" line="3725"/>
         <source>Thickness of the compass rose lines</source>
         <translation>Linienbreite der Kompassrose</translation>
     </message>
@@ -23998,7 +24031,7 @@ Parking, aprons, taxiways, fuel and tower positions will be omitted if not selec
 Parkpositionen, Vorfelder, Rollbahnen, Treibstoff- und Turmpositionen werden ausgelassen wenn nicht aktiviert.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="4065"/>
+        <location filename="src/options/options.ui" line="4070"/>
         <source>&amp;Sun shading darkness:</source>
         <translation>&amp;Sonnenschatten verdunkeln:</translation>
     </message>
@@ -24007,7 +24040,7 @@ Parkpositionen, Vorfelder, Rollbahnen, Treibstoff- und Turmpositionen werden aus
         <translation type="vanished">&amp;Diagramm</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="4075"/>
+        <location filename="src/options/options.ui" line="4080"/>
         <source>Sun shading level. Lower values result in a darker display.</source>
         <translation>Niedrigere Werte ergeben eine dunklere Anzeige.</translation>
     </message>
@@ -24024,9 +24057,9 @@ Parkpositionen, Vorfelder, Rollbahnen, Treibstoff- und Turmpositionen werden aus
         <translation type="vanished">Zeit bis die Flugzeugverfolgung wieder aktiviert wird, nachdem in der Karte gerollt oder gezoomt wurde</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="5023"/>
-        <location filename="src/options/options.ui" line="5098"/>
-        <location filename="src/options/options.ui" line="6525"/>
+        <location filename="src/options/options.ui" line="5028"/>
+        <location filename="src/options/options.ui" line="5103"/>
+        <location filename="src/options/options.ui" line="6530"/>
         <source> seconds</source>
         <translation> Sekunden</translation>
     </message>
@@ -24052,12 +24085,12 @@ Parkpositionen, Vorfelder, Rollbahnen, Treibstoff- und Turmpositionen werden aus
         <translation type="vanished">&amp;Halte aktiven Streckenteil an der Spitze der Flugplantabelle</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="4824"/>
+        <location filename="src/options/options.ui" line="4829"/>
         <source>Map Movement</source>
         <translation>Kartenbewegung</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="4845"/>
+        <location filename="src/options/options.ui" line="4850"/>
         <source>Map will follow the aircraft constantly when checked.
 This is also used for &quot;Center map on aircraft and next flight plan waypoint&quot;.</source>
         <oldsource>Map will follow the aircraft constantly when checked.
@@ -24066,17 +24099,17 @@ This is als used for &quot;Center map on aircraft and next flight plan waypoint&
 Dies wird auch für &quot;Zentriere Karte auf Flugzeug und nächsten Wegpunkt des Flugplans&quot; genutzt.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="4866"/>
+        <location filename="src/options/options.ui" line="4871"/>
         <source>Keeps the aircraft and the next flight plan waypoint visible on the map instead of simply centering the aircraft</source>
         <translation>Hält das Flugzeug und den nächsten Wegpunkt auf der Karte sichtbar, anstatt einfach nur das Flugzeug zu zentrieren</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="4869"/>
+        <location filename="src/options/options.ui" line="4874"/>
         <source>&amp;Center map on aircraft and next flight plan waypoint</source>
         <translation>&amp;Zentriere Karte auf Flugzeug und nächsten Wegpunkt des Flugplanes</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="4889"/>
+        <location filename="src/options/options.ui" line="4894"/>
         <source>Defines a box in percent of the map size. 
 A small value keeps the aircraft centered and will move the map often. 
 A large value will update the map only when aircraft reaches the map boundary.
@@ -24099,32 +24132,32 @@ Ignoriert, wenn &quot;Zentriere Karte auf Flugzeug und nächsten Wegpunkt des Fl
         <translation type="vanished">Benutze einen &amp;kurzen Dateinamen&quot;ICAO_ICAO.pln&quot; anstelle einer langen Bezeichnung wenn FSX-,  P3D- oder FlightGear-Flugpläne gespeichert werden</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="5636"/>
+        <location filename="src/options/options.ui" line="5641"/>
         <source>Weather Display in Tooltip</source>
         <translation>Wetteranzeige in Kurzinfo</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="5590"/>
-        <location filename="src/options/options.ui" line="5683"/>
+        <location filename="src/options/options.ui" line="5595"/>
+        <location filename="src/options/options.ui" line="5688"/>
         <source>&amp;Active Sky</source>
         <translation>&amp;Active Sky</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="5600"/>
-        <location filename="src/options/options.ui" line="5693"/>
+        <location filename="src/options/options.ui" line="5605"/>
+        <location filename="src/options/options.ui" line="5698"/>
         <source>&amp;NOAA</source>
         <translation>&amp;NOAA</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="5610"/>
-        <location filename="src/options/options.ui" line="5703"/>
-        <location filename="src/options/options.ui" line="6365"/>
+        <location filename="src/options/options.ui" line="5615"/>
+        <location filename="src/options/options.ui" line="5708"/>
+        <location filename="src/options/options.ui" line="6370"/>
         <source>&amp;VATSIM</source>
         <translation>&amp;VATSIM</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="5577"/>
-        <location filename="src/options/options.ui" line="5670"/>
+        <location filename="src/options/options.ui" line="5582"/>
+        <location filename="src/options/options.ui" line="5675"/>
         <source>Display current weather from the flight simulator when connected. </source>
         <translation>Zeigt das aktuelle Wetter aus dem Flugsimulator an, wenn verbunden. </translation>
     </message>
@@ -24133,19 +24166,19 @@ Ignoriert, wenn &quot;Zentriere Karte auf Flugzeug und nächsten Wegpunkt des Fl
         <translation type="vanished">Flugsimulator</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="5620"/>
-        <location filename="src/options/options.ui" line="5713"/>
-        <location filename="src/options/options.ui" line="6375"/>
+        <location filename="src/options/options.ui" line="5625"/>
+        <location filename="src/options/options.ui" line="5718"/>
+        <location filename="src/options/options.ui" line="6380"/>
         <source>&amp;IVAO</source>
         <translation>&amp;IVAO</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="5564"/>
+        <location filename="src/options/options.ui" line="5569"/>
         <source>Define which weather service METARs are to be shown in the information dock window for an airport.</source>
         <translation>Festlegen, von welchem Wetterdienst die METAR Daten im Informationsfenster eines Flugplatzes angezeigt werden sollen.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="5543"/>
+        <location filename="src/options/options.ui" line="5548"/>
         <source>Weather Display in Information Panels</source>
         <translation>Wetteranzeige im Informationsfeld</translation>
     </message>
@@ -24166,7 +24199,7 @@ Ignoriert, wenn &quot;Zentriere Karte auf Flugzeug und nächsten Wegpunkt des Fl
         <translation type="vanished">Datei- und Web-Adressen</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="6279"/>
+        <location filename="src/options/options.ui" line="6284"/>
         <source>&amp;IVAO Weather Download URL:</source>
         <translation>&amp;IVAO Wetterdownload Webadresse:</translation>
     </message>
@@ -24179,7 +24212,7 @@ Ignoriert, wenn &quot;Zentriere Karte auf Flugzeug und nächsten Wegpunkt des Fl
         <translation type="vanished">http://wx.ivao.aero/metar.php</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="6269"/>
+        <location filename="src/options/options.ui" line="6274"/>
         <source>No URL set. IVAO weather reports are disabled.</source>
         <translation>Keine Webadresse angegeben. IVAO Wettermeldungen sind deaktiviert.</translation>
     </message>
@@ -24192,113 +24225,113 @@ Ignoriert, wenn &quot;Zentriere Karte auf Flugzeug und nächsten Wegpunkt des Fl
         <translation type="vanished">Online fliegen</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="6328"/>
+        <location filename="src/options/options.ui" line="6333"/>
         <source>Online Service</source>
         <translation>Onlinedienst</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="6349"/>
+        <location filename="src/options/options.ui" line="6354"/>
         <source>Do not use any online flying services</source>
         <translation>Keinen Onlineflugdienst nutzen</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="6352"/>
+        <location filename="src/options/options.ui" line="6357"/>
         <source>&amp;None</source>
         <translation>&amp;Keiner</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="6362"/>
+        <location filename="src/options/options.ui" line="6367"/>
         <source>Use the VATSIM network pre-defined configuration for online flying</source>
         <translation>Nutze die vordefinierte VATSIM Netzwerkkonfiguration zum Onlinefliegen</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="6372"/>
+        <location filename="src/options/options.ui" line="6377"/>
         <source>Use the IVAO network pre-defined configuration for online flying</source>
         <translation>Nutze die vordefinierte IVAO Netzwerkkonfiguration zum Onlinefliegen</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="6382"/>
+        <location filename="src/options/options.ui" line="6387"/>
         <source>Use the PilotEdge network pre-defined configuration for online flying</source>
         <translation>Nutze die vordefinierte PilotEdge-Netzwerkkonfiguration zum Onlinefliegen</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="6385"/>
+        <location filename="src/options/options.ui" line="6390"/>
         <source>&amp;PilotEdge</source>
         <translation>&amp;PilotEdge</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="6392"/>
+        <location filename="src/options/options.ui" line="6397"/>
         <source>Use a custom web address for the &quot;status.txt&quot; file</source>
         <translation>Nutze eine eigene Web-Adresse für die &quot;status.txt&quot;-Datei</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="6395"/>
+        <location filename="src/options/options.ui" line="6400"/>
         <source>Custom with &amp;Status File</source>
         <translation>Eigener mit &amp;Statusdatei</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="6402"/>
+        <location filename="src/options/options.ui" line="6407"/>
         <source>Use a custom web address for the &quot;whazzup.txt&quot; file</source>
         <translation>Nutze eine eigene Web-Adresse für die &quot;whazzup.txt&quot;-Datei</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="6405"/>
+        <location filename="src/options/options.ui" line="6410"/>
         <source>&amp;Custom</source>
         <translation>&amp;Eigener</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="6419"/>
+        <location filename="src/options/options.ui" line="6424"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Little Navmap fetches data from online networks using an interval of 15 to 180 seconds depending on settings and network.&lt;/p&gt;&lt;p&gt;The program also fetches AI or multiplayer aircraft from the simulator which are updated several times a second. These aircraft are injected into the simulator by the various online clients so they are visible there. Therefore, the user aircraft and other multiplayer aircraft can appear duplicated on the map.&lt;/p&gt;&lt;p&gt;Little Navmap tries to remove these duplicates by matching the aircraft position, altitude and more parameters if this option is enabled.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Little Navmap holt sich Daten aus Online-Netzwerken in einem Intervall von 15 bis 180 Sekunden, je nach Einstellungen und Netzwerk.&lt;/p&gt;&lt;p&gt;Das Programm holt sich auch KI- oder Mehrspielerflugzeuge aus dem Simulator, die mehrmals pro Sekunde aktualisiert werden. Diese Flugzeuge werden von den verschiedenen Online-Clients in den Simulator injiziert, so dass sie dort sichtbar sind. Daher können das Benutzerflugzeug und andere Mehrspielerflugzeuge doppelt auf der Karte erscheinen.&lt;/p&gt;&lt;p&gt;Little Navmap versucht, diese Duplikate zu entfernen, indem es die Flugzeugposition, die Höhe und weitere Parameter abgleicht, wenn diese Einstellung aktiviert ist.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="6422"/>
+        <location filename="src/options/options.ui" line="6427"/>
         <source>&amp;Remove duplicate aircraft from online service and simulator</source>
         <translation>&amp;Entferne doppelte Flugzeuge aus dem Online-Dienst und dem Simulator</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="6435"/>
+        <location filename="src/options/options.ui" line="6440"/>
         <source>Web Addresses</source>
         <oldsource>Web Adresses</oldsource>
         <translation>Web-Adresse</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="6456"/>
+        <location filename="src/options/options.ui" line="6461"/>
         <source>Web address of the &quot;whazzup.txt&quot; file</source>
         <translation>Web-Adresse für die &quot;whazzup.txt&quot;-Datei</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="6459"/>
+        <location filename="src/options/options.ui" line="6464"/>
         <source>No web address for &quot;whazzup.txt&quot; entered.</source>
         <translation>Keine Web-Adresse für die &quot;whazzup.txt&quot;-Datei angegeben</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="6466"/>
+        <location filename="src/options/options.ui" line="6471"/>
         <source>Download &quot;whazzup.txt&quot; file from given URL and check validity</source>
         <translation>&quot;whazzup.txt&quot;-Datei von der angegebenen Webadresse herunterladen und testen</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="6476"/>
+        <location filename="src/options/options.ui" line="6481"/>
         <source>&amp;Whazzup File URL:</source>
         <translation>Webadresse &amp;Whazzup-Datei:</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="6486"/>
+        <location filename="src/options/options.ui" line="6491"/>
         <source>Web address of the &quot;status.txt&quot; file</source>
         <translation>Web-Adresse für die &quot;status.txt&quot;-Datei</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="6489"/>
+        <location filename="src/options/options.ui" line="6494"/>
         <source>No web address for &quot;status.txt&quot; entered.</source>
         <translation>Keine Web-Adresse für die &quot;status.txt&quot;-Datei angegeben.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="6496"/>
+        <location filename="src/options/options.ui" line="6501"/>
         <source>&amp;Status File URL:</source>
         <translation>Webadresse &amp;Status-Datei:</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="6506"/>
+        <location filename="src/options/options.ui" line="6511"/>
         <source>Download &quot;status.txt&quot; file from given URL and check validity</source>
         <translation>&quot;status.txt&quot;-Datei von der angegebenen Webadresse herunterladen und testen</translation>
     </message>
@@ -24311,22 +24344,22 @@ Niemals Werte von weniger als zwei Minuten für offizielle Netzwerke wie VATSIM 
 Kleinere Werte sind nur für private Netzwerke.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="6541"/>
+        <location filename="src/options/options.ui" line="6546"/>
         <source>&amp;Update every:</source>
         <translation>&amp;Aktualisierungsintervall:</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="6558"/>
+        <location filename="src/options/options.ui" line="6563"/>
         <source>VATSIM</source>
         <translation>VATSIM</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="6563"/>
+        <location filename="src/options/options.ui" line="6568"/>
         <source>IVAO</source>
         <translation>IVAO</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="6581"/>
+        <location filename="src/options/options.ui" line="6586"/>
         <source>&amp;Format:</source>
         <translation>&amp;Format:</translation>
     </message>
@@ -24335,23 +24368,23 @@ Kleinere Werte sind nur für private Netzwerke.</translation>
         <translation type="vanished">Zwischenspeicher und Dateien</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="6874"/>
+        <location filename="src/options/options.ui" line="6879"/>
         <source>Maximum size of &amp;disk cache:</source>
         <translation>Maximale &amp;Größe des Zwischenspeichers auf der Festplatte:</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="6855"/>
-        <location filename="src/options/options.ui" line="6887"/>
+        <location filename="src/options/options.ui" line="6860"/>
+        <location filename="src/options/options.ui" line="6892"/>
         <source> MB</source>
         <translation> MB</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="6838"/>
+        <location filename="src/options/options.ui" line="6843"/>
         <source>&amp;Clear Memory Cache</source>
         <translation>&amp;Zwischenspeicher leeren</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="6845"/>
+        <location filename="src/options/options.ui" line="6850"/>
         <source>Items in the disk cache expire after two weeks.</source>
         <translation>Elemente im Zwischenspeicher werden nach zwei Wochen gelöscht.</translation>
     </message>
@@ -24360,7 +24393,7 @@ Kleinere Werte sind nur für private Netzwerke.</translation>
         <translation type="vanished">Zwischenspeicher leeren. Dieser Prozess läuft im Hintergrund und wird eine Weile brauchen.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="7089"/>
+        <location filename="src/options/options.ui" line="7094"/>
         <source>Use online elevation data to display ground in flight plan elevation profile.
 Has a higher resolution than the offline data source but updates are slow.
 Source data has many errors.</source>
@@ -24369,7 +24402,7 @@ Diese haben eine höhere Auflösung als Offline-Datenquellen, aber die Aktualisi
 Die Offline-Datenquellen haben viele Fehler.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="7044"/>
+        <location filename="src/options/options.ui" line="7049"/>
         <source>Recommended.
 Use Offline GLOBE Elevation Data. Can be downloaded for free.
 Resolution is lower than the online source but updates are very fast.
@@ -24384,7 +24417,7 @@ Die Daten haben ein Raster von 30 Bogensekunden (ca. 900 Meter nahe des Äquator
         <translation type="vanished">&amp;Zwischenspeicher leeren</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="2120"/>
+        <location filename="src/options/options.ui" line="2125"/>
         <source>Zooms the map one step out for actions like center flight plan or double click to achieve a sharp map display.
 This works best with the Mercator projection and online maps.
 Map views might be shown with a larger zoom distance than expected if this option is selected.</source>
@@ -24397,7 +24430,7 @@ Kartenansichten werden möglicherweise mit einer größeren Zoomdistanz als erwa
         <translation type="vanished">&amp;Unscharfe Kartenanzeige vermeiden</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="1875"/>
+        <location filename="src/options/options.ui" line="1880"/>
         <source>Allows to undock and put the map window into a floating state.
 This can cause several unwanted effects when arranging dock windows.
 Uncheck this if you do experience strange effects when resizing dock windows.
@@ -24440,17 +24473,17 @@ distance measurement:</source>
 Distanzmessungen:</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="3518"/>
+        <location filename="src/options/options.ui" line="3523"/>
         <source>&amp;Compass rose:</source>
         <translation>&amp;Kompassrose:</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="3668"/>
+        <location filename="src/options/options.ui" line="3673"/>
         <source>Text size of the compass rose line labels</source>
         <translation>Textgröße der Kompassrose</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="2538"/>
+        <location filename="src/options/options.ui" line="2543"/>
         <source>&amp;Navaids:</source>
         <translation>&amp;Navigationshilfen:</translation>
     </message>
@@ -24471,99 +24504,99 @@ Distanzmessungen:</translation>
         <translation type="vanished">Online Kartenanzeige</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="4403"/>
+        <location filename="src/options/options.ui" line="4408"/>
         <source>Display Size for Online Airspaces / Centers</source>
         <translation>Größe für Online Lufträume und Center</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="4626"/>
+        <location filename="src/options/options.ui" line="4631"/>
         <source>&amp;Approach Control:</source>
         <translation>&amp;Anflugkontrolle:</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="4434"/>
-        <location filename="src/options/options.ui" line="4486"/>
-        <location filename="src/options/options.ui" line="4525"/>
-        <location filename="src/options/options.ui" line="4580"/>
-        <location filename="src/options/options.ui" line="4593"/>
-        <location filename="src/options/options.ui" line="4613"/>
-        <location filename="src/options/options.ui" line="4688"/>
-        <location filename="src/options/options.ui" line="4737"/>
+        <location filename="src/options/options.ui" line="4439"/>
+        <location filename="src/options/options.ui" line="4491"/>
+        <location filename="src/options/options.ui" line="4530"/>
+        <location filename="src/options/options.ui" line="4585"/>
+        <location filename="src/options/options.ui" line="4598"/>
+        <location filename="src/options/options.ui" line="4618"/>
+        <location filename="src/options/options.ui" line="4693"/>
+        <location filename="src/options/options.ui" line="4742"/>
         <source>Use visual range provided from online network</source>
         <translation>Sichtweite aus dem Online-Netwerk benutzen</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="4515"/>
+        <location filename="src/options/options.ui" line="4520"/>
         <source>&amp;Departure Control:</source>
         <translation>&amp;Abflugkontrolle:</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="4652"/>
+        <location filename="src/options/options.ui" line="4657"/>
         <source>&amp;Tower:</source>
         <translation>&amp;Tower:</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="4701"/>
+        <location filename="src/options/options.ui" line="4706"/>
         <source>&amp;Clearance Delivery:</source>
         <translation>&amp;Freigabekontrolle:</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="4424"/>
+        <location filename="src/options/options.ui" line="4429"/>
         <source>&amp;Ground Control:</source>
         <translation>&amp;Bodenkontrolle:</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="4570"/>
+        <location filename="src/options/options.ui" line="4575"/>
         <source>&amp;Area Control Center:</source>
         <translation>&amp;Bereichskontrollzentrum:</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="4711"/>
+        <location filename="src/options/options.ui" line="4716"/>
         <source>&amp;Center:</source>
         <oldsource>&amp;Center</oldsource>
         <translation>&amp;Center:</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="4678"/>
+        <location filename="src/options/options.ui" line="4683"/>
         <source>&amp;Online Observer:</source>
         <translation>&amp;Onlinebeobachter:</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="4606"/>
+        <location filename="src/options/options.ui" line="4611"/>
         <source>Range Circle Size</source>
         <translation>Kreisgröße</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="4447"/>
+        <location filename="src/options/options.ui" line="4452"/>
         <source>Use Size</source>
         <translation>Benutze Größe</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="4338"/>
+        <location filename="src/options/options.ui" line="4343"/>
         <source>Online Center Boundary Lookup in User Airspaces</source>
         <translation>Suche nach Lufträumen für Online-Center</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="4359"/>
+        <location filename="src/options/options.ui" line="4364"/>
         <source>Look in the user airspaces for a boundary where the
 airspace name has to match the callsign of the online center.</source>
         <translation>Suche in den Nutzerlufträumen nach einen Luftraum, dessen
 Name mit dem Rufzeichen des Online-Zentrums übereinstimmt.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="4363"/>
+        <location filename="src/options/options.ui" line="4368"/>
         <source>By airspace &amp;name vs. callsign</source>
         <translation>Nach &amp;Luftraumnamen und Rufzeichen</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="4373"/>
+        <location filename="src/options/options.ui" line="4378"/>
         <source>Look in the user airspaces for a boundary where the
 airspace filename has to match the callsign of the online center.</source>
         <translation>Suche in den Nutzerlufträumen nach einen Luftraum, dessen
 Dateiname mit dem Rufzeichen des Online-Zentrums übereinstimmt.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="4377"/>
+        <location filename="src/options/options.ui" line="4382"/>
         <source>By airspace &amp;file name vs. callsign</source>
         <translation>Nach &amp;Dateinamen des Luftraumes und Rufzeichen</translation>
     </message>
@@ -24603,7 +24636,7 @@ definieren auch die Reihenfolge beim Lesen von Koordinaten, wenn aktiviert.</tra
         <translation type="vanished">Nach dem Ändern der Einheiten wird ein Neustart empfohlen.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="1414"/>
+        <location filename="src/options/options.ui" line="1419"/>
         <source>Shows true course or heading values as small text besides magnetic course
 in information displays and tooltips .
 Only magnetic course is shown if both values are equal.
@@ -24614,24 +24647,24 @@ Es wird nur der magnetische Kurs angezeigt, wenn beide Werte gleich sind.
 Beeinflusst auch Beschriftungen bei Warteschleifen und Platzrunden.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="1420"/>
+        <location filename="src/options/options.ui" line="1425"/>
         <source>Show &amp;true course and heading besides magnetic course in information displays</source>
         <translation>&amp;Zeige auch wahren Kurs neben den magnetischen in Informationen an</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="5019"/>
+        <location filename="src/options/options.ui" line="5024"/>
         <source>Time until aircraft following is activated again after any map interaction like scrolling or zooming.
 This setting is also used in the elevation profile.</source>
         <translation>Zeit, bis das Zentrieren des Flugzeuges nach jeder Karteninteraktion, wie Scrollen oder Zoomen wieder aktiviert wird.
 Diese Einstellung wird auch im Höhenprofil verwendet.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="5165"/>
+        <location filename="src/options/options.ui" line="5170"/>
         <source>Aircraft Trail</source>
         <translation>Flugzeugpfad</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="5186"/>
+        <location filename="src/options/options.ui" line="5191"/>
         <source>Maximum number of aircraft &amp;trail points:</source>
         <translation>Maximale Anzahl von &amp;Punkten im Flugzeugpfad:</translation>
     </message>
@@ -24678,7 +24711,7 @@ Nutzen Sie dies, wenn Sie sich beim Fliegen nur auf GPS verlassen.</translation>
         <translation type="vanished">Keine Datei &quot;METAR.rwx&quot; ausgewählt. Benutze Standarddatei.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="6166"/>
+        <location filename="src/options/options.ui" line="6171"/>
         <source>Complete URL of the NOAA weather service file.
 &quot;%1&quot; is a placeholder that will be substituted with the current two-digit UTC hour.
 There is usually no need to change this URL.
@@ -24797,7 +24830,7 @@ Die Änderungen werden sofort übernommen. </translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="679"/>
-        <location filename="src/options/options.ui" line="2299"/>
+        <location filename="src/options/options.ui" line="2304"/>
         <source>&amp;Reset Font to Default</source>
         <translation>&amp;Schriftart auf Standard zurücksetzen</translation>
     </message>
@@ -24814,7 +24847,7 @@ Die Schriftgröße ist auf 30 Punkte bzw. Pixel begrenzt.</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="692"/>
-        <location filename="src/options/options.ui" line="2289"/>
+        <location filename="src/options/options.ui" line="2294"/>
         <source>Select &amp;Font ...</source>
         <translation>Schriftart &amp;auswählen ...</translation>
     </message>
@@ -24878,64 +24911,64 @@ Dies hat keinen Einfluss auf das Kartenfenster, dessen Kurzinfos separat auf der
         <translation>Nautische Meilen (NM)</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="1618"/>
+        <location filename="src/options/options.ui" line="1623"/>
         <source>Map Tooltips</source>
         <translation>Karten-Kurzinfos</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="1639"/>
+        <location filename="src/options/options.ui" line="1644"/>
         <source>Show detailed information about map objects if checked</source>
         <translation>Detaillierte Informationen über Kartenobjekte anzeigen</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="1642"/>
+        <location filename="src/options/options.ui" line="1647"/>
         <source>&amp;Verbose tooltips</source>
         <translation>&amp;Detaillierte Kurzinfos</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="1659"/>
+        <location filename="src/options/options.ui" line="1664"/>
         <source>Show tooltips for the user aircraft when hovering the cursor over the map</source>
         <translation>Kurzinfos für das Benutzerflugzeug anzeigen, wenn der Mauszeiger über die Karte bewegt wird</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="1493"/>
-        <location filename="src/options/options.ui" line="1662"/>
+        <location filename="src/options/options.ui" line="1498"/>
+        <location filename="src/options/options.ui" line="1667"/>
         <source>&amp;User aircraft</source>
         <translation>&amp;Nutzerflugzeug</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="1672"/>
+        <location filename="src/options/options.ui" line="1677"/>
         <source>Show tooltips for AI or multiplayer aircraft / ship when hovering the cursor over the map</source>
         <translation>Kurzinfos für KI oder Mehrspielerflugzeuge bzw. Schiffe anzeigen, wenn der Mauszeiger über die Karte bewegt wird</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="1506"/>
-        <location filename="src/options/options.ui" line="1675"/>
+        <location filename="src/options/options.ui" line="1511"/>
+        <location filename="src/options/options.ui" line="1680"/>
         <source>AI / multiplayer vehicles</source>
         <translation>KI- / Mehrspieler</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="1715"/>
+        <location filename="src/options/options.ui" line="1720"/>
         <source>Air&amp;spaces</source>
         <translation>&amp;Lufträume</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="1728"/>
+        <location filename="src/options/options.ui" line="1733"/>
         <source>High altitude &amp;wind barbs</source>
         <translation>Höhen&amp;windsymbole</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="1469"/>
+        <location filename="src/options/options.ui" line="1474"/>
         <source>Map Information Clicks</source>
         <translation>Karte - Informationsklicks</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="1490"/>
+        <location filename="src/options/options.ui" line="1495"/>
         <source>Show information for the user aircraft when clicking on the map</source>
         <translation>Zeige Informationen zum Nutzerflugzeug bei Klick in die Karte</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="1503"/>
+        <location filename="src/options/options.ui" line="1508"/>
         <source>Show information for AI or multiplayer aircraft / ship when clicking on the map</source>
         <translation>Zeige Informationen zu KI- oder Mehrspielerflugzeugen bei Klick in die Karte</translation>
     </message>
@@ -24945,7 +24978,7 @@ Dies hat keinen Einfluss auf das Kartenfenster, dessen Kurzinfos separat auf der
         <translation type="vanished">&amp;Radien für rote Bereichsringe (maximal 10 Werte von 0,01 bis 4.000 %dist%):</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="1881"/>
+        <location filename="src/options/options.ui" line="1886"/>
         <source>Allow to &amp;undock  the map window</source>
         <translation>Erlaube das &amp;Ablösen des Kartenfensters</translation>
     </message>
@@ -24958,62 +24991,62 @@ Für jeden Radiuswert, der zwischen 0,01 und 4000 %dist% liegen kann, wird ein E
 Das Feld fällt auf 50, 100, 200 und 500 %dist% zurück, wenn leer oder nicht gültig.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="1891"/>
+        <location filename="src/options/options.ui" line="1896"/>
         <source>&lt;b&gt;A restart is required after changing the map window docking option.&lt;/b&gt;&lt;br/&gt;
 Use &quot;Window&quot; -&gt; &quot;Reset Window Layout&quot; in the main menu to clean up the layout after a restart if necessary.</source>
         <translation>&lt;b&gt;Nach Änderung der Andockoption des Kartenfensters ist ein Neustart erforderlich.&lt;/b&gt;&lt;br/&gt;
 Benutzen Sie &quot;Fenster&quot; -&gt; &quot;Fensteranordnung auf Standard zurücksetzen&quot; im Hauptmenü, um die Anordnung zurück zu setzen, wenn notwendig.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="2264"/>
+        <location filename="src/options/options.ui" line="2269"/>
         <source>Map and Elevation Profile Font</source>
         <translation>Schriftart für Karte und Höhenprofil</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="2285"/>
+        <location filename="src/options/options.ui" line="2290"/>
         <source>Select a font for the map and the elevation profile.
 Note that some fonts, especially large fonts, can result in display errors on the map.</source>
         <translation>Wählen Sie eine Schriftart für die Karte und das Höhenprofil.
 Beachten Sie, dass einige Schriftarten, insbesondere große Schriftarten, zu Darstellungsfehlern auf der Karte führen können.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="2296"/>
+        <location filename="src/options/options.ui" line="2301"/>
         <source>Reset font for the map and the elevation profile back to default</source>
         <translation>Schriftart für Karte und Höhenprofil auf Standard zurücksetzen</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="2805"/>
+        <location filename="src/options/options.ui" line="2810"/>
         <source>Air&amp;ways:</source>
         <translation>Luft&amp;straßen:</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="2444"/>
+        <location filename="src/options/options.ui" line="2449"/>
         <source>Draw white background for airway text labels</source>
         <translation>Zeichne weißen Hintergrund für Luftstraßenbeschriftungen</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="2374"/>
+        <location filename="src/options/options.ui" line="2379"/>
         <source>Draw white background for user aircraft text labels</source>
         <translation>Zeichne weißen Hintergrund für Beschriftungen des Nutzerflugzeuges</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="2684"/>
+        <location filename="src/options/options.ui" line="2689"/>
         <source>Draw white background for AI and multiplayer aircraft labels</source>
         <translation>Zeichne weißen Hintergrund für Beschriftungen von KI und Mehrspielerflugzeugen</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="2621"/>
+        <location filename="src/options/options.ui" line="2626"/>
         <source>Draw yellow circle around add-on airport symbols</source>
         <translation>Zeichne gelben Kreis um Add-on Flugplätze</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="2624"/>
+        <location filename="src/options/options.ui" line="2629"/>
         <source>&amp;Highlight add-on airports</source>
         <oldsource>Highlight add-on airports</oldsource>
         <translation>Add-on Flugplätze &amp;hervorheben</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="1394"/>
+        <location filename="src/options/options.ui" line="1399"/>
         <source>&lt;b&gt;A restart is recommended after changing units.&lt;/b&gt;</source>
         <oldsource>&lt;b&gt;A restart is recommended after changing units&lt;/b&gt;</oldsource>
         <translation>&lt;b&gt;Nach dem Ändern der Einheiten wird ein Neustart empfohlen.&lt;/b&gt;</translation>
@@ -25023,7 +25056,7 @@ Beachten Sie, dass einige Schriftarten, insbesondere große Schriftarten, zu Dar
         <translation type="vanished">&amp;Scrollen und Zoomen in der Karte erlauben und nach der Zeit unten zum Flugzeug zurückspringen</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="5128"/>
+        <location filename="src/options/options.ui" line="5133"/>
         <source>User can scroll in the flight plan table but the program will  
 put the active leg back on top after the given timeout while flying.</source>
         <translation>Scrollen in der Flugplantabelle ist möglich. Das Programm wird jedoch  
@@ -25044,19 +25077,19 @@ nach der angegeben Zeit während des Fliegens.</translation>
         <translation type="vanished">&amp;Lösche Auswahl in Flugplantabelle nach untenstehender Zeit</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="5343"/>
+        <location filename="src/options/options.ui" line="5348"/>
         <source>Set flight plan file pattern to long name &quot;PLANTYPE DEPARTNAME (DEPARTIDENT) to DESTNAME (DESTIDENT)&quot;
 Example: &quot;IFR Frankfurt Am Main (EDDF) to Fiumicino (LIRF).lnmpln&quot;</source>
         <translation>Setze den Flugplannamen auf das lange Muster &quot;PLANTYPE DEPARTNAME (DEPARTIDENT) nach DESTNAME (DESTIDENT)&quot;
 Beispiel: &quot;IFR Frankfurt Am Main (EDDF) nach Fiumicino (LIRF).lnmpln&quot;</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="5347"/>
+        <location filename="src/options/options.ui" line="5352"/>
         <source>&amp;Long</source>
         <translation>&amp;Lang</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="5394"/>
+        <location filename="src/options/options.ui" line="5399"/>
         <source>Set flight plan file pattern to short name &quot;DEPARTIDENT DESTIDENT&quot;.
 Example: &quot;EDDF LIRF.lnmpln&quot;</source>
         <oldsource>Set flight plan file pattern to short name &quot;DEPARTIDENT DESTIDENT&quot;.
@@ -25065,7 +25098,7 @@ Example: &quot;EDDF_LIRF.lnmpln&quot;</oldsource>
 Beispiel: &quot;EDDF LIRF.lnmpln&quot;</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="5398"/>
+        <location filename="src/options/options.ui" line="5403"/>
         <source>&amp;Short</source>
         <translation>&amp;Kurz</translation>
     </message>
@@ -25104,13 +25137,13 @@ CRUISEALT: Reiseflughöhe</translation>
         <translation type="vanished">&amp;Muster für Standardflugplannamen:</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="5447"/>
+        <location filename="src/options/options.ui" line="5452"/>
         <source>Elevation Profile</source>
         <translation>Höhenprofil</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="5580"/>
-        <location filename="src/options/options.ui" line="5673"/>
+        <location filename="src/options/options.ui" line="5585"/>
+        <location filename="src/options/options.ui" line="5678"/>
         <source>&amp;Flight Simulator (FSX, P3D and X-Plane)</source>
         <translation>&amp;Flugsimulator (FSX, P3D und X-Plane)</translation>
     </message>
@@ -25121,7 +25154,7 @@ Default is &quot;http://wx.ivao.aero/metar.php&quot;.</source>
 Der Standard is &quot;http://wx.ivao.aero/metar.php&quot;.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="6094"/>
+        <location filename="src/options/options.ui" line="6099"/>
         <source>Complete URL of the VATSIM network weather download service.
 There is usually no need to change this URL.
 Entering a wrong value will cause errors when downloading weather reports.</source>
@@ -25132,7 +25165,7 @@ In der Regel ist es nicht notwendig, diese URL zu ändern.
 Die Eingabe eines falschen Wertes führt zu Fehlern beim Download.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="5832"/>
+        <location filename="src/options/options.ui" line="5837"/>
         <source>The file &quot;METAR.rwx&quot; will be used to get airport weather if X-Plane is selected.
 The default X-Plane weather file in the X-Plane base path will be used if this field is empty.</source>
         <translation>Die Datei &quot;METAR.rwx&quot; für Flugplatzwetter wird nur verwendet, wenn X-Plane ausgewählt ist.
@@ -25161,7 +25194,7 @@ Ein falscher Wert kann zu Fehlern beim Herunterladen der Höhenwinddaten führen
 Der Standard ist &quot;https://nomads.ncep.noaa.gov/cgi-bin/filter_gfs_1p00.pl&quot;.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="6198"/>
+        <location filename="src/options/options.ui" line="6203"/>
         <source>NOAA &amp;Wind Service Base URL:</source>
         <translation>NOAA &amp;Wind Webadresse:</translation>
     </message>
@@ -25170,27 +25203,27 @@ Der Standard ist &quot;https://nomads.ncep.noaa.gov/cgi-bin/filter_gfs_1p00.pl&q
         <translation type="vanished">&quot;whazzup.txt&quot; oder &quot;status.txt&quot;-Datei periodisch herunterladen.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="6568"/>
+        <location filename="src/options/options.ui" line="6573"/>
         <source>JSON (VATSIM)</source>
         <translation>JSON (VATSIM)</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="6573"/>
+        <location filename="src/options/options.ui" line="6578"/>
         <source>JSON (IVAO)</source>
         <translation>JSON (IVAO)</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="6630"/>
+        <location filename="src/options/options.ui" line="6635"/>
         <source>Web Server</source>
         <translation>Webserver</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="6749"/>
+        <location filename="src/options/options.ui" line="6754"/>
         <source>Start or stop the server to test the values above.</source>
         <translation>Server starten oder stoppen, um obige Werte zu testen.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="7057"/>
+        <location filename="src/options/options.ui" line="7062"/>
         <source>&lt;p&gt;&lt;a href=&quot;https://www.ngdc.noaa.gov/mgg/topo/gltiles.html&quot;&gt;&lt;b&gt;Click here to open the download page for the GLOBE data in your browser&lt;/b&gt;&lt;/a&gt;&lt;br/&gt;
 Download the file &lt;b&gt;&lt;i&gt;All Tiles in One .zip (all10g.zip)&lt;/i&gt;&lt;/b&gt; from the page and extract the archive to an arbitrary place, e.g in &lt;i&gt;Documents&lt;/i&gt;. Then click &lt;i&gt;Select GLOBE Directory ...&lt;/i&gt; above and select the directory with the extracted files.&lt;/p&gt;
 
@@ -25253,7 +25286,7 @@ Derzeit wird nur OpenAir unterstützt (*.txt). </translation>
         <translation type="vanished">https://nomads.ncep.noaa.gov/cgi-bin/filter_gfs_1p00.pl</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="5866"/>
+        <location filename="src/options/options.ui" line="5871"/>
         <source>Select the &quot;global_winds.grib&quot; file from the X-Plane base directory.</source>
         <translation>Die &quot;global_winds.grib&quot;-Datei aus dem X-Plane Basisverzeichnis auswählen.</translation>
     </message>
@@ -25270,182 +25303,182 @@ Use lower values only for private networks.&lt;/b&gt;</source>
 Kleinere Werte sind nur für private Netzwerke.&lt;/b&gt;</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="6759"/>
+        <location filename="src/options/options.ui" line="6764"/>
         <source>Server is running.</source>
         <translation>Server läuft.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="6651"/>
+        <location filename="src/options/options.ui" line="6656"/>
         <source>&amp;Document root directory:</source>
         <translation>&amp;Basisverzeichnis für Dokumente:</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="6700"/>
+        <location filename="src/options/options.ui" line="6705"/>
         <source>&amp;Port number:</source>
         <translation>&amp;Portnummer:</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="6752"/>
+        <location filename="src/options/options.ui" line="6757"/>
         <source>&amp;Start Server</source>
         <translation>&amp;Server starten</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="6710"/>
+        <location filename="src/options/options.ui" line="6715"/>
         <source>Port number for the web server.  Default is 8965.
 Change this if you get an error message like &quot;Bound address already in use&quot; when running the server.</source>
         <translation>Portnummer für den Webserver. Der Standardwert ist 8965.
 Dies ändern, wenn beim Betrieb des Servers eine Fehlermeldung, wie &quot;Adresse bereits im Gebrauch&quot;, auftritt.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="1738"/>
+        <location filename="src/options/options.ui" line="1743"/>
         <source>Show tooltip at the hotspot of user features like range rings, measurement lines, MSA diagrams, user holdings or traffic patterns.</source>
         <oldsource>Show tooltip on user features like range rings, measurement lines, airport MSA, user holdings or traffic patterns.</oldsource>
         <translation>Zeige Kurzinfos am aktiven Punkt von Nutzerobjekten an, wie Distanzkreisen, Messlinien, MSA-Diagrammen, Warteschleifen oder Platzrunden.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="1741"/>
+        <location filename="src/options/options.ui" line="1746"/>
         <source>&amp;User Features</source>
         <translation>Nutzer&amp;objekte</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="1754"/>
+        <location filename="src/options/options.ui" line="1759"/>
         <source>Empty Airports</source>
         <translation>Leere Flugplätze</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="1808"/>
+        <location filename="src/options/options.ui" line="1813"/>
         <source>Details while scrolling (click and drag, zoom in and out)</source>
         <translation>Details während des Rollens (Klick und ziehen, vergrößern und verkleinern)</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="1833"/>
+        <location filename="src/options/options.ui" line="1838"/>
         <source>High - Full details and reload all data while scrolling or zooming</source>
         <translation>Hoch - Zeige Details und lade alle Daten während des Rollens neu</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="1838"/>
+        <location filename="src/options/options.ui" line="1843"/>
         <source>Normal - Full details while scrolling or zooming. Loading of map objects delayed.</source>
         <translation>Normal - Volle Details beim Scrollen oder Zoomen. Laden von Kartenobjekten verzögert.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="1843"/>
+        <location filename="src/options/options.ui" line="1848"/>
         <source>Low - Low details while scrolling or zooming. Loading of map objects delayed.</source>
         <translation>Niedrig - Geringe Details beim Scrollen oder Zoomen. Laden von Kartenobjekten verzögert.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="1854"/>
+        <location filename="src/options/options.ui" line="1859"/>
         <source>Map Window</source>
         <translation>Kartenfenster</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="1965"/>
+        <location filename="src/options/options.ui" line="1970"/>
         <source>You can still use the default click and drag method to scroll and the mousewheel to zoom in this mode.
 Enable &quot;Navigation Aids&quot;, &quot;Screen Areas&quot; on options page &quot;Map Display Labels&quot; to display hints on the map.</source>
         <translation>Sie können in diesem Modus weiterhin die standardmäßige Klick- und Ziehen-Methode zum Scrollen sowie das Mausrad zum Zoomen verwenden.
 Aktivieren Sie &quot;Navigationshilfen&quot; -&gt; &quot;Kartenregionen&quot; auf der Einstellungsseite &quot;Kartenanzeige Beschriftungen&quot;, um Hinweise auf der Karte anzuzeigen.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="1986"/>
+        <location filename="src/options/options.ui" line="1991"/>
         <source>Enable &quot;Navigation Aids&quot;, &quot;Center Cross&quot; on
 options page &quot;Map Display Labels&quot; to display a screen center hint.</source>
         <translation>Aktivieren Sie &quot;Navigationshilfen&quot;, &quot;Kartenmitte&quot; auf der Einstellungsseite &quot;Kartenanzeige Beschriftungen&quot;, um Hinweise auf der Karte anzuzeigen.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="2328"/>
+        <location filename="src/options/options.ui" line="2333"/>
         <source>Symbol, Text Sizes and Colors for Map Display</source>
         <translation>Farben, Symbole und Texte für die Kartenanzeige</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="2419"/>
+        <location filename="src/options/options.ui" line="2424"/>
         <source>For VOR, NDB, ILS,waypoints, holdings, airways, top of climb and top of descent. Not for flight plan labels.</source>
         <translation>Für VOR, NDB, ILS, Wegpunkte, Warteschleifen, Luftstraßen sowie Steig- und Sinkflugmarkierungen. Nicht für Flugplanbeschriftungen.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="2818"/>
+        <location filename="src/options/options.ui" line="2823"/>
         <source>Draw white background for navaid labels.
 For VOR, NDB, ILS, waypoints and holdings. Not for flight plan labels.</source>
         <translation>Zeichnet einen weißen Hintergrund für Navigationshilfe-Beschriftungen.
 Für VOR, NDB, ILS, Wegpunkte und Warteschleifen. Nicht für Flugplanbeschriftungen.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="2710"/>
+        <location filename="src/options/options.ui" line="2715"/>
         <source>Text size for labels along airway lines</source>
         <translation>Textgröße für Beschriftungen entlang der Luftstraßen</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="2387"/>
+        <location filename="src/options/options.ui" line="2392"/>
         <source>Airway line width</source>
         <translation>Linienbreite für Luftstraßen</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="2780"/>
+        <location filename="src/options/options.ui" line="2785"/>
         <source>For VOR, NDB, waypoints, holdings, top of climb and top of descent. Not for flight plan symbols.</source>
         <translation>Für VOR, NDB, Wegpunkte, Warteschleifen, Steig- und Sinkflugmarkierungen. Nicht für Flugplansymbole.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="2859"/>
+        <location filename="src/options/options.ui" line="2864"/>
         <source>User Aircraft Trail Size, Color and Pattern for Map Display and Elevation Profile</source>
         <translation>Größe, Farbe und Muster der Flugzeugspur für Kartenanzeige und Höhenprofil</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="2931"/>
+        <location filename="src/options/options.ui" line="2936"/>
         <source>Set color for aircraft trail in map.
 Also used in the elevation profile.</source>
         <translation>Legt die Farbe für die Flugzeugspur in der Karte fest.
 Wird auch für das Höhenprofil verwendet.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="2942"/>
+        <location filename="src/options/options.ui" line="2947"/>
         <source>Also used in the elevation profile.</source>
         <translation>Wird auch für das Höhenprofil verwendet.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="3018"/>
+        <location filename="src/options/options.ui" line="3023"/>
         <source>Flight Plan on the Map</source>
         <translation>Flugplan auf der Karte</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="3039"/>
+        <location filename="src/options/options.ui" line="3044"/>
         <source>Flight plan line width on the map.
 Not used in the elevation profile.</source>
         <translation>Breite der Flugplanlinie auf der Karte.
 Wird im Höhenprofil nicht verwendet.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="3065"/>
+        <location filename="src/options/options.ui" line="3070"/>
         <source>Label size for flight plan navaids as well as labels along flight plan lines.
 Not used in the elevation profile.</source>
         <translation>Beschriftungsgröße für Flugplan-Navigationshilfen sowie für Beschriftungen entlang von Flugplanlinien.
 Wird im Höhenprofil nicht verwendet.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="3091"/>
+        <location filename="src/options/options.ui" line="3096"/>
         <source>Draw bright yellow background for flight plan labels.
 Not used in the elevation profile.</source>
         <translation>Hellgelben Hintergrund für Flugplanbeschriftungen zeichnen.
 Wird im Höhenprofil nicht verwendet.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="3121"/>
+        <location filename="src/options/options.ui" line="3126"/>
         <source>Flight Plan Colors for the Map and the Elevation Profile</source>
         <translation>Flugplanfarben für die Karte und das Höhenprofil</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="3175"/>
+        <location filename="src/options/options.ui" line="3180"/>
         <source>Color for the active flight plan leg.
 Also used in the elevation profile.</source>
         <translation>Farbe für den aktiven Flugplanabschnitt.
 Wird auch im Höhenprofil verwendet.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="3192"/>
+        <location filename="src/options/options.ui" line="3197"/>
         <source>Color for flight plan line.
 Also used in the elevation profile.</source>
         <translation>Farbe für die Flugplanlinie.
 Wird auch im Höhenprofil verwendet.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="3273"/>
+        <location filename="src/options/options.ui" line="3278"/>
         <source>Color for passed flight plan legs.
 Enable &quot;Dim passed Legs&quot; to see his color.
 Also used in the elevation profile.</source>
@@ -25454,7 +25487,7 @@ Aktivieren Sie &quot;Zurückgelegte Streckenteile abdunkeln&quot;, um diese Farb
 Wird auch im Höhenprofil verwendet.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="3252"/>
+        <location filename="src/options/options.ui" line="3257"/>
         <source>Draw already flown legs in a different color and hide waypoint texts to unclutter the map.
 Change the color of these legs with the &quot;Passed Leg Color&quot;.
 Also used in the elevation profile.</source>
@@ -25463,14 +25496,14 @@ Die Farbe dieser Abschnitte kann mit der &quot;Farbe der zurückgelegten Strecke
 Wird auch im Höhenprofil verwendet.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="3223"/>
+        <location filename="src/options/options.ui" line="3228"/>
         <source>Color for the procedure legs of a flight plan.
 Also used in the elevation profile.</source>
         <translation>Farbe für die Prozedurabschnitte eines Flugplans.
 Wird auch im Höhenprofil verwendet.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="3240"/>
+        <location filename="src/options/options.ui" line="3245"/>
         <source>Color for flight plan outline. 
 Only used if &quot;Transparent Line&quot; is not selected.
 Not used in the elevation profile.</source>
@@ -25479,7 +25512,7 @@ Wird nur verwendet, wenn &quot;Transparente Linie&quot; nicht ausgewählt ist.
 Wird nicht im Höhenprofil verwendet.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="3142"/>
+        <location filename="src/options/options.ui" line="3147"/>
         <source>Transparency of the flight plan line. Only used if &quot;Transparent Line&quot; is checked.
 Value 0 is opaque and 90 is most transparent.
 Not used in the elevation profile.</source>
@@ -25488,69 +25521,69 @@ Der Wert 0 ist undurchsichtig und 90 ist am transparentesten.
 Wird nicht im Höhenprofil verwendet.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="3203"/>
+        <location filename="src/options/options.ui" line="3208"/>
         <source>Draw the flight plan line using a transparent line without outline.
 Not used in the elevation profile.</source>
         <translation>Zeichnet die Flugplanlinie mit einer transparenten Linie ohne Umriss.
 Wird im Höhenprofil nicht verwendet.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="3303"/>
+        <location filename="src/options/options.ui" line="3308"/>
         <source>Flight Plan in the Elevation Profile</source>
         <translation>Flugplan im Höhenprofil</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="3324"/>
+        <location filename="src/options/options.ui" line="3329"/>
         <source>Label and symbol size for flight plan navaids and airports in the elevation profile.</source>
         <translation>Beschriftung und Symbolgröße für Flugplan-Navigationshilfen und Flugplätze im Höhenprofil.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="3330"/>
+        <location filename="src/options/options.ui" line="3335"/>
         <source>Text and Symbols </source>
         <translation>Text und Symbole </translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="3349"/>
+        <location filename="src/options/options.ui" line="3354"/>
         <source>Flight plan and aircraft trail line width in the elevation profile</source>
         <translation>Breite des Flugplanes und der Flugzeugspur im Höhenprofil</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="3374"/>
+        <location filename="src/options/options.ui" line="3379"/>
         <source>&amp;Flight plan line:</source>
         <translation>&amp;Flugplanlinie:</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="3436"/>
+        <location filename="src/options/options.ui" line="3441"/>
         <source>Display Options for User Features</source>
         <translation>Anzeigeeinstellungen für Nutzerobjekte</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="3710"/>
+        <location filename="src/options/options.ui" line="3715"/>
         <source>Draw white background for userpoint text labels</source>
         <translation>Zeichne weißen Hintergrund für Beschriftungen der Nutzerpunkte</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="4015"/>
+        <location filename="src/options/options.ui" line="4020"/>
         <source>&amp;Userpoints:</source>
         <translation>&amp;Nutzerpunkte:</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="3949"/>
+        <location filename="src/options/options.ui" line="3954"/>
         <source>Color for highlighted flight plan position for cursor in the elevation profile.</source>
         <translation>Farbe für die hervorgehobene Flugplanposition des Mauszeigers im Höhenprofil.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="3952"/>
+        <location filename="src/options/options.ui" line="3957"/>
         <source>Elevation &amp;Profile Highlight Color</source>
         <translation>&amp;Hervorhebungsfarbe für das Höhenprofil</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="3560"/>
+        <location filename="src/options/options.ui" line="3565"/>
         <source>Symbol size for userpoints</source>
         <translation>Symbolgröße für Nutzerpunkte</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="3917"/>
+        <location filename="src/options/options.ui" line="3922"/>
         <source>Transparency of the MSA sector diagram text and lines.
 Value 0 is opaque and 90 is most transparent.</source>
         <oldsource>Transparency of the airport MSA sector text and lines.
@@ -25559,59 +25592,59 @@ Value 0 is opaque and 90 is most transparent.</oldsource>
 Der Wert 0 ist undurchsichtig und 90 ist am transparentesten.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="3643"/>
+        <location filename="src/options/options.ui" line="3648"/>
         <source>Text size of the MSA sector diagram altitude labels</source>
         <oldsource>Text size of the airport MSA altitude labels</oldsource>
         <translation>Textgröße der Höhenbeschriftung im MSA-Sektordiagramm</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="3481"/>
+        <location filename="src/options/options.ui" line="3486"/>
         <source>&amp;MSA sector diagram:</source>
         <oldsource>&amp;Airport MSA sector diagram:</oldsource>
         <translation>&amp;MSA Sektordiagramm:</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="3805"/>
+        <location filename="src/options/options.ui" line="3810"/>
         <source>&amp;Flight Plan Highlight Color</source>
         <translation>&amp;Flugplan Hervorhebungsfarbe</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="3618"/>
+        <location filename="src/options/options.ui" line="3623"/>
         <source>Label text size for userpoints</source>
         <translation>Beschriftungsgröße für Nutzerpunkte</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="3903"/>
+        <location filename="src/options/options.ui" line="3908"/>
         <source>&amp;Search Highlight Color</source>
         <translation>&amp;Hervorhebungsfarbe für Suche</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="4044"/>
+        <location filename="src/options/options.ui" line="4049"/>
         <source>General Display Options</source>
         <translation>Allgemeine Anzeigeeinstellungen</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="4168"/>
+        <location filename="src/options/options.ui" line="4173"/>
         <source>Map Display Labels</source>
         <translation>Kartenanzeige Beschriftungen</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="4202"/>
+        <location filename="src/options/options.ui" line="4207"/>
         <source>Option</source>
         <translation>Einstellung</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="4207"/>
+        <location filename="src/options/options.ui" line="4212"/>
         <source>Description</source>
         <translation>Beschreibung</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="4222"/>
+        <location filename="src/options/options.ui" line="4227"/>
         <source>API Keys, usernames or tokens for map services</source>
         <translation>Schlüssel, Benutzernamen oder Token für Kartendienste</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="4228"/>
+        <location filename="src/options/options.ui" line="4233"/>
         <source>&lt;p&gt;You can enter login information, tokens or API keys for map services which need an user account.
 The required keys shown below are extracted from the installed map themes.&lt;/p&gt;
 
@@ -25642,22 +25675,22 @@ Zeigen Sie diese Informationen nicht öffentlich in Foren auf Screenshots.&lt;/b
 </translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="4279"/>
+        <location filename="src/options/options.ui" line="4284"/>
         <source>Key</source>
         <translation>Schlüssel</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="4284"/>
+        <location filename="src/options/options.ui" line="4289"/>
         <source>Value</source>
         <translation>Wert</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="4879"/>
+        <location filename="src/options/options.ui" line="4884"/>
         <source>Zoom &amp;distance:</source>
         <translation>&amp;Zoomdistanz:</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="4914"/>
+        <location filename="src/options/options.ui" line="4919"/>
         <source>Adjust zoom distance when flying with &quot;Center map on aircraft and next flight plan waypoint&quot; checked.
 Smaller values zoom closer.</source>
         <translation>Passen Sie die Zoomdistanz an, wenn Sie mit der Einstellung
@@ -25665,12 +25698,12 @@ Smaller values zoom closer.</source>
 Kleinere Werte zoomen näher heran.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="4947"/>
+        <location filename="src/options/options.ui" line="4952"/>
         <source>While flying - Map</source>
         <translation>Während des Fluges - Karte</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="5009"/>
+        <location filename="src/options/options.ui" line="5014"/>
         <source>&amp;Allow scrolling and zooming in the map and jump back to aircraft after:</source>
         <translation>&amp;Scrollen und Zoomen in der Karte erlauben und zum Flugzeug zurückspringen nach:</translation>
     </message>
@@ -25679,34 +25712,34 @@ Kleinere Werte zoomen näher heran.</translation>
         <translation type="vanished">Zoom-Distanz, die nach dem Landen angewendet werden soll</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="4997"/>
+        <location filename="src/options/options.ui" line="5002"/>
         <source>&amp;Zoom in on touchdown:</source>
         <translation>&amp;Nach dem Landen herein zoomen:</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="5074"/>
+        <location filename="src/options/options.ui" line="5079"/>
         <source>While flying - Flight Plan table</source>
         <translation>Während des Fluges - Flugplantabelle</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="5114"/>
+        <location filename="src/options/options.ui" line="5119"/>
         <source>Clears selected (blue) rows in the flight plan table and the related map highlights
 after the given timeout while flying.</source>
         <translation>Löscht die ausgewählten (blauen) Zeilen in der Flugplantabelle 
 nach der angegeben Zeit während des Fliegens.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="5118"/>
+        <location filename="src/options/options.ui" line="5123"/>
         <source>&amp;Clear selection in flight plan table after:</source>
         <translation>&amp;Lösche Auswahl in Flugplantabelle nach:</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="5132"/>
+        <location filename="src/options/options.ui" line="5137"/>
         <source>&amp;Scroll flight plan table back to active leg after:</source>
         <translation>&amp;Scrolle Flugplantabelle zurück zum aktiven Abschnitt nach:</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="5095"/>
+        <location filename="src/options/options.ui" line="5100"/>
         <source>Time until the selection is cleared and/or the active leg is put back on top of the flight plan table after user actions like scrolling or selecting.</source>
         <translation>Zeit, bis die Auswahl gelöscht wird bzw. die aktive Teilstrecke nach Benutzeraktionen, wie Blättern oder Auswählen, 
 wieder an den Anfang der Flugplantabelle gesetzt wird.</translation>
@@ -25722,23 +25755,28 @@ wieder an den Anfang der Flugplantabelle gesetzt wird.</translation>
         <translation>&amp;Zeige Kurzinfos in Menüs</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="1976"/>
+        <location filename="src/options/options.ui" line="1385"/>
+        <source>Degree, Decimal Minutes for Google</source>
+        <translation>Grad, Dezimal Minuten für Google</translation>
+    </message>
+    <message>
+        <location filename="src/options/options.ui" line="1981"/>
         <source>&amp;Screen click area size:</source>
         <translation>Größe der Klickbereiche:</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="2393"/>
-        <location filename="src/options/options.ui" line="2906"/>
-        <location filename="src/options/options.ui" line="3046"/>
-        <location filename="src/options/options.ui" line="3355"/>
-        <location filename="src/options/options.ui" line="3726"/>
-        <location filename="src/options/options.ui" line="3818"/>
-        <location filename="src/options/options.ui" line="3875"/>
+        <location filename="src/options/options.ui" line="2398"/>
+        <location filename="src/options/options.ui" line="2911"/>
+        <location filename="src/options/options.ui" line="3051"/>
+        <location filename="src/options/options.ui" line="3360"/>
+        <location filename="src/options/options.ui" line="3731"/>
+        <location filename="src/options/options.ui" line="3823"/>
+        <location filename="src/options/options.ui" line="3880"/>
         <source>Line Width </source>
         <translation>Linienbreite </translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="2842"/>
+        <location filename="src/options/options.ui" line="2847"/>
         <source>Hide on ground AI/multiplayer aircraft at higher zoom distances
 to avoid a cluttered up airports</source>
         <oldsource>Hide on ground AI aircraft at higher zoom distances
@@ -25747,48 +25785,48 @@ to avoid a cluttered up airports</oldsource>
 um überfüllte Flugplätze zu vermeiden</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="2846"/>
+        <location filename="src/options/options.ui" line="2851"/>
         <source>&amp;Hide aircraft on ground</source>
         <translation>&amp;Flugzeuge am Boden verbergen</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="3179"/>
+        <location filename="src/options/options.ui" line="3184"/>
         <source>&amp;Active Leg Color</source>
         <translation>Farbe des &amp;aktiven Abschnittes</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="3196"/>
+        <location filename="src/options/options.ui" line="3201"/>
         <source>&amp;Flight Plan Color</source>
         <translation>&amp;Flugplanfarbe</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="3207"/>
+        <location filename="src/options/options.ui" line="3212"/>
         <source>&amp;Transparent line</source>
         <translation>&amp;Transparente Linie</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="3227"/>
+        <location filename="src/options/options.ui" line="3232"/>
         <source>&amp;Procedure Leg Color</source>
         <translation>Farbe für &amp;Prozedurabschnitte</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="3245"/>
+        <location filename="src/options/options.ui" line="3250"/>
         <source>&amp;Outline Color</source>
         <translation>&amp;Umrandungsfarbe</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="3257"/>
+        <location filename="src/options/options.ui" line="3262"/>
         <source>&amp;Dim passed legs</source>
         <translation>Zurückgelegte Streckenteile &amp;abdunkeln</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="3278"/>
+        <location filename="src/options/options.ui" line="3283"/>
         <source>&amp;Passed Leg Color</source>
         <translation>Farbe der &amp;zurückgelegten
 Streckenteile</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="3285"/>
+        <location filename="src/options/options.ui" line="3290"/>
         <source>Draw the active flight plan leg in a different color.
 Change the color of this leg with the &quot;Active Leg Color&quot;.
 Also used in the elevation profile.</source>
@@ -25797,12 +25835,12 @@ Also used in the elevation profile.</source>
 Wird auch im Höhenprofil verwendet.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="3290"/>
+        <location filename="src/options/options.ui" line="3295"/>
         <source>&amp;Highlight active leg</source>
         <translation>&amp;Aktiven Abschnitt hervorheben</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="3498"/>
+        <location filename="src/options/options.ui" line="3503"/>
         <source>&amp;Range rings,
 traffic patterns,
 user holdings,
@@ -25815,52 +25853,52 @@ Luftstraßenhervorhebungen und
 Logbucheinträge:</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="3528"/>
+        <location filename="src/options/options.ui" line="3533"/>
         <source>Text size for measurement labels</source>
         <translation>Textgröße für Messlinien</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="3592"/>
+        <location filename="src/options/options.ui" line="3597"/>
         <source>Transparency of the selection highlight circles.
 Value 0 is opaque and 90 is most transparent.</source>
         <translation>Transparenz der Hervorhebungskreise.
 Der Wert 0 ist undurchsichtig und 90 ist am transparentesten.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="3699"/>
+        <location filename="src/options/options.ui" line="3704"/>
         <source>Color for distance measurment lines.
 Does not apply to lines originating from airports or navaids.</source>
         <translation>Farbe für Distanzmesslinien.
 Gilt nicht für Linien, die von Flugplätzen oder Navigationshilfen ausgehen.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="3703"/>
+        <location filename="src/options/options.ui" line="3708"/>
         <source>Distance &amp;Measurement Line Color</source>
         <translation>Distanzmesslinien Farbe</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="3802"/>
+        <location filename="src/options/options.ui" line="3807"/>
         <source>Highlight color on the map for selected legs in the flight plan table.</source>
         <translation>Hervorhebungsfarbe für in der Flugplantabelle ausgewählte Abschnitte.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="3812"/>
+        <location filename="src/options/options.ui" line="3817"/>
         <source>Line width for measurement lines</source>
         <oldsource>Line thickness for measurement lines</oldsource>
         <translation>Linienbreite für Messlinien</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="3869"/>
+        <location filename="src/options/options.ui" line="3874"/>
         <source>Line width for these user features</source>
         <translation>Linienbreite für diese Nutzerobjekte</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="3900"/>
+        <location filename="src/options/options.ui" line="3905"/>
         <source>Highlight color on the map for selected entries in the search result tables.</source>
         <translation>Markierungsfarbe auf der Karte für ausgewählte Einträge in den Suchergebnistabellen.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="3959"/>
+        <location filename="src/options/options.ui" line="3964"/>
         <source>Change the display of circles highlighting selected features on the map.
 These are shown when a flight plan leg is selected, an entry in a search result table is selected or 
 if you hover over the elevation profile.</source>
@@ -25869,22 +25907,22 @@ Diese werden angezeigt, wenn ein Flugplanabschnitt ausgewählt wird, ein Eintrag
 wenn Sie den Mauszeiger über das Höhenprofil bewegen.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="3964"/>
+        <location filename="src/options/options.ui" line="3969"/>
         <source>&amp;Transparent Circles</source>
         <translation>&amp;Transparente Markierungen</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="3974"/>
+        <location filename="src/options/options.ui" line="3979"/>
         <source>Symbol size for selection highlight circles</source>
         <translation>Symbolgröße für Markierungskreise</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="3980"/>
+        <location filename="src/options/options.ui" line="3985"/>
         <source>Circle Size </source>
         <translation>Kreisgröße</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="3999"/>
+        <location filename="src/options/options.ui" line="4004"/>
         <source>&amp;Highlights for selection in
 search tables,
 flight plan table or
@@ -25895,33 +25933,33 @@ der Flugplantabelle oder
 im Höhenprofil:</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="4028"/>
+        <location filename="src/options/options.ui" line="4033"/>
         <source>&amp;Distance measurments:</source>
         <translation>&amp;Distanzmessungen:</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="6990"/>
+        <location filename="src/options/options.ui" line="6995"/>
         <source>&lt;b&gt;A restart is required to detect new map themes after changing the path or after installing new map themes.&lt;/b&gt;</source>
         <oldsource>&lt;b&gt;A restart is required after changing the map display theme path.&lt;/b&gt;</oldsource>
         <translation>&lt;b&gt;Nach Änderung des Pfades oder der Installation von Kartenthemen ist ein Neustart erforderlich um neue Kartenthemen zu erkennen.&lt;/b&gt;</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="7180"/>
+        <location filename="src/options/options.ui" line="7185"/>
         <source>Scenery library directories or files to exclude from loading</source>
         <translation>Verzeichnisse oder Dateien der Szenerie-Bibliothek, die nicht geladen werden</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="7287"/>
+        <location filename="src/options/options.ui" line="7292"/>
         <source>Scenery library directories to exclude from add-on recognition</source>
         <translation>Szeneriebibliotheksverzeichnisse, die von der Add-on-Erkennung ausgeschlossen werden</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="7388"/>
+        <location filename="src/options/options.ui" line="7393"/>
         <source>Scenery library directories to include when loading</source>
         <translation>Szeneriebibliotheksverzeichnisse, die beim Laden eingschlossen werden</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="7418"/>
+        <location filename="src/options/options.ui" line="7423"/>
         <source>All add-ons in this list will be included in the scenery library when the Little Navmap 
 database is loaded, regardless of whether they are included the simulator or not.
 These paths apply to all Flight Simulators like MSFS (extending the directory &quot;Community&quot;) and 
@@ -25972,36 +26010,36 @@ Zeigen Sie diese Informationen nicht öffentlich in Foren auf Screenshots.&lt;/b
 </translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="4307"/>
+        <location filename="src/options/options.ui" line="4312"/>
         <source>Add MapBox &amp;User Map</source>
         <translation>Füge MapBox &amp;Nutzerkarte hinzu</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="4968"/>
+        <location filename="src/options/options.ui" line="4973"/>
         <source>Zoom distance that should be applied after touchdown.
 Smaller means closer.</source>
         <translation>Zoomdistanz, die nach dem Aufsetzen angewendet werden soll.
 Kleiner bedeutet näher.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="4994"/>
+        <location filename="src/options/options.ui" line="4999"/>
         <source>Zoom in to see airport details after touchdown</source>
         <translation>Hinein zoomen, um Flugplatzdetails nach der Landung zu sehen</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="5039"/>
+        <location filename="src/options/options.ui" line="5044"/>
         <source>Zoom out after takeoff.
 Not applicable if &quot;Center map on aircraft and next flight plan waypoint&quot; is selected.</source>
         <translation>Nach dem Abheben heraus zoomen.
 Nicht anwendbar, wenn &quot;Zentriere Karte auf Flugzeug und nächsten Wegpunkt des Flugplanes&quot; ausgewählt ist.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="5043"/>
+        <location filename="src/options/options.ui" line="5048"/>
         <source>&amp;Zoom out on takeoff:</source>
         <translation>&amp;Nach dem Abheben heraus zoomen:</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="5050"/>
+        <location filename="src/options/options.ui" line="5055"/>
         <source>Zoom distance to be applied after takeoff.
 Not applicable if &quot;Center map on aircraft and next flight plan waypoint&quot; is selected.
 Smaller means closer.</source>
@@ -26010,17 +26048,17 @@ Nicht anwendbar, wenn &quot;Zentriere Karte auf Flugzeug und nächsten Wegpunkt 
 Kleiner bedeutet näher.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="5142"/>
+        <location filename="src/options/options.ui" line="5147"/>
         <source>Active flight plan legs are highlighted with magenta color</source>
         <translation>Aktive Flugplanabschnitte werden mit magentafarbener Farbe hervorgehoben</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="5145"/>
+        <location filename="src/options/options.ui" line="5150"/>
         <source>&amp;Highlight active flight plan legs</source>
         <translation>&amp;Aktive Flugplanabschnitte hervorheben</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="5361"/>
+        <location filename="src/options/options.ui" line="5366"/>
         <source>Applies to new filenames when saving LNMPLN flight plans.
 File patterns for other flight plan files are defined in the multi export options dialog.
 The file suffix &quot;.lnmpln&quot; is appended automatically.
@@ -26054,74 +26092,74 @@ DESTNAME: Name des Zielflugplatzes
 CRUISEALT: Reiseflughöhe</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="5434"/>
+        <location filename="src/options/options.ui" line="5439"/>
         <source>&amp;Pattern for default flight plan file names used when saving LNMPLN:</source>
         <translation>&amp;Muster für Standard-Flugplan-Dateinamen, die beim Speichern von LNMPLN verwendet werden:</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="5762"/>
+        <location filename="src/options/options.ui" line="5767"/>
         <source>X-Plane 11 Weather and Wind Files</source>
         <translation>X-Plane 11 Wetter- und Winddateien</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="5787"/>
+        <location filename="src/options/options.ui" line="5792"/>
         <source>No &quot;global_winds.grib&quot; selected. Using default.</source>
         <translation>Keine Datei &quot;global_winds.grib&quot; ausgewählt. Benutze Standard.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="5797"/>
+        <location filename="src/options/options.ui" line="5802"/>
         <source>Wind &amp;File:</source>
         <translation>&amp;Winddatei:</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="5836"/>
+        <location filename="src/options/options.ui" line="5841"/>
         <source>No &quot;METAR.rwx&quot; selected. Using default.</source>
         <translation>Keine Datei &quot;METAR.rwx&quot; ausgewählt. Benutze Standard.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="5846"/>
+        <location filename="src/options/options.ui" line="5851"/>
         <source>&amp;Weather file:</source>
         <translation>&amp;Wetterdatei:</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="5904"/>
+        <location filename="src/options/options.ui" line="5909"/>
         <source>X-Plane 12 Weather and Wind Path</source>
         <translation>X-Plane 12 Pfad für Wetter- und Winddateien</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="5925"/>
+        <location filename="src/options/options.ui" line="5930"/>
         <source>Select the &quot;X-Plane 12/Output/real weather&quot; directory from the X-Plane base directory.</source>
         <translation>Wählen Sie das Verzeichnis &quot;X-Plane 12/Output/real weather&quot; aus dem X-Plane Basisverzeichnis.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="5960"/>
+        <location filename="src/options/options.ui" line="5965"/>
         <source>This directory &quot;X-Plane 12/Output/real weather&quot; will be used to get METAR and winds aloft data if X-Plane 12 is selected.
 The default X-Plane 12 weather directory in the X-Plane base path will be used if this field is empty.</source>
         <translation>Dieses Verzeichnis &quot;X-Plane 12/Output/real weather&quot; wird verwendet, um METAR und Höhenwinde zu erhalten, wenn X-Plane 12 ausgewählt ist.
 Das standardmäßige X-Plane 12 Wetterverzeichnis im X-Plane Basispfad wird verwendet, wenn dieses Feld leer ist.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="5964"/>
+        <location filename="src/options/options.ui" line="5969"/>
         <source>No &quot;Output/real weather&quot; selected. Using default.</source>
         <translation>Kein Verzeichnis &quot;Output/real weather&quot; ausgewählt. Benutze Standard.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="5974"/>
+        <location filename="src/options/options.ui" line="5979"/>
         <source>&amp;Weather Directory:</source>
         <translation>&amp;Wetterverzeichnis:</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="5987"/>
+        <location filename="src/options/options.ui" line="5992"/>
         <source>Active Sky Weather File</source>
         <translation>Active Sky Wetter&amp;datei</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="6037"/>
+        <location filename="src/options/options.ui" line="6042"/>
         <source>No &quot;current_wx_snapshot.txt&quot; selected. Using default.</source>
         <translation>Keine &quot;current_wx_snapshot.txt&quot; Datei ausgewählt. Verwende Standard.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="6060"/>
+        <location filename="src/options/options.ui" line="6065"/>
         <source>Online Weather and Wind Forecast Web Addresses</source>
         <translation>Web-Adressen für Online-Wetter und Windvorhersage</translation>
     </message>
@@ -26132,40 +26170,40 @@ Default is &quot;https://api.ivao.aero/v2/airports/all/metar&quot;.</source>
 Der Standard ist &quot;https://api.ivao.aero/v2/airports/all/metar&quot;.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="6156"/>
-        <location filename="src/options/options.ui" line="6188"/>
-        <location filename="src/options/options.ui" line="6208"/>
-        <location filename="src/options/options.ui" line="6218"/>
+        <location filename="src/options/options.ui" line="6161"/>
+        <location filename="src/options/options.ui" line="6193"/>
+        <location filename="src/options/options.ui" line="6213"/>
+        <location filename="src/options/options.ui" line="6223"/>
         <source>Reset the URL back to default</source>
         <translation>Webadresse auf Standard zurücksetzen</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="6159"/>
-        <location filename="src/options/options.ui" line="6191"/>
-        <location filename="src/options/options.ui" line="6211"/>
-        <location filename="src/options/options.ui" line="6221"/>
+        <location filename="src/options/options.ui" line="6164"/>
+        <location filename="src/options/options.ui" line="6196"/>
+        <location filename="src/options/options.ui" line="6216"/>
+        <location filename="src/options/options.ui" line="6226"/>
         <source>&amp;Reset</source>
         <translation>&amp;Zurücksetzen</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="6522"/>
+        <location filename="src/options/options.ui" line="6527"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Download the &amp;quot;whazzup.txt&amp;quot; or &amp;quot;status.txt&amp;quot; file periodically.&lt;/p&gt;&lt;p&gt;Use low values only for private servers.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&quot;whazzup.txt&quot; oder &quot;status.txt&quot; regelmäßig herunterladen.&lt;/p&gt;&lt;p&gt;
 Niedrige Werte nur für private Netzwerke benutzen.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="5928"/>
-        <location filename="src/options/options.ui" line="6670"/>
+        <location filename="src/options/options.ui" line="5933"/>
+        <location filename="src/options/options.ui" line="6675"/>
         <source>&amp;Select Directory ...</source>
         <translation>&amp;Verzeichnis auswählen ...</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="6084"/>
+        <location filename="src/options/options.ui" line="6089"/>
         <source>Send a test request to the NOAA wind service.</source>
         <translation>Testanfrage an dne NOAA Winddienst senden.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="6115"/>
+        <location filename="src/options/options.ui" line="6120"/>
         <source>Base URL of the NOAA wind service.
 There is usually no need to change this URL.
 Entering a wrong value will cause errors when downloading wind reports.</source>
@@ -26174,17 +26212,17 @@ In der Regel ist es nicht notwendig, diese URL zu ändern.
 Die Eingabe eines falschen Wertes führt zu Fehlern beim Download.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="6228"/>
+        <location filename="src/options/options.ui" line="6233"/>
         <source>Send a test request to a IVAO weather service.</source>
         <translation>Testanfrage an den IVAO Wetterdienst senden.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="6238"/>
+        <location filename="src/options/options.ui" line="6243"/>
         <source>Send a test request to a VATSIM weather service.</source>
         <translation>Testanfrage an den VATSIM Wetterdienst senden.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="6258"/>
+        <location filename="src/options/options.ui" line="6263"/>
         <source>Download URL for the IVAO weather file.
 There is usually no need to change this URL.
 Entering a wrong value will cause errors when downloading weather reports.</source>
@@ -26193,77 +26231,77 @@ In der Regel ist es nicht notwendig, diese URL zu ändern.
 Die Eingabe eines falschen Wertes führt zu Fehlern beim Download.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="6735"/>
+        <location filename="src/options/options.ui" line="6740"/>
         <source>&amp;Use encrypted connection (HTTPS / SSL)</source>
         <translation>&amp;Verschlüsselte Verbindung (HTTPS / SSL)</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="6916"/>
+        <location filename="src/options/options.ui" line="6921"/>
         <source>Opens the cache directory in a file manager.</source>
         <translation>Zwischenspeicherverzeichnis in der Dateiverwaltung öffnen.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="6919"/>
+        <location filename="src/options/options.ui" line="6924"/>
         <source>&amp;Show Disk Cache in File Manager</source>
         <translation>Zwischenspeicher in der &amp;Dateiverwaltung anzeigen</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="6906"/>
+        <location filename="src/options/options.ui" line="6911"/>
         <source>&amp;Maximum size of memory cache:</source>
         <translation>&amp;Maximale Größe des Zwischenspeichers im RAM:</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="6929"/>
+        <location filename="src/options/options.ui" line="6934"/>
         <source>Map Display Themes</source>
         <translation>Kartenthemen</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="6980"/>
+        <location filename="src/options/options.ui" line="6985"/>
         <source>Select a directoy to search for additional map themes.</source>
         <translation>Verzeichnis für zusätzliche Kartenthemen auswählen.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="6983"/>
+        <location filename="src/options/options.ui" line="6988"/>
         <source>No themes directory selected.</source>
         <translation>Kein Verzeichnis für Kartenthemen ausgewählt.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="6957"/>
+        <location filename="src/options/options.ui" line="6962"/>
         <source>Directory for additional &amp;map themes:</source>
         <translation>Verzeichnis für zusätzliche &amp;Kartenthemen:</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="6950"/>
+        <location filename="src/options/options.ui" line="6955"/>
         <source>Select &amp;Themes Directory ...</source>
         <translation>Verzeichnis für &amp;Kartenthemen auswählen ...</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="7006"/>
+        <location filename="src/options/options.ui" line="7011"/>
         <source>Flight Plan Elevation Profile</source>
         <translation>Flugplanhöhenprofil</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="7027"/>
+        <location filename="src/options/options.ui" line="7032"/>
         <source>&amp;Select GLOBE Directory ...</source>
         <translation>&amp;GLOBE Verzeichnis auswählen ...</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="7034"/>
+        <location filename="src/options/options.ui" line="7039"/>
         <source>Select the directoy that contains the files &quot;a10g&quot; to &quot;p10g&quot;.</source>
         <translation>Bitte wählen Sie das Verzeichnis aus, das die Dateien &quot;a10g&quot; bis &quot;p10g&quot; enthält.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="7037"/>
+        <location filename="src/options/options.ui" line="7042"/>
         <source>No elevation data directory selected.</source>
         <translation>Keine Höhendaten ausgewählt.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="7094"/>
+        <location filename="src/options/options.ui" line="7099"/>
         <source>Use Online Elevation Data</source>
         <translation>Nutze Onlinehöhendaten</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="7050"/>
+        <location filename="src/options/options.ui" line="7055"/>
         <source>Use Offline GLOBE Elevation Data</source>
         <translation>Nutze Offline GLOBE Höhendaten</translation>
     </message>
@@ -26286,20 +26324,20 @@ Von der Verknüpfung oben &lt;b&gt;&lt;i&gt;All Tiles in One .zip (all10g.zip)&l
         <translation type="obsolete">&amp;Verzeichnisse oder Dateien, die vom Laden ausgeschlossen werden:</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="7358"/>
+        <location filename="src/options/options.ui" line="7363"/>
         <source>A&amp;dd Directory ...</source>
         <oldsource>A&amp;dd ...</oldsource>
         <translation>&amp;Verzeichnis Hinzufügen ...</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="7365"/>
+        <location filename="src/options/options.ui" line="7370"/>
         <source>R&amp;emove Selected</source>
         <oldsource>R&amp;emove</oldsource>
         <translation>&amp;Ausgewählte Löschen</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="7250"/>
-        <location filename="src/options/options.ui" line="7462"/>
+        <location filename="src/options/options.ui" line="7255"/>
+        <location filename="src/options/options.ui" line="7467"/>
         <source>&amp;Add Directory ...</source>
         <translation>&amp;Verzeichnis hinzufügen ...</translation>
     </message>
@@ -26308,7 +26346,7 @@ Von der Verknüpfung oben &lt;b&gt;&lt;i&gt;All Tiles in One .zip (all10g.zip)&l
         <translation type="vanished">Verzeichnisse oder Dateien, die vom Laden ausgeschlossen werden</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="7257"/>
+        <location filename="src/options/options.ui" line="7262"/>
         <source>&amp;Add Files ...</source>
         <translation>&amp;Dateien hinzufügen ...</translation>
     </message>
@@ -26329,7 +26367,7 @@ Diese Pfade gelten für alle Flugsimulatoren wie MSFS (Erweiterung des Verzeichn
 Sie müssen die Szenerie-Bibliothek neu laden, damit die Änderungen wirksam werden.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="7207"/>
+        <location filename="src/options/options.ui" line="7212"/>
         <source>All directories including sub-directories and files in this list will be omitted when loading the scenery library into the Little Navmap database.
 You can also use this list to speed up database loading if you exclude directories that do not contain airports or navaids.
 These paths apply to all Flight Simulators (FSX, Prepar3D, MSFS and X-Plane).
@@ -26348,8 +26386,8 @@ Sie müssen die Szeneriebibliothek neu laden, damit die Änderungen aktiv werden
         <translation type="vanished">&amp;Hinzufügen ...</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="7264"/>
-        <location filename="src/options/options.ui" line="7469"/>
+        <location filename="src/options/options.ui" line="7269"/>
+        <location filename="src/options/options.ui" line="7474"/>
         <source>&amp;Remove Selected</source>
         <oldsource>&amp;Remove</oldsource>
         <translation>&amp;Ausgewählte Löschen</translation>
@@ -26365,7 +26403,7 @@ Diese Pfade treffen auf alle Flugsimulatoren (FSX, P3D und X-Plane) zu.
 Sie müssen die Szeneriebibliothek neu laden, damit die Änderungen aktiv werden.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="7314"/>
+        <location filename="src/options/options.ui" line="7319"/>
         <source>All airports found outside the default &quot;scenery&quot; directory will be considered add-ons.
 You can use this list to modify this behavior.
 Any airports found in these directories and their sub-directories will not be considered add-ons.
@@ -26392,7 +26430,7 @@ Sie müssen die Szeneriebibliothek neu laden, damit die Änderungen aktiv werden
         <translation type="vanished">Verzeichnisse, die von der &amp;Add-On Erkennung ausgeschlossen werden sollen:</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="7167"/>
+        <location filename="src/options/options.ui" line="7172"/>
         <source>&lt;b&gt;You have to reload the scenery library for the changes to take effect.&lt;/b&gt;</source>
         <oldsource>&lt;b&gt;You have to re-import the scenery library for the changes to take effect.&lt;/b&gt;</oldsource>
         <translation>&lt;b&gt;Sie müssen die Szeneriebibliothek neu laden, damit die Änderungen wirksam werden.&lt;/b&gt;</translation>
@@ -26404,7 +26442,7 @@ Changes only settings that can be done with this dialog.</source>
 Ändert nur Einstellungen, die über diesen Dialog geändert werden können.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="2203"/>
+        <location filename="src/options/options.ui" line="2208"/>
         <source>Larger values will list more objects in the tooltip.</source>
         <translation>Größere Werte führen zu mehr Kurzinfos.</translation>
     </message>
@@ -29969,9 +30007,9 @@ Wird nur im Sinkflug am Benutzerflugzeugsymbol mit dem Zusatz &quot;N&quot; geze
         <location filename="src/common/maptypes.cpp" line="304"/>
         <location filename="src/common/maptypes.cpp" line="319"/>
         <location filename="src/common/maptypes.cpp" line="333"/>
-        <location filename="src/common/unit.cpp" line="691"/>
-        <location filename="src/common/unit.cpp" line="709"/>
-        <location filename="src/common/unit.cpp" line="746"/>
+        <location filename="src/common/unit.cpp" line="693"/>
+        <location filename="src/common/unit.cpp" line="713"/>
+        <location filename="src/common/unit.cpp" line="755"/>
         <source>Invalid</source>
         <translation>Ungültig</translation>
     </message>
@@ -32761,7 +32799,7 @@ Spaces are replaced with underscores.</oldsource>
         <translation>%1 läuft bereits.</translation>
     </message>
     <message>
-        <location filename="src/navapp.cpp" line="1313"/>
+        <location filename="src/navapp.cpp" line="1314"/>
         <source>Version %5 (revision %6)</source>
         <translation>Version %5 (Revision %6)</translation>
     </message>
@@ -33135,12 +33173,12 @@ Basiert auf der Berechnung mit dem Flugzeugleistungsprofil.</translation>
         <translation>LOC</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="681"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="682"/>
         <source>Error reading multiexport configuration: Invalid magic number. Not a multiexport configuration.</source>
         <translation>Fehler beim Lesen der Multiexport-Konfiguration: Ungültige magische Nummer. Keine gültige Multiexport-Konfiguration.</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="691"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="692"/>
         <source>Error reading multiexport configuration: Invalid version. Incompatible multiexport configuration.</source>
         <translation>Fehler beim Lesen der Multiexport-Konfiguration: Ungültige Version. Inkompatible Multiexport-Konfiguration.</translation>
     </message>
@@ -33404,12 +33442,12 @@ Klicken oder neu laden, um fortzufahren.</translation>
 <context>
     <name>Route</name>
     <message>
-        <location filename="src/route/route.cpp" line="1268"/>
+        <location filename="src/route/route.cpp" line="1267"/>
         <source> (not found)</source>
         <translation> (nicht gefunden)</translation>
     </message>
     <message>
-        <location filename="src/route/route.cpp" line="3533"/>
+        <location filename="src/route/route.cpp" line="3566"/>
         <source>EMPTY</source>
         <translation>LEER</translation>
     </message>
@@ -33426,7 +33464,7 @@ Klicken oder neu laden, um fortzufahren.</translation>
         <translation type="vanished">-</translation>
     </message>
     <message>
-        <location filename="src/route/route.cpp" line="3512"/>
+        <location filename="src/route/route.cpp" line="3545"/>
         <source>Empty Flightplan</source>
         <translation>Leerer Flugplan</translation>
     </message>
@@ -34055,22 +34093,22 @@ to select departure and destination first.</oldsource>
 <context>
     <name>RouteController</name>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="268"/>
+        <location filename="src/route/routecontroller.cpp" line="269"/>
         <source>&amp;Undo Flight Plan</source>
         <translation>Flugplanänderung &amp;rückgängig machen</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="272"/>
+        <location filename="src/route/routecontroller.cpp" line="273"/>
         <source>&amp;Redo Flight Plan</source>
         <translation>Flugplanänderung &amp;wiederherstellen</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="477"/>
+        <location filename="src/route/routecontroller.cpp" line="478"/>
         <source>Undo flight plan change.</source>
         <translation>Flugplanänderung rückgängig machen.</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="482"/>
+        <location filename="src/route/routecontroller.cpp" line="483"/>
         <source>Redo flight plan change.</source>
         <translation>Flugplanänderung wiederherstellen.</translation>
     </message>
@@ -34079,7 +34117,7 @@ to select departure and destination first.</oldsource>
         <translation type="vanished">%1 Einträge in die Zwischenablage kopiert.</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="816"/>
+        <location filename="src/route/routecontroller.cpp" line="817"/>
         <source>Flight plan string to clipboard.</source>
         <translation>Flugplanzeichenkette in die Zwischenablage.</translation>
     </message>
@@ -34088,34 +34126,34 @@ to select departure and destination first.</oldsource>
         <translation type="vanished">Geschwindigkeit ändern</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="870"/>
+        <location filename="src/route/routecontroller.cpp" line="871"/>
         <source>Change Altitude</source>
         <translation>Höhe ändern</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="911"/>
+        <location filename="src/route/routecontroller.cpp" line="912"/>
         <source>Change Type</source>
         <translation>Typ ändern</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="924"/>
+        <location filename="src/route/routecontroller.cpp" line="925"/>
         <source>Flight plan type changed to %1.</source>
         <translation>Flugplantyp %1 geändert.</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="1188"/>
+        <location filename="src/route/routecontroller.cpp" line="1197"/>
         <source>Loading of FLP flight plan failed:&lt;br/&gt;&lt;br/&gt;</source>
         <translation>Laden des FLP Flugplans ist fehlgeschlagen:&lt;/br/&gt;&lt;br/&gt;</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="1194"/>
+        <location filename="src/route/routecontroller.cpp" line="1203"/>
         <source>Warnings while loading FLP flight plan file:&lt;br/&gt;&lt;br/&gt;</source>
         <translation>Warnung beim Laden der FLP Flugplandatei:&lt;br/&gt;&lt;br/&gt;</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="1196"/>
-        <location filename="src/route/routecontroller.cpp" line="1425"/>
-        <location filename="src/route/routecontroller.cpp" line="2174"/>
+        <location filename="src/route/routecontroller.cpp" line="1205"/>
+        <location filename="src/route/routecontroller.cpp" line="1226"/>
+        <location filename="src/route/routecontroller.cpp" line="2113"/>
         <source>Do not &amp;show this dialog again.</source>
         <oldsource>Do &amp;not show this dialog again.</oldsource>
         <translation>Diesen Dialog &amp;nicht mehr anzeigen.</translation>
@@ -34135,27 +34173,27 @@ Startposition auf den längsten primären Runway des Abflugplatzes gesetzt.</tra
         <translation type="vanished">&lt;p&gt;Kann Prozeduren nicht in den Flugplan laden:&lt;/p&gt;&lt;ul&gt;&lt;li&gt;%1&lt;/li&gt;&lt;/ul&gt;</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="1464"/>
+        <location filename="src/route/routecontroller.cpp" line="1415"/>
         <source>Append</source>
         <translation>Anhängen</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="1464"/>
+        <location filename="src/route/routecontroller.cpp" line="1415"/>
         <source>Insert</source>
         <translation>Einfügen</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="1839"/>
+        <location filename="src/route/routecontroller.cpp" line="1781"/>
         <source>Direct Calculation</source>
         <translation>Direkte Berechnung</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="1851"/>
+        <location filename="src/route/routecontroller.cpp" line="1793"/>
         <source>Calculated direct flight plan.</source>
         <translation>Direkten Flugplan berechnet.</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="1941"/>
+        <location filename="src/route/routecontroller.cpp" line="1883"/>
         <source>Radionnav Flight Plan Calculation</source>
         <translation>Funknavigationsflugplanberechnung</translation>
     </message>
@@ -34164,7 +34202,7 @@ Startposition auf den längsten primären Runway des Abflugplatzes gesetzt.</tra
         <translation type="vanished">Funknavigationsflugplan berechnet.</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="1975"/>
+        <location filename="src/route/routecontroller.cpp" line="1917"/>
         <source>No route found.</source>
         <translation>Keine Route gefunden.</translation>
     </message>
@@ -34199,32 +34237,32 @@ Try another routing type or create the flight plan manually.</source>
 Versuchen Sie einen anderen Routentyp oder erstellen Sie den Flugplan manuell.</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2197"/>
+        <location filename="src/route/routecontroller.cpp" line="2136"/>
         <source>Adjust altitude</source>
         <translation>Höhe anpassen</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2213"/>
+        <location filename="src/route/routecontroller.cpp" line="2153"/>
         <source>Adjusted flight plan altitude.</source>
         <translation>Flugplanhöhe angepasst.</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2221"/>
+        <location filename="src/route/routecontroller.cpp" line="2161"/>
         <source>Reverse</source>
         <translation>Umkehren</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2262"/>
+        <location filename="src/route/routecontroller.cpp" line="2201"/>
         <source>Reversed flight plan.</source>
         <translation>Flugplan umgekehrt.</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2478"/>
+        <location filename="src/route/routecontroller.cpp" line="2423"/>
         <source>Showing airport on map.</source>
         <translation>Zeige Flugplatz auf der Karte.</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2480"/>
+        <location filename="src/route/routecontroller.cpp" line="2425"/>
         <source>Showing navaid on map.</source>
         <translation>Zeige Navigationshilfe auf der Karte.</translation>
     </message>
@@ -34356,164 +34394,164 @@ to select departure and destination.</oldsource>
         <translation type="vanished">Anflug erstellen und Flugplatz als Ziel einsetzen</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="234"/>
+        <location filename="src/route/routecontroller.cpp" line="235"/>
         <source>Open or close tabs</source>
         <translation>Reiter öffnen oder schließen</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="176"/>
+        <location filename="src/route/routecontroller.cpp" line="177"/>
         <source>Longitude</source>
         <translation>Längengrad</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="154"/>
+        <location filename="src/route/routecontroller.cpp" line="155"/>
         <source>Ident</source>
         <translation>Kennung</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="155"/>
+        <location filename="src/route/routecontroller.cpp" line="156"/>
         <source>Region</source>
         <translation>Region</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="156"/>
+        <location filename="src/route/routecontroller.cpp" line="157"/>
         <source>Name</source>
         <translation>Name</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="157"/>
+        <location filename="src/route/routecontroller.cpp" line="158"/>
         <source>Procedure</source>
         <translation>Prozedur</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="158"/>
+        <location filename="src/route/routecontroller.cpp" line="159"/>
         <source>Airway or
 Procedure</source>
         <translation>Luftstraße oder
 Prozedur</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="159"/>
+        <location filename="src/route/routecontroller.cpp" line="160"/>
         <source>Restriction
 %alt%/%speed%/angle</source>
         <translation>Beschränkung
 %alt%/%speed%/Winkel</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="160"/>
+        <location filename="src/route/routecontroller.cpp" line="161"/>
         <source>Type</source>
         <translation>Typ</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="161"/>
+        <location filename="src/route/routecontroller.cpp" line="162"/>
         <source>Freq.
 MHz/kHz/Cha.</source>
         <translation>Freq.
 MHz/kHz/Kanal</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="162"/>
+        <location filename="src/route/routecontroller.cpp" line="163"/>
         <source>Range
 %dist%</source>
         <translation>Reichweite
 %dist%</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="163"/>
+        <location filename="src/route/routecontroller.cpp" line="164"/>
         <source>Course
 °M</source>
         <translation>Kurs
 °M</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="164"/>
+        <location filename="src/route/routecontroller.cpp" line="165"/>
         <source>Course
 °T</source>
         <translation>Kurs
 °T</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="165"/>
+        <location filename="src/route/routecontroller.cpp" line="166"/>
         <source>Distance
 %dist%</source>
         <translation>Distanz
 %dist%</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="166"/>
+        <location filename="src/route/routecontroller.cpp" line="167"/>
         <source>Remaining
 %dist%</source>
         <translation>Verbleibend
 %dist%</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="167"/>
+        <location filename="src/route/routecontroller.cpp" line="168"/>
         <source>Leg Time
 hh:mm</source>
         <translation>Abschnittszeit
 hh:mm</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="168"/>
+        <location filename="src/route/routecontroller.cpp" line="169"/>
         <source>ETA
 hh:mm</source>
         <translation>Ankunft
 hh:mm</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="169"/>
+        <location filename="src/route/routecontroller.cpp" line="170"/>
         <source>Fuel Rem.
 %weight%</source>
         <translation>Restl. Treibstoff
 %weight%</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="170"/>
+        <location filename="src/route/routecontroller.cpp" line="171"/>
         <source>Fuel Rem.
 %volume%</source>
         <translation>Restl. Treibstoff
 %volume%</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="171"/>
+        <location filename="src/route/routecontroller.cpp" line="172"/>
         <source>Wind
 °M/%speed%</source>
         <translation>Wind
 °M/%speed%</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="172"/>
+        <location filename="src/route/routecontroller.cpp" line="173"/>
         <source>Head- or Tailwind
 %speed%</source>
         <translation>Gegen- oder Rückenwind
 %speed%</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="173"/>
+        <location filename="src/route/routecontroller.cpp" line="174"/>
         <source>Altitude
 %alt%</source>
         <translation>Höhe
 %alt%</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="175"/>
+        <location filename="src/route/routecontroller.cpp" line="176"/>
         <source>Latitude</source>
         <translation>Breitengrad</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="177"/>
+        <location filename="src/route/routecontroller.cpp" line="178"/>
         <source>Related
 Ident/Freq./Dist./Bearing</source>
         <translation>Zugehörige
 Kennung/Freq./Dist./Kurs</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="178"/>
+        <location filename="src/route/routecontroller.cpp" line="179"/>
         <source>Remarks</source>
         <translation>Anmerkungen</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="181"/>
+        <location filename="src/route/routecontroller.cpp" line="182"/>
         <source>ICAO ident of the navaid or airport.</source>
         <translation>ICAO-Kennung des Flugplatzes oder der Navigationshilfe.</translation>
     </message>
@@ -34522,19 +34560,19 @@ Kennung/Freq./Dist./Kurs</translation>
         <translation type="obsolete">Zwei-Buchstaben-Code für Region der Navigationshilfe.</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="184"/>
+        <location filename="src/route/routecontroller.cpp" line="185"/>
         <source>Either SID, SID transition, STAR, STAR transition, transition,
 approach or missed plus the name of the procedure.</source>
         <translation>Entweder SID, SID Übergang, STAR, STAR Übergang, Übergang, 
 Anflug oder Fehlanflug plus Prozedurname.</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="186"/>
+        <location filename="src/route/routecontroller.cpp" line="187"/>
         <source>Contains the airway name for en route legs or procedure instruction.</source>
         <translation>Enthält den Luftstrassennamen für Abschnitte oder Prozeduranweisungen.</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="187"/>
+        <location filename="src/route/routecontroller.cpp" line="188"/>
         <source>Minimum and maximum altitude for en route airway segments.
 Procedure altitude restriction, speed limit or
 required descent flight path angle.</source>
@@ -34549,7 +34587,7 @@ localizer approaches on the last runway leg.</source>
 Localizer nähert sich auf der letzten Bahnstrecke.</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="192"/>
+        <location filename="src/route/routecontroller.cpp" line="193"/>
         <source>Frequency or channel of a radio navaid.
 Also shows ILS or localizer frequency for corresponding approaches
 on the last runway leg.</source>
@@ -34558,12 +34596,12 @@ Zeigt auch die ILS- oder Localizer-Frequenz für entsprechende
 Anflüge auf dem Endabschnitt an.</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="195"/>
+        <location filename="src/route/routecontroller.cpp" line="196"/>
         <source>Range of a radio navaid if available.</source>
         <translation>Reichweite eine Funknavigationshilfe, wenn verfügbar.</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="196"/>
+        <location filename="src/route/routecontroller.cpp" line="197"/>
         <source>Magnetic start course of the great circle route
 connecting the two waypoints of the leg.
 Does not consider VOR calibrated declination.</source>
@@ -34574,7 +34612,7 @@ welche die beiden Wegpunkte des Abschnittes verbindet.
 Berücksichtigt nicht die kalibrierte Missweisung von VOR.</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="199"/>
+        <location filename="src/route/routecontroller.cpp" line="200"/>
         <source>True start course of the great circle route connecting
 the two waypoints of the leg.</source>
         <translation>Wahrer Startkurs der Großkreisroute, welche die beiden
@@ -34613,34 +34651,34 @@ Calculated based on the aircraft performance profile.</source>
 Berechnet auf Grundlage der aktuellen Flugzeugleistung.</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="216"/>
+        <location filename="src/route/routecontroller.cpp" line="217"/>
         <source>Wind direction and speed at waypoint.</source>
         <translation>Windrichtung und -geschwindigkeit am Wegpunkt.</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="217"/>
+        <location filename="src/route/routecontroller.cpp" line="218"/>
         <source>Head- or tailwind at waypoint.</source>
         <translation>Gegen- oder Rückenwind am Wegpunkt.</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="218"/>
+        <location filename="src/route/routecontroller.cpp" line="219"/>
         <source>Altitude at waypoint
 Calculated based on the aircraft performance profile.</source>
         <translation>Höhe am Wegpunkt
 Basiert auf der Berechnung mit dem Flugzeugleistungsprofil.</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="222"/>
+        <location filename="src/route/routecontroller.cpp" line="223"/>
         <source>Waypoint latitude in format as selected in options.</source>
         <translation>Breitengrad des Wegpunkts im Format, das in den Einstellungen ausgewählt wurde.</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="223"/>
+        <location filename="src/route/routecontroller.cpp" line="224"/>
         <source>Waypoint longitude in format as selected in options.</source>
         <translation>Längengrad des Wegpunkts im Format, das in den Einstellungen gewählt wurde.</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="224"/>
+        <location filename="src/route/routecontroller.cpp" line="225"/>
         <source>Related or recommended navaid for procedure legs.
 Shown with navaid ident, navaid frequency, distance and bearing defining a fix.</source>
         <translation>Zugehörige oder empfohlene Navigationshilfe. für Prozedurabschnitte.
@@ -34651,7 +34689,7 @@ Dargestellt mit Kennung, Frequenz, Distanz und Kurs, welche einen Fixpunkt defin
         <translation type="obsolete">Wendeanweisungen, Überflug oder zugehörige Navigationshilfe für Prozedurabschnitte.</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="407"/>
+        <location filename="src/route/routecontroller.cpp" line="408"/>
         <source>No flight plan.
 
 Right-click the center of an airport symbol on the map and select it as departure/destination from the context menu, or use the airport search (press &quot;F4&quot;) to select departure/destination from the context menu of the search result table.</source>
@@ -34660,89 +34698,88 @@ Right-click the center of an airport symbol on the map and select it as departur
 Klicken Sie mit der rechten Maustaste auf die Mitte eines Flugplatzsymbols auf der Karte und wählen Sie es als Abflug/Ziel aus dem Kontextmenü aus. Alternativ verwenden Sie die Flugplatzsuche (drücken Sie &quot;F4&quot;), um Abflug/Ziel aus dem Kontextmenü der Suchergebnistabelle auszuwählen.</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="510"/>
+        <location filename="src/route/routecontroller.cpp" line="511"/>
         <source>Copied %1 entries as CSV to clipboard.</source>
         <translation>%1 Einträge als CSV in die Zwischenablage kopiert.</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="651"/>
-        <location filename="src/route/routecontroller.cpp" line="705"/>
+        <location filename="src/route/routecontroller.cpp" line="652"/>
+        <location filename="src/route/routecontroller.cpp" line="706"/>
         <source>Flight Plan Remarks</source>
         <translation>Flugplananmerkungen</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="673"/>
+        <location filename="src/route/routecontroller.cpp" line="674"/>
         <source>%1 - %2</source>
         <translation>%1 - %2</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="679"/>
+        <location filename="src/route/routecontroller.cpp" line="680"/>
         <source>%1 Version %2 (revision %3) on %4 </source>
         <translation>%1 Version %2 (Revision %3) am %4 </translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="1422"/>
         <source>FMS flight plan has no intermediate waypoints.&lt;br/&gt;&lt;br/&gt;Can therefore not determine the cruising altitude.&lt;br/&gt;Adjust it manually.</source>
-        <translation>Der FMS-Flugplan hat keine Zwischen-Wegpunkte.&lt;br/&gt;&lt;br/&gt;&lt;br/&gt;Kann daher die Reiseflughöhe nicht bestimmen.&lt;br/&gt;Bitte manuell einstellen.</translation>
+        <translation type="vanished">Der FMS-Flugplan hat keine Zwischen-Wegpunkte.&lt;br/&gt;&lt;br/&gt;&lt;br/&gt;Kann daher die Reiseflughöhe nicht bestimmen.&lt;br/&gt;Bitte manuell einstellen.</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="1751"/>
+        <location filename="src/route/routecontroller.cpp" line="1693"/>
         <source>&lt;p&gt;One or more procedures in the flight plan are not valid.&lt;/p&gt;&lt;ul&gt;&lt;li&gt;%1&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;These will be dropped when saving.&lt;/p&gt;&lt;p&gt;Save flight plan now and drop invalid procedures?&lt;/p&gt;</source>
         <translation>&lt;p&gt;Eine oder mehrere Prozeduren im Flugplan sind nicht gültig.&lt;/p&gt;&lt;ul&gt;&lt;li&gt;%1&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;Diese werden beim Speichern gelöscht.&lt;/p&gt;&lt;p&gt;Flugplan jetzt speichern und ungültige Prozeduren löschen?&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="1755"/>
+        <location filename="src/route/routecontroller.cpp" line="1697"/>
         <source>&lt;/li&gt;&lt;li&gt;</source>
         <translation>&lt;/li&gt;&lt;li&gt;</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="1756"/>
+        <location filename="src/route/routecontroller.cpp" line="1698"/>
         <source>Do not &amp;show this dialog again and save without warning.</source>
         <oldsource>Do &amp;not show this dialog again and save without warning.</oldsource>
         <translation>Diese Dialog &amp;nicht mehr anzeigen und ohne Warnung speichern.</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="1908"/>
+        <location filename="src/route/routecontroller.cpp" line="1850"/>
         <source>Airway Flight Plan Calculation</source>
         <translation>Luftstraßen Flugplanberechnung</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="1913"/>
+        <location filename="src/route/routecontroller.cpp" line="1855"/>
         <source>Low altitude airway Flight Plan Calculation</source>
         <translation>Niedrige Luftstraßen Flugplanberechnung</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="1918"/>
+        <location filename="src/route/routecontroller.cpp" line="1860"/>
         <source>High altitude airway Flight Plan Calculation</source>
         <translation>Hohe Luftstraßen Flugplanberechnung</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="1973"/>
+        <location filename="src/route/routecontroller.cpp" line="1915"/>
         <source>Calculated flight plan.</source>
         <translation>Flugplan berechnet.</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2020"/>
+        <location filename="src/route/routecontroller.cpp" line="1962"/>
         <source>Calculating Flight Plan ...</source>
         <translation>Berechne Flugplan ...</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2020"/>
+        <location filename="src/route/routecontroller.cpp" line="1962"/>
         <source>Cancel</source>
         <translation>Abbrechen</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2021"/>
+        <location filename="src/route/routecontroller.cpp" line="1963"/>
         <source>Little Navmap - Calculating Flight Plan</source>
         <translation>Little Navmap - Berechne Flugplan</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2488"/>
+        <location filename="src/route/routecontroller.cpp" line="2433"/>
         <source> - Flight Plan Table</source>
         <translation> - Flugplantabelle</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="5142"/>
+        <location filename="src/route/routecontroller.cpp" line="5093"/>
         <source>Download oceanic tracks in menu &quot;Flight Plan&quot;
 or calculate the flight plan again if the flight plan uses tracks.</source>
         <comment>Keep in sync with menu names</comment>
@@ -34770,7 +34807,7 @@ oder berechnen Sie den Flugplan neu, wenn der Flugplan Tracks verwendet.</transl
         <translation type="vanished"> (nicht auf der Karte angezeigt)</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2972"/>
+        <location filename="src/route/routecontroller.cpp" line="2917"/>
         <source>Table view reset to defaults.</source>
         <translation>Tabellenansicht auf Standardwerte zurück gesetzt.</translation>
     </message>
@@ -34779,7 +34816,7 @@ oder berechnen Sie den Flugplan neu, wenn der Flugplan Tracks verwendet.</transl
         <translation type="vanished">Wegpunktname ändern</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2170"/>
+        <location filename="src/route/routecontroller.cpp" line="2109"/>
         <source>Cannot calculate flight plan.
 
 Try another calculation type,
@@ -34804,7 +34841,7 @@ erstellen Sie den Flugplan manuell.</translation>
         <translation type="vanished">&amp;Anflug erstellen und Flugplatz als Ziel einsetzen</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2783"/>
+        <location filename="src/route/routecontroller.cpp" line="2728"/>
         <source>Show &amp;Procedures</source>
         <oldsource>Create &amp;approach</oldsource>
         <translation>Zeige &amp;Prozeduren</translation>
@@ -34814,7 +34851,7 @@ erstellen Sie den Flugplan manuell.</translation>
         <translation type="vanished">Bearbeite &amp;Flugplanposition ...</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2840"/>
+        <location filename="src/route/routecontroller.cpp" line="2785"/>
         <source>Edit name and coordinates of user defined flight plan position</source>
         <translation>Namen und Koordinaten von benutzerdefinierten Flugplanpositionen bearbeiten</translation>
     </message>
@@ -34823,42 +34860,42 @@ erstellen Sie den Flugplan manuell.</translation>
         <translation type="vanished">Bearbeite &amp;Anmerkungen für Flugplanposition ...</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2847"/>
+        <location filename="src/route/routecontroller.cpp" line="2792"/>
         <source>Edit remarks for selected flight plan leg</source>
         <translation>Bearbeite Anmerkungen ausgewählten Flugplanabschnitt</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="3090"/>
+        <location filename="src/route/routecontroller.cpp" line="3035"/>
         <source>Waypoint Change</source>
         <translation>Wegpunkt ändern</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="3103"/>
+        <location filename="src/route/routecontroller.cpp" line="3048"/>
         <source>Changed waypoint in flight plan.</source>
         <translation>Wegpunkt in Flugplan geändert.</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="3389"/>
+        <location filename="src/route/routecontroller.cpp" line="3333"/>
         <source>Move Waypoints</source>
         <translation>Wegpunkt verschieben</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="3453"/>
+        <location filename="src/route/routecontroller.cpp" line="3397"/>
         <source>Moved flight plan legs.</source>
         <translation>Flugplanabschnitt verschoben.</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="3477"/>
+        <location filename="src/route/routecontroller.cpp" line="3421"/>
         <source>Delete Procedure</source>
         <translation>Prozedur löschen</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="3477"/>
+        <location filename="src/route/routecontroller.cpp" line="3421"/>
         <source>Delete Waypoints</source>
         <translation>Wegpunkt löschen</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="3543"/>
+        <location filename="src/route/routecontroller.cpp" line="3487"/>
         <source>Removed flight plan legs.</source>
         <translation>Flugplanabschnitte löschen.</translation>
     </message>
@@ -34871,8 +34908,8 @@ erstellen Sie den Flugplan manuell.</translation>
         <translation type="vanished">Abflug zu %1 Parkposition %2 gesetzt.</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="3642"/>
-        <location filename="src/route/routecontroller.cpp" line="3686"/>
+        <location filename="src/route/routecontroller.cpp" line="3586"/>
+        <location filename="src/route/routecontroller.cpp" line="3630"/>
         <source>Set Start Position</source>
         <translation>Startposition setzen</translation>
     </message>
@@ -34881,72 +34918,72 @@ erstellen Sie den Flugplan manuell.</translation>
         <translation type="vanished">Abflug ist auf %1 Startposition %2 gesetzt.</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="3738"/>
+        <location filename="src/route/routecontroller.cpp" line="3682"/>
         <source>Set Departure</source>
         <translation>Abflug setzen</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="3759"/>
+        <location filename="src/route/routecontroller.cpp" line="3703"/>
         <source>Departure set to %1.</source>
         <translation>Abflug ist auf %1 gesetzt.</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="3807"/>
+        <location filename="src/route/routecontroller.cpp" line="3751"/>
         <source>Set Destination</source>
         <translation>Ziel setzen</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="3828"/>
+        <location filename="src/route/routecontroller.cpp" line="3772"/>
         <source>Destination set to %1.</source>
         <translation>Ziel ist auf %1 gesetzt.</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="3841"/>
+        <location filename="src/route/routecontroller.cpp" line="3785"/>
         <source>Add Alternate</source>
         <translation>Ausweichflugplatz hinzufügen</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="3873"/>
+        <location filename="src/route/routecontroller.cpp" line="3817"/>
         <source>Alternate %1 added.</source>
         <translation>Ausweichflugplatz %1 hinzugefügt.</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="4042"/>
-        <location filename="src/route/routecontroller.cpp" line="4043"/>
-        <location filename="src/route/routecontroller.cpp" line="4046"/>
-        <location filename="src/route/routecontroller.cpp" line="4056"/>
-        <location filename="src/route/routecontroller.cpp" line="4057"/>
-        <location filename="src/route/routecontroller.cpp" line="4060"/>
+        <location filename="src/route/routecontroller.cpp" line="3986"/>
+        <location filename="src/route/routecontroller.cpp" line="3987"/>
+        <location filename="src/route/routecontroller.cpp" line="3990"/>
+        <location filename="src/route/routecontroller.cpp" line="4000"/>
+        <location filename="src/route/routecontroller.cpp" line="4001"/>
+        <location filename="src/route/routecontroller.cpp" line="4004"/>
         <source> *</source>
         <translation> *</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="4117"/>
+        <location filename="src/route/routecontroller.cpp" line="4061"/>
         <source>Add Procedure</source>
         <translation>Prozedur hinzufügen</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="4181"/>
+        <location filename="src/route/routecontroller.cpp" line="4125"/>
         <source>Added procedure to flight plan.</source>
         <translation>Prozedur zu Flugplan hinzugefügt.</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="4196"/>
+        <location filename="src/route/routecontroller.cpp" line="4140"/>
         <source>Add Waypoint</source>
         <translation>Wegpunkt hinzufügen</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="4244"/>
+        <location filename="src/route/routecontroller.cpp" line="4188"/>
         <source>Added waypoint to flight plan.</source>
         <translation>Wegpukt zu Flugplan hinzugefügt.</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="4258"/>
+        <location filename="src/route/routecontroller.cpp" line="4202"/>
         <source>Change Waypoint</source>
         <translation>Wegpunkt ändern</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="4314"/>
+        <location filename="src/route/routecontroller.cpp" line="4258"/>
         <source>Replaced waypoint in flight plan.</source>
         <translation>Wegpunkt in Flugplan ersetzt.</translation>
     </message>
@@ -34979,29 +35016,29 @@ erstellen Sie den Flugplan manuell.</translation>
         <translation type="vanished">Bearbeite Flugplanposition oder Anmerkungen ...</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2507"/>
-        <location filename="src/route/routecontroller.cpp" line="4467"/>
+        <location filename="src/route/routecontroller.cpp" line="2452"/>
+        <location filename="src/route/routecontroller.cpp" line="4411"/>
         <source>Departure</source>
         <translation>Abflug</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="4469"/>
+        <location filename="src/route/routecontroller.cpp" line="4413"/>
         <source>Destination</source>
         <translation>Ziel</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="4471"/>
+        <location filename="src/route/routecontroller.cpp" line="4415"/>
         <source>Alternate</source>
         <translation>Ausweichflugplatz</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="4485"/>
+        <location filename="src/route/routecontroller.cpp" line="4429"/>
         <source>Track %1</source>
         <translation>Track %1</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="4499"/>
-        <location filename="src/route/routecontroller.cpp" line="4590"/>
+        <location filename="src/route/routecontroller.cpp" line="4443"/>
+        <location filename="src/route/routecontroller.cpp" line="4534"/>
         <source> / </source>
         <translation> / </translation>
     </message>
@@ -35022,106 +35059,106 @@ erstellen Sie den Flugplan manuell.</translation>
         <translation type="vanished">LOC</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="4812"/>
+        <location filename="src/route/routecontroller.cpp" line="4763"/>
         <source>%1 / %2</source>
         <oldsource>%1, %2</oldsource>
         <translation>%1 / %2</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="4825"/>
+        <location filename="src/route/routecontroller.cpp" line="4776"/>
         <source>▼</source>
         <oldsource>◄</oldsource>
         <translation>▼</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="4827"/>
+        <location filename="src/route/routecontroller.cpp" line="4778"/>
         <source>▲</source>
         <oldsource>►</oldsource>
         <translation>▲</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="4828"/>
+        <location filename="src/route/routecontroller.cpp" line="4779"/>
         <source>%1 %2</source>
         <translation>%1 %2</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="5060"/>
+        <location filename="src/route/routecontroller.cpp" line="5011"/>
         <source>Waypoint &quot;%1&quot; not found.</source>
         <translation>Wegpunkt &quot;%1&quot; nicht gefunden.</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="5095"/>
+        <location filename="src/route/routecontroller.cpp" line="5046"/>
         <source>
 </source>
         <translation>
 </translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="5130"/>
-        <location filename="src/route/routecontroller.cpp" line="5137"/>
+        <location filename="src/route/routecontroller.cpp" line="5081"/>
+        <location filename="src/route/routecontroller.cpp" line="5088"/>
         <source>Cannot load %1: %2</source>
         <translation>Kann %1 nicht laden: %2</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="5131"/>
+        <location filename="src/route/routecontroller.cpp" line="5082"/>
         <source>procedures</source>
         <translation>Prozeduren</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="5131"/>
+        <location filename="src/route/routecontroller.cpp" line="5082"/>
         <source>procedure</source>
         <translation>Prozedur</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="4506"/>
-        <location filename="src/route/routecontroller.cpp" line="4507"/>
-        <location filename="src/route/routecontroller.cpp" line="4517"/>
-        <location filename="src/route/routecontroller.cpp" line="4585"/>
-        <location filename="src/route/routecontroller.cpp" line="5132"/>
-        <location filename="src/route/routecontroller.cpp" line="5139"/>
-        <location filename="src/route/routecontroller.cpp" line="5365"/>
-        <location filename="src/route/routecontroller.cpp" line="5387"/>
+        <location filename="src/route/routecontroller.cpp" line="4450"/>
+        <location filename="src/route/routecontroller.cpp" line="4451"/>
+        <location filename="src/route/routecontroller.cpp" line="4461"/>
+        <location filename="src/route/routecontroller.cpp" line="4529"/>
+        <location filename="src/route/routecontroller.cpp" line="5083"/>
+        <location filename="src/route/routecontroller.cpp" line="5090"/>
+        <location filename="src/route/routecontroller.cpp" line="5316"/>
+        <location filename="src/route/routecontroller.cpp" line="5338"/>
         <source>, </source>
         <translation>, </translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="174"/>
+        <location filename="src/route/routecontroller.cpp" line="175"/>
         <source>Leg Safe Alt.
 %alt%</source>
         <translation>Sichere Abschnittsh.
 %alt%</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="182"/>
+        <location filename="src/route/routecontroller.cpp" line="183"/>
         <source>Two letter ICAO region code of a navaid.</source>
         <translation>ICAO zwei-Buchstaben-Kennung für Region einer Navigationshilfe.</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="183"/>
+        <location filename="src/route/routecontroller.cpp" line="184"/>
         <source>Name of airport or navaid.</source>
         <translation>Name eines Flugplatzes oder Navigationshilfe.</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="190"/>
+        <location filename="src/route/routecontroller.cpp" line="191"/>
         <source>Type of a radio navaid. Shows ILS, LOC or other for
 approaches like ILS or localizer on the last runway leg.</source>
         <translation>Typ einer Funknavigationshilfe. Zeigt ILS, LOC oder andere für
 Anflüge, wie ILS oder Localizer auf dem letzten Runway-Abschnitt.</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="201"/>
+        <location filename="src/route/routecontroller.cpp" line="202"/>
         <source>Length of the flight plan leg.</source>
         <translation>Länge des Flugplanabschnittes.</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="202"/>
+        <location filename="src/route/routecontroller.cpp" line="203"/>
         <source>Remaining distance to destination airport or procedure end point.
 Static value. Does not update while flying.</source>
         <translation>Verbleibende Distanz zum Zielflugplatz oder Endpunkt der Prozedur.
 Statischer Wert. Wird während des Fluges nicht aktualisiert.</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="204"/>
+        <location filename="src/route/routecontroller.cpp" line="205"/>
         <source>Flying time for this leg.
 Calculated based on the selected aircraft performance profile.
 Static value. Does not update while flying.</source>
@@ -35130,7 +35167,7 @@ Wird auf der Grundlage des ausgewählten Flugzeugleistungsprofils berechnet.
 Statischer Wert. Wird während des Fluges nicht aktualisiert.</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="207"/>
+        <location filename="src/route/routecontroller.cpp" line="208"/>
         <source>Estimated time of arrival.
 Calculated based on the selected aircraft performance profile.
 Static value. Does not update while flying.</source>
@@ -35139,7 +35176,7 @@ Wird auf der Grundlage des ausgewählten Flugzeugleistungsprofils berechnet.
 Statischer Wert. Wird während des Fluges nicht aktualisiert.</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="210"/>
+        <location filename="src/route/routecontroller.cpp" line="211"/>
         <source>Fuel weight remaining at waypoint.
 Calculated based on the aircraft performance profile.
 Static value. Does not update while flying.</source>
@@ -35151,7 +35188,7 @@ Wird auf der Grundlage des Leistungsprofils des Flugzeuges berechnet.
 Statischer Wert. Wird während des Fluges nicht aktualisiert.</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="213"/>
+        <location filename="src/route/routecontroller.cpp" line="214"/>
         <source>Fuel volume remaining at waypoint.
 Calculated based on the aircraft performance profile.
 Static value. Does not update while flying.</source>
@@ -35163,290 +35200,295 @@ Wird auf der Grundlage des Leistungsprofils des Flugzeuges berechnet.
 Statischer Wert. Wird während des Fluges nicht aktualisiert.</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="220"/>
+        <location filename="src/route/routecontroller.cpp" line="221"/>
         <source>Safe altitude for a flight plan leg depending on ground elevation
 and options on page &quot;Flight Plan&quot;.</source>
         <translation>Sichere Höhe für einen Flugplanabschnitt in Abhängigkeit von der Grundhöhe
 und Einstellungen auf der Seite &quot;Flugplan&quot;.</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="226"/>
+        <location filename="src/route/routecontroller.cpp" line="227"/>
         <source>Turn instructions, flyover, related navaid for procedure legs or
 or remarks entered by user.</source>
         <translation>Wendeanweisungen, Überflug, zugehörige Navigationshilfe für Prozedurabschnitte oder
 Benutzeranmerkungen.</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="270"/>
+        <location filename="src/route/routecontroller.cpp" line="271"/>
         <source>Ctrl+Z</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="274"/>
+        <location filename="src/route/routecontroller.cpp" line="275"/>
         <source>Ctrl+Y</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="1039"/>
+        <location filename="src/route/routecontroller.cpp" line="1040"/>
         <source>File &quot;%1&quot; is a not supported flight plan format or not a flight plan.</source>
         <translation>Datei &quot;%1&quot; ist ein nicht unterstütztes Flugplanformat oder kein Flugplan.</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="1159"/>
+        <location filename="src/route/routecontroller.cpp" line="1164"/>
         <source>Flight Plan Changed</source>
         <translation>Flugplan geändert</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="1403"/>
+        <location filename="src/route/routecontroller.cpp" line="1224"/>
+        <source>Can not determine the cruising altitude from this flight plan.&lt;br/&gt;Applying best guess for cruising altitude.&lt;br/&gt;Adjust it manually as needed.</source>
+        <translation>Die Reiseflughöhe kann anhand des Flugplans nicht bestimmt werden.&lt;br/&gt;Die Reiseflughöhe wird geschätzt.&lt;br/&gt;Bei Bedarf manuell anpassen.</translation>
+    </message>
+    <message>
+        <location filename="src/route/routecontroller.cpp" line="1374"/>
         <source>&lt;p&gt;Errors reading flight plan route description&lt;br/&gt;&lt;b&gt;%1&lt;/b&gt;&lt;br/&gt;from command line:&lt;/p&gt;&lt;p&gt;%2&lt;/p&gt;</source>
         <translation>&lt;p&gt;Fehler beim Lesen der Flugplan-Routenbeschreibung&lt;br/&gt;&lt;b&gt;%1&lt;/b&gt;&lt;br/&gt;von der Kommandozeile:&lt;/p&gt;&lt;p&gt;%2&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2489"/>
+        <location filename="src/route/routecontroller.cpp" line="2434"/>
         <source>Select header lines and flight plan table columns to show.
 You can move and resize columns by clicking into the flight plan column headers.</source>
         <translation>Wählen Sie die anzuzeigenden Kopfzeilen und Spalten der Flugplantabelle aus.
 Sie können Spalten verschieben und in der Größe verändern, indem Sie in die Spaltenüberschriften des Flugplans klicken.</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2496"/>
+        <location filename="src/route/routecontroller.cpp" line="2441"/>
         <source>Column Name</source>
         <translation>Spaltenname</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2496"/>
+        <location filename="src/route/routecontroller.cpp" line="2441"/>
         <source>Description</source>
         <translation>Beschreibung</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2499"/>
+        <location filename="src/route/routecontroller.cpp" line="2444"/>
         <source>Flight Plan Table Header</source>
         <translation>Flugplan Kopfzeile</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2500"/>
+        <location filename="src/route/routecontroller.cpp" line="2445"/>
         <source>Airports</source>
         <translation>Flugplätze</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2501"/>
+        <location filename="src/route/routecontroller.cpp" line="2446"/>
         <source>Departure and destination airports as links to show them on the map and in information.</source>
         <translation>Abflug- und Zielflugplätze als Links, um sie auf der Karte und in den Informationen anzuzeigen.</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2504"/>
+        <location filename="src/route/routecontroller.cpp" line="2449"/>
         <source>Takeoff Runway</source>
         <translation>Startrunway</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2505"/>
+        <location filename="src/route/routecontroller.cpp" line="2450"/>
         <source>Departure runway heading and length.</source>
         <translation>Startrunway Kurs und Länge.</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2508"/>
+        <location filename="src/route/routecontroller.cpp" line="2453"/>
         <source>SID information.</source>
         <translation>Informationen zur SID.</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2510"/>
+        <location filename="src/route/routecontroller.cpp" line="2455"/>
         <source>Arrival</source>
         <translation>Ankunft</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2511"/>
+        <location filename="src/route/routecontroller.cpp" line="2456"/>
         <source>STAR and approach procedure information.</source>
         <translation>Informationen zu STAR und Anflugprozedur.</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2513"/>
+        <location filename="src/route/routecontroller.cpp" line="2458"/>
         <source>Landing Runway</source>
         <translation>Zielrunway</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2514"/>
+        <location filename="src/route/routecontroller.cpp" line="2459"/>
         <source>Destination runway heading, available distance for landing, elevation and facilities.</source>
         <translation>Richtung des Zielrunways, verfügbare Distanz für die Landung, Höhe und Einrichtungen.</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2517"/>
+        <location filename="src/route/routecontroller.cpp" line="2462"/>
         <source>Distance and Time</source>
         <translation>Distanz und Zeit</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2517"/>
+        <location filename="src/route/routecontroller.cpp" line="2462"/>
         <source>Flight plan total distance and flight time.</source>
         <translation>Gesamte Flugplandistanz und Flugzeit.</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2521"/>
+        <location filename="src/route/routecontroller.cpp" line="2466"/>
         <source>Flight Plan Table Footer</source>
         <translation>Flugplantabelle Fußzeile</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2522"/>
+        <location filename="src/route/routecontroller.cpp" line="2467"/>
         <source>Selected Flight Plan Legs</source>
         <translation>Ausgewählte Flugplanabschnitte</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2523"/>
+        <location filename="src/route/routecontroller.cpp" line="2468"/>
         <source>Show distance, time and fuel for selected flight plan legs.</source>
         <translation>Zeigt Distanz, Zeit und Treibstoff für ausgewählte Flugplanabschnitte an.</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2524"/>
+        <location filename="src/route/routecontroller.cpp" line="2469"/>
         <source>Error Messages</source>
         <translation>Fehlermeldungen</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2525"/>
+        <location filename="src/route/routecontroller.cpp" line="2470"/>
         <source>Show error messages for flight plan elements like missing airports and more.
 It is strongly recommended to keep the error label enabled.</source>
         <translation>Anzeige von Fehlermeldungen für Flugplanelemente, wie fehlende Flugplätze und mehr.
 Es wird empfohlen, die Fehlermeldung aktiviert zu lassen.</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2529"/>
+        <location filename="src/route/routecontroller.cpp" line="2474"/>
         <source>Flight plan table columns</source>
         <translation>Flugplantabelle Spalten</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2734"/>
+        <location filename="src/route/routecontroller.cpp" line="2679"/>
         <source>Show Departure &amp;Procedures for %1</source>
         <translation>Zeige Abflug&amp;prozeduren für %1</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2738"/>
+        <location filename="src/route/routecontroller.cpp" line="2683"/>
         <source>Show procedures (no departure procedure)</source>
         <translation>Zeige Prozeduren (keine Abflugprozedur)</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2744"/>
+        <location filename="src/route/routecontroller.cpp" line="2689"/>
         <source>Show Arrival &amp;Procedures for %1</source>
         <translation>Zeige Ankunfts&amp;prozeduren für %1</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2748"/>
+        <location filename="src/route/routecontroller.cpp" line="2693"/>
         <source>Show &amp;Procedures (no arrival procedure)</source>
         <translation>Zeige &amp;Prozeduren (keine Ankunftsprozedur)</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2752"/>
+        <location filename="src/route/routecontroller.cpp" line="2697"/>
         <source>Show Procedures for %1</source>
         <translation>Zeige Prozeduren für %1</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2757"/>
+        <location filename="src/route/routecontroller.cpp" line="2702"/>
         <source>Show Procedures (no procedure)</source>
         <translation>Zeige Prozeduren (keine Prozedur)</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2761"/>
-        <location filename="src/route/routecontroller.cpp" line="2784"/>
+        <location filename="src/route/routecontroller.cpp" line="2706"/>
+        <location filename="src/route/routecontroller.cpp" line="2729"/>
         <source>Select Destination &amp;Runway for %1 ...</source>
         <translation>Wähle &amp;Zielrunway für %1 ...</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2766"/>
+        <location filename="src/route/routecontroller.cpp" line="2711"/>
         <source>Select &amp;Runway and use %1 as Destination ...</source>
         <translation>Wähle &amp;Runway und nutze %1 als Ziel ...</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2772"/>
-        <location filename="src/route/routecontroller.cpp" line="2785"/>
+        <location filename="src/route/routecontroller.cpp" line="2717"/>
+        <location filename="src/route/routecontroller.cpp" line="2730"/>
         <source>Select &amp;Departure Runway for %1 ...</source>
         <translation>Wähle &amp;Startrunway für %1 ...</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2777"/>
+        <location filename="src/route/routecontroller.cpp" line="2722"/>
         <source>Select Runway and use %1 as &amp;Departure ...</source>
         <translation>Wähle Runway und nutze %1 als &amp;Start ...</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2790"/>
-        <location filename="src/route/routecontroller.cpp" line="2885"/>
+        <location filename="src/route/routecontroller.cpp" line="2735"/>
+        <location filename="src/route/routecontroller.cpp" line="2830"/>
         <source> (no runway)</source>
         <translation> (kein Runway)</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2833"/>
+        <location filename="src/route/routecontroller.cpp" line="2778"/>
         <source>Edit &amp;Position or Remarks ...</source>
         <translation>&amp;Position oder Anmerkungen bearbeiten ...</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2839"/>
+        <location filename="src/route/routecontroller.cpp" line="2784"/>
         <source>&amp;Edit %1 ...</source>
         <translation>&amp;Bearbeite %1 ...</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2846"/>
+        <location filename="src/route/routecontroller.cpp" line="2791"/>
         <source>Edit &amp;Remarks for %1 ...</source>
         <translation>Bearbeite &amp;Anmerkungen für %1 ...</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2878"/>
+        <location filename="src/route/routecontroller.cpp" line="2823"/>
         <source>selected Navaids</source>
         <translation>ausgewählte Navigationshilfen</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="3608"/>
+        <location filename="src/route/routecontroller.cpp" line="3552"/>
         <source>Set Start Position to Airport</source>
         <translation>Setze Startposition am Flugplatz</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="3633"/>
+        <location filename="src/route/routecontroller.cpp" line="3577"/>
         <source>Start postition set to airport.</source>
         <translation>Startposition zu Flugplatz gesetzt.</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="3677"/>
+        <location filename="src/route/routecontroller.cpp" line="3621"/>
         <source>Start position set to %1 parking %2.</source>
         <translation>Startposition zu %1 und Parkposition %2 gesetzt.</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="3726"/>
+        <location filename="src/route/routecontroller.cpp" line="3670"/>
         <source>Start position set to %1 position %2.</source>
         <translation>Startposition zu %1 und Position %2 gesetzt.</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="3926"/>
-        <location filename="src/route/routecontroller.cpp" line="3972"/>
+        <location filename="src/route/routecontroller.cpp" line="3870"/>
+        <location filename="src/route/routecontroller.cpp" line="3916"/>
         <source>Select runway for destination:</source>
         <translation>Wähle Zielrunway:</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="3933"/>
-        <location filename="src/route/routecontroller.cpp" line="4009"/>
+        <location filename="src/route/routecontroller.cpp" line="3877"/>
+        <location filename="src/route/routecontroller.cpp" line="3953"/>
         <source>Select runway for departure:</source>
         <translation>Wähle Startrunway:</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="3974"/>
+        <location filename="src/route/routecontroller.cpp" line="3918"/>
         <source>Select runway and use airport as destination:</source>
         <translation>Wähle Runway und nutze Flugplatz als Ziel:</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="4011"/>
+        <location filename="src/route/routecontroller.cpp" line="3955"/>
         <source>Select runway and use airport as departure:</source>
         <translation>Wähle Runway und nutze Flugplatz als Start:</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="4092"/>
+        <location filename="src/route/routecontroller.cpp" line="4036"/>
         <source>All</source>
         <translation>Alle</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="5133"/>
+        <location filename="src/route/routecontroller.cpp" line="5084"/>
         <source>Save and reload flight plan or select new procedures to fix this.</source>
         <translation>Speichern und laden Sie den Flugplan neu oder wählen Sie neue Prozeduren, um das Problem zu beheben.</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="5138"/>
+        <location filename="src/route/routecontroller.cpp" line="5089"/>
         <source>alternates</source>
         <translation>Ausweichflugplätze</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="5138"/>
+        <location filename="src/route/routecontroller.cpp" line="5089"/>
         <source>alternate</source>
         <translation>Ausweichflugplatz</translation>
     </message>
@@ -35562,34 +35604,34 @@ oder berechnen Sie den Flugplan neu, falls Sie Tracks benutzen.</translation>
         <translation type="vanished">%1 vom Start des Sinkfluges zum Ziel</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="5336"/>
+        <location filename="src/route/routecontroller.cpp" line="5287"/>
         <source>Remarks changed</source>
         <translation>Anmerkungen geändert</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="5367"/>
+        <location filename="src/route/routecontroller.cpp" line="5318"/>
         <source>Aircraft Performance: </source>
         <translation>Flugzeugleistung: </translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="5378"/>
-        <location filename="src/route/routecontroller.cpp" line="5381"/>
+        <location filename="src/route/routecontroller.cpp" line="5329"/>
+        <location filename="src/route/routecontroller.cpp" line="5332"/>
         <source>%1%2</source>
         <translation>%1%2</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="5378"/>
-        <location filename="src/route/routecontroller.cpp" line="5381"/>
+        <location filename="src/route/routecontroller.cpp" line="5329"/>
+        <location filename="src/route/routecontroller.cpp" line="5332"/>
         <source> cycle %1</source>
         <translation> Zyklus %1</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="5387"/>
+        <location filename="src/route/routecontroller.cpp" line="5338"/>
         <source>Scenery data: </source>
         <translation>Szeneriedaten: </translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="5415"/>
+        <location filename="src/route/routecontroller.cpp" line="5366"/>
         <source>No flight plan.
 
 Remarks for the flight plan.</source>
@@ -35598,7 +35640,7 @@ Remarks for the flight plan.</source>
 Anmerkungen zum Flugplan.</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="5420"/>
+        <location filename="src/route/routecontroller.cpp" line="5371"/>
         <source>Remarks for the flight plan.</source>
         <translation>Anmerkungen zum Flugplan.</translation>
     </message>
@@ -36153,12 +36195,12 @@ im Menü &quot;Szeneriebibliothek&quot; -&gt; &quot;Navigraph&quot; ist &quot;Nu
         <translation>Während des Dateischreibens &quot;%1&quot;:</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexport.cpp" line="2083"/>
+        <location filename="src/routeexport/routeexport.cpp" line="2081"/>
         <source>&lt;p&gt;Note that saving flight plans with one or more enabled options in menu &quot;File&quot; -&gt; &quot;Export Options&quot; can cause unexpected issues:&lt;/p&gt;&lt;ul&gt;&lt;li&gt;Procedure and/or airway information will be missing when reloading the exported flight plans.&lt;/li&gt;&lt;li&gt;Several approach procedure leg types like holds and turns cannot be shown properly in simulators or aircraft.&lt;/li&gt;&lt;li&gt;Speed and altitude restrictions are not included in the exported flight plan.&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;This does not apply to the the native LNMPLN file format.&lt;/p&gt;&lt;p&gt;&lt;b&gt;Normally you should not use these export options.&lt;/b&gt;&lt;/p&gt;</source>
         <translation>&lt;p&gt;Beachten Sie, dass das Speichern von Flugplänen mit einer oder mehreren aktivierten Optionen im Menü &quot;Datei&quot; -&gt; &quot;Exporteinstellungen&quot; zu unerwarteten Problemen führen kann:&lt;/p&gt;&lt;ul&gt;&lt;li&gt;Beim Neuladen der exportierten Flugpläne fehlen Prozedur- und/oder Luftstraßeninformationen.&lt;/li&gt;&lt;li&gt;Mehrere Arten von Anflugprozeduren wie Halten und Wenden können in Simulatoren oder Flugzeugen nicht richtig dargestellt werden.&lt;/li&gt;&lt;li&gt;Geschwindigkeits- und Höhenbeschränkungen sind im exportierten Flugplan nicht enthalten.&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;Dies gilt nicht für das native LNMPLN-Dateiformat.&lt;/p&gt;&lt;p&gt;&lt;b&gt;Normalerweise sollten Sie diese Exporteinstellungen nicht verwenden.&lt;/b&gt;&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexport.cpp" line="2093"/>
+        <location filename="src/routeexport/routeexport.cpp" line="2091"/>
         <source>Do not &amp;show this dialog again.</source>
         <oldsource>Do &amp;not show this dialog again.</oldsource>
         <translation>Diesen Dialog &amp;nicht mehr anzeigen.</translation>
@@ -36402,22 +36444,22 @@ im Menü &quot;Szeneriebibliothek&quot; -&gt; &quot;Navigraph&quot; ist &quot;Nu
         <translation type="vanished">Muster ist leer.</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="577"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="578"/>
         <source>File &quot;%1&quot; does not exist.</source>
         <translation>Datei &quot;%1&quot; existiert nicht.</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="580"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="581"/>
         <source>Expected file but &quot;%1&quot; is a directory.</source>
         <translation>Datei erwartet, aber &quot;%1&quot; ist ein Verzeichnis.</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="588"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="589"/>
         <source>Directory &quot;%1&quot; does not exist</source>
         <translation>Verzeichnis &quot;%1&quot; existiert nicht</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="591"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="592"/>
         <source>Expected directory but &quot;%1&quot; is a file.</source>
         <translation>Verzeichnis erwartet, aber &quot;%1&quot; ist eine Datei.</translation>
     </message>
@@ -36425,128 +36467,128 @@ im Menü &quot;Szeneriebibliothek&quot; -&gt; &quot;Navigraph&quot; ist &quot;Nu
 <context>
     <name>RouteExportFormatMap</name>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="313"/>
         <location filename="src/routeexport/routeexportformat.cpp" line="314"/>
         <location filename="src/routeexport/routeexportformat.cpp" line="315"/>
-        <location filename="src/routeexport/routeexportformat.cpp" line="343"/>
-        <location filename="src/routeexport/routeexportformat.cpp" line="355"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="316"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="344"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="356"/>
         <source>pln</source>
         <translation>pln</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="313"/>
         <location filename="src/routeexport/routeexportformat.cpp" line="314"/>
         <location filename="src/routeexport/routeexportformat.cpp" line="315"/>
         <location filename="src/routeexport/routeexportformat.cpp" line="316"/>
         <location filename="src/routeexport/routeexportformat.cpp" line="317"/>
         <location filename="src/routeexport/routeexportformat.cpp" line="318"/>
-        <location filename="src/routeexport/routeexportformat.cpp" line="323"/>
-        <location filename="src/routeexport/routeexportformat.cpp" line="342"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="319"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="324"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="343"/>
         <source>Simulator</source>
         <translation>Simulator</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="313"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="314"/>
         <source>FSX and Prepar3D</source>
         <translation>FSX und Prepar3D</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="314"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="315"/>
         <source>Microsoft Flight Simulator 2020</source>
         <translation>Microsoft Flight Simulator 2020</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="316"/>
         <location filename="src/routeexport/routeexportformat.cpp" line="317"/>
         <location filename="src/routeexport/routeexportformat.cpp" line="318"/>
         <location filename="src/routeexport/routeexportformat.cpp" line="319"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="320"/>
         <source>fms</source>
         <translation>fms</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="317"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="318"/>
         <source>X-Plane FMS 11</source>
         <translation>X-Plane FMS 11</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="320"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="321"/>
         <source>flp</source>
         <translation>flp</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="320"/>
         <location filename="src/routeexport/routeexportformat.cpp" line="321"/>
         <location filename="src/routeexport/routeexportformat.cpp" line="322"/>
-        <location filename="src/routeexport/routeexportformat.cpp" line="326"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="323"/>
         <location filename="src/routeexport/routeexportformat.cpp" line="327"/>
         <location filename="src/routeexport/routeexportformat.cpp" line="328"/>
         <location filename="src/routeexport/routeexportformat.cpp" line="329"/>
-        <location filename="src/routeexport/routeexportformat.cpp" line="332"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="330"/>
         <location filename="src/routeexport/routeexportformat.cpp" line="333"/>
         <location filename="src/routeexport/routeexportformat.cpp" line="334"/>
-        <location filename="src/routeexport/routeexportformat.cpp" line="339"/>
-        <location filename="src/routeexport/routeexportformat.cpp" line="343"/>
-        <location filename="src/routeexport/routeexportformat.cpp" line="347"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="335"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="340"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="344"/>
         <location filename="src/routeexport/routeexportformat.cpp" line="348"/>
-        <location filename="src/routeexport/routeexportformat.cpp" line="350"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="349"/>
         <location filename="src/routeexport/routeexportformat.cpp" line="351"/>
         <location filename="src/routeexport/routeexportformat.cpp" line="352"/>
         <location filename="src/routeexport/routeexportformat.cpp" line="353"/>
         <location filename="src/routeexport/routeexportformat.cpp" line="354"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="355"/>
         <source>Aircraft</source>
         <translation>Flugzeuge</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="320"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="321"/>
         <source>Aerosoft Airbus and others</source>
         <translation>Aerosoft Airbus und andere</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="321"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="322"/>
         <source>Aerosoft CRJ</source>
         <translation>Aerosoft CRJ</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="323"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="324"/>
         <source>fgfp</source>
         <translation>fgfp</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="323"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="324"/>
         <source>FlightGear</source>
         <translation>FlightGear</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="324"/>
         <location filename="src/routeexport/routeexportformat.cpp" line="325"/>
-        <location filename="src/routeexport/routeexportformat.cpp" line="337"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="326"/>
         <location filename="src/routeexport/routeexportformat.cpp" line="338"/>
-        <location filename="src/routeexport/routeexportformat.cpp" line="357"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="339"/>
         <location filename="src/routeexport/routeexportformat.cpp" line="358"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="359"/>
         <source>gfp</source>
         <translation>gfp</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="324"/>
         <location filename="src/routeexport/routeexportformat.cpp" line="325"/>
-        <location filename="src/routeexport/routeexportformat.cpp" line="335"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="326"/>
         <location filename="src/routeexport/routeexportformat.cpp" line="336"/>
         <location filename="src/routeexport/routeexportformat.cpp" line="337"/>
         <location filename="src/routeexport/routeexportformat.cpp" line="338"/>
-        <location filename="src/routeexport/routeexportformat.cpp" line="356"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="339"/>
         <location filename="src/routeexport/routeexportformat.cpp" line="357"/>
         <location filename="src/routeexport/routeexportformat.cpp" line="358"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="359"/>
         <source>Garmin</source>
         <translation>Garmin</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="324"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="325"/>
         <source>Flight1 Garmin GTN 650/750</source>
         <translation>Flight1 Garmin GTN 650/750</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="326"/>
         <location filename="src/routeexport/routeexportformat.cpp" line="327"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="328"/>
         <source>txt</source>
         <translation>txt</translation>
     </message>
@@ -36555,27 +36597,27 @@ im Menü &quot;Szeneriebibliothek&quot; -&gt; &quot;Navigraph&quot; ist &quot;Nu
         <translation type="vanished">Rotate MD-80, JARDesign und andere</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="328"/>
         <location filename="src/routeexport/routeexportformat.cpp" line="329"/>
-        <location filename="src/routeexport/routeexportformat.cpp" line="348"/>
-        <location filename="src/routeexport/routeexportformat.cpp" line="350"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="330"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="349"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="351"/>
         <source>rte</source>
         <translation>rte</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="328"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="329"/>
         <source>PMDG aircraft</source>
         <translation>PMDG Flugzeuge</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="330"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="331"/>
         <source>gpx</source>
         <translation>gpx</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="330"/>
         <location filename="src/routeexport/routeexportformat.cpp" line="331"/>
-        <location filename="src/routeexport/routeexportformat.cpp" line="349"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="332"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="350"/>
         <source>Other</source>
         <translation>Andere</translation>
     </message>
@@ -36589,12 +36631,12 @@ Dadurch werden beim Export von Flugplänen alle Wegpunkte als benutzerdefinierte
 Beachten Sie, dass der Export von Prozeduren nicht möglich ist, wenn dies aktiviert ist.</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="312"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="313"/>
         <source>lnmpln</source>
         <translation>lnmpln</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="312"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="313"/>
         <source>Little Navmap</source>
         <translation>Little Navmap</translation>
     </message>
@@ -36607,7 +36649,7 @@ Verwenden Sie dieses Format, um Ihre Pläne zu speichern und zu sichern, da es a
 Beachten Sie, dass die Verwendung dieser Einstellung die gleiche ist wie die Verwendung von &quot;Speichern&quot; oder &quot;Speichern als&quot; im Dateimenü.</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="315"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="316"/>
         <source>FSX and Prepar3D annotated
 Only for old Little Navmap versions.</source>
         <translation>FSX und Prepar3D annotiert
@@ -36620,12 +36662,12 @@ Old limited format.</source>
 Altes eingeschränktes Format.</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="322"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="323"/>
         <source>Aerosoft CRJ for MSFS</source>
         <translation>Aerosoft CRJ für MSFS</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="325"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="326"/>
         <source>Flight1 Garmin GTN 650/750 with user defined waypoints</source>
         <translation>Flight1 Garmin GTN 650/750 mit benutzerdefinierten Wegpunkten</translation>
     </message>
@@ -36634,7 +36676,7 @@ Altes eingeschränktes Format.</translation>
         <translation type="vanished">Rotate MD-80 und andere</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="327"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="328"/>
         <source>JARDesign aircraft</source>
         <translation>JARDesign Flugzeuge</translation>
     </message>
@@ -36645,7 +36687,7 @@ Exported with aircraft track and flight plan.</source>
 Exportiert den Flugzeugpfad und den Flugplan.</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="275"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="276"/>
         <source>
 Export navaids and airports as user defined waypoints to avoid locked waypoints due to different AIRAC cycles.
 This saves all waypoints as user defined waypoints when exporting flight plans.
@@ -36656,21 +36698,21 @@ Dadurch werden beim Export von Flugplänen alle Wegpunkte als benutzerdefinierte
 Beachten Sie, dass der Export von Prozeduren nicht möglich ist, wenn dies aktiviert ist.</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="279"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="280"/>
         <source>
 Exported with aircraft track and flight plan.</source>
         <translation>
 Exportiert mit Flugzeugspur und Flugplan.</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="281"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="282"/>
         <source>
 Flight plan is split up and exported into several numbered files.</source>
         <translation>
 Der Flugplan wird aufgeteilt und in mehrere nummerierte Dateien exportiert.</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="283"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="284"/>
         <source>
 Use this format to save and backup your plans since it covers all features like remarks and more.
 Note that using this option is the same as using &quot;Save&quot; or &quot;Save as&quot; in the main menu &quot;File&quot;.</source>
@@ -36679,205 +36721,205 @@ Verwenden Sie dieses Format, um Ihre Pläne zu sichern, da es alle Funktionen wi
 Beachten Sie, dass die Verwendung dieser Einstellung die gleiche ist wie die Verwendung von &quot;Speichern&quot; oder &quot;Speichern als&quot; im Menü &quot;Datei&quot;.</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="286"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="287"/>
         <source>
 The given filename pattern is also used when exporting flight plans from the main menu &quot;File&quot;.</source>
         <translation>
 Das angegebene Dateinamensmuster wird auch beim Export von Flugplänen über das Hauptmenü &quot;Datei&quot; verwendet.</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="288"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="289"/>
         <source>
 The same format as FMS 11 but saved to the X-Plane 12 folder.</source>
         <translation>
 Das gleiche Format als FMS 11 aber in das X-Plane 12 Verzeichnis gespeichert.</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="312"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="313"/>
         <source>Little Navmap native flight plan format</source>
         <translation>Little Navmap eigenes Flugplanformat</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="316"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="317"/>
         <source>X-Plane FMS 3
 Old and limited format.</source>
         <translation>X-Plane FMS 3
 Altes eingeschränktes Format.</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="318"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="319"/>
         <source>X-Plane FMS 12</source>
         <translation>X-Plane FMS 12</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="319"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="320"/>
         <source>X-Plane CIVA Navigation System</source>
         <translation>X-Plane CIVA Navigationssystem</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="321"/>
         <location filename="src/routeexport/routeexportformat.cpp" line="322"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="323"/>
         <source>01.flp</source>
         <translation>01.flp</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="326"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="327"/>
         <source>Rotate MD-80, MD-11 and others</source>
         <translation>Rotate MD-80, MD-11 und andere</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="329"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="330"/>
         <source>PMDG aircraft for MSFS</source>
         <translation>PMDG-Flugzeuge für MSFS</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="330"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="331"/>
         <source>Garmin exchange format for Google Earth and others</source>
         <translation>Garmin Austauschformat für Google Earth und andere</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="331"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="332"/>
         <source>html</source>
         <translation>html</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="331"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="332"/>
         <source>HTML flight plan web page</source>
         <translation>HTML Flugplan Webseite</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="332"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="333"/>
         <source>fpr</source>
         <translation>fpr</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="332"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="333"/>
         <source>Majestic Dash MJC8 Q400</source>
         <translation>Majestic Dash MJC8 Q400</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="333"/>
-        <location filename="src/routeexport/routeexportformat.cpp" line="335"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="334"/>
         <location filename="src/routeexport/routeexportformat.cpp" line="336"/>
-        <location filename="src/routeexport/routeexportformat.cpp" line="340"/>
-        <location filename="src/routeexport/routeexportformat.cpp" line="345"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="337"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="341"/>
         <location filename="src/routeexport/routeexportformat.cpp" line="346"/>
         <location filename="src/routeexport/routeexportformat.cpp" line="347"/>
-        <location filename="src/routeexport/routeexportformat.cpp" line="354"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="348"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="355"/>
         <source>fpl</source>
         <translation>fpl</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="333"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="334"/>
         <source>IXEG Boeing 737</source>
         <translation>IXEG Boeing 737</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="334"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="335"/>
         <source>corte.in</source>
         <translation>corte.in</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="334"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="335"/>
         <source>Flight Factor Airbus</source>
         <translation>Flight Factor Airbus</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="335"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="336"/>
         <source>Reality XP GNS 530W/430W V2</source>
         <translation>Reality XP GNS 530W/430W V2</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="336"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="337"/>
         <source>Reality XP GNS 530W/430W V2 with user defined waypoints</source>
         <translation>Reality XP GNS 530W/430W V2 mit benutzerdefinierten Wegpunkten</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="337"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="338"/>
         <source>Reality XP GTN 750/650 Touch</source>
         <translation>Reality XP GTN 750/650 Touch</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="338"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="339"/>
         <source>Reality XP GTN 750/650 Touch with user defined waypoints</source>
         <translation>Reality XP GTN 750/650 Touch mit benutzerdefinierten Wegpunkten</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="339"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="340"/>
         <source>fltplan</source>
         <translation>fltplan</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="339"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="340"/>
         <source>iFly</source>
         <translation>iFly</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="358"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="359"/>
         <source>TDS GTNXi with user defined waypoints</source>
         <translation>TDS GTNXi mit benutzerdefinierten Wegpunkten</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="319"/>
-        <location filename="src/routeexport/routeexportformat.cpp" line="340"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="320"/>
         <location filename="src/routeexport/routeexportformat.cpp" line="341"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="342"/>
         <source>FMC</source>
         <translation>FMC</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="340"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="341"/>
         <source>X-FMC</source>
         <translation>X-FMC</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="341"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="342"/>
         <source>ufmc</source>
         <translation>ufmc</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="341"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="342"/>
         <source>UFMC</source>
         <translation>UFMC</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="342"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="343"/>
         <source>companyroutes.xml</source>
         <translation>companyroutes.xml</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="342"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="343"/>
         <source>ProSim</source>
         <translation>ProSim</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="343"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="344"/>
         <source>BlackBox Simulations Airbus</source>
         <translation>BlackBox Simulations Airbus</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="344"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="345"/>
         <source>vfp</source>
         <translation>vfp</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="344"/>
         <location filename="src/routeexport/routeexportformat.cpp" line="345"/>
         <location filename="src/routeexport/routeexportformat.cpp" line="346"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="347"/>
         <source>Online</source>
         <translation>Online</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="344"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="345"/>
         <source>VATSIM vPilot, xPilot or SWIFT</source>
         <translation>VATSIM vPilot, xPilot oder SWIFT</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="354"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="355"/>
         <source>IniBuilds Airbus for MSFS</source>
         <translation>IniBuilds Airbus für MSFS</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="357"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="358"/>
         <source>TDS GTNXi</source>
         <translation>TDS GTNXi</translation>
     </message>
@@ -36886,87 +36928,87 @@ Altes eingeschränktes Format.</translation>
         <translation type="vanished">VATSIM vPilot oder SWIFT</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="345"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="346"/>
         <source>IvAp for IVAO</source>
         <translation>IvAp für IVAO</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="346"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="347"/>
         <source>X-IVAP for IVAO</source>
         <translation>X-IVAP für IVAO</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="347"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="348"/>
         <source>FeelThere or Wilco</source>
         <translation>FeelThere oder Wilco</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="348"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="349"/>
         <source>Level-D</source>
         <translation>Level-D</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="349"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="350"/>
         <source>efbr</source>
         <translation>efbr</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="349"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="350"/>
         <source>AivlaSoft EFB</source>
         <translation>AivlaSoft EFB</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="350"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="351"/>
         <source>QualityWings</source>
         <translation>QualityWings</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="351"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="352"/>
         <source>mdr</source>
         <translation>mdr</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="351"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="352"/>
         <source>Leonardo Maddog X</source>
         <translation>Leonardo Maddog X</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="352"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="353"/>
         <source>xml</source>
         <translation>xml</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="352"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="353"/>
         <source>TFDi Design 717</source>
         <translation>TFDi Design 717</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="353"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="354"/>
         <source>route</source>
         <translation>route</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="353"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="354"/>
         <source>iFly Jets Advanced Series</source>
         <translation>iFly Jets Advanced Series</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="355"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="356"/>
         <source>FMS</source>
         <translation>FMS</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="355"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="356"/>
         <source>ISG Integrated Simavionics gauges</source>
         <translation>ISG Integrated Simavionics Instrumente</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="356"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="357"/>
         <source>fpl.pln</source>
         <translation>fpl.pln</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="356"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="357"/>
         <source>PMS50 GTN750</source>
         <translation>PMS50 GTN750</translation>
     </message>
@@ -37260,119 +37302,119 @@ Altes eingeschränktes Format.</translation>
 <context>
     <name>RouteLeg</name>
     <message>
-        <location filename="src/route/routeleg.cpp" line="560"/>
-        <location filename="src/route/routeleg.cpp" line="584"/>
+        <location filename="src/route/routeleg.cpp" line="559"/>
+        <location filename="src/route/routeleg.cpp" line="583"/>
         <source>Invalid</source>
         <translation>Ungültig</translation>
     </message>
     <message>
-        <location filename="src/route/routeleg.cpp" line="562"/>
-        <location filename="src/route/routeleg.cpp" line="586"/>
+        <location filename="src/route/routeleg.cpp" line="561"/>
+        <location filename="src/route/routeleg.cpp" line="585"/>
         <source>Waypoint</source>
         <translation>Wegpunkt</translation>
     </message>
     <message>
-        <location filename="src/route/routeleg.cpp" line="565"/>
-        <location filename="src/route/routeleg.cpp" line="606"/>
+        <location filename="src/route/routeleg.cpp" line="564"/>
+        <location filename="src/route/routeleg.cpp" line="605"/>
         <source>%1 (%2)</source>
         <translation>%1 (%2)</translation>
     </message>
     <message>
-        <location filename="src/route/routeleg.cpp" line="567"/>
-        <location filename="src/route/routeleg.cpp" line="590"/>
+        <location filename="src/route/routeleg.cpp" line="566"/>
+        <location filename="src/route/routeleg.cpp" line="589"/>
         <source>NDB</source>
         <translation>NDB</translation>
     </message>
     <message>
-        <location filename="src/route/routeleg.cpp" line="568"/>
+        <location filename="src/route/routeleg.cpp" line="567"/>
         <source>NDB (%1)</source>
         <translation>NDB (%1)</translation>
     </message>
     <message>
-        <location filename="src/route/routeleg.cpp" line="570"/>
-        <location filename="src/route/routeleg.cpp" line="592"/>
+        <location filename="src/route/routeleg.cpp" line="569"/>
+        <location filename="src/route/routeleg.cpp" line="591"/>
         <source>Airport</source>
         <translation>Flugplatz</translation>
     </message>
     <message>
-        <location filename="src/route/routeleg.cpp" line="572"/>
-        <location filename="src/route/routeleg.cpp" line="594"/>
+        <location filename="src/route/routeleg.cpp" line="571"/>
+        <location filename="src/route/routeleg.cpp" line="593"/>
         <source>ILS</source>
         <translation>ILS</translation>
     </message>
     <message>
-        <location filename="src/route/routeleg.cpp" line="574"/>
-        <location filename="src/route/routeleg.cpp" line="596"/>
+        <location filename="src/route/routeleg.cpp" line="573"/>
+        <location filename="src/route/routeleg.cpp" line="595"/>
         <source>Runway</source>
         <translation>Runway</translation>
     </message>
     <message>
-        <location filename="src/route/routeleg.cpp" line="576"/>
+        <location filename="src/route/routeleg.cpp" line="575"/>
         <source>User</source>
         <translation>Nutzer</translation>
     </message>
     <message>
-        <location filename="src/route/routeleg.cpp" line="598"/>
+        <location filename="src/route/routeleg.cpp" line="597"/>
         <source>Userpoint</source>
         <translation>Nutzerpunkt</translation>
     </message>
     <message>
-        <location filename="src/route/routeleg.cpp" line="611"/>
+        <location filename="src/route/routeleg.cpp" line="610"/>
         <source>(%1)</source>
         <translation>(%1)</translation>
     </message>
     <message>
-        <location filename="src/route/routeleg.cpp" line="613"/>
+        <location filename="src/route/routeleg.cpp" line="612"/>
         <source> </source>
         <translation> </translation>
     </message>
     <message>
-        <location filename="src/route/routeleg.cpp" line="667"/>
+        <location filename="src/route/routeleg.cpp" line="666"/>
         <source>°M/T</source>
         <translation>°M/T</translation>
     </message>
     <message>
-        <location filename="src/route/routeleg.cpp" line="667"/>
+        <location filename="src/route/routeleg.cpp" line="666"/>
         <source> °M/T</source>
         <translation> °M/T</translation>
     </message>
     <message>
-        <location filename="src/route/routeleg.cpp" line="671"/>
+        <location filename="src/route/routeleg.cpp" line="670"/>
         <source>°M</source>
         <translation>°M</translation>
     </message>
     <message>
-        <location filename="src/route/routeleg.cpp" line="671"/>
+        <location filename="src/route/routeleg.cpp" line="670"/>
         <source> °M</source>
         <translation> °M</translation>
     </message>
     <message>
-        <location filename="src/route/routeleg.cpp" line="673"/>
+        <location filename="src/route/routeleg.cpp" line="672"/>
         <source>°T</source>
         <translation>°T</translation>
     </message>
     <message>
-        <location filename="src/route/routeleg.cpp" line="673"/>
+        <location filename="src/route/routeleg.cpp" line="672"/>
         <source> °T</source>
         <translation> °T</translation>
     </message>
     <message>
-        <location filename="src/route/routeleg.cpp" line="1005"/>
+        <location filename="src/route/routeleg.cpp" line="1004"/>
         <source>Leg to &quot;%1&quot; violates restriction for airway &quot;%2&quot;:</source>
         <translation>Abschnitt nach &quot;%1&quot; verletzt Restriktionen für Luftstraße &quot;%2&quot;:</translation>
     </message>
     <message>
-        <location filename="src/route/routeleg.cpp" line="1019"/>
+        <location filename="src/route/routeleg.cpp" line="1018"/>
         <source>Wrong direction in one-way segment.</source>
         <translation>Falsche Richtung in Einwegsegment.</translation>
     </message>
     <message>
-        <location filename="src/route/routeleg.cpp" line="1028"/>
+        <location filename="src/route/routeleg.cpp" line="1027"/>
         <source>Cruise altitude %1 is below minimum altitude of %2.</source>
         <translation>Reiseflughöhe %1 ist unter der minimalen Höhe von %2.</translation>
     </message>
     <message>
-        <location filename="src/route/routeleg.cpp" line="1036"/>
+        <location filename="src/route/routeleg.cpp" line="1035"/>
         <source>Cruise altitude %1 is above maximum altitude of %2.</source>
         <translation>Reiseflughöhe %1 ist über der maximalen Höhe von %2.</translation>
     </message>
@@ -37381,17 +37423,17 @@ Altes eingeschränktes Format.</translation>
         <translation type="vanished">Abschnitt nach &quot;%1&quot; verletzt Restriktionen für Luftstraße &quot;%2&quot;:</translation>
     </message>
     <message>
-        <location filename="src/route/routeleg.cpp" line="1061"/>
+        <location filename="src/route/routeleg.cpp" line="1060"/>
         <source>Track or airway</source>
         <translation>Track oder Luftstraße</translation>
     </message>
     <message>
-        <location filename="src/route/routeleg.cpp" line="1061"/>
+        <location filename="src/route/routeleg.cpp" line="1060"/>
         <source>Airway</source>
         <translation>Luftstraße</translation>
     </message>
     <message>
-        <location filename="src/route/routeleg.cpp" line="1061"/>
+        <location filename="src/route/routeleg.cpp" line="1060"/>
         <source>%1 %2 not found for %3.</source>
         <translation>%1 %2 nicht gefunden für %3.</translation>
     </message>
@@ -37829,7 +37871,7 @@ Falls nicht anwendbar, wird die beste Schätzung aus den installierten Simulator
 <context>
     <name>RouteString</name>
     <message>
-        <location filename="src/routestring/routestringreader.cpp" line="151"/>
+        <location filename="src/routestring/routestringreader.cpp" line="165"/>
         <source>Need at least departure and destination.</source>
         <translation>Mindestens Start und Ziel ist nötig.</translation>
     </message>
@@ -37838,38 +37880,38 @@ Falls nicht anwendbar, wird die beste Schätzung aus den installierten Simulator
         <translation type="vanished">Nutze &lt;b&gt;%1&lt;/b&gt; und Reiseflughöhe &lt;b&gt;%2&lt;/b&gt;.</translation>
     </message>
     <message>
-        <location filename="src/routestring/routestringreader.cpp" line="249"/>
+        <location filename="src/routestring/routestringreader.cpp" line="264"/>
         <source>Nothing found for %1. Ignoring.</source>
         <translation>Für %1 wurde nichts gefunden. Ignoriert.</translation>
     </message>
     <message>
-        <location filename="src/routestring/routestringreader.cpp" line="324"/>
+        <location filename="src/routestring/routestringreader.cpp" line="338"/>
         <source>Found airway %1 instead of waypoint as first entry in en-route list. Ignoring.</source>
         <oldsource>Found airway %1 instead of waypoint as first entry in enroute list. Ignoring.</oldsource>
         <translation>Luftstraße %1 anstatt eines Wegpunktes als ersten Eintrag in der Routenliste gefunden. Ignoriert.</translation>
     </message>
     <message>
-        <location filename="src/routestring/routestringreader.cpp" line="360"/>
+        <location filename="src/routestring/routestringreader.cpp" line="374"/>
         <source>No navaid found for %1 on airway %2. Ignoring.</source>
         <translation>Keine Navigationshilfe für %1 auf Luftstraße %2 gefunden. Ignoriert.</translation>
     </message>
     <message>
-        <location filename="src/routestring/routestringreader.cpp" line="428"/>
+        <location filename="src/routestring/routestringreader.cpp" line="442"/>
         <source>No navaid found for %1. Ignoring.</source>
         <translation>Keine Navigationshilfe für %1 gefunden. Ignoriert.</translation>
     </message>
     <message>
-        <location filename="src/routestring/routestringreader.cpp" line="658"/>
+        <location filename="src/routestring/routestringreader.cpp" line="673"/>
         <source>Ignoring time specification for airport %1.</source>
         <translation>Ignoriere Zeitangabe für Flugplatz %1.</translation>
     </message>
     <message>
-        <location filename="src/routestring/routestringreader.cpp" line="660"/>
+        <location filename="src/routestring/routestringreader.cpp" line="675"/>
         <source>Ignoring runway specification for airport %1.</source>
         <translation>Ignoriere Runwayangabe für Flugplatz %1.</translation>
     </message>
     <message>
-        <location filename="src/routestring/routestringreader.cpp" line="798"/>
+        <location filename="src/routestring/routestringreader.cpp" line="813"/>
         <source>Mandatory departure airport %1 not found.</source>
         <translation>Zwingend erforderlicher Startflugplatz %1 nicht gefunden.</translation>
     </message>
@@ -37878,152 +37920,152 @@ Falls nicht anwendbar, wird die beste Schätzung aus den installierten Simulator
         <translation type="vanished">Zwingend erforderlicher Zielflugplatz %1 wurde nicht gefunden.</translation>
     </message>
     <message>
-        <location filename="src/routestring/routestringreader.cpp" line="200"/>
+        <location filename="src/routestring/routestringreader.cpp" line="216"/>
         <source>Using cruise altitude &lt;b&gt;%1&lt;/b&gt; for flight plan.</source>
         <translation>Nutze Reiseflughöhe &lt;b&gt;%1&lt;/b&gt; für Flugplan.</translation>
     </message>
     <message>
-        <location filename="src/routestring/routestringreader.cpp" line="206"/>
+        <location filename="src/routestring/routestringreader.cpp" line="222"/>
         <source>Ignoring speed instruction %1.</source>
         <translation>Ignoriere Geschwindigkeitsanweisung %1.</translation>
     </message>
     <message>
-        <location filename="src/routestring/routestringreader.cpp" line="208"/>
+        <location filename="src/routestring/routestringreader.cpp" line="224"/>
         <source>Ignoring speed instruction %1 in favor of aircraft performance (%2 true airspeed).</source>
         <translation>Ignoriere Geschwindigkeitsanweisung %1 zugunsten der Flugzeugleistung (%2 wahre Fluggeschwindigkeit).</translation>
     </message>
     <message>
-        <location filename="src/routestring/routestringreader.cpp" line="218"/>
+        <location filename="src/routestring/routestringreader.cpp" line="233"/>
         <source>Could not determine starting position for first item %1.</source>
         <translation>Kann Startposition für den ersten Eintrag %1 nicht feststellen.</translation>
     </message>
     <message>
-        <location filename="src/routestring/routestringreader.cpp" line="481"/>
-        <location filename="src/routestring/routestringreader.cpp" line="491"/>
+        <location filename="src/routestring/routestringreader.cpp" line="496"/>
+        <location filename="src/routestring/routestringreader.cpp" line="506"/>
         <source>%1 (%2)</source>
         <translation>%1 (%2)</translation>
     </message>
     <message>
-        <location filename="src/routestring/routestringreader.cpp" line="499"/>
+        <location filename="src/routestring/routestringreader.cpp" line="514"/>
         <source>Route description: &lt;b&gt;%1&lt;/b&gt;.</source>
         <translation>Routenbeschreibung: &lt;b&gt;%1&lt;/b&gt;.</translation>
     </message>
     <message>
-        <location filename="src/routestring/routestringreader.cpp" line="500"/>
+        <location filename="src/routestring/routestringreader.cpp" line="515"/>
         <source>Flight plan from &lt;b&gt;%1&lt;/b&gt; to &lt;b&gt;%2&lt;/b&gt;.</source>
         <translation>Flugplan von &lt;b&gt;%1&lt;/b&gt; nach &lt;b&gt;%2&lt;/b&gt;.</translation>
     </message>
     <message>
-        <location filename="src/routestring/routestringreader.cpp" line="501"/>
+        <location filename="src/routestring/routestringreader.cpp" line="516"/>
         <source>Distance without procedures: &lt;b&gt;%1&lt;/b&gt;.</source>
         <translation>Distanz ohne Prozeduren: &lt;b&gt;%1&lt;/b&gt;.</translation>
     </message>
     <message>
-        <location filename="src/routestring/routestringreader.cpp" line="513"/>
+        <location filename="src/routestring/routestringreader.cpp" line="528"/>
         <source>Found %1 %2: &lt;b&gt;%3&lt;/b&gt;.</source>
         <translation>Gefunden %1 %2: &lt;b&gt;%3&lt;/b&gt;.</translation>
     </message>
     <message>
-        <location filename="src/routestring/routestringreader.cpp" line="515"/>
+        <location filename="src/routestring/routestringreader.cpp" line="530"/>
         <source>waypoint</source>
         <translation>Wegpunkt</translation>
     </message>
     <message>
-        <location filename="src/routestring/routestringreader.cpp" line="515"/>
+        <location filename="src/routestring/routestringreader.cpp" line="530"/>
         <source>waypoints</source>
         <translation>Wegpunkte</translation>
     </message>
     <message>
-        <location filename="src/routestring/routestringreader.cpp" line="516"/>
+        <location filename="src/routestring/routestringreader.cpp" line="531"/>
         <source> </source>
         <translation> </translation>
     </message>
     <message>
-        <location filename="src/routestring/routestringreader.cpp" line="520"/>
+        <location filename="src/routestring/routestringreader.cpp" line="535"/>
         <source>Found SID: &lt;b&gt;%1&lt;/b&gt;.</source>
         <translation>SID gefunden: &lt;b&gt;%1&lt;/b&gt;.</translation>
     </message>
     <message>
-        <location filename="src/routestring/routestringreader.cpp" line="524"/>
+        <location filename="src/routestring/routestringreader.cpp" line="539"/>
         <source>Found STAR: &lt;b&gt;%1&lt;/b&gt;.</source>
         <translation>STAR gefunden: &lt;b&gt;%1&lt;/b&gt;.</translation>
     </message>
     <message>
-        <location filename="src/routestring/routestringreader.cpp" line="913"/>
+        <location filename="src/routestring/routestringreader.cpp" line="930"/>
         <source>Found alternate %1 &lt;b&gt;%2&lt;/b&gt;.</source>
         <translation>Ausweich%1 &lt;b&gt;%2&lt;/b&gt; gefunden.</translation>
     </message>
     <message>
-        <location filename="src/routestring/routestringreader.cpp" line="914"/>
+        <location filename="src/routestring/routestringreader.cpp" line="931"/>
         <source>airport</source>
         <translation>flugplatz</translation>
     </message>
     <message>
-        <location filename="src/routestring/routestringreader.cpp" line="914"/>
+        <location filename="src/routestring/routestringreader.cpp" line="931"/>
         <source>airports</source>
         <translation>flugplätze</translation>
     </message>
     <message>
-        <location filename="src/routestring/routestringreader.cpp" line="915"/>
+        <location filename="src/routestring/routestringreader.cpp" line="932"/>
         <source>, </source>
         <translation>, </translation>
     </message>
     <message>
-        <location filename="src/routestring/routestringreader.cpp" line="920"/>
-        <location filename="src/routestring/routestringreader.cpp" line="965"/>
+        <location filename="src/routestring/routestringreader.cpp" line="937"/>
+        <location filename="src/routestring/routestringreader.cpp" line="982"/>
         <source>Required destination airport %1 not found.</source>
         <translation>Erforderlicher Zielflugplatz %1 nicht gefunden.</translation>
     </message>
     <message>
-        <location filename="src/routestring/routestringreader.cpp" line="1099"/>
+        <location filename="src/routestring/routestringreader.cpp" line="1116"/>
         <source>First item %1 not found as waypoint, VOR or NDB.</source>
         <translation>Erster Eintrag %1 nicht als Wegpunkt, VOR oder NDB gefunden.</translation>
     </message>
     <message>
-        <location filename="src/routestring/routestringreader.cpp" line="268"/>
-        <location filename="src/routestring/routestringreader.cpp" line="1365"/>
+        <location filename="src/routestring/routestringreader.cpp" line="283"/>
+        <location filename="src/routestring/routestringreader.cpp" line="1372"/>
         <source>No waypoint before airway %1. Ignoring flight plan segment.</source>
         <translation>Kein Wegpunkt vor Luftstraße %1. Flugplanabschnitt wird ignoriert.</translation>
     </message>
     <message>
-        <location filename="src/routestring/routestringreader.cpp" line="279"/>
-        <location filename="src/routestring/routestringreader.cpp" line="1374"/>
+        <location filename="src/routestring/routestringreader.cpp" line="294"/>
+        <location filename="src/routestring/routestringreader.cpp" line="1381"/>
         <source>No waypoint after airway %1. Ignoring flight plan segment.</source>
         <translation>Kein Wegpunkt nach Luftstraße %1. Flugplanabschnitt wird ignoriert.</translation>
     </message>
     <message>
-        <location filename="src/routestring/routestringreader.cpp" line="1438"/>
-        <location filename="src/routestring/routestringreader.cpp" line="1443"/>
+        <location filename="src/routestring/routestringreader.cpp" line="1445"/>
+        <location filename="src/routestring/routestringreader.cpp" line="1450"/>
         <source>Waypoint %1 not found in airway %2. Ignoring flight plan segment.</source>
         <translation>Wegpunkt %1 kann in Luftstraße %2 nicht gefunden werden. Ignoriere Flugplanabschnitt.</translation>
     </message>
     <message>
-        <location filename="src/routestring/routestringreader.cpp" line="1451"/>
+        <location filename="src/routestring/routestringreader.cpp" line="1458"/>
         <source>No waypoints found for airway %1. Ignoring flight plan segment.</source>
         <translation>Keine Wegpunkte für Luftstraße %1 gefunden. Ignoriere Flugplanabschnitt.</translation>
     </message>
     <message>
-        <location filename="src/routestring/routestringreader.cpp" line="1458"/>
+        <location filename="src/routestring/routestringreader.cpp" line="1465"/>
         <source>No waypoint %1 found at airway %2. Ignoring flight plan segment.</source>
         <translation>Kein Wegpunkt %1 auf Luftstraße %2 gefunden. Ignoriere Flugplanabschnitt.</translation>
     </message>
     <message>
-        <location filename="src/routestring/routestringreader.cpp" line="1529"/>
+        <location filename="src/routestring/routestringreader.cpp" line="1536"/>
         <source>Replacing plain SID instruction with DCT (direct).</source>
         <translation>Ersetze generische SID Instruktionen mit DCT (direkt).</translation>
     </message>
     <message>
-        <location filename="src/routestring/routestringreader.cpp" line="1535"/>
+        <location filename="src/routestring/routestringreader.cpp" line="1542"/>
         <source>Replacing STAR instruction with DCT (direct).</source>
         <translation>Ersetze STAR Instruktionen mit DCT (direkt).</translation>
     </message>
     <message>
-        <location filename="src/routestring/routestringreader.cpp" line="1543"/>
+        <location filename="src/routestring/routestringreader.cpp" line="1550"/>
         <source>Ignoring invalid speed and altitude instruction %1.</source>
         <translation>Ignoriere ungültige Geschwindigkeits- und Höhenanweisung %1.</translation>
     </message>
     <message>
-        <location filename="src/routestring/routestringreader.cpp" line="1558"/>
+        <location filename="src/routestring/routestringreader.cpp" line="1565"/>
         <source>Ignoring speed and altitude at waypoint %1.</source>
         <translation>Ignoriere Geschwindigkeit und Höhe am Wegpunkt %1.</translation>
     </message>
@@ -39182,27 +39224,27 @@ Travel Totals: %1.</source>
 <context>
     <name>TrackController</name>
     <message>
-        <location filename="src/track/trackcontroller.cpp" line="137"/>
+        <location filename="src/track/trackcontroller.cpp" line="140"/>
         <source>Track download started.</source>
         <translation>Track Download gestartet</translation>
     </message>
     <message>
-        <location filename="src/track/trackcontroller.cpp" line="150"/>
+        <location filename="src/track/trackcontroller.cpp" line="153"/>
         <source>Tracks deleted.</source>
         <translation>Tracks gelöscht</translation>
     </message>
     <message>
-        <location filename="src/track/trackcontroller.cpp" line="205"/>
+        <location filename="src/track/trackcontroller.cpp" line="208"/>
         <source>&lt;p&gt;Errors while trying to establish an encrypted connection to download track information:&lt;/p&gt;&lt;p&gt;URL: %1&lt;/p&gt;&lt;p&gt;Error messages:&lt;br/&gt;%2&lt;/p&gt;&lt;p&gt;Continue?&lt;/p&gt;</source>
         <translation>&lt;p&gt;Fehler beim Versuch, eine verschlüsselte Verbindung zum Herunterladen von Tracks herzustellen:&lt;/p&gt;&lt;p&gt;Webadresse: %1&lt;/p&gt;&lt;p&gt;Fehlermeldungen:&lt;br/&gt;%2&lt;/p&gt;&lt;p&gt;Fortsetzen?&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="src/track/trackcontroller.cpp" line="211"/>
+        <location filename="src/track/trackcontroller.cpp" line="214"/>
         <source>&lt;br/&gt;</source>
         <translation>&lt;br/&gt;</translation>
     </message>
     <message>
-        <location filename="src/track/trackcontroller.cpp" line="212"/>
+        <location filename="src/track/trackcontroller.cpp" line="215"/>
         <source>Do not &amp;show this again and ignore errors.</source>
         <oldsource>Do not &amp;show this again and ignore errors in the future</oldsource>
         <translation>Diesen Dialog &amp;nicht mehr anzeigen und die Fehler ignorieren.</translation>
@@ -39216,74 +39258,74 @@ Travel Totals: %1.</source>
         <translation type="vanished">&lt;p&gt;Download der %1 Tracks von&lt;br/&gt;&quot;%2&quot;&lt;br/&gt;fehlgeschlagen.&lt;/p&gt;&lt;p&gt;Fehler: %3 (%4)&lt;/p&gt;&lt;p&gt;Überprüfen Sie die Einstellungen zu Tracks oder schalten Sie die Downloads aus.&lt;/p&gt;&lt;p&gt;Unterdrücke weitere Fehlermeldungen während dieser Sitzung.&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="src/track/trackcontroller.cpp" line="231"/>
+        <location filename="src/track/trackcontroller.cpp" line="234"/>
         <source>&lt;p&gt;Download of %1 track information from&lt;br/&gt;&quot;%2&quot;&lt;br/&gt;failed.&lt;/p&gt;&lt;p&gt;Error: %3 (%4)&lt;/p&gt;&lt;p&gt;Check track settings or disable track downloads.&lt;/p&gt;&lt;p&gt;Suppressing further messages during this session.&lt;/p&gt;</source>
         <translation>&lt;p&gt;Download der %1 Tracks von&lt;br/&gt;&quot;%2&quot;&lt;br/&gt;fehlgeschlagen.&lt;/p&gt;&lt;p&gt;Fehler: %3 (%4)&lt;/p&gt;&lt;p&gt;Überprüfen Sie die Einstellungen zu Tracks oder schalten Sie die Downloads aus.&lt;/p&gt;&lt;p&gt;Unterdrücke weitere Fehlermeldungen während dieser Sitzung.&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="src/track/trackcontroller.cpp" line="237"/>
+        <location filename="src/track/trackcontroller.cpp" line="240"/>
         <source>Do not &amp;show this dialog again.</source>
         <oldsource>Do &amp;not show this dialog again.</oldsource>
         <translation>Diesen Dialog &amp;nicht mehr anzeigen.</translation>
     </message>
     <message>
-        <location filename="src/track/trackcontroller.cpp" line="249"/>
+        <location filename="src/track/trackcontroller.cpp" line="252"/>
         <source>Track download failed.</source>
         <translation>Track Download fehlgeschlagen.</translation>
     </message>
     <message>
-        <location filename="src/track/trackcontroller.cpp" line="266"/>
+        <location filename="src/track/trackcontroller.cpp" line="269"/>
         <source>&lt;li&gt;%1: %2 tracks.&lt;/li&gt;</source>
         <translation>&lt;li&gt;%1: %2 Tracks.&lt;/li&gt;</translation>
     </message>
     <message>
-        <location filename="src/track/trackcontroller.cpp" line="268"/>
+        <location filename="src/track/trackcontroller.cpp" line="271"/>
         <source>No</source>
         <translation>keine</translation>
     </message>
     <message>
-        <location filename="src/track/trackcontroller.cpp" line="272"/>
+        <location filename="src/track/trackcontroller.cpp" line="275"/>
         <source>&lt;p&gt;Errors reading tracks.&lt;br/&gt;Make sure to use the latest navdata.&lt;/p&gt;&lt;ul&gt;&lt;li&gt;</source>
         <translation>&lt;p&gt;Fehler beim Lesen der Tracks.&lt;br/&gt;Stellen Sie sicher, dass die neuesten Navigationsdaten benutzt werden.&lt;/p&gt;&lt;ul&gt;&lt;li&gt;</translation>
     </message>
     <message>
-        <location filename="src/track/trackcontroller.cpp" line="276"/>
+        <location filename="src/track/trackcontroller.cpp" line="279"/>
         <source>&lt;/li&gt;&lt;li&gt;More ...</source>
         <translation>&lt;/li&gt;&lt;li&gt;Mehr ...</translation>
     </message>
     <message>
-        <location filename="src/track/trackcontroller.cpp" line="278"/>
+        <location filename="src/track/trackcontroller.cpp" line="281"/>
         <source>&lt;/li&gt;&lt;/ul&gt;</source>
         <translation>&lt;/li&gt;&lt;/ul&gt;</translation>
     </message>
     <message>
-        <location filename="src/track/trackcontroller.cpp" line="279"/>
+        <location filename="src/track/trackcontroller.cpp" line="282"/>
         <source>&lt;p&gt;Tracks downloaded.&lt;/p&gt;&lt;ul&gt;%1&lt;/ul&gt;%2</source>
         <translation>&lt;p&gt;Tracks heruntergeladen.&lt;/p&gt;&lt;ul&gt;%1&lt;/ul&gt;%2</translation>
     </message>
     <message>
-        <location filename="src/track/trackcontroller.cpp" line="283"/>
+        <location filename="src/track/trackcontroller.cpp" line="286"/>
         <source>Track download finished with errors.</source>
         <translation>Track Download fehlgeschlagen.</translation>
     </message>
     <message>
-        <location filename="src/track/trackcontroller.cpp" line="292"/>
+        <location filename="src/track/trackcontroller.cpp" line="295"/>
         <source>%1: %2 tracks</source>
         <translation>%1: %2 Tracks</translation>
     </message>
     <message>
-        <location filename="src/track/trackcontroller.cpp" line="292"/>
+        <location filename="src/track/trackcontroller.cpp" line="295"/>
         <source>no</source>
         <translation>keine</translation>
     </message>
     <message>
-        <location filename="src/track/trackcontroller.cpp" line="295"/>
+        <location filename="src/track/trackcontroller.cpp" line="298"/>
         <source>Tracks downloaded: %1.</source>
         <oldsource>Track download finished: %1.</oldsource>
         <translation>Tracks heruntergeladen: %1</translation>
     </message>
     <message>
-        <location filename="src/track/trackcontroller.cpp" line="295"/>
+        <location filename="src/track/trackcontroller.cpp" line="298"/>
         <source>, </source>
         <translation>, </translation>
     </message>
@@ -39446,149 +39488,150 @@ Travel Totals: %1.</source>
         <translation type="vanished">nm</translation>
     </message>
     <message>
-        <location filename="src/common/unit.cpp" line="156"/>
         <location filename="src/common/unit.cpp" line="158"/>
+        <location filename="src/common/unit.cpp" line="160"/>
         <source>ft</source>
         <translation>ft</translation>
     </message>
     <message>
-        <location filename="src/common/unit.cpp" line="160"/>
+        <location filename="src/common/unit.cpp" line="162"/>
         <source>kts</source>
         <translation>kts</translation>
     </message>
     <message>
-        <location filename="src/common/unit.cpp" line="163"/>
+        <location filename="src/common/unit.cpp" line="165"/>
         <source>fpm</source>
         <translation>fpm</translation>
     </message>
     <message>
-        <location filename="src/common/unit.cpp" line="165"/>
+        <location filename="src/common/unit.cpp" line="167"/>
         <source>gal</source>
         <translation>gal</translation>
     </message>
     <message>
-        <location filename="src/common/unit.cpp" line="166"/>
+        <location filename="src/common/unit.cpp" line="168"/>
         <source>lbs</source>
         <translation>lbs</translation>
     </message>
     <message>
-        <location filename="src/common/unit.cpp" line="168"/>
+        <location filename="src/common/unit.cpp" line="170"/>
         <source>gph</source>
         <translation>gph</translation>
     </message>
     <message>
-        <location filename="src/common/unit.cpp" line="167"/>
+        <location filename="src/common/unit.cpp" line="169"/>
         <source>pph</source>
         <translation>pph</translation>
     </message>
     <message>
-        <location filename="src/common/unit.cpp" line="488"/>
-        <location filename="src/common/unit.cpp" line="491"/>
+        <location filename="src/common/unit.cpp" line="490"/>
+        <location filename="src/common/unit.cpp" line="493"/>
         <source>&lt;b&gt;%1&lt;/b&gt;</source>
         <translation>&lt;b&gt;%1&lt;/b&gt;</translation>
     </message>
     <message>
-        <location filename="src/common/unit.cpp" line="488"/>
-        <location filename="src/common/unit.cpp" line="491"/>
+        <location filename="src/common/unit.cpp" line="490"/>
+        <location filename="src/common/unit.cpp" line="493"/>
         <source>%1</source>
         <translation>%1</translation>
     </message>
     <message>
-        <location filename="src/common/unit.cpp" line="489"/>
+        <location filename="src/common/unit.cpp" line="491"/>
         <source> &lt;span style=&quot;font-size: small;&quot;&gt;(%2)&lt;/span&gt;</source>
         <translation> &lt;span style=&quot;font-size: small;&quot;&gt;(%2)&lt;/span&gt;</translation>
     </message>
     <message>
-        <location filename="src/common/unit.cpp" line="489"/>
+        <location filename="src/common/unit.cpp" line="491"/>
         <source> (%2)</source>
         <translation> (%2)</translation>
     </message>
     <message>
-        <location filename="src/common/unit.cpp" line="497"/>
-        <location filename="src/common/unit.cpp" line="500"/>
-        <location filename="src/common/unit.cpp" line="589"/>
-        <location filename="src/common/unit.cpp" line="594"/>
-        <location filename="src/common/unit.cpp" line="639"/>
-        <location filename="src/common/unit.cpp" line="644"/>
+        <location filename="src/common/unit.cpp" line="499"/>
+        <location filename="src/common/unit.cpp" line="502"/>
+        <location filename="src/common/unit.cpp" line="591"/>
+        <location filename="src/common/unit.cpp" line="596"/>
+        <location filename="src/common/unit.cpp" line="641"/>
+        <location filename="src/common/unit.cpp" line="646"/>
+        <location filename="src/common/unit.cpp" line="700"/>
         <source>%1, %2</source>
         <translation>%1, %2</translation>
     </message>
     <message>
-        <location filename="src/common/unit.cpp" line="154"/>
+        <location filename="src/common/unit.cpp" line="156"/>
         <source>km</source>
         <translation>km</translation>
     </message>
     <message>
-        <location filename="src/common/unit.cpp" line="153"/>
+        <location filename="src/common/unit.cpp" line="155"/>
         <source>NM</source>
         <translation>NM</translation>
     </message>
     <message>
-        <location filename="src/common/unit.cpp" line="155"/>
+        <location filename="src/common/unit.cpp" line="157"/>
         <source>mi</source>
         <translation>mi</translation>
     </message>
     <message>
-        <location filename="src/common/unit.cpp" line="157"/>
         <location filename="src/common/unit.cpp" line="159"/>
+        <location filename="src/common/unit.cpp" line="161"/>
         <source>m</source>
         <translation>m</translation>
     </message>
     <message>
-        <location filename="src/common/unit.cpp" line="161"/>
+        <location filename="src/common/unit.cpp" line="163"/>
         <source>km/h</source>
         <translation>km/h</translation>
     </message>
     <message>
-        <location filename="src/common/unit.cpp" line="162"/>
+        <location filename="src/common/unit.cpp" line="164"/>
         <source>mph</source>
         <translation>mph</translation>
     </message>
     <message>
-        <location filename="src/common/unit.cpp" line="164"/>
+        <location filename="src/common/unit.cpp" line="166"/>
         <source>m/s</source>
         <translation>m/s</translation>
     </message>
     <message>
-        <location filename="src/common/unit.cpp" line="169"/>
+        <location filename="src/common/unit.cpp" line="171"/>
         <source>l</source>
         <translation>l</translation>
     </message>
     <message>
-        <location filename="src/common/unit.cpp" line="170"/>
+        <location filename="src/common/unit.cpp" line="172"/>
         <source>kg</source>
         <translation>kg</translation>
     </message>
     <message>
-        <location filename="src/common/unit.cpp" line="171"/>
+        <location filename="src/common/unit.cpp" line="173"/>
         <source>kg/h</source>
         <translation>kg/h</translation>
     </message>
     <message>
-        <location filename="src/common/unit.cpp" line="172"/>
+        <location filename="src/common/unit.cpp" line="174"/>
         <source>l/h</source>
         <translation>l/h</translation>
     </message>
     <message>
-        <location filename="src/common/unit.cpp" line="497"/>
-        <location filename="src/common/unit.cpp" line="500"/>
+        <location filename="src/common/unit.cpp" line="499"/>
+        <location filename="src/common/unit.cpp" line="502"/>
         <source>&lt;b&gt;%1, %2&lt;/b&gt;</source>
         <translation>&lt;b&gt;%1, %2&lt;/b&gt;</translation>
     </message>
     <message>
-        <location filename="src/common/unit.cpp" line="498"/>
+        <location filename="src/common/unit.cpp" line="500"/>
         <source> &lt;span style=&quot;font-size: small;&quot;&gt;(%3, %4)&lt;/span&gt;</source>
         <translation> &lt;span style=&quot;font-size: small;&quot;&gt;(%3, %4)&lt;/span&gt;</translation>
     </message>
     <message>
-        <location filename="src/common/unit.cpp" line="498"/>
+        <location filename="src/common/unit.cpp" line="500"/>
         <source> (%3, %4)</source>
         <translation> (%3, %4)</translation>
     </message>
     <message>
-        <location filename="src/common/unit.cpp" line="694"/>
         <location filename="src/common/unit.cpp" line="696"/>
         <location filename="src/common/unit.cpp" line="698"/>
+        <location filename="src/common/unit.cpp" line="702"/>
         <source>%1 %2</source>
         <translation>%1 %2</translation>
     </message>
@@ -39891,7 +39934,7 @@ Die obigen Formate müssen exakt wie im Beispiel angegeben werden.</translation>
         <translation type="vanished">Unbekannte Nutzerpunkttypen aktivieren oder deaktivieren</translation>
     </message>
     <message>
-        <location filename="src/userdata/userdatacontroller.cpp" line="459"/>
+        <location filename="src/userdata/userdatacontroller.cpp" line="461"/>
         <source>Userpoint moved.</source>
         <translation>Nutzerpunkt verschoben.</translation>
     </message>
@@ -40051,12 +40094,12 @@ Die obigen Formate müssen exakt wie im Beispiel angegeben werden.</translation>
         <translation>Zeige oder verberge %1-Nutzerpunkte</translation>
     </message>
     <message>
-        <location filename="src/userdata/userdatacontroller.cpp" line="600"/>
+        <location filename="src/userdata/userdatacontroller.cpp" line="602"/>
         <source>Userpoint added.</source>
         <translation>Nutzerpunkt hinzugefügt.</translation>
     </message>
     <message numerus="yes">
-        <location filename="src/userdata/userdatacontroller.cpp" line="633"/>
+        <location filename="src/userdata/userdatacontroller.cpp" line="635"/>
         <source>%n userpoint(s) updated.</source>
         <translation>
             <numerusform>%n Nutzerpunkt hinzugefügt.</numerusform>
@@ -40101,7 +40144,7 @@ Dies kann nicht rückgängig gemacht werden.</translation>
         <translation>Mehr ...</translation>
     </message>
     <message numerus="yes">
-        <location filename="src/userdata/userdatacontroller.cpp" line="651"/>
+        <location filename="src/userdata/userdatacontroller.cpp" line="653"/>
         <source>%n userpoint(s) deleted.</source>
         <translation>
             <numerusform>%n Nutzerpunkt gelöscht.</numerusform>
@@ -40109,20 +40152,20 @@ Dies kann nicht rückgängig gemacht werden.</translation>
         </translation>
     </message>
     <message>
-        <location filename="src/userdata/userdatacontroller.cpp" line="659"/>
+        <location filename="src/userdata/userdatacontroller.cpp" line="661"/>
         <source>Open Userpoint CSV File(s)</source>
         <translation>Öffne Nutzerpunkt CSV-Datei(en)</translation>
     </message>
     <message>
-        <location filename="src/userdata/userdatacontroller.cpp" line="660"/>
-        <location filename="src/userdata/userdatacontroller.cpp" line="780"/>
+        <location filename="src/userdata/userdatacontroller.cpp" line="662"/>
+        <location filename="src/userdata/userdatacontroller.cpp" line="782"/>
         <source>CSV Files %1;;All Files (*)</source>
         <translation>CSV-Dateien %1;;Alle Dateien (*)</translation>
     </message>
     <message numerus="yes">
-        <location filename="src/userdata/userdatacontroller.cpp" line="671"/>
-        <location filename="src/userdata/userdatacontroller.cpp" line="713"/>
-        <location filename="src/userdata/userdatacontroller.cpp" line="751"/>
+        <location filename="src/userdata/userdatacontroller.cpp" line="673"/>
+        <location filename="src/userdata/userdatacontroller.cpp" line="715"/>
+        <location filename="src/userdata/userdatacontroller.cpp" line="753"/>
         <source>%n userpoint(s) imported.</source>
         <translation>
             <numerusform>%n Nutzerpunkt importiert.</numerusform>
@@ -40130,7 +40173,7 @@ Dies kann nicht rückgängig gemacht werden.</translation>
         </translation>
     </message>
     <message>
-        <location filename="src/userdata/userdatacontroller.cpp" line="700"/>
+        <location filename="src/userdata/userdatacontroller.cpp" line="702"/>
         <source>Open X-Plane user_fix.dat File</source>
         <translation>Öffne X-Plane user_fix.dat-Datei</translation>
     </message>
@@ -40181,37 +40224,37 @@ Dies kann nicht rückgängig gemacht werden.</translation>
         <translation>&amp;Keine Nutzerpunkte</translation>
     </message>
     <message>
-        <location filename="src/userdata/userdatacontroller.cpp" line="529"/>
+        <location filename="src/userdata/userdatacontroller.cpp" line="531"/>
         <source>Addon Userpoint added.</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/userdata/userdatacontroller.cpp" line="701"/>
-        <location filename="src/userdata/userdatacontroller.cpp" line="819"/>
+        <location filename="src/userdata/userdatacontroller.cpp" line="703"/>
+        <location filename="src/userdata/userdatacontroller.cpp" line="821"/>
         <source>X-Plane User Fix Files %1;;X-Plane Dat Files %2;;All Files (*)</source>
         <translation>X-Plane User Fix Dateien %1;;X-Plane Dat Dateien %2;;Alle Dateien (*)</translation>
     </message>
     <message>
-        <location filename="src/userdata/userdatacontroller.cpp" line="738"/>
+        <location filename="src/userdata/userdatacontroller.cpp" line="740"/>
         <source>Open Garmin User Waypoint File</source>
         <translation>Öffne Garmin Nutzerwegpunkt-Datei</translation>
     </message>
     <message>
-        <location filename="src/userdata/userdatacontroller.cpp" line="739"/>
-        <location filename="src/userdata/userdatacontroller.cpp" line="855"/>
+        <location filename="src/userdata/userdatacontroller.cpp" line="741"/>
+        <location filename="src/userdata/userdatacontroller.cpp" line="857"/>
         <source>Garmin User Waypoint Files %1;;All Files (*)</source>
         <translation>Garmin Nutzerwegpunkt-Datei %1;;Alle Dateien (*)</translation>
     </message>
     <message>
-        <location filename="src/userdata/userdatacontroller.cpp" line="779"/>
+        <location filename="src/userdata/userdatacontroller.cpp" line="781"/>
         <source>Export Userpoint CSV File</source>
         <translation>Exportiere Nutzerpunkt CSV-Datei</translation>
     </message>
     <message numerus="yes">
-        <location filename="src/userdata/userdatacontroller.cpp" line="793"/>
-        <location filename="src/userdata/userdatacontroller.cpp" line="829"/>
-        <location filename="src/userdata/userdatacontroller.cpp" line="867"/>
-        <location filename="src/userdata/userdatacontroller.cpp" line="903"/>
+        <location filename="src/userdata/userdatacontroller.cpp" line="795"/>
+        <location filename="src/userdata/userdatacontroller.cpp" line="831"/>
+        <location filename="src/userdata/userdatacontroller.cpp" line="869"/>
+        <location filename="src/userdata/userdatacontroller.cpp" line="905"/>
         <source>%n userpoint(s) exported.</source>
         <translation>
             <numerusform>%n Nutzerpunkt exportiert.</numerusform>
@@ -40219,27 +40262,27 @@ Dies kann nicht rückgängig gemacht werden.</translation>
         </translation>
     </message>
     <message>
-        <location filename="src/userdata/userdatacontroller.cpp" line="818"/>
+        <location filename="src/userdata/userdatacontroller.cpp" line="820"/>
         <source>Export X-Plane user_fix.dat File</source>
         <translation>Exportiere X-Plane user_fix.dat-Datei</translation>
     </message>
     <message>
-        <location filename="src/userdata/userdatacontroller.cpp" line="854"/>
+        <location filename="src/userdata/userdatacontroller.cpp" line="856"/>
         <source>Export Garmin User Waypoint File</source>
         <translation>Exportiere Garmin Nutzerwegpunkt-Datei</translation>
     </message>
     <message>
-        <location filename="src/userdata/userdatacontroller.cpp" line="892"/>
+        <location filename="src/userdata/userdatacontroller.cpp" line="894"/>
         <source>Export XML File for FSX/P3D BGL Compiler</source>
         <translation>Exportiere XML-Datei für FSX/P3D BGL Compiler</translation>
     </message>
     <message>
-        <location filename="src/userdata/userdatacontroller.cpp" line="893"/>
+        <location filename="src/userdata/userdatacontroller.cpp" line="895"/>
         <source>XML Files %1;;All Files (*)</source>
         <translation>XML-Dateien %1;;Alle Dateien (*)</translation>
     </message>
     <message>
-        <location filename="src/userdata/userdatacontroller.cpp" line="962"/>
+        <location filename="src/userdata/userdatacontroller.cpp" line="964"/>
         <source>Select export options for userpoints.
 
 Note that the field &quot;Tags&quot; is used for the ID of the airport terminal area and the waypoint type.
@@ -40252,26 +40295,26 @@ Beachten Sie, dass das Feld &quot;Tags&quot; für die ID des Flugplatzterminalbe
 Klicken Sie auf &quot;Hilfe&quot; für weitere Informationen.</translation>
     </message>
     <message>
-        <location filename="src/userdata/userdatacontroller.cpp" line="1029"/>
+        <location filename="src/userdata/userdatacontroller.cpp" line="1031"/>
         <source> - Cleanup Userpoints</source>
         <translation> - Nutzerpunkte bereinigen</translation>
     </message>
     <message>
-        <location filename="src/userdata/userdatacontroller.cpp" line="1030"/>
+        <location filename="src/userdata/userdatacontroller.cpp" line="1032"/>
         <source>Select criteria for cleanup.
 Note that you can undo this change.</source>
         <translation>Kriterien für die Bereinigung auswählen.
 Beachten Sie, dass Sie diese Änderung rückgängig machen können.</translation>
     </message>
     <message>
-        <location filename="src/userdata/userdatacontroller.cpp" line="1036"/>
+        <location filename="src/userdata/userdatacontroller.cpp" line="1038"/>
         <source>Delete userpoints having no information
 except coordinates and type.</source>
         <translation>Benutzerpunkte löschen, die keine Informationen
 außer Koordinaten und Typ haben.</translation>
     </message>
     <message>
-        <location filename="src/userdata/userdatacontroller.cpp" line="1040"/>
+        <location filename="src/userdata/userdatacontroller.cpp" line="1042"/>
         <source>Remove duplicates using the additional fields below as criteria.
 A userpoint will considered a duplicate to another if
 all selected fields are equal.</source>
@@ -40281,42 +40324,42 @@ Ein Benutzerpunkt wird als Duplikat zu einem anderen betrachtet,
 wenn alle ausgewählten Felder gleich sind.</translation>
     </message>
     <message>
-        <location filename="src/userdata/userdatacontroller.cpp" line="1043"/>
+        <location filename="src/userdata/userdatacontroller.cpp" line="1045"/>
         <source>&amp;Ident, Name, and Type</source>
         <translation>&amp;Kennung, Name, und Typ</translation>
     </message>
     <message>
-        <location filename="src/userdata/userdatacontroller.cpp" line="1044"/>
+        <location filename="src/userdata/userdatacontroller.cpp" line="1046"/>
         <source>&amp;Region</source>
         <translation>&amp;Region</translation>
     </message>
     <message>
-        <location filename="src/userdata/userdatacontroller.cpp" line="1045"/>
+        <location filename="src/userdata/userdatacontroller.cpp" line="1047"/>
         <source>&amp;Remarks</source>
         <translation>&amp;Anmerkungen</translation>
     </message>
     <message>
-        <location filename="src/userdata/userdatacontroller.cpp" line="1046"/>
+        <location filename="src/userdata/userdatacontroller.cpp" line="1048"/>
         <source>&amp;Tags</source>
         <translation>&amp;Tags</translation>
     </message>
     <message>
-        <location filename="src/userdata/userdatacontroller.cpp" line="1047"/>
+        <location filename="src/userdata/userdatacontroller.cpp" line="1049"/>
         <source>&amp;Coordinates (similar)</source>
         <translation>&amp;Koordinaten (ähnliche)</translation>
     </message>
     <message>
-        <location filename="src/userdata/userdatacontroller.cpp" line="1091"/>
+        <location filename="src/userdata/userdatacontroller.cpp" line="1093"/>
         <source>%1 %2 deleted.</source>
         <translation>%1 %2 gelöscht.</translation>
     </message>
     <message>
-        <location filename="src/userdata/userdatacontroller.cpp" line="1091"/>
+        <location filename="src/userdata/userdatacontroller.cpp" line="1093"/>
         <source>userpoint</source>
         <translation>Nutzerpunkt</translation>
     </message>
     <message>
-        <location filename="src/userdata/userdatacontroller.cpp" line="1091"/>
+        <location filename="src/userdata/userdatacontroller.cpp" line="1093"/>
         <source>userpoints</source>
         <translation>Nutzerpunkte</translation>
     </message>
@@ -40325,13 +40368,13 @@ wenn alle ausgewählten Felder gleich sind.</translation>
         <translation type="vanished">Exporteinstellungen für Nutzerpunkte auswählen</translation>
     </message>
     <message>
-        <location filename="src/userdata/userdatacontroller.cpp" line="986"/>
+        <location filename="src/userdata/userdatacontroller.cpp" line="988"/>
         <source>Export for &amp;X-Plane 12</source>
         <oldsource>Export for &amp;X-Plane 12</oldsource>
         <translation>Export für &amp;X-Plane 12</translation>
     </message>
     <message>
-        <location filename="src/userdata/userdatacontroller.cpp" line="986"/>
+        <location filename="src/userdata/userdatacontroller.cpp" line="988"/>
         <source>File will be formatted for X-Plane 12 if selected.
 Otherwise X-Plane 11 format is used.</source>
         <translation>Die Datei wird für X-Plane 12 formatiert, falls ausgewählt.
@@ -40350,7 +40393,7 @@ Ein Backup wird vor dem Löschen in
 erstellt.</translation>
     </message>
     <message>
-        <location filename="src/userdata/userdatacontroller.cpp" line="961"/>
+        <location filename="src/userdata/userdatacontroller.cpp" line="963"/>
         <source> - Userpoint Export Options</source>
         <translation> - Nutzerpunkt Exportoptionen</translation>
     </message>
@@ -40359,23 +40402,23 @@ erstellt.</translation>
         <translation type="vanished">Exportoptionen auswählen</translation>
     </message>
     <message>
-        <location filename="src/userdata/userdatacontroller.cpp" line="971"/>
+        <location filename="src/userdata/userdatacontroller.cpp" line="973"/>
         <source>&amp;Append to an already present file</source>
         <translation>An eine bereits vorhandene Datei &amp;anhängen</translation>
     </message>
     <message>
-        <location filename="src/userdata/userdatacontroller.cpp" line="972"/>
+        <location filename="src/userdata/userdatacontroller.cpp" line="974"/>
         <source>File header will be ignored if this is enabled.</source>
         <oldsource>File header will be ignore if this is enabled.</oldsource>
         <translation>Kopfzeilen werden ignoriert, wenn dies aktiviert ist.</translation>
     </message>
     <message>
-        <location filename="src/userdata/userdatacontroller.cpp" line="977"/>
+        <location filename="src/userdata/userdatacontroller.cpp" line="979"/>
         <source>Export &amp;selected entries only</source>
         <translation>Nur &amp;ausgewählte Nutzerpunkte exportieren</translation>
     </message>
     <message>
-        <location filename="src/userdata/userdatacontroller.cpp" line="981"/>
+        <location filename="src/userdata/userdatacontroller.cpp" line="983"/>
         <source>Add a &amp;header to the first line</source>
         <translation>&amp;Kopfzeile hinzufügen</translation>
     </message>
