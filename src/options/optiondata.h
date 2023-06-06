@@ -210,7 +210,8 @@ enum UnitCoords
   COORDS_DEC, /* Decimal degree */
   COORDS_DM, /* Degree and minutes */
   COORDS_LATY_LONX, /* lat/lon with sign */
-  COORDS_LONX_LATY /* lon/lat with sign - need to be swapped internally */
+  COORDS_LONX_LATY, /* lon/lat with sign - need to be swapped internally */
+  COORDS_DECIMAL_GOOGLE   /* Degrees and decimal minutes (DMM): 41 24.2028, 2 10.4418 for direct input in Google maps */
 };
 
 /* comboBoxOptionsUnitVertFuel */

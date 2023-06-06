@@ -68,6 +68,8 @@ A big thank you to all who reported bugs and issues!
 * Adjusted route string reader to prefer a close VOR or waypoint before NDB.
 * Fixed flight plan export and save functions to avoid suggesting invalid filenames containing `/`, `\`
   or other invalid characters.
+* Added capability to read Google Earth or Google Maps coordinates like `-54 50.60, -68 17.73`.
+* Added option for Google coordinate format in options on page `Units`.
 
 ### Scenery Library
 

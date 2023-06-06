@@ -402,8 +402,8 @@ This is the file on top of the list &quot;Recent Window Layouts&quot;.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>514</width>
-             <height>422</height>
+             <width>597</width>
+             <height>451</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_22">
@@ -643,7 +643,7 @@ opening files, modifying the flight plan and other operations.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>419</width>
+             <width>583</width>
              <height>553</height>
             </rect>
            </property>
@@ -1145,8 +1145,8 @@ This does not affect the map window which can be changed separately on the optio
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>543</width>
-             <height>366</height>
+             <width>597</width>
+             <height>451</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_36">
@@ -1380,6 +1380,11 @@ also define the order when reading coordinates in the user interface if enabled.
                    <string>Longitude and Latitude with sign</string>
                   </property>
                  </item>
+                 <item>
+                  <property name="text">
+                   <string>Degree, Decimal Minutes for Google</string>
+                  </property>
+                 </item>
                 </widget>
                </item>
                <item row="7" column="0" colspan="3">
@@ -1458,7 +1463,7 @@ Also affects labels at holds and traffic patterns.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>564</width>
+             <width>583</width>
              <height>552</height>
             </rect>
            </property>
@@ -1920,8 +1925,8 @@ Use &quot;Window&quot; -&gt; &quot;Reset Window Layout&quot; in the main menu to
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>586</width>
-             <height>324</height>
+             <width>597</width>
+             <height>451</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_13">
@@ -2253,7 +2258,7 @@ Smaller values will allow a finer selection.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>485</width>
+             <width>583</width>
              <height>572</height>
             </rect>
            </property>
@@ -3007,8 +3012,8 @@ Also used in the elevation profile.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>424</width>
-             <height>337</height>
+             <width>597</width>
+             <height>451</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_35">
@@ -3412,7 +3417,7 @@ Also used in the elevation profile.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>509</width>
+             <width>583</width>
              <height>568</height>
             </rect>
            </property>
@@ -4327,8 +4332,8 @@ Do not show this information publicly in forums on screenshots.&lt;/b&gt;&lt;/p&
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>328</width>
-             <height>379</height>
+             <width>597</width>
+             <height>451</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_39">
@@ -4765,7 +4770,7 @@ airspace filename has to match the callsign of the online center.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>572</width>
+             <width>583</width>
              <height>566</height>
             </rect>
            </property>
@@ -5250,8 +5255,8 @@ Lower this value to avoid too long tracks and avoid stutters in map display.</st
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>471</width>
-             <height>348</height>
+             <width>597</width>
+             <height>451</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_26">
@@ -5529,8 +5534,8 @@ Note that this value does not affect flight plan calculation or saving of flight
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>272</width>
-             <height>478</height>
+             <width>597</width>
+             <height>451</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_27">
@@ -5751,7 +5756,7 @@ Note that this value does not affect flight plan calculation or saving of flight
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>360</width>
+             <width>583</width>
              <height>687</height>
             </rect>
            </property>
@@ -6317,8 +6322,8 @@ Entering a wrong value will cause errors when downloading weather reports.</stri
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>389</width>
-             <height>375</height>
+             <width>597</width>
+             <height>451</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_29">
@@ -6619,8 +6624,8 @@ Entering a wrong value will cause errors when downloading weather reports.</stri
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>430</width>
-             <height>240</height>
+             <width>597</width>
+             <height>451</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_37">
