@@ -176,6 +176,8 @@ QVariant LogStatsSqlModel::data(const QModelIndex& index, int role) const
       return locale.toString(dataValue.toULongLong());
     else if(type == QVariant::Double)
       return locale.toString(dataValue.toDouble(), 'f', 1);
+    else if(type == QVariant::DateTime)
+      return locale.toString(dataValue.toDateTime());
   }
 
   return QSqlQueryModel::data(index, role);
@@ -534,13 +536,18 @@ void LogStatisticsDialog::initQueries()
           "cast(sum(max(strftime('%s', destination_time_sim) - strftime('%s', departure_time_sim), 0) / 3600.) as double) as simtime, "
           "aircraft_registration from logbook group by simulator, aircraft_registration"),
 
-    Query(tr("Aircraft hours and number of flights flown"),
-          {tr("Hours flown"), tr("Total Flights"), tr("Aircraft name"), tr("Aircraft type")},
-          {RIGHT, RIGHT, LEFT, LEFT},
-          {"total_hours", "total_flights", "aircraft_name", "aircraft_type"}, 0, Qt::DescendingOrder,
-          "select sum(hours_flown) as total_hours, COUNT(*) AS total_flights, aircraft_name, aircraft_type from ("
-          "select logbook_id, aircraft_name, aircraft_type, "
-          "  cast ((julianday(destination_time) - julianday(departure_time)) * 24 AS REAL) as hours_flown "
+    Query(tr("Aircraft hours, distance, number of flights flown and more"),
+          {tr("Aircraft name"), tr("Aircraft type"), tr("Total flights"), tr("Hours flown"), tr("Average hours flown"),
+           tr("Total distance"), tr("Average distance"), tr("First flight"), tr("Last flight")},
+          {LEFT, LEFT, RIGHT, RIGHT, RIGHT, RIGHT, RIGHT, RIGHT, RIGHT},
+          {"aircraft_name", "aircraft_type", "total_flights", "total_hours", "avg_hours", "total_distance", "avg_distance",
+           "last_flight", "first_flight"}, 0, Qt::DescendingOrder,
+          "select aircraft_name, aircraft_type, count(*) as total_flights, "
+          "sum(hours_flown) as total_hours, avg(hours_flown) as avg_hours, "
+          "sum(distance_flown) as total_distance, avg(distance_flown) as avg_distance, "
+          "datetime(max(departure_time)) as last_flight, datetime(min(departure_time)) as first_flight "
+          "from (select logbook_id, aircraft_name, aircraft_type, departure_time, ifnull(distance_flown,0) as distance_flown, "
+          "cast ((julianday(destination_time) - julianday(departure_time)) * 24 as real) as hours_flown "
           "from logbook where departure_time is not null and destination_time is not null) "
           "group by aircraft_name, aircraft_type")
   };
