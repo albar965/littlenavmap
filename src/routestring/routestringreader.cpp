@@ -131,7 +131,9 @@ bool RouteStringReader::createRouteFromString(const QString& routeString, rs::Ro
 
   messages.clear();
   hasWarnings = hasErrors = false;
-  QStringList items = rs::cleanRouteString(routeString);
+
+  // Cleanup and take all until the first empty line
+  QStringList items = rs::cleanRouteStringList(routeString);
 
   // Create a pointer to temporary plan or passed pointer to plan
   // Avoids null pointer and prepare for reuse of flight plan attributes
@@ -511,7 +513,7 @@ void RouteStringReader::addReport(atools::fs::pln::Flightplan *flightplan, const
     to = flightplan->getDestinationIdent();
 
   int insertIndex = 0;
-  insertMessage(tr("Route description: <b>%1</b>.").arg(rs::cleanRouteString(rawRouteString).join(" ")), insertIndex++);
+  insertMessage(tr("Route description: <b>%1</b>.").arg(rs::cleanRouteString(rawRouteString)), insertIndex++);
   insertMessage(tr("Flight plan from <b>%1</b> to <b>%2</b>.").arg(from).arg(to), insertIndex++);
   insertMessage(tr("Distance without procedures: <b>%1</b>.").arg(Unit::distNm(flightplan->getDistanceNm())), insertIndex++);
 

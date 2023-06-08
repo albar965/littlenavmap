@@ -1619,7 +1619,7 @@ int Route::legIndexForPositions(const LineString& line, bool reverse)
   return -1;
 }
 
-void Route::cleanupFlightPlanForProcedures()
+void Route::cleanupFlightPlanForProcedures(map::MapAirway& starAirway)
 {
   updateIndices();
 
@@ -1636,10 +1636,8 @@ void Route::cleanupFlightPlanForProcedures()
   if(fromIdx > 0 && toIdx > 0)
     removeLegs(fromIdx, toIdx);
 
-  fromIdx = -1;
-  toIdx = -1;
-
   // Remove any legs overlapping with STAR or approach ======================================================
+  fromIdx = toIdx = -1;
   if(!starLegs.isEmpty() || !approachLegs.isEmpty())
   {
     // Arrivals - start at first point and look for overlap with route traversing route from start to end
@@ -1653,7 +1651,10 @@ void Route::cleanupFlightPlanForProcedures()
   }
 
   if(fromIdx > 0 && toIdx > 0)
+  {
+    starAirway = getLegAt(toIdx).getAirway();
     removeLegs(fromIdx, toIdx);
+  }
 }
 
 void Route::updateProcedureLegs(FlightplanEntryBuilder *entryBuilder, bool clearOldProcedureProperties, bool cleanupRoute)
@@ -1665,8 +1666,10 @@ void Route::updateProcedureLegs(FlightplanEntryBuilder *entryBuilder, bool clear
   // Remove all procedure / dummy legs from flight plan and route
   clearProcedureLegs(proc::PROCEDURE_ALL);
 
+  // Airway found on the first probably duplicate waypoint of a STAR
+  map::MapAirway starAirway;
   if(cleanupRoute)
-    cleanupFlightPlanForProcedures();
+    cleanupFlightPlanForProcedures(starAirway);
 
   sidLegsOffset = map::INVALID_INDEX_VALUE;
   starLegsOffset = map::INVALID_INDEX_VALUE;
@@ -1680,9 +1683,9 @@ void Route::updateProcedureLegs(FlightplanEntryBuilder *entryBuilder, bool clear
   for(int i = 0; i < sidLegs.size(); i++)
   {
     int insertIndex = 1 + i;
-    RouteLeg obj(&flightplan);
-    obj.createFromProcedureLegs(i, sidLegs, &value(i));
-    insert(insertIndex, obj);
+    RouteLeg routeLeg(&flightplan);
+    routeLeg.createFromProcedureLegs(i, sidLegs, &value(i));
+    insert(insertIndex, routeLeg);
 
     FlightplanEntry entry;
     entryBuilder->buildFlightplanEntry(sidLegs.at(insertIndex - 1), entry, true);
@@ -1698,12 +1701,18 @@ void Route::updateProcedureLegs(FlightplanEntryBuilder *entryBuilder, bool clear
   {
     const RouteLeg *prev = size() >= 2 ? &value(size() - 2) : nullptr;
 
-    RouteLeg obj(&flightplan);
-    obj.createFromProcedureLegs(i, starLegs, prev);
-    insert(size() - insertOffset, obj);
+    RouteLeg routeLeg(&flightplan);
+    routeLeg.createFromProcedureLegs(i, starLegs, prev);
+    if(i == 0)
+      // Add airway of first waypoint again
+      routeLeg.setAirway(starAirway);
+    insert(size() - insertOffset, routeLeg);
 
     FlightplanEntry entry;
     entryBuilder->buildFlightplanEntry(starLegs.at(i), entry, true);
+    if(i == 0)
+      // Add airway of first waypoint again
+      entry.setAirway(starAirway.getIdent());
     flightplan.insert(flightplan.size() - insertOffset, entry);
   }
 
@@ -1715,9 +1724,9 @@ void Route::updateProcedureLegs(FlightplanEntryBuilder *entryBuilder, bool clear
   {
     const RouteLeg *prev = size() >= 2 ? &value(size() - 2) : nullptr;
 
-    RouteLeg obj(&flightplan);
-    obj.createFromProcedureLegs(i, approachLegs, prev);
-    insert(size() - insertOffset, obj);
+    RouteLeg routeLeg(&flightplan);
+    routeLeg.createFromProcedureLegs(i, approachLegs, prev);
+    insert(size() - insertOffset, routeLeg);
 
     FlightplanEntry entry;
     entryBuilder->buildFlightplanEntry(approachLegs.at(i), entry, true);
@@ -2792,9 +2801,10 @@ Route Route::adjustedToOptions(const Route& origRoute, rf::RouteAdjustOptions op
     route.updateIndicesAndOffsets();
   }
 
+  // Remove or clear custom ============================================================================
   // Remember value since type is cleared later
-  bool customApproach = route.isCustomApproach();
-  bool customDeparture = route.isCustomDeparture();
+  bool customApproach = route.hasCustomApproach();
+  bool customDeparture = route.hasCustomDeparture();
 
   if(!removeCustom)
   {
@@ -2803,7 +2813,14 @@ Route Route::adjustedToOptions(const Route& origRoute, rf::RouteAdjustOptions op
       saveApproachWp = true;
 
     if(customDeparture && replaceCustomWp)
+    {
       saveSidWp = true;
+
+      // Remove RW waypoint to avoid confusing X-Plane FMS and GPS
+      // DEPART -> RW -> RW+X -> DEST
+      if(options.testFlag(rf::CLEAN_CUSTOM_DEPART) && route.size() > 3)
+        route.removeAllAt(1);
+    }
   }
 
   // First remove properties and procedure structures if needed ====================================
@@ -2822,6 +2839,7 @@ Route Route::adjustedToOptions(const Route& origRoute, rf::RouteAdjustOptions op
     route.updateIndicesAndOffsets();
   }
 
+  // Remove MSFS transitions ==================================================================
   if(msfs)
   {
     // Remove approach transitions and missed- these are not saved
@@ -2830,6 +2848,7 @@ Route Route::adjustedToOptions(const Route& origRoute, rf::RouteAdjustOptions op
     route.updateIndicesAndOffsets();
   }
 
+  // Save procedures as waypoints ==================================================
   if(saveApproachWp)
   {
     route.clearProcedures(proc::PROCEDURE_APPROACH_ALL_MISSED);

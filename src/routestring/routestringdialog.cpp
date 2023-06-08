@@ -33,21 +33,70 @@
 #include <QMenu>
 #include <QButtonGroup>
 #include <QScrollBar>
+#include <QFontDatabase>
+#include <QSyntaxHighlighter>
 
 const static int TEXT_CHANGE_DELAY_MS = 500;
 
 using atools::gui::HelpHandler;
 namespace apln = atools::fs::pln;
 
+/* Makes first block bold and rest gray to indicate active description text. */
+class SyntaxHighlighter :
+  public QSyntaxHighlighter
+{
+public:
+  SyntaxHighlighter(QObject *parent)
+    : QSyntaxHighlighter(parent)
+  {
+  }
+
+  void styleChanged()
+  {
+    formatHighlight.setFontWeight(QFont::Bold);
+    formatNormal.setForeground(NavApp::isCurrentGuiStyleNight() ? QColor(180, 180, 180) : QColor(100, 100, 100));
+  }
+
+private:
+  virtual void highlightBlock(const QString& text) override;
+
+  QTextCharFormat formatHighlight, formatNormal;
+
+  enum
+  {
+    BEFORE_START = -1, // First line or empty lines before any text
+    IN_HIGHLIGHT_BLOCK = 0, // Currently non-empty lines
+    AFTER_HIGHLIGHT_BLOCK = 1 // After one filled block now coloring gray
+  };
+
+};
+
+void SyntaxHighlighter::highlightBlock(const QString& text)
+{
+  if(previousBlockState() == BEFORE_START)
+    setCurrentBlockState(text.isEmpty() ? BEFORE_START : IN_HIGHLIGHT_BLOCK);
+  else if(previousBlockState() == IN_HIGHLIGHT_BLOCK)
+    setCurrentBlockState(text.isEmpty() ? AFTER_HIGHLIGHT_BLOCK : IN_HIGHLIGHT_BLOCK);
+  else if(previousBlockState() == AFTER_HIGHLIGHT_BLOCK)
+    setCurrentBlockState(AFTER_HIGHLIGHT_BLOCK);
+
+  // In text block and have text - merge current formatting
+  setFormat(0, text.size(), currentBlockState() == IN_HIGHLIGHT_BLOCK ? formatHighlight : formatNormal);
+}
+
+// =================================================================================================
+// =================================================================================================
+// =================================================================================================
+
 RouteStringDialog::RouteStringDialog(QWidget *parent, const QString& settingsSuffixParam)
   : QDialog(parent), ui(new Ui::RouteStringDialog), settingsSuffix(settingsSuffixParam)
 {
   setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
 
-  nonModal = parent == nullptr;
+  blocking = parent != nullptr;
 
   // Use non-modal if parent is not given
-  setWindowModality(nonModal ? Qt::NonModal : Qt::ApplicationModal);
+  setWindowModality(blocking ? Qt::ApplicationModal : Qt::NonModal);
 
   controller = NavApp::getRouteController();
 
@@ -69,17 +118,8 @@ RouteStringDialog::RouteStringDialog(QWidget *parent, const QString& settingsSuf
          "<b>Press the help button to open the online manual for more information.</b></p>"));
 
   // Copy main menu actions to allow using shortcuts in the non-modal dialog too
-  addActions(NavApp::getMainWindowActions());
-
-  // Styles cascade to children and mess up UI themes on linux - even if widget is selected by name
-#if !defined(Q_OS_LINUX) || defined(DEBUG_INFORMATION)
-  // Make the splitter handle better visible
-  ui->splitterRouteString->setStyleSheet(QString("QSplitter::handle { "
-                                                 "background: %1;"
-                                                 "image: url(:/littlenavmap/resources/icons/splitterhandvert.png); "
-                                                 "}").
-                                         arg(QApplication::palette().color(QPalette::Window).darker(120).name()));
-#endif
+  if(!blocking)
+    addActions(NavApp::getMainWindowActions());
 
   // Disallow collapsing of the upper and middle view
   ui->splitterRouteString->setCollapsible(0, false);
@@ -95,19 +135,24 @@ RouteStringDialog::RouteStringDialog(QWidget *parent, const QString& settingsSuf
 #if defined(Q_OS_MACOS)
   fixedFont.setPointSizeF(fixedFont.pointSizeF() * 1.2);
 #endif
-  ui->plainTextEditRouteString->setFont(fixedFont);
-  ui->plainTextEditRouteString->setWordWrapMode(QTextOption::WrapAnywhere);
 
-  if(nonModal)
+  // Need to clear, otherwise default font cannot be applied
+  ui->textEditRouteString->clear();
+  ui->textEditRouteString->document()->setDefaultFont(fixedFont);
+
+  sytaxHighlighter = new SyntaxHighlighter(ui->textEditRouteString);
+
+  if(blocking)
+  {
+    // Opened from SimBrief download
+    ui->buttonBoxRouteString->button(QDialogButtonBox::Ok)->setText(tr("Create &Flight Plan and Close"));
+    ui->buttonBoxRouteString->button(QDialogButtonBox::Apply)->hide();
+  }
+  else
   {
     // No parent and free floating
     ui->buttonBoxRouteString->button(QDialogButtonBox::Ok)->setText(tr("Create &Flight Plan"));
     ui->buttonBoxRouteString->button(QDialogButtonBox::Apply)->setText(tr("Create &Flight Plan and Close"));
-  }
-  else
-  {
-    ui->buttonBoxRouteString->button(QDialogButtonBox::Ok)->setText(tr("Create &Flight Plan and Close"));
-    ui->buttonBoxRouteString->button(QDialogButtonBox::Apply)->hide();
   }
 
   // Non-modal dialog has a close button and modal dialog a cancel button
@@ -129,8 +174,8 @@ RouteStringDialog::RouteStringDialog(QWidget *parent, const QString& settingsSuf
 
   connect(ui->pushButtonRouteStringFromClipboard, &QPushButton::clicked, this, &RouteStringDialog::fromClipboardClicked);
   connect(ui->pushButtonRouteStringToClipboard, &QPushButton::clicked, this, &RouteStringDialog::toClipboardClicked);
-  connect(ui->plainTextEditRouteString, &QPlainTextEdit::textChanged, this, &RouteStringDialog::updateButtonState);
-  connect(ui->plainTextEditRouteString, &QPlainTextEdit::textChanged, this, &RouteStringDialog::textChanged);
+  connect(ui->textEditRouteString, &QTextEdit::textChanged, this, &RouteStringDialog::updateButtonState);
+  connect(ui->textEditRouteString, &QTextEdit::textChanged, this, &RouteStringDialog::textChanged);
   connect(QGuiApplication::clipboard(), &QClipboard::dataChanged, this, &RouteStringDialog::updateButtonState);
   connect(ui->buttonBoxRouteString, &QDialogButtonBox::clicked, this, &RouteStringDialog::buttonBoxClicked);
   connect(ui->toolButtonRouteStringOptions->menu(), &QMenu::triggered, this, &RouteStringDialog::toolButtonOptionTriggered);
@@ -141,10 +186,16 @@ RouteStringDialog::RouteStringDialog(QWidget *parent, const QString& settingsSuf
 
   connect(&textUpdateTimer, &QTimer::timeout, this, &RouteStringDialog::textChangedDelayed);
   textUpdateTimer.setSingleShot(true);
+
+  // Apply splitter and text formats
+  styleChanged();
 }
 
 RouteStringDialog::~RouteStringDialog()
 {
+  sytaxHighlighter->setDocument(nullptr);
+  delete sytaxHighlighter;
+
   textUpdateTimer.stop();
   delete routeStringWriter;
   delete routeStringReader;
@@ -164,92 +215,96 @@ void RouteStringDialog::buildButtonMenu()
 
   // Writing to string ===========================================
   QAction *action;
-  action = new QAction(tr("Write departure and destination airport"), buttonMenu);
-  action->setObjectName("actionDepartDest");
-  action->setToolTip(tr("Omit departure and destination airport ident.\n"
-                        "Note that the resulting description cannot be read into a flight plan."));
-  action->setCheckable(true);
-  action->setData(static_cast<int>(rs::START_AND_DEST));
-  buttonMenu->addAction(action);
 
-  action = new QAction(tr("Write DCT (direct) instructions"), buttonMenu);
-  action->setObjectName("actionDct");
-  action->setToolTip(tr("Fill direct connections between waypoints with a \"DCT\""));
-  action->setCheckable(true);
-  action->setData(static_cast<int>(rs::DCT));
-  buttonMenu->addAction(action);
-
-  action = new QAction(tr("Write cruise speed and altitude instruction"), buttonMenu);
-  action->setObjectName("actionSpeedAlt");
-  action->setToolTip(tr("Add cruise speed and altitude to description.\n"
-                        "Speed is ignored in favor to currently loaded aircraft performance\n"
-                        "when reading a description into a flight plan."));
-  action->setCheckable(true);
-  action->setData(static_cast<int>(rs::ALT_AND_SPEED));
-  buttonMenu->addAction(action);
-
-  action = new QAction(tr("Write Waypoints instead of Airways"), buttonMenu);
-  action->setObjectName("actionWaypoints");
-  action->setToolTip(tr("Ignore airways and add all waypoints instead"));
-  action->setCheckable(true);
-  action->setData(static_cast<int>(rs::NO_AIRWAYS));
-  buttonMenu->addAction(action);
-
-  action = new QAction(tr("Write Alternates"), buttonMenu);
-  action->setObjectName("actionAlternates");
-  action->setToolTip(tr("Add the ICAO code for all alternate airports to the end of the description"));
-  action->setCheckable(true);
-  action->setData(static_cast<int>(rs::ALTERNATES));
-  buttonMenu->addAction(action);
-
-  buttonMenu->addSeparator();
-
-  // SID/STAR group ===========================================
-  procActionGroup = new QActionGroup(buttonMenu);
-  if(NavApp::hasSidStarInDatabase())
+  if(!blocking) // Do not show write options if opened from SimBrief
   {
-    action = new QAction(tr("Write SID and STAR"), buttonMenu);
-    action->setObjectName("actionSidStar");
-    action->setToolTip(tr("Write SID, STAR and the respective transitions to the description"));
+    action = new QAction(tr("Write departure and destination airport"), buttonMenu);
+    action->setObjectName("actionDepartDest");
+    action->setToolTip(tr("Omit departure and destination airport ident.\n"
+                          "Note that the resulting description cannot be read into a flight plan."));
     action->setCheckable(true);
-    action->setData(static_cast<int>(rs::SID_STAR));
+    action->setData(static_cast<int>(rs::START_AND_DEST));
+    buttonMenu->addAction(action);
+
+    action = new QAction(tr("Write DCT (direct) instructions"), buttonMenu);
+    action->setObjectName("actionDct");
+    action->setToolTip(tr("Fill direct connections between waypoints with a \"DCT\""));
+    action->setCheckable(true);
+    action->setData(static_cast<int>(rs::DCT));
+    buttonMenu->addAction(action);
+
+    action = new QAction(tr("Write cruise speed and altitude instruction"), buttonMenu);
+    action->setObjectName("actionSpeedAlt");
+    action->setToolTip(tr("Add cruise speed and altitude to description.\n"
+                          "Speed is ignored in favor to currently loaded aircraft performance\n"
+                          "when reading a description into a flight plan."));
+    action->setCheckable(true);
+    action->setData(static_cast<int>(rs::ALT_AND_SPEED));
+    buttonMenu->addAction(action);
+
+    action = new QAction(tr("Write Waypoints instead of Airways"), buttonMenu);
+    action->setObjectName("actionWaypoints");
+    action->setToolTip(tr("Ignore airways and add all waypoints instead"));
+    action->setCheckable(true);
+    action->setData(static_cast<int>(rs::NO_AIRWAYS));
+    buttonMenu->addAction(action);
+
+    action = new QAction(tr("Write Alternates"), buttonMenu);
+    action->setObjectName("actionAlternates");
+    action->setToolTip(tr("Add the ICAO code for all alternate airports to the end of the description"));
+    action->setCheckable(true);
+    action->setData(static_cast<int>(rs::ALTERNATES));
+    buttonMenu->addAction(action);
+
+    buttonMenu->addSeparator();
+
+    // SID/STAR group ===========================================
+    procActionGroup = new QActionGroup(buttonMenu);
+    if(NavApp::hasSidStarInDatabase())
+    {
+      action = new QAction(tr("Write SID and STAR"), buttonMenu);
+      action->setObjectName("actionSidStar");
+      action->setToolTip(tr("Write SID, STAR and the respective transitions to the description"));
+      action->setCheckable(true);
+      action->setData(static_cast<int>(rs::SID_STAR));
+      buttonMenu->addAction(action);
+      procActionGroup->addAction(action);
+    }
+
+    action = new QAction(tr("Write generic SID and STAR"), buttonMenu);
+    action->setObjectName("actionGenericSidStar");
+    action->setToolTip(tr("Add \"SID\" and \"STAR\" words only instead of the real procedure names"));
+    action->setCheckable(true);
+    action->setData(static_cast<int>(rs::SID_STAR_GENERIC));
     buttonMenu->addAction(action);
     procActionGroup->addAction(action);
+
+    action = new QAction(tr("Write no SID and STAR"), buttonMenu);
+    action->setObjectName("actionNoSidStar");
+    action->setToolTip(tr("Add neither SID nor STAR to the description"));
+    action->setCheckable(true);
+    action->setData(static_cast<int>(rs::SID_STAR_NONE));
+    buttonMenu->addAction(action);
+    procActionGroup->addAction(action);
+
+    buttonMenu->addSeparator();
+
+    action = new QAction(tr("Write STAR and transition reversed"), buttonMenu);
+    action->setObjectName("actionReversedStar");
+    action->setToolTip(tr("Write \"TRANS.STAR\" instead of \"STAR.TRANS\""));
+    action->setCheckable(true);
+    action->setData(static_cast<int>(rs::STAR_REV_TRANSITION));
+    buttonMenu->addAction(action);
+
+    action = new QAction(tr("Write SID/STAR and transition space separated"), buttonMenu);
+    action->setObjectName("actionSpaceSidStar");
+    action->setToolTip(tr("Use a space to separate SID, STAR and transition"));
+    action->setCheckable(true);
+    action->setData(static_cast<int>(rs::SID_STAR_SPACE));
+    buttonMenu->addAction(action);
+
+    buttonMenu->addSeparator();
   }
-
-  action = new QAction(tr("Write generic SID and STAR"), buttonMenu);
-  action->setObjectName("actionGenericSidStar");
-  action->setToolTip(tr("Add \"SID\" and \"STAR\" words only instead of the real procedure names"));
-  action->setCheckable(true);
-  action->setData(static_cast<int>(rs::SID_STAR_GENERIC));
-  buttonMenu->addAction(action);
-  procActionGroup->addAction(action);
-
-  action = new QAction(tr("Write no SID and STAR"), buttonMenu);
-  action->setObjectName("actionNoSidStar");
-  action->setToolTip(tr("Add neither SID nor STAR to the description"));
-  action->setCheckable(true);
-  action->setData(static_cast<int>(rs::SID_STAR_NONE));
-  buttonMenu->addAction(action);
-  procActionGroup->addAction(action);
-
-  buttonMenu->addSeparator();
-
-  action = new QAction(tr("Write STAR and transition reversed"), buttonMenu);
-  action->setObjectName("actionReversedStar");
-  action->setToolTip(tr("Write \"TRANS.STAR\" instead of \"STAR.TRANS\""));
-  action->setCheckable(true);
-  action->setData(static_cast<int>(rs::STAR_REV_TRANSITION));
-  buttonMenu->addAction(action);
-
-  action = new QAction(tr("Write SID/STAR and transition space separated"), buttonMenu);
-  action->setObjectName("actionSpaceSidStar");
-  action->setToolTip(tr("Use a space to separate SID, STAR and transition"));
-  action->setCheckable(true);
-  action->setData(static_cast<int>(rs::SID_STAR_SPACE));
-  buttonMenu->addAction(action);
-
-  buttonMenu->addSeparator();
 
   // Reading from string ===========================================
   action = new QAction(tr("Read trailing Airports as Alternates"), buttonMenu);
@@ -315,41 +370,32 @@ void RouteStringDialog::showHelpButtonToggled(bool checked)
 
 void RouteStringDialog::updateButtonClicked()
 {
-  plainTextEditRouteStringSet(routeStringWriter->createStringForRoute(NavApp::getRouteConst(), NavApp::getRouteCruiseSpeedKts(),
-                                                                      options | rs::ALT_AND_SPEED_METRIC));
+  textEditRouteStringPrepend(routeStringWriter->createStringForRoute(NavApp::getRouteConst(), NavApp::getRouteCruiseSpeedKts(),
+                                                                     options | rs::ALT_AND_SPEED_METRIC), true /* newline*/);
+  ui->textEditRouteString->setFocus();
 }
 
-void RouteStringDialog::toolButtonOptionTriggered(QAction *action)
+void RouteStringDialog::toolButtonOptionTriggered(QAction *)
 {
-  Q_UNUSED(action)
-
   if(updatingActions)
     return;
 
-  qDebug() << Q_FUNC_INFO << action->objectName() << action->data();
-
   // Copy menu state for options bitfield
-  for(const QAction *act : ui->toolButtonRouteStringOptions->menu()->actions())
-  {
-    rs::RouteStringOptions opts(act->data().toInt());
-    if(act->isChecked())
-      options |= opts;
-    else
-      options &= ~opts;
-  }
-  textChangedDelayed();
-}
+  for(const QAction *action : ui->toolButtonRouteStringOptions->menu()->actions())
+    options.setFlag(static_cast<rs::RouteStringOption>(action->data().toInt()), action->isChecked());
 
-const atools::fs::pln::Flightplan& RouteStringDialog::getFlightplan() const
-{
-  return *flightplan;
+  // Call immediately and update even if string is unchanged
+  textChangedInternal(true /* forceUpdate */);
 }
 
 void RouteStringDialog::saveState()
 {
   saveStateWidget();
-  atools::settings::Settings::instance().setValue(lnm::ROUTE_STRING_DIALOG_DESCR + settingsSuffix,
-                                                  ui->plainTextEditRouteString->toPlainText());
+
+  if(!blocking)
+    // Do not save contents for modal dialog
+    atools::settings::Settings::instance().setValue(lnm::ROUTE_STRING_DIALOG_DESCR + settingsSuffix,
+                                                    ui->textEditRouteString->toPlainText());
 }
 
 void RouteStringDialog::saveStateWidget()
@@ -358,26 +404,54 @@ void RouteStringDialog::saveStateWidget()
   atools::settings::Settings::instance().setValue(lnm::ROUTE_STRING_DIALOG_OPTIONS + settingsSuffix, static_cast<int>(options));
 }
 
-void RouteStringDialog::restoreState(const QString& routeString)
+void RouteStringDialog::restoreState()
 {
   atools::gui::WidgetState(lnm::ROUTE_STRING_DIALOG_SPLITTER + settingsSuffix).restore({this, ui->splitterRouteString});
   ui->splitterRouteString->setHandleWidth(6);
   options = getOptionsFromSettings();
   updateButtonState();
 
-  atools::settings::Settings& settings = atools::settings::Settings::instance();
-  if(routeString.isEmpty())
+  // Do not restore contents for modal dialog
+  if(!blocking)
+  {
+    atools::settings::Settings& settings = atools::settings::Settings::instance();
     // Load from settings
-    plainTextEditRouteStringSet(settings.valueStr(lnm::ROUTE_STRING_DIALOG_DESCR + settingsSuffix));
-  else
-    plainTextEditRouteStringSet(routeString);
+    textEditRouteStringPrepend(settings.valueStr(lnm::ROUTE_STRING_DIALOG_DESCR + settingsSuffix), false /* newline*/);
 
-  // Move cursor to top of document
-  QTextCursor cursor = ui->plainTextEditRouteString->textCursor();
-  cursor.movePosition(QTextCursor::Start, QTextCursor::MoveAnchor);
-  ui->plainTextEditRouteString->setTextCursor(cursor);
+    // Avoid clean undo step
+    ui->textEditRouteString->setUndoRedoEnabled(true);
+
+    // Move cursor to top of document
+    ui->textEditRouteString->moveCursor(QTextCursor::Start, QTextCursor::MoveAnchor);
+  }
 
   splitterMoved();
+}
+
+void RouteStringDialog::addRouteDescription(const QString& routeString)
+{
+  // Load passed string from SimBrief or other
+  textEditRouteStringPrepend(routeString, false /* newline*/);
+
+  // Avoid clean undo step
+  ui->textEditRouteString->setUndoRedoEnabled(true);
+
+  ui->textEditRouteString->setFocus();
+}
+
+void RouteStringDialog::styleChanged()
+{
+  if(sytaxHighlighter != nullptr)
+    sytaxHighlighter->styleChanged();
+
+  // Styles cascade to children and mess up UI themes on linux - even if widget is selected by name
+#if !defined(Q_OS_LINUX) || defined(DEBUG_INFORMATION)
+  // Make the splitter handle better visible
+  ui->splitterRouteString->setStyleSheet(QString("QSplitter::handle { "
+                                                 "background: %1;"
+                                                 "image: url(:/littlenavmap/resources/icons/splitterhandvert.png); "
+                                                 "}").arg(QApplication::palette().color(QPalette::Window).darker(120).name()));
+#endif
 }
 
 rs::RouteStringOptions RouteStringDialog::getOptionsFromSettings()
@@ -392,7 +466,7 @@ void RouteStringDialog::textChanged()
     // Update without delay timer
     textUpdateTimer.stop();
     immediateUpdate = false;
-    textChangedDelayed();
+    textChangedInternal(false /* forceUpdate */);
   }
   else
     // Calls RouteStringDialog::textChangedDelayed()
@@ -401,23 +475,46 @@ void RouteStringDialog::textChanged()
 
 void RouteStringDialog::textChangedDelayed()
 {
+  textChangedInternal(false /* forceUpdate */);
+}
+
+void RouteStringDialog::textChangedInternal(bool forceUpdate)
+{
+#ifdef DEBUG_INFORMATION
   qDebug() << Q_FUNC_INFO;
+#endif
 
-  flightplan->clearAll();
-  flightplan->setFlightplanType(atools::fs::pln::NO_TYPE); // Set type to none to take it from GUI when creating plan
+  QString currentRouteString = rs::cleanRouteString(ui->textEditRouteString->toPlainText());
 
-  QString errorString, routeString(ui->plainTextEditRouteString->toPlainText());
-  if(!routeString.isEmpty())
+  // Compare with last read string to avoid needless updates
+  if(forceUpdate || currentRouteString != lastCleanRouteString)
   {
-    QGuiApplication::setOverrideCursor(Qt::WaitCursor);
-    routeStringReader->createRouteFromString(routeString, options | rs::REPORT, flightplan, nullptr, &speedKts, &altitudeIncluded);
-    QGuiApplication::restoreOverrideCursor();
+    QString errorString;
+    lastCleanRouteString = currentRouteString;
 
-    // Fill report into widget
-    errorString.append(routeStringReader->getMessages().join("<br/>"));
+    if(!currentRouteString.isEmpty())
+    {
+      if(currentRouteString.size() < 1024)
+      {
+        flightplan->clearAll();
+        flightplan->setFlightplanType(atools::fs::pln::NO_TYPE); // Set type to none to take it from GUI when creating plan
+
+        QGuiApplication::setOverrideCursor(Qt::WaitCursor);
+        routeStringReader->createRouteFromString(currentRouteString, options | rs::REPORT, flightplan, nullptr, &speedKts,
+                                                 &altitudeIncluded);
+        QGuiApplication::restoreOverrideCursor();
+
+        // Fill report into widget
+        errorString.append(routeStringReader->getMessages().join("<br/>"));
+        atools::gui::util::updateTextEdit(ui->textEditRouteStringErrors, errorString, false /* scrollToTop */, true /* keepSelection */);
+      }
+      else
+        atools::gui::util::updateTextEdit(ui->textEditRouteStringErrors, tr("Description is too long."), false /* scrollToTop */,
+                                          true /* keepSelection */);
+    }
+    else
+      atools::gui::util::updateTextEdit(ui->textEditRouteStringErrors, QString(), false /* scrollToTop */, true /* keepSelection */);
   }
-
-  atools::gui::util::updateTextEdit(ui->textEditRouteStringErrors, errorString, false /* scrollToTop */, true /* keepSelection */);
 
   // Avoid update issues with macOS and mac style - force repaint
   ui->textEditRouteStringErrors->repaint();
@@ -426,12 +523,15 @@ void RouteStringDialog::textChangedDelayed()
 
 void RouteStringDialog::fromClipboardClicked()
 {
-  plainTextEditRouteStringSet(rs::cleanRouteString(QGuiApplication::clipboard()->text()).join(" "));
+  // Clean and insert all text
+  textEditRouteStringPrepend(rs::cleanRouteStringLine(QGuiApplication::clipboard()->text()), true /* newline*/);
+  ui->textEditRouteString->setFocus();
 }
 
 void RouteStringDialog::toClipboardClicked()
 {
-  QGuiApplication::clipboard()->setText(ui->plainTextEditRouteString->toPlainText());
+  // Put only first block into clipboard
+  QGuiApplication::clipboard()->setText(rs::cleanRouteString(ui->textEditRouteString->toPlainText()));
 }
 
 /* A button box button was clicked */
@@ -439,12 +539,12 @@ void RouteStringDialog::buttonBoxClicked(QAbstractButton *button)
 {
   if(button == ui->buttonBoxRouteString->button(QDialogButtonBox::Ok))
   {
-    if(nonModal)
-      // Floating window - Create a new flight plan and use undo/redo - keep non-modal dialog open - do not mark plan as changed
-      emit routeFromFlightplan(*flightplan, !isAltitudeIncluded() /* adjustAltitude */, false /* changed */, true /* undo */);
-    else
+    if(blocking)
       // Opened from SimBrief or other dialogs - Return QDialog::Accepted and close
       QDialog::accept();
+    else
+      // Floating window - Create a new flight plan and use undo/redo - keep non-modal dialog open - do not mark plan as changed
+      emit routeFromFlightplan(*flightplan, !isAltitudeIncluded() /* adjustAltitude */, false /* changed */, true /* undo */);
   }
   else if(button == ui->buttonBoxRouteString->button(QDialogButtonBox::Apply))
   {
@@ -460,40 +560,36 @@ void RouteStringDialog::buttonBoxClicked(QAbstractButton *button)
     QDialog::reject();
 }
 
-void RouteStringDialog::plainTextEditRouteStringSet(const QString& text)
+void RouteStringDialog::textEditRouteStringPrepend(const QString& text, bool newline)
 {
-  QTextDocument *doc = ui->plainTextEditRouteString->document();
+  // Do not delay update in RouteStringDialog::textChanged()
+  immediateUpdate = true;
 
-  if(doc != nullptr)
-  {
-    // Do not delay update in RouteStringDialog::textChanged()
-    immediateUpdate = true;
+  /// Do not add for empty documents
+  if(ui->textEditRouteString->document()->isEmpty())
+    newline = false;
 
-    // Remember cursor position
-    QCursor currentCursor = ui->plainTextEditRouteString->cursor();
+  QTextCursor cursor = ui->textEditRouteString->textCursor();
 
-    // Select whole document and replace text - this keeps the undo stack
-    QTextCursor cursor(doc);
-    cursor.movePosition(QTextCursor::Start);
-    cursor.beginEditBlock();
-#ifdef DEBUG_INFORMATION
-    cursor.insertText(text + "\n");
-#else
-    cursor.select(QTextCursor::Document);
-    cursor.insertText(text);
-#endif
-    cursor.endEditBlock();
+  // Insert string at start of document and create one undo step
+  cursor.beginEditBlock();
+  cursor.movePosition(QTextCursor::Start);
+  cursor.insertText(text);
+  if(newline)
+    cursor.insertText("\n\n");
+  cursor.endEditBlock();
 
-    // Restore cursor position
-    ui->plainTextEditRouteString->setCursor(currentCursor);
-  }
+  // Move back to start
+  cursor.movePosition(QTextCursor::Start);
+
+  ui->textEditRouteString->setTextCursor(cursor);
 }
 
 void RouteStringDialog::updateButtonState()
 {
   ui->pushButtonRouteStringUpdate->setEnabled(!NavApp::getRouteConst().isEmpty());
   ui->buttonBoxRouteString->button(QDialogButtonBox::Ok)->setDisabled(flightplan->isEmpty());
-  ui->pushButtonRouteStringToClipboard->setDisabled(ui->plainTextEditRouteString->toPlainText().isEmpty());
+  ui->pushButtonRouteStringToClipboard->setDisabled(ui->textEditRouteString->toPlainText().isEmpty());
   ui->pushButtonRouteStringFromClipboard->setDisabled(QGuiApplication::clipboard()->text().simplified().isEmpty());
 
   // Copy option flags to dropdown menu items

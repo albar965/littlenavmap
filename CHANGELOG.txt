@@ -66,10 +66,23 @@ A big thank you to all who reported bugs and issues!
 * Fixed issues with default filename generation having `CRUISEALT` parameter. Now using local altitude
   unit as set in options.
 * Adjusted route string reader to prefer a close VOR or waypoint before NDB.
-* Fixed flight plan export and save functions to avoid suggesting invalid filenames containing `/`, `\`
+* Fixed flight plan export and save functions to avoid suggesting filenames containing `/`, `\`
   or other invalid characters.
-* Added capability to read Google Earth or Google Maps coordinates like `-54 50.60, -68 17.73`.
-* Added option for Google coordinate format in options on page `Units`.
+* Fixed issue where airway information in flight plan was dropped after manually adding a STAR.
+* Now removing first waypoint `RW` from X-Plane FMS 11 if a departure runway is selected to avoid
+  confusing the stock FMS and GPS.
+
+### Flight plan route description
+
+* The lower part of the input field can now be used as a scratch pad. The upper bold highlighted
+  section separated by an empty line is the current route description which is read and interpreted.
+  The lower gray description texts are a part of the scratch pad. These are saved on program exit but
+  ignored apart from that.
+* The function `Create flight plan` now reads the first paragraph in the input field, i.e. until
+  the first empty line.
+* 'Load from flight plan' inserts the route description on top of the input field and leaves other
+  texts below intact.
+* Fixed issues where airways and waypoints were dropped in some cases.
 
 ### Scenery Library
 
@@ -175,6 +188,8 @@ A big thank you to all who reported bugs and issues!
   `50.07477,8.54053`. Spaces before and after the comma are allowed.
   [Little Navmap User Manual - Coordinates](https://www.littlenavmap.org/manuals/littlenavmap/release/2.8/en/COORDINATES.html)
 * Fixed issue where a search for userpoint type was not applied on startup.
+* Added capability to read Google Earth or Google Maps coordinates like `-54 50.60, -68 17.73`.
+* Added option for Google coordinate format in options on page `Units`.
 
 ### User Manual
 

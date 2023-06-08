@@ -606,8 +606,7 @@ void RouteController::flightplanTableAsTextTable(QTextCursor& cursor, const QBit
                                    mapcolors::routeProcedureMissedTableColor :
                                    mapcolors::routeProcedureTableColor);
         else if((logicalCol == rcol::IDENT && leg.getMapObjectType() == map::INVALID) ||
-                (logicalCol == rcol::AIRWAY_OR_LEGTYPE && leg.isRoute() &&
-                 leg.isAirwaySetAndInvalid(route.getCruiseAltitudeFt())))
+                (logicalCol == rcol::AIRWAY_OR_LEGTYPE && leg.isRoute() && leg.isAirwaySetAndInvalid(route.getCruiseAltitudeFt())))
           textFormat.setForeground(Qt::red);
         else
           textFormat.setForeground(Qt::black);
@@ -805,12 +804,10 @@ QString RouteController::getFlightplanTableAsHtml(float iconSizePixel, bool prin
 
 void RouteController::routeStringToClipboard() const
 {
-  qDebug() << Q_FUNC_INFO;
-
+  // Create string from the current flight plan using current settings and not from the dialog
   QString str = RouteStringWriter().createStringForRoute(route, NavApp::getRouteCruiseSpeedKts(),
                                                          RouteStringDialog::getOptionsFromSettings() | rs::ALT_AND_SPEED_METRIC);
 
-  qDebug() << "route string" << str;
   if(!str.isEmpty())
     QApplication::clipboard()->setText(str);
 
@@ -1711,7 +1708,7 @@ bool RouteController::saveFlightplanLnmInternal(const QString& filename, bool si
       route.removeProcedureLegs(missingProcedures);
 
       // Reload from database also to update the error message
-      loadProceduresFromFlightplan(true /* Clear procedure properties */, false /* cleanupRoute */, false /* autoresolveTransition */);
+      loadProceduresFromFlightplan(true /* clearOldProcedureProperties */, false /* cleanupRoute */, false /* autoresolveTransition */);
 
       // Copy loaded procedures back to properties to ensure that only valid ones are saved
       // Additionally remove duplicate waypoints
@@ -3432,7 +3429,7 @@ void RouteController::deleteSelectedLegsInternal(const QList<int>& rows)
 
       route.eraseAirway(row);
 
-      route.removeAt(row);
+      route.removeLegAt(row);
       model->removeRow(row);
     }
 
@@ -4424,9 +4421,7 @@ void RouteController::updateTableModel()
       // Airway ========================
       const map::MapAirway& airway = leg.getAirway();
 
-      QStringList awname;
-
-      awname.append(airway.isValid() && airway.isTrack() ? tr("Track %1").arg(leg.getAirwayName()) : leg.getAirwayName());
+      QStringList awname(airway.isValid() && airway.isTrack() ? tr("Track %1").arg(leg.getAirwayName()) : leg.getAirwayName());
 
       if(airway.isValid())
       {
@@ -4550,8 +4545,7 @@ void RouteController::updateTableModel()
         itemRow[col] = new QStandardItem();
 
       // Do not allow editing and drag and drop
-      itemRow[col]->setFlags(itemRow[col]->flags() &
-                             ~(Qt::ItemIsEditable | Qt::ItemIsDragEnabled | Qt::ItemIsDropEnabled));
+      itemRow[col]->setFlags(itemRow[col]->flags() & ~(Qt::ItemIsEditable | Qt::ItemIsDragEnabled | Qt::ItemIsDropEnabled));
     }
 
     // Align cells to the right - rest is aligned in updateModelRouteTimeFuel ===============

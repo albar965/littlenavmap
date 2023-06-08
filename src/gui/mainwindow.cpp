@@ -1060,6 +1060,7 @@ void MainWindow::connectAllSlots()
   connect(styleHandler, &StyleHandler::styleChanged, profileWidget, &ProfileWidget::styleChanged);
   connect(styleHandler, &StyleHandler::styleChanged, perfController, &AircraftPerfController::optionsChanged);
   connect(styleHandler, &StyleHandler::styleChanged, infoController, &InfoController::styleChanged);
+  connect(styleHandler, &StyleHandler::styleChanged, routeStringDialog, &RouteStringDialog::styleChanged);
   connect(styleHandler, &StyleHandler::styleChanged, optionsDialog, &OptionsDialog::styleChanged);
   connect(styleHandler, &StyleHandler::styleChanged, this, &MainWindow::updateStatusBarStyle);
 
@@ -2152,10 +2153,11 @@ void MainWindow::routeFromStringCurrent()
       backgroundHintRouteStringShown = true;
     }
 
+    // No parent to create non-modal dialog
     routeStringDialog = new RouteStringDialog(nullptr, QString());
 
-    // Pass empty string to load last content
-    routeStringDialog->restoreState(QString());
+    // Load last content
+    routeStringDialog->restoreState();
 
     // Add to dock handler to enable auto raise and closing on exit
     NavApp::addDialogToDockHandler(routeStringDialog);
@@ -2172,12 +2174,14 @@ void MainWindow::routeFromStringCurrent()
 
 void MainWindow::routeFromStringSimBrief(const QString& routeString)
 {
-  // Create a new modal dialog which allows to edit the route string
+  // Create a new modal/blocking dialog which allows to edit the route string
+  // Has its own state settings
   qDebug() << Q_FUNC_INFO << routeString;
-  RouteStringDialog routeStrDialog(this, "SimBrief");
+  RouteStringDialog routeStrDialog(this, "SimBrief" /* settingsSuffixParam */);
 
-  // Pass string to avoid loading of the last content
-  routeStrDialog.restoreState(routeString);
+  // Load dialog settings but not last content
+  routeStrDialog.restoreState();
+  routeStrDialog.addRouteDescription(routeString);
 
   if(routeStrDialog.exec() == QDialog::Accepted)
   {

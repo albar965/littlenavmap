@@ -80,8 +80,12 @@ enum RouteStringOption
 Q_DECLARE_FLAGS(RouteStringOptions, RouteStringOption);
 Q_DECLARE_OPERATORS_FOR_FLAGS(rs::RouteStringOptions);
 
-/* Remove all invalid characters and simplify string */
-QStringList cleanRouteString(const QString& string);
+/* Remove all invalid characters and simplify string. Extracts all characters until the next empty line. */
+QStringList cleanRouteStringList(const QString& string);
+QString cleanRouteString(const QString& string);
+
+/* Removes invalid characters and converts to upper case */
+QString cleanRouteStringLine(const QString& line);
 
 } // namespace rs
 

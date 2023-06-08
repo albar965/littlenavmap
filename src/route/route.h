@@ -350,12 +350,12 @@ public:
     return hasAnyApproachProcedure() || hasAnySidProcedure() || hasAnyStarProcedure();
   }
 
-  bool isCustomApproach() const
+  bool hasCustomApproach() const
   {
     return approachLegs.isCustomApproach();
   }
 
-  bool isCustomDeparture() const
+  bool hasCustomDeparture() const
   {
     return sidLegs.isCustomDeparture();
   }
@@ -531,7 +531,6 @@ public:
   using QList::move;
   using QList::clear;
   using QList::size;
-  using QList::removeAt;
 
   int getSizeWithoutAlternates() const;
 
@@ -540,6 +539,11 @@ public:
   {
     QList::removeAt(i);
     flightplan.removeAt(i);
+  }
+
+  void removeLegAt(int i)
+  {
+    QList::removeAt(i);
   }
 
   /* Removes all entries in route and flightplan except the ones in the range (including) */
@@ -697,7 +701,7 @@ private:
 
   /* Remove any waypoints which positions overlap with procedures. Requires a flight plan that is cleaned up and contains
    * no procedure legs. CPU intense do not use often. */
-  void cleanupFlightPlanForProcedures();
+  void cleanupFlightPlanForProcedures(map::MapAirway& starAirway);
 
   /* Removes related properies in the flight plan only */
   void clearFlightplanProcedureProperties(proc::MapProcedureTypes type);

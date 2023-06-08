@@ -148,7 +148,7 @@ QString RouteStringWriter::createGfpStringForRouteInternalProc(const Route& rout
   route.getRunwayNames(departureRw, approachRwDummy);
   starRw = route.getStarRunwayName();
 
-  if(route.isCustomDeparture())
+  if(route.hasCustomDeparture())
   {
     sid.clear();
     sidTrans.clear();
@@ -159,7 +159,7 @@ QString RouteStringWriter::createGfpStringForRouteInternalProc(const Route& rout
   if(!retval.isEmpty() && !retval.startsWith(":F:"))
     retval.prepend(":F:");
 
-  if(route.hasAnySidProcedure() && !route.isCustomDeparture() && !userWaypointOption)
+  if(route.hasAnySidProcedure() && !route.hasCustomDeparture() && !userWaypointOption)
   {
     if(!departureRw.isEmpty() && !(departureRw.endsWith("L") || departureRw.endsWith("C") || departureRw.endsWith("R")))
       departureRw.append("O");
@@ -190,7 +190,7 @@ QString RouteStringWriter::createGfpStringForRouteInternalProc(const Route& rout
     }
 
     // Approach ===============================
-    if(route.hasAnyApproachProcedure() && !route.isCustomApproach())
+    if(route.hasAnyApproachProcedure() && !route.hasCustomApproach())
     {
       QString apprArinc, apprTrans;
       route.getApproachNames(apprArinc, apprTrans);
@@ -284,21 +284,21 @@ QStringList RouteStringWriter::createStringForRouteInternal(const Route& routePa
   route.getRunwayNames(depRwy, destRwy);
   route.getApproachNames(approachName, approachTransition);
 
-  if(route.isCustomApproach())
+  if(route.hasCustomApproach())
   {
     approachName.clear();
     approachTransition.clear();
     destRwy.clear();
   }
 
-  if(route.isCustomDeparture())
+  if(route.hasCustomDeparture())
   {
     sid.clear();
     sidTrans.clear();
     depRwy.clear();
   }
 
-  if(route.hasAnyApproachProcedure() && !route.getApproachLegs().type.isEmpty() && !route.isCustomApproach())
+  if(route.hasAnyApproachProcedure() && !route.getApproachLegs().type.isEmpty() && !route.hasCustomApproach())
   {
     // Flight factor specialities - there are probably more to guess
     if(route.getApproachLegs().type == "RNAV")
@@ -489,7 +489,7 @@ QStringList RouteStringWriter::createStringForRouteInternal(const Route& routePa
   if(options.testFlag(rs::START_AND_DEST))
     items.append(lastId + (gfpCoords ? "," + coords::toGfpFormat(lastPos) : QString()));
 
-  if(!route.isCustomApproach()) // Do not add custom approach
+  if(!route.hasCustomApproach()) // Do not add custom approach
   {
     if(options.testFlag(rs::APPROACH) && !approachName.isEmpty())
     {

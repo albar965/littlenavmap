@@ -48,6 +48,7 @@ enum RouteAdjustOption
 
   REMOVE_RUNWAY_PROC = 1 << 14, /* Remove runway extensions and their waypoints */
   REMOVE_MISSED = 1 << 15, /* Remove missed approach */
+  CLEAN_CUSTOM_DEPART = 1 << 16, /* Remove first runway waypoint from selected departure runway for X-Plane */
 
   /* Export adjust options for most export formats */
   DEFAULT_OPTS = rf::REPLACE_CUSTOM_WP | rf::REMOVE_ALTERNATE | rf::REMOVE_TRACKS | FIX_PROC_ENTRY_EXIT,
@@ -81,7 +82,7 @@ enum RouteAdjustOption
   /* Export adjust options for XP11 and old FMS3 */
   DEFAULT_OPTS_FMS3 = rf::DEFAULT_OPTS_NO_PROC,
   DEFAULT_OPTS_FMS11 = rf::REPLACE_CUSTOM_WP | rf::REMOVE_ALTERNATE | rf::REMOVE_TRACKS | rf::FIX_CIRCLETOLAND |
-                       rf::XPLANE_REPLACE_AIRPORT_IDENTS,
+                       rf::XPLANE_REPLACE_AIRPORT_IDENTS | rf::CLEAN_CUSTOM_DEPART,
   DEFAULT_OPTS_CIVA_FMS = rf::DEFAULT_OPTS_NO_PROC | rf::REMOVE_ALTERNATE | rf::REMOVE_RUNWAY_PROC | rf::REMOVE_MISSED,
 
   /* Garmin GPX */
