@@ -82,6 +82,7 @@ A big thank you to all who reported bugs and issues!
   the first empty line.
 * 'Load from flight plan' inserts the route description on top of the input field and leaves other
   texts below intact.
+* Added undo/redo buttons to route description dialog window.
 * Fixed issues where airways and waypoints were dropped in some cases.
 
 ### Scenery Library

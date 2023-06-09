@@ -19,6 +19,7 @@
 
 #include "common/constants.h"
 #include "gui/helphandler.h"
+#include "gui/tools.h"
 #include "gui/widgetstate.h"
 #include "gui/widgetutil.h"
 #include "navapp.h"
@@ -131,13 +132,11 @@ RouteStringDialog::RouteStringDialog(QWidget *parent, const QString& settingsSuf
   if(ui->splitterRouteString->handle(2) != nullptr)
     ui->splitterRouteString->handle(2)->setToolTip(tr("Resize, open or close the quick help."));
 
-  QFont fixedFont = QFontDatabase::systemFont(QFontDatabase::FixedFont);
-#if defined(Q_OS_MACOS)
-  fixedFont.setPointSizeF(fixedFont.pointSizeF() * 1.2);
-#endif
-
   // Need to clear, otherwise default font cannot be applied
   ui->textEditRouteString->clear();
+
+  QFont fixedFont = atools::gui::getBestFixedFont();
+  qDebug() << Q_FUNC_INFO << "fixedFont" << fixedFont;
   ui->textEditRouteString->document()->setDefaultFont(fixedFont);
 
   sytaxHighlighter = new SyntaxHighlighter(ui->textEditRouteString);
@@ -174,12 +173,17 @@ RouteStringDialog::RouteStringDialog(QWidget *parent, const QString& settingsSuf
 
   connect(ui->pushButtonRouteStringFromClipboard, &QPushButton::clicked, this, &RouteStringDialog::fromClipboardClicked);
   connect(ui->pushButtonRouteStringToClipboard, &QPushButton::clicked, this, &RouteStringDialog::toClipboardClicked);
-  connect(ui->textEditRouteString, &QTextEdit::textChanged, this, &RouteStringDialog::updateButtonState);
-  connect(ui->textEditRouteString, &QTextEdit::textChanged, this, &RouteStringDialog::textChanged);
   connect(QGuiApplication::clipboard(), &QClipboard::dataChanged, this, &RouteStringDialog::updateButtonState);
   connect(ui->buttonBoxRouteString, &QDialogButtonBox::clicked, this, &RouteStringDialog::buttonBoxClicked);
   connect(ui->toolButtonRouteStringOptions->menu(), &QMenu::triggered, this, &RouteStringDialog::toolButtonOptionTriggered);
   connect(ui->pushButtonRouteStringUpdate, &QPushButton::clicked, this, &RouteStringDialog::updateButtonClicked);
+
+  connect(ui->textEditRouteString, &QTextEdit::textChanged, this, &RouteStringDialog::updateButtonState);
+  connect(ui->textEditRouteString, &QTextEdit::textChanged, this, &RouteStringDialog::textChanged);
+  connect(ui->textEditRouteString, &QTextEdit::undoAvailable, ui->pushButtonRouteStringUndo, &QPushButton::setEnabled);
+  connect(ui->textEditRouteString, &QTextEdit::redoAvailable, ui->pushButtonRouteStringRedo, &QPushButton::setEnabled);
+  connect(ui->pushButtonRouteStringUndo, &QPushButton::clicked, ui->textEditRouteString, &QTextEdit::undo);
+  connect(ui->pushButtonRouteStringRedo, &QPushButton::clicked, ui->textEditRouteString, &QTextEdit::redo);
 
   connect(ui->pushButtonRouteStringShowHelp, &QPushButton::toggled, this, &RouteStringDialog::showHelpButtonToggled);
   connect(ui->splitterRouteString, &QSplitter::splitterMoved, this, &RouteStringDialog::splitterMoved);
