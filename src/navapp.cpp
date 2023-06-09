@@ -133,6 +133,9 @@ void NavApp::init(MainWindow *mainWindowParam)
   qDebug() << Q_FUNC_INFO;
 
   NavApp::mainWindow = mainWindowParam;
+
+  elevationProvider = new ElevationProvider(mainWindow);
+
   databaseManager = new DatabaseManager(mainWindow);
   databaseManager->openAllDatabases(); // Only readonly databases
   databaseManager->loadLanguageIndex(); // MSFS translations from table "translation"
@@ -208,7 +211,8 @@ void NavApp::initQueries()
 void NavApp::initElevationProvider()
 {
   qDebug() << Q_FUNC_INFO;
-  elevationProvider = new ElevationProvider(mainWindow, mainWindow->getElevationModel());
+  if(elevationProvider != nullptr)
+    elevationProvider->init(mainWindow->getElevationModel());
 }
 
 void NavApp::deInit()

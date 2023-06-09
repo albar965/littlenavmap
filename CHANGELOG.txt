@@ -191,6 +191,7 @@ A big thank you to all who reported bugs and issues!
 * Fixed issue where a search for userpoint type was not applied on startup.
 * Added capability to read Google Earth or Google Maps coordinates like `-54 50.60, -68 17.73`.
 * Added option for Google coordinate format in options on page `Units`.
+* Fixed freeze after error dialog when moving or deleting GLOBE path.
 
 ### User Manual
 

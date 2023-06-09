@@ -306,7 +306,6 @@ MainWindow::MainWindow()
 
     // Init a few late objects since these depend on the map widget instance
     NavApp::initQueries();
-    NavApp::initElevationProvider();
 
     // Create elevation profile widget and replace dummy widget in window
     qDebug() << Q_FUNC_INFO << "Creating ProfileWidget";
@@ -3141,6 +3140,9 @@ void MainWindow::setDetailLabelText(const QString& text)
 void MainWindow::mainWindowShown()
 {
   qDebug() << Q_FUNC_INFO << "enter";
+
+  // This shows a warning dialog if failing - start it later within the event loop to avoid a freeze
+  QTimer::singleShot(0, this, &NavApp::initElevationProvider);
 
   // Need to set the font again to pass it on to all menus
   qDebug() << Q_FUNC_INFO << "QApplication::font()" << QApplication::font();

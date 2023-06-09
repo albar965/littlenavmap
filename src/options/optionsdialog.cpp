@@ -2439,7 +2439,7 @@ void OptionsDialog::updateCacheElevationStates()
         ui->labelCacheGlobePathState->setText(HtmlBuilder::errorMessage(tr("Directory does not exist.")));
       else if(!fileinfo.isDir())
         ui->labelCacheGlobePathState->setText(HtmlBuilder::errorMessage(tr(("Is not a directory."))));
-      else if(!NavApp::getElevationProvider()->isGlobeDirectoryValid(path))
+      else if(!ElevationProvider::isGlobeDirectoryValid(path))
         ui->labelCacheGlobePathState->setText(HtmlBuilder::errorMessage(tr("No valid GLOBE data found.")));
       else
         ui->labelCacheGlobePathState->setText(tr("Directory and files are valid."));
