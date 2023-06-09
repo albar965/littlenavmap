@@ -251,7 +251,13 @@ public:
   /* Check path if it is a directory and counts map themes in it */
   static QString getStatusTextForDir(const QString& path);
 
+  /* Checks default and user folder and shows an error dialog if any is invalid */
+  static void validateMapThemeDirectories();
+
 private:
+  static QString getMapThemeDefaultDir();
+  static QString getMapThemeUserDir();
+
   /* Get theme by internal index */
   const MapTheme& themeByIndex(int themeIndex) const;
 

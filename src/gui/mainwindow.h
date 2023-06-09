@@ -366,7 +366,7 @@ private:
   void resetAllSettings();
   void showDatabaseFiles();
   void showShowMapCache();
-  void showShowMapInstallation();
+  void showMapInstallation();
 
   /* Save map as images */
   void mapSaveImage();

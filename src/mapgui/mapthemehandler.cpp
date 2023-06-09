@@ -37,6 +37,7 @@
 #include <QRegularExpression>
 #include <QDataStream>
 #include <QActionGroup>
+#include <QStringBuilder>
 
 const static quint64 KEY = 0x19CB0467EBD391CC;
 const static QLatin1String FILENAME("mapthemekeys.bin");
@@ -57,19 +58,13 @@ MapThemeHandler::~MapThemeHandler()
 
 void MapThemeHandler::loadThemes()
 {
-  // Check if the default base folder exists in the installation folder and throw an exception if not
-  QString earthDir = QCoreApplication::applicationDirPath() +
-                     QDir::separator() + "data" + QDir::separator() + "maps" + QDir::separator() + "earth";
-  QString msg = atools::checkDirMsg(earthDir);
-  if(!msg.isEmpty())
-    throw atools::Exception(tr("Base path \"%1\" for map themes not found. %2").arg(earthDir).arg(msg));
-
   // Load all these from folder
   themes.clear();
   themeIdToIndexMap.clear();
+
   QSet<QString> ids, sourceDirs;
   QStringList errors;
-  for(const QFileInfo& dgml : findMapThemes({earthDir, OptionData::instance().getCacheMapThemeDir()}))
+  for(const QFileInfo& dgml : findMapThemes({getMapThemeDefaultDir(), getMapThemeUserDir()}))
   {
     MapTheme theme = loadTheme(dgml);
 
@@ -214,7 +209,7 @@ void MapThemeHandler::setMapThemeKeys(const QMap<QString, QString>& keys)
 void MapThemeHandler::saveKeyfile()
 {
   // Save keys ===================================================
-  QFile keyFile(atools::settings::Settings::getPath() + QDir::separator() + FILENAME);
+  QFile keyFile(atools::settings::Settings::getPath() % QDir::separator() % FILENAME);
   if(keyFile.open(QIODevice::WriteOnly))
   {
     // Apply simple encryption to the keys
@@ -295,7 +290,7 @@ void MapThemeHandler::restoreState()
 void MapThemeHandler::restoreKeyfile()
 {
   // Load keys ===================================================
-  QFile keyFile(atools::settings::Settings::getPath() + QDir::separator() + FILENAME);
+  QFile keyFile(atools::settings::Settings::getPath() % QDir::separator() % FILENAME);
 
   if(keyFile.exists())
   {
@@ -416,7 +411,7 @@ MapTheme MapThemeHandler::loadTheme(const QFileInfo& dgml)
                   if(reader.name() == "downloadUrl")
                   {
                     // Put all attributes of the download URL into one string
-                    QString atts = reader.attributes().value("protocol").toString() + reader.attributes().value("host").toString() +
+                    QString atts = reader.attributes().value("protocol").toString() % reader.attributes().value("host").toString() %
                                    reader.attributes().value("path").toString();
 
                     // Extract keywords from download URL
@@ -800,7 +795,7 @@ QString MapThemeHandler::getStatusTextForDir(const QString& path)
     QDir dir(path);
     for(const QFileInfo& themeDir : dir.entryInfoList(QDir::Dirs | QDir::NoDotAndDotDot))
     {
-      if(atools::checkFile(Q_FUNC_INFO, themeDir.absoluteFilePath() + QDir::separator() + themeDir.fileName() + ".dgml"))
+      if(atools::checkFile(Q_FUNC_INFO, themeDir.absoluteFilePath() % QDir::separator() % themeDir.fileName() % ".dgml"))
         numThemes++;
     }
 
@@ -811,4 +806,36 @@ QString MapThemeHandler::getStatusTextForDir(const QString& path)
   }
   return message;
 
+}
+
+void MapThemeHandler::validateMapThemeDirectories()
+{
+  QStringList msg;
+
+  // Default application dir is required
+  msg.append(atools::checkDirMsg(getMapThemeDefaultDir()));
+
+  if(!getMapThemeUserDir().isEmpty())
+    // User defined dir is optional
+    msg.append(atools::checkDirMsg(getMapThemeUserDir()));
+
+  // Remove empty error messages
+  msg.removeAll(QString());
+
+  if(!msg.isEmpty())
+  {
+    NavApp::closeSplashScreen();
+    QMessageBox::warning(NavApp::getQMainWidget(),
+                         QCoreApplication::applicationName(), tr("Base path(s) for map themes not found.\n%1").arg(msg.join(tr(",\n"))));
+  }
+}
+
+QString MapThemeHandler::getMapThemeDefaultDir()
+{
+  return QCoreApplication::applicationDirPath() % QDir::separator() % "data" % QDir::separator() % "maps" % QDir::separator() % "earth";
+}
+
+QString MapThemeHandler::getMapThemeUserDir()
+{
+  return OptionData::instance().getCacheMapThemeDir();
 }

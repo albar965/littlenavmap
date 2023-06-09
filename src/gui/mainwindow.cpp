@@ -1293,7 +1293,7 @@ void MainWindow::connectAllSlots()
   connect(ui->actionValidateSceneryLibrarySettings, &QAction::triggered, databaseManager, &DatabaseManager::checkSceneryOptionsManual);
   connect(ui->actionDatabaseFiles, &QAction::triggered, this, &MainWindow::showDatabaseFiles);
   connect(ui->actionShowMapCache, &QAction::triggered, this, &MainWindow::showShowMapCache);
-  connect(ui->actionShowMapInstallation, &QAction::triggered, this, &MainWindow::showShowMapInstallation);
+  connect(ui->actionShowMapInstallation, &QAction::triggered, this, &MainWindow::showMapInstallation);
 
   connect(ui->actionOptions, &QAction::triggered, this, &MainWindow::openOptionsDialog);
   connect(ui->actionResetMessages, &QAction::triggered, this, &MainWindow::resetMessages);
@@ -1813,7 +1813,7 @@ void MainWindow::showShowMapCache()
 }
 
 /* Menu item */
-void MainWindow::showShowMapInstallation()
+void MainWindow::showMapInstallation()
 {
   QString cacheMapThemeDir = OptionData::instance().getCacheMapThemeDir();
 
@@ -3143,6 +3143,9 @@ void MainWindow::mainWindowShown()
 
   // This shows a warning dialog if failing - start it later within the event loop to avoid a freeze
   QTimer::singleShot(0, this, &NavApp::initElevationProvider);
+
+  // Show a warning if map theme folders do not exist
+  QTimer::singleShot(0, this, &MapThemeHandler::validateMapThemeDirectories);
 
   // Need to set the font again to pass it on to all menus
   qDebug() << Q_FUNC_INFO << "QApplication::font()" << QApplication::font();
