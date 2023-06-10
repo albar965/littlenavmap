@@ -178,7 +178,7 @@ void ElevationProvider::init(const Marble::ElevationModel *model)
 
 void ElevationProvider::updateReader()
 {
-  bool warnWrongGlobePath = false;
+  bool warnWrongGlobePath = false, warnOpenFiles = false;
   const QString& path = OptionData::instance().getOfflineElevationPath();
 
   {
@@ -201,11 +201,9 @@ void ElevationProvider::updateReader()
           qDebug() << Q_FUNC_INFO << "Opening GLOBE files";
 
           if(!globeReader->openFiles())
-          {
-            NavApp::closeSplashScreen();
-            atools::gui::Dialog::warning(NavApp::getQMainWidget(), tr("Cannot open GLOBE data in directory<br/>\"%1\"").arg(path));
-            qDebug() << Q_FUNC_INFO << "Opening GLOBE done";
-          }
+            warnOpenFiles = true;
+
+          qDebug() << Q_FUNC_INFO << "Opening GLOBE done";
         }
       }
     }
@@ -214,6 +212,12 @@ void ElevationProvider::updateReader()
       delete globeReader;
       globeReader = nullptr;
     }
+  }
+
+  if(warnOpenFiles)
+  {
+    NavApp::closeSplashScreen();
+    atools::gui::Dialog::warning(NavApp::getQMainWidget(), tr("Cannot open GLOBE data in directory<br/>\"%1\"").arg(path));
   }
 
   if(warnWrongGlobePath)
