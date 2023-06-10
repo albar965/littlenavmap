@@ -191,6 +191,7 @@ A big thank you to all who reported bugs and issues!
 * Added option for Google coordinate format in options on page `Units`.
 * Fixed freeze after error dialog when moving or deleting GLOBE path.
 * Added warning messages if user defined or default map theme folders are not valid.
+* Fixed occasional freeze when resizing elevation profile on startup.
 
 ### User Manual
 

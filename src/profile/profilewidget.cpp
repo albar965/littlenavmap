@@ -2585,7 +2585,21 @@ void ProfileWidget::hideRubberBand()
 /* Resizing needs an update of the screen coordinates */
 void ProfileWidget::resizeEvent(QResizeEvent *)
 {
-  updateScreenCoords();
+  if(!insideResizeEvent)
+  {
+    // Recursive call might happen through:
+    // ProfileWidget::updateScreenCoords
+    // ProfileScrollArea::routeAltitudeChanged
+    // ProfileScrollArea::updateWidgets
+    // ProfileScrollArea::verticalZoomSliderValueChanged
+    // ProfileScrollArea::scaleView
+
+    insideResizeEvent = true;
+    updateScreenCoords();
+    insideResizeEvent = false;
+  }
+  else
+    qWarning() << Q_FUNC_INFO << "Recursion";
 }
 
 /* Deleting aircraft track needs an update of the screen coordinates */
