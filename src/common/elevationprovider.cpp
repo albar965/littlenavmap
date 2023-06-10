@@ -197,14 +197,17 @@ void ElevationProvider::updateReader()
       {
         delete globeReader;
         globeReader = new GlobeReader(path);
+
+        qDebug() << Q_FUNC_INFO << "Opening GLOBE files";
+
+        if(!globeReader->openFiles())
         {
-          qDebug() << Q_FUNC_INFO << "Opening GLOBE files";
-
-          if(!globeReader->openFiles())
-            warnOpenFiles = true;
-
-          qDebug() << Q_FUNC_INFO << "Opening GLOBE done";
+          delete globeReader;
+          globeReader = nullptr;
+          warnOpenFiles = true;
         }
+        else
+          qDebug() << Q_FUNC_INFO << "Opening GLOBE done";
       }
     }
     else
