@@ -3231,6 +3231,8 @@ void MainWindow::mainWindowShown()
 
 void MainWindow::mainWindowShownDelayed()
 {
+  qDebug() << Q_FUNC_INFO << "enter";
+
   NavApp::closeSplashScreen();
 
   if(OptionData::instance().getFlags().testFlag(opts::STARTUP_LOAD_LAYOUT) && !layoutFileHistory->isEmpty())
@@ -3416,6 +3418,7 @@ void MainWindow::mainWindowShownDelayed()
   qDebug() << "connectStatusLabel->size()" << connectStatusLabel->size();
   qDebug() << "timeLabel->size()" << timeLabel->size();
 #endif
+  qDebug() << Q_FUNC_INFO << "leave";
 }
 
 void MainWindow::runDirToolManual()

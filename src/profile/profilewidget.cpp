@@ -81,17 +81,17 @@ static const float ZOOM_DESTINATION_MAX_AHEAD = 100.f;
 // int manhattanLengthDelta;
 // float altitudeDelta;
 static QHash<opts::SimUpdateRate, ProfileWidget::SimUpdateDelta> SIM_UPDATE_DELTA_MAP(
-{
   {
-    opts::FAST, {1, 1.f}
-  },
-  {
-    opts::MEDIUM, {2, 10.f}
-  },
-  {
-    opts::LOW, {4, 20.f}
-  }
-});
+    {
+      opts::FAST, {1, 1.f}
+    },
+    {
+      opts::MEDIUM, {2, 10.f}
+    },
+    {
+      opts::LOW, {4, 20.f}
+    }
+  });
 
 /* Text label position and attributes for navaids */
 struct Label
@@ -460,56 +460,61 @@ void ProfileWidget::updateScreenCoords()
   waypointX.clear();
   landPolygon.clear();
 
-  // First point
-  landPolygon.append(QPoint(left, h + TOP));
-
-#ifdef DEBUG_INFORMATION_PROFILE
-  qDebug() << Q_FUNC_INFO << "==========================================================================";
-#endif
-
-#ifdef DEBUG_INFORMATION_PROFILE
-  int num = 0;
-#endif
-  for(const ElevationLeg& leg : legList->elevationLegs)
+  if(!legList->elevationLegs.isEmpty())
   {
-    if(leg.distances.isEmpty() || leg.elevation.isEmpty())
-      continue;
+    // First point
+    landPolygon.append(QPoint(left, h + TOP));
 
 #ifdef DEBUG_INFORMATION_PROFILE
-    qDebug() << Q_FUNC_INFO << num << leg.ident << "leg.distances" << leg.distances;
-    qDebug() << Q_FUNC_INFO << num << leg.ident << "leg.geometry" << leg.geometry;
-    qDebug() << Q_FUNC_INFO << num << leg.ident << "leg.elevation" << leg.elevation;
+    qDebug() << Q_FUNC_INFO << "==========================================================================";
 #endif
 
-    waypointX.append(left + static_cast<int>(leg.distances.constFirst() * horizontalScale));
-
-    QPoint lastPt;
-    for(int i = 0; i < leg.elevation.size(); i++)
+#ifdef DEBUG_INFORMATION_PROFILE
+    int num = 0;
+#endif
+    for(const ElevationLeg& leg : legList->elevationLegs)
     {
-      float alt = leg.elevation.at(i).getAltitude();
-      QPoint pt(left + static_cast<int>(leg.distances.at(i) * horizontalScale), TOP + static_cast<int>(h - alt * verticalScale));
+      if(leg.distances.isEmpty() || leg.elevation.isEmpty())
+        continue;
 
-      if(lastPt.isNull() || i == leg.elevation.size() - 1 || (lastPt - pt).manhattanLength() > 2)
+#ifdef DEBUG_INFORMATION_PROFILE
+      qDebug() << Q_FUNC_INFO << num << leg.ident << "leg.distances" << leg.distances;
+      qDebug() << Q_FUNC_INFO << num << leg.ident << "leg.geometry" << leg.geometry;
+      qDebug() << Q_FUNC_INFO << num << leg.ident << "leg.elevation" << leg.elevation;
+#endif
+
+      waypointX.append(left + static_cast<int>(leg.distances.constFirst() * horizontalScale));
+
+      QPoint lastPt;
+      for(int i = 0; i < leg.elevation.size(); i++)
       {
-        landPolygon.append(pt);
-        lastPt = pt;
+        float alt = leg.elevation.at(i).getAltitude();
+        QPoint pt(left + static_cast<int>(leg.distances.at(i) * horizontalScale), TOP + static_cast<int>(h - alt * verticalScale));
+
+        if(lastPt.isNull() || i == leg.elevation.size() - 1 || (lastPt - pt).manhattanLength() > 2)
+        {
+          landPolygon.append(pt);
+          lastPt = pt;
+        }
       }
+#ifdef DEBUG_INFORMATION_PROFILE
+      num++;
+#endif
     }
+
+    // Destination point
+    if(!waypointX.isEmpty())
+      waypointX.append(left + w);
+
 #ifdef DEBUG_INFORMATION_PROFILE
-    num++;
+    qDebug() << Q_FUNC_INFO << "waypointX" << waypointX;
+    qDebug() << Q_FUNC_INFO << "==========================================================================";
 #endif
+
+    // Last point closing polygon
+    if(!landPolygon.isEmpty())
+      landPolygon.append(QPoint(left + w, h + TOP));
   }
-
-  // Destination point
-  waypointX.append(left + w);
-
-#ifdef DEBUG_INFORMATION_PROFILE
-  qDebug() << Q_FUNC_INFO << "waypointX" << waypointX;
-  qDebug() << Q_FUNC_INFO << "==========================================================================";
-#endif
-
-  // Last point closing polygon
-  landPolygon.append(QPoint(left + w, h + TOP));
 }
 
 QVector<std::pair<int, int> > ProfileWidget::calcScaleValues()
@@ -1712,7 +1717,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
     att |= textatt::ROUTE_BG_COLOR;
 
     if(acy - rect.height() > scrollArea->getOffset().y() + TOP)
-      texty -= static_cast<float>(rect.bottom() + 20.); // Text at top
+      texty -= static_cast<float>(rect.bottom() + 20.);  // Text at top
 
     symPainter.textBoxF(&painter, texts, QPen(Qt::black), textx, texty, att, 255);
   }
@@ -1925,43 +1930,54 @@ void ProfileWidget::updateThreadFinished()
 bool ProfileWidget::fetchRouteElevations(atools::geo::LineString& elevations, const atools::geo::LineString& geometry) const
 {
   ElevationProvider *elevationProvider = NavApp::getElevationProvider();
-  for(int i = 0; i < geometry.size() - 1; i++)
+
+  if(elevationProvider->isValid())
   {
-    // Create a line string from the two points and split it at the date line if crossing
-    GeoDataLineString coords;
-    coords.setTessellate(true);
-    coords << GeoDataCoordinates(geometry.at(i).getLonX(), geometry.at(i).getLatY(), 0., GeoDataCoordinates::Degree)
-           << GeoDataCoordinates(geometry.at(i + 1).getLonX(), geometry.at(i + 1).getLatY(), 0., GeoDataCoordinates::Degree);
-
-    QVector<Marble::GeoDataLineString *> coordsCorrected = coords.toDateLineCorrected();
-    for(const Marble::GeoDataLineString *ls : coordsCorrected)
+    for(int i = 0; i < geometry.size() - 1; i++)
     {
-      for(int j = 1; j < ls->size(); j++)
+      // Create a line string from the two points and split it at the date line if crossing
+      GeoDataLineString coords;
+      coords.setTessellate(true);
+      coords << GeoDataCoordinates(geometry.at(i).getLonX(), geometry.at(i).getLatY(), 0., GeoDataCoordinates::Degree)
+             << GeoDataCoordinates(geometry.at(i + 1).getLonX(), geometry.at(i + 1).getLatY(), 0., GeoDataCoordinates::Degree);
+
+      QVector<Marble::GeoDataLineString *> coordsCorrected = coords.toDateLineCorrected();
+      for(const Marble::GeoDataLineString *ls : coordsCorrected)
       {
-        if(terminateThreadSignal)
-          return false;
+        for(int j = 1; j < ls->size(); j++)
+        {
+          if(terminateThreadSignal)
+            return false;
 
-        const Marble::GeoDataCoordinates& c1 = ls->at(j - 1);
-        const Marble::GeoDataCoordinates& c2 = ls->at(j);
-        Pos p1(c1.longitude(), c1.latitude());
-        Pos p2(c2.longitude(), c2.latitude());
+          const Marble::GeoDataCoordinates& c1 = ls->at(j - 1);
+          const Marble::GeoDataCoordinates& c2 = ls->at(j);
+          Pos p1(c1.longitude(), c1.latitude());
+          Pos p2(c2.longitude(), c2.latitude());
 
-        p1.toDeg();
-        p2.toDeg();
-        elevationProvider->getElevations(elevations, atools::geo::Line(p1, p2), atools::geo::nmToMeter(ELEVATION_SAMPLE_RADIUS_NM));
+          p1.toDeg();
+          p2.toDeg();
+          elevationProvider->getElevations(elevations, atools::geo::Line(p1, p2), atools::geo::nmToMeter(ELEVATION_SAMPLE_RADIUS_NM));
+        }
       }
+      qDeleteAll(coordsCorrected);
     }
-    qDeleteAll(coordsCorrected);
+
+    if(!elevations.isEmpty())
+    {
+      // Add start or end point if heightProfile omitted these - check only lat lon not alt
+      if(!elevations.constFirst().almostEqual(geometry.constFirst()))
+        elevations.prepend(geometry.constFirst().alt(elevations.constFirst().getAltitude()));
+
+      if(!elevations.constLast().almostEqual(geometry.constLast()))
+        elevations.append(geometry.constLast().alt(elevations.constLast().getAltitude()));
+    }
   }
 
-  if(!elevations.isEmpty())
+  // Add two null elevation dummy points if provider does not return any values
+  if(elevations.isEmpty())
   {
-    // Add start or end point if heightProfile omitted these - check only lat lon not alt
-    if(!elevations.constFirst().almostEqual(geometry.constFirst()))
-      elevations.prepend(Pos(geometry.constFirst().getLonX(), geometry.constFirst().getLatY(), elevations.constFirst().getAltitude()));
-
-    if(!elevations.constLast().almostEqual(geometry.constLast()))
-      elevations.append(Pos(geometry.constLast().getLonX(), geometry.constLast().getLatY(), elevations.constLast().getAltitude()));
+    elevations.append(geometry.constFirst().alt(0.f));
+    elevations.append(geometry.constLast().alt(0.f));
   }
 
   return true;
@@ -2024,6 +2040,9 @@ ElevationLegList ProfileWidget::fetchRouteElevationsThread(ElevationLegList legs
       if(!fetchRouteElevations(elevations, geometry))
         return ElevationLegList();
 
+      if(elevations.isEmpty())
+        return ElevationLegList();
+
       // elevations.removeDuplicates();
 #ifdef DEBUG_INFORMATION_PROFILE
       qDebug() << Q_FUNC_INFO << "elevations" << elevations << atools::geo::meterToNm(elevations.lengthMeter());
@@ -2067,11 +2086,14 @@ ElevationLegList ProfileWidget::fetchRouteElevationsThread(ElevationLegList legs
       float distanceTo = altLeg.getDistanceTo();
       totalDistanceNm += distanceTo;
 
-      double lastDist = leg.distances.constLast();
-      if(!leg.distances.isEmpty() && atools::almostNotEqual(lastDist, totalDistanceNm))
-        // Accumulated distance is different from route total distance - adjust
-        // This can happen with the online elevation provider which does not return all points exactly on the leg
-        scale = totalDistanceNm / leg.distances.constLast();
+      if(!leg.distances.isEmpty())
+      {
+        double lastDist = leg.distances.constLast();
+        if(atools::almostNotEqual(lastDist, totalDistanceNm))
+          // Accumulated distance is different from route total distance - adjust
+          // This can happen with the online elevation provider which does not return all points exactly on the leg
+          scale = totalDistanceNm / leg.distances.constLast();
+      }
     }
     else
     {

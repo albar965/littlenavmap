@@ -78,6 +78,11 @@ public:
   /* Connect marble model or initializes GLOBE reader */
   void init(const Marble::ElevationModel *model);
 
+  bool isValid() const
+  {
+    return isGlobeOfflineProvider() || marbleModel != nullptr;
+  }
+
 signals:
   /*  Elevation tiles loaded. You will get more accurate results when querying height
    * for at least one that was queried before. Only sent for online data. */
