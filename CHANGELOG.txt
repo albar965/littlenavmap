@@ -4,7 +4,7 @@ This text is partially Markdown, hence sometimes strange formatting.
 
 ==>>=============================================================================
 
-# Version 2.8.11.rc2
+# Version 2.8.11.rc3
 
 ## Notes
 
@@ -23,7 +23,7 @@ Thanks a lot to [Harvey Walker](https://github.com/harveywalker500) for working 
 
 A big thank you to all who reported bugs and issues!
 
-## Changes from 2.8.10 to 2.8.11.rc2
+## Changes from 2.8.10 to 2.8.11.rc3
 
 ### Flight Plan and Export
 
