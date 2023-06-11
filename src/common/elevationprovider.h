@@ -73,6 +73,9 @@ public:
   /* True if directory is valid and contains at least one valid GLOBE file */
   static bool isGlobeDirectoryValid(const QString& path);
 
+  /* As above but uses the default path from settings */
+  static bool isGlobeDirValid();
+
   void optionsChanged();
 
   /* Connect marble model or initializes GLOBE reader */
@@ -90,7 +93,7 @@ signals:
 
 private:
   void marbleUpdateAvailable();
-  void updateReader();
+  void updateReader(bool startup);
 
   const Marble::ElevationModel *marbleModel = nullptr;
   atools::fs::common::GlobeReader *globeReader = nullptr;

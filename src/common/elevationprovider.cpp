@@ -17,9 +17,11 @@
 
 #include "common/elevationprovider.h"
 
+#include "common/constants.h"
 #include "geo/calculations.h"
 #include "navapp.h"
 #include "fs/common/globereader.h"
+#include "gui/helphandler.h"
 #include "options/optiondata.h"
 #include "geo/line.h"
 #include "geo/linestring.h"
@@ -29,6 +31,8 @@
 
 #include <marble/GeoDataCoordinates.h>
 #include <marble/ElevationModel.h>
+
+#include <QUrl>
 
 /* Limt altitude to this value */
 static Q_DECL_CONSTEXPR float ALTITUDE_LIMIT_METER = 8800.f;
@@ -155,6 +159,11 @@ bool ElevationProvider::isGlobeOfflineProvider() const
   return globeReader != nullptr && globeReader->isValid();
 }
 
+bool ElevationProvider::isGlobeDirValid()
+{
+  return isGlobeDirectoryValid(OptionData::instance().getOfflineElevationPath());
+}
+
 bool ElevationProvider::isGlobeDirectoryValid(const QString& path)
 {
   // Checks for files and more
@@ -163,7 +172,7 @@ bool ElevationProvider::isGlobeDirectoryValid(const QString& path)
 
 void ElevationProvider::optionsChanged()
 {
-  updateReader();
+  updateReader(false /* startup */);
 }
 
 void ElevationProvider::init(const Marble::ElevationModel *model)
@@ -173,19 +182,20 @@ void ElevationProvider::init(const Marble::ElevationModel *model)
   // Marble will let us know when updates are available
   if(marbleModel != nullptr)
     connect(marbleModel, &ElevationModel::updateAvailable, this, &ElevationProvider::marbleUpdateAvailable);
-  updateReader();
+  updateReader(true /* startup */);
 }
 
-void ElevationProvider::updateReader()
+void ElevationProvider::updateReader(bool startup)
 {
-  bool warnWrongGlobePath = false, warnOpenFiles = false;
+  bool warnWrongGlobePath = false, warnOpenFiles = false,
+       useOffline = OptionData::instance().getFlags().testFlag(opts::CACHE_USE_OFFLINE_ELEVATION);
   const QString& path = OptionData::instance().getOfflineElevationPath();
 
   {
     // Make sure to wait for other methods to finish before changing the reader
     QMutexLocker locker(&mutex);
 
-    if(OptionData::instance().getFlags().testFlag(opts::CACHE_USE_OFFLINE_ELEVATION))
+    if(useOffline)
     {
       if(!GlobeReader::isDirValid(path))
       {
@@ -217,12 +227,14 @@ void ElevationProvider::updateReader()
     }
   }
 
+  // Show this warning at startup and when changing options
   if(warnOpenFiles)
   {
     NavApp::closeSplashScreen();
     atools::gui::Dialog::warning(NavApp::getQMainWidget(), tr("Cannot open GLOBE data in directory<br/>\"%1\"").arg(path));
   }
 
+  // Show this warning at startup and when changing options
   if(warnWrongGlobePath)
   {
     // Warn outside the mutex lock to avoid deadlocks
@@ -233,6 +245,22 @@ void ElevationProvider::updateReader()
                                     "to page \"Cache and Files\". Then click \"Select GLOBE Directory\" and<br/>"
                                     "select the correct place with the GLOBE elevation files.",
                                     "Keep instructions in sync with translated menus").arg(path));
+  }
+
+  // Show this only on startup
+  if(!useOffline && startup)
+  {
+    NavApp::closeSplashScreen();
+    QUrl url = atools::gui::HelpHandler::getHelpUrlWeb(lnm::helpOnlineInstallGlobeUrl, lnm::helpLanguageOnline());
+    QString message = tr(
+      "<p>The online elevation data which is used by default for the elevation profile is limited and has a lot of errors.<br/>"
+      "Therefore, it is recommended to download and use the offline GLOBE elevation data which provides world wide coverage.</p>"
+      "<p>Go to the main menu -&gt; \"Tools\" -&gt; \"Options\" and then to page \"Cache and files\" to add the GLOBE data.</p>"
+        "<p><a href=\"%1\">Click here for more information in the Little Navmap online manual</a></p>",
+      "Keep instructions in sync with translated menus").arg(url.toString());
+
+    atools::gui::Dialog(NavApp::getQMainWidget()).showInfoMsgBox(lnm::ACTIONS_SHOW_INSTALL_GLOBE, message,
+                                                                 tr("Do not &show this dialog again."));
   }
 
   emit updateAvailable();

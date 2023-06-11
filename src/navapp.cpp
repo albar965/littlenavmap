@@ -1018,6 +1018,11 @@ bool NavApp::isGlobeOfflineProvider()
   return elevationProvider->isGlobeOfflineProvider();
 }
 
+bool NavApp::isGlobeDirValid()
+{
+  return elevationProvider->isGlobeDirValid();
+}
+
 WeatherReporter *NavApp::getWeatherReporter()
 {
   return mainWindow != nullptr ? mainWindow->getWeatherReporter() : nullptr;

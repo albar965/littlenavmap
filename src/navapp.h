@@ -294,6 +294,7 @@ public:
 
   static ElevationProvider *getElevationProvider();
   static bool isGlobeOfflineProvider();
+  static bool isGlobeDirValid();
 
   static WeatherReporter *getWeatherReporter();
   static atools::fs::weather::Metar getAirportWeather(const QString& airportIcao, const atools::geo::Pos& airportPos);
