@@ -160,7 +160,7 @@ QPixmap *UserdataIcons::getIconPixmap(const QString& type, int size, icon::TextP
     // NDB navaids have their label at the bottom - place user NDB on top
     if(type == "NDB")
       *textplacement = icon::ICON_LABEL_TOP;
-    else if(atools::contains(type, {"Airport", "Addon", "Airstrip", "Closed", "Helipad", "Seaport", "Waypoint"}))
+    else if(atools::contains(type, {"Airport", "Airstrip", "Closed", "Helipad", "Seaport", "Waypoint"}))
       // Airports and waypoints have their label at the right - place user at the left
       *textplacement = icon::ICON_LABEL_LEFT;
     // else if(atools::contains(type, {"VOR", "VORTAC", "VORDME", "TACAN", "DME"}))
