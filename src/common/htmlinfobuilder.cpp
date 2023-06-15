@@ -344,25 +344,20 @@ void HtmlInfoBuilder::airportText(const MapAirport& airport, const map::WeatherC
 
   if(airport.closed())
     facilities.append(tr("Closed"));
-
   if(airport.addon())
     facilities.append(tr("Add-on"));
   if(airport.is3d())
     facilities.append(tr("3D"));
   if(airport.flags.testFlag(AP_MIL))
     facilities.append(tr("Military"));
-
   if(airport.apron())
     facilities.append(tr("Aprons"));
   if(airport.taxiway())
     facilities.append(tr("Taxiways"));
-
   if(airport.towerObject())
     facilities.append(airport.xplane ? tr("Tower Viewpoint") : tr("Tower Object"));
-
   if(airport.parking())
     facilities.append(tr("Parking"));
-
   if(airport.helipad())
     facilities.append(tr("Helipads"));
 
@@ -378,22 +373,20 @@ void HtmlInfoBuilder::airportText(const MapAirport& airport, const map::WeatherC
 
   if(mapQuery->hasProcedures(airport))
     facilities.append(tr("Procedures"));
-
   if(airport.flags.testFlag(AP_ILS))
     facilities.append(tr("ILS"));
-
   if(airport.vasi())
     facilities.append(tr("VASI"));
   if(airport.als())
     facilities.append(tr("ALS"));
-
   if(airport.flatten == 1)
     facilities.append(tr("Flatten"));
   if(airport.flatten == 0)
     facilities.append(tr("No Flatten"));
-
   if(facilities.isEmpty())
     facilities.append(tr("None"));
+
+  facilities.sort();
 
   html.row2(info ? QString() : tr("Facilities:"), facilities.join(tr(", ")));
 
