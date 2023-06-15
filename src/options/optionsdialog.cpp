@@ -1932,7 +1932,8 @@ void OptionsDialog::widgetsToOptionData()
   data.unitAlt = static_cast<opts::UnitAlt>(ui->comboBoxOptionsUnitAlt->currentIndex());
   data.unitSpeed = static_cast<opts::UnitSpeed>(ui->comboBoxOptionsUnitSpeed->currentIndex());
   data.unitVertSpeed = static_cast<opts::UnitVertSpeed>(ui->comboBoxOptionsUnitVertSpeed->currentIndex());
-  data.unitCoords = static_cast<opts::UnitCoords>(ui->comboBoxOptionsUnitCoords->currentIndex());
+  data.unitCoords = atools::minmax(opts::COORDS_MIN, opts::COORDS_MAX,
+                                   static_cast<opts::UnitCoords>(ui->comboBoxOptionsUnitCoords->currentIndex()));
   data.unitFuelWeight = static_cast<opts::UnitFuelAndWeight>(ui->comboBoxOptionsUnitFuelWeight->currentIndex());
   data.altitudeRuleType = static_cast<opts::AltitudeRule>(ui->comboBoxOptionsRouteAltitudeRuleType->currentIndex());
 
@@ -2216,7 +2217,7 @@ void OptionsDialog::optionDataToWidgets(const OptionData& data)
   ui->comboBoxOptionsUnitAlt->setCurrentIndex(data.unitAlt);
   ui->comboBoxOptionsUnitSpeed->setCurrentIndex(data.unitSpeed);
   ui->comboBoxOptionsUnitVertSpeed->setCurrentIndex(data.unitVertSpeed);
-  ui->comboBoxOptionsUnitCoords->setCurrentIndex(data.unitCoords);
+  ui->comboBoxOptionsUnitCoords->setCurrentIndex(atools::minmax(opts::COORDS_MIN, opts::COORDS_MAX, data.unitCoords));
   ui->comboBoxOptionsUnitFuelWeight->setCurrentIndex(data.unitFuelWeight);
   ui->comboBoxOptionsRouteAltitudeRuleType->setCurrentIndex(data.altitudeRuleType);
 
