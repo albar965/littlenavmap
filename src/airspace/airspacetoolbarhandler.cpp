@@ -399,14 +399,15 @@ void AirspaceToolBarHandler::altSliderChanged()
 
 void AirspaceToolBarHandler::createToolButtons()
 {
+  createAirspaceToolButton(nullptr, ":/littlenavmap/resources/icons/airspacealt.svg",
+                           tr("Select altitude limitations for airspace display"),
+                           {}, {map::AIRSPACE_ALTITUDE_ALL, map::AIRSPACE_ALTITUDE_FLIGHTPLAN, map::AIRSPACE_ALTITUDE_SET},
+                           true /* groupActions */, true /* minMaxAltitude */);
+
   createAirspaceToolButton(buttonHandlerIcao, ":/littlenavmap/resources/icons/airspaceicao.svg",
                            tr("Select ICAO airspaces"),
                            {map::CLASS_A, map::CLASS_B, map::CLASS_C, map::CLASS_D, map::CLASS_E,
                             map::CLASS_F, map::CLASS_G}, {});
-
-  createAirspaceToolButton(buttonHandlerFir, ":/littlenavmap/resources/icons/airspacefir.svg",
-                           tr("Select FIR airspaces"),
-                           {map::FIR, map::UIR}, {});
 
   createAirspaceToolButton(buttonHandlerRestricted, ":/littlenavmap/resources/icons/airspacerestr.svg",
                            tr("Select MOA, restricted, prohibited and danger airspaces"),
@@ -422,10 +423,9 @@ void AirspaceToolBarHandler::createToolButtons()
                             map::DEPARTURE, map::APPROACH, map::NATIONAL_PARK, map::MODEC, map::RADAR, map::WAVEWINDOW,
                             map::ONLINE_OBSERVER}, {});
 
-  createAirspaceToolButton(nullptr, ":/littlenavmap/resources/icons/airspacealt.svg",
-                           tr("Select altitude limitations for airspace display"),
-                           {}, {map::AIRSPACE_ALTITUDE_ALL, map::AIRSPACE_ALTITUDE_FLIGHTPLAN, map::AIRSPACE_ALTITUDE_SET},
-                           true /* groupActions */, true /* minMaxAltitude */);
+  createAirspaceToolButton(buttonHandlerFir, ":/littlenavmap/resources/icons/airspacefir.svg",
+                           tr("Select FIR airspaces"),
+                           {map::FIR, map::UIR}, {});
 }
 
 void AirspaceToolBarHandler::createAirspaceToolButton(atools::gui::ActionButtonHandler *buttonHandler, const QString& icon,
