@@ -23,7 +23,7 @@ set /p FILENAMETEMP=<"%APROJECTS%\deploy\Little Navmap %WINARCH%\version.txt"
 set FILENAME_LNM=%FILENAMETEMP: =%
 set FILENAME_LNM_RELEASE=LittleNavmap-%FILENAME_LNM%
 
-rm /Q /S "%APROJECTS%\deploy\%FILENAME_LNM_RELEASE%"
+rmdir /Q /S "%APROJECTS%\deploy\%FILENAME_LNM_RELEASE%"
 xcopy /i /s /e /f /y "%APROJECTS%\deploy\Little Navmap %WINARCH%" "%APROJECTS%\deploy\%FILENAME_LNM_RELEASE%"
 IF ERRORLEVEL 1 goto :err
 
@@ -48,7 +48,7 @@ rem ===========================================================================
 rem ==== Pack Little Navmap ===================================================
 del "%APROJECTS%\deploy\%FILENAME_LNM_RELEASE%.zip"
 
-"C:\Program Files\7-Zip\7z.exe" a "%APROJECTS%\deploy\%FILENAME_LNM_RELEASE%.zip" "%APROJECTS%\deploy\%FILENAME_LNM_RELEASE%"
+"C:\Program Files\7-Zip\7z.exe" -mx9 a "%APROJECTS%\deploy\%FILENAME_LNM_RELEASE%.zip" "%APROJECTS%\deploy\%FILENAME_LNM_RELEASE%"
 IF ERRORLEVEL 1 goto :err
 
 "C:\Program Files\Windows Defender\MpCmdRun.exe" -Scan -ScanType 3 -DisableRemediation -File "%APROJECTS%\deploy\%FILENAME_LNM_RELEASE%.zip"
