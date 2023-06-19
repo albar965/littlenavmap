@@ -748,10 +748,10 @@ void DatabaseManager::insertSimSwitchActions()
     navDbSubMenu->setToolTipsVisible(NavApp::isMenuToolTipsVisible());
     navDbGroup = new QActionGroup(navDbSubMenu);
 
-    navDbActionAuto = new QAction(tr("&Select Automatically").arg(dbname), navDbSubMenu);
+    navDbActionAuto = new QAction(tr("&Select Automatically"), navDbSubMenu);
     navDbActionAuto->setCheckable(true);
     navDbActionAuto->setChecked(navDatabaseAuto);
-    navDbActionAuto->setStatusTip(tr("Select best navdata mode for simulator").arg(dbname));
+    navDbActionAuto->setStatusTip(tr("Select best navdata mode for simulator"));
     navDbSubMenu->addAction(navDbActionAuto);
     navDbSubMenu->addSeparator();
 

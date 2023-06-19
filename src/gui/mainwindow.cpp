@@ -1059,7 +1059,6 @@ void MainWindow::connectAllSlots()
   connect(styleHandler, &StyleHandler::styleChanged, profileWidget, &ProfileWidget::styleChanged);
   connect(styleHandler, &StyleHandler::styleChanged, perfController, &AircraftPerfController::optionsChanged);
   connect(styleHandler, &StyleHandler::styleChanged, infoController, &InfoController::styleChanged);
-  connect(styleHandler, &StyleHandler::styleChanged, routeStringDialog, &RouteStringDialog::styleChanged);
   connect(styleHandler, &StyleHandler::styleChanged, optionsDialog, &OptionsDialog::styleChanged);
   connect(styleHandler, &StyleHandler::styleChanged, this, &MainWindow::updateStatusBarStyle);
 
@@ -2164,6 +2163,7 @@ void MainWindow::routeFromStringCurrent()
     // Connect signals from and to non-modal dialog
     connect(routeStringDialog, &RouteStringDialog::routeFromFlightplan, this, &MainWindow::routeFromFlightplan);
     connect(routeController, &RouteController::routeChanged, routeStringDialog, &RouteStringDialog::updateButtonState);
+    connect(NavApp::getStyleHandler(), &StyleHandler::styleChanged, routeStringDialog, &RouteStringDialog::styleChanged);
   }
 
   routeStringDialog->show();
