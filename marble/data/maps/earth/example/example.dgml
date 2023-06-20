@@ -7,6 +7,11 @@
        https://techbase.kde.org/Marble/OSMSlippyMaps for more information.
 
        All tags in these files are case sensitive.
+
+       Note:
+       The file ".../0/0/0.png" has to exist. It can be empty but has to match the format
+       given in <sourcedir format="FORMAT"> where FORMAT is JPG or PNG
+       and the tile size given <tileSize height="256" width="256"/>
        ================================================================================================ -->
   <document>
 
