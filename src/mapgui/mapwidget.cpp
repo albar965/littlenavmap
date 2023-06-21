@@ -2338,6 +2338,24 @@ void MapWidget::resetTakeoffLandingDetection()
   takeoffTimeSim = QDateTime();
 }
 
+void MapWidget::showGridConfiguration()
+{
+  qDebug() << Q_FUNC_INFO;
+
+  // Look through all render plugins and look for GraticulePlugin
+  for(Marble::RenderPlugin *plugin : renderPlugins())
+  {
+    if(plugin->nameId() == "coordinate-grid")
+    {
+      // Get configuration dialog - settings will be saved by the plugin
+      QDialog *configDialog = plugin->configDialog();
+      if(configDialog != nullptr)
+        configDialog->exec();
+      break;
+    }
+  }
+}
+
 void MapWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorData)
 {
   using atools::almostNotEqual;

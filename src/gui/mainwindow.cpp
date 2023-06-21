@@ -1547,6 +1547,7 @@ void MainWindow::connectAllSlots()
   connect(ui->actionMapJumpCoordinatesMain, &QAction::triggered, mapWidget, &MapWidget::jumpCoordinates);
   connect(ui->actionMapAircraftCenter, &QAction::toggled, mapWidget, &MapPaintWidget::showAircraft);
   connect(ui->actionMapAircraftCenterNow, &QAction::triggered, mapWidget, &MapPaintWidget::showAircraftNow);
+  connect(ui->actionMapShowGridConfig, &QAction::triggered, mapWidget, &MapWidget::showGridConfiguration);
 
   // Update jump back
   connect(ui->actionMapAircraftCenter, &QAction::toggled, mapWidget, &MapPaintWidget::jumpBackToAircraftCancel);

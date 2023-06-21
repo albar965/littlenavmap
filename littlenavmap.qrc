@@ -325,5 +325,6 @@
         <file>resources/icons/aircraft_unknown.svg</file>
         <file>resources/icons/userpoint_Addon.svg</file>
         <file>resources/icons/airportmil.svg</file>
+        <file>resources/icons/mapgridconfig.svg</file>
     </qresource>
 </RCC>
