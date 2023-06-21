@@ -260,7 +260,10 @@ QString UserdataSearch::formatModelData(const Column *col, const QVariant& displ
   // Called directly by the model for export functions
   if(col->getColumnName() == "altitude")
     return !displayRoleValue.isNull() && displayRoleValue.toFloat() < map::INVALID_ALTITUDE_VALUE ?
-           Unit::altFeet(displayRoleValue.toFloat(), false) : QString();
+           Unit::altFeet(displayRoleValue.toFloat(), false /* addUnit */, false /* narrow */, 1.f) : QString();
+  else if(col->getColumnName() == "visible_from")
+    return !displayRoleValue.isNull() && displayRoleValue.toFloat() < map::INVALID_DISTANCE_VALUE ?
+           Unit::distNm(displayRoleValue.toFloat(), false /* addUnit */, false /* narrow */, 1.f) : QString();
   else if(col->getColumnName() == "lonx")
     return Unit::coordsLonX(atools::geo::Pos(displayRoleValue.toFloat(), 0.f));
   else if(col->getColumnName() == "laty")
