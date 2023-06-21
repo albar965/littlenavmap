@@ -138,10 +138,10 @@ void MapThemeHandler::loadThemes()
                          arg(errors.join("</li><li>")).arg(errors.size() == 1 ? tr("this map theme") : tr("these map themes")));
   }
 
-  // Sort themes first by online/offline status and then by name
+  // Sort themes first by online/offline status and then case insensitive by name
   std::sort(themes.begin(), themes.end(), [](const MapTheme& t1, const MapTheme& t2) {
     if(t1.online == t2.online)
-      return t1.name.compare(t2.name) < 0;
+      return t1.name.compare(t2.name, Qt::CaseInsensitive) < 0;
     else
       return t1.online > t2.online;
   });
