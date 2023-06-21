@@ -293,7 +293,7 @@ void UserdataDialog::recordToDialog()
   }
 
   if(!record->isNull("visible_from"))
-    ui->spinBoxUserdataVisible->setValue(atools::roundToInt(Unit::distNmF(record->valueInt("visible_from"))));
+    ui->spinBoxUserdataVisible->setValue(atools::roundToInt(Unit::distNmF(record->valueFloat("visible_from"))));
   else
     ui->spinBoxUserdataVisible->setValue(atools::roundToInt(defaultDistValue()));
 
