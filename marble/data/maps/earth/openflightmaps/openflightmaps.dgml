@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dgml xmlns="http://edu.kde.org/marble/dgml/2.0">
+  <!-- https://techbase.kde.org/Marble/CustomMaps -->
+  <!--
+    This xml file is free software licensed under the GNU LGPL. You can
+    find a copy of this license in LICENSE.txt in the top directory of
+    the source code.
+
+    This is a modified version of the open flightmaps (https://www.openflightmaps.org/) theme by
+    @AmbitiousPilots (https://github.com/AmbitiousPilots/LittleNavmapOFMTheme) including changes
+    from @b-faller (https://github.com/b-faller).
+
+    This theme requires Little Navmap version 2.8.12 or above to work.
+  -->
+  <document>
+    <head>
+      <name>open flightmaps</name>
+      <target>earth</target>
+      <theme>openflightmaps</theme>
+      <visible>true</visible>
+      <license short="© open flightmaps">open flightmaps and Open Flight Maps Database (OFMDb) under the OFMA General Users License</license>
+      <description><![CDATA[<p>High quality VFR maps provided by the open flightmaps association (OFMA).</p>]]></description>
+      <icon pixmap="openflightmaps.png"/>
+      <zoom>
+        <discrete>true</discrete>
+        <minimum>900</minimum>
+        <maximum>3500</maximum>
+      </zoom>
+    </head>
+    <map bgcolor="#ffffff">
+      <canvas/>
+      <target/>
+      <layer name="openflightmaps" backend="texture">
+        <texture name="base" expire="86400"> <!-- Expire after a day to avoid issues when the map is updated -->
+          <sourcedir format="JPG">earth/openflightmaps/base</sourcedir>
+          <tileSize width="512" height="512"/>
+          <storageLayout levelZeroColumns="1" levelZeroRows="1" minimumTileLevel="7" maximumTileLevel="12" mode="Custom"/>
+          <projection name="Mercator"/>
+          <downloadUrl protocol="https" host="nwy-tiles-api.prod.newaydata.com" path="/tiles/{zoomLevel}/{x}/{y}.jpg" query="path=latest/base/latest"/>
+          <downloadPolicy usage="Browse" maximumConnections="20"/>
+          <downloadPolicy usage="Bulk" maximumConnections="2"/>
+        </texture>
+        <texture name="aero" expire="86400">
+          <sourcedir format="PNG">earth/openflightmaps/aero</sourcedir>
+          <tileSize width="512" height="512"/>
+          <storageLayout levelZeroColumns="1" levelZeroRows="1" minimumTileLevel="7" maximumTileLevel="12" mode="Custom"/>
+          <projection name="Mercator"/>
+          <downloadUrl protocol="https" host="nwy-tiles-api.prod.newaydata.com" path="/tiles/{zoomLevel}/{x}/{y}.png" query="path=latest/aero/latest"/>
+          <downloadPolicy usage="Browse" maximumConnections="20"/>
+          <downloadPolicy usage="Bulk" maximumConnections="2"/>
+          <blending name="OverpaintBlending"/>
+        </texture>
+      </layer>
+    </map>
+  </document>
+</dgml>

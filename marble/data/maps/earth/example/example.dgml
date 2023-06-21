@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <dgml xmlns="http://edu.kde.org/marble/dgml/2.0">
+  <!-- This xml file is free software licensed under the GNU LGPL. You can
+       find a copy of this license in LICENSE.txt in the top directory of
+       the source code. -->
   <!-- ================================================================================================
        Documented example DGML file explaining special fields used by Little Navmap.
        See also https://www.littlenavmap.org/manuals/littlenavmap/release/latest/en/MAPTHEMES.html,
@@ -18,7 +21,8 @@
     <!-- ================================================================================================ -->
     <!-- Header -->
     <head>
-      <!-- The license here applies to the actual map content, not this dgml file. See the license header above for the dgml file license
+      <!-- The license here applies to the actual map content, not this dgml file.
+           See the license header above for the dgml file license
            The content that this license refers to is not distributed with this package.
            The short copyright message is always shown on the map -->
       <license short="© OpenStreetMap contributors">Source: © OpenStreetMap contributors, License: Creative Commons Attribution-ShareAlike 2.0 (CC BY-SA)</license>
