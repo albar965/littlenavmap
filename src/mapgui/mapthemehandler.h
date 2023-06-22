@@ -157,7 +157,8 @@ private:
   friend QDebug operator<<(QDebug out, const MapTheme& theme);
 
   int index = -1;
-  QString dgmlFilepath, name, copyright, theme, target, urlName, urlRef, sourceDir;
+  QString dgmlFilepath, name, copyright, theme, target, urlName, urlRef;
+  QStringList sourceDirs;
   QStringList keys;
   bool textureLayer = false, geodataLayer = false, discrete = false, visible = false, online = false;
 };

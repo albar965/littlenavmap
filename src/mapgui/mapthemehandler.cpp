@@ -78,12 +78,12 @@ void MapThemeHandler::loadThemes()
         continue;
       }
 
-      if(theme.online && sourceDirs.contains(theme.sourceDir))
+      if(theme.online && sourceDirs.intersects(QSet<QString>(theme.sourceDirs.begin(), theme.sourceDirs.end())))
       {
         errors.append(tr("Duplicate source directory \"%1\" in element \"&lt;sourcedir&gt;\".<br/>"
                          "File \"%2\".<br/>"
                          "Source directories are used to cache map tiles and have to be unique across all map themes.").
-                      arg(theme.sourceDir).arg(theme.dgmlFilepath));
+                      arg(theme.sourceDirs.join(tr(("/")))).arg(theme.dgmlFilepath));
         continue;
       }
 
@@ -94,7 +94,7 @@ void MapThemeHandler::loadThemes()
         continue;
       }
 
-      if(theme.online && theme.sourceDir.isEmpty())
+      if(theme.online && theme.sourceDirs.isEmpty())
       {
         errors.append(tr("Empty source directory in in element \"&lt;sourcedir&gt;\".<br/>"
                          "File \"%1\".").arg(theme.dgmlFilepath));
@@ -110,7 +110,8 @@ void MapThemeHandler::loadThemes()
       }
 
       ids.insert(theme.theme);
-      sourceDirs.insert(theme.sourceDir);
+      for(const QString& dir : theme.sourceDirs)
+        sourceDirs.insert(dir);
 
       qInfo() << Q_FUNC_INFO << "Found" << theme.theme << theme.name;
 
@@ -137,10 +138,10 @@ void MapThemeHandler::loadThemes()
                          arg(errors.join("</li><li>")).arg(errors.size() == 1 ? tr("this map theme") : tr("these map themes")));
   }
 
-  // Sort themes first by online/offline status and then by name
+  // Sort themes first by online/offline status and then case insensitive by name
   std::sort(themes.begin(), themes.end(), [](const MapTheme& t1, const MapTheme& t2) {
     if(t1.online == t2.online)
-      return t1.name.compare(t2.name) < 0;
+      return t1.name.compare(t2.name, Qt::CaseInsensitive) < 0;
     else
       return t1.online > t2.online;
   });
@@ -432,11 +433,11 @@ MapTheme MapThemeHandler::loadTheme(const QFileInfo& dgml)
                   else if(reader.name() == "sourcedir")
                   {
 #if defined(Q_OS_WIN32)
-                    theme.sourceDir = reader.readElementText().trimmed().toLower().replace('/', QDir::separator());
+                    theme.sourceDirs.appned(reader.readElementText().trimmed().toLower().replace('/', QDir::separator()));
 #elif defined(Q_OS_MACOS)
-                    theme.sourceDir = reader.readElementText().trimmed().toLower().replace('\\', QDir::separator());
+                    theme.sourceDirs.append(reader.readElementText().trimmed().toLower().replace('\\', QDir::separator()));
 #else
-                    theme.sourceDir = reader.readElementText().trimmed().replace('\\', QDir::separator());
+                    theme.sourceDirs.append(reader.readElementText().trimmed().replace('\\', QDir::separator()));
 #endif
                   }
                   else
@@ -471,6 +472,8 @@ MapTheme MapThemeHandler::loadTheme(const QFileInfo& dgml)
   qDebug() << Q_FUNC_INFO << theme;
 #endif
 
+  theme.sourceDirs.removeAll(QString());
+  theme.sourceDirs.sort();
   return theme;
 }
 
@@ -524,7 +527,7 @@ QDebug operator<<(QDebug out, const MapTheme& theme)
       << "index" << theme.index
       << "urlName" << theme.urlName
       << "urlRef" << theme.urlRef
-      << "sourceDir" << theme.sourceDir
+      << "sourceDirs" << theme.sourceDirs
       << "dgmlFilepath" << theme.dgmlFilepath
       << "name" << theme.name
       << "copyright" << theme.copyright

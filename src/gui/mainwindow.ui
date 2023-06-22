@@ -414,15 +414,21 @@
       <string>User &amp;Features</string>
      </property>
     </widget>
+    <widget class="QMenu" name="menuAircraft">
+     <property name="title">
+      <string>&amp;AI and Online Aircraft</string>
+     </property>
+     <addaction name="actionMapShowAircraftAi"/>
+     <addaction name="actionMapShowAircraftOnline"/>
+     <addaction name="actionMapShowAircraftAiBoat"/>
+    </widget>
+    <addaction name="separator"/>
     <addaction name="actionMapResetSettings"/>
     <addaction name="separator"/>
     <addaction name="menuViewAirport"/>
     <addaction name="menuViewNavaids"/>
-    <addaction name="separator"/>
     <addaction name="menuViewAirspaces"/>
-    <addaction name="separator"/>
     <addaction name="menuViewUserFeatures"/>
-    <addaction name="separator"/>
     <addaction name="menuViewUserpoints"/>
     <addaction name="separator"/>
     <addaction name="actionMapShowRoute"/>
@@ -439,11 +445,11 @@
     <addaction name="actionMapShowCompassRose"/>
     <addaction name="actionMapShowCompassRoseAttach"/>
     <addaction name="separator"/>
-    <addaction name="actionMapShowAircraftAi"/>
-    <addaction name="actionMapShowAircraftOnline"/>
-    <addaction name="actionMapShowAircraftAiBoat"/>
+    <addaction name="menuAircraft"/>
     <addaction name="separator"/>
     <addaction name="actionMapShowGrid"/>
+    <addaction name="actionMapShowGridConfig"/>
+    <addaction name="separator"/>
     <addaction name="actionMapShowCities"/>
     <addaction name="actionMapShowMinimumAltitude"/>
     <addaction name="separator"/>
@@ -11969,6 +11975,24 @@ relation to shown airport</string>
    </property>
    <property name="statusTip">
     <string>Create a userpoint highlighting the airport as add-on</string>
+   </property>
+  </action>
+  <action name="actionMapShowGridConfig">
+   <property name="checked">
+    <bool>false</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/mapgridconfig.svg</normaloff>:/littlenavmap/resources/icons/mapgridconfig.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Show Map Grid &amp;Configuration ...</string>
+   </property>
+   <property name="toolTip">
+    <string>Show map grid configuration</string>
+   </property>
+   <property name="statusTip">
+    <string>Show map grid</string>
    </property>
   </action>
  </widget>

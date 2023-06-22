@@ -241,6 +241,8 @@ public:
     return currentDistanceMarkerId;
   }
 
+  void showGridConfiguration();
+
 signals:
   /* Fuel flow started or stopped */
   void aircraftEngineStarted(const atools::fs::sc::SimConnectUserAircraft& aircraft);
