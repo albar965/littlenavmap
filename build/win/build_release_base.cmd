@@ -33,13 +33,13 @@ rmdir /s/q "%APROJECTS%\build-atools-%CONF_TYPE%"
 mkdir "%APROJECTS%\build-atools-%CONF_TYPE%"
 
 pushd "%APROJECTS%\build-atools-%CONF_TYPE%"
-IF ERRORLEVEL 1 goto :err
+if errorlevel 1 goto :err
 
 qmake.exe "%APROJECTS%\atools\atools.pro" -spec win32-g++ CONFIG+=%CONF_TYPE%
-IF ERRORLEVEL 1 goto :err
+if errorlevel 1 goto :err
 
 mingw32-make.exe -j4
-IF ERRORLEVEL 1 goto :err
+if errorlevel 1 goto :err
 
 popd
 
@@ -51,16 +51,16 @@ rmdir /s/q "%APROJECTS%\build-littlenavconnect-%CONF_TYPE%"
 mkdir "%APROJECTS%\build-littlenavconnect-%CONF_TYPE%"
 
 pushd "%APROJECTS%\build-littlenavconnect-%CONF_TYPE%"
-IF ERRORLEVEL 1 goto :err
+if errorlevel 1 goto :err
 
 qmake.exe "%APROJECTS%\littlenavconnect\littlenavconnect.pro" -spec win32-g++ CONFIG+=%CONF_TYPE%
-IF ERRORLEVEL 1 goto :err
+if errorlevel 1 goto :err
 
 mingw32-make.exe -j4
-IF ERRORLEVEL 1 goto :err
+if errorlevel 1 goto :err
 
 mingw32-make.exe deploy
-IF ERRORLEVEL 1 goto :err
+if errorlevel 1 goto :err
 
 popd
 
@@ -72,16 +72,16 @@ rmdir /s/q "%APROJECTS%\build-littlenavmap-%CONF_TYPE%"
 mkdir "%APROJECTS%\build-littlenavmap-%CONF_TYPE%"
 
 pushd "%APROJECTS%\build-littlenavmap-%CONF_TYPE%"
-IF ERRORLEVEL 1 goto :err
+if errorlevel 1 goto :err
 
 qmake.exe "%APROJECTS%\littlenavmap\littlenavmap.pro" -spec win32-g++ CONFIG+=%CONF_TYPE%
-IF ERRORLEVEL 1 goto :err
+if errorlevel 1 goto :err
 
 mingw32-make.exe -j4
-IF ERRORLEVEL 1 goto :err
+if errorlevel 1 goto :err
 
 mingw32-make.exe deploy
-IF ERRORLEVEL 1 goto :err
+if errorlevel 1 goto :err
 
 popd
 endlocal

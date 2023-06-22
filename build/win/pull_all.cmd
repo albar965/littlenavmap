@@ -12,22 +12,22 @@ rem === Pull from atools, littlenavconnect, littlexpconnect and littlenavmap rep
 
 pushd "%APROJECTS%\atools"
 "%ATOOLS_GIT_PATH%" pull --verbose  --tags
-IF ERRORLEVEL 1 goto :err
+if errorlevel 1 goto :err
 popd
 
 pushd "%APROJECTS%\littlenavconnect"
 "%ATOOLS_GIT_PATH%" pull  --verbose  --tags
-IF ERRORLEVEL 1 goto :err
+if errorlevel 1 goto :err
 popd
 
 pushd "%APROJECTS%\littlexpconnect"
 "%ATOOLS_GIT_PATH%" pull  --verbose  --tags
-IF ERRORLEVEL 1 goto :err
+if errorlevel 1 goto :err
 popd
 
 pushd "%APROJECTS%\littlenavmap"
 "%ATOOLS_GIT_PATH%" pull  --verbose  --tags
-IF ERRORLEVEL 1 goto :err
+if errorlevel 1 goto :err
 popd
 
 echo ---- Success ----

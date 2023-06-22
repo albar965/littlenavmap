@@ -13,16 +13,16 @@ rem === Pull, build and deploy atools, littlenavconnect and littlenavmap =======
 set WINARCH=win64
 
 call pull_all.cmd nopause
-IF ERRORLEVEL 1 goto :err
+if errorlevel 1 goto :err
 
 call build_release_64.cmd nopause
-IF ERRORLEVEL 1 goto :err
+if errorlevel 1 goto :err
 
 call build_release_xpconnect.cmd nopause
-IF ERRORLEVEL 1 goto :err
+if errorlevel 1 goto :err
 
 call pack_deploy.cmd nopause
-IF ERRORLEVEL 1 goto :err
+if errorlevel 1 goto :err
 
 call build_clean.cmd nopause
 

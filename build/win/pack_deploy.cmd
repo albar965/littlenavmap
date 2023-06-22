@@ -15,7 +15,7 @@ rem set SSH_DEPLOY_TARGET=user@host:/data/alex/Public/Releases
 rem === Deploy built programs. ZIP, check with Windows Defender and copy them to network shares =============================
 
 pushd "%APROJECTS%\deploy"
-IF ERRORLEVEL 1 goto :err
+if errorlevel 1 goto :err
 
 rem Get file version number and remove spaces from variable
 rem LittleNavmap-win32-2.8.2.beta.zip
@@ -25,23 +25,23 @@ set FILENAME_LNM_RELEASE=LittleNavmap-%FILENAME_LNM%
 
 rmdir /Q /S "%APROJECTS%\deploy\%FILENAME_LNM_RELEASE%"
 xcopy /i /s /e /f /y "%APROJECTS%\deploy\Little Navmap %WINARCH%" "%APROJECTS%\deploy\%FILENAME_LNM_RELEASE%"
-IF ERRORLEVEL 1 goto :err
+if errorlevel 1 goto :err
 
 rem ===========================================================================
 rem Copy navconnect ===========================================================
 xcopy /i /s /e /f /y "%APROJECTS%\deploy\Little Navconnect %WINARCH%" "%APROJECTS%\deploy\%FILENAME_LNM_RELEASE%\Little Navconnect"
-IF ERRORLEVEL 1 goto :err
+if errorlevel 1 goto :err
 
 rem ===========================================================================
 rem Copy xpconnect ============================================================
 xcopy /i /s /e /f /y "%APROJECTS%\deploy\Little Xpconnect" "%APROJECTS%\deploy\%FILENAME_LNM_RELEASE%\Little Xpconnect"
-IF ERRORLEVEL 1 goto :err
+if errorlevel 1 goto :err
 
 rem ===========================================================================
 rem ==== Build installer ======================================================
 popd
 call build_installer.cmd nopause
-IF ERRORLEVEL 1 goto :err
+if errorlevel 1 goto :err
 pushd "%APROJECTS%\deploy"
 
 rem ===========================================================================
@@ -49,13 +49,13 @@ rem ==== Pack Little Navmap ===================================================
 del "%APROJECTS%\deploy\%FILENAME_LNM_RELEASE%.zip"
 
 "C:\Program Files\7-Zip\7z.exe" -mx9 a "%APROJECTS%\deploy\%FILENAME_LNM_RELEASE%.zip" "%APROJECTS%\deploy\%FILENAME_LNM_RELEASE%"
-IF ERRORLEVEL 1 goto :err
+if errorlevel 1 goto :err
 
 "C:\Program Files\Windows Defender\MpCmdRun.exe" -Scan -ScanType 3 -DisableRemediation -File "%APROJECTS%\deploy\%FILENAME_LNM_RELEASE%.zip"
-IF ERRORLEVEL 1 goto :err
+if errorlevel 1 goto :err
 
 "C:\Program Files\Windows Defender\MpCmdRun.exe" -Scan -ScanType 3 -DisableRemediation -File "%APROJECTS%\deploy\%FILENAME_LNM_RELEASE%-Install.exe"
-IF ERRORLEVEL 1 goto :err
+if errorlevel 1 goto :err
 
 rem ===========================================================================
 rem ==== Copy all =============================================================

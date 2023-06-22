@@ -52,7 +52,7 @@ rem Defines the used Qt for all builds
 if defined PATH_SHARED ( echo PATH_SHARED=%PATH_SHARED% ) else ( set PATH_SHARED=C:\Qt\5.15.2\mingw81_32\bin;C:\Qt\Tools\mingw810_32\bin)
 
 call build_release_base.cmd nopause
-IF ERRORLEVEL 1 goto :err
+if errorlevel 1 goto :err
 
 echo ---- Success ----
 
