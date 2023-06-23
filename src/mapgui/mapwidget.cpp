@@ -2978,8 +2978,8 @@ void MapWidget::saveState()
 
   history.saveState(atools::settings::Settings::getConfigFilename(".history"));
   getScreenIndexConst()->saveState();
-  aircraftTrack->saveState(".track");
-  aircraftTrackLogbook->saveState(".logbooktrack");
+  aircraftTrack->saveState(".track", 2 /* numBackups */);
+  aircraftTrackLogbook->saveState(".logbooktrack", 0 /* numBackups */);
 
   overlayStateToMenu();
   atools::gui::WidgetState state(lnm::MAP_OVERLAY_VISIBLE, false /*save visibility*/, true /*block signals*/);
@@ -3829,7 +3829,7 @@ void MapWidget::debugMovingPlane(QMouseEvent *event)
       }
       else
       {
-        float maxDist = helicopter ? 0.5f : 2.f;
+        float maxDist = helicopter ? 0.5f : 1.f;
         float distanceFromStart = route.getDistanceFromStart(pos);
         ground = distanceFromStart<maxDist || distanceFromStart> route.getTotalDistance() - maxDist;
 

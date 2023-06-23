@@ -116,8 +116,8 @@ public:
 
   AircraftTrack& operator=(const AircraftTrack& other);
 
-  /* Saves and restores track into a separate file (little_navmap.track) */
-  void saveState(const QString& suffix);
+  /* Saves and restores track into a separate file (little_navmap.track). Creates two additional backup files. */
+  void saveState(const QString& suffix, int numBackupFiles);
   void restoreState(const QString& suffix);
 
   void clearTrack();
@@ -129,6 +129,7 @@ public:
    */
   bool appendTrackPos(const atools::fs::sc::SimConnectUserAircraft& userAircraft, bool allowSplit);
 
+  /* Get maximum altitude in all track points */
   float getMaxAltitude() const;
 
   /* Copies the coordinates from the structs to a list of linestrings.
@@ -158,28 +159,8 @@ public:
 private:
   friend QDataStream& at::operator>>(QDataStream& dataStream, at::AircraftTrackPos& trackPos);
 
-  /* Insert an invalid position as an break indicator if aircraft jumps too far on ground. */
-  static const int MAX_POINT_DISTANCE_NM = 5;
-
   /* Maximum number of track points. If exceeded entries will be removed from beginning of the list */
   int maxTrackEntries = 20000;
-  /* Number of entries to remove at once */
-  static const int PRUNE_TRACK_ENTRIES = 200;
-
-  /* Minimum time difference between recordings */
-  static const int MIN_POSITION_TIME_DIFF_MS = 1000;
-  static const int MIN_POSITION_TIME_DIFF_GROUND_MS = 250;
-
-  static const quint32 FILE_MAGIC_NUMBER = 0x5B6C1A2B;
-
-  /* Version 2 to adds timstamp and single floating point precision. Uses 32-bit second timestamps */
-  static const quint16 FILE_VERSION_OLD = 2;
-
-  /* Version 3 adds 64-bit millisecond values */
-  static const quint16 FILE_VERSION_64BIT_TS = 3;
-
-  /* Version 4 adds double floating point precision */
-  static const quint16 FILE_VERSION_64BIT_COORDS = 4;
 
   atools::fs::sc::SimConnectUserAircraft *lastUserAircraft;
 
