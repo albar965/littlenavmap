@@ -325,6 +325,7 @@ int main(int argc, char *argv[])
               << "DPI x" << screen->logicalDotsPerInchX()
               << "y" << screen->logicalDotsPerInchX();
 
+    // Start settings and file migration
     migrate::checkAndMigrateSettings();
 
     Settings& settings = Settings::instance();

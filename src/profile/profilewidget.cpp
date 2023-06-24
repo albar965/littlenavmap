@@ -2775,7 +2775,7 @@ void ProfileWidget::updateErrorLabel()
 
 void ProfileWidget::saveAircraftTrack()
 {
-  QFile trackFile(atools::settings::Settings::getConfigFilename("_profile.track"));
+  QFile trackFile(atools::settings::Settings::getConfigFilename(lnm::PROFILE_TRACK_SUFFIX));
 
   if(trackFile.open(QIODevice::WriteOnly))
   {
@@ -2791,7 +2791,7 @@ void ProfileWidget::saveAircraftTrack()
 
 void ProfileWidget::loadAircraftTrack()
 {
-  QFile trackFile(atools::settings::Settings::getConfigFilename("_profile.track"));
+  QFile trackFile(atools::settings::Settings::getConfigFilename(lnm::PROFILE_TRACK_SUFFIX));
   if(trackFile.exists())
   {
     if(trackFile.open(QIODevice::ReadOnly))

@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -17,11 +17,12 @@
 
 #include "common/settingsmigrate.h"
 
-#include "settings/settings.h"
 #include "common/constants.h"
-#include "util/version.h"
-#include "options/optiondata.h"
 #include "gui/messagesettings.h"
+#include "options/optiondata.h"
+#include "settings/settings.h"
+#include "util/version.h"
+#include "io/fileroller.h"
 
 #include <QApplication>
 #include <QDebug>
@@ -58,10 +59,15 @@ void removeAndLog(const QString& key)
   removeAndLog(Settings::getQSettings(), key);
 }
 
+void backupFileAndLog(const QString& filename)
+{
+  qDebug() << Q_FUNC_INFO << "Backing up" << filename;
+  atools::io::FileRoller(3, "${base}.${ext}_update-backup.${num}", true /* keepOriginalFile */).rollFile(filename);
+}
+
 void checkAndMigrateSettings()
 {
   Settings& settings = Settings::instance();
-  QSettings mapstyleSettings(atools::settings::Settings::getConfigFilename("_mapstyle.ini"), QSettings::IniFormat);
 
   optionsVersion = Version(settings.valueStr(lnm::OPTIONS_VERSION));
   Version programVersion;
@@ -70,11 +76,25 @@ void checkAndMigrateSettings()
   {
     qInfo() << Q_FUNC_INFO << "Options" << optionsVersion << "program" << programVersion;
 
-    // Migrate settings =======================================================================
+    // Migrate settings if settings version is different from program version ===========================
     if(optionsVersion != programVersion)
     {
-      qInfo() << Q_FUNC_INFO << "Found settings version mismatch. Settings file version" <<
-        optionsVersion << "Program version" << programVersion << ".";
+      qInfo() << Q_FUNC_INFO << "Found settings version mismatch. Settings file version"
+              << optionsVersion << "Program version" << programVersion << ".";
+
+      // Get file names =====================================================================
+      QString trackFile = atools::settings::Settings::getConfigFilename(lnm::AIRCRAFT_TRACK_SUFFIX);
+      QString mapstyleFile = atools::settings::Settings::getConfigFilename(lnm::MAPSTYLE_INI_SUFFIX);
+      QString nightstyleFile = atools::settings::Settings::getConfigFilename(lnm::NIGHTSTYLE_INI_SUFFIX);
+
+      // Backup most important files with from/to version suffix ============================================
+      backupFileAndLog(trackFile);
+      backupFileAndLog(mapstyleFile);
+      backupFileAndLog(nightstyleFile);
+      backupFileAndLog(Settings::getFilename());
+
+      QSettings mapstyleSettings(mapstyleFile, QSettings::IniFormat);
+      QSettings nightstyleSettings(nightstyleFile, QSettings::IniFormat);
 
       // ===============================================================
       if(optionsVersion < Version("2.4.0"))
@@ -276,8 +296,9 @@ void checkAndMigrateSettings()
       Settings::syncSettings();
 
       mapstyleSettings.sync();
-    }
-  }
+      nightstyleSettings.sync();
+    } // if(optionsVersion != programVersion)
+  } // if(optionsVersion.isValid())
   else
   {
     qWarning() << Q_FUNC_INFO << "No version information found in settings file. Updating to" << programVersion;

@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -17,10 +17,11 @@
 
 #include "common/mapcolors.h"
 
+#include "atools.h"
+#include "common/constants.h"
 #include "common/maptypes.h"
 #include "options/optiondata.h"
 #include "settings/settings.h"
-#include "atools.h"
 
 #include <QPen>
 #include <QString>
@@ -639,7 +640,7 @@ void syncPen(QSettings& settings, const QString& key, QPen& pen)
 void syncColors()
 {
 #ifndef DEBUG_DISABLE_SYNC_COLORS
-  QString filename = atools::settings::Settings::getConfigFilename("_mapstyle.ini");
+  QString filename = atools::settings::Settings::getConfigFilename(lnm::MAPSTYLE_INI_SUFFIX);
 
   QSettings colorSettings(filename, QSettings::IniFormat);
   colorSettings.setValue("Options/Version", QApplication::applicationVersion());

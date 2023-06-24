@@ -442,6 +442,14 @@ const QLatin1String STARTUP_FLIGHTPLAN("flight-plan");
 const QLatin1String STARTUP_FLIGHTPLAN_DESCR("flight-plan-descr");
 const QLatin1String STARTUP_AIRCRAFT_PERF("aircraft-perf");
 
+/* Suffixes for common configuration files.
+ * Used for atools::settings::Settings::getConfigFilename() */
+const QLatin1String AIRCRAFT_TRACK_SUFFIX(".track");
+const QLatin1String PROFILE_TRACK_SUFFIX("_profile.track");
+const QLatin1String LOGBOOK_TRACK_SUFFIX(".logbooktrack");
+const QLatin1String MAPSTYLE_INI_SUFFIX("_mapstyle.ini");
+const QLatin1String NIGHTSTYLE_INI_SUFFIX("_nightstyle.ini");
+
 /*
  * Supported language for the online help system. Will be determined by presence of the file
  * little-navmap-user-manual-${LANG}.online in folder help and the current language settings of the system

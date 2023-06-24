@@ -2978,8 +2978,8 @@ void MapWidget::saveState()
 
   history.saveState(atools::settings::Settings::getConfigFilename(".history"));
   getScreenIndexConst()->saveState();
-  aircraftTrack->saveState(".track", 2 /* numBackups */);
-  aircraftTrackLogbook->saveState(".logbooktrack", 0 /* numBackups */);
+  aircraftTrack->saveState(lnm::AIRCRAFT_TRACK_SUFFIX, 2 /* numBackups */);
+  aircraftTrackLogbook->saveState(lnm::LOGBOOK_TRACK_SUFFIX, 0 /* numBackups */);
 
   overlayStateToMenu();
   atools::gui::WidgetState state(lnm::MAP_OVERLAY_VISIBLE, false /*save visibility*/, true /*block signals*/);
@@ -3034,10 +3034,10 @@ void MapWidget::restoreState()
   getScreenIndex()->restoreState();
 
   if(OptionData::instance().getFlags() & opts::STARTUP_LOAD_TRAIL)
-    aircraftTrack->restoreState(".track");
+    aircraftTrack->restoreState(lnm::AIRCRAFT_TRACK_SUFFIX);
   aircraftTrack->setMaxTrackEntries(OptionData::instance().getAircraftTrackMaxPoints());
 
-  aircraftTrackLogbook->restoreState(".logbooktrack");
+  aircraftTrackLogbook->restoreState(lnm::LOGBOOK_TRACK_SUFFIX);
   aircraftTrackLogbook->setMaxTrackEntries(OptionData::instance().getAircraftTrackMaxPoints());
 
   atools::gui::WidgetState state(lnm::MAP_OVERLAY_VISIBLE, false /*save visibility*/, true /*block signals*/);
