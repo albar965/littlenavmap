@@ -4,6 +4,62 @@ This text is partially Markdown, hence sometimes strange formatting.
 
 ==>>=============================================================================
 
+# Version 2.8.12.rc1
+
+## Notes
+
+**This is a stable release of *Little Navmap* which fixes several bugs and crashes and adds
+improvements as well as new features.**
+
+**Note that the installation of map themes has changed. Furthermore, there are changes in the scenery library
+menu and in the flight plan route description. See below for more information.**
+
+**macOS users: Keep in mind that you have to clear the quarantine flag when updating Little Xpconnect. See
+[Clearing the Quarantine Flag on macOS](https://www.littlenavmap.org/manuals/littlenavmap/release/latest/en/XPCONNECT.html#clearing-the-quarantine-flag-on-macos).**
+
+The updated online user manual is available here:
+[Little Navmap - User Manual](https://www.littlenavmap.org/manuals/littlenavmap/release/latest/en/).
+
+See here for user manual downloads:
+[User Manuals - Stable Releases](https://albar965.github.io/manuals.html#stable).
+
+A big thank you to all who reported bugs and issues!
+
+## Changes from 2.8.11 to 2.8.12.rc1 - DRAFT
+
+* Added IFR/VFR button to route description
+* Fixed issues where simulator weather was not loaded
+  Weather was not loaded and wrong warning dialog was shown if simulator is not installed on a
+  remote computer.
+* Now backing up configuration and track files with update-backup.N suffix on program update.
+* Fixed issue where separated tracks from old version were read as connected ones.
+  Now creating two backups for main track file.
+* Added Windows installer based on Inno Setup
+* More precision in userpoint altitude to avoid rounding errors between units
+* Fixed mac compilation issues
+* Added open flightmaps map theme.
+  Updated example.dgml file.
+* Fixed various issues with units in userpoint edit dialog
+  Now correctly setting and displaying metric units for "visible from" and altitude. Corrected
+  "visible from" display in userpoint search result table.
+* Now sorting map themes case insensitive
+* Added configuration option for degree grid in menu view
+* Updated example DGML
+* Corrected checking for duplicate sourceDir elements in map theme DGML files
+* Fix for warnings in log on startup
+  Route description is no updated on style change
+* Replaced NullSoft installer with Inno Setup
+
+# atools Version 3.8.16 - DRAFT
+
+* Fixed several issues in Pos and PosD conversion
+* Fixed issues where no error was shown when importing invalid userpoint or logbook CSV files.
+  Fixed issue where an aborted import might corrupt the undo data.
+* Update CSV import and export for userpoints to allow unit suffixes in altitude
+  Now detecting suffixes m and f to import altitude in respective units
+
+==<<=============================================================================
+
 # Version 2.8.11
 
 ## Notes
@@ -201,40 +257,9 @@ A big thank you to all who reported bugs and issues!
 
 * Adapted included and online user manual to changes.
 
-==<<=============================================================================
+=================================================================================
 
 # Version 2.8.10
-
-## Notes
-
-**This is a stable release of *Little Navmap* which fixes small bugs, crashes and adds small improvements.**
-
-**X-Plane: Update your Little Xpconnect installation as well with the included version 1.0.37 to
-fix issues with AI injection tools.**
-
-**macOS users: Keep in mind that you have to clear the quarantine flag when updating Little Xpconnect. See
-[Clearing the Quarantine Flag on macOS](https://www.littlenavmap.org/manuals/littlenavmap/release/latest/en/XPCONNECT.html#clearing-the-quarantine-flag-on-macos).**
-
-The online user manual is available here:
-[Little Navmap - User Manual](https://www.littlenavmap.org/manuals/littlenavmap/release/latest/en/).
-
-See here for user manual downloads:
-[User Manuals - Stable Releases](https://albar965.github.io/manuals.html#stable).
-
-A big thank you to all who reported bugs and issues!
-
-Special thanks to Max Hille for finding the issue with Xpconnect on Linux and X-Plane 12!
-
-## MSFS Notes
-
-**The active pause problem was fixed with the MSFS version SU12.**
-
-**Loading a flight plan with user-defined points placed at the at the North Pole has been fixed
-with MSFS version SU12.**
-
-See also [MSFS Common Problems](https://albar965.github.io/littlenavmap-faq.html#problems-msfs) in the FAQ.
-
-## Changes from 2.8.9 to 2.8.10
 
 * Navigraph selection is now remembered for each simulator selection separately. This means that
   the Navigraph selection is automatically changed when switching between simulators. The simulator
@@ -298,8 +323,6 @@ See also [MSFS Common Problems](https://albar965.github.io/littlenavmap-faq.html
 =================================================================================
 
 # Version 2.8.9
-
-## Changes from 2.8.8 to 2.8.9
 
 ### Map Display
 
@@ -378,8 +401,6 @@ See also [MSFS Common Problems](https://albar965.github.io/littlenavmap-faq.html
 =================================================================================
 
 # Version 2.8.8
-
-## Changes from 2.8.7 to 2.8.8
 
 ### Flight Plan and Export
 
