@@ -433,7 +433,7 @@ MapTheme MapThemeHandler::loadTheme(const QFileInfo& dgml)
                   else if(reader.name() == "sourcedir")
                   {
 #if defined(Q_OS_WIN32)
-                    theme.sourceDirs.appned(reader.readElementText().trimmed().toLower().replace('/', QDir::separator()));
+                    theme.sourceDirs.append(reader.readElementText().trimmed().toLower().replace('/', QDir::separator()));
 #elif defined(Q_OS_MACOS)
                     theme.sourceDirs.append(reader.readElementText().trimmed().toLower().replace('\\', QDir::separator()));
 #else
