@@ -2454,11 +2454,11 @@ void OptionsDialog::updateCacheElevationStates()
 
 void OptionsDialog::updateWeatherButtonState()
 {
-  WeatherReporter *wr = NavApp::getWeatherReporter();
+  WeatherReporter *weatherReporter = NavApp::getWeatherReporter();
 
-  if(wr != nullptr)
+  if(weatherReporter != nullptr)
   {
-    bool hasAs = wr->getCurrentActiveSkyType() != WeatherReporter::NONE;
+    bool hasAs = weatherReporter->hasAnyActiveSkyWeather();
     ui->checkBoxOptionsWeatherInfoAsn->setEnabled(hasAs);
     ui->checkBoxOptionsWeatherTooltipAsn->setEnabled(hasAs);
 

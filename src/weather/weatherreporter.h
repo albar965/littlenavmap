@@ -144,6 +144,11 @@ public:
     return activeSkyType;
   }
 
+  bool hasAnyActiveSkyWeather() const
+  {
+    return activeSkyType != WeatherReporter::NONE;
+  }
+
   /* ASN, AS16, ASP4, ... */
   QString getCurrentActiveSkyName() const;
 
@@ -207,7 +212,7 @@ private:
   bool checkXplanePaths();
 
   /* Show warning dialog in main loop to avoid issues when being called from draw handler */
-  void showXpWarningDialog(const QString& message);
+  void showXplaneWarningDialog(const QString& message);
 
   atools::geo::Pos fetchAirportCoordinates(const QString& airportIdent);
 

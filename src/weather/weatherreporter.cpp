@@ -234,35 +234,36 @@ void WeatherReporter::createFsWatcher()
 
 void WeatherReporter::disableXplane()
 {
-  qDebug() << Q_FUNC_INFO;
+  if(verbose)
+    qDebug() << Q_FUNC_INFO;
   xpWeatherReader->clear();
 }
 
 void WeatherReporter::initXplane()
 {
-  if(atools::fs::FsPaths::isAnyXplane(simType) && !NavApp::getCurrentSimulatorBasePath().isEmpty())
+  if(verbose)
+    qDebug() << Q_FUNC_INFO << simType;
+
+  if(simType == atools::fs::FsPaths::XPLANE_11)
   {
-    if(simType == atools::fs::FsPaths::XPLANE_11)
-    {
-      QString path = OptionData::instance().getWeatherXplane11Path();
-      if(path.isEmpty() && NavApp::hasInstalledSimulator(simType))
-        // Use default base path if simulator installation was found
-        path = NavApp::getCurrentSimulatorBasePath() + QDir::separator() + "METAR.rwx";
+    QString path = OptionData::instance().getWeatherXplane11Path();
+    if(path.isEmpty() && !NavApp::getCurrentSimulatorBasePath().isEmpty())
+      // Use default base path if simulator installation was found
+      path = NavApp::getCurrentSimulatorBasePath() + QDir::separator() + "METAR.rwx";
 
-      // Set path but do not start watching - loading starts on first access
-      xpWeatherReader->setWeatherPath(path, atools::fs::weather::WEATHER_XP11);
-    }
-    else if(simType == atools::fs::FsPaths::XPLANE_12)
-    {
-      QString path = OptionData::instance().getWeatherXplane12Path();
-      if(path.isEmpty() && NavApp::hasInstalledSimulator(simType))
-        // Use default base path if simulator installation was found
-        path = NavApp::getCurrentSimulatorBasePath() + QDir::separator() + "Output" + QDir::separator() + "real weather";
+    // Set path but do not start watching - loading starts on first access
+    xpWeatherReader->setWeatherPath(path, atools::fs::weather::WEATHER_XP11);
+  }
+  else if(simType == atools::fs::FsPaths::XPLANE_12)
+  {
+    QString path = OptionData::instance().getWeatherXplane12Path();
+    if(path.isEmpty() && !NavApp::getCurrentSimulatorBasePath().isEmpty())
+      // Use default base path if simulator installation was found
+      path = NavApp::getCurrentSimulatorBasePath() + QDir::separator() + "Output" + QDir::separator() + "real weather";
 
-      // Set path but do not start watching - loading starts on first access
-      xpWeatherReader->setWeatherPath(path, atools::fs::weather::WEATHER_XP12);
-    }
-  } // if(atools::fs::FsPaths::isAnyXplane(simType) &&
+    // Set path but do not start watching - loading starts on first access
+    xpWeatherReader->setWeatherPath(path, atools::fs::weather::WEATHER_XP12);
+  }
   else
     disableXplane();
 }
@@ -273,7 +274,7 @@ bool WeatherReporter::checkXplanePaths()
   bool xp11 = xpWeatherReader->getWeatherType() == atools::fs::weather::WEATHER_XP11;
   bool& warningShown = xp11 ? xp11WarningPathShown : xp12WarningPathShown;
 
-  // Check only if warning was not already shown and dialog is not open
+  // Check only if warning was not already shown and dialog is not open right now
   if(!showingXplaneFileWarning && !warningShown)
   {
     if(atools::fs::FsPaths::isAnyXplane(simType))
@@ -281,12 +282,14 @@ bool WeatherReporter::checkXplanePaths()
       // Validate path
       QString path = xpWeatherReader->getWeatherPath();
       QString message = xp11 ? atools::checkFileMsg(path, 80, false /* warn */) : atools::checkDirMsg(path, 80, false /* warn */);
+
+      // Valid if no error message returned
       valid = message.isEmpty();
 
       if(!valid && !warningShown)
       {
         // Call dialog in background since this function might be called from a draw handler
-        QTimer::singleShot(0, this, std::bind(&WeatherReporter::showXpWarningDialog, this, message));
+        QTimer::singleShot(0, this, std::bind(&WeatherReporter::showXplaneWarningDialog, this, message));
         warningShown = true;
       }
     }
@@ -298,7 +301,7 @@ bool WeatherReporter::checkXplanePaths()
   return valid;
 }
 
-void WeatherReporter::showXpWarningDialog(const QString& message)
+void WeatherReporter::showXplaneWarningDialog(const QString& message)
 {
   // Avoid repeated entry
   showingXplaneFileWarning = true;
@@ -740,12 +743,16 @@ void WeatherReporter::weatherDownloadFailed(const QString& error, int errorCode,
 
 QString WeatherReporter::getActiveSkyMetar(const QString& airportIcao)
 {
-  if(activeSkyDepartureIdent == airportIcao)
-    return activeSkyDepartureMetar;
-  else if(activeSkyDestinationIdent == airportIcao)
-    return activeSkyDestinationMetar;
-  else
-    return activeSkyMetars.value(airportIcao, QString());
+  if(hasAnyActiveSkyWeather())
+  {
+    if(activeSkyDepartureIdent == airportIcao)
+      return activeSkyDepartureMetar;
+    else if(activeSkyDestinationIdent == airportIcao)
+      return activeSkyDestinationMetar;
+    else
+      return activeSkyMetars.value(airportIcao, QString());
+  }
+  return QString();
 }
 
 atools::fs::weather::MetarResult WeatherReporter::getXplaneMetar(const QString& station, const atools::geo::Pos& pos)
