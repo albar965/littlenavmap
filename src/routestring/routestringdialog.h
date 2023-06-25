@@ -105,10 +105,13 @@ private:
   void toClipboardClicked();
   void buttonBoxClicked(QAbstractButton *button);
   void toolButtonOptionTriggered(QAction *);
-  void updateButtonClicked();
+  void loadFromFlightplanButtonClicked();
   void showHelpButtonToggled(bool checked);
   void splitterMoved();
   void buildButtonMenu();
+
+  void updateTypeToFlightplan();
+  void updateTypeFromFlightplan();
 
   /* Updates text edit and starts parser without delay */
   void textEditRouteStringPrepend(const QString& text, bool newline);

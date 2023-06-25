@@ -27,6 +27,7 @@
 #include "routestring/routestringreader.h"
 #include "routestring/routestringwriter.h"
 #include "settings/settings.h"
+#include "gui/signalblocker.h"
 
 #include "ui_routestringdialog.h"
 
@@ -141,18 +142,13 @@ RouteStringDialog::RouteStringDialog(QWidget *parent, const QString& settingsSuf
 
   sytaxHighlighter = new SyntaxHighlighter(ui->textEditRouteString);
 
+  ui->buttonBoxRouteString->button(QDialogButtonBox::Ok)->setText(tr("Create &Flight Plan and Close"));
   if(blocking)
-  {
     // Opened from SimBrief download
-    ui->buttonBoxRouteString->button(QDialogButtonBox::Ok)->setText(tr("Create &Flight Plan and Close"));
     ui->buttonBoxRouteString->button(QDialogButtonBox::Apply)->hide();
-  }
   else
-  {
     // No parent and free floating
-    ui->buttonBoxRouteString->button(QDialogButtonBox::Ok)->setText(tr("Create &Flight Plan"));
-    ui->buttonBoxRouteString->button(QDialogButtonBox::Apply)->setText(tr("Create &Flight Plan and Close"));
-  }
+    ui->buttonBoxRouteString->button(QDialogButtonBox::Apply)->setText(tr("Create &Flight Plan"));
 
   // Non-modal dialog has a close button and modal dialog a cancel button
   if(parent == nullptr)
@@ -176,14 +172,15 @@ RouteStringDialog::RouteStringDialog(QWidget *parent, const QString& settingsSuf
   connect(QGuiApplication::clipboard(), &QClipboard::dataChanged, this, &RouteStringDialog::updateButtonState);
   connect(ui->buttonBoxRouteString, &QDialogButtonBox::clicked, this, &RouteStringDialog::buttonBoxClicked);
   connect(ui->toolButtonRouteStringOptions->menu(), &QMenu::triggered, this, &RouteStringDialog::toolButtonOptionTriggered);
-  connect(ui->pushButtonRouteStringUpdate, &QPushButton::clicked, this, &RouteStringDialog::updateButtonClicked);
+  connect(ui->pushButtonRouteStringUpdate, &QPushButton::clicked, this, &RouteStringDialog::loadFromFlightplanButtonClicked);
 
   connect(ui->textEditRouteString, &QTextEdit::textChanged, this, &RouteStringDialog::updateButtonState);
   connect(ui->textEditRouteString, &QTextEdit::textChanged, this, &RouteStringDialog::textChanged);
   connect(ui->textEditRouteString, &QTextEdit::undoAvailable, ui->pushButtonRouteStringUndo, &QPushButton::setEnabled);
   connect(ui->textEditRouteString, &QTextEdit::redoAvailable, ui->pushButtonRouteStringRedo, &QPushButton::setEnabled);
   connect(ui->pushButtonRouteStringUndo, &QPushButton::clicked, ui->textEditRouteString, &QTextEdit::undo);
-  connect(ui->pushButtonRouteStringRedo, &QPushButton::clicked, ui->textEditRouteString, &QTextEdit::redo);
+  connect(ui->comboBoxRouteStringFlightplanType, QOverload<int>::of(&QComboBox::currentIndexChanged),
+          this, &RouteStringDialog::updateTypeToFlightplan);
 
   connect(ui->pushButtonRouteStringShowHelp, &QPushButton::toggled, this, &RouteStringDialog::showHelpButtonToggled);
   connect(ui->splitterRouteString, &QSplitter::splitterMoved, this, &RouteStringDialog::splitterMoved);
@@ -372,8 +369,10 @@ void RouteStringDialog::showHelpButtonToggled(bool checked)
   }
 }
 
-void RouteStringDialog::updateButtonClicked()
+void RouteStringDialog::loadFromFlightplanButtonClicked()
 {
+  // Plan type to combo box
+  updateTypeFromFlightplan();
   textEditRouteStringPrepend(routeStringWriter->createStringForRoute(NavApp::getRouteConst(), NavApp::getRouteCruiseSpeedKts(),
                                                                      options | rs::ALT_AND_SPEED_METRIC), true /* newline*/);
   ui->textEditRouteString->setFocus();
@@ -404,13 +403,15 @@ void RouteStringDialog::saveState()
 
 void RouteStringDialog::saveStateWidget()
 {
-  atools::gui::WidgetState(lnm::ROUTE_STRING_DIALOG_SPLITTER + settingsSuffix).save({this, ui->splitterRouteString});
+  atools::gui::WidgetState(lnm::ROUTE_STRING_DIALOG_SPLITTER + settingsSuffix).save({this, ui->splitterRouteString,
+                                                                                     ui->comboBoxRouteStringFlightplanType});
   atools::settings::Settings::instance().setValue(lnm::ROUTE_STRING_DIALOG_OPTIONS + settingsSuffix, static_cast<int>(options));
 }
 
 void RouteStringDialog::restoreState()
 {
-  atools::gui::WidgetState(lnm::ROUTE_STRING_DIALOG_SPLITTER + settingsSuffix).restore({this, ui->splitterRouteString});
+  atools::gui::WidgetState(lnm::ROUTE_STRING_DIALOG_SPLITTER + settingsSuffix).restore({this, ui->splitterRouteString,
+                                                                                        ui->comboBoxRouteStringFlightplanType});
   ui->splitterRouteString->setHandleWidth(6);
   options = getOptionsFromSettings();
   updateButtonState();
@@ -430,6 +431,19 @@ void RouteStringDialog::restoreState()
   }
 
   splitterMoved();
+}
+
+void RouteStringDialog::updateTypeToFlightplan()
+{
+  // Update type from current combox box setting
+  // Low / high altitude is set later when resolving the airways
+  flightplan->setFlightplanType(ui->comboBoxRouteStringFlightplanType->currentIndex() == 0 ? apln::IFR : apln::VFR);
+}
+
+void RouteStringDialog::updateTypeFromFlightplan()
+{
+  atools::gui::SignalBlocker blocker(ui->comboBoxRouteStringFlightplanType);
+  ui->comboBoxRouteStringFlightplanType->setCurrentIndex(flightplan->getFlightplanType() == apln::IFR ? 0 : 1);
 }
 
 void RouteStringDialog::addRouteDescription(const QString& routeString)
@@ -543,19 +557,30 @@ void RouteStringDialog::buttonBoxClicked(QAbstractButton *button)
 {
   if(button == ui->buttonBoxRouteString->button(QDialogButtonBox::Ok))
   {
+    // Create and close button =====================================
+    // Plan type from combo box
+    updateTypeToFlightplan();
+
     if(blocking)
       // Opened from SimBrief or other dialogs - Return QDialog::Accepted and close
       QDialog::accept();
     else
-      // Floating window - Create a new flight plan and use undo/redo - keep non-modal dialog open - do not mark plan as changed
+    {
+      // Only in floating window - create a new flight plan and use undo/redo - keep non-modal dialog open - do not mark plan as changed
       emit routeFromFlightplan(*flightplan, !isAltitudeIncluded() /* adjustAltitude */, false /* changed */, true /* undo */);
+      // Return QDialog::Accepted and close
+      QDialog::accept();
+    }
   }
   else if(button == ui->buttonBoxRouteString->button(QDialogButtonBox::Apply))
   {
-    // Only in floating window - create a new flight plan and use undo/redo - keep non-modal dialog open - do not mark plan as changed
+    // Create and keep open - only on non-modal, not on SimBrief =====================================
+
+    // Plan type from combo box
+    updateTypeToFlightplan();
+
+    // Floating window - Create a new flight plan and use undo/redo - keep non-modal dialog open - do not mark plan as changed
     emit routeFromFlightplan(*flightplan, !isAltitudeIncluded() /* adjustAltitude */, false /* changed */, true /* undo */);
-    // Return QDialog::Accepted and close
-    QDialog::accept();
   }
   else if(button == ui->buttonBoxRouteString->button(QDialogButtonBox::Help))
     HelpHandler::openHelpUrlWeb(this, lnm::helpOnlineUrl + "ROUTEDESCR.html", lnm::helpLanguageOnline());
