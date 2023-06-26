@@ -1392,8 +1392,8 @@ void AircraftPerfController::restoreState()
 
   // Load last used performance file or the one passed on the command line
   QString perfFile;
-  if(!NavApp::getStartupOption(lnm::STARTUP_AIRCRAFT_PERF).isEmpty())
-    perfFile = NavApp::getStartupOption(lnm::STARTUP_AIRCRAFT_PERF); // Command line
+  if(!NavApp::getStartupOptionStr(lnm::STARTUP_AIRCRAFT_PERF).isEmpty())
+    perfFile = NavApp::getStartupOptionStr(lnm::STARTUP_AIRCRAFT_PERF); // Command line
   else if(OptionData::instance().getFlags() & opts::STARTUP_LOAD_PERF)
     perfFile = settings.valueStr(lnm::AIRCRAFT_PERF_FILENAME);
 

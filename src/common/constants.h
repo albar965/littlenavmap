@@ -441,6 +441,11 @@ extern const QSize DEFAULT_MAINWINDOW_SIZE;
 const QLatin1String STARTUP_FLIGHTPLAN("flight-plan");
 const QLatin1String STARTUP_FLIGHTPLAN_DESCR("flight-plan-descr");
 const QLatin1String STARTUP_AIRCRAFT_PERF("aircraft-perf");
+const QLatin1String STARTUP_LAYOUT("layout");
+
+/* Not used as long options */
+const QLatin1String STARTUP_OTHER_ARGUMENTS("others"); /* Positional arguments not found after option - string list */
+const QLatin1String STARTUP_COMMAND_ACTIVATE("activate"); /* Bring window to front */
 
 /* Suffixes for common configuration files.
  * Used for atools::settings::Settings::getConfigFilename() */

@@ -406,7 +406,7 @@ void LogdataDialog::fileUpdated(QLineEdit *lineEdit, QLabel *label, bool perf)
           }
           else
           {
-            if(atools::fs::pln::FlightplanIO::detectFormat(filepath) != atools::fs::pln::NONE)
+            if(atools::fs::pln::FlightplanIO::isFlightplanFile(filepath))
               label->setText(tr("Valid flight plan file."));
             else
               label->setText(tr("File is not a supported flight plan."));

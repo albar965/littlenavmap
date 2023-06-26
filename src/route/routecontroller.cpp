@@ -1007,10 +1007,10 @@ void RouteController::restoreState()
   {
     // Load plan from command line or last used =============================================
     QString cmdLineFlightplanFile, cmdLineFlightplanDescr;
-    if(!NavApp::getStartupOption(lnm::STARTUP_FLIGHTPLAN).isEmpty())
-      cmdLineFlightplanFile = NavApp::getStartupOption(lnm::STARTUP_FLIGHTPLAN); // Command line file
-    else if(!NavApp::getStartupOption(lnm::STARTUP_FLIGHTPLAN_DESCR).isEmpty())
-      cmdLineFlightplanDescr = NavApp::getStartupOption(lnm::STARTUP_FLIGHTPLAN_DESCR); // Command line description
+    if(!NavApp::getStartupOptionStr(lnm::STARTUP_FLIGHTPLAN).isEmpty())
+      cmdLineFlightplanFile = NavApp::getStartupOptionStr(lnm::STARTUP_FLIGHTPLAN); // Command line file
+    else if(!NavApp::getStartupOptionStr(lnm::STARTUP_FLIGHTPLAN_DESCR).isEmpty())
+      cmdLineFlightplanDescr = NavApp::getStartupOptionStr(lnm::STARTUP_FLIGHTPLAN_DESCR); // Command line description
 
     if(!cmdLineFlightplanDescr.isEmpty())
       // Parse route description from command line ===================================================
@@ -1021,7 +1021,7 @@ void RouteController::restoreState()
       QString message = atools::checkFileMsg(cmdLineFlightplanFile);
       if(message.isEmpty())
       {
-        if(atools::fs::pln::FlightplanIO::detectFormat(cmdLineFlightplanFile) != atools::fs::pln::NONE)
+        if(atools::fs::pln::FlightplanIO::isFlightplanFile(cmdLineFlightplanFile))
         {
           if(!loadFlightplan(cmdLineFlightplanFile))
             // Cannot be loaded - clear current filename

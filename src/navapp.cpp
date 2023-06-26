@@ -56,6 +56,8 @@
 #include "weather/weatherreporter.h"
 #include "web/webcontroller.h"
 #include "web/webmapcontroller.h"
+#include "settings/settings.h"
+#include "common/constants.h"
 
 #include "ui_mainwindow.h"
 
@@ -63,6 +65,7 @@
 
 #include <QIcon>
 #include <QSplashScreen>
+#include <QSharedMemory>
 
 AirportQuery *NavApp::airportQuerySim = nullptr;
 AirportQuery *NavApp::airportQueryNav = nullptr;
@@ -100,6 +103,9 @@ bool NavApp::loadingDatabase = false;
 bool NavApp::mainWindowVisible = false;
 
 atools::util::Properties *NavApp::startupOptions = nullptr;
+
+QSharedMemory *NavApp::sharedMemory = nullptr;
+static const int SHARED_MEMORY_SIZE = 4096;
 
 NavApp::NavApp(int& argc, char **argv, int flags)
   : atools::gui::Application(argc, argv, flags)
@@ -219,6 +225,8 @@ void NavApp::deInit()
 {
   qDebug() << Q_FUNC_INFO;
 
+  deInitSharedMemory();
+
   qDebug() << Q_FUNC_INFO << "delete webController";
   delete webController;
   webController = nullptr;
@@ -318,6 +326,140 @@ void NavApp::deInit()
   qDebug() << Q_FUNC_INFO << "delete splashScreen";
   delete splashScreen;
   splashScreen = nullptr;
+}
+
+atools::util::Properties NavApp::checkSharedMemory()
+{
+  atools::util::Properties properties;
+
+  if(sharedMemory != nullptr)
+  {
+    // Already attached
+    if(sharedMemory->lock())
+    {
+      // Read size only for now
+      quint32 size;
+      // Create a view on the shared memory for reading - does not copy
+      QByteArray sizeBytes = QByteArray::fromRawData(static_cast<const char *>(sharedMemory->constData()), SHARED_MEMORY_SIZE);
+      QDataStream in(&sizeBytes, QIODevice::ReadOnly);
+      in >> size;
+
+      if(size > 0)
+      {
+        // Read properties if size is given - ignore timestamp
+        qint64 datetimeDummy;
+        in >> datetimeDummy >> properties;
+      }
+
+      // Write back a null size and a timestamp to allow the other process detect a crash
+      QByteArray bytesEmpty;
+      QDataStream out(&bytesEmpty, QIODevice::WriteOnly);
+      out << static_cast<quint32>(0) << QDateTime::currentMSecsSinceEpoch();
+      memcpy(sharedMemory->data(), bytesEmpty.constData(), static_cast<size_t>(bytesEmpty.size()));
+
+      sharedMemory->unlock();
+    }
+  }
+
+  return properties;
+}
+
+bool NavApp::initSharedMemory()
+{
+  // Shared memory layout:
+  // - quint32 Size of serialized property list
+  // - qint64 Timestamp milliseconds since Epoch
+  // - properties Serialized properties object
+
+  bool retval = false;
+
+  // Detect other running application instance with same settings - this is unsafe on Unix since shm can remain after crashes
+  if(sharedMemory == nullptr)
+    sharedMemory = new QSharedMemory("203abd54-8a6a-4308-a654-6771efec62cd" + atools::settings::Settings::getDirName());
+
+  // Create and attach
+  if(sharedMemory->create(SHARED_MEMORY_SIZE, QSharedMemory::ReadWrite))
+  {
+#ifdef DEBUG_INFORMATION
+    qDebug() << Q_FUNC_INFO << "Created" << sharedMemory->key() << sharedMemory->nativeKey();
+#endif
+
+    // Created =====================================================================
+    // Write null size and timestamp into the shared memory segment
+    // A crash is detected if timestamp is not updated for ten seconds
+    QByteArray bytes;
+    QDataStream out(&bytes, QIODevice::WriteOnly);
+    out << static_cast<quint32>(0) << QDateTime::currentMSecsSinceEpoch();
+
+    if(sharedMemory->lock())
+    {
+      memcpy(sharedMemory->data(), bytes.constData(), static_cast<size_t>(bytes.size()));
+      sharedMemory->unlock();
+    }
+  }
+  else
+  {
+    // Attach to already present one if not attached =========================================
+    if(sharedMemory->attach(QSharedMemory::ReadWrite))
+    {
+#ifdef DEBUG_INFORMATION
+      qDebug() << Q_FUNC_INFO << "Attached" << sharedMemory->key() << sharedMemory->nativeKey();
+#endif
+
+      // Read timestamp to detect freeze or crash
+      if(sharedMemory->lock())
+      {
+        qint64 datetime;
+        quint32 size;
+        // Create a view on the shared memory for reading - does not copy but needs a lock
+        QByteArray sizeBytes = QByteArray::fromRawData(static_cast<const char *>(sharedMemory->constData()), SHARED_MEMORY_SIZE);
+        QDataStream in(&sizeBytes, QIODevice::ReadOnly);
+        in >> size >> datetime;
+
+        // If timestamp is older than ten seconds other might be crashed or frozen, start normally - otherwise send message
+        if(QDateTime::fromMSecsSinceEpoch(datetime).secsTo(QDateTime::currentDateTimeUtc()) < 10)
+        {
+          // Copy command line parameters and add activate option to bring other to front
+          atools::util::Properties properties(*startupOptions);
+          properties.remove(lnm::STARTUP_FLIGHTPLAN_DESCR); // Remove unused description option
+          properties.setPropertyBool(lnm::STARTUP_COMMAND_ACTIVATE, true); // Raise other window
+
+#ifdef DEBUG_INFORMATION
+          qDebug() << Q_FUNC_INFO << "Sending" << properties;
+#endif
+
+          // Get properties for size
+          QByteArray propBytes = properties.asByteArray();
+
+          // Write off for other process
+          QByteArray bytes;
+          QDataStream out(&bytes, QIODevice::WriteOnly);
+          out << static_cast<quint32>(propBytes.size()) << QDateTime::currentMSecsSinceEpoch();
+          out.writeRawData(propBytes.constData(), propBytes.size());
+
+          if(bytes.size() < sharedMemory->size())
+          {
+            memcpy(sharedMemory->data(), bytes.constData(), static_cast<size_t>(bytes.size()));
+            retval = true;
+          }
+        } // if(QDateTime::fromMSecsSinceEpoch(date ...
+
+        sharedMemory->unlock();
+      } // if(sharedMemory->lock())
+    }
+  }
+  return retval;
+}
+
+void NavApp::deInitSharedMemory()
+{
+  if(sharedMemory != nullptr)
+  {
+    qDebug() << Q_FUNC_INFO << "delete sharedMemory";
+    sharedMemory->detach();
+    delete sharedMemory;
+    sharedMemory = nullptr;
+  }
 }
 
 void NavApp::checkForUpdates(int channelOpts, bool manual, bool startup, bool forceDebug)
@@ -868,14 +1010,24 @@ void NavApp::showUserpointSearch()
   mainWindow->showUserpointSearch();
 }
 
-QString NavApp::getStartupOption(const QString& key)
+QString NavApp::getStartupOptionStr(const QString& key)
 {
-  return startupOptions->value(key);
+  return startupOptions->getPropertyStr(key);
 }
 
-void NavApp::addStartupOption(const QString& key, const QString& value)
+QStringList NavApp::getStartupOptionStrList(const QString& key)
 {
-  startupOptions->insert(key, value);
+  return startupOptions->getPropertyStrList(key);
+}
+
+void NavApp::addStartupOptionStr(const QString& key, const QString& value)
+{
+  startupOptions->setPropertyStr(key, value);
+}
+
+void NavApp::addStartupOptionStrList(const QString& key, const QStringList& value)
+{
+  startupOptions->setPropertyStrList(key, value);
 }
 
 void NavApp::setToolTipsEnabledMainMenu(bool enabled)
@@ -1020,7 +1172,7 @@ bool NavApp::isGlobeOfflineProvider()
 
 bool NavApp::isGlobeDirValid()
 {
-  return elevationProvider->isGlobeDirValid();
+  return ElevationProvider::isGlobeDirValid();
 }
 
 WeatherReporter *NavApp::getWeatherReporter()

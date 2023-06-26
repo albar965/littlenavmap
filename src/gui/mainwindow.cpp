@@ -84,6 +84,7 @@
 #include "weather/windreporter.h"
 #include "web/webcontroller.h"
 #include "common/updatehandler.h"
+#include "util/properties.h"
 
 #include <marble/MarbleAboutDialog.h>
 #include <marble/MarbleModel.h>
@@ -379,6 +380,11 @@ MainWindow::MainWindow()
     // Enable or disable tooltips - call later since it needs the map window
     optionsDialog->updateTooltipOption();
 
+    // Check for commands from other instance =====================
+    sharedMemoryCheckTimer.setInterval(500);
+    connect(&sharedMemoryCheckTimer, &QTimer::timeout, this, &MainWindow::checkSharedMemory);
+    sharedMemoryCheckTimer.start();
+
     // Update clock =====================
     clockTimer.setInterval(1000);
     connect(&clockTimer, &QTimer::timeout, this, &MainWindow::updateClock);
@@ -671,6 +677,56 @@ void MainWindow::updateClock() const
                         .arg(QDateTime::currentDateTimeUtc().toString())
                         .arg(QDateTime::currentDateTime().toString()));
   timeLabel->setMinimumWidth(timeLabel->width());
+}
+
+void MainWindow::checkSharedMemory()
+{
+  // Check for message from other instance
+  atools::util::Properties properties = NavApp::checkSharedMemory();
+
+  if(!properties.isEmpty())
+  {
+    // Found message
+    qDebug() << Q_FUNC_INFO << properties;
+
+    // Extract filenames from known options ================================
+    QString flightplan = properties.getPropertyStr(lnm::STARTUP_FLIGHTPLAN);
+    QString perf = properties.getPropertyStr(lnm::STARTUP_AIRCRAFT_PERF);
+    QString layout = properties.getPropertyStr(lnm::STARTUP_LAYOUT);
+
+    // Extract filenames from positional arguments without options ================================
+    for(const QString otherFile : properties.getPropertyStr(lnm::STARTUP_OTHER_ARGUMENTS))
+    {
+      if(atools::checkFile(Q_FUNC_INFO, otherFile, true /* warn */))
+      {
+        if(flightplan.isEmpty() && atools::fs::pln::FlightplanIO::isFlightplanFile(otherFile))
+          flightplan = otherFile;
+
+        if(perf.isEmpty() && AircraftPerfController::isPerformanceFile(otherFile))
+          perf = otherFile;
+
+        if(layout.isEmpty() && atools::gui::DockWidgetHandler::isWindowLayoutFile(otherFile))
+          layout = otherFile;
+      }
+    }
+
+    // Load files if found and exist ===========================================
+    if(atools::checkFile(Q_FUNC_INFO, layout, true /* warn */))
+      loadLayoutDelayed(layout);
+
+    if(atools::checkFile(Q_FUNC_INFO, flightplan, true /* warn */))
+      routeOpenFile(flightplan);
+
+    if(atools::checkFile(Q_FUNC_INFO, perf, true /* warn */))
+      NavApp::getAircraftPerfController()->loadFile(perf);
+
+    // Activate window - always sent by other instance =====================================================
+    if(properties.getPropertyBool(lnm::STARTUP_COMMAND_ACTIVATE))
+    {
+      activateWindow();
+      raise();
+    }
+  }
 }
 
 /* Show map legend and bring information dock to front */
@@ -3230,6 +3286,20 @@ void MainWindow::mainWindowShown()
   qDebug() << Q_FUNC_INFO << "leave";
 }
 
+void MainWindow::loadLayoutDelayed(const QString& filename)
+{
+  try
+  {
+    // Load layout file delayed - does not apply state
+    dockHandler->loadWindowState(filename, OptionData::instance().getFlags2().testFlag(opts2::MAP_ALLOW_UNDOCK), layoutWarnText);
+    QTimer::singleShot(200, dockHandler, &atools::gui::DockWidgetHandler::currentStateToWindow);
+  }
+  catch(atools::Exception& e)
+  {
+    atools::gui::ErrorHandler(this).handleException(e);
+  }
+}
+
 void MainWindow::mainWindowShownDelayed()
 {
   qDebug() << Q_FUNC_INFO << "enter";
@@ -3237,20 +3307,7 @@ void MainWindow::mainWindowShownDelayed()
   NavApp::closeSplashScreen();
 
   if(OptionData::instance().getFlags().testFlag(opts::STARTUP_LOAD_LAYOUT) && !layoutFileHistory->isEmpty())
-  {
-    try
-    {
-      // Reload last layout file - does not apply state
-      dockHandler->loadWindowState(layoutFileHistory->getTopFile(),
-                                   OptionData::instance().getFlags2().testFlag(opts2::MAP_ALLOW_UNDOCK),
-                                   layoutWarnText);
-      QTimer::singleShot(200, dockHandler, &atools::gui::DockWidgetHandler::currentStateToWindow);
-    }
-    catch(atools::Exception& e)
-    {
-      atools::gui::ErrorHandler(this).handleException(e);
-    }
-  }
+    loadLayoutDelayed(layoutFileHistory->getTopFile());
   // else layout was already loaded from settings earlier
 
   // Apply layout again to avoid issues with formatting
@@ -4643,8 +4700,8 @@ void MainWindow::dragEnterEvent(QDragEnterEvent *event)
         // accept if file exists, is readable and matches the supported extensions or content
         QFileInfo file(url.toLocalFile());
 
-        if(file.exists() && file.isReadable() && file.isFile() &&
-           (atools::fs::pln::FlightplanIO::detectFormat(file.filePath()) ||
+        if(atools::checkFile(Q_FUNC_INFO, file, true /* warn */) &&
+           (atools::fs::pln::FlightplanIO::isFlightplanFile(file.filePath()) ||
             AircraftPerfController::isPerformanceFile(file.filePath()) ||
             atools::gui::DockWidgetHandler::isWindowLayoutFile(file.filePath())))
         {

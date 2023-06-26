@@ -65,6 +65,7 @@ class MapDetailHandler;
 class TrackManager;
 class MapThemeHandler;
 class QAction;
+class QSharedMemory;
 
 namespace atools {
 namespace util {
@@ -423,13 +424,19 @@ public:
   static void showUserpointSearch();
 
   /* Command line options */
-  static QString getStartupOption(const QString& key);
-  static void addStartupOption(const QString& key, const QString& value);
+  static QString getStartupOptionStr(const QString& key);
+  static QStringList getStartupOptionStrList(const QString& key);
+  static void addStartupOptionStr(const QString& key, const QString& value);
+  static void addStartupOptionStrList(const QString& key, const QStringList& value);
 
   /* true if tooltips in menus are visible */
   static bool isMenuToolTipsVisible();
 
   static void setToolTipsEnabledMainMenu(bool enabled);
+
+  static bool initSharedMemory();
+  static void deInitSharedMemory();
+  static atools::util::Properties checkSharedMemory();
 
 private:
   static void initApplication();
@@ -471,6 +478,8 @@ private:
 
   static WebController *webController;
   static atools::util::Properties *startupOptions;
+
+  static QSharedMemory *sharedMemory;
 
   static bool loadingDatabase;
   static bool shuttingDown;

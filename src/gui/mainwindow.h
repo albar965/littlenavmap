@@ -391,6 +391,7 @@ private:
   void layoutOpenRecent(const QString& layoutFile);
   void layoutOpenDrag(const QString& layoutFile); /* Open from drag and drop event */
   bool layoutOpenInternal(const QString& layoutFile);
+  void loadLayoutDelayed(const QString& filename);
 
   void legendAnchorClicked(const QUrl& url);
 
@@ -419,6 +420,9 @@ private:
 
   void checkForUpdates();
   void updateClock() const;
+
+  /* Called by sharedMemoryCheckTimer and checks for messages from other instances */
+  void checkSharedMemory();
 
   /* Actions that define the time source call this*/
   void sunShadingTimeChanged();
@@ -532,7 +536,11 @@ private:
   QActionGroup *actionGroupMapProjection = nullptr, *actionGroupMapSunShading = nullptr,
                *actionGroupMapWeatherSource = nullptr, *actionGroupMapWeatherWindSource = nullptr;
 
+  /* Reload weather all 15 seconds */
   QTimer weatherUpdateTimer;
+
+  /* Check shared memory for updates by other instance every second. Calls checkSharedMemory() */
+  QTimer sharedMemoryCheckTimer;
 
   bool firstStart = true; /* emit window shown only once after startup */
 
