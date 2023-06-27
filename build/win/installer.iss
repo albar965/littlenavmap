@@ -9,7 +9,7 @@
 ; Command line parameters with defaults ==========================================================================
 ; Set defaults for debugging if not given on the command line
 #ifndef LnmAppVersion
-  #define LnmAppVersion "2.8.11"
+  #define LnmAppVersion "2.8.12.rc1"
 #endif
 
 #ifndef LnmAppArch
@@ -24,6 +24,7 @@
 ; Defines ==========================================================================
 #define LnmAppProjects GetEnv("APROJECTS")
 #define LnmAppName "Little Navmap"
+#define LnmAppNameReg "LittleNavmap"
 #define LnmAppPublisher "Alexander Barthel"
 #define LnmAppURL "https://www.littlenavmap.org/"
 #define LnmAppExeName "littlenavmap.exe"
@@ -37,9 +38,9 @@
 #endif
 
 ; No file associations yet
-;#define LnmAppAssocName LnmAppName + " Flight Plan"
-;#define LnmAppAssocExt ".lnmpln"
-;#define LnmAppAssocKey StringChange(LnmAppAssocName, " ", "") + LnmAppAssocExt
+#define LnmAppAssocName LnmAppName + " Flight Plan"
+#define LnmAppAssocExt ".lnmpln"
+#define LnmAppAssocKey StringChange(LnmAppAssocName, " ", "") + LnmAppAssocExt
 
 ; LittleNavmap-win64-2.8.11-Install.exe
 #define LnmInstaller "LittleNavmap-" + LnmAppArch + "-" + LnmAppVersion + "-Install"
@@ -67,7 +68,7 @@ AppSupportURL={#LnmAppURL}
 AppUpdatesURL={#LnmAppURL}
 DefaultDirName={autopf}\{#LnmAppName}
 UninstallDisplayIcon={app}\{#LnmAppExeName}
-ChangesAssociations=no
+ChangesAssociations=yes
 DisableProgramGroupPage=yes
 LicenseFile={#LnmAppSourceBase}\LICENSE.txt
 ;InfoAfterFile={#LnmAppSourceBase}\CHANGELOG.txt
@@ -112,13 +113,14 @@ Source: "{#LnmAppSourceDir}"; DestDir: "{app}"; Flags: ignoreversion recursesubd
   Source: "{#LnmAppProjects}\Redist\vcredist_2015-2022.x64.exe"; DestDir: {tmp}; Flags: deleteafterinstall
 #endif
 
-; No file associations yet
-;[Registry]
-;Root: HKA; Subkey: "Software\Classes\{#LnmAppAssocExt}\OpenWithProgids"; ValueType: string; ValueName: "{#LnmAppAssocKey}"; ValueData: ""; Flags: uninsdeletevalue
-;Root: HKA; Subkey: "Software\Classes\{#LnmAppAssocKey}"; ValueType: string; ValueName: ""; ValueData: "{#LnmAppAssocName}"; Flags: uninsdeletekey
-;Root: HKA; Subkey: "Software\Classes\{#LnmAppAssocKey}\DefaultIcon"; ValueType: string; ValueName: ""; ValueData: "{app}\{#LnmAppExeName},0"
-;Root: HKA; Subkey: "Software\Classes\{#LnmAppAssocKey}\shell\open\command"; ValueType: string; ValueName: ""; ValueData: """{app}\{#LnmAppExeName}"" ""%1"""
-;Root: HKA; Subkey: "Software\Classes\Applications\{#LnmAppExeName}\SupportedTypes"; ValueType: string; ValueName: ".lnmpln"; ValueData: ""
+; File associations ==========================================================================
+[Registry]
+Root: HKCR; Subkey: ".lnmpln"; ValueType: string; ValueName: ""; ValueData: "{#LnmAppNameReg}"; Flags: uninsdeletevalue
+Root: HKCR; Subkey: ".lnmperf"; ValueType: string; ValueName: ""; ValueData: "{#LnmAppNameReg}"; Flags: uninsdeletevalue
+Root: HKCR; Subkey: ".lnmlayout"; ValueType: string; ValueName: ""; ValueData: "{#LnmAppNameReg}"; Flags: uninsdeletevalue
+Root: HKCR; Subkey: "{#LnmAppNameReg}"; ValueType: string; ValueName: ""; ValueData: "Little Navmap File"; Flags: uninsdeletekey
+Root: HKCR; Subkey: "{#LnmAppNameReg}\DefaultIcon"; ValueType: string; ValueName: ""; ValueData: "{app}\littlenavmap.exe,0"
+Root: HKCR; Subkey: "{#LnmAppNameReg}\shell\open\command"; ValueType: string; ValueName: ""; ValueData: """{app}\{#LnmAppExeName}"" ""%1"""
 
 ; ==========================================================================
 ; Start menu entries for all programs and documentation
