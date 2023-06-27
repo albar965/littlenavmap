@@ -20,7 +20,7 @@
 #include "atools.h"
 #include "geo/calculations.h"
 #include "common/unit.h"
-#include "navapp.h"
+#include "app/navapp.h"
 #include "common/proctypes.h"
 #include "common/symbolpainter.h"
 #include "common/formatter.h"

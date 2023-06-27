@@ -20,7 +20,7 @@
 #include "common/proctypes.h"
 #include "fs/pln/flightplanentry.h"
 #include "query/mapquery.h"
-#include "navapp.h"
+#include "app/navapp.h"
 
 using atools::fs::pln::FlightplanEntry;
 

@@ -16,6 +16,7 @@
 *****************************************************************************/
 
 #include "perf/aircraftperfcontroller.h"
+#include "common/filecheck.h"
 #include "perf/aircraftperfdialog.h"
 
 #include "gui/mainwindow.h"
@@ -24,7 +25,7 @@
 #include "settings/settings.h"
 #include "gui/widgetutil.h"
 #include "util/average.h"
-#include "navapp.h"
+#include "app/navapp.h"
 #include "common/fueltool.h"
 #include "route/route.h"
 #include "geo/calculations.h"
@@ -40,7 +41,6 @@
 #include "gui/filehistoryhandler.h"
 #include "gui/errorhandler.h"
 #include "exception.h"
-#include "navapp.h"
 #include "perf/perfmergedialog.h"
 #include "route/routealtitude.h"
 #include "gui/widgetstate.h"
@@ -1392,9 +1392,9 @@ void AircraftPerfController::restoreState()
 
   // Load last used performance file or the one passed on the command line
   QString perfFile;
-  if(!NavApp::getStartupOptionStr(lnm::STARTUP_AIRCRAFT_PERF).isEmpty())
-    perfFile = NavApp::getStartupOptionStr(lnm::STARTUP_AIRCRAFT_PERF); // Command line
-  else if(OptionData::instance().getFlags() & opts::STARTUP_LOAD_PERF)
+  fc::fromStartupProperties(NavApp::getStartupOptionsConst(), nullptr, &perfFile);
+
+  if(perfFile.isEmpty() && OptionData::instance().getFlags() & opts::STARTUP_LOAD_PERF)
     perfFile = settings.valueStr(lnm::AIRCRAFT_PERF_FILENAME);
 
   if(!perfFile.isEmpty())

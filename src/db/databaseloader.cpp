@@ -28,7 +28,7 @@
 #include "fs/navdatabaseprogress.h"
 #include "gui/errorhandler.h"
 #include "gui/textdialog.h"
-#include "navapp.h"
+#include "app/navapp.h"
 #include "options/optionsdialog.h"
 #include "settings/settings.h"
 #include "sql/sqldatabase.h"

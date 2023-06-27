@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -25,7 +25,7 @@
 #include "gui/mainwindow.h"
 #include "logbook/logdatacontroller.h"
 #include "mapgui/mapwidget.h"
-#include "navapp.h"
+#include "app/navapp.h"
 #include "options/optiondata.h"
 #include "perf/aircraftperfcontroller.h"
 #include "route/routecontroller.h"

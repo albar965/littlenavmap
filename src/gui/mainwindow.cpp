@@ -18,10 +18,12 @@
 #include "gui/mainwindow.h"
 
 #include "airspace/airspacecontroller.h"
+#include "app/dataexchange.h"
 #include "atools.h"
 #include "common/constants.h"
 #include "common/dirtool.h"
 #include "common/elevationprovider.h"
+#include "common/filecheck.h"
 #include "common/mapcolors.h"
 #include "common/settingsmigrate.h"
 #include "common/unit.h"
@@ -29,7 +31,6 @@
 #include "db/databasemanager.h"
 #include "exception.h"
 #include "fs/perf/aircraftperf.h"
-#include "fs/pln/flightplanio.h"
 #include "gui/application.h"
 #include "gui/dialog.h"
 #include "gui/dockwidgethandler.h"
@@ -53,7 +54,7 @@
 #include "mapgui/mapmarkhandler.h"
 #include "mapgui/mapthemehandler.h"
 #include "mapgui/mapwidget.h"
-#include "navapp.h"
+#include "app/navapp.h"
 #include "online/onlinedatacontroller.h"
 #include "options/optionsdialog.h"
 #include "perf/aircraftperfcontroller.h"
@@ -84,7 +85,6 @@
 #include "weather/windreporter.h"
 #include "web/webcontroller.h"
 #include "common/updatehandler.h"
-#include "util/properties.h"
 
 #include <marble/MarbleAboutDialog.h>
 #include <marble/MarbleModel.h>
@@ -257,6 +257,14 @@ MainWindow::MainWindow()
 
     NavApp::init(this);
 
+    // Initialize and connect the data exchange which sends properties from other started instances
+    const DataExchange *dataExchange = NavApp::getDataExchangeConst();
+    connect(dataExchange, &DataExchange::activateMain, this, &MainWindow::activateWindow);
+    connect(dataExchange, &DataExchange::activateMain, this, &MainWindow::raise);
+    connect(dataExchange, &DataExchange::loadRoute, this, &MainWindow::routeOpenFile);
+    connect(dataExchange, &DataExchange::loadLayout, this, &MainWindow::loadLayoutDelayed);
+    connect(dataExchange, &DataExchange::loadPerf, NavApp::getAircraftPerfController(), &AircraftPerfController::loadFile);
+
     NavApp::getStyleHandler()->insertMenuItems(ui->menuWindowStyle);
     NavApp::getStyleHandler()->restoreState();
     mapcolors::init();
@@ -379,11 +387,6 @@ MainWindow::MainWindow()
 
     // Enable or disable tooltips - call later since it needs the map window
     optionsDialog->updateTooltipOption();
-
-    // Check for commands from other instance =====================
-    sharedMemoryCheckTimer.setInterval(500);
-    connect(&sharedMemoryCheckTimer, &QTimer::timeout, this, &MainWindow::checkSharedMemory);
-    sharedMemoryCheckTimer.start();
 
     // Update clock =====================
     clockTimer.setInterval(1000);
@@ -677,56 +680,6 @@ void MainWindow::updateClock() const
                         .arg(QDateTime::currentDateTimeUtc().toString())
                         .arg(QDateTime::currentDateTime().toString()));
   timeLabel->setMinimumWidth(timeLabel->width());
-}
-
-void MainWindow::checkSharedMemory()
-{
-  // Check for message from other instance
-  atools::util::Properties properties = NavApp::checkSharedMemory();
-
-  if(!properties.isEmpty())
-  {
-    // Found message
-    qDebug() << Q_FUNC_INFO << properties;
-
-    // Extract filenames from known options ================================
-    QString flightplan = properties.getPropertyStr(lnm::STARTUP_FLIGHTPLAN);
-    QString perf = properties.getPropertyStr(lnm::STARTUP_AIRCRAFT_PERF);
-    QString layout = properties.getPropertyStr(lnm::STARTUP_LAYOUT);
-
-    // Extract filenames from positional arguments without options ================================
-    for(const QString otherFile : properties.getPropertyStr(lnm::STARTUP_OTHER_ARGUMENTS))
-    {
-      if(atools::checkFile(Q_FUNC_INFO, otherFile, true /* warn */))
-      {
-        if(flightplan.isEmpty() && atools::fs::pln::FlightplanIO::isFlightplanFile(otherFile))
-          flightplan = otherFile;
-
-        if(perf.isEmpty() && AircraftPerfController::isPerformanceFile(otherFile))
-          perf = otherFile;
-
-        if(layout.isEmpty() && atools::gui::DockWidgetHandler::isWindowLayoutFile(otherFile))
-          layout = otherFile;
-      }
-    }
-
-    // Load files if found and exist ===========================================
-    if(atools::checkFile(Q_FUNC_INFO, layout, true /* warn */))
-      loadLayoutDelayed(layout);
-
-    if(atools::checkFile(Q_FUNC_INFO, flightplan, true /* warn */))
-      routeOpenFile(flightplan);
-
-    if(atools::checkFile(Q_FUNC_INFO, perf, true /* warn */))
-      NavApp::getAircraftPerfController()->loadFile(perf);
-
-    // Activate window - always sent by other instance =====================================================
-    if(properties.getPropertyBool(lnm::STARTUP_COMMAND_ACTIVATE))
-    {
-      activateWindow();
-      raise();
-    }
-  }
 }
 
 /* Show map legend and bring information dock to front */
@@ -3283,6 +3236,9 @@ void MainWindow::mainWindowShown()
              << "geo" << screen->geometry() << "available geo" << screen->availableGeometry()
              << "available virtual geo" << screen->availableVirtualGeometry();
 
+  // Check for commands from other instances in shared memory segment
+  NavApp::getDataExchange()->startTimer();
+
   qDebug() << Q_FUNC_INFO << "leave";
 }
 
@@ -4700,10 +4656,10 @@ void MainWindow::dragEnterEvent(QDragEnterEvent *event)
         // accept if file exists, is readable and matches the supported extensions or content
         QFileInfo file(url.toLocalFile());
 
-        if(atools::checkFile(Q_FUNC_INFO, file, true /* warn */) &&
-           (atools::fs::pln::FlightplanIO::isFlightplanFile(file.filePath()) ||
-            AircraftPerfController::isPerformanceFile(file.filePath()) ||
-            atools::gui::DockWidgetHandler::isWindowLayoutFile(file.filePath())))
+        QString flightplan, perf, layout;
+        fc::checkFileType(file.filePath(), &flightplan, &perf, &layout);
+
+        if(!flightplan.isEmpty() || !perf.isEmpty() || !layout.isEmpty())
         {
           qDebug() << Q_FUNC_INFO << "accepting" << url;
           event->acceptProposedAction();

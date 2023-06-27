@@ -19,7 +19,7 @@
 
 #include "common/constants.h"
 #include "geo/calculations.h"
-#include "navapp.h"
+#include "app/navapp.h"
 #include "fs/common/globereader.h"
 #include "gui/helphandler.h"
 #include "options/optiondata.h"

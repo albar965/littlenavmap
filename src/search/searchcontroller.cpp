@@ -26,7 +26,7 @@
 #include "gui/tabwidgethandler.h"
 #include "logbook/logdatacontroller.h"
 #include "mapgui/mapwidget.h"
-#include "navapp.h"
+#include "app/navapp.h"
 #include "gui/mainwindow.h"
 #include "search/airportsearch.h"
 #include "search/logdatasearch.h"

@@ -21,7 +21,7 @@
 #include "common/unit.h"
 #include "fs/util/fsutil.h"
 #include "geo/calculations.h"
-#include "navapp.h"
+#include "app/navapp.h"
 #include "query/mapquery.h"
 #include "route/route.h"
 

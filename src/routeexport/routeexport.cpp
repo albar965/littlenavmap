@@ -29,7 +29,7 @@
 #include "gui/errorhandler.h"
 #include "gui/mainwindow.h"
 #include "io/fileroller.h"
-#include "navapp.h"
+#include "app/navapp.h"
 #include "route/routealtitude.h"
 #include "route/routecontroller.h"
 #include "routeexport/routeexportdata.h"

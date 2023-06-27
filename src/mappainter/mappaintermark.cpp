@@ -18,7 +18,7 @@
 #include "mappainter/mappaintermark.h"
 
 #include "mapgui/mapwidget.h"
-#include "navapp.h"
+#include "app/navapp.h"
 #include "mapgui/mapscale.h"
 #include "mapgui/maplayer.h"
 #include "perf/aircraftperfcontroller.h"
@@ -29,7 +29,6 @@
 #include "common/symbolpainter.h"
 #include "geo/rect.h"
 #include "atools.h"
-#include "navapp.h"
 #include "common/symbolpainter.h"
 #include "airspace/airspacecontroller.h"
 #include "common/unit.h"

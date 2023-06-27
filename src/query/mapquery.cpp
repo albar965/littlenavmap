@@ -26,7 +26,7 @@
 #include "logbook/logdatacontroller.h"
 #include "mapgui/mapairporthandler.h"
 #include "mapgui/maplayer.h"
-#include "navapp.h"
+#include "app/navapp.h"
 #include "online/onlinedatacontroller.h"
 #include "query/airportquery.h"
 #include "query/airwaytrackquery.h"

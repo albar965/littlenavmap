@@ -30,7 +30,7 @@
 #include "sql/sqlquery.h"
 #include "sql/sqlrecord.h"
 #include "mapgui/maplayer.h"
-#include "navapp.h"
+#include "app/navapp.h"
 #include "settings/settings.h"
 #include "fs/sc/simconnectdata.h"
 

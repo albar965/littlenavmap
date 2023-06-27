@@ -19,6 +19,7 @@
 
 #include "atools.h"
 #include "common/constants.h"
+#include "common/filecheck.h"
 #include "common/formatter.h"
 #include "common/mapcolors.h"
 #include "common/symbolpainter.h"
@@ -43,7 +44,7 @@
 #include "gui/treedialog.h"
 #include "gui/widgetstate.h"
 #include "mapgui/mapwidget.h"
-#include "navapp.h"
+#include "app/navapp.h"
 #include "options/optiondata.h"
 #include "parkingdialog.h"
 #include "query/airportquery.h"
@@ -1005,11 +1006,12 @@ void RouteController::restoreState()
 
   try
   {
-    // Load plan from command line or last used =============================================
     QString cmdLineFlightplanFile, cmdLineFlightplanDescr;
-    if(!NavApp::getStartupOptionStr(lnm::STARTUP_FLIGHTPLAN).isEmpty())
-      cmdLineFlightplanFile = NavApp::getStartupOptionStr(lnm::STARTUP_FLIGHTPLAN); // Command line file
-    else if(!NavApp::getStartupOptionStr(lnm::STARTUP_FLIGHTPLAN_DESCR).isEmpty())
+
+    // Load plan from command line or last used =============================================
+    fc::fromStartupProperties(NavApp::getStartupOptionsConst(), &cmdLineFlightplanFile);
+
+    if(cmdLineFlightplanFile.isEmpty() && !NavApp::getStartupOptionStr(lnm::STARTUP_FLIGHTPLAN_DESCR).isEmpty())
       cmdLineFlightplanDescr = NavApp::getStartupOptionStr(lnm::STARTUP_FLIGHTPLAN_DESCR); // Command line description
 
     if(!cmdLineFlightplanDescr.isEmpty())

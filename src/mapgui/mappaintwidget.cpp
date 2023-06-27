@@ -27,7 +27,7 @@
 #include "mapgui/mapthemehandler.h"
 #include "mappainter/mappaintlayer.h"
 #include "marble/ViewportParams.h"
-#include "navapp.h"
+#include "app/navapp.h"
 #include "query/airwayquery.h"
 #include "query/airwaytrackquery.h"
 #include "query/mapquery.h"

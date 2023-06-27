@@ -259,6 +259,9 @@ message(-----------------------------------)
 SOURCES += \
   src/airspace/airspacecontroller.cpp \
   src/airspace/airspacetoolbarhandler.cpp \
+  src/app/commandline.cpp \
+  src/app/dataexchange.cpp \
+  src/app/navapp.cpp \
   src/common/abstractinfobuilder.cpp \
   src/common/aircrafttrack.cpp \
   src/common/airportfiles.cpp \
@@ -267,6 +270,7 @@ SOURCES += \
   src/common/dialogrecordhelper.cpp \
   src/common/dirtool.cpp \
   src/common/elevationprovider.cpp \
+  src/common/filecheck.cpp \
   src/common/formatter.cpp \
   src/common/fueltool.cpp \
   src/common/htmlinfobuilder.cpp \
@@ -354,7 +358,6 @@ SOURCES += \
   src/mappainter/mappainterweather.cpp \
   src/mappainter/mappainterwind.cpp \
   src/mappainter/mappaintlayer.cpp \
-  src/navapp.cpp \
   src/online/onlinedatacontroller.cpp \
   src/options/optiondata.cpp \
   src/options/optionsdialog.cpp \
@@ -453,6 +456,9 @@ SOURCES += \
 HEADERS  += \
   src/airspace/airspacecontroller.h \
   src/airspace/airspacetoolbarhandler.h \
+  src/app/commandline.h \
+  src/app/dataexchange.h \
+  src/app/navapp.h \
   src/common/abstractinfobuilder.h \
   src/common/aircrafttrack.h \
   src/common/airportfiles.h \
@@ -461,6 +467,7 @@ HEADERS  += \
   src/common/dialogrecordhelper.h \
   src/common/dirtool.h \
   src/common/elevationprovider.h \
+  src/common/filecheck.h \
   src/common/formatter.h \
   src/common/fueltool.h \
   src/common/htmlinfobuilder.h \
@@ -549,7 +556,6 @@ HEADERS  += \
   src/mappainter/mappainterweather.h \
   src/mappainter/mappainterwind.h \
   src/mappainter/mappaintlayer.h \
-  src/navapp.h \
   src/online/onlinedatacontroller.h \
   src/options/optiondata.h \
   src/options/optionsdialog.h \

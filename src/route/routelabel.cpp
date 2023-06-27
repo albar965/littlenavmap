@@ -25,7 +25,7 @@
 #include "fs/pln/flightplan.h"
 #include "fs/util/fsutil.h"
 #include "gui/clicktooltiphandler.h"
-#include "navapp.h"
+#include "app/navapp.h"
 #include "perf/aircraftperfcontroller.h"
 #include "query/airportquery.h"
 #include "query/mapquery.h"

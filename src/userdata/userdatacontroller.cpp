@@ -30,7 +30,7 @@
 #include "gui/dialog.h"
 #include "gui/errorhandler.h"
 #include "gui/mainwindow.h"
-#include "navapp.h"
+#include "app/navapp.h"
 #include "options/optiondata.h"
 #include "search/searchcontroller.h"
 #include "search/userdatasearch.h"

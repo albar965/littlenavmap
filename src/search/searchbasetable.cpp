@@ -28,7 +28,7 @@
 #include "gui/itemviewzoomhandler.h"
 #include "logbook/logdatacontroller.h"
 #include "mapgui/mapwidget.h"
-#include "navapp.h"
+#include "app/navapp.h"
 #include "options/optiondata.h"
 #include "query/airportquery.h"
 #include "query/mapquery.h"

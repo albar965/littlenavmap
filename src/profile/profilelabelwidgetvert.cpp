@@ -22,7 +22,7 @@
 #include "common/mapcolors.h"
 #include "profile/profilescrollarea.h"
 #include "profile/profileoptions.h"
-#include "navapp.h"
+#include "app/navapp.h"
 #include "route/route.h"
 #include "common/unit.h"
 

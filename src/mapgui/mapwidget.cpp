@@ -49,7 +49,7 @@
 #include "mapgui/maptooltip.h"
 #include "mapgui/mapvisible.h"
 #include "mappainter/mappaintlayer.h"
-#include "navapp.h"
+#include "app/navapp.h"
 #include "online/onlinedatacontroller.h"
 #include "query/airportquery.h"
 #include "query/procedurequery.h"

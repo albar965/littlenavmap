@@ -17,7 +17,7 @@
 
 #include "weather/windreporter.h"
 
-#include "navapp.h"
+#include "app/navapp.h"
 #include "ui_mainwindow.h"
 #include "grib/windquery.h"
 #include "settings/settings.h"

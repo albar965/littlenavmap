@@ -24,7 +24,7 @@
 #include "util/simplecrypt.h"
 #include "util/xmlstream.h"
 #include "mapgui/mapwidget.h"
-#include "navapp.h"
+#include "app/navapp.h"
 #include "ui_mainwindow.h"
 #include "gui/dialog.h"
 #include "gui/widgetstate.h"

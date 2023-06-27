@@ -27,7 +27,7 @@
 #include "gui/actiontextsaver.h"
 #include "options/optiondata.h"
 #include "route/route.h"
-#include "navapp.h"
+#include "app/navapp.h"
 #include "atools.h"
 #include "common/unit.h"
 #include "common/symbolpainter.h"

@@ -35,7 +35,7 @@
 #include "gui/helphandler.h"
 #include "gui/mainwindow.h"
 #include "io/fileroller.h"
-#include "navapp.h"
+#include "app/navapp.h"
 #include "options/optiondata.h"
 #include "settings/settings.h"
 #include "sql/sqldatabase.h"

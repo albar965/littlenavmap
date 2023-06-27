@@ -17,11 +17,9 @@
 
 #include "web/webmapcontroller.h"
 
-#include <navapp.h>
-
 #include "mapgui/mappaintwidget.h"
 #include "mapgui/mapwidget.h"
-#include "navapp.h"
+#include "app/navapp.h"
 
 #include <QDebug>
 #include <QPixmap>

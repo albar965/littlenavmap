@@ -24,7 +24,7 @@
 #include "fs/pln/flightplan.h"
 #include "fs/util/coordinates.h"
 #include "fs/util/fsutil.h"
-#include "navapp.h"
+#include "app/navapp.h"
 #include "query/airportquery.h"
 #include "query/airwaytrackquery.h"
 #include "query/mapquery.h"

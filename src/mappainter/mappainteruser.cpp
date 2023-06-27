@@ -20,7 +20,7 @@
 #include "atools.h"
 #include "common/symbolpainter.h"
 #include "mapgui/maplayer.h"
-#include "navapp.h"
+#include "app/navapp.h"
 #include "query/mapquery.h"
 #include "userdata/userdataicons.h"
 #include "util/paintercontextsaver.h"

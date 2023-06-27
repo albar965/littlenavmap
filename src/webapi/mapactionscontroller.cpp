@@ -20,15 +20,13 @@
 #include "common/infobuildertypes.h"
 #include "common/abstractinfobuilder.h"
 
-#include <navapp.h>
-
 #include "query/mapquery.h"
 #include "query/waypointtrackquery.h"
 #include "mapgui/mappaintwidget.h"
 #include "mapgui/mapthemehandler.h"
 #include "mappainter/mappaintlayer.h"
 #include "mapgui/mapwidget.h"
-#include "navapp.h"
+#include "app/navapp.h"
 #include "common/mapresult.h"
 #include "web/webmapcontroller.h"
 

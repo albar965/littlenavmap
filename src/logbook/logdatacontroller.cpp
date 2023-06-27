@@ -37,7 +37,7 @@
 #include "logbook/logdatadialog.h"
 #include "logbook/logstatisticsdialog.h"
 #include "zip/gzip.h"
-#include "navapp.h"
+#include "app/navapp.h"
 #include "query/airportquery.h"
 #include "route/route.h"
 #include "route/routealtitude.h"

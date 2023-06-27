@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -15,6 +15,7 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
+#include "app/navapp.h"
 #include "atools.h"
 #include "common/aircrafttrack.h"
 #include "common/constants.h"
@@ -37,29 +38,25 @@
 #include "gui/translator.h"
 #include "logging/logginghandler.h"
 #include "logging/loggingutil.h"
-#include "navapp.h"
 #include "options/optionsdialog.h"
 #include "routeexport/routeexportformat.h"
 #include "settings/settings.h"
 #include "userdata/userdataicons.h"
 
-#include <QCommandLineParser>
 #include <QDebug>
 #include <QSplashScreen>
 #include <QSslSocket>
 #include <QStyleFactory>
-#include <QSharedMemory>
-#include <QMessageBox>
-#include <QLibrary>
 #include <QPixmapCache>
 #include <QSettings>
 #include <QScreen>
-#include <QProcess>
-#include <QStandardPaths>
+#include <QProcessEnvironment>
 
 #include <marble/MarbleGlobal.h>
 #include <marble/MarbleDirs.h>
 #include <marble/MarbleDebug.h>
+
+#include <app/commandline.h>
 
 using namespace Marble;
 using atools::gui::Application;
@@ -177,119 +174,27 @@ int main(int argc, char *argv[])
   {
     QApplication::processEvents();
 
-    QCommandLineParser parser;
-    parser.addHelpOption();
-    parser.addVersionOption();
-
-    QCommandLineOption settingsDirOpt({"s", "settings-directory"},
-                                      QObject::tr("Use <settings-directory> instead of \"%1\". This does *not* override the full path. "
-                                                  "Spaces are replaced with underscores.").arg(NavApp::organizationName()),
-                                      QObject::tr("settings-directory"));
-    parser.addOption(settingsDirOpt);
-
-    QCommandLineOption settingsPathOpt({"p", "settings-path"},
-                                       QObject::tr("Use <settings-path> to store options and databases into the given directory. "
-                                                   "<settings-path> can be relative or absolute. "
-                                                     "Missing directories are created. Path can be on any drive."),
-                                       QObject::tr("settings-path"));
-    parser.addOption(settingsPathOpt);
-
-    QCommandLineOption logPathOpt({"l", "log-path"},
-                                  QObject::tr("Use <log-path> to store log files into the given directory. "
-                                              "<log-path> can be relative or absolute. "
-                                                "Missing directories are created. Path can be on any drive."),
-                                  QObject::tr("settings-path"));
-    parser.addOption(logPathOpt);
-
-    QCommandLineOption cachePathOpt({"c", "cache-path"},
-                                    QObject::tr("Use <cache-path> to store tiles from online maps. "
-                                                "Missing directories are created. Path can be on any drive."),
-                                    QObject::tr("cache-path"));
-    parser.addOption(cachePathOpt);
-
-    QCommandLineOption flightplanOpt({"f", lnm::STARTUP_FLIGHTPLAN},
-                                     QObject::tr("Load the given <%1> file on startup. Can be one of the supported formats like "
-                                                 "\".lnmpln\", \".pln\", \".fms\", "
-                                                 "\".fgfp\", \".fpl\", \".gfp\" or others.").arg(lnm::STARTUP_FLIGHTPLAN),
-                                     lnm::STARTUP_FLIGHTPLAN);
-    parser.addOption(flightplanOpt);
-
-    QCommandLineOption flightplanDescrOpt({"d", lnm::STARTUP_FLIGHTPLAN_DESCR},
-                                          QObject::tr("Parse and load the given <%1> flight plan route description on startup. "
-                                                      "Example \"EDDF BOMBI LIRF\".").arg(lnm::STARTUP_FLIGHTPLAN_DESCR),
-                                          lnm::STARTUP_FLIGHTPLAN_DESCR);
-    parser.addOption(flightplanDescrOpt);
-
-    QCommandLineOption performanceOpt({"a", lnm::STARTUP_AIRCRAFT_PERF},
-                                      QObject::tr("Load the given <%1> aircraft performance file "
-                                                  "\".lnmperf\" on startup.").arg(lnm::STARTUP_AIRCRAFT_PERF),
-                                      lnm::STARTUP_AIRCRAFT_PERF);
-    parser.addOption(performanceOpt);
-
-    QCommandLineOption layoutOpt({"y", lnm::STARTUP_LAYOUT},
-                                 QObject::tr("Load the given <%1> window layout file"
-                                             "\".lnmlayout\" on startup.").arg(lnm::STARTUP_LAYOUT),
-                                 lnm::STARTUP_LAYOUT);
-    parser.addOption(layoutOpt);
-
-    QCommandLineOption languageOpt({"g", "language"},
-                                   QObject::tr("Use language code <language> like \"de\" or \"en_US\" for the user interface. "
-                                               "The code is not checked for existence or validity and "
-                                               "is saved for the next startup."), "language");
-    parser.addOption(languageOpt);
-
     // ==============================================
+    // Read command line arguments and store them in NavApp startup options or settings
+    CommandLine commandLine;
+
     // Process the actual command line arguments given by the user
-    parser.process(*QCoreApplication::instance());
-    QString logPath;
-
-    // Settings directory
-    if(parser.isSet(settingsDirOpt) && parser.isSet(settingsPathOpt))
-      qWarning() << QObject::tr("Only one of options -s and -p can be used");
-
-    if(parser.isSet(settingsDirOpt) && !parser.value(settingsDirOpt).isEmpty())
-      Settings::setOverrideOrganisation(parser.value(settingsDirOpt));
-
-    if(parser.isSet(settingsPathOpt) && !parser.value(settingsPathOpt).isEmpty())
-      Settings::setOverridePath(parser.value(settingsPathOpt));
-
-    if(parser.isSet(logPathOpt) && !parser.value(logPathOpt).isEmpty())
-      logPath = parser.value(logPathOpt);
-
-    // File loading
-    if(parser.isSet(flightplanOpt) && parser.isSet(flightplanDescrOpt))
-      qWarning() << QObject::tr("Only one of options -f and -d can be used");
-
-    if(parser.isSet(flightplanOpt) && !parser.value(flightplanOpt).isEmpty())
-      NavApp::addStartupOptionStr(lnm::STARTUP_FLIGHTPLAN, parser.value(flightplanOpt));
-
-    if(parser.isSet(flightplanDescrOpt) && !parser.value(flightplanDescrOpt).isEmpty())
-      NavApp::addStartupOptionStr(lnm::STARTUP_FLIGHTPLAN_DESCR, parser.value(flightplanDescrOpt));
-
-    if(parser.isSet(performanceOpt) && !parser.value(performanceOpt).isEmpty())
-      NavApp::addStartupOptionStr(lnm::STARTUP_AIRCRAFT_PERF, parser.value(performanceOpt));
-
-    if(parser.isSet(layoutOpt) && !parser.value(layoutOpt).isEmpty())
-      NavApp::addStartupOptionStr(lnm::STARTUP_LAYOUT, parser.value(layoutOpt));
-
-    // Other arguments without option
-    if(!parser.positionalArguments().isEmpty())
-      NavApp::addStartupOptionStrList(lnm::STARTUP_OTHER_ARGUMENTS, parser.positionalArguments());
+    commandLine.process();
 
     // ==============================================
     // Check if LNM is already running - send message across shared memory and exit if yes, otherwise continue normally
-    if(!NavApp::initSharedMemory())
+    if(!NavApp::initDataExchange())
     {
       // ==============================================
       // Initialize logging and force logfiles into the system or user temp directory
       // This will prefix all log files with orgranization and application name and append ".log"
       QString logCfg = Settings::getOverloadedPath(":/littlenavmap/resources/config/logging.cfg");
-      if(logPath.isEmpty())
+      if(commandLine.getLogPath().isEmpty())
         LoggingHandler::initializeForTemp(logCfg);
       else
       {
-        QDir().mkpath(logPath);
-        LoggingHandler::initialize(logCfg, logPath);
+        QDir().mkpath(commandLine.getLogPath());
+        LoggingHandler::initialize(logCfg, commandLine.getLogPath());
       }
 
       // ==============================================
@@ -299,8 +204,8 @@ int main(int argc, char *argv[])
 
       // ==============================================
       // Set language from command line into options - will be saved
-      if(parser.isSet(languageOpt) && !parser.value(languageOpt).isEmpty())
-        Settings::instance().setValue(lnm::OPTIONS_DIALOG_LANGUAGE, parser.value(languageOpt));
+      if(!commandLine.getLanguage().isEmpty())
+        Settings::instance().setValue(lnm::OPTIONS_DIALOG_LANGUAGE, commandLine.getLanguage());
 
       // ==============================================
       // Print some information which can be useful for debugging
@@ -421,13 +326,13 @@ int main(int argc, char *argv[])
 
       MarbleDirs::setMarbleDataPath(QApplication::applicationDirPath() + QDir::separator() + "data");
 
-      if(parser.isSet(cachePathOpt) && !parser.value(cachePathOpt).isEmpty())
+      if(!commandLine.getCachePath().isEmpty())
       {
         // "/home/USER/.local/share" ("/home/USER/.local/share/marble/maps/earth/openstreetmap")
         // "C:/Users/USER/AppData/Local" ("C:\Users\USER\AppData\Local\.marble\data\maps\earth\openstreetmap")
 
         ///home/USER/.local/share/marble
-        QFileInfo cacheFileinfo(parser.value(cachePathOpt));
+        QFileInfo cacheFileinfo(commandLine.getCachePath());
 
         QString marbleCache;
 
@@ -511,18 +416,18 @@ int main(int argc, char *argv[])
   }
   catch(atools::Exception& e)
   {
-    NavApp::deInitSharedMemory();
+    NavApp::deInitDataExchange();
     ATOOLS_HANDLE_EXCEPTION(e);
     // Does not return in case of fatal error
   }
   catch(...)
   {
-    NavApp::deInitSharedMemory();
+    NavApp::deInitDataExchange();
     ATOOLS_HANDLE_UNKNOWN_EXCEPTION;
     // Does not return in case of fatal error
   }
 
-  NavApp::deInitSharedMemory();
+  NavApp::deInitDataExchange();
 
   delete dbManager;
   dbManager = nullptr;

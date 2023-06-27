@@ -421,9 +421,6 @@ private:
   void checkForUpdates();
   void updateClock() const;
 
-  /* Called by sharedMemoryCheckTimer and checks for messages from other instances */
-  void checkSharedMemory();
-
   /* Actions that define the time source call this*/
   void sunShadingTimeChanged();
 
@@ -538,9 +535,6 @@ private:
 
   /* Reload weather all 15 seconds */
   QTimer weatherUpdateTimer;
-
-  /* Check shared memory for updates by other instance every second. Calls checkSharedMemory() */
-  QTimer sharedMemoryCheckTimer;
 
   bool firstStart = true; /* emit window shown only once after startup */
 

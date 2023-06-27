@@ -16,7 +16,7 @@
 *****************************************************************************/
 
 #include "abstractlnmactionscontroller.h"
-#include "navapp.h"
+#include "app/navapp.h"
 #include "common/infobuildertypes.h"
 #include "query/airportquery.h"
 #include "query/infoquery.h"

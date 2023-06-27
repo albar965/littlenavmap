@@ -22,7 +22,7 @@
 #include "fs/util/fsutil.h"
 #include "geo/calculations.h"
 #include "geo/line.h"
-#include "navapp.h"
+#include "app/navapp.h"
 #include "query/airportquery.h"
 #include "query/mapquery.h"
 #include "sql/sqldatabase.h"

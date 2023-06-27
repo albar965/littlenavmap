@@ -21,7 +21,7 @@
 #include "common/unit.h"
 #include "fs/perf/aircraftperf.h"
 #include "geo/calculations.h"
-#include "navapp.h"
+#include "app/navapp.h"
 #include "route/route.h"
 #include "weather/windreporter.h"
 

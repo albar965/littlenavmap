@@ -27,7 +27,7 @@
 #include "gui/itemviewzoomhandler.h"
 #include "gui/widgetstate.h"
 #include "logdatacontroller.h"
-#include "navapp.h"
+#include "app/navapp.h"
 #include "sql/sqldatabase.h"
 #include "util/htmlbuilder.h"
 

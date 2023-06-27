@@ -22,7 +22,7 @@
 #include "httpserver/httpsession.h"
 #include "templateengine/templatecache.h"
 #include "mapgui/mappaintwidget.h"
-#include "navapp.h"
+#include "app/navapp.h"
 #include "info/infocontroller.h"
 #include "route/routecontroller.h"
 #include "web/webmapcontroller.h"

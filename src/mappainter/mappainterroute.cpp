@@ -27,7 +27,7 @@
 #include "mapgui/maplayer.h"
 #include "mapgui/mappaintwidget.h"
 #include "mapgui/mapscale.h"
-#include "navapp.h"
+#include "app/navapp.h"
 #include "route/route.h"
 #include "route/routealtitudeleg.h"
 #include "util/paintercontextsaver.h"

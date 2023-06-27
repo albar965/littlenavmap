@@ -22,7 +22,7 @@
 #include "gui/tools.h"
 #include "gui/widgetstate.h"
 #include "gui/widgetutil.h"
-#include "navapp.h"
+#include "app/navapp.h"
 #include "route/routecontroller.h"
 #include "routestring/routestringreader.h"
 #include "routestring/routestringwriter.h"

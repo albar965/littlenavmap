@@ -18,7 +18,7 @@
 #include "query/infoquery.h"
 
 #include "common/constants.h"
-#include "navapp.h"
+#include "app/navapp.h"
 #include "query/querytypes.h"
 #include "settings/settings.h"
 #include "sql/sqldatabase.h"

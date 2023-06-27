@@ -22,7 +22,7 @@
 #include "gui/dialog.h"
 #include "gui/helphandler.h"
 #include "gui/mainwindow.h"
-#include "navapp.h"
+#include "app/navapp.h"
 #include "options/optionsdialog.h"
 #include "settings/settings.h"
 

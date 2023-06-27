@@ -24,7 +24,7 @@
 #include "gui/clicktooltiphandler.h"
 #include "gui/helphandler.h"
 #include "gui/widgetstate.h"
-#include "navapp.h"
+#include "app/navapp.h"
 #include "route/route.h"
 #include "route/routecontroller.h"
 #include "ui_routecalcdialog.h"

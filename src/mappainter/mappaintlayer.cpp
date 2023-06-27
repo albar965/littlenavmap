@@ -39,7 +39,7 @@
 #include "mappainter/mappainteruser.h"
 #include "mappainter/mappainterweather.h"
 #include "mappainter/mappainterwind.h"
-#include "navapp.h"
+#include "app/navapp.h"
 #include "options/optiondata.h"
 #include "route/route.h"
 #include "settings/settings.h"

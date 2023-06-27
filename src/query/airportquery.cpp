@@ -25,7 +25,7 @@
 #include "sql/sqldatabase.h"
 #include "common/maptools.h"
 #include "settings/settings.h"
-#include "navapp.h"
+#include "app/navapp.h"
 #include "sql/sqlutil.h"
 #include "fs/util/fsutil.h"
 

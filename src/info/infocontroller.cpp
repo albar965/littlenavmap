@@ -30,7 +30,7 @@
 #include "gui/widgetutil.h"
 #include "info/aircraftprogressconfig.h"
 #include "mapgui/mapwidget.h"
-#include "navapp.h"
+#include "app/navapp.h"
 #include "online/onlinedatacontroller.h"
 #include "options/optiondata.h"
 #include "query/airportquery.h"

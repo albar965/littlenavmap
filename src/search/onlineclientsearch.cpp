@@ -24,7 +24,7 @@
 #include "common/unit.h"
 #include "fs/online/onlinetypes.h"
 #include "gui/widgetstate.h"
-#include "navapp.h"
+#include "app/navapp.h"
 #include "online/onlinedatacontroller.h"
 #include "search/column.h"
 #include "search/columnlist.h"

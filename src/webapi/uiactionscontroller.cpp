@@ -3,7 +3,7 @@
 #include "mapgui/mapwidget.h"
 #include "common/infobuildertypes.h"
 #include "common/abstractinfobuilder.h"
-#include "navapp.h"
+#include "app/navapp.h"
 
 using InfoBuilderTypes::UiInfoData;
 

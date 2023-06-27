@@ -27,7 +27,7 @@
 #include "gui/griddelegate.h"
 #include "gui/itemviewzoomhandler.h"
 #include "gui/widgetstate.h"
-#include "navapp.h"
+#include "app/navapp.h"
 #include "query/airportquery.h"
 #include "query/infoquery.h"
 #include "query/mapquery.h"

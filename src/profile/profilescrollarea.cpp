@@ -26,7 +26,7 @@
 #include "route/route.h"
 #include "options/optiondata.h"
 
-#include "navapp.h"
+#include "app/navapp.h"
 #include "atools.h"
 
 #include <QDebug>

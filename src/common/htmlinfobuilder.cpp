@@ -39,7 +39,7 @@
 #include "geo/calculations.h"
 #include "logbook/logdatacontroller.h"
 #include "mapgui/mappaintwidget.h"
-#include "navapp.h"
+#include "app/navapp.h"
 #include "online/onlinedatacontroller.h"
 #include "perf/aircraftperfcontroller.h"
 #include "query/airportquery.h"

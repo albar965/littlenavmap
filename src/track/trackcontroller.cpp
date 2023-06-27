@@ -22,7 +22,7 @@
 #include "gui/dialog.h"
 #include "gui/mainwindow.h"
 #include "gui/widgetstate.h"
-#include "navapp.h"
+#include "app/navapp.h"
 #include "settings/settings.h"
 #include "settings/settings.h"
 #include "track/trackdownloader.h"

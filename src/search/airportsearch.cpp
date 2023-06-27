@@ -30,7 +30,7 @@
 #include "gui/mainwindow.h"
 #include "gui/widgetstate.h"
 #include "gui/widgetutil.h"
-#include "navapp.h"
+#include "app/navapp.h"
 #include "query/airportquery.h"
 #include "search/column.h"
 #include "search/columnlist.h"

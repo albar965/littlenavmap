@@ -35,7 +35,7 @@
 #include "gui/widgetutil.h"
 #include "mapgui/mapthemehandler.h"
 #include "mapgui/mapwidget.h"
-#include "navapp.h"
+#include "app/navapp.h"
 #include "settings/settings.h"
 #include "ui_options.h"
 #include "util/htmlbuilder.h"

@@ -25,7 +25,7 @@
 #include "atools.h"
 #include "fs/util/fsutil.h"
 #include "common/elevationprovider.h"
-#include "navapp.h"
+#include "app/navapp.h"
 #include "common/unit.h"
 
 #include <QRegularExpression>

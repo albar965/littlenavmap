@@ -27,7 +27,7 @@
 #include "mapgui/maplayer.h"
 #include "mapgui/mapmarkhandler.h"
 #include "mappainter/mappaintlayer.h"
-#include "navapp.h"
+#include "app/navapp.h"
 #include "query/mapquery.h"
 #include "userdata/userdatacontroller.h"
 #include "util/htmlbuilder.h"

@@ -21,7 +21,7 @@
 #include "common/constants.h"
 #include "fs/pln/flightplan.h"
 #include "gui/errorhandler.h"
-#include "navapp.h"
+#include "app/navapp.h"
 #include "routeexport/routeexport.h"
 #include "settings/settings.h"
 

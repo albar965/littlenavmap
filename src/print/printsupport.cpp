@@ -17,7 +17,7 @@
 
 #include "print/printsupport.h"
 
-#include "navapp.h"
+#include "app/navapp.h"
 #include "common/constants.h"
 #include "mapgui/mapwidget.h"
 #include "common/mapcolors.h"

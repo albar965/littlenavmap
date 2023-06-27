@@ -24,7 +24,7 @@
 #include "common/symbolpainter.h"
 #include "sql/sqlrecord.h"
 #include "common/maptypesfactory.h"
-#include "navapp.h"
+#include "app/navapp.h"
 
 #include <QPainter>
 

@@ -31,7 +31,7 @@
 #include "gui/widgetstate.h"
 #include "common/unitstringtool.h"
 #include "common/maptypes.h"
-#include "navapp.h"
+#include "app/navapp.h"
 
 #include <QPushButton>
 #include <QDateTime>

@@ -18,7 +18,7 @@
 #include "profile/profilewidget.h"
 
 #include "atools.h"
-#include "navapp.h"
+#include "app/navapp.h"
 #include "geo/calculations.h"
 #include "common/mapcolors.h"
 #include "profile/profilescrollarea.h"

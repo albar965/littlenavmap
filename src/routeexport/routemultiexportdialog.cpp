@@ -25,7 +25,7 @@
 #include "gui/helphandler.h"
 #include "gui/itemviewzoomhandler.h"
 #include "gui/widgetstate.h"
-#include "navapp.h"
+#include "app/navapp.h"
 #include "routeexport/routeexportformat.h"
 #include "settings/settings.h"
 #include "util/htmlbuilder.h"
