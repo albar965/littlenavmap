@@ -115,11 +115,11 @@ Source: "{#LnmAppSourceDir}"; DestDir: "{app}"; Flags: ignoreversion recursesubd
 
 ; File associations ==========================================================================
 [Registry]
-Root: HKCR; Subkey: ".lnmpln"; ValueType: string; ValueName: ""; ValueData: "{#LnmAppNameReg}"; Flags: uninsdeletevalue
-Root: HKCR; Subkey: ".lnmperf"; ValueType: string; ValueName: ""; ValueData: "{#LnmAppNameReg}"; Flags: uninsdeletevalue
-Root: HKCR; Subkey: ".lnmlayout"; ValueType: string; ValueName: ""; ValueData: "{#LnmAppNameReg}"; Flags: uninsdeletevalue
+Root: HKCR; Subkey: ".lnmpln"; ValueType: string; ValueName: ""; ValueData: "{#LnmAppNameReg}"; Flags: uninsdeletekey
+Root: HKCR; Subkey: ".lnmperf"; ValueType: string; ValueName: ""; ValueData: "{#LnmAppNameReg}"; Flags: uninsdeletekey
+Root: HKCR; Subkey: ".lnmlayout"; ValueType: string; ValueName: ""; ValueData: "{#LnmAppNameReg}"; Flags: uninsdeletekey
 Root: HKCR; Subkey: "{#LnmAppNameReg}"; ValueType: string; ValueName: ""; ValueData: "Little Navmap File"; Flags: uninsdeletekey
-Root: HKCR; Subkey: "{#LnmAppNameReg}\DefaultIcon"; ValueType: string; ValueName: ""; ValueData: "{app}\littlenavmap.exe,0"
+Root: HKCR; Subkey: "{#LnmAppNameReg}\DefaultIcon"; ValueType: string; ValueName: ""; ValueData: "{app}\littlenavmap.exe,1"
 Root: HKCR; Subkey: "{#LnmAppNameReg}\shell\open\command"; ValueType: string; ValueName: ""; ValueData: """{app}\{#LnmAppExeName}"" ""%1"""
 
 ; ==========================================================================
