@@ -904,8 +904,8 @@ macx {
 # Windows specific deploy target
 win32 {
   defineReplace(p){return ($$shell_quote($$shell_path($$1)))}
-  RC_ICONS = resources/icons/littlenavmap256.ico
-  RC_ICONS += resources/icons/littlenavmapdoc256.ico
+  RC_ICONS = resources/icons/littlenavmap.ico
+  RC_ICONS += resources/icons/littlenavmapdoc.ico
 
   CONFIG(debug, debug|release) : DLL_SUFFIX=d
   CONFIG(release, debug|release) : DLL_SUFFIX=

@@ -326,8 +326,6 @@
         <file>resources/icons/userpoint_Addon.svg</file>
         <file>resources/icons/airportmil.svg</file>
         <file>resources/icons/mapgridconfig.svg</file>
-        <file>resources/icons/littlenavmapdoc256.ico</file>
         <file>resources/icons/littlenavmapdoc.svg</file>
-        <file>resources/icons/littlenavmap256.ico</file>
     </qresource>
 </RCC>
