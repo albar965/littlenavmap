@@ -22,6 +22,7 @@
 #include "common/maptypes.h"
 #include "options/optiondata.h"
 #include "settings/settings.h"
+#include "app/navapp.h"
 
 #include <QPen>
 #include <QString>
@@ -29,7 +30,6 @@
 #include <QPalette>
 #include <QSettings>
 #include <QPainter>
-#include <navapp.h>
 
 namespace mapcolors {
 

@@ -23,9 +23,9 @@
 #include "io/binaryutil.h"
 #include "sql/sqlrecord.h"
 #include "fs/util/fsutil.h"
+#include "app/navapp.h"
 
 #include <cmath>
-#include <navapp.h>
 
 using namespace atools::geo;
 using atools::sql::SqlRecord;

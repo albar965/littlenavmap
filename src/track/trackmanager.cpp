@@ -28,10 +28,10 @@
 #include "sql/sqlutil.h"
 #include "io/binaryutil.h"
 #include "common/maptypes.h"
+#include "app/navapp.h"
 
 #include <QDataStream>
 #include <QElapsedTimer>
-#include <navapp.h>
 
 using atools::sql::SqlDatabase;
 using atools::sql::SqlTransaction;

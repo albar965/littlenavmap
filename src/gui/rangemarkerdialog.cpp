@@ -32,12 +32,12 @@
 #include "geo/pos.h"
 #include "perf/aircraftperfcontroller.h"
 #include "fs/perf/aircraftperf.h"
+#include "app/navapp.h"
 
 #include "ui_rangemarkerdialog.h"
 
 #include <QColorDialog>
 #include <QRegularExpressionValidator>
-#include <navapp.h>
 
 using atools::geo::Pos;
 

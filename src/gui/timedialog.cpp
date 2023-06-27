@@ -23,10 +23,10 @@
 #include "gui/helphandler.h"
 #include "mapgui/mapwidget.h"
 #include "gui/widgetstate.h"
+#include "app/navapp.h"
 
 #include <QAbstractButton>
 #include <QPushButton>
-#include <navapp.h>
 
 TimeDialog::TimeDialog(QWidget *parent, const QDateTime& datetime) :
   QDialog(parent), ui(new Ui::TimeDialog)
