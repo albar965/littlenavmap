@@ -27,6 +27,7 @@
 #include <QDataStream>
 #include <QSharedMemory>
 #include <QDateTime>
+#include <QDir>
 
 static const int SHARED_MEMORY_SIZE = 4096;
 static QLatin1String PROGRAM_GUID("203abd54-8a6a-4308-a654-6771efec62cd");
@@ -43,7 +44,8 @@ DataExchange::DataExchange()
 
   // Detect other running application instance with same settings - this is unsafe on Unix since shm can remain after crashes
   if(sharedMemory == nullptr)
-    sharedMemory = new QSharedMemory(PROGRAM_GUID + atools::settings::Settings::getDirName());
+    sharedMemory = new QSharedMemory(PROGRAM_GUID + "-" +
+                                     QDir::cleanPath(QFileInfo(atools::settings::Settings::getPath()).canonicalFilePath()));
 
   // Create and attach
   if(sharedMemory->create(SHARED_MEMORY_SIZE, QSharedMemory::ReadWrite))
