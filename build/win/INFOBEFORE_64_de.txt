@@ -1,0 +1,9 @@
+﻿Hinweis
+
+Dies ist die Little Navmap 64-bit-Kompilierung, die für MSFS und X-Plane verwendet werden kann.
+
+Beachten Sie, dass Little Navmap und alle zugehörigen Programme über das Netzwerk interoperabel sind (Little Navmap und Little Navconnect), ebenso wie das X-Plane-Plugin (Little Navmap, Little Navconnect und Little Xpconnect).
+
+Auch die 64-Bit- und 32-Bit-Kompilierungen nutzen die gleichen Einstellungen und Datenbanken. Sie können beide Kompilierungen installieren und ohne Probleme von einer zur anderen wechseln.
+
+Wenn Sie X-Plane verwenden, lesen Sie bitte das Benutzerhandbuch für die Installation von Little Xpconnect.
