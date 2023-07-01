@@ -1,11 +1,10 @@
 Files in this directory:
 
-=== littlemavmap.exe.manifest.RTM, littlemavmap.exe.manifest.SP1 and littlemavmap.exe.manifest.XPACK
+# SimConnect.dll and simconnect.manifest
 
-These can be used to force Little Navmap or Little Navconnect to use a different version of SimConnect.
-To use overwrite "littlenavmap.exe.manifest" with one of these files.
+32-bit FSX SimConnect library used to connect to FSX and P3D. Loaded directly by Little Navmap
 
-=== SimConnect.ini
+# SimConnect.ini
 
 This file can be used to diagnose SimConnect problems.
 
