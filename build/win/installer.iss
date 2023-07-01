@@ -54,11 +54,10 @@ WizardImageFile={#LnmAppProjects}\littlenavmap\resources\icons\background_164x31
 ; The value of AppId uniquely identifies this application. Do not use the same AppId value in installers for other applications.
 #if LnmAppArch == "win64"
   AppId={{61C4D3CA-FE30-4467-BE6D-66F8634931BC}
-  InfoBeforeFile={#LnmAppProjects}\littlenavmap\build\win\INFOBEFORE_64_en.txt
 #elif LnmAppArch == "win32"
   AppId={{BB829DC7-42F4-411B-B9DF-F1ED5BA862EC}
-  InfoBeforeFile={#LnmAppProjects}\littlenavmap\build\win\INFOBEFORE_32_en.txt
 #endif
+InfoBeforeFile={#LnmAppProjects}\littlenavmap\build\win\INFOBEFORE_{#LnmAppArch}_en.txt
 AppName={#LnmAppName}
 AppVersion={#LnmAppVersion}
 AppVerName={#LnmAppName} {#LnmAppVersion} {#AppSuffix}
@@ -94,30 +93,27 @@ WizardStyle=modern
 
 ; ==========================================================================
 [Languages]
-#if LnmAppArch == "win64"
-  Name: "english"; MessagesFile: "compiler:Default.isl"; LicenseFile: {#LnmAppProjects}\littlenavmap\build\win\LICENSE_en.rtf; \
-    InfoBeforeFile: {#LnmAppProjects}\littlenavmap\build\win\INFOBEFORE_64_en.txt
-  Name: "german"; MessagesFile: "compiler:Languages\German.isl"; LicenseFile: {#LnmAppProjects}\littlenavmap\build\win\LICENSE_de.rtf; \
-    InfoBeforeFile: {#LnmAppProjects}\littlenavmap\build\win\INFOBEFORE_64_de.txt
-#elif LnmAppArch == "win32"
-  Name: "english"; MessagesFile: "compiler:Default.isl"; LicenseFile: {#LnmAppProjects}\littlenavmap\build\win\LICENSE_en.rtf;
-    InfoBeforeFile: {#LnmAppProjects}\littlenavmap\build\win\INFOBEFORE_32_en.txt
-  Name: "german"; MessagesFile: "compiler:Languages\German.isl"; LicenseFile: {#LnmAppProjects}\littlenavmap\build\win\LICENSE_de.rtf;
-    InfoBeforeFile: {#LnmAppProjects}\littlenavmap\build\win\INFOBEFORE_32_de.txt
-#endif
-Name: "french"; MessagesFile: "compiler:Languages\French.isl"
-Name: "italian"; MessagesFile: "compiler:Languages\Italian.isl"
-Name: "brazilianportuguese"; MessagesFile: "compiler:Languages\BrazilianPortuguese.isl"
-Name: "dutch"; MessagesFile: "compiler:Languages\Dutch.isl"
-Name: "spanish"; MessagesFile: "compiler:Languages\Spanish.isl"
+Name: "en"; MessagesFile: "compiler:Default.isl"; LicenseFile: {#LnmAppProjects}\littlenavmap\build\win\LICENSE_en.rtf; \
+  InfoBeforeFile: {#LnmAppProjects}\littlenavmap\build\win\INFOBEFORE_{#LnmAppArch}_en.txt
+Name: "de"; MessagesFile: "compiler:Languages\German.isl"; LicenseFile: {#LnmAppProjects}\littlenavmap\build\win\LICENSE_de.rtf; \
+  InfoBeforeFile: {#LnmAppProjects}\littlenavmap\build\win\INFOBEFORE_{#LnmAppArch}_de.txt
+Name: "fr"; MessagesFile: "compiler:Languages\French.isl"
+Name: "it"; MessagesFile: "compiler:Languages\Italian.isl"
+Name: "pt_BR"; MessagesFile: "compiler:Languages\BrazilianPortuguese.isl"
+Name: "nl"; MessagesFile: "compiler:Languages\Dutch.isl"
+Name: "es"; MessagesFile: "compiler:Languages\Spanish.isl"
 
 ; ==========================================================================
 [Tasks]
 Name: desktopicon; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
-;Name: quicklaunchicon; Description: "Create a &Quick Launch icon"; Flags: unchecked
-Name: lnmassociation; Description: "{cm:AssocFileExtension,{#LnmAppName},"".lnmpln""%2c "".lnmperf""%2c "".lnmlayout""}"; GroupDescription: "Associate file extensions of {#LnmAppName}:"
-Name: lnmplnassociation; Description: "{cm:AssocFileExtension,{#LnmAppName},FSX%2c P3D%2c MSFS "".pln""}"; Flags: unchecked; GroupDescription: "Associate other flight plan file extensions:"
-Name: lnmfmsassociation; Description: "{cm:AssocFileExtension,{#LnmAppName},X-Plane "".fms""}"; Flags: unchecked; GroupDescription: "Associate other flight plan file extensions:"
+Name: lnmassociation; Description: "{cm:AssocFileExtension,{#LnmAppName},"".lnmpln""%2c "".lnmperf""%2c "".lnmlayout""}"; \
+  GroupDescription: "Associate file extensions of {#LnmAppName}:"
+Name: lnmplnassociation; Description: "{cm:AssocFileExtension,{#LnmAppName},FSX%2c P3D%2c MSFS "".pln""}"; Flags: unchecked; \
+  GroupDescription: "Associate other flight plan file extensions:"
+Name: lnmfmsassociation; Description: "{cm:AssocFileExtension,{#LnmAppName},X-Plane "".fms""}"; Flags: unchecked; \
+  GroupDescription: "Associate other flight plan file extensions:"
+
+; Disabled associations
 ;Name: lnmfgfpssociation; Description: "{cm:AssocFileExtension,{#LnmAppName},FlightGear "".fgfp""}"; Flags: unchecked; GroupDescription: "Associate other flight plan file extensions:"
 ;Name: lnmfplassociation; Description: "{cm:AssocFileExtension,{#LnmAppName},Garmin "".fpl""}"; Flags: unchecked; GroupDescription: "Associate other flight plan file extensions:"
 ;Name: lnmgfpassociation; Description: "{cm:AssocFileExtension,{#LnmAppName},Garmin "".gfp""}"; Flags: unchecked; GroupDescription: "Associate other flight plan file extensions:"
@@ -144,6 +140,7 @@ Root: HKCR; Subkey: ".pln"; ValueType: string; ValueName: ""; ValueData: "{#LnmA
 Root: HKCR; Subkey: ".fms"; ValueType: string; ValueName: ""; ValueData: "{#LnmAppNameReg}"; Flags: uninsdeletekey; Tasks: lnmfmsassociation
 Root: HKCR; Subkey: "{#LnmAppNameReg}\shell\open\command"; ValueType: string; ValueName: ""; ValueData: """{app}\{#LnmAppExeName}"" ""%1"""
 
+; Disabled associations
 ;Root: HKCR; Subkey: ".fgfp"; ValueType: string; ValueName: ""; ValueData: "{#LnmAppNameReg}"; Flags: uninsdeletekey; Tasks: lnmfgfpssociation
 ;Root: HKCR; Subkey: ".gfp"; ValueType: string; ValueName: ""; ValueData: "{#LnmAppNameReg}"; Flags: uninsdeletekey; Tasks: lnmgfpassociation
 ;Root: HKCR; Subkey: ".flp"; ValueType: string; ValueName: ""; ValueData: "{#LnmAppNameReg}"; Flags: uninsdeletekey; Tasks: lnmflpassociation
@@ -168,6 +165,7 @@ Filename: "{app}\{#LnmAppExeName}"; Description: "{cm:LaunchProgram,{#StringChan
 Filename: "{app}\help\Little Navmap User Manual Online Start.url"; Description: "Open the User Manual Start Page"; Flags: nowait shellexec postinstall skipifsilent
 Filename: "{app}\CHANGELOG.txt"; Description: "Open the changelog"; Flags: nowait postinstall shellexec skipifsilent
 #if LnmAppArch == "win64"
-  Filename: "{tmp}\vcredist_2015-2022.x64.exe"; StatusMsg: "Installing MSVC Redistributables 2015-2022 64-bit ..."; Parameters: "/quiet /norestart"; Flags: runascurrentuser waituntilterminated
+  Filename: "{tmp}\vcredist_2015-2022.x64.exe"; StatusMsg: "Installing MSVC Redistributables 2015-2022 64-bit ..."; \
+    Parameters: "/quiet /norestart"; Flags: runascurrentuser waituntilterminated
 #endif
 
