@@ -82,6 +82,7 @@ A big thank you to all who reported bugs and issues!
   X-Plane installation. The weather was not loaded and wrong warning dialog was shown.
 * Added selection box for `IFR` or `VFR` flight plan type to route description.
 * Flight plan route description dialog is now updated on style change.
+* Moved AI and online aircraft menu items to submenu in `View`.
 
 # Little Navconnect Version 2.8.7
 
