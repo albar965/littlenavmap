@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2022 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -79,8 +79,8 @@ public:
   /* Fetch VOR and NDB features if a waypoint in allWaypoints is one of these types.
    * Additionally filter waypoints for airway/track types. */
   void resolveWaypointNavaids(const QList<map::MapWaypoint>& allWaypoints, QHash<int, map::MapWaypoint>& waypoints,
-                              QHash<int, map::MapVor>& vors, QHash<int, map::MapNdb>& ndbs, bool normalWaypoints, bool victorWaypoints,
-                              bool jetWaypoints, bool trackWaypoints) const;
+                              QHash<int, map::MapVor>& vors, QHash<int, map::MapNdb>& ndbs, bool flightplan,
+                              bool normalWaypoints, bool victorWaypoints, bool jetWaypoints, bool trackWaypoints) const;
 
   /* Get map objects by unique database id  */
   /* From nav db, depending on mode */
@@ -168,7 +168,7 @@ public:
    */
   void getNearestScreenObjects(const CoordinateConverter& conv, const MapLayer *mapLayer, const QSet<int>& shownDetailAirportIds,
                                bool airportDiagram,
-                               map::MapTypes types, int xs, int ys, int screenDistance,
+                               map::MapTypes types, map::MapDisplayTypes displayTypes, int xs, int ys, int screenDistance,
                                map::MapResult& result) const;
 
   /* Only VOR, NDB, ILS and waypoints

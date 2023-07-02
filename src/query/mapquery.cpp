@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2022 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -226,14 +226,17 @@ void MapQuery::getNdbNearest(map::MapNdb& ndb, const atools::geo::Pos& pos) cons
 }
 
 void MapQuery::resolveWaypointNavaids(const QList<MapWaypoint>& allWaypoints, QHash<int, MapWaypoint>& waypoints, QHash<int, MapVor>& vors,
-                                      QHash<int, MapNdb>& ndbs, bool normalWaypoints, bool victorWaypoints, bool jetWaypoints,
-                                      bool trackWaypoints) const
+                                      QHash<int, MapNdb>& ndbs, bool flightplan, bool normalWaypoints, bool victorWaypoints,
+                                      bool jetWaypoints, bool trackWaypoints) const
 {
   for(const MapWaypoint& wp : allWaypoints)
   {
     // Add waypoint if airway/track status matches
-    if(normalWaypoints || (wp.hasJetAirways && jetWaypoints) || (wp.hasVictorAirways && victorWaypoints) ||
-       (wp.hasTracks && trackWaypoints))
+    if(normalWaypoints || // All waypoints shown
+       (wp.hasJetAirways && jetWaypoints) || // Jet airways shown - show waypoints too
+       (wp.hasVictorAirways && victorWaypoints) || // Victor airways shown - show waypoints too
+       (wp.hasTracks && trackWaypoints) || // Tracks shown - show waypoints too
+       (flightplan && wp.routeIndex >= 0)) // Flightplan shown and waypoint is part of the route
     {
       if(wp.isVor() && wp.artificial != map::WAYPOINT_ARTIFICIAL_NONE)
       {
@@ -675,7 +678,7 @@ QVector<map::MapIls> MapQuery::ilsByAirportAndRunway(const QString& airportIdent
 }
 
 void MapQuery::getNearestScreenObjects(const CoordinateConverter& conv, const MapLayer *mapLayer, const QSet<int>& shownDetailAirportIds,
-                                       bool airportDiagram, map::MapTypes types,
+                                       bool airportDiagram, map::MapTypes types, map::MapDisplayTypes displayTypes,
                                        int xs, int ys, int screenDistance, map::MapResult& result) const
 {
   using maptools::insertSortedByDistance;
@@ -767,8 +770,9 @@ void MapQuery::getNearestScreenObjects(const CoordinateConverter& conv, const Ma
   bool jetWaypoints = mapLayer->isAirwayWaypoint() && types.testFlag(map::AIRWAYJ);
   bool trackWaypoints = mapLayer->isTrackWaypoint() && types.testFlag(map::TRACK);
   bool normalWaypoints = mapLayer->isWaypoint() && types.testFlag(map::WAYPOINT);
+  bool flightplan = displayTypes.testFlag(map::FLIGHTPLAN);
 
-  if((victorWaypoints || jetWaypoints) || trackWaypoints || normalWaypoints)
+  if(victorWaypoints || jetWaypoints || trackWaypoints || normalWaypoints || flightplan)
   {
     // Get all close waypoints
     NavApp::getWaypointTrackQueryGui()->getNearestScreenObjects(conv, mapLayer, types, xs, ys, screenDistance, result);
@@ -777,7 +781,8 @@ void MapQuery::getNearestScreenObjects(const CoordinateConverter& conv, const Ma
     QHash<int, MapWaypoint> waypoints;
     QHash<int, MapVor> vors;
     QHash<int, MapNdb> ndbs;
-    resolveWaypointNavaids(result.waypoints, waypoints, vors, ndbs, normalWaypoints, victorWaypoints, jetWaypoints, trackWaypoints);
+    resolveWaypointNavaids(result.waypoints, waypoints, vors, ndbs,
+                           flightplan, normalWaypoints, victorWaypoints, jetWaypoints, trackWaypoints);
 
     // Add filtered waypoints back to list
     result.waypoints.clear();

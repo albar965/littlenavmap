@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -98,7 +98,9 @@ void MapPainterNav::render()
     context->setQueryOverflow(overflow);
 
     // Resolve all artificial waypoints to the respective radio navaids and also filter by airway/track type
-    mapQuery->resolveWaypointNavaids(waypoints, allWaypoints, allVor, allNdb, drawNormalWp, drawAirwayWpV, drawAirwayWpJ, drawTrackWp);
+    // Do not copy flight plan waypoints - these are drawn in MapPainterRoute
+    mapQuery->resolveWaypointNavaids(waypoints, allWaypoints, allVor, allNdb, false /* flightplan */,
+                                     drawNormalWp, drawAirwayWpV, drawAirwayWpJ, drawTrackWp);
   }
 
   // Waypoints -------------------------------------------------

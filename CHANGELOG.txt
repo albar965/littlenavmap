@@ -57,6 +57,7 @@ A big thank you to all who reported bugs and issues!
 * Now creating two backups for main trail file `little_navmap.track` to avoid data loss on update.
 * Now backing up configuration and track files with `..._update-backup.N` suffix on program update.
 * Corrected issue where map grid was drawn below landmass in some offline maps.
+* Fixed missing flight plan waypoint tooltips and click spots with airway or track display enabled.
 * Added theme [open flightmaps](https://www.openflightmaps.org/) to included map themes.
   This is a modified version of the map theme by
   [AmbitiousPilots](https://github.com/AmbitiousPilots/LittleNavmapOFMTheme) including changes
