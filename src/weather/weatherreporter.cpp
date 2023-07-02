@@ -103,7 +103,7 @@ WeatherReporter::WeatherReporter(MainWindow *parentWindow, atools::fs::FsPaths::
   // Update IVAO and NOAA timeout periods - timeout is disable if weather services are not used
   updateTimeouts();
 
-  initActiveSkyNext();
+  initActiveSkyPaths();
 
   // Set callback so the reader can build an index for nearest airports
   xpWeatherReader->setFetchAirportCoords(coordFunc);
@@ -134,7 +134,7 @@ WeatherReporter::WeatherReporter(MainWindow *parentWindow, atools::fs::FsPaths::
 
 WeatherReporter::~WeatherReporter()
 {
-  deleteFsWatcher();
+  deleteActiveSkyFsWatcher();
 
   qDebug() << Q_FUNC_INFO << "delete noaaWeather";
   delete noaaWeather;
@@ -156,8 +156,7 @@ WeatherReporter::~WeatherReporter()
 void WeatherReporter::weatherDownloadProgress(qint64 bytesReceived, qint64 bytesTotal, QString downloadUrl)
 {
   if(verbose)
-    qDebug() << Q_FUNC_INFO << "bytesReceived" << bytesReceived << "bytesTotal" << bytesTotal
-             << "downloadUrl" << downloadUrl;
+    qDebug() << Q_FUNC_INFO << "bytesReceived" << bytesReceived << "bytesTotal" << bytesTotal << "downloadUrl" << downloadUrl;
 
   QApplication::processEvents(QEventLoop::WaitForMoreEvents);
 }
@@ -188,7 +187,7 @@ atools::geo::Pos WeatherReporter::fetchAirportCoordinates(const QString& airport
     return atools::geo::EMPTY_POS;
 }
 
-void WeatherReporter::deleteFsWatcher()
+void WeatherReporter::deleteActiveSkyFsWatcher()
 {
   if(fsWatcherAsPath != nullptr)
   {
@@ -209,7 +208,7 @@ void WeatherReporter::deleteFsWatcher()
   }
 }
 
-void WeatherReporter::createFsWatcher()
+void WeatherReporter::createActiveSkyFsWatcher()
 {
   if(fsWatcherAsPath == nullptr)
   {
@@ -218,8 +217,8 @@ void WeatherReporter::createFsWatcher()
     fsWatcherAsPath->setMinFileSize(1000);
     FileSystemWatcher::connect(fsWatcherAsPath, &FileSystemWatcher::filesUpdated, this, &WeatherReporter::activeSkyWeatherFilesChanged);
   }
-  activeSkyWeatherFilesChanged({asPath});
-  fsWatcherAsPath->setFilenameAndStart(asPath);
+  activeSkyWeatherFilesChanged({asSnapshotPath});
+  fsWatcherAsPath->setFilenameAndStart(asSnapshotPath);
 
   if(fsWatcherAsFlightplanPath == nullptr)
   {
@@ -324,9 +323,9 @@ void WeatherReporter::showXplaneWarningDialog(const QString& message)
   showingXplaneFileWarning = false;
 }
 
-void WeatherReporter::initActiveSkyNext()
+void WeatherReporter::initActiveSkyPaths()
 {
-  deleteFsWatcher();
+  deleteActiveSkyFsWatcher();
 
   activeSkyType = NONE;
   activeSkyMetars.clear();
@@ -334,7 +333,7 @@ void WeatherReporter::initActiveSkyNext()
   activeSkyDestinationMetar.clear();
   activeSkyDepartureIdent.clear();
   activeSkyDestinationIdent.clear();
-  asPath.clear();
+  asSnapshotPath.clear();
   asFlightplanPath.clear();
 
   QString manualActiveSkySnapshotPath = OptionData::instance().getWeatherActiveSkyPath();
@@ -385,37 +384,37 @@ void WeatherReporter::initActiveSkyNext()
     // Assign status depending on found files ===================================================
     if(!asXpl12SnapshotPath.isEmpty())
     {
-      asPath = asXpl12SnapshotPath;
+      asSnapshotPath = asXpl12SnapshotPath;
       asFlightplanPath = aspXpl12FlightplanSnapshotPath;
       activeSkyType = ASXPL12;
     }
     else if(!asXpl11SnapshotPath.isEmpty())
     {
-      asPath = asXpl11SnapshotPath;
+      asSnapshotPath = asXpl11SnapshotPath;
       asFlightplanPath = aspXpl11FlightplanSnapshotPath;
       activeSkyType = ASXPL11;
     }
     else if(!asp5SnapshotPath.isEmpty())
     {
-      asPath = asp5SnapshotPath;
+      asSnapshotPath = asp5SnapshotPath;
       asFlightplanPath = asp5FlightplanSnapshotPath;
       activeSkyType = ASP5;
     }
     else if(!asp4SnapshotPath.isEmpty())
     {
-      asPath = asp4SnapshotPath;
+      asSnapshotPath = asp4SnapshotPath;
       asFlightplanPath = asp4FlightplanSnapshotPath;
       activeSkyType = ASP4;
     }
     else if(!as16SnapshotPath.isEmpty())
     {
-      asPath = as16SnapshotPath;
+      asSnapshotPath = as16SnapshotPath;
       asFlightplanPath = as16FlightplanSnapshotPath;
       activeSkyType = AS16;
     }
     else if(!asnSnapshotPath.isEmpty())
     {
-      asPath = asnSnapshotPath;
+      asSnapshotPath = asnSnapshotPath;
       asFlightplanPath = asnFlightplanSnapshotPath;
       activeSkyType = ASN;
     }
@@ -425,20 +424,26 @@ void WeatherReporter::initActiveSkyNext()
   else
   {
     // Manual path overrides found path for all simulators
-    asPath = manualActiveSkySnapshotPath;
+    asSnapshotPath = manualActiveSkySnapshotPath;
     asFlightplanPath = QFileInfo(manualActiveSkySnapshotPath).path() + QDir::separator() + "activeflightplanwx.txt";
     activeSkyType = MANUAL;
   }
+}
 
-  if(!asPath.isEmpty() || !asFlightplanPath.isEmpty())
+void WeatherReporter::loadActiveSkySnapshots()
+{
+  if(!asSnapshotPath.isEmpty() || !asFlightplanPath.isEmpty())
   {
-    qDebug() << Q_FUNC_INFO << "Using Active Sky paths" << asPath << asFlightplanPath;
-    loadActiveSkySnapshot(asPath);
-    loadActiveSkyFlightplanSnapshot(asFlightplanPath);
-    createFsWatcher();
+    if(verbose)
+      qDebug() << Q_FUNC_INFO << "Using Active Sky paths" << asSnapshotPath << asFlightplanPath;
+
+    if(activeSkyMetars.isEmpty())
+      // Calls loadActiveSkySnapshot() and loadActiveSkyFlightplanSnapshot()
+      createActiveSkyFsWatcher();
   }
-  else
-    qDebug() << Q_FUNC_INFO << "Active Sky path" << asPath << "not found";
+  else if(verbose)
+    qWarning() << Q_FUNC_INFO << "asSnapshotPath" << asSnapshotPath << "asFlightplanPath" << asFlightplanPath << "not found";
+
 }
 
 /* Loads complete ASN file into a hash map */
@@ -486,7 +491,7 @@ void WeatherReporter::loadActiveSkySnapshot(const QString& path)
 
     qDebug() << Q_FUNC_INFO << "Loaded" << num << "METARs";
   }
-  else
+  else if(verbose)
     qWarning() << Q_FUNC_INFO << "cannot open" << file.fileName() << "reason" << file.errorString();
 }
 
@@ -691,6 +696,18 @@ QString WeatherReporter::getCurrentActiveSkyName() const
     return tr("Active Sky");
 }
 
+const QString& WeatherReporter::getActiveSkyDepartureIdent()
+{
+  loadActiveSkySnapshots();
+  return activeSkyDepartureIdent;
+}
+
+const QString& WeatherReporter::getActiveSkyDestinationIdent()
+{
+  loadActiveSkySnapshots();
+  return activeSkyDestinationIdent;
+}
+
 void WeatherReporter::updateAirportWeather()
 {
   updateTimeouts();
@@ -743,16 +760,16 @@ void WeatherReporter::weatherDownloadFailed(const QString& error, int errorCode,
 
 QString WeatherReporter::getActiveSkyMetar(const QString& airportIcao)
 {
-  if(hasAnyActiveSkyWeather())
-  {
-    if(activeSkyDepartureIdent == airportIcao)
-      return activeSkyDepartureMetar;
-    else if(activeSkyDestinationIdent == airportIcao)
-      return activeSkyDestinationMetar;
-    else
-      return activeSkyMetars.value(airportIcao, QString());
-  }
-  return QString();
+  // Load on demand
+  loadActiveSkySnapshots();
+
+  if(activeSkyDepartureIdent == airportIcao)
+    return activeSkyDepartureMetar;
+  else if(activeSkyDestinationIdent == airportIcao)
+    return activeSkyDestinationMetar;
+  else
+    // Return value or empty
+    return activeSkyMetars.value(airportIcao, QString());
 }
 
 atools::fs::weather::MetarResult WeatherReporter::getXplaneMetar(const QString& station, const atools::geo::Pos& pos)
@@ -791,8 +808,7 @@ atools::fs::weather::MetarResult WeatherReporter::getIvaoMetar(const QString& ai
   return ivaoWeather->getMetar(airportIcao, pos);
 }
 
-atools::fs::weather::Metar WeatherReporter::getAirportWeather(const QString& airportIcao,
-                                                              const atools::geo::Pos& airportPos,
+atools::fs::weather::Metar WeatherReporter::getAirportWeather(const QString& airportIcao, const atools::geo::Pos& airportPos,
                                                               map::MapWeatherSource source)
 {
   switch(source)
@@ -846,7 +862,7 @@ void WeatherReporter::postDatabaseLoad(atools::fs::FsPaths::SimulatorType type)
     simType = type;
     resetErrorState();
     updateTimeouts();
-    initActiveSkyNext();
+    initActiveSkyPaths();
     initXplane();
   }
 }
@@ -862,7 +878,7 @@ void WeatherReporter::optionsChanged()
 
   resetErrorState();
   updateTimeouts();
-  initActiveSkyNext();
+  initActiveSkyPaths();
   initXplane();
 }
 
@@ -905,9 +921,10 @@ void WeatherReporter::updateTimeouts()
 
 void WeatherReporter::activeSkyWeatherFilesChanged(const QStringList& paths)
 {
-  qDebug() << Q_FUNC_INFO << "file" << paths << "changed";
+  if(verbose)
+    qDebug() << Q_FUNC_INFO << "file" << paths << "changed";
 
-  loadActiveSkySnapshot(asPath);
+  loadActiveSkySnapshot(asSnapshotPath);
   loadActiveSkyFlightplanSnapshot(asFlightplanPath);
   mainWindow->setStatusMessage(tr("Active Sky weather information updated."), true /* addToLog */);
 
@@ -922,7 +939,8 @@ void WeatherReporter::xplaneWeatherFileChanged()
 
 void WeatherReporter::debugDumpContainerSizes() const
 {
-  qDebug() << Q_FUNC_INFO << "activeSkyMetars.size()" << activeSkyMetars.size();
+  if(verbose)
+    qDebug() << Q_FUNC_INFO << "activeSkyMetars.size()" << activeSkyMetars.size();
 
   if(noaaWeather != nullptr)
     noaaWeather->debugDumpContainerSizes();

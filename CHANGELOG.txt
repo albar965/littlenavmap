@@ -83,6 +83,8 @@ A big thank you to all who reported bugs and issues!
 * Added selection box for `IFR` or `VFR` flight plan type to route description.
 * Flight plan route description dialog is now updated on style change.
 * Moved AI and online aircraft menu items to submenu in `View`.
+* More fixes in weather to skip unneeded reading of ActiveSky weather files. These are now read
+  on demand.
 
 # Little Navconnect Version 2.8.7
 

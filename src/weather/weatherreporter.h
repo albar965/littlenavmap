@@ -157,15 +157,9 @@ public:
     return simType;
   }
 
-  const QString& getActiveSkyDepartureIdent() const
-  {
-    return activeSkyDepartureIdent;
-  }
+  const QString& getActiveSkyDepartureIdent();
 
-  const QString& getActiveSkyDestinationIdent() const
-  {
-    return activeSkyDestinationIdent;
-  }
+  const QString& getActiveSkyDestinationIdent();
 
   /* Map weather source has changed */
   void updateAirportWeather();
@@ -181,18 +175,25 @@ private:
   void weatherDownloadFailed(const QString& error, int errorCode, QString url);
   void weatherDownloadSslErrors(const QStringList& errors, const QString& downloadUrl);
 
+  /* Called by file watcher */
   void activeSkyWeatherFilesChanged(const QStringList& paths);
   void xplaneWeatherFileChanged();
 
-  void loadActiveSkySnapshot(const QString& path);
-  void loadActiveSkyFlightplanSnapshot(const QString& path);
-  void initActiveSkyNext();
+  /* Clear watcher, METARs and detect paths */
+  void initActiveSkyPaths();
   void findActiveSkyFiles(QString& asnSnapshot, QString& flightplanSnapshot, const QString& activeSkyPrefix,
                           const QString& activeSkySimSuffix);
 
+  /* Load METARs from all AS files on demand if not yet loaded after initActiveSkyPaths(). Create file watcher. */
+  void loadActiveSkySnapshots();
+
+  /* Load METARs from files */
+  void loadActiveSkySnapshot(const QString& path);
+  void loadActiveSkyFlightplanSnapshot(const QString& path);
+
   bool validateActiveSkyFlightplanFile(const QString& path);
-  void deleteFsWatcher();
-  void createFsWatcher();
+  void createActiveSkyFsWatcher();
+  void deleteActiveSkyFsWatcher();
 
   void initXplane();
   void disableXplane();
@@ -237,7 +238,7 @@ private:
   MainWindow *mainWindow;
 
   ActiveSkyType activeSkyType = NONE;
-  QString asPath, asFlightplanPath;
+  QString asSnapshotPath, asFlightplanPath;
 
   // Remember warnings shown for database and session
   bool xp11WarningPathShown = false, xp12WarningPathShown = false;
