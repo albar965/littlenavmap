@@ -116,10 +116,10 @@ QDebug operator<<(QDebug out, const FsPathType& record)
 {
   QDebugStateSaver saver(out);
   out.nospace() << "FsPathType["
-                << "registry entry " << record.isInstalled
-                << ", has database " << record.hasDatabase
-                << ", base path " << record.basePath
-                << ", scenery config " << record.sceneryCfg
+                << "isInstalled " << record.isInstalled
+                << ", hasDatabase " << record.hasDatabase
+                << ", basePath " << record.basePath
+                << ", sceneryCfg " << record.sceneryCfg
                 << "]";
   return out;
 }

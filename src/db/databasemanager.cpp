@@ -95,6 +95,7 @@ DatabaseManager::DatabaseManager(MainWindow *parent)
   // Find any stale databases that do not belong to a simulator and update installed and has database flags
   updateSimulatorFlags();
 
+  qDebug() << Q_FUNC_INFO << "Detected simulators =====================================================";
   for(auto it = simulators.constBegin(); it != simulators.constEnd(); ++it)
     qDebug() << Q_FUNC_INFO << it.key() << it.value();
 
@@ -1106,10 +1107,11 @@ void DatabaseManager::clearAircraftIndex()
 
 void DatabaseManager::loadAircraftIndex()
 {
-  if(currentFsType == FsPaths::MSFS)
+  if(currentFsType == FsPaths::MSFS && simulators.value(FsPaths::MSFS).isInstalled)
   {
     QString basePath = simulators.value(FsPaths::MSFS).basePath;
-    aircraftIndex->loadIndex({FsPaths::getMsfsCommunityPath(basePath), FsPaths::getMsfsOfficialPath(basePath)});
+    if(atools::checkDir(Q_FUNC_INFO, basePath, true /* warn */))
+      aircraftIndex->loadIndex({FsPaths::getMsfsCommunityPath(basePath), FsPaths::getMsfsOfficialPath(basePath)});
   }
 }
 

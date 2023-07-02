@@ -121,7 +121,9 @@ bool RouteStringReader::createRouteFromString(const QString& routeString, rs::Ro
                                               atools::fs::pln::Flightplan *flightplan, map::MapObjectRefExtVector *mapObjectRefs,
                                               float *speedKts, bool *altIncluded)
 {
+#ifdef DEBUG_INFORMATION
   qDebug() << Q_FUNC_INFO;
+#endif
 
   QElapsedTimer timer;
   timer.start();
