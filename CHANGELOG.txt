@@ -53,6 +53,7 @@ A big thank you to all who reported bugs and issues!
   `Show Map Grid Configuration` to change color of grid lines and labels.
 * Fixed issue where split user aircraft trails from previous version 2.8.10 were read wrongly
   and appeared connected.
+* Corrected loading of oceanic tracks to avoid disappearing flight plan after load.
 * Now creating two backups for main trail file `little_navmap.track` to avoid data loss on update.
 * Now backing up configuration and track files with `..._update-backup.N` suffix on program update.
 * Corrected issue where map grid was drawn below landmass in some offline maps.
@@ -65,7 +66,7 @@ A big thank you to all who reported bugs and issues!
   open flightmaps map theme could not be used.
 * Updated map theme file `example.dgml`.
 * Corrected checking for duplicate elements of `sourceDir` in map theme DGML files for maps having
-  more than one layer. This avoids the issue where different map themes might overwrite data in the 
+  more than one layer. This avoids the issue where different map themes might overwrite data in the
   cache folder.
 
 # Userpoint and Logbook

@@ -1502,7 +1502,6 @@ void MainWindow::connectAllSlots()
   connect(trackController, &TrackController::postTrackLoad, infoController, &InfoController::tracksChanged);
   connect(trackController, &TrackController::postTrackLoad, this, &MainWindow::updateMapObjectsShown);
   connect(trackController, &TrackController::postTrackLoad, routeController, &RouteController::tracksChanged);
-
   connect(trackController, &TrackController::postTrackLoad, mapWidget, &MapPaintWidget::postTrackLoad);
 
   connect(ui->actionRouteDownloadTracks, &QAction::toggled, trackController, &TrackController::downloadToggled);

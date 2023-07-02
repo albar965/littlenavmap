@@ -3250,6 +3250,8 @@ void RouteController::optionsChanged()
 
 void RouteController::tracksChanged()
 {
+  // Need to save and reload flight plan
+  preDatabaseLoad();
   postDatabaseLoad();
 }
 
