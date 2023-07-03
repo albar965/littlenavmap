@@ -2907,6 +2907,7 @@ Route Route::adjustedToOptions(const Route& origRoute, rf::RouteAdjustOptions op
 
     // Replace procedures with waypoints =======================================================================
     // Now replace all entries with either valid waypoints or user defined waypoints
+    int wpNum = 1;
     for(int i = 0; i < plan.size(); i++)
     {
       FlightplanEntry& entry = plan[i];
@@ -3014,7 +3015,7 @@ Route Route::adjustedToOptions(const Route& origRoute, rf::RouteAdjustOptions op
             QString legText = procedureLeg.displayText.join(" ");
             if(msfs)
               // More relaxed than FSX
-              entry.setIdent(atools::fs::util::adjustMsfsUserWpName(legText));
+              entry.setIdent(atools::fs::util::adjustMsfsUserWpName(legText, 10, &wpNum));
             else
               entry.setIdent(atools::fs::util::adjustFsxUserWpName(legText));
           }
