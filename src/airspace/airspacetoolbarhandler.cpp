@@ -240,7 +240,7 @@ void AirspaceToolBarHandler::actionsToFilterTypes(map::MapAirspaceFilter& curren
     for(QAction *action : toolButton->menu()->actions())
     {
       map::MapAirspaceFilter filter = action->data().value<map::MapAirspaceFilter>();
-      if(filter.flags.testFlag(map::AIRSPACE_FLAG_NONE))
+      if(filter.flags.testFlag(map::AIRSPACE_ALTITUDE_FLAG_NONE))
       {
         if(action->isChecked())
           currentFilter.types |= filter.types;
@@ -257,9 +257,15 @@ void AirspaceToolBarHandler::filterTypesToActions(const map::MapAirspaceFilter& 
   {
     for(QAction *action : toolButton->menu()->actions())
     {
+      action->blockSignals(true);
       map::MapAirspaceFilter filter = action->data().value<map::MapAirspaceFilter>();
-      if(filter.flags.testFlag(map::AIRSPACE_FLAG_NONE))
+      if(filter.flags == map::AIRSPACE_ALTITUDE_FLAG_NONE)
+        // Is a normal type filter
         action->setChecked(filter.types & currentFilter.types);
+      else
+        // Grouped altitude checkbox - check depending on flags
+        action->setChecked(filter.flags & currentFilter.flags);
+      action->blockSignals(false);
     }
   }
 }
@@ -302,7 +308,7 @@ void AirspaceToolBarHandler::actionRadioGroupTriggered(QAction *action)
   qDebug() << Q_FUNC_INFO;
 
   map::MapAirspaceFilter newFilter = NavApp::getShownMapAirspaces();
-  newFilter.flags = map::AIRSPACE_FLAG_NONE;
+  newFilter.flags = map::AIRSPACE_ALTITUDE_FLAG_NONE;
 
   QActionGroup *group = dynamic_cast<QActionGroup *>(sender());
   if(group != nullptr)
@@ -439,7 +445,7 @@ void AirspaceToolBarHandler::createAirspaceToolButton(atools::gui::ActionButtonH
   for(const map::MapAirspaceTypes& type : types)
     allTypes |= type;
 
-  map::MapAirspaceFlags allFlags = map::AIRSPACE_FLAG_NONE;
+  map::MapAirspaceFlags allFlags = map::AIRSPACE_ALTITUDE_FLAG_NONE;
   for(const map::MapAirspaceFlags& flag : flags)
     allFlags |= flag;
 
@@ -534,7 +540,7 @@ void AirspaceToolBarHandler::createAirspaceToolButton(atools::gui::ActionButtonH
 
       map::MapAirspaceFilter f;
       f.types = type;
-      f.flags = map::AIRSPACE_FLAG_NONE;
+      f.flags = map::AIRSPACE_ALTITUDE_FLAG_NONE;
 
       action->setData(QVariant::fromValue(f));
 

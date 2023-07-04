@@ -339,14 +339,14 @@ extern const QVector<map::MapAirspaceSources> MAP_AIRSPACE_SRC_NO_ONLINE_VALUES;
 /* Airspace filter flags */
 enum MapAirspaceFlag
 {
-  AIRSPACE_FLAG_NONE = 0, /* Indicates that filter is used only for type */
+  AIRSPACE_ALTITUDE_FLAG_NONE = 0,   /* Indicates that filter is used only for type */
 
   /* Special filter flags - not airspace types */
   AIRSPACE_ALTITUDE_ALL = 1 << 0,
   AIRSPACE_ALTITUDE_FLIGHTPLAN = 1 << 1,
   AIRSPACE_ALTITUDE_SET = 1 << 2, /* Use values MapAirspaceFilter::minAltitudeFt and MapAirspaceFilter::maxAltitudeFt */
 
-  /* Action flags - not airspace types */
+  /* Action flags - not airspace or altitude filter types */
   AIRSPACE_ALL_ON = 1 << 3,
   AIRSPACE_ALL_OFF = 1 << 4,
 
@@ -446,7 +446,7 @@ enum MapWaypointArtificial
 {
   WAYPOINT_ARTIFICIAL_NONE = 0, /* Normal waypoint */
   WAYPOINT_ARTIFICIAL_AIRWAYS = 1, /* Dummy waypoint created for airways or airways and procedures */
-  WAYPOINT_ARTIFICIAL_PROCEDURES = 2/* Dummy waypoint created for procedures only */
+  WAYPOINT_ARTIFICIAL_PROCEDURES = 2 /* Dummy waypoint created for procedures only */
 };
 
 /* Sun shading sub menu actions.
