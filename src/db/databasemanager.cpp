@@ -617,6 +617,7 @@ QString DatabaseManager::getSimulatorFilesPathBest(const FsPaths::SimulatorTypeV
     case atools::fs::FsPaths::P3D_V3:
     case atools::fs::FsPaths::P3D_V4:
     case atools::fs::FsPaths::P3D_V5:
+    case atools::fs::FsPaths::P3D_V6:
     case atools::fs::FsPaths::MSFS:
       // Ignore user changes of path for now
       path = FsPaths::getFilesPath(type);
@@ -651,6 +652,7 @@ QString DatabaseManager::getSimulatorBasePathBest(const FsPaths::SimulatorTypeVe
     case atools::fs::FsPaths::P3D_V3:
     case atools::fs::FsPaths::P3D_V4:
     case atools::fs::FsPaths::P3D_V5:
+    case atools::fs::FsPaths::P3D_V6:
     case atools::fs::FsPaths::XPLANE_11:
     case atools::fs::FsPaths::XPLANE_12:
     case atools::fs::FsPaths::MSFS:
@@ -1576,8 +1578,8 @@ bool DatabaseManager::checkValidBasePaths() const
     else if(selectedFsType != atools::fs::FsPaths::MSFS)
     {
       // Check scenery.cfg for FSX and P3D ========================================================
-      QString sceneryCfgCodec = (selectedFsType == atools::fs::FsPaths::P3D_V4 ||
-                                 selectedFsType == atools::fs::FsPaths::P3D_V5) ? "UTF-8" : QString();
+      QString sceneryCfgCodec = (selectedFsType == atools::fs::FsPaths::P3D_V4 || selectedFsType == atools::fs::FsPaths::P3D_V5 ||
+                                 selectedFsType == atools::fs::FsPaths::P3D_V6) ? "UTF-8" : QString();
 
       if(!NavDatabase::isSceneryConfigValid(databaseDialog->getSceneryConfigFile(), sceneryCfgCodec, errors))
       {

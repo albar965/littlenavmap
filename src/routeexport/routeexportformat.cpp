@@ -414,8 +414,8 @@ void RouteExportFormatMap::updateDefaultPaths()
 
   // Get best installed simulator
   if(fsxP3dBasePath.isEmpty())
-    fsxP3dBasePath = NavApp::getSimulatorFilesPathBest({FsPaths::P3D_V5, FsPaths::P3D_V4, FsPaths::P3D_V3, FsPaths::FSX_SE, FsPaths::FSX},
-                                                       documents);
+    fsxP3dBasePath = NavApp::getSimulatorFilesPathBest({FsPaths::P3D_V6, FsPaths::P3D_V5, FsPaths::P3D_V4, FsPaths::P3D_V3, FsPaths::FSX_SE,
+                                                        FsPaths::FSX}, documents);
 
   // GNS path ===========================
   QString gns;

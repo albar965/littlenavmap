@@ -61,8 +61,18 @@ A performance file can often be used for all simulators.</string>
             </property>
            </item>
            <item>
+           <property name="text">
+             <string notr="true">XP12</string>
+           </property>
+           </item>
+           <item>
             <property name="text">
              <string notr="true">MSFS</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string notr="true">P3DV6</string>
             </property>
            </item>
            <item>

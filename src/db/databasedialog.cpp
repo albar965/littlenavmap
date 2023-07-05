@@ -217,9 +217,8 @@ void DatabaseDialog::updateWidgets()
   ui->lineEditDatabaseBasePath->setText(simulators.value(currentFsType).basePath);
   ui->lineEditDatabaseBasePath->blockSignals(false);
 
-  ui->checkBoxReadAddOnXml->setEnabled(currentFsType == atools::fs::FsPaths::P3D_V3 ||
-                                       currentFsType == atools::fs::FsPaths::P3D_V4 ||
-                                       currentFsType == atools::fs::FsPaths::P3D_V5);
+  ui->checkBoxReadAddOnXml->setEnabled(currentFsType == atools::fs::FsPaths::P3D_V3 || currentFsType == atools::fs::FsPaths::P3D_V4 ||
+                                       currentFsType == atools::fs::FsPaths::P3D_V5 || currentFsType == atools::fs::FsPaths::P3D_V6);
 
   ui->checkBoxReadInactive->setEnabled(currentFsType != atools::fs::FsPaths::MSFS);
 

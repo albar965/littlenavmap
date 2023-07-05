@@ -37,6 +37,8 @@ atools::fs::FsPaths::SimulatorType SimulatorTypeMap::getBest() const
     return FsPaths::XPLANE_12;
   else if(contains(FsPaths::XPLANE_11) && value(FsPaths::XPLANE_11).hasDatabase)
     return FsPaths::XPLANE_11;
+  else if(contains(FsPaths::P3D_V6) && value(FsPaths::P3D_V6).hasDatabase)
+    return FsPaths::P3D_V6;
   else if(contains(FsPaths::P3D_V5) && value(FsPaths::P3D_V5).hasDatabase)
     return FsPaths::P3D_V5;
   else if(contains(FsPaths::P3D_V4) && value(FsPaths::P3D_V4).hasDatabase)
@@ -53,7 +55,7 @@ atools::fs::FsPaths::SimulatorType SimulatorTypeMap::getBest() const
 
 FsPaths::SimulatorType SimulatorTypeMap::getBestInstalled() const
 {
-  return getBestInstalled({FsPaths::MSFS, FsPaths::XPLANE_12, FsPaths::XPLANE_11, FsPaths::P3D_V5, FsPaths::P3D_V4,
+  return getBestInstalled({FsPaths::MSFS, FsPaths::XPLANE_12, FsPaths::XPLANE_11, FsPaths::P3D_V6, FsPaths::P3D_V5, FsPaths::P3D_V4,
                            FsPaths::P3D_V3, FsPaths::FSX_SE, FsPaths::FSX});
 }
 
