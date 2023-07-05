@@ -904,8 +904,7 @@ void ProcedureQuery::postProcessLegs(const map::MapAirport& airport, proc::MapPr
   // qDebug() << legs;
 }
 
-void ProcedureQuery::processArtificialLegs(const map::MapAirport& airport, proc::MapProcedureLegs& legs,
-                                           bool addArtificialLegs) const
+void ProcedureQuery::processArtificialLegs(const map::MapAirport& airport, proc::MapProcedureLegs& legs, bool addArtificialLegs) const
 {
   if(!legs.isEmpty() && addArtificialLegs)
   {
@@ -1080,7 +1079,12 @@ void ProcedureQuery::processArtificialLegs(const map::MapAirport& airport, proc:
               // Fix threshold altitude since it might be above the last altitude restriction
               const proc::MapAltRestriction& lastAltRestr = legs.procedureLegs.at(insertPosition - 1).altRestriction;
               if(lastAltRestr.descriptor == proc::MapAltRestriction::AT)
+              {
+                qWarning() << Q_FUNC_INFO << "Leg altitude below airport altitude" << airport.ident << rwleg.fixIdent
+                           << "rwleg.altRestriction.alt1" << rwleg.altRestriction.alt1 << "lastAltRestr.alt1" << lastAltRestr.alt1;
+
                 rwleg.altRestriction.alt1 = std::min(rwleg.altRestriction.alt1, lastAltRestr.alt1);
+              }
             }
 
             atools::insertInto(legs.procedureLegs, insertPosition, rwleg);
@@ -1211,6 +1215,26 @@ void ProcedureQuery::processLegErrors(proc::MapProcedureLegs& legs) const
 
 void ProcedureQuery::processLegsFixRestrictions(const map::MapAirport& airport, proc::MapProcedureLegs& legs) const
 {
+  const map::MapAirport airportSim = NavApp::getMapQueryGui()->getAirportSim(airport);
+  float airportAlt = airportSim.isValid() ? airportSim.position.getAltitude() : airport.position.getAltitude();
+
+  for(int i = 1; i < legs.size(); i++)
+  {
+    proc::MapProcedureLeg& leg = legs[i];
+
+    // FEP has altitude above TDZ - ignore this here
+    if(leg.isFinalEndpointFix())
+      leg.altRestriction.descriptor = proc::MapAltRestriction::NO_ALT_RESTR;
+
+    // Test if MAP is below airport altitude
+    if(leg.isMissedApproachPoint() && leg.altRestriction.alt1 < airportAlt)
+    {
+      qWarning() << Q_FUNC_INFO << "MAP altitude below airport altitude" << airport.ident << leg.fixIdent
+                 << " leg.altRestriction.alt1" << leg.altRestriction.alt1 << "airportAlt" << airportAlt;
+      leg.altRestriction.alt1 = std::ceil(airportAlt);
+    }
+  }
+
   for(int i = 1; i < legs.size(); i++)
   {
     proc::MapProcedureLeg& leg = legs[i];
@@ -1219,7 +1243,6 @@ void ProcedureQuery::processLegsFixRestrictions(const map::MapAirport& airport, 
     if(prevLeg.isTransition() && leg.isApproach() && leg.isInitialFix() && leg.fixIdent == prevLeg.fixIdent)
     {
       // Found the connection between transition and approach
-
       if(leg.altRestriction.isValid() && prevLeg.altRestriction.isValid() &&
          atools::almostEqual(leg.altRestriction.alt1, prevLeg.altRestriction.alt1))
         // Use restriction of the initial fix - erase restriction of the transition leg
@@ -1231,24 +1254,13 @@ void ProcedureQuery::processLegsFixRestrictions(const map::MapAirport& airport, 
         prevLeg.speedRestriction.descriptor = proc::MapSpeedRestriction::NO_SPD_RESTR;
     }
 
-    if(leg.isFinalEndpointFix())
-      // FEP has altitude above TDZ - ignore this here
-      leg.altRestriction.descriptor = proc::MapAltRestriction::NO_ALT_RESTR;
-
-    if(prevLeg.isApproach() && leg.isMissed() && prevLeg.altRestriction.isValid())
+    if(prevLeg.isApproach() && leg.isMissed() && prevLeg.altRestriction.isValid() && prevLeg.altRestriction.alt1 < airportAlt)
     {
       // Last leg before missed approach - usually runway
       // Correct restriction to used simulator airport where it is wrongly below airport altitude for some
-
-      map::MapAirport airportSim = NavApp::getMapQueryGui()->getAirportSim(airport);
-      float airportAlt = airportSim.isValid() ? airportSim.position.getAltitude() : airport.position.getAltitude();
-
-      if(prevLeg.altRestriction.alt1 < airportAlt)
-      {
-        qWarning() << Q_FUNC_INFO << "Final leg altitude below airport altitude" << airport.ident
-                   << "restriction" << prevLeg.altRestriction.alt1 << "airport" << airportAlt;
-        prevLeg.altRestriction.alt1 = std::ceil(airportAlt);
-      }
+      qWarning() << Q_FUNC_INFO << "Final leg altitude below airport altitude" << airport.ident << prevLeg.fixIdent
+                 << " prevLeg.altRestriction.alt1" << prevLeg.altRestriction.alt1 << "airportAlt" << airportAlt;
+      prevLeg.altRestriction.alt1 = std::ceil(airportAlt);
     }
   }
 }

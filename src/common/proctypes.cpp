@@ -659,6 +659,11 @@ bool MapProcedureLeg::isFinalEndpointFix() const
   return proc::specialType(arincDescrCode) == proc::FEP;
 }
 
+bool MapProcedureLeg::isMissedApproachPoint() const
+{
+  return proc::specialType(arincDescrCode) == proc::MAP;
+}
+
 bool MapProcedureLeg::isHold() const
 {
   return atools::contains(type, {proc::HOLD_TO_ALTITUDE, proc::HOLD_TO_FIX, proc::HOLD_TO_MANUAL_TERMINATION});
