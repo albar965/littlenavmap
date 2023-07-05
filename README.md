@@ -4,7 +4,7 @@
 [**► macOS** - LittleNavmap-macOS-2.8.11.zip](https://github.com/albar965/littlenavmap/releases/download/v2.8.11/LittleNavmap-macOS-2.8.11.zip)<br/>
 [**► Linux \(64 bit, based on Ubuntu 22.04\)** - LittleNavmap-linux-22.04-2.8.11.tar.gz](https://github.com/albar965/littlenavmap/releases/download/v2.8.11/LittleNavmap-linux-22.04-2.8.11.tar.gz)
 
-**Other Versions:** [Github - Version 2.8.11](https://github.com/albar965/littlenavmap/releases/tag/v2.8.11)
+**Other Versions:** [GitHub - Version 2.8.11](https://github.com/albar965/littlenavmap/releases/tag/v2.8.11)
 
 #### Alternative Download Locations
 

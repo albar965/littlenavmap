@@ -134,7 +134,7 @@ MainWindow::MainWindow()
          "</a> or any later version."
        "</p>"
        "<p>The source code for this application is available at "
-         "<a href=\"https://github.com/albar965\">Github"
+         "<a href=\"https://github.com/albar965\">GitHub"
          "</a>."
        "</p>"
        "<p>More about my projects at "
