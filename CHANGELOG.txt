@@ -27,6 +27,10 @@ A big thank you to all who reported bugs and issues!
 
 ## Changes from 2.8.11 to 2.8.12.rc1
 
+### Simulators
+
+* Added support for Prepar3D v6. Note that this is untested. Let me know if you find any issues.
+
 ### Installation and Startup
 
 * Added [Inno Setup](https://jrsoftware.org/isinfo.php) installer packages. This installs
@@ -35,10 +39,13 @@ A big thank you to all who reported bugs and issues!
   creates start menu entries for all included programs as well as most important files and links.
   File types can optionally associated with *Little Navmap* which allows to load a plan by double
   clicking on a LNMPLN file in Windows Explorer. *Little Navmap* is either started or a running
-  instance is used to load a plan.
-* Improved the detection of an already running instance. Removed warning dialog for
-  `Program is already running` situation. Instead the *Little Navmap* window is brought into
-  foreground. This is working on Windows, macOS and Linux.
+  instance is used to load a plan. Note that there is no need to install or modify any files in the
+  installation folder. See also
+  [Little Navmap User Manual - Map Themes](https://www.littlenavmap.org/manuals/littlenavmap/release/2.8/en/MAPTHEMES.html)
+* Improved the detection of an already running instance of *Little Navmap*. Removed warning
+  dialog for `Program is already running` situation. Instead the *Little Navmap* window is
+  brought into foreground and any file passed to the program is opened. This is working on
+  Windows, macOS and Linux.
 * Now passing all command line parameters for flight plan, performance and layout files to an
   already running instance to load the files. This is supported on Windows, macOS and Linux.
 * Now checking all files passed on the command line without parameters for type of file to load
@@ -55,23 +62,24 @@ A big thank you to all who reported bugs and issues!
   and appeared connected.
 * Corrected loading of oceanic tracks to avoid disappearing flight plan after load.
 * Now creating two backups for main trail file `little_navmap.track` to avoid data loss on update.
-* Now backing up configuration and track files with `..._update-backup.N` suffix on program update.
+* Now backing up configuration and track files with `..._update-backup.N` suffix after installing
+  and starting a new version.
 * Corrected issue where map grid was drawn below landmass in some offline maps.
-* Menu and toolbar items for airspace altitude filter are now correctly checked again after restart.
+* Menu and toolbar items for airspace altitude filter are now correctly selected again after restart.
 * Fixed missing flight plan waypoint tooltips and click spots with airway or track display enabled.
 * Added theme [open flightmaps](https://www.openflightmaps.org/) to included map themes.
   This is a modified version of the map theme by
   [AmbitiousPilots](https://github.com/AmbitiousPilots/LittleNavmapOFMTheme) including changes
   from [b-faller](https://github.com/b-faller).
-* Now showing top level tile correctly for open flightmaps instead of black area.
-* Fixed more issues with external map theme folder where maps having more than one layer like the
+* Now showing top level map image tile correctly for open flightmaps instead of an black area.
+* Fixed more issues with the external map theme folder where maps having more than one layer like the
   open flightmaps map theme could not be used.
 * Updated map theme file `example.dgml`.
 * Corrected checking for duplicate elements of `sourceDir` in map theme DGML files for maps having
   more than one layer. This avoids the issue where different map themes might overwrite data in the
   cache folder.
 
-# Userpoint and Logbook
+### Userpoint and Logbook
 
 * Fixed problem where no error was shown when importing invalid userpoint or logbook CSV files.
 * Fixed issue where an aborted CSV import might corrupt the undo data.
@@ -83,24 +91,31 @@ A big thank you to all who reported bugs and issues!
   userpoint search result table. Now using more precision in userpoint altitude to avoid rounding
   errors between units.
 
-### Other
+### Flight Plan and Export
 
+* Corrected wrong error message for procedures having MAP lower than airport altitude.
+  Example: FAUP RNAV UP1F1 (R35)
 * Fix in flight plan export for MSFS where waypoints are moved to North. Thanks to Github user
   [eaides](https://github.com/eaides) for the hint. #1038
+* Added selection box for `IFR` or `VFR` flight plan type to route description.
+
+### Other
+
 * Fixed issues where X-Plane simulator weather was not loaded from manually set folder without a
   X-Plane installation. The weather was not loaded and wrong warning dialog was shown.
-* Added selection box for `IFR` or `VFR` flight plan type to route description.
+  This is the case when *Little Navmap* runs on an networked or remote computer and the weather
+  is loaded from a shared network drive from the flying computer.
 * Flight plan route description dialog is now updated on style change.
-* Moved AI and online aircraft menu items to sub-menu in `View`.
+* Moved AI and online aircraft menu items to sub-menu in `View` to avoid menu size limitation.
 * More fixes in weather to skip unneeded reading of ActiveSky weather files. These are now read
-  on demand.
+  on demand if ActiveSky sky options like tooltips is enabled.
 
-# Little Navconnect Version 2.8.7
+## Little Navconnect Version 2.8.7
 
-* Added support for system tray. Close button on window frame now optionally minimizes window to
-  system tray. Enable this in menu `Window` -> `Minimize to system tray`. Tray icon is always
+* Added support for system tray icon. Close button on window frame now optionally minimizes window to
+  system tray. Enable this in menu `Window` -> `Minimize to system tray`. The tray icon is always
   visible. System tray icon shows last five messages from log in tooltip. #712
-* Tray icon has a context menu to restore window, show settings and more. Click the tray icon to
+* Tray icon has a context menu to restore window, show settings and more. Left click the tray icon to
   restore or minimize the *Little Navconnect* window.
 * New option `Window` -> `Start minimized to system tray` to start program without opening a window.
 * Fixed various issues with text field updates causing warnings in log file.
