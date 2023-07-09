@@ -57,6 +57,7 @@ WizardImageFile={#LnmAppProjects}\littlenavmap\resources\icons\background_164x31
 #elif LnmAppArch == "win32"
   AppId={{BB829DC7-42F4-411B-B9DF-F1ED5BA862EC}
 #endif
+RestartIfNeededByRun=no
 InfoBeforeFile={#LnmAppProjects}\littlenavmap\build\win\INFOBEFORE_{#LnmAppArch}_en.txt
 AppName={#LnmAppName}
 AppVersion={#LnmAppVersion}
