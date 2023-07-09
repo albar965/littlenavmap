@@ -32,6 +32,7 @@
 #include "query/airportquery.h"
 #include "settings/settings.h"
 #include "util/filesystemwatcher.h"
+#include "util/filechecker.h"
 
 #include <QDir>
 #include <QStandardPaths>
@@ -71,6 +72,10 @@ WeatherReporter::WeatherReporter(MainWindow *parentWindow, atools::fs::FsPaths::
                                        "If you use this as a remote installation:\n"
                                        "Share the weather files on the flying computer and\n"
                                        "adapt the X-Plane weather path in options on page \"Weather Files\" to point to the network share."));
+
+  // Init file checkers to avoid expensive file access while trying to load weather while painting
+  asSnapshotPathChecker = new atools::util::FileChecker;
+  asFlightplanPathChecker = new atools::util::FileChecker;
 
   onlineWeatherTimeoutSecs = atools::settings::Settings::instance().valueInt(lnm::OPTIONS_WEATHER_UPDATE, 600);
 
@@ -151,6 +156,14 @@ WeatherReporter::~WeatherReporter()
   qDebug() << Q_FUNC_INFO << "delete xpWeatherReader";
   delete xpWeatherReader;
   xpWeatherReader = nullptr;
+
+  qDebug() << Q_FUNC_INFO << "delete asSnapshotPathChecker";
+  delete asSnapshotPathChecker;
+  asSnapshotPathChecker = nullptr;
+
+  qDebug() << Q_FUNC_INFO << "delete asFlightplanPathChecker";
+  delete asFlightplanPathChecker;
+  asFlightplanPathChecker = nullptr;
 }
 
 void WeatherReporter::weatherDownloadProgress(qint64 bytesReceived, qint64 bytesTotal, QString downloadUrl)
@@ -217,8 +230,15 @@ void WeatherReporter::createActiveSkyFsWatcher()
     fsWatcherAsPath->setMinFileSize(1000);
     FileSystemWatcher::connect(fsWatcherAsPath, &FileSystemWatcher::filesUpdated, this, &WeatherReporter::activeSkyWeatherFilesChanged);
   }
-  activeSkyWeatherFilesChanged({asSnapshotPath});
-  fsWatcherAsPath->setFilenameAndStart(asSnapshotPath);
+
+  // Set path only if valid to avoid recursion through paint routine if files are not available
+  if(asSnapshotPathChecker->checkFile(Q_FUNC_INFO, asSnapshotPath, false /* warn */))
+  {
+    // Call notification direct
+    activeSkyWeatherFilesChanged({asSnapshotPath});
+
+    fsWatcherAsPath->setFilenameAndStart(asSnapshotPath);
+  }
 
   if(fsWatcherAsFlightplanPath == nullptr)
   {
@@ -228,7 +248,10 @@ void WeatherReporter::createActiveSkyFsWatcher()
     FileSystemWatcher::connect(fsWatcherAsFlightplanPath, &FileSystemWatcher::filesUpdated, this,
                                &WeatherReporter::activeSkyWeatherFilesChanged);
   }
-  fsWatcherAsFlightplanPath->setFilenameAndStart(asFlightplanPath);
+
+  // Set path only if valid to avoid recursion through paint routine if files are not available
+  if(asFlightplanPathChecker->checkFile(Q_FUNC_INFO, asFlightplanPath, false /* warn */))
+    fsWatcherAsFlightplanPath->setFilenameAndStart(asFlightplanPath);
 }
 
 void WeatherReporter::disableXplane()
@@ -333,6 +356,7 @@ void WeatherReporter::initActiveSkyPaths()
   activeSkyDestinationMetar.clear();
   activeSkyDepartureIdent.clear();
   activeSkyDestinationIdent.clear();
+
   asSnapshotPath.clear();
   asFlightplanPath.clear();
 
@@ -430,9 +454,9 @@ void WeatherReporter::initActiveSkyPaths()
   }
 }
 
-void WeatherReporter::loadActiveSkySnapshots()
+void WeatherReporter::loadAllActiveSkyFiles()
 {
-  if(!asSnapshotPath.isEmpty() || !asFlightplanPath.isEmpty())
+  if(asSnapshotPathChecker->checkFile(Q_FUNC_INFO, asSnapshotPath, false /* warn */))
   {
     if(verbose)
       qDebug() << Q_FUNC_INFO << "Using Active Sky paths" << asSnapshotPath << asFlightplanPath;
@@ -698,13 +722,13 @@ QString WeatherReporter::getCurrentActiveSkyName() const
 
 const QString& WeatherReporter::getActiveSkyDepartureIdent()
 {
-  loadActiveSkySnapshots();
+  loadAllActiveSkyFiles();
   return activeSkyDepartureIdent;
 }
 
 const QString& WeatherReporter::getActiveSkyDestinationIdent()
 {
-  loadActiveSkySnapshots();
+  loadAllActiveSkyFiles();
   return activeSkyDestinationIdent;
 }
 
@@ -761,7 +785,7 @@ void WeatherReporter::weatherDownloadFailed(const QString& error, int errorCode,
 QString WeatherReporter::getActiveSkyMetar(const QString& airportIcao)
 {
   // Load on demand
-  loadActiveSkySnapshots();
+  loadAllActiveSkyFiles();
 
   if(activeSkyDepartureIdent == airportIcao)
     return activeSkyDepartureMetar;
@@ -924,11 +948,17 @@ void WeatherReporter::activeSkyWeatherFilesChanged(const QStringList& paths)
   if(verbose)
     qDebug() << Q_FUNC_INFO << "file" << paths << "changed";
 
-  loadActiveSkySnapshot(asSnapshotPath);
-  loadActiveSkyFlightplanSnapshot(asFlightplanPath);
-  mainWindow->setStatusMessage(tr("Active Sky weather information updated."), true /* addToLog */);
+  if(asSnapshotPathChecker->isValid())
+    loadActiveSkySnapshot(asSnapshotPath);
 
-  emit weatherUpdated();
+  if(asFlightplanPathChecker->isValid())
+    loadActiveSkyFlightplanSnapshot(asFlightplanPath);
+
+  if(asSnapshotPathChecker->isValid())
+  {
+    mainWindow->setStatusMessage(tr("Active Sky weather information updated."), true /* addToLog */);
+    emit weatherUpdated();
+  }
 }
 
 void WeatherReporter::xplaneWeatherFileChanged()

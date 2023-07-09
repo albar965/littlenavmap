@@ -27,6 +27,8 @@
 namespace atools {
 
 namespace util {
+
+class FileChecker;
 class FileSystemWatcher;
 }
 namespace geo {
@@ -185,7 +187,7 @@ private:
                           const QString& activeSkySimSuffix);
 
   /* Load METARs from all AS files on demand if not yet loaded after initActiveSkyPaths(). Create file watcher. */
-  void loadActiveSkySnapshots();
+  void loadAllActiveSkyFiles();
 
   /* Load METARs from files */
   void loadActiveSkySnapshot(const QString& path);
@@ -232,6 +234,7 @@ private:
   atools::util::FileSystemWatcher *fsWatcherAsPath = nullptr;
   atools::util::FileSystemWatcher *fsWatcherAsFlightplanPath = nullptr;
   atools::fs::FsPaths::SimulatorType simType = atools::fs::FsPaths::NONE;
+  atools::util::FileChecker *asSnapshotPathChecker, *asFlightplanPathChecker;
 
   atools::fs::weather::XpWeatherReader *xpWeatherReader = nullptr;
 
