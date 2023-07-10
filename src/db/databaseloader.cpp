@@ -232,6 +232,7 @@ void DatabaseLoader::loadScenery()
   progressDialog->show();
 
   navDatabaseOpts->setProgressCallback(std::bind(&DatabaseLoader::progressCallbackThread, this, std::placeholders::_1));
+  navDatabaseOpts->setCallDefaultCallback(true);
 
   // Print all options to log file =================================
   qInfo() << Q_FUNC_INFO << *navDatabaseOpts;
@@ -426,6 +427,7 @@ bool DatabaseLoader::progressCallbackThread(const atools::fs::NavDatabaseProgres
     }
 
     // Passed queued signal to main thread to allow dialog and window stuff in main event queue
+    // Connected to progressCallback()
     emit progressCallbackSignal();
   }
   return canceled;
