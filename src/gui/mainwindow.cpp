@@ -262,6 +262,7 @@ MainWindow::MainWindow()
     connect(dataExchange, &DataExchange::activateMain, this, &MainWindow::activateWindow);
     connect(dataExchange, &DataExchange::activateMain, this, &MainWindow::raise);
     connect(dataExchange, &DataExchange::loadRoute, this, &MainWindow::routeOpenFile);
+    connect(dataExchange, &DataExchange::loadRouteDescr, this, &MainWindow::routeOpenDescr);
     connect(dataExchange, &DataExchange::loadLayout, this, &MainWindow::loadLayoutDelayed);
     connect(dataExchange, &DataExchange::loadPerf, NavApp::getAircraftPerfController(), &AircraftPerfController::loadFile);
 
@@ -2262,6 +2263,19 @@ QString MainWindow::routeOpenFileDialog()
     tr("Flight Plan Files %1;;All Files (*)").
     arg(lnm::FILE_PATTERN_FLIGHTPLAN_LOAD),
     "Route/LnmPln", atools::documentsDir());
+}
+
+void MainWindow::routeOpenDescr(const QString& routeString)
+{
+  if(routeCheckForChanges())
+  {
+    routeController->loadFlightplanRouteStr(routeString);
+
+    if(OptionData::instance().getFlags() & opts::GUI_CENTER_ROUTE)
+      routeCenter();
+    showFlightPlan();
+    setStatusMessage(tr("Flight plan opened from route description."));
+  }
 }
 
 void MainWindow::routeOpenFile(QString filepath)

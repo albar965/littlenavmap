@@ -29,8 +29,8 @@ namespace fc {
 
 /* Read all properties from startup or data exchange for compatible file types. Also checks non positional arguments.
  * Checks the filenames for compatible file types and fills the given strings with file names in case of matches. */
-void fromStartupProperties(const atools::util::Properties& properties, QString *flightplan, QString *perf = nullptr,
-                           QString *layout = nullptr);
+void fromStartupProperties(const atools::util::Properties& properties, QString *flightplan, QString *flightplanDescr = nullptr,
+                           QString *perf = nullptr, QString *layout = nullptr);
 
 /* Checks the given filename for compatible file types and fills the given strings with file names in case of matches.
  * The file types are checked by content.

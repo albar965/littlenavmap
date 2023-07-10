@@ -41,7 +41,8 @@ void checkFileType(const QString& filename, QString *flightplan, QString *perf, 
   }
 }
 
-void fromStartupProperties(const atools::util::Properties& properties, QString *flightplan, QString *perf, QString *layout)
+void fromStartupProperties(const atools::util::Properties& properties, QString *flightplan, QString *flightplanDescr, QString *perf,
+                           QString *layout)
 {
   if(flightplan != nullptr)
     *flightplan = properties.getPropertyStr(lnm::STARTUP_FLIGHTPLAN);
@@ -51,6 +52,9 @@ void fromStartupProperties(const atools::util::Properties& properties, QString *
 
   if(layout != nullptr)
     *layout = properties.getPropertyStr(lnm::STARTUP_LAYOUT);
+
+  if(flightplanDescr != nullptr)
+    *flightplanDescr = properties.getPropertyStr(lnm::STARTUP_FLIGHTPLAN_DESCR);
 
   // Extract filenames from positional arguments without options ================================
   for(const QString& otherFile : properties.getPropertyStrList(lnm::STARTUP_OTHER_ARGUMENTS))

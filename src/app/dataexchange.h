@@ -62,6 +62,7 @@ signals:
   /* Sent if time found messages from other instance. */
   void loadLayout(const QString& filename);
   void loadRoute(const QString& filename);
+  void loadRouteDescr(const QString& description);
   void loadPerf(const QString& filename);
 
   /* Activate and raise main window */

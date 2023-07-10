@@ -91,7 +91,6 @@ DataExchange::DataExchange()
         {
           // Copy command line parameters and add activate option to bring other to front
           atools::util::Properties properties(NavApp::getStartupOptionsConst());
-          properties.remove(lnm::STARTUP_FLIGHTPLAN_DESCR); // Remove unused description option
           properties.setPropertyBool(lnm::STARTUP_COMMAND_ACTIVATE, true); // Raise other window
 
 #ifdef DEBUG_INFORMATION
@@ -152,15 +151,18 @@ void DataExchange::checkData()
     qDebug() << Q_FUNC_INFO << properties;
 
     // Extract filenames from known options ================================
-    QString flightplan, perf, layout;
-    fc::fromStartupProperties(properties, &flightplan, &perf, &layout);
+    QString flightplan, flightplanDescr, perf, layout;
+    fc::fromStartupProperties(properties, &flightplan, &flightplanDescr, &perf, &layout);
 
     // Load files if found and exist ===========================================
-    if(atools::checkFile(Q_FUNC_INFO, layout, true /* warn */))
-      emit loadLayout(layout);
-
     if(atools::checkFile(Q_FUNC_INFO, flightplan, true /* warn */))
       emit loadRoute(flightplan);
+
+    if(!flightplanDescr.isEmpty())
+      emit loadRouteDescr(flightplanDescr);
+
+    if(atools::checkFile(Q_FUNC_INFO, layout, true /* warn */))
+      emit loadLayout(layout);
 
     if(atools::checkFile(Q_FUNC_INFO, perf, true /* warn */))
       emit loadPerf(perf);

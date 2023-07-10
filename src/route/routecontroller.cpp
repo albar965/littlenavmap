@@ -1009,15 +1009,9 @@ void RouteController::restoreState()
     QString cmdLineFlightplanFile, cmdLineFlightplanDescr;
 
     // Load plan from command line or last used =============================================
-    fc::fromStartupProperties(NavApp::getStartupOptionsConst(), &cmdLineFlightplanFile);
+    fc::fromStartupProperties(NavApp::getStartupOptionsConst(), &cmdLineFlightplanFile, &cmdLineFlightplanDescr);
 
-    if(cmdLineFlightplanFile.isEmpty() && !NavApp::getStartupOptionStr(lnm::STARTUP_FLIGHTPLAN_DESCR).isEmpty())
-      cmdLineFlightplanDescr = NavApp::getStartupOptionStr(lnm::STARTUP_FLIGHTPLAN_DESCR); // Command line description
-
-    if(!cmdLineFlightplanDescr.isEmpty())
-      // Parse route description from command line ===================================================
-      loadFlightplanRouteStr(cmdLineFlightplanDescr);
-    else if(!cmdLineFlightplanFile.isEmpty())
+    if(!cmdLineFlightplanFile.isEmpty())
     {
       // Load from file from command line ===================================================
       QString message = atools::checkFileMsg(cmdLineFlightplanFile);
@@ -1047,6 +1041,9 @@ void RouteController::restoreState()
         QMessageBox::warning(mainWindow, QApplication::applicationName(), message);
       }
     }
+    else if(!cmdLineFlightplanDescr.isEmpty())
+      // Parse route description from command line ===================================================
+      loadFlightplanRouteStr(cmdLineFlightplanDescr);
     else
     {
       // Nothing given on command line ==================================

@@ -353,6 +353,7 @@ private:
   bool routeSaveSelection();
   void routeInsert(int insertBefore);
   void routeOpenRecent(const QString& routeFile);
+  void routeOpenDescr(const QString& routeString);
 
   /* Flight plan save functions */
   bool routeSaveLnm();
