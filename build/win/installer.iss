@@ -105,14 +105,48 @@ Name: "nl"; MessagesFile: "compiler:Languages\Dutch.isl"
 Name: "es"; MessagesFile: "compiler:Languages\Spanish.isl"
 
 ; ==========================================================================
+[CustomMessages]
+ChangelogMessage=Open the changelog
+en.ChangelogMessage=Open the changelog
+de.ChangelogMessage=Liste der Änderungen öffnen
+
+OpenStartMessage=Open the user manual start page, which contains tips and tricks for first-time users.
+en.OpenStartMessage=Open the user manual start page, which contains tips and tricks for first-time users.
+de.OpenStartMessage=Startseite des Benutzerhandbuchs öffnen, die Tipps und Tricks für Erstbenutzer enthält.
+
+InstallingRedistMessage=Installing MSVC Redistributables 2015-2022 64-bit ...
+en.InstallingRedistMessage=Installing MSVC Redistributables 2015-2022 64-bit ...
+de.InstallingRedistMessage=Installiere MSVC Redistributables 2015-2022 64-Bit ...
+
+UserManualMessage=User Manual
+en.UserManualMessage=User Manual
+de.UserManualMessage=Benutzerhandbuch
+
+ChangelogMessage=Changelog
+en.ChangelogMessage=Changelog
+de.ChangelogMessage=Liste der Änderungen
+
+ReadmeMessage=Readme
+en.ReadmeMessage=Readme
+de.ReadmeMessage=Liesmich
+
+AssocLnmMessage=Associate {#LnmAppName} file types with program:
+en.AssocLnmMessage=Associate {#LnmAppName} file types with program:
+de.AssocLnmMessage=Dateitypen von {#LnmAppName} mit dem Programm verknüpfen:
+
+AssocOtherMessage=Associate other flight plan file extensions with {#LnmAppName}:
+en.AssocOtherMessage=Associate other flight plan file extensions with {#LnmAppName}:
+de.AssocOtherMessage=Weitere Flugplan-Dateitypen mit {#LnmAppName} verknüpfen:
+
+; ==========================================================================
 [Tasks]
 Name: desktopicon; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
 Name: lnmassociation; Description: "{cm:AssocFileExtension,{#LnmAppName},"".lnmpln""%2c "".lnmperf""%2c "".lnmlayout""}"; \
-  GroupDescription: "Associate file extensions of {#LnmAppName}:"
+  GroupDescription: "{cm:AssocLnmMessage}"
 Name: lnmplnassociation; Description: "{cm:AssocFileExtension,{#LnmAppName},FSX%2c P3D%2c MSFS "".pln""}"; Flags: unchecked; \
-  GroupDescription: "Associate other flight plan file extensions:"
+  GroupDescription: "{cm:AssocOtherMessage}"
 Name: lnmfmsassociation; Description: "{cm:AssocFileExtension,{#LnmAppName},X-Plane "".fms""}"; Flags: unchecked; \
-  GroupDescription: "Associate other flight plan file extensions:"
+  GroupDescription: "{cm:AssocOtherMessage}"
 
 ; Disabled associations
 ;Name: lnmfgfpssociation; Description: "{cm:AssocFileExtension,{#LnmAppName},FlightGear "".fgfp""}"; Flags: unchecked; GroupDescription: "Associate other flight plan file extensions:"
@@ -153,20 +187,19 @@ Root: HKCR; Subkey: "{#LnmAppNameReg}\shell\open\command"; ValueType: string; Va
 [Icons]
 Name: "{autoprograms}\{#LnmAppName} {#AppSuffix}\{#LnmAppName}"; Filename: "{app}\{#LnmAppExeName}"
 Name: "{autoprograms}\{#LnmAppName} {#AppSuffix}\Little Navconnect"; Filename: "{app}\Little Navconnect\littlenavconnect.exe"
-Name: "{autoprograms}\{#LnmAppName} {#AppSuffix}\Little Navmap User Manual PDF (Offline)"; Filename: "{app}\help\little-navmap-user-manual-en.pdf"
-Name: "{autoprograms}\{#LnmAppName} {#AppSuffix}\Little Navmap User Manual (Online)"; Filename: "{app}\help\Little Navmap User Manual Online.url"
-Name: "{autoprograms}\{#LnmAppName} {#AppSuffix}\Changelog"; Filename: "{app}\CHANGELOG.TXT"
-Name: "{autoprograms}\{#LnmAppName} {#AppSuffix}\Readme"; Filename: "{app}\README.TXT"
+Name: "{autoprograms}\{#LnmAppName} {#AppSuffix}\Little Navmap {cm:UserManualMessage} PDF (Offline)"; Filename: "{app}\help\little-navmap-user-manual-en.pdf"
+Name: "{autoprograms}\{#LnmAppName} {#AppSuffix}\Little Navmap {cm:UserManualMessage} (Online)"; Filename: "{app}\help\Little Navmap User Manual Online.url"
+Name: "{autoprograms}\{#LnmAppName} {#AppSuffix}\{cm:ChangelogMessage}"; Filename: "{app}\CHANGELOG.TXT"
+Name: "{autoprograms}\{#LnmAppName} {#AppSuffix}\{cm:ReadmeMessage}"; Filename: "{app}\README.TXT"
 Name: "{autodesktop}\{#LnmAppName} {#AppSuffix}"; Filename: "{app}\{#LnmAppExeName}"; Tasks: desktopicon
 
 ; ==========================================================================
 ; Optional run at end
 [Run]
 Filename: "{app}\{#LnmAppExeName}"; Description: "{cm:LaunchProgram,{#StringChange(LnmAppName, '&', '&&')}}"; Flags: nowait postinstall skipifsilent
-Filename: "https://www.littlenavmap.org/manuals/littlenavmap/release/latest/en/START.html"; Description: "Open the user manual start page, which contains tips and tricks for first-time users."; Flags: nowait shellexec postinstall skipifsilent
-Filename: "{app}\CHANGELOG.txt"; Description: "Open the changelog"; Flags: nowait postinstall shellexec skipifsilent
+Filename: "https://www.littlenavmap.org/manuals/littlenavmap/release/latest/en/START.html"; Description: "{cm:OpenStartMessage}"; Flags: nowait shellexec postinstall skipifsilent
+Filename: "{app}\CHANGELOG.txt"; Description: "{cm:ChangelogMessage}"; Flags: nowait postinstall shellexec skipifsilent
 #if LnmAppArch == "win64"
-  Filename: "{tmp}\vcredist_2015-2022.x64.exe"; StatusMsg: "Installing MSVC Redistributables 2015-2022 64-bit ..."; \
-    Parameters: "/quiet /norestart"; Flags: runascurrentuser waituntilterminated
+  Filename: "{tmp}\vcredist_2015-2022.x64.exe"; StatusMsg: "{cm:InstallingRedistMessage}"; Parameters: "/quiet /norestart"; Flags: runascurrentuser waituntilterminated
 #endif
 
