@@ -9,7 +9,7 @@
 ; Command line parameters with defaults ==========================================================================
 ; Set defaults for debugging if not given on the command line
 #ifndef LnmAppVersion
-  #define LnmAppVersion "2.8.12.rc1"
+  #define LnmAppVersion "2.8.12.rc2"
 #endif
 
 #ifndef LnmAppArch
@@ -163,7 +163,7 @@ Name: "{autodesktop}\{#LnmAppName} {#AppSuffix}"; Filename: "{app}\{#LnmAppExeNa
 ; Optional run at end
 [Run]
 Filename: "{app}\{#LnmAppExeName}"; Description: "{cm:LaunchProgram,{#StringChange(LnmAppName, '&', '&&')}}"; Flags: nowait postinstall skipifsilent
-Filename: "{app}\help\Little Navmap User Manual Online Start.url"; Description: "Open the User Manual Start Page"; Flags: nowait shellexec postinstall skipifsilent
+Filename: "https://www.littlenavmap.org/manuals/littlenavmap/release/latest/en/START.html"; Description: "Open the user manual start page, which contains tips and tricks for first-time users."; Flags: nowait shellexec postinstall skipifsilent
 Filename: "{app}\CHANGELOG.txt"; Description: "Open the changelog"; Flags: nowait postinstall shellexec skipifsilent
 #if LnmAppArch == "win64"
   Filename: "{tmp}\vcredist_2015-2022.x64.exe"; StatusMsg: "Installing MSVC Redistributables 2015-2022 64-bit ..."; \
