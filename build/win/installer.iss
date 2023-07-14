@@ -132,12 +132,12 @@ de.AssocLnmMessage=Dateitypen von {#LnmAppName} mit dem Programm verknüpfen:
 AssocOtherMessage=Associate other flight plan file extensions with {#LnmAppName}:
 en.AssocOtherMessage=Associate other flight plan file extensions with {#LnmAppName}:
 de.AssocOtherMessage=Weitere Flugplan-Dateitypen mit {#LnmAppName} verknüpfen:
-DeleteSettingsMessage=Do you also want to remove all settings, databases and cachedd files?%n%nThis will remove the folders %n"%1"%nand%n"%2".
-en.DeleteSettingsMessage=Do you also want to remove all settings, databases and cache files?%n%nThis will remove the folders %n"%1"%nand%n"%2".
-de.DeleteSettingsMessage=Alle Einstellungen, Datenbanken und Dateien im Zwischenspeicher auch entfernen?%n%nDas wird die Verzeichnisse%n"%1"%nund%n"%2"%nentfernen.
-DeleteSettingsMessage2=This cannot be undone.%nAre your sure?
-en.DeleteSettingsMessage2=This cannot be undone.%nAre your sure?
-de.DeleteSettingsMessage2=Dies kann nicht rückgängig gemacht werden.%nWirklich löschen?
+DeleteSettingsMessage=Do you also want to remove all settings, databases and cached files?%n%nThis will remove the folders %n"%1"%nand%n"%2".
+en.DeleteSettingsMessage=Do you also want to remove all settings, databases and cached files?%n%nThis will remove the folders %n"%1"%nand%n"%2".
+de.DeleteSettingsMessage=Alle Einstellungen, Datenbanken und Dateien im Zwischenspeicher ebenfalls entfernen?%n%nDies wird die Verzeichnisse%n"%1"%nund%n"%2"%nlöschen.
+DeleteSettingsMessage2=This will delete all userpoints as well%nas the logbook and cannot be undone.%n%nAre your sure?
+en.DeleteSettingsMessage2=This will delete all userpoints as well%nas the logbook and cannot be undone.%n%nAre your sure?
+de.DeleteSettingsMessage2=Dies löscht alle Nutzerpunkte und das Logbuch und kann nicht rückgängig gemacht werden.%n%nWirklich löschen?
 
 // ==========================================================================
 [Tasks]
