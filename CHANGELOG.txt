@@ -11,7 +11,7 @@ This text is partially Markdown, hence sometimes strange formatting.
 **This is a stable release of *Little Navmap* which fixes several bugs and adds
 improvements as well as new features.**
 
-**Notable changes: Windows Installation program, Prepar3D v6 support, 
+**Notable changes: Windows Installation program, Prepar3D v6 support,
   fix for MSFS waypoint moved to North issue, Little Navconnect tray icon and more.**
 
 **Also update *Little Navconnect* and *Little Xpconnect* if you're using one of them to
@@ -93,7 +93,7 @@ A big thank you to all who reported bugs and issues!
 
 ### Flight Plan and Export
 
-* Corrected wrong error message for procedures having a MAP lower than airport elevation. 
+* Corrected wrong error message for procedures having a MAP lower than airport elevation.
   Example: FAUP RNAV UP1F1 (R35)
 * Fix in flight plan export for MSFS where several waypoints are moved to North. Thanks to Github user
   [eaides](https://github.com/eaides) for the hint. #1038
@@ -113,6 +113,7 @@ A big thank you to all who reported bugs and issues!
   This resulted in a random crash to desktop while loading the scenery library.
 * Fixed crash when loading Active Sky files if Active Sky file path was set manually and removed
   later on.
+* Corrected menu items and toolbar buttons which remained disabled after connecting to simulator.
 
 ## Little Navconnect Version 2.8.7
 

@@ -279,8 +279,7 @@ void HtmlInfoBuilder::airportText(const MapAirport& airport, const map::WeatherC
                 arg(Unit::altFeet(transitionLevel)).arg(transitionLevel / 100.f, 3, 'f', 0, QChar('0')));
 
     // Sunrise and sunset ===========================
-    QDateTime datetime =
-      NavApp::isConnectedAndAircraft() ? NavApp::getUserAircraft().getZuluTime() : QDateTime::currentDateTimeUtc();
+    QDateTime datetime = NavApp::isConnectedAndAircraft() ? NavApp::getUserAircraft().getZuluTime() : QDateTime::currentDateTimeUtc();
 
     if(datetime.isValid())
     {

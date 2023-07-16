@@ -1590,6 +1590,8 @@ void MainWindow::connectAllSlots()
   // Messages about database query result status - use queued to avoid blocking paint
   connect(mapWidget, &MapPaintWidget::resultTruncated, this, &MainWindow::resultTruncated, Qt::QueuedConnection);
 
+  connect(mapWidget, &MapWidget::userAircraftValidChanged, this, &MainWindow::updateActionStates);
+
   connect(databaseManager, &DatabaseManager::preDatabaseLoad, this, &MainWindow::preDatabaseLoad);
   connect(databaseManager, &DatabaseManager::postDatabaseLoad, this, &MainWindow::postDatabaseLoad);
 

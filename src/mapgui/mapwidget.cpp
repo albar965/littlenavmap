@@ -2362,11 +2362,19 @@ void MapWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorDa
   using atools::geo::angleAbsDiff;
 
   const atools::fs::sc::SimConnectUserAircraft& aircraft = simulatorData.getUserAircraftConst();
+
+  // Emit signal later once all values are updated - check for aircraft state changes
+  bool userAircraftValidToggled = getScreenIndexConst()->getUserAircraft().isFullyValid() != aircraft.isFullyValid();
+
   getScreenIndex()->updateSimData(simulatorData);
 
   if(databaseLoadStatus || !aircraft.isValid())
   {
     getScreenIndex()->updateLastSimData(atools::fs::sc::SimConnectData());
+
+    // Update action states if needed
+    if(userAircraftValidToggled)
+      emit userAircraftValidChanged();
     return;
   }
 
@@ -2384,8 +2392,8 @@ void MapWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorDa
   QPoint aircraftPoint = conv.wToS(aircraft.getPosition(), CoordinateConverter::DEFAULT_WTOS_SIZE, &visible);
 
   // Difference from last movement on map
-  const atools::fs::sc::SimConnectUserAircraft& last = getScreenIndexConst()->getLastUserAircraft();
-  QPoint aircraftPointDiff = aircraftPoint - conv.wToS(last.getPosition());
+  const atools::fs::sc::SimConnectUserAircraft& lastAircraft = getScreenIndexConst()->getLastUserAircraft();
+  QPoint aircraftPointDiff = aircraftPoint - conv.wToS(lastAircraft.getPosition());
   const OptionData& od = OptionData::instance();
 
   // Zoom to aircraft and next waypoint - depends on various criteria
@@ -2488,18 +2496,18 @@ void MapWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorDa
     }
 
     // Check if position has changed significantly
-    bool posHasChanged = !last.isValid() || // No previous position
+    bool posHasChanged = !lastAircraft.isValid() || // No previous position
                          aircraftPointDiff.manhattanLength() >= deltas.manhattanLengthDelta; // Screen position has changed
 
     // Check if any data like heading has changed which requires a redraw
     bool dataHasChanged = posHasChanged ||
-                          last.isFlying() != aircraft.isFlying() ||
-                          last.isOnGround() != aircraft.isOnGround() ||
-                          angleAbsDiff(last.getHeadingDegMag(),
+                          lastAircraft.isFlying() != aircraft.isFlying() ||
+                          lastAircraft.isOnGround() != aircraft.isOnGround() ||
+                          angleAbsDiff(lastAircraft.getHeadingDegMag(),
                                        aircraft.getHeadingDegMag()) > deltas.headingDelta || // Heading has changed
-                          almostNotEqual(last.getIndicatedSpeedKts(),
+                          almostNotEqual(lastAircraft.getIndicatedSpeedKts(),
                                          aircraft.getIndicatedSpeedKts(), deltas.speedDelta) || // Speed has changed
-                          almostNotEqual(last.getPosition().getAltitude(),
+                          almostNotEqual(lastAircraft.getPosition().getAltitude(),
                                          aircraft.getActualAltitudeFt(), deltas.altitudeDelta); // Altitude has changed
 
     // Force an update every five seconds to avoid hanging map view if aircraft does not move on map
@@ -2510,8 +2518,8 @@ void MapWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorDa
     lastSimUpdateMs = now;
 
     // Check for takeoff, landing and fuel consumption changes ===========
-    simDataCalcTakeoffLanding(aircraft, last);
-    simDataCalcFuelOnOff(aircraft, last);
+    simDataCalcTakeoffLanding(aircraft, lastAircraft);
+    simDataCalcFuelOnOff(aircraft, lastAircraft);
 
     if(dataHasChanged)
       // Also changes local "last"
@@ -2756,6 +2764,10 @@ void MapWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorDa
     if(!updatesEnabled())
       setUpdatesEnabled(true);
   } // if(now - lastSimUpdateMs > deltas.timeDeltaMs)
+
+  // Update action states if needed
+  if(userAircraftValidToggled)
+    emit userAircraftValidChanged();
 }
 
 void MapWidget::mainWindowShown()

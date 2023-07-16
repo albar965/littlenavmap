@@ -244,6 +244,9 @@ public:
   void showGridConfiguration();
 
 signals:
+  /* Emitted when connection is established and user aircraft turned from invalid to valid */
+  void userAircraftValidChanged();
+
   /* Fuel flow started or stopped */
   void aircraftEngineStarted(const atools::fs::sc::SimConnectUserAircraft& aircraft);
   void aircraftEngineStopped(const atools::fs::sc::SimConnectUserAircraft& aircraft);
