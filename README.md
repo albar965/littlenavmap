@@ -1,15 +1,19 @@
 #### Latest Stable Release
 
-[**► Windows 64-bit (*MSFS and X-Plane*)** - LittleNavmap-win64-2.8.11.zip](https://github.com/albar965/littlenavmap/releases/download/v2.8.11/LittleNavmap-win64-2.8.11.zip)<br/>
-[**► macOS** - LittleNavmap-macOS-2.8.11.zip](https://github.com/albar965/littlenavmap/releases/download/v2.8.11/LittleNavmap-macOS-2.8.11.zip)<br/>
-[**► Linux \(64 bit, based on Ubuntu 22.04\)** - LittleNavmap-linux-22.04-2.8.11.tar.gz](https://github.com/albar965/littlenavmap/releases/download/v2.8.11/LittleNavmap-linux-22.04-2.8.11.tar.gz)
+[**► Windows 64-bit Installer \(*MSFS and X-Plane*\)** - LittleNavmap-win64-2.8.12-Install.exe](https://github.com/albar965/littlenavmap/releases/download/v2.8.12/LittleNavmap-win64-2.8.12-Install.exe)<br/>
+[**► macOS** - LittleNavmap-macOS-2.8.12.zip](https://github.com/albar965/littlenavmap/releases/download/v2.8.12/LittleNavmap-macOS-2.8.12.zip)<br/>
+[**► Linux \(64 bit, based on Ubuntu 22.04\)** - LittleNavmap-linux-22.04-2.8.12.tar.gz](https://github.com/albar965/littlenavmap/releases/download/v2.8.12/LittleNavmap-linux-22.04-2.8.12.tar.gz)
 
-**Other Versions:** [GitHub - Version 2.8.11](https://github.com/albar965/littlenavmap/releases/tag/v2.8.11)
+**Other Versions:**
 
-#### Alternative Download Locations
+[► Windows 32-bit Installer \(*only for FSX and P3D*\) - LittleNavmap-win32-2.8.12-Install.exe](https://github.com/albar965/littlenavmap/releases/download/v2.8.12/LittleNavmap-win32-2.8.12-Install.exe)<br/>
+[► Linux \(64 bit, based on Ubuntu 20.04 for Debian or older systems\) - LittleNavmap-linux-20.04-2.8.12.tar.gz](https://github.com/albar965/littlenavmap/releases/download/v2.8.12/LittleNavmap-linux-20.04-2.8.12.tar.gz)
 
-[Box](https://app.box.com/s/8c9x2f91enpkn41cmc4b5tkzlil9ouhy), [Dropbox](https://www.dropbox.com/sh/eh446yent4rz3uq/AACg8vMEmX8AxY_5Hjpt90kWa), [Mega.nz](https://mega.nz/#F!iOZHlIab!65qqRGToUUCxiSMmzbab1w) and [OneDrive](https://1drv.ms/u/s!AoWYKlNEZds9auvFMliyQ3HK-lY?e=42ud1g).<br/>
+Zipped Windows releases without installer are available in the alternative download locations below or from the release assets at [GitHub - Little Navmap Releases - Version 2.8.12](https://github.com/albar965/littlenavmap/releases/v2.8.12) \(scroll down to `Assets`\).
 
+**Alternative Download Locations - Look into sub-folders for beta, development or release candidates:**
+
+**►** [**Box**](https://app.box.com/s/8c9x2f91enpkn41cmc4b5tkzlil9ouhy) / [**Dropbox**](https://www.dropbox.com/sh/eh446yent4rz3uq/AACg8vMEmX8AxY_5Hjpt90kWa) / [**Mega.nz**](https://mega.nz/#F!iOZHlIab!65qqRGToUUCxiSMmzbab1w) / [**OneDrive**](https://1drv.ms/u/s!AoWYKlNEZds9auvFMliyQ3HK-lY?e=42ud1g)
 
 ### Little Navmap Links
 
