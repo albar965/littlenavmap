@@ -24,20 +24,22 @@
 #endif
 
 // Defines ==========================================================================
-#define LnmAppProjects GetEnv("APROJECTS")
-#define LnmAppName "Little Navmap"
-#define LnmAppNameReg "LittleNavmap"
-#define LnmAppPublisher "Alexander Barthel"
-#define LnmAppURL "https://www.littlenavmap.org/"
-#define LnmAppExeName "littlenavmap.exe"
-#define LnmAppSourceBase LnmAppProjects + "\deploy\LittleNavmap-" + LnmAppArch + "-" + LnmAppVersion
-#define LnmAppSourceDir LnmAppSourceBase + "\*"
-
 #if LnmAppArch == "win64"
   #define AppSuffix "64-bit"
 #elif LnmAppArch == "win32"
   #define AppSuffix "32-bit"
 #endif
+
+#define LnmAppProjects GetEnv("APROJECTS")
+#define LnmAppName "Little Navmap"
+#define LnmAppConnectName "Little Navconnect"
+#define LnmAppNameReg "LittleNavmap"
+#define LnmAppPublisher "Alexander Barthel"
+#define LnmAppURL "https://www.littlenavmap.org/"
+#define LnmAppExeName "littlenavmap.exe"
+#define LnmAppConnectExeName "littlenavconnect.exe"
+#define LnmAppSourceBase LnmAppProjects + "\deploy\LittleNavmap-" + LnmAppArch + "-" + LnmAppVersion
+#define LnmAppSourceDir LnmAppSourceBase + "\*"
 
 // No file associations yet
 #define LnmAppAssocName LnmAppName + " Flight Plan"
@@ -187,7 +189,7 @@ Root: HKCR; Subkey: "{#LnmAppNameReg}\shell\open\command"; ValueType: string; Va
 // Start menu entries for all programs and documentation
 [Icons]
 Name: "{autoprograms}\{#LnmAppName} {#AppSuffix}\{#LnmAppName}"; Filename: "{app}\{#LnmAppExeName}"
-Name: "{autoprograms}\{#LnmAppName} {#AppSuffix}\Little Navconnect"; Filename: "{app}\Little Navconnect\littlenavconnect.exe"
+Name: "{autoprograms}\{#LnmAppName} {#AppSuffix}\{#LnmAppConnectName}"; Filename: "{app}\{#LnmAppConnectName}\{#LnmAppConnectExeName}"
 Name: "{autoprograms}\{#LnmAppName} {#AppSuffix}\Little Navmap {cm:UserManualMessage} PDF (Offline)"; Filename: "{app}\help\little-navmap-user-manual-en.pdf"
 Name: "{autoprograms}\{#LnmAppName} {#AppSuffix}\Little Navmap {cm:UserManualMessage} (Online)"; Filename: "{app}\help\Little Navmap User Manual Online.url"
 Name: "{autoprograms}\{#LnmAppName} {#AppSuffix}\{cm:ChangelogMessage}"; Filename: "{app}\CHANGELOG.TXT"
