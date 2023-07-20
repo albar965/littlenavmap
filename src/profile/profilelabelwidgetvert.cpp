@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -22,7 +22,7 @@
 #include "common/mapcolors.h"
 #include "profile/profilescrollarea.h"
 #include "profile/profileoptions.h"
-#include "navapp.h"
+#include "app/navapp.h"
 #include "route/route.h"
 #include "common/unit.h"
 
@@ -91,7 +91,7 @@ void ProfileLabelWidgetVert::paintEvent(QPaintEvent *)
       QPoint offset = scrollArea->getOffset();
       int safeAltY = profileWidget->getMinSafeAltitudeY() - offset.y();
       int flightplanY = profileWidget->getFlightplanAltY() - offset.y();
-      float routeAlt = NavApp::getRouteConst().getCruisingAltitudeFeet();
+      float routeAlt = NavApp::getRouteConst().getCruiseAltitudeFt();
 
       // Draw labels on left side widget ========================================================
 
@@ -141,7 +141,7 @@ void ProfileLabelWidgetVert::paintEvent(QPaintEvent *)
         symPainter.textBox(&painter, {str}, QApplication::palette().color(QPalette::Text), w - 2, flightplanY, atts, 255, baseColor);
         maxw = std::max(metrics.boundingRect(str).width(), maxw);
       }
-      setMinimumWidth(maxw + metrics.width("X"));
+      setMinimumWidth(maxw + metrics.horizontalAdvance("X"));
     }
     else
       setMinimumWidth(1); // Setting to 0 hides the widget

@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -50,7 +50,6 @@ class WeatherReporter;
 class WindReporter;
 
 namespace Marble {
-class LegendWidget;
 class MarbleAboutDialog;
 class RenderState;
 class ElevationModel;
@@ -149,6 +148,9 @@ public:
 
   /* Update the window title after switching simulators, flight plan name or change status. */
   void updateWindowTitle();
+
+  /* Update tooltip state in recent menus */
+  void setToolTipsEnabledMainMenu(bool enabled);
 
   /* Update coordinate display in status bar */
   void updateMapPosLabel(const atools::geo::Pos& pos, int x, int y);
@@ -259,6 +261,12 @@ public:
   /* Get all actions from main menu which have a text and a shortcut */
   QList<QAction *> getMainWindowActions();
 
+  /* Set on top status according main window top status */
+  void setStayOnTop(QWidget *widget);
+
+  /* Set current and default path for the LNMPLN export */
+  void setLnmplnExportDir(const QString& dir);
+
 signals:
   /* Emitted when window is shown the first time */
   void windowShown();
@@ -278,9 +286,15 @@ private:
 
   /* Dock window functions */
   void raiseFloatingWindows();
+  void hideTitleBar();
   void allowDockingWindows();
   void allowMovingWindows();
+
+  /* Signal from action */
   void stayOnTop();
+
+  /* Map dock widget floating state changed */
+  void mapDockTopLevelChanged(bool topLevel);
 
   /* Called by action */
   void fullScreenMapToggle();
@@ -339,6 +353,7 @@ private:
   bool routeSaveSelection();
   void routeInsert(int insertBefore);
   void routeOpenRecent(const QString& routeFile);
+  void routeOpenDescr(const QString& routeString);
 
   /* Flight plan save functions */
   bool routeSaveLnm();
@@ -346,13 +361,13 @@ private:
 
   void routeCenter();
   bool routeCheckForChanges();
-  void showMapLegend();
 
   /* Reset all "do not show this again" message box status values */
   void resetMessages();
   void resetAllSettings();
   void showDatabaseFiles();
   void showShowMapCache();
+  void showMapInstallation();
 
   /* Save map as images */
   void mapSaveImage();
@@ -377,6 +392,7 @@ private:
   void layoutOpenRecent(const QString& layoutFile);
   void layoutOpenDrag(const QString& layoutFile); /* Open from drag and drop event */
   bool layoutOpenInternal(const QString& layoutFile);
+  void loadLayoutDelayed(const QString& filename);
 
   void legendAnchorClicked(const QUrl& url);
 
@@ -386,8 +402,8 @@ private:
   void showOnlineTutorials();
   void showOfflineHelp();
   void showOnlineDownloads();
+  void showChangelog();
   void showNavmapLegend();
-  void loadNavmapLegend();
   bool openInSkyVector();
   void clearProcedureCache();
 
@@ -439,6 +455,9 @@ private:
 
   void openOptionsDialog();
 
+  /* Print the size of all container classes to detect overflow or memory leak conditions */
+  void debugDumpContainerSizes() const;
+
 #ifdef DEBUG_INFORMATION
   void debugActionTriggered1();
   void debugActionTriggered2();
@@ -447,6 +466,7 @@ private:
   void debugActionTriggered5();
   void debugActionTriggered6();
   void debugActionTriggered7();
+  void debugActionTriggered8();
 
 #endif
 
@@ -514,6 +534,7 @@ private:
   QActionGroup *actionGroupMapProjection = nullptr, *actionGroupMapSunShading = nullptr,
                *actionGroupMapWeatherSource = nullptr, *actionGroupMapWeatherWindSource = nullptr;
 
+  /* Reload weather all 15 seconds */
   QTimer weatherUpdateTimer;
 
   bool firstStart = true; /* emit window shown only once after startup */
@@ -531,6 +552,9 @@ private:
 
   /* Show hint dialog only once per session */
   bool backgroundHintRouteStringShown = false;
+
+  /* Call debugDumpContainerSizes() every 30 seconds */
+  QTimer debugDumpContainerSizesTimer;
 };
 
 #endif // LITTLENAVMAP_MAINWINDOW_H

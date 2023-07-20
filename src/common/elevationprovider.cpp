@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -17,17 +17,22 @@
 
 #include "common/elevationprovider.h"
 
-#include "navapp.h"
+#include "common/constants.h"
+#include "geo/calculations.h"
+#include "app/navapp.h"
 #include "fs/common/globereader.h"
+#include "gui/helphandler.h"
 #include "options/optiondata.h"
 #include "geo/line.h"
 #include "geo/linestring.h"
 #include "geo/pos.h"
 #include "gui/dialog.h"
-#include "geo/calculations.h"
+#include "atools.h"
 
 #include <marble/GeoDataCoordinates.h>
 #include <marble/ElevationModel.h>
+
+#include <QUrl>
 
 /* Limt altitude to this value */
 static Q_DECL_CONSTEXPR float ALTITUDE_LIMIT_METER = 8800.f;
@@ -41,12 +46,9 @@ using atools::fs::common::GlobeReader;
 
 using namespace Marble;
 
-ElevationProvider::ElevationProvider(QObject *parent, const Marble::ElevationModel *model)
-  : QObject(parent), marbleModel(model)
+ElevationProvider::ElevationProvider(QObject *parent)
+  : QObject(parent)
 {
-  // Marble will let us know when updates are available
-  connect(marbleModel, &ElevationModel::updateAvailable, this, &ElevationProvider::marbleUpdateAvailable);
-  updateReader();
 }
 
 ElevationProvider::~ElevationProvider()
@@ -62,10 +64,9 @@ void ElevationProvider::marbleUpdateAvailable()
 
 float ElevationProvider::getElevationMeter(const atools::geo::Pos& pos, float sampleRadiusMeter)
 {
-  QMutexLocker locker(&mutex);
-
   if(isGlobeOfflineProvider())
   {
+    QMutexLocker locker(&mutex);
     float elevation = globeReader->getElevation(pos, sampleRadiusMeter);
     if(!(elevation > atools::fs::common::OCEAN && elevation < atools::fs::common::INVALID))
       return 0.f;
@@ -74,6 +75,11 @@ float ElevationProvider::getElevationMeter(const atools::geo::Pos& pos, float sa
   }
   else
     return 0.f;
+}
+
+float ElevationProvider::getElevationFt(const atools::geo::Pos& pos, float sampleRadiusMeter)
+{
+  return atools::geo::meterToFeet(getElevationMeter(pos, sampleRadiusMeter));
 }
 
 void ElevationProvider::getElevations(atools::geo::LineString& elevations, const atools::geo::Line& line, float sampleRadiusMeter)
@@ -94,7 +100,7 @@ void ElevationProvider::getElevations(atools::geo::LineString& elevations, const
         pos.setAltitude(0.f);
     }
   }
-  else
+  else if(marbleModel != nullptr)
   {
     // Get altitude points for the line segment
     // The might not be complete and will be more complete on further iterations when we get a signal
@@ -148,7 +154,17 @@ void ElevationProvider::getElevations(atools::geo::LineString& elevations, const
     pos.setAltitude(std::min(pos.getAltitude(), ALTITUDE_LIMIT_METER));
 }
 
-bool ElevationProvider::isGlobeDirectoryValid(const QString& path) const
+bool ElevationProvider::isGlobeOfflineProvider() const
+{
+  return globeReader != nullptr && globeReader->isValid();
+}
+
+bool ElevationProvider::isGlobeDirValid()
+{
+  return isGlobeDirectoryValid(OptionData::instance().getOfflineElevationPath());
+}
+
+bool ElevationProvider::isGlobeDirectoryValid(const QString& path)
 {
   // Checks for files and more
   return GlobeReader::isDirValid(path);
@@ -156,47 +172,95 @@ bool ElevationProvider::isGlobeDirectoryValid(const QString& path) const
 
 void ElevationProvider::optionsChanged()
 {
-  // Make sure to wait for other methods to finish before changing the reader
-  QMutexLocker locker(&mutex);
-  updateReader();
+  updateReader(false /* startup */);
 }
 
-void ElevationProvider::updateReader()
+void ElevationProvider::init(const Marble::ElevationModel *model)
 {
-  if(OptionData::instance().getFlags() & opts::CACHE_USE_OFFLINE_ELEVATION)
+  marbleModel = model;
+
+  // Marble will let us know when updates are available
+  if(marbleModel != nullptr)
+    connect(marbleModel, &ElevationModel::updateAvailable, this, &ElevationProvider::marbleUpdateAvailable);
+  updateReader(true /* startup */);
+}
+
+void ElevationProvider::updateReader(bool startup)
+{
+  bool warnWrongGlobePath = false, warnOpenFiles = false,
+       useOffline = OptionData::instance().getFlags().testFlag(opts::CACHE_USE_OFFLINE_ELEVATION);
+  const QString& path = OptionData::instance().getOfflineElevationPath();
+
   {
-    const QString& path = OptionData::instance().getOfflineElevationPath();
-    if(!GlobeReader::isDirValid(path))
+    // Make sure to wait for other methods to finish before changing the reader
+    QMutexLocker locker(&mutex);
+
+    if(useOffline)
     {
-      NavApp::closeSplashScreen();
-      atools::gui::Dialog::warning(NavApp::getQMainWidget(),
-                                   tr("GLOBE elevation data directory is not valid:<br/>\"%1\"<br/><br/>"
-                                      "Go to main menu -&gt; \"Tools\" -&gt; \"Options\" and then<br/>"
-                                      "to page \"Cache and Files\". Then click \"Select GLOBE Directory\" and<br/>"
-                                      "choose the correct place with the GLOBE elevation files.",
-                                      "Keep instructions in sync with translated menus").arg(path));
-    }
-    else
-    {
-      delete globeReader;
-      globeReader = new GlobeReader(path);
+      if(!GlobeReader::isDirValid(path))
       {
+        warnWrongGlobePath = true;
+        delete globeReader;
+        globeReader = nullptr;
+      }
+      else
+      {
+        delete globeReader;
+        globeReader = new GlobeReader(path);
+
         qDebug() << Q_FUNC_INFO << "Opening GLOBE files";
 
         if(!globeReader->openFiles())
         {
-          NavApp::closeSplashScreen();
-          atools::gui::Dialog::warning(NavApp::getQMainWidget(),
-                                       tr("Cannot open GLOBE data in directory<br/>\"%1\"").arg(path));
-          qDebug() << Q_FUNC_INFO << "Opening GLOBE done";
+          delete globeReader;
+          globeReader = nullptr;
+          warnOpenFiles = true;
         }
+        else
+          qDebug() << Q_FUNC_INFO << "Opening GLOBE done";
       }
     }
+    else
+    {
+      delete globeReader;
+      globeReader = nullptr;
+    }
   }
-  else
+
+  // Show this warning at startup and when changing options
+  if(warnOpenFiles)
   {
-    delete globeReader;
-    globeReader = nullptr;
+    NavApp::closeSplashScreen();
+    atools::gui::Dialog::warning(NavApp::getQMainWidget(), tr("Cannot open GLOBE data in directory<br/>\"%1\"").arg(path));
+  }
+
+  // Show this warning at startup and when changing options
+  if(warnWrongGlobePath)
+  {
+    // Warn outside the mutex lock to avoid deadlocks
+    NavApp::closeSplashScreen();
+    atools::gui::Dialog::warning(NavApp::getQMainWidget(),
+                                 tr("GLOBE elevation data directory is not valid:<br/>\"%1\"<br/><br/>"
+                                    "Go to main menu -&gt; \"Tools\" -&gt; \"Options\" and then<br/>"
+                                    "to page \"Cache and Files\". Then click \"Select GLOBE Directory\" and<br/>"
+                                    "select the correct place with the GLOBE elevation files.",
+                                    "Keep instructions in sync with translated menus").arg(path));
+  }
+
+  // Show this only on startup
+  if(!useOffline && startup)
+  {
+    NavApp::closeSplashScreen();
+    QUrl url = atools::gui::HelpHandler::getHelpUrlWeb(lnm::helpOnlineInstallGlobeUrl, lnm::helpLanguageOnline());
+    QString message = tr(
+      "<p>The online elevation data which is used by default for the elevation profile is limited and has a lot of errors.<br/>"
+      "Therefore, it is recommended to download and use the offline GLOBE elevation data which provides world wide coverage.</p>"
+      "<p>Go to the main menu -&gt; \"Tools\" -&gt; \"Options\" and then to page \"Cache and files\" to add the GLOBE data.</p>"
+        "<p><a href=\"%1\">Click here for more information in the Little Navmap online manual</a></p>",
+      "Keep instructions in sync with translated menus").arg(url.toString());
+
+    atools::gui::Dialog(NavApp::getQMainWidget()).showInfoMsgBox(lnm::ACTIONS_SHOW_INSTALL_GLOBE, message,
+                                                                 tr("Do not &show this dialog again."));
   }
 
   emit updateAvailable();

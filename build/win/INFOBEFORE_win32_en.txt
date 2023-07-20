@@ -1,0 +1,7 @@
+Note
+
+This is the Little Navmap 32-bit build. It can be used with Prepar3D and FSX.
+
+Note that Little Navmap and all related programs are interoperable across the network (Little Navmap and Little Navconnect) as well as the X-Plane plugin (Little Navmap, Little Navconnect and Little Xpconnect).
+
+Also both 64-bit and 32-bit builds share the same settings and databases. You can install both builds and switch from one to another without problems.

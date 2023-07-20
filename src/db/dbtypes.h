@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -24,6 +24,31 @@
 #include <QString>
 #include <QObject>
 
+namespace navdb {
+enum Status : quint8
+{
+  UNKNOWN,
+  ALL, /* Only third party nav database */
+  MIXED, /* Airports from simulator rest from nav database */
+  OFF /* Only simulator database */
+};
+
+/* Defines the automatic correction and reason for the navdata source */
+enum Correction : quint8
+{
+  CORRECT_NONE,
+  CORRECT_MSFS_HAS_NAVIGRAPH, /* MSFS with Navigraph update found -> mixed mode */
+  CORRECT_MSFS_NO_NAVIGRAPH, /* MSFS without navdata update found -> no navdatabase */
+  CORRECT_FSX_P3D_UPDATED, /* Any FSX or P3D with updated cycle -> mixed or sim only mode */
+  CORRECT_FSX_P3D_OUTDATED, /* Any FSX or P3D with old included AIRAC - sim only mode */
+  CORRECT_XP_CYCLE_NAV_EQUAL, /* XP nav cycle is equal to sim cycle -> mixed mode */
+  CORRECT_XP_CYCLE_NAV_SMALLER, /* XP nav cycle is equal to sim cycle -> no navdatabase */
+  CORRECT_EMPTY, /* Sim database is empty - use navdata for all */
+  CORRECT_ALL /* Navdata for all selected - change mode */
+};
+
+}
+
 /* Combines path and scenery information for a flight simulator type */
 struct FsPathType
 {
@@ -31,6 +56,7 @@ struct FsPathType
           sceneryCfg /* full path and name of scenery.cfg file */;
   bool hasDatabase = false, /* true if a database was found in the configuration Directory */
        isInstalled = false /* True if the simulator is installed on the system */;
+  navdb::Status navDatabaseStatus = navdb::MIXED;
 };
 
 QDebug operator<<(QDebug out, const FsPathType& record);
@@ -50,8 +76,8 @@ public:
   {
   }
 
-  /* Checks for fs installtions and databases and populates the hash map */
-  void fillDefault();
+  /* Checks for fs installations and databases and populates the hash map */
+  void fillDefault(navdb::Status navDatabaseStatus);
 
   /* Get the latest/newest simulator from all installed ones or databases found */
   atools::fs::FsPaths::SimulatorType getBest() const;
@@ -86,7 +112,7 @@ private:
 
   friend QDataStream& operator>>(QDataStream& in, SimulatorTypeMap& obj);
 
-  void fillOneDefault(atools::fs::FsPaths::SimulatorType type);
+  void fillOneDefault(atools::fs::FsPaths::SimulatorType type, navdb::Status navDatabaseStatus);
 
 };
 

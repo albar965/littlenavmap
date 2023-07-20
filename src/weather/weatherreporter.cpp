@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -17,37 +17,31 @@
 
 #include "weather/weatherreporter.h"
 
-#include "gui/mainwindow.h"
-#include "settings/settings.h"
-#include "options/optiondata.h"
-#include "common/constants.h"
-#include "fs/weather/xpweatherreader.h"
-#include "navapp.h"
 #include "atools.h"
-#include "fs/weather/weathernetdownload.h"
-#include "fs/weather/noaaweatherdownloader.h"
-#include "fs/sc/simconnecttypes.h"
-#include "fs/util/fsutil.h"
-#include "query/mapquery.h"
-#include "query/airportquery.h"
-#include "fs/weather/metar.h"
-#include "util/filesystemwatcher.h"
+#include "common/constants.h"
 #include "connect/connectclient.h"
+#include "fs/weather/metar.h"
 #include "fs/weather/metarparser.h"
+#include "fs/weather/noaaweatherdownloader.h"
+#include "fs/weather/weathernetdownload.h"
+#include "fs/weather/xpweatherreader.h"
 #include "gui/dialog.h"
+#include "gui/mainwindow.h"
+#include "app/navapp.h"
+#include "options/optiondata.h"
+#include "query/airportquery.h"
+#include "settings/settings.h"
+#include "util/filesystemwatcher.h"
+#include "util/filechecker.h"
 
-#include <QDebug>
 #include <QDir>
-#include <QFile>
-#include <QFileInfo>
-#include <QNetworkRequest>
 #include <QStandardPaths>
-#include <QNetworkReply>
 #include <QTimer>
 #include <QRegularExpression>
-#include <QEventLoop>
-#include <functional>
-#include <QProcess>
+
+#if defined(Q_OS_WIN32)
+#include <QProcessEnvironment>
+#endif
 
 // Checks the first line of an ASN file if it has valid content
 static const QRegularExpression ASN_VALIDATE_REGEXP("^[A-Z0-9]{3,4}::[A-Z0-9]{3,4} .+$");
@@ -65,6 +59,24 @@ using atools::settings::Settings;
 WeatherReporter::WeatherReporter(MainWindow *parentWindow, atools::fs::FsPaths::SimulatorType type)
   : QObject(parentWindow), simType(type), mainWindow(parentWindow)
 {
+  xplaneFileWarningMsg = QString(tr("\n\nMake sure that your X-Plane base path is correct and\n"
+                                    "weather files as well as directories exist.\n\n"
+                                    "Click \"Reset paths\" in the Little Navmap dialog \"Load scenery library\"\n"
+                                    "to fix the base path after moving a X-Plane installation.\n\n"
+                                    "Also check the paths in the Little Navmap options on page \"Weather Files\".\n"
+                                    "These path should be empty to use the default.\n\n"
+                                    "Restart Little Navmap after correcting the weather paths."));
+
+  xplaneMissingWarningMsg = QString(tr("Cannot access weather files.\n"
+                                       "X-Plane is not installed on this computer.\n\n"
+                                       "If you use this as a remote installation:\n"
+                                       "Share the weather files on the flying computer and\n"
+                                       "adapt the X-Plane weather path in options on page \"Weather Files\" to point to the network share."));
+
+  // Init file checkers to avoid expensive file access while trying to load weather while painting
+  asSnapshotPathChecker = new atools::util::FileChecker;
+  asFlightplanPathChecker = new atools::util::FileChecker;
+
   onlineWeatherTimeoutSecs = atools::settings::Settings::instance().valueInt(lnm::OPTIONS_WEATHER_UPDATE, 600);
 
   verbose = Settings::instance().getAndStoreValue(lnm::OPTIONS_WEATHER_DEBUG, false).toBool();
@@ -96,14 +108,13 @@ WeatherReporter::WeatherReporter(MainWindow *parentWindow, atools::fs::FsPaths::
   // Update IVAO and NOAA timeout periods - timeout is disable if weather services are not used
   updateTimeouts();
 
-  initActiveSkyNext();
+  initActiveSkyPaths();
 
   // Set callback so the reader can build an index for nearest airports
   xpWeatherReader->setFetchAirportCoords(coordFunc);
   initXplane();
 
-  connect(xpWeatherReader, &atools::fs::weather::XpWeatherReader::weatherUpdated,
-          this, &WeatherReporter::xplaneWeatherFileChanged);
+  connect(xpWeatherReader, &atools::fs::weather::XpWeatherReader::weatherUpdated, this, &WeatherReporter::xplaneWeatherFileChanged);
 
   // Forward signals from clients for updates
   connect(noaaWeather, &NoaaWeatherDownloader::weatherUpdated, this, &WeatherReporter::noaaWeatherUpdated);
@@ -128,19 +139,37 @@ WeatherReporter::WeatherReporter(MainWindow *parentWindow, atools::fs::FsPaths::
 
 WeatherReporter::~WeatherReporter()
 {
-  deleteFsWatcher();
-  delete noaaWeather;
-  delete vatsimWeather;
-  delete ivaoWeather;
+  deleteActiveSkyFsWatcher();
 
+  qDebug() << Q_FUNC_INFO << "delete noaaWeather";
+  delete noaaWeather;
+  noaaWeather = nullptr;
+
+  qDebug() << Q_FUNC_INFO << "delete vatsimWeather";
+  delete vatsimWeather;
+  vatsimWeather = nullptr;
+
+  qDebug() << Q_FUNC_INFO << "delete ivaoWeather";
+  delete ivaoWeather;
+  ivaoWeather = nullptr;
+
+  qDebug() << Q_FUNC_INFO << "delete xpWeatherReader";
   delete xpWeatherReader;
+  xpWeatherReader = nullptr;
+
+  qDebug() << Q_FUNC_INFO << "delete asSnapshotPathChecker";
+  delete asSnapshotPathChecker;
+  asSnapshotPathChecker = nullptr;
+
+  qDebug() << Q_FUNC_INFO << "delete asFlightplanPathChecker";
+  delete asFlightplanPathChecker;
+  asFlightplanPathChecker = nullptr;
 }
 
 void WeatherReporter::weatherDownloadProgress(qint64 bytesReceived, qint64 bytesTotal, QString downloadUrl)
 {
   if(verbose)
-    qDebug() << Q_FUNC_INFO << "bytesReceived" << bytesReceived << "bytesTotal" << bytesTotal
-             << "downloadUrl" << downloadUrl;
+    qDebug() << Q_FUNC_INFO << "bytesReceived" << bytesReceived << "bytesTotal" << bytesTotal << "downloadUrl" << downloadUrl;
 
   QApplication::processEvents(QEventLoop::WaitForMoreEvents);
 }
@@ -171,13 +200,13 @@ atools::geo::Pos WeatherReporter::fetchAirportCoordinates(const QString& airport
     return atools::geo::EMPTY_POS;
 }
 
-void WeatherReporter::deleteFsWatcher()
+void WeatherReporter::deleteActiveSkyFsWatcher()
 {
   if(fsWatcherAsPath != nullptr)
   {
     // Remove watcher just in case the file changes
-    fsWatcherAsPath->disconnect(fsWatcherAsPath, &FileSystemWatcher::fileUpdated, this,
-                                &WeatherReporter::activeSkyWeatherFileChanged);
+    FileSystemWatcher::disconnect(fsWatcherAsPath, &FileSystemWatcher::filesUpdated, this,
+                                  &WeatherReporter::activeSkyWeatherFilesChanged);
     fsWatcherAsPath->deleteLater();
     fsWatcherAsPath = nullptr;
   }
@@ -185,73 +214,141 @@ void WeatherReporter::deleteFsWatcher()
   if(fsWatcherAsFlightplanPath != nullptr)
   {
     // Remove watcher just in case the file changes
-    fsWatcherAsFlightplanPath->disconnect(fsWatcherAsFlightplanPath, &FileSystemWatcher::fileUpdated, this,
-                                          &WeatherReporter::activeSkyWeatherFileChanged);
+    FileSystemWatcher::disconnect(fsWatcherAsFlightplanPath, &FileSystemWatcher::filesUpdated, this,
+                                  &WeatherReporter::activeSkyWeatherFilesChanged);
     fsWatcherAsFlightplanPath->deleteLater();
     fsWatcherAsFlightplanPath = nullptr;
   }
 }
 
-void WeatherReporter::createFsWatcher()
+void WeatherReporter::createActiveSkyFsWatcher()
 {
   if(fsWatcherAsPath == nullptr)
   {
     // Watch file for changes
     fsWatcherAsPath = new FileSystemWatcher(this, verbose);
     fsWatcherAsPath->setMinFileSize(1000);
-    fsWatcherAsPath->connect(fsWatcherAsPath, &FileSystemWatcher::fileUpdated, this,
-                             &WeatherReporter::activeSkyWeatherFileChanged);
+    FileSystemWatcher::connect(fsWatcherAsPath, &FileSystemWatcher::filesUpdated, this, &WeatherReporter::activeSkyWeatherFilesChanged);
   }
-  activeSkyWeatherFileChanged(asPath);
-  fsWatcherAsPath->setFilenameAndStart(asPath);
+
+  // Set path only if valid to avoid recursion through paint routine if files are not available
+  if(asSnapshotPathChecker->checkFile(Q_FUNC_INFO, asSnapshotPath, false /* warn */))
+  {
+    // Call notification direct
+    activeSkyWeatherFilesChanged({asSnapshotPath});
+
+    fsWatcherAsPath->setFilenameAndStart(asSnapshotPath);
+  }
 
   if(fsWatcherAsFlightplanPath == nullptr)
   {
     // Watch file for changes
     fsWatcherAsFlightplanPath = new FileSystemWatcher(this, verbose);
     fsWatcherAsFlightplanPath->setMinFileSize(50);
-    fsWatcherAsFlightplanPath->connect(fsWatcherAsFlightplanPath, &FileSystemWatcher::fileUpdated, this,
-                                       &WeatherReporter::activeSkyWeatherFileChanged);
+    FileSystemWatcher::connect(fsWatcherAsFlightplanPath, &FileSystemWatcher::filesUpdated, this,
+                               &WeatherReporter::activeSkyWeatherFilesChanged);
   }
-  fsWatcherAsFlightplanPath->setFilenameAndStart(asFlightplanPath);
+
+  // Set path only if valid to avoid recursion through paint routine if files are not available
+  if(asFlightplanPathChecker->checkFile(Q_FUNC_INFO, asFlightplanPath, false /* warn */))
+    fsWatcherAsFlightplanPath->setFilenameAndStart(asFlightplanPath);
 }
 
 void WeatherReporter::disableXplane()
 {
-  qDebug() << Q_FUNC_INFO;
+  if(verbose)
+    qDebug() << Q_FUNC_INFO;
   xpWeatherReader->clear();
 }
 
 void WeatherReporter::initXplane()
 {
-  if(atools::fs::FsPaths::isAnyXplane(simType) && !NavApp::getCurrentSimulatorBasePath().isEmpty())
+  if(verbose)
+    qDebug() << Q_FUNC_INFO << simType;
+
+  if(simType == atools::fs::FsPaths::XPLANE_11)
   {
-    QFileInfo base(NavApp::getCurrentSimulatorBasePath());
+    QString path = OptionData::instance().getWeatherXplane11Path();
+    if(path.isEmpty() && !NavApp::getCurrentSimulatorBasePath().isEmpty())
+      // Use default base path if simulator installation was found
+      path = NavApp::getCurrentSimulatorBasePath() + QDir::separator() + "METAR.rwx";
 
-    if(base.exists() && base.isDir())
-    {
-      // Get user path
-      QString path = OptionData::instance().getWeatherXplanePath();
-      if(path.isEmpty())
-        // Use default base path
-        path = NavApp::getCurrentSimulatorBasePath() + QDir::separator() + "METAR.rwx";
+    // Set path but do not start watching - loading starts on first access
+    xpWeatherReader->setWeatherPath(path, atools::fs::weather::WEATHER_XP11);
+  }
+  else if(simType == atools::fs::FsPaths::XPLANE_12)
+  {
+    QString path = OptionData::instance().getWeatherXplane12Path();
+    if(path.isEmpty() && !NavApp::getCurrentSimulatorBasePath().isEmpty())
+      // Use default base path if simulator installation was found
+      path = NavApp::getCurrentSimulatorBasePath() + QDir::separator() + "Output" + QDir::separator() + "real weather";
 
-      xpWeatherReader->setWeatherFile(path);
-      qDebug() << Q_FUNC_INFO << path;
-    }
-    else
-    {
-      qWarning() << Q_FUNC_INFO << "Base path not valid" << base.filePath();
-      disableXplane();
-    }
+    // Set path but do not start watching - loading starts on first access
+    xpWeatherReader->setWeatherPath(path, atools::fs::weather::WEATHER_XP12);
   }
   else
     disableXplane();
 }
 
-void WeatherReporter::initActiveSkyNext()
+bool WeatherReporter::checkXplanePaths()
 {
-  deleteFsWatcher();
+  bool valid = false;
+  bool xp11 = xpWeatherReader->getWeatherType() == atools::fs::weather::WEATHER_XP11;
+  bool& warningShown = xp11 ? xp11WarningPathShown : xp12WarningPathShown;
+
+  // Check only if warning was not already shown and dialog is not open right now
+  if(!showingXplaneFileWarning && !warningShown)
+  {
+    if(atools::fs::FsPaths::isAnyXplane(simType))
+    {
+      // Validate path
+      QString path = xpWeatherReader->getWeatherPath();
+      QString message = xp11 ? atools::checkFileMsg(path, 80, false /* warn */) : atools::checkDirMsg(path, 80, false /* warn */);
+
+      // Valid if no error message returned
+      valid = message.isEmpty();
+
+      if(!valid && !warningShown)
+      {
+        // Call dialog in background since this function might be called from a draw handler
+        QTimer::singleShot(0, this, std::bind(&WeatherReporter::showXplaneWarningDialog, this, message));
+        warningShown = true;
+      }
+    }
+  }
+
+  if(!valid)
+    disableXplane();
+
+  return valid;
+}
+
+void WeatherReporter::showXplaneWarningDialog(const QString& message)
+{
+  // Avoid repeated entry
+  showingXplaneFileWarning = true;
+
+  NavApp::closeSplashScreen();
+
+  if(NavApp::hasInstalledSimulator(simType))
+    // Path not valid ==========
+    atools::gui::Dialog(mainWindow).showWarnMsgBox(
+      xpWeatherReader->getWeatherType() == atools::fs::weather::WEATHER_XP11 ?
+      lnm::ACTIONS_SHOW_XP11_WEATHER_FILE_INVALID : lnm::ACTIONS_SHOW_XP12_WEATHER_FILE_INVALID,
+      message + xplaneFileWarningMsg, tr("Do not &show this dialog again."));
+  else
+    // X-Plane is not installed ==========
+    atools::gui::Dialog(mainWindow).showWarnMsgBox(
+      xpWeatherReader->getWeatherType() == atools::fs::weather::WEATHER_XP11 ?
+      lnm::ACTIONS_SHOW_XP11_WEATHER_FILE_NO_SIM : lnm::ACTIONS_SHOW_XP12_WEATHER_FILE_NO_SIM,
+      xplaneMissingWarningMsg, tr("Do not &show this dialog again."));
+
+  showingXplaneFileWarning = false;
+}
+
+void WeatherReporter::initActiveSkyPaths()
+{
+  deleteActiveSkyFsWatcher();
 
   activeSkyType = NONE;
   activeSkyMetars.clear();
@@ -259,87 +356,118 @@ void WeatherReporter::initActiveSkyNext()
   activeSkyDestinationMetar.clear();
   activeSkyDepartureIdent.clear();
   activeSkyDestinationIdent.clear();
-  asPath.clear();
+
+  asSnapshotPath.clear();
   asFlightplanPath.clear();
 
   QString manualActiveSkySnapshotPath = OptionData::instance().getWeatherActiveSkyPath();
   if(manualActiveSkySnapshotPath.isEmpty())
   {
-    QString asnSnapshotPath, asnFlightplanSnapshotPath;
-    QString as16SnapshotPath, as16FlightplanSnapshotPath;
-    QString asp4SnapshotPath, asp4FlightplanSnapshotPath;
-    // QString asp5SnapshotPath, asp5FlightplanSnapshotPath;
-    QString asXplSnapshotPath, aspXplFlightplanSnapshotPath;
+    // Manual path setting is empty - detect files automatically =======================================================
+    QString asnSnapshotPath, asnFlightplanSnapshotPath, as16SnapshotPath, as16FlightplanSnapshotPath,
+            asp4SnapshotPath, asp4FlightplanSnapshotPath, asp5SnapshotPath, asp5FlightplanSnapshotPath,
+            asXpl11SnapshotPath, aspXpl11FlightplanSnapshotPath, asXpl12SnapshotPath, aspXpl12FlightplanSnapshotPath;
 
+    // Find paths for old sim independent files ===================================================
     findActiveSkyFiles(asnSnapshotPath, asnFlightplanSnapshotPath, "ASN", QString());
-    qInfo() << "ASN snapshot" << asnSnapshotPath << "flight plan weather" << asnFlightplanSnapshotPath;
+    qInfo() << Q_FUNC_INFO << "ASN snapshot" << asnSnapshotPath << "flight plan weather" << asnFlightplanSnapshotPath;
 
     findActiveSkyFiles(as16SnapshotPath, as16FlightplanSnapshotPath, "AS16_", QString());
-    qInfo() << "AS16 snapshot" << as16SnapshotPath << "flight plan weather" << as16FlightplanSnapshotPath;
+    qInfo() << Q_FUNC_INFO << "AS16 snapshot" << as16SnapshotPath << "flight plan weather" << as16FlightplanSnapshotPath;
 
-    if(simType == atools::fs::FsPaths::P3D_V4 || simType == atools::fs::FsPaths::P3D_V5)
+    // Find paths for sim specific files ===================================================
+    if(simType == atools::fs::FsPaths::P3D_V4)
     {
       // C:\Users\USER\AppData\Roaming\Hifi\AS_P3Dv4
       findActiveSkyFiles(asp4SnapshotPath, asp4FlightplanSnapshotPath, "AS_", "P3Dv4");
-      qInfo() << "ASP4 snapshot" << asp4SnapshotPath << "flight plan weather" << asp4FlightplanSnapshotPath;
+      qInfo() << Q_FUNC_INFO << "ASP4 snapshot" << asp4SnapshotPath << "flight plan weather" << asp4FlightplanSnapshotPath;
     }
-    // else if(simType == atools::fs::FsPaths::P3D_V5)
-    // {
-    //// C:\Users\USER\AppData\Roaming\Hifi\AS_P3Dv5
-    // findActiveSkyFiles(asp4SnapshotPath, asp4FlightplanSnapshotPath, "AS_", "P3Dv5");
-    // qInfo() << "ASP5 snapshot" << asp5SnapshotPath << "flight plan weather" << asp5FlightplanSnapshotPath;
-    // }
-    else if(atools::fs::FsPaths::isAnyXplane(simType))
+    else if(simType == atools::fs::FsPaths::P3D_V5)
+    {
+      // C:\Users\USER\AppData\Roaming\Hifi\AS_P3Dv5
+      findActiveSkyFiles(asp5SnapshotPath, asp5FlightplanSnapshotPath, "AS_", "P3Dv5");
+      qInfo() << Q_FUNC_INFO << "ASP5 snapshot" << asp5SnapshotPath << "flight plan weather" << asp5FlightplanSnapshotPath;
+    }
+    else if(simType == atools::fs::FsPaths::XPLANE_11)
     {
       // C:\Users\USER\AppData\Roaming\Hifi\AS_XPL
-      findActiveSkyFiles(asXplSnapshotPath, aspXplFlightplanSnapshotPath, "AS_", "XPL");
-      qInfo() << "ASXPL snapshot" << asXplSnapshotPath << "flight plan weather" << aspXplFlightplanSnapshotPath;
+      findActiveSkyFiles(asXpl11SnapshotPath, aspXpl11FlightplanSnapshotPath, "AS_", "XPL");
+      qInfo() << Q_FUNC_INFO << "ASXPL11 snapshot" << asXpl11SnapshotPath << "flight plan weather" << aspXpl11FlightplanSnapshotPath;
+    }
+    else if(simType == atools::fs::FsPaths::XPLANE_12)
+    {
+      // C:\Users\USER\AppData\Roaming\Hifi\AS_XPL12
+      findActiveSkyFiles(asXpl12SnapshotPath, aspXpl12FlightplanSnapshotPath, "AS_", "XPL12");
+
+      // Fall back to C:\Users\USER\AppData\Roaming\Hifi\AS_XPL since documentation is not clear
+      if(asXpl12SnapshotPath.isEmpty())
+        findActiveSkyFiles(asXpl12SnapshotPath, aspXpl12FlightplanSnapshotPath, "AS_", "XPL");
+      qInfo() << Q_FUNC_INFO << "ASXPL12 snapshot" << asXpl12SnapshotPath << "flight plan weather" << aspXpl12FlightplanSnapshotPath;
     }
 
-    if(!asp4SnapshotPath.isEmpty())
+    // Assign status depending on found files ===================================================
+    if(!asXpl12SnapshotPath.isEmpty())
     {
-      // Prefer AS4 before AS16
-      asPath = asp4SnapshotPath;
+      asSnapshotPath = asXpl12SnapshotPath;
+      asFlightplanPath = aspXpl12FlightplanSnapshotPath;
+      activeSkyType = ASXPL12;
+    }
+    else if(!asXpl11SnapshotPath.isEmpty())
+    {
+      asSnapshotPath = asXpl11SnapshotPath;
+      asFlightplanPath = aspXpl11FlightplanSnapshotPath;
+      activeSkyType = ASXPL11;
+    }
+    else if(!asp5SnapshotPath.isEmpty())
+    {
+      asSnapshotPath = asp5SnapshotPath;
+      asFlightplanPath = asp5FlightplanSnapshotPath;
+      activeSkyType = ASP5;
+    }
+    else if(!asp4SnapshotPath.isEmpty())
+    {
+      asSnapshotPath = asp4SnapshotPath;
       asFlightplanPath = asp4FlightplanSnapshotPath;
       activeSkyType = ASP4;
     }
     else if(!as16SnapshotPath.isEmpty())
     {
-      // Prefer AS16 before ASN
-      asPath = as16SnapshotPath;
+      asSnapshotPath = as16SnapshotPath;
       asFlightplanPath = as16FlightplanSnapshotPath;
       activeSkyType = AS16;
     }
     else if(!asnSnapshotPath.isEmpty())
     {
-      asPath = asnSnapshotPath;
+      asSnapshotPath = asnSnapshotPath;
       asFlightplanPath = asnFlightplanSnapshotPath;
       activeSkyType = ASN;
     }
-    else if(!asXplSnapshotPath.isEmpty())
-    {
-      asPath = asXplSnapshotPath;
-      asFlightplanPath = aspXplFlightplanSnapshotPath;
-      activeSkyType = ASXPL;
-    }
+    else
+      qWarning() << Q_FUNC_INFO << "No Active Sky weather files found";
   }
   else
   {
     // Manual path overrides found path for all simulators
-    asPath = manualActiveSkySnapshotPath;
+    asSnapshotPath = manualActiveSkySnapshotPath;
     asFlightplanPath = QFileInfo(manualActiveSkySnapshotPath).path() + QDir::separator() + "activeflightplanwx.txt";
     activeSkyType = MANUAL;
   }
+}
 
-  if(!asPath.isEmpty() || !asFlightplanPath.isEmpty())
+void WeatherReporter::loadAllActiveSkyFiles()
+{
+  if(asSnapshotPathChecker->checkFile(Q_FUNC_INFO, asSnapshotPath, false /* warn */))
   {
-    qDebug() << "Using Active Sky paths" << asPath << asFlightplanPath;
-    loadActiveSkySnapshot(asPath);
-    loadActiveSkyFlightplanSnapshot(asFlightplanPath);
-    createFsWatcher();
+    if(verbose)
+      qDebug() << Q_FUNC_INFO << "Using Active Sky paths" << asSnapshotPath << asFlightplanPath;
+
+    if(activeSkyMetars.isEmpty())
+      // Calls loadActiveSkySnapshot() and loadActiveSkyFlightplanSnapshot()
+      createActiveSkyFsWatcher();
   }
-  else
-    qDebug() << "Active Sky path not found";
+  else if(verbose)
+    qWarning() << Q_FUNC_INFO << "asSnapshotPath" << asSnapshotPath << "asFlightplanPath" << asFlightplanPath << "not found";
+
 }
 
 /* Loads complete ASN file into a hash map */
@@ -378,8 +506,8 @@ void WeatherReporter::loadActiveSkySnapshot(const QString& path)
       }
       else
       {
-        qWarning() << "AS file" << file.fileName() << "has invalid entries";
-        qWarning() << "line #" << lineNum << line;
+        qWarning() << Q_FUNC_INFO << "AS file" << file.fileName() << "has invalid entries";
+        qWarning() << Q_FUNC_INFO << "line #" << lineNum << line;
       }
       lineNum++;
     }
@@ -387,8 +515,8 @@ void WeatherReporter::loadActiveSkySnapshot(const QString& path)
 
     qDebug() << Q_FUNC_INFO << "Loaded" << num << "METARs";
   }
-  else
-    qWarning() << "cannot open" << file.fileName() << "reason" << file.errorString();
+  else if(verbose)
+    qWarning() << Q_FUNC_INFO << "cannot open" << file.fileName() << "reason" << file.errorString();
 }
 
 /* Loads flight plan weather for start and destination */
@@ -459,7 +587,7 @@ void WeatherReporter::loadActiveSkyFlightplanSnapshot(const QString& path)
              << "activeSkyDestinationMetar" << activeSkyDestinationMetar;
   }
   else
-    qWarning() << "cannot open" << file.fileName() << "reason" << file.errorString();
+    qWarning() << Q_FUNC_INFO << "cannot open" << file.fileName() << "reason" << file.errorString();
 }
 
 bool WeatherReporter::validateActiveSkyFile(const QString& path)
@@ -477,7 +605,7 @@ bool WeatherReporter::validateActiveSkyFile(const QString& path)
     file.close();
   }
   else
-    qWarning() << "cannot open" << file.fileName() << "reason" << file.errorString();
+    qWarning() << Q_FUNC_INFO << "cannot open" << file.fileName() << "reason" << file.errorString();
   return retval;
 }
 
@@ -496,7 +624,7 @@ bool WeatherReporter::validateActiveSkyFlightplanFile(const QString& path)
     file.close();
   }
   else
-    qWarning() << "cannot open" << file.fileName() << "reason" << file.errorString();
+    qWarning() << Q_FUNC_INFO << "cannot open" << file.fileName() << "reason" << file.errorString();
   return retval;
 }
 
@@ -544,27 +672,27 @@ void WeatherReporter::findActiveSkyFiles(QString& asnSnapshot, QString& flightpl
 
   if(QFile::exists(weatherFile))
   {
-    qInfo() << "found Active Sky weather file" << weatherFile;
+    qInfo() << Q_FUNC_INFO << "found Active Sky weather file" << weatherFile;
     if(validateActiveSkyFile(weatherFile))
       asnSnapshot = weatherFile;
     else
-      qWarning() << "is not an ASN weather snapshot file" << weatherFile;
+      qWarning() << Q_FUNC_INFO << "is not an ASN weather snapshot file" << weatherFile;
   }
   else
-    qInfo() << "file does not exist" << weatherFile;
+    qInfo() << Q_FUNC_INFO << "file does not exist" << weatherFile;
 
   weatherFile = hifiPath + "activeflightplanwx.txt";
 
   if(QFile::exists(weatherFile))
   {
-    qInfo() << "found Active Sky flight plan weathers file" << weatherFile;
+    qInfo() << Q_FUNC_INFO << "found Active Sky flight plan weathers file" << weatherFile;
     if(validateActiveSkyFlightplanFile(weatherFile))
       flightplanSnapshot = weatherFile;
     else
-      qWarning() << "is not an Active Sky flight plan weather snapshot file" << weatherFile;
+      qWarning() << Q_FUNC_INFO << "is not an Active Sky flight plan weather snapshot file" << weatherFile;
   }
   else
-    qInfo() << "file does not exist" << weatherFile;
+    qInfo() << Q_FUNC_INFO << "file does not exist" << weatherFile;
 }
 
 bool WeatherReporter::testUrl(QStringList& result, const QString& url, const QString& airportIcao,
@@ -577,15 +705,31 @@ QString WeatherReporter::getCurrentActiveSkyName() const
 {
   if(activeSkyType == WeatherReporter::ASP4)
     return tr("ASP4");
+  else if(activeSkyType == WeatherReporter::ASP5)
+    return tr("ASP5");
   else if(activeSkyType == WeatherReporter::AS16)
     return tr("AS16");
   else if(activeSkyType == WeatherReporter::ASN)
     return tr("ASN");
-  else if(activeSkyType == WeatherReporter::ASXPL)
-    return tr("ASXP");
+  else if(activeSkyType == WeatherReporter::ASXPL11)
+    return tr("ASXP11");
+  else if(activeSkyType == WeatherReporter::ASXPL12)
+    return tr("ASXP12");
   else
     // Manually selected
     return tr("Active Sky");
+}
+
+const QString& WeatherReporter::getActiveSkyDepartureIdent()
+{
+  loadAllActiveSkyFiles();
+  return activeSkyDepartureIdent;
+}
+
+const QString& WeatherReporter::getActiveSkyDestinationIdent()
+{
+  loadAllActiveSkyFiles();
+  return activeSkyDestinationIdent;
 }
 
 void WeatherReporter::updateAirportWeather()
@@ -607,7 +751,7 @@ void WeatherReporter::weatherDownloadSslErrors(const QStringList& errors, const 
                                            "<p>Continue?</p>").
                                   arg(downloadUrl).
                                   arg(atools::strJoin(errors, tr("<br/>"))),
-                                  tr("Do not &show this again and ignore errors in the future"),
+                                  tr("Do not &show this again and ignore errors."),
                                   QMessageBox::Cancel | QMessageBox::Yes,
                                   QMessageBox::Cancel, QMessageBox::Yes);
 
@@ -640,16 +784,35 @@ void WeatherReporter::weatherDownloadFailed(const QString& error, int errorCode,
 
 QString WeatherReporter::getActiveSkyMetar(const QString& airportIcao)
 {
+  // Load on demand
+  loadAllActiveSkyFiles();
+
   if(activeSkyDepartureIdent == airportIcao)
     return activeSkyDepartureMetar;
   else if(activeSkyDestinationIdent == airportIcao)
     return activeSkyDestinationMetar;
   else
+    // Return value or empty
     return activeSkyMetars.value(airportIcao, QString());
 }
 
 atools::fs::weather::MetarResult WeatherReporter::getXplaneMetar(const QString& station, const atools::geo::Pos& pos)
 {
+  if(xpWeatherReader->getWeatherPath().isEmpty())
+    // Display warnings if path is empty
+    checkXplanePaths();
+  else if(xpWeatherReader->needsLoading())
+  {
+    // Check paths and show warning dialog if invalid
+    if(checkXplanePaths())
+    {
+      // Loading takes longer - show wait cursor
+      QGuiApplication::setOverrideCursor(Qt::WaitCursor);
+      xpWeatherReader->load();
+      QGuiApplication::restoreOverrideCursor();
+    }
+  }
+
   return xpWeatherReader->getXplaneMetar(station, pos);
 }
 
@@ -669,8 +832,7 @@ atools::fs::weather::MetarResult WeatherReporter::getIvaoMetar(const QString& ai
   return ivaoWeather->getMetar(airportIcao, pos);
 }
 
-atools::fs::weather::Metar WeatherReporter::getAirportWeather(const QString& airportIcao,
-                                                              const atools::geo::Pos& airportPos,
+atools::fs::weather::Metar WeatherReporter::getAirportWeather(const QString& airportIcao, const atools::geo::Pos& airportPos,
                                                               map::MapWeatherSource source)
 {
   switch(source)
@@ -717,11 +879,14 @@ void WeatherReporter::postDatabaseLoad(atools::fs::FsPaths::SimulatorType type)
 {
   if(type != simType)
   {
+    // Enable warning dialogs about wrong paths again
+    xp11WarningPathShown = xp12WarningPathShown = false;
+
     // Simulator has changed - reload files
     simType = type;
     resetErrorState();
     updateTimeouts();
-    initActiveSkyNext();
+    initActiveSkyPaths();
     initXplane();
   }
 }
@@ -732,9 +897,12 @@ void WeatherReporter::optionsChanged()
   noaaWeather->setRequestUrl(OptionData::instance().getWeatherNoaaUrl());
   ivaoWeather->setRequestUrl(OptionData::instance().getWeatherIvaoUrl());
 
+  // Enable warning dialogs about wrong paths again
+  xp11WarningPathShown = xp12WarningPathShown = false;
+
   resetErrorState();
   updateTimeouts();
-  initActiveSkyNext();
+  initActiveSkyPaths();
   initXplane();
 }
 
@@ -775,19 +943,41 @@ void WeatherReporter::updateTimeouts()
     vatsimWeather->setUpdatePeriod(-1);
 }
 
-void WeatherReporter::activeSkyWeatherFileChanged(const QString& path)
+void WeatherReporter::activeSkyWeatherFilesChanged(const QStringList& paths)
 {
-  qDebug() << Q_FUNC_INFO << "file" << path << "changed";
+  if(verbose)
+    qDebug() << Q_FUNC_INFO << "file" << paths << "changed";
 
-  loadActiveSkySnapshot(asPath);
-  loadActiveSkyFlightplanSnapshot(asFlightplanPath);
-  mainWindow->setStatusMessage(tr("Active Sky weather information updated."), true /* addToLog */);
+  if(asSnapshotPathChecker->isValid())
+    loadActiveSkySnapshot(asSnapshotPath);
 
-  emit weatherUpdated();
+  if(asFlightplanPathChecker->isValid())
+    loadActiveSkyFlightplanSnapshot(asFlightplanPath);
+
+  if(asSnapshotPathChecker->isValid())
+  {
+    mainWindow->setStatusMessage(tr("Active Sky weather information updated."), true /* addToLog */);
+    emit weatherUpdated();
+  }
 }
 
 void WeatherReporter::xplaneWeatherFileChanged()
 {
   mainWindow->setStatusMessage(tr("X-Plane weather information updated."), true /* addToLog */);
   emit weatherUpdated();
+}
+
+void WeatherReporter::debugDumpContainerSizes() const
+{
+  if(verbose)
+    qDebug() << Q_FUNC_INFO << "activeSkyMetars.size()" << activeSkyMetars.size();
+
+  if(noaaWeather != nullptr)
+    noaaWeather->debugDumpContainerSizes();
+  if(vatsimWeather != nullptr)
+    vatsimWeather->debugDumpContainerSizes();
+  if(ivaoWeather != nullptr)
+    ivaoWeather->debugDumpContainerSizes();
+  if(xpWeatherReader != nullptr)
+    xpWeatherReader->debugDumpContainerSizes();
 }

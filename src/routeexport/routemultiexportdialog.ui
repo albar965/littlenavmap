@@ -165,6 +165,10 @@
    </property>
   </action>
   <action name="actionResetExportPath">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/reset.svg</normaloff>:/littlenavmap/resources/icons/reset.svg</iconset>
+   </property>
    <property name="text">
     <string>&amp;Reset Export Path</string>
    </property>
@@ -224,7 +228,7 @@
   </action>
   <action name="actionResetPathsAndSelection">
    <property name="text">
-    <string>Reset &amp;Path, Filename Patterns and Selection States</string>
+    <string>Reset all &amp;Paths, Filename Patterns and Selection States</string>
    </property>
    <property name="toolTip">
     <string>Reset export paths, filename patterns and selected for export</string>

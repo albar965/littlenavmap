@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -19,8 +19,6 @@
 
 #include "common/symbolpainter.h"
 #include "common/mapcolors.h"
-#include "common/unit.h"
-#include "mapgui/mapwidget.h"
 #include "common/textplacement.h"
 #include "util/paintercontextsaver.h"
 #include "mapgui/maplayer.h"
@@ -100,7 +98,9 @@ void MapPainterNav::render()
     context->setQueryOverflow(overflow);
 
     // Resolve all artificial waypoints to the respective radio navaids and also filter by airway/track type
-    mapQuery->resolveWaypointNavaids(waypoints, allWaypoints, allVor, allNdb, drawNormalWp, drawAirwayWpV, drawAirwayWpJ, drawTrackWp);
+    // Do not copy flight plan waypoints - these are drawn in MapPainterRoute
+    mapQuery->resolveWaypointNavaids(waypoints, allWaypoints, allVor, allNdb, false /* flightplan */,
+                                     drawNormalWp, drawAirwayWpV, drawAirwayWpJ, drawTrackWp);
   }
 
   // Waypoints -------------------------------------------------
@@ -210,12 +210,8 @@ void MapPainterNav::paintAirways(const QList<map::MapAirway> *airways, bool fast
     bool visible2 = wToS(airway.to, x2, y2);
 
     if(!visible1 && !visible2)
-    {
       // Check bounding rect for visibility
-      const Rect& bnd = airway.bounding;
-      Marble::GeoDataLatLonBox airwaybox(bnd.getNorth(), bnd.getSouth(), bnd.getEast(), bnd.getWest(), Marble::GeoDataCoordinates::Degree);
-      visible1 = airwaybox.intersects(context->viewport->viewLatLonAltBox());
-    }
+      visible1 = context->viewportRect.overlaps(airway.bounding);
 
     // Draw line if both points are visible or line intersects screen coordinates
     if(visible1 || visible2)
@@ -298,7 +294,6 @@ void MapPainterNav::paintAirways(const QList<map::MapAirway> *airways, bool fast
   // Draw texts ----------------------------------------
   if(!textlist.isEmpty())
   {
-    int i = 0;
     painter->setPen(mapcolors::airwayTextColor);
     if(fill)
     {
@@ -314,7 +309,8 @@ void MapPainterNav::paintAirways(const QList<map::MapAirway> *airways, bool fast
       float textBearing;
 
       // First find text position with incomplete text
-      QString text = place.texts.join(tr(", "));
+      // Add space at start and end to avoid letters touching the background rectangle border
+      QString text = " " % place.texts.join(tr(", ")) % " ";
       Line line(airway.from, airway.to);
       if(textPlacement.findTextPos(line, line.lengthMeter(), metrics.horizontalAdvance(text), metrics.height(), 20, xt, yt, &textBearing))
       {
@@ -328,15 +324,16 @@ void MapPainterNav::paintAirways(const QList<map::MapAirway> *airways, bool fast
             // Turn arrow depending on text angle, direction and depending if text segment is reversed compared to first
             txt.prepend(((textBearing < 180.f) ^ place.positionReversed.at(j) ^ (aw.direction == map::DIR_FORWARD)) ? tr("◄ ") : tr("► "));
         }
-        text = place.texts.join(tr(", "));
+
+        // Add space at start and end to avoid letters touching the background rectangle border
+        text = " " % place.texts.join(tr(", ")) % " ";
 
         painter->translate(xt, yt);
         painter->rotate(textBearing > 180.f ? textBearing + 90.f : textBearing - 90.f);
-        painter->drawText(QPointF(-painter->fontMetrics().width(text) / 2,
+        painter->drawText(QPointF(-painter->fontMetrics().horizontalAdvance(text) / 2,
                                   -painter->fontMetrics().descent() - linewidthAirway), text);
         painter->resetTransform();
       }
-      i++;
     }
   }
 }
@@ -392,7 +389,7 @@ void MapPainterNav::paintVors(const QHash<int, map::MapVor>& vors, bool drawFast
 
   // Use margins for text placed on the left side of the object to avoid disappearing at the right screen border
   // Also consider VOR size
-  int margin = std::max(vorSize, size);
+  int margin = static_cast<int>(std::max(vorSize, size));
   QMargins margins(margin, margin, std::max(margin, 50), margin);
 
   for(const MapVor& vor : vors)
@@ -424,10 +421,11 @@ void MapPainterNav::paintNdbs(const QHash<int, map::MapNdb>& ndbs, bool drawFast
 {
   bool fill = context->flags2 & opts2::MAP_NAVAID_TEXT_BACKGROUND;
 
-  int size = context->sz(context->symbolSizeNavaid, context->mapLayer->getNdbSymbolSize());
+  float size = context->szF(context->symbolSizeNavaid, context->mapLayer->getNdbSymbolSize());
 
   // Use margins for text placed on the bottom of the object to avoid disappearing at the top screen border
-  QMargins margins(size, std::max(size, 50), size, size);
+  int sizeInt = static_cast<int>(size);
+  QMargins margins(sizeInt, std::max(sizeInt, 50), sizeInt, sizeInt);
 
   for(const MapNdb& ndb : ndbs)
   {
@@ -458,8 +456,9 @@ void MapPainterNav::paintMarkers(const QList<map::MapMarker> *markers, bool draw
 {
   int transparency = context->flags2 & opts2::MAP_NAVAID_TEXT_BACKGROUND ? 255 : 0;
 
-  int size = context->sz(context->symbolSizeNavaid, context->mapLayer->getMarkerSymbolSize());
-  QMargins margins(size, size, size, size);
+  float size = context->szF(context->symbolSizeNavaid, context->mapLayer->getMarkerSymbolSize());
+  int sizeInt = static_cast<int>(size);
+  QMargins margins(sizeInt, sizeInt, sizeInt, sizeInt);
 
   for(const MapMarker& marker : *markers)
   {
@@ -477,9 +476,8 @@ void MapPainterNav::paintMarkers(const QList<map::MapMarker> *markers, bool draw
       {
         QString type = marker.type.toLower();
         type[0] = type.at(0).toUpper();
-        x -= size / 2 + 2;
-        symbolPainter->textBoxF(context->painter, {type}, mapcolors::markerSymbolColor, x, y,
-                                textatt::RIGHT, transparency);
+        x -= size / 2.f + 2.f;
+        symbolPainter->textBoxF(context->painter, {type}, mapcolors::markerSymbolColor, x, y, textatt::RIGHT, transparency);
       }
     }
   }

@@ -21,12 +21,10 @@
 #include "common/unit.h"
 #include "atools.h"
 #include "common/constants.h"
-#include "geo/calculations.h"
 #include "gui/helphandler.h"
 #include "fs/perf/aircraftperf.h"
 #include "gui/widgetstate.h"
 #include "common/unitstringtool.h"
-#include "settings/settings.h"
 #include "common/formatter.h"
 #include "util/htmlbuilder.h"
 
@@ -36,8 +34,8 @@ using atools::fs::perf::AircraftPerf;
 using atools::roundToInt;
 
 AircraftPerfDialog::AircraftPerfDialog(QWidget *parent, const atools::fs::perf::AircraftPerf& aircraftPerformance,
-                                       const QString& modeText)
-  : QDialog(parent), ui(new Ui::AircraftPerfDialog)
+                                       const QString& modeText, bool newPerfParam)
+  : QDialog(parent), ui(new Ui::AircraftPerfDialog), newPerf(newPerfParam)
 {
   setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
   setWindowModality(Qt::ApplicationModal);
@@ -117,6 +115,9 @@ AircraftPerfDialog::AircraftPerfDialog(QWidget *parent, const atools::fs::perf::
   vertSpeedChanged();
   aircraftTypeEdited();
   updateRange();
+
+  if(newPerf)
+    ui->tabWidget->setCurrentIndex(0);
 
   // Fuel by volume or weight changed
   connect(ui->comboBoxFuelUnit, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &AircraftPerfDialog::fuelUnitChanged);
@@ -206,17 +207,19 @@ void AircraftPerfDialog::buttonBoxClicked(QAbstractButton *button)
 
 void AircraftPerfDialog::aircraftTypeEdited()
 {
-  if(!atools::fs::perf::AircraftPerf::isAircraftTypeValid(ui->lineEditType->text()))
-  {
-    ui->labelTypeStatus->show();
-    ui->labelTypeStatus->setText(atools::util::HtmlBuilder::errorMessage(tr("Aircraft type seems to be invalid. "
-                                                                            "Use official ICAO codes like \"B738\", \"BE9L\" or \"C172\".")));
-  }
-  else if(ui->lineEditType->text().isEmpty())
+  if(ui->lineEditType->text().isEmpty())
   {
     ui->labelTypeStatus->show();
     ui->labelTypeStatus->setText(atools::util::HtmlBuilder::errorMessage(tr("Aircraft type is empty. "
-                                                                            "Use official ICAO codes like \"B738\", \"BE9L\" or \"C172\".")));
+                                                                            "It is recommended to use official ICAO codes like "
+                                                                            "\"B738\", \"BE9L\" or \"C172\".")));
+  }
+  else if(!atools::fs::perf::AircraftPerf::isAircraftTypeValid(ui->lineEditType->text()))
+  {
+    ui->labelTypeStatus->show();
+    ui->labelTypeStatus->setText(atools::util::HtmlBuilder::warningMessage(tr("Aircraft type is probably not valid. "
+                                                                              "It is recommended to use official ICAO codes like "
+                                                                              "\"B738\", \"BE9L\" or \"C172\".")));
   }
   else
     ui->labelTypeStatus->hide();

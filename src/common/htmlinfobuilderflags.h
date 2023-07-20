@@ -62,6 +62,8 @@ enum ProgressConfId
   NEXT_HEADING,
   NEXT_CROSS_TRACK_DIST,
   NEXT_REMARKS,
+  NEXT_COURSE_FROM_VOR,
+  NEXT_COURSE_TO_VOR,
 
   // "Aircraft" =================================
   AIRCRAFT_HEADING = 100,
@@ -108,6 +110,7 @@ enum ProgressConfId
   ENV_SEA_LEVEL_PRESS,
   ENV_CONDITIONS,
   ENV_VISIBILITY,
+  ENV_DENSITY_ALTITUDE,
 
   // "Position" =================================
   POS_COORDINATES = 200,

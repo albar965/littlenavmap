@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -26,7 +26,7 @@
 #include "logbook/logdatacontroller.h"
 #include "mapgui/mapairporthandler.h"
 #include "mapgui/maplayer.h"
-#include "navapp.h"
+#include "app/navapp.h"
 #include "online/onlinedatacontroller.h"
 #include "query/airportquery.h"
 #include "query/airwaytrackquery.h"
@@ -73,8 +73,8 @@ static QLatin1String AIRPORTIDENT_FROM_NDB("select a.ident, n.lonx, n.laty "
                                            "order by (abs(n.lonx - :lonx) + abs(n.laty - :laty)) limit 1");
 static float MAX_AIRPORT_IDENT_DISTANCE_M = atools::geo::nmToMeter(5.f);
 
-MapQuery::MapQuery(atools::sql::SqlDatabase *sqlDb, SqlDatabase *sqlDbNav, SqlDatabase *sqlDbUser)
-  : dbSim(sqlDb), dbNav(sqlDbNav), dbUser(sqlDbUser)
+MapQuery::MapQuery(atools::sql::SqlDatabase *sqlDbSim, SqlDatabase *sqlDbNav, SqlDatabase *sqlDbUser)
+  : dbSim(sqlDbSim), dbNav(sqlDbNav), dbUser(sqlDbUser)
 {
   mapTypesFactory = new MapTypesFactory();
   atools::settings::Settings& settings = atools::settings::Settings::instance();
@@ -226,16 +226,19 @@ void MapQuery::getNdbNearest(map::MapNdb& ndb, const atools::geo::Pos& pos) cons
 }
 
 void MapQuery::resolveWaypointNavaids(const QList<MapWaypoint>& allWaypoints, QHash<int, MapWaypoint>& waypoints, QHash<int, MapVor>& vors,
-                                      QHash<int, MapNdb>& ndbs, bool normalWaypoints, bool victorWaypoints, bool jetWaypoints,
-                                      bool trackWaypoints) const
+                                      QHash<int, MapNdb>& ndbs, bool flightplan, bool normalWaypoints, bool victorWaypoints,
+                                      bool jetWaypoints, bool trackWaypoints) const
 {
   for(const MapWaypoint& wp : allWaypoints)
   {
     // Add waypoint if airway/track status matches
-    if(normalWaypoints || (wp.hasJetAirways && jetWaypoints) || (wp.hasVictorAirways && victorWaypoints) ||
-       (wp.hasTracks && trackWaypoints))
+    if(normalWaypoints || // All waypoints shown
+       (wp.hasJetAirways && jetWaypoints) || // Jet airways shown - show waypoints too
+       (wp.hasVictorAirways && victorWaypoints) || // Victor airways shown - show waypoints too
+       (wp.hasTracks && trackWaypoints) || // Tracks shown - show waypoints too
+       (flightplan && wp.routeIndex >= 0)) // Flightplan shown and waypoint is part of the route
     {
-      if(wp.isVor() && wp.artificial > 0)
+      if(wp.isVor() && wp.artificial != map::WAYPOINT_ARTIFICIAL_NONE)
       {
         // Get related VOR for artificial waypoint
         MapVor vor;
@@ -243,7 +246,7 @@ void MapQuery::resolveWaypointNavaids(const QList<MapWaypoint>& allWaypoints, QH
         if(vor.isValid())
           vors.insert(vor.id, vor);
       }
-      else if(wp.isNdb() && wp.artificial > 0)
+      else if(wp.isNdb() && wp.artificial != map::WAYPOINT_ARTIFICIAL_NONE)
       {
         // Get related NDB for artificial waypoint
         MapNdb ndb;
@@ -277,7 +280,7 @@ map::MapResultIndex *MapQuery::nearestNavaidsInternal(const Pos& pos, float dist
     map::MapResult res;
 
     // Create a rectangle that roughly covers the requested region
-    atools::geo::Rect rect(pos, atools::geo::nmToMeter(distanceNm));
+    atools::geo::Rect rect(pos, atools::geo::nmToMeter(distanceNm), true /* fast */);
 
     if(type & map::VOR)
     {
@@ -532,9 +535,7 @@ void MapQuery::getMapObjectById(map::MapResult& result, map::MapTypes type, map:
   }
   else if(type == map::RUNWAYEND)
   {
-    map::MapRunwayEnd end = (airportFromNavDatabase ?
-                             NavApp::getAirportQueryNav() :
-                             NavApp::getAirportQuerySim())->getRunwayEndById(id);
+    map::MapRunwayEnd end = (airportFromNavDatabase ? NavApp::getAirportQueryNav() : NavApp::getAirportQuerySim())->getRunwayEndById(id);
     if(end.isValid())
       result.runwayEnds.append(end);
   }
@@ -677,7 +678,7 @@ QVector<map::MapIls> MapQuery::ilsByAirportAndRunway(const QString& airportIdent
 }
 
 void MapQuery::getNearestScreenObjects(const CoordinateConverter& conv, const MapLayer *mapLayer, const QSet<int>& shownDetailAirportIds,
-                                       bool airportDiagram, map::MapTypes types,
+                                       bool airportDiagram, map::MapTypes types, map::MapDisplayTypes displayTypes,
                                        int xs, int ys, int screenDistance, map::MapResult& result) const
 {
   using maptools::insertSortedByDistance;
@@ -769,8 +770,9 @@ void MapQuery::getNearestScreenObjects(const CoordinateConverter& conv, const Ma
   bool jetWaypoints = mapLayer->isAirwayWaypoint() && types.testFlag(map::AIRWAYJ);
   bool trackWaypoints = mapLayer->isTrackWaypoint() && types.testFlag(map::TRACK);
   bool normalWaypoints = mapLayer->isWaypoint() && types.testFlag(map::WAYPOINT);
+  bool flightplan = displayTypes.testFlag(map::FLIGHTPLAN);
 
-  if((victorWaypoints || jetWaypoints) || trackWaypoints || normalWaypoints)
+  if(victorWaypoints || jetWaypoints || trackWaypoints || normalWaypoints || flightplan)
   {
     // Get all close waypoints
     NavApp::getWaypointTrackQueryGui()->getNearestScreenObjects(conv, mapLayer, types, xs, ys, screenDistance, result);
@@ -779,14 +781,15 @@ void MapQuery::getNearestScreenObjects(const CoordinateConverter& conv, const Ma
     QHash<int, MapWaypoint> waypoints;
     QHash<int, MapVor> vors;
     QHash<int, MapNdb> ndbs;
-    resolveWaypointNavaids(result.waypoints, waypoints, vors, ndbs, normalWaypoints, victorWaypoints, jetWaypoints, trackWaypoints);
+    resolveWaypointNavaids(result.waypoints, waypoints, vors, ndbs,
+                           flightplan, normalWaypoints, victorWaypoints, jetWaypoints, trackWaypoints);
 
     // Add filtered waypoints back to list
     result.waypoints.clear();
     result.waypointIds.clear();
     for(const map::MapWaypoint& wp : waypoints)
     {
-      if(wp.artificial == 0)
+      if(wp.artificial == map::WAYPOINT_ARTIFICIAL_NONE)
         insertSortedByDistance(conv, result.waypoints, &result.waypointIds, xs, ys, wp);
     }
 
@@ -1201,8 +1204,14 @@ const QList<map::MapIls> *MapQuery::getIls(GeoDataLatLonBox rect, const MapLayer
       ilsByRectQuery->exec();
       while(ilsByRectQuery->next())
       {
+        // ILS is always loaded from nav except if all is off
+        map::MapRunwayEnd end;
+        if(mapLayer->isIlsDetail() && !NavApp::isNavdataOff())
+          // Get the runway end to fix graphical alignment issues in map
+          end = NavApp::getAirportQueryNav()->getRunwayEndById(ilsByRectQuery->valueInt("loc_runway_end_id"));
+
         MapIls ils;
-        mapTypesFactory->fillIls(ilsByRectQuery->record(), ils);
+        mapTypesFactory->fillIls(ilsByRectQuery->record(), ils, end.isFullyValid() ? end.heading : map::INVALID_HEADING_VALUE);
         ilsCache.list.append(ils);
       }
     }
@@ -1295,7 +1304,7 @@ const QList<map::MapRunway> *MapQuery::getRunwaysForOverview(int airportId)
     while(runwayOverviewQuery->next())
     {
       map::MapRunway runway;
-      mapTypesFactory->fillRunway(runwayOverviewQuery->record(), runway, true);
+      mapTypesFactory->fillRunway(runwayOverviewQuery->record(), runway, true /* overview */);
       rws->append(runway);
     }
     runwayOverwiewCache.insert(airportId, rws);
@@ -1396,12 +1405,15 @@ void MapQuery::initQueries()
   gls = navUtil.hasTableAndColumn("ils", "type") && navUtil.hasRows("ils", "type in ('G', 'T')");
 
   // Check for holding table in nav (Navigraph) database and then in simulator database (X-Plane only)
-  SqlDatabase *holdingDb = SqlUtil::getDbWithTableAndRows("holding", {dbNav, dbSim});
-  qDebug() << Q_FUNC_INFO << "Holding database" << (holdingDb == nullptr ? "None" : holdingDb->databaseName());
+  // Reverse search order depending on scenery library settings
+  SqlDatabase *holdingDb = NavApp::isNavdataOff() ?
+                           SqlUtil::getDbWithTableAndRows("holding", {dbSim, dbNav}) :
+                           SqlUtil::getDbWithTableAndRows("holding", {dbNav, dbSim});
 
   // Same as above for airport MSA table
-  SqlDatabase *msaDb = SqlUtil::getDbWithTableAndRows("airport_msa", {dbNav, dbSim});
-  qDebug() << Q_FUNC_INFO << "Airport MSA database" << (msaDb == nullptr ? "None" : msaDb->databaseName());
+  SqlDatabase *msaDb = NavApp::isNavdataOff() ?
+                       SqlUtil::getDbWithTableAndRows("airport_msa", {dbSim, dbNav}) :
+                       SqlUtil::getDbWithTableAndRows("airport_msa", {dbNav, dbSim});
 
   vorByIdentQuery = new SqlQuery(dbNav);
   vorByIdentQuery->prepare("select " + vorQueryBase + " from vor where " + whereIdentRegion);
@@ -1468,9 +1480,8 @@ void MapQuery::initQueries()
 
   // Runways > 4000 feet for simplyfied runway overview
   runwayOverviewQuery = new SqlQuery(dbSim);
-  runwayOverviewQuery->prepare(
-    "select length, heading, lonx, laty, primary_lonx, primary_laty, secondary_lonx, secondary_laty "
-    "from runway where airport_id = :airportId and length > 4000 " + whereLimit);
+  runwayOverviewQuery->prepare("select runway_id, length, heading, lonx, laty, primary_lonx, primary_laty, secondary_lonx, secondary_laty "
+                               "from runway where airport_id = :airportId and length > 4000 " + whereLimit);
 
   vorsByRectQuery = new SqlQuery(dbNav);
   vorsByRectQuery->prepare("select " + vorQueryBase + " from vor where " + whereRect + " " + whereLimit);

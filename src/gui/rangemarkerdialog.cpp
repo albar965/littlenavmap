@@ -32,12 +32,12 @@
 #include "geo/pos.h"
 #include "perf/aircraftperfcontroller.h"
 #include "fs/perf/aircraftperf.h"
+#include "app/navapp.h"
 
 #include "ui_rangemarkerdialog.h"
 
 #include <QColorDialog>
 #include <QRegularExpressionValidator>
-#include <navapp.h>
 
 using atools::geo::Pos;
 
@@ -104,9 +104,9 @@ RangeMarkerDialog::RangeMarkerDialog(QWidget *parent, const atools::geo::Pos& po
 
   // Change label depending on order
   if(Unit::getUnitCoords() == opts::COORDS_LONX_LATY)
-    ui->labelRangeMarkerLatLon->setText("&Longitude and Latitude:");
+    ui->labelRangeMarkerLatLon->setText(tr("&Longitude and Latitude:"));
   else
-    ui->labelRangeMarkerLatLon->setText("&Latitude and Longitude:");
+    ui->labelRangeMarkerLatLon->setText(tr("&Latitude and Longitude:"));
 
   connect(ui->buttonBoxRangeMarker, &QDialogButtonBox::clicked, this, &RangeMarkerDialog::buttonBoxClicked);
   connect(ui->pushButtonRangeMarkerColor, &QPushButton::clicked, this, &RangeMarkerDialog::colorButtonClicked);
@@ -126,7 +126,7 @@ RangeMarkerDialog::RangeMarkerDialog(QWidget *parent, const atools::geo::Pos& po
   ui->lineEditRangeMarkerRadii->setValidator(rangeRingValidator);
 
   /// Header text
-  ui->labelRangeMarkerHeader->setText(tr("<p><b>%1</b></p>").arg(tr("Coordinates %1").arg(Unit::coords(*position))));
+  ui->labelRangeMarkerHeader->setText(tr("<p><b>%1</b></p>").arg(tr("Coordinates at click spot: %1").arg(Unit::coords(*position))));
 
   // Aircraft endurance label
   float enduranceHours, enduranceNm;
@@ -228,9 +228,10 @@ void RangeMarkerDialog::updateButtonColor()
 
 void RangeMarkerDialog::fillRangeMarker(map::RangeMarker& marker, bool dialogOpened)
 {
-  *position = atools::fs::util::fromAnyFormat(ui->lineEditRangeMarkerLatLon->text());
+  bool hemisphere = false;
+  *position = atools::fs::util::fromAnyFormat(ui->lineEditRangeMarkerLatLon->text(), &hemisphere);
 
-  if(Unit::getUnitCoords() == opts::COORDS_LONX_LATY)
+  if(Unit::getUnitCoords() == opts::COORDS_LONX_LATY && !hemisphere)
     // Swap coordinates for lat lon formats if no hemisphere (N, S, E, W) is given
     atools::fs::util::maybeSwapOrdinates(*position, ui->lineEditRangeMarkerLatLon->text());
 

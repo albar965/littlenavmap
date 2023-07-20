@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -86,7 +86,7 @@ public:
 
   /* Set the flags for map objects on or off depending on value show. Does not repaint */
   void setShowMapObject(map::MapTypes type, bool show);
-  void setShowMapObjectDisplay(map::MapObjectDisplayTypes type, bool show);
+  void setShowMapObjectDisplay(map::MapDisplayTypes type, bool show);
   void setShowAirspaces(map::MapAirspaceFilter types);
   void setShowMapObjects(map::MapTypes type, map::MapTypes mask);
 
@@ -99,13 +99,13 @@ public:
   }
 
   /* Get all shown map objects like airports, VOR, NDB, etc. */
-  map::MapTypes getShownMapObjects() const
+  map::MapTypes getShownMapTypes() const
   {
     return objectTypes;
   }
 
   /* Additional types like wind barbs or minimum altitude grid */
-  map::MapObjectDisplayTypes getShownMapObjectDisplayTypes() const
+  map::MapDisplayTypes getShownMapDisplayTypes() const
   {
     return objectDisplayTypes;
   }
@@ -199,7 +199,7 @@ private:
 
   /* Map objects currently shown */
   map::MapTypes objectTypes = map::NONE;
-  map::MapObjectDisplayTypes objectDisplayTypes = map::DISPLAY_TYPE_NONE;
+  map::MapDisplayTypes objectDisplayTypes = map::DISPLAY_TYPE_NONE;
   map::MapAirspaceFilter airspaceTypes;
   map::MapWeatherSource weatherSource = map::WEATHER_SOURCE_SIMULATOR;
   map::MapSunShading sunShading = map::SUN_SHADING_SIMULATOR_TIME;
@@ -235,7 +235,7 @@ private:
 
   MapScale *mapScale = nullptr;
   MapLayerSettings *layers = nullptr;
-  MapPaintWidget *mapWidget = nullptr;
+  MapPaintWidget *mapPaintWidget = nullptr;
   const MapLayer *mapLayer = nullptr, *mapLayerRoute = nullptr, *mapLayerEffective = nullptr;
   bool verbose = false;
 

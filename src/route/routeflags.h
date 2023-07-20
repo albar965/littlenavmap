@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -46,7 +46,9 @@ enum RouteAdjustOption
   XPLANE_REPLACE_AIRPORT_IDENTS = 1 << 13, /* Replace airport idents in waypoint list only
                                             * with either ICAO, FAA, IATA or local ones */
 
-  REMOVE_CUSTOM_PROC = 1 << 14, /* Remove custom procedures and their waypoints */
+  REMOVE_RUNWAY_PROC = 1 << 14, /* Remove runway extensions and their waypoints */
+  REMOVE_MISSED = 1 << 15, /* Remove missed approach */
+  CLEAN_CUSTOM_DEPART = 1 << 16, /* Remove first runway waypoint from selected departure runway for X-Plane */
 
   /* Export adjust options for most export formats */
   DEFAULT_OPTS = rf::REPLACE_CUSTOM_WP | rf::REMOVE_ALTERNATE | rf::REMOVE_TRACKS | FIX_PROC_ENTRY_EXIT,
@@ -57,8 +59,13 @@ enum RouteAdjustOption
   /* Always add entry and exit waypoints for procedures. This is used for formats not supporting procedures. */
   DEFAULT_OPTS_NO_PROC = rf::REPLACE_CUSTOM_WP | rf::REMOVE_ALTERNATE | rf::REMOVE_TRACKS | FIX_PROC_ENTRY_EXIT_ALWAYS,
 
-  DEFAULT_OPTS_MSFS_CRJ = rf::REPLACE_CUSTOM_WP | rf::REMOVE_ALTERNATE | rf::REMOVE_TRACKS |
-                          FIX_PROC_ENTRY_EXIT_ALWAYS | SAVE_AIRWAY_WP,
+  /* Export adjust options for Garmin GFP formats */
+  DEFAULT_OPTS_GFP = rf::DEFAULT_OPTS | rf::REMOVE_RUNWAY_PROC,
+  DEFAULT_OPTS_GFP_NO_PROC = rf::DEFAULT_OPTS_NO_PROC | rf::REMOVE_RUNWAY_PROC,
+
+  DEFAULT_OPTS_FLP = rf::REPLACE_CUSTOM_WP | rf::REMOVE_TRACKS | FIX_PROC_ENTRY_EXIT | rf::REMOVE_RUNWAY_PROC,
+  DEFAULT_OPTS_FLP_MSFS_CRJ = rf::REPLACE_CUSTOM_WP | rf::REMOVE_TRACKS | FIX_PROC_ENTRY_EXIT_ALWAYS | SAVE_AIRWAY_WP |
+                              rf::REMOVE_RUNWAY_PROC,
 
   /* LNMPLN save and load format. Does not mangle anything. */
   DEFAULT_OPTS_LNMPLN = FIX_PROC_ENTRY_EXIT | SAVE_LNMPLN,
@@ -75,7 +82,8 @@ enum RouteAdjustOption
   /* Export adjust options for XP11 and old FMS3 */
   DEFAULT_OPTS_FMS3 = rf::DEFAULT_OPTS_NO_PROC,
   DEFAULT_OPTS_FMS11 = rf::REPLACE_CUSTOM_WP | rf::REMOVE_ALTERNATE | rf::REMOVE_TRACKS | rf::FIX_CIRCLETOLAND |
-                       rf::XPLANE_REPLACE_AIRPORT_IDENTS,
+                       rf::XPLANE_REPLACE_AIRPORT_IDENTS | rf::CLEAN_CUSTOM_DEPART,
+  DEFAULT_OPTS_CIVA_FMS = rf::DEFAULT_OPTS_NO_PROC | rf::REMOVE_ALTERNATE | rf::REMOVE_RUNWAY_PROC | rf::REMOVE_MISSED,
 
   /* Garmin GPX */
   DEFAULT_OPTS_GPX = rf::DEFAULT_OPTS | rf::SAVE_AIRWAY_WP | rf::SAVE_SIDSTAR_WP | rf::SAVE_APPROACH_WP

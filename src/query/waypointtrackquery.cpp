@@ -47,14 +47,14 @@ map::MapWaypoint WaypointTrackQuery::getWaypointById(int id)
   return waypoint;
 }
 
-MapWaypoint WaypointTrackQuery::getWaypointByNavId(int navId)
+MapWaypoint WaypointTrackQuery::getWaypointByNavId(int navId, map::MapType type)
 {
   map::MapWaypoint waypoint;
   if(useTracks)
-    waypoint = trackQuery->getWaypointByNavId(navId);
+    waypoint = trackQuery->getWaypointByNavId(navId, type);
 
   if(!waypoint.isValid())
-    waypoint = waypointQuery->getWaypointByNavId(navId);
+    waypoint = waypointQuery->getWaypointByNavId(navId, type);
 
   return waypoint;
 }

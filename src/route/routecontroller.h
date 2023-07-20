@@ -21,7 +21,6 @@
 #include "route/routecommand.h"
 #include "routing/routenetworktypes.h"
 #include "route/route.h"
-#include "common/tabindexes.h"
 
 #include <QTimer>
 
@@ -89,7 +88,7 @@ public:
    * and emits routeChanged. Uses file name as new current name  */
   bool loadFlightplan(const QString& filename);
   void loadFlightplan(atools::fs::pln::Flightplan flightplan, atools::fs::pln::FileFormat format,
-                      const QString& filename, bool changed, bool adjustAltitude, bool undo);
+                      const QString& filename, bool changed, bool adjustAltitude, bool undo, bool warnAltitude);
 
   /* Load the plan from a string in LNMPLN format */
   bool loadFlightplanLnmStr(const QString& string);
@@ -107,6 +106,9 @@ public:
   bool saveFlightplanLnmAs(const QString& filename);
   bool saveFlightplanLnmAsSelection(const QString& filename);
 
+  /* Save temporary to settings folder or delete temp if plan is empty */
+  void saveFlightplanLnmDefault();
+
   /* Called if export dialog saved an LNMPLN file */
   void saveFlightplanLnmExported(const QString& filename);
 
@@ -115,7 +117,7 @@ public:
   void restoreState();
 
   /* Get the route only */
-  const Route& getRoute() const
+  const Route& getRouteConst() const
   {
     return route;
   }
@@ -145,7 +147,7 @@ public:
   /* get altitude in feet as set in the widget */
   float getCruiseAltitudeWidget() const;
 
-  bool  doesLnmFilenameMatchRoute();
+  bool  doesLnmFilenameMatchRoute() const;
 
   /* Clear routing network cache and disconnect all queries */
   void preDatabaseLoad();
@@ -292,7 +294,7 @@ public:
 #endif
 
   /* true if flight plan was loaded in LNMPLN format. Otherwise imported from PLN, FMS, etc. */
-  bool isLnmFormatFlightplan();
+  bool isLnmFormatFlightplan() const;
 
   /* Get error messages from route parsing */
   bool hasErrors() const;
@@ -342,6 +344,8 @@ signals:
 
   void addAirportMsa(map::MapAirportMsa airportMsa);
 
+  void addUserpointFromMap(const map::MapResult& result, const atools::geo::Pos& pos, bool airportAddon);
+
 private:
   friend class RouteCommand;
 
@@ -354,7 +358,7 @@ private:
   };
 
   /* Saves flight plan using LNM format */
-  bool saveFlightplanLnmInternal();
+  bool saveFlightplanLnmInternal(const QString& filename, bool silent);
 
   /* Saves flight plan sippet using LNM format to given name. Given range must not contains procedures or alternates. */
   bool saveFlightplanLnmSelectionAs(const QString& filename, int from, int to) const;
@@ -364,9 +368,6 @@ private:
 
   /* Called by route command */
   void changeRouteRedo(const atools::fs::pln::Flightplan& newFlightplan);
-
-  /* Called by route command */
-  void undoMerge();
 
   /* Save undo state before and after change */
   RouteCommand *preChange(const QString& text = QString(), rctype::RouteCmdType rcType = rctype::EDIT);
@@ -455,9 +456,7 @@ private:
   void updateModelHighlights();
 
   /* Fill the route procedure legs structures with data based on the procedure properties in the flight plan */
-  void loadProceduresFromFlightplan(bool clearOldProcedureProperties);
-
-  void loadAlternateFromFlightplan();
+  void loadProceduresFromFlightplan(bool clearOldProcedureProperties, bool cleanupRoute, bool autoresolveTransition);
 
   void beforeRouteCalc();
   void updateFlightplanEntryAirway(int airwayId, atools::fs::pln::FlightplanEntry& entry);
@@ -507,6 +506,8 @@ private:
   /* Clear all names and other properties */
   void clearFlightplan();
 
+  void updateComboBoxFromFlightplanType();
+
   /* Selected rows in table. Updated on selection change. */
   QList<int> selectedRows;
 
@@ -519,7 +520,7 @@ private:
 
   /* Need a workaround since QUndoStack does not report current indices and clean state correctly */
   int undoIndex = 0;
-  /* Clean index of the undo stack or -1 if not clean state exists */
+  /* Clean index of the undo stack or -1 if no clean state exists */
   int undoIndexClean = 0;
 
   /* Network cache for flight plan calculation */
@@ -529,7 +530,7 @@ private:
   Route route; /* real route containing all segments */
 
   /* Current filename of empty if no route - also remember start and dest to avoid accidental overwriting */
-  QString routeFilename, fileDepartureIdent, fileDestinationIdent;
+  QString routeFilename, routeFilenameDefault, fileDepartureIdent, fileDestinationIdent;
 
   /* Same as above for cruise altitude */
   float fileCruiseAltFt;
@@ -540,7 +541,7 @@ private:
   bool contextMenuOpen = false;
 
   QMainWindow *mainWindow;
-  QTableView *view;
+  QTableView *tableViewRoute;
   AirportQuery *airportQuery;
   QStandardItemModel *model;
   QUndoStack *undoStack = nullptr;
@@ -577,6 +578,9 @@ private:
 
   // Errors collected when parsing route for model
   QStringList flightplanErrors, procedureErrors, alternateErrors;
+
+  // String to save flight plan temporarily in LNMPLN format when switching databases
+  QString tempFlightplanStr;
   bool trackErrors = false;
 };
 

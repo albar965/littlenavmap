@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -71,6 +71,8 @@ QDebug operator<<(QDebug out, const map::MapTypes& type)
       flags.append("PARKING");
     if(type.testFlag(RUNWAYEND))
       flags.append("RUNWAYEND");
+    if(type.testFlag(RUNWAY))
+      flags.append("RUNWAY");
     if(type.testFlag(INVALID))
       flags.append("INVALID");
     if(type.testFlag(MISSED_APPROACH))
@@ -119,6 +121,8 @@ QDebug operator<<(QDebug out, const map::MapTypes& type)
       flags.append("AIRPORT_NO_PROCS");
     if(type.testFlag(AIRPORT_CLOSED))
       flags.append("AIRPORT_CLOSED");
+    if(type.testFlag(AIRPORT_MILITARY))
+      flags.append("AIRPORT_MILITARY");
   }
 
   out.nospace().noquote() << flags.join("|");
@@ -126,7 +130,7 @@ QDebug operator<<(QDebug out, const map::MapTypes& type)
   return out;
 }
 
-QDebug operator<<(QDebug out, const map::MapObjectDisplayTypes& type)
+QDebug operator<<(QDebug out, const map::MapDisplayTypes& type)
 {
   QDebugStateSaver saver(out);
 
@@ -206,7 +210,5 @@ QString mapWeatherSourceString(MapWeatherSource source)
   }
   return QString();
 }
-
-
 
 } // namespace map

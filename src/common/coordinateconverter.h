@@ -32,6 +32,7 @@ class GeoDataLatLonBox;
 namespace atools {
 namespace geo {
 class Pos;
+class PosD;
 class Line;
 class Rect;
 class LineString;
@@ -116,10 +117,9 @@ public:
                 bool *isHidden = nullptr) const;
 
   bool wToS(const atools::geo::Pos& coords, int& x, int& y, const QSize& size = DEFAULT_WTOS_SIZE, bool *isHidden = nullptr) const;
-
   bool wToS(const atools::geo::Pos& coords, float& x, float& y, const QSize& size = DEFAULT_WTOS_SIZE, bool *isHidden = nullptr) const;
-
   bool wToS(const atools::geo::Pos& coords, double& x, double& y, const QSize& size = DEFAULT_WTOS_SIZE, bool *isHidden = nullptr) const;
+  bool wToS(const atools::geo::PosD& coords, double& x, double& y, const QSize& size = DEFAULT_WTOS_SIZE, bool *isHidden = nullptr) const;
 
   bool wToS(const atools::geo::Line& coords, QLineF& line, const QSize& size = DEFAULT_WTOS_SIZE, bool *isHidden = nullptr) const;
 

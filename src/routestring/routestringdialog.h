@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -41,6 +41,7 @@ class QActionGroup;
 class RouteController;
 class RouteStringWriter;
 class RouteStringReader;
+class SyntaxHighlighter;
 
 class RouteStringDialog :
   public QDialog
@@ -54,7 +55,10 @@ public:
   RouteStringDialog(const RouteStringDialog& other) = delete;
   RouteStringDialog& operator=(const RouteStringDialog& other) = delete;
 
-  const atools::fs::pln::Flightplan& getFlightplan() const;
+  const atools::fs::pln::Flightplan& getFlightplan() const
+  {
+    return *flightplan;
+  }
 
   /* Saves dialog and menu action states */
   void saveStateWidget();
@@ -62,8 +66,11 @@ public:
   /* Saves route string */
   void saveState();
 
-  /* Restores last route string if "routeString" is empty */
-  void restoreState(const QString& routeString);
+  /* Restores last route string too */
+  void restoreState();
+
+  /* Update splitter and syntax highlighter */
+  void styleChanged();
 
   /* Update buttons depending on route state */
   void updateButtonState();
@@ -83,6 +90,9 @@ public:
   /* Get options from default non-modal dialog */
   static rs::RouteStringOptions getOptionsFromSettings();
 
+  /* Prepends to list */
+  void addRouteDescription(const QString& routeString);
+
 signals:
   /* Emitted when user clicks "Create flight plan" */
   void routeFromFlightplan(const atools::fs::pln::Flightplan& flightplan, bool adjustAltitude, bool changed, bool undo);
@@ -90,25 +100,33 @@ signals:
 private:
   void textChanged();
   void textChangedDelayed();
+  void textChangedInternal(bool forceUpdate);
   void fromClipboardClicked();
   void toClipboardClicked();
   void buttonBoxClicked(QAbstractButton *button);
-  void toolButtonOptionTriggered(QAction *action);
-  void updateButtonClicked();
+  void toolButtonOptionTriggered(QAction *);
+  void loadFromFlightplanButtonClicked();
   void showHelpButtonToggled(bool checked);
   void splitterMoved();
   void buildButtonMenu();
 
+  void updateTypeToFlightplan();
+  void updateTypeFromFlightplan();
+
   /* Updates text edit and starts parser without delay */
-  void plainTextEditRouteStringSet(const QString& text);
+  void textEditRouteStringPrepend(const QString& text, bool newline);
+
+  /* Catch events to allow repositioning */
+  virtual void showEvent(QShowEvent *) override;
+  virtual void hideEvent(QHideEvent *) override;
 
   Ui::RouteStringDialog *ui;
   atools::fs::pln::Flightplan *flightplan = nullptr;
   MapQuery *mapQuery = nullptr;
   RouteController *controller = nullptr;
-  RouteStringWriter *routeStringWriter;
-  RouteStringReader *routeStringReader;
-  QActionGroup *procActionGroup;
+  RouteStringWriter *routeStringWriter = nullptr;
+  RouteStringReader *routeStringReader = nullptr;
+  QActionGroup *procActionGroup = nullptr;
   QTimer textUpdateTimer;
 
   float speedKts = 0.f;
@@ -118,11 +136,20 @@ private:
   // Save different settings depending on suffix
   QString settingsSuffix;
 
-  // non-blocking if parent is null
-  bool nonModal = false;
+  // blocking if parent is not null
+  bool blocking = false;
 
   // Notify RouteStringDialog::textChanged() to a direct update instead of a delayed one
   bool immediateUpdate = false;
+
+  /* Remember dialog position when reopening */
+  QPoint position;
+
+  /* Remember to avoid unneeded parsing if user edits areas outside the active string. */
+  QString lastCleanRouteString;
+
+  /* Makes first section bold and other (scratchpad) gray */
+  SyntaxHighlighter *sytaxHighlighter;
 };
 
 #endif // LITTLENAVMAP_ROUTESTRINGDIALOG_H

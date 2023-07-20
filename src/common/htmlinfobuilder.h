@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2022 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -17,6 +17,8 @@
 
 #ifndef LITTLENAVMAP_MAPHTMLINFOBUILDER_H
 #define LITTLENAVMAP_MAPHTMLINFOBUILDER_H
+
+#include "grib/windtypes.h"
 
 #include <QCoreApplication>
 #include <QLocale>
@@ -75,10 +77,6 @@ struct DistanceMarker;
 
 namespace atools {
 
-namespace grib {
-struct WindPos;
-typedef QVector<atools::grib::WindPos> WindPosVector;
-}
 namespace geo {
 class Pos;
 }
@@ -263,8 +261,7 @@ public:
    * Creates a HTML description for a all upper layer winds at position
    * @param html Result containing HTML snippet
    */
-  void windText(const atools::grib::WindPosVector& windStack, atools::util::HtmlBuilder& html,
-                float currentAltitude, const QString& source) const;
+  void windText(const atools::grib::WindPosList& windStack, atools::util::HtmlBuilder& html, float waypointAltitude, bool table) const;
 
   /*
    * Creates a HTML description for a user defined flight plan point.
@@ -336,7 +333,13 @@ private:
                                 float magVar, bool frequencyCol, bool airportCol) const;
 
   /* Add scenery entries and links into table */
-  void addScenery(const atools::sql::SqlRecord *rec, atools::util::HtmlBuilder& html, bool com, bool ils) const;
+  enum SceneryType
+  {
+    DATASOURCE_COM, DATASOURCE_HOLD, DATASOURCE_MSA, DATASOURCE_NAV
+  };
+
+  void addScenery(const atools::sql::SqlRecord *rec, atools::util::HtmlBuilder& html, SceneryType type) const;
+
   void addAirportSceneryAndLinks(const map::MapAirport& airport, atools::util::HtmlBuilder& html) const;
   void addAirportFolder(const map::MapAirport& airport, atools::util::HtmlBuilder& html) const;
 
@@ -352,7 +355,7 @@ private:
 
   void navaidTitle(atools::util::HtmlBuilder& html, const QString& text, bool noEntities = false) const;
 
-  void airportTitle(const map::MapAirport& airport, atools::util::HtmlBuilder& html, int rating) const;
+  void airportTitle(const map::MapAirport& airport, atools::util::HtmlBuilder& html, int rating, bool procedures) const;
 
   void airportMsaTextInternal(const map::MapAirportMsa& msa, atools::util::HtmlBuilder& html, bool user) const;
   void holdingTextInternal(const map::MapHolding& holding, atools::util::HtmlBuilder& html, bool user) const;
@@ -394,7 +397,7 @@ private:
                            const map::MapAirport& airport);
   void addRadionavFixType(atools::util::HtmlBuilder& html, const atools::sql::SqlRecord& recApp) const;
 
-  QString filepathTextShow(const QString& filepath, const QString& prefix = QString()) const;
+  QString filepathTextShow(const QString& filepath, const QString& prefix = QString(), bool canonical = false) const;
   QString filepathTextOpen(const QFileInfo& filepath, bool showPath) const;
 
   void airportRow(const map::MapAirport& ap, atools::util::HtmlBuilder& html) const;

@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -38,8 +38,8 @@ public:
    * LOWI DCT NORIN UT23 ALGOI UN871 BAMUR Z2 KUDES UN871 BERSU Z55 ROTOS
    * UZ669 MILPA UL612 MOU UM129 LMG UN460 CNA DCT LFCY
    */
-  QString createStringForRoute(const Route& route, float speed, rs::RouteStringOptions options) const;
-  QStringList createStringListForRoute(const Route& route, float speed, rs::RouteStringOptions options) const;
+  QString createStringForRoute(const Route& route, float speedKts, rs::RouteStringOptions options) const;
+  QStringList createStringListForRoute(const Route& route, float speedKts, rs::RouteStringOptions options) const;
 
   /*
    * Create a route string in garming flight plan format (GFP):
@@ -47,16 +47,16 @@ public:
    *
    * If procedures is true SIDs, STARs and approaches will be included according to Garmin spec.
    */
-  QString createGfpStringForRoute(const Route& route, bool procedures, bool userWaypointOption) const;
+  QString createGfpStringForRoute(const Route& route, bool procedures, bool userWaypointOption, bool gfpCoordinates) const;
 
 private:
-  QStringList createStringForRouteInternal(const Route& routeParam, float speed, rs::RouteStringOptions options) const;
+  QStringList createStringForRouteInternal(const Route& routeParam, float speedKts, rs::RouteStringOptions options) const;
 
   /* Garming GFP format */
   QString createGfpStringForRouteInternal(const Route& route, bool userWaypointOption) const;
 
   /* Garming GFP format with procedures */
-  QString createGfpStringForRouteInternalProc(const Route& route, bool userWaypointOption) const;
+  QString createGfpStringForRouteInternalProc(const Route& route, bool userWaypointOption, bool gfpCoordinates) const;
 
 };
 

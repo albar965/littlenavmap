@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -123,8 +123,10 @@ extern QPen profileLandOutlinePen;
 extern QPen profileWaypointLinePen;
 extern QPen profileSafeAltLinePen;
 extern QPen profileSafeAltLegLinePen;
-
 extern QPen profileElevationScalePen;
+
+extern QColor distanceMarkerTextColor;
+extern QColor distanceMarkerTextBackgroundColor;
 
 /* Objects highlighted because of selection in search */
 extern QColor highlightBackColor;
@@ -228,33 +230,29 @@ const QColor routeProcedurePreviewColor = QColor(0, 120, 230);
 const QColor routeProcedurePreviewMissedColor = QColor(0, 120, 230);
 
 /* Text along route and approach segments */
-const QColor routeTextColor = QColor(0, 0, 0);
-const QColor routeTextBackgroundColor = QColor(255, 255, 255, 220);
-
-const QColor routeProcedureMissedTextColor = QColor(90, 90, 90);
-const QColor routeProcedureTextColor = QColor(0, 0, 0);
-
-const QColor routeProcedurePointColor = QColor(90, 90, 90);
-const QColor routeProcedurePointFlyoverColor = QColor(Qt::black);
-const QColor routeUserPointColor = QColor(Qt::darkYellow);
-/* Point not found in database */
-const QColor routeInvalidPointColor = QColor(Qt::red);
+extern QColor routeTextColor;
+extern QColor routeTextColorGray;
+extern QColor routeTextBackgroundColor;
+extern QColor routeProcedureMissedTextColor;
+extern QColor routeProcedureTextColor;
+extern QColor routeProcedurePointColor;
+extern QColor routeProcedurePointFlyoverColor;
+extern QColor routeUserPointColor;
+extern QColor routeInvalidPointColor;
 
 /* Procedure colors */
-const QColor routeProcedureMissedTableColor = QColor(Qt::darkRed);
-const QColor routeProcedureMissedTableColorDark = QColor(240, 170, 120);
-const QColor routeProcedureTableColor = QColor(Qt::darkBlue);
-const QColor routeProcedureTableColorDark = QColor(140, 200, 240);
+extern QColor routeProcedureMissedTableColor;
+extern QColor routeProcedureMissedTableColorDark;
+extern QColor routeProcedureTableColor;
+extern QColor routeProcedureTableColorDark;
 
 /* Alternate airport leg colors */
-const QColor routeAlternateTableColor = QColor(Qt::darkGray);
-const QColor routeAlternateTableColorDark = QColor(Qt::gray);
-
-const QColor routeInvalidTableColor = QColor(Qt::red);
-const QColor routeInvalidTableColorDark = QColor(Qt::red);
-
-const QColor nextWaypointColor(QColor(255, 100, 255));
-const QColor nextWaypointColorDark(QColor(150, 20, 150));
+extern QColor routeAlternateTableColor;
+extern QColor routeAlternateTableColorDark;
+extern QColor routeInvalidTableColor;
+extern QColor routeInvalidTableColorDark;
+extern QColor nextWaypointColor;
+extern QColor nextWaypointColorDark;
 
 /* Get an icon for the start type (RUNWAY, HELIPAD or WATER) */
 const QIcon& iconForStart(const map::MapStart& start);

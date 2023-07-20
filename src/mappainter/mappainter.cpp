@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -17,15 +17,14 @@
 
 #include "mappainter/mappainter.h"
 
+#include "mapgui/mappaintwidget.h"
 #include "mapgui/mapscale.h"
-#include "navapp.h"
+#include "app/navapp.h"
 #include "common/symbolpainter.h"
 #include "geo/calculations.h"
-#include "mapgui/mapwidget.h"
 #include "common/mapcolors.h"
 #include "common/maptypes.h"
 #include "mapgui/maplayer.h"
-#include "common/aircrafttrack.h"
 #include "common/formatter.h"
 #include "util/paintercontextsaver.h"
 #include "common/unit.h"
@@ -151,8 +150,7 @@ MapPainter::~MapPainter()
   delete symbolPainter;
 }
 
-bool MapPainter::wToSBuf(const Pos& coords, int& x, int& y, QSize size, const QMargins& margins,
-                         bool *hidden) const
+bool MapPainter::wToSBuf(const Pos& coords, int& x, int& y, QSize size, const QMargins& margins, bool *hidden) const
 {
   float xf, yf;
   bool visible = wToSBuf(coords, xf, yf, size, margins, hidden);
@@ -175,6 +173,15 @@ bool MapPainter::wToSBuf(const Pos& coords, float& x, float& y, QSize size, cons
     return context->screenRect.marginsAdded(margins).contains(atools::roundToInt(x), atools::roundToInt(y));
 
   return visible;
+}
+
+bool MapPainter::wToSBuf(const atools::geo::Pos& coords, QPointF& point, const QMargins& margins, bool *hidden) const
+{
+  float x, y;
+  bool retval = wToSBuf(coords, x, y, DEFAULT_WTOS_SIZE, margins, hidden);
+  point.setX(x);
+  point.setY(y);
+  return retval;
 }
 
 void MapPainter::paintArc(GeoPainter *painter, const Pos& centerPos, float radiusNm, float angleDegStart, float angleDegEnd, bool fast)
@@ -433,7 +440,7 @@ void MapPainter::drawText(Marble::GeoPainter *painter, const Pos& pos, const QSt
   if(!pt.isNull())
   {
     QFontMetrics metrics = painter->fontMetrics();
-    pt.setX(leftCorner ? pt.x() : pt.x() - metrics.width(text));
+    pt.setX(leftCorner ? pt.x() : pt.x() - metrics.horizontalAdvance(text));
     pt.setY(topCorner ? pt.y() + metrics.ascent() : pt.y() - metrics.descent());
     painter->drawText(pt, text);
   }
@@ -471,9 +478,9 @@ void MapPainter::drawLineString(Marble::GeoPainter *painter, const atools::geo::
     Pos& p1(splitLines[i]);
     Pos& p2(splitLines[i + 1]);
 
-    if(atools::almostEqual(p1.getLatY(), p2.getLatY()))
+    if(atools::almostEqual(p1.getLatY(), p2.getLatY()) && std::abs(p1.getLonX() - p2.getLonX()) > 0.5f)
     {
-      // Move latitude a bit up and down if equal
+      // Move latitude a bit up and down if equal and more than half a degree apart
       p1.setLatY(p1.getLatY() + LATY_CORRECTION);
       p2.setLatY(p2.getLatY() - LATY_CORRECTION);
     }
@@ -507,7 +514,16 @@ void MapPainter::drawLineString(Marble::GeoPainter *painter, const atools::geo::
     // Add last point
     geoLineStr << GeoDataCoordinates(splitLines.constLast().getLonX(), splitLines.constLast().getLatY(), 0, DEG);
 
-    painter->drawPolyline(geoLineStr);
+#ifdef DEBUG_INFORMATION_LINERENDER
+    qDebug() << Q_FUNC_INFO << "=========================================";
+    for(const GeoDataCoordinates& c : geoLineStr)
+      qDebug() << Q_FUNC_INFO << "long" << c.longitude(GeoDataCoordinates::Degree) << "lat" << c.latitude(GeoDataCoordinates::Degree);
+#endif
+
+    QVector<GeoDataLineString *> geoLineStrCorrected = geoLineStr.toDateLineCorrected();
+    for(const GeoDataLineString *geoLine: geoLineStrCorrected)
+      painter->drawPolyline(*geoLine);
+    qDeleteAll(geoLineStrCorrected);
   }
 }
 
@@ -562,7 +578,10 @@ void MapPainter::drawLineStringRadial(Marble::GeoPainter *painter, const atools:
     // Add last point
     geoLineStr << GeoDataCoordinates(splitLines.constLast().getLonX(), splitLines.constLast().getLatY(), 0, DEG);
 
-    painter->drawPolyline(geoLineStr);
+    QVector<GeoDataLineString *> geoLineStrCorrected = geoLineStr.toDateLineCorrected();
+    for(const GeoDataLineString *geoLine: geoLineStrCorrected)
+      painter->drawPolyline(*geoLine);
+    qDeleteAll(geoLineStrCorrected);
   }
 }
 
@@ -729,7 +748,7 @@ void MapPainter::paintHoldWithText(QPainter *painter, float x, float y, float di
     {
       // text pointing to origin
       QString str = metrics.elidedText(text, Qt::ElideRight, roundToInt(pixel));
-      int w1 = metrics.width(str);
+      int w1 = metrics.horizontalAdvance(str);
       painter->drawText(-w1 / 2, roundToInt(-lineWidth - 3), str);
     }
 
@@ -737,7 +756,7 @@ void MapPainter::paintHoldWithText(QPainter *painter, float x, float y, float di
     {
       // text on other side to origin
       QString str = metrics.elidedText(text2, Qt::ElideRight, roundToInt(pixel));
-      int w2 = metrics.width(str);
+      int w2 = metrics.horizontalAdvance(str);
 
       if(direction < 180.f)
         painter->translate(0, left ? -pixel / 2 : pixel / 2);
@@ -792,7 +811,7 @@ void MapPainter::paintProcedureTurnWithText(QPainter *painter, float x, float y,
     painter->setBackground(textColorBackground);
     QFontMetrics metrics = painter->fontMetrics();
     QString str = metrics.elidedText(text, Qt::ElideRight, roundToInt(turnSegment.length()));
-    int w1 = metrics.width(str);
+    int w1 = metrics.horizontalAdvance(str);
 
     painter->translate((turnSegment.x1() + turnSegment.x2()) / 2, (turnSegment.y1() + turnSegment.y2()) / 2);
     painter->rotate(turnCourse < 180.f ? turnCourse - 90.f : turnCourse + 90.f);
@@ -1003,7 +1022,7 @@ void MapPainter::paintMsaMarks(const QList<map::MapAirportMsa>& airportMsa, bool
           // Draw altitude labels ===================================================================
           for(int i = 0; i < msa.altitudes.size(); i++)
           {
-            const atools::geo::Pos& labelPos = msa.labelPositions.value(i);
+            const atools::geo::Pos labelPos = msa.labelPositions.value(i);
 
             float xp, yp;
             bool visible = wToS(labelPos, xp, yp, scale->getScreeenSizeForRect(msa.bounding));
@@ -1074,7 +1093,7 @@ void MapPainter::paintHoldingMarks(const QList<map::MapHolding>& holdings, bool 
     if(context->mapLayer->isApproach() && distPixel > 10.f)
     {
       // Calculcate approximate rectangle
-      Rect rect(holding.position, atools::geo::nmToMeter(dist) * 2.f);
+      Rect rect(holding.position, atools::geo::nmToMeter(dist) * 2.f, true /* fast */);
 
       if(context->viewportRect.overlaps(rect))
       {

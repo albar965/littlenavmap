@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -27,6 +27,8 @@
 namespace atools {
 
 namespace util {
+
+class FileChecker;
 class FileSystemWatcher;
 }
 namespace geo {
@@ -129,17 +131,24 @@ public:
   enum ActiveSkyType
   {
     NONE, /* not found */
-    MANUAL, /* Snapshot file is manually selected */
+    MANUAL, /* Snapshot file is manually selected for all simulators */
     ASN, /* Active Sky Next */
     AS16,
     ASP4, /* Active Sky for Prepar3D v4 */
-    ASXPL /* Active Sky for X-Plane */
+    ASP5, /* Active Sky for Prepar3D v5 */
+    ASXPL11, /* Active Sky for X-Plane 11 */
+    ASXPL12 /* Active Sky for X-Plane 12 */
   };
 
   /* Get type of active sky weather snapshot that was found */
   ActiveSkyType getCurrentActiveSkyType() const
   {
     return activeSkyType;
+  }
+
+  bool hasAnyActiveSkyWeather() const
+  {
+    return activeSkyType != WeatherReporter::NONE;
   }
 
   /* ASN, AS16, ASP4, ... */
@@ -150,18 +159,15 @@ public:
     return simType;
   }
 
-  const QString& getActiveSkyDepartureIdent() const
-  {
-    return activeSkyDepartureIdent;
-  }
+  const QString& getActiveSkyDepartureIdent();
 
-  const QString& getActiveSkyDestinationIdent() const
-  {
-    return activeSkyDestinationIdent;
-  }
+  const QString& getActiveSkyDestinationIdent();
 
   /* Map weather source has changed */
   void updateAirportWeather();
+
+  /* Print the size of all container classes to detect overflow or memory leak conditions */
+  void debugDumpContainerSizes() const;
 
 signals:
   /* Emitted when Active Sky or X-Plane weather file changes or a request to weather was fullfilled */
@@ -171,18 +177,25 @@ private:
   void weatherDownloadFailed(const QString& error, int errorCode, QString url);
   void weatherDownloadSslErrors(const QStringList& errors, const QString& downloadUrl);
 
-  void activeSkyWeatherFileChanged(const QString& path);
+  /* Called by file watcher */
+  void activeSkyWeatherFilesChanged(const QStringList& paths);
   void xplaneWeatherFileChanged();
 
-  void loadActiveSkySnapshot(const QString& path);
-  void loadActiveSkyFlightplanSnapshot(const QString& path);
-  void initActiveSkyNext();
+  /* Clear watcher, METARs and detect paths */
+  void initActiveSkyPaths();
   void findActiveSkyFiles(QString& asnSnapshot, QString& flightplanSnapshot, const QString& activeSkyPrefix,
                           const QString& activeSkySimSuffix);
 
+  /* Load METARs from all AS files on demand if not yet loaded after initActiveSkyPaths(). Create file watcher. */
+  void loadAllActiveSkyFiles();
+
+  /* Load METARs from files */
+  void loadActiveSkySnapshot(const QString& path);
+  void loadActiveSkyFlightplanSnapshot(const QString& path);
+
   bool validateActiveSkyFlightplanFile(const QString& path);
-  void deleteFsWatcher();
-  void createFsWatcher();
+  void createActiveSkyFsWatcher();
+  void deleteActiveSkyFsWatcher();
 
   void initXplane();
   void disableXplane();
@@ -197,6 +210,12 @@ private:
 
   /* Reset the error timer in all weather downloaders */
   void resetErrorState();
+
+  /* Check if currently selected X-Plane paths exist and return true if valid */
+  bool checkXplanePaths();
+
+  /* Show warning dialog in main loop to avoid issues when being called from draw handler */
+  void showXplaneWarningDialog(const QString& message);
 
   atools::geo::Pos fetchAirportCoordinates(const QString& airportIdent);
 
@@ -215,13 +234,21 @@ private:
   atools::util::FileSystemWatcher *fsWatcherAsPath = nullptr;
   atools::util::FileSystemWatcher *fsWatcherAsFlightplanPath = nullptr;
   atools::fs::FsPaths::SimulatorType simType = atools::fs::FsPaths::NONE;
+  atools::util::FileChecker *asSnapshotPathChecker, *asFlightplanPathChecker;
 
   atools::fs::weather::XpWeatherReader *xpWeatherReader = nullptr;
 
   MainWindow *mainWindow;
 
   ActiveSkyType activeSkyType = NONE;
-  QString asPath, asFlightplanPath;
+  QString asSnapshotPath, asFlightplanPath;
+
+  // Remember warnings shown for database and session
+  bool xp11WarningPathShown = false, xp12WarningPathShown = false;
+  QString xplaneFileWarningMsg, xplaneMissingWarningMsg;
+
+  // Warning dialog is currently open
+  bool showingXplaneFileWarning = false;
 
   /* Update online reports if older than 10 minutes */
   int onlineWeatherTimeoutSecs = 600;

@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -61,6 +61,7 @@ signals:
   void addUserpoint(int id, const atools::geo::Pos& pos);
   void editUserpoints(const QVector<int>& ids);
   void deleteUserpoints(const QVector<int>& ids);
+  void cleanupUserdata();
 
 private:
   virtual void updateButtonMenu() override;

@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -19,11 +19,10 @@
 
 #include "common/symbolpainter.h"
 #include "mapgui/maplayer.h"
-#include "query/mapquery.h"
 #include "util/paintercontextsaver.h"
-#include "navapp.h"
+#include "app/navapp.h"
 #include "weather/windreporter.h"
-#include "grib/windquery.h"
+#include "mapgui/mapfunctions.h"
 
 #include <marble/GeoPainter.h>
 #include <marble/ViewportParams.h>
@@ -41,20 +40,22 @@ MapPainterWind::~MapPainterWind()
 
 void MapPainterWind::render()
 {
-  bool drawWeather = context->objectDisplayTypes.testFlag(map::WIND_BARBS) && context->mapLayer->isWindBarbs();
-
-  if(!drawWeather)
+  if(!context->objectDisplayTypes.testFlag(map::WIND_BARBS) || context->mapLayer->getWindBarbs() == 0)
     return;
 
   atools::util::PainterContextSaver saver(context->painter);
 
-  bool overflow = false;
   const atools::grib::WindPosList *windForRect =
-    NavApp::getWindReporter()->getWindForRect(context->viewport->viewLatLonAltBox(), context->mapLayer, context->lazyUpdate, overflow);
-  context->setQueryOverflow(overflow);
+    NavApp::getWindReporter()->getWindForRect(context->viewport->viewLatLonAltBox(), context->mapLayer, context->lazyUpdate,
+                                              context->mapLayer->getWindBarbs());
 
   if(windForRect != nullptr)
   {
+    float size = context->szF(context->symbolSizeWindBarbs, context->mapLayer->getWindBarbsSymbolSize());
+
+    int marginsSize = static_cast<int>(size) * 5;
+    QMargins margins(marginsSize, marginsSize, marginsSize, marginsSize);
+
     atools::geo::Rect rect = context->viewportRect;
 
     // Inflate for half a grid cell size to avoid disappearing symbols at map border
@@ -62,27 +63,23 @@ void MapPainterWind::render()
 
     for(const atools::grib::WindPos& windPos : *windForRect)
     {
-      if(!windPos.wind.isValid())
-        continue;
-
-      if(rect.contains(windPos.pos))
+      if(windPos.wind.isValid() && rect.contains(windPos.pos) &&
+         mapfunc::windBarbVisible(windPos.pos, context->mapLayer, context->viewport->projection() == Marble::Spherical))
       {
-        bool isVisible, isHidden;
-        QPoint pos = wToS(windPos.pos, DEFAULT_WTOS_SIZE, &isVisible, &isHidden);
-        if(!pos.isNull() && /*isVisible && */ !isHidden)
+
+        QPointF point;
+        bool isHidden;
+        bool visible = wToSBuf(windPos.pos, point, margins, &isHidden);
+        if(visible && !isHidden)
         {
-          drawWindBarb(windPos.wind.speed, windPos.wind.dir, pos.x(), pos.y());
+          symbolPainter->drawWindBarbs(context->painter, windPos.wind.speed, 0.f, windPos.wind.dir,
+                                       static_cast<float>(point.x()), static_cast<float>(point.y()), size,
+                                       true /* wind barbs */, true /* alt wind */, false /* route */, context->drawFast);
+
           if(context->objCount())
             break;
         }
       }
     }
   }
-}
-
-void MapPainterWind::drawWindBarb(float speed, float direction, float x, float y)
-{
-  float size = context->szF(context->symbolSizeWindBarbs, context->mapLayer->getWindBarbsSymbolSize());
-  symbolPainter->drawWindBarbs(context->painter, speed, 0.f, direction, x, y, size,
-                               true /* wind barbs */, true /* alt wind */, false /* route */, context->drawFast);
 }

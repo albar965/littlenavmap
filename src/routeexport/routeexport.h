@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -130,6 +130,12 @@ public:
   /* Old X-Plane FMS 3 */
   bool routeExportFms3Multi(const RouteExportFormat& format);
 
+  /* X-Plane CIVA Navigation System */
+  bool routeExportCivaFmsMulti(const RouteExportFormat& format);
+
+  /* IniBuilds */
+  bool routeExportFms3IniBuildsMulti(const RouteExportFormat& format);
+
   /* Aerosoft airbus FLP */
   bool routeExportFlpMulti(const RouteExportFormat& format);
 
@@ -138,6 +144,9 @@ public:
 
   /* Flight plan export functions */
   bool routeExportGfpMulti(const RouteExportFormat& format);
+
+  /* TDS GTNXi - GFP */
+  bool routeExportTdsGtnXiMulti(const RouteExportFormat& format);
 
   /* Rotate MD-80 and others */
   bool routeExportTxtMulti(const RouteExportFormat& format);
@@ -157,7 +166,7 @@ public:
   /* Reality XP GNS */
   bool routeExportRxpGnsMulti(const RouteExportFormat& format);
 
-  /* Reality XP GTN */
+  /* Reality XP GTN - GFP */
   bool routeExportRxpGtnMulti(const RouteExportFormat& format);
 
   /* iFly */
@@ -214,7 +223,6 @@ public:
 
   /* Return a copy of the route that has procedures replaced with waypoints depending on selected options in the menu.
    *  Also sets altitude into FlightplanEntry position. */
-  static Route buildAdjustedRoute(const Route& route, rf::RouteAdjustOptions options);
   Route buildAdjustedRoute(rf::RouteAdjustOptions options);
 
   /* true if any formats are selected for multiexport */
@@ -225,6 +233,9 @@ public:
 
   /* Warning dialog when changing export options */
   void warnExportOptionsFromMenu(bool checked);
+
+  /* Set current and default path for the LNMPLN export */
+  void setLnmplnExportDir(const QString& dir);
 
 signals:
   /* Show airport on map to allow parking selection */
@@ -251,14 +262,14 @@ private:
   bool routeExportInternalFlp(const RouteExportFormat& format, bool crj, bool msfs);
 
   /* Formats that have no export method in FlightplanIO */
-  bool exportFlighplanAsGfp(const QString& filename, bool saveAsUserWaypoints);
+  bool exportFlighplanAsGfp(const QString& filename, bool saveAsUserWaypoints, bool procedures, bool gfpCoordinates);
   bool exportFlighplanAsTxt(const QString& filename);
   bool exportFlighplanAsCorteIn(const QString& filename);
   bool exportFlighplanAsProSim(const QString& filename);
   bool exportFlighplanAsUFmc(const QString& filename);
   bool exportFlightplanAsGpx(const QString& filename);
   bool exportFlighplanAsRxpGns(const QString& filename, bool saveAsUserWaypoints);
-  bool exportFlighplanAsRxpGtn(const QString& filename, bool saveAsUserWaypoints);
+  bool exportFlighplanAsRxpGtn(const QString& filename, bool saveAsUserWaypoints, bool gfpCoordinates);
 
   /* Generic export using callback and also doing exception handling. */
   bool exportFlighplan(const QString& filename, rf::RouteAdjustOptions options,
@@ -308,7 +319,7 @@ private:
 
   MainWindow *mainWindow;
   atools::gui::Dialog *dialog;
-  RouteMultiExportDialog *exportAllDialog;
+  RouteMultiExportDialog *multiExportDialog;
   RouteExportFormatMap *exportFormatMap;
   atools::fs::pln::FlightplanIO *flightplanIO;
 

@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -58,6 +58,8 @@ enum RouteExportFormatType : quint16
   GFP = 8, /* Garmin GFP Format */
   GFPUWP = 34, /* Garmin GFP Format with user defined waypoints */
   PMS50 = 39, /* Garmin PMS50 GTN750  */
+  TDSGTNXI = 43, /* TDS GTNXi - GFP format */
+  TDSGTNXIWP = 46, /* TDS GTNXi - GFP format */
 
   /* Online ================ */
   VFP = 9, /* vPilot or xPilot VATSIM */
@@ -68,6 +70,7 @@ enum RouteExportFormatType : quint16
   XFMC = 12, /* X-FMC */
   UFMC = 13, /* UFMC */
   PLNISG = 38, /* Integrated Simavionics / ISG - modified FSX PLN */
+  CIVAFMS = 45, /* X-Plane CIVA Navigation System */
 
   /* Aircraft ================ */
   FLP = 14, /* Aerosoft Airbus FLP */
@@ -88,13 +91,14 @@ enum RouteExportFormatType : quint16
   MDR = 25, /* Leonardo Maddog X */
   TFDI = 26, /* TFDi Design 717 */
   IFLY = 40, /* iFly Jets Advanced Series */
+  INIBUILDS = 44, /* MSFS IniBuilds Airbus - fpl */
 
   /* Other ================ */
   EFBR = 27, /* AivlaSoft EFB */
   GPX = 28, /* Garmin exchange format. Not a flight plan format.  */
   HTML = 29, /* Export as HTML page */
 
-  // Next = 43
+  // Next = 47
 };
 
 /* Flags for export format. Some flags are saved to the configuration,
@@ -112,9 +116,11 @@ enum RouteExportFormatFlag : quint16
   PARKING = 1 << 4, /* Format allows to import parking start position */
   AIRPORTS = 1 << 5, /* Valid departure and destination airports are needed */
   CYCLE = 1 << 6, /* Format needs a valid AIRAC cycle */
-  GARMIN_AS_WAYPOINTS = 1 << 7, /* Format to export Garmin as waypoints. */
+  GARMIN_WP = 1 << 7, /* Format to export Garmin as waypoints. */
 
   FILEREP = 1 << 8, /* Select folder or file and program creates or overwrites file on export. */
+
+  NDALL = 1 << 9,     /* Show warning if mode is all navdata. */
 
   SAVED_FLAGS = SELECTED /* Saved to configuration. */
 };

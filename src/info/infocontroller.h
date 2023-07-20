@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -79,9 +79,15 @@ public:
   /* Updates all online related information and does not raise windows */
   void onlineNetworkChanged();
 
+  /* Route has changed */
+  void routeChanged(bool, bool = false);
+
   /* Save ids of the objects shown in the tabs to content can be restored on startup */
   void saveState();
   void restoreState();
+
+  /* Reload panel information which might also trigger weather reading or downloads */
+  void restoreInformation();
 
   /* Clear all panels and result set */
   void preDatabaseLoad();
@@ -119,6 +125,7 @@ signals:
   /* Emitted when the user clicks on the "Map" link in the text browsers */
   void showPos(const atools::geo::Pos& pos, float zoom, bool doubleClick);
   void showRect(const atools::geo::Rect& rect, bool doubleClick);
+  void showProcedures(const map::MapAirport& airport, bool departureFilter, bool arrivalFilter);
 
 private:
   /* Do not update aircraft progress more than every 0.5 seconds */
@@ -161,6 +168,9 @@ private:
 
   void showProgressContextMenu(const QPoint& point);
   QString getConnectionTypeText();
+
+  void helpInfoClicked();
+  void helpAircraftClicked();
 
   QString waitingForUpdateText, notConnectedText;
 

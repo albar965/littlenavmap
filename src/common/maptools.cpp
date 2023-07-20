@@ -100,10 +100,10 @@ void RwVector::sortRunwayEnds()
 
     clear();
 
-    for(const RwEnd& end :  endMap.values())
+    for(auto it = endMap.constBegin(); it != endMap.constEnd(); ++it)
     {
-      append(end);
-      totalNumber += end.names.size();
+      append(it.value());
+      totalNumber += it.value().names.size();
     }
   }
   else if(size() == 1)

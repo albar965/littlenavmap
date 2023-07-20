@@ -143,6 +143,9 @@ public:
    * Called by ConnectClient after receiving simulator data package. */
   void updateAircraftShadowState(atools::fs::sc::SimConnectData& dataPacket);
 
+  /* Print the size of all container classes to detect overflow or memory leak conditions */
+  void debugDumpContainerSizes() const;
+
 signals:
   /* Sent whenever new data was downloaded */
   void onlineClientAndAtcUpdated(bool loadAll, bool keepSelection);
@@ -202,6 +205,9 @@ private:
 
   QString stateAsStr(OnlinedataController::State state);
 
+  // Criteria used to detect shadow aircraft right after download finished
+  float maxShadowDistanceNm = 0.5f, maxShadowAltDiffFt = 500.f, maxShadowGsDiffKts = 30.f, maxShadowHdgDiffDeg = 20.f;
+
   State currentState = NONE;
 
   QTimer downloadTimer; /* Triggers recurring downloads OnlinedataController::startDownloadInternal */
@@ -219,7 +225,7 @@ private:
 
   QTextCodec *codec = nullptr;
 
-  bool verbose = false, disableShadow = false;
+  bool verbose = false;
 
   // All online aircraft from download for spatial search (nearest)
   atools::geo::SpatialIndex<atools::fs::online::OnlineAircraft> onlineAircraftSpatialIndex;

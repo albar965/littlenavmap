@@ -19,16 +19,23 @@
 #define MAPACTIONSCONTROLLER_H
 
 #include "webapi/abstractlnmactionscontroller.h"
-#include "web/webmapcontroller.h"
-#include "mapgui/maplayersettings.h"
-
-#include "web/webflags.h"
-
-#include "geo/rect.h"
+#include <QMutex>
 #include <QPixmap>
+#include "mapgui/maplayersettings.h"
 
 class QPixmap;
 class MapPaintWidget;
+class WebApiRequest;
+class WebApiResponse;
+class AbstractInfoBuilder;
+class MapPixmap;
+
+namespace atools {
+namespace geo {
+class Rect;
+}
+}
+
 /**
  * @brief Map actions controller implementation.
  */
@@ -74,6 +81,8 @@ protected:
     MapPixmap getPixmapRect(int width, int height, atools::geo::Rect rect, int detailFactor = MapLayerSettings::MAP_DEFAULT_DETAIL_LEVEL, const QString& errorCase = tr("Invalid rectangle"));
 
     MapPaintWidget *mapPaintWidget = nullptr;
+    QMutex mapPaintWidgetMutex;
+
     QWidget *parentWidget;
     bool verbose = false;
 };

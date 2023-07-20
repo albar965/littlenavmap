@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -27,7 +27,7 @@
 #include "sql/sqlrecord.h"
 #include "query/airportquery.h"
 #include "gui/widgetstate.h"
-#include "navapp.h"
+#include "app/navapp.h"
 #include "util/htmlbuilder.h"
 #include "fs/pln/flightplanio.h"
 #include "gui/dialog.h"
@@ -406,7 +406,7 @@ void LogdataDialog::fileUpdated(QLineEdit *lineEdit, QLabel *label, bool perf)
           }
           else
           {
-            if(atools::fs::pln::FlightplanIO::detectFormat(filepath) != atools::fs::pln::NONE)
+            if(atools::fs::pln::FlightplanIO::isFlightplanFile(filepath))
               label->setText(tr("Valid flight plan file."));
             else
               label->setText(tr("File is not a supported flight plan."));

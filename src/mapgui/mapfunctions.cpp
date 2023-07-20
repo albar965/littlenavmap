@@ -18,18 +18,17 @@
 #include "mapgui/mapfunctions.h"
 
 #include "fs/sc/simconnectaircraft.h"
-#include "online/onlinedatacontroller.h"
 #include "mapgui/maplayer.h"
-#include "navapp.h"
 
 #include <QVector>
 
 namespace mapfunc {
 
-bool aircraftVisible(const atools::fs::sc::SimConnectAircraft& ac, const MapLayer *layer)
+bool aircraftVisible(const atools::fs::sc::SimConnectAircraft& ac, const MapLayer *layer, bool hideAiOnGround)
 {
   bool show = true;
-  if(ac.isOnGround())
+  if(ac.isOnGround() && hideAiOnGround)
+    // Hide on ground if flag is set - otherwise use normal logic
     show &= layer->isAiAircraftGround();
   else
   {
@@ -41,6 +40,37 @@ bool aircraftVisible(const atools::fs::sc::SimConnectAircraft& ac, const MapLaye
       show &= layer->isAiAircraftLarge();
   }
   return show;
+}
+
+bool windBarbVisible(const atools::geo::Pos& pos, const MapLayer *layer, bool sphericalProjection)
+{
+  if(layer->getWindBarbs() == 0)
+    return false;
+
+  float gridSpacing = static_cast<float>(layer->getWindBarbs());
+
+  float gridX = gridSpacing;
+  float gridY = gridSpacing;
+  if(sphericalProjection)
+  {
+    // Adjust horizontal density at higher or lower latitudes
+    float lat = std::abs(pos.getLatY());
+
+    // Perfer multiple of five to snap to display globe grid
+    if(lat > 89.f)
+      gridX = 360.f; // Draw only one barb on all levels
+    else if(lat > 88.f)
+      gridX *= 15.f;
+    else if(lat > 85.f)
+      gridX *= 10.f;
+    else if(lat > 75.f)
+      gridX *= 5.f;
+    else if(lat > 70.f)
+      gridX *= 2.f;
+  }
+
+  // Return true if point is near a grid position
+  return pos.nearGridLonLat(gridX, gridY);
 }
 
 } // namespace mapfunc

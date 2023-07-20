@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -23,9 +23,8 @@
 #include "options/optiondata.h"
 #include "geo/rect.h"
 
-#include <marble/MarbleWidget.h>
 #include <QPen>
-#include <QCoreApplication>
+#include <QFont>
 
 namespace atools {
 namespace geo {
@@ -64,7 +63,7 @@ struct PaintContext
                              *  should be used to visibility of map objects */
   const MapLayer *mapLayerEffective; /* layer for the current zoom distance not affected by detail level.
                                       *  Should be used to determine text visibility and object sizes. */
-  const MapLayer *mapLayerRoute; /* layer for the current zoom distance and details with more details for route. */
+  const MapLayer *mapLayerRoute; /* layer for the current zoom distance and more details for route. */
   Marble::GeoPainter *painter;
   Marble::ViewportParams *viewport;
   Marble::ViewContext viewContext;
@@ -73,7 +72,7 @@ struct PaintContext
   bool lazyUpdate; /* postpone reloading until map is still */
   bool darkMap; /* CartoDark or similar. Not Night mode */
   map::MapTypes objectTypes; /* Object types that should be drawn */
-  map::MapObjectDisplayTypes objectDisplayTypes; /* Object types that should be drawn */
+  map::MapDisplayTypes objectDisplayTypes; /* Object types that should be drawn */
   map::MapAirspaceFilter airspaceFilterByLayer; /* Airspaces */
   atools::geo::Rect viewportRect; /* Rectangle of current viewport */
   QRect screenRect; /* Screen coordinate rect */
@@ -109,6 +108,7 @@ struct PaintContext
   bool paintCopyright = true;
   int mimimumRunwayLengthFt = -1;
   QVector<map::MapObjectRef> *routeDrawnNavaids; /* All navaids drawn for route and procedures. Points to vector in MapScreenIndex */
+  int currentDistanceMarkerId = -1;
 
   /* Text sizes and line thickness in percent / 100 as set in options dialog */
   float textSizeAircraftAi = 1.f;
@@ -240,7 +240,6 @@ struct PaintContext
   textflags::TextFlags airportTextFlags() const;
   textflags::TextFlags airportTextFlagsMinor() const;
   textflags::TextFlags airportTextFlagsRoute(bool drawAsRoute, bool drawAsLog) const;
-
 };
 
 /* Used to collect airports for drawing. Needs to copy airport since it might be removed from the cache. */
@@ -303,6 +302,8 @@ protected:
   {
     return wToSBuf(coords, x, y, DEFAULT_WTOS_SIZE, margins, hidden);
   }
+
+  bool wToSBuf(const atools::geo::Pos& coords, QPointF& point, const QMargins& margins, bool *hidden = nullptr) const;
 
   /* Draw a circle and return text placement hints (xtext and ytext). Number of points used
    * for the circle depends on the zoom distance. Optimized for large circles. */

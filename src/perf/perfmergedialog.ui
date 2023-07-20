@@ -934,6 +934,7 @@
     <widget class="QLabel" name="labelNameValueLegend">
      <property name="font">
       <font>
+       <weight>75</weight>
        <bold>true</bold>
       </font>
      </property>
@@ -1295,6 +1296,7 @@
     <widget class="QLabel" name="labelNameValueLegend2">
      <property name="font">
       <font>
+       <weight>75</weight>
        <bold>true</bold>
       </font>
      </property>
@@ -1558,6 +1560,7 @@
   </layout>
  </widget>
  <tabstops>
+  <tabstop>comboBoxSimulator</tabstop>
   <tabstop>comboBoxName</tabstop>
   <tabstop>comboBoxType</tabstop>
   <tabstop>comboBoxUsableFuel</tabstop>
@@ -1577,6 +1580,7 @@
   <tabstop>comboBoxAlternateFuelFlow</tabstop>
   <tabstop>pushButtonCopy</tabstop>
   <tabstop>pushButtonMerge</tabstop>
+  <tabstop>pushButtonIgnore</tabstop>
  </tabstops>
  <resources>
   <include location="../../littlenavmap.qrc"/>

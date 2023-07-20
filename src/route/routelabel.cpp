@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2021 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2022 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -25,7 +25,7 @@
 #include "fs/pln/flightplan.h"
 #include "fs/util/fsutil.h"
 #include "gui/clicktooltiphandler.h"
-#include "navapp.h"
+#include "app/navapp.h"
 #include "perf/aircraftperfcontroller.h"
 #include "query/airportquery.h"
 #include "query/mapquery.h"
@@ -89,6 +89,22 @@ void RouteLabel::restoreState()
   footerError = settings.valueBool(lnm::ROUTE_FOOTER_ERROR, true);
 }
 
+void RouteLabel::styleChanged()
+{
+  // Need to clear the labels to force style update - otherwise link colors remain the same
+  NavApp::getMainUi()->labelRouteInfo->clear();
+
+  // Update later in event queue to avoid obscure problem of disappearing labels
+  QTimer::singleShot(0, this, &RouteLabel::updateAll);
+}
+
+void RouteLabel::updateAll()
+{
+  updateHeaderLabel();
+  updateFooterSelectionLabel();
+  updateFooterErrorLabel();
+}
+
 /* Update the dock window top level label */
 void RouteLabel::updateHeaderLabel()
 {
@@ -122,6 +138,7 @@ void RouteLabel::updateHeaderLabel()
       buildHeaderDistTime(htmlDistTime);
 
     // Join all texts with <br>
+    ui->labelRouteInfo->setTextFormat(Qt::RichText);
     ui->labelRouteInfo->setText(HtmlBuilder::joinBr({htmlAirport, htmlDepart, htmlArrival, htmlLand, htmlDistTime}));
   }
   else
@@ -167,7 +184,7 @@ void RouteLabel::buildPrintText(atools::util::HtmlBuilder& html, bool titleOnly)
 
 void RouteLabel::buildHeaderAirports(atools::util::HtmlBuilder& html, bool widget)
 {
-  const Flightplan& flightplan = route.getFlightplan();
+  const Flightplan& flightplan = route.getFlightplanConst();
   QString departureAirport, departureParking, destinationAirport;
 
   // Add departure to text ==============================================================
@@ -193,8 +210,8 @@ void RouteLabel::buildHeaderAirports(atools::util::HtmlBuilder& html, bool widge
   else
   {
     departureAirport = tr("%1 (%2)").
-                       arg(flightplan.getEntries().constFirst().getIdent()).
-                       arg(flightplan.getEntries().constFirst().getWaypointTypeAsDisplayString());
+                       arg(flightplan.constFirst().getIdent()).
+                       arg(flightplan.constFirst().getWaypointTypeAsDisplayString());
   }
 
   // Add destination to text ==============================================================
@@ -317,7 +334,7 @@ void RouteLabel::buildHeaderArrival(atools::util::HtmlBuilder& html, bool widget
         star += "." % starLegs.transitionFixIdent;
       arrHtml.b(star);
 
-      starRunway = starLegs.procedureRunway;
+      starRunway = starLegs.runway;
 
       if(!headerRunwayLand || !widget)
       {
@@ -325,10 +342,10 @@ void RouteLabel::buildHeaderArrival(atools::util::HtmlBuilder& html, bool widget
         {
           // No approach. Direct from STAR to runway.
           arrHtml.text(tr(" at runway "));
-          arrHtml.b(starLegs.procedureRunway);
+          arrHtml.b(starLegs.runway);
         }
-        else if(!starLegs.procedureRunway.isEmpty())
-          arrHtml.text(tr(" (")).b(starLegs.procedureRunway).text(tr(") "));
+        else if(!starLegs.runway.isEmpty())
+          arrHtml.text(tr(" (")).b(starLegs.runway).text(tr(") "));
       }
 
       if(!(arrivalLegs.mapType & proc::PROCEDURE_APPROACH) || arrivalLegs.isCustomApproach())
@@ -357,15 +374,15 @@ void RouteLabel::buildHeaderArrival(atools::util::HtmlBuilder& html, bool widget
           arrHtml.b(tr("Arrive ")).text(tr(" via "));
 
         // Type and suffix =======================
-        QString type(arrivalLegs.displayApproachType());
-        if(!arrivalLegs.approachSuffix.isEmpty())
-          type += tr("-%1").arg(arrivalLegs.approachSuffix);
+        QString type(arrivalLegs.displayType());
+        if(!arrivalLegs.suffix.isEmpty())
+          type += tr("-%1").arg(arrivalLegs.suffix);
 
         arrHtml.b(type).nbsp();
         arrHtml.b(arrivalLegs.approachFixIdent);
 
-        if(!arrivalLegs.approachArincName.isEmpty())
-          arrHtml.b(tr(" (%1)").arg(arrivalLegs.approachArincName));
+        if(!arrivalLegs.arincName.isEmpty())
+          arrHtml.b(tr(" (%1)").arg(arrivalLegs.arincName));
 
         if(!headerRunwayLand || !widget)
         {
@@ -443,7 +460,7 @@ void RouteLabel::buildHeaderRunwayTakeoff(atools::util::HtmlBuilder& html)
             end = runwayEnds.first();
 
           html.b(tr("Takeoff")).text(tr(" from ")).b(end.name).text(tr(", "));
-          html.text(formatter::courseTextFromTrue(end.heading, departLeg.getMagvar()), ahtml::NO_ENTITIES);
+          html.text(formatter::courseTextFromTrue(end.heading, departLeg.getMagvarStart()), ahtml::NO_ENTITIES);
 
           map::MapRunway runway = airportQuerySim->getRunwayByEndId(departLeg.getId(), end.id);
           if(runway.isValid())
@@ -493,7 +510,7 @@ void RouteLabel::buildHeaderRunwayLand(atools::util::HtmlBuilder& html)
               html.b(tr("Land")).text(tr(" at ")).b(end.name).text(tr(", "));
 
               QStringList rwAtts;
-              rwAtts.append(formatter::courseTextFromTrue(end.heading, destLeg.getMagvar()));
+              rwAtts.append(formatter::courseTextFromTrue(end.heading, destLeg.getMagvarEnd()));
 
               map::MapRunway runway = airportQuerySim->getRunwayByEndId(destLeg.getId(), end.id);
               if(runway.isValid())
@@ -517,7 +534,7 @@ void RouteLabel::buildHeaderRunwayLand(atools::util::HtmlBuilder& html)
 
 void RouteLabel::buildHeaderTocTod(atools::util::HtmlBuilder& html)
 {
-  html.p().b(tr("Cruising altitude ")).text(Unit::altFeet(route.getCruisingAltitudeFeet()));
+  html.p().b(tr("Cruising altitude ")).text(Unit::altFeet(route.getCruiseAltitudeFt()));
 
   if(route.getTopOfClimbDistance() < map::INVALID_DISTANCE_VALUE || route.getTopOfDescentFromDestination() < map::INVALID_DISTANCE_VALUE)
   {
@@ -645,7 +662,7 @@ void RouteLabel::updateFooterSelectionLabel()
 
           distanceNm += leg.getDistanceTo();
 
-          if(route.getAltitudeLegs().isValidProfile())
+          if(route.isValidProfile())
           {
             const RouteAltitudeLeg& altLeg = route.getAltitudeLegAt(index);
 

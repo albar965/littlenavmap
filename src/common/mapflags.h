@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -40,11 +40,13 @@ Q_DECL_CONSTEXPR static float INVALID_SPEED_VALUE = std::numeric_limits<float>::
 Q_DECL_CONSTEXPR static float INVALID_TIME_VALUE = std::numeric_limits<float>::max();
 Q_DECL_CONSTEXPR static float INVALID_WEIGHT_VALUE = std::numeric_limits<float>::max();
 Q_DECL_CONSTEXPR static float INVALID_VOLUME_VALUE = std::numeric_limits<float>::max();
+Q_DECL_CONSTEXPR static float INVALID_LON_LAT_VALUE = std::numeric_limits<float>::max();
 Q_DECL_CONSTEXPR static int INVALID_INDEX_VALUE = std::numeric_limits<int>::max();
 
 Q_DECL_CONSTEXPR static float INVALID_MAGVAR = 9999.f;
 
 Q_DECL_CONSTEXPR static float DEFAULT_ILS_WIDTH_DEG = 4.f;
+Q_DECL_CONSTEXPR static float DEFAULT_GLS_RNP_WIDTH_DEG = 8.f;
 
 /* minimum ground speed for fuel flow calculations and other */
 Q_DECL_CONSTEXPR static float MIN_GROUND_SPEED = 30.f;
@@ -65,8 +67,8 @@ enum MapType : unsigned long long
 {
   NONE =             0,
   AIRPORT =          1 << 0, /* Master switch for airport display */
-  // 1 << 1, Unused
-  // 1 << 2,
+  RUNWAY =           1 << 1, /* Stores runways for queries */
+  // 1 << 2, UNUSED
   // 1 << 3,
   // 1 << 4,
   VOR =              1 << 5, /* Also: DME, VORDME, VORTAC and TACAN */
@@ -118,19 +120,23 @@ enum MapType : unsigned long long
   AIRPORT_UNLIGHTED =    0x0000'0400'0000'0000, /* Filter flag. Show airports having no lighting */
   AIRPORT_NO_PROCS =     0x0000'0800'0000'0000, /* Filter flag. Show airports without approach procedure */
   AIRPORT_CLOSED =       0x0000'1000'0000'0000, /* Filter flag. Show closed airports */
+  AIRPORT_MILITARY =     0x0000'4000'0000'0000, /* Filter flag. Show military airports */
 
   /* Procedure flags ================================  */
   PROCEDURE_POINT =      0x0000'2000'0000'0000, /* Type flag for map base and context menu */
+
+  // NEXT = 0x0000'8000'0000'0000
 
   /* =============================================================================================== */
   /* Pure visibiliy flags. Nothing is shown if not at least one of these is set */
   AIRPORT_ALL_VISIBLE = AIRPORT_HARD | AIRPORT_SOFT | AIRPORT_WATER | AIRPORT_HELIPAD,
 
   /* All available filters in drop down button */
-  AIRPORT_FILTER_ALL = AIRPORT_ALL_VISIBLE | AIRPORT_EMPTY | AIRPORT_UNLIGHTED | AIRPORT_NO_PROCS | AIRPORT_CLOSED | AIRPORT_ADDON,
+  AIRPORT_FILTER_ALL = AIRPORT_ALL_VISIBLE | AIRPORT_EMPTY | AIRPORT_UNLIGHTED | AIRPORT_NO_PROCS |
+                       AIRPORT_CLOSED | AIRPORT_MILITARY | AIRPORT_ADDON,
 
   /* Visible and filter flags */
-  AIRPORT_ALL = AIRPORT_ALL_VISIBLE | AIRPORT | AIRPORT_EMPTY | AIRPORT_UNLIGHTED | AIRPORT_NO_PROCS | AIRPORT_CLOSED,
+  AIRPORT_ALL = AIRPORT_ALL_VISIBLE | AIRPORT | AIRPORT_EMPTY | AIRPORT_UNLIGHTED | AIRPORT_NO_PROCS | AIRPORT_CLOSED | AIRPORT_MILITARY,
 
   /* Also default value on first start */
   AIRPORT_ALL_AND_ADDON = AIRPORT_ALL | AIRPORT_ADDON,
@@ -158,7 +164,7 @@ QDebug operator<<(QDebug out, const map::MapTypes& type);
 
 /* Type that is used only for flags to determine what should be drawn.
  * Rarely used in other contexts and not as types in map::MapBase. */
-enum MapObjectDisplayType
+enum MapDisplayType
 {
   DISPLAY_TYPE_NONE = 0,
   AIRPORT_WEATHER = 1 << 0, /* Airport weather icons */
@@ -177,7 +183,7 @@ enum MapObjectDisplayType
   FLIGHTPLAN = 1 << 9, /* Flight plan */
   FLIGHTPLAN_TOC_TOD = 1 << 10, /* Top of climb and top of descent */
 
-  GLS = 1 << 13, /* GLS approaches or GBAS paths - only display flag. Object is stored with type ILS. */
+  GLS = 1 << 13, /* RNV approach, GLS approache or GBAS path - only display flag. Object is stored with type ILS. */
   AIRCRAFT_TRACK = 1 << 17, /* Simulator aircraft track. Not an object type. */
 
   AIRCRAFT_ENDURANCE = 1 << 18, /* Range ring for current aircraft endurance. */
@@ -188,10 +194,10 @@ enum MapObjectDisplayType
   LOGBOOK_ALL = LOGBOOK_DIRECT | LOGBOOK_ROUTE | LOGBOOK_TRACK
 };
 
-Q_DECLARE_FLAGS(MapObjectDisplayTypes, MapObjectDisplayType);
-Q_DECLARE_OPERATORS_FOR_FLAGS(map::MapObjectDisplayTypes);
+Q_DECLARE_FLAGS(MapDisplayTypes, MapDisplayType);
+Q_DECLARE_OPERATORS_FOR_FLAGS(map::MapDisplayTypes);
 
-QDebug operator<<(QDebug out, const map::MapObjectDisplayTypes& type);
+QDebug operator<<(QDebug out, const map::MapDisplayTypes& type);
 
 /* Query type for all getNearest and other functions. Covers all what is not included in MapObjectTypes */
 enum MapObjectQueryType
@@ -204,7 +210,7 @@ enum MapObjectQueryType
   QUERY_PROCEDURES = 1 << 4, /* Procedure navaids when querying route */
   QUERY_PROCEDURES_MISSED = 1 << 5, /* Missed procedure navaids when querying route */
   QUERY_MARK_RANGE = 1 << 6, /* Range rings */
-  QUERY_MARK_MSA = 1 << 7, /* Airport MSA sectors */
+  QUERY_MARK_MSA = 1 << 7, /* MSA sectors */
   QUERY_MARK_DISTANCE = 1 << 8, /* Measurement lines */
   QUERY_PREVIEW_PROC_POINTS = 1 << 9, /* Points from procedure preview */
   QUERY_PROC_RECOMMENDED = 1 << 10, /* Recommended navaids from procedures */
@@ -221,7 +227,8 @@ Q_DECLARE_OPERATORS_FOR_FLAGS(map::MapObjectQueryTypes);
 enum DistanceMarkerFlag
 {
   DIST_MARK_NONE = 0,
-  DIST_MARK_RADIAL = 1 << 0
+  DIST_MARK_RADIAL = 1 << 0, /* Draw radial */
+  DIST_MARK_MAGVAR = 1 << 1 /* Has calibrated declination */
 };
 
 Q_DECLARE_FLAGS(DistanceMarkerFlags, DistanceMarkerFlag);
@@ -332,14 +339,14 @@ extern const QVector<map::MapAirspaceSources> MAP_AIRSPACE_SRC_NO_ONLINE_VALUES;
 /* Airspace filter flags */
 enum MapAirspaceFlag
 {
-  AIRSPACE_FLAG_NONE = 0, /* Indicates that filter is used only for type */
+  AIRSPACE_ALTITUDE_FLAG_NONE = 0,   /* Indicates that filter is used only for type */
 
   /* Special filter flags - not airspace types */
   AIRSPACE_ALTITUDE_ALL = 1 << 0,
   AIRSPACE_ALTITUDE_FLIGHTPLAN = 1 << 1,
   AIRSPACE_ALTITUDE_SET = 1 << 2, /* Use values MapAirspaceFilter::minAltitudeFt and MapAirspaceFilter::maxAltitudeFt */
 
-  /* Action flags - not airspace types */
+  /* Action flags - not airspace or altitude filter types */
   AIRSPACE_ALL_ON = 1 << 3,
   AIRSPACE_ALL_OFF = 1 << 4,
 
@@ -401,7 +408,7 @@ enum MapAirportFlag
   AP_LIGHT = 1 << 1, /* Has at least one lighted runway */
   AP_TOWER = 1 << 2, /* Has a tower frequency */
   AP_ILS = 1 << 3, /* At least one runway end has ILS */
-  AP_PROCEDURE = 1 << 4, /* At least one runway end has an approach */
+  AP_PROCEDURE = 1 << 4, /* At least one runway end has a procedure in the sim data */
   AP_MIL = 1 << 5,
   AP_CLOSED = 1 << 6, /* All runways are closed */
   AP_AVGAS = 1 << 7,
@@ -432,6 +439,14 @@ enum MapAirportType
   AP_TYPE_LAND = 1,
   AP_TYPE_SEAPLANE = 16,
   AP_TYPE_HELIPORT = 17,
+};
+
+/* X-Plane airport type. Matches values in apt.dat */
+enum MapWaypointArtificial
+{
+  WAYPOINT_ARTIFICIAL_NONE = 0, /* Normal waypoint */
+  WAYPOINT_ARTIFICIAL_AIRWAYS = 1, /* Dummy waypoint created for airways or airways and procedures */
+  WAYPOINT_ARTIFICIAL_PROCEDURES = 2 /* Dummy waypoint created for procedures only */
 };
 
 /* Sun shading sub menu actions.
@@ -501,8 +516,8 @@ enum TextAttribute
   CENTER = 0x0080,
 
   /* Vertical alignment */
-  VTOP = 0x1000, /* Reference point at top to place text below an icon */
-  VBOTTOM = 0x2000, /* Reference point at bottom to place text on top of an icon */
+  VERT_BELOW = 0x1000, /* Reference point at top to place text below an icon */
+  VERT_ABOVE = 0x2000, /* Reference point at bottom to place text on top of an icon */
 
   /* Color attributes */
   ROUTE_BG_COLOR = 0x0100, /* Use light yellow background for route objects */

@@ -1,3 +1,9 @@
+Note: These build instructions are outdated.
+Look at the Little Navmap Github Wiki for constantly updated instructions:
+https://github.com/albar965/littlenavmap/wiki/Compiling
+
+==============================================================================
+
 # Build Instructions
 
 The atools static library is required. Clone atools (`git clone https://github.com/albar965/atools.git`)
@@ -52,7 +58,7 @@ the examples below. Avoid paths with spaces if possible.
 * `APROJECTS/little_navmap_help`                   Additional PDF help files copied from here for littlenavmap. Optional. `HELP_BASE`
 * `APROJECTS/littlenavmap`                         Little Navmap Sources.
 * `C:\Program Files (x86)\...\SimConnect SDK`      SimConnect on Windows only. Optional. `ATOOLS_SIMCONNECT_PATH`
-* `C:\Program Files (x86)\OpenSSL-Win32`           Default SSL installtion path. Required on Windows only. `OPENSSL_PATH`
+* `C:\Program Files (x86)\OpenSSL-Win32`           Default SSL installation path. Required on Windows only. `OPENSSL_PATH`
 
 ## Windows
 

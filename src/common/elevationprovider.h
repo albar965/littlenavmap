@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -51,7 +51,7 @@ class ElevationProvider :
   Q_OBJECT
 
 public:
-  explicit ElevationProvider(QObject *parent, const Marble::ElevationModel *model);
+  explicit ElevationProvider(QObject *parent);
   virtual ~ElevationProvider() override;
 
   ElevationProvider(const ElevationProvider& other) = delete;
@@ -60,6 +60,7 @@ public:
   /* Elevation in meter. Only for offline data.
    * "sampleRadiusMeter" defines a rectangle where five points are sampled and the maximum is used. */
   float getElevationMeter(const atools::geo::Pos& pos, float sampleRadiusMeter = 0.f);
+  float getElevationFt(const atools::geo::Pos& pos, float sampleRadiusMeter = 0.f);
 
   /* Get elevations along a great circle line. Will create a point every 500 meters and delete
    * consecutive ones with same elevation. Elevation given in meter
@@ -67,15 +68,23 @@ public:
   void getElevations(atools::geo::LineString& elevations, const atools::geo::Line& line, float sampleRadiusMeter = 0.f);
 
   /* true if the data is provided from the fast offline source */
-  bool isGlobeOfflineProvider() const
-  {
-    return globeReader != nullptr;
-  }
+  bool isGlobeOfflineProvider() const;
 
   /* True if directory is valid and contains at least one valid GLOBE file */
-  bool isGlobeDirectoryValid(const QString& path) const;
+  static bool isGlobeDirectoryValid(const QString& path);
+
+  /* As above but uses the default path from settings */
+  static bool isGlobeDirValid();
 
   void optionsChanged();
+
+  /* Connect marble model or initializes GLOBE reader */
+  void init(const Marble::ElevationModel *model);
+
+  bool isValid() const
+  {
+    return isGlobeOfflineProvider() || marbleModel != nullptr;
+  }
 
 signals:
   /*  Elevation tiles loaded. You will get more accurate results when querying height
@@ -84,7 +93,7 @@ signals:
 
 private:
   void marbleUpdateAvailable();
-  void updateReader();
+  void updateReader(bool startup);
 
   const Marble::ElevationModel *marbleModel = nullptr;
   atools::fs::common::GlobeReader *globeReader = nullptr;

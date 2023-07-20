@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -45,7 +45,7 @@ QStringList AirportFiles::getAirportFilesBase(const QString& airportIdent)
    *  Do not change after initial translation to avoid breaking the file lookup. */
   QFileInfo translatedPath = atools::documentsDir() +
                              QDir::separator() +
-                             tr("%1 Files").arg(QApplication::applicationName()) +
+                             tr("%1 Files").arg(QCoreApplication::applicationName()) +
                              QDir::separator() +
                              tr("Airports") +
                              QDir::separator() + airportIdent;
@@ -53,7 +53,7 @@ QStringList AirportFiles::getAirportFilesBase(const QString& airportIdent)
     retval.insert(translatedPath.canonicalFilePath());
 
   QFileInfo path = atools::documentsDir() +
-                   QDir::separator() + QApplication::applicationName() +
+                   QDir::separator() + QCoreApplication::applicationName() +
                    " Files" +
                    QDir::separator() +
                    "Airports" +

@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -39,6 +39,9 @@ class HtmlBuilder;
 namespace Ui {
 class LogStatisticsDialog;
 }
+
+class LogStatsSqlModel;
+class Query;
 
 /*
  * Shows logbook statistics in a text browser as well as for various queries in a table
@@ -89,16 +92,7 @@ private:
   void setModel();
   void clearModel();
 
-  /* Contains information about selected query in combo box */
-  struct Query
-  {
-    QString label; /* Combo box label */
-    QStringList header; /* Result table headers - must be equal to query columns*/
-    QVector<Qt::Alignment> align; /* Column alignment - must be equal to query columns*/
-    QString query; /* SQL query */
-  };
-
-  QVector<Query> QUERIES;
+  QVector<Query> queries;
 
   Ui::LogStatisticsDialog *ui;
   LogdataController *logdataController;
@@ -114,33 +108,7 @@ private:
 
   /* Remember dilalog position when reopening */
   QPoint position;
-};
 
-/* Delegate to change table column data alignment */
-class LogStatsDelegate
-  : public QStyledItemDelegate
-{
-public:
-  LogStatsDelegate();
-
-  QVector<Qt::Alignment> align;
-
-private:
-  virtual void paint(QPainter *painter, const QStyleOptionViewItem& option, const QModelIndex& index) const override;
-
-};
-
-/* Overrides data method for local sensitive number formatting */
-class LogStatsSqlModel :
-  public QSqlQueryModel
-{
-public:
-  LogStatsSqlModel();
-
-private:
-  virtual QVariant data(const QModelIndex& index, int role) const override;
-
-  QLocale locale;
 };
 
 #endif // LNM_LOGSTATISTICSDIALOG_H

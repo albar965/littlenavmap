@@ -19,7 +19,6 @@
 #include "common/infobuildertypes.h"
 
 #include "sql/sqlrecord.h"
-#include "common/unit.h"
 
 using InfoBuilderTypes::AirportInfoData;
 
@@ -54,7 +53,7 @@ QByteArray JsonInfoBuilder::airport(AirportInfoData airportInfoData) const
         { "name", qUtf8Printable(data.airport.name) },
         { "region", qUtf8Printable(data.airport.region) },
         { "closed", data.airport.closed() },
-        { "elevation", data.airport.getPosition().getAltitude() },
+        { "elevation", data.airport.getAltitude() },
         { "magneticDeclination", data.airport.magvar },
         { "position", nullptr },
         { "rating", nullptr },
@@ -374,7 +373,7 @@ QByteArray JsonInfoBuilder::features(MapFeaturesData mapFeaturesData) const
            json["airports"]["result"][i]["ident"] = qUtf8Printable(airport.ident);
            json["airports"]["result"][i]["name"] = qUtf8Printable(airport.name);
            json["airports"]["result"][i]["position"] = coordinatesToJSON(getCoordinates(airport.position));
-           json["airports"]["result"][i]["elevation"] =  airport.getPosition().getAltitude();
+           json["airports"]["result"][i]["elevation"] =  airport.getAltitude();
 
 //           JSON airportJson;
 
@@ -397,7 +396,7 @@ QByteArray JsonInfoBuilder::features(MapFeaturesData mapFeaturesData) const
            json["ndbs"]["result"][i]["ident"] = qUtf8Printable(ndb.ident);
            json["ndbs"]["result"][i]["name"] = qUtf8Printable(ndb.name);
            json["ndbs"]["result"][i]["position"] = coordinatesToJSON(getCoordinates(ndb.position));
-           json["ndbs"]["result"][i]["elevation"] =  ndb.getPosition().getAltitude();
+           json["ndbs"]["result"][i]["elevation"] =  ndb.getAltitude();
 
        }
 
@@ -410,7 +409,7 @@ QByteArray JsonInfoBuilder::features(MapFeaturesData mapFeaturesData) const
            json["vors"]["result"][i]["ident"] = qUtf8Printable(vor.ident);
            json["vors"]["result"][i]["name"] = qUtf8Printable(vor.name);
            json["vors"]["result"][i]["position"] = coordinatesToJSON(getCoordinates(vor.position));
-           json["vors"]["result"][i]["elevation"] =  vor.getPosition().getAltitude();
+           json["vors"]["result"][i]["elevation"] =  vor.getAltitude();
 
        }
 
@@ -423,7 +422,7 @@ QByteArray JsonInfoBuilder::features(MapFeaturesData mapFeaturesData) const
            json["markers"]["result"][i]["ident"] = qUtf8Printable(marker.ident);
            json["markers"]["result"][i]["type"] = qUtf8Printable(marker.type);
            json["markers"]["result"][i]["position"] = coordinatesToJSON(getCoordinates(marker.position));
-           json["markers"]["result"][i]["elevation"] =  marker.getPosition().getAltitude();
+           json["markers"]["result"][i]["elevation"] =  marker.getAltitude();
 
        }
 
@@ -436,7 +435,7 @@ QByteArray JsonInfoBuilder::features(MapFeaturesData mapFeaturesData) const
            json["waypoints"]["result"][i]["ident"] = qUtf8Printable(waypoint.ident);
            json["waypoints"]["result"][i]["type"] = qUtf8Printable(waypoint.type);
            json["waypoints"]["result"][i]["position"] = coordinatesToJSON(getCoordinates(waypoint.position));
-           json["waypoints"]["result"][i]["elevation"] =  waypoint.getPosition().getAltitude();
+           json["waypoints"]["result"][i]["elevation"] =  waypoint.getAltitude();
 
        }
 
@@ -483,7 +482,7 @@ QByteArray JsonInfoBuilder::feature(MapFeaturesData mapFeaturesData) const
            json["airports"]["result"][i]["ident"] = qUtf8Printable(airport.ident);
            json["airports"]["result"][i]["name"] = qUtf8Printable(airport.name);
            json["airports"]["result"][i]["position"] = coordinatesToJSON(getCoordinates(airport.position));
-           json["airports"]["result"][i]["elevation"] =  airport.getPosition().getAltitude();
+           json["airports"]["result"][i]["elevation"] =  airport.getAltitude();
 
 //           JSON airportJson;
 
@@ -506,7 +505,7 @@ QByteArray JsonInfoBuilder::feature(MapFeaturesData mapFeaturesData) const
            json["ndbs"]["result"][i]["ident"] = qUtf8Printable(ndb.ident);
            json["ndbs"]["result"][i]["name"] = qUtf8Printable(ndb.name);
            json["ndbs"]["result"][i]["position"] = coordinatesToJSON(getCoordinates(ndb.position));
-           json["ndbs"]["result"][i]["elevation"] =  ndb.getPosition().getAltitude();
+           json["ndbs"]["result"][i]["elevation"] =  ndb.getAltitude();
 
        }
 
@@ -519,7 +518,7 @@ QByteArray JsonInfoBuilder::feature(MapFeaturesData mapFeaturesData) const
            json["vors"]["result"][i]["ident"] = qUtf8Printable(vor.ident);
            json["vors"]["result"][i]["name"] = qUtf8Printable(vor.name);
            json["vors"]["result"][i]["position"] = coordinatesToJSON(getCoordinates(vor.position));
-           json["vors"]["result"][i]["elevation"] =  vor.getPosition().getAltitude();
+           json["vors"]["result"][i]["elevation"] =  vor.getAltitude();
 
        }
 
@@ -532,7 +531,7 @@ QByteArray JsonInfoBuilder::feature(MapFeaturesData mapFeaturesData) const
            json["markers"]["result"][i]["ident"] = qUtf8Printable(marker.ident);
            json["markers"]["result"][i]["type"] = qUtf8Printable(marker.type);
            json["markers"]["result"][i]["position"] = coordinatesToJSON(getCoordinates(marker.position));
-           json["markers"]["result"][i]["elevation"] =  marker.getPosition().getAltitude();
+           json["markers"]["result"][i]["elevation"] =  marker.getAltitude();
 
        }
 
@@ -545,7 +544,7 @@ QByteArray JsonInfoBuilder::feature(MapFeaturesData mapFeaturesData) const
            json["waypoints"]["result"][i]["ident"] = qUtf8Printable(waypoint.ident);
            json["waypoints"]["result"][i]["type"] = qUtf8Printable(waypoint.type);
            json["waypoints"]["result"][i]["position"] = coordinatesToJSON(getCoordinates(waypoint.position));
-           json["waypoints"]["result"][i]["elevation"] =  waypoint.getPosition().getAltitude();
+           json["waypoints"]["result"][i]["elevation"] =  waypoint.getAltitude();
 
        }
 

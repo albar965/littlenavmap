@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -53,8 +53,7 @@ public:
    * @param sqlDb database for simulator scenery data
    * @param sqlDbNav for updated navaids
    */
-  MapQuery(atools::sql::SqlDatabase *sqlDb, atools::sql::SqlDatabase *sqlDbNav,
-           atools::sql::SqlDatabase *sqlDbUser);
+  MapQuery(atools::sql::SqlDatabase *sqlDbSim, atools::sql::SqlDatabase *sqlDbNav, atools::sql::SqlDatabase *sqlDbUser);
   ~MapQuery();
 
   MapQuery(const MapQuery& other) = delete;
@@ -80,8 +79,8 @@ public:
   /* Fetch VOR and NDB features if a waypoint in allWaypoints is one of these types.
    * Additionally filter waypoints for airway/track types. */
   void resolveWaypointNavaids(const QList<map::MapWaypoint>& allWaypoints, QHash<int, map::MapWaypoint>& waypoints,
-                              QHash<int, map::MapVor>& vors, QHash<int, map::MapNdb>& ndbs, bool normalWaypoints, bool victorWaypoints,
-                              bool jetWaypoints, bool trackWaypoints) const;
+                              QHash<int, map::MapVor>& vors, QHash<int, map::MapNdb>& ndbs, bool flightplan,
+                              bool normalWaypoints, bool victorWaypoints, bool jetWaypoints, bool trackWaypoints) const;
 
   /* Get map objects by unique database id  */
   /* From nav db, depending on mode */
@@ -167,8 +166,9 @@ public:
    * @param screenDistance maximum distance to coordinates
    * @param result will receive objects based on type
    */
-  void getNearestScreenObjects(const CoordinateConverter& conv, const MapLayer *mapLayer, const QSet<int>& shownDetailAirportIds, bool airportDiagram,
-                               map::MapTypes types, int xs, int ys, int screenDistance,
+  void getNearestScreenObjects(const CoordinateConverter& conv, const MapLayer *mapLayer, const QSet<int>& shownDetailAirportIds,
+                               bool airportDiagram,
+                               map::MapTypes types, map::MapDisplayTypes displayTypes, int xs, int ys, int screenDistance,
                                map::MapResult& result) const;
 
   /* Only VOR, NDB, ILS and waypoints

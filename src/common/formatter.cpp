@@ -117,9 +117,10 @@ QString capNavString(const QString& str)
 
 bool checkCoordinates(QString& message, const QString& text, atools::geo::Pos *pos)
 {
-  atools::geo::Pos readPos = atools::fs::util::fromAnyFormat(text);
+  bool hemisphere = false;
+  atools::geo::Pos readPos = atools::fs::util::fromAnyFormat(text, &hemisphere);
 
-  if(Unit::getUnitCoords() == opts::COORDS_LONX_LATY)
+  if(Unit::getUnitCoords() == opts::COORDS_LONX_LATY && !hemisphere)
     // Swap coordinates for lat lon formats if no hemisphere (N, S, E, W) is given
     atools::fs::util::maybeSwapOrdinates(readPos, text);
 
@@ -261,30 +262,30 @@ QString windInformation(float headWind, float crossWind)
   return windTxt.join(QObject::tr(", "));
 }
 
-QString courseTextFromTrue(float trueCourse, float magvar, bool magBold, bool trueSmall, bool narrow)
+QString courseTextFromTrue(float trueCourse, float magvar, bool magBold, bool trueSmall, bool narrow, bool forceBoth)
 {
   // true to magnetic
-  return courseText(atools::geo::normalizeCourse(trueCourse - magvar), trueCourse, magBold, trueSmall, narrow);
+  return courseText(atools::geo::normalizeCourse(trueCourse - magvar), trueCourse, magBold, trueSmall, narrow, forceBoth);
 }
 
-QString courseTextFromMag(float magCourse, float magvar, bool magBold, bool trueSmall, bool narrow)
+QString courseTextFromMag(float magCourse, float magvar, bool magBold, bool trueSmall, bool narrow, bool forceBoth)
 {
   // magnetic to true
-  return courseText(magCourse, atools::geo::normalizeCourse(magCourse + magvar), magBold, trueSmall, narrow);
+  return courseText(magCourse, atools::geo::normalizeCourse(magCourse + magvar), magBold, trueSmall, narrow, forceBoth);
 }
 
 QString courseSuffix()
 {
-  return OptionData::instance().getFlags2() & opts2::UNIT_TRUE_COURSE ? QObject::tr("°M/T") : QObject::tr("°M");
+  return OptionData::instance().getFlags2().testFlag(opts2::UNIT_TRUE_COURSE) ? QObject::tr("°M/T") : QObject::tr("°M");
 }
 
-QString courseText(float magCourse, float trueCourse, bool magBold, bool trueSmall, bool narrow)
+QString courseText(float magCourse, float trueCourse, bool magBold, bool trueSmall, bool narrow, bool forceBoth)
 {
   QString magStr, trueStr;
   if(magCourse < map::INVALID_COURSE_VALUE / 2.f)
     magStr = QLocale().toString(magCourse, 'f', 0);
 
-  if(OptionData::instance().getFlags2() & opts2::UNIT_TRUE_COURSE)
+  if(forceBoth || OptionData::instance().getFlags2().testFlag(opts2::UNIT_TRUE_COURSE) || magStr.isEmpty())
   {
     if(trueCourse < map::INVALID_COURSE_VALUE / 2.f)
       trueStr = QLocale().toString(trueCourse, 'f', 0);
@@ -324,6 +325,32 @@ QString courseText(float magCourse, float trueCourse, bool magBold, bool trueSma
       return QObject::tr("%1%2°T%3").arg(bold).arg(trueStr).arg(boldEnd);
   }
   return QString();
+}
+
+QString courseTextNarrow(float magCourse, float trueCourse)
+{
+  QString initTrueText, initMagText;
+
+  if(trueCourse < map::INVALID_COURSE_VALUE)
+    initTrueText = QString::number(trueCourse, 'f', 0);
+
+  if(magCourse < map::INVALID_COURSE_VALUE)
+    initMagText = QString::number(magCourse, 'f', 0);
+
+  QString initText;
+  if(!initTrueText.isEmpty() && !initMagText.isEmpty())
+  {
+    if(initTrueText == initMagText)
+      initText = QObject::tr("%1°M/T").arg(initMagText);
+    else
+      initText = QObject::tr("%1°M %2°T").arg(initMagText).arg(initTrueText);
+  }
+  else if(!initMagText.isEmpty())
+    initText = QObject::tr("%1°M").arg(initMagText);
+  else if(!initTrueText.isEmpty())
+    initText = QObject::tr("%1°T").arg(initTrueText);
+
+  return initText;
 }
 
 } // namespace formatter

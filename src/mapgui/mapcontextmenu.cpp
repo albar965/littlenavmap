@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -27,7 +27,7 @@
 #include "gui/actiontextsaver.h"
 #include "options/optiondata.h"
 #include "route/route.h"
-#include "navapp.h"
+#include "app/navapp.h"
 #include "atools.h"
 #include "common/unit.h"
 #include "common/symbolpainter.h"
@@ -188,6 +188,9 @@ void MapContextMenu::buildMainMenu()
   insertHoldMenu(mapMenu);
   insertAirportMsaMenu(mapMenu);
   insertRemoveMarkMenu(mapMenu);
+  mapMenu.addSeparator();
+
+  insertMarkAddonAirportMenu(mapMenu);
   mapMenu.addSeparator();
 
   QMenu *sub = mapMenu.addMenu(QIcon(":/littlenavmap/resources/icons/userdata.svg"), tr("&Userpoints"));
@@ -394,13 +397,13 @@ void MapContextMenu::insertInformationMenu(QMenu& menu)
   for(const map::MapBase *base : index)
   {
     // Check shadowed AI aircraft
-    const map::MapAiAircraft *ai = base->asPtr<map::MapAiAircraft>(map::AIRCRAFT_AI);
+    const map::MapAiAircraft *ai = base->asPtr<map::MapAiAircraft>();
     if(ai != nullptr && ai->getAircraft().isOnlineShadow())
       refs.insert(map::MapObjectRef(onlineDataController->getShadowedOnlineAircraft(ai->getAircraft()).getId(), map::AIRCRAFT_ONLINE));
     else
     {
       // Check shadowed user aircraft
-      const map::MapUserAircraft *user = base->asPtr<map::MapUserAircraft>(map::AIRCRAFT);
+      const map::MapUserAircraft *user = base->asPtr<map::MapUserAircraft>();
       if(user != nullptr && user->getAircraft().isOnlineShadow())
         refs.insert(map::MapObjectRef(onlineDataController->getShadowedOnlineAircraft(user->getAircraft()).getId(), map::AIRCRAFT_ONLINE));
     }
@@ -661,7 +664,7 @@ void MapContextMenu::insertMeasureMenu(QMenu& menu)
     };
 
   insertMenuOrAction(menu, mc::MEASURE, MapResultIndex().
-                     addRef(*result, map::AIRPORT | map::VOR | map::NDB | map::WAYPOINT).
+                     addRef(*result, map::AIRPORT | map::VOR | map::NDB | map::WAYPOINT | map::USERPOINT).
                      sort(DEFAULT_TYPE_SORT, alphaSort),
                      tr("&Measure Distance from %1"), tr("Measure great circle distance on the map"),
                      tr("Ctrl+Click"), QIcon(":/littlenavmap/resources/icons/distancemeasure.svg"), true /* allowNoMapObject */, callback);
@@ -754,7 +757,7 @@ void MapContextMenu::insertAirportMsaMenu(QMenu& menu)
 
   insertMenuOrAction(menu, mc::AIRPORT_MSA, MapResultIndex().addRef(*result, map::AIRPORT_MSA).
                      sort(DEFAULT_TYPE_SORT, alphaSort),
-                     tr("Add &MSA Diagram at %1"), tr("Show an airport MSA sector diagram on the map at a position or a navaid"),
+                     tr("Add &MSA Diagram at %1"), tr("Show a MSA sector diagram on the map at an airport or a navaid"),
                      QString(), QIcon(":/littlenavmap/resources/icons/msa.svg"), false /* allowNoMapObject */, callback);
 }
 
@@ -992,6 +995,23 @@ void MapContextMenu::insertEditRouteUserpointMenu(QMenu& menu)
                      QString(), QIcon(":/littlenavmap/resources/icons/routestring.svg"), false /* allowNoMapObject */, callback);
 }
 
+void MapContextMenu::insertMarkAddonAirportMenu(QMenu& menu)
+{
+  ActionCallback callback =
+    [ = ](const map::MapBase *base, QString&, QIcon&, bool& disable, bool) -> void
+    {
+      disable = !visibleOnMap || base == nullptr;
+    };
+
+  insertMenuOrAction(menu, mc::MARKAIRPORTADDON,
+                     MapResultIndex().
+                     addRef(*result, map::AIRPORT).
+                     sort(DEFAULT_TYPE_SORT, alphaSort),
+                     tr("&Mark %1 as Add-on"), tr("Create a userpoint highlighting the airport as add-on"),
+                     QString(), QIcon(":/littlenavmap/resources/icons/airportaddon.svg"), false /* allowNoMapObject */,
+                     callback);
+}
+
 void MapContextMenu::insertUserpointAddMenu(QMenu& menu)
 {
   ActionCallback callback =
@@ -1080,17 +1100,32 @@ void MapContextMenu::insertShowInSearchMenu(QMenu& menu)
                             {
                               disable = !visibleOnMap || base == nullptr;
 
+#ifdef DEBUG_INFORMATION
+                              if(base != nullptr)
+                                qDebug() << Q_FUNC_INFO << map::mapObjectTypeToString(base->getType());
+#endif
+
                               if(base != nullptr && base->objType == map::AIRCRAFT)
                               {
                                 // Add shadowed online aircraft for user
                                 const map::MapUserAircraft *userAircraft = base->asPtr<map::MapUserAircraft>();
-                                if(userAircraft != nullptr && userAircraft->getAircraft().isOnlineShadow())
+                                if(userAircraft != nullptr)
                                 {
-                                  atools::fs::sc::SimConnectAircraft shadowedOnlineAircraft =
-                                    NavApp::getOnlinedataController()->getShadowedOnlineAircraft(userAircraft->getAircraft());
+                                  if(userAircraft->getAircraft().isOnlineShadow())
+                                  {
+                                    atools::fs::sc::SimConnectAircraft shadowedOnlineAircraft =
+                                      NavApp::getOnlinedataController()->getShadowedOnlineAircraft(userAircraft->getAircraft());
 
-                                  if(shadowedOnlineAircraft.isValid())
-                                    text = tr("&Show %1 in Search").arg(map::aircraftTextShort(shadowedOnlineAircraft));
+                                    if(shadowedOnlineAircraft.isValid())
+                                      text = tr("&Show %1 in Search").arg(map::aircraftTextShort(shadowedOnlineAircraft));
+                                    else
+                                      disable = true;
+                                  }
+                                  else
+                                    disable = true;
+
+                                  if(disable)
+                                    text = tr("&Show in Search");
                                 }
                               }
                             };
@@ -1135,7 +1170,7 @@ bool MapContextMenu::exec(QPoint menuPos, QPoint point)
   }
 
   // Get objects near position =============================================================
-  screenIndex->getAllNearest(point.x(), point.y(), screenSearchDist, *result,
+  screenIndex->getAllNearest(point, screenSearchDist, *result,
                              map::QUERY_MARK | map::QUERY_PREVIEW_PROC_POINTS | map::QUERY_PROC_RECOMMENDED);
 
   result->moveOnlineAirspacesToFront();

@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -18,8 +18,6 @@
 #include "common/mapresult.h"
 
 #include "geo/calculations.h"
-#include "options/optiondata.h"
-#include "common/maptools.h"
 
 namespace map {
 
@@ -69,6 +67,9 @@ MapResult& MapResult::clear(const MapTypes& types)
 
   if(types.testFlag(map::RUNWAYEND))
     runwayEnds.clear();
+
+  if(types.testFlag(map::RUNWAY))
+    runways.clear();
 
   if(types.testFlag(map::ILS))
     ils.clear();
@@ -189,6 +190,9 @@ MapResult& MapResult::clearAllButFirst(const MapTypes& types)
 
   if(types.testFlag(map::RUNWAYEND))
     clearAllButFirst(runwayEnds);
+
+  if(types.testFlag(map::RUNWAY))
+    clearAllButFirst(runways);
 
   if(types.testFlag(map::ILS))
     clearAllButFirst(ils);
@@ -391,6 +395,7 @@ void MapResult::removeInvalid()
 {
   removeInvalid(airports, &airportIds);
   removeInvalid(runwayEnds);
+  removeInvalid(runways);
   removeInvalid(towers);
   removeInvalid(parkings);
   removeInvalid(helipads);
@@ -458,6 +463,8 @@ const atools::geo::Pos& MapResult::getPosition(const std::initializer_list<MapTy
         return airways.constFirst().getPosition();
       else if(type == map::RUNWAYEND)
         return runwayEnds.constFirst().getPosition();
+      else if(type == map::RUNWAY)
+        return runways.constFirst().getPosition();
       else if(type == map::ILS)
         return ils.constFirst().getPosition();
       else if(type == map::HOLDING)
@@ -514,6 +521,8 @@ QString MapResult::getIdent(const std::initializer_list<MapTypes>& types) const
         return airways.constFirst().name;
       else if(type == map::RUNWAYEND)
         return runwayEnds.constFirst().name;
+      else if(type == map::RUNWAY)
+        return runways.constFirst().primaryName + "/" + runways.constFirst().secondaryName;
       else if(type == map::ILS)
         return ils.constFirst().ident;
       else if(type == map::HOLDING)
@@ -599,6 +608,8 @@ bool MapResult::getIdAndType(int& id, MapTypes& type, const std::initializer_lis
         id = airways.constFirst().getId();
       else if(t == map::RUNWAYEND)
         id = runwayEnds.constFirst().getId();
+      else if(t == map::RUNWAY)
+        id = runways.constFirst().getId();
       else if(t == map::ILS)
         id = ils.constFirst().getId();
       else if(t == map::HOLDING)
@@ -658,6 +669,8 @@ MapResult& MapResult::addFromMapBase(const MapBase *base)
       airways.append(base->asObj<map::MapAirway>());
     else if(base->getType().testFlag(map::RUNWAYEND))
       runwayEnds.append(base->asObj<map::MapRunwayEnd>());
+    else if(base->getType().testFlag(map::RUNWAY))
+      runways.append(base->asObj<map::MapRunway>());
     else if(base->getType().testFlag(map::ILS))
       ils.append(base->asObj<map::MapIls>());
     else if(base->getType().testFlag(map::HOLDING))
@@ -707,6 +720,7 @@ int MapResult::size(const MapTypes& types) const
   totalSize += types.testFlag(map::NDB) ? ndbs.size() : 0;
   totalSize += types.testFlag(map::AIRWAY) ? airways.size() : 0;
   totalSize += types.testFlag(map::RUNWAYEND) ? runwayEnds.size() : 0;
+  totalSize += types.testFlag(map::RUNWAY) ? runways.size() : 0;
   totalSize += types.testFlag(map::ILS) ? ils.size() : 0;
   totalSize += types.testFlag(map::HOLDING) ? holdings.size() : 0;
   totalSize += types.testFlag(map::AIRSPACE) ? airspaces.size() : 0;
@@ -749,6 +763,13 @@ QDebug operator<<(QDebug out, const map::MapResult& record)
     out << "RunwayEnd[";
     for(const map::MapRunwayEnd& obj :  record.runwayEnds)
       out << obj.name << ",";
+    out << "]";
+  }
+  if(!record.runways.isEmpty())
+  {
+    out << "Runway[";
+    for(const map::MapRunway& obj :  record.runways)
+      out << obj.primaryName << "/" << obj.secondaryName << ",";
     out << "]";
   }
   if(!record.parkings.isEmpty())
@@ -848,196 +869,77 @@ QDebug operator<<(QDebug out, const map::MapResult& record)
 
 MapResultIndex& MapResultIndex::add(const MapResult& resultParam, const MapTypes& types)
 {
-  if(types.testFlag(AIRPORT))
-  {
-    result.airports.append(resultParam.airports);
-    addAll(result.airports);
-  }
-  if(types.testFlag(AIRPORT_MSA))
-  {
-    result.airportMsa.append(resultParam.airportMsa);
-    addAll(result.airportMsa);
-  }
-  if(types.testFlag(RUNWAYEND))
-  {
-    result.runwayEnds.append(resultParam.runwayEnds);
-    addAll(result.runwayEnds);
-  }
-  if(types.testFlag(PARKING))
-  {
-    result.parkings.append(resultParam.parkings);
-    addAll(result.parkings);
-  }
-  if(types.testFlag(HELIPAD))
-  {
-    result.helipads.append(resultParam.helipads);
-    addAll(result.helipads);
-  }
-  if(types.testFlag(WAYPOINT))
-  {
-    result.waypoints.append(resultParam.waypoints);
-    addAll(result.waypoints);
-  }
-  if(types.testFlag(VOR))
-  {
-    result.vors.append(resultParam.vors);
-    addAll(result.vors);
-  }
-  if(types.testFlag(NDB))
-  {
-    result.ndbs.append(resultParam.ndbs);
-    addAll(result.ndbs);
-  }
-  if(types.testFlag(MARKER))
-  {
-    result.markers.append(resultParam.markers);
-    addAll(result.markers);
-  }
-  if(types.testFlag(ILS))
-  {
-    result.ils.append(resultParam.ils);
-    addAll(result.ils);
-  }
-  if(types.testFlag(HOLDING))
-  {
-    result.holdings.append(resultParam.holdings);
-    addAll(result.holdings);
-  }
-  if(types.testFlag(AIRWAY))
-  {
-    result.airways.append(resultParam.airways);
-    addAll(result.airways);
-  }
-  if(types.testFlag(AIRSPACE))
-  {
-    result.airspaces.append(resultParam.airspaces);
-    addAll(result.airspaces);
-  }
-  if(types.testFlag(USERPOINTROUTE))
-  {
-    result.userpointsRoute.append(resultParam.userpointsRoute);
-    addAll(result.userpointsRoute);
-  }
-  if(types.testFlag(USERPOINT))
-  {
-    result.userpoints.append(resultParam.userpoints);
-    addAll(result.userpoints);
-  }
-  if(types.testFlag(LOGBOOK))
-  {
-    result.logbookEntries.append(resultParam.logbookEntries);
-    addAll(result.logbookEntries);
-  }
-  if(types.testFlag(PROCEDURE_POINT))
-  {
-    result.procPoints.append(resultParam.procPoints);
-    addAll(result.procPoints);
-  }
+    addToIndexRangeIf(resultParam.airports, result.airports, types);
+    addToIndexRangeIf(resultParam.airportMsa, result.airportMsa, types);
+    addToIndexRangeIf(resultParam.runwayEnds, result.runwayEnds, types);
+    addToIndexRangeIf(resultParam.runways, result.runways, types);
+    addToIndexRangeIf(resultParam.parkings, result.parkings, types);
+    addToIndexRangeIf(resultParam.helipads, result.helipads, types);
+    addToIndexRangeIf(resultParam.waypoints, result.waypoints, types);
+    addToIndexRangeIf(resultParam.vors, result.vors, types);
+    addToIndexRangeIf(resultParam.ndbs, result.ndbs, types);
+    addToIndexRangeIf(resultParam.markers, result.markers, types);
+    addToIndexRangeIf(resultParam.ils, result.ils, types);
+    addToIndexRangeIf(resultParam.holdings, result.holdings, types);
+    addToIndexRangeIf(resultParam.airways, result.airways, types);
+    addToIndexRangeIf(resultParam.airspaces, result.airspaces, types);
+    addToIndexRangeIf(resultParam.userpointsRoute, result.userpointsRoute, types);
+    addToIndexRangeIf(resultParam.userpoints, result.userpoints, types);
+    addToIndexRangeIf(resultParam.logbookEntries, result.logbookEntries, types);
+    addToIndexRangeIf(resultParam.procPoints, result.procPoints, types);
 
   // Aircraft ===========
-  if(types.testFlag(AIRCRAFT))
+  if(types.testFlag(AIRCRAFT) && resultParam.userAircraft.isValid())
   {
     result.userAircraft = resultParam.userAircraft;
-    if(result.userAircraft.isValid())
-      append(&result.userAircraft);
+    append(&result.userAircraft);
   }
-  if(types.testFlag(AIRCRAFT_AI))
-  {
-    result.aiAircraft.append(resultParam.aiAircraft);
-    addAll(result.aiAircraft);
-  }
-  if(types.testFlag(AIRCRAFT_ONLINE))
-  {
-    result.onlineAircraft.append(resultParam.onlineAircraft);
-    addAll(result.onlineAircraft);
-  }
+  addToIndexRangeIf(resultParam.aiAircraft, result.aiAircraft, types);
+  addToIndexRangeIf(resultParam.onlineAircraft, result.onlineAircraft, types);
 
   // Markers ========================
-  if(types.testFlag(MARK_RANGE))
-  {
-    result.rangeMarks.append(resultParam.rangeMarks);
-    addAll(result.rangeMarks);
-  }
-  if(types.testFlag(MARK_DISTANCE))
-  {
-    result.distanceMarks.append(resultParam.distanceMarks);
-    addAll(result.distanceMarks);
-  }
-  if(types.testFlag(MARK_HOLDING))
-  {
-    result.holdingMarks.append(resultParam.holdingMarks);
-    addAll(result.holdingMarks);
-  }
-  if(types.testFlag(MARK_PATTERNS))
-  {
-    result.patternMarks.append(resultParam.patternMarks);
-    addAll(result.patternMarks);
-  }
-  if(types.testFlag(MARK_MSA))
-  {
-    result.msaMarks.append(resultParam.msaMarks);
-    addAll(result.msaMarks);
-  }
+  addToIndexRangeIf(resultParam.rangeMarks, result.rangeMarks, types);
+  addToIndexRangeIf(resultParam.distanceMarks, result.distanceMarks, types);
+  addToIndexRangeIf(resultParam.holdingMarks, result.holdingMarks, types);
+  addToIndexRangeIf(resultParam.patternMarks, result.patternMarks, types);
+  addToIndexRangeIf(resultParam.msaMarks, result.msaMarks, types);
 
   return *this;
 }
 
 MapResultIndex& MapResultIndex::addRef(const MapResult& resultParam, const MapTypes& types)
 {
-  if(types.testFlag(AIRPORT))
-    addAll(resultParam.airports);
-  if(types.testFlag(AIRPORT_MSA))
-    addAll(resultParam.airportMsa);
-  if(types.testFlag(RUNWAYEND))
-    addAll(resultParam.runwayEnds);
-  if(types.testFlag(PARKING))
-    addAll(resultParam.parkings);
-  if(types.testFlag(HELIPAD))
-    addAll(resultParam.helipads);
-  if(types.testFlag(WAYPOINT))
-    addAll(resultParam.waypoints);
-  if(types.testFlag(VOR))
-    addAll(resultParam.vors);
-  if(types.testFlag(NDB))
-    addAll(resultParam.ndbs);
-  if(types.testFlag(MARKER))
-    addAll(resultParam.markers);
-  if(types.testFlag(ILS))
-    addAll(resultParam.ils);
-  if(types.testFlag(HOLDING))
-    addAll(resultParam.holdings);
-  if(types.testFlag(AIRWAY))
-    addAll(resultParam.airways);
-  if(types.testFlag(AIRSPACE))
-    addAll(resultParam.airspaces);
-  if(types.testFlag(USERPOINTROUTE))
-    addAll(resultParam.userpointsRoute);
-  if(types.testFlag(USERPOINT))
-    addAll(resultParam.userpoints);
-  if(types.testFlag(LOGBOOK))
-    addAll(resultParam.logbookEntries);
-  if(types.testFlag(PROCEDURE_POINT))
-    addAll(resultParam.procPoints);
+    addToIndexIf(resultParam.airports, types);
+    addToIndexIf(resultParam.airportMsa, types);
+    addToIndexIf(resultParam.runwayEnds, types);
+    addToIndexIf(resultParam.runways, types);
+    addToIndexIf(resultParam.parkings, types);
+    addToIndexIf(resultParam.helipads, types);
+    addToIndexIf(resultParam.waypoints, types);
+    addToIndexIf(resultParam.vors, types);
+    addToIndexIf(resultParam.ndbs, types);
+    addToIndexIf(resultParam.markers, types);
+    addToIndexIf(resultParam.ils, types);
+    addToIndexIf(resultParam.holdings, types);
+    addToIndexIf(resultParam.airways, types);
+    addToIndexIf(resultParam.airspaces, types);
+    addToIndexIf(resultParam.userpointsRoute, types);
+    addToIndexIf(resultParam.userpoints, types);
+    addToIndexIf(resultParam.logbookEntries, types);
+    addToIndexIf(resultParam.procPoints, types);
 
   // Aircraft ===========
   if(types.testFlag(AIRCRAFT) && resultParam.userAircraft.isValid())
     append(&resultParam.userAircraft);
+  addToIndexIf(resultParam.aiAircraft, types);
+  addToIndexIf(resultParam.onlineAircraft, types);
 
-  if(types.testFlag(AIRCRAFT_AI))
-    addAll(resultParam.aiAircraft);
-  if(types.testFlag(AIRCRAFT_ONLINE))
-    addAll(resultParam.onlineAircraft);
-
-  if(types.testFlag(MARK_RANGE))
-    addAll(resultParam.rangeMarks);
-  if(types.testFlag(MARK_DISTANCE))
-    addAll(resultParam.distanceMarks);
-  if(types.testFlag(MARK_HOLDING))
-    addAll(resultParam.holdingMarks);
-  if(types.testFlag(MARK_PATTERNS))
-    addAll(resultParam.patternMarks);
-  if(types.testFlag(MARK_MSA))
-    addAll(resultParam.msaMarks);
+  // User features ===========
+  addToIndexIf(resultParam.rangeMarks, types);
+  addToIndexIf(resultParam.distanceMarks, types);
+  addToIndexIf(resultParam.holdingMarks, types);
+  addToIndexIf(resultParam.patternMarks, types);
+  addToIndexIf(resultParam.msaMarks, types);
 
   return *this;
 }
@@ -1077,16 +979,40 @@ MapResultIndex& MapResultIndex::sort(const QVector<MapTypes>& types, const MapRe
 
 MapResultIndex& MapResultIndex::sort(const atools::geo::Pos& pos, bool sortNearToFar)
 {
-  if(isEmpty() || !pos.isValid())
+  if(size() <= 1 || !pos.isValid())
     // Nothing to sort
     return *this;
 
-  std::sort(begin(), end(),
-            [pos, sortNearToFar](const MapBase *obj1, const MapBase *obj2) -> bool
+  std::sort(begin(), end(), [pos, sortNearToFar](const MapBase *obj1, const MapBase *obj2) -> bool
     {
-      bool res = obj1->getPosition().distanceMeterTo(pos) < obj2->getPosition().distanceMeterTo(pos);
-      return sortNearToFar ? res : !res;
+      float dist1, dist2;
+      atools::geo::LineDistance lineDist;
+
+      const map::MapRunway *rw = obj1->asPtr<map::MapRunway>();
+      if(rw != nullptr)
+      {
+        // Distance to runway line
+        pos.distanceMeterToLine(rw->primaryPosition, rw->secondaryPosition, lineDist);
+        dist1 = std::abs(lineDist.distance);
+      }
+      else
+        // Distance to center position
+        dist1 = obj1->getPosition().distanceMeterTo(pos);
+
+      rw = obj2->asPtr<map::MapRunway>();
+      if(rw != nullptr)
+      {
+        // Distance to runway line
+        pos.distanceMeterToLine(rw->primaryPosition, rw->secondaryPosition, lineDist);
+        dist2 = std::abs(lineDist.distance);
+      }
+      else
+        // Distance to center position
+        dist2 = obj2->getPosition().distanceMeterTo(pos);
+
+      return sortNearToFar ? dist1<dist2 : dist1> dist2;
     });
+
   return *this;
 }
 

@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -63,6 +63,8 @@ enum RouteStringOption
 
   REPORT = 1 << 22, /* Add final report and other information message before all other messages on success */
 
+  ALT_AND_SPEED_METRIC = 1 << 23, /* Allow altitude and speed restriction in metric if set in user interface. Only in GUI. */
+
   // Next is 23
 
   DEFAULT_OPTIONS = START_AND_DEST | ALT_AND_SPEED | SID_STAR | ALTERNATES | READ_ALTERNATES | REPORT,
@@ -78,8 +80,12 @@ enum RouteStringOption
 Q_DECLARE_FLAGS(RouteStringOptions, RouteStringOption);
 Q_DECLARE_OPERATORS_FOR_FLAGS(rs::RouteStringOptions);
 
-/* Remove all invalid characters and simplify string */
-QStringList cleanRouteString(const QString& string);
+/* Remove all invalid characters and simplify string. Extracts all characters until the next empty line. */
+QStringList cleanRouteStringList(const QString& string);
+QString cleanRouteString(const QString& string);
+
+/* Removes invalid characters and converts to upper case */
+QString cleanRouteStringLine(const QString& line);
 
 } // namespace rs
 

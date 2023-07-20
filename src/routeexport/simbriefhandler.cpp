@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2022 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -23,7 +23,7 @@
 #include "gui/dialog.h"
 #include "gui/helphandler.h"
 #include "gui/mainwindow.h"
-#include "navapp.h"
+#include "app/navapp.h"
 #include "route/route.h"
 #include "routeexport/fetchroutedialog.h"
 #include "routestring/routestringwriter.h"
@@ -58,6 +58,7 @@ void SimBriefHandler::sendRouteToSimBrief()
   const static atools::gui::DialogButtonList BUTTONS({
     {QString(), QMessageBox::Cancel},
     {tr("&Export"), QMessageBox::Yes},
+    {tr("&Help"), QMessageBox::Help},
     {tr("&Copy web address to clipboard"), QMessageBox::YesToAll}
   });
 
@@ -67,7 +68,7 @@ void SimBriefHandler::sendRouteToSimBrief()
                              "<tr><td>Cruise altitide:</td><td>%2</td></tr>"
                                "<tr><td>Aircraft type:</td><td>%3</td></tr></tbody></table>"
                                  "<p>Open your web browser and log into SimBrief before exporting the flight plan.</p>").
-                    arg(routeString).arg(Unit::altFeet(route.getCruisingAltitudeFeet())).arg(aircraftType);
+                    arg(routeString).arg(Unit::altFeet(route.getCruiseAltitudeFt())).arg(aircraftType);
 
   int result = atools::gui::Dialog(mainWindow).showQuestionMsgBox(lnm::ACTIONS_SHOW_SEND_SIMBRIEF, message,
                                                                   tr("Do not &show this dialog again and "
@@ -77,7 +78,9 @@ void SimBriefHandler::sendRouteToSimBrief()
   // Build URL ================================
   QUrl url = sendRouteUrl(route.getDepartureAirportLeg().getIdent(), route.getDestinationAirportLeg().getIdent(),
                           route.getAlternateIdents().value(0), // Send only first alternate
-                          routeString, aircraftType, route.getCruisingAltitudeFeet());
+                          routeString, aircraftType, route.getCruiseAltitudeFt());
+
+  qDebug() << Q_FUNC_INFO << "Encoded full URL" << url.toEncoded();
 
   if(result == QMessageBox::Yes)
   {
@@ -89,6 +92,8 @@ void SimBriefHandler::sendRouteToSimBrief()
     QApplication::clipboard()->setText(url.toEncoded());
     NavApp::setStatusMessage(QString(tr("SimBrief address copied to clipboard.")));
   }
+  else if(result == QMessageBox::Help)
+    atools::gui::HelpHandler::openHelpUrlWeb(mainWindow, lnm::helpOnlineUrl + "LOADSIMBRIEF.html", lnm::helpLanguageOnline());
 }
 
 QUrl SimBriefHandler::sendRouteUrl(const QString& departure, const QString& destination, const QString& alternate, const QString& route,

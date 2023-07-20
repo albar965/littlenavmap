@@ -49,36 +49,3 @@ void RouteCommand::redo()
   else
     controller->changeRouteRedo(planAfterChange);
 }
-
-int RouteCommand::id() const
-{
-  return type;
-}
-
-bool RouteCommand::mergeWith(const QUndoCommand *other)
-{
-  if(other->id() != id())
-    return false;
-
-  const RouteCommand *newCmd = dynamic_cast<const RouteCommand *>(other);
-  if(newCmd == nullptr)
-    return false;
-
-  switch(type)
-  {
-    case rctype::EDIT:
-      return false;
-
-    case rctype::REVERSE:
-    case rctype::DELETE:
-    case rctype::MOVE:
-    case rctype::ALTITUDE:
-    case rctype::REMARKS:
-      // Merge - overwrite the flight plan after the change
-      planAfterChange = newCmd->planAfterChange;
-      // Let controller know about the merge so the undo index can be adapted
-      controller->undoMerge();
-      return true;
-  }
-  return false;
-}

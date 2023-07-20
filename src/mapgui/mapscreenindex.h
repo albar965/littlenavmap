@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -105,11 +105,11 @@ public:
    * @param xs/ys Screen coordinates.
    * @param maxDistance maximum distance to xs/ys
    */
-  void getAllNearest(int xs, int ys, int maxDistance, map::MapResult& result, map::MapObjectQueryTypes types) const;
+  void getAllNearest(const QPoint& point, int maxDistance, map::MapResult& result, map::MapObjectQueryTypes types) const;
 
   /* Get nearest map features (only the endpoint)
    * or -1 if nothing was found near the cursor position. Index points into the list of getDistanceMarks */
-  int getNearestDistanceMarkId(int xs, int ys, int maxDistance) const;
+  int getNearestDistanceMarkId(int xs, int ys, int maxDistance, bool *origin = nullptr) const;
   int getNearestRangeMarkId(int xs, int ys, int maxDistance) const;
   int getNearestTrafficPatternId(int xs, int ys, int maxDistance) const;
   int getNearestHoldId(int xs, int ys, int maxDistance) const;
@@ -163,10 +163,7 @@ public:
     return procedureHighlights;
   }
 
-  void setProcedureHighlights(const QVector<proc::MapProcedureLegs>& value)
-  {
-    procedureHighlights = value;
-  }
+  void setProcedureHighlights(const QVector<proc::MapProcedureLegs>& value);
 
   /* Single procedure from search selection */
   const proc::MapProcedureLegs& getProcedureHighlight() const
@@ -194,6 +191,12 @@ public:
   const QHash<int, map::DistanceMarker>& getDistanceMarks() const
   {
     return distanceMarks;
+  }
+
+  /* Get for editing */
+  map::DistanceMarker& getDistanceMark(int id)
+  {
+    return distanceMarks[id];
   }
 
   /* Airfield traffic patterns. */
@@ -230,8 +233,11 @@ public:
 
   void clearAllMarkers(map::MapTypes types);
 
-  /* Update measurement lines */
-  void updateDistanceMarkerTo(int id, const atools::geo::Pos& pos);
+  /* Update measurement lines positions */
+  void updateDistanceMarkerFromPos(int id, const atools::geo::Pos& pos);
+  void updateDistanceMarkerToPos(int id, const atools::geo::Pos& pos);
+
+  /* Update measurement lines all fields except id where the parameter is used. */
   void updateDistanceMarker(int id, const map::DistanceMarker& marker);
 
   // ====================

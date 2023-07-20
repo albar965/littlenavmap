@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -21,8 +21,7 @@
 #include "common/unit.h"
 #include "fs/util/fsutil.h"
 #include "geo/calculations.h"
-#include "navapp.h"
-#include "options/optiondata.h"
+#include "app/navapp.h"
 #include "query/mapquery.h"
 #include "route/route.h"
 
@@ -379,7 +378,7 @@ QString altRestrictionText(const MapAltRestriction& restriction)
       case proc::MapAltRestriction::ILS_AT_OR_ABOVE:
         return QObject::tr("ILS GS %1").arg(Unit::altFeet(restriction.alt1));
 
-      case proc::MapAltRestriction::NONE:
+      case proc::MapAltRestriction::NO_ALT_RESTR:
         return QString();
 
       case proc::MapAltRestriction::AT:
@@ -410,7 +409,7 @@ QString altRestrictionTextNarrow(const proc::MapAltRestriction& altRestriction)
       retval = QObject::tr("GS") + Unit::altFeet(altRestriction.alt1, true, true);
       break;
 
-    case proc::MapAltRestriction::NONE:
+    case proc::MapAltRestriction::NO_ALT_RESTR:
       break;
 
     case proc::MapAltRestriction::AT:
@@ -442,7 +441,7 @@ QString altRestrictionTextShort(const proc::MapAltRestriction& altRestriction)
     case proc::MapAltRestriction::ILS_AT_OR_ABOVE:
       retval = QObject::tr("GS ") + Unit::altFeet(altRestriction.alt1, false, false);
       break;
-    case proc::MapAltRestriction::NONE:
+    case proc::MapAltRestriction::NO_ALT_RESTR:
       break;
     case proc::MapAltRestriction::AT:
       retval = Unit::altFeet(altRestriction.alt1, false, false);
@@ -465,7 +464,7 @@ QString speedRestrictionTextShort(const proc::MapSpeedRestriction& speedRestrict
 {
   switch(speedRestriction.descriptor)
   {
-    case proc::MapSpeedRestriction::NONE:
+    case proc::MapSpeedRestriction::NO_SPD_RESTR:
       break;
 
     case proc::MapSpeedRestriction::AT:
@@ -484,7 +483,7 @@ QString speedRestrictionText(const proc::MapSpeedRestriction& speedRestriction)
 {
   switch(speedRestriction.descriptor)
   {
-    case proc::MapSpeedRestriction::NONE:
+    case proc::MapSpeedRestriction::NO_SPD_RESTR:
       break;
 
     case proc::MapSpeedRestriction::AT:
@@ -503,7 +502,7 @@ QString speedRestrictionTextNarrow(const proc::MapSpeedRestriction& speedRestric
 {
   switch(speedRestriction.descriptor)
   {
-    case proc::MapSpeedRestriction::NONE:
+    case proc::MapSpeedRestriction::NO_SPD_RESTR:
       break;
 
     case proc::MapSpeedRestriction::AT:
@@ -524,7 +523,7 @@ QDebug operator<<(QDebug out, const proc::MapProcedureRef& ref)
   out.noquote().nospace() << "MapProcedureRef("
                           << "airportId " << ref.airportId
                           << ", runwayEndId " << ref.runwayEndId
-                          << ", approachId " << ref.approachId
+                          << ", approachId " << ref.procedureId
                           << ", transitionId " << ref.transitionId
                           << ", legId " << ref.legId
                           << ", mapType " << ref.mapType << ")";
@@ -544,17 +543,17 @@ QDebug operator<<(QDebug out, const MapProcedureLegs& legs)
   out << "ProcedureLeg =====" << endl;
   out << "maptype" << legs.mapType << endl;
 
-  out << "approachDistance" << legs.approachDistance
+  out << "approachDistance" << legs.procedureDistance
       << "transitionDistance" << legs.transitionDistance
       << "missedDistance" << legs.missedDistance << endl;
 
-  out << "approachType" << legs.approachType
-      << "approachSuffix" << legs.approachSuffix
+  out << "approachType" << legs.type
+      << "approachSuffix" << legs.suffix
       << "approachFixIdent" << legs.approachFixIdent
-      << "approachArincName" << legs.approachArincName
+      << "approachArincName" << legs.arincName
       << "transitionType" << legs.transitionType
       << "transitionFixIdent" << legs.transitionFixIdent
-      << "procedureRunway" << legs.procedureRunway
+      << "procedureRunway" << legs.runway
       << "runwayEnd.name" << legs.runwayEnd.name << endl;
 
   out << "===== Legs =====" << endl;
@@ -568,7 +567,7 @@ QDebug operator<<(QDebug out, const MapProcedureLeg& leg)
 {
   QDebugStateSaver saver(out);
   out << "ProcedureLeg =============" << endl;
-  out << "approachId" << leg.approachId
+  out << "approachId" << leg.procedureId
       << "transitionId" << leg.transitionId
       << "legId" << leg.legId << endl
       << "type" << leg.type
@@ -608,6 +607,12 @@ QDebug operator<<(QDebug out, const MapProcedureLeg& leg)
   out << "speedDescriptor" << leg.speedRestriction.descriptor
       << "speed" << leg.speedRestriction.speed << endl;
   return out;
+}
+
+float MapProcedureLeg::calculatedMagCourse() const
+{
+  return calculatedTrueCourse < map::INVALID_COURSE_VALUE ?
+         atools::geo::normalizeCourse(calculatedTrueCourse - magvar) : map::INVALID_COURSE_VALUE;
 }
 
 bool MapProcedureLeg::hasErrorRef() const
@@ -654,6 +659,11 @@ bool MapProcedureLeg::isFinalEndpointFix() const
   return proc::specialType(arincDescrCode) == proc::FEP;
 }
 
+bool MapProcedureLeg::isMissedApproachPoint() const
+{
+  return proc::specialType(arincDescrCode) == proc::MAP;
+}
+
 bool MapProcedureLeg::isHold() const
 {
   return atools::contains(type, {proc::HOLD_TO_ALTITUDE, proc::HOLD_TO_FIX, proc::HOLD_TO_MANUAL_TERMINATION});
@@ -693,7 +703,7 @@ proc::LegSpecialType specialType(const QString& arincDescrCode)
   return proc::NONE;
 }
 
-bool MapProcedureLeg::noCourseDisplay() const
+bool MapProcedureLeg::noCalcCourseDisplay() const
 {
   return isCircular() || type == proc::DIRECT_TO_FIX;
 }
@@ -730,8 +740,8 @@ MapProcedureLeg& MapProcedureLegs::atInternal(int i)
 {
   if(isDeparture())
   {
-    if(i < approachLegs.size())
-      return approachLegs[apprIdx(i)];
+    if(i < procedureLegs.size())
+      return procedureLegs[apprIdx(i)];
     else
       return transitionLegs[transIdx(i)];
   }
@@ -740,7 +750,7 @@ MapProcedureLeg& MapProcedureLegs::atInternal(int i)
     if(i < transitionLegs.size())
       return transitionLegs[transIdx(i)];
     else
-      return approachLegs[apprIdx(i)];
+      return procedureLegs[apprIdx(i)];
   }
 }
 
@@ -748,8 +758,8 @@ const MapProcedureLeg& MapProcedureLegs::atInternalConst(int i) const
 {
   if(isDeparture())
   {
-    if(i < approachLegs.size())
-      return approachLegs[apprIdx(i)];
+    if(i < procedureLegs.size())
+      return procedureLegs[apprIdx(i)];
     else
       return transitionLegs[transIdx(i)];
   }
@@ -758,7 +768,7 @@ const MapProcedureLeg& MapProcedureLegs::atInternalConst(int i) const
     if(i < transitionLegs.size())
       return transitionLegs[transIdx(i)];
     else
-      return approachLegs[apprIdx(i)];
+      return procedureLegs[apprIdx(i)];
   }
 }
 
@@ -769,17 +779,17 @@ int MapProcedureLegs::apprIdx(int i) const
 
 int MapProcedureLegs::transIdx(int i) const
 {
-  return isDeparture() ? i - approachLegs.size() : i;
+  return isDeparture() ? i - procedureLegs.size() : i;
 }
 
-void MapProcedureLegs::clearApproach()
+void MapProcedureLegs::clearProcedure()
 {
   mapType &= ~proc::PROCEDURE_APPROACH;
-  approachLegs.clear();
-  approachDistance = missedDistance = 0.f;
-  approachType.clear();
-  approachSuffix.clear();
-  approachArincName.clear();
+  procedureLegs.clear();
+  procedureDistance = missedDistance = 0.f;
+  type.clear();
+  suffix.clear();
+  arincName.clear();
   approachFixIdent.clear();
   runwayEnd = map::MapRunwayEnd();
 }
@@ -805,17 +815,17 @@ int MapProcedureLegs::indexForLeg(const proc::MapProcedureLeg& leg) const
 
 bool MapProcedureLegs::hasSidOrStarParallelRunways() const
 {
-  return atools::fs::util::hasSidStarParallelRunways(approachArincName);
+  return atools::fs::util::hasSidStarParallelRunways(arincName);
 }
 
 bool MapProcedureLegs::hasSidOrStarAllRunways() const
 {
-  return atools::fs::util::hasSidStarAllRunways(approachArincName);
+  return atools::fs::util::hasSidStarAllRunways(arincName);
 }
 
-const MapProcedureLeg *proc::MapProcedureLegs::approachLegById(int legId) const
+const MapProcedureLeg *proc::MapProcedureLegs::procedureLegById(int legId) const
 {
-  for(const MapProcedureLeg& leg : approachLegs)
+  for(const MapProcedureLeg& leg : procedureLegs)
   {
     if(leg.legId == legId)
       return &leg;
@@ -825,8 +835,8 @@ const MapProcedureLeg *proc::MapProcedureLegs::approachLegById(int legId) const
 
 QString procedureLegCourse(const MapProcedureLeg& leg)
 {
-  if(!leg.noCourseDisplay() && leg.calculatedDistance > 0.f && leg.calculatedTrueCourse < map::INVALID_COURSE_VALUE)
-    return QLocale().toString(atools::geo::normalizeCourse(leg.calculatedTrueCourse - leg.magvar), 'f', 0);
+  if(!leg.noCalcCourseDisplay() && leg.calculatedDistance > 0.f && leg.calculatedTrueCourse < map::INVALID_COURSE_VALUE)
+    return QLocale().toString(leg.calculatedMagCourse(), 'f', 0);
   else
     return QString();
 }
@@ -898,7 +908,7 @@ QStringList procedureLegRecommended(const MapProcedureLeg& leg)
       related.append(Unit::distNm(leg.rho));
 
       if(leg.theta < map::INVALID_COURSE_VALUE)
-        related.append(QObject::tr("R%1").arg(QLocale().toString(leg.theta, 'f', 0)));
+        related.append(radialText(leg.theta));
     }
   }
   return related;
@@ -1005,8 +1015,8 @@ QString procedureLegsText(const proc::MapProcedureLegs& legs, proc::MapProcedure
                    arg(narrow ? QString() :
                        (procType.testFlag(proc::PROCEDURE_MISSED) && !missedAsApproach ?
                         QObject::tr("Missed ") : QObject::tr("Approach "))).
-                   arg(legs.displayApproachType()).
-                   arg(legs.approachSuffix.isEmpty() ? QString() : (QObject::tr("-") + legs.approachSuffix)).
+                   arg(legs.displayType()).
+                   arg(legs.suffix.isEmpty() ? QString() : (QObject::tr("-") + legs.suffix)).
                    arg(legs.approachFixIdent);
 
         // Add transition text if type from related leg is a transitionn
@@ -1036,10 +1046,10 @@ QString procedureLegsText(const proc::MapProcedureLegs& legs, proc::MapProcedure
     else
     {
       // Multi runway procedure =============
-      if(atools::fs::util::hasSidStarAllRunways(legs.approachArincName))
+      if(atools::fs::util::hasSidStarAllRunways(legs.arincName))
         procText.append(narrow ? QObject::tr(" all") : QObject::tr(" all runways"));
-      else if(atools::fs::util::hasSidStarParallelRunways(legs.approachArincName))
-        procText.append((narrow ? QObject::tr(" all %1") : QObject::tr(" all runways %1")).arg(legs.approachArincName.mid(2, 2)));
+      else if(atools::fs::util::hasSidStarParallelRunways(legs.arincName))
+        procText.append((narrow ? QObject::tr(" all %1") : QObject::tr(" all runways %1")).arg(legs.arincName.mid(2, 2)));
     }
   }
   return procText;
@@ -1336,7 +1346,7 @@ QStringList procedureTextFirstAndLastFix(const MapProcedureLegs& legs, proc::Map
   }
   else
   {
-    for(const proc::MapProcedureLeg& leg : legs.approachLegs)
+    for(const proc::MapProcedureLeg& leg : legs.procedureLegs)
       tempLegs.append(&leg);
   }
 
@@ -1412,6 +1422,11 @@ QString aircraftCategoryText(const QString& cat)
   return QString();
 
 #endif
+}
+
+QString radialText(float radial)
+{
+  return QObject::tr("R%1", "Radial").arg(radial, 3, 'f', 0, QChar('0'));
 }
 
 } // namespace proc

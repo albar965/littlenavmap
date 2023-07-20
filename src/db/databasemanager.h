@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -19,7 +19,6 @@
 #define LITTLENAVMAP_DATABASEMANAGER_H
 
 #include "fs/fspaths.h"
-#include "fs/navdatabaseflags.h"
 #include "db/dbtypes.h"
 
 #include <QAction>
@@ -34,6 +33,7 @@ namespace db {
 class DatabaseMeta;
 }
 namespace scenery {
+class AircraftIndex;
 class LanguageJson;
 }
 
@@ -58,16 +58,6 @@ class DatabaseDialog;
 class MainWindow;
 class TrackManager;
 class DatabaseLoader;
-
-namespace dbstat {
-enum NavdatabaseStatus
-{
-  NAVDATABASE_ALL, /* Only third party nav database */
-  NAVDATABASE_MIXED, /* Airports from simulator rest from nav database */
-  NAVDATABASE_OFF /* Only simulator database */
-};
-
-}
 
 /*
  * Takes care of all scenery database management. Switching between flight simulators, loading of scenery
@@ -99,17 +89,29 @@ public:
   /* Raise and activate progress window */
   void showProgressWindow();
 
-  /* True if background process is loading */
-  bool isLoading();
+  /* true if loading is in process or confirmation dialog is shown */
+  bool isLoadingProgress();
 
   /* Save and restore all paths and current simulator settings */
   void saveState();
 
   /* Returns true if there are any flight simulator installations found in the registry */
-  bool hasInstalledSimulators() const;
+  bool hasInstalledSimulators() const
+  {
+    return !simulators.getAllInstalled().isEmpty();
+  }
+
+  /* Returns true if there is an installation for the given sim found */
+  bool hasInstalledSimulator(atools::fs::FsPaths::SimulatorType type) const
+  {
+    return simulators.value(type).isInstalled;
+  }
 
   /* Returns true if there are any flight simulator databases found (probably copied by the user) */
-  bool hasSimulatorDatabases() const;
+  bool hasSimulatorDatabases() const
+  {
+    return !simulators.getAllHavingDatabase().isEmpty();
+  }
 
   /* Opens Sim, Nav and respective airspace Sqlite databases in readonly mode. If the database is new or does not contain a schema
    * an empty schema is created.
@@ -120,9 +122,11 @@ public:
   /* Load MSFS translations for current language */
   void loadLanguageIndex();
 
+  /* Load MSFS aircraft.cfg files from paths */
+  void loadAircraftIndex();
+
   /* Open a writeable database for userpoints or online network data. Automatic transactions are off.  */
-  void openWriteableDatabase(atools::sql::SqlDatabase *database, const QString& name, const QString& displayName,
-                             bool backup);
+  void openWriteableDatabase(atools::sql::SqlDatabase *database, const QString& name, const QString& displayName, bool backup);
   void closeLogDatabase();
   void closeUserDatabase();
   void closeTrackDatabase();
@@ -133,17 +137,29 @@ public:
    * Will not return if an exception is caught during opening. */
   void closeAllDatabases();
 
-  /* Get the simulator database. Will return null if not opened before. */
-  atools::sql::SqlDatabase *getDatabaseSim();
+  /* Get the simulator database. Will return null if not opened before. Connection inside is changed depending on settings. */
+  atools::sql::SqlDatabase *getDatabaseSim()
+  {
+    return databaseSim;
+  }
 
-  /* Get navaid database or same as above if it does not exist */
-  atools::sql::SqlDatabase *getDatabaseNav();
+  /* Get navaid database or same as above if it does not exist.Connection inside is changed depending on settings. */
+  atools::sql::SqlDatabase *getDatabaseNav()
+  {
+    return databaseNav;
+  }
 
   /* Get the simulator database for airspaces which is independent of nav data mode. Will return null if not opened before. */
-  atools::sql::SqlDatabase *getDatabaseSimAirspace();
+  atools::sql::SqlDatabase *getDatabaseSimAirspace()
+  {
+    return databaseSimAirspace;
+  }
 
   /* Get the nav database for airspaces which is independent of nav data mode. Will return null if not opened before. */
-  atools::sql::SqlDatabase *getDatabaseNavAirspace();
+  atools::sql::SqlDatabase *getDatabaseNavAirspace()
+  {
+    return databaseNavAirspace;
+  }
 
   /*
    * Insert actions for switching between installed flight simulators.
@@ -180,12 +196,12 @@ public:
 
   /* Get files path for installed simulators in order of the given list.
    * Also considers probably changed paths by user */
-  QString getSimulatorFilesPathBest(const atools::fs::FsPaths::SimulatorTypeVector& types) const;
+  QString getSimulatorFilesPathBest(const atools::fs::FsPaths::SimulatorTypeVector& types, const QString& defaultPath) const;
 
   /* Same as above but for simulator base path */
   QString getSimulatorBasePathBest(const atools::fs::FsPaths::SimulatorTypeVector& types) const;
 
-  dbstat::NavdatabaseStatus getNavDatabaseStatus() const
+  navdb::Status getNavDatabaseStatus() const
   {
     return navDatabaseStatus;
   }
@@ -238,6 +254,12 @@ public:
     return *languageIndex;
   }
 
+  /* MSFS translations from table "translation" */
+  atools::fs::scenery::AircraftIndex& getAircraftIndex() const
+  {
+    return *aircraftIndex;
+  }
+
   /* Checks if size and last modification time have changed on the readonly nav and sim databases.
    * Shows an error dialog if this is the case */
   void checkForChangedNavAndSimDatabases();
@@ -246,7 +268,13 @@ public:
   void checkDatabaseVersion();
 
   /* Validate scenery library mode and show warning dialogs which allow to set the recommended mode */
-  void checkSceneryOptionsManual();
+  void checkSceneryOptionsManual()
+  {
+    checkSceneryOptions(true /* manualCheck */);
+  }
+
+  /* Checks the simulator database independent of scenery library settings. Expensive since it opens the file */
+  bool hasDataInSimDatabase();
 
 signals:
   /* Emitted before opening the scenery database dialog, loading a database or switching to a new simulator database.
@@ -262,8 +290,11 @@ signals:
 private:
   void restoreState();
 
-  bool isDatabaseCompatible(atools::sql::SqlDatabase *db);
-  bool hasData(atools::sql::SqlDatabase *db);
+  bool isDatabaseCompatible(atools::sql::SqlDatabase *db) const;
+  bool hasData(atools::sql::SqlDatabase *db) const;
+
+  /* Correct navdata selection according to simulator, AIRAC cycle and other. Updates simulators and navDatabaseStatus */
+  void assignSceneryCorrection();
 
   void simulatorChangedFromComboBox(atools::fs::FsPaths::SimulatorType value);
   void loadSceneryInternal();
@@ -277,39 +308,54 @@ private:
   void updateDialogInfo(atools::fs::FsPaths::SimulatorType value);
 
   /* Database stored in settings directory */
-  QString buildDatabaseFileName(atools::fs::FsPaths::SimulatorType currentFsType);
+  QString buildDatabaseFileName(atools::fs::FsPaths::SimulatorType currentFsType) const;
 
   /* Database stored in application directory */
-  QString buildDatabaseFileNameAppDir(atools::fs::FsPaths::SimulatorType type);
+  QString buildDatabaseFileNameAppDir(atools::fs::FsPaths::SimulatorType type) const;
 
   /* Temporary name stored in settings directory */
-  QString buildCompilingDatabaseFileName();
+  QString buildCompilingDatabaseFileName() const;
 
   /* Simulator changed from main menu */
   void switchSimFromMainMenu();
+  void switchSimInternal(atools::fs::FsPaths::SimulatorType type);
 
   /* Navdatabase mode change from main menu */
   void switchNavFromMainMenu();
+
+  /* Navdatabase auto mode changed from main menu */
+  void switchNavAutoFromMainMenu();
+
+  /* Set menus according to correction */
+  void correctSceneryOptions(navdb::Correction& correction);
 
   void freeActions();
   void insertSimSwitchAction(atools::fs::FsPaths::SimulatorType type, QAction *before, QMenu *menu, int index);
   void updateSimulatorFlags();
   void updateSimulatorPathsFromDialog();
+
+  /* Checks for missing files and assigns a new simulator if needed */
   void correctSimulatorType();
+  navdb::Correction getSceneryCorrection(const navdb::Status& navDbStatus, atools::fs::FsPaths::SimulatorType simType) const;
 
   /* Get cycle metadata from a database file */
-  const atools::fs::db::DatabaseMeta metaFromFile(const QString& file);
+  const atools::fs::db::DatabaseMeta databaseMetadataFromFile(const QString& file) const;
 
   void clearLanguageIndex();
 
-  bool checkValidBasePaths();
+  void clearAircraftIndex();
+
+  bool checkValidBasePaths() const;
+
+  /* Disable or enable nav menu items depending on auto status */
+  void updateNavMenuStatus();
 
   /* Validate scenery library mode and show warning dialogs which allow to set the recommended mode.
    * manualCheck shows an "Ok" button if all is valid and ignores "do not show again" state. */
   void checkSceneryOptions(bool manualCheck);
 
-  // Get metadata independent of scenery library settings
-  const atools::fs::db::DatabaseMeta databaseMetadata(atools::fs::FsPaths::SimulatorType type);
+  /* Get metadata independent of scenery library settings from the database files */
+  const atools::fs::db::DatabaseMeta databaseMetadataFromType(atools::fs::FsPaths::SimulatorType type) const;
 
   atools::gui::Dialog *dialog;
   DatabaseDialog *databaseDialog = nullptr;
@@ -317,8 +363,8 @@ private:
 
   // Need a pointer since it has to be deleted before the destructor is left
   atools::sql::SqlDatabase
-  *databaseSim = nullptr /* Database for simulator content */,
-  *databaseNav = nullptr /* Database for third party navigation data */,
+  *databaseSim = nullptr /* Database for simulator content. Connection inside is exchanged depending on settings. */,
+  *databaseNav = nullptr /* Database for third party navigation data. Connection inside is exchanged depending on settings. */,
   *databaseUser = nullptr /* Database for user data */,
   *databaseTrack = nullptr /* Database for tracks like NAT, PACOTS and AUSOTS */,
   *databaseLogbook = nullptr /* Database for logbook */,
@@ -333,10 +379,11 @@ private:
 
   /* Switch simulator actions */
   QActionGroup *simDbGroup = nullptr, *navDbGroup = nullptr;
-  QList<QAction *> actions;
-  QAction *navDbActionOff = nullptr, *navDbActionBlend = nullptr, *navDbActionAll = nullptr,
-          *menuDbSeparator = nullptr, *menuNavDbSeparator = nullptr;
+  QList<QAction *> simDbActions;
+
   QMenu *navDbSubMenu = nullptr;
+  QAction *navDbActionOff = nullptr, *navDbActionMixed = nullptr, *navDbActionAll = nullptr, *navDbActionAuto = nullptr,
+          *menuDbSeparator = nullptr, *menuNavDbSeparator = nullptr;
 
   atools::fs::FsPaths::SimulatorType
   /* Currently selected simulator which will be used in the map, search, etc. */
@@ -345,7 +392,8 @@ private:
     selectedFsType = atools::fs::FsPaths::NONE;
 
   /* Using Navigraph update or not */
-  dbstat::NavdatabaseStatus navDatabaseStatus = dbstat::NAVDATABASE_OFF;
+  navdb::Status navDatabaseStatus = navdb::OFF;
+  bool navDatabaseAuto = true;
 
   DatabaseLoader *databaseLoader = nullptr;
 
@@ -363,6 +411,7 @@ private:
 
   /* MSFS translations from table "translation" */
   atools::fs::scenery::LanguageJson *languageIndex = nullptr;
+  atools::fs::scenery::AircraftIndex *aircraftIndex = nullptr;
 
   /* Show hint dialog only once per session */
   bool backgroundHintShown = false;

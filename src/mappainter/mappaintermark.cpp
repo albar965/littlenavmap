@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
 #include "mappainter/mappaintermark.h"
 
 #include "mapgui/mapwidget.h"
-#include "navapp.h"
+#include "app/navapp.h"
 #include "mapgui/mapscale.h"
 #include "mapgui/maplayer.h"
 #include "perf/aircraftperfcontroller.h"
@@ -29,18 +29,14 @@
 #include "common/symbolpainter.h"
 #include "geo/rect.h"
 #include "atools.h"
-#include "navapp.h"
 #include "common/symbolpainter.h"
 #include "airspace/airspacecontroller.h"
-#include "common/constants.h"
 #include "common/unit.h"
 #include "route/routeleg.h"
 #include "route/route.h"
-#include "route/routecontroller.h"
 #include "util/paintercontextsaver.h"
 #include "common/textplacement.h"
 #include "fs/userdata/logdatamanager.h"
-#include "mapgui/mapscreenindex.h"
 
 #include <marble/GeoDataLineString.h>
 #include <marble/GeoDataLinearRing.h>
@@ -52,7 +48,12 @@
 const float MAX_COMPASS_ROSE_RADIUS_NM = 500.f;
 const float MIN_COMPASS_ROSE_RADIUS_NM = 0.2f;
 const double MIN_VIEW_DISTANCE_COMPASS_ROSE_KM = 6400.;
-const float MAX_TURN_PATH_NM = 5.f;
+
+#ifdef DEBUG_INFORMATION_MEASUREMENT
+const int DISTMARK_DEG_PRECISION = 3;
+#else
+const int DISTMARK_DEG_PRECISION = 0;
+#endif
 
 using namespace Marble;
 using namespace map;
@@ -61,6 +62,9 @@ namespace ageo = atools::geo;
 MapPainterMark::MapPainterMark(MapPaintWidget *mapWidgetParam, MapScale *mapScale, PaintContext *paintContext)
   : MapPainter(mapWidgetParam, mapScale, paintContext)
 {
+  magTrueSuffix = tr("°M/T");
+  magSuffix = tr("°M");
+  trueSuffix = tr("°T");
 }
 
 MapPainterMark::~MapPainterMark()
@@ -77,9 +81,10 @@ void MapPainterMark::render()
     atools::util::PainterContextSaver dbgsaver(context->painter);
     symbolPainter->textBox(context->painter, {
       QString("Layer %1").arg(context->mapLayer->getMaxRange()),
+      QString("Layer route %1").arg(context->mapLayerRoute->getMaxRange()),
       QString("Airport sym %1").arg(context->mapLayer->getAirportSymbolSize()),
-      QString("Min runway %1").arg(context->mapLayer->getMinRunwayLength())},
-                           mapcolors::routeLogEntryOutlineColor, 0, 50, textatt::ROUTE_BG_COLOR);
+      QString("Min RW %1").arg(context->mapLayer->getMinRunwayLength())},
+                           mapcolors::routeLogEntryOutlineColor, 1, 1, textatt::ROUTE_BG_COLOR | textatt::VERT_BELOW);
   }
 #endif
 
@@ -103,12 +108,11 @@ void MapPainterMark::render()
 
   // Measurement lines
   if(context->objectTypes.testFlag(map::MARK_DISTANCE))
-    paintMeasurementMarks();
+    paintDistanceMarks();
 
   paintCompassRose();
   paintEndurance();
   paintSelectedAltitudeRange();
-  paintTurnPath();
 
   paintHighlights();
   paintRouteDrag();
@@ -499,7 +503,7 @@ void MapPainterMark::paintLogEntries(const QList<map::MapLogbookEntry>& entries)
       {
         drawLineString(painter, geo);
 
-        if(context->distanceKm < layer::DISTANCE_CUT_OFF_LIMIT_KM)
+        if(!mapPaintWidget->isDistanceCutOff())
         {
           // Draw waypoint symbols and text for route preview =========
           const QStringList& names = visibleRouteTexts.at(i);
@@ -519,7 +523,7 @@ void MapPainterMark::paintLogEntries(const QList<map::MapLogbookEntry>& entries)
       }
     }
 
-    if(context->distanceKm < layer::DISTANCE_CUT_OFF_LIMIT_KM)
+    if(!mapPaintWidget->isDistanceCutOff())
     {
       painter->setPen(QPen(routeLogEntryOutlineColor, (outerlinewidth - lineWidth) / 2., Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
       painter->setBrush(Qt::white);
@@ -538,7 +542,7 @@ void MapPainterMark::paintLogEntries(const QList<map::MapLogbookEntry>& entries)
   }
 
   // Draw track ==========================================================================
-  if(context->distanceKm < layer::DISTANCE_CUT_OFF_LIMIT_KM)
+  if(!mapPaintWidget->isDistanceCutOff())
   {
     if(context->objectDisplayTypes & map::LOGBOOK_TRACK && !visibleTrackGeometries.isEmpty())
     {
@@ -591,7 +595,7 @@ void MapPainterMark::paintLogEntries(const QList<map::MapLogbookEntry>& entries)
     }
 
     // Draw line text ==========================================================================
-    if(context->distanceKm < layer::DISTANCE_CUT_OFF_LIMIT_KM)
+    if(!mapPaintWidget->isDistanceCutOff())
     {
       context->szFont(context->textSizeRangeUserFeature);
       painter->setBackground(mapcolors::routeTextBackgroundColor);
@@ -624,7 +628,7 @@ void MapPainterMark::paintLogEntries(const QList<map::MapLogbookEntry>& entries)
   }
 
   // Draw airport symbols and text always ==========================================================================
-  if(context->distanceKm < layer::DISTANCE_CUT_OFF_LIMIT_KM)
+  if(!mapPaintWidget->isDistanceCutOff())
   {
     float x, y;
     textflags::TextFlags flags = context->airportTextFlagsRoute(false /* draw as route */, true /* draw as log */);
@@ -832,7 +836,7 @@ void MapPainterMark::paintRangeMarks()
     {
       float maxRadiusNm = *maxRingIter;
 
-      if(context->viewportRect.overlaps(ageo::Rect(rings.position, ageo::nmToMeter(maxRadiusNm))) || maxRadiusNm > 2000.f /*&& !fast*/)
+      if(context->viewportRect.overlaps(ageo::Rect(rings.position, ageo::nmToMeter(maxRadiusNm), true /* fast */)) || maxRadiusNm > 2000.f)
       {
         // Ring is visible - the rest of the visibility check is done in paintCircle
 
@@ -877,84 +881,6 @@ void MapPainterMark::paintRangeMarks()
       }
     }
   }
-}
-
-void MapPainterMark::paintTurnPath()
-{
-  const atools::fs::sc::SimConnectUserAircraft& userAircraft = mapPaintWidget->getUserAircraft();
-  if(context->objectDisplayTypes & map::AIRCRAFT_TURN_PATH && userAircraft.isFlying())
-  {
-    const ageo::Pos& aircraftPos = mapPaintWidget->getUserAircraft().getPosition();
-    if(aircraftPos.isValid())
-    {
-      float groundSpeedKts, turnSpeedDegPerSec;
-      mapPaintWidget->getScreenIndex()->getAverageGroundAndTurnSpeed(groundSpeedKts, turnSpeedDegPerSec);
-
-      if(groundSpeedKts > 20.f)
-      {
-        // Draw one line segment every 0.1 NM
-        float distanceStepNm = 0.1f;
-
-        // Turn in degree at each node
-        float turnStep = turnSpeedDegPerSec * (distanceStepNm * 3600.f / groundSpeedKts);
-
-        // Current distance from first node (aircraft)
-        float curDistance = 0.f;
-        float curHeading = userAircraft.getTrackDegTrue() + turnStep;
-
-        float lineWidth = context->szF(context->thicknessUserFeature, mapcolors::markTurnPathPen.width());
-        context->painter->setPen(mapcolors::adjustWidth(mapcolors::markTurnPathPen, lineWidth));
-        context->painter->setBrush(QBrush(mapcolors::markTurnPathPen.color()));
-
-        // One step is 0.1 NM
-        int step = 0;
-
-        float pixelForMaxTurnPath = scale->getPixelForNm(MAX_TURN_PATH_NM);
-        if(pixelForMaxTurnPath > 40)
-        {
-          ageo::Pos curPos = aircraftPos;
-          ageo::LineString line(aircraftPos);
-
-          // Stop either at distance or if turn radius drawn is close to 180°
-          while(curDistance < MAX_TURN_PATH_NM &&
-                atools::geo::angleAbsDiff(userAircraft.getTrackDegTrue(), curHeading) < 180.f - std::abs(turnStep))
-          {
-            // Next point for given distance and heading
-            ageo::Pos newPos = curPos.endpoint(ageo::nmToMeter(distanceStepNm), curHeading);
-            line.append(newPos);
-
-            // Draw mark at each 0.5 NM
-            if(step > 0 && (step % 5) == 0)
-            {
-              double length = lineWidth * 1.4;
-
-              // Longer mark at 1 NM
-              if((step % 10) == 0)
-                length *= 1.8;
-
-              // Draw line segment as mark
-              QPoint pt = wToS(curPos);
-              if(!pt.isNull())
-              {
-                context->painter->translate(pt);
-                context->painter->rotate(curHeading - (turnStep / 2.) + 90.);
-                context->painter->drawLine(QPointF(0., -length), QPointF(0., length));
-                context->painter->resetTransform();
-              }
-            }
-
-            curPos = newPos;
-            curDistance += distanceStepNm;
-            curHeading += turnStep;
-            curHeading = ageo::normalizeCourse(curHeading);
-            step++;
-          }
-
-          drawLineString(context->painter, line);
-        } // if(pixelForMaxTurnPath > 20)
-      } // if(groundSpeedKts > 20.f)
-    } // if(aircraftPos.isValid())
-  } // if(context->objectDisplayTypes & map::AIRCRAFT_TURN_PATH && userAircraft.isFlying())
 }
 
 void MapPainterMark::paintSelectedAltitudeRange()
@@ -1004,8 +930,8 @@ void MapPainterMark::paintEndurance()
     if(pos.isValid())
     {
       // Get endurance
-      float enduranceHours, enduranceNm;
-      NavApp::getAircraftPerfController()->getEnduranceCurrent(enduranceHours, enduranceNm, true /* average */);
+      float enduranceHours = 0.f, enduranceNm = 0.f;
+      NavApp::getAircraftPerfController()->getEnduranceAverage(enduranceHours, enduranceNm);
       if(enduranceNm < map::INVALID_DISTANCE_VALUE)
       {
         Marble::GeoPainter *painter = context->painter;
@@ -1354,133 +1280,165 @@ void MapPainterMark::paintCompassRose()
   }
 }
 
-void MapPainterMark::paintMeasurementMarks()
+QStringList MapPainterMark::distanceMarkText(const map::DistanceMarker& marker, bool drawFast) const
+{
+  float initTrue = marker.from.initialBearing(marker.to);
+  float finalTrue = marker.from.finalBearing(marker.to);
+  float distanceMeter = marker.getDistanceMeter();
+
+  QString finalMagText;
+  if(marker.flags.testFlag(map::DIST_MARK_MAGVAR))
+    finalMagText = QString::number(ageo::normalizeCourse(finalTrue - marker.magvar), 'f', DISTMARK_DEG_PRECISION);
+  else
+    finalMagText = QString::number(ageo::normalizeCourse(finalTrue -
+                                                         NavApp::getMagVar(marker.to, marker.magvar)), 'f', DISTMARK_DEG_PRECISION);
+
+  QString textStr, radialStr, distStr, magTrueStr, trueStr;
+  // Center labels ==============================================================
+  // Text label - VOR, airport, etc. ==========================================================
+  bool textLabel = context->dOptMeasurement(optsd::MEASUREMENT_LABEL) && !marker.text.isEmpty();
+  if(textLabel)
+    textStr = marker.text;
+
+  // Draw radial number always after label of separate in next line ====================================================
+  if(context->dOptMeasurement(optsd::MEASUREMENT_RADIAL) && marker.flags.testFlag(map::DIST_MARK_RADIAL))
+    radialStr = proc::radialText(ageo::normalizeCourse(initTrue - marker.magvar));
+
+  // Distance ==========================================================
+  if(context->dOptMeasurement(optsd::MEASUREMENT_DIST) && distanceMeter < INVALID_DISTANCE_VALUE)
+  {
+    if(Unit::getUnitDist() == opts::DIST_KM && Unit::getUnitShortDist() == opts::DIST_SHORT_METER && distanceMeter < 6000)
+      distStr = QLocale(QLocale::C).toString(distanceMeter, 'f', 0) % Unit::getUnitShortDistStr();
+    else
+    {
+      distStr = Unit::distMeter(distanceMeter, true /* addUnit */, 20, true /* narrow */);
+      if(distanceMeter < 6000.f)
+        // Add feet to text for short distances
+        distStr = Unit::distShortMeter(distanceMeter, true /* addUnit */, true /* narrow */);
+    }
+  }
+
+  // Mag (/ true) Course on separate line ==========================================================
+  QString initMagText = QString::number(ageo::normalizeCourse(initTrue - marker.magvar), 'f', DISTMARK_DEG_PRECISION);
+  QString initTrueText = QString::number(initTrue, 'f', DISTMARK_DEG_PRECISION);
+  QString finalTrueText = QString::number(finalTrue, 'f', DISTMARK_DEG_PRECISION);
+  if(context->dOptMeasurement(optsd::MEASUREMENT_TRUE) && context->dOptMeasurement(optsd::MEASUREMENT_MAG) &&
+     initTrueText == initMagText && finalTrueText == finalMagText)
+  {
+    // drawFast: Avoid flickering course while dragging line
+    if(drawFast || initTrueText == finalTrueText)
+      magTrueStr = initTrueText % magTrueSuffix;
+    else
+      magTrueStr = initTrueText % magTrueSuffix % '\\' % finalTrueText % magTrueSuffix;
+  }
+  else
+  {
+    if(context->dOptMeasurement(optsd::MEASUREMENT_MAG))
+    {
+      if(drawFast || initMagText == finalMagText)
+        magTrueStr = initMagText % magSuffix;
+      else
+        magTrueStr = initMagText % magSuffix % '\\' % finalMagText % magSuffix;
+    }
+    if(context->dOptMeasurement(optsd::MEASUREMENT_TRUE))
+    {
+      if(drawFast || initTrueText == finalTrueText)
+        trueStr = initTrueText % trueSuffix;
+      else
+        trueStr = initTrueText % trueSuffix % '\\' % finalTrueText % trueSuffix;
+    }
+  }
+
+  // Build text =========================================
+  QStringList texts;
+  texts.append(magTrueStr);
+
+  if(magTrueStr.isEmpty() || trueStr.isEmpty())
+    // Two lines so far - add label and radial in one line and distance in another line
+    texts << atools::strJoin({textStr, radialStr}, tr(" / ")) << distStr;
+  else
+    // Label, radial and distance in one line between the course labels
+    texts << atools::strJoin({textStr, radialStr, distStr}, tr(" / "));
+
+  texts.append(trueStr);
+  texts.removeAll(QString());
+
+#ifdef DEBUG_INFORMATION_MEASUREMENT
+  texts.append("[" + QString::number(distanceMeter, 'f', 0) + " m]");
+  QPointF p1 = wToSF(marker.from);
+  QPointF p2 = wToSF(marker.to);
+  QLineF linef(p1, p2);
+  texts.append("[" + QString::number(linef.length(), 'f', 0) + " px]");
+#endif
+  return texts;
+}
+
+void MapPainterMark::paintDistanceMarks()
 {
   atools::util::PainterContextSaver saver(context->painter);
   GeoPainter *painter = context->painter;
   context->szFont(context->textSizeRangeMeasurement);
-  QFontMetrics metrics = painter->fontMetrics();
 
   const QList<map::DistanceMarker>& distanceMarkers = mapPaintWidget->getDistanceMarks().values();
-  float lineWidth = context->szF(context->thicknessMeasurement, 3);
-  TextPlacement textPlacement(context->painter, this, context->screenRect);
-  const QColor measurementColor = OptionData::instance().getMeasurementColor();
 
+  // Sort markers into a list of pointers where the last one is the one currently edited and drawn on top
+  QList<const map::DistanceMarker *> markers;
   for(const map::DistanceMarker& marker : distanceMarkers)
   {
-    QColor color = marker.color.isValid() ? marker.color : measurementColor;
-    // Get color from marker
+    if(marker.id == context->currentDistanceMarkerId)
+      markers.append(&marker);
+    else
+      markers.prepend(&marker);
+  }
+
+  float lineWidth = context->szF(context->thicknessMeasurement, 3);
+  const QColor measurementColor = OptionData::instance().getMeasurementColor();
+  painter->setBackgroundMode(Qt::OpaqueMode);
+  painter->setBackground(mapcolors::distanceMarkerTextBackgroundColor);
+
+  for(const map::DistanceMarker *marker : markers)
+  {
+    // Get color from marker or default
+    QColor color = marker->color.isValid() ? marker->color : measurementColor;
     painter->setPen(QPen(color, lineWidth * 0.5, Qt::SolidLine, Qt::FlatCap, Qt::MiterJoin));
 
-    const int SYMBOL_SIZE = 5;
-    int x, y;
-    if(wToS(marker.from, x, y))
+    float symbolSize = lineWidth * 1.7f;
+    float x, y;
+    // Draw ellipse at start point ==================
+    if(wToS(marker->from, x, y))
     {
-      // Draw ellipse at start point
       painter->setBrush(Qt::white);
-      painter->drawEllipse(QPoint(x, y), SYMBOL_SIZE, SYMBOL_SIZE);
+      painter->drawEllipse(QPointF(x, y), symbolSize, symbolSize);
     }
 
-    if(wToS(marker.to, x, y))
+    // Draw cross at end point =======================
+    if(wToS(marker->to, x, y))
     {
-      // Draw cross at end point
-      painter->drawLine(x - SYMBOL_SIZE, y, x + SYMBOL_SIZE, y);
-      painter->drawLine(x, y - SYMBOL_SIZE, x, y + SYMBOL_SIZE);
+      painter->drawLine(QPointF(x - symbolSize, y), QPointF(x + symbolSize, y));
+      painter->drawLine(QPointF(x, y - symbolSize), QPointF(x, y + symbolSize));
     }
 
     // Draw great circle line ========================================================
     painter->setPen(QPen(color, lineWidth, Qt::SolidLine, Qt::RoundCap, Qt::MiterJoin));
-    float distanceMeter = marker.getDistanceMeter();
+    drawLine(painter, ageo::Line(marker->from, marker->to));
 
-    // Draw line
-    drawLine(painter, ageo::Line(marker.from, marker.to));
+    // Build '\n' separated texts =============================
+    QStringList texts =
+      distanceMarkText(*marker, marker->id == context->currentDistanceMarkerId && context->viewContext == Marble::Animation);
 
-    // Build and draw text
-    QStringList texts;
-
-    if(context->dOptMeasurement(optsd::MEASUREMENT_LABEL) && !marker.text.isEmpty())
-      texts.append(marker.text);
-
-    GeoDataCoordinates from(marker.from.getLonX(), marker.from.getLatY(), 0, DEG);
-    GeoDataCoordinates to(marker.to.getLonX(), marker.to.getLatY(), 0, DEG);
-    double initTrue = ageo::normalizeCourse(from.bearing(to, DEG, INITBRG));
-    double finalTrue = ageo::normalizeCourse(from.bearing(to, DEG, FINALBRG));
-
-#ifdef DEBUG_INFORMATION_MEASUREMENT
-    int precision = 3;
-#else
-    int precision = 0;
-#endif
-    QString initTrueText = QString::number(initTrue, 'f', precision);
-    QString finalTrueText = QString::number(finalTrue, 'f', precision);
-    QString initMagText = QString::number(ageo::normalizeCourse(initTrue - marker.magvar), 'f', precision);
-    QString finalMagText = QString::number(ageo::normalizeCourse(finalTrue - NavApp::getMagVar(marker.to, marker.magvar)), 'f', precision);
-
-    QString arrowLeft = tr("► ");
-
-    if(context->dOptMeasurement(optsd::MEASUREMENT_TRUE) && context->dOptMeasurement(optsd::MEASUREMENT_MAG) &&
-       initTrueText == initMagText && finalTrueText == finalMagText)
+    if(marker->from != marker->to)
     {
-      if(initTrueText == finalTrueText)
-        texts.append(initTrueText % tr("°M/T"));
-      else
-        texts.append(initTrueText % tr("°M/T ") % arrowLeft % finalTrueText % tr("°M/T"));
+      painter->setPen(mapcolors::distanceMarkerTextColor);
+      TextPlacement textPlacement(context->painter, this, context->screenRect);
+      textPlacement.setArrowForEmpty(true);
+      textPlacement.setMinLengthForText(painter->fontMetrics().averageCharWidth() * 2);
+      textPlacement.setDrawFast(context->drawFast);
+      textPlacement.setLineWidth(lineWidth);
+      textPlacement.setTextOnLineCenter(true);
+      textPlacement.calculateTextAlongLine(ageo::Line(marker->from, marker->to), texts.join('\n'));
+      textPlacement.drawTextAlongLines();
     }
-    else
-    {
-      if(context->dOptMeasurement(optsd::MEASUREMENT_MAG))
-      {
-        if(initMagText == finalMagText)
-          texts.append(initMagText % tr("°M"));
-        else
-          texts.append(initMagText % tr("°M ") % arrowLeft % finalMagText % tr("°M"));
-      }
-
-      if(context->dOptMeasurement(optsd::MEASUREMENT_TRUE))
-      {
-        if(initTrueText == finalTrueText)
-          texts.append(initTrueText % tr("°T"));
-        else
-          texts.append(initTrueText % tr("°T ") % arrowLeft % finalTrueText % tr("°T"));
-      }
-    }
-
-    if(context->dOptMeasurement(optsd::MEASUREMENT_DIST) && distanceMeter < INVALID_DISTANCE_VALUE)
-    {
-      if(Unit::getUnitDist() == opts::DIST_KM && Unit::getUnitShortDist() == opts::DIST_SHORT_METER && distanceMeter < 6000)
-        texts.append(QLocale(QLocale::C).toString(distanceMeter, 'f', 0) % Unit::getUnitShortDistStr());
-      else
-      {
-        texts.append(Unit::distMeter(distanceMeter, true /* addUnit */, 20, true /* narrow */));
-        if(distanceMeter < 6000)
-          // Add feet to text for short distances
-          texts.append(Unit::distShortMeter(distanceMeter, true /* addUnit */, true /* narrow */));
-      }
-    }
-
-    // Draw radial number
-    if(context->dOptMeasurement(optsd::MEASUREMENT_RADIAL) && marker.flags.testFlag(map::DIST_MARK_RADIAL))
-      texts.append(tr("R%1").arg(ageo::normalizeCourse(initTrue - marker.magvar), 3, 'f', 0, QChar('0')));
-
-#ifdef DEBUG_INFORMATION
-    texts.append("[" + QString::number(distanceMeter, 'f', 0) + " m]");
-    QPointF p1 = wToSF(marker.from);
-    QPointF p2 = wToSF(marker.to);
-    QLineF linef(p1, p2);
-    texts.append("[" + QString::number(linef.length(), 'f', 0) + " px]");
-#endif
-
-    if(marker.from != marker.to && !texts.isEmpty())
-    {
-      int xt = -1, yt = -1;
-      ageo::Line line(marker.from, marker.to);
-      if(textPlacement.findTextPos(line, distanceMeter, metrics.width(texts.at(0)), metrics.height(), 20, xt, yt, nullptr))
-        symbolPainter->textBox(painter, texts, painter->pen(), xt, yt, textatt::CENTER);
-      else if(textPlacement.findTextPos(line, distanceMeter, 2.f, 2.f, 20, xt, yt, nullptr))
-        // No place found since line is probably too short - try again with 2 pixel size
-        symbolPainter->textBox(painter, texts, painter->pen(), xt, yt, textatt::CENTER);
-    }
-  }
+  } // for(const map::DistanceMarker& marker : distanceMarkers)
 }
 
 void MapPainterMark::paintPatternMarks()

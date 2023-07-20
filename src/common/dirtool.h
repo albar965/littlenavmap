@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -37,24 +37,25 @@ public:
    */
   explicit DirTool(QWidget *parent, const QString& base, const QString& appName, const QString& settingsKeyPrefix);
 
-  /* Asks user to create directory structure. Creates directories and changes file dialog defaults if user confirms.*/
-  void run();
-  bool hasAllDirs();
-
   /* Checks for existence and shows dialog if folders are incomplete */
-  bool runIfMissing();
+  void runIfMissing(bool manual, bool& complete, bool& created);
 
   /* Get base folder like "C:\Users\ME\Documents\Little Navmap Files" with native separators. */
   QString getApplicationDir() const;
 
 private:
+  /* Asks user to create directory structure. Creates directories and changes file dialog defaults if user confirms.*/
+  void run(bool manual, bool& created);
+  bool hasAllDirs();
+
   /* Fills errors if any */
   bool createAllDirs();
 
   /* true if all folders exist */
   bool hasDir(const QString& dir);
 
-  /* Update file dialog defaults */
+  /* Update file dialog and other defaults in settings file
+   * Some options have to be updated if file dialog settingsPrefix or line edit widget name changes*/
   void updateOptions();
 
   /* Create based on documentsDir/applicationDir and fills errors if any */
@@ -67,7 +68,7 @@ private:
   QWidget *parentWidget;
   QString documentsDir /* E.g. "C:\Users\ME\Documents" */,
           applicationDir /* Localized, e.g. "Little Navmap Files" */,
-          flightPlanDir, perfDir, layoutDir, airspaceDir, globeDir, airportsDir;
+          flightPlanDir, perfDir, layoutDir, airspaceDir, globeDir, airportsDir, mapThemesDir;
   QString settingsPrefix;
   QStringList errors;
 

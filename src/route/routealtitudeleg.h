@@ -70,12 +70,6 @@ public:
     return verticalAngle > -10.f && verticalAngle < -0.9f;
   }
 
-  /* Altitude restriction from procedures if available. Otherwise invalid. */
-  const proc::MapAltRestriction& getRestriction() const
-  {
-    return restriction;
-  }
-
   /* true if this is a dummy leg without geometry. */
   bool isEmpty() const
   {
@@ -122,7 +116,7 @@ public:
 
   float getWaypointAltitude() const
   {
-    return geometry.isEmpty() ? map::INVALID_ALTITUDE_VALUE : geometry.constLast().y();
+    return geometry.isEmpty() ? map::INVALID_ALTITUDE_VALUE : static_cast<float>(geometry.constLast().y());
   }
 
   bool isTopOfClimb() const

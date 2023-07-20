@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -208,11 +208,8 @@ public:
   /* Update map */
   void postDatabaseLoad();
 
-  /* Set map theme.
-   * @param theme filename of the map theme
-   * @param index MapThemeComboIndex
-   */
-  void setTheme(const QString& theme, const QString& themeId);
+  /* Set map theme. * themeId: "google-maps-def",  themePath: "earth/google-maps-def/google-maps-def.dgml" or full path */
+  void setTheme(const QString& themePath, const QString& themeId);
 
   /* Show points of interest and other labels for certain map themes */
   void setShowMapPois(bool show);
@@ -225,11 +222,11 @@ public:
   /* Define which airport or navaid types are shown on the map. Updates screen index on demand. */
   void setShowMapObject(map::MapTypes type, bool show);
   void setShowMapObjects(map::MapTypes type, map::MapTypes mask);
-  void setShowMapObjectDisplay(map::MapObjectDisplayTypes type, bool show);
+  void setShowMapObjectDisplay(map::MapDisplayTypes type, bool show);
   void setShowMapAirspaces(map::MapAirspaceFilter types);
 
-  map::MapTypes getShownMapFeatures() const;
-  map::MapObjectDisplayTypes getShownMapFeaturesDisplay() const;
+  map::MapTypes getShownMapTypes() const;
+  map::MapDisplayTypes getShownMapDisplayTypes() const;
   map::MapAirspaceFilter getShownAirspaces() const;
   map::MapAirspaceFilter getShownAirspaceTypesByLayer() const;
 
@@ -417,6 +414,9 @@ public:
   /* Too many objects on map */
   bool isPaintOverflow() const;
 
+  /* Do not show anything above this zoom distance except user features */
+  bool isDistanceCutOff() const;
+
 signals:
   /* Emitted whenever the result exceeds the limit clause in the queries */
   void resultTruncated();
@@ -487,6 +487,7 @@ protected:
 
   /* Update toolbar state for visible features - default is no-op */
   virtual void updateMapVisibleUi() const;
+  virtual void updateMapVisibleUiPostDatabaseLoad() const;
 
   /* Update internal values for visible map objects based on menus - default is no-op */
   virtual void updateMapObjectsShown();
@@ -497,11 +498,12 @@ protected:
 
   virtual void resizeEvent(QResizeEvent *event) override;
 
-  void updateGeometryIndex(map::MapTypes oldTypes, map::MapObjectDisplayTypes oldDisplayTypes);
+  void updateGeometryIndex(map::MapTypes oldTypes, map::MapDisplayTypes oldDisplayTypes);
 
   /* If width and height of a bounding rect are smaller than this: Use show point */
   static constexpr float POS_IS_POINT_EPSILON_DEG = 0.0001f;
   static constexpr float MIN_ZOOM_RECT_DIAMETER_KM = 0.04f;
+  static constexpr float MAX_ZOOM_RECT_DIAMETER_KM = 1000.f;
 
   /* Caches complex X-Plane apron geometry as objects in screen coordinates for faster painting. */
   ApronGeometryCache *apronGeometryCache;
@@ -548,15 +550,18 @@ protected:
   /* Paint copyright note into image */
   bool paintCopyright = true;
 
-  /* Map theme id. */
+  /* Update screen index after painting */
+  bool screenIndexUpdateReqired = false;
+
+  /* Map theme id like "google-maps-def". */
   QString currentThemeId;
 
   /* Trail/track of user aircraft */
   AircraftTrack *aircraftTrack = nullptr, *aircraftTrackLogbook = nullptr;
 
 private:
-  /* Set map theme and adjust properties accordingly */
-  void setThemeInternal(const QString& theme);
+  /* Set map theme and adjust properties accordingly. themePath is the full path to the DGML */
+  void setThemeInternal(const QString& themePath);
 
   /* Override widget events */
   virtual void paintEvent(QPaintEvent *paintEvent) override;
@@ -581,6 +586,9 @@ private:
 
   /* Avoids dark background when printing in night mode */
   bool printing = false;
+
+  /* true if inside paint event - avoids crashes due to nested calls */
+  bool painting = false;
 };
 
 #endif // LITTLENAVMAP_NAVMAPPAINTWIDGET_H

@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -17,21 +17,21 @@
 
 #include "mapgui/mapvisible.h"
 
-#include "mapgui/maplayer.h"
-#include "mappainter/mappaintlayer.h"
 #include "airspace/airspacecontroller.h"
-#include "fs/common/morareader.h"
-#include "navapp.h"
 #include "atools.h"
-#include "query/mapquery.h"
-#include "util/htmlbuilder.h"
-#include "gui/mainwindow.h"
-#include "weather/windreporter.h"
-#include "mapgui/mapmarkhandler.h"
-#include "mapgui/mapairporthandler.h"
 #include "common/maptypes.h"
-#include "userdata/userdatacontroller.h"
 #include "common/unit.h"
+#include "fs/common/morareader.h"
+#include "gui/mainwindow.h"
+#include "mapgui/mapairporthandler.h"
+#include "mapgui/maplayer.h"
+#include "mapgui/mapmarkhandler.h"
+#include "mappainter/mappaintlayer.h"
+#include "app/navapp.h"
+#include "query/mapquery.h"
+#include "userdata/userdatacontroller.h"
+#include "util/htmlbuilder.h"
+#include "weather/windreporter.h"
 
 #include <QStringBuilder>
 
@@ -49,18 +49,15 @@ MapVisible::~MapVisible()
 /* Update the visible objects indication in the status bar. */
 void MapVisible::updateVisibleObjectsStatusBar()
 {
-  if(!NavApp::hasDataInDatabase())
+  if(simDbEmpty)
   {
     NavApp::getMainWindow()->setMapObjectsShownMessageText(
       atools::util::HtmlBuilder::errorMessage(tr("Database is empty")),
       tr("<p style='white-space:pre'>The currently selected scenery database for the simulator is empty.<br/>Go to: "
            "Main menu -&gt; \"Scenery Library\" -&gt; \"Load Scenery Library\" "
            "or press <code>Ctrl+Shift+L</code>.<br/>"
-           "Then choose the simulator and press \"Load\".</p>",
+           "Then select the simulator and press \"Load\".</p>",
          "Keep instructions in sync with translated menus and shortcuts"));
-
-    NavApp::getMainWindow()->setMapObjectsShownMessageText(
-      tr("—"), tr("Database is empty. Reload scenery library database to see map features."));
   }
   else
   {
@@ -68,8 +65,8 @@ void MapVisible::updateVisibleObjectsStatusBar()
 
     if(layer != nullptr && !paintLayer->noRender())
     {
-      map::MapTypes shown = paintLayer->getShownMapObjects();
-      map::MapObjectDisplayTypes shownDispTypes = paintLayer->getShownMapObjectDisplayTypes();
+      map::MapTypes shown = paintLayer->getShownMapTypes();
+      map::MapDisplayTypes shownDispTypes = paintLayer->getShownMapDisplayTypes();
 
       QStringList airportShortLabel;
       atools::util::HtmlBuilder tooltip(false);
@@ -139,10 +136,10 @@ void MapVisible::updateVisibleObjectsStatusBar()
         }
 
         if(shown.testFlag(map::AIRPORT_NO_PROCS))
-          features.append(tr("without approach procedure"));
+          features.append(tr("without procedure"));
         else
         {
-          features.append(tr("only with approach procedure (P)"));
+          features.append(tr("only with procedure (P)"));
           apShort.append(tr("P"));
         }
 
@@ -150,6 +147,12 @@ void MapVisible::updateVisibleObjectsStatusBar()
         {
           features.append(tr("closed (C)"));
           apShort.append(tr("C"));
+        }
+
+        if(shown.testFlag(map::AIRPORT_MILITARY))
+        {
+          features.append(tr("military (M)"));
+          apShort.append(tr("M"));
         }
 
         if(shown.testFlag(map::AIRPORT_ADDON))
@@ -225,7 +228,7 @@ void MapVisible::updateVisibleObjectsStatusBar()
       if(layer->isAirportMsa() && shown.testFlag(map::AIRPORT_MSA))
       {
         navaidLabel.append(tr("MSA"));
-        navaidsTooltip.append(tr("Airport MSA (MSA)"));
+        navaidsTooltip.append(tr("MSA Sectors (MSA)"));
       }
 
       if(layer->isMora() && shownDispTypes.testFlag(map::MORA) && NavApp::getMoraReader()->isDataAvailable())
@@ -372,13 +375,13 @@ void MapVisible::updateVisibleObjectsStatusBar()
       else
         tooltip.tr().td(tr("No airport weather shown")).trEnd();
 
-      if(shownDispTypes.testFlag(map::WIND_BARBS) && layer->isWindBarbs())
+      if(shownDispTypes.testFlag(map::WIND_BARBS) && layer->getWindBarbs() > 0)
       {
         WindReporter *windReporter = NavApp::getWindReporter();
         tooltip.tr().td().b(tr("Wind shown (W): ")).text(windReporter->getLevelText()).
         b(tr(" Wind source: ")).text(windReporter->getSourceText()).tdEnd().trEnd();
 
-        if(windReporter->isWindShown() && (windReporter->getSource() != wind::NO_SOURCE || windReporter->isWindManual()))
+        if(windReporter->isWindShown() && windReporter->getSource() != wind::WIND_SOURCE_DISABLED)
           weatherLabel.append(tr("W"));
       }
       else
@@ -438,4 +441,10 @@ void MapVisible::updateVisibleObjectsStatusBar()
     else
       NavApp::getMainWindow()->setMapObjectsShownMessageText(tr("—"), tr("Nothing shown. Zoom in to see map features."));
   } // if(!NavApp::hasDataInDatabase()) ... else
+}
+
+void MapVisible::postDatabaseLoad()
+{
+  // Remember value since call is expensive
+  simDbEmpty = !NavApp::hasDataInSimDatabase();
 }

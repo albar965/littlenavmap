@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
 #include "common/maptypes.h"
 #include "common/unit.h"
 #include "gui/actionbuttonhandler.h"
-#include "navapp.h"
+#include "app/navapp.h"
 #include "ui_mainwindow.h"
 
 #include <QAction>
@@ -240,7 +240,7 @@ void AirspaceToolBarHandler::actionsToFilterTypes(map::MapAirspaceFilter& curren
     for(QAction *action : toolButton->menu()->actions())
     {
       map::MapAirspaceFilter filter = action->data().value<map::MapAirspaceFilter>();
-      if(filter.flags.testFlag(map::AIRSPACE_FLAG_NONE))
+      if(filter.flags.testFlag(map::AIRSPACE_ALTITUDE_FLAG_NONE))
       {
         if(action->isChecked())
           currentFilter.types |= filter.types;
@@ -257,9 +257,15 @@ void AirspaceToolBarHandler::filterTypesToActions(const map::MapAirspaceFilter& 
   {
     for(QAction *action : toolButton->menu()->actions())
     {
+      action->blockSignals(true);
       map::MapAirspaceFilter filter = action->data().value<map::MapAirspaceFilter>();
-      if(filter.flags.testFlag(map::AIRSPACE_FLAG_NONE))
+      if(filter.flags == map::AIRSPACE_ALTITUDE_FLAG_NONE)
+        // Is a normal type filter
         action->setChecked(filter.types & currentFilter.types);
+      else
+        // Grouped altitude checkbox - check depending on flags
+        action->setChecked(filter.flags & currentFilter.flags);
+      action->blockSignals(false);
     }
   }
 }
@@ -302,7 +308,7 @@ void AirspaceToolBarHandler::actionRadioGroupTriggered(QAction *action)
   qDebug() << Q_FUNC_INFO;
 
   map::MapAirspaceFilter newFilter = NavApp::getShownMapAirspaces();
-  newFilter.flags = map::AIRSPACE_FLAG_NONE;
+  newFilter.flags = map::AIRSPACE_ALTITUDE_FLAG_NONE;
 
   QActionGroup *group = dynamic_cast<QActionGroup *>(sender());
   if(group != nullptr)
@@ -399,14 +405,15 @@ void AirspaceToolBarHandler::altSliderChanged()
 
 void AirspaceToolBarHandler::createToolButtons()
 {
+  createAirspaceToolButton(nullptr, ":/littlenavmap/resources/icons/airspacealt.svg",
+                           tr("Select altitude limitations for airspace display"),
+                           {}, {map::AIRSPACE_ALTITUDE_ALL, map::AIRSPACE_ALTITUDE_FLIGHTPLAN, map::AIRSPACE_ALTITUDE_SET},
+                           true /* groupActions */, true /* minMaxAltitude */);
+
   createAirspaceToolButton(buttonHandlerIcao, ":/littlenavmap/resources/icons/airspaceicao.svg",
                            tr("Select ICAO airspaces"),
                            {map::CLASS_A, map::CLASS_B, map::CLASS_C, map::CLASS_D, map::CLASS_E,
                             map::CLASS_F, map::CLASS_G}, {});
-
-  createAirspaceToolButton(buttonHandlerFir, ":/littlenavmap/resources/icons/airspacefir.svg",
-                           tr("Select FIR airspaces"),
-                           {map::FIR, map::UIR}, {});
 
   createAirspaceToolButton(buttonHandlerRestricted, ":/littlenavmap/resources/icons/airspacerestr.svg",
                            tr("Select MOA, restricted, prohibited and danger airspaces"),
@@ -422,10 +429,9 @@ void AirspaceToolBarHandler::createToolButtons()
                             map::DEPARTURE, map::APPROACH, map::NATIONAL_PARK, map::MODEC, map::RADAR, map::WAVEWINDOW,
                             map::ONLINE_OBSERVER}, {});
 
-  createAirspaceToolButton(nullptr, ":/littlenavmap/resources/icons/airspacealt.svg",
-                           tr("Select altitude limitations for airspace display"),
-                           {}, {map::AIRSPACE_ALTITUDE_ALL, map::AIRSPACE_ALTITUDE_FLIGHTPLAN, map::AIRSPACE_ALTITUDE_SET},
-                           true /* groupActions */, true /* minMaxAltitude */);
+  createAirspaceToolButton(buttonHandlerFir, ":/littlenavmap/resources/icons/airspacefir.svg",
+                           tr("Select FIR airspaces"),
+                           {map::FIR, map::UIR}, {});
 }
 
 void AirspaceToolBarHandler::createAirspaceToolButton(atools::gui::ActionButtonHandler *buttonHandler, const QString& icon,
@@ -439,7 +445,7 @@ void AirspaceToolBarHandler::createAirspaceToolButton(atools::gui::ActionButtonH
   for(const map::MapAirspaceTypes& type : types)
     allTypes |= type;
 
-  map::MapAirspaceFlags allFlags = map::AIRSPACE_FLAG_NONE;
+  map::MapAirspaceFlags allFlags = map::AIRSPACE_ALTITUDE_FLAG_NONE;
   for(const map::MapAirspaceFlags& flag : flags)
     allFlags |= flag;
 
@@ -534,7 +540,7 @@ void AirspaceToolBarHandler::createAirspaceToolButton(atools::gui::ActionButtonH
 
       map::MapAirspaceFilter f;
       f.types = type;
-      f.flags = map::AIRSPACE_FLAG_NONE;
+      f.flags = map::AIRSPACE_ALTITUDE_FLAG_NONE;
 
       action->setData(QVariant::fromValue(f));
 

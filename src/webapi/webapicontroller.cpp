@@ -16,9 +16,10 @@
 *****************************************************************************/
 
 #include "webapi/webapicontroller.h"
-#include "webapi/actionscontrollerindex.h"
-
 #include "common/jsoninfobuilder.h"
+#include "webapi/actionscontrollerindex.h"
+#include "webapi/webapiresponse.h"
+#include "webapi/webapirequest.h"
 
 #include <QDebug>
 #include <QMetaMethod>

@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -17,19 +17,18 @@
 
 #include "mapgui/maptooltip.h"
 
-#include "common/maptypes.h"
-#include "navapp.h"
-#include "util/htmlbuilder.h"
-#include "common/htmlinfobuilder.h"
-#include "gui/mainwindow.h"
-#include "route/route.h"
 #include "airspace/airspacecontroller.h"
-#include "options/optiondata.h"
-#include "sql/sqlrecord.h"
-#include "weather/windreporter.h"
+#include "common/htmlinfobuilder.h"
+#include "common/maptypes.h"
 #include "grib/windquery.h"
-#include "route/routealtitudeleg.h"
+#include "gui/mainwindow.h"
 #include "mapgui/mappaintwidget.h"
+#include "app/navapp.h"
+#include "options/optiondata.h"
+#include "route/route.h"
+#include "sql/sqlrecord.h"
+#include "util/htmlbuilder.h"
+#include "weather/windreporter.h"
 
 #include <QPalette>
 #include <QToolTip>
@@ -307,13 +306,13 @@ QString MapTooltip::buildTooltip(const map::MapResult& mapSearchResult, const at
     buildOneTooltip(html, overflow, numEntries, mapSearchResult.airways, info, &HtmlInfoBuilder::airwayText);
   }
 
-  // High altitude winds ===========================================================================
+  // High altitude wind barbs - not flight plan ===========================================================================
   if(!overflow)
   {
     if(opts.testFlag(optsd::TOOLTIP_WIND) && mapSearchResult.windPos.isValid())
     {
       WindReporter *windReporter = NavApp::getWindReporter();
-      atools::grib::WindPosVector winds = windReporter->getWindStackForPos(mapSearchResult.windPos);
+      atools::grib::WindPosList winds = windReporter->getWindStackForPos(mapSearchResult.windPos);
       if(!winds.isEmpty())
       {
         if(checkText(html))
@@ -325,9 +324,10 @@ QString MapTooltip::buildTooltip(const map::MapResult& mapSearchResult, const at
           if(!html.isEmpty())
             html.textBar(TEXT_BAR_LENGTH);
 
-          info.windText(winds, html, windReporter->getAltitudeFt(), windReporter->getSourceText());
+          // Show wind stack with barb notation for layer
+          info.windText(winds, html, map::INVALID_ALTITUDE_VALUE, false /* table */);
 
-#ifdef DEBUG_INFORMATION
+#ifdef DEBUG_INFORMATION_WIND
           html.hr().small(QString("Pos(%1, %2), alt(%3)").
                           arg(mapSearchResult.windPos.getLonX()).arg(mapSearchResult.windPos.getLatY()).
                           arg(windReporter->getAltitudeFt(), 0, 'f', 2)).br();

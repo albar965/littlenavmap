@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -31,6 +31,8 @@ const static QString COORDS_DMS_FORMAT_LONX("%L1° %L2' %L3\" %L4");
 const static QString COORDS_DMS_FORMAT_LATY("%L1° %L2' %L3\" %L4");
 const static QString COORDS_DM_FORMAT_LONX("%L1° %L2' %L3");
 const static QString COORDS_DM_FORMAT_LATY("%L1° %L2' %L3");
+const static QString COORDS_DM_GOOGLE_FORMAT_LONX("%1 %2");
+const static QString COORDS_DM_GOOGLE_FORMAT_LATY("%1 %2");
 
 QLocale *Unit::locale = nullptr;
 QLocale *Unit::clocale = nullptr;
@@ -105,6 +107,7 @@ QString Unit::replacePlaceholders(const QString& text, bool fuelAsVolume, opts::
 {
   QString retval(text);
   retval.replace("%distshort%", unitShortDistStr);
+  retval.replace("%dists%", unitShortDistStr);
   retval.replace("%dist%", unitDistStr);
   retval.replace("%alt%", unitAltStr);
   retval.replace("%speed%", unitSpeedStr);
@@ -406,7 +409,7 @@ float Unit::altFeetF(float value)
 
 int Unit::altFeetI(int value)
 {
-  return atools::roundToInt(altMeterF(ageo::feetToMeter(value)));
+  return atools::roundToInt(altMeterF(ageo::feetToMeter(static_cast<float>(value))));
 }
 
 QString Unit::volGallon(float value, bool addUnit)
@@ -693,6 +696,8 @@ QString Unit::coords(const ageo::Pos& pos, opts::UnitCoords coordUnit)
     return tr("%1 %2").arg(adjustNum(locale->toString(pos.getLatY(), 'f', 5))).arg(adjustNum(locale->toString(pos.getLonX(), 'f', 5)));
   else if(coordUnit == opts::COORDS_LONX_LATY)
     return tr("%1 %2").arg(adjustNum(locale->toString(pos.getLonX(), 'f', 5))).arg(adjustNum(locale->toString(pos.getLatY(), 'f', 5)));
+  else if(coordUnit == opts::COORDS_DECIMAL_GOOGLE)
+    return tr("%1, %2").arg(coordsLatY(pos, coordUnit)).arg(coordsLonX(pos, coordUnit));
   else
     return tr("%1 %2").arg(coordsLatY(pos, coordUnit)).arg(coordsLonX(pos, coordUnit));
 }
@@ -730,6 +735,11 @@ QString Unit::coordsLonX(const ageo::Pos& pos, opts::UnitCoords coordUnit)
              arg(atools::absInt(pos.getLonXDeg())).
              arg(std::abs(pos.getLonXMin() + pos.getLonXSec() / 60.f), 0, 'f', 2).
              arg(pos.getLonX() > 0.f ? "E" : "W");
+
+    case opts::COORDS_DECIMAL_GOOGLE:
+      return COORDS_DM_GOOGLE_FORMAT_LONX.
+             arg(pos.getLonXDeg()).
+             arg(std::abs(pos.getLonXMin() + pos.getLonXSec() / 60.f), 0, 'f', 2);
   }
   return QString();
 }
@@ -767,6 +777,11 @@ QString Unit::coordsLatY(const ageo::Pos& pos, opts::UnitCoords coordUnit)
              arg(atools::absInt(pos.getLatYDeg())).
              arg(std::abs(pos.getLatYMin() + pos.getLatYSec() / 60.f), 0, 'f', 2).
              arg(pos.getLatY() > 0.f ? "N" : "S");
+
+    case opts::COORDS_DECIMAL_GOOGLE:
+      return COORDS_DM_GOOGLE_FORMAT_LATY.
+             arg(pos.getLatYDeg()).
+             arg(std::abs(pos.getLatYMin() + pos.getLatYSec() / 60.f), 0, 'f', 2);
   }
   return QString();
 }

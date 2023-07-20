@@ -56,9 +56,9 @@ UserWaypointDialog::UserWaypointDialog(QWidget *parent, const atools::fs::pln::F
 
   // Change label depending on order
   if(Unit::getUnitCoords() == opts::COORDS_LONX_LATY)
-    ui->labelRouteUserWaypointLatLon->setText("&Longitude and Latitude:");
+    ui->labelRouteUserWaypointLatLon->setText(tr("&Longitude and Latitude:"));
   else
-    ui->labelRouteUserWaypointLatLon->setText("&Latitude and Longitude:");
+    ui->labelRouteUserWaypointLatLon->setText(tr("&Latitude and Longitude:"));
 
   if(waypointEdit)
   {
@@ -109,9 +109,10 @@ void UserWaypointDialog::buttonBoxClicked(QAbstractButton *button)
       entry->setRegion(ui->lineEditRouteUserWaypointRegion->text());
       entry->setName(ui->lineEditRouteUserWaypointName->text());
 
-      atools::geo::Pos pos = atools::fs::util::fromAnyFormat(ui->lineEditRouteUserWaypointLatLon->text());
+      bool hemisphere = false;
+      atools::geo::Pos pos = atools::fs::util::fromAnyFormat(ui->lineEditRouteUserWaypointLatLon->text(), &hemisphere);
 
-      if(Unit::getUnitCoords() == opts::COORDS_LONX_LATY)
+      if(Unit::getUnitCoords() == opts::COORDS_LONX_LATY && !hemisphere)
         // Parsing uses lat/lon - swap for lon/lat
         // Swap coordinates for lat lon formats if no hemisphere (N, S, E, W) is given
         atools::fs::util::maybeSwapOrdinates(pos, ui->lineEditRouteUserWaypointLatLon->text());

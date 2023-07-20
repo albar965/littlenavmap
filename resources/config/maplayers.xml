@@ -28,6 +28,7 @@
         <AiAircraftText>true</AiAircraftText>
         <AiAircraftTextDetail>true</AiAircraftTextDetail>
         <AiAircraftTextDetail2>true</AiAircraftTextDetail2>
+        <AiAircraftTextDetail3>true</AiAircraftTextDetail3>
         <AiShipLarge>true</AiShipLarge>
         <AiShipSmall>true</AiShipSmall>
 
@@ -89,6 +90,7 @@
 
         <!-- ILS feathers ================= -->
         <Ils>true</Ils>
+        <IlsDetail>true</IlsDetail>
         <IlsIdent>true</IlsIdent>
         <IlsInfo>true</IlsInfo>
 
@@ -122,6 +124,7 @@
 
         <!-- Flight plan details ================= -->
         <RouteTextAndDetail>true</RouteTextAndDetail>
+        <RouteTextAndDetail2>true</RouteTextAndDetail2>
         <RouteFontScale>1</RouteFontScale>
 
         <!-- Oceaninc tracks ================= -->
@@ -151,7 +154,7 @@
         <WaypointSymbolSize>3</WaypointSymbolSize>
 
         <!-- Wind barbs ================= -->
-        <WindBarbs>true</WindBarbs>
+        <WindBarbs>1</WindBarbs> <!-- At every degree, 2 = at every even degree grid point, etc. -->
         <WindBarbsSymbolSize>6</WindBarbsSymbolSize>
       </Layer>
       <!-- ==============================================================================
@@ -171,7 +174,7 @@
         <UserpointSymbolSize>28</UserpointSymbolSize>
         <VorSymbolSize>30</VorSymbolSize>
         <WaypointSymbolSize>14</WaypointSymbolSize>
-        <WindBarbsSymbolSize>22</WindBarbsSymbolSize>
+        <WindBarbsSymbolSize>14</WindBarbsSymbolSize>
       </Layer>
       <!-- ==============================================================================
       Following layers are derived from their respective predecessor, i.e. "0.3" derives from "0.2".
@@ -180,7 +183,6 @@
       <Layer MaximumRangeKm="0.3">
         <AirportDiagramDetail3>false</AirportDiagramDetail3>
         <AirportMsaSymbolScale>7</AirportMsaSymbolScale>
-        <WindBarbsSymbolSize>20</WindBarbsSymbolSize>
       </Layer>
       <!-- =================================================================================== -->
       <Layer MaximumRangeKm="1">
@@ -199,11 +201,11 @@
         <UserpointSymbolSize>26</UserpointSymbolSize>
         <VorSymbolSize>26</VorSymbolSize>
         <WaypointSymbolSize>10</WaypointSymbolSize>
-        <WindBarbsSymbolSize>18</WindBarbsSymbolSize>
+        <WindBarbsSymbolSize>13</WindBarbsSymbolSize>
       </Layer>
       <!-- =================================================================================== -->
       <Layer MaximumRangeKm="10">
-        <AirportDiagram>false</AirportDiagram>
+        <AiAircraftTextDetail3>false</AiAircraftTextDetail3>
         <AirportMinorSymbolSize>18</AirportMinorSymbolSize>
         <AirportMsaSymbolScale>4</AirportMsaSymbolScale>
         <AirportSymbolSize>18</AirportSymbolSize>
@@ -213,10 +215,12 @@
         <NdbSymbolSize>24</NdbSymbolSize>
         <VorSymbolSize>24</VorSymbolSize>
         <WaypointSymbolSize>8</WaypointSymbolSize>
-        <WindBarbsSymbolSize>16</WindBarbsSymbolSize>
+        <WindBarbsSymbolSize>12</WindBarbsSymbolSize>
       </Layer>
       <!-- =================================================================================== -->
       <Layer MaximumRangeKm="25">
+        <AiAircraftGround>false</AiAircraftGround>
+        <AirportDiagram>false</AirportDiagram>
         <AirportMsaDetails>false</AirportMsaDetails>
         <NdbSymbolSize>22</NdbSymbolSize>
         <UserpointSymbolSize>24</UserpointSymbolSize>
@@ -224,6 +228,7 @@
       </Layer>
       <!-- =================================================================================== -->
       <Layer MaximumRangeKm="50">
+        <AiAircraftTextDetail2>false</AiAircraftTextDetail2>
         <AiShipSmall>false</AiShipSmall>
         <AirportDiagramRunway>false</AirportDiagramRunway>
         <AirportMinorFontScale>0.9</AirportMinorFontScale>
@@ -246,8 +251,6 @@
       </Layer>
       <!-- =================================================================================== -->
       <Layer MaximumRangeKm="100">
-        <AiAircraftGround>false</AiAircraftGround>
-        <AiAircraftTextDetail2>false</AiAircraftTextDetail2>
         <AirportInfo>false</AirportInfo>
         <AirportMinorFontScale>0.8</AirportMinorFontScale>
         <AirportMinorName>false</AirportMinorName>
@@ -259,16 +262,19 @@
         <VorInfo>false</VorInfo>
         <VorSymbolSize>16</VorSymbolSize>
         <WaypointSymbolSize>3</WaypointSymbolSize>
-        <WindBarbsSymbolSize>14</WindBarbsSymbolSize>
+        <WindBarbsSymbolSize>11</WindBarbsSymbolSize>
       </Layer>
       <!-- =================================================================================== -->
       <Layer MaximumRangeKm="150">
-        <AirportMinorSymbolSize>10</AirportMinorSymbolSize>
+        <AiAircraftTextDetail>false</AiAircraftTextDetail>
         <AirportName>false</AirportName>
+        <AirportMinorFontScale>0.6</AirportMinorFontScale>
         <AirportOverviewRunway>false</AirportOverviewRunway>
+        <AirportMinorSymbolSize>9</AirportMinorSymbolSize>
         <AirportSymbolSize>10</AirportSymbolSize>
         <AirwayIdent>false</AirwayIdent>
         <ApproachText>false</ApproachText>
+        <IlsDetail>false</IlsDetail>
         <MaximumTextLengthUserpoint>8</MaximumTextLengthUserpoint>
         <NdbIdent>false</NdbIdent>
         <NdbSymbolSize>12</NdbSymbolSize>
@@ -280,10 +286,9 @@
       </Layer>
       <!-- =================================================================================== -->
       <Layer MaximumRangeKm="250">
-        <AiAircraftTextDetail>false</AiAircraftTextDetail>
         <AirportFontScale>0.9</AirportFontScale>
         <AirportMinorIdent>false</AirportMinorIdent>
-        <AirportMinorSymbolSize>8</AirportMinorSymbolSize>
+        <AirportMinorSymbolSize>7</AirportMinorSymbolSize>
         <AirportSymbolSize>8</AirportSymbolSize>
         <MinRunwayLength>2000</MinRunwayLength>
         <NdbSymbolSize>8</NdbSymbolSize>
@@ -304,14 +309,13 @@
         <UserpointInfo>false</UserpointInfo>
         <VorSymbolSize>6</VorSymbolSize>
         <WaypointRouteName>false</WaypointRouteName>
-        <WindBarbsSymbolSize>12</WindBarbsSymbolSize>
+        <WindBarbsSymbolSize>10</WindBarbsSymbolSize>
       </Layer>
       <!-- =================================================================================== -->
       <Layer MaximumRangeKm="750">
         <AiAircraftSize>24</AiAircraftSize>
         <AiShipLarge>false</AiShipLarge>
         <AirportMsa>false</AirportMsa>
-        <AirportSymbolSize>8</AirportSymbolSize>
         <AirspaceOther>false</AirspaceOther>
         <AirspaceRestricted>false</AirspaceRestricted>
         <AirspaceSpecial>false</AirspaceSpecial>
@@ -323,12 +327,14 @@
         <UserpointSymbolSize>12</UserpointSymbolSize>
         <VorRouteInfo>false</VorRouteInfo>
         <VorSymbolSize>3</VorSymbolSize>
+        <WindBarbsSymbolSize>9</WindBarbsSymbolSize>
       </Layer>
       <!-- =================================================================================== -->
       <Layer MaximumRangeKm="1200">
         <AiAircraftSize>20</AiAircraftSize>
         <AiAircraftSmall>false</AiAircraftSmall>
         <AirportFontScale>0.8</AirportFontScale>
+        <AirportMinorSymbolSize>6</AirportMinorSymbolSize>
         <AirportSymbolSize>6</AirportSymbolSize>
         <AirspaceFg>false</AirspaceFg>
         <AirspaceIcao>false</AirspaceIcao>
@@ -338,12 +344,19 @@
         <RouteFontScale>0.8</RouteFontScale>
         <TrackInfo>false</TrackInfo>
         <Vor>false</Vor>
-        <WindBarbsSymbolSize>10</WindBarbsSymbolSize>
-      </Layer>
+        <WindBarbs>2</WindBarbs>
+     </Layer>
+      <!-- =================================================================================== -->
+      <Layer MaximumRangeKm="1800">
+        <AirportFontScale>0.6</AirportFontScale>
+        <WindBarbs>3</WindBarbs>
+     </Layer>
       <!-- =================================================================================== -->
       <Layer MaximumRangeKm="2400">
         <AiAircraftSize>10</AiAircraftSize>
+        <AiAircraftText>false</AiAircraftText>
         <AirportIdent>false</AirportIdent>
+        <AirportMinorSymbolSize>4</AirportMinorSymbolSize>
         <AirportSymbolSize>4</AirportSymbolSize>
         <AirportWeather>false</AirportWeather>
         <AirportWeatherDetails>false</AirportWeatherDetails>
@@ -352,16 +365,32 @@
         <NdbRouteIdent>false</NdbRouteIdent>
         <VorRouteIdent>false</VorRouteIdent>
         <TrackWaypoint>false</TrackWaypoint>
-        <WindBarbsSymbolSize>6</WindBarbsSymbolSize>
+        <WindBarbsSymbolSize>8</WindBarbsSymbolSize>
+      </Layer>
+      <!-- =================================================================================== -->
+      <Layer MaximumRangeKm="3600">
+        <WindBarbs>4</WindBarbs>
+      </Layer>
+      <!-- =================================================================================== -->
+      <Layer MaximumRangeKm="4000">
+        <AiAircraftLarge>false</AiAircraftLarge>
+        <AirportMinorSymbolSize>3</AirportMinorSymbolSize>
+        <AirportSymbolSize>3</AirportSymbolSize>
+        <RouteTextAndDetail>false</RouteTextAndDetail>
+        <Approach>false</Approach>
+        <RouteTextAndDetail2>false</RouteTextAndDetail2>
+      </Layer>
+      <!-- =================================================================================== -->
+      <Layer MaximumRangeKm="6000">
+        <WindBarbs>8</WindBarbs>
+        <AirportMinorSymbolSize>2</AirportMinorSymbolSize>
+        <AirportSymbolSize>2</AirportSymbolSize>
       </Layer>
       <!-- =================================================================================== -->
       <!-- Distance cutoff limit. -->
-      <Layer MaximumRangeKm="4000">
+      <Layer MaximumRangeKm="10000">
+        <WindBarbs>10</WindBarbs>
         <AiAircraftLarge>false</AiAircraftLarge>
-        <AiAircraftText>false</AiAircraftText>
-        <AirportSymbolSize>3</AirportSymbolSize>
-        <Approach>false</Approach>
-        <WindBarbs>false</WindBarbs>
       </Layer>
       <!-- =================================================================================== -->
       <!-- Use very large range to always have a layer available with all drawing disabled. -->
@@ -370,10 +399,10 @@
         <AirportNoRating>false</AirportNoRating>
         <AirspaceFirUir>false</AirspaceFirUir>
         <OnlineAircraft>false</OnlineAircraft>
-        <RouteTextAndDetail>false</RouteTextAndDetail>
         <Track>false</Track>
         <TrackIdent>false</TrackIdent>
         <Userpoint>false</Userpoint>
+        <WindBarbs>0</WindBarbs> <!-- At no degree -->
       </Layer>
     </Layers>
   </MapLayerSettings>

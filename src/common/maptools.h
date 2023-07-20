@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -244,7 +244,8 @@ void insertSortedByDistance(const CoordinateConverter& conv, QList<TYPE>& list, 
   }
 }
 
-/* Inserts elements from list into result sorted by screen distance to xs/ys using ids set for deduplication */
+/* Inserts elements from list into result sorted by screen distance to xs/ys using ids set for deduplication
+ * Uses getPosition from the TYPE. */
 template<typename TYPE>
 void insertSorted(const CoordinateConverter& conv, int xs, int ys, const QList<TYPE>& list, QList<TYPE>& result,
                   QSet<int> *ids, int maxDistance)
@@ -253,6 +254,26 @@ void insertSorted(const CoordinateConverter& conv, int xs, int ys, const QList<T
   for(const TYPE& obj : list)
   {
     if(obj.getPosition().isValid() && conv.wToS(obj.getPosition(), x, y))
+      if((atools::geo::manhattanDistance(x, y, xs, ys)) < maxDistance)
+        maptools::insertSortedByDistance(conv, result, ids, xs, ys, obj);
+  }
+}
+
+/* Inserts elements from list into result sorted by screen distance to xs/ys using ids set for deduplication.
+ *  Uses getPositionTo() and getPositionFrom() from the TYPE. */
+template<typename TYPE>
+void insertSortedFromTo(const CoordinateConverter& conv, int xs, int ys, const QList<TYPE>& list, QList<TYPE>& result,
+                        QSet<int> *ids, int maxDistance)
+{
+  int x, y;
+  for(const TYPE& obj : list)
+  {
+    // Also deduplicates results preferring ones from getPositionTo()
+    if(obj.getPosition().isValid() && conv.wToS(obj.getPositionTo(), x, y))
+      if((atools::geo::manhattanDistance(x, y, xs, ys)) < maxDistance)
+        maptools::insertSortedByDistance(conv, result, ids, xs, ys, obj);
+
+    if(obj.getPosition().isValid() && conv.wToS(obj.getPositionFrom(), x, y))
       if((atools::geo::manhattanDistance(x, y, xs, ys)) < maxDistance)
         maptools::insertSortedByDistance(conv, result, ids, xs, ys, obj);
   }

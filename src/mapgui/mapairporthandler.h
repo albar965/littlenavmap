@@ -37,7 +37,7 @@ class AirportLabelAction;
  * Adds a toolbutton with more actions, a slider and a label to configure airport display on the map.
  * Saves and loads airport visibility flags.
  */
-class MapAirportHandler :
+struct MapAirportHandler :
   public QObject
 {
   Q_OBJECT
@@ -94,7 +94,7 @@ private:
 
   /* Actions for toolbar button and menu */
   QAction *actionReset = nullptr, *actionHard = nullptr, *actionSoft = nullptr, *actionEmpty = nullptr, *actionAddon = nullptr,
-          *actionUnlighted = nullptr, *actionNoProcedures = nullptr, *actionClosed = nullptr, *actionWater = nullptr,
+          *actionUnlighted = nullptr, *actionNoProcedures = nullptr, *actionClosed = nullptr, *actionMil = nullptr, *actionWater = nullptr,
           *actionHelipad = nullptr;
 
   /* Widget wrapper allowing to put an arbitrary widget into a menu */

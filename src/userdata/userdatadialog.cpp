@@ -24,7 +24,6 @@
 #include "common/dialogrecordhelper.h"
 #include "common/constants.h"
 #include "common/formatter.h"
-#include "gui/mainwindow.h"
 #include "fs/util/coordinates.h"
 #include "common/unit.h"
 #include "gui/helphandler.h"
@@ -32,11 +31,15 @@
 #include "gui/widgetstate.h"
 #include "common/unitstringtool.h"
 #include "common/maptypes.h"
-#include "navapp.h"
+#include "app/navapp.h"
 
 #include <QPushButton>
 #include <QDateTime>
 #include <QLocale>
+
+const float DEFAULT_VIEW_DISTANCE_NM = 250.f;
+const float DEFAULT_VIEW_DISTANCE_KM = 450.f;
+const float DEFAULT_VIEW_DISTANCE_MI = 300.f;
 
 const QLatin1String UserdataDialog::DEFAULT_TYPE("Bookmark");
 
@@ -73,16 +76,13 @@ UserdataDialog::UserdataDialog(QWidget *parent, ud::UserdataDialogMode mode, Use
 
   // Change label depending on order
   if(Unit::getUnitCoords() == opts::COORDS_LONX_LATY)
-    ui->labelUserdataLatLon->setText("&Longitude and Latitude:");
+    ui->labelUserdataLatLon->setText(tr("&Longitude and Latitude:"));
   else
-    ui->labelUserdataLatLon->setText("&Latitude and Longitude:");
+    ui->labelUserdataLatLon->setText(tr("&Latitude and Longitude:"));
 
   // Update units
   units = new UnitStringTool();
-  units->init({
-    ui->spinBoxUserdataAltitude,
-    ui->spinBoxUserdataVisible
-  });
+  units->init({ui->spinBoxUserdataAltitude, ui->spinBoxUserdataVisible});
 
   // Show checkboxes when editing more than one entry
   ui->checkBoxUserdataAltitude->setVisible(showCheckbox);
@@ -190,7 +190,7 @@ void UserdataDialog::resetClicked()
     ui->lineEditUserdataName->clear();
     ui->lineEditUserdataTags->clear();
     ui->spinBoxUserdataAltitude->setValue(0.);
-    ui->spinBoxUserdataVisible->setValue(250);
+    ui->spinBoxUserdataVisible->setValue(atools::roundToInt(defaultDistValue()));
     ui->plainTextEditUserdataDescription->clear();
     ui->checkBoxUserdataTemp->setChecked(false);
   }
@@ -202,7 +202,7 @@ void UserdataDialog::acceptClicked()
 {
   // Copy widget data to record
   dialogToRecord();
-  qDebug() << Q_FUNC_INFO << record;
+  qDebug() << Q_FUNC_INFO << *record;
 
   QDialog::accept();
 }
@@ -244,15 +244,9 @@ void UserdataDialog::updateWidgets()
 
     // Disable dialog OK button if nothing is checked
     ui->buttonBoxUserdata->button(QDialogButtonBox::Ok)->setEnabled(
-      ui->checkBoxUserdataAltitude->isChecked() |
-      ui->checkBoxUserdataDescription->isChecked() |
-      ui->checkBoxUserdataRegion->isChecked() |
-      ui->checkBoxUserdataIdent->isChecked() |
-      ui->checkBoxUserdataName->isChecked() |
-      ui->checkBoxUserdataTags->isChecked() |
-      ui->checkBoxUserdataType->isChecked() |
-      ui->checkBoxUserdataVisible->isChecked()
-      );
+      ui->checkBoxUserdataAltitude->isChecked() || ui->checkBoxUserdataDescription->isChecked() ||
+      ui->checkBoxUserdataRegion->isChecked() || ui->checkBoxUserdataIdent->isChecked() || ui->checkBoxUserdataName->isChecked() ||
+      ui->checkBoxUserdataTags->isChecked() || ui->checkBoxUserdataType->isChecked() || ui->checkBoxUserdataVisible->isChecked());
   }
 }
 
@@ -299,9 +293,9 @@ void UserdataDialog::recordToDialog()
   }
 
   if(!record->isNull("visible_from"))
-    ui->spinBoxUserdataVisible->setValue(atools::roundToInt(Unit::distNmF(record->valueInt("visible_from"))));
+    ui->spinBoxUserdataVisible->setValue(atools::roundToInt(Unit::distNmF(record->valueFloat("visible_from"))));
   else
-    ui->spinBoxUserdataVisible->setValue(atools::roundToInt(Unit::distNmF(250.f)));
+    ui->spinBoxUserdataVisible->setValue(atools::roundToInt(defaultDistValue()));
 
   ui->spinBoxUserdataAltitude->setValue(atools::roundToInt(Unit::altFeetF(record->valueInt("altitude"))));
 
@@ -355,14 +349,15 @@ void UserdataDialog::dialogToRecord()
 
   record->setValue("last_edit_timestamp", QDateTime::currentDateTime());
 
-  helper.dialogToRecordInt(ui->spinBoxUserdataVisible, "visible_from", ui->checkBoxUserdataVisible);
-  helper.dialogToRecordInt(ui->spinBoxUserdataAltitude, "altitude", ui->checkBoxUserdataAltitude);
+  helper.dialogToRecordInt(ui->spinBoxUserdataVisible, "visible_from", ui->checkBoxUserdataVisible, Unit::distNmF);
+  helper.dialogToRecordInt(ui->spinBoxUserdataAltitude, "altitude", ui->checkBoxUserdataAltitude, Unit::altFeetF);
 
   if(editMode != ud::EDIT_MULTIPLE)
   {
-    atools::geo::Pos pos = atools::fs::util::fromAnyFormat(ui->lineEditUserdataLatLon->text());
+    bool hemisphere = false;
+    atools::geo::Pos pos = atools::fs::util::fromAnyFormat(ui->lineEditUserdataLatLon->text(), &hemisphere);
 
-    if(Unit::getUnitCoords() == opts::COORDS_LONX_LATY)
+    if(Unit::getUnitCoords() == opts::COORDS_LONX_LATY && !hemisphere)
       // Swap coordinates for lat lon formats if no hemisphere (N, S, E, W) is given
       atools::fs::util::maybeSwapOrdinates(pos, ui->lineEditUserdataLatLon->text());
 
@@ -389,4 +384,20 @@ void UserdataDialog::fillTypeComboBox(const QString& type)
     ui->comboBoxUserdataType->insertItem(0, QIcon(*icons->getIconPixmap(type, size)), type);
     ui->comboBoxUserdataType->setCurrentIndex(0);
   }
+}
+
+float UserdataDialog::defaultDistValue()
+{
+  switch(Unit::getUnitDist())
+  {
+    case opts::DIST_NM:
+      return DEFAULT_VIEW_DISTANCE_NM;
+
+    case opts::DIST_KM:
+      return DEFAULT_VIEW_DISTANCE_KM;
+
+    case opts::DIST_MILES:
+      return DEFAULT_VIEW_DISTANCE_MI;
+  }
+  return DEFAULT_VIEW_DISTANCE_NM;
 }

@@ -95,6 +95,8 @@ private:
 
   void fillTypeComboBox(const QString& type);
 
+  float defaultDistValue();
+
   atools::sql::SqlRecord *record;
   ud::UserdataDialogMode editMode;
   Ui::UserdataDialog *ui;

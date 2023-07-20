@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
 #include "common/constants.h"
 #include "common/mapresult.h"
 #include "common/maptypesfactory.h"
-#include "common/unit.h"
+#include "db/undoredoprogress.h"
 #include "exception.h"
 #include "fs/userdata/userdatamanager.h"
 #include "geo/pos.h"
@@ -30,7 +30,8 @@
 #include "gui/dialog.h"
 #include "gui/errorhandler.h"
 #include "gui/mainwindow.h"
-#include "navapp.h"
+#include "app/navapp.h"
+#include "options/optiondata.h"
 #include "search/searchcontroller.h"
 #include "search/userdatasearch.h"
 #include "settings/settings.h"
@@ -65,7 +66,7 @@ UserdataController::UserdataController(atools::fs::userdata::UserdataManager *us
   connect(ui->actionSearchUserpointRedo, &QAction::triggered, this, &UserdataController::redoTriggered);
 
   manager->setMaximumUndoSteps(50);
-  manager->setTextSuffix(tr(" Userpoint"), tr(" Userpoints"));
+  manager->setTextSuffix(tr("Userpoint", "Userpoint singular"), tr("Userpoints", "Userpoint plural"));
   manager->setActions(ui->actionSearchUserpointUndo, ui->actionSearchUserpointRedo);
 }
 
@@ -82,12 +83,27 @@ void UserdataController::undoTriggered()
   qDebug() << Q_FUNC_INFO;
   if(manager->canUndo())
   {
-    QGuiApplication::setOverrideCursor(Qt::WaitCursor);
-    manager->undo();
-    QGuiApplication::restoreOverrideCursor();
+    SqlTransaction transaction(manager->getDatabase());
+    UndoRedoProgress progress(mainWindow, tr("Little Navmap - Undoing Userpoint changes"), tr("Undoing changes ..."));
+    manager->setProgressCallback(std::bind(&UndoRedoProgress::callback, &progress, std::placeholders::_1, std::placeholders::_2));
 
-    emit refreshUserdataSearch(false, false);
-    emit userdataChanged();
+    progress.start();
+    manager->undo();
+    progress.stop();
+
+    manager->setProgressCallback(nullptr);
+    if(!progress.isCanceled())
+    {
+      qDebug() << Q_FUNC_INFO << "Committing";
+      transaction.commit();
+      emit refreshUserdataSearch(false, false);
+      emit userdataChanged();
+    }
+    else
+    {
+      qDebug() << Q_FUNC_INFO << "Rolling back";
+      transaction.rollback();
+    }
   }
 }
 
@@ -96,12 +112,27 @@ void UserdataController::redoTriggered()
   qDebug() << Q_FUNC_INFO;
   if(manager->canRedo())
   {
-    QGuiApplication::setOverrideCursor(Qt::WaitCursor);
-    manager->redo();
-    QGuiApplication::restoreOverrideCursor();
+    SqlTransaction transaction(manager->getDatabase());
+    UndoRedoProgress progress(mainWindow, tr("Little Navmap - Redoing Userpoint changes"), tr("Redoing changes ..."));
+    manager->setProgressCallback(std::bind(&UndoRedoProgress::callback, &progress, std::placeholders::_1, std::placeholders::_2));
 
-    emit refreshUserdataSearch(false, false);
-    emit userdataChanged();
+    progress.start();
+    manager->redo();
+    progress.stop();
+
+    manager->setProgressCallback(nullptr);
+    if(!progress.isCanceled())
+    {
+      qDebug() << Q_FUNC_INFO << "Committing";
+      transaction.commit();
+      emit refreshUserdataSearch(false, false);
+      emit userdataChanged();
+    }
+    else
+    {
+      qDebug() << Q_FUNC_INFO << "Rolling back";
+      transaction.rollback();
+    }
   }
 }
 
@@ -120,6 +151,10 @@ QString UserdataController::getDefaultType(const QString& type)
 
 void UserdataController::enableCategoryOnMap(const QString& category)
 {
+#ifdef DEBUG_INFORMATION
+  qDebug() << Q_FUNC_INFO << "category" << category;
+#endif
+
   if(icons->hasType(category))
   {
     if(!selectedTypes.contains(category))
@@ -153,7 +188,7 @@ void UserdataController::addToolbarButton()
   ui->toolbarMapOptions->insertSeparator(ui->actionMapShowRoute);
 
   // Create and add select all action =====================================
-  actionAll = new QAction(tr("&All"), buttonMenu);
+  actionAll = new QAction(tr("&All Userpoints"), buttonMenu);
   actionAll->setToolTip(tr("Toggle all / current selection of userpoints"));
   actionAll->setStatusTip(actionAll->toolTip());
   buttonMenu->addAction(actionAll);
@@ -161,7 +196,7 @@ void UserdataController::addToolbarButton()
   buttonHandler->setAllAction(actionAll);
 
   // Create and add select none action =====================================
-  actionNone = new QAction(tr("&None"), buttonMenu);
+  actionNone = new QAction(tr("&No Userpoints"), buttonMenu);
   actionNone->setToolTip(tr("Toggle none / current selection of userpoints"));
   actionNone->setStatusTip(actionNone->toolTip());
   buttonMenu->addAction(actionNone);
@@ -311,12 +346,13 @@ QStringList UserdataController::getAllTypes() const
   return icons->getAllTypes();
 }
 
-void UserdataController::addUserpointFromMap(const map::MapResult& result, atools::geo::Pos pos)
+void UserdataController::addUserpointFromMap(const map::MapResult& result, atools::geo::Pos pos, bool airportAddon)
 {
   qDebug() << Q_FUNC_INFO;
+
   if(result.isEmpty(map::AIRPORT | map::VOR | map::NDB | map::WAYPOINT | map::USERPOINT))
     // No prefill start empty dialog of with last added data
-    addUserpointInternal(-1, pos, SqlRecord(), true /* enableCategory */);
+    addUserpointInternal(-1, pos, SqlRecord());
   else
   {
     // Prepare the dialog prefill data
@@ -324,10 +360,18 @@ void UserdataController::addUserpointFromMap(const map::MapResult& result, atool
     if(result.hasAirports())
     {
       const map::MapAirport& ap = result.airports.constFirst();
-      prefillRec.appendFieldAndValue("ident", ap.displayIdent())
-      .appendFieldAndValue("name", ap.name)
-      .appendFieldAndValue("type", "Airport")
-      .appendFieldAndValue("region", ap.region);
+
+      prefillRec.appendFieldAndValue("ident", ap.displayIdent()).appendFieldAndValue("name", ap.name).
+      appendFieldAndValue("region", ap.region);
+
+      if(airportAddon)
+        // Addon type to highlight add-on airports
+        prefillRec.appendFieldAndValue("type", "Addon").
+        appendFieldAndValue("visible_from", 5000.f /* NM */).
+        appendFieldAndValueIf("tags", NavApp::getCurrentSimulatorShortName());
+      else
+        prefillRec.appendFieldAndValue("type", "Airport");
+
       pos = ap.position;
     }
     else if(result.hasVor())
@@ -388,7 +432,10 @@ void UserdataController::addUserpointFromMap(const map::MapResult& result, atool
 
     prefillRec.appendFieldAndValue("altitude", pos.getAltitude());
 
-    addUserpointInternal(-1, pos, prefillRec, true /* enableCategory */);
+    if(airportAddon)
+      addUserpointInternalAddon(pos, prefillRec);
+    else
+      addUserpointInternal(-1, pos, prefillRec);
   }
 }
 
@@ -416,7 +463,9 @@ void UserdataController::moveUserpointFromMap(const map::MapUserpoint& userpoint
 
 void UserdataController::clearTemporary()
 {
+  SqlTransaction transaction(manager->getDatabase());
   manager->clearTemporary();
+  transaction.commit();
   manager->updateUndoRedoActions();
 }
 
@@ -440,10 +489,49 @@ void UserdataController::editUserpointFromMap(const map::MapResult& result)
 
 void UserdataController::addUserpoint(int id, const atools::geo::Pos& pos)
 {
-  addUserpointInternal(id, pos, SqlRecord(), false /* enableCategory */);
+  addUserpointInternal(id, pos, SqlRecord());
 }
 
-void UserdataController::addUserpointInternal(int id, const atools::geo::Pos& pos, const SqlRecord& prefillRec, bool enableCategory)
+void UserdataController::addUserpointInternalAddon(const atools::geo::Pos& pos, const SqlRecord& rec)
+{
+  qDebug() << Q_FUNC_INFO;
+
+#ifdef DEBUG_INFORMATION
+  qDebug() << Q_FUNC_INFO << rec;
+#endif
+
+  *lastAddedRecord = rec;
+
+  // Set id to null to let userdata manager select id
+  if(lastAddedRecord->contains("userdata_id"))
+    lastAddedRecord->setNull("userdata_id");
+
+  lastAddedRecord->setEmptyStringsToNull();
+
+  lastAddedRecord->appendFieldAndValue("last_edit_timestamp", QDateTime::currentDateTime());
+
+  if(pos.isValid())
+  {
+    // Take coordinates for prefill if given
+    lastAddedRecord->appendFieldAndValue("lonx", pos.getLonX()).appendFieldAndValue("laty", pos.getLatY());
+    if(pos.getAltitude() < map::INVALID_ALTITUDE_VALUE)
+      lastAddedRecord->appendFieldAndValue("altitude", pos.getAltitude());
+  }
+
+  // Add to database
+  SqlTransaction transaction(manager->getDatabase());
+  manager->insertOneRecord(*lastAddedRecord);
+  transaction.commit();
+
+  // Enable category on map for new type
+  enableCategoryOnMap(lastAddedRecord->valueStr("type"));
+
+  emit refreshUserdataSearch(false /* load all */, false /* keep selection */);
+  emit userdataChanged();
+  mainWindow->setStatusMessage(tr("Addon Userpoint added."));
+}
+
+void UserdataController::addUserpointInternal(int id, const atools::geo::Pos& pos, const SqlRecord& prefillRec)
 {
   qDebug() << Q_FUNC_INFO;
 
@@ -475,7 +563,9 @@ void UserdataController::addUserpointInternal(int id, const atools::geo::Pos& po
       rec.appendFieldAndValue("altitude", pos.getAltitude());
   }
 
+#ifdef DEBUG_INFORMATION
   qDebug() << Q_FUNC_INFO << rec;
+#endif
 
   UserdataDialog dlg(mainWindow, ud::ADD, icons);
   dlg.restoreState();
@@ -489,15 +579,23 @@ void UserdataController::addUserpointInternal(int id, const atools::geo::Pos& po
     if(lastAddedRecord->contains("import_file_path"))
       lastAddedRecord->setNull("import_file_path");
 
+#ifdef DEBUG_INFORMATION
     qDebug() << Q_FUNC_INFO << rec;
+#endif
+
+    // Set id to null to let userdata manager select id
+    if(lastAddedRecord->contains("userdata_id"))
+      lastAddedRecord->setNull("userdata_id");
+
+    lastAddedRecord->setEmptyStringsToNull();
 
     // Add to database
     SqlTransaction transaction(manager->getDatabase());
     manager->insertOneRecord(*lastAddedRecord);
     transaction.commit();
 
-    if(enableCategory)
-      enableCategoryOnMap(lastAddedRecord->valueStr("type"));
+    // Enable category on map for new type
+    enableCategoryOnMap(lastAddedRecord->valueStr("type"));
 
     emit refreshUserdataSearch(false /* load all */, false /* keep selection */);
     emit userdataChanged();
@@ -521,9 +619,16 @@ void UserdataController::editUserpoints(const QVector<int>& ids)
     if(retval == QDialog::Accepted)
     {
       // Change modified columns for all given ids
+      SqlRecord editedRec = dlg.getRecord();
+      editedRec.setEmptyStringsToNull();
+
       SqlTransaction transaction(manager->getDatabase());
-      manager->updateRecords(dlg.getRecord(), ids);
+      manager->updateRecords(editedRec, QSet<int>(ids.constBegin(), ids.constEnd()));
       transaction.commit();
+
+      // Enable category on map if the type has changed
+      if(editedRec.contains("type"))
+        enableCategoryOnMap(editedRec.valueStr("type"));
 
       emit refreshUserdataSearch(false /* load all */, false /* keep selection */);
       emit userdataChanged();
@@ -540,7 +645,7 @@ void UserdataController::deleteUserpoints(const QVector<int>& ids)
   qDebug() << Q_FUNC_INFO;
 
   SqlTransaction transaction(manager->getDatabase());
-  manager->deleteRows(ids);
+  manager->deleteRows(QSet<int>(ids.constBegin(), ids.constEnd()));
   transaction.commit();
 
   emit refreshUserdataSearch(false /* load all */, false /* keep selection */);
@@ -553,33 +658,36 @@ void UserdataController::importCsv()
   qDebug() << Q_FUNC_INFO;
   try
   {
-
-    QStringList files = dialog->openFileDialogMulti(
-      tr("Open Userpoint CSV File(s)"),
-      tr("CSV Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_USERDATA_CSV), "Userdata/Csv");
-
-    int numImported = 0;
-    for(const QString& file:files)
-    {
-      if(!file.isEmpty())
-        numImported += manager->importCsv(file, atools::fs::userdata::NONE, ',', '"');
-    }
+    QStringList files = dialog->openFileDialogMulti(tr("Open Userpoint CSV File(s)"),
+                                                    tr("CSV Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_USERDATA_CSV), "Userdata/Csv");
+    files.removeAll(QString());
 
     if(!files.isEmpty())
     {
-      mainWindow->showUserpointSearch();
+      QGuiApplication::setOverrideCursor(Qt::WaitCursor);
+      SqlTransaction transaction(manager->getDatabase());
+      int numImported = manager->importCsv(files, atools::fs::userdata::NONE, ',', '"');
+      transaction.commit();
+      QGuiApplication::restoreOverrideCursor();
+
       mainWindow->setStatusMessage(tr("%n userpoint(s) imported.", "", numImported));
-      manager->updateUndoRedoActions();
-      emit refreshUserdataSearch(false /* load all */, false /* keep selection */);
+      if(numImported > 0)
+      {
+        mainWindow->showUserpointSearch();
+        manager->updateUndoRedoActions();
+        emit refreshUserdataSearch(false /* load all */, false /* keep selection */);
+      }
     }
   }
   catch(atools::Exception& e)
   {
+    QGuiApplication::restoreOverrideCursor();
     NavApp::closeSplashScreen();
     atools::gui::ErrorHandler(mainWindow).handleException(e);
   }
   catch(...)
   {
+    QGuiApplication::restoreOverrideCursor();
     NavApp::closeSplashScreen();
     atools::gui::ErrorHandler(mainWindow).handleUnknownException();
   }
@@ -590,15 +698,19 @@ void UserdataController::importXplaneUserFixDat()
   qDebug() << Q_FUNC_INFO;
   try
   {
-
     QString file = dialog->openFileDialog(
       tr("Open X-Plane user_fix.dat File"),
-      tr("X-Plane User Fix Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_USER_FIX_DAT), "Userdata/UserFixDat",
-      xplaneUserWptDatPath());
+      tr("X-Plane User Fix Files %1;;X-Plane Dat Files %2;;All Files (*)").arg(lnm::FILE_PATTERN_USER_FIX_DAT).arg(lnm::FILE_PATTERN_DAT),
+      "Userdata/UserFixDat", xplaneUserWptDatPath());
 
     if(!file.isEmpty())
     {
+      QGuiApplication::setOverrideCursor(Qt::WaitCursor);
+      SqlTransaction transaction(manager->getDatabase());
       int numImported = manager->importXplane(file);
+      transaction.commit();
+      QGuiApplication::restoreOverrideCursor();
+
       mainWindow->showUserpointSearch();
       mainWindow->setStatusMessage(tr("%n userpoint(s) imported.", "", numImported));
       manager->updateUndoRedoActions();
@@ -607,11 +719,13 @@ void UserdataController::importXplaneUserFixDat()
   }
   catch(atools::Exception& e)
   {
+    QGuiApplication::restoreOverrideCursor();
     NavApp::closeSplashScreen();
     atools::gui::ErrorHandler(mainWindow).handleException(e);
   }
   catch(...)
   {
+    QGuiApplication::restoreOverrideCursor();
     NavApp::closeSplashScreen();
     atools::gui::ErrorHandler(mainWindow).handleUnknownException();
   }
@@ -629,7 +743,12 @@ void UserdataController::importGarmin()
 
     if(!file.isEmpty())
     {
+      QGuiApplication::setOverrideCursor(Qt::WaitCursor);
+      SqlTransaction transaction(manager->getDatabase());
       int numImported = manager->importGarmin(file);
+      transaction.commit();
+      QGuiApplication::restoreOverrideCursor();
+
       mainWindow->showUserpointSearch();
       mainWindow->setStatusMessage(tr("%n userpoint(s) imported.", "", numImported));
       manager->updateUndoRedoActions();
@@ -638,11 +757,13 @@ void UserdataController::importGarmin()
   }
   catch(atools::Exception& e)
   {
+    QGuiApplication::restoreOverrideCursor();
     NavApp::closeSplashScreen();
     atools::gui::ErrorHandler(mainWindow).handleException(e);
   }
   catch(...)
   {
+    QGuiApplication::restoreOverrideCursor();
     NavApp::closeSplashScreen();
     atools::gui::ErrorHandler(mainWindow).handleUnknownException();
   }
@@ -653,14 +774,13 @@ void UserdataController::exportCsv()
   qDebug() << Q_FUNC_INFO;
   try
   {
-    bool selected, append, header;
-    if(exportSelectedQuestion(selected, append, header, true /* append allowed */, true /* header allowed */))
+    bool selected, append, header, xp12;
+    if(exportSelectedQuestion(selected, append, header, xp12, true /* appendAllowed */, true /* headerAllowed */, false /* xplane */))
     {
       QString file = dialog->saveFileDialog(
         tr("Export Userpoint CSV File"),
         tr("CSV Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_USERDATA_CSV),
-        ".csv",
-        "Userdata/Csv", QString(), QString(), append /* dont confirm overwrite */);
+        ".csv", "Userdata/Csv", QString(), QString(), append /* dont confirm overwrite */);
 
       if(!file.isEmpty())
       {
@@ -693,23 +813,21 @@ void UserdataController::exportXplaneUserFixDat()
   qDebug() << Q_FUNC_INFO;
   try
   {
-    bool selected, append, header;
-    if(exportSelectedQuestion(selected, append, header, true /* append allowed */, false /* header allowed */))
+    bool selected, append, header, xp12;
+    if(exportSelectedQuestion(selected, append, header, xp12, true /* appendAllowed */, false /* headerAllowed */, true /* xplane */))
     {
       QString file = dialog->saveFileDialog(
         tr("Export X-Plane user_fix.dat File"),
-        tr("X-Plane User Fix Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_USER_FIX_DAT),
-        ".dat",
-        "Userdata/UserFixDat",
-        xplaneUserWptDatPath(), "user_fix.dat", append /* dont confirm overwrite */);
+        tr("X-Plane User Fix Files %1;;X-Plane Dat Files %2;;All Files (*)").arg(lnm::FILE_PATTERN_USER_FIX_DAT).arg(lnm::FILE_PATTERN_DAT),
+        ".dat", "Userdata/UserFixDat", xplaneUserWptDatPath(), "user_fix.dat", append /* dont confirm overwrite */);
 
       if(!file.isEmpty())
       {
         QVector<int> ids;
         if(selected)
           ids = NavApp::getUserdataSearch()->getSelectedIds();
-        int numExported =
-          manager->exportXplane(file, ids, append ? atools::fs::userdata::APPEND : atools::fs::userdata::NONE);
+        int numExported = manager->exportXplane(file, ids, append ? atools::fs::userdata::APPEND : atools::fs::userdata::NONE,
+                                                xp12);
         mainWindow->setStatusMessage(tr("%n userpoint(s) exported.", "", numExported));
       }
     }
@@ -731,8 +849,8 @@ void UserdataController::exportGarmin()
   qDebug() << Q_FUNC_INFO;
   try
   {
-    bool selected, append, header;
-    if(exportSelectedQuestion(selected, append, header, true /* append allowed */, false /* header allowed */))
+    bool selected, append, header, xp12;
+    if(exportSelectedQuestion(selected, append, header, xp12, true /* appendAllowed */, false /* headerAllowed */, false /* xplane */))
     {
       QString file = dialog->saveFileDialog(
         tr("Export Garmin User Waypoint File"),
@@ -769,8 +887,8 @@ void UserdataController::exportBglXml()
   qDebug() << Q_FUNC_INFO;
   try
   {
-    bool selected, append, header;
-    if(exportSelectedQuestion(selected, append, header, false /* append allowed */, false /* header allowed */))
+    bool selected, append, header, xp12;
+    if(exportSelectedQuestion(selected, append, header, xp12, false /* appendAllowed */, false /* headerAllowed */, false /* xplane */))
     {
       QString file = dialog->saveFileDialog(
         tr("Export XML File for FSX/P3D BGL Compiler"),
@@ -819,7 +937,7 @@ QString UserdataController::garminGtnUserWptPath()
 #ifdef Q_OS_WIN32
   QString gtnPath(QProcessEnvironment::systemEnvironment().value("GTNSIMDATA"));
   path = gtnPath.isEmpty() ? "C:\\ProgramData\\Garmin\\Trainers\\GTN" : gtnPath;
-#elif DEBUG_INFORMATION
+#elif defined(DEBUG_INFORMATION)
   path = atools::buildPath({atools::documentsDir(), "Garmin", "Trainers", "GTN"});
 #else
   path = atools::documentsDir();
@@ -827,8 +945,8 @@ QString UserdataController::garminGtnUserWptPath()
   return path;
 }
 
-bool UserdataController::exportSelectedQuestion(bool& selected, bool& append, bool& header, bool appendAllowed,
-                                                bool headerAllowed)
+bool UserdataController::exportSelectedQuestion(bool& selected, bool& append, bool& header, bool& xp12, bool appendAllowed,
+                                                bool headerAllowed, bool xplane)
 {
   int numSelected = NavApp::getUserdataSearch()->getSelectedRowCount();
 
@@ -839,11 +957,15 @@ bool UserdataController::exportSelectedQuestion(bool& selected, bool& append, bo
   // Dialog options
   enum
   {
-    SELECTED, APPEND, HEADER
+    SELECTED, APPEND, HEADER, XP12
   };
 
   atools::gui::ChoiceDialog choiceDialog(mainWindow, QApplication::applicationName() + tr(" - Userpoint Export Options"),
-                                         tr("Select export options for userpoints"), lnm::USERDATA_EXPORT_CHOICE_DIALOG, "USERPOINT.html");
+                                         tr("Select export options for userpoints.\n\n"
+                                            "Note that the field \"Tags\" is used for the ID of the airport "
+                                            "terminal area and the waypoint type.\n"
+                                            "Click \"Help\" for more information."),
+                                         lnm::USERDATA_EXPORT_CHOICE_DIALOG, "USERPOINT.html");
   choiceDialog.setHelpOnlineUrl(lnm::helpOnlineUrl);
   choiceDialog.setHelpLanguageOnline(lnm::helpLanguageOnline());
 
@@ -862,6 +984,12 @@ bool UserdataController::exportSelectedQuestion(bool& selected, bool& append, bo
   else
     choiceDialog.addCheckBoxHidden(HEADER);
 
+  if(xplane)
+    choiceDialog.addCheckBox(XP12, tr("Export for &X-Plane 12"), tr("File will be formatted for X-Plane 12 if selected.\n"
+                                                                    "Otherwise X-Plane 11 format is used."), false);
+  else
+    choiceDialog.addCheckBoxHidden(XP12);
+
   choiceDialog.addSpacer();
 
   choiceDialog.restoreState();
@@ -878,8 +1006,93 @@ bool UserdataController::exportSelectedQuestion(bool& selected, bool& append, bo
     selected = choiceDialog.isChecked(SELECTED); // Only true if enabled too
     append = choiceDialog.isChecked(APPEND);
     header = choiceDialog.isChecked(HEADER) && !choiceDialog.isChecked(APPEND);
+    xp12 = choiceDialog.isChecked(XP12);
     return true;
   }
   else
     return false;
+}
+
+void UserdataController::cleanupUserdata()
+{
+  qDebug() << Q_FUNC_INFO;
+
+  enum
+  {
+    COMPARE, // Ident, Name, and Type
+    REGION,
+    DESCRIPTION,
+    TAGS,
+    COORDINATES,
+    EMPTY
+  };
+
+  // Create a dialog with tree checkboxes =====================
+  atools::gui::ChoiceDialog choiceDialog(mainWindow, QApplication::applicationName() + tr(" - Cleanup Userpoints"),
+                                         tr("Select criteria for cleanup.\nNote that you can undo this change."),
+                                         lnm::SEARCHTAB_USERDATA_CLEAN_DIALOG, "USERPOINT.html#userpoint-cleanup");
+
+  choiceDialog.setHelpOnlineUrl(lnm::helpOnlineUrl);
+  choiceDialog.setHelpLanguageOnline(lnm::helpLanguageOnline());
+
+  choiceDialog.addCheckBox(EMPTY, tr("Delete userpoints having no information\n"
+                                     "except coordinates and type."), QString(), true);
+  choiceDialog.addLine();
+
+  choiceDialog.addLabel(tr("Remove duplicates using the additional fields below as criteria.\n"
+                           "A userpoint will considered a duplicate to another if\n"
+                           "all selected fields are equal."));
+  choiceDialog.addCheckBox(COMPARE, tr("&Ident, Name, and Type"));
+  choiceDialog.addCheckBox(REGION, tr("&Region"));
+  choiceDialog.addCheckBox(DESCRIPTION, tr("&Remarks"));
+  choiceDialog.addCheckBox(TAGS, tr("&Tags"));
+  choiceDialog.addCheckBox(COORDINATES, tr("&Coordinates (similar)"));
+  choiceDialog.addSpacer();
+
+  // Disable duplicate cleanup parameters is top box is off
+  connect(&choiceDialog, &atools::gui::ChoiceDialog::checkBoxToggled, [&choiceDialog](int id, bool checked) {
+    if(id == COMPARE)
+    {
+      choiceDialog.getCheckBox(REGION)->setEnabled(checked);
+      choiceDialog.getCheckBox(DESCRIPTION)->setEnabled(checked);
+      choiceDialog.getCheckBox(TAGS)->setEnabled(checked);
+      choiceDialog.getCheckBox(COORDINATES)->setEnabled(checked);
+    }
+  });
+
+  // Disable ok button if not at least one of these is checked
+  choiceDialog.setRequiredAnyChecked({COMPARE, EMPTY});
+
+  choiceDialog.restoreState();
+
+  if(choiceDialog.exec() == QDialog::Accepted)
+  {
+    // type name ident region description tags
+    QStringList columns;
+    if(choiceDialog.isChecked(COMPARE))
+    {
+      columns << "type" << "ident" << "name";
+
+      if(choiceDialog.isChecked(REGION))
+        columns.append("region");
+      if(choiceDialog.isChecked(DESCRIPTION))
+        columns.append("description");
+      if(choiceDialog.isChecked(TAGS))
+        columns.append("tags");
+    }
+
+    // Dialog ok. Remove entries.
+    QGuiApplication::setOverrideCursor(Qt::WaitCursor);
+    SqlTransaction transaction(manager->getDatabase());
+    int removed = manager->cleanupUserdata(columns, choiceDialog.isChecked(COORDINATES), choiceDialog.isChecked(EMPTY));
+    transaction.commit();
+    QGuiApplication::restoreOverrideCursor();
+
+    if(removed > 0)
+      emit userdataChanged();
+    mainWindow->setStatusMessage(tr("%1 %2 deleted.").arg(removed).arg(removed == 1 ? tr("userpoint") : tr("userpoints")));
+
+    emit refreshUserdataSearch(false /* load all */, false /* keep selection */);
+    emit userdataChanged();
+  }
 }

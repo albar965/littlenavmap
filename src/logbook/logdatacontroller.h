@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -81,15 +81,16 @@ public:
   /* Show edit dialog and save changes to the database if accepted for the given ids */
   void editLogEntries(const QVector<int>& ids);
   void addLogEntry();
+  void cleanupLogEntries();
 
   /* Show message box and delete entries with the given ids */
-  void deleteLogEntries(const QVector<int>& ids);
+  void deleteLogEntries(const QSet<int>& ids);
 
-  /* Import and export from a predefined CSV format */
+  /* Import and export from a predefined CSV format. Import does not commit. */
   void importCsv();
   void exportCsv();
 
-  /* Import X-Plane text logbook */
+  /* Import X-Plane text logbook - does not commit. */
   void importXplane();
 
   /* Show search tab and raise window */

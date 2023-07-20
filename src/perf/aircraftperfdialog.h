@@ -46,8 +46,8 @@ class AircraftPerfDialog :
 
 public:
   /* Will create a copy of AircraftPerf for editing */
-  explicit AircraftPerfDialog(QWidget *parent, const atools::fs::perf::AircraftPerf& aircraftPerformance,
-                              const QString& modeText);
+  explicit AircraftPerfDialog(QWidget *parent, const atools::fs::perf::AircraftPerf& aircraftPerformance, const QString& modeText,
+                              bool newPerfParam);
   virtual ~AircraftPerfDialog() override;
 
   AircraftPerfDialog(const AircraftPerfDialog& other) = delete;
@@ -113,7 +113,7 @@ private:
   /* Set based on the fuel unit combo box */
   FuelUnit fuelUnit = WEIGHT_LBS;
 
-  bool saveClicked = false;
+  bool saveClicked = false, newPerf = false;
 };
 
 #endif // LNM_AIRCRAFTPERFDIALOG_H

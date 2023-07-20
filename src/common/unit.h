@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -235,6 +235,11 @@ public:
   static const QString& getUnitFfWeightStr()
   {
     return unitFfWeightStr;
+  }
+
+  static opts::UnitAlt getUnitAlt()
+  {
+    return unitAlt;
   }
 
   static opts::UnitDist getUnitDist()

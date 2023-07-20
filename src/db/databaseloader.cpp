@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2022 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -22,18 +22,18 @@
 #include "common/formatter.h"
 #include "db/databaseprogressdialog.h"
 #include "db/dbtools.h"
-#include "exception.h"
 #include "fs/navdatabase.h"
 #include "fs/navdatabaseerrors.h"
 #include "fs/navdatabaseoptions.h"
 #include "fs/navdatabaseprogress.h"
 #include "gui/errorhandler.h"
 #include "gui/textdialog.h"
-#include "navapp.h"
+#include "app/navapp.h"
 #include "options/optionsdialog.h"
 #include "settings/settings.h"
 #include "sql/sqldatabase.h"
 
+#include <QDir>
 #include <QElapsedTimer>
 #include <QSettings>
 #include <QtConcurrent/QtConcurrentRun>
@@ -66,53 +66,54 @@ const static int UPDATE_RATE_MS = 250;
 DatabaseLoader::DatabaseLoader(QObject *parent)
   : QObject(parent)
 {
-  databaseInfoText = QObject::tr("<table>"
-                                   "<tbody>"
-                                     "<tr> "
-                                       "<td width=\"60\"><b>Files:</b>"
-                                       "</td>    "
-                                       "<td width=\"60\">&nbsp;&nbsp;&nbsp;&nbsp;%L6"
-                                       "</td> "
-                                       "<td width=\"60\"><b>VOR:</b>"
-                                       "</td> "
-                                       "<td width=\"60\">&nbsp;&nbsp;&nbsp;&nbsp;%L8"
-                                       "</td> "
-                                       "<td width=\"60\"><b>Markers:</b>"
-                                       "</td>     "
-                                       "<td width=\"60\">&nbsp;&nbsp;&nbsp;&nbsp;%L11"
-                                       "</td>"
-                                     "</tr>"
-                                     "<tr> "
-                                       "<td width=\"60\"><b>Airports:</b>"
-                                       "</td> "
-                                       "<td width=\"60\">&nbsp;&nbsp;&nbsp;&nbsp;%L7"
-                                       "</td> "
-                                       "<td width=\"60\"><b>ILS:</b>"
-                                       "</td> "
-                                       "<td width=\"60\">&nbsp;&nbsp;&nbsp;&nbsp;%L9"
-                                       "</td> "
-                                       "<td width=\"60\"><b>Waypoints:</b>"
-                                       "</td>  "
-                                       "<td width=\"60\">&nbsp;&nbsp;&nbsp;&nbsp;%L12"
-                                       "</td>"
-                                     "</tr>"
-                                     "<tr> "
-                                       "<td width=\"60\">"
-                                       "</td>"
-                                       "<td width=\"60\">"
-                                       "</td>"
-                                       "<td width=\"60\"><b>NDB:</b>"
-                                       "</td> "
-                                       "<td width=\"60\">&nbsp;&nbsp;&nbsp;&nbsp;%L10"
-                                       "</td> "
-                                       "<td width=\"60\"><b>Airspaces:</b>"
-                                       "</td>  "
-                                       "<td width=\"60\">&nbsp;&nbsp;&nbsp;&nbsp;%L13"
-                                       "</td>"
-                                     "</tr>"
-                                   "</tbody>"
-                                 "</table>"
-                                 );
+  databaseInfoText = QObject::tr(
+    "<table>"
+      "<tbody>"
+        "<tr> "
+          "<td width=\"60\"><b>Files:</b>"
+          "</td>    "
+          "<td width=\"60\">&nbsp;&nbsp;&nbsp;&nbsp;%L6"
+          "</td> "
+          "<td width=\"60\"><b>VOR:</b>"
+          "</td> "
+          "<td width=\"60\">&nbsp;&nbsp;&nbsp;&nbsp;%L8"
+          "</td> "
+          "<td width=\"60\"><b>Markers:</b>"
+          "</td>     "
+          "<td width=\"60\">&nbsp;&nbsp;&nbsp;&nbsp;%L11"
+          "</td>"
+        "</tr>"
+        "<tr> "
+          "<td width=\"60\"><b>Airports:</b>"
+          "</td> "
+          "<td width=\"60\">&nbsp;&nbsp;&nbsp;&nbsp;%L7"
+          "</td> "
+          "<td width=\"60\"><b>ILS:</b>"
+          "</td> "
+          "<td width=\"60\">&nbsp;&nbsp;&nbsp;&nbsp;%L9"
+          "</td> "
+          "<td width=\"60\"><b>Waypoints:</b>"
+          "</td>  "
+          "<td width=\"60\">&nbsp;&nbsp;&nbsp;&nbsp;%L12"
+          "</td>"
+        "</tr>"
+        "<tr> "
+          "<td width=\"60\">"
+          "</td>"
+          "<td width=\"60\">"
+          "</td>"
+          "<td width=\"60\"><b>NDB:</b>"
+          "</td> "
+          "<td width=\"60\">&nbsp;&nbsp;&nbsp;&nbsp;%L10"
+          "</td> "
+          "<td width=\"60\"><b>Airspaces:</b>"
+          "</td>  "
+          "<td width=\"60\">&nbsp;&nbsp;&nbsp;&nbsp;%L13"
+          "</td>"
+        "</tr>"
+      "</tbody>"
+    "</table>"
+    );
 
   databaseTimeText = QObject::tr(
     "<b>%1</b><br/>" // Scenery:
@@ -179,28 +180,18 @@ void DatabaseLoader::loadScenery()
 
   // Add exclude paths from option dialog ===================
   const OptionData& optionData = OptionData::instance();
-  navDatabaseOpts->addToAddonDirectoryExcludes(optionData.getDatabaseAddonExclude());
 
-  for(const QString& fileOrPath : optionData.getDatabaseExclude())
-  {
-    QFileInfo fileInfo(fileOrPath);
+  // Add include directories ================================================
+  for(const QString& path : optionData.getDatabaseInclude())
+    navDatabaseOpts->addIncludeGui(path);
 
-    if(fileInfo.exists())
-    {
-      if(fileInfo.isDir())
-      {
-        qInfo() << Q_FUNC_INFO << "Directory exclusion" << fileOrPath;
-        navDatabaseOpts->addToDirectoryExcludesGui({fileOrPath});
-      }
-      else
-      {
-        qInfo() << Q_FUNC_INFO << "File exclusion" << fileOrPath;
-        navDatabaseOpts->addToFilePathExcludesGui({fileOrPath});
-      }
-    }
-    else
-      qWarning() << Q_FUNC_INFO << "Exclusion does not exist" << fileOrPath;
-  }
+  // Add excludes for files and directories ================================================
+  for(const QString& path : optionData.getDatabaseExclude())
+    navDatabaseOpts->addExcludeGui(path);
+
+  // Add add-on excludes for files and directories ================================================
+  for(const QString& path : optionData.getDatabaseAddonExclude())
+    navDatabaseOpts->addAddonExcludeGui(path);
 
   // Select simulator db to load
   navDatabaseOpts->setSimulatorType(selectedFsType);
@@ -210,7 +201,7 @@ void DatabaseLoader::loadScenery()
   // No parent to allow non-modal dialog
   progressDialog = new DatabaseProgressDialog(nullptr, atools::fs::FsPaths::typeToShortName(selectedFsType));
 
-  // Add to dock handler to enable auto raise and closing on exit
+  // Add to dock handler to enable auto raise and closing on exit as well as applying stay-on-top status from main
   NavApp::addDialogToDockHandler(progressDialog);
 
   QString basePath = simulators.value(selectedFsType).basePath;
@@ -241,7 +232,9 @@ void DatabaseLoader::loadScenery()
   progressDialog->show();
 
   navDatabaseOpts->setProgressCallback(std::bind(&DatabaseLoader::progressCallbackThread, this, std::placeholders::_1));
+  navDatabaseOpts->setCallDefaultCallback(true);
 
+  // Print all options to log file =================================
   qInfo() << Q_FUNC_INFO << *navDatabaseOpts;
 
   // ==================================================================================
@@ -281,10 +274,21 @@ void DatabaseLoader::compileDatabasePost()
   {
     // Show results and wait until user selects ok or cancel
     progressDialog->setFinishedState();
+    NavApp::setStayOnTop(progressDialog);
+
+    // Show dialog modal and wait for discard / use database answer
     int result = progressDialog->exec();
 
     if(result == QDialog::Rejected)
+      // Discard clicked
       resultFlagsShared.setFlag(atools::fs::COMPILE_CANCELED);
+    else if(result == QDialog::Accepted)
+    {
+      // Use database clicked - raise main window
+      NavApp::getQMainWidget()->activateWindow();
+      NavApp::getQMainWidget()->raise();
+    }
+
   }
   // else reopen loading dialog
 
@@ -344,13 +348,16 @@ void DatabaseLoader::progressCallback()
       qDebug() << Q_FUNC_INFO << "running new file or scenery area";
 #endif
 
-      currentBglFilePath = navDatabaseProgressShared->getBglFilePath();
+      currentBglFilePath = navDatabaseProgressShared->getFilePath();
+
+      QString path = QDir::toNativeSeparators(QDir::cleanPath(navDatabaseProgressShared->getSceneryPath()));
+      QString file = navDatabaseProgressShared->getFileName();
 
       // Switched to a new scenery area
       progressDialog->setLabelText(
         databaseLoadingText.arg(atools::elideTextShortMiddle(navDatabaseProgressShared->getSceneryTitle(), MAX_TEXT_LENGTH)).
-        arg(atools::elideTextShortMiddle(navDatabaseProgressShared->getSceneryPath(), MAX_TEXT_LENGTH)).
-        arg(atools::elideTextShortMiddle(navDatabaseProgressShared->getBglFileName(), MAX_TEXT_LENGTH)).
+        arg(atools::elideTextShortMiddle(path, MAX_TEXT_LENGTH)).
+        arg(atools::elideTextShortMiddle(file, MAX_TEXT_LENGTH)).
         arg(formatter::formatElapsed(timer)).
         arg(navDatabaseProgressShared->getNumErrors()).
         arg(navDatabaseProgressShared->getNumFiles()).
@@ -420,6 +427,7 @@ bool DatabaseLoader::progressCallbackThread(const atools::fs::NavDatabaseProgres
     }
 
     // Passed queued signal to main thread to allow dialog and window stuff in main event queue
+    // Connected to progressCallback()
     emit progressCallbackSignal();
   }
   return canceled;
@@ -432,92 +440,90 @@ void DatabaseLoader::showErrors()
   if(navDatabaseErrors->getTotal() > 0)
   {
     int totalErrors = navDatabaseErrors->getTotalErrors();
-    int totalWarnings = navDatabaseErrors->getTotalWarnings();
+    int totalNotes = navDatabaseErrors->getTotalWarnings();
 
     // Adjust text depending on warnings and errors =========================================
-    QString dialogTitle, headerText;
-    if(totalErrors > 0 && totalWarnings > 0)
-    {
-      dialogTitle = tr("Errors and Warnings");
-      headerText = tr("%1 errors and %2 warnings").arg(totalErrors).arg(totalWarnings);
-    }
-    else if(totalErrors > 0)
-    {
-      dialogTitle = tr("Errors");
-      headerText = tr("%1 errors").arg(totalErrors);
-    }
-    else if(totalWarnings > 0)
-    {
-      dialogTitle = tr("Warnings");
-      headerText = tr("%1 warnings").arg(totalWarnings);
-    }
+    QStringList headerText;
 
-    QString errorTexts;
-    errorTexts.append(tr("<h3>Found %1 in %2 scenery entries when loading the scenery database</h3>").
-                      arg(headerText).arg(navDatabaseErrors->sceneryErrors.size()));
+    if(totalErrors > 0)
+      headerText.append(tr("%1 %2").arg(totalErrors).arg(totalErrors > 1 ? tr("errors") : tr("error")));
+
+    if(totalNotes > 0)
+      headerText.append(tr("%1 %2").arg(totalNotes).arg(totalNotes > 1 ?
+                                                        tr("notes", "Database loading notes") :
+                                                        tr("note", "Database loading notes")));
+
+    QString texts;
+    texts.append(tr("<h3>Found %1 in %2 scenery entries when loading the scenery database</h3>").
+                 arg(atools::strJoin(headerText, tr(", "), tr(" and "))).arg(navDatabaseErrors->sceneryErrors.size()));
 
     if(totalErrors > 0)
     {
       // Show contact for real errors =========================================
-      errorTexts.append(tr("<b>If you wish to report these errors attach the log and configuration files "
-                             "to your report, add all other available information and send it to one "
-                             "of the contact addresses below.</b>"
-                             "<hr/>%1"
-                               "<hr/>%2").
-                        arg(atools::gui::Application::getContactHtml()).
-                        arg(atools::gui::Application::getReportPathHtml()));
+      texts.append(tr("<b>If you wish to report these errors attach the log and configuration files "
+                        "to your report, add all other available information and send it to "
+                        "the contact address below.</b>"
+                        "<hr/>%1"
+                          "<hr/>%2").
+                   arg(atools::gui::Application::getContactHtml()).
+                   arg(atools::gui::Application::getReportPathHtml()));
 
-      errorTexts.append(tr("<hr/>Some files or scenery directories could not be read.<br/>"
-                           "You should check if the airports of the affected sceneries display "
-                           "correctly and show the correct information.<hr/>"));
+      texts.append(tr("<hr/>Some files or scenery directories could not be read.<br/>"
+                      "You should check if the airports of the affected sceneries display "
+                      "correctly and show the correct information.<hr/>"));
     }
-    else if(totalWarnings > 0)
+    else if(totalNotes > 0)
       // Show normal header for encryption warnings =========================================
-      errorTexts.append(tr("<hr/>Some files or scenery directories could not be read properly "
-                             "due to encrypted airport data or other issues.<hr/>"));
+      texts.append(tr("<hr/>Some files or scenery directories could not be read properly "
+                        "due to encrypted airport data.<hr/>"));
 
     int numScenery = 0;
     for(const atools::fs::NavDatabaseErrors::SceneryErrors& scErr : navDatabaseErrors->sceneryErrors)
     {
       if(numScenery >= MAX_ERROR_SCENERY_MESSAGES)
       {
-        errorTexts.append(tr("<b>More scenery entries ...</b>"));
+        texts.append(tr("<b>More scenery entries ...</b>"));
         break;
       }
 
       int numBgl = 0;
-      errorTexts.append(tr("<b>Scenery Title: %1</b><br/>").arg(scErr.scenery.getTitle()));
+      texts.append(tr("<b>Scenery Title: %1</b><br/>").arg(scErr.scenery.getTitle()));
 
       for(const QString& err : scErr.sceneryErrorsMessages)
-        errorTexts.append(err + "<br/>");
+        texts.append(err + "<br/>");
 
       for(const atools::fs::NavDatabaseErrors::SceneryFileError& bglErr : scErr.fileErrors)
       {
         if(numBgl >= MAX_ERROR_BGL_MESSAGES)
         {
-          errorTexts.append(tr("<b>More files ...</b>"));
+          texts.append(tr("<b>More files ...</b>"));
           break;
         }
         numBgl++;
 
-        errorTexts.append(tr("<b>File:</b> \"%1\"<br/><b>Message:</b> %2<br/>").
-                          arg(bglErr.filepath).arg(bglErr.errorMessage));
+        texts.append(tr("<b>File:</b> \"%1\"<br/><b>Message:</b> %2<br/>").
+                     arg(bglErr.filepath).arg(bglErr.errorMessage));
       }
-      errorTexts.append("<br/>");
+      texts.append("<br/>");
       numScenery++;
     }
 
-    TextDialog errorDialog(progressDialog, tr("%1 - Load Scenery Library %2").arg(QApplication::applicationName()).arg(dialogTitle),
+    // Let the error dialog be a child of main to block main window
+    TextDialog errorDialog(NavApp::getQMainWidget(), tr("%1 - Load Scenery Library Results").arg(QApplication::applicationName()),
                            "SCENERY.html#errors"); // anchor for future use
-    errorDialog.setHtmlMessage(errorTexts, true /* print to log */);
+    errorDialog.setHtmlMessage(texts, true /* print to log */);
+    NavApp::setStayOnTop(&errorDialog);
     errorDialog.exec();
+
+    // Raise progress again
+    progressDialog->activateWindow();
   }
 }
 
 void DatabaseLoader::loadSceneryStop()
 {
   qDebug() << Q_FUNC_INFO << "stopping";
-  if(isLoading())
+  if(future.isRunning())
   {
     {
       QWriteLocker locker(&resultFlagsLock);
@@ -549,9 +555,9 @@ void DatabaseLoader::deleteProgressDialog()
   progressDialog = nullptr;
 }
 
-bool DatabaseLoader::isLoading() const
+bool DatabaseLoader::isLoadingProgress() const
 {
-  return future.isRunning();
+  return progressDialog != nullptr && progressDialog->isVisible();
 }
 
 void DatabaseLoader::showProgressWindow() const

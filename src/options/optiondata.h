@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -69,7 +69,11 @@ enum Flag
    * ui->checkBoxOptionsRouteEastWestRule */
   ROUTE_ALTITUDE_RULE = 1 << 9,
 
-  // Old options removed
+  /* ui->checkBoxOptionsOnlineRemoveShadow */
+  ONLINE_REMOVE_SHADOW = 1 << 10,
+
+  /* ui->checkBoxOptionsMapAiAircraftHideGround */
+  MAP_AI_HIDE_GROUND = 1 << 11,
 
   /* No box mode when moving map.
    * ui->checkBoxOptionsSimUpdatesConstant */
@@ -101,7 +105,8 @@ enum Flag
   // ROUTE_GARMIN_USER_WPT = 1 << 22,
 
   /* checkBoxOptionsRouteDeclination */
-  ROUTE_IGNORE_VOR_DECLINATION = 1 << 23,
+  // DELETED from 2.8.1.beta AND FREE
+  // ROUTE_IGNORE_VOR_DECLINATION = 1 << 23,
 
   /* Reload aircraft performance on startup.
    * ui->checkBoxOptionsStartupLoadperf */
@@ -119,6 +124,11 @@ enum Flag
    * ui->checkBoxOptionsGuiWheel */
   GUI_REVERSE_WHEEL = 1 << 27,
 
+  /* checkBoxOptionsGuiTooltipsAll */
+  ENABLE_TOOLTIPS_ALL = 1 << 28,
+
+  /* checkBoxOptionsGuiTooltipsMenu */
+  ENABLE_TOOLTIPS_MENU = 1 << 29,
 };
 
 Q_DECLARE_FLAGS(Flags, Flag);
@@ -200,7 +210,12 @@ enum UnitCoords
   COORDS_DEC, /* Decimal degree */
   COORDS_DM, /* Degree and minutes */
   COORDS_LATY_LONX, /* lat/lon with sign */
-  COORDS_LONX_LATY /* lon/lat with sign - need to be swapped internally */
+  COORDS_LONX_LATY, /* lon/lat with sign - need to be swapped internally */
+  COORDS_DECIMAL_GOOGLE, /* Degrees and decimal minutes (DMM): 41 24.2028, 2 10.4418 for direct input in Google maps */
+
+  /* Used for bounds checking in case new options were added */
+  COORDS_MIN = COORDS_DMS,
+  COORDS_MAX = COORDS_DECIMAL_GOOGLE
 };
 
 /* comboBoxOptionsUnitVertFuel */
@@ -338,8 +353,8 @@ enum Flag2
   /* checkBoxOptionsMapUserpointText */
   MAP_USERPOINT_TEXT_BACKGROUND = 1 << 24,
 
-  /* checkBoxOptionsGuiTooltips */
-  DISABLE_TOOLTIPS = 1 << 25,
+  /* checkBoxOptionsSimZoomOnTakeoff */
+  ROUTE_ZOOM_TAKEOFF = 1 << 25,
 
   /* checkBoxOptionsMapUserAircraftText */
   MAP_USER_TEXT_BACKGROUND = 1 << 26,
@@ -461,7 +476,7 @@ enum DisplayOptionAiAircraft : quint32
   ITEM_AI_AIRCRAFT_CLIMB_SINK = 1 << 9,
   ITEM_AI_AIRCRAFT_HEADING = 1 << 10,
   ITEM_AI_AIRCRAFT_ALTITUDE = 1 << 11,
-  ITEM_AI_AIRCRAFT_TAS = 12,
+  ITEM_AI_AIRCRAFT_TAS = 1 << 12,
   ITEM_AI_AIRCRAFT_COORDINATES = 1 << 13,
   ITEM_AI_AIRCRAFT_DIST_BEARING_FROM_USER = 1 << 14,
   ITEM_AI_AIRCRAFT_INDICATED_ALTITUDE = 1 << 15
@@ -543,7 +558,10 @@ enum DisplayOptionRoute
   ROUTE_NONE = 0,
   ROUTE_DISTANCE = 1 << 0,
   ROUTE_MAG_COURSE = 1 << 1,
-  ROUTE_TRUE_COURSE = 1 << 2
+  ROUTE_TRUE_COURSE = 1 << 2,
+  ROUTE_INITIAL_FINAL_MAG_COURSE = 1 << 3,
+  ROUTE_INITIAL_FINAL_TRUE_COURSE = 1 << 4,
+  ROUTE_AIRWAY = 1 << 5
 };
 
 Q_DECLARE_FLAGS(DisplayOptionsRoute, DisplayOptionRoute);
@@ -586,6 +604,8 @@ Q_DECLARE_OPERATORS_FOR_FLAGS(optsd::DisplayClickOptions);
  * All default values are defined in the widgets in the options.ui file.
  *
  * Values applied by the reset function in the options dialog are defined in this structure.
+ *
+ * Values applied on first startup are defined by action state in .ui file.
  *
  * This class will be populated by the OptionsDialog which loads widget data from the settings
  * and transfers this data into this class.
@@ -666,10 +686,16 @@ public:
     return weatherActiveSkyPath;
   }
 
-  /* X-Plane path that overrides the default */
-  const QString& getWeatherXplanePath() const
+  /* X-Plane 11 path to METAR.rwx that overrides the default */
+  const QString& getWeatherXplane11Path() const
   {
-    return weatherXplanePath;
+    return weatherXplane11Path;
+  }
+
+  /* X-Plane 12 path to METAR and wind files that overrides the default "X-Plane 12/Output/real weather" */
+  const QString& getWeatherXplane12Path() const
+  {
+    return weatherXplane12Path;
   }
 
   const QString& getWeatherNoaaUrl() const
@@ -687,16 +713,22 @@ public:
     return weatherIvaoUrl;
   }
 
-  /* List of directories that excludes paths from being recognized as add-ons. Only for scenery database loading. */
-  const QStringList& getDatabaseAddonExclude() const
+  /* Folders that are included in scanning */
+  const QStringList& getDatabaseInclude() const
   {
-    return databaseAddonExclude;
+    return databaseInclude;
   }
 
   /* List of directories and files that are excluded from scenery database loading */
   const QStringList& getDatabaseExclude() const
   {
     return databaseExclude;
+  }
+
+  /* List of directories that excludes paths from being recognized as add-ons. Only for scenery database loading. */
+  const QStringList& getDatabaseAddonExclude() const
+  {
+    return databaseAddonExclude;
   }
 
   opts::MapScrollDetail getMapScrollDetail() const
@@ -1020,6 +1052,12 @@ public:
     return simZoomOnLandingDist;
   }
 
+  /* In local user units (NM, mi, KM) */
+  float getSimZoomOnTakeoffDistance() const
+  {
+    return simZoomOnTakeoffDist;
+  }
+
   int getSimCleanupTableTime() const
   {
     return simCleanupTableTime;
@@ -1236,6 +1274,11 @@ public:
     return highlightProfileColor;
   }
 
+  const QString& getCacheMapThemeDir() const
+  {
+    return cacheMapThemeDir;
+  }
+
 private:
   friend class OptionsDialog;
 
@@ -1249,7 +1292,8 @@ private:
   opts::Flags flags = opts::STARTUP_LOAD_KML | opts::STARTUP_LOAD_MAP_SETTINGS | opts::STARTUP_LOAD_ROUTE | opts::STARTUP_SHOW_LAST |
                       opts::GUI_CENTER_KML | opts::GUI_CENTER_ROUTE | opts::MAP_EMPTY_AIRPORTS | opts::ROUTE_ALTITUDE_RULE |
                       opts::CACHE_USE_ONLINE_ELEVATION | opts::STARTUP_LOAD_INFO | opts::STARTUP_LOAD_SEARCH | opts::STARTUP_LOAD_TRAIL |
-                      opts::STARTUP_SHOW_SPLASH;
+                      opts::STARTUP_SHOW_SPLASH | opts::ONLINE_REMOVE_SHADOW | opts::ENABLE_TOOLTIPS_ALL | opts::STARTUP_LOAD_PERF |
+                      opts::GUI_AVOID_OVERWRITE_FLIGHTPLAN;
 
   // Defines the defaults used for reset
   optsw::FlagsWeather flagsWeather =
@@ -1268,7 +1312,8 @@ private:
                          opts2::ROUTE_CENTER_ACTIVE_LEG | opts2::ROUTE_NO_FOLLOW_ON_MOVE | opts2::MAP_ROUTE_HIGHLIGHT_ACTIVE;
 
   QString weatherActiveSkyPath, // ui->lineEditOptionsWeatherAsnPath
-          weatherXplanePath; // lineEditOptionsWeatherXplanePath
+          weatherXplane11Path, // ui->lineEditOptionsWeatherXplanePath
+          weatherXplane12Path; // ui->lineEditOptionsWeatherXplane12Path
 
   /* Default weather URLs used in reset */
   const static QString WEATHER_NOAA_DEFAULT_URL;
@@ -1286,15 +1331,19 @@ private:
   QString weatherXplaneWind;
 
   QString cacheOfflineElevationPath;
+  QString cacheMapThemeDir;
 
   // Initialized by widget
   QString flightplanPattern;
 
-  // ui->listWidgetOptionsDatabaseAddon
-  QStringList databaseAddonExclude;
+  // ui->tableWidgetOptionsDatabaseInclude
+  QStringList databaseInclude;
 
-  // ui->listWidgetOptionsDatabaseExclude
+  // ui->tableWidgetOptionsDatabaseExclude
   QStringList databaseExclude;
+
+  // ui->tableWidgetOptionsDatabaseAddon
+  QStringList databaseAddonExclude;
 
   opts::MapScrollDetail mapScrollDetail = opts::DETAIL_NORMAL;
   opts::MapNavigation mapNavigation = opts::MAP_NAV_CLICK_DRAG_MOVE;
@@ -1466,7 +1515,10 @@ private:
   int simNoFollowOnScrollTime = 10;
 
   // doubleSpinBoxOptionsSimZoomOnLanding,
-  float simZoomOnLandingDist = 0.2f;
+  float simZoomOnLandingDist = 0.1f;
+
+  // spinBoxOptionsSimZoomOnTakeoff,
+  float simZoomOnTakeoffDist = 10.f;
 
   // spinBoxOptionsSimCleanupTableTime,
   int simCleanupTableTime = 10;
@@ -1481,7 +1533,7 @@ private:
   int displayTextSizeCompassRose = 100;
 
   // spinBoxOptionsMapHighlightTransparent
-  int displayMapHighlightTransparent = 100;
+  int displayMapHighlightTransparent = 50;
 
   // spinBoxDisplayOnlineClearance
   int displayOnlineClearance = -1;
@@ -1554,11 +1606,12 @@ private:
 
   optsd::DisplayOptionsNavAid displayOptionsNavAid = optsd::NAVAIDS_NONE;
 
-  optsd::DisplayOptionsRoute displayOptionsRoute = optsd::ROUTE_DISTANCE | optsd::ROUTE_MAG_COURSE;
+  optsd::DisplayOptionsRoute displayOptionsRoute = optsd::ROUTE_DISTANCE | optsd::ROUTE_INITIAL_FINAL_MAG_COURSE;
 
   optsd::DisplayTooltipOptions displayTooltipOptions = optsd::TOOLTIP_AIRCRAFT_USER | optsd::TOOLTIP_AIRCRAFT_AI |
                                                        optsd::TOOLTIP_AIRPORT | optsd::TOOLTIP_AIRSPACE |
-                                                       optsd::TOOLTIP_NAVAID | optsd::TOOLTIP_WIND | optsd::TOOLTIP_VERBOSE;
+                                                       optsd::TOOLTIP_NAVAID | optsd::TOOLTIP_WIND | optsd::TOOLTIP_VERBOSE |
+                                                       optsd::TOOLTIP_MARKS;
   optsd::DisplayClickOptions displayClickOptions = optsd::CLICK_AIRCRAFT_USER | optsd::CLICK_AIRCRAFT_AI |
                                                    optsd::CLICK_AIRPORT | optsd::CLICK_AIRSPACE | optsd::CLICK_NAVAID;
 

@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -19,7 +19,7 @@
 #define LNM_AIRPORTFILES_H
 
 #include <QFileInfoList>
-#include <QApplication>
+#include <QCoreApplication>
 
 /*
  * Class that does simple caching of a list of files found in the translated folder "Documents/Little Navmap Files/ICAO"

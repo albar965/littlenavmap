@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -24,7 +24,8 @@ namespace map {
 // =====================================================================
 /*
  * Mixed search result for e.g. queries on a bounding rectangle for map display or for all get nearest methods.
- * Contains aggregated lists for all possible objects. */
+ * Contains aggregated lists for all possible objects.
+ * Does not use inheritance and not virtual methods to avoid overhead */
 struct MapResult
 {
   /* Create from base class. Inspects type and adds one object to this */
@@ -34,6 +35,7 @@ struct MapResult
   QList<MapAirport> airports;
   QSet<int> airportIds; /* Ids used to deduplicate when merging highlights and nearest */
 
+  QList<MapRunway> runways;
   QList<MapRunwayEnd> runwayEnds;
   QList<MapAirport> towers;
   QList<MapParking> parkings;
@@ -168,6 +170,11 @@ struct MapResult
     return !holdings.isEmpty();
   }
 
+  bool hasParkings() const
+  {
+    return !parkings.isEmpty();
+  }
+
   bool hasUserpointsRoute() const
   {
     return !userpointsRoute.isEmpty();
@@ -178,9 +185,14 @@ struct MapResult
     return !ils.isEmpty();
   }
 
-  bool hasRunwayEnd() const
+  bool hasRunwayEnds() const
   {
     return !runwayEnds.isEmpty();
+  }
+
+  bool hasRunways() const
+  {
+    return !runways.isEmpty();
   }
 
   bool hasWaypoints() const
@@ -277,8 +289,7 @@ struct MapResultIndex
   }
 
   /* Sort by type list and then by callback */
-  MapResultIndex& sort(const QVector<map::MapTypes>& types,
-                       const map::MapResultIndex::SortFunction& sortFunc);
+  MapResultIndex& sort(const QVector<map::MapTypes>& types, const map::MapResultIndex::SortFunction& sortFunc);
 
   /* Sort objects by distance to pos in the list */
   MapResultIndex& sort(const atools::geo::Pos& pos, bool sortNearToFar);
@@ -290,11 +301,41 @@ struct MapResultIndex
   MapResultIndex& remove(const atools::geo::Pos& pos, float maxDistanceNm);
 
 private:
+  /* Last index is including */
   template<typename TYPE>
-  void addAll(const QList<TYPE>& list)
+  void addToIndex(const QList<TYPE>& list, int firstIndex = 0, int lastIndex = -1)
   {
-    for(const TYPE& obj : list)
-      append(&obj);
+    if(lastIndex == -1)
+      lastIndex = list.size() - 1;
+
+    for(int i = firstIndex; i <= lastIndex; i++)
+      // Add object pointer to this
+      append(&list.at(i));
+  }
+
+  template<typename TYPE>
+  void addToIndexIf(const QList<TYPE>& list, const MapTypes& types)
+  {
+    if(types.testFlag(TYPE::staticType()))
+    {
+      for(const TYPE& obj : list)
+        append(&obj);
+    }
+  }
+
+  template<typename TYPE>
+  void addToIndexRangeIf(const QList<TYPE>& from, QList<TYPE>& to, const MapTypes& types)
+  {
+    if(types.testFlag(TYPE::staticType()))
+    {
+      int startIndex = to.size();
+
+      // Add whole list to target
+      to.append(from);
+
+      // Add object pointers from target list to this
+      addToIndex(to, startIndex);
+    }
   }
 
   map::MapResult result;

@@ -321,5 +321,11 @@
         <file>resources/icons/aircraft_small_online.svg</file>
         <file>resources/icons/turnpath.svg</file>
         <file>resources/icons/databasecheck.svg</file>
+        <file>resources/icons/userpoint_Oil Platform.svg</file>
+        <file>resources/icons/aircraft_unknown.svg</file>
+        <file>resources/icons/userpoint_Addon.svg</file>
+        <file>resources/icons/airportmil.svg</file>
+        <file>resources/icons/mapgridconfig.svg</file>
+        <file>resources/icons/littlenavmapdoc.svg</file>
     </qresource>
 </RCC>

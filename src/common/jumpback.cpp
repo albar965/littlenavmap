@@ -17,7 +17,7 @@
 
 #include "common/jumpback.h"
 
-#include <navapp.h>
+#include "app/navapp.h"
 #include "options/optiondata.h"
 
 JumpBack::JumpBack(QObject *parent, bool verboseLogging)

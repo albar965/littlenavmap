@@ -30,10 +30,10 @@
 #include "common/unit.h"
 #include "geo/calculations.h"
 #include "common/mapresult.h"
+#include "app/navapp.h"
 
 #include <QColor>
 #include <QColorDialog>
-#include <navapp.h>
 
 HoldDialog::HoldDialog(QWidget *parent, const map::MapResult& resultParam, const atools::geo::Pos& positionParam)
   : QDialog(parent), ui(new Ui::HoldDialog), color(Qt::darkBlue)

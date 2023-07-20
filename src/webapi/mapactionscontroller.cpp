@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -20,16 +20,15 @@
 #include "common/infobuildertypes.h"
 #include "common/abstractinfobuilder.h"
 
-#include <navapp.h>
-
 #include "query/mapquery.h"
 #include "query/waypointtrackquery.h"
 #include "mapgui/mappaintwidget.h"
 #include "mapgui/mapthemehandler.h"
 #include "mappainter/mappaintlayer.h"
 #include "mapgui/mapwidget.h"
-#include "navapp.h"
+#include "app/navapp.h"
 #include "common/mapresult.h"
+#include "web/webmapcontroller.h"
 
 #include <QDebug>
 #include <QBuffer>
@@ -91,7 +90,7 @@ WebApiResponse MapActionsController::imageAction(WebApiRequest request){
 
       // Add copyright/attributions to header
       response.headers.insert("Image-Attributions",
-                              getNavApp()->getMapThemeHandler()->getTheme(mapPaintWidget->getCurrentThemeId()).getCopyright().toUtf8());
+                              NavApp::getMapThemeHandler()->getTheme(mapPaintWidget->getCurrentThemeId()).getCopyright().toUtf8());
 
       response.status = 200;
       response.body = bytes;
@@ -246,6 +245,8 @@ MapPixmap MapActionsController::getPixmapPosDistance(int width, int height, atoo
 
   if(mapPaintWidget != nullptr)
   {
+    QMutexLocker locker(&mapPaintWidgetMutex);
+
     // Copy all map settings
     mapPaintWidget->copySettings(*NavApp::getMapWidgetGui());
 
@@ -315,6 +316,8 @@ MapPixmap MapActionsController::getPixmapRect(int width, int height, atools::geo
   {
     if(mapPaintWidget != nullptr)
     {
+      QMutexLocker locker(&mapPaintWidgetMutex);
+
       // Copy all map settings
       mapPaintWidget->copySettings(*NavApp::getMapWidgetGui());
 

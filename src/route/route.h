@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -259,7 +259,7 @@ public:
   }
 
   /* The flight plan has dummy entries for procedure points that are flagged as no save */
-  const atools::fs::pln::Flightplan& getFlightplan() const
+  const atools::fs::pln::Flightplan& getFlightplanConst() const
   {
     return flightplan;
   }
@@ -270,7 +270,7 @@ public:
   }
 
   /* Value in flight plan is stored in local unit */
-  float getCruisingAltitudeFeet() const;
+  float getCruiseAltitudeFt() const;
 
   void setFlightplan(const atools::fs::pln::Flightplan& value)
   {
@@ -350,12 +350,12 @@ public:
     return hasAnyApproachProcedure() || hasAnySidProcedure() || hasAnyStarProcedure();
   }
 
-  bool isCustomApproach() const
+  bool hasCustomApproach() const
   {
     return approachLegs.isCustomApproach();
   }
 
-  bool isCustomDeparture() const
+  bool hasCustomDeparture() const
   {
     return sidLegs.isCustomDeparture();
   }
@@ -417,6 +417,12 @@ public:
     sidLegs = legs;
   }
 
+  /* Outbound course from the waypoint of the previous leg, i.e. course at the start of the given leg. Uses VOR declination if present. */
+  void getOutboundCourse(int index, float& magCourse, float& trueCourse) const;
+
+  /* Inbound course to the waypoint of the given leg, i.e. course at the end of the given leg.  Uses VOR declination if present.*/
+  void getInboundCourse(int index, float& magCourse, float& trueCourse) const;
+
   /* Insert legs of procedures into flight plan and update all offsets and indexes */
   void updateProcedureLegs(FlightplanEntryBuilder *entryBuilder, bool clearOldProcedureProperties, bool cleanupRoute);
 
@@ -431,6 +437,9 @@ public:
 
   /* Remove alternate airport(s) from route and flightplan */
   void removeAlternateLegs();
+
+  /* Remove missed approach legs from route and flightplan */
+  void removeMissedLegs();
 
   /* Deletes flight plan properties too */
   void removeProcedureLegs();
@@ -448,10 +457,10 @@ public:
   }
 
   /* Leg end position - i.e. the waypoint at the end of the leg */
-  const atools::geo::Pos& getPositionAt(int i) const;
+  const atools::geo::Pos getPositionAt(int i) const;
 
   /* Leg start position - i.e. the waypoint at the end of the previous leg */
-  const atools::geo::Pos& getPrevPositionAt(int i) const;
+  const atools::geo::Pos getPrevPositionAt(int i) const;
 
   /* Update distance, course, bounding rect and total distance for route map objects.
    *  Also calculates maximum number of user points. */
@@ -514,63 +523,31 @@ public:
   /* Returns empty object if index is invalid */
   const RouteLeg& value(int i) const;
 
-  int size() const
-  {
-    return QList::size();
-  }
+  using QList::isEmpty;
+  using QList::append;
+  using QList::prepend;
+  using QList::insert;
+  using QList::replace;
+  using QList::move;
+  using QList::clear;
+  using QList::size;
 
   int getSizeWithoutAlternates() const;
-
-  bool isEmpty() const
-  {
-    return QList::isEmpty();
-  }
-
-  void append(const RouteLeg& leg)
-  {
-    QList::append(leg);
-  }
-
-  void prepend(const RouteLeg& leg)
-  {
-    QList::prepend(leg);
-  }
-
-  void insert(int before, const RouteLeg& leg)
-  {
-    QList::insert(before, leg);
-  }
-
-  void replace(int i, const RouteLeg& leg)
-  {
-    QList::replace(i, leg);
-  }
-
-  void move(int from, int to)
-  {
-    QList::move(from, to);
-  }
-
-  void removeAt(int i)
-  {
-    QList::removeAt(i);
-  }
 
   /* Removes the shadowed flight plan entry too */
   void removeAllAt(int i)
   {
     QList::removeAt(i);
-    flightplan.getEntries().removeAt(i);
+    flightplan.removeAt(i);
+  }
+
+  void removeLegAt(int i)
+  {
+    QList::removeAt(i);
   }
 
   /* Removes all entries in route and flightplan except the ones in the range (including) */
   void removeAllExceptRange(int from, int to);
-
-  /* Removes only route legs and does not touch the flight plan copy */
-  void clear()
-  {
-    QList::clear();
-  }
 
   /* Removes all legs, procedure information and flight plan legs */
   void clearAll();
@@ -606,7 +583,9 @@ public:
   /* Fetch airways by waypoint and name and adjust route altititude if needed */
   /* Uses airway by name cache in query which is called often. */
   void updateAirwaysAndAltitude(bool adjustRouteAltitude);
-  int getAdjustedAltitude(int newAltitude) const;
+
+  /* Apply simplified east/west or north/south rule. Return in local units */
+  float getAdjustedAltitude(float altitudeLocal) const;
 
   /* Get a position along the route. Pos is invalid if not along. distFromStart in nm */
   atools::geo::Pos getPositionAtDistance(float distFromStartNm) const;
@@ -645,7 +624,7 @@ public:
   const RouteAltitudeLeg& getAltitudeLegAt(int i) const;
   bool hasAltitudeLegs() const;
   int getNumAltitudeLegs() const;
-  bool hasValidProfile() const;
+  bool isValidProfile() const;
 
   /* Calculate route leg altitudes that are needed for the elevation profile */
   void updateLegAltitudes();
@@ -663,15 +642,12 @@ public:
   /* Assign index and pointer to flight plan for all objects and also update all procedure and alternate offsets */
   void updateIndicesAndOffsets();
 
-  void clearFlightplanAlternateProperties();
-
   /* Get idents of all alternates */
   QStringList getAlternateIdents() const;
 
   /* Get display idents (ICAO, IATA, FAA or local) of all alternates */
   QStringList getAlternateDisplayIdents() const;
 
-  void updateAlternateProperties();
   QVector<map::MapAirport> getAlternateAirports() const;
 
   /* Get a bit array which indicates high/low airways - needed for some export formats.
@@ -692,11 +668,11 @@ public:
   void updateDepartureAndDestination();
 
   /* Get file name pattern based on route values */
-  QString buildDefaultFilename(const QString& suffix, bool clean = true) const;
+  QString buildDefaultFilename(const QString& suffix) const;
   QString buildDefaultFilenameShort(const QString& separator, const QString& suffix) const;
 
   /* Uses pattern from options if empty */
-  QString buildDefaultFilename(QString pattern, QString suffix, bool clean = true) const;
+  QString buildDefaultFilename(QString pattern, QString suffix) const;
 
   /* Get all missing (i.e. not loaded) procedures where property values are present
    * but procedure structs are not loaded/resolved */
@@ -725,7 +701,7 @@ private:
 
   /* Remove any waypoints which positions overlap with procedures. Requires a flight plan that is cleaned up and contains
    * no procedure legs. CPU intense do not use often. */
-  void cleanupFlightPlanForProcedures();
+  void cleanupFlightPlanForProcedures(map::MapAirway& starAirway);
 
   /* Removes related properies in the flight plan only */
   void clearFlightplanProcedureProperties(proc::MapProcedureTypes type);
@@ -760,6 +736,9 @@ private:
 
   /* Update waypoint numbers with prefix "WP" automatically in order of plan */
   void updateWaypointNames();
+
+  /* Updates airway objects in route legs and returns min and max altitude defined by airways and flight plan restrictions */
+  void updateAirways(float& minAltitudeFt, float& maxAltitudeFt, bool adjustRouteAltitude);
 
   atools::geo::Rect boundingRect;
 

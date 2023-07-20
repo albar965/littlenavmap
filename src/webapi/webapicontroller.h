@@ -18,10 +18,12 @@
 #ifndef LNM_WebApiController_H
 #define LNM_WebApiController_H
 
+#include <QMap>
 #include <QObject>
-#include "webapi/webapirequest.h"
-#include "webapi/webapiresponse.h"
-#include "common/abstractinfobuilder.h"
+
+class WebApiRequest;
+class WebApiResponse;
+class AbstractInfoBuilder;
 
 /**
  * @brief The WebApiController class resolving WebApiRequests to WebApiResponses

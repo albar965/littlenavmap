@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -28,6 +28,7 @@ namespace map {
 struct MapAirspace;
 struct MapAirway;
 struct MapLogbookEntry;
+struct DistanceMarker;
 }
 
 class MapWidget;
@@ -61,7 +62,7 @@ private:
   void paintRangeMarks();
 
   /* Draw great circle line distance measurement lines */
-  void paintMeasurementMarks();
+  void paintDistanceMarks();
 
   /* Traffic patterns */
   void paintPatternMarks();
@@ -74,9 +75,6 @@ private:
 
   /* Draw a "green banana" where aircraft reaches autopilot altitude */
   void paintSelectedAltitudeRange();
-
-  /* Draw a green turn path indicator */
-  void paintTurnPath();
 
   /* Draw drag operations in progress */
   void paintUserpointDrag();
@@ -92,6 +90,9 @@ private:
   /* Logbook highlights */
   void paintLogEntries(const QList<map::MapLogbookEntry>& entries);
 
+  QStringList distanceMarkText(const map::DistanceMarker& marker, bool drawFast) const;
+
+  QString magTrueSuffix, magSuffix, trueSuffix;
 };
 
 #endif // LITTLENAVMAP_MAPPAINTERMARK_H

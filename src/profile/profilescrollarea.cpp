@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -26,7 +26,7 @@
 #include "route/route.h"
 #include "options/optiondata.h"
 
-#include "navapp.h"
+#include "app/navapp.h"
 #include "atools.h"
 
 #include <QDebug>
@@ -38,6 +38,9 @@
 #include <QWidget>
 #include <QToolTip>
 #include "ui_mainwindow.h"
+
+// Need to use fixed value for minimum since Qt arbitrarily resets min to 0
+const static int PROFILE_SLIDER_MINIMUM = 1;
 
 ProfileScrollArea::ProfileScrollArea(ProfileWidget *parent, QScrollArea *scrollAreaParam)
   : QObject(parent), profileWidget(parent),
@@ -131,8 +134,7 @@ ProfileScrollArea::~ProfileScrollArea()
 
 void ProfileScrollArea::helpClicked()
 {
-  atools::gui::HelpHandler::openHelpUrlWeb(scrollArea, lnm::helpOnlineUrl + "PROFILE.html",
-                                           lnm::helpLanguageOnline());
+  atools::gui::HelpHandler::openHelpUrlWeb(scrollArea, lnm::helpOnlineUrl + "PROFILE.html", lnm::helpLanguageOnline());
 }
 
 void ProfileScrollArea::expandWidget()
@@ -146,8 +148,10 @@ void ProfileScrollArea::expandWidget()
 
   // Resize widget temporarily and then switch it off again
   scrollArea->setWidgetResizable(true);
-  ui->horizontalSliderProfileZoom->setValue(ui->horizontalSliderProfileZoom->minimum());
-  ui->verticalSliderProfileZoom->setValue(ui->verticalSliderProfileZoom->minimum());
+  ui->horizontalSliderProfileZoom->setValue(PROFILE_SLIDER_MINIMUM);
+  ui->horizontalSliderProfileZoom->setMinimum(PROFILE_SLIDER_MINIMUM);
+  ui->verticalSliderProfileZoom->setValue(PROFILE_SLIDER_MINIMUM);
+  ui->verticalSliderProfileZoom->setMinimum(PROFILE_SLIDER_MINIMUM);
   scrollArea->setWidgetResizable(false);
 }
 
@@ -335,8 +339,10 @@ void ProfileScrollArea::updateWidgets()
   if(!routeValid)
   {
     // Reset zoom sliders
-    ui->horizontalSliderProfileZoom->setValue(ui->horizontalSliderProfileZoom->minimum());
-    ui->verticalSliderProfileZoom->setValue(ui->verticalSliderProfileZoom->minimum());
+    ui->horizontalSliderProfileZoom->setValue(PROFILE_SLIDER_MINIMUM);
+    ui->horizontalSliderProfileZoom->setMinimum(PROFILE_SLIDER_MINIMUM);
+    ui->verticalSliderProfileZoom->setValue(PROFILE_SLIDER_MINIMUM);
+    ui->verticalSliderProfileZoom->setMinimum(PROFILE_SLIDER_MINIMUM);
     lastVertScrollPos = 0.5;
     lastHorizScrollPos = 0.5;
   }
@@ -442,8 +448,8 @@ bool ProfileScrollArea::keyEvent(QKeyEvent *event)
   else if(event->key() == Qt::Key_0 || event->key() == Qt::Key_Insert)
   {
     // Reset using 0 or 0/Ins on numpad
-    ui->horizontalSliderProfileZoom->setValue(ui->horizontalSliderProfileZoom->minimum());
-    ui->verticalSliderProfileZoom->setValue(ui->verticalSliderProfileZoom->minimum());
+    ui->horizontalSliderProfileZoom->setValue(PROFILE_SLIDER_MINIMUM);
+    ui->verticalSliderProfileZoom->setValue(PROFILE_SLIDER_MINIMUM);
     consumed = true;
   }
 
@@ -752,9 +758,13 @@ bool ProfileScrollArea::isPointVisible(const QPoint& point)
          atools::inRange(vertScrollBar->value(), vertScrollBar->value() + viewport->height(), point.y());
 }
 
-void ProfileScrollArea::centerAircraftAndDest(const QPoint& aircraftScreenPoint, const QPoint& destScreenPoint, bool zoomVertically,
-                                              bool force)
+void ProfileScrollArea::centerRect(const QPoint& leftScreenPoint, const QPoint& rightScreenPoint, bool zoomVertically, bool force)
 {
+#ifdef DEBUG_INFORMATION
+  qDebug() << Q_FUNC_INFO << "leftScreenPoint" << leftScreenPoint << "rightScreenPoint" << rightScreenPoint
+           << "zoomVertically" << zoomVertically << "force" << force;
+#endif
+
   const static double MIN_VIEWPORT_LENGTH_NM = 8.;
   const static double MIN_VIEWPORT_HEIGHT_FT = 3000.;
   const static int MIN_UPDATE_SECONDS = 5;
@@ -762,10 +772,10 @@ void ProfileScrollArea::centerAircraftAndDest(const QPoint& aircraftScreenPoint,
   // point1 and point2 are relative to profile widget rect
   Ui::MainWindow *ui = NavApp::getMainUi();
 
-  if(!aircraftScreenPoint.isNull() && !destScreenPoint.isNull())
+  if(!leftScreenPoint.isNull() && !rightScreenPoint.isNull())
   {
     // Convert points to floating point
-    QPointF aircraftPt(aircraftScreenPoint), destPt(destScreenPoint);
+    QPointF aircraftPt(leftScreenPoint), destPt(rightScreenPoint);
 
     // Add margins to left point to avoid zooming in too deep
     aircraftPt.rx() -= viewport->width() / 10.f;
@@ -781,8 +791,8 @@ void ProfileScrollArea::centerAircraftAndDest(const QPoint& aircraftScreenPoint,
     double viewportWidthNm = viewport->width() / profileWidget->getHorizontalScale();
     double viewportHeightFt = viewport->height() / profileWidget->getVerticalScale();
 
-#ifdef DEBUG_INFORMATION
-    qDebug() << Q_FUNC_INFO << aircraftScreenPoint << destScreenPoint << aircraftPt << destPt
+#ifdef DEBUG_INFORMATION_PROFILE_CENTER_RECT
+    qDebug() << Q_FUNC_INFO << leftScreenPoint << rightScreenPoint << aircraftPt << destPt
              << "widthNm" << viewportWidthNm << "heightFt" << viewportHeightFt;
     qDebug() << Q_FUNC_INFO << "rel1X" << relative1X << "rel1Y" << relative1Y << "rel2X" << relative2X << "rel2Y" << relative2Y;
     qDebug() << Q_FUNC_INFO << "viewport" << viewport->rect() << "profile widget" << profileWidget->rect();
@@ -790,7 +800,7 @@ void ProfileScrollArea::centerAircraftAndDest(const QPoint& aircraftScreenPoint,
 #endif
 
     // Force update if aircraft is not visible
-    if(!isPointVisible(aircraftScreenPoint))
+    if(!isPointVisible(leftScreenPoint))
       force = true;
 
     // Do not update more often than five seconds

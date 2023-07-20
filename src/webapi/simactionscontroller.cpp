@@ -1,11 +1,9 @@
 #include "simactionscontroller.h"
-#include "common/maptypes.h"
 #include "common/infobuildertypes.h"
 #include "common/abstractinfobuilder.h"
-#include "navapp.h"
-#include "atools.h"
 #include "geo/calculations.h"
 #include "fs/sc/simconnectdata.h"
+#include "webapi/webapirequest.h"
 
 using InfoBuilderTypes::SimConnectInfoData;
 using atools::geo::normalizeCourse;

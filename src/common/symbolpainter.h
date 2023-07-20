@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -97,7 +97,7 @@ public:
                           float x, float y, float size, bool windPointer, bool windBarbs, bool fast);
 
   /* Wind arrow */
-  void drawWindPointer(QPainter *painter, float x, float y, int size, float dir);
+  void drawWindPointer(QPainter *painter, float x, float y, float size, float dir);
 
   /* Draw large symbol with sectors and labels. MSA circle with bearings and altitude */
   void drawAirportMsa(QPainter *painter, const map::MapAirportMsa& airportMsa, float x, float y, float size, float symbolScale, bool header,
@@ -124,10 +124,9 @@ public:
 
   /* NDB texts have no background excepts for flight plan */
   void drawNdbText(QPainter *painter, const map::MapNdb& ndb, float x, float y, textflags::TextFlags flags,
-                   int size, bool fill, const QStringList *addtionalText = nullptr);
+                   float size, bool fill, const QStringList *addtionalText = nullptr);
 
-  void drawMarkerSymbol(QPainter *painter, const map::MapMarker& marker, float x, float y, int size,
-                        bool fast);
+  void drawMarkerSymbol(QPainter *painter, const map::MapMarker& marker, float x, float y, float size, bool fast);
 
   static void drawHelipadSymbol(QPainter *painter, const map::MapHelipad& helipad, float x, float y, float w, float h, bool fast);
 
@@ -135,30 +134,30 @@ public:
   void drawUserpointSymbol(QPainter *painter, float x, float y, float size, bool routeFill);
 
   /* Circle for approach points which are not navaids */
-  void drawProcedureSymbol(QPainter *painter, float x, float y, int size, bool routeFill);
+  void drawProcedureSymbol(QPainter *painter, float x, float y, float size, bool routeFill);
 
   /* Circle for flight plan waypoints */
   void drawLogbookPreviewSymbol(QPainter *painter, float x, float y, float size);
 
   /* Maltese cross to indicate FAF on the map and ring to indicate fly over*/
-  void drawProcedureUnderlay(QPainter *painter, float x, float y, int size, bool flyover, bool faf);
+  void drawProcedureUnderlay(QPainter *painter, float x, float y, float size, bool flyover, bool faf);
 
   /* Flyover underlay */
   void drawProcedureFlyover(QPainter *painter, float x, float y, float size);
 
   /* Maltese cross to indicate FAF on the map */
-  void drawProcedureFaf(QPainter *painter, float x, float y, int size);
+  void drawProcedureFaf(QPainter *painter, float x, float y, float size);
 
   /* Draw a custom text box */
   void textBox(QPainter *painter, const QStringList& texts, const QPen& textPen, int x, int y,
                textatt::TextAttributes atts = textatt::NONE,
                int transparency = 255, const QColor& backgroundColor = QColor());
-  void textBoxF(QPainter *painter, const QStringList& texts, QPen textPen, float x, float y,
+  void textBoxF(QPainter *painter, QStringList texts, QPen textPen, float x, float y,
                 textatt::TextAttributes atts = textatt::NONE,
                 int transparency = 255, const QColor& backgroundColor = QColor());
 
   /* Get dimensions of a custom text box */
-  QRect textBoxSize(QPainter *painter, const QStringList& texts, textatt::TextAttributes atts);
+  QRectF textBoxSize(QPainter *painter, const QStringList& texts, textatt::TextAttributes atts);
 
   /* Upper level winds */
   void drawWindBarbs(QPainter *painter, float wind, float gust, float dir, float x, float y, float size,

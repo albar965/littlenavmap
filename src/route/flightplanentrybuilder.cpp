@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -18,11 +18,9 @@
 #include "route/flightplanentrybuilder.h"
 
 #include "common/proctypes.h"
-#include "fs/pln/flightplan.h"
 #include "fs/pln/flightplanentry.h"
-#include "fs/util/fsutil.h"
 #include "query/mapquery.h"
-#include "navapp.h"
+#include "app/navapp.h"
 
 using atools::fs::pln::FlightplanEntry;
 
@@ -31,20 +29,17 @@ FlightplanEntryBuilder::FlightplanEntryBuilder()
 }
 
 /* Copy airport attributes to flight plan entry */
-void FlightplanEntryBuilder::buildFlightplanEntry(const map::MapAirport& airport, FlightplanEntry& entry,
-                                                  bool alternate) const
+void FlightplanEntryBuilder::buildFlightplanEntry(const map::MapAirport& airport, FlightplanEntry& entry, bool alternate) const
 {
   entryFromAirport(airport, entry, alternate);
 }
 
 /* create a flight plan entry from object id/type or user position */
-void FlightplanEntryBuilder::buildFlightplanEntry(int id, const atools::geo::Pos& userPos,
-                                                  map::MapTypes type, FlightplanEntry& entry,
+void FlightplanEntryBuilder::buildFlightplanEntry(int id, const atools::geo::Pos& userPos, map::MapTypes type, FlightplanEntry& entry,
                                                   bool resolveWaypoints)
 {
   map::MapResult result;
-  NavApp::getMapQueryGui()->getMapObjectById(result, type, map::AIRSPACE_SRC_NONE, id,
-                                             false /* airport from nav database */);
+  NavApp::getMapQueryGui()->getMapObjectById(result, type, map::AIRSPACE_SRC_NONE, id, false /* airport from nav database */);
   buildFlightplanEntry(userPos, result, entry, resolveWaypoints, map::NONE);
 }
 
@@ -70,8 +65,16 @@ void FlightplanEntryBuilder::entryFromUserpoint(const map::MapUserpoint& userpoi
   entry.setPosition(userpoint.position);
   entry.setWaypointType(atools::fs::pln::entry::USER);
 
+  QString ident;
   if(!userpoint.ident.isEmpty())
-    entry.setIdent(userpoint.ident);
+    ident = userpoint.ident;
+  else if(!userpoint.name.isEmpty())
+    ident = userpoint.name.toUpper();
+  else if(!userpoint.type.isEmpty())
+    ident = userpoint.type.toUpper();
+
+  if(!ident.isEmpty())
+    entry.setIdent(ident);
   else
     entry.setIdent("WP" + QString::number(curUserpointNumber++));
 

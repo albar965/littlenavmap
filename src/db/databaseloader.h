@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2022 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -63,8 +63,8 @@ public:
   /* Stops loading, waits for thread to be finished and closes progress dialog */
   void loadSceneryStop();
 
-  /* true if loading is in process */
-  bool isLoading() const;
+  /* true if loading is in process or confirmation dialog is shown */
+  bool isLoadingProgress() const;
 
   /* Put progress window to foreground if open */
   void showProgressWindow() const;

@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -57,6 +57,9 @@ public:
   /* true if style requires darkening the map */
   bool isCurrentGuiStyleNight() const;
 
+  const static QLatin1String DEFAULT_STYLE; /* Fusion */
+  const static QLatin1String DEFAULT_STYLE_DARK; /* Night */
+
 signals:
   /* Sent on change */
   void preStyleChange(const QString& name, bool night);
@@ -65,6 +68,12 @@ signals:
 private:
   struct Style
   {
+    Style(const QString& displayNameParam, const QString& styleNameParam, const QString& stylesheetParam,
+          const QPalette& paletteParam, bool nightParam) : displayName(displayNameParam),
+      styleName(styleNameParam), stylesheet(stylesheetParam), palette(paletteParam), night(nightParam)
+    {
+    }
+
     QString displayName, styleName, stylesheet;
     QPalette palette;
     bool night;

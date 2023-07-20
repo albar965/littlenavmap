@@ -245,7 +245,7 @@ Keeps procedures.</string>
           </widget>
          </item>
          <item row="0" column="0" colspan="3">
-          <widget class="QSlider" name="horizontalSliderRouteCalcAirwayPreference">
+          <widget class="QSlider" name="horizontalSliderRouteCalcAirwayPref">
            <property name="toolTip">
             <string>Move the slider left to use airways only. This is the fastest calculation method.
 Move the slider to the right to use direct waypoint connections only.
@@ -254,13 +254,13 @@ allows to find a flight plan that can cross areas without an airway network or
 unusable airways (e.g. due to altitude restrictions).</string>
            </property>
            <property name="maximum">
-            <number>10</number>
+            <number>14</number>
            </property>
            <property name="pageStep">
             <number>1</number>
            </property>
            <property name="value">
-            <number>5</number>
+            <number>7</number>
            </property>
            <property name="tracking">
             <bool>true</bool>
@@ -504,7 +504,7 @@ Disabled if a navdatabase does not allow it.</string>
     </spacer>
    </item>
    <item>
-    <widget class="QFrame" name="">
+    <widget class="QFrame" name="frame">
      <property name="frameShape">
       <enum>QFrame::StyledPanel</enum>
      </property>
@@ -589,6 +589,24 @@ Erases procedures.</string>
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>radioButtonRouteCalcFull</tabstop>
+  <tabstop>radioButtonRouteCalcSelection</tabstop>
+  <tabstop>spinBoxRouteCalcCruiseAltitude</tabstop>
+  <tabstop>pushButtonRouteCalcAdjustAltitude</tabstop>
+  <tabstop>radioButtonRouteCalcAirway</tabstop>
+  <tabstop>radioButtonRouteCalcAirwayAll</tabstop>
+  <tabstop>radioButtonRouteCalcAirwayJet</tabstop>
+  <tabstop>radioButtonRouteCalcAirwayVictor</tabstop>
+  <tabstop>checkBoxRouteCalcAirwayNoRnav</tabstop>
+  <tabstop>checkBoxRouteCalcAirwayTrack</tabstop>
+  <tabstop>pushButtonRouteCalcTrackDownload</tabstop>
+  <tabstop>horizontalSliderRouteCalcAirwayPref</tabstop>
+  <tabstop>radioButtonRouteCalcRadio</tabstop>
+  <tabstop>checkBoxRouteCalcRadioNdb</tabstop>
+  <tabstop>pushButtonRouteCalcDirect</tabstop>
+  <tabstop>pushButtonRouteCalcReverse</tabstop>
+ </tabstops>
  <resources>
   <include location="../../littlenavmap.qrc"/>
  </resources>

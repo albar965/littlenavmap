@@ -23,10 +23,7 @@
 #include "webapi/webapicontroller.h"
 #include "web/webapp.h"
 #include "gui/helphandler.h"
-
-#include "templateengine/templatecache.h"
 #include "httpserver/httplistener.h"
-#include "httpserver/httpsessionstore.h"
 #include "common/htmlinfobuilder.h"
 #include "common/constants.h"
 
@@ -221,6 +218,8 @@ void WebController::stopServer()
 
 void WebController::restartServer(bool force)
 {
+  qDebug() << Q_FUNC_INFO << "isRunning()" << isRunning() << "force" << force;
+
   if(isRunning() || force)
   {
     stopServer();
@@ -243,7 +242,7 @@ QStringList WebController::getUrlStr() const
 {
   QStringList retval;
   for(int i = 0; i < urlList.size(); i++)
-    retval.append(tr("<a href=\"%1\">%1</a> (IP address <a href=\"%2\">%2</a>)").
+    retval.append(tr("<a href=\"%1\"><b>%1</b></a> (IP address <a href=\"%2\">%2</a>)").
                   arg(urlList.value(i).toString()).arg(urlIpList.value(i).toString()));
   return retval;
 }
@@ -299,9 +298,9 @@ QString WebController::getDefaultDocumentRoot() const
   return QFileInfo(QCoreApplication::applicationDirPath() + QDir::separator() + "web").canonicalFilePath();
 }
 
-
-WebMapController *WebController::getWebMapController() const{
-    return mapController;
+WebMapController *WebController::getWebMapController() const
+{
+  return mapController;
 
 }
 

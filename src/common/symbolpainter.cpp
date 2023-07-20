@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -17,31 +17,23 @@
 
 #include "symbolpainter.h"
 
-#include "common/maptypes.h"
-#include "query/mapquery.h"
 #include "common/mapcolors.h"
-#include "options/optiondata.h"
+#include "common/maptypes.h"
 #include "common/unit.h"
-#include "geo/calculations.h"
-#include "util/paintercontextsaver.h"
-#include "fs/weather/metar.h"
 #include "fs/util/fsutil.h"
+#include "fs/weather/metar.h"
 #include "fs/weather/metarparser.h"
+#include "geo/calculations.h"
+#include "options/optiondata.h"
+#include "util/paintercontextsaver.h"
 
 #include <QPainter>
 #include <QStringBuilder>
-#include <marble/GeoPainter.h>
 
 using namespace Marble;
 using namespace map;
 using atools::geo::angleToQt;
 using atools::fs::util::roundComFrequency;
-
-/* Simulator aircraft symbol */
-const QVector<QLine> AIRCRAFTLINES({QLine(0, -20, 0, 16), // Body
-                                    QLine(-20, 2, 0, -6), QLine(0, -6, 20, 2), // Wings
-                                    QLine(-10, 18, 0, 14), QLine(0, 14, 10, 18) // Horizontal stabilizer
-                                   });
 
 QIcon SymbolPainter::createAirportIcon(const map::MapAirport& airport, int size)
 {
@@ -249,9 +241,10 @@ void SymbolPainter::drawAirportSymbol(QPainter *painter, const map::MapAirport& 
   if(airport.addon() && addonHighlight)
   {
     // Draw addon underlay ==========================
-    float addonRadius = radius + atools::minmax(3.8f, 4.8f, radius * 0.55f);
     painter->setBrush(mapcolors::addonAirportBackgroundColor);
     painter->setPen(QPen(mapcolors::addonAirportFrameColor));
+
+    float addonRadius = radius + atools::minmax(3.f, 6.f, radius);
     painter->drawEllipse(QPointF(x, y), addonRadius, addonRadius);
   }
 
@@ -643,14 +636,14 @@ QVector<int> SymbolPainter::calculateWindBarbs(float& lineLength, float lineWidt
   return barbs;
 }
 
-void SymbolPainter::drawWindPointer(QPainter *painter, float x, float y, int size, float dir)
+void SymbolPainter::drawWindPointer(QPainter *painter, float x, float y, float size, float dir)
 {
   atools::util::PainterContextSaver saver(painter);
   painter->setBackgroundMode(Qt::TransparentMode);
 
-  painter->translate(x, y + size / 2);
+  painter->translate(x, y + size / 2.f);
   painter->rotate(atools::geo::normalizeCourse(dir + 180.f));
-  painter->drawPixmap(-size / 2, -size / 2, *windPointerFromCache(size));
+  painter->drawPixmap(QPointF(-size / 2.f, -size / 2.f), *windPointerFromCache(atools::roundToInt(size)));
   painter->resetTransform();
 }
 
@@ -697,7 +690,7 @@ void SymbolPainter::drawAirportMsa(QPainter *painter, const map::MapAirportMsa& 
                         arg(airportMsa.trueBearing ? tr("°T") : tr("°M")).
                         arg(Unit::getUnitAltStr());
 
-      QRectF bounding = painter->fontMetrics().boundingRect(heading);
+      QRectF bounding = QFontMetricsF(painter->font()).boundingRect(heading);
       QPointF pt(x - bounding.size().width() / 2., y - radius);
       painter->drawText(pt, heading);
 
@@ -734,7 +727,7 @@ void SymbolPainter::drawAirportMsa(QPainter *painter, const map::MapAirportMsa& 
         if(drawDetails)
         {
           // Move origin to label position and draw text
-          QSizeF txtsize = painter->fontMetrics().boundingRect(text).size();
+          QSizeF txtsize = QFontMetricsF(painter->font()).boundingRect(text).size();
           painter->translate(line.center());
           painter->rotate(bearing < 180.f ? bearing - 90.f : bearing + 90.f); // Keep text upwards
           painter->drawText(QPointF(-txtsize.width() / 2., txtsize.height() / 3.), text);
@@ -759,7 +752,7 @@ void SymbolPainter::drawAirportMsa(QPainter *painter, const map::MapAirportMsa& 
           line.setAngle(atools::geo::angleToQt(bearing + atools::geo::angleAbsDiff2(bearing, bearingTo) / 2.f));
 
         QString text = Unit::altFeet(airportMsa.altitudes.at(i), false /* addUnit */, true /* narrow */);
-        QSizeF txtsize = painter->fontMetrics().boundingRect(text).size();
+        QSizeF txtsize = QFontMetricsF(painter->font()).boundingRect(text).size();
         painter->drawText(QPointF(line.p2().x() - txtsize.width() / 2., line.p2().y() + txtsize.height() / 2.), text);
       }
 
@@ -798,7 +791,7 @@ void SymbolPainter::drawUserpointSymbol(QPainter *painter, float x, float y, flo
   painter->drawRect(QRectF(x - radius, y - radius, size, size));
 }
 
-void SymbolPainter::drawProcedureSymbol(QPainter *painter, float x, float y, int size, bool routeFill)
+void SymbolPainter::drawProcedureSymbol(QPainter *painter, float x, float y, float size, bool routeFill)
 {
   atools::util::PainterContextSaver saver(painter);
   painter->setBackgroundMode(Qt::TransparentMode);
@@ -823,15 +816,15 @@ void SymbolPainter::drawLogbookPreviewSymbol(QPainter *painter, float x, float y
   painter->drawEllipse(QPointF(x, y), size / 2.f, size / 2.f);
 }
 
-void SymbolPainter::drawProcedureUnderlay(QPainter *painter, float x, float y, int size, bool flyover, bool faf)
+void SymbolPainter::drawProcedureUnderlay(QPainter *painter, float x, float y, float size, bool flyover, bool faf)
 {
   if(flyover)
     // Ring to indicate fly over
-    drawProcedureFlyover(painter, x, y, size + 14);
+    drawProcedureFlyover(painter, x, y, size + 12.f);
 
   if(faf)
     /* Maltese cross to indicate FAF on the map */
-    drawProcedureFaf(painter, x, y, size + 18);
+    drawProcedureFaf(painter, x, y, size + 18.f);
 }
 
 void SymbolPainter::drawProcedureFlyover(QPainter *painter, float x, float y, float size)
@@ -839,13 +832,13 @@ void SymbolPainter::drawProcedureFlyover(QPainter *painter, float x, float y, fl
   atools::util::PainterContextSaver saver(painter);
   painter->setBackgroundMode(Qt::OpaqueMode);
 
-  float lineWidth = std::max(size / 10.f, 1.5f);
+  float lineWidth = std::max(size / 16.f, 2.5f);
   painter->setPen(QPen(mapcolors::routeProcedurePointFlyoverColor, lineWidth, Qt::SolidLine, Qt::SquareCap));
   painter->setBrush(Qt::NoBrush);
   painter->drawEllipse(QPointF(x, y), size / 2.f, size / 2.f);
 }
 
-void SymbolPainter::drawProcedureFaf(QPainter *painter, float x, float y, int size)
+void SymbolPainter::drawProcedureFaf(QPainter *painter, float x, float y, float size)
 {
   static QPolygonF polygon(
   {
@@ -1045,9 +1038,8 @@ void SymbolPainter::drawNdbSymbol(QPainter *painter, float x, float y, float siz
   else
     painter->setBrush(Qt::NoBrush);
 
-  if(size > 4)
+  if(size > 4.f)
   {
-
     float lineWidth = std::max(size / 16.f, 1.5f);
 
     // Use dotted or solid line depending on size
@@ -1072,8 +1064,7 @@ void SymbolPainter::drawNdbSymbol(QPainter *painter, float x, float y, float siz
   painter->drawPoint(QPointF(x, y));
 }
 
-void SymbolPainter::drawMarkerSymbol(QPainter *painter, const map::MapMarker& marker, float x, float y,
-                                     int size, bool fast)
+void SymbolPainter::drawMarkerSymbol(QPainter *painter, const map::MapMarker& marker, float x, float y, float size, bool fast)
 {
   atools::util::PainterContextSaver saver(painter);
 
@@ -1081,7 +1072,7 @@ void SymbolPainter::drawMarkerSymbol(QPainter *painter, const map::MapMarker& ma
   painter->setBrush(Qt::NoBrush);
   painter->setPen(QPen(mapcolors::markerSymbolColor, 1.5, Qt::SolidLine, Qt::RoundCap));
 
-  if(!fast && size > 5)
+  if(!fast && size > 5.f)
   {
     // Draw rotated lens / ellipse
     double radius = size / 2.;
@@ -1091,13 +1082,13 @@ void SymbolPainter::drawMarkerSymbol(QPainter *painter, const map::MapMarker& ma
     painter->resetTransform();
   }
 
-  painter->setPen(QPen(mapcolors::markerSymbolColor, size / 4., Qt::SolidLine, Qt::RoundCap));
+  painter->setPen(QPen(mapcolors::markerSymbolColor, size / 4.f, Qt::SolidLine, Qt::RoundCap));
 
   painter->drawPoint(QPointF(x, y));
 }
 
 void SymbolPainter::drawNdbText(QPainter *painter, const map::MapNdb& ndb, float x, float y,
-                                textflags::TextFlags flags, int size, bool fill, const QStringList *addtionalText)
+                                textflags::TextFlags flags, float size, bool fill, const QStringList *addtionalText)
 {
   QStringList texts;
 
@@ -1120,8 +1111,8 @@ void SymbolPainter::drawNdbText(QPainter *painter, const map::MapNdb& ndb, float
 
   if(!flags.testFlag(textflags::ABS_POS))
   {
-    y += size / 2.f + painter->fontMetrics().ascent();
-    textAttrs |= textatt::CENTER;
+    y += size / 2.f + 2.f;
+    textAttrs |= textatt::CENTER | textatt::VERT_BELOW;
   }
 
   if(addtionalText != nullptr && !addtionalText->isEmpty())
@@ -1239,15 +1230,15 @@ void SymbolPainter::drawAirportText(QPainter *painter, const map::MapAirport& ai
     if(airport.closed())
       atts |= textatt::STRIKEOUT;
 
-    if(flags & textflags::ROUTE_TEXT)
+    if(flags.testFlag(textflags::ROUTE_TEXT))
       atts |= textatt::ROUTE_BG_COLOR;
 
-    if(flags & textflags::LOG_TEXT)
+    if(flags.testFlag(textflags::LOG_TEXT))
       atts |= textatt::LOG_BG_COLOR;
 
     int transparency = diagram ? 180 : 255;
     // No background for empty airports except if they are part of the route or log
-    if(airport.emptyDraw() && !(flags & textflags::ROUTE_TEXT) && !(flags & textflags::LOG_TEXT))
+    if(airport.emptyDraw() && !flags.testFlag(textflags::ROUTE_TEXT) && !flags.testFlag(textflags::LOG_TEXT))
       transparency = 0;
 
     if(!flags.testFlag(textflags::ABS_POS))
@@ -1286,8 +1277,8 @@ QStringList SymbolPainter::airportTexts(optsd::DisplayOptionsAirport dispOpts, t
 
     // bool elevUnit = Unit::getUnitAltStr() != Unit::getUnitShortDistStr();
     if(dispOpts & optsd::ITEM_AIRPORT_RUNWAY)
-      if(airport.longestRunwayLength != 0 || airport.getPosition().getAltitude() != 0.f)
-        texts.append(Unit::altFeet(airport.getPosition().getAltitude(), true /*addUnit*/, true /*narrow*/) % " " %
+      if(airport.longestRunwayLength != 0 || airport.getAltitude() != 0.f)
+        texts.append(Unit::altFeet(airport.getAltitude(), true /*addUnit*/, true /*narrow*/) % " " %
                      (airport.flags.testFlag(map::AP_LIGHT) ? "L " : "- ") %
                      Unit::distShortFeet(airport.longestRunwayLength, true /*addUnit*/, true /*narrow*/) % " ");
   }
@@ -1316,14 +1307,23 @@ void SymbolPainter::textBox(QPainter *painter, const QStringList& texts, const Q
   textBoxF(painter, texts, textPen, x, y, atts, transparency, backgroundColor);
 }
 
-void SymbolPainter::textBoxF(QPainter *painter, const QStringList& texts, QPen textPen, float x, float y, textatt::TextAttributes atts,
+void SymbolPainter::textBoxF(QPainter *painter, QStringList texts, QPen textPen, float x, float y, textatt::TextAttributes atts,
                              int transparency, const QColor& backgroundColor)
 {
+  // Added margins to background retangle to avoid letters touching the border
+  const static QMarginsF TEXT_MARGINS(2., 0., 2., 0.);
+  const static QMarginsF TEXT_MARGINS_SMALL(-2., 1., -2., 1.); // Margins for small fonts
+  const static QMarginsF TEXT_MARGINS_UNDERLINE(2., 0., 2., 2.); // Margins for unterlined text
+
+  // Remove empty lines
+  texts.removeAll(QString());
+
   if(texts.isEmpty())
     return;
 
   atools::util::PainterContextSaver saver(painter);
 
+  // Determine background and text colors ======================
   QColor backColor(backgroundColor);
   if(!backColor.isValid())
   {
@@ -1348,6 +1348,8 @@ void SymbolPainter::textBoxF(QPainter *painter, const QStringList& texts, QPen t
     transparency = 255;
   }
 
+  // Determine fill ======================
+  bool fill = false;
   if(transparency != 255)
   {
     if(transparency == 0) // Do not fill at all
@@ -1362,15 +1364,19 @@ void SymbolPainter::textBoxF(QPainter *painter, const QStringList& texts, QPen t
       backColor.setAlpha(transparency);
       painter->setBrush(backColor);
       painter->setBackground(backColor);
+      fill = true;
     }
   }
-  else // Fill background
+  else
   {
+    // Fill background
     painter->setBackgroundMode(Qt::OpaqueMode);
     painter->setBrush(backColor);
     painter->setBackground(backColor);
+    fill = true;
   }
 
+  // Text attributes =============================================
   if(atts.testFlag(textatt::ITALIC) || atts.testFlag(textatt::BOLD) || atts.testFlag(textatt::UNDERLINE) ||
      atts.testFlag(textatt::OVERLINE) || atts.testFlag(textatt::STRIKEOUT))
   {
@@ -1394,38 +1400,32 @@ void SymbolPainter::textBoxF(QPainter *painter, const QStringList& texts, QPen t
     painter->setFont(f);
   }
 
-  // Draw the text
-  QFontMetricsF metrics = painter->fontMetrics();
-  float height = static_cast<float>(metrics.height()) - 1.f;
-  float totalHeight = height * texts.size();
-  float yoffset = 0.f;
+  // Calculate font sizes =========================
+  QFontMetricsF metrics(painter->font());
+  double height = metrics.height() - 1.;
+  double totalHeight = height * texts.size();
+  double yoffset = 0.;
 
-  if(atts.testFlag(textatt::VTOP))
-  {
+  // Calculate vertical reference point ====================
+  if(atts.testFlag(textatt::VERT_BELOW))
     // Reference point at top to place text below an icon
-    yoffset = static_cast<float>(metrics.descent()) + totalHeight;
-
-  }
-  else if(atts.testFlag(textatt::VBOTTOM))
-  {
+    yoffset = 0;
+  else if(atts.testFlag(textatt::VERT_ABOVE))
     // Reference point at bottom of text stack to place text on top of an icon
-    yoffset = -static_cast<float>(metrics.descent());
-  }
+    yoffset = -totalHeight;
   else
     // Center text vertically
-    yoffset = totalHeight / 2.f - static_cast<float>(metrics.descent());
+    yoffset = -totalHeight / 2.f;
 
-  painter->setPen(textPen);
+  // Draw background rectangle if and calculate text positions ===================
+  painter->setPen(Qt::NoPen);
 
-  // Draw text in reverse order to avoid undercut
-  for(int i = texts.size() - 1; i >= 0; i--)
+  QVector<QPointF> textPt;
+  for(const QString& text : texts)
   {
-    const QString& text = texts.at(i);
-    if(text.isEmpty())
-      continue;
-
-    float w = static_cast<float>(metrics.horizontalAdvance(text));
-    float newx = x;
+    QRectF boundingRect = metrics.boundingRect(text);
+    double w = boundingRect.width();
+    double newx = x;
     if(atts.testFlag(textatt::RIGHT))
       // Reference point is at the right of the text (right-aligned) to place text at the left of an icon
       newx -= w;
@@ -1433,14 +1433,36 @@ void SymbolPainter::textBoxF(QPainter *painter, const QStringList& texts, QPen t
       newx -= w / 2.f;
     // else LEFT  Reference point is at the left of the text (left-aligned) to place text at the right of an icon
 
-    painter->drawText(QPointF(newx, y + yoffset), text);
-    yoffset -= height;
+    QPointF pt(newx, y + yoffset);
+    textPt.append(pt);
+
+    if(fill)
+    {
+      boundingRect.moveTo(pt);
+
+      if(boundingRect.height() < 14)
+        // Use smaller margins for small fonts
+        painter->drawRect(boundingRect.marginsRemoved(TEXT_MARGINS_SMALL));
+      else
+        // Extend bottom margin for underlined letters
+        painter->drawRect(boundingRect.marginsAdded(atts.testFlag(textatt::UNDERLINE) ? TEXT_MARGINS_UNDERLINE : TEXT_MARGINS));
+    }
+    yoffset += height;
   }
+
+  painter->setBackgroundMode(Qt::TransparentMode);
+  painter->setBrush(Qt::NoBrush);
+  painter->setPen(textPen);
+
+  // Draw texts =================================
+  QPointF ascent(0., metrics.ascent());
+  for(int i = 0; i < texts.size(); i++)
+    painter->drawText(textPt.at(i) + ascent, texts.at(i));
 }
 
-QRect SymbolPainter::textBoxSize(QPainter *painter, const QStringList& texts, textatt::TextAttributes atts)
+QRectF SymbolPainter::textBoxSize(QPainter *painter, const QStringList& texts, textatt::TextAttributes atts)
 {
-  QRect retval;
+  QRectF retval;
   if(texts.isEmpty())
     return retval;
 
@@ -1455,25 +1477,25 @@ QRect SymbolPainter::textBoxSize(QPainter *painter, const QStringList& texts, te
     painter->setFont(f);
   }
 
-  QFontMetrics metrics = painter->fontMetrics();
-  int h = metrics.height();
+  QFontMetricsF metrics(painter->font());
+  double h = metrics.height();
 
   // Increase text box size for each bounding rectangle of text
-  int yoffset = 0;
+  double yoffset = 0.;
   for(const QString& t : texts)
   {
-    int w = metrics.width(t);
-    int newx = 0;
+    double w = metrics.horizontalAdvance(t);
+    double newx = 0.;
     if(atts.testFlag(textatt::RIGHT))
       newx -= w;
     else if(atts.testFlag(textatt::CENTER))
-      newx -= w / 2;
+      newx -= w / 2.;
 
-    int textW = metrics.width(t);
+    double textW = metrics.horizontalAdvance(t);
     if(retval.isNull())
-      retval = QRect(newx, yoffset, textW, h);
+      retval = QRectF(newx, yoffset, textW, h);
     else
-      retval = retval.united(QRect(newx, yoffset, textW, h));
+      retval = retval.united(QRectF(newx, yoffset, textW, h));
     // painter->drawText(newx, y + yoffset, t);
     yoffset += h;
   }

@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
 #include "atools.h"
 #include "geo/calculations.h"
 #include "common/unit.h"
-#include "navapp.h"
+#include "app/navapp.h"
 #include "common/proctypes.h"
 #include "common/symbolpainter.h"
 #include "common/formatter.h"
@@ -367,7 +367,7 @@ void initTranslateableTexts()
       {"CTL", QObject::tr("Control")},
       {"D", QObject::tr("Departure Control")},
       {"DIR", QObject::tr("Director (Approach Control Radar)")},
-      {"EFS", QObject::tr("Enroute Flight Advisory Service (EFAS)")},
+      {"EFS", QObject::tr("En-route Flight Advisory Service (EFAS)")},
       {"EMR", QObject::tr("Emergency")},
       {"FSS", QObject::tr("Flight Service Station")},
       {"GCO", QObject::tr("Ground Comm Outlet")},
@@ -944,6 +944,11 @@ bool MapAirport::closed() const
   return flags.testFlag(AP_CLOSED);
 }
 
+bool MapAirport::military() const
+{
+  return flags.testFlag(AP_MIL);
+}
+
 bool MapAirport::hard() const
 {
   return flags.testFlag(AP_HARD);
@@ -995,23 +1000,20 @@ bool MapAirport::emptyDraw() const
     return false;
 
   const OptionData& od = OptionData::instance();
-  bool empty3dFlag = od.getFlags2().testFlag(opts2::MAP_EMPTY_AIRPORTS_3D);
-  bool emptyFlag = od.getFlags().testFlag(opts::MAP_EMPTY_AIRPORTS);
-
-  return emptyDraw(emptyFlag, empty3dFlag);
+  return emptyDraw(od.getFlags().testFlag(opts::MAP_EMPTY_AIRPORTS), od.getFlags2().testFlag(opts2::MAP_EMPTY_AIRPORTS_3D));
 }
 
-bool MapAirport::emptyDraw(bool emptyFlag, bool empty3dFlag) const
+bool MapAirport::emptyDraw(bool emptyOptsFlag, bool emptyOpts3dFlag) const
 {
   if(NavApp::isNavdataAll())
     return false;
 
-  if(emptyFlag)
+  if(emptyOptsFlag)
   {
-    if(empty3dFlag && xplane)
+    if(emptyOpts3dFlag && xplane)
       return !is3d() && !addon() && !waterOnly();
     else
-      return empty() && !waterOnly();
+      return rating == 0 && !waterOnly();
   }
   else
     return false;
@@ -1038,15 +1040,6 @@ int MapAirport::paintPriority(bool forceAddonFlag, bool emptyOptsFlag, bool empt
 
   // Define higher airports with hard runways by runway length
   return longestRunwayLength;
-}
-
-bool MapAirport::empty() const
-{
-  if(rating == -1)
-    // Not calculated
-    return !parking() && !taxiway() && !apron() && !addon() && !helipad();
-  else
-    return rating == 0;
 }
 
 bool MapAirport::addon() const
@@ -1111,8 +1104,7 @@ bool MapAirport::waterOnly() const
 
 bool MapAirport::helipadOnly() const
 {
-  return !flags.testFlag(AP_HARD) && !flags.testFlag(AP_SOFT) &&
-         !flags.testFlag(AP_WATER) && flags.testFlag(AP_HELIPAD);
+  return !flags.testFlag(AP_HARD) && !flags.testFlag(AP_SOFT) && !flags.testFlag(AP_WATER) && flags.testFlag(AP_HELIPAD);
 }
 
 bool MapAirport::noRunways() const
@@ -1156,6 +1148,9 @@ bool MapAirport::isVisible(map::MapTypes types, int minRunwayFt, const MapLayer 
     return false;
 
   if(closed() && !types.testFlag(map::AIRPORT_CLOSED))
+    return false;
+
+  if(military() && !types.testFlag(map::AIRPORT_MILITARY))
     return false;
 
   return true;
@@ -1553,6 +1548,14 @@ QString userpointText(const MapUserpoint& userpoint, int elideName)
     return QObject::tr("Userpoint %1").arg(atools::elideTextShort(userpoint.ident.isEmpty() ? userpoint.name : userpoint.ident, elideName));
 }
 
+QString userpointShortText(const MapUserpoint& userpoint, int elideName)
+{
+  if(userpoint.ident.isEmpty() && userpoint.name.isEmpty())
+    return atools::elideTextShort(userpoint.type, elideName);
+  else
+    return atools::elideTextShort(userpoint.ident.isEmpty() ? userpoint.name : userpoint.ident, elideName);
+}
+
 QString logEntryText(const MapLogbookEntry& logEntry)
 {
   return QObject::tr("Logbook Entry %1 to %2").arg(logEntry.departureIdent).arg(logEntry.destinationIdent);
@@ -1619,13 +1622,13 @@ QString airwayAltText(const MapAirway& airway)
   QString altTxt;
   if(airway.minAltitude > 0)
   {
-    if(airway.maxAltitude > 0 && airway.maxAltitude < 60000)
+    if(airway.maxAltitude > 0 && airway.maxAltitude < map::MapAirway::MAX_ALTITUDE_LIMIT_FT)
       altTxt = Unit::altFeet(airway.minAltitude);
     else
       altTxt = QObject::tr("Min ") % Unit::altFeet(airway.minAltitude);
   }
 
-  if(airway.maxAltitude > 0 && airway.maxAltitude < 60000)
+  if(airway.maxAltitude > 0 && airway.maxAltitude < map::MapAirway::MAX_ALTITUDE_LIMIT_FT)
   {
     if(airway.minAltitude > 0)
       altTxt += QObject::tr(" to ") % Unit::altFeet(airway.maxAltitude);
@@ -1637,7 +1640,7 @@ QString airwayAltText(const MapAirway& airway)
 
 QString airwayAltTextShort(const MapAirway& airway, bool addUnit, bool narrow)
 {
-  if(airway.maxAltitude > 0 && airway.maxAltitude < 60000)
+  if(airway.maxAltitude > 0 && airway.maxAltitude < map::MapAirway::MAX_ALTITUDE_LIMIT_FT)
     return QObject::tr("%1-%2").
            arg(Unit::altFeet(airway.minAltitude, false /*addUnit*/, narrow)).
            arg(Unit::altFeet(airway.maxAltitude, addUnit, narrow));
@@ -1647,22 +1650,28 @@ QString airwayAltTextShort(const MapAirway& airway, bool addUnit, bool narrow)
     return QString();
 }
 
-QString airportText(const MapAirport& airport, int elideName)
+QString airportText(const MapAirport& airport, int elideName, bool includeIdent)
 {
   if(!airport.isValid())
     return QObject::tr("Airport");
   else
-    return QObject::tr("Airport %1").arg(airportTextShort(airport, elideName));
+    return QObject::tr("Airport %1").arg(airportTextShort(airport, elideName), includeIdent);
 }
 
-QString airportTextShort(const MapAirport& airport, int elideName)
+QString airportTextShort(const MapAirport& airport, int elideName, bool includeIdent)
 {
+  QString displayIdent = airport.displayIdent();
+
+  if(includeIdent && airport.ident != displayIdent)
+    // Show internal ident first if it differs from display ident (airport search context menu)
+    displayIdent = QObject::tr("%1, %2").arg(airport.ident).arg(displayIdent);
+
   if(!airport.isValid())
     return QObject::tr("Airport");
   else if(airport.name.isEmpty())
-    return airport.displayIdent();
+    return displayIdent;
   else
-    return QObject::tr("%1 (%2)").arg(atools::elideTextShort(airport.name, elideName)).arg(airport.displayIdent());
+    return QObject::tr("%1 (%2)").arg(atools::elideTextShort(airport.name, elideName)).arg(displayIdent);
 }
 
 QString airportMsaTextShort(const MapAirportMsa& airportMsa)
@@ -1886,6 +1895,8 @@ QString mapObjectTypeToString(MapTypes type)
       str.append("PROCEDURE_POINT");
     if(type.testFlag(map::RUNWAYEND))
       str.append("RUNWAYEND");
+    if(type.testFlag(map::RUNWAY))
+      str.append("RUNWAY");
     if(type.testFlag(map::TRACK))
       str.append("TRACK");
     if(type.testFlag(map::USERPOINT))
@@ -2568,14 +2579,14 @@ QStringList MapRunwayEnd::uniqueVasiTypeStr() const
 }
 
 MapProcedurePoint::MapProcedurePoint()
-  : MapBase(map::PROCEDURE_POINT)
+  : MapBase(staticType())
 {
   legs = new proc::MapProcedureLegs();
 }
 
 MapProcedurePoint::MapProcedurePoint(const proc::MapProcedureLegs& legsParam, int legIndexParam, int routeIndexParam, bool previewParam,
                                      bool previewAllParam)
-  : map::MapBase(map::PROCEDURE_POINT)
+  : map::MapBase(staticType())
 {
   legs = new proc::MapProcedureLegs();
   *legs = legsParam;
@@ -2614,7 +2625,7 @@ MapProcedurePoint& MapProcedurePoint::operator=(const MapProcedurePoint& other)
 
 std::tuple<int, int, int> MapProcedurePoint::compoundId() const
 {
-  return std::make_tuple(legs->ref.airportId, legs->ref.approachId, getLeg().isAnyTransition() ? legs->ref.transitionId : -1);
+  return std::make_tuple(legs->ref.airportId, legs->ref.procedureId, getLeg().isAnyTransition() ? legs->ref.transitionId : -1);
 }
 
 const proc::MapProcedureLeg& MapProcedurePoint::getLeg() const

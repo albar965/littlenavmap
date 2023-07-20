@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -30,7 +30,7 @@
 #include "gui/mainwindow.h"
 #include "gui/widgetstate.h"
 #include "gui/widgetutil.h"
-#include "navapp.h"
+#include "app/navapp.h"
 #include "query/airportquery.h"
 #include "search/column.h"
 #include "search/columnlist.h"
@@ -629,6 +629,7 @@ void AirportSearch::getSelectedMapObjects(map::MapResult& result) const
   rec.appendField(idColumnName, QVariant::Int);
   rec.appendField("lonx", QVariant::Double);
   rec.appendField("laty", QVariant::Double);
+  rec.appendField("rating", QVariant::Int);
 
   MapTypesFactory factory;
 
@@ -646,18 +647,17 @@ void AirportSearch::getSelectedMapObjects(map::MapResult& result) const
         rec.setValue(0, idVar);
         rec.setValue(1, controller->getRawData(row, "lonx"));
         rec.setValue(2, controller->getRawData(row, "laty"));
+        rec.setValue(3, controller->getRawData(row, "rating"));
 
 #ifdef DEBUG_INFORMATION_SELECTION
         qDebug() << Q_FUNC_INFO << "range" << range << "row" << row << rec;
 #endif
         // Not fully populated
-        factory.fillAirport(rec, ap, false /* complete */, false /* nav */,
-                            NavApp::isAirportDatabaseXPlane(false /* navdata */));
+        factory.fillAirport(rec, ap, false /* complete */, false /* nav */, NavApp::isAirportDatabaseXPlane(false /* navdata */));
         result.airports.append(ap);
       }
       else
-        qWarning() << Q_FUNC_INFO << "Invalid selection: range" << range
-                   << "row" << row << "col" << idColumnName << idVar;
+        qWarning() << Q_FUNC_INFO << "Invalid selection: range" << range << "row" << row << "col" << idColumnName << idVar;
     }
     range++;
   }
@@ -708,16 +708,13 @@ void AirportSearch::updateButtonMenu()
                                           atools::gui::util::anyWidgetChanged(
                                             {ui->gridLayoutAirportExtSearch, ui->horizontalLayoutAirportRatingSearch}));
   atools::gui::util::changeStarIndication(ui->actionAirportSearchShowFuelParkOptions,
-                                          atools::gui::util::anyWidgetChanged(
-                                            {ui->gridLayoutAirportSearchParking}));
+                                          atools::gui::util::anyWidgetChanged({ui->gridLayoutAirportSearchParking}));
 
   atools::gui::util::changeStarIndication(ui->actionAirportSearchShowRunwayOptions,
-                                          atools::gui::util::anyWidgetChanged(
-                                            {ui->gridLayoutAirportSearchRunway}));
+                                          atools::gui::util::anyWidgetChanged({ui->gridLayoutAirportSearchRunway}));
 
   atools::gui::util::changeStarIndication(ui->actionAirportSearchShowAltOptions,
-                                          atools::gui::util::anyWidgetChanged(
-                                            {ui->horizontalLayoutAirportAltitudeSearch}));
+                                          atools::gui::util::anyWidgetChanged({ui->horizontalLayoutAirportAltitudeSearch}));
 
   bool distanceSearchChanged = false;
   if(ui->checkBoxAirportDistSearch->isChecked())
@@ -726,8 +723,7 @@ void AirportSearch::updateButtonMenu()
   atools::gui::util::changeStarIndication(ui->actionAirportSearchShowDistOptions, distanceSearchChanged);
 
   atools::gui::util::changeStarIndication(ui->actionAirportSearchShowSceneryOptions,
-                                          atools::gui::util::anyWidgetChanged(
-                                            {ui->horizontalLayoutAirportScenerySearch}));
+                                          atools::gui::util::anyWidgetChanged({ui->horizontalLayoutAirportScenerySearch}));
 }
 
 void AirportSearch::updatePushButtons()
@@ -759,8 +755,8 @@ void AirportSearch::resetSearch()
   // Flight plan search widgets are not registered and need to be changed here
   // Convert NM to user selected display units
   Ui::MainWindow *ui = NavApp::getMainUi();
-  ui->spinBoxAirportFlightplanMinSearch->setValue(Unit::distNmF(FLIGHTPLAN_MIN_DISTANCE_DEFAULT_NM));
-  ui->spinBoxAirportFlightplanMaxSearch->setValue(Unit::distNmF(FLIGHTPLAN_MAX_DISTANCE_DEFAULT_NM));
+  ui->spinBoxAirportFlightplanMinSearch->setValue(static_cast<int>(Unit::distNmF(FLIGHTPLAN_MIN_DISTANCE_DEFAULT_NM)));
+  ui->spinBoxAirportFlightplanMaxSearch->setValue(static_cast<int>(Unit::distNmF(FLIGHTPLAN_MAX_DISTANCE_DEFAULT_NM)));
 
   SearchBaseTable::resetSearch();
 }

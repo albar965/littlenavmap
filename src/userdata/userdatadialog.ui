@@ -221,7 +221,11 @@ Required for export to X-Plane &quot;user_fix.dat&quot;.</string>
      <item row="7" column="2">
       <widget class="QLineEdit" name="lineEditUserdataTags">
        <property name="toolTip">
-        <string>List of tags. Simple textfield for various purposes.</string>
+        <string>List of tags. Simple textfield for various purposes.
+
+Tags are also used for X-Plane export and import to and from &quot;user_fix.dat&quot;.
+The field &quot;Tags&quot; is used for the ID of the airport terminal area and the waypoint type.
+Click &quot;Help&quot; for more information.</string>
        </property>
        <property name="statusTip">
         <string/>

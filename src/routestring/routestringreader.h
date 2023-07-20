@@ -80,10 +80,8 @@ public:
   /* Create a flight plan for the given route string and include speed and altitude if given (pointers != null).
    * Fills either flightplan and/or mapObjectRefs if not null.
    * Get error, warning and information messages with getMessages() */
-  bool createRouteFromString(const QString& routeString, rs::RouteStringOptions options,
-                             atools::fs::pln::Flightplan *flightplan,
-                             map::MapObjectRefExtVector *mapObjectRefs = nullptr,
-                             float *speedKts = nullptr, bool *altIncluded = nullptr);
+  bool createRouteFromString(const QString& routeString, rs::RouteStringOptions options, atools::fs::pln::Flightplan *flightplan,
+                             map::MapObjectRefExtVector *mapObjectRefs = nullptr, float *speedKts = nullptr, bool *altIncluded = nullptr);
 
   /* Get error and warning messages */
   const QStringList& getMessages() const
@@ -148,12 +146,15 @@ private:
   void removeEmptyResults(QList<ParseEntry>& resultList);
 
   /* Fetch departure airport as well as SID */
-  bool addDeparture(atools::fs::pln::Flightplan *flightplan, map::MapObjectRefExtVector *mapObjectRefs, QStringList& items);
+  bool addDeparture(atools::fs::pln::Flightplan *flightplan, map::MapObjectRefExtVector *mapObjectRefs, QStringList& items,
+                    QString& sidTransWp);
 
   /* Fetch destination airport as well as STAR */
-  bool addDestination(atools::fs::pln::Flightplan *flightplan, map::MapObjectRefExtVector *mapObjectRefs, QStringList& items,
-                      rs::RouteStringOptions options);
-  void destinationInternal(map::MapAirport& destination, proc::MapProcedureLegs& starLegs, QStringList& items, int& consume, int index);
+  bool addDestination(atools::fs::pln::Flightplan *flightplan, QList<atools::fs::pln::FlightplanEntry>* alternates,
+                      map::MapObjectRefExtVector *mapObjectRefs, QStringList& items,
+                      QString& starTransWp, rs::RouteStringOptions options);
+  void destinationInternal(map::MapAirport& destination, proc::MapProcedureLegs& starLegs, QStringList& items, QString& starTransWp,
+                           int& consume, int index);
 
   /* Remove time and runways from ident and return airport ident only. Also add warning messages */
   QString extractAirportIdent(QString ident);
@@ -162,17 +163,18 @@ private:
   atools::geo::Pos findFirstCoordinate(const QStringList& items);
 
   /* Create reference struct from given entry and map search result */
-  map::MapObjectRefExt mapObjectRefFromEntry(const atools::fs::pln::FlightplanEntry& entry,
-                                             const map::MapResult& result, const QString& name);
+  map::MapObjectRefExt mapObjectRefFromEntry(const atools::fs::pln::FlightplanEntry& entry, const map::MapResult& result,
+                                             const QString& name);
 
   /* Get airway segments with given name between  waypoints */
   map::MapAirway extractAirway(const QList<map::MapAirway>& airways, int waypointId1, int waypointId2, const QString& airwayName);
 
   /* Read and consume SID and maybe transition from list. Can be "SID", "SID.TRANS" or "SID TRANS" */
-  void readSidAndTrans(QStringList& items, int& sidId, int& sidTransId, const map::MapAirport& departure);
+  void readSidAndTrans(QStringList& items, QString& sidTransWp, int& sidId, int& sidTransId, const map::MapAirport& departure);
 
   /* Try to read all STAR and transition variants. Number of items to delete is given in "consume" */
-  void readStarAndTrans(QStringList& items, int& starId, int& starTransId, int& consume, const map::MapAirport& destination, int index);
+  void readStarAndTrans(QStringList& items, QString& startTransWp, int& starId, int& starTransId, int& consume,
+                        const map::MapAirport& destination, int index);
 
   /* Read a space spearated STAR with transition. Can be "STAR TRANS" or "TRANS STAR". Items are not consumed. */
   void readStarAndTransSpace(const QString& star, QString trans, int& starId, int& starTransId, const map::MapAirport& destination);

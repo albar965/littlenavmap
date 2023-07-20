@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -25,7 +25,7 @@
 #include "gui/mainwindow.h"
 #include "logbook/logdatacontroller.h"
 #include "mapgui/mapwidget.h"
-#include "navapp.h"
+#include "app/navapp.h"
 #include "options/optiondata.h"
 #include "perf/aircraftperfcontroller.h"
 #include "route/routecontroller.h"
@@ -86,7 +86,7 @@ QStringList MapMarkHandler::getMarkTypesText() const
   if(markTypes & map::MARK_PATTERNS)
     types.append(tr("Traffic Patterns"));
   if(markTypes & map::MARK_MSA)
-    types.append(tr("Airport MSA"));
+    types.append(tr("MSA Sector Diagrams"));
   return types;
 }
 
@@ -143,14 +143,14 @@ void MapMarkHandler::addToolbarButton()
   ui->toolbarMapOptions->insertWidget(ui->actionMapShowRoute, toolButton);
 
   // Create and add actions to toolbar and menu =================================
-  actionAll = new QAction(tr("&All"), buttonMenu);
+  actionAll = new QAction(tr("&All User Features"), buttonMenu);
   actionAll->setToolTip(tr("Toggle all / current selection of user features"));
   actionAll->setStatusTip(actionAll->toolTip());
   buttonMenu->addAction(actionAll);
   buttonHandler->setAllAction(actionAll);
   ui->menuViewUserFeatures->addAction(actionAll);
 
-  actionNone = new QAction(tr("&None"), buttonMenu);
+  actionNone = new QAction(tr("&No User Features"), buttonMenu);
   actionNone->setToolTip(tr("Toggle none / current selection of user features"));
   actionNone->setStatusTip(actionNone->toolTip());
   buttonMenu->addAction(actionNone);
@@ -166,7 +166,7 @@ void MapMarkHandler::addToolbarButton()
   actionPatterns = addAction(":/littlenavmap/resources/icons/trafficpattern.svg", tr("&Traffic Patterns"),
                              tr("Show or hide traffic patterns"));
   actionHolds = addAction(":/littlenavmap/resources/icons/enroutehold.svg", tr("&Holdings"), tr("Show or hide holdings"));
-  actionAirportMsa = addAction(":/littlenavmap/resources/icons/msa.svg", tr("&MSA Diagrams"), tr("Show or hide airport MSA sectors"));
+  actionAirportMsa = addAction(":/littlenavmap/resources/icons/msa.svg", tr("&MSA Diagrams"), tr("Show or hide MSA sector diagrams"));
 
   // Connect all action signals to same handler method
   connect(buttonHandler, &atools::gui::ActionButtonHandler::actionAllTriggered, this, &MapMarkHandler::toolbarActionTriggered);
@@ -288,10 +288,10 @@ void MapMarkHandler::routeResetAll()
   choiceDialog.addCheckBox(EMPTY_FLIGHT_PLAN, tr("&Create an empty flight plan"), QString(), true /* checked */);
 
   choiceDialog.addLine();
-  choiceDialog.addCheckBox(DELETE_TRAIL, tr("&Delete aircraft trail"),
+  choiceDialog.addCheckBox(DELETE_TRAIL, tr("&Delete user aircraft trail"),
                            tr("Delete simulator aircraft trail from map and elevation profile"), true /* checked */);
   choiceDialog.addCheckBox(DELETE_ACTIVE_LEG, tr("&Reset active flight plan leg"),
-                           tr("Remove the active flight plan leg"), true /* checked */);
+                           tr("Reset the active flight plan leg"), true /* checked */);
   choiceDialog.addCheckBox(RESTART_PERF, tr("Restart the aircraft &performance collection"),
                            tr("Restarts the background aircraft performance collection"), true /* checked */);
   choiceDialog.addCheckBox(RESTART_LOGBOOK, tr("Reset flight detection in &logbook"),

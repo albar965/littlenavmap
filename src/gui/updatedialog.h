@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2022 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -42,14 +42,14 @@ public:
    * manualCheck = user checked manually
    * downloadAvailable = download is available
    */
-  explicit UpdateDialog(QWidget *parent, bool manualCheck, bool downloadAvailable);
+  explicit UpdateDialog(QWidget *parent, bool manualCheck);
   virtual ~UpdateDialog() override;
 
   UpdateDialog(const UpdateDialog& other) = delete;
   UpdateDialog& operator=(const UpdateDialog& other) = delete;
 
   /* HTML text and URL for the download button */
-  void setMessage(const QString& text, const QUrl& url);
+  void setMessage(const QString& text);
   QDialogButtonBox *getButtonBox();
 
   /* true if user clicked "ignore this update" */
@@ -59,10 +59,9 @@ private:
   void anchorClicked(const QUrl& url);
   void buttonBoxClicked(QAbstractButton *button);
 
-  QUrl downloadUrl;
   QDialogButtonBox::ButtonRole buttonClickedRole = QDialogButtonBox::InvalidRole;
   Ui::UpdateDialog *ui;
-  bool manual, hasDownload;
+  bool manual;
 };
 
 #endif // LITTLENAVMAP_UPDATEDIALOG_H

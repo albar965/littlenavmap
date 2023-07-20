@@ -17,9 +17,9 @@
 
 #include "abstractactionscontroller.h"
 
-#include "navapp.h"
-#include "geo/pos.h"
 #include "common/abstractinfobuilder.h"
+#include "webapi/webapirequest.h"
+#include "webapi/webapiresponse.h"
 
 #include <QDebug>
 

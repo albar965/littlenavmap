@@ -19,6 +19,7 @@
 #include "common/maptypes.h"
 #include "common/infobuildertypes.h"
 #include "common/abstractinfobuilder.h"
+#include "webapi/webapirequest.h"
 
 using InfoBuilderTypes::AirportInfoData;
 

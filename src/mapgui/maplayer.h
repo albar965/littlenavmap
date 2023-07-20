@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -27,12 +27,6 @@ class XmlStream;
 }
 
 namespace layer {
-
-/* Do not show anything above this zoom distance except user features */
-constexpr float DISTANCE_CUT_OFF_LIMIT_KM = 4000.f;
-
-/* Stop all drawing, tooltips and interaction above this limit */
-constexpr float NO_DRAW_LIMIT_KM = 8000.f;
 
 /* Ships considered large above this model radius in feet */
 constexpr int LARGE_SHIP_SIZE = 150;
@@ -120,16 +114,19 @@ public:
     return airportDiagramRunway;
   }
 
+  /* Lowest detail */
   bool isAirportDiagramDetail() const
   {
     return airportDiagramDetail;
   }
 
+  /* Higher detail */
   bool isAirportDiagramDetail2() const
   {
     return airportDiagramDetail2;
   }
 
+  /* Highest detail */
   bool isAirportDiagramDetail3() const
   {
     return airportDiagramDetail3;
@@ -290,6 +287,11 @@ public:
     return ils;
   }
 
+  bool isIlsDetail() const
+  {
+    return ilsDetail;
+  }
+
   bool isIlsIdent() const
   {
     return ilsIdent;
@@ -348,6 +350,11 @@ public:
   int getWaypointSymbolSize() const
   {
     return waypointSymbolSize;
+  }
+
+  int getProcedurePointSymbolSize() const
+  {
+    return waypointSymbolSize + 3;
   }
 
   int getVorSymbolSize() const
@@ -441,14 +448,22 @@ public:
     return aiAircraftText;
   }
 
+  /* Lowest detail */
   bool isAiAircraftTextDetail() const
   {
     return aiAircraftTextDetail;
   }
 
+  /* Higher detail */
   bool isAiAircraftTextDetail2() const
   {
     return aiAircraftTextDetail2;
+  }
+
+  /* Highest detail */
+  bool isAiAircraftTextDetail3() const
+  {
+    return aiAircraftTextDetail3;
   }
 
   bool isOnlineAircraft() const
@@ -491,7 +506,7 @@ public:
     return airportMsaDetails;
   }
 
-  int getAirportMsaSymbolScale() const
+  float getAirportMsaSymbolScale() const
   {
     return airportMsaSymbolScale;
   }
@@ -502,12 +517,20 @@ public:
     return mora;
   }
 
+  /* Lowest detail */
   bool isRouteTextAndDetail() const
   {
     return routeTextAndDetail;
   }
 
-  bool isWindBarbs() const
+  /* Higher detail */
+  bool isRouteTextAndDetail2() const
+  {
+    return routeTextAndDetail2;
+  }
+
+  /* 2 = show barbs at every even coordinate, 1 = show at every coordinate */
+  int getWindBarbs() const
   {
     return windBarbs;
   }
@@ -576,7 +599,8 @@ private:
 
        airportMinor = true, airportMinorIdent = true, airportMinorName = true, airportMinorInfo = true,
 
-       approachDetail = true, approachText = true, approachTextDetail = true, routeTextAndDetail = true, userpoint = true;
+       approachDetail = true, approachText = true, approachTextDetail = true, routeTextAndDetail = true, routeTextAndDetail2 = true,
+       userpoint = true;
 
   bool airportWeather = true, airportWeatherDetails = true;
 
@@ -584,16 +608,16 @@ private:
 
   int airportSymbolSize = 3, airportMinorSymbolSize = 3, minRunwayLength = 0;
 
-  bool windBarbs = true;
+  int windBarbs = 1;
   int windBarbsSymbolSize = 6;
 
   float airportMsaSymbolScale = 6.f;
   float airportMinorFontScale = 1.f, airportFontScale = 1.f, routeFontScale = 1.f;
 
   bool waypoint = true, waypointName = true, vor = true, vorIdent = true, vorInfo = true, vorLarge = true, ndb = true, ndbIdent = true,
-       ndbInfo = true, marker = true, markerInfo = true, userpointInfo = true, ils = true, ilsIdent = true, ilsInfo = true, airway = true,
-       airwayDetails = true, airwayWaypoint = true, airwayIdent = true, airwayInfo = true, track = true, trackWaypoint = true,
-       trackIdent = true, trackInfo = true, mora = true, holding = true, holdingInfo = true, holdingInfo2 = true;
+       ndbInfo = true, marker = true, markerInfo = true, userpointInfo = true, ils = true, ilsIdent = true, ilsInfo = true,
+       ilsDetail = true, airway = true, airwayDetails = true, airwayWaypoint = true, airwayIdent = true, airwayInfo = true, track = true,
+       trackWaypoint = true, trackIdent = true, trackInfo = true, mora = true, holding = true, holdingInfo = true, holdingInfo2 = true;
 
   bool airportRouteInfo = true;
   bool vorRouteIdent = true, vorRouteInfo = true;
@@ -611,7 +635,7 @@ private:
   int aiAircraftSize = 32;
   bool aiAircraftGround = true, aiAircraftLarge = true, aiAircraftSmall = true, onlineAircraft = true, aiShipLarge = true,
        aiShipSmall = true, aiAircraftGroundText = true, aiAircraftText = true, aiAircraftTextDetail = true, aiAircraftTextDetail2 = true,
-       onlineAircraftText = true;
+       aiAircraftTextDetail3 = true, onlineAircraftText = true;
 };
 
 #endif // LITTLENAVMAP_MAPLAYER_H

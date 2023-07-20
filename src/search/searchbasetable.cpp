@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -27,9 +27,8 @@
 #include "gui/dialog.h"
 #include "gui/itemviewzoomhandler.h"
 #include "logbook/logdatacontroller.h"
-#include "mapgui/mapmarkhandler.h"
 #include "mapgui/mapwidget.h"
-#include "navapp.h"
+#include "app/navapp.h"
 #include "options/optiondata.h"
 #include "query/airportquery.h"
 #include "query/mapquery.h"
@@ -333,7 +332,6 @@ void SearchBaseTable::updateTableSelection(bool noFollow)
 
 void SearchBaseTable::searchMarkChanged(const atools::geo::Pos& mark)
 {
-  qDebug() << "new mark" << mark;
   if(columns->isDistanceCheckBoxChecked() && mark.isValid())
     updateDistanceSearch();
 }
@@ -664,18 +662,18 @@ void SearchBaseTable::reconnectSelectionModel()
 /* Slot for table selection changed */
 void SearchBaseTable::tableSelectionChanged(const QItemSelection&, const QItemSelection&)
 {
-  tableSelectionChangedInternal(false /* follow selection */);
+  tableSelectionChangedInternal(false /* noFollow */);
 }
 
 /* Update highlights if dock is hidden or shown (does not change for dock tab stacks) */
 void SearchBaseTable::dockVisibilityChanged(bool)
 {
-  tableSelectionChangedInternal(true /* do not follow selection */);
+  tableSelectionChangedInternal(true /* noFollow */);
 }
 
 void SearchBaseTable::fetchedMore()
 {
-  tableSelectionChangedInternal(true /* do not follow selection */);
+  tableSelectionChangedInternal(true /* noFollow */);
 }
 
 void SearchBaseTable::tableSelectionChangedInternal(bool noFollow)
@@ -693,10 +691,7 @@ void SearchBaseTable::tableSelectionChangedInternal(bool noFollow)
   // Follow selection =======================
   if(!noFollow)
   {
-    if(sm != nullptr &&
-       sm->currentIndex().isValid() &&
-       sm->isSelected(sm->currentIndex()) &&
-       followModeAction() != nullptr &&
+    if(sm != nullptr && sm->currentIndex().isValid() && sm->isSelected(sm->currentIndex()) && followModeAction() != nullptr &&
        followModeAction()->isChecked())
       showRow(sm->currentIndex().row(), false /* show info */);
   }
@@ -729,14 +724,14 @@ void SearchBaseTable::refreshData(bool loadAll, bool keepSelection)
 {
   controller->refreshData(loadAll, keepSelection);
 
-  tableSelectionChangedInternal(true /* do not follow selection */);
+  tableSelectionChangedInternal(true /* noFollow */);
 }
 
 void SearchBaseTable::refreshView()
 {
   controller->refreshView();
 
-  tableSelectionChangedInternal(true /* do not follow selection */);
+  tableSelectionChangedInternal(true /* noFollow */);
 }
 
 int SearchBaseTable::getVisibleRowCount() const
@@ -959,7 +954,7 @@ void SearchBaseTable::contextMenu(const QPoint& pos)
                          ui->actionSearchShowApproaches, ui->actionSearchShowApproachCustom, ui->actionSearchShowDepartureCustom,
                          ui->actionSearchShowInformation, ui->actionSearchShowOnMap, ui->actionSearchTableCopy,
                          ui->actionSearchTableSelectAll, ui->actionSearchTableSelectNothing, ui->actionUserdataAdd,
-                         ui->actionUserdataDelete, ui->actionUserdataEdit});
+                         ui->actionUserdataDelete, ui->actionUserdataEdit, ui->actionSearchMarkAddon});
 
   bool columnCanFilter = false, columnCanFilterBuilder = false;
   atools::geo::Pos position;
@@ -998,6 +993,7 @@ void SearchBaseTable::contextMenu(const QPoint& pos)
   const Column *columnDescriptor = nullptr;
   QString objectText, navaidRangeText;
   map::MapResult result, msaResult;
+
   if(index.isValid())
   {
     columnDescriptor = columns->getColumn(index.column());
@@ -1013,20 +1009,17 @@ void SearchBaseTable::contextMenu(const QPoint& pos)
       // Get position to display range rings
       position = atools::geo::Pos(controller->getRawData(index.row(), "lonx"), controller->getRawData(index.row(), "laty"));
 
-    // get airport, VOR, NDB or waypoint id from model row
+    // get airport, VOR, NDB or waypoint id from model row ===========================
     getNavTypeAndId(index.row(), mapObjType, id);
 
     map::MapAirspaceSource airspaceSrc = tabIndex == si::SEARCH_ONLINE_CENTER ? map::AIRSPACE_SRC_ONLINE : map::AIRSPACE_SRC_NONE;
     mapQuery->getMapObjectById(result, mapObjType, airspaceSrc, id, mapObjType != map::AIRPORT);
 
+    // Fill result with map objects ===========================
     std::initializer_list<map::MapTypes> msaTypeList = {map::AIRPORT, map::VOR, map::NDB, map::WAYPOINT};
     if(result.hasTypes(map::AIRPORT | map::VOR | map::NDB | map::WAYPOINT))
       NavApp::getMapQueryGui()->getMapObjectByIdent(msaResult, map::AIRPORT_MSA, result.getIdent(msaTypeList),
                                                     result.getRegion(msaTypeList), QString(), result.getPosition(msaTypeList));
-
-    objectText = result.objectText(mapObjType, NAVAID_NAMES_ELIDE);
-    if((result.hasVor() && result.vors.constFirst().range > 0) || (result.hasNdb() && result.ndbs.constFirst().range > 0))
-      navaidRangeText = objectText;
 
     if(mapObjType == map::AIRPORT && result.hasAirports())
       airport = result.airports.constFirst();
@@ -1051,6 +1044,14 @@ void SearchBaseTable::contextMenu(const QPoint& pos)
       else
         qWarning() << Q_FUNC_INFO << "No airport found";
     }
+
+    // Get text for menu items ===========================
+    if(mapObjType == map::AIRPORT && airport.isValid())
+      objectText = map::airportTextShort(airport, NAVAID_NAMES_ELIDE, true /* includeIdent */);
+    else
+      objectText = result.objectText(mapObjType, NAVAID_NAMES_ELIDE);
+    if((result.hasVor() && result.vors.constFirst().range > 0) || (result.hasNdb() && result.ndbs.constFirst().range > 0))
+      navaidRangeText = objectText;
   }
   else
     qDebug() << "Invalid index at" << pos;
@@ -1092,6 +1093,7 @@ void SearchBaseTable::contextMenu(const QPoint& pos)
   ui->actionSearchLogRouteAirportDest->setDisabled(disableDestination);
   ui->actionSearchLogRouteAirportAlternate->setDisabled(disableAlternate);
 
+  ui->actionSearchMarkAddon->setEnabled(airport.isValid());
   ui->actionSearchLogShowOnMapAirport->setEnabled(airport.isValid());
   ui->actionSearchLogShowInformationAirport->setEnabled(airport.isValid());
 
@@ -1104,9 +1106,13 @@ void SearchBaseTable::contextMenu(const QPoint& pos)
   ui->actionSearchShowApproaches->setEnabled(false);
   ui->actionSearchShowApproachCustom->setEnabled(false);
   ui->actionSearchShowDepartureCustom->setEnabled(false);
+  ui->actionSearchMarkAddon->setEnabled(false);
 
   if(mapObjType == map::AIRPORT && airport.isValid())
   {
+    ui->actionSearchMarkAddon->setEnabled(true);
+    ActionTool::setText(ui->actionSearchMarkAddon, true, objectText);
+
     bool departureFilter, arrivalFilter, hasDeparture, hasAnyArrival, airportDeparture, airportDestination, airportRoundTrip;
     route.getAirportProcedureFlags(airport, -1, departureFilter, arrivalFilter, hasDeparture, hasAnyArrival, airportDeparture,
                                    airportDestination, airportRoundTrip);
@@ -1234,9 +1240,8 @@ void SearchBaseTable::contextMenu(const QPoint& pos)
   int selectedRows = getSelectedRowCount();
   QMenu menu;
   menu.setToolTipsVisible(NavApp::isMenuToolTipsVisible());
-  if(atools::contains(tabIndex,
-                      {si::SEARCH_AIRPORT, si::SEARCH_NAV, si::SEARCH_USER, si::SEARCH_LOG, si::SEARCH_ONLINE_CENTER,
-                       si::SEARCH_ONLINE_CLIENT}))
+  if(atools::contains(tabIndex, {si::SEARCH_AIRPORT, si::SEARCH_NAV, si::SEARCH_USER, si::SEARCH_LOG, si::SEARCH_ONLINE_CENTER,
+                                 si::SEARCH_ONLINE_CLIENT}))
   {
     menu.addAction(ui->actionSearchShowInformation);
     menu.addAction(ui->actionSearchShowOnMap);
@@ -1274,6 +1279,9 @@ void SearchBaseTable::contextMenu(const QPoint& pos)
     menu.addAction(ui->actionUserdataAdd);
     menu.addAction(ui->actionUserdataEdit);
     menu.addAction(ui->actionUserdataDelete);
+    menu.addSeparator();
+
+    menu.addAction(ui->actionUserdataCleanup);
     menu.addSeparator();
   } // if(tabIndex == si::SEARCH_USER)
 
@@ -1317,13 +1325,23 @@ void SearchBaseTable::contextMenu(const QPoint& pos)
     if(atools::contains(tabIndex, {si::SEARCH_AIRPORT, si::SEARCH_NAV}))
       menu.addAction(ui->actionMapAirportMsa);
     menu.addSeparator();
+
+    if(atools::contains(tabIndex, {si::SEARCH_AIRPORT}))
+    {
+      menu.addAction(ui->actionSearchMarkAddon);
+      menu.addSeparator();
+    }
   }
 
-  if(atools::contains(tabIndex, {si::SEARCH_LOG}))
+  if(tabIndex == si::SEARCH_LOG)
   {
     menu.addAction(ui->actionLogdataAdd);
     menu.addAction(ui->actionLogdataEdit);
     menu.addAction(ui->actionLogdataDelete);
+    menu.addAction(ui->actionLogdataDelete);
+    menu.addSeparator();
+
+    menu.addAction(ui->actionLogdataCleanup);
     menu.addSeparator();
 
     // Logbook airport menu if clicked on departure or destination =======================
@@ -1352,10 +1370,7 @@ void SearchBaseTable::contextMenu(const QPoint& pos)
     filesSub->addSeparator();
     filesSub->addAction(ui->actionSearchLogdataSaveGpxAs);
     menu.addSeparator();
-  }
 
-  if(tabIndex == si::SEARCH_LOG)
-  {
     if(selectedRows > 1)
     {
       ui->actionLogdataEdit->setText(tr("&Edit Logbook Entries ..."));
@@ -1427,11 +1442,10 @@ void SearchBaseTable::contextMenu(const QPoint& pos)
       ui->actionLogdataPerfLoad->setText(ui->actionLogdataPerfLoad->text().arg(QString()));
   } // if(tabIndex == si::SEARCH_LOG)
 
-  if(atools::contains(tabIndex,
-                      {si::SEARCH_AIRPORT, si::SEARCH_NAV, si::SEARCH_USER, si::SEARCH_LOG, si::SEARCH_ONLINE_CENTER,
-                       si::SEARCH_ONLINE_CLIENT}))
+  if(atools::contains(tabIndex, {si::SEARCH_AIRPORT, si::SEARCH_NAV, si::SEARCH_USER, si::SEARCH_LOG, si::SEARCH_ONLINE_CENTER,
+                                 si::SEARCH_ONLINE_CLIENT}))
   {
-    if(atools::contains(tabIndex, {si::SEARCH_LOG}))
+    if(tabIndex == si::SEARCH_LOG)
     {
       // Logbook display options menu =======================
       QMenu *sub = menu.addMenu(tr("&View Options"));
@@ -1451,9 +1465,8 @@ void SearchBaseTable::contextMenu(const QPoint& pos)
     menu.addSeparator();
   }
 
-  if(atools::contains(tabIndex,
-                      {si::SEARCH_AIRPORT, si::SEARCH_NAV, si::SEARCH_USER, si::SEARCH_LOG, si::SEARCH_ONLINE_CENTER,
-                       si::SEARCH_ONLINE_CLIENT}))
+  if(atools::contains(tabIndex, {si::SEARCH_AIRPORT, si::SEARCH_NAV, si::SEARCH_USER, si::SEARCH_LOG, si::SEARCH_ONLINE_CENTER,
+                                 si::SEARCH_ONLINE_CLIENT}))
   {
     menu.addAction(followModeAction());
     menu.addSeparator();
@@ -1467,9 +1480,7 @@ void SearchBaseTable::contextMenu(const QPoint& pos)
   menu.addAction(ui->actionSearchResetView);
   menu.addSeparator();
 
-  if(atools::contains(tabIndex,
-                      {si::SEARCH_AIRPORT, si::SEARCH_NAV, si::SEARCH_USER, si::SEARCH_ONLINE_CENTER,
-                       si::SEARCH_ONLINE_CLIENT}))
+  if(atools::contains(tabIndex, {si::SEARCH_AIRPORT, si::SEARCH_NAV, si::SEARCH_USER, si::SEARCH_ONLINE_CENTER, si::SEARCH_ONLINE_CLIENT}))
     menu.addAction(ui->actionSearchSetMark);
 
   QAction *action = menu.exec(menuPos);
@@ -1532,6 +1543,11 @@ void SearchBaseTable::contextMenu(const QPoint& pos)
     // NavApp::getMapWidget()->clearRangeRingsAndDistanceMarkers(); // Connected directly
     else if(action == ui->actionMapAirportMsa)
       emit addAirportMsa(msaResult.airportMsa.value(0));
+    else if(action == ui->actionSearchMarkAddon)
+    {
+      for(const map::MapAirport& ap : result.airports)
+        emit addUserpointFromMap(map::MapResult::createFromMapBase(&ap), ap.position, true /* airportAddon */);
+    }
     else if(action == ui->actionRouteAddPos)
       emit routeAdd(id, atools::geo::EMPTY_POS, mapObjType, -1);
     else if(action == ui->actionRouteAppendPos)

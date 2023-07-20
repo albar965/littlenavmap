@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2022 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -33,7 +33,7 @@ bool ProfileOptions::showOptions()
 {
   qDebug() << Q_FUNC_INFO;
 
-  atools::gui::TreeDialog treeDialog(parentWidget, QApplication::applicationName() + tr(" - Elevation Profile"),
+  atools::gui::TreeDialog treeDialog(parentWidget, QCoreApplication::applicationName() + tr(" - Elevation Profile"),
                                      tr("Select options for Elevation Profile."),
                                      lnm::PROFILE_DISPLAY_OPTIONS_DIALOG, "PROFILE.html#profile-options",
                                      true /* showExpandCollapse */);
@@ -55,11 +55,11 @@ bool ProfileOptions::showOptions()
                          "Shown on descent only at user aircraft symbol suffixed with \"N\"."));
 
   QTreeWidgetItem *labelItem = treeDialog.addTopItem1(tr("Labels"));
-  treeDialog.addItem2(labelItem, optsp::PROFILE_LABELS_ALT, tr("Show Altitude"), tr("Show or hide the labels at the left side of the elevation profile."));
-  treeDialog.addItem2(labelItem, optsp::PROFILE_LABELS_DISTANCE, tr("Distance"), tr("Distance of flight plan leg."));
-  treeDialog.addItem2(labelItem, optsp::PROFILE_LABELS_MAG_COURSE, tr("Magnetic Course"), tr( "Show magnetic great circle start course at flight plan leg."));
-  treeDialog.addItem2(labelItem, optsp::PROFILE_LABELS_TRUE_COURSE, tr("True Course"), tr( "Show true great circle start course at flight plan leg."));
-  treeDialog.addItem2(labelItem, optsp::PROFILE_LABELS_RELATED, tr("Related Navaid"), tr( "Related navaid for a procedure fix including bearing and distance."));
+  treeDialog.addItem2(labelItem, optsp::PROFILE_LABELS_ALT, tr("Show Altitude"), tr("Show or hide the altitude labels at the left side of the elevation profile."));
+  treeDialog.addItem2(labelItem, optsp::PROFILE_LABELS_DISTANCE, tr("Distance"), tr("Distance of flight plan leg in the elevation profile header."));
+  treeDialog.addItem2(labelItem, optsp::PROFILE_LABELS_MAG_COURSE, tr("Magnetic Course"), tr( "Show magnetic great circle start course for flight plan leg in the header."));
+  treeDialog.addItem2(labelItem, optsp::PROFILE_LABELS_TRUE_COURSE, tr("True Course"), tr( "Show true great circle start course for flight plan leg in the header."));
+  treeDialog.addItem2(labelItem, optsp::PROFILE_LABELS_RELATED, tr("Related Navaid"), tr( "Related navaid for a procedure fix including bearing and distance in the header."));
 
   QTreeWidgetItem *profileItem = treeDialog.addTopItem1(tr("Elevation Profile"));
   treeDialog.addItem2(profileItem, optsp::PROFILE_GROUND, tr("Ground"), tr("Green ground display."));

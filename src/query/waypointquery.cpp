@@ -67,13 +67,21 @@ map::MapWaypoint WaypointQuery::getWaypointById(int id)
   return wp;
 }
 
-MapWaypoint WaypointQuery::getWaypointByNavId(int navId)
+MapWaypoint WaypointQuery::getWaypointByNavId(int navId, map::MapType type)
 {
   map::MapWaypoint wp;
   if(!query::valid(Q_FUNC_INFO, waypointByNavIdQuery))
     return wp;
 
   waypointByNavIdQuery->bindValue(":id", navId);
+
+  if(type == map::VOR)
+    waypointByNavIdQuery->bindValue(":type", "V");
+  else if(type == map::NDB)
+    waypointByNavIdQuery->bindValue(":type", "N");
+  else
+    waypointByNavIdQuery->bindValue(":type", "%");
+
   waypointByNavIdQuery->exec();
   if(waypointByNavIdQuery->next())
     mapTypesFactory->fillWaypoint(waypointByNavIdQuery->record(), wp, trackDatabase);
@@ -116,7 +124,7 @@ void WaypointQuery::getWaypointsRect(QVector<map::MapWaypoint>& waypoints, const
   if(!query::valid(Q_FUNC_INFO, waypointRectQuery))
     return;
 
-  for(Rect r : Rect(pos, nmToMeter(distanceNm)).splitAtAntiMeridian())
+  for(Rect r : Rect(pos, nmToMeter(distanceNm), true /* fast */).splitAtAntiMeridian())
   {
     query::bindRect(r, waypointRectQuery);
     waypointRectQuery->exec();
@@ -163,7 +171,7 @@ const QList<map::MapWaypoint> *WaypointQuery::getWaypoints(const GeoDataLatLonBo
         mapTypesFactory->fillWaypoint(waypointsByRectQuery->record(), wp, trackDatabase);
 
         // Avoid artificial waypoints created only for procedure or airway resolution
-        if(wp.artificial == 0)
+        if(wp.artificial == map::WAYPOINT_ARTIFICIAL_NONE)
           waypointCache.list.append(wp);
       }
     }
@@ -279,7 +287,7 @@ void WaypointQuery::initQueries()
   waypointByIdQuery->prepare("select " + waypointQueryBase + " from " + table + " where " + id + " = :id");
 
   waypointByNavIdQuery = new SqlQuery(dbNav);
-  waypointByNavIdQuery->prepare("select " + waypointQueryBase + " from " + table + " where nav_id = :id");
+  waypointByNavIdQuery->prepare("select " + waypointQueryBase + " from " + table + " where nav_id = :id and type like :type");
 
   // Get Waypoint in rect
   waypointRectQuery = new SqlQuery(dbNav);

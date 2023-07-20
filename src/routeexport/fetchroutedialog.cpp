@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2022 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -21,18 +21,18 @@
 
 #include "atools.h"
 #include "common/constants.h"
-#include "common/unit.h"
 #include "fs/pln/flightplan.h"
 #include "gui/dialog.h"
 #include "gui/helphandler.h"
 #include "gui/widgetstate.h"
-#include "navapp.h"
+#include "app/navapp.h"
 #include "route/routecontroller.h"
 #include "routestring/routestringreader.h"
+#include "settings/settings.h"
+#include "util/htmlbuilder.h"
 #include "util/httpdownloader.h"
 #include "util/xmlstream.h"
 #include "zip/gzip.h"
-#include "settings/settings.h"
 
 #include <QPushButton>
 #include <QTimer>
@@ -41,6 +41,7 @@
 #include <QStringBuilder>
 
 using atools::util::HttpDownloader;
+namespace apln = atools::fs::pln;
 
 FetchRouteDialog::FetchRouteDialog(QWidget *parent) :
   QDialog(parent),
@@ -55,14 +56,14 @@ FetchRouteDialog::FetchRouteDialog(QWidget *parent) :
                                                                "https://www.simbrief.com/api/xml.fetcher.php");
 
   downloader = new HttpDownloader(this);
-  flightplan = new atools::fs::pln::Flightplan;
+  flightplan = new apln::Flightplan;
 
   // Connect signals ============================================
   connect(downloader, &HttpDownloader::downloadFailed, this, &FetchRouteDialog::downloadFailed);
   connect(downloader, &HttpDownloader::downloadFinished, this, &FetchRouteDialog::downloadFinished);
   connect(downloader, &HttpDownloader::downloadSslErrors, this, &FetchRouteDialog::downloadSslErrors);
   connect(ui->buttonBox, &QDialogButtonBox::clicked, this, &FetchRouteDialog::buttonBoxClicked);
-  connect(ui->lineEditUsername, &QLineEdit::textChanged, this, &FetchRouteDialog::updateButtonStates);
+  connect(ui->lineEditLogin, &QLineEdit::textChanged, this, &FetchRouteDialog::updateButtonStates);
 
   // Change button texts and tooltips ============================================
   ui->buttonBox->button(QDialogButtonBox::Ok)->setText(tr("&Download Flight Plan"));
@@ -99,6 +100,10 @@ void FetchRouteDialog::buttonBoxClicked(QAbstractButton *button)
     // Close dialog and use flight plan
     saveState();
     QDialog::accept();
+
+    // Use always IFR for SimBrief plans
+    flightplan->setFlightplanType(apln::IFR);
+
     emit routeNewFromFlightplan(*flightplan, false /* adjustAltitude */, true /* changed */, false /* undo */);
   }
   else if(button == ui->buttonBox->button(QDialogButtonBox::YesToAll))
@@ -111,6 +116,7 @@ void FetchRouteDialog::buttonBoxClicked(QAbstractButton *button)
   else if(button == ui->buttonBox->button(QDialogButtonBox::Cancel))
   {
     // Stop all and close
+    saveState();
     downloader->cancelDownload();
     updateButtonStates();
     QDialog::reject();
@@ -130,7 +136,7 @@ void FetchRouteDialog::updateButtonStates()
   }
   else
   {
-    ui->buttonBox->button(QDialogButtonBox::Ok)->setDisabled(ui->lineEditUsername->text().isEmpty()); // Download
+    ui->buttonBox->button(QDialogButtonBox::Ok)->setDisabled(ui->lineEditLogin->text().isEmpty()); // Download
     ui->buttonBox->button(QDialogButtonBox::Yes)->setDisabled(flightplan->isEmpty()); // Create plan
     ui->buttonBox->button(QDialogButtonBox::YesToAll)->setDisabled(routeString.isEmpty()); // Pass to route description
   }
@@ -139,14 +145,14 @@ void FetchRouteDialog::updateButtonStates()
 void FetchRouteDialog::restoreState()
 {
   atools::gui::WidgetState widgetState(lnm::FETCH_SIMBRIEF_DIALOG, false);
-  widgetState.restore({this, ui->lineEditUsername});
+  widgetState.restore({this, ui->comboBoxLoginType, ui->lineEditLogin});
   updateButtonStates();
 }
 
 void FetchRouteDialog::saveState()
 {
   atools::gui::WidgetState widgetState(lnm::FETCH_SIMBRIEF_DIALOG, false);
-  widgetState.save({this, ui->lineEditUsername});
+  widgetState.save({this, ui->comboBoxLoginType, ui->lineEditLogin});
 }
 
 void FetchRouteDialog::startDownload()
@@ -159,13 +165,27 @@ void FetchRouteDialog::startDownload()
   // Example with username: https://www.simbrief.com/api/xml.fetcher.php?username=LOGINNAME
 
   QUrlQuery query;
-  query.addQueryItem("username", ui->lineEditUsername->text());
+  query.addQueryItem(ui->comboBoxLoginType->currentIndex() == 0 ? "username" : "userid", ui->lineEditLogin->text());
 
   QUrl url(fetcherUrl);
   url.setQuery(query);
 
-  qDebug() << Q_FUNC_INFO << url.toDisplayString();
+#ifdef DEBUG_INFORMATION
+  qDebug() << Q_FUNC_INFO << "Encoded full URL" << url.toEncoded();
+#endif
 
+  {
+    // Remove user information and log encoded query
+    QUrlQuery queryLog;
+    queryLog.addQueryItem(ui->comboBoxLoginType->currentIndex() == 0 ? "username" : "userid", "XXXXX");
+
+    QUrl urlLog(fetcherUrl);
+    urlLog.setQuery(queryLog);
+
+    qDebug() << Q_FUNC_INFO << "Encoded URL" << urlLog.toEncoded();
+  }
+
+  // Encode to replace spaces with %20
   downloader->setUrl(url.toEncoded());
   downloader->startDownload();
 }
@@ -174,18 +194,23 @@ void FetchRouteDialog::downloadFinished(const QByteArray& data, QString)
 {
   qDebug() << Q_FUNC_INFO;
 
+  routeString.clear();
+  flightplan->clearAll();
+
   // Read downloaded XML ==================================================================
   atools::util::XmlStream xmlStream(atools::zip::gzipDecompressIf(data, Q_FUNC_INFO));
   QXmlStreamReader& reader = xmlStream.getReader();
 
-  QString departure, destination, alternate, route;
+  QString departure, departureRunway, destination, destinationRunway, alternate, route;
   xmlStream.readUntilElement("OFP");
 
+  // http://www.simbrief.com/ofp/flightplans/xml/1681767414_1A4303D4A7.xml
   // . ...
   // . <origin>
   // .   <icao_code>EDDF</icao_code>
   // .   <iata_code>FRA</iata_code>
   // .   <faa_code/>
+  // .   <plan_rwy>22R</plan_rwy>
   // . ...
   // . <destination>
   // .   <icao_code>LIRF</icao_code>
@@ -194,6 +219,7 @@ void FetchRouteDialog::downloadFinished(const QByteArray& data, QString)
   // .   <elevation>14</elevation>
   // .   <pos_lat>41.800278</pos_lat>
   // .   <pos_long>12.238889</pos_long>
+  // .    <plan_rwy>04R</plan_rwy>
   // . ...
   // . <alternate>
   // .   <icao_code>LIRN</icao_code>
@@ -219,6 +245,8 @@ void FetchRouteDialog::downloadFinished(const QByteArray& data, QString)
       {
         if(reader.name() == "icao_code")
           departure = reader.readElementText();
+        else if(reader.name() == "plan_rwy")
+          departureRunway = reader.readElementText();
         else
           xmlStream.skipCurrentElement(false /* warn */);
       }
@@ -229,6 +257,8 @@ void FetchRouteDialog::downloadFinished(const QByteArray& data, QString)
       {
         if(reader.name() == "icao_code")
           destination = reader.readElementText();
+        else if(reader.name() == "plan_rwy")
+          destinationRunway = reader.readElementText();
         else
           xmlStream.skipCurrentElement(false /* warn */);
       }
@@ -258,11 +288,35 @@ void FetchRouteDialog::downloadFinished(const QByteArray& data, QString)
   }
 
   // Join plan elements to route string =============================
+
+  // SimBrief sometimes reports a departure or arrival alternate - clear these
+  if(alternate == departure || alternate == destination)
+    alternate.clear();
+
   routeString = departure % " " % route % " " % destination % " " % alternate;
 
   // Read string to flight plan
   RouteStringReader routeStringReader(NavApp::getRouteController()->getFlightplanEntryBuilder());
   bool ok = routeStringReader.createRouteFromString(routeString, rs::SIMBRIEF_READ_DEFAULTS, flightplan);
+
+  // Assign runways to procedures ====================================================
+  QHash<QString, QString>& properties = flightplan->getProperties();
+  if(!departureRunway.isEmpty())
+  {
+    // Assign to SID - wrong runways will be replaced
+    if(!properties.value(apln::SID).isEmpty())
+      properties.insert(apln::SIDRW, departureRunway);
+    else
+    {
+      // Use as start parking - position will be calculated automatically when reading flight plan
+      flightplan->setDepartureParkingName(departureRunway);
+      flightplan->setDepartureParkingType(apln::RUNWAY);
+    }
+  }
+
+  if(!destinationRunway.isEmpty())
+    // Assign to STAR - wrong runways will be replaced
+    properties.insert(apln::STARRW, destinationRunway);
 
   QString message(tr("<p>Flight successfully downloaded. Reading of route description %1.").arg(ok ? tr("successful") : tr("failed")));
 
@@ -274,11 +328,13 @@ void FetchRouteDialog::downloadFinished(const QByteArray& data, QString)
 
   if(!ok)
     // Parsing failed clear plan
-    flightplan->clear();
+    flightplan->clearAll();
 
   ui->textEditResult->setText(message);
 
-  qDebug() << Q_FUNC_INFO << "departure" << departure << "destination" << destination << "alternate" << alternate << "route" << route;
+  qDebug() << Q_FUNC_INFO << "departure" << departure << "departureRunway" << departureRunway
+           << "destination" << destination << "destinationRunway" << destinationRunway
+           << "alternate" << alternate << "route" << route;
 
 #ifdef DEBUG_INFORMATION
   qDebug() << Q_FUNC_INFO << *flightplan;
@@ -291,10 +347,14 @@ void FetchRouteDialog::downloadFinished(const QByteArray& data, QString)
 void FetchRouteDialog::downloadFailed(const QString& error, int errorCode, QString downloadUrl)
 {
   qDebug() << Q_FUNC_INFO;
-  ui->textEditResult->setText(tr("<p>Downloading flight plan failed.</p>"
-                                   "<p>Download of SimBrief Flight plan from<br/>"
-                                   "\"%1\"<br/>failed.</p>" "<p>Error: %2 (%3)</p>").
-                              arg(downloadUrl).arg(error).arg(errorCode));
+  QString message = atools::util::HtmlBuilder::errorMessage(tr("Download of SimBrief flight plan failed."));
+
+  ui->textEditResult->setText(tr("<p>%1</p>"
+                                   "<p>URL: &quot;%2&quot;</p>"
+                                     "<p>Error: %3 (%4)</p>"
+                                       "<p>Did you log into SimBrief and generate a flight plan?</p>"
+                                         "<p>Is your Pilot ID or Username correct?</p>").
+                              arg(message).arg(downloadUrl).arg(error).arg(errorCode));
 
   // Have to update states in event queue since isDownloading is still set while in this method
   QTimer::singleShot(0, this, &FetchRouteDialog::updateButtonStates);
@@ -313,7 +373,7 @@ void FetchRouteDialog::downloadSslErrors(const QStringList& errors, const QStrin
                                            "<p>Continue?</p>").
                                   arg(downloadUrl).
                                   arg(atools::strJoin(errors, tr("<br/>"))),
-                                  tr("Do not &show this again and ignore errors in the future"),
+                                  tr("Do not &show this again and ignore errors."),
                                   QMessageBox::Cancel | QMessageBox::Yes,
                                   QMessageBox::Cancel, QMessageBox::Yes);
 

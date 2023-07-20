@@ -37,7 +37,7 @@ void messages::resetAllMessages()
   settings.setValue(lnm::ACTIONS_SHOW_INSTALL_DIRS, true);
   settings.setValue(lnm::ACTIONS_SHOW_INSTALL_GLOBE, true);
   settings.setValue(lnm::ACTIONS_SHOW_LOAD_FLP_WARN, true);
-  settings.setValue(lnm::ACTIONS_SHOW_LOAD_FMS_ALT_WARN, true);
+  settings.setValue(lnm::ACTIONS_SHOW_LOAD_ALT_WARN, true);
   settings.setValue(lnm::ACTIONS_SHOW_LOGBOOK_CONVERSION, true);
   settings.setValue(lnm::ACTIONS_SHOW_QUIT, true);
   settings.setValue(lnm::ACTIONS_SHOW_QUIT_LOADING, true);
@@ -52,6 +52,7 @@ void messages::resetAllMessages()
   settings.setValue(lnm::ACTIONS_SHOW_ROUTE_ALTERNATE_ERROR, true);
   settings.setValue(lnm::ACTIONS_SHOW_ROUTE_ERROR, true);
   settings.setValue(lnm::ACTIONS_SHOW_ROUTE_NO_CYCLE_WARNING, true);
+  settings.setValue(lnm::ACTIONS_SHOW_ROUTE_NAVDATA_ALL_WARNING, true);
   settings.setValue(lnm::ACTIONS_SHOW_ROUTE_PARKING_WARNING, true);
   settings.setValue(lnm::ACTIONS_SHOW_ROUTE_START_CHANGED, true);
   settings.setValue(lnm::ACTIONS_SHOW_ROUTE_WARNING, true);
@@ -81,11 +82,17 @@ void messages::resetEssentialMessages()
   settings.setValue(lnm::ACTIONS_SHOW_TRACK_DOWNLOAD_FAIL, true);
   settings.setValue(lnm::ACTIONS_SHOW_WEATHER_DOWNLOAD_FAIL, true);
   settings.setValue(lnm::ACTIONS_SHOW_MISSING_SIMULATORS, true);
-  settings.setValue(lnm::ACTIONS_SHOW_DATABASE_MSFS_NAVIGRAPH, true);
-  settings.setValue(lnm::ACTIONS_SHOW_DATABASE_MSFS_NAVIGRAPH_OFF, true);
+  settings.setValue(lnm::ACTIONS_SHOW_CORRECT_MSFS_HAS_NAVIGRAPH, true);
+  settings.setValue(lnm::ACTIONS_SHOW_CORRECT_MSFS_NO_NAVIGRAPH, true);
+  settings.setValue(lnm::ACTIONS_SHOW_CORRECT_XP_CYCLE_NAV_SMALLER, true);
+  settings.setValue(lnm::ACTIONS_SHOW_CORRECT_XP_CYCLE_NAV_EQUAL, true);
+  settings.setValue(lnm::ACTIONS_SHOW_CORRECT_FSX_P3D_UPDATED, true);
+  settings.setValue(lnm::ACTIONS_SHOW_CORRECT_FSX_P3D_OUTDATED, true);
   settings.setValue(lnm::ACTIONS_SHOW_DATABASE_MSFS_NAVIGRAPH_ALL, true);
-  settings.setValue(lnm::ACTIONS_SHOW_DATABASE_CYCLE_MISMATCH, true);
-  settings.setValue(lnm::ACTIONS_SHOW_DATABASE_CYCLE_MATCH, true);
   settings.setValue(lnm::ACTIONS_SHOW_FILE_EXPORT_OPTIONS_WARN, true);
   settings.setValue(lnm::ACTIONS_SHOW_FILE_EXPORT_OPTIONS_WARN_EXP, true);
+  settings.setValue(lnm::ACTIONS_SHOW_XP11_WEATHER_FILE_INVALID, true);
+  settings.setValue(lnm::ACTIONS_SHOW_XP12_WEATHER_FILE_INVALID, true);
+  settings.setValue(lnm::ACTIONS_SHOW_XP11_WEATHER_FILE_NO_SIM, true);
+  settings.setValue(lnm::ACTIONS_SHOW_XP12_WEATHER_FILE_NO_SIM, true);
 }

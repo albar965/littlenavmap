@@ -56,27 +56,27 @@ public:
 protected:
   void paintAircraftTrack();
 
+  /* Draw a green turn path indicator */
+  void paintTurnPath(const atools::fs::sc::SimConnectUserAircraft& userAircraft);
+
   void paintUserAircraft(const atools::fs::sc::SimConnectUserAircraft& userAircraft, float x, float y);
-  void paintAiVehicle(const atools::fs::sc::SimConnectAircraft& vehicle, bool forceLabel);
+  void paintAiVehicle(const atools::fs::sc::SimConnectAircraft& vehicle, float x, float y, bool forceLabelNearby);
 
   void paintTextLabelUser(float x, float y, int size, const atools::fs::sc::SimConnectUserAircraft& aircraft);
-  void paintTextLabelAi(float x, float y, int size, const atools::fs::sc::SimConnectAircraft& aircraft,
-                        bool forceLabel);
+  void paintTextLabelAi(float x, float y, float size, const atools::fs::sc::SimConnectAircraft& aircraft, bool forceLabelNearby);
   void appendClimbSinkText(QStringList& texts, const atools::fs::sc::SimConnectAircraft& aircraft);
-  void appendAtcText(QStringList& texts, const atools::fs::sc::SimConnectAircraft& aircraft,
-                     bool registration, bool type, bool airline, bool flightnumber, bool transponderCode);
+  void prependAtcText(QStringList& texts, const atools::fs::sc::SimConnectAircraft& aircraft,
+                     bool registration, bool type, bool airline, bool flightnumber, bool transponderCode, int elideAirline,
+                     int maxTextWidth);
   void appendSpeedText(QStringList& texts, const atools::fs::sc::SimConnectAircraft& aircraft, bool ias, bool gs,
                        bool tas);
   void climbSinkPointer(QString& upDown, const atools::fs::sc::SimConnectAircraft& aircraft);
 
-  void paintWindPointer(const atools::fs::sc::SimConnectUserAircraft& aircraft, int x, int y);
-  void paintTextLabelWind(int x, int y, int size, const atools::fs::sc::SimConnectUserAircraft& aircraft);
+  void paintWindPointer(const atools::fs::sc::SimConnectUserAircraft& aircraft, float x, float y);
+  void paintTextLabelWind(float x, float y, float size, const atools::fs::sc::SimConnectUserAircraft& aircraft);
 
   /* Calculate rotation for aircraft icon */
   float calcRotation(const atools::fs::sc::SimConnectAircraft& aircraft);
-
-  static Q_DECL_CONSTEXPR int WIND_POINTER_SIZE = 40;
-
 };
 
 #endif // LITTLENAVMAP_MAPPAINTERVECHICLE_H

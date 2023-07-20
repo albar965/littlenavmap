@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -17,10 +17,12 @@
 
 #include "common/mapcolors.h"
 
-#include "query/mapquery.h"
+#include "atools.h"
+#include "common/constants.h"
+#include "common/maptypes.h"
 #include "options/optiondata.h"
 #include "settings/settings.h"
-#include "atools.h"
+#include "app/navapp.h"
 
 #include <QPen>
 #include <QString>
@@ -28,16 +30,14 @@
 #include <QPalette>
 #include <QSettings>
 #include <QPainter>
-#include <navapp.h>
 
 namespace mapcolors {
 
 /* Colors that are updated from confguration file */
 
 QPen taxiwayLinePen(QColor(200, 200, 0), 1.5, Qt::DashLine, Qt::FlatCap);
-QColor taxiwayNameColor(Qt::black);
-
 QColor taxiwayNameBackgroundColor(255, 255, 120);
+QColor taxiwayNameColor(Qt::black);
 
 QColor airportDetailBackColor(255, 255, 255);
 QColor airportEmptyColor(130, 130, 130);
@@ -131,9 +131,12 @@ QColor routeHighlightBackColor(Qt::black);
 /* Objects highlighted because of selection in route profile */
 QColor profileHighlightBackColor(Qt::black);
 
+QColor distanceMarkerTextColor(Qt::black);
+QColor distanceMarkerTextBackgroundColor(255, 255, 255, 220);
+
 QPen markEndurancePen(Qt::black, 2., Qt::DotLine, Qt::FlatCap, Qt::MiterJoin);
-QPen markSelectedAltitudeRangePen(Qt::darkGreen, 3., Qt::SolidLine, Qt::FlatCap);
-QPen markTurnPathPen(Qt::darkGreen, 2., Qt::SolidLine, Qt::FlatCap);
+QPen markSelectedAltitudeRangePen(Qt::darkGreen, 1.5, Qt::SolidLine, Qt::FlatCap);
+QPen markTurnPathPen(Qt::darkGreen, 1.5, Qt::SolidLine, Qt::FlatCap);
 
 /* Map print colors */
 QColor mapPrintRowColor(250, 250, 250);
@@ -150,6 +153,33 @@ QColor aircraftUserLabelColor(0, 0, 0);
 QColor aircraftUserLabelColorBg(255, 255, 150);
 QColor aircraftAiLabelColor(0, 0, 0);
 QColor aircraftAiLabelColorBg(255, 255, 255);
+
+/* Text along route and approach segments */
+QColor routeTextColor(0, 0, 0);
+QColor routeTextColorGray(80, 80, 80);
+QColor routeTextBackgroundColor(255, 255, 255, 220);
+QColor routeProcedureMissedTextColor(90, 90, 90);
+QColor routeProcedureTextColor(0, 0, 0);
+QColor routeProcedurePointColor(90, 90, 90);
+QColor routeProcedurePointFlyoverColor(Qt::black);
+QColor routeUserPointColor(Qt::darkYellow);
+QColor routeInvalidPointColor(Qt::red);
+
+/* Procedure colors */
+QColor routeProcedureMissedTableColorDark(240, 170, 120);
+QColor routeProcedureMissedTableColor(Qt::darkRed);
+
+QColor routeProcedureTableColorDark(140, 200, 240);
+QColor routeProcedureTableColor(Qt::darkBlue);
+
+/* Alternate airport leg colors */
+QColor routeAlternateTableColor(Qt::darkGray);
+QColor routeAlternateTableColorDark(Qt::gray);
+QColor routeInvalidTableColor(Qt::red);
+QColor routeInvalidTableColorDark(Qt::red);
+
+QColor nextWaypointColor(255, 100, 255);
+QColor nextWaypointColorDark(150, 20, 150);
 
 /* Alternating colors */
 static QColor rowBgColor;
@@ -610,10 +640,23 @@ void syncPen(QSettings& settings, const QString& key, QPen& pen)
 void syncColors()
 {
 #ifndef DEBUG_DISABLE_SYNC_COLORS
-  QString filename = atools::settings::Settings::getConfigFilename("_mapstyle.ini");
+  QString filename = atools::settings::Settings::getConfigFilename(lnm::MAPSTYLE_INI_SUFFIX);
 
   QSettings colorSettings(filename, QSettings::IniFormat);
   colorSettings.setValue("Options/Version", QApplication::applicationVersion());
+
+  colorSettings.beginGroup("FlightPlan");
+  syncColor(colorSettings, "RouteProcedureMissedTableColorDark", routeProcedureMissedTableColorDark);
+  syncColor(colorSettings, "RouteProcedureMissedTableColor", routeProcedureMissedTableColor);
+  syncColor(colorSettings, "RouteProcedureTableColorDark", routeProcedureTableColorDark);
+  syncColor(colorSettings, "RouteProcedureTableColor", routeProcedureTableColor);
+  syncColor(colorSettings, "RouteAlternateTableColor", routeAlternateTableColor);
+  syncColor(colorSettings, "RouteAlternateTableColorDark", routeAlternateTableColorDark);
+  syncColor(colorSettings, "RouteInvalidTableColor", routeInvalidTableColor);
+  syncColor(colorSettings, "RouteInvalidTableColorDark", routeInvalidTableColorDark);
+  syncColor(colorSettings, "NextWaypointColor", nextWaypointColor);
+  syncColor(colorSettings, "NextWaypointColorDark", nextWaypointColorDark);
+  colorSettings.endGroup();
 
   colorSettings.beginGroup("Aircraft");
   syncColorArgb(colorSettings, "UserLabelColor", aircraftUserLabelColor);
@@ -686,6 +729,8 @@ void syncColors()
   syncPen(colorSettings, "SelectedAltitudeRangePen", markSelectedAltitudeRangePen);
   syncPen(colorSettings, "TurnPathPen", markTurnPathPen);
   syncColorArgb(colorSettings, "TouchRegionFillColor", touchRegionFillColor);
+  syncColor(colorSettings, "DistanceMarkerTextColor", distanceMarkerTextColor);
+  syncColorArgb(colorSettings, "DistanceMarkerTextBackgroundColor", distanceMarkerTextBackgroundColor);
   colorSettings.endGroup();
 
   colorSettings.beginGroup("Highlight");
@@ -731,6 +776,18 @@ void syncColors()
   syncPen(colorSettings, "SafeAltLinePen", profileSafeAltLinePen);
   syncPen(colorSettings, "SafeAltLegLinePen", profileSafeAltLegLinePen);
   syncPen(colorSettings, "VasiCenterPen", profileVasiCenterPen);
+  colorSettings.endGroup();
+
+  colorSettings.beginGroup("Route");
+  syncColor(colorSettings, "TextColor", routeTextColor);
+  syncColor(colorSettings, "TextColorGray", routeTextColorGray);
+  syncColor(colorSettings, "TextBackgroundColor", routeTextBackgroundColor);
+  syncColor(colorSettings, "ProcedureMissedTextColor", routeProcedureMissedTextColor);
+  syncColor(colorSettings, "ProcedureTextColor", routeProcedureTextColor);
+  syncColor(colorSettings, "ProcedurePointColor", routeProcedurePointColor);
+  syncColor(colorSettings, "ProcedurePointFlyoverColor", routeProcedurePointFlyoverColor);
+  syncColor(colorSettings, "UserPointColor", routeUserPointColor);
+  syncColor(colorSettings, "InvalidPointColor", routeInvalidPointColor);
   colorSettings.endGroup();
 
   // Sync airspace colors ============================================

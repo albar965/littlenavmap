@@ -10,7 +10,7 @@
     <x>0</x>
     <y>0</y>
     <width>1261</width>
-    <height>1395</height>
+    <height>882</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -34,7 +34,7 @@
      <x>0</x>
      <y>0</y>
      <width>1261</width>
-     <height>21</height>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -177,6 +177,7 @@
     <addaction name="actionShowFloatingWindows"/>
     <addaction name="actionShowAllowDocking"/>
     <addaction name="actionShowAllowMoving"/>
+    <addaction name="actionShowWindowTitleBar"/>
     <addaction name="separator"/>
     <addaction name="actionShowStatusbar"/>
     <addaction name="separator"/>
@@ -187,13 +188,14 @@
     </property>
     <addaction name="actionHelpContents"/>
     <addaction name="actionHelpTutorials"/>
-    <addaction name="actionHelpFaq"/>
+    <addaction name="actionHelpNavmapLegend"/>
+    <addaction name="separator"/>
     <addaction name="actionHelpContentsOffline"/>
     <addaction name="separator"/>
+    <addaction name="actionHelpFaq"/>
     <addaction name="actionHelpDownloads"/>
     <addaction name="separator"/>
-    <addaction name="actionHelpNavmapLegend"/>
-    <addaction name="actionHelpMapLegend"/>
+    <addaction name="actionHelpChangelog"/>
     <addaction name="separator"/>
     <addaction name="actionHelpAbout"/>
     <addaction name="separator"/>
@@ -215,6 +217,7 @@
      <addaction name="actionHelpOpenConfigFile"/>
      <addaction name="actionDatabaseFiles"/>
      <addaction name="actionShowMapCache"/>
+     <addaction name="actionShowMapInstallation"/>
     </widget>
     <addaction name="actionConnectSimulator"/>
     <addaction name="actionConnectSimulatorToggle"/>
@@ -241,9 +244,15 @@
     </property>
     <addaction name="actionMapShowHome"/>
     <addaction name="actionMapAircraftCenterNow"/>
-    <addaction name="actionMapShowMark"/>
     <addaction name="actionRouteCenter"/>
+    <addaction name="actionMapShowMark"/>
     <addaction name="actionMapJumpCoordinatesMain"/>
+    <addaction name="separator"/>
+    <addaction name="actionMapAircraftCenter"/>
+    <addaction name="actionMapDeleteAircraftTrack"/>
+    <addaction name="separator"/>
+    <addaction name="actionMapBack"/>
+    <addaction name="actionMapNext"/>
     <addaction name="separator"/>
     <addaction name="actionMapClearAllHighlights"/>
     <addaction name="separator"/>
@@ -252,12 +261,6 @@
     <addaction name="actionMapHideAllPatterns"/>
     <addaction name="actionMapHideAllHoldings"/>
     <addaction name="actionMapHideAllMsa"/>
-    <addaction name="separator"/>
-    <addaction name="actionMapAircraftCenter"/>
-    <addaction name="actionMapDeleteAircraftTrack"/>
-    <addaction name="separator"/>
-    <addaction name="actionMapBack"/>
-    <addaction name="actionMapNext"/>
     <addaction name="separator"/>
     <addaction name="actionMapDetailsMore"/>
     <addaction name="actionMapDetailsDefault"/>
@@ -283,7 +286,6 @@
     <addaction name="actionShowApproachCustom"/>
     <addaction name="separator"/>
     <addaction name="actionRouteEditMode"/>
-    <addaction name="separator"/>
     <addaction name="separator"/>
     <addaction name="actionRouteCalc"/>
     <addaction name="actionRouteCalcDirect"/>
@@ -326,6 +328,8 @@
     <addaction name="separator"/>
     <addaction name="actionSearchUserpointUndo"/>
     <addaction name="actionSearchUserpointRedo"/>
+    <addaction name="separator"/>
+    <addaction name="actionUserdataCleanup"/>
     <addaction name="separator"/>
     <addaction name="actionUserdataImportCSV"/>
     <addaction name="actionUserdataImportUserfixDat"/>
@@ -410,15 +414,21 @@
       <string>User &amp;Features</string>
      </property>
     </widget>
+    <widget class="QMenu" name="menuAircraft">
+     <property name="title">
+      <string>&amp;AI and Online Aircraft</string>
+     </property>
+     <addaction name="actionMapShowAircraftAi"/>
+     <addaction name="actionMapShowAircraftOnline"/>
+     <addaction name="actionMapShowAircraftAiBoat"/>
+    </widget>
+    <addaction name="separator"/>
     <addaction name="actionMapResetSettings"/>
     <addaction name="separator"/>
     <addaction name="menuViewAirport"/>
     <addaction name="menuViewNavaids"/>
-    <addaction name="separator"/>
     <addaction name="menuViewAirspaces"/>
-    <addaction name="separator"/>
     <addaction name="menuViewUserFeatures"/>
-    <addaction name="separator"/>
     <addaction name="menuViewUserpoints"/>
     <addaction name="separator"/>
     <addaction name="actionMapShowRoute"/>
@@ -435,11 +445,11 @@
     <addaction name="actionMapShowCompassRose"/>
     <addaction name="actionMapShowCompassRoseAttach"/>
     <addaction name="separator"/>
-    <addaction name="actionMapShowAircraftAi"/>
-    <addaction name="actionMapShowAircraftOnline"/>
-    <addaction name="actionMapShowAircraftAiBoat"/>
+    <addaction name="menuAircraft"/>
     <addaction name="separator"/>
     <addaction name="actionMapShowGrid"/>
+    <addaction name="actionMapShowGridConfig"/>
+    <addaction name="separator"/>
     <addaction name="actionMapShowCities"/>
     <addaction name="actionMapShowMinimumAltitude"/>
     <addaction name="separator"/>
@@ -474,6 +484,8 @@
     <addaction name="actionAircraftPerformanceLoadMerge"/>
     <addaction name="actionAircraftPerformanceMerge"/>
     <addaction name="actionAircraftPerformanceRestart"/>
+    <addaction name="separator"/>
+    <addaction name="actionAircraftPerformanceWarnMismatch"/>
    </widget>
    <widget class="QMenu" name="menuLogbook">
     <property name="title">
@@ -483,6 +495,8 @@
     <addaction name="separator"/>
     <addaction name="actionSearchLogdataUndo"/>
     <addaction name="actionSearchLogdataRedo"/>
+    <addaction name="separator"/>
+    <addaction name="actionLogdataCleanup"/>
     <addaction name="separator"/>
     <addaction name="actionLogdataShowStatistics"/>
     <addaction name="separator"/>
@@ -513,9 +527,8 @@
      <property name="title">
       <string>&amp;Wind source</string>
      </property>
-     <addaction name="actionMapShowWindManual"/>
-     <addaction name="separator"/>
      <addaction name="actionMapShowWindDisabled"/>
+     <addaction name="actionMapShowWindManual"/>
      <addaction name="actionMapShowWindSimulator"/>
      <addaction name="actionMapShowWindNOAA"/>
     </widget>
@@ -630,7 +643,7 @@
            <item>
             <layout class="QHBoxLayout" name="horizontalLayoutAirportNameSearch">
              <property name="spacing">
-              <number>2</number>
+              <number>0</number>
              </property>
              <item>
               <widget class="QLineEdit" name="lineEditAirportIcaoSearch">
@@ -778,7 +791,7 @@
            <item>
             <layout class="QHBoxLayout" name="horizontalLayoutAirportNameSearch2">
              <property name="spacing">
-              <number>2</number>
+              <number>0</number>
              </property>
              <item>
               <widget class="QLineEdit" name="lineEditAirportCitySearch">
@@ -953,7 +966,7 @@
                 <string>Airports with procedures</string>
                </property>
                <property name="text">
-                <string>&amp;Procedures</string>
+                <string>&amp;Proc.</string>
                </property>
                <property name="tristate">
                 <bool>true</bool>
@@ -1076,7 +1089,10 @@
            </item>
            <item>
             <layout class="QGridLayout" name="gridLayoutAirportSearchParking">
-             <property name="spacing">
+             <property name="horizontalSpacing">
+              <number>0</number>
+             </property>
+             <property name="verticalSpacing">
               <number>2</number>
              </property>
              <item row="0" column="1">
@@ -1196,7 +1212,10 @@
            </item>
            <item>
             <layout class="QGridLayout" name="gridLayoutAirportSearchRunway">
-             <property name="spacing">
+             <property name="horizontalSpacing">
+              <number>0</number>
+             </property>
+             <property name="verticalSpacing">
               <number>2</number>
              </property>
              <item row="0" column="0">
@@ -1208,7 +1227,7 @@
                 </sizepolicy>
                </property>
                <property name="text">
-                <string>&amp;Runways:</string>
+                <string>&amp;Rwy:</string>
                </property>
                <property name="alignment">
                 <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -1233,7 +1252,7 @@
                 <bool>true</bool>
                </property>
                <property name="suffix">
-                <string> %distshort% max</string>
+                <string> %dists% max</string>
                </property>
                <property name="maximum">
                 <number>50000</number>
@@ -1258,7 +1277,7 @@
                 <bool>true</bool>
                </property>
                <property name="suffix">
-                <string> %distshort% min</string>
+                <string> %dists% min</string>
                </property>
                <property name="maximum">
                 <number>50000</number>
@@ -1339,7 +1358,7 @@
            <item>
             <layout class="QHBoxLayout" name="horizontalLayoutAirportAltitudeSearch">
              <property name="spacing">
-              <number>2</number>
+              <number>0</number>
              </property>
              <property name="topMargin">
               <number>0</number>
@@ -1356,7 +1375,7 @@
                 </sizepolicy>
                </property>
                <property name="text">
-                <string>&amp;Elevation:</string>
+                <string>&amp;Elev:</string>
                </property>
                <property name="buddy">
                 <cstring>spinBoxAirportAltitudeMinSearch</cstring>
@@ -1440,7 +1459,7 @@
            <item>
             <layout class="QHBoxLayout" name="horizontalLayoutAirportDistanceSearch">
              <property name="spacing">
-              <number>2</number>
+              <number>0</number>
              </property>
              <property name="topMargin">
               <number>0</number>
@@ -1460,7 +1479,7 @@
                 <string>Search for all airports within the given distance limits around the distance search center</string>
                </property>
                <property name="text">
-                <string>&amp;Distance:</string>
+                <string>&amp;Dist:</string>
                </property>
               </widget>
              </item>
@@ -1582,7 +1601,7 @@
            <item>
             <layout class="QHBoxLayout" name="horizontalLayoutAirportFlightplanSearch">
              <property name="spacing">
-              <number>2</number>
+              <number>0</number>
              </property>
              <property name="topMargin">
               <number>0</number>
@@ -1630,7 +1649,7 @@
                 <bool>true</bool>
                </property>
                <property name="suffix">
-                <string> %dist% min distance</string>
+                <string> %dist% min</string>
                </property>
                <property name="maximum">
                 <number>20490</number>
@@ -1658,7 +1677,7 @@
                 <bool>true</bool>
                </property>
                <property name="suffix">
-                <string> %dist% max distance</string>
+                <string> %dist% max</string>
                </property>
                <property name="minimum">
                 <number>10</number>
@@ -1695,7 +1714,7 @@
            <item>
             <layout class="QHBoxLayout" name="horizontalLayoutAirportScenerySearch">
              <property name="spacing">
-              <number>2</number>
+              <number>0</number>
              </property>
              <item>
               <widget class="QLineEdit" name="lineEditAirportScenerySearch">
@@ -1849,7 +1868,7 @@
            <item>
             <layout class="QHBoxLayout" name="horizontalLayoutNavNameSearch">
              <property name="spacing">
-              <number>2</number>
+              <number>0</number>
              </property>
              <property name="topMargin">
               <number>0</number>
@@ -2055,7 +2074,10 @@
              <property name="topMargin">
               <number>0</number>
              </property>
-             <property name="spacing">
+             <property name="horizontalSpacing">
+              <number>0</number>
+             </property>
+             <property name="verticalSpacing">
               <number>2</number>
              </property>
              <item row="2" column="1">
@@ -2256,7 +2278,7 @@
            <item>
             <layout class="QHBoxLayout" name="horizontalLayoutNavDistanceSearch">
              <property name="spacing">
-              <number>2</number>
+              <number>0</number>
              </property>
              <property name="topMargin">
               <number>0</number>
@@ -2398,7 +2420,7 @@
            <item>
             <layout class="QHBoxLayout" name="horizontalLayoutNavScenerySearch">
              <property name="spacing">
-              <number>2</number>
+              <number>0</number>
              </property>
              <property name="bottomMargin">
               <number>0</number>
@@ -2547,19 +2569,19 @@
          <item>
           <layout class="QHBoxLayout" name="horizontalLayout_2">
            <property name="spacing">
-            <number>2</number>
+            <number>0</number>
            </property>
            <property name="leftMargin">
-            <number>2</number>
+            <number>0</number>
            </property>
            <property name="topMargin">
-            <number>2</number>
+            <number>0</number>
            </property>
            <property name="rightMargin">
-            <number>2</number>
+            <number>0</number>
            </property>
            <property name="bottomMargin">
-            <number>2</number>
+            <number>0</number>
            </property>
            <item>
             <widget class="QComboBox" name="comboBoxProcedureSearchFilter">
@@ -2651,13 +2673,6 @@
              </property>
              <property name="flat">
               <bool>false</bool>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="Line" name="line_2">
-             <property name="orientation">
-              <enum>Qt::Vertical</enum>
              </property>
             </widget>
            </item>
@@ -2789,7 +2804,7 @@
          <item>
           <layout class="QHBoxLayout" name="horizontalLayoutUserdata">
            <property name="spacing">
-            <number>2</number>
+            <number>0</number>
            </property>
            <property name="topMargin">
             <number>0</number>
@@ -3024,7 +3039,7 @@
          <item>
           <layout class="QHBoxLayout" name="horizontalLayoutUserdataMore">
            <property name="spacing">
-            <number>2</number>
+            <number>0</number>
            </property>
            <property name="topMargin">
             <number>0</number>
@@ -3193,7 +3208,7 @@
          <item>
           <layout class="QHBoxLayout" name="horizontalLayoutLogdata">
            <property name="spacing">
-            <number>2</number>
+            <number>0</number>
            </property>
            <property name="topMargin">
             <number>0</number>
@@ -3207,14 +3222,14 @@
               </sizepolicy>
              </property>
              <property name="toolTip">
-              <string>Departure or destination airport ICAO code.
+              <string>Departure or destination airport ident.
 Matches any visited airport.</string>
              </property>
              <property name="statusTip">
-              <string>Departure or destination airport ICAO code. </string>
+              <string>Departure or destination airport ident. </string>
              </property>
              <property name="placeholderText">
-              <string>Airport ICAO</string>
+              <string>Airport Ident</string>
              </property>
              <property name="clearButtonEnabled">
               <bool>true</bool>
@@ -3409,7 +3424,7 @@ Matches any visited airport.</string>
            <item>
             <layout class="QHBoxLayout" name="horizontalLayoutLogdataDepartDest">
              <property name="spacing">
-              <number>2</number>
+              <number>0</number>
              </property>
              <property name="topMargin">
               <number>0</number>
@@ -3423,13 +3438,13 @@ Matches any visited airport.</string>
                 </sizepolicy>
                </property>
                <property name="toolTip">
-                <string>Departure airport ICAO code</string>
+                <string>Departure airport ident</string>
                </property>
                <property name="statusTip">
-                <string>Departure airport ICAO code</string>
+                <string>Departure airport ident</string>
                </property>
                <property name="placeholderText">
-                <string>Departure ICAO</string>
+                <string>Departure Airport Ident</string>
                </property>
                <property name="clearButtonEnabled">
                 <bool>true</bool>
@@ -3445,13 +3460,13 @@ Matches any visited airport.</string>
                 </sizepolicy>
                </property>
                <property name="toolTip">
-                <string>Destination airport ICAO code</string>
+                <string>Destination airport ident</string>
                </property>
                <property name="statusTip">
-                <string>Destination airport ICAO code</string>
+                <string>Destination airport ident</string>
                </property>
                <property name="placeholderText">
-                <string>Destination ICAO</string>
+                <string>Destination Airport Ident</string>
                </property>
                <property name="clearButtonEnabled">
                 <bool>true</bool>
@@ -3463,7 +3478,7 @@ Matches any visited airport.</string>
            <item>
             <layout class="QHBoxLayout" name="horizontalLayoutAircraftSim">
              <property name="spacing">
-              <number>2</number>
+              <number>0</number>
              </property>
              <property name="topMargin">
               <number>0</number>
@@ -3570,7 +3585,7 @@ Matches any visited airport.</string>
          <item>
           <layout class="QHBoxLayout" name="horizontalLayoutLogdataDist">
            <property name="spacing">
-            <number>2</number>
+            <number>0</number>
            </property>
            <property name="topMargin">
             <number>0</number>
@@ -3732,7 +3747,7 @@ Matches any visited airport.</string>
          <item>
           <layout class="QHBoxLayout" name="horizontalLayoutOnlineClient">
            <property name="spacing">
-            <number>2</number>
+            <number>0</number>
            </property>
            <item>
             <widget class="QLineEdit" name="lineEditOnlineClientCallsign">
@@ -3787,10 +3802,10 @@ Matches any visited airport.</string>
               </sizepolicy>
              </property>
              <property name="toolTip">
-              <string>Departure airport ICAO code</string>
+              <string>Departure airport ident</string>
              </property>
              <property name="statusTip">
-              <string>Departure airport ICAO code</string>
+              <string>Departure airport ident</string>
              </property>
              <property name="placeholderText">
               <string comment="Online Client Departure">Departure</string>
@@ -3809,10 +3824,10 @@ Matches any visited airport.</string>
               </sizepolicy>
              </property>
              <property name="toolTip">
-              <string>Destination airport ICAO code</string>
+              <string>Destination airport ident</string>
              </property>
              <property name="statusTip">
-              <string>Destination airport ICAO code</string>
+              <string>Destination airport ident</string>
              </property>
              <property name="placeholderText">
               <string>Destination</string>
@@ -3991,7 +4006,7 @@ Matches any visited airport.</string>
          <item>
           <layout class="QHBoxLayout" name="horizontalLayoutOnlineCenter">
            <property name="spacing">
-            <number>2</number>
+            <number>0</number>
            </property>
            <item>
             <widget class="QLineEdit" name="lineEditOnlineCenterCallsign">
@@ -4708,20 +4723,31 @@ Matches any visited airport.</string>
               <number>0</number>
              </property>
              <item>
-              <widget class="QCheckBox" name="checkBoxAircraftPerformanceWindMan">
+              <widget class="QToolButton" name="toolButtonAircraftPerformanceWind">
                <property name="toolTip">
-                <string>Use manual wind settings for fuel calculation if checked.
-This will also be reflected by the wind barbs at the flight plan waypoints and the
-wind display in the elevation profile top line.</string>
+                <string>Select wind source for performance calculation and map display</string>
                </property>
                <property name="statusTip">
-                <string>Use manual wind settings for fuel calculation.</string>
+                <string>Select wind source for performance calculation and map display</string>
                </property>
                <property name="text">
-                <string>&amp;Manual Wind</string>
+                <string/>
+               </property>
+               <property name="icon">
+                <iconset resource="../../littlenavmap.qrc">
+                 <normaloff>:/littlenavmap/resources/icons/wind.svg</normaloff>:/littlenavmap/resources/icons/wind.svg</iconset>
+               </property>
+               <property name="checkable">
+                <bool>true</bool>
                </property>
                <property name="checked">
-                <bool>false</bool>
+                <bool>true</bool>
+               </property>
+               <property name="popupMode">
+                <enum>QToolButton::InstantPopup</enum>
+               </property>
+               <property name="toolButtonStyle">
+                <enum>Qt::ToolButtonTextBesideIcon</enum>
                </property>
               </widget>
              </item>
@@ -4916,7 +4942,7 @@ wind display in the elevation profile top line.</string>
              <item>
               <widget class="QSpinBox" name="spinBoxAircraftPerformanceWindDirection">
                <property name="toolTip">
-                <string>Average true wind direction at flight plan cruise level</string>
+                <string>Average true wind direction at selected altitude.</string>
                </property>
                <property name="statusTip">
                 <string>Average true wind direction at flight plan cruise level</string>
@@ -4935,7 +4961,7 @@ wind display in the elevation profile top line.</string>
              <item>
               <widget class="QSpinBox" name="spinBoxAircraftPerformanceWindSpeed">
                <property name="toolTip">
-                <string>Average wind at flight plan cruise level.
+                <string>Average wind at selected altitude.
 Wind speed will be interpolated for climb and descent phases.</string>
                </property>
                <property name="statusTip">
@@ -4949,6 +4975,45 @@ Wind speed will be interpolated for climb and descent phases.</string>
                </property>
                <property name="singleStep">
                 <number>10</number>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLabel" name="labelAircraftPerformanceWindAt">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="text">
+                <string>&amp;at</string>
+               </property>
+               <property name="buddy">
+                <cstring>spinBoxAircraftPerformanceWindAlt</cstring>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QSpinBox" name="spinBoxAircraftPerformanceWindAlt">
+               <property name="toolTip">
+                <string>Altitude for average wind value.
+Wind speed will be interpolated between this altitude and ground level.</string>
+               </property>
+               <property name="statusTip">
+                <string>Altitude for average wind value.\nWind speed will be interpolated between this altitude and ground level.</string>
+               </property>
+               <property name="suffix">
+                <string> %alt%</string>
+               </property>
+               <property name="maximum">
+                <number>100000</number>
+               </property>
+               <property name="singleStep">
+                <number>500</number>
+               </property>
+               <property name="value">
+                <number>10000</number>
                </property>
               </widget>
              </item>
@@ -5534,9 +5599,6 @@ relation to shown airport</string>
         <attribute name="title">
          <string>Userpoints</string>
         </attribute>
-        <attribute name="toolTip">
-         <string>User defined waypoints</string>
-        </attribute>
         <layout class="QVBoxLayout" name="verticalLayout_36">
          <property name="spacing">
           <number>2</number>
@@ -5689,8 +5751,10 @@ relation to shown airport</string>
    <addaction name="actionMapShowMark"/>
    <addaction name="actionRouteCenter"/>
    <addaction name="separator"/>
+   <addaction name="actionMapAircraftCenterNow"/>
    <addaction name="actionMapAircraftCenter"/>
    <addaction name="separator"/>
+   <addaction name="actionMapDeleteAircraftTrack"/>
    <addaction name="actionMapClearAllHighlights"/>
    <addaction name="separator"/>
    <addaction name="actionMapBack"/>
@@ -5818,7 +5882,7 @@ relation to shown airport</string>
             <property name="geometry">
              <rect>
               <x>0</x>
-              <y>98</y>
+              <y>0</y>
               <width>228</width>
               <height>86</height>
              </rect>
@@ -6046,12 +6110,6 @@ relation to shown airport</string>
                <property name="orientation">
                 <enum>Qt::Vertical</enum>
                </property>
-               <property name="invertedAppearance">
-                <bool>false</bool>
-               </property>
-               <property name="invertedControls">
-                <bool>false</bool>
-               </property>
                <property name="tickPosition">
                 <enum>QSlider::NoTicks</enum>
                </property>
@@ -6257,111 +6315,6 @@ relation to shown airport</string>
     </layout>
    </widget>
   </widget>
-  <widget class="QDockWidget" name="dockWidgetLegend">
-   <property name="enabled">
-    <bool>true</bool>
-   </property>
-   <property name="windowIcon">
-    <iconset resource="../../littlenavmap.qrc">
-     <normaloff>:/littlenavmap/resources/icons/legenddock.svg</normaloff>:/littlenavmap/resources/icons/legenddock.svg</iconset>
-   </property>
-   <property name="floating">
-    <bool>false</bool>
-   </property>
-   <property name="windowTitle">
-    <string>Legend</string>
-   </property>
-   <attribute name="dockWidgetArea">
-    <number>2</number>
-   </attribute>
-   <widget class="QWidget" name="dockWidgetContents">
-    <layout class="QVBoxLayout" name="verticalLayout_13">
-     <property name="spacing">
-      <number>2</number>
-     </property>
-     <property name="leftMargin">
-      <number>2</number>
-     </property>
-     <property name="topMargin">
-      <number>0</number>
-     </property>
-     <property name="rightMargin">
-      <number>2</number>
-     </property>
-     <property name="bottomMargin">
-      <number>0</number>
-     </property>
-     <item>
-      <widget class="QTabWidget" name="tabWidgetLegend">
-       <property name="currentIndex">
-        <number>0</number>
-       </property>
-       <widget class="QWidget" name="tabLegendNav">
-        <attribute name="title">
-         <string>Navmap</string>
-        </attribute>
-        <layout class="QVBoxLayout" name="verticalLayout_21">
-         <property name="spacing">
-          <number>2</number>
-         </property>
-         <property name="leftMargin">
-          <number>2</number>
-         </property>
-         <property name="topMargin">
-          <number>2</number>
-         </property>
-         <property name="rightMargin">
-          <number>2</number>
-         </property>
-         <property name="bottomMargin">
-          <number>2</number>
-         </property>
-         <item>
-          <widget class="QTextBrowser" name="textBrowserLegendNavInfo">
-           <property name="openExternalLinks">
-            <bool>false</bool>
-           </property>
-           <property name="openLinks">
-            <bool>false</bool>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </widget>
-       <widget class="QWidget" name="tabLegend">
-        <attribute name="title">
-         <string>Map</string>
-        </attribute>
-        <layout class="QVBoxLayout" name="verticalLayout_20">
-         <property name="spacing">
-          <number>2</number>
-         </property>
-         <property name="leftMargin">
-          <number>2</number>
-         </property>
-         <property name="topMargin">
-          <number>2</number>
-         </property>
-         <property name="rightMargin">
-          <number>2</number>
-         </property>
-         <property name="bottomMargin">
-          <number>2</number>
-         </property>
-         <item>
-          <widget class="QTextBrowser" name="textBrowserLegendInfo">
-           <property name="openExternalLinks">
-            <bool>true</bool>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </widget>
-      </widget>
-     </item>
-    </layout>
-   </widget>
-  </widget>
   <widget class="QDockWidget" name="dockWidgetMap">
    <property name="minimumSize">
     <size>
@@ -6420,8 +6373,10 @@ relation to shown airport</string>
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
-   <addaction name="actionConnectSimulator"/>
    <addaction name="actionReloadScenery"/>
+   <addaction name="actionValidateSceneryLibrarySettings"/>
+   <addaction name="separator"/>
+   <addaction name="actionConnectSimulator"/>
    <addaction name="actionOptions"/>
   </widget>
   <widget class="QToolBar" name="toolBarView">
@@ -6856,7 +6811,7 @@ relation to shown airport</string>
      <normaloff>:/littlenavmap/resources/icons/help.svg</normaloff>:/littlenavmap/resources/icons/help.svg</iconset>
    </property>
    <property name="text">
-    <string>&amp;Contents (Online)</string>
+    <string>&amp;User Manual (Online)</string>
    </property>
    <property name="toolTip">
     <string>Show the online help in a browser</string>
@@ -7737,10 +7692,10 @@ relation to shown airport</string>
     <string>Show User &amp;Aircraft</string>
    </property>
    <property name="toolTip">
-    <string>Show simulator aircraft position and data on map</string>
+    <string>Show simulator aircraft symbol on the map</string>
    </property>
    <property name="statusTip">
-    <string>Show simulator aircraft position and data on map</string>
+    <string>Show simulator aircraft symbol on the map</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+Alt+B</string>
@@ -7803,7 +7758,7 @@ relation to shown airport</string>
      <normaloff>:/littlenavmap/resources/icons/aircrafttraildelete.svg</normaloff>:/littlenavmap/resources/icons/aircrafttraildelete.svg</iconset>
    </property>
    <property name="text">
-    <string>Delete Aircraft &amp;Trail</string>
+    <string>Delete User Aircraft &amp;Trail</string>
    </property>
    <property name="toolTip">
     <string>Delete simulator aircraft trail from map and elevation profile</string>
@@ -7856,7 +7811,7 @@ relation to shown airport</string>
      <normaloff>:/littlenavmap/resources/icons/help.svg</normaloff>:/littlenavmap/resources/icons/help.svg</iconset>
    </property>
    <property name="text">
-    <string>&amp;Navmap Legend</string>
+    <string>&amp;User Manual - Map Legend (Online)</string>
    </property>
    <property name="toolTip">
     <string>Show the navigation map legend online in a browser</string>
@@ -8103,10 +8058,10 @@ relation to shown airport</string>
     <string>Show &amp;AI and &amp;Multiplayer Aircraft</string>
    </property>
    <property name="toolTip">
-    <string>Show simulator AI and multiplayer aircraft position and data on map</string>
+    <string>Show simulator AI and multiplayer aircraft on the map</string>
    </property>
    <property name="statusTip">
-    <string>Show simulator AI and multiplayer aircraft position and data on map</string>
+    <string>Show simulator AI and multiplayer aircraft on the map</string>
    </property>
   </action>
   <action name="actionPrintMap">
@@ -8285,7 +8240,7 @@ relation to shown airport</string>
      <normaloff>:/littlenavmap/resources/icons/help.svg</normaloff>:/littlenavmap/resources/icons/help.svg</iconset>
    </property>
    <property name="text">
-    <string>&amp;Contents (Offline, PDF)</string>
+    <string>&amp;User Manual (Offline, PDF)</string>
    </property>
    <property name="toolTip">
     <string>Show the offline help also including the legend in a PDF viewer</string>
@@ -8367,10 +8322,10 @@ relation to shown airport</string>
     <string>Show &amp;Missed Approaches</string>
    </property>
    <property name="toolTip">
-    <string>Show missed approach legs on the map</string>
+    <string>Show missed approach legs of flight plan or procedure preview on the map</string>
    </property>
    <property name="statusTip">
-    <string>Show missed approach legs on the map</string>
+    <string>Show missed approach legs of flight plan or procedure preview on the map</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+Alt+M</string>
@@ -8451,10 +8406,10 @@ relation to shown airport</string>
     <string>Select Approach &amp;Runway for %1 ...</string>
    </property>
    <property name="toolTip">
-    <string>Select approach runway for airport</string>
+    <string>Add an approach runway and a final leg to the flight plan</string>
    </property>
    <property name="statusTip">
-    <string>Add a custom approach to the flight plan</string>
+    <string>Add an approach runway and a final leg to the flight plan</string>
    </property>
    <property name="shortcut">
     <string>Alt+Shift+U</string>
@@ -8469,10 +8424,10 @@ relation to shown airport</string>
     <string>Select Approach &amp;Runway for %1 ...</string>
    </property>
    <property name="toolTip">
-    <string>Select approach runway for airport</string>
+    <string>Add an approach runway and a final leg to the flight plan</string>
    </property>
    <property name="statusTip">
-    <string>Add a custom approach to the flight plan</string>
+    <string>Add an approach runway and a final leg to the flight plan</string>
    </property>
    <property name="shortcut">
     <string>Alt+Shift+U</string>
@@ -8643,10 +8598,10 @@ relation to shown airport</string>
     <string>Show AI and &amp;Multiplayer Ships</string>
    </property>
    <property name="toolTip">
-    <string>Show simulator AI and multiplayer ship position and data on map</string>
+    <string>Show simulator AI and multiplayer ships on the map</string>
    </property>
    <property name="statusTip">
-    <string>Show simulator AI and multiplayer ship position and data on map</string>
+    <string>Show simulator AI and multiplayer ships on the map</string>
    </property>
   </action>
   <action name="actionRouteSaveAsGpx">
@@ -8677,7 +8632,7 @@ relation to shown airport</string>
      <normaloff>:/littlenavmap/resources/icons/help.svg</normaloff>:/littlenavmap/resources/icons/help.svg</iconset>
    </property>
    <property name="text">
-    <string>&amp;Tutorials (Online)</string>
+    <string>&amp;User Manual - Tutorials (Online)</string>
    </property>
    <property name="toolTip">
     <string>Show the online tutorials in a browser</string>
@@ -8733,13 +8688,13 @@ relation to shown airport</string>
      <normaloff>:/littlenavmap/resources/icons/saveasfms.svg</normaloff>:/littlenavmap/resources/icons/saveasfms.svg</iconset>
    </property>
    <property name="text">
-    <string>Export Flight &amp;Plan as X-Plane FMS 11 ...</string>
+    <string>Export Flight &amp;Plan as FMS for X-Plane 11 and 12 ...</string>
    </property>
    <property name="toolTip">
-    <string>Export flight plan as FMS 11 file usable by X-Plane 11.10 and above</string>
+    <string>Export flight plan using FMS format usable by X-Plane 11 and 12</string>
    </property>
    <property name="statusTip">
-    <string>Export flight plan as FMS 11 file usable by X-Plane 11.10 and above</string>
+    <string>Export flight plan using FMS format usable by X-Plane 11 and 12</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+Shift+X</string>
@@ -9131,7 +9086,7 @@ relation to shown airport</string>
   </action>
   <action name="actionShowFloatingWindows">
    <property name="text">
-    <string>Show all &amp;floating Windows</string>
+    <string>Show all &amp;floating Dock Windows</string>
    </property>
    <property name="toolTip">
     <string>Raise and show all undocked floating windows</string>
@@ -9433,7 +9388,7 @@ relation to shown airport</string>
      <normaloff>:/littlenavmap/resources/icons/centeraircraft.svg</normaloff>:/littlenavmap/resources/icons/centeraircraft.svg</iconset>
    </property>
    <property name="text">
-    <string>Center &amp;Aircraft</string>
+    <string>&amp;Keep User Aircraft Centered</string>
    </property>
    <property name="toolTip">
     <string>Center the user aircraft on the elevation profile</string>
@@ -9996,10 +9951,10 @@ relation to shown airport</string>
     <string>&amp;Flight Simulator (X-Plane only)</string>
    </property>
    <property name="toolTip">
-    <string>Use the X-Plane wind file</string>
+    <string>Use the X-Plane wind file for fuel report and map display</string>
    </property>
    <property name="statusTip">
-    <string>Use the X-Plane wind file</string>
+    <string>Use the X-Plane wind file for fuel report and map display</string>
    </property>
   </action>
   <action name="actionMapShowWindNOAA">
@@ -10013,10 +9968,10 @@ relation to shown airport</string>
     <string>&amp;NOAA</string>
    </property>
    <property name="toolTip">
-    <string>Download wind files from NOAA</string>
+    <string>Download wind files from NOAAf or fuel report and map display</string>
    </property>
    <property name="statusTip">
-    <string>Download wind files from NOAA</string>
+    <string>Download wind files from NOAA for fuel report and map display</string>
    </property>
   </action>
   <action name="actionMapShowWindDisabled">
@@ -10122,7 +10077,7 @@ relation to shown airport</string>
     <string>Edit one or more logbook entries</string>
    </property>
    <property name="statusTip">
-    <string>Edit one or more userpoints</string>
+    <string>Edit one or more logbook entries</string>
    </property>
    <property name="shortcut">
     <string>Return</string>
@@ -10140,7 +10095,7 @@ relation to shown airport</string>
     <string>Add logbook entry</string>
    </property>
    <property name="statusTip">
-    <string>Add Userpoint</string>
+    <string>Add logbook entry</string>
    </property>
    <property name="shortcut">
     <string>Ins</string>
@@ -10158,7 +10113,7 @@ relation to shown airport</string>
     <string>Remove one or more logbook entries</string>
    </property>
    <property name="statusTip">
-    <string>Remove one or more userpoints</string>
+    <string>Remove one or more logbook entries</string>
    </property>
    <property name="shortcut">
     <string>Del</string>
@@ -10520,7 +10475,7 @@ relation to shown airport</string>
      <normaloff>:/littlenavmap/resources/icons/routecalc.svg</normaloff>:/littlenavmap/resources/icons/routecalc.svg</iconset>
    </property>
    <property name="text">
-    <string>Show Flight Plan &amp;Calculation  ...</string>
+    <string>Flight Plan &amp;Calculation  ...</string>
    </property>
    <property name="toolTip">
     <string>Shows the flight plan calculation window</string>
@@ -11064,13 +11019,13 @@ relation to shown airport</string>
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>&amp;Manual Wind</string>
+    <string>&amp;Manual</string>
    </property>
    <property name="toolTip">
-    <string>Manual wind in fuel report overrides other</string>
+    <string>Manual wind for fuel report and map display</string>
    </property>
    <property name="statusTip">
-    <string>Manual wind in fuel report overrides other</string>
+    <string>Manual wind for fuel report and map display</string>
    </property>
   </action>
   <action name="actionTrackSourcesNat">
@@ -11140,7 +11095,7 @@ relation to shown airport</string>
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>Allow Window &amp;moving</string>
+    <string>Allow Dock Window &amp;moving</string>
    </property>
    <property name="toolTip">
     <string>Allows to move dock windows by clicking into the title bar.</string>
@@ -11192,13 +11147,13 @@ relation to shown airport</string>
      <normaloff>:/littlenavmap/resources/icons/gls.svg</normaloff>:/littlenavmap/resources/icons/gls.svg</iconset>
    </property>
    <property name="text">
-    <string>Show &amp;GLS Approach Paths</string>
+    <string>Show &amp;GLS/RNP Approach Paths</string>
    </property>
    <property name="toolTip">
-    <string>Show GLS approach paths on map</string>
+    <string>Show GLS and RNP approach paths on map</string>
    </property>
    <property name="statusTip">
-    <string>Show GLS approach paths on map</string>
+    <string>Show GLS and RNP approach paths on map</string>
    </property>
   </action>
   <action name="actionMapShowHolding">
@@ -11333,10 +11288,10 @@ relation to shown airport</string>
     <string>Goto &amp;User Aircraft</string>
    </property>
    <property name="toolTip">
-    <string>Keep the user aircraft centered on the map</string>
+    <string>Jump to the user aircraft</string>
    </property>
    <property name="statusTip">
-    <string>Keep the user aircraft centered on the map</string>
+    <string>Jump to the user aircraft</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+PgUp</string>
@@ -11357,7 +11312,7 @@ relation to shown airport</string>
     <string>Show &amp;MSA Sectors</string>
    </property>
    <property name="toolTip">
-    <string>Show airport MSA sectors on the map</string>
+    <string>Show MSA sectors on the map</string>
    </property>
    <property name="statusTip">
     <string>Show holdings on map</string>
@@ -11372,7 +11327,7 @@ relation to shown airport</string>
     <string>Add &amp;MSA Diagram at %1</string>
    </property>
    <property name="toolTip">
-    <string>Display airport MSA sector diagram</string>
+    <string>Display MSA sector diagram</string>
    </property>
    <property name="statusTip">
     <string>Display holding at this position or navaid</string>
@@ -11384,10 +11339,10 @@ relation to shown airport</string>
      <normaloff>:/littlenavmap/resources/icons/msaoff.svg</normaloff>:/littlenavmap/resources/icons/msaoff.svg</iconset>
    </property>
    <property name="text">
-    <string>&amp;Remove Airport MSA</string>
+    <string>&amp;Remove MSA Sector Diagram</string>
    </property>
    <property name="toolTip">
-    <string>Remove this airport MSA sector diagram</string>
+    <string>Remove this MSA sector diagram</string>
    </property>
    <property name="statusTip">
     <string>Remove this holding</string>
@@ -11402,10 +11357,10 @@ relation to shown airport</string>
     <string>Select &amp;Departure Runway for %1 ...</string>
    </property>
    <property name="toolTip">
-    <string>Select departure runway for airport</string>
+    <string>Add a departure runway and extended runway leg to the flight plan</string>
    </property>
    <property name="statusTip">
-    <string>Add a custom approach to the flight plan</string>
+    <string>Add a departure runway and extended runway leg to the flight plan</string>
    </property>
    <property name="shortcut">
     <string>Alt+Shift+R</string>
@@ -11420,10 +11375,10 @@ relation to shown airport</string>
     <string>Select &amp;Departure Runway for %1 ...</string>
    </property>
    <property name="toolTip">
-    <string>Select departure runway for airport</string>
+    <string>Add a departure runway and extended runway leg to the flight plan</string>
    </property>
    <property name="statusTip">
-    <string>Add a custom approach to the flight plan</string>
+    <string>Add a departure runway and extended runway leg to the flight plan</string>
    </property>
    <property name="shortcut">
     <string>Alt+Shift+R</string>
@@ -11560,14 +11515,14 @@ relation to shown airport</string>
     <bool>true</bool>
    </property>
    <property name="checked">
-    <bool>true</bool>
+    <bool>false</bool>
    </property>
    <property name="icon">
     <iconset resource="../../littlenavmap.qrc">
      <normaloff>:/littlenavmap/resources/icons/altrange.svg</normaloff>:/littlenavmap/resources/icons/altrange.svg</iconset>
    </property>
    <property name="text">
-    <string>Show Selected &amp;Altitude Range</string>
+    <string>Show Selected &amp;Altitude Range Arc</string>
    </property>
    <property name="toolTip">
     <string>Show range for selected autopilot altitude</string>
@@ -11703,7 +11658,7 @@ relation to shown airport</string>
      <normaloff>:/littlenavmap/resources/icons/centeraircraftdest.svg</normaloff>:/littlenavmap/resources/icons/centeraircraftdest.svg</iconset>
    </property>
    <property name="text">
-    <string>&amp;Zoom to Aircraft and Destination</string>
+    <string>&amp;Center on Aircraft and Destination</string>
    </property>
    <property name="toolTip">
     <string>Zoom elevation profile to aircraft and destination</string>
@@ -11725,13 +11680,13 @@ relation to shown airport</string>
   </action>
   <action name="actionCreateDirStructure">
    <property name="text">
-    <string>&amp;Create Directory Structure</string>
+    <string>&amp;Create Directory Structure for saving Files</string>
    </property>
    <property name="toolTip">
-    <string>Create the recommended directory structure for saving files</string>
+    <string>Create the recommended directory structure for saving and loading files</string>
    </property>
    <property name="statusTip">
-    <string>Create the recommended directory structure for saving files</string>
+    <string>Create the recommended directory structure for saving and loading files</string>
    </property>
   </action>
   <action name="actionProfileDisplayOptions">
@@ -11781,10 +11736,10 @@ relation to shown airport</string>
     <string>Show &amp;Online Aircraft</string>
    </property>
    <property name="toolTip">
-    <string>Show online client aircraft position and data on map</string>
+    <string>Show online client aircraft on the map</string>
    </property>
    <property name="statusTip">
-    <string>Show online client aircraft position and data on map</string>
+    <string>Show online client aircraft on the map</string>
    </property>
   </action>
   <action name="actionResetTabs">
@@ -11873,7 +11828,7 @@ relation to shown airport</string>
     <bool>true</bool>
    </property>
    <property name="checked">
-    <bool>true</bool>
+    <bool>false</bool>
    </property>
    <property name="icon">
     <iconset resource="../../littlenavmap.qrc">
@@ -11907,6 +11862,139 @@ relation to shown airport</string>
     <string>Check if the correct modes for the scenery library are used</string>
    </property>
   </action>
+  <action name="actionShowWindowTitleBar">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Show Dock Window &amp;Title Bars</string>
+   </property>
+   <property name="iconText">
+    <string>Show Dock Window Title Bars</string>
+   </property>
+   <property name="toolTip">
+    <string>Show or hide the title bars of docked windows</string>
+   </property>
+   <property name="statusTip">
+    <string>Show or hide the title bars of docked windows</string>
+   </property>
+  </action>
+  <action name="actionAircraftPerformanceWarnMismatch">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>&amp;Warning for Aircraft Type Mismatch</string>
+   </property>
+   <property name="toolTip">
+    <string>Show a warning if the loaded performance file does not match the simulator aircraft</string>
+   </property>
+   <property name="statusTip">
+    <string>Show a warning if the loaded performance file does not match the simulator aircraft</string>
+   </property>
+  </action>
+  <action name="actionLogdataCleanup">
+   <property name="text">
+    <string>&amp;Cleanup Logbook Entries ...</string>
+   </property>
+   <property name="toolTip">
+    <string>Remove invalid logbook entries</string>
+   </property>
+   <property name="statusTip">
+    <string>Remove invalid logbook entries</string>
+   </property>
+  </action>
+  <action name="actionHelpChangelog">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/help.svg</normaloff>:/littlenavmap/resources/icons/help.svg</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Changelog</string>
+   </property>
+   <property name="toolTip">
+    <string>Open changelog in text editor</string>
+   </property>
+   <property name="statusTip">
+    <string>Open changelog in text editor</string>
+   </property>
+  </action>
+  <action name="actionShowMapInstallation">
+   <property name="text">
+    <string>Show Map Theme &amp;Installation Directory</string>
+   </property>
+   <property name="toolTip">
+    <string>Open the Little Navmap map installation directory for additional maps</string>
+   </property>
+   <property name="statusTip">
+    <string>Open the Little Navmap map installation directory for additional maps</string>
+   </property>
+  </action>
+  <action name="actionUserdataCleanup">
+   <property name="text">
+    <string>&amp;Cleanup Userpoints ...</string>
+   </property>
+   <property name="iconText">
+    <string>Delete duplicates and invalid userpoints from database</string>
+   </property>
+   <property name="toolTip">
+    <string>Delete duplicates and invalid userpoints from database</string>
+   </property>
+  </action>
+  <action name="actionRouteMarkAddon">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/airportaddon.svg</normaloff>:/littlenavmap/resources/icons/airportaddon.svg</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Mark %1 as Add-on</string>
+   </property>
+   <property name="toolTip">
+    <string>Create a userpoint highlighting the airport as add-on</string>
+   </property>
+   <property name="statusTip">
+    <string>Create a userpoint highlighting the airport as add-on</string>
+   </property>
+  </action>
+  <action name="actionSearchMarkAddon">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/airportaddon.svg</normaloff>:/littlenavmap/resources/icons/airportaddon.svg</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Mark %1 as Add-on</string>
+   </property>
+   <property name="toolTip">
+    <string>Create a userpoint highlighting the airport as add-on</string>
+   </property>
+   <property name="statusTip">
+    <string>Create a userpoint highlighting the airport as add-on</string>
+   </property>
+  </action>
+  <action name="actionMapShowGridConfig">
+   <property name="checked">
+    <bool>false</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/mapgridconfig.svg</normaloff>:/littlenavmap/resources/icons/mapgridconfig.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Show Map Grid &amp;Configuration ...</string>
+   </property>
+   <property name="toolTip">
+    <string>Show map grid configuration</string>
+   </property>
+   <property name="statusTip">
+    <string>Show map grid</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <tabstops>
@@ -11916,9 +12004,10 @@ relation to shown airport</string>
   <tabstop>pushButtonRouteClearSelection</tabstop>
   <tabstop>pushButtonRouteSettings</tabstop>
   <tabstop>pushButtonRouteHelp</tabstop>
+  <tabstop>textBrowserViewRoute</tabstop>
   <tabstop>tableViewRoute</tabstop>
   <tabstop>plainTextEditRouteRemarks</tabstop>
-  <tabstop>checkBoxAircraftPerformanceWindMan</tabstop>
+  <tabstop>toolButtonAircraftPerformanceWind</tabstop>
   <tabstop>pushButtonAircraftPerformanceEdit</tabstop>
   <tabstop>pushButtonAircraftPerformanceNew</tabstop>
   <tabstop>pushButtonAircraftPerformanceLoad</tabstop>
@@ -11927,6 +12016,7 @@ relation to shown airport</string>
   <tabstop>pushButtonAircraftPerformanceHelp</tabstop>
   <tabstop>spinBoxAircraftPerformanceWindDirection</tabstop>
   <tabstop>spinBoxAircraftPerformanceWindSpeed</tabstop>
+  <tabstop>spinBoxAircraftPerformanceWindAlt</tabstop>
   <tabstop>textBrowserAircraftPerformanceReport</tabstop>
   <tabstop>pushButtonAircraftPerfCollectRestart</tabstop>
   <tabstop>pushButtonAircraftPerfCollectMerge</tabstop>
@@ -11946,8 +12036,6 @@ relation to shown airport</string>
   <tabstop>textBrowserLogbookInfo</tabstop>
   <tabstop>textBrowserClientInfo</tabstop>
   <tabstop>textBrowserCenterInfo</tabstop>
-  <tabstop>widgetProfileLabelVert</tabstop>
-  <tabstop>scrollAreaProfile</tabstop>
   <tabstop>tabWidgetAircraft</tabstop>
   <tabstop>textBrowserAircraftInfo</tabstop>
   <tabstop>textBrowserAircraftProgressInfo</tabstop>
@@ -11984,6 +12072,9 @@ relation to shown airport</string>
   <tabstop>spinBoxAirportDistMinSearch</tabstop>
   <tabstop>spinBoxAirportDistMaxSearch</tabstop>
   <tabstop>comboBoxAirportDistDirectionSearch</tabstop>
+  <tabstop>pushButtonAirportFlightplanSearch</tabstop>
+  <tabstop>spinBoxAirportFlightplanMinSearch</tabstop>
+  <tabstop>spinBoxAirportFlightplanMaxSearch</tabstop>
   <tabstop>lineEditAirportScenerySearch</tabstop>
   <tabstop>lineEditAirportFileSearch</tabstop>
   <tabstop>tableViewAirportSearch</tabstop>
@@ -12007,6 +12098,8 @@ relation to shown airport</string>
   <tabstop>tableViewNavSearch</tabstop>
   <tabstop>comboBoxProcedureSearchFilter</tabstop>
   <tabstop>comboBoxProcedureRunwayFilter</tabstop>
+  <tabstop>pushButtonProcedureShowAll</tabstop>
+  <tabstop>pushButtonProcedureSearchReset</tabstop>
   <tabstop>pushButtonProcedureSearchClearSelection</tabstop>
   <tabstop>pushButtonProcedureHelpSearch</tabstop>
   <tabstop>treeWidgetApproachSearch</tabstop>
@@ -12061,9 +12154,14 @@ relation to shown airport</string>
   <tabstop>pushButtonOnlineCenterHelpSearch</tabstop>
   <tabstop>tableViewOnlineCenterSearch</tabstop>
   <tabstop>tableViewOnlineServerSearch</tabstop>
-  <tabstop>tabWidgetLegend</tabstop>
-  <tabstop>textBrowserLegendNavInfo</tabstop>
-  <tabstop>textBrowserLegendInfo</tabstop>
+  <tabstop>widgetProfileLabelVert</tabstop>
+  <tabstop>widgetProfileLabelHoriz</tabstop>
+  <tabstop>scrollAreaProfile</tabstop>
+  <tabstop>verticalSliderProfileZoom</tabstop>
+  <tabstop>horizontalSliderProfileZoom</tabstop>
+  <tabstop>pushButtonProfileExpand</tabstop>
+  <tabstop>pushButtonProfileSettings</tabstop>
+  <tabstop>pushButtonProfileHelp</tabstop>
  </tabstops>
  <resources>
   <include location="../../littlenavmap.qrc"/>

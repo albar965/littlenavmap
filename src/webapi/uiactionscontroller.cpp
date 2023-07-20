@@ -3,9 +3,7 @@
 #include "mapgui/mapwidget.h"
 #include "common/infobuildertypes.h"
 #include "common/abstractinfobuilder.h"
-#include "navapp.h"
-#include "web/webcontroller.h"
-#include "web/webmapcontroller.h"
+#include "app/navapp.h"
 
 using InfoBuilderTypes::UiInfoData;
 
@@ -18,8 +16,6 @@ UiActionsController::UiActionsController(QObject *parent, bool verboseParam, Abs
         qDebug() << Q_FUNC_INFO;
 }
 
-#include <QDebug>
-
 WebApiResponse UiActionsController::infoAction(WebApiRequest request){
 Q_UNUSED(request)
     if(verbose)
@@ -30,9 +26,9 @@ Q_UNUSED(request)
 
     UiInfoData data = {
         getMainWindow()->getMapWidget()->zoom(),
-        getNavApp()->getMapPaintWidgetWeb()->zoom(),
+        NavApp::getMapPaintWidgetWeb()->zoom(),
         getMainWindow()->getMapWidget()->distance(),
-        getNavApp()->getMapPaintWidgetWeb()->distance()
+        NavApp::getMapPaintWidgetWeb()->distance()
     };
 
     response.body = infoBuilder->uiinfo(data);

@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -17,26 +17,28 @@
 
 #include "mappainter/mappainteraircraft.h"
 
-#include "mapgui/mapwidget.h"
-#include "navapp.h"
-#include "online/onlinedatacontroller.h"
-#include "mapgui/mapfunctions.h"
-#include "util/paintercontextsaver.h"
+#include "common/constants.h"
 #include "geo/calculations.h"
+#include "mapgui/mapfunctions.h"
+#include "mapgui/mappaintwidget.h"
+#include "app/navapp.h"
+#include "online/onlinedatacontroller.h"
+#include "settings/settings.h"
+#include "util/paintercontextsaver.h"
 
 #include <marble/GeoPainter.h>
 #include <marble/ViewportParams.h>
 
+using atools::fs::sc::SimConnectUserAircraft;
 using atools::fs::sc::SimConnectAircraft;
-
-const int NUM_CLOSEST_AI_LABELS = 5;
-const float DIST_METER_CLOSEST_AI_LABELS = atools::geo::nmToMeter(20);
-const float DIST_FT_CLOSEST_AI_LABELS = 5000;
 
 MapPainterAircraft::MapPainterAircraft(MapPaintWidget *mapWidget, MapScale *mapScale, PaintContext *paintContext)
   : MapPainterVehicle(mapWidget, mapScale, paintContext)
 {
-
+  atools::settings::Settings& settings = atools::settings::Settings::instance();
+  maxNearestAiLabels = settings.getAndStoreValue(lnm::MAP_MAX_NEAREST_AI_LABELS, 5).toInt();
+  maxNearestAiLabelsDistNm = atools::geo::nmToMeter(settings.getAndStoreValue(lnm::MAP_MAX_NEAREST_AI_LABELS_DIST_NM, 10.).toFloat());
+  maxNearestAiLabelsVertDistFt = settings.getAndStoreValue(lnm::MAP_MAX_NEAREST_AI_LABELS_VERT_DIST_FT, 5000.).toFloat();
 }
 
 MapPainterAircraft::~MapPainterAircraft()
@@ -47,33 +49,32 @@ MapPainterAircraft::~MapPainterAircraft()
 void MapPainterAircraft::render()
 {
   atools::util::PainterContextSaver saver(context->painter);
-  const atools::fs::sc::SimConnectUserAircraft& userAircraft = mapPaintWidget->getUserAircraft();
+  const SimConnectUserAircraft& userAircraft = mapPaintWidget->getUserAircraft();
 
   if(context->objectTypes & map::AIRCRAFT_ALL)
   {
-    const atools::geo::Pos& pos = userAircraft.getPosition();
-
     // Draw AI and online aircraft - not boats ====================================================================
     bool onlineEnabled = context->objectTypes.testFlag(map::AIRCRAFT_ONLINE) && NavApp::isOnlineNetworkActive();
     bool aiEnabled = context->objectTypes.testFlag(map::AIRCRAFT_AI) && NavApp::isConnected();
+    const atools::geo::Pos& userPos = userAircraft.getPosition();
     if(aiEnabled || onlineEnabled)
     {
       bool overflow = false;
 
       // Merge simulator aircraft and online aircraft
-      QVector<const atools::fs::sc::SimConnectAircraft *> allAircraft;
+      QVector<const SimConnectAircraft *> allAircraft;
 
       // Get all pure (slowly updated) online aircraft ======================================
       if(onlineEnabled)
       {
         // Filters duplicates from simulator and user aircraft out - remove shadow aircraft
-        const QList<atools::fs::sc::SimConnectAircraft> *onlineAircraft =
+        const QList<SimConnectAircraft> *onlineAircraft =
           NavApp::getOnlinedataController()->getAircraft(context->viewport->viewLatLonAltBox(),
                                                          context->mapLayer, context->lazyUpdate, overflow);
 
         context->setQueryOverflow(overflow);
 
-        for(const atools::fs::sc::SimConnectAircraft& ac : *onlineAircraft)
+        for(const SimConnectAircraft& ac : *onlineAircraft)
           allAircraft.append(&ac);
       }
 
@@ -99,32 +100,42 @@ void MapPainterAircraft::render()
       struct AiDistType
       {
         const SimConnectAircraft *aircraft;
+        float x, y;
         float distanceLateralMeter, distanceVerticalFt;
       };
 
       QVector<AiDistType> aiSorted;
-
+      QMargins margins(100, 100, 100, 100);
+      bool hidden = false;
+      float x, y;
       for(const SimConnectAircraft *ac : allAircraft)
-        aiSorted.append({ac,
-                         pos.distanceMeterTo(ac->getPosition()),
-                         std::abs(pos.getAltitude() - ac->getActualAltitudeFt())});
+      {
+        if(wToSBuf(ac->getPosition(), x, y, margins, &hidden))
+        {
+          if(!hidden)
+            aiSorted.append({ac, x, y, userPos.distanceMeterTo(ac->getPosition()),
+                             std::abs(userPos.getAltitude() - ac->getActualAltitudeFt())});
+        }
+      }
 
-      std::sort(aiSorted.begin(), aiSorted.end(), [](const AiDistType& ai1,
-                                                     const AiDistType& ai2) -> bool
+      // Sort to have the closest at the start of the list =======================
+      std::sort(aiSorted.begin(), aiSorted.end(), [](const AiDistType& ai1, const AiDistType& ai2) -> bool
       {
         // returns ​true if the first argument is less than (i.e. is ordered before) the second.
-        return ai1.distanceLateralMeter > ai2.distanceLateralMeter;
+        return ai1.distanceLateralMeter < ai2.distanceLateralMeter;
       });
 
-      int num = aiSorted.size();
+      bool hideAiOnGround = OptionData::instance().getFlags().testFlag(opts::MAP_AI_HIDE_GROUND);
+      int num = 0;
       for(const AiDistType& adt : aiSorted)
       {
         const SimConnectAircraft& ac = *adt.aircraft;
-        if(mapfunc::aircraftVisible(ac, context->mapLayer))
+        if(mapfunc::aircraftVisible(ac, context->mapLayer, hideAiOnGround))
         {
-          paintAiVehicle(ac, --num < NUM_CLOSEST_AI_LABELS &&
-                         adt.distanceLateralMeter < DIST_METER_CLOSEST_AI_LABELS &&
-                         adt.distanceVerticalFt < DIST_FT_CLOSEST_AI_LABELS);
+          bool forceLabelNearby = num++ < maxNearestAiLabels &&
+                                  adt.distanceLateralMeter < maxNearestAiLabelsDistNm &&
+                                  adt.distanceVerticalFt < maxNearestAiLabelsVertDistFt;
+          paintAiVehicle(ac, adt.x, adt.y, forceLabelNearby);
         }
       }
     }
@@ -132,14 +143,19 @@ void MapPainterAircraft::render()
     // Draw user aircraft ====================================================================
     if(context->objectTypes.testFlag(map::AIRCRAFT))
     {
+      // Use higher accuracy - falls back to normal position if not set
+        atools::geo::PosD pos = userAircraft.getPositionD();
       if(pos.isValid())
       {
         bool hidden = false;
-        float x, y;
+        double x, y;
         if(wToS(pos, x, y, DEFAULT_WTOS_SIZE, &hidden))
         {
           if(!hidden)
-            paintUserAircraft(userAircraft, x, y);
+          {
+            paintTurnPath(userAircraft);
+            paintUserAircraft(userAircraft, static_cast<float>(x), static_cast<float>(y));
+          }
         }
       }
     }
@@ -147,5 +163,5 @@ void MapPainterAircraft::render()
 
   // Wind display depends only on option
   if(context->dOptUserAc(optsac::ITEM_USER_AIRCRAFT_WIND_POINTER) && userAircraft.isValid())
-    paintWindPointer(userAircraft, context->painter->device()->width() / 2, 0);
+    paintWindPointer(userAircraft, context->screenRect.width() / 2.f, 2.f);
 }

@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2022 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -121,10 +121,13 @@ public:
   float getRouteCruiseSpeedKts();
 
   /* Wind direction in degree as set in the flight plan dock on tab aircraft */
-  float getWindDir() const;
+  float getManualWindDirDeg() const;
 
   /* Wind speed in knots as set in the flight plan dock on tab aircraft */
-  float getWindSpeed() const;
+  float getManualWindSpeedKts() const;
+
+  /* Selected wind altitude */
+  float getManualWindAltFt() const;
 
   /* Checkbox above flight plan table */
   bool isWindManual() const;
@@ -133,6 +136,7 @@ public:
   void routeChanged(bool, bool = false);
   void updateReports();
   void routeAltitudeChanged(float);
+  void warningChanged();
 
   void flightSegmentChanged(const atools::fs::perf::FlightSegment& flightSegment);
 
@@ -164,11 +168,14 @@ public:
   void getEnduranceFull(float& enduranceHours, float& enduranceNm);
 
   /* Current aircraft endurance based on current fuel flow. This is the rolling average over ten seconds or current value. */
-  void getEnduranceCurrent(float& enduranceHours, float& enduranceNm, bool average);
+  void getEnduranceAverage(float& enduranceHours, float& enduranceNm);
 
   /* Get collected major errors */
   bool hasErrors() const;
   QStringList getErrorStrings() const;
+
+  /* Update tooltips showing the file path. Set "setToolTipsVisible" for menu always to true */
+  void updateMenuTooltips();
 
 signals:
   /* Sent if performance or wind has changed */
@@ -179,9 +186,11 @@ private:
   /* Create a new performance sheet and opens the edit dialog after asking to save currently unchanged */
   void create();
 
-  /* Opens the edit dialog. */
+  /* Opens the edit dialog asks for changes and saves if needed. */
   void edit();
-  bool editInternal(atools::fs::perf::AircraftPerf& perf, const QString& modeText);
+
+  /* Opens the edit dialog and returns true if accepted. */
+  bool editInternal(atools::fs::perf::AircraftPerf& perf, const QString& modeText, bool newPerf, bool& saveClicked);
 
   /* Open file dialog and load a new performance file after asking to save currently unchanged */
   void load();
@@ -202,9 +211,6 @@ private:
   void helpClickedPerf() const;
   void helpClickedPerfCollect() const;
 
-  void manualWindToggled();
-  void manualWindToggledAction();
-
   /* Wind spin boxes changed */
   void windBoxesChanged();
 
@@ -217,6 +223,7 @@ private:
   /* Create or update HTML report for performance collection */
   void updateReportCurrent();
 
+  /* Update buttons tab title change indication and main window filename and change indication */
   void updateActionStates();
 
   /* Invalidate performance file after an error - state "none loaded" */

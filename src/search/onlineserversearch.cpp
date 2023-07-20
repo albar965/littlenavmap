@@ -17,7 +17,7 @@
 
 #include "search/onlineserversearch.h"
 
-#include "navapp.h"
+#include "app/navapp.h"
 #include "common/maptypes.h"
 #include "common/mapflags.h"
 #include "common/constants.h"

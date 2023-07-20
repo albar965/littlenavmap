@@ -28,14 +28,14 @@ Simulator 2020, X-Plane 11 and X-Plane 12.
 ------------------------------------------------------------------------------
 
 See the Little Navmap help for more information.
-All online here: https://www.littlenavmap.org/manuals/littlenavmap/release/2.6/en/
+All online here: https://www.littlenavmap.org/manuals/littlenavmap/release/latest/en/
 
 ------------------------------------------------------------------------------
 -- INSTALLATION --------------------------------------------------------------
 ------------------------------------------------------------------------------
 
 See online manual for installation instructions:
-https://www.littlenavmap.org/manuals/littlenavmap/release/2.6/en/INSTALLATION.html
+https://www.littlenavmap.org/manuals/littlenavmap/release/latest/en/INSTALLATION.html
 
 ------------------------------------------------------------------------------
 -- OTHER PROGRAMS INCLUDED ---------------------------------------------------
@@ -45,14 +45,21 @@ This archieve can contain two additional programs depending on downloaded versio
 
 Little Navconnect
 =================
+
 An agent connecting Little Navmap with a FSX, Prepar3D or X-Plane flight simulator usable
 for remote and networked connections.
 
 Little Xpconnect
 =================
+
 A X-Plane plugin that allows to use Little Navmap as a moving map when flying.
 Little Navmap can connect locally to this plugin. Remote or networked setups can be done with
 the Little Navconnect program.
+
+Apple macOS users: Keep in mind that you have to clear the quarantine flag for *Little Xpconnect*
+on installation or update. See
+https://www.littlenavmap.org/manuals/littlenavmap/release/latest/en/XPCONNECT.html#clearing-the-quarantine-flag-on-macos
+for more information.
 
 ------------------------------------------------------------------------------
 -- LICENSE -------------------------------------------------------------------
@@ -67,4 +74,4 @@ https://github.com/albar965/littlenavmap
 The source code for Little Navconnect is available at Github too:
 https://github.com/albar965/littlenavconnect
 
-Copyright 2015-2020 Alexander Barthel (https://www.littlenavmap.org/contact.html).
+Copyright 2015-2023 Alexander Barthel (https://www.littlenavmap.org/contact.html).

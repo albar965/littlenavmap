@@ -83,7 +83,7 @@ bool MapLayer::hasSameQueryParametersMarker(const MapLayer *other) const
 
 bool MapLayer::hasSameQueryParametersIls(const MapLayer *other) const
 {
-  return ils == other->ils;
+  return ils == other->ils && ilsDetail == other->ilsDetail;
 }
 
 bool MapLayer::hasSameQueryParametersHolding(const MapLayer *other) const
@@ -135,6 +135,8 @@ void MapLayer::loadFromXml(atools::util::XmlStream& xmlStream)
       aiAircraftTextDetail = xmlStream.readElementTextBool();
     else if(reader.name() == "AiAircraftTextDetail2")
       aiAircraftTextDetail2 = xmlStream.readElementTextBool();
+    else if(reader.name() == "AiAircraftTextDetail3")
+      aiAircraftTextDetail3 = xmlStream.readElementTextBool();
     else if(reader.name() == "AiShipLarge")
       aiShipLarge = xmlStream.readElementTextBool();
     else if(reader.name() == "AiShipSmall")
@@ -225,6 +227,8 @@ void MapLayer::loadFromXml(atools::util::XmlStream& xmlStream)
       holdingInfo2 = xmlStream.readElementTextBool();
     else if(reader.name() == "Ils")
       ils = xmlStream.readElementTextBool();
+    else if(reader.name() == "IlsDetail")
+      ilsDetail = xmlStream.readElementTextBool();
     else if(reader.name() == "IlsIdent")
       ilsIdent = xmlStream.readElementTextBool();
     else if(reader.name() == "IlsInfo")
@@ -255,6 +259,8 @@ void MapLayer::loadFromXml(atools::util::XmlStream& xmlStream)
       onlineAircraftText = xmlStream.readElementTextBool();
     else if(reader.name() == "RouteTextAndDetail")
       routeTextAndDetail = xmlStream.readElementTextBool();
+    else if(reader.name() == "RouteTextAndDetail2")
+      routeTextAndDetail2 = xmlStream.readElementTextBool();
     else if(reader.name() == "Track")
       track = xmlStream.readElementTextBool();
     else if(reader.name() == "TrackIdent")
@@ -292,7 +298,7 @@ void MapLayer::loadFromXml(atools::util::XmlStream& xmlStream)
     else if(reader.name() == "WaypointSymbolSize")
       waypointSymbolSize = xmlStream.readElementTextInt();
     else if(reader.name() == "WindBarbs")
-      windBarbs = xmlStream.readElementTextBool();
+      windBarbs = xmlStream.readElementTextInt();
     else if(reader.name() == "WindBarbsSymbolSize")
       windBarbsSymbolSize = xmlStream.readElementTextInt();
     else if(reader.name() == "MaximumTextLengthAirport")
@@ -326,6 +332,7 @@ QDebug operator<<(QDebug out, const MapLayer& record)
   out << "<AiAircraftText>" << record.aiAircraftText << "</AiAircraftText>" << endl;
   out << "<AiAircraftTextDetail>" << record.aiAircraftTextDetail << "</AiAircraftTextDetail>" << endl;
   out << "<AiAircraftTextDetail2>" << record.aiAircraftTextDetail2 << "</AiAircraftTextDetail2>" << endl;
+  out << "<AiAircraftTextDetail3>" << record.aiAircraftTextDetail2 << "</AiAircraftTextDetail3>" << endl;
   out << "<AiShipLarge>" << record.aiShipLarge << "</AiShipLarge>" << endl;
   out << "<AiShipSmall>" << record.aiShipSmall << "</AiShipSmall>" << endl;
   out << "<Airport>" << record.airport << "</Airport>" << endl;
@@ -373,6 +380,7 @@ QDebug operator<<(QDebug out, const MapLayer& record)
   out << "<HoldingInfo>" << record.holdingInfo << "</HoldingInfo>" << endl;
   out << "<HoldingInfo2>" << record.holdingInfo2 << "</HoldingInfo2>" << endl;
   out << "<Ils>" << record.ils << "</Ils>" << endl;
+  out << "<IlsDetail>" << record.ilsDetail << "</IlsDetail>" << endl;
   out << "<IlsIdent>" << record.ilsIdent << "</IlsIdent>" << endl;
   out << "<IlsInfo>" << record.ilsInfo << "</IlsInfo>" << endl;
   out << "<Marker>" << record.marker << "</Marker>" << endl;
@@ -393,6 +401,7 @@ QDebug operator<<(QDebug out, const MapLayer& record)
   out << "<OnlineAircraft>" << record.onlineAircraft << "</OnlineAircraft>" << endl;
   out << "<OnlineAircraftText>" << record.onlineAircraftText << "</OnlineAircraftText>" << endl;
   out << "<RouteTextAndDetail>" << record.routeTextAndDetail << "</RouteTextAndDetail>" << endl;
+  out << "<RouteTextAndDetail2>" << record.routeTextAndDetail2 << "</RouteTextAndDetail2>" << endl;
   out << "<Track>" << record.track << "</Track>" << endl;
   out << "<TrackIdent>" << record.trackIdent << "</TrackIdent>" << endl;
   out << "<TrackInfo>" << record.trackInfo << "</TrackInfo>" << endl;

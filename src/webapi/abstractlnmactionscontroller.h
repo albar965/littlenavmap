@@ -37,12 +37,12 @@ namespace atools {
     }
 }
 namespace InfoBuilderTypes {
-    class AirportAdminNames;
+    struct AirportAdminNames;
 }
 namespace ageo = atools::geo;
 namespace map {
-    class MapAirport;
-    class WeatherContext;
+    struct MapAirport;
+    struct WeatherContext;
 }
 
 class NavApp;
@@ -68,7 +68,7 @@ class AbstractLnmActionsController :
     Q_ENUMS(AirportQueryType)
 public:
     Q_INVOKABLE AbstractLnmActionsController(QObject *parent, bool verboseParam, AbstractInfoBuilder* infoBuilder);
-    virtual ~AbstractLnmActionsController();
+    virtual ~AbstractLnmActionsController() override;
     enum AirportQueryType { SIM, NAV };
 protected:
     // Main LNM objects

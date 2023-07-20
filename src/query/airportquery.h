@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -53,7 +53,7 @@ class MapTypesFactory;
 class MapLayer;
 
 /* Key for nearestCache combining all query parameters */
-struct NearestCacheKeyAirport;
+class NearestCacheKeyAirport;
 
 /*
  * Provides map related database queries. Fill objects of the maptypes namespace and maintains a cache.
@@ -163,7 +163,7 @@ public:
   void getRunwayEndByNames(map::MapResult& result, const QString& runwayName, const QString& airportIdent);
   map::MapRunwayEnd getRunwayEndByName(int airportId, const QString& runway);
   bool getBestRunwayEndForPosAndCourse(map::MapRunwayEnd& runwayEnd, map::MapAirport& airport,
-                                       const atools::geo::Pos& pos, float trackTrue);
+                                       const atools::geo::Pos& pos, float trackTrue, bool helicopter);
 
   const QList<map::MapApron> *getAprons(int airportId);
 
@@ -175,18 +175,14 @@ public:
 
   const QList<map::MapHelipad> *getHelipads(int airportId);
 
-  /* Get nearest airports that have a procedure sorted by distance to pos with a maximum distance distanceNm.
+  /* Get nearest airports that have a procedure and are sorted by distance to pos with a maximum distance distanceNm.
    * Uses distance * 4 and searches again if nothing was found.*/
-  map::MapResultIndex *getNearestAirportsProc(const map::MapAirport& airport, float distanceNm);
-
-  /* Get a list of runways of all airports inside rectangle sorted by distance to pos */
-  void getRunways(QVector<map::MapRunway>& runways, const atools::geo::Rect& rect, const atools::geo::Pos& pos);
+  const map::MapResultIndex *getNearestProcAirports(const atools::geo::Pos& pos, const QString& ident, float distanceNm);
 
   /* Get the best fitting runway end from the given list of runways according to heading.
-   *  Only the rearest airport is returned if no runway was found */
-  void getBestRunwayEndAndAirport(map::MapRunwayEnd& runwayEnd, map::MapAirport& airport,
-                                  const QVector<map::MapRunway>& runways, const atools::geo::Pos& pos, float heading,
-                                  float maxRwDistance, float maxHeadingDeviation);
+   * Only the rearest airport is returned if no runway was found */
+  void bestRunwayEndAndAirport(map::MapRunwayEnd& runwayEnd, map::MapAirport& airport, const map::MapResultIndex& runwayAirports,
+                               const atools::geo::Pos& pos, float heading, float maxDistanceMeter, float maxHeadingDeviationDeg);
 
   map::MapRunwayEnd getRunwayEndById(int id);
 
@@ -210,18 +206,21 @@ public:
 private:
   friend inline uint qHash(const NearestCacheKeyAirport& key);
 
-  map::MapResultIndex *nearestAirportsProcInternal(const map::MapAirport& airport, float distanceNm);
+  const map::MapResultIndex *nearestProcAirportsInternal(const atools::geo::Pos& pos, const QString& ident, float distanceNm);
 
-  const QList<map::MapAirport> *fetchAirports(const Marble::GeoDataLatLonBox& rect,
-                                              atools::sql::SqlQuery *query, bool reverse,
+  const QList<map::MapAirport> *fetchAirports(const Marble::GeoDataLatLonBox& rect, atools::sql::SqlQuery *query, bool reverse,
                                               bool lazy, bool overview);
 
   bool runwayCompare(const map::MapRunway& r1, const map::MapRunway& r2);
   bool hasQueryByAirportId(atools::sql::SqlQuery& query, int id) const;
-  void startByNameAndPos(map::MapStart& start, int airportId, const QString& runwayEndName,
-                         const atools::geo::Pos& position);
+  void startByNameAndPos(map::MapStart& start, int airportId, const QString& runwayEndName, const atools::geo::Pos& position);
   void runwayEndByNames(map::MapResult& result, const QString& runwayName, const QString& airportIdent);
   map::MapRunwayEnd runwayEndByName(int airportId, const QString& runway);
+
+  /* Get a list of runways of all airports inside rectangle sorted by distance to pos.
+   * Airport objects are not complete. */
+  void getRunwaysAndAirports(map::MapResultIndex& runwayAirports, const atools::geo::Rect& rect, const atools::geo::Pos& pos,
+                             bool noRunway);
 
   /* true if third party navdata */
   bool navdata;

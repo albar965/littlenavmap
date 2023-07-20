@@ -22,7 +22,7 @@
 #include "httpserver/httpsession.h"
 #include "templateengine/templatecache.h"
 #include "mapgui/mappaintwidget.h"
-#include "navapp.h"
+#include "app/navapp.h"
 #include "info/infocontroller.h"
 #include "route/routecontroller.h"
 #include "web/webmapcontroller.h"
@@ -58,7 +58,7 @@ RequestHandler::RequestHandler(QObject *parent, WebMapController *webMapControll
           NavApp::getMapPaintWidgetGui(), &MapPaintWidget::getUserAircraft, Qt::BlockingQueuedConnection);
   connect(this, &RequestHandler::getRoute,
           NavApp::getRouteController(),
-          static_cast<const Route& (RouteController::*)() const>(&RouteController::getRoute),
+          static_cast<const Route& (RouteController::*)() const>(&RouteController::getRouteConst),
           Qt::BlockingQueuedConnection);
   connect(this, &RequestHandler::getFlightplanTableAsHtml,
           NavApp::getRouteController(), &RouteController::getFlightplanTableAsHtml, Qt::BlockingQueuedConnection);

@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2022 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -21,6 +21,7 @@
 #include "options/optiondata.h"
 
 #include <QObject>
+#include <QTimer>
 
 namespace atools {
 namespace util {
@@ -48,6 +49,17 @@ public:
   UpdateHandler(const UpdateHandler& other) = delete;
   UpdateHandler& operator=(const UpdateHandler& other) = delete;
 
+  enum UpdateReason
+  {
+    UPDATE_REASON_UNKNOWN,
+    UPDATE_REASON_MANUAL, /* Manual check - show "no updates found" dialog */
+    UPDATE_REASON_FORCE, /* Debug option - always shows dialog */
+    UPDATE_REASON_TIMER, /* Internal timer event. Not checking if disabled or a modal dialog is opened. */
+    UPDATE_REASON_STARTUP /* Also triggers timer */
+  };
+
+  Q_ENUM(UpdateReason)
+
   /*
    * Check asynchronously for updates and call updateFound if anything was found.
    * Skips updates that are in the skip list in settings and also checks the timestamp for the last update.
@@ -56,13 +68,35 @@ public:
    * @param manuallyTriggered Ignores timestamp and shows also a dialog if nothing was found.
    * Also ignores the skip list.
    */
-  void checkForUpdates(opts::UpdateChannels channelOpts, bool manuallyTriggered, bool force);
+  void checkForUpdates(UpdateReason reason);
+
+  /* Disable or enable update check on timer events */
+  void disableUpdateCheck()
+  {
+    enabled = false;
+  }
+
+  void enableUpdateCheck()
+  {
+    enabled = true;
+  }
+
+  void setChannelOpts(opts::UpdateChannels value)
+  {
+    channelOpts = value;
+  }
 
 private:
   void updateFound(atools::util::UpdateList updates);
   void updateFailed(QString errorString);
+  void updateCheckTimeout();
 
-  bool manual = false;
+  /* Run every 15 minues and checks but not if disabled or modal dialogs visible */
+  QTimer updateTimer;
+
+  opts::UpdateChannels channelOpts;
+  UpdateReason updateReason = UPDATE_REASON_UNKNOWN;
+  bool enabled = true;
   atools::util::UpdateCheck *updateCheck;
   MainWindow *mainWindow = nullptr;
 };

@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -23,10 +23,10 @@
 
 using atools::fs::FsPaths;
 
-void SimulatorTypeMap::fillDefault()
+void SimulatorTypeMap::fillDefault(navdb::Status navDatabaseStatus)
 {
   for(FsPaths::SimulatorType type : FsPaths::getAllSimulatorTypes())
-    fillOneDefault(type);
+    fillOneDefault(type, navDatabaseStatus);
 }
 
 atools::fs::FsPaths::SimulatorType SimulatorTypeMap::getBest() const
@@ -37,6 +37,8 @@ atools::fs::FsPaths::SimulatorType SimulatorTypeMap::getBest() const
     return FsPaths::XPLANE_12;
   else if(contains(FsPaths::XPLANE_11) && value(FsPaths::XPLANE_11).hasDatabase)
     return FsPaths::XPLANE_11;
+  else if(contains(FsPaths::P3D_V6) && value(FsPaths::P3D_V6).hasDatabase)
+    return FsPaths::P3D_V6;
   else if(contains(FsPaths::P3D_V5) && value(FsPaths::P3D_V5).hasDatabase)
     return FsPaths::P3D_V5;
   else if(contains(FsPaths::P3D_V4) && value(FsPaths::P3D_V4).hasDatabase)
@@ -53,7 +55,7 @@ atools::fs::FsPaths::SimulatorType SimulatorTypeMap::getBest() const
 
 FsPaths::SimulatorType SimulatorTypeMap::getBestInstalled() const
 {
-  return getBestInstalled({FsPaths::MSFS, FsPaths::XPLANE_12, FsPaths::XPLANE_11, FsPaths::P3D_V5, FsPaths::P3D_V4,
+  return getBestInstalled({FsPaths::MSFS, FsPaths::XPLANE_12, FsPaths::XPLANE_11, FsPaths::P3D_V6, FsPaths::P3D_V5, FsPaths::P3D_V4,
                            FsPaths::P3D_V3, FsPaths::FSX_SE, FsPaths::FSX});
 }
 
@@ -90,14 +92,23 @@ QList<FsPaths::SimulatorType> SimulatorTypeMap::getAllHavingDatabase() const
   return retval;
 }
 
-void SimulatorTypeMap::fillOneDefault(FsPaths::SimulatorType type)
+void SimulatorTypeMap::fillOneDefault(FsPaths::SimulatorType type, navdb::Status navDatabaseStatus)
 {
   // Simulator is installed - create a new entry or update the present one
   FsPathType& path = (*this)[type];
   if(path.basePath.isEmpty())
     path.basePath = FsPaths::getBasePath(type);
+
   if(path.sceneryCfg.isEmpty())
     path.sceneryCfg = FsPaths::getSceneryLibraryPath(type);
+
+  // Assign status if passed to this function
+  if(navDatabaseStatus != navdb::UNKNOWN)
+    path.navDatabaseStatus = navDatabaseStatus;
+
+  // Reset to mixed if invalid
+  if(path.navDatabaseStatus == navdb::UNKNOWN)
+    path.navDatabaseStatus = navdb::MIXED;
 
   // If already present or not - this one has a registry entry or an installation file for X-Plane
   path.isInstalled = FsPaths::hasSimulator(type);
@@ -107,26 +118,28 @@ QDebug operator<<(QDebug out, const FsPathType& record)
 {
   QDebugStateSaver saver(out);
   out.nospace() << "FsPathType["
-                << "registry entry " << record.isInstalled
-                << ", has database " << record.hasDatabase
-                << ", base path " << record.basePath
-                << ", scenery config " << record.sceneryCfg
+                << "isInstalled " << record.isInstalled
+                << ", hasDatabase " << record.hasDatabase
+                << ", basePath " << record.basePath
+                << ", sceneryCfg " << record.sceneryCfg
                 << "]";
   return out;
 }
 
 QDataStream& operator<<(QDataStream& out, const FsPathType& obj)
 {
-  out << obj.basePath << obj.sceneryCfg;
+  out << obj.basePath << obj.sceneryCfg << static_cast<quint8>(obj.navDatabaseStatus);
   return out;
 }
 
 QDataStream& operator>>(QDataStream& in, FsPathType& obj)
 {
-  in >> obj.basePath >> obj.sceneryCfg;
+  quint8 navStatus;
+  in >> obj.basePath >> obj.sceneryCfg >> navStatus;
 
   obj.basePath = QDir::toNativeSeparators(obj.basePath);
   obj.sceneryCfg = QDir::toNativeSeparators(obj.sceneryCfg);
+  obj.navDatabaseStatus = static_cast<navdb::Status>(navStatus);
 
   return in;
 }

@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -75,6 +75,9 @@ public:
   /* Get combo box selection */
   ExportOptions getExportOptions()const;
 
+  /* Set current and default path for the LNMPLN export */
+  void setLnmplnExportDir(const QString& dir);
+
 signals:
   /* Save now button list is clicked */
   void saveNowButtonClicked(const RouteExportFormat& format);
@@ -139,6 +142,14 @@ private:
   void actionResetExportPathTriggered();
   void actionSelectExportPathTriggered();
   void actionSelectTriggered();
+
+  void saveTableLayout();
+  void loadTableLayout();
+
+#ifdef DEBUG_INFORMATION_MULTIEXPORT
+  void resetPathsAndSelectionDebug();
+
+#endif
 
   /* Get elements, indexes and row for current selection or -1 if nothing selected */
   QModelIndex selectedIndex();

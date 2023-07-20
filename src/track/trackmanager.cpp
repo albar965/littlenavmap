@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -28,10 +28,10 @@
 #include "sql/sqlutil.h"
 #include "io/binaryutil.h"
 #include "common/maptypes.h"
+#include "app/navapp.h"
 
 #include <QDataStream>
 #include <QElapsedTimer>
-#include <navapp.h>
 
 using atools::sql::SqlDatabase;
 using atools::sql::SqlTransaction;
@@ -44,7 +44,7 @@ using atools::track::Track;
 
 TrackManager::TrackManager(SqlDatabase *trackDatabase, SqlDatabase *navDatabase)
   : atools::sql::DataManagerBase(trackDatabase, "track", "track_id",
-                                 ":/atools/resources/sql/fs/track/create_track_schema.sql",
+                                 {":/atools/resources/sql/fs/track/create_track_schema.sql"},
                                  QString(), /* undoSqlScript */
                                  ":/atools/resources/sql/fs/track/drop_track_schema.sql"),
   dbNav(navDatabase)
@@ -166,7 +166,7 @@ void TrackManager::loadTracks(const TrackVectorType& tracks, bool onlyValid)
         if(ref.objType & map::AIRWAY)
           continue;
 
-        if(ref.id == -1 || !ref.position.isValidRange())
+        if((ref.id == -1 && ref.objType != map::USERPOINTROUTE) || !ref.position.isValidRange())
           qWarning() << Q_FUNC_INFO << "Invalid track ref" << ref;
 
         const map::MapObjectRefExt *refLast2 = i > 1 ? &refs.at(i - 2) : nullptr;

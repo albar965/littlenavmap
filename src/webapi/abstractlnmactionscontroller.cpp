@@ -16,7 +16,7 @@
 *****************************************************************************/
 
 #include "abstractlnmactionscontroller.h"
-#include "navapp.h"
+#include "app/navapp.h"
 #include "common/infobuildertypes.h"
 #include "query/airportquery.h"
 #include "query/infoquery.h"
@@ -28,8 +28,6 @@
 #include "fs/util/morsecode.h"
 #include "fs/sc/simconnectdata.h"
 #include "mapgui/mappaintwidget.h"
-#include "web/webcontroller.h"
-#include "web/webmapcontroller.h"
 
 namespace ageo = atools::geo;
 using atools::fs::util::MorseCode;

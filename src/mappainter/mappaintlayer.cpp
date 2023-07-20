@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -19,12 +19,11 @@
 
 #include "common/constants.h"
 #include "common/mapcolors.h"
-#include "connect/connectclient.h"
 #include "geo/calculations.h"
 #include "mapgui/maplayersettings.h"
 #include "mapgui/mapscale.h"
-#include "mapgui/mapwidget.h"
 #include "mapgui/mapthemehandler.h"
+#include "mapgui/mapwidget.h"
 #include "mappainter/mappainteraircraft.h"
 #include "mappainter/mappainterairport.h"
 #include "mappainter/mappainterairspace.h"
@@ -40,7 +39,7 @@
 #include "mappainter/mappainteruser.h"
 #include "mappainter/mappainterweather.h"
 #include "mappainter/mappainterwind.h"
-#include "navapp.h"
+#include "app/navapp.h"
 #include "options/optiondata.h"
 #include "route/route.h"
 #include "settings/settings.h"
@@ -54,7 +53,7 @@ using namespace Marble;
 using namespace atools::geo;
 
 MapPaintLayer::MapPaintLayer(MapPaintWidget *widget)
-  : mapWidget(widget)
+  : mapPaintWidget(widget)
 {
   verbose = atools::settings::Settings::instance().getAndStoreValue(lnm::OPTIONS_MAP_LAYER_DEBUG, false).toBool();
 
@@ -64,21 +63,21 @@ MapPaintLayer::MapPaintLayer(MapPaintWidget *widget)
   mapScale = new MapScale();
 
   // Create all painters
-  mapPainterNav = new MapPainterNav(mapWidget, mapScale, &context);
-  mapPainterIls = new MapPainterIls(mapWidget, mapScale, &context);
-  mapPainterAirport = new MapPainterAirport(mapWidget, mapScale, &context);
-  mapPainterMsa = new MapPainterMsa(mapWidget, mapScale, &context);
-  mapPainterAirspace = new MapPainterAirspace(mapWidget, mapScale, &context);
-  mapPainterMark = new MapPainterMark(mapWidget, mapScale, &context);
-  mapPainterRoute = new MapPainterRoute(mapWidget, mapScale, &context);
-  mapPainterAircraft = new MapPainterAircraft(mapWidget, mapScale, &context);
-  mapPainterTrack = new MapPainterTrack(mapWidget, mapScale, &context);
-  mapPainterShip = new MapPainterShip(mapWidget, mapScale, &context);
-  mapPainterUser = new MapPainterUser(mapWidget, mapScale, &context);
-  mapPainterAltitude = new MapPainterAltitude(mapWidget, mapScale, &context);
-  mapPainterWeather = new MapPainterWeather(mapWidget, mapScale, &context);
-  mapPainterWind = new MapPainterWind(mapWidget, mapScale, &context);
-  mapPainterTop = new MapPainterTop(mapWidget, mapScale, &context);
+  mapPainterNav = new MapPainterNav(mapPaintWidget, mapScale, &context);
+  mapPainterIls = new MapPainterIls(mapPaintWidget, mapScale, &context);
+  mapPainterAirport = new MapPainterAirport(mapPaintWidget, mapScale, &context);
+  mapPainterMsa = new MapPainterMsa(mapPaintWidget, mapScale, &context);
+  mapPainterAirspace = new MapPainterAirspace(mapPaintWidget, mapScale, &context);
+  mapPainterMark = new MapPainterMark(mapPaintWidget, mapScale, &context);
+  mapPainterRoute = new MapPainterRoute(mapPaintWidget, mapScale, &context);
+  mapPainterAircraft = new MapPainterAircraft(mapPaintWidget, mapScale, &context);
+  mapPainterTrack = new MapPainterTrack(mapPaintWidget, mapScale, &context);
+  mapPainterShip = new MapPainterShip(mapPaintWidget, mapScale, &context);
+  mapPainterUser = new MapPainterUser(mapPaintWidget, mapScale, &context);
+  mapPainterAltitude = new MapPainterAltitude(mapPaintWidget, mapScale, &context);
+  mapPainterWeather = new MapPainterWeather(mapPaintWidget, mapScale, &context);
+  mapPainterWind = new MapPainterWind(mapPaintWidget, mapScale, &context);
+  mapPainterTop = new MapPainterTop(mapPaintWidget, mapScale, &context);
 
   // Default for visible object types
   objectTypes = map::MapTypes(map::AIRPORT_ALL_AND_ADDON) | map::MapTypes(map::VOR) | map::MapTypes(map::NDB) | map::MapTypes(map::AP_ILS) |
@@ -144,7 +143,7 @@ void MapPaintLayer::setShowMapObject(map::MapTypes type, bool show)
     objectTypes &= ~type;
 }
 
-void MapPaintLayer::setShowMapObjectDisplay(map::MapObjectDisplayTypes type, bool show)
+void MapPaintLayer::setShowMapObjectDisplay(map::MapDisplayTypes type, bool show)
 {
   if(show)
     objectDisplayTypes |= type;
@@ -223,7 +222,7 @@ void MapPaintLayer::initMapLayerSettings()
   // File can be overloaded in the settings folder
   // Map widget is updated if the file changes
   layers = new MapLayerSettings(verbose);
-  layers->connectMapSettingsUpdated(mapWidget);
+  layers->connectMapSettingsUpdated(mapPaintWidget);
   layers->loadFromFile();
 }
 
@@ -234,7 +233,7 @@ void MapPaintLayer::updateLayers()
     mapLayerEffective = mapLayer = mapLayerRoute = nullptr;
   else
   {
-    float distKm = static_cast<float>(mapWidget->distance());
+    float distKm = static_cast<float>(mapPaintWidget->distance());
     // Get the uncorrected effective layer - route painting is independent of declutter
     mapLayerEffective = layers->getLayer(distKm);
     mapLayer = layers->getLayer(distKm, detailLevel);
@@ -244,14 +243,14 @@ void MapPaintLayer::updateLayers()
 
 bool MapPaintLayer::noRender() const
 {
-  const ViewportParams *viewport = mapWidget->viewport();
+  const ViewportParams *viewport = mapPaintWidget->viewport();
 
   if(viewport->projection() == Marble::Mercator)
     // Do not draw if Mercator wraps around whole planet
     return viewport->viewLatLonAltBox().width(GeoDataCoordinates::Degree) >= 350.;
   else if(viewport->projection() == Marble::Spherical)
     // Limit drawing to maximum zoom distance
-    return mapWidget->distance() > layer::NO_DRAW_LIMIT_KM;
+    return mapPaintWidget->isDistanceCutOff();
 
   return false;
 }
@@ -266,10 +265,10 @@ bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport, const 
   Q_UNUSED(renderPos)
   Q_UNUSED(layer)
 
-  if(!databaseLoadStatus && !mapWidget->isNoNavPaint())
+  if(!databaseLoadStatus && !mapPaintWidget->isNoNavPaint())
   {
     // Update map scale for screen distance approximation
-    mapScale->update(viewport, mapWidget->distance());
+    mapScale->update(viewport, mapPaintWidget->distance());
     updateLayers();
 
     // What to draw while scrolling or zooming map
@@ -297,19 +296,20 @@ bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport, const 
       context.objectTypes = objectTypes;
       context.objectDisplayTypes = objectDisplayTypes;
       context.airspaceFilterByLayer = getShownAirspacesTypesByLayer();
-      context.viewContext = mapWidget->viewContext();
-      context.drawFast = mapScrollDetail == opts::DETAIL_LOW && mapWidget->viewContext() == Marble::Animation;
-      context.lazyUpdate = mapScrollDetail != opts::DETAIL_HIGH && mapWidget->viewContext() == Marble::Animation;
+      context.viewContext = mapPaintWidget->viewContext();
+      context.drawFast = mapScrollDetail == opts::DETAIL_LOW && mapPaintWidget->viewContext() == Marble::Animation;
+      context.lazyUpdate = mapScrollDetail != opts::DETAIL_HIGH && mapPaintWidget->viewContext() == Marble::Animation;
       context.mapScrollDetail = mapScrollDetail;
-      context.distanceKm = static_cast<float>(mapWidget->distance());
+      context.distanceKm = static_cast<float>(mapPaintWidget->distance());
       context.distanceNm = atools::geo::meterToNm(context.distanceKm * 1000.f);
 
       context.userPointTypes = NavApp::getUserdataController()->getSelectedTypes();
       context.userPointTypesAll = NavApp::getUserdataController()->getAllTypes();
       context.userPointTypeUnknown = NavApp::getUserdataController()->isSelectedUnknownType();
-      context.zoomDistanceMeter = static_cast<float>(mapWidget->distance() * 1000.);
-      context.darkMap = NavApp::getMapThemeHandler()->isDarkTheme(mapWidget->getCurrentThemeId());
-      context.paintCopyright = mapWidget->isPaintCopyright();
+      context.zoomDistanceMeter = static_cast<float>(mapPaintWidget->distance() * 1000.);
+      context.darkMap = NavApp::getMapThemeHandler()->isDarkTheme(mapPaintWidget->getCurrentThemeId());
+      context.paintCopyright = mapPaintWidget->isPaintCopyright();
+      context.currentDistanceMarkerId = NavApp::getMapWidgetGui()->getCurrentDistanceMarkerId();
 
       context.mimimumRunwayLengthFt = minimumRunwayLenghtFt;
 
@@ -323,7 +323,7 @@ bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport, const 
                                                box.east(GeoDataCoordinates::Degree),
                                                box.south(GeoDataCoordinates::Degree));
 
-      context.screenRect = mapWidget->rect();
+      context.screenRect = mapPaintWidget->rect();
 
       const OptionData& od = OptionData::instance();
 
@@ -368,10 +368,10 @@ bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport, const 
       context.flags2 = od.getFlags2();
 
       context.weatherSource = weatherSource;
-      context.visibleWidget = mapWidget->isVisibleWidget();
+      context.visibleWidget = mapPaintWidget->isVisibleWidget();
 
       // Prepare index for all navaids drawn by route - needed for context menu and tooltips
-      context.routeDrawnNavaids = mapWidget->getRouteDrawnNavaids();
+      context.routeDrawnNavaids = mapPaintWidget->getRouteDrawnNavaids();
       context.routeDrawnNavaids->clear();
 
       // ====================================
@@ -444,7 +444,8 @@ bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport, const 
 
       if(context.mapLayerRoute->isApproach())
       {
-        for(const proc::MapProcedureLegs& procedure : mapWidget->getProcedureHighlights())
+        // Procedure legs from "show all" function ======================================
+        for(const proc::MapProcedureLegs& procedure : mapPaintWidget->getProcedureHighlights())
         {
           for(int i = 0; i < procedure.size(); i++)
           {
@@ -458,22 +459,26 @@ bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport, const 
           }
         }
 
-        const proc::MapProcedureLegs& procedure = mapWidget->getProcedureHighlight();
+        // Procedure legs from selected procedures ======================================
+        const proc::MapProcedureLegs& procedure = mapPaintWidget->getProcedureHighlight();
         for(int i = 0; i < procedure.size(); i++)
         {
-          const map::MapResult& navaids = procedure.at(i).navaids;
-          if(navaids.hasWaypoints())
-            context.routeProcIdMap.insert({navaids.waypoints.constFirst().id, map::WAYPOINT});
-          if(navaids.hasVor())
-            context.routeProcIdMap.insert({navaids.vors.constFirst().id, map::VOR});
-          if(navaids.hasNdb())
-            context.routeProcIdMap.insert({navaids.ndbs.constFirst().id, map::NDB});
+          if(!procedure.at(i).isMissed() || context.objectTypes & map::MISSED_APPROACH)
+          {
+            const map::MapResult& navaids = procedure.at(i).navaids;
+            if(navaids.hasWaypoints())
+              context.routeProcIdMap.insert({navaids.waypoints.constFirst().id, map::WAYPOINT});
+            if(navaids.hasVor())
+              context.routeProcIdMap.insert({navaids.vors.constFirst().id, map::VOR});
+            if(navaids.hasNdb())
+              context.routeProcIdMap.insert({navaids.ndbs.constFirst().id, map::NDB});
+          }
         }
-      }
+      } // if(context.mapLayerRoute->isApproach())
 
       // ====================================
       // Get airports from logbook highlight to avoid duplicate drawing
-      const map::MapResult& highlightResultsSearch = mapWidget->getSearchHighlights();
+      const map::MapResult& highlightResultsSearch = mapPaintWidget->getSearchHighlights();
       for(const map::MapLogbookEntry& entry : highlightResultsSearch.logbookEntries)
       {
         if(entry.departurePos.isValid())
@@ -483,13 +488,13 @@ bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport, const 
       }
 
       // Set render hints depending on context (moving, still) =====================
-      if(mapWidget->viewContext() == Marble::Still)
+      if(mapPaintWidget->viewContext() == Marble::Still)
       {
         painter->setRenderHint(QPainter::Antialiasing, true);
         painter->setRenderHint(QPainter::TextAntialiasing, true);
         painter->setRenderHint(QPainter::SmoothPixmapTransform, true);
       }
-      else if(mapWidget->viewContext() == Marble::Animation)
+      else if(mapPaintWidget->viewContext() == Marble::Animation)
       {
         painter->setRenderHint(QPainter::Antialiasing, false);
         painter->setRenderHint(QPainter::TextAntialiasing, false);
@@ -505,7 +510,7 @@ bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport, const 
       // Ship below other navaids and airports
       mapPainterShip->render();
 
-      if(mapWidget->distance() < layer::DISTANCE_CUT_OFF_LIMIT_KM)
+      if(!mapPaintWidget->isDistanceCutOff())
       {
         if(!context.isObjectOverflow())
           mapPainterAirspace->render();
@@ -559,7 +564,7 @@ bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport, const 
       mapPainterTop->render();
     } // if(!noRender())
 
-    if(!mapWidget->isPrinting() && mapWidget->isVisibleWidget())
+    if(!mapPaintWidget->isPrinting() && mapPaintWidget->isVisibleWidget())
       // Dim the map by drawing a semi-transparent black rectangle - but not for printing or web services
       mapcolors::darkenPainterRect(*painter);
   }

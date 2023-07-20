@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -28,6 +28,7 @@
 #endif
 
 #include <QPainter>
+#include <QStringBuilder>
 
 using atools::geo::Line;
 using atools::geo::LineString;
@@ -39,7 +40,7 @@ TextPlacement::TextPlacement(QPainter *painterParam, const CoordinateConverter *
 {
   arrowRight = tr(" ►");
   arrowLeft = tr("◄ ");
-
+  sectionSeparator = tr(" / ");
   screenRect = screenRectParam;
 }
 
@@ -63,7 +64,7 @@ void TextPlacement::calculateTextPositions(const atools::geo::LineString& points
   }
 }
 
-void TextPlacement::calculateTextAlongLines(const QVector<atools::geo::Line>& lines, const QStringList& routeTexts)
+void TextPlacement::calculateTextAlongLines(const QVector<atools::geo::Line>& lines, const QStringList& lineTexts)
 {
   visibleStartPoints.resize(lines.size() + 1);
 
@@ -83,11 +84,11 @@ void TextPlacement::calculateTextAlongLines(const QVector<atools::geo::Line>& li
       if(line.isValid() && lineLength > minLengthForText)
       {
         // Build temporary elided text to get the right length - use any arrow
-        QString text = elideText(routeTexts.at(i), arrowLeft, lineLength);
+        QString text = elideText(lineTexts.at(i), arrowLeft, metrics, lineLength);
 
         int xt, yt;
         float brg;
-        if(findTextPos(lines.at(i), lines.at(i).lengthMeter(), static_cast<float>(metrics.horizontalAdvance(text)),
+        if(findTextPos(lines.at(i), lines.at(i).lengthMeter(), horizontalAdvance(text, metrics),
                        static_cast<float>(metrics.height()), maximumPoints, xt, yt, &brg))
         {
           textCoords.append(QPoint(xt, yt));
@@ -122,21 +123,35 @@ void TextPlacement::calculateTextAlongLines(const QVector<atools::geo::Line>& li
   }
 }
 
-QString TextPlacement::elideText(const QString& text, const QString& arrow, float lineLength)
+void TextPlacement::calculateTextAlongLine(const atools::geo::Line& line, const QString& lineText)
 {
-  QFontMetricsF metrics = painter->fontMetrics();
-  return metrics.elidedText(text, Qt::ElideRight, lineLength - metrics.horizontalAdvance(arrow) - metrics.height() * 2);
+  calculateTextAlongLines({line}, {lineText});
 }
 
-void TextPlacement::drawTextAlongOneLine(const QString& text, float bearing, const QPointF& textCoord, float textLineLength)
+float TextPlacement::horizontalAdvance(const QString& text, const QFontMetricsF& metrics) const
+{
+  double maxAdvance = 0.;
+  for(const QString& txt : text.split('\n'))
+    maxAdvance = std::max(maxAdvance, metrics.horizontalAdvance(txt));
+  return static_cast<float>(maxAdvance);
+}
+
+QString TextPlacement::elideText(const QString& text, const QString& arrow, const QFontMetricsF& metrics, float lineLength) const
+{
+  QStringList txts = text.split('\n');
+  for(QString& txt : txts)
+    txt = metrics.elidedText(txt, Qt::ElideRight, lineLength - metrics.horizontalAdvance(arrow) - metrics.height() * 2);
+  return txts.join('\n');
+}
+
+void TextPlacement::drawTextAlongOneLine(QString text, float bearing, const QPointF& textCoord, float textLineLength) const
 {
   if(!text.isEmpty() || arrowForEmpty)
   {
-    QString newText(text);
     // Cut text right or left depending on direction
     float rotate;
     QString arrow;
-    if(bearing < 180.)
+    if(bearing < 180.f)
     {
       if(!arrowRight.isEmpty())
         arrow = arrowRight;
@@ -151,33 +166,62 @@ void TextPlacement::drawTextAlongOneLine(const QString& text, float bearing, con
     }
 
     // Draw text
-    QFontMetricsF metrics = painter->fontMetrics();
+    QFontMetricsF metrics(painter->font());
 
-    newText = elideText(newText, arrow, textLineLength);
+    // Elide each line in text
+    text = elideText(text, arrow, metrics, textLineLength);
 
-    if(bearing < 180.)
-      newText += arrow;
+    // Split separated text into lines
+    QStringList txts = text.split('\n');
+
+    // Swap sections if needed ============================================================
+    if(bearing >= 180.f)
+    {
+      // Need to swap all sections separated by backslash due to rotation
+      for(QString& txt : txts)
+      {
+        if(txt.contains('\\'))
+          txt = txt.section('\\', 1, 1).trimmed() % sectionSeparator % txt.section('\\', 0, 0).trimmed();
+      }
+    }
     else
-      newText = arrow + newText;
+    {
+      // No swap needed - replace backslash with separator
+      for(QString& txt : txts)
+        txt.replace('\\', sectionSeparator);
+    }
 
-    double yoffset = 0.;
+    // Add arrow to center line ================================
+    int mid = txts.size() / 2;
+    if(bearing < 180.)
+      txts[mid].append(arrow);
+    else
+      txts[mid] = arrow % txts.at(mid);
+
+    // Calculate offset ======================================
+    double yoffset = 0.; // Negative moves up
     if(textOnLineCenter)
-      yoffset = -metrics.descent() + metrics.height() / 2.;
+      yoffset = -metrics.height() * txts.size() / 2. + metrics.ascent();
     else
     {
       if(textOnTopOfLine || bearing >= 180.)
-        // Keep all texts north
-        yoffset = -metrics.descent() - lineWidth / 2. - 2.;
+        // Keep all texts north - positive moves down
+        yoffset = -(lineWidth / 2. + 2. + metrics.height() * txts.size() - metrics.ascent());
       else
-        yoffset = metrics.ascent() + lineWidth / 2. + 2.;
+        // Text allowed below line
+        yoffset = lineWidth / 2. + 2. + metrics.ascent();
     }
 
     painter->translate(textCoord.x(), textCoord.y());
     painter->rotate(rotate);
 
-    QPointF textPos(-static_cast<float>(metrics.horizontalAdvance(newText)) / 2.f, yoffset);
+    for(int i = 0; i < txts.size(); i++)
+    {
+      // Add space at start and end to avoid letters touching the border
+      QString txt = ' ' % txts.at(i) % ' ';
+      painter->drawText(QPointF(-horizontalAdvance(txt, metrics) / 2.f, yoffset + i * metrics.height()), txt);
+    }
 
-    painter->drawText(textPos, newText);
     painter->resetTransform();
   }
 }
@@ -215,6 +259,13 @@ bool TextPlacement::findTextPos(const Line& line, float distanceMeter, float tex
     *bearing = brg;
 
   return retval;
+}
+
+float TextPlacement::getArrowWidth() const
+{
+  QFontMetricsF metrics(painter->font());
+  return static_cast<float>(std::max(metrics.horizontalAdvance(arrowLeft), metrics.horizontalAdvance(arrowRight)) +
+                            metrics.horizontalAdvance(' '));
 }
 
 int TextPlacement::findClosestInternal(const QVector<int>& fullyVisibleValid, const QVector<int>& pointsIdxValid, const QPolygonF& points,

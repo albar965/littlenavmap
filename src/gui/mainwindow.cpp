@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -18,10 +18,12 @@
 #include "gui/mainwindow.h"
 
 #include "airspace/airspacecontroller.h"
+#include "app/dataexchange.h"
 #include "atools.h"
 #include "common/constants.h"
 #include "common/dirtool.h"
 #include "common/elevationprovider.h"
+#include "common/filecheck.h"
 #include "common/mapcolors.h"
 #include "common/settingsmigrate.h"
 #include "common/unit.h"
@@ -29,7 +31,6 @@
 #include "db/databasemanager.h"
 #include "exception.h"
 #include "fs/perf/aircraftperf.h"
-#include "fs/pln/flightplanio.h"
 #include "gui/application.h"
 #include "gui/dialog.h"
 #include "gui/dockwidgethandler.h"
@@ -53,7 +54,7 @@
 #include "mapgui/mapmarkhandler.h"
 #include "mapgui/mapthemehandler.h"
 #include "mapgui/mapwidget.h"
-#include "navapp.h"
+#include "app/navapp.h"
 #include "online/onlinedatacontroller.h"
 #include "options/optionsdialog.h"
 #include "perf/aircraftperfcontroller.h"
@@ -83,16 +84,14 @@
 #include "weather/weatherreporter.h"
 #include "weather/windreporter.h"
 #include "web/webcontroller.h"
+#include "common/updatehandler.h"
 
-#include <marble/LegendWidget.h>
 #include <marble/MarbleAboutDialog.h>
 #include <marble/MarbleModel.h>
 #include <marble/HttpDownloadManager.h>
 #include <marble/MarbleDirs.h>
 
-#include <QDebug>
 #include <QCloseEvent>
-#include <QDesktopServices>
 #include <QScreen>
 #include <QWindow>
 #include <QSslSocket>
@@ -104,8 +103,6 @@
 #include <QStringBuilder>
 
 #include "ui_mainwindow.h"
-
-static const int WEATHER_UPDATE_MS = 15000;
 
 static const int MAX_STATUS_MESSAGES = 10;
 
@@ -124,7 +121,7 @@ MainWindow::MainWindow()
   aboutMessage =
     tr("<p style='white-space:pre'>is a free open source flight planner, navigation tool, moving map,<br/>"
        "airport search and airport information system<br/>"
-       "for X-Plane 11, Flight Simulator X, Prepar3D and Microsoft Flight Simulator 2020.</p>"
+       "for X-Plane 11, X-Plane 12, Flight Simulator X, Prepar3D and Microsoft Flight Simulator 2020.</p>"
        "<p>"
          "<b>"
            "If you would like to show your appreciation you can donate&nbsp;"
@@ -137,7 +134,7 @@ MainWindow::MainWindow()
          "</a> or any later version."
        "</p>"
        "<p>The source code for this application is available at "
-         "<a href=\"https://github.com/albar965\">Github"
+         "<a href=\"https://github.com/albar965\">GitHub"
          "</a>."
        "</p>"
        "<p>More about my projects at "
@@ -145,7 +142,7 @@ MainWindow::MainWindow()
          "</a>."
        "</p>"
        "<p>"
-         "<b>Copyright 2015-2022 Alexander Barthel"
+         "<b>Copyright 2015-2023 Alexander Barthel"
          "</b>"
        "</p>").arg(lnm::helpDonateUrl);
 
@@ -206,8 +203,7 @@ MainWindow::MainWindow()
     dockHandler =
       new atools::gui::DockWidgetHandler(this,
                                          // Add all available dock widgets here ==========================
-                                         {ui->dockWidgetLegend, ui->dockWidgetAircraft,
-                                          ui->dockWidgetSearch, ui->dockWidgetProfile,
+                                         {ui->dockWidgetAircraft, ui->dockWidgetSearch, ui->dockWidgetProfile,
                                           ui->dockWidgetInformation, ui->dockWidgetRoute},
                                          // Add all available toolbars  here =============================
                                          {ui->toolBarMain, ui->toolBarMap, ui->toolbarMapOptions,
@@ -261,6 +257,15 @@ MainWindow::MainWindow()
 
     NavApp::init(this);
 
+    // Initialize and connect the data exchange which sends properties from other started instances
+    const DataExchange *dataExchange = NavApp::getDataExchangeConst();
+    connect(dataExchange, &DataExchange::activateMain, this, &MainWindow::activateWindow);
+    connect(dataExchange, &DataExchange::activateMain, this, &MainWindow::raise);
+    connect(dataExchange, &DataExchange::loadRoute, this, &MainWindow::routeOpenFile);
+    connect(dataExchange, &DataExchange::loadRouteDescr, this, &MainWindow::routeOpenDescr);
+    connect(dataExchange, &DataExchange::loadLayout, this, &MainWindow::loadLayoutDelayed);
+    connect(dataExchange, &DataExchange::loadPerf, NavApp::getAircraftPerfController(), &AircraftPerfController::loadFile);
+
     NavApp::getStyleHandler()->insertMenuItems(ui->menuWindowStyle);
     NavApp::getStyleHandler()->restoreState();
     mapcolors::init();
@@ -277,19 +282,17 @@ MainWindow::MainWindow()
     windReporter->addToolbarButton();
 
     qDebug() << Q_FUNC_INFO << "Creating FileHistoryHandler for flight plans";
-    routeFileHistory = new FileHistoryHandler(this, lnm::ROUTE_FILENAMES_RECENT, ui->menuRecentRoutes,
-                                              ui->actionRecentRoutesClear);
+    routeFileHistory = new FileHistoryHandler(this, lnm::ROUTE_FILENAMES_RECENT, ui->menuRecentRoutes, ui->actionRecentRoutesClear);
 
     qDebug() << Q_FUNC_INFO << "Creating RouteController";
     routeController = new RouteController(this, ui->tableViewRoute);
 
     qDebug() << Q_FUNC_INFO << "Creating FileHistoryHandler for KML files";
-    kmlFileHistory = new FileHistoryHandler(this, lnm::ROUTE_FILENAMESKML_RECENT, ui->menuRecentKml,
-                                            ui->actionClearKmlMenu);
+    kmlFileHistory = new FileHistoryHandler(this, lnm::ROUTE_FILENAMESKML_RECENT, ui->menuRecentKml, ui->actionClearKmlMenu);
 
     qDebug() << Q_FUNC_INFO << "Creating FileHistoryHandler for layout files";
-    layoutFileHistory = new FileHistoryHandler(this, lnm::LAYOUT_RECENT, ui->menuWindowLayoutRecent,
-                                               ui->actionWindowLayoutClearRecent);
+    layoutFileHistory = new FileHistoryHandler(this, lnm::LAYOUT_RECENT, ui->menuWindowLayoutRecent, ui->actionWindowLayoutClearRecent);
+    layoutFileHistory->setFirstItemShortcut("Ctrl+Shift+W");
 
     mapThemeHandler = new MapThemeHandler(this);
     mapThemeHandler->loadThemes();
@@ -313,7 +316,6 @@ MainWindow::MainWindow()
 
     // Init a few late objects since these depend on the map widget instance
     NavApp::initQueries();
-    NavApp::initElevationProvider();
 
     // Create elevation profile widget and replace dummy widget in window
     qDebug() << Q_FUNC_INFO << "Creating ProfileWidget";
@@ -363,6 +365,7 @@ MainWindow::MainWindow()
     // Update window states based on actions
     allowDockingWindows();
     allowMovingWindows();
+    hideTitleBar();
 
     updateActionStates();
     updateMarkActionStates();
@@ -381,14 +384,12 @@ MainWindow::MainWindow()
 
     profileWidget->updateProfileShowFeatures();
 
-    loadNavmapLegend();
-    mapThemeHandler->updateLegend();
     updateWindowTitle();
 
     // Enable or disable tooltips - call later since it needs the map window
     optionsDialog->updateTooltipOption();
 
-    // Update clock every second =====================
+    // Update clock =====================
     clockTimer.setInterval(1000);
     connect(&clockTimer, &QTimer::timeout, this, &MainWindow::updateClock);
     clockTimer.start();
@@ -397,6 +398,15 @@ MainWindow::MainWindow()
     renderStatusTimer.setInterval(5000);
     renderStatusTimer.setSingleShot(true);
     connect(&renderStatusTimer, &QTimer::timeout, this, &MainWindow::renderStatusReset);
+
+    // Print the size of all container classes to detect overflow or memory leak conditions
+    // Do this every 30 seconds if enabled with "[Options] StorageDebug=true" in ini file
+    if(Settings::instance().getAndStoreValue(lnm::OPTIONS_STORAGE_DEBUG, false).toBool())
+    {
+      debugDumpContainerSizesTimer.setInterval(30000);
+      connect(&debugDumpContainerSizesTimer, &QTimer::timeout, this, &MainWindow::debugDumpContainerSizes);
+      debugDumpContainerSizesTimer.start();
+    }
 
     qDebug() << Q_FUNC_INFO << "Constructor done";
   }
@@ -437,6 +447,10 @@ MainWindow::MainWindow()
   QAction *debugAction7 = new QAction("DEBUG - Dump map layers", ui->menuHelp);
   this->addAction(debugAction7);
 
+  QAction *debugAction8 = new QAction("DEBUG - Reset update timestamp to -2 days", ui->menuHelp);
+  this->addAction(debugAction8);
+
+  ui->menuHelp->addSeparator();
   ui->menuHelp->addSeparator();
   ui->menuHelp->addAction(debugAction1);
   ui->menuHelp->addAction(debugAction2);
@@ -445,6 +459,7 @@ MainWindow::MainWindow()
   ui->menuHelp->addAction(debugAction5);
   ui->menuHelp->addAction(debugAction6);
   ui->menuHelp->addAction(debugAction7);
+  ui->menuHelp->addAction(debugAction8);
 
   connect(debugAction1, &QAction::triggered, this, &MainWindow::debugActionTriggered1);
   connect(debugAction2, &QAction::triggered, this, &MainWindow::debugActionTriggered2);
@@ -453,6 +468,7 @@ MainWindow::MainWindow()
   connect(debugAction5, &QAction::triggered, this, &MainWindow::debugActionTriggered5);
   connect(debugAction6, &QAction::triggered, this, &MainWindow::debugActionTriggered6);
   connect(debugAction7, &QAction::triggered, this, &MainWindow::debugActionTriggered7);
+  connect(debugAction8, &QAction::triggered, this, &MainWindow::debugActionTriggered8);
 
 #endif
 
@@ -471,67 +487,122 @@ MainWindow::~MainWindow()
   // Close all queries
   preDatabaseLoad();
 
+  // Set all pointers to null to catch errors for late access
+
   qDebug() << Q_FUNC_INFO << "delete routeStringDialog";
   NavApp::removeDialogFromDockHandler(routeStringDialog);
   delete routeStringDialog;
+  routeStringDialog = nullptr;
+
   qDebug() << Q_FUNC_INFO << "delete routeController";
   delete routeController;
+  routeController = nullptr;
+
   qDebug() << Q_FUNC_INFO << "delete searchController";
   delete searchController;
+  searchController = nullptr;
+
   qDebug() << Q_FUNC_INFO << "delete weatherReporter";
   delete weatherReporter;
+  weatherReporter = nullptr;
+
   qDebug() << Q_FUNC_INFO << "delete windReporter";
   delete windReporter;
+  windReporter = nullptr;
+
   qDebug() << Q_FUNC_INFO << "delete profileWidget";
   delete profileWidget;
+  profileWidget = nullptr;
+
   qDebug() << Q_FUNC_INFO << "delete marbleAbout";
   delete marbleAboutDialog;
+  marbleAboutDialog = nullptr;
+
   qDebug() << Q_FUNC_INFO << "delete infoController";
   delete infoController;
+  infoController = nullptr;
+
   qDebug() << Q_FUNC_INFO << "delete printSupport";
   delete printSupport;
+  printSupport = nullptr;
+
   qDebug() << Q_FUNC_INFO << "delete routeFileHistory";
   delete routeFileHistory;
+  routeFileHistory = nullptr;
+
   qDebug() << Q_FUNC_INFO << "delete kmlFileHistory";
   delete kmlFileHistory;
+  kmlFileHistory = nullptr;
+
   qDebug() << Q_FUNC_INFO << "delete layoutFileHistory";
   delete layoutFileHistory;
+  layoutFileHistory = nullptr;
+
   qDebug() << Q_FUNC_INFO << "delete optionsDialog";
   delete optionsDialog;
+  optionsDialog = nullptr;
+
   qDebug() << Q_FUNC_INFO << "delete mapWidget";
   delete mapWidget;
-  qDebug() << Q_FUNC_INFO << "delete ui";
-  delete ui;
+  mapWidget = nullptr;
+
   qDebug() << Q_FUNC_INFO << "delete dialog";
   delete dialog;
+  dialog = nullptr;
+
   qDebug() << Q_FUNC_INFO << "delete errorHandler";
   delete errorHandler;
+  errorHandler = nullptr;
+
   qDebug() << Q_FUNC_INFO << "delete helpHandler";
   delete helpHandler;
-  qDebug() << Q_FUNC_INFO << "delete dockHandler";
-  delete dockHandler;
+  helpHandler = nullptr;
+
   qDebug() << Q_FUNC_INFO << "delete actionGroupMapProjection";
   delete actionGroupMapProjection;
+  actionGroupMapProjection = nullptr;
+
   qDebug() << Q_FUNC_INFO << "delete actionGroupMapSunShading";
   delete actionGroupMapSunShading;
+  actionGroupMapSunShading = nullptr;
+
   qDebug() << Q_FUNC_INFO << "delete actionGroupMapWeatherSource";
   delete actionGroupMapWeatherSource;
+  actionGroupMapWeatherSource = nullptr;
+
   qDebug() << Q_FUNC_INFO << "delete actionGroupMapWeatherWindSource";
   delete actionGroupMapWeatherWindSource;
+  actionGroupMapWeatherWindSource = nullptr;
+
   qDebug() << Q_FUNC_INFO << "delete currentWeatherContext";
   delete currentWeatherContext;
+  currentWeatherContext = nullptr;
+
   qDebug() << Q_FUNC_INFO << "delete routeExport";
   delete routeExport;
+  routeExport = nullptr;
+
   qDebug() << Q_FUNC_INFO << "delete simbriefHandler";
   delete simbriefHandler;
+  simbriefHandler = nullptr;
+
   qDebug() << Q_FUNC_INFO << "delete   mapThemeHandler";
   delete mapThemeHandler;
+  mapThemeHandler = nullptr;
 
   qDebug() << Q_FUNC_INFO << "NavApplication::deInit()";
   NavApp::deInit();
 
   qDebug() << Q_FUNC_INFO << "Unit::deInit()";
   Unit::deInit();
+
+  qDebug() << Q_FUNC_INFO << "delete ui";
+  delete ui;
+  ui = nullptr;
+
+  qDebug() << Q_FUNC_INFO << "delete dockHandler";
+  delete dockHandler;
+  dockHandler = nullptr;
 
   // Delete settings singleton
   qDebug() << Q_FUNC_INFO << "Settings::shutdown()";
@@ -561,13 +632,13 @@ void MainWindow::debugActionTriggered2()
 {
   qDebug() << "======================================================================================";
   qDebug() << Q_FUNC_INFO;
-  qDebug() << NavApp::getRouteConst().getFlightplan();
+  qDebug() << NavApp::getRouteConst().getFlightplanConst();
   qDebug() << "======================================================================================";
 }
 
 void MainWindow::debugActionTriggered3()
 {
-  NavApp::checkForUpdates(OptionData::instance().getUpdateChannels(), false /* manually triggered */, true /* forceDebug */);
+  NavApp::checkForUpdates(OptionData::instance().getUpdateChannels(), false /* manual */, false /* startup */, true /* forceDebug */);
 }
 
 void MainWindow::debugActionTriggered4()
@@ -591,6 +662,11 @@ void MainWindow::debugActionTriggered7()
   mapWidget->dumpMapLayers();
 }
 
+void MainWindow::debugActionTriggered8()
+{
+  Settings::instance().setValueVar(lnm::OPTIONS_UPDATE_LAST_CHECKED, QDateTime::currentDateTime().toSecsSinceEpoch() - 3600L * 48L);
+}
+
 #endif
 
 void MainWindow::updateMap() const
@@ -600,71 +676,30 @@ void MainWindow::updateMap() const
 
 void MainWindow::updateClock() const
 {
-  timeLabel->setText(QDateTime::currentDateTimeUtc().toString("d   HH:mm:ss Z"));
+  timeLabel->setText(QDateTime::currentDateTimeUtc().toString("d   HH:mm:ss UTC "));
   timeLabel->setToolTip(tr("Day of month and UTC time.\n%1\nLocal: %2")
                         .arg(QDateTime::currentDateTimeUtc().toString())
                         .arg(QDateTime::currentDateTime().toString()));
+  timeLabel->setMinimumWidth(timeLabel->width());
 }
 
 /* Show map legend and bring information dock to front */
 void MainWindow::showNavmapLegend()
 {
-  if(!legendFile.isEmpty() && QFile::exists(legendFile))
-  {
-    dockHandler->activateWindow(ui->dockWidgetLegend);
-    ui->tabWidgetLegend->setCurrentIndex(0);
-    setStatusMessage(tr("Opened navigation map legend."));
-  }
-  else
-  {
-    // URL is empty loading failed - show it in browser
-    HelpHandler::openHelpUrlWeb(this, lnm::helpOnlineLegendUrl, lnm::helpLanguageOnline());
-    setStatusMessage(tr("Opened map legend in browser."));
-  }
-}
-
-/* Load the navmap legend into the text browser */
-void MainWindow::loadNavmapLegend()
-{
-  qDebug() << Q_FUNC_INFO;
-
-  legendFile = HelpHandler::getHelpFile(lnm::helpLegendLocalFile, OptionData::instance().getLanguage());
-  qDebug() << "legendUrl" << legendFile;
-
-  QFile legend(legendFile);
-  if(legend.open(QIODevice::ReadOnly))
-  {
-    QTextStream stream(&legend);
-    stream.setCodec("UTF-8");
-    QString legendText = stream.readAll();
-
-#ifdef DEBUG_INFORMATION_LEGEND
-    qDebug() << Q_FUNC_INFO << "==========================================";
-    qDebug().noquote().nospace() << legendText;
-    qDebug() << Q_FUNC_INFO << "==========================================";
-#endif
-
-    QString searchPath = QCoreApplication::applicationDirPath() + QDir::separator() + "help";
-    ui->textBrowserLegendNavInfo->setSearchPaths({searchPath});
-    ui->textBrowserLegendNavInfo->setText(legendText);
-  }
-  else
-  {
-    qWarning() << "Error opening legend" << legendFile << legend.errorString();
-    legendFile.clear();
-  }
+  // Show it in browser
+  HelpHandler::openHelpUrlWeb(this, lnm::helpOnlineLegendUrl, lnm::helpLanguageOnline());
+  setStatusMessage(tr("Opened map legend in browser."));
 }
 
 /* Check manually for updates as triggered by the action */
 void MainWindow::checkForUpdates()
 {
-  NavApp::checkForUpdates(OptionData::instance().getUpdateChannels(),
-                          true /* manually triggered */, false /* forceDebug */);
+  NavApp::checkForUpdates(OptionData::instance().getUpdateChannels(), true /* manual */, false /* startup */, false /* forceDebug */);
 }
 
 void MainWindow::showOnlineHelp()
 {
-  HelpHandler::openHelpUrlWeb(this, lnm::helpOnlineUrl, lnm::helpLanguageOnline());
+  HelpHandler::openHelpUrlWeb(this, lnm::helpOnlineMainUrl, lnm::helpLanguageOnline());
 }
 
 void MainWindow::showOnlineTutorials()
@@ -675,6 +710,11 @@ void MainWindow::showOnlineTutorials()
 void MainWindow::showOnlineDownloads()
 {
   HelpHandler::openHelpUrlWeb(this, lnm::helpOnlineDownloadsUrl, lnm::helpLanguageOnline());
+}
+
+void MainWindow::showChangelog()
+{
+  HelpHandler::openFile(this, QApplication::applicationDirPath() + QDir::separator() + "CHANGELOG.txt");
 }
 
 void MainWindow::showDonationPage()
@@ -701,14 +741,6 @@ void MainWindow::openLogFile()
 void MainWindow::openConfigFile()
 {
   HelpHandler::openFile(this, Settings::getFilename());
-}
-
-/* Show marble legend */
-void MainWindow::showMapLegend()
-{
-  dockHandler->activateWindow(ui->dockWidgetLegend);
-  ui->tabWidgetLegend->setCurrentIndex(1);
-  setStatusMessage(tr("Opened map legend."));
 }
 
 /* User clicked "show in browser" in legend */
@@ -768,8 +800,17 @@ void MainWindow::setupUi()
   actionGroupMapWeatherWindSource = new QActionGroup(ui->menuHighAltitudeWindSource);
   actionGroupMapWeatherWindSource->setObjectName("actionGroupMapWeatherWindSource");
   actionGroupMapWeatherWindSource->addAction(ui->actionMapShowWindDisabled);
-  actionGroupMapWeatherWindSource->addAction(ui->actionMapShowWindNOAA);
+  actionGroupMapWeatherWindSource->addAction(ui->actionMapShowWindManual);
   actionGroupMapWeatherWindSource->addAction(ui->actionMapShowWindSimulator);
+  actionGroupMapWeatherWindSource->addAction(ui->actionMapShowWindNOAA);
+
+  // Tool button in flight plan report
+
+  ui->toolButtonAircraftPerformanceWind->setMenu(new QMenu(ui->toolButtonAircraftPerformanceWind));
+  QMenu *buttonMenu = ui->toolButtonAircraftPerformanceWind->menu();
+  buttonMenu->setToolTipsVisible(true);
+  buttonMenu->addActions({ui->actionMapShowWindDisabled, ui->actionMapShowWindManual,
+                          ui->actionMapShowWindSimulator, ui->actionMapShowWindNOAA});
 
   // Update dock widget actions with tooltip, status tip and keypress
   ui->dockWidgetSearch->toggleViewAction()->setIcon(QIcon(":/littlenavmap/resources/icons/searchdock.svg"));
@@ -803,12 +844,6 @@ void MainWindow::setupUi()
                                                          arg(ui->dockWidgetAircraft->windowTitle()));
   ui->dockWidgetAircraft->toggleViewAction()->setStatusTip(ui->dockWidgetAircraft->toggleViewAction()->toolTip());
 
-  ui->dockWidgetLegend->toggleViewAction()->setIcon(QIcon(":/littlenavmap/resources/icons/legenddock.svg"));
-  ui->dockWidgetLegend->toggleViewAction()->setShortcut(QKeySequence(tr("Alt+7")));
-  ui->dockWidgetLegend->toggleViewAction()->setToolTip(tr("Open or show the %1 dock window").
-                                                       arg(ui->dockWidgetLegend->windowTitle()));
-  ui->dockWidgetLegend->toggleViewAction()->setStatusTip(ui->dockWidgetLegend->toggleViewAction()->toolTip());
-
   // Connect to methods internally
   dockHandler->connectDockWindows();
 
@@ -818,8 +853,7 @@ void MainWindow::setupUi()
                                ui->dockWidgetRoute->toggleViewAction(),
                                ui->dockWidgetInformation->toggleViewAction(),
                                ui->dockWidgetProfile->toggleViewAction(),
-                               ui->dockWidgetAircraft->toggleViewAction(),
-                               ui->dockWidgetLegend->toggleViewAction()});
+                               ui->dockWidgetAircraft->toggleViewAction()});
 
   ui->menuView->insertSeparator(ui->actionShowStatusbar);
 
@@ -840,18 +874,14 @@ void MainWindow::setupUi()
   ui->toolBarView->addAction(ui->dockWidgetInformation->toggleViewAction());
   ui->toolBarView->addAction(ui->dockWidgetProfile->toggleViewAction());
   ui->toolBarView->addAction(ui->dockWidgetAircraft->toggleViewAction());
-  ui->toolBarView->addAction(ui->dockWidgetLegend->toggleViewAction());
 
   // ==============================================================
   // Create labels for the statusbar
-  Qt::AlignmentFlag align = Qt::AlignCenter;
-  QFrame::Shadow shadow = QFrame::Sunken;
-  QFrame::Shape shape = QFrame::StyledPanel;
-
   connectStatusLabel = new QLabel();
   connectStatusLabel->setText(tr("Not connected."));
   connectStatusLabel->setToolTip(tr("Simulator connection status."));
   ui->statusBar->addPermanentWidget(connectStatusLabel);
+  connectStatusLabel->setMinimumWidth(connectStatusLabel->width());
 
   mapVisibleLabel = new QLabel();
   ui->statusBar->addPermanentWidget(mapVisibleLabel);
@@ -877,14 +907,6 @@ void MainWindow::setupUi()
   ui->statusBar->addPermanentWidget(mapMagvarLabel);
 
   timeLabel = new QLabel();
-  timeLabel->setAlignment(align);
-  timeLabel->setFrameShadow(shadow);
-  timeLabel->setFrameShape(shape);
-#ifdef Q_OS_MACOS
-  timeLabel->setMinimumWidth(60);
-#else
-  timeLabel->setMinimumWidth(55);
-#endif
   timeLabel->setToolTip(tr("Day of month and UTC time."));
   ui->statusBar->addPermanentWidget(timeLabel);
 
@@ -906,13 +928,13 @@ void MainWindow::updateStatusBarStyle()
   if(NavApp::getStyleHandler() != nullptr)
   {
     QString style = NavApp::getStyleHandler()->getCurrentGuiStyleDisplayName();
-    if(style.compare("Fusion", Qt::CaseInsensitive) == 0)
+    if(style.compare(StyleHandler::DEFAULT_STYLE, Qt::CaseInsensitive) == 0)
     {
       shadow = QFrame::Sunken;
       shape = QFrame::StyledPanel;
       adjustFrame = true;
     }
-    else if(style.compare("Night", Qt::CaseInsensitive) == 0)
+    else if(style.compare(StyleHandler::DEFAULT_STYLE_DARK, Qt::CaseInsensitive) == 0)
     {
       shadow = QFrame::Sunken;
       shape = QFrame::Box;
@@ -925,51 +947,64 @@ void MainWindow::updateStatusBarStyle()
   {
     connectStatusLabel->setFrameShadow(shadow);
     connectStatusLabel->setFrameShape(shape);
+    connectStatusLabel->setMargin(1);
+
     mapVisibleLabel->setFrameShadow(shadow);
     mapVisibleLabel->setFrameShape(shape);
+    mapVisibleLabel->setMargin(1);
+
     mapDetailLabel->setFrameShadow(shadow);
     mapDetailLabel->setFrameShape(shape);
+    mapDetailLabel->setMargin(1);
+
     mapRenderStatusLabel->setFrameShadow(shadow);
     mapRenderStatusLabel->setFrameShape(shape);
+    mapRenderStatusLabel->setMargin(1);
+
     mapDistanceLabel->setFrameShadow(shadow);
     mapDistanceLabel->setFrameShape(shape);
+    mapDistanceLabel->setMargin(1);
+
     mapPositionLabel->setFrameShadow(shadow);
     mapPositionLabel->setFrameShape(shape);
+    mapPositionLabel->setMargin(1);
+
     mapMagvarLabel->setFrameShadow(shadow);
     mapMagvarLabel->setFrameShape(shape);
+    mapMagvarLabel->setMargin(1);
+
     timeLabel->setFrameShadow(shadow);
     timeLabel->setFrameShape(shape);
+    timeLabel->setMargin(1);
   }
 #endif
 
+  // Set a minimum width - the labels grow (but do not shrink) with content changes
   connectStatusLabel->setAlignment(align);
-  connectStatusLabel->setMinimumWidth(100);
+  connectStatusLabel->setMinimumWidth(20);
 
   mapVisibleLabel->setAlignment(align);
-  mapVisibleLabel->setMinimumWidth(100);
+  mapVisibleLabel->setMinimumWidth(20);
 
   mapDetailLabel->setAlignment(align);
-  mapDetailLabel->setMinimumWidth(100);
+  mapDetailLabel->setMinimumWidth(20);
 
   mapRenderStatusLabel->setAlignment(align);
-  mapRenderStatusLabel->setMinimumWidth(100);
+  mapRenderStatusLabel->setMinimumWidth(20);
 
   mapDistanceLabel->setAlignment(align);
-  mapDistanceLabel->setMinimumWidth(60);
+  mapDistanceLabel->setMinimumWidth(20);
 
   mapPositionLabel->setAlignment(align);
-  mapPositionLabel->setMinimumWidth(240);
+  mapPositionLabel->setMinimumWidth(20);
+  mapPositionLabel->setText(tr("—"));
 
   mapMagvarLabel->setAlignment(align);
-  mapMagvarLabel->setMinimumWidth(40);
+  mapMagvarLabel->setMinimumWidth(20);
+  mapMagvarLabel->setText(tr("—"));
 
   timeLabel->setAlignment(align);
-#ifdef Q_OS_MACOS
-  timeLabel->setMinimumWidth(60);
-#else
-  timeLabel->setMinimumWidth(55);
-#endif
-
+  timeLabel->setMinimumWidth(20);
 }
 
 void MainWindow::clearProcedureCache()
@@ -979,9 +1014,6 @@ void MainWindow::clearProcedureCache()
 
 void MainWindow::connectAllSlots()
 {
-  // Get "show in browser"  click
-  connect(ui->textBrowserLegendNavInfo, &QTextBrowser::anchorClicked, this, &MainWindow::legendAnchorClicked);
-
   // Options dialog ===================================================================
   // Notify others of options change
   // The units need to be called before all others
@@ -1027,32 +1059,33 @@ void MainWindow::connectAllSlots()
   // Style handler ===================================================================
   // Save complete state due to crashes in Qt
   AircraftPerfController *perfController = NavApp::getAircraftPerfController();
-
-  connect(NavApp::getStyleHandler(), &StyleHandler::preStyleChange, this, &MainWindow::saveStateNow);
-  connect(NavApp::getStyleHandler(), &StyleHandler::styleChanged, mapcolors::styleChanged);
-  connect(NavApp::getStyleHandler(), &StyleHandler::styleChanged, infoController, &InfoController::optionsChanged);
-  connect(NavApp::getStyleHandler(), &StyleHandler::styleChanged, routeController, &RouteController::styleChanged);
-  connect(NavApp::getStyleHandler(), &StyleHandler::styleChanged, searchController, &SearchController::styleChanged);
-  connect(NavApp::getStyleHandler(), &StyleHandler::styleChanged, mapWidget, &MapPaintWidget::styleChanged);
-  connect(NavApp::getStyleHandler(), &StyleHandler::styleChanged, profileWidget, &ProfileWidget::styleChanged);
-  connect(NavApp::getStyleHandler(), &StyleHandler::styleChanged, perfController, &AircraftPerfController::optionsChanged);
-  connect(NavApp::getStyleHandler(), &StyleHandler::styleChanged, infoController, &InfoController::styleChanged);
-  connect(NavApp::getStyleHandler(), &StyleHandler::styleChanged, optionsDialog, &OptionsDialog::styleChanged);
-  connect(NavApp::getStyleHandler(), &StyleHandler::styleChanged, this, &MainWindow::updateStatusBarStyle);
+  const StyleHandler *styleHandler = NavApp::getStyleHandler();
+  connect(styleHandler, &StyleHandler::preStyleChange, this, &MainWindow::saveStateNow);
+  connect(styleHandler, &StyleHandler::styleChanged, mapcolors::styleChanged);
+  connect(styleHandler, &StyleHandler::styleChanged, infoController, &InfoController::optionsChanged);
+  connect(styleHandler, &StyleHandler::styleChanged, routeController, &RouteController::styleChanged);
+  connect(styleHandler, &StyleHandler::styleChanged, searchController, &SearchController::styleChanged);
+  connect(styleHandler, &StyleHandler::styleChanged, mapWidget, &MapPaintWidget::styleChanged);
+  connect(styleHandler, &StyleHandler::styleChanged, profileWidget, &ProfileWidget::styleChanged);
+  connect(styleHandler, &StyleHandler::styleChanged, perfController, &AircraftPerfController::optionsChanged);
+  connect(styleHandler, &StyleHandler::styleChanged, infoController, &InfoController::styleChanged);
+  connect(styleHandler, &StyleHandler::styleChanged, optionsDialog, &OptionsDialog::styleChanged);
+  connect(styleHandler, &StyleHandler::styleChanged, this, &MainWindow::updateStatusBarStyle);
 
   // WindReporter ===================================================================================
   // Wind has to be calculated first - receive routeChanged signal first
-  connect(routeController, &RouteController::routeChanged, windReporter, &WindReporter::updateManualRouteWinds);
   connect(routeController, &RouteController::routeChanged, windReporter, &WindReporter::updateToolButtonState);
-  connect(perfController, &AircraftPerfController::aircraftPerformanceChanged,
-          windReporter, &WindReporter::updateToolButtonState);
+  connect(perfController, &AircraftPerfController::aircraftPerformanceChanged, windReporter, &WindReporter::updateToolButtonState);
 
   // Aircraft performance signals =======================================================
+  connect(ui->actionAircraftPerformanceWarnMismatch, &QAction::toggled, perfController, &AircraftPerfController::warningChanged);
+
   connect(perfController, &AircraftPerfController::aircraftPerformanceChanged, routeController,
           &RouteController::aircraftPerformanceChanged);
   connect(perfController, &AircraftPerfController::windChanged, routeController, &RouteController::windUpdated);
   connect(perfController, &AircraftPerfController::windChanged, profileWidget, &ProfileWidget::windUpdated);
   connect(perfController, &AircraftPerfController::windChanged, mapWidget, &MapWidget::windDisplayUpdated);
+
   connect(routeController, &RouteController::routeChanged, perfController, &AircraftPerfController::routeChanged);
   connect(routeController, &RouteController::routeAltitudeChanged, perfController, &AircraftPerfController::routeAltitudeChanged);
 
@@ -1073,9 +1106,9 @@ void MainWindow::connectAllSlots()
   connect(routeController, &RouteController::routeAltitudeChanged, mapWidget, &MapPaintWidget::routeAltitudeChanged);
   connect(routeController, &RouteController::preRouteCalc, profileWidget, &ProfileWidget::preRouteCalc);
   connect(routeController, &RouteController::showInformation, infoController, &InfoController::showInformation);
-
-  connect(routeController, &RouteController::showProcedures, searchController->getProcedureSearch(),
-          &ProcedureSearch::showProcedures);
+  connect(routeController, &RouteController::addUserpointFromMap,
+          NavApp::getUserdataController(), &UserdataController::addUserpointFromMap);
+  connect(routeController, &RouteController::showProcedures, searchController->getProcedureSearch(), &ProcedureSearch::showProcedures);
 
   // Update rubber band in map window if user hovers over profile
   connect(profileWidget, &ProfileWidget::highlightProfilePoint, mapWidget, &MapPaintWidget::changeProfileHighlight);
@@ -1089,6 +1122,7 @@ void MainWindow::connectAllSlots()
   connect(routeController, &RouteController::addAirportMsa, mapWidget, &MapWidget::addMsaMark);
 
   connect(routeController, &RouteController::routeChanged, NavApp::updateWindowTitle);
+  connect(routeController, &RouteController::routeChanged, infoController, &InfoController::routeChanged);
 
   // Add departure and dest runway actions separately to windows since their shortcuts overlap with context menu shortcuts
   QList<QAction *> actions({ui->actionShowDepartureCustom, ui->actionShowApproachCustom});
@@ -1107,8 +1141,7 @@ void MainWindow::connectAllSlots()
   connect(airportSearch, &SearchBaseTable::showPos, mapWidget, &MapPaintWidget::showPos);
   connect(airportSearch, &SearchBaseTable::changeSearchMark, mapWidget, &MapWidget::changeSearchMark);
   connect(airportSearch, &SearchBaseTable::showInformation, infoController, &InfoController::showInformation);
-  connect(airportSearch, &SearchBaseTable::showProcedures,
-          searchController->getProcedureSearch(), &ProcedureSearch::showProcedures);
+  connect(airportSearch, &SearchBaseTable::showProcedures, searchController->getProcedureSearch(), &ProcedureSearch::showProcedures);
   connect(airportSearch, &SearchBaseTable::showCustomApproach, routeController, &RouteController::showCustomApproach);
   connect(airportSearch, &SearchBaseTable::showCustomDeparture, routeController, &RouteController::showCustomDeparture);
   connect(airportSearch, &SearchBaseTable::routeSetDeparture, routeController, &RouteController::routeSetDeparture);
@@ -1117,6 +1150,7 @@ void MainWindow::connectAllSlots()
   connect(airportSearch, &SearchBaseTable::routeAdd, routeController, &RouteController::routeAdd);
   connect(airportSearch, &SearchBaseTable::selectionChanged, searchController, &SearchController::searchSelectionChanged);
   connect(airportSearch, &SearchBaseTable::addAirportMsa, mapWidget, &MapWidget::addMsaMark);
+  connect(airportSearch, &SearchBaseTable::addUserpointFromMap, NavApp::getUserdataController(), &UserdataController::addUserpointFromMap);
 
   // Nav search ===================================================================================
   NavSearch *navSearch = searchController->getNavSearch();
@@ -1225,16 +1259,13 @@ void MainWindow::connectAllSlots()
   // Clear cache and update map widget
   connect(onlinedataController, &OnlinedataController::onlineClientAndAtcUpdated,
           NavApp::getAirspaceController(), &AirspaceController::onlineClientAndAtcUpdated);
-  connect(onlinedataController, &OnlinedataController::onlineClientAndAtcUpdated,
-          mapWidget, &MapPaintWidget::onlineClientAndAtcUpdated);
-  connect(onlinedataController, &OnlinedataController::onlineNetworkChanged,
-          mapWidget, &MapPaintWidget::onlineNetworkChanged);
+  connect(onlinedataController, &OnlinedataController::onlineClientAndAtcUpdated, mapWidget, &MapPaintWidget::onlineClientAndAtcUpdated);
+  connect(onlinedataController, &OnlinedataController::onlineNetworkChanged, mapWidget, &MapPaintWidget::onlineNetworkChanged);
 
   // Update info
-  connect(onlinedataController, &OnlinedataController::onlineClientAndAtcUpdated,
-          infoController, &InfoController::onlineClientAndAtcUpdated);
-  connect(onlinedataController, &OnlinedataController::onlineNetworkChanged,
-          infoController, &InfoController::onlineNetworkChanged);
+  connect(onlinedataController, &OnlinedataController::onlineClientAndAtcUpdated, infoController,
+          &InfoController::onlineClientAndAtcUpdated);
+  connect(onlinedataController, &OnlinedataController::onlineNetworkChanged, infoController, &InfoController::onlineNetworkChanged);
 
   connect(onlinedataController, &OnlinedataController::onlineNetworkChanged,
           NavApp::getAirspaceController(), &AirspaceController::updateButtonsAndActions);
@@ -1257,6 +1288,7 @@ void MainWindow::connectAllSlots()
 
   connect(infoController, &InfoController::showPos, mapWidget, &MapPaintWidget::showPos);
   connect(infoController, &InfoController::showRect, mapWidget, &MapPaintWidget::showRect);
+  connect(infoController, &InfoController::showProcedures, searchController->getProcedureSearch(), &ProcedureSearch::showProcedures);
 
   // Use this event to show scenery library dialog on first start after main windows is shown
   connect(this, &MainWindow::windowShown, this, &MainWindow::mainWindowShown, Qt::QueuedConnection);
@@ -1270,6 +1302,7 @@ void MainWindow::connectAllSlots()
   connect(ui->actionValidateSceneryLibrarySettings, &QAction::triggered, databaseManager, &DatabaseManager::checkSceneryOptionsManual);
   connect(ui->actionDatabaseFiles, &QAction::triggered, this, &MainWindow::showDatabaseFiles);
   connect(ui->actionShowMapCache, &QAction::triggered, this, &MainWindow::showShowMapCache);
+  connect(ui->actionShowMapInstallation, &QAction::triggered, this, &MainWindow::showMapInstallation);
 
   connect(ui->actionOptions, &QAction::triggered, this, &MainWindow::openOptionsDialog);
   connect(ui->actionResetMessages, &QAction::triggered, this, &MainWindow::resetMessages);
@@ -1281,6 +1314,7 @@ void MainWindow::connectAllSlots()
   connect(ui->actionWindowStayOnTop, &QAction::toggled, this, &MainWindow::stayOnTop);
   connect(ui->actionShowAllowDocking, &QAction::toggled, this, &MainWindow::allowDockingWindows);
   connect(ui->actionShowAllowMoving, &QAction::toggled, this, &MainWindow::allowMovingWindows);
+  connect(ui->actionShowWindowTitleBar, &QAction::toggled, this, &MainWindow::hideTitleBar);
   connect(ui->actionShowFullscreenMap, &QAction::toggled, this, &MainWindow::fullScreenMapToggle);
 
   // File menu ============================================================
@@ -1344,6 +1378,7 @@ void MainWindow::connectAllSlots()
   connect(ui->actionHelpTutorials, &QAction::triggered, this, &MainWindow::showOnlineTutorials);
   connect(ui->actionHelpContentsOffline, &QAction::triggered, this, &MainWindow::showOfflineHelp);
   connect(ui->actionHelpDownloads, &QAction::triggered, this, &MainWindow::showOnlineDownloads);
+  connect(ui->actionHelpChangelog, &QAction::triggered, this, &MainWindow::showChangelog);
   connect(ui->actionHelpAbout, &QAction::triggered, helpHandler, &atools::gui::HelpHandler::about);
   connect(ui->actionHelpAboutQt, &QAction::triggered, helpHandler, &atools::gui::HelpHandler::aboutQt);
   connect(ui->actionHelpCheckUpdates, &QAction::triggered, this, &MainWindow::checkForUpdates);
@@ -1373,6 +1408,9 @@ void MainWindow::connectAllSlots()
 
   connect(mapWidget, &MapWidget::routeInsertProcedure, routeController, &RouteController::routeAddProcedure);
 
+  // Map needs to restore title bar state when floating
+  connect(ui->dockWidgetMap, &QDockWidget::topLevelChanged, this, &MainWindow::mapDockTopLevelChanged);
+
   // Window menu ======================================
   connect(layoutFileHistory, &FileHistoryHandler::fileSelected, this, &MainWindow::layoutOpenRecent);
   connect(ui->actionWindowLayoutOpen, &QAction::triggered, this, &MainWindow::layoutOpen);
@@ -1386,8 +1424,6 @@ void MainWindow::connectAllSlots()
   connect(ui->actionMapShowVor, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
   connect(ui->actionMapShowNdb, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
   connect(ui->actionMapShowWp, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
-  connect(ui->actionMapShowIls, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
-  connect(ui->actionMapShowGls, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
   connect(ui->actionMapShowHolding, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
   connect(ui->actionMapShowAirportMsa, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
   connect(ui->actionMapShowVictorAirways, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
@@ -1395,6 +1431,13 @@ void MainWindow::connectAllSlots()
   connect(ui->actionMapShowTracks, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
   connect(ui->actionMapShowRoute, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
   connect(ui->actionMapShowTocTod, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
+
+  connect(ui->actionMapShowIls, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
+  connect(ui->actionMapShowGls, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
+  /* *INDENT-OFF* */
+  connect(ui->actionMapShowIls,  &QAction::toggled, profileWidget, &ProfileWidget::showIlsChanged);
+  connect(ui->actionMapShowGls,  &QAction::toggled, profileWidget, &ProfileWidget::showIlsChanged);
+  /* *INDENT-ON* */
 
   // MARK_RANGE  MARK_DISTANCE MARK_HOLDING  MARK_PATTERNS MARK_MSA
   connect(ui->actionMapHideAllRangeRings, &QAction::triggered, mapMarkHandler, &MapMarkHandler::clearRangeRings);
@@ -1460,7 +1503,6 @@ void MainWindow::connectAllSlots()
   connect(trackController, &TrackController::postTrackLoad, infoController, &InfoController::tracksChanged);
   connect(trackController, &TrackController::postTrackLoad, this, &MainWindow::updateMapObjectsShown);
   connect(trackController, &TrackController::postTrackLoad, routeController, &RouteController::tracksChanged);
-
   connect(trackController, &TrackController::postTrackLoad, mapWidget, &MapPaintWidget::postTrackLoad);
 
   connect(ui->actionRouteDownloadTracks, &QAction::toggled, trackController, &TrackController::downloadToggled);
@@ -1514,6 +1556,7 @@ void MainWindow::connectAllSlots()
   connect(ui->actionMapJumpCoordinatesMain, &QAction::triggered, mapWidget, &MapWidget::jumpCoordinates);
   connect(ui->actionMapAircraftCenter, &QAction::toggled, mapWidget, &MapPaintWidget::showAircraft);
   connect(ui->actionMapAircraftCenterNow, &QAction::triggered, mapWidget, &MapPaintWidget::showAircraftNow);
+  connect(ui->actionMapShowGridConfig, &QAction::triggered, mapWidget, &MapWidget::showGridConfiguration);
 
   // Update jump back
   connect(ui->actionMapAircraftCenter, &QAction::toggled, mapWidget, &MapPaintWidget::jumpBackToAircraftCancel);
@@ -1544,15 +1587,13 @@ void MainWindow::connectAllSlots()
   connect(mapWidget, &MapWidget::routeAdd, routeController, &RouteController::routeAdd);
   connect(mapWidget, &MapWidget::routeReplace, routeController, &RouteController::routeReplace);
 
-  // Messages about database query result status
-  connect(mapWidget, &MapPaintWidget::resultTruncated, this, &MainWindow::resultTruncated);
+  // Messages about database query result status - use queued to avoid blocking paint
+  connect(mapWidget, &MapPaintWidget::resultTruncated, this, &MainWindow::resultTruncated, Qt::QueuedConnection);
+
+  connect(mapWidget, &MapWidget::userAircraftValidChanged, this, &MainWindow::updateActionStates);
 
   connect(databaseManager, &DatabaseManager::preDatabaseLoad, this, &MainWindow::preDatabaseLoad);
   connect(databaseManager, &DatabaseManager::postDatabaseLoad, this, &MainWindow::postDatabaseLoad);
-
-  // Not needed. All properties removed from legend since they are not persistent
-  // connect(legendWidget, &Marble::LegendWidget::propertyValueChanged,
-  // mapWidget, &MapWidget::setPropertyValue);
 
   connect(ui->actionAboutMarble, &QAction::triggered, marbleAboutDialog, &Marble::MarbleAboutDialog::exec);
 
@@ -1573,26 +1614,26 @@ void MainWindow::connectAllSlots()
   connect(connectClient, &ConnectClient::disconnectedFromSimulator,
           NavApp::getAircraftPerfController(), &AircraftPerfController::disconnectedFromSimulator);
 
-  connect(connectClient, &ConnectClient::disconnectedFromSimulator, routeController,
-          &RouteController::disconnectedFromSimulator);
+  connect(connectClient, &ConnectClient::disconnectedFromSimulator, routeController, &RouteController::disconnectedFromSimulator);
 
   connect(connectClient, &ConnectClient::disconnectedFromSimulator, this, &MainWindow::sunShadingTimeChanged);
 
   // Map widget needs to clear track first
   connect(connectClient, &ConnectClient::connectedToSimulator, mapWidget, &MapPaintWidget::connectedToSimulator);
-  connect(connectClient, &ConnectClient::disconnectedFromSimulator, mapWidget,
-          &MapPaintWidget::disconnectedFromSimulator);
+  connect(connectClient, &ConnectClient::disconnectedFromSimulator, mapWidget, &MapPaintWidget::disconnectedFromSimulator);
 
   connect(connectClient, &ConnectClient::connectedToSimulator, this, &MainWindow::updateActionStates);
   connect(connectClient, &ConnectClient::disconnectedFromSimulator, this, &MainWindow::updateActionStates);
 
+  // Do not show update dialogs while connected
+  connect(connectClient, &ConnectClient::connectedToSimulator, NavApp::getUpdateHandler(), &UpdateHandler::disableUpdateCheck);
+  connect(connectClient, &ConnectClient::disconnectedFromSimulator, NavApp::getUpdateHandler(), &UpdateHandler::enableUpdateCheck);
+
   connect(connectClient, &ConnectClient::connectedToSimulator, infoController, &InfoController::connectedToSimulator);
-  connect(connectClient, &ConnectClient::disconnectedFromSimulator, infoController,
-          &InfoController::disconnectedFromSimulator);
+  connect(connectClient, &ConnectClient::disconnectedFromSimulator, infoController, &InfoController::disconnectedFromSimulator);
 
   connect(connectClient, &ConnectClient::connectedToSimulator, profileWidget, &ProfileWidget::connectedToSimulator);
-  connect(connectClient, &ConnectClient::disconnectedFromSimulator, profileWidget,
-          &ProfileWidget::disconnectedFromSimulator);
+  connect(connectClient, &ConnectClient::disconnectedFromSimulator, profileWidget, &ProfileWidget::disconnectedFromSimulator);
 
   connect(connectClient, &ConnectClient::connectedToSimulator, routeController, &RouteController::updateFooterErrorLabel);
   connect(connectClient, &ConnectClient::disconnectedFromSimulator, routeController, &RouteController::updateFooterErrorLabel);
@@ -1621,7 +1662,6 @@ void MainWindow::connectAllSlots()
 
   // Legend ===============================================
   connect(ui->actionHelpNavmapLegend, &QAction::triggered, this, &MainWindow::showNavmapLegend);
-  connect(ui->actionHelpMapLegend, &QAction::triggered, this, &MainWindow::showMapLegend);
 
   connect(&weatherUpdateTimer, &QTimer::timeout, this, &MainWindow::weatherUpdateTimeout);
 
@@ -1772,10 +1812,7 @@ void MainWindow::weatherUpdateTimeout()
 /* Menu item */
 void MainWindow::showDatabaseFiles()
 {
-  QUrl url = QUrl::fromLocalFile(NavApp::getDatabaseManager()->getDatabaseDirectory());
-
-  if(!QDesktopServices::openUrl(url))
-    atools::gui::Dialog::warning(this, tr("Error opening database files directory \"%1\"").arg(url.toDisplayString()));
+  helpHandler->openFile(NavApp::getDatabaseManager()->getDatabaseDirectory());
 }
 
 /* Menu item */
@@ -1783,10 +1820,20 @@ void MainWindow::showShowMapCache()
 {
   // Windows: C:\Users\YOURUSERNAME\AppData\Local\.marble\data
   // Linux and macOS: $HOME/.local/share/marble
-  QUrl url = QUrl::fromLocalFile(Marble::MarbleDirs::localPath() % QDir::separator() % "maps" % QDir::separator() % "earth");
+  helpHandler->openFile(Marble::MarbleDirs::localPath() % QDir::separator() % "maps" % QDir::separator() % "earth");
+}
 
-  if(!QDesktopServices::openUrl(url))
-    atools::gui::Dialog::warning(this, tr("Error opening map cache directory \"%1\"").arg(url.toDisplayString()));
+/* Menu item */
+void MainWindow::showMapInstallation()
+{
+  QString cacheMapThemeDir = OptionData::instance().getCacheMapThemeDir();
+
+  QString msg = atools::checkDirMsg(cacheMapThemeDir);
+  if(msg.isEmpty())
+    helpHandler->openFile(cacheMapThemeDir);
+  else
+    QMessageBox::warning(this, QApplication::applicationName(),
+                         msg + tr("\n\nSet the path to additional map themes in options on page \"Cache and Files\""));
 }
 
 /* Updates label and tooltip for connection status */
@@ -1817,6 +1864,7 @@ void MainWindow::updateConnectionStatusMessageText()
   else
     connectStatusLabel->setToolTip(tr("Simulator:\n%1\n\nOnline Network:\n%2").
                                    arg(connectionStatusTooltip).arg(onlineConnectionStatusTooltip));
+  connectStatusLabel->setMinimumWidth(connectStatusLabel->width());
 }
 
 /* Updates label and tooltip for objects shown on map */
@@ -1824,6 +1872,7 @@ void MainWindow::setMapObjectsShownMessageText(const QString& text, const QStrin
 {
   mapVisibleLabel->setText(text);
   mapVisibleLabel->setToolTip(tooltipText);
+  mapVisibleLabel->setMinimumWidth(mapVisibleLabel->width());
 }
 
 const ElevationModel *MainWindow::getElevationModel()
@@ -1839,6 +1888,7 @@ void MainWindow::resultTruncated()
                                  "Display might be incomplete.\n"
                                  "Reduce map details in the \"View\" menu.",
                                  "Keep menu item in sync with menu translation"));
+  mapVisibleLabel->setMinimumWidth(mapVisibleLabel->width());
 }
 
 void MainWindow::distanceChanged()
@@ -1859,6 +1909,7 @@ void MainWindow::distanceChanged()
 #endif
 
   mapDistanceLabel->setText(text);
+  mapDistanceLabel->setMinimumWidth(mapDistanceLabel->width());
 }
 
 void MainWindow::renderStatusReset()
@@ -1887,6 +1938,7 @@ void MainWindow::renderStatusUpdateLabel(RenderStatus status, bool forceUpdate)
         break;
     }
     lastRenderStatus = status;
+    mapRenderStatusLabel->setMinimumWidth(mapRenderStatusLabel->width());
   }
 }
 
@@ -1921,7 +1973,7 @@ void MainWindow::updateMapPosLabel(const atools::geo::Pos& pos, int x, int y)
   {
     QString text(Unit::coords(pos));
 
-    if(NavApp::getElevationProvider()->isGlobeOfflineProvider() && pos.getAltitude() < map::INVALID_ALTITUDE_VALUE)
+    if(NavApp::isGlobeOfflineProvider() && pos.getAltitude() < map::INVALID_ALTITUDE_VALUE)
       text += tr(" / ") + Unit::altMeter(pos.getAltitude());
 
     float magVar = NavApp::getMagVar(pos);
@@ -1931,17 +1983,20 @@ void MainWindow::updateMapPosLabel(const atools::geo::Pos& pos, int x, int y)
 #endif
 
     mapMagvarLabel->setText(magVarText);
+    mapMagvarLabel->setMinimumWidth(mapMagvarLabel->width());
 
 #ifdef DEBUG_INFORMATION
     text.append(QString(" [%1,%2]").arg(x).arg(y));
 #endif
 
     mapPositionLabel->setText(text);
+    mapPositionLabel->setMinimumWidth(mapPositionLabel->width());
   }
   else
   {
-    mapPositionLabel->setText(tr("No position"));
-    mapMagvarLabel->clear();
+    mapPositionLabel->setText(tr("—"));
+    mapPositionLabel->setMinimumWidth(mapPositionLabel->width());
+    mapMagvarLabel->setText(tr("—"));
   }
 }
 
@@ -1949,19 +2004,27 @@ void MainWindow::updateMapPosLabel(const atools::geo::Pos& pos, int x, int y)
 void MainWindow::updateWindowTitle()
 {
   QString newTitle = mainWindowTitle;
-  dbstat::NavdatabaseStatus navDbStatus = NavApp::getDatabaseManager()->getNavDatabaseStatus();
+  navdb::Status navDbStatus = NavApp::getDatabaseManager()->getNavDatabaseStatus();
 
   atools::util::Version version(NavApp::applicationVersion());
 
+#if defined(WINARCH64)
+  QString applicationVersion = version.getVersionString() + tr(" 64-bit");
+#elif defined(WINARCH32)
+  QString applicationVersion = version.getVersionString() + tr(" 32-bit");
+#else
+  QString applicationVersion = version.getVersionString();
+#endif
+
   // Program version and revision ==========================================
   if(version.isStable() || version.isReleaseCandidate() || version.isBeta())
-    newTitle += tr(" %1").arg(version.getVersionString());
+    newTitle += tr(" %1").arg(applicationVersion);
   else
-    newTitle += tr(" %1 (%2)").arg(version.getVersionString()).arg(GIT_REVISION_LITTLENAVMAP);
+    newTitle += tr(" %1 (%2)").arg(applicationVersion).arg(GIT_REVISION_LITTLENAVMAP);
 
   // Database information  ==========================================
   // Simulator database =========
-  if(navDbStatus == dbstat::NAVDATABASE_ALL)
+  if(navDbStatus == navdb::ALL)
     newTitle += tr(" - (%1)").arg(NavApp::getCurrentSimulatorShortName());
   else
   {
@@ -1972,14 +2035,14 @@ void MainWindow::updateWindowTitle()
   }
 
   // Nav database =========
-  if(navDbStatus == dbstat::NAVDATABASE_ALL)
+  if(navDbStatus == navdb::ALL)
     newTitle += tr(" / N");
-  else if(navDbStatus == dbstat::NAVDATABASE_MIXED)
+  else if(navDbStatus == navdb::MIXED)
     newTitle += tr(" / N");
-  else if(navDbStatus == dbstat::NAVDATABASE_OFF)
+  else if(navDbStatus == navdb::OFF)
     newTitle += tr(" / (N)");
 
-  if((navDbStatus == dbstat::NAVDATABASE_ALL || navDbStatus == dbstat::NAVDATABASE_MIXED) &&
+  if((navDbStatus == navdb::ALL || navDbStatus == navdb::MIXED) &&
      !NavApp::getDatabaseAiracCycleNav().isEmpty())
     newTitle += tr(" %1").arg(NavApp::getDatabaseAiracCycleNav());
 
@@ -2012,13 +2075,30 @@ void MainWindow::updateWindowTitle()
   setWindowTitle(newTitle);
 }
 
+void MainWindow::setToolTipsEnabledMainMenu(bool enabled)
+{
+  // NavApp function disabled tooltips in whole menu - enable them again
+  if(!enabled)
+  {
+    if(routeFileHistory != nullptr)
+      routeFileHistory->updateMenuTooltips();
+    if(kmlFileHistory != nullptr)
+      kmlFileHistory->updateMenuTooltips();
+    if(layoutFileHistory != nullptr)
+      layoutFileHistory->updateMenuTooltips();
+    if(NavApp::getAircraftPerfController() != nullptr)
+      NavApp::getAircraftPerfController()->updateMenuTooltips();
+  }
+}
+
 void MainWindow::deleteAircraftTrack(bool quiet)
 {
   int result = QMessageBox::Yes;
 
   if(!quiet)
-    result = dialog->showQuestionMsgBox(lnm::ACTIONS_SHOW_DELETE_TRAIL, tr("Delete aircraft trail?"), tr("Do not &show this dialog again."),
-                                        QMessageBox::Yes | QMessageBox::No, QMessageBox::No, QMessageBox::Yes);
+    result =
+      dialog->showQuestionMsgBox(lnm::ACTIONS_SHOW_DELETE_TRAIL, tr("Delete user aircraft trail?"), tr("Do not &show this dialog again."),
+                                 QMessageBox::Yes | QMessageBox::No, QMessageBox::No, QMessageBox::Yes);
 
   if(result == QMessageBox::Yes)
   {
@@ -2038,7 +2118,7 @@ bool MainWindow::routeCheckForChanges()
 
   QMessageBox msgBox(this);
   msgBox.setWindowTitle(QApplication::applicationName());
-  msgBox.setText(routeController->getRoute().isEmpty() ?
+  msgBox.setText(routeController->getRouteConst().isEmpty() ?
                  tr("Flight Plan has been changed.\n"
                     "There are changes which can be restored by using undo.") :
                  tr("Flight Plan has been changed."));
@@ -2083,10 +2163,11 @@ void MainWindow::routeFromStringCurrent()
       backgroundHintRouteStringShown = true;
     }
 
+    // No parent to create non-modal dialog
     routeStringDialog = new RouteStringDialog(nullptr, QString());
 
-    // Pass empty string to load last content
-    routeStringDialog->restoreState(QString());
+    // Load last content
+    routeStringDialog->restoreState();
 
     // Add to dock handler to enable auto raise and closing on exit
     NavApp::addDialogToDockHandler(routeStringDialog);
@@ -2094,6 +2175,7 @@ void MainWindow::routeFromStringCurrent()
     // Connect signals from and to non-modal dialog
     connect(routeStringDialog, &RouteStringDialog::routeFromFlightplan, this, &MainWindow::routeFromFlightplan);
     connect(routeController, &RouteController::routeChanged, routeStringDialog, &RouteStringDialog::updateButtonState);
+    connect(NavApp::getStyleHandler(), &StyleHandler::styleChanged, routeStringDialog, &RouteStringDialog::styleChanged);
   }
 
   routeStringDialog->show();
@@ -2103,12 +2185,14 @@ void MainWindow::routeFromStringCurrent()
 
 void MainWindow::routeFromStringSimBrief(const QString& routeString)
 {
-  // Create a new modal dialog which allows to edit the route string
+  // Create a new modal/blocking dialog which allows to edit the route string
+  // Has its own state settings
   qDebug() << Q_FUNC_INFO << routeString;
-  RouteStringDialog routeStrDialog(this, "SimBrief");
+  RouteStringDialog routeStrDialog(this, "SimBrief" /* settingsSuffixParam */);
 
-  // Pass string to avoid loading of the last content
-  routeStrDialog.restoreState(routeString);
+  // Load dialog settings but not last content
+  routeStrDialog.restoreState();
+  routeStrDialog.addRouteDescription(routeString);
 
   if(routeStrDialog.exec() == QDialog::Accepted)
   {
@@ -2129,7 +2213,11 @@ void MainWindow::routeFromFlightplan(const atools::fs::pln::Flightplan& flightpl
   // Check for changes and show question dialog unless undo stack is used
   if(undo || routeCheckForChanges())
   {
-    routeController->loadFlightplan(flightplan, atools::fs::pln::LNM_PLN, QString(), changed, adjustAltitude, undo);
+    // Transfer flag to new flightplan to avoid silently overwriting non LNMPLN files with own format
+    bool lnmpln = routeController->getRouteConst().getFlightplanConst().isLnmFormat();
+    routeController->loadFlightplan(flightplan, atools::fs::pln::LNM_PLN, QString(),
+                                    changed, adjustAltitude, undo, false /* warnAltitude */);
+    routeController->getRoute().getFlightplan().setLnmFormat(lnmpln);
     if(OptionData::instance().getFlags() & opts::GUI_CENTER_ROUTE)
       routeCenter();
     showFlightPlan();
@@ -2177,6 +2265,19 @@ QString MainWindow::routeOpenFileDialog()
     tr("Flight Plan Files %1;;All Files (*)").
     arg(lnm::FILE_PATTERN_FLIGHTPLAN_LOAD),
     "Route/LnmPln", atools::documentsDir());
+}
+
+void MainWindow::routeOpenDescr(const QString& routeString)
+{
+  if(routeCheckForChanges())
+  {
+    routeController->loadFlightplanRouteStr(routeString);
+
+    if(OptionData::instance().getFlags() & opts::GUI_CENTER_ROUTE)
+      routeCenter();
+    showFlightPlan();
+    setStatusMessage(tr("Flight plan opened from route description."));
+  }
 }
 
 void MainWindow::routeOpenFile(QString filepath)
@@ -2246,7 +2347,7 @@ void MainWindow::routeAppend()
   if(!routeFile.isEmpty())
   {
     if(routeController->insertFlightplan(routeFile,
-                                         routeController->getRoute().getDestinationAirportLegIndex() + 1 /* append */))
+                                         routeController->getRouteConst().getDestinationAirportLegIndex() + 1 /* append */))
     {
       routeFileHistory->addFile(routeFile);
       if(OptionData::instance().getFlags() & opts::GUI_CENTER_ROUTE)
@@ -2322,7 +2423,7 @@ void MainWindow::routeSaveLnmExported(const QString& filename)
 bool MainWindow::routeSaveLnm()
 {
   // Show a simple warning for the rare case that altitude is null ===============
-  if(atools::almostEqual(NavApp::getRouteConst().getCruisingAltitudeFeet(), 0.f, 10.f))
+  if(atools::almostEqual(NavApp::getRouteConst().getCruiseAltitudeFt(), 0.f, 10.f))
     dialog->showInfoMsgBox(lnm::ACTIONS_SHOW_CRUISE_ZERO_WARNING,
                            tr("Flight plan cruise altitude is zero.\n"
                               "A simulator might not be able to load the flight plan."),
@@ -2686,7 +2787,7 @@ void MainWindow::mapSaveImageAviTab()
       {
         QString defaultFileName;
 
-        if(routeController->getRoute().isEmpty())
+        if(routeController->getRouteConst().isEmpty())
           defaultFileName = tr("LittleNavmap_%1.png").arg(QDateTime::currentDateTime().toString("yyyyMMddHHmm"));
         else
           defaultFileName = NavApp::getRouteConst().buildDefaultFilenameShort("_", ".jpg");
@@ -2818,7 +2919,7 @@ void MainWindow::proceduresSelectedInternal(const QVector<proc::MapProcedureRef>
   for(const proc::MapProcedureRef& ref: refs)
   {
 #ifdef DEBUG_INFORMATION
-    qDebug() << Q_FUNC_INFO << "approachId" << ref.approachId << "transitionId" << ref.transitionId << "legId" << ref.legId;
+    qDebug() << Q_FUNC_INFO << "approachId" << ref.procedureId << "transitionId" << ref.transitionId << "legId" << ref.legId;
 #endif
 
     map::MapAirport airport = NavApp::getAirportQueryNav()->getAirportById(ref.airportId);
@@ -2834,7 +2935,7 @@ void MainWindow::proceduresSelectedInternal(const QVector<proc::MapProcedureRef>
     }
     else
     {
-      if(ref.hasApproachAndTransitionIds())
+      if(ref.hasProcedureAndTransitionIds())
       {
         // Load transition including approach
         const proc::MapProcedureLegs *legs = procedureQuery->getTransitionLegs(airport, ref.transitionId);
@@ -2843,14 +2944,14 @@ void MainWindow::proceduresSelectedInternal(const QVector<proc::MapProcedureRef>
         else
           qWarning() << "Transition not found" << ref.transitionId;
       }
-      else if(ref.hasApproachOnlyIds())
+      else if(ref.hasProcedureOnlyIds())
       {
         proc::MapProcedureRef curRef;
         if(!previewAll)
           // Only one procedure in preview - try to keep transition if user moved selection to approach leg
           curRef = mapWidget->getProcedureHighlight().ref;
 
-        if(ref.airportId == curRef.airportId && ref.approachId == curRef.approachId &&
+        if(ref.airportId == curRef.airportId && ref.procedureId == curRef.procedureId &&
            !ref.hasTransitionId() && curRef.hasTransitionId() && ref.isLeg())
         {
           // Approach leg selected - keep preview of current transition
@@ -2864,11 +2965,11 @@ void MainWindow::proceduresSelectedInternal(const QVector<proc::MapProcedureRef>
         }
         else
         {
-          const proc::MapProcedureLegs *legs = procedureQuery->getApproachLegs(airport, ref.approachId);
+          const proc::MapProcedureLegs *legs = procedureQuery->getProcedureLegs(airport, ref.procedureId);
           if(legs != nullptr)
             procedures.append(*legs);
           else
-            qWarning() << "Approach not found" << ref.approachId;
+            qWarning() << "Approach not found" << ref.procedureId;
         }
       }
     }
@@ -2904,7 +3005,7 @@ void MainWindow::procedureLegSelected(const proc::MapProcedureRef& ref)
   const proc::MapProcedureLeg *leg = nullptr;
 
 #ifdef DEBUG_INFORMATION
-  qDebug() << Q_FUNC_INFO << "approachId" << ref.approachId << "transitionId" << ref.transitionId << "legId" << ref.legId;
+  qDebug() << Q_FUNC_INFO << "approachId" << ref.procedureId << "transitionId" << ref.transitionId << "legId" << ref.legId;
 #endif
 
   if(ref.legId != -1)
@@ -2913,7 +3014,7 @@ void MainWindow::procedureLegSelected(const proc::MapProcedureRef& ref)
     if(ref.transitionId != -1)
       leg = procedureQuery->getTransitionLeg(airport, ref.legId);
     else
-      leg = procedureQuery->getApproachLeg(airport, ref.approachId, ref.legId);
+      leg = procedureQuery->getProcedureLeg(airport, ref.procedureId, ref.legId);
   }
 
   if(leg != nullptr)
@@ -2987,6 +3088,7 @@ void MainWindow::openOptionsDialog()
     return;
   }
 #endif
+  NavApp::setStayOnTop(optionsDialog);
   optionsDialog->open();
 }
 
@@ -3056,12 +3158,19 @@ void MainWindow::statusMessageChanged(const QString& text)
 void MainWindow::setDetailLabelText(const QString& text)
 {
   mapDetailLabel->setText(text);
+  mapDetailLabel->setMinimumWidth(mapDetailLabel->width());
 }
 
 /* Called by window shown event when the main window is visible the first time */
 void MainWindow::mainWindowShown()
 {
   qDebug() << Q_FUNC_INFO << "enter";
+
+  // This shows a warning dialog if failing - start it later within the event loop to avoid a freeze
+  QTimer::singleShot(0, this, &NavApp::initElevationProvider);
+
+  // Show a warning if map theme folders do not exist
+  QTimer::singleShot(0, this, &MapThemeHandler::validateMapThemeDirectories);
 
   // Need to set the font again to pass it on to all menus
   qDebug() << Q_FUNC_INFO << "QApplication::font()" << QApplication::font();
@@ -3110,7 +3219,7 @@ void MainWindow::mainWindowShown()
   weatherUpdateTimeout();
 
   // Update the weather every 15 seconds if connected
-  weatherUpdateTimer.setInterval(WEATHER_UPDATE_MS);
+  weatherUpdateTimer.setInterval(Settings::instance().getAndStoreValue(lnm::OPTIONS_WEATHER_UPDATE_RATE_SIM, 15000).toInt());
   weatherUpdateTimer.start();
 
   optionsDialog->checkOfficialOnlineUrls();
@@ -3122,7 +3231,7 @@ void MainWindow::mainWindowShown()
   if(ui->actionRunWebserver->isChecked())
   {
     NavApp::getWebController()->startServer();
-    updateMapKeys(); // Update API keys in web map widget
+    updateMapKeys(); // Update API keys and theme dir in web map widget
   }
   webserverStatusChanged(NavApp::getWebController()->isRunning());
 
@@ -3142,28 +3251,34 @@ void MainWindow::mainWindowShown()
              << "geo" << screen->geometry() << "available geo" << screen->availableGeometry()
              << "available virtual geo" << screen->availableVirtualGeometry();
 
+  // Check for commands from other instances in shared memory segment
+  NavApp::getDataExchange()->startTimer();
+
   qDebug() << Q_FUNC_INFO << "leave";
+}
+
+void MainWindow::loadLayoutDelayed(const QString& filename)
+{
+  try
+  {
+    // Load layout file delayed - does not apply state
+    dockHandler->loadWindowState(filename, OptionData::instance().getFlags2().testFlag(opts2::MAP_ALLOW_UNDOCK), layoutWarnText);
+    QTimer::singleShot(200, dockHandler, &atools::gui::DockWidgetHandler::currentStateToWindow);
+  }
+  catch(atools::Exception& e)
+  {
+    atools::gui::ErrorHandler(this).handleException(e);
+  }
 }
 
 void MainWindow::mainWindowShownDelayed()
 {
+  qDebug() << Q_FUNC_INFO << "enter";
+
   NavApp::closeSplashScreen();
 
   if(OptionData::instance().getFlags().testFlag(opts::STARTUP_LOAD_LAYOUT) && !layoutFileHistory->isEmpty())
-  {
-    try
-    {
-      // Reload last layout file - does not apply state
-      dockHandler->loadWindowState(layoutFileHistory->getTopFile(),
-                                   OptionData::instance().getFlags2().testFlag(opts2::MAP_ALLOW_UNDOCK),
-                                   layoutWarnText);
-      QTimer::singleShot(200, dockHandler, &atools::gui::DockWidgetHandler::currentStateToWindow);
-    }
-    catch(atools::Exception& e)
-    {
-      atools::gui::ErrorHandler(this).handleException(e);
-    }
-  }
+    loadLayoutDelayed(layoutFileHistory->getTopFile());
   // else layout was already loaded from settings earlier
 
   // Apply layout again to avoid issues with formatting
@@ -3189,7 +3304,7 @@ void MainWindow::mainWindowShownDelayed()
   }
 
   // Center flight plan after loading - do this delayed to consider window size changes
-  if(OptionData::instance().getFlags() & opts::GUI_CENTER_ROUTE && !NavApp::isRouteEmpty())
+  if(OptionData::instance().getFlags().testFlag(opts::STARTUP_SHOW_ROUTE) && !NavApp::isRouteEmpty())
     NavApp::getMapPaintWidgetGui()->showRect(routeController->getBoundingRect(), false);
 
   // Set window flag
@@ -3259,7 +3374,7 @@ void MainWindow::mainWindowShownDelayed()
                                   "simulator scenery into the Little Navmap database.<br/>"
                                   "This process runs in the background.<br/>"
                                   "You can start this manually in the menu<br/>"
-                                  "\"Scenery Library\" -> \"Reload Scenery Library\".</li>"
+                                  "\"Scenery Library\" -> \"Load Scenery Library\".</li>"
                                   "<li>The connection dialog window opens allowing to attach Little Navmap<br/>"
                                   "to a simulator while flying.<br/>"
                                   "Do this manually in menu \"Tools\" -> \"Connect to Flight Simulator\".</li>"
@@ -3267,7 +3382,7 @@ void MainWindow::mainWindowShownDelayed()
                                 "<p>You can also skip all these steps and run them later.</p>"
                                   "<p>See the help menu to access the online user manual and tutorials.</p>"
                                   "</body>"
-                                "</html");
+                                "</html>");
 
     int retval = QMessageBox::information(this, tr("%1 - Introduction").arg(QApplication::applicationName()), text,
                                           QMessageBox::Ok, QMessageBox::Cancel);
@@ -3296,42 +3411,46 @@ void MainWindow::mainWindowShownDelayed()
   {
     databasesErased = false;
     // Databases were removed - show dialog
-    databaseManager->loadScenery();
-  }
-
-  if(!NavApp::getElevationProvider()->isGlobeOfflineProvider())
-  {
-    QUrl url = atools::gui::HelpHandler::getHelpUrlWeb(lnm::helpOnlineInstallGlobeUrl, lnm::helpLanguageOnline());
-    QString message = tr(
-      "<p>The online elevation data which is used by default for the elevation profile is limited and has a lot of errors.<br/>"
-      "Therefore, it is recommended to download and use the offline GLOBE elevation data which provides world wide coverage.</p>"
-      "<p>Go to the main menu -&gt; \"Tools\" -&gt; \"Options\" and then to page \"Cache and files\" to add the GLOBE data.</p>"
-        "<p><a href=\"%1\">Click here for more information in the Little Navmap online manual</a></p>",
-      "Keep instructions in sync with translated menus").arg(url.toString());
-
-    dialog->showInfoMsgBox(lnm::ACTIONS_SHOW_INSTALL_GLOBE, message, tr("Do not &show this dialog again."));
+    if(databaseManager->hasInstalledSimulators())
+      databaseManager->loadScenery();
   }
 
   // Checks if version of database is smaller than application database version and shows a warning dialog if it is
   databaseManager->checkDatabaseVersion();
 
   // Check for updates once main window is visible
-  NavApp::checkForUpdates(OptionData::instance().getUpdateChannels(), false /* manually triggered */, false /* forceDebug */);
+  NavApp::checkForUpdates(OptionData::instance().getUpdateChannels(), false /* manual */, true /* startup */, false /* forceDebug */);
+
+  // Update the information display later delayed to avoid long loading times due to weather timeout
+  QTimer::singleShot(50, infoController, &InfoController::restoreInformation);
+
+#ifdef DEBUG_INFORMATION
+  qDebug() << "mapDistanceLabel->size()" << mapDistanceLabel->size();
+  qDebug() << "mapPositionLabel->size()" << mapPositionLabel->size();
+  qDebug() << "mapMagvarLabel->size()" << mapMagvarLabel->size();
+  qDebug() << "mapRenderStatusLabel->size()" << mapRenderStatusLabel->size();
+  qDebug() << "mapDetailLabel->size()" << mapDetailLabel->size();
+  qDebug() << "mapVisibleLabel->size()" << mapVisibleLabel->size();
+  qDebug() << "connectStatusLabel->size()" << connectStatusLabel->size();
+  qDebug() << "timeLabel->size()" << timeLabel->size();
+#endif
+  qDebug() << Q_FUNC_INFO << "leave";
 }
 
 void MainWindow::runDirToolManual()
 {
-  runDirTool(true);
+  runDirTool(true /* manual */);
 }
 
 void MainWindow::runDirTool(bool manual)
 {
+  bool alreadyComplete, created;
   DirTool dirTool(this, atools::documentsDir(), QApplication::applicationName(), lnm::ACTIONS_SHOW_INSTALL_DIRS);
-  bool hasDirs = dirTool.runIfMissing();
+  dirTool.runIfMissing(manual, alreadyComplete, created);
 
-  qDebug() << Q_FUNC_INFO << "hasDirs" << hasDirs << "manual" << manual;
+  qDebug() << Q_FUNC_INFO << "alreadyComplete" << alreadyComplete << "manual" << manual << "created" << created;
 
-  if(hasDirs && manual)
+  if(alreadyComplete && manual && !created)
     QMessageBox::information(this, QApplication::applicationName(),
                              tr("<p>Directory structure for Little Navmap files is already complete.</p>"
                                   "<p>Base directory is<br/>\"%1\"</p>").arg(dirTool.getApplicationDir()));
@@ -3395,12 +3514,25 @@ void MainWindow::fullScreenMapToggle()
     fullScreenOff();
 }
 
+void MainWindow::setStayOnTop(QWidget *widget)
+{
+  dockHandler->setStayOnTop(widget, ui->actionWindowStayOnTop->isChecked());
+}
+
+void MainWindow::setLnmplnExportDir(const QString& dir)
+{
+  routeExport->setLnmplnExportDir(dir);
+}
+
 void MainWindow::stayOnTop()
 {
   qDebug() << Q_FUNC_INFO;
-  dockHandler->setStayOnTop(marbleAboutDialog, ui->actionWindowStayOnTop->isChecked());
-  dockHandler->setStayOnTop(optionsDialog, ui->actionWindowStayOnTop->isChecked());
-  dockHandler->setStayOnTopMain(ui->actionWindowStayOnTop->isChecked());
+
+  bool onTop = ui->actionWindowStayOnTop->isChecked();
+  dockHandler->setStayOnTop(marbleAboutDialog, onTop);
+  dockHandler->setStayOnTop(optionsDialog, onTop);
+  dockHandler->setStayOnTopDialogWidgets(onTop);
+  dockHandler->setStayOnTopMain(onTop);
 }
 
 void MainWindow::allowMovingWindows()
@@ -3421,6 +3553,23 @@ void MainWindow::allowDockingWindows()
   if(OptionData::instance().getFlags2().testFlag(opts2::MAP_ALLOW_UNDOCK))
     // Undockable map widget is not registered in handler
     DockWidgetHandler::setDockingAllowed(ui->dockWidgetMap, ui->actionShowAllowDocking->isChecked());
+}
+
+void MainWindow::hideTitleBar()
+{
+  qDebug() << Q_FUNC_INFO;
+  dockHandler->setHideTitleBar(!ui->actionShowWindowTitleBar->isChecked());
+
+  if(OptionData::instance().getFlags2().testFlag(opts2::MAP_ALLOW_UNDOCK))
+    // Undockable map widget is not registered in handler
+    DockWidgetHandler::setHideTitleBar(ui->dockWidgetMap, !ui->actionShowWindowTitleBar->isChecked());
+}
+
+void MainWindow::mapDockTopLevelChanged(bool topLevel)
+{
+  // Map widget changed floating state
+  if(OptionData::instance().getFlags2().testFlag(opts2::MAP_ALLOW_UNDOCK))
+    DockWidgetHandler::setHideTitleBar(ui->dockWidgetMap, dockHandler->getHideTitle() && !topLevel);
 }
 
 void MainWindow::raiseFloatingWindows()
@@ -3462,7 +3611,9 @@ void MainWindow::updateHighlightActionStates()
 /* Enable or disable actions */
 void MainWindow::updateActionStates()
 {
+#ifdef DEBUG_INFORMATION
   qDebug() << Q_FUNC_INFO;
+#endif
 
   if(NavApp::isShuttingDown())
     return;
@@ -3497,9 +3648,9 @@ void MainWindow::updateActionStates()
 
   ui->actionRouteCenter->setEnabled(hasFlightplan);
   ui->actionRouteSelectParking->setEnabled(route.hasValidDeparture());
-  ui->actionMapShowRoute->setEnabled(hasFlightplan);
-  ui->actionMapShowTocTod->setEnabled(hasFlightplan && ui->actionMapShowRoute->isChecked());
-  ui->actionInfoApproachShowMissedAppr->setEnabled(hasFlightplan && ui->actionMapShowRoute->isChecked());
+  ui->actionMapShowRoute->setEnabled(true);
+  ui->actionMapShowTocTod->setEnabled(true);
+  ui->actionInfoApproachShowMissedAppr->setEnabled(true);
   ui->actionRouteEditMode->setEnabled(hasFlightplan);
   ui->actionPrintFlightplan->setEnabled(hasFlightplan);
   ui->actionRouteCopyString->setEnabled(hasFlightplan);
@@ -3508,6 +3659,9 @@ void MainWindow::updateActionStates()
   bool hasTracks = NavApp::hasTracks();
   ui->actionRouteDeleteTracks->setEnabled(hasTracks);
   ui->actionMapShowTracks->setEnabled(hasTracks);
+
+  bool hasTracksEnabled = NavApp::hasTracksEnabled();
+  ui->actionRouteDownloadTracksNow->setEnabled(hasTracksEnabled);
 
 #ifdef DEBUG_MOVING_AIRPLANE
   ui->actionMapShowAircraft->setEnabled(true);
@@ -3519,7 +3673,7 @@ void MainWindow::updateActionStates()
 #else
   ui->actionMapShowAircraft->setEnabled(NavApp::isConnected());
   ui->actionMapAircraftCenter->setEnabled(NavApp::isConnected());
-  ui->actionMapAircraftCenterNow->setEnabled(NavApp::isConnected());
+  ui->actionMapAircraftCenterNow->setEnabled(NavApp::isConnectedAndAircraft());
 
   // AI, multiplayer or online clients
   ui->actionMapShowAircraftAi->setEnabled(NavApp::isConnected() && NavApp::isFetchAiAircraft());
@@ -3557,7 +3711,7 @@ void MainWindow::resetAllSettings()
     QMessageBox::warning(this, QApplication::applicationName() + tr("Reset all Settings "),
                          tr("<b>This will reset all options, window layout, dialog layout, "
                               "aircraft trail, map position history and file histories "
-                              "back to default and restart <i>%1</i>.</b><br/><br/>"
+                              "back to default and restart %1.</b><br/><br/>"
                               "User features like range rings or patterns as well as "
                               "scenery, logbook and userpoint databases are not affected.<br/><br/>"
                               "A copy of the settings file<br/><br/>"
@@ -3565,9 +3719,8 @@ void MainWindow::resetAllSettings()
                               "will be created in the folder<br/><br/>"
                               "\"%3\"<br/><br/>"
                               "which allows you to undo this change."
-                            ).arg(QApplication::applicationName()).arg(settingFile).arg(settingPath)
-                         , QMessageBox::Ok | QMessageBox::Cancel | QMessageBox::Help,
-                         QMessageBox::Cancel);
+                            ).arg(QApplication::applicationName()).arg(settingFile).arg(settingPath),
+                         QMessageBox::Ok | QMessageBox::Cancel | QMessageBox::Help, QMessageBox::Cancel);
 
   if(retval == QMessageBox::Ok)
   {
@@ -3575,8 +3728,7 @@ void MainWindow::resetAllSettings()
     close();
   }
   else if(retval == QMessageBox::Help)
-    atools::gui::HelpHandler::openHelpUrlWeb(this, lnm::helpOnlineUrl + "MENUS.html#reset-and-restart",
-                                             lnm::helpLanguageOnline());
+    atools::gui::HelpHandler::openHelpUrlWeb(this, lnm::helpOnlineUrl + "MENUS.html#reset-and-restart", lnm::helpLanguageOnline());
 }
 
 void MainWindow::resetWindowLayout()
@@ -3638,25 +3790,6 @@ void MainWindow::restoreStateMain()
   else
     // Use default state saved in application
     resetWindowLayout();
-
-#ifdef DEBUG_MENU_TOOLTIPS
-  // Enable tooltips for all menus
-  QList<QAction *> stack;
-  stack.append(ui->menuBar->actions());
-  while(!stack.isEmpty())
-  {
-    QMenu *menu = stack.takeLast()->menu();
-    if(menu != nullptr)
-    {
-      menu->setToolTipsVisible(true);
-      for(QAction *sub : menu->actions())
-      {
-        if(sub->menu() != nullptr)
-          stack.append(sub);
-      }
-    }
-  }
-#endif
 
   // Need to be loaded in constructor first since it reads all options
   // optionsDialog->restoreState();
@@ -3727,7 +3860,7 @@ void MainWindow::restoreStateMain()
   widgetState.setBlockSignals(true);
   if(OptionData::instance().getFlags() & opts::STARTUP_LOAD_MAP_SETTINGS)
   {
-    // Restore map settings if desired by the user
+    // Restore map settings if requested by the user
     widgetState.restore({ui->actionMapShowVor, ui->actionMapShowNdb, ui->actionMapShowWp,
                          ui->actionMapShowIls, ui->actionMapShowGls, ui->actionMapShowHolding, ui->actionMapShowAirportMsa,
                          ui->actionMapShowVictorAirways, ui->actionMapShowJetAirways, ui->actionMapShowTracks, ui->actionShowAirspaces,
@@ -3744,8 +3877,9 @@ void MainWindow::restoreStateMain()
   // Map settings that are always loaded
   widgetState.restore({ui->actionMapShowGrid, ui->actionMapShowCities, ui->actionRouteEditMode, ui->actionRouteSaveSidStarWaypointsOpt,
                        ui->actionRouteSaveApprWaypointsOpt, ui->actionRouteSaveAirwayWaypointsOpt, ui->actionLogdataCreateLogbook,
-                       ui->actionMapShowSunShading, ui->actionMapShowAirportWeather, ui->actionMapShowMinimumAltitude,
-                       ui->actionRunWebserver, ui->actionShowAllowDocking, ui->actionShowAllowMoving, ui->actionWindowStayOnTop});
+                       ui->actionAircraftPerformanceWarnMismatch, ui->actionMapShowSunShading, ui->actionMapShowAirportWeather,
+                       ui->actionMapShowMinimumAltitude, ui->actionRunWebserver, ui->actionShowAllowDocking, ui->actionShowAllowMoving,
+                       ui->actionShowWindowTitleBar, ui->actionWindowStayOnTop});
 
   widgetState.setBlockSignals(false);
 
@@ -3770,18 +3904,22 @@ void MainWindow::optionsChanged()
   dockHandler->setAutoRaiseWindows(OptionData::instance().getFlags2().testFlag(opts2::RAISE_DOCK_WINDOWS));
   dockHandler->setAutoRaiseMainWindow(OptionData::instance().getFlags2().testFlag(opts2::RAISE_MAIN_WINDOW));
 
-  updateMapKeys();
+  if(mapThemeHandler != nullptr)
+    mapThemeHandler->optionsChanged();
 }
 
 void MainWindow::updateMapKeys()
 {
-  // Is null on startup
-  if(mapWidget != nullptr)
-    mapWidget->setKeys(mapThemeHandler->getMapThemeKeysHash());
+  if(mapThemeHandler != nullptr)
+  {
+    // Is null on startup
+    if(mapWidget != nullptr)
+      mapWidget->setKeys(mapThemeHandler->getMapThemeKeysHash());
 
-  // Might be null if not started
-  if(NavApp::getMapPaintWidgetWeb() != nullptr)
-    NavApp::getMapPaintWidgetWeb()->setKeys(mapThemeHandler->getMapThemeKeysHash());
+    // Might be null if not started
+    if(NavApp::getMapPaintWidgetWeb() != nullptr)
+      NavApp::getMapPaintWidgetWeb()->setKeys(mapThemeHandler->getMapThemeKeysHash());
+  }
 }
 
 void MainWindow::saveStateNow()
@@ -3977,9 +4115,10 @@ void MainWindow::saveActionStates()
                     ui->actionMapShowAircraftAiBoat, ui->actionMapShowAircraftTrack, ui->actionInfoApproachShowMissedAppr,
                     ui->actionMapShowGrid, ui->actionMapShowCities, ui->actionMapShowSunShading, ui->actionMapShowAirportWeather,
                     ui->actionMapShowMinimumAltitude, ui->actionRouteEditMode, ui->actionRouteSaveSidStarWaypointsOpt,
-                    ui->actionRouteSaveApprWaypointsOpt, ui->actionRouteSaveAirwayWaypointsOpt, ui->actionLogdataCreateLogbook,
-                    ui->actionRunWebserver, ui->actionSearchLogdataShowDirect, ui->actionSearchLogdataShowRoute,
-                    ui->actionSearchLogdataShowTrack, ui->actionShowAllowDocking, ui->actionShowAllowMoving, ui->actionWindowStayOnTop});
+                    ui->actionAircraftPerformanceWarnMismatch, ui->actionRouteSaveApprWaypointsOpt, ui->actionRouteSaveAirwayWaypointsOpt,
+                    ui->actionLogdataCreateLogbook, ui->actionRunWebserver, ui->actionSearchLogdataShowDirect,
+                    ui->actionSearchLogdataShowRoute, ui->actionSearchLogdataShowTrack, ui->actionShowAllowDocking,
+                    ui->actionShowAllowMoving, ui->actionShowWindowTitleBar, ui->actionWindowStayOnTop});
 
   Settings::syncSettings();
 }
@@ -4018,8 +4157,9 @@ void MainWindow::printShortcuts()
   // Print all main menu and sub menu shortcuts ==============================================
   qDebug() << "===============================================================================";
 
-  QString out;
-  QTextStream stream(&out, QIODevice::WriteOnly);
+  QString outShortcuts, outItems;
+  QTextStream streamShortcuts(&outShortcuts, QIODevice::WriteOnly);
+  QTextStream streamItems(&outItems, QIODevice::WriteOnly);
   QSet<QKeySequence> keys;
   QStringList warnings;
 
@@ -4031,15 +4171,15 @@ void MainWindow::printShortcuts()
     {
       QString text = mainmenus->menu()->menuAction()->text().remove(QChar('&'));
 
-      stream << endl << ".. _shortcuts-main-" << text.toLower() << ":" << endl << endl;
+      streamShortcuts << endl << ".. _shortcuts-main-" << text.toLower() << ":" << endl << endl;
 
-      stream << text << endl;
-      stream << QString("^").repeated(text.size()) << endl << endl;
+      streamShortcuts << text << endl;
+      streamShortcuts << QString("^").repeated(text.size()) << endl << endl;
 
-      stream << "+" << QString("-").repeated(c1) << "+" << QString("-").repeated(c2) << "+" << endl;
-      stream << "| " << QString("Menu").leftJustified(c1 - 1)
-             << "| " << QString("Shortcut").leftJustified(c2 - 1) << "|" << endl;
-      stream << "+" << QString("=").repeated(c1) << "+" << QString("=").repeated(c2) << "+" << endl;
+      streamShortcuts << "+" << QString("-").repeated(c1) << "+" << QString("-").repeated(c2) << "+" << endl;
+      streamShortcuts << "| " << QString("Menu").leftJustified(c1 - 1)
+                      << "| " << QString("Shortcut").leftJustified(c2 - 1) << "|" << endl;
+      streamShortcuts << "+" << QString("=").repeated(c1) << "+" << QString("=").repeated(c2) << "+" << endl;
 
       QString mainmenu = mainmenus->text().remove(QChar('&'));
       for(const QAction *mainAction : mainmenus->menu()->actions())
@@ -4054,14 +4194,42 @@ void MainWindow::printShortcuts()
               if(keys.contains(subAction->shortcut()))
                 warnings.append(QString("Duplicate shortcut \"%1\"").arg(subAction->shortcut().toString()));
 
-              stream << "| "
-                     << QString(mainmenu + " -> " + submenu + " -> " +
-                         subAction->text().remove(QChar('&'))).leftJustified(c1 - 1)
-                     << "| "
-                     << ("``" + subAction->shortcut().toString() + "``").leftJustified(c2 - 1)
-                     << "|" << endl;
-              stream << "+" << QString("-").repeated(c1) << "+" << QString("-").repeated(c2) << "+" << endl;
+              streamShortcuts << "| "
+                              << QString(mainmenu + " -> " + submenu + " -> " + subAction->text().remove(QChar('&'))).leftJustified(c1 - 1)
+                              << "| "
+                              << ("``" + subAction->shortcut().toString() + "``").leftJustified(c2 - 1)
+                              << "|" << endl;
+              streamShortcuts << "+" << QString("-").repeated(c1) << "+" << QString("-").repeated(c2) << "+" << endl;
               keys.insert(subAction->shortcut());
+            }
+
+            if(!submenu.startsWith("Recent") && !subAction->text().isEmpty())
+            {
+              QString actionText = subAction->text().remove(QChar('&')).simplified().remove(" ...").remove("...");
+              QString imageName = subAction->icon().name().isEmpty() ? QString() : QFileInfo(subAction->icon().name()).baseName() % ".png";
+
+              streamItems << (".. ===== " % mainmenu % " -> " % submenu % " -> " % subAction->text().remove(QChar('&'))) << endl;
+
+              // .. _show-empty-airports:
+              streamItems << (".. _" % actionText.toLower().replace(" ", "-") % ":") << endl;
+
+              // if(imageName.isEmpty())
+              // {
+              //// Show empty Airports
+              //// '''''''''''''''''''''''''''''''''''''''''
+              // streamItems << actionText << endl;
+              // streamItems << QString("'").repeated(80) << endl << endl;
+              // }
+              // else
+              {
+                // |Show empty Airports| Show empty Airports
+                // '''''''''''''''''''''''''''''''''''''''''
+                streamItems << ("|" % actionText % "| " % actionText) << endl;
+                streamItems << QString("'").repeated(80) << endl << endl;
+
+                // .. |Show empty Airports| image:: ../images/icon_airportempty.png
+                streamItems << (".. |" % actionText % "| image:: ../images/icon_" % imageName) << endl << endl;
+              }
             }
           }
           submenu.clear();
@@ -4073,20 +4241,51 @@ void MainWindow::printShortcuts()
             if(keys.contains(mainAction->shortcut()))
               warnings.append(QString("Duplicate shortcut \"%1\"").arg(mainAction->shortcut().toString()));
 
-            stream << "| "
-                   << QString(mainmenu + " -> " + mainAction->text().remove(QChar('&'))).leftJustified(c1 - 1)
-                   << "| "
-                   << ("``" + mainAction->shortcut().toString() + "``").leftJustified(c2 - 1)
-                   << "|" << endl;
-            stream << "+" << QString("-").repeated(c1) << "+" << QString("-").repeated(c2) << "+" << endl;
+            streamShortcuts << "| "
+                            << QString(mainmenu + " -> " + mainAction->text().remove(QChar('&'))).leftJustified(c1 - 1)
+                            << "| "
+                            << ("``" + mainAction->shortcut().toString() + "``").leftJustified(c2 - 1)
+                            << "|" << endl;
+            streamShortcuts << "+" << QString("-").repeated(c1) << "+" << QString("-").repeated(c2) << "+" << endl;
             keys.insert(mainAction->shortcut());
+          }
+
+          if(!mainAction->text().isEmpty())
+          {
+            streamItems << (".. ===== " % mainmenu % " -> " % mainAction->text().remove(QChar('&'))) << endl;
+            QString actionText = mainAction->text().remove(QChar('&')).simplified().remove(" ...").remove("...");
+            QString imageName = mainAction->icon().name().isEmpty() ? QString() : QFileInfo(mainAction->icon().name()).baseName() % ".png";
+
+            // if(imageName.isEmpty())
+            // {
+            //// Show empty Airports
+            //// '''''''''''''''''''''''''''''''''''''''''
+            // streamItems << actionText << endl;
+            // streamItems << QString("'").repeated(80) << endl << endl;
+            // }
+            // else
+            {
+              // .. _show-empty-airports:
+              streamItems << (".. _" % actionText.toLower().replace(" ", "-") % ":") << endl;
+
+              // |Show empty Airports| Show empty Airports
+              // '''''''''''''''''''''''''''''''''''''''''
+              streamItems << ("|" % actionText % "| " % actionText) << endl;
+              streamItems << QString("'").repeated(80) << endl << endl;
+
+              // .. |Show empty Airports| image:: ../images/icon_airportempty.png
+              streamItems << (".. |" % actionText % "| image:: ../images/icon_" % imageName) << endl << endl;
+            }
           }
         }
       }
     }
   }
-  qDebug().nospace().noquote() << endl << out;
-
+  qDebug() << "Shortcuts ===============================================================================";
+  qDebug().nospace().noquote() << endl << outShortcuts;
+  qDebug() << "===============================================================================";
+  qDebug().nospace().noquote() << endl << outItems;
+  qDebug() << "Items ===============================================================================";
   for(const QString& warning : warnings)
     qWarning().nospace().noquote() << Q_FUNC_INFO << " " << warning;
 
@@ -4110,8 +4309,13 @@ void MainWindow::closeEvent(QCloseEvent *event)
   // close button on the window frame
   qDebug() << Q_FUNC_INFO;
 
-  if(routeController->hasChanged())
+  // Save to default file in options or delete the default file if plan is empty
+  if(OptionData::instance().getFlags().testFlag(opts::STARTUP_LOAD_ROUTE))
+    // Save automatically
+    routeController->saveFlightplanLnmDefault();
+  else if(routeController->hasChanged())
   {
+    // Changed flight plan found - ask for confirmation
     if(!routeCheckForChanges())
     {
       // Do not exit
@@ -4140,13 +4344,13 @@ void MainWindow::closeEvent(QCloseEvent *event)
   // Do not ask if user did a reset settings
   if(!NavApp::isRestartProcess())
   {
-    if(NavApp::getDatabaseManager()->isLoading())
+    if(NavApp::getDatabaseManager()->isLoadingProgress())
     {
       // Database compiling in background ==========================
       int result = dialog->showQuestionMsgBox(lnm::ACTIONS_SHOW_QUIT_LOADING,
                                               tr("%1 is loading the scenery library database in the background.\n"
                                                  "Really quit and cancel the loading process?").arg(QApplication::applicationName()),
-                                              tr("Do not &show this dialog again and cancel loading in the future."),
+                                              tr("Do not &show this dialog again and cancel loading."),
                                               QMessageBox::Yes | QMessageBox::No, QMessageBox::No, QMessageBox::Yes);
 
       if(result != QMessageBox::Yes)
@@ -4162,7 +4366,7 @@ void MainWindow::closeEvent(QCloseEvent *event)
     {
       // Normal as quit dialog ======================================
       int result = dialog->showQuestionMsgBox(lnm::ACTIONS_SHOW_QUIT, tr("Really quit?"),
-                                              tr("Do not &show this dialog again and quit in the future."),
+                                              tr("Do not &show this dialog again and quit."),
                                               QMessageBox::Yes | QMessageBox::No, QMessageBox::No, QMessageBox::Yes);
 
       if(result != QMessageBox::Yes)
@@ -4467,10 +4671,10 @@ void MainWindow::dragEnterEvent(QDragEnterEvent *event)
         // accept if file exists, is readable and matches the supported extensions or content
         QFileInfo file(url.toLocalFile());
 
-        if(file.exists() && file.isReadable() && file.isFile() &&
-           (atools::fs::pln::FlightplanIO::detectFormat(file.filePath()) ||
-            AircraftPerfController::isPerformanceFile(file.filePath()) ||
-            atools::gui::DockWidgetHandler::isWindowLayoutFile(file.filePath())))
+        QString flightplan, perf, layout;
+        fc::checkFileType(file.filePath(), &flightplan, &perf, &layout);
+
+        if(!flightplan.isEmpty() || !perf.isEmpty() || !layout.isEmpty())
         {
           qDebug() << Q_FUNC_INFO << "accepting" << url;
           event->acceptProposedAction();
@@ -4554,4 +4758,18 @@ void MainWindow::toggleWebserver(bool checked)
 void MainWindow::openWebserver()
 {
   NavApp::getWebController()->openPage();
+}
+
+void MainWindow::debugDumpContainerSizes() const
+{
+  qDebug() << Q_FUNC_INFO << "======================================";
+  if(windReporter != nullptr)
+    windReporter->debugDumpContainerSizes();
+  if(weatherReporter != nullptr)
+    weatherReporter->debugDumpContainerSizes();
+  if(NavApp::getOnlinedataController() != nullptr)
+    NavApp::getOnlinedataController()->debugDumpContainerSizes();
+  if(NavApp::getConnectClient() != nullptr)
+    NavApp::getConnectClient()->debugDumpContainerSizes();
+  qDebug() << Q_FUNC_INFO << "======================================";
 }

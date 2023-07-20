@@ -26,7 +26,7 @@
 #include "gui/helphandler.h"
 #include "gui/itemviewzoomhandler.h"
 #include "gui/widgetstate.h"
-#include "navapp.h"
+#include "app/navapp.h"
 #include "query/airportquery.h"
 #include "query/mapquery.h"
 #include "route/route.h"
@@ -325,7 +325,7 @@ void ParkingDialog::updateTableSelection()
     if(item != nullptr)
     {
       // Check if position matches current route values
-      const internal::StartPosition& pos = startPositions.value(item->data(Qt::UserRole).toInt());
+      const internal::StartPosition pos = startPositions.value(item->data(Qt::UserRole).toInt());
 
       if( // Parking matches
         (pos.parking.isValid() && parking.name == pos.parking.name && parking.number == pos.parking.number &&

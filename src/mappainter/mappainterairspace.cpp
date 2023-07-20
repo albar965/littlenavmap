@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -23,7 +23,7 @@
 #include "mapgui/maplayer.h"
 #include "query/mapquery.h"
 #include "airspace/airspacecontroller.h"
-#include "navapp.h"
+#include "app/navapp.h"
 #include "mapgui/mapscale.h"
 
 #include <marble/GeoDataLineString.h>
@@ -62,7 +62,7 @@ void MapPainterAirspace::render()
   {
     bool overflow = false;
     controller->getAirspaces(airspaces, curBox, context->mapLayer, context->airspaceFilterByLayer,
-                             context->route->getCruisingAltitudeFeet(),
+                             context->route->getCruiseAltitudeFt(),
                              context->viewContext == Marble::Animation, map::AIRSPACE_SRC_ALL, overflow);
     context->setQueryOverflow(overflow);
   }

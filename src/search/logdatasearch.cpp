@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -27,7 +27,7 @@
 #include "common/formatter.h"
 #include "gui/widgetstate.h"
 #include "gui/widgetutil.h"
-#include "navapp.h"
+#include "app/navapp.h"
 #include "query/airportquery.h"
 #include "search/column.h"
 #include "search/columnlist.h"
@@ -68,7 +68,7 @@ LogdataSearch::LogdataSearch(QMainWindow *parent, QTableView *tableView, si::Tab
   append(Column("logbook_id").hidden()).
   append(Column("departure_time", tr("Departure\nReal Time")).defaultSort(true).defaultSortOrder(Qt::DescendingOrder)).
   append(Column("departure_time_sim", tr("Departure\nSim. Time UTC"))).
-  append(Column("departure_ident", ui->lineEditLogdataDeparture, tr("Departure\nICAO")).filterByBuilder()).
+  append(Column("departure_ident", ui->lineEditLogdataDeparture, tr("Departure\nIdent")).filterByBuilder()).
   append(Column("departure_name", tr("Departure"))).
   append(Column("departure_runway").hidden()).
 
@@ -80,7 +80,7 @@ LogdataSearch::LogdataSearch(QMainWindow *parent, QTableView *tableView, si::Tab
 
   append(Column("destination_time", tr("Destination\nReal Time"))).
   append(Column("destination_time_sim", tr("Destination\nSim. Time UTC"))).
-  append(Column("destination_ident", ui->lineEditLogdataDestination, tr("Destination\nICAO")).filterByBuilder()).
+  append(Column("destination_ident", ui->lineEditLogdataDestination, tr("Destination\nIdent")).filterByBuilder()).
   append(Column("destination_name", tr("Destination"))).
   append(Column("destination_runway").hidden()).
   append(Column("aircraft_name", ui->lineEditLogdataAircraftModel, tr("Aircraft\nModel")).filter()).
@@ -160,8 +160,7 @@ void LogdataSearch::connectSearchSlots()
   Ui::MainWindow *ui = NavApp::getMainUi();
 
   // Small push buttons on top
-  connect(ui->pushButtonLogdataClearSelection, &QPushButton::clicked,
-          this, &SearchBaseTable::nothingSelectedTriggered);
+  connect(ui->pushButtonLogdataClearSelection, &QPushButton::clicked, this, &SearchBaseTable::nothingSelectedTriggered);
   connect(ui->pushButtonLogdataReset, &QPushButton::clicked, this, &SearchBaseTable::resetSearch);
 
   // Install filter for cursor down action
@@ -196,8 +195,9 @@ void LogdataSearch::connectSearchSlots()
   ui->actionLogdataEdit->setShortcutContext(Qt::WidgetWithChildrenShortcut);
   ui->actionLogdataAdd->setShortcutContext(Qt::WidgetWithChildrenShortcut);
   ui->actionLogdataDelete->setShortcutContext(Qt::WidgetWithChildrenShortcut);
+  ui->actionLogdataCleanup->setShortcutContext(Qt::WidgetWithChildrenShortcut);
 
-  ui->tableViewLogdata->addActions({ui->actionLogdataEdit, ui->actionLogdataAdd, ui->actionLogdataDelete});
+  ui->tableViewLogdata->addActions({ui->actionLogdataEdit, ui->actionLogdataAdd, ui->actionLogdataDelete, ui->actionLogdataCleanup});
 
   connect(ui->pushButtonLogdataEdit, &QPushButton::clicked, this, &LogdataSearch::editLogEntriesTriggered);
   connect(ui->actionLogdataEdit, &QAction::triggered, this, &LogdataSearch::editLogEntriesTriggered);
@@ -207,6 +207,8 @@ void LogdataSearch::connectSearchSlots()
 
   connect(ui->pushButtonLogdataAdd, &QPushButton::clicked, this, &LogdataSearch::addLogEntryTriggered);
   connect(ui->actionLogdataAdd, &QAction::triggered, this, &LogdataSearch::addLogEntryTriggered);
+
+  connect(ui->actionLogdataCleanup, &QAction::triggered, this, &LogdataSearch::cleanupLogEntries);
 }
 
 void LogdataSearch::addLogEntryTriggered()
@@ -221,7 +223,8 @@ void LogdataSearch::editLogEntriesTriggered()
 
 void LogdataSearch::deleteLogEntriesTriggered()
 {
-  emit deleteLogEntries(getSelectedIds());
+  QVector<int> selectedIds = getSelectedIds();
+  emit deleteLogEntries(QSet<int>(selectedIds.constBegin(), selectedIds.constEnd()));
 }
 
 void LogdataSearch::saveState()

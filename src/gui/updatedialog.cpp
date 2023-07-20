@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2022 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -29,11 +29,10 @@
 static const QDialogButtonBox::ButtonRole IGNORE_THIS_UPDATE_ROLE = QDialogButtonBox::DestructiveRole;
 static const QDialogButtonBox::ButtonRole REMIND_LATER_ROLE = QDialogButtonBox::NoRole;
 static const QDialogButtonBox::ButtonRole CLOSE_ROLE = QDialogButtonBox::RejectRole;
-static const QDialogButtonBox::ButtonRole DOWNLOAD_ROLE = QDialogButtonBox::YesRole;
 static const QDialogButtonBox::ButtonRole COPY_ROLE = QDialogButtonBox::ActionRole;
 
-UpdateDialog::UpdateDialog(QWidget *parent, bool manualCheck, bool downloadAvailable)
-  : QDialog(parent), ui(new Ui::UpdateDialog), manual(manualCheck), hasDownload(downloadAvailable)
+UpdateDialog::UpdateDialog(QWidget *parent, bool manualCheck)
+  : QDialog(parent), ui(new Ui::UpdateDialog), manual(manualCheck)
 {
   setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
   setWindowModality(Qt::ApplicationModal);
@@ -53,9 +52,6 @@ UpdateDialog::UpdateDialog(QWidget *parent, bool manualCheck, bool downloadAvail
     close->setDefault(true);
   }
 
-  if(hasDownload)
-    ui->buttonBoxUpdate->addButton(tr("&Download in Web Browser"), DOWNLOAD_ROLE);
-
   ui->buttonBoxUpdate->addButton(tr("&Copy to Clipboard"), COPY_ROLE);
 
   connect(ui->buttonBoxUpdate, &QDialogButtonBox::clicked, this, &UpdateDialog::buttonBoxClicked);
@@ -67,9 +63,7 @@ void UpdateDialog::buttonBoxClicked(QAbstractButton *button)
 {
   buttonClickedRole = ui->buttonBoxUpdate->buttonRole(button);
 
-  if(buttonClickedRole == DOWNLOAD_ROLE)
-    atools::gui::HelpHandler::openUrl(this, downloadUrl);
-  else if(buttonClickedRole == COPY_ROLE)
+  if(buttonClickedRole == COPY_ROLE)
   {
     // Copy formatted and plain text to clipboard
     QMimeData *data = new QMimeData;
@@ -86,10 +80,9 @@ UpdateDialog::~UpdateDialog()
   delete ui;
 }
 
-void UpdateDialog::setMessage(const QString& text, const QUrl& url)
+void UpdateDialog::setMessage(const QString& text)
 {
   ui->textBrowserUpdate->setText(text);
-  downloadUrl = url;
 }
 
 QDialogButtonBox *UpdateDialog::getButtonBox()

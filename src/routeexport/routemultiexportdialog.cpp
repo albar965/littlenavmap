@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -25,8 +25,7 @@
 #include "gui/helphandler.h"
 #include "gui/itemviewzoomhandler.h"
 #include "gui/widgetstate.h"
-#include "navapp.h"
-#include "options/optiondata.h"
+#include "app/navapp.h"
 #include "routeexport/routeexportformat.h"
 #include "settings/settings.h"
 #include "util/htmlbuilder.h"
@@ -99,29 +98,30 @@ void TableItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem& opt
   const RouteExportFormat& format = (*formats)[static_cast<rexp::RouteExportFormatType>(index.data(FORMAT_TYPE_ROLE).toInt())];
   QStyleOptionViewItem styleItem(option);
 
+  bool invalid = false;
+
+  if(index.column() == PATTERN && !format.isPatternValid())
+    // Pattern is invalid - draw dark red for selection and light red warning for normal state in background
+    invalid = true;
+
   if(format.isSelected())
   {
     // Set whole row to bold if selected for multiexport =========================
     styleItem.font.setBold(true);
 
-    bool invalid = false;
-    if(index.column() == PATTERN && !format.isPatternValid())
-      // Pattern is invalid - draw dark red for selection and light red warning for normal state in background
-      invalid = true;
-
     if(index.column() == PATH && !format.isPathValid())
       // Path is invalid - draw dark red for selection and light red warning for normal state in background
       invalid = true;
+  }
 
-    if(invalid)
-    {
-      styleItem.palette.setColor(QPalette::Highlight, QColor(Qt::red).darker(130));
-      styleItem.palette.setColor(QPalette::HighlightedText, Qt::white);
-      styleItem.palette.setColor(QPalette::Text, Qt::white);
+  if(invalid)
+  {
+    styleItem.palette.setColor(QPalette::Highlight, QColor(Qt::red).darker(130));
+    styleItem.palette.setColor(QPalette::HighlightedText, Qt::white);
+    styleItem.palette.setColor(QPalette::Text, Qt::white);
 
-      // Delegate does not paint background
-      painter->fillRect(option.rect, Qt::red);
-    }
+    // Delegate does not paint background
+    painter->fillRect(option.rect, Qt::red);
   }
 
   QStyledItemDelegate::paint(painter, styleItem, index);
@@ -274,9 +274,15 @@ int RouteMultiExportDialog::exec()
   // Update table
   updateModel();
 
+  // Reload layout
+  loadTableLayout();
+
   int retval = QDialog::exec();
   formatMapDialog->updatePathErrors();
+
   saveDialogState();
+  saveTableLayout();
+
   return retval;
 }
 
@@ -299,13 +305,11 @@ void RouteMultiExportDialog::buttonBoxClicked(QAbstractButton *button)
   }
   else if(button == ui->buttonBoxRouteExport->button(QDialogButtonBox::Cancel))
   {
-    saveDialogState();
     setExportOptions(exportOptions);
     QDialog::reject();
   }
   else if(button == ui->buttonBoxRouteExport->button(QDialogButtonBox::Help))
-    atools::gui::HelpHandler::openHelpUrlWeb(parentWidget(), lnm::helpOnlineUrl + "ROUTEEXPORTALL.html",
-                                             lnm::helpLanguageOnline());
+    atools::gui::HelpHandler::openHelpUrlWeb(parentWidget(), lnm::helpOnlineUrl + "ROUTEEXPORTALL.html", lnm::helpLanguageOnline());
 
 #ifdef DEBUG_INFORMATION
   for(auto it = formatMapDialog->constBegin(); it != formatMapDialog->constEnd(); ++it)
@@ -316,7 +320,7 @@ void RouteMultiExportDialog::buttonBoxClicked(QAbstractButton *button)
 void RouteMultiExportDialog::restoreState()
 {
   atools::gui::WidgetState widgetState(lnm::ROUTE_EXPORT_DIALOG, false);
-  widgetState.restore({this, ui->tableViewRouteExport, ui->comboBoxRouteExportOptions});
+  widgetState.restore({this, ui->comboBoxRouteExportOptions});
 
   // Check if there is no save widget state - fix sorting if not
   firstStart = !widgetState.contains(ui->tableViewRouteExport);
@@ -325,18 +329,20 @@ void RouteMultiExportDialog::restoreState()
   updateTableColors();
   updateLabel();
   updateActions();
+
+  loadTableLayout();
 }
 
 void RouteMultiExportDialog::saveDialogState()
 {
   atools::gui::WidgetState widgetState(lnm::ROUTE_EXPORT_DIALOG, false);
-  widgetState.save({this, ui->tableViewRouteExport});
+  widgetState.save(this);
 }
 
 void RouteMultiExportDialog::saveState()
 {
   atools::gui::WidgetState widgetState(lnm::ROUTE_EXPORT_DIALOG, false);
-  widgetState.save({this, ui->tableViewRouteExport, ui->comboBoxRouteExportOptions});
+  widgetState.save({this, ui->comboBoxRouteExportOptions});
 }
 
 void RouteMultiExportDialog::updateLabel()
@@ -353,7 +359,9 @@ void RouteMultiExportDialog::updateLabel()
 
     // Collect pattern errors and generate example
     QString patternMsg;
-    QString example = atools::fs::pln::Flightplan::getFilenamePatternExample(format.getPattern(), QString(), true /* html */, &patternMsg);
+    QString example = atools::fs::pln::Flightplan::getFilenamePatternExample(format.getPattern(),
+                                                                             QFileInfo(format.getDefaultPattern()).suffix(),
+                                                                             true /* html */, &patternMsg);
     QString errorMsg = pathMsg % patternMsg;
 
     // Get header / short description
@@ -362,7 +370,7 @@ void RouteMultiExportDialog::updateLabel()
     // Add either example or error message
     if(errorMsg.isEmpty())
       texts.append(tr("<b>Example export path and file:</b> &quot;%1&quot;").
-                   arg(QDir::toNativeSeparators(format.getPath() % QDir::separator() % example)));
+                   arg(QDir::toNativeSeparators(QDir::cleanPath(format.getPath() % QDir::separator() % example))));
     else
       texts.append(atools::util::HtmlBuilder::errorMessage(errorMsg));
 
@@ -431,9 +439,9 @@ void RouteMultiExportDialog::updateTableColors()
                                "The file suffix like \".lnmpln\", \".pln\" or \".fgfp\" is a part of the pattern.\n"
                                "\n"
                                "PLANTYPE: \"IFR\" or \"VFR\"\n"
-                               "DEPARTIDENT: Departure airport ICAO code\n"
+                               "DEPARTIDENT: Departure airport ident\n"
                                "DEPARTNAME: Departure airport name\n"
-                               "DESTIDENT: Destination airport ICAO code\n"
+                               "DESTIDENT: Destination airport ident\n"
                                "DESTNAME: Destination airport name\n"
                                "CRUISEALT: Cruise altitude"));
 
@@ -450,11 +458,13 @@ void RouteMultiExportDialog::updateTableColors()
       {
         if(col == PATTERN)
         {
-          // Add tooltips to path column
+          // Add tooltips to pattern column - errors also for not selected rows
           QString errorMessage;
-          if(fmt.isSelected() && !fmt.isPatternValid(&errorMessage))
+          if(!fmt.isPatternValid(&errorMessage))
+            // Not valid
             item->setToolTip(tr("Error: %1\nPress F2 or double click to edit filename pattern.\n\n%2").arg(errorMessage).arg(patternHelp));
           else if(fmt.isSelected())
+            // Selected and valid
             item->setToolTip(tr("Format selected for export.\n"
                                 "Press F2 or double click to edit filename pattern.\n\n%1").arg(patternHelp));
           else
@@ -607,9 +617,6 @@ void RouteMultiExportDialog::updateModel()
     row++;
   }
 
-  // Reload layout
-  atools::gui::WidgetState(lnm::ROUTE_EXPORT_DIALOG, false).restore(ui->tableViewRouteExport);
-
   // No moving of first columns
   ui->tableViewRouteExport->horizontalHeader()->setSectionResizeMode(BUTTONS, QHeaderView::ResizeToContents);
 
@@ -679,22 +686,27 @@ void RouteMultiExportDialog::selectPath(rexp::RouteExportFormatType type, int ro
   if(type == rexp::NO_TYPE)
     return;
 
-  const RouteExportFormat fmt = formatMapDialog->value(type);
-  QString filepath;
+  const RouteExportFormat format = formatMapDialog->value(type);
 
-  if(fmt.isAppendToFile())
+  QString filepath, filter;
+  QString suffix = format.getSuffix(); // Get suffix plus dot
+  if(!suffix.isEmpty())
+    filter = tr("%1 Files %2;;All Files (*)").arg(format.getFormat()).arg(format.getFilter());
+  else
+    filter = tr("All Files (*)");
+
+  if(format.isAppendToFile())
     // Format use a file to append plan
-    filepath = atools::gui::Dialog(this).openFileDialog(tr("Select Export File for %1").arg(fmt.getComment()),
-                                                        tr("Flight Plan Files %1;;All Files (*)").
-                                                        arg(fmt.getFilter()), QString(), fmt.getPath());
+    filepath = atools::gui::Dialog(this).openFileDialog(tr("Select Export File for %1").arg(format.getComment()),
+                                                        filter, QString(), format.getPath());
   else
     // Format uses a directory to save a file
     filepath = atools::gui::Dialog(this).openDirectoryDialog(tr("Select Export Directory for %1").
-                                                             arg(fmt.getComment()), QString(), fmt.getPath());
+                                                             arg(format.getComment()), QString(), format.getPath());
 
   if(!filepath.isEmpty())
   {
-    if(fmt.isAppendToFile())
+    if(format.isAppendToFile())
     {
       // Update filename in pattern too
       QFileInfo fi(filepath);
@@ -706,7 +718,7 @@ void RouteMultiExportDialog::selectPath(rexp::RouteExportFormatType type, int ro
     }
     else
     {
-      filepath = QDir::toNativeSeparators(filepath);
+      filepath = QDir::toNativeSeparators(QDir::cleanPath(filepath));
       formatMapDialog->updatePath(type, filepath);
 
       itemModel->item(row, PATH)->setText(filepath);
@@ -760,6 +772,22 @@ void RouteMultiExportDialog::resetPattern(rexp::RouteExportFormatType type, int 
   updateLabel();
 }
 
+#ifdef DEBUG_INFORMATION_MULTIEXPORT
+
+void RouteMultiExportDialog::resetPathsAndSelectionDebug()
+{
+  resetPathsAndSelection();
+
+  for(auto it = formatMapDialog->constBegin(); it != formatMapDialog->constEnd(); ++it)
+    formatMapDialog->setDebugOptions(it.key());
+  updateModel();
+
+  // Reload layout
+  loadTableLayout();
+}
+
+#endif
+
 void RouteMultiExportDialog::resetPathsAndSelection()
 {
   // Ask before resetting user data ==============
@@ -770,6 +798,9 @@ void RouteMultiExportDialog::resetPathsAndSelection()
 
   if(msgBox.exec() == QMessageBox::Yes)
   {
+    // Save layout before changing table
+    saveTableLayout();
+
     // Reset values in map ========================================
     for(auto it = formatMapDialog->constBegin(); it != formatMapDialog->constEnd(); ++it)
     {
@@ -780,6 +811,9 @@ void RouteMultiExportDialog::resetPathsAndSelection()
 
     // Fill model/view again from table
     updateModel();
+
+    // Reload layout
+    loadTableLayout();
   }
 }
 
@@ -854,7 +888,7 @@ void RouteMultiExportDialog::itemChanged(QStandardItem *item)
     {
       // Update custom path
       formatMapDialog->updatePath(type, item->text());
-      item->setText(QDir::toNativeSeparators(item->text()));
+      item->setText(QDir::toNativeSeparators(QDir::cleanPath(item->text())));
       updateTableColors();
       updateLabel();
     }
@@ -903,8 +937,8 @@ void RouteMultiExportDialog::tableContextMenu(const QPoint&)
   menu.setToolTipsVisible(NavApp::isMenuToolTipsVisible());
   menu.addAction(ui->actionSelect);
   menu.addSeparator();
-  menu.addAction(ui->actionExportFileNow);
   menu.addAction(ui->actionSelectExportPath);
+  menu.addAction(ui->actionExportFileNow);
   menu.addSeparator();
   menu.addAction(ui->actionEditPath);
   menu.addAction(ui->actionResetExportPath);
@@ -919,11 +953,38 @@ void RouteMultiExportDialog::tableContextMenu(const QPoint&)
   menu.addAction(ui->actionDefaultTextSize);
   menu.addAction(ui->actionDecreaseTextSize);
 
+#ifdef DEBUG_INFORMATION_MULTIEXPORT
+  menu.addSeparator();
+
+  QAction *initDebugAction = new QAction("Debug Init", &menu);
+  menu.addAction(initDebugAction);
+
+  QAction *allDebugAction = new QAction("Debug Select all", &menu);
+  menu.addAction(allDebugAction);
+
+  QAction *noneDebugAction = new QAction("Debug Select none", &menu);
+  menu.addAction(noneDebugAction);
+#endif
+
   QAction *action = menu.exec(menuPos);
 
   // Handle actions which are not connected to methods
   if(action == ui->actionResetPathsAndSelection)
     resetPathsAndSelection();
+#ifdef DEBUG_INFORMATION_MULTIEXPORT
+  else if(action == initDebugAction)
+    resetPathsAndSelectionDebug();
+  else if(action == allDebugAction)
+  {
+    for(auto it = selectCheckBoxIndex.begin(); it != selectCheckBoxIndex.end(); ++it)
+      it.value()->setChecked(true);
+  }
+  else if(action == noneDebugAction)
+  {
+    for(auto it = selectCheckBoxIndex.begin(); it != selectCheckBoxIndex.end(); ++it)
+      it.value()->setChecked(false);
+  }
+#endif
   else if(action == ui->actionResetView)
   {
     // Reorder columns to match model order
@@ -991,4 +1052,19 @@ void RouteMultiExportDialog::actionEditPatternTriggered()
 void RouteMultiExportDialog::actionSelectTriggered()
 {
   selectForExport(selectedType(), ui->actionSelect->isChecked());
+}
+
+void RouteMultiExportDialog::saveTableLayout()
+{
+  atools::gui::WidgetState(lnm::ROUTE_EXPORT_DIALOG, false).save(ui->tableViewRouteExport);
+}
+
+void RouteMultiExportDialog::loadTableLayout()
+{
+  atools::gui::WidgetState(lnm::ROUTE_EXPORT_DIALOG, false).restore(ui->tableViewRouteExport);
+}
+
+void RouteMultiExportDialog::setLnmplnExportDir(const QString& dir)
+{
+  formatMapSystem->setLnmplnExportDir(dir);
 }

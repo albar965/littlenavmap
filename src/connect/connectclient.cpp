@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -17,20 +17,19 @@
 
 #include "connect/connectclient.h"
 
-#include "navapp.h"
+#include "app/navapp.h"
 #include "common/constants.h"
 #include "fs/sc/simconnectreply.h"
 #include "fs/sc/datareaderthread.h"
 #include "gui/dialog.h"
 #include "online/onlinedatacontroller.h"
-#include "gui/errorhandler.h"
 #include "gui/mainwindow.h"
-#include "gui/widgetstate.h"
 #include "geo/calculations.h"
 #include "settings/settings.h"
 #include "fs/sc/simconnecthandler.h"
 #include "fs/sc/xpconnecthandler.h"
 #include "fs/scenery/languagejson.h"
+#include "fs/scenery/aircraftindex.h"
 
 #include <QDataStream>
 #include <QTcpSocket>
@@ -48,8 +47,7 @@ const static int WEATHER_TIMEOUT_FS_SECS = 15;
 const static int NOT_AVAILABLE_TIMEOUT_FS_SECS = 300;
 
 ConnectClient::ConnectClient(MainWindow *parent)
-  : QObject(parent), mainWindow(parent), metarIdentCache(WEATHER_TIMEOUT_FS_SECS),
-  notAvailableStations(NOT_AVAILABLE_TIMEOUT_FS_SECS)
+  : QObject(parent), mainWindow(parent), metarIdentCache(WEATHER_TIMEOUT_FS_SECS), notAvailableStations(NOT_AVAILABLE_TIMEOUT_FS_SECS)
 {
   atools::settings::Settings& settings = atools::settings::Settings::instance();
   verbose = settings.getAndStoreValue(lnm::OPTIONS_CONNECTCLIENT_DEBUG, false).toBool();
@@ -59,7 +57,8 @@ ConnectClient::ConnectClient(MainWindow *parent)
 
   // Create FSX/P3D handler for SimConnect
   simConnectHandler = new atools::fs::sc::SimConnectHandler(verbose);
-  simConnectHandler->loadSimConnect(QApplication::applicationFilePath() + ".simconnect");
+  simConnectHandler->loadSimConnect(QApplication::applicationDirPath() +
+                                    QDir::separator() + "simconnect" + QDir::separator() + "simconnect.manifest");
 
   // Create X-Plane handler for shared memory
   xpConnectHandler = new atools::fs::sc::XpConnectHandler();
@@ -85,8 +84,7 @@ ConnectClient::ConnectClient(MainWindow *parent)
   connect(dataReader, &DataReaderThread::postSimConnectData, this, &ConnectClient::postSimConnectData);
   connect(dataReader, &DataReaderThread::postStatus, this, &ConnectClient::statusPosted);
   connect(dataReader, &DataReaderThread::connectedToSimulator, this, &ConnectClient::connectedToSimulatorDirect);
-  connect(dataReader, &DataReaderThread::disconnectedFromSimulator, this,
-          &ConnectClient::disconnectedFromSimulatorDirect);
+  connect(dataReader, &DataReaderThread::disconnectedFromSimulator, this, &ConnectClient::disconnectedFromSimulatorDirect);
 
   connectDialog = new ConnectDialog(mainWindow, simConnectHandler->isLoaded());
   connect(connectDialog, &ConnectDialog::updateRateChanged, this, &ConnectClient::updateRateChanged);
@@ -152,6 +150,7 @@ void ConnectClient::connectToServerDialog()
   else if(isXpConnect() && isConnected())
     type = cd::XPLANE;
 
+  NavApp::setStayOnTop(connectDialog);
   int retval = connectDialog->execConnectDialog(type);
   connectDialog->hide();
 
@@ -189,7 +188,16 @@ QString ConnectClient::simName() const
     if(dataReader->getHandler() == xpConnectHandler)
       return tr("X-Plane");
     else if(dataReader->getHandler() == simConnectHandler)
+#if defined(SIMCONNECT_BUILD_WIN64)
+      return tr("MSFS");
+
+#elif defined(SIMCONNECT_BUILD_WIN32)
+      return tr("FSX or Prepar3D");
+
+#else
       return tr("FSX, Prepar3D or MSFS");
+
+#endif
   }
   return QString();
 }
@@ -201,7 +209,18 @@ QString ConnectClient::simShortName() const
     if(dataReader->getHandler() == xpConnectHandler)
       return tr("XP");
     else if(dataReader->getHandler() == simConnectHandler)
+    {
+#if defined(SIMCONNECT_BUILD_WIN64)
+      return tr("MSFS");
+
+#elif defined(SIMCONNECT_BUILD_WIN32)
+      return tr("FSX/P3D");
+
+#else
       return tr("FSX/P3D/MSFS");
+
+#endif
+    }
   }
   return QString();
 }
@@ -222,8 +241,11 @@ void ConnectClient::disconnectedFromSimulatorDirect()
 {
   qDebug() << Q_FUNC_INFO;
 
+  showTerminalError();
+
   // Try to reconnect if it was not unlinked by using the disconnect button
-  if(!errorState && connectDialog->isAutoConnect() && connectDialog->isAnyConnectDirect() && !manualDisconnect)
+  if(!errorState && connectDialog->isAutoConnect() &&
+     connectDialog->isAnyConnectDirect() && !manualDisconnect)
     connectInternal();
   else
     mainWindow->setConnectionStatusMessageText(tr("Disconnected"), tr("Disconnected from local flight simulator."));
@@ -259,13 +281,17 @@ void ConnectClient::postSimConnectData(atools::fs::sc::SimConnectData dataPacket
       atools::fs::sc::SimConnectUserAircraft& userAircraft = dataPacket.getUserAircraft();
       // Workaround for MSFS sending wrong positions around 0/0 while in menu
       if(!userAircraft.isFullyValid())
+      {
+        if(verbose)
+          qDebug() << Q_FUNC_INFO << "User aircraft not fully valid";
         // Invalidate position at the 0,0 position if no groundspeed
         userAircraft.setCoordinates(atools::geo::EMPTY_POS);
+      }
 
       // Modify AI aircraft and set shadow flag if a online network aircraft is registered as shadowed in the index
       NavApp::getOnlinedataController()->updateAircraftShadowState(dataPacket);
 
-      // Update the MSFS translated aircraft names and types =============
+      // Update the MSFS translated aircraft names and types ===================================
       /* Mooney, Boeing, Actually aircraft model. */
       // const QString& getAirplaneType() const
       // const QString& getAirplaneAirline() const
@@ -273,21 +299,41 @@ void ConnectClient::postSimConnectData(atools::fs::sc::SimConnectData dataPacket
       // const QString& getAirplaneTitle() const
       /* Short ICAO code MD80, BE58, etc. Actually type designator. */
       // const QString& getAirplaneModel() const
-      const atools::fs::scenery::LanguageJson& idx = NavApp::getLanguageIndex();
-      if(!idx.isEmpty())
+      const atools::fs::scenery::LanguageJson& languageIndex = NavApp::getLanguageIndex();
+      if(!languageIndex.isEmpty())
       {
         // Change user aircraft names
-        userAircraft.updateAircraftNames(idx.getName(userAircraft.getAirplaneType()),
-                                         idx.getName(userAircraft.getAirplaneAirline()),
-                                         idx.getName(userAircraft.getAirplaneTitle()),
-                                         idx.getName(userAircraft.getAirplaneModel()));
+        userAircraft.updateAircraftNames(languageIndex.getName(userAircraft.getAirplaneType()),
+                                         languageIndex.getName(userAircraft.getAirplaneAirline()),
+                                         languageIndex.getName(userAircraft.getAirplaneTitle()),
+                                         languageIndex.getName(userAircraft.getAirplaneModel()));
 
         // Change AI names
         for(atools::fs::sc::SimConnectAircraft& ac : dataPacket.getAiAircraft())
-          ac.updateAircraftNames(idx.getName(ac.getAirplaneType()),
-                                 idx.getName(ac.getAirplaneAirline()),
-                                 idx.getName(ac.getAirplaneTitle()),
-                                 idx.getName(ac.getAirplaneModel()));
+          ac.updateAircraftNames(languageIndex.getName(ac.getAirplaneType()),
+                                 languageIndex.getName(ac.getAirplaneAirline()),
+                                 languageIndex.getName(ac.getAirplaneTitle()),
+                                 languageIndex.getName(ac.getAirplaneModel()));
+      }
+
+      // Update ICAO aircraft designator from aircraft.cfg for MSFS ===================================
+      QString aircraftCfgKey = userAircraft.getProperties().value(atools::fs::sc::PROP_AIRCRAFT_CFG).getValueString();
+      if(!aircraftCfgKey.isEmpty())
+        // Has property - fetch from index by loaded aircraft.cfg values
+        userAircraft.setAirplaneModel(NavApp::getAircraftIndex().getIcaoTypeDesignator(aircraftCfgKey));
+
+      // Fix incorrect on-ground status which appears from some traffic tools =======================
+      for(atools::fs::sc::SimConnectAircraft& ac : dataPacket.getAiAircraft())
+      {
+        // Ground speed given and too high for ground operations
+        bool gsFlying = ac.getGroundSpeedKts() < map::INVALID_SPEED_VALUE && ac.getGroundSpeedKts() > 40.f;
+
+        // Vertical speed given and too high for ground
+        bool vsFlying = ac.getVerticalSpeedFeetPerMin() < map::INVALID_SPEED_VALUE &&
+                        (ac.getVerticalSpeedFeetPerMin() > 100.f || ac.getVerticalSpeedFeetPerMin() < -100.f);
+
+        if(ac.isOnGround() && (gsFlying || vsFlying))
+          ac.setFlag(atools::fs::sc::ON_GROUND);
       }
 
       emit dataPacketReceived(dataPacket);
@@ -341,8 +387,7 @@ void ConnectClient::postSimConnectData(atools::fs::sc::SimConnectData dataPacket
   }
 }
 
-void ConnectClient::handleError(atools::fs::sc::SimConnectStatus status, const QString& error,
-                                bool xplane, bool network)
+void ConnectClient::handleError(atools::fs::sc::SimConnectStatus status, const QString& error, bool xplane, bool network)
 {
   QString hint, program;
 
@@ -355,14 +400,16 @@ void ConnectClient::handleError(atools::fs::sc::SimConnectStatus status, const Q
   {
     case atools::fs::sc::OK:
       break;
+
     case atools::fs::sc::INVALID_MAGIC_NUMBER:
     case atools::fs::sc::VERSION_MISMATCH:
-      hint = tr("Update <i>%1</i> to the latest version.<br/>"
-                "The installed version of <i>%1</i><br/>"
+      hint = tr("Update %1 to the latest version.<br/>"
+                "The installed version of %1<br/>"
                 "is not compatible with this version of Little Navmap.<br/><br/>"
-                "Install the latest version of <i>%1</i>.").arg(program);
+                "Install the latest version of %1 which you can always find in the Little Navmap installation directory.").arg(program);
       errorState = true;
       break;
+
     case atools::fs::sc::INSUFFICIENT_WRITE:
     case atools::fs::sc::WRITE_ERROR:
       hint = tr("The connection is not reliable.<br/><br/>"
@@ -371,8 +418,7 @@ void ConnectClient::handleError(atools::fs::sc::SimConnectStatus status, const Q
       break;
   }
 
-  errorMessageBox->setText(tr("<p>Error receiving data from <i>%1</i>:</p>"
-                                "<p>%2</p><p>%3</p>").arg(program).arg(error).arg(hint));
+  errorMessageBox->setText(tr("<p>Error receiving data from %1:</p><p>%2</p><p>%3</p>").arg(program).arg(error).arg(hint));
   errorMessageBox->show();
 }
 
@@ -593,6 +639,24 @@ void ConnectClient::connectInternalAuto()
     connectInternal();
 }
 
+void ConnectClient::showTerminalError()
+{
+  if(dataReader->isFailedTerminally())
+  {
+    if(!terminalErrorShown)
+    {
+      terminalErrorShown = true;
+      QMessageBox::warning(mainWindow, QApplication::applicationName(),
+                           tr("Too many errors when trying to connect to simulator.\n\n"
+                              "Not matching simulator interface or other SimConnect problem.\n\n"
+                              "Make sure to use the right version of %1 with the right simulator:\n"
+                              "%1 32-bit: FSX and P3D\n"
+                              "%1 64-bit: MSFS\n"
+                              "You have to restart %1 to resume.").arg(QApplication::applicationName()));
+    }
+  }
+}
+
 void ConnectClient::connectInternal()
 {
   if(connectDialog->isAnyConnectDirect())
@@ -605,17 +669,25 @@ void ConnectClient::connectInternal()
     if(isXpConnect())
       dataReader->setReconnectRateSec(directReconnectXpSec);
     else if(isSimConnect())
+    {
       dataReader->setReconnectRateSec(directReconnectSimSec);
+      showTerminalError();
+    }
 
     // Copy settings from dialog
     updateRateChanged(connectDialog->getCurrentSimType());
     fetchOptionsChanged(connectDialog->getCurrentSimType());
     aiFetchRadiusChanged(connectDialog->getCurrentSimType());
 
-    dataReader->start();
-
-    mainWindow->setConnectionStatusMessageText(tr("Connecting (%1) ...").arg(simShortName()),
-                                               tr("Trying to connect to local flight simulator (%1).").arg(simName()));
+    if(dataReader->isFailedTerminally())
+      mainWindow->setConnectionStatusMessageText(tr("Error (%1) ...").arg(simShortName()),
+                                                 tr("Too many errors when trying to connect to simulator (%1).").arg(simName()));
+    else
+    {
+      dataReader->start();
+      mainWindow->setConnectionStatusMessageText(tr("Connecting (%1) ...").arg(simShortName()),
+                                                 tr("Trying to connect to local flight simulator (%1).").arg(simName()));
+    }
   }
   else if(socket == nullptr && !connectDialog->getRemoteHostname().isEmpty())
   {
@@ -626,8 +698,7 @@ void ConnectClient::connectInternal()
 
     connect(socket, &QTcpSocket::readyRead, this, &ConnectClient::readFromSocket);
     connect(socket, &QTcpSocket::connected, this, &ConnectClient::connectedToServerSocket);
-    connect(socket,
-            static_cast<void (QAbstractSocket::*)(QAbstractSocket::SocketError)>(&QAbstractSocket::error),
+    connect(socket, static_cast<void (QAbstractSocket::*)(QAbstractSocket::SocketError)>(&QAbstractSocket::error),
             this, &ConnectClient::readFromSocketError);
 
     qDebug() << "Connecting to" << connectDialog->getRemoteHostname() << ":" << connectDialog->getRemotePort();
@@ -886,4 +957,13 @@ void ConnectClient::readFromSocket()
       qDebug() << "readFromSocket outstanding" << outstandingReplies;
     }
   }
+}
+
+void ConnectClient::debugDumpContainerSizes() const
+{
+  qDebug() << Q_FUNC_INFO << "metarIdentCache.size()" << metarIdentCache.size();
+  qDebug() << Q_FUNC_INFO << "outstandingReplies.size()" << outstandingReplies.size();
+  qDebug() << Q_FUNC_INFO << "queuedRequests.size()" << queuedRequests.size();
+  qDebug() << Q_FUNC_INFO << "queuedRequestIdents.size()" << queuedRequestIdents.size();
+  qDebug() << Q_FUNC_INFO << "notAvailableStations.size()" << notAvailableStations.size();
 }

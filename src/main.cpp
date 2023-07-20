@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -15,51 +15,48 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#include "gui/mainwindow.h"
+#include "app/navapp.h"
+#include "atools.h"
+#include "common/aircrafttrack.h"
 #include "common/constants.h"
+#include "common/formatter.h"
+#include "common/maptypes.h"
+#include "common/maptypes.h"
+#include "common/proctypes.h"
+#include "common/settingsmigrate.h"
+#include "common/unit.h"
+#include "db/databasemanager.h"
+#include "exception.h"
+#include "fs/sc/simconnectdata.h"
+#include "fs/sc/simconnectreply.h"
+#include "fs/weather/metarparser.h"
+#include "geo/calculations.h"
+#include "gui/application.h"
+#include "gui/dockwidgethandler.h"
+#include "gui/mainwindow.h"
+#include "gui/mapposhistory.h"
+#include "gui/translator.h"
 #include "logging/logginghandler.h"
 #include "logging/loggingutil.h"
 #include "options/optionsdialog.h"
-#include "settings/settings.h"
-#include "gui/translator.h"
-#include "gui/mapposhistory.h"
-#include "common/maptypes.h"
-#include "gui/application.h"
-#include "common/formatter.h"
-#include "exception.h"
-#include "navapp.h"
-#include "atools.h"
-#include "gui/errorhandler.h"
-#include "db/databasemanager.h"
-#include "common/settingsmigrate.h"
-#include "common/aircrafttrack.h"
-#include "fs/sc/simconnectdata.h"
-#include "fs/sc/simconnectreply.h"
-#include "common/maptypes.h"
-#include "common/proctypes.h"
-#include "common/unit.h"
-#include "geo/calculations.h"
-#include "fs/weather/metarparser.h"
-#include "userdata/userdataicons.h"
 #include "routeexport/routeexportformat.h"
-#include "gui/dockwidgethandler.h"
+#include "settings/settings.h"
+#include "userdata/userdataicons.h"
 
-#include <QCommandLineParser>
 #include <QDebug>
 #include <QSplashScreen>
 #include <QSslSocket>
 #include <QStyleFactory>
-#include <QSharedMemory>
-#include <QMessageBox>
-#include <QLibrary>
 #include <QPixmapCache>
 #include <QSettings>
 #include <QScreen>
-#include <QProcess>
+#include <QProcessEnvironment>
 
 #include <marble/MarbleGlobal.h>
 #include <marble/MarbleDirs.h>
 #include <marble/MarbleDebug.h>
+
+#include <app/commandline.h>
 
 using namespace Marble;
 using atools::gui::Application;
@@ -177,284 +174,260 @@ int main(int argc, char *argv[])
   {
     QApplication::processEvents();
 
-    QCommandLineParser parser;
-    parser.addHelpOption();
-    parser.addVersionOption();
-
-    QCommandLineOption settingsDirOpt({"s", "settings-directory"},
-                                      QObject::tr("Use <settings-directory> instead of \"%1\". This does *not* override the full path. "
-                                                  "Spaces are replaced with underscores.").arg(NavApp::organizationName()),
-                                      QObject::tr("settings-directory"));
-    parser.addOption(settingsDirOpt);
-
-    QCommandLineOption settingsPathOpt({"p", "settings-path"},
-                                       QObject::tr("Use <settings-path> to store options and databases into the given directory. "
-                                                   "<settings-path> can be relative or absolute. "
-                                                     "Missing directories are created. Path can be on any drive."),
-                                       QObject::tr("settings-path"));
-    parser.addOption(settingsPathOpt);
-
-    QCommandLineOption flightplanOpt({"f", lnm::STARTUP_FLIGHTPLAN},
-                                     QObject::tr("Load the given <%1> file on startup. Can be one of the supported formats like "
-                                                 "\".lnmpln\", \".pln\", \".fms\", "
-                                                 "\".fgfp\", \".fpl\", \".gfp\" or others.").arg(lnm::STARTUP_FLIGHTPLAN),
-                                     lnm::STARTUP_FLIGHTPLAN);
-    parser.addOption(flightplanOpt);
-
-    QCommandLineOption flightplanDescrOpt({"d", lnm::STARTUP_FLIGHTPLAN_DESCR},
-                                          QObject::tr("Parse and load the given <%1> flight plan route description on startup. "
-                                                      "Example \"EDDF BOMBI LIRF\".").arg(lnm::STARTUP_FLIGHTPLAN_DESCR),
-                                          lnm::STARTUP_FLIGHTPLAN_DESCR);
-    parser.addOption(flightplanDescrOpt);
-
-    QCommandLineOption performanceOpt({"a", lnm::STARTUP_AIRCRAFT_PERF},
-                                      QObject::tr("Load the given <%1> aircraft performance file "
-                                                  "\".lnmperf\" on startup.").arg(lnm::STARTUP_AIRCRAFT_PERF),
-                                      lnm::STARTUP_AIRCRAFT_PERF);
-    parser.addOption(performanceOpt);
-
     // ==============================================
+    // Read command line arguments and store them in NavApp startup options or settings
+    CommandLine commandLine;
+
     // Process the actual command line arguments given by the user
-    parser.process(*QCoreApplication::instance());
-
-    // Settings directory
-    if(parser.isSet(settingsDirOpt) && parser.isSet(settingsPathOpt))
-      qWarning() << QObject::tr("Only one of options -s and -p can be used");
-
-    if(parser.isSet(settingsDirOpt) && !parser.value(settingsDirOpt).isEmpty())
-      Settings::setOverrideOrganisation(parser.value(settingsDirOpt));
-
-    if(parser.isSet(settingsPathOpt) && !parser.value(settingsPathOpt).isEmpty())
-      Settings::setOverridePath(parser.value(settingsPathOpt));
-
-    // File loading
-    if(parser.isSet(flightplanOpt) && parser.isSet(flightplanDescrOpt))
-      qWarning() << QObject::tr("Only one of options -f and -d can be used");
-
-    if(parser.isSet(flightplanOpt) && !parser.value(flightplanOpt).isEmpty())
-      NavApp::addStartupOption(lnm::STARTUP_FLIGHTPLAN, parser.value(flightplanOpt));
-
-    if(parser.isSet(flightplanDescrOpt) && !parser.value(flightplanDescrOpt).isEmpty())
-      NavApp::addStartupOption(lnm::STARTUP_FLIGHTPLAN_DESCR, parser.value(flightplanDescrOpt));
-
-    if(parser.isSet(performanceOpt) && !parser.value(performanceOpt).isEmpty())
-      NavApp::addStartupOption(lnm::STARTUP_AIRCRAFT_PERF, parser.value(performanceOpt));
+    commandLine.process();
 
     // ==============================================
-    // Start splash screen
-    if(atools::settings::Settings::instance().valueBool(lnm::OPTIONS_DIALOG_SHOW_SPLASH, true))
-      NavApp::initSplashScreen();
-
-    // ==============================================
-    // Initialize logging and force logfiles into the system or user temp directory
-    // This will prefix all log files with orgranization and application name and append ".log"
-    LoggingHandler::initializeForTemp(atools::settings::Settings::getOverloadedPath(":/littlenavmap/resources/config/logging.cfg"));
-
-    // Print some information which can be useful for debugging
-    LoggingUtil::logSystemInformation();
-    for(const QString& message : messages)
-      qInfo() << message;
-
-    qInfo().noquote().nospace() << "atools revision " << atools::gitRevision() << " "
-                                << Application::applicationName() << " revision " << GIT_REVISION_LITTLENAVMAP;
-
-    LoggingUtil::logStandardPaths();
-    Settings::logSettingsInformation();
-
-    qInfo() << "SSL supported" << QSslSocket::supportsSsl()
-            << "build library" << QSslSocket::sslLibraryBuildVersionString()
-            << "library" << QSslSocket::sslLibraryVersionString();
-
-    qInfo() << "Available styles" << QStyleFactory::keys();
-
-    qInfo() << "SimConnectData Version" << atools::fs::sc::SimConnectData::getDataVersion()
-            << "SimConnectReply Version" << atools::fs::sc::SimConnectReply::getReplyVersion();
-
-    qInfo() << "QT_OPENGL" << QProcessEnvironment::systemEnvironment().value("QT_OPENGL");
-    qInfo() << "QT_SCALE_FACTOR" << QProcessEnvironment::systemEnvironment().value("QT_SCALE_FACTOR");
-    if(QApplication::testAttribute(Qt::AA_UseDesktopOpenGL))
-      qInfo() << "Using Qt desktop renderer";
-    if(QApplication::testAttribute(Qt::AA_UseOpenGLES))
-      qInfo() << "Using Qt angle renderer";
-    if(QApplication::testAttribute(Qt::AA_UseSoftwareOpenGL))
-      qInfo() << "Using Qt software renderer";
-
-    qInfo() << "UI default font" << QApplication::font();
-    for(const QScreen *screen: QGuiApplication::screens())
-      qInfo() << "Screen" << screen->name()
-              << "size" << screen->size()
-              << "physical size" << screen->physicalSize()
-              << "DPI ratio" << screen->devicePixelRatio()
-              << "DPI x" << screen->logicalDotsPerInchX()
-              << "y" << screen->logicalDotsPerInchX();
-
-    migrate::checkAndMigrateSettings();
-
-    Settings& settings = Settings::instance();
-
-    qInfo() << "Settings dir name" << Settings::getDirName();
-
-    int pixmapCache = settings.valueInt(lnm::OPTIONS_PIXMAP_CACHE, -1);
-    qInfo() << "QPixmapCache cacheLimit" << QPixmapCache::cacheLimit() << "KB";
-    if(pixmapCache != -1)
+    // Check if LNM is already running - send message across shared memory and exit if yes, otherwise continue normally
+    if(!NavApp::initDataExchange())
     {
-      qInfo() << "Overriding pixmap cache" << pixmapCache << "KB";
-      QPixmapCache::setCacheLimit(pixmapCache);
-    }
+      // ==============================================
+      // Initialize logging and force logfiles into the system or user temp directory
+      // This will prefix all log files with orgranization and application name and append ".log"
+      QString logCfg = Settings::getOverloadedPath(":/littlenavmap/resources/config/logging.cfg");
+      if(commandLine.getLogPath().isEmpty())
+        LoggingHandler::initializeForTemp(logCfg);
+      else
+      {
+        QDir().mkpath(commandLine.getLogPath());
+        LoggingHandler::initialize(logCfg, commandLine.getLogPath());
+      }
 
-    // Load font from options settings ========================================
-    QString fontStr = settings.valueStr(lnm::OPTIONS_DIALOG_FONT, QString());
-    QFont font;
-    if(!fontStr.isEmpty())
-    {
-      font.fromString(fontStr);
+      // ==============================================
+      // Start splash screen
+      if(Settings::instance().valueBool(lnm::OPTIONS_DIALOG_SHOW_SPLASH, true))
+        NavApp::initSplashScreen();
 
-      if(font != QApplication::font())
-        QApplication::setFont(font);
-    }
-    qInfo() << "Loaded font" << font.toString() << "from options. Stored font info" << fontStr;
+      // ==============================================
+      // Set language from command line into options - will be saved
+      if(!commandLine.getLanguage().isEmpty())
+        Settings::instance().setValue(lnm::OPTIONS_DIALOG_LANGUAGE, commandLine.getLanguage());
 
-    // Load available translations ============================================
-    qInfo() << "Loading translations for" << OptionsDialog::getLocale();
-    Translator::load(OptionsDialog::getLocale());
+      // ==============================================
+      // Print some information which can be useful for debugging
+      LoggingUtil::logSystemInformation();
+      for(const QString& message : messages)
+        qInfo() << message;
 
-    // Load region override ============================================
-    // Forcing the English locale if the user has chosen it this way
-    if(OptionsDialog::isOverrideRegion())
-    {
-      qInfo() << "Overriding region settings";
-      QLocale::setDefault(QLocale("en"));
-    }
+      // Log system information
+      qInfo().noquote().nospace() << "atools revision " << atools::gitRevision() << " "
+                                  << Application::applicationName() << " revision " << GIT_REVISION_LITTLENAVMAP;
 
-    qDebug() << "Locale after setting to" << OptionsDialog::getLocale() << QLocale()
-             << "decimal point" << QString(QLocale().decimalPoint())
-             << "group separator" << QString(QLocale().groupSeparator());
+      LoggingUtil::logStandardPaths();
+      Settings::logSettingsInformation();
 
-    // Add paths here to allow translation =================================
-    Application::addReportPath(QObject::tr("Log files:"), LoggingHandler::getLogFiles());
+      qInfo() << "SSL supported" << QSslSocket::supportsSsl()
+              << "build library" << QSslSocket::sslLibraryBuildVersionString()
+              << "library" << QSslSocket::sslLibraryVersionString();
 
-    Application::addReportPath(QObject::tr("Database directory:"),
-                               {Settings::getPath() + QDir::separator() + lnm::DATABASE_DIR});
-    Application::addReportPath(QObject::tr("Configuration:"), {Settings::getFilename()});
-    Application::setEmailAddresses({"alex@littlenavmap.org"});
+      qInfo() << "Available styles" << QStyleFactory::keys();
 
-    // Load help URLs from urls.cfg =================================
-    lnm::loadHelpUrls();
+      qInfo() << "SimConnectData Version" << atools::fs::sc::SimConnectData::getDataVersion()
+              << "SimConnectReply Version" << atools::fs::sc::SimConnectReply::getReplyVersion();
 
-    // Load simulator paths =================================
-    atools::fs::FsPaths::loadAllPaths();
-    atools::fs::FsPaths::logAllPaths();
+      qInfo() << "QT_OPENGL" << QProcessEnvironment::systemEnvironment().value("QT_OPENGL");
+      qInfo() << "QT_SCALE_FACTOR" << QProcessEnvironment::systemEnvironment().value("QT_SCALE_FACTOR");
+      if(QApplication::testAttribute(Qt::AA_UseDesktopOpenGL))
+        qInfo() << "Using Qt desktop renderer";
+      if(QApplication::testAttribute(Qt::AA_UseOpenGLES))
+        qInfo() << "Using Qt angle renderer";
+      if(QApplication::testAttribute(Qt::AA_UseSoftwareOpenGL))
+        qInfo() << "Using Qt software renderer";
 
-    // Avoid static translations and load these dynamically now  =================================
-    Unit::initTranslateableTexts();
-    UserdataIcons::initTranslateableTexts();
-    map::initTranslateableTexts();
-    proc::initTranslateableTexts();
-    atools::fs::weather::initTranslateableTexts();
-    formatter::initTranslateableTexts();
+      qInfo() << "UI default font" << QApplication::font();
+      for(const QScreen *screen: QGuiApplication::screens())
+        qInfo() << "Screen" << screen->name()
+                << "size" << screen->size()
+                << "physical size" << screen->physicalSize()
+                << "DPI ratio" << screen->devicePixelRatio()
+                << "DPI x" << screen->logicalDotsPerInchX()
+                << "y" << screen->logicalDotsPerInchX();
+
+      // Start settings and file migration
+      migrate::checkAndMigrateSettings();
+
+      Settings& settings = Settings::instance();
+
+      qInfo() << "Settings dir name" << Settings::getDirName();
+
+      int pixmapCache = settings.valueInt(lnm::OPTIONS_PIXMAP_CACHE, -1);
+      qInfo() << "QPixmapCache cacheLimit" << QPixmapCache::cacheLimit() << "KB";
+      if(pixmapCache != -1)
+      {
+        qInfo() << "Overriding pixmap cache" << pixmapCache << "KB";
+        QPixmapCache::setCacheLimit(pixmapCache);
+      }
+
+      // Load font from options settings ========================================
+      QString fontStr = settings.valueStr(lnm::OPTIONS_DIALOG_FONT, QString());
+      QFont font;
+      if(!fontStr.isEmpty())
+      {
+        font.fromString(fontStr);
+
+        if(font != QApplication::font())
+          QApplication::setFont(font);
+      }
+      qInfo() << "Loaded font" << font.toString() << "from options. Stored font info" << fontStr;
+
+      // Load available translations ============================================
+      qInfo() << "Loading translations for" << OptionsDialog::getLocale();
+      Translator::load(OptionsDialog::getLocale());
+
+      // Load region override ============================================
+      // Forcing the English locale if the user has chosen it this way
+      if(OptionsDialog::isOverrideRegion())
+      {
+        qInfo() << "Overriding region settings";
+        QLocale::setDefault(QLocale("en"));
+      }
+
+      qDebug() << "Locale after setting to" << OptionsDialog::getLocale() << QLocale()
+               << "decimal point" << QString(QLocale().decimalPoint())
+               << "group separator" << QString(QLocale().groupSeparator());
+
+      // Add paths here to allow translation =================================
+      Application::addReportPath(QObject::tr("Log files:"), LoggingHandler::getLogFiles());
+
+      Application::addReportPath(QObject::tr("Database directory:"), {Settings::getPath() + QDir::separator() + lnm::DATABASE_DIR});
+      Application::addReportPath(QObject::tr("Configuration:"), {Settings::getFilename()});
+      Application::setEmailAddresses({"alex@littlenavmap.org"});
+
+      // Load help URLs from urls.cfg =================================
+      lnm::loadHelpUrls();
+
+      // Load simulator paths =================================
+      atools::fs::FsPaths::loadAllPaths();
+      atools::fs::FsPaths::logAllPaths();
+
+      // Avoid static translations and load these dynamically now  =================================
+      Unit::initTranslateableTexts();
+      UserdataIcons::initTranslateableTexts();
+      map::initTranslateableTexts();
+      proc::initTranslateableTexts();
+      atools::fs::weather::initTranslateableTexts();
+      formatter::initTranslateableTexts();
+
+      // =============================================================================================
+      // Set up Marble widget and print debugging information
+      MarbleGlobal::Profiles profiles = MarbleGlobal::detectProfiles();
+      MarbleGlobal::getInstance()->setProfiles(profiles);
+
+      qDebug() << "Marble Local Path:" << MarbleDirs::localPath();
+      qDebug() << "Marble Plugin Local Path:" << MarbleDirs::pluginLocalPath();
+      qDebug() << "Marble Data Path (Run Time) :" << MarbleDirs::marbleDataPath();
+      qDebug() << "Marble Plugin Path (Run Time) :" << MarbleDirs::marblePluginPath();
+      qDebug() << "Marble System Path:" << MarbleDirs::systemPath();
+      qDebug() << "Marble Plugin System Path:" << MarbleDirs::pluginSystemPath();
+
+      MarbleDirs::setMarbleDataPath(QApplication::applicationDirPath() + QDir::separator() + "data");
+
+      if(!commandLine.getCachePath().isEmpty())
+      {
+        // "/home/USER/.local/share" ("/home/USER/.local/share/marble/maps/earth/openstreetmap")
+        // "C:/Users/USER/AppData/Local" ("C:\Users\USER\AppData\Local\.marble\data\maps\earth\openstreetmap")
+
+        ///home/USER/.local/share/marble
+        QFileInfo cacheFileinfo(commandLine.getCachePath());
+
+        QString marbleCache;
+
+        if(cacheFileinfo.isRelative())
+          marbleCache = QApplication::applicationDirPath() + QDir::separator() + cacheFileinfo.filePath();
+        else
+          marbleCache = cacheFileinfo.absoluteFilePath();
+
+        marbleCache = marbleCache + QDir::separator() + "marble";
+
+        // Have to create full path to avoid Marble showing a migration dialog
+        QString marbleCachePath = marbleCache + QDir::separator() + "maps" + QDir::separator() + "earth";
+        qDebug() << Q_FUNC_INFO << "Creating" << marbleCachePath;
+        QDir().mkpath(marbleCachePath);
+
+        qDebug() << Q_FUNC_INFO << "Setting Marble cache to" << marbleCache;
+        MarbleDirs::setMarbleLocalPath(marbleCache);
+      }
 
 #if defined(Q_OS_MACOS)
-    // Check for minimum macOS version  macOS Sierra 10.12
-    if(QSysInfo::macVersion() != QSysInfo::MV_None && QSysInfo::macVersion() < QSysInfo::MV_10_12)
-    {
-      NavApp::closeSplashScreen();
-      QMessageBox::critical(nullptr, QObject::tr("%1 - Error").arg(QApplication::applicationName()),
-                            QObject::tr("%1 needs at least macOS Sierra version 10.12 or newer.").
-                            arg(QApplication::applicationName()));
-      return 1;
-    }
-#endif
-
-#if defined(Q_OS_WIN32)
-    // Detect other running application instance - this is unsafe on Unix since shm can remain after crashes
-    QSharedMemory shared("203abd54-8a6a-4308-a654-6771efec62cd" + Settings::instance().getDirName()); // generated GUID
-    if(!shared.create(512, QSharedMemory::ReadWrite))
-    {
-      NavApp::closeSplashScreen();
-      QMessageBox::critical(nullptr, QObject::tr("%1 - Error").arg(QApplication::applicationName()),
-                            QObject::tr("%1 is already running.").arg(QApplication::applicationName()));
-      return 1;
-    }
-#endif
-
-    // Set up Marble widget and print debugging informations
-    MarbleGlobal::Profiles profiles = MarbleGlobal::detectProfiles();
-    MarbleGlobal::getInstance()->setProfiles(profiles);
-
-    qDebug() << "Marble Local Path:" << MarbleDirs::localPath();
-    qDebug() << "Marble Plugin Local Path:" << MarbleDirs::pluginLocalPath();
-    qDebug() << "Marble Data Path (Run Time) :" << MarbleDirs::marbleDataPath();
-    qDebug() << "Marble Plugin Path (Run Time) :" << MarbleDirs::marblePluginPath();
-    qDebug() << "Marble System Path:" << MarbleDirs::systemPath();
-    qDebug() << "Marble Plugin System Path:" << MarbleDirs::pluginSystemPath();
-
-    MarbleDirs::setMarbleDataPath(QApplication::applicationDirPath() + QDir::separator() + "data");
-
-#if defined(Q_OS_MACOS)
-    QDir pluginsDir(QApplication::applicationDirPath());
-    pluginsDir.cdUp();
-    pluginsDir.cd("PlugIns");
-    MarbleDirs::setMarblePluginPath(pluginsDir.absolutePath());
+      QDir pluginsDir(QApplication::applicationDirPath());
+      pluginsDir.cdUp();
+      pluginsDir.cd("PlugIns");
+      MarbleDirs::setMarblePluginPath(pluginsDir.absolutePath());
 #else
-    MarbleDirs::setMarblePluginPath(QApplication::applicationDirPath() + QDir::separator() + "plugins");
+      MarbleDirs::setMarblePluginPath(QApplication::applicationDirPath() + QDir::separator() + "plugins");
 #endif
 
-    MarbleDebug::setEnabled(settings.getAndStoreValue(lnm::OPTIONS_MARBLE_DEBUG, false).toBool());
+      MarbleDebug::setEnabled(settings.getAndStoreValue(lnm::OPTIONS_MARBLE_DEBUG, false).toBool());
 
-    qDebug() << "New Marble Local Path:" << MarbleDirs::localPath();
-    qDebug() << "New Marble Plugin Local Path:" << MarbleDirs::pluginLocalPath();
-    qDebug() << "New Marble Data Path (Run Time) :" << MarbleDirs::marbleDataPath();
-    qDebug() << "New Marble Plugin Path (Run Time) :" << MarbleDirs::marblePluginPath();
-    qDebug() << "New Marble System Path:" << MarbleDirs::systemPath();
-    qDebug() << "New Marble Plugin System Path:" << MarbleDirs::pluginSystemPath();
+      qDebug() << "New Marble Local Path:" << MarbleDirs::localPath();
+      qDebug() << "New Marble Plugin Local Path:" << MarbleDirs::pluginLocalPath();
+      qDebug() << "New Marble Data Path (Run Time) :" << MarbleDirs::marbleDataPath();
+      qDebug() << "New Marble Plugin Path (Run Time) :" << MarbleDirs::marblePluginPath();
+      qDebug() << "New Marble System Path:" << MarbleDirs::systemPath();
+      qDebug() << "New Marble Plugin System Path:" << MarbleDirs::pluginSystemPath();
 
-    // Disable tooltip effects since these do not work well with tooltip updates while displaying
-    QApplication::setEffectEnabled(Qt::UI_FadeTooltip, false);
-    QApplication::setEffectEnabled(Qt::UI_AnimateTooltip, false);
+      // =============================================================================================
+      // Disable tooltip effects since these do not work well with tooltip updates while displaying
+      QApplication::setEffectEnabled(Qt::UI_FadeTooltip, false);
+      QApplication::setEffectEnabled(Qt::UI_AnimateTooltip, false);
 
 #if QT_VERSION > QT_VERSION_CHECK(5, 10, 0)
-    QApplication::setAttribute(Qt::AA_DisableWindowContextHelpButton);
+      QApplication::setAttribute(Qt::AA_DisableWindowContextHelpButton);
 #endif
 
-    // Check if database is compatible and ask the user to erase all incompatible ones
-    // If erasing databases is refused exit application
-    bool databasesErased = false;
-    dbManager = new DatabaseManager(nullptr);
+      // =============================================================================================
+      // Check if database is compatible and ask the user to erase all incompatible ones
+      // If erasing databases is refused exit application
+      bool databasesErased = false;
+      dbManager = new DatabaseManager(nullptr);
 
-    /* Copy from application directory to settings directory if newer and create indexes if missing */
-    dbManager->checkCopyAndPrepareDatabases();
+      /* Copy from application directory to settings directory if newer and create indexes if missing */
+      dbManager->checkCopyAndPrepareDatabases();
 
-    if(dbManager->checkIncompatibleDatabases(&databasesErased))
-    {
-      delete dbManager;
-      dbManager = nullptr;
+      if(dbManager->checkIncompatibleDatabases(&databasesErased))
+      {
+        delete dbManager;
+        dbManager = nullptr;
 
-      MainWindow mainWindow;
+        MainWindow mainWindow;
 
-      // Show database dialog if something was removed
-      mainWindow.setDatabaseErased(databasesErased);
+        // Show database dialog if something was removed
+        mainWindow.setDatabaseErased(databasesErased);
 
-      mainWindow.show();
+        mainWindow.show();
 
-      // Hide splash once main window is shown
-      NavApp::finishSplashScreen();
+        // Hide splash once main window is shown
+        NavApp::finishSplashScreen();
 
-      qDebug() << "Before app.exec()";
-      retval = QApplication::exec();
-    }
+        // =============================================================================================
+        // Run application
+        qDebug() << "Before app.exec()";
+        retval = QApplication::exec();
+      }
+    } // if(!NavApp::initSharedMemory())
+    else
+      retval = 0;
 
     qInfo() << "app.exec() done, retval is" << retval << (retval == 0 ? "(ok)" : "(error)");
   }
   catch(atools::Exception& e)
   {
+    NavApp::deInitDataExchange();
     ATOOLS_HANDLE_EXCEPTION(e);
     // Does not return in case of fatal error
   }
   catch(...)
   {
+    NavApp::deInitDataExchange();
     ATOOLS_HANDLE_UNKNOWN_EXCEPTION;
     // Does not return in case of fatal error
   }
+
+  NavApp::deInitDataExchange();
 
   delete dbManager;
   dbManager = nullptr;

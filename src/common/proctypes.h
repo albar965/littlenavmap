@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -22,8 +22,6 @@
 #include "common/procflags.h"
 
 #include <QColor>
-#include <QRegularExpression>
-#include <QString>
 
 class Route;
 
@@ -36,22 +34,22 @@ namespace proc {
 void initTranslateableTexts();
 
 // =====================================================================
-/* Altitude restriction for approaches or transitions */
+/* Altitude restriction for procedures or transitions */
 struct MapAltRestriction
 {
   enum Descriptor
   {
-    NONE,
-    AT,
-    AT_OR_ABOVE,
-    AT_OR_BELOW,
+    NO_ALT_RESTR,
+    AT, /* At alt1 */
+    AT_OR_ABOVE, /* At or above alt1 */
+    AT_OR_BELOW, /* At or below alt1 */
     BETWEEN, /* At or above alt2 and at or below alt1 */
-    ILS_AT, /* ILS glideslope altitude at alt1 */
-    ILS_AT_OR_ABOVE /* ILS glideslope altitude at alt1*/
+    ILS_AT, /* ILS glideslope altitude at alt1 - not restricting */
+    ILS_AT_OR_ABOVE /* ILS glideslope altitude at alt1 - not restricting */
   };
 
-  Descriptor descriptor = MapAltRestriction::NONE;
-  float alt1, alt2,
+  Descriptor descriptor = MapAltRestriction::NO_ALT_RESTR;
+  float alt1, alt2, /* Feet */
         verticalAngleAlt = map::INVALID_ALTITUDE_VALUE; /* Forced since calculated from vertical angle */
 
   /* Indicator used to force lowest altitude on final FAF and FACF to avoid arriving above glide slope or VASI.
@@ -60,7 +58,7 @@ struct MapAltRestriction
 
   bool isValid() const
   {
-    return descriptor != MapAltRestriction::NONE;
+    return descriptor != MapAltRestriction::NO_ALT_RESTR;
   }
 
   bool isIls() const
@@ -76,18 +74,18 @@ struct MapSpeedRestriction
 {
   enum Descriptor
   {
-    NONE,
+    NO_SPD_RESTR,
     AT,
     MIN,
     MAX
   };
 
-  Descriptor descriptor = MapSpeedRestriction::NONE;
+  Descriptor descriptor = MapSpeedRestriction::NO_SPD_RESTR;
   float speed = 0.f;
 
   bool isValid() const
   {
-    return descriptor != MapSpeedRestriction::NONE && speed > 0.f;
+    return descriptor != MapSpeedRestriction::NO_SPD_RESTR && speed > 0.f;
   }
 
 };
@@ -97,21 +95,21 @@ struct MapSpeedRestriction
  * Hashable and compareable */
 struct MapProcedureRef
 {
-  MapProcedureRef(int airportIdParam, int runwayEndIdParam, int approachIdParam, int transitionIdParam, int legIdParam,
+  MapProcedureRef(int airportIdParam, int runwayEndIdParam, int procIdParam, int transIdParam, int legIdParam,
                   proc::MapProcedureTypes type)
-    : airportId(airportIdParam), runwayEndId(runwayEndIdParam), approachId(approachIdParam), transitionId(transitionIdParam),
+    : airportId(airportIdParam), runwayEndId(runwayEndIdParam), procedureId(procIdParam), transitionId(transIdParam),
     legId(legIdParam), mapType(type)
   {
   }
 
   MapProcedureRef()
-    : airportId(-1), runwayEndId(-1), approachId(-1), transitionId(-1), legId(-1), mapType(PROCEDURE_NONE)
+    : airportId(-1), runwayEndId(-1), procedureId(-1), transitionId(-1), legId(-1), mapType(PROCEDURE_NONE)
   {
   }
 
   bool operator==(const proc::MapProcedureRef& other) const
   {
-    return airportId == other.airportId && approachId == other.approachId && runwayEndId == other.runwayEndId &&
+    return airportId == other.airportId && procedureId == other.procedureId && runwayEndId == other.runwayEndId &&
            transitionId == other.transitionId && legId == other.legId && mapType == other.mapType;
   }
 
@@ -122,7 +120,7 @@ struct MapProcedureRef
 
   int airportId /* always from navdatabase - only simdatabase if this is a custom approach */,
       runwayEndId /* always from navdatabase - only simdatabase if this is a custom approach */,
-      approachId, transitionId, legId;
+      procedureId, transitionId, legId;
   proc::MapProcedureTypes mapType;
 
   bool isLeg() const
@@ -130,9 +128,9 @@ struct MapProcedureRef
     return legId != -1;
   }
 
-  bool hasApproachOnlyIds() const
+  bool hasProcedureOnlyIds() const
   {
-    return approachId != -1 && transitionId == -1;
+    return procedureId != -1 && transitionId == -1;
   }
 
   bool hasTransitionId() const
@@ -140,24 +138,24 @@ struct MapProcedureRef
     return transitionId != -1;
   }
 
-  bool hasApproachId() const
+  bool hasProcedureId() const
   {
-    return approachId != -1;
+    return procedureId != -1;
   }
 
-  bool hasApproachAndTransitionIds() const
+  bool hasProcedureAndTransitionIds() const
   {
-    return approachId != -1 && transitionId != -1;
+    return procedureId != -1 && transitionId != -1;
   }
 
-  bool hasApproachOrTransitionIds() const
+  bool hasProcedureOrTransitionIds() const
   {
-    return approachId != -1 || transitionId != -1;
+    return procedureId != -1 || transitionId != -1;
   }
 
   bool isEmpty() const
   {
-    return approachId == -1 && transitionId == -1;
+    return procedureId == -1 && transitionId == -1;
   }
 
 };
@@ -166,7 +164,8 @@ QDebug operator<<(QDebug out, const proc::MapProcedureRef& ref);
 
 inline uint qHash(const proc::MapProcedureRef& ref)
 {
-  return static_cast<unsigned int>(ref.airportId) ^ static_cast<unsigned int>(ref.approachId) ^ static_cast<unsigned int>(ref.runwayEndId) ^
+  return static_cast<unsigned int>(ref.airportId) ^ static_cast<unsigned int>(ref.procedureId) ^
+         static_cast<unsigned int>(ref.runwayEndId) ^
          static_cast<unsigned int>(ref.transitionId) ^ static_cast<unsigned int>(ref.legId) ^ qHash(ref.mapType);
 }
 
@@ -198,7 +197,7 @@ struct MapProcedureLeg
   proc::ProcedureLegType type = INVALID_LEG_TYPE; /* Type of this leg */
   proc::MapProcedureTypes mapType = PROCEDURE_NONE; /* Type of the procedure this leg belongs to */
 
-  int airportId = -1, approachId = -1, transitionId = -1, legId = -1;
+  int airportId = -1, procedureId = -1, transitionId = -1, legId = -1;
 
   float course, /* magnetic from ARINC */
         distance /* Distance from source in NM */,
@@ -220,6 +219,10 @@ struct MapProcedureLeg
                               * Geometry contains entry stub. */
 
        malteseCross = false; /* Draw Maltese cross for either FAF or FACF depending on ILS altitude restriction */
+
+  /* Magnetic course value or INVALID_COURSE_VALUE if not applicable.
+   * Check noCourseDisplay() to before to avoid invalid. */
+  float calculatedMagCourse() const;
 
   bool isValid() const
   {
@@ -286,6 +289,7 @@ struct MapProcedureLeg
     return mapType & proc::PROCEDURE_SID_TRANSITION;
   }
 
+  /* STAR and transition */
   bool isAnyStar() const
   {
     return mapType & proc::PROCEDURE_STAR_ALL;
@@ -294,6 +298,12 @@ struct MapProcedureLeg
   bool isStar() const
   {
     return mapType & proc::PROCEDURE_STAR;
+  }
+
+  /* SID and transition */
+  bool isAnySid() const
+  {
+    return mapType & proc::PROCEDURE_SID_ALL;
   }
 
   bool isStarTransition() const
@@ -343,9 +353,11 @@ struct MapProcedureLeg
 
   }
 
+  /* Special ARINC types like FAF, MAP, etc. */
   bool isFinalApproachFix() const;
   bool isFinalApproachCourseFix() const;
   bool isFinalEndpointFix() const;
+  bool isMissedApproachPoint() const;
 
   bool isHold() const;
 
@@ -364,8 +376,8 @@ struct MapProcedureLeg
   /* Do not display distance e.g. for course to altitude */
   bool noDistanceDisplay() const;
 
-  /* No course display for e.g. arc legs */
-  bool noCourseDisplay() const;
+  /* No calculated course display for e.g. arc legs */
+  bool noCalcCourseDisplay() const;
 
   /* No ident at end of manual legs */
   bool noIdentDisplay() const;
@@ -376,21 +388,21 @@ QDebug operator<<(QDebug out, const proc::MapProcedureLeg& leg);
 
 // =====================================================================
 /* All legs for a arrival or departure including SID, STAR, transition and approach.
- * Approach (also partially synonym for procedure). Flying order in transitionLegs and then approachLegs.
- * SID contains all legs in approach and transition fields. Flying order in approachLegs and then transitionLegs.
- * STAR contains all legs in approach and transition fields. Flying order in transitionLegs and then approachLegs */
+ * Flying order in transitionLegs and then procedureLegs.
+ * SID contains all legs in approach and transition fields. Flying order in procedureLegs and then transitionLegs.
+ * STAR contains all legs in approach and transition fields. Flying order in transitionLegs and then procedureLegs */
 struct MapProcedureLegs
 {
-  QVector<MapProcedureLeg> transitionLegs, approachLegs;
+  QVector<MapProcedureLeg> transitionLegs, procedureLegs;
 
   /* Reference with all database ids */
   MapProcedureRef ref;
   atools::geo::Rect bounding;
 
-  QString approachType, /* GNSS (display GLS) GPS IGS ILS LDA LOC LOCB NDB NDBDME RNAV (RNV) SDF TCN VOR VORDME */
-          approachSuffix, approachFixIdent /* Approach fix or SID/STAR name */,
-          approachArincName, transitionType, transitionFixIdent,
-          procedureRunway, /* Runway from the procedure does not have to match the airport runway but is saved */
+  QString type, /* GNSS (display GLS) GPS IGS ILS LDA LOC LOCB NDB NDBDME RNAV (RNV) SDF TCN VOR VORDME */
+          suffix, approachFixIdent /* Approach fix or SID/STAR name */,
+          arincName, transitionType, transitionFixIdent,
+          runway, /* Runway from the procedure does not have to match the airport runway but is saved */
           aircraftCategory; /* 5.221 */
 
   /* Only for approaches - the found runway end at the airport - can be different due to fuzzy search.
@@ -399,7 +411,7 @@ struct MapProcedureLegs
   proc::MapProcedureTypes mapType = PROCEDURE_NONE;
 
   /* Accumulated distances */
-  float approachDistance = 0.f, transitionDistance = 0.f, missedDistance = 0.f;
+  float procedureDistance = 0.f, transitionDistance = 0.f, missedDistance = 0.f;
 
   /* Assigned color for multi preview or default color for normal preview. */
   QColor previewColor;
@@ -416,13 +428,13 @@ struct MapProcedureLegs
        verticalAngle; /* One or more legs have a vertical angle */
 
   /* Short display type name */
-  QString displayApproachType() const
+  QString displayType() const
   {
     // Correct wrong designation of GLS approaches as GNSS for display
-    return approachType == "GNSS" ? "GLS" : approachType;
+    return type == "GNSS" ? "GLS" : type;
   }
 
-  static QString displayApproachType(const QString& type)
+  static QString displayType(const QString& type)
   {
     // Correct wrong designation of GLS approaches as GNSS for display
     return type == "GNSS" ? "GLS" : type;
@@ -431,7 +443,7 @@ struct MapProcedureLegs
   /* Anything that needs to display an ILS frequency or GNSS channel */
   bool hasFrequencyOrChannel() const
   {
-    return hasFrequencyOrChannel(approachType);
+    return hasFrequencyOrChannel(type);
   }
 
   static bool hasFrequencyOrChannel(const QString& approachType)
@@ -443,13 +455,13 @@ struct MapProcedureLegs
   /* All ILS, LOC, LDA, etc. */
   bool hasFrequency() const
   {
-    return hasFrequency(approachType);
+    return hasFrequency(type);
   }
 
   /* RNP and GLS. */
   bool hasChannel() const
   {
-    return hasChannel(approachType);
+    return hasChannel(type);
   }
 
   static bool hasFrequency(const QString& approachType)
@@ -470,32 +482,32 @@ struct MapProcedureLegs
 
   bool isCustomApproach() const
   {
-    return approachType == "CUSTOM";
+    return type == "CUSTOM";
   }
 
   bool isCustomDeparture() const
   {
-    return approachType == "CUSTOMDEPART";
+    return type == "CUSTOMDEPART";
   }
 
   bool isRnavGps() const
   {
-    return approachType == "RNAV" || approachType == "GPS";
+    return type == "RNAV" || type == "GPS";
   }
 
   bool isPrecision() const
   {
-    return approachType == "ILS" || approachType == "GNSS" /* GLS */;
+    return type == "ILS" || type == "GNSS" /* GLS */;
   }
 
   bool isGls() const
   {
-    return approachType == "GNSS" /* GLS */;
+    return type == "GNSS" /* GLS */;
   }
 
   bool isIls() const
   {
-    return approachType == "ILS";
+    return type == "ILS";
   }
 
   bool isNonPrecision() const
@@ -503,7 +515,7 @@ struct MapProcedureLegs
     return !isPrecision();
   }
 
-  void clearApproach();
+  void clearProcedure();
 
   void clearTransition();
 
@@ -517,7 +529,7 @@ struct MapProcedureLegs
 
   int size() const
   {
-    return transitionLegs.size() + approachLegs.size();
+    return transitionLegs.size() + procedureLegs.size();
   }
 
   /* If it has arinc names like "ALL" or "RW10B" */
@@ -549,7 +561,7 @@ struct MapProcedureLegs
     return atInternalConst(size() - 1);
   }
 
-  const MapProcedureLeg *approachLegById(int legId) const;
+  const MapProcedureLeg *procedureLegById(int legId) const;
   const MapProcedureLeg *transitionLegById(int legId) const;
 
   MapProcedureLeg& operator[](int i)
@@ -643,6 +655,9 @@ QString altRestrictionTextShort(const proc::MapAltRestriction& altRestriction);
 QString speedRestrictionTextNarrow(const proc::MapSpeedRestriction& speedRestriction);
 QString speedRestrictionText(const proc::MapSpeedRestriction& speedRestriction);
 QString speedRestrictionTextShort(const proc::MapSpeedRestriction& speedRestriction);
+
+/* VOR radial text like "R090" */
+QString radialText(float radial);
 
 /* Determine various route and procedure related states for the given map object.
  * Queries are omitted if the respective parameters are null */

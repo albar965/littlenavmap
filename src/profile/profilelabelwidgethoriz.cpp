@@ -20,7 +20,7 @@
 #include "atools.h"
 #include "common/mapcolors.h"
 #include "common/unit.h"
-#include "navapp.h"
+#include "app/navapp.h"
 #include "profile/profilescrollarea.h"
 #include "profile/profilewidget.h"
 #include "profile/profileoptions.h"

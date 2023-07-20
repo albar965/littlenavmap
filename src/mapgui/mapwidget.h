@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -54,23 +54,25 @@ namespace mw {
 /* State of click, drag and drop actions on the map */
 enum MouseState
 {
-  NONE = 0x0000, /* Nothing */
+  NONE = 0, /* Nothing */
 
-  DRAG_DISTANCE = 0x0001, /* A new distance measurement line is dragged */
-  DRAG_CHANGE_DISTANCE = 0x0002, /* A present distance measurement line is changed dragging */
+  DRAG_DIST_NEW_END = 1 << 0, /* A new distance measurement line is dragged moving the endpoint */
+  DRAG_DIST_CHANGE_START = 1 << 1, /* A present distance measurement line is changed dragging the origin */
+  DRAG_DIST_CHANGE_END = 1 << 2, /* A present distance measurement line is changed dragging the endpoint */
 
-  DRAG_ROUTE_LEG = 0x0004, /* Changing a flight plan leg by adding a new point */
-  DRAG_ROUTE_POINT = 0x0008, /* Changing the flight plan by replacing a present waypoint */
+  DRAG_ROUTE_LEG = 1 << 3, /* Changing a flight plan leg by adding a new point */
+  DRAG_ROUTE_POINT = 1 << 4, /* Changing the flight plan by replacing a present waypoint */
 
-  DRAG_USER_POINT = 0x0010, /* Moving a userpoint around */
+  DRAG_USER_POINT = 1 << 5, /* Moving a userpoint around */
 
-  DRAG_POST = 0x0020, /* Mouse released - all done */
-  DRAG_POST_MENU = 0x0040, /* A menu is opened after selecting multiple objects.
+  DRAG_POST = 1 << 6, /* Mouse released - all done */
+  DRAG_POST_MENU = 1 << 7, /* A menu is opened after selecting multiple objects.
                             * Avoid cancelling all drag when loosing focus */
-  DRAG_POST_CANCEL = 0x0080, /* Right mousebutton clicked - cancel all actions */
+  DRAG_POST_CANCEL = 1 << 8, /* Right mousebutton clicked - cancel all actions */
 
   /* Used to check if any interaction is going on */
-  DRAG_ALL = mw::DRAG_DISTANCE | mw::DRAG_CHANGE_DISTANCE | mw::DRAG_ROUTE_LEG | mw::DRAG_ROUTE_POINT |
+  DRAG_ALL = mw::DRAG_DIST_NEW_END | mw::DRAG_DIST_CHANGE_START | mw::DRAG_DIST_CHANGE_END |
+             mw::DRAG_ROUTE_LEG | mw::DRAG_ROUTE_POINT |
              mw::DRAG_USER_POINT
 };
 
@@ -188,8 +190,7 @@ public:
   void addRangeMark(const atools::geo::Pos& pos, bool showDialog);
 
   /* Add radio navaid range ring. Falls back to normal range rings if range is 0. */
-  void addNavRangeMark(const atools::geo::Pos& pos, map::MapTypes type, const QString& displayIdent,
-                       const QString& frequency, float range);
+  void addNavRangeMark(const atools::geo::Pos& pos, map::MapTypes type, const QString& displayIdent, const QString& frequency, float range);
 
   /* Remove range rings on index, print message and update map */
   void removeRangeMark(int id);
@@ -234,7 +235,18 @@ public:
 
   void resetTakeoffLandingDetection();
 
+  /* Currently dragging measurement line */
+  int getCurrentDistanceMarkerId() const
+  {
+    return currentDistanceMarkerId;
+  }
+
+  void showGridConfiguration();
+
 signals:
+  /* Emitted when connection is established and user aircraft turned from invalid to valid */
+  void userAircraftValidChanged();
+
   /* Fuel flow started or stopped */
   void aircraftEngineStarted(const atools::fs::sc::SimConnectUserAircraft& aircraft);
   void aircraftEngineStopped(const atools::fs::sc::SimConnectUserAircraft& aircraft);
@@ -265,7 +277,7 @@ signals:
   void showInformation(const map::MapResult& result);
 
   /* Add user point and pass result to it so it can prefill the dialog */
-  void addUserpointFromMap(const map::MapResult& result, const atools::geo::Pos& pos);
+  void addUserpointFromMap(const map::MapResult& result, const atools::geo::Pos& pos, bool airportAddon);
   void editUserpointFromMap(const map::MapResult& result);
   void deleteUserpointFromMap(int id);
 
@@ -347,9 +359,13 @@ private:
   void elevationDisplayTimerTimeout();
 
   /* Start a line measurement after context menu selection or click+modifier */
-  void addMeasurement(const atools::geo::Pos& pos, const map::MapResult& result);
-  void addMeasurement(const atools::geo::Pos& pos, const map::MapAirport *airport, const map::MapVor *vor,
-                      const map::MapNdb *ndb, const map::MapWaypoint *waypoint);
+  void addDistanceMarker(const atools::geo::Pos& pos, const map::MapResult& result);
+  void addDistanceMarker(const atools::geo::Pos& pos, const map::MapAirport *airport, const map::MapVor *vor,
+                         const map::MapNdb *ndb, const map::MapWaypoint *waypoint, const map::MapUserpoint *userpoint);
+  void fillDistanceMarker(map::DistanceMarker& distanceMarker, const atools::geo::Pos& pos, const map::MapResult& result);
+  void fillDistanceMarker(map::DistanceMarker& distanceMarker, const atools::geo::Pos& pos, const map::MapAirport *airport,
+                          const map::MapVor *vor, const map::MapNdb *ndb, const map::MapWaypoint *waypoint,
+                          const map::MapUserpoint *userpoint);
 
   /* Show the given object in the search search window with filters and selection set */
   void showResultInSearch(const map::MapBase *base);
@@ -374,11 +390,10 @@ private:
 
   /* Update the flight plan from a drag and drop result. Show a menu if multiple objects are
    * found at the button release position. */
-  void updateRoute(QPoint newPoint, int leg, int point, bool fromClickAdd, bool fromClickAppend);
+  void updateRoute(const QPoint& point, int leg, int pointIndex, bool fromClickAdd, bool fromClickAppend);
 
   /* Show menu to allow selection of a map feature below the cursor */
-  bool showFeatureSelectionMenu(int& id, map::MapTypes& type, const map::MapResult& result,
-                                const QString& menuText);
+  bool showFeatureSelectionMenu(int& id, map::MapTypes& type, const map::MapResult& result, const QString& menuText);
 
   /* MapPaintWidget overrides for UI updates mostly ============================================================ */
   virtual void optionsChanged() override;
@@ -387,6 +402,7 @@ private:
 
   virtual void updateThemeUi(const QString& themeId) override;
   virtual void updateMapVisibleUi() const override;
+  virtual void updateMapVisibleUiPostDatabaseLoad() const override;
 
   /* Called at start of user interaction like moving or scrolling */
   virtual void jumpBackToAircraftStart() override;
@@ -475,7 +491,7 @@ private:
   double takeoffLandingDistanceNm = 0.;
 
   /* Used in simDataChanged() to zoom close to the airport after touchdown */
-  bool touchdownDetectedZoom = false;
+  bool touchdownDetectedZoom = false, takeoffDetectedZoom = false;
 
   /* Time of takeoff or invalid if not detected yet */
   QDateTime takeoffTimeSim;

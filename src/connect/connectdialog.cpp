@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2022 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -22,7 +22,7 @@
 #include "fs/sc/datareaderthread.h"
 #include "gui/helphandler.h"
 #include "gui/widgetstate.h"
-#include "navapp.h"
+#include "app/navapp.h"
 #include "settings/settings.h"
 #include "ui_connectdialog.h"
 #include "util/htmlbuilder.h"
@@ -57,6 +57,19 @@ ConnectDialog::ConnectDialog(QWidget *parent, bool simConnectAvailable)
                                       "Reinstall Little Navmap or "
                                       "install a FSX SP2 compatible version of SimConnect on your computer.<br/>")) +
                                  ui->labelConnectFsx->text());
+  }
+  else
+  {
+
+#if defined(SIMCONNECT_BUILD_WIN64)
+    ui->tabWidgetConnect->setTabText(0, tr("MSFS"));
+    ui->labelConnectFsx->setText(tr("Connect directly to MSFS running on the same computer as "
+                                    "Little Navmap"));
+#elif defined(SIMCONNECT_BUILD_WIN32)
+    ui->tabWidgetConnect->setTabText(0, tr("FSX or Prepar3D"));
+    ui->labelConnectFsx->setText(tr("Connect directly to FSX or Prepar3D running on the same computer as "
+                                    "Little Navmap"));
+#endif
   }
 #else
   // Remove FSX/P3D tab for non Windows systems

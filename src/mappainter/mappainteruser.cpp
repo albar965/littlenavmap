@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -17,16 +17,13 @@
 
 #include "mappainter/mappainteruser.h"
 
+#include "atools.h"
 #include "common/symbolpainter.h"
-#include "common/mapcolors.h"
-#include "common/unit.h"
-#include "mapgui/mapwidget.h"
-#include "util/paintercontextsaver.h"
 #include "mapgui/maplayer.h"
+#include "app/navapp.h"
 #include "query/mapquery.h"
 #include "userdata/userdataicons.h"
-#include "navapp.h"
-#include "atools.h"
+#include "util/paintercontextsaver.h"
 
 #include <QElapsedTimer>
 
@@ -79,7 +76,6 @@ void MapPainterUser::paintUserpoints(const QList<MapUserpoint>& userpoints, bool
 
       if(icons->hasType(userpoint.type) || context->userPointTypeUnknown)
       {
-
         float size = context->szF(context->symbolSizeUserpoint, context->mapLayer->getUserPointSymbolSize());
         if(userpoint.type == "Logbook")
         {
@@ -91,11 +87,10 @@ void MapPainterUser::paintUserpoints(const QList<MapUserpoint>& userpoints, bool
         const QPixmap *iconPixmap = icons->getIconPixmap(userpoint.type, atools::roundToInt(size), &textPlacementHint);
         context->painter->drawPixmap(QPointF(x - size / 2.f, y - size / 2.f), *iconPixmap);
 
-        if(context->mapLayer->isUserpointInfo() && !drawFast)
+        // Do not draw labels for airport add-on marks
+        if(context->mapLayer->isUserpointInfo() && !drawFast && !userpoint.isAddon())
         {
           int maxTextLength = context->mapLayer->getMaxTextLengthUserpoint();
-
-          // Avoid showing same text twice
           QStringList texts;
           texts.append(atools::elideTextShort(userpoint.ident, maxTextLength));
           QString name = userpoint.name != userpoint.ident ? atools::elideTextShort(userpoint.name, maxTextLength) : QString();
@@ -111,7 +106,7 @@ void MapPainterUser::paintUserpoints(const QList<MapUserpoint>& userpoints, bool
           {
             case icon::ICON_LABEL_TOP:
               // NDB - place on top
-              textatts = textatt::VBOTTOM | textatt::CENTER;
+              textatts = textatt::VERT_ABOVE | textatt::CENTER;
               ypos = y - offset;
               break;
 
@@ -123,7 +118,7 @@ void MapPainterUser::paintUserpoints(const QList<MapUserpoint>& userpoints, bool
 
             case icon::ICON_LABEL_BOTTOM:
               // Place on bottom
-              textatts = textatt::VTOP | textatt::CENTER;
+              textatts = textatt::VERT_BELOW | textatt::CENTER;
               ypos = y + offset;
               break;
 
@@ -132,12 +127,12 @@ void MapPainterUser::paintUserpoints(const QList<MapUserpoint>& userpoints, bool
               textatts = textatt::RIGHT;
               xpos = x - offset;
               break;
-
           }
 
           symbolPainter->textBoxF(context->painter, texts, QPen(Qt::black), xpos, ypos, textatts, fill ? 255 : 0);
-        }
-      }
-    }
-  }
+
+        } // if(context->mapLayer->isUserpointInfo() && !drawFast)
+      } // if(icons->hasType(userpoint.type) || context->userPointTypeUnknown)
+    } // if(visible)
+  } // for(const MapUserpoint& userpoint : userpoints)
 }
