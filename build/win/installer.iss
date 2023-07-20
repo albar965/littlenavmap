@@ -116,9 +116,9 @@ de.ChangelogMessage=Liste der Änderungen öffnen
 OpenStartMessage=Open the user manual start page, which contains tips and tricks for first-time users.
 en.OpenStartMessage=Open the user manual start page, which contains tips and tricks for first-time users.
 de.OpenStartMessage=Startseite des Benutzerhandbuchs öffnen, die Tipps und Tricks für Erstbenutzer enthält.
-InstallingRedistMessage=Installing MSVC Redistributables 2015-2022 64-bit ...
-en.InstallingRedistMessage=Installing MSVC Redistributables 2015-2022 64-bit ...
-de.InstallingRedistMessage=Installiere MSVC Redistributables 2015-2022 64-Bit ...
+InstallingRedistMessage=Installing MSVC Redistributables ...
+en.InstallingRedistMessage=Installing MSVC Redistributables ...
+de.InstallingRedistMessage=Installiere MSVC Redistributables ...
 UserManualMessage=User Manual
 en.UserManualMessage=User Manual
 de.UserManualMessage=Benutzerhandbuch
@@ -165,7 +165,10 @@ Source: "{#LnmAppSourceDir}"; DestDir: "{app}"; Flags: ignoreversion recursesubd
 // VC++ redistributable runtime. Extracted by VC2017RedistNeedsInstall(), if needed.
 #if LnmAppArch == "win64"
   Source: "{#LnmAppProjects}\Redist\vcredist_2015-2022.x64.exe"; DestDir: {tmp}; Flags: deleteafterinstall
+#elif LnmAppArch == "win32"
+  Source: "{#LnmAppProjects}\Redist\vcredist_2005_x86.exe"; DestDir: {tmp}; Flags: deleteafterinstall
 #endif
+
 Source: "{#LnmAppProjects}\littlenavmap\build\win\Little Navmap User Manual Online.url"; DestDir: "{app}\help";
 Source: "{#LnmAppProjects}\littlenavmap\build\win\Little Navmap User Manual Online Start.url"; DestDir: "{app}\help";
 
@@ -204,6 +207,8 @@ Filename: "https://www.littlenavmap.org/manuals/littlenavmap/release/latest/en/S
 Filename: "{app}\CHANGELOG.txt"; Description: "{cm:ChangelogMessage}"; Flags: nowait postinstall shellexec skipifsilent
 #if LnmAppArch == "win64"
   Filename: "{tmp}\vcredist_2015-2022.x64.exe"; StatusMsg: "{cm:InstallingRedistMessage}"; Parameters: "/quiet /norestart"; Flags: runascurrentuser waituntilterminated
+#elif LnmAppArch == "win32"
+  Filename: "{tmp}\vcredist_2005_x86.exe"; StatusMsg: "{cm:InstallingRedistMessage}"; Parameters: "/Q"; Flags: runascurrentuser waituntilterminated
 #endif
 
 
