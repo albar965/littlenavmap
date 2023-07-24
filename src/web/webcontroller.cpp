@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -143,22 +143,25 @@ void WebController::startServer()
     // Listening ====================================================
     qInfo() << Q_FUNC_INFO << "Listening on" << listener->serverAddress().toString() << listener->serverPort();
 
+    QString scheme = encrypted ? "https" : "http";
     QHostAddress addr = listener->serverAddress();
     QUrl url;
-    url.setScheme(encrypted ? "https" : "http");
+    url.setScheme(scheme);
     url.setPort(port);
 
     if(addr == QHostAddress::Any)
     {
       // Collect hostnames and IPs from all interfaces
-      QList<QHostAddress> ipAddressesList = QNetworkInterface::allAddresses();
-      for(const QHostAddress& ip : ipAddressesList)
+      for(const QHostAddress& hostAddr : QNetworkInterface::allAddresses())
       {
-        QString ipStr = ip.toString();
-        if(!ip.isLoopback() && !ip.isNull() && ip.protocol() == QAbstractSocket::IPv4Protocol)
+        QString ipStr = hostAddr.toString();
+        if(!hostAddr.isLoopback() && !hostAddr.isNull() &&
+           (hostAddr.protocol() == QAbstractSocket::IPv4Protocol || hostAddr.protocol() == QAbstractSocket::IPv6Protocol))
         {
           QString name = QHostInfo::fromName(ipStr).hostName();
-          qDebug() << "Found valid IP" << ipStr << "name" << name;
+          qDebug() << "Found valid IP" << ipStr << "name" << name
+                   << "isLinkLocal" << hostAddr.isLinkLocal() << "isSiteLocal" << hostAddr.isSiteLocal()
+                   << "isUniqueLocalUnicast" << hostAddr.isUniqueLocalUnicast() << "isGlobal" << hostAddr.isGlobal();
 
           if(!name.isEmpty() && name != ipStr)
           {
@@ -171,7 +174,11 @@ void WebController::startServer()
             urlList.append(url);
           }
 
-          url.setHost(ipStr);
+          if(hostAddr.protocol() == QAbstractSocket::IPv6Protocol && hostAddr.isLinkLocal())
+            url.setHost(ipStr.section('%', 0, 0)); // Remove interface from local IPv6 addresses
+          else
+            url.setHost(ipStr);
+
           urlIpList.append(url);
         }
         else
@@ -179,12 +186,12 @@ void WebController::startServer()
       }
     }
 
-    // Add localhost if nothing was found
+    // Add IPv4 localhost if nothing was found =================================
     if(urlList.isEmpty())
-      urlList.append(QString(QString(encrypted ? "https" : "http") + "://localhost:%1").arg(port));
+      urlList.append(QString(QString(scheme) + "://localhost:%1").arg(port));
 
     if(urlIpList.isEmpty())
-      urlIpList.append(QString(QString(encrypted ? "https" : "http") + "://127.0.0.1:%1").arg(port));
+      urlIpList.append(QString(QString(scheme) + "://%1:%2").arg(QHostAddress(QHostAddress::LocalHost).toString()).arg(port));
   }
 
   emit webserverStatusChanged(true);
@@ -242,8 +249,14 @@ QStringList WebController::getUrlStr() const
 {
   QStringList retval;
   for(int i = 0; i < urlList.size(); i++)
-    retval.append(tr("<a href=\"%1\"><b>%1</b></a> (IP address <a href=\"%2\">%2</a>)").
-                  arg(urlList.value(i).toString()).arg(urlIpList.value(i).toString()));
+    retval.append(tr("<a href=\"%1\"><b>%2:%3</b></a> (<a href=\"%4\">%5:%6</a>)").
+                  arg(urlList.value(i).toString(QUrl::None).toHtmlEscaped()).
+                  arg(urlList.value(i).host().toHtmlEscaped()).
+                  arg(urlList.value(i).port()).
+                  arg(urlIpList.value(i).toString(QUrl::None).toHtmlEscaped()).
+                  arg(urlIpList.value(i).host().toHtmlEscaped()).
+                  arg(urlIpList.value(i).port())
+                  );
   return retval;
 }
 

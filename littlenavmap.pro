@@ -250,6 +250,7 @@ message(QT_INSTALL_TRANSLATIONS: $$[QT_INSTALL_TRANSLATIONS])
 message(QT_INSTALL_BINS: $$[QT_INSTALL_BINS])
 message(CONFIG: $$CONFIG)
 message(DEFINES: $$DEFINES)
+message(QT: $$QT)
 message(-----------------------------------)
 }
 

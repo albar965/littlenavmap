@@ -37,6 +37,7 @@
 #include <QCoreApplication>
 #include <QThread>
 #include <QDir>
+#include <QHostAddress>
 
 using atools::fs::sc::DataReaderThread;
 
@@ -702,7 +703,8 @@ void ConnectClient::connectInternal()
             this, &ConnectClient::readFromSocketError);
 
     qDebug() << "Connecting to" << connectDialog->getRemoteHostname() << ":" << connectDialog->getRemotePort();
-    socket->connectToHost(connectDialog->getRemoteHostname(), connectDialog->getRemotePort(), QAbstractSocket::ReadWrite);
+    socket->connectToHost(connectDialog->getRemoteHostname(), connectDialog->getRemotePort(),
+                          QAbstractSocket::ReadWrite, QAbstractSocket::AnyIPProtocol);
 
     mainWindow->setConnectionStatusMessageText(tr("Connecting ..."),
                                                tr("Trying to connect to remote flight simulator on \"%1\".").
@@ -869,7 +871,7 @@ void ConnectClient::writeReplyToSocket(atools::fs::sc::SimConnectReply& reply)
 /* Called by signal QTcpSocket::connected */
 void ConnectClient::connectedToServerSocket()
 {
-  qInfo() << Q_FUNC_INFO << "Connected to" << socket->peerName() << ":" << socket->peerPort();
+  qInfo() << Q_FUNC_INFO << "Connected to" << socket->peerName() << socket->peerPort() << socket->peerAddress().protocol();
   socketConnected = true;
   reconnectNetworkTimer.stop();
 
