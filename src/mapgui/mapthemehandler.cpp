@@ -728,6 +728,8 @@ void MapThemeHandler::changeMapTheme()
   qDebug() << Q_FUNC_INFO << themeId << theme;
 
   mapWidget->setTheme(theme.getDgmlFilepath(), themeId);
+  if(NavApp::getMapPaintWidgetWeb() != nullptr)
+    NavApp::getMapPaintWidgetWeb()->setTheme(theme.getDgmlFilepath(), themeId);
 
   NavApp::setStatusMessage(tr("Map theme changed to %1.").arg(actionGroupMapTheme->checkedAction()->text()));
 }
@@ -782,6 +784,9 @@ void MapThemeHandler::optionsChanged()
     // Assign the default theme if the current one was removed
     currentThemeId = defaultTheme.getThemeId();
     NavApp::getMapWidgetGui()->setTheme(defaultTheme.getDgmlFilepath(), currentThemeId);
+
+    if(NavApp::getMapPaintWidgetWeb() != nullptr)
+      NavApp::getMapPaintWidgetWeb()->setTheme(defaultTheme.getDgmlFilepath(), currentThemeId);
   }
 
   // Check the theme action
