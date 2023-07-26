@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -66,10 +66,7 @@ public:
   bool isRunning() const;
 
   /* Get the default url. Usually hostname and port or IP and port as fallback. */
-  QUrl getUrl(bool useIpAddress) const
-  {
-    return useIpAddress ? urlIpList.value(0) : urlList.value(0);
-  }
+  QUrl getUrl(bool useIpAddress) const;
 
   /* Get list of bound URLs (IPs) for display */
   QStringList getUrlStr() const;
@@ -156,7 +153,19 @@ private:
   QWidget *parentWidget;
   bool verbose = false;
 
-  QVector<QUrl> urlList, urlIpList;
+  struct Host
+  {
+    Host(QUrl urlParam, QUrl ipParam, bool isIpv6Param)
+      : urlName(std::move(urlParam)), urlIp(std::move(ipParam)), ipv6(isIpv6Param)
+    {
+    }
+
+    QUrl urlName, urlIp;
+    bool ipv6;
+  };
+
+  // hostname/ip/v6
+  QVector<Host> hosts;
 
   /* Remember custom certifiates. */
   QString sslKeyFile, sslCertFile;

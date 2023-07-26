@@ -2729,11 +2729,12 @@ void OptionsDialog::updateWebServerStatus()
     {
       QStringList urls = webController->getUrlStr();
 
+      if(urls.isEmpty())
+        ui->labelOptionsWebStatus->setText(tr("No valid address found."));
+      else if(urls.size() == 1)
+        ui->labelOptionsWebStatus->setText(tr("Web Server is running at the address:<br/>%1").arg(urls.constFirst()));
       if(urls.size() > 1)
-        ui->labelOptionsWebStatus->setText(tr("Web Server is running at<ul><li>%1</li></ul>").
-                                           arg(webController->getUrlStr().join("</li><li>")));
-      else
-        ui->labelOptionsWebStatus->setText(tr("Web Server is running at %1").arg(urls.join(tr(", "))));
+        ui->labelOptionsWebStatus->setText(tr("Web Server is running at addresses:<br/>%1").arg(urls.join("<br/>")));
 
       ui->pushButtonOptionsWebStart->setText(tr("&Stop Web Server"));
     }

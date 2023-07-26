@@ -144,19 +144,31 @@ void WebController::startServer()
     qInfo() << Q_FUNC_INFO << "Listening on" << listener->serverAddress().toString() << listener->serverPort();
 
     QString scheme = encrypted ? "https" : "http";
-    QHostAddress addr = listener->serverAddress();
-    QUrl url;
-    url.setScheme(scheme);
-    url.setPort(port);
+    QHostAddress listenerAddress = listener->serverAddress(), localhostIpv4, localhostIpv6;
+    QUrl urlName;
+    urlName.setScheme(scheme);
+    urlName.setPort(port);
 
-    if(addr == QHostAddress::Any)
+    if(listenerAddress == QHostAddress::Any)
     {
       // Collect hostnames and IPs from all interfaces
       for(const QHostAddress& hostAddr : QNetworkInterface::allAddresses())
       {
+        if(hostAddr.isNull())
+          continue;
+
+        if(hostAddr.isLoopback())
+        {
+          // Add loopback addresses later if nothing else was found
+          if(hostAddr.protocol() == QAbstractSocket::IPv4Protocol)
+            localhostIpv4 = hostAddr;
+          else if(hostAddr.protocol() == QAbstractSocket::IPv6Protocol)
+            localhostIpv6 = hostAddr;
+          continue;
+        }
+
         QString ipStr = hostAddr.toString();
-        if(!hostAddr.isLoopback() && !hostAddr.isNull() &&
-           (hostAddr.protocol() == QAbstractSocket::IPv4Protocol || hostAddr.protocol() == QAbstractSocket::IPv6Protocol))
+        if(hostAddr.protocol() == QAbstractSocket::IPv4Protocol || hostAddr.protocol() == QAbstractSocket::IPv6Protocol)
         {
           QString name = QHostInfo::fromName(ipStr).hostName();
           qDebug() << "Found valid IP" << ipStr << "name" << name
@@ -164,22 +176,17 @@ void WebController::startServer()
                    << "isUniqueLocalUnicast" << hostAddr.isUniqueLocalUnicast() << "isGlobal" << hostAddr.isGlobal();
 
           if(!name.isEmpty() && name != ipStr)
-          {
-            url.setHost(name);
-            urlList.append(url);
-          }
+            urlName.setHost(name);
           else
-          {
-            url.setHost(ipStr);
-            urlList.append(url);
-          }
+            urlName.setHost(ipStr);
 
+          QUrl urlIp(urlName);
           if(hostAddr.protocol() == QAbstractSocket::IPv6Protocol && hostAddr.isLinkLocal())
-            url.setHost(ipStr.section('%', 0, 0)); // Remove interface from local IPv6 addresses
+            urlIp.setHost(ipStr.section('%', 0, 0)); // Remove interface from local IPv6 addresses
           else
-            url.setHost(ipStr);
+            urlIp.setHost(ipStr);
 
-          urlIpList.append(url);
+          hosts.append(Host(urlName, urlIp, hostAddr.protocol() == QAbstractSocket::IPv6Protocol));
         }
         else
           qDebug() << "Found IP" << ipStr;
@@ -187,11 +194,14 @@ void WebController::startServer()
     }
 
     // Add IPv4 localhost if nothing was found =================================
-    if(urlList.isEmpty())
-      urlList.append(QString(QString(scheme) + "://localhost:%1").arg(port));
+    if(hosts.isEmpty() && !localhostIpv4.isNull())
+      hosts.append(Host(QString("%1://localhost:%2").arg(scheme).arg(port),
+                        QString("%1://%2:%3").arg(scheme).arg(QHostAddress(QHostAddress::LocalHost).toString()).arg(port), false));
 
-    if(urlIpList.isEmpty())
-      urlIpList.append(QString(QString(scheme) + "://%1:%2").arg(QHostAddress(QHostAddress::LocalHost).toString()).arg(port));
+    // Ensure IPv4 in front
+    std::sort(hosts.begin(), hosts.end(), [ = ](const Host& host1, const Host& host2) {
+      return host1.ipv6 < host2.ipv6;
+    });
   }
 
   emit webserverStatusChanged(true);
@@ -215,8 +225,7 @@ void WebController::stopServer()
   delete requestHandler;
   requestHandler = nullptr;
 
-  urlList.clear();
-  urlIpList.clear();
+  hosts.clear();
 
   WebApp::deinit();
 
@@ -236,8 +245,10 @@ void WebController::restartServer(bool force)
 
 void WebController::openPage()
 {
-  if(!getUrl(false).isEmpty())
+  if(!getUrl(false /* useIpAddress */).isEmpty())
     atools::gui::HelpHandler::openUrl(parentWidget, getUrl(false));
+  else
+    qWarning() << Q_FUNC_INFO << "No valid URL found";
 }
 
 bool WebController::isRunning() const
@@ -245,18 +256,29 @@ bool WebController::isRunning() const
   return listener != nullptr && listener->isListening();
 }
 
+QUrl WebController::getUrl(bool useIpAddress) const
+{
+  if(hosts.isEmpty())
+    return QUrl();
+  else
+    return useIpAddress ? hosts.constFirst().urlIp : hosts.constFirst().urlName;
+}
+
 QStringList WebController::getUrlStr() const
 {
   QStringList retval;
-  for(int i = 0; i < urlList.size(); i++)
-    retval.append(tr("<a href=\"%1\"><b>%2:%3</b></a> (<a href=\"%4\">%5:%6</a>)").
-                  arg(urlList.value(i).toString(QUrl::None).toHtmlEscaped()).
-                  arg(urlList.value(i).host().toHtmlEscaped()).
-                  arg(urlList.value(i).port()).
-                  arg(urlIpList.value(i).toString(QUrl::None).toHtmlEscaped()).
-                  arg(urlIpList.value(i).host().toHtmlEscaped()).
-                  arg(urlIpList.value(i).port())
-                  );
+  int num = 1;
+  for(const Host& host : hosts)
+  {
+    const QUrl& hostname = host.urlName;
+    const QUrl& ip = host.urlIp;
+
+    retval.append(tr("%1. %2 <a href=\"%3\"><b>%4:%5</b></a> <small>(<a href=\"%6\">%7:%8</a>)</small>").
+                  arg(num++).
+                  arg(host.ipv6 ? tr("IPv6") : tr("IPv4")).
+                  arg(hostname.toString(QUrl::None).toHtmlEscaped()).arg(hostname.host().toHtmlEscaped()).arg(hostname.port()).
+                  arg(ip.toString(QUrl::None).toHtmlEscaped()).arg(ip.host().toHtmlEscaped()).arg(ip.port()));
+  }
   return retval;
 }
 

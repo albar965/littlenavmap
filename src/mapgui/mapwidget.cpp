@@ -2767,7 +2767,12 @@ void MapWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorDa
 
   // Update action states if needed
   if(userAircraftValidToggled)
+  {
+#ifdef DEBUG_INFORMATION
+    qDebug() << Q_FUNC_INFO << "userAircraftValidChanged()";
+#endif
     emit userAircraftValidChanged();
+  }
 }
 
 void MapWidget::mainWindowShown()

@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -90,8 +90,7 @@ public:
   /* Request weather. Return value will be empty and the request will be started in background.
    * Signal weatherUpdated is sent if request was finished. Than call this method again.
    * onlyStation: Do not return weather for interpolated or nearest only. Keeps an internal blacklist. */
-  atools::fs::weather::MetarResult requestWeather(const QString& station, const atools::geo::Pos& pos,
-                                                  bool onlyStation);
+  atools::fs::weather::MetarResult requestWeather(const QString& station, const atools::geo::Pos& pos, bool onlyStation);
 
   bool isFetchAiShip() const;
   bool isFetchAiAircraft() const;
