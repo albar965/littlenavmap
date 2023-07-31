@@ -55,8 +55,8 @@ void messages::resetAllMessages()
   settings.setValue(lnm::ACTIONS_SHOW_ROUTE_NAVDATA_ALL_WARNING, true);
   settings.setValue(lnm::ACTIONS_SHOW_ROUTE_PARKING_WARNING, true);
   settings.setValue(lnm::ACTIONS_SHOW_ROUTE_START_CHANGED, true);
-  settings.setValue(lnm::ACTIONS_SHOW_ROUTE_WARNING, true);
-  settings.setValue(lnm::ACTIONS_SHOW_ROUTE_WARNING_MULTI, true);
+  settings.setValue(lnm::ACTIONS_SHOW_ROUTE_AIRPORT_WARNING, true);
+  settings.setValue(lnm::ACTIONS_SHOW_ROUTE_VFR_WARNING, true);
 
   settings.setValue(lnm::ACTIONS_SHOW_SSL_FAILED, true);
   settings.setValue(lnm::ACTIONS_SHOW_SSL_WARNING_ONLINE, true);

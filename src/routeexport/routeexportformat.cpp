@@ -312,7 +312,7 @@ void RouteExportFormatMap::init()
   //   type           flags            format              category             comment all after \n also used as tooltip
   FMT(LNMPLN,       NONE,                 DF % tr("lnmpln"),  tr("Little Navmap"), tr("Little Navmap native flight plan format") % lnmTooltip        );
   FMT(PLN,          AIRPORTS|PARKING,     DF % tr("pln"),     tr("Simulator"), tr("FSX and Prepar3D") % mainMenu                                     );
-  FMT(PLNMSFS,      AIRPORTS|PARKING,     DF % tr("pln"),     tr("Simulator"), tr("Microsoft Flight Simulator 2020") % mainMenu                      );
+  FMT(PLNMSFS,      AIRPORTS|PARKING|VFR, DF % tr("pln"),     tr("Simulator"), tr("Microsoft Flight Simulator 2020") % mainMenu                      );
   FMT(PLNANNOTATED, AIRPORTS|PARKING,     DF % tr("pln"),     tr("Simulator"), tr("FSX and Prepar3D annotated\nOnly for old Little Navmap versions."));
   FMT(FMS3,         AIRPORTS,             SD % tr("fms"),     tr("Simulator"), tr("X-Plane FMS 3\nOld and limited format.")                          );
   FMT(FMS11,        AIRPORTS|CYCLE|NDALL, SD % tr("fms"),     tr("Simulator"), tr("X-Plane FMS 11") % mainMenu                                       );

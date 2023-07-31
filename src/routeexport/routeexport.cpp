@@ -1314,13 +1314,14 @@ bool RouteExport::routeValidate(const QVector<RouteExportFormat>& formats, bool 
   // NavApp::updateRouteCycleMetadata();
 
   // Collect requirements for all exported formats
-  bool validateParking = false, validateDepartAndDest = false, validateCycle = false, validateNavdataAll = false;
+  bool validateParking = false, validateDepartAndDest = false, validateCycle = false, validateNavdataAll = false, validateVfr = false;
   for(const RouteExportFormat& fmt : formats)
   {
     validateParking |= fmt.getFlags().testFlag(rexp::PARKING);
     validateDepartAndDest |= fmt.getFlags().testFlag(rexp::AIRPORTS);
     validateCycle |= fmt.getFlags().testFlag(rexp::CYCLE);
     validateNavdataAll |= fmt.getFlags().testFlag(rexp::NDALL);
+    validateVfr |= fmt.getFlags().testFlag(rexp::VFR);
   }
 
   NavApp::closeSplashScreen();
@@ -1333,7 +1334,7 @@ bool RouteExport::routeValidate(const QVector<RouteExportFormat>& formats, bool 
   if(multi)
     doNotShowAgainText = tr("Do not &show this dialog again and export all files.");
   else
-    doNotShowAgainText = tr("Do not &show this dialog again and save Flight Plan.");
+    doNotShowAgainText = tr("Do not &show this dialog again and save flight plan.");
   QString reallyContinue = tr("\n\nReally continue?");
 
   // Check for valid airports for departure and destination ================================
@@ -1342,19 +1343,19 @@ bool RouteExport::routeValidate(const QVector<RouteExportFormat>& formats, bool 
     QString message;
 
     if(multi)
-      message = tr("Flight Plan must have a valid airport as start and destination and "
+      message = tr("Flight plan must have a valid airport as start and destination and "
                    "might not be usable for the selected export formats.");
     else
-      message = tr("Flight Plan must have a valid airport as start and destination and "
+      message = tr("Flight plan must have a valid airport as start and destination and "
                    "might not be usable by the simulator.");
 
     message += reallyContinue;
 
-    int result = dialog->showQuestionMsgBox(multi ? lnm::ACTIONS_SHOW_ROUTE_WARNING_MULTI : lnm::ACTIONS_SHOW_ROUTE_WARNING,
+    int result = dialog->showQuestionMsgBox(lnm::ACTIONS_SHOW_ROUTE_AIRPORT_WARNING,
                                             message, doNotShowAgainText, QMessageBox::Yes | QMessageBox::No, QMessageBox::No,
                                             QMessageBox::Yes);
 
-    if(result == QMessageBox::Cancel)
+    if(result == QMessageBox::No)
       save = false;
   }
 
@@ -1372,8 +1373,9 @@ bool RouteExport::routeValidate(const QVector<RouteExportFormat>& formats, bool 
     message += tr("This can result in issues loading the flight plan into the GPS or FMS since airports might not match.");
     message += reallyContinue;
 
-    int result = dialog->showQuestionMsgBox(lnm::ACTIONS_SHOW_ROUTE_NAVDATA_ALL_WARNING, message, doNotShowAgainText,
-                                            QMessageBox::Yes | QMessageBox::No, QMessageBox::No, QMessageBox::Yes);
+    int result = dialog->showQuestionMsgBox(lnm::ACTIONS_SHOW_ROUTE_NAVDATA_ALL_WARNING,
+                                            message, doNotShowAgainText, QMessageBox::Yes | QMessageBox::No, QMessageBox::No,
+                                            QMessageBox::Yes);
 
     if(result == QMessageBox::No)
       save = false;
@@ -1393,8 +1395,35 @@ bool RouteExport::routeValidate(const QVector<RouteExportFormat>& formats, bool 
 
     message += reallyContinue;
 
-    int result = dialog->showQuestionMsgBox(lnm::ACTIONS_SHOW_ROUTE_NO_CYCLE_WARNING, message, doNotShowAgainText,
-                                            QMessageBox::Yes | QMessageBox::No, QMessageBox::No, QMessageBox::Yes);
+    int result = dialog->showQuestionMsgBox(lnm::ACTIONS_SHOW_ROUTE_NO_CYCLE_WARNING,
+                                            message, doNotShowAgainText, QMessageBox::Yes | QMessageBox::No, QMessageBox::No,
+                                            QMessageBox::Yes);
+
+    if(result == QMessageBox::No)
+      save = false;
+  }
+
+  // Check for VFR export to MSFS with procedures or airways  ================================
+  if(validateVfr && (route.hasAirways() || route.hasAnyProcedure()))
+  {
+    QString message;
+    if(multi)
+      message = tr("One of the selected export formats is PLN for MSFS.\n"
+                   "The flight plan is of type VFR but contains procedures and/or airways.\n\n"
+                   "MSFS will remove all waypoints between departure and destination when loading.\n\n"
+                   "Set the flight plan type in the window \"Flight Planning\" to \"IFR\" or "
+                   "omit procedures and airways in VFR plans to avoid this.");
+    else
+      message += tr("The flight plan is of type \"VFR\" but contains procedures and/or airways.\n"
+                    "MSFS will remove all waypoints between departure and destination when loading.\n\n"
+                    "Set the flight plan type in the window \"Flight Planning\" to \"IFR\" or "
+                    "omit procedures and airways in VFR plans to avoid this.");
+
+    message += reallyContinue;
+
+    int result = dialog->showQuestionMsgBox(lnm::ACTIONS_SHOW_ROUTE_VFR_WARNING,
+                                            message, doNotShowAgainText, QMessageBox::Yes | QMessageBox::No, QMessageBox::No,
+                                            QMessageBox::Yes);
 
     if(result == QMessageBox::No)
       save = false;
@@ -1415,9 +1444,9 @@ bool RouteExport::routeValidate(const QVector<RouteExportFormat>& formats, bool 
     if(multi)
       message = tr("One or more of the selected export formats support setting a parking spot as a start position.\n\n");
 
-    message += tr("The departure airport has parking spots but no parking was selected for this Flight Plan.");
+    message += tr("The departure airport has parking spots but no parking was selected for this Flight plan.");
     int result = dialog->showQuestionMsgBox(lnm::ACTIONS_SHOW_ROUTE_PARKING_WARNING, message,
-                                            tr("Do not &show this dialog again and save Flight Plan."), BUTTONS, QMessageBox::Yes,
+                                            tr("Do not &show this dialog again and save flight plan."), BUTTONS, QMessageBox::Yes,
                                             QMessageBox::Save);
 
     if(result == QMessageBox::Yes)
