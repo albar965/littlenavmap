@@ -2434,9 +2434,9 @@ bool MainWindow::routeSaveLnm()
     // Forbid saving of other formats than LNMPLN directly =========================================
     atools::gui::DialogButtonList buttonList =
     {
-      {QString(), QMessageBox::Cancel},
-      {tr("Save &as LNMPLN ..."), QMessageBox::Save},
-      {QString(), QMessageBox::Help}
+      atools::gui::DialogButton(QString(), QMessageBox::Cancel),
+      atools::gui::DialogButton(tr("Save &as LNMPLN ..."), QMessageBox::Save),
+      atools::gui::DialogButton(QString(), QMessageBox::Help)
     };
 
     // Ask before saving file

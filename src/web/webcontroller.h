@@ -155,8 +155,8 @@ private:
 
   struct Host
   {
-    Host(QUrl urlParam, QUrl ipParam, bool isIpv6Param)
-      : urlName(std::move(urlParam)), urlIp(std::move(ipParam)), ipv6(isIpv6Param)
+    Host(const QUrl& urlParam, const QUrl& ipParam, bool isIpv6Param)
+      : urlName(urlParam), urlIp(ipParam), ipv6(isIpv6Param)
     {
     }
 

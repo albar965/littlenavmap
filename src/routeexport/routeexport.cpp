@@ -1405,10 +1405,10 @@ bool RouteExport::routeValidate(const QVector<RouteExportFormat>& formats, bool 
   {
     // Airport has parking but no one is selected
     const static atools::gui::DialogButtonList BUTTONS({
-      {QString(), QMessageBox::Cancel},
-      {tr("Select Start &Position"), QMessageBox::Yes},
-      {tr("Show &Departure on Map"), QMessageBox::YesToAll},
-      {QString(), QMessageBox::Save}
+      atools::gui::DialogButton(QString(), QMessageBox::Cancel),
+      atools::gui::DialogButton(tr("Select Start &Position"), QMessageBox::Yes),
+      atools::gui::DialogButton(tr("Show &Departure on Map"), QMessageBox::YesToAll),
+      atools::gui::DialogButton(QString(), QMessageBox::Save)
     });
 
     QString message;

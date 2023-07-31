@@ -56,10 +56,10 @@ void SimBriefHandler::sendRouteToSimBrief()
 
   // Ask user ================================
   const static atools::gui::DialogButtonList BUTTONS({
-    {QString(), QMessageBox::Cancel},
-    {tr("&Export"), QMessageBox::Yes},
-    {tr("&Help"), QMessageBox::Help},
-    {tr("&Copy web address to clipboard"), QMessageBox::YesToAll}
+    atools::gui::DialogButton(QString(), QMessageBox::Cancel),
+    atools::gui::DialogButton(tr("&Export"), QMessageBox::Yes),
+    atools::gui::DialogButton(tr("&Help"), QMessageBox::Help),
+    atools::gui::DialogButton(tr("&Copy web address to clipboard"), QMessageBox::YesToAll)
   });
 
   QString message = tr("<p><b>Export this flight plan to SimBrief?</b></p>"

@@ -81,23 +81,24 @@ static const float ZOOM_DESTINATION_MAX_AHEAD = 100.f;
 // int manhattanLengthDelta;
 // float altitudeDelta;
 static QHash<opts::SimUpdateRate, ProfileWidget::SimUpdateDelta> SIM_UPDATE_DELTA_MAP(
+{
   {
-    {
-      opts::FAST, {1, 1.f}
-    },
-    {
-      opts::MEDIUM, {2, 10.f}
-    },
-    {
-      opts::LOW, {4, 20.f}
-    }
-  });
+    opts::FAST, {1, 1.f}
+  },
+  {
+    opts::MEDIUM, {2, 10.f}
+  },
+  {
+    opts::LOW, {4, 20.f}
+  }
+});
 
 /* Text label position and attributes for navaids */
 struct Label
 {
-  Label(QPoint symPtParam, const QColor& colorParam, bool procSymbolParam, const QStringList& textsParam, map::MapTypes typeParam)
-    : symPt(std::move(symPtParam)), color(colorParam), procSymbol(procSymbolParam), texts(textsParam), type(typeParam)
+  Label(const QPoint& symPtParam, const QColor& colorParam, bool procSymbolParam, const QStringList& textsParam,
+        const map::MapTypes& typeParam)
+    : symPt(symPtParam), color(colorParam), procSymbol(procSymbolParam), texts(textsParam), type(typeParam)
   {
   }
 
@@ -1717,7 +1718,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
     att |= textatt::ROUTE_BG_COLOR;
 
     if(acy - rect.height() > scrollArea->getOffset().y() + TOP)
-      texty -= static_cast<float>(rect.bottom() + 20.);  // Text at top
+      texty -= static_cast<float>(rect.bottom() + 20.); // Text at top
 
     symPainter.textBoxF(&painter, texts, QPen(Qt::black), textx, texty, att, 255);
   }
