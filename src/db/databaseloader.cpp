@@ -508,12 +508,25 @@ void DatabaseLoader::showErrors()
       numScenery++;
     }
 
-    // Let the error dialog be a child of main to block main window
-    TextDialog errorDialog(NavApp::getQMainWidget(), tr("%1 - Load Scenery Library Results").arg(QApplication::applicationName()),
-                           "SCENERY.html#errors"); // anchor for future use
-    errorDialog.setHtmlMessage(texts, true /* print to log */);
-    NavApp::setStayOnTop(&errorDialog);
-    errorDialog.exec();
+    if(totalErrors > 0 || Settings::instance().valueBool(lnm::ACTIONS_SHOW_DATABASE_HINTS, true))
+    {
+      // Let the error dialog be a child of main to block main window
+      TextDialog errorDialog(NavApp::getQMainWidget(), tr("%1 - Load Scenery Library Results").arg(QApplication::applicationName()),
+                             "SCENERY.html#errors"); // anchor for future use
+
+      // Show check box in case of notes
+      errorDialog.setNotShowAgainCheckBoxVisible(totalNotes > 0);
+      errorDialog.setNotShowAgainCheckBoxText(tr("&Do not show hints again and open this dialog only for errors."));
+
+      errorDialog.setHtmlMessage(texts, true /* print to log */);
+
+      NavApp::setStayOnTop(&errorDialog);
+      errorDialog.exec();
+
+      if(totalNotes > 0)
+        // Save check box state in case of notes
+        Settings::instance().setValue(lnm::ACTIONS_SHOW_DATABASE_HINTS, !errorDialog.isNotShowAgainChecked());
+    }
 
     // Raise progress again
     progressDialog->activateWindow();

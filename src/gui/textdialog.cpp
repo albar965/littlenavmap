@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -43,6 +43,7 @@ TextDialog::TextDialog(QWidget *parent, const QString& title, const QString& hel
     ui->buttonBox->removeButton(ui->buttonBox->button(QDialogButtonBox::Help));
 
   ui->buttonBox->button(QDialogButtonBox::Ok)->setDefault(true);
+  ui->checkBoxNotShowAgain->setVisible(false); // Hide per default
 
   connect(ui->buttonBox, &QDialogButtonBox::clicked, this, &TextDialog::buttonBoxClicked);
   connect(ui->textBrowser, &QTextBrowser::anchorClicked, this, &TextDialog::anchorClicked);
@@ -81,6 +82,21 @@ void TextDialog::setHtmlMessage(const QString& messages, bool printToLog)
 
   if(printToLog)
     qInfo().noquote().nospace() << QTextDocumentFragment::fromHtml(messages).toPlainText();
+}
+
+void TextDialog::setNotShowAgainCheckBoxVisible(bool visible)
+{
+  ui->checkBoxNotShowAgain->setVisible(visible);
+}
+
+void TextDialog::setNotShowAgainCheckBoxText(const QString& text)
+{
+  ui->checkBoxNotShowAgain->setText(text);
+}
+
+bool TextDialog::isNotShowAgainChecked() const
+{
+  return ui->checkBoxNotShowAgain->isChecked();
 }
 
 void TextDialog::anchorClicked(const QUrl& url)
