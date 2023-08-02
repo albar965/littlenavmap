@@ -3204,7 +3204,7 @@ void MainWindow::mainWindowShown()
     QUrl url = atools::gui::HelpHandler::getHelpUrlWeb(lnm::helpOnlineInstallRedistUrl, lnm::helpLanguageOnline());
     QString message2 = tr("<p><a href=\"%1\">Click here for more information in the Little Navmap online manual</a></p>").
                        arg(url.toString());
-    message %= message2;
+    message += message2;
 #endif
 
     dialog->showWarnMsgBox(lnm::ACTIONS_SHOW_SSL_FAILED, message, tr("Do not &show this dialog again."));
