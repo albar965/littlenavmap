@@ -714,7 +714,7 @@ void MainWindow::showOnlineDownloads()
 
 void MainWindow::showChangelog()
 {
-  HelpHandler::openFile(this, QApplication::applicationDirPath() + QDir::separator() + "CHANGELOG.txt");
+  HelpHandler::openFile(this, QApplication::applicationDirPath() % atools::SEP % "CHANGELOG.txt");
 }
 
 void MainWindow::showDonationPage()
@@ -747,7 +747,7 @@ void MainWindow::openConfigFile()
 void MainWindow::legendAnchorClicked(const QUrl& url)
 {
   if(url.scheme() == "lnm" && url.host() == "legend")
-    HelpHandler::openHelpUrlWeb(this, lnm::helpOnlineUrl + "LEGEND.html", lnm::helpLanguageOnline());
+    HelpHandler::openHelpUrlWeb(this, lnm::helpOnlineUrl % "LEGEND.html", lnm::helpLanguageOnline());
   else
     HelpHandler::openUrl(this, url);
 
@@ -1820,7 +1820,7 @@ void MainWindow::showShowMapCache()
 {
   // Windows: C:\Users\YOURUSERNAME\AppData\Local\.marble\data
   // Linux and macOS: $HOME/.local/share/marble
-  helpHandler->openFile(Marble::MarbleDirs::localPath() % QDir::separator() % "maps" % QDir::separator() % "earth");
+  helpHandler->openFile(Marble::MarbleDirs::localPath() % atools::SEP % "maps" % atools::SEP % "earth");
 }
 
 /* Menu item */
@@ -1833,7 +1833,7 @@ void MainWindow::showMapInstallation()
     helpHandler->openFile(cacheMapThemeDir);
   else
     QMessageBox::warning(this, QApplication::applicationName(),
-                         msg + tr("\n\nSet the path to additional map themes in options on page \"Cache and Files\""));
+                         msg % tr("\n\nSet the path to additional map themes in options on page \"Cache and Files\""));
 }
 
 /* Updates label and tooltip for connection status */
@@ -1899,10 +1899,10 @@ void MainWindow::distanceChanged()
   // #endif
   float dist = Unit::distMeterF(static_cast<float>(mapWidget->distance() * 1000.f));
   QString distStr = QLocale().toString(dist, 'f', dist < 20.f ? (dist < 0.2f ? 2 : 1) : 0);
-  if(distStr.endsWith(QString(QLocale().decimalPoint()) + "0"))
+  if(distStr.endsWith(QString(QLocale().decimalPoint()) % "0"))
     distStr.chop(2);
 
-  QString text = distStr + " " + Unit::getUnitDistStr();
+  QString text = distStr % " " % Unit::getUnitDistStr();
 
 #ifdef DEBUG_INFORMATION
   text += QString("[%1km][%2z]").arg(mapWidget->distance(), 0, 'f', 2).arg(mapWidget->zoom());
@@ -1974,7 +1974,7 @@ void MainWindow::updateMapPosLabel(const atools::geo::Pos& pos, int x, int y)
     QString text(Unit::coords(pos));
 
     if(NavApp::isGlobeOfflineProvider() && pos.getAltitude() < map::INVALID_ALTITUDE_VALUE)
-      text += tr(" / ") + Unit::altMeter(pos.getAltitude());
+      text += tr(" / ") % Unit::altMeter(pos.getAltitude());
 
     float magVar = NavApp::getMagVar(pos);
     QString magVarText = map::magvarText(magVar, true /* short text */);
@@ -2009,9 +2009,9 @@ void MainWindow::updateWindowTitle()
   atools::util::Version version(NavApp::applicationVersion());
 
 #if defined(WINARCH64)
-  QString applicationVersion = version.getVersionString() + tr(" 64-bit");
+  QString applicationVersion = version.getVersionString() % tr(" 64-bit");
 #elif defined(WINARCH32)
-  QString applicationVersion = version.getVersionString() + tr(" 32-bit");
+  QString applicationVersion = version.getVersionString() % tr(" 32-bit");
 #else
   QString applicationVersion = version.getVersionString();
 #endif
@@ -2452,7 +2452,7 @@ bool MainWindow::routeSaveLnm()
       return false;
     else if(result == QMessageBox::Help)
     {
-      atools::gui::HelpHandler::openHelpUrlWeb(this, lnm::helpOnlineUrl + "FLIGHTPLANFMT.html", lnm::helpLanguageOnline());
+      atools::gui::HelpHandler::openHelpUrlWeb(this, lnm::helpOnlineUrl % "FLIGHTPLANFMT.html", lnm::helpLanguageOnline());
       return false;
     }
   }
@@ -2509,7 +2509,7 @@ bool MainWindow::openInSkyVector()
   QString route = RouteStringWriter().createStringForRoute(NavApp::getRouteConst(), NavApp::getRouteCruiseSpeedKts(),
                                                            rs::START_AND_DEST | rs::SKYVECTOR_COORDS);
 
-  HelpHandler::openUrlWeb(this, "https://skyvector.com/?fpl=" + route);
+  HelpHandler::openUrlWeb(this, "https://skyvector.com/?fpl=" % route);
   return true;
 }
 
@@ -2700,7 +2700,7 @@ bool MainWindow::createMapImage(QPixmap& pixmap, const QString& dialogTitle, con
       connect(paintWidget.model()->downloadManager(), &HttpDownloadManager::progressChanged, this,
               [&progress, &queuedJobs, &activeJobs, &numSeconds, &label](int active, int queued) -> void
       {
-        progress.setLabelText(label.arg(numSeconds) + tr("%1 downloads active and %2 downloads queued.").
+        progress.setLabelText(label.arg(numSeconds) % tr("%1 downloads active and %2 downloads queued.").
                               arg(active).arg(queued));
         queuedJobs = queued;
         activeJobs = active;
@@ -2798,9 +2798,9 @@ void MainWindow::mapSaveImageAviTab()
           tr("Save Map as Image for AviTab"),
           tr("JPG Image Files (*.jpg *.jpeg);;PNG Image Files (*.png);;All Files (*)"),
           "jpg", "MainWindow/AviTab",
-          NavApp::getCurrentSimulatorBasePath() +
-          QDir::separator() + "Resources" + QDir::separator() + "plugins" + QDir::separator() + "AviTab" +
-          QDir::separator() + "MapTiles" + QDir::separator() + "Mercator", defaultFileName,
+          NavApp::getCurrentSimulatorBasePath() %
+          atools::SEP % "Resources" % atools::SEP % "plugins" % atools::SEP % "AviTab" %
+          atools::SEP % "MapTiles" % atools::SEP % "Mercator", defaultFileName,
           false /* confirm overwrite */,
           false /* autoNumber */,
           &filterIndex);
@@ -2822,7 +2822,7 @@ void MainWindow::mapSaveImageAviTab()
             atools::gui::Dialog::warning(this, tr("Error saving image.\n" "Only JPG and PNG are allowed."));
           else
           {
-            QFile jsonFile(imageFile + ".json");
+            QFile jsonFile(imageFile % ".json");
             if(jsonFile.open(QIODevice::WriteOnly | QIODevice::Text))
             {
               QTextStream stream(&jsonFile);
@@ -3131,7 +3131,7 @@ void MainWindow::setStatusMessage(const QString& message, bool addToLog)
     for(int i = 0; i < statusMessages.size(); i++)
       msg.append(tr("%1: %2").arg(QLocale().toString(statusMessages.at(i).timestamp.time(), tr("hh:mm:ss"))).
                  arg(statusMessages.at(i).message));
-    ui->statusBar->setToolTip(msg.join(tr("<br/>")) + tr("</p>"));
+    ui->statusBar->setToolTip(msg.join(tr("<br/>")) % tr("</p>"));
   }
 
   ui->statusBar->showMessage(message);
@@ -3204,7 +3204,7 @@ void MainWindow::mainWindowShown()
     QUrl url = atools::gui::HelpHandler::getHelpUrlWeb(lnm::helpOnlineInstallRedistUrl, lnm::helpLanguageOnline());
     QString message2 = tr("<p><a href=\"%1\">Click here for more information in the Little Navmap online manual</a></p>").
                        arg(url.toString());
-    message += message2;
+    message %= message2;
 #endif
 
     dialog->showWarnMsgBox(lnm::ACTIONS_SHOW_SSL_FAILED, message, tr("Do not &show this dialog again."));
@@ -3343,7 +3343,7 @@ void MainWindow::mainWindowShownDelayed()
                            "<p>You can copy a Little Navmap scenery library database from another computer "
                              "if you wish to run this Little Navmap instance on a remote across a network.</p>");
 
-    QUrl url = atools::gui::HelpHandler::getHelpUrlWeb(lnm::helpOnlineUrl + "NETWORK.html", lnm::helpLanguageOnline());
+    QUrl url = atools::gui::HelpHandler::getHelpUrlWeb(lnm::helpOnlineUrl % "NETWORK.html", lnm::helpLanguageOnline());
     message.append(tr("<p><a href=\"%1\">Click here for more information in the Little Navmap online manual</a></p>").arg(url.toString()));
 
     dialog->showInfoMsgBox(lnm::ACTIONS_SHOW_MISSING_SIMULATORS, message, tr("Do not &show this dialog again."));
@@ -3708,7 +3708,7 @@ void MainWindow::resetAllSettings()
   QString settingPath = Settings::getPath();
 
   QMessageBox::StandardButton retval =
-    QMessageBox::warning(this, QApplication::applicationName() + tr("Reset all Settings "),
+    QMessageBox::warning(this, QApplication::applicationName() % tr("Reset all Settings "),
                          tr("<b>This will reset all options, window layout, dialog layout, "
                               "aircraft trail, map position history and file histories "
                               "back to default and restart %1.</b><br/><br/>"
@@ -3728,7 +3728,7 @@ void MainWindow::resetAllSettings()
     close();
   }
   else if(retval == QMessageBox::Help)
-    atools::gui::HelpHandler::openHelpUrlWeb(this, lnm::helpOnlineUrl + "MENUS.html#reset-and-restart", lnm::helpLanguageOnline());
+    atools::gui::HelpHandler::openHelpUrlWeb(this, lnm::helpOnlineUrl % "MENUS.html#reset-and-restart", lnm::helpLanguageOnline());
 }
 
 void MainWindow::resetWindowLayout()

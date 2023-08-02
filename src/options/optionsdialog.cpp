@@ -2642,7 +2642,7 @@ void OptionsDialog::selectXplane12PathClicked()
   QString path = ui->lineEditOptionsWeatherXplane12Path->text();
 
   if(path.isEmpty())
-    path = "Output" % QDir::separator() % "real weather";
+    path = "Output" % atools::SEP % "real weather";
 
   if(QFileInfo(path).isRelative())
     path = NavApp::getSimulatorBasePath(atools::fs::FsPaths::XPLANE_12) % path;
@@ -2696,7 +2696,7 @@ void OptionsDialog::clearMemCachedClicked()
 /* Opens the disk cache in explorer, finder, whatever */
 void OptionsDialog::showDiskCacheClicked()
 {
-  QUrl url = QUrl::fromLocalFile(Marble::MarbleDirs::localPath() % QDir::separator() % "maps" % QDir::separator() % "earth");
+  QUrl url = QUrl::fromLocalFile(Marble::MarbleDirs::localPath() % atools::SEP % "maps" % atools::SEP % "earth");
 
   if(!QDesktopServices::openUrl(url))
     atools::gui::Dialog::warning(this, tr("Error opening disk cache \"%1\"").arg(url.toDisplayString()));
@@ -2757,7 +2757,7 @@ void OptionsDialog::updateWebDocrootStatus()
       ui->labelOptionWebDocrootStatus->setText(HtmlBuilder::errorMessage(tr("Error: Directory does not exist.")));
     else if(!fileinfo.isDir())
       ui->labelOptionWebDocrootStatus->setText(HtmlBuilder::errorMessage(tr("Error: Is not a directory.")));
-    else if(!QFileInfo::exists(path + QDir::separator() + "index.html"))
+    else if(!QFileInfo::exists(path + atools::SEP + "index.html"))
       ui->labelOptionWebDocrootStatus->setText(HtmlBuilder::warningMessage(tr("Warning: No file \"index.html\" found.")));
     else
       ui->labelOptionWebDocrootStatus->setText(tr("Document root is valid."));

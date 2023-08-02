@@ -268,7 +268,7 @@ void WindReporter::updateDataSource()
       // Load GRIB file only if X-Plane is enabled - will call windDownloadFinished later
       QString path = OptionData::instance().getWeatherXplaneWind();
       if(path.isEmpty())
-        path = NavApp::getCurrentSimulatorBasePath() + QDir::separator() + "global_winds.grib";
+        path = NavApp::getCurrentSimulatorBasePath() + atools::SEP + "global_winds.grib";
 
       windQueryOnline->initFromPath(path, atools::fs::weather::WEATHER_XP11);
     }
@@ -277,7 +277,7 @@ void WindReporter::updateDataSource()
       QString path = OptionData::instance().getWeatherXplane12Path();
       if(path.isEmpty())
         // Use default base path
-        path = NavApp::getCurrentSimulatorBasePath() + QDir::separator() + "Output" + QDir::separator() + "real weather";
+        path = NavApp::getCurrentSimulatorBasePath() + atools::SEP + "Output" + atools::SEP + "real weather";
 
       windQueryOnline->initFromPath(path, atools::fs::weather::WEATHER_XP12);
     }

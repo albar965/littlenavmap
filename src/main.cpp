@@ -167,7 +167,7 @@ int main(int argc, char *argv[])
   DatabaseManager *dbManager = nullptr;
 
 #if defined(Q_OS_WIN32)
-  QApplication::addLibraryPath(QApplication::applicationDirPath() + QDir::separator() + "plugins");
+  QApplication::addLibraryPath(QApplication::applicationDirPath() + atools::SEP + "plugins");
 #endif
 
   try
@@ -293,7 +293,7 @@ int main(int argc, char *argv[])
       // Add paths here to allow translation =================================
       Application::addReportPath(QObject::tr("Log files:"), LoggingHandler::getLogFiles());
 
-      Application::addReportPath(QObject::tr("Database directory:"), {Settings::getPath() + QDir::separator() + lnm::DATABASE_DIR});
+      Application::addReportPath(QObject::tr("Database directory:"), {Settings::getPath() + atools::SEP + lnm::DATABASE_DIR});
       Application::addReportPath(QObject::tr("Configuration:"), {Settings::getFilename()});
       Application::setEmailAddresses({"alex@littlenavmap.org"});
 
@@ -324,7 +324,7 @@ int main(int argc, char *argv[])
       qDebug() << "Marble System Path:" << MarbleDirs::systemPath();
       qDebug() << "Marble Plugin System Path:" << MarbleDirs::pluginSystemPath();
 
-      MarbleDirs::setMarbleDataPath(QApplication::applicationDirPath() + QDir::separator() + "data");
+      MarbleDirs::setMarbleDataPath(QApplication::applicationDirPath() + atools::SEP + "data");
 
       if(!commandLine.getCachePath().isEmpty())
       {
@@ -337,14 +337,14 @@ int main(int argc, char *argv[])
         QString marbleCache;
 
         if(cacheFileinfo.isRelative())
-          marbleCache = QApplication::applicationDirPath() + QDir::separator() + cacheFileinfo.filePath();
+          marbleCache = QApplication::applicationDirPath() + atools::SEP + cacheFileinfo.filePath();
         else
           marbleCache = cacheFileinfo.absoluteFilePath();
 
-        marbleCache = marbleCache + QDir::separator() + "marble";
+        marbleCache = marbleCache + atools::SEP + "marble";
 
         // Have to create full path to avoid Marble showing a migration dialog
-        QString marbleCachePath = marbleCache + QDir::separator() + "maps" + QDir::separator() + "earth";
+        QString marbleCachePath = marbleCache + atools::SEP + "maps" + atools::SEP + "earth";
         qDebug() << Q_FUNC_INFO << "Creating" << marbleCachePath;
         QDir().mkpath(marbleCachePath);
 
@@ -358,7 +358,7 @@ int main(int argc, char *argv[])
       pluginsDir.cd("PlugIns");
       MarbleDirs::setMarblePluginPath(pluginsDir.absolutePath());
 #else
-      MarbleDirs::setMarblePluginPath(QApplication::applicationDirPath() + QDir::separator() + "plugins");
+      MarbleDirs::setMarblePluginPath(QApplication::applicationDirPath() + atools::SEP + "plugins");
 #endif
 
       MarbleDebug::setEnabled(settings.getAndStoreValue(lnm::OPTIONS_MARBLE_DEBUG, false).toBool());

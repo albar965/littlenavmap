@@ -370,7 +370,7 @@ void RouteMultiExportDialog::updateLabel()
     // Add either example or error message
     if(errorMsg.isEmpty())
       texts.append(tr("<b>Example export path and file:</b> &quot;%1&quot;").
-                   arg(QDir::toNativeSeparators(QDir::cleanPath(format.getPath() % QDir::separator() % example))));
+                   arg(atools::nativeCleanPath(format.getPath() % atools::SEP % example)));
     else
       texts.append(atools::util::HtmlBuilder::errorMessage(errorMsg));
 
@@ -718,7 +718,7 @@ void RouteMultiExportDialog::selectPath(rexp::RouteExportFormatType type, int ro
     }
     else
     {
-      filepath = QDir::toNativeSeparators(QDir::cleanPath(filepath));
+      filepath = atools::nativeCleanPath(filepath);
       formatMapDialog->updatePath(type, filepath);
 
       itemModel->item(row, PATH)->setText(filepath);
@@ -888,7 +888,7 @@ void RouteMultiExportDialog::itemChanged(QStandardItem *item)
     {
       // Update custom path
       formatMapDialog->updatePath(type, item->text());
-      item->setText(QDir::toNativeSeparators(QDir::cleanPath(item->text())));
+      item->setText(atools::nativeCleanPath(item->text()));
       updateTableColors();
       updateLabel();
     }

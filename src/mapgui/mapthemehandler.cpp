@@ -210,7 +210,7 @@ void MapThemeHandler::setMapThemeKeys(const QMap<QString, QString>& keys)
 void MapThemeHandler::saveKeyfile()
 {
   // Save keys ===================================================
-  QFile keyFile(atools::settings::Settings::getPath() % QDir::separator() % FILENAME);
+  QFile keyFile(atools::settings::Settings::getPath() % atools::SEP % FILENAME);
   if(keyFile.open(QIODevice::WriteOnly))
   {
     // Apply simple encryption to the keys
@@ -291,7 +291,7 @@ void MapThemeHandler::restoreState()
 void MapThemeHandler::restoreKeyfile()
 {
   // Load keys ===================================================
-  QFile keyFile(atools::settings::Settings::getPath() % QDir::separator() % FILENAME);
+  QFile keyFile(atools::settings::Settings::getPath() % atools::SEP % FILENAME);
 
   if(keyFile.exists())
   {
@@ -431,15 +431,7 @@ MapTheme MapThemeHandler::loadTheme(const QFileInfo& dgml)
                     theme.online = true;
                   }
                   else if(reader.name() == "sourcedir")
-                  {
-#if defined(Q_OS_WIN32)
-                    theme.sourceDirs.append(reader.readElementText().trimmed().toLower().replace('/', QDir::separator()));
-#elif defined(Q_OS_MACOS)
-                    theme.sourceDirs.append(reader.readElementText().trimmed().toLower().replace('\\', QDir::separator()));
-#else
-                    theme.sourceDirs.append(reader.readElementText().trimmed().replace('\\', QDir::separator()));
-#endif
-                  }
+                    theme.sourceDirs.append(atools::nativeCleanPath(reader.readElementText().trimmed()));
                   else
                     xmlStream.skipCurrentElement();
                 }
@@ -803,7 +795,7 @@ QString MapThemeHandler::getStatusTextForDir(const QString& path)
     QDir dir(path);
     for(const QFileInfo& themeDir : dir.entryInfoList(QDir::Dirs | QDir::NoDotAndDotDot))
     {
-      if(atools::checkFile(Q_FUNC_INFO, themeDir.absoluteFilePath() % QDir::separator() % themeDir.fileName() % ".dgml"))
+      if(atools::checkFile(Q_FUNC_INFO, themeDir.absoluteFilePath() % atools::SEP % themeDir.fileName() % ".dgml"))
         numThemes++;
     }
 
@@ -840,7 +832,7 @@ void MapThemeHandler::validateMapThemeDirectories()
 
 QString MapThemeHandler::getMapThemeDefaultDir()
 {
-  return QCoreApplication::applicationDirPath() % QDir::separator() % "data" % QDir::separator() % "maps" % QDir::separator() % "earth";
+  return QCoreApplication::applicationDirPath() % atools::SEP % "data" % atools::SEP % "maps" % atools::SEP % "earth";
 }
 
 QString MapThemeHandler::getMapThemeUserDir()

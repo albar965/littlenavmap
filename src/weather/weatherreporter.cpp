@@ -38,6 +38,7 @@
 #include <QStandardPaths>
 #include <QTimer>
 #include <QRegularExpression>
+#include <QStringBuilder>
 
 #if defined(Q_OS_WIN32)
 #include <QProcessEnvironment>
@@ -271,7 +272,7 @@ void WeatherReporter::initXplane()
     QString path = OptionData::instance().getWeatherXplane11Path();
     if(path.isEmpty() && !NavApp::getCurrentSimulatorBasePath().isEmpty())
       // Use default base path if simulator installation was found
-      path = NavApp::getCurrentSimulatorBasePath() + QDir::separator() + "METAR.rwx";
+      path = NavApp::getCurrentSimulatorBasePath() % atools::SEP % "METAR.rwx";
 
     // Set path but do not start watching - loading starts on first access
     xpWeatherReader->setWeatherPath(path, atools::fs::weather::WEATHER_XP11);
@@ -281,7 +282,7 @@ void WeatherReporter::initXplane()
     QString path = OptionData::instance().getWeatherXplane12Path();
     if(path.isEmpty() && !NavApp::getCurrentSimulatorBasePath().isEmpty())
       // Use default base path if simulator installation was found
-      path = NavApp::getCurrentSimulatorBasePath() + QDir::separator() + "Output" + QDir::separator() + "real weather";
+      path = NavApp::getCurrentSimulatorBasePath() % atools::SEP % "Output" % atools::SEP % "real weather";
 
     // Set path but do not start watching - loading starts on first access
     xpWeatherReader->setWeatherPath(path, atools::fs::weather::WEATHER_XP12);
@@ -335,7 +336,7 @@ void WeatherReporter::showXplaneWarningDialog(const QString& message)
     atools::gui::Dialog(mainWindow).showWarnMsgBox(
       xpWeatherReader->getWeatherType() == atools::fs::weather::WEATHER_XP11 ?
       lnm::ACTIONS_SHOW_XP11_WEATHER_FILE_INVALID : lnm::ACTIONS_SHOW_XP12_WEATHER_FILE_INVALID,
-      message + xplaneFileWarningMsg, tr("Do not &show this dialog again."));
+      message % xplaneFileWarningMsg, tr("Do not &show this dialog again."));
   else
     // X-Plane is not installed ==========
     atools::gui::Dialog(mainWindow).showWarnMsgBox(
@@ -449,7 +450,7 @@ void WeatherReporter::initActiveSkyPaths()
   {
     // Manual path overrides found path for all simulators
     asSnapshotPath = manualActiveSkySnapshotPath;
-    asFlightplanPath = QFileInfo(manualActiveSkySnapshotPath).path() + QDir::separator() + "activeflightplanwx.txt";
+    asFlightplanPath = QFileInfo(manualActiveSkySnapshotPath).path() % atools::SEP % "activeflightplanwx.txt";
     activeSkyType = MANUAL;
   }
 }
@@ -556,7 +557,7 @@ void WeatherReporter::loadActiveSkyFlightplanSnapshot(const QString& path)
         if(type == "DepartureMETAR")
         {
           activeSkyDepartureIdent = match.captured(2);
-          activeSkyDepartureMetar = activeSkyDepartureIdent + match.captured(3);
+          activeSkyDepartureMetar = activeSkyDepartureIdent % match.captured(3);
 
           if(MetarParser::extractDateTime(activeSkyDepartureMetar) <
              MetarParser::extractDateTime(activeSkyMetars.value(activeSkyDepartureIdent, QString())))
@@ -569,7 +570,7 @@ void WeatherReporter::loadActiveSkyFlightplanSnapshot(const QString& path)
         else if(type == "DestinationMETAR")
         {
           activeSkyDestinationIdent = match.captured(2);
-          activeSkyDestinationMetar = activeSkyDestinationIdent + match.captured(3);
+          activeSkyDestinationMetar = activeSkyDestinationIdent % match.captured(3);
 
           if(MetarParser::extractDateTime(activeSkyDestinationMetar) <
              MetarParser::extractDateTime(activeSkyMetars.value(activeSkyDestinationIdent, QString())))
@@ -644,31 +645,27 @@ void WeatherReporter::findActiveSkyFiles(QString& asnSnapshot, QString& flightpl
   {
     // Determine suffix from sim type
     if(simType == atools::fs::FsPaths::FSX)
-      simPathComponent = activeSkyPrefix + "FSX";
+      simPathComponent = activeSkyPrefix % "FSX";
     else if(simType == atools::fs::FsPaths::FSX_SE)
-      simPathComponent = activeSkyPrefix + "FSX";
+      simPathComponent = activeSkyPrefix % "FSX";
     else if(simType == atools::fs::FsPaths::P3D_V3)
-      simPathComponent = activeSkyPrefix + "P3D";
+      simPathComponent = activeSkyPrefix % "P3D";
     else if(simType == atools::fs::FsPaths::P3D_V4)
-      simPathComponent = activeSkyPrefix + "P3D";
+      simPathComponent = activeSkyPrefix % "P3D";
     else if(simType == atools::fs::FsPaths::P3D_V5)
-      simPathComponent = activeSkyPrefix + "P3D";
+      simPathComponent = activeSkyPrefix % "P3D";
     else if(simType == atools::fs::FsPaths::XPLANE_11)
-      simPathComponent = activeSkyPrefix + "XP";
+      simPathComponent = activeSkyPrefix % "XP";
     else if(simType == atools::fs::FsPaths::XPLANE_12)
-      simPathComponent = activeSkyPrefix + "XP"; // Unknown for now
+      simPathComponent = activeSkyPrefix % "XP"; // Unknown for now
   }
   else
     // Use fixed suffix for AS4
-    simPathComponent = activeSkyPrefix + activeSkySimSuffix;
+    simPathComponent = activeSkyPrefix % activeSkySimSuffix;
 
-  QString hifiPath = appdata +
-                     QDir::separator() + "HiFi" +
-                     QDir::separator() + simPathComponent +
-                     QDir::separator() + "Weather" +
-                     QDir::separator();
+  QString hifiPath = appdata % atools::SEP % "HiFi" % atools::SEP % simPathComponent % atools::SEP % "Weather" % atools::SEP;
 
-  QString weatherFile = hifiPath + "current_wx_snapshot.txt";
+  QString weatherFile = hifiPath % "current_wx_snapshot.txt";
 
   if(QFile::exists(weatherFile))
   {
@@ -681,7 +678,7 @@ void WeatherReporter::findActiveSkyFiles(QString& asnSnapshot, QString& flightpl
   else
     qInfo() << Q_FUNC_INFO << "file does not exist" << weatherFile;
 
-  weatherFile = hifiPath + "activeflightplanwx.txt";
+  weatherFile = hifiPath % "activeflightplanwx.txt";
 
   if(QFile::exists(weatherFile))
   {

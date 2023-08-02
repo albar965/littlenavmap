@@ -59,7 +59,7 @@ ConnectClient::ConnectClient(MainWindow *parent)
   // Create FSX/P3D handler for SimConnect
   simConnectHandler = new atools::fs::sc::SimConnectHandler(verbose);
   simConnectHandler->loadSimConnect(QApplication::applicationDirPath() +
-                                    QDir::separator() + "simconnect" + QDir::separator() + "simconnect.manifest");
+                                    atools::SEP + "simconnect" + atools::SEP + "simconnect.manifest");
 
   // Create X-Plane handler for shared memory
   xpConnectHandler = new atools::fs::sc::XpConnectHandler();

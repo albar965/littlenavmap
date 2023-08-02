@@ -5015,8 +5015,7 @@ QString HtmlInfoBuilder::filepathTextShow(const QString& filepath, const QString
 
   if(fileinfo.exists())
   {
-    QString filepathStr =
-      QDir::toNativeSeparators(QDir::cleanPath(canonical ? atools::canonicalFilePath(fileinfo) : fileinfo.absoluteFilePath()));
+    QString filepathStr = atools::nativeCleanPath(canonical ? atools::canonicalFilePath(fileinfo) : fileinfo.absoluteFilePath());
     link.small(prefix).a(filepathStr, QString("lnm://show?filepath=%1").arg(filepathStr), ahtml::LINK_NO_UL | ahtml::SMALL);
   }
   else

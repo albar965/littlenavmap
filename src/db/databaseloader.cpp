@@ -350,7 +350,7 @@ void DatabaseLoader::progressCallback()
 
       currentBglFilePath = navDatabaseProgressShared->getFilePath();
 
-      QString path = QDir::toNativeSeparators(QDir::cleanPath(navDatabaseProgressShared->getSceneryPath()));
+      QString path = atools::nativeCleanPath(navDatabaseProgressShared->getSceneryPath());
       QString file = navDatabaseProgressShared->getFileName();
 
       // Switched to a new scenery area

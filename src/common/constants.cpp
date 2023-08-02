@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -17,8 +17,8 @@
 
 #include "common/constants.h"
 
+#include "atools.h"
 #include "gui/helphandler.h"
-
 #include "options/optiondata.h"
 #include "settings/settings.h"
 
@@ -28,6 +28,7 @@
 #include <QDebug>
 #include <QCoreApplication>
 #include <QUrl>
+#include <QStringBuilder>
 
 namespace lnm {
 
@@ -60,7 +61,7 @@ const QString helpLanguageOnline()
   {
     // Get the online indicator file
     QString onlineFlagFile = atools::gui::HelpHandler::getHelpFile(
-      QString("help") + QDir::separator() + "little-navmap-user-manual-${LANG}.online",
+      QLatin1String("help") % atools::SEP % "little-navmap-user-manual-${LANG}.online",
       OptionData::instance().getLanguage());
 
     // Extract language from the file
@@ -89,29 +90,29 @@ void loadHelpUrls()
   guiLanguage = guiLanguage.section('_', 0, 0);
 
   // .../help/en/index.html
-  QFileInfo localFile(QCoreApplication::applicationDirPath() + QDir::separator() + "help" + QDir::separator() +
-                      guiLanguage + QDir::separator() + "index.html");
+  QFileInfo localFile(QCoreApplication::applicationDirPath() % atools::SEP % "help" % atools::SEP %
+                      guiLanguage % atools::SEP % "index.html");
 
   if(!localFile.exists())
     // Try English manual
-    localFile.setFile(QCoreApplication::applicationDirPath() + QDir::separator() + "help" + QDir::separator() +
-                      "en" + QDir::separator() + "index.html");
+    localFile.setFile(QCoreApplication::applicationDirPath() % atools::SEP % "help" % atools::SEP %
+                      "en" % atools::SEP % "index.html");
 
   // Check if local index.html exists
   if(localFile.exists())
   {
     // Use local files for manual
-    QString base = QUrl::fromLocalFile(localFile.path()).toString() + "/";
+    QString base = QUrl::fromLocalFile(localFile.path()).toString() % "/";
     helpOnlineUrl = base;
-    helpOnlineMainUrl = base + "index.html";
+    helpOnlineMainUrl = base % "index.html";
 
-    helpOnlineTutorialsUrl = base + "TUTORIALS.html";
-    helpOnlineLegendUrl = base + "LEGEND.html";
-    helpOnlineInstallRedistUrl = base + "INSTALLATION.html#windows";
-    helpOnlineInstallGlobeUrl = base + "OPTIONS.html#cache-elevation";
-    helpOnlineInstallDirUrl = base + "FOLDERS.html";
-    helpOnlineNavdatabasesUrl = base + "NAVDATA.html";
-    helpOnlineStartUrl = base + "START.html";
+    helpOnlineTutorialsUrl = base % "TUTORIALS.html";
+    helpOnlineLegendUrl = base % "LEGEND.html";
+    helpOnlineInstallRedistUrl = base % "INSTALLATION.html#windows";
+    helpOnlineInstallGlobeUrl = base % "OPTIONS.html#cache-elevation";
+    helpOnlineInstallDirUrl = base % "FOLDERS.html";
+    helpOnlineNavdatabasesUrl = base % "NAVDATA.html";
+    helpOnlineStartUrl = base % "START.html";
   }
   else
   {
@@ -122,13 +123,13 @@ void loadHelpUrls()
     helpOnlineUrl = settings.value("help/base", base).toString();
     helpOnlineMainUrl = helpOnlineUrl;
 
-    helpOnlineTutorialsUrl = settings.value("help/tutorials", base + "TUTORIALS.html").toString();
-    helpOnlineLegendUrl = settings.value("help/legend", base + "LEGEND.html").toString();
-    helpOnlineInstallRedistUrl = settings.value("help/installredist", base + "INSTALLATION.html#windows").toString();
-    helpOnlineInstallGlobeUrl = settings.value("help/installglobe", base + "OPTIONS.html#cache-elevation").toString();
-    helpOnlineInstallDirUrl = settings.value("help/installdir", base + "FOLDERS.html").toString();
-    helpOnlineNavdatabasesUrl = settings.value("help/navdata", base + "NAVDATA.html").toString();
-    helpOnlineStartUrl = settings.value("help/start", base + "START.html").toString();
+    helpOnlineTutorialsUrl = settings.value("help/tutorials", base % "TUTORIALS.html").toString();
+    helpOnlineLegendUrl = settings.value("help/legend", base % "LEGEND.html").toString();
+    helpOnlineInstallRedistUrl = settings.value("help/installredist", base % "INSTALLATION.html#windows").toString();
+    helpOnlineInstallGlobeUrl = settings.value("help/installglobe", base % "OPTIONS.html#cache-elevation").toString();
+    helpOnlineInstallDirUrl = settings.value("help/installdir", base % "FOLDERS.html").toString();
+    helpOnlineNavdatabasesUrl = settings.value("help/navdata", base % "NAVDATA.html").toString();
+    helpOnlineStartUrl = settings.value("help/start", base % "START.html").toString();
   }
 
   qDebug() << Q_FUNC_INFO << "Help URL" << helpOnlineUrl;
