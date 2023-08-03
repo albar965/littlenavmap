@@ -76,6 +76,10 @@ void MapPainterIls::render()
             // Part of flight plan - paint later
             continue;
 
+          // Skip if ILS has an airport ident and airport is to be drawn */
+          if(!ils.airportIdent.isEmpty() && !context->visibleAirportIds.contains(ils.airportIdent))
+            continue;
+
           if(ils.isAnyGlsRnp() && !context->objectDisplayTypes.testFlag(map::GLS))
             continue;
 

@@ -515,6 +515,8 @@ bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport, const 
         if(!context.isObjectOverflow())
           mapPainterAirspace->render();
 
+        mapPainterAirport->collectVisibleAirports(context.visibleAirportIds);
+
         if(!context.isObjectOverflow())
           mapPainterIls->render();
 

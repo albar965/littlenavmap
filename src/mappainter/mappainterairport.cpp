@@ -66,8 +66,11 @@ MapPainterAirport::~MapPainterAirport()
 {
 }
 
-void MapPainterAirport::render()
+void MapPainterAirport::collectVisibleAirports(QSet<QString>& visibleAirportIds)
 {
+  visibleAirports.clear();
+  visibleAirportIds.clear();
+
   if((!context->objectTypes.testFlag(map::AIRPORT) || !context->mapLayer->isAirport()) &&
      (!context->mapLayer->isAirportDiagramRunway()) && context->routeProcIdMap.isEmpty())
     return;
@@ -123,7 +126,6 @@ void MapPainterAirport::render()
   int minRunwayLength = context->mimimumRunwayLengthFt; // GUI setting
 
   // Collect all airports that are visible ===========================
-  QVector<PaintAirportType> visibleAirports;
   for(const MapAirport& airport : airports)
   {
     // Either part of the route or enabled in the actions/menus/toolbar
@@ -140,14 +142,20 @@ void MapPainterAirport::render()
           visibleOnMap = airport.bounding.overlaps(context->viewportRect);
 
         if(visibleOnMap)
+        {
           visibleAirports.append(PaintAirportType(airport, x, y));
+          visibleAirportIds.insert(airport.ident);
+        }
       }
     }
   }
 
   using namespace std::placeholders;
   std::sort(visibleAirports.begin(), visibleAirports.end(), std::bind(&MapPainter::sortAirportFunction, this, _1, _2));
+}
 
+void MapPainterAirport::render()
+{
   // In diagram mode draw background first to avoid overwriting other airports ===========================
   if(context->mapLayer->isAirportDiagramRunway() && context->dOptAp(optsd::ITEM_AIRPORT_DETAIL_BOUNDARY))
   {

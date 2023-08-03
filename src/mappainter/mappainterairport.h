@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -19,8 +19,6 @@
 #define LITTLENAVMAP_MAPPAINTERAIRPORT_H
 
 #include "mappainter/mappainter.h"
-
-#include "fs/common/xpgeometry.h"
 
 class SymbolPainter;
 
@@ -48,18 +46,24 @@ public:
   MapPainterAirport(MapPaintWidget *mapPaintWidget, MapScale *mapScale, PaintContext *paintContext);
   virtual ~MapPainterAirport() override;
 
+  /* Needs call of collectVisibleAirports() before */
   virtual void render() override;
+
+  /* Pre-calculates visible airports for render() and fills visibleAirports.
+   * visibleAirportIds gets all idents of shown airports */
+  void collectVisibleAirports(QSet<QString>& visibleAirportIds);
 
 private:
   void drawAirportSymbol(const map::MapAirport& ap, float x, float y, float size);
   void drawAirportDiagram(const map::MapAirport& airport);
   void drawAirportDiagramBackground(const map::MapAirport& airport);
   void drawAirportSymbolOverview(const map::MapAirport& ap, float x, float y, float symsize);
-  void runwayCoords(const QList<map::MapRunway> *runways, QList<QPointF>* centers, QList<QRectF>* rects,
-                    QList<QRectF>* innerRects, QList<QRectF>* outlineRects, bool overview);
+  void runwayCoords(const QList<map::MapRunway> *runways, QList<QPointF> *centers, QList<QRectF> *rects,
+                    QList<QRectF> *innerRects, QList<QRectF> *outlineRects, bool overview);
   void drawFsApron(const map::MapApron& apron);
   void drawXplaneApron(const map::MapApron& apron, bool fast);
 
+  QVector<PaintAirportType> visibleAirports;
 };
 
 #endif // LITTLENAVMAP_MAPPAINTERAIRPORT_H

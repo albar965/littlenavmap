@@ -95,6 +95,9 @@ struct PaintContext
   QSet<map::MapObjectRef> routeProcIdMap, /* Navaids on plan */
                           routeProcIdMapRec /* Recommended navaids */;
 
+  // All airport ids which are to be drawn
+  QSet<QString> visibleAirportIds;
+
   optsac::DisplayOptionsUserAircraft dispOptsUser;
   optsac::DisplayOptionsAiAircraft dispOptsAi;
   optsd::DisplayOptionsAirport dispOptsAirport;

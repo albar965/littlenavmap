@@ -79,6 +79,7 @@ void MapPainterMark::render()
 #ifdef DEBUG_INFORMATION
   {
     atools::util::PainterContextSaver dbgsaver(context->painter);
+    context->szFont(context->textSizeAirport);
     symbolPainter->textBox(context->painter, {
       QString("Layer %1").arg(context->mapLayer->getMaxRange()),
       QString("Layer route %1").arg(context->mapLayerRoute->getMaxRange()),
