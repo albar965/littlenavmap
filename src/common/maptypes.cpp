@@ -1114,9 +1114,13 @@ bool MapAirport::noRunways() const
 
 bool MapAirport::isVisible(map::MapTypes types, int minRunwayFt, const MapLayer *layer) const
 {
-  if(addon() && types.testFlag(map::AIRPORT_ADDON))
-    // Show addon in any case if flag is set
-    return true;
+  // Show addon independent of layer if flag is set
+  bool overrideAddon = addon() && types.testFlag(map::AIRPORT_ADDON);
+
+  if(!overrideAddon)
+    // Use max of layer and GUI min runway length if not overrideing addon
+    // otherwise use only GUI limit to force addons
+    minRunwayFt = std::max(minRunwayFt, layer->getMinRunwayLength());
 
   if(minRunwayFt > 0 && longestRunwayLength < minRunwayFt)
     return false;
@@ -1131,8 +1135,8 @@ bool MapAirport::isVisible(map::MapTypes types, int minRunwayFt, const MapLayer 
   if(softOnly() && !types.testFlag(map::AIRPORT_SOFT))
     return false;
 
-  // Check layer
-  if(isMinor() && !layer->isAirportMinor())
+  // Check layer minor/major airport flag but not if overriding addon
+  if(!overrideAddon && !layer->isAirportMinor() && isMinor())
     return false;
 
   if(waterOnly() && !types.testFlag(map::AIRPORT_WATER))

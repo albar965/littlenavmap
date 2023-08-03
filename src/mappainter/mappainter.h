@@ -106,7 +106,7 @@ struct PaintContext
   map::MapWeatherSource weatherSource;
   bool visibleWidget;
   bool paintCopyright = true;
-  int mimimumRunwayLengthFt = -1;
+  int mimimumRunwayLengthFt = -1; /* Value from toolbar */
   QVector<map::MapObjectRef> *routeDrawnNavaids; /* All navaids drawn for route and procedures. Points to vector in MapScreenIndex */
   int currentDistanceMarkerId = -1;
 
@@ -240,6 +240,7 @@ struct PaintContext
   textflags::TextFlags airportTextFlags() const;
   textflags::TextFlags airportTextFlagsMinor() const;
   textflags::TextFlags airportTextFlagsRoute(bool drawAsRoute, bool drawAsLog) const;
+
 };
 
 /* Used to collect airports for drawing. Needs to copy airport since it might be removed from the cache. */

@@ -207,6 +207,7 @@ private:
   /* Airports drawn having parking spots which require tooltips and more */
   QSet<int> shownDetailAirportIds;
 
+  /* Value from toolbar */
   int minimumRunwayLenghtFt = 0;
 
   /* Default detail factor. Range is from 5 to 15 */

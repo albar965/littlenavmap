@@ -684,11 +684,10 @@ void MapQuery::getNearestScreenObjects(const CoordinateConverter& conv, const Ma
   using maptools::insertSortedByDistance;
   using maptools::insertSortedByTowerDistance;
 
-  int minRunwayLength = std::max(NavApp::getMapAirportHandler()->getMinimumRunwayFt(), mapLayer->getMinRunwayLength());
-
   int x, y;
   if(mapLayer->isAirport() && types.testFlag(map::AIRPORT))
   {
+    int minRunwayLength = NavApp::getMapAirportHandler()->getMinimumRunwayFt(); // GUI setting
     for(int i = airportCache.list.size() - 1; i >= 0; i--)
     {
       const MapAirport& airport = airportCache.list.at(i);

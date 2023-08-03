@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2022 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -118,10 +118,9 @@ void MapPainterAirport::render()
     }
   }
 
-  int minRunwayLength = std::max(context->mimimumRunwayLengthFt, context->mapLayer->getMinRunwayLength());
-
   // Use margins for text placed on the right side of the object to avoid disappearing at the left screen border
   QMargins margins(100, 10, 10, 10);
+  int minRunwayLength = context->mimimumRunwayLengthFt; // GUI setting
 
   // Collect all airports that are visible ===========================
   QVector<PaintAirportType> visibleAirports;
