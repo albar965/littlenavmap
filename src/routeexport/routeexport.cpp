@@ -1404,7 +1404,7 @@ bool RouteExport::routeValidate(const QVector<RouteExportFormat>& formats, bool 
   }
 
   // Check for VFR export to MSFS with procedures or airways  ================================
-  if(validateVfr && (route.hasAirways() || route.hasAnyProcedure()))
+  if(validateVfr && route.isTypeVfr() && (route.hasAirways() || route.hasAnyProcedure()))
   {
     QString message;
     if(multi)

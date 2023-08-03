@@ -269,6 +269,16 @@ public:
     return flightplan;
   }
 
+  bool isTypeVfr() const
+  {
+    return flightplan.getFlightplanType() == atools::fs::pln::VFR;
+  }
+
+  bool isTypeIfr() const
+  {
+    return flightplan.getFlightplanType() == atools::fs::pln::IFR;
+  }
+
   /* Value in flight plan is stored in local unit */
   float getCruiseAltitudeFt() const;
 
