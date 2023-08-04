@@ -640,7 +640,12 @@ bool Route::getRouteDistances(float *distFromStart, float *distToDest,
           toDest = toDest - value(routeIndex).getDistanceTo() + distToCurrent;
         }
       }
-      *distToDest = atools::minmax(0.f, totalDistance, static_cast<float>(toDest));
+      if(getSizeWithoutAlternates() > 1)
+        // Real plan with legs - limit to total length
+        *distToDest = atools::minmax(0.f, totalDistance, static_cast<float>(toDest));
+      else
+        // Single point/airport plan for pattern work or other
+        *distToDest = std::max(0.f, static_cast<float>(toDest));
     }
 
     return true;
@@ -2054,7 +2059,9 @@ const RouteLeg& Route::value(int i) const
   const static RouteLeg EMPTY_ROUTE_LEG;
   if(!atools::inRange(*this, i))
   {
+#ifdef DEBUG_INFORMATION
     qWarning() << Q_FUNC_INFO << "Invalid index" << i;
+#endif
     return EMPTY_ROUTE_LEG;
   }
   else

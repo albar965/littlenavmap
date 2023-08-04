@@ -221,7 +221,9 @@ const RouteAltitudeLeg& RouteAltitude::value(int i) const
   const static RouteAltitudeLeg EMPTY_ROUTE_ALT_LEG;
   if(!atools::inRange(*this, i))
   {
+#ifdef DEBUG_INFORMATION
     qWarning() << Q_FUNC_INFO << "Invalid index" << i;
+#endif
     return EMPTY_ROUTE_ALT_LEG;
   }
   else

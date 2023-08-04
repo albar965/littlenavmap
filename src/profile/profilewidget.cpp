@@ -259,7 +259,8 @@ void ProfileWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulat
   // Need route with update active leg and aircraft position
   const Route& route = NavApp::getRouteConst();
 
-  if(!route.isFlightplanEmpty())
+  // Do not update for single airport plans
+  if(route.getSizeWithoutAlternates() > 1)
   {
     simData = simulatorData;
 
