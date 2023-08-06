@@ -90,7 +90,9 @@ float Parameter::asFloat(const QString& key, float defaultValue) const
     return value;
   else
   {
+#ifdef DEBUG_INFORMATION_WEB
     qWarning() << Q_FUNC_INFO << "Wrong float value for" << key << ":" << str;
+#endif
     return defaultValue;
   }
 }
