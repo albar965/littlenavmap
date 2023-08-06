@@ -79,98 +79,98 @@ public:
   /* Read all unit names (Meter, Nm, ...) in the methods as "from" values */
 
   /* Distances: Returns either nautical miles, kilometer or miles */
-  static QString distMeter(float value, bool addUnit = true, int minValPrec = 20, bool narrow = false);
-  static QString distNm(float value, bool addUnit = true, int minValPrec = 20, bool narrow = false);
+  static QString distMeter(float meter, bool addUnit = true, int minValPrec = 20, bool narrow = false);
+  static QString distNm(float nm, bool addUnit = true, int minValPrec = 20, bool narrow = false);
 
-  static float distMeterF(float value);
-  static float distNmF(float value);
+  static float distMeterF(float meter);
+  static float distNmF(float nm);
 
   /* Short distances: Returns either feet or meter */
-  static QString distShortMeter(float value, bool addUnit = true, bool narrow = false);
-  static QString distShortNm(float value, bool addUnit = true, bool narrow = false);
-  static QString distShortFeet(float value, bool addUnit = true, bool narrow = false);
+  static QString distShortMeter(float meter, bool addUnit = true, bool narrow = false);
+  static QString distShortNm(float nm, bool addUnit = true, bool narrow = false);
+  static QString distShortFeet(float ft, bool addUnit = true, bool narrow = false);
 
-  static float distShortMeterF(float value);
-  static float distShortNmF(float value);
-  static float distShortFeetF(float value);
+  static float distShortMeterF(float meter);
+  static float distShortNmF(float nm);
+  static float distShortFeetF(float ft);
 
   /* Speed: Returns either kts, km/h or m/h */
-  static QString speedKts(float value, bool addUnit = true, bool narrow = false);
+  static QString speedKts(float kts, bool addUnit = true, bool narrow = false);
 
   /* Get the other available two units except the currently selected one. */
-  static QStringList speedKtsOther(float value, bool addUnit = true, bool narrow = false);
+  static QStringList speedKtsOther(float kts, bool addUnit = true, bool narrow = false);
 
-  static float speedKtsF(float value);
-  static QString speedMeterPerSec(float value, bool addUnit = true, bool narrow = false);
-  static float speedMeterPerSecF(float value = true);
+  static float speedKtsF(float kts);
+  static QString speedMeterPerSec(float mPerSec, bool addUnit = true, bool narrow = false);
+  static float speedMeterPerSecF(float mPerSec = true);
 
-  static QString speedVertFpm(float value, bool addUnit = true);
-  static float speedVertFpmF(float value);
+  static QString speedVertFpm(float fpm, bool addUnit = true);
+  static float speedVertFpmF(float fpm);
 
   /* Speed: Returns either ft/m or m/s */
-  static QString speedVertFpmOther(float value, bool addUnit = true);
+  static QString speedVertFpmOther(float fpm, bool addUnit = true);
 
   /* Altitude: Returns either meter or feet */
-  static QString altMeter(float value, bool addUnit = true, bool narrow = false, float round = 0.f);
-  static QString altFeet(float value, bool addUnit = true, bool narrow = false, float round = 0.f);
+  static QString altMeter(float meter, bool addUnit = true, bool narrow = false, float round = 0.f);
+  static QString altFeet(float ft, bool addUnit = true, bool narrow = false, float round = 0.f);
 
   /* Get the other unit ft vs. meter and vice versa */
-  static QString altFeetOther(float value, bool addUnit = true, bool narrow = false, float round = 0.f);
+  static QString altFeetOther(float ft, bool addUnit = true, bool narrow = false, float round = 0.f);
 
-  static float altMeterF(float value);
-  static float altFeetF(float value);
-  static int altFeetI(int value);
+  static float altMeterF(float meter);
+  static float altFeetF(float ft);
+  static int altFeetI(int ft);
 
   /* Volume: Returns either gal or l for fuel*/
-  static QString volGallon(float value, bool addUnit = true);
-  static float volGallonF(float value);
+  static QString volGallon(float gal, bool addUnit = true);
+  static float volGallonF(float gal);
 
-  static QString volLiter(float value, bool addUnit = true);
-  static float volLiterF(float value);
+  static QString volLiter(float liter, bool addUnit = true);
+  static float volLiterF(float liter);
 
   /* Weight: Returns either lbs or kg for fuel */
-  static QString weightLbs(float value, bool addUnit = true);
-  static float weightLbsF(float value);
-  static QString weightKg(float value, bool addUnit = true);
-  static float weightKgF(float value);
+  static QString weightLbs(float lbs, bool addUnit = true);
+  static float weightLbsF(float lbs);
+  static QString weightKg(float kg, bool addUnit = true);
+  static float weightKgF(float kg);
 
   /* Get unit string with unit as selected in options and other unit in brackets */
-  static QString weightLbsLocalOther(float value, bool localBold = false, bool otherSmall = true);
-  static QString fuelLbsAndGalLocalOther(float valueLbs, float valueGal, bool localBold = false, bool otherSmall = true);
+  static QString weightLbsLocalOther(float lbs, bool localBold = false, bool otherSmall = true);
+  static QString fuelLbsAndGalLocalOther(float lbs, float gal, bool localBold = false, bool otherSmall = true);
 
   /* Fuel flow US Gallon and lbs */
-  static QString ffGallon(float value, bool addUnit = true);
-  static float ffGallonF(float value);
-  static QString ffLbs(float value, bool addUnit = true);
-  static float ffLbsF(float value);
+  static QString ffGallon(float gal, bool addUnit = true);
+  static float ffGallonF(float gal);
+  static QString ffLbs(float lbs, bool addUnit = true);
+  static float ffLbsF(float lbs);
 
   /* Return string containing both units - weight and volume */
-  static QString ffLbsAndGal(float valueLbs, float valueGal, bool addUnit = true);
-  static QString fuelLbsAndGal(float valueLbs, float valueGal, bool addUnit = true);
+  static QString ffLbsAndGal(float lbs, float gal, bool addUnit = true);
+  static QString fuelLbsAndGal(float lbs, float gal, bool addUnit = true);
 
-  static QString fuelLbsGallon(float value, bool addUnit = true, bool fuelAsVolume = false);
+  static QString fuelLbsGallon(float gal, bool addUnit = true, bool fuelAsVolume = false);
 
   /* Converts either volume or weight to current unit */
-  static float fuelLbsGallonF(float value, bool fuelAsVolume = false);
+  static float fuelLbsGallonF(float gal, bool fuelAsVolume = false);
 
-  static QString ffLbsGallon(float value, bool addUnit = true, bool fuelAsVolume = false);
-  static float ffLbsGallonF(float value, bool fuelAsVolume = false);
+  static QString ffLbsGallon(float gal, bool addUnit = true, bool fuelAsVolume = false);
+  static float ffLbsGallonF(float gal, bool fuelAsVolume = false);
 
   /* Fuel flow metric */
-  static QString ffLiter(float value, bool addUnit = true);
-  static float ffLiterF(float value);
-  static QString ffKg(float value, bool addUnit = true);
-  static float ffKgF(float value);
+  static QString ffLiter(float liter, bool addUnit = true);
+  static float ffLiterF(float liter);
+  static QString ffKg(float kg, bool addUnit = true);
+  static float ffKgF(float kg);
 
   /* Return string containing both units - weight and volume */
-  static QString ffKgAndLiter(float valueKg, float valueLiter, bool addUnit = true);
-  static QString fuelKgAndLiter(float valueKg, float valueLiter, bool addUnit = true);
+  static QString ffKgAndLiter(float kg, float liter, bool addUnit = true);
+  static QString fuelKgAndLiter(float kg, float liter, bool addUnit = true);
 
-  static QString fuelKgLiter(float value, bool addUnit = true, bool fuelAsVolume = false);
-  static float fuelKgLiterF(float value, bool fuelAsVolume = false);
+  static QString fuelKgLiter(float kgLiter, bool addUnit = true, bool fuelAsVolume = false);
+  static float fuelKgLiterF(float kgLiter, bool fuelAsVolume = false);
 
-  static QString ffKgLiter(float value, bool addUnit = true, bool fuelAsVolume = false);
-  static float ffKgLiterF(float value, bool fuelAsVolume = false);
+  static QString ffKgLiter(float kgLiter, bool addUnit = true, bool fuelAsVolume = false);
+  static float ffKgLiterF(float kgLiter, bool fuelAsVolume = false);
 
   /* Can be used as function pointers for conversion. fromCopy is a dummy returning the same value */
   static float fromUsToMetric(float value, bool fuelAsVolume);
