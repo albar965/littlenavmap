@@ -24,6 +24,9 @@
 #include <QHash>
 #include <QObject>
 
+namespace map {
+class MapAirport;
+}
 namespace atools {
 
 namespace util {
@@ -104,7 +107,13 @@ public:
 
   /* For display. Source depends on settings and parsed objects are cached. */
   atools::fs::weather::Metar getAirportWeather(const QString& airportIcao, const atools::geo::Pos& airportPos,
-                                               map::MapWeatherSource source);
+                                               map::MapWeatherSource source, bool stationOnly);
+
+  /* Get wind at airport. No nearest values for stationOnly=true. */
+  void getAirportWind(int& windDirectionDeg, float& windSpeedKts, const map::MapAirport& airport, bool stationOnly);
+
+  /* Gives preferred runways with title text like "Prefers runway:". Runways might be grouped. */
+  void getBestRunwaysTextShort(QString& title, QString& runwayNumbers, QString& sourceText, const map::MapAirport& airport);
 
   /* Does nothing currently */
   void preDatabaseLoad();

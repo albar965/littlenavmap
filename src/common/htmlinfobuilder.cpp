@@ -432,49 +432,7 @@ void HtmlInfoBuilder::airportText(const MapAirport& airport, const map::WeatherC
 
     // Source for map icon display
     MapWeatherSource src = NavApp::getMapWeatherSource();
-
-    const atools::fs::weather::MetarResult& fsMetar = weatherContext.fsMetar;
-    if(!fsMetar.isEmpty())
-    {
-      // Simulator weather =====================================================
-      QString sim = tr("%1 ").arg(NavApp::getCurrentSimulatorShortName());
-      addMetarLine(html, tr("%1Station").arg(sim), airport, fsMetar.metarForStation,
-                   fsMetar.requestIdent, fsMetar.timestamp, true /* fs */, src == WEATHER_SOURCE_SIMULATOR);
-      addMetarLine(html, tr("%1Nearest").arg(sim), airport,
-                   fsMetar.metarForNearest, fsMetar.requestIdent, fsMetar.timestamp,
-                   true /* fs */, src == WEATHER_SOURCE_SIMULATOR);
-      addMetarLine(html, tr("%1Interpolated").arg(sim), airport,
-                   fsMetar.metarForInterpolated, fsMetar.requestIdent, fsMetar.timestamp,
-                   true /* fs */, src == WEATHER_SOURCE_SIMULATOR);
-    }
-
-    // Active Sky weather =====================================================
-    addMetarLine(html, weatherContext.asType, airport, weatherContext.asMetar, QString(), QDateTime(),
-                 false /* fs */, src == WEATHER_SOURCE_ACTIVE_SKY);
-
-    // NOAA weather =====================================================
-    addMetarLine(html, tr("NOAA Station"), airport, weatherContext.noaaMetar.metarForStation,
-                 weatherContext.noaaMetar.requestIdent, weatherContext.noaaMetar.timestamp,
-                 false /* fs */, src == WEATHER_SOURCE_NOAA);
-    addMetarLine(html, tr("NOAA Nearest"), airport, weatherContext.noaaMetar.metarForNearest,
-                 weatherContext.noaaMetar.requestIdent, weatherContext.noaaMetar.timestamp,
-                 false /* fs */, src == WEATHER_SOURCE_NOAA);
-
-    // VATSIM weather =====================================================
-    addMetarLine(html, tr("VATSIM Station"), airport, weatherContext.vatsimMetar.metarForStation,
-                 weatherContext.vatsimMetar.requestIdent, weatherContext.vatsimMetar.timestamp,
-                 false /* fs */, src == WEATHER_SOURCE_VATSIM);
-    addMetarLine(html, tr("VATSIM Nearest"), airport, weatherContext.vatsimMetar.metarForNearest,
-                 weatherContext.vatsimMetar.requestIdent, weatherContext.vatsimMetar.timestamp,
-                 false /* fs */, src == WEATHER_SOURCE_VATSIM);
-
-    // IVAO weather =====================================================
-    addMetarLine(html, tr("IVAO Station"), airport, weatherContext.ivaoMetar.metarForStation,
-                 weatherContext.ivaoMetar.requestIdent, weatherContext.ivaoMetar.timestamp,
-                 false /* fs */, src == WEATHER_SOURCE_IVAO);
-    addMetarLine(html, tr("IVAO Nearest"), airport, weatherContext.ivaoMetar.metarForNearest,
-                 weatherContext.ivaoMetar.requestIdent, weatherContext.ivaoMetar.timestamp,
-                 false /* fs */, src == WEATHER_SOURCE_IVAO);
+    addMetarLines(html, weatherContext, src, airport);
     html.tableEnd();
   }
 
@@ -761,7 +719,6 @@ void HtmlInfoBuilder::comText(const MapAirport& airport, HtmlBuilder& html) cons
       if(info)
         // Add scenery indicator to clear source - either nav or sim
         addScenery(nullptr, html, DATASOURCE_COM);
-
     }
     else
       html.p(tr("Airport has no COM Frequency."));
@@ -778,32 +735,10 @@ void HtmlInfoBuilder::bestRunwaysText(const MapAirport& airport, HtmlBuilder& ht
 
   // Need wind direction and speed - otherwise all runways are good =======================
   if(windDirectionDeg != -1 && windSpeedKts < atools::fs::weather::INVALID_METAR_VALUE)
-  {
-    const SqlRecordList *recVector = infoQuery->getRunwayInformation(airport.id);
-    if(recVector != nullptr)
-    {
-
-      // Collect runway ends and wind conditions =======================================
-      for(const SqlRecord& rec : *recVector)
-      {
-        int length = rec.valueInt("length");
-        QString surface = rec.valueStr("surface");
-        const SqlRecord *recPrim = infoQuery->getRunwayEndInformation(rec.valueInt("primary_end_id"));
-        if(!recPrim->valueBool("has_closed_markings"))
-          ends.appendRwEnd(recPrim->valueStr("name"), surface, length, recPrim->valueFloat("heading"));
-
-        const SqlRecord *recSec = infoQuery->getRunwayEndInformation(rec.valueInt("secondary_end_id"));
-        if(!recSec->valueBool("has_closed_markings"))
-          ends.appendRwEnd(recSec->valueStr("name"), surface, length, recSec->valueFloat("heading"));
-      }
-    }
-  }
+    infoQuery->getRunwayEnds(ends, airport.id);
 
   if(!ends.isEmpty())
   {
-    // Sort by headwind =======================================
-    ends.sortRunwayEnds();
-
     max = std::min(ends.size(), max);
 
     if(details)
@@ -811,15 +746,11 @@ void HtmlInfoBuilder::bestRunwaysText(const MapAirport& airport, HtmlBuilder& ht
       // Table header for detailed view
       head(html, ends.getTotalNumber() == 1 ? tr("Best runway for wind") : tr("Best runways for wind"));
       html.table();
-      html.tr(QColor()).th(ends.getTotalNumber() == 1 ? tr("Runway") : tr("Runways")).
-      th(tr("Surface")).th(tr("Length")).th(tr("Headwind")).th(tr("Crosswind"))
-      .trEnd();
-    }
 
-    // Create runway table for details =====================================
+      html.tr().th(ends.getTotalNumber() == 1 ? tr("Runway") : tr("Runways")).
+      th(tr("Surface")).th(tr("Length")).th(tr("Headwind")).th(tr("Crosswind")).trEnd();
 
-    if(details)
-    {
+      // Create runway table for details =====================================
       // Table for detailed view
       int num = 0;
       for(const maptools::RwEnd& end : ends)
@@ -830,6 +761,7 @@ void HtmlInfoBuilder::bestRunwaysText(const MapAirport& airport, HtmlBuilder& ht
 
         QString lengthTxt;
         if(end.minlength == end.maxlength)
+          // Not grouped
           lengthTxt = Unit::distShortFeet(end.minlength);
         else
           // Grouped runways have a min and max length
@@ -840,10 +772,10 @@ void HtmlInfoBuilder::bestRunwaysText(const MapAirport& airport, HtmlBuilder& ht
         // Table entry ==================
         html.tr(QColor()).
         td(end.names.join(tr(", ")), ahtml::BOLD).
-        td(end.soft ? tr("Soft") : tr("Hard")).
+        td(end.softRunway ? tr("Soft") : tr("Hard")).
         td(lengthTxt, ahtml::ALIGN_RIGHT).
-        td(formatter::windInformationHead(end.head), ahtml::ALIGN_RIGHT).
-        td(Unit::speedKts(end.cross), ahtml::ALIGN_RIGHT).
+        td(formatter::windInformationTailHead(end.headWind), ahtml::ALIGN_RIGHT).
+        td(Unit::speedKts(end.crossWind), ahtml::ALIGN_RIGHT).
         trEnd();
         num++;
       }
@@ -855,19 +787,19 @@ void HtmlInfoBuilder::bestRunwaysText(const MapAirport& airport, HtmlBuilder& ht
       QStringList runways;
       for(const maptools::RwEnd& end : ends)
       {
-        if(end.head <= 2)
+        if(end.headWind <= 2)
           break;
         runways.append(end.names);
       }
 
       if(!runways.isEmpty())
-        html.br().b((ends.getTotalNumber() == 1 ? tr(" Prefers runway: ") : tr(" Prefers runways: "))).
+        html.br().b((ends.getTotalNumber() == 1 ? tr(" Wind prefers runway: ") : tr(" Wind prefers runways: "))).
         text(runways.mid(0, 4).join(tr(", ")));
     }
   }
   else if(details)
     // Either crosswind is equally strong and/or headwind too low or no directional wind
-    head(html, tr("All runways good for landing or takeoff."));
+    head(html, tr("All runways good for takeoff and landing."));
 }
 
 void HtmlInfoBuilder::runwayText(const MapAirport& airport, HtmlBuilder& html, bool details, bool soft) const
@@ -1743,8 +1675,7 @@ void HtmlInfoBuilder::addRadionavFixType(HtmlBuilder& html, const SqlRecord& rec
 
 static const Flags WEATHER_TITLE_FLAGS = ahtml::BOLD | ahtml::BIG;
 
-void HtmlInfoBuilder::weatherText(const map::WeatherContext& context, const MapAirport& airport,
-                                  HtmlBuilder& html) const
+void HtmlInfoBuilder::weatherText(const map::WeatherContext& context, const MapAirport& airport, HtmlBuilder& html) const
 {
   if(info)
   {
@@ -1843,7 +1774,7 @@ void HtmlInfoBuilder::weatherText(const map::WeatherContext& context, const MapA
       // NOAA or nearest ===========================
       decodedMetars(html, context.noaaMetar, airport, tr("NOAA"), src == WEATHER_SOURCE_NOAA && weatherShown);
 
-      // Vatsim metar ===========================
+      // Vatsim metar or nearest ===========================
       decodedMetars(html, context.vatsimMetar, airport, tr("VATSIM"), src == WEATHER_SOURCE_VATSIM && weatherShown);
 
       // IVAO or nearest ===========================
@@ -2167,7 +2098,6 @@ void HtmlInfoBuilder::decodedMetar(HtmlBuilder& html, const map::MapAirport& air
   if(!parsed.getUnusedData().isEmpty())
     html.p().text(tr("Additional information:"), ahtml::BOLD).br().text(parsed.getUnusedData()).pEnd();
 
-  // bestRunwaysText(airport, html, windSpeedKts, parsed.getWindDir(), 8 /* max entries */, true /* details */);
   bestRunwaysText(airport, html, parsed, 8 /* max entries */, true /* details */);
 
 #ifdef DEBUG_INFORMATION
@@ -4695,7 +4625,7 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
     float headWind = 0.f, crossWind = 0.f;
     ageo::windForCourse(headWind, crossWind, windSpeed, windDir, userAircraft->getHeadingDegMag());
 
-    QString windPtr = formatter::windInformation(headWind, crossWind);
+    QString windPtr = formatter::windInformation(headWind, crossWind, tr(", "));
 
     // if(!value.isEmpty())
     // Keep an empty line to avoid flickering
@@ -5137,6 +5067,53 @@ void HtmlInfoBuilder::rowForStrCap(HtmlBuilder& html, const SqlRecord *rec, cons
     if(!i.isEmpty())
       html.row2(msg, val.arg(capString(i)));
   }
+}
+
+void HtmlInfoBuilder::addMetarLines(HtmlBuilder& html, const map::WeatherContext& weatherContext, MapWeatherSource src,
+                                    const map::MapAirport& airport) const
+{
+  const atools::fs::weather::MetarResult& fsMetar = weatherContext.fsMetar;
+  if(!fsMetar.isEmpty())
+  {
+    // Simulator weather =====================================================
+    QString sim = tr("%1 ").arg(NavApp::getCurrentSimulatorShortName());
+    addMetarLine(html, tr("%1Station").arg(sim), airport, fsMetar.metarForStation,
+                 fsMetar.requestIdent, fsMetar.timestamp, true /* fs */, src == WEATHER_SOURCE_SIMULATOR);
+    addMetarLine(html, tr("%1Nearest").arg(sim), airport,
+                 fsMetar.metarForNearest, fsMetar.requestIdent, fsMetar.timestamp,
+                 true /* fs */, src == WEATHER_SOURCE_SIMULATOR);
+    addMetarLine(html, tr("%1Interpolated").arg(sim), airport,
+                 fsMetar.metarForInterpolated, fsMetar.requestIdent, fsMetar.timestamp,
+                 true /* fs */, src == WEATHER_SOURCE_SIMULATOR);
+  }
+
+  // Active Sky weather =====================================================
+  addMetarLine(html, weatherContext.asType, airport, weatherContext.asMetar, QString(), QDateTime(),
+               false /* fs */, src == WEATHER_SOURCE_ACTIVE_SKY);
+
+  // NOAA weather =====================================================
+  addMetarLine(html, tr("NOAA Station"), airport, weatherContext.noaaMetar.metarForStation,
+               weatherContext.noaaMetar.requestIdent, weatherContext.noaaMetar.timestamp,
+               false /* fs */, src == WEATHER_SOURCE_NOAA);
+  addMetarLine(html, tr("NOAA Nearest"), airport, weatherContext.noaaMetar.metarForNearest,
+               weatherContext.noaaMetar.requestIdent, weatherContext.noaaMetar.timestamp,
+               false /* fs */, src == WEATHER_SOURCE_NOAA);
+
+  // VATSIM weather =====================================================
+  addMetarLine(html, tr("VATSIM Station"), airport, weatherContext.vatsimMetar.metarForStation,
+               weatherContext.vatsimMetar.requestIdent, weatherContext.vatsimMetar.timestamp,
+               false /* fs */, src == WEATHER_SOURCE_VATSIM);
+  addMetarLine(html, tr("VATSIM Nearest"), airport, weatherContext.vatsimMetar.metarForNearest,
+               weatherContext.vatsimMetar.requestIdent, weatherContext.vatsimMetar.timestamp,
+               false /* fs */, src == WEATHER_SOURCE_VATSIM);
+
+  // IVAO weather =====================================================
+  addMetarLine(html, tr("IVAO Station"), airport, weatherContext.ivaoMetar.metarForStation,
+               weatherContext.ivaoMetar.requestIdent, weatherContext.ivaoMetar.timestamp,
+               false /* fs */, src == WEATHER_SOURCE_IVAO);
+  addMetarLine(html, tr("IVAO Nearest"), airport, weatherContext.ivaoMetar.metarForNearest,
+               weatherContext.ivaoMetar.requestIdent, weatherContext.ivaoMetar.timestamp,
+               false /* fs */, src == WEATHER_SOURCE_IVAO);
 }
 
 void HtmlInfoBuilder::addMetarLine(atools::util::HtmlBuilder& html, const QString& header,

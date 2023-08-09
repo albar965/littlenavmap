@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -100,7 +100,7 @@ map::MapAirport AbstractLnmActionsController::getAirportByIdent(QByteArray ident
 };
 map::WeatherContext AbstractLnmActionsController::getWeatherContext(map::MapAirport& airport){
     map::WeatherContext weatherContext;
-    getMainWindow()->buildWeatherContext(weatherContext, airport);
+    getMainWindow()->buildWeatherContextInfo(weatherContext, airport);
     return weatherContext;
 };
 const SqlRecord* AbstractLnmActionsController::getAirportInformation(int id){

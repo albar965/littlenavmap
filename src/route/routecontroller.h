@@ -18,12 +18,15 @@
 #ifndef LITTLENAVMAP_ROUTECONTROLLER_H
 #define LITTLENAVMAP_ROUTECONTROLLER_H
 
-#include "route/routecommand.h"
 #include "routing/routenetworktypes.h"
 #include "route/route.h"
+#include "route/routecommandflags.h"
 
 #include <QTimer>
 
+class QUndoStack;
+
+class QAction;
 namespace atools {
 namespace routing {
 class RouteFinder;
@@ -49,18 +52,19 @@ class FlightplanEntry;
 }
 }
 
-class QMainWindow;
-class QTableView;
-class QStandardItemModel;
-class QItemSelection;
-class FlightplanEntryBuilder;
-class SymbolPainter;
 class AirportQuery;
 class AirwayTrackQuery;
-class UnitStringTool;
+class FlightplanEntryBuilder;
+class QItemSelection;
+class QMainWindow;
+class QStandardItemModel;
+class QTableView;
 class QTextCursor;
 class RouteCalcDialog;
+class RouteCommand;
 class RouteLabel;
+class SymbolPainter;
+class UnitStringTool;
 
 /*
  * All flight plan related tasks like saving, loading, modification, calculation and table

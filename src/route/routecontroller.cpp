@@ -43,6 +43,7 @@
 #include "gui/tools.h"
 #include "gui/treedialog.h"
 #include "gui/widgetstate.h"
+#include "info/infocontroller.h"
 #include "mapgui/mapwidget.h"
 #include "app/navapp.h"
 #include "options/optiondata.h"
@@ -55,6 +56,7 @@
 #include "route/flightplanentrybuilder.h"
 #include "route/routealtitude.h"
 #include "route/routecalcdialog.h"
+#include "route/routecommand.h"
 #include "route/routelabel.h"
 #include "route/runwayselectiondialog.h"
 #include "route/userwaypointdialog.h"
@@ -80,6 +82,7 @@
 #include <QProgressDialog>
 #include <QScrollBar>
 #include <QStringBuilder>
+#include <QUndoStack>
 
 namespace rcol {
 // Route table column indexes

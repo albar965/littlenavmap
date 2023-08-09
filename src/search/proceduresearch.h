@@ -18,7 +18,7 @@
 #ifndef LITTLENAVMAP_PROCTREECONTROLLER_H
 #define LITTLENAVMAP_PROCTREECONTROLLER_H
 
- #include "common/procflags.h"
+#include "common/procflags.h"
 #include "common/mapflags.h"
 #include "search/abstractsearch.h"
 
@@ -96,6 +96,9 @@ public:
   virtual void updateTableSelection(bool noFollow) override;
   virtual void clearSelection() override;
   virtual bool hasSelection() const override;
+
+  /* Update wind in tree and header */
+  void weatherUpdated();
 
 signals:
   /* Show approaches and highlight circles on the map */
@@ -215,11 +218,18 @@ private:
   void clearSelectionClicked();
   void showAllToggled(bool checked);
 
+  /* Get procedure reference with ids only */
+  proc::MapProcedureRef fetchProcRef(QTreeWidgetItem *item);
+
+  /* Load whole procedure */
   const proc::MapProcedureLegs *fetchProcData(proc::MapProcedureRef& ref, QTreeWidgetItem *item);
+
+  /* User click on top link */
   void airportLabelLinkActivated(const QString& link);
 
   void procedureDisplayText(QString& procTypeText, QStringList& attText, const atools::sql::SqlRecord& recApp,
                             proc::MapProcedureTypes maptype, int numTransitions);
+  void updateProcedureWind();
 
   // item's types are the indexes into this array with approach, transition and leg ids
   QVector<proc::MapProcedureRef> itemIndex;
@@ -233,7 +243,9 @@ private:
   ProcedureQuery *procedureQuery = nullptr;
   AirportQuery *airportQueryNav = nullptr;
   QTreeWidget *treeWidget = nullptr;
-  QFont transitionFont, procedureFont, legFont, missedLegFont, invalidLegFont, identFont;
+
+  /* Fonts for tree elements */
+  QFont procedureBoldFont, procedureNormalFont, legFont, missedLegFont, invalidLegFont, identFont;
 
   map::MapAirport *currentAirportNav, *currentAirportSim;
 

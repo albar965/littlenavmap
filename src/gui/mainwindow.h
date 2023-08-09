@@ -166,9 +166,15 @@ public:
 
   void setDetailLabelText(const QString& text);
 
-  bool buildWeatherContextForInfo(map::WeatherContext& weatherContext, const map::MapAirport& airport);
-  void buildWeatherContext(map::WeatherContext& weatherContext, const map::MapAirport& airport) const;
-  void buildWeatherContextForTooltip(map::WeatherContext& weatherContext, const map::MapAirport& airport) const;
+  /* Update the current weather context for the information window. Returns true if any
+   * weather has changed or an update is needed */
+  bool buildWeatherContextInfoFull(map::WeatherContext& weatherContext, const map::MapAirport& airport);
+
+  /* Build a normal weather context - used by printing */
+  void buildWeatherContextInfo(map::WeatherContext& weatherContext, const map::MapAirport& airport) const;
+
+  /* Build a temporary weather context for the map tooltip */
+  void buildWeatherContextTooltip(map::WeatherContext& weatherContext, const map::MapAirport& airport) const;
 
   /* Render state from marble widget. Get the more detailed state since it updates more often */
   void renderStatusChanged(const Marble::RenderState& state);
@@ -396,8 +402,11 @@ private:
 
   void legendAnchorClicked(const QUrl& url);
 
-  void scaleToolbar(QToolBar *toolbar, float scale);
   void clearWeatherContext();
+  void buildWeatherContext(map::WeatherContext& weatherContext, const map::MapAirport& airport, bool simulator, bool activeSky, bool noaa,
+                           bool vatsim, bool ivao) const;
+
+  void scaleToolbar(QToolBar *toolbar, float scale);
   void showOnlineHelp();
   void showOnlineTutorials();
   void showOfflineHelp();

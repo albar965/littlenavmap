@@ -18,14 +18,15 @@
 #include "runwayselection.h"
 
 #include "app/navapp.h"
-#include "common/unit.h"
-#include "query/airportquery.h"
-#include "geo/calculations.h"
-#include "query/mapquery.h"
-#include "fs/util/fsutil.h"
-#include "gui/itemviewzoomhandler.h"
-
 #include "atools.h"
+#include "common/formatter.h"
+#include "common/unit.h"
+#include "fs/util/fsutil.h"
+#include "geo/calculations.h"
+#include "gui/itemviewzoomhandler.h"
+#include "query/airportquery.h"
+#include "query/mapquery.h"
+#include "weather/weatherreporter.h"
 
 #include <QLabel>
 #include <QTableWidget>
@@ -131,10 +132,20 @@ const map::MapAirport& RunwaySelection::getAirport() const
 
 void RunwaySelection::fillAirportLabel()
 {
+  QString label;
   if(airportLabel != nullptr)
-    airportLabel->setText(tr("<b>%1, elevation %2</b>").
-                          arg(map::airportTextShort(*airport)).
-                          arg(Unit::altFeet(airport->position.getAltitude())));
+  {
+    label = tr("<p><b>%1, elevation %2</b></p>").
+            arg(map::airportTextShort(*airport)).
+            arg(Unit::altFeet(airport->position.getAltitude()));
+
+    QString title, runwayText, sourceText;
+    NavApp::getWeatherReporter()->getBestRunwaysTextShort(title, runwayText, sourceText, *airport);
+    if(!title.isEmpty())
+      label.append(tr("<p>%1</p>").arg(atools::strJoin({title, runwayText, sourceText}, tr(" "))));
+  }
+
+  airportLabel->setText(label);
 }
 
 void RunwaySelection::fillRunwayList()
@@ -180,23 +191,47 @@ void RunwaySelection::fillRunwayList()
   {
     runwayTableWidget->setSelectionMode(QAbstractItemView::SingleSelection);
 
-    // Set table size
+    QStringList header({tr(" Number "),
+                        tr(" Length and Width\n%1").arg(Unit::getUnitShortDistStr()),
+                        tr(" Heading\n°M", "Runway heading"),
+                        tr(" Surface "),
+                        tr(" Facilities "),
+                        tr(" Head- and Crosswind\n%1").arg(Unit::getUnitSpeedStr())});
+    QStringList headerTooltips({tr("Runway number."),
+                                tr("Length and width of runway in %1.").arg(Unit::getUnitShortDistStr()),
+                                tr("Runway heading in degree magnetic."),
+                                QString(),
+                                QString(),
+                                tr("Head- and crosswind components for runway in %1.\n"
+                                   "Weather source is selected in menu \"Weather\" -> \"Airport Weather Source\".\n"
+                                   "Tailwinds are omitted.").arg(Unit::getUnitSpeedStr())});
+
+    Q_ASSERT(header.size() == headerTooltips.size());
+
+    // Set table size ===================================================
     runwayTableWidget->setRowCount(runways.size());
-    runwayTableWidget->setColumnCount(5);
+    runwayTableWidget->setColumnCount(header.size());
 
-    runwayTableWidget->setHorizontalHeaderLabels({tr(" Number "), tr(" Length and Width "), tr(" Heading ", "Runway heading"),
-                                                  tr(" Surface "), tr(" Facilities ")});
+    // Fill header texts ===================================================
+    runwayTableWidget->setHorizontalHeaderLabels(header);
+    for(int i = 0; i < headerTooltips.size(); i++)
+      runwayTableWidget->horizontalHeaderItem(i)->setToolTip(headerTooltips.at(i));
 
-    // Index in runway table
-    int index = 0;
+    // Fetch airport wind ===================================================
+    int windDirectionDeg;
+    float windSpeedKts;
+    NavApp::getAirportWind(windDirectionDeg, windSpeedKts, *airport, false /* stationOnly */);
+
+    // Fill items ===================================================
+    int index = 0; // Index in runway table
     for(const RunwayIdxEntry& runway : runways)
-      addItem(runway, index++);
+      addItem(runway, formatter::windInformationShort(windDirectionDeg, windSpeedKts, runway.end.heading), index++);
 
     runwayTableWidget->resizeColumnsToContents();
   }
 }
 
-void RunwaySelection::addItem(const RunwayIdxEntry& entry, int index)
+void RunwaySelection::addItem(const RunwayIdxEntry& entry, const QString& windText, int index)
 {
   // Collect attributes
   QStringList atts;
@@ -234,12 +269,13 @@ void RunwaySelection::addItem(const RunwayIdxEntry& entry, int index)
 
   // Dimensions
   item = new QTableWidgetItem(tr("%1 x %2").
-                              arg(Unit::distShortFeet(entry.runway.length, false)).arg(Unit::distShortFeet(entry.runway.width)));
+                              arg(Unit::distShortFeet(entry.runway.length, false /* addUnit */)).
+                              arg(Unit::distShortFeet(entry.runway.width, false /* addUnit */)));
   item->setTextAlignment(Qt::AlignRight);
   runwayTableWidget->setItem(index, col++, item);
 
   // Heading
-  item = new QTableWidgetItem(tr("%1°M").arg(QLocale().toString(heading, 'f', 0)));
+  item = new QTableWidgetItem(QLocale().toString(heading, 'f', 0));
   item->setTextAlignment(Qt::AlignRight);
   runwayTableWidget->setItem(index, col++, item);
 
@@ -249,6 +285,10 @@ void RunwaySelection::addItem(const RunwayIdxEntry& entry, int index)
 
   // Attributes
   item = new QTableWidgetItem(atts.join(", "));
+  runwayTableWidget->setItem(index, col++, item);
+
+  // Headwind and Crosswind
+  item = new QTableWidgetItem(windText);
   runwayTableWidget->setItem(index, col++, item);
 }
 

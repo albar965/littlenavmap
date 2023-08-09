@@ -588,6 +588,7 @@ HEADERS  += \
   src/route/routealtitudeleg.h \
   src/route/routecalcdialog.h \
   src/route/routecommand.h \
+  src/route/routecommandflags.h \
   src/route/routecontroller.h \
   src/route/routeextractor.h \
   src/route/routeflags.h \

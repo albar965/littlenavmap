@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2022 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -19,6 +19,7 @@
 
 #include "common/constants.h"
 #include "app/navapp.h"
+#include "common/maptools.h"
 #include "query/querytypes.h"
 #include "settings/settings.h"
 #include "sql/sqldatabase.h"
@@ -133,6 +134,30 @@ const SqlRecordList *InfoQuery::getRunwayInformation(int airportId)
 
   runwayQuery->bindValue(":id", airportId);
   return query::cachedRecordList(runwayCache, runwayQuery, airportId);
+}
+
+void InfoQuery::getRunwayEnds(maptools::RwVector& ends, int airportId)
+{
+  const SqlRecordList *recVector = getRunwayInformation(airportId);
+  if(recVector != nullptr)
+  {
+    // Collect runway ends and wind conditions =======================================
+    for(const SqlRecord& rec : *recVector)
+    {
+      int length = rec.valueInt("length");
+      QString surface = rec.valueStr("surface");
+      const SqlRecord *recPrim = getRunwayEndInformation(rec.valueInt("primary_end_id"));
+      if(!recPrim->valueBool("has_closed_markings"))
+        ends.appendRwEnd(recPrim->valueStr("name"), surface, length, recPrim->valueFloat("heading"));
+
+      const SqlRecord *recSec = getRunwayEndInformation(rec.valueInt("secondary_end_id"));
+      if(!recSec->valueBool("has_closed_markings"))
+        ends.appendRwEnd(recSec->valueStr("name"), surface, length, recSec->valueFloat("heading"));
+    }
+  }
+
+  // Sort by headwind and merge entries =======================================
+  ends.sortRunwayEnds();
 }
 
 const SqlRecordList *InfoQuery::getHelipadInformation(int airportId)

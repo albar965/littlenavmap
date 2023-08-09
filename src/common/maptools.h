@@ -350,15 +350,15 @@ void removeDuplicatesById(QVector<TYPE>& vector)
 /* Runway sorting tools. Allows to sort runways by headwind and crosswind */
 struct RwEnd
 {
-  RwEnd(const QString& name, const QString& surf, int lengthParam, float headWind, float crossWind);
+  RwEnd(const QString& name, const QString& surface, int lengthParam, float headWindParam, float crossWindParam);
   RwEnd()
   {
 
   }
 
   QStringList names;
-  bool soft;
-  int cross, head, minlength, maxlength;
+  bool softRunway;
+  int crossWind, headWind, minlength, maxlength;
 };
 
 /* List of runway ends */

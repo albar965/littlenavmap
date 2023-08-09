@@ -25,38 +25,38 @@ struct RwKey
 {
   RwKey(const RwEnd& end)
   {
-    head = end.head;
-    cross = end.cross;
-    soft = end.soft;
+    headWind = end.headWind;
+    crossWind = end.crossWind;
+    softRunway = end.softRunway;
   }
 
-  int head, cross;
-  bool soft;
+  int headWind, crossWind;
+  bool softRunway;
 };
 
 inline bool operator<(const RwKey& key1, const RwKey& key2)
 {
-  if(key1.head != key2.head)
+  if(key1.headWind != key2.headWind)
     // Sort first by headwind
-    return key1.head > key2.head;
-  else if(key1.soft != key2.soft)
+    return key1.headWind > key2.headWind;
+  else if(key1.softRunway != key2.softRunway)
     // Hard runways to front
-    return key1.soft < key2.soft;
+    return key1.softRunway < key2.softRunway;
   else
     // Last criteria crosswind
-    return key1.cross > key2.cross;
+    return key1.crossWind > key2.crossWind;
 }
 
-RwEnd::RwEnd(const QString& name, const QString& surf, int lengthParam, float headWind, float crossWind)
+RwEnd::RwEnd(const QString& name, const QString& surface, int lengthParam, float headWindParam, float crossWindParam)
 {
   minlength = maxlength = lengthParam;
   names.append(name);
-  soft = map::isSoftSurface(surf) || map::isWaterSurface(surf);
+  softRunway = map::isSoftSurface(surface) || map::isWaterSurface(surface);
 
-  head = atools::roundToInt(headWind);
+  headWind = atools::roundToInt(headWindParam);
 
   // Don't care about crosswind direction
-  cross = atools::roundToInt(std::abs(crossWind));
+  crossWind = atools::roundToInt(std::abs(crossWindParam));
 }
 
 void RwVector::appendRwEnd(const QString& name, const QString& surface, int length, float heading)
@@ -66,7 +66,7 @@ void RwVector::appendRwEnd(const QString& name, const QString& surface, int leng
     float headWind, crossWind;
     atools::geo::windForCourse(headWind, crossWind, speed, direction, heading);
 
-    if(headWind > minSpeed)
+    if(headWind >= minSpeed)
     {
       RwEnd end(name, surface, length, headWind, crossWind);
       append(end);

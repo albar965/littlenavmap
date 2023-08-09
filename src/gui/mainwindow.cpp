@@ -1646,6 +1646,7 @@ void MainWindow::connectAllSlots()
   connect(weatherReporter, &WeatherReporter::weatherUpdated, mapWidget, &MapWidget::updateTooltip);
   connect(weatherReporter, &WeatherReporter::weatherUpdated, infoController, &InfoController::updateAirportWeather);
   connect(weatherReporter, &WeatherReporter::weatherUpdated, mapWidget, &MapPaintWidget::weatherUpdated);
+  connect(weatherReporter, &WeatherReporter::weatherUpdated, procedureSearch, &ProcedureSearch::weatherUpdated);
 
   connect(connectClient, &ConnectClient::weatherUpdated, mapWidget, &MapPaintWidget::weatherUpdated);
   connect(connectClient, &ConnectClient::weatherUpdated, mapWidget, &MapWidget::updateTooltip);
@@ -4468,9 +4469,7 @@ void MainWindow::postDatabaseLoad(atools::fs::FsPaths::SimulatorType type)
   NavApp::logDatabaseMeta();
 }
 
-/* Update the current weather context for the information window. Returns true if any
- * weather has changed or an update is needed */
-bool MainWindow::buildWeatherContextForInfo(map::WeatherContext& weatherContext, const map::MapAirport& airport)
+bool MainWindow::buildWeatherContextInfoFull(map::WeatherContext& weatherContext, const map::MapAirport& airport)
 {
   optsw::FlagsWeather flags = OptionData::instance().getFlagsWeather();
   bool changed = false;
@@ -4569,47 +4568,34 @@ bool MainWindow::buildWeatherContextForInfo(map::WeatherContext& weatherContext,
   return changed;
 }
 
-/* Build a normal weather context - used by printing */
-void MainWindow::buildWeatherContext(map::WeatherContext& weatherContext, const map::MapAirport& airport) const
+void MainWindow::buildWeatherContextInfo(map::WeatherContext& weatherContext, const map::MapAirport& airport) const
 {
   optsw::FlagsWeather flags = OptionData::instance().getFlagsWeather();
-
-  weatherContext.ident = airport.ident;
-
-  if(flags & optsw::WEATHER_INFO_FS)
-  {
-    if(atools::fs::FsPaths::isAnyXplane(NavApp::getCurrentSimulatorDb()))
-      weatherContext.fsMetar = weatherReporter->getXplaneMetar(airport.ident, airport.position);
-    else
-      weatherContext.fsMetar =
-        NavApp::getConnectClient()->requestWeather(airport.ident, airport.position, false /* station only */);
-  }
-
-  if(flags & optsw::WEATHER_INFO_ACTIVESKY)
-  {
-    weatherContext.asMetar = weatherReporter->getActiveSkyMetar(airport.ident);
-    fillActiveSkyType(weatherContext, airport.ident);
-  }
-
-  if(flags & optsw::WEATHER_INFO_NOAA)
-    weatherContext.noaaMetar = weatherReporter->getNoaaMetar(airport.ident, airport.position);
-
-  if(flags & optsw::WEATHER_INFO_VATSIM)
-    weatherContext.vatsimMetar = weatherReporter->getVatsimMetar(airport.ident, airport.position);
-
-  if(flags & optsw::WEATHER_INFO_IVAO)
-    weatherContext.ivaoMetar = weatherReporter->getIvaoMetar(airport.ident, airport.position);
+  buildWeatherContext(weatherContext, airport,
+                      flags.testFlag(optsw::WEATHER_INFO_FS),
+                      flags.testFlag(optsw::WEATHER_INFO_ACTIVESKY),
+                      flags.testFlag(optsw::WEATHER_INFO_NOAA),
+                      flags.testFlag(optsw::WEATHER_INFO_VATSIM),
+                      flags.testFlag(optsw::WEATHER_INFO_IVAO));
 }
 
-/* Build a temporary weather context for the map tooltip */
-void MainWindow::buildWeatherContextForTooltip(map::WeatherContext& weatherContext,
-                                               const map::MapAirport& airport) const
+void MainWindow::buildWeatherContextTooltip(map::WeatherContext& weatherContext, const map::MapAirport& airport) const
 {
   optsw::FlagsWeather flags = OptionData::instance().getFlagsWeather();
+  buildWeatherContext(weatherContext, airport,
+                      flags.testFlag(optsw::WEATHER_TOOLTIP_FS),
+                      flags.testFlag(optsw::WEATHER_TOOLTIP_ACTIVESKY),
+                      flags.testFlag(optsw::WEATHER_TOOLTIP_NOAA),
+                      flags.testFlag(optsw::WEATHER_TOOLTIP_VATSIM),
+                      flags.testFlag(optsw::WEATHER_TOOLTIP_IVAO));
+}
 
+void MainWindow::buildWeatherContext(map::WeatherContext& weatherContext, const map::MapAirport& airport,
+                                     bool simulator, bool activeSky, bool noaa, bool vatsim, bool ivao) const
+{
   weatherContext.ident = airport.ident;
 
-  if(flags & optsw::WEATHER_TOOLTIP_FS)
+  if(simulator)
   {
     if(atools::fs::FsPaths::isAnyXplane(NavApp::getCurrentSimulatorDb()))
       weatherContext.fsMetar = weatherReporter->getXplaneMetar(airport.ident, airport.position);
@@ -4617,19 +4603,19 @@ void MainWindow::buildWeatherContextForTooltip(map::WeatherContext& weatherConte
       weatherContext.fsMetar = NavApp::getConnectClient()->requestWeather(airport.ident, airport.position, false /* station only */);
   }
 
-  if(flags & optsw::WEATHER_TOOLTIP_ACTIVESKY)
+  if(activeSky)
   {
     weatherContext.asMetar = weatherReporter->getActiveSkyMetar(airport.ident);
     fillActiveSkyType(weatherContext, airport.ident);
   }
 
-  if(flags & optsw::WEATHER_TOOLTIP_NOAA)
+  if(noaa)
     weatherContext.noaaMetar = weatherReporter->getNoaaMetar(airport.ident, airport.position);
 
-  if(flags & optsw::WEATHER_TOOLTIP_VATSIM)
+  if(vatsim)
     weatherContext.vatsimMetar = weatherReporter->getVatsimMetar(airport.ident, airport.position);
 
-  if(flags & optsw::WEATHER_TOOLTIP_IVAO)
+  if(ivao)
     weatherContext.ivaoMetar = weatherReporter->getIvaoMetar(airport.ident, airport.position);
 }
 

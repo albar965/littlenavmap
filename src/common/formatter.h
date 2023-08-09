@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -61,10 +61,17 @@ QString formatMinutesHoursDaysLong(double timeHours);
 /* Format elapsed time to minutes and seconds */
 QString formatElapsed(const QElapsedTimer& timer);
 
-/* Format wind as string with pointer */
-QString windInformation(float headWind, float crossWind);
-QString windInformationCross(float crossWind);
-QString windInformationHead(float headWind);
+/* Format wind as string with pointer. Tail head and crosswind. */
+QString windInformation(float headWindKts, float crossWindKts, const QString& separator, bool addUnit = true);
+
+/* Crosswind > 1 kts */
+QString windInformationCross(float crossWindKts, bool addUnit = true);
+
+/* Tail and headwind > 1 kts */
+QString windInformationTailHead(float headWindKts, bool addUnit = true);
+
+/* Only headwind > 1 kts and crosswind */
+QString windInformationShort(int windDirectionDeg, float windSpeedKts, float runwayEndHeading);
 
 /* Get course or heading text with magnetic and/or true course depending on settings */
 QString courseText(float magCourse, float trueCourse, bool magBold = false, bool trueSmall = true, bool narrow = false,

@@ -20,7 +20,6 @@
 #include "airspace/airspacecontroller.h"
 #include "common/htmlinfobuilder.h"
 #include "common/maptypes.h"
-#include "grib/windquery.h"
 #include "gui/mainwindow.h"
 #include "mapgui/mappaintwidget.h"
 #include "app/navapp.h"
@@ -265,7 +264,7 @@ QString MapTooltip::buildTooltip(const map::MapResult& mapSearchResult, const at
 
         map::WeatherContext currentWeatherContext;
 
-        mainWindow->buildWeatherContextForTooltip(currentWeatherContext, airport);
+        mainWindow->buildWeatherContextTooltip(currentWeatherContext, airport);
         info.airportText(airport, currentWeatherContext, html, &route);
 
         if(airport.routeIndex >= 0)

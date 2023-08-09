@@ -601,8 +601,8 @@ void InfoController::updateAirportInternal(bool newAirport, bool bearingChange, 
   if(currentSearchResult.hasAirports())
   {
     map::WeatherContext currentWeatherContext;
-    bool weatherChanged = mainWindow->buildWeatherContextForInfo(currentWeatherContext,
-                                                                 currentSearchResult.airports.constFirst());
+    bool weatherChanged = mainWindow->buildWeatherContextInfoFull(currentWeatherContext,
+                                                                  currentSearchResult.airports.constFirst());
 
     // qDebug() << Q_FUNC_INFO << "newAirport" << newAirport << "weatherChanged" << weatherChanged
     // << "ident" << currentWeatherContext.ident;
@@ -1484,7 +1484,7 @@ QStringList InfoController::getAirportTextFull(const QString& ident) const
   if(airport.isValid())
   {
     map::WeatherContext weatherContext;
-    mainWindow->buildWeatherContext(weatherContext, airport);
+    mainWindow->buildWeatherContextInfo(weatherContext, airport);
 
     atools::util::HtmlBuilder html(mapcolors::webTableBackgroundColor, mapcolors::webTableAltBackgroundColor);
     HtmlInfoBuilder builder(mainWindow, mainWindow->getMapWidget(), true /*info*/, true /*print*/);

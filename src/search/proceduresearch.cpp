@@ -17,7 +17,10 @@
 
 #include "search/proceduresearch.h"
 
+#include "app/navapp.h"
+#include "atools.h"
 #include "common/constants.h"
+#include "common/formatter.h"
 #include "common/mapcolors.h"
 #include "common/unit.h"
 #include "fs/util/fsutil.h"
@@ -27,7 +30,6 @@
 #include "gui/griddelegate.h"
 #include "gui/itemviewzoomhandler.h"
 #include "gui/widgetstate.h"
-#include "app/navapp.h"
 #include "query/airportquery.h"
 #include "query/infoquery.h"
 #include "query/mapquery.h"
@@ -39,6 +41,7 @@
 #include "sql/sqlrecord.h"
 #include "ui_mainwindow.h"
 #include "util/htmlbuilder.h"
+#include "weather/weatherreporter.h"
 
 #include <QMenu>
 #include <QMouseEvent>
@@ -56,7 +59,8 @@ enum TreeColumnIndex
   COL_RESTR = 2,
   COL_COURSE = 3,
   COL_DISTANCE = 4,
-  COL_REMARKS = 5,
+  COL_WIND = 5,
+  COL_REMARKS = 6,
   INVALID = -1
 };
 
@@ -173,7 +177,6 @@ ProcedureSearch::ProcedureSearch(QMainWindow *main, QTreeWidget *treeWidgetParam
 
   treeEventFilter = new TreeEventFilter(this);
   treeWidget->viewport()->installEventFilter(treeEventFilter);
-
 }
 
 ProcedureSearch::~ProcedureSearch()
@@ -365,19 +368,26 @@ void ProcedureSearch::updateHeaderLabel()
 
   QString tooltip, statusTip;
   Ui::MainWindow *ui = NavApp::getMainUi();
+  atools::util::HtmlBuilder html;
+
   if(currentAirportSim->isValid())
   {
-    atools::util::HtmlBuilder html;
-    html.a(map::airportTextShort(*currentAirportSim), "lnm://showairport", atools::util::html::BOLD | atools::util::html::LINK_NO_UL).br();
+    html.a(map::airportTextShort(*currentAirportSim), "lnm://showairport", atools::util::html::BOLD | atools::util::html::LINK_NO_UL);
     if(currentAirportNav->procedure())
-      html.text(procs).nbsp();
+    {
+      QString title, runwayText, sourceText;
+      NavApp::getWeatherReporter()->getBestRunwaysTextShort(title, runwayText, sourceText, *currentAirportSim);
+      if(!sourceText.isEmpty())
+        html.br().text(atools::strJoin({title, runwayText, sourceText}, tr(" ")));
+      else
+        html.br();
+      html.br().text(procs).nbsp();
+    }
     else
-      html.text(tr("Airport has no procedure.")).nbsp();
-    ui->labelProcedureSearch->setText(html.getHtml());
+      html.br().text(tr("Airport has no procedure.")).nbsp();
   }
   else
   {
-    atools::util::HtmlBuilder html;
     html.warning(tr("No Airport selected.")).br().nbsp();
     ui->labelProcedureSearch->setText(html.getHtml());
 
@@ -386,12 +396,14 @@ void ProcedureSearch::updateHeaderLabel()
                  "and select \"Show Procedures\" for an airport.</p>");
     statusTip = tr("Select \"Show Procedures\" for an airport to fill this list");
   }
+
+  ui->labelProcedureSearch->setText(html.getHtml());
   ui->labelProcedureSearch->setToolTip(tooltip);
   ui->labelProcedureSearch->setStatusTip(statusTip);
   treeWidget->setToolTip(tooltip);
   treeWidget->setStatusTip(statusTip);
 
-#ifdef DEBUG_INFORMATION
+#ifdef DEBUG_INFORMATION_PROC
   ui->labelProcedureSearch->setText(ui->labelProcedureSearch->text() + (errors ? " ***ERRORS*** " : " ---OK---"));
 
 #endif
@@ -639,6 +651,7 @@ void ProcedureSearch::fillProcedureTreeWidget()
         QString procTypeText; // RNAV 32-Y or ILS 16
         QStringList attText; // GPS Overlay, etc.
         procedureDisplayText(procTypeText, attText, recApp, type, transitionRecords != nullptr ? transitionRecords->size() : 0);
+
         QTreeWidgetItem *apprItem = buildProcedureItem(root, recApp, prefix % procTypeText, attText);
 
         if(transitionRecords != nullptr)
@@ -657,6 +670,7 @@ void ProcedureSearch::fillProcedureTreeWidget()
     itemLoadedIndex.resize(itemIndex.size());
   }
 
+  updateProcedureWind();
   treeWidget->blockSignals(false);
 }
 
@@ -743,6 +757,11 @@ void ProcedureSearch::updateTreeHeader()
 
   header->setText(COL_DISTANCE, tr("Dist./Time\n%1/min").arg(Unit::getUnitDistStr()));
   header->setToolTip(COL_DISTANCE, tr("Distance to fly in %1 or flying time in minutes.").arg(Unit::getUnitDistStr()));
+
+  header->setText(COL_WIND, tr("Head- and Crosswind\n%1").arg(Unit::getUnitSpeedStr()));
+  header->setToolTip(COL_WIND, tr("Head- and crosswind components in %1 for departure or arrival runway.\n"
+                                  "Weather source is selected in menu \"Weather\" -> \"Airport Weather Source\".\n"
+                                  "Tailwinds are omitted.").arg(Unit::getUnitSpeedStr()));
 
   header->setText(COL_REMARKS, tr("Remarks"));
   header->setToolTip(COL_REMARKS, tr("Turn instructions, flyover or related navaid for procedure legs."));
@@ -1158,8 +1177,9 @@ void ProcedureSearch::showOnMapSelected()
     emit showRect(currentAirportSim->bounding, false /* doubleClick */);
 }
 
-const proc::MapProcedureLegs *ProcedureSearch::fetchProcData(MapProcedureRef& ref, QTreeWidgetItem *item)
+MapProcedureRef ProcedureSearch::fetchProcRef(QTreeWidgetItem *item)
 {
+  MapProcedureRef ref;
   if(item != nullptr && !itemIndex.isEmpty())
   {
     MapProcedureRef procData = itemIndex.at(item->type());
@@ -1168,9 +1188,17 @@ const proc::MapProcedureLegs *ProcedureSearch::fetchProcData(MapProcedureRef& re
       procData = itemIndex.at(item->parent()->type());
 
     ref = procData;
+  }
+  return ref;
+}
+
+const proc::MapProcedureLegs *ProcedureSearch::fetchProcData(MapProcedureRef& ref, QTreeWidgetItem *item)
+{
+  ref = fetchProcRef(item);
+
+  if(!ref.isEmpty())
     // Get transition id too if SID with only transition legs is selected
     fetchSingleTransitionId(ref);
-  }
 
   const proc::MapProcedureLegs *procedureLegs = nullptr;
   // Get the aproach legs for the initial fix
@@ -1327,22 +1355,43 @@ void ProcedureSearch::procedureDisplayText(QString& procTypeText, QStringList& a
     procTypeText.append(tr(" (T)"));
 }
 
+void ProcedureSearch::updateProcedureWind()
+{
+  int windDirectionDeg;
+  float windSpeedKts;
+  NavApp::getAirportWind(windDirectionDeg, windSpeedKts, *currentAirportNav, false /* stationOnly */);
+
+  QTreeWidgetItem *root = treeWidget->invisibleRootItem();
+  for(int i = 0; i < root->childCount(); i++)
+  {
+    QTreeWidgetItem *item = root->child(i);
+    MapProcedureRef ref = fetchProcRef(item);
+
+    QString windText;
+    map::MapRunwayEnd runwayEnd = airportQueryNav->getRunwayEndById(ref.runwayEndId);
+    if(runwayEnd.isValid())
+      windText = formatter::windInformationShort(windDirectionDeg, windSpeedKts, runwayEnd.heading);
+    item->setText(COL_WIND, windText);
+  }
+}
+
 QTreeWidgetItem *ProcedureSearch::buildProcedureItem(QTreeWidgetItem *runwayItem, const SqlRecord& recApp,
                                                      const QString& procType, const QStringList& attStr)
 {
-  QString altStr;
-  // if(recApp.valueFloat("altitude") > 0.f)
-  // altStr = Unit::altFeet(recApp.valueFloat("altitude"), false);
-
   QTreeWidgetItem *item = new QTreeWidgetItem({procType, recApp.valueStr("fix_ident"),
-                                               altStr, QString(), QString(), attStr.join(tr(", "))}, itemIndex.size() - 1);
+                                               QString(), QString(), QString(), QString(), attStr.join(tr(", "))}, itemIndex.size() - 1);
   item->setChildIndicatorPolicy(QTreeWidgetItem::ShowIndicator);
   item->setTextAlignment(COL_RESTR, Qt::AlignRight);
   item->setTextAlignment(COL_COURSE, Qt::AlignRight);
   item->setTextAlignment(COL_DISTANCE, Qt::AlignRight);
 
-  for(int i = 0; i < item->columnCount(); i++)
-    item->setFont(i, procedureFont);
+  // First columns bold
+  for(int i = COL_DESCRIPTION; i <= COL_IDENT; i++)
+    item->setFont(i, procedureBoldFont);
+
+  // Rest in normal font
+  for(int i = COL_RESTR; i <= COL_REMARKS; i++)
+    item->setFont(i, procedureNormalFont);
 
   runwayItem->addChild(item);
 
@@ -1351,10 +1400,6 @@ QTreeWidgetItem *ProcedureSearch::buildProcedureItem(QTreeWidgetItem *runwayItem
 
 QTreeWidgetItem *ProcedureSearch::buildTransitionItem(QTreeWidgetItem *procItem, const SqlRecord& recTrans, bool sidOrStar)
 {
-  QString altStr;
-  // if(recTrans.valueFloat("altitude") > 0.f)
-  // altStr = Unit::altFeet(recTrans.valueFloat("altitude"), false);
-
   QStringList attStr;
   if(!sidOrStar)
   {
@@ -1364,15 +1409,20 @@ QTreeWidgetItem *ProcedureSearch::buildTransitionItem(QTreeWidgetItem *procItem,
       attStr.append(tr("DME"));
   }
 
-  QTreeWidgetItem *item = new QTreeWidgetItem(
-    {tr("Transition"), recTrans.valueStr("fix_ident"), altStr, QString(), QString(), attStr.join(tr(", "))}, itemIndex.size() - 1);
+  QTreeWidgetItem *item = new QTreeWidgetItem({tr("Transition"), recTrans.valueStr("fix_ident"), QString(),
+                                               QString(), QString(), QString(), attStr.join(tr(", "))}, itemIndex.size() - 1);
   item->setChildIndicatorPolicy(QTreeWidgetItem::ShowIndicator);
   item->setTextAlignment(COL_RESTR, Qt::AlignRight);
   item->setTextAlignment(COL_COURSE, Qt::AlignRight);
   item->setTextAlignment(COL_DISTANCE, Qt::AlignRight);
 
-  for(int i = 0; i < item->columnCount(); i++)
-    item->setFont(i, transitionFont);
+  // First columns bold
+  for(int i = COL_DESCRIPTION; i <= COL_IDENT; i++)
+    item->setFont(i, procedureBoldFont);
+
+  // Rest normal
+  for(int i = COL_RESTR; i <= COL_REMARKS; i++)
+    item->setFont(i, procedureNormalFont);
 
   procItem->addChild(item);
 
@@ -1381,14 +1431,14 @@ QTreeWidgetItem *ProcedureSearch::buildTransitionItem(QTreeWidgetItem *procItem,
 
 QTreeWidgetItem *ProcedureSearch::buildLegItem(const MapProcedureLeg& leg)
 {
-  QStringList texts;
   QIcon icon;
   int fontHeight = treeWidget->fontMetrics().height();
 
+  QStringList texts;
   texts << proc::procedureLegTypeStr(leg.type);
   texts << proc::procedureLegFixStr(leg);
-
   texts << proc::restrictionText(leg).join(tr(", ")) << proc::procedureLegCourse(leg) << proc::procedureLegDistance(leg);
+  texts << QString(); // Wind filled in updateProcedureWind()
 
   QStringList remarkStr = proc::procedureLegRemark(leg);
 
@@ -1541,24 +1591,11 @@ void ProcedureSearch::restoreTreeViewState(const QBitArray& state, bool blockSig
 
 void ProcedureSearch::createFonts()
 {
-  const QFont& font = treeWidget->font();
-  identFont = font;
+
+  identFont = procedureNormalFont = procedureBoldFont = legFont = missedLegFont = invalidLegFont = treeWidget->font();
   identFont.setWeight(QFont::Bold);
-
-  procedureFont = font;
-  procedureFont.setWeight(QFont::Bold);
-
-  transitionFont = font;
-  transitionFont.setWeight(QFont::Bold);
-
-  legFont = font;
-  // legFont.setPointSizeF(legFont.pointSizeF() * 0.85f);
-
-  missedLegFont = font;
-  // missedLegFont.setItalic(true);
-
-  invalidLegFont = legFont;
-  invalidLegFont.setBold(true);
+  procedureBoldFont.setWeight(QFont::Bold);
+  invalidLegFont.setWeight(QFont::Bold);
 }
 
 void ProcedureSearch::getSelectedMapObjects(map::MapResult&) const
@@ -1595,6 +1632,12 @@ void ProcedureSearch::clearSelection()
 bool ProcedureSearch::hasSelection() const
 {
   return treeWidget->selectionModel()->hasSelection() || NavApp::getMainUi()->pushButtonProcedureShowAll->isChecked();
+}
+
+void ProcedureSearch::weatherUpdated()
+{
+  updateHeaderLabel();
+  updateProcedureWind();
 }
 
 /* Update highlights if dock is hidden or shown (does not change for dock tab stacks) */

@@ -1081,10 +1081,15 @@ WindReporter *NavApp::getWindReporter()
   return mainWindow->getWindReporter();
 }
 
-atools::fs::weather::Metar NavApp::getAirportWeather(const QString& airportIcao, const atools::geo::Pos& airportPos)
+atools::fs::weather::Metar NavApp::getAirportWeather(const QString& airportIcao, const atools::geo::Pos& airportPos, bool stationOnly)
 {
   return mainWindow->getWeatherReporter()->getAirportWeather(airportIcao, airportPos,
-                                                             mainWindow->getMapWidget()->getMapWeatherSource());
+                                                             mainWindow->getMapWidget()->getMapWeatherSource(), stationOnly);
+}
+
+void NavApp::getAirportWind(int& windDirectionDeg, float& windSpeedKts, const map::MapAirport& airport, bool stationOnly)
+{
+  mainWindow->getWeatherReporter()->getAirportWind(windDirectionDeg, windSpeedKts, airport, stationOnly);
 }
 
 map::MapWeatherSource NavApp::getAirportWeatherSource()

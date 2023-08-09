@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -19,24 +19,11 @@
 #define LITTLENAVMAP_ROUTECOMMAND_H
 
 #include "fs/pln/flightplan.h"
+#include "route/routecommandflags.h"
 
 #include <QUndoCommand>
 
 class RouteController;
-
-namespace rctype {
-/* Command type used to merge undo actions */
-enum RouteCmdType
-{
-  EDIT = -1, /* Unmergeable edit */
-  DELETE = 0, /* Waypoint(s) deleted in table */
-  MOVE = 1, /* Waypoint(s) moved in table */
-  ALTITUDE = 2, /* Altitude changed in spin box */
-  REVERSE = 4, /* Route reverse action */
-  REMARKS = 5 /* Route remarks edited */
-};
-
-}
 
 /*
  * Flight plan undo command including a few workaround for QUndoCommand inflexibilities.

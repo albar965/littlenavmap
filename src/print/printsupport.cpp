@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -27,7 +27,6 @@
 #include "util/htmlbuilder.h"
 #include "print/printdialog.h"
 #include "common/htmlinfobuilder.h"
-#include "weather/weatherreporter.h"
 #include "gui/mainwindow.h"
 
 #include <QPainter>
@@ -94,8 +93,8 @@ void PrintSupport::fillWeatherCache()
   if(!route.isEmpty())
   {
     map::WeatherContext currentWeatherContext;
-    mainWindow->buildWeatherContext(currentWeatherContext, route.getDepartureAirportLeg().getAirport());
-    mainWindow->buildWeatherContext(currentWeatherContext, route.getDestinationAirportLeg().getAirport());
+    mainWindow->buildWeatherContextInfo(currentWeatherContext, route.getDepartureAirportLeg().getAirport());
+    mainWindow->buildWeatherContextInfo(currentWeatherContext, route.getDestinationAirportLeg().getAirport());
   }
 }
 
@@ -254,7 +253,7 @@ void PrintSupport::addAirport(QTextCursor& cursor, const map::MapAirport& airpor
   HtmlBuilder html(mapcolors::mapPrintRowColor, mapcolors::mapPrintRowColorAlt);
   if(departure ? (opts& prt::DEPARTURE_OVERVIEW) : (opts & prt::DESTINATION_OVERVIEW))
   {
-    mainWindow->buildWeatherContext(weatherContext, airport);
+    mainWindow->buildWeatherContextInfo(weatherContext, airport);
     if(!newPage)
       html.hr();
     html.h2(tr("%1 Airport").arg(prefix));

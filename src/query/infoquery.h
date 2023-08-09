@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2022 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -23,6 +23,9 @@
 #include <QCache>
 #include <QObject>
 
+namespace maptools {
+class RwVector;
+}
 namespace atools {
 namespace sql {
 class SqlDatabase;
@@ -74,6 +77,9 @@ public:
 
   /* Get record for table runway_end */
   const atools::sql::SqlRecord *getRunwayEndInformation(int runwayEndId);
+
+  /* Get runways paired with runway ends. Closed are excluded. */
+  void getRunwayEnds(maptools::RwVector& ends, int airportId);
 
   const atools::sql::SqlRecordList *getHelipadInformation(int airportId);
   const atools::sql::SqlRecordList *getStartInformation(int airportId);

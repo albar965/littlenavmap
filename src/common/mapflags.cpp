@@ -194,10 +194,10 @@ QString mapWeatherSourceString(MapWeatherSource source)
       return QObject::tr("Disabled");
 
     case map::WEATHER_SOURCE_SIMULATOR:
-      return QObject::tr("Simulator");
+      return QObject::tr("Flight Simulator");
 
     case map::WEATHER_SOURCE_ACTIVE_SKY:
-      return QObject::tr("ActiveSky");
+      return QObject::tr("Active Sky");
 
     case map::WEATHER_SOURCE_NOAA:
       return QObject::tr("NOAA");

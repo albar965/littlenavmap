@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2022 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -19,6 +19,7 @@
 #define LITTLENAVMAP_MAPHTMLINFOBUILDER_H
 
 #include "grib/windtypes.h"
+#include "common/mapflags.h"
 
 #include <QCoreApplication>
 #include <QLocale>
@@ -155,6 +156,10 @@ public:
   void runwayText(const map::MapAirport& airport, atools::util::HtmlBuilder& html,
                   bool details = true, bool soft = true) const;
 
+  /* Adds text for preferred runways */
+  void bestRunwaysText(const map::MapAirport& airport, atools::util::HtmlBuilder& html,
+                       const atools::fs::weather::MetarParser& parsed, int max, bool details) const;
+
   /*
    * Creates a HTML description for all COM frequencies of an airport.
    * @param airport
@@ -254,8 +259,7 @@ public:
    * @param helipad
    * @param html Result containing HTML snippet
    */
-  void helipadText(const map::MapHelipad& helipad,
-                   atools::util::HtmlBuilder& html) const;
+  void helipadText(const map::MapHelipad& helipad, atools::util::HtmlBuilder& html) const;
 
   /*
    * Creates a HTML description for a all upper layer winds at position
@@ -277,10 +281,8 @@ public:
    * @param data
    * @param html Result containing HTML snippet
    */
-  void aircraftText(const atools::fs::sc::SimConnectAircraft& aircraft,
-                    atools::util::HtmlBuilder& html, int num = -1, int total = -1);
-  void aircraftTextWeightAndFuel(const atools::fs::sc::SimConnectUserAircraft& userAircraft,
-                                 atools::util::HtmlBuilder& html) const;
+  void aircraftText(const atools::fs::sc::SimConnectAircraft& aircraft, atools::util::HtmlBuilder& html, int num = -1, int total = -1);
+  void aircraftTextWeightAndFuel(const atools::fs::sc::SimConnectUserAircraft& userAircraft, atools::util::HtmlBuilder& html) const;
 
   /*
    * Creates a HTML description for simulator user aircraft progress and ambient values.
@@ -381,11 +383,11 @@ private:
   void aircraftTitle(const atools::fs::sc::SimConnectAircraft& aircraft,
                      atools::util::HtmlBuilder& html);
 
-  void dateTimeAndFlown(const atools::fs::sc::SimConnectUserAircraft *userAircraft,
-                        atools::util::HtmlBuilder& html) const;
+  void dateTimeAndFlown(const atools::fs::sc::SimConnectUserAircraft *userAircraft, atools::util::HtmlBuilder& html) const;
+  void addMetarLines(atools::util::HtmlBuilder& html, const map::WeatherContext& weatherContext, map::MapWeatherSource src,
+                     const map::MapAirport& airport) const;
   void addMetarLine(atools::util::HtmlBuilder& html, const QString& header, const map::MapAirport& airport,
-                    const QString& metar, const QString& station,
-                    const QDateTime& timestamp, bool fsMetar, bool mapDisplay) const;
+                    const QString& metar, const QString& station, const QDateTime& timestamp, bool fsMetar, bool mapDisplay) const;
 
   void decodedMetar(atools::util::HtmlBuilder& html, const map::MapAirport& airport,
                     const map::MapAirport& reportAirport, const atools::fs::weather::Metar& metar,
@@ -393,8 +395,6 @@ private:
   void decodedMetars(atools::util::HtmlBuilder& html, const atools::fs::weather::MetarResult& metar,
                      const map::MapAirport& airport, const QString& name, bool mapDisplay) const;
 
-  bool buildWeatherContext(map::WeatherContext& lastContext, map::WeatherContext& newContext,
-                           const map::MapAirport& airport);
   void addRadionavFixType(atools::util::HtmlBuilder& html, const atools::sql::SqlRecord& recApp) const;
 
   QString filepathTextShow(const QString& filepath, const QString& prefix = QString(), bool canonical = false) const;
@@ -409,9 +409,7 @@ private:
   QString airportLink(const atools::util::HtmlBuilder& html, const QString& ident,
                       const QString& name, const atools::geo::Pos& pos) const;
 
-  /* Adds text for preferred runways */
-  void bestRunwaysText(const map::MapAirport& airport, atools::util::HtmlBuilder& html,
-                       const atools::fs::weather::MetarParser& parsed, int max, bool details) const;
+  /* Adds text for remarks */
   void descriptionText(const QString& descriptionText, atools::util::HtmlBuilder& html) const;
 
   /* Add morse code row2line */

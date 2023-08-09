@@ -41,6 +41,7 @@ Q_DECL_CONSTEXPR static float INVALID_TIME_VALUE = std::numeric_limits<float>::m
 Q_DECL_CONSTEXPR static float INVALID_WEIGHT_VALUE = std::numeric_limits<float>::max();
 Q_DECL_CONSTEXPR static float INVALID_VOLUME_VALUE = std::numeric_limits<float>::max();
 Q_DECL_CONSTEXPR static float INVALID_LON_LAT_VALUE = std::numeric_limits<float>::max();
+Q_DECL_CONSTEXPR static float INVALID_METAR_VALUE = std::numeric_limits<float>::max(); // Same as in metarparser.h
 Q_DECL_CONSTEXPR static int INVALID_INDEX_VALUE = std::numeric_limits<int>::max();
 
 Q_DECL_CONSTEXPR static float INVALID_MAGVAR = 9999.f;
@@ -339,7 +340,7 @@ extern const QVector<map::MapAirspaceSources> MAP_AIRSPACE_SRC_NO_ONLINE_VALUES;
 /* Airspace filter flags */
 enum MapAirspaceFlag
 {
-  AIRSPACE_ALTITUDE_FLAG_NONE = 0,   /* Indicates that filter is used only for type */
+  AIRSPACE_ALTITUDE_FLAG_NONE = 0, /* Indicates that filter is used only for type */
 
   /* Special filter flags - not airspace types */
   AIRSPACE_ALTITUDE_ALL = 1 << 0,

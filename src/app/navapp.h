@@ -67,6 +67,9 @@ class MapThemeHandler;
 class QAction;
 class DataExchange;
 
+namespace map {
+class MapAirport;
+}
 namespace atools {
 namespace util {
 class Properties;
@@ -298,7 +301,9 @@ public:
   static bool isGlobeDirValid();
 
   static WeatherReporter *getWeatherReporter();
-  static atools::fs::weather::Metar getAirportWeather(const QString& airportIcao, const atools::geo::Pos& airportPos);
+  static atools::fs::weather::Metar getAirportWeather(const QString& airportIcao, const atools::geo::Pos& airportPos, bool stationOnly);
+  static void getAirportWind(int& windDirectionDeg, float& windSpeedKts, const map::MapAirport& airport, bool stationOnly);
+
   static map::MapWeatherSource getAirportWeatherSource();
   static WindReporter *getWindReporter();
 

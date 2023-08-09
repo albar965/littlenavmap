@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -20,12 +20,12 @@
 #include "fs/util/fsutil.h"
 
 #include "atools.h"
+#include "common/mapflags.h"
 #include "fs/util/coordinates.h"
 #include "geo/calculations.h"
-#include "common/mapflags.h"
+#include "geo/pos.h"
 #include "unit.h"
 #include "util/htmlbuilder.h"
-#include "geo/pos.h"
 
 #include <QDateTime>
 #include <QElapsedTimer>
@@ -223,14 +223,14 @@ QDateTime readDateTime(QString str)
   return retval;
 }
 
-QString windInformationHead(float headWind)
+QString windInformationTailHead(float headWindKts, bool addUnit)
 {
   QString windPtr;
-  if(std::abs(headWind) >= 1.0f)
+  if(std::abs(headWindKts) >= 1.0f)
   {
-    windPtr += Unit::speedKts(std::abs(headWind));
+    windPtr += Unit::speedKts(std::abs(headWindKts), addUnit);
 
-    if(headWind <= -1.f)
+    if(headWindKts <= -1.f)
       windPtr += QObject::tr(" ▲"); // Tailwind
     else
       windPtr += QObject::tr(" ▼"); // Headwind
@@ -238,28 +238,43 @@ QString windInformationHead(float headWind)
   return windPtr;
 }
 
-QString windInformationCross(float crossWind)
+QString windInformationCross(float crossWindKts, bool addUnit)
 {
   QString windPtr;
-  if(std::abs(crossWind) >= 1.0f)
+  if(std::abs(crossWindKts) >= 0.5f) // Rounded up to 1
   {
-    windPtr += Unit::speedKts(std::abs(crossWind));
+    windPtr += Unit::speedKts(std::abs(crossWindKts), addUnit);
 
-    if(crossWind >= 1.f)
+    if(crossWindKts > 0.f)
       windPtr += QObject::tr(" ◄");
-    else if(crossWind <= -1.f)
+    else if(crossWindKts < 0.f)
       windPtr += QObject::tr(" ►");
   }
   return windPtr;
 }
 
-QString windInformation(float headWind, float crossWind)
+QString windInformation(float headWindKts, float crossWindKts, const QString& separator, bool addUnit)
 {
   QStringList windTxt;
-  windTxt.append(windInformationHead(headWind));
-  windTxt.append(windInformationCross(crossWind));
+  windTxt.append(windInformationTailHead(headWindKts, addUnit));
+  windTxt.append(windInformationCross(crossWindKts, addUnit));
   windTxt.removeAll(QString());
-  return windTxt.join(QObject::tr(", "));
+  return windTxt.join(separator);
+}
+
+QString windInformationShort(int windDirectionDeg, float windSpeedKts, float runwayEndHeading)
+{
+  QString windStr;
+  if(windDirectionDeg != -1 && windSpeedKts >= 1.f && windSpeedKts < map::INVALID_METAR_VALUE)
+  {
+    float headWindKts, crossWindKts;
+    atools::geo::windForCourse(headWindKts, crossWindKts, windSpeedKts, windDirectionDeg, runwayEndHeading);
+
+    // Only show for head wind > 1
+    if(headWindKts >= 1.f)
+      windStr = formatter::windInformation(headWindKts, crossWindKts, QObject::tr(" "), false /* addUnit */);
+  }
+  return windStr;
 }
 
 QString courseTextFromTrue(float trueCourse, float magvar, bool magBold, bool trueSmall, bool narrow, bool forceBoth)

@@ -19,6 +19,8 @@
 
 #include "atools.h"
 #include "common/constants.h"
+#include "common/maptools.h"
+#include "common/maptypes.h"
 #include "connect/connectclient.h"
 #include "fs/weather/metar.h"
 #include "fs/weather/metarparser.h"
@@ -30,6 +32,7 @@
 #include "app/navapp.h"
 #include "options/optiondata.h"
 #include "query/airportquery.h"
+#include "query/infoquery.h"
 #include "settings/settings.h"
 #include "util/filesystemwatcher.h"
 #include "util/filechecker.h"
@@ -752,8 +755,7 @@ void WeatherReporter::weatherDownloadSslErrors(const QStringList& errors, const 
                                   QMessageBox::Cancel | QMessageBox::Yes,
                                   QMessageBox::Cancel, QMessageBox::Yes);
 
-  atools::fs::weather::WeatherDownloadBase *downloader =
-    dynamic_cast<atools::fs::weather::WeatherDownloadBase *>(sender());
+  atools::fs::weather::WeatherDownloadBase *downloader = dynamic_cast<atools::fs::weather::WeatherDownloadBase *>(sender());
 
   if(downloader != nullptr)
     downloader->setIgnoreSslErrors(result == QMessageBox::Yes);
@@ -830,8 +832,11 @@ atools::fs::weather::MetarResult WeatherReporter::getIvaoMetar(const QString& ai
 }
 
 atools::fs::weather::Metar WeatherReporter::getAirportWeather(const QString& airportIcao, const atools::geo::Pos& airportPos,
-                                                              map::MapWeatherSource source)
+                                                              map::MapWeatherSource source, bool stationOnly)
 {
+  // Empty position forces station only instead of allowing nearest
+  const atools::geo::Pos& pos = stationOnly ? atools::geo::EMPTY_POS : airportPos;
+
   switch(source)
   {
     case map::WEATHER_SOURCE_DISABLED:
@@ -840,11 +845,10 @@ atools::fs::weather::Metar WeatherReporter::getAirportWeather(const QString& air
     case map::WEATHER_SOURCE_SIMULATOR:
       if(atools::fs::FsPaths::isAnyXplane(NavApp::getCurrentSimulatorDb()))
         // X-Plane weather file
-        return Metar(getXplaneMetar(airportIcao, atools::geo::EMPTY_POS).metarForStation);
+        return Metar(getXplaneMetar(airportIcao, pos).getMetar(stationOnly));
       else if(NavApp::isConnected() /*&& !NavApp::getConnectClient()->isConnectedNetwork()*/)
       {
-        atools::fs::weather::MetarResult res =
-          NavApp::getConnectClient()->requestWeather(airportIcao, airportPos, true);
+        atools::fs::weather::MetarResult res = NavApp::getConnectClient()->requestWeather(airportIcao, airportPos, true);
 
         if(res.isValid() && !res.metarForStation.isEmpty())
           // FSX/P3D - Flight simulator fetched weather or network connection
@@ -856,15 +860,68 @@ atools::fs::weather::Metar WeatherReporter::getAirportWeather(const QString& air
       return Metar(getActiveSkyMetar(airportIcao));
 
     case map::WEATHER_SOURCE_NOAA:
-      return Metar(getNoaaMetar(airportIcao, atools::geo::EMPTY_POS).metarForStation);
+      return Metar(getNoaaMetar(airportIcao, pos).getMetar(stationOnly));
 
     case map::WEATHER_SOURCE_VATSIM:
-      return Metar(getVatsimMetar(airportIcao, atools::geo::EMPTY_POS).metarForStation);
+      return Metar(getVatsimMetar(airportIcao, pos).getMetar(stationOnly));
 
     case map::WEATHER_SOURCE_IVAO:
-      return Metar(getIvaoMetar(airportIcao, atools::geo::EMPTY_POS).metarForStation);
+      return Metar(getIvaoMetar(airportIcao, pos).getMetar(stationOnly));
   }
   return Metar();
+}
+
+void WeatherReporter::getAirportWind(int& windDirectionDeg, float& windSpeedKts, const map::MapAirport& airport, bool stationOnly)
+{
+  atools::fs::weather::Metar metar = getAirportWeather(airport.ident, airport.position, NavApp::getMapWeatherSource(), stationOnly);
+  const atools::fs::weather::MetarParser& parsed = metar.getParsedMetar();
+  windDirectionDeg = parsed.getWindDir();
+  windSpeedKts = parsed.getWindSpeedKts();
+}
+
+void WeatherReporter::getBestRunwaysTextShort(QString& title, QString& runwayNumbers, QString& sourceText, const map::MapAirport& airport)
+{
+  if(NavApp::getAirportWeatherSource() != map::WEATHER_SOURCE_DISABLED)
+  {
+    int windDirectionDeg;
+    float windSpeedKts;
+    getAirportWind(windDirectionDeg, windSpeedKts, airport, false /* stationOnly */);
+
+    // Need wind direction and speed - otherwise all runways are good =======================
+    if(windDirectionDeg != -1 && windSpeedKts < atools::fs::weather::INVALID_METAR_VALUE)
+    {
+      // Sorted by wind and merged for same direction
+      maptools::RwVector ends(windSpeedKts, windDirectionDeg);
+      NavApp::getInfoQuery()->getRunwayEnds(ends, airport.id);
+
+      if(!ends.isEmpty())
+      {
+        // Simple runway list for tooltips only with headwind > 1
+        QStringList runways;
+        for(const maptools::RwEnd& end : ends)
+        {
+          if(end.headWind <= 2)
+            break;
+          runways.append(end.names);
+        }
+
+        if(!runways.isEmpty())
+        {
+          title = runways.size() == 1 ? tr("Wind prefers runway:") : tr("Wind prefers runways:");
+          runwayNumbers = tr("%1.").arg(atools::strJoin(runways.mid(0, 4), tr(", "), tr(" and ")));
+        }
+      }
+
+      if(runwayNumbers.isEmpty())
+        title = tr("All runways good for takeoff and landing.");
+    }
+    else
+      title = tr("No wind information.");
+
+    sourceText = tr("Using airport weather source \"%1\".").arg(map::mapWeatherSourceString(NavApp::getAirportWeatherSource()));
+  }
+  else
+    sourceText = tr("Airport weather source is disabled in menu \"Weather\" -> \"Airport Weather Source\".");
 }
 
 void WeatherReporter::preDatabaseLoad()

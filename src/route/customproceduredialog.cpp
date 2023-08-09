@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -25,16 +25,14 @@
 #include "gui/helphandler.h"
 #include "gui/runwayselection.h"
 #include "gui/widgetstate.h"
-#include "settings/settings.h"
 #include "ui_customproceduredialog.h"
 
 #include <QPushButton>
 #include <QStringBuilder>
 
-
 CustomProcedureDialog::CustomProcedureDialog(QWidget *parent, const map::MapAirport& mapAirport, bool departureParam,
-                                             const QString& dialogHeader) :
-  QDialog(parent), ui(new Ui::CustomProcedureDialog), departure(departureParam)
+                                             const QString& dialogHeader)
+  : QDialog(parent), ui(new Ui::CustomProcedureDialog), departure(departureParam)
 {
   setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
   setWindowModality(Qt::ApplicationModal);
@@ -50,8 +48,8 @@ CustomProcedureDialog::CustomProcedureDialog(QWidget *parent, const map::MapAirp
   connect(ui->spinBoxCustomProcAlt, QOverload<int>::of(&QSpinBox::valueChanged), this, &CustomProcedureDialog::updateWidgets);
   connect(ui->spinBoxCustomProcAngle, QOverload<int>::of(&QSpinBox::valueChanged), this, &CustomProcedureDialog::updateWidgets);
   connect(ui->buttonBoxCustomProc, &QDialogButtonBox::clicked, this, &CustomProcedureDialog::buttonBoxClicked);
-  connect(ui->doubleSpinBoxCustomProcDist, QOverload<double>::of(&QDoubleSpinBox::valueChanged), this,
-          &CustomProcedureDialog::updateWidgets);
+  connect(ui->doubleSpinBoxCustomProcDist, QOverload<double>::of(&QDoubleSpinBox::valueChanged),
+          this, &CustomProcedureDialog::updateWidgets);
 
   restoreState();
 
