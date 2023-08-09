@@ -907,15 +907,18 @@ void MapPainterMark::paintSelectedAltitudeRange()
         atools::util::PainterContextSaver saver(painter);
         if(rangeDistanceNm > 0.5f && rangeDistanceNm < 1000.f)
         {
-          float lineWidth = context->szF(context->thicknessUserFeature, mapcolors::markSelectedAltitudeRangePen.width());
-          painter->setPen(mapcolors::adjustWidth(mapcolors::markSelectedAltitudeRangePen, lineWidth));
-          painter->setBrush(Qt::NoBrush);
-          context->szFont(context->textSizeRangeUserFeature);
+          if(scale->getPixelForNm(rangeDistanceNm, userAircraft.getTrackDegTrue()) > 16)
+          {
+            float lineWidth = context->szF(context->thicknessUserFeature, mapcolors::markSelectedAltitudeRangePen.width());
+            painter->setPen(mapcolors::adjustWidth(mapcolors::markSelectedAltitudeRangePen, lineWidth));
+            painter->setBrush(Qt::NoBrush);
+            context->szFont(context->textSizeRangeUserFeature);
 
-          // Draw arc
-          float arcAngleStart = ageo::normalizeCourse(userAircraft.getTrackDegTrue() - 45.f);
-          float arcAngleEnd = ageo::normalizeCourse(userAircraft.getTrackDegTrue() + 45.f);
-          paintArc(painter, pos, rangeDistanceNm, arcAngleStart, arcAngleEnd, context->drawFast);
+            // Draw arc
+            float arcAngleStart = ageo::normalizeCourse(userAircraft.getTrackDegTrue() - 45.f);
+            float arcAngleEnd = ageo::normalizeCourse(userAircraft.getTrackDegTrue() + 45.f);
+            paintArc(painter, pos, rangeDistanceNm, arcAngleStart, arcAngleEnd, context->drawFast);
+          }
         }
       }
     }
