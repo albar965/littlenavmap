@@ -76,7 +76,7 @@ const static float MAX_RUNWAY_DISTANCE_METER = 150.f; // First iteration
 const static float MAX_RUNWAY_DISTANCE_METER_2 = 2000.f; // Second iteration if first failed
 const static float MAX_RUNWAY_DISTANCE_METER_3 = 10000.f; // Third iteration if second failed
 
-const static float MAX_FUZZY_AIRPORT_DISTANCE_METER = 5000.f;
+const static float MAX_FUZZY_AIRPORT_DISTANCE_METER = 500.f;
 
 AirportQuery::AirportQuery(atools::sql::SqlDatabase *sqlDb, bool nav)
   : navdata(nav), db(sqlDb)
