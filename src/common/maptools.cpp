@@ -18,6 +18,7 @@
 #include "common/maptools.h"
 
 #include "common/maptypes.h"
+#include "fs/util/fsutil.h"
 
 namespace maptools {
 
@@ -108,6 +109,21 @@ void RwVector::sortRunwayEnds()
   }
   else if(size() == 1)
     totalNumber = constFirst().names.size();
+}
+
+QStringList RwVector::getSortedRunways(int minHeadWind)
+{
+  QStringList runways;
+  for(const maptools::RwEnd& end : *this)
+  {
+    if(end.headWind <= minHeadWind)
+      break;
+    runways.append(end.names);
+  }
+
+  // Sort by number and designator
+  std::sort(runways.begin(), runways.end(), atools::fs::util::compareRunwayNumber);
+  return runways;
 }
 
 } // namespace maptools

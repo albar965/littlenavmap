@@ -784,17 +784,10 @@ void HtmlInfoBuilder::bestRunwaysText(const MapAirport& airport, HtmlBuilder& ht
     else
     {
       // Simple runway list for tooltips only with headwind > 2
-      QStringList runways;
-      for(const maptools::RwEnd& end : ends)
-      {
-        if(end.headWind <= 2)
-          break;
-        runways.append(end.names);
-      }
+      QStringList runways = ends.getSortedRunways(2);
 
       if(!runways.isEmpty())
       {
-        std::sort(runways.begin(), runways.end(), atools::fs::util::compareRunwayNumber);
         html.br().b((ends.getTotalNumber() == 1 ? tr(" Wind prefers runway: ") : tr(" Wind prefers runways: "))).
         text(runways.mid(0, 4).join(tr(", ")));
       }

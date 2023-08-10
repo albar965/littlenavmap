@@ -22,7 +22,6 @@
 #include "common/maptools.h"
 #include "common/maptypes.h"
 #include "connect/connectclient.h"
-#include "fs/util/fsutil.h"
 #include "fs/weather/metar.h"
 #include "fs/weather/metarparser.h"
 #include "fs/weather/noaaweatherdownloader.h"
@@ -898,18 +897,9 @@ void WeatherReporter::getBestRunwaysTextShort(QString& title, QString& runwayNum
       if(!ends.isEmpty())
       {
         // Simple runway list for tooltips only with headwind > 1
-        QStringList runways;
-        for(const maptools::RwEnd& end : ends)
-        {
-          if(end.headWind <= 2)
-            break;
-          runways.append(end.names);
-        }
-
+        QStringList runways = ends.getSortedRunways(2);
         if(!runways.isEmpty())
         {
-          // Sort by number and designator
-          std::sort(runways.begin(), runways.end(), atools::fs::util::compareRunwayNumber);
           title = runways.size() == 1 ? tr("Wind prefers runway:") : tr("Wind prefers runways:");
           runwayNumbers = tr("%1.").arg(atools::strJoin(runways.mid(0, 4), tr(", "), tr(" and ")));
         }

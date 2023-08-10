@@ -389,6 +389,9 @@ public:
     minSpeed = value;
   }
 
+  /* Get names numerically sorted having minHeadWind */
+  QStringList getSortedRunways(int minHeadWind);
+
 private:
   float speed, direction, minSpeed = 0.5f;
   int totalNumber = 0;
