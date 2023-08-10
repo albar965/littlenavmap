@@ -793,8 +793,11 @@ void HtmlInfoBuilder::bestRunwaysText(const MapAirport& airport, HtmlBuilder& ht
       }
 
       if(!runways.isEmpty())
+      {
+        std::sort(runways.begin(), runways.end(), atools::fs::util::compareRunwayNumber);
         html.br().b((ends.getTotalNumber() == 1 ? tr(" Wind prefers runway: ") : tr(" Wind prefers runways: "))).
         text(runways.mid(0, 4).join(tr(", ")));
+      }
     }
   }
   else if(details)
