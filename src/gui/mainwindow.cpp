@@ -81,6 +81,8 @@
 #include "userdata/userdatacontroller.h"
 #include "util/htmlbuilder.h"
 #include "util/version.h"
+#include "weather/weathercontext.h"
+#include "weather/weathercontexthandler.h"
 #include "weather/weatherreporter.h"
 #include "weather/windreporter.h"
 #include "web/webcontroller.h"
@@ -213,7 +215,6 @@ MainWindow::MainWindow()
     marbleAboutDialog = new Marble::MarbleAboutDialog(this);
     marbleAboutDialog->setApplicationTitle(QApplication::applicationName());
 
-    currentWeatherContext = new map::WeatherContext;
 
     routeExport = new RouteExport(this);
     simbriefHandler = new SimBriefHandler(this);
@@ -276,6 +277,7 @@ MainWindow::MainWindow()
 
     qDebug() << Q_FUNC_INFO << "Creating WeatherReporter";
     weatherReporter = new WeatherReporter(this, NavApp::getCurrentSimulatorDb());
+    weatherContextHandler = new WeatherContextHandler(weatherReporter, NavApp::getConnectClient());
 
     qDebug() << Q_FUNC_INFO << "Creating WindReporter";
     windReporter = new WindReporter(this, NavApp::getCurrentSimulatorDb());
@@ -574,13 +576,13 @@ MainWindow::~MainWindow()
   delete actionGroupMapWeatherWindSource;
   actionGroupMapWeatherWindSource = nullptr;
 
-  qDebug() << Q_FUNC_INFO << "delete currentWeatherContext";
-  delete currentWeatherContext;
-  currentWeatherContext = nullptr;
-
   qDebug() << Q_FUNC_INFO << "delete routeExport";
   delete routeExport;
   routeExport = nullptr;
+
+  qDebug() << Q_FUNC_INFO << "delete weatherContextHandler";
+  delete weatherContextHandler;
+  weatherContextHandler = nullptr;
 
   qDebug() << Q_FUNC_INFO << "delete simbriefHandler";
   delete simbriefHandler;
@@ -1024,7 +1026,7 @@ void MainWindow::connectAllSlots()
   connect(optionsDialog, &OptionsDialog::optionsChanged, this, &MainWindow::clearProcedureCache);
 
   // Reset weather context first
-  connect(optionsDialog, &OptionsDialog::optionsChanged, this, &MainWindow::clearWeatherContext);
+  connect(optionsDialog, &OptionsDialog::optionsChanged, weatherContextHandler, &WeatherContextHandler::clearWeatherContext);
 
   connect(optionsDialog, &OptionsDialog::optionsChanged, NavApp::getAirspaceController(), &AirspaceController::optionsChanged);
 
@@ -4423,7 +4425,7 @@ void MainWindow::preDatabaseLoad()
 
     NavApp::preDatabaseLoad();
 
-    clearWeatherContext();
+    weatherContextHandler->clearWeatherContext();
   }
   else
     qWarning() << "Already in database loading status";
@@ -4467,177 +4469,6 @@ void MainWindow::postDatabaseLoad(atools::fs::FsPaths::SimulatorType type)
   updateMapObjectsShown();
 
   NavApp::logDatabaseMeta();
-}
-
-bool MainWindow::buildWeatherContextInfoFull(map::WeatherContext& weatherContext, const map::MapAirport& airport)
-{
-  optsw::FlagsWeather flags = OptionData::instance().getFlagsWeather();
-  bool changed = false;
-  bool newAirport = currentWeatherContext->ident != airport.ident;
-
-#ifdef DEBUG_INFORMATION_WEATHER
-  qDebug() << Q_FUNC_INFO;
-#endif
-
-  currentWeatherContext->ident = airport.ident;
-
-  if(flags & optsw::WEATHER_INFO_FS)
-  {
-    if(atools::fs::FsPaths::isAnyXplane(NavApp::getCurrentSimulatorDb()))
-    {
-      currentWeatherContext->fsMetar = weatherReporter->getXplaneMetar(airport.ident, airport.position);
-      changed = true;
-    }
-    else if(NavApp::isConnected())
-    {
-      // FSX/P3D - Flight simulator fetched weather
-      atools::fs::weather::MetarResult metar =
-        NavApp::getConnectClient()->requestWeather(airport.ident, airport.position, false /* station only */);
-
-      if(newAirport || (!metar.isEmpty() && metar != currentWeatherContext->fsMetar))
-      {
-        // Airport has changed or METAR has changed
-        currentWeatherContext->fsMetar = metar;
-        changed = true;
-      }
-    }
-    else
-    {
-      if(!currentWeatherContext->fsMetar.isEmpty())
-      {
-        // If there was a previous metar and the new one is empty we were being disconnected
-        currentWeatherContext->fsMetar = atools::fs::weather::MetarResult();
-        changed = true;
-      }
-    }
-  }
-
-  if(flags & optsw::WEATHER_INFO_ACTIVESKY)
-  {
-    fillActiveSkyType(*currentWeatherContext, airport.ident);
-
-    QString metarStr = weatherReporter->getActiveSkyMetar(airport.ident);
-    if(newAirport || (!metarStr.isEmpty() && metarStr != currentWeatherContext->asMetar))
-    {
-      // Airport has changed or METAR has changed
-      currentWeatherContext->asMetar = metarStr;
-      changed = true;
-    }
-  }
-
-  if(flags & optsw::WEATHER_INFO_NOAA)
-  {
-    atools::fs::weather::MetarResult noaaMetar = weatherReporter->getNoaaMetar(airport.ident, airport.position);
-    if(newAirport || (!noaaMetar.isEmpty() && noaaMetar != currentWeatherContext->noaaMetar))
-    {
-      // Airport has changed or METAR has changed
-      currentWeatherContext->noaaMetar = noaaMetar;
-      changed = true;
-    }
-  }
-
-  if(flags & optsw::WEATHER_INFO_VATSIM)
-  {
-    atools::fs::weather::MetarResult vatsimMetar = weatherReporter->getVatsimMetar(airport.ident, airport.position);
-    if(newAirport || (!vatsimMetar.isEmpty() && vatsimMetar != currentWeatherContext->vatsimMetar))
-    {
-      // Airport has changed or METAR has changed
-      currentWeatherContext->vatsimMetar = vatsimMetar;
-      changed = true;
-    }
-  }
-
-  if(flags & optsw::WEATHER_INFO_IVAO)
-  {
-    atools::fs::weather::MetarResult ivaoMetar = weatherReporter->getIvaoMetar(airport.ident, airport.position);
-    if(newAirport || (!ivaoMetar.isEmpty() && ivaoMetar != currentWeatherContext->ivaoMetar))
-    {
-      // Airport has changed or METAR has changed
-      currentWeatherContext->ivaoMetar = ivaoMetar;
-      changed = true;
-    }
-  }
-
-  weatherContext = *currentWeatherContext;
-
-#ifdef DEBUG_INFORMATION_WEATHER
-  if(changed)
-    qDebug() << Q_FUNC_INFO << "changed" << changed << weatherContext;
-#endif
-
-  return changed;
-}
-
-void MainWindow::buildWeatherContextInfo(map::WeatherContext& weatherContext, const map::MapAirport& airport) const
-{
-  optsw::FlagsWeather flags = OptionData::instance().getFlagsWeather();
-  buildWeatherContext(weatherContext, airport,
-                      flags.testFlag(optsw::WEATHER_INFO_FS),
-                      flags.testFlag(optsw::WEATHER_INFO_ACTIVESKY),
-                      flags.testFlag(optsw::WEATHER_INFO_NOAA),
-                      flags.testFlag(optsw::WEATHER_INFO_VATSIM),
-                      flags.testFlag(optsw::WEATHER_INFO_IVAO));
-}
-
-void MainWindow::buildWeatherContextTooltip(map::WeatherContext& weatherContext, const map::MapAirport& airport) const
-{
-  optsw::FlagsWeather flags = OptionData::instance().getFlagsWeather();
-  buildWeatherContext(weatherContext, airport,
-                      flags.testFlag(optsw::WEATHER_TOOLTIP_FS),
-                      flags.testFlag(optsw::WEATHER_TOOLTIP_ACTIVESKY),
-                      flags.testFlag(optsw::WEATHER_TOOLTIP_NOAA),
-                      flags.testFlag(optsw::WEATHER_TOOLTIP_VATSIM),
-                      flags.testFlag(optsw::WEATHER_TOOLTIP_IVAO));
-}
-
-void MainWindow::buildWeatherContext(map::WeatherContext& weatherContext, const map::MapAirport& airport,
-                                     bool simulator, bool activeSky, bool noaa, bool vatsim, bool ivao) const
-{
-  weatherContext.ident = airport.ident;
-
-  if(simulator)
-  {
-    if(atools::fs::FsPaths::isAnyXplane(NavApp::getCurrentSimulatorDb()))
-      weatherContext.fsMetar = weatherReporter->getXplaneMetar(airport.ident, airport.position);
-    else
-      weatherContext.fsMetar = NavApp::getConnectClient()->requestWeather(airport.ident, airport.position, false /* station only */);
-  }
-
-  if(activeSky)
-  {
-    weatherContext.asMetar = weatherReporter->getActiveSkyMetar(airport.ident);
-    fillActiveSkyType(weatherContext, airport.ident);
-  }
-
-  if(noaa)
-    weatherContext.noaaMetar = weatherReporter->getNoaaMetar(airport.ident, airport.position);
-
-  if(vatsim)
-    weatherContext.vatsimMetar = weatherReporter->getVatsimMetar(airport.ident, airport.position);
-
-  if(ivao)
-    weatherContext.ivaoMetar = weatherReporter->getIvaoMetar(airport.ident, airport.position);
-}
-
-/* Fill active sky information into the weather context */
-void MainWindow::fillActiveSkyType(map::WeatherContext& weatherContext, const QString& airportIdent) const
-{
-  weatherContext.asType = weatherReporter->getCurrentActiveSkyName();
-  weatherContext.isAsDeparture = false;
-  weatherContext.isAsDestination = false;
-
-  if(weatherReporter->getActiveSkyDepartureIdent() == airportIdent)
-    weatherContext.isAsDeparture = true;
-  if(weatherReporter->getActiveSkyDestinationIdent() == airportIdent)
-    weatherContext.isAsDestination = true;
-}
-
-void MainWindow::clearWeatherContext()
-{
-  qDebug() << Q_FUNC_INFO;
-
-  // Clear all weather and fetch new
-  *currentWeatherContext = map::WeatherContext();
 }
 
 void MainWindow::dragEnterEvent(QDragEnterEvent *event)

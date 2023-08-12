@@ -378,6 +378,7 @@ public:
   /* Sort runway ends by headwind and crosswind and combine ends with the same wind. */
   void sortRunwayEnds();
 
+  /* Covers merged runway numbers with equal wind/heading too */
   int getTotalNumber() const
   {
     return totalNumber;

@@ -22,7 +22,6 @@
 #include "common/mapflags.h"
 #include "geo/linestring.h"
 #include "fs/sc/simconnectuseraircraft.h"
-#include "fs/weather/weathertypes.h"
 #include "fs/common/xpgeometry.h"
 
 #include <QColor>
@@ -401,7 +400,16 @@ struct MapAirport
   const QString& displayIdent(bool useIata = true) const;
 
   /* One of ident or ICAO */
-  const QString& displayIdentIcao() const;
+  const QString& displayIdentIcao() const
+  {
+    return xplane && !icao.isEmpty() ? icao : ident;
+  }
+
+  /* Ident as used in METARs */
+  const QString& metarIdent() const
+  {
+    return displayIdentIcao();
+  }
 
   bool closed() const;
   bool military() const;
@@ -1616,23 +1624,6 @@ struct DistanceMarker
 
 QDataStream& operator>>(QDataStream& dataStream, map::DistanceMarker& obj);
 QDataStream& operator<<(QDataStream& dataStream, const map::DistanceMarker& obj);
-
-// =====================================================================
-/* Stores last METARs to avoid unneeded updates in widget */
-struct WeatherContext
-{
-  atools::fs::weather::MetarResult fsMetar, ivaoMetar, noaaMetar, vatsimMetar;
-  bool isAsDeparture = false, isAsDestination = false;
-  QString asMetar, asType, ident;
-
-  bool isEmpty() const
-  {
-    return fsMetar.isEmpty() && asMetar.isEmpty() && noaaMetar.isEmpty() && vatsimMetar.isEmpty() && ivaoMetar.isEmpty();
-  }
-
-};
-
-QDebug operator<<(QDebug out, const map::WeatherContext& record);
 
 // =====================================================================================
 /* Database type strings to GUI strings and map objects to display strings */

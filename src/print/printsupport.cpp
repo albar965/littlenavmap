@@ -19,15 +19,17 @@
 
 #include "app/navapp.h"
 #include "common/constants.h"
-#include "mapgui/mapwidget.h"
-#include "common/mapcolors.h"
-#include "settings/settings.h"
-#include "route/routecontroller.h"
-#include "perf/aircraftperfcontroller.h"
-#include "util/htmlbuilder.h"
-#include "print/printdialog.h"
 #include "common/htmlinfobuilder.h"
+#include "common/mapcolors.h"
 #include "gui/mainwindow.h"
+#include "mapgui/mapwidget.h"
+#include "perf/aircraftperfcontroller.h"
+#include "print/printdialog.h"
+#include "route/routecontroller.h"
+#include "settings/settings.h"
+#include "util/htmlbuilder.h"
+#include "weather/weathercontext.h"
+#include "weather/weathercontexthandler.h"
 
 #include <QPainter>
 #include <QtPrintSupport/QPrintPreviewDialog>
@@ -93,8 +95,8 @@ void PrintSupport::fillWeatherCache()
   if(!route.isEmpty())
   {
     map::WeatherContext currentWeatherContext;
-    mainWindow->buildWeatherContextInfo(currentWeatherContext, route.getDepartureAirportLeg().getAirport());
-    mainWindow->buildWeatherContextInfo(currentWeatherContext, route.getDestinationAirportLeg().getAirport());
+    mainWindow->getWeatherContextHandler()->buildWeatherContextInfo(currentWeatherContext, route.getDepartureAirportLeg().getAirport());
+    mainWindow->getWeatherContextHandler()->buildWeatherContextInfo(currentWeatherContext, route.getDestinationAirportLeg().getAirport());
   }
 }
 
@@ -253,7 +255,7 @@ void PrintSupport::addAirport(QTextCursor& cursor, const map::MapAirport& airpor
   HtmlBuilder html(mapcolors::mapPrintRowColor, mapcolors::mapPrintRowColorAlt);
   if(departure ? (opts& prt::DEPARTURE_OVERVIEW) : (opts & prt::DESTINATION_OVERVIEW))
   {
-    mainWindow->buildWeatherContextInfo(weatherContext, airport);
+    mainWindow->getWeatherContextHandler()->buildWeatherContextInfo(weatherContext, airport);
     if(!newPage)
       html.hr();
     html.h2(tr("%1 Airport").arg(prefix));

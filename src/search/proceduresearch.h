@@ -212,24 +212,31 @@ private:
   static proc::MapProcedureTypes buildTypeFromProcedureRec(const atools::sql::SqlRecord& recApp);
   static bool procedureSortFunc(const atools::sql::SqlRecord& rec1, const atools::sql::SqlRecord& rec2);
 
-  void fetchSingleTransitionId(proc::MapProcedureRef& ref);
-  QString procedureAndTransitionText(const QTreeWidgetItem *item);
+  void fetchSingleTransitionId(proc::MapProcedureRef& ref) const;
+
+  /* For header and menu item */
+  QString procedureAndTransitionText(const QTreeWidgetItem *item) const;
 
   void clearSelectionClicked();
   void showAllToggled(bool checked);
 
   /* Get procedure reference with ids only */
-  proc::MapProcedureRef fetchProcRef(QTreeWidgetItem *item);
+  const proc::MapProcedureRef& fetchProcRef(const QTreeWidgetItem *item) const;
 
   /* Load whole procedure */
-  const proc::MapProcedureLegs *fetchProcData(proc::MapProcedureRef& ref, QTreeWidgetItem *item);
+  const proc::MapProcedureLegs *fetchProcData(proc::MapProcedureRef& ref, const QTreeWidgetItem *item) const;
 
   /* User click on top link */
   void airportLabelLinkActivated(const QString& link);
 
+  /* Create display text for procedure column */
   void procedureDisplayText(QString& procTypeText, QStringList& attText, const atools::sql::SqlRecord& recApp,
                             proc::MapProcedureTypes maptype, int numTransitions);
+
+  /* Update wind columns for procedures after weather change */
   void updateProcedureWind();
+
+  QString transitionIndicator;
 
   // item's types are the indexes into this array with approach, transition and leg ids
   QVector<proc::MapProcedureRef> itemIndex;

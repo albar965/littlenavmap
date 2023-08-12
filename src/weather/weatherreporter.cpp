@@ -196,10 +196,15 @@ void WeatherReporter::vatsimWeatherUpdated()
   emit weatherUpdated();
 }
 
-atools::geo::Pos WeatherReporter::fetchAirportCoordinates(const QString& airportIdent)
+atools::geo::Pos WeatherReporter::fetchAirportCoordinates(const QString& metarAirportIdent)
 {
   if(!NavApp::isLoadingDatabase())
-    return NavApp::getAirportQuerySim()->getAirportPosByIdent(airportIdent);
+  {
+    if(atools::fs::FsPaths::isAnyXplane(simType))
+      return NavApp::getAirportQuerySim()->getAirportPosByIdentOrIcao(metarAirportIdent);
+    else
+      return NavApp::getAirportQuerySim()->getAirportPosByIdent(metarAirportIdent);
+  }
   else
     return atools::geo::EMPTY_POS;
 }
@@ -820,8 +825,7 @@ atools::fs::weather::MetarResult WeatherReporter::getNoaaMetar(const QString& ai
   return noaaWeather->getMetar(airportIcao, pos);
 }
 
-atools::fs::weather::MetarResult WeatherReporter::getVatsimMetar(const QString& airportIcao,
-                                                                 const atools::geo::Pos& pos)
+atools::fs::weather::MetarResult WeatherReporter::getVatsimMetar(const QString& airportIcao, const atools::geo::Pos& pos)
 {
   return vatsimWeather->getMetar(airportIcao, pos);
 }
@@ -831,11 +835,12 @@ atools::fs::weather::MetarResult WeatherReporter::getIvaoMetar(const QString& ai
   return ivaoWeather->getMetar(airportIcao, pos);
 }
 
-atools::fs::weather::Metar WeatherReporter::getAirportWeather(const QString& airportIcao, const atools::geo::Pos& airportPos,
-                                                              map::MapWeatherSource source, bool stationOnly)
+atools::fs::weather::Metar WeatherReporter::getAirportWeather(const map::MapAirport& airport, bool stationOnly)
 {
   // Empty position forces station only instead of allowing nearest
-  const atools::geo::Pos& pos = stationOnly ? atools::geo::EMPTY_POS : airportPos;
+  const atools::geo::Pos& pos = stationOnly ? atools::geo::EMPTY_POS : airport.position;
+  map::MapWeatherSource source = NavApp::getMapWeatherSource();
+  const QString& ident = airport.metarIdent();
 
   switch(source)
   {
@@ -845,10 +850,10 @@ atools::fs::weather::Metar WeatherReporter::getAirportWeather(const QString& air
     case map::WEATHER_SOURCE_SIMULATOR:
       if(atools::fs::FsPaths::isAnyXplane(NavApp::getCurrentSimulatorDb()))
         // X-Plane weather file
-        return Metar(getXplaneMetar(airportIcao, pos).getMetar(stationOnly));
+        return Metar(getXplaneMetar(ident, pos).getMetar(stationOnly));
       else if(NavApp::isConnected() /*&& !NavApp::getConnectClient()->isConnectedNetwork()*/)
       {
-        atools::fs::weather::MetarResult res = NavApp::getConnectClient()->requestWeather(airportIcao, airportPos, true);
+        atools::fs::weather::MetarResult res = NavApp::getConnectClient()->requestWeather(ident, pos, true);
 
         if(res.isValid() && !res.metarForStation.isEmpty())
           // FSX/P3D - Flight simulator fetched weather or network connection
@@ -857,23 +862,23 @@ atools::fs::weather::Metar WeatherReporter::getAirportWeather(const QString& air
       return Metar();
 
     case map::WEATHER_SOURCE_ACTIVE_SKY:
-      return Metar(getActiveSkyMetar(airportIcao));
+      return Metar(getActiveSkyMetar(ident));
 
     case map::WEATHER_SOURCE_NOAA:
-      return Metar(getNoaaMetar(airportIcao, pos).getMetar(stationOnly));
+      return Metar(getNoaaMetar(ident, pos).getMetar(stationOnly));
 
     case map::WEATHER_SOURCE_VATSIM:
-      return Metar(getVatsimMetar(airportIcao, pos).getMetar(stationOnly));
+      return Metar(getVatsimMetar(ident, pos).getMetar(stationOnly));
 
     case map::WEATHER_SOURCE_IVAO:
-      return Metar(getIvaoMetar(airportIcao, pos).getMetar(stationOnly));
+      return Metar(getIvaoMetar(ident, pos).getMetar(stationOnly));
   }
   return Metar();
 }
 
 void WeatherReporter::getAirportWind(int& windDirectionDeg, float& windSpeedKts, const map::MapAirport& airport, bool stationOnly)
 {
-  atools::fs::weather::Metar metar = getAirportWeather(airport.ident, airport.position, NavApp::getMapWeatherSource(), stationOnly);
+  atools::fs::weather::Metar metar = getAirportWeather(airport, stationOnly);
   const atools::fs::weather::MetarParser& parsed = metar.getParsedMetar();
   windDirectionDeg = parsed.getWindDir();
   windSpeedKts = parsed.getWindSpeedKts();

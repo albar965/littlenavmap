@@ -106,8 +106,7 @@ public:
   atools::fs::weather::MetarResult getIvaoMetar(const QString& airportIcao, const atools::geo::Pos& pos);
 
   /* For display. Source depends on settings and parsed objects are cached. */
-  atools::fs::weather::Metar getAirportWeather(const QString& airportIcao, const atools::geo::Pos& airportPos,
-                                               map::MapWeatherSource source, bool stationOnly);
+  atools::fs::weather::Metar getAirportWeather(const map::MapAirport& airport, bool stationOnly);
 
   /* Get wind at airport. No nearest values for stationOnly=true. */
   void getAirportWind(int& windDirectionDeg, float& windSpeedKts, const map::MapAirport& airport, bool stationOnly);
@@ -226,7 +225,7 @@ private:
   /* Show warning dialog in main loop to avoid issues when being called from draw handler */
   void showXplaneWarningDialog(const QString& message);
 
-  atools::geo::Pos fetchAirportCoordinates(const QString& airportIdent);
+  atools::geo::Pos fetchAirportCoordinates(const QString& metarAirportIdent);
 
   /* Update IVAO and NOAA timeout periods - timeout is disable if weather services are not used */
   void updateTimeouts();

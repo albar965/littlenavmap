@@ -53,6 +53,7 @@
 #include "userdata/userdataicons.h"
 #include "util/htmlbuilder.h"
 #include "weather/windreporter.h"
+#include "weather/weathercontext.h"
 
 #include <QSize>
 #include <QUrl>
@@ -391,6 +392,7 @@ void HtmlInfoBuilder::airportText(const MapAirport& airport, const map::WeatherC
 
   html.tableEnd();
 
+  // Runways ==================================================================================
   // Create a list of runway attributes
   if(info)
     head(html, tr("Runways"));
@@ -424,6 +426,7 @@ void HtmlInfoBuilder::airportText(const MapAirport& airport, const map::WeatherC
     html.tableEnd();
   }
 
+  // Weather ==================================================================================
   if(!weatherContext.isEmpty())
   {
     if(info)
@@ -454,7 +457,7 @@ void HtmlInfoBuilder::airportText(const MapAirport& airport, const map::WeatherC
     html.tableEnd();
   }
 
-  // Add most important COM frequencies
+  // Add most important COM frequencies ================================================================
   if((airport.towerFrequency > 0 || airport.atisFrequency > 0 || airport.awosFrequency > 0 ||
       airport.asosFrequency > 0 || airport.unicomFrequency > 0) && verbose)
   {
@@ -789,7 +792,7 @@ void HtmlInfoBuilder::bestRunwaysText(const MapAirport& airport, HtmlBuilder& ht
       if(!runways.isEmpty())
       {
         html.br().b((ends.getTotalNumber() == 1 ? tr(" Wind prefers runway: ") : tr(" Wind prefers runways: "))).
-        text(runways.mid(0, 4).join(tr(", ")));
+        text(atools::strJoin(runways.mid(0, 4), tr(", "), tr(" and ")));
       }
     }
   }

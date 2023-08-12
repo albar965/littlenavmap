@@ -16,18 +16,21 @@
 *****************************************************************************/
 
 #include "abstractlnmactionscontroller.h"
+
 #include "app/navapp.h"
 #include "common/infobuildertypes.h"
+#include "common/maptypes.h"
+#include "fs/sc/simconnectdata.h"
+#include "fs/util/morsecode.h"
+#include "geo/calculations.h"
+#include "gui/mainwindow.h"
+#include "mapgui/mappaintwidget.h"
 #include "query/airportquery.h"
 #include "query/infoquery.h"
 #include "query/mapquery.h"
-#include "gui/mainwindow.h"
-#include "geo/calculations.h"
-#include "common/maptypes.h"
 #include "sql/sqlrecord.h"
-#include "fs/util/morsecode.h"
-#include "fs/sc/simconnectdata.h"
-#include "mapgui/mappaintwidget.h"
+#include "weather/weathercontext.h"
+#include "weather/weathercontexthandler.h"
 
 namespace ageo = atools::geo;
 using atools::fs::util::MorseCode;
@@ -100,7 +103,7 @@ map::MapAirport AbstractLnmActionsController::getAirportByIdent(QByteArray ident
 };
 map::WeatherContext AbstractLnmActionsController::getWeatherContext(map::MapAirport& airport){
     map::WeatherContext weatherContext;
-    getMainWindow()->buildWeatherContextInfo(weatherContext, airport);
+    getMainWindow()->getWeatherContextHandler()->buildWeatherContextInfo(weatherContext, airport);
     return weatherContext;
 };
 const SqlRecord* AbstractLnmActionsController::getAirportInformation(int id){

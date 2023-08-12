@@ -18,6 +18,7 @@
 #include "infocontroller.h"
 
 #include "airspace/airspacecontroller.h"
+#include "app/navapp.h"
 #include "atools.h"
 #include "common/constants.h"
 #include "common/htmlinfobuilder.h"
@@ -30,7 +31,6 @@
 #include "gui/widgetutil.h"
 #include "info/aircraftprogressconfig.h"
 #include "mapgui/mapwidget.h"
-#include "app/navapp.h"
 #include "online/onlinedatacontroller.h"
 #include "options/optiondata.h"
 #include "query/airportquery.h"
@@ -40,6 +40,8 @@
 #include "settings/settings.h"
 #include "ui_mainwindow.h"
 #include "util/htmlbuilder.h"
+#include "weather/weathercontext.h"
+#include "weather/weathercontexthandler.h"
 
 #include <QUrlQuery>
 
@@ -592,8 +594,7 @@ void InfoController::updateProgress()
   }
 }
 
-void InfoController::updateAirportInternal(bool newAirport, bool bearingChange, bool scrollToTop,
-                                           bool forceWeatherUpdate)
+void InfoController::updateAirportInternal(bool newAirport, bool bearingChange, bool scrollToTop, bool forceWeatherUpdate)
 {
   if(databaseLoadStatus)
     return;
@@ -601,8 +602,8 @@ void InfoController::updateAirportInternal(bool newAirport, bool bearingChange, 
   if(currentSearchResult.hasAirports())
   {
     map::WeatherContext currentWeatherContext;
-    bool weatherChanged = mainWindow->buildWeatherContextInfoFull(currentWeatherContext,
-                                                                  currentSearchResult.airports.constFirst());
+    bool weatherChanged = NavApp::getWeatherContextHandler()->buildWeatherContextInfoFull(currentWeatherContext,
+                                                                                          currentSearchResult.airports.constFirst());
 
     // qDebug() << Q_FUNC_INFO << "newAirport" << newAirport << "weatherChanged" << weatherChanged
     // << "ident" << currentWeatherContext.ident;
@@ -1484,7 +1485,7 @@ QStringList InfoController::getAirportTextFull(const QString& ident) const
   if(airport.isValid())
   {
     map::WeatherContext weatherContext;
-    mainWindow->buildWeatherContextInfo(weatherContext, airport);
+    NavApp::getWeatherContextHandler()->buildWeatherContextInfo(weatherContext, airport);
 
     atools::util::HtmlBuilder html(mapcolors::webTableBackgroundColor, mapcolors::webTableAltBackgroundColor);
     HtmlInfoBuilder builder(mainWindow, mainWindow->getMapWidget(), true /*info*/, true /*print*/);

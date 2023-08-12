@@ -117,7 +117,11 @@ public:
   /* Get display ident (ICAO, IATA, FAA or local) based on internal ident */
   QString getDisplayIdent(const QString& ident);
 
+  /* Used as callback for loading METAR data to fetch airport coordinates for nearest */
   atools::geo::Pos getAirportPosByIdent(const QString& ident);
+
+  /* Used as callback for loading METAR data to fetch airport coordinates for nearest. Looks for either ident or icao. */
+  atools::geo::Pos getAirportPosByIdentOrIcao(const QString& identOrIcao);
 
   /* true if airport has procedures. Airport must be available in this database (sim or nav). */
   bool hasProcedures(const map::MapAirport& airport) const;
@@ -252,9 +256,9 @@ private:
 
   atools::sql::SqlQuery *airportByIdentQuery = nullptr, *airportsByTruncatedIdentQuery = nullptr,
                         *airportByOfficialQuery = nullptr, *airportByPosQuery = nullptr,
-                        *airportCoordsByIdentQuery = nullptr, *airportByRectAndProcQuery = nullptr,
-                        *runwayEndByIdQuery = nullptr, *runwayEndByNameQuery = nullptr, *airportByIdQuery = nullptr,
-                        *airportAdminByIdQuery = nullptr, *airportProcByIdQuery = nullptr,
+                        *airportCoordsByIdentQuery = nullptr, *airportCoordsByIdentOrIcaoQuery = nullptr,
+                        *airportByRectAndProcQuery = nullptr, *runwayEndByIdQuery = nullptr, *runwayEndByNameQuery = nullptr,
+                        *airportByIdQuery = nullptr, *airportAdminByIdQuery = nullptr, *airportProcByIdQuery = nullptr,
                         *procArrivalByAirportIdQuery = nullptr, *procDepartureByAirportIdQuery = nullptr;
 };
 

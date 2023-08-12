@@ -125,6 +125,8 @@ ProcedureSearch::ProcedureSearch(QMainWindow *main, QTreeWidget *treeWidgetParam
   gridDelegate->setHeightIncrease(0);
   treeWidget->setItemDelegate(gridDelegate);
 
+  transitionIndicator = tr(" (T)");
+
   Ui::MainWindow *ui = NavApp::getMainUi();
   ui->comboBoxProcedureSearchFilter->insertSeparator(FILTER_SEPARATOR_1);
 
@@ -296,6 +298,7 @@ void ProcedureSearch::postDatabaseLoad()
   resetSearch();
   updateFilterBoxes();
   updateHeaderLabel();
+  updateProcedureWind();
   updateWidgets();
 }
 
@@ -409,9 +412,9 @@ void ProcedureSearch::updateHeaderLabel()
 #endif
 }
 
-QString ProcedureSearch::procedureAndTransitionText(const QTreeWidgetItem *item)
+QString ProcedureSearch::procedureAndTransitionText(const QTreeWidgetItem *item) const
 {
-  QString procs;
+  QString text;
   if(item != nullptr)
   {
     MapProcedureRef ref = itemIndex.at(item->type());
@@ -423,14 +426,14 @@ QString ProcedureSearch::procedureAndTransitionText(const QTreeWidgetItem *item)
 
     if(ref.hasProcedureOnlyIds())
     {
-      // Only approach
-      procs.append(tr("%1 %2").arg(item->text(COL_DESCRIPTION)).arg(item->text(COL_IDENT)));
+      // Only approach - remove transition indicator
+      text.append(tr("%1 %2").arg(item->text(COL_DESCRIPTION)).arg(item->text(COL_IDENT)).remove(transitionIndicator));
       if(item->childCount() == 1 && ref.mapType & proc::PROCEDURE_SID)
       {
-        // Special SID case that has only transition legs and only one transition
+        // Special SID case that has only transition legs and only one transition - remove transition indicator
         QTreeWidgetItem *child = item->child(0);
         if(child != nullptr)
-          procs.append(tr("%1 %2").arg(child->text(COL_DESCRIPTION)).arg(child->text(COL_IDENT)));
+          text.append(tr("%1 %2").arg(child->text(COL_DESCRIPTION)).arg(child->text(COL_IDENT)).remove(transitionIndicator));
       }
     }
     else
@@ -439,12 +442,12 @@ QString ProcedureSearch::procedureAndTransitionText(const QTreeWidgetItem *item)
       {
         QTreeWidgetItem *appr = item->parent();
         if(appr != nullptr)
-          procs.append(tr("%1 %2").arg(appr->text(COL_DESCRIPTION)).arg(appr->text(COL_IDENT)));
+          text.append(tr("%1 %2").arg(appr->text(COL_DESCRIPTION)).arg(appr->text(COL_IDENT)));
       }
-      procs.append(tr(" %1 %2").arg(item->text(COL_DESCRIPTION)).arg(item->text(COL_IDENT)));
+      text.append(tr(" %1 %2").arg(item->text(COL_DESCRIPTION)).arg(item->text(COL_IDENT)));
     }
   }
-  return procs.simplified();
+  return text.simplified();
 }
 
 void ProcedureSearch::clearRunwayFilter()
@@ -773,7 +776,7 @@ void ProcedureSearch::updateTreeHeader()
 }
 
 /* If approach has no legs and a single transition: SID special case. get transition id from cache */
-void ProcedureSearch::fetchSingleTransitionId(MapProcedureRef& ref)
+void ProcedureSearch::fetchSingleTransitionId(MapProcedureRef& ref) const
 {
   if(ref.hasProcedureOnlyIds())
   {
@@ -1177,22 +1180,22 @@ void ProcedureSearch::showOnMapSelected()
     emit showRect(currentAirportSim->bounding, false /* doubleClick */);
 }
 
-MapProcedureRef ProcedureSearch::fetchProcRef(QTreeWidgetItem *item)
+const MapProcedureRef& ProcedureSearch::fetchProcRef(const QTreeWidgetItem *item) const
 {
-  MapProcedureRef ref;
+  const static MapProcedureRef EMPTY_REF;
   if(item != nullptr && !itemIndex.isEmpty())
   {
-    MapProcedureRef procData = itemIndex.at(item->type());
+    const MapProcedureRef& procData = itemIndex.at(item->type());
     if(procData.isLeg() && item->parent() != nullptr)
       // Get parent approach data if approach is a leg
-      procData = itemIndex.at(item->parent()->type());
-
-    ref = procData;
+      return itemIndex.at(item->parent()->type());
+    else
+      return procData;
   }
-  return ref;
+  return EMPTY_REF;
 }
 
-const proc::MapProcedureLegs *ProcedureSearch::fetchProcData(MapProcedureRef& ref, QTreeWidgetItem *item)
+const proc::MapProcedureLegs *ProcedureSearch::fetchProcData(MapProcedureRef& ref, const QTreeWidgetItem *item) const
 {
   ref = fetchProcRef(item);
 
@@ -1316,7 +1319,9 @@ void ProcedureSearch::procedureDisplayText(QString& procTypeText, QStringList& a
   QString suffix(recApp.valueStr("suffix"));
   QString type(recApp.valueStr("type"));
 
-  if(numTransitions > 0)
+  if(numTransitions == 1)
+    attText.append(tr("1 Transition"));
+  else if(numTransitions > 1)
     attText.append(tr("%L1 Transitions").arg(numTransitions));
 
   if(maptype == proc::PROCEDURE_SID)
@@ -1352,26 +1357,33 @@ void ProcedureSearch::procedureDisplayText(QString& procTypeText, QStringList& a
     procTypeText.append(tr(" ") % recApp.valueStr("sid_star_arinc_name", QString()));
 
   if(numTransitions > 0)
-    procTypeText.append(tr(" (T)"));
+    procTypeText.append(transitionIndicator);
 }
 
 void ProcedureSearch::updateProcedureWind()
 {
-  int windDirectionDeg;
-  float windSpeedKts;
-  NavApp::getAirportWind(windDirectionDeg, windSpeedKts, *currentAirportNav, false /* stationOnly */);
-
-  QTreeWidgetItem *root = treeWidget->invisibleRootItem();
-  for(int i = 0; i < root->childCount(); i++)
+  if(currentAirportSim->isValid())
   {
-    QTreeWidgetItem *item = root->child(i);
-    MapProcedureRef ref = fetchProcRef(item);
+    QTreeWidgetItem *root = treeWidget->invisibleRootItem();
 
-    QString windText;
-    map::MapRunwayEnd runwayEnd = airportQueryNav->getRunwayEndById(ref.runwayEndId);
-    if(runwayEnd.isValid())
-      windText = formatter::windInformationShort(windDirectionDeg, windSpeedKts, runwayEnd.heading);
-    item->setText(COL_WIND, windText);
+    if(root->childCount() > 0)
+    {
+      int windDirectionDeg;
+      float windSpeedKts;
+      NavApp::getAirportWind(windDirectionDeg, windSpeedKts, *currentAirportSim, false /* stationOnly */);
+
+      for(int i = 0; i < root->childCount(); i++)
+      {
+        QTreeWidgetItem *item = root->child(i);
+        MapProcedureRef ref = fetchProcRef(item);
+
+        QString windText;
+        map::MapRunwayEnd runwayEnd = airportQueryNav->getRunwayEndById(ref.runwayEndId);
+        if(runwayEnd.isValid())
+          windText = formatter::windInformationShort(windDirectionDeg, windSpeedKts, runwayEnd.heading);
+        item->setText(COL_WIND, windText);
+      }
+    }
   }
 }
 

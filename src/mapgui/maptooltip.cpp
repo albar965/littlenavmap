@@ -18,15 +18,17 @@
 #include "mapgui/maptooltip.h"
 
 #include "airspace/airspacecontroller.h"
+#include "app/navapp.h"
 #include "common/htmlinfobuilder.h"
 #include "common/maptypes.h"
 #include "gui/mainwindow.h"
 #include "mapgui/mappaintwidget.h"
-#include "app/navapp.h"
 #include "options/optiondata.h"
 #include "route/route.h"
 #include "sql/sqlrecord.h"
 #include "util/htmlbuilder.h"
+#include "weather/weathercontext.h"
+#include "weather/weathercontexthandler.h"
 #include "weather/windreporter.h"
 
 #include <QPalette>
@@ -264,7 +266,7 @@ QString MapTooltip::buildTooltip(const map::MapResult& mapSearchResult, const at
 
         map::WeatherContext currentWeatherContext;
 
-        mainWindow->buildWeatherContextTooltip(currentWeatherContext, airport);
+        mainWindow->getWeatherContextHandler()->buildWeatherContextTooltip(currentWeatherContext, airport);
         info.airportText(airport, currentWeatherContext, html, &route);
 
         if(airport.routeIndex >= 0)

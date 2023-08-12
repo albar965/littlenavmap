@@ -49,6 +49,7 @@ class SimBriefHandler;
 class WeatherReporter;
 class WindReporter;
 
+class WeatherContextHandler;
 namespace Marble {
 class MarbleAboutDialog;
 class RenderState;
@@ -75,7 +76,6 @@ class HelpHandler;
 class FileHistoryHandler;
 class DockWidgetHandler;
 }
-
 }
 
 namespace Ui {
@@ -89,14 +89,10 @@ class ProcedureQuery;
 
 namespace proc {
 struct MapProcedureRef;
-
 }
 
 namespace map {
-struct WeatherContext;
-
 struct MapAirport;
-
 }
 
 /*
@@ -141,6 +137,11 @@ public:
     return weatherReporter;
   }
 
+  WeatherContextHandler *getWeatherContextHandler() const
+  {
+    return weatherContextHandler;
+  }
+
   WindReporter *getWindReporter() const
   {
     return windReporter;
@@ -165,16 +166,6 @@ public:
   void statusMessageChanged(const QString& text);
 
   void setDetailLabelText(const QString& text);
-
-  /* Update the current weather context for the information window. Returns true if any
-   * weather has changed or an update is needed */
-  bool buildWeatherContextInfoFull(map::WeatherContext& weatherContext, const map::MapAirport& airport);
-
-  /* Build a normal weather context - used by printing */
-  void buildWeatherContextInfo(map::WeatherContext& weatherContext, const map::MapAirport& airport) const;
-
-  /* Build a temporary weather context for the map tooltip */
-  void buildWeatherContextTooltip(map::WeatherContext& weatherContext, const map::MapAirport& airport) const;
 
   /* Render state from marble widget. Get the more detailed state since it updates more often */
   void renderStatusChanged(const Marble::RenderState& state);
@@ -402,10 +393,6 @@ private:
 
   void legendAnchorClicked(const QUrl& url);
 
-  void clearWeatherContext();
-  void buildWeatherContext(map::WeatherContext& weatherContext, const map::MapAirport& airport, bool simulator, bool activeSky, bool noaa,
-                           bool vatsim, bool ivao) const;
-
   void scaleToolbar(QToolBar *toolbar, float scale);
   void showOnlineHelp();
   void showOnlineTutorials();
@@ -422,7 +409,6 @@ private:
   /* Emit a signal windowShown after first appearance */
   virtual void showEvent(QShowEvent *event) override;
   void weatherUpdateTimeout();
-  void fillActiveSkyType(map::WeatherContext& weatherContext, const QString& airportIdent) const;
   void updateAirspaceTypes(map::MapAirspaceFilter filter);
   void updateAirspaceSources();
   void resetWindowLayout();
@@ -548,8 +534,7 @@ private:
 
   bool firstStart = true; /* emit window shown only once after startup */
 
-  map::WeatherContext *currentWeatherContext = nullptr;
-
+  WeatherContextHandler *weatherContextHandler;
   QAction *emptyAirportSeparator = nullptr;
 
   /* Show database dialog after cleanup of obsolete databases if true */

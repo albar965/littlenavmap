@@ -437,6 +437,8 @@ SOURCES += \
   src/userdata/userdatacontroller.cpp \
   src/userdata/userdatadialog.cpp \
   src/userdata/userdataicons.cpp \
+  src/weather/weathercontext.cpp \
+  src/weather/weathercontexthandler.cpp \
   src/weather/weatherreporter.cpp \
   src/weather/windreporter.cpp \
   src/web/requesthandler.cpp \
@@ -636,6 +638,8 @@ HEADERS  += \
   src/userdata/userdatacontroller.h \
   src/userdata/userdatadialog.h \
   src/userdata/userdataicons.h \
+  src/weather/weathercontext.h \
+  src/weather/weathercontexthandler.h \
   src/weather/weatherreporter.h \
   src/weather/windreporter.h \
   src/web/requesthandler.h \

@@ -506,7 +506,12 @@ void AirspaceController::loadAirspace(atools::fs::userdata::AirspaceReaderBase& 
 atools::geo::Pos AirspaceController::fetchAirportCoordinates(const QString& airportIdent)
 {
   if(!NavApp::isLoadingDatabase())
-    return NavApp::getAirportQuerySim()->getAirportPosByIdent(airportIdent);
+  {
+    if(atools::fs::FsPaths::isAnyXplane(NavApp::getCurrentSimulatorDb()))
+      return NavApp::getAirportQuerySim()->getAirportPosByIdentOrIcao(airportIdent);
+    else
+      return NavApp::getAirportQuerySim()->getAirportPosByIdent(airportIdent);
+  }
   else
     return atools::geo::EMPTY_POS;
 }

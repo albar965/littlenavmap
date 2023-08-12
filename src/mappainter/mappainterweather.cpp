@@ -130,8 +130,7 @@ void MapPainterWeather::render()
   for(const PaintAirportType& airportWeather: visibleAirportWeather)
   {
     atools::fs::weather::Metar metar =
-      reporter->getAirportWeather(airportWeather.airport->ident, airportWeather.airport->position, context->weatherSource,
-                                  true /* stationOnly */);
+      reporter->getAirportWeather(*airportWeather.airport, true /* stationOnly */);
 
     if(metar.isValid())
       drawAirportWeather(metar, static_cast<float>(airportWeather.point.x()), static_cast<float>(airportWeather.point.y()));

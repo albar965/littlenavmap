@@ -25,6 +25,8 @@
 #include <QObject>
 
 class Route;
+
+namespace map { class WeatherContext; }
 namespace atools {
     namespace sql {
         class SqlRecord;

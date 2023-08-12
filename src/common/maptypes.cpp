@@ -907,15 +907,6 @@ QString parkingNameForFlightplan(const map::MapParking& parking)
     return parkingNameMapUntranslated.value(parking.name).toUpper() % " " % QString::number(parking.number) % parking.suffix;
 }
 
-const QString& MapAirport::displayIdentIcao() const
-{
-  if(xplane && !icao.isEmpty())
-    return icao;
-
-  // Otherwise internal id
-  return ident;
-}
-
 const QString& MapAirport::displayIdent(bool useIata) const
 {
   if(xplane)
@@ -2002,23 +1993,6 @@ QDebug operator<<(QDebug out, const MapObjectRefExt& ref)
     out.noquote().nospace() << ", " << ref.position;
 
   out.noquote().nospace() << "]";
-  return out;
-}
-
-QDebug operator<<(QDebug out, const WeatherContext& record)
-{
-  QDebugStateSaver saver(out);
-
-  out << "WeatherContext["
-      << "Sim METAR" << record.fsMetar
-      << "IVAO METAR" << record.ivaoMetar
-      << "NOAA METAR" << record.noaaMetar
-      << "VATSIM METAR" << record.vatsimMetar
-      << "AS departure" << record.isAsDeparture
-      << "AS destination" << record.isAsDestination
-      << "AS METAR" << record.asMetar
-      << "AS type" << record.asType
-      << "ident" << record.ident << "]";
   return out;
 }
 

@@ -364,9 +364,22 @@ atools::geo::Pos AirportQuery::getAirportPosByIdent(const QString& ident)
   airportCoordsByIdentQuery->bindValue(":ident", ident);
   airportCoordsByIdentQuery->exec();
   if(airportCoordsByIdentQuery->next())
-    pos = ageo::Pos(airportCoordsByIdentQuery->value("lonx").toFloat(),
-                    airportCoordsByIdentQuery->value("laty").toFloat());
+    pos = ageo::Pos(airportCoordsByIdentQuery->value("lonx").toFloat(), airportCoordsByIdentQuery->value("laty").toFloat());
   airportCoordsByIdentQuery->finish();
+  return pos;
+}
+
+atools::geo::Pos AirportQuery::getAirportPosByIdentOrIcao(const QString& identOrIcao)
+{
+  if(!query::valid(Q_FUNC_INFO, airportCoordsByIdentOrIcaoQuery))
+    return atools::geo::EMPTY_POS;
+
+  ageo::Pos pos;
+  airportCoordsByIdentOrIcaoQuery->bindValue(":identicao", identOrIcao);
+  airportCoordsByIdentOrIcaoQuery->exec();
+  if(airportCoordsByIdentOrIcaoQuery->next())
+    pos = ageo::Pos(airportCoordsByIdentOrIcaoQuery->value("lonx").toFloat(), airportCoordsByIdentOrIcaoQuery->value("laty").toFloat());
+  airportCoordsByIdentOrIcaoQuery->finish();
   return pos;
 }
 
@@ -1258,6 +1271,9 @@ void AirportQuery::initQueries()
   airportCoordsByIdentQuery = new SqlQuery(db);
   airportCoordsByIdentQuery->prepare("select lonx, laty from airport where ident = :ident ");
 
+  airportCoordsByIdentOrIcaoQuery = new SqlQuery(db);
+  airportCoordsByIdentOrIcaoQuery->prepare("select lonx, laty from airport where ident = :identicao or icao = :identicao ");
+
   airportByRectAndProcQuery = new SqlQuery(db);
   airportByRectAndProcQuery->prepare("select " % airportQueryBase.join(", ") % " from airport where " % whereRect %
                                      " and num_approach > 0 " % whereLimit);
@@ -1419,6 +1435,9 @@ void AirportQuery::deInitQueries()
 
   delete airportCoordsByIdentQuery;
   airportCoordsByIdentQuery = nullptr;
+
+  delete airportCoordsByIdentOrIcaoQuery;
+  airportCoordsByIdentOrIcaoQuery = nullptr;
 
   delete airportByRectAndProcQuery;
   airportByRectAndProcQuery = nullptr;
