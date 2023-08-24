@@ -6391,7 +6391,7 @@ relation to shown airport</string>
    </attribute>
    <addaction name="actionShowFullscreenMap"/>
   </widget>
-  <widget class="QToolBar" name="toolbarMapOptions">
+  <widget class="QToolBar" name="toolBarMapOptions">
    <property name="windowTitle">
     <string>Map Options Toolbar</string>
    </property>

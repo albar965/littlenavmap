@@ -393,7 +393,6 @@ private:
 
   void legendAnchorClicked(const QUrl& url);
 
-  void scaleToolbar(QToolBar *toolbar, float scale);
   void showOnlineHelp();
   void showOnlineTutorials();
   void showOfflineHelp();
@@ -449,6 +448,8 @@ private:
   void updateMapKeys();
 
   void openOptionsDialog();
+
+  void applyToolBarSize();
 
   /* Print the size of all container classes to detect overflow or memory leak conditions */
   void debugDumpContainerSizes() const;
@@ -536,6 +537,8 @@ private:
 
   WeatherContextHandler *weatherContextHandler;
   QAction *emptyAirportSeparator = nullptr;
+
+  QList<QToolBar *> toolbars;
 
   /* Show database dialog after cleanup of obsolete databases if true */
   bool databasesErased = false;

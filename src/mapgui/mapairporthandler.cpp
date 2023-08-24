@@ -290,7 +290,7 @@ void MapAirportHandler::addToolbarButton()
 {
   Ui::MainWindow *ui = NavApp::getMainUi();
 
-  toolButton = new QToolButton(ui->toolbarMapOptions);
+  toolButton = new QToolButton(ui->toolBarMapOptions);
 
   // Connect master switch button
   connect(ui->actionMapShowAirports, &QAction::toggled, this, &MapAirportHandler::toolbarActionTriggered);
@@ -309,8 +309,8 @@ void MapAirportHandler::addToolbarButton()
   buttonMenu->setToolTipsVisible(true);
   buttonMenu->setTearOffEnabled(true);
 
-  ui->toolbarMapOptions->insertWidget(ui->actionMapShowVor, toolButton);
-  ui->toolbarMapOptions->insertSeparator(ui->actionMapShowVor);
+  ui->toolBarMapOptions->insertWidget(ui->actionMapShowVor, toolButton);
+  ui->toolBarMapOptions->insertSeparator(ui->actionMapShowVor);
 
   // Create and add actions to toolbar and menu =================================
   actionReset = new QAction(tr("&Reset airport display options"), buttonMenu);

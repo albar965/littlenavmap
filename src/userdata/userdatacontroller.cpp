@@ -168,7 +168,7 @@ void UserdataController::enableCategoryOnMap(const QString& category)
 void UserdataController::addToolbarButton()
 {
   Ui::MainWindow *ui = NavApp::getMainUi();
-  userdataToolButton = new QToolButton(ui->toolbarMapOptions);
+  userdataToolButton = new QToolButton(ui->toolBarMapOptions);
 
   // Create and add toolbar button =====================================
   userdataToolButton->setIcon(QIcon(":/littlenavmap/resources/icons/userpoint_POI.svg"));
@@ -184,8 +184,8 @@ void UserdataController::addToolbarButton()
   buttonMenu->setTearOffEnabled(true);
 
   // Insert before show route
-  ui->toolbarMapOptions->insertWidget(ui->actionMapShowRoute, userdataToolButton);
-  ui->toolbarMapOptions->insertSeparator(ui->actionMapShowRoute);
+  ui->toolBarMapOptions->insertWidget(ui->actionMapShowRoute, userdataToolButton);
+  ui->toolBarMapOptions->insertSeparator(ui->actionMapShowRoute);
 
   // Create and add select all action =====================================
   actionAll = new QAction(tr("&All Userpoints"), buttonMenu);

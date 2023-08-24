@@ -125,7 +125,7 @@ void MapMarkHandler::addToolbarButton()
 {
   Ui::MainWindow *ui = NavApp::getMainUi();
 
-  toolButton = new QToolButton(ui->toolbarMapOptions);
+  toolButton = new QToolButton(ui->toolBarMapOptions);
 
   // Create and add toolbar button =====================================
   toolButton->setIcon(QIcon(":/littlenavmap/resources/icons/userfeatures.svg"));
@@ -140,7 +140,7 @@ void MapMarkHandler::addToolbarButton()
   buttonMenu->setToolTipsVisible(true);
   buttonMenu->setTearOffEnabled(true);
 
-  ui->toolbarMapOptions->insertWidget(ui->actionMapShowRoute, toolButton);
+  ui->toolBarMapOptions->insertWidget(ui->actionMapShowRoute, toolButton);
 
   // Create and add actions to toolbar and menu =================================
   actionAll = new QAction(tr("&All User Features"), buttonMenu);

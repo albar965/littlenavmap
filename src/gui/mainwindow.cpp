@@ -201,6 +201,9 @@ MainWindow::MainWindow()
     helpHandler = new atools::gui::HelpHandler(this, aboutMessage, GIT_REVISION_LITTLENAVMAP);
 
     // Create dock and mainwindow handler ============================================
+    toolbars.append({ui->toolBarMain, ui->toolBarMap, ui->toolBarMapOptions, ui->toolBarRoute, ui->toolBarView, ui->toolBarAirspaces,
+                     ui->toolBarTools});
+
     atools::settings::Settings& settings = atools::settings::Settings::instance();
     dockHandler =
       new atools::gui::DockWidgetHandler(this,
@@ -208,13 +211,11 @@ MainWindow::MainWindow()
                                          {ui->dockWidgetAircraft, ui->dockWidgetSearch, ui->dockWidgetProfile,
                                           ui->dockWidgetInformation, ui->dockWidgetRoute},
                                          // Add all available toolbars  here =============================
-                                         {ui->toolBarMain, ui->toolBarMap, ui->toolbarMapOptions,
-                                          ui->toolBarRoute, ui->toolBarView, ui->toolBarAirspaces, ui->toolBarTools},
+                                         toolbars,
                                          settings.getAndStoreValue(lnm::OPTIONS_DOCKHANDLER_DEBUG, false).toBool());
 
     marbleAboutDialog = new Marble::MarbleAboutDialog(this);
     marbleAboutDialog->setApplicationTitle(QApplication::applicationName());
-
 
     routeExport = new RouteExport(this);
     simbriefHandler = new SimBriefHandler(this);
@@ -756,23 +757,17 @@ void MainWindow::legendAnchorClicked(const QUrl& url)
   setStatusMessage(tr("Opened legend link in browser."));
 }
 
-void MainWindow::scaleToolbar(QToolBar *toolbar, float scale)
-{
-  QSizeF size = toolbar->iconSize();
-  size *= scale;
-  toolbar->setIconSize(size.toSize());
-}
-
 void MainWindow::setupUi()
 {
-  // Reduce large icons on mac
+  // Reduce large icons on mac once intially
 #if defined(Q_OS_MACOS)
-  scaleToolbar(ui->toolBarMain, 0.72f);
-  scaleToolbar(ui->toolBarMap, 0.72f);
-  scaleToolbar(ui->toolbarMapOptions, 0.72f);
-  scaleToolbar(ui->toolBarRoute, 0.72f);
-  scaleToolbar(ui->toolBarAirspaces, 0.72f);
-  scaleToolbar(ui->toolBarView, 0.72f);
+
+  for(QToolBar *toolbar : toolbars)
+  {
+    QSizeF size = toolbar->iconSize();
+    size *= 0.72f;
+    toolbar->setIconSize(size.toSize());
+  }
 #endif
 
   // Projection menu items
@@ -863,7 +858,7 @@ void MainWindow::setupUi()
   ui->menuView->insertActions(ui->actionShowStatusbar,
                               {ui->toolBarMain->toggleViewAction(),
                                ui->toolBarMap->toggleViewAction(),
-                               ui->toolbarMapOptions->toggleViewAction(),
+                               ui->toolBarMapOptions->toggleViewAction(),
                                ui->toolBarRoute->toggleViewAction(),
                                ui->toolBarAirspaces->toggleViewAction(),
                                ui->toolBarView->toggleViewAction(),
@@ -3773,8 +3768,7 @@ void MainWindow::restoreStateMain()
 
   Settings& settings = Settings::instance();
 
-  if(OptionData::instance().getFlags2().testFlag(opts2::OVERRIDE_TOOLBAR_SIZE))
-    setIconSize(OptionData::instance().getGuiToolbarSize());
+  applyToolBarSize();
 
   if(settings.contains(lnm::MAINWINDOW_WIDGET_DOCKHANDLER))
   {
@@ -3897,12 +3891,17 @@ void MainWindow::restoreStateMain()
   qDebug() << Q_FUNC_INFO << "leave";
 }
 
-void MainWindow::optionsChanged()
+void MainWindow::applyToolBarSize()
 {
   if(OptionData::instance().getFlags2().testFlag(opts2::OVERRIDE_TOOLBAR_SIZE))
     setIconSize(OptionData::instance().getGuiToolbarSize());
   else
     setIconSize(defaultToolbarIconSize);
+}
+
+void MainWindow::optionsChanged()
+{
+  applyToolBarSize();
 
   dockHandler->setAutoRaiseWindows(OptionData::instance().getFlags2().testFlag(opts2::RAISE_DOCK_WINDOWS));
   dockHandler->setAutoRaiseMainWindow(OptionData::instance().getFlags2().testFlag(opts2::RAISE_MAIN_WINDOW));

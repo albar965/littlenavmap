@@ -393,7 +393,7 @@ void WindReporter::addToolbarButton()
 {
   // Create and add toolbar button =====================================
   Ui::MainWindow *ui = NavApp::getMainUi();
-  windlevelToolButton = new QToolButton(ui->toolbarMapOptions);
+  windlevelToolButton = new QToolButton(ui->toolBarMapOptions);
   windlevelToolButton->setIcon(QIcon(":/littlenavmap/resources/icons/wind.svg"));
   windlevelToolButton->setPopupMode(QToolButton::InstantPopup);
   windlevelToolButton->setToolTip(tr("Wind forecast altitude levels to display"));
@@ -407,7 +407,7 @@ void WindReporter::addToolbarButton()
   buttonMenu->setTearOffEnabled(true);
 
   // Insert before show route
-  ui->toolbarMapOptions->insertWidget(ui->actionMapShowSunShading, windlevelToolButton);
+  ui->toolBarMapOptions->insertWidget(ui->actionMapShowSunShading, windlevelToolButton);
   ui->menuHighAltitudeWindLevels->clear();
 
   // Create and add flight plan action =====================================
