@@ -325,12 +325,12 @@ RouteController::RouteController(QMainWindow *parentWindow, QTableView *tableVie
   tableCleanupTimer.setSingleShot(true);
 
   // Restart timer when scrolling or holding the slider
-  connect(tableViewRoute->verticalScrollBar(), &QScrollBar::valueChanged, this, &RouteController::viewScrolled);
-  connect(tableViewRoute->horizontalScrollBar(), &QScrollBar::valueChanged, this, &RouteController::viewScrolled);
-  connect(tableViewRoute->verticalScrollBar(), &QScrollBar::sliderPressed, this, &RouteController::sliderPressedOrReleased);
-  connect(tableViewRoute->horizontalScrollBar(), &QScrollBar::sliderPressed, this, &RouteController::sliderPressedOrReleased);
-  connect(tableViewRoute->verticalScrollBar(), &QScrollBar::sliderReleased, this, &RouteController::sliderPressedOrReleased);
-  connect(tableViewRoute->horizontalScrollBar(), &QScrollBar::sliderReleased, this, &RouteController::sliderPressedOrReleased);
+  connect(tableViewRoute->verticalScrollBar(), &QScrollBar::valueChanged, this, &RouteController::updateCleanupTimer);
+  connect(tableViewRoute->horizontalScrollBar(), &QScrollBar::valueChanged, this, &RouteController::updateCleanupTimer);
+  connect(tableViewRoute->verticalScrollBar(), &QScrollBar::sliderPressed, this, &RouteController::updateCleanupTimer);
+  connect(tableViewRoute->horizontalScrollBar(), &QScrollBar::sliderPressed, this, &RouteController::updateCleanupTimer);
+  connect(tableViewRoute->verticalScrollBar(), &QScrollBar::sliderReleased, this, &RouteController::updateCleanupTimer);
+  connect(tableViewRoute->horizontalScrollBar(), &QScrollBar::sliderReleased, this, &RouteController::updateCleanupTimer);
 
   // set up table view
   tableViewRoute->horizontalHeader()->setSectionsMovable(true);
@@ -375,17 +375,17 @@ RouteController::RouteController(QMainWindow *parentWindow, QTableView *tableVie
     connect(tableViewRoute->selectionModel(), &QItemSelectionModel::selectionChanged, this, &RouteController::tableSelectionChanged);
 
   // Connect actions - actions without shortcut key are used in the context menu method directly
-  connect(ui->actionRouteTableCopy, &QAction::triggered, this, &RouteController::tableCopyClipboard);
-  connect(ui->actionRouteLegDown, &QAction::triggered, this, &RouteController::moveSelectedLegsDown);
-  connect(ui->actionRouteLegUp, &QAction::triggered, this, &RouteController::moveSelectedLegsUp);
+  connect(ui->actionRouteTableCopy, &QAction::triggered, this, &RouteController::tableCopyClipboardTriggered);
+  connect(ui->actionRouteLegDown, &QAction::triggered, this, &RouteController::moveSelectedLegsDownTriggered);
+  connect(ui->actionRouteLegUp, &QAction::triggered, this, &RouteController::moveSelectedLegsUpTriggered);
   connect(ui->actionRouteDeleteLeg, &QAction::triggered, this, &RouteController::deleteSelectedLegsTriggered);
   connect(ui->actionRouteEditUserWaypoint, &QAction::triggered, this, &RouteController::editUserWaypointTriggered);
 
-  connect(ui->actionRouteShowInformation, &QAction::triggered, this, &RouteController::showInformationMenu);
-  connect(ui->actionRouteShowApproaches, &QAction::triggered, this, &RouteController::showProceduresMenu);
-  connect(ui->actionRouteShowApproachCustom, &QAction::triggered, this, &RouteController::showCustomApproachRouteMenu);
-  connect(ui->actionRouteShowDepartureCustom, &QAction::triggered, this, &RouteController::showCustomDepartureRouteMenu);
-  connect(ui->actionRouteShowOnMap, &QAction::triggered, this, &RouteController::showOnMapMenu);
+  connect(ui->actionRouteShowInformation, &QAction::triggered, this, &RouteController::showInformationTriggered);
+  connect(ui->actionRouteShowApproaches, &QAction::triggered, this, &RouteController::showProceduresTriggered);
+  connect(ui->actionRouteShowApproachCustom, &QAction::triggered, this, &RouteController::showCustomApproachRouteTriggered);
+  connect(ui->actionRouteShowDepartureCustom, &QAction::triggered, this, &RouteController::showCustomDepartureRouteTriggered);
+  connect(ui->actionRouteShowOnMap, &QAction::triggered, this, &RouteController::showOnMapTriggered);
   connect(ui->actionRouteDirectTo, &QAction::triggered, this, &RouteController::directToTriggered);
 
   connect(ui->dockWidgetRoute, &QDockWidget::visibilityChanged, this, &RouteController::dockVisibilityChanged);
@@ -489,7 +489,7 @@ void RouteController::redoTriggered()
 }
 
 /* Ctrl-C - copy selected table contents in CSV format to clipboard */
-void RouteController::tableCopyClipboard()
+void RouteController::tableCopyClipboardTriggered()
 {
   qDebug() << "RouteController::tableCopyClipboard";
 
@@ -507,8 +507,7 @@ void RouteController::tableCopyClipboard()
                   };
 
   QString csv;
-  int exported = CsvExporter::selectionAsCsv(tableViewRoute, true /* rows */, true /* header */, csv,
-                                             {}, nullptr, dataFunc);
+  int exported = CsvExporter::selectionAsCsv(tableViewRoute, true /* rows */, true /* header */, csv, {}, nullptr, dataFunc);
 
   if(!csv.isEmpty())
   {
@@ -2344,12 +2343,8 @@ void RouteController::updateActions()
   }
 }
 
-/* From context menu */
-void RouteController::showInformationMenu()
+void RouteController::showInformationTriggered()
 {
-  if(!hasTableSelection())
-    return;
-
   qDebug() << Q_FUNC_INFO;
   QModelIndex index = tableViewRoute->currentIndex();
   if(index.isValid())
@@ -2372,12 +2367,8 @@ void RouteController::showInformationInternal(const RouteLeg& routeLeg)
   }
 }
 
-/* From context menu */
-void RouteController::showProceduresMenu()
+void RouteController::showProceduresTriggered()
 {
-  if(!hasTableSelection())
-    return;
-
   QModelIndex index = tableViewRoute->currentIndex();
   if(index.isValid())
   {
@@ -2393,11 +2384,8 @@ void RouteController::showProceduresMenu()
 }
 
 /* From context menu */
-void RouteController::showOnMapMenu()
+void RouteController::showOnMapTriggered()
 {
-  if(!hasTableSelection())
-    return;
-
   QModelIndex index = tableViewRoute->currentIndex();
   if(index.isValid())
   {
@@ -2503,8 +2491,9 @@ void RouteController::routeTableOptions()
 
 void RouteController::activateLegTriggered()
 {
-  if(hasTableSelection())
-    activateLegManually(selectedRows.constFirst());
+  QModelIndex index = tableViewRoute->currentIndex();
+  if(index.isValid())
+    activateLegManually(index.row());
 }
 
 void RouteController::helpClicked()
@@ -2563,21 +2552,28 @@ void RouteController::tableContextMenu(const QPoint& pos)
   // Save text which will be changed below - Re-enable actions on exit to allow keystrokes
   atools::gui::ActionTool actionTool(actions);
 
+  // Get table index ===========================================================
   QModelIndex index = tableViewRoute->indexAt(pos);
-
-  if(!index.isValid() && model->rowCount() > 0)
+  if(model->rowCount() > 0)
   {
-    // Fall back to selction and get first field there
-    QList<int> rows = atools::gui::selectedRows(tableViewRoute->selectionModel(), false /* reverse */);
-    if(!rows.isEmpty())
-      index = model->index(rows.constFirst(), 0);
+    if(index.isValid())
+      // Click spot is valid - set current but do not update selection
+      tableViewRoute->selectionModel()->setCurrentIndex(index, QItemSelectionModel::NoUpdate | QItemSelectionModel::Rows);
     else
-      // Get current position
-      index = tableViewRoute->currentIndex();
-
-    if(!index.isValid() && model->rowCount() > 0)
-      // Simply get first entry in case of no selection and no current position
-      index = model->index(0, 0);
+    {
+      // Invalid click spot - fall back to selection and get first field there
+      // Update current for ...Triggered() methods called by actions
+      QList<int> rows = atools::gui::selectedRows(tableViewRoute->selectionModel(), false /* reverse */);
+      if(rows.size() == 1)
+      {
+        // Move current to one selected row
+        index = model->index(rows.constFirst(), 0);
+        tableViewRoute->selectionModel()->setCurrentIndex(index, QItemSelectionModel::NoUpdate | QItemSelectionModel::Rows);
+      }
+      else
+        // Use current - keep all disabled if this is not valid
+        index = tableViewRoute->currentIndex();
+    }
   }
 
   const RouteLeg *routeLeg = nullptr, *prevRouteLeg = nullptr;
@@ -3009,7 +3005,8 @@ void RouteController::updateActiveLeg()
 
 void RouteController::editUserWaypointTriggered()
 {
-  if(hasTableSelection())
+  QModelIndex index = tableViewRoute->currentIndex();
+  if(index.isValid())
     editUserWaypointName(tableViewRoute->currentIndex().row());
 }
 
@@ -3118,16 +3115,6 @@ void RouteController::updateCleanupTimer()
       tableCleanupTimer.start();
     }
   }
-}
-
-void RouteController::viewScrolled(int)
-{
-  updateCleanupTimer();
-}
-
-void RouteController::sliderPressedOrReleased()
-{
-  updateCleanupTimer();
 }
 
 void RouteController::tableSelectionChanged(const QItemSelection& selected, const QItemSelection& deselected)
@@ -3304,7 +3291,7 @@ bool RouteController::doesLnmFilenameMatchRoute() const
 }
 
 /* Called by action */
-void RouteController::moveSelectedLegsDown()
+void RouteController::moveSelectedLegsDownTriggered()
 {
   if(model->rowCount() <= 1)
     return;
@@ -3314,7 +3301,7 @@ void RouteController::moveSelectedLegsDown()
 }
 
 /* Called by action */
-void RouteController::moveSelectedLegsUp()
+void RouteController::moveSelectedLegsUpTriggered()
 {
   if(model->rowCount() <= 1)
     return;
@@ -3886,23 +3873,15 @@ void RouteController::showCustomDepartureMainMenu()
     showCustomDeparture(route.getDepartureAirportLeg().getAirport(), tr("Select runway for departure:"));
 }
 
-void RouteController::showCustomApproachRouteMenu()
+void RouteController::showCustomApproachRouteTriggered()
 {
-  // Flight plan table context menu
-  if(!hasTableSelection())
-    return;
-
   QModelIndex index = tableViewRoute->currentIndex();
   if(index.isValid() && route.getDepartureAirportLegIndex() != index.row())
     showCustomApproach(route.value(index.row()).getAirport(), QString());
 }
 
-void RouteController::showCustomDepartureRouteMenu()
+void RouteController::showCustomDepartureRouteTriggered()
 {
-  // Flight plan table context menu
-  if(!hasTableSelection())
-    return;
-
   QModelIndex index = tableViewRoute->currentIndex();
   if(index.isValid() && route.getDestinationAirportLegIndex() != index.row())
     showCustomDeparture(route.value(index.row()).getAirport(), QString());
@@ -4136,9 +4115,9 @@ void RouteController::routeAddProcedure(proc::MapProcedureLegs legs)
 
 void RouteController::directToTriggered()
 {
-  QList<int> rows = getSelectedRows(false);
-  if(!rows.isEmpty())
-    routeDirectTo(-1, atools::geo::EMPTY_POS, map::NONE, rows.constFirst());
+  QModelIndex index = tableViewRoute->currentIndex();
+  if(index.isValid())
+    routeDirectTo(-1, atools::geo::EMPTY_POS, map::NONE, index.row());
 }
 
 void RouteController::routeDirectTo(int id, atools::geo::Pos userPos, map::MapTypes type, int legIndexDirectTo)

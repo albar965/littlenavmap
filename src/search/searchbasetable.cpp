@@ -970,7 +970,7 @@ void SearchBaseTable::contextMenu(const QPoint& pos)
 
   if(!index.isValid())
   {
-    // Fall back to selction and get first field there
+    // Fall back to selection and get first field there
     QList<int> selectedRows = controller->getSelectedRows(false /* reverse */);
     if(!selectedRows.isEmpty())
       index = controller->getModelIndexFor(selectedRows.constFirst(), 0);

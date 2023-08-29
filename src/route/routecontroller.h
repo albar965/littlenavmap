@@ -392,8 +392,8 @@ private:
 
   void tableSelectionChanged(const QItemSelection& selected, const QItemSelection& deselected);
 
-  void moveSelectedLegsDown();
-  void moveSelectedLegsUp();
+  void moveSelectedLegsDownTriggered();
+  void moveSelectedLegsUpTriggered();
   void moveSelectedLegsInternal(MoveDirection direction);
   void deleteSelectedLegs(const QList<int>& rows);
   void deleteSelectedLegsInternal(const QList<int>& rows);
@@ -437,18 +437,21 @@ private:
   /* Used by undo/redo */
   void changeRouteUndoRedo(const atools::fs::pln::Flightplan& newFlightplan);
 
-  void tableCopyClipboard();
-
-  void showInformationMenu();
-  void showProceduresMenu();
+  void tableCopyClipboardTriggered();
 
   /* From context menu */
-  void showCustomApproachRouteMenu();
+  void showInformationTriggered();
 
   /* From context menu */
-  void showCustomDepartureRouteMenu();
+  void showProceduresTriggered();
 
-  void showOnMapMenu();
+  /* From context menu */
+  void showCustomApproachRouteTriggered();
+
+  /* From context menu */
+  void showCustomDepartureRouteTriggered();
+
+  void showOnMapTriggered();
 
   void showInformationInternal(const RouteLeg& routeLeg);
 
@@ -497,9 +500,6 @@ private:
 
   /* Move active leg to second top position */
   void scrollToActive();
-
-  void viewScrolled(int);
-  void sliderPressedOrReleased();
 
   /* Remove all errors from lists */
   void clearAllErrors();
