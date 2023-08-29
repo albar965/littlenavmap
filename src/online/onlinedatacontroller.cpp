@@ -84,7 +84,7 @@ OnlinedataController::OnlinedataController(atools::fs::online::OnlinedataManager
 
   // Load criteria used to detect shadow aircraft right after download finished
   maxShadowDistanceNm = settings.getAndStoreValue(lnm::OPTIONS_ONLINE_NETWORK_MAX_SHADOW_DIST_NM, 2.0).toFloat();
-  maxShadowAltDiffFt = settings.getAndStoreValue(lnm::OPTIONS_ONLINE_NETWORK_MAX_SHADOW_ALT_DIFF_FT, 500.).toFloat();
+  maxShadowAltDiffFt = settings.getAndStoreValue(lnm::OPTIONS_ONLINE_NETWORK_MAX_SHADOW_ALT_DIFF_FT, 1000.).toFloat();
   maxShadowGsDiffKts = settings.getAndStoreValue(lnm::OPTIONS_ONLINE_NETWORK_MAX_SHADOW_GS_DIFF_KTS, 50.).toFloat();
   maxShadowHdgDiffDeg = settings.getAndStoreValue(lnm::OPTIONS_ONLINE_NETWORK_MAX_SHADOW_HDG_DIFF_DEG, 90.).toFloat();
 
