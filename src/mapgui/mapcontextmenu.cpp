@@ -396,19 +396,19 @@ void MapContextMenu::insertInformationMenu(QMenu& menu)
   // Remove all online aircraft having a simulator shadow from the index for this menu item only
   // Collect shadowed online aircraft first
   OnlinedataController *onlineDataController = NavApp::getOnlinedataController();
-  QSet<map::MapObjectRef> refs;
+  QSet<map::MapRef> refs;
   for(const map::MapBase *base : index)
   {
     // Check shadowed AI aircraft
     const map::MapAiAircraft *ai = base->asPtr<map::MapAiAircraft>();
     if(ai != nullptr && ai->getAircraft().isOnlineShadow())
-      refs.insert(map::MapObjectRef(onlineDataController->getShadowedOnlineAircraft(ai->getAircraft()).getId(), map::AIRCRAFT_ONLINE));
+      refs.insert(map::MapRef(onlineDataController->getShadowedOnlineAircraft(ai->getAircraft()).getId(), map::AIRCRAFT_ONLINE));
     else
     {
       // Check shadowed user aircraft
       const map::MapUserAircraft *user = base->asPtr<map::MapUserAircraft>();
       if(user != nullptr && user->getAircraft().isOnlineShadow())
-        refs.insert(map::MapObjectRef(onlineDataController->getShadowedOnlineAircraft(user->getAircraft()).getId(), map::AIRCRAFT_ONLINE));
+        refs.insert(map::MapRef(onlineDataController->getShadowedOnlineAircraft(user->getAircraft()).getId(), map::AIRCRAFT_ONLINE));
     }
   }
 

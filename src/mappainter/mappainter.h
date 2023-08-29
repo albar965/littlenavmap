@@ -51,7 +51,7 @@ class Route;
 
 namespace map {
 struct MapAirport;
-struct MapObjectRef;
+struct MapRef;
 struct MapHolding;
 struct MapAirportMsa;
 }
@@ -92,7 +92,7 @@ struct PaintContext
 
   // All waypoints from the route and add them to the map to avoid duplicate drawing
   // Same for procedure preview
-  QSet<map::MapObjectRef> routeProcIdMap, /* Navaids on plan */
+  QSet<map::MapRef> routeProcIdMap, /* Navaids on plan */
                           routeProcIdMapRec /* Recommended navaids */;
 
   // All airport ids which are to be drawn
@@ -110,7 +110,7 @@ struct PaintContext
   bool visibleWidget;
   bool paintCopyright = true;
   int mimimumRunwayLengthFt = -1; /* Value from toolbar */
-  QVector<map::MapObjectRef> *routeDrawnNavaids; /* All navaids drawn for route and procedures. Points to vector in MapScreenIndex */
+  QVector<map::MapRef> *routeDrawnNavaids; /* All navaids drawn for route and procedures. Points to vector in MapScreenIndex */
   int currentDistanceMarkerId = -1;
 
   /* Text sizes and line thickness in percent / 100 as set in options dialog */

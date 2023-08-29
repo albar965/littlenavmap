@@ -26,7 +26,7 @@
 
 namespace map {
 struct MapResult;
-struct MapObjectRef;
+struct MapRef;
 struct RangeMarker;
 struct DistanceMarker;
 struct PatternMarker;
@@ -402,9 +402,9 @@ public:
   /* Print all layers to debug channel */
   void dumpMapLayers() const;
 
-  const QVector<map::MapObjectRef>& getRouteDrawnNavaidsConst() const;
+  const QVector<map::MapRef>& getRouteDrawnNavaidsConst() const;
 
-  QVector<map::MapObjectRef> *getRouteDrawnNavaids();
+  QVector<map::MapRef> *getRouteDrawnNavaids();
 
   const QString& getCurrentThemeId() const
   {

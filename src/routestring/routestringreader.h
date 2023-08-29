@@ -43,9 +43,9 @@ struct MapResult;
 struct MapAirwayWaypoint;
 struct MapWaypoint;
 struct MapAirport;
-struct MapObjectRefExt;
+struct MapRefExt;
 struct MapAirway;
-typedef QVector<map::MapObjectRefExt> MapObjectRefExtVector;
+typedef QVector<map::MapRefExt> MapRefExtVector;
 }
 
 namespace proc {
@@ -81,7 +81,7 @@ public:
    * Fills either flightplan and/or mapObjectRefs if not null.
    * Get error, warning and information messages with getMessages() */
   bool createRouteFromString(const QString& routeString, rs::RouteStringOptions options, atools::fs::pln::Flightplan *flightplan,
-                             map::MapObjectRefExtVector *mapObjectRefs = nullptr, float *speedKts = nullptr, bool *altIncluded = nullptr);
+                             map::MapRefExtVector *mapObjectRefs = nullptr, float *speedKts = nullptr, bool *altIncluded = nullptr);
 
   /* Get error and warning messages */
   const QStringList& getMessages() const
@@ -146,12 +146,12 @@ private:
   void removeEmptyResults(QList<ParseEntry>& resultList);
 
   /* Fetch departure airport as well as SID */
-  bool addDeparture(atools::fs::pln::Flightplan *flightplan, map::MapObjectRefExtVector *mapObjectRefs, QStringList& items,
+  bool addDeparture(atools::fs::pln::Flightplan *flightplan, map::MapRefExtVector *mapObjectRefs, QStringList& items,
                     QString& sidTransWp);
 
   /* Fetch destination airport as well as STAR */
   bool addDestination(atools::fs::pln::Flightplan *flightplan, QList<atools::fs::pln::FlightplanEntry>* alternates,
-                      map::MapObjectRefExtVector *mapObjectRefs, QStringList& items,
+                      map::MapRefExtVector *mapObjectRefs, QStringList& items,
                       QString& starTransWp, rs::RouteStringOptions options);
   void destinationInternal(map::MapAirport& destination, proc::MapProcedureLegs& starLegs, QStringList& items, QString& starTransWp,
                            int& consume, int index);
@@ -163,7 +163,7 @@ private:
   atools::geo::Pos findFirstCoordinate(const QStringList& items);
 
   /* Create reference struct from given entry and map search result */
-  map::MapObjectRefExt mapObjectRefFromEntry(const atools::fs::pln::FlightplanEntry& entry, const map::MapResult& result,
+  map::MapRefExt mapObjectRefFromEntry(const atools::fs::pln::FlightplanEntry& entry, const map::MapResult& result,
                                              const QString& name);
 
   /* Get airway segments with given name between  waypoints */

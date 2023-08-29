@@ -101,7 +101,6 @@ int main(int argc, char *argv[])
   qRegisterMetaTypeStreamOperators<RouteExportFormatMap>();
 
   qRegisterMetaTypeStreamOperators<map::MapAirspaceFilter>();
-  qRegisterMetaTypeStreamOperators<map::MapObjectRef>();
   qRegisterMetaTypeStreamOperators<map::MapTypes>();
 
   // Register types and load process environment

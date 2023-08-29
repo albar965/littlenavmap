@@ -289,11 +289,11 @@ public:
 
   /* Get nearest flight plan leg to given screen position xs/ys. */
   void getNearest(const CoordinateConverter& conv, int xs, int ys, int screenDistance, map::MapResult& mapobjects,
-                  map::MapObjectQueryTypes types, const QVector<map::MapObjectRef>& routeDrawnNavaids) const;
+                  map::MapObjectQueryTypes types, const QVector<map::MapRef>& routeDrawnNavaids) const;
 
   /* Get nearest recommended navaids to given screen position xs/ys. */
   void getNearestRecommended(const CoordinateConverter& conv, int xs, int ys, int screenDistance, map::MapResult& mapobjects,
-                             map::MapObjectQueryTypes types, const QVector<map::MapObjectRef>& routeDrawnNavaids) const;
+                             map::MapObjectQueryTypes types, const QVector<map::MapRef>& routeDrawnNavaids) const;
 
   void eraseAirway(int row);
 
@@ -699,11 +699,11 @@ public:
   void setActivePos(const atools::geo::Pos& pos, float course);
 
   /* Get index for ref or -1 if not found. Procedures are stored with flag PROCEDURE in the index. */
-  int getLegIndexForRef(const map::MapObjectRef& ref) const;
+  int getLegIndexForRef(const map::MapRef& ref) const;
 
   int getLegIndexForIdAndType(int id, map::MapTypes type) const
   {
-    return getLegIndexForRef(map::MapObjectRef(id, type));
+    return getLegIndexForRef(map::MapRef(id, type));
   }
 
 private:
@@ -803,7 +803,7 @@ private:
   RouteAltitude *altitude = nullptr;
 
   /* Ref to flight plan leg  index map */
-  QHash<map::MapObjectRef, int> objectIndex;
+  QHash<map::MapRef, int> objectIndex;
 };
 
 QDebug operator<<(QDebug out, const Route& route);

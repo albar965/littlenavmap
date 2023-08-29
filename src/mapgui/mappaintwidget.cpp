@@ -416,12 +416,12 @@ void MapPaintWidget::dumpMapLayers() const
   paintLayer->dumpMapLayers();
 }
 
-const QVector<map::MapObjectRef>& MapPaintWidget::getRouteDrawnNavaidsConst() const
+const QVector<map::MapRef>& MapPaintWidget::getRouteDrawnNavaidsConst() const
 {
   return screenIndex->getRouteDrawnNavaidsConst();
 }
 
-QVector<map::MapObjectRef> *MapPaintWidget::getRouteDrawnNavaids()
+QVector<map::MapRef> *MapPaintWidget::getRouteDrawnNavaids()
 {
   return screenIndex->getRouteDrawnNavaids();
 }

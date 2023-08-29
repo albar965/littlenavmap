@@ -105,7 +105,7 @@ struct MapResult
   /* Get id and type from the result. Vector of types defines priority. true if something was found.
    * id is set to -1 if nothing was found. */
   bool getIdAndType(int& id, MapTypes& type, const std::initializer_list<MapTypes>& types) const;
-  map::MapObjectRef getRef(const std::initializer_list<MapTypes>& types) const;
+  map::MapRef getRef(const std::initializer_list<MapTypes>& types) const;
 
   /* Get position and returns first for the list of types defining priority by order */
   const atools::geo::Pos& getPosition(const std::initializer_list<MapTypes>& types) const;

@@ -1129,7 +1129,7 @@ const RouteLeg& Route::getDepartureAirportLeg() const
 }
 
 void Route::getNearestRecommended(const CoordinateConverter& conv, int xs, int ys, int screenDistance, map::MapResult& mapobjects,
-                                  map::MapObjectQueryTypes types, const QVector<map::MapObjectRef>& routeDrawnNavaids) const
+                                  map::MapObjectQueryTypes types, const QVector<map::MapRef>& routeDrawnNavaids) const
 {
   using maptools::insertSortedByDistance;
 
@@ -1196,7 +1196,7 @@ void Route::getNearestRecommended(const CoordinateConverter& conv, int xs, int y
 }
 
 void Route::getNearest(const CoordinateConverter& conv, int xs, int ys, int screenDistance, map::MapResult& mapobjects,
-                       map::MapObjectQueryTypes types, const QVector<map::MapObjectRef>& routeDrawnNavaids) const
+                       map::MapObjectQueryTypes types, const QVector<map::MapRef>& routeDrawnNavaids) const
 {
   using maptools::insertSortedByDistance;
 
@@ -1790,7 +1790,7 @@ void Route::setActivePos(const atools::geo::Pos& pos, float course)
   activePos.course = course;
 }
 
-int Route::getLegIndexForRef(const map::MapObjectRef& ref) const
+int Route::getLegIndexForRef(const map::MapRef& ref) const
 {
   return objectIndex.value(ref, -1);
 }
@@ -1966,7 +1966,7 @@ void Route::updateIndices()
   {
     RouteLeg& leg = (*this)[i];
     leg.setFlightplanEntryIndex(i);
-    objectIndex.insert(map::MapObjectRef(leg.getId(), leg.getMapObjectType()), i); // types includes PROCEDURE
+    objectIndex.insert(map::MapRef(leg.getId(), leg.getMapObjectType()), i); // types includes PROCEDURE
   }
 }
 

@@ -195,7 +195,7 @@ void MapPainterRoute::paintRoute()
       const QColor& flightplanProcedureColor = OptionData::instance().getFlightplanProcedureColor();
 
       // Keep de-duplication separate from approach and STAR to avoid lines overlaying symbols
-      QSet<map::MapObjectRef> idMap(routeProcIdMap);
+      QSet<map::MapRef> idMap(routeProcIdMap);
       if(route->hasAnyApproachProcedure())
         paintProcedure(lastLegPoint, idMap, route->getApproachLegs(), route->getApproachLegsOffset(),
                        flightplanProcedureColor, false /* preview */, false /* previewAll */);
@@ -245,7 +245,7 @@ void MapPainterRoute::paintRoute()
 
 }
 
-void MapPainterRoute::paintRecommended(int passedRouteLeg, QSet<map::MapObjectRef>& idMap)
+void MapPainterRoute::paintRecommended(int passedRouteLeg, QSet<map::MapRef>& idMap)
 {
   // Margins for text at left (VOR), right (waypoints) and below (NDB)
   QMargins margins(50, 10, 50, 20);
@@ -695,7 +695,7 @@ void MapPainterRoute::paintTopOfDescentAndClimb()
 }
 
 /* Draw approaches and transitions selected in the tree view */
-void MapPainterRoute::paintProcedure(proc::MapProcedureLeg& lastLegPoint, QSet<map::MapObjectRef>& idMap,
+void MapPainterRoute::paintProcedure(proc::MapProcedureLeg& lastLegPoint, QSet<map::MapRef>& idMap,
                                      const proc::MapProcedureLegs& legs, int legsRouteOffset, const QColor& color, bool preview,
                                      bool previewAll)
 {
@@ -1432,7 +1432,7 @@ QLineF MapPainterRoute::paintProcedureTurn(QVector<QLineF>& lastLines, QLineF li
   return nextLine;
 }
 
-void MapPainterRoute::paintProcedurePoint(proc::MapProcedureLeg& lastLegPoint, QSet<map::MapObjectRef>& idMap,
+void MapPainterRoute::paintProcedurePoint(proc::MapProcedureLeg& lastLegPoint, QSet<map::MapRef>& idMap,
                                           const proc::MapProcedureLegs& legs, int index, bool preview, bool previewAll, bool drawTextFlag)
 {
   const proc::MapProcedureLeg& leg = legs.at(index);

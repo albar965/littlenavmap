@@ -118,7 +118,7 @@ RouteStringReader::~RouteStringReader()
 }
 
 bool RouteStringReader::createRouteFromString(const QString& routeString, rs::RouteStringOptions options,
-                                              atools::fs::pln::Flightplan *flightplan, map::MapObjectRefExtVector *mapObjectRefs,
+                                              atools::fs::pln::Flightplan *flightplan, map::MapRefExtVector *mapObjectRefs,
                                               float *speedKts, bool *altIncluded)
 {
 #ifdef DEBUG_INFORMATION
@@ -143,7 +143,7 @@ bool RouteStringReader::createRouteFromString(const QString& routeString, rs::Ro
   fp = flightplan != nullptr ? flightplan : &tempFp;
 
 #ifdef DEBUG_INFORMATION
-  map::MapObjectRefExtVector refTemp;
+  map::MapRefExtVector refTemp;
   mapObjectRefs = mapObjectRefs != nullptr ? mapObjectRefs : &refTemp;
 
   qDebug() << "items" << items;
@@ -327,13 +327,13 @@ bool RouteStringReader::createRouteFromString(const QString& routeString, rs::Ro
   // Either append (if no airports) or append before destination
   int insertOffset = readNoAirports ? 0 : 1;
 
-  map::MapObjectRefExt lastRef;
+  map::MapRefExt lastRef;
   for(int i = 0; i < resultList.size(); i++)
   {
     const QString& item = resultList.at(i).item;
     const MapResult& result = resultList.at(i).result;
     const ParseEntry *lastParseEntry = i > 0 ? &resultList.at(i - 1) : nullptr;
-    map::MapObjectRefExt curRef;
+    map::MapRefExt curRef;
 
     // Add waypoints on airways =======================================
     if(result.hasAirways())
@@ -366,11 +366,11 @@ bool RouteStringReader::createRouteFromString(const QString& routeString, rs::Ro
               airwayQuery->getAirwaysForWaypoints(airways, lastRef.id, wp.id, item);
               if(!airways.isEmpty())
                 atools::insertInto(*mapObjectRefs, insertPos,
-                                   map::MapObjectRefExt(airways.constFirst().id, map::AIRWAY, airways.constFirst().name));
+                                   map::MapRefExt(airways.constFirst().id, map::AIRWAY, airways.constFirst().name));
 
               insertPos = mapObjectRefs->size() - insertOffset;
               // Waypoint
-              curRef = map::MapObjectRefExt(wp.id, wp.position, map::WAYPOINT, wp.ident);
+              curRef = map::MapRefExt(wp.id, wp.position, map::WAYPOINT, wp.ident);
               atools::insertInto(*mapObjectRefs, insertPos, curRef);
             }
           }
@@ -396,7 +396,7 @@ bool RouteStringReader::createRouteFromString(const QString& routeString, rs::Ro
         if(mapObjectRefs != nullptr)
         {
           // Add user defined waypoint with original coordinate string
-          curRef = map::MapObjectRefExt(-1, entry.getPosition(), map::USERPOINTROUTE, item);
+          curRef = map::MapRefExt(-1, entry.getPosition(), map::USERPOINTROUTE, item);
           atools::insertInto(*mapObjectRefs, mapObjectRefs->size() - insertOffset, curRef);
         }
 
@@ -424,7 +424,7 @@ bool RouteStringReader::createRouteFromString(const QString& routeString, rs::Ro
             airwayQuery->getAirwaysForWaypoints(airways, lastRef.id, curRef.id, lastParseEntry->airway);
             if(!airways.isEmpty())
               atools::insertInto(*mapObjectRefs, mapObjectRefs->size() - insertOffset,
-                                 map::MapObjectRefExt(airways.constFirst().id, map::AIRWAY, airways.constFirst().name));
+                                 map::MapRefExt(airways.constFirst().id, map::AIRWAY, airways.constFirst().name));
           }
 
           // Add navaid or airport including original name
@@ -481,7 +481,7 @@ bool RouteStringReader::createRouteFromString(const QString& routeString, rs::Ro
   if(mapObjectRefs != nullptr)
   {
     qDebug() << "===============================";
-    for(const map::MapObjectRefExt& r : *mapObjectRefs)
+    for(const map::MapRefExt& r : *mapObjectRefs)
       qDebug() << r;
   }
 #endif
@@ -543,7 +543,7 @@ void RouteStringReader::addReport(atools::fs::pln::Flightplan *flightplan, const
     insertMessage(tr("Found STAR: <b>%1</b>.").arg(star), insertIndex++);
 }
 
-map::MapObjectRefExt RouteStringReader::mapObjectRefFromEntry(const FlightplanEntry& entry,
+map::MapRefExt RouteStringReader::mapObjectRefFromEntry(const FlightplanEntry& entry,
                                                               const map::MapResult& result, const QString& name)
 {
   atools::fs::pln::entry::WaypointType type = entry.getWaypointType();
@@ -558,9 +558,9 @@ map::MapObjectRefExt RouteStringReader::mapObjectRefFromEntry(const FlightplanEn
   else if(type == atools::fs::pln::entry::NDB && result.hasNdb())
     return result.ndbs.constFirst().getRefExt(name);
   else if(type == atools::fs::pln::entry::USER && result.hasUserpointsRoute())
-    return map::MapObjectRefExt(-1, result.userpointsRoute.constFirst().position, map::USERPOINTROUTE, name);
+    return map::MapRefExt(-1, result.userpointsRoute.constFirst().position, map::USERPOINTROUTE, name);
   else
-    return map::MapObjectRefExt();
+    return map::MapRefExt();
 }
 
 void RouteStringReader::buildEntryForResult(FlightplanEntry& entry, const MapResult& result,
@@ -752,7 +752,7 @@ void RouteStringReader::readSidAndTrans(QStringList& items, QString& sidTransWp,
   }
 }
 
-bool RouteStringReader::addDeparture(atools::fs::pln::Flightplan *flightplan, map::MapObjectRefExtVector *mapObjectRefs, QStringList& items,
+bool RouteStringReader::addDeparture(atools::fs::pln::Flightplan *flightplan, map::MapRefExtVector *mapObjectRefs, QStringList& items,
                                      QString& sidTransWp)
 {
   QString ident = extractAirportIdent(items.takeFirst());
@@ -779,7 +779,7 @@ bool RouteStringReader::addDeparture(atools::fs::pln::Flightplan *flightplan, ma
     entryBuilder->buildFlightplanEntry(departure, entry, false /* alternate */);
     flightplan->append(entry);
     if(mapObjectRefs != nullptr)
-      mapObjectRefs->append(map::MapObjectRefExt(departure.id, departure.position, map::AIRPORT, departure.ident));
+      mapObjectRefs->append(map::MapRefExt(departure.id, departure.position, map::AIRPORT, departure.ident));
 
     if(!items.isEmpty())
     {
@@ -820,7 +820,7 @@ bool RouteStringReader::addDeparture(atools::fs::pln::Flightplan *flightplan, ma
 }
 
 bool RouteStringReader::addDestination(atools::fs::pln::Flightplan *flightplan, QList<atools::fs::pln::FlightplanEntry> *alternates,
-                                       map::MapObjectRefExtVector *mapObjectRefs, QStringList& items, QString& starTransWp,
+                                       map::MapRefExtVector *mapObjectRefs, QStringList& items, QString& starTransWp,
                                        rs::RouteStringOptions options)
 {
   if(options & rs::READ_ALTERNATES)
@@ -903,7 +903,7 @@ bool RouteStringReader::addDestination(atools::fs::pln::Flightplan *flightplan, 
       entryBuilder->buildFlightplanEntry(dest, entry, false /* alternate */);
       flightplan->append(entry);
       if(mapObjectRefs != nullptr)
-        mapObjectRefs->append(map::MapObjectRefExt(dest.id, dest.position, map::AIRPORT, dest.ident));
+        mapObjectRefs->append(map::MapRefExt(dest.id, dest.position, map::AIRPORT, dest.ident));
 
       // Get destination STAR ========================
       if(!star.isEmpty())
@@ -962,7 +962,7 @@ bool RouteStringReader::addDestination(atools::fs::pln::Flightplan *flightplan, 
       entryBuilder->buildFlightplanEntry(dest, entry, false /* alternate */);
       flightplan->append(entry);
       if(mapObjectRefs != nullptr)
-        mapObjectRefs->append(map::MapObjectRefExt(dest.id, dest.position, map::AIRPORT, dest.ident));
+        mapObjectRefs->append(map::MapRefExt(dest.id, dest.position, map::AIRPORT, dest.ident));
 
       // Consume airport
       items.removeLast();

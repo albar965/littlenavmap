@@ -2160,7 +2160,7 @@ bool MapWidget::showFeatureSelectionMenu(int& id, map::MapTypes& type, const map
   for(const map::MapAirport& obj : result.airports)
   {
     QAction *action = new QAction(SymbolPainter::createAirportIcon(obj, ICON_SIZE), menuText.arg(map::airportText(obj, 20)), this);
-    action->setData(QVariant::fromValue(map::MapObjectRef(obj.id, map::AIRPORT)));
+    action->setData(QVariant::fromValue(map::MapRef(obj.id, map::AIRPORT)));
     menu.addAction(action);
   }
 
@@ -2172,19 +2172,19 @@ bool MapWidget::showFeatureSelectionMenu(int& id, map::MapTypes& type, const map
   for(const map::MapVor& obj : result.vors)
   {
     QAction *action = new QAction(SymbolPainter::createVorIcon(obj, ICON_SIZE), menuText.arg(map::vorText(obj)), this);
-    action->setData(QVariant::fromValue(map::MapObjectRef(obj.id, map::VOR)));
+    action->setData(QVariant::fromValue(map::MapRef(obj.id, map::VOR)));
     menu.addAction(action);
   }
   for(const map::MapNdb& obj : result.ndbs)
   {
     QAction *action = new QAction(SymbolPainter::createNdbIcon(ICON_SIZE), menuText.arg(map::ndbText(obj)), this);
-    action->setData(QVariant::fromValue(map::MapObjectRef(obj.id, map::NDB)));
+    action->setData(QVariant::fromValue(map::MapRef(obj.id, map::NDB)));
     menu.addAction(action);
   }
   for(const map::MapWaypoint& obj : result.waypoints)
   {
     QAction *action = new QAction(SymbolPainter::createWaypointIcon(ICON_SIZE), menuText.arg(map::waypointText(obj)), this);
-    action->setData(QVariant::fromValue(map::MapObjectRef(obj.id, map::WAYPOINT)));
+    action->setData(QVariant::fromValue(map::MapRef(obj.id, map::WAYPOINT)));
     menu.addAction(action);
   }
 
@@ -2202,7 +2202,7 @@ bool MapWidget::showFeatureSelectionMenu(int& id, map::MapTypes& type, const map
     else
     {
       action = new QAction(SymbolPainter::createUserpointIcon(ICON_SIZE), menuText.arg(map::userpointText(obj)), this);
-      action->setData(QVariant::fromValue(map::MapObjectRef(obj.id, map::USERPOINT)));
+      action->setData(QVariant::fromValue(map::MapRef(obj.id, map::USERPOINT)));
       menu.addAction(action);
     }
     numUserpoints++;
@@ -2212,7 +2212,7 @@ bool MapWidget::showFeatureSelectionMenu(int& id, map::MapTypes& type, const map
   menu.addSeparator();
   {
     QAction *action = new QAction(SymbolPainter::createUserpointIcon(ICON_SIZE), menuText.arg(tr("Position")), this);
-    action->setData(QVariant::fromValue(map::MapObjectRef(-1, map::USERPOINTROUTE)));
+    action->setData(QVariant::fromValue(map::MapRef(-1, map::USERPOINTROUTE)));
     menu.addAction(action);
   }
 
@@ -2226,7 +2226,7 @@ bool MapWidget::showFeatureSelectionMenu(int& id, map::MapTypes& type, const map
   if(action != nullptr && !action->data().isNull())
   {
     // Get id and type from selected action
-    map::MapObjectRef data = action->data().value<map::MapObjectRef>();
+    map::MapRef data = action->data().value<map::MapRef>();
     id = data.id;
     type = data.objType;
     return true;

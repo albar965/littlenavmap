@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2022 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -78,7 +78,7 @@ private:
   };
 
   void paintRoute();
-  void paintRecommended(int passedRouteLeg, QSet<map::MapObjectRef>& idMap);
+  void paintRecommended(int passedRouteLeg, QSet<map::MapRef>& idMap);
 
   void paintAirport(float x, float y, const map::MapAirport& obj);
   void paintVor(float x, float y, const map::MapVor& obj, bool preview);
@@ -86,7 +86,7 @@ private:
   void paintWaypoint(float x, float y, const map::MapWaypoint& obj, bool preview);
   void paintWaypoint(const QColor& col, float x, float y, bool preview);
 
-  void paintProcedure(proc::MapProcedureLeg& lastLegPoint, QSet<map::MapObjectRef>& idMap, const proc::MapProcedureLegs& legs,
+  void paintProcedure(proc::MapProcedureLeg& lastLegPoint, QSet<map::MapRef>& idMap, const proc::MapProcedureLegs& legs,
                       int legsRouteOffset, const QColor& color, bool preview, bool previewAll);
   void paintWaypointText(float x, float y, const map::MapWaypoint& obj, bool drawTextDetails,
                          const QStringList *additionalText);
@@ -98,7 +98,7 @@ private:
   void paintUserpoint(float x, float y, const map::MapUserpointRoute& obj, bool preview);
 
   void paintProcedurePoint(float x, float y, bool preview);
-  void paintProcedurePoint(proc::MapProcedureLeg& lastLegPoint, QSet<map::MapObjectRef>& idMap, const proc::MapProcedureLegs& legs,
+  void paintProcedurePoint(proc::MapProcedureLeg& lastLegPoint, QSet<map::MapRef>& idMap, const proc::MapProcedureLegs& legs,
                            int index, bool preview, bool previewAll, bool drawTextFlag);
   void paintProcedurePointText(float x, float y, bool drawTextDetails, const QStringList& texts);
 
@@ -132,7 +132,7 @@ private:
   void paintInboundOutboundTexts(const TextPlacement& textPlacement, int passedRouteLeg, bool vor);
 
   /* Avoid drawing duplicate navaids from flight plan and preview */
-  QSet<map::MapObjectRef> routeProcIdMap;
+  QSet<map::MapRef> routeProcIdMap;
 
 };
 

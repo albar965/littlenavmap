@@ -651,14 +651,14 @@ bool MapResult::getIdAndType(int& id, MapTypes& type, const std::initializer_lis
   return id != -1;
 }
 
-map::MapObjectRef MapResult::getRef(const std::initializer_list<MapTypes>& types) const
+map::MapRef MapResult::getRef(const std::initializer_list<MapTypes>& types) const
 {
   int id = -1;
   map::MapTypes type = map::NONE;
   if(getIdAndType(id, type, types))
-    return map::MapObjectRef(id, type);
+    return map::MapRef(id, type);
   else
-    return map::MapObjectRef();
+    return map::MapRef();
 }
 
 MapResult& MapResult::addFromMapBase(const MapBase *base)

@@ -160,7 +160,7 @@ void TrackManager::loadTracks(const TrackVectorType& tracks, bool onlyValid)
       // Write all waypoints to the database ===========================================
       for(int i = 1; i < refs.size(); i++)
       {
-        const map::MapObjectRefExt& ref = refs.at(i);
+        const map::MapRefExt& ref = refs.at(i);
 
         // Read airways later
         if(ref.objType & map::AIRWAY)
@@ -169,8 +169,8 @@ void TrackManager::loadTracks(const TrackVectorType& tracks, bool onlyValid)
         if((ref.id == -1 && ref.objType != map::USERPOINTROUTE) || !ref.position.isValidRange())
           qWarning() << Q_FUNC_INFO << "Invalid track ref" << ref;
 
-        const map::MapObjectRefExt *refLast2 = i > 1 ? &refs.at(i - 2) : nullptr;
-        const map::MapObjectRefExt& refLast1 = refs.at(i - 1);
+        const map::MapRefExt *refLast2 = i > 1 ? &refs.at(i - 2) : nullptr;
+        const map::MapRefExt& refLast1 = refs.at(i - 1);
 
         trackRec.setValue("track_id", trackId++);
         trackRec.setValue("trackmeta_id", trackmetaId);
@@ -185,7 +185,7 @@ void TrackManager::loadTracks(const TrackVectorType& tracks, bool onlyValid)
           trackRec.setValue("altitude_levels_west", atools::io::writeVector<quint16, quint16>(track.westLevels));
 
         int airwayId = -1;
-        map::MapObjectRefExt fromRef, toRef;
+        map::MapRefExt fromRef, toRef;
         if(refLast2 != nullptr && refLast1.objType & map::AIRWAY)
         {
           // Previous entry is an airway - second previous is from waypoint
@@ -285,7 +285,7 @@ void TrackManager::loadTracks(const TrackVectorType& tracks, bool onlyValid)
 }
 
 int TrackManager::addTrackpoint(QHash<int, SqlRecord>& trackpoints, atools::sql::SqlRecord rec,
-                                map::MapObjectRefExt ref, int trackpointId)
+                                map::MapRefExt ref, int trackpointId)
 {
   int returnId = -1;
 

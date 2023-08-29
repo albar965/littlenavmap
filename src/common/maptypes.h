@@ -76,20 +76,20 @@ struct PosCourse
 
 // =====================================================================
 /* Primitive id type combo that is hashable and comparable */
-struct MapObjectRef
+struct MapRef
 {
-  MapObjectRef()
+  MapRef()
     : id(-1), objType(NONE)
   {
 
   }
 
-  MapObjectRef(int idParam, map::MapType typeParam)
+  MapRef(int idParam, map::MapType typeParam)
     : id(idParam), objType(typeParam)
   {
   }
 
-  MapObjectRef(int idParam, map::MapTypes typeParam)
+  MapRef(int idParam, map::MapTypes typeParam)
     : id(idParam), objType(typeParam.asEnum())
   {
   }
@@ -100,12 +100,12 @@ struct MapObjectRef
   /* Use simple type information to avoid vtable and RTTI overhead. Avoid QFlags wrapper here. */
   map::MapType objType;
 
-  bool operator==(const map::MapObjectRef& other) const
+  bool operator==(const map::MapRef& other) const
   {
     return objType == other.objType && id == other.id;
   }
 
-  bool operator!=(const map::MapObjectRef& other) const
+  bool operator!=(const map::MapRef& other) const
   {
     return !operator==(other);
   }
@@ -117,45 +117,42 @@ struct MapObjectRef
 
 };
 
-QDataStream& operator>>(QDataStream& dataStream, map::MapObjectRef& obj);
-QDataStream& operator<<(QDataStream& dataStream, const map::MapObjectRef& obj);
+QDebug operator<<(QDebug out, const map::MapRef& ref);
 
-QDebug operator<<(QDebug out, const map::MapObjectRef& ref);
-
-inline uint qHash(const map::MapObjectRef& type)
+inline uint qHash(const map::MapRef& type)
 {
   return static_cast<uint>(type.id) ^ static_cast<uint>(type.objType);
 }
 
-typedef QVector<MapObjectRef> MapObjectRefVector;
+typedef QVector<MapRef> MapRefVector;
 
 // =====================================================================
 /* Extended reference type that also covers coordinates and name.
  *  Hashable and comparable.*/
-struct MapObjectRefExt
-  : public MapObjectRef
+struct MapRefExt
+  : public MapRef
 {
-  MapObjectRefExt()
+  MapRefExt()
   {
   }
 
-  MapObjectRefExt(int idParam, map::MapType typeParam)
-    : MapObjectRef(idParam, typeParam)
+  MapRefExt(int idParam, map::MapType typeParam)
+    : MapRef(idParam, typeParam)
   {
   }
 
-  MapObjectRefExt(int idParam, const atools::geo::Pos posParam, map::MapType typeParam)
-    : MapObjectRef(idParam, typeParam), position(posParam)
+  MapRefExt(int idParam, const atools::geo::Pos posParam, map::MapType typeParam)
+    : MapRef(idParam, typeParam), position(posParam)
   {
   }
 
-  MapObjectRefExt(int idParam, map::MapType typeParam, const QString& nameParam)
-    : MapObjectRef(idParam, typeParam), name(nameParam)
+  MapRefExt(int idParam, map::MapType typeParam, const QString& nameParam)
+    : MapRef(idParam, typeParam), name(nameParam)
   {
   }
 
-  MapObjectRefExt(int idParam, const atools::geo::Pos posParam, map::MapType typeParam, const QString& nameParam)
-    : MapObjectRef(idParam, typeParam), position(posParam), name(nameParam)
+  MapRefExt(int idParam, const atools::geo::Pos posParam, map::MapType typeParam, const QString& nameParam)
+    : MapRef(idParam, typeParam), position(posParam), name(nameParam)
   {
   }
 
@@ -165,27 +162,27 @@ struct MapObjectRefExt
   /* Original name or coordinate format string for user points */
   QString name;
 
-  bool operator==(const map::MapObjectRefExt& other) const
+  bool operator==(const map::MapRefExt& other) const
   {
     return objType == map::USERPOINT || objType == map::USERPOINTROUTE ?
-           position == other.position : MapObjectRef::operator==(other);
+           position == other.position : MapRef::operator==(other);
   }
 
-  bool operator!=(const map::MapObjectRefExt& other) const
+  bool operator!=(const map::MapRefExt& other) const
   {
     return !operator==(other);
   }
 
 };
 
-QDebug operator<<(QDebug out, const map::MapObjectRefExt& ref);
+QDebug operator<<(QDebug out, const map::MapRefExt& ref);
 
-inline uint qHash(const map::MapObjectRefExt& type)
+inline uint qHash(const map::MapRefExt& type)
 {
-  return qHash(static_cast<map::MapObjectRef>(type)) ^ qHash(type.position);
+  return qHash(static_cast<map::MapRef>(type)) ^ qHash(type.position);
 }
 
-typedef QVector<MapObjectRefExt> MapObjectRefExtVector;
+typedef QVector<MapRefExt> MapRefExtVector;
 
 // =====================================================================
 /* Convert type from nav_search table to enum */
@@ -253,19 +250,19 @@ struct MapBase
     return id;
   }
 
-  map::MapObjectRef getRef() const
+  map::MapRef getRef() const
   {
-    return map::MapObjectRef(id, objType);
+    return map::MapRef(id, objType);
   }
 
-  map::MapObjectRefExt getRefExt() const
+  map::MapRefExt getRefExt() const
   {
-    return map::MapObjectRefExt(id, position, objType);
+    return map::MapRefExt(id, position, objType);
   }
 
-  map::MapObjectRefExt getRefExt(const QString& name) const
+  map::MapRefExt getRefExt(const QString& name) const
   {
-    return map::MapObjectRefExt(id, position, objType, name);
+    return map::MapRefExt(id, position, objType, name);
   }
 
   /* Returns object cast to concrete object or null if type does not match */
@@ -1786,7 +1783,7 @@ Q_DECLARE_TYPEINFO(map::MapIls, Q_MOVABLE_TYPE);
 Q_DECLARE_TYPEINFO(map::MapLogbookEntry, Q_MOVABLE_TYPE);
 Q_DECLARE_TYPEINFO(map::MapMarker, Q_MOVABLE_TYPE);
 Q_DECLARE_TYPEINFO(map::MapNdb, Q_MOVABLE_TYPE);
-Q_DECLARE_TYPEINFO(map::MapObjectRefExt, Q_MOVABLE_TYPE);
+Q_DECLARE_TYPEINFO(map::MapRefExt, Q_MOVABLE_TYPE);
 Q_DECLARE_TYPEINFO(map::MapParking, Q_MOVABLE_TYPE);
 Q_DECLARE_TYPEINFO(map::MapProcedurePoint, Q_MOVABLE_TYPE);
 Q_DECLARE_TYPEINFO(map::MapRunway, Q_MOVABLE_TYPE);
@@ -1799,8 +1796,8 @@ Q_DECLARE_TYPEINFO(map::MapWaypoint, Q_MOVABLE_TYPE);
 Q_DECLARE_TYPEINFO(map::PosCourse, Q_PRIMITIVE_TYPE);
 
 /* Type info and serializable objects */
-Q_DECLARE_TYPEINFO(map::MapObjectRef, Q_PRIMITIVE_TYPE);
-Q_DECLARE_METATYPE(map::MapObjectRef);
+Q_DECLARE_TYPEINFO(map::MapRef, Q_PRIMITIVE_TYPE);
+Q_DECLARE_METATYPE(map::MapRef);
 
 Q_DECLARE_TYPEINFO(map::RangeMarker, Q_MOVABLE_TYPE);
 Q_DECLARE_METATYPE(map::RangeMarker);

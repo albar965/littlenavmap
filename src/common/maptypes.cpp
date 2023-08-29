@@ -1426,18 +1426,6 @@ QDataStream& operator<<(QDataStream& dataStream, const map::MsaMarker& obj)
   return dataStream;
 }
 
-QDataStream& operator>>(QDataStream& dataStream, MapObjectRef& obj)
-{
-  dataStream >> obj.id >> obj.objType;
-  return dataStream;
-}
-
-QDataStream& operator<<(QDataStream& dataStream, const MapObjectRef& obj)
-{
-  dataStream << obj.id << obj.objType;
-  return dataStream;
-}
-
 QString vorType(const MapVor& vor)
 {
   if(vor.isValid())
@@ -1969,7 +1957,7 @@ QDebug operator<<(QDebug out, const MapBase& obj)
   return out;
 }
 
-QDebug operator<<(QDebug out, const MapObjectRef& ref)
+QDebug operator<<(QDebug out, const MapRef& ref)
 {
   QDebugStateSaver saver(out);
   out.noquote().nospace() << "MapObjectRef["
@@ -1979,7 +1967,7 @@ QDebug operator<<(QDebug out, const MapObjectRef& ref)
   return out;
 }
 
-QDebug operator<<(QDebug out, const MapObjectRefExt& ref)
+QDebug operator<<(QDebug out, const MapRefExt& ref)
 {
   QDebugStateSaver saver(out);
   out.noquote().nospace() << "MapObjectRefExt["

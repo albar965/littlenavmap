@@ -392,7 +392,7 @@ bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport, const 
           const RouteLeg& routeLeg = route->value(i);
           map::MapTypes type = routeLeg.getMapObjectType();
           if(type == map::AIRPORT || type == map::VOR || type == map::NDB || type == map::WAYPOINT)
-            context.routeProcIdMap.insert(map::MapObjectRef(routeLeg.getId(), type));
+            context.routeProcIdMap.insert(map::MapRef(routeLeg.getId(), type));
         }
 
         // Add procedure navaids beginning from previous leg ==============

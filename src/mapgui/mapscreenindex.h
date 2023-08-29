@@ -57,7 +57,7 @@ struct MapHolding;
 struct MapIls;
 struct MapLogbookEntry;
 struct MapNdb;
-struct MapObjectRef;
+struct MapRef;
 struct MapParking;
 struct MapResult;
 struct MapUserpoint;
@@ -288,12 +288,12 @@ public:
     return airwayLines;
   }
 
-  const QVector<map::MapObjectRef>& getRouteDrawnNavaidsConst() const
+  const QVector<map::MapRef>& getRouteDrawnNavaidsConst() const
   {
     return routeDrawnNavaids;
   }
 
-  QVector<map::MapObjectRef> *getRouteDrawnNavaids()
+  QVector<map::MapRef> *getRouteDrawnNavaids()
   {
     return &routeDrawnNavaids;
   }
@@ -344,7 +344,7 @@ private:
 
   /* Cleared before and filled while painting with all navaids that were actually painted from route and procedures including recommended.
    * This includes route userpoints */
-  QVector<map::MapObjectRef> routeDrawnNavaids;
+  QVector<map::MapRef> routeDrawnNavaids;
 
   /* One procedure highlight from selection */
   proc::MapProcedureLeg *procedureLegHighlight = nullptr;

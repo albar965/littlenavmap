@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -22,8 +22,8 @@
 #include "sql/datamanagerbase.h"
 
 namespace map {
-struct MapObjectRefExt;
-typedef QVector<map::MapObjectRefExt> MapObjectRefExtVector;
+struct MapRefExt;
+typedef QVector<map::MapRefExt> MapObjectRefExtVector;
 }
 
 /*
@@ -75,7 +75,7 @@ private:
   /* Add waypoint/trackpoint to hash returning waypoint id or new generated trackpoint id.
    * rec is an empty record for trackpoint table. */
   int addTrackpoint(QHash<int, atools::sql::SqlRecord>& trackpoints, atools::sql::SqlRecord rec,
-                    map::MapObjectRefExt ref, int trackpointId);
+                    map::MapRefExt ref, int trackpointId);
 
   /* Add track metadata to records if not already present. metaId is incremented if inserted. */
   bool addTrackmeta(QHash<std::pair<atools::track::TrackType, QString>, atools::sql::SqlRecord>& records,

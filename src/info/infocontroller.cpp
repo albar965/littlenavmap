@@ -466,7 +466,7 @@ void InfoController::anchorClicked(const QUrl& url)
 void InfoController::saveState()
 {
   // Store currently shown map objects in a string list containing id and type
-  map::MapObjectRefVector refs;
+  map::MapRefVector refs;
   for(const map::MapAirport& airport  : currentSearchResult.airports)
     refs.append({airport.id, map::AIRPORT});
 
@@ -500,7 +500,7 @@ void InfoController::saveState()
   // Save list =====================================================
   atools::settings::Settings& settings = atools::settings::Settings::instance();
   QStringList refList;
-  for(const map::MapObjectRef& ref : refs)
+  for(const map::MapRef& ref : refs)
     refList.append(QString("%1;%2").arg(ref.id).arg(ref.objType));
   settings.setValue(lnm::INFOWINDOW_CURRENTMAPOBJECTS, refList.join(";"));
 
