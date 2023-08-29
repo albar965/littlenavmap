@@ -667,11 +667,11 @@ void procedureFlags(const Route& route, const map::MapBase *base, bool *departur
                     bool *departureProc = nullptr);
 
 /* Check if airport can be added as departure, destination or alternate and gives
- * information if menu items should be disabled.
+ * information if menu items should be disabled. disable is set to true if needed but left alone otherwise.
  * Returns suffix string for menu items. */
-QString  procedureTextSuffixDeparture(const Route& route, const map::MapAirport& airport, bool& disable);
-QString  procedureTextSuffixDestination(const Route& route, const map::MapAirport& airport, bool& disable);
+QString  procedureTextSuffixDepartDest(const Route& route, const map::MapAirport& airport, bool& disable);
 QString  procedureTextSuffixAlternate(const Route& route, const map::MapAirport& airport, bool& disable);
+QString  procedureTextSuffixDirectTo(bool& disable, const Route& route, int legIndex, const map::MapAirport *airport);
 
 QString aircraftCategoryText(const QString& cat);
 

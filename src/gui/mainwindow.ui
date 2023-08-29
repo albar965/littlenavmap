@@ -11995,6 +11995,42 @@ relation to shown airport</string>
     <string>Show map grid</string>
    </property>
   </action>
+  <action name="actionRouteDirectTo">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/directto.svg</normaloff>:/littlenavmap/resources/icons/directto.svg</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Direct to %1</string>
+   </property>
+   <property name="toolTip">
+    <string>Change flight plan to fly direct to leg or navaid</string>
+   </property>
+   <property name="statusTip">
+    <string>Change flight plan to fly direct to leg or navaid</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+D</string>
+   </property>
+  </action>
+  <action name="actionSearchDirectTo">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/directto.svg</normaloff>:/littlenavmap/resources/icons/directto.svg</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Direct to %1</string>
+   </property>
+   <property name="toolTip">
+    <string>Change flight plan to fly direct to leg or navaid</string>
+   </property>
+   <property name="statusTip">
+    <string>Change flight plan to fly direct to leg or navaid</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+D</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <tabstops>

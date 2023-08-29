@@ -2012,6 +2012,10 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
           emit routeAdd(id, pos, type, map::INVALID_INDEX_VALUE);
           break;
 
+        case mc::DIRECT:
+          emit directTo(id, pos, type, contextMenu.getSelectedRouteIndex());
+          break;
+
         case mc::DELETEROUTEWAYPOINT:
           NavApp::getRouteController()->routeDelete(contextMenu.getSelectedRouteIndex());
           break;

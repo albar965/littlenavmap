@@ -1230,7 +1230,7 @@ bool procedureLegFrom(ProcedureLegType type)
     });
 }
 
-QString  procedureTextSuffixDeparture(const Route& route, const map::MapAirport& airport, bool& disable)
+QString  procedureTextSuffixDepartDest(const Route& route, const map::MapAirport& airport, bool& disable)
 {
   bool departure = false, destination = false, alternate = false;
   proc::procedureFlags(route, &airport, &departure, &destination, &alternate);
@@ -1242,28 +1242,6 @@ QString  procedureTextSuffixDeparture(const Route& route, const map::MapAirport&
       text = QObject::tr(" (is departure)");
     else if(destination)
       text = QObject::tr(" (is destination)");
-    else if(alternate)
-      text = QObject::tr(" (is alternate)");
-
-    disable = false;
-  }
-  else
-    disable = true;
-  return text;
-}
-
-QString  procedureTextSuffixDestination(const Route& route, const map::MapAirport& airport, bool& disable)
-{
-  bool departure = false, destination = false, alternate = false;
-  proc::procedureFlags(route, &airport, &departure, &destination, &alternate);
-
-  QString text;
-  if(airport.isValid())
-  {
-    if(destination)
-      text = QObject::tr(" (is destination)");
-    else if(departure)
-      text = QObject::tr(" (is departure)");
     else if(alternate)
       text = QObject::tr(" (is alternate)");
     disable = false;
@@ -1296,6 +1274,59 @@ QString  procedureTextSuffixAlternate(const Route& route, const map::MapAirport&
   }
   else
     disable = true;
+  return text;
+}
+
+QString  procedureTextSuffixDirectTo(bool& disable, const Route& route, int legIndex, const map::MapAirport *airport)
+{
+  QString text;
+  int activeLegIndex = route.getActiveLegIndex();
+  if(!NavApp::isConnectedAndAircraft())
+  {
+    disable = true;
+    text = QObject::tr(" (not connected to simulator)");
+  }
+  else if(activeLegIndex == -1 || activeLegIndex == map::INVALID_INDEX_VALUE)
+  {
+    // Active is required for PPOS
+    disable = true;
+    text = QObject::tr(" (no active flight plan segment)");
+  }
+  else if((legIndex != -1 && legIndex < activeLegIndex) || (route.getSizeWithoutAlternates() == 1 && legIndex == 0))
+  {
+    // Do not allow to direct to back if leg index is given
+    // Or circling with single airport - allow only another airport or navaid
+    disable = true;
+    text = QObject::tr(" (past active)");
+  }
+  else if(legIndex != -1 && legIndex < map::INVALID_INDEX_VALUE)
+  {
+    // Index for route leg given
+    bool containsProc, moveDownTouchesProc, moveUpTouchesProc;
+    route.selectionFlagsProcedures(QList<int>({legIndex}), containsProc, moveDownTouchesProc, moveUpTouchesProc);
+
+    bool procOk = (containsProc && !moveUpTouchesProc) || // First point of approach or arrival procedure
+                  !containsProc; // Selected leg is no procedure
+    bool departOk = legIndex > 0 || activeLegIndex > 0; // Back to departure only if active after direct to leg
+
+    disable = !procOk || !departOk;
+    if(disable)
+      text = QObject::tr(" (is procedure)");
+    else
+    {
+      // Airport given - try to find "is destination" and other texts
+      if(airport != nullptr && airport->isValid())
+      {
+        bool disableDummy;
+        text = procedureTextSuffixDepartDest(route, *airport, disableDummy);
+      }
+
+      if(text.isEmpty())
+        // No specific text but it is still a part of the plan
+        text = QObject::tr(" (flight plan)");
+    }
+  }
+
   return text;
 }
 

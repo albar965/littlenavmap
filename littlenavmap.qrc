@@ -327,5 +327,6 @@
         <file>resources/icons/airportmil.svg</file>
         <file>resources/icons/mapgridconfig.svg</file>
         <file>resources/icons/littlenavmapdoc.svg</file>
+        <file>resources/icons/directto.svg</file>
     </qresource>
 </RCC>

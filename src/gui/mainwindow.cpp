@@ -1145,6 +1145,7 @@ void MainWindow::connectAllSlots()
   connect(airportSearch, &SearchBaseTable::routeSetDestination, routeController, &RouteController::routeSetDestination);
   connect(airportSearch, &SearchBaseTable::routeAddAlternate, routeController, &RouteController::routeAddAlternate);
   connect(airportSearch, &SearchBaseTable::routeAdd, routeController, &RouteController::routeAdd);
+  connect(airportSearch, &SearchBaseTable::routeDirectTo, routeController, &RouteController::routeDirectTo);
   connect(airportSearch, &SearchBaseTable::selectionChanged, searchController, &SearchController::searchSelectionChanged);
   connect(airportSearch, &SearchBaseTable::addAirportMsa, mapWidget, &MapWidget::addMsaMark);
   connect(airportSearch, &SearchBaseTable::addUserpointFromMap, NavApp::getUserdataController(), &UserdataController::addUserpointFromMap);
@@ -1582,6 +1583,7 @@ void MainWindow::connectAllSlots()
   connect(mapWidget, &MapWidget::routeSetDest, routeController, &RouteController::routeSetDestination);
   connect(mapWidget, &MapWidget::routeAddAlternate, routeController, &RouteController::routeAddAlternate);
   connect(mapWidget, &MapWidget::routeAdd, routeController, &RouteController::routeAdd);
+  connect(mapWidget, &MapWidget::directTo, routeController, &RouteController::routeDirectTo);
   connect(mapWidget, &MapWidget::routeReplace, routeController, &RouteController::routeReplace);
 
   // Messages about database query result status - use queued to avoid blocking paint

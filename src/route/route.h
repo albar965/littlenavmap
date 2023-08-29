@@ -189,7 +189,7 @@ public:
   const RouteLeg& getDestinationLeg() const;
 
   /* Always destination airport after missed (if any) and one before the alternate if any.
-   *  Not necessarily an airport. */
+   * Not necessarily an airport. */
   int getDestinationAirportLegIndex() const;
   const RouteLeg& getDestinationAirportLeg() const;
 
@@ -688,6 +688,24 @@ public:
    * but procedure structs are not loaded/resolved */
   proc::MapProcedureTypes getMissingProcedures();
 
+  /* Check if selected rows affect procedures. Used to disable move and other actions */
+  void selectionFlagsAlternate(const QList<int>& rows, bool& containsAlternate, bool& moveDownTouchesAlt, bool& moveUpTouchesAlt,
+                               bool& moveDownLeavesAlt, bool& moveUpLeavesAlt) const;
+
+  /* Check if selected rows affect alternate airports. Used to disable move and other actions. */
+  void selectionFlagsProcedures(const QList<int>& rows, bool& containsProc, bool& moveDownTouchesProc, bool& moveUpTouchesProc) const;
+
+  /* Override current positon and course for aircraft */
+  void setActivePos(const atools::geo::Pos& pos, float course);
+
+  /* Get index for ref or -1 if not found. Procedures are stored with flag PROCEDURE in the index. */
+  int getLegIndexForRef(const map::MapObjectRef& ref) const;
+
+  int getLegIndexForIdAndType(int id, map::MapTypes type) const
+  {
+    return getLegIndexForRef(map::MapObjectRef(id, type));
+  }
+
 private:
   /* Get a list of approach ILS (not localizer) and the used runway end. Only for approaches. */
   void updateApproachRunwayEndAndIls(QVector<map::MapIls>& ilsVector, map::MapRunwayEnd *runwayEnd,
@@ -783,6 +801,9 @@ private:
   map::MapRunwayEnd destRunwayEnd;
 
   RouteAltitude *altitude = nullptr;
+
+  /* Ref to flight plan leg  index map */
+  QHash<map::MapObjectRef, int> objectIndex;
 };
 
 QDebug operator<<(QDebug out, const Route& route);

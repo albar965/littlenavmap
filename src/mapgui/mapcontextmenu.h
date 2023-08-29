@@ -82,6 +82,7 @@ enum MenuActionType
   PROCEDUREADD, /* Add airport procedures into plan */
   CUSTOMAPPROACH, /* Create custom procedure */
   CUSTOMDEPARTURE, /* Create custom procedure */
+  DIRECT, /* Direct to waypoint or position */
   MEASURE, /* GC measmurement line */
   NAVAIDRANGE, /* Show range ring for radio navaid */
   PATTERN, /* Airport traffic pattern */
@@ -178,10 +179,11 @@ private:
   void insertProcedureAddMenu(QMenu& menu);
   void insertCustomApproachMenu(QMenu& menu);
   void insertCustomDepartureMenu(QMenu& menu);
-  void insertRemoveMarkMenu(QMenu& menu);
+  void insertDirectToMenu(QMenu& menu);
 
   // ----
   void insertMeasureMenu(QMenu& menu);
+  void insertRemoveMarkMenu(QMenu& menu);
 
   // ui->actionMapHideDistanceMarker
 

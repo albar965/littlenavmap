@@ -172,6 +172,8 @@ signals:
   /* Add airport or navaid to flight plan. Leg will be selected automatically */
   void routeAdd(int id, const atools::geo::Pos& userPos, map::MapTypes type, int legIndex);
 
+  void routeDirectTo(int id, const atools::geo::Pos& userPos, map::MapTypes type, int legIndexDirectTo);
+
   /* Load flight plan or load aircraft performance file triggered from logbook */
   void loadRouteFile(const QString& filepath);
   void loadPerfFile(const QString& filepath);
@@ -248,6 +250,7 @@ private:
   void routeSetDepartureAction();
   void routeSetDestinationAction();
   void routeAddAlternateAction();
+  void routeDirectToAction();
 
   /* Get selected index or index of first entry in the result table */
   QModelIndex selectedOrFirstIndex();

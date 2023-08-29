@@ -158,6 +158,7 @@ SearchBaseTable::SearchBaseTable(QMainWindow *parent, QTableView *tableView, Col
     ui->actionSearchRouteAirportStart->setShortcutContext(Qt::WidgetWithChildrenShortcut);
     ui->actionSearchRouteAirportDest->setShortcutContext(Qt::WidgetWithChildrenShortcut);
     ui->actionSearchRouteAirportAlternate->setShortcutContext(Qt::WidgetWithChildrenShortcut);
+    ui->actionSearchDirectTo->setShortcutContext(Qt::WidgetWithChildrenShortcut);
   }
 
   if(tabIndex == si::SEARCH_USER)
@@ -186,7 +187,8 @@ SearchBaseTable::SearchBaseTable(QMainWindow *parent, QTableView *tableView, Col
                           ui->actionSearchShowDepartureCustom, ui->actionSearchShowOnMap});
 
   if(tabIndex == si::SEARCH_AIRPORT)
-    currentTab->addActions({ui->actionSearchRouteAirportStart, ui->actionSearchRouteAirportDest, ui->actionSearchRouteAirportAlternate});
+    currentTab->addActions({ui->actionSearchRouteAirportStart, ui->actionSearchRouteAirportDest, ui->actionSearchRouteAirportAlternate,
+                            ui->actionSearchDirectTo});
 
   if(tabIndex == si::SEARCH_USER)
     currentTab->addActions({ui->actionSearchUserpointUndo, ui->actionSearchUserpointRedo});
@@ -212,6 +214,9 @@ SearchBaseTable::SearchBaseTable(QMainWindow *parent, QTableView *tableView, Col
     connect(ui->actionSearchRouteAirportDest, &QAction::triggered, this, &SearchBaseTable::routeSetDestinationAction);
     connect(ui->actionSearchRouteAirportAlternate, &QAction::triggered, this, &SearchBaseTable::routeAddAlternateAction);
   }
+
+  if(tabIndex == si::SEARCH_AIRPORT)
+    connect(ui->actionSearchDirectTo, &QAction::triggered, this, &SearchBaseTable::routeDirectToAction);
 
   // Load text size from options
   zoomHandler->zoomPercent(OptionData::instance().getGuiSearchTableTextSize());
@@ -943,10 +948,10 @@ void SearchBaseTable::contextMenu(const QPoint& pos)
   // Save and restore action texts on return
   ActionTool actionTool({ui->actionLogdataAdd, ui->actionLogdataDelete, ui->actionLogdataEdit, ui->actionLogdataPerfLoad,
                          ui->actionLogdataRouteOpen, ui->actionMapHold, ui->actionMapNavaidRange, ui->actionMapRangeRings,
-                         ui->actionMapTrafficPattern, ui->actionRouteAddPos, ui->actionRouteAppendPos, ui->actionSearchFilterExcluding,
-                         ui->actionSearchFilterIncluding, ui->actionSearchLogdataOpenPerf, ui->actionSearchLogdataOpenPlan,
-                         ui->actionSearchLogdataSaveGpxAs, ui->actionSearchLogdataSavePerfAs, ui->actionSearchLogdataSavePlanAs,
-                         ui->actionSearchLogRouteAirportAlternate, ui->actionSearchLogRouteAirportDest,
+                         ui->actionMapTrafficPattern, ui->actionRouteAddPos, ui->actionRouteAppendPos, ui->actionSearchDirectTo,
+                         ui->actionSearchFilterExcluding, ui->actionSearchFilterIncluding, ui->actionSearchLogdataOpenPerf,
+                         ui->actionSearchLogdataOpenPlan, ui->actionSearchLogdataSaveGpxAs, ui->actionSearchLogdataSavePerfAs,
+                         ui->actionSearchLogdataSavePlanAs, ui->actionSearchLogRouteAirportAlternate, ui->actionSearchLogRouteAirportDest,
                          ui->actionSearchLogRouteAirportStart, ui->actionSearchLogShowInformationAirport,
                          ui->actionSearchLogShowOnMapAirport, ui->actionSearchResetSearch, ui->actionSearchResetView,
                          ui->actionSearchRouteAirportAlternate, ui->actionSearchRouteAirportDest, ui->actionMapAirportMsa,
@@ -993,6 +998,8 @@ void SearchBaseTable::contextMenu(const QPoint& pos)
   const Column *columnDescriptor = nullptr;
   QString objectText, navaidRangeText;
   map::MapResult result, msaResult;
+  int routeIndex = -1;
+  const Route& route = NavApp::getRouteConst();
 
   if(index.isValid())
   {
@@ -1050,8 +1057,14 @@ void SearchBaseTable::contextMenu(const QPoint& pos)
       objectText = map::airportTextShort(airport, NAVAID_NAMES_ELIDE, true /* includeIdent */);
     else
       objectText = result.objectText(mapObjType, NAVAID_NAMES_ELIDE);
+
     if((result.hasVor() && result.vors.constFirst().range > 0) || (result.hasNdb() && result.ndbs.constFirst().range > 0))
       navaidRangeText = objectText;
+
+    routeIndex = route.getLegIndexForRef(result.getRef({map::AIRPORT}));
+
+    if(result.hasAirports())
+      result.airports.first().routeIndex = routeIndex;
   }
   else
     qDebug() << "Invalid index at" << pos;
@@ -1071,26 +1084,35 @@ void SearchBaseTable::contextMenu(const QPoint& pos)
   int range = controller->hasColumn("range") ? controller->getRawData(index.row(), "range").toInt() : 0;
   ui->actionMapNavaidRange->setEnabled(range > 0 && (mapObjType == map::VOR || mapObjType == map::NDB));
 
-  ui->actionRouteAddPos->setEnabled(mapObjType == map::VOR || mapObjType == map::NDB || mapObjType == map::WAYPOINT ||
-                                    mapObjType == map::AIRPORT || mapObjType == map::USERPOINT);
-  ui->actionRouteAppendPos->setEnabled(mapObjType == map::VOR || mapObjType == map::NDB || mapObjType == map::WAYPOINT ||
-                                       mapObjType == map::AIRPORT || mapObjType == map::USERPOINT);
+  bool validType = mapObjType == map::VOR || mapObjType == map::NDB || mapObjType == map::WAYPOINT || mapObjType == map::AIRPORT ||
+                   mapObjType == map::USERPOINT;
+  ui->actionRouteAddPos->setEnabled(validType);
+  ui->actionRouteAppendPos->setEnabled(validType);
+  ui->actionSearchDirectTo->setEnabled(validType && NavApp::isConnectedAndAircraft());
 
   // Airport actions ==============================================================
-  const Route& route = NavApp::getRouteConst();
-  bool disableDeparture = false, disableDestination = false, disableAlternate = false;
-  QString departureSuffix = proc::procedureTextSuffixDeparture(route, airport, disableDeparture);
-  QString destinationSuffix = proc::procedureTextSuffixDestination(route, airport, disableDestination);
+  bool disableDepartDest = false, disableAlternate = false, disableDirectTo = false;
+  QString departDestSuffix = proc::procedureTextSuffixDepartDest(route, airport, disableDepartDest);
   QString alternateSuffix = proc::procedureTextSuffixAlternate(route, airport, disableAlternate);
+  QString directToSuffix = proc::procedureTextSuffixDirectTo(disableDirectTo, route, routeIndex, &airport);
 
   // Airport search
-  ui->actionSearchRouteAirportStart->setDisabled(disableDeparture);
-  ui->actionSearchRouteAirportDest->setDisabled(disableDestination);
+  ui->actionSearchRouteAirportStart->setDisabled(disableDepartDest);
+  ui->actionSearchRouteAirportDest->setDisabled(disableDepartDest);
   ui->actionSearchRouteAirportAlternate->setDisabled(disableAlternate);
 
+  ui->actionSearchDirectTo->setDisabled(disableDirectTo);
+  if(disableDirectTo)
+    ui->actionSearchDirectTo->setText(ui->actionSearchDirectTo->text().arg(objectText) + directToSuffix);
+  else if(routeIndex != -1)
+  {
+    QString suffix = departDestSuffix.isEmpty() ? tr(" (flight plan)") : departDestSuffix;
+    ui->actionSearchDirectTo->setText(ui->actionSearchDirectTo->text().arg(objectText) + suffix);
+  }
+
   // Logbook airport sub-menu
-  ui->actionSearchLogRouteAirportStart->setDisabled(disableDeparture);
-  ui->actionSearchLogRouteAirportDest->setDisabled(disableDestination);
+  ui->actionSearchLogRouteAirportStart->setDisabled(disableDepartDest);
+  ui->actionSearchLogRouteAirportDest->setDisabled(disableDepartDest);
   ui->actionSearchLogRouteAirportAlternate->setDisabled(disableAlternate);
 
   ui->actionSearchMarkAddon->setEnabled(airport.isValid());
@@ -1189,8 +1211,8 @@ void SearchBaseTable::contextMenu(const QPoint& pos)
     else if(logAirport)
       airportText = tr("(Airport not found)");
 
-    ui->actionSearchLogRouteAirportStart->setText(ui->actionSearchLogRouteAirportStart->text().arg(airportText) + departureSuffix);
-    ui->actionSearchLogRouteAirportDest->setText(ui->actionSearchLogRouteAirportDest->text().arg(airportText) + destinationSuffix);
+    ui->actionSearchLogRouteAirportStart->setText(ui->actionSearchLogRouteAirportStart->text().arg(airportText) + departDestSuffix);
+    ui->actionSearchLogRouteAirportDest->setText(ui->actionSearchLogRouteAirportDest->text().arg(airportText) + departDestSuffix);
     ui->actionSearchLogRouteAirportAlternate->setText(ui->actionSearchLogRouteAirportAlternate->text().arg(airportText) + alternateSuffix);
 
     ui->actionSearchLogShowInformationAirport->setText(ui->actionSearchLogShowInformationAirport->text().arg(airportText));
@@ -1228,8 +1250,8 @@ void SearchBaseTable::contextMenu(const QPoint& pos)
   ActionTool::setText(ui->actionMapNavaidRange, navaidRangeText);
 
   // Airport search
-  ui->actionSearchRouteAirportStart->setText(ui->actionSearchRouteAirportStart->text().arg(objectText) % departureSuffix);
-  ui->actionSearchRouteAirportDest->setText(ui->actionSearchRouteAirportDest->text().arg(objectText) % destinationSuffix);
+  ui->actionSearchRouteAirportStart->setText(ui->actionSearchRouteAirportStart->text().arg(objectText) % departDestSuffix);
+  ui->actionSearchRouteAirportDest->setText(ui->actionSearchRouteAirportDest->text().arg(objectText) % departDestSuffix);
   ui->actionSearchRouteAirportAlternate->setText(ui->actionSearchRouteAirportAlternate->text().arg(objectText) % alternateSuffix);
 
   // Build the menu depending on tab =========================================================================
@@ -1304,6 +1326,12 @@ void SearchBaseTable::contextMenu(const QPoint& pos)
   {
     menu.addAction(ui->actionRouteAddPos);
     menu.addAction(ui->actionRouteAppendPos);
+    menu.addSeparator();
+  }
+
+  if(atools::contains(tabIndex, {si::SEARCH_AIRPORT}))
+  {
+    menu.addAction(ui->actionSearchDirectTo);
     menu.addSeparator();
   }
 
@@ -1639,6 +1667,19 @@ void SearchBaseTable::routeAddAlternateAction()
   {
     qDebug() << Q_FUNC_INFO;
     emit routeAddAlternate(currentAirport());
+  }
+}
+
+void SearchBaseTable::routeDirectToAction()
+{
+  if(view->isVisible() && tabIndex == si::SEARCH_AIRPORT)
+  {
+    qDebug() << Q_FUNC_INFO;
+
+    // Passing airport if not part of plan - also passing index or -1 if a part of plan or not
+    map::MapAirport airport = currentAirport();
+    emit routeDirectTo(airport.id, atools::geo::EMPTY_POS, map::AIRPORT,
+                       NavApp::getRouteConst().getLegIndexForIdAndType(airport.id, map::AIRPORT));
   }
 }
 

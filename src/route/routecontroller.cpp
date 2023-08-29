@@ -43,7 +43,6 @@
 #include "gui/tools.h"
 #include "gui/treedialog.h"
 #include "gui/widgetstate.h"
-#include "info/infocontroller.h"
 #include "mapgui/mapwidget.h"
 #include "app/navapp.h"
 #include "options/optiondata.h"
@@ -349,6 +348,7 @@ RouteController::RouteController(QMainWindow *parentWindow, QTableView *tableVie
   ui->actionRouteDeleteLeg->setShortcutContext(Qt::WidgetWithChildrenShortcut);
   ui->actionRouteShowInformation->setShortcutContext(Qt::WidgetWithChildrenShortcut);
   ui->actionRouteShowApproaches->setShortcutContext(Qt::WidgetWithChildrenShortcut);
+  ui->actionRouteDirectTo->setShortcutContext(Qt::WidgetWithChildrenShortcut);
   ui->actionRouteShowApproachCustom->setShortcutContext(Qt::WidgetWithChildrenShortcut);
   ui->actionRouteShowDepartureCustom->setShortcutContext(Qt::WidgetWithChildrenShortcut);
   ui->actionRouteShowOnMap->setShortcutContext(Qt::WidgetWithChildrenShortcut);
@@ -366,9 +366,9 @@ RouteController::RouteController(QMainWindow *parentWindow, QTableView *tableVie
   // Add action/shortcuts to table view
   tableViewRoute->addActions({ui->actionRouteLegDown, ui->actionRouteLegUp, ui->actionRouteDeleteLeg,
                               ui->actionRouteTableCopy, ui->actionRouteShowInformation,
-                              ui->actionRouteShowApproaches, ui->actionRouteShowApproachCustom, ui->actionRouteShowDepartureCustom,
-                              ui->actionRouteShowOnMap, ui->actionRouteTableSelectNothing, ui->actionRouteTableSelectAll,
-                              ui->actionRouteActivateLeg, ui->actionRouteResetView, ui->actionRouteSetMark,
+                              ui->actionRouteShowApproaches, ui->actionRouteDirectTo, ui->actionRouteShowApproachCustom,
+                              ui->actionRouteShowDepartureCustom, ui->actionRouteShowOnMap, ui->actionRouteTableSelectNothing,
+                              ui->actionRouteTableSelectAll, ui->actionRouteActivateLeg, ui->actionRouteResetView, ui->actionRouteSetMark,
                               ui->actionRouteEditUserWaypoint});
 
   if(tableViewRoute->selectionModel() != nullptr)
@@ -378,7 +378,7 @@ RouteController::RouteController(QMainWindow *parentWindow, QTableView *tableVie
   connect(ui->actionRouteTableCopy, &QAction::triggered, this, &RouteController::tableCopyClipboard);
   connect(ui->actionRouteLegDown, &QAction::triggered, this, &RouteController::moveSelectedLegsDown);
   connect(ui->actionRouteLegUp, &QAction::triggered, this, &RouteController::moveSelectedLegsUp);
-  connect(ui->actionRouteDeleteLeg, &QAction::triggered, this, &RouteController::deleteSelectedLegs);
+  connect(ui->actionRouteDeleteLeg, &QAction::triggered, this, &RouteController::deleteSelectedLegsTriggered);
   connect(ui->actionRouteEditUserWaypoint, &QAction::triggered, this, &RouteController::editUserWaypointTriggered);
 
   connect(ui->actionRouteShowInformation, &QAction::triggered, this, &RouteController::showInformationMenu);
@@ -386,6 +386,7 @@ RouteController::RouteController(QMainWindow *parentWindow, QTableView *tableVie
   connect(ui->actionRouteShowApproachCustom, &QAction::triggered, this, &RouteController::showCustomApproachRouteMenu);
   connect(ui->actionRouteShowDepartureCustom, &QAction::triggered, this, &RouteController::showCustomDepartureRouteMenu);
   connect(ui->actionRouteShowOnMap, &QAction::triggered, this, &RouteController::showOnMapMenu);
+  connect(ui->actionRouteDirectTo, &QAction::triggered, this, &RouteController::directToTriggered);
 
   connect(ui->dockWidgetRoute, &QDockWidget::visibilityChanged, this, &RouteController::dockVisibilityChanged);
   connect(ui->actionRouteTableSelectNothing, &QAction::triggered, this, &RouteController::clearTableSelection);
@@ -1138,7 +1139,7 @@ void RouteController::newFlightplan()
   route.updateAircraftPerfMetadata();
 
   updateTableModel();
-  updateMoveAndDeleteActions();
+  updateActions();
   remarksFlightPlanToWidget();
 
   emit routeChanged(true /* geometry changed */, true /* new flight plan */);
@@ -1287,7 +1288,7 @@ void RouteController::loadFlightplan(atools::fs::pln::Flightplan flightplan, ato
 
   remarksFlightPlanToWidget();
   updateTableModel();
-  updateMoveAndDeleteActions();
+  updateActions();
   routeCalcDialog->setCruisingAltitudeFt(route.getCruiseAltitudeFt());
 
 #ifdef DEBUG_INFORMATION
@@ -1532,7 +1533,7 @@ bool RouteController::insertFlightplan(const QString& filename, int insertBefore
     else if(middleInsert)
       selectRange(insertPosSelection, insertPosSelection + flightplan.size() - 1);
 
-    updateMoveAndDeleteActions();
+    updateActions();
 
     emit routeChanged(true);
   }
@@ -1786,7 +1787,7 @@ void RouteController::calculateDirect()
   route.updateLegAltitudes();
 
   updateTableModel();
-  updateMoveAndDeleteActions();
+  updateActions();
   postChange(undoCommand);
   emit routeChanged(true);
   NavApp::setStatusMessage(tr("Calculated direct flight plan."));
@@ -2076,7 +2077,7 @@ bool RouteController::calculateRouteInternal(atools::routing::RouteFinder *route
       route.updateLegAltitudes();
 
       updateTableModel();
-      updateMoveAndDeleteActions();
+      updateActions();
 
       postChange(undoCommand);
       NavApp::updateWindowTitle();
@@ -2193,7 +2194,7 @@ void RouteController::reverseRoute()
 
   updateActiveLeg();
   updateTableModel();
-  updateMoveAndDeleteActions();
+  updateActions();
 
   postChange(undoCommand);
   emit routeChanged(true);
@@ -2253,7 +2254,7 @@ void RouteController::postDatabaseLoad()
   entryBuilder->setCurUserpointNumber(route.getNextUserWaypointNumber());
 
   updateTableModel();
-  updateMoveAndDeleteActions();
+  updateActions();
   NavApp::updateErrorLabel();
 
   routeCalcDialog->postDatabaseLoad();
@@ -2294,7 +2295,7 @@ void RouteController::showAtIndex(int index, bool info, bool map, bool doubleCli
   }
 }
 
-void RouteController::updateMoveAndDeleteActions()
+void RouteController::updateActions()
 {
   // Disable all per default
   Ui::MainWindow *ui = NavApp::getMainUi();
@@ -2310,26 +2311,12 @@ void RouteController::updateMoveAndDeleteActions()
   QItemSelectionModel *sm = tableViewRoute->selectionModel();
   if(sm != nullptr && sm->hasSelection())
   {
-    bool containsProc = false, containsAlternate = false, moveDownTouchesProc = false, moveUpTouchesProc = false,
-         moveDownTouchesAlt = false, moveUpTouchesAlt = false,
-         moveDownLeavesAlt = false, moveUpLeavesAlt = false;
+    bool containsProc, containsAlternate, moveDownTouchesProc, moveUpTouchesProc, moveDownTouchesAlt, moveUpTouchesAlt, moveDownLeavesAlt,
+         moveUpLeavesAlt;
     // Ordered from top to bottom
-    QList<int> rows = getSelectedRows(false);
-
-    for(int row : rows)
-    {
-      containsProc |= route.value(row).isAnyProcedure();
-      containsAlternate |= route.value(row).isAlternate();
-    }
-
-    moveUpTouchesProc = rows.constFirst() > 0 && route.value(rows.constFirst() - 1).isAnyProcedure();
-    moveDownTouchesProc = rows.constLast() < route.size() - 1 && route.value(rows.constLast() + 1).isAnyProcedure();
-
-    moveUpTouchesAlt = rows.constFirst() > 0 && route.value(rows.constFirst() - 1).isAlternate();
-    moveDownTouchesAlt = rows.constLast() < route.size() - 1 && route.value(rows.constLast() + 1).isAlternate();
-
-    moveUpLeavesAlt = rows.constFirst() > 0 && !route.value(rows.constFirst() - 1).isAlternate();
-    moveDownLeavesAlt = rows.constLast() >= route.size() - 1 || !route.value(rows.constLast() + 1).isAlternate();
+    QList<int> rows = getSelectedRows(false /* reverse */);
+    route.selectionFlagsProcedures(rows, containsProc, moveDownTouchesProc, moveUpTouchesProc);
+    route.selectionFlagsAlternate(rows, containsAlternate, moveDownTouchesAlt, moveUpTouchesAlt, moveDownLeavesAlt, moveUpLeavesAlt);
 
     if(rows.size() == 1 && containsAlternate)
     {
@@ -2340,13 +2327,16 @@ void RouteController::updateMoveAndDeleteActions()
     else if(model->rowCount() > 1)
     {
       ui->actionRouteDeleteLeg->setEnabled(true);
-      ui->actionRouteLegUp->setEnabled(sm->hasSelection() && !sm->isRowSelected(0, QModelIndex()) &&
-                                       !containsProc && !containsAlternate && !moveUpTouchesProc && !moveUpTouchesAlt);
 
-      ui->actionRouteLegDown->setEnabled(sm->hasSelection() &&
-                                         !sm->isRowSelected(model->rowCount() - 1, QModelIndex()) &&
-                                         !containsProc && !containsAlternate && !moveDownTouchesProc &&
-                                         !moveDownTouchesAlt);
+      if(sm->hasSelection())
+      {
+        ui->actionRouteLegUp->setEnabled(!sm->isRowSelected(0, QModelIndex()) &&
+                                         !containsProc && !containsAlternate && !moveUpTouchesProc && !moveUpTouchesAlt);
+
+        ui->actionRouteLegDown->setEnabled(!sm->isRowSelected(model->rowCount() - 1, QModelIndex()) &&
+                                           !containsProc && !containsAlternate && !moveDownTouchesProc &&
+                                           !moveDownTouchesAlt);
+      }
     }
     else if(model->rowCount() == 1)
       // Only one waypoint - nothing to move
@@ -2563,8 +2553,8 @@ void RouteController::tableContextMenu(const QPoint& pos)
 
   QList<QAction *> actions({ui->actionRouteShowInformation, ui->actionRouteShowApproaches, ui->actionRouteShowApproachCustom,
                             ui->actionRouteShowDepartureCustom, ui->actionRouteShowOnMap, ui->actionRouteActivateLeg,
-                            ui->actionRouteFollowSelection, ui->actionRouteLegUp, ui->actionRouteLegDown, ui->actionRouteDeleteLeg,
-                            ui->actionRouteEditUserWaypoint, ui->actionRouteInsert, ui->actionRouteTableAppend,
+                            ui->actionRouteDirectTo, ui->actionRouteFollowSelection, ui->actionRouteLegUp, ui->actionRouteLegDown,
+                            ui->actionRouteDeleteLeg, ui->actionRouteEditUserWaypoint, ui->actionRouteInsert, ui->actionRouteTableAppend,
                             ui->actionRouteSaveSelection, ui->actionRouteCalcSelected, ui->actionMapRangeRings, ui->actionMapNavaidRange,
                             ui->actionMapTrafficPattern, ui->actionMapHold, ui->actionMapAirportMsa, ui->actionRouteTableCopy,
                             ui->actionRouteTableSelectAll, ui->actionRouteTableSelectNothing, ui->actionRouteResetView,
@@ -2611,7 +2601,8 @@ void RouteController::tableContextMenu(const QPoint& pos)
   QMenu menu;
   menu.setToolTipsVisible(NavApp::isMenuToolTipsVisible());
 
-  updateMoveAndDeleteActions();
+  // Enable/disable move, delete and direct to
+  updateActions();
 
   ui->actionRouteTableCopy->setEnabled(index.isValid());
 
@@ -2762,15 +2753,11 @@ void RouteController::tableContextMenu(const QPoint& pos)
   }
 
   ui->actionRouteSaveSelection->setEnabled(canSaveSelection());
-
   ui->actionRouteTableAppend->setEnabled(!route.isEmpty());
-
   ui->actionRouteInsert->setEnabled(canInsert);
-
   ui->actionRouteCalcSelected->setEnabled(canCalcSelection());
-
-  ui->actionRouteTableSelectNothing->setEnabled(
-    tableViewRoute->selectionModel() == nullptr ? false : tableViewRoute->selectionModel()->hasSelection());
+  ui->actionRouteTableSelectNothing->setEnabled(tableViewRoute->selectionModel() == nullptr ?
+                                                false : tableViewRoute->selectionModel()->hasSelection());
   ui->actionRouteTableSelectAll->setEnabled(!route.isEmpty());
 
   // Edit position ======================================
@@ -2794,13 +2781,10 @@ void RouteController::tableContextMenu(const QPoint& pos)
   }
 
   // Get selected VOR and NDB and check if ranges can be shown ====================================
-  QList<int> selectedRouteLegIndexes;
-  getSelectedRouteLegs(selectedRouteLegIndexes);
-
   // If there are any radio navaids in the selected list enable range menu item
   int numRadioNavaids = 0;
   QString navaidText;
-  for(int idx : selectedRouteLegIndexes)
+  for(int idx : selectedRows)
   {
     const RouteLeg& leg = route.value(idx);
     if((leg.getVor().isValid() && leg.getVor().range > 0) || (leg.getNdb().isValid() && leg.getNdb().range > 0))
@@ -2810,8 +2794,18 @@ void RouteController::tableContextMenu(const QPoint& pos)
     }
   }
 
-  // Add marks ==============================================================================
+  // Direct ==============================================================================
+  if(!selectedRows.isEmpty())
+  {
+    bool disableDirect = true;
+    QString suffix = proc::procedureTextSuffixDirectTo(disableDirect, route, selectedRows.constFirst(), &routeLeg->getAirport());
+    ui->actionRouteDirectTo->setDisabled(disableDirect);
+    ActionTool::setText(ui->actionRouteDirectTo, !disableDirect, objectText, suffix);
+  }
+  else
+    ui->actionRouteDirectTo->setDisabled(true);
 
+  // Add marks ==============================================================================
   ActionTool::setText(ui->actionMapRangeRings, routeLeg != nullptr, objectText);
 
   if(numRadioNavaids == 0)
@@ -2819,7 +2813,7 @@ void RouteController::tableContextMenu(const QPoint& pos)
   else if(numRadioNavaids == 1)
     ActionTool::setText(ui->actionMapNavaidRange, routeLeg != nullptr, navaidText);
   else if(numRadioNavaids > 1)
-    ActionTool::setText(ui->actionMapNavaidRange, routeLeg != nullptr, tr("selected Navaids"));
+    ActionTool::setText(ui->actionMapNavaidRange, routeLeg != nullptr, tr("selected navaids"));
 
   ActionTool::setText(ui->actionMapHold, routeLeg != nullptr, objectText);
 
@@ -2857,6 +2851,9 @@ void RouteController::tableContextMenu(const QPoint& pos)
   menu.addAction(ui->actionRouteLegDown);
   menu.addAction(ui->actionRouteDeleteLeg);
   menu.addAction(ui->actionRouteEditUserWaypoint);
+  menu.addSeparator();
+
+  menu.addAction(ui->actionRouteDirectTo);
   menu.addSeparator();
 
   menu.addAction(ui->actionRouteInsert);
@@ -2935,7 +2932,7 @@ void RouteController::tableContextMenu(const QPoint& pos)
     else if(action == ui->actionMapNavaidRange)
     {
       // Show range rings for all radio navaids
-      for(int idx : selectedRouteLegIndexes)
+      for(int idx : selectedRows)
       {
         const RouteLeg& routeLegSel = route.value(idx);
         if(routeLegSel.getNdb().isValid() || routeLegSel.getVor().isValid())
@@ -2977,8 +2974,6 @@ void RouteController::tableContextMenu(const QPoint& pos)
       emit addAirportMsa(msaResult.airportMsa.value(0));
     else if(action == ui->actionRouteInsert)
       emit routeInsert(row);
-    else if(action == ui->actionRouteActivateLeg)
-      activateLegManually(index.row());
     else if(action == ui->actionRouteCalcSelected)
       calculateRouteWindowSelection();
     // Other actions emit signals directly
@@ -2989,7 +2984,6 @@ void RouteController::tableContextMenu(const QPoint& pos)
   updateCleanupTimer();
 }
 
-/* Activate leg manually from menu */
 void RouteController::activateLegManually(int index)
 {
   qDebug() << Q_FUNC_INFO << index;
@@ -3040,7 +3034,7 @@ void RouteController::editUserWaypointName(int index)
 
       updateActiveLeg();
       updateTableModel();
-      updateMoveAndDeleteActions();
+      updateActions();
 
       postChange(undoCommand);
       emit routeChanged(true);
@@ -3143,9 +3137,9 @@ void RouteController::tableSelectionChanged(const QItemSelection& selected, cons
 
   // Get selected rows in ascending order
   selectedRows.clear();
-  selectedRows = getSelectedRows(false);
+  selectedRows = getSelectedRows(false /* reverse */);
 
-  updateMoveAndDeleteActions();
+  updateActions();
   QItemSelectionModel *sm = tableViewRoute->selectionModel();
 
   if(sm == nullptr)
@@ -3213,7 +3207,12 @@ void RouteController::changeRouteUndoRedo(const atools::fs::pln::Flightplan& new
   remarksFlightPlanToWidget();
 
   updateTableModel();
-  updateMoveAndDeleteActions();
+  updateActions();
+
+  // Clear all also removes active airaft position - assign again and select active leg
+  route.setActivePos(aircraft.getPosition(), aircraft.getHeadingDegTrue());
+  updateActiveLeg();
+  highlightNextWaypoint(route.getActiveLegIndexCorrected());
 
   if(currentRow == -1 || currentRow > tableViewRoute->model()->rowCount() - 1)
     currentRow = tableViewRoute->model()->rowCount() - 1;
@@ -3391,7 +3390,7 @@ void RouteController::moveSelectedLegsInternal(MoveDirection direction)
     // Restore previous selection at new moved position
     selectList(rows, direction);
 
-    updateMoveAndDeleteActions();
+    updateActions();
 
     postChange(undoCommand);
     emit routeChanged(true);
@@ -3401,13 +3400,38 @@ void RouteController::moveSelectedLegsInternal(MoveDirection direction)
 
 void RouteController::routeDelete(int index)
 {
-  deleteSelectedLegsInternal({index});
+  deleteSelectedLegs({index});
 }
 
-/* Called by action */
-void RouteController::deleteSelectedLegs()
+void RouteController::deleteSelectedLegsTriggered()
 {
-  deleteSelectedLegsInternal(getSelectedRows(true /* reverse */));
+  deleteSelectedLegs(getSelectedRows(true /* reverse */));
+}
+
+void RouteController::deleteSelectedLegs(const QList<int>& rows)
+{
+  if(!rows.isEmpty())
+  {
+    if(tableViewRoute->selectionModel() != nullptr)
+      tableViewRoute->selectionModel()->clear();
+
+    proc::MapProcedureTypes procs = affectedProcedures(rows);
+
+    // Do not merge for procedure deletes
+    RouteCommand *undoCommand = preChange(procs & proc::PROCEDURE_ALL ? tr("Delete Procedure") : tr("Delete Waypoints"),
+                                          procs & proc::PROCEDURE_ALL ? rctype::EDIT : rctype::DELETE);
+
+    tableViewRoute->selectionModel()->setCurrentIndex(
+      model->index(rows.constLast(), 0), QItemSelectionModel::SelectCurrent | QItemSelectionModel::Rows);
+    deleteSelectedLegsInternal(rows);
+    updateActiveLeg();
+    updateTableModel();
+    updateActions();
+
+    postChange(undoCommand);
+    emit routeChanged(true);
+    NavApp::setStatusMessage(tr("Removed flight plan legs."));
+  }
 }
 
 void RouteController::deleteSelectedLegsInternal(const QList<int>& rows)
@@ -3418,14 +3442,7 @@ void RouteController::deleteSelectedLegsInternal(const QList<int>& rows)
   {
     proc::MapProcedureTypes procs = affectedProcedures(rows);
 
-    // Do not merge for procedure deletes
-    RouteCommand *undoCommand = preChange(procs & proc::PROCEDURE_ALL ? tr("Delete Procedure") : tr("Delete Waypoints"),
-                                          procs & proc::PROCEDURE_ALL ? rctype::EDIT : rctype::DELETE);
-
-    int currentRow = rows.constLast();
-
-    if(tableViewRoute->selectionModel() != nullptr)
-      tableViewRoute->selectionModel()->clear();
+    int currentRow = tableViewRoute->currentIndex().isValid() ? tableViewRoute->currentIndex().row() : -1;
 
     for(int row : rows)
     {
@@ -3467,9 +3484,6 @@ void RouteController::deleteSelectedLegsInternal(const QList<int>& rows)
     // Get type and cruise altitude from widgets
     updateFlightplanFromWidgets();
 
-    updateActiveLeg();
-    updateTableModel();
-
     // Update current position at the beginning of the former selection but do not update selection
     if(currentRow == -1 || currentRow > tableViewRoute->model()->rowCount() - 1)
       currentRow = tableViewRoute->model()->rowCount() - 1;
@@ -3478,14 +3492,8 @@ void RouteController::deleteSelectedLegsInternal(const QList<int>& rows)
     qDebug() << Q_FUNC_INFO << "currentRow" << currentRow;
 #endif
 
-    tableViewRoute->selectionModel()->setCurrentIndex(model->index(currentRow,
-                                                                   0), QItemSelectionModel::SelectCurrent | QItemSelectionModel::Rows);
-
-    updateMoveAndDeleteActions();
-
-    postChange(undoCommand);
-    emit routeChanged(true);
-    NavApp::setStatusMessage(tr("Removed flight plan legs."));
+    tableViewRoute->selectionModel()->setCurrentIndex(
+      model->index(currentRow, 0), QItemSelectionModel::SelectCurrent | QItemSelectionModel::Rows);
   }
 }
 
@@ -3570,7 +3578,7 @@ void RouteController::routeClearParkingAndStart()
   // Get type and cruise altitude from widgets
   updateFlightplanFromWidgets();
   updateTableModel();
-  updateMoveAndDeleteActions();
+  updateActions();
 
   postChange(undoCommand);
   emit routeChanged(true);
@@ -3614,7 +3622,7 @@ void RouteController::routeSetParking(const map::MapParking& parking)
   // Get type and cruise altitude from widgets
   updateFlightplanFromWidgets();
   updateTableModel();
-  updateMoveAndDeleteActions();
+  updateActions();
 
   postChange(undoCommand);
   emit routeChanged(true);
@@ -3663,7 +3671,7 @@ void RouteController::routeSetStartPosition(map::MapStart start)
   // Get type and cruise altitude from widgets
   updateFlightplanFromWidgets();
   updateTableModel();
-  updateMoveAndDeleteActions();
+  updateActions();
 
   postChange(undoCommand);
   emit routeChanged(true);
@@ -3697,7 +3705,7 @@ void RouteController::routeSetDeparture(map::MapAirport airport)
 
   updateActiveLeg();
   updateTableModel();
-  updateMoveAndDeleteActions();
+  updateActions();
 
   postChange(undoCommand);
   emit routeChanged(true);
@@ -3766,7 +3774,7 @@ void RouteController::routeSetDestination(map::MapAirport airport)
 
   updateActiveLeg();
   updateTableModel();
-  updateMoveAndDeleteActions();
+  updateActions();
 
   postChange(undoCommand);
   emit routeChanged(true);
@@ -4115,7 +4123,7 @@ void RouteController::routeAddProcedure(proc::MapProcedureLegs legs)
 
   updateActiveLeg();
   updateTableModel();
-  updateMoveAndDeleteActions();
+  updateActions();
 
   postChange(undoCommand);
 
@@ -4126,24 +4134,168 @@ void RouteController::routeAddProcedure(proc::MapProcedureLegs legs)
   NavApp::setStatusMessage(tr("Added procedure to flight plan."));
 }
 
+void RouteController::directToTriggered()
+{
+  QList<int> rows = getSelectedRows(false);
+  if(!rows.isEmpty())
+    routeDirectTo(-1, atools::geo::EMPTY_POS, map::NONE, rows.constFirst());
+}
+
+void RouteController::routeDirectTo(int id, atools::geo::Pos userPos, map::MapTypes type, int legIndexDirectTo)
+{
+  qDebug() << Q_FUNC_INFO << "id" << id << "userPos" << userPos << "type" << type << "legIndexDirectTo" << legIndexDirectTo
+           << "route.getActiveLegIndex()" << route.getActiveLegIndex();
+
+  bool disable = false;
+  proc::procedureTextSuffixDirectTo(disable, route, legIndexDirectTo, &route.getLegAt(legIndexDirectTo).getAirport());
+
+  if(!disable)
+  {
+    RouteCommand *undoCommand = preChange(tr("Direct to"));
+    updateActiveLeg();
+
+    if(legIndexDirectTo != -1 && legIndexDirectTo < map::INVALID_INDEX_VALUE)
+    {
+      // To route leg: id 482 userPos Pos(-120.370773,49.381542,0.000000) type VOR legIndexDirectTo 15
+      // legIndexDirectTo leg index which will be connect from PPOS to legIndexDirectTo
+
+      // Index of active leg - departure airport is leg 0, first leg is index 1
+      int actIdx = route.getActiveLegIndex();
+      QList<int> rows;
+      bool addPresentPos = false;
+
+      if(route.getLegAt(legIndexDirectTo).isAlternate())
+      {
+#ifdef DEBUG_INFORMATION
+        qDebug() << Q_FUNC_INFO << "forward to alternate";
+#endif
+        // Direct to is an alterate ======================================
+        // Remember old alternate
+        const RouteLeg& altDest = route.getLegAt(legIndexDirectTo);
+        Pos pos = altDest.getPosition();
+        map::MapTypes altType = altDest.getMapObjectType();
+        int altId = altDest.getId();
+
+        // Put alternate to delete on top of list
+        rows.append(legIndexDirectTo);
+
+        if(route.getSizeWithoutAlternates() > 1)
+        {
+          // Other legs to delete including procedures in reverse order
+          int deleteFromIdx = route.getDestinationAirportLegIndex();
+          for(int i = deleteFromIdx; i >= actIdx; i--)
+            rows.append(i);
+        }
+
+        // Delete legs
+        deleteSelectedLegsInternal(rows);
+
+        // Append previously saved alternate as new destination
+        routeAddInternal(altId, pos, altType, map::INVALID_INDEX_VALUE, true /* presentPos */);
+
+        addPresentPos = true;
+      }
+      else
+      {
+        // Direct to is an intermediate waypoint or the destination ======================================
+
+        if(legIndexDirectTo == actIdx)
+        {
+#ifdef DEBUG_INFORMATION
+          qDebug() << Q_FUNC_INFO << "forward legIndexDirectTo == actIdx";
+#endif
+          // Insert current position for user aircraft into nearest leg
+          addPresentPos = true;
+        }
+        if(legIndexDirectTo > actIdx)
+        {
+#ifdef DEBUG_INFORMATION
+          qDebug() << Q_FUNC_INFO << "forward legIndexDirectTo > actIdx";
+#endif
+
+          // Direct to waypoint ahead ==================
+          for(int i = legIndexDirectTo - 1; i >= actIdx; i--)
+            rows.append(i);
+
+#ifdef DEBUG_INFORMATION
+          qDebug() << Q_FUNC_INFO << "forward legIndexDirectTo > actIdx" << rows;
+#endif
+
+          // Delete legs until direct to including current one
+          // Do not delete if direct to is current leg
+          deleteSelectedLegsInternal(rows);
+          addPresentPos = true;
+        }
+        // else Direct to waypoint back - invalid
+      }
+
+      // Insert current position for user aircraft into nearest leg
+      if(addPresentPos)
+        routeAddInternal(-1, NavApp::getUserAircraftPos(), map::USERPOINTROUTE, -1, true /* presentPos */);
+    }
+    else // if(id == -1 && userPos.isValid() && type == map::NONE)
+    {
+      // To any pos: id -1 userPos Pos(-120.346367,49.243427,0.000000) type NONE legIndexDirectTo -1
+      // To any airport or navaid: id 10366 userPos Pos(-120.513565,49.468750,0.000000) type AIRPORT legIndexDirectTo -1
+      int insertIndex = routeAddInternal(-1, NavApp::getUserAircraftPos(), map::USERPOINTROUTE, -1, true /* presentPos */);
+      routeAddInternal(id, userPos, type, insertIndex);
+    }
+
+    updateActiveLeg();
+    updateTableModel();
+    updateActions();
+
+    postChange(undoCommand);
+    emit routeChanged(true);
+    NavApp::setStatusMessage(tr("Changed flight plan for direct to."));
+  }
+}
+
 void RouteController::routeAdd(int id, atools::geo::Pos userPos, map::MapTypes type, int legIndex)
 {
-  qDebug() << Q_FUNC_INFO << "user pos" << userPos << "id" << id
-           << "type" << type << "leg index" << legIndex;
-
-  FlightplanEntry entry;
-  entryBuilder->buildFlightplanEntry(id, userPos, type, entry, -1);
-
-  int insertIndex = calculateInsertIndex(entry.getPosition(), legIndex);
-
-  qDebug() << Q_FUNC_INFO << "insertIndex" << insertIndex;
+  qDebug() << Q_FUNC_INFO << "user pos" << userPos << "id" << id << "type" << type << "leg index" << legIndex;
 
   RouteCommand *undoCommand = preChange(tr("Add Waypoint"));
 
   if(route.isEmpty())
     NavApp::showFlightPlan();
 
+  routeAddInternal(id, userPos, type, legIndex);
+  updateActiveLeg();
+  updateTableModel();
+  updateActions();
+
+  postChange(undoCommand);
+  emit routeChanged(true);
+  NavApp::setStatusMessage(tr("Added waypoint to flight plan."));
+}
+
+int RouteController::routeAddInternal(int id, atools::geo::Pos userPos, map::MapTypes type, int legIndex, bool presentPos)
+{
+  QString userpointIdent;
+  if(presentPos)
+  {
+    // Prepare for direct to insertion
+    userpointIdent = tr("PPOS");
+
+    // Look into flight plan for an PPOS at the same position - return index if found
+    for(int i = 0; i < route.size(); i++)
+    {
+      const RouteLeg& leg = route.getLegAt(i);
+      if(leg.getMapObjectType() == map::USERPOINTROUTE && leg.getIdent() == userpointIdent &&
+         leg.getPosition().almostEqual(userPos, atools::geo::Pos::POS_EPSILON_1NM))
+        return i;
+    }
+  }
+
+  qDebug() << Q_FUNC_INFO << "id" << id << "userPos" << userPos << "type" << type
+           << "legIndex" << legIndex << "userpointIdent" << userpointIdent;
+
+  FlightplanEntry entry;
+  entryBuilder->buildFlightplanEntry(id, userPos, type, entry, -1);
+
   Flightplan& flightplan = route.getFlightplan();
+  int insertIndex = calculateInsertIndex(entry.getPosition(), legIndex);
   flightplan.insert(insertIndex, entry);
   route.eraseAirway(insertIndex);
   route.eraseAirway(insertIndex + 1);
@@ -4154,6 +4306,8 @@ void RouteController::routeAdd(int id, atools::geo::Pos userPos, map::MapTypes t
     lastLeg = &route.value(insertIndex - 1);
   RouteLeg routeLeg(&flightplan);
   routeLeg.createFromDatabaseByEntry(insertIndex, lastLeg);
+  if(!userpointIdent.isEmpty())
+    routeLeg.getFlightplanEntry()->setIdent(userpointIdent);
 
   route.insert(insertIndex, routeLeg);
 
@@ -4178,15 +4332,7 @@ void RouteController::routeAdd(int id, atools::geo::Pos userPos, map::MapTypes t
   // Get type and cruise altitude from widgets
   updateFlightplanFromWidgets();
 
-  updateActiveLeg();
-  updateTableModel();
-  updateMoveAndDeleteActions();
-
-  postChange(undoCommand);
-
-  emit routeChanged(true);
-
-  NavApp::setStatusMessage(tr("Added waypoint to flight plan."));
+  return insertIndex;
 }
 
 void RouteController::routeReplace(int id, atools::geo::Pos userPos, map::MapTypes type,
@@ -4252,7 +4398,7 @@ void RouteController::routeReplace(int id, atools::geo::Pos userPos, map::MapTyp
 
   updateActiveLeg();
   updateTableModel();
-  updateMoveAndDeleteActions();
+  updateActions();
 
   postChange(undoCommand);
   emit routeChanged(true);
@@ -4906,14 +5052,12 @@ void RouteController::scrollToActive()
   }
 }
 
-/* */
 void RouteController::highlightNextWaypoint(int activeLegIdx)
 {
   // Check if model is already initailized
   if(model->rowCount() == 0)
     return;
 
-  // Remove background brush for all rows and columns ===============
   activeLegIndex = activeLegIdx;
   for(int row = 0; row < model->rowCount(); ++row)
   {
@@ -5203,7 +5347,6 @@ void RouteController::postChange(RouteCommand *undoCommand)
 
 proc::MapProcedureTypes RouteController::affectedProcedures(const QList<int>& indexes)
 {
-  qDebug() << Q_FUNC_INFO << indexes;
   proc::MapProcedureTypes types = proc::PROCEDURE_NONE;
 
   for(int index : indexes)
@@ -5257,6 +5400,8 @@ proc::MapProcedureTypes RouteController::affectedProcedures(const QList<int>& in
   if(types & proc::PROCEDURE_STAR_TRANSITION && route.getStarLegs().procedureLegs.isEmpty())
     // Remove the empty STAR structure too
     types |= proc::PROCEDURE_STAR_ALL;
+
+  qDebug() << Q_FUNC_INFO << "indexes" << indexes << "types" << types;
 
   return types;
 }

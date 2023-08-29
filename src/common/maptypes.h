@@ -110,6 +110,11 @@ struct MapObjectRef
     return !operator==(other);
   }
 
+  bool isValid() const
+  {
+    return id != -1 && objType != NONE;
+  }
+
 };
 
 QDataStream& operator>>(QDataStream& dataStream, map::MapObjectRef& obj);

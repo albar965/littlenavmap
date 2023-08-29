@@ -270,6 +270,9 @@ signals:
   void routeAdd(int id, const atools::geo::Pos& userPos, map::MapTypes type, int legIndex);
   void routeReplace(int id, const atools::geo::Pos& userPos, map::MapTypes type, int oldIndex);
 
+  /* Direct to flight plan waypoint, navaid or position */
+  void directTo(int id, const atools::geo::Pos& userPos, map::MapTypes type, int legIndex);
+
   /* Show a map object in the search panel (context menu) */
   void showInSearch(map::MapTypes type, const atools::sql::SqlRecord& record, bool select);
 

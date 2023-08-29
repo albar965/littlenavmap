@@ -651,6 +651,16 @@ bool MapResult::getIdAndType(int& id, MapTypes& type, const std::initializer_lis
   return id != -1;
 }
 
+map::MapObjectRef MapResult::getRef(const std::initializer_list<MapTypes>& types) const
+{
+  int id = -1;
+  map::MapTypes type = map::NONE;
+  if(getIdAndType(id, type, types))
+    return map::MapObjectRef(id, type);
+  else
+    return map::MapObjectRef();
+}
+
 MapResult& MapResult::addFromMapBase(const MapBase *base)
 {
   if(base != nullptr)
@@ -869,24 +879,24 @@ QDebug operator<<(QDebug out, const map::MapResult& record)
 
 MapResultIndex& MapResultIndex::add(const MapResult& resultParam, const MapTypes& types)
 {
-    addToIndexRangeIf(resultParam.airports, result.airports, types);
-    addToIndexRangeIf(resultParam.airportMsa, result.airportMsa, types);
-    addToIndexRangeIf(resultParam.runwayEnds, result.runwayEnds, types);
-    addToIndexRangeIf(resultParam.runways, result.runways, types);
-    addToIndexRangeIf(resultParam.parkings, result.parkings, types);
-    addToIndexRangeIf(resultParam.helipads, result.helipads, types);
-    addToIndexRangeIf(resultParam.waypoints, result.waypoints, types);
-    addToIndexRangeIf(resultParam.vors, result.vors, types);
-    addToIndexRangeIf(resultParam.ndbs, result.ndbs, types);
-    addToIndexRangeIf(resultParam.markers, result.markers, types);
-    addToIndexRangeIf(resultParam.ils, result.ils, types);
-    addToIndexRangeIf(resultParam.holdings, result.holdings, types);
-    addToIndexRangeIf(resultParam.airways, result.airways, types);
-    addToIndexRangeIf(resultParam.airspaces, result.airspaces, types);
-    addToIndexRangeIf(resultParam.userpointsRoute, result.userpointsRoute, types);
-    addToIndexRangeIf(resultParam.userpoints, result.userpoints, types);
-    addToIndexRangeIf(resultParam.logbookEntries, result.logbookEntries, types);
-    addToIndexRangeIf(resultParam.procPoints, result.procPoints, types);
+  addToIndexRangeIf(resultParam.airports, result.airports, types);
+  addToIndexRangeIf(resultParam.airportMsa, result.airportMsa, types);
+  addToIndexRangeIf(resultParam.runwayEnds, result.runwayEnds, types);
+  addToIndexRangeIf(resultParam.runways, result.runways, types);
+  addToIndexRangeIf(resultParam.parkings, result.parkings, types);
+  addToIndexRangeIf(resultParam.helipads, result.helipads, types);
+  addToIndexRangeIf(resultParam.waypoints, result.waypoints, types);
+  addToIndexRangeIf(resultParam.vors, result.vors, types);
+  addToIndexRangeIf(resultParam.ndbs, result.ndbs, types);
+  addToIndexRangeIf(resultParam.markers, result.markers, types);
+  addToIndexRangeIf(resultParam.ils, result.ils, types);
+  addToIndexRangeIf(resultParam.holdings, result.holdings, types);
+  addToIndexRangeIf(resultParam.airways, result.airways, types);
+  addToIndexRangeIf(resultParam.airspaces, result.airspaces, types);
+  addToIndexRangeIf(resultParam.userpointsRoute, result.userpointsRoute, types);
+  addToIndexRangeIf(resultParam.userpoints, result.userpoints, types);
+  addToIndexRangeIf(resultParam.logbookEntries, result.logbookEntries, types);
+  addToIndexRangeIf(resultParam.procPoints, result.procPoints, types);
 
   // Aircraft ===========
   if(types.testFlag(AIRCRAFT) && resultParam.userAircraft.isValid())
@@ -909,24 +919,24 @@ MapResultIndex& MapResultIndex::add(const MapResult& resultParam, const MapTypes
 
 MapResultIndex& MapResultIndex::addRef(const MapResult& resultParam, const MapTypes& types)
 {
-    addToIndexIf(resultParam.airports, types);
-    addToIndexIf(resultParam.airportMsa, types);
-    addToIndexIf(resultParam.runwayEnds, types);
-    addToIndexIf(resultParam.runways, types);
-    addToIndexIf(resultParam.parkings, types);
-    addToIndexIf(resultParam.helipads, types);
-    addToIndexIf(resultParam.waypoints, types);
-    addToIndexIf(resultParam.vors, types);
-    addToIndexIf(resultParam.ndbs, types);
-    addToIndexIf(resultParam.markers, types);
-    addToIndexIf(resultParam.ils, types);
-    addToIndexIf(resultParam.holdings, types);
-    addToIndexIf(resultParam.airways, types);
-    addToIndexIf(resultParam.airspaces, types);
-    addToIndexIf(resultParam.userpointsRoute, types);
-    addToIndexIf(resultParam.userpoints, types);
-    addToIndexIf(resultParam.logbookEntries, types);
-    addToIndexIf(resultParam.procPoints, types);
+  addToIndexIf(resultParam.airports, types);
+  addToIndexIf(resultParam.airportMsa, types);
+  addToIndexIf(resultParam.runwayEnds, types);
+  addToIndexIf(resultParam.runways, types);
+  addToIndexIf(resultParam.parkings, types);
+  addToIndexIf(resultParam.helipads, types);
+  addToIndexIf(resultParam.waypoints, types);
+  addToIndexIf(resultParam.vors, types);
+  addToIndexIf(resultParam.ndbs, types);
+  addToIndexIf(resultParam.markers, types);
+  addToIndexIf(resultParam.ils, types);
+  addToIndexIf(resultParam.holdings, types);
+  addToIndexIf(resultParam.airways, types);
+  addToIndexIf(resultParam.airspaces, types);
+  addToIndexIf(resultParam.userpointsRoute, types);
+  addToIndexIf(resultParam.userpoints, types);
+  addToIndexIf(resultParam.logbookEntries, types);
+  addToIndexIf(resultParam.procPoints, types);
 
   // Aircraft ===========
   if(types.testFlag(AIRCRAFT) && resultParam.userAircraft.isValid())

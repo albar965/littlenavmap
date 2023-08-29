@@ -162,6 +162,7 @@ void Route::clearAll()
   destRunwayIlsProfile.clear();
   destRunwayIlsFlightPlanTable.clear();
   destRunwayEnd = map::MapRunwayEnd();
+  objectIndex.clear();
 
   totalDistance = 0.f;
 }
@@ -1751,6 +1752,49 @@ proc::MapProcedureTypes Route::getMissingProcedures()
   return ProcedureQuery::getMissingProcedures(flightplan.getProperties(), approachLegs, starLegs, sidLegs);
 }
 
+void Route::selectionFlagsAlternate(const QList<int>& rows, bool& containsAlternate, bool& moveDownTouchesAlt,
+                                    bool& moveUpTouchesAlt, bool& moveDownLeavesAlt, bool& moveUpLeavesAlt) const
+{
+  containsAlternate = moveDownTouchesAlt = moveUpTouchesAlt = moveDownLeavesAlt = moveUpLeavesAlt = false;
+
+  if(!rows.isEmpty())
+  {
+    for(int row : rows)
+      containsAlternate |= value(row).isAlternate();
+
+    moveUpTouchesAlt = rows.constFirst() > 0 && value(rows.constFirst() - 1).isAlternate();
+    moveDownTouchesAlt = rows.constLast() < size() - 1 && value(rows.constLast() + 1).isAlternate();
+
+    moveUpLeavesAlt = rows.constFirst() > 0 && !value(rows.constFirst() - 1).isAlternate();
+    moveDownLeavesAlt = rows.constLast() >= size() - 1 || !value(rows.constLast() + 1).isAlternate();
+  }
+}
+
+void Route::selectionFlagsProcedures(const QList<int>& rows, bool& containsProc, bool& moveDownTouchesProc, bool& moveUpTouchesProc) const
+{
+  containsProc = moveDownTouchesProc = moveUpTouchesProc = false;
+
+  if(!rows.isEmpty())
+  {
+    for(int row : rows)
+      containsProc |= value(row).isAnyProcedure();
+
+    moveUpTouchesProc = rows.constFirst() > 0 && value(rows.constFirst() - 1).isAnyProcedure();
+    moveDownTouchesProc = rows.constLast() < size() - 1 && value(rows.constLast() + 1).isAnyProcedure();
+  }
+}
+
+void Route::setActivePos(const atools::geo::Pos& pos, float course)
+{
+  activePos.pos = pos;
+  activePos.course = course;
+}
+
+int Route::getLegIndexForRef(const map::MapObjectRef& ref) const
+{
+  return objectIndex.value(ref, -1);
+}
+
 void Route::removeLegs(int from, int to)
 {
   qDebug() << Q_FUNC_INFO << "removing from" << from << "to" << to;
@@ -1915,9 +1959,15 @@ int Route::adjustedActiveLeg() const
 
 void Route::updateIndices()
 {
+  objectIndex.clear();
+
   // Update internal indices pointing to flight plan legs
   for(int i = 0; i < size(); i++)
-    (*this)[i].setFlightplanEntryIndex(i);
+  {
+    RouteLeg& leg = (*this)[i];
+    leg.setFlightplanEntryIndex(i);
+    objectIndex.insert(map::MapObjectRef(leg.getId(), leg.getMapObjectType()), i); // types includes PROCEDURE
+  }
 }
 
 void Route::updateIndicesAndOffsets()

@@ -180,6 +180,9 @@ void MapContextMenu::buildMainMenu()
   insertEditRouteUserpointMenu(mapMenu);
   mapMenu.addSeparator();
 
+  insertDirectToMenu(mapMenu);
+  mapMenu.addSeparator();
+
   insertMeasureMenu(mapMenu);
   ui->actionMapRangeRings->setText(ui->actionMapRangeRings->text() + tr("\tShift+Click"));
   mapMenu.addAction(ui->actionMapRangeRings);
@@ -652,6 +655,26 @@ void MapContextMenu::insertCustomDepartureMenu(QMenu& menu)
                      QString(), QIcon(":/littlenavmap/resources/icons/runwaydepart.svg"), false /* allowNoMapObject */, callback);
 }
 
+void MapContextMenu::insertDirectToMenu(QMenu& menu)
+{
+  ActionCallback callback =
+    [ = ](const map::MapBase *base, QString& text, QIcon&, bool& disable, bool) -> void
+    {
+      disable = !visibleOnMap;
+      if(base == nullptr)
+        // Any position
+        text = text.arg(tr("here"));
+      else
+        text.append(proc::procedureTextSuffixDirectTo(disable, route, map::routeIndex(base), base->asPtr<map::MapAirport>()));
+    };
+
+  insertMenuOrAction(menu, mc::DIRECT, MapResultIndex().
+                     addRef(*result, map::AIRPORT | map::VOR | map::NDB | map::WAYPOINT | map::USERPOINT | map::USERPOINTROUTE).
+                     sort(DEFAULT_TYPE_SORT, alphaSort),
+                     tr("&Direct to %1"), tr("Change flight plan to fly direct to navaid, flight plan leg or position"),
+                     QString(), QIcon(":/littlenavmap/resources/icons/directto.svg"), true /* allowNoMapObject */, callback);
+}
+
 void MapContextMenu::insertMeasureMenu(QMenu& menu)
 {
   ActionCallback callback =
@@ -836,7 +859,7 @@ void MapContextMenu::insertDestinationMenu(QMenu& menu)
     {
       disable = base == nullptr;
       if(base != nullptr)
-        text.append(proc::procedureTextSuffixDestination(route, base->asObj<map::MapAirport>(), disable));
+        text.append(proc::procedureTextSuffixDepartDest(route, base->asObj<map::MapAirport>(), disable));
     };
 
   insertMenuOrAction(menu, mc::DESTINATION, MapResultIndex().addRef(*result, map::AIRPORT).sort(alphaSort),

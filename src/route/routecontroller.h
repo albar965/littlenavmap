@@ -171,7 +171,7 @@ public:
    * @param id Id of object to insert
    * @param userPos Coordinates of user defined position if no navaid is to be inserted.
    * @param type Type of object to insert. maptypes::USER if userPos is set.
-   * @param legIndex Insert after the leg with this index. Will use nearest leg if index is -1.
+   * @param legIndex Insert after the leg with this index. Will use nearest leg if index is -1 and append if INVALID_INDEX.
    */
   void routeAdd(int id, atools::geo::Pos userPos, map::MapTypes type, int legIndex);
 
@@ -183,6 +183,12 @@ public:
 
   /* Delete waypoint at the given index. Will also delete departure or destination */
   void routeDelete(int index);
+
+  /* Called by action */
+  void deleteSelectedLegsTriggered();
+
+  void routeDirectTo(int id, atools::geo::Pos userPos, map::MapTypes type, int legIndexDirectTo);
+  void directToTriggered();
 
   /* Set departure parking position. If the airport of the parking spot is different to
    * the current departure it will be replaced too. */
@@ -389,14 +395,19 @@ private:
   void moveSelectedLegsDown();
   void moveSelectedLegsUp();
   void moveSelectedLegsInternal(MoveDirection direction);
-  void deleteSelectedLegs();
+  void deleteSelectedLegs(const QList<int>& rows);
   void deleteSelectedLegsInternal(const QList<int>& rows);
+
   QList<int> getSelectedRows(bool reverseRoute) const;
 
   void selectList(const QList<int>& selectedRows, int offset);
   void selectRange(int from, int to);
 
-  void updateMoveAndDeleteActions();
+  /* Enable/disable move, delete and direct to */
+  void updateActions();
+  void updateDirectToAction();
+
+  int routeAddInternal(int id, atools::geo::Pos userPos, map::MapTypes type, int legIndex, bool presentPos = false);
 
   void routeSetDepartureInternal(const map::MapAirport& airport);
   void routeSetDestinationInternal(const map::MapAirport& airport);
@@ -563,7 +574,7 @@ private:
   bool loadingDatabaseState = false;
   qint64 lastSimUpdate = 0;
 
-  /* Currently active leg or -1 if none */
+  /* Currently active leg or -1 if none. Used for table highlighting. */
   int activeLegIndex = -1;
 
   /* Copy of current active aircraft updated every MIN_SIM_UPDATE_TIME_MS */
