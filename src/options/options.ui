@@ -4137,7 +4137,7 @@ elevation profile hover:</string>
                   <number>10</number>
                  </property>
                  <property name="value">
-                  <number>50</number>
+                  <number>80</number>
                  </property>
                 </widget>
                </item>

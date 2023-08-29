@@ -1384,7 +1384,7 @@ private:
   int guiToolbarSize = 24;
 
   // ui->spinBoxOptionsGuiThemeMapDimming
-  int guiStyleMapDimming = 50;
+  int guiStyleMapDimming = 80;
 
   // ui->spinBoxOptionsMapClickRect
   int mapClickSensitivity = 10;
