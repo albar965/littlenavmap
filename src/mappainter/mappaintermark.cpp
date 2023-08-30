@@ -76,18 +76,6 @@ void MapPainterMark::render()
 {
   atools::util::PainterContextSaver saver(context->painter);
 
-#ifdef DEBUG_INFORMATION
-  {
-    atools::util::PainterContextSaver dbgsaver(context->painter);
-    context->szFont(context->textSizeAirport);
-    symbolPainter->textBox(context->painter, {
-      QString("Layer %1").arg(context->mapLayer->getMaxRange()),
-      QString("Layer route %1").arg(context->mapLayerRoute->getMaxRange()),
-      QString("Airport sym %1").arg(context->mapLayer->getAirportSymbolSize()),
-      QString("Min RW %1").arg(context->mapLayer->getMinRunwayLength())},
-                           mapcolors::routeLogEntryOutlineColor, 1, 1, textatt::ROUTE_BG_COLOR | textatt::VERT_BELOW);
-  }
-#endif
 
   paintMark();
   paintHome();

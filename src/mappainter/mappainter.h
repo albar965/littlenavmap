@@ -25,6 +25,7 @@
 
 #include <QPen>
 #include <QFont>
+#include <QDateTime>
 
 namespace atools {
 namespace geo {
@@ -93,7 +94,7 @@ struct PaintContext
   // All waypoints from the route and add them to the map to avoid duplicate drawing
   // Same for procedure preview
   QSet<map::MapRef> routeProcIdMap, /* Navaids on plan */
-                          routeProcIdMapRec /* Recommended navaids */;
+                    routeProcIdMapRec /* Recommended navaids */;
 
   // All airport ids which are to be drawn
   QSet<QString> visibleAirportIds;
@@ -244,6 +245,26 @@ struct PaintContext
   textflags::TextFlags airportTextFlagsMinor() const;
   textflags::TextFlags airportTextFlagsRoute(bool drawAsRoute, bool drawAsLog) const;
 
+  void startTimer(const QString& label)
+  {
+    if(verboseDraw)
+      renderTimesMs.insert(label, QDateTime::currentMSecsSinceEpoch());
+  }
+
+  void endTimer(const QString& label)
+  {
+    if(verboseDraw)
+      renderTimesMs.insert(label, QDateTime::currentMSecsSinceEpoch() - renderTimesMs.value(label));
+  }
+
+  void clearTimer()
+  {
+    if(verboseDraw)
+      renderTimesMs.clear();
+  }
+
+  bool verboseDraw = false;
+  QMap<QString, qint64> renderTimesMs;
 };
 
 /* Used to collect airports for drawing. Needs to copy airport since it might be removed from the cache. */

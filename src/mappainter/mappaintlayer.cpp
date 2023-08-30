@@ -56,6 +56,7 @@ MapPaintLayer::MapPaintLayer(MapPaintWidget *widget)
   : mapPaintWidget(widget)
 {
   verbose = atools::settings::Settings::instance().getAndStoreValue(lnm::OPTIONS_MAP_LAYER_DEBUG, false).toBool();
+  verboseDraw = atools::settings::Settings::instance().getAndStoreValue(lnm::OPTIONS_MAP_LAYER_DEBUG_DRAW, false).toBool();
 
   // Create the layer configuration
   initMapLayerSettings();
@@ -366,6 +367,7 @@ bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport, const 
       context.dispOptsRoute = od.getDisplayOptionsRoute();
       context.flags = od.getFlags();
       context.flags2 = od.getFlags2();
+      context.verboseDraw = verboseDraw;
 
       context.weatherSource = weatherSource;
       context.visibleWidget = mapPaintWidget->isVisibleWidget();

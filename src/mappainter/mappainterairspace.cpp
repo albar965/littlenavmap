@@ -52,6 +52,8 @@ void MapPainterAirspace::render()
   if(!context->mapLayer->isAirspace() || !(context->objectTypes.testFlag(map::AIRSPACE)))
     return;
 
+  context->startTimer("Airspace");
+
   AirspaceController *controller = NavApp::getAirspaceController();
 
   // Get online and offline airspace and merge then into one list =============
@@ -124,4 +126,5 @@ void MapPainterAirspace::render()
       }
     }
   }
+  context->endTimer("Airspace");
 }

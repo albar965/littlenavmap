@@ -156,6 +156,7 @@ void MapPainterAirport::collectVisibleAirports(QSet<QString>& visibleAirportIds)
 
 void MapPainterAirport::render()
 {
+  context->startTimer("Airport");
   // In diagram mode draw background first to avoid overwriting other airports ===========================
   if(context->mapLayer->isAirportDiagramRunway() && context->dOptAp(optsd::ITEM_AIRPORT_DETAIL_BOUNDARY))
   {
@@ -211,6 +212,7 @@ void MapPainterAirport::render()
                                      context->mapLayer->getMaxTextLengthAirport());
     }
   }
+  context->endTimer("Airport");
 }
 
 /* Draws the full airport diagram including runway, taxiways, apron, parking and more */

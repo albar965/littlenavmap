@@ -19,6 +19,8 @@
 
 #include "common/mapcolors.h"
 #include "app/navapp.h"
+#include "common/symbolpainter.h"
+#include "mapgui/maplayer.h"
 #include "util/paintercontextsaver.h"
 #include "mapgui/mapthemehandler.h"
 #include "mapgui/mappaintwidget.h"
@@ -144,6 +146,25 @@ void MapPainterTop::render()
     }
   }
 #endif
+
+  if(context->verboseDraw)
+  {
+    atools::util::PainterContextSaver dbgsaver(context->painter);
+    context->szFont(0.8f);
+
+    QStringList labels;
+    labels.append(QString("Layer %1").arg(context->mapLayer->getMaxRange()));
+    labels.append(QString("Layer route %1").arg(context->mapLayerRoute->getMaxRange()));
+    labels.append(QString("Airport sym %1").arg(context->mapLayer->getAirportSymbolSize()));
+    labels.append(QString("Min RW %1").arg(context->mapLayer->getMinRunwayLength()));
+    labels.append("-");
+
+    for(auto it = context->renderTimesMs.constBegin(); it != context->renderTimesMs.constEnd(); ++it)
+      labels.append(QString("%1: %2 ms").arg(it.key()).arg(it.value()));
+
+    symbolPainter->textBox(context->painter, labels, QPen(Qt::black), 1, 1, textatt::VERT_BELOW);
+  }
+
 }
 
 void MapPainterTop::paintCopyright()
