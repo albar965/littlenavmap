@@ -96,7 +96,7 @@ void MapPainterWeather::render()
     }
 
     QVector<MapAirport> alternates = context->route->getAlternateAirports();
-    for(const map::MapAirport& airport :alternates)
+    for(const map::MapAirport& airport : qAsConst(alternates))
     {
       visibleOnMap = wToS(airport.position, x, y, scale->getScreeenSizeForRect(airport.bounding), &hidden);
       if(!hidden && visibleOnMap)
@@ -127,7 +127,7 @@ void MapPainterWeather::render()
   std::sort(visibleAirportWeather.begin(), visibleAirportWeather.end(), std::bind(&MapPainter::sortAirportFunction, this, _1, _2));
 
   WeatherReporter *reporter = NavApp::getWeatherReporter();
-  for(const PaintAirportType& airportWeather: visibleAirportWeather)
+  for(const PaintAirportType& airportWeather: qAsConst(visibleAirportWeather))
   {
     atools::fs::weather::Metar metar =
       reporter->getAirportWeather(*airportWeather.airport, true /* stationOnly */);

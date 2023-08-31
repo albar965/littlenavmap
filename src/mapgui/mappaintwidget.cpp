@@ -391,7 +391,7 @@ void MapPaintWidget::updateGeometryIndex(map::MapTypes oldTypes, map::MapDisplay
   map::MapTypes types = getShownMapTypes();
   map::MapDisplayTypes displayTypes = getShownMapDisplayTypes();
 
-  if(((types& map::AIRWAY_ALL) != (oldTypes & map::AIRWAY_ALL)) || types.testFlag(map::TRACK) || oldTypes.testFlag(map::TRACK))
+  if(((types & map::AIRWAY_ALL) != (oldTypes & map::AIRWAY_ALL)) || types.testFlag(map::TRACK) || oldTypes.testFlag(map::TRACK))
     screenIndex->updateAirwayScreenGeometry(getCurrentViewBoundingBox());
 
   if(types.testFlag(map::AIRSPACE) != oldTypes.testFlag(map::AIRSPACE))
@@ -407,7 +407,7 @@ void MapPaintWidget::updateGeometryIndex(map::MapTypes oldTypes, map::MapDisplay
     screenIndex->updateRouteScreenGeometry(getCurrentViewBoundingBox());
 
   // Update screen coordinate cache if display options have changed
-  if((displayTypes& map::LOGBOOK_ALL) != (oldDisplayTypes & map::LOGBOOK_ALL))
+  if((displayTypes & map::LOGBOOK_ALL) != (oldDisplayTypes & map::LOGBOOK_ALL))
     screenIndex->updateLogEntryScreenGeometry(getCurrentViewBoundingBox());
 }
 
@@ -1276,6 +1276,13 @@ void MapPaintWidget::paintEvent(QPaintEvent *paintEvent)
     // Avoid excessive logging on visible widget
     qDebug() << Q_FUNC_INFO << "Viewport" << getCurrentViewBoundingBox().toString(GeoDataCoordinates::Degree);
     qDebug() << Q_FUNC_INFO << "currentViewBoundingBox" << currentViewBoundingBox.toString(GeoDataCoordinates::Degree);
+  }
+
+  if(skipRender)
+  {
+    // Skip unneeded rendering after single mouseclick
+    skipRender = false;
+    return;
   }
 
   if(!painting)

@@ -61,6 +61,8 @@ void MapPainterRoute::render()
   // Clear before collecting duplicates
   routeProcIdMap.clear();
 
+  context->startTimer("Route");
+  setNoAntiAliasFont();
   // Draw route including procedures =====================================
   if(context->objectDisplayTypes.testFlag(map::FLIGHTPLAN))
   {
@@ -87,6 +89,8 @@ void MapPainterRoute::render()
       paintProcedure(lastLegPointDummy, routeProcIdMap, procedureHighlight, 0, procedureHighlight.previewColor,
                      true /* preview */, false /* previewAll */);
   }
+  resetNoAntiAliasFont();
+  context->endTimer("Route");
 }
 
 QString MapPainterRoute::buildLegText(const RouteLeg& leg)
@@ -890,7 +894,7 @@ void MapPainterRoute::paintProcedure(proc::MapProcedureLeg& lastLegPoint, QSet<m
       QVector<Line> textLines;
       LineString positions;
 
-      for(const DrawText& dt : drawTextLines)
+      for(const DrawText& dt : qAsConst(drawTextLines))
       {
         textLines.append(dt.line);
         positions.append(dt.line.getPos1());
@@ -1532,12 +1536,6 @@ void MapPainterRoute::paintProcedurePoint(proc::MapProcedureLeg& lastLegPoint, Q
   }
 
   QStringList texts;
-  // if(index > 0 && legs.isApproach(index) &&
-  // legs.isTransition(index - 1) && context->objectTypes & proctypes::APPROACH &&
-  // context->objectTypes & proctypes::APPROACH_TRANSITION)
-  //// Merge display text to get any text from a preceding transition point
-  // texts.append(legs.at(index - 1).displayText);
-
   float x = 0, y = 0;
 
   // Margins for text at left (VOR), right (waypoints) and below (NDB)

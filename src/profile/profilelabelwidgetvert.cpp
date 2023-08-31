@@ -17,14 +17,14 @@
 
 #include "profile/profilelabelwidgetvert.h"
 
-#include "profile/profilewidget.h"
-#include "common/symbolpainter.h"
-#include "common/mapcolors.h"
-#include "profile/profilescrollarea.h"
-#include "profile/profileoptions.h"
 #include "app/navapp.h"
-#include "route/route.h"
+#include "common/mapcolors.h"
+#include "common/symbolpainter.h"
 #include "common/unit.h"
+#include "profile/profileoptions.h"
+#include "profile/profilescrollarea.h"
+#include "profile/profilewidget.h"
+#include "route/route.h"
 
 #include <QContextMenuEvent>
 #include <QPainter>
@@ -81,6 +81,7 @@ void ProfileLabelWidgetVert::paintEvent(QPaintEvent *)
     QPainter painter(this);
     painter.setRenderHint(QPainter::Antialiasing);
     painter.setRenderHint(QPainter::TextAntialiasing);
+    painter.setRenderHint(QPainter::SmoothPixmapTransform);
 
     // Fill background white
     painter.fillRect(rect(), QApplication::palette().color(QPalette::Base));

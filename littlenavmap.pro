@@ -805,7 +805,7 @@ unix:!macx {
   exists($$DATABASE_BASE) : deploy.commands += cp -Rvf $$DATABASE_BASE $$DEPLOY_DIR &&
   exists($$HELP_BASE) : deploy.commands += cp -Rvf $$HELP_BASE/* $$DEPLOY_DIR/help &&
   deploy.commands += cp -vf $$PWD/desktop/\"Little Navmap Portable Linux.sh\" $$DEPLOY_DIR/\"Little Navmap Portable.sh\" &&
-  deploy.commands += cp -vf $$PWD/desktop/qt.conf $$DEPLOY_DIR &&
+  deploy.commands += cp -vf $$PWD/desktop/linux-qt.conf $$DEPLOY_DIR/qt.conf &&
   deploy.commands += cp -vf $$PWD/CHANGELOG.txt $$DEPLOY_DIR &&
   deploy.commands += cp -vf $$PWD/README.txt $$DEPLOY_DIR &&
   deploy.commands += cp -vf $$PWD/LICENSE.txt $$DEPLOY_DIR &&
@@ -938,6 +938,7 @@ win32 {
   deploy.commands += xcopy $$p($$PWD/README.txt) $$p($$DEPLOY_BASE/$$WIN_TARGET_NAME) &&
   deploy.commands += xcopy $$p($$PWD/LICENSE.txt) $$p($$DEPLOY_BASE/$$WIN_TARGET_NAME) &&
   deploy.commands += copy $$p($$PWD/desktop/Little Navmap Portable Win.cmd) $$p($$DEPLOY_BASE/$$WIN_TARGET_NAME/Little Navmap Portable.cmd) &&
+  deploy.commands += copy $$p($$PWD/desktop/win-qt.conf) $$p($$DEPLOY_BASE/$$WIN_TARGET_NAME/qt.conf) &&
   deploy.commands += xcopy $$p($$PWD/*.qm) $$p($$DEPLOY_BASE/$$WIN_TARGET_NAME/translations) &&
   deploy.commands += xcopy $$p($$ATOOLS_INC_PATH/../*.qm) $$p($$DEPLOY_BASE/$$WIN_TARGET_NAME/translations) &&
   exists($$DATABASE_BASE) : deploy.commands += xcopy /i /s /e /f /y $$p($$DATABASE_BASE) $$p($$DEPLOY_BASE/$$WIN_TARGET_NAME/little_navmap_db) &&

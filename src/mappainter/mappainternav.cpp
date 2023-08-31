@@ -67,7 +67,7 @@ void MapPainterNav::render()
     airwayQuery->getAirways(airways, curBox, context->mapLayer, context->lazyUpdate);
     context->endTimer("Airway fetch");
 
-    paintAirways(&airways, context->drawFast);
+    paintAirways(&airways, context->drawFast, false /* track */);
   }
 
   // Tracks -------------------------------------------------
@@ -75,10 +75,12 @@ void MapPainterNav::render()
   if(drawTrack && !context->isObjectOverflow())
   {
     // Draw track lines
+    context->startTimer("Track fetch");
     QList<MapAirway> tracks;
     airwayQuery->getTracks(tracks, curBox, context->mapLayer, context->lazyUpdate);
+    context->endTimer("Track fetch");
 
-    paintAirways(&tracks, context->drawFast);
+    paintAirways(&tracks, context->drawFast, true /* track */);
   }
 
   context->szFont(context->textSizeNavaid);
@@ -173,9 +175,13 @@ void MapPainterNav::render()
 }
 
 /* Draw airways and texts */
-void MapPainterNav::paintAirways(const QList<map::MapAirway> *airways, bool fast)
+void MapPainterNav::paintAirways(const QList<map::MapAirway> *airways, bool fast, bool track)
 {
-  QFontMetrics metrics = context->painter->fontMetrics();
+#ifdef Q_OS_WIN
+  bool rotateText = context->viewContext == Marble::Still;
+#else
+  bool rotateText = true;
+#endif
 
   // Keep text placement information for each airway line which can cover multiple texts/airways
   struct Place
@@ -204,7 +210,7 @@ void MapPainterNav::paintAirways(const QList<map::MapAirway> *airways, bool fast
   QPolygonF arrowTrack = buildArrow(static_cast<float>(linewidthTrack * 2.5));
   Marble::GeoPainter *painter = context->painter;
 
-  context->startTimer("Airway draw");
+  context->startTimer(track ? "Track draw" : "Airway draw");
   for(int i = 0; i < airways->size(); i++)
   {
     const MapAirway& airway = airways->at(i);
@@ -251,7 +257,7 @@ void MapPainterNav::paintAirways(const QList<map::MapAirway> *airways, bool fast
         if(ident)
           text.append(airway.name);
 
-        if(info)
+        if(info && rotateText)
         {
           text.append(tr(" / "));
 
@@ -285,9 +291,6 @@ void MapPainterNav::paintAirways(const QList<map::MapAirway> *airways, bool fast
             reversed = index != -1;
           }
 
-          // if(reversed)
-          // qDebug() << text << reversed;
-
           if(index != -1)
           {
             // Index already found - add the new text to the present one
@@ -305,9 +308,9 @@ void MapPainterNav::paintAirways(const QList<map::MapAirway> *airways, bool fast
       }
     }
   }
-  context->endTimer("Airway draw");
+  context->endTimer(track ? "Track draw" : "Airway draw");
 
-  context->startTimer("Airway draw text");
+  context->startTimer(track ? "Track draw text" : "Airway draw text");
   // Draw texts ----------------------------------------
   TextPlacement textPlacement(painter, this, context->screenRect);
   if(!textlist.isEmpty())
@@ -320,11 +323,13 @@ void MapPainterNav::paintAirways(const QList<map::MapAirway> *airways, bool fast
       painter->setBackground(mapcolors::textBoxColor);
     }
 
-    for(Place& place: textlist)
+    setNoAntiAliasFont();
+
+    QFontMetricsF metrics(context->painter->font());
+    for(Place& place : textlist)
     {
       const MapAirway& airway = airways->at(place.airwayIndexByText.constFirst());
-      int xt = -1, yt = -1;
-      float textBearing;
+      float xt = -1.f, yt = -1.f, textBearing;
 
       // First find text position with incomplete text
       // Add space at start and end to avoid letters touching the background rectangle border
@@ -338,23 +343,30 @@ void MapPainterNav::paintAirways(const QList<map::MapAirway> *airways, bool fast
           const map::MapAirway& aw = airways->at(place.airwayIndexByText.at(j));
           QString& txt = place.texts[j];
 
-          if(aw.direction != map::DIR_BOTH)
+          if(aw.direction != map::DIR_BOTH && rotateText)
             // Turn arrow depending on text angle, direction and depending if text segment is reversed compared to first
+            // Omit arrow if no rotation
             txt.prepend(((textBearing < 180.f) ^ place.positionReversed.at(j) ^ (aw.direction == map::DIR_FORWARD)) ? tr("◄ ") : tr("► "));
+          else
+            // Elide for not rotated texts
+            txt = atools::elideTextShort(txt, 20);
         }
 
         // Add space at start and end to avoid letters touching the background rectangle border
         text = " " % place.texts.join(tr(", ")) % " ";
 
         painter->translate(xt, yt);
-        painter->rotate(textBearing > 180.f ? textBearing + 90.f : textBearing - 90.f);
-        painter->drawText(QPointF(-painter->fontMetrics().horizontalAdvance(text) / 2,
-                                  -painter->fontMetrics().descent() - linewidthAirway), text);
+        if(rotateText)
+          painter->rotate(textBearing > 180.f ? textBearing + 90.f : textBearing - 90.f);
+        painter->drawText(QPointF(-metrics.horizontalAdvance(text) / 2.,
+                                  -metrics.descent() - linewidthAirway), text);
         painter->resetTransform();
       }
     }
+
+    resetNoAntiAliasFont();
   }
-  context->endTimer("Airway draw text");
+  context->endTimer(track ? "Track draw text" : "Airway draw text");
 }
 
 /* Draw waypoints. If airways are enabled corresponding waypoints are drawn too */

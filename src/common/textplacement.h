@@ -73,7 +73,7 @@ public:
    *  @param distanceMeter distance between points
    *  @param maxPoints Maximum number of points to sample
    */
-  bool findTextPos(const atools::geo::Line& line, float distanceMeter, float textWidth, float textHeight, int maxPoints, int& x, int& y,
+  bool findTextPos(const atools::geo::Line& line, float distanceMeter, float textWidth, float textHeight, int maxPoints, float& x, float& y,
                    float *bearing) const;
 
   /* Bit array indicating which start point is visible or not.  Filled by calculateTextAlongLines */
@@ -157,7 +157,7 @@ public:
 private:
   bool findTextPosInternal(const atools::geo::Line& line, float distanceMeter, float textWidth, float textHeight, int numPoints,
                            bool allowPartial,
-                           int& x, int& y, float& bearing) const;
+                           float& x, float& y, float& bearing) const;
   int findClosestInternal(const QVector<int>& fullyVisibleValid, const QVector<int>& pointsIdxValid, const QPolygonF& points,
                           const QVector<QPointF>& neighbors) const;
 

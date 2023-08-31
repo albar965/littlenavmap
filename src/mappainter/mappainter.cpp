@@ -138,8 +138,7 @@ textflags::TextFlags PaintContext::airportTextFlagsRoute(bool drawAsRoute, bool 
 
 // =================================================
 MapPainter::MapPainter(MapPaintWidget *parentMapWidget, MapScale *mapScale, PaintContext *paintContext)
-  : CoordinateConverter(parentMapWidget->viewport()), context(paintContext), mapPaintWidget(parentMapWidget),
-  scale(mapScale)
+  : CoordinateConverter(parentMapWidget->viewport()), context(paintContext), mapPaintWidget(parentMapWidget), scale(mapScale)
 {
   airportQuery = NavApp::getAirportQuerySim();
   symbolPainter = new SymbolPainter();
@@ -400,6 +399,32 @@ void MapPainter::paintCircleLargeInternal(GeoPainter *painter, const Pos& center
   }
 }
 
+void MapPainter::setNoAntiAliasFont()
+{
+  if(context->viewContext == Marble::Animation)
+  {
+    QFont font = context->painter->font();
+    savedFontStrategy = font.styleStrategy();
+    font.setStyleStrategy(QFont::NoAntialias);
+    context->painter->setFont(font);
+
+    savedDefaultFontStrategy = context->defaultFont.styleStrategy();
+    context->defaultFont.setStyleStrategy(QFont::NoAntialias);
+  }
+}
+
+void MapPainter::resetNoAntiAliasFont()
+{
+  if(context->viewContext == Marble::Animation)
+  {
+    QFont font = context->painter->font();
+    font.setStyleStrategy(savedFontStrategy);
+    context->painter->setFont(font);
+
+    context->defaultFont.setStyleStrategy(savedDefaultFontStrategy);
+  }
+}
+
 void MapPainter::drawLineStraight(Marble::GeoPainter *painter, const atools::geo::Line& line)
 {
   double x1, y1, x2, y2;
@@ -507,7 +532,7 @@ void MapPainter::drawLineString(Marble::GeoPainter *painter, const atools::geo::
         ls.append(line.getPos1());
 
       // Append split points or single point
-      for(const Pos& pos : ls)
+      for(const Pos& pos : qAsConst(ls))
         geoLineStr << GeoDataCoordinates(pos.getLonX(), pos.getLatY(), 0, DEG);
     }
 
@@ -521,7 +546,7 @@ void MapPainter::drawLineString(Marble::GeoPainter *painter, const atools::geo::
 #endif
 
     QVector<GeoDataLineString *> geoLineStrCorrected = geoLineStr.toDateLineCorrected();
-    for(const GeoDataLineString *geoLine: geoLineStrCorrected)
+    for(const GeoDataLineString *geoLine : qAsConst(geoLineStrCorrected))
       painter->drawPolyline(*geoLine);
     qDeleteAll(geoLineStrCorrected);
   }
@@ -571,7 +596,7 @@ void MapPainter::drawLineStringRadial(Marble::GeoPainter *painter, const atools:
         ls.append(line.getPos1());
 
       // Append split points or single point
-      for(const Pos& pos : ls)
+      for(const Pos& pos : qAsConst(ls))
         geoLineStr << GeoDataCoordinates(pos.getLonX(), pos.getLatY(), 0, DEG);
     }
 
@@ -579,7 +604,7 @@ void MapPainter::drawLineStringRadial(Marble::GeoPainter *painter, const atools:
     geoLineStr << GeoDataCoordinates(splitLines.constLast().getLonX(), splitLines.constLast().getLatY(), 0, DEG);
 
     QVector<GeoDataLineString *> geoLineStrCorrected = geoLineStr.toDateLineCorrected();
-    for(const GeoDataLineString *geoLine: geoLineStrCorrected)
+    for(const GeoDataLineString *geoLine : qAsConst(geoLineStrCorrected))
       painter->drawPolyline(*geoLine);
     qDeleteAll(geoLineStrCorrected);
   }
@@ -956,7 +981,7 @@ void MapPainter::paintMsaMarks(const QList<map::MapAirportMsa>& airportMsa, bool
   atools::util::PainterContextSaver saver(context->painter);
   GeoPainter *painter = context->painter;
 
-  for(const map::MapAirportMsa& msa:airportMsa)
+  for(const map::MapAirportMsa& msa : airportMsa)
   {
     float x, y;
     bool msaVisible = wToS(msa.position, x, y, scale->getScreeenSizeForRect(msa.bounding));

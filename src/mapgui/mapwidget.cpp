@@ -634,7 +634,7 @@ void MapWidget::keyPressEvent(QKeyEvent *event)
 {
 #ifdef DEBUG_INFORMATION_KEY_INPUT
   qDebug() << Q_FUNC_INFO << event->text() << hex << event->nativeScanCode() << hex << event->key() << dec <<
-    event->modifiers();
+  event->modifiers();
 #endif
 
   // Does not work for key presses that are consumed by the widget
@@ -790,6 +790,9 @@ void MapWidget::mousePressEvent(QMouseEvent *event)
   qDebug() << Q_FUNC_INFO << "state" << mouseState << "modifiers" << event->modifiers() << "pos" << event->pos();
 #endif
 
+  // Skip unneeded rendering after single mouseclick
+  skipRender = true;
+
   if(noRender())
   {
     // Zoomed to far out - reset cursor and ignore input
@@ -855,6 +858,9 @@ void MapWidget::mouseReleaseEvent(QMouseEvent *event)
 #ifdef DEBUG_INFORMATION
   qDebug() << Q_FUNC_INFO << "state" << mouseState << "modifiers" << event->modifiers() << "pos" << event->pos();
 #endif
+
+  // Skip unneeded rendering after single mouseclick
+  skipRender = false;
 
   if(noRender())
   {
@@ -1247,6 +1253,9 @@ void MapWidget::wheelEvent(QWheelEvent *event)
       }
     }
   }
+  else
+    // Skip unneeded rendering after single mouseclick
+    skipRender = true;
 
 #ifdef DEBUG_INFORMATION
   qDebug() << Q_FUNC_INFO << "distance NM" << atools::geo::kmToNm(distance())
@@ -1762,10 +1771,10 @@ void MapWidget::fillDistanceMarker(map::DistanceMarker& distanceMarker, const at
     distanceMarker.color = mapcolors::vorSymbolColor;
 
     if(!vor->dmeOnly)
-      distanceMarker.flags |= map::DIST_MARK_RADIAL; // Also TACAN
+      distanceMarker.flags |= map::DIST_MARK_RADIAL;  // Also TACAN
 
     if(vor->isCalibratedVor())
-      distanceMarker.flags |= map::DIST_MARK_MAGVAR; // Only VOR, VORDME and VORTAC
+      distanceMarker.flags |= map::DIST_MARK_MAGVAR;  // Only VOR, VORDME and VORTAC
   }
   else if(ndb != nullptr && ndb->isValid())
   {
@@ -1832,6 +1841,9 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
 
   if(mouseState != mw::NONE)
     return;
+
+  // Skip unneeded rendering after single mouseclick
+  skipRender = true;
 
   // Disable any automatic scrolling
   contextMenuActive = true;

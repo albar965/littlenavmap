@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -47,17 +47,21 @@ void MapPainterIls::render()
 {
   if(context->mapLayer->isIls())
   {
+    context->startTimer("ILS");
+
     // Get ILS from flight plan which are also painted in the profile
     QVector<map::MapIls> routeIls;
     QSet<int> routeIlsIds;
     if(context->objectDisplayTypes.testFlag(map::FLIGHTPLAN))
     {
       routeIls = context->route->getDestRunwayIlsMap();
-      for(const map::MapIls& ils : routeIls)
+      for(const map::MapIls& ils : qAsConst(routeIls))
         routeIlsIds.insert(ils.id);
     }
 
     const GeoDataLatLonBox& curBox = context->viewport->viewLatLonAltBox();
+    Marble::GeoPainter *painter = context->painter;
+    setNoAntiAliasFont();
 
     int x, y;
     if(context->objectTypes.testFlag(map::ILS) || context->objectDisplayTypes.testFlag(map::GLS))
@@ -68,7 +72,7 @@ void MapPainterIls::render()
 
       if(ilsList != nullptr)
       {
-        atools::util::PainterContextSaver saver(context->painter);
+        atools::util::PainterContextSaver saver(painter);
 
         for(const MapIls& ils : *ilsList)
         {
@@ -105,7 +109,7 @@ void MapPainterIls::render()
     }
 
     // Paint ILS from approach
-    for(const MapIls& ils : routeIls)
+    for(const MapIls& ils : qAsConst(routeIls))
     {
       bool visible = wToS(ils.position, x, y, scale->getScreeenSizeForRect(ils.bounding));
 
@@ -115,12 +119,17 @@ void MapPainterIls::render()
       if(visible)
         drawIlsSymbol(ils, context->drawFast);
     }
+    context->endTimer("ILS");
+
+    resetNoAntiAliasFont();
   }
 }
 
 void MapPainterIls::drawIlsSymbol(const map::MapIls& ils, bool fast)
 {
-  atools::util::PainterContextSaver saver(context->painter);
+  Marble::GeoPainter *painter = context->painter;
+
+  atools::util::PainterContextSaver saver(painter);
 
   if(!ils.hasGeometry)
     return;
@@ -132,9 +141,9 @@ void MapPainterIls::drawIlsSymbol(const map::MapIls& ils, bool fast)
   QColor textColor = isIls ? mapcolors::ilsTextColor : mapcolors::glsTextColor;
   QPen centerPen = isIls ? mapcolors::ilsCenterPen : mapcolors::glsCenterPen;
 
-  context->painter->setBackgroundMode(Qt::TransparentMode);
-  context->painter->setBrush(fast ? QBrush(Qt::transparent) : QBrush(fillColor));
-  context->painter->setPen(QPen(symColor, 2, Qt::SolidLine, Qt::FlatCap));
+  painter->setBackgroundMode(Qt::TransparentMode);
+  painter->setBrush(fast ? QBrush(Qt::transparent) : QBrush(fillColor));
+  painter->setPen(QPen(symColor, 2, Qt::SolidLine, Qt::FlatCap));
 
   QSize size = scale->getScreeenSizeForRect(ils.bounding);
   bool visible;
@@ -148,30 +157,30 @@ void MapPainterIls::drawIlsSymbol(const map::MapIls& ils, bool fast)
   if(context->mapLayer->isIlsDetail())
   {
     if(!isIls)
-      context->painter->drawPolygon(QPolygonF({origin, p1, p2, origin}));
+      painter->drawPolygon(QPolygonF({origin, p1, p2, origin}));
     else if(ils.hasGlideslope())
     {
-      context->painter->drawPolygon(QPolygonF({origin, p1, p2, origin}));
-      context->painter->drawPolyline(QPolygonF({p1, pmid, p2}));
+      painter->drawPolygon(QPolygonF({origin, p1, p2, origin}));
+      painter->drawPolyline(QPolygonF({p1, pmid, p2}));
     }
     else
-      context->painter->drawPolygon(QPolygonF({origin, p1, pmid, p2, origin}));
+      painter->drawPolygon(QPolygonF({origin, p1, pmid, p2, origin}));
   }
   else
     // Simplified polygon
-    context->painter->drawPolygon(QPolygonF({origin, p1, p2, origin}));
+    painter->drawPolygon(QPolygonF({origin, p1, p2, origin}));
 
   if(!context->drawFast)
   {
     if(context->mapLayer->isIlsDetail())
     {
       // Draw dashed center line
-      context->painter->setPen(centerPen);
+      painter->setPen(centerPen);
 
       if(isIls)
-        context->painter->drawLine(origin, pmid);
+        painter->drawLine(origin, pmid);
       else
-        context->painter->drawLine(origin, QLine(p1, p2).center());
+        painter->drawLine(origin, QLine(p1, p2).center());
     }
 
     // Draw ILS text -----------------------------------
@@ -187,8 +196,8 @@ void MapPainterIls::drawIlsSymbol(const map::MapIls& ils, bool fast)
       text = " " % text % " ";
 
       context->szFont(context->textSizeNavaid);
-      context->painter->setPen(QPen(textColor, 0.5f, Qt::SolidLine, Qt::FlatCap));
-      context->painter->translate(origin);
+      painter->setPen(QPen(textColor, 0.5f, Qt::SolidLine, Qt::FlatCap));
+      painter->translate(origin);
 
       // Position GLS and RNP on the botton and ILS on the top of the feather
       float width = ils.localizerWidth();
@@ -207,22 +216,21 @@ void MapPainterIls::drawIlsSymbol(const map::MapIls& ils, bool fast)
       {
         if(context->flags2 & opts2::MAP_NAVAID_TEXT_BACKGROUND)
         {
-          context->painter->setBackground(Qt::white);
-          context->painter->setBackgroundMode(Qt::OpaqueMode);
+          painter->setBackground(Qt::white);
+          painter->setBackgroundMode(Qt::OpaqueMode);
         }
 
-        QFontMetrics metrics = context->painter->fontMetrics();
+        QFontMetrics metrics = painter->fontMetrics();
         int texth = ils.isAnyGlsRnp() ? metrics.height() : -metrics.descent();
 
         // Cut text to feather length
         text = metrics.elidedText(text, Qt::ElideRight, featherLen);
         int textw = metrics.horizontalAdvance(text);
-
         int textpos = ils.displayHeading > 180 ? (featherLen - textw) / 2 : -(featherLen + textw) / 2;
 
-        context->painter->rotate(rotate);
-        context->painter->drawText(textpos, texth, text);
-        context->painter->resetTransform();
+        painter->rotate(rotate);
+        painter->drawText(textpos, texth, text);
+        painter->resetTransform();
       }
     }
   }

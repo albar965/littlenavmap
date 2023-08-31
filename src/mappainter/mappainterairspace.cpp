@@ -21,7 +21,6 @@
 #include "util/paintercontextsaver.h"
 #include "route/route.h"
 #include "mapgui/maplayer.h"
-#include "query/mapquery.h"
 #include "airspace/airspacecontroller.h"
 #include "app/navapp.h"
 #include "mapgui/mapscale.h"
@@ -76,7 +75,7 @@ void MapPainterAirspace::render()
 
     painter->setBackgroundMode(Qt::TransparentMode);
 
-    for(const MapAirspace *airspace : airspaces)
+    for(const MapAirspace *airspace : qAsConst(airspaces))
     {
       if(!(airspace->type & context->airspaceFilterByLayer.types))
         continue;

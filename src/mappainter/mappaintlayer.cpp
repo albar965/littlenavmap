@@ -376,6 +376,8 @@ bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport, const 
       context.routeDrawnNavaids = mapPaintWidget->getRouteDrawnNavaids();
       context.routeDrawnNavaids->clear();
 
+      context.startTimer("All");
+
       // ====================================
       // Get all waypoints from the route and add them to the map to avoid duplicate drawing
       if(context.objectDisplayTypes.testFlag(map::FLIGHTPLAN))
@@ -564,6 +566,8 @@ bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport, const 
       mapPainterAircraft->render();
 
       mapPainterMark->render();
+
+      context.endTimer("All");
 
       mapPainterTop->render();
     } // if(!noRender())

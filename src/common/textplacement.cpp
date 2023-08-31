@@ -86,12 +86,11 @@ void TextPlacement::calculateTextAlongLines(const QVector<atools::geo::Line>& li
         // Build temporary elided text to get the right length - use any arrow
         QString text = elideText(lineTexts.at(i), arrowLeft, metrics, lineLength);
 
-        int xt, yt;
-        float brg;
+        float xt, yt, brg;
         if(findTextPos(lines.at(i), lines.at(i).lengthMeter(), horizontalAdvance(text, metrics),
                        static_cast<float>(metrics.height()), maximumPoints, xt, yt, &brg))
         {
-          textCoords.append(QPoint(xt, yt));
+          textCoords.append(QPointF(xt, yt));
           textBearings.append(brg);
           texts.append(text);
           textLineLengths.append(lineLength);
@@ -244,7 +243,7 @@ void TextPlacement::drawTextAlongLines()
 }
 
 bool TextPlacement::findTextPos(const Line& line, float distanceMeter, float textWidth, float textHeight, int maxPoints,
-                                int& x, int& y, float *bearing) const
+                                float& x, float& y, float *bearing) const
 {
   float brg = 0.f;
 
@@ -293,7 +292,7 @@ int TextPlacement::findClosestInternal(const QVector<int>& fullyVisibleValid, co
 }
 
 bool TextPlacement::findTextPosInternal(const Line& line, float distanceMeter, float textWidth, float textHeight, int numPoints,
-                                        bool allowPartial, int& x, int& y, float& bearing) const
+                                        bool allowPartial, float& x, float& y, float& bearing) const
 {
 #ifdef DEBUG_TEXPLACEMENT_PAINT
   atools::util::PainterContextSaver saver(painter);
@@ -455,8 +454,8 @@ bool TextPlacement::findTextPosInternal(const Line& line, float distanceMeter, f
         bearing = static_cast<float>(atools::geo::normalizeCourse(bearingsValid.at(foundIndexValid) + 90.));
 
         const QPointF& pt = points.at(pointsIdxValid.at(foundIndexValid));
-        x = atools::roundToInt(pt.x());
-        y = atools::roundToInt(pt.y());
+        x = static_cast<float>(pt.x());
+        y = static_cast<float>(pt.y());
         return true;
       }
     } // if(!pointsIdxValid.isEmpty())

@@ -164,7 +164,6 @@ void MapPainterTop::render()
 
     symbolPainter->textBox(context->painter, labels, QPen(Qt::black), 1, 1, textatt::VERT_BELOW);
   }
-
 }
 
 void MapPainterTop::paintCopyright()

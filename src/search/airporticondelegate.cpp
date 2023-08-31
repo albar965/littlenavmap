@@ -17,14 +17,13 @@
 
 #include "search/airporticondelegate.h"
 
+#include "app/navapp.h"
 #include "common/maptypes.h"
-#include "options/optiondata.h"
+#include "common/maptypesfactory.h"
+#include "common/symbolpainter.h"
 #include "search/sqlmodel.h"
 #include "search/sqlproxymodel.h"
-#include "common/symbolpainter.h"
 #include "sql/sqlrecord.h"
-#include "common/maptypesfactory.h"
-#include "app/navapp.h"
 
 #include <QPainter>
 
@@ -81,6 +80,7 @@ void AirportIconDelegate::paint(QPainter *painter, const QStyleOptionViewItem& o
 
   painter->setRenderHint(QPainter::Antialiasing);
   painter->setRenderHint(QPainter::TextAntialiasing);
+  painter->setRenderHint(QPainter::SmoothPixmapTransform);
 
   // Draw the text
   QStyledItemDelegate::paint(painter, opt, index);

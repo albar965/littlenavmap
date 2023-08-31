@@ -559,6 +559,9 @@ protected:
   /* Trail/track of user aircraft */
   AircraftTrack *aircraftTrack = nullptr, *aircraftTrackLogbook = nullptr;
 
+  /* Skip the first unneeded render event after mouse events */
+  bool skipRender = false;
+
 private:
   /* Set map theme and adjust properties accordingly. themePath is the full path to the DGML */
   void setThemeInternal(const QString& themePath);

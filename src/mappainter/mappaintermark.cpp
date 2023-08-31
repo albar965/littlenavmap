@@ -1644,7 +1644,7 @@ void MapPainterMark::paintRouteDrag()
       context->painter->setPen(QPen(mapcolors::mapDragColor, 3, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
 
       // Draw lines from current mouse position to all fixed points which can be waypoints or several alternates
-      for(const ageo::Pos& pos : fixed)
+      for(const ageo::Pos& pos : qAsConst(fixed))
         drawLine(context->painter, ageo::Line(curGeo, pos));
     }
   }

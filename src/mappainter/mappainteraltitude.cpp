@@ -17,15 +17,14 @@
 
 #include "mappainter/mappainteraltitude.h"
 
-#include "mapgui/mapscale.h"
-#include "mapgui/maplayer.h"
-#include "query/mapquery.h"
-#include "common/mapcolors.h"
-#include "mapgui/mapwidget.h"
-#include "util/paintercontextsaver.h"
 #include "app/navapp.h"
 #include "atools.h"
+#include "common/mapcolors.h"
 #include "fs/common/morareader.h"
+#include "geo/line.h"
+#include "mapgui/maplayer.h"
+#include "mapgui/mapscale.h"
+#include "util/paintercontextsaver.h"
 
 #include <QElapsedTimer>
 
@@ -34,7 +33,6 @@
 
 using namespace Marble;
 using namespace atools::geo;
-using map::MapIls;
 
 MapPainterAltitude::MapPainterAltitude(MapPaintWidget *mapWidget, MapScale *mapScale, PaintContext *paintContext)
   : MapPainter(mapWidget, mapScale, paintContext)

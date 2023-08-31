@@ -44,7 +44,7 @@ private:
   void paintWaypoints(const QHash<int, map::MapWaypoint>& waypoints);
 
   void paintMarkers(const QList<map::MapMarker> *markers, bool drawFast);
-  void paintAirways(const QList<map::MapAirway> *airways, bool fast);
+  void paintAirways(const QList<map::MapAirway> *airways, bool fast, bool track);
 
 };
 

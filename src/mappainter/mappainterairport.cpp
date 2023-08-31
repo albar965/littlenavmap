@@ -66,6 +66,71 @@ MapPainterAirport::~MapPainterAirport()
 {
 }
 
+void MapPainterAirport::render()
+{
+  context->startTimer("Airport");
+
+  // In diagram mode draw background first to avoid overwriting other airports ===========================
+  if(context->mapLayer->isAirportDiagramRunway() && context->dOptAp(optsd::ITEM_AIRPORT_DETAIL_BOUNDARY))
+  {
+    for(const PaintAirportType& airport : qAsConst(visibleAirports))
+      drawAirportDiagramBackground(*airport.airport);
+  }
+
+  // Draw diagrams or simple runway diagrams ===========================
+  if(context->mapLayer->isAirportDiagramRunway())
+  {
+    setNoAntiAliasFont();
+    for(const PaintAirportType& airport : qAsConst(visibleAirports))
+      drawAirportDiagram(*airport.airport);
+    resetNoAntiAliasFont();
+  }
+
+  float airportFontScale = context->mapLayer->getAirportFontScale();
+  float airportSoftFontScale = context->mapLayer->getAirportMinorFontScale();
+
+  // Calculate parameters for normal and soft airports
+  float symsize = context->szF(context->symbolSizeAirport, context->mapLayer->getAirportSymbolSize());
+  float symsizeMinor = context->szF(context->symbolSizeAirport, context->mapLayer->getAirportMinorSymbolSize());
+
+  float apSymSize = context->mapLayer->isAirportDiagram() ? symsize * 2.f : symsize;
+  float apMinorSymSize = context->mapLayer->isAirportDiagram() ? symsizeMinor * 2.f : symsizeMinor;
+
+  // Get layer dependent text flags ===================
+  textflags::TextFlags textFlags = context->airportTextFlags();
+  textflags::TextFlags textFlagsMinor = context->airportTextFlagsMinor();
+
+  // Add airport symbols on top of diagrams ===========================
+  for(int i = 0; i < visibleAirports.size(); i++)
+  {
+    const MapAirport *airport = visibleAirports.at(i).airport;
+    const QPointF& pt = visibleAirports.at(i).point;
+    float x = static_cast<float>(pt.x());
+    float y = static_cast<float>(pt.y());
+    bool minor = airport->isMinor();
+
+    // Airport diagram is not influenced by detail level
+    if(!context->mapLayer->isAirportDiagramRunway())
+      // Draw simplified runway lines if big enough
+      drawAirportSymbolOverview(*airport, x, y, minor ? symsizeMinor : symsize);
+
+    // More detailed symbol will be drawn by the route or log painter - skip here
+    if(!context->routeProcIdMap.contains(airport->getRef()))
+    {
+      // Symbol will be omitted for runway overview
+      drawAirportSymbol(*airport, x, y, minor ? symsizeMinor : symsize);
+
+      context->szFont(context->textSizeAirport * (minor ? airportSoftFontScale : airportFontScale));
+
+      symbolPainter->drawAirportText(context->painter, *airport, x, y, context->dispOptsAirport, minor ? textFlagsMinor : textFlags,
+                                     minor ? apMinorSymSize : apSymSize, context->mapLayer->isAirportDiagram(),
+                                     context->mapLayer->getMaxTextLengthAirport());
+    }
+  }
+
+  context->endTimer("Airport");
+}
+
 void MapPainterAirport::collectVisibleAirports(QSet<QString>& visibleAirportIds)
 {
   visibleAirports.clear();
@@ -152,67 +217,6 @@ void MapPainterAirport::collectVisibleAirports(QSet<QString>& visibleAirportIds)
 
   using namespace std::placeholders;
   std::sort(visibleAirports.begin(), visibleAirports.end(), std::bind(&MapPainter::sortAirportFunction, this, _1, _2));
-}
-
-void MapPainterAirport::render()
-{
-  context->startTimer("Airport");
-  // In diagram mode draw background first to avoid overwriting other airports ===========================
-  if(context->mapLayer->isAirportDiagramRunway() && context->dOptAp(optsd::ITEM_AIRPORT_DETAIL_BOUNDARY))
-  {
-    for(const PaintAirportType& airport : visibleAirports)
-      drawAirportDiagramBackground(*airport.airport);
-  }
-
-  // Draw diagrams or simple runway diagrams ===========================
-  if(context->mapLayer->isAirportDiagramRunway())
-  {
-    for(const PaintAirportType& airport : visibleAirports)
-      drawAirportDiagram(*airport.airport);
-  }
-
-  float airportFontScale = context->mapLayer->getAirportFontScale();
-  float airportSoftFontScale = context->mapLayer->getAirportMinorFontScale();
-
-  // Calculate parameters for normal and soft airports
-  float symsize = context->szF(context->symbolSizeAirport, context->mapLayer->getAirportSymbolSize());
-  float symsizeMinor = context->szF(context->symbolSizeAirport, context->mapLayer->getAirportMinorSymbolSize());
-
-  float apSymSize = context->mapLayer->isAirportDiagram() ? symsize * 2.f : symsize;
-  float apMinorSymSize = context->mapLayer->isAirportDiagram() ? symsizeMinor * 2.f : symsizeMinor;
-
-  // Get layer dependent text flags ===================
-  textflags::TextFlags textFlags = context->airportTextFlags();
-  textflags::TextFlags textFlagsMinor = context->airportTextFlagsMinor();
-
-  // Add airport symbols on top of diagrams ===========================
-  for(int i = 0; i < visibleAirports.size(); i++)
-  {
-    const MapAirport *airport = visibleAirports.at(i).airport;
-    const QPointF& pt = visibleAirports.at(i).point;
-    float x = static_cast<float>(pt.x());
-    float y = static_cast<float>(pt.y());
-    bool minor = airport->isMinor();
-
-    // Airport diagram is not influenced by detail level
-    if(!context->mapLayer->isAirportDiagramRunway())
-      // Draw simplified runway lines if big enough
-      drawAirportSymbolOverview(*airport, x, y, minor ? symsizeMinor : symsize);
-
-    // More detailed symbol will be drawn by the route or log painter - skip here
-    if(!context->routeProcIdMap.contains(airport->getRef()))
-    {
-      // Symbol will be omitted for runway overview
-      drawAirportSymbol(*airport, x, y, minor ? symsizeMinor : symsize);
-
-      context->szFont(context->textSizeAirport * (minor ? airportSoftFontScale : airportFontScale));
-
-      symbolPainter->drawAirportText(context->painter, *airport, x, y, context->dispOptsAirport, minor ? textFlagsMinor : textFlags,
-                                     minor ? apMinorSymSize : apSymSize, context->mapLayer->isAirportDiagram(),
-                                     context->mapLayer->getMaxTextLengthAirport());
-    }
-  }
-  context->endTimer("Airport");
 }
 
 /* Draws the full airport diagram including runway, taxiways, apron, parking and more */
