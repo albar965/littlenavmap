@@ -634,7 +634,7 @@ void MapWidget::keyPressEvent(QKeyEvent *event)
 {
 #ifdef DEBUG_INFORMATION_KEY_INPUT
   qDebug() << Q_FUNC_INFO << event->text() << hex << event->nativeScanCode() << hex << event->key() << dec <<
-  event->modifiers();
+    event->modifiers();
 #endif
 
   // Does not work for key presses that are consumed by the widget
@@ -1771,10 +1771,10 @@ void MapWidget::fillDistanceMarker(map::DistanceMarker& distanceMarker, const at
     distanceMarker.color = mapcolors::vorSymbolColor;
 
     if(!vor->dmeOnly)
-      distanceMarker.flags |= map::DIST_MARK_RADIAL;  // Also TACAN
+      distanceMarker.flags |= map::DIST_MARK_RADIAL; // Also TACAN
 
     if(vor->isCalibratedVor())
-      distanceMarker.flags |= map::DIST_MARK_MAGVAR;  // Only VOR, VORDME and VORTAC
+      distanceMarker.flags |= map::DIST_MARK_MAGVAR; // Only VOR, VORDME and VORTAC
   }
   else if(ndb != nullptr && ndb->isValid())
   {
@@ -3308,8 +3308,10 @@ void MapWidget::updateMapObjectsShown()
   setShowMapPois(ui->actionMapShowCities->isChecked());
   setShowGrid(ui->actionMapShowGrid->isChecked());
 
+  // Remember current values in paint layer to compare and detect changes
   map::MapTypes oldTypes = getShownMapTypes();
   map::MapDisplayTypes oldDisplayTypes = getShownMapDisplayTypes();
+  int oldMinRunwayLength = getShownMinimumRunwayFt();
 
   setShowMapObject(map::AIRWAYV, ui->actionMapShowVictorAirways->isChecked());
   setShowMapObject(map::AIRWAYJ, ui->actionMapShowJetAirways->isChecked());
@@ -3351,14 +3353,13 @@ void MapWidget::updateMapObjectsShown()
   // ILS and marker are shown together
   setShowMapObject(map::ILS, ui->actionMapShowIls->isChecked());
   setShowMapObject(map::MARKER, ui->actionMapShowIls->isChecked());
-
   setShowMapObjectDisplay(map::GLS, ui->actionMapShowGls->isChecked());
 
   setShowMapObjects(NavApp::getMapMarkHandler()->getMarkTypes(), map::MARK_ALL);
   setShowMapObjects(NavApp::getMapAirportHandler()->getAirportTypes(), map::AIRPORT_ALL_AND_ADDON);
   paintLayer->setShowMinimumRunwayFt(NavApp::getMapAirportHandler()->getMinimumRunwayFt());
 
-  updateGeometryIndex(oldTypes, oldDisplayTypes);
+  updateGeometryIndex(oldTypes, oldDisplayTypes, oldMinRunwayLength);
 
   mapVisible->updateVisibleObjectsStatusBar();
 

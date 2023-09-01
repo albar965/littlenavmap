@@ -19,6 +19,7 @@
 
 #include "mapgui/mapscale.h"
 #include "mapgui/maplayer.h"
+#include "query/airportquery.h"
 #include "query/mapquery.h"
 #include "geo/calculations.h"
 #include "common/mapcolors.h"
@@ -64,7 +65,8 @@ void MapPainterIls::render()
     setNoAntiAliasFont();
 
     int x, y;
-    if(context->objectTypes.testFlag(map::ILS) || context->objectDisplayTypes.testFlag(map::GLS))
+    if((context->objectTypes.testFlag(map::ILS) || context->objectDisplayTypes.testFlag(map::GLS)) &&
+       context->objectTypes.testFlag(map::AIRPORT))
     {
       bool overflow = false;
       const QList<MapIls> *ilsList = mapQuery->getIls(curBox, context->mapLayer, context->lazyUpdate, overflow);
@@ -74,14 +76,10 @@ void MapPainterIls::render()
       {
         atools::util::PainterContextSaver saver(painter);
 
-        for(const MapIls& ils : *ilsList)
+        for(const MapIls& ils : qAsConst(*ilsList))
         {
           if(routeIlsIds.contains(ils.id))
             // Part of flight plan - paint later
-            continue;
-
-          // Skip if ILS has an airport ident and airport is to be drawn */
-          if(!ils.airportIdent.isEmpty() && !context->visibleAirportIds.contains(ils.airportIdent))
             continue;
 
           if(ils.isAnyGlsRnp() && !context->objectDisplayTypes.testFlag(map::GLS))
@@ -101,6 +99,14 @@ void MapPainterIls::render()
           {
             if(context->objCount())
               return;
+
+            // Check if airport is to be shown - hide ILS if not - show ILS if no airport ident in navaid
+            if(!ils.airportIdent.isEmpty())
+            {
+              map::MapAirport airport = airportQuery->getAirportByIdent(ils.airportIdent);
+              if(airport.isValid() && !airport.isVisible(context->objectTypes, context->mimimumRunwayLengthFt, context->mapLayer))
+                continue;
+            }
 
             drawIlsSymbol(ils, context->drawFast);
           }
@@ -148,11 +154,11 @@ void MapPainterIls::drawIlsSymbol(const map::MapIls& ils, bool fast)
   QSize size = scale->getScreeenSizeForRect(ils.bounding);
   bool visible;
   // Use visible dummy here since we need to call the method that also returns coordinates outside the screen
-  QPoint pmid = wToS(ils.posmid, size, &visible);
-  QPoint origin = wToS(ils.position, size, &visible);
+  QPointF pmid = wToSF(ils.posmid, size, &visible);
+  QPointF origin = wToSF(ils.position, size, &visible);
 
-  QPoint p1 = wToS(ils.pos1, size, &visible);
-  QPoint p2 = wToS(ils.pos2, size, &visible);
+  QPointF p1 = wToSF(ils.pos1, size, &visible);
+  QPointF p2 = wToSF(ils.pos2, size, &visible);
 
   if(context->mapLayer->isIlsDetail())
   {
@@ -180,7 +186,7 @@ void MapPainterIls::drawIlsSymbol(const map::MapIls& ils, bool fast)
       if(isIls)
         painter->drawLine(origin, pmid);
       else
-        painter->drawLine(origin, QLine(p1, p2).center());
+        painter->drawLine(origin, QLineF(p1, p2).center());
     }
 
     // Draw ILS text -----------------------------------
@@ -220,16 +226,16 @@ void MapPainterIls::drawIlsSymbol(const map::MapIls& ils, bool fast)
           painter->setBackgroundMode(Qt::OpaqueMode);
         }
 
-        QFontMetrics metrics = painter->fontMetrics();
-        int texth = ils.isAnyGlsRnp() ? metrics.height() : -metrics.descent();
+        QFontMetricsF metrics(painter->font());
+        double texth = ils.isAnyGlsRnp() ? metrics.height() : -metrics.descent();
 
         // Cut text to feather length
         text = metrics.elidedText(text, Qt::ElideRight, featherLen);
-        int textw = metrics.horizontalAdvance(text);
-        int textpos = ils.displayHeading > 180 ? (featherLen - textw) / 2 : -(featherLen + textw) / 2;
+        double textw = metrics.horizontalAdvance(text);
+        double textpos = ils.displayHeading > 180. ? (featherLen - textw) / 2. : -(featherLen + textw) / 2.;
 
         painter->rotate(rotate);
-        painter->drawText(textpos, texth, text);
+        painter->drawText(QPointF(textpos, texth), text);
         painter->resetTransform();
       }
     }

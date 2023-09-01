@@ -385,19 +385,22 @@ void MapPaintWidget::setShowMapPois(bool show)
   setShowTerrain(show);
 }
 
-void MapPaintWidget::updateGeometryIndex(map::MapTypes oldTypes, map::MapDisplayTypes oldDisplayTypes)
+void MapPaintWidget::updateGeometryIndex(map::MapTypes oldTypes, map::MapDisplayTypes oldDisplayTypes, int oldMinRunwayLength)
 {
   // Update screen coordinate caches if display options have changed
   map::MapTypes types = getShownMapTypes();
   map::MapDisplayTypes displayTypes = getShownMapDisplayTypes();
+  int minRunwayLength = getShownMinimumRunwayFt();
 
-  if(((types & map::AIRWAY_ALL) != (oldTypes & map::AIRWAY_ALL)) || types.testFlag(map::TRACK) || oldTypes.testFlag(map::TRACK))
+  if(((types& map::AIRWAY_ALL) != (oldTypes & map::AIRWAY_ALL)) || types.testFlag(map::TRACK) || oldTypes.testFlag(map::TRACK))
     screenIndex->updateAirwayScreenGeometry(getCurrentViewBoundingBox());
 
   if(types.testFlag(map::AIRSPACE) != oldTypes.testFlag(map::AIRSPACE))
     screenIndex->updateAirspaceScreenGeometry(getCurrentViewBoundingBox());
 
-  if((types.testFlag(map::ILS) != oldTypes.testFlag(map::ILS)) ||
+  if(minRunwayLength != oldMinRunwayLength || // Airport visibility also changes ILS
+     (types& map::AIRPORT_ALL_AND_ADDON) != (oldTypes & map::AIRPORT_ALL_AND_ADDON) || // ILS are disabled with airports
+     (types.testFlag(map::ILS) != oldTypes.testFlag(map::ILS)) ||
      (displayTypes.testFlag(map::GLS) != oldDisplayTypes.testFlag(map::GLS)) ||
      (displayTypes.testFlag(map::FLIGHTPLAN) != oldDisplayTypes.testFlag(map::FLIGHTPLAN)))
     screenIndex->updateIlsScreenGeometry(getCurrentViewBoundingBox());
@@ -407,7 +410,7 @@ void MapPaintWidget::updateGeometryIndex(map::MapTypes oldTypes, map::MapDisplay
     screenIndex->updateRouteScreenGeometry(getCurrentViewBoundingBox());
 
   // Update screen coordinate cache if display options have changed
-  if((displayTypes & map::LOGBOOK_ALL) != (oldDisplayTypes & map::LOGBOOK_ALL))
+  if((displayTypes& map::LOGBOOK_ALL) != (oldDisplayTypes & map::LOGBOOK_ALL))
     screenIndex->updateLogEntryScreenGeometry(getCurrentViewBoundingBox());
 }
 
@@ -485,6 +488,11 @@ bool MapPaintWidget::checkPos(const atools::geo::Pos&)
 map::MapTypes MapPaintWidget::getShownMapTypes() const
 {
   return paintLayer->getShownMapTypes();
+}
+
+int MapPaintWidget::getShownMinimumRunwayFt() const
+{
+  return paintLayer->getShownMinimumRunwayFt();
 }
 
 map::MapDisplayTypes MapPaintWidget::getShownMapDisplayTypes() const

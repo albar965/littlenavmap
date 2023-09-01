@@ -70,6 +70,9 @@ void MapPainterAirport::render()
 {
   context->startTimer("Airport");
 
+  QVector<PaintAirportType> visibleAirports;
+  collectVisibleAirports(visibleAirports);
+
   // In diagram mode draw background first to avoid overwriting other airports ===========================
   if(context->mapLayer->isAirportDiagramRunway() && context->dOptAp(optsd::ITEM_AIRPORT_DETAIL_BOUNDARY))
   {
@@ -131,10 +134,10 @@ void MapPainterAirport::render()
   context->endTimer("Airport");
 }
 
-void MapPainterAirport::collectVisibleAirports(QSet<QString>& visibleAirportIds)
+void MapPainterAirport::collectVisibleAirports(QVector<PaintAirportType>& visibleAirports)
 {
+  QSet<QString> visibleAirportIds;
   visibleAirports.clear();
-  visibleAirportIds.clear();
 
   if((!context->objectTypes.testFlag(map::AIRPORT) || !context->mapLayer->isAirport()) &&
      (!context->mapLayer->isAirportDiagramRunway()) && context->routeProcIdMap.isEmpty())

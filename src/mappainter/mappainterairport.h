@@ -49,11 +49,11 @@ public:
   /* Needs call of collectVisibleAirports() before */
   virtual void render() override;
 
+private:
   /* Pre-calculates visible airports for render() and fills visibleAirports.
    * visibleAirportIds gets all idents of shown airports */
-  void collectVisibleAirports(QSet<QString>& visibleAirportIds);
+  void collectVisibleAirports(QVector<PaintAirportType>& visibleAirports);
 
-private:
   void drawAirportSymbol(const map::MapAirport& ap, float x, float y, float size);
   void drawAirportDiagram(const map::MapAirport& airport);
   void drawAirportDiagramBackground(const map::MapAirport& airport);
@@ -63,7 +63,6 @@ private:
   void drawFsApron(const map::MapApron& apron);
   void drawXplaneApron(const map::MapApron& apron, bool fast);
 
-  QVector<PaintAirportType> visibleAirports;
 };
 
 #endif // LITTLENAVMAP_MAPPAINTERAIRPORT_H

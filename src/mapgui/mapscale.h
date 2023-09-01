@@ -18,10 +18,9 @@
 #ifndef LITTLENAVMAP_MAPSCALE_H
 #define LITTLENAVMAP_MAPSCALE_H
 
-#include <QVector>
-#include <QSize>
+#include "geo/calculations.h"
 
- #include <marble/ViewportParams.h>
+#include <marble/ViewportParams.h>
 
 namespace atools {
 namespace geo {
@@ -49,17 +48,47 @@ public:
   /* Convert length unit into screen pixels for the given direction. This approximation loses accuracy with
    *  higher zoom distances. */
   float getPixelForMeter(float meter, float directionDeg = DEFAULT_ANGLE) const;
-  float getPixelForFeet(float feet, float directionDeg = DEFAULT_ANGLE) const;
-  float getPixelForNm(float nm, float directionDeg = DEFAULT_ANGLE) const;
 
-  int getPixelIntForMeter(float meter, float directionDeg = DEFAULT_ANGLE) const;
-  int getPixelIntForFeet(float feet, float directionDeg = DEFAULT_ANGLE) const;
-  int getPixelIntForNm(float nm, float directionDeg = DEFAULT_ANGLE) const;
+  float getPixelForFeet(float feet, float directionDeg = DEFAULT_ANGLE) const
+  {
+    return getPixelForMeter(atools::geo::feetToMeter(feet), directionDeg);
+  }
+
+  float getPixelForNm(float nm, float directionDeg = DEFAULT_ANGLE) const
+  {
+    return getPixelForMeter(atools::geo::nmToMeter(nm), directionDeg);
+  }
+
+  int getPixelIntForMeter(float meter, float directionDeg = DEFAULT_ANGLE) const
+  {
+    return static_cast<int>(std::round(getPixelForMeter(meter, directionDeg)));
+  }
+
+  int getPixelIntForFeet(float feet, float directionDeg = DEFAULT_ANGLE) const
+  {
+    return getPixelIntForMeter(atools::geo::feetToMeter(static_cast<float>(feet)), directionDeg);
+  }
+
+  int getPixelIntForNm(float nm, float directionDeg = DEFAULT_ANGLE) const
+  {
+    return getPixelIntForMeter(atools::geo::nmToMeter(nm), directionDeg);
+  }
 
   /* Get screen pixels for one unit on the screen center */
-  float getMeterPerPixel(float directionDeg = DEFAULT_ANGLE) const;
-  float getFeetPerPixel(float directionDeg = DEFAULT_ANGLE) const;
-  float getNmPerPixel(float directionDeg = DEFAULT_ANGLE) const;
+  float getMeterPerPixel(float directionDeg = DEFAULT_ANGLE) const
+  {
+    return 1.f / getPixelForMeter(1.f, directionDeg);
+  }
+
+  float getFeetPerPixel(float directionDeg = DEFAULT_ANGLE) const
+  {
+    return 1.f / getPixelForFeet(1.f, directionDeg);
+  }
+
+  float getNmPerPixel(float directionDeg = DEFAULT_ANGLE) const
+  {
+    return 1.f / getPixelForNm(1.f, directionDeg);
+  }
 
   /*Get an approximation in screen pixes for the given coordinate rectangle */
   QSize getScreeenSizeForRect(const atools::geo::Rect& rect) const;

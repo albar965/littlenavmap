@@ -18,10 +18,10 @@
 #include "mapscale.h"
 
 #include "common/coordinateconverter.h"
+#include "common/mapflags.h"
 #include "geo/pos.h"
 #include "geo/calculations.h"
 #include "geo/rect.h"
-#include "common/maptypes.h"
 
 #include <QLineF>
 
@@ -122,36 +122,6 @@ float MapScale::getScreenRotation(float angle, const atools::geo::Pos& position,
   return angle;
 }
 
-int MapScale::getPixelIntForMeter(float meter, float directionDeg) const
-{
-  return static_cast<int>(std::round(getPixelForMeter(meter, directionDeg)));
-}
-
-int MapScale::getPixelIntForFeet(float feet, float directionDeg) const
-{
-  return getPixelIntForMeter(atools::geo::feetToMeter(static_cast<float>(feet)), directionDeg);
-}
-
-int MapScale::getPixelIntForNm(float nm, float directionDeg) const
-{
-  return getPixelIntForMeter(atools::geo::nmToMeter(nm), directionDeg);
-}
-
-float MapScale::getMeterPerPixel(float directionDeg) const
-{
-  return 1.f / getPixelForMeter(1.f, directionDeg);
-}
-
-float MapScale::getFeetPerPixel(float directionDeg) const
-{
-  return 1.f / getPixelForFeet(1.f, directionDeg);
-}
-
-float MapScale::getNmPerPixel(float directionDeg) const
-{
-  return 1.f / getPixelForNm(1.f, directionDeg);
-}
-
 float MapScale::getPixelForMeter(float meter, float directionDeg) const
 {
   directionDeg = atools::geo::normalizeCourse(directionDeg);
@@ -170,16 +140,6 @@ float MapScale::getPixelForMeter(float meter, float directionDeg) const
   float pixelPerKm = lowerScale + (upperScale - lowerScale) * (directionDeg - lowerDeg) / (upperDeg - lowerDeg);
 
   return pixelPerKm * meter / 1000.f;
-}
-
-float MapScale::getPixelForFeet(float feet, float directionDeg) const
-{
-  return getPixelForMeter(atools::geo::feetToMeter(feet), directionDeg);
-}
-
-float MapScale::getPixelForNm(float nm, float directionDeg) const
-{
-  return getPixelForMeter(atools::geo::nmToMeter(nm), directionDeg);
 }
 
 QDebug operator<<(QDebug out, const MapScale& scale)

@@ -3062,13 +3062,9 @@ void MainWindow::resetMapObjectsShown()
 /* A button like airport, vor, ndb, etc. was pressed - update the map */
 void MainWindow::updateMapObjectsShown()
 {
-  // Save to configuration
-  // saveActionStates();
-
   mapWidget->updateMapObjectsShown();
   profileWidget->update();
   updateActionStates();
-  // setStatusMessage(tr("Map settings changed."));
 }
 
 /* Map history has changed */
