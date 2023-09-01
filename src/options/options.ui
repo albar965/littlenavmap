@@ -644,7 +644,7 @@ opening files, modifying the flight plan and other operations.</string>
              <x>0</x>
              <y>0</y>
              <width>583</width>
-             <height>553</height>
+             <height>576</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_23">
@@ -836,10 +836,7 @@ This does not affect the map window which can be changed separately on the optio
               <property name="title">
                <string>Toolbars</string>
               </property>
-              <layout class="QHBoxLayout" name="horizontalLayout_5">
-               <property name="spacing">
-                <number>2</number>
-               </property>
+              <layout class="QGridLayout" name="gridLayout_42">
                <property name="leftMargin">
                 <number>2</number>
                </property>
@@ -852,20 +849,7 @@ This does not affect the map window which can be changed separately on the optio
                <property name="bottomMargin">
                 <number>2</number>
                </property>
-               <item>
-                <widget class="QCheckBox" name="checkBoxOptionsGuiToolbarSize">
-                 <property name="toolTip">
-                  <string>Allows to change the size of the toolbar icons from system default if checked.</string>
-                 </property>
-                 <property name="text">
-                  <string>&amp;Override Icon size for toolbars:</string>
-                 </property>
-                 <property name="checked">
-                  <bool>false</bool>
-                 </property>
-                </widget>
-               </item>
-               <item>
+               <item row="0" column="2">
                 <widget class="QSpinBox" name="spinBoxOptionsGuiToolbarSize">
                  <property name="sizePolicy">
                   <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
@@ -890,6 +874,32 @@ This does not affect the map window which can be changed separately on the optio
                  </property>
                  <property name="value">
                   <number>24</number>
+                 </property>
+                </widget>
+               </item>
+               <item row="0" column="1">
+                <widget class="QCheckBox" name="checkBoxOptionsGuiToolbarSize">
+                 <property name="toolTip">
+                  <string>Allows to change the size of the toolbar icons from system default if checked.</string>
+                 </property>
+                 <property name="text">
+                  <string>&amp;Override Icon size for toolbars:</string>
+                 </property>
+                 <property name="checked">
+                  <bool>false</bool>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="1" colspan="2">
+                <widget class="QLabel" name="labelOptionsGuiToolbarSize">
+                 <property name="text">
+                  <string>&lt;b&gt;A restart is required after changing the toolbar size.&lt;/b&gt;</string>
+                 </property>
+                 <property name="wordWrap">
+                  <bool>true</bool>
+                 </property>
+                 <property name="textInteractionFlags">
+                  <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
                  </property>
                 </widget>
                </item>

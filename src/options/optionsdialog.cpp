@@ -96,6 +96,9 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
   // Disable menu tooltips on macOS
   ui->checkBoxOptionsGuiTooltipsMenu->hide();
   ui->checkBoxOptionsGuiTooltipsMenu->setChecked(false);
+#else
+  // Restart after toolbar change only on macOS
+  ui->labelOptionsGuiToolbarSize->hide();
 #endif
 
   if(ui->splitterOptions->handle(1) != nullptr)
