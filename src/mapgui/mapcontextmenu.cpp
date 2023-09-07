@@ -1125,7 +1125,7 @@ void MapContextMenu::insertShowInSearchMenu(QMenu& menu)
 
 #ifdef DEBUG_INFORMATION
                               if(base != nullptr)
-                                qDebug() << Q_FUNC_INFO << map::mapObjectTypeToString(base->getType());
+                                qDebug() << Q_FUNC_INFO << map::mapTypeToString(base->getType());
 #endif
 
                               if(base != nullptr && base->objType == map::AIRCRAFT)

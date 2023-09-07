@@ -394,7 +394,7 @@ bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport, const 
             continue;
 
           const RouteLeg& routeLeg = route->value(i);
-          map::MapTypes type = routeLeg.getMapObjectType();
+          map::MapTypes type = routeLeg.getMapType();
           if(type == map::AIRPORT || type == map::VOR || type == map::NDB || type == map::WAYPOINT)
             context.routeProcIdMap.insert(map::MapRef(routeLeg.getId(), type));
         }
@@ -403,7 +403,7 @@ bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport, const 
         for(int i = std::max(passedRouteLeg - 1, 0); i < route->size(); i++)
         {
           const RouteLeg& routeLeg = route->value(i);
-          map::MapTypes type = routeLeg.getMapObjectType();
+          map::MapTypes type = routeLeg.getMapType();
           if(type == map::PROCEDURE)
           {
             if(!routeLeg.getProcedureLeg().isMissed() || context.objectTypes & map::MISSED_APPROACH)
@@ -424,7 +424,7 @@ bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport, const 
         for(int i = passedRouteLeg; i < route->size(); i++)
         {
           const RouteLeg& routeLeg = route->value(i);
-          map::MapTypes type = routeLeg.getMapObjectType();
+          map::MapTypes type = routeLeg.getMapType();
           if(type == map::PROCEDURE)
           {
             if(!routeLeg.getProcedureLeg().isMissed() || context.objectTypes & map::MISSED_APPROACH)

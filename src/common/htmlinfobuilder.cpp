@@ -3897,8 +3897,8 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
         QString headText = alternate ? tr("Alternate") : tr("Destination");
         const RouteLeg& destLeg = alternate && route.getActiveLeg() != nullptr ? *route.getActiveLeg() : route.getDestinationAirportLeg();
 
-        headText += tr(" - ") % destLeg.getDisplayIdent() % (destLeg.getMapObjectTypeName().isEmpty() ? QString() : tr(", ") %
-                                                             destLeg.getMapObjectTypeName());
+        headText += tr(" - ") % destLeg.getDisplayIdent() % (destLeg.getMapTypeName().isEmpty() ? QString() : tr(", ") %
+                                                             destLeg.getMapTypeName());
 
         html.mark();
         head(html, headText);
@@ -4072,8 +4072,8 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
       {
         if(!routeLegCorrected.getDisplayIdent().isEmpty())
           nextName = routeLegCorrected.getDisplayIdent() %
-                     (routeLegCorrected.getMapObjectTypeName().isEmpty() ? QString() : tr(", ") %
-                      routeLegCorrected.getMapObjectTypeName());
+                     (routeLegCorrected.getMapTypeName().isEmpty() ? QString() : tr(", ") %
+                      routeLegCorrected.getMapTypeName());
       }
 
       // From or to fix depending on leg type

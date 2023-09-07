@@ -609,7 +609,7 @@ void RouteController::flightplanTableAsTextTable(QTextCursor& cursor, const QBit
           textFormat.setForeground(leg.getProcedureLeg().isMissed() ?
                                    mapcolors::routeProcedureMissedTableColor :
                                    mapcolors::routeProcedureTableColor);
-        else if((logicalCol == rcol::IDENT && leg.getMapObjectType() == map::INVALID) ||
+        else if((logicalCol == rcol::IDENT && leg.getMapType() == map::INVALID) ||
                 (logicalCol == rcol::AIRWAY_OR_LEGTYPE && leg.isRoute() && leg.isAirwaySetAndInvalid(route.getCruiseAltitudeFt())))
           textFormat.setForeground(Qt::red);
         else
@@ -772,7 +772,7 @@ QString RouteController::getFlightplanTableAsHtml(float iconSizePixel, bool prin
             color = leg.getProcedureLeg().isMissed() ?
                     mapcolors::routeProcedureMissedTableColor :
                     mapcolors::routeProcedureTableColor;
-          else if((logicalCol == rcol::IDENT && leg.getMapObjectType() == map::INVALID) ||
+          else if((logicalCol == rcol::IDENT && leg.getMapType() == map::INVALID) ||
                   (logicalCol == rcol::AIRWAY_OR_LEGTYPE && leg.isRoute() &&
                    leg.isAirwaySetAndInvalid(route.getCruiseAltitudeFt())))
             color = Qt::red;
@@ -2282,7 +2282,7 @@ void RouteController::showAtIndex(int index, bool info, bool map, bool doubleCli
     {
       if(map)
       {
-        if(routeLeg.getMapObjectType() == map::AIRPORT)
+        if(routeLeg.getMapType() == map::AIRPORT)
           emit showRect(routeLeg.getAirport().bounding, doubleClick);
         else
           emit showPos(routeLeg.getPosition(), 0.f, doubleClick);
@@ -2361,7 +2361,7 @@ void RouteController::showInformationInternal(const RouteLeg& routeLeg)
   else
   {
     map::MapResult result;
-    NavApp::getMapQueryGui()->getMapObjectById(result, routeLeg.getMapObjectType(), map::AIRSPACE_SRC_NONE,
+    NavApp::getMapQueryGui()->getMapObjectById(result, routeLeg.getMapType(), map::AIRSPACE_SRC_NONE,
                                                routeLeg.getId(), false /* airport from nav database */);
     emit showInformation(result);
   }
@@ -2374,7 +2374,7 @@ void RouteController::showProceduresTriggered()
   {
     const RouteLeg& routeLeg = route.value(index.row());
 
-    if(routeLeg.isValidWaypoint() && routeLeg.getMapObjectType() == map::AIRPORT)
+    if(routeLeg.isValidWaypoint() && routeLeg.getMapType() == map::AIRPORT)
     {
       bool departureFilter, arrivalFilter;
       route.getAirportProcedureFlags(routeLeg.getAirport(), index.row(), departureFilter, arrivalFilter);
@@ -2391,12 +2391,12 @@ void RouteController::showOnMapTriggered()
   {
     const RouteLeg& routeLeg = route.value(index.row());
 
-    if(routeLeg.getMapObjectType() == map::AIRPORT)
+    if(routeLeg.getMapType() == map::AIRPORT)
       emit showRect(routeLeg.getAirport().bounding, false);
     else
       emit showPos(routeLeg.getPosition(), 0.f, false);
 
-    if(routeLeg.getMapObjectType() == map::AIRPORT)
+    if(routeLeg.getMapType() == map::AIRPORT)
       NavApp::setStatusMessage(tr("Showing airport on map."));
     else
       NavApp::setStatusMessage(tr("Showing navaid on map."));
@@ -2590,7 +2590,7 @@ void RouteController::tableContextMenu(const QPoint& pos)
   if(routeLeg != nullptr)
   {
     objectText = routeLeg->getDisplayText(NAVAID_NAMES_ELIDE);
-    if(routeLeg->getMapObjectType() == map::AIRPORT)
+    if(routeLeg->getMapType() == map::AIRPORT)
       airportText = objectText;
   }
 
@@ -2627,8 +2627,8 @@ void RouteController::tableContextMenu(const QPoint& pos)
     }
     else
       ui->actionRouteShowInformation->setEnabled(routeLeg->isValidWaypoint() &&
-                                                 routeLeg->getMapObjectType() != map::USERPOINTROUTE &&
-                                                 routeLeg->getMapObjectType() != map::INVALID);
+                                                 routeLeg->getMapType() != map::USERPOINTROUTE &&
+                                                 routeLeg->getMapType() != map::INVALID);
 
     if(routeLeg->isValidWaypoint())
     {
@@ -2647,7 +2647,7 @@ void RouteController::tableContextMenu(const QPoint& pos)
 
     // Prepare procedure menus ==============================================================================
 
-    if(routeLeg->isValidWaypoint() && routeLeg->getMapObjectType() == map::AIRPORT)
+    if(routeLeg->isValidWaypoint() && routeLeg->getMapType() == map::AIRPORT)
     {
       ui->actionRouteMarkAddon->setEnabled(true);
       ActionTool::setText(ui->actionRouteMarkAddon, true, objectText);
@@ -2760,7 +2760,7 @@ void RouteController::tableContextMenu(const QPoint& pos)
   ui->actionRouteEditUserWaypoint->setText(tr("Edit &Position or Remarks ..."));
   if(routeLeg != nullptr)
   {
-    if(routeLeg->getMapObjectType() == map::USERPOINTROUTE)
+    if(routeLeg->getMapType() == map::USERPOINTROUTE)
     {
       ui->actionRouteEditUserWaypoint->setEnabled(true);
       ui->actionRouteEditUserWaypoint->setText(tr("&Edit %1 ..."));
@@ -2917,7 +2917,7 @@ void RouteController::tableContextMenu(const QPoint& pos)
     else if(action == ui->actionMapHold && routeLeg != nullptr)
     {
       map::MapResult result;
-      NavApp::getMapQueryGui()->getMapObjectById(result, routeLeg->getMapObjectType(), map::AIRSPACE_SRC_NONE,
+      NavApp::getMapQueryGui()->getMapObjectById(result, routeLeg->getMapType(), map::AIRSPACE_SRC_NONE,
                                                  routeLeg->getId(), false /* airport from nav*/);
 
       if(!result.isEmpty(map::AIRPORT | map::VOR | map::NDB | map::WAYPOINT))
@@ -2933,7 +2933,7 @@ void RouteController::tableContextMenu(const QPoint& pos)
         const RouteLeg& routeLegSel = route.value(idx);
         if(routeLegSel.getNdb().isValid() || routeLegSel.getVor().isValid())
         {
-          map::MapTypes type = routeLegSel.getMapObjectType();
+          map::MapTypes type = routeLegSel.getMapType();
           if(routeLegSel.isAnyProcedure())
           {
             if(routeLegSel.getNdb().isValid())
@@ -3581,7 +3581,7 @@ void RouteController::routeSetParking(const map::MapParking& parking)
 
   undoCommand = preChange(tr("Set Start Position"));
 
-  if(route.isEmpty() || route.getDepartureAirportLeg().getMapObjectType() != map::AIRPORT ||
+  if(route.isEmpty() || route.getDepartureAirportLeg().getMapType() != map::AIRPORT ||
      route.getDepartureAirportLeg().getId() != parking.airportId)
   {
     // No route, no start airport or different airport
@@ -3626,7 +3626,7 @@ void RouteController::routeSetStartPosition(map::MapStart start)
   RouteCommand *undoCommand = preChange(tr("Set Start Position"));
   NavApp::showFlightPlan();
 
-  if(route.isEmpty() || route.getDepartureAirportLeg().getMapObjectType() != map::AIRPORT ||
+  if(route.isEmpty() || route.getDepartureAirportLeg().getMapType() != map::AIRPORT ||
      route.getDepartureAirportLeg().getId() != start.airportId)
   {
     // No route, no start airport or different airport
@@ -4053,7 +4053,7 @@ void RouteController::routeAddProcedure(proc::MapProcedureLegs legs)
 
   if(legs.mapType & proc::PROCEDURE_STAR || legs.mapType & proc::PROCEDURE_APPROACH_ALL_MISSED)
   {
-    if(route.isEmpty() || route.getDestinationAirportLeg().getMapObjectType() != map::AIRPORT ||
+    if(route.isEmpty() || route.getDestinationAirportLeg().getMapType() != map::AIRPORT ||
        route.getDestinationAirportLeg().getId() != airportSim.id)
     {
       // No route, no destination airport or different airport
@@ -4076,7 +4076,7 @@ void RouteController::routeAddProcedure(proc::MapProcedureLegs legs)
   }
   else if(legs.mapType & proc::PROCEDURE_DEPARTURE)
   {
-    if(route.isEmpty() || route.getDepartureAirportLeg().getMapObjectType() != map::AIRPORT ||
+    if(route.isEmpty() || route.getDepartureAirportLeg().getMapType() != map::AIRPORT ||
        route.getDepartureAirportLeg().getId() != airportSim.id)
     {
       // No route, no departure airport or different airport
@@ -4152,7 +4152,7 @@ void RouteController::routeDirectTo(int id, atools::geo::Pos userPos, map::MapTy
         // Remember old alternate
         const RouteLeg& altDest = route.getLegAt(legIndexDirectTo);
         Pos pos = altDest.getPosition();
-        map::MapTypes altType = altDest.getMapObjectType();
+        map::MapTypes altType = altDest.getMapType();
         int altId = altDest.getId();
 
         // Put alternate to delete on top of list
@@ -4261,7 +4261,7 @@ int RouteController::routeAddInternal(int id, atools::geo::Pos userPos, map::Map
     for(int i = 0; i < route.size(); i++)
     {
       const RouteLeg& leg = route.getLegAt(i);
-      if(leg.getMapObjectType() == map::USERPOINTROUTE && leg.getIdent() == userpointIdent &&
+      if(leg.getMapType() == map::USERPOINTROUTE && leg.getIdent() == userpointIdent &&
          leg.getPosition().almostEqual(userPos, atools::geo::Pos::POS_EPSILON_1NM))
         return i;
     }
@@ -4465,7 +4465,7 @@ void RouteController::updateFlightplanFromWidgets(Flightplan& flightplan)
 QIcon RouteController::iconForLeg(const RouteLeg& leg, int size) const
 {
   QIcon icon;
-  if(leg.getMapObjectType() == map::AIRPORT)
+  if(leg.getMapType() == map::AIRPORT)
     icon = SymbolPainter::createAirportIcon(leg.getAirport(), size - 2);
   else if(leg.getVor().isValid())
     icon = SymbolPainter::createVorIcon(leg.getVor(), size);
@@ -4473,9 +4473,9 @@ QIcon RouteController::iconForLeg(const RouteLeg& leg, int size) const
     icon = SymbolPainter::createNdbIcon(size);
   else if(leg.getWaypoint().isValid())
     icon = SymbolPainter::createWaypointIcon(size);
-  else if(leg.getMapObjectType() == map::USERPOINTROUTE)
+  else if(leg.getMapType() == map::USERPOINTROUTE)
     icon = SymbolPainter::createUserpointIcon(size);
-  else if(leg.getMapObjectType() == map::INVALID)
+  else if(leg.getMapType() == map::INVALID)
     icon = SymbolPainter::createWaypointIcon(size, mapcolors::routeInvalidPointColor);
   else if(leg.isAnyProcedure())
     icon = SymbolPainter::createProcedurePointIcon(size);
@@ -5126,7 +5126,7 @@ void RouteController::updateModelHighlights()
         // Ident colum ==========================================
         if(col == rcol::IDENT)
         {
-          if(leg.getMapObjectType() == map::INVALID)
+          if(leg.getMapType() == map::INVALID)
           {
             item->setForeground(invalidColor);
             QString err = tr("Waypoint \"%1\" not found.").arg(leg.getDisplayIdent());

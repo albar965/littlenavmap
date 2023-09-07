@@ -151,16 +151,16 @@ public:
   /* Get range of radio navaid. -1 if not a radio navaid. Source is always database. */
   int getRange() const;
 
-  map::MapTypes getMapObjectType() const
+  map::MapTypes getMapType() const
   {
     return type;
   }
 
   /* Type like Airport, NDB (MH) or VOR (H) */
-  QString getMapObjectTypeName() const;
+  QString getMapTypeName() const;
 
   /* Type like Airport, NDB or VOR */
-  QString getMapObjectTypeNameShort() const;
+  QString getMapTypeNameShort() const;
 
   /* Display text usable for menu items */
   QString getDisplayText(int elideName = 100) const;

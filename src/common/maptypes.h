@@ -186,7 +186,7 @@ typedef QVector<MapRefExt> MapRefExtVector;
 
 // =====================================================================
 /* Convert type from nav_search table to enum */
-map::MapTypes navTypeToMapObjectType(const QString& navType);
+map::MapTypes navTypeToMapType(const QString& navType);
 bool navTypeTacan(const QString& navType);
 bool navTypeVortac(const QString& navType);
 
@@ -1679,7 +1679,7 @@ QString parkingNameForFlightplan(const MapParking& parking);
 const QString& airspaceTypeToString(map::MapAirspaceTypes type);
 const QString& airspaceFlagToString(map::MapAirspaceFlags type); /* Includes mnemonics */
 const QString& airspaceFlagToStringLong(map::MapAirspaceFlags type); /* For tooltips */
-QString mapObjectTypeToString(MapTypes type); /* For debugging purposes. Not translated */
+QString mapTypeToString(MapTypes type); /* For debugging purposes. Not translated */
 const QString& airspaceRemark(map::MapAirspaceTypes type);
 
 int airspaceDrawingOrder(map::MapAirspaceTypes type);

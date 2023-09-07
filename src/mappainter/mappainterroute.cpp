@@ -258,7 +258,7 @@ void MapPainterRoute::paintRecommended(int passedRouteLeg, QSet<map::MapRef>& id
   for(int i = passedRouteLeg; i < route.size(); i++)
   {
     const RouteLeg& routeLeg = route.value(i);
-    map::MapTypes type = routeLeg.getMapObjectType();
+    map::MapTypes type = routeLeg.getMapType();
     if(type == map::PROCEDURE)
     {
       float x = 0, y = 0;
@@ -2013,7 +2013,7 @@ void MapPainterRoute::drawSymbols(const QBitArray& visibleStartPoints, const QLi
       float x = static_cast<float>(pt.x());
       float y = static_cast<float>(pt.y());
       const RouteLeg& leg = context->route->value(i);
-      map::MapTypes type = leg.getMapObjectType();
+      map::MapTypes type = leg.getMapType();
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wswitch"
       switch(type)
@@ -2085,7 +2085,7 @@ void MapPainterRoute::drawRouteSymbolText(const QBitArray& visibleStartPoints, c
       float x = static_cast<float>(pt.x());
       float y = static_cast<float>(pt.y());
       const RouteLeg& obj = context->route->value(i);
-      map::MapTypes type = obj.getMapObjectType();
+      map::MapTypes type = obj.getMapType();
 
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wswitch-enum"
@@ -2126,7 +2126,7 @@ void MapPainterRoute::drawStartParking()
 
   // Draw start position or parking circle into the airport diagram
   const RouteLeg& departureLeg = route->getDepartureAirportLeg();
-  if(departureLeg.isValid() && departureLeg.getMapObjectType() == map::AIRPORT)
+  if(departureLeg.isValid() && departureLeg.getMapType() == map::AIRPORT)
   {
     // Use airport symbol as base size for default
     float radius = context->szF(context->symbolSizeAirport, context->mapLayerRoute->getAirportSymbolSize()) * 0.75f;

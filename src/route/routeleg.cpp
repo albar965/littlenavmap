@@ -553,7 +553,7 @@ int RouteLeg::getRange() const
   return -1;
 }
 
-QString RouteLeg::getMapObjectTypeName() const
+QString RouteLeg::getMapTypeName() const
 {
   if(type == map::INVALID)
     return tr("Invalid");
@@ -577,7 +577,7 @@ QString RouteLeg::getMapObjectTypeName() const
     return EMPTY_STRING;
 }
 
-QString RouteLeg::getMapObjectTypeNameShort() const
+QString RouteLeg::getMapTypeNameShort() const
 {
   if(type == map::INVALID)
     return tr("Invalid");
@@ -601,12 +601,12 @@ QString RouteLeg::getMapObjectTypeNameShort() const
 
 QString RouteLeg::getDisplayText(int elideName) const
 {
-  if(getMapObjectType() == map::AIRPORT)
+  if(getMapType() == map::AIRPORT)
     return tr("%1 (%2)").arg(atools::elideTextShort(getName(), elideName)).arg(airport.displayIdent());
   else
   {
     QStringList texts;
-    texts << getMapObjectTypeNameShort() << atools::elideTextShort(getName(), elideName)
+    texts << getMapTypeNameShort() << atools::elideTextShort(getName(), elideName)
           << (getIdent().isEmpty() ? QString() : tr("(%1)").arg(getIdent()));
     texts.removeAll(QString());
     return texts.join(tr(" "));
@@ -1172,7 +1172,7 @@ QDebug operator<<(QDebug out, const RouteLeg& leg)
   out.noquote().nospace() << "RouteLeg["
                           << "id " << leg.getId()
                           << ", " << leg.getIdent()
-                          << ", " << leg.getMapObjectTypeName()
+                          << ", " << leg.getMapTypeName()
                           << ", distance " << leg.getDistanceTo()
                           << ", " << leg.getPosition()
                           << ", course start " << leg.getCourseStartMag() << "°M " << leg.getCourseStartTrue() << "°T"

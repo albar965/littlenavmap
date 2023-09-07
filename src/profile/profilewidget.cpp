@@ -1371,7 +1371,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
       if(!procSymbol)
       {
         // Draw all except airport, waypoint, VOR and NDB
-        map::MapTypes type = leg.getMapObjectType();
+        map::MapTypes type = leg.getMapType();
         if(type == map::AIRPORT || leg.isAirport() ||
            type == map::WAYPOINT || leg.getWaypoint().isValid() ||
            type == map::VOR || leg.getVor().isValid() ||
@@ -1416,7 +1416,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
       if(!procSymbol)
       {
         // Draw all except airport, VOR, NDB and userpoint
-        map::MapTypes type = leg.getMapObjectType();
+        map::MapTypes type = leg.getMapType();
         if(type == map::AIRPORT || leg.isAirport() ||
            type == map::VOR || leg.getVor().isValid() ||
            type == map::NDB || leg.getNdb().isValid() ||
@@ -1455,7 +1455,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
       if(!procSymbol)
       {
         // Draw all except airport, waypoint and userpoint
-        map::MapTypes type = leg.getMapObjectType();
+        map::MapTypes type = leg.getMapType();
         if(type == map::AIRPORT || leg.isAirport() ||
            type == map::WAYPOINT || leg.getWaypoint().isValid() ||
            type == map::USERPOINTROUTE || type == map::INVALID)
@@ -1488,7 +1488,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
       const RouteLeg& leg = route.value(routeIndex);
 
       // Airports are drawn separately and need no merge for texts
-      if(leg.getMapObjectType() == map::AIRPORT)
+      if(leg.getMapType() == map::AIRPORT)
         continue;
 
       int legScreenWidth = calcLegScreenWidth(altLegs, waypointIndex) - 10;
@@ -1509,7 +1509,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
         last->texts.removeDuplicates();
       }
       else
-        labels.append(Label(symPt, color, procSymbol, texts, leg.getMapObjectType()));
+        labels.append(Label(symPt, color, procSymbol, texts, leg.getMapType()));
     }
 
     // Sort by type and position (right to left)
@@ -1532,7 +1532,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
       QPoint symPt(altLegs.at(waypointIndex).constLast());
 
       // Draw all airport except destination and departure
-      if(leg.getMapObjectType() == map::AIRPORT && routeIndex > 0 && routeIndex < route.getDestinationAirportLegIndex())
+      if(leg.getMapType() == map::AIRPORT && routeIndex > 0 && routeIndex < route.getDestinationAirportLegIndex())
       {
         symPainter.drawAirportSymbol(&painter, leg.getAirport(), symPt.x(), symPt.y(), airportSize, false, false, false);
 
@@ -1547,7 +1547,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
     {
       // Draw departure always on the left also if there are departure procedures
       const RouteLeg& departureLeg = route.getDepartureAirportLeg();
-      if(departureLeg.getMapObjectType() == map::AIRPORT)
+      if(departureLeg.getMapType() == map::AIRPORT)
       {
         int textW = painter.fontMetrics().horizontalAdvance(departureLeg.getDisplayIdent());
         symPainter.drawAirportSymbol(&painter, departureLeg.getAirport(), left, flightplanY, airportSize, false, false, false);
@@ -1557,7 +1557,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
 
       // Draw destination always on the right also if there are approach procedures
       const RouteLeg& destinationLeg = route.getDestinationAirportLeg();
-      if(destinationLeg.getMapObjectType() == map::AIRPORT)
+      if(destinationLeg.getMapType() == map::AIRPORT)
       {
         int textW = painter.fontMetrics().horizontalAdvance(destinationLeg.getDisplayIdent());
         symPainter.drawAirportSymbol(&painter, destinationLeg.getAirport(), left + w, flightplanY, airportSize, false, false, false);
@@ -1747,7 +1747,7 @@ int ProfileWidget::calcLegScreenWidth(const QVector<QPolygon>& altLegs, int wayp
 QStringList ProfileWidget::textsAndColorForLeg(QColor& color, bool& procSymbol, const RouteLeg& leg, bool procedureDisplayText,
                                                int legWidth)
 {
-  map::MapTypes type = leg.getMapObjectType();
+  map::MapTypes type = leg.getMapType();
   QString ident;
   color = mapcolors::routeUserPointColor;
 

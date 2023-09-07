@@ -778,7 +778,7 @@ void MapScreenIndex::updateRouteScreenGeometry(const Marble::GeoDataLatLonBox& c
       int x2, y2;
       if(conv.wToS(p2, x2, y2))
       {
-        map::MapTypes type = routeLeg.getMapObjectType();
+        map::MapTypes type = routeLeg.getMapType();
         if(type == map::AIRPORT && (i == departIndex || i == destIndex || routeLeg.isAlternate()))
           // Departure, destination or alternate airport - put to from of list for higher priority
           airportPoints.append(std::make_pair(i, QPoint(x2, y2)));

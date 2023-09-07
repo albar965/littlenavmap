@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -31,18 +31,18 @@ void RouteExtractor::extractRoute(QVector<RouteEntry>& route, float& distanceMet
   QVector<atools::routing::RouteLeg> routeLegs;
   routeFinder->extractLegs(routeLegs, distanceMeter);
 
-  for(const atools::routing::RouteLeg& leg : routeLegs)
+  for(const atools::routing::RouteLeg& leg : qAsConst(routeLegs))
   {
     RouteEntry entry;
     entry.ref.id = leg.navId;
     entry.airwayId = leg.airwayId;
-    entry.ref.objType = toMapObjectType(leg.type);
+    entry.ref.objType = toMapType(leg.type);
     route.append(entry);
   }
 }
 
 /* Convert internal network type to MapObjectTypes for extract route */
-map::MapType RouteExtractor::toMapObjectType(atools::routing::NodeType type) const
+map::MapType RouteExtractor::toMapType(atools::routing::NodeType type) const
 {
   switch(type)
   {

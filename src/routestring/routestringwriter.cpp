@@ -328,7 +328,7 @@ QStringList RouteStringWriter::createStringForRouteInternal(const Route& routePa
       continue;
 
     // Ignore departure airport depending on options
-    if(i == 0 && leg.getMapObjectType() == map::AIRPORT && !options.testFlag(rs::START_AND_DEST))
+    if(i == 0 && leg.getMapType() == map::AIRPORT && !options.testFlag(rs::START_AND_DEST))
       // Options is off
       continue;
 
@@ -336,7 +336,7 @@ QStringList RouteStringWriter::createStringForRouteInternal(const Route& routePa
     // Internal ident or ICAO
     QString ident = leg.getDisplayIdent();
 
-    if(leg.getMapObjectType() == map::USERPOINTROUTE)
+    if(leg.getMapType() == map::USERPOINTROUTE)
     {
       // CYCD DCT DUNCN V440 YYJ V495 CDGPN DCT N48194W123096 DCT WATTR V495 JAWBN DCT 0S9
       if(options.testFlag(rs::GFP))
@@ -387,7 +387,7 @@ QStringList RouteStringWriter::createStringForRouteInternal(const Route& routePa
 
     lastId = ident;
     lastPos = leg.getPosition();
-    lastType = leg.getMapObjectType();
+    lastType = leg.getMapType();
     lastAirway = airway;
     lastIndex = i;
   }

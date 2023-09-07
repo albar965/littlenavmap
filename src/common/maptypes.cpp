@@ -1152,7 +1152,7 @@ bool MapAirport::isVisible(map::MapTypes types, int minRunwayFt, const MapLayer 
 }
 
 /* Convert nav_search type */
-map::MapTypes navTypeToMapObjectType(const QString& navType)
+map::MapTypes navTypeToMapType(const QString& navType)
 {
   map::MapTypes type = NONE;
   if(navType.startsWith("V") || navType == "D" || navType.startsWith("TC"))
@@ -1800,7 +1800,7 @@ const QString& airspaceFlagToStringLong(map::MapAirspaceFlags type)
   return airspaceFlagNameMapLong[type];
 }
 
-QString mapObjectTypeToString(MapTypes type)
+QString mapTypeToString(MapTypes type)
 {
   if(type == NONE)
     return QObject::tr("None");
@@ -1951,7 +1951,7 @@ QDebug operator<<(QDebug out, const MapBase& obj)
   QDebugStateSaver saver(out);
   out.noquote().nospace() << "MapBase["
                           << "id " << obj.id
-                          << ", type " << mapObjectTypeToString(obj.objType)
+                          << ", type " << mapTypeToString(obj.objType)
                           << ", " << obj.position
                           << "]";
   return out;
@@ -1962,7 +1962,7 @@ QDebug operator<<(QDebug out, const MapRef& ref)
   QDebugStateSaver saver(out);
   out.noquote().nospace() << "MapObjectRef["
                           << "id " << ref.id
-                          << ", type " << mapObjectTypeToString(ref.objType)
+                          << ", type " << mapTypeToString(ref.objType)
                           << "]";
   return out;
 }
@@ -1972,7 +1972,7 @@ QDebug operator<<(QDebug out, const MapRefExt& ref)
   QDebugStateSaver saver(out);
   out.noquote().nospace() << "MapObjectRefExt["
                           << "id " << ref.id
-                          << ", type " << mapObjectTypeToString(ref.objType);
+                          << ", type " << mapTypeToString(ref.objType);
 
   if(!ref.name.isEmpty())
     out.noquote().nospace() << ", name " << ref.name;

@@ -1266,7 +1266,7 @@ void Route::getNearest(const CoordinateConverter& conv, int xs, int ys, int scre
         insertSortedByDistance(conv, mapobjects.airports, &mapobjects.airportIds, xs, ys, ap);
       }
 
-      if(leg.getMapObjectType() == map::INVALID)
+      if(leg.getMapType() == map::INVALID)
       {
         map::MapUserpointRoute up;
         up.routeIndex = i;
@@ -1279,7 +1279,7 @@ void Route::getNearest(const CoordinateConverter& conv, int xs, int ys, int scre
         mapobjects.userpointsRoute.append(up);
       }
 
-      if(leg.getMapObjectType() == map::USERPOINTROUTE)
+      if(leg.getMapType() == map::USERPOINTROUTE)
       {
         map::MapUserpointRoute up;
         up.id = i;
@@ -1401,7 +1401,7 @@ bool Route::hasUserWaypoints() const
 {
   for(const RouteLeg& leg : *this)
   {
-    if(leg.getMapObjectType() == map::USERPOINTROUTE)
+    if(leg.getMapType() == map::USERPOINTROUTE)
       return true;
   }
   return false;
@@ -1936,7 +1936,7 @@ void Route::updateAirportRegions()
   int i = 0;
   for(RouteLeg& leg : *this)
   {
-    if(leg.getMapObjectType() == map::AIRPORT)
+    if(leg.getMapType() == map::AIRPORT)
     {
       NavApp::getAirportQuerySim()->getAirportRegion(leg.getAirport());
       flightplan[i].setRegion(leg.getAirport().region);
@@ -1966,7 +1966,7 @@ void Route::updateIndices()
   {
     RouteLeg& leg = (*this)[i];
     leg.setFlightplanEntryIndex(i);
-    objectIndex.insert(map::MapRef(leg.getId(), leg.getMapObjectType()), i); // types includes PROCEDURE
+    objectIndex.insert(map::MapRef(leg.getId(), leg.getMapType()), i); // types includes PROCEDURE
   }
 }
 
@@ -2091,7 +2091,7 @@ void Route::setActiveLeg(int value)
 bool Route::isAirportAfterArrival(int index)
 {
   return (hasAnyApproachProcedure() /*|| hasStarProcedure()*/) &&
-         index == getDestinationAirportLegIndex() && value(index).getMapObjectType() == map::AIRPORT;
+         index == getDestinationAirportLegIndex() && value(index).getMapType() == map::AIRPORT;
 }
 
 int Route::getArrivaLegsOffset() const
@@ -2704,7 +2704,7 @@ void Route::createRouteLegsFromFlightplan()
     RouteLeg leg(&flightplan);
     leg.createFromDatabaseByEntry(i, lastLeg);
 
-    if(leg.getMapObjectType() == map::INVALID)
+    if(leg.getMapType() == map::INVALID)
       // Not found in database
       qWarning() << "Entry for ident" << flightplan.at(i).getIdent() << "region" << flightplan.at(i).getRegion() << "is not valid";
 
@@ -3369,7 +3369,7 @@ void Route::updateAirways(float& minAltitudeFt, float& maxAltitudeFt, bool adjus
     // Adjust min and max by airway or track restricitons ============================
     if(!routeLeg.getAirwayName().isEmpty())
     {
-      if(i == 1 && prevLeg.getMapObjectType() == map::AIRPORT)
+      if(i == 1 && prevLeg.getMapType() == map::AIRPORT)
       {
         routeLeg.setAirway(map::MapAirway());
         routeLeg.getFlightplanEntry()->setAirway(QString());

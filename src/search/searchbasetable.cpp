@@ -1857,7 +1857,7 @@ void SearchBaseTable::getNavTypeAndId(int row, map::MapTypes& navType, map::MapA
   else if(tabIndex == si::SEARCH_NAV)
   {
     // Otherwise nav_search table
-    navType = map::navTypeToMapObjectType(controller->getRawData(row, "nav_type").toString());
+    navType = map::navTypeToMapType(controller->getRawData(row, "nav_type").toString());
 
     if(navType == map::VOR)
       id = controller->getRawData(row, "vor_id").toInt();

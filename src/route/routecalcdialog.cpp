@@ -231,8 +231,8 @@ void RouteCalcDialog::updateHeader()
     {
       const RouteLeg& fromLeg = route.getLegAt(fromIndex);
       const RouteLeg& toLeg = route.getLegAt(toIndex);
-      departure = tr("%1 (%2)").arg(fromLeg.getDisplayIdent()).arg(fromLeg.getMapObjectTypeName());
-      destination = tr("%1 (%2)").arg(toLeg.getDisplayIdent()).arg(toLeg.getMapObjectTypeName());
+      departure = tr("%1 (%2)").arg(fromLeg.getDisplayIdent()).arg(fromLeg.getMapTypeName());
+      destination = tr("%1 (%2)").arg(toLeg.getDisplayIdent()).arg(toLeg.getMapTypeName());
       title = tr("<b>Calculate flight plan between legs<br/>%1 and %2</b>").arg(departure).arg(destination);
     }
     else
@@ -254,12 +254,12 @@ void RouteCalcDialog::updateHeader()
       if(route.hasValidDeparture())
         departure = tr("%1 (%2)").arg(departLeg.getName()).arg(departLeg.getDisplayIdent());
       else
-        departure = tr("%1 (%2)").arg(departLeg.getDisplayIdent()).arg(departLeg.getMapObjectTypeName());
+        departure = tr("%1 (%2)").arg(departLeg.getDisplayIdent()).arg(departLeg.getMapTypeName());
 
       if(route.hasValidDestination())
         destination = tr("%1 (%2)").arg(destLeg.getName()).arg(destLeg.getDisplayIdent());
       else
-        destination = tr("%1 (%2)").arg(destLeg.getDisplayIdent()).arg(destLeg.getMapObjectTypeName());
+        destination = tr("%1 (%2)").arg(destLeg.getDisplayIdent()).arg(destLeg.getMapTypeName());
 
       title = tr("<b>Calculate flight plan from<br/>%1 to %2</b><hr/>").arg(departure).arg(destination);
 
