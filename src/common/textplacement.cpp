@@ -130,7 +130,8 @@ void TextPlacement::calculateTextAlongLine(const atools::geo::Line& line, const 
 float TextPlacement::horizontalAdvance(const QString& text, const QFontMetricsF& metrics) const
 {
   double maxAdvance = 0.;
-  for(const QString& txt : text.split('\n'))
+  const QStringList txts = text.split('\n');
+  for(const QString& txt : txts)
     maxAdvance = std::max(maxAdvance, metrics.horizontalAdvance(txt));
   return static_cast<float>(maxAdvance);
 }
@@ -231,7 +232,7 @@ void TextPlacement::drawTextAlongLines()
   {
     // Draw text with direction arrow along lines
     int i = 0;
-    for(const QPointF& textCoord : textCoords)
+    for(const QPointF& textCoord : qAsConst(textCoords))
     {
       if(!colors2.isEmpty() && colors2.at(i).isValid())
         painter->setPen(colors2.at(i));

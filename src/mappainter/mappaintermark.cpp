@@ -76,7 +76,6 @@ void MapPainterMark::render()
 {
   atools::util::PainterContextSaver saver(context->painter);
 
-
   paintMark();
   paintHome();
 
@@ -1299,14 +1298,24 @@ QStringList MapPainterMark::distanceMarkText(const map::DistanceMarker& marker, 
   // Distance ==========================================================
   if(context->dOptMeasurement(optsd::MEASUREMENT_DIST) && distanceMeter < INVALID_DISTANCE_VALUE)
   {
-    if(Unit::getUnitDist() == opts::DIST_KM && Unit::getUnitShortDist() == opts::DIST_SHORT_METER && distanceMeter < 6000)
-      distStr = QLocale(QLocale::C).toString(distanceMeter, 'f', 0) % Unit::getUnitShortDistStr();
+    float localDist = Unit::distMeterF(distanceMeter);
+
+    if(Unit::getUnitDist() == opts::DIST_KM && Unit::getUnitShortDist() == opts::DIST_SHORT_METER)
+    {
+      // Use either km or meter
+      if(localDist < 6.f)
+        distStr = Unit::distShortMeter(distanceMeter, true /* addUnit */, true /* narrow */);
+      else
+        distStr = Unit::distMeter(distanceMeter, true /* addUnit */, 20, true /* narrow */);
+    }
     else
     {
+      // Use NM/mi and feet
       distStr = Unit::distMeter(distanceMeter, true /* addUnit */, 20, true /* narrow */);
-      if(distanceMeter < 6000.f)
-        // Add feet to text for short distances
-        distStr = Unit::distShortMeter(distanceMeter, true /* addUnit */, true /* narrow */);
+
+      if(localDist < 3.f)
+        // Add feet or meter to text for short distances below three local units
+        distStr.append(tr("/") % Unit::distShortMeter(distanceMeter, true /* addUnit */, true /* narrow */));
     }
   }
 
@@ -1321,6 +1330,7 @@ QStringList MapPainterMark::distanceMarkText(const map::DistanceMarker& marker, 
     if(drawFast || initTrueText == finalTrueText)
       magTrueStr = initTrueText % magTrueSuffix;
     else
+      // Use backslash for separation to allow text placement to swap on direction
       magTrueStr = initTrueText % magTrueSuffix % '\\' % finalTrueText % magTrueSuffix;
   }
   else
@@ -1330,6 +1340,7 @@ QStringList MapPainterMark::distanceMarkText(const map::DistanceMarker& marker, 
       if(drawFast || initMagText == finalMagText)
         magTrueStr = initMagText % magSuffix;
       else
+        // Use backslash for separation to allow text placement to swap on direction
         magTrueStr = initMagText % magSuffix % '\\' % finalMagText % magSuffix;
     }
     if(context->dOptMeasurement(optsd::MEASUREMENT_TRUE))
@@ -1337,6 +1348,7 @@ QStringList MapPainterMark::distanceMarkText(const map::DistanceMarker& marker, 
       if(drawFast || initTrueText == finalTrueText)
         trueStr = initTrueText % trueSuffix;
       else
+        // Use backslash for separation to allow text placement to swap on direction
         trueStr = initTrueText % trueSuffix % '\\' % finalTrueText % trueSuffix;
     }
   }
