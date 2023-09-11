@@ -328,5 +328,6 @@
         <file>resources/icons/mapgridconfig.svg</file>
         <file>resources/icons/littlenavmapdoc.svg</file>
         <file>resources/icons/directto.svg</file>
+        <file>resources/icons/alternate.svg</file>
     </qresource>
 </RCC>

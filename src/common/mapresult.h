@@ -107,6 +107,13 @@ struct MapResult
   bool getIdAndType(int& id, MapTypes& type, const std::initializer_list<MapTypes>& types) const;
   map::MapRef getRef(const std::initializer_list<MapTypes>& types) const;
 
+  /* Get id. This assumes there is only one object for the given type. Returns -1 if not found. */
+  int getId(const MapTypes& type) const;
+
+  /* Get routeIndex. This assumes there is only one object for the given type. Returns -1 if not found.
+   * Only for flight plan related types. */
+  int getRouteIndex(const MapTypes& type) const;
+
   /* Get position and returns first for the list of types defining priority by order */
   const atools::geo::Pos& getPosition(const std::initializer_list<MapTypes>& types) const;
 
@@ -121,6 +128,8 @@ struct MapResult
 
   /* Remove all except first for the given types only */
   MapResult& clearAllButFirst(const MapTypes& types = map::ALL);
+
+  MapResult& clearRouteIndex(const MapTypes& types = map::ALL);
 
   /* Give online airspaces/centers priority */
   void moveOnlineAirspacesToFront();
@@ -252,10 +261,24 @@ struct MapResult
 
 private:
   template<typename TYPE>
-  void clearAllButFirst(QList<TYPE>& list);
+  void clearAllButFirst(QList<TYPE>& list)
+  {
+    while(list.size() > 1)
+      list.removeLast();
+  }
 
   template<typename TYPE>
   void removeInvalid(QList<TYPE>& list, QSet<int> *ids = nullptr);
+
+  template<class TYPE>
+  void setRouteIndex(QList<TYPE>& list, const MapTypes& types, const MapTypes& type, int routeIndex = -1)
+  {
+    if(types.testFlag(type) && !isEmpty(type))
+    {
+      for(TYPE& t : list)
+        t.routeIndex = routeIndex;
+    }
+  }
 
 };
 

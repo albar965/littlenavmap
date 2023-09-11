@@ -432,6 +432,7 @@
     <addaction name="menuViewUserpoints"/>
     <addaction name="separator"/>
     <addaction name="actionMapShowRoute"/>
+    <addaction name="actionMapShowAlternate"/>
     <addaction name="actionMapShowTocTod"/>
     <addaction name="actionInfoApproachShowMissedAppr"/>
     <addaction name="separator"/>
@@ -6415,6 +6416,7 @@ relation to shown airport</string>
    <addaction name="separator"/>
    <addaction name="actionMapShowRoute"/>
    <addaction name="actionInfoApproachShowMissedAppr"/>
+   <addaction name="actionMapShowAlternate"/>
    <addaction name="separator"/>
    <addaction name="actionMapShowAircraft"/>
    <addaction name="actionMapShowAircraftTrack"/>
@@ -12029,6 +12031,27 @@ relation to shown airport</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+D</string>
+   </property>
+  </action>
+  <action name="actionMapShowAlternate">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/alternate.svg</normaloff>:/littlenavmap/resources/icons/alternate.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Show &amp;Alternate Airports</string>
+   </property>
+   <property name="toolTip">
+    <string>Show legs to alternate airports and airports for flight plan on the map</string>
+   </property>
+   <property name="statusTip">
+    <string>Show legs to alternate airports and airports for flight plan on the map</string>
    </property>
   </action>
  </widget>

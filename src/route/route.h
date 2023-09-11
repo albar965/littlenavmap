@@ -658,7 +658,7 @@ public:
   /* Get display idents (ICAO, IATA, FAA or local) of all alternates */
   QStringList getAlternateDisplayIdents() const;
 
-  QVector<map::MapAirport> getAlternateAirports() const;
+  const QVector<map::MapAirport> getAlternateAirports() const;
 
   /* Get a bit array which indicates high/low airways - needed for some export formats.
    *  True indicates high airway used towards waypoint at the same index. */
@@ -705,6 +705,12 @@ public:
   {
     return getLegIndexForRef(map::MapRef(id, type));
   }
+
+  /* Fill route index for all airports in the result */
+  void updateAirportRouteIndex(map::MapResult& result) const;
+
+  /* Clear route index for all flight plan related objects in result */
+  void clearAirportRouteIndex(map::MapResult& result) const;
 
 private:
   /* Get a list of approach ILS (not localizer) and the used runway end. Only for approaches. */

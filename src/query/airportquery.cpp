@@ -129,6 +129,7 @@ void AirportQuery::getAirportById(map::MapAirport& airport, int airportId)
   if(!query::valid(Q_FUNC_INFO, airportByIdQuery))
     return;
 
+  int routeIndex = airport.routeIndex; // Remember index if set
   map::MapAirport *ap = airportIdCache.object(airportId);
 
   if(ap != nullptr)
@@ -146,6 +147,8 @@ void AirportQuery::getAirportById(map::MapAirport& airport, int airportId)
     airport = *ap;
     airportIdCache.insert(airportId, ap);
   }
+
+  airport.routeIndex = routeIndex;
 }
 
 map::MapAirport AirportQuery::getAirportByIdent(const QString& ident)

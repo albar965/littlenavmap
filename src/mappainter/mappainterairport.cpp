@@ -172,10 +172,15 @@ void MapPainterAirport::collectVisibleAirports(QVector<PaintAirportType>& visibl
       airports.append(context->route->getDestinationAirportLeg().getAirport());
       routeAirportIds.insert(airports.constLast().id);
     }
-    for(const map::MapAirport& ap : context->route->getAlternateAirports())
+
+    // Add alternates only to index if visible
+    if(context->objectDisplayTypes.testFlag(map::FLIGHTPLAN_ALTERNATE))
     {
-      airports.append(ap);
-      routeAirportIds.insert(airports.constLast().id);
+      for(const map::MapAirport& ap : context->route->getAlternateAirports())
+      {
+        airports.append(ap);
+        routeAirportIds.insert(airports.constLast().id);
+      }
     }
   }
 
@@ -489,8 +494,8 @@ void MapPainterAirport::drawAirportDiagram(const map::MapAirport& airport)
 
       QVector<MapTaxiPath> pathsToLabel;
       QList<MapTaxiPath> paths;
-
-      for(QString taxiname : map.uniqueKeys())
+      const QStringList keys = map.uniqueKeys();
+      for(QString taxiname : keys)
       {
         paths = map.values(taxiname);
         pathsToLabel.clear();

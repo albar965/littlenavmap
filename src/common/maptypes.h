@@ -265,12 +265,22 @@ struct MapBase
     return map::MapRefExt(id, position, objType, name);
   }
 
-  /* Returns object cast to concrete object or null if type does not match */
+  /* Returns object cast to const concrete object pointer or null if type does not match */
   template<typename TYPE>
   const TYPE *asPtr() const
   {
     if(TYPE::staticType() == objType)
       return static_cast<const TYPE *>(this);
+    else
+      return nullptr;
+  }
+
+  /* Returns object cast to object pointer or null if type does not match */
+  template<typename TYPE>
+  TYPE *asPtr()
+  {
+    if(TYPE::staticType() == objType)
+      return static_cast<TYPE *>(this);
     else
       return nullptr;
   }

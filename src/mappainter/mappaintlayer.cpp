@@ -388,6 +388,7 @@ bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport, const 
         int passedRouteLeg = context.flags2.testFlag(opts2::MAP_ROUTE_DIM_PASSED) ? activeRouteLeg : 0;
 
         // Check starting with previous leg of active for normal legs ====================
+        bool drawAlternate = context.objectDisplayTypes.testFlag(map::FLIGHTPLAN_ALTERNATE);
         for(int i = passedRouteLeg - 1; i < route->size(); i++)
         {
           if(i < 0)
@@ -396,7 +397,10 @@ bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport, const 
           const RouteLeg& routeLeg = route->value(i);
           map::MapTypes type = routeLeg.getMapType();
           if(type == map::AIRPORT || type == map::VOR || type == map::NDB || type == map::WAYPOINT)
-            context.routeProcIdMap.insert(map::MapRef(routeLeg.getId(), type));
+          {
+            if(drawAlternate || !routeLeg.isAlternate())
+              context.routeProcIdMap.insert(map::MapRef(routeLeg.getId(), type));
+          }
         }
 
         // Add procedure navaids beginning from previous leg ==============
@@ -445,7 +449,6 @@ bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport, const 
       // ====================================
       // Get navaids from procedure highlight to avoid duplicate drawing
       // These will be drawn in the procedure preview or flight plan instead of the navaid painter
-
       if(context.mapLayerRoute->isApproach())
       {
         // Procedure legs from "show all" function ======================================
@@ -492,18 +495,10 @@ bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport, const 
       }
 
       // Set render hints depending on context (moving, still) =====================
-      if(mapPaintWidget->viewContext() == Marble::Still)
-      {
-        painter->setRenderHint(QPainter::Antialiasing, true);
-        painter->setRenderHint(QPainter::TextAntialiasing, true);
-        painter->setRenderHint(QPainter::SmoothPixmapTransform, true);
-      }
-      else if(mapPaintWidget->viewContext() == Marble::Animation)
-      {
-        painter->setRenderHint(QPainter::Antialiasing, false);
-        painter->setRenderHint(QPainter::TextAntialiasing, false);
-        painter->setRenderHint(QPainter::SmoothPixmapTransform, false);
-      }
+      bool still = mapPaintWidget->viewContext() == Marble::Still;
+      painter->setRenderHint(QPainter::Antialiasing, still);
+      painter->setRenderHint(QPainter::TextAntialiasing, still);
+      painter->setRenderHint(QPainter::SmoothPixmapTransform, still);
 
       // =========================================================================
       // Draw ====================================

@@ -833,6 +833,20 @@ Pos Route::getPositionAtDistance(float distFromStartNm) const
   return retval;
 }
 
+void Route::updateAirportRouteIndex(map::MapResult& result) const
+{
+  for(map::MapAirport& airport : result.airports)
+  {
+    if(airport.routeIndex == -1)
+      airport.routeIndex = getLegIndexForIdAndType(airport.id, map::AIRPORT);
+  }
+}
+
+void Route::clearAirportRouteIndex(map::MapResult& result) const
+{
+  result.clearRouteIndex();
+}
+
 void Route::updateApproachIls()
 {
   if(isEmpty())
@@ -893,7 +907,7 @@ void Route::updateApproachRunwayEndAndIls(QVector<map::MapIls>& ilsVector, map::
       {
         // ILS does not even match runway - try fuzzy to consider renamed runways
         QStringList variants = atools::fs::util::runwayNameVariants(approachLegs.runwayEnd.name);
-        for(const QString& runwayVariant : variants)
+        for(const QString& runwayVariant : qAsConst(variants))
           maptools::insert(ilsMapAll, mapQuery->getIlsByAirportAndRunway(destAirportIdent, runwayVariant));
       }
 
@@ -910,7 +924,7 @@ void Route::updateApproachRunwayEndAndIls(QVector<map::MapIls>& ilsVector, map::
            leg.recFixType != "TN" && leg.recFixType != "W")
         {
           map::MapIls foundIls;
-          for(const map::MapIls& ils : ilsMapAll)
+          for(const map::MapIls& ils : qAsConst(ilsMapAll))
           {
             if(leg.recFixIdent == ils.ident)
             {
@@ -1216,6 +1230,10 @@ void Route::getNearest(const CoordinateConverter& conv, int xs, int ys, int scre
         // Do not edit missed procedures
         continue;
     }
+
+    if(leg.isAlternate() && !types.testFlag(map::QUERY_ALTERNATE))
+      // Do not edit alternate airports
+      continue;
 
     // ==========================================================================================
     // Use fix position to get real navaids from procedures instead of projected or otherwise modified positions
@@ -1558,7 +1576,7 @@ QStringList Route::getAlternateDisplayIdents() const
   return alternateIdents;
 }
 
-QVector<map::MapAirport> Route::getAlternateAirports() const
+const QVector<map::MapAirport> Route::getAlternateAirports() const
 {
   QVector<map::MapAirport> alternates;
   int offset = getAlternateLegsOffset();
@@ -2186,7 +2204,7 @@ void Route::updateBoundingRect()
 {
   Marble::GeoDataLineString line;
 
-  for(const RouteLeg& routeLeg : *this)
+  for(const RouteLeg& routeLeg : qAsConst(*this))
     if(routeLeg.getPosition().isValid())
       line.append(Marble::GeoDataCoordinates(routeLeg.getPosition().getLonX(),
                                              routeLeg.getPosition().getLatY(), 0., Marble::GeoDataCoordinates::Degree));

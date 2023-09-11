@@ -183,6 +183,7 @@ enum MapDisplayType
 
   FLIGHTPLAN = 1 << 9, /* Flight plan */
   FLIGHTPLAN_TOC_TOD = 1 << 10, /* Top of climb and top of descent */
+  FLIGHTPLAN_ALTERNATE = 1 << 21, /* Alternate airport and lines in flightplan */
 
   GLS = 1 << 13, /* RNV approach, GLS approache or GBAS path - only display flag. Object is stored with type ILS. */
   AIRCRAFT_TRACK = 1 << 17, /* Simulator aircraft track. Not an object type. */
@@ -215,6 +216,7 @@ enum MapObjectQueryType
   QUERY_MARK_DISTANCE = 1 << 8, /* Measurement lines */
   QUERY_PREVIEW_PROC_POINTS = 1 << 9, /* Points from procedure preview */
   QUERY_PROC_RECOMMENDED = 1 << 10, /* Recommended navaids from procedures */
+  QUERY_ALTERNATE = 1 << 11, /* Alternate airports in flight plan */
 
   /* All user creatable/placeable features */
   QUERY_MARK = QUERY_MARK_DISTANCE | QUERY_MARK_HOLDINGS | QUERY_MARK_PATTERNS | QUERY_MARK_RANGE | QUERY_MARK_MSA,

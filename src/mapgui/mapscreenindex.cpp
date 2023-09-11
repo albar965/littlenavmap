@@ -748,8 +748,8 @@ void MapScreenIndex::updateRouteScreenGeometry(const Marble::GeoDataLatLonBox& c
 {
   const Route& route = NavApp::getRouteConst();
 
-  map::MapTypes shown = paintLayer->getShownMapTypes();
-  bool missed = shown.testFlag(map::MISSED_APPROACH);
+  bool missed = paintLayer->getShownMapTypes().testFlag(map::MISSED_APPROACH);
+  bool alternate = paintLayer->getShownMapDisplayTypes().testFlag(map::FLIGHTPLAN_ALTERNATE);
 
   routeLines.clear();
   routePointsEditable.clear();
@@ -772,6 +772,10 @@ void MapScreenIndex::updateRouteScreenGeometry(const Marble::GeoDataLatLonBox& c
 
       // Do not add the missed legs if they are not shown
       if(routeLeg.getProcedureLeg().isMissed() && !missed)
+        continue;
+
+      // Do not add alternate legs if they are hidden
+      if(routeLeg.isAlternate() && !alternate)
         continue;
 
       const Pos& p2 = routeLeg.getPosition();
@@ -913,19 +917,25 @@ void MapScreenIndex::getAllNearest(const QPoint& point, int maxDistance, map::Ma
   getNearestAirspaces(xs, ys, result);
   getNearestIls(xs, ys, maxDistance, result);
 
+  const Route& route = NavApp::getRouteConst();
   // Flight plan objects =============================================================
   if(shownDisplay.testFlag(map::FLIGHTPLAN))
   {
     map::MapObjectQueryTypes queryTypes = types | map::QUERY_PROCEDURES | map::QUERY_PROC_POINTS;
 
+    // Add points and procedures if missed is visible
     if(shown.testFlag(map::MISSED_APPROACH))
       queryTypes |= map::QUERY_PROC_MISSED_POINTS | map::QUERY_PROCEDURES_MISSED;
 
+    // Query alternates if shown
+    if(shownDisplay.testFlag(map::FLIGHTPLAN_ALTERNATE))
+      queryTypes |= map::QUERY_ALTERNATE;
+
     // Get copies from flight plan if visible
-    NavApp::getRouteConst().getNearest(conv, xs, ys, maxDistance, result, queryTypes, routeDrawnNavaids);
+    route.getNearest(conv, xs, ys, maxDistance, result, queryTypes, routeDrawnNavaids);
 
     if(types.testFlag(map::QUERY_PROC_RECOMMENDED))
-      NavApp::getRouteConst().getNearestRecommended(conv, xs, ys, maxDistance, result, queryTypes, routeDrawnNavaids);
+      route.getNearestRecommended(conv, xs, ys, maxDistance, result, queryTypes, routeDrawnNavaids);
   }
 
   // Get points of procedure preview
@@ -956,16 +966,17 @@ void MapScreenIndex::getAllNearest(const QPoint& point, int maxDistance, map::Ma
   mapWidget->getMapQuery()->getNearestScreenObjects(conv, mapLayer, shownDetailAirportIds, airportDiagram, mapTypes, displayTypes,
                                                     xs, ys, maxDistance, result);
 
-  // Update all incomplete objects, especially from search
-  for(map::MapAirport& obj : result.airports)
+  // Update all incomplete objects, especially from search preview
+  for(map::MapAirport& airport : result.airports)
   {
-    if(!obj.complete())
-    {
-      int routeIndex = obj.routeIndex;
-      airportQuery->getAirportById(obj, obj.getId());
-      obj.routeIndex = routeIndex;
-    }
+    if(!airport.complete())
+      airportQuery->getAirportById(airport, airport.getId());
   }
+
+  if(shownDisplay.testFlag(map::FLIGHTPLAN))
+    route.updateAirportRouteIndex(result);
+  else
+    route.clearAirportRouteIndex(result);
 
   // Check if pointer is near a wind barb in the one degree grid
   if(paintLayer->getShownMapDisplayTypes().testFlag(map::WIND_BARBS))

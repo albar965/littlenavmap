@@ -149,6 +149,7 @@ void MapPainterRoute::paintRoute()
   // Collect line text and geometry from the route
   QStringList routeTexts;
   QVector<Line> lines;
+  bool drawAlternate = context->objectDisplayTypes.testFlag(map::FLIGHTPLAN_ALTERNATE);
 
   // Collect route - only coordinates and texts ===============================
   const RouteLeg& destLeg = route->getDestinationAirportLeg();
@@ -159,8 +160,17 @@ void MapPainterRoute::paintRoute()
 
     if(leg.isAlternate())
     {
-      routeTexts.append(buildLegText(leg));
-      lines.append(Line(destLeg.getPosition(), leg.getPosition()));
+      if(drawAlternate)
+      {
+        routeTexts.append(buildLegText(leg));
+        lines.append(Line(destLeg.getPosition(), leg.getPosition()));
+      }
+      else
+      {
+        // Add empty texts to skip drawing
+        routeTexts.append(QString());
+        lines.append(Line());
+      }
     }
     else
     {
@@ -353,6 +363,7 @@ void MapPainterRoute::drawRouteInternal(QStringList routeTexts, QVector<Line> li
     bool transparent = context->flags2.testFlag(opts2::MAP_ROUTE_TRANSPARENT);
     float alpha = transparent ? (1.f - context->transparencyFlightplan) : 1.f;
     float lineWidth = transparent ? outerlinewidth : innerlinewidth;
+    bool drawAlternate = context->objectDisplayTypes.testFlag(map::FLIGHTPLAN_ALTERNATE);
 
     const QPen routePen(mapcolors::adjustAlphaF(od.getFlightplanColor(), alpha), lineWidth, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
     const QPen routeOutlinePen(od.getFlightplanOutlineColor(), outerlinewidth, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
@@ -371,7 +382,7 @@ void MapPainterRoute::drawRouteInternal(QStringList routeTexts, QVector<Line> li
 
       if(!transparent)
       {
-        if(alternateOffset != map::INVALID_INDEX_VALUE)
+        if(alternateOffset != map::INVALID_INDEX_VALUE && drawAlternate)
         {
           painter->setPen(routeAlternateOutlinePen);
           for(int idx = alternateOffset; idx < alternateOffset + route->getNumAlternateLegs(); idx++)
@@ -390,7 +401,7 @@ void MapPainterRoute::drawRouteInternal(QStringList routeTexts, QVector<Line> li
         drawLine(painter, lines.at(i));
 
       // Draw center line for alternates all from destination airport to each alternate
-      if(alternateOffset != map::INVALID_INDEX_VALUE)
+      if(alternateOffset != map::INVALID_INDEX_VALUE && drawAlternate)
       {
         mapcolors::adjustPenForAlternate(painter);
         for(int idx = alternateOffset; idx < alternateOffset + route->getNumAlternateLegs(); idx++)
@@ -455,12 +466,15 @@ void MapPainterRoute::drawRouteInternal(QStringList routeTexts, QVector<Line> li
   textPlacementBuf.setDrawFast(context->drawFast);
   textPlacementBuf.setLineWidth(outerlinewidth);
   textPlacementBuf.calculateTextPositions(positions);
+  bool drawAlternate = context->objectDisplayTypes.testFlag(map::FLIGHTPLAN_ALTERNATE);
 
   QBitArray visibleStartPointsBuf = textPlacementBuf.getVisibleStartPoints();
   for(int i = 0; i < route->size(); i++)
   {
     // Make all approach points except the last one invisible to avoid text and symbol overlay over approach
-    if(route->value(i).isAnyProcedure())
+    // Also clear hidden alternates
+    const RouteLeg& leg = route->getLegAt(i);
+    if(leg.isAnyProcedure() || (leg.isAlternate() && !drawAlternate))
       visibleStartPointsBuf.clearBit(i);
   }
 
@@ -2014,6 +2028,7 @@ void MapPainterRoute::drawSymbols(const QBitArray& visibleStartPoints, const QLi
       float y = static_cast<float>(pt.y());
       const RouteLeg& leg = context->route->value(i);
       map::MapTypes type = leg.getMapType();
+
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wswitch"
       switch(type)
@@ -2022,18 +2037,23 @@ void MapPainterRoute::drawSymbols(const QBitArray& visibleStartPoints, const QLi
           // name and region not found in database
           paintWaypoint(mapcolors::routeInvalidPointColor, x, y, preview);
           break;
+
         case map::USERPOINTROUTE:
           paintUserpoint(x, y, leg.getUserpointRoute(), preview);
           break;
+
         case map::AIRPORT:
           paintAirport(x, y, leg.getAirport());
           break;
+
         case map::VOR:
           paintVor(x, y, leg.getVor(), preview);
           break;
+
         case map::NDB:
           paintNdb(x, y, leg.getNdb(), preview);
           break;
+
         case map::WAYPOINT:
           paintWaypoint(x, y, leg.getWaypoint(), preview);
           break;

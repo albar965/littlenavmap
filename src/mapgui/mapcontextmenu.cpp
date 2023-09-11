@@ -940,6 +940,19 @@ void MapContextMenu::insertDeleteRouteWaypointMenu(QMenu& menu)
     return map::routeIndex(base) == -1 || (base->objType != map::PROCEDURE_POINT && isProcedure(base));
   }), index.end());
 
+  // Erase duplicate occasions of procedures which can appear in double used waypoints
+  index.erase(std::unique(index.begin(), index.end(), [ = ](const map::MapBase *base1, const map::MapBase *base2) -> bool
+  {
+    const map::MapProcedurePoint *procPt1 = base1->asPtr<map::MapProcedurePoint>();
+    if(procPt1 != nullptr)
+    {
+      const map::MapProcedurePoint *procPt2 = base2->asPtr<map::MapProcedurePoint>();
+      if(procPt2 != nullptr)
+        return procPt1->compoundId() == procPt2->compoundId();
+    }
+    return false;
+  }), index.end());
+
   index.sort(DEFAULT_TYPE_SORT, alphaSort);
 
   ActionCallback callback =
@@ -1193,8 +1206,13 @@ bool MapContextMenu::exec(QPoint menuPos, QPoint point)
   }
 
   // Get objects near position =============================================================
-  screenIndex->getAllNearest(point, screenSearchDist, *result,
-                             map::QUERY_MARK | map::QUERY_PREVIEW_PROC_POINTS | map::QUERY_PROC_RECOMMENDED);
+  map::MapObjectQueryTypes queryType = map::QUERY_MARK | map::QUERY_PREVIEW_PROC_POINTS | map::QUERY_PROC_RECOMMENDED;
+
+  // Fetch alternates only if enabled on map
+  if(mapWidget->getShownMapDisplayTypes().testFlag(map::FLIGHTPLAN_ALTERNATE))
+    queryType |= map::QUERY_ALTERNATE;
+
+  screenIndex->getAllNearest(point, screenSearchDist, *result, queryType);
 
   result->moveOnlineAirspacesToFront();
 

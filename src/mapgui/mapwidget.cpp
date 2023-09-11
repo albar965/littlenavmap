@@ -542,8 +542,12 @@ void MapWidget::updateTooltipResult()
                                         map::QUERY_MARK_MSA | map::QUERY_MARK_DISTANCE | map::QUERY_MARK_RANGE |
                                         map::QUERY_PREVIEW_PROC_POINTS | map::QUERY_PROC_RECOMMENDED;
 
+  // Enable features not always shown depending on visiblity
   if(getShownMapTypes().testFlag(map::MISSED_APPROACH))
     queryTypes |= map::QUERY_PROC_MISSED_POINTS;
+
+  if(getShownMapDisplayTypes().testFlag(map::FLIGHTPLAN_ALTERNATE))
+    queryTypes |= map::QUERY_ALTERNATE;
 
   // Load tooltip data into mapSearchResultTooltip
   *mapSearchResultTooltip = map::MapResult();
@@ -2359,7 +2363,8 @@ void MapWidget::showGridConfiguration()
   qDebug() << Q_FUNC_INFO;
 
   // Look through all render plugins and look for GraticulePlugin
-  for(Marble::RenderPlugin *plugin : renderPlugins())
+  const QList<Marble::RenderPlugin *> plugins = renderPlugins();
+  for(Marble::RenderPlugin *plugin : plugins)
   {
     if(plugin->nameId() == "coordinate-grid")
     {
@@ -3198,13 +3203,13 @@ void MapWidget::resetSettingActionsToDefault()
   atools::gui::SignalBlocker blocker({ui->actionMapShowAirports, ui->actionMapShowVor, ui->actionMapShowNdb, ui->actionMapShowWp,
                                       ui->actionMapShowIls, ui->actionMapShowGls, ui->actionMapShowHolding, ui->actionMapShowAirportMsa,
                                       ui->actionMapShowVictorAirways, ui->actionMapShowJetAirways, ui->actionMapShowTracks,
-                                      ui->actionShowAirspaces, ui->actionMapShowRoute, ui->actionMapShowTocTod, ui->actionMapShowAircraft,
-                                      ui->actionMapShowCompassRose, ui->actionMapShowCompassRoseAttach, ui->actionMapShowEndurance,
-                                      ui->actionMapShowSelectedAltRange, ui->actionMapShowTurnPath, ui->actionMapAircraftCenter,
-                                      ui->actionMapShowAircraftAi, ui->actionMapShowAircraftOnline, ui->actionMapShowAircraftAiBoat,
-                                      ui->actionMapShowAircraftTrack, ui->actionInfoApproachShowMissedAppr, ui->actionMapShowGrid,
-                                      ui->actionMapShowCities, ui->actionMapShowMinimumAltitude, ui->actionMapShowAirportWeather,
-                                      ui->actionMapShowSunShading});
+                                      ui->actionShowAirspaces, ui->actionMapShowRoute, ui->actionMapShowTocTod, ui->actionMapShowAlternate,
+                                      ui->actionMapShowAircraft, ui->actionMapShowCompassRose, ui->actionMapShowCompassRoseAttach,
+                                      ui->actionMapShowEndurance, ui->actionMapShowSelectedAltRange, ui->actionMapShowTurnPath,
+                                      ui->actionMapAircraftCenter, ui->actionMapShowAircraftAi, ui->actionMapShowAircraftOnline,
+                                      ui->actionMapShowAircraftAiBoat, ui->actionMapShowAircraftTrack, ui->actionInfoApproachShowMissedAppr,
+                                      ui->actionMapShowGrid, ui->actionMapShowCities, ui->actionMapShowMinimumAltitude,
+                                      ui->actionMapShowAirportWeather, ui->actionMapShowSunShading});
 
   // Menu map =====================================
   ui->actionMapAircraftCenter->setChecked(true);
@@ -3231,6 +3236,7 @@ void MapWidget::resetSettingActionsToDefault()
   // -----------------
   ui->actionMapShowRoute->setChecked(true);
   ui->actionMapShowTocTod->setChecked(true);
+  ui->actionMapShowAlternate->setChecked(true);
   ui->actionInfoApproachShowMissedAppr->setChecked(true);
   ui->actionMapShowAircraft->setChecked(true);
   ui->actionMapShowAircraftTrack->setChecked(true);
@@ -3321,6 +3327,7 @@ void MapWidget::updateMapObjectsShown()
 
   setShowMapObjectDisplay(map::FLIGHTPLAN, ui->actionMapShowRoute->isChecked());
   setShowMapObjectDisplay(map::FLIGHTPLAN_TOC_TOD, ui->actionMapShowTocTod->isChecked());
+  setShowMapObjectDisplay(map::FLIGHTPLAN_ALTERNATE, ui->actionMapShowAlternate->isChecked());
   setShowMapObject(map::MISSED_APPROACH, ui->actionInfoApproachShowMissedAppr->isChecked());
 
   setShowMapObjectDisplay(map::COMPASS_ROSE, ui->actionMapShowCompassRose->isChecked());

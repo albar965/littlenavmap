@@ -124,13 +124,6 @@ MapResult& MapResult::clear(const MapTypes& types)
 }
 
 template<typename TYPE>
-void MapResult::clearAllButFirst(QList<TYPE>& list)
-{
-  while(list.size() > 1)
-    list.removeLast();
-}
-
-template<typename TYPE>
 void MapResult::removeInvalid(QList<TYPE>& list, QSet<int> *ids)
 {
   if(ids != nullptr)
@@ -246,15 +239,27 @@ MapResult& MapResult::clearAllButFirst(const MapTypes& types)
   return *this;
 }
 
+MapResult& MapResult::clearRouteIndex(const MapTypes& types)
+{
+  setRouteIndex(airports, types, map::AIRPORT);
+  setRouteIndex(waypoints, types, map::WAYPOINT);
+  setRouteIndex(vors, types, map::VOR);
+  setRouteIndex(ndbs, types, map::NDB);
+  setRouteIndex(userpointsRoute, types, map::USERPOINTROUTE);
+  setRouteIndex(procPoints, types, map::PROCEDURE_POINT);
+
+  return *this;
+}
+
 void MapResult::moveOnlineAirspacesToFront()
 {
   QList<MapAirspace> list;
-  for(const MapAirspace& a: airspaces)
+  for(const MapAirspace& a: qAsConst(airspaces))
   {
     if(a.isOnline())
       list.append(a);
   }
-  for(const MapAirspace& a: airspaces)
+  for(const MapAirspace& a: qAsConst(airspaces))
   {
     if(!a.isOnline())
       list.append(a);
@@ -271,7 +276,7 @@ MapResult MapResult::moveOnlineAirspacesToFront() const
 
 bool MapResult::hasSimNavUserAirspaces() const
 {
-  for(const map::MapAirspace& airspace : airspaces)
+  for(const map::MapAirspace& airspace : qAsConst(airspaces))
   {
     if(!airspace.isOnline())
       return true;
@@ -495,7 +500,6 @@ const atools::geo::Pos& MapResult::getPosition(const std::initializer_list<MapTy
         return patternMarks.constFirst().getPosition();
       else if(type == MARK_MSA)
         return msaMarks.constFirst().getPosition();
-
     }
   }
   return atools::geo::EMPTY_POS;
@@ -592,60 +596,12 @@ bool MapResult::getIdAndType(int& id, MapTypes& type, const std::initializer_lis
 
   for(const MapTypes& t : types)
   {
-    if(!isEmpty(t))
-    {
-      if(t == map::AIRPORT)
-        id = airports.constFirst().getId();
-      else if(t == map::AIRPORT_MSA)
-        id = airportMsa.constFirst().getId();
-      else if(t == map::WAYPOINT)
-        id = waypoints.constFirst().getId();
-      else if(t == map::VOR)
-        id = vors.constFirst().getId();
-      else if(t == map::NDB)
-        id = ndbs.constFirst().getId();
-      else if(t == map::AIRWAY)
-        id = airways.constFirst().getId();
-      else if(t == map::RUNWAYEND)
-        id = runwayEnds.constFirst().getId();
-      else if(t == map::RUNWAY)
-        id = runways.constFirst().getId();
-      else if(t == map::ILS)
-        id = ils.constFirst().getId();
-      else if(t == map::HOLDING)
-        id = holdings.constFirst().getId();
-      else if(t == map::AIRSPACE)
-        id = airspaces.constFirst().getId();
-      else if(t == map::USERPOINTROUTE)
-        id = userpointsRoute.constFirst().getId();
-      else if(t == map::USERPOINT)
-        id = userpoints.constFirst().getId();
-      else if(t == map::LOGBOOK)
-        id = logbookEntries.constFirst().getId();
-      else if(t == map::PROCEDURE_POINT)
-        id = procPoints.constFirst().getId();
-      else if(t == map::AIRCRAFT)
-        id = userAircraft.getId();
-      else if(t == map::AIRCRAFT_AI)
-        id = aiAircraft.constFirst().getId();
-      else if(t == map::AIRCRAFT_ONLINE)
-        id = onlineAircraft.constFirst().getId();
-      else if(t == map::MARK_RANGE)
-        id = rangeMarks.constFirst().getId();
-      else if(t == map::MARK_DISTANCE)
-        id = distanceMarks.constFirst().getId();
-      else if(t == map::MARK_HOLDING)
-        id = holdingMarks.constFirst().getId();
-      else if(t == map::MARK_PATTERNS)
-        id = patternMarks.constFirst().getId();
-      else if(t == map::MARK_MSA)
-        id = msaMarks.constFirst().getId();
+    id = getId(t);
 
-      if(id != -1)
-      {
-        type = t;
-        break;
-      }
+    if(id != -1)
+    {
+      type = t;
+      break;
     }
   }
   return id != -1;
@@ -659,6 +615,80 @@ map::MapRef MapResult::getRef(const std::initializer_list<MapTypes>& types) cons
     return map::MapRef(id, type);
   else
     return map::MapRef();
+}
+
+int MapResult::getId(const map::MapTypes& type) const
+{
+  if(!isEmpty(type))
+  {
+    if(type == map::AIRPORT)
+      return airports.constFirst().getId();
+    else if(type == map::AIRPORT_MSA)
+      return airportMsa.constFirst().getId();
+    else if(type == map::WAYPOINT)
+      return waypoints.constFirst().getId();
+    else if(type == map::VOR)
+      return vors.constFirst().getId();
+    else if(type == map::NDB)
+      return ndbs.constFirst().getId();
+    else if(type == map::AIRWAY)
+      return airways.constFirst().getId();
+    else if(type == map::RUNWAYEND)
+      return runwayEnds.constFirst().getId();
+    else if(type == map::RUNWAY)
+      return runways.constFirst().getId();
+    else if(type == map::ILS)
+      return ils.constFirst().getId();
+    else if(type == map::HOLDING)
+      return holdings.constFirst().getId();
+    else if(type == map::AIRSPACE)
+      return airspaces.constFirst().getId();
+    else if(type == map::USERPOINTROUTE)
+      return userpointsRoute.constFirst().getId();
+    else if(type == map::USERPOINT)
+      return userpoints.constFirst().getId();
+    else if(type == map::LOGBOOK)
+      return logbookEntries.constFirst().getId();
+    else if(type == map::PROCEDURE_POINT)
+      return procPoints.constFirst().getId();
+    else if(type == map::AIRCRAFT)
+      return userAircraft.getId();
+    else if(type == map::AIRCRAFT_AI)
+      return aiAircraft.constFirst().getId();
+    else if(type == map::AIRCRAFT_ONLINE)
+      return onlineAircraft.constFirst().getId();
+    else if(type == map::MARK_RANGE)
+      return rangeMarks.constFirst().getId();
+    else if(type == map::MARK_DISTANCE)
+      return distanceMarks.constFirst().getId();
+    else if(type == map::MARK_HOLDING)
+      return holdingMarks.constFirst().getId();
+    else if(type == map::MARK_PATTERNS)
+      return patternMarks.constFirst().getId();
+    else if(type == map::MARK_MSA)
+      return msaMarks.constFirst().getId();
+  }
+  return -1;
+}
+
+int MapResult::getRouteIndex(const map::MapTypes& type) const
+{
+  if(!isEmpty(type))
+  {
+    if(type == map::AIRPORT)
+      return airports.constFirst().routeIndex;
+    else if(type == map::WAYPOINT)
+      return waypoints.constFirst().routeIndex;
+    else if(type == map::VOR)
+      return vors.constFirst().routeIndex;
+    else if(type == map::NDB)
+      return ndbs.constFirst().routeIndex;
+    else if(type == map::USERPOINTROUTE)
+      return userpointsRoute.constFirst().routeIndex;
+    else if(type == map::PROCEDURE_POINT)
+      return procPoints.constFirst().routeIndex;
+  }
+  return -1;
 }
 
 MapResult& MapResult::addFromMapBase(const MapBase *base)

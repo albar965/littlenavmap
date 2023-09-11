@@ -406,6 +406,7 @@ void MapPaintWidget::updateGeometryIndex(map::MapTypes oldTypes, map::MapDisplay
     screenIndex->updateIlsScreenGeometry(getCurrentViewBoundingBox());
 
   if(types.testFlag(map::MISSED_APPROACH) != oldTypes.testFlag(map::MISSED_APPROACH) ||
+     displayTypes.testFlag(map::FLIGHTPLAN_ALTERNATE) != oldDisplayTypes.testFlag(map::FLIGHTPLAN_ALTERNATE) ||
      (displayTypes.testFlag(map::FLIGHTPLAN) != oldDisplayTypes.testFlag(map::FLIGHTPLAN)))
     screenIndex->updateRouteScreenGeometry(getCurrentViewBoundingBox());
 
