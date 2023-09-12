@@ -17,6 +17,7 @@
 
 #include "search/searchbasetable.h"
 
+#include "app/navapp.h"
 #include "atools.h"
 #include "common/constants.h"
 #include "common/mapcolors.h"
@@ -26,9 +27,9 @@
 #include "gui/actiontool.h"
 #include "gui/dialog.h"
 #include "gui/itemviewzoomhandler.h"
+#include "gui/tools.h"
 #include "logbook/logdatacontroller.h"
 #include "mapgui/mapwidget.h"
-#include "app/navapp.h"
 #include "options/optiondata.h"
 #include "query/airportquery.h"
 #include "query/mapquery.h"
@@ -37,8 +38,8 @@
 #include "search/columnlist.h"
 #include "search/searchcontroller.h"
 #include "search/sqlcontroller.h"
-#include "sql/sqlrecord.h"
 #include "search/sqlmodel.h"
+#include "sql/sqlrecord.h"
 #include "ui_mainwindow.h"
 
 #include <QTimer>
@@ -224,6 +225,7 @@ SearchBaseTable::SearchBaseTable(QMainWindow *parent, QTableView *tableView, Col
   viewEventFilter = new ViewEventFilter(this);
   widgetEventFilter = new SearchWidgetEventFilter(this);
   view->installEventFilter(viewEventFilter);
+  atools::gui::adjustTableColors(view);
 }
 
 SearchBaseTable::~SearchBaseTable()
@@ -328,6 +330,7 @@ void SearchBaseTable::optionsChanged()
 void SearchBaseTable::styleChanged()
 {
   view->update();
+  atools::gui::adjustTableColors(view);
 }
 
 void SearchBaseTable::updateTableSelection(bool noFollow)

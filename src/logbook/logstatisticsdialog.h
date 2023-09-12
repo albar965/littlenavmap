@@ -64,6 +64,8 @@ public:
   /* Update display units */
   void optionsChanged();
 
+  void styleChanged();
+
 private:
   /* Use events to update data and disconnect from database if not visible. */
   /* Also enable or disable toolbar/menu action. */

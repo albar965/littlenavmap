@@ -180,6 +180,11 @@ void LogdataController::optionsChanged()
   statsDialog->optionsChanged();
 }
 
+void LogdataController::styleChanged()
+{
+  statsDialog->styleChanged();
+}
+
 void LogdataController::deleteLogEntryFromMap(int id)
 {
   deleteLogEntries({id});

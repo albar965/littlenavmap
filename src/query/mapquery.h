@@ -118,7 +118,7 @@ public:
 
   /* Get ILS from sim database based on airport ident and runway name.
    * Runway name can be zero prefixed or prefixed with "RW". */
-  QVector<map::MapIls> getIlsByAirportAndRunway(const QString& airportIdent, const QString& runway) const;
+  const QVector<map::MapIls> getIlsByAirportAndRunway(const QString& airportIdent, const QString& runway) const;
 
   /* Get ILS from sim database based on airport ident and ILS ident. Uses exact match. */
   QVector<map::MapIls> getIlsByAirportAndIdent(const QString& airportIdent, const QString& ilsIdent) const;

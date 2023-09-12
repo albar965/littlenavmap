@@ -24,6 +24,7 @@
 #include "fs/util/fsutil.h"
 #include "geo/calculations.h"
 #include "gui/itemviewzoomhandler.h"
+#include "gui/tools.h"
 #include "query/airportquery.h"
 #include "query/mapquery.h"
 #include "weather/weatherreporter.h"
@@ -67,6 +68,8 @@ RunwaySelection::RunwaySelection(QObject *parent, const map::MapAirport& mapAirp
 
   // Resize widget to get rid of the too large default margins
   zoomHandler = new atools::gui::ItemViewZoomHandler(runwayTableWidget);
+  atools::gui::adjustTableColors(runwayTableWidget);
+
 }
 
 RunwaySelection::~RunwaySelection()
@@ -224,7 +227,7 @@ void RunwaySelection::fillRunwayList()
 
     // Fill items ===================================================
     int index = 0; // Index in runway table
-    for(const RunwayIdxEntry& runway : runways)
+    for(const RunwayIdxEntry& runway : qAsConst(runways))
       addItem(runway, formatter::windInformationShort(windDirectionDeg, windSpeedKts, runway.end.heading), index++);
 
     runwayTableWidget->resizeColumnsToContents();
@@ -299,7 +302,7 @@ bool RunwaySelection::includeRunway(const QString& runwayName)
     return true;
   else
   {
-    for(const QString& filter : runwayNameFilter)
+    for(const QString& filter : qAsConst(runwayNameFilter))
     {
       if(atools::fs::util::runwayEqual(runwayName, filter))
         return true;

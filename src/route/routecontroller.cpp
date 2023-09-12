@@ -234,6 +234,7 @@ RouteController::RouteController(QMainWindow *parentWindow, QTableView *tableVie
   flightplanIO = new atools::fs::pln::FlightplanIO();
 
   Ui::MainWindow *ui = NavApp::getMainUi();
+  atools::gui::adjustTableColors(ui->tableViewRoute);
   tabHandlerRoute = new atools::gui::TabWidgetHandler(ui->tabWidgetRoute, {}, QIcon(":/littlenavmap/resources/icons/tabbutton.svg"),
                                                       tr("Open or close tabs"));
   tabHandlerRoute->init(rc::TabRouteIds, lnm::ROUTEWINDOW_WIDGET_TABS);
@@ -1431,7 +1432,7 @@ bool RouteController::insertFlightplan(const QString& filename, int insertBefore
       insertPosSelection = route.size();
 
       // Append flight plan to current flightplan object - route is updated later
-      for(const FlightplanEntry& entry : flightplan)
+      for(const FlightplanEntry& entry : qAsConst(flightplan))
         routePlan.append(entry);
 
       // Appended after destination airport
@@ -2037,7 +2038,7 @@ bool RouteController::calculateRouteInternal(atools::routing::RouteFinder *route
 
       int idx = 1;
       // Create flight plan entries - will be copied later to the route map objects
-      for(const RouteEntry& routeEntry : calculatedRoute)
+      for(const RouteEntry& routeEntry : qAsConst(calculatedRoute))
       {
         FlightplanEntry flightplanEntry;
         entryBuilder->buildFlightplanEntry(routeEntry.ref.id, atools::geo::EMPTY_POS, routeEntry.ref.objType,
@@ -2158,7 +2159,6 @@ void RouteController::showInRoute(int index)
   qDebug() << Q_FUNC_INFO << index;
   if(index >= 0 && index < map::INVALID_INDEX_VALUE)
     tableViewRoute->selectRow(index);
-  // tableViewRoute->scrollTo(model->index(std::max(index - 1, 0), 0), QAbstractItemView::PositionAtTop);
 }
 
 void RouteController::reverseRoute()
@@ -2788,7 +2788,7 @@ void RouteController::tableContextMenu(const QPoint& pos)
   // If there are any radio navaids in the selected list enable range menu item
   int numRadioNavaids = 0;
   QString navaidText;
-  for(int idx : selectedRows)
+  for(int idx : qAsConst(selectedRows))
   {
     const RouteLeg& leg = route.value(idx);
     if((leg.getVor().isValid() && leg.getVor().range > 0) || (leg.getNdb().isValid() && leg.getNdb().range > 0))
@@ -2936,7 +2936,7 @@ void RouteController::tableContextMenu(const QPoint& pos)
     else if(action == ui->actionMapNavaidRange)
     {
       // Show range rings for all radio navaids
-      for(int idx : selectedRows)
+      for(int idx : qAsConst(selectedRows))
       {
         const RouteLeg& routeLegSel = route.value(idx);
         if(routeLegSel.getNdb().isValid() || routeLegSel.getVor().isValid())
@@ -3223,6 +3223,7 @@ void RouteController::styleChanged()
   tabHandlerRoute->styleChanged();
   updateModelHighlights();
   routeLabel->styleChanged();
+  atools::gui::adjustTableColors(ui->tableViewRoute);
   highlightNextWaypoint(route.getActiveLegIndexCorrected());
 }
 
@@ -3331,7 +3332,7 @@ void RouteController::moveSelectedLegsInternal(MoveDirection direction)
     // Remove selection
     if(tableViewRoute->selectionModel() != nullptr)
       tableViewRoute->selectionModel()->clear();
-    for(int row : rows)
+    for(int row : qAsConst(rows))
     {
       // Change flight plan
       route.getFlightplan().move(row, row + direction);

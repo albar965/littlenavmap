@@ -16,6 +16,7 @@
 *****************************************************************************/
 
 #include "logbook/logstatisticsdialog.h"
+#include "gui/tools.h"
 #include "ui_logstatisticsdialog.h"
 
 #include "common/constants.h"
@@ -195,6 +196,7 @@ LogStatisticsDialog::LogStatisticsDialog(QWidget *parent, LogdataController *log
   initQueries();
 
   ui->setupUi(this);
+  atools::gui::adjustTableColors(ui->tableViewLogStatsGrouped);
 
   // Copy main menu actions to allow using shortcuts in the non-modal dialog too
   addActions(NavApp::getMainWindowActions());
@@ -204,7 +206,7 @@ LogStatisticsDialog::LogStatisticsDialog(QWidget *parent, LogdataController *log
   button->setToolTip(tr("Copies overview as formatted text or table as CSV to clipboard"));
 
   // Fill query labels into combo box ==============================
-  for(const Query& q : queries)
+  for(const Query& q : qAsConst(queries))
     ui->comboBoxLogStatsGrouped->addItem(q.label, q.query);
 
   // Create and set delegate ==============================
@@ -252,6 +254,11 @@ void LogStatisticsDialog::logDataChanged()
 void LogStatisticsDialog::optionsChanged()
 {
   logDataChanged();
+}
+
+void LogStatisticsDialog::styleChanged()
+{
+  atools::gui::adjustTableColors(ui->tableViewLogStatsGrouped);
 }
 
 void LogStatisticsDialog::buttonBoxClicked(QAbstractButton *button)
@@ -398,7 +405,7 @@ void LogStatisticsDialog::updateStatisticsText()
   QVector<std::pair<int, QString> > simulators;
   logdataController->getFlightStatsSimulator(simulators);
   html.table();
-  for(const std::pair<int, QString>& sim : simulators)
+  for(const std::pair<int, QString>& sim : qAsConst(simulators))
     html.row2(tr("%1:").arg(sim.second.isEmpty() ? tr("Unknown") : sim.second),
               tr("%1 flights").arg(locale.toString(sim.first)), right);
   html.tableEnd();
