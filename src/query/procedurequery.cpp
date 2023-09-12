@@ -2619,7 +2619,7 @@ void ProcedureQuery::getLegsForFlightplanProperties(const QHash<QString, QString
 
         qDebug() << Q_FUNC_INFO << "Nothing found for ARINC" << arincName << "trying" << variants;
 
-        for(const QString& variant : variants)
+        for(const QString& variant : qAsConst(variants))
         {
           procedureIdByArincNameQuery->bindValue(":arincname", variant);
 
@@ -2723,7 +2723,8 @@ void ProcedureQuery::getLegsForFlightplanProperties(const QHash<QString, QString
       {
         // Try to get STAR by a list of potential starting points to workaround wrong PLN files
         const proc::MapProcedureLegs *legs = getProcedureLegs(departureNav, starId);
-        for(const QString& transWp : properties.value(pln::STARTRANSWP).split(atools::fs::pln::PROPERTY_LIST_SEP))
+        const QStringList strings = properties.value(pln::STARTRANSWP).split(atools::fs::pln::PROPERTY_LIST_SEP);
+        for(const QString& transWp : strings)
         {
           if(procedureValid(legs, nullptr) && !legs->isEmpty() && legs->constFirst().fixIdent != transWp)
             starTransId = getApprOrStarTransitionIdByWp(destinationNav, transWp, starId);
@@ -2886,7 +2887,7 @@ int ProcedureQuery::findProcedureId(const map::MapAirport& airport, atools::sql:
 
     qDebug() << Q_FUNC_INFO << "Nothing found for runway" << runway << "trying" << variants;
 
-    for(const QString& rw : variants)
+    for(const QString& rw : qAsConst(variants))
     {
       if((id = findProcedureLegId(airport, query, suffix, rw, false, strict)) != -1)
         return id;

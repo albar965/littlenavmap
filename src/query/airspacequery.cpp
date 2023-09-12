@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2022 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -17,12 +17,11 @@
 
 #include "query/airspacequery.h"
 
+#include "atools.h"
 #include "common/constants.h"
-#include "common/maptools.h"
 #include "common/maptypesfactory.h"
 #include "fs/common/binarygeometry.h"
 #include "mapgui/maplayer.h"
-#include "options/optiondata.h"
 #include "settings/settings.h"
 #include "sql/sqldatabase.h"
 #include "sql/sqlutil.h"

@@ -817,7 +817,7 @@ const map::MapResultIndex *AirportQuery::nearestProcAirportsInternal(const atool
     result->remove(pos, distanceNm);
 
     // Sort the rest by distance
-    result->sort(pos, true /*sortNearToFar*/);
+    result->sort(pos);
 
     nearestAirportCache.insert(key, result);
   }
@@ -954,7 +954,7 @@ void AirportQuery::getRunwaysAndAirports(map::MapResultIndex& runwayAirports, co
   }
 
   // Sort by distance to airport or runway line nearest at beginning of list
-  runwayAirports.sort(pos, true /* sortNearToFar */);
+  runwayAirports.sort(pos);
 }
 
 const QList<map::MapTaxiPath> *AirportQuery::getTaxiPaths(int airportId)
@@ -1456,7 +1456,8 @@ QHash<int, QList<map::MapParking> > AirportQuery::getParkingCache() const
 {
   QHash<int, QList<map::MapParking> > retval;
 
-  for(int key : parkingCache.keys())
+  const QList<int> keys = parkingCache.keys();
+  for(int key : keys)
     retval.insert(key, *parkingCache.object(key));
 
   return retval;
@@ -1466,7 +1467,8 @@ QHash<int, QList<map::MapHelipad> > AirportQuery::getHelipadCache() const
 {
   QHash<int, QList<map::MapHelipad> > retval;
 
-  for(int key : helipadCache.keys())
+  const QList<int> keys = helipadCache.keys();
+  for(int key : keys)
     retval.insert(key, *helipadCache.object(key));
 
   return retval;

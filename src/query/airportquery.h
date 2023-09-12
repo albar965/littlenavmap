@@ -200,8 +200,8 @@ public:
   /* Create and prepare all queries */
   void deInitQueries();
 
+  /* Get copies of cached objects */
   QHash<int, QList<map::MapParking> > getParkingCache() const;
-
   QHash<int, QList<map::MapHelipad> > getHelipadCache() const;
 
   static QStringList airportColumns(const atools::sql::SqlDatabase *db);

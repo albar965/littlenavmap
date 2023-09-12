@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -52,7 +52,7 @@ void bindRect(const atools::geo::Rect& rect, atools::sql::SqlQuery *query, const
 void fetchObjectsForRect(const atools::geo::Rect& rect, atools::sql::SqlQuery *query,
                          std::function<void(atools::sql::SqlQuery *query)> callback);
 
-QList<Marble::GeoDataLatLonBox> splitAtAntiMeridian(const Marble::GeoDataLatLonBox& rect, double factor = 0.,
+const QList<Marble::GeoDataLatLonBox> splitAtAntiMeridian(const Marble::GeoDataLatLonBox& rect, double factor = 0.,
                                                     double increment = 0.);
 
 /* Inflate rect by width and height in degrees. If it crosses the poles or date line it will be limited */

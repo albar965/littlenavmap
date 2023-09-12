@@ -344,7 +344,7 @@ map::MapResultIndex *MapQuery::nearestNavaidsInternal(const Pos& pos, float dist
     result->remove(pos, distanceNm);
 
     // Sort the rest by distance
-    result->sort(pos, true /* sortNearToFar */);
+    result->sort(pos);
 
     nearestNavaidCache.insert(key, result);
   }
@@ -786,18 +786,18 @@ void MapQuery::getNearestScreenObjects(const CoordinateConverter& conv, const Ma
     // Add filtered waypoints back to list
     result.waypoints.clear();
     result.waypointIds.clear();
-    for(const map::MapWaypoint& wp : waypoints)
+    for(const map::MapWaypoint& wp : qAsConst(waypoints))
     {
       if(wp.artificial == map::WAYPOINT_ARTIFICIAL_NONE)
         insertSortedByDistance(conv, result.waypoints, &result.waypointIds, xs, ys, wp);
     }
 
     // Add VOR fetched for artificial waypoints
-    for(const map::MapVor& vor : vors)
+    for(const map::MapVor& vor : qAsConst(vors))
       insertSortedByDistance(conv, result.vors, &result.vorIds, xs, ys, vor);
 
     // Add NDB fetched for artificial waypoints
-    for(const map::MapNdb& ndb : ndbs)
+    for(const map::MapNdb& ndb : qAsConst(ndbs))
       insertSortedByDistance(conv, result.ndbs, &result.ndbIds, xs, ys, ndb);
   }
 
@@ -828,7 +828,7 @@ void MapQuery::getNearestScreenObjects(const CoordinateConverter& conv, const Ma
   {
     // Also check parking and helipads in airport diagrams
     QHash<int, QList<MapParking> > parkingCache = NavApp::getAirportQuerySim()->getParkingCache();
-    for(auto it = parkingCache.begin(); it != parkingCache.end(); ++it)
+    for(auto it = parkingCache.constBegin(); it != parkingCache.constEnd(); ++it)
     {
       // Only draw if airport is actually drawn on map
       if(shownDetailAirportIds.contains(it.key()))
@@ -842,7 +842,7 @@ void MapQuery::getNearestScreenObjects(const CoordinateConverter& conv, const Ma
     }
 
     QHash<int, QList<MapHelipad> > helipadCache = NavApp::getAirportQuerySim()->getHelipadCache();
-    for(auto it = helipadCache.begin(); it != helipadCache.end(); ++it)
+    for(auto it = helipadCache.constBegin(); it != helipadCache.constEnd(); ++it)
     {
       if(shownDetailAirportIds.contains(it.key()))
       {
@@ -911,8 +911,7 @@ const QList<map::MapVor> *MapQuery::getVors(const GeoDataLatLonBox& rect, const 
 
   if(vorCache.list.isEmpty() && !lazy)
   {
-    for(const GeoDataLatLonBox& r :
-        query::splitAtAntiMeridian(rect, queryRectInflationFactor, queryRectInflationIncrement))
+    for(const GeoDataLatLonBox& r : query::splitAtAntiMeridian(rect, queryRectInflationFactor, queryRectInflationIncrement))
     {
       query::bindRect(r, vorsByRectQuery);
       vorsByRectQuery->exec();
@@ -948,8 +947,7 @@ const QList<map::MapNdb> *MapQuery::getNdbs(const GeoDataLatLonBox& rect, const 
 
   if(ndbCache.list.isEmpty() && !lazy)
   {
-    for(const GeoDataLatLonBox& r :
-        query::splitAtAntiMeridian(rect, queryRectInflationFactor, queryRectInflationIncrement))
+    for(const GeoDataLatLonBox& r : query::splitAtAntiMeridian(rect, queryRectInflationFactor, queryRectInflationIncrement))
     {
       query::bindRect(r, ndbsByRectQuery);
       ndbsByRectQuery->exec();
@@ -1000,7 +998,7 @@ const QList<map::MapUserpoint> MapQuery::getUserdataPoints(const GeoDataLatLonBo
       else
         queryTypes = types;
 
-      for(const QString& queryType : queryTypes)
+      for(const QString& queryType : qAsConst(queryTypes))
       {
         userdataPointByRectQuery->bindValue(":type", queryType);
         userdataPointByRectQuery->exec();
