@@ -358,7 +358,7 @@ void MapWidget::historyBack()
   }
 }
 
-void MapWidget::handleInfoClick(QPoint point)
+void MapWidget::handleInfoClick(const QPoint& point)
 {
   qDebug() << Q_FUNC_INFO << point;
 
@@ -423,6 +423,32 @@ void MapWidget::handleInfoClick(QPoint point)
   }
 
   emit showInformation(*mapSearchResultInfoClick);
+}
+
+void MapWidget::handleRouteClick(const QPoint& point)
+{
+  qDebug() << Q_FUNC_INFO << point;
+
+  // Check if click enabled and flight plan is visible
+  if(OptionData::instance().getDisplayClickOptions().testFlag(optsd::CLICK_FLIGHTPLAN) &&
+     getShownMapDisplayTypes().testFlag(map::FLIGHTPLAN))
+  {
+    Pos pos = CoordinateConverter(viewport()).sToW(point);
+    if(pos.isValid())
+    {
+      // Get all objects near click and remove all having no route index, i.e. are not a part of the route
+      map::MapResult result;
+      getScreenIndexConst()->getAllNearest(point, screenSearchDistance, result, map::QUERY_NONE /* For double click */);
+      result.removeNoRouteIndex();
+
+      // Add only route related objects and sort by distance
+      map::MapResultIndex index;
+      index.add(result, map::NAV_FLIGHTPLAN).sort(pos);
+
+      if(!index.isEmpty())
+        emit showInRoute(map::routeIndex(index.first()));
+    }
+  }
 }
 
 void MapWidget::fuelOnOffTimeout()
@@ -1064,7 +1090,8 @@ void MapWidget::mouseReleaseEvent(QMouseEvent *event)
       {
         if(cursor().shape() != Qt::ArrowCursor)
           setCursor(Qt::ArrowCursor);
-        handleInfoClick(event->pos());
+        handleInfoClick(event->pos()); // Show information
+        handleRouteClick(event->pos()); // Select in flight plan
 
         if(OptionData::instance().getMapNavigation() == opts::MAP_NAV_CLICK_CENTER)
         {
@@ -2070,6 +2097,10 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
 
         case mc::SHOWINSEARCH:
           showResultInSearch(base);
+          break;
+
+        case mc::SHOWINROUTE:
+          emit showInRoute(map::routeIndex(base));
           break;
 
         case mc::REMOVEUSER:

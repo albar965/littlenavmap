@@ -591,7 +591,8 @@ enum DisplayClickOption
   CLICK_AIRSPACE = 1 << 3,
   CLICK_AIRPORT_PROC = 1 << 4,
   CLICK_AIRCRAFT_AI = 1 << 5,
-  CLICK_AIRCRAFT_USER = 1 << 6
+  CLICK_AIRCRAFT_USER = 1 << 6,
+  CLICK_FLIGHTPLAN = 1 << 7
 };
 
 Q_DECLARE_FLAGS(DisplayClickOptions, DisplayClickOption);

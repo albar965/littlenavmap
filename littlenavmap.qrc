@@ -329,5 +329,6 @@
         <file>resources/icons/littlenavmapdoc.svg</file>
         <file>resources/icons/directto.svg</file>
         <file>resources/icons/alternate.svg</file>
+        <file>resources/icons/routeselect.svg</file>
     </qresource>
 </RCC>

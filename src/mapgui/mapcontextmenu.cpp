@@ -224,10 +224,13 @@ void MapContextMenu::buildMainMenu()
   if(visibleOnMap)
   {
     // More rarely used menu items
-    sub->addAction(ui->actionMapJumpCoordinates);
+    sub->addAction(ui->actionMapJumpCoordinates); // Used in MapWidget::contextMenuEvent()
+    sub->addSeparator();
     insertShowInSearchMenu(*sub);
+    insertShowInRouteMenu(*sub);
     sub->addSeparator();
 
+    // Used directly in MapWidget::contextMenuEvent()
     sub->addAction(ui->actionMapCopyCoordinates);
     sub->addAction(ui->actionMapSetMark);
     sub->addAction(ui->actionMapSetHome);
@@ -1128,6 +1131,24 @@ void MapContextMenu::insertLogEntryEdit(QMenu& menu)
   insertMenuOrAction(menu, mc::LOGENTRYEDIT, MapResultIndex().addRef(*result, map::LOGBOOK).sort(alphaSort),
                      tr("Edit &Log Entry %1 ..."), tr("Edit the logbook entry at this position"),
                      QString(), QIcon(":/littlenavmap/resources/icons/logdata_edit.svg"));
+}
+
+void MapContextMenu::insertShowInRouteMenu(QMenu& menu)
+{
+  MapResultIndex index;
+  index.addRef(*result, map::AIRPORT | map::VOR | map::NDB | map::WAYPOINT | map::USERPOINTROUTE).
+  sort(DEFAULT_TYPE_SORT, alphaSort);
+
+  // Erase all waypoints which are not part of the flight plan
+  index.erase(std::remove_if(index.begin(), index.end(), [](const map::MapBase *base) -> bool
+  {
+    return map::routeIndex(base) == -1;
+  }), index.end());
+
+  insertMenuOrAction(menu, mc::SHOWINROUTE, index,
+                     tr("Select Leg %1 in &Flight Plan"), tr("Select the related flight plan leg for a navaid or airport"),
+                     QString(), QIcon(":/littlenavmap/resources/icons/routeselect.svg"), false);
+
 }
 
 void MapContextMenu::insertShowInSearchMenu(QMenu& menu)

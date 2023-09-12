@@ -244,6 +244,9 @@ public:
   /* Adjust altitude according to simple east/west VFR/IFR rules */
   void adjustFlightplanAltitude();
 
+  /* Select result in flight plan table */
+  void showInRoute(int index);
+
   FlightplanEntryBuilder *getFlightplanEntryBuilder() const
   {
     return entryBuilder;

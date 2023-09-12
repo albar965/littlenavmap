@@ -128,6 +128,7 @@ void MapResult::removeInvalid(QList<TYPE>& list, QSet<int> *ids)
 {
   if(ids != nullptr)
   {
+    // Remove from id list
     for(const TYPE& type : list)
     {
       if(!type.isValid())
@@ -138,6 +139,34 @@ void MapResult::removeInvalid(QList<TYPE>& list, QSet<int> *ids)
   list.erase(std::remove_if(list.begin(), list.end(), [](const TYPE& type) -> bool {
       return !type.isValid();
     }), list.end());
+}
+
+template<typename TYPE>
+void MapResult::removeNoRouteIndex(QList<TYPE>& list, QSet<int> *ids)
+{
+  if(ids != nullptr)
+  {
+    // Remove from id list
+    for(const TYPE& type : list)
+    {
+      if(type.routeIndex == -1)
+        ids->remove(type.id);
+    }
+  }
+
+  list.erase(std::remove_if(list.begin(), list.end(), [](const TYPE& type) -> bool {
+      return type.routeIndex == -1;
+    }), list.end());
+}
+
+template<class TYPE>
+void MapResult::setRouteIndex(QList<TYPE>& list, const MapTypes& types, const MapTypes& type, int routeIndex)
+{
+  if(types.testFlag(type) && !isEmpty(type))
+  {
+    for(TYPE& t : list)
+      t.routeIndex = routeIndex;
+  }
 }
 
 MapResult& MapResult::clearAllButFirst(const MapTypes& types)
@@ -338,7 +367,7 @@ int MapResult::numOnlineAirspaces() const
   return num;
 }
 
-QList<map::MapAirspace> MapResult::getSimNavUserAirspaces() const
+const QList<map::MapAirspace> MapResult::getSimNavUserAirspaces() const
 {
   QList<map::MapAirspace> retval;
   for(const map::MapAirspace& airspace : airspaces)
@@ -349,7 +378,7 @@ QList<map::MapAirspace> MapResult::getSimNavUserAirspaces() const
   return retval;
 }
 
-QList<map::MapAirspace> MapResult::getOnlineAirspaces() const
+const QList<map::MapAirspace> MapResult::getOnlineAirspaces() const
 {
   QList<map::MapAirspace> retval;
   for(const map::MapAirspace& airspace : airspaces)
@@ -405,7 +434,7 @@ void MapResult::removeInvalid()
   removeInvalid(parkings);
   removeInvalid(helipads);
   removeInvalid(waypoints, &waypointIds);
-  removeInvalid(vors, &waypointIds);
+  removeInvalid(vors, &vorIds);
   removeInvalid(ndbs, &ndbIds);
   removeInvalid(markers);
   removeInvalid(ils);
@@ -426,26 +455,30 @@ void MapResult::removeInvalid()
   removeInvalid(msaMarks);
 }
 
+void MapResult::removeNoRouteIndex()
+{
+  removeNoRouteIndex(airports, &airportIds);
+  removeNoRouteIndex(waypoints, &waypointIds);
+  removeNoRouteIndex(vors, &vorIds);
+  removeNoRouteIndex(ndbs, &ndbIds);
+  removeNoRouteIndex(userpointsRoute);
+  removeNoRouteIndex(procPoints);
+}
+
 void MapResult::clearNavdataAirspaces()
 {
-  QList<map::MapAirspace>::iterator it = std::remove_if(airspaces.begin(), airspaces.end(),
-                                                        [](const map::MapAirspace& airspace) -> bool
+  airspaces.erase(std::remove_if(airspaces.begin(), airspaces.end(), [](const map::MapAirspace& airspace) -> bool
     {
       return !airspace.isOnline();
-    });
-  if(it != airspaces.end())
-    airspaces.erase(it, airspaces.end());
+    }), airspaces.end());
 }
 
 void MapResult::clearOnlineAirspaces()
 {
-  QList<map::MapAirspace>::iterator it = std::remove_if(airspaces.begin(), airspaces.end(),
-                                                        [](const map::MapAirspace& airspace) -> bool
+  airspaces.erase(std::remove_if(airspaces.begin(), airspaces.end(), [](const map::MapAirspace& airspace) -> bool
     {
       return airspace.isOnline();
-    });
-  if(it != airspaces.end())
-    airspaces.erase(it, airspaces.end());
+    }), airspaces.end());
 }
 
 const atools::geo::Pos& MapResult::getPosition(const std::initializer_list<MapTypes>& types) const

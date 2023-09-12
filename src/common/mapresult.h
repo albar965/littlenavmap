@@ -129,6 +129,7 @@ struct MapResult
   /* Remove all except first for the given types only */
   MapResult& clearAllButFirst(const MapTypes& types = map::ALL);
 
+  /* Sets routeIndex for all flight plan related types to -1 */
   MapResult& clearRouteIndex(const MapTypes& types = map::ALL);
 
   /* Give online airspaces/centers priority */
@@ -251,13 +252,16 @@ struct MapResult
   int numSimNavUserAirspaces() const;
   int numOnlineAirspaces() const;
 
-  QList<MapAirspace> getSimNavUserAirspaces() const;
-
-  QList<MapAirspace> getOnlineAirspaces() const;
+  const QList<MapAirspace> getSimNavUserAirspaces() const;
+  const QList<MapAirspace> getOnlineAirspaces() const;
 
   QString objectText(MapTypes type, int elideName = 1000) const;
 
+  /* Remove all invalid objects */
   void removeInvalid();
+
+  /* Remove all objects having no route index, i.e. which are not a part of the flight plan */
+  void removeNoRouteIndex();
 
 private:
   template<typename TYPE>
@@ -268,17 +272,13 @@ private:
   }
 
   template<typename TYPE>
+  void removeNoRouteIndex(QList<TYPE>& list, QSet<int> *ids = nullptr);
+
+  template<typename TYPE>
   void removeInvalid(QList<TYPE>& list, QSet<int> *ids = nullptr);
 
   template<class TYPE>
-  void setRouteIndex(QList<TYPE>& list, const MapTypes& types, const MapTypes& type, int routeIndex = -1)
-  {
-    if(types.testFlag(type) && !isEmpty(type))
-    {
-      for(TYPE& t : list)
-        t.routeIndex = routeIndex;
-    }
-  }
+  void setRouteIndex(QList<TYPE>& list, const MapTypes& types, const MapTypes& type, int routeIndex = -1);
 
 };
 
@@ -316,7 +316,7 @@ struct MapResultIndex
   MapResultIndex& sort(const QVector<map::MapTypes>& types, const map::MapResultIndex::SortFunction& sortFunc);
 
   /* Sort objects by distance to pos in the list */
-  MapResultIndex& sort(const atools::geo::Pos& pos, bool sortNearToFar);
+  MapResultIndex& sort(const atools::geo::Pos& pos, bool sortNearToFar = true);
 
   /* Sort objects alphabetically */
   // MapSearchResultIndex& sort();

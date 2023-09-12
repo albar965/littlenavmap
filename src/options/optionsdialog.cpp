@@ -294,6 +294,7 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
      ui->checkBoxOptionsMapClickAirportProcs,
      ui->checkBoxOptionsMapClickNavaid,
      ui->checkBoxOptionsMapClickAirspace,
+     ui->checkBoxOptionsMapClickFlightplan,
      ui->checkBoxOptionsMapUndock,
      ui->checkBoxOptionsRouteEastWestRule,
      ui->comboBoxOptionsRouteAltitudeRuleType,
@@ -1814,11 +1815,12 @@ void OptionsDialog::widgetsToOptionData()
 
   data.displayClickOptions.setFlag(optsd::CLICK_AIRCRAFT_USER, ui->checkBoxOptionsMapClickUserAircraft->isChecked());
   data.displayClickOptions.setFlag(optsd::CLICK_AIRCRAFT_AI, ui->checkBoxOptionsMapClickAiAircraft->isChecked());
-
   data.displayClickOptions.setFlag(optsd::CLICK_AIRPORT, ui->checkBoxOptionsMapClickAirport->isChecked());
   data.displayClickOptions.setFlag(optsd::CLICK_AIRPORT_PROC, ui->checkBoxOptionsMapClickAirportProcs->isChecked());
   data.displayClickOptions.setFlag(optsd::CLICK_NAVAID, ui->checkBoxOptionsMapClickNavaid->isChecked());
   data.displayClickOptions.setFlag(optsd::CLICK_AIRSPACE, ui->checkBoxOptionsMapClickAirspace->isChecked());
+  data.displayClickOptions.setFlag(optsd::CLICK_FLIGHTPLAN, ui->checkBoxOptionsMapClickFlightplan->isChecked());
+
   toFlags2(ui->checkBoxOptionsSimZoomOnLanding, opts2::ROUTE_ZOOM_LANDING);
   toFlags2(ui->checkBoxOptionsSimZoomOnTakeoff, opts2::ROUTE_ZOOM_TAKEOFF);
   data.weatherXplane11Path = QDir::toNativeSeparators(ui->lineEditOptionsWeatherXplanePath->text());
@@ -2113,6 +2115,7 @@ void OptionsDialog::optionDataToWidgets(const OptionData& data)
   ui->checkBoxOptionsMapClickAirportProcs->setChecked(data.displayClickOptions.testFlag(optsd::CLICK_AIRPORT_PROC));
   ui->checkBoxOptionsMapClickNavaid->setChecked(data.displayClickOptions.testFlag(optsd::CLICK_NAVAID));
   ui->checkBoxOptionsMapClickAirspace->setChecked(data.displayClickOptions.testFlag(optsd::CLICK_AIRSPACE));
+  ui->checkBoxOptionsMapClickFlightplan->setChecked(data.displayClickOptions.testFlag(optsd::CLICK_FLIGHTPLAN));
 
   ui->lineEditOptionsWeatherXplanePath->setText(QDir::toNativeSeparators(data.weatherXplane11Path));
   ui->lineEditOptionsWeatherXplane12Path->setText(QDir::toNativeSeparators(data.weatherXplane12Path));

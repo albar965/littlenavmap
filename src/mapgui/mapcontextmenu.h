@@ -102,6 +102,7 @@ enum MenuActionType
   USERPOINTDELETE, /* Remove userpoint (in sub-menu) */
   LOGENTRYEDIT, /* Edit logbook entry on preview */
   SHOWINSEARCH, /* Show objects in search window with filter and selection */
+  SHOWINROUTE, /* Select legs in flight plan table */
   REMOVEUSER /* Remove traffic pattern, hold, etc. */
 };
 
@@ -226,12 +227,13 @@ private:
   void insertLogEntryEdit(QMenu& menu);
 
   // ----
+  void insertShowInRouteMenu(QMenu& menu);
   void insertShowInSearchMenu(QMenu& menu);
 
   // ---- if full screen
   // ui->actionShowFullscreenMap // connected by main window
 
-  // ---- sub-menu "More"
+  // ---- sub-menu "More" - used in MapWidget::contextMenuEvent()
   // ui->actionMapCopyCoordinates
   // ui->actionMapSetMark
   // ui->actionMapSetHome

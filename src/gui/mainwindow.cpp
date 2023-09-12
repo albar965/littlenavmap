@@ -1396,6 +1396,8 @@ void MainWindow::connectAllSlots()
   connect(mapWidget, &MapWidget::showCustomApproach, routeController, &RouteController::showCustomApproach);
   connect(mapWidget, &MapWidget::showCustomDeparture, routeController, &RouteController::showCustomDeparture);
   connect(mapWidget, &MapPaintWidget::shownMapFeaturesChanged, routeController, &RouteController::shownMapFeaturesChanged);
+  connect(mapWidget, &MapWidget::showInRoute, routeController, &RouteController::showInRoute);
+  connect(mapWidget, &MapWidget::showInRoute, this, &MainWindow::showFlightPlan);
   connect(mapWidget, &MapWidget::addUserpointFromMap, NavApp::getUserdataController(), &UserdataController::addUserpointFromMap);
   connect(mapWidget, &MapWidget::editUserpointFromMap, NavApp::getUserdataController(), &UserdataController::editUserpointFromMap);
   connect(mapWidget, &MapWidget::deleteUserpointFromMap, NavApp::getUserdataController(), &UserdataController::deleteUserpointFromMap);

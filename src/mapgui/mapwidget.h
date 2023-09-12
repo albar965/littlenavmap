@@ -279,6 +279,9 @@ signals:
   /* Show information about objects from single click or context menu */
   void showInformation(const map::MapResult& result);
 
+  /* Select result in flight plan table */
+  void showInRoute(int index);
+
   /* Add user point and pass result to it so it can prefill the dialog */
   void addUserpointFromMap(const map::MapResult& result, const atools::geo::Pos& pos, bool airportAddon);
   void editUserpointFromMap(const map::MapResult& result);
@@ -341,7 +344,10 @@ private:
   void connectOverlayMenus();
 
   /* Show information from context menu or single click */
-  void handleInfoClick(QPoint point);
+  void handleInfoClick(const QPoint& point);
+
+  /* Highlight flight plan leg if enabled. */
+  void handleRouteClick(const QPoint& point);
 
   /* Scroll and zoom for touchscreen area mode */
   bool handleTouchAreaClick(QMouseEvent *event);

@@ -2153,6 +2153,14 @@ void RouteController::adjustFlightplanAltitude()
   }
 }
 
+void RouteController::showInRoute(int index)
+{
+  qDebug() << Q_FUNC_INFO << index;
+  if(index >= 0 && index < map::INVALID_INDEX_VALUE)
+    tableViewRoute->selectRow(index);
+  // tableViewRoute->scrollTo(model->index(std::max(index - 1, 0), 0), QAbstractItemView::PositionAtTop);
+}
+
 void RouteController::reverseRoute()
 {
   qDebug() << Q_FUNC_INFO;

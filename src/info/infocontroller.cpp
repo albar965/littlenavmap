@@ -467,34 +467,34 @@ void InfoController::saveState()
 {
   // Store currently shown map objects in a string list containing id and type
   map::MapRefVector refs;
-  for(const map::MapAirport& airport  : currentSearchResult.airports)
+  for(const map::MapAirport& airport  : qAsConst(currentSearchResult.airports))
     refs.append({airport.id, map::AIRPORT});
 
-  for(const map::MapAirportMsa& msa  : currentSearchResult.airportMsa)
+  for(const map::MapAirportMsa& msa  : qAsConst(currentSearchResult.airportMsa))
     refs.append({msa.id, map::AIRPORT_MSA});
 
-  for(const map::MapVor& vor : currentSearchResult.vors)
+  for(const map::MapVor& vor : qAsConst(currentSearchResult.vors))
     refs.append({vor.id, map::VOR});
 
-  for(const map::MapNdb& ndb : currentSearchResult.ndbs)
+  for(const map::MapNdb& ndb : qAsConst(currentSearchResult.ndbs))
     refs.append({ndb.id, map::NDB});
 
-  for(const map::MapWaypoint& waypoint : currentSearchResult.waypoints)
+  for(const map::MapWaypoint& waypoint : qAsConst(currentSearchResult.waypoints))
     refs.append({waypoint.id, map::WAYPOINT});
 
-  for(const map::MapIls& ils : currentSearchResult.ils)
+  for(const map::MapIls& ils : qAsConst(currentSearchResult.ils))
     refs.append({ils.id, map::ILS});
 
-  for(const map::MapHolding& holding : currentSearchResult.holdings)
+  for(const map::MapHolding& holding : qAsConst(currentSearchResult.holdings))
     refs.append({holding.id, map::HOLDING});
 
-  for(const map::MapUserpoint& userpoint: currentSearchResult.userpoints)
+  for(const map::MapUserpoint& userpoint: qAsConst(currentSearchResult.userpoints))
     refs.append({userpoint.id, map::USERPOINT});
 
-  for(const map::MapLogbookEntry& logEntry : currentSearchResult.logbookEntries)
+  for(const map::MapLogbookEntry& logEntry : qAsConst(currentSearchResult.logbookEntries))
     refs.append({logEntry.id, map::LOGBOOK});
 
-  for(const map::MapAirway& airway : currentSearchResult.airways)
+  for(const map::MapAirway& airway : qAsConst(currentSearchResult.airways))
     refs.append({airway.id, map::AIRWAY});
 
   // Save list =====================================================
@@ -506,7 +506,7 @@ void InfoController::saveState()
 
   // Save airspaces =====================================================
   refList.clear();
-  for(const map::MapAirspace& airspace : currentSearchResult.airspaces)
+  for(const map::MapAirspace& airspace : qAsConst(currentSearchResult.airspaces))
   {
     // Do not save online airspace ids since they will change on next startup
     if(!airspace.isOnline())
@@ -672,7 +672,7 @@ void InfoController::onlineNetworkChanged()
 
   // Remove all online network airspaces from current result
   QList<map::MapAirspace> airspaces;
-  for(const map::MapAirspace& airspace : currentSearchResult.airspaces)
+  for(const map::MapAirspace& airspace : qAsConst(currentSearchResult.airspaces))
     if(!airspace.isOnline())
       airspaces.append(airspace);
   currentSearchResult.airspaces = airspaces;
@@ -717,7 +717,7 @@ void InfoController::showInformationInternal(map::MapResult result, bool showWin
     QSet<int> onlineIds;
 
     // Get shadowed online aircraft from AI shadows ====================
-    for(const map::MapAiAircraft& mapAiAircraft : result.aiAircraft)
+    for(const map::MapAiAircraft& mapAiAircraft : qAsConst(result.aiAircraft))
     {
       atools::fs::sc::SimConnectAircraft onlineAircraft = onlineDataController->getShadowedOnlineAircraft(mapAiAircraft.getAircraft());
 
@@ -730,7 +730,7 @@ void InfoController::showInformationInternal(map::MapResult result, bool showWin
     }
 
     // Add present online aircraft which are not already added by shadow above ================
-    for(const map::MapOnlineAircraft& mapOnlineAircraft : result.onlineAircraft)
+    for(const map::MapOnlineAircraft& mapOnlineAircraft : qAsConst(result.onlineAircraft))
     {
       if(!onlineIds.contains(mapOnlineAircraft.getId()))
         onlineAircraftList.append(map::MapOnlineAircraft(mapOnlineAircraft));
@@ -786,7 +786,7 @@ void InfoController::showInformationInternal(map::MapResult result, bool showWin
       currentSearchResult.onlineAircraft.clear();
       currentSearchResult.onlineAircraftIds.clear();
 
-      for(const map::MapOnlineAircraft& mapOnlineAircraft : result.onlineAircraft)
+      for(const map::MapOnlineAircraft& mapOnlineAircraft : qAsConst(result.onlineAircraft))
       {
         atools::fs::sc::SimConnectAircraft ac = onlineDataController->getClientAircraftById(mapOnlineAircraft.getId());
 
@@ -915,7 +915,7 @@ void InfoController::showInformationInternal(map::MapResult result, bool showWin
     html.b().a(tr("Remove Center Highlights"), QString("lnm://do?hideonlineairspaces"),
                ahtml::LINK_NO_UL).bEnd().tdEnd().trEnd().tableEnd();
 
-    for(const map::MapAirspace& airspace : onlineAirspaces)
+    for(const map::MapAirspace& airspace : qAsConst(onlineAirspaces))
     {
 #ifdef DEBUG_INFORMATION
       qDebug() << "Found airspace" << airspace.id;
@@ -944,7 +944,7 @@ void InfoController::showInformationInternal(map::MapResult result, bool showWin
 
     currentSearchResult.logbookEntries.clear();
 
-    for(const map::MapLogbookEntry& logEntry : result.logbookEntries)
+    for(const map::MapLogbookEntry& logEntry : qAsConst(result.logbookEntries))
     {
       qDebug() << "Found log entry" << logEntry.id;
 
@@ -1138,7 +1138,7 @@ bool InfoController::updateUserpointInternal(const map::MapResult& result, bool 
   bool foundUserpoint = false;
 
   // Userpoints on top of the list
-  for(map::MapUserpoint userpoint: result.userpoints)
+  for(const map::MapUserpoint& userpoint : qAsConst(result.userpoints))
   {
 #ifdef DEBUG_INFORMATION
     qDebug() << "Found waypoint" << userpoint.ident;
@@ -1285,7 +1285,7 @@ void InfoController::updateAiAircraftText()
         if(!currentSearchResult.aiAircraft.isEmpty())
         {
           int num = 1;
-          for(const map::MapAiAircraft& aircraft : currentSearchResult.aiAircraft)
+          for(const map::MapAiAircraft& aircraft : qAsConst(currentSearchResult.aiAircraft))
           {
             infoBuilder->aircraftText(aircraft.getAircraft(), html, num, lastSimData.getAiAircraftConst().size());
 
@@ -1385,7 +1385,7 @@ void InfoController::updateAiAirports(const atools::fs::sc::SimConnectData& data
     QList<map::MapAiAircraft> newAiAircraftShown;
 
     // Find all aircraft currently shown on the page in the newly arrived ai list
-    for(const map::MapAiAircraft& aircraft : currentSearchResult.aiAircraft)
+    for(const map::MapAiAircraft& aircraft : qAsConst(currentSearchResult.aiAircraft))
     {
       QVector<atools::fs::sc::SimConnectAircraft>::const_iterator it =
         std::find_if(newAiAircraft.constBegin(), newAiAircraft.constEnd(),

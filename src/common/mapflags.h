@@ -151,6 +151,9 @@ enum MapType : unsigned long long
   /* All navaids ======================================== */
   NAV_ALL = VOR | NDB | WAYPOINT,
 
+  /* All flight plan related types ======================================== */
+  NAV_FLIGHTPLAN = NAV_ALL | AIRPORT | PROCEDURE_POINT | USERPOINTROUTE,
+
   /* All objects that have a magvar assigned */
   NAV_MAGVAR = AIRPORT | VOR | NDB | WAYPOINT,
 

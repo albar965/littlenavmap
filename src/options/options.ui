@@ -1599,17 +1599,24 @@ userpoints and logbook entries when clicking on the map</string>
                 </widget>
                </item>
                <item>
-                <spacer name="verticalSpacer_18">
+                <widget class="Line" name="line_13">
                  <property name="orientation">
-                  <enum>Qt::Vertical</enum>
+                  <enum>Qt::Horizontal</enum>
                  </property>
-                 <property name="sizeHint" stdset="0">
-                  <size>
-                   <width>20</width>
-                   <height>40</height>
-                  </size>
+                </widget>
+               </item>
+               <item>
+                <widget class="QCheckBox" name="checkBoxOptionsMapClickFlightplan">
+                 <property name="toolTip">
+                  <string>Select flight plan leg clicked on the map</string>
                  </property>
-                </spacer>
+                 <property name="text">
+                  <string>&amp;Flight Plan</string>
+                 </property>
+                 <property name="checked">
+                  <bool>false</bool>
+                 </property>
+                </widget>
                </item>
               </layout>
              </widget>
@@ -1916,6 +1923,19 @@ Use &quot;Window&quot; -&gt; &quot;Reset Window Layout&quot; in the main menu to
                </item>
               </layout>
              </widget>
+            </item>
+            <item row="4" column="1">
+             <spacer name="verticalSpacer_18">
+              <property name="orientation">
+               <enum>Qt::Vertical</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>20</width>
+                <height>40</height>
+               </size>
+              </property>
+             </spacer>
             </item>
            </layout>
           </widget>
