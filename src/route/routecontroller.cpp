@@ -3223,7 +3223,7 @@ void RouteController::styleChanged()
   tabHandlerRoute->styleChanged();
   updateModelHighlights();
   routeLabel->styleChanged();
-  atools::gui::adjustTableColors(ui->tableViewRoute);
+  atools::gui::adjustTableColors(NavApp::getMainUi()->tableViewRoute);
   highlightNextWaypoint(route.getActiveLegIndexCorrected());
 }
 
