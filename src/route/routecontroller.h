@@ -566,6 +566,9 @@ private:
   FlightplanEntryBuilder *entryBuilder = nullptr;
   atools::fs::pln::FlightplanIO *flightplanIO = nullptr;
 
+  // Ignore follow selection in tableSelectionChanged() if its origin is from showInRoute()
+  bool ignoreSelectionEvent = false;
+
   QAction *undoAction = nullptr, *redoAction = nullptr;
 
   /* Takes care of the top label */

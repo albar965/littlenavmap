@@ -2158,7 +2158,12 @@ void RouteController::showInRoute(int index)
 {
   qDebug() << Q_FUNC_INFO << index;
   if(index >= 0 && index < map::INVALID_INDEX_VALUE)
+  {
+    // Ignore follow selection in tableSelectionChanged() if its origin is from here
+    ignoreSelectionEvent = true;
+
     tableViewRoute->selectRow(index);
+  }
 }
 
 void RouteController::reverseRoute()
@@ -3162,8 +3167,12 @@ void RouteController::tableSelectionChanged(const QItemSelection& selected, cons
 
   updateCleanupTimer();
 
-  if(NavApp::getMainUi()->actionRouteFollowSelection->isChecked() && sm->currentIndex().isValid() && sm->isSelected(sm->currentIndex()))
-    emit showPos(route.value(sm->currentIndex().row()).getPosition(), map::INVALID_DISTANCE_VALUE, false);
+  // Ignore follow selection if its origin is from showInRoute()
+  if(!ignoreSelectionEvent && NavApp::getMainUi()->actionRouteFollowSelection->isChecked() &&
+     sm->currentIndex().isValid() && sm->isSelected(sm->currentIndex()))
+    emit showPos(route.value(sm->currentIndex().row()).getPosition(), map::INVALID_DISTANCE_VALUE, false /* doubleClick */);
+
+  ignoreSelectionEvent = false;
 }
 
 /* Called by undo command */

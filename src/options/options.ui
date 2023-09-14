@@ -1546,32 +1546,6 @@ Also affects labels at holds and traffic patterns.</string>
                 </widget>
                </item>
                <item>
-                <layout class="QHBoxLayout" name="horizontalLayout_3">
-                 <property name="spacing">
-                  <number>0</number>
-                 </property>
-                 <property name="leftMargin">
-                  <number>22</number>
-                 </property>
-                 <property name="topMargin">
-                  <number>0</number>
-                 </property>
-                 <item>
-                  <widget class="QCheckBox" name="checkBoxOptionsMapClickAirportProcs">
-                   <property name="toolTip">
-                    <string>Show procedures in procedure search tab on airport click</string>
-                   </property>
-                   <property name="text">
-                    <string>Show &amp;procedures on airport click</string>
-                   </property>
-                   <property name="checked">
-                    <bool>false</bool>
-                   </property>
-                  </widget>
-                 </item>
-                </layout>
-               </item>
-               <item>
                 <widget class="QCheckBox" name="checkBoxOptionsMapClickNavaid">
                  <property name="toolTip">
                   <string>Show information for waypoints, VOR, NDB, airways,
@@ -1598,30 +1572,77 @@ userpoints and logbook entries when clicking on the map</string>
                  </property>
                 </widget>
                </item>
+              </layout>
+             </widget>
+            </item>
+            <item row="1" column="0" colspan="2">
+             <widget class="QGroupBox" name="groupBoxMapTooltips_3">
+              <property name="title">
+               <string>Empty Airports</string>
+              </property>
+              <layout class="QVBoxLayout" name="verticalLayout_37">
+               <property name="spacing">
+                <number>2</number>
+               </property>
+               <property name="leftMargin">
+                <number>2</number>
+               </property>
+               <property name="topMargin">
+                <number>2</number>
+               </property>
+               <property name="rightMargin">
+                <number>2</number>
+               </property>
+               <property name="bottomMargin">
+                <number>2</number>
+               </property>
                <item>
-                <widget class="Line" name="line_13">
-                 <property name="orientation">
-                  <enum>Qt::Horizontal</enum>
+                <widget class="QCheckBox" name="checkBoxOptionsMapEmptyAirports">
+                 <property name="toolTip">
+                  <string>Empty airports are not add-ons, have no taxiways, no parking and no aprons.
+These are displayed underneath all other airports and use a gray symbol.
+The aiports toolbar button can be used to disable them if this checkbox is enabled.</string>
+                 </property>
+                 <property name="text">
+                  <string>&amp;Treat empty airports special</string>
+                 </property>
+                 <property name="checked">
+                  <bool>true</bool>
                  </property>
                 </widget>
                </item>
                <item>
-                <widget class="QCheckBox" name="checkBoxOptionsMapClickFlightplan">
+                <widget class="QCheckBox" name="checkBoxOptionsMapEmptyAirports3D">
                  <property name="toolTip">
-                  <string>Select flight plan leg clicked on the map</string>
+                  <string>All X-Plane airports which are not 3D and not add-on
+will be displayed underneath all other airports and use a gray symbol.
+The aiports toolbar button can be used to disable them if this checkbox is enabled.</string>
                  </property>
                  <property name="text">
-                  <string>&amp;Flight Plan</string>
+                  <string>&amp;Consider all X-Plane airports not being 3D empty</string>
                  </property>
                  <property name="checked">
-                  <bool>false</bool>
+                  <bool>true</bool>
                  </property>
                 </widget>
                </item>
               </layout>
              </widget>
             </item>
-            <item row="4" column="0">
+            <item row="6" column="1">
+             <spacer name="verticalSpacer_18">
+              <property name="orientation">
+               <enum>Qt::Vertical</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>20</width>
+                <height>40</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item row="6" column="0">
              <spacer name="verticalSpacer_4">
               <property name="orientation">
                <enum>Qt::Vertical</enum>
@@ -1634,7 +1655,107 @@ userpoints and logbook entries when clicking on the map</string>
               </property>
              </spacer>
             </item>
-            <item row="3" column="0">
+            <item row="0" column="0" colspan="2">
+             <widget class="QGroupBox" name="groupBoxOptionsMapGeneral">
+              <property name="title">
+               <string>Map Window</string>
+              </property>
+              <layout class="QGridLayout" name="gridLayoutOptionsMapLower">
+               <property name="leftMargin">
+                <number>2</number>
+               </property>
+               <property name="topMargin">
+                <number>2</number>
+               </property>
+               <property name="rightMargin">
+                <number>2</number>
+               </property>
+               <property name="bottomMargin">
+                <number>2</number>
+               </property>
+               <property name="spacing">
+                <number>2</number>
+               </property>
+               <item row="0" column="0" colspan="2">
+                <widget class="QCheckBox" name="checkBoxOptionsMapUndock">
+                 <property name="toolTip">
+                  <string>Allows to undock and put the map window into a floating state.
+This can cause several unwanted effects when arranging dock windows.
+Uncheck this if you do experience strange effects when resizing dock windows.
+Restart the program after changing this option. You might also need to reset the window layout.</string>
+                 </property>
+                 <property name="text">
+                  <string>Allow to &amp;undock  the map window</string>
+                 </property>
+                 <property name="checked">
+                  <bool>false</bool>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="0" colspan="2">
+                <widget class="QLabel" name="label_5">
+                 <property name="text">
+                  <string>&lt;b&gt;A restart is required after changing the map window docking option.&lt;/b&gt;&lt;br/&gt;
+Use &quot;Window&quot; -&gt; &quot;Reset Window Layout&quot; in the main menu to clean up the layout after a restart if necessary.</string>
+                 </property>
+                 <property name="wordWrap">
+                  <bool>true</bool>
+                 </property>
+                 <property name="textInteractionFlags">
+                  <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </widget>
+            </item>
+            <item row="2" column="0" colspan="2">
+             <widget class="QGroupBox" name="groupBoxMapTooltips_2">
+              <property name="title">
+               <string>Details while scrolling (click and drag, zoom in and out)</string>
+              </property>
+              <layout class="QVBoxLayout" name="verticalLayout_36">
+               <property name="spacing">
+                <number>2</number>
+               </property>
+               <property name="leftMargin">
+                <number>2</number>
+               </property>
+               <property name="topMargin">
+                <number>2</number>
+               </property>
+               <property name="rightMargin">
+                <number>2</number>
+               </property>
+               <property name="bottomMargin">
+                <number>2</number>
+               </property>
+               <item>
+                <widget class="QComboBox" name="comboBoxMapScrollZoomDetails">
+                 <property name="currentIndex">
+                  <number>1</number>
+                 </property>
+                 <item>
+                  <property name="text">
+                   <string>High - Full details and reload all data while scrolling or zooming</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>Normal - Full details while scrolling or zooming. Loading of map objects delayed.</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>Low - Low details while scrolling or zooming. Loading of map objects delayed.</string>
+                  </property>
+                 </item>
+                </widget>
+               </item>
+              </layout>
+             </widget>
+            </item>
+            <item row="3" column="0" rowspan="2">
              <widget class="QGroupBox" name="groupBoxMapTooltips">
               <property name="title">
                <string>Map Tooltips</string>
@@ -1770,12 +1891,12 @@ userpoints and logbook entries when hovering the cursor over the map</string>
               </layout>
              </widget>
             </item>
-            <item row="1" column="0" colspan="2">
-             <widget class="QGroupBox" name="groupBoxMapTooltips_3">
+            <item row="4" column="1">
+             <widget class="QGroupBox" name="groupBoxOptionsMapInfoClicks_2">
               <property name="title">
-               <string>Empty Airports</string>
+               <string>Other Click Actions </string>
               </property>
-              <layout class="QVBoxLayout" name="verticalLayout_37">
+              <layout class="QVBoxLayout" name="verticalLayout_15">
                <property name="spacing">
                 <number>2</number>
                </property>
@@ -1792,150 +1913,46 @@ userpoints and logbook entries when hovering the cursor over the map</string>
                 <number>2</number>
                </property>
                <item>
-                <widget class="QCheckBox" name="checkBoxOptionsMapEmptyAirports">
+                <widget class="QCheckBox" name="checkBoxOptionsMapClickAirportProcs">
                  <property name="toolTip">
-                  <string>Empty airports are not add-ons, have no taxiways, no parking and no aprons.
-These are displayed underneath all other airports and use a gray symbol.
-The aiports toolbar button can be used to disable them if this checkbox is enabled.</string>
+                  <string>Show procedures in procedure search tab on airport click</string>
                  </property>
                  <property name="text">
-                  <string>&amp;Treat empty airports special</string>
-                 </property>
-                 <property name="checked">
-                  <bool>true</bool>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QCheckBox" name="checkBoxOptionsMapEmptyAirports3D">
-                 <property name="toolTip">
-                  <string>All X-Plane airports which are not 3D and not add-on
-will be displayed underneath all other airports and use a gray symbol.
-The aiports toolbar button can be used to disable them if this checkbox is enabled.</string>
-                 </property>
-                 <property name="text">
-                  <string>&amp;Consider all X-Plane airports not being 3D empty</string>
-                 </property>
-                 <property name="checked">
-                  <bool>true</bool>
-                 </property>
-                </widget>
-               </item>
-              </layout>
-             </widget>
-            </item>
-            <item row="2" column="0" colspan="2">
-             <widget class="QGroupBox" name="groupBoxMapTooltips_2">
-              <property name="title">
-               <string>Details while scrolling (click and drag, zoom in and out)</string>
-              </property>
-              <layout class="QVBoxLayout" name="verticalLayout_36">
-               <property name="spacing">
-                <number>2</number>
-               </property>
-               <property name="leftMargin">
-                <number>2</number>
-               </property>
-               <property name="topMargin">
-                <number>2</number>
-               </property>
-               <property name="rightMargin">
-                <number>2</number>
-               </property>
-               <property name="bottomMargin">
-                <number>2</number>
-               </property>
-               <item>
-                <widget class="QComboBox" name="comboBoxMapScrollZoomDetails">
-                 <property name="currentIndex">
-                  <number>1</number>
-                 </property>
-                 <item>
-                  <property name="text">
-                   <string>High - Full details and reload all data while scrolling or zooming</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>Normal - Full details while scrolling or zooming. Loading of map objects delayed.</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>Low - Low details while scrolling or zooming. Loading of map objects delayed.</string>
-                  </property>
-                 </item>
-                </widget>
-               </item>
-              </layout>
-             </widget>
-            </item>
-            <item row="0" column="0" colspan="2">
-             <widget class="QGroupBox" name="groupBoxOptionsMapGeneral">
-              <property name="title">
-               <string>Map Window</string>
-              </property>
-              <layout class="QGridLayout" name="gridLayoutOptionsMapLower">
-               <property name="leftMargin">
-                <number>2</number>
-               </property>
-               <property name="topMargin">
-                <number>2</number>
-               </property>
-               <property name="rightMargin">
-                <number>2</number>
-               </property>
-               <property name="bottomMargin">
-                <number>2</number>
-               </property>
-               <property name="spacing">
-                <number>2</number>
-               </property>
-               <item row="0" column="0" colspan="2">
-                <widget class="QCheckBox" name="checkBoxOptionsMapUndock">
-                 <property name="toolTip">
-                  <string>Allows to undock and put the map window into a floating state.
-This can cause several unwanted effects when arranging dock windows.
-Uncheck this if you do experience strange effects when resizing dock windows.
-Restart the program after changing this option. You might also need to reset the window layout.</string>
-                 </property>
-                 <property name="text">
-                  <string>Allow to &amp;undock  the map window</string>
+                  <string>Show &amp;procedures on airport click</string>
                  </property>
                  <property name="checked">
                   <bool>false</bool>
                  </property>
                 </widget>
                </item>
-               <item row="1" column="0" colspan="2">
-                <widget class="QLabel" name="label_5">
+               <item>
+                <widget class="QCheckBox" name="checkBoxOptionsMapClickFlightplan">
+                 <property name="toolTip">
+                  <string>Select flight plan leg clicked on the map</string>
+                 </property>
                  <property name="text">
-                  <string>&lt;b&gt;A restart is required after changing the map window docking option.&lt;/b&gt;&lt;br/&gt;
-Use &quot;Window&quot; -&gt; &quot;Reset Window Layout&quot; in the main menu to clean up the layout after a restart if necessary.</string>
+                  <string>&amp;Select Flight Plan legs on navaid or airport click</string>
                  </property>
-                 <property name="wordWrap">
-                  <bool>true</bool>
-                 </property>
-                 <property name="textInteractionFlags">
-                  <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
+                 <property name="checked">
+                  <bool>false</bool>
                  </property>
                 </widget>
                </item>
+               <item>
+                <layout class="QHBoxLayout" name="horizontalLayout_5">
+                 <property name="spacing">
+                  <number>0</number>
+                 </property>
+                 <property name="leftMargin">
+                  <number>22</number>
+                 </property>
+                 <property name="topMargin">
+                  <number>0</number>
+                 </property>
+                </layout>
+               </item>
               </layout>
              </widget>
-            </item>
-            <item row="4" column="1">
-             <spacer name="verticalSpacer_18">
-              <property name="orientation">
-               <enum>Qt::Vertical</enum>
-              </property>
-              <property name="sizeHint" stdset="0">
-               <size>
-                <width>20</width>
-                <height>40</height>
-               </size>
-              </property>
-             </spacer>
             </item>
            </layout>
           </widget>
@@ -7610,7 +7627,6 @@ You have to reload the scenery library so that the changes take effect.</string>
   <tabstop>checkBoxOptionsMapClickUserAircraft</tabstop>
   <tabstop>checkBoxOptionsMapClickAiAircraft</tabstop>
   <tabstop>checkBoxOptionsMapClickAirport</tabstop>
-  <tabstop>checkBoxOptionsMapClickAirportProcs</tabstop>
   <tabstop>checkBoxOptionsMapClickNavaid</tabstop>
   <tabstop>checkBoxOptionsMapClickAirspace</tabstop>
   <tabstop>scrollArea_5</tabstop>
