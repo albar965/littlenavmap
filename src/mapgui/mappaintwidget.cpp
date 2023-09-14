@@ -1285,13 +1285,19 @@ void MapPaintWidget::paintEvent(QPaintEvent *paintEvent)
     // Avoid excessive logging on visible widget
     qDebug() << Q_FUNC_INFO << "Viewport" << getCurrentViewBoundingBox().toString(GeoDataCoordinates::Degree);
     qDebug() << Q_FUNC_INFO << "currentViewBoundingBox" << currentViewBoundingBox.toString(GeoDataCoordinates::Degree);
+    qDebug() << Q_FUNC_INFO << "skipRender" << skipRender << "painting" << painting
+             << "noRender" << noRender() << "mapCoversViewport" << viewport()->mapCoversViewport();
   }
 
   if(skipRender)
   {
     // Skip unneeded rendering after single mouseclick
     skipRender = false;
-    return;
+
+    // Exit paint only if the map covers the whole view.
+    // Spurious paint events are triggered if the coverage is not complete (e.g. black background around the globe)
+    if(viewport()->mapCoversViewport())
+      return;
   }
 
   if(!painting)

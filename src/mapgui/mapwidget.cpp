@@ -817,7 +817,8 @@ bool MapWidget::mousePressCheckModifierActions(QMouseEvent *event)
 void MapWidget::mousePressEvent(QMouseEvent *event)
 {
 #ifdef DEBUG_INFORMATION
-  qDebug() << Q_FUNC_INFO << "state" << mouseState << "modifiers" << event->modifiers() << "pos" << event->pos();
+  qDebug() << Q_FUNC_INFO << "state" << mouseState << "modifiers" << event->modifiers() << "pos" << event->pos()
+           << "noRender()" << noRender();
 #endif
 
   // Skip unneeded rendering after single mouseclick
