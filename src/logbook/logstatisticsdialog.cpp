@@ -196,7 +196,7 @@ LogStatisticsDialog::LogStatisticsDialog(QWidget *parent, LogdataController *log
   initQueries();
 
   ui->setupUi(this);
-  atools::gui::adjustTableColors(ui->tableViewLogStatsGrouped);
+  atools::gui::adjustSelectionColors(ui->tableViewLogStatsGrouped);
 
   // Copy main menu actions to allow using shortcuts in the non-modal dialog too
   addActions(NavApp::getMainWindowActions());
@@ -258,7 +258,7 @@ void LogStatisticsDialog::optionsChanged()
 
 void LogStatisticsDialog::styleChanged()
 {
-  atools::gui::adjustTableColors(ui->tableViewLogStatsGrouped);
+  atools::gui::adjustSelectionColors(ui->tableViewLogStatsGrouped);
 }
 
 void LogStatisticsDialog::buttonBoxClicked(QAbstractButton *button)

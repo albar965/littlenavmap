@@ -68,7 +68,7 @@ RunwaySelection::RunwaySelection(QObject *parent, const map::MapAirport& mapAirp
 
   // Resize widget to get rid of the too large default margins
   zoomHandler = new atools::gui::ItemViewZoomHandler(runwayTableWidget);
-  atools::gui::adjustTableColors(runwayTableWidget);
+  atools::gui::adjustSelectionColors(runwayTableWidget);
 
 }
 

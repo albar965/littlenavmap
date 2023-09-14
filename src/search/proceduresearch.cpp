@@ -29,6 +29,7 @@
 #include "gui/dialog.h"
 #include "gui/griddelegate.h"
 #include "gui/itemviewzoomhandler.h"
+#include "gui/tools.h"
 #include "gui/widgetstate.h"
 #include "query/airportquery.h"
 #include "query/infoquery.h"
@@ -124,6 +125,7 @@ ProcedureSearch::ProcedureSearch(QMainWindow *main, QTreeWidget *treeWidgetParam
   gridDelegate = new atools::gui::GridDelegate(treeWidget);
   gridDelegate->setHeightIncrease(0);
   treeWidget->setItemDelegate(gridDelegate);
+  atools::gui::adjustSelectionColors(treeWidget);
 
   transitionIndicator = tr(" (T)");
 
@@ -261,6 +263,7 @@ void ProcedureSearch::optionsChanged()
 
   // Adapt table view text size
   gridDelegate->styleChanged();
+  atools::gui::adjustSelectionColors(treeWidget);
   zoomHandler->zoomPercent(OptionData::instance().getGuiSearchTableTextSize());
   createFonts();
   updateHeaderLabel();

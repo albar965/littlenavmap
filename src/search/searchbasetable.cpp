@@ -225,7 +225,7 @@ SearchBaseTable::SearchBaseTable(QMainWindow *parent, QTableView *tableView, Col
   viewEventFilter = new ViewEventFilter(this);
   widgetEventFilter = new SearchWidgetEventFilter(this);
   view->installEventFilter(viewEventFilter);
-  atools::gui::adjustTableColors(view);
+  atools::gui::adjustSelectionColors(view);
 }
 
 SearchBaseTable::~SearchBaseTable()
@@ -330,7 +330,7 @@ void SearchBaseTable::optionsChanged()
 void SearchBaseTable::styleChanged()
 {
   view->update();
-  atools::gui::adjustTableColors(view);
+  atools::gui::adjustSelectionColors(view);
 }
 
 void SearchBaseTable::updateTableSelection(bool noFollow)

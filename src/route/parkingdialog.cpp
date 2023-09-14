@@ -87,7 +87,7 @@ ParkingDialog::ParkingDialog(QWidget *parent, const map::MapAirport& departureAi
   ui->setupUi(this);
 
   zoomHandler = new atools::gui::ItemViewZoomHandler(ui->tableWidgetSelectParking);
-  atools::gui::adjustTableColors(ui->tableWidgetSelectParking);
+  atools::gui::adjustSelectionColors(ui->tableWidgetSelectParking);
 
   restoreState();
   updateTable();

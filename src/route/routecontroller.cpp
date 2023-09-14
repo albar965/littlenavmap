@@ -234,7 +234,7 @@ RouteController::RouteController(QMainWindow *parentWindow, QTableView *tableVie
   flightplanIO = new atools::fs::pln::FlightplanIO();
 
   Ui::MainWindow *ui = NavApp::getMainUi();
-  atools::gui::adjustTableColors(ui->tableViewRoute);
+  atools::gui::adjustSelectionColors(ui->tableViewRoute);
   tabHandlerRoute = new atools::gui::TabWidgetHandler(ui->tabWidgetRoute, {}, QIcon(":/littlenavmap/resources/icons/tabbutton.svg"),
                                                       tr("Open or close tabs"));
   tabHandlerRoute->init(rc::TabRouteIds, lnm::ROUTEWINDOW_WIDGET_TABS);
@@ -3232,7 +3232,7 @@ void RouteController::styleChanged()
   tabHandlerRoute->styleChanged();
   updateModelHighlights();
   routeLabel->styleChanged();
-  atools::gui::adjustTableColors(NavApp::getMainUi()->tableViewRoute);
+  atools::gui::adjustSelectionColors(NavApp::getMainUi()->tableViewRoute);
   highlightNextWaypoint(route.getActiveLegIndexCorrected());
 }
 
