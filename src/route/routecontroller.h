@@ -370,7 +370,7 @@ private:
     MOVE_UP = -1
   };
 
-  /* Saves flight plan using LNM format */
+  /* Saves flight plan using LNM format. Returns true on success. */
   bool saveFlightplanLnmInternal(const QString& filename, bool silent);
 
   /* Saves flight plan sippet using LNM format to given name. Given range must not contains procedures or alternates. */

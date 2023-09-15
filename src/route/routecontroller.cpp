@@ -1593,8 +1593,13 @@ void RouteController::saveFlightplanLnmDefault()
 bool RouteController::saveFlightplanLnmAs(const QString& filename)
 {
   qDebug() << Q_FUNC_INFO << filename;
-  routeFilename = filename;
-  return saveFlightplanLnmInternal(routeFilename, false /* silent */);
+  bool success = saveFlightplanLnmInternal(filename, false /* silent */);
+
+  if(success)
+    // Keep filename only if process was not canceled out or failed otherwise
+    routeFilename = filename;
+
+  return success;
 }
 
 Route RouteController::getRouteForSelection() const
