@@ -49,6 +49,9 @@ enum RouteAdjustOption
   REMOVE_RUNWAY_PROC = 1 << 14, /* Remove runway extensions and their waypoints */
   REMOVE_MISSED = 1 << 15, /* Remove missed approach */
   CLEAN_CUSTOM_DEPART = 1 << 16, /* Remove first runway waypoint from selected departure runway for X-Plane */
+  SAVE_KEEP_INVALID_START = 1 << 17, /* Do not remove parking/start position names which were not resolved against database */
+
+  /* Flag combinations =========================================================================== */
 
   /* Export adjust options for most export formats */
   DEFAULT_OPTS = rf::REPLACE_CUSTOM_WP | rf::REMOVE_ALTERNATE | rf::REMOVE_TRACKS | FIX_PROC_ENTRY_EXIT,
@@ -68,10 +71,10 @@ enum RouteAdjustOption
                               rf::REMOVE_RUNWAY_PROC,
 
   /* LNMPLN save and load format. Does not mangle anything. */
-  DEFAULT_OPTS_LNMPLN = FIX_PROC_ENTRY_EXIT | SAVE_LNMPLN,
+  DEFAULT_OPTS_LNMPLN = FIX_PROC_ENTRY_EXIT | SAVE_LNMPLN | SAVE_KEEP_INVALID_START,
 
   /* LNMPLN save selected legs as plan. */
-  DEFAULT_OPTS_LNMPLN_SAVE_SELECTED = DEFAULT_OPTS_LNMPLN | rf::REMOVE_ALTERNATE,
+  DEFAULT_OPTS_LNMPLN_SAVE_SELECTED = DEFAULT_OPTS_LNMPLN | rf::REMOVE_ALTERNATE | SAVE_KEEP_INVALID_START,
 
   /* Option for RouteStringWriter used to generate a route description */
   DEFAULT_OPTS_ROUTESTRING = FIX_PROC_ENTRY_EXIT,

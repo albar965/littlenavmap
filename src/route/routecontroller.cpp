@@ -1132,7 +1132,7 @@ void RouteController::newFlightplan()
   // Copy current alt and type from widgets to flightplan
   updateFlightplanFromWidgets();
 
-  route.createRouteLegsFromFlightplan();
+  route.createRouteLegsFromFlightplan(nullptr);
   route.updateAll();
   route.updateLegAltitudes();
   route.updateRouteCycleMetadata();
@@ -1249,7 +1249,7 @@ void RouteController::loadFlightplan(atools::fs::pln::Flightplan flightplan, ato
   route.setFlightplan(flightplan);
   Flightplan& routeFlightplan = route.getFlightplan();
 
-  route.createRouteLegsFromFlightplan();
+  route.createRouteLegsFromFlightplan(&parkingErrors);
 
   // test and error after undo/redo and switch
 
@@ -1411,8 +1411,7 @@ bool RouteController::insertFlightplan(const QString& filename, int insertBefore
   {
     // Will throw an exception if something goes wrong
     flightplanIO->load(flightplan, filename);
-    RouteCommand *undoCommand = preChange(insertBefore >= route.getDestinationAirportLegIndex() ?
-                                          tr("Insert") : tr("Append"));
+    RouteCommand *undoCommand = preChange(insertBefore >= route.getDestinationAirportLegIndex() ? tr("Insert") : tr("Append"));
 
     bool beforeDestInsert = false, beforeDepartPrepend = false, afterDestAppend = false, middleInsert = false;
     int insertPosSelection = insertBefore;
@@ -1510,7 +1509,7 @@ bool RouteController::insertFlightplan(const QString& filename, int insertBefore
     route.clearProcedureLegs(proc::PROCEDURE_ALL, true /* clear route */, false /* clear flight plan */);
 
     // Rebuild all legs from flightplan object and properties
-    route.createRouteLegsFromFlightplan();
+    route.createRouteLegsFromFlightplan(&parkingErrors);
 
     // Load procedures and add legs
     loadProceduresFromFlightplan(true /* clearOldProcedureProperties */, false /* cleanupRoute */, false /* autoresolveTransition */);
@@ -1726,7 +1725,7 @@ bool RouteController::saveFlightplanLnmInternal(const QString& filename, bool si
       route.updateAll();
       route.updateAirwaysAndAltitude(false /* adjustRouteAltitude */);
       route.updateLegAltitudes();
-      route.updateDepartureAndDestination();
+      route.updateDepartureAndDestination(false /* clearInvalidStart */); // Keep start/parking which was not found in database
 
       routeHasChanged = true;
     }
@@ -2063,7 +2062,7 @@ bool RouteController::calculateRouteInternal(atools::routing::RouteFinder *route
       flightplan.removeProcedureEntries();
 
       // Copy flight plan to route object
-      route.createRouteLegsFromFlightplan();
+      route.createRouteLegsFromFlightplan(nullptr);
 
       // Reload procedures from properties
       loadProceduresFromFlightplan(true /* clearOldProcedureProperties */, false /* cleanupRoute */, false /* autoresolveTransition */);
@@ -2204,7 +2203,7 @@ void RouteController::reverseRoute()
     flightplan[i].setAirway(QString());
   flightplan.getProperties().remove(atools::fs::pln::PROCAIRWAY);
 
-  route.createRouteLegsFromFlightplan();
+  route.createRouteLegsFromFlightplan(nullptr);
   route.updateAll();
   route.updateAirwaysAndAltitude(false /* adjustRouteAltitude */);
   route.updateLegAltitudes();
@@ -2255,7 +2254,7 @@ void RouteController::postDatabaseLoad()
 
   // Assign plan to route and get reference to it
   route.setFlightplan(flightplan);
-  route.createRouteLegsFromFlightplan();
+  route.createRouteLegsFromFlightplan(&parkingErrors);
   loadProceduresFromFlightplan(false /* clearOldProcedureProperties */, false /* cleanupRoute */, false /* autoresolveTransition */);
   route.updateAll(); // Removes alternate property if not resolvable
   route.updateRouteCycleMetadata();
@@ -3180,7 +3179,6 @@ void RouteController::tableSelectionChanged(const QItemSelection& selected, cons
   ignoreSelectionEvent = false;
 }
 
-/* Called by undo command */
 void RouteController::changeRouteUndo(const atools::fs::pln::Flightplan& newFlightplan)
 {
   // Keep our own index as a workaround
@@ -3190,7 +3188,6 @@ void RouteController::changeRouteUndo(const atools::fs::pln::Flightplan& newFlig
   changeRouteUndoRedo(newFlightplan);
 }
 
-/* Called by undo command */
 void RouteController::changeRouteRedo(const atools::fs::pln::Flightplan& newFlightplan)
 {
   // Keep our own index as a workaround
@@ -3199,16 +3196,16 @@ void RouteController::changeRouteRedo(const atools::fs::pln::Flightplan& newFlig
   changeRouteUndoRedo(newFlightplan);
 }
 
-/* Update window after undo or redo action */
 void RouteController::changeRouteUndoRedo(const atools::fs::pln::Flightplan& newFlightplan)
 {
   int currentRow = tableViewRoute->currentIndex().isValid() ? tableViewRoute->currentIndex().row() : -1;
 
+  clearAllErrors();
   route.clearAll();
   route.setFlightplan(newFlightplan);
 
   // Change format in plan according to last saved format
-  route.createRouteLegsFromFlightplan();
+  route.createRouteLegsFromFlightplan(&parkingErrors);
   loadProceduresFromFlightplan(false /* clearOldProcedureProperties */, false /* cleanupRoute */, false /* autoresolveTransition */);
   route.updateAll();
   route.updateAirwaysAndAltitude(false /* adjustRouteAltitude */);
@@ -3388,7 +3385,7 @@ void RouteController::moveSelectedLegsInternal(MoveDirection direction)
     route.updateAirwaysAndAltitude(false /* adjustRouteAltitude */);
     route.updateLegAltitudes();
 
-    route.updateDepartureAndDestination();
+    route.updateDepartureAndDestination(false /* clearInvalidStart */);
     // Get type and cruise altitude from widgets
     updateFlightplanFromWidgets();
 
@@ -3489,7 +3486,7 @@ void RouteController::deleteSelectedLegsInternal(const QList<int>& rows)
     route.updateAirwaysAndAltitude(false /* adjustRouteAltitude */);
     route.updateLegAltitudes();
 
-    route.updateDepartureAndDestination();
+    route.updateDepartureAndDestination(false /* clearInvalidStart */);
 
     // Get type and cruise altitude from widgets
     updateFlightplanFromWidgets();
@@ -3584,7 +3581,7 @@ void RouteController::routeClearParkingAndStart()
   route.updateAirwaysAndAltitude(false /* adjustRouteAltitude */);
   route.updateLegAltitudes();
 
-  route.updateDepartureAndDestination();
+  route.updateDepartureAndDestination(true /* clearInvalidStart */);
   // Get type and cruise altitude from widgets
   updateFlightplanFromWidgets();
   updateTableModel();
@@ -3622,13 +3619,12 @@ void RouteController::routeSetParking(const map::MapParking& parking)
   pln::Flightplan& flightplan = route.getFlightplan();
   flightplan.setDepartureParkingName(map::parkingNameForFlightplan(parking));
   flightplan.setDepartureParkingType(atools::fs::pln::PARKING);
-  flightplan.setDepartureParkingPosition(parking.position, route.getDepartureAirportLeg().getAltitude(),
-                                         parking.heading);
+  flightplan.setDepartureParkingPosition(parking.position, route.getDepartureAirportLeg().getAltitude(), parking.heading);
 
   route.updateAirwaysAndAltitude(false /* adjustRouteAltitude */);
   route.updateLegAltitudes();
+  route.updateDepartureAndDestination(true /* clearInvalidStart */);
 
-  route.updateDepartureAndDestination();
   // Get type and cruise altitude from widgets
   updateFlightplanFromWidgets();
   updateTableModel();
@@ -3676,7 +3672,7 @@ void RouteController::routeSetStartPosition(map::MapStart start)
 
   route.updateAirwaysAndAltitude(false /* adjustRouteAltitude */);
   route.updateLegAltitudes();
-  route.updateDepartureAndDestination();
+  route.updateDepartureAndDestination(true /* clearInvalidStart */);
 
   // Get type and cruise altitude from widgets
   updateFlightplanFromWidgets();
@@ -3708,7 +3704,7 @@ void RouteController::routeSetDeparture(map::MapAirport airport)
   route.updateAll();
   route.updateAirwaysAndAltitude(false /* adjustRouteAltitude */);
   route.updateLegAltitudes();
-  route.updateDepartureAndDestination();
+  route.updateDepartureAndDestination(true /* clearInvalidStart */);
 
   // Get type and cruise altitude from widgets
   updateFlightplanFromWidgets();
@@ -3777,7 +3773,7 @@ void RouteController::routeSetDestination(map::MapAirport airport)
   route.updateAll();
   route.updateAirwaysAndAltitude(false /* adjustRouteAltitude */);
   route.updateLegAltitudes();
-  route.updateDepartureAndDestination();
+  route.updateDepartureAndDestination(false /* clearInvalidStart */);
 
   // Get type and cruise altitude from widgets
   updateFlightplanFromWidgets();
@@ -3823,7 +3819,7 @@ void RouteController::routeAddAlternate(map::MapAirport airport)
   route.updateAll();
   route.updateAirwaysAndAltitude(false /* adjustRouteAltitude */);
   route.updateLegAltitudes();
-  route.updateDepartureAndDestination();
+  route.updateDepartureAndDestination(false /* clearInvalidStart */);
 
   // Get type and cruise altitude from widgets
   updateFlightplanFromWidgets();
@@ -4118,7 +4114,7 @@ void RouteController::routeAddProcedure(proc::MapProcedureLegs legs)
   route.updateAll();
   route.updateAirwaysAndAltitude(false /* adjustRouteAltitude */);
   route.updateLegAltitudes();
-  route.updateDepartureAndDestination();
+  route.updateDepartureAndDestination(false /* clearInvalidStart */);
 
   // Get type and cruise altitude from widgets
   updateFlightplanFromWidgets();
@@ -4307,7 +4303,7 @@ int RouteController::routeAddInternal(int id, atools::geo::Pos userPos, map::Map
   if(flightplan.isEmpty() && insertIndex > 0)
     lastLeg = &route.value(insertIndex - 1);
   RouteLeg routeLeg(&flightplan);
-  routeLeg.createFromDatabaseByEntry(insertIndex, lastLeg);
+  routeLeg.createFromDatabaseByEntry(insertIndex, lastLeg, nullptr);
   if(!userpointIdent.isEmpty())
     routeLeg.getFlightplanEntry()->setIdent(userpointIdent);
 
@@ -4330,15 +4326,14 @@ int RouteController::routeAddInternal(int id, atools::geo::Pos userPos, map::Map
   route.updateAirwaysAndAltitude(false /* adjustRouteAltitude */);
   route.updateLegAltitudes();
 
-  route.updateDepartureAndDestination();
+  route.updateDepartureAndDestination(false /* clearInvalidStart */);
   // Get type and cruise altitude from widgets
   updateFlightplanFromWidgets();
 
   return insertIndex;
 }
 
-void RouteController::routeReplace(int id, atools::geo::Pos userPos, map::MapTypes type,
-                                   int legIndex)
+void RouteController::routeReplace(int id, atools::geo::Pos userPos, map::MapTypes type, int legIndex)
 {
   qDebug() << Q_FUNC_INFO << "user pos" << userPos << "id" << id
            << "type" << type << "leg index" << legIndex;
@@ -4378,7 +4373,7 @@ void RouteController::routeReplace(int id, atools::geo::Pos userPos, map::MapTyp
     lastLeg = &route.value(legIndex - 1);
 
   RouteLeg routeLeg(&flightplan);
-  routeLeg.createFromDatabaseByEntry(legIndex, lastLeg);
+  routeLeg.createFromDatabaseByEntry(legIndex, lastLeg, nullptr);
 
   route.replace(legIndex, routeLeg);
   route.eraseAirway(legIndex);
@@ -4394,7 +4389,7 @@ void RouteController::routeReplace(int id, atools::geo::Pos userPos, map::MapTyp
   route.updateAirwaysAndAltitude(false /* adjustRouteAltitude */);
   route.updateLegAltitudes();
 
-  route.updateDepartureAndDestination();
+  route.updateDepartureAndDestination(false /* clearInvalidStart */);
   // Get type and cruise altitude from widgets
   updateFlightplanFromWidgets();
 
@@ -5105,7 +5100,6 @@ void RouteController::highlightNextWaypoint(int activeLegIdx)
   }
 }
 
-/* Set colors for procedures and missing objects like waypoints and airways */
 void RouteController::updateModelHighlights()
 {
   // Check if model is already initailized
@@ -5209,7 +5203,7 @@ void RouteController::updateModelHighlights()
 
 bool RouteController::hasErrors() const
 {
-  return !flightplanErrors.isEmpty() || !procedureErrors.isEmpty() || !alternateErrors.isEmpty();
+  return !flightplanErrors.isEmpty() || !procedureErrors.isEmpty() || !alternateErrors.isEmpty() || !parkingErrors.isEmpty();
 }
 
 QStringList RouteController::getErrorStrings() const
@@ -5217,8 +5211,8 @@ QStringList RouteController::getErrorStrings() const
   QStringList toolTip;
   if(hasErrors())
   {
-    if(!flightplanErrors.isEmpty())
-      toolTip.append(flightplanErrors);
+    toolTip.append(flightplanErrors);
+    toolTip.append(parkingErrors);
 
     if(!procedureErrors.isEmpty())
     {
@@ -5531,6 +5525,7 @@ void RouteController::clearAllErrors()
   procedureErrors.clear();
   alternateErrors.clear();
   flightplanErrors.clear();
+  parkingErrors.clear();
   trackErrors = false;
 }
 

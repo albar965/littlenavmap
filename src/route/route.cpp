@@ -1867,7 +1867,7 @@ void Route::clearProcedureLegs(proc::MapProcedureTypes type, bool clearRoute, bo
   }
 }
 
-void Route::updateDepartureAndDestination()
+void Route::updateDepartureAndDestination(bool clearInvalidStart)
 {
   if(!isEmpty())
   {
@@ -1885,8 +1885,7 @@ void Route::updateDepartureAndDestination()
     {
       // Get position from parking spot
       flightplan.setDepartureParkingName(map::parkingNameForFlightplan(departure.getDepartureParking()));
-      flightplan.setDepartureParkingPosition(departure.getDepartureParking().position,
-                                             departure.getAltitude(),
+      flightplan.setDepartureParkingPosition(departure.getDepartureParking().position, departure.getAltitude(),
                                              departure.getDepartureParking().heading);
       flightplan.setDepartureParkingType(atools::fs::pln::PARKING);
     }
@@ -1894,8 +1893,7 @@ void Route::updateDepartureAndDestination()
     {
       // Get position from start
       flightplan.setDepartureParkingName(departure.getDepartureStart().runwayName);
-      flightplan.setDepartureParkingPosition(departure.getDepartureStart().position,
-                                             departure.getAltitude(),
+      flightplan.setDepartureParkingPosition(departure.getDepartureStart().position, departure.getAltitude(),
                                              departure.getDepartureStart().heading);
 
       // A start can be a runway or a helipad
@@ -1904,7 +1902,7 @@ void Route::updateDepartureAndDestination()
       else if(!departure.getDepartureStart().runwayName.isEmpty())
         flightplan.setDepartureParkingType(atools::fs::pln::RUNWAY);
     }
-    else
+    else if(clearInvalidStart) // Clear only if requested - otherwise leave parking and/or start intact
     {
       // No start position and no parking - use airport/navaid position
       flightplan.setDepartureParkingName(QString());
@@ -1931,7 +1929,7 @@ void Route::updateAll()
   updateDistancesAndCourse();
   updateBoundingRect();
   updateWaypointNames();
-  updateDepartureAndDestination();
+  updateDepartureAndDestination(false /* clearInvalidStart */);
   updateApproachIls();
 }
 
@@ -2710,7 +2708,7 @@ const Pos Route::getPrevPositionAt(int i) const
     return atools::geo::EMPTY_POS;
 }
 
-void Route::createRouteLegsFromFlightplan()
+void Route::createRouteLegsFromFlightplan(QStringList *parkingErrors)
 {
   clear();
 
@@ -2720,7 +2718,7 @@ void Route::createRouteLegsFromFlightplan()
   for(int i = 0; i < flightplan.size(); i++)
   {
     RouteLeg leg(&flightplan);
-    leg.createFromDatabaseByEntry(i, lastLeg);
+    leg.createFromDatabaseByEntry(i, lastLeg, parkingErrors);
 
     if(leg.getMapType() == map::INVALID)
       // Not found in database
@@ -2788,7 +2786,8 @@ Route Route::adjustedToOptions(const Route& origRoute, rf::RouteAdjustOptions op
   atools::fs::pln::Flightplan& plan = route.getFlightplan();
   FlightplanEntryBuilder entryBuilder;
 
-  route.updateDepartureAndDestination();
+// Clear unresolved parking/start names depending on flag
+  route.updateDepartureAndDestination(!options.testFlag(rf::SAVE_KEEP_INVALID_START));
 
   // Restore duplicate waypoints at route/procedure entry/exits which were removed after route calculation
   if(options.testFlag(rf::FIX_PROC_ENTRY_EXIT) || options.testFlag(rf::FIX_PROC_ENTRY_EXIT_ALWAYS))
@@ -3165,7 +3164,7 @@ Route Route::adjustedToOptions(const Route& origRoute, rf::RouteAdjustOptions op
     }
 
     // Copy flight plan entries to route legs - will also add coordinates
-    route.createRouteLegsFromFlightplan();
+    route.createRouteLegsFromFlightplan(nullptr);
     route.updateAll();
 
     // Assign airport idents to waypoints where available - for MSFS =======================================

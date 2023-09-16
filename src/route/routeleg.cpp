@@ -148,7 +148,7 @@ void RouteLeg::assignAnyNavaid(atools::fs::pln::FlightplanEntry *flightplanEntry
   }
 }
 
-void RouteLeg::createFromDatabaseByEntry(int entryIndex, const RouteLeg *prevLeg)
+void RouteLeg::createFromDatabaseByEntry(int entryIndex, const RouteLeg *prevLeg, QStringList *parkingErrors)
 {
   index = entryIndex;
 
@@ -222,11 +222,11 @@ void RouteLeg::createFromDatabaseByEntry(int entryIndex, const RouteLeg *prevLeg
 
         // Resolve parking if first airport ==============================
         QString name = flightplan->getDepartureParkingName().trimmed();
-        QList<map::MapParking> parkings;
         if(!name.isEmpty() && prevLeg == nullptr)
         {
           // There is a parking name and this is the departure airport
           bool translateName = false;
+          QList<map::MapParking> parkings;
           if(NavApp::isAirportDatabaseXPlane(false /* navdata */) || name.endsWith(PARKING_NO_NUMBER))
           {
             // X-Plane style parking - name only ======
@@ -288,6 +288,12 @@ void RouteLeg::createFromDatabaseByEntry(int entryIndex, const RouteLeg *prevLeg
             flightplan->setDepartureParkingType(atools::fs::pln::PARKING);
           }
           // End of parking detection
+
+          if(parkingErrors != nullptr && !start.isValid() && !parking.isValid())
+          {
+            qWarning() << Q_FUNC_INFO << "Parking or start position" << name << "not found at departure airport";
+            parkingErrors->append(tr("Parking or start position \"%1\" not found at departure airport.").arg(name));
+          }
         } // if(!name.isEmpty() && prevLeg == nullptr)
       }
       break;
@@ -818,7 +824,7 @@ QString RouteLeg::getDisplayIdent(bool useIata) const
     return getIdent();
 }
 
-QString RouteLeg::getComment() const
+const QString& RouteLeg::getComment() const
 {
   return getFlightplanEntry().getComment();
 }
@@ -885,7 +891,7 @@ void RouteLeg::getMagTrueRealCourse(float& courseMag, float& courseTrue, bool *p
   }
 }
 
-QString RouteLeg::getRegion() const
+const QString& RouteLeg::getRegion() const
 {
   if(airport.isValid())
     return airport.region;
@@ -903,7 +909,7 @@ QString RouteLeg::getRegion() const
   return EMPTY_STRING;
 }
 
-QString RouteLeg::getName() const
+const QString& RouteLeg::getName() const
 {
   if(type == map::INVALID)
     return EMPTY_STRING;
@@ -940,12 +946,12 @@ QString RouteLeg::getFrequencyOrChannel() const
     return getChannel();
 }
 
-QString RouteLeg::getChannel() const
+const QString& RouteLeg::getChannel() const
 {
   if(vor.isValid() && vor.tacan)
     return vor.channel;
   else
-    return QString();
+    return EMPTY_STRING;
 }
 
 int RouteLeg::getFrequency() const
@@ -1145,14 +1151,8 @@ void RouteLeg::assignRunwayOrHelipad(const QString& name)
   NavApp::getAirportQuerySim()->getStartByNameAndPos(start, airport.id, name, flightplan->getDepartureParkingPosition());
 
   if(!start.isValid() || start.position.distanceMeterTo(flightplan->getDepartureParkingPosition()) > MAX_PARKING_DIST_METER)
-  {
-    // Navigraph database has no start table
-
+    // Do not clear departure position in flight plan to allow the parking name to survive database switches
     qWarning() << Q_FUNC_INFO << "Found no start positions for" << name;
-    // Clear departure position in flight plan
-    flightplan->setDepartureParkingName(QString());
-    flightplan->setDepartureParkingType(atools::fs::pln::NO_POS);
-  }
   else
   {
     // Helicopter pad or runway name

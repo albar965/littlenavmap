@@ -2834,7 +2834,7 @@ void MapWidget::mainWindowShown()
 
   // Create a copy of KML files where all missing files will be removed from the recent list
   QStringList copyKml(kmlFilePaths);
-  for(const QString& kml : kmlFilePaths)
+  for(const QString& kml : qAsConst(kmlFilePaths))
   {
     if(!loadKml(kml, false /* center */))
       copyKml.removeAll(kml);
@@ -2978,7 +2978,7 @@ void MapWidget::overlayStateFromMenu()
 
 void MapWidget::connectOverlayMenus()
 {
-  for(QAction *action : mapOverlays)
+  for(QAction *action : qAsConst(mapOverlays))
     connect(action, &QAction::toggled, this, &MapWidget::overlayStateFromMenu);
 
   for(auto it = mapOverlays.constBegin(); it != mapOverlays.constEnd(); ++it)
@@ -3053,7 +3053,7 @@ void MapWidget::saveState()
 
   overlayStateToMenu();
   atools::gui::WidgetState state(lnm::MAP_OVERLAY_VISIBLE, false /*save visibility*/, true /*block signals*/);
-  for(QAction *action : mapOverlays)
+  for(QAction *action : qAsConst(mapOverlays))
     state.save(action);
 }
 
@@ -3111,7 +3111,7 @@ void MapWidget::restoreState()
   aircraftTrackLogbook->setMaxTrackEntries(OptionData::instance().getAircraftTrackMaxPoints());
 
   atools::gui::WidgetState state(lnm::MAP_OVERLAY_VISIBLE, false /*save visibility*/, true /*block signals*/);
-  for(QAction *action : mapOverlays)
+  for(QAction *action : qAsConst(mapOverlays))
     state.restore(action);
 
   if(OptionData::instance().getFlags() & opts::STARTUP_LOAD_MAP_SETTINGS)

@@ -584,7 +584,7 @@ public:
 
   /* Loads navaids from database and create all route map objects from flight plan.
    * Flight plan will be corrected if needed. */
-  void createRouteLegsFromFlightplan();
+  void createRouteLegsFromFlightplan(QStringList* parkingErrors);
 
   /* @return true if departure is valid and departure airport has no parking or departure of flight plan
    *  has parking or helipad as start position */
@@ -675,7 +675,7 @@ public:
   void reloadProcedures(proc::MapProcedureTypes procs);
 
   /* Copies departure and destination names and positions from Route to Flightplan */
-  void updateDepartureAndDestination();
+  void updateDepartureAndDestination(bool clearInvalidStart);
 
   /* Get file name pattern based on route values */
   QString buildDefaultFilename(const QString& suffix) const;

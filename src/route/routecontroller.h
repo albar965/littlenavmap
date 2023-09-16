@@ -376,10 +376,10 @@ private:
   /* Saves flight plan sippet using LNM format to given name. Given range must not contains procedures or alternates. */
   bool saveFlightplanLnmSelectionAs(const QString& filename, int from, int to) const;
 
-  /* Called by route command */
+  /* Called by undo command */
   void changeRouteUndo(const atools::fs::pln::Flightplan& newFlightplan);
 
-  /* Called by route command */
+  /* Called by undo command */
   void changeRouteRedo(const atools::fs::pln::Flightplan& newFlightplan);
 
   /* Save undo state before and after change */
@@ -474,6 +474,9 @@ private:
 
   void updateTableHeaders();
   void highlightNextWaypoint(int activeLegIdx);
+
+  /* Set colors for procedures and missing objects like waypoints and airways.
+   * Also fills flight plan errors */
   void updateModelHighlights();
 
   /* Fill the route procedure legs structures with data based on the procedure properties in the flight plan */
@@ -593,14 +596,14 @@ private:
   /* Timers for updating altitude delayer, clear selection while flying and moving active to top */
   QTimer routeAltDelayTimer, tableCleanupTimer;
 
-  // Route table colum headings
+  /* Route table colum headings */
   QStringList routeColumns, routeColumnDescription;
   UnitStringTool *units = nullptr;
 
-  // Errors collected when parsing route for model
-  QStringList flightplanErrors, procedureErrors, alternateErrors;
+  /* Errors collected when parsing route for model, reading route legs or reading procedures */
+  QStringList flightplanErrors, parkingErrors, procedureErrors, alternateErrors;
 
-  // String to save flight plan temporarily in LNMPLN format when switching databases
+  /* String to save flight plan temporarily in LNMPLN format when switching databases */
   QString tempFlightplanStr;
   bool trackErrors = false;
 };

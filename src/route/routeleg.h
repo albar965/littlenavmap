@@ -59,7 +59,7 @@ public:
    * @param query Database query object
    * @param predRouteMapObj Predecessor of this entry or null if this is the first waypoint in the list
    */
-  void createFromDatabaseByEntry(int entryIndex, const RouteLeg *prevLeg);
+  void createFromDatabaseByEntry(int entryIndex, const RouteLeg *prevLeg, QStringList *parkingErrors);
 
   /*
    * Creates a route map object from an airport database object.
@@ -111,12 +111,12 @@ public:
   QString getDisplayIdent(bool useIata = true) const;
 
   /* Comment section from flight plan entry */
-  QString getComment() const;
+  const QString& getComment() const;
 
-  QString getRegion() const;
+  const QString& getRegion() const;
 
   /* Get name of airport or navaid. Empty for waypoint or user. Source can be flight plan entry or database. */
-  QString getName() const;
+  const QString& getName() const;
 
   /* Get airway  name from loaded flight plan. */
   const QString& getAirwayName() const;
@@ -133,7 +133,7 @@ public:
 
   /* Get frequency of radio navaid. 0 if not a radio navaid. Source is always database. */
   int getFrequency() const;
-  QString getChannel() const;
+  const QString& getChannel() const;
   QString getFrequencyOrChannel() const;
 
   /* Get magnetic variation at leg start. Source is always database. Does NOT use VOR declination. */
@@ -219,7 +219,7 @@ public:
   map::MapUserpointRoute getUserpointRoute() const;
 
   /* Get Waypoint or empty object if not assigned. Use position.isValid to check for empty */
-  map::MapRunwayEnd getRunwayEnd() const
+  const map::MapRunwayEnd& getRunwayEnd() const
   {
     return runwayEnd;
   }
