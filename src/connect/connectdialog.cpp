@@ -361,7 +361,7 @@ void ConnectDialog::restoreState()
   QStringList entries = Settings::instance().valueStrList(lnm::NAVCONNECT_REMOTEHOSTS);
   entries.removeDuplicates();
 
-  for(const QString& entry : entries)
+  for(const QString& entry : qAsConst(entries))
     if(!entry.isEmpty())
       ui->comboBoxConnectHostname->addItem(entry);
 

@@ -98,7 +98,7 @@ void ProfileLabelWidgetVert::paintEvent(QPaintEvent *)
 
       // Draw altitude labels ================================
       SymbolPainter symPainter;
-      QVector<std::pair<int, int> > scaleValues = profileWidget->calcScaleValues();
+      const QVector<std::pair<int, int> > scaleValues = profileWidget->calcScaleValues();
 
       QFont f = QApplication::font();
       f.setPointSizeF(f.pointSizeF() * 0.9);

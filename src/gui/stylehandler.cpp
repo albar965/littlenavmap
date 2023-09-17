@@ -51,7 +51,8 @@ StyleHandler::StyleHandler(QMainWindow *mainWindowParam)
 #endif
 
   // Collect names and palettes from all system styles
-  for(const QString& styleName : QStyleFactory::keys())
+  const QStringList keys = QStyleFactory::keys();
+  for(const QString& styleName : keys)
   {
     QStyle *style = QStyleFactory::create(styleName);
 
@@ -138,7 +139,7 @@ void StyleHandler::insertMenuItems(QMenu *menu)
   styleActionGroup = new QActionGroup(menu);
 
   int index = 0;
-  for(const Style& style : styles)
+  for(const Style& style : qAsConst(styles))
   {
     QAction *action = new QAction(style.displayName, menu);
     action->setData(index);
@@ -238,7 +239,8 @@ void StyleHandler::restoreState()
 #else
     QString currentStyleName = QApplication::style()->objectName();
 #endif
-    for(const QString& styleName : QStyleFactory::keys())
+    const QStringList keys = QStyleFactory::keys();
+    for(const QString& styleName : keys)
     {
 #ifdef DEBUG_INFORMATION
       qDebug() << Q_FUNC_INFO << "styleName" << styleName;

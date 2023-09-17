@@ -976,7 +976,7 @@ bool MapPaintWidget::addKmlFile(const QString& kmlFile)
 
 void MapPaintWidget::clearKmlFiles()
 {
-  for(const QString& file : kmlFilePaths)
+  for(const QString& file : qAsConst(kmlFilePaths))
     model()->removeGeoData(file);
   kmlFilePaths.clear();
 }
@@ -1124,7 +1124,8 @@ void MapPaintWidget::changeProfileHighlight(const atools::geo::Pos& pos)
 void MapPaintWidget::overlayStateFromMenu()
 {
   // Default implementation for hidden widget - disable all overlays
-  for(AbstractFloatItem *overlay : floatItems())
+  const QList<AbstractFloatItem *> floats = floatItems();
+  for(AbstractFloatItem *overlay : floats)
   {
     overlay->setVisible(false);
     overlay->hide();

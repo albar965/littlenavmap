@@ -81,7 +81,6 @@
 #include "userdata/userdatacontroller.h"
 #include "util/htmlbuilder.h"
 #include "util/version.h"
-#include "weather/weathercontext.h"
 #include "weather/weathercontexthandler.h"
 #include "weather/weatherreporter.h"
 #include "weather/windreporter.h"
@@ -3244,7 +3243,8 @@ void MainWindow::mainWindowShown()
     QTimer::singleShot(1000, NavApp::getTrackController(), &TrackController::startDownloadStartup);
 
   // Log screen information ==============
-  for(QScreen *screen : QGuiApplication::screens())
+  const QList<QScreen *> screens = QGuiApplication::screens();
+  for(QScreen *screen : screens)
     qDebug() << Q_FUNC_INFO
              << (screen == QGuiApplication::primaryScreen() ? "Primary Screen" : "Screen")
              << "name" << screen->name() << "model" << screen->model() << "manufacturer" << screen->manufacturer()

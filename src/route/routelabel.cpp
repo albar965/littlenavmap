@@ -624,7 +624,7 @@ void RouteLabel::buildErrorLabel(QString& toolTipText, QStringList errors, const
 
     toolTipText.append(header);
     toolTipText.append("<ul>");
-    for(const QString& str : errors)
+    for(const QString& str : qAsConst(errors))
       toolTipText.append("<li>" % str % "</li>");
     toolTipText.append("</ul>");
   }

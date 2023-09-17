@@ -179,7 +179,7 @@ const QList<map::MapAirspace> *AirspaceQuery::getAirspaces(const GeoDataLatLonBo
         // Get the airspace objects without geometry
         for(const GeoDataLatLonBox& r : query::splitAtAntiMeridian(rect, queryRectInflationFactor, queryRectInflationIncrement))
         {
-          for(const QString& typeStr : typeStrings)
+          for(const QString& typeStr : qAsConst(typeStrings))
           {
             query::bindRect(r, query);
             query->bindValue(":type", typeStr);

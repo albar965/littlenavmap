@@ -347,7 +347,7 @@ QString MapTooltip::buildTooltip(const map::MapResult& mapSearchResult, const at
     if(opts.testFlag(optsd::TOOLTIP_AIRSPACE))
     {
       // Put all online airspace on top of the list to have consistent ordering with menus and info windows
-      MapResult res = mapSearchResult.moveOnlineAirspacesToFront();
+      const MapResult res = mapSearchResult.moveOnlineAirspacesToFront();
 
       for(const MapAirspace& airspace : res.airspaces)
       {

@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -70,7 +70,7 @@ void AirwayQuery::getAirwaysForWaypoints(QList<map::MapAirway>& airways, int way
   QList<map::MapAirway> temp;
   getAirwaysForWaypoint(temp, waypointId1);
 
-  for(const map::MapAirway& a : airways)
+  for(const map::MapAirway& a : qAsConst(airways))
   {
     if((airwayName.isEmpty() || a.name == airwayName) &&
        (waypointId2 == a.fromWaypointId || waypointId2 == a.toWaypointId))

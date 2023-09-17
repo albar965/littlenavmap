@@ -31,13 +31,13 @@ AirportFiles::AirportFiles()
 
 }
 
-QFileInfoList AirportFiles::getAirportFiles(const QString& airportIdent)
+const QFileInfoList AirportFiles::getAirportFiles(const QString& airportIdent)
 {
   updateAirportFiles(airportIdent);
   return airportFiles;
 }
 
-QStringList AirportFiles::getAirportFilesBase(const QString& airportIdent)
+const QStringList AirportFiles::getAirportFilesBase(const QString& airportIdent)
 {
   QSet<QString> retval;
 
@@ -79,8 +79,8 @@ void AirportFiles::updateAirportFiles(const QString& airportIdent)
       QDir airportDir = dir;
       if(airportDir.exists())
       {
-        QFileInfoList entryInfoList = airportDir.entryInfoList(QDir::Files | QDir::NoDotAndDotDot,
-                                                               QDir::Name | QDir::LocaleAware);
+        const QFileInfoList entryInfoList = airportDir.entryInfoList(QDir::Files | QDir::NoDotAndDotDot,
+                                                                     QDir::Name | QDir::LocaleAware);
 
         for(const QFileInfo& file : entryInfoList)
         {

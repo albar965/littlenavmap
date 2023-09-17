@@ -58,7 +58,7 @@ AirspaceController::AirspaceController(MainWindow *mainWindowParam,
   if(dbOnline != nullptr)
     queries.insert(map::AIRSPACE_SRC_ONLINE, new AirspaceQuery(dbOnline, map::AIRSPACE_SRC_ONLINE));
 
-  for(AirspaceQuery *q : queries)
+  for(AirspaceQuery *q : qAsConst(queries))
     q->initQueries();
 
   // Button and action handler =================================
@@ -167,9 +167,7 @@ atools::sql::SqlRecord AirspaceController::getAirspaceInfoRecordById(map::MapAir
 }
 
 void AirspaceController::getAirspacesInternal(AirspaceVector& airspaceVector, const Marble::GeoDataLatLonBox& rect,
-                                              const MapLayer *mapLayer,
-                                              map::MapAirspaceFilter filter,
-                                              float flightPlanAltitude, bool lazy,
+                                              const MapLayer *mapLayer, map::MapAirspaceFilter filter, float flightPlanAltitude, bool lazy,
                                               map::MapAirspaceSources src, bool& overflow)
 {
   if((src & map::AIRSPACE_SRC_USER) && loadingUserAirspaces)
@@ -196,9 +194,8 @@ void AirspaceController::getAirspacesInternal(AirspaceVector& airspaceVector, co
   }
 }
 
-void AirspaceController::getAirspaces(AirspaceVector& airspaces, const Marble::GeoDataLatLonBox& rect,
-                                      const MapLayer *mapLayer, map::MapAirspaceFilter filter,
-                                      float flightPlanAltitude, bool lazy,
+void AirspaceController::getAirspaces(AirspaceVector& airspaces, const Marble::GeoDataLatLonBox& rect, const MapLayer *mapLayer,
+                                      map::MapAirspaceFilter filter, float flightPlanAltitude, bool lazy,
                                       map::MapAirspaceSources sourcesParam, bool& overflow)
 {
   // Merge airspace pointers from all sources/caches into one list
@@ -249,7 +246,7 @@ void AirspaceController::optionsChanged()
 {
   if(!loadingUserAirspaces)
   {
-    for(AirspaceQuery *query : queries)
+    for(AirspaceQuery *query : qAsConst(queries))
       // Also calls deinit before and clears caches
       query->initQueries();
   }
@@ -261,7 +258,7 @@ void AirspaceController::preDatabaseLoad()
   // preDatabaseLoadAirspaces and postDatabaseLoadAirspaces
   if(!loadingUserAirspaces)
   {
-    for(AirspaceQuery *query : queries)
+    for(AirspaceQuery *query : qAsConst(queries))
       query->deInitQueries();
   }
 }
@@ -272,7 +269,7 @@ void AirspaceController::postDatabaseLoad()
   // preDatabaseLoadAirspaces and postDatabaseLoadAirspaces
   if(!loadingUserAirspaces)
   {
-    for(AirspaceQuery *query : queries)
+    for(AirspaceQuery *query : qAsConst(queries))
       query->initQueries();
   }
 }
@@ -468,7 +465,7 @@ void AirspaceController::loadAirspaces()
 
         html.p(tr("Conversion Errors/Warnings"), atools::util::html::BOLD | atools::util::html::BIG);
         html.ol();
-        for(const QString& err :  errors)
+        for(const QString& err :  qAsConst(errors))
           html.li(err);
         html.olEnd();
 

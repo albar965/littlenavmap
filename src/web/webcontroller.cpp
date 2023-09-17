@@ -152,7 +152,8 @@ void WebController::startServer()
     if(listenerAddress == QHostAddress::Any)
     {
       // Collect hostnames and IPs from all interfaces
-      for(const QHostAddress& hostAddr : QNetworkInterface::allAddresses())
+      const QList<QHostAddress> addresses = QNetworkInterface::allAddresses();
+      for(const QHostAddress& hostAddr : addresses)
       {
         if(hostAddr.isNull())
           continue;

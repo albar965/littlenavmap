@@ -671,7 +671,7 @@ void AirportQuery::startByNameAndPos(map::MapStart& start, int airportId, const 
     // Now find the nearest since number is not unique for helipads and runways
     map::MapStart minStart;
     float minDistance = map::INVALID_DISTANCE_VALUE;
-    for(const map::MapStart& s : starts)
+    for(const map::MapStart& s : qAsConst(starts))
     {
       float dist = position.distanceMeterTo(s.position);
 

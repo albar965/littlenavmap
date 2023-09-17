@@ -690,7 +690,7 @@ void DatabaseManager::insertSimSwitchActions()
   });
 
   // Add real simulators first
-  for(atools::fs::FsPaths::SimulatorType type : keys)
+  for(atools::fs::FsPaths::SimulatorType type : qAsConst(keys))
   {
     const FsPathType pathType = simulators.value(type);
 
@@ -1012,7 +1012,7 @@ void DatabaseManager::switchSimInternal(atools::fs::FsPaths::SimulatorType type)
   {
     // Check and uncheck manually since the QActionGroup is unreliable
     atools::gui::SignalBlocker blocker(simDbActions);
-    for(QAction *act : simDbActions)
+    for(QAction *act : qAsConst(simDbActions))
       act->setChecked(act->data().value<atools::fs::FsPaths::SimulatorType>() == currentFsType);
   }
 }
@@ -1986,7 +1986,7 @@ void DatabaseManager::freeActions()
     navDbGroup->deleteLater();
     navDbGroup = nullptr;
   }
-  for(QAction *action : simDbActions)
+  for(QAction *action : qAsConst(simDbActions))
     action->deleteLater();
   simDbActions.clear();
 }

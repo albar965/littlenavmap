@@ -150,9 +150,10 @@ bool checkCoordinates(QString& message, const QString& text, atools::geo::Pos *p
 
 QString yearVariant(QString dateTimeFormat)
 {
+  const static QRegularExpression YEAR_REGEXP("\\byy\\b");
   if(dateTimeFormat.contains("yyyy"))
     return dateTimeFormat.replace("yyyy", "yy");
-  else if(dateTimeFormat.contains(QRegularExpression("\\byy\\b")))
+  else if(dateTimeFormat.contains(YEAR_REGEXP))
     return dateTimeFormat.replace("yy", "yyyy");
 
   return dateTimeFormat;
@@ -188,7 +189,7 @@ void initTranslateableTexts()
   dateTimeFormats.append(yearVariant(localeEn.dateTimeFormat(QLocale::NarrowFormat)));
 
   // Add variants with time zone ===========================
-  QStringList temp(dateTimeFormats);
+  const QStringList temp(dateTimeFormats);
   for(const QString& t : temp)
   {
     if(!t.endsWith("t"))
@@ -214,7 +215,7 @@ QDateTime readDateTime(QString str)
 
   str = str.simplified();
 
-  for(const QString& format : dateTimeFormats)
+  for(const QString& format : qAsConst(dateTimeFormats))
   {
     retval = locale.toDateTime(str, format);
     if(retval.isValid())

@@ -249,7 +249,7 @@ bool RouteStringReader::createRouteFromString(const QString& routeString, rs::Ro
 #endif
 
   QList<ParseEntry> resultList;
-  for(const QString& item : cleanItems)
+  for(const QString& item : qAsConst(cleanItems))
   {
     // Fetch all possible waypoints
     MapResult result;
@@ -309,7 +309,7 @@ bool RouteStringReader::createRouteFromString(const QString& routeString, rs::Ro
 
 #ifdef DEBUG_INFORMATION
 
-  for(const ParseEntry& parse : resultList)
+  for(const ParseEntry& parse : qAsConst(resultList))
     qDebug() << parse.item << parse.airway << parse.result;
 
 #endif
@@ -481,7 +481,7 @@ bool RouteStringReader::createRouteFromString(const QString& routeString, rs::Ro
   if(mapObjectRefs != nullptr)
   {
     qDebug() << "===============================";
-    for(const map::MapRefExt& r : *mapObjectRefs)
+    for(const map::MapRefExt& r : qAsConst(*mapObjectRefs))
       qDebug() << r;
   }
 #endif
@@ -1131,7 +1131,7 @@ atools::geo::Pos RouteStringReader::findFirstCoordinate(const QStringList& items
         if(items.size() > 1)
         {
           const QString& secondItem = items.at(1);
-          for(const map::MapWaypoint& w : result.waypoints)
+          for(const map::MapWaypoint& w : qAsConst(result.waypoints))
           {
             QList<map::MapWaypoint> waypoints;
             airwayQuery->getWaypointsForAirway(waypoints, secondItem, w.ident);
@@ -1270,7 +1270,7 @@ void RouteStringReader::filterWaypoints(MapResult& result, atools::geo::Pos& las
     {
       // Extract unique airways names
       QSet<QString> airwayNames;
-      for(const map::MapAirway& a : result.airways)
+      for(const map::MapAirway& a : qAsConst(result.airways))
         airwayNames.insert(a.name);
 
       // Extract unique waypoint idents
@@ -1398,7 +1398,7 @@ void RouteStringReader::filterAirways(QList<ParseEntry>& resultList, int i)
       airwayQuery->getWaypointListForAirwayName(allAirwayWaypoints, airwayName);
 
 #ifdef DEBUG_INFORMATION
-      for(const map::MapAirwayWaypoint& w : allAirwayWaypoints)
+      for(const map::MapAirwayWaypoint& w : qAsConst(allAirwayWaypoints))
         qDebug() << w.waypoint.id << w.waypoint.ident << w.waypoint.region;
 #endif
 
@@ -1407,9 +1407,9 @@ void RouteStringReader::filterAirways(QList<ParseEntry>& resultList, int i)
         int startIndex = -1, endIndex = -1;
 
         // Iterate through all found waypoint combinations (same ident) and try to match them to an airway
-        for(const map::MapWaypoint& wpLast : lastResult.waypoints)
+        for(const map::MapWaypoint& wpLast : qAsConst(lastResult.waypoints))
         {
-          for(const map::MapWaypoint& wpNext : nextResult.waypoints)
+          for(const map::MapWaypoint& wpNext : qAsConst(nextResult.waypoints))
           {
             // Find the waypoint indexes by id in the list of all waypoints for this airway
             findIndexesInAirway(allAirwayWaypoints, wpLast.id, wpNext.id, startIndex, endIndex, airwayName);

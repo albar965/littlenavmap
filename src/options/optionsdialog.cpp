@@ -944,7 +944,7 @@ void OptionsDialog::onlineTestUrl(const QString& url, bool statusFile)
   if(atools::fs::weather::testUrl(result, url, QString(), QHash<QString, QString>(), 250))
   {
     bool ok = false;
-    for(const QString& str : result)
+    for(const QString& str : qAsConst(result))
     {
       if(statusFile)
         ok |= str.simplified().startsWith("url0") || str.simplified().startsWith("url1");
@@ -1615,7 +1615,7 @@ void OptionsDialog::addDatabaseExcludeFileClicked()
 {
   qDebug() << Q_FUNC_INFO;
 
-  QStringList paths = atools::gui::Dialog(this).openFileDialogMulti(tr("Open Files to exclude from Scenery Loading"),
+  const QStringList paths = atools::gui::Dialog(this).openFileDialogMulti(tr("Open Files to exclude from Scenery Loading"),
                                                                     QString(), // filter lnm::OPTIONS_DIALOG_DB_FILE_DLG,
                                                                     NavApp::getCurrentSimulatorBasePath());
 

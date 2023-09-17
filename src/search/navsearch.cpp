@@ -245,7 +245,8 @@ QueryBuilderResult NavSearch::navQueryBuilderFunc(QWidget *widget)
     QLineEdit *lineEdit = dynamic_cast<QLineEdit *>(widget);
     if(lineEdit != nullptr)
     {
-      QStringList textList = lineEdit->text().simplified().split(" "), queryList;
+      const QStringList textList = lineEdit->text().simplified().split(" ");
+      QStringList queryList;
       bool overrideQuery = false;
 
       for(QString text : textList)

@@ -265,7 +265,7 @@ void UserdataController::actionsToTypes()
 {
   // Copy state for known types
   selectedTypes.clear();
-  for(QAction *action : actions)
+  for(QAction *action : qAsConst(actions))
   {
     if(action->isChecked())
       selectedTypes.append(action->data().toString());
@@ -279,7 +279,7 @@ void UserdataController::actionsToTypes()
 void UserdataController::typesToActions()
 {
   // Copy state for known types
-  for(QAction *action : actions)
+  for(QAction *action : qAsConst(actions))
     action->setChecked(selectedTypes.contains(action->data().toString()));
   actionUnknown->setChecked(selectedUnknownType);
   userdataToolButton->setChecked(!selectedTypes.isEmpty() || selectedUnknownType);
@@ -306,7 +306,7 @@ void UserdataController::restoreState()
     atools::settings::Settings& settings = atools::settings::Settings::instance();
 
     // Get list of enabled. Enable all as default
-    QStringList list = settings.valueStrList(lnm::MAP_USERDATA, allTypes);
+    const QStringList list = settings.valueStrList(lnm::MAP_USERDATA, allTypes);
     selectedUnknownType = settings.valueBool(lnm::MAP_USERDATA_UNKNOWN, true);
 
     // Remove all types from the restored list of enabled which were not found in the new list of registered types

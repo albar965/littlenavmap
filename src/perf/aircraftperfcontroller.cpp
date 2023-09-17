@@ -1083,7 +1083,7 @@ void AircraftPerfController::fuelReport(atools::util::HtmlBuilder& html, bool pr
       {
         html.p();
         html.warning(tr("Possible problems found:")).br();
-        for(const QString& err : extraErrors)
+        for(const QString& err : qAsConst(extraErrors))
           html.warning(err).br();
         html.pEnd();
       }

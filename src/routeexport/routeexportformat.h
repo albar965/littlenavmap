@@ -276,7 +276,7 @@ public:
   bool hasSelected() const;
 
   /* Get all formats that are selected for multiexport */
-  QVector<RouteExportFormat> getSelected() const;
+  const QVector<RouteExportFormat> getSelected() const;
 
   /* Clear user selected path and use default again */
   void clearPath(rexp::RouteExportFormatType type);

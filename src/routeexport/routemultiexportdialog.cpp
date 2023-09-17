@@ -522,7 +522,7 @@ void RouteMultiExportDialog::updateModel()
 
   // Fill model ============================================
   int row = 0;
-  for(const RouteExportFormat& format : values)
+  for(const RouteExportFormat& format : qAsConst(values))
   {
     // Userdata needed in callbacks
     int userdata = format.getTypeAsInt();

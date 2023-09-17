@@ -749,7 +749,7 @@ void MapTypesFactory::fillParking(const SqlRecord& record, map::MapParking& park
   if(parking.number == -1)
   {
     // Look at name components
-    QStringList texts = parking.name.split(" ");
+    const QStringList texts = parking.name.split(" ");
     QStringList textsShort;
     bool ok = false;
     for(const QString& txt : texts)
@@ -812,7 +812,8 @@ void MapTypesFactory::fillAirspace(const SqlRecord& record, map::MapAirspace& ai
   airspace.name = record.valueStr(airspace.isOnline() ? "callsign" : "name");
   airspace.comType = record.valueStr("com_type");
 
-  for(const QString& str : record.valueStr("com_frequency", QString()).split("&"))
+  const QStringList split = record.valueStr("com_frequency", QString()).split("&");
+  for(const QString& str : split)
   {
     bool ok;
     int frequency = str.toInt(&ok);

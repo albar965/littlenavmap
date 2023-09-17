@@ -100,7 +100,7 @@ int AirspaceAltSliderAction::maxValue() const
 void AirspaceAltSliderAction::setSliderValue(int value)
 {
   sliderValue = value;
-  for(QSlider *slider : sliders)
+  for(QSlider *slider : qAsConst(sliders))
   {
     slider->blockSignals(true);
     slider->setValue(sliderValue);
@@ -138,7 +138,7 @@ void AirspaceLabelAction::setText(const QString& textParam)
 {
   text = textParam;
   // Set text to all registered labels
-  for(QLabel *label : labels)
+  for(QLabel *label : qAsConst(labels))
     label->setText(text);
 }
 
@@ -218,9 +218,10 @@ void AirspaceToolBarHandler::updateToolActions()
 {
   bool enable = NavApp::getMainUi()->actionShowAirspaces->isChecked();
   bool hasAirspaces = NavApp::hasAnyAirspaces();
-  for(QToolButton *toolButton : airspaceToolButtons)
+  for(QToolButton *toolButton : qAsConst(airspaceToolButtons))
   {
-    for(QAction *action : toolButton->menu()->actions())
+    const QList<QAction *> actions = toolButton->menu()->actions();
+    for(QAction *action : actions)
       action->setEnabled(enable && hasAirspaces);
   }
 }
@@ -235,9 +236,10 @@ void AirspaceToolBarHandler::updateSliders()
 
 void AirspaceToolBarHandler::actionsToFilterTypes(map::MapAirspaceFilter& currentFilter)
 {
-  for(QToolButton *toolButton : airspaceToolButtons)
+  for(QToolButton *toolButton : qAsConst(airspaceToolButtons))
   {
-    for(QAction *action : toolButton->menu()->actions())
+    const QList<QAction *> actions = toolButton->menu()->actions();
+    for(QAction *action : actions)
     {
       map::MapAirspaceFilter filter = action->data().value<map::MapAirspaceFilter>();
       if(filter.flags.testFlag(map::AIRSPACE_ALTITUDE_FLAG_NONE))
@@ -253,9 +255,10 @@ void AirspaceToolBarHandler::actionsToFilterTypes(map::MapAirspaceFilter& curren
 
 void AirspaceToolBarHandler::filterTypesToActions(const map::MapAirspaceFilter& currentFilter)
 {
-  for(QToolButton *toolButton : airspaceToolButtons)
+  for(QToolButton *toolButton : qAsConst(airspaceToolButtons))
   {
-    for(QAction *action : toolButton->menu()->actions())
+    const QList<QAction *> actions = toolButton->menu()->actions();
+    for(QAction *action : actions)
     {
       action->blockSignals(true);
       map::MapAirspaceFilter filter = action->data().value<map::MapAirspaceFilter>();
@@ -314,7 +317,8 @@ void AirspaceToolBarHandler::actionRadioGroupTriggered(QAction *action)
   if(group != nullptr)
   {
     // Have to do the group selection here since it is broken by blockSignals
-    for(QAction *groupAction :  group->actions())
+    const QList<QAction *> actions = group->actions();
+    for(QAction *groupAction : actions)
     {
       map::MapAirspaceFilter filter = action->data().value<map::MapAirspaceFilter>();
       if(groupAction == action)
