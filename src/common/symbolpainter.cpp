@@ -113,7 +113,7 @@ QIcon SymbolPainter::createAirwayIcon(const map::MapAirway& airway, int size)
   QPainter painter(&pixmap);
   prepareForIcon(painter);
 
-  painter.setPen(QPen(mapcolors::colorForAirwayTrack(airway), 1.5));
+  painter.setPen(QPen(mapcolors::colorForAirwayOrTrack(airway), 1.5));
 
   painter.drawLine(0, 0, size, size);
 
@@ -153,7 +153,7 @@ QIcon SymbolPainter::createProcedurePointIcon(int size)
   return QIcon(pixmap);
 }
 
-QIcon SymbolPainter::createAirspaceIcon(const map::MapAirspace& airspace, int size)
+QIcon SymbolPainter::createAirspaceIcon(const map::MapAirspace& airspace, int size, int lineThickness, int transparency)
 {
   QPixmap pixmap(size, size);
   pixmap.fill(QColor(Qt::transparent));
@@ -161,8 +161,8 @@ QIcon SymbolPainter::createAirspaceIcon(const map::MapAirspace& airspace, int si
   prepareForIcon(painter);
 
   painter.setBackgroundMode(Qt::TransparentMode);
-  painter.setPen(mapcolors::penForAirspace(airspace));
-  painter.setBrush(mapcolors::colorForAirspaceFill(airspace));
+  painter.setPen(mapcolors::penForAirspace(airspace, lineThickness));
+  painter.setBrush(mapcolors::colorForAirspaceFill(airspace, transparency));
   painter.drawEllipse(2, 2, size - 4, size - 4);
   return QIcon(pixmap);
 }

@@ -57,7 +57,7 @@ public:
   void updateButtonsAndActions();
 
 signals:
-  void updateAirspaceTypes(map::MapAirspaceFilter filter);
+  void updateAirspaceTypes(const map::MapAirspaceFilter& filter);
 
 private:
   /* Create one toolbar button with all menus */

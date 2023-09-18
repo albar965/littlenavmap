@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -80,7 +80,7 @@ public:
 
   /* Get airspaces from all enabled sources for map display */
   void getAirspaces(AirspaceVector& airspaces, const Marble::GeoDataLatLonBox& rect, const MapLayer *mapLayer,
-                    map::MapAirspaceFilter filter, float flightPlanAltitude, bool lazy,
+                    const map::MapAirspaceFilter& filter, float flightPlanAltitude, bool lazy,
                     map::MapAirspaceSources sourcesParam, bool& overflow);
 
   /* Get Geometry for any airspace and source database */
@@ -122,16 +122,16 @@ public:
   void loadAirspaces();
 
   /* Tries to fetch online airspace geometry by name and facility. */
-  const atools::geo::LineString* getOnlineAirspaceGeoByName(const QString& callsign, const QString& facilityType);
+  const atools::geo::LineString *getOnlineAirspaceGeoByName(const QString& callsign, const QString& facilityType);
 
   /* Tries to fetch online airspace geometry by file name. */
-  const atools::geo::LineString* getOnlineAirspaceGeoByFile(const QString& callsign);
+  const atools::geo::LineString *getOnlineAirspaceGeoByFile(const QString& callsign);
 
   void resetSettingsToDefault();
 
 signals:
   /* Filter in drop down buttons have changed */
-  void updateAirspaceTypes(map::MapAirspaceFilter filter);
+  void updateAirspaceTypes(const map::MapAirspaceFilter& filter);
 
   /* Source database selection has changed */
   void updateAirspaceSources(map::MapAirspaceSources sources);
@@ -151,7 +151,7 @@ private:
   void sourceToActions();
 
   void getAirspacesInternal(AirspaceVector& airspaceVector, const Marble::GeoDataLatLonBox& rect,
-                            const MapLayer *mapLayer, map::MapAirspaceFilter filter, float flightPlanAltitude,
+                            const MapLayer *mapLayer, const map::MapAirspaceFilter& filter, float flightPlanAltitude,
                             bool lazy, map::MapAirspaceSources src, bool& overflow);
   void preLoadAirpaces();
   void postLoadAirpaces();

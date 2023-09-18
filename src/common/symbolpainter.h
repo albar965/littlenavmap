@@ -75,7 +75,7 @@ public:
   static QIcon createWaypointIcon(int size, const QColor& color = QColor());
   static QIcon createUserpointIcon(int size);
   static QIcon createProcedurePointIcon(int size);
-  static QIcon createAirspaceIcon(const map::MapAirspace& airspace, int size);
+  static QIcon createAirspaceIcon(const map::MapAirspace& airspace, int size, int lineThickness, int transparency);
   static QIcon createProcedurePreviewIcon(const QColor& color, int size);
   static QIcon createHelipadIcon(const map::MapHelipad& helipad, int size);
 

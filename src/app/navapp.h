@@ -204,7 +204,7 @@ public:
 
   static map::MapTypes getShownMapTypes();
   static map::MapDisplayTypes getShownMapDisplayTypes();
-  static map::MapAirspaceFilter getShownMapAirspaces();
+  static const map::MapAirspaceFilter& getShownMapAirspaces();
 
   static AirportQuery *getAirportQuerySim();
   static AirportQuery *getAirportQueryNav();

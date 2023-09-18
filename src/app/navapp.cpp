@@ -1309,7 +1309,7 @@ map::MapDisplayTypes NavApp::getShownMapDisplayTypes()
   return mainWindow->getMapWidget()->getShownMapDisplayTypes();
 }
 
-map::MapAirspaceFilter NavApp::getShownMapAirspaces()
+const map::MapAirspaceFilter& NavApp::getShownMapAirspaces()
 {
   return mainWindow->getMapWidget()->getShownAirspaces();
 }

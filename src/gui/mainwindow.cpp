@@ -3028,7 +3028,7 @@ void MainWindow::procedureLegSelected(const proc::MapProcedureRef& ref)
   updateHighlightActionStates();
 }
 
-void MainWindow::updateAirspaceTypes(map::MapAirspaceFilter filter)
+void MainWindow::updateAirspaceTypes(const map::MapAirspaceFilter& filter)
 {
   mapWidget->setShowMapAirspaces(filter);
   mapWidget->updateMapObjectsShown();

@@ -66,7 +66,7 @@ public:
 
   /* Get airspaces for map display */
   const QList<map::MapAirspace> *getAirspaces(const Marble::GeoDataLatLonBox& rect, const MapLayer *mapLayer,
-                                              map::MapAirspaceFilter filter, float flightPlanAltitude, bool lazy, bool& overflow);
+                                              const map::MapAirspaceFilter& filter, float flightPlanAltitude, bool lazy, bool& overflow);
   const atools::geo::LineString *getAirspaceGeometryById(int airspaceId);
 
   /* Query raw geometry blob by online callsign (name) and facility type */
@@ -117,6 +117,8 @@ private:
   atools::sql::SqlQuery *airspaceByRectQuery = nullptr, *airspaceByRectAltRangeQuery = nullptr, *airspaceByRectAltQuery = nullptr,
                         *airspaceLinesByIdQuery = nullptr, *airspaceGeoByNameQuery = nullptr, *airspaceGeoByFileQuery = nullptr,
                         *airspaceByIdQuery = nullptr, *airspaceInfoQuery = nullptr;
+
+  bool hasMultipleCode = false;
 
   /* Source database definition */
   map::MapAirspaceSources source;

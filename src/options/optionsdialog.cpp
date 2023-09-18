@@ -405,14 +405,17 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
      ui->checkBoxOptionsMapUserAircraftText,
      ui->checkBoxOptionsMapAiAircraftText,
      ui->checkBoxOptionsMapAiAircraftHideGround,
+     ui->checkBoxOptionsMapAirspaceNoMultZ,
      ui->spinBoxOptionsDisplayTextSizeAirway,
      ui->spinBoxOptionsDisplayThicknessAirway,
+     ui->spinBoxOptionsDisplayThicknessAirspace,
 
      ui->spinBoxOptionsDisplayTextSizeMora,
      ui->spinBoxOptionsDisplayTransparencyMora,
 
      ui->spinBoxOptionsDisplayTextSizeAirportMsa,
      ui->spinBoxOptionsDisplayTransparencyAirportMsa,
+     ui->spinBoxOptionsDisplayTransparencyAirspace,
 
      ui->spinBoxOptionsMapNavTouchArea,
 
@@ -1616,8 +1619,8 @@ void OptionsDialog::addDatabaseExcludeFileClicked()
   qDebug() << Q_FUNC_INFO;
 
   const QStringList paths = atools::gui::Dialog(this).openFileDialogMulti(tr("Open Files to exclude from Scenery Loading"),
-                                                                    QString(), // filter lnm::OPTIONS_DIALOG_DB_FILE_DLG,
-                                                                    NavApp::getCurrentSimulatorBasePath());
+                                                                          QString(), // filter lnm::OPTIONS_DIALOG_DB_FILE_DLG,
+                                                                          NavApp::getCurrentSimulatorBasePath());
 
   for(const QString& path : paths)
     addDatabaseTableItem(ui->tableWidgetOptionsDatabaseExclude, path);
@@ -1780,6 +1783,7 @@ void OptionsDialog::widgetsToOptionData()
   toFlags2(ui->checkBoxOptionsMapUserAircraftText, opts2::MAP_USER_TEXT_BACKGROUND);
   toFlags2(ui->checkBoxOptionsMapAiAircraftText, opts2::MAP_AI_TEXT_BACKGROUND);
   toFlags(ui->checkBoxOptionsMapAiAircraftHideGround, opts::MAP_AI_HIDE_GROUND);
+  toFlags(ui->checkBoxOptionsMapAirspaceNoMultZ, opts::MAP_AIRSPACE_NO_MULT_Z);
   toFlags2(ui->checkBoxOptionsMapHighlightTransparent, opts2::MAP_HIGHLIGHT_TRANSPARENT);
 
   toFlags2(ui->checkBoxOptionsMapFlightplanDimPassed, opts2::MAP_ROUTE_DIM_PASSED);
@@ -1895,6 +1899,7 @@ void OptionsDialog::widgetsToOptionData()
   data.displayTextSizeNavaid = ui->spinBoxOptionsDisplayTextSizeNavaid->value();
   data.displayTextSizeUserpoint = ui->spinBoxOptionsDisplayTextSizeUserpoint->value();
   data.displayThicknessAirway = ui->spinBoxOptionsDisplayThicknessAirway->value();
+  data.displayThicknessAirspace = ui->spinBoxOptionsDisplayThicknessAirspace->value();
   data.displayTextSizeAirway = ui->spinBoxOptionsDisplayTextSizeAirway->value();
   data.displayThicknessFlightplan = ui->spinBoxOptionsDisplayThicknessFlightplan->value();
   data.displayThicknessFlightplanProfile = ui->spinBoxOptionsDisplayThicknessFlightplanProfile->value();
@@ -1919,6 +1924,7 @@ void OptionsDialog::widgetsToOptionData()
   data.displayTextSizeMora = ui->spinBoxOptionsDisplayTextSizeMora->value();
 
   data.displayTransparencyAirportMsa = ui->spinBoxOptionsDisplayTransparencyAirportMsa->value();
+  data.displayTransparencyAirspace = ui->spinBoxOptionsDisplayTransparencyAirspace->value();
   data.displayTextSizeAirportMsa = ui->spinBoxOptionsDisplayTextSizeAirportMsa->value();
 
   data.mapNavTouchArea = ui->spinBoxOptionsMapNavTouchArea->value();
@@ -2077,6 +2083,8 @@ void OptionsDialog::optionDataToWidgets(const OptionData& data)
   fromFlags2(data, ui->checkBoxOptionsMapUserAircraftText, opts2::MAP_USER_TEXT_BACKGROUND);
   fromFlags2(data, ui->checkBoxOptionsMapAiAircraftText, opts2::MAP_AI_TEXT_BACKGROUND);
   fromFlags(data, ui->checkBoxOptionsMapAiAircraftHideGround, opts::MAP_AI_HIDE_GROUND);
+  fromFlags(data, ui->checkBoxOptionsMapAirspaceNoMultZ, opts::MAP_AIRSPACE_NO_MULT_Z);
+
   fromFlags2(data, ui->checkBoxOptionsMapHighlightTransparent, opts2::MAP_HIGHLIGHT_TRANSPARENT);
   fromFlags2(data, ui->checkBoxOptionsMapFlightplanText, opts2::MAP_ROUTE_TEXT_BACKGROUND);
   fromFlags2(data, ui->checkBoxOptionsMapFlightplanDimPassed, opts2::MAP_ROUTE_DIM_PASSED);
@@ -2188,6 +2196,7 @@ void OptionsDialog::optionDataToWidgets(const OptionData& data)
   ui->spinBoxOptionsDisplaySymbolSizeHighlight->setValue(data.displaySymbolSizeHighlight);
   ui->spinBoxOptionsDisplayTextSizeUserpoint->setValue(data.displayTextSizeUserpoint);
   ui->spinBoxOptionsDisplayThicknessAirway->setValue(data.displayThicknessAirway);
+  ui->spinBoxOptionsDisplayThicknessAirspace->setValue(data.displayThicknessAirspace);
   ui->spinBoxOptionsDisplayTextSizeAirway->setValue(data.displayTextSizeAirway);
   ui->spinBoxOptionsDisplayThicknessFlightplan->setValue(data.displayThicknessFlightplan);
   ui->spinBoxOptionsDisplayThicknessFlightplanProfile->setValue(data.displayThicknessFlightplanProfile);
@@ -2210,6 +2219,7 @@ void OptionsDialog::optionDataToWidgets(const OptionData& data)
   ui->spinBoxOptionsDisplayTransparencyMora->setValue(data.displayTransparencyMora);
   ui->spinBoxOptionsDisplayTextSizeMora->setValue(data.displayTextSizeMora);
   ui->spinBoxOptionsDisplayTransparencyAirportMsa->setValue(data.displayTransparencyAirportMsa);
+  ui->spinBoxOptionsDisplayTransparencyAirspace->setValue(data.displayTransparencyAirspace);
   ui->spinBoxOptionsDisplayTextSizeAirportMsa->setValue(data.displayTextSizeAirportMsa);
   ui->spinBoxOptionsMapNavTouchArea->setValue(data.mapNavTouchArea);
   ui->spinBoxOptionsDisplayTextSizeUserFeature->setValue(data.displayTextSizeUserFeature);

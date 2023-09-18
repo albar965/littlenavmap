@@ -223,12 +223,12 @@ public:
   void setShowMapObject(map::MapTypes type, bool show);
   void setShowMapObjects(map::MapTypes type, map::MapTypes mask);
   void setShowMapObjectDisplay(map::MapDisplayTypes type, bool show);
-  void setShowMapAirspaces(map::MapAirspaceFilter types);
+  void setShowMapAirspaces(const map::MapAirspaceFilter& types);
 
   /* All currently set map display filters */
   map::MapTypes getShownMapTypes() const;
   map::MapDisplayTypes getShownMapDisplayTypes() const;
-  map::MapAirspaceFilter getShownAirspaces() const;
+  const map::MapAirspaceFilter& getShownAirspaces() const;
   map::MapAirspaceFilter getShownAirspaceTypesByLayer() const;
   int getShownMinimumRunwayFt() const;
 

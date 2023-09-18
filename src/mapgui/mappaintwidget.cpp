@@ -458,7 +458,7 @@ void MapPaintWidget::setShowMapObjectDisplay(map::MapDisplayTypes type, bool sho
   paintLayer->setShowMapObjectDisplay(type, show);
 }
 
-void MapPaintWidget::setShowMapAirspaces(map::MapAirspaceFilter types)
+void MapPaintWidget::setShowMapAirspaces(const map::MapAirspaceFilter& types)
 {
   paintLayer->setShowAirspaces(types);
   updateMapVisibleUi();
@@ -501,7 +501,7 @@ map::MapDisplayTypes MapPaintWidget::getShownMapDisplayTypes() const
   return paintLayer->getShownMapDisplayTypes();
 }
 
-map::MapAirspaceFilter MapPaintWidget::getShownAirspaces() const
+const map::MapAirspaceFilter& MapPaintWidget::getShownAirspaces() const
 {
   return paintLayer->getShownAirspaces();
 }

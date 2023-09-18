@@ -139,12 +139,15 @@ void MapScreenIndex::updateAirspaceScreenGeometryInternal(QSet<map::MapAirspaceI
 
   if(scale->isValid() && controller != nullptr && paintLayer != nullptr)
   {
+    map::MapAirspaceFilter filter = mapWidget->getShownAirspaceTypesByLayer();
+    filter.flags.setFlag(map::AIRSPACE_NO_MULTIPLE_Z, OptionData::instance().getFlags().testFlag(opts::MAP_AIRSPACE_NO_MULT_Z));
+
     AirspaceVector airspaces;
 
     // Get displayed airspaces ================================
     bool overflow = false;
     if(!highlights && paintLayer->getShownMapTypes().testFlag(map::AIRSPACE))
-      controller->getAirspaces(airspaces, curBox, paintLayer->getMapLayer(), mapWidget->getShownAirspaceTypesByLayer(),
+      controller->getAirspaces(airspaces, curBox, paintLayer->getMapLayer(), filter,
                                NavApp::getRouteConst().getCruiseAltitudeFt(), false, source, overflow);
 
     // Get highlighted airspaces from info window ================================
@@ -164,7 +167,7 @@ void MapScreenIndex::updateAirspaceScreenGeometryInternal(QSet<map::MapAirspaceI
     CoordinateConverter conv(mapWidget->viewport());
     for(const map::MapAirspace *airspace : qAsConst(airspaces))
     {
-      if(!(airspace->type & mapWidget->getShownAirspaceTypesByLayer().types) && !highlights)
+      if(!(airspace->type & filter.types) && !highlights)
         continue;
 
       Marble::GeoDataLatLonBox airspacebox = conv.toGdc(airspace->bounding);

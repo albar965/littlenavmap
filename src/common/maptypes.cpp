@@ -2443,7 +2443,12 @@ QIcon mapBaseIcon(const map::MapBase *base, int size)
         return SymbolPainter::createUserpointIcon(size);
 
       case map::AIRSPACE:
-        return SymbolPainter::createAirspaceIcon(*base->asPtr<map::MapAirspace>(), size);
+        {
+          const OptionData& optionData = OptionData::instance();
+          return SymbolPainter::createAirspaceIcon(*base->asPtr<map::MapAirspace>(), size,
+                                                   optionData.getDisplayThicknessAirspace(),
+                                                   optionData.getDisplayTransparencyAirspace());
+        }
 
       case map::PARKING:
         return mapcolors::iconForParkingType(base->asPtr<map::MapParking>()->type);

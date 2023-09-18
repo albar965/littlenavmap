@@ -726,7 +726,7 @@ void MapPainterMark::paintAirwayTextList(const QList<map::MapAirway>& airwayList
   {
     if(airway.isValid())
     {
-      QPen innerPen = mapcolors::colorForAirwayTrack(airway);
+      QPen innerPen = mapcolors::colorForAirwayOrTrack(airway);
 
       // Draw text  at center position of a line
       int x, y;
@@ -752,19 +752,20 @@ void MapPainterMark::paintAirspace(const map::MapAirspace& airspace)
 {
   const ageo::LineString *airspaceGeometry = NavApp::getAirspaceController()->getAirspaceGeometry(airspace.combinedId());
   Marble::GeoPainter *painter = context->painter;
+  const OptionData& optionData = OptionData::instance();
 
   float lineWidth = context->szF(context->thicknessUserFeature, 5);
 
   QPen outerPen(mapcolors::highlightBackColor, lineWidth, Qt::SolidLine, Qt::FlatCap);
 
   // Make boundary pen the same color as airspace boundary without transparency
-  QPen innerPen = mapcolors::penForAirspace(airspace);
+  QPen innerPen = mapcolors::penForAirspace(airspace, optionData.getDisplayThicknessAirspace());
   innerPen.setWidthF(lineWidth * 0.5);
   QColor c = innerPen.color();
   c.setAlpha(255);
   innerPen.setColor(c);
 
-  painter->setBrush(mapcolors::colorForAirspaceFill(airspace));
+  painter->setBrush(mapcolors::colorForAirspaceFill(airspace, optionData.getDisplayTransparencyAirspace()));
   context->szFont(context->textSizeRangeUserFeature);
 
   if(airspaceGeometry != nullptr)

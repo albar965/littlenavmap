@@ -408,7 +408,7 @@ private:
   /* Emit a signal windowShown after first appearance */
   virtual void showEvent(QShowEvent *event) override;
   void weatherUpdateTimeout();
-  void updateAirspaceTypes(map::MapAirspaceFilter filter);
+  void updateAirspaceTypes(const map::MapAirspaceFilter& filter);
   void updateAirspaceSources();
   void resetWindowLayout();
   void resetTabLayout();

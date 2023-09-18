@@ -356,6 +356,8 @@ enum MapAirspaceFlag
   AIRSPACE_ALL_ON = 1 << 3,
   AIRSPACE_ALL_OFF = 1 << 4,
 
+  AIRSPACE_NO_MULTIPLE_Z = 1 << 5,
+
   AIRSPACE_FLAG_DEFAULT = AIRSPACE_ALTITUDE_ALL
 };
 
@@ -378,6 +380,16 @@ struct MapAirspaceFilter
   MapAirspaceFilter(const MapAirspaceTypes& typesParam, const MapAirspaceFlags& flagsParam, int minAltitudeFtParam, int maxAltitudeFtParam)
     :  types(typesParam), flags(flagsParam), minAltitudeFt(minAltitudeFtParam), maxAltitudeFt(maxAltitudeFtParam)
   {
+  }
+
+  bool operator==(const map::MapAirspaceFilter& other) const
+  {
+    return types == other.types || flags != other.flags || minAltitudeFt != other.minAltitudeFt || maxAltitudeFt != other.maxAltitudeFt;
+  }
+
+  bool operator!=(const map::MapAirspaceFilter& other) const
+  {
+    return !operator==(other);
   }
 
   MapAirspaceTypes types;

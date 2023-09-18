@@ -191,7 +191,7 @@ void AirspaceToolBarHandler::allAirspacesToggled()
 
 void AirspaceToolBarHandler::updateToolButtons()
 {
-  map::MapAirspaceFilter shown = NavApp::getShownMapAirspaces();
+  const map::MapAirspaceFilter& shown = NavApp::getShownMapAirspaces();
 
   QAction *airspaceAction = NavApp::getMainUi()->actionShowAirspaces;
 
@@ -276,7 +276,7 @@ void AirspaceToolBarHandler::filterTypesToActions(const map::MapAirspaceFilter& 
 void AirspaceToolBarHandler::updateButtonsAndActions()
 {
   // Copy currently selected altitude values to sliders
-  map::MapAirspaceFilter filter = NavApp::getShownMapAirspaces();
+  const map::MapAirspaceFilter& filter = NavApp::getShownMapAirspaces();
   sliderActionAltMin->setAltitudeFt(filter.minAltitudeFt);
   sliderActionAltMax->setAltitudeFt(filter.maxAltitudeFt);
 
@@ -341,7 +341,7 @@ void AirspaceToolBarHandler::updateSliderLabel()
   int min = sliderActionAltMin->getAltitudeFt();
   int max = sliderActionAltMax->getAltitudeFt();
 
-  map::MapAirspaceFilter filter = NavApp::getShownMapAirspaces();
+  const map::MapAirspaceFilter& filter = NavApp::getShownMapAirspaces();
   QString disabledText;
 
   // Get note text if slider is disabled =============

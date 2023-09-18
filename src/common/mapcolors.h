@@ -276,10 +276,14 @@ const QColor& alternatingRowColor(int row, bool isSort);
 
 const QPen aircraftTrailPen(float size);
 
-const QPen& penForAirspace(const map::MapAirspace& airspace);
-const QColor& colorForAirspaceFill(const map::MapAirspace& airspace);
+/* lineThickness = 20 to 300 and default 100 equal to a scale factor of 0.2 to 3.0 to default line width. */
+QPen penForAirspace(const map::MapAirspace& airspace, int lineThickness);
 
-const QColor& colorForAirwayTrack(const map::MapAirway& airway);
+/* Lower values make the airspace more opaque and higher values more transparent. Default is 80. */
+QColor colorForAirspaceFill(const map::MapAirspace& airspace, int transparency);
+
+/* Color for airway or track */
+const QColor& colorForAirwayOrTrack(const map::MapAirway& airway);
 
 /* Convert current pen into dotted pen leaving style and color as is */
 void adjustPenForCircleToLand(QPainter *painter);

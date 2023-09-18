@@ -131,8 +131,8 @@ QColor routeHighlightBackColor(Qt::black);
 /* Objects highlighted because of selection in route profile */
 QColor profileHighlightBackColor(Qt::black);
 
-QColor distanceMarkerTextColor(Qt::black);
 QColor distanceMarkerTextBackgroundColor(255, 255, 255, 220);
+QColor distanceMarkerTextColor(Qt::black);
 
 QPen markEndurancePen(Qt::black, 2., Qt::DotLine, Qt::FlatCap, Qt::MiterJoin);
 QPen markSelectedAltitudeRangePen(Qt::darkGreen, 1.5, Qt::SolidLine, Qt::FlatCap);
@@ -536,17 +536,25 @@ static QHash<QString, map::MapAirspaceTypes> airspaceConfigNames(
   }
   );
 
-const QColor& colorForAirspaceFill(const map::MapAirspace& airspace)
+QColor colorForAirspaceFill(const map::MapAirspace& airspace, int transparency)
 {
-  return airspaceFillColors[airspace.type];
+  // Lower values make the airspace more opaque and higher values more transparent. Default is 80.
+  QColor color = airspaceFillColors[airspace.type];
+
+  // 0 = transparent, 1 = opaque
+  color.setAlphaF(atools::minmax(0., 1., 1.5 * color.alphaF() * (1. - transparency / 100.)));
+  return color;
 }
 
-const QPen& penForAirspace(const map::MapAirspace& airspace)
+QPen penForAirspace(const map::MapAirspace& airspace, int lineThickness)
 {
-  return airspacePens[airspace.type];
+  // lineThickness = 20 to 300 and default 100 equal to a scale factor of 0.2 to 3.0
+  QPen pen = airspacePens[airspace.type];
+  pen.setWidthF(pen.widthF() * lineThickness / 100.);
+  return pen;
 }
 
-const QColor& colorForAirwayTrack(const map::MapAirway& airway)
+const QColor& colorForAirwayOrTrack(const map::MapAirway& airway)
 {
   static QColor EMPTY_COLOR;
 
@@ -885,14 +893,14 @@ void darkenPainterRect(QPainter& painter)
 QPen adjustAlphaF(QPen pen, float alpha)
 {
   QColor color = pen.color();
-  color.setAlphaF(static_cast<double>(alpha));
+  color.setAlphaF(alpha);
   pen.setColor(color);
   return pen;
 }
 
 QColor adjustAlphaF(QColor color, float alpha)
 {
-  color.setAlphaF(static_cast<double>(alpha));
+  color.setAlphaF(alpha);
   return color;
 }
 

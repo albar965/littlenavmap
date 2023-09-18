@@ -113,7 +113,7 @@ public:
   /* Adjusted by layer visibility */
   map::MapAirspaceFilter getShownAirspacesTypesByLayer() const;
 
-  map::MapAirspaceFilter getShownAirspaces() const
+  const map::MapAirspaceFilter& getShownAirspaces() const
   {
     return airspaceTypes;
   }

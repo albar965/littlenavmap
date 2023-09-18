@@ -68,6 +68,10 @@ void MapPainterAirspace::render()
     context->setQueryOverflow(overflow);
   }
 
+  const OptionData& optionData = OptionData::instance();
+  int displayThicknessAirspace = optionData.getDisplayThicknessAirspace();
+  int displayTransparencyAirspace = optionData.getDisplayTransparencyAirspace();
+
   if(!airspaces.isEmpty())
   {
     Marble::GeoPainter *painter = context->painter;
@@ -90,7 +94,7 @@ void MapPainterAirspace::render()
 
         // qDebug() << airspace.getId() << airspace.name;
 
-        const QPen airpacePen = mapcolors::penForAirspace(*airspace);
+        const QPen airpacePen = mapcolors::penForAirspace(*airspace, displayThicknessAirspace);
         QPen pen = airpacePen;
 
         if(airspace->isOnline())
@@ -100,7 +104,7 @@ void MapPainterAirspace::render()
         painter->setPen(pen);
 
         if(!context->drawFast)
-          painter->setBrush(mapcolors::colorForAirspaceFill(*airspace));
+          painter->setBrush(mapcolors::colorForAirspaceFill(*airspace, displayTransparencyAirspace));
 
         const LineString *lines = controller->getAirspaceGeometry(airspace->combinedId());
 

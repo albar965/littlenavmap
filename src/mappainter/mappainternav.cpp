@@ -224,7 +224,7 @@ void MapPainterNav::paintAirways(const QList<map::MapAirway> *airways, bool fast
     bool ident = (!isTrack && context->mapLayer->isAirwayIdent()) || (isTrack && context->mapLayer->isTrackIdent());
     bool info = (!isTrack && context->mapLayer->isAirwayInfo()) || (isTrack && context->mapLayer->isTrackInfo());
 
-    painter->setPen(QPen(mapcolors::colorForAirwayTrack(airway), isTrack ? linewidthTrack : linewidthAirway));
+    painter->setPen(QPen(mapcolors::colorForAirwayOrTrack(airway), isTrack ? linewidthTrack : linewidthAirway));
     painter->setBrush(painter->pen().color());
 
     // Get start and end point of airway segment in screen coordinates
@@ -335,7 +335,9 @@ void MapPainterNav::paintAirways(const QList<map::MapAirway> *airways, bool fast
       // Add space at start and end to avoid letters touching the background rectangle border
       QString text = " " % place.texts.join(tr(", ")) % " ";
       Line line(airway.from, airway.to);
-      if(textPlacement.findTextPos(line, line.lengthMeter(), metrics.horizontalAdvance(text), metrics.height(), 20, xt, yt, &textBearing))
+      if(textPlacement.findTextPos(line, line.lengthMeter(),
+                                   static_cast<float>(metrics.horizontalAdvance(text)),
+                                   static_cast<float>(metrics.height()), 20, xt, yt, &textBearing))
       {
         // Prepend arrows to all texts
         for(int j = 0; j < place.texts.size(); ++j)

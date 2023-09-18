@@ -129,6 +129,9 @@ enum Flag
 
   /* checkBoxOptionsGuiTooltipsMenu */
   ENABLE_TOOLTIPS_MENU = 1 << 29,
+
+  /* ui->checkBoxOptionsMapAirspaceNoMultZ */
+  MAP_AIRSPACE_NO_MULT_Z = 1 << 30
 };
 
 Q_DECLARE_FLAGS(Flags, Flag);
@@ -1280,6 +1283,16 @@ public:
     return cacheMapThemeDir;
   }
 
+  int getDisplayThicknessAirspace() const
+  {
+    return displayThicknessAirspace;
+  }
+
+  int getDisplayTransparencyAirspace() const
+  {
+    return displayTransparencyAirspace;
+  }
+
 private:
   friend class OptionsDialog;
 
@@ -1294,16 +1307,11 @@ private:
                       opts::GUI_CENTER_KML | opts::GUI_CENTER_ROUTE | opts::MAP_EMPTY_AIRPORTS | opts::ROUTE_ALTITUDE_RULE |
                       opts::CACHE_USE_ONLINE_ELEVATION | opts::STARTUP_LOAD_INFO | opts::STARTUP_LOAD_SEARCH | opts::STARTUP_LOAD_TRAIL |
                       opts::STARTUP_SHOW_SPLASH | opts::ONLINE_REMOVE_SHADOW | opts::ENABLE_TOOLTIPS_ALL | opts::STARTUP_LOAD_PERF |
-                      opts::GUI_AVOID_OVERWRITE_FLIGHTPLAN;
+                      opts::GUI_AVOID_OVERWRITE_FLIGHTPLAN | opts::MAP_AIRSPACE_NO_MULT_Z;
 
   // Defines the defaults used for reset
-  optsw::FlagsWeather flagsWeather =
-    optsw::WEATHER_INFO_FS |
-    optsw::WEATHER_INFO_ACTIVESKY |
-    optsw::WEATHER_INFO_NOAA |
-    optsw::WEATHER_TOOLTIP_FS |
-    optsw::WEATHER_TOOLTIP_ACTIVESKY |
-    optsw::WEATHER_TOOLTIP_NOAA;
+  optsw::FlagsWeather flagsWeather = optsw::WEATHER_INFO_FS | optsw::WEATHER_INFO_ACTIVESKY | optsw::WEATHER_INFO_NOAA |
+                                     optsw::WEATHER_TOOLTIP_FS | optsw::WEATHER_TOOLTIP_ACTIVESKY | optsw::WEATHER_TOOLTIP_NOAA;
 
   opts2::Flags2 flags2 = opts2::MAP_AIRPORT_TEXT_BACKGROUND | opts2::MAP_AIRPORT_HIGHLIGHT_ADDON |
                          opts2::MAP_ROUTE_TEXT_BACKGROUND | opts2::MAP_USER_TEXT_BACKGROUND | opts2::ROUTE_HIGHLIGHT_ACTIVE_TABLE |
@@ -1574,6 +1582,12 @@ private:
 
   // spinBoxOptionsMapNavTouchscreenArea
   int mapNavTouchArea = 10;
+
+  // spinBoxOptionsDisplayThicknessAirspace
+  int displayThicknessAirspace = 100;
+
+  // spinBoxOptionsDisplayTransparencyAirspace
+  int displayTransparencyAirspace = 80;
 
   QColor flightplanColor = QColor(Qt::yellow), flightplanOutlineColor = QColor(Qt::black), flightplanProcedureColor = QColor(255, 150, 0),
          flightplanActiveColor = QColor(Qt::magenta), flightplanPassedColor = QColor(Qt::gray), trailColor = QColor(Qt::black),

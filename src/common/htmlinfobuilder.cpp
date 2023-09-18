@@ -3013,7 +3013,11 @@ bool HtmlInfoBuilder::bearingToUserText(const ageo::Pos& pos, float magVar, Html
 
 void HtmlInfoBuilder::airspaceText(const MapAirspace& airspace, const atools::sql::SqlRecord& onlineRec, HtmlBuilder& html) const
 {
-  QIcon icon = SymbolPainter::createAirspaceIcon(airspace, symbolSizeTitle.height());
+  const OptionData& optionData = OptionData::instance();
+  QIcon icon = SymbolPainter::createAirspaceIcon(airspace, symbolSizeTitle.height(),
+                                                 optionData.getDisplayThicknessAirspace(),
+                                                 optionData.getDisplayTransparencyAirspace());
+
   html.img(icon, QString(), QString(), symbolSizeTitle);
   html.nbsp().nbsp();
 

@@ -107,7 +107,7 @@ void AirspaceQuery::getAirspaceById(map::MapAirspace& airspace, int airspaceId)
 }
 
 const QList<map::MapAirspace> *AirspaceQuery::getAirspaces(const GeoDataLatLonBox& rect, const MapLayer *mapLayer,
-                                                           map::MapAirspaceFilter filter, float flightPlanAltitude,
+                                                           const map::MapAirspaceFilter& filter, float flightPlanAltitude,
                                                            bool lazy, bool& overflow)
 {
   airspaceCache.updateCache(rect, mapLayer, queryRectInflationFactor, queryRectInflationIncrement, lazy,
@@ -116,9 +116,7 @@ const QList<map::MapAirspace> *AirspaceQuery::getAirspaces(const GeoDataLatLonBo
     return curLayer->hasSameQueryParametersAirspace(newLayer);
   });
 
-  if(filter.types != lastAirspaceFilter.types || filter.flags != lastAirspaceFilter.flags ||
-     filter.minAltitudeFt != lastAirspaceFilter.minAltitudeFt || filter.maxAltitudeFt != lastAirspaceFilter.maxAltitudeFt ||
-     atools::almostNotEqual(lastFlightplanAltitude, flightPlanAltitude))
+  if(filter != lastAirspaceFilter || atools::almostNotEqual(lastFlightplanAltitude, flightPlanAltitude))
   {
     // Need a few more parameters to clear the cache which is different to other map features
     airspaceCache.list.clear();
@@ -199,6 +197,9 @@ const QList<map::MapAirspace> *AirspaceQuery::getAirspaces(const GeoDataLatLonBo
             {
               // Avoid double airspaces which can happen if they cross the date boundary
               if(ids.contains(query->valueInt("boundary_id")))
+                continue;
+
+              if(hasMultipleCode && filter.flags.testFlag(map::AIRSPACE_NO_MULTIPLE_Z) && query->valueStr("multiple_code") == "Z")
                 continue;
 
               if(hasFirUir)
@@ -427,7 +428,9 @@ void AirspaceQuery::initQueries()
     SqlRecord rec = db->record("boundary");
     if(rec.contains("time_code"))
       airspaceQueryBase += ", time_code ";
-    if(rec.contains("multiple_code"))
+
+    hasMultipleCode = rec.contains("multiple_code");
+    if(hasMultipleCode)
       airspaceQueryBase += ", multiple_code ";
 
     if(rec.contains("restrictive_type"))
