@@ -584,7 +584,7 @@ public:
 
   /* Loads navaids from database and create all route map objects from flight plan.
    * Flight plan will be corrected if needed. */
-  void createRouteLegsFromFlightplan(QStringList* parkingErrors);
+  void createRouteLegsFromFlightplan();
 
   /* @return true if departure is valid and departure airport has no parking or departure of flight plan
    *  has parking or helipad as start position */

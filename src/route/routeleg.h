@@ -59,7 +59,7 @@ public:
    * @param query Database query object
    * @param predRouteMapObj Predecessor of this entry or null if this is the first waypoint in the list
    */
-  void createFromDatabaseByEntry(int entryIndex, const RouteLeg *prevLeg, QStringList *parkingErrors);
+  void createFromDatabaseByEntry(int entryIndex, const RouteLeg *prevLeg);
 
   /*
    * Creates a route map object from an airport database object.

@@ -415,7 +415,7 @@ private:
   void routeSetDepartureInternal(const map::MapAirport& airport);
   void routeSetDestinationInternal(const map::MapAirport& airport);
 
-  void updateTableModel();
+  void updateTableModelAndErrors();
 
   void routeAltChanged();
   void routeAltChangedDelayed();
@@ -477,7 +477,7 @@ private:
 
   /* Set colors for procedures and missing objects like waypoints and airways.
    * Also fills flight plan errors */
-  void updateModelHighlights();
+  void updateModelHighlightsAndErrors();
 
   /* Fill the route procedure legs structures with data based on the procedure properties in the flight plan */
   void loadProceduresFromFlightplan(bool clearOldProcedureProperties, bool cleanupRoute, bool autoresolveTransition);

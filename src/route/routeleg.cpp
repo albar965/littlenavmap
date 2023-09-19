@@ -148,7 +148,7 @@ void RouteLeg::assignAnyNavaid(atools::fs::pln::FlightplanEntry *flightplanEntry
   }
 }
 
-void RouteLeg::createFromDatabaseByEntry(int entryIndex, const RouteLeg *prevLeg, QStringList *parkingErrors)
+void RouteLeg::createFromDatabaseByEntry(int entryIndex, const RouteLeg *prevLeg)
 {
   index = entryIndex;
 
@@ -288,12 +288,6 @@ void RouteLeg::createFromDatabaseByEntry(int entryIndex, const RouteLeg *prevLeg
             flightplan->setDepartureParkingType(atools::fs::pln::PARKING);
           }
           // End of parking detection
-
-          if(parkingErrors != nullptr && !start.isValid() && !parking.isValid())
-          {
-            qWarning() << Q_FUNC_INFO << "Parking or start position" << name << "not found at departure airport";
-            parkingErrors->append(tr("Parking or start position \"%1\" not found at departure airport.").arg(name));
-          }
         } // if(!name.isEmpty() && prevLeg == nullptr)
       }
       break;

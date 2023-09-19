@@ -2708,7 +2708,7 @@ const Pos Route::getPrevPositionAt(int i) const
     return atools::geo::EMPTY_POS;
 }
 
-void Route::createRouteLegsFromFlightplan(QStringList *parkingErrors)
+void Route::createRouteLegsFromFlightplan()
 {
   clear();
 
@@ -2718,7 +2718,7 @@ void Route::createRouteLegsFromFlightplan(QStringList *parkingErrors)
   for(int i = 0; i < flightplan.size(); i++)
   {
     RouteLeg leg(&flightplan);
-    leg.createFromDatabaseByEntry(i, lastLeg, parkingErrors);
+    leg.createFromDatabaseByEntry(i, lastLeg);
 
     if(leg.getMapType() == map::INVALID)
       // Not found in database
@@ -2786,7 +2786,7 @@ Route Route::adjustedToOptions(const Route& origRoute, rf::RouteAdjustOptions op
   atools::fs::pln::Flightplan& plan = route.getFlightplan();
   FlightplanEntryBuilder entryBuilder;
 
-// Clear unresolved parking/start names depending on flag
+  // Clear unresolved parking/start names depending on flag
   route.updateDepartureAndDestination(!options.testFlag(rf::SAVE_KEEP_INVALID_START));
 
   // Restore duplicate waypoints at route/procedure entry/exits which were removed after route calculation
@@ -3164,7 +3164,7 @@ Route Route::adjustedToOptions(const Route& origRoute, rf::RouteAdjustOptions op
     }
 
     // Copy flight plan entries to route legs - will also add coordinates
-    route.createRouteLegsFromFlightplan(nullptr);
+    route.createRouteLegsFromFlightplan();
     route.updateAll();
 
     // Assign airport idents to waypoints where available - for MSFS =======================================
