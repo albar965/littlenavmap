@@ -970,7 +970,7 @@ void Route::updateApproachRunwayEndAndIls(QVector<map::MapIls>& ilsVector, map::
         maptools::insert(ilsMapAll, ilsMapRecommended); // Merge and deduplicate
 
         // Check if there is a RNP navaid matching the approach ==========
-        auto found = std::find_if(ilsMapAll.constBegin(), ilsMapAll.constEnd(), [ = ](const map::MapIls& ils) {
+        auto found = std::find_if(ilsMapAll.constBegin(), ilsMapAll.constEnd(), [this](const map::MapIls& ils) {
           return ils.ident == approachLegs.arincName;
         });
 
@@ -1041,7 +1041,7 @@ void Route::updateApproachRunwayEndAndIls(QVector<map::MapIls>& ilsVector, map::
   // Filter out unusable ILS for profile display ========================================================
   if(profile)
   {
-    ilsVector.erase(std::remove_if(ilsVector.begin(), ilsVector.end(), [ = ](const map::MapIls& ils) -> bool {
+    ilsVector.erase(std::remove_if(ilsVector.begin(), ilsVector.end(), [this](const map::MapIls& ils) -> bool {
       // Needs to have GS, not farther away from runway end than 4NM and not more than 20 degree difference
       return !ils.hasGlideslope() || destRunwayEnd.position.distanceMeterTo(ils.position) > atools::geo::nmToMeter(4.) ||
       atools::geo::angleAbsDiff(destRunwayEnd.heading, ils.heading) > 20.f;

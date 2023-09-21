@@ -123,10 +123,8 @@ void UserdataSearch::connectSearchSlots()
   ui->toolButtonUserdata->addActions({ui->actionUserdataSearchShowMoreOptions});
 
   // Drop down menu actions
-  connect(ui->actionUserdataSearchShowMoreOptions, &QAction::toggled, this, [ = ](bool state)
-  {
-    atools::gui::util::showHideLayoutElements({ui->horizontalLayoutUserdataMore}, state,
-                                              {ui->lineUserdataMore});
+  connect(ui->actionUserdataSearchShowMoreOptions, &QAction::toggled, this, [this, ui](bool state) {
+    atools::gui::util::showHideLayoutElements({ui->horizontalLayoutUserdataMore}, state, {ui->lineUserdataMore});
     updateButtonMenu();
   });
 

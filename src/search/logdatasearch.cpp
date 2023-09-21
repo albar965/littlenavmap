@@ -180,13 +180,13 @@ void LogdataSearch::connectSearchSlots()
   ui->toolButtonLogdata->addActions({ui->actionLogdataSearchShowMoreOptions, ui->actionLogdataSearchShowDistOptions});
 
   // Drop down menu actions
-  connect(ui->actionLogdataSearchShowMoreOptions, &QAction::toggled, this, [ = ](bool state)
+  connect(ui->actionLogdataSearchShowMoreOptions, &QAction::toggled, this, [ui, this](bool state)
   {
     atools::gui::util::showHideLayoutElements({ui->verticalLayoutLogdataMore}, state, {ui->lineLogdataMore});
     updateButtonMenu();
   });
 
-  connect(ui->actionLogdataSearchShowDistOptions, &QAction::toggled, this, [ = ](bool state)
+  connect(ui->actionLogdataSearchShowDistOptions, &QAction::toggled, this, [ui, this](bool state)
   {
     atools::gui::util::showHideLayoutElements({ui->horizontalLayoutLogdataDist}, state, {ui->lineLogdataMoreDist});
     updateButtonMenu();

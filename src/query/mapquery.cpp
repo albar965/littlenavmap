@@ -864,7 +864,7 @@ const QList<map::MapAirport> *MapQuery::getAirports(const Marble::GeoDataLatLonB
   bool normal = types & map::AIRPORT_ALL;
 
   airportCache.updateCache(rect, mapLayer, queryRectInflationFactor, queryRectInflationIncrement, lazy,
-                           [ = ](const MapLayer *curLayer, const MapLayer *newLayer) -> bool
+                           [this, addon, normal](const MapLayer *curLayer, const MapLayer *newLayer) -> bool
   {
     return curLayer->hasSameQueryParametersAirport(newLayer) &&
     // Invalidate cache if settings differ

@@ -117,9 +117,9 @@ AirportSearch::AirportSearch(QMainWindow *parent, QTableView *tableView, si::Tab
   ui->checkBoxAirportAvgasSearch->setCheckState(Qt::PartiallyChecked);
 
   // Show/hide all search options menu action
-  connect(ui->actionAirportSearchShowAllOptions, &QAction::toggled, this, [ = ](bool state)
+  connect(ui->actionAirportSearchShowAllOptions, &QAction::toggled, this, [this](bool state)
   {
-    for(QAction *a: airportSearchMenuActions)
+    for(QAction *a: qAsConst(airportSearchMenuActions))
       a->setChecked(state);
   });
 
@@ -416,52 +416,38 @@ void AirportSearch::connectSearchSlots()
                                            ui->actionAirportSearchShowSceneryOptions});
 
   // Drop down menu actions
-  connect(ui->actionAirportSearchShowExtOptions, &QAction::toggled, this, [ = ](bool state)
-  {
-    atools::gui::util::showHideLayoutElements({ui->gridLayoutAirportExtSearch}, state,
-                                              {ui->lineAirportExtSearch});
+  connect(ui->actionAirportSearchShowExtOptions, &QAction::toggled, this, [ui, this](bool state) {
+    atools::gui::util::showHideLayoutElements({ui->gridLayoutAirportExtSearch}, state, {ui->lineAirportExtSearch});
     updateButtonMenu();
   });
 
-  connect(ui->actionAirportSearchShowFuelParkOptions, &QAction::toggled, this, [ = ](bool state)
-  {
-    atools::gui::util::showHideLayoutElements({ui->gridLayoutAirportSearchParking}, state,
-                                              {ui->lineAirportFuelParkSearch});
+  connect(ui->actionAirportSearchShowFuelParkOptions, &QAction::toggled, this, [ui, this](bool state) {
+    atools::gui::util::showHideLayoutElements({ui->gridLayoutAirportSearchParking}, state, {ui->lineAirportFuelParkSearch});
     updateButtonMenu();
   });
 
-  connect(ui->actionAirportSearchShowRunwayOptions, &QAction::toggled, this, [ = ](bool state)
-  {
-    atools::gui::util::showHideLayoutElements({ui->gridLayoutAirportSearchRunway}, state,
-                                              {ui->lineAirportRunwaySearch});
+  connect(ui->actionAirportSearchShowRunwayOptions, &QAction::toggled, this, [ui, this](bool state) {
+    atools::gui::util::showHideLayoutElements({ui->gridLayoutAirportSearchRunway}, state, {ui->lineAirportRunwaySearch});
     updateButtonMenu();
   });
 
-  connect(ui->actionAirportSearchShowAltOptions, &QAction::toggled, this, [ = ](bool state)
-  {
-    atools::gui::util::showHideLayoutElements({ui->horizontalLayoutAirportAltitudeSearch}, state,
-                                              {ui->lineAirportAltSearch});
+  connect(ui->actionAirportSearchShowAltOptions, &QAction::toggled, this, [ui, this](bool state) {
+    atools::gui::util::showHideLayoutElements({ui->horizontalLayoutAirportAltitudeSearch}, state, {ui->lineAirportAltSearch});
     updateButtonMenu();
   });
 
-  connect(ui->actionAirportSearchShowDistOptions, &QAction::toggled, this, [ = ](bool state)
-  {
-    atools::gui::util::showHideLayoutElements({ui->horizontalLayoutAirportDistanceSearch}, state,
-                                              {ui->lineAirportDistSearch});
+  connect(ui->actionAirportSearchShowDistOptions, &QAction::toggled, this, [ui, this](bool state) {
+    atools::gui::util::showHideLayoutElements({ui->horizontalLayoutAirportDistanceSearch}, state, {ui->lineAirportDistSearch});
     updateButtonMenu();
   });
 
-  connect(ui->actionAirportSearchShowFlightplanOptions, &QAction::toggled, this, [ = ](bool state)
-  {
-    atools::gui::util::showHideLayoutElements({ui->horizontalLayoutAirportFlightplanSearch}, state,
-                                              {ui->lineAirportFlightplanSearch});
+  connect(ui->actionAirportSearchShowFlightplanOptions, &QAction::toggled, this, [ui, this](bool state) {
+    atools::gui::util::showHideLayoutElements({ui->horizontalLayoutAirportFlightplanSearch}, state, {ui->lineAirportFlightplanSearch});
     updateButtonMenu();
   });
 
-  connect(ui->actionAirportSearchShowSceneryOptions, &QAction::toggled, this, [ = ](bool state)
-  {
-    atools::gui::util::showHideLayoutElements({ui->horizontalLayoutAirportScenerySearch}, state,
-                                              {ui->lineAirportScenerySearch});
+  connect(ui->actionAirportSearchShowSceneryOptions, &QAction::toggled, this, [ui, this](bool state) {
+    atools::gui::util::showHideLayoutElements({ui->horizontalLayoutAirportScenerySearch}, state, {ui->lineAirportScenerySearch});
     updateButtonMenu();
   });
 

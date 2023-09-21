@@ -1233,7 +1233,7 @@ void RouteStringReader::filterWaypoints(MapResult& result, atools::geo::Pos& las
 {
   // Remove artificial waypoints which were created for procedures only
   result.waypoints.erase(std::remove_if(result.waypoints.begin(), result.waypoints.end(),
-                                        [ = ](const map::MapWaypoint& wp) -> bool {
+                                        [](const map::MapWaypoint& wp) -> bool {
     return wp.artificial == map::WAYPOINT_ARTIFICIAL_PROCEDURES;
   }), result.waypoints.end());
 

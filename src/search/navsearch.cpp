@@ -67,9 +67,9 @@ NavSearch::NavSearch(QMainWindow *parent, QTableView *tableView, si::TabSearchId
   };
 
   // Show/hide all search options menu action
-  connect(ui->actionNavSearchShowAllOptions, &QAction::toggled, this, [ = ](bool state)
+  connect(ui->actionNavSearchShowAllOptions, &QAction::toggled, this, [this](bool state)
   {
-    for(QAction *a: navSearchMenuActions)
+    for(QAction *a: qAsConst(navSearchMenuActions))
       a->setChecked(state);
   });
 
@@ -216,23 +216,17 @@ void NavSearch::connectSearchSlots()
                                        ui->actionNavSearchShowSceneryOptions});
 
   // Drop down menu actions
-  connect(ui->actionNavSearchShowTypeOptions, &QAction::toggled, this, [ = ](bool state)
-  {
-    atools::gui::util::showHideLayoutElements({ui->gridLayoutNavSearchType}, state,
-                                              {ui->lineNavTypeSearch});
+  connect(ui->actionNavSearchShowTypeOptions, &QAction::toggled, this, [ui, this](bool state) {
+    atools::gui::util::showHideLayoutElements({ui->gridLayoutNavSearchType}, state, {ui->lineNavTypeSearch});
     updateButtonMenu();
   });
 
-  connect(ui->actionNavSearchShowDistOptions, &QAction::toggled, this, [ = ](bool state)
-  {
-    atools::gui::util::showHideLayoutElements({ui->horizontalLayoutNavDistanceSearch}, state,
-                                              {ui->lineNavDistanceSearch});
+  connect(ui->actionNavSearchShowDistOptions, &QAction::toggled, this, [ui, this](bool state) {
+    atools::gui::util::showHideLayoutElements({ui->horizontalLayoutNavDistanceSearch}, state, {ui->lineNavDistanceSearch});
     updateButtonMenu();
   });
-  connect(ui->actionNavSearchShowSceneryOptions, &QAction::toggled, this, [ = ](bool state)
-  {
-    atools::gui::util::showHideLayoutElements({ui->horizontalLayoutNavScenerySearch}, state,
-                                              {ui->lineNavScenerySearch});
+  connect(ui->actionNavSearchShowSceneryOptions, &QAction::toggled, this, [ui, this](bool state) {
+    atools::gui::util::showHideLayoutElements({ui->horizontalLayoutNavScenerySearch}, state, {ui->lineNavScenerySearch});
     updateButtonMenu();
   });
 }

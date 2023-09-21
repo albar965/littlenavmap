@@ -1096,7 +1096,7 @@ MapResultIndex& MapResultIndex::remove(const atools::geo::Pos& pos, float maxDis
 
   float maxMeter = atools::geo::nmToMeter(maxDistanceNm);
 
-  auto it = std::remove_if(begin(), end(), [ = ](const MapBase *obj) -> bool
+  auto it = std::remove_if(begin(), end(), [maxMeter, &pos](const MapBase *obj) -> bool
     {
       return obj->position.distanceMeterTo(pos) > maxMeter;
     });

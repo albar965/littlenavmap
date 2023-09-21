@@ -719,7 +719,8 @@ OnlineAircraft OnlinedataController::shadowAircraftInternal(const atools::fs::sc
       qDebug() << Q_FUNC_INFO << "nearest.size()" << nearest.size();
 
     // Filter out all which do not match more non-spatial criteria =================================
-    nearest.erase(std::remove_if(nearest.begin(), nearest.end(), [ = ](const OnlineAircraft& aircraft) -> bool {
+    nearest.erase(std::remove_if(nearest.begin(), nearest.end(),
+                                 [&simAircraft, this](const OnlineAircraft& aircraft) -> bool {
       bool altOk = true, gsOk = true, hdgOk = true;
 
       if(atools::inRange(-1000.f, map::INVALID_ALTITUDE_VALUE / 4.f, simAircraft.getActualAltitudeFt()) &&

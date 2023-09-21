@@ -899,8 +899,7 @@ void InfoController::showInformationInternal(map::MapResult result, bool showWin
     // Delete all airspaces that were removed from the database inbetween
     QList<map::MapAirspace> onlineAirspaces = result.getOnlineAirspaces();
     QList<map::MapAirspace>::iterator it = std::remove_if(onlineAirspaces.begin(), onlineAirspaces.end(),
-                                                          [ = ](const map::MapAirspace& airspace) -> bool
-    {
+                                                          [this](const map::MapAirspace& airspace) -> bool {
       return !airspaceController->hasAirspaceById({airspace.id, map::AIRSPACE_SRC_ONLINE});
     });
     if(it != onlineAirspaces.end())
@@ -1183,10 +1182,8 @@ void InfoController::styleChanged()
 void InfoController::tracksChanged()
 {
   // Remove tracks from current result since the ids might change
-  currentSearchResult.airways.erase(std::remove_if(currentSearchResult.airways.begin(),
-                                                   currentSearchResult.airways.end(),
-                                                   [ = ](const map::MapAirway& airway) -> bool
-  {
+  currentSearchResult.airways.erase(std::remove_if(currentSearchResult.airways.begin(), currentSearchResult.airways.end(),
+                                                   [](const map::MapAirway& airway) -> bool {
     return airway.isTrack();
   }), currentSearchResult.airways.end());
 
@@ -1387,10 +1384,7 @@ void InfoController::updateAiAirports(const atools::fs::sc::SimConnectData& data
     // Find all aircraft currently shown on the page in the newly arrived ai list
     for(const map::MapAiAircraft& aircraft : qAsConst(currentSearchResult.aiAircraft))
     {
-      QVector<atools::fs::sc::SimConnectAircraft>::const_iterator it =
-        std::find_if(newAiAircraft.constBegin(), newAiAircraft.constEnd(),
-                     [ = ](const SimConnectAircraft& ac) -> bool
-      {
+      auto it = std::find_if(newAiAircraft.constBegin(), newAiAircraft.constEnd(), [&aircraft](const SimConnectAircraft& ac) -> bool {
         return ac.getObjectId() == aircraft.getAircraft().getObjectId();
       });
       if(it != newAiAircraft.end())

@@ -117,9 +117,7 @@ void removeByDistance(QList<TYPE>& list, const atools::geo::Pos& pos, int maxDis
   if(list.isEmpty() || !pos.isValid() || !(maxDistanceMeter < map::INVALID_INDEX_VALUE))
     return;
 
-  auto it = std::remove_if(list.begin(), list.end(),
-                           [ = ](const TYPE& type) -> bool
-    {
+  auto it = std::remove_if(list.begin(), list.end(), [maxDistanceMeter, &pos](const TYPE& type) -> bool {
       return type.getPosition().distanceMeterTo(pos) > maxDistanceMeter;
     });
 
@@ -135,9 +133,7 @@ void removeByDistance(QList<TYPE>& list, const atools::geo::Pos& pos, float maxD
   if(list.isEmpty() || !pos.isValid() || !(maxDistanceMeter < map::INVALID_DISTANCE_VALUE))
     return;
 
-  auto it = std::remove_if(list.begin(), list.end(),
-                           [ = ](const TYPE& type) -> bool
-    {
+  auto it = std::remove_if(list.begin(), list.end(), [maxDistanceMeter, &pos](const TYPE& type) -> bool {
       return type.getPosition().distanceMeterTo(pos) > maxDistanceMeter;
     });
 
@@ -153,9 +149,7 @@ void removeByDirection(QList<TYPE>& list, const atools::geo::Pos& pos, int lastD
   if(list.isEmpty() || !pos.isValid())
     return;
 
-  auto it = std::remove_if(list.begin(), list.end(),
-                           [ = ](const TYPE& type) -> bool
-    {
+  auto it = std::remove_if(list.begin(), list.end(), [lastDirection, &pos](const TYPE& type) -> bool {
       int crs = 360 + atools::geo::normalizeCourse(type.getPosition().angleTo(pos));
       int crs2 = 360 + atools::geo::normalizeCourse(lastDirection);
       return atools::absInt(crs - crs2) > 120;
@@ -173,8 +167,7 @@ void sortByDistance(QList<TYPE>& list, const atools::geo::Pos& pos)
   if(list.size() <= 1 || !pos.isValid())
     return;
 
-  std::sort(list.begin(), list.end(), [ = ](const TYPE& t1, const TYPE& t2) -> bool
-    {
+  std::sort(list.begin(), list.end(), [&pos](const TYPE& t1, const TYPE& t2) -> bool {
       return t1.getPosition().distanceMeterTo(pos) < t2.getPosition().distanceMeterTo(pos);
     });
 }
@@ -185,8 +178,7 @@ void sortByDistance(QVector<TYPE>& list, const atools::geo::Pos& pos)
   if(list.size() <= 1 || !pos.isValid())
     return;
 
-  std::sort(list.begin(), list.end(), [ = ](const TYPE& t1, const TYPE& t2) -> bool
-    {
+  std::sort(list.begin(), list.end(), [&pos](const TYPE& t1, const TYPE& t2) -> bool {
       return t1.getPosition().distanceMeterTo(pos) < t2.getPosition().distanceMeterTo(pos);
     });
 }
@@ -198,8 +190,7 @@ void sortByDistanceAndAltitude(QList<TYPE>& list, const atools::geo::Pos& pos, f
   if(list.size() <= 1 || !pos.isValid())
     return;
 
-  std::sort(list.begin(), list.end(), [ = ](const TYPE& t1, const TYPE& t2) -> bool
-    {
+  std::sort(list.begin(), list.end(), [&pos, altitudeWeight](const TYPE& t1, const TYPE& t2) -> bool {
       return t1.getPosition().distanceMeterTo3d(pos, altitudeWeight) < t2.getPosition().distanceMeterTo3d(pos, altitudeWeight);
     });
 }
@@ -210,8 +201,7 @@ void sortByDistanceAndAltitude(QVector<TYPE>& list, const atools::geo::Pos& pos,
   if(list.size() <= 1 || !pos.isValid())
     return;
 
-  std::sort(list.begin(), list.end(), [ = ](const TYPE& t1, const TYPE& t2) -> bool
-    {
+  std::sort(list.begin(), list.end(), [&pos, altitudeWeight](const TYPE& t1, const TYPE& t2) -> bool {
       return t1.getPosition().distanceMeterTo3d(pos, altitudeWeight) < t2.getPosition().distanceMeterTo3d(pos, altitudeWeight);
     });
 }
@@ -228,14 +218,11 @@ void insertSortedByDistance(const CoordinateConverter& conv, QList<TYPE>& list, 
 
   if(ids == nullptr || !ids->contains(type.getId()))
   {
-    auto it = std::lower_bound(list.begin(), list.end(), type,
-                               [ = ](const TYPE& a1, const TYPE& a2) -> bool
-      {
+    auto it = std::lower_bound(list.begin(), list.end(), type, [&conv, xs, ys](const TYPE& a1, const TYPE& a2) -> bool {
         int x1, y1, x2, y2;
         conv.wToS(a1.getPosition(), x1, y1);
         conv.wToS(a2.getPosition(), x2, y2);
-        return atools::geo::manhattanDistance(x1, y1, xs, ys) <
-        atools::geo::manhattanDistance(x2, y2, xs, ys);
+        return atools::geo::manhattanDistance(x1, y1, xs, ys) < atools::geo::manhattanDistance(x2, y2, xs, ys);
       });
     list.insert(it, type);
 
@@ -254,8 +241,10 @@ void insertSorted(const CoordinateConverter& conv, int xs, int ys, const QList<T
   for(const TYPE& obj : list)
   {
     if(obj.getPosition().isValid() && conv.wToS(obj.getPosition(), x, y))
-      if((atools::geo::manhattanDistance(x, y, xs, ys)) < maxDistance)
+    {
+      if(atools::geo::manhattanDistance(x, y, xs, ys) < maxDistance)
         maptools::insertSortedByDistance(conv, result, ids, xs, ys, obj);
+    }
   }
 }
 
@@ -284,14 +273,11 @@ template<typename TYPE>
 void insertSortedByTowerDistance(const CoordinateConverter& conv, QList<TYPE>& list, int xs, int ys,
                                  TYPE type)
 {
-  auto it = std::lower_bound(list.begin(), list.end(), type,
-                             [ = ](const TYPE& a1, const TYPE& a2) -> bool
-    {
+  auto it = std::lower_bound(list.begin(), list.end(), type, [&conv, xs, ys](const TYPE& a1, const TYPE& a2) -> bool {
       int x1, y1, x2, y2;
       conv.wToS(a1.towerCoords, x1, y1);
       conv.wToS(a2.towerCoords, x2, y2);
-      return atools::geo::manhattanDistance(x1, y1, xs, ys) <
-      atools::geo::manhattanDistance(x2, y2, xs, ys);
+      return atools::geo::manhattanDistance(x1, y1, xs, ys) < atools::geo::manhattanDistance(x2, y2, xs, ys);
     });
   list.insert(it, type);
 }
@@ -319,8 +305,7 @@ TYPE byId(const QList<TYPE>& list, int id)
 template<typename TYPE>
 void removeById(QList<TYPE>& list, int id)
 {
-  auto it = std::remove_if(list.begin(), list.end(), [id](const TYPE& p) -> bool
-    {
+  auto it = std::remove_if(list.begin(), list.end(), [id](const TYPE& p) -> bool {
       return p.getId() == id;
     });
 
