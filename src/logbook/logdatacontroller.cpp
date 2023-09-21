@@ -29,6 +29,7 @@
 #include "gui/errorhandler.h"
 #include "gui/helphandler.h"
 #include "gui/mainwindow.h"
+#include "gui/sqlquerydialog.h"
 #include "gui/textdialog.h"
 #include "perf/aircraftperfcontroller.h"
 #include "search/searchcontroller.h"
@@ -36,6 +37,7 @@
 #include "common/aircrafttrack.h"
 #include "logbook/logdatadialog.h"
 #include "logbook/logstatisticsdialog.h"
+#include "sql/sqlcolumn.h"
 #include "zip/gzip.h"
 #include "app/navapp.h"
 #include "query/airportquery.h"
@@ -59,6 +61,7 @@
 
 using atools::sql::SqlTransaction;
 using atools::sql::SqlRecord;
+using atools::sql::SqlColumn;
 using atools::geo::Pos;
 using atools::fs::pln::FlightplanIO;
 
@@ -664,7 +667,8 @@ void LogdataController::cleanupLogEntries()
   {
     SHORT_DISTANCE,
     DEPARTURE_AND_DESTINATION_EQUAL,
-    DEPARTURE_OR_DESTINATION_EMPTY
+    DEPARTURE_OR_DESTINATION_EMPTY,
+    SHOW_PREVIEW
   };
 
   qDebug() << Q_FUNC_INFO;
@@ -672,7 +676,7 @@ void LogdataController::cleanupLogEntries()
   // Create a dialog with tree checkboxes =====================
   atools::gui::ChoiceDialog choiceDialog(mainWindow, QApplication::applicationName() + tr(" - Cleanup Logbook"),
                                          tr("Select criteria for cleanup.\nNote that you can undo this change."),
-                                         lnm::SEARCHTAB_LOGDATA_CLEAN_DIALOG, "LOGBOOK.html#logbook-cleanup");
+                                         lnm::SEARCHTAB_LOGDATA_CLEANUP_DIALOG, "LOGBOOK.html#logbook-cleanup");
 
   choiceDialog.setHelpOnlineUrl(lnm::helpOnlineUrl);
   choiceDialog.setHelpLanguageOnline(lnm::helpLanguageOnline());
@@ -701,6 +705,9 @@ void LogdataController::cleanupLogEntries()
   choiceDialog.addCheckBox(DEPARTURE_OR_DESTINATION_EMPTY, tr("&Either departure or destinaion ident empty"),
                            tr("Removes incomplete entries where the flight was terminated early, for example."));
   choiceDialog.addSpacer();
+  choiceDialog.addLine();
+  choiceDialog.addCheckBox(SHOW_PREVIEW, tr("Show a &preview before deleting logbook entries"),
+                           tr("Shows a dialog window with all logbook entries to be deleted before removing them."), true /* checked */);
 
   // Disable ok button if not at least one of these is checked
   choiceDialog.setRequiredAnyChecked({SHORT_DISTANCE, DEPARTURE_AND_DESTINATION_EQUAL, DEPARTURE_OR_DESTINATION_EMPTY});
@@ -708,18 +715,84 @@ void LogdataController::cleanupLogEntries()
 
   if(choiceDialog.exec() == QDialog::Accepted)
   {
-    // Dialog ok. Remove entries.
-    QGuiApplication::setOverrideCursor(Qt::WaitCursor);
-    SqlTransaction transaction(manager->getDatabase());
-    int removed = manager->cleanupLogEntries(choiceDialog.isChecked(DEPARTURE_AND_DESTINATION_EQUAL),
-                                             choiceDialog.isChecked(DEPARTURE_OR_DESTINATION_EMPTY),
-                                             choiceDialog.isChecked(SHORT_DISTANCE) ? distNm : -1.f);
-    transaction.commit();
-    QGuiApplication::restoreOverrideCursor();
+    bool deleteEntries = false;
 
-    if(removed > 0)
-      logChanged(false /* load all */, false /* keep selection */);
-    mainWindow->setStatusMessage(tr("%1 logbook %2 deleted.").arg(removed).arg(removed == 1 ? tr("entry") : tr("entries")));
+    // Show preview table ===============================================
+    if(choiceDialog.isChecked(SHOW_PREVIEW))
+    {
+      QVector<atools::sql::SqlColumn> previewCols({
+        SqlColumn("departure_time", tr("Departure\nReal Time")),
+        SqlColumn("aircraft_name", tr("Aircraft\nModel")),
+        SqlColumn("aircraft_type", tr("Aircraft\nType")),
+        SqlColumn("aircraft_registration", tr("Aircraft\nRegistration")),
+        SqlColumn("simulator", tr("Simulator")),
+        SqlColumn("departure_ident", tr("Departure\nIdent")),
+        SqlColumn("departure_name", tr("Departure")),
+        SqlColumn("destination_ident", tr("Destination\nIdent")),
+        SqlColumn("destination_name", tr("Destination")),
+        SqlColumn("distance_flown", Unit::replacePlaceholders(tr("Distance\nFlown %dist%"))),
+        SqlColumn("flightplan", tr("Flight Plan\nattached")),
+        SqlColumn("aircraft_perf", tr("Aircraft Performance\nattached")),
+        SqlColumn("aircraft_trail", tr("Aircraft Trail\nattached")),
+        SqlColumn("description", tr("Remarks")),
+      });
+
+      // Get query for preview
+      QString queryStr = manager->getCleanupPreview(choiceDialog.isChecked(DEPARTURE_AND_DESTINATION_EQUAL),
+                                                    choiceDialog.isChecked(DEPARTURE_OR_DESTINATION_EMPTY),
+                                                    choiceDialog.isChecked(SHORT_DISTANCE) ? distNm : -1.f, previewCols);
+
+      // Callback for data formatting
+      atools::gui::SqlQueryDialogDataFunc dataFunc([&previewCols](int column, const QVariant& data, Qt::ItemDataRole role) -> QVariant {
+                                                   const QString& colname = previewCols.at(column).getName();
+
+                                                   if(role == Qt::TextAlignmentRole)
+                                                   {
+                                                     if(colname == "departure_time" || colname == "distance_flown")
+                                                       return Qt::AlignRight;
+                                                   }
+                                                   else if(role == Qt::DisplayRole)
+                                                   {
+                                                     if(colname == "departure_time")
+                                                       return data.toDateTime();
+                                                     else if(colname == "distance_flown")
+                                                       return Unit::distNm(data.toFloat(), false /* addUnit */);
+                                                     else if(colname == "flightplan" || colname == "aircraft_perf" ||
+                                                             colname == "aircraft_trail")
+                                                       return data.toByteArray().isEmpty() ? tr("-") : tr("✓");
+                                                   }
+
+                                                   return data;
+        });
+
+      // Build preview dialog ===============================================
+      atools::gui::SqlQueryDialog previewDialog(mainWindow, QCoreApplication::applicationName() + tr(" - Cleanup Preview"),
+                                                tr("These logbook entries will be deleted.\nNote that you can undo this change."),
+                                                lnm::SEARCHTAB_USERDATA_CLEANUP_PREVIEW, "LOGBOOK.html#cleanup-logbook-entries",
+                                                tr("&Delete Logbook entries"));
+      previewDialog.initQuery(manager->getDatabase(), queryStr, previewCols, dataFunc);
+      if(previewDialog.exec() == QDialog::Accepted)
+        deleteEntries = true;
+    }
+    else
+      deleteEntries = true;
+
+    if(deleteEntries)
+    {
+      // Dialog ok - remove entries ===============================================
+      QGuiApplication::setOverrideCursor(Qt::WaitCursor);
+      SqlTransaction transaction(manager->getDatabase());
+      int removed = manager->cleanupLogEntries(choiceDialog.isChecked(DEPARTURE_AND_DESTINATION_EQUAL),
+                                               choiceDialog.isChecked(DEPARTURE_OR_DESTINATION_EMPTY),
+                                               choiceDialog.isChecked(SHORT_DISTANCE) ? distNm : -1.f);
+      transaction.commit();
+      QGuiApplication::restoreOverrideCursor();
+
+      // Send messages ===============================================
+      if(removed > 0)
+        logChanged(false /* load all */, false /* keep selection */);
+      mainWindow->setStatusMessage(tr("%1 logbook %2 deleted.").arg(removed).arg(removed == 1 ? tr("entry") : tr("entries")));
+    }
   }
 }
 

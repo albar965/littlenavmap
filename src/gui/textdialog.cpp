@@ -40,7 +40,7 @@ TextDialog::TextDialog(QWidget *parent, const QString& title, const QString& hel
   button->setToolTip(tr("Copies message as formatted text to the clipboard"));
 
   if(helpBaseUrl.isEmpty())
-    ui->buttonBox->removeButton(ui->buttonBox->button(QDialogButtonBox::Help));
+    ui->buttonBox->button(QDialogButtonBox::Help)->hide();
 
   ui->buttonBox->button(QDialogButtonBox::Ok)->setDefault(true);
   ui->checkBoxNotShowAgain->setVisible(false); // Hide per default

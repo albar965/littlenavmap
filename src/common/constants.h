@@ -233,10 +233,12 @@ const QLatin1String SEARCHTAB_NAV_VIEW_WIDGET("SearchPaneNav/WidgetView");
 const QLatin1String SEARCHTAB_NAV_VIEW_DIST_WIDGET("SearchPaneNav/WidgetDistView");
 
 const QLatin1String SEARCHTAB_USERDATA_VIEW_WIDGET("SearchPaneUserdata/WidgetView");
-const QLatin1String SEARCHTAB_USERDATA_CLEAN_DIALOG("SearchPaneUserdata/CleanupDialog");
+const QLatin1String SEARCHTAB_USERDATA_CLEANUP_DIALOG("SearchPaneUserdata/CleanupDialog");
+const QLatin1String SEARCHTAB_USERDATA_CLEANUP_PREVIEW("SearchPaneUserdata/CleanupPreview");
 
 const QLatin1String SEARCHTAB_LOGDATA_VIEW_WIDGET("SearchPaneLogdata/WidgetView");
-const QLatin1String SEARCHTAB_LOGDATA_CLEAN_DIALOG("SearchPaneLogdata/CleanupDialog");
+const QLatin1String SEARCHTAB_LOGDATA_CLEANUP_DIALOG("SearchPaneLogdata/CleanupDialog");
+const QLatin1String SEARCHTAB_LOGDATA_CLEANUP_PREVIEW("SearchPaneLogdata/CleanupPreview");
 
 const QLatin1String ROUTE_EXPORT_DIALOG("RouteExport/RouteExportDialog");
 const QLatin1String ROUTE_EXPORT_DIALOG_ZOOM("RouteExport/RouteExportDialogZoom");
@@ -295,9 +297,7 @@ const QLatin1String ROUTE_PARKING_DIALOG("Route/ParkingDialog");
 
 const QLatin1String LOGDATA_EDIT_ADD_DIALOG("LogdataDialog/Widget");
 const QLatin1String LOGDATA_STATS_DIALOG("LogdataStatsDialog/Widget");
-
 const QLatin1String LOGDATA_EXPORT_CSV("Logdata/CsvExport");
-
 const QLatin1String LOGDATA_ENTRY_ID("Logdata/EntryId");
 
 /* Options dialog */

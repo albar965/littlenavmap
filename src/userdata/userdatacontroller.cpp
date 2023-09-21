@@ -31,15 +31,18 @@
 #include "gui/errorhandler.h"
 #include "gui/mainwindow.h"
 #include "app/navapp.h"
+#include "gui/sqlquerydialog.h"
 #include "options/optiondata.h"
 #include "search/searchcontroller.h"
 #include "search/userdatasearch.h"
 #include "settings/settings.h"
+#include "sql/sqlcolumn.h"
 #include "sql/sqlrecord.h"
 #include "sql/sqltransaction.h"
 #include "ui_mainwindow.h"
 #include "userdata/userdatadialog.h"
 #include "userdata/userdataicons.h"
+#include "common/unit.h"
 
 #include <QDebug>
 #include <QProcessEnvironment>
@@ -48,6 +51,7 @@
 
 using atools::sql::SqlTransaction;
 using atools::sql::SqlRecord;
+using atools::sql::SqlColumn;
 using atools::geo::Pos;
 
 UserdataController::UserdataController(atools::fs::userdata::UserdataManager *userdataManager, MainWindow *parent)
@@ -1024,13 +1028,14 @@ void UserdataController::cleanupUserdata()
     DESCRIPTION,
     TAGS,
     COORDINATES,
-    EMPTY
+    EMPTY,
+    SHOW_PREVIEW
   };
 
   // Create a dialog with tree checkboxes =====================
   atools::gui::ChoiceDialog choiceDialog(mainWindow, QApplication::applicationName() + tr(" - Cleanup Userpoints"),
                                          tr("Select criteria for cleanup.\nNote that you can undo this change."),
-                                         lnm::SEARCHTAB_USERDATA_CLEAN_DIALOG, "USERPOINT.html#userpoint-cleanup");
+                                         lnm::SEARCHTAB_USERDATA_CLEANUP_DIALOG, "USERPOINT.html#userpoint-cleanup");
 
   choiceDialog.setHelpOnlineUrl(lnm::helpOnlineUrl);
   choiceDialog.setHelpLanguageOnline(lnm::helpLanguageOnline());
@@ -1048,8 +1053,11 @@ void UserdataController::cleanupUserdata()
   choiceDialog.addCheckBox(TAGS, tr("&Tags"));
   choiceDialog.addCheckBox(COORDINATES, tr("&Coordinates (similar)"));
   choiceDialog.addSpacer();
+  choiceDialog.addLine();
+  choiceDialog.addCheckBox(SHOW_PREVIEW, tr("Show a &preview before deleting userpoints"),
+                           tr("Shows a dialog window with all userpoints to be deleted before removing them."), true /* checked */);
 
-  // Disable duplicate cleanup parameters is top box is off
+  // Disable duplicate cleanup parameters if top box is off
   connect(&choiceDialog, &atools::gui::ChoiceDialog::checkBoxToggled, [&choiceDialog](int id, bool checked) {
     if(id == COMPARE)
     {
@@ -1060,39 +1068,100 @@ void UserdataController::cleanupUserdata()
     }
   });
 
-  // Disable ok button if not at least one of these is checked
+  // Disable the ok button if not at least one of these is checked
   choiceDialog.setRequiredAnyChecked({COMPARE, EMPTY});
 
   choiceDialog.restoreState();
 
   if(choiceDialog.exec() == QDialog::Accepted)
   {
+    bool deleteEntries = false;
+
+    // Create list for duplicate column check ===============================================
     // type name ident region description tags
-    QStringList columns;
+    QStringList duplicateColumns;
     if(choiceDialog.isChecked(COMPARE))
     {
-      columns << "type" << "ident" << "name";
+      duplicateColumns << "type" << "ident" << "name";
 
       if(choiceDialog.isChecked(REGION))
-        columns.append("region");
+        duplicateColumns.append("region");
       if(choiceDialog.isChecked(DESCRIPTION))
-        columns.append("description");
+        duplicateColumns.append("description");
       if(choiceDialog.isChecked(TAGS))
-        columns.append("tags");
+        duplicateColumns.append("tags");
     }
 
-    // Dialog ok. Remove entries.
-    QGuiApplication::setOverrideCursor(Qt::WaitCursor);
-    SqlTransaction transaction(manager->getDatabase());
-    int removed = manager->cleanupUserdata(columns, choiceDialog.isChecked(COORDINATES), choiceDialog.isChecked(EMPTY));
-    transaction.commit();
-    QGuiApplication::restoreOverrideCursor();
+    // Prepare - replace null values with empty strings
+    manager->preCleanup();
 
-    if(removed > 0)
+    // Show preview table ===============================================
+    if(choiceDialog.isChecked(SHOW_PREVIEW))
+    {
+      // Columns to be shown in the preview
+      QVector<atools::sql::SqlColumn> previewCols({
+        SqlColumn("type", tr("Type")),
+        SqlColumn("last_edit_timestamp", tr("Last Change")),
+        SqlColumn("ident", tr("Ident")),
+        SqlColumn("region", tr("Region")),
+        SqlColumn("name", tr("Name")),
+        SqlColumn("tags", tr("Tags")),
+        SqlColumn("description", tr("Remarks")),
+        SqlColumn("import_file_path", tr("Imported\nfrom File"))
+      });
+
+      // Get query for preview
+      QString queryStr = manager->getCleanupPreview(duplicateColumns, choiceDialog.isChecked(COORDINATES), choiceDialog.isChecked(EMPTY),
+                                                    previewCols);
+
+      // Callback for data formatting
+      atools::gui::SqlQueryDialogDataFunc dataFunc([&previewCols](int column, const QVariant& data, Qt::ItemDataRole role) -> QVariant {
+                                                   if(previewCols.at(column).getName() == "last_edit_timestamp")
+                                                   {
+                                                     // Convert to time and align right
+                                                     if(role == Qt::TextAlignmentRole)
+                                                       return Qt::AlignRight;
+                                                     else if(role == Qt::DisplayRole)
+                                                       return data.toDateTime();
+                                                   }
+                                                   return data;
+        });
+
+      // Build preview dialog ===============================================
+      atools::gui::SqlQueryDialog previewDialog(mainWindow, QCoreApplication::applicationName() + tr(" - Cleanup Preview"),
+                                                tr("These userpoints will be deleted.\nNote that you can undo this change."),
+                                                lnm::SEARCHTAB_USERDATA_CLEANUP_PREVIEW, "USERPOINT.html#cleanup-userpoints",
+                                                tr("&Delete Userpoints"));
+      previewDialog.initQuery(manager->getDatabase(), queryStr, previewCols, dataFunc);
+      if(previewDialog.exec() == QDialog::Accepted)
+        deleteEntries = true;
+    }
+    else
+      deleteEntries = true;
+
+    int removed = 0;
+    if(deleteEntries)
+    {
+      // Dialog ok - remove entries ===============================================
+      QGuiApplication::setOverrideCursor(Qt::WaitCursor);
+      SqlTransaction transaction(manager->getDatabase());
+      removed = manager->cleanupUserdata(duplicateColumns, choiceDialog.isChecked(COORDINATES), choiceDialog.isChecked(EMPTY));
+      transaction.commit();
+      QGuiApplication::restoreOverrideCursor();
+    }
+
+    // Undo prepare - replace empty strings with null values
+    manager->postCleanup();
+
+    // Send messages ===============================================
+    if(deleteEntries)
+    {
+      if(removed > 0)
+        emit userdataChanged();
+      mainWindow->setStatusMessage(tr("%1 %2 deleted.").arg(removed).arg(removed == 1 ? tr("userpoint") : tr("userpoints")));
+
+      emit refreshUserdataSearch(false /* load all */, false /* keep selection */);
       emit userdataChanged();
-    mainWindow->setStatusMessage(tr("%1 %2 deleted.").arg(removed).arg(removed == 1 ? tr("userpoint") : tr("userpoints")));
-
-    emit refreshUserdataSearch(false /* load all */, false /* keep selection */);
-    emit userdataChanged();
+    }
   }
 }
