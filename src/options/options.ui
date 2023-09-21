@@ -61,7 +61,7 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>597</width>
+             <width>600</width>
              <height>451</height>
             </rect>
            </property>
@@ -402,7 +402,7 @@ This is the file on top of the list &quot;Recent Window Layouts&quot;.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>597</width>
+             <width>600</width>
              <height>451</height>
             </rect>
            </property>
@@ -643,7 +643,7 @@ opening files, modifying the flight plan and other operations.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>583</width>
+             <width>586</width>
              <height>576</height>
             </rect>
            </property>
@@ -1155,7 +1155,7 @@ This does not affect the map window which can be changed separately on the optio
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>597</width>
+             <width>600</width>
              <height>451</height>
             </rect>
            </property>
@@ -1473,8 +1473,8 @@ Also affects labels at holds and traffic patterns.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>583</width>
-             <height>552</height>
+             <width>595</width>
+             <height>565</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_12">
@@ -1601,7 +1601,7 @@ userpoints and logbook entries when clicking on the map</string>
                  <property name="toolTip">
                   <string>Empty airports are not add-ons, have no taxiways, no parking and no aprons.
 These are displayed underneath all other airports and use a gray symbol.
-The aiports toolbar button can be used to disable them if this checkbox is enabled.</string>
+The aiports toolbar button can be used to hide empty airports if this box is checked.</string>
                  </property>
                  <property name="text">
                   <string>&amp;Treat empty airports special</string>
@@ -1614,12 +1614,12 @@ The aiports toolbar button can be used to disable them if this checkbox is enabl
                <item>
                 <widget class="QCheckBox" name="checkBoxOptionsMapEmptyAirports3D">
                  <property name="toolTip">
-                  <string>All X-Plane airports which are not 3D and not add-on
+                  <string>All X-Plane airports which are 2D and stock
 will be displayed underneath all other airports and use a gray symbol.
-The aiports toolbar button can be used to disable them if this checkbox is enabled.</string>
+The aiports toolbar button can be used to hide empty airports if this box is checked.</string>
                  </property>
                  <property name="text">
-                  <string>&amp;Consider all X-Plane airports not being 3D empty</string>
+                  <string>&amp;X-Plane 2D airports are shown as empty</string>
                  </property>
                  <property name="checked">
                   <bool>true</bool>
@@ -1972,7 +1972,7 @@ userpoints and logbook entries when hovering the cursor over the map</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>597</width>
+             <width>600</width>
              <height>451</height>
             </rect>
            </property>
@@ -2305,8 +2305,8 @@ Smaller values will allow a finer selection.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>583</width>
-             <height>572</height>
+             <width>586</width>
+             <height>630</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_20">
@@ -3143,7 +3143,7 @@ Also used in the elevation profile.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>597</width>
+             <width>600</width>
              <height>451</height>
             </rect>
            </property>
@@ -3548,7 +3548,7 @@ Also used in the elevation profile.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>583</width>
+             <width>586</width>
              <height>568</height>
             </rect>
            </property>
@@ -4463,7 +4463,7 @@ Do not show this information publicly in forums on screenshots.&lt;/b&gt;&lt;/p&
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>597</width>
+             <width>600</width>
              <height>451</height>
             </rect>
            </property>
@@ -4901,7 +4901,7 @@ airspace filename has to match the callsign of the online center.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>583</width>
+             <width>586</width>
              <height>566</height>
             </rect>
            </property>
@@ -5386,7 +5386,7 @@ Lower this value to avoid too long tracks and avoid stutters in map display.</st
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>597</width>
+             <width>600</width>
              <height>451</height>
             </rect>
            </property>
@@ -5665,7 +5665,7 @@ Note that this value does not affect flight plan calculation or saving of flight
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>597</width>
+             <width>600</width>
              <height>451</height>
             </rect>
            </property>
@@ -5887,7 +5887,7 @@ Note that this value does not affect flight plan calculation or saving of flight
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>583</width>
+             <width>586</width>
              <height>687</height>
             </rect>
            </property>
@@ -6453,7 +6453,7 @@ Entering a wrong value will cause errors when downloading weather reports.</stri
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>597</width>
+             <width>600</width>
              <height>451</height>
             </rect>
            </property>
@@ -6755,7 +6755,7 @@ Entering a wrong value will cause errors when downloading weather reports.</stri
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>597</width>
+             <width>600</width>
              <height>451</height>
             </rect>
            </property>
@@ -6942,7 +6942,7 @@ Little Navmap GIT repository.
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>583</width>
+             <width>586</width>
              <height>503</height>
             </rect>
            </property>
@@ -7283,7 +7283,7 @@ Source data has many errors.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>583</width>
+             <width>586</width>
              <height>470</height>
             </rect>
            </property>
