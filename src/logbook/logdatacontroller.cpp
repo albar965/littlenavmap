@@ -770,6 +770,8 @@ void LogdataController::cleanupLogEntries()
                                                 tr("These logbook entries will be deleted.\nNote that you can undo this change."),
                                                 lnm::SEARCHTAB_USERDATA_CLEANUP_PREVIEW, "LOGBOOK.html#cleanup-logbook-entries",
                                                 tr("&Delete Logbook entries"));
+      previewDialog.setHelpOnlineUrl(lnm::helpOnlineUrl);
+      previewDialog.setHelpLanguageOnline(lnm::helpLanguageOnline());
       previewDialog.initQuery(manager->getDatabase(), queryStr, previewCols, dataFunc);
       if(previewDialog.exec() == QDialog::Accepted)
         deleteEntries = true;

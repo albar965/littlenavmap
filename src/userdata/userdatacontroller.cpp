@@ -1132,6 +1132,8 @@ void UserdataController::cleanupUserdata()
                                                 tr("These userpoints will be deleted.\nNote that you can undo this change."),
                                                 lnm::SEARCHTAB_USERDATA_CLEANUP_PREVIEW, "USERPOINT.html#cleanup-userpoints",
                                                 tr("&Delete Userpoints"));
+      previewDialog.setHelpOnlineUrl(lnm::helpOnlineUrl);
+      previewDialog.setHelpLanguageOnline(lnm::helpLanguageOnline());
       previewDialog.initQuery(manager->getDatabase(), queryStr, previewCols, dataFunc);
       if(previewDialog.exec() == QDialog::Accepted)
         deleteEntries = true;
