@@ -1312,8 +1312,8 @@ void SymbolPainter::textBoxF(QPainter *painter, QStringList texts, QPen textPen,
   // Added margins to background retangle to avoid letters touching the border
   // Windows needs different margins due to fontengine=freetype
 #ifdef Q_OS_WINDOWS
-  const static QMarginsF TEXT_MARGINS(2., 1., 1., 0.); // Margins for normal fonts added
-  const static QMarginsF TEXT_MARGINS_SMALL(1., 0., 1., 0.); // Margins for small fonts added
+  const static QMarginsF TEXT_MARGINS(2., 2., 1., 0.); // Margins for normal fonts added
+  const static QMarginsF TEXT_MARGINS_SMALL(1., 1., 1., 0.); // Margins for small fonts added
   const static QMarginsF TEXT_MARGINS_UNDERLINE(2., -1., 1., 1.); // Margins for underlined text added
 #else
   const static QMarginsF TEXT_MARGINS(2., -1., 2., 0.); // Margins for normal fonts added
