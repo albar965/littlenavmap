@@ -1303,16 +1303,23 @@ QStringList SymbolPainter::airportTexts(optsd::DisplayOptionsAirport dispOpts, t
 void SymbolPainter::textBox(QPainter *painter, const QStringList& texts, const QPen& textPen, int x, int y,
                             textatt::TextAttributes atts, int transparency, const QColor& backgroundColor)
 {
-  textBoxF(painter, texts, textPen, x, y, atts, transparency, backgroundColor);
+  textBoxF(painter, texts, textPen, atools::roundToInt(x), atools::roundToInt(y), atts, transparency, backgroundColor);
 }
 
 void SymbolPainter::textBoxF(QPainter *painter, QStringList texts, QPen textPen, float x, float y, textatt::TextAttributes atts,
                              int transparency, const QColor& backgroundColor)
 {
   // Added margins to background retangle to avoid letters touching the border
-  const static QMarginsF TEXT_MARGINS(2., 0., 2., 0.);
-  const static QMarginsF TEXT_MARGINS_SMALL(-2., 1., -2., 1.); // Margins for small fonts
-  const static QMarginsF TEXT_MARGINS_UNDERLINE(2., 0., 2., 2.); // Margins for unterlined text
+  // Windows needs different margins due to fontengine=freetype
+#ifdef Q_OS_WINDOWS
+  const static QMarginsF TEXT_MARGINS(2., 1., 1., 0.); // Margins for normal fonts added
+  const static QMarginsF TEXT_MARGINS_SMALL(1., 0., 1., 0.); // Margins for small fonts added
+  const static QMarginsF TEXT_MARGINS_UNDERLINE(2., -1., 1., 1.); // Margins for underlined text added
+#else
+  const static QMarginsF TEXT_MARGINS(2., -1., 2., 0.); // Margins for normal fonts added
+  const static QMarginsF TEXT_MARGINS_SMALL(1., 0., 1., 0.); // Margins for small fonts added
+  const static QMarginsF TEXT_MARGINS_UNDERLINE(2., -1., 1., 1.); // Margins for underlined text added
+#endif
 
   // Remove empty lines
   texts.removeAll(QString());
@@ -1420,7 +1427,7 @@ void SymbolPainter::textBoxF(QPainter *painter, QStringList texts, QPen textPen,
   painter->setPen(Qt::NoPen);
 
   QVector<QPointF> textPt;
-  for(const QString& text : texts)
+  for(const QString& text : qAsConst(texts))
   {
     QRectF boundingRect = metrics.boundingRect(text);
     double w = boundingRect.width();
@@ -1439,12 +1446,25 @@ void SymbolPainter::textBoxF(QPainter *painter, QStringList texts, QPen textPen,
     {
       boundingRect.moveTo(pt);
 
-      if(boundingRect.height() < 14)
-        // Use smaller margins for small fonts
-        painter->drawRect(boundingRect.marginsRemoved(TEXT_MARGINS_SMALL));
+      if(atts.testFlag(textatt::NO_ROUND_RECT))
+      {
+        if(boundingRect.height() < 14)
+          // Use smaller margins for small fonts
+          painter->drawRect(boundingRect.marginsAdded(TEXT_MARGINS_SMALL));
+        else
+          // Extend bottom margin for underlined letters
+          painter->drawRect(boundingRect.marginsAdded(atts.testFlag(textatt::UNDERLINE) ? TEXT_MARGINS_UNDERLINE : TEXT_MARGINS));
+      }
       else
-        // Extend bottom margin for underlined letters
-        painter->drawRect(boundingRect.marginsAdded(atts.testFlag(textatt::UNDERLINE) ? TEXT_MARGINS_UNDERLINE : TEXT_MARGINS));
+      {
+        if(boundingRect.height() < 14)
+          // Use smaller margins for small fonts
+          painter->drawRoundedRect(boundingRect.marginsAdded(TEXT_MARGINS_SMALL), 2., 2.);
+        else
+          // Extend bottom margin for underlined letters
+          painter->drawRoundedRect(boundingRect.marginsAdded(atts.testFlag(textatt::UNDERLINE) ? TEXT_MARGINS_UNDERLINE : TEXT_MARGINS),
+                                   4., 4.);
+      }
     }
     yoffset += height;
   }

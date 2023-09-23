@@ -543,6 +543,8 @@ enum TextAttribute
   WARNING_COLOR = 0x0400, /* Orange warning text */
   ERROR_COLOR = 0x0800, /* White on red error text */
 
+  NO_ROUND_RECT = 0x4000, /* No rounded background rect */
+
   ROUTE_TEXT_ATTS = ROUTE_BG_COLOR | textatt::VERT_BELOW | textatt::LEFT
 };
 

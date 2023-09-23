@@ -297,7 +297,7 @@ float AircraftTrack::getMaxAltitude() const
   return static_cast<float>(maxAlt);
 }
 
-QVector<atools::geo::LineString> AircraftTrack::getLineStrings() const
+const QVector<atools::geo::LineString> AircraftTrack::getLineStrings() const
 {
   QVector<atools::geo::LineString> linestrings;
 
@@ -325,7 +325,7 @@ QVector<atools::geo::LineString> AircraftTrack::getLineStrings() const
   return linestrings;
 }
 
-QVector<QVector<atools::geo::PosD> > AircraftTrack::getPositionsD() const
+const QVector<QVector<atools::geo::PosD> > AircraftTrack::getPositionsD() const
 {
   QVector<QVector<atools::geo::PosD> > linestrings;
 
@@ -353,7 +353,7 @@ QVector<QVector<atools::geo::PosD> > AircraftTrack::getPositionsD() const
   return linestrings;
 }
 
-QVector<QVector<qint64> > AircraftTrack::getTimestampsMs() const
+const QVector<QVector<qint64> > AircraftTrack::getTimestampsMs() const
 {
   QVector<QVector<qint64> > timestamps;
 

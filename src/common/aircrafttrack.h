@@ -134,13 +134,13 @@ public:
 
   /* Copies the coordinates from the structs to a list of linestrings.
    * More than one linestring might be returned if the trail is interrupted. */
-  QVector<atools::geo::LineString> getLineStrings() const;
+  const QVector<atools::geo::LineString> getLineStrings() const;
 
   /* Accurate positions for drawing */
-  QVector<QVector<atools::geo::PosD> > getPositionsD() const;
+  const QVector<QVector<atools::geo::PosD> > getPositionsD() const;
 
   /* Same size as getLineStrings() but returns the timestamps in milliseconds since Epoch UTC for each position */
-  QVector<QVector<qint64> > getTimestampsMs() const;
+  const QVector<QVector<qint64> > getTimestampsMs() const;
 
   /* Pull only needed methods of the base class into public space */
   using QList::isEmpty;
