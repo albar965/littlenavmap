@@ -416,13 +416,12 @@ void MapPainterNav::paintWaypoints(const QHash<int, map::MapWaypoint>& waypoints
 void MapPainterNav::paintVors(const QHash<int, map::MapVor>& vors, bool drawFast)
 {
   bool fill = context->flags2 & opts2::MAP_NAVAID_TEXT_BACKGROUND;
-
   float size = context->szF(context->symbolSizeNavaid, context->mapLayer->getVorSymbolSize());
-  float vorSize = context->mapLayer->isVorLarge() ? size * 5.f : 0.f;
+  float sizeLarge = context->szF(context->symbolSizeNavaid, context->mapLayer->getVorSymbolSizeLarge());
 
   // Use margins for text placed on the left side of the object to avoid disappearing at the right screen border
   // Also consider VOR size
-  int margin = static_cast<int>(std::max(vorSize, size));
+  int margin = static_cast<int>(std::max(sizeLarge, size));
   QMargins margins(margin, margin, std::max(margin, 50), margin);
 
   for(const MapVor& vor : vors)
@@ -436,7 +435,7 @@ void MapPainterNav::paintVors(const QHash<int, map::MapVor>& vors, bool drawFast
       if(context->objCount())
         return;
 
-      symbolPainter->drawVorSymbol(context->painter, vor, x, y, size, false, drawFast, context->mapLayer->isVorLarge());
+      symbolPainter->drawVorSymbol(context->painter, vor, x, y, size, sizeLarge, false /* routeFill */, drawFast);
 
       textflags::TextFlags flags;
 

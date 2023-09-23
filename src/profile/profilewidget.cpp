@@ -474,7 +474,7 @@ void ProfileWidget::updateScreenCoords()
 #ifdef DEBUG_INFORMATION_PROFILE
     int num = 0;
 #endif
-    for(const ElevationLeg& leg : legList->elevationLegs)
+    for(const ElevationLeg& leg : qAsConst(legList->elevationLegs))
     {
       if(leg.distances.isEmpty() || leg.elevation.isEmpty())
         continue;
@@ -519,7 +519,7 @@ void ProfileWidget::updateScreenCoords()
   }
 }
 
-QVector<std::pair<int, int> > ProfileWidget::calcScaleValues()
+const QVector<std::pair<int, int> > ProfileWidget::calcScaleValues()
 {
   int h = rect().height() - TOP;
   // Create a temporary scale based on current units
@@ -790,7 +790,7 @@ void ProfileWidget::paintVasi(QPainter& painter, const Route& route)
     }
 
     // Draw all VASI =================================================
-    for(const std::pair<float, QString>& vasi : vasiList)
+    for(const std::pair<float, QString>& vasi : qAsConst(vasiList))
     {
       // VASI has shorted visibility than ILS range
       float featherLen = atools::geo::nmToFeet(6.f);
@@ -958,7 +958,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
 
   int flightplanTextY = flightplanY + 14;
   painter.setPen(mapcolors::profileWaypointLinePen);
-  for(int wpx : waypointX)
+  for(int wpx : qAsConst(waypointX))
     painter.drawLine(wpx, 0, wpx, TOP + h);
 
   // Draw elevation scale lines ======================================================
@@ -1463,7 +1463,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
         else if(type == map::NDB || leg.getNdb().isValid())
           symPainter.drawNdbSymbol(&painter, symPt.x(), symPt.y(), navaidSize, true, false);
         else if(type == map::VOR || leg.getVor().isValid())
-          symPainter.drawVorSymbol(&painter, leg.getVor(), symPt.x(), symPt.y(), navaidSize, true, false, false);
+          symPainter.drawVorSymbol(&painter, leg.getVor(), symPt.x(), symPt.y(), navaidSize, 0.f, true /* routeFill */, false /* fast */);
       }
 
       // Procedure symbols ========================================================
@@ -1943,7 +1943,7 @@ bool ProfileWidget::fetchRouteElevations(atools::geo::LineString& elevations, co
       coords << GeoDataCoordinates(geometry.at(i).getLonX(), geometry.at(i).getLatY(), 0., GeoDataCoordinates::Degree)
              << GeoDataCoordinates(geometry.at(i + 1).getLonX(), geometry.at(i + 1).getLatY(), 0., GeoDataCoordinates::Degree);
 
-      QVector<Marble::GeoDataLineString *> coordsCorrected = coords.toDateLineCorrected();
+      const QVector<Marble::GeoDataLineString *> coordsCorrected = coords.toDateLineCorrected();
       for(const Marble::GeoDataLineString *ls : coordsCorrected)
       {
         for(int j = 1; j < ls->size(); j++)

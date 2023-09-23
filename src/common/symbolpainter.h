@@ -112,8 +112,8 @@ public:
                         const QStringList *addtionalText = nullptr);
 
   /* VOR with large size has a ring with compass ticks. For VORs part of the route the interior is filled.  */
-  void drawVorSymbol(QPainter *painter, const map::MapVor& vor, float x, float y, float size, bool routeFill,
-                     bool fast, bool largeSize);
+  void drawVorSymbol(QPainter *painter, const map::MapVor& vor, float x, float y, float size, float sizeLarge, bool routeFill,
+                     bool fast);
 
   /* VOR texts have no background excepts for flight plan */
   void drawVorText(QPainter *painter, const map::MapVor& vor, float x, float y, textflags::TextFlags flags,

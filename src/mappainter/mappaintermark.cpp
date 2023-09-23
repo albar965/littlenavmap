@@ -1262,10 +1262,8 @@ void MapPainterMark::paintCompassRose()
           else
             text = tr("%1°M").arg(QString::number(atools::roundToInt(aircraft.getTrackDegMag())));
 
-          symbolPainter->textBoxF(painter, {text, tr("TRK")}, painter->pen(),
-                                  static_cast<float>(trueTrackTextPoint.x()),
-                                  static_cast<float>(trueTrackTextPoint.y()),
-                                  textatt::CENTER | textatt::ROUTE_BG_COLOR);
+          symbolPainter->textBoxF(painter, {text, tr("TRK")}, painter->pen(), static_cast<float>(trueTrackTextPoint.x()),
+                                  static_cast<float>(trueTrackTextPoint.y()), textatt::CENTER | textatt::ROUTE_BG_COLOR);
         }
       }
     }

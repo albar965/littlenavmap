@@ -53,7 +53,7 @@ QIcon SymbolPainter::createAirportWeatherIcon(const atools::fs::weather::Metar& 
   QPainter painter(&pixmap);
   prepareForIcon(painter);
 
-  SymbolPainter().drawAirportWeather(&painter, metar, size / 2, size / 2, size * 7 / 10,
+  SymbolPainter().drawAirportWeather(&painter, metar, size / 2.f, size / 2.f, size * 7.f / 10.f,
                                      false /*windPointer*/, false /*windBarbs*/, false /*fast*/);
   return QIcon(pixmap);
 }
@@ -79,7 +79,7 @@ QIcon SymbolPainter::createAirportMsaIcon(const map::MapAirportMsa& airportMsa, 
   if(actualSize != nullptr)
     *actualSize = size;
 
-  SymbolPainter().drawAirportMsa(&painter, airportMsa, size / 2, size / 2, 0, symbolScale,
+  SymbolPainter().drawAirportMsa(&painter, airportMsa, size / 2.f, size / 2.f, 0.f, symbolScale,
                                  false /* header */, false /* transparency */, false /* fast */);
   return QIcon(pixmap);
 }
@@ -91,7 +91,7 @@ QIcon SymbolPainter::createVorIcon(const map::MapVor& vor, int size)
   QPainter painter(&pixmap);
   prepareForIcon(painter);
 
-  SymbolPainter().drawVorSymbol(&painter, vor, size / 2, size / 2, size * 7 / 10, false, false, false);
+  SymbolPainter().drawVorSymbol(&painter, vor, size / 2.f, size / 2.f, size * 7.f / 10.f, 0.f, false /* routeFill */, false /* fast */);
   return QIcon(pixmap);
 }
 
@@ -102,7 +102,7 @@ QIcon SymbolPainter::createNdbIcon(int size)
   QPainter painter(&pixmap);
   prepareForIcon(painter);
 
-  SymbolPainter().drawNdbSymbol(&painter, size / 2, size / 2, size * 8 / 10, false, false);
+  SymbolPainter().drawNdbSymbol(&painter, size / 2.f, size / 2.f, size * 8.f / 10.f, false, false);
   return QIcon(pixmap);
 }
 
@@ -127,7 +127,7 @@ QIcon SymbolPainter::createWaypointIcon(int size, const QColor& color)
   QPainter painter(&pixmap);
   prepareForIcon(painter);
 
-  SymbolPainter().drawWaypointSymbol(&painter, color, size / 2, size / 2, size / 2, false);
+  SymbolPainter().drawWaypointSymbol(&painter, color, size / 2.f, size / 2.f, size / 2.f, false);
   return QIcon(pixmap);
 }
 
@@ -149,7 +149,7 @@ QIcon SymbolPainter::createProcedurePointIcon(int size)
   QPainter painter(&pixmap);
   prepareForIcon(painter);
 
-  SymbolPainter().drawProcedureSymbol(&painter, size / 2, size / 2, size / 2, false);
+  SymbolPainter().drawProcedureSymbol(&painter, size / 2.f, size / 2.f, size / 2.f, false);
   return QIcon(pixmap);
 }
 
@@ -189,7 +189,7 @@ QIcon SymbolPainter::createHelipadIcon(const MapHelipad& helipad, int size)
   prepareForIcon(painter);
 
   painter.setBackgroundMode(Qt::TransparentMode);
-  drawHelipadSymbol(&painter, helipad, size / 2, size / 2, size * 0.40f, size * 0.40f, false);
+  drawHelipadSymbol(&painter, helipad, size / 2.f, size / 2.f, size * 0.4f, size * 0.4f, false);
   return QIcon(pixmap);
 }
 
@@ -881,8 +881,8 @@ void SymbolPainter::drawProcedureFaf(QPainter *painter, float x, float y, float 
   painter->drawPolygon(poly);
 }
 
-void SymbolPainter::drawVorSymbol(QPainter *painter, const map::MapVor& vor, float x, float y, float size, bool routeFill, bool fast,
-                                  bool largeSize)
+void SymbolPainter::drawVorSymbol(QPainter *painter, const map::MapVor& vor, float x, float y, float size, float sizeLarge, bool routeFill,
+                                  bool fast)
 {
   atools::util::PainterContextSaver saver(painter);
 
@@ -894,6 +894,7 @@ void SymbolPainter::drawVorSymbol(QPainter *painter, const map::MapVor& vor, flo
 
   // Use double to avoid type conversions
   double sizeD = static_cast<double>(size);
+  double sizeLargeD = static_cast<double>(sizeLarge);
 
   if(size > 4)
   {
@@ -904,11 +905,12 @@ void SymbolPainter::drawVorSymbol(QPainter *painter, const map::MapVor& vor, flo
 
     painter->translate(x, y);
 
-    if(largeSize && !vor.dmeOnly)
+    if(sizeLarge > 0.f && !vor.dmeOnly)
       // If compass ticks are drawn rotate center symbol too
       painter->rotate(vor.magvar);
 
     double radiusD = sizeD / 2.;
+    double radiusLargeD = sizeLargeD / 2.;
 
     if(vor.tacan || vor.vortac)
     {
@@ -993,23 +995,23 @@ void SymbolPainter::drawVorSymbol(QPainter *painter, const map::MapVor& vor, flo
       }
     }
 
-    if(largeSize && !vor.dmeOnly)
+    if(sizeLarge > 0.f && !vor.dmeOnly)
     {
       // Draw compass circle and ticks
       painter->setBrush(Qt::NoBrush);
       painter->setPen(QPen(mapcolors::vorSymbolColor, roseLineWidth, Qt::SolidLine, Qt::SquareCap));
-      painter->drawEllipse(QPointF(0., 0.), radiusD * 5., radiusD * 5.);
+      painter->drawEllipse(QPointF(0., 0.), radiusLargeD, radiusLargeD);
 
       if(!fast)
       {
         for(int i = 0; i < 360; i += 10)
         {
           if(i == 0)
-            painter->drawLine(QLineF(0., 0., 0., -radiusD * 5.));
+            painter->drawLine(QLineF(0., 0., 0., -radiusLargeD));
           else if((i % 90) == 0)
-            painter->drawLine(QLineF(0., -radiusD * 4., 0., -radiusD * 5.));
+            painter->drawLine(QLineF(0., -radiusD * 4., 0., -radiusLargeD));
           else
-            painter->drawLine(QLineF(0., -radiusD * 4.5, 0., -radiusD * 5.));
+            painter->drawLine(QLineF(0., -radiusD * 4.5, 0., -radiusLargeD));
           painter->rotate(10.);
         }
       }
@@ -1107,7 +1109,7 @@ void SymbolPainter::drawNdbText(QPainter *painter, const map::MapNdb& ndb, float
 
   textatt::TextAttributes textAttrs = textatt::NONE;
   if(flags & textflags::ROUTE_TEXT)
-    textAttrs |= textatt::ROUTE_BG_COLOR;
+    textAttrs |= textatt::ROUTE_TEXT_ATTS;
 
   if(!flags.testFlag(textflags::ABS_POS))
   {
@@ -1127,8 +1129,7 @@ void SymbolPainter::drawNdbText(QPainter *painter, const map::MapNdb& ndb, float
       texts.append(*addtionalText);
   }
 
-  int transparency = fill ? 255 : 0;
-  textBoxF(painter, texts, mapcolors::ndbSymbolColor, x, y, textAttrs, transparency);
+  textBoxF(painter, texts, mapcolors::ndbSymbolColor, x, y, textAttrs, fill ? 255 : 0);
 }
 
 void SymbolPainter::drawVorText(QPainter *painter, const map::MapVor& vor, float x, float y,
@@ -1156,7 +1157,7 @@ void SymbolPainter::drawVorText(QPainter *painter, const map::MapVor& vor, float
 
   textatt::TextAttributes textAttrs = textatt::NONE;
   if(flags & textflags::ROUTE_TEXT)
-    textAttrs |= textatt::ROUTE_BG_COLOR;
+    textAttrs |= textatt::ROUTE_TEXT_ATTS;
 
   if(!flags.testFlag(textflags::ABS_POS))
   {
@@ -1176,8 +1177,7 @@ void SymbolPainter::drawVorText(QPainter *painter, const map::MapVor& vor, float
       texts.append(*addtionalText);
   }
 
-  int transparency = fill ? 255 : 0;
-  textBoxF(painter, texts, mapcolors::vorSymbolColor, x, y, textAttrs, transparency);
+  textBoxF(painter, texts, mapcolors::vorSymbolColor, x, y, textAttrs, fill ? 255 : 0);
 }
 
 void SymbolPainter::drawWaypointText(QPainter *painter, const map::MapWaypoint& wp, float x, float y,
@@ -1190,7 +1190,7 @@ void SymbolPainter::drawWaypointText(QPainter *painter, const map::MapWaypoint& 
 
   textatt::TextAttributes textAttrs = textatt::NONE;
   if(flags.testFlag(textflags::ROUTE_TEXT))
-    textAttrs |= textatt::ROUTE_BG_COLOR;
+    textAttrs |= textatt::ROUTE_TEXT_ATTS;
 
   if(!flags.testFlag(textflags::ABS_POS))
   {
@@ -1210,8 +1210,7 @@ void SymbolPainter::drawWaypointText(QPainter *painter, const map::MapWaypoint& 
       texts.append(*addtionalText);
   }
 
-  int transparency = fill ? 255 : 0;
-  textBoxF(painter, texts, mapcolors::waypointSymbolColor, x, y, textAttrs, transparency);
+  textBoxF(painter, texts, mapcolors::waypointSymbolColor, x, y, textAttrs, fill ? 255 : 0);
 }
 
 void SymbolPainter::drawAirportText(QPainter *painter, const map::MapAirport& airport, float x, float y,
@@ -1231,7 +1230,7 @@ void SymbolPainter::drawAirportText(QPainter *painter, const map::MapAirport& ai
       atts |= textatt::STRIKEOUT;
 
     if(flags.testFlag(textflags::ROUTE_TEXT))
-      atts |= textatt::ROUTE_BG_COLOR;
+      atts |= textatt::ROUTE_TEXT_ATTS;
 
     if(flags.testFlag(textflags::LOG_TEXT))
       atts |= textatt::LOG_BG_COLOR;
@@ -1242,7 +1241,7 @@ void SymbolPainter::drawAirportText(QPainter *painter, const map::MapAirport& ai
       transparency = 0;
 
     if(!flags.testFlag(textflags::ABS_POS))
-      x += size + 2.f;
+      x += size;
 
     if(flags & textflags::NO_BACKGROUND)
       transparency = 0;
@@ -1508,8 +1507,7 @@ const QPixmap *SymbolPainter::windPointerFromCache(int size)
     return windPointerPixmaps.object(size);
   else
   {
-    QPixmap *newPx =
-      new QPixmap(QIcon(":/littlenavmap/resources/icons/windpointer.svg").pixmap(QSize(size, size)));
+    QPixmap *newPx = new QPixmap(QIcon(":/littlenavmap/resources/icons/windpointer.svg").pixmap(QSize(size, size)));
     windPointerPixmaps.insert(size, newPx);
     return newPx;
   }
@@ -1521,8 +1519,7 @@ const QPixmap *SymbolPainter::trackLineFromCache(int size)
     return trackLinePixmaps.object(size);
   else
   {
-    QPixmap *newPx =
-      new QPixmap(QIcon(":/littlenavmap/resources/icons/trackline.svg").pixmap(QSize(size, size)));
+    QPixmap *newPx = new QPixmap(QIcon(":/littlenavmap/resources/icons/trackline.svg").pixmap(QSize(size, size)));
     trackLinePixmaps.insert(size, newPx);
     return newPx;
   }

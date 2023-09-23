@@ -156,7 +156,7 @@ QColor aircraftAiLabelColorBg(255, 255, 255);
 
 /* Text along route and approach segments */
 QColor routeTextColor(0, 0, 0);
-QColor routeTextColorGray(80, 80, 80);
+QColor routeTextColorGray(140, 140, 140);
 QColor routeTextBackgroundColor(255, 255, 255, 220);
 QColor routeProcedureMissedTextColor(90, 90, 90);
 QColor routeProcedureTextColor(0, 0, 0);

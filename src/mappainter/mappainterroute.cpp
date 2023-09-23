@@ -40,10 +40,11 @@
 
 using namespace Marble;
 using namespace atools::geo;
+using atools::contains;
+using map::MapType;
+using map::PosCourse;
 using proc::MapProcedureLeg;
 using proc::MapProcedureLegs;
-using map::PosCourse;
-using atools::contains;
 namespace ageo = atools::geo;
 
 MapPainterRoute::MapPainterRoute(MapPaintWidget *mapWidget, MapScale *mapScale, PaintContext *paintContext)
@@ -516,14 +517,23 @@ void MapPainterRoute::drawRouteInternal(QStringList routeTexts, QVector<Line> li
     drawWindBarbs(visibleStartPointsBuf, textPlacementBuf.getStartPoints());
 }
 
+float MapPainterRoute::sizeForRouteType(const MapLayer *layer, MapType type)
+{
+  if(type == map::AIRPORT)
+    return context->szF(context->symbolSizeAirport, layer->getAirportSymbolSize());
+  else if(type == map::NDB)
+    return context->szF(context->symbolSizeNavaid, layer->getNdbSymbolSize());
+  else if(type == map::VOR)
+    return context->szF(context->symbolSizeNavaid, std::max(layer->getVorSymbolSizeRoute(), layer->getVorSymbolSizeLarge()));
+
+  // Use waypoint as fallback
+  return context->szF(context->symbolSizeNavaid, layer->getWaypointSymbolSize());
+}
+
 void MapPainterRoute::paintInboundOutboundTexts(const TextPlacement& textPlacement, int passedRouteLeg, bool vor)
 {
   const Route *route = context->route;
   Marble::GeoPainter *painter = context->painter;
-
-  // Get maximum symbol size to avoid overlap with text
-  float symbolSize = std::max(context->szF(context->symbolSizeAirport, context->mapLayerRoute->getAirportSymbolSize()),
-                              context->szF(context->symbolSizeNavaid, context->mapLayerRoute->getVorSymbolSize()));
 
   // Collect options
   bool magCourse = context->dOptRoute(optsd::ROUTE_INITIAL_FINAL_MAG_COURSE);
@@ -534,7 +544,7 @@ void MapPainterRoute::paintInboundOutboundTexts(const TextPlacement& textPlaceme
     return;
 
   // Make text a bit smaller
-  context->szFont(context->textSizeFlightplan * 0.9f * context->mapLayerRoute->getRouteFontScale());
+  context->szFont(context->textSizeFlightplan * 0.85f * context->mapLayerRoute->getRouteFontScale());
 
   QFontMetricsF metrics = painter->fontMetrics();
   QMargins margins(100, 100, 100, 100); // Avoid pop out at screen borders
@@ -586,7 +596,7 @@ void MapPainterRoute::paintInboundOutboundTexts(const TextPlacement& textPlaceme
     Line line(lastLeg.getPosition(), curLeg.getPosition());
     QPointF first2, last2;
     float lengthToMeter = atools::geo::nmToMeter(curLeg.getDistanceTo());
-    float fraction = 1.f * scale->getMeterPerPixel() * 20.f / lengthToMeter; // Calculate fraction for roughly 20 pixels distance
+    float fraction = scale->getMeterPerPixel() * 20.f / lengthToMeter; // Calculate fraction for roughly 20 pixels distance
     wToSBuf(line.interpolate(lengthToMeter, fraction), first2, margins, &firstHidden);
     wToSBuf(line.interpolate(lengthToMeter, 1.f - fraction), last2, margins, &lastHidden);
 
@@ -610,14 +620,16 @@ void MapPainterRoute::paintInboundOutboundTexts(const TextPlacement& textPlaceme
     // Check if texts fit along line
     if(outboundTextLength + inboundTextLength < lineLength * (vor ? 0.75 : 0.5))
     {
+      // Get maximum symbol size to avoid overlap with text
       // Outbound from lastLeg navaid  =================================
       if(!outboundText.isEmpty() && vor == lastLeg.isCalibratedVor() && firstVisible1)
       {
+
         // Draw blue if related to VOR
         painter->setPen(lastLeg.isCalibratedVor() ? mapcolors::vorSymbolColor : mapcolors::routeTextColorGray);
 
-        // Move p2 by setting length to get accurate text center
-        outboundTextLine.setLength(outboundTextLength + symbolSize * 1.1);
+        // Move p2 by setting length to get accurate text center - sizeForRouteType is distance to navaid
+        outboundTextLine.setLength(outboundTextLength + sizeForRouteType(context->mapLayerRoute, lastLeg.getMapType()) + 5.);
 
         // Draw texts
         float rotate = static_cast<float>(atools::geo::angleFromQt(outboundTextLine.angle()));
@@ -630,8 +642,8 @@ void MapPainterRoute::paintInboundOutboundTexts(const TextPlacement& textPlaceme
         // Draw blue if related to VOR
         painter->setPen(curLeg.isCalibratedVor() ? mapcolors::vorSymbolColor : mapcolors::routeTextColorGray);
 
-        // Move p2 by setting length to get accurate text center
-        inboundTextLine.setLength(inboundTextLength + symbolSize * 1.1);
+        // Move p2 by setting length to get accurate text center - sizeForRouteType is distance to navaid
+        inboundTextLine.setLength(inboundTextLength + sizeForRouteType(context->mapLayerRoute, curLeg.getMapType()) + 5.);
 
         // Rotate + 180 since line is from end to interpolated end
         float rotate = static_cast<float>(atools::geo::angleFromQt(inboundTextLine.angle() + 180.));
@@ -681,8 +693,8 @@ void MapPainterRoute::paintTopOfDescentAndClimb()
           if(context->mapLayerRoute->isAirportRouteInfo())
             toc.append(Unit::distNm(route->getTopOfClimbDistance()));
 
-          symbolPainter->textBoxF(context->painter, toc, QPen(mapcolors::routeTextColor),
-                                  x + radius, y + radius, textatt::ROUTE_BG_COLOR, transparency);
+          symbolPainter->textBoxF(context->painter, toc, QPen(mapcolors::routeTextColor), x + radius, y + radius, textatt::ROUTE_TEXT_ATTS,
+                                  transparency);
         }
       }
     }
@@ -704,8 +716,8 @@ void MapPainterRoute::paintTopOfDescentAndClimb()
           if(context->mapLayerRoute->isAirportRouteInfo())
             tod.append(Unit::distNm(route->getTopOfDescentFromDestination()));
 
-          symbolPainter->textBoxF(context->painter, tod, QPen(mapcolors::routeTextColor),
-                                  x + radius, y + radius, textatt::ROUTE_BG_COLOR, transparency);
+          symbolPainter->textBoxF(context->painter, tod, QPen(mapcolors::routeTextColor), x + radius, y + radius, textatt::ROUTE_TEXT_ATTS,
+                                  transparency);
         }
       }
     }
@@ -1890,9 +1902,9 @@ void MapPainterRoute::paintWaypointText(float x, float y, const map::MapWaypoint
 void MapPainterRoute::paintVor(float x, float y, const map::MapVor& obj, bool preview)
 {
   context->routeDrawnNavaids->append(obj.getRef());
-  float size = context->szF(context->symbolSizeNavaid, context->mapLayerRoute->getVorSymbolSize());
-  size = std::max(size, 8.f);
-  symbolPainter->drawVorSymbol(context->painter, obj, x, y, size, !preview, false, context->mapLayerRoute->isVorLarge());
+  float size = context->szF(context->symbolSizeNavaid, context->mapLayerRoute->getVorSymbolSizeRoute());
+  float sizeLarge = context->szF(context->symbolSizeNavaid, context->mapLayerRoute->getVorSymbolSizeLarge());
+  symbolPainter->drawVorSymbol(context->painter, obj, x, y, size, sizeLarge, !preview, false /* fast */);
 }
 
 void MapPainterRoute::paintVorText(float x, float y, const map::MapVor& obj, bool drawTextDetails, const QStringList *additionalText)
@@ -1994,7 +2006,7 @@ void MapPainterRoute::paintText(const QColor& color, float x, float y, bool draw
   texts.removeDuplicates();
   texts.removeAll(QString());
 
-  atts |= textatt::ROUTE_BG_COLOR;
+  atts |= textatt::ROUTE_TEXT_ATTS;
 
   if(!drawTextDetails)
   {
@@ -2014,7 +2026,7 @@ void MapPainterRoute::paintText(const QColor& color, float x, float y, bool draw
     transparency = 0;
 
   if(!texts.isEmpty() && context->mapLayerRoute->isWaypointRouteName())
-    symbolPainter->textBoxF(context->painter, texts, color, x + size / 2.f + 2.f, y, atts, transparency);
+    symbolPainter->textBoxF(context->painter, texts, color, x + size, y, atts, transparency);
 }
 
 void MapPainterRoute::drawSymbols(const QBitArray& visibleStartPoints, const QList<QPointF>& startPoints, bool preview)
@@ -2105,28 +2117,32 @@ void MapPainterRoute::drawRouteSymbolText(const QBitArray& visibleStartPoints, c
       float x = static_cast<float>(pt.x());
       float y = static_cast<float>(pt.y());
       const RouteLeg& obj = context->route->value(i);
-      map::MapTypes type = obj.getMapType();
 
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wswitch-enum"
-      switch(type)
+      switch(obj.getMapType())
       {
         case map::INVALID:
           paintText(mapcolors::routeInvalidPointColor, x, y, true /* drawTextDetails */, {obj.getDisplayIdent()});
           break;
+
         case map::USERPOINTROUTE:
           paintText(mapcolors::routeUserPointColor, x, y, true /* drawTextDetails */,
                     {atools::elideTextShort(obj.getDisplayIdent(), context->mapLayerRoute->getMaxTextLengthAirport())});
           break;
+
         case map::AIRPORT:
           paintAirportText(x, y, obj.getAirport());
           break;
+
         case map::VOR:
           paintVorText(x, y, obj.getVor(), true /* drawTextDetails */, nullptr);
           break;
+
         case map::NDB:
           paintNdbText(x, y, obj.getNdb(), true /* drawTextDetails */, nullptr);
           break;
+
         case map::WAYPOINT:
           paintWaypointText(x, y, obj.getWaypoint(), true /* drawTextDetails */, nullptr);
           break;

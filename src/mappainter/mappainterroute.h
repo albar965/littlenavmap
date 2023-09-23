@@ -131,6 +131,9 @@ private:
   QColor flightplanActiveProcColor() const;
   void paintInboundOutboundTexts(const TextPlacement& textPlacement, int passedRouteLeg, bool vor);
 
+  /* Get size for type to calculate label distances */
+  float sizeForRouteType(const MapLayer *layer, map::MapType type);
+
   /* Avoid drawing duplicate navaids from flight plan and preview */
   QSet<map::MapRef> routeProcIdMap;
 

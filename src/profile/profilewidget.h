@@ -119,7 +119,7 @@ public:
   void mainWindowShown();
 
   /* Pair of screen y and altitude in feet to display and label the scale */
-  QVector<std::pair<int, int> > calcScaleValues();
+  const QVector<std::pair<int, int> > calcScaleValues();
 
   float getMinSafeAltitudeFt() const
   {

@@ -362,6 +362,16 @@ public:
     return vorSymbolSize;
   }
 
+  int getVorSymbolSizeRoute() const
+  {
+    return std::max(vorSymbolSize, 8);
+  }
+
+  int getVorSymbolSizeLarge() const
+  {
+    return isVorLarge() ? vorSymbolSize * 5 : 0;
+  }
+
   int getNdbSymbolSize() const
   {
     return ndbSymbolSize;
