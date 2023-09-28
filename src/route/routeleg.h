@@ -390,6 +390,13 @@ public:
   QStringList buildLegText(bool dist, bool magCourseFlag, bool trueCourseFlag, bool narrow) const;
   static QStringList buildLegText(float distance, float courseMag, float courseTrue, bool narrow);
 
+  /* Course to waypoint at end of leg. Either uses geometry course or saved course if geometry is not valid */
+  float getGeometryEndCourse() const;
+
+  /* Course from waypoint at previous leg or at the beginning of this leg.
+   * Either uses geometry course of this or saved course if geometry is not valid */
+  float getGeometryStartCourse() const;
+
 private:
   friend QDebug operator<<(QDebug out, const RouteLeg& leg);
 

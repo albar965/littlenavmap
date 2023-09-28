@@ -509,7 +509,7 @@ void MapPainterNav::paintMarkers(const QList<map::MapMarker> *markers, bool draw
         QString type = marker.type.toLower();
         type[0] = type.at(0).toUpper();
         x -= size / 2.f + 2.f;
-        symbolPainter->textBoxF(context->painter, {type}, mapcolors::markerSymbolColor, x, y, textatt::RIGHT, transparency);
+        symbolPainter->textBoxF(context->painter, {type}, mapcolors::markerSymbolColor, x, y, textatt::LEFT, transparency);
       }
     }
   }

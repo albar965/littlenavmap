@@ -901,7 +901,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
     setFont(optionData.getGuiFont());
     painter.fillRect(rect(), QApplication::palette().color(QPalette::Base));
     symPainter.textBox(&painter, {tr("No Flight Plan.")}, QApplication::palette().color(QPalette::PlaceholderText),
-                       4, painter.fontMetrics().ascent(), textatt::LEFT, 0);
+                       4, painter.fontMetrics().ascent(), textatt::RIGHT, 0);
     scrollArea->updateLabelWidgets();
     return;
   }
@@ -912,7 +912,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
     setFont(font);
     painter.fillRect(rect(), QApplication::palette().color(QPalette::Base));
     symPainter.textBox(&painter, {tr("Flight Plan not valid.")}, atools::util::HtmlBuilder::COLOR_FOREGROUND_WARNING,
-                       4, painter.fontMetrics().ascent(), textatt::LEFT, 0);
+                       4, painter.fontMetrics().ascent(), textatt::RIGHT, 0);
     scrollArea->updateLabelWidgets();
     return;
   }
@@ -1591,7 +1591,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
               painter.drawEllipse(QPoint(tocX, flightplanY), radius, radius);
 
               symPainter.textBox(&painter, {tr("TOC %1").arg(Unit::distNm(route.getTopOfClimbDistance()))},
-                                 QPen(Qt::black), tocX - radius * 2, flightplanY - 6, textatt::ROUTE_BG_COLOR | textatt::RIGHT, 255);
+                                 QPen(Qt::black), tocX - radius * 2, flightplanY - 6, textatt::ROUTE_BG_COLOR | textatt::LEFT, 255);
             }
           }
         }
@@ -1621,14 +1621,14 @@ void ProfileWidget::paintEvent(QPaintEvent *)
     int departureAltTextY = TOP + roundToInt(h - departureAlt * verticalScale);
     departureAltTextY = std::min(departureAltTextY, TOP + h - painter.fontMetrics().height() / 2);
     QString startAltStr = Unit::altFeet(departureAlt);
-    symPainter.textBox(&painter, {startAltStr}, labelColor, left - 4, departureAltTextY, textatt::BOLD | textatt::RIGHT, 255);
+    symPainter.textBox(&painter, {startAltStr}, labelColor, left - 4, departureAltTextY, textatt::BOLD | textatt::LEFT, 255);
 
     // Destination altitude label =========================================================
     float destAlt = route.getDestinationAirportLeg().getAltitude();
     int destinationAltTextY = TOP + static_cast<int>(h - destAlt * verticalScale);
     destinationAltTextY = std::min(destinationAltTextY, TOP + h - painter.fontMetrics().height() / 2);
     QString destAltStr = Unit::altFeet(destAlt);
-    symPainter.textBox(&painter, {destAltStr}, labelColor, left + w + 4, destinationAltTextY, textatt::BOLD | textatt::LEFT, 255);
+    symPainter.textBox(&painter, {destAltStr}, labelColor, left + w + 4, destinationAltTextY, textatt::BOLD | textatt::RIGHT, 255);
   } // if(NavApp::getMapWidget()->getShownMapFeatures() & map::FLIGHTPLAN)
 
   // Draw user aircraft track =========================================================
@@ -1714,7 +1714,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
     QRectF rect = symPainter.textBoxSize(&painter, texts, att);
     if(textx + rect.right() > left + w)
       // Move text to the left when approaching the right corner
-      att |= textatt::RIGHT;
+      att |= textatt::LEFT;
 
     att |= textatt::ROUTE_BG_COLOR;
 

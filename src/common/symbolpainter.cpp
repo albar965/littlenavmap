@@ -414,7 +414,6 @@ void SymbolPainter::drawAirportWeather(QPainter *painter, const atools::fs::weat
     switch(maxCoverage)
     {
       case atools::fs::weather::MetarCloud::COVERAGE_NIL:
-        qDebug() << Q_FUNC_INFO << "COVERAGE_NIL";
         painter->drawEllipse(rect);
         if(!fast)
         {
@@ -1089,8 +1088,8 @@ void SymbolPainter::drawMarkerSymbol(QPainter *painter, const map::MapMarker& ma
   painter->drawPoint(QPointF(x, y));
 }
 
-void SymbolPainter::drawNdbText(QPainter *painter, const map::MapNdb& ndb, float x, float y,
-                                textflags::TextFlags flags, float size, bool fill, const QStringList *addtionalText)
+void SymbolPainter::drawNdbText(QPainter *painter, const map::MapNdb& ndb, float x, float y, textflags::TextFlags flags, float size,
+                                bool fill, textatt::TextAttributes atts, const QStringList *addtionalText)
 {
   QStringList texts;
 
@@ -1107,14 +1106,14 @@ void SymbolPainter::drawNdbText(QPainter *painter, const map::MapNdb& ndb, float
   if(flags & textflags::FREQ)
     texts.append(QString::number(ndb.frequency / 100., 'f', 1));
 
-  textatt::TextAttributes textAttrs = textatt::NONE;
   if(flags & textflags::ROUTE_TEXT)
-    textAttrs |= textatt::ROUTE_TEXT_ATTS;
+    atts |= textatt::ROUTE_BG_COLOR;
 
   if(!flags.testFlag(textflags::ABS_POS))
   {
-    y += size / 2.f + 2.f;
-    textAttrs |= textatt::CENTER | textatt::VERT_BELOW;
+    if(!(atts & textatt::PLACE_ALL))
+      atts |= textatt::CENTER | textatt::BELOW;
+    adjustPos(x, y, size / 2.f, atts);
   }
 
   if(addtionalText != nullptr && !addtionalText->isEmpty())
@@ -1122,18 +1121,18 @@ void SymbolPainter::drawNdbText(QPainter *painter, const map::MapNdb& ndb, float
     if(flags.testFlag(textflags::ELLIPSE_IDENT))
     {
       if(!texts.isEmpty())
-        // Ingore additional texts and add ellipsis
+        // Ignore additional texts and add ellipsis
         texts.first() = texts.constFirst() % tr("…", "Dots used indicate additional text in map");
     }
     else
       texts.append(*addtionalText);
   }
 
-  textBoxF(painter, texts, mapcolors::ndbSymbolColor, x, y, textAttrs, fill ? 255 : 0);
+  textBoxF(painter, texts, mapcolors::ndbSymbolColor, x, y, atts, fill ? 255 : 0);
 }
 
-void SymbolPainter::drawVorText(QPainter *painter, const map::MapVor& vor, float x, float y,
-                                textflags::TextFlags flags, float size, bool fill, const QStringList *addtionalText)
+void SymbolPainter::drawVorText(QPainter *painter, const map::MapVor& vor, float x, float y, textflags::TextFlags flags, float size,
+                                bool fill, textatt::TextAttributes atts, const QStringList *addtionalText)
 {
   QStringList texts;
 
@@ -1155,14 +1154,14 @@ void SymbolPainter::drawVorText(QPainter *painter, const map::MapVor& vor, float
       texts.append(vor.channel);
   }
 
-  textatt::TextAttributes textAttrs = textatt::NONE;
   if(flags & textflags::ROUTE_TEXT)
-    textAttrs |= textatt::ROUTE_TEXT_ATTS;
+    atts |= textatt::ROUTE_BG_COLOR;
 
   if(!flags.testFlag(textflags::ABS_POS))
   {
-    x -= size / 2.f + 2.f;
-    textAttrs |= textatt::RIGHT;
+    if(!(atts & textatt::PLACE_ALL))
+      atts |= textatt::LEFT;
+    adjustPos(x, y, size, atts);
   }
 
   if(addtionalText != nullptr && !addtionalText->isEmpty())
@@ -1170,32 +1169,50 @@ void SymbolPainter::drawVorText(QPainter *painter, const map::MapVor& vor, float
     if(flags.testFlag(textflags::ELLIPSE_IDENT))
     {
       if(!texts.isEmpty())
-        // Ingore additional texts and add ellipsis
+        // Ignore additional texts and add ellipsis
         texts.first() = texts.constFirst() % tr("…", "Dots used indicate additional text in map");
     }
     else
       texts.append(*addtionalText);
   }
 
-  textBoxF(painter, texts, mapcolors::vorSymbolColor, x, y, textAttrs, fill ? 255 : 0);
+  textBoxF(painter, texts, mapcolors::vorSymbolColor, x, y, atts, fill ? 255 : 0);
+}
+
+void SymbolPainter::adjustPos(float& x, float& y, float size, textatt::TextAttributes atts)
+{
+  if((atts & textatt::PLACE_ALL_VERT) && atts & textatt::PLACE_ALL_HORIZ)
+    // Reduce distance for diagonal placement
+    size /= 1.5f;
+
+  if(atts & textatt::RIGHT)
+    x += size;
+  else if(atts & textatt::LEFT)
+    x -= size;
+
+  if(atts & textatt::ABOVE)
+    y -= size;
+  else if(atts & textatt::BELOW)
+    y += size;
 }
 
 void SymbolPainter::drawWaypointText(QPainter *painter, const map::MapWaypoint& wp, float x, float y,
-                                     textflags::TextFlags flags, float size, bool fill, const QStringList *addtionalText)
+                                     textflags::TextFlags flags, float size, bool fill, textatt::TextAttributes atts,
+                                     const QStringList *addtionalText)
 {
   QStringList texts;
 
   if(flags.testFlag(textflags::IDENT))
     texts.append(wp.ident);
 
-  textatt::TextAttributes textAttrs = textatt::NONE;
   if(flags.testFlag(textflags::ROUTE_TEXT))
-    textAttrs |= textatt::ROUTE_TEXT_ATTS;
+    atts |= textatt::ROUTE_BG_COLOR;
 
   if(!flags.testFlag(textflags::ABS_POS))
   {
-    x += size / 2.f + 2.f;
-    textAttrs |= textatt::LEFT;
+    if(!(atts & textatt::PLACE_ALL))
+      atts |= textatt::RIGHT;
+    adjustPos(x, y, size, atts);
   }
 
   if(addtionalText != nullptr && !addtionalText->isEmpty())
@@ -1203,26 +1220,25 @@ void SymbolPainter::drawWaypointText(QPainter *painter, const map::MapWaypoint& 
     if(flags.testFlag(textflags::ELLIPSE_IDENT))
     {
       if(!texts.isEmpty())
-        // Ingore additional texts and add ellipsis
+        // Ignore additional texts and add ellipsis
         texts.first() = texts.constFirst() % tr("…", "Dots used indicate additional text in map");
     }
     else
       texts.append(*addtionalText);
   }
 
-  textBoxF(painter, texts, mapcolors::waypointSymbolColor, x, y, textAttrs, fill ? 255 : 0);
+  textBoxF(painter, texts, mapcolors::waypointSymbolColor, x, y, atts, fill ? 255 : 0);
 }
 
 void SymbolPainter::drawAirportText(QPainter *painter, const map::MapAirport& airport, float x, float y,
                                     optsd::DisplayOptionsAirport dispOpts, textflags::TextFlags flags, float size,
-                                    bool diagram, int maxTextLength)
+                                    bool diagram, int maxTextLength, textatt::TextAttributes atts)
 {
   // Get layer and options dependent texts
   QStringList texts = airportTexts(dispOpts, flags, airport, maxTextLength);
 
   if(!texts.isEmpty())
   {
-    textatt::TextAttributes atts = textatt::NONE;
     if(airport.addon())
       atts |= textatt::ITALIC | textatt::UNDERLINE;
 
@@ -1230,7 +1246,7 @@ void SymbolPainter::drawAirportText(QPainter *painter, const map::MapAirport& ai
       atts |= textatt::STRIKEOUT;
 
     if(flags.testFlag(textflags::ROUTE_TEXT))
-      atts |= textatt::ROUTE_TEXT_ATTS;
+      atts |= textatt::ROUTE_BG_COLOR;
 
     if(flags.testFlag(textflags::LOG_TEXT))
       atts |= textatt::LOG_BG_COLOR;
@@ -1241,7 +1257,11 @@ void SymbolPainter::drawAirportText(QPainter *painter, const map::MapAirport& ai
       transparency = 0;
 
     if(!flags.testFlag(textflags::ABS_POS))
-      x += size;
+    {
+      if(!(atts & textatt::PLACE_ALL))
+        atts |= textatt::RIGHT;
+      adjustPos(x, y, size, atts);
+    }
 
     if(flags & textflags::NO_BACKGROUND)
       transparency = 0;
@@ -1413,10 +1433,10 @@ void SymbolPainter::textBoxF(QPainter *painter, QStringList texts, QPen textPen,
   double yoffset = 0.;
 
   // Calculate vertical reference point ====================
-  if(atts.testFlag(textatt::VERT_BELOW))
+  if(atts.testFlag(textatt::BELOW))
     // Reference point at top to place text below an icon
     yoffset = 0;
-  else if(atts.testFlag(textatt::VERT_ABOVE))
+  else if(atts.testFlag(textatt::ABOVE))
     // Reference point at bottom of text stack to place text on top of an icon
     yoffset = -totalHeight;
   else
@@ -1432,7 +1452,7 @@ void SymbolPainter::textBoxF(QPainter *painter, QStringList texts, QPen textPen,
     QRectF boundingRect = metrics.boundingRect(text);
     double w = boundingRect.width();
     double newx = x;
-    if(atts.testFlag(textatt::RIGHT))
+    if(atts.testFlag(textatt::LEFT))
       // Reference point is at the right of the text (right-aligned) to place text at the left of an icon
       newx -= w;
     else if(atts.testFlag(textatt::CENTER))
@@ -1505,7 +1525,7 @@ QRectF SymbolPainter::textBoxSize(QPainter *painter, const QStringList& texts, t
   {
     double w = metrics.horizontalAdvance(t);
     double newx = 0.;
-    if(atts.testFlag(textatt::RIGHT))
+    if(atts.testFlag(textatt::LEFT))
       newx -= w;
     else if(atts.testFlag(textatt::CENTER))
       newx -= w / 2.;

@@ -41,6 +41,6 @@ void MapPainterTrack::render()
     // If actions are unchecked return
     return;
 
-  atools::util::PainterContextSaver(context->painter);
+  atools::util::PainterContextSaver saver(context->painter);
   paintAircraftTrack();
 }

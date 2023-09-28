@@ -658,8 +658,8 @@ QStringList RouteLeg::buildLegText(float distance, float courseMag, float course
   bool addMagCourse = courseMag < map::INVALID_COURSE_VALUE;
   bool addTrueCourse = courseTrue < map::INVALID_COURSE_VALUE;
 
-  QString courseMagStr = QString::number(atools::geo::normalizeCourse(courseMag), 'f', 0);
-  QString courseTrueStr = QString::number(atools::geo::normalizeCourse(courseTrue), 'f', 0);
+  QString courseMagStr = QString::number(normalizeCourse(courseMag), 'f', 0);
+  QString courseTrueStr = QString::number(normalizeCourse(courseTrue), 'f', 0);
 
   if(addMagCourse && addTrueCourse && courseMagStr == courseTrueStr)
     // True and mag course are equal - combine
@@ -673,6 +673,16 @@ QStringList RouteLeg::buildLegText(float distance, float courseMag, float course
   }
 
   return texts;
+}
+
+float RouteLeg::getGeometryEndCourse() const
+{
+  return geometry.isPoint() ? getCourseEndTrue() : opposedCourseDeg(geometry.getEndCourse());
+}
+
+float RouteLeg::getGeometryStartCourse() const
+{
+  return geometry.isPoint() ? getCourseStartTrue() : geometry.getStartCourse();
 }
 
 float RouteLeg::getCourseStartMag() const

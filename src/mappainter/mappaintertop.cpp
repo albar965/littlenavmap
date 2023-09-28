@@ -25,7 +25,7 @@
 #include "mapgui/mapthemehandler.h"
 #include "mapgui/mappaintwidget.h"
 
-#ifdef DEBUG_INFORMATION
+#ifdef DEBUG_APPROACH_PAINT
 #include "common/proctypes.h"
 #endif
 
@@ -162,7 +162,7 @@ void MapPainterTop::render()
     for(auto it = context->renderTimesMs.constBegin(); it != context->renderTimesMs.constEnd(); ++it)
       labels.append(QString("%1: %2 ms").arg(it.key()).arg(it.value()));
 
-    symbolPainter->textBox(context->painter, labels, QPen(Qt::black), 1, 1, textatt::VERT_BELOW);
+    symbolPainter->textBox(context->painter, labels, QPen(Qt::black), 1, 1, textatt::BELOW);
   }
 }
 

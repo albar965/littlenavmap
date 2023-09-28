@@ -69,7 +69,7 @@ class DataExchange;
 class WeatherContextHandler;
 
 namespace map {
-class MapAirport;
+struct MapAirport;
 }
 namespace atools {
 namespace util {

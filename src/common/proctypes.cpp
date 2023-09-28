@@ -736,52 +736,6 @@ atools::geo::LineString MapProcedureLegs::buildGeometry() const
   return retval;
 }
 
-MapProcedureLeg& MapProcedureLegs::atInternal(int i)
-{
-  if(isDeparture())
-  {
-    if(i < procedureLegs.size())
-      return procedureLegs[apprIdx(i)];
-    else
-      return transitionLegs[transIdx(i)];
-  }
-  else
-  {
-    if(i < transitionLegs.size())
-      return transitionLegs[transIdx(i)];
-    else
-      return procedureLegs[apprIdx(i)];
-  }
-}
-
-const MapProcedureLeg& MapProcedureLegs::atInternalConst(int i) const
-{
-  if(isDeparture())
-  {
-    if(i < procedureLegs.size())
-      return procedureLegs[apprIdx(i)];
-    else
-      return transitionLegs[transIdx(i)];
-  }
-  else
-  {
-    if(i < transitionLegs.size())
-      return transitionLegs[transIdx(i)];
-    else
-      return procedureLegs[apprIdx(i)];
-  }
-}
-
-int MapProcedureLegs::apprIdx(int i) const
-{
-  return isDeparture() ? i : i - transitionLegs.size();
-}
-
-int MapProcedureLegs::transIdx(int i) const
-{
-  return isDeparture() ? i - procedureLegs.size() : i;
-}
-
 void MapProcedureLegs::clearProcedure()
 {
   mapType &= ~proc::PROCEDURE_APPROACH;

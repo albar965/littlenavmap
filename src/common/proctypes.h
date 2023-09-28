@@ -573,10 +573,29 @@ struct MapProcedureLegs
   atools::geo::LineString buildGeometry() const;
 
 private:
-  MapProcedureLeg& atInternal(int i);
-  const MapProcedureLeg& atInternalConst(int i) const;
-  int apprIdx(int i) const;
-  int transIdx(int i) const;
+  MapProcedureLeg& atInternal(int i)
+  {
+    return isDeparture() ?
+           (i < procedureLegs.size() ? procedureLegs[apprIdx(i)] : transitionLegs[transIdx(i)]) :
+           (i < transitionLegs.size() ? transitionLegs[transIdx(i)] : procedureLegs[apprIdx(i)]);
+  }
+
+  const MapProcedureLeg& atInternalConst(int i) const
+  {
+    return isDeparture() ?
+           (i < procedureLegs.size() ? procedureLegs.at(apprIdx(i)) : transitionLegs.at(transIdx(i))) :
+           (i < transitionLegs.size() ? transitionLegs.at(transIdx(i)) : procedureLegs.at(apprIdx(i)));
+  }
+
+  int apprIdx(int i) const
+  {
+    return isDeparture() ? i : i - transitionLegs.size();
+  }
+
+  int transIdx(int i) const
+  {
+    return isDeparture() ? i - procedureLegs.size() : i;
+  }
 
   bool isDeparture() const
   {

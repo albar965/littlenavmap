@@ -87,7 +87,7 @@ public:
                          bool isAirportDiagram, bool fast, bool addonHighlight);
   void drawAirportText(QPainter *painter, const map::MapAirport& airport, float x, float y,
                        optsd::DisplayOptionsAirport dispOpts, textflags::TextFlags flags, float size, bool diagram,
-                       int maxTextLength);
+                       int maxTextLength, textatt::TextAttributes atts = textatt::NONE);
 
   /* Waypoint symbol. Can use a different color for invalid waypoints that were not found in the database */
   void drawWaypointSymbol(QPainter *painter, const QColor& col, float x, float y, float size, bool fill);
@@ -108,7 +108,7 @@ public:
 
   /* Waypoint texts have no background excepts for flight plan */
   void drawWaypointText(QPainter *painter, const map::MapWaypoint& wp, float x, float y,
-                        textflags::TextFlags flags, float size, bool fill,
+                        textflags::TextFlags flags, float size, bool fill, textatt::TextAttributes atts = textatt::NONE,
                         const QStringList *addtionalText = nullptr);
 
   /* VOR with large size has a ring with compass ticks. For VORs part of the route the interior is filled.  */
@@ -117,14 +117,14 @@ public:
 
   /* VOR texts have no background excepts for flight plan */
   void drawVorText(QPainter *painter, const map::MapVor& vor, float x, float y, textflags::TextFlags flags,
-                   float size, bool fill, const QStringList *addtionalText = nullptr);
+                   float size, bool fill, textatt::TextAttributes atts = textatt::NONE, const QStringList *addtionalText = nullptr);
 
   /* NDB with dotted rings or solid rings depending on size. For NDBs part of the route the interior is filled.  */
   void drawNdbSymbol(QPainter *painter, float x, float y, float size, bool routeFill, bool fast);
 
   /* NDB texts have no background excepts for flight plan */
   void drawNdbText(QPainter *painter, const map::MapNdb& ndb, float x, float y, textflags::TextFlags flags,
-                   float size, bool fill, const QStringList *addtionalText = nullptr);
+                   float size, bool fill, textatt::TextAttributes atts = textatt::NONE, const QStringList *addtionalText = nullptr);
 
   void drawMarkerSymbol(QPainter *painter, const map::MapMarker& marker, float x, float y, float size, bool fast);
 
@@ -162,6 +162,9 @@ public:
   /* Upper level winds */
   void drawWindBarbs(QPainter *painter, float wind, float gust, float dir, float x, float y, float size,
                      bool windBarbs, bool altWind, bool route, bool fast) const;
+
+  /* Move coordinates by size based on text placement attributes */
+  void adjustPos(float& x, float& y, float size, textatt::TextAttributes atts);
 
 private:
   QStringList airportTexts(optsd::DisplayOptionsAirport dispOpts, textflags::TextFlags flags,

@@ -106,25 +106,25 @@ void MapPainterUser::paintUserpoints(const QList<MapUserpoint>& userpoints, bool
           {
             case icon::ICON_LABEL_TOP:
               // NDB - place on top
-              textatts = textatt::VERT_ABOVE | textatt::CENTER;
+              textatts = textatt::ABOVE | textatt::CENTER;
               ypos = y - offset;
               break;
 
             case icon::ICON_LABEL_RIGHT:
               // VOR - alight left and place right
-              textatts = textatt::LEFT;
+              textatts = textatt::RIGHT;
               xpos = x + offset;
               break;
 
             case icon::ICON_LABEL_BOTTOM:
               // Place on bottom
-              textatts = textatt::VERT_BELOW | textatt::CENTER;
+              textatts = textatt::BELOW | textatt::CENTER;
               ypos = y + offset;
               break;
 
             case icon::ICON_LABEL_LEFT:
               // Airports and waypoints - alight right and place left
-              textatts = textatt::RIGHT;
+              textatts = textatt::LEFT;
               xpos = x - offset;
               break;
           }

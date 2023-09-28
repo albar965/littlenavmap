@@ -413,7 +413,7 @@ void MapPainterVehicle::paintTextLabelUser(float x, float y, int size, const Sim
     {
       ice.prepend(tr("Ice %"));
       symbolPainter->textBoxF(context->painter, ice, mapcolors::aircraftUserLabelColor, x - size * 3 / 4, y,
-                              textatt::ERROR_COLOR | textatt::RIGHT, 255, mapcolors::aircraftUserLabelColorBg);
+                              textatt::ERROR_COLOR | textatt::LEFT, 255, mapcolors::aircraftUserLabelColorBg);
     }
   }
 
@@ -531,7 +531,7 @@ void MapPainterVehicle::paintTextLabelWind(float x, float y, float size, const S
     }
     else
     {
-      atts |= textatt::CENTER | textatt::VERT_BELOW;
+      atts |= textatt::CENTER | textatt::BELOW;
       texts.append(tr("No wind"));
       xs = x;
       ys = y;

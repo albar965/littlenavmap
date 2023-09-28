@@ -106,7 +106,7 @@ void ProfileLabelWidgetVert::paintEvent(QPaintEvent *)
       painter.setFont(f);
       QFontMetrics metrics(f);
 
-      textatt::TextAttributes atts = textatt::BOLD | textatt::RIGHT;
+      textatt::TextAttributes atts = textatt::BOLD | textatt::LEFT;
       QColor baseColor = QApplication::palette().color(QPalette::Base);
       int maxw = 1;
       for(const std::pair<int, int>& scale : scaleValues)

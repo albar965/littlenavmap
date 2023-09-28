@@ -528,14 +528,14 @@ enum TextAttribute
   OVERLINE = 0x0008,
   STRIKEOUT = 0x0010,
 
-  /* Alignment */
-  RIGHT = 0x0020, /* Reference point is at the right of the text (right-aligned) to place text at the left of an icon */
-  LEFT = 0x0040, /* Reference point is at the left of the text (left-aligned) to place text at the right of an icon */
+  /* Text placement */
+  LEFT = 0x0020, /* Reference point is at the right of the text (right-aligned) to place text at the LEFT of an icon */
+  RIGHT = 0x0040, /* Reference point is at the left of the text (left-aligned) to place text at the RIGHT of an icon */
   CENTER = 0x0080,
 
   /* Vertical alignment */
-  VERT_BELOW = 0x1000, /* Reference point at top to place text below an icon */
-  VERT_ABOVE = 0x2000, /* Reference point at bottom to place text on top of an icon */
+  BELOW = 0x1000, /* Reference point at top to place text BELOW an icon */
+  ABOVE = 0x2000, /* Reference point at bottom to place text ABOVE an icon */
 
   /* Color attributes */
   ROUTE_BG_COLOR = 0x0100, /* Use light yellow background for route objects */
@@ -545,7 +545,23 @@ enum TextAttribute
 
   NO_ROUND_RECT = 0x4000, /* No rounded background rect */
 
-  ROUTE_TEXT_ATTS = ROUTE_BG_COLOR | textatt::VERT_BELOW | textatt::LEFT
+  /* Automatic text placement to octants for flight plan labels */
+  PLACE_ABOVE = ABOVE | CENTER,
+  PLACE_ABOVE_RIGHT = ABOVE | RIGHT,
+  PLACE_RIGHT = RIGHT,
+  PLACE_BELOW_RIGHT = BELOW | RIGHT,
+  PLACE_BELOW = BELOW | CENTER,
+  PLACE_BELOW_LEFT = BELOW | LEFT,
+  PLACE_LEFT = LEFT,
+  PLACE_ABOVE_LEFT = ABOVE | LEFT,
+
+  /* Horizontal placement flags */
+  PLACE_ALL_HORIZ = LEFT | RIGHT,
+  /* Vertical placement flags */
+  PLACE_ALL_VERT = ABOVE | BELOW,
+
+  /* All placement flags */
+  PLACE_ALL = LEFT | RIGHT | CENTER | BELOW | ABOVE,
 };
 
 Q_DECLARE_FLAGS(TextAttributes, TextAttribute);
