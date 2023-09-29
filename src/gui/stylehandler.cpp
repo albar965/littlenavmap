@@ -32,8 +32,10 @@
 #include <QWindow>
 #include <QStringBuilder>
 
-const QLatin1String StyleHandler::DEFAULT_STYLE("Fusion");
-const QLatin1String StyleHandler::DEFAULT_STYLE_DARK("Night");
+const QLatin1String StyleHandler::STYLE_FUSION("Fusion");
+const QLatin1String StyleHandler::STYLE_NIGHT("Night");
+const QLatin1String StyleHandler::STYLE_WINDOWSVISTA("windowsvista");
+const QLatin1String StyleHandler::STYLE_WINDOWS("Windows");
 
 using atools::settings::Settings;
 
@@ -41,13 +43,28 @@ StyleHandler::StyleHandler(QMainWindow *mainWindowParam)
   : QObject(mainWindowParam), mainWindow(mainWindowParam)
 {
 
-  // Override goofy fusion tab close buttons on Windows and macOS
+  // Override fusion tab close buttons on Windows and macOS
 #if defined(Q_OS_WIN32) || defined(Q_OS_MACOS)
   QString fusionStyleSheet(
     "QTabBar::close-button { image: url(:/littlenavmap/resources/icons/tab_close_button.png); } "
     "QTabBar::close-button:hover { image: url(:/littlenavmap/resources/icons/tab_close_button_hover.png); }");
+
 #else
   QString fusionStyleSheet;
+#endif
+
+  // Override checked menu items style with icons for windows
+#if defined(Q_OS_WIN32)
+  QString vistaStyleSheet =
+    "QMenu::icon:checked:enabled { background: darkgray; border: 2px solid #606060; border-radius: 2px; }"
+    "QMenu::icon:checked:disabled { background: darkgray; border: 2px solid #606060; border-radius: 2px; }"
+    // "QMenu::icon:unchecked:enabled { background: lightgray; border: 2px solid lightgray; border-radius: 2px; }"
+    // "QMenu::icon:unchecked:disabled { background: lightgray; border: 2px solid lightgray; border-radius: 2px; }"
+    // "QMenu::item:checked { border-color: lightgray; background: #6f6fda; color: white; }"
+    "QMenu::item:selected { border-color: lightgray; background: #6f6fda; color: white; }"
+    "QMenu::item { padding: 2px 2px; }";
+#else
+  QString vistaStyleSheet;
 #endif
 
   // Collect names and palettes from all system styles
@@ -58,7 +75,7 @@ StyleHandler::StyleHandler(QMainWindow *mainWindowParam)
 
     QPalette palette = style->standardPalette();
     QString stylesheet;
-    if(styleName == DEFAULT_STYLE)
+    if(styleName == STYLE_FUSION)
     {
       // Store fusion palette settings a in a separate ini file
       QString filename = Settings::getConfigFilename("_fusionstyle.ini");
@@ -66,6 +83,8 @@ StyleHandler::StyleHandler(QMainWindow *mainWindowParam)
       paletteSettings.syncPalette(palette);
       stylesheet = fusionStyleSheet;
     }
+    else if(styleName == STYLE_WINDOWSVISTA || styleName == STYLE_WINDOWS)
+      stylesheet = vistaStyleSheet;
 
     styles.append(Style(styleName, styleName, stylesheet, palette, false /* night */));
     delete style;
@@ -84,9 +103,10 @@ StyleHandler::StyleHandler(QMainWindow *mainWindowParam)
     QString("QPushButton:checked { background-color: %1; }").arg(darkPalette.color(QPalette::Light).name()) %
 
     // Thicker frame for selected menu items with icons
-    "QMenu::icon:checked:enabled { border: 2px solid lightgray; border-radius: 5px; }" %
-    "QMenu::icon:checked:disabled { border: 2px solid dimgray; border-radius: 5px; }" %
+    "QMenu::icon:checked:enabled { background: #808080; border: 2px solid darkgray; border-radius: 2px; }" %
+    "QMenu::icon:checked:disabled { background: #808080; border: 2px solid dimgray; border-radius: 2px; }" %
     QString("QMenu::item:selected { border-color: lightgray; background: %1; }").arg(darkPalette.color(QPalette::Highlight).name()) %
+    "QMenu::item { padding: 2px 2px; }" %
 
     // Checkbox images ====================
     "QCheckBox::indicator:checked { image: url(:/littlenavmap/resources/icons/checkbox_dark_checked.png); }" %
@@ -115,7 +135,7 @@ StyleHandler::StyleHandler(QMainWindow *mainWindowParam)
   atools::gui::PaletteSettings paletteSettings(filename, "StyleColors");
   paletteSettings.syncPalette(darkPalette);
 
-  styles.append(Style(DEFAULT_STYLE_DARK, DEFAULT_STYLE, nightStyleSheet, darkPalette, true /* night */));
+  styles.append(Style(STYLE_NIGHT, STYLE_FUSION, nightStyleSheet, darkPalette, true /* night */));
 }
 
 StyleHandler::~StyleHandler()
@@ -148,12 +168,12 @@ void StyleHandler::insertMenuItems(QMenu *menu)
     action->setStatusTip(tr("Switch user interface style to \"%1\"").arg(style.displayName));
     action->setActionGroup(styleActionGroup);
 
-    if(style.displayName == DEFAULT_STYLE)
+    if(style.displayName == STYLE_FUSION)
     {
       action->setShortcut(QKeySequence(tr("Shift+F2")));
       action->setShortcutContext(Qt::ApplicationShortcut);
     }
-    else if(style.displayName == DEFAULT_STYLE_DARK)
+    else if(style.displayName == STYLE_NIGHT)
     {
       action->setShortcut(QKeySequence(tr("Shift+F3")));
       action->setShortcutContext(Qt::ApplicationShortcut);

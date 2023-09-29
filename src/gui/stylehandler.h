@@ -57,8 +57,10 @@ public:
   /* true if style requires darkening the map */
   bool isCurrentGuiStyleNight() const;
 
-  const static QLatin1String DEFAULT_STYLE; /* Fusion */
-  const static QLatin1String DEFAULT_STYLE_DARK; /* Night */
+  const static QLatin1String STYLE_FUSION; /* Fusion */
+  const static QLatin1String STYLE_NIGHT; /* Night */
+  const static QLatin1String STYLE_WINDOWSVISTA; /* Windows 10 and 11 */
+  const static QLatin1String STYLE_WINDOWS; /* Old Windows */
 
 signals:
   /* Sent on change */
