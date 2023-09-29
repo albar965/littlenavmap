@@ -56,12 +56,12 @@ StyleHandler::StyleHandler(QMainWindow *mainWindowParam)
   // Override checked menu items style with icons for windows
 #if defined(Q_OS_WIN32)
   QString vistaStyleSheet =
-    "QMenu::icon:checked:enabled { background: darkgray; border: 2px solid #606060; border-radius: 2px; }"
-    "QMenu::icon:checked:disabled { background: darkgray; border: 2px solid #606060; border-radius: 2px; }"
+    "QMenu::icon:checked:enabled { background: #90c8f6; border: 2px solid #90c8f6; border-radius: 2px; }"
+    "QMenu::icon:checked:disabled { background: #90c8f6; border: 2px solid #90c8f6; border-radius: 2px; }"
     // "QMenu::icon:unchecked:enabled { background: lightgray; border: 2px solid lightgray; border-radius: 2px; }"
     // "QMenu::icon:unchecked:disabled { background: lightgray; border: 2px solid lightgray; border-radius: 2px; }"
     // "QMenu::item:checked { border-color: lightgray; background: #6f6fda; color: white; }"
-    "QMenu::item:selected { border-color: lightgray; background: #6f6fda; color: white; }"
+    "QMenu::item:selected { border-color: #91c9f7; background: #91c9f7; color: black; }"
     "QMenu::item { padding: 2px 2px; }";
 #else
   QString vistaStyleSheet;
