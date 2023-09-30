@@ -25,8 +25,8 @@ class WeatherReporter;
 class ConnectClient;
 
 namespace map {
-class MapAirport;
-class WeatherContext;
+struct MapAirport;
+struct WeatherContext;
 }
 
 /*

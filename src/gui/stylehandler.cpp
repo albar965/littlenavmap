@@ -255,7 +255,7 @@ void StyleHandler::restoreState()
 
     // Use Fusion on macOS since the Qt apple style is a mess
 #ifdef Q_OS_MACOS
-    QString currentStyleName = DEFAULT_STYLE;
+    QString currentStyleName = STYLE_FUSION;
 #else
     QString currentStyleName = QApplication::style()->objectName();
 #endif

@@ -19,13 +19,12 @@
 #define LITTLENAVMAP_WEATHERREPORTER_H
 
 #include "fs/fspaths.h"
-#include "common/mapflags.h"
 
 #include <QHash>
 #include <QObject>
 
 namespace map {
-class MapAirport;
+struct MapAirport;
 }
 namespace atools {
 
