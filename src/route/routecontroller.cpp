@@ -2440,6 +2440,9 @@ void RouteController::routeTableOptions()
                       tr("Departure and destination airports as links to show them on the map and in information."),
                       routeLabel->isHeaderAirports());
 
+  treeDialog.addItem2(headerItem, rcol::HEADER_DIST_TIME, tr("Distance and Time"), tr("Flight plan total distance and flight time."),
+                      routeLabel->isHeaderDistTime());
+
   treeDialog.addItem2(headerItem, rcol::HEADER_TAKEOFF, tr("Takeoff Runway"),
                       tr("Departure runway heading and length."), routeLabel->isHeaderRunwayTakeoff());
 
@@ -2452,9 +2455,6 @@ void RouteController::routeTableOptions()
   treeDialog.addItem2(headerItem, rcol::HEADER_LAND, tr("Landing Runway"),
                       tr("Destination runway heading, available distance for landing, elevation and facilities."),
                       routeLabel->isHeaderRunwayLand());
-
-  treeDialog.addItem2(headerItem, rcol::HEADER_DIST_TIME, tr("Distance and Time"), tr("Flight plan total distance and flight time."),
-                      routeLabel->isHeaderDistTime());
 
   // Add footer options to tree ========================================
   QTreeWidgetItem *footerItem = treeDialog.addTopItem1(tr("Flight Plan Table Footer"));

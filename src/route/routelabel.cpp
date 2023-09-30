@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2022 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -111,35 +111,35 @@ void RouteLabel::updateHeaderLabel()
   Ui::MainWindow *ui = NavApp::getMainUi();
 
   bool visible = !route.isEmpty() &&
-                 (headerAirports || headerDeparture || headerArrival || headerRunwayTakeoff || headerRunwayLand || headerDistTime);
+                 (headerAirports || headerDistTime || headerRunwayTakeoff || headerDeparture || headerArrival || headerRunwayLand);
 
   // Hide label if no plan or nothing selected
   ui->labelRouteInfo->setVisible(visible);
 
   if(visible)
   {
-    autil::HtmlBuilder htmlAirport, htmlDepart, htmlArrival, htmlLand, htmlDistTime;
+    autil::HtmlBuilder htmlAirports, htmlDistTime, htmlRunwayTakeoffDepart, htmlArrival, htmlRunwayLand;
     if(headerAirports)
-      buildHeaderAirports(htmlAirport, true /* widget */);
+      buildHeaderAirports(htmlAirports, true /* widget */);
+
+    if(headerDistTime)
+      buildHeaderDistTime(htmlDistTime, true /* widget */);
 
     if(headerRunwayTakeoff)
-      buildHeaderRunwayTakeoff(htmlDepart);
+      buildHeaderRunwayTakeoff(htmlRunwayTakeoffDepart);
 
     if(headerDeparture)
-      buildHeaderDepart(htmlDepart, true /* widget */);
+      buildHeaderDepart(htmlRunwayTakeoffDepart, true /* widget */); // On the same line as buildHeaderRunwayTakeoff()
 
     if(headerArrival)
       buildHeaderArrival(htmlArrival, true /* widget */);
 
     if(headerRunwayLand)
-      buildHeaderRunwayLand(htmlLand);
-
-    if(headerDistTime)
-      buildHeaderDistTime(htmlDistTime);
+      buildHeaderRunwayLand(htmlRunwayLand);
 
     // Join all texts with <br>
     ui->labelRouteInfo->setTextFormat(Qt::RichText);
-    ui->labelRouteInfo->setText(HtmlBuilder::joinBr({htmlAirport, htmlDepart, htmlArrival, htmlLand, htmlDistTime}));
+    ui->labelRouteInfo->setText(HtmlBuilder::joinBr({htmlAirports, htmlDistTime, htmlRunwayTakeoffDepart, htmlArrival, htmlRunwayLand}));
   }
   else
     ui->labelRouteInfo->clear();
@@ -152,34 +152,27 @@ void RouteLabel::buildHtmlText(atools::util::HtmlBuilder& html)
 
 void RouteLabel::buildPrintText(atools::util::HtmlBuilder& html, bool titleOnly)
 {
-  buildHeaderAirports(html, false /* widget */);
+  autil::HtmlBuilder htmlAirports, htmlTodTod, htmlDistTime, htmlRunwayTakeoff, htmlDepart, htmlArrival, htmlRunwayLand;
+
+  // Header h1
+  buildHeaderAirports(htmlAirports, false /* widget */);
 
   if(!titleOnly)
   {
-    html.p();
-    buildHeaderTocTod(html);
-    html.pEnd();
-
-    html.p();
-    buildHeaderRunwayTakeoff(html);
-    html.pEnd();
-
-    html.p();
-    buildHeaderDepart(html, false /* widget */);
-    html.pEnd();
-
-    html.p();
-    buildHeaderArrival(html, false /* widget */);
-    html.pEnd();
-
-    html.p();
-    buildHeaderRunwayLand(html);
-    html.pEnd();
-
-    html.p();
-    buildHeaderDistTime(html);
-    html.pEnd();
+    buildHeaderTocTod(htmlTodTod);
+    buildHeaderDistTime(htmlDistTime, false /* widget */);
+    buildHeaderRunwayTakeoff(htmlRunwayTakeoff);
+    buildHeaderDepart(htmlDepart, false /* widget */);
+    buildHeaderArrival(htmlArrival, false /* widget */);
+    buildHeaderRunwayLand(htmlRunwayLand);
   }
+
+  html.append(htmlAirports);
+
+  if(!titleOnly)
+    // Tow paragraphs with break separated lines
+    html.append(HtmlBuilder::joinP({HtmlBuilder::joinBr({htmlTodTod, htmlDistTime}),
+                                    HtmlBuilder::joinBr({htmlRunwayTakeoff, htmlDepart, htmlArrival, htmlRunwayLand})}));
 }
 
 void RouteLabel::buildHeaderAirports(atools::util::HtmlBuilder& html, bool widget)
@@ -229,12 +222,23 @@ void RouteLabel::buildHeaderAirports(atools::util::HtmlBuilder& html, bool widge
     if(widget)
     {
       // Add airports with links ==============================
-      html.a(departureAirport, "lnm://showdeparture", ahtml::LINK_NO_UL | ahtml::BOLD);
+      ahtml::Flags flags = ahtml::BOLD;
+
+      if(headerDistTime)
+        flags |= ahtml::LINK_NO_UL;
+      else
+        // No distance - add separator underline
+        html.u();
+
+      html.a(departureAirport, "lnm://showdeparture", flags);
       if(!departureParking.isEmpty())
-        html.text(tr(" / ")).a(departureParking, "lnm://showdepartureparking", ahtml::LINK_NO_UL | ahtml::BOLD);
+        html.text(tr(" / ")).a(departureParking, "lnm://showdepartureparking", flags);
 
       if(!destinationAirport.isEmpty() && route.getSizeWithoutAlternates() > 1)
-        html.text(tr(" to ")).a(destinationAirport, "lnm://showdestination", ahtml::LINK_NO_UL | ahtml::BOLD);
+        html.text(tr(" to ")).a(destinationAirport, "lnm://showdestination", flags);
+
+      if(!headerDistTime)
+        html.uEnd();
     }
     else
     {
@@ -251,7 +255,7 @@ void RouteLabel::buildHeaderDepart(atools::util::HtmlBuilder& html, bool widget)
 {
   // Add procedures to text ==============================================================
 
-  HtmlBuilder departHtml = html.cleared(), arrHtml = html.cleared();
+  HtmlBuilder departHtml = html.cleared();
 
   if(route.hasAnyProcedure())
   {
@@ -282,30 +286,7 @@ void RouteLabel::buildHeaderDepart(atools::util::HtmlBuilder& html, bool widget)
       departHtml.text(tr(". "));
     }
 
-    if(widget)
-    {
-      // Header label widget
-      html.append(departHtml);
-      if(!arrHtml.isEmpty())
-      {
-        if(!departHtml.isEmpty())
-          html.br();
-        html.append(arrHtml);
-      }
-    }
-    else
-    {
-      // HTML export or printing
-      if(!departHtml.isEmpty() || !arrHtml.isEmpty())
-      {
-        html.p();
-        if(!departHtml.isEmpty())
-          html.append(departHtml);
-        if(!arrHtml.isEmpty())
-          html.nbsp().append(arrHtml);
-        html.pEnd();
-      }
-    }
+    html.append(departHtml);
   }
 }
 
@@ -315,7 +296,7 @@ void RouteLabel::buildHeaderArrival(atools::util::HtmlBuilder& html, bool widget
 
   // Add procedures to text ==============================================================
 
-  HtmlBuilder departHtml = html.cleared(), arrHtml = html.cleared();
+  HtmlBuilder arrHtml = html.cleared();
 
   if(route.hasAnyProcedure())
   {
@@ -408,31 +389,16 @@ void RouteLabel::buildHeaderArrival(atools::util::HtmlBuilder& html, bool widget
     if(widget)
     {
       // Header label widget
-      html.append(departHtml);
       if(!arrHtml.isEmpty())
-      {
-        if(!departHtml.isEmpty())
-          html.br();
         html.append(arrHtml);
-      }
 
       // Check STAR and approach runways - these have to match
       if(!approachRunway.isEmpty() && !starRunway.isEmpty() && !atools::fs::util::runwayEqual(approachRunway, starRunway))
         html.br().error(tr("STAR runway \"%1\" not equal to approach runway \"%2\".").arg(starRunway).arg(approachRunway));
     }
     else
-    {
       // HTML export or printing
-      if(!departHtml.isEmpty() || !arrHtml.isEmpty())
-      {
-        html.p();
-        if(!departHtml.isEmpty())
-          html.append(departHtml);
-        if(!arrHtml.isEmpty())
-          html.nbsp().append(arrHtml);
-        html.pEnd();
-      }
-    }
+      html.append(arrHtml);
   }
 }
 
@@ -534,7 +500,7 @@ void RouteLabel::buildHeaderRunwayLand(atools::util::HtmlBuilder& html)
 
 void RouteLabel::buildHeaderTocTod(atools::util::HtmlBuilder& html)
 {
-  html.p().b(tr("Cruising altitude ")).text(Unit::altFeet(route.getCruiseAltitudeFt()));
+  html.b(tr("Cruising altitude ")).text(Unit::altFeet(route.getCruiseAltitudeFt()));
 
   if(route.getTopOfClimbDistance() < map::INVALID_DISTANCE_VALUE || route.getTopOfDescentFromDestination() < map::INVALID_DISTANCE_VALUE)
   {
@@ -544,15 +510,18 @@ void RouteLabel::buildHeaderTocTod(atools::util::HtmlBuilder& html)
     if(route.getTopOfDescentFromDestination() < map::INVALID_DISTANCE_VALUE)
       html.text(tr(", ")).b(tr(" start of descent to destination ")).text(Unit::distNm(route.getTopOfDescentFromDestination()));
   }
-  html.text(tr(".")).pEnd();
+  html.text(tr("."));
 }
 
-void RouteLabel::buildHeaderDistTime(atools::util::HtmlBuilder& html)
+void RouteLabel::buildHeaderDistTime(atools::util::HtmlBuilder& html, bool widget)
 {
   if(!route.isEmpty())
   {
     if(route.getSizeWithoutAlternates() > 1)
     {
+      if(widget)
+        html.u();
+
       html.b(tr("Distance ")).text(Unit::distNm(route.getTotalDistance()));
 
       if(route.getAltitudeLegs().getTravelTimeHours() > 0.f)
@@ -565,6 +534,9 @@ void RouteLabel::buildHeaderDistTime(atools::util::HtmlBuilder& html)
         html.text(formatter::formatMinutesHoursLong(route.getAltitudeLegs().getTravelTimeHours()));
       }
       html.text(tr("."));
+
+      if(widget)
+        html.uEnd();
     }
   }
 }
