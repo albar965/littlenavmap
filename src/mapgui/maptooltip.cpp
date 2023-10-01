@@ -133,9 +133,7 @@ QString MapTooltip::buildTooltip(const map::MapResult& mapSearchResult, const at
     if(mapSearchResult.userAircraft.isValid())
     {
       if(checkText(html))
-      {
         overflow = true;
-      }
       else
       {
         if(!html.isEmpty())
@@ -277,6 +275,14 @@ QString MapTooltip::buildTooltip(const map::MapResult& mapSearchResult, const at
     }
   }
 
+  // Departure parking ===========================================================================
+  if(!overflow && opts.testFlag(optsd::TOOLTIP_AIRPORT) && mapSearchResult.parkings.size() == 1)
+  {
+    // Do not show distance if departure parking is the only one in the list
+    if(mapSearchResult.parkings.constFirst().id == route.getDepartureParking().id)
+      distance = false; // do not show distance to last leg
+  }
+
   // Navaids ===========================================================================
   if(opts.testFlag(optsd::TOOLTIP_NAVAID))
   {
@@ -317,9 +323,7 @@ QString MapTooltip::buildTooltip(const map::MapResult& mapSearchResult, const at
       if(!winds.isEmpty())
       {
         if(checkText(html))
-        {
           overflow = true;
-        }
         else
         {
           if(!html.isEmpty())
