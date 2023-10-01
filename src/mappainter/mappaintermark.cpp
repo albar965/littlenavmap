@@ -1577,7 +1577,8 @@ void MapPainterMark::paintPatternMarks()
           QString text = tr("%1/%2").
                          arg(Unit::altFeet(pattern.position.getAltitude(), true /* addUnit */, true /* narrow */, 10.f /* round */)).
                          arg(formatter::courseTextFromTrue(ageo::opposedCourseDeg(pattern.courseTrue), pattern.magvar,
-                                                           false /* magBold */, false /* trueSmall */, true /* narrow */));
+                                                           false /* magBold */, false /* magBig */,
+                                                           false /* trueSmall */, true /* narrow */));
 
           painter->setBrush(Qt::white);
           textPlacement.drawTextAlongOneLine(text, angle, center, atools::roundToInt(downwind.length()));
@@ -1585,8 +1586,8 @@ void MapPainterMark::paintPatternMarks()
           // Text for final leg =======================================
           text = tr("RW%1/%2").
                  arg(pattern.runwayName).
-                 arg(formatter::courseTextFromTrue(pattern.courseTrue, pattern.magvar, false /* magBold */, false /* trueSmall */,
-                                                   true /* narrow */));
+                 arg(formatter::courseTextFromTrue(pattern.courseTrue, pattern.magvar, false /* magBold */, false /* magBig */,
+                                                   false /* trueSmall */, true /* narrow */));
           textPlacement.drawTextAlongOneLine(text, oppAngle, final.pointAt(0.60), atools::roundToInt(final.length()));
 
           // Draw arrows on legs =======================================

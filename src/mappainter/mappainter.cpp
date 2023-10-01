@@ -1130,9 +1130,8 @@ void MapPainter::paintHoldingMarks(const QList<map::MapHolding>& holdings, bool 
           if(detail2)
           {
             // Text for inbound leg =======================================
-            inboundText.append(formatter::courseTextFromTrue(holding.courseTrue, holding.magvar,
-                                                             false /* magBold */, false /* trueSmall */,
-                                                             true /* narrow */));
+            inboundText.append(formatter::courseTextFromTrue(holding.courseTrue, holding.magvar, false /* magBold */, false /* magBig */,
+                                                             false /* trueSmall */, true /* narrow */));
 
             if(holding.time > 0.f)
               inboundText.append(tr("%1min").arg(QString::number(holding.time, 'g', 2)));
@@ -1147,7 +1146,7 @@ void MapPainter::paintHoldingMarks(const QList<map::MapHolding>& holdings, bool 
           {
             // Text for outbound leg =======================================
             outboundText.append(formatter::courseTextFromTrue(opposedCourseDeg(holding.courseTrue), holding.magvar,
-                                                              false /* magBold */, false /* trueSmall */,
+                                                              false /* magBold */, false /* magBig */, false /* trueSmall */,
                                                               true /* narrow */));
 
             if(user)

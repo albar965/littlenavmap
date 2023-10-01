@@ -31,6 +31,7 @@
 #include <QElapsedTimer>
 #include <QLocale>
 #include <QRegularExpression>
+#include <QStringBuilder>
 
 namespace formatter {
 
@@ -278,16 +279,16 @@ QString windInformationShort(int windDirectionDeg, float windSpeedKts, float run
   return windStr;
 }
 
-QString courseTextFromTrue(float trueCourse, float magvar, bool magBold, bool trueSmall, bool narrow, bool forceBoth)
+QString courseTextFromTrue(float trueCourse, float magvar, bool magBold, bool magBig, bool trueSmall, bool narrow, bool forceBoth)
 {
   // true to magnetic
-  return courseText(atools::geo::normalizeCourse(trueCourse - magvar), trueCourse, magBold, trueSmall, narrow, forceBoth);
+  return courseText(atools::geo::normalizeCourse(trueCourse - magvar), trueCourse, magBold, magBig, trueSmall, narrow, forceBoth);
 }
 
-QString courseTextFromMag(float magCourse, float magvar, bool magBold, bool trueSmall, bool narrow, bool forceBoth)
+QString courseTextFromMag(float magCourse, float magvar, bool magBold, bool magBig, bool trueSmall, bool narrow, bool forceBoth)
 {
   // magnetic to true
-  return courseText(magCourse, atools::geo::normalizeCourse(magCourse + magvar), magBold, trueSmall, narrow, forceBoth);
+  return courseText(magCourse, atools::geo::normalizeCourse(magCourse + magvar), magBold, magBig, trueSmall, narrow, forceBoth);
 }
 
 QString courseSuffix()
@@ -295,7 +296,7 @@ QString courseSuffix()
   return OptionData::instance().getFlags2().testFlag(opts2::UNIT_TRUE_COURSE) ? QObject::tr("°M/T") : QObject::tr("°M");
 }
 
-QString courseText(float magCourse, float trueCourse, bool magBold, bool trueSmall, bool narrow, bool forceBoth)
+QString courseText(float magCourse, float trueCourse, bool magBold, bool magBig, bool trueSmall, bool narrow, bool forceBoth)
 {
   QString magStr, trueStr;
   if(magCourse < map::INVALID_COURSE_VALUE / 2.f)
@@ -308,8 +309,16 @@ QString courseText(float magCourse, float trueCourse, bool magBold, bool trueSma
   }
 
   // Formatting for magnetic course
-  QLatin1String bold = magBold ? QLatin1String("<b>") : QLatin1String();
-  QLatin1String boldEnd = magBold ? QLatin1String("</b>") : QLatin1String();
+  QString style, styleEnd;
+  if(magBold)
+    style.append("<b>");
+  if(magBig)
+    style.append("<big>");
+
+  if(magBig)
+    styleEnd.append("</big>");
+  if(magBold)
+    styleEnd.append("</b>");
 
   if(atools::almostEqual(magCourse, trueCourse, 1.5f))
   {
@@ -317,7 +326,7 @@ QString courseText(float magCourse, float trueCourse, bool magBold, bool trueSma
       return QString();
 
     // Values are close - display only magnetic
-    return QObject::tr("%1%2°M%3").arg(bold).arg(magStr).arg(boldEnd);
+    return QObject::tr("%1%2°M%3").arg(style).arg(magStr).arg(styleEnd);
   }
   else
   {
@@ -329,16 +338,16 @@ QString courseText(float magCourse, float trueCourse, bool magBold, bool trueSma
 
       // Values differ and both are valid - display magnetic and true
       return QObject::tr("%1%2°M%3,%4%5%6°T%7").
-             arg(bold).arg(magStr).arg(boldEnd).
+             arg(style).arg(magStr).arg(styleEnd).
              arg(narrow ? QString() : QObject::tr(" ", "Separator for mag/true course text")).
              arg(small).arg(trueStr).arg(smallEnd);
     }
     else if(!magStr.isEmpty())
       // Only mag value is valid
-      return QObject::tr("%1%2°M%3").arg(bold).arg(magStr).arg(boldEnd);
+      return QObject::tr("%1%2°M%3").arg(style).arg(magStr).arg(styleEnd);
     else if(!trueStr.isEmpty())
       // Only true value is valid
-      return QObject::tr("%1%2°T%3").arg(bold).arg(trueStr).arg(boldEnd);
+      return QObject::tr("%1%2°T%3").arg(style).arg(trueStr).arg(styleEnd);
   }
   return QString();
 }

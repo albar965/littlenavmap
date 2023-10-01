@@ -83,7 +83,6 @@ using atools::fs::util::roundComFrequency;
 
 using formatter::courseText;
 using formatter::courseSuffix;
-using formatter::courseTextFromMag;
 using formatter::courseTextFromTrue;
 
 namespace ahtml = atools::util::html;
@@ -1017,7 +1016,8 @@ void HtmlInfoBuilder::runwayEndText(HtmlBuilder& html, const MapAirport& airport
 
   bool forceBoth = std::abs(airport.magvar) > 90.f;
   html.row2(tr("Heading:", "runway heading"),
-            courseTextFromTrue(hdgPrimTrue, airport.magvar, true /* magBold */, true /* trueSmall */, false /* narrow */, forceBoth),
+            courseTextFromTrue(hdgPrimTrue, airport.magvar, true /* magBold */, false /* magBig */, true /* trueSmall */,
+                               false /* narrow */, forceBoth),
             ahtml::NO_ENTITIES);
 
   float threshold = rec->valueFloat("offset_threshold");
@@ -1283,7 +1283,7 @@ void HtmlInfoBuilder::windText(const atools::grib::WindPosList& windStack, HtmlB
         html.table();
         html.row2(tr("Flight Plan wind (%1)").arg(source), tr("%2, %3, %4").
                   arg(Unit::altFeet(wind.pos.getAltitude())).
-                  arg(courseTextFromTrue(wind.wind.dir, magVar, false /* no bold */, true /* no small */)).
+                  arg(courseTextFromTrue(wind.wind.dir, magVar)).
                   arg(Unit::speedKts(wind.wind.speed)), ahtml::NO_ENTITIES | ahtml::NOBR);
         html.tableEnd();
       }
@@ -1363,7 +1363,7 @@ void HtmlInfoBuilder::windText(const atools::grib::WindPosList& windStack, HtmlB
         if(wind.wind.isNull())
           courseTxt = tr("-");
         else
-          courseTxt = courseTextFromTrue(wind.wind.dir, magVar, false /* no bold */, true /* no small */);
+          courseTxt = courseTextFromTrue(wind.wind.dir, magVar);
 
         QString speedTxt;
         if(wind.wind.isNull())
@@ -1968,7 +1968,7 @@ void HtmlInfoBuilder::decodedMetar(HtmlBuilder& html, const map::MapAirport& air
 
     if(parsed.getWindDir() >= 0)
       // Wind direction given
-      windDir = courseTextFromTrue(parsed.getWindDir(), airport.magvar, false) % tr(", ");
+      windDir = courseTextFromTrue(parsed.getWindDir(), airport.magvar) % tr(", ");
 
     if(parsed.getWindRangeFrom() != -1 && parsed.getWindRangeTo() != -1)
       // Wind direction range given (additionally to dir in some cases)
@@ -2303,11 +2303,9 @@ void HtmlInfoBuilder::holdingTextInternal(const MapHolding& holding, HtmlBuilder
     title.append(tr("User "));
 
   if(!navTypeStr.isEmpty())
-  {
     // Hold has a navaid
-    title.append(tr("Holding at %1 %2, %3").arg(navTypeStr).arg(holding.navIdent).
-                 arg(courseTextFromTrue(holding.courseTrue, holding.magvar)));
-  }
+    title.append(tr("Holding at %1 %2, %3").
+                 arg(navTypeStr).arg(holding.navIdent).arg(courseTextFromTrue(holding.courseTrue, holding.magvar)));
   else
     // Hold at a position
     title.append(tr("Holding %1").arg(courseTextFromTrue(holding.courseTrue, holding.magvar)));
@@ -3536,7 +3534,7 @@ void HtmlInfoBuilder::aircraftText(const atools::fs::sc::SimConnectAircraft& air
       heading = normalizeCourse(aircraft.getHeadingDegTrue() - NavApp::getMagVar(aircraft.getPosition()));
 
     if(heading < atools::fs::sc::SC_INVALID_FLOAT)
-      hdg.append(courseText(heading, aircraft.getHeadingDegTrue(), false /* magBold */));
+      hdg.append(courseText(heading, aircraft.getHeadingDegTrue()));
 
     QStringList texts;
     // Heading if available
@@ -4213,7 +4211,7 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
             courseToWptTrue = aircraft.getPosition().angleDegTo(routeLeg.getPosition());
 
             html.id(pid::NEXT_COURSE_TO_WP).row2(tr("Course to waypoint:"),
-                                                 courseTextFromTrue(courseToWptTrue, routeLeg.getMagvarEnd(), true /* bold */),
+                                                 courseTextFromTrue(courseToWptTrue, routeLeg.getMagvarEnd(), true /* magBold */),
                                                  ahtml::NO_ENTITIES);
 
             int lastDepartureLegIdx = route.getLastIndexOfDepartureProcedure();
@@ -4345,7 +4343,6 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
     head(html, tr("Aircraft"));
   html.table();
 
-  QStringList hdg;
   float heading = atools::fs::sc::SC_INVALID_FLOAT;
   if(aircraft.getHeadingDegMag() < atools::fs::sc::SC_INVALID_FLOAT)
     heading = aircraft.getHeadingDegMag();
@@ -4353,10 +4350,9 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
     heading = normalizeCourse(aircraft.getHeadingDegTrue() - NavApp::getMagVar(aircraft.getPosition()));
 
   if(heading < atools::fs::sc::SC_INVALID_FLOAT)
-    hdg.append(courseText(heading, aircraft.getHeadingDegTrue(), true));
-
-  if(!hdg.isEmpty())
-    html.id(pid::AIRCRAFT_HEADING).row2(tr("Heading:", "aircraft heading"), hdg.join(tr(", ")), ahtml::NO_ENTITIES);
+    html.id(pid::AIRCRAFT_HEADING).row2(tr("Heading:", "aircraft heading"),
+                                        courseText(heading, aircraft.getHeadingDegTrue(),
+                                                   true /* magBold */, true /* magBig */, false /* trueSmall */), ahtml::NO_ENTITIES);
 
   if(userAircraft != nullptr && info)
   {
@@ -4429,7 +4425,7 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
         // Check for display of alternate units
         QString otherInd;
         if(html.isIdSet(pid::ALT_INDICATED_OTHER))
-          otherInd = tr(", <b>%1</b>").arg(Unit::altFeetOther(aircraft.getIndicatedAltitudeFt()));
+          otherInd = tr(", %1").arg(Unit::altFeetOther(aircraft.getIndicatedAltitudeFt()));
 
         html.id(pid::ALT_INDICATED).row2(tr("Indicated:"),
                                          highlightText(Unit::altFeet(aircraft.getIndicatedAltitudeFt())) % otherInd, ahtml::NO_ENTITIES);
@@ -4442,9 +4438,10 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
       // Check for display of alternate units
       QString otherAct;
       if(html.isIdSet(pid::ALT_ACTUAL_OTHER))
-        otherAct = tr(", %1").arg(Unit::altFeetOther(speedActKts));
+        otherAct = tr(", <small>%1</small>").arg(Unit::altFeetOther(speedActKts));
 
-      html.id(pid::ALT_ACTUAL).row2(longDisplay ? tr("Actual:") : tr("Altitude:"), Unit::altFeet(speedActKts) % otherAct);
+      html.id(pid::ALT_ACTUAL).row2(longDisplay ? tr("Actual:") : tr("Altitude:"), Unit::altFeet(speedActKts) % otherAct,
+                                    ahtml::NO_ENTITIES);
     }
 
     if(userAircraft != nullptr && longDisplay && !aircraft.isAnyBoat())
@@ -4478,7 +4475,7 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
 
         QString otherInd;
         if(html.isIdSet(pid::SPEED_INDICATED_OTHER))
-          otherInd = tr(", <b>%1</b>").arg(Unit::speedKtsOther(speedIndKts).join(tr(", ")));
+          otherInd = tr(", %1").arg(Unit::speedKtsOther(speedIndKts).join(tr(", ")));
 
         html.id(pid::SPEED_INDICATED);
         if(aircraft.getIndicatedAltitudeFt() < 10000.f && speedIndKts > 260.f)
@@ -4618,8 +4615,12 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
     float windSpeed = userAircraft->getWindSpeedKts();
     float windDir = normalizeCourse(userAircraft->getWindDirectionDegT() - userAircraft->getMagVarDeg());
     if(windSpeed >= 1.f)
-      html.id(pid::ENV_WIND_DIR_SPEED).row2(tr("Wind Direction and Speed:"), courseText(windDir, userAircraft->getWindDirectionDegT()) %
-                                            tr(", ") % Unit::speedKts(windSpeed), ahtml::NO_ENTITIES);
+    {
+      QString windTxt = courseText(windDir, userAircraft->getWindDirectionDegT(),
+                                   true /* magBold */, true /* magBig */, false /* trueSmall */) %
+                        tr(", ") % highlightText(Unit::speedKts(windSpeed));
+      html.id(pid::ENV_WIND_DIR_SPEED).row2(tr("Wind Direction and Speed:"), windTxt, ahtml::NO_ENTITIES);
+    }
     else
       html.id(pid::ENV_WIND_DIR_SPEED).row2(tr("Wind Direction and Speed:"), tr("None"));
 
@@ -4629,7 +4630,6 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
 
     QString windPtr = formatter::windInformation(headWind, crossWind, tr(", "));
 
-    // if(!value.isEmpty())
     // Keep an empty line to avoid flickering
     html.id(pid::ENV_WIND_DIR_SPEED).row2(QString(), windPtr, ahtml::NO_ENTITIES);
 
@@ -4653,8 +4653,9 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
     html.id(pid::ENV_ISA_DEV).row2(tr("ISA Deviation:"), locale.toString(isaDeviation, 'f', 0) % tr(" °C"));
 
     float seaLevelPressureMbar = userAircraft->getSeaLevelPressureMbar();
-    html.id(pid::ENV_SEA_LEVEL_PRESS).row2(tr("Sea Level Pressure:"), locale.toString(seaLevelPressureMbar, 'f', 0) % tr(" hPa, ") %
-                                           locale.toString(ageo::mbarToInHg(seaLevelPressureMbar), 'f', 2) % tr(" inHg"));
+    QString pressureTxt = highlightText(locale.toString(seaLevelPressureMbar, 'f', 0) % tr(" hPa, ") %
+                                        locale.toString(ageo::mbarToInHg(seaLevelPressureMbar), 'f', 2) % tr(" inHg"));
+    html.id(pid::ENV_SEA_LEVEL_PRESS).row2(tr("Sea Level Pressure:"), pressureTxt, ahtml::NO_ENTITIES);
 
     // Not in air
     if(userAircraft->isOnGround())

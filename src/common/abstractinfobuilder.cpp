@@ -22,7 +22,6 @@
 #include "sql/sqlrecord.h"
 #include "common/formatter.h"
 #include "common/unit.h"
-#include "common/maptypes.h"
 
 using formatter::courseTextFromTrue;
 using atools::geo::opposedCourseDeg;
