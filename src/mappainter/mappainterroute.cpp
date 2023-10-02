@@ -517,12 +517,24 @@ void MapPainterRoute::paintRouteInternal(QStringList routeTexts, QVector<Line> l
     paintWindBarbs(visibleStartPointsBuf, textPlacementBuf.getStartPoints());
 }
 
-float MapPainterRoute::sizeForRouteType(const MapLayer *layer, MapType type)
+float MapPainterRoute::sizeForRouteType(const MapLayer *layer, const RouteLeg& leg)
 {
+  map::MapTypes type = leg.getMapType();
+  if(type == map::PROCEDURE)
+  {
+    const MapProcedureLeg& procedureLeg = leg.getProcedureLeg();
+    if(procedureLeg.navaids.hasVor())
+      type = map::VOR;
+    else if(procedureLeg.navaids.hasNdb())
+      type = map::NDB;
+    else if(procedureLeg.navaids.hasWaypoints())
+      type = map::WAYPOINT;
+  }
+
   if(type == map::AIRPORT)
     return context->szF(context->symbolSizeAirport, layer->getAirportSymbolSize());
   else if(type == map::NDB)
-    return context->szF(context->symbolSizeNavaid, layer->getNdbSymbolSize());
+    return context->szF(context->symbolSizeNavaid, layer->getNdbSymbolSize()) * 1.2f;
   else if(type == map::VOR)
     return context->szF(context->symbolSizeNavaid, std::max(layer->getVorSymbolSizeRoute(), layer->getVorSymbolSizeLarge()));
 
@@ -629,7 +641,7 @@ void MapPainterRoute::paintInboundOutboundTexts(const TextPlacement& textPlaceme
         painter->setPen(lastLeg.isCalibratedVor() ? mapcolors::vorSymbolColor : mapcolors::routeTextColorGray);
 
         // Move p2 by setting length to get accurate text center - sizeForRouteType is distance to navaid
-        outboundTextLine.setLength(outboundTextLength + sizeForRouteType(context->mapLayerRoute, lastLeg.getMapType()) + 5.);
+        outboundTextLine.setLength(outboundTextLength + sizeForRouteType(context->mapLayerRoute, lastLeg) + 5.);
 
         // Draw texts
         float rotate = static_cast<float>(atools::geo::angleFromQt(outboundTextLine.angle()));
@@ -643,7 +655,7 @@ void MapPainterRoute::paintInboundOutboundTexts(const TextPlacement& textPlaceme
         painter->setPen(curLeg.isCalibratedVor() ? mapcolors::vorSymbolColor : mapcolors::routeTextColorGray);
 
         // Move p2 by setting length to get accurate text center - sizeForRouteType is distance to navaid
-        inboundTextLine.setLength(inboundTextLength + sizeForRouteType(context->mapLayerRoute, curLeg.getMapType()) + 5.);
+        inboundTextLine.setLength(inboundTextLength + sizeForRouteType(context->mapLayerRoute, curLeg) + 5.);
 
         // Rotate + 180 since line is from end to interpolated end
         float rotate = static_cast<float>(atools::geo::angleFromQt(inboundTextLine.angle() + 180.));
@@ -1958,7 +1970,7 @@ void MapPainterRoute::paintNdbText(float x, float y, const map::MapNdb& obj, boo
     fill = false;
   }
 
-  symbolPainter->drawNdbText(context->painter, obj, x, y, flags, size, fill, atts, additionalText);
+  symbolPainter->drawNdbText(context->painter, obj, x, y, flags, size * 1.5f, fill, atts, additionalText);
 }
 
 /* paint intermediate approach point */
@@ -1973,7 +1985,7 @@ void MapPainterRoute::paintProcedurePointText(float x, float y, bool drawTextDet
 {
   float size = context->szF(context->symbolSizeNavaid, context->mapLayerRoute->getProcedurePointSymbolSize());
   float lineWidth = std::max(size / 5.f, 2.0f);
-  paintText(mapcolors::routeProcedurePointColor, x + lineWidth + 2.f, y, size, drawTextDetails, texts, atts);
+  paintText(mapcolors::routeProcedurePointColor, x + lineWidth + 2.f, y, size * 1.5f, drawTextDetails, texts, atts);
 }
 
 void MapPainterRoute::paintProcedureUnderlay(const proc::MapProcedureLeg& leg, float x, float y, float size)

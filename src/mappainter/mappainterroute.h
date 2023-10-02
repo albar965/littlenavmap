@@ -147,7 +147,7 @@ private:
   void paintInboundOutboundTexts(const TextPlacement& textPlacement, int passedRouteLeg, bool vor);
 
   /* Get size for type to calculate label distances */
-  float sizeForRouteType(const MapLayer *layer, map::MapType type);
+  float sizeForRouteType(const MapLayer *layer, const RouteLeg& leg);
 
   /* Get text placement sector based on inbound and outbound leg courses */
   textatt::TextAttributes textPlacementAtts(int curIndex);
