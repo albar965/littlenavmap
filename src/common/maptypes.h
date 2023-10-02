@@ -1669,6 +1669,9 @@ QString parkingNameNumberAndType(const map::MapParking& parking);
 QString parkingNameOrNumber(const map::MapParking& parking);
 QString startType(const map::MapStart& start);
 
+// Keywords to be replaced to shorten name in map display
+const QVector<std::pair<QRegularExpression, QString> >& parkingKeywords();
+
 QString helipadText(const map::MapHelipad& helipad);
 
 /* Route index from base type */

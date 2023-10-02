@@ -163,6 +163,7 @@
       A small "MaximumRangeKm" value means closer zoom and vice versa.
       =================================================================================== -->
       <Layer MaximumRangeKm="0.2">
+        <AirportDiagramDetail3>false</AirportDiagramDetail3>
         <AirportMinorSymbolSize>20</AirportMinorSymbolSize>
         <AirportMsaSymbolScale>8</AirportMsaSymbolScale>
         <AirportSymbolSize>20</AirportSymbolSize>
@@ -181,16 +182,18 @@
       These change sizes, scales and disable (but not enable) features.
       =================================================================================== -->
       <Layer MaximumRangeKm="0.3">
-        <AirportDiagramDetail3>false</AirportDiagramDetail3>
         <AirportMsaSymbolScale>7</AirportMsaSymbolScale>
       </Layer>
       <!-- =================================================================================== -->
       <Layer MaximumRangeKm="1">
         <AiAircraftGroundText>false</AiAircraftGroundText>
-        <AirportDiagramDetail2>false</AirportDiagramDetail2>
         <AirportMsaSymbolScale>6</AirportMsaSymbolScale>
         <NdbSymbolSize>28</NdbSymbolSize>
         <VorSymbolSize>28</VorSymbolSize>
+      </Layer>
+      <!-- =================================================================================== -->
+      <Layer MaximumRangeKm="2">
+        <AirportDiagramDetail2>false</AirportDiagramDetail2>
       </Layer>
       <!-- =================================================================================== -->
       <Layer MaximumRangeKm="5">

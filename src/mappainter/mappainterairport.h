@@ -23,12 +23,11 @@
 class SymbolPainter;
 
 namespace map {
+
+class MapParking;
 struct MapAirport;
-
 struct MapApron;
-
 struct MapRunway;
-
 }
 
 struct PaintAirportType;
@@ -62,6 +61,16 @@ private:
                     QList<QRectF> *innerRects, QList<QRectF> *outlineRects, bool overview);
   void drawFsApron(const map::MapApron& apron);
   void drawXplaneApron(const map::MapApron& apron, bool fast);
+  QString parkingNameForSize(const map::MapParking& parking, float width);
+
+  /* Replace or erase parking keywords */
+  QString parkingReplaceKeywords(QString parkingName, bool erase);
+
+  /* Remove space between prefix and digits */
+  QString parkingCompressDigits(const QString& parkingName);
+
+  /* Extract a single number */
+  QString parkingExtractNumber(const QString& parkingName);
 
 };
 

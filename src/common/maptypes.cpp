@@ -17,21 +17,22 @@
 
 #include "common/maptypes.h"
 
-#include "atools.h"
-#include "geo/calculations.h"
-#include "common/unit.h"
 #include "app/navapp.h"
+#include "atools.h"
+#include "common/formatter.h"
+#include "common/mapcolors.h"
 #include "common/proctypes.h"
 #include "common/symbolpainter.h"
-#include "common/formatter.h"
-#include "fs/util/fsutil.h"
-#include "userdata/userdataicons.h"
+#include "common/unit.h"
 #include "common/vehicleicons.h"
-#include "common/mapcolors.h"
+#include "fs/util/fsutil.h"
+#include "geo/calculations.h"
 #include "mapgui/maplayer.h"
+#include "userdata/userdataicons.h"
 
 #include <QDataStream>
 #include <QIcon>
+#include <QRegularExpression>
 #include <QRegularExpression>
 #include <QStringBuilder>
 
@@ -47,28 +48,18 @@ static QHash<QString, QString> parkingMapRamp;
 
 /* Full name for all parking including type */
 static QHash<QString, QString> parkingTypeMap;
-
 static QHash<QString, QString> parkingNameMap;
-
 static QHash<QString, QString> parkingDatabaseNameMap;
-
+static QVector<std::pair<QRegularExpression, QString> > parkingDatabaseKeywords;
 static QHash<QString, QString> navTypeNamesVor;
-
 static QHash<QString, QString> navTypeNamesVorLong;
-
 static QHash<QString, QString> navTypeNamesNdb;
-
 static QHash<QString, QString> navTypeNamesWaypoint;
-
 static QHash<QString, QString> navTypeNames;
-
 static QHash<QString, QString> comTypeNames;
-
 static QHash<map::MapAirspaceTypes, QString> airspaceTypeNameMap;
-
 static QHash<map::MapAirspaceFlags, QString> airspaceFlagNameMap;
 static QHash<map::MapAirspaceFlags, QString> airspaceFlagNameMapLong;
-
 static QHash<map::MapAirspaceTypes, QString> airspaceRemarkMap;
 
 void initTranslateableTexts()
@@ -263,6 +254,68 @@ void initTranslateableTexts()
       {"GATE_Y", QObject::tr("GY")},
       {"GATE_Z", QObject::tr("GZ")},
     });
+
+/* *INDENT-OFF* */
+  // Order is important
+  parkingDatabaseKeywords = QVector<std::pair<QRegularExpression, QString> >({
+      {QRegularExpression("\\b" % QObject::tr("Apron", "Has to match other parking keyword translations") % "\\b", QRegularExpression::CaseInsensitiveOption), "A"},
+      {QRegularExpression("\\b" % QObject::tr("Cargo", "Has to match other parking keyword translations") % "\\b", QRegularExpression::CaseInsensitiveOption), "C"},
+      {QRegularExpression("\\b" % QObject::tr("Combat", "Has to match other parking keyword translations") % "\\b", QRegularExpression::CaseInsensitiveOption), "C"},
+      {QRegularExpression("\\b" % QObject::tr("Commuter") % "\\b", QRegularExpression::CaseInsensitiveOption), "C"},
+      {QRegularExpression("\\b" % QObject::tr("Club") % "\\b", QRegularExpression::CaseInsensitiveOption), "C"},
+      {QRegularExpression("\\b" % QObject::tr("Concrete") % "\\b", QRegularExpression::CaseInsensitiveOption), "C"},
+      {QRegularExpression("\\b" % QObject::tr("Center") % "\\b", QRegularExpression::CaseInsensitiveOption), "C"},
+      {QRegularExpression("\\b" % QObject::tr("Domestic") % "\\b", QRegularExpression::CaseInsensitiveOption), "D"},
+      {QRegularExpression("\\b" % QObject::tr("Docking") % "\\b", QRegularExpression::CaseInsensitiveOption), "D"},
+      {QRegularExpression("\\b" % QObject::tr("Dock", "Has to match other parking keyword translations") % "\\b", QRegularExpression::CaseInsensitiveOption), "D"},
+      {QRegularExpression("\\b" % QObject::tr("Eastern") % "\\b", QRegularExpression::CaseInsensitiveOption), "E"},
+      {QRegularExpression("\\b" % QObject::tr("East", "Has to match other parking keyword translations") % "\\b", QRegularExpression::CaseInsensitiveOption), "E"},
+      {QRegularExpression("\\b" % QObject::tr("Extra", "Has to match other parking keyword translations") % "\\b", QRegularExpression::CaseInsensitiveOption), "E"},
+      {QRegularExpression("\\b" % QObject::tr("Executive") % "\\b", QRegularExpression::CaseInsensitiveOption), "E"},
+      {QRegularExpression("\\b" % QObject::tr("Fuel-Start") % "\\b", QRegularExpression::CaseInsensitiveOption), "F"},
+      {QRegularExpression("\\b" % QObject::tr("Fueling Station") % "\\b", QRegularExpression::CaseInsensitiveOption), "F"},
+      {QRegularExpression("\\b" % QObject::tr("Fuel", "Has to match other parking keyword translations") % "\\b", QRegularExpression::CaseInsensitiveOption), "F"},
+      {QRegularExpression("\\b" % QObject::tr("Gate", "Has to match other parking keyword translations") % "\\b", QRegularExpression::CaseInsensitiveOption), "G"},
+      {QRegularExpression("\\b" % QObject::tr("General Aviation") % "\\b", QRegularExpression::CaseInsensitiveOption), "GA"},
+      {QRegularExpression("\\b" % QObject::tr("Hangars") % "\\b", QRegularExpression::CaseInsensitiveOption), "H"},
+      {QRegularExpression("\\b" % QObject::tr("Hangar") % "\\b", QRegularExpression::CaseInsensitiveOption), "H"},
+      {QRegularExpression("\\b" % QObject::tr("Hangers") % "\\b", QRegularExpression::CaseInsensitiveOption), "H"},
+      {QRegularExpression("\\b" % QObject::tr("Hanger") % "\\b", QRegularExpression::CaseInsensitiveOption), "H"},
+      {QRegularExpression("\\b" % QObject::tr("Heavy", "Has to match other parking keyword translations") % "\\b", QRegularExpression::CaseInsensitiveOption), "H"},
+      {QRegularExpression("\\b" % QObject::tr("Hold Short") % "\\b", QRegularExpression::CaseInsensitiveOption), "H"},
+      {QRegularExpression("\\b" % QObject::tr("Hold") % "\\b", QRegularExpression::CaseInsensitiveOption), "H"},
+      {QRegularExpression("\\b" % QObject::tr("Maintenance") % "\\b", QRegularExpression::CaseInsensitiveOption), "M"},
+      {QRegularExpression("\\b" % QObject::tr("Medium", "Has to match other parking keyword translations") % "\\b", QRegularExpression::CaseInsensitiveOption), "M"},
+      {QRegularExpression("\\b" % QObject::tr("Military", "Has to match other parking keyword translations") % "\\b", QRegularExpression::CaseInsensitiveOption), "M"},
+      {QRegularExpression("\\b" % QObject::tr("Mil", "Has to match other parking keyword translations") % "\\b", QRegularExpression::CaseInsensitiveOption), "M"},
+      {QRegularExpression("\\b" % QObject::tr("New") % "\\b", QRegularExpression::CaseInsensitiveOption), ""},
+      {QRegularExpression("\\b" % QObject::tr("Northern") % "\\b", QRegularExpression::CaseInsensitiveOption), "N"},
+      {QRegularExpression("\\b" % QObject::tr("North", "Has to match other parking keyword translations") % "\\b", QRegularExpression::CaseInsensitiveOption), "N"},
+      {QRegularExpression("\\b" % QObject::tr("Parking", "Has to match other parking keyword translations") % "\\b", QRegularExpression::CaseInsensitiveOption), "P"},
+      {QRegularExpression("\\b" % QObject::tr("Park") % "\\b", QRegularExpression::CaseInsensitiveOption), "P"},
+      {QRegularExpression("\\b" % QObject::tr("Position") % "\\b", QRegularExpression::CaseInsensitiveOption), "P"},
+      {QRegularExpression("\\b" % QObject::tr("Pos") % "\\b", QRegularExpression::CaseInsensitiveOption), "P"},
+      {QRegularExpression("\\b" % QObject::tr("Private") % "\\b", QRegularExpression::CaseInsensitiveOption), "P"},
+      {QRegularExpression("\\b" % QObject::tr("Ramp", "Has to match other parking keyword translations") % "\\b", QRegularExpression::CaseInsensitiveOption), "R"},
+      {QRegularExpression("\\b" % QObject::tr("Run up area") % "\\b", QRegularExpression::CaseInsensitiveOption), "R"},
+      {QRegularExpression("\\b" % QObject::tr("Run up") % "\\b", QRegularExpression::CaseInsensitiveOption), "R"},
+      {QRegularExpression("\\b" % QObject::tr("Sky Dive") % "\\b", QRegularExpression::CaseInsensitiveOption), "SD"},
+      {QRegularExpression("\\b" % QObject::tr("Small") % "\\b", QRegularExpression::CaseInsensitiveOption), "S"},
+      {QRegularExpression("\\b" % QObject::tr("Southern") % "\\b", QRegularExpression::CaseInsensitiveOption), "S"},
+      {QRegularExpression("\\b" % QObject::tr("South", "Has to match other parking keyword translations") % "\\b", QRegularExpression::CaseInsensitiveOption), "S"},
+      {QRegularExpression("\\b" % QObject::tr("Stand") % "\\b", QRegularExpression::CaseInsensitiveOption), "S"},
+      {QRegularExpression("\\b" % QObject::tr("Start") % "\\b", QRegularExpression::CaseInsensitiveOption), "S"},
+      {QRegularExpression("\\b" % QObject::tr("Takeoff") % "\\b", QRegularExpression::CaseInsensitiveOption), "T"},
+      {QRegularExpression("\\b" % QObject::tr("Terminal") % "\\b", QRegularExpression::CaseInsensitiveOption), "T"},
+      {QRegularExpression("\\b" % QObject::tr("Tie down") % "\\b", QRegularExpression::CaseInsensitiveOption), "T"},
+      {QRegularExpression("\\b" % QObject::tr("Tie-down") % "\\b", QRegularExpression::CaseInsensitiveOption), "T"},
+      {QRegularExpression("\\b" % QObject::tr("Tiedowns") % "\\b", QRegularExpression::CaseInsensitiveOption), "T"},
+      {QRegularExpression("\\b" % QObject::tr("Tiedown") % "\\b", QRegularExpression::CaseInsensitiveOption), "T"},
+      {QRegularExpression("\\b" % QObject::tr("Transient") % "\\b", QRegularExpression::CaseInsensitiveOption), "T"},
+      {QRegularExpression("\\b" % QObject::tr("Western") % "\\b", QRegularExpression::CaseInsensitiveOption), "W"},
+      {QRegularExpression("\\b" % QObject::tr("West", "Has to match other parking keyword translations") % "\\b", QRegularExpression::CaseInsensitiveOption), "W"}
+    });
+  /* *INDENT-ON* */
 
   navTypeNamesVor = QHash<QString, QString>(
     {
@@ -822,6 +875,12 @@ int surfaceQuality(const QString& surface)
 {
   Q_ASSERT(!surfaceQualityMap.isEmpty());
   return surfaceQualityMap.value(surface, 0);
+}
+
+const QVector<std::pair<QRegularExpression, QString> >& parkingKeywords()
+{
+  Q_ASSERT(!parkingDatabaseKeywords.isEmpty());
+  return parkingDatabaseKeywords;
 }
 
 const QString& parkingGateName(const QString& gate)
