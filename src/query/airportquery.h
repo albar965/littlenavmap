@@ -19,7 +19,9 @@
 #define LITTLENAVMAP_AIRPORTQUERY_H
 
 #include "common/mapflags.h"
+
 #include <QCache>
+#include <QSet>
 
 namespace Marble {
 class GeoDataLatLonBox;
@@ -122,6 +124,15 @@ public:
 
   /* Used as callback for loading METAR data to fetch airport coordinates for nearest. Looks for either ident or icao. */
   atools::geo::Pos getAirportPosByIdentOrIcao(const QString& identOrIcao);
+
+  /* Checks ident or IATA from hash if the airport has procedures and applies the flag.
+   * Fast but not 100 percent accurate for airports with not matching idents since no fuzzy search is done. */
+  void correctAirportProcedureFlag(map::MapAirport& airport);
+
+  void correctAirportProcedureFlag(map::MapAirport *airport)
+  {
+    correctAirportProcedureFlag(*airport);
+  }
 
   /* true if airport has procedures. Airport must be available in this database (sim or nav). */
   bool hasProcedures(const map::MapAirport& airport) const;
@@ -226,6 +237,13 @@ private:
   void getRunwaysAndAirports(map::MapResultIndex& runwayAirports, const atools::geo::Rect& rect, const atools::geo::Pos& pos,
                              bool noRunway);
 
+  /* Load all airport idents of airports with procedures if this is a navdata query object */
+  void loadAirportProcedureCache();
+
+  /* Checks ident or IATA from hash if the airport has procedures.
+   * Fast but not 100 percent accurate for airports with not matching idents since no fuzzy search is done. */
+  bool hasAirportProcedures(const QString& ident, const QString& iata);
+
   /* true if third party navdata */
   bool navdata;
 
@@ -243,6 +261,7 @@ private:
   QCache<QString, map::MapAirport> airportIdentCache;
   QCache<int, map::MapAirport> airportIdCache, airportFuzzyIdCache;
   QCache<NearestCacheKeyAirport, map::MapResultIndex> nearestAirportCache;
+  QSet<QString> airportsWithProceduresIdent, airportsWithProceduresIata;
 
   /* Available ident columns in airport table. Set to true if column exists and has not null values. */
   bool icaoCol = false, faaCol = false, iataCol = false, localCol = false;

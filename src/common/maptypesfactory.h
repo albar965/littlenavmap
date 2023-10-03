@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -54,9 +54,6 @@ struct MapAirportMsa;
 class MapTypesFactory
 {
 public:
-  MapTypesFactory();
-  ~MapTypesFactory();
-
   /*
    * Populate airport object.
    * @param complete if false only id and position are present in the record. Used for creating the object
@@ -102,13 +99,9 @@ public:
 
 private:
   void fillVorBase(const atools::sql::SqlRecord& record, map::MapVor& vor);
-
   void fillAirportBase(const atools::sql::SqlRecord& record, map::MapAirport& ap, bool complete);
-
-  map::MapAirportFlags airportFlag(const atools::sql::SqlRecord& record, const QString& field,
-                                   map::MapAirportFlags airportFlag);
+  map::MapAirportFlags airportFlag(const atools::sql::SqlRecord& record, const QString& field, map::MapAirportFlags airportFlag);
   map::MapAirportFlags fillAirportFlags(const atools::sql::SqlRecord& record, bool overview);
-
   map::MapType strToType(const QString& navType);
 
 };

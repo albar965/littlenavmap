@@ -326,7 +326,7 @@ private:
   void head(atools::util::HtmlBuilder& html, const QString& text) const;
 
   bool nearestMapObjectsText(const map::MapAirport& airport, atools::util::HtmlBuilder& html,
-                             const map::MapResultIndex *nearest, const QString& header, bool frequencyCol,
+                             const map::MapResultIndex *nearestNav, const QString& header, bool frequencyCol,
                              bool airportCol,
                              int maxRows) const;
   void nearestMapObjectsTextRow(const map::MapAirport& airport, atools::util::HtmlBuilder& html, const QString& type,

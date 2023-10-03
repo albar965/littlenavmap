@@ -618,6 +618,7 @@ void AirportSearch::getSelectedMapObjects(map::MapResult& result) const
   rec.appendField("rating", QVariant::Int);
 
   MapTypesFactory factory;
+  AirportQuery *airportQueryNav = NavApp::getAirportQueryNav();
 
   // Fill the result with incomplete airport objects (only id and lat/lon)
   const QItemSelection& selection = controller->getSelection();
@@ -626,7 +627,7 @@ void AirportSearch::getSelectedMapObjects(map::MapResult& result) const
   {
     for(int row = rng.top(); row <= rng.bottom(); ++row)
     {
-      map::MapAirport ap;
+      map::MapAirport airport;
       QVariant idVar = controller->getRawData(row, idColumnName);
       if(idVar.isValid())
       {
@@ -639,8 +640,10 @@ void AirportSearch::getSelectedMapObjects(map::MapResult& result) const
         qDebug() << Q_FUNC_INFO << "range" << range << "row" << row << rec;
 #endif
         // Not fully populated
-        factory.fillAirport(rec, ap, false /* complete */, false /* nav */, NavApp::isAirportDatabaseXPlane(false /* navdata */));
-        result.airports.append(ap);
+        factory.fillAirport(rec, airport, false /* complete */, false /* nav */, NavApp::isAirportDatabaseXPlane(false /* navdata */));
+        airportQueryNav->correctAirportProcedureFlag(airport);
+
+        result.airports.append(airport);
       }
       else
         qWarning() << Q_FUNC_INFO << "Invalid selection: range" << range << "row" << row << "col" << idColumnName << idVar;

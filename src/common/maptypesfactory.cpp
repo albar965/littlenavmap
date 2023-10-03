@@ -23,23 +23,10 @@
 #include "io/binaryutil.h"
 #include "sql/sqlrecord.h"
 #include "fs/util/fsutil.h"
-#include "app/navapp.h"
-
-#include <cmath>
 
 using namespace atools::geo;
 using atools::sql::SqlRecord;
 using namespace map;
-
-MapTypesFactory::MapTypesFactory()
-{
-
-}
-
-MapTypesFactory::~MapTypesFactory()
-{
-
-}
 
 void MapTypesFactory::fillAirport(const SqlRecord& record, map::MapAirport& airport, bool complete, bool nav, bool xplane)
 {
@@ -187,6 +174,8 @@ map::MapAirportFlags MapTypesFactory::fillAirportFlags(const SqlRecord& record, 
 
   if(!overview)
   {
+    // The procedure flag is not accurate for mixed mode databases and is updated later on by
+    // AirportQuery::hasAirportProcedures()
     flags |= airportFlag(record, "num_approach", AP_PROCEDURE);
     flags |= airportFlag(record, "num_runway_light", AP_LIGHT);
     flags |= airportFlag(record, "num_runway_end_ils", AP_ILS);

@@ -368,7 +368,7 @@ void ProcedureSearch::updateHeaderLabel()
 {
   QString procs;
 
-  QList<QTreeWidgetItem *> items = treeWidget->selectedItems();
+  const QList<QTreeWidgetItem *> items = treeWidget->selectedItems();
   for(QTreeWidgetItem *item : items)
     procs.append(procedureAndTransitionText(item));
 
@@ -500,7 +500,7 @@ void ProcedureSearch::updateFilterBoxes()
       QList<QString> runwaylist = runways.values();
       std::sort(runwaylist.begin(), runwaylist.end());
 
-      for(const QString& rw : runwaylist)
+      for(const QString& rw : qAsConst(runwaylist))
       {
         if(rw.isEmpty())
           ui->comboBoxProcedureRunwayFilter->addItem(tr("No Runway"), rw);
@@ -802,7 +802,7 @@ void ProcedureSearch::itemSelectionChangedInternal(bool noFollow)
 #endif
 
   Ui::MainWindow *ui = NavApp::getMainUi();
-  QList<QTreeWidgetItem *> selectedItems = treeWidget->selectedItems();
+  const QList<QTreeWidgetItem *> selectedItems = treeWidget->selectedItems();
   if(selectedItems.isEmpty() || NavApp::getSearchController()->getCurrentSearchTabId() != tabIndex)
   {
     emit procedureSelected(proc::MapProcedureRef());

@@ -261,11 +261,11 @@ void MapQuery::resolveWaypointNavaids(const QList<MapWaypoint>& allWaypoints, QH
   }
 }
 
-map::MapResultIndex *MapQuery::getNearestNavaids(const Pos& pos, float distanceNm, map::MapTypes type, int maxIls, float maxIlsDist)
+map::MapResultIndex *MapQuery::getNearestNavaids(const Pos& pos, float distanceNm, map::MapTypes type, int maxIls, float maxIlsDistNm)
 {
-  map::MapResultIndex *nearest = nearestNavaidsInternal(pos, distanceNm, type, maxIls, maxIlsDist);
+  map::MapResultIndex *nearest = nearestNavaidsInternal(pos, distanceNm, type, maxIls, maxIlsDistNm);
   if(nearest == nullptr || nearest->size() < 5)
-    nearest = nearestNavaidsInternal(pos, distanceNm * 4.f, type, maxIls, maxIlsDist);
+    nearest = nearestNavaidsInternal(pos, distanceNm * 4.f, type, maxIls, maxIlsDistNm);
   return nearest;
 }
 
@@ -1230,6 +1230,8 @@ const QList<map::MapAirport> *MapQuery::fetchAirports(const Marble::GeoDataLatLo
   if(!query::valid(Q_FUNC_INFO, query))
     return nullptr;
 
+  AirportQuery *airportQueryNav = NavApp::getAirportQueryNav();
+
   if(airportCache.list.isEmpty() && !lazy)
   {
     bool navdata = NavApp::isNavdataAll();
@@ -1246,15 +1248,18 @@ const QList<map::MapAirport> *MapQuery::fetchAirports(const Marble::GeoDataLatLo
         query->exec();
         while(query->next())
         {
-          MapAirport ap;
+          MapAirport airport;
           if(overview)
             // Fill only a part of the object
-            mapTypesFactory->fillAirportForOverview(query->record(), ap, navdata, NavApp::isAirportDatabaseXPlane(navdata));
+            mapTypesFactory->fillAirportForOverview(query->record(), airport, navdata, NavApp::isAirportDatabaseXPlane(navdata));
           else
-            mapTypesFactory->fillAirport(query->record(), ap, true /* complete */, navdata, NavApp::isAirportDatabaseXPlane(navdata));
+            mapTypesFactory->fillAirport(query->record(), airport, true /* complete */, navdata, NavApp::isAirportDatabaseXPlane(navdata));
 
-          ids.insert(ap.id);
-          airportCache.list.append(ap);
+          // Need to update airport procedure flag for mixed mode databases to enable procedure filter on map
+          airportQueryNav->correctAirportProcedureFlag(airport);
+
+          ids.insert(airport.id);
+          airportCache.list.append(airport);
         }
       }
 
@@ -1265,16 +1270,20 @@ const QList<map::MapAirport> *MapQuery::fetchAirports(const Marble::GeoDataLatLo
         airportAddonByRectQuery->exec();
         while(airportAddonByRectQuery->next())
         {
-          MapAirport ap;
+          MapAirport airport;
           if(overview)
             // Fill only a part of the object
-            mapTypesFactory->fillAirportForOverview(airportAddonByRectQuery->record(), ap, navdata,
+            mapTypesFactory->fillAirportForOverview(airportAddonByRectQuery->record(), airport, navdata,
                                                     NavApp::isAirportDatabaseXPlane(navdata));
           else
-            mapTypesFactory->fillAirport(airportAddonByRectQuery->record(), ap, true /* complete */, navdata,
+            mapTypesFactory->fillAirport(airportAddonByRectQuery->record(), airport, true /* complete */, navdata,
                                          NavApp::isAirportDatabaseXPlane(navdata));
-          if(!ids.contains(ap.id))
-            airportCache.list.append(ap);
+
+          // Need to update airport procedure flag for mixed mode databases to enable procedure filter on map
+          airportQueryNav->correctAirportProcedureFlag(airport);
+
+          if(!ids.contains(airport.id))
+            airportCache.list.append(airport);
         }
       }
     }

@@ -552,15 +552,17 @@ void HtmlInfoBuilder::nearestText(const MapAirport& airport, HtmlBuilder& html) 
       airportTitle(airport, html, -1, true /* procedures */);
 
     // Get nearest airports that have procedures ====================================
-    const MapResultIndex *nearestAirports =
+    const MapResultIndex *nearestAirportsNav =
       airportQueryNav->getNearestProcAirports(airport.position, airport.ident, NEAREST_MAX_DISTANCE_AIRPORT_NM);
-    if(!nearestMapObjectsText(airport, html, nearestAirports, tr("Nearest Airports with Procedures"), false, true, NEAREST_MAX_NUM_AIRPORT))
+
+    if(!nearestMapObjectsText(airport, html, nearestAirportsNav, tr("Nearest Airports with Procedures"), false, true,
+                              NEAREST_MAX_NUM_AIRPORT))
       html.p().b(tr("No airports with procedures within a radius of %1.").arg(Unit::distNm(NEAREST_MAX_DISTANCE_AIRPORT_NM * 4.f))).pEnd();
 
     // Get nearest VOR and NDB ====================================
     MapResultIndex *nearestNavaids =
       mapWidget->getMapQuery()->getNearestNavaids(airport.position, NEAREST_MAX_DISTANCE_NAVAID_NM,
-                                                  map::VOR | map::NDB | map::ILS, 3 /* max ILS */, 4.f /* max ILS dist NM */);
+                                                  map::VOR | map::NDB | map::ILS, 3 /* maxIls */, 4.f /* maxIlsDistNm */);
 
     if(!nearestMapObjectsText(airport, html, nearestNavaids, tr("Nearest Radio Navaids"), true, false, NEAREST_MAX_NUM_NAVAID))
       html.p().b(tr("No navaids within a radius of %1.").arg(Unit::distNm(NEAREST_MAX_DISTANCE_NAVAID_NM * 4.f))).pEnd();
@@ -608,11 +610,10 @@ void HtmlInfoBuilder::nearestMapObjectsTextRow(const MapAirport& airport, HtmlBu
   trEnd();
 }
 
-bool HtmlInfoBuilder::nearestMapObjectsText(const MapAirport& airport, HtmlBuilder& html,
-                                            const map::MapResultIndex *nearest, const QString& header,
-                                            bool frequencyCol, bool airportCol, int maxRows) const
+bool HtmlInfoBuilder::nearestMapObjectsText(const MapAirport& airport, HtmlBuilder& html, const map::MapResultIndex *nearestNav,
+                                            const QString& header, bool frequencyCol, bool airportCol, int maxRows) const
 {
-  if(nearest != nullptr && !nearest->isEmpty())
+  if(nearestNav != nullptr && !nearestNav->isEmpty())
   {
     html.br().br().text(header, ahtml::BOLD | ahtml::BIG);
     html.table();
@@ -636,46 +637,44 @@ bool HtmlInfoBuilder::nearestMapObjectsText(const MapAirport& airport, HtmlBuild
 
     // Go through mixed list of map objects ============================================
     int row = 1;
-    for(const map::MapBase *base : *nearest)
+    for(const map::MapBase *baseNav : *nearestNav)
     {
       if(row++ > maxRows)
         // Stop at max
         break;
 
       // Airport ======================================
-      const map::MapAirport *ap = base->asPtr<map::MapAirport>();
-      if(ap != nullptr)
+      const map::MapAirport *apNav = baseNav->asPtr<map::MapAirport>();
+      if(apNav != nullptr)
       {
+        // Airport comes from navdatabase having procedures - convert to simulator airport to get sim name
         // Convert navdatabase airport to simulator
-        map::MapAirport simAp = mapWidget->getMapQuery()->getAirportSim(*ap);
+        map::MapAirport apSim = mapWidget->getMapQuery()->getAirportSim(*apNav);
 
         // Omit center airport used as reference
-        if(simAp.isValid() && simAp.id != airport.id)
-          nearestMapObjectsTextRow(airport, html, QString(), simAp.displayIdent(), simAp.name,
-                                   QString(), &simAp, simAp.magvar, frequencyCol, airportCol);
+        if(apSim.isValid() && apSim.id != airport.id)
+          nearestMapObjectsTextRow(airport, html, QString(), apSim.displayIdent(), apSim.name, QString(), &apSim, apSim.magvar,
+                                   frequencyCol, airportCol);
       }
 
-      const map::MapVor *vor = base->asPtr<map::MapVor>();
+      const map::MapVor *vor = baseNav->asPtr<map::MapVor>();
       if(vor != nullptr)
-        nearestMapObjectsTextRow(airport, html, map::vorType(*vor), vor->ident, vor->name,
-                                 locale.toString(vor->frequency / 1000., 'f',
-                                                 2), vor, vor->magvar, frequencyCol, airportCol);
+        nearestMapObjectsTextRow(airport, html, map::vorType(*vor), vor->ident, vor->name, locale.toString(vor->frequency / 1000., 'f', 2),
+                                 vor, vor->magvar, frequencyCol, airportCol);
 
-      const map::MapNdb *ndb = base->asPtr<map::MapNdb>();
+      const map::MapNdb *ndb = baseNav->asPtr<map::MapNdb>();
       if(ndb != nullptr)
-        nearestMapObjectsTextRow(airport, html, tr("NDB"), ndb->ident, ndb->name,
-                                 locale.toString(ndb->frequency / 100., 'f',
-                                                 1), ndb, ndb->magvar, frequencyCol, airportCol);
+        nearestMapObjectsTextRow(airport, html, tr("NDB"), ndb->ident, ndb->name, locale.toString(ndb->frequency / 100., 'f', 1),
+                                 ndb, ndb->magvar, frequencyCol, airportCol);
 
-      const map::MapWaypoint *waypoint = base->asPtr<map::MapWaypoint>();
+      const map::MapWaypoint *waypoint = baseNav->asPtr<map::MapWaypoint>();
       if(waypoint != nullptr)
-        nearestMapObjectsTextRow(airport, html, tr("Waypoint"), waypoint->ident, QString(),
-                                 QString(), waypoint, waypoint->magvar, frequencyCol, airportCol);
+        nearestMapObjectsTextRow(airport, html, tr("Waypoint"), waypoint->ident, QString(), QString(), waypoint, waypoint->magvar,
+                                 frequencyCol, airportCol);
 
-      const map::MapIls *ils = base->asPtr<map::MapIls>();
+      const map::MapIls *ils = baseNav->asPtr<map::MapIls>();
       if(ils != nullptr && !ils->isAnyGlsRnp())
-        nearestMapObjectsTextRow(airport, html, map::ilsType(*ils, true /* gs */, true /* dme */, tr(", ")),
-                                 ils->ident, ils->name,
+        nearestMapObjectsTextRow(airport, html, map::ilsType(*ils, true /* gs */, true /* dme */, tr(", ")), ils->ident, ils->name,
                                  ils->freqMHzLocale(), ils, ils->magvar, frequencyCol, airportCol);
     }
     html.tableEnd();
