@@ -377,6 +377,7 @@ bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport, const 
       context.routeDrawnNavaids->clear();
 
       context.startTimer("All");
+      setNoAntiAliasFont(&context);
 
       // ====================================
       // Get all waypoints from the route and add them to the map to avoid duplicate drawing
@@ -560,6 +561,7 @@ bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport, const 
 
       mapPainterMark->render();
 
+      resetNoAntiAliasFont(&context);
       context.endTimer("All");
 
       mapPainterTop->render();
@@ -570,4 +572,30 @@ bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport, const 
       mapcolors::darkenPainterRect(*painter);
   }
   return true;
+}
+
+void MapPaintLayer::setNoAntiAliasFont(PaintContext *context)
+{
+  if(context->viewContext == Marble::Animation)
+  {
+    QFont font = context->painter->font();
+    savedFontStrategy = font.styleStrategy();
+    font.setStyleStrategy(QFont::NoAntialias);
+    context->painter->setFont(font);
+
+    savedDefaultFontStrategy = context->defaultFont.styleStrategy();
+    context->defaultFont.setStyleStrategy(QFont::NoAntialias);
+  }
+}
+
+void MapPaintLayer::resetNoAntiAliasFont(PaintContext *context)
+{
+  if(context->viewContext == Marble::Animation)
+  {
+    QFont font = context->painter->font();
+    font.setStyleStrategy(savedFontStrategy);
+    context->painter->setFont(font);
+
+    context->defaultFont.setStyleStrategy(savedDefaultFontStrategy);
+  }
 }

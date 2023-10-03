@@ -84,10 +84,8 @@ void MapPainterAirport::render()
   // Draw diagrams or simple runway diagrams ===========================
   if(context->mapLayer->isAirportDiagramRunway())
   {
-    setNoAntiAliasFont();
     for(const PaintAirportType& airport : qAsConst(visibleAirports))
       drawAirportDiagram(*airport.airport);
-    resetNoAntiAliasFont();
   }
 
   float airportFontScale = context->mapLayer->getAirportFontScale();
@@ -131,7 +129,6 @@ void MapPainterAirport::render()
                                      context->mapLayer->getMaxTextLengthAirport());
     }
   }
-
   context->endTimer("Airport");
 }
 

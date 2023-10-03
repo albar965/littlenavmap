@@ -62,7 +62,6 @@ void MapPainterIls::render()
 
     const GeoDataLatLonBox& curBox = context->viewport->viewLatLonAltBox();
     Marble::GeoPainter *painter = context->painter;
-    setNoAntiAliasFont();
 
     int x, y;
     if((context->objectTypes.testFlag(map::ILS) || context->objectDisplayTypes.testFlag(map::GLS)) &&
@@ -126,8 +125,6 @@ void MapPainterIls::render()
         drawIlsSymbol(ils, context->drawFast);
     }
     context->endTimer("ILS");
-
-    resetNoAntiAliasFont();
   }
 }
 

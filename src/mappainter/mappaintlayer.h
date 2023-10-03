@@ -197,6 +197,12 @@ private:
   virtual bool render(Marble::GeoPainter *painter, Marble::ViewportParams *viewport,
                       const QString& renderPos = "NONE", Marble::GeoSceneLayer *layer = nullptr) override;
 
+  /* Disable font anti-aliasing for default and painter font */
+  void setNoAntiAliasFont(PaintContext *context);
+
+  /* Restore normal font anti-aliasing for default and painter font */
+  void resetNoAntiAliasFont(PaintContext *context);
+
   /* Map objects currently shown */
   map::MapTypes objectTypes = map::NONE;
   map::MapDisplayTypes objectDisplayTypes = map::DISPLAY_TYPE_NONE;
@@ -239,6 +245,7 @@ private:
   MapPaintWidget *mapPaintWidget = nullptr;
   const MapLayer *mapLayer = nullptr, *mapLayerRoute = nullptr, *mapLayerEffective = nullptr;
   bool verbose = false, verboseDraw = false;
+  QFont::StyleStrategy savedFontStrategy, savedDefaultFontStrategy;
 
 };
 

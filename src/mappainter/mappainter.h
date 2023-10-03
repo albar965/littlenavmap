@@ -409,12 +409,6 @@ protected:
   /* Draw a large spherical correct projected circle */
   void paintCircleLargeInternal(Marble::GeoPainter *painter, const atools::geo::Pos& centerPos, float radiusNm, bool fast, QPoint *textPos);
 
-  /* Disable font anti-aliasing for default and painter font */
-  void setNoAntiAliasFont();
-
-  /* Restore normal font anti-aliasing for default and painter font */
-  void resetNoAntiAliasFont();
-
   /* Minimum points to use for a circle */
   const int CIRCLE_MIN_POINTS = 16;
   /* Maximum points to use for a circle */
@@ -428,8 +422,6 @@ protected:
   WaypointTrackQuery *waypointQuery = nullptr;
   AirportQuery *airportQuery = nullptr;
   MapScale *scale = nullptr;
-
-  QFont::StyleStrategy savedFontStrategy, savedDefaultFontStrategy;
 };
 
 #endif // LITTLENAVMAP_MAPPAINTER_H

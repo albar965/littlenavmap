@@ -399,32 +399,6 @@ void MapPainter::paintCircleLargeInternal(GeoPainter *painter, const Pos& center
   }
 }
 
-void MapPainter::setNoAntiAliasFont()
-{
-  if(context->viewContext == Marble::Animation)
-  {
-    QFont font = context->painter->font();
-    savedFontStrategy = font.styleStrategy();
-    font.setStyleStrategy(QFont::NoAntialias);
-    context->painter->setFont(font);
-
-    savedDefaultFontStrategy = context->defaultFont.styleStrategy();
-    context->defaultFont.setStyleStrategy(QFont::NoAntialias);
-  }
-}
-
-void MapPainter::resetNoAntiAliasFont()
-{
-  if(context->viewContext == Marble::Animation)
-  {
-    QFont font = context->painter->font();
-    font.setStyleStrategy(savedFontStrategy);
-    context->painter->setFont(font);
-
-    context->defaultFont.setStyleStrategy(savedDefaultFontStrategy);
-  }
-}
-
 void MapPainter::drawLineStraight(Marble::GeoPainter *painter, const atools::geo::Line& line)
 {
   double x1, y1, x2, y2;

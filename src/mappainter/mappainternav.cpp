@@ -323,8 +323,6 @@ void MapPainterNav::paintAirways(const QList<map::MapAirway> *airways, bool fast
       painter->setBackground(mapcolors::textBoxColor);
     }
 
-    setNoAntiAliasFont();
-
     QFontMetricsF metrics(context->painter->font());
     for(Place& place : textlist)
     {
@@ -365,8 +363,6 @@ void MapPainterNav::paintAirways(const QList<map::MapAirway> *airways, bool fast
         painter->resetTransform();
       }
     }
-
-    resetNoAntiAliasFont();
   }
   context->endTimer(track ? "Track draw text" : "Airway draw text");
 }

@@ -63,7 +63,6 @@ void MapPainterRoute::render()
   routeProcIdMap.clear();
 
   context->startTimer("Route");
-  setNoAntiAliasFont();
   // Draw route including procedures =====================================
   if(context->objectDisplayTypes.testFlag(map::FLIGHTPLAN))
   {
@@ -90,7 +89,6 @@ void MapPainterRoute::render()
       paintProcedure(lastLegPointDummy, routeProcIdMap, procedureHighlight, 0, procedureHighlight.previewColor,
                      true /* preview */, false /* previewAll */);
   }
-  resetNoAntiAliasFont();
   context->endTimer("Route");
 }
 
