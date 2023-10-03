@@ -105,7 +105,10 @@
 
 #include "ui_mainwindow.h"
 
-static const int MAX_STATUS_MESSAGES = 10;
+const static int MAX_STATUS_MESSAGES = 10;
+const static int CLOCK_TIMER_MS = 1000;
+const static int RENDER_STATUS_TIMER_MS = 5000;
+const static int SHRINK_STATUS_BAR_TIMER_MS = 10000;
 
 using namespace Marble;
 using atools::settings::Settings;
@@ -392,14 +395,18 @@ MainWindow::MainWindow()
     optionsDialog->updateTooltipOption();
 
     // Update clock =====================
-    clockTimer.setInterval(1000);
+    clockTimer.setInterval(CLOCK_TIMER_MS);
     connect(&clockTimer, &QTimer::timeout, this, &MainWindow::updateClock);
     clockTimer.start();
 
     // Reset render status - change to done after ten seconds =====================
-    renderStatusTimer.setInterval(5000);
+    renderStatusTimer.setInterval(RENDER_STATUS_TIMER_MS);
     renderStatusTimer.setSingleShot(true);
     connect(&renderStatusTimer, &QTimer::timeout, this, &MainWindow::renderStatusReset);
+
+    shrinkStatusBarTimer.setInterval(SHRINK_STATUS_BAR_TIMER_MS);
+    shrinkStatusBarTimer.setSingleShot(true);
+    connect(&shrinkStatusBarTimer, &QTimer::timeout, this, &MainWindow::shrinkStatusBar);
 
     // Print the size of all container classes to detect overflow or memory leak conditions
     // Do this every 30 seconds if enabled with "[Options] StorageDebug=true" in ini file
@@ -993,11 +1000,11 @@ void MainWindow::updateStatusBarStyle()
 
   mapPositionLabel->setAlignment(align);
   mapPositionLabel->setMinimumWidth(20);
-  mapPositionLabel->setText(tr("—"));
+  mapPositionLabel->setText(tr(" — "));
 
   mapMagvarLabel->setAlignment(align);
   mapMagvarLabel->setMinimumWidth(20);
-  mapMagvarLabel->setText(tr("—"));
+  mapMagvarLabel->setText(tr(" — "));
 
   timeLabel->setAlignment(align);
   timeLabel->setMinimumWidth(20);
@@ -1967,6 +1974,29 @@ void MainWindow::routeCenter()
   }
 }
 
+void MainWindow::shrinkStatusBar()
+{
+#ifdef DEBUG_INFORMATION
+  qDebug() << Q_FUNC_INFO << statusBar()->geometry() << QCursor::pos();
+#endif
+
+  // Do not shrink status bar if cursor is above
+  if(!statusBar()->rect().contains(statusBar()->mapFromGlobal(QCursor::pos())))
+  {
+    mapPositionLabel->clear();
+    mapPositionLabel->setText(tr(" — "));
+    mapPositionLabel->setMinimumWidth(20);
+    mapPositionLabel->resize(20, mapPositionLabel->height());
+
+    mapMagvarLabel->clear();
+    mapMagvarLabel->setText(tr(" — "));
+    mapMagvarLabel->setMinimumWidth(20);
+    mapMagvarLabel->resize(20, mapMagvarLabel->height());
+  }
+  else
+    shrinkStatusBarTimer.start();
+}
+
 void MainWindow::updateMapPosLabel(const atools::geo::Pos& pos, int x, int y)
 {
   Q_UNUSED(x)
@@ -1994,12 +2024,18 @@ void MainWindow::updateMapPosLabel(const atools::geo::Pos& pos, int x, int y)
 
     mapPositionLabel->setText(text);
     mapPositionLabel->setMinimumWidth(mapPositionLabel->width());
+
+    // Stop status bar time to avoid shrinking
+    shrinkStatusBarTimer.stop();
   }
   else
   {
-    mapPositionLabel->setText(tr("—"));
+    mapPositionLabel->setText(tr(" — "));
     mapPositionLabel->setMinimumWidth(mapPositionLabel->width());
-    mapMagvarLabel->setText(tr("—"));
+    mapMagvarLabel->setText(tr(" — "));
+
+    // Reduce status fields bar after timeout
+    shrinkStatusBarTimer.start();
   }
 }
 

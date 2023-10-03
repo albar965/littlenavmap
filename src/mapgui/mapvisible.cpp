@@ -433,13 +433,13 @@ void MapVisible::updateVisibleObjectsStatusBar()
         label.append(routeLabel.join(tr(",")));
 
       if(label.isEmpty())
-        label.append(tr("—"));
+        label.append(tr(" — "));
 
       // Update the statusbar label text and tooltip of the label
       NavApp::getMainWindow()->setMapObjectsShownMessageText(atools::elideTextShort(label.join(tr("/")), 40), tooltip.getHtml());
     } // if(layer != nullptr && !paintLayer->noRender())
     else
-      NavApp::getMainWindow()->setMapObjectsShownMessageText(tr("—"), tr("Nothing shown. Zoom in to see map features."));
+      NavApp::getMainWindow()->setMapObjectsShownMessageText(tr(" — "), tr("Nothing shown. Zoom in to see map features."));
   } // if(!NavApp::hasDataInDatabase()) ... else
 }
 

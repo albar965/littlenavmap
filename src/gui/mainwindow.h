@@ -454,6 +454,9 @@ private:
   /* Print the size of all container classes to detect overflow or memory leak conditions */
   void debugDumpContainerSizes() const;
 
+  /* Reduce status bar size if no mouse movement */
+  void shrinkStatusBar();
+
 #ifdef DEBUG_INFORMATION
   void debugActionTriggered1();
   void debugActionTriggered2();
@@ -544,7 +547,9 @@ private:
   bool databasesErased = false;
   QSize defaultToolbarIconSize;
   QString aboutMessage, layoutWarnText;
-  QTimer clockTimer, renderStatusTimer;
+  QTimer clockTimer /* MainWindow::updateClock() every second */,
+         renderStatusTimer /* MainWindow::renderStatusReset() if render status is stalled */,
+         shrinkStatusBarTimer /* calls MainWindow::shrinkStatusBar() once map pos and magvar are "-" */;
   Marble::RenderStatus lastRenderStatus = Marble::Incomplete;
 
   /* Show hint dialog only once per session */
