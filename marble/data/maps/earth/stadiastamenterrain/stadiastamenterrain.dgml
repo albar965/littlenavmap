@@ -10,9 +10,9 @@
       <!-- The license here applies to the actual map content, not this dgml file. See the license header above for the dgml file license -->
       <!-- The content that this license refers to is not distributed with this package -->
       <license short="© stamen and OpenStreetMap contributors">Source: © OpenStreetMap contributors, License: Creative Commons Attribution-ShareAlike 2.0 (CC BY-SA)</license>
-      <name>StamenTerrain</name>
+      <name>Stadia StamenTerrain</name>
       <target>earth</target>
-      <theme>stamenterrain</theme>
+      <theme>stadiastamenterrain</theme>
       <icon pixmap="stamenterrain-preview.png"/>
       <visible>true</visible>
       <description><![CDATA[<p>Map tiles by Stamen Design, under CC BY 3.0. Data by OpenStreetMap, under ODbL.</p>]]></description>
@@ -25,17 +25,15 @@
     <map bgcolor="#000000">
       <canvas/>
       <target/>
-      <layer name="stamenterrain" backend="texture">
+      <layer name="stadiastamenterrain" backend="texture">
         <!-- Tiles expire after 14 days -->
         <texture name="mapnik_data" expire="1209600">
-          <sourcedir format="PNG"> earth/stamenterrain </sourcedir>
+          <sourcedir format="PNG"> earth/stadiastamenterrain </sourcedir>
           <tileSize width="256" height="256"/>
-          <storageLayout levelZeroColumns="1" levelZeroRows="1" maximumTileLevel="19" mode="OpenStreetMap"/>
+          <storageLayout levelZeroColumns="1" levelZeroRows="1" maximumTileLevel="19" mode="Custom"/>
           <projection name="Mercator"/>
 
-          <downloadUrl protocol="http" host="a.tile.stamen.com" path="/terrain/"/>
-          <downloadUrl protocol="http" host="b.tile.stamen.com" path="/terrain/"/>
-          <downloadUrl protocol="http" host="c.tile.stamen.com" path="/terrain/"/>
+          <downloadUrl protocol="https" host="tiles.stadiamaps.com" path="/tiles/stamen_terrain/{z}/{x}/{y}.png?api_key={Stadia API Key}"/>
 
           <downloadPolicy usage="Browse" maximumConnections="20"/>
 
