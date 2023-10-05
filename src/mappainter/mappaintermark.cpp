@@ -591,7 +591,7 @@ void MapPainterMark::paintLogEntries(const QList<map::MapLogbookEntry>& entries)
       for(const MapLogbookEntry *entry : visibleLogEntries)
       {
         // Text for one line
-        ageo::LineString positions = entry->lineString();
+        const ageo::LineString positions = entry->lineString();
 
         TextPlacement textPlacement(context->painter, this, context->screenRect);
         textPlacement.setDrawFast(context->drawFast);
@@ -702,7 +702,7 @@ void MapPainterMark::paintAirwayList(const QList<map::MapAirway>& airwayList)
   }
 
   // Draw waypoint triangles =============================================
-  for(const ageo::Pos& pos : linestring)
+  for(const ageo::Pos& pos : qAsConst(linestring))
   {
     QPointF pt = wToS(pos);
     if(!pt.isNull())

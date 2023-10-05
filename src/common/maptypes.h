@@ -1002,7 +1002,7 @@ struct MapLogbookEntry
 
   map::MapAirport departure, destination;
 
-  atools::geo::LineString lineString() const
+  const atools::geo::LineString lineString() const
   {
     atools::geo::LineString l(departurePos, destinationPos);
     l.removeInvalid();

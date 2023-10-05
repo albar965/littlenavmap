@@ -2635,7 +2635,7 @@ bool HtmlInfoBuilder::logEntryText(MapLogbookEntry logEntry, HtmlBuilder& html) 
         if(rec.valueFloat("distance_flown") > 0.f)
           html.row2(tr("Distance flown:"), Unit::distNm(rec.valueFloat("distance_flown")));
 
-        ageo::LineString line = logEntry.lineString();
+        const ageo::LineString line = logEntry.lineString();
         if(line.isValid())
           html.row2(tr("Great circle distance:"), Unit::distMeter(line.lengthMeter()));
       }

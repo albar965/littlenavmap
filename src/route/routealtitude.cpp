@@ -108,8 +108,8 @@ float RouteAltitude::getAltitudeForDistance(float distanceToDest) const
     // Now search through the geometry to find a matching line (if more than one)
     const RouteAltitudeLeg& leg = value(idx);
 
-    auto itGeo = std::lower_bound(leg.geometry.constBegin(), leg.geometry.constEnd(), distFromStart, [](const QPointF& pt,
-                                                                                                        float dist) -> bool {
+    auto itGeo = std::lower_bound(leg.geometry.constBegin(), leg.geometry.constEnd(), distFromStart,
+                                  [](const QPointF& pt, float dist) -> bool {
       // true if first is less than second, i.e. ordered before
       return pt.x() < dist;
     });
@@ -2019,7 +2019,7 @@ void RouteAltitude::calculateTrip(const atools::fs::perf::AircraftPerf& perf)
   // Calculate average values for all =====================================
   float uAverageAll = 0.f, vAverageAll = 0.f;
   float uAverageCruise = 0.f, vAverageCruise = 0.f;
-  for(const RouteAltitudeLeg& leg : *this)
+  for(const RouteAltitudeLeg& leg : qAsConst(*this))
   {
     if(leg.isMissed() || leg.isAlternate())
       break;

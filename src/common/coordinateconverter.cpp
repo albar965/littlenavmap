@@ -95,7 +95,7 @@ Pos CoordinateConverter::fromGdc(const GeoDataCoordinates& coords) const
   return Pos(coords.longitude(DEG), coords.latitude(DEG));
 }
 
-LineString CoordinateConverter::fromGdcStr(const GeoDataLineString& coords) const
+const LineString CoordinateConverter::fromGdcStr(const GeoDataLineString& coords) const
 {
   LineString linestring;
   for(const GeoDataCoordinates& gdc : coords)
