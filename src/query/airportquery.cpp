@@ -332,14 +332,18 @@ void AirportQuery::getAirportFuzzy(map::MapAirport& airport, const map::MapAirpo
   if(!airportCopy.isValid())
     return;
 
-  map::MapAirport *ap = airportFuzzyIdCache.object(airportCopy.id);
-  QList<map::MapAirport> airports;
+  map::MapAirport *apCached = airportFuzzyIdCache.object(airportCopy.id);
 
-  if(ap != nullptr)
-    // Found in cache
-    airport = *ap;
+  if(apCached != nullptr)
+    // Found in cache - copy from pointer
+    airport = *apCached;
   else
   {
+    QList<map::MapAirport> airports;
+
+    // Create new airport for caching
+    apCached = new map::MapAirport;
+
     // airportFrom has to be copied to avoid overwriting
     // Try exact ident match first
     map::MapAirport airportByIdent;
@@ -375,15 +379,15 @@ void AirportQuery::getAirportFuzzy(map::MapAirport& airport, const map::MapAirpo
       ageo::Rect rect(airportCopy.position, ageo::nmToMeter(10.f), true /* fast */);
 
       query::fetchObjectsForRect(rect, airportByPosQuery, [ =, &airports](atools::sql::SqlQuery *query) -> void {
-        map::MapAirport a;
-        mapTypesFactory->fillAirport(query->record(), a, true /* complete */, navdata, NavApp::isAirportDatabaseXPlane(navdata));
+        map::MapAirport airportByCoord;
+        mapTypesFactory->fillAirport(query->record(), airportByCoord, true /* complete */,
+                                     navdata, NavApp::isAirportDatabaseXPlane(navdata));
         if(!navdata)
-          NavApp::getAirportQueryNav()->correctAirportProcedureFlag(ap);
-        airports.append(a);
+          NavApp::getAirportQueryNav()->correctAirportProcedureFlag(airportByCoord);
+        airports.append(airportByCoord);
       });
     }
 
-    ap = new map::MapAirport;
     if(!airports.isEmpty())
     {
       // Sort by distance and remove too far away
@@ -392,14 +396,17 @@ void AirportQuery::getAirportFuzzy(map::MapAirport& airport, const map::MapAirpo
 
       if(!airports.isEmpty())
         // Assign to cache object
-        *ap = airports.constFirst();
+        *apCached = airports.constFirst();
     } // else assign empty airport to indicate that is it not available
 
-    airport = *ap;
-    airportFuzzyIdCache.insert(airportCopy.id, ap);
+    // Can be valid or empty
+    airport = *apCached;
+
+    // Also insert negative entries for not found
+    airportFuzzyIdCache.insert(airportCopy.id, apCached);
 
 #ifdef DEBUG_INFORMATION
-    qDebug() << Q_FUNC_INFO << "Found" << *ap << "as replacement for" << airportCopy;
+    qDebug() << Q_FUNC_INFO << "Found" << *apCached << "as replacement for" << airportCopy;
 #endif
   }
 }
