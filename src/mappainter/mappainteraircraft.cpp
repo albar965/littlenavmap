@@ -48,6 +48,7 @@ MapPainterAircraft::~MapPainterAircraft()
 
 void MapPainterAircraft::render()
 {
+  const static QMargins MARGINS(100, 100, 100, 100);
   atools::util::PainterContextSaver saver(context->painter);
   const SimConnectUserAircraft& userAircraft = mapPaintWidget->getUserAircraft();
 
@@ -105,12 +106,11 @@ void MapPainterAircraft::render()
       };
 
       QVector<AiDistType> aiSorted;
-      QMargins margins(100, 100, 100, 100);
       bool hidden = false;
       float x, y;
       for(const SimConnectAircraft *ac : allAircraft)
       {
-        if(wToSBuf(ac->getPosition(), x, y, margins, &hidden))
+        if(wToSBuf(ac->getPosition(), x, y, MARGINS, &hidden))
         {
           if(!hidden)
             aiSorted.append({ac, x, y, userPos.distanceMeterTo(ac->getPosition()),
@@ -144,7 +144,7 @@ void MapPainterAircraft::render()
     if(context->objectTypes.testFlag(map::AIRCRAFT))
     {
       // Use higher accuracy - falls back to normal position if not set
-        atools::geo::PosD pos = userAircraft.getPositionD();
+      atools::geo::PosD pos = userAircraft.getPositionD();
       if(pos.isValid())
       {
         bool hidden = false;

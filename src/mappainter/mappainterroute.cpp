@@ -261,7 +261,7 @@ void MapPainterRoute::paintRoute()
 void MapPainterRoute::paintRecommended(int passedRouteLeg, QSet<map::MapRef>& idMap)
 {
   // Margins for text at left (VOR), right (waypoints) and below (NDB)
-  QMargins margins(50, 10, 50, 20);
+  const static QMargins MARGINS(50, 10, 50, 20);
 
   const Route& route = NavApp::getRouteConst();
   for(int i = passedRouteLeg; i < route.size(); i++)
@@ -284,7 +284,7 @@ void MapPainterRoute::paintRecommended(int passedRouteLeg, QSet<map::MapRef>& id
           if(!idMap.contains(wp.getRef()))
           {
             idMap.insert(wp.getRef());
-            if(wToSBuf(wp.position, x, y, margins))
+            if(wToSBuf(wp.position, x, y, MARGINS))
             {
               paintWaypoint(x, y, wp, false);
               paintWaypointText(x, y, wp, true /* drawTextDetails */, textatt::ROUTE_BG_COLOR, nullptr);
@@ -300,7 +300,7 @@ void MapPainterRoute::paintRecommended(int passedRouteLeg, QSet<map::MapRef>& id
           if(!idMap.contains(vor.getRef()))
           {
             idMap.insert(vor.getRef());
-            if(wToSBuf(vor.position, x, y, margins))
+            if(wToSBuf(vor.position, x, y, MARGINS))
             {
               paintVor(x, y, vor, false);
               paintVorText(x, y, vor, true /* drawTextDetails */, textatt::ROUTE_BG_COLOR, nullptr);
@@ -316,7 +316,7 @@ void MapPainterRoute::paintRecommended(int passedRouteLeg, QSet<map::MapRef>& id
           if(!idMap.contains(ndb.getRef()))
           {
             idMap.insert(ndb.getRef());
-            if(wToSBuf(ndb.position, x, y, margins))
+            if(wToSBuf(ndb.position, x, y, MARGINS))
             {
               paintNdb(x, y, ndb, false);
               paintNdbText(x, y, ndb, true /* drawTextDetails */, textatt::ROUTE_BG_COLOR, nullptr);
@@ -330,6 +330,8 @@ void MapPainterRoute::paintRecommended(int passedRouteLeg, QSet<map::MapRef>& id
 
 void MapPainterRoute::paintRouteInternal(QStringList routeTexts, QVector<Line> lines, int passedRouteLeg)
 {
+  const static QMargins MARGINS(100, 100, 100, 100);
+
   const Route *route = context->route;
   Marble::GeoPainter *painter = context->painter;
   const OptionData& od = OptionData::instance();
@@ -460,7 +462,7 @@ void MapPainterRoute::paintRouteInternal(QStringList routeTexts, QVector<Line> l
 
   // ================================================================================
   // Separate text placement object with screen buffer to avoid navaids popping out at screen edges
-  TextPlacement textPlacementBuf(painter, this, context->screenRect.marginsAdded(QMargins(100, 100, 100, 100)));
+  TextPlacement textPlacementBuf(painter, this, context->screenRect.marginsAdded(MARGINS));
   textPlacementBuf.setMinLengthForText(painter->fontMetrics().averageCharWidth() * 2);
   textPlacementBuf.setDrawFast(context->drawFast);
   textPlacementBuf.setLineWidth(outerlinewidth);
@@ -542,6 +544,7 @@ float MapPainterRoute::sizeForRouteType(const MapLayer *layer, const RouteLeg& l
 
 void MapPainterRoute::paintInboundOutboundTexts(const TextPlacement& textPlacement, int passedRouteLeg, bool vor)
 {
+  const static QMargins MARGINS(100, 100, 100, 100); // Avoid pop out at screen borders
   const Route *route = context->route;
   Marble::GeoPainter *painter = context->painter;
 
@@ -557,7 +560,6 @@ void MapPainterRoute::paintInboundOutboundTexts(const TextPlacement& textPlaceme
   context->szFont(context->textSizeFlightplan * 0.85f * context->mapLayerRoute->getRouteFontScale());
 
   QFontMetricsF metrics = painter->fontMetrics();
-  QMargins margins(100, 100, 100, 100); // Avoid pop out at screen borders
   float arrowWidth = textPlacement.getArrowWidth(); // Arrows added in text placement
 
   int lastDepartureLeg = route->getLastIndexOfDepartureProcedure();
@@ -580,8 +582,8 @@ void MapPainterRoute::paintInboundOutboundTexts(const TextPlacement& textPlaceme
     // Get first and last positions as well as visibility ============================
     bool firstHidden, lastHidden;
     QPointF first1, last1;
-    bool firstVisible1 = wToSBuf(lastLeg.getPosition(), first1, margins, &firstHidden);
-    bool lastVisible1 = wToSBuf(curLeg.getPosition(), last1, margins, &lastHidden);
+    bool firstVisible1 = wToSBuf(lastLeg.getPosition(), first1, MARGINS, &firstHidden);
+    bool lastVisible1 = wToSBuf(curLeg.getPosition(), last1, MARGINS, &lastHidden);
 
     if(firstHidden || lastHidden)
       // Return if any behind the globe
@@ -607,8 +609,8 @@ void MapPainterRoute::paintInboundOutboundTexts(const TextPlacement& textPlaceme
     QPointF first2, last2;
     float lengthToMeter = atools::geo::nmToMeter(curLeg.getDistanceTo());
     float fraction = scale->getMeterPerPixel() * 20.f / lengthToMeter; // Calculate fraction for roughly 20 pixels distance
-    wToSBuf(line.interpolate(lengthToMeter, fraction), first2, margins, &firstHidden);
-    wToSBuf(line.interpolate(lengthToMeter, 1.f - fraction), last2, margins, &lastHidden);
+    wToSBuf(line.interpolate(lengthToMeter, fraction), first2, MARGINS, &firstHidden);
+    wToSBuf(line.interpolate(lengthToMeter, 1.f - fraction), last2, MARGINS, &lastHidden);
 
     if(firstHidden || lastHidden)
       // Return if any behind the globe
@@ -665,6 +667,7 @@ void MapPainterRoute::paintInboundOutboundTexts(const TextPlacement& textPlaceme
 
 void MapPainterRoute::paintTopOfDescentAndClimb()
 {
+  const static QMargins MARGINS(50, 10, 10, 10);
   const textatt::TextAttributes TEXT_ATTS = textatt::ROUTE_BG_COLOR | textatt::PLACE_BELOW_RIGHT;
   const Route *route = context->route;
   if(route->getSizeWithoutAlternates() >= 2)
@@ -681,7 +684,6 @@ void MapPainterRoute::paintTopOfDescentAndClimb()
     int activeLegIndex = route->getActiveLegIndex();
 
     // Use margins for text placed on the right side of the object to avoid disappearing at the left screen border
-    QMargins margins(50, 10, 10, 10);
     bool drawTextDetails = context->mapLayerRoute->isApproachText();
     // Draw the top of climb circle and text ======================
     if(!(context->flags2.testFlag(opts2::MAP_ROUTE_DIM_PASSED)) ||
@@ -691,7 +693,7 @@ void MapPainterRoute::paintTopOfDescentAndClimb()
       if(pos.isValid())
       {
         float x, y;
-        if(wToSBuf(pos, x, y, margins))
+        if(wToSBuf(pos, x, y, MARGINS))
         {
           context->painter->drawEllipse(QPointF(x, y), radius, radius);
 
@@ -713,7 +715,7 @@ void MapPainterRoute::paintTopOfDescentAndClimb()
       if(pos.isValid())
       {
         float x, y;
-        if(wToSBuf(pos, x, y, margins))
+        if(wToSBuf(pos, x, y, MARGINS))
         {
           context->painter->drawEllipse(QPointF(x, y), radius, radius);
 
@@ -985,6 +987,7 @@ void MapPainterRoute::paintProcedureSegment(const proc::MapProcedureLegs& legs,
                                             int index, QVector<QLineF>& lastLines, QVector<DrawText> *drawTextLines,
                                             bool noText, bool previewAll, bool draw)
 {
+  const static QMargins MARGINS(50, 50, 50, 50);
   const proc::MapProcedureLeg& leg = legs.at(index);
 
   if(previewAll && leg.isMissed())
@@ -1260,7 +1263,7 @@ void MapPainterRoute::paintProcedureSegment(const proc::MapProcedureLegs& legs,
     }
 
     float px, py;
-    wToSBuf(leg.procedureTurnPos, px, py, size, QMargins(50, 50, 50, 50), &hidden);
+    wToSBuf(leg.procedureTurnPos, px, py, size, MARGINS, &hidden);
 
     if(draw && !hidden)
     {
@@ -1468,6 +1471,7 @@ QLineF MapPainterRoute::paintProcedureTurn(QVector<QLineF>& lastLines, QLineF li
 void MapPainterRoute::paintProcedurePoint(proc::MapProcedureLeg& lastLegPoint, QSet<map::MapRef>& idMap, const proc::MapProcedureLegs& legs,
                                           int index, int legsRouteOffset, bool preview, bool previewAll, bool drawTextFlag)
 {
+  const static QMargins MARGINS(50, 10, 50, 20);
   const proc::MapProcedureLeg& leg = legs.at(index);
   bool drawText = context->mapLayerRoute->isApproachText() && drawTextFlag;
   bool drawTextDetails = !previewAll && drawTextFlag && context->mapLayerRoute->isApproachTextDetails();
@@ -1571,12 +1575,11 @@ void MapPainterRoute::paintProcedurePoint(proc::MapProcedureLeg& lastLegPoint, Q
   float x = 0, y = 0;
 
   // Margins for text at left (VOR), right (waypoints) and below (NDB)
-  QMargins margins(50, 10, 50, 20);
   float defaultOverflySize = context->szF(context->symbolSizeNavaid, context->mapLayerRoute->getWaypointSymbolSize());
   if(leg.mapType == proc::PROCEDURE_SID && index == 0)
   {
     // All legs with a calculated end point - runway =====================
-    if(wToSBuf(leg.line.getPos1(), x, y, margins))
+    if(wToSBuf(leg.line.getPos1(), x, y, MARGINS))
     {
       texts.append("RW" % legs.runwayEnd.name);
 
@@ -1618,7 +1621,7 @@ void MapPainterRoute::paintProcedurePoint(proc::MapProcedureLeg& lastLegPoint, Q
       return;
 
     // All legs with a calculated end point
-    if(wToSBuf(leg.line.getPos2(), x, y, margins))
+    if(wToSBuf(leg.line.getPos2(), x, y, MARGINS))
     {
       texts.append(leg.displayText);
       texts.append(proc::altRestrictionTextNarrow(altRestr));
@@ -1634,14 +1637,14 @@ void MapPainterRoute::paintProcedurePoint(proc::MapProcedureLeg& lastLegPoint, Q
   }
   else if(leg.type == proc::START_OF_PROCEDURE)
   {
-    if(wToSBuf(leg.line.getPos1(), x, y, margins))
+    if(wToSBuf(leg.line.getPos1(), x, y, MARGINS))
       paintProcedurePoint(x, y, false);
   }
   else if(leg.type == proc::COURSE_TO_FIX || leg.type == proc::CUSTOM_APP_RUNWAY || leg.type == proc::CUSTOM_DEP_END)
   {
     if(index == 0)
     {
-      if(wToSBuf(leg.line.getPos1(), x, y, margins))
+      if(wToSBuf(leg.line.getPos1(), x, y, MARGINS))
       {
         if(drawUnderlay)
           paintProcedureUnderlay(leg, x, y, defaultOverflySize);
@@ -1650,7 +1653,7 @@ void MapPainterRoute::paintProcedurePoint(proc::MapProcedureLeg& lastLegPoint, Q
     }
     else if(leg.interceptPos.isValid())
     {
-      if(wToSBuf(leg.interceptPos, x, y, margins))
+      if(wToSBuf(leg.interceptPos, x, y, MARGINS))
       {
         // Draw intercept comment - no altitude restriction and no underlay there
         texts.append(leg.displayText);
@@ -1734,7 +1737,7 @@ void MapPainterRoute::paintProcedurePoint(proc::MapProcedureLeg& lastLegPoint, Q
   const map::MapResult& navaids = leg.navaids;
   float symbolSizeWaypoint = context->szF(context->symbolSizeNavaid, context->mapLayerRoute->getWaypointSymbolSize());
 
-  if(!navaids.waypoints.isEmpty() && wToSBuf(navaids.waypoints.constFirst().position, x, y, margins))
+  if(!navaids.waypoints.isEmpty() && wToSBuf(navaids.waypoints.constFirst().position, x, y, MARGINS))
   {
 
     const map::MapWaypoint& wp = navaids.waypoints.constFirst();
@@ -1751,7 +1754,7 @@ void MapPainterRoute::paintProcedurePoint(proc::MapProcedureLeg& lastLegPoint, Q
         paintWaypointText(x, y, wp, drawTextDetails, atts, &texts);
     }
   }
-  else if(!navaids.vors.isEmpty() && wToSBuf(navaids.vors.constFirst().position, x, y, margins))
+  else if(!navaids.vors.isEmpty() && wToSBuf(navaids.vors.constFirst().position, x, y, MARGINS))
   {
 
     const map::MapVor& vor = navaids.vors.constFirst();
@@ -1769,7 +1772,7 @@ void MapPainterRoute::paintProcedurePoint(proc::MapProcedureLeg& lastLegPoint, Q
         paintVorText(x, y, vor, drawTextDetails, atts, &texts);
     }
   }
-  else if(!navaids.ndbs.isEmpty() && wToSBuf(navaids.ndbs.constFirst().position, x, y, margins))
+  else if(!navaids.ndbs.isEmpty() && wToSBuf(navaids.ndbs.constFirst().position, x, y, MARGINS))
   {
 
     const map::MapNdb& ndb = navaids.ndbs.constFirst();
@@ -1787,7 +1790,7 @@ void MapPainterRoute::paintProcedurePoint(proc::MapProcedureLeg& lastLegPoint, Q
         paintNdbText(x, y, ndb, drawTextDetails, atts, &texts);
     }
   }
-  else if(!navaids.ils.isEmpty() && wToSBuf(navaids.ils.constFirst().position, x, y, margins))
+  else if(!navaids.ils.isEmpty() && wToSBuf(navaids.ils.constFirst().position, x, y, MARGINS))
   {
     const map::MapIls& ils = navaids.ils.constFirst();
     if(!idMap.contains(ils.getRef()))
@@ -1802,7 +1805,7 @@ void MapPainterRoute::paintProcedurePoint(proc::MapProcedureLeg& lastLegPoint, Q
     if(drawText)
       paintProcedurePointText(x, y, drawTextDetails, atts, texts);
   }
-  else if(!navaids.runwayEnds.isEmpty() && wToSBuf(navaids.runwayEnds.constFirst().position, x, y, margins))
+  else if(!navaids.runwayEnds.isEmpty() && wToSBuf(navaids.runwayEnds.constFirst().position, x, y, MARGINS))
   {
     texts.prepend(leg.fixIdent);
     if(drawUnderlay)
@@ -1811,7 +1814,7 @@ void MapPainterRoute::paintProcedurePoint(proc::MapProcedureLeg& lastLegPoint, Q
     if(drawText)
       paintProcedurePointText(x, y, drawTextDetails, atts, texts);
   }
-  else if(!leg.fixIdent.isEmpty() && wToSBuf(leg.fixPos, x, y, margins))
+  else if(!leg.fixIdent.isEmpty() && wToSBuf(leg.fixPos, x, y, MARGINS))
   {
     // Custom IF case
     texts.prepend(leg.fixIdent);
@@ -2267,6 +2270,7 @@ void MapPainterRoute::drawRouteSymbolText(const QBitArray& visibleStartPoints, c
 
 void MapPainterRoute::paintStartParking()
 {
+  const static QMargins MARGINS(20, 20, 20, 20);
   const Route *route = context->route;
 
   // Draw start position or parking circle into the airport diagram
@@ -2304,7 +2308,7 @@ void MapPainterRoute::paintStartParking()
     if(startPos.isValid())
     {
       float x, y;
-      if(wToSBuf(startPos, x, y, QMargins(20, 20, 20, 20)))
+      if(wToSBuf(startPos, x, y, MARGINS))
       {
         bool transparent = context->flags2.testFlag(opts2::MAP_HIGHLIGHT_TRANSPARENT);
         if(!transparent)

@@ -377,7 +377,7 @@ void MapPainterNav::paintWaypoints(const QHash<int, map::MapWaypoint>& waypoints
   bool fill = context->flags2 & opts2::MAP_NAVAID_TEXT_BACKGROUND;
 
   // Use margins for text placed on the right side of the object to avoid disappearing at the left screen border
-  QMargins margins(50, 10, 10, 10);
+  const static QMargins MARGINS(50, 10, 10, 10);
 
   for(const MapWaypoint& waypoint : waypoints)
   {
@@ -385,7 +385,7 @@ void MapPainterNav::paintWaypoints(const QHash<int, map::MapWaypoint>& waypoints
       continue;
 
     float x, y;
-    if(wToSBuf(waypoint.position, x, y, margins))
+    if(wToSBuf(waypoint.position, x, y, MARGINS))
     {
       if(context->objCount())
         return;

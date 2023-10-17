@@ -400,6 +400,8 @@ void MapPainterMark::paintHighlights()
 
 void MapPainterMark::paintLogEntries(const QList<map::MapLogbookEntry>& entries)
 {
+  const static QMargins MARGINS(120, 10, 10, 10);
+
   GeoPainter *painter = context->painter;
   painter->setBackgroundMode(Qt::TransparentMode);
   painter->setBackground(Qt::black);
@@ -622,7 +624,6 @@ void MapPainterMark::paintLogEntries(const QList<map::MapLogbookEntry>& entries)
     textflags::TextFlags flags = context->airportTextFlagsRoute(false /* draw as route */, true /* draw as log */);
     float size = context->szF(context->symbolSizeAirport, context->mapLayer->getAirportSymbolSize());
     context->szFont(context->textSizeFlightplan);
-    QMargins margins(120, 10, 10, 10);
 
     QSet<int> airportIds;
     for(const MapLogbookEntry *entry : allLogEntries)
@@ -631,8 +632,8 @@ void MapPainterMark::paintLogEntries(const QList<map::MapLogbookEntry>& entries)
       if(!airportIds.contains(entry->departure.id))
       {
         if(entry->departure.isValid() ?
-           wToSBuf(entry->departure.position, x, y, margins) : // Use valid airport position
-           wToSBuf(entry->departurePos, x, y, margins)) // Use recorded position
+           wToSBuf(entry->departure.position, x, y, MARGINS) : // Use valid airport position
+           wToSBuf(entry->departurePos, x, y, MARGINS)) // Use recorded position
         {
           symbolPainter->drawAirportSymbol(context->painter, entry->departure, x, y, size, false, context->drawFast,
                                            context->flags2.testFlag(opts2::MAP_AIRPORT_HIGHLIGHT_ADDON));
@@ -646,8 +647,8 @@ void MapPainterMark::paintLogEntries(const QList<map::MapLogbookEntry>& entries)
       if(!airportIds.contains(entry->destination.id))
       {
         if(entry->destination.isValid() ?
-           wToSBuf(entry->destination.position, x, y, margins) :
-           wToSBuf(entry->destinationPos, x, y, margins))
+           wToSBuf(entry->destination.position, x, y, MARGINS) :
+           wToSBuf(entry->destinationPos, x, y, MARGINS))
         {
           symbolPainter->drawAirportSymbol(context->painter, entry->destination, x, y, size, false, context->drawFast,
                                            context->flags2.testFlag(opts2::MAP_AIRPORT_HIGHLIGHT_ADDON));

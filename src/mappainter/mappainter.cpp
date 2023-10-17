@@ -411,9 +411,10 @@ void MapPainter::drawLineStraight(Marble::GeoPainter *painter, const atools::geo
 
 void MapPainter::drawLine(QPainter *painter, const QLineF& line)
 {
+  static const QMarginsF MARGINS(1., 1., 1., 1.);
   QRectF rect(line.p1(), line.p2());
   // Add margins to avoid null width and height which will not intersect with viewport
-  rect = rect.normalized().marginsAdded(QMarginsF(1., 1., 1., 1.));
+  rect = rect.normalized().marginsAdded(MARGINS);
 
   if(atools::geo::lineValid(line) && QRectF(painter->viewport()).intersects(rect))
   {

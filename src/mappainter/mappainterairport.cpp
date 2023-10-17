@@ -134,6 +134,7 @@ void MapPainterAirport::render()
 
 void MapPainterAirport::collectVisibleAirports(QVector<PaintAirportType>& visibleAirports)
 {
+  const static QMargins MARGINS(100, 10, 10, 10);
   QSet<QString> visibleAirportIds;
   visibleAirports.clear();
 
@@ -193,7 +194,6 @@ void MapPainterAirport::collectVisibleAirports(QVector<PaintAirportType>& visibl
   }
 
   // Use margins for text placed on the right side of the object to avoid disappearing at the left screen border
-  QMargins margins(100, 10, 10, 10);
   int minRunwayLength = context->mimimumRunwayLengthFt; // GUI setting
 
   // Collect all airports that are visible ===========================
@@ -204,7 +204,7 @@ void MapPainterAirport::collectVisibleAirports(QVector<PaintAirportType>& visibl
     {
       float x, y;
       bool hidden;
-      bool visibleOnMap = wToSBuf(airport.position, x, y, scale->getScreeenSizeForRect(airport.bounding), margins, &hidden);
+      bool visibleOnMap = wToSBuf(airport.position, x, y, scale->getScreeenSizeForRect(airport.bounding), MARGINS, &hidden);
 
       if(!hidden)
       {
@@ -316,6 +316,9 @@ void MapPainterAirport::drawXplaneApron(const map::MapApron& apron, bool fast)
 /* Draws the full airport diagram including runway, taxiways, apron, parking and more */
 void MapPainterAirport::drawAirportDiagram(const map::MapAirport& airport)
 {
+  const static QMargins MARGINS(2, 2, 2, 2);
+  const static QMargins MARGINS_SMALL(30, 30, 30, 30);
+
   Marble::GeoPainter *painter = context->painter;
   atools::util::PainterContextSaver saver(painter);
   bool fast = context->drawFast;
@@ -581,7 +584,6 @@ void MapPainterAirport::drawAirportDiagram(const map::MapAirport& airport)
   if(runways != nullptr)
   {
     // Draw black runway outlines --------------------------------
-    QMargins margins(2, 2, 2, 2);
     painter->setPen(QPen(mapcolors::runwayOutlineColor, 3, Qt::SolidLine, Qt::FlatCap));
     painter->setBrush(Qt::NoBrush);
     for(int i = 0; i < runwayCenters.size(); i++)
@@ -590,7 +592,7 @@ void MapPainterAirport::drawAirportDiagram(const map::MapAirport& airport)
       {
         painter->translate(runwayCenters.at(i));
         painter->rotate(runways->at(i).heading);
-        painter->drawRect(runwayRects.at(i).marginsAdded(margins));
+        painter->drawRect(runwayRects.at(i).marginsAdded(MARGINS));
         painter->resetTransform();
       }
     }
@@ -671,7 +673,6 @@ void MapPainterAirport::drawAirportDiagram(const map::MapAirport& airport)
     // Approximate needed margins by largest parking diameter to avoid parking circles dissappearing on the screen borders
     int size = scale->getPixelIntForFeet(200);
     QMargins margins(size, size, size, size);
-    QMargins marginsSmall(30, 30, 30, 30);
 
     // Collect parking information to avoid duplicate calculation
     struct Parking
@@ -752,7 +753,7 @@ void MapPainterAirport::drawAirportDiagram(const map::MapAirport& airport)
     if(airport.towerCoords.isValid())
     {
       float x, y;
-      if(wToSBuf(airport.towerCoords, x, y, marginsSmall))
+      if(wToSBuf(airport.towerCoords, x, y, MARGINS_SMALL))
       {
         if(airport.towerFrequency > 0)
         {
@@ -799,7 +800,7 @@ void MapPainterAirport::drawAirportDiagram(const map::MapAirport& airport)
       if(airport.towerCoords.isValid())
       {
         float x, y;
-        if(wToSBuf(airport.towerCoords, x, y, marginsSmall))
+        if(wToSBuf(airport.towerCoords, x, y, MARGINS_SMALL))
         {
           QString text = mapLayerEffective->isAirportDiagramDetail3() ? tr("Tower") : tr("T");
           painter->setPen(QPen(mapcolors::towerTextColor, 2, Qt::SolidLine, Qt::FlatCap));
