@@ -116,14 +116,14 @@ void SearchController::getSelectedMapObjects(map::MapResult& result) const
 
 void SearchController::optionsChanged()
 {
-  for(AbstractSearch *search : allSearchTabs)
+  for(AbstractSearch *search : qAsConst(allSearchTabs))
     search->optionsChanged();
 }
 
 void SearchController::styleChanged()
 {
   tabHandlerSearch->styleChanged();
-  for(AbstractSearch *search : allSearchTabs)
+  for(AbstractSearch *search : qAsConst(allSearchTabs))
     search->styleChanged();
 }
 
@@ -184,7 +184,7 @@ void SearchController::tabChanged(int index)
 
 void SearchController::saveState()
 {
-  for(AbstractSearch *s : allSearchTabs)
+  for(AbstractSearch *s : qAsConst(allSearchTabs))
     s->saveState();
 
   tabHandlerSearch->saveState();
@@ -194,7 +194,7 @@ void SearchController::restoreState()
 {
   tabHandlerSearch->restoreState();
 
-  for(AbstractSearch *s : allSearchTabs)
+  for(AbstractSearch *s : qAsConst(allSearchTabs))
     s->restoreState();
 }
 
@@ -272,13 +272,13 @@ void SearchController::postCreateSearch(AbstractSearch *search)
 
 void SearchController::preDatabaseLoad()
 {
-  for(AbstractSearch *search : allSearchTabs)
+  for(AbstractSearch *search : qAsConst(allSearchTabs))
     search->preDatabaseLoad();
 }
 
 void SearchController::postDatabaseLoad()
 {
-  for(AbstractSearch *search : allSearchTabs)
+  for(AbstractSearch *search : qAsConst(allSearchTabs))
     search->postDatabaseLoad();
 }
 
@@ -294,14 +294,14 @@ void SearchController::refreshLogdata()
 
 void SearchController::clearSelection()
 {
-  for(AbstractSearch *search : allSearchTabs)
+  for(AbstractSearch *search : qAsConst(allSearchTabs))
     search->clearSelection();
 }
 
 bool SearchController::hasSelection()
 {
   bool selection = false;
-  for(AbstractSearch *search : allSearchTabs)
+  for(AbstractSearch *search : qAsConst(allSearchTabs))
     selection |= search->hasSelection();
   return selection;
 }
@@ -447,7 +447,7 @@ void SearchController::searchSelectionChanged(const SearchBaseTable *source, int
     source->getSelectedMapObjects(result);
 
     float travelTimeRealHours = 0.f, travelTimeSimHours = 0.f, distanceNm = 0.f;
-    for(const map::MapLogbookEntry& entry : result.logbookEntries)
+    for(const map::MapLogbookEntry& entry : qAsConst(result.logbookEntries))
     {
       travelTimeRealHours += entry.travelTimeRealHours;
       travelTimeSimHours += entry.travelTimeSimHours;
