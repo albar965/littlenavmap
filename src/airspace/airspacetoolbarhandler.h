@@ -75,7 +75,7 @@ private:
   /* Update button depressed state or not */
   void updateToolButtons();
 
-  /* Enable or disable actions based on master airpace action */
+  /* Enable or disable actions based on master airspace action */
   void updateToolActions();
 
   /* Extract flags from not grouped actions all/none/type and emit updateAirspaceTypes() */

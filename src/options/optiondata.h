@@ -524,6 +524,20 @@ enum DisplayOptionNavAid
 Q_DECLARE_FLAGS(DisplayOptionsNavAid, DisplayOptionNavAid);
 Q_DECLARE_OPERATORS_FOR_FLAGS(optsd::DisplayOptionsNavAid);
 
+/* Airspace labels */
+enum DisplayOptionAirspace
+{
+  AIRSPACE_NONE = 0,
+  AIRSPACE_NAME = 1 << 1, /* Airspace name */
+  AIRSPACE_RESTRICTIVE_NAME = 1 << 2, /* Restrictive name */
+  AIRSPACE_TYPE = 1 << 3, /* Type */
+  AIRSPACE_ALTITUDE = 1 << 4, /* Altitude restriction */
+  AIRSPACE_COM = 1 << 5 /* COM frequencies */
+};
+
+Q_DECLARE_FLAGS(DisplayOptionsAirspace, DisplayOptionAirspace);
+Q_DECLARE_OPERATORS_FOR_FLAGS(optsd::DisplayOptionsAirspace);
+
 /* Measurement lines */
 enum DisplayOptionMeasurement
 {
@@ -975,6 +989,11 @@ public:
     return displayOptionsNavAid;
   }
 
+  const optsd::DisplayOptionsAirspace& getDisplayOptionsAirspace() const
+  {
+    return displayOptionsAirspace;
+  }
+
   const optsd::DisplayOptionsRoute& getDisplayOptionsRoute() const
   {
     return displayOptionsRoute;
@@ -1293,6 +1312,11 @@ public:
     return displayTransparencyAirspace;
   }
 
+  int getDisplayTextSizeAirspace() const
+  {
+    return displayTextSizeAirspace;
+  }
+
 private:
   friend class OptionsDialog;
 
@@ -1589,6 +1613,9 @@ private:
   // spinBoxOptionsDisplayTransparencyAirspace
   int displayTransparencyAirspace = 80;
 
+  // spinBoxOptionsDisplayTextSizeAirspace
+  int displayTextSizeAirspace = 100;
+
   QColor flightplanColor = QColor(Qt::yellow), flightplanOutlineColor = QColor(Qt::black), flightplanProcedureColor = QColor(255, 150, 0),
          flightplanActiveColor = QColor(Qt::magenta), flightplanPassedColor = QColor(Qt::gray), trailColor = QColor(Qt::black),
          measurementColor = QColor(Qt::black);
@@ -1620,6 +1647,8 @@ private:
                                                                optsd::MEASUREMENT_DIST | optsd::MEASUREMENT_LABEL;
 
   optsd::DisplayOptionsNavAid displayOptionsNavAid = optsd::NAVAIDS_NONE;
+  optsd::DisplayOptionsAirspace displayOptionsAirspace = optsd::AIRSPACE_RESTRICTIVE_NAME | optsd::AIRSPACE_TYPE |
+                                                         optsd::AIRSPACE_ALTITUDE | optsd::AIRSPACE_COM;
 
   optsd::DisplayOptionsRoute displayOptionsRoute = optsd::ROUTE_DISTANCE | optsd::ROUTE_INITIAL_FINAL_MAG_COURSE;
 

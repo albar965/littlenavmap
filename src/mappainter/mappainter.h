@@ -79,6 +79,7 @@ struct PaintContext
   map::MapTypes objectTypes; /* Object types that should be drawn */
   map::MapDisplayTypes objectDisplayTypes; /* Object types that should be drawn */
   map::MapAirspaceFilter airspaceFilterByLayer; /* Airspaces */
+  map::MapAirspaceTypes airspaceTextsByLayer;
   atools::geo::Rect viewportRect; /* Rectangle of current viewport */
   QRect screenRect; /* Screen coordinate rect */
 
@@ -122,6 +123,7 @@ struct PaintContext
   float symbolSizeHighlight = 1.f;
   float thicknessFlightplan = 1.f;
   float textSizeNavaid = 1.f;
+  float textSizeAirspace = 1.f;
   float textSizeUserpoint = 1.f;
   float textSizeAirway = 1.f;
   float thicknessAirway = 1.f;
@@ -346,6 +348,9 @@ protected:
 
   void drawPolygon(Marble::GeoPainter *painter, const atools::geo::LineString& linestring);
 
+  void drawPolygons(Marble::GeoPainter *painter, const QVector<QPolygonF *>& polygons);
+  void drawPolygon(Marble::GeoPainter *painter, const QPolygonF& polygon);
+
   /* Draw simple text with current settings. Corners are the text corners pointing to the position */
   void drawText(Marble::GeoPainter *painter, const atools::geo::Pos& pos, const QString& text, bool topCorner, bool leftCorner);
 
@@ -422,6 +427,8 @@ protected:
   WaypointTrackQuery *waypointQuery = nullptr;
   AirportQuery *airportQuery = nullptr;
   MapScale *scale = nullptr;
+
+private:
 };
 
 #endif // LITTLENAVMAP_MAPPAINTER_H

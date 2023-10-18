@@ -132,6 +132,11 @@ public:
   atools::geo::Pos sToW(const QPoint& point) const;
   atools::geo::Pos sToW(const QPointF& point) const;
 
+  /* Get screen polygons for given line string. Polygons are cleaned up from duplicates and split at anti-meridian.
+   * Free with releasePolygons() */
+  const QVector<QPolygonF *> createPolygons(const atools::geo::LineString& linestring, const QRectF& screenRect) const;
+  void releasePolygons(const QVector<QPolygonF *>& polygons) const;
+
   /* Shortcuts for more readable code */
   static Q_DECL_CONSTEXPR Marble::GeoDataCoordinates::Unit DEG = Marble::GeoDataCoordinates::Degree;
   static Q_DECL_CONSTEXPR Marble::GeoDataCoordinates::BearingType INITBRG = Marble::GeoDataCoordinates::InitialBearing;
@@ -139,6 +144,7 @@ public:
 
 private:
   bool wToSInternal(const Marble::GeoDataCoordinates& coords, double& x, double& y, const QSize& size, bool *isHidden) const;
+  const QVector<QPolygonF *> createPolygonsInternal(const atools::geo::LineString& linestring, const QRectF& screenRect) const;
 
   const Marble::ViewportParams *viewport;
 

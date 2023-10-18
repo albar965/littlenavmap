@@ -64,7 +64,15 @@ public:
   void drawTextAlongLines();
   void clearLineTextData();
 
-  void drawTextAlongOneLine(QString text, float bearing, const QPointF& textCoord, float textLineLength) const;
+  /* Side overrides all object set values like setTextOnLineCenter().
+   * Position when looking from p1 to p2 */
+  enum Side
+  {
+    NONE, LEFT, RIGHT, CENTER
+  };
+
+  void drawTextAlongOneLine(QString text, float bearing, const QPointF& textCoord, float textLineLength,
+                            TextPlacement::Side side = NONE, float offset = 2.f) const;
 
   /* Find text position along a great circle route
    *  @param x,y resulting text position

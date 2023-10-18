@@ -3079,21 +3079,15 @@ void HtmlInfoBuilder::airspaceText(const MapAirspace& airspace, const atools::sq
 
   html.table();
 
-  if(!airspace.restrictiveDesignation.isEmpty())
-  {
-    QString restrictedName = airspace.restrictiveType % "-" % airspace.restrictiveDesignation;
-    if(restrictedName != airspace.name)
-      html.row2(tr("Designation:"), restrictedName);
-  }
-
-  html.row2(tr("Type:"), map::airspaceTypeToString(airspace.type));
+  html.row2If(tr("Designation:"), map::airspaceRestrictiveName(airspace));
+  html.row2If(tr("Type:"), map::airspaceTypeToString(airspace.type));
 
   if(!airspace.isOnline())
   {
     if(airspace.minAltitudeType.isEmpty())
       html.row2(tr("Min altitude:"), tr("Unknown"));
     else
-      html.row2(tr("Min altitude:"), Unit::altFeet(airspace.minAltitude) % " " % airspace.minAltitudeType);
+      html.row2(tr("Min altitude:"), Unit::altFeet(airspace.minAltitude) % tr(" ") % airspace.minAltitudeType);
 
     QString maxAlt;
     if(airspace.maxAltitudeType.isEmpty())
@@ -3101,7 +3095,7 @@ void HtmlInfoBuilder::airspaceText(const MapAirspace& airspace, const atools::sq
     else if(airspace.maxAltitudeType == "UL")
       maxAlt = tr("Unlimited");
     else
-      maxAlt = Unit::altFeet(airspace.maxAltitude) % " " % airspace.maxAltitudeType;
+      maxAlt = Unit::altFeet(airspace.maxAltitude) % tr(" ") % airspace.maxAltitudeType;
 
     html.row2(tr("Max altitude:"), maxAlt);
   }
@@ -3158,8 +3152,15 @@ void HtmlInfoBuilder::airspaceText(const MapAirspace& airspace, const atools::sq
 
 #ifdef DEBUG_INFORMATION
   if(info)
+  {
     html.small(QString("Database: source = %1, boundary_id = %2").
                arg(map::airspaceSourceText(airspace.src)).arg(airspace.getId())).br();
+    html.small(QString("name = %1, comName = %2, comType = %3, minAltitudeType = %4, maxAltitudeType = %5, "
+                       "multipleCode = %6, restrictiveDesignation = %7, restrictiveType = %8, timeCode = %9").
+               arg(airspace.name).arg(airspace.comName).arg(airspace.comType).arg(airspace.minAltitudeType).
+               arg(airspace.maxAltitudeType).arg(airspace.multipleCode).arg(airspace.restrictiveDesignation).
+               arg(airspace.restrictiveType).arg(airspace.timeCode));
+  }
 #endif
 
 }

@@ -751,7 +751,6 @@ void MapPainterMark::paintAirwayTextList(const QList<map::MapAirway>& airwayList
 
 void MapPainterMark::paintAirspace(const map::MapAirspace& airspace)
 {
-  const ageo::LineString *airspaceGeometry = NavApp::getAirspaceController()->getAirspaceGeometry(airspace.combinedId());
   Marble::GeoPainter *painter = context->painter;
   const OptionData& optionData = OptionData::instance();
 
@@ -769,40 +768,34 @@ void MapPainterMark::paintAirspace(const map::MapAirspace& airspace)
   painter->setBrush(mapcolors::colorForAirspaceFill(airspace, optionData.getDisplayTransparencyAirspace()));
   context->szFont(context->textSizeRangeUserFeature);
 
-  if(airspaceGeometry != nullptr)
+  if(context->viewportRect.overlaps(airspace.bounding))
   {
-    if(context->viewportRect.overlaps(airspace.bounding))
+    if(context->objCount())
+      return;
+
+    const atools::geo::LineString *lineString = NavApp::getAirspaceController()->getAirspaceGeometry(airspace.combinedId());
+
+    if(lineString != nullptr)
     {
-      if(context->objCount())
-        return;
-
-      Marble::GeoDataLinearRing linearRing;
-      linearRing.setTessellate(true);
-
-      for(const ageo::Pos& pos : *airspaceGeometry)
-        linearRing.append(Marble::GeoDataCoordinates(pos.getLonX(), pos.getLatY(), 0, DEG));
-      GeoDataCoordinates center = linearRing.latLonAltBox().center();
+      const QVector<QPolygonF *> polygons = createPolygons(*lineString, context->screenRect);
 
       if(!context->drawFast)
       {
         // Draw black background for outline
         painter->setPen(outerPen);
-        painter->drawPolygon(linearRing);
+        for(const QPolygonF *polygon : polygons)
+          painter->drawPolygon(*polygon);
         painter->setPen(innerPen);
       }
-      painter->drawPolygon(linearRing);
 
-      int x, y;
-      if(wToS(center, x, y))
-      {
-        QStringList texts;
-        texts << (airspace.isOnline() ? airspace.name : formatter::capNavString(airspace.name))
-              << map::airspaceTypeToString(airspace.type);
-        if(!airspace.restrictiveDesignation.isEmpty())
-          texts << (airspace.restrictiveType % "-" % airspace.restrictiveDesignation);
+      for(const QPolygonF *polygon : polygons)
+        painter->drawPolygon(*polygon);
 
-        symbolPainter->textBoxF(painter, {texts}, innerPen, x, y, textatt::CENTER);
-      }
+      QPointF center = polygons.constFirst()->boundingRect().center();
+      symbolPainter->textBoxF(painter, {map::airspaceNameMap(airspace, 20, true, true, true, true, true)}, innerPen,
+                              static_cast<float>(center.x()), static_cast<float>(center.y()), textatt::CENTER);
+
+      releasePolygons(polygons);
     }
   }
 }

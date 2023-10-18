@@ -382,10 +382,16 @@ public:
     return markerSymbolSize;
   }
 
-  bool isAirspace() const
+  bool isAnyAirspace() const
   {
     return isAirspaceCenter() || isAirspaceFg() || isAirspaceFirUir() || isAirspaceIcao() || isAirspaceOther() ||
            isAirspaceRestricted() || isAirspaceSpecial();
+  }
+
+  bool isAnyAirspaceText() const
+  {
+    return isAirspaceCenterText() || isAirspaceFgText() || isAirspaceFirUirText() || isAirspaceIcaoText() || isAirspaceOtherText() ||
+           isAirspaceRestrictedText() || isAirspaceSpecialText();
   }
 
   bool isAirspaceCenter() const
@@ -421,6 +427,41 @@ public:
   bool isAirspaceOther() const
   {
     return airspaceOther;
+  }
+
+  bool isAirspaceCenterText() const
+  {
+    return airspaceCenterText;
+  }
+
+  bool isAirspaceIcaoText() const
+  {
+    return airspaceIcaoText;
+  }
+
+  bool isAirspaceFgText() const
+  {
+    return airspaceFgText;
+  }
+
+  bool isAirspaceFirUirText() const
+  {
+    return airspaceFirUirText;
+  }
+
+  bool isAirspaceRestrictedText() const
+  {
+    return airspaceRestrictedText;
+  }
+
+  bool isAirspaceSpecialText() const
+  {
+    return airspaceSpecialText;
+  }
+
+  bool isAirspaceOtherText() const
+  {
+    return airspaceOtherText;
   }
 
   bool isAiAircraftLarge() const
@@ -595,6 +636,11 @@ public:
     return routeFontScale;
   }
 
+  float getAirspaceFontScale() const
+  {
+    return airspaceFontScale;
+  }
+
   /* Load layer data from stream which is already positioned inside a layer element */
   void loadFromXml(atools::util::XmlStream& xmlStream);
 
@@ -622,7 +668,7 @@ private:
   int windBarbsSymbolSize = 6;
 
   float airportMsaSymbolScale = 6.f;
-  float airportMinorFontScale = 1.f, airportFontScale = 1.f, routeFontScale = 1.f;
+  float airportMinorFontScale = 1.f, airportFontScale = 1.f, routeFontScale = 1.f, airspaceFontScale = 1.f;
 
   bool waypoint = true, waypointName = true, vor = true, vorIdent = true, vorInfo = true, vorLarge = true, ndb = true, ndbIdent = true,
        ndbInfo = true, marker = true, markerInfo = true, userpointInfo = true, ils = true, ilsIdent = true, ilsInfo = true,
@@ -641,6 +687,9 @@ private:
 
   bool airspaceCenter = true, airspaceIcao = true, airspaceFg = true, airspaceFirUir = true, airspaceRestricted = true,
        airspaceSpecial = true, airspaceOther = true;
+
+  bool airspaceCenterText = true, airspaceIcaoText = true, airspaceFgText = true, airspaceFirUirText = true, airspaceRestrictedText = true,
+       airspaceSpecialText = true, airspaceOtherText = true;
 
   int aiAircraftSize = 32;
   bool aiAircraftGround = true, aiAircraftLarge = true, aiAircraftSmall = true, onlineAircraft = true, aiShipLarge = true,

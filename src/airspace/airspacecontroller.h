@@ -153,8 +153,8 @@ private:
   void getAirspacesInternal(AirspaceVector& airspaceVector, const Marble::GeoDataLatLonBox& rect,
                             const MapLayer *mapLayer, const map::MapAirspaceFilter& filter, float flightPlanAltitude,
                             bool lazy, map::MapAirspaceSources src, bool& overflow);
-  void preLoadAirpaces();
-  void postLoadAirpaces();
+  void preLoadAirspaces();
+  void postLoadAirspaces();
 
   void loadAirspace(atools::fs::userdata::AirspaceReaderBase& reader, const QString& file, int fileId, int& nextAirspaceId,
                     int& numReadFile);

@@ -201,6 +201,20 @@ void MapLayer::loadFromXml(atools::util::XmlStream& xmlStream)
       airspaceRestricted = xmlStream.readElementTextBool();
     else if(reader.name() == "AirspaceSpecial")
       airspaceSpecial = xmlStream.readElementTextBool();
+    else if(reader.name() == "AirspaceCenterText")
+      airspaceCenterText = xmlStream.readElementTextBool();
+    else if(reader.name() == "AirspaceFgText")
+      airspaceFgText = xmlStream.readElementTextBool();
+    else if(reader.name() == "AirspaceFirUirText")
+      airspaceFirUirText = xmlStream.readElementTextBool();
+    else if(reader.name() == "AirspaceIcaoText")
+      airspaceIcaoText = xmlStream.readElementTextBool();
+    else if(reader.name() == "AirspaceOtherText")
+      airspaceOtherText = xmlStream.readElementTextBool();
+    else if(reader.name() == "AirspaceRestrictedText")
+      airspaceRestrictedText = xmlStream.readElementTextBool();
+    else if(reader.name() == "AirspaceSpecialText")
+      airspaceSpecialText = xmlStream.readElementTextBool();
     else if(reader.name() == "Airway")
       airway = xmlStream.readElementTextBool();
     else if(reader.name() == "AirwayDetails")
@@ -313,6 +327,8 @@ void MapLayer::loadFromXml(atools::util::XmlStream& xmlStream)
       airportMinorFontScale = xmlStream.readElementTextFloat();
     else if(reader.name() == "RouteFontScale")
       routeFontScale = xmlStream.readElementTextFloat();
+    else if(reader.name() == "AirspaceFontScale")
+      airspaceFontScale = xmlStream.readElementTextFloat();
     else
       xmlStream.skipCurrentElement(true /* warn */);
   }
@@ -367,6 +383,13 @@ QDebug operator<<(QDebug out, const MapLayer& record)
   out << "<AirspaceOther>" << record.airspaceOther << "</AirspaceOther>" << endl;
   out << "<AirspaceRestricted>" << record.airspaceRestricted << "</AirspaceRestricted>" << endl;
   out << "<AirspaceSpecial>" << record.airspaceSpecial << "</AirspaceSpecial>" << endl;
+  out << "<AirspaceCenterText>" << record.airspaceCenterText << "</AirspaceCenterText>" << endl;
+  out << "<AirspaceFgText>" << record.airspaceFgText << "</AirspaceFgText>" << endl;
+  out << "<AirspaceFirUirText>" << record.airspaceFirUirText << "</AirspaceFirUirText>" << endl;
+  out << "<AirspaceIcaoText>" << record.airspaceIcaoText << "</AirspaceIcaoText>" << endl;
+  out << "<AirspaceOtherText>" << record.airspaceOtherText << "</AirspaceOtherText>" << endl;
+  out << "<AirspaceRestrictedText>" << record.airspaceRestrictedText << "</AirspaceRestrictedText>" << endl;
+  out << "<AirspaceSpecialText>" << record.airspaceSpecialText << "</AirspaceSpecialText>" << endl;
   out << "<Airway>" << record.airway << "</Airway>" << endl;
   out << "<AirwayDetails>" << record.airway << "</AirwayDetails>" << endl;
   out << "<AirwayIdent>" << record.airwayIdent << "</AirwayIdent>" << endl;

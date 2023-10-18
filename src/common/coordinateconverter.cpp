@@ -23,6 +23,7 @@
 #include "geo/linestring.h"
 
 #include <marble/GeoDataLineString.h>
+#include <marble/GeoDataLinearRing.h>
 #include <marble/ViewportParams.h>
 
 #include <QLineF>
@@ -394,4 +395,57 @@ bool CoordinateConverter::wToSInternal(const Marble::GeoDataCoordinates& coords,
   if(isHidden != nullptr)
     *isHidden = hidden;
   return visible && !hidden;
+}
+
+const QVector<QPolygonF *> CoordinateConverter::createPolygons(const atools::geo::LineString& linestring, const QRectF& screenRect) const
+{
+  QVector<QPolygonF *> polys;
+  for(const LineString& ls : linestring.splitAtAntiMeridianList())
+    polys.append(createPolygonsInternal(ls, screenRect));
+  return polys;
+}
+
+const QVector<QPolygonF *> CoordinateConverter::createPolygonsInternal(const atools::geo::LineString& linestring,
+                                                                       const QRectF& screenRect) const
+{
+  Marble::GeoDataLinearRing linearRing;
+  linearRing.setTessellate(true);
+
+  for(const Pos& pos : linestring)
+    linearRing.append(Marble::GeoDataCoordinates(pos.getLonX(), pos.getLatY(), 0, DEG));
+
+  QVector<QPolygonF *> polygons;
+  if(viewport->viewLatLonAltBox().intersects(linearRing.latLonAltBox()) && viewport->resolves(linearRing.latLonAltBox()))
+    // Function might return two polygons in Mercator where one is not visible on the screen
+    // Polygons will contain more points than the world coordinate polygon
+    viewport->screenCoordinates(linearRing, polygons);
+
+  if(polygons.size() > 1)
+  {
+    // Remove all invisible which appear especially in Mercator projection
+    QPolygonF screenPolygon(screenRect);
+    polygons.erase(std::remove_if(polygons.begin(), polygons.end(), [&screenPolygon](const QPolygonF *polygon)->bool {
+      return !polygon->intersects(screenPolygon);
+    }), polygons.end());
+
+    // Remove all points which are too close together
+    for(QPolygonF *polygon : qAsConst(polygons))
+    {
+      // Remove all consecutive duplicate elements from the range
+      polygon->erase(std::unique(polygon->begin(), polygon->end(), [](QPointF& p1, QPointF& p2) -> bool {
+        return atools::almostEqual(p1.x(), p2.x(), 0.5) && atools::almostEqual(p1.y(), p2.y(), 0.5);
+      }), polygon->end());
+
+      // Close again
+      if(!polygon->isClosed())
+        polygon->append(polygon->constFirst());
+    }
+  }
+
+  return polygons;
+}
+
+void CoordinateConverter::releasePolygons(const QVector<QPolygonF *>& polygons) const
+{
+  qDeleteAll(polygons);
 }

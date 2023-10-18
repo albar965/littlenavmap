@@ -191,7 +191,40 @@ map::MapAirspaceFilter MapPaintLayer::getShownAirspacesTypesByLayer() const
   if(!mapLayer->isAirspaceOther())
     filter.types &= ~map::AIRSPACE_OTHER;
 
+  filter.flags.setFlag(map::AIRSPACE_NO_MULTIPLE_Z, OptionData::instance().getFlags().testFlag(opts::MAP_AIRSPACE_NO_MULT_Z));
+
   return filter;
+}
+
+map::MapAirspaceTypes MapPaintLayer::getShownAirspaceTextsByLayer() const
+{
+  map::MapAirspaceTypes types = map::AIRSPACE_NONE;
+
+  if(mapLayer != nullptr)
+  {
+    if(mapLayer->isAirspaceIcaoText())
+      types |= map::AIRSPACE_CLASS_ICAO;
+
+    if(mapLayer->isAirspaceFgText())
+      types |= map::AIRSPACE_CLASS_FG;
+
+    if(mapLayer->isAirspaceFirUirText())
+      types |= map::AIRSPACE_FIR_UIR;
+
+    if(mapLayer->isAirspaceCenterText())
+      types |= map::AIRSPACE_CENTER;
+
+    if(mapLayer->isAirspaceRestrictedText())
+      types |= map::AIRSPACE_RESTRICTED;
+
+    if(mapLayer->isAirspaceSpecialText())
+      types |= map::AIRSPACE_SPECIAL;
+
+    if(mapLayer->isAirspaceOtherText())
+      types |= map::AIRSPACE_OTHER;
+  }
+
+  return types;
 }
 
 void MapPaintLayer::initQueries()
@@ -297,6 +330,7 @@ bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport, const 
       context.objectTypes = objectTypes;
       context.objectDisplayTypes = objectDisplayTypes;
       context.airspaceFilterByLayer = getShownAirspacesTypesByLayer();
+      context.airspaceTextsByLayer = getShownAirspaceTextsByLayer();
       context.viewContext = mapPaintWidget->viewContext();
       context.drawFast = mapScrollDetail == opts::DETAIL_LOW && mapPaintWidget->viewContext() == Marble::Animation;
       context.lazyUpdate = mapScrollDetail != opts::DETAIL_HIGH && mapPaintWidget->viewContext() == Marble::Animation;
@@ -341,6 +375,7 @@ bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport, const 
       context.textSizeAirport = od.getDisplayTextSizeAirport() / 100.f;
       context.textSizeFlightplan = od.getDisplayTextSizeFlightplan() / 100.f;
       context.textSizeNavaid = od.getDisplayTextSizeNavaid() / 100.f;
+      context.textSizeAirspace = od.getDisplayTextSizeAirspace() / 100.f;
       context.textSizeUserpoint = od.getDisplayTextSizeUserpoint() / 100.f;
       context.textSizeAirway = od.getDisplayTextSizeAirway() / 100.f;
       context.textSizeCompassRose = od.getDisplayTextSizeCompassRose() / 100.f;

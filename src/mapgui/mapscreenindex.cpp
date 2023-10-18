@@ -140,7 +140,6 @@ void MapScreenIndex::updateAirspaceScreenGeometryInternal(QSet<map::MapAirspaceI
   if(scale->isValid() && controller != nullptr && paintLayer != nullptr)
   {
     map::MapAirspaceFilter filter = mapWidget->getShownAirspaceTypesByLayer();
-    filter.flags.setFlag(map::AIRSPACE_NO_MULTIPLE_Z, OptionData::instance().getFlags().testFlag(opts::MAP_AIRSPACE_NO_MULT_Z));
 
     AirspaceVector airspaces;
 
@@ -148,7 +147,7 @@ void MapScreenIndex::updateAirspaceScreenGeometryInternal(QSet<map::MapAirspaceI
     bool overflow = false;
     if(!highlights && paintLayer->getShownMapTypes().testFlag(map::AIRSPACE))
       controller->getAirspaces(airspaces, curBox, paintLayer->getMapLayer(), filter,
-                               NavApp::getRouteConst().getCruiseAltitudeFt(), false, source, overflow);
+                               NavApp::getRouteConst().getCruiseAltitudeFt(), false /* lazy */, source, overflow);
 
     // Get highlighted airspaces from info window ================================
     for(const map::MapAirspace& airspace : qAsConst(airspaceHighlights))
@@ -175,18 +174,17 @@ void MapScreenIndex::updateAirspaceScreenGeometryInternal(QSet<map::MapAirspaceI
       // Check if airspace overlaps with current screen and is not already in list
       if(airspacebox.intersects(curBox) && !ids.contains(airspace->combinedId()))
       {
-
         const atools::geo::LineString *lines = controller->getAirspaceGeometry(airspace->combinedId());
         if(lines != nullptr)
         {
-          QVector<QPolygonF> polygons = conv.wToS(*lines);
-
-          for(const QPolygonF& poly : qAsConst(polygons))
+          const QVector<QPolygonF *> polys = conv.createPolygons(*lines, mapWidget->rect());
+          for(const QPolygonF *poly : qAsConst(polys))
           {
             // Cut off all polygon parts that are not visible on screen
-            airspacePolygons.append(std::make_pair(airspace->combinedId(), poly.intersected(QPolygon(mapWidget->rect())).toPolygon()));
+            airspacePolygons.append(std::make_pair(airspace->combinedId(), poly->intersected(QPolygon(mapWidget->rect())).toPolygon()));
             ids.insert(airspace->combinedId());
           }
+          conv.releasePolygons(polys);
         }
       }
     }
@@ -217,7 +215,7 @@ void MapScreenIndex::updateAirspaceScreenGeometry(const Marble::GeoDataLatLonBox
   // First get geometry from highlights
   updateAirspaceScreenGeometryInternal(ids, NavApp::getAirspaceController()->getAirspaceSources(), curBox, true /* highlights */);
 
-  if(!paintLayer->getMapLayer()->isAirspace() || !paintLayer->getShownMapTypes().testFlag(map::AIRSPACE))
+  if(!paintLayer->getMapLayer()->isAnyAirspace() || !paintLayer->getShownMapTypes().testFlag(map::AIRSPACE))
     return;
 
   // Do not put into index if nothing is drawn
@@ -1211,19 +1209,12 @@ void MapScreenIndex::updateAllGeometry(const Marble::GeoDataLatLonBox& curBox)
   updateIlsScreenGeometry(curBox);
 }
 
-/* Get all airways near cursor position */
 void MapScreenIndex::getNearestAirspaces(int xs, int ys, map::MapResult& result) const
 {
-  for(int i = 0; i < airspacePolygons.size(); i++)
+  for(const std::pair<map::MapAirspaceId, QPolygon>& polyPair : airspacePolygons)
   {
-    const std::pair<map::MapAirspaceId, QPolygon>& polyPair = airspacePolygons.at(i);
-
     if(polyPair.second.containsPoint(QPoint(xs, ys), Qt::OddEvenFill))
-    {
-      map::MapAirspace airspace;
-      NavApp::getAirspaceController()->getAirspaceById(airspace, polyPair.first);
-      result.airspaces.append(airspace);
-    }
+      result.airspaces.append(NavApp::getAirspaceController()->getAirspaceById(polyPair.first));
   }
 }
 

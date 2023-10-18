@@ -63,12 +63,20 @@
 
         <!-- Airspaces ================= -->
         <AirspaceCenter>true</AirspaceCenter>
+        <AirspaceCenterText>true</AirspaceCenterText>
         <AirspaceFg>true</AirspaceFg>
+        <AirspaceFgText>true</AirspaceFgText>
         <AirspaceFirUir>true</AirspaceFirUir>
+        <AirspaceFirUirText>true</AirspaceFirUirText>
         <AirspaceIcao>true</AirspaceIcao>
+        <AirspaceIcaoText>true</AirspaceIcaoText>
         <AirspaceOther>true</AirspaceOther>
+        <AirspaceOtherText>true</AirspaceOtherText>
         <AirspaceRestricted>true</AirspaceRestricted>
+        <AirspaceRestrictedText>true</AirspaceRestrictedText>
         <AirspaceSpecial>true</AirspaceSpecial>
+        <AirspaceSpecialText>true</AirspaceSpecialText>
+        <AirspaceFontScale>1</AirspaceFontScale>
 
         <!-- Airways ================= -->
         <Airway>true</Airway>
@@ -293,6 +301,7 @@
         <AirportMinorIdent>false</AirportMinorIdent>
         <AirportMinorSymbolSize>7</AirportMinorSymbolSize>
         <AirportSymbolSize>8</AirportSymbolSize>
+        <AirspaceFontScale>0.95</AirspaceFontScale>
         <MinRunwayLength>2000</MinRunwayLength>
         <NdbSymbolSize>8</NdbSymbolSize>
         <OnlineAircraftText>false</OnlineAircraftText>
@@ -305,6 +314,9 @@
         <AiAircraftSize>26</AiAircraftSize>
         <AirportMinor>false</AirportMinor>
         <AirportRouteInfo>false</AirportRouteInfo>
+        <AirspaceOtherText>false</AirspaceOtherText>
+        <AirspaceRestrictedText>false</AirspaceRestrictedText>
+        <AirspaceSpecialText>false</AirspaceSpecialText>
         <AirwayWaypoint>false</AirwayWaypoint>
         <Ils>false</Ils>
         <MinRunwayLength>4000</MinRunwayLength>
@@ -322,6 +334,9 @@
         <AirspaceOther>false</AirspaceOther>
         <AirspaceRestricted>false</AirspaceRestricted>
         <AirspaceSpecial>false</AirspaceSpecial>
+        <AirspaceFgText>false</AirspaceFgText>
+        <AirspaceIcaoText>false</AirspaceIcaoText>
+        <AirspaceFontScale>0.8</AirspaceFontScale>
         <AirwayDetails>false</AirwayDetails>
         <Holding>false</Holding>
         <MinRunwayLength>6000</MinRunwayLength>
@@ -341,6 +356,7 @@
         <AirportSymbolSize>6</AirportSymbolSize>
         <AirspaceFg>false</AirspaceFg>
         <AirspaceIcao>false</AirspaceIcao>
+        <AirspaceCenterText>false</AirspaceCenterText>
         <Airway>false</Airway>
         <ApproachDetail>false</ApproachDetail>
         <MinRunwayLength>8000</MinRunwayLength>
@@ -364,6 +380,7 @@
         <AirportWeather>false</AirportWeather>
         <AirportWeatherDetails>false</AirportWeatherDetails>
         <AirspaceCenter>false</AirspaceCenter>
+        <AirspaceFontScale>0.75</AirspaceFontScale>
         <Mora>false</Mora>
         <NdbRouteIdent>false</NdbRouteIdent>
         <VorRouteIdent>false</VorRouteIdent>
@@ -393,6 +410,7 @@
       <!-- Distance cutoff limit. -->
       <Layer MaximumRangeKm="10000">
         <WindBarbs>10</WindBarbs>
+        <AirspaceFirUirText>false</AirspaceFirUirText>
         <AiAircraftLarge>false</AiAircraftLarge>
       </Layer>
       <!-- =================================================================================== -->

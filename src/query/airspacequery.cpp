@@ -232,6 +232,12 @@ const QList<map::MapAirspace> *AirspaceQuery::getAirspaces(const GeoDataLatLonBo
   return &airspaceCache.list;
 }
 
+void AirspaceQuery::airspaceGeometry(LineString *lines, const QByteArray& bytes)
+{
+  atools::fs::common::BinaryGeometry geometry(bytes);
+  geometry.swapGeometry(*lines);
+}
+
 const LineString *AirspaceQuery::getAirspaceGeometryById(int airspaceId)
 {
   if(!query::valid(Q_FUNC_INFO, airspaceLinesByIdQuery))
@@ -241,19 +247,16 @@ const LineString *AirspaceQuery::getAirspaceGeometryById(int airspaceId)
     return airspaceLineCache.object(airspaceId);
   else
   {
-    LineString *lines = new LineString;
+    LineString *linestring = new LineString;
 
     airspaceLinesByIdQuery->bindValue(":id", airspaceId);
     airspaceLinesByIdQuery->exec();
     if(airspaceLinesByIdQuery->next())
-    {
-      atools::fs::common::BinaryGeometry geometry(airspaceLinesByIdQuery->value("geometry").toByteArray());
-      geometry.swapGeometry(*lines);
-    }
+      airspaceGeometry(linestring, airspaceLinesByIdQuery->value("geometry").toByteArray());
     airspaceLinesByIdQuery->finish();
-    airspaceLineCache.insert(airspaceId, lines);
+    airspaceLineCache.insert(airspaceId, linestring);
 
-    return lines;
+    return linestring;
   }
 }
 
@@ -285,8 +288,7 @@ const LineString *AirspaceQuery::getAirspaceGeometryByFile(QString callsign)
         // Check if the basename matches the callsign
         if(basename == callsign.toUpper())
         {
-          atools::fs::common::BinaryGeometry geo(airspaceGeoByFileQuery->value("geometry").toByteArray());
-          geo.swapGeometry(*lineString);
+          airspaceGeometry(lineString, airspaceGeoByFileQuery->value("geometry").toByteArray());
           break;
         }
       }
@@ -354,10 +356,7 @@ const LineString *AirspaceQuery::airspaceGeometryByNameInternal(const QString& c
       airspaceGeoByNameQuery->exec();
 
       if(airspaceGeoByNameQuery->next())
-      {
-        atools::fs::common::BinaryGeometry geo(airspaceGeoByNameQuery->value("geometry").toByteArray());
-        geo.swapGeometry(*lineString);
-      }
+        airspaceGeometry(lineString, airspaceGeoByNameQuery->value("geometry").toByteArray());
 
       airspaceGeoByNameQuery->finish();
       onlineCenterGeoCache.insert(callsign, lineString);

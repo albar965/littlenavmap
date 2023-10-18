@@ -1698,6 +1698,8 @@ const QString& airspaceRemark(map::MapAirspaceTypes type);
 int airspaceDrawingOrder(map::MapAirspaceTypes type);
 QString airspaceSourceText(map::MapAirspaceSources src);
 QString airspaceName(const map::MapAirspace& airspace);
+QString airspaceRestrictiveName(const map::MapAirspace& airspace);
+QStringList airspaceNameMap(const map::MapAirspace& airspace, int maxTextLength, bool name, bool restrictiveName, bool type, bool altitude, bool com);
 QString airspaceText(const map::MapAirspace& airspace);
 
 QString aircraftTypeString(const atools::fs::sc::SimConnectAircraft& aircraft); /* Helicopter, etc. */

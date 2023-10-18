@@ -384,7 +384,7 @@ struct MapAirspaceFilter
 
   bool operator==(const map::MapAirspaceFilter& other) const
   {
-    return types == other.types || flags != other.flags || minAltitudeFt != other.minAltitudeFt || maxAltitudeFt != other.maxAltitudeFt;
+    return types == other.types && flags == other.flags && minAltitudeFt == other.minAltitudeFt && maxAltitudeFt == other.maxAltitudeFt;
   }
 
   bool operator!=(const map::MapAirspaceFilter& other) const

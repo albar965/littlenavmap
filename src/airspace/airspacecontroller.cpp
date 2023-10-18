@@ -328,7 +328,7 @@ void AirspaceController::loadAirspaces()
     qDebug() << Q_FUNC_INFO << basePath;
 
     // Disable queries to avoid locked database
-    preLoadAirpaces();
+    preLoadAirspaces();
 
     bool success = false;
     int sceneryId = 1, fileId = 1, numReadTotal = 0, numFiles = 0;
@@ -478,7 +478,7 @@ void AirspaceController::loadAirspaces()
     }
 
     // Re-initialize queries again
-    postLoadAirpaces();
+    postLoadAirspaces();
 
     // Let online controller update airspace shapes
     emit userAirspacesUpdated();
@@ -541,7 +541,7 @@ const atools::geo::LineString *AirspaceController::getOnlineAirspaceGeoByName(co
   return nullptr;
 }
 
-void AirspaceController::preLoadAirpaces()
+void AirspaceController::preLoadAirspaces()
 {
   loadingUserAirspaces = true;
   if(queries.contains(map::AIRSPACE_SRC_USER))
@@ -550,7 +550,7 @@ void AirspaceController::preLoadAirpaces()
   emit preDatabaseLoadAirspaces();
 }
 
-void AirspaceController::postLoadAirpaces()
+void AirspaceController::postLoadAirspaces()
 {
   if(queries.contains(map::AIRSPACE_SRC_USER))
     queries.value(map::AIRSPACE_SRC_USER)->initQueries();

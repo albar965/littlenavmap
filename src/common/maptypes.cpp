@@ -58,6 +58,7 @@ static QHash<QString, QString> navTypeNamesWaypoint;
 static QHash<QString, QString> navTypeNames;
 static QHash<QString, QString> comTypeNames;
 static QHash<map::MapAirspaceTypes, QString> airspaceTypeNameMap;
+static QHash<map::MapAirspaceTypes, QString> airspaceTypeShortNameMap;
 static QHash<map::MapAirspaceFlags, QString> airspaceFlagNameMap;
 static QHash<map::MapAirspaceFlags, QString> airspaceFlagNameMapLong;
 static QHash<map::MapAirspaceTypes, QString> airspaceRemarkMap;
@@ -255,7 +256,7 @@ void initTranslateableTexts()
       {"GATE_Z", QObject::tr("GZ")},
     });
 
-/* *INDENT-OFF* */
+  /* *INDENT-OFF* */
   // Order is important
   parkingDatabaseKeywords = QVector<std::pair<QRegularExpression, QString> >({
       {QRegularExpression("\\b" % QObject::tr("Apron", "Has to match other parking keyword translations") % "\\b", QRegularExpression::CaseInsensitiveOption), "A"},
@@ -480,6 +481,43 @@ void initTranslateableTexts()
       {map::MCTR, QObject::tr("Military Control Zone")},
       {map::TRSA, QObject::tr("Terminal Radar Service Area")},
       {map::TRAINING, QObject::tr("Training")},
+      {map::GLIDERPROHIBITED, QObject::tr("Glider Prohibited")},
+      {map::WAVEWINDOW, QObject::tr("Wave Window")},
+      {map::ONLINE_OBSERVER, QObject::tr("Online Observer")}
+    });
+
+  airspaceTypeShortNameMap = QHash<map::MapAirspaceTypes, QString>(
+    {
+      {map::AIRSPACE_NONE, QObject::tr("No Airspace")},
+      {map::CENTER, QObject::tr("CTR")},
+      {map::CLASS_A, QObject::tr("A")},
+      {map::CLASS_B, QObject::tr("B")},
+      {map::CLASS_C, QObject::tr("C")},
+      {map::CLASS_D, QObject::tr("D")},
+      {map::CLASS_E, QObject::tr("E")},
+      {map::CLASS_F, QObject::tr("F")},
+      {map::CLASS_G, QObject::tr("G")},
+      {map::FIR, QObject::tr("FIR")},
+      {map::UIR, QObject::tr("UIR")},
+      {map::TOWER, QObject::tr("TWR")},
+      {map::CLEARANCE, QObject::tr("CLR")},
+      {map::GROUND, QObject::tr("GND")},
+      {map::DEPARTURE, QObject::tr("DEP")},
+      {map::APPROACH, QObject::tr("APP")},
+      {map::MOA, QObject::tr("MOA")},
+      {map::RESTRICTED, QObject::tr("R")},
+      {map::PROHIBITED, QObject::tr("P")},
+      {map::WARNING, QObject::tr("W")},
+      {map::CAUTION, QObject::tr("CN")},
+      {map::ALERT, QObject::tr("A")},
+      {map::DANGER, QObject::tr("D")},
+      {map::NATIONAL_PARK, QObject::tr("National Park")},
+      {map::MODEC, QObject::tr("Mode-C")},
+      {map::RADAR, QObject::tr("Radar")},
+      {map::GCA, QObject::tr("GCA")},
+      {map::MCTR, QObject::tr("MCZ")},
+      {map::TRSA, QObject::tr("TRSA")},
+      {map::TRAINING, QObject::tr("T")},
       {map::GLIDERPROHIBITED, QObject::tr("Glider Prohibited")},
       {map::WAVEWINDOW, QObject::tr("Wave Window")},
       {map::ONLINE_OBSERVER, QObject::tr("Online Observer")}
@@ -1843,19 +1881,21 @@ QString ndbFullShortText(const MapNdb& ndb)
 
 const QString& airspaceTypeToString(map::MapAirspaceTypes type)
 {
-  Q_ASSERT(!airspaceTypeNameMap.isEmpty());
   return airspaceTypeNameMap[type];
+}
+
+const QString& airspaceTypeShortToString(map::MapAirspaceTypes type)
+{
+  return airspaceTypeShortNameMap[type];
 }
 
 const QString& airspaceFlagToString(map::MapAirspaceFlags type)
 {
-  Q_ASSERT(!airspaceFlagNameMap.isEmpty());
   return airspaceFlagNameMap[type];
 }
 
 const QString& airspaceFlagToStringLong(map::MapAirspaceFlags type)
 {
-  Q_ASSERT(!airspaceFlagNameMapLong.isEmpty());
   return airspaceFlagNameMapLong[type];
 }
 
@@ -2248,6 +2288,81 @@ atools::geo::LineString MapIls::boundary() const
 QString airspaceName(const MapAirspace& airspace)
 {
   return airspace.isOnline() ? airspace.name : formatter::capNavString(airspace.name);
+}
+
+QString airspaceRestrictiveNameMap(const MapAirspace& airspace)
+{
+  QString restrictedName;
+  if(!airspace.restrictiveDesignation.isEmpty())
+  {
+    QString name = formatter::capNavString(airspace.restrictiveDesignation).trimmed();
+
+    if(name.endsWith('*'))
+      name = name.remove('*').trimmed();
+
+    restrictedName = airspace.restrictiveType % QObject::tr("-") % name;
+  }
+  return restrictedName;
+}
+
+QStringList airspaceNameMap(const MapAirspace& airspace, int maxTextLength, bool name, bool restrictiveName, bool type, bool altitude,
+                            bool com)
+{
+  QStringList texts;
+
+  QString restrNameStr = airspaceRestrictiveNameMap(airspace);
+  if(type)
+  {
+    // Type only if it not a part of the restrictive name
+    const QString& typeStr = airspaceTypeShortToString(airspace.type);
+    if(!((name && airspace.name.startsWith(typeStr % '-')) || (restrictiveName && restrNameStr.startsWith(typeStr % '-'))))
+      texts.append(typeStr);
+  }
+
+  // Name if requested but always for FIR and UIR spaces
+  if(name || airspace.type == map::FIR || airspace.type == map::UIR)
+    texts.append(atools::elideTextShort(airspace.isOnline() ? airspace.name : formatter::capNavString(airspace.name), maxTextLength));
+
+  if(restrictiveName)
+    texts.append(restrNameStr);
+
+  if(altitude && !airspace.isOnline())
+  {
+    QString altTextLower, altTextUpper;
+
+    if(!airspace.maxAltitudeType.isEmpty() && airspace.maxAltitudeType != "UL" && airspace.maxAltitude < 60000)
+      altTextUpper = Unit::altFeet(airspace.maxAltitude, false /* addUnit */, true /* narrow */) %
+                     QObject::tr(" ") % airspace.maxAltitudeType;
+
+    if(!airspace.minAltitudeType.isEmpty() && airspace.minAltitude > 0)
+      altTextLower = Unit::altFeet(airspace.minAltitude, false /* addUnit */, true /* narrow */);
+
+    if(airspace.maxAltitudeType != airspace.minAltitudeType && !altTextLower.isEmpty() && !altTextUpper.isEmpty())
+      altTextLower = QObject::tr(" ") % airspace.minAltitudeType;
+
+    if(!airspace.minAltitudeType.isEmpty() && airspace.minAltitude == 0 && !altTextUpper.isEmpty())
+      altTextLower = QObject::tr("0");
+
+    if(!altTextLower.isEmpty() || !altTextUpper.isEmpty())
+      texts.append(altTextLower % QObject::tr("-") % altTextUpper);
+  }
+
+  if(com)
+  {
+    QStringList freqTxt;
+    for(int freq : airspace.comFrequencies)
+    {
+      if(airspace.isOnline())
+        // Use online freqencies as is - convert kHz to MHz
+        freqTxt.append(QString::number(freq / 1000.f, 'f', 3));
+      else
+        freqTxt.append(QString::number(atools::fs::util::roundComFrequency(freq), 'f', 3));
+    }
+    texts.append(atools::strJoin(freqTxt, QObject::tr(" / ")));
+  }
+
+  texts.removeDuplicates();
+  return texts;
 }
 
 QString airspaceText(const MapAirspace& airspace)
@@ -2699,6 +2814,22 @@ const QIcon& ilsIcon(const MapIls& ils)
 float DistanceMarker::getDistanceNm() const
 {
   return atools::geo::meterToNm(getDistanceMeter());
+}
+
+QString airspaceRestrictiveName(const MapAirspace& airspace)
+{
+  if(!airspace.restrictiveDesignation.isEmpty())
+  {
+    QString name = formatter::capNavString(airspace.restrictiveDesignation).trimmed();
+
+    if(name.endsWith('*'))
+      name = name.remove('*').trimmed();
+
+    QString restrictedName = airspace.restrictiveType % QObject::tr("-") % name;
+    if(restrictedName != airspace.name)
+      return restrictedName;
+  }
+  return QString();
 }
 
 } // namespace types

@@ -254,6 +254,8 @@ extern QColor routeInvalidTableColorDark;
 extern QColor nextWaypointColor;
 extern QColor nextWaypointColorDark;
 
+extern QColor textBoxColorAirspace;
+
 /* Get an icon for the start type (RUNWAY, HELIPAD or WATER) */
 const QIcon& iconForStart(const map::MapStart& start);
 

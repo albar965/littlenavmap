@@ -1101,8 +1101,7 @@ void MapPaintWidget::updateLogEntryScreenGeometry()
   screenIndex->updateLogEntryScreenGeometry(getCurrentViewBoundingBox());
 }
 
-void MapPaintWidget::changeSearchHighlights(const map::MapResult& newHighlights, bool updateAirspace,
-                                            bool updateLogEntries)
+void MapPaintWidget::changeSearchHighlights(const map::MapResult& newHighlights, bool updateAirspace, bool updateLogEntries)
 {
   screenIndex->changeSearchHighlights(newHighlights);
   if(updateLogEntries)

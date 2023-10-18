@@ -162,7 +162,7 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
                                                                                                         "Only shown if \"Use map areas\" on page \"Map Navigation\" is enabled as well."), optsd::NAVAIDS_TOUCHSCREEN_ICONS);
 
   // Airport =====================================================
-  QTreeWidgetItem *airport = addTopItem(tr("Airport"), tr("Select airport labels to display on the map."));
+  QTreeWidgetItem *airport = addTopItem(tr("Airports"), tr("Select airport labels to display on the map."));
   addItem<optsd::DisplayOptionsAirport>(airport, displayOptItemIndexAirport, tr("Name (Ident)"), tr("Airport name and ident in brackets depending on zoom factor.\n"
                                                                                                     "Ident can be internal, ICAO, FAA, IATA or local depending on avilability."), optsd::ITEM_AIRPORT_NAME, true);
   addItem<optsd::DisplayOptionsAirport>(airport, displayOptItemIndexAirport, tr("Tower Frequency"), QString(), optsd::ITEM_AIRPORT_TOWER, true);
@@ -194,6 +194,14 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
                                                                                                                "Not shown at procedure legs."), optsd::ROUTE_INITIAL_FINAL_MAG_COURSE, true);
   addItem<optsd::DisplayOptionsRoute>(route, displayOptItemIndexRoute, tr("True Start and End Course"), tr("Display great circle initial and final true course at the start and end of flight plan legs.\n"
                                                                                                            "The label is fixed. Not shown at procedure legs."), optsd::ROUTE_INITIAL_FINAL_TRUE_COURSE);
+
+  // Airspace =====================================================
+  QTreeWidgetItem *airspaces = addTopItem(tr("Airspaces"), QString());
+  addItem<optsd::DisplayOptionsAirspace>(airspaces , displayOptItemIndexAirspace, tr("Name"), tr("Shows the airspace name."), optsd::AIRSPACE_NAME);
+  addItem<optsd::DisplayOptionsAirspace>(airspaces , displayOptItemIndexAirspace, tr("Restrictive Name"), tr("Shows the restrictive name like \"P-51\" of an airspace."), optsd::AIRSPACE_RESTRICTIVE_NAME, true);
+  addItem<optsd::DisplayOptionsAirspace>(airspaces , displayOptItemIndexAirspace, tr("Type"), tr("Type of airspace like \"Prohibited\"."), optsd::AIRSPACE_TYPE, true);
+  addItem<optsd::DisplayOptionsAirspace>(airspaces , displayOptItemIndexAirspace, tr("Altitude"), tr("Display the altitude restrictions of airspaces."), optsd::AIRSPACE_ALTITUDE, true);
+  addItem<optsd::DisplayOptionsAirspace>(airspaces , displayOptItemIndexAirspace, tr("COM Frequency"), tr("Airspace COM frequency if available."), optsd::AIRSPACE_COM, true);
 
   // User aircraft =====================================================
   QTreeWidgetItem *userAircraft = addTopItem(tr("User Aircraft"), tr("Select text labels and other options for the user aircraft."));
@@ -375,6 +383,7 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
      ui->spinBoxOptionsDisplaySymbolSizeUserpoint,
      ui->spinBoxOptionsDisplaySymbolSizeHighlight,
      ui->spinBoxOptionsDisplayTextSizeNavaid,
+     ui->spinBoxOptionsDisplayTextSizeAirspace,
      ui->spinBoxOptionsDisplayTextSizeUserpoint,
      ui->spinBoxOptionsDisplayThicknessFlightplan,
      ui->spinBoxOptionsDisplayThicknessFlightplanProfile,
@@ -1094,6 +1103,7 @@ void OptionsDialog::saveState()
   saveDisplayOptItemStates(displayOptItemIndexMeasurement, lnm::OPTIONS_DIALOG_DISPLAY_OPTIONS_MEASUREMENT);
   saveDisplayOptItemStates(displayOptItemIndexRoute, lnm::OPTIONS_DIALOG_DISPLAY_OPTIONS_ROUTE);
   saveDisplayOptItemStates(displayOptItemIndexNavAid, lnm::OPTIONS_DIALOG_DISPLAY_OPTIONS_NAVAID);
+  saveDisplayOptItemStates(displayOptItemIndexAirspace, lnm::OPTIONS_DIALOG_DISPLAY_OPTIONS_AIRSPACE);
 
   Settings& settings = Settings::instance();
 
@@ -1193,6 +1203,7 @@ void OptionsDialog::restoreState()
   restoreOptionItemStates(displayOptItemIndexMeasurement, lnm::OPTIONS_DIALOG_DISPLAY_OPTIONS_MEASUREMENT);
   restoreOptionItemStates(displayOptItemIndexRoute, lnm::OPTIONS_DIALOG_DISPLAY_OPTIONS_ROUTE);
   restoreOptionItemStates(displayOptItemIndexNavAid, lnm::OPTIONS_DIALOG_DISPLAY_OPTIONS_NAVAID);
+  restoreOptionItemStates(displayOptItemIndexAirspace, lnm::OPTIONS_DIALOG_DISPLAY_OPTIONS_AIRSPACE);
 
   ui->splitterOptions->setHandleWidth(6);
 
@@ -1728,6 +1739,9 @@ void OptionsDialog::widgetsToOptionData()
   data.displayOptionsNavAid = optsd::NAVAIDS_NONE;
   displayOptWidgetToOptionData(data.displayOptionsNavAid, displayOptItemIndexNavAid);
 
+  data.displayOptionsAirspace = optsd::AIRSPACE_NONE;
+  displayOptWidgetToOptionData(data.displayOptionsAirspace, displayOptItemIndexAirspace);
+
   toFlags(ui->checkBoxOptionsStartupLoadKml, opts::STARTUP_LOAD_KML);
   toFlags(ui->checkBoxOptionsStartupLoadMapSettings, opts::STARTUP_LOAD_MAP_SETTINGS);
   toFlags(ui->checkBoxOptionsStartupLoadTrail, opts::STARTUP_LOAD_TRAIL);
@@ -1897,6 +1911,7 @@ void OptionsDialog::widgetsToOptionData()
   data.displaySymbolSizeUserpoint = ui->spinBoxOptionsDisplaySymbolSizeUserpoint->value();
   data.displaySymbolSizeHighlight = ui->spinBoxOptionsDisplaySymbolSizeHighlight->value();
   data.displayTextSizeNavaid = ui->spinBoxOptionsDisplayTextSizeNavaid->value();
+  data.displayTextSizeAirspace = ui->spinBoxOptionsDisplayTextSizeAirspace->value();
   data.displayTextSizeUserpoint = ui->spinBoxOptionsDisplayTextSizeUserpoint->value();
   data.displayThicknessAirway = ui->spinBoxOptionsDisplayThicknessAirway->value();
   data.displayThicknessAirspace = ui->spinBoxOptionsDisplayThicknessAirspace->value();
@@ -2027,6 +2042,7 @@ void OptionsDialog::optionDataToWidgets(const OptionData& data)
   displayOptDataToWidget(data.displayOptionsMeasurement, displayOptItemIndexMeasurement);
   displayOptDataToWidget(data.displayOptionsRoute, displayOptItemIndexRoute);
   displayOptDataToWidget(data.displayOptionsNavAid, displayOptItemIndexNavAid);
+  displayOptDataToWidget(data.displayOptionsAirspace, displayOptItemIndexAirspace);
 
   // Copy from check and radio buttons
   fromFlags(data, ui->checkBoxOptionsStartupLoadKml, opts::STARTUP_LOAD_KML);
@@ -2195,6 +2211,8 @@ void OptionsDialog::optionDataToWidgets(const OptionData& data)
   ui->spinBoxOptionsDisplaySymbolSizeUserpoint->setValue(data.displaySymbolSizeUserpoint);
   ui->spinBoxOptionsDisplaySymbolSizeHighlight->setValue(data.displaySymbolSizeHighlight);
   ui->spinBoxOptionsDisplayTextSizeUserpoint->setValue(data.displayTextSizeUserpoint);
+  ui->spinBoxOptionsDisplayTextSizeNavaid->setValue(data.displayTextSizeNavaid);
+  ui->spinBoxOptionsDisplayTextSizeAirspace->setValue(data.displayTextSizeAirspace);
   ui->spinBoxOptionsDisplayThicknessAirway->setValue(data.displayThicknessAirway);
   ui->spinBoxOptionsDisplayThicknessAirspace->setValue(data.displayThicknessAirspace);
   ui->spinBoxOptionsDisplayTextSizeAirway->setValue(data.displayTextSizeAirway);

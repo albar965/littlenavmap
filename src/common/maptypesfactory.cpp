@@ -801,7 +801,13 @@ void MapTypesFactory::fillAirspace(const SqlRecord& record, map::MapAirspace& ai
   airspace.name = record.valueStr(airspace.isOnline() ? "callsign" : "name");
   airspace.comType = record.valueStr("com_type");
 
-  const QStringList split = record.valueStr("com_frequency", QString()).split("&");
+  QString comCol;
+  if(record.contains("com_frequency"))
+    comCol = "com_frequency";
+  else if(record.contains("frequency"))
+    comCol = "frequency";
+
+  const QStringList split = record.valueStr(comCol, QString()).split("&");
   for(const QString& str : split)
   {
     bool ok;

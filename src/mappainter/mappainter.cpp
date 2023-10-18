@@ -454,13 +454,42 @@ void MapPainter::drawCross(Marble::GeoPainter *painter, int x, int y, int size)
 
 void MapPainter::drawPolygon(Marble::GeoPainter *painter, const atools::geo::LineString& linestring)
 {
-  Marble::GeoDataLinearRing linearRing;
-  linearRing.setTessellate(true);
+  QVector<QPolygonF *> polygons = createPolygons(linestring, context->screenRect);
+  drawPolygons(painter, polygons);
+  releasePolygons(polygons);
+}
 
-  for(const Pos& pos : linestring)
-    linearRing.append(Marble::GeoDataCoordinates(pos.getLonX(), pos.getLatY(), 0, DEG));
+void MapPainter::drawPolygons(Marble::GeoPainter *painter, const QVector<QPolygonF *>& polygons)
+{
+  for(const QPolygonF *polygon : polygons)
+    drawPolygon(painter, *polygon);
+}
 
-  painter->drawPolygon(linearRing);
+void MapPainter::drawPolygon(Marble::GeoPainter *painter, const QPolygonF& polygon)
+{
+  painter->drawPolygon(polygon, Qt::OddEvenFill);
+
+#ifdef DEBUG_INFORMATION_PAINT_POLYGON
+  {
+    atools::util::PainterContextSaver save(painter);
+    painter->setPen(Qt::black);
+    for(int i = 0; i < polygon.size(); i++)
+    {
+      QPointF pt = polygon.at(i);
+      painter->drawEllipse(pt, 3, 3);
+
+      if((i % 4) == 0)
+        pt.rx() += 10;
+      else if((i % 4) == 1)
+        pt.rx() -= 10;
+      else if((i % 4) == 2)
+        pt.ry() += 10;
+      else if((i % 4) == 3)
+        pt.ry() -= 10;
+      painter->drawText(pt, QString::number(i));
+    }
+  }
+#endif
 }
 
 void MapPainter::drawLineString(Marble::GeoPainter *painter, const atools::geo::LineString& linestring)

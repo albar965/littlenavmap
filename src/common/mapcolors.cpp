@@ -63,6 +63,8 @@ QColor msaFillColor("#a0ffffff");
 QColor msaTextColor(Qt::darkGray);
 QColor msaSymbolColor(Qt::darkGray);
 
+QColor textBoxColorAirspace(255, 255, 255, 180);
+
 QPen msaDiagramLinePen(QColor("#000000"), 2.);
 QColor msaDiagramNumberColor("#70000000");
 QPen msaDiagramLinePenDark(QColor("#808080"), 2.);
@@ -800,6 +802,7 @@ void syncColors()
 
   // Sync airspace colors ============================================
   colorSettings.beginGroup("Airspace");
+  syncColorArgb(colorSettings, "TextBoxColorAirspace", textBoxColorAirspace);
 
   for(auto it = airspaceConfigNames.constBegin(); it != airspaceConfigNames.constEnd(); ++it)
   {

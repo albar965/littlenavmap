@@ -1253,7 +1253,7 @@ void RouteController::loadFlightplan(atools::fs::pln::Flightplan flightplan, ato
 
   // test and error after undo/redo and switch
 
-  // These formats have transtion waypoints which might match or not on import and require a cleanup
+  // These formats have transition waypoints which might match or not on import and require a cleanup
   bool specialProcedureHandling = format == atools::fs::pln::MSFS_PLN || format == atools::fs::pln::FSC_PLN;
 
   loadProceduresFromFlightplan(false /* clearOldProcedureProperties */, specialProcedureHandling /* cleanupRoute */,
