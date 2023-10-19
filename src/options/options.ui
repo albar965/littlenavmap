@@ -975,7 +975,7 @@ This does not affect the map window which can be changed separately on the optio
                   <string> %</string>
                  </property>
                  <property name="minimum">
-                  <number>70</number>
+                  <number>50</number>
                  </property>
                  <property name="maximum">
                   <number>200</number>
@@ -1007,7 +1007,7 @@ This does not affect the map window which can be changed separately on the optio
                   <string> %</string>
                  </property>
                  <property name="minimum">
-                  <number>70</number>
+                  <number>50</number>
                  </property>
                  <property name="maximum">
                   <number>200</number>
@@ -2721,7 +2721,7 @@ Lower values make the airspace more opaque and higher values more transparent.</
                   <string>Line Width </string>
                  </property>
                  <property name="minimum">
-                  <number>10</number>
+                  <number>20</number>
                  </property>
                  <property name="maximum">
                   <number>300</number>
@@ -2919,7 +2919,7 @@ Lower values make the airspace more opaque and higher values more transparent.</
                   <string>Line Width </string>
                  </property>
                  <property name="minimum">
-                  <number>50</number>
+                  <number>20</number>
                  </property>
                  <property name="maximum">
                   <number>300</number>
@@ -3160,7 +3160,7 @@ For VOR, NDB, ILS, waypoints and holdings. Not for flight plan labels.</string>
                   <string>Line Width </string>
                  </property>
                  <property name="minimum">
-                  <number>50</number>
+                  <number>20</number>
                  </property>
                  <property name="maximum">
                   <number>200</number>
@@ -3300,7 +3300,7 @@ Not used in the elevation profile.</string>
                   <string>Line Width </string>
                  </property>
                  <property name="minimum">
-                  <number>50</number>
+                  <number>20</number>
                  </property>
                  <property name="maximum">
                   <number>300</number>
@@ -3837,7 +3837,7 @@ Also used in the elevation profile.</string>
                   <string>Line Width </string>
                  </property>
                  <property name="minimum">
-                  <number>50</number>
+                  <number>20</number>
                  </property>
                  <property name="maximum">
                   <number>200</number>
@@ -4128,7 +4128,7 @@ Value 0 is opaque and 90 is most transparent.</string>
                   <string>Line Width </string>
                  </property>
                  <property name="minimum">
-                  <number>50</number>
+                  <number>20</number>
                  </property>
                  <property name="maximum">
                   <number>200</number>
@@ -4263,7 +4263,7 @@ Does not apply to lines originating from airports or navaids.</string>
                   <string>Line Width </string>
                  </property>
                  <property name="minimum">
-                  <number>50</number>
+                  <number>20</number>
                  </property>
                  <property name="maximum">
                   <number>200</number>
