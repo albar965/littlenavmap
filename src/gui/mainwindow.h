@@ -246,6 +246,9 @@ public:
   /* Question dialog and then delete map and profile trail */
   void deleteAircraftTrack(bool quiet = false);
 
+  /* Silently deletes track on takeoff */
+  void deleteProfileAircraftTrack();
+
   atools::gui::DockWidgetHandler *getDockHandler() const
   {
     return dockHandler;

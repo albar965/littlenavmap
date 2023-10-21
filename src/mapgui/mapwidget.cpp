@@ -2360,6 +2360,9 @@ void MapWidget::takeoffLandingTimeout()
       takeoffTimeSim = takeoffLandingLastAircraft->getZuluTime();
       takeoffLandingDistanceNm = 0.;
 
+      // Delete the profile track to avoid the messy collection of older tracks
+      NavApp::getMainWindow()->deleteProfileAircraftTrack();
+
       emit aircraftTakeoff(aircraft);
     }
   }

@@ -2130,6 +2130,11 @@ void MainWindow::setToolTipsEnabledMainMenu(bool enabled)
   }
 }
 
+void MainWindow::deleteProfileAircraftTrack()
+{
+  profileWidget->deleteAircraftTrack();
+}
+
 void MainWindow::deleteAircraftTrack(bool quiet)
 {
   int result = QMessageBox::Yes;
