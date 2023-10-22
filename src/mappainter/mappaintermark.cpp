@@ -1453,6 +1453,10 @@ void MapPainterMark::paintPatternMarks()
 
   QPolygonF arrow = buildArrow(lineWidth * 2.3f);
 
+  // . B---------Downwind---------------C
+  // . a                                r
+  // . s                                o
+  // . e--Final--==Runway==--Departure--s
   for(const PatternMarker& pattern : patterns)
   {
     bool visibleOrigin, hiddenOrigin;
@@ -1460,32 +1464,32 @@ void MapPainterMark::paintPatternMarks()
     if(hiddenOrigin)
       continue;
 
-    float finalDistance = pattern.base45Degree ? pattern.downwindDistance : pattern.baseDistance;
-    if(context->mapLayer->isApproach() && scale->getPixelForNm(finalDistance) > 5.f)
-    {
+    // All distances in meter
+    float runwayLength = ageo::feetToMeter(pattern.runwayLength);
+    float parallelDist = ageo::nmToMeter(pattern.downwindParallelDistance);
+    float departureDist = pattern.base45Degree ? ageo::nmToMeter(pattern.downwindParallelDistance) + runwayLength :
+                          ageo::nmToMeter(pattern.departureDistance);
+    float finalDist = ageo::nmToMeter(pattern.base45Degree ? pattern.downwindParallelDistance : pattern.finalDistance);
 
-      // Turn point base to final
-      ageo::Pos baseFinal = pattern.position.endpoint(ageo::nmToMeter(finalDistance),
-                                                      ageo::opposedCourseDeg(pattern.courseTrue));
+    if(context->mapLayer->isApproach() && scale->getPixelForNm(finalDist) > 5.f)
+    {
+      // Turn point base to final - extend from runway
+      ageo::Pos baseToFinal = pattern.position.endpoint(finalDist, ageo::opposedCourseDeg(pattern.courseTrue));
 
       // Turn point downwind to base
-      ageo::Pos downwindBase = baseFinal.endpoint(ageo::nmToMeter(pattern.downwindDistance),
-                                                  pattern.courseTrue + (pattern.turnRight ? 90.f : -90.f));
+      ageo::Pos downwindToBase = baseToFinal.endpoint(parallelDist, pattern.courseTrue + (pattern.turnRight ? 90.f : -90.f));
 
-      // Turn point upwind to crosswind
-      ageo::Pos upwindCrosswind = pattern.position.endpoint(ageo::nmToMeter(finalDistance) + ageo::feetToMeter(pattern.runwayLength),
-                                                            pattern.courseTrue);
+      // Turn point departure to crosswind
+      ageo::Pos departureToCrosswind = pattern.position.endpoint(departureDist, pattern.courseTrue);
 
       // Turn point crosswind to downwind
-      ageo::Pos crosswindDownwind = upwindCrosswind.endpoint(ageo::nmToMeter(pattern.downwindDistance),
-                                                             pattern.courseTrue +
-                                                             (pattern.turnRight ? 90.f : -90.f));
+      ageo::Pos crosswindToDownwind = departureToCrosswind.endpoint(parallelDist, pattern.courseTrue + (pattern.turnRight ? 90.f : -90.f));
 
       // Calculate bounding rectangle and check if it is at least partially visible
-      ageo::Rect rect(baseFinal);
-      rect.extend(downwindBase);
-      rect.extend(upwindCrosswind);
-      rect.extend(crosswindDownwind);
+      ageo::Rect rect(baseToFinal);
+      rect.extend(downwindToBase);
+      rect.extend(departureToCrosswind);
+      rect.extend(crosswindToDownwind);
 
       // Expand rect by approximately 2 NM
       rect.inflateMeter(ageo::nmToMeter(2.f), ageo::nmToMeter(2.f));
@@ -1493,21 +1497,20 @@ void MapPainterMark::paintPatternMarks()
       if(context->viewportRect.overlaps(rect))
       {
         // Entry at opposite runway threshold
-        ageo::Pos downwindEntry = downwindBase.endpoint(ageo::nmToMeter(finalDistance) +
-                                                        ageo::feetToMeter(pattern.runwayLength), pattern.courseTrue);
+        ageo::Pos downwindEntry = downwindToBase.endpoint(finalDist + runwayLength, pattern.courseTrue);
 
         bool visible, hidden;
         // Bail out if any points are hidden behind the globe
-        QPointF baseFinalPoint = wToS(baseFinal, DEFAULT_WTOS_SIZE, &visible, &hidden);
+        QPointF baseFinalPoint = wToS(baseToFinal, DEFAULT_WTOS_SIZE, &visible, &hidden);
         if(hidden)
           continue;
-        QPointF downwindBasePoint = wToS(downwindBase, DEFAULT_WTOS_SIZE, &visible, &hidden);
+        QPointF downwindBasePoint = wToS(downwindToBase, DEFAULT_WTOS_SIZE, &visible, &hidden);
         if(hidden)
           continue;
-        QPointF upwindCrosswindPoint = wToS(upwindCrosswind, DEFAULT_WTOS_SIZE, &visible, &hidden);
+        QPointF upwindCrosswindPoint = wToS(departureToCrosswind, DEFAULT_WTOS_SIZE, &visible, &hidden);
         if(hidden)
           continue;
-        QPointF crosswindDownwindPoint = wToS(crosswindDownwind, DEFAULT_WTOS_SIZE, &visible, &hidden);
+        QPointF crosswindDownwindPoint = wToS(crosswindToDownwind, DEFAULT_WTOS_SIZE, &visible, &hidden);
         if(hidden)
           continue;
         QPointF downwindEntryPoint = wToS(downwindEntry, DEFAULT_WTOS_SIZE, &visible, &hidden);
@@ -1516,15 +1519,14 @@ void MapPainterMark::paintPatternMarks()
         bool drawDetails = QLineF(baseFinalPoint, crosswindDownwindPoint).length() > 50.;
 
         // Calculate polygon rounding in pixels =======================
-        float pixelForNm = scale->getPixelForNm(pattern.downwindDistance, pattern.courseTrue + 90.f);
-        atools::util::RoundedPolygon polygon(pixelForNm / 3.f,
-                                             {originPoint, upwindCrosswindPoint, crosswindDownwindPoint,
-                                              downwindBasePoint, baseFinalPoint});
+        float pixelForNm = scale->getPixelForNm(pattern.downwindParallelDistance, pattern.courseTrue + 90.f);
+        atools::util::RoundedPolygon polygon(pixelForNm / 3.f, {originPoint, upwindCrosswindPoint, crosswindDownwindPoint,
+                                                                downwindBasePoint, baseFinalPoint});
 
         QLineF downwind(crosswindDownwindPoint, downwindBasePoint);
         QLineF upwind(originPoint, upwindCrosswindPoint);
         float angle = static_cast<float>(ageo::angleFromQt(downwind.angle()));
-        float oppAngle = static_cast<float>(ageo::opposedCourseDeg(ageo::angleFromQt(downwind.angle())));
+        float oppositeAngle = static_cast<float>(ageo::opposedCourseDeg(ageo::angleFromQt(downwind.angle())));
 
         if(pattern.showEntryExit && context->mapLayer->isApproachText())
         {
@@ -1534,19 +1536,18 @@ void MapPainterMark::paintPatternMarks()
           drawLine(painter, upwind);
 
           // Straight out exit for pattern =======================
-          QPointF exitStraight = wToS(upwindCrosswind.endpoint(ageo::nmToMeter(1.f), oppAngle), DEFAULT_WTOS_SIZE, &visible, &hidden);
+          QPointF exitStraight =
+            wToS(departureToCrosswind.endpoint(ageo::nmToMeter(1.f), oppositeAngle), DEFAULT_WTOS_SIZE, &visible, &hidden);
           drawLine(painter, upwind.p2(), exitStraight);
 
           // 45 degree exit for pattern =======================
-          QPointF exit45Deg = wToS(upwindCrosswind.endpoint(
-                                     ageo::nmToMeter(1.f), oppAngle + (pattern.turnRight ? 45.f : -45.f)), DEFAULT_WTOS_SIZE, &visible,
-                                   &hidden);
+          QPointF exit45Deg = wToS(departureToCrosswind.endpoint(ageo::nmToMeter(1.f), oppositeAngle + (pattern.turnRight ? 45.f : -45.f)),
+                                   DEFAULT_WTOS_SIZE, &visible, &hidden);
           drawLine(painter, upwind.p2(), exit45Deg);
 
           // Entry to downwind
-          QPointF entry =
-            wToS(downwindEntry.endpoint(ageo::nmToMeter(1.f), oppAngle + (pattern.turnRight ? 45.f : -45.f)), DEFAULT_WTOS_SIZE, &visible,
-                 &hidden);
+          QPointF entry = wToS(downwindEntry.endpoint(ageo::nmToMeter(1.f), oppositeAngle + (pattern.turnRight ? 45.f : -45.f)),
+                               DEFAULT_WTOS_SIZE, &visible, &hidden);
           drawLine(painter, downwindEntryPoint, entry);
 
           if(drawDetails)
@@ -1582,7 +1583,7 @@ void MapPainterMark::paintPatternMarks()
                  arg(pattern.runwayName).
                  arg(formatter::courseTextFromTrue(pattern.courseTrue, pattern.magvar, false /* magBold */, false /* magBig */,
                                                    false /* trueSmall */, true /* narrow */));
-          textPlacement.drawTextAlongOneLine(text, oppAngle, final.pointAt(0.60), atools::roundToInt(final.length()));
+          textPlacement.drawTextAlongOneLine(text, oppositeAngle, final.pointAt(0.60), atools::roundToInt(final.length()));
 
           // Draw arrows on legs =======================================
           // Set a lighter fill color for arrows

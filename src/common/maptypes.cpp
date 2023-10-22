@@ -1465,7 +1465,8 @@ QDataStream& operator<<(QDataStream& dataStream, const map::DistanceMarker& obj)
 QDataStream& operator>>(QDataStream& dataStream, PatternMarker& obj)
 {
   dataStream >> obj.airportIcao >> obj.runwayName >> obj.color >> obj.turnRight >> obj.base45Degree >> obj.showEntryExit
-  >> obj.runwayLength >> obj.downwindDistance >> obj.baseDistance >> obj.courseTrue >> obj.magvar >> obj.position;
+  >> obj.runwayLength >> obj.downwindParallelDistance >> obj.finalDistance >> obj.departureDistance
+  >> obj.courseTrue >> obj.magvar >> obj.position;
   obj.objType = map::MARK_PATTERNS;
   return dataStream;
 }
@@ -1473,7 +1474,8 @@ QDataStream& operator>>(QDataStream& dataStream, PatternMarker& obj)
 QDataStream& operator<<(QDataStream& dataStream, const PatternMarker& obj)
 {
   dataStream << obj.airportIcao << obj.runwayName << obj.color << obj.turnRight << obj.base45Degree << obj.showEntryExit
-             << obj.runwayLength << obj.downwindDistance << obj.baseDistance << obj.courseTrue << obj.magvar << obj.position;
+             << obj.runwayLength << obj.downwindParallelDistance << obj.finalDistance << obj.departureDistance
+             << obj.courseTrue << obj.magvar << obj.position;
 
   return dataStream;
 }

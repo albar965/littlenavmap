@@ -1511,7 +1511,7 @@ struct PatternMarker
        showEntryExit /* Entry and exit indicators */;
   int runwayLength; /* ft Does not include displaced threshold */
 
-  float downwindDistance, baseDistance; /* NM */
+  float downwindParallelDistance, finalDistance, departureDistance; /* NM */
   float courseTrue; /* degree true final course*/
   float magvar;
 
@@ -1699,7 +1699,8 @@ int airspaceDrawingOrder(map::MapAirspaceTypes type);
 QString airspaceSourceText(map::MapAirspaceSources src);
 QString airspaceName(const map::MapAirspace& airspace);
 QString airspaceRestrictiveName(const map::MapAirspace& airspace);
-QStringList airspaceNameMap(const map::MapAirspace& airspace, int maxTextLength, bool name, bool restrictiveName, bool type, bool altitude, bool com);
+QStringList airspaceNameMap(const map::MapAirspace& airspace, int maxTextLength, bool name, bool restrictiveName, bool type, bool altitude,
+                            bool com);
 QString airspaceText(const map::MapAirspace& airspace);
 
 QString aircraftTypeString(const atools::fs::sc::SimConnectAircraft& aircraft); /* Helicopter, etc. */

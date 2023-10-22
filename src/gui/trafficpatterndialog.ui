@@ -175,7 +175,8 @@
    <item row="7" column="1">
     <widget class="QDoubleSpinBox" name="doubleSpinBoxTrafficPatternBaseDistance">
      <property name="toolTip">
-      <string>Distance from turn to final to runway end</string>
+      <string>Distance from turn to final to runway end, 
+i.e. length of the final segment</string>
      </property>
      <property name="showGroupSeparator" stdset="0">
       <bool>true</bool>
@@ -285,6 +286,45 @@
      <attribute name="verticalHeaderVisible">
       <bool>false</bool>
      </attribute>
+    </widget>
+   </item>
+   <item row="8" column="0">
+    <widget class="QLabel" name="labelTrafficPatternDepartureDistance">
+     <property name="text">
+      <string>&amp;Departure from threshold:</string>
+     </property>
+     <property name="buddy">
+      <cstring>doubleSpinBoxTrafficPatternBaseDistance</cstring>
+     </property>
+    </widget>
+   </item>
+   <item row="8" column="1">
+    <widget class="QDoubleSpinBox" name="doubleSpinBoxTrafficPatternDepartureDistance">
+     <property name="toolTip">
+      <string>Distance from runway threshold to turn to crosswind. 
+Measured from the start of the runway, i.e. the end of the final leg.</string>
+     </property>
+     <property name="showGroupSeparator" stdset="0">
+      <bool>true</bool>
+     </property>
+     <property name="suffix">
+      <string> %dist%</string>
+     </property>
+     <property name="decimals">
+      <number>1</number>
+     </property>
+     <property name="minimum">
+      <double>0.100000000000000</double>
+     </property>
+     <property name="maximum">
+      <double>10.000000000000000</double>
+     </property>
+     <property name="singleStep">
+      <double>0.100000000000000</double>
+     </property>
+     <property name="value">
+      <double>3.000000000000000</double>
+     </property>
     </widget>
    </item>
   </layout>

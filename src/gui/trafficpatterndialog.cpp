@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2022 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -33,7 +33,6 @@
 
 #include <QColorDialog>
 
-
 using atools::geo::Pos;
 
 TrafficPatternDialog::TrafficPatternDialog(QWidget *parent, const map::MapAirport& mapAirport) :
@@ -60,7 +59,8 @@ TrafficPatternDialog::TrafficPatternDialog(QWidget *parent, const map::MapAirpor
 
   // Saves original texts and restores them on deletion
   units = new UnitStringTool();
-  units->init({ui->doubleSpinBoxTrafficPatternBaseDistance, ui->doubleSpinBoxDownwindDistance, ui->spinBoxTrafficPatternAltitude});
+  units->init({ui->doubleSpinBoxTrafficPatternBaseDistance, ui->doubleSpinBoxTrafficPatternDepartureDistance,
+               ui->doubleSpinBoxDownwindDistance, ui->spinBoxTrafficPatternAltitude});
 
   restoreState();
 }
@@ -102,6 +102,7 @@ void TrafficPatternDialog::restoreState()
     ui->doubleSpinBoxDownwindDistance,
     ui->spinBoxTrafficPatternAltitude,
     ui->doubleSpinBoxTrafficPatternBaseDistance,
+    ui->doubleSpinBoxTrafficPatternDepartureDistance,
     ui->checkBoxTrafficPattern45Degree,
     ui->comboBoxTrafficPatternTurnDirection,
     ui->checkBoxTrafficPatternEntryExit
@@ -121,6 +122,7 @@ void TrafficPatternDialog::saveState()
     ui->doubleSpinBoxDownwindDistance,
     ui->spinBoxTrafficPatternAltitude,
     ui->doubleSpinBoxTrafficPatternBaseDistance,
+    ui->doubleSpinBoxTrafficPatternDepartureDistance,
     ui->checkBoxTrafficPattern45Degree,
     ui->comboBoxTrafficPatternTurnDirection,
     ui->checkBoxTrafficPatternEntryExit
@@ -158,8 +160,11 @@ void TrafficPatternDialog::updateRunwayLabel()
 
 void TrafficPatternDialog::updateWidgets()
 {
-  ui->doubleSpinBoxTrafficPatternBaseDistance->setEnabled(!ui->checkBoxTrafficPattern45Degree->isChecked());
-  ui->labelTrafficPatternBaseDistance->setEnabled(!ui->checkBoxTrafficPattern45Degree->isChecked());
+  bool enabled = !ui->checkBoxTrafficPattern45Degree->isChecked();
+  ui->doubleSpinBoxTrafficPatternBaseDistance->setEnabled(enabled);
+  ui->labelTrafficPatternBaseDistance->setEnabled(enabled);
+  ui->doubleSpinBoxTrafficPatternDepartureDistance->setEnabled(enabled);
+  ui->labelTrafficPatternDepartureDistance->setEnabled(enabled);
 }
 
 void TrafficPatternDialog::fillPatternMarker(map::PatternMarker& pattern)
@@ -179,9 +184,9 @@ void TrafficPatternDialog::fillPatternMarker(map::PatternMarker& pattern)
   pattern.turnRight = ui->comboBoxTrafficPatternTurnDirection->currentIndex() == 1;
   pattern.base45Degree = ui->checkBoxTrafficPattern45Degree->isChecked();
   pattern.showEntryExit = ui->checkBoxTrafficPatternEntryExit->isChecked();
-  pattern.downwindDistance = Unit::rev(static_cast<float>(ui->doubleSpinBoxDownwindDistance->value()), Unit::distNmF);
-  pattern.baseDistance = Unit::rev(
-    static_cast<float>(ui->doubleSpinBoxTrafficPatternBaseDistance->value()), Unit::distNmF);
+  pattern.downwindParallelDistance = Unit::rev(static_cast<float>(ui->doubleSpinBoxDownwindDistance->value()), Unit::distNmF);
+  pattern.finalDistance = Unit::rev(static_cast<float>(ui->doubleSpinBoxTrafficPatternBaseDistance->value()), Unit::distNmF);
+  pattern.departureDistance = Unit::rev(static_cast<float>(ui->doubleSpinBoxTrafficPatternDepartureDistance->value()), Unit::distNmF);
 
   pattern.courseTrue = primary ? rw.heading : atools::geo::opposedCourseDeg(rw.heading);
   pattern.magvar = airport.magvar;

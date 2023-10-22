@@ -178,7 +178,7 @@ const QLatin1String MAP_MAX_NEAREST_AI_LABELS_DIST_NM("Map/MaxNearestAiLabelsDis
 const QLatin1String MAP_MAX_NEAREST_AI_LABELS_VERT_DIST_FT("Map/MaxNearestAiLabelsVertDistFt");
 
 const QLatin1String MAP_DISTANCEMARKERS("Map/DistanceMarkers1");
-const QLatin1String MAP_TRAFFICPATTERNS("Map/TrafficPatt1ns1");
+const QLatin1String MAP_TRAFFICPATTERNS("Map/TrafficPatterns2");
 const QLatin1String MAP_HOLDINGS("Map/Holdings1");
 const QLatin1String MAP_AIRPORT_MSA("Map/AirportMsa1");
 const QLatin1String MAP_MARK_DISPLAY("Map/MarkDisplay1");
