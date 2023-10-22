@@ -169,8 +169,8 @@ private:
   void restoreTreeViewState(const QBitArray& state, bool blockSignals);
 
   /* Build full approach or transition items for the tree view */
-  QTreeWidgetItem *buildProcedureItem(QTreeWidgetItem *runwayItem, const atools::sql::SqlRecord& recApp, const QString& procType,
-                                      const QStringList& attStr);
+  QTreeWidgetItem *buildProcedureItem(QTreeWidgetItem *runwayItem, const atools::sql::SqlRecord& recApp, const QString& procTypeText,
+                                      const QString& procTypeShortText, const QStringList& attStr);
   QTreeWidgetItem *buildTransitionItem(QTreeWidgetItem *procItem, const atools::sql::SqlRecord& recTrans, bool sidOrStar);
 
   /* Build an leg for the selected/table or tree view */
@@ -230,13 +230,13 @@ private:
   void airportLabelLinkActivated(const QString& link);
 
   /* Create display text for procedure column */
-  void procedureDisplayText(QString& procTypeText, QStringList& attText, const atools::sql::SqlRecord& recApp,
+  void procedureDisplayText(QString& procTypeText, QString& procTypeShortText, QStringList& attText, const atools::sql::SqlRecord& recApp,
                             proc::MapProcedureTypes maptype, int numTransitions);
 
   /* Update wind columns for procedures after weather change */
   void updateProcedureWind();
 
-  QString transitionIndicator;
+  QString transitionIndicator, transitionIndicatorOne;
 
   // item's types are the indexes into this array with approach, transition and leg ids
   QVector<proc::MapProcedureRef> itemIndex;

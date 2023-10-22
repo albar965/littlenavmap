@@ -127,7 +127,8 @@ ProcedureSearch::ProcedureSearch(QMainWindow *main, QTreeWidget *treeWidgetParam
   treeWidget->setItemDelegate(gridDelegate);
   atools::gui::adjustSelectionColors(treeWidget);
 
-  transitionIndicator = tr(" (T)");
+  transitionIndicator = tr(" (%L1 transitions)");
+  transitionIndicatorOne = tr(" (one transition)");
 
   Ui::MainWindow *ui = NavApp::getMainUi();
   ui->comboBoxProcedureSearchFilter->insertSeparator(FILTER_SEPARATOR_1);
@@ -429,14 +430,17 @@ QString ProcedureSearch::procedureAndTransitionText(const QTreeWidgetItem *item)
 
     if(ref.hasProcedureOnlyIds())
     {
-      // Only approach - remove transition indicator
-      text.append(tr("%1 %2").arg(item->text(COL_DESCRIPTION)).arg(item->text(COL_IDENT)).remove(transitionIndicator));
+      // Only approach
+      text.append(tr("%1 %2").arg(item->data(COL_DESCRIPTION, Qt::UserRole).toString()).arg(item->text(COL_IDENT)));
       if(item->childCount() == 1 && ref.mapType & proc::PROCEDURE_SID)
       {
-        // Special SID case that has only transition legs and only one transition - remove transition indicator
+        // Special SID case that has only transition legs and only one transition
         QTreeWidgetItem *child = item->child(0);
         if(child != nullptr)
-          text.append(tr("%1 %2").arg(child->text(COL_DESCRIPTION)).arg(child->text(COL_IDENT)).remove(transitionIndicator));
+        {
+          text.append(tr(" via "));
+          text.append(tr("%1 %2").arg(child->data(COL_DESCRIPTION, Qt::UserRole).toString()).arg(child->text(COL_IDENT)));
+        }
       }
     }
     else
@@ -445,9 +449,12 @@ QString ProcedureSearch::procedureAndTransitionText(const QTreeWidgetItem *item)
       {
         QTreeWidgetItem *appr = item->parent();
         if(appr != nullptr)
-          text.append(tr("%1 %2").arg(appr->text(COL_DESCRIPTION)).arg(appr->text(COL_IDENT)));
+        {
+          text.append(tr("%1 %2").arg(appr->data(COL_DESCRIPTION, Qt::UserRole).toString()).arg(appr->text(COL_IDENT)));
+          text.append(tr(" via "));
+        }
       }
-      text.append(tr(" %1 %2").arg(item->text(COL_DESCRIPTION)).arg(item->text(COL_IDENT)));
+      text.append(tr(" %1 %2").arg(item->data(COL_DESCRIPTION, Qt::UserRole).toString()).arg(item->text(COL_IDENT)));
     }
   }
   return text.simplified();
@@ -654,11 +661,13 @@ void ProcedureSearch::fillProcedureTreeWidget()
         if(type & proc::PROCEDURE_APPROACH)
           prefix = tr("Approach ");
 
-        QString procTypeText; // RNAV 32-Y or ILS 16
-        QStringList attText; // GPS Overlay, etc.
-        procedureDisplayText(procTypeText, attText, recApp, type, transitionRecords != nullptr ? transitionRecords->size() : 0);
+        QString procTypeText; // "RNAV 32-Y" or "ILS 16 (one transition)"
+        QString procTypeShortText; // "RNAV 32-Y" or "ILS 16"
+        QStringList attText; // "GPS Overlay", etc.
+        procedureDisplayText(procTypeText, procTypeShortText, attText, recApp, type,
+                             transitionRecords != nullptr ? transitionRecords->size() : 0);
 
-        QTreeWidgetItem *apprItem = buildProcedureItem(root, recApp, prefix % procTypeText, attText);
+        QTreeWidgetItem *apprItem = buildProcedureItem(root, recApp, prefix % procTypeText, prefix % procTypeShortText, attText);
 
         if(transitionRecords != nullptr)
         {
@@ -1316,16 +1325,11 @@ void ProcedureSearch::showEntry(QTreeWidgetItem *item, bool doubleClick, bool zo
   }
 }
 
-void ProcedureSearch::procedureDisplayText(QString& procTypeText, QStringList& attText, const SqlRecord& recApp,
+void ProcedureSearch::procedureDisplayText(QString& procTypeText, QString& procTypeShortText, QStringList& attText, const SqlRecord& recApp,
                                            proc::MapProcedureTypes maptype, int numTransitions)
 {
   QString suffix(recApp.valueStr("suffix"));
   QString type(recApp.valueStr("type"));
-
-  if(numTransitions == 1)
-    attText.append(tr("1 Transition"));
-  else if(numTransitions > 1)
-    attText.append(tr("%L1 Transitions").arg(numTransitions));
 
   if(maptype == proc::PROCEDURE_SID)
     procTypeText += tr("SID");
@@ -1359,8 +1363,12 @@ void ProcedureSearch::procedureDisplayText(QString& procTypeText, QStringList& a
   if(!recApp.valueStr("sid_star_arinc_name", QString()).isEmpty())
     procTypeText.append(tr(" ") % recApp.valueStr("sid_star_arinc_name", QString()));
 
-  if(numTransitions > 0)
-    procTypeText.append(transitionIndicator);
+  procTypeShortText = procTypeText;
+
+  if(numTransitions == 1)
+    procTypeText.append(transitionIndicatorOne);
+  else if(numTransitions > 1)
+    procTypeText.append(transitionIndicator.arg(numTransitions));
 }
 
 void ProcedureSearch::updateProcedureWind()
@@ -1390,15 +1398,16 @@ void ProcedureSearch::updateProcedureWind()
   }
 }
 
-QTreeWidgetItem *ProcedureSearch::buildProcedureItem(QTreeWidgetItem *runwayItem, const SqlRecord& recApp,
-                                                     const QString& procType, const QStringList& attStr)
+QTreeWidgetItem *ProcedureSearch::buildProcedureItem(QTreeWidgetItem *runwayItem, const SqlRecord& recApp, const QString& procTypeText,
+                                                     const QString& procTypeShortText, const QStringList& attStr)
 {
-  QTreeWidgetItem *item = new QTreeWidgetItem({procType, recApp.valueStr("fix_ident"),
+  QTreeWidgetItem *item = new QTreeWidgetItem({procTypeText, recApp.valueStr("fix_ident"),
                                                QString(), QString(), QString(), QString(), attStr.join(tr(", "))}, itemIndex.size() - 1);
   item->setChildIndicatorPolicy(QTreeWidgetItem::ShowIndicator);
   item->setTextAlignment(COL_RESTR, Qt::AlignRight);
   item->setTextAlignment(COL_COURSE, Qt::AlignRight);
   item->setTextAlignment(COL_DISTANCE, Qt::AlignRight);
+  item->setData(COL_DESCRIPTION, Qt::UserRole, procTypeShortText);
 
   // First columns bold
   for(int i = COL_DESCRIPTION; i <= COL_IDENT; i++)
@@ -1430,6 +1439,7 @@ QTreeWidgetItem *ProcedureSearch::buildTransitionItem(QTreeWidgetItem *procItem,
   item->setTextAlignment(COL_RESTR, Qt::AlignRight);
   item->setTextAlignment(COL_COURSE, Qt::AlignRight);
   item->setTextAlignment(COL_DISTANCE, Qt::AlignRight);
+  item->setData(COL_DESCRIPTION, Qt::UserRole, tr("transition"));
 
   // First columns bold
   for(int i = COL_DESCRIPTION; i <= COL_IDENT; i++)
