@@ -1565,7 +1565,9 @@ void MapPainterRoute::paintProcedurePoint(proc::MapProcedureLeg& lastLegPoint, Q
   }
 
   // Get text placement sector based on inbound and outbound leg courses
-  textatt::TextAttributes atts = textPlacementAtts(legsRouteOffset + index);
+  textatt::TextAttributes atts = textatt::ROUTE_BG_COLOR;
+  if(!preview && !previewAll)
+    atts = textPlacementAtts(legsRouteOffset + index);
 
   QStringList texts;
 #ifdef DEBUG_INFORMATION_PROCEDURE_INDEX
