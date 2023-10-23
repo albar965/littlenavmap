@@ -263,7 +263,7 @@ private:
   const MapTheme& themeByIndex(int themeIndex) const;
 
   /* Look for directories with a valid DGML file in the earth dir */
-  QList<QFileInfo> findMapThemes(const QStringList& paths);
+  const QList<QFileInfo> findMapThemes(const QStringList& paths);
 
   /* Briefly read the most important data from a DGML file needed to build a MapTheme object */
   MapTheme loadTheme(const QFileInfo& dgml);

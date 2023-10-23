@@ -1290,6 +1290,7 @@ void MainWindow::connectAllSlots()
   connect(ui->actionResetLayout, &QAction::triggered, this, &MainWindow::resetWindowLayout);
   connect(ui->actionResetTabs, &QAction::triggered, this, &MainWindow::resetTabLayout);
   connect(ui->actionResetAllSettings, &QAction::triggered, this, &MainWindow::resetAllSettings);
+  connect(ui->actionCreateACrashReport, &QAction::triggered, this, &MainWindow::createIssueReport);
 
   connect(infoController, &InfoController::showPos, mapWidget, &MapPaintWidget::showPos);
   connect(infoController, &InfoController::showRect, mapWidget, &MapPaintWidget::showRect);
@@ -3318,7 +3319,7 @@ void MainWindow::mainWindowShownDelayed()
 
   NavApp::closeSplashScreen();
 
-  if(OptionData::instance().getFlags().testFlag(opts::STARTUP_LOAD_LAYOUT) && !layoutFileHistory->isEmpty())
+  if(OptionData::instance().getFlags().testFlag(opts::STARTUP_LOAD_LAYOUT) && !layoutFileHistory->isEmpty() && !NavApp::isSafeMode())
     loadLayoutDelayed(layoutFileHistory->getTopFile());
   // else layout was already loaded from settings earlier
 
@@ -3746,6 +3747,7 @@ void MainWindow::updateActionStates()
 
 void MainWindow::resetAllSettings()
 {
+  qDebug() << Q_FUNC_INFO;
   QString settingFile = Settings::getFilename();
   QString settingPath = Settings::getPath();
 
@@ -3771,6 +3773,26 @@ void MainWindow::resetAllSettings()
   }
   else if(retval == QMessageBox::Help)
     atools::gui::HelpHandler::openHelpUrlWeb(this, lnm::helpOnlineUrl % "MENUS.html#reset-and-restart", lnm::helpLanguageOnline());
+}
+
+void MainWindow::createIssueReport()
+{
+  qDebug() << Q_FUNC_INFO;
+
+  // Build report and get file path
+  QString crashReportFile = NavApp::buildCrashReportNavAppManual();
+
+  QFileInfo crashReportFileinfo(crashReportFile);
+  QUrl crashReportUrl = QUrl::fromLocalFile(crashReportFileinfo.absoluteFilePath());
+
+  QString message = tr("<p style=\"white-space:pre\">An issue report was generated and saved with all related files in a Zip archive.</p>"
+                         "<p style=\"white-space:pre\"><a href=\"%1\"><b>Click here to open the issue report \"%2\"</b></a></p>"
+                           "<p style=\"white-space:pre\">You can send this file to the author to investigate a problem.</p>"
+                             "<p style=\"white-space:pre\">%3</p>").
+                    arg(crashReportUrl.toString()).arg(crashReportFileinfo.fileName()).arg(NavApp::getContactHtml());
+
+  // Notify use with links
+  QMessageBox::information(this, NavApp::applicationName(), message);
 }
 
 void MainWindow::resetWindowLayout()

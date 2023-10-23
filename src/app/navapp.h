@@ -435,6 +435,15 @@ public:
   static QStringList getStartupOptionStrList(const QString& key);
   static void addStartupOptionStr(const QString& key, const QString& value);
   static void addStartupOptionStrList(const QString& key, const QStringList& value);
+  static void clearStartupOptions(); /* Clear for safe mode */
+
+  /* Creates a lock file and shows a warning dialog if this is already present from a former crash.
+   * Sets safe mode if user chooses to skip file loading.
+   * Always creates a crash report in case of previous unsafe exit. */
+  static void recordStartNavApp();
+
+  /* Record files and pack them into a zip for a crash report */
+  static QString buildCrashReportNavAppManual();
 
   /* true if tooltips in menus are visible */
   static bool isMenuToolTipsVisible();

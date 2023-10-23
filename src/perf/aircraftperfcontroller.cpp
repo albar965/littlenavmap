@@ -1391,22 +1391,25 @@ void AircraftPerfController::restoreState()
   fileHistory->restoreState();
 
   // Load last used performance file or the one passed on the command line
-  QString perfFile;
-  fc::fromStartupProperties(NavApp::getStartupOptionsConst(), nullptr, nullptr, &perfFile);
-
-  if(perfFile.isEmpty() && OptionData::instance().getFlags() & opts::STARTUP_LOAD_PERF)
-    perfFile = settings.valueStr(lnm::AIRCRAFT_PERF_FILENAME);
-
-  if(!perfFile.isEmpty())
+  if(!NavApp::isSafeMode())
   {
-    QString message = atools::checkFileMsg(perfFile);
-    if(message.isEmpty())
-      loadFile(perfFile);
-    else
+    QString perfFile;
+    fc::fromStartupProperties(NavApp::getStartupOptionsConst(), nullptr, nullptr, &perfFile);
+
+    if(perfFile.isEmpty() && OptionData::instance().getFlags() & opts::STARTUP_LOAD_PERF)
+      perfFile = settings.valueStr(lnm::AIRCRAFT_PERF_FILENAME);
+
+    if(!perfFile.isEmpty())
     {
-      // No file or not readable
-      NavApp::closeSplashScreen();
-      QMessageBox::warning(mainWindow, QApplication::applicationName(), message);
+      QString message = atools::checkFileMsg(perfFile);
+      if(message.isEmpty())
+        loadFile(perfFile);
+      else
+      {
+        // No file or not readable
+        NavApp::closeSplashScreen();
+        QMessageBox::warning(mainWindow, QApplication::applicationName(), message);
+      }
     }
   }
 

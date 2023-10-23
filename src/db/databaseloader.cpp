@@ -478,7 +478,7 @@ void DatabaseLoader::showErrors()
                         "due to encrypted airport data.<hr/>"));
 
     int numScenery = 0;
-    for(const atools::fs::NavDatabaseErrors::SceneryErrors& scErr : navDatabaseErrors->sceneryErrors)
+    for(const atools::fs::NavDatabaseErrors::SceneryErrors& scErr : qAsConst(navDatabaseErrors->sceneryErrors))
     {
       if(numScenery >= MAX_ERROR_SCENERY_MESSAGES)
       {

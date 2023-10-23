@@ -19,6 +19,7 @@
 
 #include "airspace/airspacecontroller.h"
 #include "common/aircrafttrack.h"
+#include "common/constants.h"
 #include "common/elevationprovider.h"
 #include "common/updatehandler.h"
 #include "common/vehicleicons.h"
@@ -29,13 +30,13 @@
 #include "fs/common/magdecreader.h"
 #include "fs/common/morareader.h"
 #include "fs/db/databasemeta.h"
-#include "fs/weather/metar.h"
 #include "gui/errorhandler.h"
 #include "gui/mainwindow.h"
 #include "gui/stylehandler.h"
 #include "route/routealtitude.h"
 #include "util/properties.h"
 #include "logbook/logdatacontroller.h"
+#include "logging/logginghandler.h"
 #include "mapgui/mapmarkhandler.h"
 #include "mapgui/mapairporthandler.h"
 #include "mapgui/mapdetailhandler.h"
@@ -57,6 +58,7 @@
 #include "web/webcontroller.h"
 #include "web/webmapcontroller.h"
 #include "app/dataexchange.h"
+#include "settings/settings.h"
 
 #include "ui_mainwindow.h"
 
@@ -102,6 +104,8 @@ bool NavApp::closeCalled = false;
 bool NavApp::shuttingDown = false;
 bool NavApp::loadingDatabase = false;
 bool NavApp::mainWindowVisible = false;
+
+using atools::settings::Settings;
 
 NavApp::NavApp(int& argc, char **argv, int flags)
   : atools::gui::Application(argc, argv, flags)
@@ -921,6 +925,47 @@ void NavApp::addStartupOptionStrList(const QString& key, const QStringList& valu
   startupOptions->setPropertyStrList(key, value);
 }
 
+void NavApp::clearStartupOptions()
+{
+  startupOptions->clear();
+}
+
+void getCrashReportFiles(QStringList& crashReportFiles, QString& reportFilename, bool manual)
+{
+  // Collect all files which should be skipped on startup
+  Settings& settings = Settings::instance();
+  crashReportFiles.append(settings.valueStr(lnm::ROUTE_FILENAME));
+  crashReportFiles.append(settings.valueStr(lnm::AIRCRAFT_PERF_FILENAME));
+  crashReportFiles.append(Settings::getFilename());
+  crashReportFiles.append(Settings::getConfigFilename(".lnmpln"));
+
+  // Add log files last to catch any error which appear while compressing
+  crashReportFiles.append(atools::logging::LoggingHandler::getLogFiles());
+
+  reportFilename = Settings::getConfigFilename(manual ? "_issuereport.zip" : "_crashreport.zip", "crashreports");
+}
+
+void NavApp::recordStartNavApp()
+{
+  QStringList crashReportFiles;
+  QString reportFilename;
+  getCrashReportFiles(crashReportFiles, reportFilename, false /* manual */);
+
+  Application::recordStart(nullptr, Settings::getConfigFilename(".running"), reportFilename, crashReportFiles);
+
+  // Keep command line options to avoid using the wrong configuration folder
+}
+
+QString NavApp::buildCrashReportNavAppManual()
+{
+  QStringList crashReportFiles;
+  QString reportFilename;
+  getCrashReportFiles(crashReportFiles, reportFilename, true /* manual */);
+
+  Application::buildCrashReport(reportFilename, crashReportFiles);
+  return reportFilename;
+}
+
 void NavApp::setToolTipsEnabledMainMenu(bool enabled)
 {
   // Enable tooltips for all menus
@@ -933,7 +978,8 @@ void NavApp::setToolTipsEnabledMainMenu(bool enabled)
     if(menu != nullptr)
     {
       menu->setToolTipsVisible(enabled);
-      for(QAction *sub : menu->actions())
+      const QList<QAction *> actions = menu->actions();
+      for(QAction *sub : actions)
       {
         if(sub->menu() != nullptr)
           stack.append(sub);

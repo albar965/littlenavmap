@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -21,11 +21,10 @@
 #include "common/constants.h"
 #include "common/formatter.h"
 #include "common/mapresult.h"
-#include "common/unit.h"
-#include "fs/online/onlinetypes.h"
 #include "gui/widgetstate.h"
 #include "app/navapp.h"
 #include "online/onlinedatacontroller.h"
+#include "options/optiondata.h"
 #include "search/column.h"
 #include "search/columnlist.h"
 #include "search/sqlcontroller.h"
@@ -124,7 +123,7 @@ void OnlineClientSearch::saveState()
 
 void OnlineClientSearch::restoreState()
 {
-  if(OptionData::instance().getFlags() & opts::STARTUP_LOAD_SEARCH)
+  if(OptionData::instance().getFlags() & opts::STARTUP_LOAD_SEARCH && !NavApp::isSafeMode())
   {
     atools::gui::WidgetState widgetState(lnm::SEARCHTAB_ONLINE_CLIENT_VIEW_WIDGET);
     widgetState.restore(onlineClientSearchWidgets);

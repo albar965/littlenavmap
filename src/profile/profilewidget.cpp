@@ -2682,7 +2682,7 @@ void ProfileWidget::restoreState()
   profileOptions->restoreState();
   scrollArea->restoreState();
 
-  if(OptionData::instance().getFlags() & opts::STARTUP_LOAD_TRAIL)
+  if(OptionData::instance().getFlags() & opts::STARTUP_LOAD_TRAIL && !NavApp::isSafeMode())
     loadAircraftTrack();
 }
 

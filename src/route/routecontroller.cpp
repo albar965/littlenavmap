@@ -1053,25 +1053,28 @@ void RouteController::restoreState()
       // Nothing given on command line ==================================
       if(OptionData::instance().getFlags().testFlag(opts::STARTUP_LOAD_ROUTE))
       {
-        QString lastUsedFlightplanFile = atools::settings::Settings::instance().valueStr(lnm::ROUTE_FILENAME);
-        QString flightplanToLoad = lastUsedFlightplanFile;
-        bool changed = false;
-
-        if(atools::checkFile(Q_FUNC_INFO, routeFilenameDefault, false /* warn */))
+        if(!NavApp::isSafeMode())
         {
-          // Default file exists from last save - load it and set new file to changed
-          flightplanToLoad = routeFilenameDefault;
-          changed = true;
-        }
+          QString lastUsedFlightplanFile = atools::settings::Settings::instance().valueStr(lnm::ROUTE_FILENAME);
+          QString flightplanToLoad = lastUsedFlightplanFile;
+          bool changed = false;
 
-        if(!flightplanToLoad.isEmpty())
-        {
-          Flightplan fp;
-          atools::fs::pln::FileFormat format = flightplanIO->load(fp, flightplanToLoad);
-          // Do not warn on missing altitude after loading
-          loadFlightplan(fp, format, flightplanToLoad, changed, false /* adjustAltitude */, false /* undo */, false /* warnAltitude */);
+          if(atools::checkFile(Q_FUNC_INFO, routeFilenameDefault, false /* warn */))
+          {
+            // Default file exists from last save - load it and set new file to changed
+            flightplanToLoad = routeFilenameDefault;
+            changed = true;
+          }
 
-          routeFilename = lastUsedFlightplanFile;
+          if(!flightplanToLoad.isEmpty())
+          {
+            Flightplan fp;
+            atools::fs::pln::FileFormat format = flightplanIO->load(fp, flightplanToLoad);
+            // Do not warn on missing altitude after loading
+            loadFlightplan(fp, format, flightplanToLoad, changed, false /* adjustAltitude */, false /* undo */, false /* warnAltitude */);
+
+            routeFilename = lastUsedFlightplanFile;
+          }
         }
       }
     }

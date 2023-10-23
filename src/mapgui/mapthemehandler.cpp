@@ -110,7 +110,7 @@ void MapThemeHandler::loadThemes()
       }
 
       ids.insert(theme.theme);
-      for(const QString& dir : theme.sourceDirs)
+      for(const QString& dir : qAsConst(theme.sourceDirs))
         sourceDirs.insert(dir);
 
       qInfo() << Q_FUNC_INFO << "Found" << theme.theme << theme.name;
@@ -119,7 +119,7 @@ void MapThemeHandler::loadThemes()
       themes.append(theme);
 
       // Collect all keys and insert with empty value
-      for(const QString& key : theme.keys)
+      for(const QString& key : qAsConst(theme.keys))
         mapThemeKeys.insert(key, QString());
     }
     else
@@ -469,7 +469,7 @@ MapTheme MapThemeHandler::loadTheme(const QFileInfo& dgml)
   return theme;
 }
 
-QList<QFileInfo> MapThemeHandler::findMapThemes(const QStringList& paths)
+const QList<QFileInfo> MapThemeHandler::findMapThemes(const QStringList& paths)
 {
   QList<QFileInfo> dgmlFileInfos;
 

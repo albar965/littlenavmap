@@ -241,7 +241,7 @@ void LogdataSearch::restoreState()
 {
   Ui::MainWindow *ui = NavApp::getMainUi();
   atools::gui::WidgetState widgetState(lnm::SEARCHTAB_LOGDATA_VIEW_WIDGET);
-  if(OptionData::instance().getFlags() & opts::STARTUP_LOAD_SEARCH)
+  if(OptionData::instance().getFlags() & opts::STARTUP_LOAD_SEARCH && !NavApp::isSafeMode())
   {
     widgetState.restore(logdataSearchWidgets);
 

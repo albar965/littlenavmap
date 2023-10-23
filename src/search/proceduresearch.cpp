@@ -714,7 +714,7 @@ void ProcedureSearch::saveState()
 void ProcedureSearch::restoreState()
 {
   atools::settings::Settings& settings = atools::settings::Settings::instance();
-  if(OptionData::instance().getFlags() & opts::STARTUP_LOAD_SEARCH)
+  if(OptionData::instance().getFlags() & opts::STARTUP_LOAD_SEARCH && !NavApp::isSafeMode())
   {
     if(NavApp::hasDataInDatabase())
     {
@@ -726,7 +726,7 @@ void ProcedureSearch::restoreState()
   updateFilterBoxes();
 
   QBitArray state;
-  if(OptionData::instance().getFlags() & opts::STARTUP_LOAD_SEARCH)
+  if(OptionData::instance().getFlags() & opts::STARTUP_LOAD_SEARCH && !NavApp::isSafeMode())
   {
     Ui::MainWindow *ui = NavApp::getMainUi();
     WidgetState(lnm::APPROACHTREE_WIDGET).restore({ui->comboBoxProcedureSearchFilter, ui->comboBoxProcedureRunwayFilter,
@@ -743,7 +743,7 @@ void ProcedureSearch::restoreState()
   updateTreeHeader();
   WidgetState(lnm::APPROACHTREE_WIDGET).restore(treeWidget);
 
-  if(OptionData::instance().getFlags() & opts::STARTUP_LOAD_SEARCH)
+  if(OptionData::instance().getFlags() & opts::STARTUP_LOAD_SEARCH && !NavApp::isSafeMode())
   {
     // Restoring state will emit above signal
     if(currentAirportNav->isValid() && currentAirportNav->procedure())

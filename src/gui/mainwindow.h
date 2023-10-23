@@ -365,6 +365,9 @@ private:
   /* Reset all "do not show this again" message box status values */
   void resetMessages();
   void resetAllSettings();
+
+  /* Manual issue report triggered from the menu */
+  void createIssueReport();
   void showDatabaseFiles();
   void showShowMapCache();
   void showMapInstallation();

@@ -226,8 +226,10 @@
     <addaction name="actionOpenWebserver"/>
     <addaction name="separator"/>
     <addaction name="actionResetMessages"/>
+    <addaction name="separator"/>
     <addaction name="actionResetAllSettings"/>
     <addaction name="actionSaveAllNow"/>
+    <addaction name="actionCreateACrashReport"/>
     <addaction name="separator"/>
     <addaction name="actionCreateDirStructure"/>
     <addaction name="menuHelpFilesAndFolders"/>
@@ -12052,6 +12054,17 @@ relation to shown airport</string>
    </property>
    <property name="statusTip">
     <string>Show legs to alternate airports and airports for flight plan on the map</string>
+   </property>
+  </action>
+  <action name="actionCreateACrashReport">
+   <property name="text">
+    <string>&amp;Create an Issue Report</string>
+   </property>
+   <property name="toolTip">
+    <string>Builds an issue report package containing all related files to report a problem</string>
+   </property>
+   <property name="statusTip">
+    <string>Builds an issue report package containing all related files to report a problem</string>
    </property>
   </action>
  </widget>

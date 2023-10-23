@@ -3100,13 +3100,13 @@ void MapWidget::restoreState()
     homeDistance = DEFAULT_MAP_DISTANCE_KM;
   }
 
-  if(OptionData::instance().getFlags() & opts::STARTUP_LOAD_KML)
+  if(OptionData::instance().getFlags() & opts::STARTUP_LOAD_KML && !NavApp::isSafeMode())
     kmlFilePaths = settings.valueStrList(lnm::MAP_KMLFILES);
 
   // Restore range rings, patterns, holds and more
   getScreenIndex()->restoreState();
 
-  if(OptionData::instance().getFlags() & opts::STARTUP_LOAD_TRAIL)
+  if(OptionData::instance().getFlags() & opts::STARTUP_LOAD_TRAIL && !NavApp::isSafeMode())
     aircraftTrack->restoreState(lnm::AIRCRAFT_TRACK_SUFFIX);
   aircraftTrack->setMaxTrackEntries(OptionData::instance().getAircraftTrackMaxPoints());
 
