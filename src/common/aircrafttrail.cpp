@@ -45,8 +45,10 @@ static const float MAX_POINT_DISTANCE_NM = 5.f;
 static const int PRUNE_TRACK_ENTRIES = 200;
 
 /* Minimum time difference between recordings */
-static const int MIN_POSITION_TIME_DIFF_MS = 1000;
-static const int MIN_POSITION_TIME_DIFF_GROUND_MS = 250;
+static const int MIN_POSITION_TIME_DIFF_FLYING_MS = 2000;
+static const int MIN_POSITION_TIME_DIFF_GROUND_MS = 500;
+static const float MIN_POSITION_DISTANCE_DIFF_FLYING_M = atools::geo::Pos::POS_EPSILON_100M;
+static const float MIN_POSITION_DISTANCE_DIFF_GROUND_M = atools::geo::Pos::POS_EPSILON_5M;
 
 static const quint32 FILE_MAGIC_NUMBER = 0x5B6C1A2B;
 
@@ -391,13 +393,14 @@ bool AircraftTrail::appendTrailPos(const atools::fs::sc::SimConnectUserAircraft&
   else
   {
     // Use a smaller distance on ground before storing position
-    float epsilonPos = onGround ? atools::geo::Pos::POS_EPSILON_5M : atools::geo::Pos::POS_EPSILON_100M;
-    qint64 epsilonTime = onGround ? MIN_POSITION_TIME_DIFF_GROUND_MS : MIN_POSITION_TIME_DIFF_MS;
+    float epsilonPos = onGround ? MIN_POSITION_DISTANCE_DIFF_GROUND_M : MIN_POSITION_DISTANCE_DIFF_FLYING_M;
+    qint64 epsilonTime = onGround ? MIN_POSITION_TIME_DIFF_GROUND_MS : MIN_POSITION_TIME_DIFF_FLYING_MS;
 
     qint64 timeMs = timestamp.toMSecsSinceEpoch();
     const at::AircraftTrailPos& last = constLast();
     qint64 lastTimeMs = last.getTimestampMs();
 
+    // Either moved or time passed by
     atools::geo::Pos pos = posD.asPos();
     if(!pos.almostEqual(last.getPosition(), epsilonPos) && !atools::almostEqual(lastTimeMs, timeMs, epsilonTime))
     {
