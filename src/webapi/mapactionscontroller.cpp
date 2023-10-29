@@ -327,8 +327,8 @@ MapPixmap MapActionsController::getPixmapRect(int width, int height, atools::geo
       mapPaintWidget->showRectStreamlined(rect, false);
 
       // Disable dynamic/live features
-      mapPaintWidget->setShowMapObject(map::AIRCRAFT_ALL,false);
-      mapPaintWidget->setShowMapObjectDisplay(map::AIRCRAFT_TRACK,false);
+      mapPaintWidget->setShowMapObject(map::AIRCRAFT_ALL, false);
+      mapPaintWidget->setShowMapObject(map::AIRCRAFT_TRAIL, false);
 
       // Set detail factor
       mapPaintWidget->getMapPaintLayer()->setDetailLevel(detailFactor);

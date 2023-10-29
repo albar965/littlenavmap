@@ -23,6 +23,7 @@
 #include "common/formatter.h"
 #include "common/fueltool.h"
 #include "common/htmlinfobuilderflags.h"
+#include "common/mapcolors.h"
 #include "common/maptools.h"
 #include "common/maptypes.h"
 #include "common/symbolpainter.h"
@@ -3790,6 +3791,52 @@ void HtmlInfoBuilder::aircraftTextWeightAndFuel(const atools::fs::sc::SimConnect
                                                          userAircraft.getFuelTotalQuantityGallons(), true /* bold */), ahtml::NO_ENTITIES);
     html.tableEnd().row2AlignRight(false);
   }
+}
+
+void HtmlInfoBuilder::aircraftTrackText(const AircraftTrailSegment& trailSegment, HtmlBuilder& html, bool logbook) const
+{
+  float thicknessTrail = OptionData::instance().getDisplayThicknessTrail() / 100.f;
+
+  // Create icon showing the same line style as configured by the user or logbook icon
+  QIcon icon = logbook ? QIcon(":/littlenavmap/resources/icons/logbook.svg") :
+               SymbolPainter::createAircraftTrailIcon(symbolSizeTitle.height(), mapcolors::aircraftTrailPen(thicknessTrail * 2.f));
+
+  html.img(icon, QString(), QString(), symbolSizeTitle);
+  html.nbsp().nbsp();
+
+  if(logbook)
+    html.text("Logbook Aircraft Trail", ahtml::BOLD);
+  else
+    html.text("User Aircraft Trail", ahtml::BOLD);
+
+  html.table();
+
+  // Simulator date and time with seconds ========================
+  QDateTime datetime = QDateTime::fromMSecsSinceEpoch(trailSegment.timestampPos, Qt::UTC);
+  bool overrideLocale = OptionData::instance().getFlags().testFlag(opts::GUI_OVERRIDE_LOCALE);
+  html.row2(tr("Simulator Date and Time:"),
+            formatter::formatDateTimeSeconds(datetime, overrideLocale) % tr(" ") % datetime.timeZoneAbbreviation());
+
+  // Speed ==================================
+  html.row2(tr("Speed:"), Unit::speedMeterPerSec(trailSegment.speed));
+
+  // Long line segments =========================================
+  if(trailSegment.length > 5000.)
+    html.row2(tr("Trail Segment Length (long jump):"), Unit::distMeter(static_cast<float>(trailSegment.length)));
+
+  html.row2(tr("Distance Flown:"), Unit::distMeter(static_cast<float>(trailSegment.distanceFromStart)));
+  html.row2(tr("Actual Altitude:"), Unit::altFeet(trailSegment.to.getAltitude()));
+
+  if(trailSegment.onGround)
+    html.row2(tr("On ground"));
+  html.tableEnd();
+
+#ifdef DEBUG_INFORMATION
+  html.small("[Index]" % QString::number(trailSegment.index));
+#endif
+
+  if(info)
+    html.br();
 }
 
 void HtmlInfoBuilder::dateTimeAndFlown(const SimConnectUserAircraft *userAircraft, HtmlBuilder& html) const

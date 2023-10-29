@@ -17,7 +17,7 @@
 
 #include "mapgui/mappaintwidget.h"
 
-#include "common/aircrafttrack.h"
+#include "common/aircrafttrail.h"
 #include "common/constants.h"
 #include "common/mapresult.h"
 #include "common/unit.h"
@@ -72,8 +72,8 @@ MapPaintWidget::MapPaintWidget(QWidget *parent, bool visible)
 {
   verbose = atools::settings::Settings::instance().getAndStoreValue(lnm::OPTIONS_MAPWIDGET_DEBUG, false).toBool();
 
-  aircraftTrack = new AircraftTrack;
-  aircraftTrackLogbook = new AircraftTrack;
+  aircraftTrail = new AircraftTrail;
+  aircraftTrailLogbook = new AircraftTrail;
 
   // Set the map quality to gain speed while moving
   setMapQualityForViewContext(HighQuality, Still);
@@ -132,10 +132,10 @@ MapPaintWidget::~MapPaintWidget()
   delete screenIndex;
 
   qDebug() << Q_FUNC_INFO << "delete aircraftTrack";
-  delete aircraftTrack;
+  delete aircraftTrail;
 
   qDebug() << Q_FUNC_INFO << "delete aircraftTrackLogbook";
-  delete aircraftTrackLogbook;
+  delete aircraftTrailLogbook;
 
   qDebug() << Q_FUNC_INFO << "delete apronGeometryCache";
   delete apronGeometryCache;
@@ -194,8 +194,8 @@ void MapPaintWidget::copySettings(const MapPaintWidget& other)
 
   // Copy own/internal settings
   currentThemeId = other.currentThemeId;
-  *aircraftTrack = *other.aircraftTrack;
-  *aircraftTrackLogbook = *other.aircraftTrackLogbook;
+  *aircraftTrail = *other.aircraftTrail;
+  *aircraftTrailLogbook = *other.aircraftTrailLogbook;
   searchMarkPos = other.searchMarkPos;
   homePos = other.homePos;
   homeDistance = other.homeDistance;
@@ -1017,7 +1017,7 @@ bool MapPaintWidget::hasHighlights() const
 
 bool MapPaintWidget::hasTrackPoints() const
 {
-  return !aircraftTrack->isEmpty();
+  return !aircraftTrail->isEmpty();
 }
 
 const map::MapResult& MapPaintWidget::getSearchHighlights() const

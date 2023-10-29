@@ -17,7 +17,7 @@
 
 #include "mapgui/mapwidget.h"
 
-#include "common/aircrafttrack.h"
+#include "common/aircrafttrail.h"
 #include "common/constants.h"
 #include "common/elevationprovider.h"
 #include "common/jumpback.h"
@@ -568,12 +568,21 @@ void MapWidget::updateTooltipResult()
                                         map::QUERY_MARK_MSA | map::QUERY_MARK_DISTANCE | map::QUERY_MARK_RANGE |
                                         map::QUERY_PREVIEW_PROC_POINTS | map::QUERY_PROC_RECOMMENDED;
 
+  const OptionData& optiondata = OptionData::instance();
+
   // Enable features not always shown depending on visiblity
   if(getShownMapTypes().testFlag(map::MISSED_APPROACH))
     queryTypes |= map::QUERY_PROC_MISSED_POINTS;
 
   if(getShownMapDisplayTypes().testFlag(map::FLIGHTPLAN_ALTERNATE))
     queryTypes |= map::QUERY_ALTERNATE;
+
+  if(getShownMapTypes().testFlag(map::AIRCRAFT_TRAIL) && optiondata.getDisplayTooltipOptions().testFlag(optsd::TOOLTIP_AIRCRAFT_TRAIL))
+    queryTypes |= map::QUERY_AIRCRAFT_TRAIL;
+
+  if(optiondata.getDisplayTooltipOptions().testFlag(optsd::TOOLTIP_AIRCRAFT_TRAIL) &&
+     getShownMapDisplayTypes().testFlag(map::LOGBOOK_TRACK))
+    queryTypes |= map::QUERY_AIRCRAFT_TRAIL_LOG;
 
   // Load tooltip data into mapSearchResultTooltip
   *mapSearchResultTooltip = map::MapResult();
@@ -621,11 +630,11 @@ void MapWidget::showTooltip(bool update)
   {
     qreal lon, lat;
     QPoint point = mapFromGlobal(tooltipGlobalPos);
+    map::AircraftTrailSegment trailSegment;
     if(geoCoordinates(point.x(), point.y(), lon, lat))
     {
       // Build a new tooltip HTML for weather changes or aircraft updates
       QString text;
-
       if(paintLayer->getMapLayer() != nullptr)
         text = mapTooltip->buildTooltip(*mapSearchResultTooltip, atools::geo::Pos(lon, lat), NavApp::getRouteConst(),
                                         paintLayer->getMapLayer()->isAirportDiagram());
@@ -2472,19 +2481,19 @@ void MapWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorDa
   dy = std::max(static_cast<int>(height() * boxFactor), 32);
   widgetRectSmallPlan.adjust(dx, dy, -dx, -dy);
 
-  bool wasEmpty = aircraftTrack->isEmpty();
+  bool wasEmpty = aircraftTrail->isEmpty();
 #ifdef DEBUG_INFORMATION_DISABLED
   qDebug() << "curPos" << curPos;
   qDebug() << "widgetRectSmall" << widgetRectSmall;
 #endif
 
-  bool pruned = aircraftTrack->appendTrackPos(aircraft, true /* allowSplit */);
-  pruned |= aircraftTrackLogbook->appendTrackPos(aircraft, false /* allowSplit */);
+  bool pruned = aircraftTrail->appendTrailPos(aircraft, true /* allowSplit */);
+  pruned |= aircraftTrailLogbook->appendTrailPos(aircraft, false /* allowSplit */);
 
   if(pruned)
     emit aircraftTrackPruned();
 
-  if(wasEmpty != aircraftTrack->isEmpty())
+  if(wasEmpty != aircraftTrail->isEmpty())
     // We have a track - update toolbar and menu
     emit updateActionStates();
 
@@ -3005,7 +3014,6 @@ bool MapWidget::isCenterLegAndAircraftActive()
 void MapWidget::optionsChanged()
 {
   screenSearchDistance = OptionData::instance().getMapClickSensitivity();
-
   screenSearchDistanceTooltip = OptionData::instance().getMapTooltipSensitivity();
   MapPaintWidget::optionsChanged();
 }
@@ -3051,8 +3059,8 @@ void MapWidget::saveState()
 
   history.saveState(atools::settings::Settings::getConfigFilename(".history"));
   getScreenIndexConst()->saveState();
-  aircraftTrack->saveState(lnm::AIRCRAFT_TRACK_SUFFIX, 2 /* numBackups */);
-  aircraftTrackLogbook->saveState(lnm::LOGBOOK_TRACK_SUFFIX, 0 /* numBackups */);
+  aircraftTrail->saveState(lnm::AIRCRAFT_TRACK_SUFFIX, 2 /* numBackups */);
+  aircraftTrailLogbook->saveState(lnm::LOGBOOK_TRACK_SUFFIX, 0 /* numBackups */);
 
   overlayStateToMenu();
   atools::gui::WidgetState state(lnm::MAP_OVERLAY_VISIBLE, false /*save visibility*/, true /*block signals*/);
@@ -3107,11 +3115,11 @@ void MapWidget::restoreState()
   getScreenIndex()->restoreState();
 
   if(OptionData::instance().getFlags() & opts::STARTUP_LOAD_TRAIL && !NavApp::isSafeMode())
-    aircraftTrack->restoreState(lnm::AIRCRAFT_TRACK_SUFFIX);
-  aircraftTrack->setMaxTrackEntries(OptionData::instance().getAircraftTrackMaxPoints());
+    aircraftTrail->restoreState(lnm::AIRCRAFT_TRACK_SUFFIX);
+  aircraftTrail->setMaxTrackEntries(OptionData::instance().getAircraftTrackMaxPoints());
 
-  aircraftTrackLogbook->restoreState(lnm::LOGBOOK_TRACK_SUFFIX);
-  aircraftTrackLogbook->setMaxTrackEntries(OptionData::instance().getAircraftTrackMaxPoints());
+  aircraftTrailLogbook->restoreState(lnm::LOGBOOK_TRACK_SUFFIX);
+  aircraftTrailLogbook->setMaxTrackEntries(OptionData::instance().getAircraftTrackMaxPoints());
 
   atools::gui::WidgetState state(lnm::MAP_OVERLAY_VISIBLE, false /*save visibility*/, true /*block signals*/);
   for(QAction *action : qAsConst(mapOverlays))
@@ -3371,7 +3379,7 @@ void MapWidget::updateMapObjectsShown()
   setShowMapObjectDisplay(map::AIRCRAFT_SELECTED_ALT_RANGE, ui->actionMapShowSelectedAltRange->isChecked());
   setShowMapObjectDisplay(map::AIRCRAFT_TURN_PATH, ui->actionMapShowTurnPath->isChecked());
   setShowMapObject(map::AIRCRAFT, ui->actionMapShowAircraft->isChecked());
-  setShowMapObjectDisplay(map::AIRCRAFT_TRACK, ui->actionMapShowAircraftTrack->isChecked());
+  setShowMapObject(map::AIRCRAFT_TRAIL, ui->actionMapShowAircraftTrack->isChecked());
   setShowMapObject(map::AIRCRAFT_AI, ui->actionMapShowAircraftAi->isChecked());
   setShowMapObject(map::AIRCRAFT_ONLINE, ui->actionMapShowAircraftOnline->isChecked());
   setShowMapObject(map::AIRCRAFT_AI_SHIP, ui->actionMapShowAircraftAiBoat->isChecked());
@@ -3843,14 +3851,14 @@ void MapWidget::clearAllMarkers(map::MapTypes types)
 
 void MapWidget::deleteAircraftTrack()
 {
-  aircraftTrack->clearTrack();
+  aircraftTrail->clearTrail();
   emit updateActionStates();
   update();
 }
 
-void MapWidget::deleteAircraftTrackLogbook()
+void MapWidget::deleteAircraftTrailLogbook()
 {
-  aircraftTrackLogbook->clearTrack();
+  aircraftTrailLogbook->clearTrail();
 }
 
 void MapWidget::setDetailLevel(int level)

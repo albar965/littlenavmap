@@ -17,7 +17,7 @@
 
 #include "app/navapp.h"
 #include "atools.h"
-#include "common/aircrafttrack.h"
+#include "common/aircrafttrail.h"
 #include "common/constants.h"
 #include "common/formatter.h"
 #include "common/maptypes.h"
@@ -94,8 +94,8 @@ int main(int argc, char *argv[])
   qRegisterMetaTypeStreamOperators<map::RangeMarker>();
   qRegisterMetaTypeStreamOperators<QList<map::RangeMarker> >();
 
-  qRegisterMetaTypeStreamOperators<at::AircraftTrackPos>();
-  qRegisterMetaTypeStreamOperators<QList<at::AircraftTrackPos> >();
+  qRegisterMetaTypeStreamOperators<at::AircraftTrailPos>();
+  qRegisterMetaTypeStreamOperators<QList<at::AircraftTrailPos> >();
 
   qRegisterMetaTypeStreamOperators<RouteExportFormat>();
   qRegisterMetaTypeStreamOperators<RouteExportFormatMap>();

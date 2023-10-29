@@ -71,7 +71,7 @@ struct MapProcedureLegs;
 
 }
 
-class AircraftTrack;
+class AircraftTrail;
 
 /*
  * Contains all functions to draw a map including background, flight plan, navaids and whatnot.
@@ -184,14 +184,14 @@ public:
   /* true if any highlighting circles are to be drawn on the map */
   bool hasHighlights() const;
 
-  const AircraftTrack& getAircraftTrack() const
+  const AircraftTrail& getAircraftTrail() const
   {
-    return *aircraftTrack;
+    return *aircraftTrail;
   }
 
-  const AircraftTrack& getAircraftTrackLogbook() const
+  const AircraftTrail& getAircraftTrailLogbook() const
   {
-    return *aircraftTrackLogbook;
+    return *aircraftTrailLogbook;
   }
 
   bool hasTrackPoints() const;
@@ -559,7 +559,7 @@ protected:
   QString currentThemeId;
 
   /* Trail/track of user aircraft */
-  AircraftTrack *aircraftTrack = nullptr, *aircraftTrackLogbook = nullptr;
+  AircraftTrail *aircraftTrail = nullptr, *aircraftTrailLogbook = nullptr;
 
   /* Skip the first unneeded render event after mouse events */
   bool skipRender = false;

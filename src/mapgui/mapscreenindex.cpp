@@ -18,8 +18,10 @@
 #include "mapgui/mapscreenindex.h"
 
 #include "airspace/airspacecontroller.h"
+#include "common/aircrafttrail.h"
 #include "common/constants.h"
 #include "common/maptools.h"
+#include "fs/gpx/gpxtypes.h"
 #include "fs/sc/simconnectdata.h"
 #include "logbook/logdatacontroller.h"
 #include "mapgui/mapairporthandler.h"
@@ -345,11 +347,13 @@ void MapScreenIndex::updateLogEntryScreenGeometry(const Marble::GeoDataLatLonBox
           if(types.testFlag(map::LOGBOOK_ROUTE) && searchHighlights->logbookEntries.size() == 1)
           {
             // Get geometry for flight plan if preview is enabled
-            const atools::geo::LineString *geo = NavApp::getLogdataController()->getRouteGeometry(entry.id);
-            if(geo != nullptr)
+            const atools::fs::gpx::GpxData *gpxData = NavApp::getLogdataController()->getGpxData(entry.id);
+            if(gpxData != nullptr)
             {
-              for(int i = 0; i < geo->size() - 1; i++)
-                updateLineScreenGeometry(logEntryLines, entry.id, Line(geo->at(i), geo->at(i + 1)), curBox, conv);
+              for(int i = 0; i < gpxData->flightplan.size() - 1; i++)
+                updateLineScreenGeometry(logEntryLines, entry.id,
+                                         Line(gpxData->flightplan.at(i).getPosition(), gpxData->flightplan.at(i + 1).getPosition()),
+                                         curBox, conv);
             }
           }
         }
@@ -995,6 +999,35 @@ void MapScreenIndex::getAllNearest(const QPoint& point, int maxDistance, map::Ma
           if(atools::geo::manhattanDistance(xg, yg, xs, ys) < maxDistance)
             result.windPos = pos;
         }
+      }
+    }
+  }
+
+  // Aircraft trails ========================================================
+  auto coordinateFunc = [this](float lonX, float latY, double& xt, double& yt) {
+                          mapWidget->screenCoordinates(lonX, latY, xt, yt);
+                        };
+  Pos pos = conv.sToW(xs, ys);
+
+  if(pos.isValid())
+  {
+    if(types.testFlag(map::QUERY_AIRCRAFT_TRAIL))
+      // Get nearest (one) trail segment and provide screen coordinate conversion function
+      result.trailSegment = mapWidget->getAircraftTrail().findNearest(point, pos, maxDistance,
+                                                                      mapWidget->viewport()->viewLatLonAltBox(), coordinateFunc);
+
+    // Trail is only shown for single selection
+    if(types.testFlag(map::QUERY_AIRCRAFT_TRAIL_LOG) && searchHighlights->logbookEntries.size() == 1)
+    {
+      const atools::fs::gpx::GpxData *gpxData =
+        NavApp::getLogdataController()->getGpxData(searchHighlights->logbookEntries.constFirst().id);
+      if(gpxData != nullptr)
+      {
+        AircraftTrail trail;
+        trail.fillTrailFromGpxData(*gpxData);
+
+        // Get nearest (one) trail segment from logbook preview and provide screen coordinate conversion function
+        result.trailSegmentLog = trail.findNearest(point, pos, maxDistance, mapWidget->viewport()->viewLatLonAltBox(), coordinateFunc);
       }
     }
   }

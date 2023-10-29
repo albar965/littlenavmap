@@ -449,3 +449,92 @@ void CoordinateConverter::releasePolygons(const QVector<QPolygonF *>& polygons) 
 {
   qDeleteAll(polygons);
 }
+
+const QVector<QPolygonF *> CoordinateConverter::createPolylines(const atools::geo::LineString& linestring, const QRectF& screenRect) const
+{
+  return createPolylinesInternal(linestring, screenRect);
+}
+
+const QVector<QPolygonF *> CoordinateConverter::createPolylinesInternal(const atools::geo::LineString& linestring,
+                                                                        const QRectF& screenRect) const
+{
+  QVector<QPolygonF *> polylineVector;
+
+  const float LATY_CORRECTION = 0.00001f;
+  LineString correctedLines = linestring;
+
+  // Avoid the straight line Marble draws wrongly for equal latitudes - needed to force GC path
+  for(int i = 0; i < correctedLines.size() - 1; i++)
+  {
+    Pos& p1(correctedLines[i]);
+    Pos& p2(correctedLines[i + 1]);
+
+    if(atools::almostEqual(p1.getLatY(), p2.getLatY()) && std::abs(p1.getLonX() - p2.getLonX()) > 0.5f)
+    {
+      // Move latitude a bit up and down if equal and more than half a degree apart
+      p1.setLatY(p1.getLatY() + LATY_CORRECTION);
+      p2.setLatY(p2.getLatY() - LATY_CORRECTION);
+    }
+  }
+
+  // Build Marble geometry object
+  if(!correctedLines.isEmpty())
+  {
+    GeoDataLineString geoLineStr;
+    geoLineStr.setTessellate(true);
+
+    for(int i = 0; i < correctedLines.size() - 1; i++)
+    {
+      Line line(correctedLines.at(i), correctedLines.at(i + 1));
+
+      // Split long lines to work around the buggy visibility check in Marble resulting in disappearing line segments
+      // Do a quick check using Manhattan distance in degree
+      LineString ls;
+      if(line.lengthSimple() > 30.f)
+        line.interpolatePoints(line.lengthMeter(), 20, ls);
+      else if(line.lengthSimple() > 5.f)
+        line.interpolatePoints(line.lengthMeter(), 5, ls);
+      else
+        ls.append(line.getPos1());
+
+      // Append split points or single point
+      for(const Pos& pos : qAsConst(ls))
+        geoLineStr << GeoDataCoordinates(pos.getLonX(), pos.getLatY(), 0, DEG);
+    }
+
+    // Add last point
+    geoLineStr << GeoDataCoordinates(correctedLines.constLast().getLonX(), correctedLines.constLast().getLatY(), 0, DEG);
+
+#ifdef DEBUG_INFORMATION_LINERENDER
+    qDebug() << Q_FUNC_INFO << "=========================================";
+    for(const GeoDataCoordinates& c : geoLineStr)
+      qDebug() << Q_FUNC_INFO << "long" << c.longitude(GeoDataCoordinates::Degree) << "lat" << c.latitude(GeoDataCoordinates::Degree);
+#endif
+
+    // Build polyline vector ==============================================
+    QVector<GeoDataLineString *> geoLineStrCorrected = geoLineStr.toDateLineCorrected();
+    for(const GeoDataLineString *geoLine : qAsConst(geoLineStrCorrected))
+    {
+      if(viewport->viewLatLonAltBox().intersects(geoLine->latLonAltBox()))
+      {
+        QVector<QPolygonF *> polylines;
+        viewport->screenCoordinates(*geoLine, polylines);
+
+        // Remove invisible polylines
+        QPolygonF screenPolygon(screenRect);
+        polylines.erase(std::remove_if(polylines.begin(), polylines.end(), [&screenPolygon](const QPolygonF *polyline)->bool {
+          return !polyline->intersects(screenPolygon);
+        }), polylines.end());
+
+        polylineVector.append(polylines);
+      }
+    }
+    qDeleteAll(geoLineStrCorrected);
+  }
+  return polylineVector;
+}
+
+void CoordinateConverter::releasePolylines(const QVector<QPolygonF *>& polylines) const
+{
+  qDeleteAll(polylines);
+}

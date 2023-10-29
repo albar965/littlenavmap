@@ -61,6 +61,9 @@ QString formatMinutesHoursDaysLong(double timeHours);
 /* Format elapsed time to minutes and seconds */
 QString formatElapsed(const QElapsedTimer& timer);
 
+/* Locale dependent date time with seconds. Override results in "10/26/23 8:21:00 PM" */
+QString formatDateTimeSeconds(const QDateTime& datetime, bool overrideLocale);
+
 /* Format wind as string with pointer. Tail head and crosswind. */
 QString windInformation(float headWindKts, float crossWindKts, const QString& separator, bool addUnit = true);
 

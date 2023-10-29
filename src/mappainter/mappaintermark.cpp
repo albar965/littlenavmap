@@ -411,47 +411,50 @@ void MapPainterMark::paintLogEntries(const QList<map::MapLogbookEntry>& entries)
   // Collect visible feature parts ==========================================================================
   atools::fs::userdata::LogdataManager *logdataManager = NavApp::getLogdataManager();
   QVector<const MapLogbookEntry *> visibleLogEntries, allLogEntries;
-  QVector<ageo::LineString> visibleRouteGeometries;
-  QVector<QStringList> visibleRouteTexts;
+  ageo::LineString visibleRouteGeometries;
+  QStringList visibleRouteTexts;
   QVector<ageo::LineString> visibleTrackGeometries;
 
-  for(const MapLogbookEntry& entry : entries)
+  for(const MapLogbookEntry& logEntry : entries)
   {
     // All selected for airport drawing
-    allLogEntries.append(&entry);
+    allLogEntries.append(&logEntry);
 
     // All which have visible geometry
-    if(context->viewportRect.overlaps(entry.bounding()))
-      visibleLogEntries.append(&entry);
+    if(context->viewportRect.overlaps(logEntry.bounding()))
+      visibleLogEntries.append(&logEntry);
 
-    // Show details only if one entry is selected
+    // Show details only if one entry is selected - only direct connection for more than one selection
     if(entries.size() == 1)
     {
-      const atools::fs::userdata::LogEntryGeometry *geometry = logdataManager->getGeometry(entry.id);
+      // Get cached data
+      const atools::fs::gpx::GpxData *gpxData = logdataManager->getGpxData(logEntry.id);
+
       // Geometry might be null in case of cache overflow
-      if(geometry != nullptr && !geometry->tracks.isEmpty())
+      if(gpxData != nullptr && !gpxData->tracks.isEmpty())
       {
         // Geometry has to be copied since cache in LogDataManager might remove it any time
-
-        // Limit number of visible routes
-        if(context->objectDisplayTypes & map::LOGBOOK_ROUTE)
+        if(context->objectDisplayTypes.testFlag(map::LOGBOOK_ROUTE) && context->viewportRect.overlaps(gpxData->flightplanRect))
         {
-          if(context->viewportRect.overlaps(geometry->routeRect))
-            visibleRouteGeometries.append(geometry->route);
-          else
-            // Insert null to have it in sync with route texts
-            visibleRouteGeometries.append(ageo::EMPTY_LINESTRING);
-
-          visibleRouteTexts.append(geometry->names);
+          for(const atools::fs::pln::FlightplanEntry& entry : gpxData->flightplan)
+          {
+            visibleRouteGeometries.append(entry.getPosition());
+            visibleRouteTexts.append(entry.getIdent());
+          }
         }
 
         // Limit number of visible tracks
-        if(context->objectDisplayTypes & map::LOGBOOK_TRACK && context->viewportRect.overlaps(geometry->trackRect))
+        if(context->objectDisplayTypes.testFlag(map::LOGBOOK_TRACK) && context->viewportRect.overlaps(gpxData->trackRect))
         {
-          for(const ageo::LineString& line : geometry->tracks)
+          for(const atools::fs::gpx::TrackPoints& points : gpxData->tracks)
           {
-            if(context->viewportRect.overlaps(line.boundingRect()))
-              visibleTrackGeometries.append(line);
+            ageo::LineString lineString;
+
+            for(const atools::fs::gpx::TrackPoint& point : points)
+              lineString.append(point.pos.asPos());
+
+            if(context->viewportRect.overlaps(lineString.boundingRect()))
+              visibleTrackGeometries.append(lineString);
           }
         }
       }
@@ -473,42 +476,29 @@ void MapPainterMark::paintLogEntries(const QList<map::MapLogbookEntry>& entries)
     painter->setPen(QPen(routeLogEntryOutlineColor, outerlinewidth, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
 
     // Draw outline for all selected entries ===============
-    for(const ageo::LineString& geo: visibleRouteGeometries)
-    {
-      if(geo.isValid())
-        drawLineString(painter, geo);
-    }
+    // Draw one route
+    drawPolyline(painter, visibleRouteGeometries);
 
     // Draw line for all selected entries ===============
     // Use a lighter pen for the flight plan legs ======================================
     QPen routePen(routeLogEntryColor, lineWidth, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
     routePen.setColor(routeLogEntryColor.lighter(130));
     painter->setPen(routePen);
+    drawPolyline(painter, visibleRouteGeometries);
 
-    for(int i = 0; i < visibleRouteGeometries.size(); i++)
+    if(!mapPaintWidget->isDistanceCutOff())
     {
-      const ageo::LineString& geo = visibleRouteGeometries.at(i);
-
-      if(geo.isValid())
+      for(int i = 0; i < visibleRouteGeometries.size(); i++)
       {
-        drawLineString(painter, geo);
-
-        if(!mapPaintWidget->isDistanceCutOff())
+        // Draw waypoint symbols and text for route preview =========
+        const QString& name = visibleRouteTexts.at(i);
+        float x, y;
+        if(wToS(visibleRouteGeometries.at(i), x, y))
         {
-          // Draw waypoint symbols and text for route preview =========
-          const QStringList& names = visibleRouteTexts.at(i);
-          for(int j = 1; j < geo.size() - 1; j++)
-          {
-            float x, y;
-            if(wToS(geo.at(j), x, y))
-            {
-              symbolPainter->drawLogbookPreviewSymbol(context->painter, x, y, symbolSize);
+          symbolPainter->drawLogbookPreviewSymbol(context->painter, x, y, symbolSize);
 
-              if(context->mapLayer->isWaypointRouteName() && names.size() == geo.size())
-                symbolPainter->textBoxF(context->painter, {names.at(j)}, routeLogEntryOutlineColor,
-                                        x + symbolSize / 2 + 2, y, textatt::LOG_BG_COLOR);
-            }
-          }
+          if(context->mapLayer->isWaypointRouteName())
+            symbolPainter->textBoxF(context->painter, {name}, routeLogEntryOutlineColor, x + symbolSize / 2 + 2, y, textatt::LOG_BG_COLOR);
         }
       }
     }
@@ -518,23 +508,17 @@ void MapPainterMark::paintLogEntries(const QList<map::MapLogbookEntry>& entries)
       painter->setPen(QPen(routeLogEntryOutlineColor, (outerlinewidth - lineWidth) / 2., Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
       painter->setBrush(Qt::white);
       QPolygonF arrow = buildArrow(outerlinewidth);
-      for(int i = 0; i < visibleRouteGeometries.size(); i++)
-      {
-        const ageo::LineString& geo = visibleRouteGeometries.at(i);
-        if(geo.isValid())
-        {
-          // Draw waypoint symbols and text for route preview =========
-          for(int j = 1; j < geo.size(); j++)
-            paintArrowAlongLine(painter, ageo::Line(geo.at(j), geo.at(j - 1)), arrow, 0.5f /* pos*/, 40.f /* minLengthPx */);
-        }
-      }
+      for(int i = 1; i < visibleRouteGeometries.size(); i++)
+        // Draw waypoint symbols and text for route preview =========
+        paintArrowAlongLine(painter, ageo::Line(visibleRouteGeometries.at(i),
+                                                visibleRouteGeometries.at(i - 1)), arrow, 0.5f /* pos*/, 40.f /* minLengthPx */);
     }
   }
 
   // Draw track ==========================================================================
   if(!mapPaintWidget->isDistanceCutOff())
   {
-    if(context->objectDisplayTypes & map::LOGBOOK_TRACK && !visibleTrackGeometries.isEmpty())
+    if(context->objectDisplayTypes.testFlag(map::LOGBOOK_TRACK) && !visibleTrackGeometries.isEmpty())
     {
       // Use a darker pen for the trail but same style as normal trail ======================================
       QPen trackPen = mapcolors::aircraftTrailPen(context->sz(context->thicknessTrail, 2));
@@ -544,7 +528,7 @@ void MapPainterMark::paintLogEntries(const QList<map::MapLogbookEntry>& entries)
       for(const ageo::LineString& geo: visibleTrackGeometries)
       {
         if(geo.isValid())
-          drawLineString(painter, geo);
+          drawPolyline(painter, geo);
       }
     }
   }
@@ -569,7 +553,7 @@ void MapPainterMark::paintLogEntries(const QList<map::MapLogbookEntry>& entries)
     for(const ageo::LineString& line : geo)
     {
       if(line.size() > 1)
-        drawLineString(painter, line);
+        drawPolyline(painter, line);
       else
         drawCircle(painter, line.getPos1(), circleSize);
     }
@@ -579,7 +563,7 @@ void MapPainterMark::paintLogEntries(const QList<map::MapLogbookEntry>& entries)
     for(const ageo::LineString& line : geo)
     {
       if(line.size() > 1)
-        drawLineString(painter, line);
+        drawPolyline(painter, line);
       else
         drawCircle(painter, line.getPos1(), circleSize);
     }
@@ -680,14 +664,14 @@ void MapPainterMark::paintAirwayList(const QList<map::MapAirway>& airwayList)
   float lineWidth = context->szF(context->thicknessUserFeature, 5.f);
   QPen outerPen(mapcolors::highlightBackColor, lineWidth, Qt::SolidLine, Qt::RoundCap);
   painter->setPen(outerPen);
-  drawLineString(painter, linestring);
+  drawPolyline(painter, linestring);
 
   // Inner line ================
   QPen innerPen(mapcolors::airwayVictorColor, lineWidth);
   innerPen.setWidthF(lineWidth * 0.5);
   innerPen.setColor(innerPen.color().lighter(150));
   painter->setPen(innerPen);
-  drawLineString(painter, linestring);
+  drawPolyline(painter, linestring);
 
   // Arrows ================
   QPolygonF arrow = buildArrow(lineWidth);

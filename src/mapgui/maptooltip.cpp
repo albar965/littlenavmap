@@ -116,8 +116,8 @@ QString MapTooltip::buildTooltip(const map::MapResult& mapSearchResult, const at
 #endif
 
   HtmlBuilder html(false);
-  HtmlInfoBuilder info(mainWindow, NavApp::getMapPaintWidgetGui(),
-                       false /* infoParam */, false /* infoParam */, opts.testFlag(optsd::TOOLTIP_VERBOSE));
+  MapPaintWidget *mapPaintWidget = NavApp::getMapPaintWidgetGui();
+  HtmlInfoBuilder info(mainWindow, mapPaintWidget, false /* infoParam */, false /* infoParam */, opts.testFlag(optsd::TOOLTIP_VERBOSE));
   int numEntries = 0;
   bool bearing = true, // Suppress bearing for user aircraft
        distance = true, // No distance to last flight plan leg for route legs
@@ -218,7 +218,6 @@ QString MapTooltip::buildTooltip(const map::MapResult& mapSearchResult, const at
   }
 
   // User features / marks ===================================================================
-
   if(opts.testFlag(optsd::TOOLTIP_MARKS))
   {
     // Traffic pattern
@@ -281,6 +280,41 @@ QString MapTooltip::buildTooltip(const map::MapResult& mapSearchResult, const at
     // Do not show distance if departure parking is the only one in the list
     if(mapSearchResult.parkings.constFirst().id == route.getDepartureParking().id)
       distance = false; // do not show distance to last leg
+  }
+
+  // Aircraft trail point ===========================================================================
+  if(opts.testFlag(optsd::TOOLTIP_AIRCRAFT_TRAIL))
+  {
+    if(!overflow && mapSearchResult.trailSegment.isValid())
+    {
+      if(checkText(html))
+        overflow = true;
+      else
+      {
+        if(!html.isEmpty())
+          html.textBar(TEXT_BAR_LENGTH);
+
+        info.aircraftTrackText(mapSearchResult.trailSegment, html, false /* logbook */);
+        distance = false; // do not show distance to last leg
+        numEntries++;
+      }
+    }
+
+    // Aircraft trail point from logbook preview ===========================================================================
+    if(!overflow && mapSearchResult.trailSegmentLog.isValid())
+    {
+      if(checkText(html))
+        overflow = true;
+      else
+      {
+        if(!html.isEmpty())
+          html.textBar(TEXT_BAR_LENGTH);
+
+        info.aircraftTrackText(mapSearchResult.trailSegmentLog, html, true /* logbook */);
+        distance = false; // do not show distance to last leg
+        numEntries++;
+      }
+    }
   }
 
   // Navaids ===========================================================================
@@ -375,9 +409,8 @@ QString MapTooltip::buildTooltip(const map::MapResult& mapSearchResult, const at
     }
   }
 
-  QString str;
-
   // Prepend distance and bearing information ================================
+  QString str;
   if(!html.isEmpty())
   {
     HtmlBuilder temp = html.cleared();

@@ -18,7 +18,7 @@
 #include "app/navapp.h"
 
 #include "airspace/airspacecontroller.h"
-#include "common/aircrafttrack.h"
+#include "common/aircrafttrail.h"
 #include "common/constants.h"
 #include "common/elevationprovider.h"
 #include "common/updatehandler.h"
@@ -1325,24 +1325,24 @@ const atools::fs::db::DatabaseMeta *NavApp::getDatabaseMetaNav()
   return databaseMetaNav;
 }
 
-const AircraftTrack& NavApp::getAircraftTrack()
+const AircraftTrail& NavApp::getAircraftTrail()
 {
-  return getMapWidgetGui()->getAircraftTrack();
+  return getMapWidgetGui()->getAircraftTrail();
 }
 
-const AircraftTrack& NavApp::getAircraftTrackLogbook()
+const AircraftTrail& NavApp::getAircraftTrailLogbook()
 {
-  return getMapWidgetGui()->getAircraftTrackLogbook();
+  return getMapWidgetGui()->getAircraftTrailLogbook();
 }
 
-void NavApp::deleteAircraftTrackLogbook()
+void NavApp::deleteAircraftTrailLogbook()
 {
-  return getMapWidgetGui()->deleteAircraftTrackLogbook();
+  return getMapWidgetGui()->deleteAircraftTrailLogbook();
 }
 
-bool NavApp::isAircraftTrackEmpty()
+bool NavApp::isAircraftTrailEmpty()
 {
-  return getAircraftTrack().isEmpty();
+  return getAircraftTrail().isEmpty();
 }
 
 map::MapTypes NavApp::getShownMapTypes()

@@ -3670,7 +3670,7 @@ void MainWindow::updateActionStates()
 
   const Route& route = NavApp::getRouteConst();
   bool hasFlightplan = !route.isFlightplanEmpty();
-  bool hasTrack = !NavApp::isAircraftTrackEmpty();
+  bool hasTrack = !NavApp::isAircraftTrailEmpty();
   ui->actionRouteAppend->setEnabled(hasFlightplan);
   ui->actionRouteSave->setEnabled(hasFlightplan /* && routeController->hasChanged()*/);
   ui->actionRouteSaveAs->setEnabled(hasFlightplan);

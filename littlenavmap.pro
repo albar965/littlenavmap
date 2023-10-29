@@ -264,7 +264,7 @@ SOURCES += \
   src/app/dataexchange.cpp \
   src/app/navapp.cpp \
   src/common/abstractinfobuilder.cpp \
-  src/common/aircrafttrack.cpp \
+  src/common/aircrafttrail.cpp \
   src/common/airportfiles.cpp \
   src/common/constants.cpp \
   src/common/coordinateconverter.cpp \
@@ -463,7 +463,7 @@ HEADERS  += \
   src/app/dataexchange.h \
   src/app/navapp.h \
   src/common/abstractinfobuilder.h \
-  src/common/aircrafttrack.h \
+  src/common/aircrafttrail.h \
   src/common/airportfiles.h \
   src/common/constants.h \
   src/common/coordinateconverter.h \

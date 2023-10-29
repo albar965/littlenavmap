@@ -1637,6 +1637,35 @@ struct DistanceMarker
 QDataStream& operator>>(QDataStream& dataStream, map::DistanceMarker& obj);
 QDataStream& operator<<(QDataStream& dataStream, const map::DistanceMarker& obj);
 
+// =====================================================================
+/* Aircraft trail segment/point. Position and other values are
+ * interpolated. */
+struct AircraftTrailSegment
+  : public MapBase
+{
+  AircraftTrailSegment()
+    : MapBase(staticType())
+  {
+  }
+
+  static map::MapType staticType()
+  {
+    return map::AIRCRAFT_TRAIL;
+  }
+
+  int index; /* Index to "to" trail point. Always > 0. */
+  atools::geo::Pos from, to;
+
+  float length, /* Whole segment length */
+        distanceFromStart, /* All from departure in meter */
+        altitude, /* Feet at interpolated pos */
+        speed; /* Meter per second across the whole segment - not interpolated */
+
+  qint64 timestampPos; /* Milliseconds since Epoch, interpolated pos */
+  bool onGround;
+
+};
+
 // =====================================================================================
 /* Database type strings to GUI strings and map objects to display strings */
 QString navTypeName(const QString& type);

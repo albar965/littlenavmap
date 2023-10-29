@@ -397,7 +397,7 @@ void MapVisible::updateVisibleObjectsStatusBar()
       else
         tooltip.tr().td(tr("No wind shown")).trEnd();
 
-      if(shownDispTypes.testFlag(map::AIRCRAFT_TRACK)) // Always shown until cut off distance
+      if(shown.testFlag(map::AIRCRAFT_TRAIL)) // Always shown until cut off distance
       {
         tooltip.tr().td().b(tr("Aircraft track (T)")).tdEnd().trEnd();
         routeLabel.append(tr("T"));

@@ -17,7 +17,7 @@
 
 #include "mappainter/mappaintervehicle.h"
 
-#include "common/aircrafttrack.h"
+#include "common/aircrafttrail.h"
 #include "common/mapcolors.h"
 #include "common/symbolpainter.h"
 #include "common/unit.h"
@@ -30,6 +30,7 @@
 #include "mapgui/mapscreenindex.h"
 #include "app/navapp.h"
 #include "fs/sc/simconnectuseraircraft.h"
+#include "util/paintercontextsaver.h"
 
 #include <marble/GeoPainter.h>
 
@@ -198,7 +199,7 @@ void MapPainterVehicle::paintTurnPath(const atools::fs::sc::SimConnectUserAircra
             step++;
           }
 
-          drawLineString(context->painter, line);
+          drawPolyline(context->painter, line);
         } // if(pixelForMaxTurnPath > 20)
       } // if(groundSpeedKts > 20.f)
     } // if(aircraftPos.isValid())
@@ -217,17 +218,28 @@ float MapPainterVehicle::calcRotation(const SimConnectAircraft& aircraft)
   return scale->getScreenRotation(rotate, aircraft.getPosition(), context->zoomDistanceMeter);
 }
 
-void MapPainterVehicle::paintAircraftTrack()
+void MapPainterVehicle::paintAircraftTrail()
 {
-  const AircraftTrack& aircraftTrack = NavApp::getAircraftTrack();
+  const AircraftTrail& aircraftTrack = NavApp::getAircraftTrail();
 
   if(!aircraftTrack.isEmpty())
   {
     context->painter->setPen(mapcolors::aircraftTrailPen(context->sz(context->thicknessTrail, 2)));
 
+#ifdef DEBUG_DRAW_TRACK
+    {
+      atools::util::PainterContextSaver saver(context->painter);
+      context->painter->setPen(QPen(Qt::blue, 2));
+      int i = 0;
+      for(const at::AircraftTrailPos& pos : aircraftTrack)
+        drawText(context->painter, pos.getPosition(), QString::number(i++), 0.f, 0.f);
+    }
+
+#endif
+
     // Draw with simple precision
     for(const LineString& line : aircraftTrack.getLineStrings())
-      drawLineString(context->painter, line);
+      drawPolyline(context->painter, line);
   }
 }
 

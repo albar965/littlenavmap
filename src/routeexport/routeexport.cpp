@@ -17,10 +17,12 @@
 
 #include "routeexport/routeexport.h"
 
+#include "fs/gpx/gpxio.h"
+#include "fs/gpx/gpxtypes.h"
 #include "routeexport/routeexportformat.h"
 #include "routeexport/routeexportdialog.h"
 #include "atools.h"
-#include "common/aircrafttrack.h"
+#include "common/aircrafttrail.h"
 #include "common/constants.h"
 #include "exception.h"
 #include "fs/perf/aircraftperf.h"
@@ -1255,7 +1257,7 @@ bool RouteExport::routeExportGpx(const RouteExportFormat& format)
   {
     if(exportFlightplanAsGpx(routeFile))
     {
-      if(NavApp::getAircraftTrack().isEmpty())
+      if(NavApp::getAircraftTrail().isEmpty())
         mainWindow->setStatusMessage(tr("Flight plan saved as GPX."));
       else
         mainWindow->setStatusMessage(tr("Flight plan and track saved as GPX."));
@@ -2006,8 +2008,8 @@ bool RouteExport::exportFlightplanAsGpx(const QString& filename)
 
   try
   {
-    FlightplanIO().saveGpx(buildAdjustedRoute(rf::DEFAULT_OPTS_GPX).getFlightplanConst(), filename,
-                           NavApp::getAircraftTrack().getLineStrings(), NavApp::getAircraftTrack().getTimestampsMs());
+    atools::fs::gpx::GpxIO().saveGpx(filename,
+                                     NavApp::getAircraftTrail().toGpxData(buildAdjustedRoute(rf::DEFAULT_OPTS_GPX).getFlightplanConst()));
   }
   catch(atools::Exception& e)
   {

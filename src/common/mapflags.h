@@ -126,7 +126,9 @@ enum MapType : unsigned long long
   /* Procedure flags ================================  */
   PROCEDURE_POINT =      0x0000'2000'0000'0000, /* Type flag for map base and context menu */
 
-  // NEXT = 0x0000'8000'0000'0000
+  AIRCRAFT_TRAIL = 0x0000'8000'0000'0000, /* Simulator aircraft track.  */
+
+  // NEXT = 0x0001'0000'0000'0000
 
   /* =============================================================================================== */
   /* Pure visibiliy flags. Nothing is shown if not at least one of these is set */
@@ -189,7 +191,6 @@ enum MapDisplayType
   FLIGHTPLAN_ALTERNATE = 1 << 21, /* Alternate airport and lines in flightplan */
 
   GLS = 1 << 13, /* RNV approach, GLS approache or GBAS path - only display flag. Object is stored with type ILS. */
-  AIRCRAFT_TRACK = 1 << 17, /* Simulator aircraft track. Not an object type. */
 
   AIRCRAFT_ENDURANCE = 1 << 18, /* Range ring for current aircraft endurance. */
 
@@ -220,6 +221,8 @@ enum MapObjectQueryType
   QUERY_PREVIEW_PROC_POINTS = 1 << 9, /* Points from procedure preview */
   QUERY_PROC_RECOMMENDED = 1 << 10, /* Recommended navaids from procedures */
   QUERY_ALTERNATE = 1 << 11, /* Alternate airports in flight plan */
+  QUERY_AIRCRAFT_TRAIL = 1 << 12, /* Aircraft trail */
+  QUERY_AIRCRAFT_TRAIL_LOG = 1 << 13, /* Aircraft trail */
 
   /* All user creatable/placeable features */
   QUERY_MARK = QUERY_MARK_DISTANCE | QUERY_MARK_HOLDINGS | QUERY_MARK_PATTERNS | QUERY_MARK_RANGE | QUERY_MARK_MSA,

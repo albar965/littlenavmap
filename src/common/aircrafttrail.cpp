@@ -15,8 +15,12 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#include "common/aircrafttrack.h"
+#include "common/aircrafttrail.h"
 
+#include "common/mapflags.h"
+#include "common/maptypes.h"
+#include "fs/gpx/gpxtypes.h"
+#include "marble/GeoDataCoordinates.h"
 #include "settings/settings.h"
 #include "atools.h"
 #include "geo/calculations.h"
@@ -28,7 +32,11 @@
 #include <QDateTime>
 #include <QFile>
 
-quint16 AircraftTrack::version = 0;
+#include <marble/GeoDataLatLonAltBox.h>
+
+using atools::geo::Pos;
+
+quint16 AircraftTrail::version = 0;
 
 /* Insert an invalid position as an break indicator if aircraft jumps too far on ground. */
 static const float MAX_POINT_DISTANCE_NM = 5.f;
@@ -53,9 +61,9 @@ static const quint16 FILE_VERSION_64BIT_COORDS = 4;
 
 namespace at {
 
-QDataStream& operator>>(QDataStream& dataStream, at::AircraftTrackPos& trackPos)
+QDataStream& operator>>(QDataStream& dataStream, at::AircraftTrailPos& trackPos)
 {
-  if(AircraftTrack::version == FILE_VERSION_64BIT_COORDS)
+  if(AircraftTrail::version == FILE_VERSION_64BIT_COORDS)
   {
     // Newest format with 64 bit coordinates and 64 bit timestamp
     dataStream >> trackPos.pos >> trackPos.timestampMs >> trackPos.onGround;
@@ -65,7 +73,7 @@ QDataStream& operator>>(QDataStream& dataStream, at::AircraftTrackPos& trackPos)
       // Add separator
       trackPos.pos = atools::geo::PosD();
   }
-  else if(AircraftTrack::version == FILE_VERSION_64BIT_TS)
+  else if(AircraftTrail::version == FILE_VERSION_64BIT_TS)
   {
     // Convert 32 bit coordinates
     atools::geo::Pos pos;
@@ -74,7 +82,7 @@ QDataStream& operator>>(QDataStream& dataStream, at::AircraftTrackPos& trackPos)
     // Convert invalid float positions to invalid double positions to indicate split track
     trackPos.pos = atools::geo::PosD(pos);
   }
-  else if(AircraftTrack::version == FILE_VERSION_OLD)
+  else if(AircraftTrail::version == FILE_VERSION_OLD)
   {
     // Convert 32 bit timestamp and coordinates
     atools::geo::Pos pos;
@@ -89,7 +97,7 @@ QDataStream& operator>>(QDataStream& dataStream, at::AircraftTrackPos& trackPos)
   return dataStream;
 }
 
-QDataStream& operator<<(QDataStream& dataStream, const at::AircraftTrackPos& trackPos)
+QDataStream& operator<<(QDataStream& dataStream, const at::AircraftTrailPos& trackPos)
 {
 #ifdef DEBUG_SAVE_TRACK_OLD
   dataStream << trackPos.pos.asPos() << trackPos.timestampMs << trackPos.onGround;
@@ -101,24 +109,24 @@ QDataStream& operator<<(QDataStream& dataStream, const at::AircraftTrackPos& tra
 
 }
 
-AircraftTrack::AircraftTrack()
+AircraftTrail::AircraftTrail()
 {
   lastUserAircraft = new atools::fs::sc::SimConnectUserAircraft;
 }
 
-AircraftTrack::~AircraftTrack()
+AircraftTrail::~AircraftTrail()
 {
   delete lastUserAircraft;
 }
 
-AircraftTrack::AircraftTrack(const AircraftTrack& other)
-  : QList<at::AircraftTrackPos>(other)
+AircraftTrail::AircraftTrail(const AircraftTrail& other)
+  : QList<at::AircraftTrailPos>(other)
 {
   lastUserAircraft = new atools::fs::sc::SimConnectUserAircraft;
   this->operator=(other);
 }
 
-AircraftTrack& AircraftTrack::operator=(const AircraftTrack& other)
+AircraftTrail& AircraftTrail::operator=(const AircraftTrail& other)
 {
   clear();
   append(other);
@@ -127,7 +135,148 @@ AircraftTrack& AircraftTrack::operator=(const AircraftTrack& other)
   return *this;
 }
 
-void AircraftTrack::saveState(const QString& suffix, int numBackupFiles)
+map::AircraftTrailSegment AircraftTrail::findNearest(const QPoint& point, const atools::geo::Pos& position, int maxScreenDistance,
+                                                     const Marble::GeoDataLatLonAltBox& viewportBox,
+                                                     ScreenCoordinatesFunc screenCoordinates) const
+{
+  map::AircraftTrailSegment trail;
+  if(size() <= 1)
+    return trail;
+
+  atools::geo::Rect viewportRect(viewportBox.west(Marble::GeoDataCoordinates::Degree),
+                                 viewportBox.north(Marble::GeoDataCoordinates::Degree),
+                                 viewportBox.east(Marble::GeoDataCoordinates::Degree),
+                                 viewportBox.south(Marble::GeoDataCoordinates::Degree));
+
+  int trackIndex = -1;
+  const QVector<atools::geo::LineString> tracks = getLineStrings();
+  int indexTracks = 0;
+  atools::geo::LineDistance result, resultLine, resultShortest, resultShortestLine;
+  resultShortest.distance = map::INVALID_DISTANCE_VALUE;
+
+  for(const atools::geo::LineString& track : tracks)
+  {
+    atools::geo::Rect bounding = track.boundingRect();
+
+#ifdef DEBUG_INFORMATION_TRACK_NEAREST
+    qDebug() << Q_FUNC_INFO << "###############" << "bounding" << bounding << "viewportRect" << viewportRect;
+#endif
+
+    if(bounding.overlaps(viewportRect))
+    {
+      int idx = -1;
+      track.distanceMeterToLineString(position, result, &resultLine, &idx, &viewportRect);
+
+      if(std::abs(result.distance) < std::abs(resultShortest.distance) && result.status == atools::geo::ALONG_TRACK)
+      {
+        resultShortest = result;
+        resultShortestLine = resultLine;
+        trackIndex = idx + indexTracks;
+      }
+    }
+
+    indexTracks += track.size() + 1;
+  }
+
+#ifdef DEBUG_INFORMATION_TRACK_NEAREST
+  qDebug() << Q_FUNC_INFO << "resultShortest" << resultShortest << "trackIndex" << trackIndex << "size()" << size();
+  qDebug() << Q_FUNC_INFO << "resultLine" << resultLine;
+#endif
+
+  at::AircraftTrailPos posFrom, posTo;
+  Pos pos;
+
+  if(trackIndex != -1 && resultShortest.status == atools::geo::ALONG_TRACK)
+  {
+    posFrom = at(trackIndex);
+    posTo = at(trackIndex + 1);
+    atools::geo::Line line(posFrom.getPosition(), posTo.getPosition());
+
+    double length = posFrom.getPosD().distanceMeterToDouble(posTo.getPosD());
+    double fraction = resultShortestLine.distanceFrom1 / length;
+    pos = line.interpolate(static_cast<float>(length), static_cast<float>(fraction));
+    trackIndex++;
+
+    double xs, ys;
+    screenCoordinates(pos.getLonX(), pos.getLatY(), xs, ys);
+
+    if(atools::geo::manhattanDistance(point.x(), point.y(), atools::roundToInt(xs), atools::roundToInt(ys)) < maxScreenDistance)
+    {
+#ifdef DEBUG_INFORMATION_TRACK_NEAREST
+      qDebug() << Q_FUNC_INFO << "NEAR" << pos << point << QPoint(static_cast<int>(xs), static_cast<int>(ys));
+#endif
+      double distFrom1 = static_cast<double>(resultShortestLine.distanceFrom1);
+      double travelTime = static_cast<double>(posTo.getTimestampMs() - posFrom.getTimestampMs());
+      trail.position = pos;
+      trail.index = trackIndex;
+      trail.from = posFrom.getPosition();
+      trail.to = posTo.getPosition();
+      trail.length = static_cast<float>(length);
+      trail.distanceFromStart = resultShortest.distanceFrom1;
+
+      trail.altitude = static_cast<float>(atools::interpolate(posFrom.getAltitudeD(), posTo.getAltitudeD(), 0., length, distFrom1));
+      trail.speed = static_cast<float>(length / travelTime * 1000.f);
+      trail.timestampPos = posFrom.getTimestampMs() + std::lround(travelTime * fraction);
+      trail.onGround = atools::interpolate(static_cast<double>(posFrom.isOnGround()), static_cast<double>(posTo.isOnGround()),
+                                           0., length, distFrom1) > 0.5;
+    }
+    else
+    {
+#ifdef DEBUG_INFORMATION_TRACK_NEAREST
+      qDebug() << Q_FUNC_INFO << "MISSED" << pos << point << QPoint(static_cast<int>(xs), static_cast<int>(ys));
+#endif
+      trackIndex = -1;
+      trail.position = Pos();
+    }
+  }
+  return trail;
+}
+
+atools::fs::gpx::GpxData AircraftTrail::toGpxData(const atools::fs::pln::Flightplan& flightplan) const
+{
+  atools::fs::gpx::GpxData gpxData;
+  gpxData.flightplan = flightplan;
+
+  const QVector<QVector<atools::geo::PosD> >& positionList = getPositionsD();
+  const QVector<QVector<qint64> >& timestampsList = getTimestampsMs();
+
+  Q_ASSERT(positionList.size() == timestampsList.size());
+
+  for(int i = 0; i < positionList.size(); i++)
+  {
+    const QVector<atools::geo::PosD>& positions = positionList.at(i);
+    const QVector<qint64>& timestamps = timestampsList.at(i);
+
+    Q_ASSERT(positions.size() == timestamps.size());
+
+    atools::fs::gpx::TrackPoints points;
+    for(int j = 0; j < positions.size(); j++)
+    {
+      points.append(atools::fs::gpx::TrackPoint(positions.at(j), timestamps.at(j)));
+      gpxData.trackRect.extend(positions.at(j).asPos());
+    }
+    gpxData.tracks.append(points);
+  }
+
+  for(const atools::fs::pln::FlightplanEntry& entry : flightplan)
+    gpxData.flightplanRect.extend(entry.getPosition());
+
+  return gpxData;
+}
+
+void AircraftTrail::fillTrailFromGpxData(const atools::fs::gpx::GpxData& gpxData)
+{
+  clear();
+  for(const atools::fs::gpx::TrackPoints& points : qAsConst(gpxData.tracks))
+  {
+    for(const atools::fs::gpx::TrackPoint& point : qAsConst(points))
+      append(at::AircraftTrailPos(point.pos, point.timestampMs, false));
+    append(at::AircraftTrailPos());
+  }
+  calculateMaxAltitude();
+}
+
+void AircraftTrail::saveState(const QString& suffix, int numBackupFiles)
 {
   QFile trackFile(atools::settings::Settings::getConfigFilename(suffix));
 
@@ -144,7 +293,7 @@ void AircraftTrack::saveState(const QString& suffix, int numBackupFiles)
     qWarning() << "Cannot write track" << trackFile.fileName() << ":" << trackFile.errorString();
 }
 
-void AircraftTrack::restoreState(const QString& suffix)
+void AircraftTrail::restoreState(const QString& suffix)
 {
   clear();
 
@@ -160,14 +309,16 @@ void AircraftTrack::restoreState(const QString& suffix)
     else
       qWarning() << "Cannot read track" << trackFile.fileName() << ":" << trackFile.errorString();
   }
+  calculateMaxAltitude();
 }
 
-void AircraftTrack::clearTrack()
+void AircraftTrail::clearTrail()
 {
   clear();
+  maximumAltitude = 0.f;
 }
 
-void AircraftTrack::saveToStream(QDataStream& out)
+void AircraftTrail::saveToStream(QDataStream& out)
 {
   out.setVersion(QDataStream::Qt_5_5);
 
@@ -180,7 +331,7 @@ void AircraftTrack::saveToStream(QDataStream& out)
 #endif
 }
 
-bool AircraftTrack::readFromStream(QDataStream& in)
+bool AircraftTrail::readFromStream(QDataStream& in)
 {
   bool retval = false;
   clear();
@@ -191,15 +342,15 @@ bool AircraftTrack::readFromStream(QDataStream& in)
 
   if(magic == FILE_MAGIC_NUMBER)
   {
-    in >> AircraftTrack::version;
-    if(AircraftTrack::version == FILE_VERSION_64BIT_TS || AircraftTrack::version == FILE_VERSION_OLD)
+    in >> AircraftTrail::version;
+    if(AircraftTrail::version == FILE_VERSION_64BIT_TS || AircraftTrail::version == FILE_VERSION_OLD)
     {
       // Read old float coordinates
       in.setFloatingPointPrecision(QDataStream::SinglePrecision);
       in >> *this;
       retval = true;
     }
-    else if(AircraftTrack::version == FILE_VERSION_64BIT_COORDS)
+    else if(AircraftTrail::version == FILE_VERSION_64BIT_COORDS)
     {
       // Read new double coordinates
       in.setFloatingPointPrecision(QDataStream::DoublePrecision);
@@ -207,7 +358,7 @@ bool AircraftTrack::readFromStream(QDataStream& in)
       retval = true;
     }
     else
-      qWarning() << "Cannot read track. Invalid version number:" << AircraftTrack::version;
+      qWarning() << "Cannot read track. Invalid version number:" << AircraftTrail::version;
   }
   else
     qWarning() << "Cannot read track. Invalid magic number:" << magic;
@@ -215,7 +366,7 @@ bool AircraftTrack::readFromStream(QDataStream& in)
   return retval;
 }
 
-bool AircraftTrack::appendTrackPos(const atools::fs::sc::SimConnectUserAircraft& userAircraft, bool allowSplit)
+bool AircraftTrail::appendTrailPos(const atools::fs::sc::SimConnectUserAircraft& userAircraft, bool allowSplit)
 {
   if(!userAircraft.isValid())
   {
@@ -236,7 +387,7 @@ bool AircraftTrack::appendTrackPos(const atools::fs::sc::SimConnectUserAircraft&
   bool onGround = userAircraft.isOnGround();
 
   if(isEmpty() && userAircraft.isValid())
-    append(at::AircraftTrackPos(posD, timestamp.toMSecsSinceEpoch(), onGround));
+    append(at::AircraftTrailPos(posD, timestamp.toMSecsSinceEpoch(), onGround));
   else
   {
     // Use a smaller distance on ground before storing position
@@ -244,15 +395,15 @@ bool AircraftTrack::appendTrackPos(const atools::fs::sc::SimConnectUserAircraft&
     qint64 epsilonTime = onGround ? MIN_POSITION_TIME_DIFF_GROUND_MS : MIN_POSITION_TIME_DIFF_MS;
 
     qint64 timeMs = timestamp.toMSecsSinceEpoch();
-    const at::AircraftTrackPos& last = constLast();
+    const at::AircraftTrailPos& last = constLast();
     qint64 lastTimeMs = last.getTimestampMs();
 
     atools::geo::Pos pos = posD.asPos();
-    if(!pos.almostEqual(last.getPos(), epsilonPos) && !atools::almostEqual(lastTimeMs, timeMs, epsilonTime))
+    if(!pos.almostEqual(last.getPosition(), epsilonPos) && !atools::almostEqual(lastTimeMs, timeMs, epsilonTime))
     {
       bool lastValid = lastUserAircraft->isValid();
       bool aircraftChanged = lastValid && lastUserAircraft->hasAircraftChanged(userAircraft);
-      bool jumped = !isEmpty() && pos.distanceMeterTo(last.getPos()) > atools::geo::nmToMeter(MAX_POINT_DISTANCE_NM);
+      bool jumped = !isEmpty() && pos.distanceMeterTo(last.getPosition()) > atools::geo::nmToMeter(MAX_POINT_DISTANCE_NM);
 
       // Points where the track is interrupted (new flight) are indicated by invalid coordinates.
       // Warping at altitude does not interrupt a track.
@@ -264,8 +415,8 @@ bool AircraftTrack::appendTrackPos(const atools::fs::sc::SimConnectUserAircraft&
 #endif
 
         // Add an invalid position before indicating a break
-        append(at::AircraftTrackPos(timestamp.toMSecsSinceEpoch(), onGround));
-        append(at::AircraftTrackPos(posD, timestamp.toMSecsSinceEpoch(), onGround));
+        append(at::AircraftTrailPos(timestamp.toMSecsSinceEpoch(), onGround));
+        append(at::AircraftTrailPos(posD, timestamp.toMSecsSinceEpoch(), onGround));
       }
       else
       {
@@ -280,24 +431,34 @@ bool AircraftTrack::appendTrackPos(const atools::fs::sc::SimConnectUserAircraft&
 
           pruned = true;
         }
-        append(at::AircraftTrackPos(posD, timestamp.toMSecsSinceEpoch(), onGround));
+        append(at::AircraftTrailPos(posD, timestamp.toMSecsSinceEpoch(), onGround));
       }
 
       *lastUserAircraft = userAircraft;
     }
   }
+
+  if(!isEmpty())
+    // Last one is always valid
+    updateMaxAltitude(constLast());
+
   return pruned;
 }
 
-float AircraftTrack::getMaxAltitude() const
+void AircraftTrail::calculateMaxAltitude()
 {
-  double maxAlt = 0.;
-  for(const at::AircraftTrackPos& trackPos : *this)
-    maxAlt = std::max(maxAlt, trackPos.getPosD().getAltitude());
-  return static_cast<float>(maxAlt);
+  maximumAltitude = 0.;
+  for(const at::AircraftTrailPos& trackPos : qAsConst(*this))
+    updateMaxAltitude(trackPos);
 }
 
-const QVector<atools::geo::LineString> AircraftTrack::getLineStrings() const
+void AircraftTrail::updateMaxAltitude(const at::AircraftTrailPos& trackPos)
+{
+  if(trackPos.isValid())
+    maximumAltitude = std::max(maximumAltitude, static_cast<float>(trackPos.getPosD().getAltitude()));
+}
+
+const QVector<atools::geo::LineString> AircraftTrail::getLineStrings() const
 {
   QVector<atools::geo::LineString> linestrings;
 
@@ -306,7 +467,7 @@ const QVector<atools::geo::LineString> AircraftTrack::getLineStrings() const
     atools::geo::LineString line;
     linestrings.reserve(size());
 
-    for(const at::AircraftTrackPos& trackPos : *this)
+    for(const at::AircraftTrailPos& trackPos : *this)
     {
       if(!trackPos.isValid())
       {
@@ -315,7 +476,7 @@ const QVector<atools::geo::LineString> AircraftTrack::getLineStrings() const
         line.clear();
       }
       else
-        line.append(trackPos.getPos());
+        line.append(trackPos.getPosition());
     }
 
     // Add rest
@@ -325,7 +486,7 @@ const QVector<atools::geo::LineString> AircraftTrack::getLineStrings() const
   return linestrings;
 }
 
-const QVector<QVector<atools::geo::PosD> > AircraftTrack::getPositionsD() const
+const QVector<QVector<atools::geo::PosD> > AircraftTrail::getPositionsD() const
 {
   QVector<QVector<atools::geo::PosD> > linestrings;
 
@@ -334,7 +495,7 @@ const QVector<QVector<atools::geo::PosD> > AircraftTrack::getPositionsD() const
     QVector<atools::geo::PosD> line;
     linestrings.reserve(size());
 
-    for(const at::AircraftTrackPos& trackPos : *this)
+    for(const at::AircraftTrailPos& trackPos : *this)
     {
       if(!trackPos.isValid())
       {
@@ -353,7 +514,7 @@ const QVector<QVector<atools::geo::PosD> > AircraftTrack::getPositionsD() const
   return linestrings;
 }
 
-const QVector<QVector<qint64> > AircraftTrack::getTimestampsMs() const
+const QVector<QVector<qint64> > AircraftTrail::getTimestampsMs() const
 {
   QVector<QVector<qint64> > timestamps;
 
@@ -362,7 +523,7 @@ const QVector<QVector<qint64> > AircraftTrack::getTimestampsMs() const
     QVector<qint64> times;
     timestamps.reserve(size());
 
-    for(const at::AircraftTrackPos& trackPos : *this)
+    for(const at::AircraftTrailPos& trackPos : *this)
     {
       if(!trackPos.isValid())
       {

@@ -87,6 +87,9 @@ struct MapResult
 
   QList<map::MapProcedurePoint> procPoints;
 
+  /* Nearest aircraft trail segment for user aircraft and logbook preview */
+  map::AircraftTrailSegment trailSegment, trailSegmentLog;
+
   /* true if none of the types exists in this result */
   bool isEmpty(const map::MapTypes& types = map::ALL) const
   {

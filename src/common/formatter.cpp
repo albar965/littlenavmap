@@ -378,4 +378,15 @@ QString courseTextNarrow(float magCourse, float trueCourse)
   return initText;
 }
 
+QString formatDateTimeSeconds(const QDateTime& datetime, bool overrideLocale)
+{
+  QString dateTimeStr = overrideLocale ?
+                        "MM/dd/yy h:mm:ss AP" :
+                        QObject::tr("dd.MM.yy hh:mm:ss", "Translate to short date and time format in your language with seconds."
+                                                         "See https://doc.qt.io/qt-5/qtime.html#toString and "
+                                                         "https://doc.qt.io/qt-5/qdate.html#toString-2 "
+                                                         "Look at your operating system settings to find suitable format");
+  return QLocale().toString(datetime, dateTimeStr);
+}
+
 } // namespace formatter

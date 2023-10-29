@@ -193,6 +193,22 @@ QIcon SymbolPainter::createHelipadIcon(const MapHelipad& helipad, int size)
   return QIcon(pixmap);
 }
 
+QIcon SymbolPainter::createAircraftTrailIcon(int size, const QPen& pen)
+{
+  QPixmap pixmap(size, size);
+  pixmap.fill(QColor(Qt::transparent));
+  QPainter painter(&pixmap);
+  prepareForIcon(painter);
+
+  double margins = pen.widthF();
+
+  painter.setBackgroundMode(Qt::OpaqueMode);
+  painter.setPen(pen);
+  painter.setBrush(Qt::transparent);
+  painter.drawLine(QPointF(margins, margins), QPointF(size - margins, size - margins));
+  return QIcon(pixmap);
+}
+
 void SymbolPainter::drawHelipadSymbol(QPainter *painter, const map::MapHelipad& helipad, float x, float y, float w, float h, bool fast)
 {
   painter->setBrush(mapcolors::colorForSurface(helipad.surface));

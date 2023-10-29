@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -16,7 +16,6 @@
 *****************************************************************************/
 
 #include "mappainter/mappaintertrack.h"
-#include "common/maptypes.h"
 
 #include "util/paintercontextsaver.h"
 
@@ -37,10 +36,10 @@ MapPainterTrack::~MapPainterTrack()
 
 void MapPainterTrack::render()
 {
-  if(!context->objectDisplayTypes.testFlag(map::AIRCRAFT_TRACK))
+  if(!context->objectTypes.testFlag(map::AIRCRAFT_TRAIL))
     // If actions are unchecked return
     return;
 
   atools::util::PainterContextSaver saver(context->painter);
-  paintAircraftTrack();
+  paintAircraftTrail();
 }

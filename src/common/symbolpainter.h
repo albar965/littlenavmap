@@ -78,6 +78,7 @@ public:
   static QIcon createAirspaceIcon(const map::MapAirspace& airspace, int size, int lineThickness, int transparency);
   static QIcon createProcedurePreviewIcon(const QColor& color, int size);
   static QIcon createHelipadIcon(const map::MapHelipad& helipad, int size);
+  static QIcon createAircraftTrailIcon(int size, const QPen& pen);
 
   /* Scale is not pixel size but a factor related for font size */
   static QIcon createAirportMsaIcon(const map::MapAirportMsa& airportMsa, const QFont& font, float symbolScale, int *actualSize = nullptr);

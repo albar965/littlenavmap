@@ -38,6 +38,10 @@ class ErrorHandler;
 class HelpHandler;
 }
 namespace fs {
+
+namespace gpx {
+class GpxData;
+}
 namespace pln {
 class Flightplan;
 }
@@ -145,8 +149,7 @@ public:
   /* Resets detection of flight */
   void resetTakeoffLandingDetection();
 
-  const QVector<atools::geo::LineString> *getTrackGeometry(int id);
-  const atools::geo::LineString *getRouteGeometry(int id);
+  const atools::fs::gpx::GpxData *getGpxData(int id);
 
   /* Clear caches */
   void preDatabaseLoad();

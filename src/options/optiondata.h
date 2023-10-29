@@ -594,7 +594,8 @@ enum DisplayTooltipOption
   TOOLTIP_AIRCRAFT_AI = 1 << 5,
   TOOLTIP_AIRCRAFT_USER = 1 << 6,
   TOOLTIP_VERBOSE = 1 << 7,
-  TOOLTIP_MARKS = 1 << 8
+  TOOLTIP_MARKS = 1 << 8,
+  TOOLTIP_AIRCRAFT_TRAIL = 1 << 9
 };
 
 Q_DECLARE_FLAGS(DisplayTooltipOptions, DisplayTooltipOption);
@@ -1655,7 +1656,7 @@ private:
   optsd::DisplayTooltipOptions displayTooltipOptions = optsd::TOOLTIP_AIRCRAFT_USER | optsd::TOOLTIP_AIRCRAFT_AI |
                                                        optsd::TOOLTIP_AIRPORT | optsd::TOOLTIP_AIRSPACE |
                                                        optsd::TOOLTIP_NAVAID | optsd::TOOLTIP_WIND | optsd::TOOLTIP_VERBOSE |
-                                                       optsd::TOOLTIP_MARKS;
+                                                       optsd::TOOLTIP_MARKS | optsd::TOOLTIP_AIRCRAFT_TRAIL;
   optsd::DisplayClickOptions displayClickOptions = optsd::CLICK_AIRCRAFT_USER | optsd::CLICK_AIRCRAFT_AI |
                                                    optsd::CLICK_AIRPORT | optsd::CLICK_AIRSPACE | optsd::CLICK_NAVAID;
 

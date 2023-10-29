@@ -211,7 +211,7 @@ public:
   void deleteAircraftTrack();
 
   /* Clear separate track collected for the logbook */
-  void deleteAircraftTrackLogbook();
+  void deleteAircraftTrailLogbook();
 
   /* Clear all entries and reset current index */
   void clearHistory();

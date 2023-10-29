@@ -665,7 +665,7 @@ opening files, modifying the flight plan and other operations.</string>
            <property name="geometry">
             <rect>
              <x>0</x>
-             <y>-125</y>
+             <y>0</y>
              <width>586</width>
              <height>576</height>
             </rect>
@@ -1495,9 +1495,9 @@ Also affects labels at holds and traffic patterns.</string>
            <property name="geometry">
             <rect>
              <x>0</x>
-             <y>0</y>
+             <y>-151</y>
              <width>595</width>
-             <height>565</height>
+             <height>600</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_12">
@@ -1841,6 +1841,19 @@ Restart the program after changing this option. You might also need to reset the
                  </property>
                  <property name="text">
                   <string>&amp;User aircraft</string>
+                 </property>
+                 <property name="checked">
+                  <bool>true</bool>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QCheckBox" name="checkBoxOptionsMapTooltipTrail">
+                 <property name="toolTip">
+                  <string>Show tooltips for points on the user aircraft trail</string>
+                 </property>
+                 <property name="text">
+                  <string>&amp;User aircraft trail</string>
                  </property>
                  <property name="checked">
                   <bool>true</bool>
@@ -3678,7 +3691,7 @@ Also used in the elevation profile.</string>
            <property name="geometry">
             <rect>
              <x>0</x>
-             <y>-267</y>
+             <y>0</y>
              <width>586</width>
              <height>718</height>
             </rect>
@@ -5063,7 +5076,7 @@ airspace filename has to match the callsign of the online center.</string>
            <property name="geometry">
             <rect>
              <x>0</x>
-             <y>-115</y>
+             <y>0</y>
              <width>586</width>
              <height>566</height>
             </rect>

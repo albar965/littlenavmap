@@ -23,6 +23,7 @@
 #include "common/maptypesfactory.h"
 #include "db/undoredoprogress.h"
 #include "exception.h"
+#include "fs/gpx/gpxio.h"
 #include "fs/userdata/logdatamanager.h"
 #include "geo/calculations.h"
 #include "gui/dialog.h"
@@ -34,7 +35,7 @@
 #include "perf/aircraftperfcontroller.h"
 #include "search/searchcontroller.h"
 #include "logbook/logdataconverter.h"
-#include "common/aircrafttrack.h"
+#include "common/aircrafttrail.h"
 #include "logbook/logdatadialog.h"
 #include "logbook/logstatisticsdialog.h"
 #include "sql/sqlcolumn.h"
@@ -310,7 +311,7 @@ void LogdataController::createTakeoffLanding(const atools::fs::sc::SimConnectUse
       record.setValue("route_string", NavApp::getRouteStringDefaultOpts()); // varchar(1024),
 
       // Clear separate logbook track =========================
-      NavApp::deleteAircraftTrackLogbook();
+      NavApp::deleteAircraftTrailLogbook();
 
       // Record flight plan and aircraft performance =========================
       recordFlightplanAndPerf(record);
@@ -374,15 +375,12 @@ void LogdataController::createTakeoffLanding(const atools::fs::sc::SimConnectUse
         recordFlightplanAndPerf(record);
 
         // Save GPX with simplified flight plan and trail =========================
-        record.setValue("aircraft_trail",
-                        FlightplanIO().saveGpxGz(NavApp::getRouteConst().
-                                                 updatedAltitudes().adjustedToOptions(rf::DEFAULT_OPTS_GPX).
-                                                 getFlightplanConst(),
-                                                 NavApp::getAircraftTrackLogbook().getLineStrings(),
-                                                 NavApp::getAircraftTrackLogbook().getTimestampsMs())); // blob
+        const atools::fs::pln::Flightplan flightplan =
+          NavApp::getRouteConst().updatedAltitudes().adjustedToOptions(rf::DEFAULT_OPTS_GPX).getFlightplanConst();
+        record.setValue("aircraft_trail", atools::fs::gpx::GpxIO().saveGpxGz(NavApp::getAircraftTrailLogbook().toGpxData(flightplan)));
 
         // Clear separate logbook track =========================
-        NavApp::deleteAircraftTrackLogbook();
+        NavApp::deleteAircraftTrailLogbook();
 
         // Determine fuel type again =========================
         float weightVolRatio = 0.f;
@@ -492,16 +490,9 @@ void LogdataController::displayOptionsChanged()
   manager->clearGeometryCache();
 }
 
-const atools::geo::LineString *LogdataController::getRouteGeometry(int id)
+const atools::fs::gpx::GpxData *LogdataController::getGpxData(int id)
 {
-  const atools::fs::userdata::LogEntryGeometry *entry = manager->getGeometry(id);
-  return entry != nullptr ? &entry->route : nullptr;
-}
-
-const QVector<atools::geo::LineString> *LogdataController::getTrackGeometry(int id)
-{
-  const atools::fs::userdata::LogEntryGeometry *entry = manager->getGeometry(id);
-  return entry != nullptr ? &entry->tracks : nullptr;
+  return manager->getGpxData(id);
 }
 
 void LogdataController::editLogEntryFromMap(int id)
@@ -1164,13 +1155,14 @@ void LogdataController::gpxAttach(atools::sql::SqlRecord *record, QWidget *paren
 {
   try
   {
-    const AircraftTrack& track = currentTrack ? NavApp::getAircraftTrack() : NavApp::getAircraftTrackLogbook();
+    const AircraftTrail& track = currentTrack ? NavApp::getAircraftTrail() : NavApp::getAircraftTrailLogbook();
 
     if(!track.isEmpty() || !NavApp::getRouteConst().isEmpty())
-      record->setValue("aircraft_trail",
-                       FlightplanIO().saveGpxGz(NavApp::getRouteConst().
-                                                updatedAltitudes().adjustedToOptions(rf::DEFAULT_OPTS_GPX).
-                                                getFlightplanConst(), track.getLineStrings(), track.getTimestampsMs())); // blob
+    {
+      const atools::fs::pln::Flightplan flightplan =
+        NavApp::getRouteConst().updatedAltitudes().adjustedToOptions(rf::DEFAULT_OPTS_GPX).getFlightplanConst();
+      record->setValue("aircraft_trail", atools::fs::gpx::GpxIO().saveGpxGz(track.toGpxData(flightplan)));
+    }
     else
       record->setNull("aircraft_trail");
 

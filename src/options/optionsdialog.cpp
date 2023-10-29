@@ -296,6 +296,7 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
      ui->checkBoxOptionsMapTooltipAirspace,
      ui->checkBoxOptionsMapTooltipWind,
      ui->checkBoxOptionsMapTooltipUser,
+     ui->checkBoxOptionsMapTooltipTrail,
      ui->checkBoxOptionsMapClickUserAircraft,
      ui->checkBoxOptionsMapClickAiAircraft,
      ui->checkBoxOptionsMapClickAirport,
@@ -1830,6 +1831,7 @@ void OptionsDialog::widgetsToOptionData()
   data.displayTooltipOptions.setFlag(optsd::TOOLTIP_AIRSPACE, ui->checkBoxOptionsMapTooltipAirspace->isChecked());
   data.displayTooltipOptions.setFlag(optsd::TOOLTIP_WIND, ui->checkBoxOptionsMapTooltipWind->isChecked());
   data.displayTooltipOptions.setFlag(optsd::TOOLTIP_MARKS, ui->checkBoxOptionsMapTooltipUser->isChecked());
+  data.displayTooltipOptions.setFlag(optsd::TOOLTIP_AIRCRAFT_TRAIL, ui->checkBoxOptionsMapTooltipTrail->isChecked());
 
   data.displayClickOptions.setFlag(optsd::CLICK_AIRCRAFT_USER, ui->checkBoxOptionsMapClickUserAircraft->isChecked());
   data.displayClickOptions.setFlag(optsd::CLICK_AIRCRAFT_AI, ui->checkBoxOptionsMapClickAiAircraft->isChecked());
@@ -2134,6 +2136,7 @@ void OptionsDialog::optionDataToWidgets(const OptionData& data)
   ui->checkBoxOptionsMapTooltipAirspace->setChecked(data.displayTooltipOptions.testFlag(optsd::TOOLTIP_AIRSPACE));
   ui->checkBoxOptionsMapTooltipWind->setChecked(data.displayTooltipOptions.testFlag(optsd::TOOLTIP_WIND));
   ui->checkBoxOptionsMapTooltipUser->setChecked(data.displayTooltipOptions.testFlag(optsd::TOOLTIP_MARKS));
+  ui->checkBoxOptionsMapTooltipTrail->setChecked(data.displayTooltipOptions.testFlag(optsd::TOOLTIP_AIRCRAFT_TRAIL));
 
   ui->checkBoxOptionsMapClickAirport->setChecked(data.displayClickOptions.testFlag(optsd::CLICK_AIRPORT));
   ui->checkBoxOptionsMapClickAirportProcs->setChecked(data.displayClickOptions.testFlag(optsd::CLICK_AIRPORT_PROC));

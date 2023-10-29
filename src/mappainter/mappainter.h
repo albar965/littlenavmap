@@ -47,16 +47,12 @@ class MapScale;
 class MapWidget;
 class SymbolPainter;
 class WaypointTrackQuery;
-class AircraftTrack;
 class Route;
 
 namespace map {
 struct MapAirport;
-
 struct MapRef;
-
 struct MapHolding;
-
 struct MapAirportMsa;
 
 }
@@ -347,9 +343,12 @@ protected:
   void drawLineRadial(Marble::GeoPainter *painter, const atools::geo::Line& line, bool noRecurse = false);
 
   void drawPolygon(Marble::GeoPainter *painter, const atools::geo::LineString& linestring);
-
   void drawPolygons(Marble::GeoPainter *painter, const QVector<QPolygonF *>& polygons);
   void drawPolygon(Marble::GeoPainter *painter, const QPolygonF& polygon);
+
+  void drawPolyline(Marble::GeoPainter *painter, const atools::geo::LineString& linestring);
+  void drawPolylines(Marble::GeoPainter *painter, const QVector<QPolygonF *>& polygons);
+  void drawPolyline(Marble::GeoPainter *painter, const QPolygonF& polygon);
 
   /* Draw simple text with current settings. Corners are the text corners pointing to the position */
   void drawText(Marble::GeoPainter *painter, const atools::geo::Pos& pos, const QString& text, bool topCorner, bool leftCorner);

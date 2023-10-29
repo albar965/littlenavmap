@@ -24,7 +24,7 @@
 #include "fs/fspaths.h"
 
 class AircraftPerfController;
-class AircraftTrack;
+class AircraftTrail;
 class AirportQuery;
 class AirwayTrackQuery;
 class WaypointTrackQuery;
@@ -351,11 +351,11 @@ public:
   static QString getOnlineNetworkTranslated();
   static bool isOnlineNetworkActive();
 
-  static bool isAircraftTrackEmpty();
-  static const AircraftTrack& getAircraftTrack();
+  static bool isAircraftTrailEmpty();
+  static const AircraftTrail& getAircraftTrail();
 
-  static const AircraftTrack& getAircraftTrackLogbook();
-  static void deleteAircraftTrackLogbook();
+  static const AircraftTrail& getAircraftTrailLogbook();
+  static void deleteAircraftTrailLogbook();
 
   static void initSplashScreen();
 
