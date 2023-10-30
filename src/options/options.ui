@@ -1495,7 +1495,7 @@ Also affects labels at holds and traffic patterns.</string>
            <property name="geometry">
             <rect>
              <x>0</x>
-             <y>-151</y>
+             <y>0</y>
              <width>595</width>
              <height>600</height>
             </rect>
@@ -4498,7 +4498,7 @@ Does not apply to lines originating from airports or navaids.</string>
               <bool>true</bool>
              </property>
              <property name="wordWrap">
-              <bool>true</bool>
+              <bool>false</bool>
              </property>
              <property name="headerHidden">
               <bool>false</bool>

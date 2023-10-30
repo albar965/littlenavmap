@@ -189,10 +189,14 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
   addItem<optsd::DisplayOptionsRoute>(route, displayOptItemIndexRoute, tr("True Course"), tr("Show great circle true start course at flight plan leg.\n"
                                                                                              "The label moves to keep it visible while scrolling."), optsd::ROUTE_TRUE_COURSE);
 
-  addItem<optsd::DisplayOptionsRoute>(route, displayOptItemIndexRoute, tr("Magnetic Start and End Course"), tr("Display great circle initial and final magnetic course at the start and end of flight plan legs.\n"
-                                                                                                               "The label is fixed. Course also depends on VOR calibrated declination and is colored blue if related to VOR.\n"
+  addItem<optsd::DisplayOptionsRoute>(route, displayOptItemIndexRoute, tr("Magnetic Start and End Course"), tr("Display great circle initial and final magnetic course\n"
+                                                                                                               "at the start and end of flight plan legs.\n"
+                                                                                                               "The label is fixed. Course also depends on\n"
+                                                                                                               "VOR calibrated declination and\n"
+                                                                                                               "is colored blue if related to VOR.\n"
                                                                                                                "Not shown at procedure legs."), optsd::ROUTE_INITIAL_FINAL_MAG_COURSE, true);
-  addItem<optsd::DisplayOptionsRoute>(route, displayOptItemIndexRoute, tr("True Start and End Course"), tr("Display great circle initial and final true course at the start and end of flight plan legs.\n"
+  addItem<optsd::DisplayOptionsRoute>(route, displayOptItemIndexRoute, tr("True Start and End Course"), tr("Display great circle initial and final true course at\n"
+                                                                                                           "the start and end of flight plan legs.\n"
                                                                                                            "The label is fixed. Not shown at procedure legs."), optsd::ROUTE_INITIAL_FINAL_TRUE_COURSE);
 
   // Airspace =====================================================
@@ -218,9 +222,12 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
   addItem<optsac::DisplayOptionsUserAircraft>(userAircraft, displayOptItemIndexUser, tr("Actual Altitude"), tr("Real aircraft altitude prefixed with \"ALT\" on the map"), optsac::ITEM_USER_AIRCRAFT_ALTITUDE, true);
   addItem<optsac::DisplayOptionsUserAircraft>(userAircraft, displayOptItemIndexUser, tr("Indicated Altitude"), tr("Indicated aircraft altitude prefixed with \"IND\" on the map"), optsac::ITEM_USER_AIRCRAFT_INDICATED_ALTITUDE);
   addItem<optsac::DisplayOptionsUserAircraft>(userAircraft, displayOptItemIndexUser, tr("Altitude above ground"), tr("Actual altitude above ground. Prefixed with \"AGL\" on the map"), optsac::ITEM_USER_AIRCRAFT_ALT_ABOVE_GROUND);
-  addItem<optsac::DisplayOptionsUserAircraft>(userAircraft, displayOptItemIndexUser, tr("Track Line"), tr("Show the aircraft track as a black needle protruding from the aircraft nose."), optsac::ITEM_USER_AIRCRAFT_TRACK_LINE, true);
-  addItem<optsac::DisplayOptionsUserAircraft>(userAircraft, displayOptItemIndexUser, tr("Coordinates"), tr("Show aircraft coordinates using the format selected on options page \"Units\"."), optsac::ITEM_USER_AIRCRAFT_COORDINATES);
-  addItem<optsac::DisplayOptionsUserAircraft>(userAircraft, displayOptItemIndexUser, tr("Icing"), tr("Show a red label \"ICE\" and icing values in percent when aircraft icing occurs."), optsac::ITEM_USER_AIRCRAFT_ICE);
+  addItem<optsac::DisplayOptionsUserAircraft>(userAircraft, displayOptItemIndexUser, tr("Track Line"), tr("Show the aircraft track as a black needle at\n"
+                                                                                                          "the from of the user aircraft."), optsac::ITEM_USER_AIRCRAFT_TRACK_LINE, true);
+  addItem<optsac::DisplayOptionsUserAircraft>(userAircraft, displayOptItemIndexUser, tr("Coordinates"), tr("Show aircraft coordinates using the format selected on\n"
+                                                                                                           "options page \"Units\"."), optsac::ITEM_USER_AIRCRAFT_COORDINATES);
+  addItem<optsac::DisplayOptionsUserAircraft>(userAircraft, displayOptItemIndexUser, tr("Icing"), tr("Show a red label \"ICE\" and icing values in percent\n"
+                                                                                                     "when aircraft icing occurs."), optsac::ITEM_USER_AIRCRAFT_ICE);
 
   // AI =====================================================
   QTreeWidgetItem *aiAircraft = addTopItem(tr("AI, Multiplayer and Online Client Aircraft"), tr("Select text labels for the AI, multiplayer and online client aircraft."));
@@ -237,8 +244,10 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
   addItem<optsac::DisplayOptionsAiAircraft>(aiAircraft, displayOptItemIndexAi, tr("Actual Altitude"), tr("Real aircraft altitude prefixed with \"ALT\" on the map"), optsac::ITEM_AI_AIRCRAFT_ALTITUDE, true);
   addItem<optsac::DisplayOptionsAiAircraft>(aiAircraft, displayOptItemIndexAi, tr("Indicated Altitude"), tr("Indicated aircraft altitude prefixed with \"IND\" on the map"), optsac::ITEM_AI_AIRCRAFT_INDICATED_ALTITUDE);
   addItem<optsac::DisplayOptionsAiAircraft>(aiAircraft, displayOptItemIndexAi, tr("Departure and Destination"), tr("Departure and destination airport idents"), optsac::ITEM_AI_AIRCRAFT_DEP_DEST);
-  addItem<optsac::DisplayOptionsAiAircraft>(aiAircraft, displayOptItemIndexAi, tr("Coordinates"), tr("Show aircraft coordinates using the format selected on options page \"Units\"."), optsac::ITEM_AI_AIRCRAFT_COORDINATES);
-  addItem<optsac::DisplayOptionsAiAircraft>(aiAircraft, displayOptItemIndexAi, tr("Distance and Bearing from User"), tr("Distance and magnetic bearing from user aircraft prefixed with \"From User\"."), optsac::ITEM_AI_AIRCRAFT_DIST_BEARING_FROM_USER);
+  addItem<optsac::DisplayOptionsAiAircraft>(aiAircraft, displayOptItemIndexAi, tr("Coordinates"), tr("Show aircraft coordinates using the format selected on\n"
+                                                                                                     "options page \"Units\"."), optsac::ITEM_AI_AIRCRAFT_COORDINATES);
+  addItem<optsac::DisplayOptionsAiAircraft>(aiAircraft, displayOptItemIndexAi, tr("Distance and Bearing from User"), tr("Distance and magnetic bearing from user aircraft\n"
+                                                                                                                        "prefixed with \"From User\"."), optsac::ITEM_AI_AIRCRAFT_DIST_BEARING_FROM_USER);
 
   // Compass rose =====================================================
   QTreeWidgetItem *compassRose = addTopItem(tr("Compass Rose"), tr("Select display options for the compass rose."));
@@ -249,8 +258,10 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
   addItem<optsd::DisplayOptionsRose>(compassRose, displayOptItemIndexRose, tr("Heading Line"), tr("Show the dashed heading line for user aircraft."), optsd::ROSE_HEADING_LINE, true);
   addItem<optsd::DisplayOptionsRose>(compassRose, displayOptItemIndexRose, tr("Track Line"), tr("Show the solid track line for user aircraft."), optsd::ROSE_TRACK_LINE, true);
   addItem<optsd::DisplayOptionsRose>(compassRose, displayOptItemIndexRose, tr("Track Label"), tr("Show track label for user aircraft."), optsd::ROSE_TRACK_LABEL, true);
-  addItem<optsd::DisplayOptionsRose>(compassRose, displayOptItemIndexRose, tr("Heading Indicator"), tr("Show the heading for the user aircraft as a small magenta circle."), optsd::ROSE_CRAB_ANGLE, true);
-  addItem<optsd::DisplayOptionsRose>(compassRose, displayOptItemIndexRose, tr("Course to Next Waypoint"), tr("Show the course to next waypoint for the user aircraft as a small magenta line."), optsd::ROSE_NEXT_WAYPOINT, true);
+  addItem<optsd::DisplayOptionsRose>(compassRose, displayOptItemIndexRose, tr("Heading Indicator"), tr("Show the heading for the user aircraft as a\n"
+                                                                                                       "small magenta circle."), optsd::ROSE_CRAB_ANGLE, true);
+  addItem<optsd::DisplayOptionsRose>(compassRose, displayOptItemIndexRose, tr("Course to Next Waypoint"), tr("Show the course to next waypoint for the user aircraft as\n"
+                                                                                                             "a small magenta line."), optsd::ROSE_NEXT_WAYPOINT, true);
   addItem<optsd::DisplayOptionsRose>(compassRose, displayOptItemIndexRose, tr("True Heading"), tr("Show the whole circle and tick marks using true heading."), optsd::ROSE_TRUE_HEADING);
 
   // Measurment lines =====================================================
@@ -258,7 +269,8 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
   addItem<optsd::DisplayOptionsMeasurement>(measurement, displayOptItemIndexMeasurement, tr("Distance"), tr("Great circle distance for measurement line."), optsd::MEASUREMENT_DIST, true);
   addItem<optsd::DisplayOptionsMeasurement>(measurement, displayOptItemIndexMeasurement, tr("Magnetic Course"), tr("Show magnetic course for start and end of line."), optsd::MEASUREMENT_MAG, true);
   addItem<optsd::DisplayOptionsMeasurement>(measurement, displayOptItemIndexMeasurement, tr("True Course"), tr("Show true course for start and end of line."), optsd::MEASUREMENT_TRUE, true);
-  addItem<optsd::DisplayOptionsMeasurement>(measurement, displayOptItemIndexMeasurement, tr("Radial Number"), tr("Shows the radial prefixed with \"R\" for VOR, VORDME, VORTAC, TACAN or NDB."), optsd::MEASUREMENT_RADIAL);
+  addItem<optsd::DisplayOptionsMeasurement>(measurement, displayOptItemIndexMeasurement, tr("Radial Number"), tr("Shows the radial prefixed with \"R\" for VOR, VORDME,\n"
+                                                                                                                 "VORTAC, TACAN or NDB."), optsd::MEASUREMENT_RADIAL);
   addItem<optsd::DisplayOptionsMeasurement>(measurement, displayOptItemIndexMeasurement, tr("Navaid or airport ident"), tr("Show ident if attached to navaid or airport.\n"
                                                                                                                            "Also show frequency if attached to a radio navaid. "), optsd::MEASUREMENT_LABEL, true);
   /* *INDENT-ON* */
