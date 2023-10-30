@@ -425,6 +425,7 @@ const QPen aircraftTrailPen(float size)
   return QPen();
 }
 
+/* Default colors. Saved to little_navmap_mapstyle.ini and can be overridden there */
 static QHash<map::MapAirspaceTypes, QColor> airspaceFillColors(
   {
     {map::AIRSPACE_NONE, QColor("#00000000")},
@@ -463,6 +464,7 @@ static QHash<map::MapAirspaceTypes, QColor> airspaceFillColors(
   }
   );
 
+/* Default colors. Saved to little_navmap_mapstyle.ini and can be overridden there */
 static QHash<map::MapAirspaceTypes, QPen> airspacePens(
   {
     {map::AIRSPACE_NONE, QPen(QColor("#00000000"))},
@@ -501,6 +503,7 @@ static QHash<map::MapAirspaceTypes, QPen> airspacePens(
   }
   );
 
+/* Maps airspace types to color configuration options */
 static QHash<QString, map::MapAirspaceTypes> airspaceConfigNames(
   {
     {"Center", map::CENTER},
@@ -522,7 +525,7 @@ static QHash<QString, map::MapAirspaceTypes> airspaceConfigNames(
     {"Restricted", map::RESTRICTED},
     {"Prohibited", map::PROHIBITED},
     {"Warning", map::WARNING},
-    {"Caution", map::WARNING},
+    {"Caution", map::CAUTION},
     {"Alert", map::ALERT},
     {"Danger", map::DANGER},
     {"NationalPark", map::NATIONAL_PARK},
