@@ -170,61 +170,58 @@ void TextPlacement::drawTextAlongOneLine(QString text, float bearing, const QPoi
     // Elide each line in text - considers \n and returns them too
     text = elideText(text, arrow, metrics, textLineLength);
 
-    if(text.size() > arrow.size() + 2)
+    // Split separated text into lines
+    QStringList txts = text.split('\n');
+
+    // Swap sections if needed ============================================================
+    if(bearing >= 180.f)
     {
-      // Split separated text into lines
-      QStringList txts = text.split('\n');
-
-      // Swap sections if needed ============================================================
-      if(bearing >= 180.f)
+      // Need to swap all sections separated by backslash due to rotation
+      for(QString& txt : txts)
       {
-        // Need to swap all sections separated by backslash due to rotation
-        for(QString& txt : txts)
-        {
-          if(txt.contains('\\'))
-            txt = txt.section('\\', 1, 1).trimmed() % sectionSeparator % txt.section('\\', 0, 0).trimmed();
-        }
+        if(txt.contains('\\'))
+          txt = txt.section('\\', 1, 1).trimmed() % sectionSeparator % txt.section('\\', 0, 0).trimmed();
       }
-      else
-      {
-        // No swap needed - replace backslash with separator
-        for(QString& txt : txts)
-          txt.replace('\\', sectionSeparator);
-      }
-
-      // Add arrow to center line ================================
-      int mid = txts.size() / 2;
-      if(bearing < 180.)
-        txts[mid].append(arrow);
-      else
-        txts[mid] = arrow % txts.at(mid);
-
-      // Calculate offset ======================================
-      // Text allowed below line
-      double yoffsetBelow = lineWidth / 2. + offset + metrics.ascent();
-      // Keep all texts north - positive moves down
-      double yoffsetAbove = -(lineWidth / 2. + offset + metrics.height() * txts.size() - metrics.ascent());
-      double yoffset = 0.; // Negative moves up
-
-      if(side == CENTER || textOnLineCenter)
-        yoffset = -metrics.height() * txts.size() / 2. + metrics.ascent();
-      else if(side != NONE)
-        yoffset = (side == LEFT && bearing >= 180.) || (side == RIGHT && bearing < 180.) ? yoffsetBelow : yoffsetAbove;
-      else
-        yoffset = textOnTopOfLine || bearing >= 180. ? yoffsetAbove : yoffsetBelow;
-
-      painter->translate(textCoord.x(), textCoord.y());
-      painter->rotate(rotate);
-
-      for(int i = 0; i < txts.size(); i++)
-      {
-        // Add space at start and end to avoid letters touching the border
-        QString txt = ' ' % txts.at(i) % ' ';
-        painter->drawText(QPointF(-horizontalAdvance(txt, metrics) / 2.f, yoffset + i * metrics.height()), txt);
-      }
-
-      painter->resetTransform();
     }
+    else
+    {
+      // No swap needed - replace backslash with separator
+      for(QString& txt : txts)
+        txt.replace('\\', sectionSeparator);
+    }
+
+    // Add arrow to center line ================================
+    int mid = txts.size() / 2;
+    if(bearing < 180.)
+      txts[mid].append(arrow);
+    else
+      txts[mid] = arrow % txts.at(mid);
+
+    // Calculate offset ======================================
+    // Text allowed below line
+    double yoffsetBelow = lineWidth / 2. + offset + metrics.ascent();
+    // Keep all texts north - positive moves down
+    double yoffsetAbove = -(lineWidth / 2. + offset + metrics.height() * txts.size() - metrics.ascent());
+    double yoffset = 0.;   // Negative moves up
+
+    if(side == CENTER || textOnLineCenter)
+      yoffset = -metrics.height() * txts.size() / 2. + metrics.ascent();
+    else if(side != NONE)
+      yoffset = (side == LEFT && bearing >= 180.) || (side == RIGHT && bearing < 180.) ? yoffsetBelow : yoffsetAbove;
+    else
+      yoffset = textOnTopOfLine || bearing >= 180. ? yoffsetAbove : yoffsetBelow;
+
+    painter->translate(textCoord.x(), textCoord.y());
+    painter->rotate(rotate);
+
+    for(int i = 0; i < txts.size(); i++)
+    {
+      // Add space at start and end to avoid letters touching the border
+      QString txt = ' ' % txts.at(i) % ' ';
+      painter->drawText(QPointF(-horizontalAdvance(txt, metrics) / 2.f, yoffset + i * metrics.height()), txt);
+    }
+
+    painter->resetTransform();
   }
 }
 
