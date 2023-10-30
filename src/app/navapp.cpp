@@ -951,7 +951,8 @@ void NavApp::recordStartNavApp()
   QString reportFilename;
   getCrashReportFiles(crashReportFiles, reportFilename, false /* manual */);
 
-  Application::recordStart(nullptr, Settings::getConfigFilename(".running"), reportFilename, crashReportFiles);
+  Application::recordStart(nullptr, Settings::getConfigFilename(".running"), reportFilename, crashReportFiles,
+                           lnm::helpOnlineUrl, "en");
 
   // Keep command line options to avoid using the wrong configuration folder
 }

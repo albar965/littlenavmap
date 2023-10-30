@@ -220,6 +220,9 @@ int main(int argc, char *argv[])
       qInfo() << "Loading translations for" << language;
       Translator::load(language);
 
+      // Load help URLs from urls.cfg =================================
+      lnm::loadHelpUrls();
+
       // Check lock file for previously crashed instances ===================================
       NavApp::recordStartNavApp();
 
@@ -302,9 +305,6 @@ int main(int argc, char *argv[])
 
       Application::addReportPath(QObject::tr("Database directory:"), {Settings::getPath() + atools::SEP + lnm::DATABASE_DIR});
       Application::addReportPath(QObject::tr("Configuration:"), {Settings::getFilename()});
-
-      // Load help URLs from urls.cfg =================================
-      lnm::loadHelpUrls();
 
       // Load simulator paths =================================
       atools::fs::FsPaths::loadAllPaths();
