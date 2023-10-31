@@ -46,7 +46,6 @@ class LineString;
 }
 }
 
-namespace at {
 /* User aircraft trail position. Can be converted to QVariant and thus be saved to settings.
  *
  * An invalid position indicates a break of the tracks.
@@ -103,21 +102,19 @@ struct AircraftTrailPos
   }
 
 private:
-  friend QDataStream& operator<<(QDataStream& dataStream, const at::AircraftTrailPos& trackPos);
-  friend QDataStream& operator>>(QDataStream& dataStream, at::AircraftTrailPos& trackPos);
+  friend QDataStream& operator<<(QDataStream& dataStream, const AircraftTrailPos& trackPos);
+  friend QDataStream& operator>>(QDataStream& dataStream, AircraftTrailPos& trackPos);
 
   atools::geo::PosD pos;
   qint64 timestampMs;
   bool onGround;
 };
 
-QDataStream& operator>>(QDataStream& dataStream, at::AircraftTrailPos& obj);
-QDataStream& operator<<(QDataStream& dataStream, const at::AircraftTrailPos& obj);
+QDataStream& operator>>(QDataStream& dataStream, AircraftTrailPos& obj);
+QDataStream& operator<<(QDataStream& dataStream, const AircraftTrailPos& obj);
 
-}
-
-Q_DECLARE_TYPEINFO(at::AircraftTrailPos, Q_PRIMITIVE_TYPE);
-Q_DECLARE_METATYPE(at::AircraftTrailPos);
+Q_DECLARE_TYPEINFO(AircraftTrailPos, Q_PRIMITIVE_TYPE);
+Q_DECLARE_METATYPE(AircraftTrailPos);
 
 /*
  * Stores the trail points of the flight simulator user aircraft.
@@ -126,7 +123,7 @@ Q_DECLARE_METATYPE(at::AircraftTrailPos);
  * Warping at altitude does not interrupt a track.
  */
 class AircraftTrail :
-  private QList<at::AircraftTrailPos>
+  private QList<AircraftTrailPos>
 {
 public:
   AircraftTrail();
@@ -183,21 +180,21 @@ public:
   bool readFromStream(QDataStream & in);
 
   /* Pull only needed methods of the base class into public space */
-  using QList<at::AircraftTrailPos>::isEmpty;
-  using QList<at::AircraftTrailPos>::at;
-  using QList<at::AircraftTrailPos>::size;
-  using QList<at::AircraftTrailPos>::constBegin;
-  using QList<at::AircraftTrailPos>::constEnd;
-  using QList<at::AircraftTrailPos>::begin;
-  using QList<at::AircraftTrailPos>::end;
-  using QList<at::AircraftTrailPos>::constFirst;
-  using QList<at::AircraftTrailPos>::constLast;
+  using QList<AircraftTrailPos>::isEmpty;
+  using QList<AircraftTrailPos>::at;
+  using QList<AircraftTrailPos>::size;
+  using QList<AircraftTrailPos>::constBegin;
+  using QList<AircraftTrailPos>::constEnd;
+  using QList<AircraftTrailPos>::begin;
+  using QList<AircraftTrailPos>::end;
+  using QList<AircraftTrailPos>::constFirst;
+  using QList<AircraftTrailPos>::constLast;
 
 private:
-  friend QDataStream& at::operator>>(QDataStream& dataStream, at::AircraftTrailPos& trackPos);
+  friend QDataStream& operator>>(QDataStream& dataStream, AircraftTrailPos& trackPos);
 
   void calculateMaxAltitude();
-  void updateMaxAltitude(const at::AircraftTrailPos& trackPos);
+  void updateMaxAltitude(const AircraftTrailPos& trackPos);
 
   /* Accurate positions for drawing */
   const QVector<QVector<atools::geo::PosD> > getPositionsD() const;
@@ -209,6 +206,10 @@ private:
   int maxTrackEntries = 20000;
 
   float maximumAltitude = 0.f;
+
+  /* Trail density settings which depends on ground speed */
+  float minGroundDist, minGroundSpeedToDistFactor, minFlyingDist, minFlyingSpeedToDistFactor;
+  qint64 maxFlyingTimeMs, maxGroundTimeMs;
 
   atools::fs::sc::SimConnectUserAircraft *lastUserAircraft;
 

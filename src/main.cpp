@@ -94,8 +94,8 @@ int main(int argc, char *argv[])
   qRegisterMetaTypeStreamOperators<map::RangeMarker>();
   qRegisterMetaTypeStreamOperators<QList<map::RangeMarker> >();
 
-  qRegisterMetaTypeStreamOperators<at::AircraftTrailPos>();
-  qRegisterMetaTypeStreamOperators<QList<at::AircraftTrailPos> >();
+  qRegisterMetaTypeStreamOperators<AircraftTrailPos>();
+  qRegisterMetaTypeStreamOperators<QList<AircraftTrailPos> >();
 
   qRegisterMetaTypeStreamOperators<RouteExportFormat>();
   qRegisterMetaTypeStreamOperators<RouteExportFormatMap>();

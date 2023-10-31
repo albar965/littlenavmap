@@ -231,7 +231,7 @@ void MapPainterVehicle::paintAircraftTrail()
       atools::util::PainterContextSaver saver(context->painter);
       context->painter->setPen(QPen(Qt::blue, 2));
       int i = 0;
-      for(const at::AircraftTrailPos& pos : aircraftTrack)
+      for(const AircraftTrailPos& pos : aircraftTrack)
         drawText(context->painter, pos.getPosition(), QString::number(i++), 0.f, 0.f);
     }
 

@@ -275,6 +275,9 @@ const QLatin1String SETTINGS_INFOQUERY("Settings/InfoQuery");
 const QLatin1String SETTINGS_MAPQUERY("Settings/MapQuery1");
 const QLatin1String SETTINGS_DATABASE("Settings/Database");
 
+/* Aircraft trail densisity settings */
+const QLatin1String SETTINGS_AIRCRAFT_TRAIL("Settings/AircraftTrail");
+
 const QLatin1String APPROACHTREE_WIDGET("ApproachTree/Widget");
 const QLatin1String APPROACHTREE_SELECTED_WIDGET("ApproachTree/WidgetSelected");
 const QLatin1String APPROACHTREE_STATE("ApproachTree/TreeState");
