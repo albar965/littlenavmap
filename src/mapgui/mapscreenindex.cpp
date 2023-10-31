@@ -1053,20 +1053,33 @@ void MapScreenIndex::getNearestHighlights(int xs, int ys, int maxDistance, map::
   insertSorted(conv, xs, ys, searchHighlights->runwayEnds, result.runwayEnds, nullptr, maxDistance);
 
   // Add only if requested and visible on map
+  QSet<int> userFeatureIds;
   if(types & map::QUERY_MARK_HOLDINGS && NavApp::getMapMarkHandler()->getMarkTypes().testFlag(map::MARK_HOLDING))
-    insertSorted(conv, xs, ys, holdingMarks.values(), result.holdingMarks, nullptr, maxDistance);
+    insertSorted(conv, xs, ys, holdingMarks.values(), result.holdingMarks, &userFeatureIds, maxDistance);
 
   if(types & map::QUERY_MARK_MSA && NavApp::getMapMarkHandler()->getMarkTypes().testFlag(map::MARK_MSA))
+  {
+    userFeatureIds.clear();
     insertSorted(conv, xs, ys, msaMarks.values(), result.msaMarks, &result.airportMsaIds, maxDistance);
+  }
 
   if(types & map::QUERY_MARK_PATTERNS && NavApp::getMapMarkHandler()->getMarkTypes().testFlag(map::MARK_PATTERNS))
-    insertSorted(conv, xs, ys, patternMarks.values(), result.patternMarks, nullptr, maxDistance);
+  {
+    userFeatureIds.clear();
+    insertSorted(conv, xs, ys, patternMarks.values(), result.patternMarks, &userFeatureIds, maxDistance);
+  }
 
   if(types & map::QUERY_MARK_RANGE && NavApp::getMapMarkHandler()->getMarkTypes().testFlag(map::MARK_RANGE))
-    insertSorted(conv, xs, ys, rangeMarks.values(), result.rangeMarks, nullptr, maxDistance);
+  {
+    userFeatureIds.clear();
+    insertSorted(conv, xs, ys, rangeMarks.values(), result.rangeMarks, &userFeatureIds, maxDistance);
+  }
 
   if(types & map::QUERY_MARK_DISTANCE && NavApp::getMapMarkHandler()->getMarkTypes().testFlag(map::MARK_DISTANCE))
-    insertSortedFromTo(conv, xs, ys, distanceMarks.values(), result.distanceMarks, nullptr, maxDistance);
+  {
+    userFeatureIds.clear();
+    insertSortedFromTo(conv, xs, ys, distanceMarks.values(), result.distanceMarks, &userFeatureIds, maxDistance);
+  }
 }
 
 void MapScreenIndex::getNearestProcedureHighlights(int xs, int ys, int maxDistance, map::MapResult& result,
