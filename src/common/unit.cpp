@@ -250,6 +250,30 @@ QString Unit::distShortFeet(float ft, bool addUnit, bool narrow)
   return u(distShortFeetF(ft), unitShortDistStr, addUnit, narrow);
 }
 
+QString Unit::distLongShortMeter(float distanceMeter, const QString& separator, bool addUnit, bool narrow)
+{
+  QString distStr;
+  float localDist = Unit::distMeterF(distanceMeter);
+  if(Unit::getUnitDist() == opts::DIST_KM && Unit::getUnitShortDist() == opts::DIST_SHORT_METER)
+  {
+    // Use either km or meter
+    if(localDist < 6.f)
+      distStr = Unit::distShortMeter(distanceMeter, addUnit, narrow);
+    else
+      distStr = Unit::distMeter(distanceMeter, addUnit, 20, narrow);
+  }
+  else
+  {
+    // Use NM/mi and feet
+    distStr = Unit::distMeter(distanceMeter, addUnit, 20, narrow);
+
+    if(localDist < 3.f)
+      // Add feet or meter to text for short distances below three local units
+      distStr.append(separator % Unit::distShortMeter(distanceMeter, addUnit, narrow));
+  }
+  return distStr;
+}
+
 float Unit::distShortMeterF(float meter)
 {
   switch(unitShortDist)

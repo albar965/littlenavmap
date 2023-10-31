@@ -1274,27 +1274,7 @@ QStringList MapPainterMark::distanceMarkText(const map::DistanceMarker& marker, 
 
   // Distance ==========================================================
   if(context->dOptMeasurement(optsd::MEASUREMENT_DIST) && distanceMeter < INVALID_DISTANCE_VALUE)
-  {
-    float localDist = Unit::distMeterF(distanceMeter);
-
-    if(Unit::getUnitDist() == opts::DIST_KM && Unit::getUnitShortDist() == opts::DIST_SHORT_METER)
-    {
-      // Use either km or meter
-      if(localDist < 6.f)
-        distStr = Unit::distShortMeter(distanceMeter, true /* addUnit */, true /* narrow */);
-      else
-        distStr = Unit::distMeter(distanceMeter, true /* addUnit */, 20, true /* narrow */);
-    }
-    else
-    {
-      // Use NM/mi and feet
-      distStr = Unit::distMeter(distanceMeter, true /* addUnit */, 20, true /* narrow */);
-
-      if(localDist < 3.f)
-        // Add feet or meter to text for short distances below three local units
-        distStr.append(tr("/") % Unit::distShortMeter(distanceMeter, true /* addUnit */, true /* narrow */));
-    }
-  }
+    distStr = Unit::distLongShortMeter(distanceMeter, tr("/"), true /* addUnit */, true /* narrow */);
 
   // Mag (/ true) Course on separate line ==========================================================
   QString initMagText = QString::number(ageo::normalizeCourse(initTrue - marker.magvar), 'f', DISTMARK_DEG_PRECISION);

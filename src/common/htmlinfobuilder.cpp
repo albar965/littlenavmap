@@ -2405,11 +2405,11 @@ void HtmlInfoBuilder::distanceMarkerText(const DistanceMarker& marker, atools::u
   QString initCourseStr = tr("%L1°M, %L2°T").arg(initTrue - marker.magvar, 0, 'f', 0).arg(initTrue, 0, 'f', 0);
   QString finalCourseStr = tr("%L1°M, %L2°T").arg(finalTrue - marker.magvar, 0, 'f', 0).arg(finalTrue, 0, 'f', 0);
 
-  float distMeter = marker.getDistanceMeter();
   html.table();
   html.row2If(tr("Label:"), marker.text);
+  float distMeter = marker.getDistanceMeter();
   if(distMeter < map::INVALID_DISTANCE_VALUE)
-    html.row2If(tr("Distance:"), Unit::distMeter(distMeter));
+    html.row2If(tr("Distance:"), Unit::distLongShortMeter(distMeter, tr(", ")));
 
   if(initCourseStr != finalCourseStr)
   {
@@ -3818,7 +3818,8 @@ void HtmlInfoBuilder::aircraftTrackText(const AircraftTrailSegment& trailSegment
             formatter::formatDateTimeSeconds(datetime, overrideLocale) % tr(" ") % datetime.timeZoneAbbreviation());
 
   // Speed ==================================
-  html.row2(tr("Speed:"), Unit::speedMeterPerSec(trailSegment.speed));
+  if(atools::geo::meterPerSecToKnots(trailSegment.speed) < 10000.f)
+    html.row2(tr("Speed:"), Unit::speedMeterPerSec(trailSegment.speed));
 
   // Long line segments =========================================
   if(trailSegment.length > 5000.)

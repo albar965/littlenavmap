@@ -90,6 +90,9 @@ public:
   static QString distShortNm(float nm, bool addUnit = true, bool narrow = false);
   static QString distShortFeet(float ft, bool addUnit = true, bool narrow = false);
 
+  /* Short and long distance. Meter or km / NM and ft */
+  static QString distLongShortMeter(float ft, const QString& separator, bool addUnit = true, bool narrow = false);
+
   static float distShortMeterF(float meter);
   static float distShortNmF(float nm);
   static float distShortFeetF(float ft);
