@@ -145,6 +145,9 @@ public:
   /* Erases trail and populates this with the given gpxData */
   void fillTrailFromGpxData(const atools::fs::gpx::GpxData& gpxData);
 
+  /* Appends the given gpxData as new track segment without deleting the current one. */
+  void appendTrailFromGpxData(const atools::fs::gpx::GpxData& gpxData);
+
   /* Saves and restores track into a separate file (little_navmap.track). Creates two additional backup files. */
   void saveState(const QString& suffix, int numBackupFiles);
   void restoreState(const QString& suffix);

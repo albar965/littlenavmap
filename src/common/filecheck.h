@@ -35,7 +35,8 @@ void fromStartupProperties(const atools::util::Properties& properties, QString *
 /* Checks the given filename for compatible file types and fills the given strings with file names in case of matches.
  * The file types are checked by content.
  * All compatible flight plan types are checked. */
-void checkFileType(const QString& filename, QString *flightplan, QString *perf = nullptr, QString *layout = nullptr);
+void checkFileType(const QString& filename, QString *flightplan, QString *perf = nullptr, QString *layout = nullptr,
+                   QString *gpx = nullptr);
 
 } // namespace fc
 

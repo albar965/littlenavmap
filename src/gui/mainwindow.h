@@ -223,6 +223,10 @@ public:
   /* Called from the export if LNMPLN was bulk exported */
   void routeSaveLnmExported(const QString& filename);
 
+  /* Load or append trail from GPX file */
+  void trailLoadGpx();
+  void trailAppendGpx();
+
   /* true if map window is maximized */
   bool isFullScreen() const;
 
@@ -244,10 +248,10 @@ public:
   void routeNew();
 
   /* Question dialog and then delete map and profile trail */
-  void deleteAircraftTrack(bool quiet = false);
+  void deleteAircraftTrail(bool quiet);
 
   /* Silently deletes track on takeoff */
-  void deleteProfileAircraftTrack();
+  void deleteProfileAircraftTrail();
 
   atools::gui::DockWidgetHandler *getDockHandler() const
   {
@@ -398,6 +402,8 @@ private:
   void loadLayoutDelayed(const QString& filename);
 
   void legendAnchorClicked(const QUrl& url);
+
+  void trailLoadGpxFile(const QString& file);
 
   void showOnlineHelp();
   void showOnlineTutorials();

@@ -23,10 +23,11 @@
 #include "gui/dockwidgethandler.h"
 #include "perf/aircraftperfcontroller.h"
 #include "util/properties.h"
+#include "fs/gpx/gpxio.h"
 
 namespace fc {
 
-void checkFileType(const QString& filename, QString *flightplan, QString *perf, QString *layout)
+void checkFileType(const QString& filename, QString *flightplan, QString *perf, QString *layout, QString *gpx)
 {
   if(atools::checkFile(Q_FUNC_INFO, filename, true /* warn */))
   {
@@ -38,6 +39,9 @@ void checkFileType(const QString& filename, QString *flightplan, QString *perf, 
 
     if(layout != nullptr && layout->isEmpty() && atools::gui::DockWidgetHandler::isWindowLayoutFile(filename))
       *layout = filename;
+
+    if(gpx != nullptr && gpx->isEmpty() && atools::fs::gpx::GpxIO::isGpxFile(filename))
+      *gpx = filename;
   }
 }
 
@@ -57,7 +61,8 @@ void fromStartupProperties(const atools::util::Properties& properties, QString *
     *flightplanDescr = properties.getPropertyStr(lnm::STARTUP_FLIGHTPLAN_DESCR);
 
   // Extract filenames from positional arguments without options ================================
-  for(const QString& otherFile : properties.getPropertyStrList(lnm::STARTUP_OTHER_ARGUMENTS))
+  const QStringList propertyStrList = properties.getPropertyStrList(lnm::STARTUP_OTHER_ARGUMENTS);
+  for(const QString& otherFile : propertyStrList)
     fc::checkFileType(otherFile, flightplan, perf, layout);
 }
 

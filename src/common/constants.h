@@ -98,6 +98,7 @@ const QLatin1String ACTIONS_SHOW_XP11_WEATHER_FILE_INVALID("Actions/Xplane11Weat
 const QLatin1String ACTIONS_SHOW_XP12_WEATHER_FILE_INVALID("Actions/Xplane12WeatherFileInvalid");
 const QLatin1String ACTIONS_SHOW_XP11_WEATHER_FILE_NO_SIM("Actions/Xplane11WeatherFileNoSim");
 const QLatin1String ACTIONS_SHOW_XP12_WEATHER_FILE_NO_SIM("Actions/Xplane12WeatherFileNoSim");
+const QLatin1String ACTIONS_SHOW_REPLACE_TRAIL("Actions/ReplaceTrail");
 
 const QLatin1String ACTIONS_SHOW_DATABASE_HINTS("Actions/DatabaseLoadShowHints");
 const QLatin1String ACTIONS_SHOW_DATABASE_OLD("Actions/DatabaseOld");

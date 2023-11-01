@@ -48,6 +48,7 @@ void messages::resetAllMessages()
   settings.setValue(lnm::ACTIONS_SHOW_SEND_SIMBRIEF, true);
   settings.setValue(lnm::ACTIONS_SHOW_UPDATE_FAILED, true);
   settings.setValue(lnm::ACTIONS_SHOW_ZOOM_WARNING, true);
+  settings.setValue(lnm::ACTIONS_SHOW_REPLACE_TRAIL, true);
 
   settings.setValue(lnm::ACTIONS_SHOW_ROUTE_ALTERNATE_ERROR, true);
   settings.setValue(lnm::ACTIONS_SHOW_ROUTE_ERROR, true);
@@ -67,6 +68,7 @@ void messages::resetAllMessages()
 
   settings.setValue(lnm::ACTIONS_SHOW_DATABASE_BACKGROUND_HINT, true);
   settings.setValue(lnm::ROUTE_STRING_DIALOG_BACKGROUND_HINT, true);
+
 }
 
 void messages::resetEssentialMessages()

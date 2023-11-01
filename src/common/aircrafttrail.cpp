@@ -270,6 +270,16 @@ atools::fs::gpx::GpxData AircraftTrail::toGpxData(const atools::fs::pln::Flightp
 void AircraftTrail::fillTrailFromGpxData(const atools::fs::gpx::GpxData& gpxData)
 {
   clear();
+  appendTrailFromGpxData(gpxData);
+}
+
+void AircraftTrail::appendTrailFromGpxData(const atools::fs::gpx::GpxData& gpxData)
+{
+  // Add separator
+  if(!isEmpty())
+    append(AircraftTrailPos());
+
+  // Add track points
   for(const atools::fs::gpx::TrackPoints& points : qAsConst(gpxData.tracks))
   {
     if(!points.isEmpty())

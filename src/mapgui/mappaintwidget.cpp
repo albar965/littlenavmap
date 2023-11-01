@@ -1015,9 +1015,9 @@ bool MapPaintWidget::hasHighlights() const
          !screenIndex->getAirwayHighlights().isEmpty();
 }
 
-bool MapPaintWidget::hasTrackPoints() const
+int MapPaintWidget::getAircraftTrailSize() const
 {
-  return !aircraftTrail->isEmpty();
+  return aircraftTrail->size();
 }
 
 const map::MapResult& MapPaintWidget::getSearchHighlights() const

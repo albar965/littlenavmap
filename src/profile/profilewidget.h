@@ -90,7 +90,7 @@ public:
   void updateProfileShowFeatures();
 
   /* Notification after track deletion */
-  void deleteAircraftTrack();
+  void deleteAircraftTrail();
 
   /* Stops thread and disables all udpates */
   void preDatabaseLoad();

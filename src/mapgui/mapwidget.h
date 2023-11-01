@@ -207,8 +207,11 @@ public:
   /* Removes all range rings and distance measurement lines */
   void clearAllMarkers(map::MapTypes types);
 
+  void loadAircraftTrail(const QString& filename);
+  void appendAircraftTrail(const QString& filename);
+
   /* Delete the current aircraft track. Will not stop collecting new track points */
-  void deleteAircraftTrack();
+  void deleteAircraftTrail();
 
   /* Clear separate track collected for the logbook */
   void deleteAircraftTrailLogbook();

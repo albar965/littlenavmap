@@ -30,6 +30,7 @@
 #include "connect/connectclient.h"
 #include "db/databasemanager.h"
 #include "exception.h"
+#include "fs/gpx/gpxio.h"
 #include "fs/perf/aircraftperf.h"
 #include "gui/application.h"
 #include "gui/dialog.h"
@@ -1348,13 +1349,18 @@ void MainWindow::connectAllSlots()
   connect(ui->actionRouteSaveAll, &QAction::triggered, this, [this]() { routeExport->routeMultiExport(); });
   connect(ui->actionRouteSaveAllOptions, &QAction::triggered, this, [this]() { routeExport->routeMultiExportOptions(); });
 
-  connect(ui->actionRouteSaveAsGpx, &QAction::triggered, this, [this]() { routeExport->routeExportGpxMan(); });
   connect(ui->actionRouteSaveAsHtml, &QAction::triggered, this, [this]() { routeExport->routeExportHtmlMan(); });
 
   // Online export options
   connect(ui->actionRouteSaveAsVfp, &QAction::triggered, this, [this]() { routeExport->routeExportVfpMan(); });
   connect(ui->actionRouteSaveAsIvap, &QAction::triggered, this, [this]() { routeExport->routeExportIvapMan(); });
   connect(ui->actionRouteSaveAsXIvap, &QAction::triggered, this, [this]() { routeExport->routeExportXIvapMan(); });
+
+  // GPX export and import options
+  connect(ui->actionSaveAircraftTrailToGPX, &QAction::triggered, this, [this]() { routeExport->routeExportGpxMan(); });
+  connect(ui->actionLoadAircraftTrailFromGPX, &QAction::triggered, this, &MainWindow::trailLoadGpx);
+  connect(ui->actionAppendAircraftTrailFromGPX, &QAction::triggered, this, &MainWindow::trailAppendGpx);
+
   /* *INDENT-ON* */
 
   connect(ui->actionRouteShowSkyVector, &QAction::triggered, this, &MainWindow::openInSkyVector);
@@ -1536,10 +1542,8 @@ void MainWindow::connectAllSlots()
 
   // Update airport index in weather for changed simulator database
   connect(ui->actionMapShowWeatherDisabled, &QAction::toggled, weatherReporter, &WeatherReporter::updateAirportWeather);
-  connect(ui->actionMapShowWeatherSimulator, &QAction::toggled, weatherReporter,
-          &WeatherReporter::updateAirportWeather);
-  connect(ui->actionMapShowWeatherActiveSky, &QAction::toggled, weatherReporter,
-          &WeatherReporter::updateAirportWeather);
+  connect(ui->actionMapShowWeatherSimulator, &QAction::toggled, weatherReporter, &WeatherReporter::updateAirportWeather);
+  connect(ui->actionMapShowWeatherActiveSky, &QAction::toggled, weatherReporter, &WeatherReporter::updateAirportWeather);
   connect(ui->actionMapShowWeatherNoaa, &QAction::toggled, weatherReporter, &WeatherReporter::updateAirportWeather);
   connect(ui->actionMapShowWeatherVatsim, &QAction::toggled, weatherReporter, &WeatherReporter::updateAirportWeather);
   connect(ui->actionMapShowWeatherIvao, &QAction::toggled, weatherReporter, &WeatherReporter::updateAirportWeather);
@@ -1558,7 +1562,10 @@ void MainWindow::connectAllSlots()
   connect(ui->actionMapShowAircraftAiBoat, &QAction::toggled, infoController, &InfoController::updateAllInformation);
 
   // Order is important here. First let the mapwidget delete the track then notify the profile
-  connect(ui->actionMapDeleteAircraftTrack, &QAction::triggered, this, &MainWindow::deleteAircraftTrack);
+  connect(ui->actionMapDeleteAircraftTrack, &QAction::triggered,
+          this, [this]() {
+    deleteAircraftTrail(false /* quiet */);
+  });
 
   connect(ui->actionMapShowMark, &QAction::triggered, mapWidget, &MapWidget::showSearchMark);
   connect(ui->actionMapShowHome, &QAction::triggered, mapWidget, &MapWidget::showHome);
@@ -2131,12 +2138,12 @@ void MainWindow::setToolTipsEnabledMainMenu(bool enabled)
   }
 }
 
-void MainWindow::deleteProfileAircraftTrack()
+void MainWindow::deleteProfileAircraftTrail()
 {
-  profileWidget->deleteAircraftTrack();
+  profileWidget->deleteAircraftTrail();
 }
 
-void MainWindow::deleteAircraftTrack(bool quiet)
+void MainWindow::deleteAircraftTrail(bool quiet)
 {
   int result = QMessageBox::Yes;
 
@@ -2147,8 +2154,8 @@ void MainWindow::deleteAircraftTrack(bool quiet)
 
   if(result == QMessageBox::Yes)
   {
-    mapWidget->deleteAircraftTrack();
-    profileWidget->deleteAircraftTrack();
+    mapWidget->deleteAircraftTrail();
+    profileWidget->deleteAircraftTrail();
     updateActionStates();
     setStatusMessage(QString(tr("Aircraft track removed from map.")));
   }
@@ -2305,11 +2312,8 @@ void MainWindow::routeOpen()
 
 QString MainWindow::routeOpenFileDialog()
 {
-  return dialog->openFileDialog(
-    tr("Open Flight Plan"),
-    tr("Flight Plan Files %1;;All Files (*)").
-    arg(lnm::FILE_PATTERN_FLIGHTPLAN_LOAD),
-    "Route/LnmPln", atools::documentsDir());
+  return dialog->openFileDialog(tr("Open Flight Plan"), tr("Flight Plan Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_FLIGHTPLAN_LOAD),
+                                "Route/LnmPln", atools::documentsDir());
 }
 
 void MainWindow::routeOpenDescr(const QString& routeString)
@@ -2327,6 +2331,7 @@ void MainWindow::routeOpenDescr(const QString& routeString)
 
 void MainWindow::routeOpenFile(QString filepath)
 {
+  qDebug() << Q_FUNC_INFO << filepath;
   if(routeCheckForChanges())
   {
     if(filepath.isEmpty())
@@ -2358,6 +2363,53 @@ void MainWindow::routeOpenFileLnmStr(const QString& string)
       showFlightPlan();
       setStatusMessage(tr("Flight plan opened."));
     }
+  }
+}
+
+void MainWindow::trailLoadGpx()
+{
+  QString file = dialog->openFileDialog(tr("Open and Replace GPX Trail"), tr("GPX Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_GPX),
+                                        "Route/Gpx", atools::documentsDir());
+  trailLoadGpxFile(file);
+}
+
+void MainWindow::trailLoadGpxFile(const QString& file)
+{
+  qDebug() << Q_FUNC_INFO << file;
+
+  if(!file.isEmpty())
+  {
+    if(atools::fs::gpx::GpxIO::isGpxFile(file))
+    {
+      bool replace = true;
+
+      if(mapWidget->getAircraftTrailSize() > 0)
+        replace = dialog->showQuestionMsgBox(lnm::ACTIONS_SHOW_REPLACE_TRAIL,
+                                             tr("Replace the current user aircraft trail?"),
+                                             tr("Do not &show this dialog again and replace trail."),
+                                             QMessageBox::Yes | QMessageBox::No, QMessageBox::No, QMessageBox::Yes) == QMessageBox::Yes;
+
+      if(replace)
+        mapWidget->loadAircraftTrail(file);
+    }
+    else
+      QMessageBox::warning(this, QApplication::applicationName(), tr("The file \"%1\" is no valid GPX file.").arg(file));
+  }
+}
+
+void MainWindow::trailAppendGpx()
+{
+  QString file = dialog->openFileDialog(tr("Open and Append GPX Trail"), tr("GPX Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_GPX),
+                                        "Route/Gpx", atools::documentsDir());
+
+  qDebug() << Q_FUNC_INFO << file;
+
+  if(!file.isEmpty())
+  {
+    if(atools::fs::gpx::GpxIO::isGpxFile(file))
+      mapWidget->appendAircraftTrail(file);
+    else
+      QMessageBox::warning(this, QApplication::applicationName(), tr("The file \"%1\" is no valid GPX file.").arg(file));
   }
 }
 
@@ -2485,13 +2537,12 @@ bool MainWindow::routeSaveLnm()
     };
 
     // Ask before saving file
-    int result =
-      dialog->showQuestionMsgBox(lnm::ACTIONS_SHOW_SAVE_WARNING,
-                                 tr("<p>You cannot save this file directly.<br/>"
-                                    "Use the export function instead.</p>"
-                                    "<p>Save using the LNMPLN format now?</p>"),
-                                 tr("Do not &show this dialog again and save as LNMPLN."),
-                                 buttonList, QMessageBox::Cancel, QMessageBox::Save);
+    int result = dialog->showQuestionMsgBox(lnm::ACTIONS_SHOW_SAVE_WARNING,
+                                            tr("<p>You cannot save this file directly.<br/>"
+                                               "Use the export function instead.</p>"
+                                               "<p>Save using the LNMPLN format now?</p>"),
+                                            tr("Do not &show this dialog again and save as LNMPLN."),
+                                            buttonList, QMessageBox::Cancel, QMessageBox::Save);
 
     if(result == QMessageBox::Cancel)
       return false;
@@ -3678,7 +3729,7 @@ void MainWindow::updateActionStates()
   ui->actionRouteSaveAsFms11->setEnabled(hasFlightplan);
   ui->actionRouteSaveAsPln->setEnabled(hasFlightplan);
   ui->actionRouteSaveAsPlnMsfs->setEnabled(hasFlightplan);
-  ui->actionRouteSaveAsGpx->setEnabled(hasFlightplan || hasTrack);
+  ui->actionSaveAircraftTrailToGPX->setEnabled(hasFlightplan || hasTrack);
   ui->actionRouteSaveAsHtml->setEnabled(hasFlightplan);
   ui->actionRouteSaveAll->setEnabled(hasFlightplan && routeExport->hasSelected());
   ui->actionRouteSendToSimBrief->setEnabled(hasFlightplan);
@@ -3730,7 +3781,7 @@ void MainWindow::updateActionStates()
   ui->actionConnectSimulatorToggle->blockSignals(false);
 
   ui->actionMapShowAircraftTrack->setEnabled(true);
-  ui->actionMapDeleteAircraftTrack->setEnabled(mapWidget->hasTrackPoints() || profileWidget->hasTrackPoints());
+  ui->actionMapDeleteAircraftTrack->setEnabled(mapWidget->getAircraftTrailSize() > 0 || profileWidget->hasTrackPoints());
 
   bool canCalcRoute = route.canCalcRoute();
   ui->actionRouteCalcDirect->setEnabled(canCalcRoute && NavApp::getRouteConst().hasEntries());
@@ -4022,7 +4073,7 @@ void MainWindow::saveStateMain()
     // About to reset all settings and restart application
     if(NavApp::isRestartProcess())
     {
-      deleteAircraftTrack(true /* do not ask questions */);
+      deleteAircraftTrail(true /* quiet */);
       mapWidget->clearHistory();
     }
 
@@ -4553,10 +4604,10 @@ void MainWindow::dragEnterEvent(QDragEnterEvent *event)
         // accept if file exists, is readable and matches the supported extensions or content
         QFileInfo file(url.toLocalFile());
 
-        QString flightplan, perf, layout;
-        fc::checkFileType(file.filePath(), &flightplan, &perf, &layout);
+        QString flightplan, perf, layout, gpx;
+        fc::checkFileType(file.filePath(), &flightplan, &perf, &layout, &gpx);
 
-        if(!flightplan.isEmpty() || !perf.isEmpty() || !layout.isEmpty())
+        if(!flightplan.isEmpty() || !perf.isEmpty() || !layout.isEmpty() || !gpx.isEmpty())
         {
           qDebug() << Q_FUNC_INFO << "accepting" << url;
           event->acceptProposedAction();
@@ -4581,6 +4632,9 @@ void MainWindow::dropEvent(QDropEvent *event)
     else if(AircraftPerfController::isPerformanceFile(filepath))
       // Load aircraft performance file
       NavApp::getAircraftPerfController()->loadFile(filepath);
+    else if(atools::fs::gpx::GpxIO::isGpxFile(filepath))
+      // Load GPX trail
+      trailLoadGpxFile(filepath);
     else
       // Load flight plan
       routeOpenFile(filepath);

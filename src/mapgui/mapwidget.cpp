@@ -25,6 +25,8 @@
 #include "common/symbolpainter.h"
 #include "common/unit.h"
 #include "connect/connectclient.h"
+#include "fs/gpx/gpxio.h"
+#include "fs/gpx/gpxtypes.h"
 #include "fs/perf/aircraftperf.h"
 #include "fs/sc/simconnectdata.h"
 #include "geo/calculations.h"
@@ -2370,7 +2372,7 @@ void MapWidget::takeoffLandingTimeout()
       takeoffLandingDistanceNm = 0.;
 
       // Delete the profile track to avoid the messy collection of older tracks
-      NavApp::getMainWindow()->deleteProfileAircraftTrack();
+      NavApp::getMainWindow()->deleteProfileAircraftTrail();
 
       emit aircraftTakeoff(aircraft);
     }
@@ -3849,7 +3851,31 @@ void MapWidget::clearAllMarkers(map::MapTypes types)
   mainWindow->setStatusMessage(tr("User features removed from map."));
 }
 
-void MapWidget::deleteAircraftTrack()
+void MapWidget::loadAircraftTrail(const QString& filename)
+{
+  atools::fs::gpx::GpxData gpxData;
+  atools::fs::gpx::GpxIO().loadGpx(gpxData, filename);
+
+  aircraftTrail->fillTrailFromGpxData(gpxData);
+
+  update();
+  emit updateActionStates();
+  mainWindow->setStatusMessage(tr("User aircraft trail replaced."));
+}
+
+void MapWidget::appendAircraftTrail(const QString& filename)
+{
+  atools::fs::gpx::GpxData gpxData;
+  atools::fs::gpx::GpxIO().loadGpx(gpxData, filename);
+
+  aircraftTrail->appendTrailFromGpxData(gpxData);
+
+  update();
+  emit updateActionStates();
+  mainWindow->setStatusMessage(tr("User aircraft trail appended."));
+}
+
+void MapWidget::deleteAircraftTrail()
 {
   aircraftTrail->clearTrail();
   emit updateActionStates();

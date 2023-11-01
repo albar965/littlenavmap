@@ -194,7 +194,7 @@ public:
     return *aircraftTrailLogbook;
   }
 
-  bool hasTrackPoints() const;
+  int getAircraftTrailSize() const;
 
   /* Disconnect painter to avoid updates while no data is available */
   void preDatabaseLoad();
@@ -595,5 +595,7 @@ private:
   /* true if inside paint event - avoids crashes due to nested calls */
   bool painting = false;
 };
+
+
 
 #endif // LITTLENAVMAP_NAVMAPPAINTWIDGET_H

@@ -58,8 +58,9 @@
      <property name="title">
       <string>E&amp;xport Flight Plan to Other Formats</string>
      </property>
+     <addaction name="actionRouteShowSkyVector"/>
+     <addaction name="separator"/>
      <addaction name="actionRouteSaveAsHtml"/>
-     <addaction name="actionRouteSaveAsGpx"/>
      <addaction name="separator"/>
      <addaction name="actionRouteSaveAsVfp"/>
      <addaction name="actionRouteSaveAsIvap"/>
@@ -72,6 +73,15 @@
      <addaction name="actionRouteSaveApprWaypointsOpt"/>
      <addaction name="actionRouteSaveSidStarWaypointsOpt"/>
      <addaction name="actionRouteSaveAirwayWaypointsOpt"/>
+    </widget>
+    <widget class="QMenu" name="menuGPXGPSExchangeFormat">
+     <property name="title">
+      <string>&amp;GPS Exchange Format (GPX)</string>
+     </property>
+     <addaction name="actionLoadAircraftTrailFromGPX"/>
+     <addaction name="actionAppendAircraftTrailFromGPX"/>
+     <addaction name="separator"/>
+     <addaction name="actionSaveAircraftTrailToGPX"/>
     </widget>
     <addaction name="actionRouteNew"/>
     <addaction name="actionRouteOpen"/>
@@ -91,7 +101,8 @@
     <addaction name="actionRouteFetchFromSimBrief"/>
     <addaction name="actionRouteSendToSimBrief"/>
     <addaction name="separator"/>
-    <addaction name="actionRouteShowSkyVector"/>
+    <addaction name="menuGPXGPSExchangeFormat"/>
+    <addaction name="separator"/>
     <addaction name="menuExportFlightplanToOnlineFormats"/>
     <addaction name="separator"/>
     <addaction name="menuExportOptions"/>
@@ -8608,9 +8619,9 @@ relation to shown airport</string>
     <string>Show simulator AI and multiplayer ships on the map</string>
    </property>
   </action>
-  <action name="actionRouteSaveAsGpx">
+  <action name="actionSaveAircraftTrailToGPX">
    <property name="text">
-    <string>Export Flight Plan as GP&amp;X ...</string>
+    <string>&amp;Export Flight Plan and Trail as GPX ...</string>
    </property>
    <property name="toolTip">
     <string>Save flight plan and flown track in GPS Exchange Format usable by Google Earth and many other Programs</string>
@@ -12065,6 +12076,28 @@ relation to shown airport</string>
    </property>
    <property name="statusTip">
     <string>Builds an issue report package containing all related files to report a problem</string>
+   </property>
+  </action>
+  <action name="actionLoadAircraftTrailFromGPX">
+   <property name="text">
+    <string>&amp;Load Aircraft Trail from GPX ...</string>
+   </property>
+   <property name="toolTip">
+    <string>Load aircraft trail from a GPX file replacing the current user aircraft trail</string>
+   </property>
+   <property name="statusTip">
+    <string>Load aircraft trail from a GPX file replacing the current user aircraft trail</string>
+   </property>
+  </action>
+  <action name="actionAppendAircraftTrailFromGPX">
+   <property name="text">
+    <string>&amp;Append Aircraft Trail from GPX ...</string>
+   </property>
+   <property name="toolTip">
+    <string>Load aircraft trail from a GPX file and append it to the current user aircraft trail</string>
+   </property>
+   <property name="statusTip">
+    <string>Load aircraft trail from a GPX file and append it to the current user aircraft trail</string>
    </property>
   </action>
  </widget>

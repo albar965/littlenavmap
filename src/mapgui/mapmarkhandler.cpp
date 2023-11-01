@@ -314,7 +314,7 @@ void MapMarkHandler::routeResetAll()
       mainWindow->routeNew();
 
     if(choiceDialog.isChecked(DELETE_TRAIL))
-      mainWindow->deleteAircraftTrack(true /* quiet */);
+      mainWindow->deleteAircraftTrail(true /* quiet */);
 
     if(choiceDialog.isChecked(DELETE_ACTIVE_LEG))
       NavApp::getRouteController()->resetActiveLeg();

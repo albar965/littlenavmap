@@ -2525,7 +2525,7 @@ void ProfileWidget::showContextMenu(const QPoint& globalPoint)
           action == ui->actionProfileShowVerticalTrack)
     update();
   else if(action == ui->actionProfileDeleteAircraftTrack)
-    deleteAircraftTrack();
+    deleteAircraftTrail();
 
   // Other actions are connected to methods or used during updates
   // else if(action == ui->actionProfileFit)
@@ -2627,7 +2627,7 @@ void ProfileWidget::resizeEvent(QResizeEvent *)
 }
 
 /* Deleting aircraft track needs an update of the screen coordinates */
-void ProfileWidget::deleteAircraftTrack()
+void ProfileWidget::deleteAircraftTrail()
 {
   aircraftTrackPoints.clear();
 
