@@ -936,6 +936,7 @@ void getCrashReportFiles(QStringList& crashReportFiles, QString& reportFilename,
   Settings& settings = Settings::instance();
   crashReportFiles.append(settings.valueStr(lnm::ROUTE_FILENAME));
   crashReportFiles.append(settings.valueStr(lnm::AIRCRAFT_PERF_FILENAME));
+  crashReportFiles.append(Settings::getConfigFilename(lnm::AIRCRAFT_TRACK_SUFFIX));
   crashReportFiles.append(Settings::getFilename());
   crashReportFiles.append(Settings::getConfigFilename(".lnmpln"));
 
