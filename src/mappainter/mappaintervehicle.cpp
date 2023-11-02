@@ -237,8 +237,8 @@ void MapPainterVehicle::paintAircraftTrail()
 
 #endif
 
-    // Draw with simple precision
-    for(const LineString& line : aircraftTrack.getLineStrings())
+    // Draw with simple precision and add user aircraft position to last
+    for(const LineString& line : aircraftTrack.getLineStrings(mapPaintWidget->getUserAircraft().getPosition()))
       drawPolyline(context->painter, line);
   }
 }

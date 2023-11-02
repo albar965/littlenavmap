@@ -35,7 +35,7 @@
 #include "mappainter/mappainterroute.h"
 #include "mappainter/mappaintership.h"
 #include "mappainter/mappaintertop.h"
-#include "mappainter/mappaintertrack.h"
+#include "mappainter/mappaintertrail.h"
 #include "mappainter/mappainteruser.h"
 #include "mappainter/mappainterweather.h"
 #include "mappainter/mappainterwind.h"
@@ -72,7 +72,7 @@ MapPaintLayer::MapPaintLayer(MapPaintWidget *widget)
   mapPainterMark = new MapPainterMark(mapPaintWidget, mapScale, &context);
   mapPainterRoute = new MapPainterRoute(mapPaintWidget, mapScale, &context);
   mapPainterAircraft = new MapPainterAircraft(mapPaintWidget, mapScale, &context);
-  mapPainterTrack = new MapPainterTrack(mapPaintWidget, mapScale, &context);
+  mapPainterTrack = new MapPainterTrail(mapPaintWidget, mapScale, &context);
   mapPainterShip = new MapPainterShip(mapPaintWidget, mapScale, &context);
   mapPainterUser = new MapPainterUser(mapPaintWidget, mapScale, &context);
   mapPainterAltitude = new MapPainterAltitude(mapPaintWidget, mapScale, &context);

@@ -3819,7 +3819,11 @@ void HtmlInfoBuilder::aircraftTrackText(const AircraftTrailSegment& trailSegment
 
   // Speed ==================================
   if(atools::geo::meterPerSecToKnots(trailSegment.speed) < 10000.f)
-    html.row2(tr("Speed:"), Unit::speedMeterPerSec(trailSegment.speed));
+    html.row2(tr("Groundspeed:"), Unit::speedMeterPerSec(trailSegment.speed));
+
+  if(trailSegment.headingTrue < map::INVALID_HEADING_VALUE)
+    html.row2(tr("Heading:", "aircraft heading"), courseTextFromTrue(trailSegment.headingTrue, NavApp::getMagVar(trailSegment.to)),
+              ahtml::NO_ENTITIES);
 
   // Long line segments =========================================
   if(trailSegment.length > 5000.)

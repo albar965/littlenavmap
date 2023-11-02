@@ -15,7 +15,7 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#include "mappainter/mappaintertrack.h"
+#include "mappainter/mappaintertrail.h"
 
 #include "util/paintercontextsaver.h"
 
@@ -23,23 +23,22 @@
 
 using atools::fs::sc::SimConnectAircraft;
 
-MapPainterTrack::MapPainterTrack(MapPaintWidget *mapWidget, MapScale *mapScale, PaintContext *paintContext)
+MapPainterTrail::MapPainterTrail(MapPaintWidget *mapWidget, MapScale *mapScale, PaintContext *paintContext)
   : MapPainterVehicle(mapWidget, mapScale, paintContext)
 {
 
 }
 
-MapPainterTrack::~MapPainterTrack()
+MapPainterTrail::~MapPainterTrail()
 {
 
 }
 
-void MapPainterTrack::render()
+void MapPainterTrail::render()
 {
-  if(!context->objectTypes.testFlag(map::AIRCRAFT_TRAIL))
-    // If actions are unchecked return
-    return;
-
-  atools::util::PainterContextSaver saver(context->painter);
-  paintAircraftTrail();
+  if(context->objectTypes.testFlag(map::AIRCRAFT_TRAIL))
+  {
+    atools::util::PainterContextSaver saver(context->painter);
+    paintAircraftTrail();
+  }
 }

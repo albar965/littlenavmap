@@ -169,7 +169,7 @@ public:
 
   /* Copies the coordinates from the structs to a list of linestrings.
    * More than one linestring might be returned if the trail is interrupted. */
-  const QVector<atools::geo::LineString> getLineStrings() const;
+  const QVector<atools::geo::LineString> getLineStrings(const atools::geo::Pos& aircraftPos) const;
 
   /* Track will be pruned if it contains more track entries than this value. Default is 20000. */
   void setMaxTrackEntries(int value)
@@ -211,7 +211,8 @@ private:
   float maximumAltitude = 0.f;
 
   /* Trail density settings which depends on ground speed */
-  float minGroundDist, minGroundSpeedToDistFactor, minFlyingDist, minFlyingSpeedToDistFactor;
+  float minGroundDist, minGroundSpeedToDistFactor, minFlyingDist, minFlyingSpeedToDistFactor, maxHeadingDiffDeg, maxSpeedDiffDeg,
+        maxAltDiffDeg;
   qint64 maxFlyingTimeMs, maxGroundTimeMs;
 
   atools::fs::sc::SimConnectUserAircraft *lastUserAircraft;

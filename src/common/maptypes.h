@@ -1639,7 +1639,7 @@ QDataStream& operator<<(QDataStream& dataStream, const map::DistanceMarker& obj)
 
 // =====================================================================
 /* Aircraft trail segment/point. Position and other values are
- * interpolated. */
+ * interpolated. Not used for saving. */
 struct AircraftTrailSegment
   : public MapBase
 {
@@ -1659,7 +1659,8 @@ struct AircraftTrailSegment
   float length, /* Whole segment length */
         distanceFromStart, /* All from departure in meter */
         altitude, /* Feet at interpolated pos */
-        speed; /* Meter per second across the whole segment - not interpolated */
+        speed, /* Meter per second across the whole segment - not interpolated */
+        headingTrue; /* Calculated between points */
 
   qint64 timestampPos; /* Milliseconds since Epoch, interpolated pos */
   bool onGround;
