@@ -17,7 +17,6 @@
 
 #include "mappainter/mappaintervehicle.h"
 
-#include "common/aircrafttrail.h"
 #include "common/mapcolors.h"
 #include "common/symbolpainter.h"
 #include "common/unit.h"
@@ -30,7 +29,6 @@
 #include "mapgui/mapscreenindex.h"
 #include "app/navapp.h"
 #include "fs/sc/simconnectuseraircraft.h"
-#include "util/paintercontextsaver.h"
 
 #include <marble/GeoPainter.h>
 
@@ -216,31 +214,6 @@ float MapPainterVehicle::calcRotation(const SimConnectAircraft& aircraft)
 
   // Get projection corrected rotation angle
   return scale->getScreenRotation(rotate, aircraft.getPosition(), context->zoomDistanceMeter);
-}
-
-void MapPainterVehicle::paintAircraftTrail()
-{
-  const AircraftTrail& aircraftTrack = NavApp::getAircraftTrail();
-
-  if(!aircraftTrack.isEmpty())
-  {
-    context->painter->setPen(mapcolors::aircraftTrailPen(context->sz(context->thicknessTrail, 2)));
-
-#ifdef DEBUG_DRAW_TRACK
-    {
-      atools::util::PainterContextSaver saver(context->painter);
-      context->painter->setPen(QPen(Qt::blue, 2));
-      int i = 0;
-      for(const AircraftTrailPos& pos : aircraftTrack)
-        drawText(context->painter, pos.getPosition(), QString::number(i++), 0.f, 0.f);
-    }
-
-#endif
-
-    // Draw with simple precision and add user aircraft position to last
-    for(const LineString& line : aircraftTrack.getLineStrings(mapPaintWidget->getUserAircraft().getPosition()))
-      drawPolyline(context->painter, line);
-  }
 }
 
 void MapPainterVehicle::paintTextLabelAi(float x, float y, float size, const SimConnectAircraft& aircraft, bool forceLabelNearby)

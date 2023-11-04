@@ -416,6 +416,7 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
      ui->spinBoxOptionsDisplayThicknessCompassRose,
      ui->spinBoxOptionsDisplaySunShadeDarkness,
      ui->comboBoxOptionsDisplayTrailType,
+     ui->comboBoxOptionsDisplayTrailGradient,
      ui->spinBoxOptionsDisplayTextSizeCompassRose,
      ui->spinBoxOptionsDisplayTextSizeUserFeature,
      ui->spinBoxOptionsDisplayTextSizeMeasurement,
@@ -428,6 +429,7 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
      ui->checkBoxOptionsMapAiAircraftText,
      ui->checkBoxOptionsMapAiAircraftHideGround,
      ui->checkBoxOptionsMapAirspaceNoMultZ,
+     ui->checkBoxOptionsDisplayTrailGradient,
      ui->spinBoxOptionsDisplayTextSizeAirway,
      ui->spinBoxOptionsDisplayThicknessAirway,
      ui->spinBoxOptionsDisplayThicknessAirspace,
@@ -573,6 +575,7 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
   // ===========================================================================
   // Map
   connect(ui->checkBoxOptionsMapClickAirport, &QCheckBox::toggled, this, &OptionsDialog::mapClickAirportProcsToggled);
+  connect(ui->checkBoxOptionsDisplayTrailGradient, &QCheckBox::toggled, this, &OptionsDialog::updateTrailStates);
 
   // Map navigation
   connect(ui->radioButtonOptionsMapNavDragMove, &QRadioButton::clicked, this, &OptionsDialog::updateNavOptions);
@@ -1079,6 +1082,11 @@ QString OptionsDialog::getLocale()
   return Settings::instance().valueStr(lnm::OPTIONS_DIALOG_LANGUAGE, QLocale().name());
 }
 
+void OptionsDialog::updateTrailStates()
+{
+  ui->comboBoxOptionsDisplayTrailGradient->setEnabled(ui->checkBoxOptionsDisplayTrailGradient->isChecked());
+}
+
 void OptionsDialog::updateWidgetStates()
 {
   updateWhileFlyingWidgets(false);
@@ -1098,6 +1106,7 @@ void OptionsDialog::updateWidgetStates()
   updateFlightPlanColorWidgets();
   updateHighlightWidgets();
   toolbarSizeClicked();
+  updateTrailStates();
 }
 
 void OptionsDialog::saveState()
@@ -1812,6 +1821,7 @@ void OptionsDialog::widgetsToOptionData()
   toFlags(ui->checkBoxOptionsMapAiAircraftHideGround, opts::MAP_AI_HIDE_GROUND);
   toFlags(ui->checkBoxOptionsMapAirspaceNoMultZ, opts::MAP_AIRSPACE_NO_MULT_Z);
   toFlags2(ui->checkBoxOptionsMapHighlightTransparent, opts2::MAP_HIGHLIGHT_TRANSPARENT);
+  toFlags(ui->checkBoxOptionsDisplayTrailGradient, opts::MAP_TRAIL_GRADIENT);
 
   toFlags2(ui->checkBoxOptionsMapFlightplanDimPassed, opts2::MAP_ROUTE_DIM_PASSED);
   toFlags2(ui->checkBoxOptionsMapFlightplanHighlightActive, opts2::MAP_ROUTE_HIGHLIGHT_ACTIVE);
@@ -1977,6 +1987,8 @@ void OptionsDialog::widgetsToOptionData()
   data.unitFuelWeight = static_cast<opts::UnitFuelAndWeight>(ui->comboBoxOptionsUnitFuelWeight->currentIndex());
   data.altitudeRuleType = static_cast<opts::AltitudeRule>(ui->comboBoxOptionsRouteAltitudeRuleType->currentIndex());
 
+  data.displayTrailGradientType = static_cast<opts::DisplayTrailGradientType>(ui->comboBoxOptionsDisplayTrailGradient->currentIndex());
+
   if(ui->radioButtonOptionsOnlineNone->isChecked())
     data.onlineNetwork = opts::ONLINE_NONE;
   else if(ui->radioButtonOptionsOnlineVatsim->isChecked())
@@ -2114,6 +2126,7 @@ void OptionsDialog::optionDataToWidgets(const OptionData& data)
   fromFlags2(data, ui->checkBoxOptionsMapAiAircraftText, opts2::MAP_AI_TEXT_BACKGROUND);
   fromFlags(data, ui->checkBoxOptionsMapAiAircraftHideGround, opts::MAP_AI_HIDE_GROUND);
   fromFlags(data, ui->checkBoxOptionsMapAirspaceNoMultZ, opts::MAP_AIRSPACE_NO_MULT_Z);
+  fromFlags(data, ui->checkBoxOptionsDisplayTrailGradient, opts::MAP_TRAIL_GRADIENT);
 
   fromFlags2(data, ui->checkBoxOptionsMapHighlightTransparent, opts2::MAP_HIGHLIGHT_TRANSPARENT);
   fromFlags2(data, ui->checkBoxOptionsMapFlightplanText, opts2::MAP_ROUTE_TEXT_BACKGROUND);
@@ -2269,6 +2282,7 @@ void OptionsDialog::optionDataToWidgets(const OptionData& data)
   ui->comboBoxOptionsUnitCoords->setCurrentIndex(atools::minmax(opts::COORDS_MIN, opts::COORDS_MAX, data.unitCoords));
   ui->comboBoxOptionsUnitFuelWeight->setCurrentIndex(data.unitFuelWeight);
   ui->comboBoxOptionsRouteAltitudeRuleType->setCurrentIndex(data.altitudeRuleType);
+  ui->comboBoxOptionsDisplayTrailGradient->setCurrentIndex(data.displayTrailGradientType);
 
   switch(data.onlineNetwork)
   {

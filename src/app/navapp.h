@@ -407,6 +407,8 @@ public:
   static QString getCurrentGuiStyleDisplayName();
   static bool isCurrentGuiStyleNight();
 
+  static bool isDarkMapTheme();
+
   static StyleHandler *getStyleHandler();
 
   static map::MapWeatherSource getMapWeatherSource();

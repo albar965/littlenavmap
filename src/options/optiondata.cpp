@@ -121,7 +121,7 @@ QString OptionData::getOnlineWhazzupUrl() const
   return QString();
 }
 
-QFont OptionData::getMapFont() const
+const QFont OptionData::getMapFont() const
 {
   QFont font;
   if(!mapFont.isEmpty())
@@ -133,7 +133,7 @@ QFont OptionData::getMapFont() const
   return font;
 }
 
-QFont OptionData::getGuiFont() const
+const QFont OptionData::getGuiFont() const
 {
   QFont font;
   if(!guiFont.isEmpty())
@@ -166,7 +166,7 @@ int OptionData::getOnlineReload(opts::OnlineNetwork network) const
   return 180;
 }
 
-QSize OptionData::getGuiToolbarSize() const
+const QSize OptionData::getGuiToolbarSize() const
 {
   return QSize(guiToolbarSize, guiToolbarSize);
 }

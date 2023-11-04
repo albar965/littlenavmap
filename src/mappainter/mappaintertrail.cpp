@@ -17,7 +17,12 @@
 
 #include "mappainter/mappaintertrail.h"
 
+#include "app/navapp.h"
+#include "common/aircrafttrail.h"
+#include "fs/sc/simconnectuseraircraft.h"
+#include "mapgui/mappaintwidget.h"
 #include "util/paintercontextsaver.h"
+#include "geo/linestring.h"
 
 #include <marble/GeoPainter.h>
 
@@ -38,7 +43,12 @@ void MapPainterTrail::render()
 {
   if(context->objectTypes.testFlag(map::AIRCRAFT_TRAIL))
   {
-    atools::util::PainterContextSaver saver(context->painter);
-    paintAircraftTrail();
+    const AircraftTrail& aircraftTrail = NavApp::getAircraftTrail();
+    if(!aircraftTrail.isEmpty() && resolves(aircraftTrail.getBounding()))
+    {
+      atools::util::PainterContextSaver saver(context->painter);
+      const QVector<atools::geo::LineString> lineStrings = aircraftTrail.getLineStrings(mapPaintWidget->getUserAircraft().getPosition());
+      paintAircraftTrail(lineStrings, aircraftTrail.getMinAltitude(), aircraftTrail.getMaxAltitude());
+    }
   }
 }

@@ -402,7 +402,7 @@ This is the file on top of the list &quot;Recent Window Layouts&quot;.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>586</width>
+             <width>514</width>
              <height>466</height>
             </rect>
            </property>
@@ -666,7 +666,7 @@ opening files, modifying the flight plan and other operations.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>586</width>
+             <width>419</width>
              <height>576</height>
             </rect>
            </property>
@@ -1853,7 +1853,7 @@ Restart the program after changing this option. You might also need to reset the
                   <string>Show tooltips for points on the user aircraft trail</string>
                  </property>
                  <property name="text">
-                  <string>&amp;User aircraft trail</string>
+                  <string>User aircraft &amp;trail</string>
                  </property>
                  <property name="checked">
                   <bool>true</bool>
@@ -2355,9 +2355,9 @@ Smaller values will allow a finer selection.</string>
            <property name="geometry">
             <rect>
              <x>0</x>
-             <y>0</y>
+             <y>-512</y>
              <width>586</width>
-             <height>902</height>
+             <height>963</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_20">
@@ -3123,7 +3123,7 @@ For VOR, NDB, ILS, waypoints and holdings. Not for flight plan labels.</string>
             <item>
              <widget class="QGroupBox" name="groupBoxOptionsDisplay_2">
               <property name="title">
-               <string>User Aircraft Trail Size, Color and Pattern for Map Display and Elevation Profile</string>
+               <string>User Aircraft Trail for Map Display and Elevation Profile</string>
               </property>
               <layout class="QGridLayout" name="gridLayout_48">
                <property name="leftMargin">
@@ -3141,6 +3141,23 @@ For VOR, NDB, ILS, waypoints and holdings. Not for flight plan labels.</string>
                <property name="spacing">
                 <number>2</number>
                </property>
+               <item row="12" column="2">
+                <widget class="QPushButton" name="pushButtonOptionsDisplayTrailColor">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="toolTip">
+                  <string>Set color for aircraft trail in map.
+Also used in the elevation profile.</string>
+                 </property>
+                 <property name="text">
+                  <string>Color</string>
+                 </property>
+                </widget>
+               </item>
                <item row="12" column="0">
                 <layout class="QHBoxLayout" name="horizontalLayout_6">
                  <property name="spacing">
@@ -3176,30 +3193,13 @@ For VOR, NDB, ILS, waypoints and holdings. Not for flight plan labels.</string>
                   <number>20</number>
                  </property>
                  <property name="maximum">
-                  <number>200</number>
+                  <number>300</number>
                  </property>
                  <property name="singleStep">
                   <number>10</number>
                  </property>
                  <property name="value">
                   <number>100</number>
-                 </property>
-                </widget>
-               </item>
-               <item row="12" column="2">
-                <widget class="QPushButton" name="pushButtonOptionsDisplayTrailColor">
-                 <property name="sizePolicy">
-                  <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                   <horstretch>0</horstretch>
-                   <verstretch>0</verstretch>
-                  </sizepolicy>
-                 </property>
-                 <property name="toolTip">
-                  <string>Set color for aircraft trail in map.
-Also used in the elevation profile.</string>
-                 </property>
-                 <property name="text">
-                  <string>Color</string>
                  </property>
                 </widget>
                </item>
@@ -3224,6 +3224,74 @@ Also used in the elevation profile.</string>
                   </property>
                  </item>
                 </widget>
+               </item>
+              </layout>
+             </widget>
+            </item>
+            <item>
+             <widget class="QGroupBox" name="groupBoxOptionsDisplay_3">
+              <property name="title">
+               <string>User Aircraft Trail for Map Display</string>
+              </property>
+              <layout class="QGridLayout" name="gridLayout_55">
+               <property name="leftMargin">
+                <number>2</number>
+               </property>
+               <property name="topMargin">
+                <number>2</number>
+               </property>
+               <property name="rightMargin">
+                <number>2</number>
+               </property>
+               <property name="bottomMargin">
+                <number>2</number>
+               </property>
+               <property name="spacing">
+                <number>2</number>
+               </property>
+               <item row="12" column="1">
+                <widget class="QComboBox" name="comboBoxOptionsDisplayTrailGradient">
+                 <property name="toolTip">
+                  <string>Shows a color gradient indicating the flown actual altitude 
+between minimum and maximum altitude in the trail.
+Uses always a solid line. Not used in the elevation profile.</string>
+                 </property>
+                 <item>
+                  <property name="text">
+                   <string>Colors</string>
+                  </property>
+                  <property name="icon">
+                   <iconset resource="../../littlenavmap.qrc">
+                    <normaloff>:/littlenavmap/resources/icons/gradientcolors.svg</normaloff>:/littlenavmap/resources/icons/gradientcolors.svg</iconset>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>White to Black</string>
+                  </property>
+                  <property name="icon">
+                   <iconset resource="../../littlenavmap.qrc">
+                    <normaloff>:/littlenavmap/resources/icons/gradientblackwhite.svg</normaloff>:/littlenavmap/resources/icons/gradientblackwhite.svg</iconset>
+                  </property>
+                 </item>
+                </widget>
+               </item>
+               <item row="12" column="0">
+                <layout class="QHBoxLayout" name="horizontalLayout_8">
+                 <property name="spacing">
+                  <number>2</number>
+                 </property>
+                 <property name="leftMargin">
+                  <number>0</number>
+                 </property>
+                 <item>
+                  <widget class="QCheckBox" name="checkBoxOptionsDisplayTrailGradient">
+                   <property name="text">
+                    <string>Use color gradient to indicate flown altitude:</string>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
                </item>
               </layout>
              </widget>
@@ -5714,10 +5782,12 @@ Example: &quot;EDDF LIRF.lnmpln&quot;</string>
                <item row="0" column="0" colspan="3">
                 <widget class="QCheckBox" name="checkBoxOptionsGuiCenterRoute">
                  <property name="toolTip">
-                  <string>Does not apply to the flight plan loaded after startup.</string>
+                  <string>Centers a loaded flight plan or a loaded GPX trail.
+Does not apply to the flight plan loaded after startup.
+</string>
                  </property>
                  <property name="text">
-                  <string>Center &amp;flight plan on map after loading</string>
+                  <string>Center &amp;flight plan or aircraft trail on map after loading</string>
                  </property>
                  <property name="checked">
                   <bool>true</bool>
@@ -8102,6 +8172,8 @@ You have to reload the scenery library so that the changes take effect.</string>
   <tabstop>pushButtonOptionsDatabaseRemoveAddon</tabstop>
   <tabstop>checkBoxOptionsOnlineRemoveShadow</tabstop>
  </tabstops>
- <resources/>
+ <resources>
+  <include location="../../littlenavmap.qrc"/>
+ </resources>
  <connections/>
 </ui>

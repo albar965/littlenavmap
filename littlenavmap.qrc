@@ -330,5 +330,7 @@
         <file>resources/icons/directto.svg</file>
         <file>resources/icons/alternate.svg</file>
         <file>resources/icons/routeselect.svg</file>
+        <file>resources/icons/gradientblackwhite.svg</file>
+        <file>resources/icons/gradientcolors.svg</file>
     </qresource>
 </RCC>

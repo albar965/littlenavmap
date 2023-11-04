@@ -103,6 +103,7 @@ private:
   virtual void reject() override;
 
   void updateWidgetStates();
+  void updateTrailStates();
 
   void buttonBoxClicked(QAbstractButton *button);
   void widgetsToOptionData();

@@ -2322,7 +2322,7 @@ void MainWindow::routeOpenDescr(const QString& routeString)
   {
     routeController->loadFlightplanRouteStr(routeString);
 
-    if(OptionData::instance().getFlags() & opts::GUI_CENTER_ROUTE)
+    if(OptionData::instance().getFlags().testFlag(opts::GUI_CENTER_ROUTE))
       routeCenter();
     showFlightPlan();
     setStatusMessage(tr("Flight plan opened from route description."));
@@ -2342,7 +2342,7 @@ void MainWindow::routeOpenFile(QString filepath)
       if(routeController->loadFlightplan(filepath))
       {
         routeFileHistory->addFile(filepath);
-        if(OptionData::instance().getFlags() & opts::GUI_CENTER_ROUTE)
+        if(OptionData::instance().getFlags().testFlag(opts::GUI_CENTER_ROUTE))
           routeCenter();
         showFlightPlan();
         setStatusMessage(tr("Flight plan opened."));
@@ -2358,7 +2358,7 @@ void MainWindow::routeOpenFileLnmStr(const QString& string)
   {
     if(routeController->loadFlightplanLnmStr(string))
     {
-      if(OptionData::instance().getFlags() & opts::GUI_CENTER_ROUTE)
+      if(OptionData::instance().getFlags().testFlag(opts::GUI_CENTER_ROUTE))
         routeCenter();
       showFlightPlan();
       setStatusMessage(tr("Flight plan opened."));

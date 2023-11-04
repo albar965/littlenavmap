@@ -3858,6 +3858,9 @@ void MapWidget::loadAircraftTrail(const QString& filename)
 
   aircraftTrail->fillTrailFromGpxData(gpxData);
 
+  if(OptionData::instance().getFlags().testFlag(opts::GUI_CENTER_ROUTE))
+    showRect(gpxData.trailRect, false /* doubleClick */);
+
   update();
   emit updateActionStates();
   mainWindow->setStatusMessage(tr("User aircraft trail replaced."));
@@ -3869,6 +3872,9 @@ void MapWidget::appendAircraftTrail(const QString& filename)
   atools::fs::gpx::GpxIO().loadGpx(gpxData, filename);
 
   aircraftTrail->appendTrailFromGpxData(gpxData);
+
+  if(OptionData::instance().getFlags().testFlag(opts::GUI_CENTER_ROUTE))
+    showRect(gpxData.trailRect, false /* doubleClick */);
 
   update();
   emit updateActionStates();

@@ -54,8 +54,7 @@ GeoDataCoordinates CoordinateConverter::toGdc(const Pos& coords) const
 
 Marble::GeoDataLatLonBox CoordinateConverter::toGdc(const atools::geo::Rect& coords) const
 {
-  return GeoDataLatLonBox(coords.getNorth(), coords.getSouth(),
-                          coords.getEast(), coords.getWest(), DEG);
+  return GeoDataLatLonBox(coords.getNorth(), coords.getSouth(), coords.getEast(), coords.getWest(), DEG);
 }
 
 Rect CoordinateConverter::fromGdc(const GeoDataLatLonBox& coords) const
@@ -453,6 +452,29 @@ void CoordinateConverter::releasePolygons(const QVector<QPolygonF *>& polygons) 
 const QVector<QPolygonF *> CoordinateConverter::createPolylines(const atools::geo::LineString& linestring, const QRectF& screenRect) const
 {
   return createPolylinesInternal(linestring, screenRect);
+}
+
+bool CoordinateConverter::resolves(const Marble::GeoDataLatLonBox& box) const
+{
+  return viewport->resolves(box) && viewport->viewLatLonAltBox().intersects(box);
+}
+
+bool CoordinateConverter::resolves(const Marble::GeoDataCoordinates& coord1, const Marble::GeoDataCoordinates& coord2) const
+{
+  Marble::GeoDataLineString line;
+  line.setTessellate(true);
+  line << coord1 << coord2;
+  return resolves(line.latLonAltBox());
+}
+
+bool CoordinateConverter::resolves(const atools::geo::Rect& rect) const
+{
+  return resolves(toGdc(rect));
+}
+
+bool CoordinateConverter::resolves(const atools::geo::Line& line) const
+{
+  return resolves(toGdc(line.getPos1()), toGdc(line.getPos2()));
 }
 
 const QVector<QPolygonF *> CoordinateConverter::createPolylinesInternal(const atools::geo::LineString& linestring,

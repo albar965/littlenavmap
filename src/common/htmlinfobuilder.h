@@ -299,7 +299,7 @@ public:
   void aircraftOnlineText(const atools::fs::sc::SimConnectAircraft& aircraft, const atools::sql::SqlRecord& onlineRec,
                           atools::util::HtmlBuilder& html);
 
-  void aircraftTrackText(const map::AircraftTrailSegment& trailSegment, atools::util::HtmlBuilder& html, bool logbook) const;
+  void aircraftTrailText(const map::AircraftTrailSegment& trailSegment, atools::util::HtmlBuilder& html, bool logbook) const;
 
   /* User features / marks */
   void msaMarkerText(const map::MsaMarker& msa, atools::util::HtmlBuilder& html) const;

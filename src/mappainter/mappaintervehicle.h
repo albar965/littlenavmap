@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -54,7 +54,6 @@ public:
   virtual void render() override = 0;
 
 protected:
-  void paintAircraftTrail();
 
   /* Draw a green turn path indicator */
   void paintTurnPath(const atools::fs::sc::SimConnectUserAircraft& userAircraft);
@@ -68,8 +67,7 @@ protected:
   void prependAtcText(QStringList& texts, const atools::fs::sc::SimConnectAircraft& aircraft,
                       bool registration, bool type, bool airline, bool flightnumber, bool transponderCode, int elideAirline,
                       int maxTextWidth);
-  void appendSpeedText(QStringList& texts, const atools::fs::sc::SimConnectAircraft& aircraft, bool ias, bool gs,
-                       bool tas);
+  void appendSpeedText(QStringList& texts, const atools::fs::sc::SimConnectAircraft& aircraft, bool ias, bool gs, bool tas);
   void climbSinkPointer(QString& upDown, const atools::fs::sc::SimConnectAircraft& aircraft);
 
   void paintWindPointer(const atools::fs::sc::SimConnectUserAircraft& aircraft, float x, float y);

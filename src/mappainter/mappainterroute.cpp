@@ -127,7 +127,7 @@ QString MapPainterRoute::buildLegText(float distance, float courseMag, float cou
 void MapPainterRoute::paintRoute()
 {
   const Route *route = context->route;
-  if(route->isEmpty())
+  if(route->isEmpty() || (route->size() >= 2 && !resolves(route->getBoundingRect())))
     return;
 
   atools::util::PainterContextSaver saver(context->painter);

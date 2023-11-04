@@ -33,6 +33,7 @@
 #include "gui/errorhandler.h"
 #include "gui/mainwindow.h"
 #include "gui/stylehandler.h"
+#include "mapgui/mapthemehandler.h"
 #include "route/routealtitude.h"
 #include "util/properties.h"
 #include "logbook/logdatacontroller.h"
@@ -1237,6 +1238,11 @@ QFont NavApp::getTextBrowserInfoFont()
 MapThemeHandler *NavApp::getMapThemeHandler()
 {
   return mainWindow->getMapThemeHandler();
+}
+
+bool NavApp::isDarkMapTheme()
+{
+  return getMapThemeHandler()->isDarkTheme(getMapPaintWidgetGui()->getCurrentThemeId());
 }
 
 const QString& NavApp::getCurrentRouteFilepath()

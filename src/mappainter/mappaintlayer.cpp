@@ -22,7 +22,6 @@
 #include "geo/calculations.h"
 #include "mapgui/maplayersettings.h"
 #include "mapgui/mapscale.h"
-#include "mapgui/mapthemehandler.h"
 #include "mapgui/mapwidget.h"
 #include "mappainter/mappainteraircraft.h"
 #include "mappainter/mappainterairport.h"
@@ -342,7 +341,7 @@ bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport, const 
       context.userPointTypesAll = NavApp::getUserdataController()->getAllTypes();
       context.userPointTypeUnknown = NavApp::getUserdataController()->isSelectedUnknownType();
       context.zoomDistanceMeter = static_cast<float>(mapPaintWidget->distance() * 1000.);
-      context.darkMap = NavApp::getMapThemeHandler()->isDarkTheme(mapPaintWidget->getCurrentThemeId());
+      context.darkMap = NavApp::isDarkMapTheme();
       context.paintCopyright = mapPaintWidget->isPaintCopyright();
       context.currentDistanceMarkerId = NavApp::getMapWidgetGui()->getCurrentDistanceMarkerId();
 

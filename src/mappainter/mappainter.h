@@ -338,9 +338,7 @@ protected:
                 bool fast);
 
   void drawLineString(Marble::GeoPainter *painter, const atools::geo::LineString& linestring);
-  void drawLineStringRadial(Marble::GeoPainter *painter, const atools::geo::LineString& linestring);
-  void drawLine(Marble::GeoPainter *painter, const atools::geo::Line& line, bool noRecurse = false);
-  void drawLineRadial(Marble::GeoPainter *painter, const atools::geo::Line& line, bool noRecurse = false);
+  void drawLine(Marble::GeoPainter *painter, const atools::geo::Line& line, bool forceDraw = false);
 
   void drawPolygon(Marble::GeoPainter *painter, const atools::geo::LineString& linestring);
   void drawPolygons(Marble::GeoPainter *painter, const QVector<QPolygonF *>& polygons);
@@ -389,6 +387,8 @@ protected:
   void paintProcedureTurnWithText(QPainter *painter, float x, float y, float turnHeading, float distanceNm, bool left,
                                   QLineF *extensionLine, const QString& text, const QColor& textColor,
                                   const QColor& textColorBackground);
+
+  void paintAircraftTrail(const QVector<atools::geo::LineString>& lineStrings, float minAlt, float maxAlt);
 
   /* Arrow pointing upwards or downwards */
   QPolygonF buildArrow(float size, bool downwards = false);

@@ -532,99 +532,21 @@ void MapPainter::drawPolygon(Marble::GeoPainter *painter, const QPolygonF& polyg
 #endif
 }
 
-void MapPainter::drawLineStringRadial(Marble::GeoPainter *painter, const atools::geo::LineString& linestring)
+void MapPainter::drawLine(Marble::GeoPainter *painter, const atools::geo::Line& line, bool forceDraw)
 {
-  if(linestring.size() < 2)
-    return;
-
-  const float LATY_CORRECTION = 0.00001f;
-  LineString splitLines = linestring.splitAtAntiMeridian();
-  splitLines.removeDuplicates();
-
-  // Avoid the straight line Marble draws wrongly for equal latitudes - needed to force GC path
-  for(int i = 0; i < splitLines.size() - 1; i++)
+  QVector<QPolygonF *> polygons = createPolylines(LineString(line.getPos1(), line.getPos2()), context->screenRect);
+  if(!polygons.isEmpty())
   {
-    Pos& p1(splitLines[i]);
-    Pos& p2(splitLines[i + 1]);
-
-    if(atools::almostEqual(p1.getLatY(), p2.getLatY()))
-    {
-      // Move latitude a bit up and down if equal
-      p1.setLatY(p1.getLatY() + LATY_CORRECTION);
-      p2.setLatY(p2.getLatY() - LATY_CORRECTION);
-    }
+    drawPolylines(painter, polygons);
+    releasePolylines(polygons);
   }
-
-  // Build Marble geometry object
-  if(!splitLines.isEmpty())
+  else if(forceDraw)
   {
-    GeoDataLineString geoLineStr;
-    geoLineStr.setTessellate(true);
-
-    for(int i = 0; i < splitLines.size() - 1; i++)
-    {
-      Line line(splitLines.at(i), splitLines.at(i + 1));
-
-      // Split long lines to work around the buggy visibility check in Marble resulting in disappearing line segments
-      // Do a quick check using Manhattan distance in degree
-      LineString ls;
-      if(line.lengthSimple() > 30.f)
-        line.interpolatePointsRhumb(line.lengthMeter(), 20, ls);
-      else if(line.lengthSimple() > 5.f)
-        line.interpolatePointsRhumb(line.lengthMeter(), 5, ls);
-      else
-        ls.append(line.getPos1());
-
-      // Append split points or single point
-      for(const Pos& pos : qAsConst(ls))
-        geoLineStr << GeoDataCoordinates(pos.getLonX(), pos.getLatY(), 0, DEG);
-    }
-
-    // Add last point
-    geoLineStr << GeoDataCoordinates(splitLines.constLast().getLonX(), splitLines.constLast().getLatY(), 0, DEG);
-
-    QVector<GeoDataLineString *> geoLineStrCorrected = geoLineStr.toDateLineCorrected();
-    for(const GeoDataLineString *geoLine : qAsConst(geoLineStrCorrected))
-      painter->drawPolyline(*geoLine);
-    qDeleteAll(geoLineStrCorrected);
-  }
-}
-
-void MapPainter::drawLine(Marble::GeoPainter *painter, const atools::geo::Line& line, bool noRecurse)
-{
-  if(line.isValid() && !line.isPoint())
-  {
-    if(line.crossesAntiMeridian())
-    {
-      // Avoid endless recursion because hitting anti-meridian again because of inaccuracies
-      if(!noRecurse)
-      {
-        for(const Line& split : line.splitAtAntiMeridian())
-          // Call self again
-          drawLine(painter, split, true /* noRecurse */);
-      }
-    }
-    else
-      drawPolyline(painter, LineString(line.getPos1(), line.getPos2()));
-  }
-}
-
-void MapPainter::drawLineRadial(Marble::GeoPainter *painter, const atools::geo::Line& line, bool noRecurse)
-{
-  if(line.isValid() && !line.isPoint())
-  {
-    if(line.crossesAntiMeridian())
-    {
-      // Avoid endless recursion because hitting anti-meridian again because of inaccuracies
-      if(!noRecurse)
-      {
-        for(const Line& split : line.splitAtAntiMeridian())
-          // Call self again
-          drawLineRadial(painter, split, true /* noRecurse */);
-      }
-    }
-    else
-      drawLineStringRadial(painter, LineString(line.getPos1(), line.getPos2()));
+    // Avoid disappearing line segments due to Marble
+    QPointF pt1 = wToSF(line.getPos1());
+    QPointF pt2 = wToSF(line.getPos2());
+    if(!pt1.isNull() && !pt2.isNull())
+      drawLine(context->painter, pt1, pt2);
   }
 }
 
@@ -868,6 +790,56 @@ void MapPainter::paintProcedureTurnWithText(QPainter *painter, float x, float y,
   painter->setPen(pen);
   painter->drawPolygon(poly);
   painter->restore();
+}
+
+void MapPainter::paintAircraftTrail(const QVector<LineString>& lineStrings, float minAlt, float maxAlt)
+{
+  if(!lineStrings.isEmpty())
+  {
+
+#ifdef DEBUG_DRAW_TRACK
+    {
+      atools::util::PainterContextSaver saver(context->painter);
+      context->painter->setPen(QPen(Qt::blue, 2));
+      int i = 0;
+      for(const AircraftTrailPos& pos : aircraftTrack)
+        drawText(context->painter, pos.getPosition(), QString::number(i++), 0.f, 0.f);
+    }
+
+#endif
+
+    if(OptionData::instance().getFlags().testFlag(opts::MAP_TRAIL_GRADIENT))
+    {
+      // Draw black or white background as one single line ==========================
+      context->painter->setPen(mapcolors::aircraftTrailPenOuter(context->szF(context->thicknessTrail, 2.f)));
+      for(const LineString& lineString : lineStrings)
+        drawPolyline(context->painter, lineString);
+
+      // Split linestring and draw single line segments using different colors for gradient ==========================
+      for(const LineString& lineString : lineStrings)
+      {
+        for(int i = 0; i < lineString.size() - 1; i++)
+        {
+          Line line(lineString.at(i), lineString.at(i + 1));
+
+          // Average altitude between start and end point
+          float alt = static_cast<float>((line.getPos1().getAltitude() + line.getPos2().getAltitude()) / 2.);
+
+          context->painter->setPen(mapcolors::aircraftTrailPen(context->szF(context->thicknessTrail, 2.f), minAlt, maxAlt, alt));
+
+          // Draw line and force drawing also for very short segments
+          drawLine(context->painter, line, true /* forceDraw */);
+        }
+      }
+    }
+    else
+    {
+      // Styled pen - no gradient ==================================
+      context->painter->setPen(mapcolors::aircraftTrailPen(context->szF(context->thicknessTrail, 2.f)));
+      for(const LineString& lineString : lineStrings)
+        drawPolyline(context->painter, lineString);
+    }
+  }
 }
 
 QPolygonF MapPainter::buildArrow(float size, bool downwards)

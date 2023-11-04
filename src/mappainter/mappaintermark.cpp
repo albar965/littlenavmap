@@ -192,7 +192,8 @@ void MapPainterMark::paintHighlights()
   float alpha = transparent ? (1.f - context->transparencyHighlight) : 1.f;
 
   // Selected logbook entries ------------------------------------------
-  paintLogEntries(highlightResultsSearch.logbookEntries);
+  if(highlightResultsSearch.hasLogEntries())
+    paintLogEntries(highlightResultsSearch.logbookEntries);
 
   // ====================================================================
   // Collect all highlight rings for positions =============
@@ -408,12 +409,14 @@ void MapPainterMark::paintLogEntries(const QList<map::MapLogbookEntry>& entries)
   painter->setBrush(Qt::NoBrush);
   context->szFont(context->textSizeFlightplan);
 
+  float minAltitude = std::numeric_limits<float>::max(), maxAltitude = std::numeric_limits<float>::min();
   // Collect visible feature parts ==========================================================================
   atools::fs::userdata::LogdataManager *logdataManager = NavApp::getLogdataManager();
   QVector<const MapLogbookEntry *> visibleLogEntries, allLogEntries;
   ageo::LineString visibleRouteGeometries;
   QStringList visibleRouteTexts;
-  QVector<ageo::LineString> visibleTrackGeometries;
+  QVector<ageo::LineString> visibleTrailGeometries;
+  bool showRouteAndTrail = entries.size() == 1;
 
   for(const MapLogbookEntry& logEntry : entries)
   {
@@ -421,20 +424,21 @@ void MapPainterMark::paintLogEntries(const QList<map::MapLogbookEntry>& entries)
     allLogEntries.append(&logEntry);
 
     // All which have visible geometry
-    if(context->viewportRect.overlaps(logEntry.bounding()))
+    if(resolves(logEntry.bounding()))
       visibleLogEntries.append(&logEntry);
 
     // Show details only if one entry is selected - only direct connection for more than one selection
-    if(entries.size() == 1)
+    if(showRouteAndTrail)
     {
       // Get cached data
       const atools::fs::gpx::GpxData *gpxData = logdataManager->getGpxData(logEntry.id);
 
       // Geometry might be null in case of cache overflow
-      if(gpxData != nullptr && !gpxData->tracks.isEmpty())
+      // Geometry has to be copied since cache in LogDataManager might remove it any time
+      if(gpxData != nullptr)
       {
-        // Geometry has to be copied since cache in LogDataManager might remove it any time
-        if(context->objectDisplayTypes.testFlag(map::LOGBOOK_ROUTE) && context->viewportRect.overlaps(gpxData->flightplanRect))
+        // Flight plan =========================================================
+        if(!gpxData->flightplan.isEmpty() && context->objectDisplayTypes.testFlag(map::LOGBOOK_ROUTE) && resolves(gpxData->flightplanRect))
         {
           for(const atools::fs::pln::FlightplanEntry& entry : gpxData->flightplan)
           {
@@ -443,21 +447,28 @@ void MapPainterMark::paintLogEntries(const QList<map::MapLogbookEntry>& entries)
           }
         }
 
+        // Trail =========================================================
         // Limit number of visible tracks
-        if(context->objectDisplayTypes.testFlag(map::LOGBOOK_TRACK) && context->viewportRect.overlaps(gpxData->trackRect))
+        if(!gpxData->trails.isEmpty() && context->objectDisplayTypes.testFlag(map::LOGBOOK_TRACK) && resolves(gpxData->trailRect))
         {
-          for(const atools::fs::gpx::TrackPoints& points : gpxData->tracks)
+          maxAltitude = std::max(maxAltitude, gpxData->maxTrailAltitude);
+          minAltitude = std::min(minAltitude, gpxData->minTrailAltitude);
+
+          for(const atools::fs::gpx::TrailPoints& points : gpxData->trails)
           {
-            ageo::LineString lineString;
+            if(!points.isEmpty())
+            {
+              ageo::LineString lineString;
+              for(const atools::fs::gpx::TrailPoint& point : points)
+                lineString.append(point.pos.asPos());
 
-            for(const atools::fs::gpx::TrackPoint& point : points)
-              lineString.append(point.pos.asPos());
-
-            if(context->viewportRect.overlaps(lineString.boundingRect()))
-              visibleTrackGeometries.append(lineString);
+              if(resolves(lineString.boundingRect()))
+                visibleTrailGeometries.append(lineString);
+            }
           }
         }
       }
+      break;
     }
   }
 
@@ -518,18 +529,14 @@ void MapPainterMark::paintLogEntries(const QList<map::MapLogbookEntry>& entries)
   // Draw track ==========================================================================
   if(!mapPaintWidget->isDistanceCutOff())
   {
-    if(context->objectDisplayTypes.testFlag(map::LOGBOOK_TRACK) && !visibleTrackGeometries.isEmpty())
+    if(context->objectDisplayTypes.testFlag(map::LOGBOOK_TRACK) && !visibleTrailGeometries.isEmpty())
     {
       // Use a darker pen for the trail but same style as normal trail ======================================
       QPen trackPen = mapcolors::aircraftTrailPen(context->sz(context->thicknessTrail, 2));
       trackPen.setColor(mapcolors::routeLogEntryColor.darker(200));
       painter->setPen(trackPen);
 
-      for(const ageo::LineString& geo: visibleTrackGeometries)
-      {
-        if(geo.isValid())
-          drawPolyline(painter, geo);
-      }
+      paintAircraftTrail(visibleTrailGeometries, minAltitude, maxAltitude);
     }
   }
 
@@ -803,7 +810,8 @@ void MapPainterMark::paintRangeMarks()
     {
       float maxRadiusNm = *maxRingIter;
 
-      if(context->viewportRect.overlaps(ageo::Rect(rings.position, ageo::nmToMeter(maxRadiusNm), true /* fast */)) || maxRadiusNm > 2000.f)
+      ageo::Rect rect(rings.position, ageo::nmToMeter(maxRadiusNm), true /* fast */);
+      if(context->viewportRect.overlaps(rect) || maxRadiusNm > 2000.f)
       {
         // Ring is visible - the rest of the visibility check is done in paintCircle
 
@@ -818,31 +826,34 @@ void MapPainterMark::paintRangeMarks()
           painter->drawEllipse(center, 4., 4.);
         }
 
-        painter->setBrush(Qt::NoBrush);
-
-        // Draw all rings
-        for(float radius : rings.ranges)
+        if(resolves(rect))
         {
-          QPoint textPos;
-          paintCircle(painter, rings.position, radius, context->drawFast, &textPos);
-          if(!textPos.isNull())
+          painter->setBrush(Qt::NoBrush);
+
+          // Draw all rings
+          for(float radius : rings.ranges)
           {
-            // paintCircle found a text position - draw text
-            painter->setPen(mapcolors::rangeRingTextColor);
+            QPoint textPos;
+            paintCircle(painter, rings.position, radius, context->drawFast, &textPos);
+            if(!textPos.isNull())
+            {
+              // paintCircle found a text position - draw text
+              painter->setPen(mapcolors::rangeRingTextColor);
 
-            QStringList texts;
+              QStringList texts;
 
-            if(!rings.text.isEmpty())
-              texts.append(rings.text);
+              if(!rings.text.isEmpty())
+                texts.append(rings.text);
 
-            // Build narrow text manually
-            if(radius > 0.f)
-              texts.append(tr("%1%2").arg(QLocale(QLocale::C).toString(Unit::distNmF(radius), 'g', 6)).arg(Unit::getUnitDistStr()));
+              // Build narrow text manually
+              if(radius > 0.f)
+                texts.append(tr("%1%2").arg(QLocale(QLocale::C).toString(Unit::distNmF(radius), 'g', 6)).arg(Unit::getUnitDistStr()));
 
-            textPos.ry() += painter->fontMetrics().height() / 2 - painter->fontMetrics().descent();
-            symbolPainter->textBox(painter, texts, painter->pen(), textPos.x(), textPos.y(), textatt::CENTER);
+              textPos.ry() += painter->fontMetrics().height() / 2 - painter->fontMetrics().descent();
+              symbolPainter->textBox(painter, texts, painter->pen(), textPos.x(), textPos.y(), textatt::CENTER);
 
-            painter->setPen(QPen(QBrush(rings.color), lineWidth, Qt::SolidLine, Qt::RoundCap, Qt::MiterJoin));
+              painter->setPen(QPen(QBrush(rings.color), lineWidth, Qt::SolidLine, Qt::RoundCap, Qt::MiterJoin));
+            }
           }
         }
       }
@@ -1379,25 +1390,28 @@ void MapPainterMark::paintDistanceMarks()
       painter->drawLine(QPointF(x, y - symbolSize), QPointF(x, y + symbolSize));
     }
 
-    // Draw great circle line ========================================================
-    painter->setPen(QPen(color, lineWidth, Qt::SolidLine, Qt::RoundCap, Qt::MiterJoin));
-    drawLine(painter, ageo::Line(marker->from, marker->to));
-
-    // Build '\n' separated texts =============================
-    QStringList texts =
-      distanceMarkText(*marker, marker->id == context->currentDistanceMarkerId && context->viewContext == Marble::Animation);
-
-    if(marker->from != marker->to)
+    if(resolves(ageo::Line(marker->from, marker->to)))
     {
-      painter->setPen(mapcolors::distanceMarkerTextColor);
-      TextPlacement textPlacement(context->painter, this, context->screenRect);
-      textPlacement.setArrowForEmpty(true);
-      textPlacement.setMinLengthForText(painter->fontMetrics().averageCharWidth() * 2);
-      textPlacement.setDrawFast(context->drawFast);
-      textPlacement.setLineWidth(lineWidth);
-      textPlacement.setTextOnLineCenter(true);
-      textPlacement.calculateTextAlongLine(ageo::Line(marker->from, marker->to), texts.join('\n'));
-      textPlacement.drawTextAlongLines();
+      // Draw great circle line ========================================================
+      painter->setPen(QPen(color, lineWidth, Qt::SolidLine, Qt::RoundCap, Qt::MiterJoin));
+      drawLine(painter, ageo::Line(marker->from, marker->to));
+
+      // Build '\n' separated texts =============================
+      QStringList texts =
+        distanceMarkText(*marker, marker->id == context->currentDistanceMarkerId && context->viewContext == Marble::Animation);
+
+      if(marker->from != marker->to)
+      {
+        painter->setPen(mapcolors::distanceMarkerTextColor);
+        TextPlacement textPlacement(context->painter, this, context->screenRect);
+        textPlacement.setArrowForEmpty(true);
+        textPlacement.setMinLengthForText(painter->fontMetrics().averageCharWidth() * 2);
+        textPlacement.setDrawFast(context->drawFast);
+        textPlacement.setLineWidth(lineWidth);
+        textPlacement.setTextOnLineCenter(true);
+        textPlacement.calculateTextAlongLine(ageo::Line(marker->from, marker->to), texts.join('\n'));
+        textPlacement.drawTextAlongLines();
+      }
     }
   } // for(const map::DistanceMarker& marker : distanceMarkers)
 }
@@ -1458,7 +1472,7 @@ void MapPainterMark::paintPatternMarks()
       // Expand rect by approximately 2 NM
       rect.inflateMeter(ageo::nmToMeter(2.f), ageo::nmToMeter(2.f));
 
-      if(context->viewportRect.overlaps(rect))
+      if(resolves(rect))
       {
         // Entry at opposite runway threshold
         ageo::Pos downwindEntry = downwindToBase.endpoint(finalDist + runwayLength, pattern.courseTrue);

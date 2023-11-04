@@ -19,6 +19,7 @@
 #define LITTLENAVMAP_AIRCRAFTTRACK_H
 
 #include "geo/pos.h"
+#include "geo/rect.h"
 
 namespace Marble {
 class GeoDataLatLonAltBox;
@@ -164,7 +165,17 @@ public:
   /* Get maximum altitude in all track points */
   float getMaxAltitude() const
   {
-    return maximumAltitude;
+    return maxAltitude;
+  }
+
+  float getMinAltitude() const
+  {
+    return minAltitude;
+  }
+
+  const atools::geo::Rect& getBounding() const
+  {
+    return bounding;
   }
 
   /* Copies the coordinates from the structs to a list of linestrings.
@@ -196,8 +207,9 @@ public:
 private:
   friend QDataStream& operator>>(QDataStream& dataStream, AircraftTrailPos& trackPos);
 
-  void calculateMaxAltitude();
-  void updateMaxAltitude(const AircraftTrailPos& trackPos);
+  void clearBoundaries();
+  void calculateBoundaries();
+  void calculateBoundary(const AircraftTrailPos& trackPos);
 
   /* Accurate positions for drawing */
   const QVector<QVector<atools::geo::PosD> > getPositionsD() const;
@@ -208,7 +220,8 @@ private:
   /* Maximum number of track points. If exceeded entries will be removed from beginning of the list */
   int maxTrackEntries = 20000;
 
-  float maximumAltitude = 0.f;
+  float maxAltitude, minAltitude;
+  atools::geo::Rect bounding;
 
   /* Trail density settings which depends on ground speed */
   float minGroundDist, minGroundSpeedToDistFactor, minFlyingDist, minFlyingSpeedToDistFactor, maxHeadingDiffDeg, maxSpeedDiffDeg,

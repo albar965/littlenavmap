@@ -101,8 +101,8 @@ enum Flag
   /* checkBoxOptionsGuiOverrideLocale */
   GUI_OVERRIDE_LOCALE = 1 << 21,
 
-  /* checkBoxOptionsRouteExportUserWpt */
-  // ROUTE_GARMIN_USER_WPT = 1 << 22,
+  /* checkBoxOptionsDisplayTrailGradient */
+  MAP_TRAIL_GRADIENT = 1 << 22,
 
   /* checkBoxOptionsRouteDeclination */
   // DELETED from 2.8.1.beta AND FREE
@@ -231,9 +231,16 @@ enum UnitFuelAndWeight
 /* comboBoxOptionsDisplayTrailType */
 enum DisplayTrailType
 {
-  DASHED,
-  DOTTED,
-  SOLID
+  TRAIL_TYPE_DASHED,
+  TRAIL_TYPE_DOTTED,
+  TRAIL_TYPE_SOLID
+};
+
+/* comboBoxOptionsDisplayTrailGradient */
+enum DisplayTrailGradientType
+{
+  TRAIL_GRADIENT_COLOR,
+  TRAIL_GRADIENT_BLACKWHITE
 };
 
 /* comboBoxOptionsStartupUpdateRate - how often to check for updates */
@@ -642,12 +649,12 @@ public:
   OptionData& operator=(const OptionData& other) = delete;
 
   /* Get option flags */
-  opts::Flags getFlags() const
+  const opts::Flags getFlags() const
   {
     return flags;
   }
 
-  opts2::Flags2 getFlags2() const
+  const opts2::Flags2 getFlags2() const
   {
     return flags2;
   }
@@ -659,7 +666,7 @@ public:
   }
 
   /* Get short user interface language code name like "en" or "de" suitable for help URLs */
-  QString getLanguageShort() const
+  const QString getLanguageShort() const
   {
     return guiLanguage.section('_', 0, 0).section('-', 0, 0);
   }
@@ -915,6 +922,11 @@ public:
     return displayTrailType;
   }
 
+  opts::DisplayTrailGradientType getDisplayTrailGradientType() const
+  {
+    return displayTrailGradientType;
+  }
+
   int getDisplayTextSizeNavaid() const
   {
     return displayTextSizeNavaid;
@@ -1160,7 +1172,7 @@ public:
     return displayOnlineTower;
   }
 
-  QString getWebDocumentRoot() const
+  const QString& getWebDocumentRoot() const
   {
     return webDocumentRoot;
   }
@@ -1216,10 +1228,10 @@ public:
   }
 
   /* Get selected font for map. Falls back to GUI font and then back to system font. */
-  QFont getMapFont() const;
+  const QFont getMapFont() const;
 
   /* Get user interface font */
-  QFont getGuiFont() const;
+  const QFont getGuiFont() const;
 
   /* User set online refresh rate in seconds for custom configurations or stock networks in seconds
    * or -1 for auto value fetched from whazzup or JSON */
@@ -1281,7 +1293,7 @@ public:
     return simUpdateBoxCenterLegZoom;
   }
 
-  QSize getGuiToolbarSize() const;
+  const QSize getGuiToolbarSize() const;
 
   const QColor& getHighlightFlightplanColor() const
   {
@@ -1624,7 +1636,10 @@ private:
   QColor highlightFlightplanColor = QColor(Qt::green), highlightSearchColor = QColor(Qt::yellow), highlightProfileColor = QColor(Qt::cyan);
 
   // comboBoxOptionsDisplayTrailType
-  opts::DisplayTrailType displayTrailType = opts::DASHED;
+  opts::DisplayTrailType displayTrailType = opts::TRAIL_TYPE_DASHED;
+
+  // comboBoxOptionsDisplayTrailGradient
+  opts::DisplayTrailGradientType displayTrailGradientType = opts::TRAIL_GRADIENT_COLOR;
 
   /* Default values are set by widget states - these are needed for the reset button */
   optsac::DisplayOptionsUserAircraft displayOptionsUserAircraft =

@@ -407,20 +407,51 @@ const QColor& colorForSurface(const QString& surface)
   return unknown;
 }
 
-const QPen aircraftTrailPen(float size)
+const QPen aircraftTrailPenOuter(float size)
 {
-  opts::DisplayTrailType type = OptionData::instance().getDisplayTrailType();
+  return QPen(NavApp::isDarkMapTheme() ? Qt::white : Qt::black, size + 3., Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
+}
 
-  switch(type)
+const QPen aircraftTrailPen(float size, float minAlt, float maxAlt, float alt)
+{
+  const OptionData& optionData = OptionData::instance();
+  if(optionData.getFlags().testFlag(opts::MAP_TRAIL_GRADIENT))
   {
-    case opts::DASHED:
-      return QPen(OptionData::instance().getTrailColor(), size, Qt::DashLine, Qt::FlatCap, Qt::BevelJoin);
+    // Gradient pens ===========================================================
+    alt -= minAlt;
+    int hue, sat, value;
+    QColor col;
+    switch(optionData.getDisplayTrailGradientType())
+    {
+      case opts::TRAIL_GRADIENT_COLOR:
+        // Change hue depending on altitude. Red is 0 and last used value magenta is 300
+        col = Qt::red;
+        col.getHsv(&hue, &sat, &value);
+        col.setHsv(atools::minmax(0 /* red */, 300 /* magenta */, atools::roundToInt(alt / (maxAlt - minAlt) * 300.f)), sat, value);
+        return QPen(col, size, Qt::SolidLine, Qt::SquareCap, Qt::MiterJoin);
 
-    case opts::DOTTED:
-      return QPen(OptionData::instance().getTrailColor(), size, Qt::DotLine, Qt::FlatCap, Qt::BevelJoin);
+      case opts::TRAIL_GRADIENT_BLACKWHITE:
+        // Change value depending on altitude and start with white = value 255
+        col = Qt::white;
+        col.getHsv(&hue, &sat, &value);
+        col.setHsv(hue, sat, atools::minmax(0, 255, 255 - atools::roundToInt(alt / (maxAlt - minAlt) * 255.f)));
+        return QPen(col, size, Qt::SolidLine, Qt::SquareCap, Qt::MiterJoin);
+    }
+  }
+  else
+  {
+    // Styled pens ===========================================================
+    switch(optionData.getDisplayTrailType())
+    {
+      case opts::TRAIL_TYPE_DASHED:
+        return QPen(optionData.getTrailColor(), size, Qt::DashLine, Qt::SquareCap, Qt::MiterJoin);
 
-    case opts::SOLID:
-      return QPen(OptionData::instance().getTrailColor(), size, Qt::SolidLine, Qt::FlatCap, Qt::BevelJoin);
+      case opts::TRAIL_TYPE_DOTTED:
+        return QPen(optionData.getTrailColor(), size, Qt::DotLine, Qt::SquareCap, Qt::MiterJoin);
+
+      case opts::TRAIL_TYPE_SOLID:
+        return QPen(optionData.getTrailColor(), size, Qt::SolidLine, Qt::SquareCap, Qt::MiterJoin);
+    }
   }
   return QPen();
 }

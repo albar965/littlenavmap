@@ -226,19 +226,20 @@ map::AircraftTrailSegment AircraftTrail::findNearest(const QPoint& point, const 
 #endif
       double distFrom1 = static_cast<double>(resultShortestLine.distanceFrom1);
       double travelTime = static_cast<double>(posTo.getTimestampMs() - posFrom.getTimestampMs());
+
+      // Set interpolated altitude
+      pos.setAltitude(static_cast<float>(atools::interpolate(posFrom.getAltitudeD(), posTo.getAltitudeD(), 0., length, distFrom1)));
       trail.position = pos;
       trail.index = trackIndex;
       trail.from = posFrom.getPosition();
       trail.to = posTo.getPosition();
       trail.length = static_cast<float>(length);
       trail.distanceFromStart = resultShortest.distanceFrom1;
-
-      trail.altitude = static_cast<float>(atools::interpolate(posFrom.getAltitudeD(), posTo.getAltitudeD(), 0., length, distFrom1));
       trail.speed = static_cast<float>(length / travelTime * 1000.f);
       trail.headingTrue = static_cast<float>(posFrom.getPosD().angleDegTo(posTo.getPosD()));
       trail.timestampPos = posFrom.getTimestampMs() + std::lround(travelTime * fraction);
-      trail.onGround = atools::interpolate(static_cast<double>(posFrom.isOnGround()), static_cast<double>(posTo.isOnGround()),
-                                           0., length, distFrom1) > 0.5;
+      trail.onGround = atools::roundToInt(atools::interpolate(static_cast<double>(posFrom.isOnGround()),
+                                                              static_cast<double>(posTo.isOnGround()), 0., length, distFrom1));
     }
     else
     {
@@ -269,13 +270,14 @@ atools::fs::gpx::GpxData AircraftTrail::toGpxData(const atools::fs::pln::Flightp
 
     Q_ASSERT(positions.size() == timestamps.size());
 
-    atools::fs::gpx::TrackPoints points;
+    atools::fs::gpx::TrailPoints points;
     for(int j = 0; j < positions.size(); j++)
     {
-      points.append(atools::fs::gpx::TrackPoint(positions.at(j), timestamps.at(j)));
-      gpxData.trackRect.extend(positions.at(j).asPos());
+      const atools::geo::PosD& pos = positions.at(j);
+      points.append(atools::fs::gpx::TrailPoint(pos, timestamps.at(j)));
+      gpxData.updateBoundaries(pos.asPos());
     }
-    gpxData.tracks.append(points);
+    gpxData.trails.append(points);
   }
 
   for(const atools::fs::pln::FlightplanEntry& entry : flightplan)
@@ -297,16 +299,16 @@ void AircraftTrail::appendTrailFromGpxData(const atools::fs::gpx::GpxData& gpxDa
     append(AircraftTrailPos());
 
   // Add track points
-  for(const atools::fs::gpx::TrackPoints& points : qAsConst(gpxData.tracks))
+  for(const atools::fs::gpx::TrailPoints& points : qAsConst(gpxData.trails))
   {
     if(!points.isEmpty())
     {
-      for(const atools::fs::gpx::TrackPoint& point : qAsConst(points))
+      for(const atools::fs::gpx::TrailPoint& point : qAsConst(points))
         append(AircraftTrailPos(point.pos, point.timestampMs, false));
       append(AircraftTrailPos());
     }
   }
-  calculateMaxAltitude();
+  calculateBoundaries();
 }
 
 void AircraftTrail::saveState(const QString& suffix, int numBackupFiles)
@@ -342,13 +344,7 @@ void AircraftTrail::restoreState(const QString& suffix)
     else
       qWarning() << "Cannot read track" << trackFile.fileName() << ":" << trackFile.errorString();
   }
-  calculateMaxAltitude();
-}
-
-void AircraftTrail::clearTrail()
-{
-  clear();
-  maximumAltitude = 0.f;
+  calculateBoundaries();
 }
 
 void AircraftTrail::saveToStream(QDataStream& out)
@@ -509,22 +505,40 @@ bool AircraftTrail::appendTrailPos(const atools::fs::sc::SimConnectUserAircraft&
 
   if(!isEmpty())
     // Last one is always valid
-    updateMaxAltitude(constLast());
+    calculateBoundary(constLast());
 
   return pruned;
 }
 
-void AircraftTrail::calculateMaxAltitude()
+void AircraftTrail::clearTrail()
 {
-  maximumAltitude = 0.;
-  for(const AircraftTrailPos& trackPos : qAsConst(*this))
-    updateMaxAltitude(trackPos);
+  clear();
+  clearBoundaries();
 }
 
-void AircraftTrail::updateMaxAltitude(const AircraftTrailPos& trackPos)
+void AircraftTrail::clearBoundaries()
+{
+  bounding = atools::geo::Rect();
+  minAltitude = std::numeric_limits<float>::max();
+  maxAltitude = std::numeric_limits<float>::min();
+}
+
+void AircraftTrail::calculateBoundaries()
+{
+  clearBoundaries();
+  for(const AircraftTrailPos& trackPos : qAsConst(*this))
+    calculateBoundary(trackPos);
+}
+
+void AircraftTrail::calculateBoundary(const AircraftTrailPos& trackPos)
 {
   if(trackPos.isValid())
-    maximumAltitude = std::max(maximumAltitude, static_cast<float>(trackPos.getPosD().getAltitude()));
+  {
+    float alt = static_cast<float>(trackPos.getPosD().getAltitude());
+    minAltitude = std::min(minAltitude, alt);
+    maxAltitude = std::max(maxAltitude, alt);
+    bounding.extend(trackPos.getPosition());
+  }
 }
 
 const QVector<atools::geo::LineString> AircraftTrail::getLineStrings(const atools::geo::Pos& aircraftPos) const

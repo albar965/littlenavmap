@@ -140,6 +140,13 @@ public:
   const QVector<QPolygonF *> createPolylines(const atools::geo::LineString& linestring, const QRectF& screenRect) const;
   void releasePolylines(const QVector<QPolygonF *>& polylines) const;
 
+  /*  Determines whether a geographical feature is big enough so that it should
+   * represent a single point on the screen. Additionally checks if feature bounding rect overlaps viewport. */
+  bool resolves(const Marble::GeoDataLatLonBox& box) const;
+  bool resolves(const Marble::GeoDataCoordinates& coord1, const Marble::GeoDataCoordinates& coord2) const;
+  bool resolves(const atools::geo::Rect& rect) const;
+  bool resolves(const atools::geo::Line& line) const;
+
   /* Shortcuts for more readable code */
   static Q_DECL_CONSTEXPR Marble::GeoDataCoordinates::Unit DEG = Marble::GeoDataCoordinates::Degree;
   static Q_DECL_CONSTEXPR Marble::GeoDataCoordinates::BearingType INITBRG = Marble::GeoDataCoordinates::InitialBearing;

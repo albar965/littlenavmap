@@ -294,7 +294,7 @@ QString MapTooltip::buildTooltip(const map::MapResult& mapSearchResult, const at
         if(!html.isEmpty())
           html.textBar(TEXT_BAR_LENGTH);
 
-        info.aircraftTrackText(mapSearchResult.trailSegment, html, false /* logbook */);
+        info.aircraftTrailText(mapSearchResult.trailSegment, html, false /* logbook */);
         distance = false; // do not show distance to last leg
         numEntries++;
       }
@@ -310,7 +310,7 @@ QString MapTooltip::buildTooltip(const map::MapResult& mapSearchResult, const at
         if(!html.isEmpty())
           html.textBar(TEXT_BAR_LENGTH);
 
-        info.aircraftTrackText(mapSearchResult.trailSegmentLog, html, true /* logbook */);
+        info.aircraftTrailText(mapSearchResult.trailSegmentLog, html, true /* logbook */);
         distance = false; // do not show distance to last leg
         numEntries++;
       }

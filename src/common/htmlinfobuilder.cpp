@@ -3793,15 +3793,34 @@ void HtmlInfoBuilder::aircraftTextWeightAndFuel(const atools::fs::sc::SimConnect
   }
 }
 
-void HtmlInfoBuilder::aircraftTrackText(const AircraftTrailSegment& trailSegment, HtmlBuilder& html, bool logbook) const
+void HtmlInfoBuilder::aircraftTrailText(const AircraftTrailSegment& trailSegment, HtmlBuilder& html, bool logbook) const
 {
-  float thicknessTrail = OptionData::instance().getDisplayThicknessTrail() / 100.f;
+  if(logbook)
+    // Prefix with logbook icon for logbook trails ===========================
+    html.img(QIcon(":/littlenavmap/resources/icons/logbook.svg"), QString(), QString(), symbolSizeTitle);
 
-  // Create icon showing the same line style as configured by the user or logbook icon
-  QIcon icon = logbook ? QIcon(":/littlenavmap/resources/icons/logbook.svg") :
-               SymbolPainter::createAircraftTrailIcon(symbolSizeTitle.height(), mapcolors::aircraftTrailPen(thicknessTrail * 2.f));
+  if(OptionData::instance().getFlags().testFlag(opts::MAP_TRAIL_GRADIENT))
+  {
+    // Show color gradient SVG =================================
+    switch(OptionData::instance().getDisplayTrailGradientType())
+    {
+      case opts::TRAIL_GRADIENT_COLOR:
+        html.img(QIcon(":/littlenavmap/resources/icons/gradientcolors.svg"), QString(), QString(), symbolSizeTitle);
+        break;
 
-  html.img(icon, QString(), QString(), symbolSizeTitle);
+      case opts::TRAIL_GRADIENT_BLACKWHITE:
+        html.img(QIcon(":/littlenavmap/resources/icons/gradientblackwhite.svg"), QString(), QString(), symbolSizeTitle);
+        break;
+    }
+  }
+  else
+  {
+    // Create icon showing the same line style as configured by the user or logbook icon ==============
+    float thicknessTrail = OptionData::instance().getDisplayThicknessTrail() / 100.f;
+    html.img(SymbolPainter::createAircraftTrailIcon(symbolSizeTitle.height(), mapcolors::aircraftTrailPen(thicknessTrail * 2.f)),
+             QString(), QString(), symbolSizeTitle);
+  }
+
   html.nbsp().nbsp();
 
   if(logbook)
@@ -3811,27 +3830,32 @@ void HtmlInfoBuilder::aircraftTrackText(const AircraftTrailSegment& trailSegment
 
   html.table();
 
-  // Simulator date and time with seconds ========================
+  // Simulator date and time with seconds - interpolated ========================
   QDateTime datetime = QDateTime::fromMSecsSinceEpoch(trailSegment.timestampPos, Qt::UTC);
   bool overrideLocale = OptionData::instance().getFlags().testFlag(opts::GUI_OVERRIDE_LOCALE);
   html.row2(tr("Simulator Date and Time:"),
             formatter::formatDateTimeSeconds(datetime, overrideLocale) % tr(" ") % datetime.timeZoneAbbreviation());
 
-  // Speed ==================================
+  // Speed through segment ==================================
   if(atools::geo::meterPerSecToKnots(trailSegment.speed) < 10000.f)
     html.row2(tr("Groundspeed:"), Unit::speedMeterPerSec(trailSegment.speed));
 
+  // Course ==================================
   if(trailSegment.headingTrue < map::INVALID_HEADING_VALUE)
-    html.row2(tr("Heading:", "aircraft heading"), courseTextFromTrue(trailSegment.headingTrue, NavApp::getMagVar(trailSegment.to)),
+    html.row2(tr("Course:", "aircraft course"), courseTextFromTrue(trailSegment.headingTrue, NavApp::getMagVar(trailSegment.to)),
               ahtml::NO_ENTITIES);
 
   // Long line segments =========================================
   if(trailSegment.length > 5000.)
     html.row2(tr("Trail Segment Length (long jump):"), Unit::distMeter(static_cast<float>(trailSegment.length)));
 
+  // Distance to current point ========================
   html.row2(tr("Distance Flown:"), Unit::distMeter(static_cast<float>(trailSegment.distanceFromStart)));
-  html.row2(tr("Actual Altitude:"), Unit::altFeet(trailSegment.to.getAltitude()));
 
+  // Interpolated altitude ====================================
+  html.row2(tr("Actual Altitude:"), Unit::altFeet(trailSegment.getAltitude()));
+
+  // On ground weighted/interpolated ====================================
   if(trailSegment.onGround)
     html.row2(tr("On ground"));
   html.tableEnd();

@@ -276,7 +276,11 @@ const QColor& colorForAirport(const map::MapAirport& ap);
 /* Alternating row background color for search tables */
 const QColor& alternatingRowColor(int row, bool isSort);
 
-const QPen aircraftTrailPen(float size);
+/* Aircraft trail either by set style or gradient for given altitudes */
+const QPen aircraftTrailPen(float size, float minAlt = 0.f, float maxAlt = 0.f, float alt = 0.f);
+
+/* Outline for gradient aircraft trail */
+const QPen aircraftTrailPenOuter(float size);
 
 /* lineThickness = 20 to 300 and default 100 equal to a scale factor of 0.2 to 3.0 to default line width. */
 QPen penForAirspace(const map::MapAirspace& airspace, int lineThickness);
