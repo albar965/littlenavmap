@@ -277,7 +277,7 @@ void RouteExportFormatMap::init()
                                 "This saves all waypoints as user defined waypoints when exporting flight plans.\n"
                                 "Note that is not possible to export procedures if this is enabled.");
 
-  const QString gpxTooltip = tr("\nExported with aircraft track and flight plan.");
+  const QString gpxTooltip = tr("\nGPX is exported with aircraft trail and flight plan.");
 
   const QString civaTooltip = tr("\nFlight plan is split up and exported into several numbered files.");
 
@@ -328,7 +328,7 @@ void RouteExportFormatMap::init()
   FMT(TXTJAR,       AIRPORTS,             S0 % tr("txt"),     tr("Aircraft"),  tr("JARDesign aircraft")                                              );
   FMT(RTE,          AIRPORTS,             S0 % tr("rte"),     tr("Aircraft"),  tr("PMDG aircraft")                                                   );
   FMT(RTEMSFS,      AIRPORTS,             S0 % tr("rte"),     tr("Aircraft"),  tr("PMDG aircraft for MSFS")                                          );
-  FMT(GPX,          NONE,                 DF % tr("gpx"),     tr("Other"),     tr("Garmin exchange format for Google Earth and others") % gpxTooltip % mainMenu );
+  FMT(GPX,          NONE,                 DF % tr("gpx"),     tr("Garmin"),    tr("Garmin GPX exchange format for Google Earth and others") % gpxTooltip % mainMenu );
   FMT(HTML,         NONE,                 DF % tr("html"),    tr("Other"),     tr("HTML flight plan web page") % mainMenu                            );
   FMT(FPR,          AIRPORTS,             S0 % tr("fpr"),     tr("Aircraft"),  tr("Majestic Dash MJC8 Q400")                                         );
   FMT(FPL,          AIRPORTS,             S0 % tr("fpl"),     tr("Aircraft"),  tr("IXEG Boeing 737")                                                 );
