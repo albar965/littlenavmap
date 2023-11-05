@@ -118,21 +118,24 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
 
   // Add option pages with text, icon and tooltip ========================================
   /* *INDENT-OFF* */
-  QListWidget*list = ui->listWidgetOptionPages;
+  QListWidget *list = ui->listWidgetOptionPages;
   list->addItem(pageListItem(list, tr("Startup and Updates"), tr("Select what should be reloaded on startup and change update settings."), ":/littlenavmap/resources/icons/littlenavmap.svg"));
   list->addItem(pageListItem(list, tr("User Interface"), tr("Change language settings, window options and other user interface behavior."), ":/littlenavmap/resources/icons/statusbar.svg"));
-  list->addItem(pageListItem(list, tr("Display and Text"), tr("Change text sizes, user interface font and other display options."), ":/littlenavmap/resources/icons/copy.svg"));
+  list->addItem(pageListItem(list, tr("Display and Text"), tr("Change text sizes, user interface font, tooltips and more display options."), ":/littlenavmap/resources/icons/copy.svg"));
   list->addItem(pageListItem(list, tr("Units"), tr("Fuel, distance, speed and coordindate units as well as\noptions for course and heading display."), ":/littlenavmap/resources/icons/units.svg"));
-  list->addItem(pageListItem(list, tr("Map"), tr("General map settings: Zoom, click and tooltip settings."), ":/littlenavmap/resources/icons/mapsettings.svg"));
-  list->addItem(pageListItem(list, tr("Map Navigation"), tr("Zoom, click and screen navigation settings."), ":/littlenavmap/resources/icons/mapnavigation.svg"));
+  list->addItem(pageListItem(list, tr("Files"), tr("Edit flight plan file pattern and more file related actions."), ":/littlenavmap/resources/icons/fileopen.svg"));
+  list->addItem(pageListItem(list, tr("Map"), tr("Change map window behavior, handling of empty airports, and general display options."), ":/littlenavmap/resources/icons/mapsettings.svg"));
+  list->addItem(pageListItem(list, tr("Map Tooltips and Clicks"), tr("Tooltip and map click settings."), ":/littlenavmap/resources/icons/mapclick.svg"));
+  list->addItem(pageListItem(list, tr("Map Navigation"), tr("Zoom, click, screen navigation and mousewheel settings."), ":/littlenavmap/resources/icons/mapnavigation.svg"));
   list->addItem(pageListItem(list, tr("Map Display"), tr("Change colors, symbols, texts and font for map display and elevation profile objects."), ":/littlenavmap/resources/icons/mapdisplay.svg"));
-  list->addItem(pageListItem(list, tr("Map Display Flight Plan"), tr("Adjust display style and colors for the flight plan on the map and the elevation profile."), ":/littlenavmap/resources/icons/mapdisplayflightplan.svg"));
-  list->addItem(pageListItem(list, tr("Map Display User"), tr("Change colors, symbols and texts for marks, measurement lines and other user features for map and elevation profile."), ":/littlenavmap/resources/icons/mapdisplay2.svg"));
-  list->addItem(pageListItem(list, tr("Map Display Labels"), tr("Change map display and elevation profile label options for marks, user aircraft and more."), ":/littlenavmap/resources/icons/mapdisplaylabels.svg"));
-  list->addItem(pageListItem(list, tr("Map Display Keys"), tr("Enter username, API keys or tokens for map services which require a login."), ":/littlenavmap/resources/icons/mapdisplaykeys.svg"));
-  list->addItem(pageListItem(list, tr("Map Display Online"), tr("Map display online center options."), ":/littlenavmap/resources/icons/airspaceonline.svg"));
-  list->addItem(pageListItem(list, tr("Simulator Aircraft"), tr("Update and movement options for the user aircraft and trail."), ":/littlenavmap/resources/icons/aircraft.svg"));
-  list->addItem(pageListItem(list, tr("Flight Plan"), tr("Options for flight plan calculation, saving and loading."), ":/littlenavmap/resources/icons/route.svg"));
+  list->addItem(pageListItem(list, tr("Map Flight Plan"), tr("Adjust display style and colors for the flight plan on the map and the elevation profile."), ":/littlenavmap/resources/icons/mapdisplayflightplan.svg"));
+  list->addItem(pageListItem(list, tr("Map Aircraft Trail"), tr("Edit display of the user aircraft trail and number of trail points."), ":/littlenavmap/resources/icons/aircrafttrail.svg"));
+  list->addItem(pageListItem(list, tr("Map User"), tr("Change colors, symbols and texts for highlights, measurement lines and other user features for map and elevation profile."), ":/littlenavmap/resources/icons/mapdisplay2.svg"));
+  list->addItem(pageListItem(list, tr("Map Labels"), tr("Change map display and elevation profile label options for all map features."), ":/littlenavmap/resources/icons/mapdisplaylabels.svg"));
+  list->addItem(pageListItem(list, tr("Map Keys"), tr("Enter username, API keys or tokens for map services which require a login."), ":/littlenavmap/resources/icons/mapdisplaykeys.svg"));
+  list->addItem(pageListItem(list, tr("Map Online"), tr("Map display online center options."), ":/littlenavmap/resources/icons/airspaceonline.svg"));
+  list->addItem(pageListItem(list, tr("Simulator Aircraft"), tr("Update and movement options for the user aircraft."), ":/littlenavmap/resources/icons/aircraft.svg"));
+  list->addItem(pageListItem(list, tr("Flight Plan"), tr("Options for flight plan calculation and elevation profile altitude buffer."), ":/littlenavmap/resources/icons/route.svg"));
   list->addItem(pageListItem(list, tr("Weather"), tr("Change weather sources for information and tooltips."), ":/littlenavmap/resources/icons/weather.svg"));
   list->addItem(pageListItem(list, tr("Weather Files"), tr("Change web download addresses or file paths of weather sources."), ":/littlenavmap/resources/icons/weatherurl.svg"));
   list->addItem(pageListItem(list, tr("Online Flying"), tr("Select online flying services like VATSIM, IVAO or custom."), ":/littlenavmap/resources/icons/aircraft_online.svg"));
@@ -2766,8 +2769,7 @@ void OptionsDialog::showDiskCacheClicked()
     atools::gui::Dialog::warning(this, tr("Error opening disk cache \"%1\"").arg(url.toDisplayString()));
 }
 
-QListWidgetItem *OptionsDialog::pageListItem(QListWidget *parent, const QString& text,
-                                             const QString& tooltip, const QString& iconPath)
+QListWidgetItem *OptionsDialog::pageListItem(QListWidget *parent, const QString& text, const QString& tooltip, const QString& iconPath)
 {
   QListWidgetItem *item = new QListWidgetItem(text, parent);
   if(!tooltip.isEmpty())

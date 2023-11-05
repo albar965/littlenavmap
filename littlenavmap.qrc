@@ -334,5 +334,6 @@
         <file>resources/icons/gradientcolors.svg</file>
         <file>resources/icons/icongradientcolors.svg</file>
         <file>resources/icons/icongradientblackwhite.svg</file>
+        <file>resources/icons/mapclick.svg</file>
     </qresource>
 </RCC>
