@@ -234,7 +234,7 @@ ProfileWidget::~ProfileWidget()
   profileOptions = nullptr;
 }
 
-void ProfileWidget::aircraftTrackPruned()
+void ProfileWidget::aircraftTrailPruned()
 {
   if(!widgetVisible)
     return;
@@ -290,17 +290,17 @@ void ProfileWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulat
       // Add track point if delta value between last and current update is large enough
       if(simPosValid)
       {
-        if(aircraftTrackPoints.isEmpty())
-          aircraftTrackPoints.append(currentPoint);
+        if(aircraftTrailPoints.isEmpty())
+          aircraftTrailPoints.append(currentPoint);
         else
         {
-          QLineF delta(aircraftTrackPoints.constLast(), currentPoint);
+          QLineF delta(aircraftTrailPoints.constLast(), currentPoint);
 
           if(std::abs(delta.dx()) > 0.1 /* NM */ || std::abs(delta.dy()) > 50. /* ft */)
-            aircraftTrackPoints.append(currentPoint);
+            aircraftTrailPoints.append(currentPoint);
 
-          if(aircraftTrackPoints.size() > OptionData::instance().getAircraftTrackMaxPoints())
-            aircraftTrackPoints.removeFirst();
+          if(aircraftTrailPoints.size() > OptionData::instance().getAircraftTrailMaxPoints())
+            aircraftTrailPoints.removeFirst();
         }
       }
 
@@ -448,7 +448,7 @@ void ProfileWidget::updateScreenCoords()
   else
     maxWindowAlt = legList->route.getCruiseAltitudeFt();
 
-  if(simData.getUserAircraftConst().isValid() && (showAircraft || showAircraftTrack) && !NavApp::getRouteConst().isFlightplanEmpty())
+  if(simData.getUserAircraftConst().isValid() && (showAircraft || showAircraftTrail) && !NavApp::getRouteConst().isFlightplanEmpty())
     maxWindowAlt = std::max(maxWindowAlt, aircraftAlt(simData.getUserAircraftConst()));
 
   // if(showAircraftTrack)
@@ -1631,11 +1631,11 @@ void ProfileWidget::paintEvent(QPaintEvent *)
     symPainter.textBox(&painter, {destAltStr}, labelColor, left + w + 4, destinationAltTextY, textatt::BOLD | textatt::RIGHT, 255);
   } // if(NavApp::getMapWidget()->getShownMapFeatures() & map::FLIGHTPLAN)
 
-  // Draw user aircraft track =========================================================
-  if(!aircraftTrackPoints.isEmpty() && showAircraftTrack)
+  // Draw user aircraft trail =========================================================
+  if(!aircraftTrailPoints.isEmpty() && showAircraftTrail)
   {
-    painter.setPen(mapcolors::aircraftTrailPen(optionData.getDisplayThicknessFlightplanProfile() / 100.f * 2.f));
-    painter.drawPolyline(toScreen(aircraftTrackPoints));
+    painter.setPen(mapcolors::aircraftTrailPenProfile(optionData.getDisplayThicknessFlightplanProfile() / 100.f * 2.f));
+    painter.drawPolyline(toScreen(aircraftTrailPoints));
   }
 
   // Draw user aircraft =========================================================
@@ -2481,7 +2481,7 @@ void ProfileWidget::showContextMenu(const QPoint& globalPoint)
   ui->actionProfileCenterAircraft->setEnabled(NavApp::isConnectedAndAircraft());
   // Zoom to aircraft and destination is only enabled if center is checked
   ui->actionProfileZoomAircraft->setEnabled(NavApp::isConnectedAndAircraft() && ui->actionProfileCenterAircraft->isChecked());
-  ui->actionProfileDeleteAircraftTrack->setEnabled(hasTrackPoints());
+  ui->actionProfileDeleteAircraftTrack->setEnabled(hasTrailPoints());
 
   ui->actionProfileShowVasi->setEnabled(hasValidRouteForDisplay());
   ui->actionProfileShowIls->setEnabled(hasValidRouteForDisplay());
@@ -2629,7 +2629,7 @@ void ProfileWidget::resizeEvent(QResizeEvent *)
 /* Deleting aircraft track needs an update of the screen coordinates */
 void ProfileWidget::deleteAircraftTrail()
 {
-  aircraftTrackPoints.clear();
+  aircraftTrailPoints.clear();
 
   updateScreenCoords();
   update();
@@ -2674,7 +2674,7 @@ void ProfileWidget::saveState()
   scrollArea->saveState();
   profileOptions->saveState();
 
-  saveAircraftTrack();
+  saveAircraftTrail();
 }
 
 void ProfileWidget::restoreState()
@@ -2683,7 +2683,7 @@ void ProfileWidget::restoreState()
   scrollArea->restoreState();
 
   if(OptionData::instance().getFlags() & opts::STARTUP_LOAD_TRAIL && !NavApp::isSafeMode())
-    loadAircraftTrack();
+    loadAircraftTrail();
 }
 
 void ProfileWidget::restoreSplitter()
@@ -2712,10 +2712,10 @@ void ProfileWidget::updateProfileShowFeatures()
 
   // Compare own values with action values
   bool updateProfile = showAircraft != ui->actionMapShowAircraft->isChecked() ||
-                       showAircraftTrack != ui->actionMapShowAircraftTrack->isChecked();
+                       showAircraftTrail != ui->actionMapShowAircraftTrack->isChecked();
 
   showAircraft = ui->actionMapShowAircraft->isChecked();
-  showAircraftTrack = ui->actionMapShowAircraftTrack->isChecked();
+  showAircraftTrail = ui->actionMapShowAircraftTrack->isChecked();
 
   if(updateProfile)
   {
@@ -2775,32 +2775,32 @@ void ProfileWidget::updateErrorLabel()
   NavApp::updateErrorLabel();
 }
 
-void ProfileWidget::saveAircraftTrack()
+void ProfileWidget::saveAircraftTrail()
 {
-  QFile trackFile(atools::settings::Settings::getConfigFilename(lnm::PROFILE_TRACK_SUFFIX));
+  QFile trailFile(atools::settings::Settings::getConfigFilename(lnm::PROFILE_TRACK_SUFFIX));
 
-  if(trackFile.open(QIODevice::WriteOnly))
+  if(trailFile.open(QIODevice::WriteOnly))
   {
-    QDataStream out(&trackFile);
+    QDataStream out(&trailFile);
     out.setVersion(QDataStream::Qt_5_5);
     out.setFloatingPointPrecision(QDataStream::SinglePrecision);
-    out << FILE_MAGIC_NUMBER << FILE_VERSION << aircraftTrackPoints;
-    trackFile.close();
+    out << FILE_MAGIC_NUMBER << FILE_VERSION << aircraftTrailPoints;
+    trailFile.close();
   }
   else
-    qWarning() << "Cannot write track" << trackFile.fileName() << ":" << trackFile.errorString();
+    qWarning() << "Cannot write track" << trailFile.fileName() << ":" << trailFile.errorString();
 }
 
-void ProfileWidget::loadAircraftTrack()
+void ProfileWidget::loadAircraftTrail()
 {
-  QFile trackFile(atools::settings::Settings::getConfigFilename(lnm::PROFILE_TRACK_SUFFIX));
-  if(trackFile.exists())
+  QFile trailFile(atools::settings::Settings::getConfigFilename(lnm::PROFILE_TRACK_SUFFIX));
+  if(trailFile.exists())
   {
-    if(trackFile.open(QIODevice::ReadOnly))
+    if(trailFile.open(QIODevice::ReadOnly))
     {
       quint32 magic;
       quint16 version;
-      QDataStream in(&trackFile);
+      QDataStream in(&trailFile);
       in.setVersion(QDataStream::Qt_5_5);
       in.setFloatingPointPrecision(QDataStream::SinglePrecision);
       in >> magic;
@@ -2809,16 +2809,16 @@ void ProfileWidget::loadAircraftTrack()
       {
         in >> version;
         if(version == FILE_VERSION)
-          in >> aircraftTrackPoints;
+          in >> aircraftTrailPoints;
         else
-          qWarning() << "Cannot read track" << trackFile.fileName() << ". Invalid version number:" << version;
+          qWarning() << "Cannot read track" << trailFile.fileName() << ". Invalid version number:" << version;
       }
       else
-        qWarning() << "Cannot read track" << trackFile.fileName() << ". Invalid magic number:" << magic;
-      trackFile.close();
+        qWarning() << "Cannot read track" << trailFile.fileName() << ". Invalid magic number:" << magic;
+      trailFile.close();
     }
     else
-      qWarning() << "Cannot read track" << trackFile.fileName() << ":" << trackFile.errorString();
+      qWarning() << "Cannot read track" << trailFile.fileName() << ":" << trailFile.errorString();
   }
 }
 

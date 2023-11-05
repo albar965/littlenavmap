@@ -1257,6 +1257,7 @@ void OptionsDialog::restoreState()
   updateMapFontLabel();
   onlineDisplayRangeClicked();
   eastWestRuleClicked();
+  updateTrailStates();
 
   updateWebServerStatus();
   updateWebDocrootStatus();
@@ -1909,7 +1910,7 @@ void OptionsDialog::widgetsToOptionData()
 
   data.simUpdateBox = ui->spinBoxOptionsSimUpdateBox->value();
   data.simUpdateBoxCenterLegZoom = ui->spinBoxOptionsSimCenterLegZoom->value();
-  data.aircraftTrackMaxPoints = ui->spinBoxSimMaxTrackPoints->value();
+  data.aircraftTrailMaxPoints = ui->spinBoxSimMaxTrackPoints->value();
 
   data.cacheSizeDisk = ui->spinBoxOptionsCacheDiskSize->value();
   data.cacheSizeMemory = ui->spinBoxOptionsCacheMemorySize->value();
@@ -2219,7 +2220,7 @@ void OptionsDialog::optionDataToWidgets(const OptionData& data)
   ui->spinBoxOptionsSimCleanupTableTime->setValue(data.simCleanupTableTime);
   ui->spinBoxOptionsSimUpdateBox->setValue(data.simUpdateBox);
   ui->spinBoxOptionsSimCenterLegZoom->setValue(data.simUpdateBoxCenterLegZoom);
-  ui->spinBoxSimMaxTrackPoints->setValue(data.aircraftTrackMaxPoints);
+  ui->spinBoxSimMaxTrackPoints->setValue(data.aircraftTrailMaxPoints);
   ui->spinBoxOptionsCacheDiskSize->setValue(data.cacheSizeDisk);
   ui->spinBoxOptionsCacheMemorySize->setValue(data.cacheSizeMemory);
   ui->spinBoxOptionsGuiInfoText->setValue(data.guiInfoTextSize);

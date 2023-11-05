@@ -3118,10 +3118,10 @@ void MapWidget::restoreState()
 
   if(OptionData::instance().getFlags() & opts::STARTUP_LOAD_TRAIL && !NavApp::isSafeMode())
     aircraftTrail->restoreState(lnm::AIRCRAFT_TRACK_SUFFIX);
-  aircraftTrail->setMaxTrackEntries(OptionData::instance().getAircraftTrackMaxPoints());
+  aircraftTrail->setMaxTrackEntries(OptionData::instance().getAircraftTrailMaxPoints());
 
   aircraftTrailLogbook->restoreState(lnm::LOGBOOK_TRACK_SUFFIX);
-  aircraftTrailLogbook->setMaxTrackEntries(OptionData::instance().getAircraftTrackMaxPoints());
+  aircraftTrailLogbook->setMaxTrackEntries(OptionData::instance().getAircraftTrailMaxPoints());
 
   atools::gui::WidgetState state(lnm::MAP_OVERLAY_VISIBLE, false /*save visibility*/, true /*block signals*/);
   for(QAction *action : qAsConst(mapOverlays))

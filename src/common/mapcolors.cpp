@@ -412,6 +412,29 @@ const QPen aircraftTrailPenOuter(float size)
   return QPen(NavApp::isDarkMapTheme() ? Qt::white : Qt::black, size + 3., Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
 }
 
+const QPen aircraftTrailPenProfile(float size)
+{
+  const OptionData& optionData = OptionData::instance();
+  QPen pen(optionData.getTrailColor(), size, Qt::SolidLine, Qt::SquareCap, Qt::MiterJoin);
+
+  // Styled pens ===========================================================
+  switch(optionData.getDisplayTrailType())
+  {
+    case opts::TRAIL_TYPE_DASHED:
+      pen.setStyle(Qt::DashLine);
+      break;
+
+    case opts::TRAIL_TYPE_DOTTED:
+      pen.setStyle(Qt::DotLine);
+      break;
+
+    case opts::TRAIL_TYPE_SOLID:
+      pen.setStyle(Qt::SolidLine);
+      break;
+  }
+  return pen;
+}
+
 const QPen aircraftTrailPen(float size, float minAlt, float maxAlt, float alt)
 {
   const OptionData& optionData = OptionData::instance();
@@ -421,6 +444,7 @@ const QPen aircraftTrailPen(float size, float minAlt, float maxAlt, float alt)
     alt -= minAlt;
     int hue, sat, value;
     QColor col;
+    QPen pen(col, size, Qt::SolidLine, Qt::SquareCap, Qt::MiterJoin);
     switch(optionData.getDisplayTrailGradientType())
     {
       case opts::TRAIL_GRADIENT_COLOR:
@@ -428,32 +452,22 @@ const QPen aircraftTrailPen(float size, float minAlt, float maxAlt, float alt)
         col = Qt::red;
         col.getHsv(&hue, &sat, &value);
         col.setHsv(atools::minmax(0 /* red */, 300 /* magenta */, atools::roundToInt(alt / (maxAlt - minAlt) * 300.f)), sat, value);
-        return QPen(col, size, Qt::SolidLine, Qt::SquareCap, Qt::MiterJoin);
+        pen.setColor(col);
+        break;
 
       case opts::TRAIL_GRADIENT_BLACKWHITE:
         // Change value depending on altitude and start with white = value 255
         col = Qt::white;
         col.getHsv(&hue, &sat, &value);
         col.setHsv(hue, sat, atools::minmax(0, 255, 255 - atools::roundToInt(alt / (maxAlt - minAlt) * 255.f)));
-        return QPen(col, size, Qt::SolidLine, Qt::SquareCap, Qt::MiterJoin);
+        pen.setColor(col);
+        break;
     }
+    return pen;
   }
   else
-  {
     // Styled pens ===========================================================
-    switch(optionData.getDisplayTrailType())
-    {
-      case opts::TRAIL_TYPE_DASHED:
-        return QPen(optionData.getTrailColor(), size, Qt::DashLine, Qt::SquareCap, Qt::MiterJoin);
-
-      case opts::TRAIL_TYPE_DOTTED:
-        return QPen(optionData.getTrailColor(), size, Qt::DotLine, Qt::SquareCap, Qt::MiterJoin);
-
-      case opts::TRAIL_TYPE_SOLID:
-        return QPen(optionData.getTrailColor(), size, Qt::SolidLine, Qt::SquareCap, Qt::MiterJoin);
-    }
-  }
-  return QPen();
+    return aircraftTrailPenProfile(size);
 }
 
 /* Default colors. Saved to little_navmap_mapstyle.ini and can be overridden there */

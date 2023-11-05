@@ -1072,9 +1072,9 @@ public:
     return updateChannels;
   }
 
-  int getAircraftTrackMaxPoints() const
+  int getAircraftTrailMaxPoints() const
   {
-    return aircraftTrackMaxPoints;
+    return aircraftTrailMaxPoints;
   }
 
   int getSimNoFollowAircraftScrollSeconds() const
@@ -1555,7 +1555,7 @@ private:
   int displaySunShadingDimFactor = 40;
 
   // spinBoxSimMaxTrackPoints
-  int aircraftTrackMaxPoints = 20000;
+  int aircraftTrailMaxPoints = 20000;
 
   // spinBoxSimDoNotFollowOnScrollTime
   int simNoFollowOnScrollTime = 10;

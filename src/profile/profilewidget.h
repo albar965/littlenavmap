@@ -77,7 +77,7 @@ public:
   void simDataChanged(const atools::fs::sc::SimConnectData& simulatorData);
 
   /* Track was shortened and needs a full update */
-  void aircraftTrackPruned();
+  void aircraftTrailPruned();
 
   void simulatorStatusChanged();
 
@@ -140,9 +140,9 @@ public:
   /* true if converted route is valid and can be shown on map. This also includes routes without valid TOC and TOD */
   bool hasValidRouteForDisplay() const;
 
-  bool hasTrackPoints() const
+  bool hasTrailPoints() const
   {
-    return !aircraftTrackPoints.isEmpty();
+    return !aircraftTrailPoints.isEmpty();
   }
 
   /* Call by this and profile label widget class. Point in screen coordinates. */
@@ -260,8 +260,8 @@ private:
   void updateErrorLabel();
 
   /* Load and save track separately */
-  void saveAircraftTrack();
-  void loadAircraftTrack();
+  void saveAircraftTrail();
+  void loadAircraftTrail();
 
   void updateTooltip();
 
@@ -286,7 +286,7 @@ private:
   atools::fs::sc::SimConnectData simData, lastSimData;
 
   /* Track x = distance from start in NM and y = altitude in feet */
-  QPolygonF aircraftTrackPoints;
+  QPolygonF aircraftTrailPoints;
 
   float aircraftDistanceFromStart; /* NM */
   float lastAircraftDistanceFromStart;
@@ -319,7 +319,7 @@ private:
 
   QString fixedLabelText;
 
-  bool widgetVisible = false, showAircraft = false, showAircraftTrack = false;
+  bool widgetVisible = false, showAircraft = false, showAircraftTrail = false;
   QVector<int> waypointX; /* Flight plan waypoint screen coordinates - does contain the dummy
                            * from airport to runway but not missed legs */
   QPolygon landPolygon; /* Green landmass polygon */

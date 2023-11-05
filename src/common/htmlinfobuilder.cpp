@@ -3805,11 +3805,11 @@ void HtmlInfoBuilder::aircraftTrailText(const AircraftTrailSegment& trailSegment
     switch(OptionData::instance().getDisplayTrailGradientType())
     {
       case opts::TRAIL_GRADIENT_COLOR:
-        html.img(QIcon(":/littlenavmap/resources/icons/gradientcolors.svg"), QString(), QString(), symbolSizeTitle);
+        html.img(QIcon(":/littlenavmap/resources/icons/icongradientcolors.svg"), QString(), QString(), symbolSizeTitle);
         break;
 
       case opts::TRAIL_GRADIENT_BLACKWHITE:
-        html.img(QIcon(":/littlenavmap/resources/icons/gradientblackwhite.svg"), QString(), QString(), symbolSizeTitle);
+        html.img(QIcon(":/littlenavmap/resources/icons/icongradientblackwhite.svg"), QString(), QString(), symbolSizeTitle);
         break;
     }
   }

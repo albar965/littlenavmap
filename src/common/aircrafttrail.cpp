@@ -128,9 +128,9 @@ AircraftTrail::AircraftTrail()
   maxFlyingTimeMs = settings.getAndStoreValue(lnm::SETTINGS_AIRCRAFT_TRAIL + "MaxFlyingTimeMs", 15000).toInt();
 
   // Changes in aircraft parameters trigger a new point
-  maxHeadingDiffDeg = settings.getAndStoreValue(lnm::SETTINGS_AIRCRAFT_TRAIL + "MaxHeadingDiffDeg", 4.).toInt();
-  maxSpeedDiffDeg = settings.getAndStoreValue(lnm::SETTINGS_AIRCRAFT_TRAIL + "MaxSpeedDiffDeg", 5.).toInt();
-  maxAltDiffDeg = settings.getAndStoreValue(lnm::SETTINGS_AIRCRAFT_TRAIL + "MaxAltDiffDeg", 100.).toInt();
+  maxHeadingDiffDeg = settings.getAndStoreValue(lnm::SETTINGS_AIRCRAFT_TRAIL + "MaxHeadingDiffDeg", 5.).toInt();
+  maxSpeedDiffDeg = settings.getAndStoreValue(lnm::SETTINGS_AIRCRAFT_TRAIL + "MaxSpeedDiffDeg", 10.).toInt();
+  maxAltDiffDeg = settings.getAndStoreValue(lnm::SETTINGS_AIRCRAFT_TRAIL + "MaxAltDiffDeg", 500.).toInt();
 }
 
 AircraftTrail::~AircraftTrail()

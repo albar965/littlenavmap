@@ -796,18 +796,6 @@ void MapPainter::paintAircraftTrail(const QVector<LineString>& lineStrings, floa
 {
   if(!lineStrings.isEmpty())
   {
-
-#ifdef DEBUG_DRAW_TRACK
-    {
-      atools::util::PainterContextSaver saver(context->painter);
-      context->painter->setPen(QPen(Qt::blue, 2));
-      int i = 0;
-      for(const AircraftTrailPos& pos : aircraftTrack)
-        drawText(context->painter, pos.getPosition(), QString::number(i++), 0.f, 0.f);
-    }
-
-#endif
-
     if(OptionData::instance().getFlags().testFlag(opts::MAP_TRAIL_GRADIENT))
     {
       // Draw black or white background as one single line ==========================

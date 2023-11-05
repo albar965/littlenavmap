@@ -332,5 +332,7 @@
         <file>resources/icons/routeselect.svg</file>
         <file>resources/icons/gradientblackwhite.svg</file>
         <file>resources/icons/gradientcolors.svg</file>
+        <file>resources/icons/icongradientcolors.svg</file>
+        <file>resources/icons/icongradientblackwhite.svg</file>
     </qresource>
 </RCC>

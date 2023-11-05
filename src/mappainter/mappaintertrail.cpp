@@ -21,6 +21,7 @@
 #include "common/aircrafttrail.h"
 #include "fs/sc/simconnectuseraircraft.h"
 #include "mapgui/mappaintwidget.h"
+#include "route/route.h"
 #include "util/paintercontextsaver.h"
 #include "geo/linestring.h"
 
@@ -46,9 +47,25 @@ void MapPainterTrail::render()
     const AircraftTrail& aircraftTrail = NavApp::getAircraftTrail();
     if(!aircraftTrail.isEmpty() && resolves(aircraftTrail.getBounding()))
     {
+#ifdef DEBUG_DRAW_TRACK
+      {
+        atools::util::PainterContextSaver saver(context->painter);
+        context->painter->setPen(QPen(Qt::blue, 2));
+        int i = 0;
+        for(const AircraftTrailPos& pos : aircraftTrail)
+          drawText(context->painter, pos.getPosition(), QString::number(i++), 0.f, 0.f);
+      }
+
+#endif
+
+      float maxAltitude = aircraftTrail.getMaxAltitude();
+      // Use flight plan cruise as max altitude if valid
+      if(context->route->getSizeWithoutAlternates() > 2)
+        maxAltitude = std::max(context->route->getCruiseAltitudeFt(), maxAltitude);
+
       atools::util::PainterContextSaver saver(context->painter);
       const QVector<atools::geo::LineString> lineStrings = aircraftTrail.getLineStrings(mapPaintWidget->getUserAircraft().getPosition());
-      paintAircraftTrail(lineStrings, aircraftTrail.getMinAltitude(), aircraftTrail.getMaxAltitude());
+      paintAircraftTrail(lineStrings, aircraftTrail.getMinAltitude(), maxAltitude);
     }
   }
 }

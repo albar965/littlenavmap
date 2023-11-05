@@ -279,6 +279,9 @@ const QColor& alternatingRowColor(int row, bool isSort);
 /* Aircraft trail either by set style or gradient for given altitudes */
 const QPen aircraftTrailPen(float size, float minAlt = 0.f, float maxAlt = 0.f, float alt = 0.f);
 
+/* Aircraft trail for elevation profile. Adheres to style settgings and not gradient. */
+const QPen aircraftTrailPenProfile(float size);
+
 /* Outline for gradient aircraft trail */
 const QPen aircraftTrailPenOuter(float size);
 
