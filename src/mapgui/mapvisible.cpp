@@ -399,11 +399,11 @@ void MapVisible::updateVisibleObjectsStatusBar()
 
       if(shown.testFlag(map::AIRCRAFT_TRAIL)) // Always shown until cut off distance
       {
-        tooltip.tr().td().b(tr("Aircraft track (T)")).tdEnd().trEnd();
+        tooltip.tr().td().b(tr("Aircraft trail (T)")).tdEnd().trEnd();
         routeLabel.append(tr("T"));
       }
       else
-        tooltip.tr().td(tr("No aircraft track shown")).trEnd();
+        tooltip.tr().td(tr("No aircraft trail shown")).trEnd();
 
       if(layer->isUserpoint())
       {

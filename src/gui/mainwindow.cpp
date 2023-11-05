@@ -2157,7 +2157,7 @@ void MainWindow::deleteAircraftTrail(bool quiet)
     mapWidget->deleteAircraftTrail();
     profileWidget->deleteAircraftTrail();
     updateActionStates();
-    setStatusMessage(QString(tr("Aircraft track removed from map.")));
+    setStatusMessage(QString(tr("Aircraft trail removed from map.")));
   }
 }
 
