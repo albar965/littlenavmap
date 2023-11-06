@@ -61,7 +61,7 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>610</width>
+             <width>614</width>
              <height>459</height>
             </rect>
            </property>
@@ -402,7 +402,7 @@ This is the file on top of the list &quot;Recent Window Layouts&quot;.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>610</width>
+             <width>614</width>
              <height>459</height>
             </rect>
            </property>
@@ -434,7 +434,7 @@ This is the file on top of the list &quot;Recent Window Layouts&quot;.</string>
                <item row="5" column="0" colspan="2">
                 <widget class="QLabel" name="label_18">
                  <property name="text">
-                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Other numeric units can be change on page &amp;quot;Units&amp;quot;.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Other numeric units can be changed on page &amp;quot;Units&amp;quot;.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                  </property>
                  <property name="wordWrap">
                   <bool>true</bool>
@@ -595,8 +595,8 @@ opening files, modifying the flight plan and other operations.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>596</width>
-             <height>665</height>
+             <width>600</width>
+             <height>704</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_23">
@@ -783,6 +783,22 @@ This does not affect the map window which can be changed separately on the optio
                  </property>
                  <property name="checked">
                   <bool>false</bool>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QLabel" name="labelOptionsGuiFontNote_2">
+                 <property name="text">
+                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;You can define tooltip actions separately for each map feature on page &amp;quot;Map Tooltips and Clicks&amp;quot;.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                 </property>
+                 <property name="wordWrap">
+                  <bool>true</bool>
+                 </property>
+                 <property name="margin">
+                  <number>10</number>
+                 </property>
+                 <property name="textInteractionFlags">
+                  <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
                  </property>
                 </widget>
                </item>
@@ -1116,7 +1132,7 @@ This does not affect the map window which can be changed separately on the optio
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>610</width>
+             <width>614</width>
              <height>459</height>
             </rect>
            </property>
@@ -1437,7 +1453,7 @@ Also affects labels at holds and traffic patterns.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>610</width>
+             <width>614</width>
              <height>459</height>
             </rect>
            </property>
@@ -1653,7 +1669,7 @@ Example: &quot;IFR Frankfurt Am Main (EDDF) to Fiumicino (LIRF).lnmpln&quot;</st
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>610</width>
+             <width>614</width>
              <height>459</height>
             </rect>
            </property>
@@ -1759,7 +1775,7 @@ Restart the program after changing this option. You might also need to reset the
             <item row="2" column="0" colspan="2">
              <widget class="QGroupBox" name="groupBox_31">
               <property name="title">
-               <string>General Display Options</string>
+               <string>Map Display Options</string>
               </property>
               <layout class="QGridLayout" name="gridLayout_47">
                <property name="leftMargin">
@@ -1812,14 +1828,7 @@ Restart the program after changing this option. You might also need to reset the
                  </property>
                 </widget>
                </item>
-               <item row="1" column="0" colspan="2">
-                <widget class="Line" name="line_23">
-                 <property name="orientation">
-                  <enum>Qt::Horizontal</enum>
-                 </property>
-                </widget>
-               </item>
-               <item row="2" column="0">
+               <item row="1" column="0">
                 <widget class="QLabel" name="labelOptionsGuiThemeMapDimming">
                  <property name="text">
                   <string>Map &amp;dimming in night style:</string>
@@ -1829,7 +1838,7 @@ Restart the program after changing this option. You might also need to reset the
                  </property>
                 </widget>
                </item>
-               <item row="2" column="1">
+               <item row="1" column="1">
                 <widget class="QSpinBox" name="spinBoxOptionsGuiThemeMapDimming">
                  <property name="toolTip">
                   <string>Darken the map and the flight plan elevation profile for the style &quot;Night&quot;. Lower values result in a darker display.</string>
@@ -1929,8 +1938,8 @@ The aiports toolbar button can be used to hide empty airports if this box is che
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>615</width>
-             <height>445</height>
+             <width>614</width>
+             <height>459</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_2">
@@ -2302,7 +2311,7 @@ userpoints and logbook entries when hovering the cursor over the map</string>
             <item row="0" column="1">
              <widget class="QGroupBox" name="groupBoxMapClickSensitivity_2">
               <property name="title">
-               <string>&amp;Click sensitivity when selecting objects on the map</string>
+               <string>&amp;Click Sensitivity for Map Objects</string>
               </property>
               <layout class="QGridLayout" name="gridLayout_4">
                <property name="leftMargin">
@@ -2361,8 +2370,8 @@ Smaller values will allow a finer selection.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>610</width>
-             <height>459</height>
+             <width>600</width>
+             <height>523</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_12">
@@ -2408,6 +2417,16 @@ Enable &quot;Navigation Aids&quot;, &quot;Screen Areas&quot; on options page &qu
                  </property>
                 </widget>
                </item>
+               <item row="0" column="0" colspan="2">
+                <widget class="QRadioButton" name="radioButtonOptionsMapNavDragMove">
+                 <property name="text">
+                  <string>&amp;Click and drag map to move. Mouse wheel zooms to cursor position.</string>
+                 </property>
+                 <property name="checked">
+                  <bool>true</bool>
+                 </property>
+                </widget>
+               </item>
                <item row="1" column="0" colspan="2">
                 <widget class="QRadioButton" name="radioButtonOptionsMapNavClickCenter">
                  <property name="toolTip">
@@ -2416,16 +2435,6 @@ options page &quot;Map Display Labels&quot; to display a screen center hint.</st
                  </property>
                  <property name="text">
                   <string>Click &amp;map to center position. Mouse wheel zooms to the map center position.</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="0" column="0" colspan="2">
-                <widget class="QRadioButton" name="radioButtonOptionsMapNavDragMove">
-                 <property name="text">
-                  <string>&amp;Click and drag map to move. Mouse wheel zooms to cursor position.</string>
-                 </property>
-                 <property name="checked">
-                  <bool>true</bool>
                  </property>
                 </widget>
                </item>
@@ -2448,6 +2457,22 @@ options page &quot;Map Display Labels&quot; to display a screen center hint.</st
                  </property>
                  <property name="value">
                   <number>10</number>
+                 </property>
+                </widget>
+               </item>
+               <item row="4" column="0" colspan="2">
+                <widget class="QLabel" name="label_24">
+                 <property name="text">
+                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Enable &amp;quot;Navigation Aids&amp;quot;, &amp;quot;Center Cross&amp;quot; on options page &amp;quot;Map Display Labels&amp;quot; to display a screen center hint.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                 </property>
+                 <property name="wordWrap">
+                  <bool>true</bool>
+                 </property>
+                 <property name="margin">
+                  <number>10</number>
+                 </property>
+                 <property name="textInteractionFlags">
+                  <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
                  </property>
                 </widget>
                </item>
@@ -2673,9 +2698,9 @@ Map views might be shown with a larger zoom distance than expected if this optio
            <property name="geometry">
             <rect>
              <x>0</x>
-             <y>-381</y>
-             <width>596</width>
-             <height>840</height>
+             <y>0</y>
+             <width>600</width>
+             <height>824</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_20">
@@ -3114,6 +3139,9 @@ Lower values make the airspace more opaque and higher values more transparent.</
                  <property name="margin">
                   <number>10</number>
                  </property>
+                 <property name="textInteractionFlags">
+                  <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
+                 </property>
                 </widget>
                </item>
                <item row="12" column="2">
@@ -3161,6 +3189,9 @@ Lower values make the airspace more opaque and higher values more transparent.</
                  </property>
                  <property name="margin">
                   <number>10</number>
+                 </property>
+                 <property name="textInteractionFlags">
+                  <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
                  </property>
                 </widget>
                </item>
@@ -3433,6 +3464,9 @@ For VOR, NDB, ILS, waypoints and holdings. Not for flight plan labels.</string>
                  <property name="margin">
                   <number>10</number>
                  </property>
+                 <property name="textInteractionFlags">
+                  <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
+                 </property>
                 </widget>
                </item>
               </layout>
@@ -3484,7 +3518,7 @@ For VOR, NDB, ILS, waypoints and holdings. Not for flight plan labels.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>610</width>
+             <width>614</width>
              <height>459</height>
             </rect>
            </property>
@@ -3782,6 +3816,9 @@ Also used in the elevation profile.</string>
                  <property name="margin">
                   <number>10</number>
                  </property>
+                 <property name="textInteractionFlags">
+                  <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
+                 </property>
                 </widget>
                </item>
               </layout>
@@ -3902,7 +3939,7 @@ Also used in the elevation profile.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>610</width>
+             <width>614</width>
              <height>459</height>
             </rect>
            </property>
@@ -4022,8 +4059,10 @@ Also used in the elevation profile.</string>
                <item row="13" column="0">
                 <widget class="QLabel" name="labelOptionsMapSizeTrail">
                  <property name="text">
-                  <string>User aircraft &amp;trail for
-map display and elevation profile:</string>
+                  <string>User aircraft &amp;trail for map display and elevation profile:</string>
+                 </property>
+                 <property name="wordWrap">
+                  <bool>true</bool>
                  </property>
                  <property name="buddy">
                   <cstring>spinBoxOptionsDisplayThicknessTrail</cstring>
@@ -4138,9 +4177,9 @@ Lower this value to avoid too long tracks and avoid stutters in map display.</st
            <property name="geometry">
             <rect>
              <x>0</x>
-             <y>-164</y>
-             <width>596</width>
-             <height>623</height>
+             <y>0</y>
+             <width>600</width>
+             <height>591</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_35">
@@ -4210,6 +4249,12 @@ Lower this value to avoid too long tracks and avoid stutters in map display.</st
                  </property>
                  <property name="text">
                   <string>&amp;MSA sector diagram:</string>
+                 </property>
+                 <property name="wordWrap">
+                  <bool>true</bool>
+                 </property>
+                 <property name="textInteractionFlags">
+                  <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
                  </property>
                  <property name="buddy">
                   <cstring>spinBoxOptionsDisplayTransparencyAirportMsa</cstring>
@@ -4313,13 +4358,16 @@ Lower this value to avoid too long tracks and avoid stutters in map display.</st
                <item row="8" column="2" rowspan="4">
                 <widget class="QLabel" name="labelOptionsMapSizeHighlight">
                  <property name="text">
-                  <string>&amp;Highlights for selection in
-search tables,
-flight plan table or
-elevation profile hover:</string>
+                  <string>&amp;Highlights for selection in search tables, flight plan table or elevation profile hover:</string>
                  </property>
                  <property name="alignment">
                   <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+                 </property>
+                 <property name="wordWrap">
+                  <bool>true</bool>
+                 </property>
+                 <property name="textInteractionFlags">
+                  <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
                  </property>
                  <property name="buddy">
                   <cstring>spinBoxOptionsDisplaySymbolSizeHighlight</cstring>
@@ -4406,8 +4454,10 @@ elevation profile hover:</string>
                   <string/>
                  </property>
                  <property name="text">
-                  <string>&amp;Minimum altitude grid
-(MORA):</string>
+                  <string>&amp;Minimum altitude grid (MORA):</string>
+                 </property>
+                 <property name="wordWrap">
+                  <bool>true</bool>
                  </property>
                  <property name="buddy">
                   <cstring>spinBoxOptionsDisplayTransparencyMora</cstring>
@@ -4478,6 +4528,9 @@ elevation profile hover:</string>
                  </property>
                  <property name="alignment">
                   <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+                 </property>
+                 <property name="wordWrap">
+                  <bool>true</bool>
                  </property>
                  <property name="buddy">
                   <cstring>spinBoxOptionsDisplaySymbolSizeUserpoint</cstring>
@@ -4680,14 +4733,16 @@ Value 0 is opaque and 90 is most transparent.</string>
                <item row="0" column="2">
                 <widget class="QLabel" name="labelOptionsMapSizeUserFeature">
                  <property name="text">
-                  <string>&amp;Range rings,
-traffic patterns,
-user holdings,
-airway highlights and
-logbook entries:</string>
+                  <string>&amp;Range rings, traffic patterns, user holdings, airway highlights and logbook entries:</string>
                  </property>
                  <property name="alignment">
                   <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+                 </property>
+                 <property name="wordWrap">
+                  <bool>true</bool>
+                 </property>
+                 <property name="textInteractionFlags">
+                  <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
                  </property>
                  <property name="buddy">
                   <cstring>spinBoxOptionsDisplayThicknessUserFeature</cstring>
@@ -4744,6 +4799,9 @@ Does not apply to lines originating from airports or navaids.</string>
                  <property name="text">
                   <string>&amp;Compass rose:</string>
                  </property>
+                 <property name="wordWrap">
+                  <bool>true</bool>
+                 </property>
                  <property name="buddy">
                   <cstring>spinBoxOptionsDisplayThicknessCompassRose</cstring>
                  </property>
@@ -4772,6 +4830,12 @@ Does not apply to lines originating from airports or navaids.</string>
                  </property>
                  <property name="alignment">
                   <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+                 </property>
+                 <property name="wordWrap">
+                  <bool>true</bool>
+                 </property>
+                 <property name="textInteractionFlags">
+                  <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
                  </property>
                  <property name="buddy">
                   <cstring>spinBoxOptionsDisplayThicknessMeasurement</cstring>
@@ -4968,6 +5032,22 @@ Do not show this information publicly in forums on screenshots.&lt;/b&gt;&lt;/p&
              </item>
             </layout>
            </item>
+           <item>
+            <widget class="QLabel" name="label_23">
+             <property name="text">
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Change the path to map additional map themes on page &amp;quot;Cache and Files&amp;quot;.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             </property>
+             <property name="wordWrap">
+              <bool>true</bool>
+             </property>
+             <property name="margin">
+              <number>10</number>
+             </property>
+             <property name="textInteractionFlags">
+              <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
+             </property>
+            </widget>
+           </item>
           </layout>
          </widget>
         </item>
@@ -4985,7 +5065,7 @@ Do not show this information publicly in forums on screenshots.&lt;/b&gt;&lt;/p&
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>610</width>
+             <width>614</width>
              <height>459</height>
             </rect>
            </property>
@@ -5422,9 +5502,9 @@ airspace filename has to match the callsign of the online center.</string>
            <property name="geometry">
             <rect>
              <x>0</x>
-             <y>-45</y>
-             <width>596</width>
-             <height>504</height>
+             <y>0</y>
+             <width>600</width>
+             <height>626</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_25">
@@ -5512,6 +5592,12 @@ This is also used for &quot;Center map on aircraft and next flight plan waypoint
                 <widget class="QLabel" name="labelOptionsSimUpdateBox">
                  <property name="text">
                   <string>&amp;Simulator aircraft scroll box size (percent of map window size):</string>
+                 </property>
+                 <property name="wordWrap">
+                  <bool>true</bool>
+                 </property>
+                 <property name="textInteractionFlags">
+                  <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
                  </property>
                  <property name="buddy">
                   <cstring>spinBoxOptionsSimUpdateBox</cstring>
@@ -5818,6 +5904,22 @@ put the active leg back on top after the given timeout while flying.</string>
              </widget>
             </item>
             <item>
+             <widget class="QLabel" name="label_25">
+              <property name="text">
+               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Click the help button to read more about aircraft movement in the user manual. The options on this page aim to minimize needed interactions with Little Navmap while flying but might be confusion for new users.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              </property>
+              <property name="wordWrap">
+               <bool>true</bool>
+              </property>
+              <property name="margin">
+               <number>10</number>
+              </property>
+              <property name="textInteractionFlags">
+               <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
+              </property>
+             </widget>
+            </item>
+            <item>
              <spacer name="verticalSpacer_10">
               <property name="orientation">
                <enum>Qt::Vertical</enum>
@@ -5848,7 +5950,7 @@ put the active leg back on top after the given timeout while flying.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>610</width>
+             <width>614</width>
              <height>459</height>
             </rect>
            </property>
@@ -5940,6 +6042,12 @@ South / North: Same as North / South but reverses odd and even.</string>
                  <property name="text">
                   <string>&amp;Minimum altitude buffer to ground in elevation profile (red line):</string>
                  </property>
+                 <property name="wordWrap">
+                  <bool>true</bool>
+                 </property>
+                 <property name="textInteractionFlags">
+                  <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
+                 </property>
                  <property name="buddy">
                   <cstring>spinBoxOptionsRouteGroundBuffer</cstring>
                  </property>
@@ -6002,8 +6110,8 @@ Note that this value does not affect flight plan calculation or saving of flight
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>596</width>
-             <height>518</height>
+             <width>600</width>
+             <height>558</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_27">
@@ -6038,6 +6146,9 @@ Note that this value does not affect flight plan calculation or saving of flight
                  </property>
                  <property name="wordWrap">
                   <bool>true</bool>
+                 </property>
+                 <property name="margin">
+                  <number>10</number>
                  </property>
                  <property name="textInteractionFlags">
                   <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
@@ -6131,6 +6242,9 @@ Note that this value does not affect flight plan calculation or saving of flight
                  </property>
                  <property name="wordWrap">
                   <bool>true</bool>
+                 </property>
+                 <property name="margin">
+                  <number>10</number>
                  </property>
                  <property name="textInteractionFlags">
                   <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
@@ -6237,7 +6351,7 @@ Note that this value does not affect flight plan calculation or saving of flight
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>596</width>
+             <width>600</width>
              <height>727</height>
             </rect>
            </property>
@@ -6803,7 +6917,7 @@ Entering a wrong value will cause errors when downloading weather reports.</stri
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>610</width>
+             <width>614</width>
              <height>459</height>
             </rect>
            </property>
@@ -7105,7 +7219,7 @@ Entering a wrong value will cause errors when downloading weather reports.</stri
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>610</width>
+             <width>614</width>
              <height>459</height>
             </rect>
            </property>
@@ -7135,6 +7249,12 @@ Entering a wrong value will cause errors when downloading weather reports.</stri
                 <widget class="QLabel" name="labelOptionsWebDocroot">
                  <property name="text">
                   <string>&amp;Document root directory:</string>
+                 </property>
+                 <property name="wordWrap">
+                  <bool>true</bool>
+                 </property>
+                 <property name="textInteractionFlags">
+                  <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
                  </property>
                  <property name="buddy">
                   <cstring>lineEditOptionsWebDocroot</cstring>
@@ -7292,8 +7412,8 @@ Little Navmap GIT repository.
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>596</width>
-             <height>618</height>
+             <width>600</width>
+             <height>638</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_30">
@@ -7325,13 +7445,6 @@ Little Navmap GIT repository.
                  </property>
                 </widget>
                </item>
-               <item row="2" column="0" colspan="2">
-                <widget class="QLabel" name="labelOptionsCacheDiskExpiration">
-                 <property name="text">
-                  <string>Items in the disk cache expire after two weeks.</string>
-                 </property>
-                </widget>
-               </item>
                <item row="0" column="1">
                 <widget class="QSpinBox" name="spinBoxOptionsCacheMemorySize">
                  <property name="showGroupSeparator" stdset="0">
@@ -7358,6 +7471,9 @@ Little Navmap GIT repository.
                 <widget class="QLabel" name="labelOptionsCacheDisk">
                  <property name="text">
                   <string>Maximum size of &amp;disk cache:</string>
+                 </property>
+                 <property name="wordWrap">
+                  <bool>true</bool>
                  </property>
                  <property name="buddy">
                   <cstring>spinBoxOptionsCacheDiskSize</cstring>
@@ -7391,6 +7507,9 @@ Little Navmap GIT repository.
                  <property name="text">
                   <string>&amp;Maximum size of memory cache:</string>
                  </property>
+                 <property name="wordWrap">
+                  <bool>true</bool>
+                 </property>
                  <property name="buddy">
                   <cstring>spinBoxOptionsCacheMemorySize</cstring>
                  </property>
@@ -7403,6 +7522,22 @@ Little Navmap GIT repository.
                  </property>
                  <property name="text">
                   <string>&amp;Show Disk Cache in File Manager</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="2" column="0" colspan="3">
+                <widget class="QLabel" name="labelOptionsCacheDiskExpiration">
+                 <property name="text">
+                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Items in the disk cache expire after two weeks as a standard. The actual time depends on the used map theme.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                 </property>
+                 <property name="wordWrap">
+                  <bool>true</bool>
+                 </property>
+                 <property name="margin">
+                  <number>10</number>
+                 </property>
+                 <property name="textInteractionFlags">
+                  <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
                  </property>
                 </widget>
                </item>
@@ -7655,7 +7790,7 @@ Source data has many errors.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>596</width>
+             <width>600</width>
              <height>490</height>
             </rect>
            </property>
