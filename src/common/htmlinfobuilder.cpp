@@ -3861,7 +3861,11 @@ void HtmlInfoBuilder::aircraftTrailText(const AircraftTrailSegment& trailSegment
   html.tableEnd();
 
 #ifdef DEBUG_INFORMATION
-  html.small("[Index]" % QString::number(trailSegment.index));
+  html.small("[Index]" % QString::number(trailSegment.index) %
+             " [length]" % Unit::distMeter(static_cast<float>(trailSegment.length)) %
+             " [Time]" % QString::number(trailSegment.timestampPos) %
+             " [alt diff]" % QString::number(trailSegment.from.getAltitude() - trailSegment.to.getAltitude())
+             );
 #endif
 
   if(info)

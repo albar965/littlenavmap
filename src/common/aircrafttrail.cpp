@@ -106,16 +106,17 @@ AircraftTrail::AircraftTrail()
   lastUserAircraft = new atools::fs::sc::SimConnectUserAircraft;
 
   // Load settings for trail point density on ground ===========================
+  // All conditions are combined using OR
   atools::settings::Settings& settings = atools::settings::Settings::instance();
 
   // Minimum distance between points [meter] = GS [kts] * minGroundSpeedToDistFactor
-  minGroundSpeedToDistFactor = settings.getAndStoreValue(lnm::SETTINGS_AIRCRAFT_TRAIL + "MinGroundSpeedToDistanceFactor", 1.).toFloat();
+  minGroundSpeedToDistFactor = settings.getAndStoreValue(lnm::SETTINGS_AIRCRAFT_TRAIL + "MinGroundSpeedToDistanceFactor", 4.).toFloat();
 
   // Minimum for the result from above
-  minGroundDist = settings.getAndStoreValue(lnm::SETTINGS_AIRCRAFT_TRAIL + "MinGroundDistanceMeter", 20.).toFloat();
+  minGroundDist = settings.getAndStoreValue(lnm::SETTINGS_AIRCRAFT_TRAIL + "MinGroundDistanceMeter", 40.).toFloat();
 
   // Force point after time passed
-  maxGroundTimeMs = settings.getAndStoreValue(lnm::SETTINGS_AIRCRAFT_TRAIL + "MaxGroundTimeMs", 4000).toInt();
+  maxGroundTimeMs = settings.getAndStoreValue(lnm::SETTINGS_AIRCRAFT_TRAIL + "MaxGroundTimeMs", 10000).toInt();
 
   // Load settings for trail point density when flying ===========================
   // Minimum distance between points [meter] = GS [kts] * minFlyingSpeedToDistFactor
@@ -125,7 +126,7 @@ AircraftTrail::AircraftTrail()
   minFlyingDist = settings.getAndStoreValue(lnm::SETTINGS_AIRCRAFT_TRAIL + "MinFlyingDistanceMeter", 10000.).toFloat();
 
   // Force point after time passed
-  maxFlyingTimeMs = settings.getAndStoreValue(lnm::SETTINGS_AIRCRAFT_TRAIL + "MaxFlyingTimeMs", 15000).toInt();
+  maxFlyingTimeMs = settings.getAndStoreValue(lnm::SETTINGS_AIRCRAFT_TRAIL + "MaxFlyingTimeMs", 30000).toInt();
 
   // Changes in aircraft parameters trigger a new point
   maxHeadingDiffDeg = settings.getAndStoreValue(lnm::SETTINGS_AIRCRAFT_TRAIL + "MaxHeadingDiffDeg", 5.).toInt();
