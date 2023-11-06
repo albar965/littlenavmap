@@ -677,12 +677,12 @@ QStringList RouteLeg::buildLegText(float distance, float courseMag, float course
 
 float RouteLeg::getGeometryEndCourse() const
 {
-  return geometry.isPoint() ? getCourseEndTrue() : opposedCourseDeg(geometry.getEndCourse());
+  return geometry.isPoint() ? map::INVALID_COURSE_VALUE : opposedCourseDeg(geometry.getEndCourse());
 }
 
 float RouteLeg::getGeometryStartCourse() const
 {
-  return geometry.isPoint() ? getCourseStartTrue() : geometry.getStartCourse();
+  return geometry.isPoint() ? map::INVALID_COURSE_VALUE : geometry.getStartCourse();
 }
 
 float RouteLeg::getCourseStartMag() const

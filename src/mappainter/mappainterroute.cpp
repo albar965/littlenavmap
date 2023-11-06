@@ -954,6 +954,7 @@ void MapPainterRoute::paintProcedure(proc::MapProcedureLeg& lastLegPoint, QSet<m
   }
 
   // Texts and navaid icons ====================================================
+  // Drawn from destination to departure/aircraft
   for(int i = legs.size() - 1; i >= 0; i--)
   {
     // No text labels for passed points but always for preview
@@ -980,12 +981,11 @@ void MapPainterRoute::paintProcedure(proc::MapProcedureLeg& lastLegPoint, QSet<m
 
     if(drawPoint)
       paintProcedurePoint(lastLegPoint, idMap, legs, i, legsRouteOffset, preview, previewAll, drawText);
-  }
+  } // for(int i = legs.size() - 1; i >= 0; i--)
 }
 
-void MapPainterRoute::paintProcedureSegment(const proc::MapProcedureLegs& legs,
-                                            int index, QVector<QLineF>& lastLines, QVector<DrawText> *drawTextLines,
-                                            bool noText, bool previewAll, bool draw)
+void MapPainterRoute::paintProcedureSegment(const proc::MapProcedureLegs& legs, int index, QVector<QLineF>& lastLines,
+                                            QVector<DrawText> *drawTextLines, bool noText, bool previewAll, bool draw)
 {
   const static QMargins MARGINS(50, 50, 50, 50);
   const proc::MapProcedureLeg& leg = legs.at(index);

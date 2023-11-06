@@ -97,6 +97,8 @@ private:
   /* Draw a full procedure */
   void paintProcedure(proc::MapProcedureLeg& lastLegPoint, QSet<map::MapRef>& idMap, const proc::MapProcedureLegs& legs,
                       int legsRouteOffset, const QColor& color, bool preview, bool previewAll);
+
+  /* Draw line and collect information for text along lines. */
   void paintProcedureSegment(const proc::MapProcedureLegs& legs, int index, QVector<QLineF>& lastLines, QVector<DrawText> *drawTextLines,
                              bool noText, bool previewAll, bool draw);
 
