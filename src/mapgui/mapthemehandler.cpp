@@ -62,7 +62,7 @@ void MapThemeHandler::loadThemes()
   themes.clear();
   themeIdToIndexMap.clear();
 
-  QSet<QString> ids, sourceDirs;
+  QHash<QString, MapTheme> ids, sourceDirs;
   QStringList errors;
   for(const QFileInfo& dgml : findMapThemes({getMapThemeDefaultDir(), getMapThemeUserDir()}))
   {
@@ -72,18 +72,40 @@ void MapThemeHandler::loadThemes()
     {
       if(ids.contains(theme.theme))
       {
-        errors.append(tr("Duplicate theme id \"%1\" in element \"&lt;theme&gt;\".<br/>"
-                         "File \"%2\".<br/>"
-                         "Theme ids have to be unique across all map themes.").arg(theme.theme).arg(theme.dgmlFilepath));
+        MapTheme otherTheme = ids.value(theme.theme);
+        errors.append(tr("Duplicate theme id \"%1\" in element \"&lt;theme&gt;\".<br/><br/>"
+                         "File with first occurence<br/>\"%2\".<br/><br/>"
+                         "File with second occurence being ignored<br/>\"%3\".<br/><br/>"
+                         "Theme ids have to be unique across all map themes.").
+                      arg(theme.theme).arg(otherTheme.dgmlFilepath).arg(theme.dgmlFilepath));
         continue;
       }
 
-      if(theme.online && sourceDirs.intersects(QSet<QString>(theme.sourceDirs.begin(), theme.sourceDirs.end())))
+      // Present source dirs loaded so far
+      QSet<QString> sourceDirKeys(sourceDirs.keyBegin(), sourceDirs.keyEnd());
+
+      // Test for overlapping source dirs with this theme
+      QSet<QString> conflictSourceDirKeys = sourceDirKeys.intersect(QSet<QString>(theme.sourceDirs.begin(), theme.sourceDirs.end()));
+
+      if(theme.online && !conflictSourceDirKeys.isEmpty())
       {
-        errors.append(tr("Duplicate source directory \"%1\" in element \"&lt;sourcedir&gt;\".<br/>"
-                         "File \"%2\".<br/>"
+        // Get a list of themes using the same source dirs
+        QList<MapTheme> otherThemes;
+        for(auto it = conflictSourceDirKeys.begin(); it != conflictSourceDirKeys.end(); ++it)
+          otherThemes.append(sourceDirs.values(*it));
+
+        // Get file paths for DGML
+        QStringList otherDgmlFilepaths;
+        for(const MapTheme& t : otherThemes)
+          otherDgmlFilepaths.append(t.dgmlFilepath);
+        otherDgmlFilepaths.removeAll(QString());
+        otherDgmlFilepaths.removeDuplicates();
+
+        errors.append(tr("Duplicate source directory or directories \"%1\" in element \"&lt;sourcedir&gt;\".<br/><br/>"
+                         "File with first occurence<br/>\"%2\".<br/><br/>"
+                         "File(s) with second occurence being ignored<br/>\"%3\".<br/><br/>"
                          "Source directories are used to cache map tiles and have to be unique across all map themes.").
-                      arg(theme.sourceDirs.join(tr(("/")))).arg(theme.dgmlFilepath));
+                      arg(theme.sourceDirs.join(tr("\", \""))).arg(otherDgmlFilepaths.join(tr("\", \""))).arg(theme.dgmlFilepath));
         continue;
       }
 
@@ -109,9 +131,9 @@ void MapThemeHandler::loadThemes()
         continue;
       }
 
-      ids.insert(theme.theme);
+      ids.insert(theme.theme, theme);
       for(const QString& dir : qAsConst(theme.sourceDirs))
-        sourceDirs.insert(dir);
+        sourceDirs.insert(dir, theme);
 
       qInfo() << Q_FUNC_INFO << "Found" << theme.theme << theme.name;
 
@@ -134,8 +156,8 @@ void MapThemeHandler::loadThemes()
     QMessageBox::warning(mainWindow, QApplication::applicationName(),
                          tr("<p>Found errors in map %2:</p>"
                               "<ul><li>%1</li></ul>"
-                                "<p>Ignoring %2.</p>").
-                         arg(errors.join("</li><li>")).arg(errors.size() == 1 ? tr("this map theme") : tr("these map themes")));
+                                "<p>Ignoring duplicate or incorrect %2.</p>").
+                         arg(errors.join("</li><li>")).arg(errors.size() == 1 ? tr("map theme") : tr("map themes")));
   }
 
   // Sort themes first by online/offline status and then case insensitive by name
