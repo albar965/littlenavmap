@@ -183,6 +183,30 @@ QColor routeInvalidTableColorDark(Qt::red);
 QColor nextWaypointColor(255, 100, 255);
 QColor nextWaypointColorDark(150, 20, 150);
 
+// Surface colors for runways, aprons and taxiways
+static QColor surfaceConcrete("#888888");
+static QColor surfaceGrass("#00a000");
+static QColor surfaceWater("#808585ff");
+static QColor surfaceAsphalt("#707070");
+static QColor surfaceCement("#a0a0a0");
+static QColor surfaceClay("#DEB887");
+static QColor surfaceSnow("#dbdbdb");
+static QColor surfaceIce("#d0d0ff");
+static QColor surfaceDirt("#CD853F");
+static QColor surfaceCoral("#FFE4C4");
+static QColor surfaceGravel("#c0c0c0");
+static QColor surfaceOilTreated("#2F4F4F");
+static QColor surfaceSteelMats("#a0f0ff");
+static QColor surfaceBituminous("#505050");
+static QColor surfaceBrick("#A0522D");
+static QColor surfaceMacadam("#c8c8c8");
+static QColor surfacePlanks("#8B4513");
+static QColor surfaceSand("#F4A460");
+static QColor surfaceShale("#F5DEB3");
+static QColor surfaceTarmac("#909090");
+static QColor surfaceUnknown("#ffffff");
+static QColor surfaceTransparent("#e0e0e0");
+
 /* Alternating colors */
 static QColor rowBgColor;
 static QColor rowAltBgColor;
@@ -337,74 +361,51 @@ const QIcon& iconForParkingType(const QString& type)
 
 const QColor& colorForSurface(const QString& surface)
 {
-  static const QColor concrete("#888888");
-  static const QColor grass("#00a000");
-  static const QColor water("#808585ff");
-  static const QColor asphalt("#707070");
-  static const QColor cement("#a0a0a0");
-  static const QColor clay("#DEB887");
-  static const QColor snow("#dbdbdb");
-  static const QColor ice("#d0d0ff");
-  static const QColor dirt("#CD853F");
-  static const QColor coral("#FFE4C4");
-  static const QColor gravel("#c0c0c0");
-  static const QColor oilTreated("#2F4F4F");
-  static const QColor steelMats("#a0f0ff");
-  static const QColor bituminous("#505050");
-  static const QColor brick("#A0522D");
-  static const QColor macadam("#c8c8c8");
-  static const QColor planks("#8B4513");
-  static const QColor sand("#F4A460");
-  static const QColor shale("#F5DEB3");
-  static const QColor tarmac("#909090");
-  static const QColor unknown("#ffffff");
-  static const QColor transparent("#80808080");
-
   if(surface == "A")
-    return asphalt;
+    return surfaceAsphalt;
   else if(surface == "G")
-    return grass;
+    return surfaceGrass;
   else if(surface == "D")
-    return dirt;
+    return surfaceDirt;
   else if(surface == "C")
-    return concrete;
+    return surfaceConcrete;
   else if(surface == "GR")
-    return gravel;
+    return surfaceGravel;
   else if(surface == "W")
-    return water;
+    return surfaceWater;
   else if(surface == "CE")
-    return cement;
+    return surfaceCement;
   else if(surface == "CL")
-    return clay;
+    return surfaceClay;
   else if(surface == "SN")
-    return snow;
+    return surfaceSnow;
   else if(surface == "I")
-    return ice;
+    return surfaceIce;
   else if(surface == "CR")
-    return coral;
+    return surfaceCoral;
   else if(surface == "OT")
-    return oilTreated;
+    return surfaceOilTreated;
   else if(surface == "SM")
-    return steelMats;
+    return surfaceSteelMats;
   else if(surface == "B")
-    return bituminous;
+    return surfaceBituminous;
   else if(surface == "BR")
-    return brick;
+    return surfaceBrick;
   else if(surface == "M")
-    return macadam;
+    return surfaceMacadam;
   else if(surface == "PL")
-    return planks;
+    return surfacePlanks;
   else if(surface == "S")
-    return sand;
+    return surfaceSand;
   else if(surface == "SH")
-    return shale;
+    return surfaceShale;
   else if(surface == "T")
-    return tarmac;
+    return surfaceTarmac;
   else if(surface == "TR")
-    return transparent;
+    return surfaceTransparent;
 
   // else if(surface == "NONE" || surface == "UNKNOWN" || surface == "INVALID") || TR
-  return unknown;
+  return surfaceUnknown;
 }
 
 const QPen aircraftTrailPenOuter(float size)
@@ -846,6 +847,31 @@ void syncColors()
   syncColor(colorSettings, "ProcedurePointFlyoverColor", routeProcedurePointFlyoverColor);
   syncColor(colorSettings, "UserPointColor", routeUserPointColor);
   syncColor(colorSettings, "InvalidPointColor", routeInvalidPointColor);
+  colorSettings.endGroup();
+
+  colorSettings.beginGroup("Surface");
+  syncColorArgb(colorSettings, "Concrete", surfaceConcrete);
+  syncColorArgb(colorSettings, "Grass", surfaceGrass);
+  syncColorArgb(colorSettings, "Water", surfaceWater);
+  syncColorArgb(colorSettings, "Asphalt", surfaceAsphalt);
+  syncColorArgb(colorSettings, "Cement", surfaceCement);
+  syncColorArgb(colorSettings, "Clay", surfaceClay);
+  syncColorArgb(colorSettings, "Snow", surfaceSnow);
+  syncColorArgb(colorSettings, "Ice", surfaceIce);
+  syncColorArgb(colorSettings, "Dirt", surfaceDirt);
+  syncColorArgb(colorSettings, "Coral", surfaceCoral);
+  syncColorArgb(colorSettings, "Gravel", surfaceGravel);
+  syncColorArgb(colorSettings, "OilTreated", surfaceOilTreated);
+  syncColorArgb(colorSettings, "SteelMats", surfaceSteelMats);
+  syncColorArgb(colorSettings, "Bituminous", surfaceBituminous);
+  syncColorArgb(colorSettings, "Brick", surfaceBrick);
+  syncColorArgb(colorSettings, "Macadam", surfaceMacadam);
+  syncColorArgb(colorSettings, "Planks", surfacePlanks);
+  syncColorArgb(colorSettings, "Sand", surfaceSand);
+  syncColorArgb(colorSettings, "Shale", surfaceShale);
+  syncColorArgb(colorSettings, "Tarmac", surfaceTarmac);
+  syncColorArgb(colorSettings, "Unknown", surfaceUnknown);
+  syncColorArgb(colorSettings, "Transparent", surfaceTransparent);
   colorSettings.endGroup();
 
   // Sync airspace colors ============================================

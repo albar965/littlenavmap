@@ -453,8 +453,7 @@ void MapPainterAirport::drawAirportDiagram(const map::MapAirport& airport)
       const MapTaxiPath& taxipath = taxipaths->at(i);
       if(!taxipath.closed && taxipath.drawSurface && pathThickness.at(i) > 0)
       {
-        painter->setPen(QPen(mapcolors::colorForSurface(taxipath.surface),
-                             pathThickness.at(i), Qt::SolidLine, Qt::RoundCap));
+        painter->setPen(QPen(mapcolors::colorForSurface(taxipath.surface), pathThickness.at(i), Qt::SolidLine, Qt::RoundCap));
         painter->drawLine(startPts.at(i), endPts.at(i));
       }
     }
