@@ -373,6 +373,12 @@ struct MapProcedureLeg
     return type == proc::INITIAL_FIX || type == proc::CUSTOM_APP_START;
   }
 
+  /* Used to detect overlapping transition and approach legs */
+  bool isAlmostEqual(const proc::MapProcedureLeg& other) const
+  {
+    return isValid() && fixPos.almostEqual(other.fixPos) && fixIdent == other.fixIdent && fixRegion == other.fixRegion;
+  }
+
   /* Do not display distance e.g. for course to altitude */
   bool noDistanceDisplay() const;
 

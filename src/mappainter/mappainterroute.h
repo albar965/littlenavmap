@@ -95,17 +95,21 @@ private:
   void paintUserpoint(float x, float y, const map::MapUserpointRoute& obj, bool preview);
 
   /* Draw a full procedure */
-  void paintProcedure(proc::MapProcedureLeg& lastLegPoint, QSet<map::MapRef>& idMap, const proc::MapProcedureLegs& legs,
-                      int legsRouteOffset, const QColor& color, bool preview, bool previewAll);
+  void paintProcedure(QSet<map::MapRef>& idMap,
+                      const proc::MapProcedureLegs& legs, int legsRouteOffset, const QColor& color, bool preview, bool previewAll);
 
-  /* Draw line and collect information for text along lines. */
+  /* Draw line and collect information for text along lines.  Called from destination to departure/aircraft */
   void paintProcedureSegment(const proc::MapProcedureLegs& legs, int index, QVector<QLineF>& lastLines, QVector<DrawText> *drawTextLines,
                              bool noText, bool previewAll, bool draw);
 
+  /* Draw procedure position including text label and icon */
+  void paintProcedurePoint(QSet<map::MapRef>& idMap,
+                           const proc::MapProcedureLegs& legs, int index, int routeIndex, bool preview, bool previewAll,
+                           bool drawTextFlag);
+
   /* Draw procedure point like manual */
   void paintProcedurePoint(float x, float y, bool preview);
-  void paintProcedurePoint(proc::MapProcedureLeg& lastLegPoint, QSet<map::MapRef>& idMap, const proc::MapProcedureLegs& legs,
-                           int index, int legsRouteOffset, bool preview, bool previewAll, bool drawTextFlag);
+
   QLineF paintProcedureTurn(QVector<QLineF>& lastLines, QLineF line, const proc::MapProcedureLeg& leg, QPainter *painter,
                             const QPointF& intersectPoint, bool draw);
   void paintProcedureBow(const proc::MapProcedureLeg *prevLeg, QVector<QLineF>& lastLines, QPainter *painter, QLineF line,
@@ -152,7 +156,7 @@ private:
   float sizeForRouteType(const MapLayer *layer, const RouteLeg& leg);
 
   /* Get text placement sector based on inbound and outbound leg courses */
-  textatt::TextAttributes textPlacementAtts(int curIndex);
+  textatt::TextAttributes textPlacementAttributes(int routeIndex);
 
   /* Avoid drawing duplicate navaids from flight plan and preview */
   QSet<map::MapRef> routeProcIdMap;

@@ -649,6 +649,11 @@ public:
    */
   QString getProcedureLegText(proc::MapProcedureTypes mapType, bool includeRunway, bool missedAsApproach, bool transitionAsProcedure) const;
 
+  const proc::MapProcedureLeg& getProcedureLegAt(int i) const
+  {
+    return getLegAt(i).getProcedureLeg();
+  }
+
   /* Assign index and pointer to flight plan for all objects and also update all procedure and alternate offsets */
   void updateIndicesAndOffsets();
 
