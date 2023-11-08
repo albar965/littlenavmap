@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -54,8 +54,8 @@ public:
 
   void dialogToRecordInt(QComboBox *widget, const QString& name, QCheckBox *checkBox);
 
-  void dialogToRecordStr(QPlainTextEdit* widget, const QString& name, QCheckBox *checkBox);
-  void dialogToRecordDateTime(QDateTimeEdit *widget, const QString& name, QCheckBox *checkBox = nullptr);
+  void dialogToRecordStr(QPlainTextEdit *widget, const QString& name, QCheckBox *checkBox);
+  void dialogToRecordDateTime(QDateTimeEdit *widget, const QString& name, QCheckBox *checkBox, bool localTime);
 
 private:
   /* true if value should be set */

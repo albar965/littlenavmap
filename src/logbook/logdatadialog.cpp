@@ -522,10 +522,10 @@ void LogdataDialog::dialogToRecord()
   helper.dialogToRecordInt(ui->spinBoxFlightDistanceFlown, "distance_flown", nullptr, Unit::distNmF); // double
 
   // Date and time ========================================================
-  helper.dialogToRecordDateTime(ui->dateTimeEditDepartureDateTimeReal, "departure_time"); // varchar(100)
-  helper.dialogToRecordDateTime(ui->dateTimeEditDepartureDateTimeSim, "departure_time_sim"); // varchar(100)
-  helper.dialogToRecordDateTime(ui->dateTimeEditDestinationDateTimeReal, "destination_time"); // varchar(100)
-  helper.dialogToRecordDateTime(ui->dateTimeEditDestinationDateTimeSim, "destination_time_sim"); // varchar(100)
+  helper.dialogToRecordDateTime(ui->dateTimeEditDepartureDateTimeReal, "departure_time", nullptr, true /* local */); // varchar(100)
+  helper.dialogToRecordDateTime(ui->dateTimeEditDepartureDateTimeSim, "departure_time_sim", nullptr, false /* local */); // varchar(100)
+  helper.dialogToRecordDateTime(ui->dateTimeEditDestinationDateTimeReal, "destination_time", nullptr, true /* local */); // varchar(100)
+  helper.dialogToRecordDateTime(ui->dateTimeEditDestinationDateTimeSim, "destination_time_sim", nullptr, false /* local */); // varchar(100)
 
   // Runways ============================================================
   helper.dialogToRecordStr(ui->lineEditDepartureRunway, "departure_runway");

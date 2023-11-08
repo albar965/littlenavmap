@@ -66,7 +66,7 @@ LogdataSearch::LogdataSearch(QMainWindow *parent, QTableView *tableView, si::Tab
   // Columns that are hidden are also needed to fill MapAirport object and for the icon delegate
   columns->
   append(Column("logbook_id").hidden()).
-  append(Column("departure_time", tr("Departure\nReal Time")).defaultSort(true).defaultSortOrder(Qt::DescendingOrder)).
+  append(Column("departure_time", tr("Departure\nReal Local Time")).defaultSort(true).defaultSortOrder(Qt::DescendingOrder)).
   append(Column("departure_time_sim", tr("Departure\nSim. Time UTC"))).
   append(Column("departure_ident", ui->lineEditLogdataDeparture, tr("Departure\nIdent")).filterByBuilder()).
   append(Column("departure_name", tr("Departure"))).
@@ -78,7 +78,7 @@ LogdataSearch::LogdataSearch(QMainWindow *parent, QTableView *tableView, si::Tab
   append(Column("travel_time_sim", tr("Travel\nSim. Time")).
          sqlFunc("strftime('%s', destination_time_sim) - strftime('%s', departure_time_sim)")).
 
-  append(Column("destination_time", tr("Destination\nReal Time"))).
+  append(Column("destination_time", tr("Destination\nReal Local Time"))).
   append(Column("destination_time_sim", tr("Destination\nSim. Time UTC"))).
   append(Column("destination_ident", ui->lineEditLogdataDestination, tr("Destination\nIdent")).filterByBuilder()).
   append(Column("destination_name", tr("Destination"))).

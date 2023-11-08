@@ -512,7 +512,7 @@ void UserdataController::addUserpointInternalAddon(const atools::geo::Pos& pos, 
 
   lastAddedRecord->setEmptyStringsToNull();
 
-  lastAddedRecord->appendFieldAndValue("last_edit_timestamp", QDateTime::currentDateTime());
+  lastAddedRecord->appendFieldAndValue("last_edit_timestamp", atools::convertToIsoWithOffset(QDateTime::currentDateTime()));
 
   if(pos.isValid())
   {

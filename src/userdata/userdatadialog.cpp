@@ -347,7 +347,7 @@ void UserdataDialog::dialogToRecord()
   helper.dialogToRecordStr(ui->plainTextEditUserdataDescription, "description", ui->checkBoxUserdataDescription);
   helper.dialogToRecordStr(ui->lineEditUserdataTags, "tags", ui->checkBoxUserdataTags);
 
-  record->setValue("last_edit_timestamp", QDateTime::currentDateTime());
+  record->setValue("last_edit_timestamp", atools::convertToIsoWithOffset(QDateTime::currentDateTime()));
 
   helper.dialogToRecordInt(ui->spinBoxUserdataVisible, "visible_from", ui->checkBoxUserdataVisible, Unit::distNmF);
   helper.dialogToRecordInt(ui->spinBoxUserdataAltitude, "altitude", ui->checkBoxUserdataAltitude, Unit::altFeetF);
