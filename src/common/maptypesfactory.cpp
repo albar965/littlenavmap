@@ -383,8 +383,8 @@ void MapTypesFactory::fillLogbookEntry(const atools::sql::SqlRecord& rec, MapLog
       obj.travelTimeSimHours = 0.f;
   }
 
-  obj.perfFile = rec.valueStr("performance_file");
-  obj.routeFile = rec.valueStr("flightplan_file");
+  obj.performanceFile = atools::nativeCleanPath(rec.valueStr("performance_file"));
+  obj.routeFile = atools::nativeCleanPath(rec.valueStr("flightplan_file"));
 
   if(obj.departurePos.isValid() && obj.destinationPos.isValid())
     obj.position = Line(obj.departurePos, obj.destinationPos).boundingRect().getCenter();

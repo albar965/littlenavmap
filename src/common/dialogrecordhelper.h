@@ -57,6 +57,9 @@ public:
   void dialogToRecordStr(QPlainTextEdit *widget, const QString& name, QCheckBox *checkBox);
   void dialogToRecordDateTime(QDateTimeEdit *widget, const QString& name, QCheckBox *checkBox, bool localTime);
 
+  /* Converts to native path */
+  void dialogToRecordPath(QLineEdit *widget, const QString& name, QCheckBox *checkBox);
+
 private:
   /* true if value should be set */
   bool isSetValue(QCheckBox *checkBox);

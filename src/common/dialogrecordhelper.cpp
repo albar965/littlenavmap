@@ -62,6 +62,16 @@ void DialogRecordHelper::dialogToRecordStr(QLineEdit *widget, const QString& nam
     record->remove(name);
 }
 
+void DialogRecordHelper::dialogToRecordPath(QLineEdit *widget, const QString& name, QCheckBox *checkBox)
+{
+  if(isSetValue(checkBox))
+    record->setValue(name, atools::nativeCleanPath(widget->text()));
+
+  if(isRemoveValue(checkBox))
+    // do not set to null but remove completely
+    record->remove(name);
+}
+
 void DialogRecordHelper::dialogToRecordStr(QPlainTextEdit *widget, const QString& name, QCheckBox *checkBox)
 {
   if(isSetValue(checkBox))

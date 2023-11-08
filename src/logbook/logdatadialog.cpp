@@ -147,7 +147,7 @@ LogdataDialog::LogdataDialog(QWidget *parent, ld::LogdataDialogMode mode)
   });
 
   // Show checkboxes when editing more than one entry
-  for(QCheckBox *checkBox : editCheckBoxList)
+  for(QCheckBox *checkBox : qAsConst(editCheckBoxList))
   {
     checkBox->setVisible(showCheckbox);
     connect(checkBox, &QCheckBox::toggled, this, &LogdataDialog::updateWidgets);
@@ -240,7 +240,7 @@ void LogdataDialog::resetClicked()
   if(editMode == ld::EDIT_MULTIPLE)
   {
     // Reset checkboxes to unchecked
-    for(QCheckBox *checkBox : editCheckBoxList)
+    for(QCheckBox *checkBox : qAsConst(editCheckBoxList))
       checkBox->setChecked(false);
   }
 
@@ -445,8 +445,8 @@ void LogdataDialog::recordToDialog()
   ui->lineEditFlightNumber->setText(record->valueStr("flightplan_number")); // varchar(100) collate nocase
 
   // Files =====================================
-  ui->lineEditFlightPlanFile->setText(record->valueStr("flightplan_file")); // varchar(1024) collate nocase
-  ui->lineEditFlightPerfFile->setText(record->valueStr("performance_file")); // varchar(1024) collate nocase
+  ui->lineEditFlightPlanFile->setText(atools::nativeCleanPath(record->valueStr("flightplan_file"))); // varchar(1024) collate nocase
+  ui->lineEditFlightPerfFile->setText(atools::nativeCleanPath(record->valueStr("performance_file"))); // varchar(1024) collate nocase
 
   ui->spinBoxFlightCruiseAltitude->setValue(roundToInt(Unit::altFeetF(record->valueFloat("flightplan_cruise_altitude")))); // double
 
@@ -505,8 +505,8 @@ void LogdataDialog::dialogToRecord()
   helper.dialogToRecordStr(ui->lineEditFlightNumber, "flightplan_number", ui->checkBoxFlightNumber);
 
   // Files ========================================================
-  helper.dialogToRecordStr(ui->lineEditFlightPerfFile, "performance_file", ui->checkBoxFlightPerfFile);
-  helper.dialogToRecordStr(ui->lineEditFlightPlanFile, "flightplan_file", ui->checkBoxFlightPlanFile);
+  helper.dialogToRecordPath(ui->lineEditFlightPerfFile, "performance_file", ui->checkBoxFlightPerfFile);
+  helper.dialogToRecordPath(ui->lineEditFlightPlanFile, "flightplan_file", ui->checkBoxFlightPlanFile);
 
   // Fuel and weight ========================================================
   int fuelAsVolume = ui->comboBoxFuelUnits->currentIndex();
@@ -662,7 +662,7 @@ void LogdataDialog::updateWidgets()
     ui->comboBoxFuelType->setEnabled(ui->checkBoxFuelType->isChecked());
 
     bool enable = false;
-    for(QCheckBox *checkBox : editCheckBoxList)
+    for(const QCheckBox *checkBox : qAsConst(editCheckBoxList))
       enable |= checkBox->isChecked();
 
     // Disable dialog OK button if nothing is checked

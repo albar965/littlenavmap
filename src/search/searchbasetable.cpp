@@ -1458,13 +1458,13 @@ void SearchBaseTable::contextMenu(const QPoint& pos)
       ui->actionLogdataRouteOpen->setText(ui->actionLogdataRouteOpen->text().arg(QString()));
 
     ui->actionLogdataPerfLoad->setEnabled(false);
-    if(!logEntry.perfFile.isEmpty())
+    if(!logEntry.performanceFile.isEmpty())
     {
-      if(QFileInfo::exists(logEntry.perfFile))
+      if(QFileInfo::exists(logEntry.performanceFile))
       {
         ui->actionLogdataPerfLoad->setEnabled(true);
         ui->actionLogdataPerfLoad->setText(ui->actionLogdataPerfLoad->text().
-                                           arg(atools::elideTextShort(QFileInfo(logEntry.perfFile).fileName(),
+                                           arg(atools::elideTextShort(QFileInfo(logEntry.performanceFile).fileName(),
                                                                       NAVAID_NAMES_ELIDE)));
       }
       else
@@ -1601,7 +1601,7 @@ void SearchBaseTable::contextMenu(const QPoint& pos)
     else if(action == ui->actionLogdataRouteOpen)
       emit loadRouteFile(logEntry.routeFile);
     else if(action == ui->actionLogdataPerfLoad)
-      emit loadPerfFile(logEntry.perfFile);
+      emit loadPerfFile(logEntry.performanceFile);
     // Logbook actions are not connected to anything - execute here =========
     else if(action == ui->actionSearchLogdataOpenPlan)
       NavApp::getLogdataController()->planOpen(&logRecord, mainWindow);

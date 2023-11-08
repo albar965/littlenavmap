@@ -288,8 +288,8 @@ void LogdataController::createTakeoffLanding(const atools::fs::sc::SimConnectUse
       record.setValue("aircraft_registration", aircraft.getAirplaneRegistration()); // varchar(50),
       record.setValue("flightplan_number", aircraft.getAirplaneFlightnumber()); // varchar(100),
       record.setValue("flightplan_cruise_altitude", NavApp::getRouteCruiseAltitudeFt()); // integer,
-      record.setValue("flightplan_file", NavApp::getCurrentRouteFilepath()); // varchar(1024),
-      record.setValue("performance_file", NavApp::getCurrentAircraftPerfFilepath()); // varchar(1024),
+      record.setValue("flightplan_file", atools::nativeCleanPath(NavApp::getCurrentRouteFilepath())); // varchar(1024),
+      record.setValue("performance_file", atools::nativeCleanPath(NavApp::getCurrentAircraftPerfFilepath())); // varchar(1024),
       record.setValue("block_fuel", NavApp::getAltitudeLegs().getBlockFuel(NavApp::getAircraftPerformance())); // integer,
       record.setValue("trip_fuel", NavApp::getAltitudeLegs().getTripFuel()); // integer,
       record.setValue("grossweight", aircraft.getAirplaneTotalWeightLbs()); // integer,
@@ -603,8 +603,8 @@ void LogdataController::prefillLogEntry(atools::sql::SqlRecord& rec)
   gpxAttach(&rec, mainWindow, true /* currentTrack */);
 
   // Filenames ======================================================
-  rec.setValue("flightplan_file", NavApp::getCurrentRouteFilepath());
-  rec.setValue("performance_file", NavApp::getCurrentAircraftPerfFilepath());
+  rec.setValue("flightplan_file", atools::nativeCleanPath(NavApp::getCurrentRouteFilepath()));
+  rec.setValue("performance_file", atools::nativeCleanPath(NavApp::getCurrentAircraftPerfFilepath()));
 }
 
 void LogdataController::addLogEntry()

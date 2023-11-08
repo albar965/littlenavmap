@@ -2739,20 +2739,16 @@ bool HtmlInfoBuilder::logEntryText(MapLogbookEntry logEntry, HtmlBuilder& html) 
       bool route = logdataController->hasRouteAttached(logEntry.id);
       bool track = logdataController->hasTrackAttached(logEntry.id);
 
-      if(!rec.valueStr("flightplan_file").isEmpty() || !rec.valueStr("performance_file").isEmpty() ||
-         perf || track || route)
+      if(!rec.valueStr("flightplan_file").isEmpty() || !rec.valueStr("performance_file").isEmpty() || perf || track || route)
       {
         html.p(tr("Files"), ahtml::BOLD);
         html.table();
-        html.row2If(tr("Flight plan:"),
-                    atools::strJoin({(route ? tr("Attached") : QString()),
-                                     filepathTextShow(rec.valueStr("flightplan_file"), tr("Referenced: "))},
-                                    tr("<br/>")),
-                    ahtml::NO_ENTITIES | ahtml::SMALL);
-        html.row2If(tr("Aircraft performance:"),
-                    atools::strJoin({(route ? tr("Attached") : QString()),
-                                     filepathTextShow(rec.valueStr("performance_file"), tr("Referenced: "))},
-                                    tr("<br/>")),
+        html.row2If(tr("Flight plan:"), atools::strJoin({(route ? tr("Attached") : QString()),
+                                                         filepathTextShow(rec.valueStr("flightplan_file"), tr("Referenced: "))},
+                                                        tr("<br/>")), ahtml::NO_ENTITIES | ahtml::SMALL);
+        html.row2If(tr("Aircraft performance:"), atools::strJoin({(route ? tr("Attached") : QString()),
+                                                                  filepathTextShow(rec.valueStr("performance_file"), tr("Referenced: "))},
+                                                                 tr("<br/>")),
                     ahtml::NO_ENTITIES | ahtml::SMALL);
         html.row2If(tr("Aircraft trail:"), route ? tr("Attached") : QString(), ahtml::NO_ENTITIES | ahtml::SMALL);
         html.tableEnd();
