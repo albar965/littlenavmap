@@ -3628,6 +3628,70 @@ QString Route::getProcedureLegText(proc::MapProcedureTypes mapType, bool include
     return QString();
 }
 
+void Route::getVerticalPathDeviationTexts(QString *descentDeviation, QString *verticalAngle, bool *verticalRequired,
+                                          QString *verticalAngleNext) const
+{
+  float distFromStartNm = map::INVALID_DISTANCE_VALUE, distToDestNm = map::INVALID_DISTANCE_VALUE,
+        nextLegDistance = map::INVALID_DISTANCE_VALUE, distanceToTod = map::INVALID_DISTANCE_VALUE;
+  const atools::fs::sc::SimConnectUserAircraft& userAircraft = NavApp::getUserAircraft();
+
+  // Vertical path deviation =======================================================
+  if(getRouteDistances(&distFromStartNm, &distToDestNm, &nextLegDistance))
+  {
+    if(distFromStartNm < map::INVALID_DISTANCE_VALUE)
+      distanceToTod = getTopOfDescentDistance() - distFromStartNm;
+
+    if(distanceToTod <= 0 && userAircraft.isValid() && userAircraft.isFlying())
+    {
+      if(descentDeviation != nullptr)
+      {
+        // Display vertical path deviation when after TOD
+        float vertAlt = getAltitudeForDistance(distToDestNm);
+
+        if(vertAlt < map::INVALID_ALTITUDE_VALUE)
+        {
+          float diff = userAircraft.getActualAltitudeFt() - vertAlt;
+          QString upDown;
+          if(diff >= 100.f)
+            upDown = tr(", above ▼");
+          else if(diff <= -100)
+            upDown = tr(", below ▲");
+
+          *descentDeviation = Unit::altFeet(diff) % upDown;
+        }
+      }
+    }
+  }
+
+  // Vertical speed and angle to destination =======================================================
+  if(verticalAngle != nullptr)
+  {
+    bool required = false;
+    float vertAngle = getVerticalAngleAtDistance(distToDestNm, &required);
+
+    if(verticalRequired != nullptr)
+      *verticalRequired = required;
+
+    if(vertAngle < map::INVALID_ANGLE_VALUE)
+    {
+      QString speedText = Unit::speedVertFpm(-atools::geo::descentSpeedForPathAngle(userAircraft.getGroundSpeedKts(), vertAngle));
+      *verticalAngle = tr("%L1°, %L2").arg(vertAngle, 0, 'g', required ? 3 : 2).arg(speedText % tr(" ▼"));
+    }
+  }
+
+  // Vertical speed and angle to next =======================================================
+  if(verticalAngleNext != nullptr)
+  {
+    float vertAngleToNext = getVerticalAngleToNext(nextLegDistance);
+    if(vertAngleToNext < map::INVALID_ANGLE_VALUE)
+    {
+      QString speedText = Unit::speedVertFpm(-atools::geo::descentSpeedForPathAngle(userAircraft.getGroundSpeedKts(), vertAngleToNext));
+      *verticalAngleNext = tr("%L1°, %L2").arg(vertAngleToNext, 0, 'g', 2).arg(speedText % tr(" ▼"));
+    }
+  }
+
+}
+
 QString Route::buildDefaultFilename(const QString& suffix) const
 {
   return buildDefaultFilename(QString(), suffix);

@@ -47,6 +47,16 @@ bool ProfileOptions::showOptions()
   treeDialog.addItem2(rootItem, optsp::PROFILE_TOOLTIP, tr("Show Tooltip"), tr("Display a tooltip with elevation and more information when hovering the mouse over the profile."));
   treeDialog.addItem2(rootItem, optsp::PROFILE_HIGHLIGHT, tr("Highlight Position on Map"), tr("Highlight the flight plan position on the map while hovering the mouse over the profile."));
 
+  QTreeWidgetItem *headerItem = treeDialog.addTopItem1(tr("Header Line"));
+  treeDialog.addItem2(headerItem, optsp::PROFILE_HEADER_DIST_TIME_TO_DEST, tr("Destination"), tr("Distance and time to destination."));
+  treeDialog.addItem2(headerItem, optsp::PROFILE_HEADER_DIST_TIME_TO_TOD, tr("Top of Descent"), tr("Distance and time to top of descent.\n"
+                                                                                                   "Not shown if passed."));
+  treeDialog.addItem2(headerItem, optsp::PROFILE_HEADER_DESCENT_PATH_DEVIATION, tr("Deviation"), tr("Vertical altitude deviation from descent path.\n"
+                                                                                                    "▼ means above (increase sink rate) and ▲ means below (decrease sink rate)."));
+  treeDialog.addItem2(headerItem, optsp::PROFILE_HEADER_DESCENT_PATH_ANGLE, tr("Angle and Speed"), tr("Vertical flight path angle needed to keep the vertical path angle.\n"
+                                                                                                      "Changes to \"Required angle\" if mandatory in approach procedures."));
+
+
   QTreeWidgetItem *aircraftItem = treeDialog.addTopItem1(tr("User Aircraft Labels"));
   treeDialog.addItem2(aircraftItem, optsp::PROFILE_AIRCRAFT_ALTITUDE, tr("Altitude"), tr("Show actual user aircraft altitude at symbol."));
   treeDialog.addItem2(aircraftItem, optsp::PROFILE_AIRCRAFT_VERT_SPEED, tr("Vertical Speed"), tr("Show vertical speed of at user aircraft symbol."));

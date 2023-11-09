@@ -222,7 +222,7 @@ private:
   void terminateThread();
   float calcGroundBufferFt(float maxElevationFt);
 
-  void updateLabel();
+  void updateHeaderLabel();
 
   /* Calculate map position on flight plan for x screen/widget position on profile.
    * Additionally gives index into route, distances from/to and altitude at x. maxElev is minimum elevation for leg.
@@ -316,8 +316,6 @@ private:
   QString lastTooltipString;
   atools::geo::Pos lastTooltipPos;
   QPoint lastTooltipScreenPos;
-
-  QString fixedLabelText;
 
   bool widgetVisible = false, showAircraft = false, showAircraftTrail = false;
   QVector<int> waypointX; /* Flight plan waypoint screen coordinates - does contain the dummy

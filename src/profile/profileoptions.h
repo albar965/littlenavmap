@@ -22,7 +22,7 @@
 
 namespace optsp {
 
-/* Display options for elevation profile affecting line as well as top and left labels. */
+/* Display options for elevation profile affecting line as well as top and left labels. Saved to settings. */
 enum DisplayOptionProfile
 {
   PROFILE_NONE = 0,
@@ -57,10 +57,20 @@ enum DisplayOptionProfile
   PROFILE_AIRCRAFT_VERT_SPEED = 1 << 19,
   PROFILE_AIRCRAFT_VERT_ANGLE_NEXT = 1 << 20,
 
-  // Next is 1 << 21
+  /* ui->labelProfileInfo in ProfileWidget::updateHeaderLabel() */
+  PROFILE_HEADER_DIST_TIME_TO_DEST = 1 << 21, /* Destination: 82 NM (0 h 15 m). */
+  PROFILE_HEADER_DIST_TIME_TO_TOD = 1 << 22, /* Top of Descent: 69 NM (0 h 11 m). */
+  PROFILE_HEADER_DESCENT_PATH_DEVIATION = 1 << 23, /* Descent Path: Deviation: 1,153 ft, above */
+  PROFILE_HEADER_DESCENT_PATH_ANGLE = 1 << 24, /* ... Angle and Speed: -3.4°, -2,102 fpm */
+
+  // Next is 1 << 25
 
   /* All drawn in the top label */
   PROFILE_TOP_ANY = PROFILE_LABELS_DISTANCE | PROFILE_LABELS_MAG_COURSE | PROFILE_LABELS_TRUE_COURSE | PROFILE_LABELS_RELATED,
+
+  /* All drawn in the header label */
+  PROFILE_HEADER_ANY = PROFILE_HEADER_DIST_TIME_TO_DEST | PROFILE_HEADER_DIST_TIME_TO_TOD | PROFILE_HEADER_DESCENT_PATH_DEVIATION |
+                       PROFILE_HEADER_DESCENT_PATH_ANGLE,
 
   /* All drawn along the flight plan line */
   PROFILE_FP_ANY = PROFILE_FP_DIST | PROFILE_FP_MAG_COURSE | PROFILE_FP_TRUE_COURSE | PROFILE_FP_VERTICAL_ANGLE,
@@ -79,8 +89,13 @@ static const QVector<optsp::DisplayOptionProfile> ALL_OPTIONS({optsp::PROFILE_LA
                                                                optsp::PROFILE_SAFE_ALTITUDE, optsp::PROFILE_LEG_SAFE_ALTITUDE,
                                                                optsp::PROFILE_LABELS_ALT, optsp::PROFILE_TOOLTIP,
                                                                optsp::PROFILE_HIGHLIGHT, optsp::PROFILE_AIRCRAFT_ALTITUDE,
-                                                               optsp::PROFILE_AIRCRAFT_VERT_SPEED,
-                                                               optsp::PROFILE_AIRCRAFT_VERT_ANGLE_NEXT});
+                                                               optsp::PROFILE_AIRCRAFT_VERT_SPEED, optsp::PROFILE_AIRCRAFT_VERT_ANGLE_NEXT,
+                                                               optsp::PROFILE_HEADER_DIST_TIME_TO_DEST,
+                                                               optsp::PROFILE_HEADER_DIST_TIME_TO_TOD,
+                                                               optsp::PROFILE_HEADER_DESCENT_PATH_DEVIATION,
+                                                               optsp::PROFILE_HEADER_DESCENT_PATH_ANGLE
+
+                                                              });
 
 static const optsp::DisplayOptionsProfile DEFAULT_OPTIONS = optsp::PROFILE_LABELS_DISTANCE | optsp::PROFILE_LABELS_RELATED |
                                                             optsp::PROFILE_FP_MAG_COURSE | optsp::PROFILE_FP_VERTICAL_ANGLE |
@@ -89,7 +104,11 @@ static const optsp::DisplayOptionsProfile DEFAULT_OPTIONS = optsp::PROFILE_LABEL
                                                             optsp::PROFILE_SAFE_ALTITUDE | optsp::PROFILE_LEG_SAFE_ALTITUDE |
                                                             optsp::PROFILE_LABELS_ALT | optsp::PROFILE_TOOLTIP | optsp::PROFILE_HIGHLIGHT |
                                                             optsp::PROFILE_AIRCRAFT_ALTITUDE | optsp::PROFILE_AIRCRAFT_VERT_SPEED |
-                                                            optsp::PROFILE_AIRCRAFT_VERT_ANGLE_NEXT;
+                                                            optsp::PROFILE_AIRCRAFT_VERT_ANGLE_NEXT |
+                                                            optsp::PROFILE_HEADER_DIST_TIME_TO_DEST |
+                                                            optsp::PROFILE_HEADER_DIST_TIME_TO_TOD |
+                                                            optsp::PROFILE_HEADER_DESCENT_PATH_DEVIATION |
+                                                            optsp::PROFILE_HEADER_DESCENT_PATH_ANGLE;
 }
 
 /*

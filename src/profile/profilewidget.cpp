@@ -344,7 +344,7 @@ void ProfileWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulat
     update();
 
   if(widgetVisible)
-    updateLabel();
+    updateHeaderLabel();
 }
 
 void ProfileWidget::centerAircraft()
@@ -384,7 +384,7 @@ void ProfileWidget::connectedToSimulator()
   simData = atools::fs::sc::SimConnectData();
   updateScreenCoords();
   update();
-  updateLabel();
+  updateHeaderLabel();
 }
 
 void ProfileWidget::disconnectedFromSimulator()
@@ -394,7 +394,7 @@ void ProfileWidget::disconnectedFromSimulator()
   simData = atools::fs::sc::SimConnectData();
   updateScreenCoords();
   update();
-  updateLabel();
+  updateHeaderLabel();
   scrollArea->hideTooltip();
 }
 
@@ -900,7 +900,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
   {
     setFont(optionData.getGuiFont());
     painter.fillRect(rect(), QApplication::palette().color(QPalette::Base));
-    symPainter.textBox(&painter, {tr("No Flight Plan.")}, QApplication::palette().color(QPalette::PlaceholderText),
+    symPainter.textBox(&painter, {tr("No Flight Plan")}, QApplication::palette().color(QPalette::PlaceholderText),
                        4, painter.fontMetrics().ascent(), textatt::RIGHT, 0);
     scrollArea->updateLabelWidgets();
     return;
@@ -911,7 +911,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
     font.setBold(true);
     setFont(font);
     painter.fillRect(rect(), QApplication::palette().color(QPalette::Base));
-    symPainter.textBox(&painter, {tr("Flight Plan not valid.")}, atools::util::HtmlBuilder::COLOR_FOREGROUND_WARNING,
+    symPainter.textBox(&painter, {tr("Flight Plan not valid")}, atools::util::HtmlBuilder::COLOR_FOREGROUND_WARNING,
                        4, painter.fontMetrics().ascent(), textatt::RIGHT, 0);
     scrollArea->updateLabelWidgets();
     return;
@@ -1877,7 +1877,7 @@ void ProfileWidget::routeChanged(bool geometryChanged, bool newFlightPlan)
     update();
 
   updateErrorLabel();
-  updateLabel();
+  updateHeaderLabel();
 }
 
 /* Called by updateTimer after any route or elevation updates and starts the thread */
@@ -1915,7 +1915,7 @@ void ProfileWidget::updateThreadFinished()
     *legList = future.result();
     updateScreenCoords();
     updateErrorLabel();
-    updateLabel();
+    updateHeaderLabel();
     update();
     updateTooltip();
 
@@ -2537,52 +2537,88 @@ void ProfileWidget::showContextMenu(const QPoint& globalPoint)
   contextMenuActive = false;
 }
 
-void ProfileWidget::updateLabel()
+void ProfileWidget::updateHeaderLabel()
 {
-  float distFromStartNm = 0.f, distToDestNm = 0.f, nearestLegDistance = 0.f;
-  const Route& curRoute = NavApp::getRouteConst();
-  if(simData.getUserAircraftConst().isValid())
+  optsp::DisplayOptionsProfile options = profileOptions->getDisplayOptions();
+  QStringList text;
+
+  if(options & optsp::PROFILE_HEADER_ANY)
   {
-    if(curRoute.getRouteDistances(&distFromStartNm, &distToDestNm, &nearestLegDistance))
+    float distFromStartNm = 0.f, distToDestNm = 0.f, nearestLegDistance = 0.f;
+    const Route& route = NavApp::getRouteConst();
+    if(simData.getUserAircraftConst().isValid())
     {
-      if(curRoute.isActiveMissed())
-        distToDestNm = 0.f;
+      bool timeToDestOpt = options.testFlag(optsp::PROFILE_HEADER_DIST_TIME_TO_DEST);
 
-      if(curRoute.isActiveAlternate())
-        // Use distance to alternate instead of destination
-        fixedLabelText = tr("<b>Alternate: %1.</b>&nbsp;&nbsp;").arg(Unit::distNm(nearestLegDistance));
-      else
+      if(route.getRouteDistances(&distFromStartNm, &distToDestNm, &nearestLegDistance))
       {
-        if(NavApp::getMapWidgetGui()->getShownMapDisplayTypes().testFlag(map::FLIGHTPLAN_TOC_TOD) &&
-           curRoute.getTopOfDescentDistance() < map::INVALID_DISTANCE_VALUE)
+        if(route.isActiveMissed())
+          distToDestNm = 0.f;
+
+        if(route.isActiveAlternate())
         {
-          // Fuel and time calculated or estimated
-          FuelTimeResult fuelTime;
-          NavApp::getAircraftPerfController()->calculateFuelAndTimeTo(fuelTime, distToDestNm, nearestLegDistance,
-                                                                      curRoute.getActiveLegIndex());
-
-          float toTod = curRoute.getTopOfDescentDistance() - distFromStartNm;
-
-          fixedLabelText = tr("<b>Destination: %1 (%2). Top of Descent: %3%4.</b>&nbsp;&nbsp;").
-                           arg(Unit::distNm(distToDestNm)).
-                           arg(formatter::formatMinutesHoursLong(fuelTime.timeToDest)).
-                           arg(toTod > 0.f ? Unit::distNm(toTod) : tr("Passed")).
-                           arg(toTod > 0.f ? tr(" (%1)").
-                               arg(formatter::formatMinutesHoursLong(fuelTime.timeToTod)) : QString());
+          // Show only alternate distance ==========================================
+          if(timeToDestOpt)
+            // Use distance to alternate instead of destination
+            text.append(tr("<b>Alternate:</b> %1").arg(Unit::distNm(nearestLegDistance)));
         }
         else
-          fixedLabelText = tr("<b>Destination: %1.</b>&nbsp;&nbsp;").arg(Unit::distNm(distToDestNm));
+        {
+          bool vertDeviationOpt = options.testFlag(optsp::PROFILE_HEADER_DESCENT_PATH_DEVIATION);
+          bool descentAngleOpt = options.testFlag(optsp::PROFILE_HEADER_DESCENT_PATH_ANGLE);
+          bool timeToTodOpt = options.testFlag(optsp::PROFILE_HEADER_DIST_TIME_TO_TOD);
+
+          if(NavApp::getMapWidgetGui()->getShownMapDisplayTypes().testFlag(map::FLIGHTPLAN_TOC_TOD) &&
+             route.getTopOfDescentDistance() < map::INVALID_DISTANCE_VALUE)
+          {
+            // Fuel and time calculated or estimated
+            FuelTimeResult fuelTime;
+            NavApp::getAircraftPerfController()->calculateFuelAndTimeTo(fuelTime, distToDestNm, nearestLegDistance,
+                                                                        route.getActiveLegIndex());
+
+            // Time and distance to destination ==========================================
+            if(timeToDestOpt)
+              text.append(tr("<b>Destination:</b> %1 (%2)").
+                          arg(Unit::distNm(distToDestNm)).
+                          arg(formatter::formatMinutesHoursLong(fuelTime.timeToDest)));
+
+            float toTod = route.getTopOfDescentDistance() - distFromStartNm;
+            bool todAhead = toTod > 0.f;
+
+            // Time and distance to TOD ==========================================
+            if(timeToTodOpt && todAhead)
+              text.append(tr("<b>Top of Descent:</b> %1%2").
+                          arg(todAhead ? Unit::distNm(toTod) : tr("Passed")).
+                          arg(todAhead ? tr(" (%1)").arg(formatter::formatMinutesHoursLong(fuelTime.timeToTod)) : QString()));
+
+            // Descent angle and speed after TOD ==========================================
+            if((vertDeviationOpt || descentAngleOpt) && !todAhead)
+            {
+              QString descentDeviationText, verticalAngleText;
+              bool verticalRequired;
+              route.getVerticalPathDeviationTexts(&descentDeviationText, &verticalAngleText, &verticalRequired, nullptr);
+
+              if(vertDeviationOpt && !descentDeviationText.isEmpty())
+                text.append(tr("<b>Vert. Path Deviation:</b> %1").arg(descentDeviationText));
+
+              if(descentAngleOpt && !verticalAngleText.isEmpty())
+              {
+                QString vertText = verticalRequired ? tr("<b>Required Angle and Speed:</b> %1") : tr("<b>Angle and Speed:</b> %1");
+                text.append(vertText.arg(verticalAngleText));
+              }
+            }
+          }
+          else if(timeToDestOpt)
+            text.append(tr("<b>Destination:</b> %1").arg(Unit::distNm(distToDestNm)));
+        }
       }
     }
-    NavApp::getMainUi()->labelProfileInfo->setVisible(true);
-  }
-  else
-  {
-    NavApp::getMainUi()->labelProfileInfo->setVisible(false);
-    fixedLabelText.clear();
   }
 
-  NavApp::getMainUi()->labelProfileInfo->setText(fixedLabelText);
+  NavApp::getMainUi()->labelProfileInfo->setVisible(!text.isEmpty());
+
+  if(!text.isEmpty())
+    NavApp::getMainUi()->labelProfileInfo->setText(text.join(tr(",&nbsp;&nbsp;&nbsp;", "Separator for profile header")));
 }
 
 /* Cursor leaves widget. Stop displaying the rubberband */
@@ -2600,7 +2636,7 @@ void ProfileWidget::hideRubberBand()
   delete rubberBand;
   rubberBand = nullptr;
 
-  updateLabel();
+  updateHeaderLabel();
 
   // Tell map widget to erase highlight
   emit highlightProfilePoint(atools::geo::EMPTY_POS);
@@ -2660,7 +2696,7 @@ void ProfileWidget::optionsChanged()
 
   updateScreenCoords();
   updateErrorLabel();
-  updateLabel();
+  updateHeaderLabel();
   update();
 }
 

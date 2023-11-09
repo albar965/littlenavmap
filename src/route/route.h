@@ -649,6 +649,11 @@ public:
    */
   QString getProcedureLegText(proc::MapProcedureTypes mapType, bool includeRunway, bool missedAsApproach, bool transitionAsProcedure) const;
 
+  /* Get texts for deviation and descent angles after passing TOD. Pointers can be nullptr if not required. */
+  void getVerticalPathDeviationTexts(QString *descentDeviation, QString *verticalAngle, bool *verticalRequired,
+                                     QString *verticalAngleNext) const;
+
+  /* Procedure leg is not valid if en-route leg */
   const proc::MapProcedureLeg& getProcedureLegAt(int i) const
   {
     return getLegAt(i).getProcedureLeg();

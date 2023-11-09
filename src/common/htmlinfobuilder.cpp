@@ -4636,41 +4636,22 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
 
     // ================================================================================
     // Vertical Flight Path =========================================================================
-    if(distanceToTod <= 0 && userAircraft != nullptr && userAircraft->isFlying())
+    if(distanceToTod <= 0.f && userAircraft != nullptr && userAircraft->isFlying())
     {
       html.mark();
       if(longDisplay)
         head(html, tr("Descent Path"));
       html.table();
 
+      QString descentDeviation, verticalAngle, verticalAngleNext;
+      bool verticalRequired;
+      route.getVerticalPathDeviationTexts(&descentDeviation, &verticalAngle, &verticalRequired, &verticalAngleNext);
+
       if(html.isIdSet(pid::DESCENT_DEVIATION))
-      {
-        // Display vertical path deviation when after TOD
-        float vertAlt = route.getAltitudeForDistance(distToDestNm);
-
-        if(vertAlt < map::INVALID_ALTITUDE_VALUE)
-        {
-          float diff = aircraft.getActualAltitudeFt() - vertAlt;
-          QString upDown;
-          if(diff >= 100.f)
-            upDown = tr(", above ▼");
-          else if(diff <= -100)
-            upDown = tr(", below ▲");
-
-          html.row2(tr("Deviation:"), Unit::altFeet(diff) % upDown, ahtml::NO_ENTITIES);
-        }
-      }
+        html.row2If(tr("Deviation:"), descentDeviation, ahtml::NO_ENTITIES);
 
       if(html.isIdSet(pid::DESCENT_ANGLE_SPEED))
-      {
-        bool required = false;
-        float vertAngle = route.getVerticalAngleAtDistance(distToDestNm, &required);
-        if(vertAngle < map::INVALID_ANGLE_VALUE)
-          html.row2(required ? tr("Required Angle and Speed:") : tr("Angle and Speed:"),
-                    tr("%L1°, %L2").arg(vertAngle, 0, 'g', required ? 3 : 2).
-                    arg(Unit::speedVertFpm(-ageo::descentSpeedForPathAngle(userAircraft->getGroundSpeedKts(), vertAngle)) %
-                        tr(" ▼")));
-      }
+        html.row2If(verticalRequired ? tr("Required Angle and Speed:") : tr("Angle and Speed:"), verticalAngle);
 
       if(html.isIdSet(pid::DESCENT_VERT_ANGLE_NEXT))
       {
