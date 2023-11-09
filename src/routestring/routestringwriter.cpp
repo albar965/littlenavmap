@@ -478,7 +478,7 @@ QStringList RouteStringWriter::createStringForRouteInternal(const Route& routePa
         items.append(star + (starTrans.isEmpty() ? QString() : '.' + starTrans));
     }
   }
-  else if(options.testFlag(rs::SID_STAR_GENERIC) && !star.isEmpty())
+  else if(options.testFlag(rs::SID_STAR_GENERIC))
     items.append("STAR");
 
   // Remove last DCT for flight factor export
