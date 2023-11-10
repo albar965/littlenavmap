@@ -47,7 +47,7 @@
      </widget>
      <widget class="QStackedWidget" name="stackedWidgetOptions">
       <property name="currentIndex">
-       <number>0</number>
+       <number>6</number>
       </property>
       <widget class="QWidget" name="stackedWidgetOptionsStartup">
        <layout class="QVBoxLayout" name="verticalLayout_41">
@@ -595,8 +595,8 @@ opening files, modifying the flight plan and other operations.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>419</width>
-             <height>736</height>
+             <width>591</width>
+             <height>704</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_23">
@@ -1132,8 +1132,8 @@ This does not affect the map window which can be changed separately on the optio
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>568</width>
-             <height>386</height>
+             <width>605</width>
+             <height>459</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_36">
@@ -1453,8 +1453,8 @@ Also affects labels at holds and traffic patterns.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>471</width>
-             <height>372</height>
+             <width>605</width>
+             <height>459</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_59">
@@ -1669,8 +1669,8 @@ Example: &quot;IFR Frankfurt Am Main (EDDF) to Fiumicino (LIRF).lnmpln&quot;</st
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>321</width>
-             <height>417</height>
+             <width>605</width>
+             <height>459</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout">
@@ -1938,8 +1938,8 @@ The aiports toolbar button can be used to hide empty airports if this box is che
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>595</width>
-             <height>344</height>
+             <width>605</width>
+             <height>459</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_2">
@@ -2370,8 +2370,8 @@ Smaller values will allow a finer selection.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>501</width>
-             <height>523</height>
+             <width>591</width>
+             <height>507</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_12">
@@ -2699,8 +2699,8 @@ Map views might be shown with a larger zoom distance than expected if this optio
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>499</width>
-             <height>840</height>
+             <width>591</width>
+             <height>824</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_20">
@@ -3518,8 +3518,8 @@ For VOR, NDB, ILS, waypoints and holdings. Not for flight plan labels.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>424</width>
-             <height>432</height>
+             <width>605</width>
+             <height>459</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_35">
@@ -3939,8 +3939,8 @@ Also used in the elevation profile.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>467</width>
-             <height>251</height>
+             <width>605</width>
+             <height>459</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_57">
@@ -3965,6 +3965,13 @@ Also used in the elevation profile.</string>
                <property name="spacing">
                 <number>2</number>
                </property>
+               <item row="15" column="0" colspan="4">
+                <widget class="Line" name="line_24">
+                 <property name="orientation">
+                  <enum>Qt::Horizontal</enum>
+                 </property>
+                </widget>
+               </item>
                <item row="13" column="3">
                 <widget class="QComboBox" name="comboBoxOptionsDisplayTrailType">
                  <property name="toolTip">
@@ -3983,33 +3990,6 @@ Also used in the elevation profile.</string>
                  <item>
                   <property name="text">
                    <string>Solid</string>
-                  </property>
-                 </item>
-                </widget>
-               </item>
-               <item row="16" column="2" colspan="2">
-                <widget class="QComboBox" name="comboBoxOptionsDisplayTrailGradient">
-                 <property name="toolTip">
-                  <string>Shows a color gradient indicating the flown actual altitude 
-between minimum and maximum altitude in the trail.
-Uses always a solid line. Not used in the elevation profile.</string>
-                 </property>
-                 <item>
-                  <property name="text">
-                   <string>Colors</string>
-                  </property>
-                  <property name="icon">
-                   <iconset resource="../../littlenavmap.qrc">
-                    <normaloff>:/littlenavmap/resources/icons/gradientcolors.svg</normaloff>:/littlenavmap/resources/icons/gradientcolors.svg</iconset>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>White to Black</string>
-                  </property>
-                  <property name="icon">
-                   <iconset resource="../../littlenavmap.qrc">
-                    <normaloff>:/littlenavmap/resources/icons/gradientblackwhite.svg</normaloff>:/littlenavmap/resources/icons/gradientblackwhite.svg</iconset>
                   </property>
                  </item>
                 </widget>
@@ -4069,7 +4049,7 @@ Also used in the elevation profile.</string>
                  </property>
                 </widget>
                </item>
-               <item row="16" column="0" colspan="2">
+               <item row="17" column="0">
                 <widget class="QCheckBox" name="checkBoxOptionsDisplayTrailGradient">
                  <property name="text">
                   <string>&amp;Use gradient to indicate flown altitude.
@@ -4077,11 +4057,40 @@ Note that this applies only to the map display:</string>
                  </property>
                 </widget>
                </item>
-               <item row="15" column="0" colspan="4">
-                <widget class="Line" name="line_24">
-                 <property name="orientation">
-                  <enum>Qt::Horizontal</enum>
+               <item row="17" column="1" colspan="3">
+                <widget class="QComboBox" name="comboBoxOptionsDisplayTrailGradient">
+                 <property name="toolTip">
+                  <string>Shows a color gradient indicating the flown actual altitude 
+between minimum and maximum altitude in the trail.
+Uses always a solid line. Not used in the elevation profile.</string>
                  </property>
+                 <item>
+                  <property name="text">
+                   <string>Yellow, Green Cyan to Blue</string>
+                  </property>
+                  <property name="icon">
+                   <iconset resource="../../littlenavmap.qrc">
+                    <normaloff>:/littlenavmap/resources/icons/gradientcolors2.svg</normaloff>:/littlenavmap/resources/icons/gradientcolors2.svg</iconset>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>Red, Yellow, Green Cyan, Blue to Magenta</string>
+                  </property>
+                  <property name="icon">
+                   <iconset resource="../../littlenavmap.qrc">
+                    <normaloff>:/littlenavmap/resources/icons/gradientcolors.svg</normaloff>:/littlenavmap/resources/icons/gradientcolors.svg</iconset>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>White to Black</string>
+                  </property>
+                  <property name="icon">
+                   <iconset resource="../../littlenavmap.qrc">
+                    <normaloff>:/littlenavmap/resources/icons/gradientblackwhite.svg</normaloff>:/littlenavmap/resources/icons/gradientblackwhite.svg</iconset>
+                  </property>
+                 </item>
                 </widget>
                </item>
               </layout>

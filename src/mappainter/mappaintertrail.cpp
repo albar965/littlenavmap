@@ -45,7 +45,10 @@ void MapPainterTrail::render()
   if(context->objectTypes.testFlag(map::AIRCRAFT_TRAIL))
   {
     const AircraftTrail& aircraftTrail = NavApp::getAircraftTrail();
-    if(!aircraftTrail.isEmpty() && resolves(aircraftTrail.getBounding()))
+    const atools::geo::Rect& bounding = aircraftTrail.getBounding();
+
+    // Have to do separate check for single point rect which appears right after deleting the trail
+    if(!aircraftTrail.isEmpty() && (resolves(bounding) || (bounding.isPoint() && context->viewportRect.overlaps(bounding))))
     {
 #ifdef DEBUG_DRAW_TRACK
       {

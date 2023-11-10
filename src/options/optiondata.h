@@ -239,7 +239,8 @@ enum DisplayTrailType
 /* comboBoxOptionsDisplayTrailGradient */
 enum DisplayTrailGradientType
 {
-  TRAIL_GRADIENT_COLOR,
+  TRAIL_GRADIENT_COLOR_YELLOW_BLUE,
+  TRAIL_GRADIENT_COLOR_RAINBOW,
   TRAIL_GRADIENT_BLACKWHITE
 };
 
@@ -1639,7 +1640,7 @@ private:
   opts::DisplayTrailType displayTrailType = opts::TRAIL_TYPE_DASHED;
 
   // comboBoxOptionsDisplayTrailGradient
-  opts::DisplayTrailGradientType displayTrailGradientType = opts::TRAIL_GRADIENT_COLOR;
+  opts::DisplayTrailGradientType displayTrailGradientType = opts::TRAIL_GRADIENT_COLOR_YELLOW_BLUE;
 
   /* Default values are set by widget states - these are needed for the reset button */
   optsac::DisplayOptionsUserAircraft displayOptionsUserAircraft =

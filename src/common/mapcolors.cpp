@@ -441,29 +441,41 @@ const QPen aircraftTrailPen(float size, float minAlt, float maxAlt, float alt)
   const OptionData& optionData = OptionData::instance();
   if(optionData.getFlags().testFlag(opts::MAP_TRAIL_GRADIENT))
   {
+    bool altValid = atools::almostNotEqual(minAlt, maxAlt, 100.f);
+
     // Gradient pens ===========================================================
     alt -= minAlt;
-    int hue, sat, value;
+    int hue, saturation, value;
     QColor col;
     QPen pen(col, size, Qt::SolidLine, Qt::SquareCap, Qt::MiterJoin);
     switch(optionData.getDisplayTrailGradientType())
     {
-      case opts::TRAIL_GRADIENT_COLOR:
+      case opts::TRAIL_GRADIENT_COLOR_YELLOW_BLUE:
+        // Change hue depending on altitude. Red is 0 and last used value magenta is 300
+        col = Qt::yellow;
+        col.getHsv(&hue, &saturation, &value);
+        hue = atools::minmax(60 /* yellow */, 240 /* blue */, atools::roundToInt(alt / (maxAlt - minAlt) * 300.f));
+        break;
+
+      case opts::TRAIL_GRADIENT_COLOR_RAINBOW:
         // Change hue depending on altitude. Red is 0 and last used value magenta is 300
         col = Qt::red;
-        col.getHsv(&hue, &sat, &value);
-        col.setHsv(atools::minmax(0 /* red */, 300 /* magenta */, atools::roundToInt(alt / (maxAlt - minAlt) * 300.f)), sat, value);
-        pen.setColor(col);
+        col.getHsv(&hue, &saturation, &value);
+        hue = atools::minmax(0 /* red */, 300 /* magenta */, atools::roundToInt(alt / (maxAlt - minAlt) * 300.f));
         break;
 
       case opts::TRAIL_GRADIENT_BLACKWHITE:
         // Change value depending on altitude and start with white = value 255
         col = Qt::white;
-        col.getHsv(&hue, &sat, &value);
-        col.setHsv(hue, sat, atools::minmax(0, 255, 255 - atools::roundToInt(alt / (maxAlt - minAlt) * 255.f)));
-        pen.setColor(col);
+        col.getHsv(&hue, &saturation, &value);
+        value = atools::minmax(0 /* black */, 255 /* white */, 255 - atools::roundToInt(alt / (maxAlt - minAlt) * 255.f));
         break;
     }
+
+    if(altValid)
+      col.setHsv(hue, saturation, value);
+
+    pen.setColor(col);
     return pen;
   }
   else

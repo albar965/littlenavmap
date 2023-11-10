@@ -3800,7 +3800,11 @@ void HtmlInfoBuilder::aircraftTrailText(const AircraftTrailSegment& trailSegment
     // Show color gradient SVG =================================
     switch(OptionData::instance().getDisplayTrailGradientType())
     {
-      case opts::TRAIL_GRADIENT_COLOR:
+      case opts::TRAIL_GRADIENT_COLOR_YELLOW_BLUE:
+        html.img(QIcon(":/littlenavmap/resources/icons/icongradientcolors2.svg"), QString(), QString(), symbolSizeTitle);
+        break;
+
+      case opts::TRAIL_GRADIENT_COLOR_RAINBOW:
         html.img(QIcon(":/littlenavmap/resources/icons/icongradientcolors.svg"), QString(), QString(), symbolSizeTitle);
         break;
 
