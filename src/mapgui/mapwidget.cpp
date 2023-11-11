@@ -241,45 +241,16 @@ MapWidget::~MapWidget()
   qDebug() << Q_FUNC_INFO << "removeEventFilter";
   removeEventFilter(this);
 
-  qDebug() << Q_FUNC_INFO << "delete jumpBack";
-  delete jumpBack;
-  jumpBack = nullptr;
-
-  qDebug() << Q_FUNC_INFO << "delete mapTooltip";
-  delete mapTooltip;
-  mapTooltip = nullptr;
-
-  qDebug() << Q_FUNC_INFO << "delete mapVisible";
-  delete mapVisible;
-  mapVisible = nullptr;
-
-  qDebug() << Q_FUNC_INFO << "delete pushButtonExitFullscreen";
-  delete pushButtonExitFullscreen;
-  pushButtonExitFullscreen = nullptr;
-
-  qDebug() << Q_FUNC_INFO << "delete takeoffLandingLastAircraft";
-  delete takeoffLandingLastAircraft;
-  takeoffLandingLastAircraft = nullptr;
-
-  qDebug() << Q_FUNC_INFO << "delete mapSearchResultTooltip";
-  delete mapSearchResultTooltip;
-  mapSearchResultTooltip = nullptr;
-
-  qDebug() << Q_FUNC_INFO << "delete mapSearchResultTooltipLast";
-  delete mapSearchResultTooltipLast;
-  mapSearchResultTooltipLast = nullptr;
-
-  qDebug() << Q_FUNC_INFO << "delete mapSearchResultInfoClick";
-  delete mapSearchResultInfoClick;
-  mapSearchResultInfoClick = nullptr;
-
-  qDebug() << Q_FUNC_INFO << "delete distanceMarkerBackup";
-  delete distanceMarkerBackup;
-  distanceMarkerBackup = nullptr;
-
-  qDebug() << Q_FUNC_INFO << "delete userpointDrag";
-  delete userpointDrag;
-  userpointDrag = nullptr;
+  ATOOLS_DELETE_LOG(jumpBack);
+  ATOOLS_DELETE_LOG(mapTooltip);
+  ATOOLS_DELETE_LOG(mapVisible);
+  ATOOLS_DELETE_LOG(pushButtonExitFullscreen);
+  ATOOLS_DELETE_LOG(takeoffLandingLastAircraft);
+  ATOOLS_DELETE_LOG(mapSearchResultTooltip);
+  ATOOLS_DELETE_LOG(mapSearchResultTooltipLast);
+  ATOOLS_DELETE_LOG(mapSearchResultInfoClick);
+  ATOOLS_DELETE_LOG(distanceMarkerBackup);
+  ATOOLS_DELETE_LOG(userpointDrag);
 }
 
 void MapWidget::addFullScreenExitButton()
@@ -306,8 +277,7 @@ void MapWidget::removeFullScreenExitButton()
   if(pushButtonExitFullscreen != nullptr)
   {
     disconnect(pushButtonExitFullscreen, &QPushButton::clicked, this, &MapWidget::exitFullScreenPressed);
-    delete pushButtonExitFullscreen;
-    pushButtonExitFullscreen = nullptr;
+    ATOOLS_DELETE(pushButtonExitFullscreen);
   }
 }
 

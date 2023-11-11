@@ -212,40 +212,13 @@ DatabaseManager::~DatabaseManager()
   // Delete simulator switch actions
   freeActions();
 
-#ifdef DEBUG_INFORMATION
-  qDebug() << Q_FUNC_INFO << "delete databaseLoader";
-#endif
-  delete databaseLoader;
-
-#ifdef DEBUG_INFORMATION
-  qDebug() << Q_FUNC_INFO << "delete databaseDialog";
-#endif
-  delete databaseDialog;
-
-#ifdef DEBUG_INFORMATION
-  qDebug() << Q_FUNC_INFO << "delete dialog";
-#endif
-  delete dialog;
-
-#ifdef DEBUG_INFORMATION
-  qDebug() << Q_FUNC_INFO << "delete userdataManager";
-#endif
-  delete userdataManager;
-
-#ifdef DEBUG_INFORMATION
-  qDebug() << Q_FUNC_INFO << "delete trackManager";
-#endif
-  delete trackManager;
-
-#ifdef DEBUG_INFORMATION
-  qDebug() << Q_FUNC_INFO << "delete logdataManager";
-#endif
-  delete logdataManager;
-
-#ifdef DEBUG_INFORMATION
-  qDebug() << Q_FUNC_INFO << "delete onlinedataManager";
-#endif
-  delete onlinedataManager;
+  ATOOLS_DELETE_LOG(databaseLoader);
+  ATOOLS_DELETE_LOG(databaseDialog);
+  ATOOLS_DELETE_LOG(dialog);
+  ATOOLS_DELETE_LOG(userdataManager);
+  ATOOLS_DELETE_LOG(trackManager);
+  ATOOLS_DELETE_LOG(logdataManager);
+  ATOOLS_DELETE_LOG(onlinedataManager);
 
   closeAllDatabases();
   closeUserDatabase();
@@ -254,38 +227,17 @@ DatabaseManager::~DatabaseManager()
   closeUserAirspaceDatabase();
   closeOnlineDatabase();
 
-  qDebug() << Q_FUNC_INFO << "delete databaseSim";
-  delete databaseSim;
-
-  qDebug() << Q_FUNC_INFO << "delete databaseNav";
-  delete databaseNav;
-
-  qDebug() << Q_FUNC_INFO << "delete databaseUser";
-  delete databaseUser;
-
-  qDebug() << Q_FUNC_INFO << "delete databaseTrack";
-  delete databaseTrack;
-
-  qDebug() << Q_FUNC_INFO << "delete databaseLogbook";
-  delete databaseLogbook;
-
-  qDebug() << Q_FUNC_INFO << "delete databaseOnline";
-  delete databaseOnline;
-
-  qDebug() << Q_FUNC_INFO << "delete databaseUserAirspace";
-  delete databaseUserAirspace;
-
-  qDebug() << Q_FUNC_INFO << "delete databaseSimAirspace";
-  delete databaseSimAirspace;
-
-  qDebug() << Q_FUNC_INFO << "delete databaseNavAirspace";
-  delete databaseNavAirspace;
-
-  qDebug() << Q_FUNC_INFO << "delete languageIndex";
-  delete languageIndex;
-
-  qDebug() << Q_FUNC_INFO << "delete aircraftIndex";
-  delete aircraftIndex;
+  ATOOLS_DELETE_LOG(databaseSim);
+  ATOOLS_DELETE_LOG(databaseNav);
+  ATOOLS_DELETE_LOG(databaseUser);
+  ATOOLS_DELETE_LOG(databaseTrack);
+  ATOOLS_DELETE_LOG(databaseLogbook);
+  ATOOLS_DELETE_LOG(databaseOnline);
+  ATOOLS_DELETE_LOG(databaseUserAirspace);
+  ATOOLS_DELETE_LOG(databaseSimAirspace);
+  ATOOLS_DELETE_LOG(databaseNavAirspace);
+  ATOOLS_DELETE_LOG(languageIndex);
+  ATOOLS_DELETE_LOG(aircraftIndex);
 
   SqlDatabase::removeDatabase(dbtools::DATABASE_NAME_SIM);
   SqlDatabase::removeDatabase(dbtools::DATABASE_NAME_NAV);

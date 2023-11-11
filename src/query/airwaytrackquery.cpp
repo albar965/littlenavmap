@@ -172,9 +172,6 @@ void AirwayTrackQuery::clearCache()
 
 void AirwayTrackQuery::deleteChildren()
 {
-  delete trackQuery;
-  trackQuery = nullptr;
-
-  delete airwayQuery;
-  airwayQuery = nullptr;
+  ATOOLS_DELETE(trackQuery);
+  ATOOLS_DELETE(airwayQuery);
 }

@@ -1537,64 +1537,29 @@ void MapQuery::deInitQueries()
   ilsCache.clear();
   runwayOverwiewCache.clear();
 
-  delete airportByRectQuery;
-  airportByRectQuery = nullptr;
-  delete airportAddonByRectQuery;
-  airportAddonByRectQuery = nullptr;
-
-  delete runwayOverviewQuery;
-  runwayOverviewQuery = nullptr;
-
-  delete vorsByRectQuery;
-  vorsByRectQuery = nullptr;
-  delete ndbsByRectQuery;
-  ndbsByRectQuery = nullptr;
-  delete markersByRectQuery;
-  markersByRectQuery = nullptr;
-  delete holdingByRectQuery;
-  holdingByRectQuery = nullptr;
-
-  delete userdataPointByRectQuery;
-  userdataPointByRectQuery = nullptr;
-
-  delete vorByIdentQuery;
-  vorByIdentQuery = nullptr;
-  delete ndbByIdentQuery;
-  ndbByIdentQuery = nullptr;
-
-  delete vorByIdQuery;
-  vorByIdQuery = nullptr;
-  delete ndbByIdQuery;
-  ndbByIdQuery = nullptr;
-
-  delete vorByWaypointIdQuery;
-  vorByWaypointIdQuery = nullptr;
-  delete ndbByWaypointIdQuery;
-  ndbByWaypointIdQuery = nullptr;
-
-  delete vorNearestQuery;
-  vorNearestQuery = nullptr;
-  delete ndbNearestQuery;
-  ndbNearestQuery = nullptr;
-
-  delete ilsByRectQuery;
-  ilsByRectQuery = nullptr;
-  delete ilsByIdentQuery;
-  ilsByIdentQuery = nullptr;
-  delete ilsByIdQuery;
-  ilsByIdQuery = nullptr;
-  delete ilsQuerySimByAirportAndRw;
-  ilsQuerySimByAirportAndRw = nullptr;
-  delete ilsQuerySimByAirportAndIdent;
-  ilsQuerySimByAirportAndIdent = nullptr;
-
-  delete holdingByIdQuery;
-  holdingByIdQuery = nullptr;
-
-  delete airportMsaByIdentQuery;
-  airportMsaByIdentQuery = nullptr;
-  delete airportMsaByRectQuery;
-  airportMsaByRectQuery = nullptr;
-  delete airportMsaByIdQuery;
-  airportMsaByIdQuery = nullptr;
+  ATOOLS_DELETE(airportByRectQuery);
+  ATOOLS_DELETE(airportAddonByRectQuery);
+  ATOOLS_DELETE(runwayOverviewQuery);
+  ATOOLS_DELETE(vorsByRectQuery);
+  ATOOLS_DELETE(ndbsByRectQuery);
+  ATOOLS_DELETE(markersByRectQuery);
+  ATOOLS_DELETE(holdingByRectQuery);
+  ATOOLS_DELETE(userdataPointByRectQuery);
+  ATOOLS_DELETE(vorByIdentQuery);
+  ATOOLS_DELETE(ndbByIdentQuery);
+  ATOOLS_DELETE(vorByIdQuery);
+  ATOOLS_DELETE(ndbByIdQuery);
+  ATOOLS_DELETE(vorByWaypointIdQuery);
+  ATOOLS_DELETE(ndbByWaypointIdQuery);
+  ATOOLS_DELETE(vorNearestQuery);
+  ATOOLS_DELETE(ndbNearestQuery);
+  ATOOLS_DELETE(ilsByRectQuery);
+  ATOOLS_DELETE(ilsByIdentQuery);
+  ATOOLS_DELETE(ilsByIdQuery);
+  ATOOLS_DELETE(ilsQuerySimByAirportAndRw);
+  ATOOLS_DELETE(ilsQuerySimByAirportAndIdent);
+  ATOOLS_DELETE(holdingByIdQuery);
+  ATOOLS_DELETE(airportMsaByIdentQuery);
+  ATOOLS_DELETE(airportMsaByRectQuery);
+  ATOOLS_DELETE(airportMsaByIdQuery);
 }

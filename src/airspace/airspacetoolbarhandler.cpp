@@ -17,6 +17,7 @@
 
 #include "airspace/airspacetoolbarhandler.h"
 
+#include "atools.h"
 #include "common/maptypes.h"
 #include "common/unit.h"
 #include "gui/actionbuttonhandler.h"
@@ -177,11 +178,11 @@ AirspaceToolBarHandler::AirspaceToolBarHandler(QWidget *parent)
 
 AirspaceToolBarHandler::~AirspaceToolBarHandler()
 {
-  delete buttonHandlerIcao;
-  delete buttonHandlerFir;
-  delete buttonHandlerRestricted;
-  delete buttonHandlerSpecial;
-  delete buttonHandlerOther;
+  ATOOLS_DELETE(buttonHandlerIcao);
+  ATOOLS_DELETE(buttonHandlerFir);
+  ATOOLS_DELETE(buttonHandlerRestricted);
+  ATOOLS_DELETE(buttonHandlerSpecial);
+  ATOOLS_DELETE(buttonHandlerOther);
 }
 
 void AirspaceToolBarHandler::allAirspacesToggled()

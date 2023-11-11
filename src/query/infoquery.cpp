@@ -360,45 +360,18 @@ void InfoQuery::deInitQueries()
   transitionCache.clear();
   airportSceneryCache.clear();
 
-  delete airportQuery;
-  airportQuery = nullptr;
-
-  delete airportSceneryQuery;
-  airportSceneryQuery = nullptr;
-
-  delete comQuery;
-  comQuery = nullptr;
-
-  delete vorQuery;
-  vorQuery = nullptr;
-
-  delete msaQuery;
-  msaQuery = nullptr;
-
-  delete holdingQuery;
-  holdingQuery = nullptr;
-
-  delete ndbQuery;
-  ndbQuery = nullptr;
-
-  delete runwayQuery;
-  runwayQuery = nullptr;
-
-  delete helipadQuery;
-  helipadQuery = nullptr;
-
-  delete startQuery;
-  startQuery = nullptr;
-
-  delete runwayEndQuery;
-  runwayEndQuery = nullptr;
-
-  delete vorIdentRegionQuery;
-  vorIdentRegionQuery = nullptr;
-
-  delete approachQuery;
-  approachQuery = nullptr;
-
-  delete transitionQuery;
-  transitionQuery = nullptr;
+  ATOOLS_DELETE(airportQuery);
+  ATOOLS_DELETE(airportSceneryQuery);
+  ATOOLS_DELETE(comQuery);
+  ATOOLS_DELETE(vorQuery);
+  ATOOLS_DELETE(msaQuery);
+  ATOOLS_DELETE(holdingQuery);
+  ATOOLS_DELETE(ndbQuery);
+  ATOOLS_DELETE(runwayQuery);
+  ATOOLS_DELETE(helipadQuery);
+  ATOOLS_DELETE(startQuery);
+  ATOOLS_DELETE(runwayEndQuery);
+  ATOOLS_DELETE(vorIdentRegionQuery);
+  ATOOLS_DELETE(approachQuery);
+  ATOOLS_DELETE(transitionQuery);
 }

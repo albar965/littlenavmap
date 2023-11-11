@@ -18,6 +18,7 @@
 #include "app/navapp.h"
 
 #include "airspace/airspacecontroller.h"
+#include "atools.h"
 #include "common/aircrafttrail.h"
 #include "common/constants.h"
 #include "common/elevationprovider.h"
@@ -117,11 +118,8 @@ NavApp::NavApp(int& argc, char **argv, int flags)
 
 NavApp::~NavApp()
 {
-  delete dataExchange;
-  dataExchange = nullptr;
-
-  delete startupOptions;
-  startupOptions = nullptr;
+  ATOOLS_DELETE(dataExchange);
+  ATOOLS_DELETE(startupOptions);
 }
 
 void NavApp::initApplication()
@@ -227,111 +225,32 @@ void NavApp::initElevationProvider()
 
 void NavApp::deInit()
 {
-  qDebug() << Q_FUNC_INFO;
-
-  qDebug() << Q_FUNC_INFO << "delete dataExchange";
-  delete dataExchange;
-  dataExchange = nullptr;
-
-  qDebug() << Q_FUNC_INFO << "delete webController";
-  delete webController;
-  webController = nullptr;
-
-  qDebug() << Q_FUNC_INFO << "delete styleHandler";
-  delete styleHandler;
-  styleHandler = nullptr;
-
-  qDebug() << Q_FUNC_INFO << "delete userdataController";
-  delete userdataController;
-  userdataController = nullptr;
-
-  qDebug() << Q_FUNC_INFO << "delete mapMarkHandler";
-  delete mapMarkHandler;
-  mapMarkHandler = nullptr;
-
-  qDebug() << Q_FUNC_INFO << "delete mapAirportHandler";
-  delete mapAirportHandler;
-  mapAirportHandler = nullptr;
-
-  qDebug() << Q_FUNC_INFO << "delete mapDetailHandler";
-  delete mapDetailHandler;
-  mapDetailHandler = nullptr;
-
-  qDebug() << Q_FUNC_INFO << "delete logdataController";
-  delete logdataController;
-  logdataController = nullptr;
-
-  qDebug() << Q_FUNC_INFO << "delete onlinedataController";
-  delete onlinedataController;
-  onlinedataController = nullptr;
-
-  qDebug() << Q_FUNC_INFO << "delete airwayController";
-  delete trackController;
-  trackController = nullptr;
-
-  qDebug() << Q_FUNC_INFO << "delete aircraftPerfController";
-  delete aircraftPerfController;
-  aircraftPerfController = nullptr;
-
-  qDebug() << Q_FUNC_INFO << "delete airspaceController";
-  delete airspaceController;
-  airspaceController = nullptr;
-
-  qDebug() << Q_FUNC_INFO << "delete updateHandler";
-  delete updateHandler;
-  updateHandler = nullptr;
-
-  qDebug() << Q_FUNC_INFO << "delete connectClient";
-  delete connectClient;
-  connectClient = nullptr;
-
-  qDebug() << Q_FUNC_INFO << "delete elevationProvider";
-  delete elevationProvider;
-  elevationProvider = nullptr;
-
-  qDebug() << Q_FUNC_INFO << "delete airportQuery";
-  delete airportQuerySim;
-  airportQuerySim = nullptr;
-
-  qDebug() << Q_FUNC_INFO << "delete airportQueryNav";
-  delete airportQueryNav;
-  airportQueryNav = nullptr;
-
-  qDebug() << Q_FUNC_INFO << "delete infoQuery";
-  delete infoQuery;
-  infoQuery = nullptr;
-
-  qDebug() << Q_FUNC_INFO << "delete approachQuery";
-  delete procedureQuery;
-  procedureQuery = nullptr;
-
-  qDebug() << Q_FUNC_INFO << "delete databaseManager";
-  delete databaseManager;
-  databaseManager = nullptr;
-
-  qDebug() << Q_FUNC_INFO << "delete databaseMeta";
-  delete databaseMetaSim;
-  databaseMetaSim = nullptr;
-
-  qDebug() << Q_FUNC_INFO << "delete databaseMetaNav";
-  delete databaseMetaNav;
-  databaseMetaNav = nullptr;
-
-  qDebug() << Q_FUNC_INFO << "delete magDecReader";
-  delete magDecReader;
-  magDecReader = nullptr;
-
-  qDebug() << Q_FUNC_INFO << "delete moraReader";
-  delete moraReader;
-  moraReader = nullptr;
-
-  qDebug() << Q_FUNC_INFO << "delete vehicleIcons";
-  delete vehicleIcons;
-  vehicleIcons = nullptr;
-
-  qDebug() << Q_FUNC_INFO << "delete splashScreen";
-  delete splashScreen;
-  splashScreen = nullptr;
+  ATOOLS_DELETE_LOG(dataExchange);
+  ATOOLS_DELETE_LOG(webController);
+  ATOOLS_DELETE_LOG(styleHandler);
+  ATOOLS_DELETE_LOG(userdataController);
+  ATOOLS_DELETE_LOG(mapMarkHandler);
+  ATOOLS_DELETE_LOG(mapAirportHandler);
+  ATOOLS_DELETE_LOG(mapDetailHandler);
+  ATOOLS_DELETE_LOG(logdataController);
+  ATOOLS_DELETE_LOG(onlinedataController);
+  ATOOLS_DELETE_LOG(trackController);
+  ATOOLS_DELETE_LOG(aircraftPerfController);
+  ATOOLS_DELETE_LOG(airspaceController);
+  ATOOLS_DELETE_LOG(updateHandler);
+  ATOOLS_DELETE_LOG(connectClient);
+  ATOOLS_DELETE_LOG(elevationProvider);
+  ATOOLS_DELETE_LOG(airportQuerySim);
+  ATOOLS_DELETE_LOG(airportQueryNav);
+  ATOOLS_DELETE_LOG(infoQuery);
+  ATOOLS_DELETE_LOG(procedureQuery);
+  ATOOLS_DELETE_LOG(databaseManager);
+  ATOOLS_DELETE_LOG(databaseMetaSim);
+  ATOOLS_DELETE_LOG(databaseMetaNav);
+  ATOOLS_DELETE_LOG(magDecReader);
+  ATOOLS_DELETE_LOG(moraReader);
+  ATOOLS_DELETE_LOG(vehicleIcons);
+  ATOOLS_DELETE_LOG(splashScreen);
 }
 
 const DataExchange *NavApp::getDataExchangeConst()
@@ -354,8 +273,7 @@ bool NavApp::initDataExchange()
 
 void NavApp::deInitDataExchange()
 {
-  delete dataExchange;
-  dataExchange = nullptr;
+  ATOOLS_DELETE_LOG(dataExchange);
 }
 
 void NavApp::checkForUpdates(int channelOpts, bool manual, bool startup, bool forceDebug)

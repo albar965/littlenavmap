@@ -144,10 +144,8 @@ void Unit::init()
 
 void Unit::deInit()
 {
-  delete locale;
-  locale = nullptr;
-  delete clocale;
-  clocale = nullptr;
+  ATOOLS_DELETE_LOG(locale);
+  ATOOLS_DELETE_LOG(clocale);
 }
 
 void Unit::initTranslateableTexts()

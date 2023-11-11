@@ -1437,79 +1437,31 @@ void AirportQuery::deInitQueries()
   airportsWithProceduresIata.clear();
   nearestAirportCache.clear();
 
-  delete runwayOverviewQuery;
-  runwayOverviewQuery = nullptr;
-
-  delete apronQuery;
-  apronQuery = nullptr;
-
-  delete parkingQuery;
-  parkingQuery = nullptr;
-
-  delete startQuery;
-  startQuery = nullptr;
-  delete startByIdQuery;
-  startByIdQuery = nullptr;
-
-  delete parkingTypeNumberQuery;
-  parkingTypeNumberQuery = nullptr;
-
-  delete parkingTypeNumberSuffixQuery;
-  parkingTypeNumberSuffixQuery = nullptr;
-
-  delete parkingNameQuery;
-  parkingNameQuery = nullptr;
-
-  delete helipadQuery;
-  helipadQuery = nullptr;
-
-  delete taxiparthQuery;
-  taxiparthQuery = nullptr;
-
-  delete runwaysQuery;
-  runwaysQuery = nullptr;
-
-  delete airportByIdQuery;
-  airportByIdQuery = nullptr;
-
-  delete airportAdminByIdQuery;
-  airportAdminByIdQuery = nullptr;
-
-  delete airportProcByIdQuery;
-  airportProcByIdQuery = nullptr;
-
-  delete procDepartureByAirportIdQuery;
-  procDepartureByAirportIdQuery = nullptr;
-
-  delete procArrivalByAirportIdQuery;
-  procArrivalByAirportIdQuery = nullptr;
-
-  delete airportByIdentQuery;
-  airportByIdentQuery = nullptr;
-
-  delete airportsByTruncatedIdentQuery;
-  airportsByTruncatedIdentQuery = nullptr;
-
-  delete airportByOfficialQuery;
-  airportByOfficialQuery = nullptr;
-
-  delete airportByPosQuery;
-  airportByPosQuery = nullptr;
-
-  delete airportCoordsByIdentQuery;
-  airportCoordsByIdentQuery = nullptr;
-
-  delete airportCoordsByIdentOrIcaoQuery;
-  airportCoordsByIdentOrIcaoQuery = nullptr;
-
-  delete airportByRectAndProcQuery;
-  airportByRectAndProcQuery = nullptr;
-
-  delete runwayEndByIdQuery;
-  runwayEndByIdQuery = nullptr;
-
-  delete runwayEndByNameQuery;
-  runwayEndByNameQuery = nullptr;
+  ATOOLS_DELETE(runwayOverviewQuery);
+  ATOOLS_DELETE(apronQuery);
+  ATOOLS_DELETE(parkingQuery);
+  ATOOLS_DELETE(startQuery);
+  ATOOLS_DELETE(startByIdQuery);
+  ATOOLS_DELETE(parkingTypeNumberQuery);
+  ATOOLS_DELETE(parkingTypeNumberSuffixQuery);
+  ATOOLS_DELETE(parkingNameQuery);
+  ATOOLS_DELETE(helipadQuery);
+  ATOOLS_DELETE(taxiparthQuery);
+  ATOOLS_DELETE(runwaysQuery);
+  ATOOLS_DELETE(airportByIdQuery);
+  ATOOLS_DELETE(airportAdminByIdQuery);
+  ATOOLS_DELETE(airportProcByIdQuery);
+  ATOOLS_DELETE(procDepartureByAirportIdQuery);
+  ATOOLS_DELETE(procArrivalByAirportIdQuery);
+  ATOOLS_DELETE(airportByIdentQuery);
+  ATOOLS_DELETE(airportsByTruncatedIdentQuery);
+  ATOOLS_DELETE(airportByOfficialQuery);
+  ATOOLS_DELETE(airportByPosQuery);
+  ATOOLS_DELETE(airportCoordsByIdentQuery);
+  ATOOLS_DELETE(airportCoordsByIdentOrIcaoQuery);
+  ATOOLS_DELETE(airportByRectAndProcQuery);
+  ATOOLS_DELETE(runwayEndByIdQuery);
+  ATOOLS_DELETE(runwayEndByNameQuery);
 }
 
 QHash<int, QList<map::MapParking> > AirportQuery::getParkingCache() const

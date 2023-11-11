@@ -18,6 +18,7 @@
 #include "airspace/airspacecontroller.h"
 
 #include "airspace/airspacetoolbarhandler.h"
+#include "atools.h"
 #include "common/constants.h"
 #include "db/airspacedialog.h"
 #include "db/dbtools.h"
@@ -78,8 +79,7 @@ AirspaceController::AirspaceController(MainWindow *mainWindowParam,
 
 AirspaceController::~AirspaceController()
 {
-  qDebug() << Q_FUNC_INFO << "delete airspaceHandler";
-  delete airspaceHandler;
+  ATOOLS_DELETE_LOG(airspaceHandler);
 
   qDeleteAll(queries);
   queries.clear();

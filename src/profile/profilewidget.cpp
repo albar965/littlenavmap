@@ -214,24 +214,15 @@ ProfileWidget::ProfileWidget(QWidget *parent)
 
 ProfileWidget::~ProfileWidget()
 {
-  qDebug() << Q_FUNC_INFO << "delete jumpBack";
-  delete jumpBack;
+  ATOOLS_DELETE_LOG(jumpBack);
 
   updateTimer->stop();
   updateTimer->deleteLater();
   terminateThread();
 
-  qDebug() << Q_FUNC_INFO << "delete scrollArea";
-  delete scrollArea;
-  scrollArea = nullptr;
-
-  qDebug() << Q_FUNC_INFO << "delete legList";
-  delete legList;
-  legList = nullptr;
-
-  qDebug() << Q_FUNC_INFO << "delete profileOptions";
-  delete profileOptions;
-  profileOptions = nullptr;
+  ATOOLS_DELETE_LOG(scrollArea);
+  ATOOLS_DELETE_LOG(legList);
+  ATOOLS_DELETE_LOG(profileOptions);
 }
 
 void ProfileWidget::aircraftTrailPruned()

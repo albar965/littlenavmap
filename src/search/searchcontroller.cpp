@@ -17,6 +17,7 @@
 
 #include "search/searchcontroller.h"
 
+#include "atools.h"
 #include "common/constants.h"
 #include "common/formatter.h"
 #include "common/mapresult.h"
@@ -70,41 +71,15 @@ SearchController::SearchController(QMainWindow *parent, QTabWidget *tabWidgetSea
 
 SearchController::~SearchController()
 {
-  qDebug() << Q_FUNC_INFO << "delete tabHandlerSearch";
-  delete tabHandlerSearch;
-  tabHandlerSearch = nullptr;
-
-  qDebug() << Q_FUNC_INFO << "delete airportSearch";
-  delete airportSearch;
-  airportSearch = nullptr;
-
-  qDebug() << Q_FUNC_INFO << "delete navSearch";
-  delete navSearch;
-  navSearch = nullptr;
-
-  qDebug() << Q_FUNC_INFO << "delete procedureSearch";
-  delete procedureSearch;
-  procedureSearch = nullptr;
-
-  qDebug() << Q_FUNC_INFO << "delete userdataSearch";
-  delete userdataSearch;
-  userdataSearch = nullptr;
-
-  qDebug() << Q_FUNC_INFO << "delete logdataSearch";
-  delete logdataSearch;
-  logdataSearch = nullptr;
-
-  qDebug() << Q_FUNC_INFO << "delete onlineClientSearch";
-  delete onlineClientSearch;
-  onlineClientSearch = nullptr;
-
-  qDebug() << Q_FUNC_INFO << "delete onlineCenterSearch";
-  delete onlineCenterSearch;
-  onlineCenterSearch = nullptr;
-
-  qDebug() << Q_FUNC_INFO << "delete onlineServerSearch";
-  delete onlineServerSearch;
-  onlineServerSearch = nullptr;
+  ATOOLS_DELETE_LOG(tabHandlerSearch);
+  ATOOLS_DELETE_LOG(airportSearch);
+  ATOOLS_DELETE_LOG(navSearch);
+  ATOOLS_DELETE_LOG(procedureSearch);
+  ATOOLS_DELETE_LOG(userdataSearch);
+  ATOOLS_DELETE_LOG(logdataSearch);
+  ATOOLS_DELETE_LOG(onlineClientSearch);
+  ATOOLS_DELETE_LOG(onlineCenterSearch);
+  ATOOLS_DELETE_LOG(onlineServerSearch);
 }
 
 void SearchController::getSelectedMapObjects(map::MapResult& result) const

@@ -316,28 +316,14 @@ void WaypointQuery::deInitQueries()
 {
   clearCache();
 
-  delete waypointsByRectQuery;
-  waypointsByRectQuery = nullptr;
-  delete waypointsAirwayByRectQuery;
-  waypointsAirwayByRectQuery = nullptr;
-
-  delete waypointByIdentQuery;
-  waypointByIdentQuery = nullptr;
-
-  delete waypointNearestQuery;
-  waypointNearestQuery = nullptr;
-
-  delete waypointRectQuery;
-  waypointRectQuery = nullptr;
-
-  delete waypointByIdQuery;
-  waypointByIdQuery = nullptr;
-
-  delete waypointByNavIdQuery;
-  waypointByNavIdQuery = nullptr;
-
-  delete waypointInfoQuery;
-  waypointInfoQuery = nullptr;
+ATOOLS_DELETE(waypointsByRectQuery);
+ATOOLS_DELETE(waypointsAirwayByRectQuery);
+ATOOLS_DELETE(waypointByIdentQuery);
+ATOOLS_DELETE(waypointNearestQuery);
+ATOOLS_DELETE(waypointRectQuery);
+ATOOLS_DELETE(waypointByIdQuery);
+ATOOLS_DELETE(waypointByNavIdQuery);
+ATOOLS_DELETE(waypointInfoQuery);
 }
 
 void WaypointQuery::clearCache()

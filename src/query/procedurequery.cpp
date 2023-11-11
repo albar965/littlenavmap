@@ -2018,44 +2018,19 @@ void ProcedureQuery::deInitQueries()
   procedureLegIndex.clear();
   transitionLegIndex.clear();
 
-  delete procedureLegQuery;
-  procedureLegQuery = nullptr;
-
-  delete transitionLegQuery;
-  transitionLegQuery = nullptr;
-
-  delete transitionIdForLegQuery;
-  transitionIdForLegQuery = nullptr;
-
-  delete procedureIdForTransQuery;
-  procedureIdForTransQuery = nullptr;
-
-  delete runwayEndIdQuery;
-  runwayEndIdQuery = nullptr;
-
-  delete transitionQuery;
-  transitionQuery = nullptr;
-
-  delete procedureQuery;
-  procedureQuery = nullptr;
-
-  delete procedureIdByNameQuery;
-  procedureIdByNameQuery = nullptr;
-
-  delete procedureIdByArincNameQuery;
-  procedureIdByArincNameQuery = nullptr;
-
-  delete transitionIdByNameQuery;
-  transitionIdByNameQuery = nullptr;
-
-  delete sidTransIdByWpQuery;
-  sidTransIdByWpQuery = nullptr;
-
-  delete starTransIdByWpQuery;
-  starTransIdByWpQuery = nullptr;
-
-  delete transitionIdsForProcedureQuery;
-  transitionIdsForProcedureQuery = nullptr;
+  ATOOLS_DELETE(procedureLegQuery);
+  ATOOLS_DELETE(transitionLegQuery);
+  ATOOLS_DELETE(transitionIdForLegQuery);
+  ATOOLS_DELETE(procedureIdForTransQuery);
+  ATOOLS_DELETE(runwayEndIdQuery);
+  ATOOLS_DELETE(transitionQuery);
+  ATOOLS_DELETE(procedureQuery);
+  ATOOLS_DELETE(procedureIdByNameQuery);
+  ATOOLS_DELETE(procedureIdByArincNameQuery);
+  ATOOLS_DELETE(transitionIdByNameQuery);
+  ATOOLS_DELETE(sidTransIdByWpQuery);
+  ATOOLS_DELETE(starTransIdByWpQuery);
+  ATOOLS_DELETE(transitionIdsForProcedureQuery);
 }
 
 void ProcedureQuery::clearFlightplanProcedureProperties(QHash<QString, QString>& properties, const proc::MapProcedureTypes& type)

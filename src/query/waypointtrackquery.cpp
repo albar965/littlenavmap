@@ -186,11 +186,8 @@ void WaypointTrackQuery::clearCache()
 
 void WaypointTrackQuery::deleteChildren()
 {
-  delete trackQuery;
-  trackQuery = nullptr;
-
-  delete waypointQuery;
-  waypointQuery = nullptr;
+  ATOOLS_DELETE(trackQuery);
+  ATOOLS_DELETE(waypointQuery);
 }
 
 SqlQuery *WaypointTrackQuery::getWaypointsByRectQuery() const

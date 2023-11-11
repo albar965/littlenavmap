@@ -120,28 +120,17 @@ MapPaintWidget::~MapPaintWidget()
 
   // Have to delete manually since classes can be copied and does not delete in destructor
   airwayTrackQuery->deleteChildren();
-  delete airwayTrackQuery;
+  ATOOLS_DELETE_LOG(airwayTrackQuery);
 
   waypointTrackQuery->deleteChildren();
-  delete waypointTrackQuery;
+  ATOOLS_DELETE_LOG(waypointTrackQuery);
 
-  qDebug() << Q_FUNC_INFO << "delete paintLayer";
-  delete paintLayer;
-
-  qDebug() << Q_FUNC_INFO << "delete screenIndex";
-  delete screenIndex;
-
-  qDebug() << Q_FUNC_INFO << "delete aircraftTrack";
-  delete aircraftTrail;
-
-  qDebug() << Q_FUNC_INFO << "delete aircraftTrackLogbook";
-  delete aircraftTrailLogbook;
-
-  qDebug() << Q_FUNC_INFO << "delete apronGeometryCache";
-  delete apronGeometryCache;
-
-  qDebug() << Q_FUNC_INFO << "delete mapQuery";
-  delete mapQuery;
+  ATOOLS_DELETE_LOG(paintLayer);
+  ATOOLS_DELETE_LOG(screenIndex);
+  ATOOLS_DELETE_LOG(aircraftTrail);
+  ATOOLS_DELETE_LOG(aircraftTrailLogbook);
+  ATOOLS_DELETE_LOG(apronGeometryCache);
+  ATOOLS_DELETE_LOG(mapQuery);
 }
 
 void MapPaintWidget::copySettings(const MapPaintWidget& other)

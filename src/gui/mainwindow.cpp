@@ -498,107 +498,32 @@ MainWindow::~MainWindow()
   preDatabaseLoad();
 
   // Set all pointers to null to catch errors for late access
-
-  qDebug() << Q_FUNC_INFO << "delete routeStringDialog";
   NavApp::removeDialogFromDockHandler(routeStringDialog);
-  delete routeStringDialog;
-  routeStringDialog = nullptr;
-
-  qDebug() << Q_FUNC_INFO << "delete routeController";
-  delete routeController;
-  routeController = nullptr;
-
-  qDebug() << Q_FUNC_INFO << "delete searchController";
-  delete searchController;
-  searchController = nullptr;
-
-  qDebug() << Q_FUNC_INFO << "delete weatherReporter";
-  delete weatherReporter;
-  weatherReporter = nullptr;
-
-  qDebug() << Q_FUNC_INFO << "delete windReporter";
-  delete windReporter;
-  windReporter = nullptr;
-
-  qDebug() << Q_FUNC_INFO << "delete profileWidget";
-  delete profileWidget;
-  profileWidget = nullptr;
-
-  qDebug() << Q_FUNC_INFO << "delete marbleAbout";
-  delete marbleAboutDialog;
-  marbleAboutDialog = nullptr;
-
-  qDebug() << Q_FUNC_INFO << "delete infoController";
-  delete infoController;
-  infoController = nullptr;
-
-  qDebug() << Q_FUNC_INFO << "delete printSupport";
-  delete printSupport;
-  printSupport = nullptr;
-
-  qDebug() << Q_FUNC_INFO << "delete routeFileHistory";
-  delete routeFileHistory;
-  routeFileHistory = nullptr;
-
-  qDebug() << Q_FUNC_INFO << "delete kmlFileHistory";
-  delete kmlFileHistory;
-  kmlFileHistory = nullptr;
-
-  qDebug() << Q_FUNC_INFO << "delete layoutFileHistory";
-  delete layoutFileHistory;
-  layoutFileHistory = nullptr;
-
-  qDebug() << Q_FUNC_INFO << "delete optionsDialog";
-  delete optionsDialog;
-  optionsDialog = nullptr;
-
-  qDebug() << Q_FUNC_INFO << "delete mapWidget";
-  delete mapWidget;
-  mapWidget = nullptr;
-
-  qDebug() << Q_FUNC_INFO << "delete dialog";
-  delete dialog;
-  dialog = nullptr;
-
-  qDebug() << Q_FUNC_INFO << "delete errorHandler";
-  delete errorHandler;
-  errorHandler = nullptr;
-
-  qDebug() << Q_FUNC_INFO << "delete helpHandler";
-  delete helpHandler;
-  helpHandler = nullptr;
-
-  qDebug() << Q_FUNC_INFO << "delete actionGroupMapProjection";
-  delete actionGroupMapProjection;
-  actionGroupMapProjection = nullptr;
-
-  qDebug() << Q_FUNC_INFO << "delete actionGroupMapSunShading";
-  delete actionGroupMapSunShading;
-  actionGroupMapSunShading = nullptr;
-
-  qDebug() << Q_FUNC_INFO << "delete actionGroupMapWeatherSource";
-  delete actionGroupMapWeatherSource;
-  actionGroupMapWeatherSource = nullptr;
-
-  qDebug() << Q_FUNC_INFO << "delete actionGroupMapWeatherWindSource";
-  delete actionGroupMapWeatherWindSource;
-  actionGroupMapWeatherWindSource = nullptr;
-
-  qDebug() << Q_FUNC_INFO << "delete routeExport";
-  delete routeExport;
-  routeExport = nullptr;
-
-  qDebug() << Q_FUNC_INFO << "delete weatherContextHandler";
-  delete weatherContextHandler;
-  weatherContextHandler = nullptr;
-
-  qDebug() << Q_FUNC_INFO << "delete simbriefHandler";
-  delete simbriefHandler;
-  simbriefHandler = nullptr;
-
-  qDebug() << Q_FUNC_INFO << "delete   mapThemeHandler";
-  delete mapThemeHandler;
-  mapThemeHandler = nullptr;
+  ATOOLS_DELETE_LOG(routeStringDialog);
+  ATOOLS_DELETE_LOG(routeController);
+  ATOOLS_DELETE_LOG(searchController);
+  ATOOLS_DELETE_LOG(weatherReporter);
+  ATOOLS_DELETE_LOG(windReporter);
+  ATOOLS_DELETE_LOG(profileWidget);
+  ATOOLS_DELETE_LOG(marbleAboutDialog);
+  ATOOLS_DELETE_LOG(infoController);
+  ATOOLS_DELETE_LOG(printSupport);
+  ATOOLS_DELETE_LOG(routeFileHistory);
+  ATOOLS_DELETE_LOG(kmlFileHistory);
+  ATOOLS_DELETE_LOG(layoutFileHistory);
+  ATOOLS_DELETE_LOG(optionsDialog);
+  ATOOLS_DELETE_LOG(mapWidget);
+  ATOOLS_DELETE_LOG(dialog);
+  ATOOLS_DELETE_LOG(errorHandler);
+  ATOOLS_DELETE_LOG(helpHandler);
+  ATOOLS_DELETE_LOG(actionGroupMapProjection);
+  ATOOLS_DELETE_LOG(actionGroupMapSunShading);
+  ATOOLS_DELETE_LOG(actionGroupMapWeatherSource);
+  ATOOLS_DELETE_LOG(actionGroupMapWeatherWindSource);
+  ATOOLS_DELETE_LOG(routeExport);
+  ATOOLS_DELETE_LOG(weatherContextHandler);
+  ATOOLS_DELETE_LOG(simbriefHandler);
+  ATOOLS_DELETE_LOG(mapThemeHandler);
 
   qDebug() << Q_FUNC_INFO << "NavApplication::deInit()";
   NavApp::deInit();
@@ -606,13 +531,9 @@ MainWindow::~MainWindow()
   qDebug() << Q_FUNC_INFO << "Unit::deInit()";
   Unit::deInit();
 
-  qDebug() << Q_FUNC_INFO << "delete ui";
-  delete ui;
-  ui = nullptr;
+  ATOOLS_DELETE_LOG(ui);
 
-  qDebug() << Q_FUNC_INFO << "delete dockHandler";
-  delete dockHandler;
-  dockHandler = nullptr;
+  ATOOLS_DELETE_LOG(dockHandler);
 
   // Delete settings singleton
   qDebug() << Q_FUNC_INFO << "Settings::shutdown()";

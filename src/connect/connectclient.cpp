@@ -112,20 +112,11 @@ ConnectClient::~ConnectClient()
 
   disconnectClicked();
 
-  qDebug() << Q_FUNC_INFO << "delete dataReader";
-  delete dataReader;
-
-  qDebug() << Q_FUNC_INFO << "delete simConnectHandler";
-  delete simConnectHandler;
-
-  qDebug() << Q_FUNC_INFO << "delete xpConnectHandler";
-  delete xpConnectHandler;
-
-  qDebug() << Q_FUNC_INFO << "delete dialog";
-  delete connectDialog;
-
-  qDebug() << Q_FUNC_INFO << "delete errorMessage";
-  delete errorMessageBox;
+  ATOOLS_DELETE_LOG(dataReader);
+  ATOOLS_DELETE_LOG(simConnectHandler);
+  ATOOLS_DELETE_LOG(xpConnectHandler);
+  ATOOLS_DELETE_LOG(connectDialog);
+  ATOOLS_DELETE_LOG(errorMessageBox);
 }
 
 void ConnectClient::flushQueuedRequests()
