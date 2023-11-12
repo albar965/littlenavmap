@@ -28,6 +28,7 @@
 #include "gui/griddelegate.h"
 #include "gui/helphandler.h"
 #include "gui/itemviewzoomhandler.h"
+#include "gui/listwidgetindex.h"
 #include "gui/texteditdialog.h"
 #include "gui/tools.h"
 #include "gui/translator.h"
@@ -114,6 +115,7 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
   zoomHandlerDatabaseAddonExclude = new atools::gui::ItemViewZoomHandler(ui->tableWidgetOptionsDatabaseExcludeAddon);
 
   gridDelegate = new atools::gui::GridDelegate(ui->treeWidgetOptionsDisplayTextOptions);
+  listWidgetIndex = new atools::gui::ListWidgetIndex(ui->listWidgetOptionPages, ui->stackedWidgetOptions);
   ui->treeWidgetOptionsDisplayTextOptions->setItemDelegate(gridDelegate);
 
   // Add option pages with text, icon and tooltip ========================================
@@ -692,6 +694,8 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
 
   // Map theme key double clicked ===================================================================
   connect(ui->tableWidgetOptionsMapKeys, &QTableWidget::itemDoubleClicked, this, &OptionsDialog::mapThemeKeyEdited);
+
+  connect(ui->lineEditOptionSearch, &QLineEdit::textEdited, this, &OptionsDialog::searchTextEdited);
 }
 
 /* called at program end */
@@ -699,41 +703,16 @@ OptionsDialog::~OptionsDialog()
 {
   ui->treeWidgetOptionsDisplayTextOptions->setItemDelegate(nullptr);
 
-  qDebug() << Q_FUNC_INFO << "delete gridDelegate";
-  delete gridDelegate;
-  gridDelegate = nullptr;
-
-  qDebug() << Q_FUNC_INFO << "delete zoomHandlerLabelTree";
-  delete zoomHandlerLabelTree;
-  zoomHandlerLabelTree = nullptr;
-
-  qDebug() << Q_FUNC_INFO << "delete zoomHandlerDatabaseInclude";
-  delete zoomHandlerDatabaseInclude;
-  zoomHandlerDatabaseInclude = nullptr;
-
-  qDebug() << Q_FUNC_INFO << "delete zoomHandlerDatabaseExclude";
-  delete zoomHandlerDatabaseExclude;
-  zoomHandlerDatabaseExclude = nullptr;
-
-  qDebug() << Q_FUNC_INFO << "delete zoomHandlerDatabaseAddonExclude";
-  delete zoomHandlerDatabaseAddonExclude;
-  zoomHandlerDatabaseAddonExclude = nullptr;
-
-  qDebug() << Q_FUNC_INFO << "delete zoomHandlerMapThemeKeysTable";
-  delete zoomHandlerMapThemeKeysTable;
-  zoomHandlerMapThemeKeysTable = nullptr;
-
-  qDebug() << Q_FUNC_INFO << "delete units";
-  delete units;
-  units = nullptr;
-
-  qDebug() << Q_FUNC_INFO << "delete ui";
-  delete ui;
-  ui = nullptr;
-
-  qDebug() << Q_FUNC_INFO << "delete fontDialog";
-  delete fontDialog;
-  fontDialog = nullptr;
+  ATOOLS_DELETE_LOG(gridDelegate);
+  ATOOLS_DELETE_LOG(listWidgetIndex);
+  ATOOLS_DELETE_LOG(zoomHandlerLabelTree);
+  ATOOLS_DELETE_LOG(zoomHandlerDatabaseInclude);
+  ATOOLS_DELETE_LOG(zoomHandlerDatabaseExclude);
+  ATOOLS_DELETE_LOG(zoomHandlerDatabaseAddonExclude);
+  ATOOLS_DELETE_LOG(zoomHandlerMapThemeKeysTable);
+  ATOOLS_DELETE_LOG(units);
+  ATOOLS_DELETE_LOG(ui);
+  ATOOLS_DELETE_LOG(fontDialog);
 }
 
 void OptionsDialog::styleChanged()
@@ -744,6 +723,11 @@ void OptionsDialog::styleChanged()
   atools::gui::util::labelForcedUpdate(ui->labelOptionsWebStatus);
 
   gridDelegate->styleChanged();
+
+  // Update potential search hightlights with new color
+  listWidgetIndex->setHighlightColor(NavApp::isCurrentGuiStyleNight() ? QColor(255, 0, 0, 200) : QColor(255, 255, 0, 200));
+  listWidgetIndex->find(QString());
+  listWidgetIndex->find(ui->lineEditOptionSearch->text());
 }
 
 void OptionsDialog::setCacheMapThemeDir(const QString& mapThemesDir)
@@ -2339,6 +2323,11 @@ void OptionsDialog::mapThemeKeyEdited(QTableWidgetItem *item)
 
   if(item->flags().testFlag(Qt::ItemIsEditable))
     ui->tableWidgetOptionsMapKeys->editItem(item);
+}
+
+void OptionsDialog::searchTextEdited(const QString& text)
+{
+  listWidgetIndex->find(text);
 }
 
 void OptionsDialog::widgetToMapThemeKeys(OptionData& data)

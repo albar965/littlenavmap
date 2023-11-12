@@ -6,44 +6,57 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>907</width>
-    <height>528</height>
+    <width>911</width>
+    <height>565</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Little Navmap - Options</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout">
+  <layout class="QVBoxLayout" name="verticalLayout_69">
    <item>
     <widget class="QSplitter" name="splitterOptions">
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
      </property>
-     <property name="childrenCollapsible">
-      <bool>false</bool>
-     </property>
-     <widget class="QListWidget" name="listWidgetOptionPages">
-      <property name="minimumSize">
-       <size>
-        <width>150</width>
-        <height>0</height>
-       </size>
-      </property>
-      <property name="editTriggers">
-       <set>QAbstractItemView::NoEditTriggers</set>
-      </property>
-      <property name="showDropIndicator" stdset="0">
-       <bool>false</bool>
-      </property>
-      <property name="alternatingRowColors">
-       <bool>true</bool>
-      </property>
-      <property name="selectionBehavior">
-       <enum>QAbstractItemView::SelectRows</enum>
-      </property>
-      <property name="currentRow">
-       <number>-1</number>
-      </property>
+     <widget class="QWidget" name="verticalLayoutWidget">
+      <layout class="QVBoxLayout" name="verticalLayout_68">
+       <item>
+        <widget class="QLineEdit" name="lineEditOptionSearch">
+         <property name="placeholderText">
+          <string>Search for Options</string>
+         </property>
+         <property name="clearButtonEnabled">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QListWidget" name="listWidgetOptionPages">
+         <property name="minimumSize">
+          <size>
+           <width>150</width>
+           <height>0</height>
+          </size>
+         </property>
+         <property name="editTriggers">
+          <set>QAbstractItemView::NoEditTriggers</set>
+         </property>
+         <property name="showDropIndicator" stdset="0">
+          <bool>false</bool>
+         </property>
+         <property name="alternatingRowColors">
+          <bool>true</bool>
+         </property>
+         <property name="selectionBehavior">
+          <enum>QAbstractItemView::SelectRows</enum>
+         </property>
+         <property name="currentRow">
+          <number>-1</number>
+         </property>
+        </widget>
+       </item>
+      </layout>
      </widget>
      <widget class="QStackedWidget" name="stackedWidgetOptions">
       <property name="currentIndex">
@@ -61,8 +74,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>605</width>
-             <height>459</height>
+             <width>606</width>
+             <height>496</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_21">
@@ -402,8 +415,8 @@ This is the file on top of the list &quot;Recent Window Layouts&quot;.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>514</width>
-             <height>368</height>
+             <width>606</width>
+             <height>496</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_22">
@@ -434,7 +447,7 @@ This is the file on top of the list &quot;Recent Window Layouts&quot;.</string>
                <item row="5" column="0" colspan="2">
                 <widget class="QLabel" name="label_18">
                  <property name="text">
-                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Other numeric units can be changed on page &amp;quot;Units&amp;quot;.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/littlenavmap/resources/icons/bulb.svg&quot;/&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Other numeric units can be changed on page &amp;quot;Units&amp;quot;.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                  </property>
                  <property name="wordWrap">
                   <bool>true</bool>
@@ -595,8 +608,8 @@ opening files, modifying the flight plan and other operations.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>419</width>
-             <height>736</height>
+             <width>592</width>
+             <height>707</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_23">
@@ -667,7 +680,7 @@ Font size is limited to 30 points/pixels.</string>
                <item row="3" column="0" colspan="3">
                 <widget class="QLabel" name="labelOptionsGuiFontNote">
                  <property name="text">
-                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;A restart is recommended after changing the user interface font.&lt;/span&gt;&lt;br/&gt;Note that not all fonts are suitable for the user interface.&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;The map font can be changed on the page &amp;quot;Map Display&amp;quot;.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;A restart is recommended after changing the user interface font.&lt;/span&gt;&lt;br/&gt;Note that not all fonts are suitable for the user interface.&lt;/p&gt;&lt;p&gt;&lt;img src=&quot;:/littlenavmap/resources/icons/bulb.svg&quot;/&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;The map font can be changed on the page &amp;quot;Map Display&amp;quot;.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                  </property>
                  <property name="wordWrap">
                   <bool>true</bool>
@@ -789,7 +802,7 @@ This does not affect the map window which can be changed separately on the optio
                <item>
                 <widget class="QLabel" name="labelOptionsGuiFontNote_2">
                  <property name="text">
-                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;You can define tooltip actions separately for each map feature on page &amp;quot;Map Tooltips and Clicks&amp;quot;.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/littlenavmap/resources/icons/bulb.svg&quot;/&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;You can define tooltip actions separately for each map feature on page &amp;quot;Map Tooltips and Clicks&amp;quot;.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                  </property>
                  <property name="wordWrap">
                   <bool>true</bool>
@@ -1132,8 +1145,8 @@ This does not affect the map window which can be changed separately on the optio
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>568</width>
-             <height>386</height>
+             <width>606</width>
+             <height>496</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_36">
@@ -1453,8 +1466,8 @@ Also affects labels at holds and traffic patterns.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>471</width>
-             <height>372</height>
+             <width>606</width>
+             <height>496</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_59">
@@ -1585,7 +1598,7 @@ Example: &quot;IFR Frankfurt Am Main (EDDF) to Fiumicino (LIRF).lnmpln&quot;</st
                <item row="7" column="0" colspan="3">
                 <widget class="QLabel" name="label_21">
                  <property name="text">
-                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;You can set more file patterns and export locations in the &amp;quot;Multi Export Flight Plan Options&amp;quot; in the main menu &amp;quot;File&amp;quot;.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/littlenavmap/resources/icons/bulb.svg&quot;/&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;You can set more file patterns and export locations in the &amp;quot;Multi Export Flight Plan Options&amp;quot; in the main menu &amp;quot;File&amp;quot;.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                  </property>
                  <property name="wordWrap">
                   <bool>true</bool>
@@ -1669,8 +1682,8 @@ Example: &quot;IFR Frankfurt Am Main (EDDF) to Fiumicino (LIRF).lnmpln&quot;</st
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>321</width>
-             <height>417</height>
+             <width>606</width>
+             <height>496</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout">
@@ -1730,7 +1743,7 @@ Restart the program after changing this option. You might also need to reset the
                <item>
                 <widget class="QLabel" name="label_20">
                  <property name="text">
-                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Use &amp;quot;Window&amp;quot; -&amp;gt; &amp;quot;Reset Window Layout&amp;quot; in the main menu to clean up the layout after a restart, if necessary.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/littlenavmap/resources/icons/bulb.svg&quot;/&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Use &amp;quot;Window&amp;quot; -&amp;gt; &amp;quot;Reset Window Layout&amp;quot; in the main menu to clean up the layout after a restart, if necessary.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                  </property>
                  <property name="wordWrap">
                   <bool>true</bool>
@@ -1938,8 +1951,8 @@ The aiports toolbar button can be used to hide empty airports if this box is che
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>605</width>
-             <height>459</height>
+             <width>606</width>
+             <height>496</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_2">
@@ -2369,8 +2382,8 @@ Smaller values will allow a finer selection.</string>
            <property name="geometry">
             <rect>
              <x>0</x>
-             <y>-48</y>
-             <width>591</width>
+             <y>0</y>
+             <width>592</width>
              <height>507</height>
             </rect>
            </property>
@@ -2463,7 +2476,7 @@ options page &quot;Map Labels&quot; to display a screen center hint.</string>
                <item row="4" column="0" colspan="2">
                 <widget class="QLabel" name="label_24">
                  <property name="text">
-                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Enable &amp;quot;Navigation Aids&amp;quot;, &amp;quot;Center Cross&amp;quot; on options page &amp;quot;Map Labels&amp;quot; to display a screen center hint.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/littlenavmap/resources/icons/bulb.svg&quot;/&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Enable &amp;quot;Navigation Aids&amp;quot;, &amp;quot;Center Cross&amp;quot; on options page &amp;quot;Map Labels&amp;quot; to display a screen center hint.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                  </property>
                  <property name="wordWrap">
                   <bool>true</bool>
@@ -2698,9 +2711,9 @@ Map views might be shown with a larger zoom distance than expected if this optio
            <property name="geometry">
             <rect>
              <x>0</x>
-             <y>-424</y>
-             <width>591</width>
-             <height>883</height>
+             <y>-387</y>
+             <width>592</width>
+             <height>886</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_20">
@@ -3131,7 +3144,7 @@ Lower values make the airspace more opaque and higher values more transparent.</
                <item row="21" column="0" colspan="3">
                 <widget class="QLabel" name="label_12">
                  <property name="text">
-                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Airspace label settings can be found on page &amp;quot;Map Labels&amp;quot; in branch &amp;quot;Airspaces&amp;quot;.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/littlenavmap/resources/icons/bulb.svg&quot;/&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Airspace label settings can be found on page &amp;quot;Map Labels&amp;quot; in branch &amp;quot;Airspaces&amp;quot;.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                  </property>
                  <property name="wordWrap">
                   <bool>true</bool>
@@ -3182,7 +3195,7 @@ Lower values make the airspace more opaque and higher values more transparent.</
                <item row="25" column="0" colspan="3">
                 <widget class="QLabel" name="label_13">
                  <property name="text">
-                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Label settings for the user aircraft can be found on page &amp;quot;Map Labels&amp;quot; in branch &amp;quot;User Aircraft&amp;quot;.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/littlenavmap/resources/icons/bulb.svg&quot;/&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Label settings for the user aircraft can be found on page &amp;quot;Map Labels&amp;quot; in branch &amp;quot;User Aircraft&amp;quot;.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                  </property>
                  <property name="wordWrap">
                   <bool>true</bool>
@@ -3198,7 +3211,7 @@ Lower values make the airspace more opaque and higher values more transparent.</
                <item row="3" column="0" colspan="3">
                 <widget class="QLabel" name="label_11">
                  <property name="text">
-                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;More airport settings can be found on page &amp;quot;Map Labels&amp;quot; in the branches &amp;quot;Airport&amp;quot; and &amp;quot;Airport Details&amp;quot;.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/littlenavmap/resources/icons/bulb.svg&quot;/&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;More airport settings can be found on page &amp;quot;Map Labels&amp;quot; in the branches &amp;quot;Airport&amp;quot; and &amp;quot;Airport Details&amp;quot;.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                  </property>
                  <property name="wordWrap">
                   <bool>true</bool>
@@ -3456,7 +3469,7 @@ For VOR, NDB, ILS, waypoints and holdings. Not for flight plan labels.</string>
                <item row="30" column="0" colspan="3">
                 <widget class="QLabel" name="label_14">
                  <property name="text">
-                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Label settings for the AI or multiplayer aircraft can be found on page &amp;quot;Map Labels&amp;quot; in branch &amp;quot;AI, Multiplayer and Online Client Aircraft&amp;quot;.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/littlenavmap/resources/icons/bulb.svg&quot;/&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Label settings for the AI or multiplayer aircraft can be found on page &amp;quot;Map Labels&amp;quot; in branch &amp;quot;AI, Multiplayer and Online Client Aircraft&amp;quot;.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                  </property>
                  <property name="wordWrap">
                   <bool>true</bool>
@@ -3475,7 +3488,7 @@ For VOR, NDB, ILS, waypoints and holdings. Not for flight plan labels.</string>
             <item>
              <widget class="QLabel" name="label_26">
               <property name="text">
-               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;More label options for the elevation profile can be found in menu &amp;quot;Tools&amp;quot; -&amp;gt; &amp;quot;Elevation Profile Display Options&amp;quot;.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/littlenavmap/resources/icons/bulb.svg&quot;/&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;More label options for the elevation profile can be found in menu &amp;quot;Tools&amp;quot; -&amp;gt; &amp;quot;Elevation Profile Display Options&amp;quot;.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
               </property>
               <property name="wordWrap">
                <bool>true</bool>
@@ -3507,7 +3520,7 @@ For VOR, NDB, ILS, waypoints and holdings. Not for flight plan labels.</string>
         </item>
        </layout>
       </widget>
-      <widget class="QWidget" name="stackedWidgetOptionsMapDisplayFlightplan">
+      <widget class="QWidget" name="stackedWidgetOptionsMapFlightplan">
        <layout class="QVBoxLayout" name="verticalLayout_34">
         <property name="spacing">
          <number>6</number>
@@ -3534,8 +3547,8 @@ For VOR, NDB, ILS, waypoints and holdings. Not for flight plan labels.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>591</width>
-             <height>471</height>
+             <width>606</width>
+             <height>496</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_35">
@@ -3824,7 +3837,7 @@ Also used in the elevation profile.</string>
                <item row="6" column="0" colspan="4">
                 <widget class="QLabel" name="label_15">
                  <property name="text">
-                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Flight plan label settings can be found on page &amp;quot;Map Labels&amp;quot; in branch &amp;quot;Flight Plan&amp;quot;.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/littlenavmap/resources/icons/bulb.svg&quot;/&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Flight plan label settings can be found on page &amp;quot;Map Labels&amp;quot; in branch &amp;quot;Flight Plan&amp;quot;.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                  </property>
                  <property name="wordWrap">
                   <bool>true</bool>
@@ -3924,7 +3937,7 @@ Also used in the elevation profile.</string>
                <item row="1" column="0" colspan="4">
                 <widget class="QLabel" name="label_27">
                  <property name="text">
-                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Label options for the elevation profile can be found in menu &amp;quot;Tools&amp;quot; -&amp;gt; &amp;quot;Elevation Profile Display Options&amp;quot;.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/littlenavmap/resources/icons/bulb.svg&quot;/&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Label options for the elevation profile can be found in menu &amp;quot;Tools&amp;quot; -&amp;gt; &amp;quot;Elevation Profile Display Options&amp;quot;.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                  </property>
                  <property name="wordWrap">
                   <bool>true</bool>
@@ -3959,7 +3972,7 @@ Also used in the elevation profile.</string>
         </item>
        </layout>
       </widget>
-      <widget class="QWidget" name="stackedWidgetOptionsMapDisplayTrail">
+      <widget class="QWidget" name="stackedWidgetOptionsMapAircraftTrail">
        <layout class="QVBoxLayout" name="verticalLayout_48">
         <item>
          <widget class="QScrollArea" name="scrollArea_19">
@@ -3971,8 +3984,8 @@ Also used in the elevation profile.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>605</width>
-             <height>459</height>
+             <width>606</width>
+             <height>496</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_57">
@@ -4191,7 +4204,7 @@ Lower this value to avoid too long tracks and avoid stutters in map display.</st
             <item>
              <widget class="QLabel" name="label_28">
               <property name="text">
-               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Aircraft trails can be loaded and saved in the menu &amp;quot;File&amp;quot; -&amp;gt; &amp;quot;GPS Exchange Format (GPX)&amp;quot;.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/littlenavmap/resources/icons/bulb.svg&quot;/&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Aircraft trails can be loaded and saved in the menu &amp;quot;File&amp;quot; -&amp;gt; &amp;quot;GPS Exchange Format (GPX)&amp;quot;.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
               </property>
               <property name="wordWrap">
                <bool>true</bool>
@@ -4223,7 +4236,7 @@ Lower this value to avoid too long tracks and avoid stutters in map display.</st
         </item>
        </layout>
       </widget>
-      <widget class="QWidget" name="stackedWidgetOptionsMapDisplayUser">
+      <widget class="QWidget" name="stackedWidgetOptionsMapUser">
        <layout class="QVBoxLayout" name="verticalLayout_49">
         <item>
          <widget class="QScrollArea" name="scrollArea_6">
@@ -4234,8 +4247,8 @@ Lower this value to avoid too long tracks and avoid stutters in map display.</st
            <property name="geometry">
             <rect>
              <x>0</x>
-             <y>0</y>
-             <width>591</width>
+             <y>-95</y>
+             <width>592</width>
              <height>591</height>
             </rect>
            </property>
@@ -4565,7 +4578,7 @@ Lower this value to avoid too long tracks and avoid stutters in map display.</st
                <item row="5" column="2" colspan="3">
                 <widget class="QLabel" name="label_16">
                  <property name="text">
-                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Label settings for distance measurement lines can be found on page &amp;quot;Map Labels&amp;quot; in branch &amp;quot;Measurement Lines&amp;quot;.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/littlenavmap/resources/icons/bulb.svg&quot;/&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Label settings for distance measurement lines can be found on page &amp;quot;Map Labels&amp;quot; in branch &amp;quot;Measurement Lines&amp;quot;.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                  </property>
                  <property name="wordWrap">
                   <bool>true</bool>
@@ -4902,7 +4915,7 @@ Does not apply to lines originating from airports or navaids.</string>
                <item row="18" column="2" colspan="3">
                 <widget class="QLabel" name="label_17">
                  <property name="text">
-                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Compass rose label settings can be found on page &amp;quot;Map Labels&amp;quot; in branch &amp;quot;Compass Rose&amp;quot;.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/littlenavmap/resources/icons/bulb.svg&quot;/&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Compass rose label settings can be found on page &amp;quot;Map Labels&amp;quot; in branch &amp;quot;Compass Rose&amp;quot;.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                  </property>
                  <property name="wordWrap">
                   <bool>true</bool>
@@ -4924,7 +4937,7 @@ Does not apply to lines originating from airports or navaids.</string>
         </item>
        </layout>
       </widget>
-      <widget class="QWidget" name="stackedWidgetOptionsMapDisplayLabels">
+      <widget class="QWidget" name="stackedWidgetOptionsMapLabels">
        <layout class="QVBoxLayout" name="verticalLayout_33">
         <property name="spacing">
          <number>6</number>
@@ -4993,7 +5006,7 @@ Does not apply to lines originating from airports or navaids.</string>
         </item>
        </layout>
       </widget>
-      <widget class="QWidget" name="stackedWidgetOptionsMapDisplayKeys">
+      <widget class="QWidget" name="stackedWidgetOptionsMapKeys">
        <layout class="QVBoxLayout" name="verticalLayout_39">
         <item>
          <widget class="QGroupBox" name="groupBox_33">
@@ -5092,7 +5105,7 @@ Do not show this information publicly in forums on screenshots.&lt;/b&gt;&lt;/p&
            <item>
             <widget class="QLabel" name="label_23">
              <property name="text">
-              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Change the path to additional map themes on page &amp;quot;Cache and Files&amp;quot;. Click the help button for installation instructions.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/littlenavmap/resources/icons/bulb.svg&quot;/&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Change the path to additional map themes on page &amp;quot;Cache and Files&amp;quot;. Click the help button for installation instructions.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
              </property>
              <property name="wordWrap">
               <bool>true</bool>
@@ -5110,7 +5123,7 @@ Do not show this information publicly in forums on screenshots.&lt;/b&gt;&lt;/p&
         </item>
        </layout>
       </widget>
-      <widget class="QWidget" name="stackedWidgetOptionsMapDisplayOnline">
+      <widget class="QWidget" name="stackedWidgetOptionsMapOnline">
        <layout class="QVBoxLayout" name="verticalLayout_50">
         <item>
          <widget class="QScrollArea" name="scrollArea_7">
@@ -5122,8 +5135,8 @@ Do not show this information publicly in forums on screenshots.&lt;/b&gt;&lt;/p&
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>605</width>
-             <height>459</height>
+             <width>606</width>
+             <height>496</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_39">
@@ -5548,7 +5561,7 @@ airspace filename has to match the callsign of the online center.</string>
         </item>
        </layout>
       </widget>
-      <widget class="QWidget" name="stackedWidgetOptionsSimAircraft">
+      <widget class="QWidget" name="stackedWidgetOptionsSimulatorAircraft">
        <layout class="QVBoxLayout" name="verticalLayout_51">
         <item>
          <widget class="QScrollArea" name="scrollArea_9">
@@ -5559,9 +5572,9 @@ airspace filename has to match the callsign of the online center.</string>
            <property name="geometry">
             <rect>
              <x>0</x>
-             <y>-166</y>
-             <width>591</width>
-             <height>626</height>
+             <y>-130</y>
+             <width>592</width>
+             <height>629</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_25">
@@ -5963,7 +5976,7 @@ put the active leg back on top after the given timeout while flying.</string>
             <item>
              <widget class="QLabel" name="label_25">
               <property name="text">
-               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Click the Help button to read more about aircraft movement in the user manual. The options on this page are intended to minimize interactions with Little Navmap during flight, but may be confusing to new users.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/littlenavmap/resources/icons/bulb.svg&quot;/&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Click the Help button to read more about aircraft movement in the user manual. The options on this page are intended to minimize interactions with Little Navmap during flight, but may be confusing to new users.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
               </property>
               <property name="wordWrap">
                <bool>true</bool>
@@ -6007,8 +6020,8 @@ put the active leg back on top after the given timeout while flying.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>605</width>
-             <height>459</height>
+             <width>606</width>
+             <height>496</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_26">
@@ -6166,9 +6179,9 @@ Note that this value does not affect flight plan calculation or saving of flight
            <property name="geometry">
             <rect>
              <x>0</x>
-             <y>0</y>
-             <width>591</width>
-             <height>558</height>
+             <y>-62</y>
+             <width>592</width>
+             <height>561</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_27">
@@ -6367,7 +6380,7 @@ Note that this value does not affect flight plan calculation or saving of flight
             <item>
              <widget class="QLabel" name="label_22">
               <property name="text">
-               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;See in the main menu &amp;quot;Weather&amp;quot; for more options to display winds aloft and weather at airports.&lt;br/&gt;The page &amp;quot;Weather Files&amp;quot; allows to select paths if non-standard simulator installations are used.&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Disable unneeded options to improve performance.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/littlenavmap/resources/icons/bulb.svg&quot;/&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;See in the main menu &amp;quot;Weather&amp;quot; for more options to display winds aloft and weather at airports.&lt;br/&gt;The page &amp;quot;Weather Files&amp;quot; allows to select paths if non-standard simulator installations are used.&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Disable unneeded options to improve performance.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
               </property>
               <property name="wordWrap">
                <bool>true</bool>
@@ -6396,7 +6409,7 @@ Note that this value does not affect flight plan calculation or saving of flight
         </item>
        </layout>
       </widget>
-      <widget class="QWidget" name="stackedWidgetOptionsWeatherUrls">
+      <widget class="QWidget" name="stackedWidgetOptionsWeatherFiles">
        <layout class="QVBoxLayout" name="verticalLayout_18">
         <item>
          <widget class="QScrollArea" name="scrollArea_12">
@@ -6408,7 +6421,7 @@ Note that this value does not affect flight plan calculation or saving of flight
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>591</width>
+             <width>592</width>
              <height>727</height>
             </rect>
            </property>
@@ -6962,7 +6975,7 @@ Entering a wrong value will cause errors when downloading weather reports.</stri
         </item>
        </layout>
       </widget>
-      <widget class="QWidget" name="stackedWidgetOptionsOnline">
+      <widget class="QWidget" name="stackedWidgetOptionsOnlineFlying">
        <layout class="QVBoxLayout" name="verticalLayout_53">
         <item>
          <widget class="QScrollArea" name="scrollArea_13">
@@ -6974,8 +6987,8 @@ Entering a wrong value will cause errors when downloading weather reports.</stri
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>605</width>
-             <height>459</height>
+             <width>606</width>
+             <height>496</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_29">
@@ -7276,8 +7289,8 @@ Entering a wrong value will cause errors when downloading weather reports.</stri
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>605</width>
-             <height>459</height>
+             <width>606</width>
+             <height>496</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_37">
@@ -7457,7 +7470,7 @@ Little Navmap GIT repository.
         </item>
        </layout>
       </widget>
-      <widget class="QWidget" name="stackedWidgetOptionsCacheFiles">
+      <widget class="QWidget" name="stackedWidgetOptionsCacheAndFiles">
        <layout class="QVBoxLayout" name="verticalLayout_55">
         <item>
          <widget class="QScrollArea" name="scrollArea_15">
@@ -7469,7 +7482,7 @@ Little Navmap GIT repository.
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>591</width>
+             <width>592</width>
              <height>645</height>
             </rect>
            </property>
@@ -7585,7 +7598,7 @@ Little Navmap GIT repository.
                <item row="2" column="0" colspan="3">
                 <widget class="QLabel" name="labelOptionsCacheDiskExpiration">
                  <property name="text">
-                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Items in the disk cache expire after two weeks as a standard. The actual time depends on the used map theme.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/littlenavmap/resources/icons/bulb.svg&quot;/&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Items in the disk cache expire after two weeks as a standard. The actual time depends on the used map theme.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                  </property>
                  <property name="wordWrap">
                   <bool>true</bool>
@@ -7681,7 +7694,7 @@ Little Navmap GIT repository.
                <item row="4" column="0" colspan="3">
                 <widget class="QLabel" name="label_19">
                  <property name="text">
-                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Map theme API keys for themes requiring an account can be entered on page &amp;quot;Map Keys&amp;quot;.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/littlenavmap/resources/icons/bulb.svg&quot;/&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Map theme API keys for themes requiring an account can be entered on page &amp;quot;Map Keys&amp;quot;.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                  </property>
                  <property name="wordWrap">
                   <bool>true</bool>
@@ -7820,7 +7833,7 @@ Source data has many errors.</string>
         </item>
        </layout>
       </widget>
-      <widget class="QWidget" name="stackedWidgetOptionsScenery">
+      <widget class="QWidget" name="stackedWidgetOptionsSceneryLibrary">
        <layout class="QVBoxLayout" name="verticalLayout_56">
         <property name="spacing">
          <number>6</number>
@@ -7847,8 +7860,8 @@ Source data has many errors.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>591</width>
-             <height>490</height>
+             <width>606</width>
+             <height>496</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_38">

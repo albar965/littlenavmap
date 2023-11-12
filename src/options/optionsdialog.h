@@ -44,6 +44,7 @@ class QTableWidget;
 
 namespace atools {
 namespace gui {
+class ListWidgetIndex;
 class GridDelegate;
 class ItemViewZoomHandler;
 }
@@ -272,6 +273,8 @@ private:
   QString rangeFloatToString(const QVector<float>& ranges) const;
   void mapThemeKeyEdited(QTableWidgetItem *item);
 
+  void searchTextEdited(const QString& text);
+
   QString guiLanguage, guiFont, mapFont;
   QColor flightplanColor, flightplanOutlineColor, flightplanProcedureColor, flightplanActiveColor, trailColor, measurementColor,
          flightplanPassedColor, highlightFlightplanColor, highlightSearchColor, highlightProfileColor;
@@ -299,6 +302,8 @@ private:
                                    *zoomHandlerDatabaseAddonExclude = nullptr;
 
   atools::gui::GridDelegate *gridDelegate = nullptr;
+
+  atools::gui::ListWidgetIndex *listWidgetIndex = nullptr;
 };
 
 #endif // LITTLENAVMAP_OPTIONSDIALOG_H
