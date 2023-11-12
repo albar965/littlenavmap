@@ -116,7 +116,7 @@ AircraftTrail::AircraftTrail()
   maxGroundTimeMs = settings.getAndStoreValue(lnm::SETTINGS_AIRCRAFT_TRAIL + "MaxGroundTimeMs", 10000).toInt();
 
   // Load settings for trail point density when flying ===========================
-  // Minimum distance - no points closer
+  // Minimum distance - no points closer even if parameters have changed
   minFlyingDistMeter = settings.getAndStoreValue(lnm::SETTINGS_AIRCRAFT_TRAIL + "MinFlyingDistanceMeter", 250.).toFloat();
 
   // Force point after time passed
@@ -125,7 +125,12 @@ AircraftTrail::AircraftTrail()
   // Changes in aircraft parameters trigger a new point
   maxHeadingDiffDeg = settings.getAndStoreValue(lnm::SETTINGS_AIRCRAFT_TRAIL + "MaxHeadingDiffDeg", 6.).toFloat();
   maxSpeedDiffKts = settings.getAndStoreValue(lnm::SETTINGS_AIRCRAFT_TRAIL + "MaxGsDiffKts", 10.).toFloat();
-  maxAltDiffFt = settings.getAndStoreValue(lnm::SETTINGS_AIRCRAFT_TRAIL + "MaxAltDiffFt", 250.).toFloat();
+
+  maxAltDiffFtUpper = settings.getAndStoreValue(lnm::SETTINGS_AIRCRAFT_TRAIL + "MaxAltDiffFtUpper", 1000.).toFloat();
+  maxAltDiffFtLower = settings.getAndStoreValue(lnm::SETTINGS_AIRCRAFT_TRAIL + "MaxAltDiffFtLower", 100.).toFloat();
+
+  // Use maxAltDiffFtLower if below or maxAltDiffFtUpper if above
+  aglThresholdFt = settings.getAndStoreValue(lnm::SETTINGS_AIRCRAFT_TRAIL + "AglThresholdFt", 3000.).toFloat();
 }
 
 AircraftTrail::~AircraftTrail()
@@ -435,13 +440,16 @@ bool AircraftTrail::appendTrailPos(const atools::fs::sc::SimConnectUserAircraft&
       maxTimeMs = maxFlyingTimeMs;
     }
 
+    float actualAltitudeFt = userAircraft.getActualAltitudeFt();
+    float maxAltDiffFt = userAircraft.getAltitudeAboveGroundFt() < aglThresholdFt ? maxAltDiffFtLower : maxAltDiffFtUpper;
+
     Pos pos = posD.asPos();
     const AircraftTrailPos& last = constLast();
     float distanceToLastMeter = pos.distanceMeterTo(last.getPosition());
 
     // Test if any aircraft parameters have changed to create a point before max time or max distance is exceeded
     bool speedChanged = almostNotEqual(lastUserAircraft->getGroundSpeedKts(), userAircraft.getGroundSpeedKts(), maxSpeedDiffKts);
-    bool altChanged = almostNotEqual(lastUserAircraft->getActualAltitudeFt(), userAircraft.getActualAltitudeFt(), maxAltDiffFt);
+    bool altChanged = almostNotEqual(lastUserAircraft->getActualAltitudeFt(), actualAltitudeFt, maxAltDiffFt);
     bool headingChanged =
       atools::geo::angleAbsDiff(lastUserAircraft->getHeadingDegTrue(), userAircraft.getHeadingDegTrue()) > maxHeadingDiffDeg;
     bool aboveMinDistance = distanceToLastMeter > minDistanceMeter;

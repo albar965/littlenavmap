@@ -224,7 +224,7 @@ private:
   atools::geo::Rect bounding;
 
   /* Trail density settings which depends on ground speed */
-  float minGroundDistMeter, minFlyingDistMeter, maxHeadingDiffDeg, maxSpeedDiffKts, maxAltDiffFt;
+  float minGroundDistMeter, minFlyingDistMeter, maxHeadingDiffDeg, maxSpeedDiffKts, maxAltDiffFtUpper, maxAltDiffFtLower, aglThresholdFt;
   qint64 maxFlyingTimeMs, maxGroundTimeMs;
 
   atools::fs::sc::SimConnectUserAircraft *lastUserAircraft;
