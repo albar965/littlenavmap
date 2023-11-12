@@ -451,10 +451,10 @@ const QPen aircraftTrailPen(float size, float minAlt, float maxAlt, float alt)
     switch(optionData.getDisplayTrailGradientType())
     {
       case opts::TRAIL_GRADIENT_COLOR_YELLOW_BLUE:
-        // Change hue depending on altitude. Red is 0 and last used value magenta is 300
+        // Change hue depending on altitude. Yellow is 60 and last used value blue is 240
         col = Qt::yellow;
         col.getHsv(&hue, &saturation, &value);
-        hue = atools::minmax(60 /* yellow */, 240 /* blue */, atools::roundToInt(alt / (maxAlt - minAlt) * 300.f));
+        hue = atools::minmax(60 /* yellow */, 240 /* blue */, atools::roundToInt(60.f + alt / (maxAlt - minAlt) * 180.f));
         break;
 
       case opts::TRAIL_GRADIENT_COLOR_RAINBOW:
