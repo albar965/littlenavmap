@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -123,6 +123,10 @@ QVariant SqlProxyModel::headerData(int section, Qt::Orientation orientation, int
 /* Defines greater and lower than for sorting of the two columns distance and heading */
 bool SqlProxyModel::lessThan(const QModelIndex& sourceLeft, const QModelIndex& sourceRight) const
 {
+  // These types can be converted to long long and compared
+  const static QSet<QVariant::Type> NUMERIC_TYPES({QVariant::Bool, QVariant::Int, QVariant::UInt, QVariant::LongLong, QVariant::ULongLong,
+                                                   QVariant::Date, QVariant::Time, QVariant::DateTime});
+
   QString leftCol = sourceSqlModel->getColumnName(sourceLeft.column());
   QString rightCol = sourceSqlModel->getColumnName(sourceRight.column());
 
@@ -141,8 +145,21 @@ bool SqlProxyModel::lessThan(const QModelIndex& sourceLeft, const QModelIndex& s
     return headingLeft < headingRight;
   }
   else
-    // Let the model do the sorting for other columns
-    return QSortFilterProxyModel::lessThan(sourceLeft, sourceRight);
+  {
+    // Get unmodified (converted to strings) raw data
+    QVariant leftData = sourceSqlModel->rawData(sourceLeft);
+    QVariant rightData = sourceSqlModel->rawData(sourceRight);
+
+    if(leftData.type() == QVariant::Double && rightData.type() == QVariant::Double)
+      // Compare float and double numerically
+      return leftData.toDouble() < rightData.toDouble();
+    else if(NUMERIC_TYPES.contains(leftData.type()) && NUMERIC_TYPES.contains(rightData.type()))
+      // Compare bool, int to long long numerically
+      return leftData.toLongLong() < rightData.toLongLong();
+    else
+      // Let the model do the sorting for other columns
+      return QSortFilterProxyModel::lessThan(sourceLeft, sourceRight);
+  }
 }
 
 /* Returns the formatted data for the "distance" and "heading" column */

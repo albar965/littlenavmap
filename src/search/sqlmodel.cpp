@@ -672,6 +672,11 @@ QVariant SqlModel::defaultDataHandler(int, int, const Column *, const QVariant&,
   return QVariant();
 }
 
+QVariant SqlModel::rawData(const QModelIndex& index) const
+{
+  return index.isValid() ? QSqlQueryModel::data(index, Qt::DisplayRole) : QVariant();
+}
+
 QVariant SqlModel::data(const QModelIndex& index, int role) const
 {
   if(!index.isValid())
