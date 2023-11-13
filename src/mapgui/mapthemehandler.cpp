@@ -76,7 +76,8 @@ void MapThemeHandler::loadThemes()
         errors.append(tr("Duplicate theme id \"%1\" in element \"&lt;theme&gt;\".<br/><br/>"
                          "File with first occurence<br/>\"%2\".<br/><br/>"
                          "File with second occurence being ignored<br/>\"%3\".<br/><br/>"
-                         "Theme ids have to be unique across all map themes.").
+                         "Theme ids have to be unique across all map themes.<br/><br/>"
+                         "<b>Remove one of these two map themes to avoid this message.</b><br/>").
                       arg(theme.theme).arg(otherTheme.dgmlFilepath).arg(theme.dgmlFilepath));
         continue;
       }
@@ -104,7 +105,8 @@ void MapThemeHandler::loadThemes()
         errors.append(tr("Duplicate source directory or directories \"%1\" in element \"&lt;sourcedir&gt;\".<br/><br/>"
                          "File with first occurence<br/>\"%2\".<br/><br/>"
                          "File(s) with second occurence being ignored<br/>\"%3\".<br/><br/>"
-                         "Source directories are used to cache map tiles and have to be unique across all map themes.").
+                         "Source directories are used to cache map tiles and have to be unique across all map themes.<br/><br/>"
+                         "<b>Remove one of these two map themes to avoid this message.</b><br/>").
                       arg(theme.sourceDirs.join(tr("\", \""))).arg(otherDgmlFilepaths.join(tr("\", \""))).arg(theme.dgmlFilepath));
         continue;
       }
@@ -112,14 +114,16 @@ void MapThemeHandler::loadThemes()
       if(theme.theme.isEmpty())
       {
         errors.append(tr("Empty theme id in in element \"&lt;theme&gt;\".<br/>"
-                         "File \"%1\".").arg(theme.dgmlFilepath));
+                         "File \"%1\".<br/><br/>"
+                         "<b>Remove or repair this map theme to avoid this message.</b><br/>").arg(theme.dgmlFilepath));
         continue;
       }
 
       if(theme.online && theme.sourceDirs.isEmpty())
       {
         errors.append(tr("Empty source directory in in element \"&lt;sourcedir&gt;\".<br/>"
-                         "File \"%1\".").arg(theme.dgmlFilepath));
+                         "File \"%1\".<br/><br/>"
+                         "<b>Remove or repair this map theme to avoid this message.</b><br/>").arg(theme.dgmlFilepath));
         continue;
       }
 
@@ -127,7 +131,8 @@ void MapThemeHandler::loadThemes()
       {
         errors.append(tr("Invalid target \"%1\" in element \"&lt;target&gt;\".<br/>"
                          "File \"%2\".<br/>"
-                         "Element must contain text \"earth\".").arg(theme.target).arg(theme.dgmlFilepath));
+                         "Element must contain text \"earth\".<br/><br/>"
+                         "<b>Remove or repair this map theme to avoid this message.</b><br/>").arg(theme.target).arg(theme.dgmlFilepath));
         continue;
       }
 
@@ -156,7 +161,8 @@ void MapThemeHandler::loadThemes()
     QMessageBox::warning(mainWindow, QApplication::applicationName(),
                          tr("<p>Found errors in map %2:</p>"
                               "<ul><li>%1</li></ul>"
-                                "<p>Ignoring duplicate or incorrect %2.</p>").
+                                "<p>Ignoring duplicate or incorrect %2.</p>"
+                                  "<p>Note that all other valid map themes are loaded and can be used despite this message.</p>").
                          arg(errors.join("</li><li>")).arg(errors.size() == 1 ? tr("map theme") : tr("map themes")));
   }
 
