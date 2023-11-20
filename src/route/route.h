@@ -403,7 +403,12 @@ public:
 
   /* Arrival rw is either STAR or approach */
   void getRunwayNames(QString& departure, QString& arrival) const;
-  void getApproachNames(QString& approachArincName, QString& approachTransition) const;
+
+  /* Get approach ARINC name including suffix and suffix separately */
+  void getApproachNames(QString& approachArincName, QString& approachTransition, QString& approachSuffix) const;
+
+  /* Full name plus forward slash  separator like "/LMA.I05R-Z". Transition plus ARINC name. */
+  QString getFullApproachName() const;
 
   const QString& getSidRunwayName() const;
   const QString& getStarRunwayName() const;

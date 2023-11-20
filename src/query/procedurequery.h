@@ -98,21 +98,28 @@ public:
                                       proc::MapProcedureLegs& approachLegs, proc::MapProcedureLegs& starLegs,
                                       proc::MapProcedureLegs& sidLegs, QStringList& errors, bool autoresolveTransition);
 
+  /* Get the assigned runway of a user defined departure. Empty if real SID. */
+  static QString getCustomDepartureRunway(const QHash<QString, QString>& properties);
+
+  /* Get the assigned runway of a user defined approach. Empty if real approach. */
+  static QString getCustomApprochRunway(const QHash<QString, QString>& properties);
+
   /* Get dot-separated SID/STAR and the respective transition from the properties */
-  static QString getSidAndTransition(const QHash<QString, QString>& properties);
-  static QString getStarAndTransition(const QHash<QString, QString>& properties);
+  static QString getSidAndTransition(const QHash<QString, QString>& properties, QString& runway);
+  static QString getStarAndTransition(const QHash<QString, QString>& properties, QString& runway);
+
+  /* Get ARINC format of approach and transition. Dot separated. */
+  static QString getApproachAndTransitionArinc(const QHash<QString, QString>& properties);
+  static void getApproachAndTransitionDisplay(const QHash<QString, QString>& properties, QString& approach, QString& arinc,
+                                              QString& transition, QString& runway);
 
   /* Populate the property list for given procedures */
-  static void fillFlightplanProcedureProperties(QHash<QString, QString>& properties,
-                                                const proc::MapProcedureLegs& procedureLegs,
-                                                const proc::MapProcedureLegs& starLegs,
-                                                const proc::MapProcedureLegs& sidLegs);
+  static void fillFlightplanProcedureProperties(QHash<QString, QString>& properties, const proc::MapProcedureLegs& approachLegs,
+                                                const proc::MapProcedureLegs& starLegs, const proc::MapProcedureLegs& sidLegs);
 
   /* Check if structs are filled according to properties. If a struct is empty return flag for missing (not resolved) procedure */
-  static proc::MapProcedureTypes getMissingProcedures(QHash<QString, QString>& properties,
-                                                      const proc::MapProcedureLegs& procedureLegs,
-                                                      const proc::MapProcedureLegs& starLegs,
-                                                      const proc::MapProcedureLegs& sidLegs);
+  static proc::MapProcedureTypes getMissingProcedures(QHash<QString, QString>& properties, const proc::MapProcedureLegs& procedureLegs,
+                                                      const proc::MapProcedureLegs& starLegs, const proc::MapProcedureLegs& sidLegs);
 
   /* Removes properties from the given map based on given types */
   static void clearFlightplanProcedureProperties(QHash<QString, QString>& properties, const proc::MapProcedureTypes& type);
@@ -135,9 +142,20 @@ public:
   /* Get a STAR or approach transition by first known waypoint ident. */
   int getApprOrStarTransitionIdByWp(map::MapAirport destination, const QString& transWaypoint, int starId, bool strict = false);
 
-  /* Creates a user defined VFR procedure procedure */
+  /* Get approach id by ARINC name optionally looking for runway. Returns -1 if not found.  */
+  int getApproachId(map::MapAirport destination, const QString& arincName, const QString& runway);
+
+  /* Get a transition only for an approach */
+  int getTransitionId(map::MapAirport destination, const QString& fixIdent, const QString& type, int approachId);
+
+  /* Creates a user defined approach procedure. Handled like an approach procedure. */
+  void createCustomApproach(proc::MapProcedureLegs& procedure, const map::MapAirport& airport, const QString& runwayEnd,
+                            float finalLegDistance, float entryAltitude, float offsetAngle);
   void createCustomApproach(proc::MapProcedureLegs& procedure, const map::MapAirport& airportSim,
                             const map::MapRunwayEnd& runwayEndSim, float finalLegDistance, float entryAltitude, float offsetAngle);
+
+  /* Creates a user defined departure procedure. Handled like a SID. */
+  void createCustomDeparture(proc::MapProcedureLegs& procedure, const map::MapAirport& airport, const QString& runwayEnd, float distance);
   void createCustomDeparture(proc::MapProcedureLegs& procedure, const map::MapAirport& airportSim,
                              const map::MapRunwayEnd& runwayEndSim, float distance);
 
@@ -160,14 +178,12 @@ public:
   void postProcessLegsForRoute(proc::MapProcedureLegs& starLegs, const proc::MapProcedureLegs& procedureLegs,
                                const map::MapAirport& airport);
 
+  static bool doesRunwayMatchSidOrStar(const proc::MapProcedureLegs& procedure, const QString& runway);
+
 private:
   proc::MapProcedureLeg buildTransitionLegEntry(const map::MapAirport& airport);
   proc::MapProcedureLeg buildProcedureLegEntry(const map::MapAirport& airport);
   void buildLegEntry(atools::sql::SqlQuery *query, proc::MapProcedureLeg& leg, const map::MapAirport& airport);
-
-  void createCustomApproach(proc::MapProcedureLegs& procedure, const map::MapAirport& airport, const QString& runwayEnd,
-                            float finalLegDistance, float entryAltitude, float offsetAngle);
-  void createCustomDeparture(proc::MapProcedureLegs& procedure, const map::MapAirport& airport, const QString& runwayEnd, float distance);
 
   /* See comments in postProcessLegs about the steps below */
   void postProcessLegs(const map::MapAirport& airport, proc::MapProcedureLegs& legs, bool addArtificialLegs) const;
@@ -200,25 +216,22 @@ private:
   bool procedureValid(const proc::MapProcedureLegs *legs, QStringList *errors);
 
   /* Create artificial legs, i.e. legs which are not official ones */
-  proc::MapProcedureLeg createRunwayLeg(const proc::MapProcedureLeg& leg,
-                                        const proc::MapProcedureLegs& legs) const;
-  proc::MapProcedureLeg createStartLeg(const proc::MapProcedureLeg& leg,
-                                       const proc::MapProcedureLegs& legs, const QStringList& displayText) const;
+  proc::MapProcedureLeg createRunwayLeg(const proc::MapProcedureLeg& leg, const proc::MapProcedureLegs& legs) const;
+  proc::MapProcedureLeg createStartLeg(const proc::MapProcedureLeg& leg, const proc::MapProcedureLegs& legs,
+                                       const QStringList& displayText) const;
 
   proc::MapProcedureLegs *buildProcedureLegs(const map::MapAirport& airport, int procedureId);
   proc::MapProcedureLegs *fetchProcedureLegs(const map::MapAirport& airport, int procedureId);
   proc::MapProcedureLegs *fetchTransitionLegs(const map::MapAirport& airport, int procedureId, int transitionId);
   int procedureIdForTransitionId(int transitionId);
-  void mapObjectByIdent(map::MapResult& result, map::MapTypes type, const QString& ident,
-                        const QString& region, const QString& airport,
+  void mapObjectByIdent(map::MapResult& result, map::MapTypes type, const QString& ident, const QString& region, const QString& airport,
                         const atools::geo::Pos& sortByDistancePos);
 
   int findTransitionId(const map::MapAirport& airport, atools::sql::SqlQuery *query, bool strict);
-  int findProcedureId(const map::MapAirport& airport, atools::sql::SqlQuery *query, const QString& suffix,
-                      const QString& runway, bool strict);
-  int findProcedureLegId(const map::MapAirport& airport, atools::sql::SqlQuery *query,
-                         const QString& suffix, const QString& runway, bool transition,
-                         bool strict);
+  int findProcedureId(const map::MapAirport& airport, atools::sql::SqlQuery *query, const QString& suffix, const QString& runway,
+                      bool strict);
+  int findProcedureLegId(const map::MapAirport& airport, atools::sql::SqlQuery *query, const QString& suffix, const QString& runway,
+                         bool transition, bool strict);
 
   /* Get runway end and try lower and higher numbers if nothing was found - adds a dummy entry with airport
    * position if no runway ends were found */
@@ -226,14 +239,14 @@ private:
   void runwayEndByNameSim(map::MapResult& result, const QString& name, const map::MapAirport& airport);
 
   /* Check if a runway matches an SID/STAR "ALL" or e.g. "RW10B" pattern or matches exactly */
-  bool doesRunwayMatch(const QString& runway, const QString& runwayFromQuery, const QString& arincName,
-                       const QStringList& airportRunways, bool matchEmptyRunway) const;
+  static bool doesRunwayMatch(const QString& runway, const QString& runwayFromQuery, const QString& arincName,
+                              const QStringList& airportRunways, bool matchEmptyRunway);
 
   /* Check if a runway matches an SID/STAR "ALL" or e.g. "RW10B" pattern - otherwise false */
-  bool doesSidStarRunwayMatch(const QString& runway, const QString& arincName, const QStringList& airportRunways) const;
+  static bool doesSidStarRunwayMatch(const QString& runway, const QString& arincName, const QStringList& airportRunways);
 
   /* Get first runway of an airport which matches an SID/STAR "ALL" or e.g. "RW10B" pattern. */
-  QString anyMatchingRunwayForSidStar(const QString& arincName, const QStringList& airportRunways) const;
+  static QString anyMatchingRunwayForSidStar(const QString& arincName, const QStringList& airportRunways);
 
   QString runwayErrorString(const QString& runway);
 

@@ -149,7 +149,7 @@ void TrackManager::loadTracks(const TrackVectorType& tracks, bool onlyValid)
       if(reader.hasWarningMessages() || reader.hasErrorMessages())
       {
         qWarning() << Q_FUNC_INFO << routeStr;
-        qWarning() << Q_FUNC_INFO << reader.getMessages();
+        qWarning() << Q_FUNC_INFO << reader.getAllMessages();
       }
 
       // Empty records
@@ -261,7 +261,7 @@ void TrackManager::loadTracks(const TrackVectorType& tracks, bool onlyValid)
                     arg(track.name).
                     arg(track.typeString()).arg(atools::elideTextShortMiddle(track.route.join(" "), 40));
       errorMessages.append(err);
-      errorMessages.append(reader.getMessages());
+      errorMessages.append(reader.getAllMessages());
     }
   }
 

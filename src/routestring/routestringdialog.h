@@ -23,6 +23,8 @@
 #include <QDialog>
 #include <QTimer>
 
+class QMenu;
+
 namespace Ui {
 class RouteStringDialog;
 }
@@ -119,6 +121,8 @@ private:
   /* Catch events to allow repositioning */
   virtual void showEvent(QShowEvent *) override;
   virtual void hideEvent(QHideEvent *) override;
+
+  QMenu *advancedMenu = nullptr;
 
   Ui::RouteStringDialog *ui;
   atools::fs::pln::Flightplan *flightplan = nullptr;

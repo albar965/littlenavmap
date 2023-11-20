@@ -1158,18 +1158,18 @@ void RouteController::loadFlightplan(atools::fs::pln::Flightplan flightplan, ato
     RouteStringReader rs(entryBuilder);
     rs.setPlaintextMessages(true);
     bool ok = rs.createRouteFromString(routeString.join(" "), rs::NONE, &flightplan);
-    qInfo() << "createRouteFromString messages" << rs.getMessages();
+    qInfo() << "createRouteFromString messages" << rs.getAllMessages();
 
     if(!ok)
     {
-      atools::gui::Dialog::warning(mainWindow, tr("Loading of FLP flight plan failed:<br/><br/>") % rs.getMessages().join("<br/>"));
+      atools::gui::Dialog::warning(mainWindow, tr("Loading of FLP flight plan failed:<br/><br/>") % rs.getAllMessages().join("<br/>"));
       return;
 
     }
-    else if(!rs.getMessages().isEmpty())
+    else if(!rs.getAllMessages().isEmpty())
       atools::gui::Dialog(mainWindow).showInfoMsgBox(lnm::ACTIONS_SHOW_LOAD_FLP_WARN,
                                                      tr("Warnings while loading FLP flight plan file:<br/><br/>") %
-                                                     rs.getMessages().join("<br/>"),
+                                                     rs.getAllMessages().join("<br/>"),
                                                      tr("Do not &show this dialog again."));
 
     adjustAltAfterLoad = true; // Change altitude based on airways and procedures later
@@ -1340,7 +1340,7 @@ void RouteController::loadFlightplanRouteStr(const QString& routeString)
   if(reader.hasErrorMessages() || reader.hasWarningMessages())
     QMessageBox::warning(mainWindow, QApplication::applicationName(),
                          tr("<p>Errors reading flight plan route description<br/><b>%1</b><br/>from command line:</p><p>%2</p>").
-                         arg(routeString).arg(reader.getMessages().join("<br>")));
+                         arg(routeString).arg(reader.getAllMessages().join("<br>")));
 }
 
 bool RouteController::loadFlightplan(const QString& filename)
@@ -3983,7 +3983,7 @@ void RouteController::updateRouteTabChangedStatus()
 void RouteController::routeAddProcedure(proc::MapProcedureLegs legs)
 {
   qDebug() << Q_FUNC_INFO
-           << legs.type << legs.approachFixIdent << legs.suffix << legs.arincName
+           << legs.type << legs.procedureFixIdent << legs.suffix << legs.arincName
            << legs.transitionType << legs.transitionFixIdent;
 
   if(legs.isEmpty())
@@ -5374,7 +5374,7 @@ proc::MapProcedureTypes RouteController::affectedProcedures(const QList<int>& in
   }
 
   if(types & proc::PROCEDURE_SID_TRANSITION && route.getSidLegs().procedureLegs.isEmpty() &&
-     !route.getSidLegs().approachFixIdent.isEmpty())
+     !route.getSidLegs().procedureFixIdent.isEmpty())
     // Remove the empty SID structure too
     types |= proc::PROCEDURE_SID;
 

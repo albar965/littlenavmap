@@ -278,7 +278,7 @@ void RouteLabel::buildHeaderDepart(atools::util::HtmlBuilder& html, bool widget)
         departHtml.text(tr(" using SID "));
       }
 
-      QString sid(sidLegs.approachFixIdent);
+      QString sid(sidLegs.procedureFixIdent);
       if(!sidLegs.transitionFixIdent.isEmpty())
         sid += "." % sidLegs.transitionFixIdent;
 
@@ -310,7 +310,7 @@ void RouteLabel::buildHeaderArrival(atools::util::HtmlBuilder& html, bool widget
       arrHtml.b(tr("Arrive "));
       arrHtml.text(tr(" using STAR "));
 
-      QString star(starLegs.approachFixIdent);
+      QString star(starLegs.procedureFixIdent);
       if(!starLegs.transitionFixIdent.isEmpty())
         star += "." % starLegs.transitionFixIdent;
       arrHtml.b(star);
@@ -355,12 +355,8 @@ void RouteLabel::buildHeaderArrival(atools::util::HtmlBuilder& html, bool widget
           arrHtml.b(tr("Arrive ")).text(tr(" via "));
 
         // Type and suffix =======================
-        QString type(arrivalLegs.displayType());
-        if(!arrivalLegs.suffix.isEmpty())
-          type += tr("-%1").arg(arrivalLegs.suffix);
-
-        arrHtml.b(type).nbsp();
-        arrHtml.b(arrivalLegs.approachFixIdent);
+        arrHtml.b(arrivalLegs.displayTypeAndSuffix()).nbsp();
+        arrHtml.b(arrivalLegs.procedureFixIdent);
 
         if(!arrivalLegs.arincName.isEmpty())
           arrHtml.b(tr(" (%1)").arg(arrivalLegs.arincName));

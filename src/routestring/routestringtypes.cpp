@@ -23,17 +23,19 @@ namespace rs {
 
 QString cleanRouteStringLine(const QString& line)
 {
-  static const QRegularExpression REGEXP("[^A-Z0-9/\\.]");
+  static const QRegularExpression REGEXP("[^A-Z0-9/\\.\\-]");
 
-  // Replace all non word characters with space
-  return line.toUpper().replace(REGEXP, " ").simplified();
+  // Replace all non word characters except A-Z, 0-9, ".", and "-" with space
+  // Remove - which are not part of an approach description
+  return line.toUpper().replace(REGEXP, " ").replace(" -", " ").replace("- ", " ").simplified();
 }
 
 QStringList cleanRouteStringList(const QString& string)
 {
   // Read line by line
   QStringList list;
-  for(const QString& line : string.split('\n'))
+  const QStringList split = string.split('\n');
+  for(const QString& line : split)
   {
     if(line.simplified().isEmpty() && !list.isEmpty())
       // Found text already and now an empty line - stop here

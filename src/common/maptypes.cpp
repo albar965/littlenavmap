@@ -2782,7 +2782,7 @@ const proc::MapProcedureLeg& MapProcedurePoint::getLeg() const
 
 const QString& MapProcedurePoint::getIdent() const
 {
-  return legs->approachFixIdent;
+  return legs->procedureFixIdent;
 }
 
 QString procedurePointText(const MapProcedurePoint& procPoint)

@@ -102,8 +102,8 @@ void initTranslateableTexts()
       {"MLS", QObject::tr("MLS")},
 
       /* User defined approach procedure */
-      {"CUSTOM", QObject::tr("Approach")},
-      {"CUSTOMDEPART", QObject::tr("Departure")}
+      {atools::fs::pln::APPROACHTYPECUSTOM, QObject::tr("Approach")},
+      {atools::fs::pln::SIDTYPECUSTOM, QObject::tr("Departure")}
     });
 
   approachLegTypeToStr = QHash<ProcedureLegType, QString>(
@@ -549,7 +549,7 @@ QDebug operator<<(QDebug out, const MapProcedureLegs& legs)
 
   out << "approachType" << legs.type
       << "approachSuffix" << legs.suffix
-      << "approachFixIdent" << legs.approachFixIdent
+      << "approachFixIdent" << legs.procedureFixIdent
       << "approachArincName" << legs.arincName
       << "transitionType" << legs.transitionType
       << "transitionFixIdent" << legs.transitionFixIdent
@@ -744,7 +744,7 @@ void MapProcedureLegs::clearProcedure()
   type.clear();
   suffix.clear();
   arincName.clear();
-  approachFixIdent.clear();
+  procedureFixIdent.clear();
   runwayEnd = map::MapRunwayEnd();
 }
 
@@ -971,7 +971,7 @@ QString procedureLegsText(const proc::MapProcedureLegs& legs, proc::MapProcedure
                         QObject::tr("Missed ") : QObject::tr("Approach "))).
                    arg(legs.displayType()).
                    arg(legs.suffix.isEmpty() ? QString() : (QObject::tr("-") + legs.suffix)).
-                   arg(legs.approachFixIdent);
+                   arg(legs.procedureFixIdent);
 
         // Add transition text if type from related leg is a transitionn
         if(procType.testFlag(proc::PROCEDURE_TRANSITION) && legs.mapType.testFlag(proc::PROCEDURE_TRANSITION))
@@ -982,13 +982,13 @@ QString procedureLegsText(const proc::MapProcedureLegs& legs, proc::MapProcedure
     {
       // SID or STAR with respective transitions =================================
       if(legs.mapType.testFlag(proc::PROCEDURE_STAR_TRANSITION) && procType.testFlag(proc::PROCEDURE_STAR_TRANSITION))
-        procText = QObject::tr("STAR %1.%2").arg(legs.approachFixIdent).arg(legs.transitionFixIdent);
+        procText = QObject::tr("STAR %1.%2").arg(legs.procedureFixIdent).arg(legs.transitionFixIdent);
       else if(legs.mapType.testFlag(proc::PROCEDURE_SID_TRANSITION) && procType.testFlag(proc::PROCEDURE_SID_TRANSITION))
-        procText = QObject::tr("SID %1.%2").arg(legs.approachFixIdent).arg(legs.transitionFixIdent);
+        procText = QObject::tr("SID %1.%2").arg(legs.procedureFixIdent).arg(legs.transitionFixIdent);
       else if(legs.mapType.testFlag(proc::PROCEDURE_STAR))
-        procText = QObject::tr("STAR %1").arg(legs.approachFixIdent);
+        procText = QObject::tr("STAR %1").arg(legs.procedureFixIdent);
       else if(legs.mapType.testFlag(proc::PROCEDURE_SID))
-        procText = QObject::tr("SID %1").arg(legs.approachFixIdent);
+        procText = QObject::tr("SID %1").arg(legs.procedureFixIdent);
     }
   }
 

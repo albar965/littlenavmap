@@ -559,10 +559,9 @@ void NavApp::updateRouteCycleMetadata()
   getRoute().updateRouteCycleMetadata();
 }
 
-QString NavApp::getRouteStringDefaultOpts()
+QString NavApp::getRouteStringLogbook()
 {
-  return RouteStringWriter().createStringForRoute(getRouteConst(), NavApp::getRouteCruiseSpeedKts(),
-                                                  rs::DEFAULT_OPTIONS | rs::ALT_AND_SPEED_METRIC);
+  return RouteStringWriter().createStringForRoute(getRouteConst(), NavApp::getRouteCruiseSpeedKts(), rs::DEFAULT_OPTIONS_LOGBOOK);
 }
 
 const atools::geo::Rect& NavApp::getRouteRect()

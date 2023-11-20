@@ -38,8 +38,8 @@ enum RouteStringOption
   NO_AIRWAYS = 1 << 6, /* Add all waypoints instead of from/airway/to triplet */
 
   SID_STAR_SPACE = 1 << 7, /* Separate SID/STAR and transition with space. Not ATS compliant. */
-  RUNWAY = 1 << 8, /* Add departure runway if available. Not ATS compliant. */
-  APPROACH = 1 << 9, /* Add approach ARINC name and transition after destination. Not ATS compliant. */
+  CORTEIN_DEPARTURE_RUNWAY = 1 << 8, /* Add departure runway if available. Not ATS compliant. Only for export of "Corte.in". */
+  CORTEIN_APPROACH = 1 << 9, /* Add approach ARINC name and transition after destination. Not ATS compliant. Only for export of "Corte.in".  */
   FLIGHTLEVEL = 1 << 10, /* Append flight level at end of string. Not ATS compliant. */
 
   GFP_COORDS = 1 << 11, /* Suffix all navaids with coordinates for new GFP format */
@@ -65,9 +65,15 @@ enum RouteStringOption
 
   ALT_AND_SPEED_METRIC = 1 << 23, /* Allow altitude and speed restriction in metric if set in user interface. Only in GUI. */
 
-  // Next is 23
+  WRITE_APPROACH_RUNWAYS = 1 << 24, /* Add departure runway and approach ARINC name. Example "GCLA/36 TFS3T TFS GCTS/TES2.I07-Y" */
 
-  DEFAULT_OPTIONS = START_AND_DEST | ALT_AND_SPEED | SID_STAR | ALTERNATES | READ_ALTERNATES | REPORT,
+  // Next is 25
+
+  /* Default on startup */
+  DEFAULT_OPTIONS = START_AND_DEST | ALT_AND_SPEED | SID_STAR | ALTERNATES | READ_ALTERNATES | REPORT | WRITE_APPROACH_RUNWAYS,
+
+  /* Default for logbook entries */
+  DEFAULT_OPTIONS_LOGBOOK = DEFAULT_OPTIONS | ALT_AND_SPEED_METRIC,
 
   /* Values used to read tracks */
   TRACK_DEFAULTS = rs::READ_NO_AIRPORTS | rs::READ_MATCH_WAYPOINTS | rs::NO_TRACKS,

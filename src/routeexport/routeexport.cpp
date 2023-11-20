@@ -1841,7 +1841,7 @@ bool RouteExport::exportFlighplanAsCorteIn(const QString& filename)
   QString txt = RouteStringWriter().
                 createStringForRoute(buildAdjustedRoute(rf::DEFAULT_OPTS | rf::REMOVE_RUNWAY_PROC), 0.f,
                                      rs::DCT | rs::NO_FINAL_DCT | rs::START_AND_DEST | rs::SID_STAR | rs::SID_STAR_SPACE |
-                                     rs::RUNWAY /*| rs::APPROACH unreliable */ | rs::FLIGHTLEVEL);
+                                     rs::CORTEIN_DEPARTURE_RUNWAY /*| rs::CORTEIN_APPROACH unreliable */ | rs::FLIGHTLEVEL);
 
   const atools::fs::pln::Flightplan& flightplan = NavApp::getRouteConst().getFlightplanConst();
 

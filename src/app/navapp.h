@@ -227,8 +227,8 @@ public:
   static Route& getRoute();
   static void updateRouteCycleMetadata();
 
-  /* Get a generic route string */
-  static QString getRouteStringDefaultOpts();
+  /* Get a generic route string for logbook entry */
+  static QString getRouteStringLogbook();
   static const atools::geo::Rect& getRouteRect();
 
   static const RouteAltitude& getAltitudeLegs();

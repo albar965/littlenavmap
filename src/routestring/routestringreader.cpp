@@ -35,6 +35,7 @@
 
 #include <QElapsedTimer>
 #include <QRegularExpression>
+#include <QStringBuilder>
 
 using atools::fs::pln::Flightplan;
 using atools::fs::pln::FlightplanEntry;
@@ -44,6 +45,63 @@ namespace coords = atools::fs::util;
 namespace ageo = atools::geo;
 namespace plnentry = atools::fs::pln::entry;
 
+// Maximum distance to previous waypoint - everything above will be sorted out
+const static float MAX_WAYPOINT_DISTANCE_NM = 5000.f;
+
+// Do not select alternate beyond 1000 NM
+const static float MAX_ALTERNATE_DISTANCE_NM = 1000.f;
+
+// Choose best navaid from a cluster with this distance.
+// Used to prioritize VOR and waypoints before NDB with the same name
+const static float MAX_CLOSE_NAVAIDS_DISTANCE_NM = 5.f;
+
+const static QRegularExpression SPDALT_WAYPOINT("^([A-Z0-9]+)/[NMK]\\d{3,4}[FSAM]\\d{3,4}$");
+
+// Time specification directly after airport - ignored
+// Runway specification directly after airport. Example: USSS/08R ... ZMUB1200/33
+const static QRegularExpression AIRPORT_TIME_RUNWAY("^(?<ap>[A-Z0-9]{3,4})" // Required airport
+                                                    "(?<time>(\\d{4}))?" // Optional time - ignored
+                                                    "(/(?<rw>[LCRTABW0-9]{2,3}))?$"); // Optional runway
+
+// GCTS1200/TES2.I07-Y
+const static QRegularExpression AIRPORT_TIME_APPROACH("^(?<ap>[A-Z0-9]{3,4})" // "GCTS" Required airport
+                                                      "(?<time>\\d{4})?" // "1200" Optional time - ignored
+                                                      "(/((?<trans>[A-Z0-9]+)\\.)?(?<appr>([A-Z][A-Z0-9\\-]*)))?$"); // Optional approach "TES2.I07-Y"
+
+const static QRegularExpression SID_STAR_TRANS("^([A-Z0-9]{1,7})(\\.([A-Z0-9]{1,6}))?$");
+
+const static map::MapTypes ROUTE_TYPES_AND_AIRWAY(map::AIRPORT | map::WAYPOINT | map::VOR | map::NDB | map::USERPOINTROUTE | map::AIRWAY);
+
+const static map::MapTypes ROUTE_TYPES(map::AIRPORT | map::WAYPOINT | map::VOR | map::NDB | map::USERPOINTROUTE);
+
+// No airports
+const static map::MapTypes ROUTE_TYPES_NAVAIDS(map::WAYPOINT | map::VOR | map::NDB | map::USERPOINTROUTE);
+const static std::initializer_list<map::MapTypes> ROUTE_TYPES_NAVAIDS_LIST =
+{map::WAYPOINT, map::VOR, map::NDB, map::USERPOINTROUTE};
+
+/* ========================================================================================
+ * Combines all features like airport, STAR, approach and runway found for a runway item */
+struct DestInfo
+{
+  DestInfo(const proc::MapProcedureLegs& starParam, const proc::MapProcedureLegs& apprParam, const map::MapAirport& apParam,
+           const map::MapRunwayEnd& runwayEndParam, int consumeParam)
+    : star(starParam), approach(apprParam), airport(apParam), consume(consumeParam), runwayEnd(runwayEndParam)
+  {
+  }
+
+  proc::MapProcedureLegs star, approach;
+
+  // List of consecutive airports at end of string - destination is last
+  map::MapAirport airport;
+
+  // Number of entries that have to be consumed for SID and/or transition: 0, 1, or 2
+  int consume;
+
+  map::MapRunwayEnd runwayEnd;
+};
+
+/* ========================================================================================
+ * Map object by type and distance */
 struct TypeDist
 {
   TypeDist(const ageo::Pos& posParam, const ageo::Pos& lastPosParam, const ageo::Pos& destPosParam, map::MapTypes typeParam,
@@ -64,45 +122,21 @@ struct TypeDist
   map::MapWaypointArtificial artificial;
 };
 
-// Maximum distance to previous waypoint - everything above will be sorted out
-const static float MAX_WAYPOINT_DISTANCE_NM = 5000.f;
-
-// Do not select alternate beyond 1000 NM
-const static float MAX_ALTERNATE_DISTANCE_NM = 1000.f;
-
-// Choose best navaid from a cluster with this distance.
-// Used to prioritize VOR and waypoints before NDB with the same name
-const static float MAX_CLOSE_NAVAIDS_DISTANCE_NM = 5.f;
-
-const static QRegularExpression SPDALT_WAYPOINT("^([A-Z0-9]+)/[NMK]\\d{3,4}[FSAM]\\d{3,4}$");
-
-// Time specification directly after airport - ignored
-// Runway specification directly after airport - ignored. Example: USSS/08R ... ZMUB1200/33
-const static QRegularExpression AIRPORT_TIME_RUNWAY("^([A-Z0-9]{3,4})(\\d{4})?(/[LCR0-9]{2,3})?$");
-
-const static QRegularExpression SID_STAR_TRANS("^([A-Z0-9]{1,7})(\\.([A-Z0-9]{1,6}))?$");
-
-const static map::MapTypes ROUTE_TYPES_AND_AIRWAY(map::AIRPORT | map::WAYPOINT | map::VOR | map::NDB | map::USERPOINTROUTE | map::AIRWAY);
-
-const static map::MapTypes ROUTE_TYPES(map::AIRPORT | map::WAYPOINT | map::VOR | map::NDB | map::USERPOINTROUTE);
-
-// No airports
-const static map::MapTypes ROUTE_TYPES_NAVAIDS(map::WAYPOINT | map::VOR | map::NDB | map::USERPOINTROUTE);
-const static std::initializer_list<map::MapTypes> ROUTE_TYPES_NAVAIDS_LIST =
-{map::WAYPOINT, map::VOR, map::NDB, map::USERPOINTROUTE};
-
-/* Internal parsing structure which holds all found potential candidates from a search */
+/*  ========================================================================================
+ * Internal parsing structure which holds all found potential candidates from a search */
 struct RouteStringReader::ParseEntry
 {
   QString item, airway;
   map::MapResult result;
 };
 
+// ========================================================================================
 RouteStringReader::RouteStringReader(FlightplanEntryBuilder *flightplanEntryBuilder)
   : entryBuilder(flightplanEntryBuilder)
 {
   mapQuery = NavApp::getMapQueryGui();
   airportQuerySim = NavApp::getAirportQuerySim();
+  airportQueryNav = NavApp::getAirportQueryNav();
   procQuery = NavApp::getProcedureQuery();
 
   // Create a copy of the delegate which uses the same AirwayQuery objects
@@ -119,7 +153,7 @@ RouteStringReader::~RouteStringReader()
 
 bool RouteStringReader::createRouteFromString(const QString& routeString, rs::RouteStringOptions options,
                                               atools::fs::pln::Flightplan *flightplan, map::MapRefExtVector *mapObjectRefs,
-                                              float *speedKts, bool *altIncluded)
+                                              float *speedKtsParam, bool *altIncludedParam)
 {
 #ifdef DEBUG_INFORMATION
   qDebug() << Q_FUNC_INFO;
@@ -131,8 +165,9 @@ bool RouteStringReader::createRouteFromString(const QString& routeString, rs::Ro
   airwayQuery->setUseTracks(!(options & rs::NO_TRACKS));
   waypointQuery->setUseTracks(false);
 
-  messages.clear();
-  hasWarnings = hasErrors = false;
+  logMessages.clear();
+  warningMessages.clear();
+  errorMessages.clear();
 
   // Cleanup and take all until the first empty line
   QStringList items = rs::cleanRouteStringList(routeString);
@@ -150,12 +185,15 @@ bool RouteStringReader::createRouteFromString(const QString& routeString, rs::Ro
 #endif
 
   // Remove all unneeded adornment like speed and times and also combine waypoint coordinate pairs
-  // Also extracts speed, altitude, SID and STAR
-  float altitudeFt;
-  QStringList cleanItems = cleanItemList(items, speedKts, &altitudeFt);
+  // Also extracts speed, altitude, SID and STAR - Keeps airport runway and approach information intact
+  float altitudeFt, speedKts;
+  QStringList cleanItems = cleanItemList(items, speedKts, altitudeFt);
 
-  if(altIncluded != nullptr)
-    *altIncluded = altitudeFt > 0.f;
+  if(speedKtsParam != nullptr)
+    *speedKtsParam = speedKts;
+
+  if(altIncludedParam != nullptr)
+    *altIncludedParam = altitudeFt > 0.f;
 
   if(altitudeFt > 0.f)
     fp->setCruiseAltitudeFt(altitudeFt);
@@ -216,17 +254,16 @@ bool RouteStringReader::createRouteFromString(const QString& routeString, rs::Ro
     lastPos = fp->getDeparturePosition();
   }
 
-  if(altitudeFt > 0.f && options.testFlag(rs::REPORT))
-    appendMessage(tr("Using cruise altitude <b>%1</b> for flight plan.").arg(Unit::altFeet(altitudeFt)));
-
-  if(speedKts != nullptr && *speedKts > 0.f)
+  // Cruise speed =====================================================================
+  if(speedKtsParam != nullptr && *speedKtsParam > 0.f)
   {
     float cruise = NavApp::getRouteCruiseSpeedKts();
-    if(atools::almostEqual(*speedKts, cruise, 1.f))
-      appendWarning(tr("Ignoring speed instruction %1.").arg(Unit::speedKts(*speedKts)));
+    if(atools::almostEqual(*speedKtsParam, cruise, 1.f))
+      appendWarning(tr("Ignoring speed instruction %1.").arg(Unit::speedKts(*speedKtsParam)));
     else
-      appendWarning(tr("Ignoring speed instruction %1 in favor of aircraft performance (%2 true airspeed).").
-                    arg(Unit::speedKts(*speedKts)).arg(Unit::speedKts(NavApp::getRouteCruiseSpeedKts())));
+      // Detected speed differs from aircraft performance
+      appendWarning(tr("Ignoring speed instruction %1 in favor of aircraft performance which uses %2 true airspeed.").
+                    arg(Unit::speedKts(*speedKtsParam)).arg(Unit::speedKts(NavApp::getRouteCruiseSpeedKts())));
   }
 
   // Do not get any navaids that are too far away
@@ -239,7 +276,7 @@ bool RouteStringReader::createRouteFromString(const QString& routeString, rs::Ro
     return false;
   }
 
-  // Remove consecutive duplicates ===========================
+  // Remove consecutive duplicates ===========================================
   cleanItems.erase(std::unique(cleanItems.begin(), cleanItems.end()), cleanItems.end());
 
   // Collect all navaids, airports and coordinates into MapSearchResults =============================
@@ -381,8 +418,8 @@ bool RouteStringReader::createRouteFromString(const QString& routeString, rs::Ro
       }
     }
     else
-    // Add a single waypoint from direct =======================================
     {
+      // Add a single waypoint from direct =======================================
       FlightplanEntry entry;
       if(!result.userpointsRoute.isEmpty())
       {
@@ -471,8 +508,9 @@ bool RouteStringReader::createRouteFromString(const QString& routeString, rs::Ro
 
   fp->append(alternates);
 
+  // Report =====================================================================
   if(options.testFlag(rs::REPORT))
-    addReport(fp, routeString);
+    addReport(fp, routeString, altitudeFt);
 
 #ifdef DEBUG_INFORMATION
   qDebug() << "===============================";
@@ -489,62 +527,140 @@ bool RouteStringReader::createRouteFromString(const QString& routeString, rs::Ro
   return true;
 }
 
-void RouteStringReader::addReport(atools::fs::pln::Flightplan *flightplan, const QString& rawRouteString)
+const QStringList RouteStringReader::getAllMessages() const
 {
-  QString from, to;
-  AirportQuery *airportQuery = NavApp::getAirportQuerySim();
+  QStringList messages(errorMessages);
 
-  if(!flightplan->getDepartureName().isEmpty() &&
-     flightplan->getDepartureName() != flightplan->getDepartureIdent())
-    // Departure is airport
-    from = tr("%1 (%2)").
-           arg(flightplan->getDepartureName()).
-           arg(airportQuery->getDisplayIdent(flightplan->getDepartureIdent()));
-  else
-    // Departure is waypoint
-    from = flightplan->getDepartureIdent();
+  if(!messages.isEmpty() && !warningMessages.isEmpty())
+    messages << QString(); // Converted to newline
+  messages << warningMessages;
 
-  if(!flightplan->getDestinationName().isEmpty() &&
-     flightplan->getDestinationName() != flightplan->getDestinationIdent())
-    // Departure is airport
-    to = tr("%1 (%2)").
-         arg(flightplan->getDestinationName()).
-         arg(airportQuery->getDisplayIdent(flightplan->getDestinationIdent()));
-  else
-    // Departure is waypoint
-    to = flightplan->getDestinationIdent();
+  if(!messages.isEmpty() && !logMessages.isEmpty())
+    messages << QString(); // Converted to newline
+  messages << logMessages;
 
+  return messages;
+}
+
+void RouteStringReader::addReport(atools::fs::pln::Flightplan *flightplan, const QString& rawRouteString, float cruiseAltitudeFt)
+{
+  QString departAirport, destAirport;
   int insertIndex = 0;
-  insertMessage(tr("Route description: <b>%1</b>.").arg(rs::cleanRouteString(rawRouteString)), insertIndex++);
-  insertMessage(tr("Flight plan from <b>%1</b> to <b>%2</b>.").arg(from).arg(to), insertIndex++);
-  insertMessage(tr("Distance without procedures: <b>%1</b>.").arg(Unit::distNm(flightplan->getDistanceNm())), insertIndex++);
 
+  // Prepare flight plan texts ================================================================================
+  // Departure =============================
+  if(!flightplan->getDepartureName().isEmpty() && flightplan->getDepartureName() != flightplan->getDepartureIdent())
+    // Departure is airport
+    departAirport =
+      tr("%1 (%2)").arg(flightplan->getDepartureName()).arg(airportQuerySim->getDisplayIdent(flightplan->getDepartureIdent()));
+  else
+    // Departure is waypoint
+    departAirport = flightplan->getDepartureIdent();
+
+  // Destination ============================
+  if(!flightplan->getDestinationName().isEmpty() && flightplan->getDestinationName() != flightplan->getDestinationIdent())
+    // Destination is airport
+    destAirport = tr("%1 (%2)").arg(flightplan->getDestinationName()).arg(airportQuerySim->getDisplayIdent(
+                                                                            flightplan->getDestinationIdent()));
+  else
+    // Departure is waypoint
+    destAirport = flightplan->getDestinationIdent();
+
+  insertMessage(tr("Flight plan from <b>%1</b> to <b>%2</b>.").arg(departAirport).arg(destAirport), insertIndex++);
+  insertMessage(tr("Distance without procedures is <b>%1</b>.").arg(Unit::distNm(flightplan->getDistanceNm())), insertIndex++);
+  if(cruiseAltitudeFt > 0.f)
+    insertMessage(tr("Using cruise altitude <b>%1</b> for flight plan.").arg(Unit::altFeet(cruiseAltitudeFt)), insertIndex++);
+
+  // Departure/takeoff ===================================================================================
+  const QHash<QString, QString>& properties = flightplan->getPropertiesConst();
+  QString customDepartRunway = ProcedureQuery::getCustomDepartureRunway(properties);
+  if(!customDepartRunway.isEmpty())
+    insertMessage(tr("Takeoff from runway <b>%1</b>.").arg(customDepartRunway), insertIndex++);
+  else
+  {
+    QString sidRunway;
+    QString sid = ProcedureQuery::getSidAndTransition(properties, sidRunway);
+    if(!sid.isEmpty())
+    {
+      QString rwMsg = !sidRunway.isEmpty() ? tr(" and runway <b>%1</b>").arg(sidRunway) : QString();
+      insertMessage(tr("Depart using SID <b>%1</b>%2.").arg(sid).arg(rwMsg), insertIndex++);
+    }
+  }
+
+  // Arrival/STAR ===================================================================================
+  QString starRunway;
+  QString star = ProcedureQuery::getStarAndTransition(properties, starRunway);
+  if(!star.isEmpty())
+  {
+    QString rwMsg = !starRunway.isEmpty() ? tr(" and runway <b>%1</b>").arg(starRunway) : QString();
+    insertMessage(tr("Arrive using STAR <b>%1</b>%2.").arg(star).arg(rwMsg), insertIndex++);
+  }
+
+  // Approach ===================================================================================
+  QString customApprRunway = ProcedureQuery::getCustomApprochRunway(properties);
+  if(!customApprRunway.isEmpty())
+    insertMessage(tr("Land at runway <b>%1</b>.").arg(customApprRunway), insertIndex++);
+  else
+  {
+    QString approach, transition, runway, arinc;
+    ProcedureQuery::getApproachAndTransitionDisplay(properties, approach, arinc, transition, runway);
+
+    if(!transition.isEmpty())
+      transition = tr(" via <b>%1</b> to").arg(transition);
+
+    if(!runway.isEmpty())
+      runway = tr(", land at runway <b>%1</b>").arg(runway);
+
+    if(!approach.isEmpty())
+      insertMessage(tr("Approach%1 <b>%2</b> (<b>%3</b>)%4.").arg(transition).arg(approach).arg(arinc).arg(runway), insertIndex++);
+  }
+
+  // Alternates ===================================================================================
+  const QVector<const atools::fs::pln::FlightplanEntry *> alternates = flightplan->getAlternates();
+  if(!alternates.isEmpty())
+  {
+    QStringList alternateIdents;
+    for(const atools::fs::pln::FlightplanEntry *alternate:alternates)
+      alternateIdents.append(alternate->getIdent());
+
+    insertMessage(tr("Alternate %1 <b>%2</b>.").
+                  arg(alternateIdents.size() == 1 ? tr("airport is") : tr("airports are")).
+                  arg(atools::strJoin(alternateIdents, tr("</b>, <b>"), tr("</b> and <b>"))), insertIndex++);
+  }
+
+  // Add empty line ==============
+  insertMessage(QString(), insertIndex++);
+
+  // Raw route description and found waypoints ===================================================================================
+  insertMessage(tr("Route description:<br/>"
+                   "<b>%1</b>.").arg(rs::cleanRouteString(rawRouteString)), insertIndex++);
   QStringList idents;
   for(atools::fs::pln::FlightplanEntry& entry : *flightplan)
   {
     if(entry.getWaypointType() == atools::fs::pln::entry::AIRPORT)
-      idents.append(airportQuery->getDisplayIdent(entry.getIdent()));
+      idents.append(airportQuerySim->getDisplayIdent(entry.getIdent()));
     else
       idents.append(entry.getIdent());
   }
 
   if(!idents.isEmpty())
-    insertMessage(tr("Found %1 %2: <b>%3</b>.").
+  {
+#ifdef DEBUG_INFORMATION
+    QString identStr = idents.join(tr(" "));
+#else
+    QString identStr = atools::elideTextShortMiddle(idents.join(tr(" ")), 120);
+#endif
+
+    insertMessage(tr("Found %1 %2:<br/><b>%3</b>.").
                   arg(idents.size()).
                   arg(idents.size() == 1 ? tr("waypoint") : tr("waypoints")).
-                  arg(atools::elideTextShortMiddle(idents.join(tr(" ")), 150)), insertIndex++);
+                  arg(identStr), insertIndex++);
+  }
 
-  QString sid = ProcedureQuery::getSidAndTransition(flightplan->getPropertiesConst());
-  if(!sid.isEmpty())
-    insertMessage(tr("Found SID: <b>%1</b>.").arg(sid), insertIndex++);
-
-  QString star = ProcedureQuery::getStarAndTransition(flightplan->getPropertiesConst());
-  if(!star.isEmpty())
-    insertMessage(tr("Found STAR: <b>%1</b>.").arg(star), insertIndex++);
 }
 
 map::MapRefExt RouteStringReader::mapObjectRefFromEntry(const FlightplanEntry& entry,
-                                                              const map::MapResult& result, const QString& name)
+                                                        const map::MapResult& result, const QString& name)
 {
   atools::fs::pln::entry::WaypointType type = entry.getWaypointType();
 
@@ -636,49 +752,104 @@ void RouteStringReader::resultWithClosest(map::MapResult& resultWithClosest, con
 
 void RouteStringReader::insertMessage(const QString& message, int index)
 {
-  messages.insert(index, message);
+  logMessages.insert(index, message);
   qInfo() << Q_FUNC_INFO << "Message:" << message;
 }
 
 void RouteStringReader::appendMessage(const QString& message)
 {
-  messages.append(message);
+  logMessages.append(message);
   qInfo() << Q_FUNC_INFO << "Message:" << message;
 }
 
 void RouteStringReader::appendWarning(const QString& message)
 {
-  hasWarnings = true;
   if(plaintextMessages)
-    messages.append(message);
+    warningMessages.append(message);
   else
-    messages.append(atools::util::HtmlBuilder::warningMessage(message));
+    warningMessages.append(atools::util::HtmlBuilder::warningMessage(message));
   qWarning() << Q_FUNC_INFO << "Warning:" << message;
 }
 
 void RouteStringReader::appendError(const QString& message)
 {
-  hasErrors = true;
   if(plaintextMessages)
-    messages.append(message);
+    errorMessages.append(message);
   else
-    messages.append(atools::util::HtmlBuilder::errorMessage(message));
+    errorMessages.append(atools::util::HtmlBuilder::errorMessage(message));
   qWarning() << Q_FUNC_INFO << "Error:" << message;
 }
 
-QString RouteStringReader::extractAirportIdent(QString ident)
+void RouteStringReader::extractAirportIdentDeparture(QString item, QString& airport, QString& runway)
 {
-  QRegularExpressionMatch match = AIRPORT_TIME_RUNWAY.match(ident);
+  // Copy item to avoid underlying modification if item and airport are the same
+
+  // Try to match AIRPORTTIME/RUNWAY
+  QRegularExpressionMatch match = AIRPORT_TIME_RUNWAY.match(item);
   if(match.hasMatch())
   {
-    ident = match.captured(1);
+    airport = match.captured("ap");
 
-    if(!match.captured(2).isEmpty())
-      appendWarning(tr("Ignoring time specification for airport %1.").arg(ident));
-    if(!match.captured(3).isEmpty())
-      appendWarning(tr("Ignoring runway specification for airport %1.").arg(ident));
+    QString time = match.captured("time");
+    if(!time.isEmpty())
+      appendWarning(tr("Ignoring time specification \"%1\" for departure airport %2.").arg(time).arg(item));
+
+    runway = match.captured("rw");
   }
-  return ident;
+  else
+    // Return as airport to catch error later
+    airport = item;
+}
+
+void RouteStringReader::extractAirportIdentDestination(QString item, QString& airport, QString& approach, QString& transition,
+                                                       QString& runway)
+{
+  // Copy item to avoid underlying modification if item and airport are the same
+  QString time;
+  // Try to match AIRPORTTIME/TRANSITION.APPROACH ===================================
+  QRegularExpressionMatch match = AIRPORT_TIME_APPROACH.match(item);
+  if(match.hasMatch())
+  {
+    // Match for full item including time, transition and approach
+    // GCTS1200/TES2.I07-Y
+    airport = match.captured("ap");
+    time = match.captured("time");
+    approach = match.captured("appr");
+    transition = match.captured("trans");
+  }
+  else
+  {
+    // Try to match AIRPORTTIME/RUNWAY =======================================
+    match = AIRPORT_TIME_RUNWAY.match(item);
+    if(match.hasMatch())
+    {
+      // Match for full item including time and runway
+      // GCTS1200/07
+      airport = match.captured("ap");
+      runway = match.captured("rw");
+      time = match.captured("time");
+    }
+    else
+      // Nothing matched Return as airport to catch error later
+      airport = item;
+  }
+
+  if(!time.isEmpty())
+    appendWarning(tr("Ignoring time specification \"%1\" for destination airport %2.").arg(time).arg(item));
+}
+
+void RouteStringReader::airportSim(map::MapAirport& airport, const QString& ident)
+{
+  airport = map::MapAirport();
+  airportQuerySim->getAirportByIdent(airport, ident);
+  if(!airport.isValid())
+  {
+    // Try again with official codes but not ident
+    QList<map::MapAirport> airports = airportQuerySim->getAirportsByOfficialIdent(ident, nullptr, map::INVALID_DISTANCE_VALUE,
+                                                                                  map::AP_QUERY_OFFICIAL);
+    if(!airports.isEmpty())
+      airport = airports.constFirst();
+  }
 }
 
 QString RouteStringReader::sidStarAbbrev(QString sid)
@@ -690,7 +861,7 @@ QString RouteStringReader::sidStarAbbrev(QString sid)
 }
 
 void RouteStringReader::readSidAndTrans(QStringList& items, QString& sidTransWp, int& sidId, int& sidTransId,
-                                        const map::MapAirport& departure)
+                                        const map::MapAirport& departure, const QString& runway)
 {
   sidTransId = -1;
   sidId = -1;
@@ -709,7 +880,7 @@ void RouteStringReader::readSidAndTrans(QStringList& items, QString& sidTransWp,
       QString sid = sidStarAbbrev(items.constFirst());
       QString trans = items.value(1);
 
-      sidId = procQuery->getSidId(departure, sid, QString(), true /* strict */);
+      sidId = procQuery->getSidId(departure, sid, runway, true /* strict */);
 
       if(sidId != -1)
         // Consume SID
@@ -736,7 +907,7 @@ void RouteStringReader::readSidAndTrans(QStringList& items, QString& sidTransWp,
         QString sid = sidStarAbbrev(sidMatch.captured(1));
         QString trans = sidMatch.captured(3);
 
-        sidId = procQuery->getSidId(departure, sid, QString(), true /* strict */);
+        sidId = procQuery->getSidId(departure, sid, runway, true /* strict */);
         if(sidId != -1 && !trans.isEmpty())
         {
           sidTransId = procQuery->getSidTransitionId(departure, trans, sidId, true /* strict */);
@@ -749,72 +920,105 @@ void RouteStringReader::readSidAndTrans(QStringList& items, QString& sidTransWp,
         // Consume SID and transition
         items.removeFirst();
     }
-  }
+  } // if(!foundAirway)
 }
 
 bool RouteStringReader::addDeparture(atools::fs::pln::Flightplan *flightplan, map::MapRefExtVector *mapObjectRefs, QStringList& items,
                                      QString& sidTransWp)
 {
-  QString ident = extractAirportIdent(items.takeFirst());
+  QString airportIdent, runway;
+  extractAirportIdentDeparture(items.takeFirst(), airportIdent, runway);
 
-  map::MapAirport departure;
-  airportQuerySim->getAirportByIdent(departure, ident);
-  if(!departure.isValid())
+  map::MapAirport departureAirport;
+  airportSim(departureAirport, airportIdent);
+
+  if(departureAirport.isValid())
   {
-    // Try again with official codes but not ident
-    QList<map::MapAirport> airports = airportQuerySim->getAirportsByOfficialIdent(ident, nullptr, map::INVALID_DISTANCE_VALUE,
-                                                                                  map::AP_QUERY_OFFICIAL);
-    if(!airports.isEmpty())
-      departure = airports.constFirst();
-  }
+    // Fill flight plan departure
+    flightplan->setDepartureName(departureAirport.name);
+    flightplan->setDepartureIdent(departureAirport.ident);
+    flightplan->setDeparturePosition(departureAirport.position);
+    flightplan->setDepartureParkingPosition(departureAirport.position, atools::fs::pln::INVALID_ALTITUDE, atools::fs::pln::INVALID_HEADING);
 
-  if(departure.isValid())
-  {
-    flightplan->setDepartureName(departure.name);
-    flightplan->setDepartureIdent(departure.ident);
-    flightplan->setDeparturePosition(departure.position);
-    flightplan->setDepartureParkingPosition(departure.position, atools::fs::pln::INVALID_ALTITUDE, atools::fs::pln::INVALID_HEADING);
-
+    // Build departure airport entry
     FlightplanEntry entry;
-    entryBuilder->buildFlightplanEntry(departure, entry, false /* alternate */);
+    entryBuilder->buildFlightplanEntry(departureAirport, entry, false /* alternate */);
     flightplan->append(entry);
     if(mapObjectRefs != nullptr)
-      mapObjectRefs->append(map::MapRefExt(departure.id, departure.position, map::AIRPORT, departure.ident));
+      mapObjectRefs->append(map::MapRefExt(departureAirport.id, departureAirport.position, map::AIRPORT, departureAirport.ident));
 
     if(!items.isEmpty())
     {
       // Try to read SID and transition and consume items
+      // Pass in runway to allow selection of ambigious SID
       int sidId, sidTransId;
-      readSidAndTrans(items, sidTransWp, sidId, sidTransId, departure);
+      readSidAndTrans(items, sidTransWp, sidId, sidTransId, departureAirport, runway);
 
       // Fill procedure into route if found =============================
+      proc::MapProcedureLegs arrivalLegsDummy, starLegsDummy, sidLegs;
       if(sidId != -1)
       {
-        proc::MapProcedureLegs arrivalLegs, starLegs, departureLegs;
         if(sidId != -1 && sidTransId == -1)
         {
           // Only SID
-          const proc::MapProcedureLegs *legs = procQuery->getProcedureLegs(departure, sidId);
+          const proc::MapProcedureLegs *legs = procQuery->getProcedureLegs(departureAirport, sidId);
           if(legs != nullptr)
-            departureLegs = *legs;
+            sidLegs = *legs;
         }
         else if(sidId != -1 && sidTransId != -1)
         {
           // SID and transition
-          const proc::MapProcedureLegs *legs = procQuery->getTransitionLegs(departure, sidTransId);
+          const proc::MapProcedureLegs *legs = procQuery->getTransitionLegs(departureAirport, sidTransId);
           if(legs != nullptr)
-            departureLegs = *legs;
+            sidLegs = *legs;
         }
-
-        // Add information to the flight plan property list
-        ProcedureQuery::fillFlightplanProcedureProperties(flightplan->getProperties(), arrivalLegs, starLegs, departureLegs);
       }
+      else if(!runway.isEmpty())
+      {
+        // No SID but runway given with airport
+        map::MapRunwayEnd runwayEnd = airportQuerySim->getRunwayEndByName(departureAirport.id, runway);
+        // mapQuery->getRunwayEndByNameFuzzy(runwayEnds, runway, airport, true /* navdata */);
+
+        if(runwayEnd.isValid())
+          // Create a custom departure with 3 NM leg
+          procQuery->createCustomDeparture(sidLegs, departureAirport, runway, 3.f);
+        else
+        {
+          appendWarning(tr("Runway %1 not found for departure airport %2. Ignoring runway.").arg(runway).arg(departureAirport.ident));
+
+          // Clear runway from SID
+          sidLegs.runway.clear();
+
+          // Clear to avoid further tests
+          runway.clear();
+        }
+      }
+
+      // Compare SID allowed runways with given runway if this is not a user defined departure
+      if(!sidLegs.isEmpty() && !runway.isEmpty() && !sidLegs.isCustomDeparture())
+      {
+        if(!ProcedureQuery::doesRunwayMatchSidOrStar(sidLegs, runway))
+        {
+          appendWarning(tr("Runway %1 does not match SID %2 at departure airport %3. Ignoring runway.").
+                        arg(runway).arg(sidLegs.procedureFixIdent).arg(airportIdent));
+          sidLegs.runway.clear();
+          runway.clear();
+        }
+        else
+          sidLegs.runway = runway;
+      }
+
+      // Add information to the flight plan property list
+      ProcedureQuery::fillFlightplanProcedureProperties(flightplan->getProperties(), arrivalLegsDummy, starLegsDummy, sidLegs);
     }
     return true;
   }
   else
   {
-    appendError(tr("Mandatory departure airport %1 not found.").arg(ident));
+    if(airportIdent.contains('/'))
+      appendError(tr("Required departure airport %1 not found or wrong runway given after \"/\".").arg(airportIdent));
+    else
+      appendError(tr("Required departure airport %1 not found.").arg(airportIdent));
     return false;
   }
 }
@@ -823,177 +1027,175 @@ bool RouteStringReader::addDestination(atools::fs::pln::Flightplan *flightplan, 
                                        map::MapRefExtVector *mapObjectRefs, QStringList& items, QString& starTransWp,
                                        rs::RouteStringOptions options)
 {
-  if(options & rs::READ_ALTERNATES)
+  // Collect information for all trailing airports
+  QVector<DestInfo> destInfos;
+
+  // Iterate from end of list and collect airports with possible STAR, runways or approaches in reverse order
+  int idx = items.size() - 1;
+  while(idx >= 0)
   {
-    // Read airports at end of list as alternates =============================================
+    proc::MapProcedureLegs star, approach;
+    map::MapAirport ap;
+    map::MapRunwayEnd runwayEnd;
 
-    // List of consecutive airports at end of string - destination is last entry, alternates before
-    QVector<proc::MapProcedureLegs> stars;
-    QVector<map::MapAirport> airports;
-
-    // Number of entries that have to be consumed for SID and/or transition - 0, 1, or 2
-    QVector<int> consumeList;
-
-    // Iterate from end of list and collect airports in reverse order
-    int idx = items.size() - 1;
-    while(idx >= 0)
-    {
-      proc::MapProcedureLegs star;
-      map::MapAirport ap;
-
-      // Get airport and STAR
-      int consume = 0;
-      destinationInternal(ap, star, items, starTransWp, consume, idx);
-
-      if(!star.isEmpty())
-      {
-        // Found a matching STAR - this is the destination - stop here
-        stars.append(star);
-        airports.append(ap);
-        consumeList.append(consume);
-        break;
-      }
-
-      if(ap.isValid() &&
-         (airports.isEmpty() || airports.constFirst().position.distanceMeterTo(ap.position) < ageo::nmToMeter(MAX_ALTERNATE_DISTANCE_NM)))
-      {
-        // Check if given alternate airport ident matches with any VOR, NDB or WAYPOINT nearby =====================
-        QString item = items.value(idx);
-        if(item.length() == 3 || item.length() == 5)
-        {
-          // Get VOR, NDB or waypoints
-          map::MapResult result;
-          mapQuery->getMapObjectByIdent(result, map::VOR | map::NDB | map::WAYPOINT, items.value(idx), QString(), QString(),
-                                        ap.position, ageo::nmToMeter(MAX_ALTERNATE_DISTANCE_NM));
-          if(result.hasNavaids())
-          {
-            // Have overlapping navaid names - ignore airport identifier and stop here
-            break;
-          }
-        }
-
-        // Found a valid airport, add and continue with previous one
-        stars.append(star);
-        airports.append(ap);
-        consumeList.append(consume);
-        idx--;
-      }
-      else
-        // No valid airport - stop here
-        break;
-    }
-
-    if(!airports.isEmpty())
-    {
-      // Found airports
-      // Consume all airports in item list
-      for(int i = 0; i < airports.size() && !items.isEmpty(); i++)
-        items.removeLast();
-
-      // Get and consume destination airport at the end of the list ========================
-      map::MapAirport dest = airports.takeLast();
-      proc::MapProcedureLegs star = stars.takeLast();
-      int consume = consumeList.takeLast();
-
-      flightplan->setDestinationName(dest.name);
-      flightplan->setDestinationIdent(dest.ident);
-      flightplan->setDestinationPosition(dest.getPosition());
-
-      FlightplanEntry entry;
-      entryBuilder->buildFlightplanEntry(dest, entry, false /* alternate */);
-      flightplan->append(entry);
-      if(mapObjectRefs != nullptr)
-        mapObjectRefs->append(map::MapRefExt(dest.id, dest.position, map::AIRPORT, dest.ident));
-
-      // Get destination STAR ========================
-      if(!star.isEmpty())
-      {
-        // Consume STAR in list - one or two entries
-        for(int i = 0; i < consume; i++)
-          items.removeLast();
-
-        // Add STAR information to the flight plan property list
-        proc::MapProcedureLegs arrivalLegs, departureLegs;
-        ProcedureQuery::fillFlightplanProcedureProperties(flightplan->getProperties(), arrivalLegs, star, departureLegs);
-      }
-
-      // Collect remaining alternates ========================
-      if(alternates != nullptr)
-      {
-        QStringList alternateDisplayIdents;
-        for(const map::MapAirport& altAirport : airports)
-        {
-          FlightplanEntry altEntry;
-          entryBuilder->buildFlightplanEntry(altAirport, altEntry, true /* alternate */);
-          alternates->prepend(altEntry);
-
-          alternateDisplayIdents.prepend(airportQuerySim->getDisplayIdent(altAirport.ident));
-        }
-
-        if(!alternateDisplayIdents.isEmpty() && options.testFlag(rs::REPORT))
-          appendMessage(tr("Found alternate %1 <b>%2</b>.").
-                        arg(alternateDisplayIdents.size() == 1 ? tr("airport") : tr("airports")).
-                        arg(alternateDisplayIdents.join(tr(", "))));
-      }
-    } // if(!airports.isEmpty())
-    else
-    {
-      appendError(tr("Required destination airport %1 not found.").arg(items.isEmpty() ? QString() : items.constLast()));
-      return false;
-    }
-  } // if(options & rs::READ_ALTERNATES)
-  else
-  {
-    // Read airports at end of list as waypoints =============================================
-    proc::MapProcedureLegs star;
-    map::MapAirport dest;
-
-    // Get airport and STAR at end of list ================================
+    // Get airport and STAR
     int consume = 0;
-    destinationInternal(dest, star, items, starTransWp, consume, items.size() - 1);
+    destinationInternal(ap, star, approach, items, starTransWp, runwayEnd, consume, idx);
 
-    if(dest.isValid())
+    if(!star.isEmpty() || !approach.isEmpty())
     {
-      flightplan->setDestinationName(dest.name);
-      flightplan->setDestinationIdent(dest.ident);
-      flightplan->setDestinationPosition(dest.getPosition());
+      // Found a matching STAR or approach - this must be the destination - stop here
+      // Approach might also be a user defined one
+      destInfos.append(DestInfo(star, approach, ap, runwayEnd, !star.isEmpty() ? consume : -1));
+      break;
+    }
 
-      FlightplanEntry entry;
-      entryBuilder->buildFlightplanEntry(dest, entry, false /* alternate */);
-      flightplan->append(entry);
-      if(mapObjectRefs != nullptr)
-        mapObjectRefs->append(map::MapRefExt(dest.id, dest.position, map::AIRPORT, dest.ident));
+    if(ap.isValid() && (destInfos.isEmpty() ||
+                        destInfos.constFirst().airport.position.distanceMeterTo(ap.position) < ageo::nmToMeter(MAX_ALTERNATE_DISTANCE_NM)))
+    {
+      // Check if given alternate airport ident matches with any VOR, NDB or WAYPOINT nearby =====================
+      QString item = items.value(idx);
+      if(item.length() == 3 || item.length() == 5)
+      {
+        // Get VOR, NDB or waypoints
+        map::MapResult result;
+        mapQuery->getMapObjectByIdent(result, map::VOR | map::NDB | map::WAYPOINT, items.value(idx), QString(), QString(),
+                                      ap.position, ageo::nmToMeter(MAX_ALTERNATE_DISTANCE_NM));
+        if(result.hasNavaids())
+          // Have overlapping navaid names - ignore airport identifier and stop here
+          break;
+      }
 
-      // Consume airport
+      // Found a valid airport, add and continue with previous one
+      destInfos.append(DestInfo(star, approach, ap, runwayEnd, consume));
+      idx--;
+    }
+    else
+      // No valid airport - stop here
+      break;
+
+    if(!(options & rs::READ_ALTERNATES))
+      // Read airports at end of list as alternates - bail out here after first iteration
+      break;
+  }
+
+  if(!destInfos.isEmpty())
+  {
+    // Found airports - Consume all airports in item list =======================================================================
+    for(int i = 0; i < destInfos.size() && !items.isEmpty(); i++)
       items.removeLast();
 
-      // Get destination STAR ========================
-      if(!star.isEmpty())
-      {
-        // Consume STAR in list
-        for(int i = 0; i < consume; i++)
-          items.removeLast();
+    // Get destination airport from the end of the list ========================
+    DestInfo destInfo = destInfos.takeLast();
 
-        // Add information to the flight plan property list
-        proc::MapProcedureLegs arrivalLegs, departureLegs;
-        ProcedureQuery::fillFlightplanProcedureProperties(flightplan->getProperties(), arrivalLegs, star, departureLegs);
+    // Fill flight plan destination info
+    flightplan->setDestinationName(destInfo.airport.name);
+    flightplan->setDestinationIdent(destInfo.airport.ident);
+    flightplan->setDestinationPosition(destInfo.airport.getPosition());
+
+    // Create destination entry ===============
+    FlightplanEntry entry;
+    entryBuilder->buildFlightplanEntry(destInfo.airport, entry, false /* alternate */);
+    flightplan->append(entry);
+    if(mapObjectRefs != nullptr)
+      mapObjectRefs->append(map::MapRefExt(destInfo.airport.id, destInfo.airport.position, map::AIRPORT, destInfo.airport.ident));
+
+    // Check if STAR matches runway for given approach
+    if(!destInfo.star.isEmpty() && !destInfo.approach.isEmpty() && !destInfo.approach.isCustomApproach())
+    {
+      if(!ProcedureQuery::doesRunwayMatchSidOrStar(destInfo.star, destInfo.approach.runway))
+      {
+        appendWarning(tr("Approach runway %1 does not match STAR %2 at destination airport %3. Ignoring approach.").
+                      arg(destInfo.approach.runway).arg(destInfo.star.procedureFixIdent).arg(destInfo.airport.ident));
+
+        // Clear all approach and runway related to ignore when creating flight plan properties
+        destInfo.star.runwayEnd = map::MapRunwayEnd();
+        destInfo.star.runway.clear();
+        destInfo.runwayEnd = map::MapRunwayEnd();
+        destInfo.approach = proc::MapProcedureLegs();
+      }
+      else
+        // Assign runway end to STAR to allow disambiguation
+        destInfo.star.runwayEnd = destInfo.runwayEnd;
+    }
+
+    // Check if STAR allows given runway end
+    if(!destInfo.star.isEmpty() && destInfo.runwayEnd.isValid())
+    {
+      if(!ProcedureQuery::doesRunwayMatchSidOrStar(destInfo.star, destInfo.runwayEnd.name))
+      {
+        appendWarning(tr("Runway %1 does not match STAR %2 at destination airport %3. Ignoring runway.").
+                      arg(destInfo.runwayEnd.name).arg(destInfo.star.procedureFixIdent).arg(destInfo.airport.ident));
+
+        // Clear all approach and runway related to ignore when creating flight plan properties
+        destInfo.star.runwayEnd = map::MapRunwayEnd();
+        destInfo.star.runway.clear();
+        destInfo.runwayEnd = map::MapRunwayEnd();
+        destInfo.approach = proc::MapProcedureLegs();
+      }
+      else
+        // Assign runway end to STAR to allow disambiguation
+        destInfo.star.runwayEnd = destInfo.runwayEnd;
+    }
+
+    // Get destination STAR ========================
+    if(!destInfo.star.isEmpty() || !destInfo.approach.isEmpty())
+    {
+      if(!destInfo.star.isEmpty())
+      {
+        // Consume STAR in list - either one dot separated transtion or from space separated transition two entries
+        for(int i = 0; i < destInfo.consume; i++)
+          items.removeLast();
       }
 
-      // Remaining airports are handled by other waypoint code
+      // Add STAR and approach information to the flight plan property list
+      proc::MapProcedureLegs departLegsDummy;
+      ProcedureQuery::fillFlightplanProcedureProperties(flightplan->getProperties(), destInfo.approach, destInfo.star, departLegsDummy);
     }
-    else
+
+    // Collect remaining alternates ========================
+    if(alternates != nullptr)
     {
-      appendError(tr("Required destination airport %1 not found.").arg(items.isEmpty() ? QString() : items.constLast()));
-      return false;
+      QStringList alternateDisplayIdents;
+      for(const DestInfo& destInf : destInfos)
+      {
+        FlightplanEntry altEntry;
+        entryBuilder->buildFlightplanEntry(destInf.airport, altEntry, true /* alternate */);
+        alternates->prepend(altEntry);
+
+        alternateDisplayIdents.prepend(airportQuerySim->getDisplayIdent(destInf.airport.ident));
+      }
     }
+  } // if(!airports.isEmpty())
+  else
+  {
+    QString airport = items.isEmpty() ? QString() : items.constLast();
+    if(airport.contains('/'))
+      appendError(tr("Required destination airport %1 not found or wrong runway given after \"/\".").arg(airport));
+    else
+      appendError(tr("Required destination airport %1 not found.").arg(airport));
+    return false;
   }
+
   return true;
 }
 
-void RouteStringReader::readStarAndTransDot(const QString& starTrans, int& starId, int& starTransId, const map::MapAirport& destination)
+void RouteStringReader::readApproachAndTrans(const QString& approachArinc, const QString& approachTrans,
+                                             int& approachId, int& transitionId, const map::MapAirport& destination)
 {
-  starId = -1;
-  starTransId = -1;
+  approachId = transitionId = -1;
+
+  if(!approachArinc.isEmpty())
+    approachId = procQuery->getApproachId(destination, approachArinc, QString());
+
+  if(approachId != -1 && !approachTrans.isEmpty())
+    transitionId = procQuery->getTransitionId(destination, approachTrans, QString(), approachId);
+}
+
+void RouteStringReader::readStarAndTransDot(const QString& starTrans, const QString& runway, int& starId, int& starTransId,
+                                            const map::MapAirport& destination)
+{
+  starId = starTransId = -1;
 
   QRegularExpressionMatch starMatch = SID_STAR_TRANS.match(starTrans);
   if(starMatch.hasMatch())
@@ -1001,7 +1203,7 @@ void RouteStringReader::readStarAndTransDot(const QString& starTrans, int& starI
     QString star = sidStarAbbrev(starMatch.captured(1));
     QString trans = starMatch.captured(3);
 
-    starId = procQuery->getStarId(destination, star, QString(), true /* strict */);
+    starId = procQuery->getStarId(destination, star, runway, true /* strict */);
     if(starId != -1 && !trans.isEmpty())
     {
       // Try tansition if STAR was found
@@ -1013,17 +1215,17 @@ void RouteStringReader::readStarAndTransDot(const QString& starTrans, int& starI
   }
 }
 
-void RouteStringReader::readStarAndTransSpace(const QString& star, QString trans, int& starId, int& starTransId,
+void RouteStringReader::readStarAndTransSpace(const QString& star, QString trans, const QString& runway, int& starId, int& starTransId,
                                               const map::MapAirport& destination)
 {
-  starId = procQuery->getStarId(destination, sidStarAbbrev(star), QString(), true /* strict */);
+  starId = procQuery->getStarId(destination, sidStarAbbrev(star), runway, true /* strict */);
 
   if(starId != -1 && !trans.isEmpty())
     starTransId = procQuery->getSidTransitionId(destination, trans, starId, true /* strict */);
 }
 
-void RouteStringReader::readStarAndTrans(QStringList& items, QString& startTransWp, int& starId, int& starTransId, int& consume,
-                                         const map::MapAirport& destination, int index)
+void RouteStringReader::readStarAndTrans(QStringList& items, QString& startTransWp, const QString& runway, int& starId, int& starTransId,
+                                         int& consume, const map::MapAirport& destination, int index)
 {
   starId = -1;
   starTransId = -1;
@@ -1035,11 +1237,11 @@ void RouteStringReader::readStarAndTrans(QStringList& items, QString& startTrans
   if(!item1.contains('.'))
   {
     // Read "TRANS STAR" notation ======================================================
-    readStarAndTransSpace(item1, item2, starId, starTransId, destination);
+    readStarAndTransSpace(item1, item2, runway, starId, starTransId, destination);
 
     if(starId == -1)
       // Read "STAR TRANS" notation ======================================================
-      readStarAndTransSpace(item2, item1, starId, starTransId, destination);
+      readStarAndTransSpace(item2, item1, runway, starId, starTransId, destination);
     else
       // Remember item which was consumed as a STAR transition in space separated notation "TRANS STAR"
       startTransWp = item2;
@@ -1051,11 +1253,11 @@ void RouteStringReader::readStarAndTrans(QStringList& items, QString& startTrans
     QString starTrans = items.value(index - 1);
     item1 = starTrans.section('.', 0, 0);
     item2 = starTrans.section('.', 1, 1);
-    readStarAndTransDot(item1 + "." + item2, starId, starTransId, destination);
+    readStarAndTransDot(item1 % '.' % item2, runway, starId, starTransId, destination);
 
     if(starId == -1)
       // Read "TRANS.SID" notation ======================================================
-      readStarAndTransDot(item2 + "." + item1, starId, starTransId, destination);
+      readStarAndTransDot(item2 % '.' % item1, runway, starId, starTransId, destination);
 
     if(starId != -1)
       consume = 1;
@@ -1070,38 +1272,79 @@ void RouteStringReader::readStarAndTrans(QStringList& items, QString& startTrans
   }
 }
 
-void RouteStringReader::destinationInternal(map::MapAirport& destination, proc::MapProcedureLegs& starLegs, QStringList& items,
-                                            QString& starTransWp, int& consume, int index)
+void RouteStringReader::destinationInternal(map::MapAirport& destinationAirport, proc::MapProcedureLegs& starLegs,
+                                            proc::MapProcedureLegs& approachLegs, QStringList& items,
+                                            QString& starTransWp, map::MapRunwayEnd& runwayEnd, int& consume, int index)
 {
-  QString ident = extractAirportIdent(items.at(index));
-  airportQuerySim->getAirportByIdent(destination, ident);
+  QString airportIdent, approach, transition, runway;
+  extractAirportIdentDestination(items.at(index), airportIdent, approach, transition, runway);
 
-  if(!destination.isValid())
-  {
-    // Try again official codes but not ident
-    QList<map::MapAirport> airports = airportQuerySim->getAirportsByOfficialIdent(ident, nullptr, map::INVALID_DISTANCE_VALUE,
-                                                                                  map::AP_QUERY_OFFICIAL);
-    if(!airports.isEmpty())
-      destination = airports.constFirst();
-  }
+  map::MapAirport departureAirport;
+  airportSim(destinationAirport, airportIdent);
 
-  if(destination.isValid() && items.size() > 1 && index > 0)
+  // Check if list is large enough to hold a destination
+  if(destinationAirport.isValid() && items.size() > 1 && index > 0)
   {
+    // Resolve approach information =================================
+    if(!approach.isEmpty())
+    {
+      int approachId = -1, transitionId = -1;
+      readApproachAndTrans(approach, transition, approachId, transitionId, destinationAirport);
+
+      if(transitionId != -1)
+      {
+        // Approach and transition - fetch both
+        const proc::MapProcedureLegs *legs = procQuery->getTransitionLegs(destinationAirport, transitionId);
+        if(legs != nullptr)
+          approachLegs = *legs;
+      }
+      else if(approachId != -1)
+      {
+        // Only approach
+        const proc::MapProcedureLegs *legs = procQuery->getProcedureLegs(destinationAirport, approachId);
+        if(legs != nullptr)
+          approachLegs = *legs;
+      }
+
+      if(!approach.isEmpty() && approachLegs.isProcedureEmpty())
+        appendWarning(tr("Approach %1 not found for destination airport %2. Ignoring approach.").
+                      arg(approach).arg(destinationAirport.ident));
+      else if(!transition.isEmpty() && approachLegs.isTransitionEmpty())
+        appendWarning(tr("Transition %1 not found for destination airport %2. Ignoring transition.").
+                      arg(transition).arg(destinationAirport.ident));
+    }
+    else if(!runway.isEmpty())
+    {
+      // Resolve runway only information =================================
+      runwayEnd = airportQuerySim->getRunwayEndByName(destinationAirport.id, runway);
+      // mapQuery->getRunwayEndByNameFuzzy(runwayEnds, runway, airport, true /* navdata */);
+
+      if(runwayEnd.isValid())
+        // Create a user defined approach using 1000 ft above threshold and 3 NM final
+        procQuery->createCustomApproach(approachLegs, destinationAirport, runway, 3.f, 1000.f, 0.f);
+      else
+        appendWarning(tr("Runway %1 not found for destination airport %2. Ignoring runway.").
+                      arg(runway).arg(destinationAirport.ident));
+    }
+
+    if(!approachLegs.isEmpty())
+      runway = approachLegs.runway;
+
     // Try to read STAR and transition in several possible combination with and without dot
     int starId, starTransId;
-    readStarAndTrans(items, starTransWp, starId, starTransId, consume, destination, index);
+    readStarAndTrans(items, starTransWp, runway, starId, starTransId, consume, destinationAirport, index);
 
     if(starId != -1 && starTransId == -1)
     {
       // Only STAR
-      const proc::MapProcedureLegs *legs = procQuery->getProcedureLegs(destination, starId);
+      const proc::MapProcedureLegs *legs = procQuery->getProcedureLegs(destinationAirport, starId);
       if(legs != nullptr)
         starLegs = *legs;
     }
     else if(starId != -1 && starTransId != -1)
     {
       // STAR and transition
-      const proc::MapProcedureLegs *legs = procQuery->getTransitionLegs(destination, starTransId);
+      const proc::MapProcedureLegs *legs = procQuery->getTransitionLegs(destinationAirport, starTransId);
       if(legs != nullptr)
         starLegs = *legs;
     }
@@ -1521,12 +1764,10 @@ void RouteStringReader::findWaypoints(MapResult& result, const QString& item, bo
   }
 }
 
-QStringList RouteStringReader::cleanItemList(const QStringList& items, float *speedKnots, float *altFeet)
+QStringList RouteStringReader::cleanItemList(const QStringList& items, float& speedKnots, float& altFeet)
 {
-  if(speedKnots != nullptr)
-    *speedKnots = 0.f;
-  if(altFeet != nullptr)
-    *altFeet = 0.f;
+  speedKnots = 0.f;
+  altFeet = 0.f;
 
   QStringList cleanItems;
   for(int i = 0; i < items.size(); i++)
@@ -1554,10 +1795,8 @@ QStringList RouteStringReader::cleanItemList(const QStringList& items, float *sp
         appendWarning(tr("Ignoring invalid speed and altitude instruction %1.").arg(item));
       else
       {
-        if(speedKnots != nullptr)
-          *speedKnots = spd;
-        if(altFeet != nullptr)
-          *altFeet = alt;
+        speedKnots = spd;
+        altFeet = alt;
       }
       continue;
     }
@@ -1569,11 +1808,9 @@ QStringList RouteStringReader::cleanItemList(const QStringList& items, float *sp
       appendWarning(tr("Ignoring speed and altitude at waypoint %1.").arg(item));
     }
 
-    item = extractAirportIdent(item);
-
     if(i < items.size() - 1)
     {
-      QString itemPair = item + "/" + items.at(i + 1);
+      QString itemPair = item % '/' % items.at(i + 1);
       if(coords::fromDegMinPairFormat(itemPair).isValid())
       {
         cleanItems.append(itemPair);

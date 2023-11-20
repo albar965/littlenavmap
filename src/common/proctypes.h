@@ -20,6 +20,7 @@
 
 #include "common/mapresult.h"
 #include "common/procflags.h"
+#include "fs/pln/flightplanconstants.h"
 
 #include <QColor>
 
@@ -406,13 +407,14 @@ struct MapProcedureLegs
   atools::geo::Rect bounding;
 
   QString type, /* GNSS (display GLS) GPS IGS ILS LDA LOC LOCB NDB NDBDME RNAV (RNV) SDF TCN VOR VORDME */
-          suffix, approachFixIdent /* Approach fix or SID/STAR name */,
-          arincName, transitionType, transitionFixIdent,
-          runway, /* Runway from the procedure does not have to match the airport runway but is saved */
+          suffix, procedureFixIdent /* Approach fix or SID/STAR name */,
+          arincName, /* ARINC for procedures or runways ("ALL", "16B", etc.) for SID and STAR */
+          transitionType, transitionFixIdent,
+          runway, /* Runway from the procedure does not have to match the airport runway but is saved. Used by approaches and SID. */
           aircraftCategory; /* 5.221 */
 
   /* Only for approaches - the found runway end at the airport - can be different due to fuzzy search.
-   * Coordinates might be set even for CTL approaches where name is empty in this case.s */
+   * Coordinates might be set even for CTL approaches where name is empty in this case. */
   map::MapRunwayEnd runwayEnd;
   proc::MapProcedureTypes mapType = PROCEDURE_NONE;
 
@@ -433,11 +435,17 @@ struct MapProcedureLegs
        rnp, /* One or more legs have a required navigation performance */
        verticalAngle; /* One or more legs have a vertical angle */
 
-  /* Short display type name */
+  /* Short display type name "VOR" or "ILS" */
   QString displayType() const
   {
     // Correct wrong designation of GLS approaches as GNSS for display
     return type == "GNSS" ? "GLS" : type;
+  }
+
+  /* "VOR-A" or "ILS-Z" */
+  QString displayTypeAndSuffix() const
+  {
+    return suffix.isEmpty() ? type : type + '-' + suffix;
   }
 
   static QString displayType(const QString& type)
@@ -488,12 +496,12 @@ struct MapProcedureLegs
 
   bool isCustomApproach() const
   {
-    return type == "CUSTOM";
+    return type == atools::fs::pln::APPROACHTYPECUSTOM;
   }
 
   bool isCustomDeparture() const
   {
-    return type == "CUSTOMDEPART";
+    return type == atools::fs::pln::SIDTYPECUSTOM;
   }
 
   bool isRnavGps() const
@@ -578,6 +586,16 @@ struct MapProcedureLegs
   /* Positions of all legs not including missed approach */
   atools::geo::LineString buildGeometry() const;
 
+  bool isProcedureEmpty() const
+  {
+    return procedureLegs.isEmpty();
+  }
+
+  bool isTransitionEmpty() const
+  {
+    return transitionLegs.isEmpty();
+  }
+
 private:
   MapProcedureLeg& atInternal(int i)
   {
@@ -631,6 +649,7 @@ QString procedureFixType(const QString& type);
 /* Ident name and FAF, MAP, IAF */
 QString procedureLegFixStr(const proc::MapProcedureLeg& leg);
 
+/* "LOC" -> "Localizer", "TCN" -> "TACAN" */
 QString procedureType(const QString& type);
 proc::ProcedureLegType procedureLegEnum(const QString& type);
 QString procedureLegTypeStr(ProcedureLegType type);

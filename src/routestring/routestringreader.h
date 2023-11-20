@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -39,6 +39,7 @@ class FlightplanEntry;
 }
 
 namespace map {
+struct MapRunwayEnd;
 struct MapResult;
 struct MapAirwayWaypoint;
 struct MapWaypoint;
@@ -81,13 +82,7 @@ public:
    * Fills either flightplan and/or mapObjectRefs if not null.
    * Get error, warning and information messages with getMessages() */
   bool createRouteFromString(const QString& routeString, rs::RouteStringOptions options, atools::fs::pln::Flightplan *flightplan,
-                             map::MapRefExtVector *mapObjectRefs = nullptr, float *speedKts = nullptr, bool *altIncluded = nullptr);
-
-  /* Get error and warning messages */
-  const QStringList& getMessages() const
-  {
-    return messages;
-  }
+                             map::MapRefExtVector *mapObjectRefs = nullptr, float *speedKtsParam = nullptr, bool *altIncludedParam = nullptr);
 
   /* Set to true to generate non HTML messages */
   void setPlaintextMessages(bool value)
@@ -97,13 +92,16 @@ public:
 
   bool hasWarningMessages() const
   {
-    return hasWarnings;
+    return !warningMessages.isEmpty();
   }
 
   bool hasErrorMessages() const
   {
-    return hasErrors;
+    return errorMessages.isEmpty();
   }
+
+  /* Get messages in order of error, warning and info messages separated by an empty line */
+  const QStringList getAllMessages() const;
 
 private:
   /* Internal parsing structure which holds all found potential candidates from a search */
@@ -114,7 +112,7 @@ private:
   void insertMessage(const QString& message, int index);
   void appendWarning(const QString& message);
   void appendError(const QString& message);
-  void addReport(atools::fs::pln::Flightplan *flightplan, const QString& rawRouteString);
+  void addReport(atools::fs::pln::Flightplan *flightplan, const QString& rawRouteString, float cruiseAltitudeFt);
 
   /* Get the start and end index for the given waypoint ids*/
   void findIndexesInAirway(const QList<map::MapAirwayWaypoint>& allAirwayWaypoints, int lastId, int nextId, int& startIndex, int& endIndex,
@@ -142,7 +140,9 @@ private:
                        const QString& item, float maxDistance);
 
   void filterAirways(QList<ParseEntry>& resultList, int i);
-  QStringList cleanItemList(const QStringList& items, float *speedKnots, float *altFeet);
+
+  /* Remove all extaneous characters that do not belong to a route string */
+  QStringList cleanItemList(const QStringList& items, float& speedKnots, float& altFeet);
   void removeEmptyResults(QList<ParseEntry>& resultList);
 
   /* Fetch departure airport as well as SID */
@@ -150,49 +150,59 @@ private:
                     QString& sidTransWp);
 
   /* Fetch destination airport as well as STAR */
-  bool addDestination(atools::fs::pln::Flightplan *flightplan, QList<atools::fs::pln::FlightplanEntry>* alternates,
-                      map::MapRefExtVector *mapObjectRefs, QStringList& items,
-                      QString& starTransWp, rs::RouteStringOptions options);
-  void destinationInternal(map::MapAirport& destination, proc::MapProcedureLegs& starLegs, QStringList& items, QString& starTransWp,
-                           int& consume, int index);
+  bool addDestination(atools::fs::pln::Flightplan *flightplan, QList<atools::fs::pln::FlightplanEntry> *alternates,
+                      map::MapRefExtVector *mapObjectRefs, QStringList& items, QString& starTransWp, rs::RouteStringOptions options);
+  void destinationInternal(map::MapAirport& destination, proc::MapProcedureLegs& starLegs, proc::MapProcedureLegs& approachLegs,
+                           QStringList& items, QString& starTransWp, map::MapRunwayEnd& runwayEnd, int& consume, int index);
 
-  /* Remove time and runways from ident and return airport ident only. Also add warning messages */
-  QString extractAirportIdent(QString ident);
+  /* Remove time from ident and return airport ident and runway. Also add warnings and messages */
+  void extractAirportIdentDeparture(QString item, QString& airport, QString& runway);
+
+  /* Remove time from ident and return airport ident and approach. Also add warnings and messages */
+  void extractAirportIdentDestination(QString item, QString& airport, QString& approach, QString& transition, QString& runway);
 
   /* Extract the first coordinate for the list if no airports are used */
   atools::geo::Pos findFirstCoordinate(const QStringList& items);
 
   /* Create reference struct from given entry and map search result */
-  map::MapRefExt mapObjectRefFromEntry(const atools::fs::pln::FlightplanEntry& entry, const map::MapResult& result,
-                                             const QString& name);
+  map::MapRefExt mapObjectRefFromEntry(const atools::fs::pln::FlightplanEntry& entry, const map::MapResult& result, const QString& name);
 
   /* Get airway segments with given name between  waypoints */
   map::MapAirway extractAirway(const QList<map::MapAirway>& airways, int waypointId1, int waypointId2, const QString& airwayName);
 
   /* Read and consume SID and maybe transition from list. Can be "SID", "SID.TRANS" or "SID TRANS" */
-  void readSidAndTrans(QStringList& items, QString& sidTransWp, int& sidId, int& sidTransId, const map::MapAirport& departure);
+  void readSidAndTrans(QStringList& items, QString& sidTransWp, int& sidId, int& sidTransId, const map::MapAirport& departure,
+                       const QString& runway);
 
   /* Try to read all STAR and transition variants. Number of items to delete is given in "consume" */
-  void readStarAndTrans(QStringList& items, QString& startTransWp, int& starId, int& starTransId, int& consume,
+  void readStarAndTrans(QStringList& items, QString& startTransWp, const QString& runway, int& starId, int& starTransId, int& consume,
                         const map::MapAirport& destination, int index);
 
   /* Read a space spearated STAR with transition. Can be "STAR TRANS" or "TRANS STAR". Items are not consumed. */
-  void readStarAndTransSpace(const QString& star, QString trans, int& starId, int& starTransId, const map::MapAirport& destination);
+  void readStarAndTransSpace(const QString& star, QString trans, const QString& runway, int& starId, int& starTransId,
+                             const map::MapAirport& destination);
 
   /* Read a dot spearated STAR with transition. Can be "STAR.TRANS" or "TRANS.STAR". Items are not consumed. */
-  void readStarAndTransDot(const QString& starTrans, int& starId, int& starTransId, const map::MapAirport& destination);
+  void readStarAndTransDot(const QString& starTrans, const QString& runway, int& starId, int& starTransId,
+                           const map::MapAirport& destination);
+
+  void readApproachAndTrans(const QString& approachArinc, const QString& approachTrans, int& starId, int& starTransId,
+                            const map::MapAirport& destination);
 
   /* Convert to abbreviated SID: ENVA UTUNA1A -> ENVA UTUN1A */
   QString sidStarAbbrev(QString sid);
 
+  /* First try exact match and then all possible idents. */
+  void airportSim(map::MapAirport& airport, const QString& ident);
+
   MapQuery *mapQuery = nullptr;
   AirwayTrackQuery *airwayQuery = nullptr;
   WaypointTrackQuery *waypointQuery = nullptr;
-  AirportQuery *airportQuerySim = nullptr;
+  AirportQuery *airportQuerySim = nullptr, *airportQueryNav = nullptr;
   ProcedureQuery *procQuery = nullptr;
   FlightplanEntryBuilder *entryBuilder = nullptr;
-  QStringList messages;
-  bool plaintextMessages = false, hasWarnings = false, hasErrors = false;
+  QStringList errorMessages, warningMessages, logMessages;
+  bool plaintextMessages = false;
 };
 
 #endif // LITTLENAVMAP_ROUTESTRINGREADER_H

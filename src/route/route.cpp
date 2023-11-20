@@ -209,9 +209,9 @@ bool Route::canEditComment(int index) const
 
 void Route::getSidStarNames(QString& sid, QString& sidTrans, QString& star, QString& starTrans) const
 {
-  sid = sidLegs.approachFixIdent;
+  sid = sidLegs.procedureFixIdent;
   sidTrans = sidLegs.transitionFixIdent;
-  star = starLegs.approachFixIdent;
+  star = starLegs.procedureFixIdent;
   starTrans = starLegs.transitionFixIdent;
 }
 
@@ -280,17 +280,34 @@ void Route::getInboundCourse(int index, float& magCourse, float& trueCourse) con
   }
 }
 
-void Route::getApproachNames(QString& approachArincName, QString& approachTransition) const
+QString Route::getFullApproachName() const
+{
+  QString approach, approachArincName, approachTransition, approachSuffixDummy;
+  getApproachNames(approachArincName, approachTransition, approachSuffixDummy);
+
+  if(!approachTransition.isEmpty())
+    approach = approachTransition % '.' % approachArincName;
+  else
+    approach = approachArincName;
+
+  if(!approach.isEmpty())
+    approach.prepend('/');
+  return approach;
+}
+
+void Route::getApproachNames(QString& approachArincName, QString& approachTransition, QString& approachSuffix) const
 {
   if(hasAnyApproachProcedure())
   {
     approachArincName = approachLegs.arincName;
     approachTransition = approachLegs.transitionFixIdent;
+    approachSuffix = approachLegs.suffix;
   }
   else
   {
     approachArincName.clear();
     approachTransition.clear();
+    approachSuffix.clear();
   }
 }
 
@@ -3024,7 +3041,7 @@ Route Route::adjustedToOptions(const Route& origRoute, rf::RouteAdjustOptions op
             entry.setFlag(atools::fs::pln::entry::PROCEDURE, false);
 
             // Set entry to SID but not transition
-            entry.setSid(sid.approachFixIdent);
+            entry.setSid(sid.procedureFixIdent);
             rw = sid.runway;
           }
           else if(leg.getProcedureType() & proc::PROCEDURE_STAR_ALL)
@@ -3033,7 +3050,7 @@ Route Route::adjustedToOptions(const Route& origRoute, rf::RouteAdjustOptions op
             entry.setFlag(atools::fs::pln::entry::PROCEDURE, false);
 
             // Set entry to STAR but not transition
-            entry.setStar(star.approachFixIdent);
+            entry.setStar(star.procedureFixIdent);
             rw = star.runway;
           }
 

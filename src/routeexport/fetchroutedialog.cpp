@@ -322,8 +322,9 @@ void FetchRouteDialog::downloadFinished(const QByteArray& data, QString)
 
   // Add any information/warning/error messages from parsing
   message.append(tr("<p>"));
-  if(!routeStringReader.getMessages().isEmpty())
-    message.append(routeStringReader.getMessages().join("<br/>"));
+  const QStringList messages = routeStringReader.getAllMessages();
+  if(!messages.isEmpty())
+    message.append(messages.join("<br/>"));
   message.append(tr("</p>"));
 
   if(!ok)

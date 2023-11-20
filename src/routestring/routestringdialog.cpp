@@ -142,7 +142,7 @@ RouteStringDialog::RouteStringDialog(QWidget *parent, const QString& settingsSuf
 
   sytaxHighlighter = new SyntaxHighlighter(ui->textEditRouteString);
 
-  ui->buttonBoxRouteString->button(QDialogButtonBox::Ok)->setText(tr("Create &Flight Plan and Close"));
+  ui->buttonBoxRouteString->button(QDialogButtonBox::Ok)->setText(tr("&Create Flight Plan and Close"));
   if(blocking)
     // Opened from SimBrief download
     ui->buttonBoxRouteString->button(QDialogButtonBox::Apply)->hide();
@@ -201,6 +201,7 @@ RouteStringDialog::~RouteStringDialog()
   delete routeStringWriter;
   delete routeStringReader;
   delete procActionGroup;
+  delete advancedMenu;
   delete ui;
   delete flightplan;
 }
@@ -219,22 +220,15 @@ void RouteStringDialog::buildButtonMenu()
 
   if(!blocking) // Do not show write options if opened from SimBrief
   {
-    action = new QAction(tr("Write departure and destination airport"), buttonMenu);
-    action->setObjectName("actionDepartDest");
-    action->setToolTip(tr("Omit departure and destination airport ident.\n"
-                          "Note that the resulting description cannot be read into a flight plan."));
+    action = new QAction(tr("Write &runway and approach instructions"), buttonMenu);
+    action->setObjectName("actionRunwayApproach");
+    action->setToolTip(tr("Write departure runway and approach plus transition separated by a \"/\".\n"
+                          "Example: \"GCLA/36 ... GCTS/TES2.I07-Y\""));
     action->setCheckable(true);
-    action->setData(static_cast<int>(rs::START_AND_DEST));
+    action->setData(static_cast<int>(rs::WRITE_APPROACH_RUNWAYS));
     buttonMenu->addAction(action);
 
-    action = new QAction(tr("Write DCT (direct) instructions"), buttonMenu);
-    action->setObjectName("actionDct");
-    action->setToolTip(tr("Fill direct connections between waypoints with a \"DCT\""));
-    action->setCheckable(true);
-    action->setData(static_cast<int>(rs::DCT));
-    buttonMenu->addAction(action);
-
-    action = new QAction(tr("Write cruise speed and altitude instruction"), buttonMenu);
+    action = new QAction(tr("Write &cruise speed and altitude instruction"), buttonMenu);
     action->setObjectName("actionSpeedAlt");
     action->setToolTip(tr("Add cruise speed and altitude to description.\n"
                           "Speed is ignored in favor to currently loaded aircraft performance\n"
@@ -243,14 +237,14 @@ void RouteStringDialog::buildButtonMenu()
     action->setData(static_cast<int>(rs::ALT_AND_SPEED));
     buttonMenu->addAction(action);
 
-    action = new QAction(tr("Write Waypoints instead of Airways"), buttonMenu);
-    action->setObjectName("actionWaypoints");
-    action->setToolTip(tr("Ignore airways and add all waypoints instead"));
+    action = new QAction(tr("Write &DCT (direct) instructions"), buttonMenu);
+    action->setObjectName("actionDct");
+    action->setToolTip(tr("Fill direct connections between waypoints with a \"DCT\""));
     action->setCheckable(true);
-    action->setData(static_cast<int>(rs::NO_AIRWAYS));
+    action->setData(static_cast<int>(rs::DCT));
     buttonMenu->addAction(action);
 
-    action = new QAction(tr("Write Alternates"), buttonMenu);
+    action = new QAction(tr("Write &alternates"), buttonMenu);
     action->setObjectName("actionAlternates");
     action->setToolTip(tr("Add the ICAO code for all alternate airports to the end of the description"));
     action->setCheckable(true);
@@ -258,12 +252,11 @@ void RouteStringDialog::buildButtonMenu()
     buttonMenu->addAction(action);
 
     buttonMenu->addSeparator();
-
     // SID/STAR group ===========================================
     procActionGroup = new QActionGroup(buttonMenu);
     if(NavApp::hasSidStarInDatabase())
     {
-      action = new QAction(tr("Write SID and STAR"), buttonMenu);
+      action = new QAction(tr("Write &SID and STAR"), buttonMenu);
       action->setObjectName("actionSidStar");
       action->setToolTip(tr("Write SID, STAR and the respective transitions to the description"));
       action->setCheckable(true);
@@ -272,7 +265,7 @@ void RouteStringDialog::buildButtonMenu()
       procActionGroup->addAction(action);
     }
 
-    action = new QAction(tr("Write generic SID and STAR"), buttonMenu);
+    action = new QAction(tr("Write &generic SID and STAR"), buttonMenu);
     action->setObjectName("actionGenericSidStar");
     action->setToolTip(tr("Add \"SID\" and \"STAR\" words only instead of the real procedure names"));
     action->setCheckable(true);
@@ -280,7 +273,7 @@ void RouteStringDialog::buildButtonMenu()
     buttonMenu->addAction(action);
     procActionGroup->addAction(action);
 
-    action = new QAction(tr("Write no SID and STAR"), buttonMenu);
+    action = new QAction(tr("Write &no SID and STAR"), buttonMenu);
     action->setObjectName("actionNoSidStar");
     action->setToolTip(tr("Add neither SID nor STAR to the description"));
     action->setCheckable(true);
@@ -290,14 +283,14 @@ void RouteStringDialog::buildButtonMenu()
 
     buttonMenu->addSeparator();
 
-    action = new QAction(tr("Write STAR and transition reversed"), buttonMenu);
+    action = new QAction(tr("Write STAR and &transition reversed"), buttonMenu);
     action->setObjectName("actionReversedStar");
     action->setToolTip(tr("Write \"TRANS.STAR\" instead of \"STAR.TRANS\""));
     action->setCheckable(true);
     action->setData(static_cast<int>(rs::STAR_REV_TRANSITION));
     buttonMenu->addAction(action);
 
-    action = new QAction(tr("Write SID/STAR and transition space separated"), buttonMenu);
+    action = new QAction(tr("&Write SID/STAR and transition space separated"), buttonMenu);
     action->setObjectName("actionSpaceSidStar");
     action->setToolTip(tr("Use a space to separate SID, STAR and transition"));
     action->setCheckable(true);
@@ -308,7 +301,7 @@ void RouteStringDialog::buildButtonMenu()
   }
 
   // Reading from string ===========================================
-  action = new QAction(tr("Read trailing Airports as Alternates"), buttonMenu);
+  action = new QAction(tr("&Read trailing airports as alternates"), buttonMenu);
   action->setObjectName("actionTrailingAlternates");
   action->setToolTip(tr("A list of airports at the end of the description will be read as alternate "
                         "airports when reading if checked.\n"
@@ -317,19 +310,41 @@ void RouteStringDialog::buildButtonMenu()
   action->setData(static_cast<int>(rs::READ_ALTERNATES));
   buttonMenu->addAction(action);
 
-  action = new QAction(tr("Read first and last item as Navaid"), buttonMenu);
-  action->setObjectName("actionNavaid");
-  action->setToolTip(tr("Does not expect the first and last string item to be an airport ICAO ident if checked"));
-  action->setCheckable(true);
-  action->setData(static_cast<int>(rs::READ_NO_AIRPORTS));
-  buttonMenu->addAction(action);
+  buttonMenu->addSeparator();
+  delete advancedMenu;
+  advancedMenu = new QMenu(tr("&Advanced"));
+  buttonMenu->addMenu(advancedMenu);
 
-  action = new QAction(tr("Read: Match coordinates to Waypoints"), buttonMenu);
+  action = new QAction(tr("Write &waypoints instead of airways"), advancedMenu);
+  action->setObjectName("actionWaypoints");
+  action->setToolTip(tr("Ignore airways and add all waypoints instead"));
+  action->setCheckable(true);
+  action->setData(static_cast<int>(rs::NO_AIRWAYS));
+  advancedMenu->addAction(action);
+
+  action = new QAction(tr("Write &departure and destination airport"), advancedMenu);
+  action->setObjectName("actionDepartDest");
+  action->setToolTip(tr("Omit departure and destination airport ident.\n"
+                        "Note that the resulting description cannot be read into a flight plan."));
+  action->setCheckable(true);
+  action->setData(static_cast<int>(rs::START_AND_DEST));
+  advancedMenu->addAction(action);
+  advancedMenu->addSeparator();
+
+  action = new QAction(tr("Read: Match coordinates to &waypoints"), advancedMenu);
   action->setObjectName("actionMatchCoords");
   action->setToolTip(tr("Coordinates will be converted to navaids if nearby"));
   action->setCheckable(true);
   action->setData(static_cast<int>(rs::READ_MATCH_WAYPOINTS));
-  buttonMenu->addAction(action);
+  advancedMenu->addAction(action);
+
+  action = new QAction(tr("Read first and last item as &navaid"), advancedMenu);
+  action->setObjectName("actionNavaid");
+  action->setToolTip(tr("Does not expect the first and last string item to be an airport ICAO ident if checked"));
+  action->setCheckable(true);
+  action->setData(static_cast<int>(rs::READ_NO_AIRPORTS));
+  advancedMenu->addAction(action);
+
 }
 
 void RouteStringDialog::splitterMoved()
@@ -343,7 +358,7 @@ void RouteStringDialog::showHelpButtonToggled(bool checked)
 {
   QList<int> sizes = ui->splitterRouteString->sizes();
   int total = 0;
-  for(int size : sizes)
+  for(int size : qAsConst(sizes))
     total += size;
 
   if(sizes.size() == 3)
@@ -384,7 +399,8 @@ void RouteStringDialog::toolButtonOptionTriggered(QAction *)
     return;
 
   // Copy menu state for options bitfield
-  for(const QAction *action : ui->toolButtonRouteStringOptions->menu()->actions())
+  const QList<QAction *> actions = ui->toolButtonRouteStringOptions->menu()->actions();
+  for(const QAction *action : actions)
     options.setFlag(static_cast<rs::RouteStringOption>(action->data().toInt()), action->isChecked());
 
   // Call immediately and update even if string is unchanged
@@ -523,7 +539,7 @@ void RouteStringDialog::textChangedInternal(bool forceUpdate)
         QGuiApplication::restoreOverrideCursor();
 
         // Fill report into widget
-        errorString.append(routeStringReader->getMessages().join("<br/>"));
+        errorString.append(routeStringReader->getAllMessages().join("<br/>"));
         atools::gui::util::updateTextEdit(ui->textEditRouteStringErrors, errorString, false /* scrollToTop */, true /* keepSelection */);
       }
       else
@@ -623,7 +639,8 @@ void RouteStringDialog::updateButtonState()
 
   // Copy option flags to dropdown menu items
   updatingActions = true;
-  for(QAction *act : ui->toolButtonRouteStringOptions->menu()->actions())
+  const QList<QAction *> actions = ui->toolButtonRouteStringOptions->menu()->actions();
+  for(QAction *act : actions)
     act->setChecked(rs::RouteStringOptions(act->data().toInt()) & options);
   updatingActions = false;
 }
