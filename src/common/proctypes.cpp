@@ -102,8 +102,8 @@ void initTranslateableTexts()
       {"MLS", QObject::tr("MLS")},
 
       /* User defined approach procedure */
-      {atools::fs::pln::APPROACHTYPECUSTOM, QObject::tr("Approach")},
-      {atools::fs::pln::SIDTYPECUSTOM, QObject::tr("Departure")}
+      {atools::fs::pln::APPROACH_TYPE_CUSTOM, QObject::tr("Approach")},
+      {atools::fs::pln::SID_TYPE_CUSTOM, QObject::tr("Departure")}
     });
 
   approachLegTypeToStr = QHash<ProcedureLegType, QString>(

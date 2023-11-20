@@ -5446,8 +5446,8 @@ void RouteController::updateRemarkHeader()
     QStringList data;
     QString simdata = FsPaths::typeToShortDisplayName(FsPaths::stringToType(props.value(atools::fs::pln::SIMDATA)));
     QString navdata = FsPaths::typeToShortDisplayName(FsPaths::stringToType(props.value(atools::fs::pln::NAVDATA)));
-    QString simcycle = props.value(atools::fs::pln::SIMDATACYCLE);
-    QString navcycle = props.value(atools::fs::pln::NAVDATACYCLE);
+    QString simcycle = props.value(atools::fs::pln::SIMDATA_CYCLE);
+    QString navcycle = props.value(atools::fs::pln::NAVDATA_CYCLE);
 
     if(!simdata.isEmpty())
       data.append(tr("%1%2").arg(simdata).arg(simcycle.isEmpty() ? QString() : tr(" cycle %1").arg(simcycle)));

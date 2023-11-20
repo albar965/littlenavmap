@@ -94,9 +94,9 @@ void Route::updateRouteCycleMetadata()
   QHash<QString, QString>& properties = flightplan.getProperties();
   // Add metadata for navdata reference =========================
   properties.insert(atools::fs::pln::SIMDATA, NavApp::getDatabaseMetaSim()->getDataSource());
-  properties.insert(atools::fs::pln::SIMDATACYCLE, NavApp::getDatabaseAiracCycleSim());
+  properties.insert(atools::fs::pln::SIMDATA_CYCLE, NavApp::getDatabaseAiracCycleSim());
   properties.insert(atools::fs::pln::NAVDATA, NavApp::getDatabaseMetaNav()->getDataSource());
-  properties.insert(atools::fs::pln::NAVDATACYCLE, NavApp::getDatabaseAiracCycleNav());
+  properties.insert(atools::fs::pln::NAVDATA_CYCLE, NavApp::getDatabaseAiracCycleNav());
 }
 
 void Route::resetActive()
@@ -3229,7 +3229,7 @@ Route Route::adjustedToOptions(const Route& origRoute, rf::RouteAdjustOptions op
     // Check for a circle-to-land approach without runway - add a random (best) runway from the airport to
     // satisfy the X-Plane GPS/FMC/G1000
     if(route.getDestinationAirportLeg().isAirport() &&
-       plan.getPropertiesConst().value(atools::fs::pln::APPROACHRW).isEmpty() &&
+       plan.getPropertiesConst().value(atools::fs::pln::APPROACH_RW).isEmpty() &&
        (!plan.getPropertiesConst().value(atools::fs::pln::APPROACH).isEmpty() ||
         !plan.getPropertiesConst().value(atools::fs::pln::APPROACH_ARINC).isEmpty()))
     {
@@ -3237,7 +3237,7 @@ Route Route::adjustedToOptions(const Route& origRoute, rf::RouteAdjustOptions op
       const QList<map::MapRunway> *runways = NavApp::getAirportQuerySim()->
                                              getRunways(route.getDestinationAirportLeg().getId());
       if(runways != nullptr && !runways->isEmpty())
-        plan.getProperties().insert(atools::fs::pln::APPROACHRW, runways->constLast().primaryName);
+        plan.getProperties().insert(atools::fs::pln::APPROACH_RW, runways->constLast().primaryName);
     }
   }
 

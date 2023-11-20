@@ -496,12 +496,12 @@ struct MapProcedureLegs
 
   bool isCustomApproach() const
   {
-    return type == atools::fs::pln::APPROACHTYPECUSTOM;
+    return type == atools::fs::pln::APPROACH_TYPE_CUSTOM;
   }
 
   bool isCustomDeparture() const
   {
-    return type == atools::fs::pln::SIDTYPECUSTOM;
+    return type == atools::fs::pln::SID_TYPE_CUSTOM;
   }
 
   bool isRnavGps() const
