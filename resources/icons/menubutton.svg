@@ -2,20 +2,20 @@
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
 
 <svg
-   xmlns:dc="http://purl.org/dc/elements/1.1/"
-   xmlns:cc="http://creativecommons.org/ns#"
-   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-   xmlns:svg="http://www.w3.org/2000/svg"
-   xmlns="http://www.w3.org/2000/svg"
-   xmlns:xlink="http://www.w3.org/1999/xlink"
-   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
-   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    id="svg3082"
    height="48"
    width="48"
    version="1.1"
-   inkscape:version="0.91 r13725"
-   sodipodi:docname="menubutton.svg">
+   inkscape:version="1.2.2 (b0a8486541, 2022-12-01)"
+   sodipodi:docname="menubutton.svg"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:dc="http://purl.org/dc/elements/1.1/">
   <metadata
      id="metadata52">
     <rdf:RDF>
@@ -50,7 +50,10 @@
      inkscape:window-x="40"
      inkscape:window-y="24"
      inkscape:window-maximized="1"
-     inkscape:current-layer="svg3082">
+     inkscape:current-layer="svg3082"
+     inkscape:showpageshadow="2"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1">
     <inkscape:grid
        type="xygrid"
        id="grid4203" />
@@ -228,30 +231,39 @@
     </linearGradient>
   </defs>
   <rect
-     style="opacity:1;fill:#505050;fill-opacity:1;stroke:#505050;stroke-width:1.04589486;stroke-linecap:square;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+     style="fill:#dddddd;fill-opacity:1;stroke:#dddddd;stroke-width:0.999997;stroke-linecap:square;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+     id="rect4211-3"
+     width="46.708508"
+     height="46.542374"
+     x="0.69659346"
+     y="0.77966112"
+     rx="1.4666959"
+     ry="0.99633008" />
+  <rect
+     style="opacity:1;fill:#2e2f2e;fill-opacity:1;stroke:#2e2f2e;stroke-width:0.999995;stroke-linecap:square;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
      id="rect4211"
-     width="38.267822"
-     height="5.4915252"
-     x="5.1469975"
-     y="6.4476776"
+     width="44.369526"
+     height="7.0000019"
+     x="1.8152418"
+     y="3.4985254"
      rx="1.4666959"
      ry="0.99633002" />
   <rect
-     style="opacity:1;fill:#505050;fill-opacity:1;stroke:#505050;stroke-width:1.04589486;stroke-linecap:square;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
-     id="rect4211-9"
-     width="38.267822"
-     height="5.4915252"
-     x="5.1469975"
-     y="36.407795"
-     rx="1.4666959"
-     ry="0.99633002" />
-  <rect
-     style="opacity:1;fill:#505050;fill-opacity:1;stroke:#505050;stroke-width:1.04589486;stroke-linecap:square;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+     style="fill:#2e2f2e;fill-opacity:1;stroke:#2e2f2e;stroke-width:1.04589;stroke-linecap:square;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
      id="rect4211-7"
-     width="38.267822"
-     height="5.4915252"
-     x="5.1469975"
-     y="21.260967"
+     width="44.324108"
+     height="6.9541101"
+     x="1.9398828"
+     y="38.389832"
      rx="1.4666959"
-     ry="0.99633002" />
+     ry="0.99633008" />
+  <rect
+     style="fill:#2e2f2e;fill-opacity:1;stroke:#2e2f2e;stroke-width:1.04589;stroke-linecap:square;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+     id="rect4211-5"
+     width="44.324108"
+     height="6.9541101"
+     x="1.8381878"
+     y="20.447176"
+     rx="1.4666959"
+     ry="0.99633008" />
 </svg>
