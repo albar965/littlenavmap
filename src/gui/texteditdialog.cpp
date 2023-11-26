@@ -25,7 +25,6 @@
 #include <QPushButton>
 #include <QClipboard>
 #include <QDebug>
-#include <QTextDocumentFragment>
 #include <QLabel>
 #include <QUrl>
 

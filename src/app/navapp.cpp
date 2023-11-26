@@ -866,20 +866,22 @@ void getCrashReportFiles(QStringList& crashReportFiles, QString& reportFilename,
 
 void NavApp::recordStartNavApp()
 {
+#ifndef DEBUG_DISABLE_CRASH_REPORT
+
   QStringList crashReportFiles;
   QString reportFilename;
   getCrashReportFiles(crashReportFiles, reportFilename, false /* manual */);
 
   Application::recordStart(nullptr, Settings::getConfigFilename(".running"), reportFilename, crashReportFiles,
                            lnm::helpOnlineUrl, "en");
-
+#endif
   // Keep command line options to avoid using the wrong configuration folder
 }
 
 QString NavApp::buildCrashReportNavAppManual()
 {
-  QStringList crashReportFiles;
   QString reportFilename;
+  QStringList crashReportFiles;
   getCrashReportFiles(crashReportFiles, reportFilename, true /* manual */);
 
   Application::buildCrashReport(reportFilename, crashReportFiles);

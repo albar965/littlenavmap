@@ -441,8 +441,10 @@ int main(int argc, char *argv[])
   qInfo() << "About to shut down logging";
   atools::logging::LoggingHandler::shutdown();
 
+#ifndef DEBUG_DISABLE_CRASH_REPORT
   // Remove lock file which is used to detect a previously crash
   NavApp::recordExit();
+#endif
 
   return retval;
 }
