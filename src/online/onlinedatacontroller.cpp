@@ -357,8 +357,8 @@ void OnlinedataController::downloadFinished(const QByteArray& data, QString url)
         updateShadowIndex();
 
         // Message for search tabs, map widget and info
-        emit onlineServersUpdated(true /* load all */, true /* keep selection */);
-        emit onlineClientAndAtcUpdated(true /* load all */, true /* keep selection */);
+        emit onlineServersUpdated(true /* load all */, true /* keep selection */, true /* force */);
+        emit onlineClientAndAtcUpdated(true /* load all */, true /* keep selection */, true /* force */);
         statusBarMessage();
       }
     }
@@ -389,8 +389,8 @@ void OnlinedataController::downloadFinished(const QByteArray& data, QString url)
     lastUpdateTime = now;
 
     // Message for search tabs, map widget and info
-    emit onlineClientAndAtcUpdated(true /* load all */, true /* keep selection */);
-    emit onlineServersUpdated(true /* load all */, true /* keep selection */);
+    emit onlineClientAndAtcUpdated(true /* load all */, true /* keep selection */, true /* force */);
+    emit onlineServersUpdated(true /* load all */, true /* keep selection */, true /* force */);
     statusBarMessage();
   }
 }
@@ -499,8 +499,8 @@ void OnlinedataController::optionsChanged()
 
   updateAtcSizes();
 
-  emit onlineClientAndAtcUpdated(true /* load all */, true /* keep selection */);
-  emit onlineServersUpdated(true /* load all */, true /* keep selection */);
+  emit onlineClientAndAtcUpdated(true /* load all */, true /* keep selection */, true /* force */);
+  emit onlineServersUpdated(true /* load all */, true /* keep selection */, true /* force */);
   emit onlineNetworkChanged();
   statusBarMessage();
 

@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -23,8 +23,8 @@
 class Column;
 class AirportIconDelegate;
 class QAction;
-struct QueryBuilderResult;
 class UnitStringTool;
+class QueryWidget;
 
 namespace atools {
 namespace sql {
@@ -65,16 +65,13 @@ public slots:
 
 private:
   virtual void updateButtonMenu() override;
-  virtual void saveViewState(bool distSearchActive) override;
-  virtual void restoreViewState(bool distSearchActive) override;
+  virtual void saveViewState(bool distanceSearchState) override;
+  virtual void restoreViewState(bool distanceSearchState) override;
   virtual void updatePushButtons() override;
   QAction *followModeAction() override;
 
   /* Options dialog has changed some options */
   virtual void optionsChanged() override;
-
-  /* Callback for combined query on ident, icao, faa and local columns. */
-  QueryBuilderResult airportQueryBuilderFunc(QWidget *widget);
 
   void setCallbacks();
   QVariant modelDataHandler(int colIndex, int rowIndex, const Column *col, const QVariant&,
@@ -87,8 +84,6 @@ private:
 
   /* Update min/max values in random flight plan spin boxes */
   void updateRandomFlightplanDistance();
-
-  static const QSet<QString> NUMBER_COLUMNS;
 
   /* All layouts, lines and drop down menu items */
   QList<QObject *> airportSearchWidgets;

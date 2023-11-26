@@ -55,11 +55,12 @@ public:
   /* Filter by using query builder callback */
   void filterByBuilder();
 
-  /* Creates an include filer for value at index in the table */
-  void filterIncluding(QModelIndex index, bool forceQueryBuilder);
+  /* Creates an include filer for value at index in the table. Uses exact query value in double
+   * quotes resulting in like "AAA" instead of like "%AAA%" */
+  void filterIncluding(QModelIndex index, bool forceQueryBuilder, bool exact);
 
   /* Creates an exclude filer for value at index in the table */
-  void filterExcluding(QModelIndex index, bool forceQueryBuilder);
+  void filterExcluding(QModelIndex index, bool forceQueryBuilder, bool exact);
 
   /* Clear all filters, sort order and go back to default view */
   void resetView();
@@ -79,8 +80,8 @@ public:
   const Column *getColumnModel(int colIndex) const;
 
   /* Add a filter for a column. Placeholder and negation will be adapted to SQL
-   * query */
-  void filter(const Column *col, const QVariant& value, const QVariant& maxValue = QVariant());
+   * query. Exact omits the % around queries like "AAA" */
+  void filter(const Column *col, const QVariant& value, const QVariant& maxValue, bool exact);
 
   /* Get field data formatted for display as seen in the table view */
   QVariant getFormattedFieldData(const QModelIndex& index) const;
@@ -120,7 +121,9 @@ public:
 
   /* Sets the SQL query into the model. This will start the query and fetch data from the database. */
   void updateSqlQuery();
-  void resetSqlQuery();
+
+  /* Set query to model causing a refresh. Unless force is set the query is compared to the current query and skipped if equal */
+  void resetSqlQuery(bool force);
 
   /* Set a filter for objects within the given bounding rectangle */
   void filterByBoundingRect(const atools::geo::Rect& boundingRectangle);
@@ -133,7 +136,7 @@ public:
   /* Reset search and filter by ident, region and airport
    * "ignoreQueryBuilder" set to true will cause columns in record matching query builder
    * columns to be used as normal queries (not query builder). */
-  void filterByRecord(const atools::sql::SqlRecord& record, bool ignoreQueryBuilder);
+  void filterByRecord(const atools::sql::SqlRecord& record, bool ignoreQueryBuilder, bool exact);
 
   /* Get empty record (no data) containing field/column information */
   atools::sql::SqlRecord getSqlRecord() const;
@@ -160,11 +163,28 @@ public:
   }
 
   /* Update model after data change */
-  void refreshData();
+  void refreshData(bool force);
 
   void setQueryBuilder(const QueryBuilder& builder)
   {
     queryBuilder = builder;
+  }
+
+  /* Set by derived classes to avoid unneeded queries on startup. */
+  void setRestoreFinished()
+  {
+    restoreFinished = true;
+  }
+
+  bool isRestoreFinished() const
+  {
+    return restoreFinished;
+  }
+
+  /* true if widgets are currently updated by filterBy(). Avoids unneeded database queries. */
+  bool isUpdatingWidgets() const
+  {
+    return updatingWidgets;
   }
 
 signals:
@@ -188,7 +208,7 @@ private:
 
   virtual void sort(int column, Qt::SortOrder order) override;
 
-  void filterBy(bool exclude, QString whereCol, QVariant whereValue, bool forceQueryBuilder, bool ignoreQueryBuilder);
+  void filterBy(bool exclude, QString whereCol, QVariant whereValue, bool forceQueryBuilder, bool ignoreQueryBuilder, bool exact);
   QString buildColumnList(const atools::sql::SqlRecord& tableCols);
   QString buildWhere(const atools::sql::SqlRecord& tableCols, QVector<const Column *>& overridingColumns);
   QString buildWhereValue(const WhereCondition& cond);
@@ -196,13 +216,14 @@ private:
   void clearWhereConditions();
 
   /* Filter by value at index (context menu in table view). forceQueryBuilder to always use it. */
-  void filterBy(QModelIndex index, bool exclude, bool forceQueryBuilder);
+  void filterBy(QModelIndex index, bool exclude, bool forceQueryBuilder, bool exact);
   QString  sortOrderToSql(Qt::SortOrder order);
   QVariant defaultDataHandler(int, int, const Column *, const QVariant&,
                               const QVariant& displayRoleValue, Qt::ItemDataRole role) const;
   void updateTotalCount();
-  void buildSqlWhereValue(QVariant& whereValue) const;
-  void buildSqlWhereValue(QString& whereValue) const;
+  void buildSqlWhereValue(QVariant& whereValue, bool exact) const;
+  void buildSqlWhereValue(QString& whereValue, bool exact) const;
+  bool isDistanceSearchActive() const;
 
   /* Default - all conditions are combined using "and" */
   const QString WHERE_OPERATOR = " and ";
@@ -236,6 +257,8 @@ private:
   /* Set by buildWhere. Will ignore all other filter options */
   bool overrideModeActive = false;
 
+  bool restoreFinished = false;
+  bool updatingWidgets = false;
 };
 
 #endif // LITTLENAVMAP_SQLMODEL_H

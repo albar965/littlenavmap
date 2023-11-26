@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -21,6 +21,7 @@
 #include <QStringList>
 #include <functional>
 
+class QAction;
 class QWidget;
 class QComboBox;
 class QLineEdit;
@@ -46,8 +47,8 @@ public:
   Column(const QString& columnName, const QString& columnDisplayName = QString());
   Column(const QString& columnName, QWidget *widget, const QString& columnDisplayName = QString());
 
-  /* Column can be used in filters */
-  Column& filter(bool value = true);
+  /* Column can be used in filters. Action is used to show hidden search options if needed. */
+  Column& filter(bool value = true, QAction *showOptionsActionParam = nullptr);
   Column& filterByBuilder(bool value = true);
 
   /* Column like ident can override other filters */
@@ -99,6 +100,9 @@ public:
 
   /* Sql function to build column like "strftime('%s', destination_time) - strftime('%s', departure_time)" */
   Column& sqlFunc(const QString& sqlFunctionParam);
+
+  /* true if either column or min/max widgets are set and enabled */
+  bool isWidgetEnabled() const;
 
   bool isFilter() const
   {
@@ -246,13 +250,22 @@ public:
     return sqlFunction;
   }
 
+  /* Action which is used to show the potentially hidden related option for this column */
+  QAction *getShowOptionsAction() const
+  {
+    return showOptionsAction;
+  }
+
 private:
   friend class ColumnList;
 
   QString colName;
   QString colDisplayName;
   const QString colOrigDisplayName;
+
   QWidget *colWidget = nullptr, *colMaxWidget = nullptr, *colMinWidget = nullptr;
+  QAction *showOptionsAction = nullptr;
+
   QString colWidgetSuffix, colMaxWidgetSuffix, colMinWidgetSuffix;
   QString colSortFuncAsc, colSortFuncDesc;
 

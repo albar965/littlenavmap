@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -21,6 +21,10 @@
 #include <QObject>
 
 #include "common/tabindexes.h"
+
+namespace Ui {
+class MainWindow;
+}
 
 namespace map {
 struct MapResult;
@@ -84,7 +88,7 @@ protected:
   /* Tab index of this search tab on the search dock window */
   si::TabSearchId tabIndex;
   QMainWindow *mainWindow = nullptr;
-
+  Ui::MainWindow *ui = nullptr;
 };
 
 #endif // LITTLENAVMAP_ABSTRACTSEARCH_H

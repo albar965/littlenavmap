@@ -34,7 +34,12 @@
 OnlineClientSearch::OnlineClientSearch(QMainWindow *parent, QTableView *tableView, si::TabSearchId tabWidgetIndex)
   : SearchBaseTable(parent, tableView, new ColumnList("client", "client_id"), tabWidgetIndex)
 {
-  Ui::MainWindow *ui = NavApp::getMainUi();
+  // All widgets that will have their state and visibility saved and restored
+  onlineClientSearchWidgets =
+  {
+    ui->horizontalLayoutOnlineClient,
+    ui->actionSearchOnlineClientFollowSelection
+  };
 
   // Default view column descriptors
   // Hidden columns are part of the query and can be used as search criteria but are not shown in the table
@@ -89,14 +94,6 @@ void OnlineClientSearch::connectSearchSlots()
 {
   SearchBaseTable::connectSearchSlots();
 
-  Ui::MainWindow *ui = NavApp::getMainUi();
-
-  // All widgets that will have their state and visibility saved and restored
-  onlineClientSearchWidgets =
-  {
-    ui->horizontalLayoutOnlineClient
-  };
-
   // Small push buttons on top
   connect(ui->pushButtonOnlineClientSearchClearSelection, &QPushButton::clicked,
           this, &SearchBaseTable::nothingSelectedTriggered);
@@ -116,9 +113,6 @@ void OnlineClientSearch::saveState()
 {
   atools::gui::WidgetState widgetState(lnm::SEARCHTAB_ONLINE_CLIENT_VIEW_WIDGET);
   widgetState.save(onlineClientSearchWidgets);
-
-  Ui::MainWindow *ui = NavApp::getMainUi();
-  widgetState.save(ui->horizontalLayoutOnlineClient);
 }
 
 void OnlineClientSearch::restoreState()
@@ -127,30 +121,21 @@ void OnlineClientSearch::restoreState()
   {
     atools::gui::WidgetState widgetState(lnm::SEARCHTAB_ONLINE_CLIENT_VIEW_WIDGET);
     widgetState.restore(onlineClientSearchWidgets);
-
-    restoreViewState(false);
-
-    // Need to block signals here to avoid unwanted behavior (will enable
-    // distance search and avoid saving of wrong view widget state)
-    widgetState.setBlockSignals(true);
-    Ui::MainWindow *ui = NavApp::getMainUi();
-    widgetState.restore(ui->horizontalLayoutOnlineClient);
   }
   else
-    atools::gui::WidgetState(lnm::SEARCHTAB_ONLINE_CLIENT_VIEW_WIDGET).restore(
-      NavApp::getMainUi()->tableViewOnlineClientSearch);
+    atools::gui::WidgetState(lnm::SEARCHTAB_ONLINE_CLIENT_VIEW_WIDGET).restore(ui->tableViewOnlineClientSearch);
+
+  finishRestore();
 }
 
 void OnlineClientSearch::saveViewState(bool)
 {
-  atools::gui::WidgetState(lnm::SEARCHTAB_ONLINE_CLIENT_VIEW_WIDGET).save(
-    NavApp::getMainUi()->tableViewOnlineClientSearch);
+  atools::gui::WidgetState(lnm::SEARCHTAB_ONLINE_CLIENT_VIEW_WIDGET).save(ui->tableViewOnlineClientSearch);
 }
 
 void OnlineClientSearch::restoreViewState(bool)
 {
-  atools::gui::WidgetState(lnm::SEARCHTAB_ONLINE_CLIENT_VIEW_WIDGET).restore(
-    NavApp::getMainUi()->tableViewOnlineClientSearch);
+  atools::gui::WidgetState(lnm::SEARCHTAB_ONLINE_CLIENT_VIEW_WIDGET).restore(ui->tableViewOnlineClientSearch);
 }
 
 /* Callback for the controller. Will be called for each table cell and should return a formatted value */
@@ -218,7 +203,7 @@ QString OnlineClientSearch::formatModelData(const Column *col, const QVariant& d
 
 void OnlineClientSearch::getSelectedMapObjects(map::MapResult& result) const
 {
-  if(!NavApp::getMainUi()->dockWidgetSearch->isVisible())
+  if(!ui->dockWidgetSearch->isVisible())
     return;
 
   // Build a SQL record with all available fields
@@ -267,11 +252,10 @@ void OnlineClientSearch::updateButtonMenu()
 void OnlineClientSearch::updatePushButtons()
 {
   QItemSelectionModel *sm = view->selectionModel();
-  Ui::MainWindow *ui = NavApp::getMainUi();
   ui->pushButtonOnlineClientSearchClearSelection->setEnabled(sm != nullptr && sm->hasSelection());
 }
 
 QAction *OnlineClientSearch::followModeAction()
 {
-  return NavApp::getMainUi()->actionSearchOnlineClientFollowSelection;
+  return ui->actionSearchOnlineClientFollowSelection;
 }

@@ -16,6 +16,7 @@
 *****************************************************************************/
 
 #include "search/columnlist.h"
+#include "gui/signalblocker.h"
 #include "search/column.h"
 #include "common/unit.h"
 
@@ -49,38 +50,46 @@ void ColumnList::clear()
   distanceCheckBox = nullptr;
 }
 
-bool ColumnList::isDistanceCheckBoxChecked() const
+void ColumnList::updateDistanceSearchWidgets()
 {
-  return distanceCheckBox != nullptr ? distanceCheckBox->isChecked() : false;
+  atools::gui::SignalBlocker blocker({maxDistanceWidget, minDistanceWidget, distanceDirectionWidget});
+  bool active = isDistanceCheckBoxActive();
+
+  if(maxDistanceWidget != nullptr)
+    maxDistanceWidget->setEnabled(active);
+
+  if(minDistanceWidget != nullptr)
+    minDistanceWidget->setEnabled(active);
+
+  if(distanceDirectionWidget != nullptr)
+    distanceDirectionWidget->setEnabled(active);
 }
 
 void ColumnList::updateUnits()
 {
   // Replace widget suffices and table headers
-  for(Column *col : columns)
+  for(Column *col : qAsConst(columns))
   {
     col->colDisplayName = Unit::replacePlaceholders(col->colOrigDisplayName);
 
-    QSpinBox *sb = col->getSpinBoxWidget();
-    if(sb != nullptr)
-      sb->setSuffix(Unit::replacePlaceholders(sb->suffix(), col->colWidgetSuffix));
+    QSpinBox *spinBox = col->getSpinBoxWidget();
+    if(spinBox != nullptr)
+      spinBox->setSuffix(Unit::replacePlaceholders(spinBox->suffix(), col->colWidgetSuffix));
 
-    sb = col->getMinSpinBoxWidget();
-    if(sb != nullptr)
-      sb->setSuffix(Unit::replacePlaceholders(sb->suffix(), col->colMinWidgetSuffix));
+    spinBox = col->getMinSpinBoxWidget();
+    if(spinBox != nullptr)
+      spinBox->setSuffix(Unit::replacePlaceholders(spinBox->suffix(), col->colMinWidgetSuffix));
 
-    sb = col->getMaxSpinBoxWidget();
-    if(sb != nullptr)
-      sb->setSuffix(Unit::replacePlaceholders(sb->suffix(), col->colMaxWidgetSuffix));
+    spinBox = col->getMaxSpinBoxWidget();
+    if(spinBox != nullptr)
+      spinBox->setSuffix(Unit::replacePlaceholders(spinBox->suffix(), col->colMaxWidgetSuffix));
   }
 
   if(minDistanceWidget != nullptr)
-    minDistanceWidget->setSuffix(
-      Unit::replacePlaceholders(minDistanceWidget->suffix(), minDistanceWidgetSuffix));
+    minDistanceWidget->setSuffix(Unit::replacePlaceholders(minDistanceWidget->suffix(), minDistanceWidgetSuffix));
 
   if(maxDistanceWidget != nullptr)
-    maxDistanceWidget->setSuffix(
-      Unit::replacePlaceholders(maxDistanceWidget->suffix(), maxDistanceWidgetSuffix));
+    maxDistanceWidget->setSuffix(Unit::replacePlaceholders(maxDistanceWidget->suffix(), maxDistanceWidgetSuffix));
 }
 
 ColumnList& ColumnList::append(const Column& col)
@@ -135,9 +144,7 @@ void ColumnList::assignWidget(const QString& field, QWidget *widget)
     qWarning() << "Cannot assign widget to" << field;
 }
 
-void ColumnList::assignDistanceSearchWidgets(QCheckBox *checkBox,
-                                             QComboBox *directionWidget, QSpinBox *minWidget,
-                                             QSpinBox *maxWidget)
+void ColumnList::assignDistanceSearchWidgets(QCheckBox *checkBox, QComboBox *directionWidget, QSpinBox *minWidget, QSpinBox *maxWidget)
 {
   distanceCheckBox = checkBox;
   minDistanceWidget = minWidget;
@@ -215,29 +222,6 @@ void ColumnList::resetWidgets(const QStringList& exceptColNames)
     distanceCheckBox->setCheckState(Qt::Unchecked);
 
   queryBuilder.resetWidgets();
-}
-
-void ColumnList::enableWidgets(bool enabled, const QStringList& exceptColNames)
-{
-  // Enable widgets assigned to columns
-  for(Column *cd : qAsConst(columns))
-  {
-    if(!exceptColNames.contains(cd->getColumnName()) && cd->getWidget() != nullptr)
-      cd->getWidget()->setEnabled(enabled);
-  }
-
-  // Enable distance search widgets
-  if(minDistanceWidget != nullptr)
-    minDistanceWidget->setEnabled(enabled);
-
-  if(maxDistanceWidget != nullptr)
-    maxDistanceWidget->setEnabled(enabled);
-
-  if(distanceCheckBox != nullptr)
-    distanceCheckBox->setEnabled(enabled);
-
-  if(distanceDirectionWidget != nullptr)
-    distanceDirectionWidget->setEnabled(enabled);
 }
 
 void ColumnList::setQueryBuilder(const QueryBuilder& builder)

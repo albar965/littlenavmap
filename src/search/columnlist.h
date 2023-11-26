@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -21,6 +21,7 @@
 #include "search/querybuilder.h"
 
 #include <QHash>
+#include <QCheckBox>
 
 class QWidget;
 class Column;
@@ -65,9 +66,6 @@ public:
   /* Clear all LineEdit widgets and reset other back to default state */
   void resetWidgets(const QStringList& exceptColNames = QStringList());
 
-  /* Enable or disable widgets except the ones with the give column names */
-  void enableWidgets(bool enabled = true, const QStringList& exceptColNames = QStringList());
-
   ColumnList& append(const Column& col);
 
   QString getTablename() const
@@ -76,8 +74,7 @@ public:
   }
 
   /* Assign widgets for distance search */
-  void assignDistanceSearchWidgets(QCheckBox *checkBox, QComboBox *directionWidget,
-                                   QSpinBox *minWidget, QSpinBox *maxWidget);
+  void assignDistanceSearchWidgets(QCheckBox *checkBox, QComboBox *directionWidget, QSpinBox *minWidget, QSpinBox *maxWidget);
   void clear();
 
   QSpinBox *getMinDistanceWidget() const
@@ -100,7 +97,18 @@ public:
     return distanceCheckBox;
   }
 
-  bool isDistanceCheckBoxChecked() const;
+  bool isDistanceCheckBoxActive() const
+  {
+    return distanceCheckBox != nullptr ? distanceCheckBox->isChecked() && distanceCheckBox->isEnabled() : false;
+  }
+
+  bool isDistanceCheckBoxChecked() const
+  {
+    return distanceCheckBox != nullptr ? distanceCheckBox->isChecked() : false;
+  }
+
+  /* Enables/disables min/max/direction widgets if checkbox is set or not. Blocks signals. */
+  void updateDistanceSearchWidgets();
 
   const QString& getIdColumnName() const
   {

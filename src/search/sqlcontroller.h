@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -75,10 +75,10 @@ public:
   void filterByBuilder();
 
   /* Filter by text at the given index */
-  void filterIncluding(const QModelIndex& index, bool forceQueryBuilder);
+  void filterIncluding(const QModelIndex& index, bool forceQueryBuilder, bool exact);
 
   /* Filter excluding by text at the given index */
-  void filterExcluding(const QModelIndex& index, bool builder);
+  void filterExcluding(const QModelIndex& index, bool builder, bool exact);
 
   /* Set a filter by text from a line edit */
   void filterByLineEdit(const Column *col, const QString& text);
@@ -186,6 +186,11 @@ public:
     return model;
   }
 
+  /* Set by derived classes to avoid unneeded queries on startup. */
+  bool isRestoreFinished() const;
+
+  void setRestoreFinished();
+
   /* Initializes the record with all column names from the current query */
   void initRecord(atools::sql::SqlRecord& rec);
 
@@ -195,10 +200,13 @@ public:
   void preDatabaseLoad();
   void postDatabaseLoad();
 
+  /* Rebuilds query and updates if changed */
+  void rebuildQuery();
+
   void updateHeaderData();
 
   /* Update query on changes in the database. Loads all data needed to restore selection if keepSelection is true */
-  void refreshData(bool loadAll, bool keepSelection);
+  void refreshData(bool loadAll, bool keepSelection, bool force);
 
   /* Update view only */
   void refreshView();
@@ -216,7 +224,7 @@ public:
   void setBuilder(const QueryBuilder& builder);
 
 private:
-  void viewSetModel(QAbstractItemModel *newModel);
+  void viewSetModel(QAbstractItemModel *itemModel);
 
   /* Adapt columns to query change */
   void processViewColumns();

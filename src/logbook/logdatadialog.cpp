@@ -580,7 +580,12 @@ void LogdataDialog::removeAirport(const QString& prefix)
 void LogdataDialog::setAirport(const QString& ident, const QString& prefix, bool includeIdent)
 {
   if(includeIdent)
-    record->setValue(prefix + "_ident", ident.toUpper());
+  {
+    if(ident.isEmpty())
+      record->setNull(prefix + "_ident");
+    else
+      record->setValue(prefix + "_ident", ident.toUpper());
+  }
 
   QList<map::MapAirport> airports = NavApp::getAirportQuerySim()->getAirportsByOfficialIdent(ident.toUpper());
 

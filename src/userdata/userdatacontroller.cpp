@@ -100,7 +100,7 @@ void UserdataController::undoTriggered()
     {
       qDebug() << Q_FUNC_INFO << "Committing";
       transaction.commit();
-      emit refreshUserdataSearch(false, false);
+      emit refreshUserdataSearch(false /* loadAll */, false /* keepSelection */, true /* force */);
       emit userdataChanged();
     }
     else
@@ -129,7 +129,7 @@ void UserdataController::redoTriggered()
     {
       qDebug() << Q_FUNC_INFO << "Committing";
       transaction.commit();
-      emit refreshUserdataSearch(false, false);
+      emit refreshUserdataSearch(false /* loadAll */, false /* keepSelection */, true /* force */);
       emit userdataChanged();
     }
     else
@@ -530,7 +530,7 @@ void UserdataController::addUserpointInternalAddon(const atools::geo::Pos& pos, 
   // Enable category on map for new type
   enableCategoryOnMap(lastAddedRecord->valueStr("type"));
 
-  emit refreshUserdataSearch(false /* load all */, false /* keep selection */);
+  emit refreshUserdataSearch(false /* loadAll */, false /* keepSelection */, true /* force */);
   emit userdataChanged();
   mainWindow->setStatusMessage(tr("Addon Userpoint added."));
 }
@@ -601,7 +601,7 @@ void UserdataController::addUserpointInternal(int id, const atools::geo::Pos& po
     // Enable category on map for new type
     enableCategoryOnMap(lastAddedRecord->valueStr("type"));
 
-    emit refreshUserdataSearch(false /* load all */, false /* keep selection */);
+    emit refreshUserdataSearch(false /* loadAll */, false /* keepSelection */, true /* force */);
     emit userdataChanged();
     mainWindow->setStatusMessage(tr("Userpoint added."));
   }
@@ -634,7 +634,7 @@ void UserdataController::editUserpoints(const QVector<int>& ids)
       if(editedRec.contains("type"))
         enableCategoryOnMap(editedRec.valueStr("type"));
 
-      emit refreshUserdataSearch(false /* load all */, false /* keep selection */);
+      emit refreshUserdataSearch(false /* loadAll */, false /* keepSelection */, true /* force */);
       emit userdataChanged();
       mainWindow->setStatusMessage(tr("%n userpoint(s) updated.", "", ids.size()));
     }
@@ -652,7 +652,7 @@ void UserdataController::deleteUserpoints(const QVector<int>& ids)
   manager->deleteRows(QSet<int>(ids.constBegin(), ids.constEnd()));
   transaction.commit();
 
-  emit refreshUserdataSearch(false /* load all */, false /* keep selection */);
+  emit refreshUserdataSearch(false /* loadAll */, false /* keepSelection */, true /* force */);
   emit userdataChanged();
   mainWindow->setStatusMessage(tr("%n userpoint(s) deleted.", "", ids.size()));
 }
@@ -679,7 +679,7 @@ void UserdataController::importCsv()
       {
         mainWindow->showUserpointSearch();
         manager->updateUndoRedoActions();
-        emit refreshUserdataSearch(false /* load all */, false /* keep selection */);
+        emit refreshUserdataSearch(false /* loadAll */, false /* keepSelection */, true /* force */);
       }
     }
   }
@@ -718,7 +718,7 @@ void UserdataController::importXplaneUserFixDat()
       mainWindow->showUserpointSearch();
       mainWindow->setStatusMessage(tr("%n userpoint(s) imported.", "", numImported));
       manager->updateUndoRedoActions();
-      emit refreshUserdataSearch(false /* load all */, false /* keep selection */);
+      emit refreshUserdataSearch(false /* loadAll */, false /* keepSelection */, true /* force */);
     }
   }
   catch(atools::Exception& e)
@@ -756,7 +756,7 @@ void UserdataController::importGarmin()
       mainWindow->showUserpointSearch();
       mainWindow->setStatusMessage(tr("%n userpoint(s) imported.", "", numImported));
       manager->updateUndoRedoActions();
-      emit refreshUserdataSearch(false /* load all */, false /* keep selection */);
+      emit refreshUserdataSearch(false /* loadAll */, false /* keepSelection */, true /* force */);
     }
   }
   catch(atools::Exception& e)
@@ -1162,7 +1162,7 @@ void UserdataController::cleanupUserdata()
         emit userdataChanged();
       mainWindow->setStatusMessage(tr("%1 %2 deleted.").arg(removed).arg(removed == 1 ? tr("userpoint") : tr("userpoints")));
 
-      emit refreshUserdataSearch(false /* load all */, false /* keep selection */);
+      emit refreshUserdataSearch(false /* loadAll */, false /* keepSelection */, true /* force */);
       emit userdataChanged();
     }
   }

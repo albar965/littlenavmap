@@ -29,6 +29,7 @@
 #include "gui/itemviewzoomhandler.h"
 #include "gui/tools.h"
 #include "logbook/logdatacontroller.h"
+#include "gui/widgetutil.h"
 #include "mapgui/mapwidget.h"
 #include "options/optiondata.h"
 #include "query/airportquery.h"
@@ -138,8 +139,6 @@ SearchBaseTable::SearchBaseTable(QMainWindow *parent, QTableView *tableView, Col
 #if QT_VERSION >= QT_VERSION_CHECK(5, 11, 0)
   connect(NavApp::navAppInstance(), &atools::gui::Application::fontChanged, this, &SearchBaseTable::fontChanged);
 #endif
-
-  Ui::MainWindow *ui = NavApp::getMainUi();
 
   // Avoid stealing of Ctrl-C from other default menus
   ui->actionSearchTableCopy->setShortcutContext(Qt::WidgetWithChildrenShortcut);
@@ -280,6 +279,87 @@ void SearchBaseTable::tableCopyClipboard()
   }
 }
 
+void SearchBaseTable::buttonMenuTriggered(QLayout *layout, QWidget *otherWidget, bool state, bool distanceSearch)
+{
+  // Show or hide all elements recursively
+  atools::gui::util::showHideLayoutElements({layout}, {otherWidget}, state, true /* disable */);
+
+  // Update menu suffixes
+  updateButtonMenu();
+
+  // Skip if still loading
+  if(controller->isRestoreFinished())
+  {
+    view->clearSelection();
+    if(distanceSearch)
+      distanceSearchChanged(true /* changeViewState */);
+    else
+      controller->rebuildQuery();
+  }
+}
+
+QueryBuilderResult SearchBaseTable::queryBuilderFunc(const QueryWidget& queryWidget)
+{
+  QLineEdit *lineEdit = dynamic_cast<QLineEdit *>(queryWidget.getWidget());
+  if(lineEdit != nullptr)
+  {
+    // Widget list is always one line edit as registered in airport search or nav search
+
+    // Split at space boundaries considering quoted texts
+    // "ABC DEF" GHI "JK" -> {"ABC DEF", GHI, "JK"}
+    const QStringList textList = atools::splitStringAtQuotes(lineEdit->text().trimmed());
+    QStringList queryList;
+    bool overrideQuery = false;
+
+    // Iterate through all split string parts
+    for(QString text : textList)
+    {
+      text = text.simplified();
+
+      if(text.isEmpty())
+        continue;
+
+      if(text.startsWith('"') && text.endsWith('"'))
+        text = text.chopped(1).mid(1);
+      else
+      {
+        // Check text length without placeholders for override
+        if(queryWidget.isAllowOverride())
+        {
+          QString overrideText(text);
+          overrideText.remove('*');
+          overrideQuery |= overrideText.size() >= 3;
+        }
+
+        text = text.replace('*', '%');
+
+        // Partial search
+        text = '%' % text % '%';
+      }
+
+      if(!text.isEmpty())
+      {
+        // Escape single quotes to avoid malformed query and resulting exception
+        text.replace("'", "''");
+        QString query;
+
+        // Cannot use "arg" to build string since percent confuses QString
+        QStringList clauses;
+        for(const QString& col: queryWidget.getColumns())
+          clauses.append(col % " like " % '\'' % text % '\'');
+        query = '(' % clauses.join(" or ") % ')';
+
+        if(!query.isEmpty())
+          queryList.append(query);
+      } // if(!text.isEmpty())
+    } // for(const QString& text : textList)
+
+    if(!queryList.isEmpty())
+      return QueryBuilderResult('(' % queryList.join(" or ") % ')', overrideQuery);
+  }
+  return QueryBuilderResult();
+}
+
 void SearchBaseTable::initViewAndController(atools::sql::SqlDatabase *db)
 {
   view->horizontalHeader()->setSectionsMovable(true);
@@ -340,7 +420,7 @@ void SearchBaseTable::updateTableSelection(bool noFollow)
 
 void SearchBaseTable::searchMarkChanged(const atools::geo::Pos& mark)
 {
-  if(columns->isDistanceCheckBoxChecked() && mark.isValid())
+  if(columns->isDistanceCheckBoxActive() && mark.isValid())
     updateDistanceSearch();
 }
 
@@ -348,8 +428,7 @@ void SearchBaseTable::updateDistanceSearch()
 {
   MapWidget *mapWidget = NavApp::getMapWidgetGui();
 
-  if(columns->isDistanceCheckBoxChecked() &&
-     mapWidget->getSearchMarkPos().isValid())
+  if(columns->isDistanceCheckBoxActive() && mapWidget->getSearchMarkPos().isValid())
   {
     // Currently running distance search - update result
     QSpinBox *minDistanceWidget = columns->getMinDistanceWidget();
@@ -372,22 +451,22 @@ void SearchBaseTable::connectSearchWidgets()
   {
     controller->setBuilder(columns->getQueryBuilder());
 
-    QWidget *widget = columns->getQueryBuilder().getWidget();
-
-    if(widget != nullptr)
+    // Connect all query builder widgets
+    for(QWidget *widget : columns->getQueryBuilder().getWidgets())
     {
-      QLineEdit *lineEdit = dynamic_cast<QLineEdit *>(widget);
-
-      // Only line edit allowed for now
-      if(lineEdit != nullptr)
+      if(widget != nullptr)
       {
-        connect(lineEdit, &QLineEdit::textChanged, this, [this](const QString& text)
+        QLineEdit *lineEdit = dynamic_cast<QLineEdit *>(widget);
+
+        // Only line edit allowed for now
+        if(lineEdit != nullptr)
         {
-          Q_UNUSED(text)
-          controller->filterByBuilder();
-          updateButtonMenu();
-          editStartTimer();
-        });
+          connect(lineEdit, &QLineEdit::textChanged, this, [this](const QString&) {
+            controller->filterByBuilder();
+            updateButtonMenu();
+            editStartTimer();
+          });
+        }
       }
     }
   }
@@ -397,8 +476,7 @@ void SearchBaseTable::connectSearchWidgets()
   {
     if(col->getLineEditWidget() != nullptr)
     {
-      connect(col->getLineEditWidget(), &QLineEdit::textChanged, this, [col, this](const QString& text)
-      {
+      connect(col->getLineEditWidget(), &QLineEdit::textChanged, this, [col, this](const QString& text) {
         controller->filterByLineEdit(col, text);
         updateButtonMenu();
         editStartTimer();
@@ -409,11 +487,9 @@ void SearchBaseTable::connectSearchWidgets()
       if(col->getComboBoxWidget()->isEditable())
       {
         // Treat editable combo boxes like line edits
-        connect(col->getComboBoxWidget(), &QComboBox::editTextChanged, this, [col, this](const QString& text)
-        {
-          QComboBox *box = col->getComboBoxWidget();
-
+        connect(col->getComboBoxWidget(), &QComboBox::editTextChanged, this, [col, this](QString text) {
           {
+            QComboBox *box = col->getComboBoxWidget();
             QSignalBlocker blocker(box);
 
             // Reset index if entered word does not match
@@ -429,8 +505,7 @@ void SearchBaseTable::connectSearchWidgets()
       }
       else
       {
-        connect(col->getComboBoxWidget(), QOverload<int>::of(&QComboBox::currentIndexChanged), this, [col, this](int index)
-        {
+        connect(col->getComboBoxWidget(), QOverload<int>::of(&QComboBox::currentIndexChanged), this, [col, this](int index) {
           controller->filterByComboBox(col, index, index == 0);
           updateButtonMenu();
           editStartTimer();
@@ -439,8 +514,7 @@ void SearchBaseTable::connectSearchWidgets()
     }
     else if(col->getCheckBoxWidget() != nullptr)
     {
-      connect(col->getCheckBoxWidget(), &QCheckBox::stateChanged, this, [col, this](int state)
-      {
+      connect(col->getCheckBoxWidget(), &QCheckBox::stateChanged, this, [col, this](int state) {
         controller->filterByCheckbox(col, state, col->getCheckBoxWidget()->isTristate());
         updateButtonMenu();
         editStartTimer();
@@ -448,8 +522,7 @@ void SearchBaseTable::connectSearchWidgets()
     }
     else if(col->getSpinBoxWidget() != nullptr)
     {
-      connect(col->getSpinBoxWidget(), QOverload<int>::of(&QSpinBox::valueChanged), this, [col, this](int value)
-      {
+      connect(col->getSpinBoxWidget(), QOverload<int>::of(&QSpinBox::valueChanged), this, [col, this](int value) {
         updateFromSpinBox(value, col);
         updateButtonMenu();
         editStartTimer();
@@ -457,15 +530,13 @@ void SearchBaseTable::connectSearchWidgets()
     }
     else if(col->getMinSpinBoxWidget() != nullptr && col->getMaxSpinBoxWidget() != nullptr)
     {
-      connect(col->getMinSpinBoxWidget(), QOverload<int>::of(&QSpinBox::valueChanged), this, [col, this](int value)
-      {
+      connect(col->getMinSpinBoxWidget(), QOverload<int>::of(&QSpinBox::valueChanged), this, [col, this](int value) {
         updateFromMinSpinBox(value, col);
         updateButtonMenu();
         editStartTimer();
       });
 
-      connect(col->getMaxSpinBoxWidget(), QOverload<int>::of(&QSpinBox::valueChanged), this, [col, this](int value)
-      {
+      connect(col->getMaxSpinBoxWidget(), QOverload<int>::of(&QSpinBox::valueChanged), this, [col, this](int value) {
         updateFromMaxSpinBox(value, col);
         updateButtonMenu();
         editStartTimer();
@@ -478,14 +549,12 @@ void SearchBaseTable::connectSearchWidgets()
   QComboBox *distanceDirWidget = columns->getDistanceDirectionWidget();
   QCheckBox *distanceCheckBox = columns->getDistanceCheckBox();
 
-  if(minDistanceWidget != nullptr && maxDistanceWidget != nullptr &&
-     distanceDirWidget != nullptr && distanceCheckBox != nullptr)
+  if(minDistanceWidget != nullptr && maxDistanceWidget != nullptr && distanceDirWidget != nullptr && distanceCheckBox != nullptr)
   {
     // If all distance widgets are present connect them
     connect(distanceCheckBox, &QCheckBox::stateChanged, this, &SearchBaseTable::distanceSearchStateChanged);
 
-    connect(minDistanceWidget, QOverload<int>::of(&QSpinBox::valueChanged), this, [this, distanceDirWidget, maxDistanceWidget](int value)
-    {
+    connect(minDistanceWidget, QOverload<int>::of(&QSpinBox::valueChanged), this, [this, distanceDirWidget, maxDistanceWidget](int value) {
       controller->filterByDistanceUpdate(
         static_cast<sqlmodeltypes::SearchDirection>(distanceDirWidget->currentIndex()),
         Unit::rev(value, Unit::distNmF),
@@ -496,8 +565,7 @@ void SearchBaseTable::connectSearchWidgets()
       editStartTimer();
     });
 
-    connect(maxDistanceWidget, QOverload<int>::of(&QSpinBox::valueChanged), this, [this, distanceDirWidget, minDistanceWidget](int value)
-    {
+    connect(maxDistanceWidget, QOverload<int>::of(&QSpinBox::valueChanged), this, [this, distanceDirWidget, minDistanceWidget](int value) {
       controller->filterByDistanceUpdate(
         static_cast<sqlmodeltypes::SearchDirection>(distanceDirWidget->currentIndex()),
         Unit::rev(minDistanceWidget->value(), Unit::distNmF),
@@ -560,43 +628,55 @@ void SearchBaseTable::updateFromMaxSpinBox(int value, const Column *col)
   col->getMinSpinBoxWidget()->setMaximum(value);
 }
 
-void SearchBaseTable::distanceSearchStateChanged(int state)
+void SearchBaseTable::distanceSearchStateChanged(int)
 {
-  distanceSearchChanged(state == Qt::Checked, true);
+  distanceSearchChanged(true /* changeViewState */);
 }
 
-void SearchBaseTable::distanceSearchChanged(bool checked, bool changeViewState)
+void SearchBaseTable::distanceSearchChanged(bool changeViewState)
 {
-  MapWidget *mapWidget = NavApp::getMapWidgetGui();
-
-  if((mapWidget->getSearchMarkPos().isNull() || !mapWidget->getSearchMarkPos().isValid()) && checked)
+  // Check for spurious events/signals when loading and updating widgets
+  if(controller->isRestoreFinished())
   {
-    atools::gui::Dialog(mainWindow).showInfoMsgBox(lnm::ACTIONS_SHOW_SEARCH_CENTER_NULL,
-                                                   tr("The search center is not set.\n"
-                                                      "Right-click into the map and select\n"
-                                                      "\"Set Center for Distance Search\"."),
-                                                   tr("Do not &show this dialog again."));
+    // Old state to be saved
+    bool oldViewState = viewStateDistSearch;
+
+    // New state to be loaded
+    viewStateDistSearch = columns->isDistanceCheckBoxActive();
+
+    MapWidget *mapWidget = NavApp::getMapWidgetGui();
+
+    if((mapWidget->getSearchMarkPos().isNull() || !mapWidget->getSearchMarkPos().isValid()) && viewStateDistSearch)
+      atools::gui::Dialog(mainWindow).showInfoMsgBox(lnm::ACTIONS_SHOW_SEARCH_CENTER_NULL,
+                                                     tr("The search center is not set.\n"
+                                                        "Right-click into the map and select\n"
+                                                        "\"Set Center for Distance Search\"."),
+                                                     tr("Do not &show this dialog again."));
+
+    QSpinBox *minDistanceWidget = columns->getMinDistanceWidget();
+    QSpinBox *maxDistanceWidget = columns->getMaxDistanceWidget();
+    QComboBox *distanceDirWidget = columns->getDistanceDirectionWidget();
+
+    if(changeViewState)
+      saveViewState(oldViewState);
+
+    controller->filterByDistance(viewStateDistSearch ? mapWidget->getSearchMarkPos() : atools::geo::Pos(),
+                                 static_cast<sqlmodeltypes::SearchDirection>(distanceDirWidget->currentIndex()),
+                                 Unit::rev(minDistanceWidget->value(), Unit::distNmF),
+                                 Unit::rev(maxDistanceWidget->value(), Unit::distNmF));
+
+    // Need to load all rows for distance search due to proxy model which needs all for proper sorting
+    if(viewStateDistSearch)
+      controller->loadAllRowsForDistanceSearch();
+
+    // Restore view for new state
+    if(changeViewState)
+      restoreViewState(viewStateDistSearch);
+
+    updateButtonMenu();
+
+    columns->updateDistanceSearchWidgets();
   }
-
-  QSpinBox *minDistanceWidget = columns->getMinDistanceWidget();
-  QSpinBox *maxDistanceWidget = columns->getMaxDistanceWidget();
-  QComboBox *distanceDirWidget = columns->getDistanceDirectionWidget();
-
-  if(changeViewState)
-    saveViewState(!checked);
-
-  controller->filterByDistance(checked ? mapWidget->getSearchMarkPos() : atools::geo::Pos(),
-                               static_cast<sqlmodeltypes::SearchDirection>(distanceDirWidget->currentIndex()),
-                               Unit::rev(minDistanceWidget->value(), Unit::distNmF),
-                               Unit::rev(maxDistanceWidget->value(), Unit::distNmF));
-
-  minDistanceWidget->setEnabled(checked);
-  maxDistanceWidget->setEnabled(checked);
-  distanceDirWidget->setEnabled(checked);
-  if(checked)
-    controller->loadAllRowsForDistanceSearch();
-  restoreViewState(checked);
-  updateButtonMenu();
 }
 
 void SearchBaseTable::installEventFilterForWidget(QWidget *widget)
@@ -626,8 +706,6 @@ void SearchBaseTable::connectSearchSlots()
 {
   connect(view, &QTableView::doubleClicked, this, &SearchBaseTable::doubleClick);
   connect(view, &QTableView::customContextMenuRequested, this, &SearchBaseTable::contextMenu);
-
-  Ui::MainWindow *ui = NavApp::getMainUi();
 
   connect(ui->actionSearchShowAll, &QAction::triggered, this, &SearchBaseTable::loadAllRowsIntoView);
   connect(ui->actionSearchResetSearch, &QAction::triggered, this, &SearchBaseTable::resetSearch);
@@ -708,14 +786,14 @@ void SearchBaseTable::tableSelectionChangedInternal(bool noFollow)
 
 void SearchBaseTable::preDatabaseLoad()
 {
-  saveViewState(controller->isDistanceSearch());
+  saveViewState(columns->isDistanceCheckBoxActive());
   controller->preDatabaseLoad();
 }
 
 void SearchBaseTable::postDatabaseLoad()
 {
   controller->postDatabaseLoad();
-  restoreViewState(controller->isDistanceSearch());
+  restoreViewState(columns->isDistanceCheckBoxActive());
 }
 
 /* Reset view sort order, column width and column order back to default values */
@@ -729,9 +807,9 @@ void SearchBaseTable::resetView()
   }
 }
 
-void SearchBaseTable::refreshData(bool loadAll, bool keepSelection)
+void SearchBaseTable::refreshData(bool loadAll, bool keepSelection, bool force)
 {
-  controller->refreshData(loadAll, keepSelection);
+  controller->refreshData(loadAll, keepSelection, force);
 
   tableSelectionChangedInternal(true /* noFollow */);
 }
@@ -807,6 +885,25 @@ void SearchBaseTable::resetSearch()
   }
 }
 
+void SearchBaseTable::finishRestore()
+{
+  // Stop skipping query changes
+  controller->setRestoreFinished();
+
+  // Get current distance search state
+  viewStateDistSearch = columns->isDistanceCheckBoxActive();
+
+  // Reload view from options
+  restoreViewState(viewStateDistSearch);
+
+  // Enable/disable search widgets
+  columns->updateDistanceSearchWidgets();
+
+  if(viewStateDistSearch)
+    // Activate distance search if it was active - otherwise leave default behavior - leave view as is
+    distanceSearchChanged(false /* changeViewState */);
+}
+
 /* Loads all rows into the table view */
 void SearchBaseTable::loadAllRowsIntoView()
 {
@@ -874,10 +971,8 @@ void SearchBaseTable::showRow(int row, bool showInfo)
        columns->hasColumn("right_lonx") && columns->hasColumn("bottom_laty"))
     {
       // Rectangle at airports
-      atools::geo::Pos topLeft(controller->getRawData(row, "left_lonx"),
-                               controller->getRawData(row, "top_laty"));
-      atools::geo::Pos bottomRight(controller->getRawData(row, "right_lonx"),
-                                   controller->getRawData(row, "bottom_laty"));
+      atools::geo::Pos topLeft(controller->getRawData(row, "left_lonx"), controller->getRawData(row, "top_laty"));
+      atools::geo::Pos bottomRight(controller->getRawData(row, "right_lonx"), controller->getRawData(row, "bottom_laty"));
 
       if(topLeft.isValid() && bottomRight.isValid())
         emit showRect(atools::geo::Rect(topLeft, bottomRight), true);
@@ -886,10 +981,8 @@ void SearchBaseTable::showRow(int row, bool showInfo)
             columns->hasColumn("max_lonx") && columns->hasColumn("min_laty"))
     {
       // Different column names for airspaces and online centers
-      atools::geo::Pos topLeft(controller->getRawData(row, "min_lonx"),
-                               controller->getRawData(row, "max_laty"));
-      atools::geo::Pos bottomRight(controller->getRawData(row, "max_lonx"),
-                                   controller->getRawData(row, "min_laty"));
+      atools::geo::Pos topLeft(controller->getRawData(row, "min_lonx"), controller->getRawData(row, "max_laty"));
+      atools::geo::Pos bottomRight(controller->getRawData(row, "max_lonx"), controller->getRawData(row, "min_laty"));
 
       if(topLeft.isValid() && bottomRight.isValid())
         emit showRect(atools::geo::Rect(topLeft, bottomRight), true);
@@ -897,10 +990,8 @@ void SearchBaseTable::showRow(int row, bool showInfo)
     else if(columns->hasColumn("departure_lonx") && columns->hasColumn("departure_laty") &&
             columns->hasColumn("destination_lonx") && columns->hasColumn("destination_laty"))
     {
-      atools::geo::Pos depart(controller->getRawData(row, "departure_lonx"),
-                              controller->getRawData(row, "departure_laty"));
-      atools::geo::Pos dest(controller->getRawData(row, "destination_lonx"),
-                            controller->getRawData(row, "destination_laty"));
+      atools::geo::Pos depart(controller->getRawData(row, "departure_lonx"), controller->getRawData(row, "departure_laty"));
+      atools::geo::Pos dest(controller->getRawData(row, "destination_lonx"), controller->getRawData(row, "destination_laty"));
 
       if(depart.isValid() && dest.isValid())
         emit showRect(atools::geo::boundingRect({depart, dest}), true);
@@ -936,8 +1027,6 @@ void SearchBaseTable::contextMenu(const QPoint& pos)
   qDebug() << Q_FUNC_INFO << "pos" << pos;
 
   static const int NAVAID_NAMES_ELIDE = 15;
-
-  Ui::MainWindow *ui = NavApp::getMainUi();
 
   QPoint menuPos = QCursor::pos();
   // Use widget center if position is not inside widget
@@ -1532,10 +1621,17 @@ void SearchBaseTable::contextMenu(const QPoint& pos)
       resetView();
     else if(action == ui->actionSearchTableCopy)
       tableCopyClipboard();
-    else if(action == ui->actionSearchFilterIncluding)
-      controller->filterIncluding(index, columnDescriptor == nullptr ? false : columnDescriptor->isFilterByBuilder());
-    else if(action == ui->actionSearchFilterExcluding)
-      controller->filterExcluding(index, columnDescriptor == nullptr ? false : columnDescriptor->isFilterByBuilder());
+    else if(action == ui->actionSearchFilterIncluding || action == ui->actionSearchFilterExcluding)
+    {
+      // Automatically unhide search options layout if needed. By checking the related action.
+      if(columnDescriptor != nullptr && columnDescriptor->getShowOptionsAction() != nullptr)
+        columnDescriptor->getShowOptionsAction()->setChecked(true);
+
+      if(action == ui->actionSearchFilterIncluding)
+        controller->filterIncluding(index, columnDescriptor == nullptr ? false : columnDescriptor->isFilterByBuilder(), true /* exact */);
+      else if(action == ui->actionSearchFilterExcluding)
+        controller->filterExcluding(index, columnDescriptor == nullptr ? false : columnDescriptor->isFilterByBuilder(), true /* exact */);
+    }
     else if(action == ui->actionSearchTableSelectAll)
       controller->selectAllRows();
     else if(action == ui->actionSearchTableSelectNothing)
@@ -1577,7 +1673,7 @@ void SearchBaseTable::contextMenu(const QPoint& pos)
       emit addAirportMsa(msaResult.airportMsa.value(0));
     else if(action == ui->actionSearchMarkAddon)
     {
-      for(const map::MapAirport& ap : result.airports)
+      for(const map::MapAirport& ap : qAsConst(result.airports))
         emit addUserpointFromMap(map::MapResult::createFromMapBase(&ap), ap.position, true /* airportAddon */);
     }
     else if(action == ui->actionRouteAddPos)
@@ -1921,12 +2017,14 @@ QVariant SearchBaseTable::modelDataHandler(int colIndex, int rowIndex, const Col
         return Qt::AlignRight;
 
       break;
+
     case Qt::BackgroundRole:
       if(colIndex == controller->getSortColumnIndex())
         // Use another alternating color if this is a field in the sort column
         return mapcolors::alternatingRowColor(rowIndex, true);
 
       break;
+
     default:
       break;
   }

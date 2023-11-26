@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -37,8 +37,6 @@
 OnlineCenterSearch::OnlineCenterSearch(QMainWindow *parent, QTableView *tableView, si::TabSearchId tabWidgetIndex)
   : SearchBaseTable(parent, tableView, new ColumnList("atc", "atc_id"), tabWidgetIndex)
 {
-  Ui::MainWindow *ui = NavApp::getMainUi();
-
   QStringList facilityType;
   facilityType << QString()
                << " > 0"    // No OBSERVER,
@@ -95,17 +93,15 @@ void OnlineCenterSearch::connectSearchSlots()
 {
   SearchBaseTable::connectSearchSlots();
 
-  Ui::MainWindow *ui = NavApp::getMainUi();
-
   // All widgets that will have their state and visibility saved and restored
   onlineCenterSearchWidgets =
   {
-    ui->horizontalLayoutOnlineCenter
+    ui->horizontalLayoutOnlineCenter,
+    ui->actionSearchOnlineCenterFollowSelection
   };
 
   // Small push buttons on top
-  connect(ui->pushButtonOnlineCenterSearchClearSelection, &QPushButton::clicked,
-          this, &SearchBaseTable::nothingSelectedTriggered);
+  connect(ui->pushButtonOnlineCenterSearchClearSelection, &QPushButton::clicked, this, &SearchBaseTable::nothingSelectedTriggered);
   connect(ui->pushButtonOnlineCenterSearchReset, &QPushButton::clicked, this, &SearchBaseTable::resetSearch);
 
   installEventFilterForWidget(ui->lineEditOnlineCenterCallsign);
@@ -121,9 +117,6 @@ void OnlineCenterSearch::saveState()
 {
   atools::gui::WidgetState widgetState(lnm::SEARCHTAB_ONLINE_CENTER_VIEW_WIDGET);
   widgetState.save(onlineCenterSearchWidgets);
-
-  Ui::MainWindow *ui = NavApp::getMainUi();
-  widgetState.save(ui->horizontalLayoutOnlineCenter);
 }
 
 void OnlineCenterSearch::restoreState()
@@ -132,30 +125,21 @@ void OnlineCenterSearch::restoreState()
   {
     atools::gui::WidgetState widgetState(lnm::SEARCHTAB_ONLINE_CENTER_VIEW_WIDGET);
     widgetState.restore(onlineCenterSearchWidgets);
-
-    restoreViewState(false);
-
-    // Need to block signals here to avoid unwanted behavior (will enable
-    // distance search and avoid saving of wrong view widget state)
-    widgetState.setBlockSignals(true);
-    Ui::MainWindow *ui = NavApp::getMainUi();
-    widgetState.restore(ui->horizontalLayoutOnlineCenter);
   }
   else
-    atools::gui::WidgetState(lnm::SEARCHTAB_ONLINE_CENTER_VIEW_WIDGET).restore(
-      NavApp::getMainUi()->tableViewOnlineCenterSearch);
+    atools::gui::WidgetState(lnm::SEARCHTAB_ONLINE_CENTER_VIEW_WIDGET).restore(ui->tableViewOnlineCenterSearch);
+
+  finishRestore();
 }
 
 void OnlineCenterSearch::saveViewState(bool)
 {
-  atools::gui::WidgetState(lnm::SEARCHTAB_ONLINE_CENTER_VIEW_WIDGET).save(
-    NavApp::getMainUi()->tableViewOnlineCenterSearch);
+  atools::gui::WidgetState(lnm::SEARCHTAB_ONLINE_CENTER_VIEW_WIDGET).save(ui->tableViewOnlineCenterSearch);
 }
 
 void OnlineCenterSearch::restoreViewState(bool)
 {
-  atools::gui::WidgetState(lnm::SEARCHTAB_ONLINE_CENTER_VIEW_WIDGET).restore(
-    NavApp::getMainUi()->tableViewOnlineCenterSearch);
+  atools::gui::WidgetState(lnm::SEARCHTAB_ONLINE_CENTER_VIEW_WIDGET).restore(ui->tableViewOnlineCenterSearch);
 }
 
 /* Callback for the controller. Will be called for each table cell and should return a formatted value */
@@ -196,7 +180,8 @@ QString OnlineCenterSearch::formatModelData(const Column *col, const QVariant& d
     if(col->getColumnName() == "frequency")
     {
       QStringList freqs;
-      for(const QString& str : displayRoleValue.toString().split("&"))
+      const QStringList dispRoles = displayRoleValue.toString().split('&');
+      for(const QString& str : dispRoles)
         freqs.append(QLocale().toString(str.toDouble() / 1000., 'f', 3));
       return freqs.join(tr(", "));
     }
@@ -221,7 +206,7 @@ QString OnlineCenterSearch::formatModelData(const Column *col, const QVariant& d
 
 void OnlineCenterSearch::getSelectedMapObjects(map::MapResult& result) const
 {
-  if(!NavApp::getMainUi()->dockWidgetSearch->isVisible())
+  if(!ui->dockWidgetSearch->isVisible())
     return;
 
   // Build a SQL record with all available fields
@@ -270,11 +255,10 @@ void OnlineCenterSearch::updateButtonMenu()
 void OnlineCenterSearch::updatePushButtons()
 {
   QItemSelectionModel *sm = view->selectionModel();
-  Ui::MainWindow *ui = NavApp::getMainUi();
   ui->pushButtonOnlineCenterSearchClearSelection->setEnabled(sm != nullptr && sm->hasSelection());
 }
 
 QAction *OnlineCenterSearch::followModeAction()
 {
-  return NavApp::getMainUi()->actionSearchOnlineCenterFollowSelection;
+  return ui->actionSearchOnlineCenterFollowSelection;
 }

@@ -148,8 +148,8 @@ public:
 
 signals:
   /* Sent whenever new data was downloaded */
-  void onlineClientAndAtcUpdated(bool loadAll, bool keepSelection);
-  void onlineServersUpdated(bool loadAll, bool keepSelection);
+  void onlineClientAndAtcUpdated(bool loadAll, bool keepSelection, bool force);
+  void onlineServersUpdated(bool loadAll, bool keepSelection, bool force);
 
   /* Sent when network changes via options dialog */
   void onlineNetworkChanged();

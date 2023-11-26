@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -37,6 +37,10 @@ class SearchWidgetEventFilter;
 class QLineEdit;
 class QAction;
 class QComboBox;
+
+class QLayout;
+class QueryWidget;
+class QueryBuilderResult;
 
 namespace atools {
 namespace sql {
@@ -114,7 +118,7 @@ public:
   void nothingSelectedTriggered();
 
   /* Refresh table after updates in the database */
-  void refreshData(bool loadAll, bool keepSelection);
+  void refreshData(bool loadAll, bool keepSelection, bool force);
   void refreshView();
 
   /* Number of rows currently loaded into the table view */
@@ -138,6 +142,10 @@ public:
   QString formatModelData(const Column *, const QVariant& displayRoleValue) const;
 
   void selectAll();
+
+  /* Callback for combined query on ident, icao, faa and local columns.
+   * Internal. */
+  QueryBuilderResult queryBuilderFunc(const QueryWidget& queryWidget);
 
 signals:
   /* Show rectangle object (airport) on double click or menu selection */
@@ -190,18 +198,24 @@ protected:
   /* Return the action that defines follow mode */
   virtual QAction *followModeAction() = 0;
 
+  /* An option selection action in the dropdown button menu was checked. Update menu items and search. */
+  void buttonMenuTriggered(QLayout *layouts, QWidget *otherWidgets, bool state, bool distanceSearch);
+
   /* Derived have to call this in constructor. Initializes table view, header, controller and CSV export. */
   void initViewAndController(atools::sql::SqlDatabase *db);
 
   /* Connect widgets to the controller */
   void connectSearchWidgets();
 
-  void distanceSearchChanged(bool checked, bool changeViewState);
+  void distanceSearchChanged(bool changeViewState);
 
   void installEventFilterForWidget(QWidget *widget);
 
   /* get airport at current position, airport at top of selection or airport on top of the list **/
   map::MapAirport currentAirport();
+
+  /* Call at the end of restoring parameters */
+  void finishRestore();
 
   /* Table/view controller */
   SqlController *controller = nullptr;
@@ -212,9 +226,12 @@ protected:
   MapQuery *mapQuery;
   AirportQuery *airportQuery;
 
+  /* true = current view is distance search view and false = normal view */
+  bool viewStateDistSearch = false;
+
 private:
-  virtual void saveViewState(bool distSearchActive) = 0;
-  virtual void restoreViewState(bool distSearchActive) = 0;
+  virtual void saveViewState(bool distanceSearchState) = 0;
+  virtual void restoreViewState(bool distanceSearchState) = 0;
   virtual void tabDeactivated() override;
 
   void tableSelectionChangedInternal(bool noFollow);
@@ -236,7 +253,7 @@ private:
   void showOnMapTriggered();
   void contextMenu(const QPoint& pos);
   void dockVisibilityChanged(bool);
-  void distanceSearchStateChanged(int state);
+  void distanceSearchStateChanged(int);
   void updateDistanceSearch();
   void updateFromSpinBox(int value, const Column *col);
   void updateFromMinSpinBox(int value, const Column *col);

@@ -51,10 +51,6 @@ OnlineServerSearch::~OnlineServerSearch()
 {
 }
 
-void OnlineServerSearch::overrideMode(const QStringList&)
-{
-}
-
 void OnlineServerSearch::connectSearchSlots()
 {
   SearchBaseTable::connectSearchSlots();
@@ -65,24 +61,25 @@ void OnlineServerSearch::connectSearchSlots()
 
 void OnlineServerSearch::saveState()
 {
+  saveViewState(false);
 }
 
 void OnlineServerSearch::restoreState()
 {
-  if(OptionData::instance().getFlags() & opts::STARTUP_LOAD_SEARCH && !NavApp::isSafeMode())
-    restoreViewState(false);
-  else
-    atools::gui::WidgetState(lnm::SEARCHTAB_ONLINE_SERVER_VIEW_WIDGET).restore(NavApp::getMainUi()->tableViewOnlineServerSearch);
+  if(!OptionData::instance().getFlags().testFlag(opts::STARTUP_LOAD_SEARCH) || NavApp::isSafeMode())
+    atools::gui::WidgetState(lnm::SEARCHTAB_ONLINE_SERVER_VIEW_WIDGET).restore(ui->tableViewOnlineServerSearch);
+
+  finishRestore();
 }
 
 void OnlineServerSearch::saveViewState(bool)
 {
-  atools::gui::WidgetState(lnm::SEARCHTAB_ONLINE_SERVER_VIEW_WIDGET).save(NavApp::getMainUi()->tableViewOnlineServerSearch);
+  atools::gui::WidgetState(lnm::SEARCHTAB_ONLINE_SERVER_VIEW_WIDGET).save(ui->tableViewOnlineServerSearch);
 }
 
 void OnlineServerSearch::restoreViewState(bool)
 {
-  atools::gui::WidgetState(lnm::SEARCHTAB_ONLINE_SERVER_VIEW_WIDGET).restore(NavApp::getMainUi()->tableViewOnlineServerSearch);
+  atools::gui::WidgetState(lnm::SEARCHTAB_ONLINE_SERVER_VIEW_WIDGET).restore(ui->tableViewOnlineServerSearch);
 }
 
 /* Callback for the controller. Will be called for each table cell and should return a formatted value */

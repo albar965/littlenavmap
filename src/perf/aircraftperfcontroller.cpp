@@ -752,7 +752,7 @@ void AircraftPerfController::updateActionStates()
   ui->spinBoxAircraftPerformanceWindDirection->setEnabled(manualWind);
   ui->spinBoxAircraftPerformanceWindSpeed->setEnabled(manualWind);
   ui->spinBoxAircraftPerformanceWindAlt->setEnabled(manualWind);
-  atools::gui::util::showHideLayoutElements({ui->horizontalLayoutManWind}, manualWind, {});
+  atools::gui::util::showHideLayoutElements({ui->horizontalLayoutManWind}, {}, manualWind, true /* disable */);
 }
 
 void AircraftPerfController::updateReport()

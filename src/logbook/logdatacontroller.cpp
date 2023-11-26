@@ -117,7 +117,7 @@ void LogdataController::undoTriggered()
       transaction.commit();
       manager->clearGeometryCache();
 
-      emit refreshLogSearch(false, false);
+      emit refreshLogSearch(false /* loadAll */, false /* keepSelection */, true /* force */);
       emit logDataChanged();
     }
     else
@@ -148,7 +148,7 @@ void LogdataController::redoTriggered()
       transaction.commit();
       manager->clearGeometryCache();
 
-      emit refreshLogSearch(false, false);
+      emit refreshLogSearch(false /* loadAll */, false /* keepSelection */, true /* force */);
       emit logDataChanged();
     }
     else
@@ -423,7 +423,7 @@ void LogdataController::logChanged(bool loadAll, bool keepSelection)
   emit logDataChanged();
 
   // Reload search
-  emit refreshLogSearch(loadAll, keepSelection);
+  emit refreshLogSearch(loadAll, keepSelection, true /* force */);
 }
 
 void LogdataController::recordFlightplanAndPerf(atools::sql::SqlRecord& record)
@@ -707,6 +707,9 @@ void LogdataController::cleanupLogEntries()
   {
     bool deleteEntries = false;
 
+    // Prepare - replace null values with empty strings
+    manager->preCleanup();
+
     // Show preview table ===============================================
     if(choiceDialog.isChecked(SHOW_PREVIEW))
     {
@@ -769,17 +772,26 @@ void LogdataController::cleanupLogEntries()
     else
       deleteEntries = true;
 
+    manager->postCleanup();
+
+    int removed = 0;
     if(deleteEntries)
     {
       // Dialog ok - remove entries ===============================================
       QGuiApplication::setOverrideCursor(Qt::WaitCursor);
       SqlTransaction transaction(manager->getDatabase());
-      int removed = manager->cleanupLogEntries(choiceDialog.isChecked(DEPARTURE_AND_DESTINATION_EQUAL),
-                                               choiceDialog.isChecked(DEPARTURE_OR_DESTINATION_EMPTY),
-                                               choiceDialog.isChecked(SHORT_DISTANCE) ? distNm : -1.f);
+      removed = manager->cleanupLogEntries(choiceDialog.isChecked(DEPARTURE_AND_DESTINATION_EQUAL),
+                                           choiceDialog.isChecked(DEPARTURE_OR_DESTINATION_EMPTY),
+                                           choiceDialog.isChecked(SHORT_DISTANCE) ? distNm : -1.f);
       transaction.commit();
       QGuiApplication::restoreOverrideCursor();
+    }
 
+    // Undo prepare - replace empty strings with null values
+    manager->postCleanup();
+
+    if(deleteEntries)
+    {
       // Send messages ===============================================
       if(removed > 0)
         logChanged(false /* load all */, false /* keep selection */);

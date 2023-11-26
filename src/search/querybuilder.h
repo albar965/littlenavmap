@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -26,19 +26,26 @@
 class QWidget;
 
 /*
- * Result class for query builder callback.
+ * Result class for query builder callback function.
  */
-struct QueryBuilderResult
+class QueryBuilderResult
 {
+public:
   explicit QueryBuilderResult()
     : overrideQuery(false)
   {
 
   }
 
-  explicit QueryBuilderResult(const QString& w, bool o)
-    : where(w), overrideQuery(o)
+  explicit QueryBuilderResult(const QString& whereParam, bool overrideParam)
+    : where(whereParam), overrideQuery(overrideParam)
   {
+  }
+
+  /* Complete where clause without "where" */
+  const QString& getWhere() const
+  {
+    return where;
   }
 
   bool isEmpty() const
@@ -46,15 +53,63 @@ struct QueryBuilderResult
     return where.isEmpty();
   }
 
+  /* Can override other search options */
+  bool isOverrideQuery() const
+  {
+    return overrideQuery;
+  }
+
+private:
   QString where; /* partial where clause */
   bool overrideQuery; /* true if this result should override all other queries */
+
 };
 
-typedef std::function<QueryBuilderResult(QWidget *widget)> QueryBuilderFuncType;
+/*
+ * Connects a widget with a list of search columns. Used to omit searches from hidden or disabled widgets.
+ */
+class QueryWidget
+{
+public:
+  QueryWidget(QWidget *widgetParam, const QStringList& columnParam, bool allowOverrideParam)
+    : widget(widgetParam), columns(columnParam), allowOverride(allowOverrideParam)
+  {
+  }
 
-/* A callback object which can build a where clause for more than one column in search.
+  QWidget *getWidget() const
+  {
+    return widget;
+  }
+
+  bool isWidgetEnabled() const;
+
+  /* Get all table columns covered by this widget */
+  const QStringList& getColumns() const
+  {
+    return columns;
+  }
+
+  /* Can override other search options */
+  bool isAllowOverride() const
+  {
+    return allowOverride;
+  }
+
+private:
+  QWidget *widget;
+  const QStringList columns;
+  bool allowOverride;
+};
+
+typedef QVector<QueryWidget> QueryWidgetVector;
+typedef QVector<QueryBuilderResult> QueryBuilderResultVector;
+typedef std::function<QueryBuilderResult(const QueryWidget& queryWidget)> QueryBuilderFuncType;
+
+/*
+ * A callback object which can build a where clause for more than one column in search.
  * Uses a function object which can point to any method, function or lambda.
- * Only one per search can be used. */
+ * Only one per search can be used.
+ */
 class QueryBuilder
 {
 public:
@@ -64,8 +119,8 @@ public:
    *                        Currently only line edit widgets supported.
    * @param cols Affected/used column names.
    */
-  QueryBuilder(QueryBuilderFuncType funcParam, QWidget *widgetParam, const QStringList& cols)
-    : func(funcParam), widget(widgetParam), columns(cols)
+  QueryBuilder(QueryBuilderFuncType funcParam, const QueryWidgetVector& queryWidgetsParam)
+    : func(funcParam), queryWidgets(queryWidgetsParam)
   {
   }
 
@@ -80,35 +135,27 @@ public:
     return func ? true : false;
   }
 
-  /* Invoke callback to get query string */
-  QueryBuilderResult build() const
-  {
-    if(func)
-      return func(widget);
-    else
-      return QueryBuilderResult();
-  }
+  /* Invoke callback to get query string for each query widget. */
+  QueryBuilderResultVector build() const;
 
   /* Get triggering widgets. Normally used in the callback function to extract filter values.
-   *  Currently only line edit widgets supported. */
-  QWidget *getWidget() const
-  {
-    return widget;
-  }
+   * Currently only line edit widgets supported. */
+  const QVector<QWidget *> getWidgets() const;
 
-  /* Get affected or used column names */
-  const QStringList& getColumns() const
-  {
-    return columns;
-  }
+  /* Get affected or used column names for all query widgets */
+  const QStringList getColumns() const;
 
-  /* Clear all widgets of type QLineEdit, QCheckBox, QComboBox and QSpinBox */
+  /* Clear contents of all widgets of type QLineEdit, QCheckBox, QComboBox and QSpinBox */
   void resetWidgets();
+
+  const QueryWidgetVector& getQueryWidgets() const
+  {
+    return queryWidgets;
+  }
 
 private:
   QueryBuilderFuncType func;
-  QWidget *widget = nullptr;
-  QStringList columns;
+  QueryWidgetVector queryWidgets;
 };
 
 #endif // LNM_QUERYBUILDER_H

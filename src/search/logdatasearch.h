@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -26,7 +26,8 @@ class QTableView;
 class QAction;
 class QMainWindow;
 class Column;
-struct QueryBuilderResult;
+class QueryBuilderResult;
+class QueryWidget;
 
 namespace atools {
 namespace sql {
@@ -81,9 +82,6 @@ private:
 
   /* Add button */
   void addLogEntryTriggered();
-
-  /* Callback function which creates a where clause using destination and departure ident. */
-  QueryBuilderResult airportQueryBuilderFunc(QWidget *widget);
 
   /* All layouts, lines and drop down menu items */
   QList<QObject *> logdataSearchWidgets;

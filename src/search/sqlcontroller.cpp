@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -64,16 +64,25 @@ void SqlController::preDatabaseLoad()
 
 void SqlController::postDatabaseLoad()
 {
-  if(proxyModel != nullptr)
-    viewSetModel(proxyModel);
-  else
-    viewSetModel(model);
-  model->updateSqlQuery();
-  model->resetSqlQuery();
-  model->fillHeaderData();
+  rebuildQuery();
 }
 
-void SqlController::refreshData(bool loadAll, bool keepSelection)
+void SqlController::rebuildQuery()
+{
+  if(!model->isUpdatingWidgets())
+  {
+    if(proxyModel != nullptr)
+      viewSetModel(proxyModel);
+    else
+      viewSetModel(model);
+
+    model->updateSqlQuery();
+    model->resetSqlQuery(false /* force */);
+    model->fillHeaderData();
+  }
+}
+
+void SqlController::refreshData(bool loadAll, bool keepSelection, bool force)
 {
   QItemSelectionModel *sm = view->selectionModel();
 
@@ -82,7 +91,8 @@ void SqlController::refreshData(bool loadAll, bool keepSelection)
   QSet<int> rows;
   if(sm != nullptr && keepSelection)
   {
-    for(const QModelIndex& index : sm->selectedRows(0))
+    const QModelIndexList selectedRows = sm->selectedRows(0);
+    for(const QModelIndex& index : selectedRows)
     {
       if(index.row() > maxRow)
         maxRow = index.row();
@@ -91,7 +101,7 @@ void SqlController::refreshData(bool loadAll, bool keepSelection)
   }
 
   // Reload query model
-  model->refreshData();
+  model->refreshData(force);
 
   if(loadAll)
   {
@@ -156,23 +166,23 @@ void SqlController::filterByBuilder()
   searchParamsChanged = true;
 }
 
-void SqlController::filterIncluding(const QModelIndex& index, bool forceQueryBuilder)
+void SqlController::filterIncluding(const QModelIndex& index, bool forceQueryBuilder, bool exact)
 {
 #ifdef DEBUG_INFORMATION
   qDebug() << Q_FUNC_INFO;
 #endif
   view->clearSelection();
-  model->filterIncluding(toSource(index), forceQueryBuilder);
+  model->filterIncluding(toSource(index), forceQueryBuilder, exact);
   searchParamsChanged = true;
 }
 
-void SqlController::filterExcluding(const QModelIndex& index, bool builder)
+void SqlController::filterExcluding(const QModelIndex& index, bool builder, bool exact)
 {
 #ifdef DEBUG_INFORMATION
   qDebug() << Q_FUNC_INFO;
 #endif
   view->clearSelection();
-  model->filterExcluding(toSource(index), builder);
+  model->filterExcluding(toSource(index), builder, exact);
   searchParamsChanged = true;
 }
 
@@ -189,13 +199,23 @@ atools::geo::Pos SqlController::getGeoPos(const QModelIndex& index, const QStrin
   return atools::geo::Pos();
 }
 
+bool SqlController::isRestoreFinished() const
+{
+  return model->isRestoreFinished();
+}
+
+void SqlController::setRestoreFinished()
+{
+  model->setRestoreFinished();
+}
+
 void SqlController::filterByLineEdit(const Column *col, const QString& text)
 {
 #ifdef DEBUG_INFORMATION
   qDebug() << Q_FUNC_INFO;
 #endif
   view->clearSelection();
-  model->filter(col, text);
+  model->filter(col, text, QVariant(), false /* exact */);
   searchParamsChanged = true;
 }
 
@@ -207,9 +227,9 @@ void SqlController::filterBySpinBox(const Column *col, int value)
   view->clearSelection();
   if(col->getSpinBoxWidget()->value() == col->getSpinBoxWidget()->minimum())
     // Send a null variant if spin box is at minimum value
-    model->filter(col, QVariant(QVariant::Int));
+    model->filter(col, QVariant(QVariant::Int), QVariant(), false /* exact */);
   else
-    model->filter(col, value);
+    model->filter(col, value, QVariant(), false /* exact */);
   searchParamsChanged = true;
 }
 
@@ -219,7 +239,7 @@ void SqlController::showInSearch(const atools::sql::SqlRecord& record, bool igno
   qDebug() << Q_FUNC_INFO << record;
 #endif
   view->clearSelection();
-  model->filterByRecord(record, ignoreQueryBuilder);
+  model->filterByRecord(record, ignoreQueryBuilder, true /* exact */);
   searchParamsChanged = true;
 }
 
@@ -238,7 +258,7 @@ void SqlController::filterByMinMaxSpinBox(const Column *col, int minValue, int m
     // Send a null variant for max if maximum spin box is at maximum value
     maxVal = QVariant(QVariant::Int);
 
-  model->filter(col, minVal, maxVal);
+  model->filter(col, minVal, maxVal, false /* exact */);
   searchParamsChanged = true;
 }
 
@@ -254,19 +274,19 @@ void SqlController::filterByCheckbox(const Column *col, int state, bool triState
     switch(s)
     {
       case Qt::Unchecked:
-        model->filter(col, 0);
+        model->filter(col, 0, QVariant(), false /* exact */);
         break;
       case Qt::PartiallyChecked:
         // null for partially checked
-        model->filter(col, QVariant(QVariant::Int));
+        model->filter(col, QVariant(QVariant::Int), QVariant(), false /* exact */);
         break;
       case Qt::Checked:
-        model->filter(col, 1);
+        model->filter(col, 1, QVariant(), false /* exact */);
         break;
     }
   }
   else
-    model->filter(col, state == Qt::Checked ? 1 : QVariant(QVariant::Int));
+    model->filter(col, state == Qt::Checked ? 1 : QVariant(QVariant::Int), QVariant(), false /* exact */);
   searchParamsChanged = true;
 }
 
@@ -278,9 +298,9 @@ void SqlController::filterByComboBox(const Column *col, int value, bool noFilter
   view->clearSelection();
   if(noFilter)
     // Index 0 for combo box means here: no filter, so remove it and send null variant
-    model->filter(col, QVariant(QVariant::Int));
+    model->filter(col, QVariant(QVariant::Int), QVariant(), false /* exact */);
   else
-    model->filter(col, value);
+    model->filter(col, value, QVariant(), false /* exact */);
   searchParamsChanged = true;
 }
 
@@ -368,11 +388,15 @@ void SqlController::filterByDistanceUpdate(sqlmodeltypes::SearchDirection dir, f
 }
 
 /* Set new model into view and delete old selection model to avoid memory leak */
-void SqlController::viewSetModel(QAbstractItemModel *newModel)
+void SqlController::viewSetModel(QAbstractItemModel *itemModel)
 {
-  QItemSelectionModel *m = view->selectionModel();
-  view->setModel(newModel);
-  delete m;
+  // Update only if different - otherwise view freezes
+  if(itemModel != view->model())
+  {
+    QItemSelectionModel *m = view->selectionModel();
+    view->setModel(itemModel);
+    delete m;
+  }
 }
 
 void SqlController::selectAllRows()
@@ -602,7 +626,7 @@ void SqlController::loadAllRowsForDistanceSearch()
     QGuiApplication::setOverrideCursor(Qt::WaitCursor);
 
     // Run query again
-    model->resetSqlQuery();
+    model->resetSqlQuery(false /* force */);
 
     // Let proxy know that filter parameters have changed
     proxyModel->invalidate();
@@ -628,7 +652,7 @@ void SqlController::loadAllRows()
   if(proxyModel != nullptr)
   {
     // Run query again
-    model->resetSqlQuery();
+    model->resetSqlQuery(false /* force */);
 
     // Let proxy know that filter parameters have changed
     proxyModel->invalidate();

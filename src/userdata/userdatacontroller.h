@@ -156,7 +156,7 @@ public:
 
 signals:
   /* Sent after database modification to update the search result table */
-  void refreshUserdataSearch(bool loadAll, bool keepSelection);
+  void refreshUserdataSearch(bool loadAll, bool keepSelection, bool force);
 
   /* Issue a redraw of the map */
   void userdataChanged();

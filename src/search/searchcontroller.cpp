@@ -159,8 +159,8 @@ void SearchController::tabChanged(int index)
 
 void SearchController::saveState()
 {
-  for(AbstractSearch *s : qAsConst(allSearchTabs))
-    s->saveState();
+  for(AbstractSearch *searchTab : qAsConst(allSearchTabs))
+    searchTab->saveState();
 
   tabHandlerSearch->saveState();
 }
@@ -169,8 +169,8 @@ void SearchController::restoreState()
 {
   tabHandlerSearch->restoreState();
 
-  for(AbstractSearch *s : qAsConst(allSearchTabs))
-    s->restoreState();
+  for(AbstractSearch *searchTab : qAsConst(allSearchTabs))
+    searchTab->restoreState();
 }
 
 void SearchController::createAirportSearch(QTableView *tableView)
@@ -259,12 +259,12 @@ void SearchController::postDatabaseLoad()
 
 void SearchController::refreshUserdata()
 {
-  userdataSearch->refreshData(false /* load all */, true /* keep selection */);
+  userdataSearch->refreshData(false /* load all */, true /* keep selection */, true /* force */);
 }
 
 void SearchController::refreshLogdata()
 {
-  logdataSearch->refreshData(false /* load all */, true /* keep selection */);
+  logdataSearch->refreshData(false /* load all */, true /* keep selection */, true /* force */);
 }
 
 void SearchController::clearSelection()

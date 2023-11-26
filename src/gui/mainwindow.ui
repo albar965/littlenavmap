@@ -655,12 +655,12 @@
             <number>2</number>
            </property>
            <item>
-            <layout class="QHBoxLayout" name="horizontalLayoutAirportNameSearch">
+            <layout class="QHBoxLayout" name="horizontalLayoutAirportTextSearch">
              <property name="spacing">
               <number>0</number>
              </property>
              <item>
-              <widget class="QLineEdit" name="lineEditAirportIcaoSearch">
+              <widget class="QLineEdit" name="lineEditAirportTextSearch">
                <property name="sizePolicy">
                 <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                  <horstretch>1</horstretch>
@@ -668,41 +668,17 @@
                 </sizepolicy>
                </property>
                <property name="toolTip">
-                <string>Airport ICAO, IATA, FAA or local code</string>
+                <string>Airport ident (ICAO, IATA, FAA or local), name, city, state, province, country or area code.
+Searches for partial text in all fields. Note that not all fields are available depending on simulator.</string>
                </property>
                <property name="statusTip">
-                <string>Airport ICAO, IATA, FAA or local code</string>
+                <string>Airport ident (ICAO, IATA, FAA or local), name, city, state, province, country or area code.\nSearches for partial text in all fields.</string>
+               </property>
+               <property name="text">
+                <string/>
                </property>
                <property name="placeholderText">
-                <string>Ident</string>
-               </property>
-               <property name="clearButtonEnabled">
-                <bool>true</bool>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QLineEdit" name="lineEditAirportNameSearch">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-                 <horstretch>2</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="sizeIncrement">
-                <size>
-                 <width>0</width>
-                 <height>0</height>
-                </size>
-               </property>
-               <property name="toolTip">
-                <string>Airport name</string>
-               </property>
-               <property name="statusTip">
-                <string>Airport name</string>
-               </property>
-               <property name="placeholderText">
-                <string>Name</string>
+                <string>Ident, name, city, state, province, country or area code</string>
                </property>
                <property name="clearButtonEnabled">
                 <bool>true</bool>
@@ -803,57 +779,140 @@
             </layout>
            </item>
            <item>
-            <layout class="QHBoxLayout" name="horizontalLayoutAirportNameSearch2">
+            <widget class="Line" name="lineAirportAdminSearch">
+             <property name="lineWidth">
+              <number>4</number>
+             </property>
+             <property name="midLineWidth">
+              <number>2</number>
+             </property>
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <layout class="QVBoxLayout" name="verticalLayoutAirportAdminSearch">
              <property name="spacing">
               <number>0</number>
              </property>
+             <property name="topMargin">
+              <number>0</number>
+             </property>
              <item>
-              <widget class="QLineEdit" name="lineEditAirportCitySearch">
-               <property name="toolTip">
-                <string>Airport city</string>
+              <layout class="QHBoxLayout" name="horizontalLayout_3">
+               <property name="spacing">
+                <number>0</number>
                </property>
-               <property name="statusTip">
-                <string>Airport city</string>
+               <property name="topMargin">
+                <number>0</number>
                </property>
-               <property name="placeholderText">
-                <string>City</string>
-               </property>
-               <property name="clearButtonEnabled">
-                <bool>true</bool>
-               </property>
-              </widget>
+               <item>
+                <widget class="QLineEdit" name="lineEditAirportIcaoSearch">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                   <horstretch>1</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="toolTip">
+                  <string>Airport ICAO, IATA, FAA or local code</string>
+                 </property>
+                 <property name="statusTip">
+                  <string>Airport ICAO, IATA, FAA or local code</string>
+                 </property>
+                 <property name="placeholderText">
+                  <string>Ident</string>
+                 </property>
+                 <property name="clearButtonEnabled">
+                  <bool>true</bool>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QLineEdit" name="lineEditAirportNameSearch">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                   <horstretch>2</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="toolTip">
+                  <string>Airport name</string>
+                 </property>
+                 <property name="statusTip">
+                  <string>Airport name</string>
+                 </property>
+                 <property name="placeholderText">
+                  <string>Name</string>
+                 </property>
+                 <property name="clearButtonEnabled">
+                  <bool>true</bool>
+                 </property>
+                </widget>
+               </item>
+              </layout>
              </item>
              <item>
-              <widget class="QLineEdit" name="lineEditAirportStateSearch">
-               <property name="toolTip">
-                <string>Airport state or province</string>
+              <layout class="QHBoxLayout" name="horizontalLayout_5">
+               <property name="spacing">
+                <number>0</number>
                </property>
-               <property name="statusTip">
-                <string>Airport state or province</string>
+               <property name="topMargin">
+                <number>0</number>
                </property>
-               <property name="placeholderText">
-                <string>State / Province</string>
-               </property>
-               <property name="clearButtonEnabled">
-                <bool>true</bool>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QLineEdit" name="lineEditAirportCountrySearch">
-               <property name="toolTip">
-                <string>Airport country or area code if available</string>
-               </property>
-               <property name="statusTip">
-                <string>Airport country or area code if available</string>
-               </property>
-               <property name="placeholderText">
-                <string>Country / Area Code</string>
-               </property>
-               <property name="clearButtonEnabled">
-                <bool>true</bool>
-               </property>
-              </widget>
+               <item>
+                <widget class="QLineEdit" name="lineEditAirportCitySearch">
+                 <property name="toolTip">
+                  <string>Airport city.
+Not available for all simulators.</string>
+                 </property>
+                 <property name="statusTip">
+                  <string>Airport city</string>
+                 </property>
+                 <property name="placeholderText">
+                  <string>City</string>
+                 </property>
+                 <property name="clearButtonEnabled">
+                  <bool>true</bool>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QLineEdit" name="lineEditAirportStateSearch">
+                 <property name="toolTip">
+                  <string>Airport state or province.
+Not available for all simulators.</string>
+                 </property>
+                 <property name="statusTip">
+                  <string>Airport state or province</string>
+                 </property>
+                 <property name="placeholderText">
+                  <string>State / Province</string>
+                 </property>
+                 <property name="clearButtonEnabled">
+                  <bool>true</bool>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QLineEdit" name="lineEditAirportCountrySearch">
+                 <property name="toolTip">
+                  <string>Airport country or area code.
+Not available for all simulators.</string>
+                 </property>
+                 <property name="statusTip">
+                  <string>Airport country or area code if available</string>
+                 </property>
+                 <property name="placeholderText">
+                  <string>Country / Area Code</string>
+                 </property>
+                 <property name="clearButtonEnabled">
+                  <bool>true</bool>
+                 </property>
+                </widget>
+               </item>
+              </layout>
              </item>
             </layout>
            </item>
@@ -872,8 +931,11 @@
            </item>
            <item>
             <layout class="QGridLayout" name="gridLayoutAirportExtSearch">
-             <property name="spacing">
+             <property name="horizontalSpacing">
               <number>0</number>
+             </property>
+             <property name="verticalSpacing">
+              <number>2</number>
              </property>
              <item row="2" column="6">
               <widget class="QCheckBox" name="checkBoxAirportClosedSearch">
@@ -885,54 +947,6 @@
                </property>
                <property name="text">
                 <string>&amp;Closed</string>
-               </property>
-               <property name="tristate">
-                <bool>true</bool>
-               </property>
-              </widget>
-             </item>
-             <item row="2" column="7">
-              <widget class="QCheckBox" name="checkBoxAirportJetASearch">
-               <property name="toolTip">
-                <string>Airports that have jet fuel</string>
-               </property>
-               <property name="statusTip">
-                <string>Airports that have jet fuel</string>
-               </property>
-               <property name="text">
-                <string>Jet&amp;fuel</string>
-               </property>
-               <property name="tristate">
-                <bool>true</bool>
-               </property>
-              </widget>
-             </item>
-             <item row="2" column="4">
-              <widget class="QCheckBox" name="checkBoxAirportTowerSearch">
-               <property name="toolTip">
-                <string>Airports with tower frequency</string>
-               </property>
-               <property name="statusTip">
-                <string>Airports with tower frequency</string>
-               </property>
-               <property name="text">
-                <string>&amp;Tower</string>
-               </property>
-               <property name="tristate">
-                <bool>true</bool>
-               </property>
-              </widget>
-             </item>
-             <item row="1" column="4">
-              <widget class="QCheckBox" name="checkBoxAirportLightSearch">
-               <property name="toolTip">
-                <string>Airports with at least one lighted runway</string>
-               </property>
-               <property name="statusTip">
-                <string>Airports with at least one lighted runway</string>
-               </property>
-               <property name="text">
-                <string>&amp;Lighted</string>
                </property>
                <property name="tristate">
                 <bool>true</bool>
@@ -955,16 +969,32 @@
                </property>
               </widget>
              </item>
-             <item row="1" column="7">
-              <widget class="QCheckBox" name="checkBoxAirportAvgasSearch">
+             <item row="2" column="4">
+              <widget class="QCheckBox" name="checkBoxAirportTowerSearch">
                <property name="toolTip">
-                <string>Airports that have avgas</string>
+                <string>Airports with tower frequency</string>
                </property>
                <property name="statusTip">
-                <string>Airports that have avgas</string>
+                <string>Airports with tower frequency</string>
                </property>
                <property name="text">
-                <string>Av&amp;gas</string>
+                <string>&amp;Tower</string>
+               </property>
+               <property name="tristate">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="0">
+              <widget class="QCheckBox" name="checkBoxAirportAddonSearch">
+               <property name="toolTip">
+                <string>Add-on airports</string>
+               </property>
+               <property name="statusTip">
+                <string>Add-on airports</string>
+               </property>
+               <property name="text">
+                <string>Add&amp;on</string>
                </property>
                <property name="tristate">
                 <bool>true</bool>
@@ -981,6 +1011,54 @@
                </property>
                <property name="text">
                 <string>&amp;Proc.</string>
+               </property>
+               <property name="tristate">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="4">
+              <widget class="QCheckBox" name="checkBoxAirportLightSearch">
+               <property name="toolTip">
+                <string>Airports with at least one lighted runway</string>
+               </property>
+               <property name="statusTip">
+                <string>Airports with at least one lighted runway</string>
+               </property>
+               <property name="text">
+                <string>&amp;Lighted</string>
+               </property>
+               <property name="tristate">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item row="2" column="7">
+              <widget class="QCheckBox" name="checkBoxAirportJetASearch">
+               <property name="toolTip">
+                <string>Airports that have jet fuel</string>
+               </property>
+               <property name="statusTip">
+                <string>Airports that have jet fuel</string>
+               </property>
+               <property name="text">
+                <string>Jet&amp;fuel</string>
+               </property>
+               <property name="tristate">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="7">
+              <widget class="QCheckBox" name="checkBoxAirportAvgasSearch">
+               <property name="toolTip">
+                <string>Airports that have avgas</string>
+               </property>
+               <property name="statusTip">
+                <string>Airports that have avgas</string>
+               </property>
+               <property name="text">
+                <string>Av&amp;gas</string>
                </property>
                <property name="tristate">
                 <bool>true</bool>
@@ -1004,86 +1082,51 @@
               </widget>
              </item>
              <item row="2" column="0">
-              <layout class="QHBoxLayout" name="horizontalLayoutAirportRatingSearch">
-               <property name="spacing">
-                <number>0</number>
-               </property>
-               <property name="leftMargin">
-                <number>0</number>
-               </property>
-               <property name="topMargin">
-                <number>0</number>
-               </property>
-               <property name="rightMargin">
-                <number>6</number>
-               </property>
-               <property name="bottomMargin">
-                <number>0</number>
-               </property>
-               <item>
-                <widget class="QComboBox" name="comboBoxAirportRatingSearch">
-                 <property name="toolTip">
-                  <string>Airports that have a minimum star rating</string>
-                 </property>
-                 <property name="statusTip">
-                  <string>Airports that have a minimum star rating</string>
-                 </property>
-                 <property name="frame">
-                  <bool>true</bool>
-                 </property>
-                 <item>
-                  <property name="text">
-                   <string>All Ratings</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>At least ★</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>At least ★★</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>At least ★★★</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>At least ★★★★</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>★★★★★</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>3D (X-Plane)</string>
-                  </property>
-                 </item>
-                </widget>
-               </item>
-              </layout>
-             </item>
-             <item row="1" column="0">
-              <widget class="QCheckBox" name="checkBoxAirportAddonSearch">
+              <widget class="QComboBox" name="comboBoxAirportRatingSearch">
                <property name="toolTip">
-                <string>Add-on airports</string>
+                <string>Airports that have a minimum star rating</string>
                </property>
                <property name="statusTip">
-                <string>Add-on airports</string>
+                <string>Airports that have a minimum star rating</string>
                </property>
-               <property name="text">
-                <string>Add&amp;on</string>
-               </property>
-               <property name="tristate">
+               <property name="frame">
                 <bool>true</bool>
                </property>
+               <item>
+                <property name="text">
+                 <string>All Ratings</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>At least ★</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>At least ★★</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>At least ★★★</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>At least ★★★★</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>★★★★★</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>3D (X-Plane)</string>
+                </property>
+               </item>
               </widget>
              </item>
             </layout>
@@ -1974,7 +2017,7 @@
                 <string>Navaid airport ICAO code</string>
                </property>
                <property name="placeholderText">
-                <string>Airport ICAO Code</string>
+                <string>Airport ident</string>
                </property>
                <property name="clearButtonEnabled">
                 <bool>true</bool>
@@ -6903,7 +6946,7 @@ relation to shown airport</string>
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>All</string>
+    <string>Toggle All / None</string>
    </property>
    <property name="toolTip">
     <string>Show all or no additional search options</string>
@@ -6950,7 +6993,7 @@ relation to shown airport</string>
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>All</string>
+    <string>Toggle All / None</string>
    </property>
    <property name="toolTip">
     <string>Show all or no additional navaid search options</string>
@@ -12100,6 +12143,23 @@ relation to shown airport</string>
     <string>Load aircraft trail from a GPX file and append it to the current user aircraft trail</string>
    </property>
   </action>
+  <action name="actionAirportSearchShowAdminOptions">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Names</string>
+   </property>
+   <property name="toolTip">
+    <string>Show airport administrative search options like city names or countries</string>
+   </property>
+   <property name="statusTip">
+    <string>Show airport administrative search options like city names or countries</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <tabstops>
@@ -12146,21 +12206,11 @@ relation to shown airport</string>
   <tabstop>textBrowserAircraftProgressInfo</tabstop>
   <tabstop>textBrowserAircraftAiInfo</tabstop>
   <tabstop>tabWidgetSearch</tabstop>
-  <tabstop>lineEditAirportIcaoSearch</tabstop>
-  <tabstop>lineEditAirportNameSearch</tabstop>
-  <tabstop>pushButtonAirportSearchReset</tabstop>
-  <tabstop>pushButtonAirportSearchClearSelection</tabstop>
-  <tabstop>pushButtonAirportHelpSearch</tabstop>
-  <tabstop>toolButtonAirportSearch</tabstop>
-  <tabstop>lineEditAirportCitySearch</tabstop>
-  <tabstop>lineEditAirportStateSearch</tabstop>
-  <tabstop>lineEditAirportCountrySearch</tabstop>
   <tabstop>checkBoxAirportAddonSearch</tabstop>
   <tabstop>checkBoxAirportLightSearch</tabstop>
   <tabstop>checkBoxAirportIlsSearch</tabstop>
   <tabstop>checkBoxAirportMilSearch</tabstop>
   <tabstop>checkBoxAirportAvgasSearch</tabstop>
-  <tabstop>comboBoxAirportRatingSearch</tabstop>
   <tabstop>checkBoxAirportTowerSearch</tabstop>
   <tabstop>checkBoxAirportApprSearch</tabstop>
   <tabstop>checkBoxAirportClosedSearch</tabstop>
