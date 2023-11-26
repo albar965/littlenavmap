@@ -67,6 +67,8 @@ private:
   /* true if value should be removed (not nulled) */
   bool isRemoveValue(QCheckBox *checkBox);
 
+  void setStrValueOrNull(const QString& name, const QString& value);
+
   atools::sql::SqlRecord *record = nullptr;
   bool multiEdit = false;
 

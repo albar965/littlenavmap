@@ -52,10 +52,18 @@ bool DialogRecordHelper::isRemoveValue(QCheckBox *checkBox)
     return false;
 }
 
+void DialogRecordHelper::setStrValueOrNull(const QString& name, const QString& value)
+{
+  if(value.isEmpty())
+    record->setNull(name);
+  else
+    record->setValue(name, value);
+}
+
 void DialogRecordHelper::dialogToRecordStr(QLineEdit *widget, const QString& name, QCheckBox *checkBox, bool toUpper)
 {
   if(isSetValue(checkBox))
-    record->setValue(name, toUpper ? widget->text().toUpper() : widget->text());
+    setStrValueOrNull(name, toUpper ? widget->text().toUpper() : widget->text());
 
   if(isRemoveValue(checkBox))
     // do not set to null but remove completely
@@ -65,7 +73,7 @@ void DialogRecordHelper::dialogToRecordStr(QLineEdit *widget, const QString& nam
 void DialogRecordHelper::dialogToRecordPath(QLineEdit *widget, const QString& name, QCheckBox *checkBox)
 {
   if(isSetValue(checkBox))
-    record->setValue(name, atools::nativeCleanPath(widget->text()));
+    setStrValueOrNull(name, atools::nativeCleanPath(widget->text()));
 
   if(isRemoveValue(checkBox))
     // do not set to null but remove completely
@@ -75,7 +83,7 @@ void DialogRecordHelper::dialogToRecordPath(QLineEdit *widget, const QString& na
 void DialogRecordHelper::dialogToRecordStr(QPlainTextEdit *widget, const QString& name, QCheckBox *checkBox)
 {
   if(isSetValue(checkBox))
-    record->setValue(name, widget->toPlainText());
+    setStrValueOrNull(name, widget->toPlainText());
 
   if(isRemoveValue(checkBox))
     record->remove(name);
