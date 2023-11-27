@@ -104,20 +104,37 @@ RouteStringDialog::RouteStringDialog(QWidget *parent, const QString& settingsSuf
 
   ui->setupUi(this);
 
-  // Need to set text programatically since Qt Designer add garbage which messes up formatting on other platforms
+  /* *INDENT-OFF* */
+  // Need to set text programatically since Qt Designer adds garbage which messes up formatting on other platforms
   ui->textEditSyntaxHelp->setText(
-    tr("<p><b><big>Quick Help</big></b><br/>"
-       "<b>Format:</b> FROM[ETD] [SPEEDALT] [SIDTRANS] [ENROUTE] [STARTRANS] TO[ETA] [ALTERNATES]<br/>"
-       "<b>Optional fields</b> are enclosed with <b>&quot;[]&quot;</b>.<br/>"
-       "<b>FROM</b> is the required departure airport. Departure time <b>ETD</b> is ignored.<br/>"
-       "<b>SPEEDALT</b> describes flight plan cruise altitude and speed. See manual for format details.<br/>"
-       "<b>SIDTRANS</b> is a SID and an optional transition which can be given as <b>&quot;SID.TRANS&quot;</b> or <b>&quot;SID TRANS&quot;</b>.<br/>"
-       "<b>ENROUTE</b> is a space separated list of navaids, navaid/airway/navaid combinations or user defined waypoints as coordinates.<br/>"
-       "<b>STARTRANS</b> is a STAR and an optional transition which can be given as <b>&quot;STAR.TRANS&quot;</b>, "
-         "<b>&quot;STAR TRANS&quot;</b>, <b>&quot;TRANS.STAR&quot;</b> or <b>&quot;TRANS STAR&quot;</b><br/>"
-         "<b>TO</b> is the required destination airport. Arrival time <b>ETA</b> is ignored.<br/>"
-         "<b>ALTERNATES</b> is a list of alternate or en-route airports depending on selected option.<br/>"
-         "<b>Press the help button to open the online manual for more information.</b></p>"));
+    tr("<p><b><big>Quick Help</big></b></p>"
+       "<p><b>Format:</b> FROM[ETD][/DEPARTRWY] [SPEEDALT] [SIDTRANS] [ENROUTE] [STARTRANS] TO[ETA][/APPROACH] [ALTERNATES]<br/>"
+              "<b>Optional fields</b> are enclosed in <b>&quot;[]&quot;</b>.<br/>"
+              "All text until the first empty line is read as route descrtiption. Lines below can be used as a scratchpad.</p>"
+       "<ul>"
+         "<li><b>FROM</b> is the required departure airport. Departure time <b>&quot;ETD&quot;</b> is ignored.</li>"
+         "<li><b>DEPARTRWY</b> is an optional departure runway separated by a <b>&quot;/&quot;</b>. Example <b>&quot;EDDF/07R&quot;</b>. "
+                           "Must match available runways in SID if used.</li>"
+         "<li><b>SPEEDALT</b> optionally describes the flight plan cruise altitude and speed. "
+                           "Press the help button to open the user manual for format details.</li>"
+         "<li><b>SIDTRANS</b> is a SID and an optional transition, which can be specified as <b>&quot;SID.TRANS&quot;</b> or <b>&quot;SID TRANS&quot;</b>.</li>"
+         "<li><b>ENROUTE</b> is a space-separated list of navaids, navaid/airway/navaid combinations or user-defined waypoints as coordinates.</li>"
+         "<li><b>STARTRANS</b> is a STAR and an optional transition which can be specified as <b>&quot;STAR.TRANS&quot;</b>, "
+                          "<b>&quot;STAR TRANS&quot;</b>, <b>&quot;TRANS.STAR&quot;</b> or <b>&quot;TRANS STAR&quot;</b></li>"
+         "<li><b>TO</b> is the required destination airport. The arrival time <b>&quot;ETA&quot;</b> is ignored.</li>"
+         "<li><b>APPROACH</b> this is either the destination runway such as <b>&quot;EDDH/08L&quot;</b> "
+                          "or an optional transition and approach separated by <b>&quot;.&quot;</b>. The approach/runway field is optional."
+                          "For example, <b>&quot;CYLW/HUMEK.I16-Z&quot;</b> with a transition or <b>&quot;CYLW/R16-Z&quot;</b> without a transition. "
+                          "Note that the approach must be entered in ARINC notation, which is shown in parentheses in the "
+                          "dock window &quot;Search&quot; on tab &quot;Procedures&quot;. "
+                          "The approach runway must match the allowed runways for a SID, if used.</li>"
+         "<li><b>ALTERNATES</b> is a list of alternate or en-route airports depending on the selected option.</li>"
+       "</ul>"
+       "<p><b>Click on the button &quot;Menu&quot; (<img height=\"%1\" src=\":/littlenavmap/resources/icons/menubutton.svg\" />) "
+              "for options to customize the reading and writing of the route description.</b></p>"
+       "<p><b>Click the button &quot;Help&quot; below to open the online manual for more information.</b></p>").arg(this->fontMetrics().height()));
+  /* *INDENT-ON* */
+
 
   // Copy main menu actions to allow using shortcuts in the non-modal dialog too
   if(!blocking)
