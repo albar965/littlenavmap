@@ -72,7 +72,7 @@ public:
   void resetSearch();
 
   /* Filter by using query builder callback */
-  void filterByBuilder();
+  void filterByBuilder(const QWidget* widget);
 
   /* Filter by text at the given index */
   void filterIncluding(const QModelIndex& index, bool forceQueryBuilder, bool exact);

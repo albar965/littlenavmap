@@ -308,8 +308,12 @@ QueryBuilderResult SearchBaseTable::queryBuilderFunc(const QueryWidget& queryWid
     // Split at space boundaries considering quoted texts
     // "ABC DEF" GHI "JK" -> {"ABC DEF", GHI, "JK"}
     const QStringList textList = atools::splitStringAtQuotes(lineEdit->text().trimmed());
-    QStringList queryList;
+    QStringList queryList, excludeQueryList;
     bool overrideQuery = false;
+
+#ifdef DEBUG_INFORMATION
+    qDebug() << Q_FUNC_INFO << textList;
+#endif
 
     // Iterate through all split string parts
     for(QString text : textList)
@@ -319,7 +323,16 @@ QueryBuilderResult SearchBaseTable::queryBuilderFunc(const QueryWidget& queryWid
       if(text.isEmpty())
         continue;
 
+      bool exclude = false;
+      if(text.startsWith('-') && queryWidget.isAllowExclude())
+      {
+        // Negate search "not like '%TEXT%'" or "not like 'TEXT'"
+        text = text.mid(1);
+        exclude = true;
+      }
+
       if(text.startsWith('"') && text.endsWith('"'))
+        // Exact match "like 'TEXT'"
         text = text.chopped(1).mid(1);
       else
       {
@@ -333,7 +346,7 @@ QueryBuilderResult SearchBaseTable::queryBuilderFunc(const QueryWidget& queryWid
 
         text = text.replace('*', '%');
 
-        // Partial search
+        // Partial search "like '%TEXT%'"
         text = '%' % text % '%';
       }
 
@@ -341,23 +354,51 @@ QueryBuilderResult SearchBaseTable::queryBuilderFunc(const QueryWidget& queryWid
       {
         // Escape single quotes to avoid malformed query and resulting exception
         text.replace("'", "''");
-        QString query;
 
         // Cannot use "arg" to build string since percent confuses QString
         QStringList clauses;
         for(const QString& col: queryWidget.getColumns())
-          clauses.append(col % " like " % '\'' % text % '\'');
-        query = '(' % clauses.join(" or ") % ')';
+          if(exclude)
+            clauses.append("coalesce(" % col % ", '') not like \''" % text % '\'');
+          else
+            clauses.append(col % " like " % '\'' % text % '\'');
+        clauses.removeAll(QString());
+        clauses.removeDuplicates();
+
+        QString query = joinQuery(clauses, exclude /* concatAnd */);
 
         if(!query.isEmpty())
-          queryList.append(query);
+        {
+          if(exclude)
+            excludeQueryList.append(query);
+          else
+            queryList.append(query);
+        }
       } // if(!text.isEmpty())
     } // for(const QString& text : textList)
 
-    if(!queryList.isEmpty())
-      return QueryBuilderResult('(' % queryList.join(" or ") % ')', overrideQuery);
+    QStringList queryTextList;
+    queryTextList.append(joinQuery(queryList, false /* concatAnd */));
+    queryTextList.append(joinQuery(excludeQueryList, true /* concatAnd */));
+    queryTextList.removeAll(QString());
+    queryTextList.removeDuplicates();
+
+    QString query = joinQuery(queryTextList, false /* concatAnd */);
+
+#ifdef DEBUG_INFORMATION
+    qDebug() << Q_FUNC_INFO << "query" << query;
+#endif
+
+    return QueryBuilderResult(query, overrideQuery);
   }
   return QueryBuilderResult();
+}
+
+QString SearchBaseTable::joinQuery(const QStringList& texts, bool concatAnd)
+{
+  const static QLatin1String andStr(" and "), orStr(" or ");
+  const QLatin1String& concat = concatAnd ? andStr : orStr;
+  return atools::strJoin("(", texts, concat, concat, ")");
 }
 
 void SearchBaseTable::initViewAndController(atools::sql::SqlDatabase *db)
@@ -461,8 +502,8 @@ void SearchBaseTable::connectSearchWidgets()
         // Only line edit allowed for now
         if(lineEdit != nullptr)
         {
-          connect(lineEdit, &QLineEdit::textChanged, this, [this](const QString&) {
-            controller->filterByBuilder();
+          connect(lineEdit, &QLineEdit::textChanged, this, [this, lineEdit](const QString&) {
+            controller->filterByBuilder(lineEdit);
             updateButtonMenu();
             editStartTimer();
           });

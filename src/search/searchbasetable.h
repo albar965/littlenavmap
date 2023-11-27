@@ -272,6 +272,8 @@ private:
   /* Get selected index or index of first entry in the result table */
   QModelIndex selectedOrFirstIndex();
 
+  QString joinQuery(const QStringList& texts, bool concatAnd);
+
   /* CSV export to clipboard */
   CsvExporter *csvExporter = nullptr;
 

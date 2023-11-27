@@ -37,6 +37,18 @@
 OnlineCenterSearch::OnlineCenterSearch(QMainWindow *parent, QTableView *tableView, si::TabSearchId tabWidgetIndex)
   : SearchBaseTable(parent, tableView, new ColumnList("atc", "atc_id"), tabWidgetIndex)
 {
+  /* *INDENT-OFF* */
+  ui->pushButtonOnlineCenterHelpSearch->setToolTip(
+    "<p>All set search conditions have to match.</p>"
+    "<p>Search tips for text fields: </p>"
+    "<ul>"
+      "<li>Default is search for online centers that contain the entered text.</li>"
+      "<li>Use &quot;*&quot; as a placeholder for any text. </li>"
+      "<li>Prefix with &quot;-&quot; as first character to negate search.</li>"
+      "<li>Only callsign field: Use double quotes like &quot;EGGB_TWR&quot; to force exact search.</li>"
+    "</ul>");
+  /* *INDENT-ON* */
+
   QStringList facilityType;
   facilityType << QString()
                << " > 0"    // No OBSERVER,

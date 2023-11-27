@@ -41,6 +41,20 @@
 NavSearch::NavSearch(QMainWindow *parent, QTableView *tableView, si::TabSearchId tabWidgetIndex)
   : SearchBaseTable(parent, tableView, new ColumnList("nav_search", "nav_search_id"), tabWidgetIndex)
 {
+  /* *INDENT-OFF* */
+  ui->pushButtonNavHelpSearch->setToolTip(
+    "<p>All set search conditions have to match.</p>"
+    "<p>Search tips for text fields: </p>"
+    "<ul>"
+      "<li>Default is search for navaids that contain the entered text.</li>"
+      "<li>Use &quot;*&quot; as a placeholder for any text. </li>"
+      "<li>Prefix with &quot;-&quot; as first character to negate search.</li>"
+      "<li>Only ident field: Use double quotes like &quot;TAU&quot; or &quot;BOMBI&quot; to force exact search.</li>"
+      "<li>Only ident field: Enter a space separated list of idents to look for more than one navaid.</li>"
+    "</ul>");
+  /* *INDENT-ON* */
+
+
   // All widgets that will have their state and visibility saved and restored
   navSearchWidgets =
   {
@@ -177,7 +191,8 @@ NavSearch::NavSearch(QMainWindow *parent, QTableView *tableView, si::TabSearchId
 
   // Assign the callback which builds a part of the where clause for the airport search ======================
   columns->setQueryBuilder(QueryBuilder(std::bind(&SearchBaseTable::queryBuilderFunc, this, std::placeholders::_1),
-                                        {QueryWidget(ui->lineEditNavIcaoSearch, {"ident"}, false /* allowOverride */)}));
+                                        {QueryWidget(ui->lineEditNavIcaoSearch, {"ident"},
+                                                     false /* allowOverride */, false /* allowExclude */)}));
 
   SearchBaseTable::initViewAndController(NavApp::getDatabaseNav());
 

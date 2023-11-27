@@ -71,8 +71,8 @@ private:
 class QueryWidget
 {
 public:
-  QueryWidget(QWidget *widgetParam, const QStringList& columnParam, bool allowOverrideParam)
-    : widget(widgetParam), columns(columnParam), allowOverride(allowOverrideParam)
+  QueryWidget(QWidget *widgetParam, const QStringList& columnParam, bool allowOverrideParam, bool allowExcludeParam)
+    : widget(widgetParam), columns(columnParam), allowOverride(allowOverrideParam), allowExclude(allowExcludeParam)
   {
   }
 
@@ -95,10 +95,16 @@ public:
     return allowOverride;
   }
 
+  /* Allow operator "-" to exclude search terms */
+  bool isAllowExclude() const
+  {
+    return allowExclude;
+  }
+
 private:
   QWidget *widget;
   const QStringList columns;
-  bool allowOverride;
+  bool allowOverride, allowExclude;
 };
 
 typedef QVector<QueryWidget> QueryWidgetVector;

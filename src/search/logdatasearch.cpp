@@ -40,6 +40,18 @@
 LogdataSearch::LogdataSearch(QMainWindow *parent, QTableView *tableView, si::TabSearchId tabWidgetIndex)
   : SearchBaseTable(parent, tableView, new ColumnList("logbook", "logbook_id"), tabWidgetIndex)
 {
+  /* *INDENT-OFF* */
+  ui->pushButtonLogdataHelp->setToolTip(
+    "<p>All set search conditions have to match.</p>"
+    "<p>Search tips for text fields: </p>"
+    "<ul>"
+      "<li>Default is search for logbook entries that contain the entered text.</li>"
+      "<li>Use &quot;*&quot; as a placeholder for any text. </li>"
+      "<li>Use double quotes like &quot;EKSN&quot; to force exact search.</li>"
+      "<li>Prefix with &quot;-&quot; as first character to negate search.</li>"
+    "</ul>");
+  /* *INDENT-ON* */
+
   // All widgets that will have their state and visibility saved and restored
   logdataSearchWidgets =
   {
@@ -103,7 +115,7 @@ LogdataSearch::LogdataSearch(QMainWindow *parent, QTableView *tableView, si::Tab
   // Assign the callback which builds the where clause for the airport search ======================
   columns->setQueryBuilder(QueryBuilder(std::bind(&SearchBaseTable::queryBuilderFunc, this, std::placeholders::_1),
                                         {QueryWidget(ui->lineEditLogdataAirport, {"departure_ident", "destination_ident"},
-                                                     false /* allowOverride */)}));
+                                                     false /* allowOverride */, false /* allowExclude */)}));
 
   SearchBaseTable::initViewAndController(NavApp::getDatabaseLogbook());
 

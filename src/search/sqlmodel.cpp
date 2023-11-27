@@ -51,10 +51,10 @@ SqlModel::~SqlModel()
 {
 }
 
-void SqlModel::filterByBuilder()
+void SqlModel::filterByBuilder(const QWidget *widget)
 {
   qDebug() << Q_FUNC_INFO;
-  buildQuery();
+  buildQuery(widget);
 }
 
 void SqlModel::filterIncluding(QModelIndex index, bool forceQueryBuilder, bool exact)
@@ -121,7 +121,7 @@ void SqlModel::filterBy(bool exclude, QString whereCol, QVariant whereValueDisp,
     whereValueDisp = whereValueDispStr;
   }
 
-  const Column *colDescr = columns->getColumn(whereCol);
+  const Column *col = columns->getColumn(whereCol);
 
   // Ignore callback messages which try to re-run the query when changing widget values
   updatingWidgets = true;
@@ -194,7 +194,7 @@ void SqlModel::filterBy(bool exclude, QString whereCol, QVariant whereValueDisp,
   }
 
   if(!forceQueryBuilder)
-    whereConditionMap.insert(whereCol, {whereOp, whereValueSql, whereValueDisp, colDescr});
+    whereConditionMap.insert(whereCol, {whereOp, whereValueSql, whereValueDisp, col});
 
   // Done updating - allow updates to the query again
   updatingWidgets = false;
@@ -308,7 +308,7 @@ void SqlModel::filter(const Column *col, const QVariant& variantDisp, const QVar
       // Insert new condition
       whereConditionMap.insert(colName, {oper, variantSql, variantDisp, col});
   }
-  buildQuery();
+  buildQuery(col->getLineEditWidget());
 }
 
 void SqlModel::buildSqlWhereValue(QVariant& whereValue, bool exact) const
@@ -476,8 +476,10 @@ QString SqlModel::buildColumnList(const atools::sql::SqlRecord& tableCols)
 }
 
 /* Create SQL query and set it into the model */
-void SqlModel::buildQuery()
+void SqlModel::buildQuery(const QWidget *widgetFromBuilder)
 {
+  Q_UNUSED(widgetFromBuilder)
+
   // Ignore signals/messages from values set in widgets
   if(updatingWidgets)
     return;

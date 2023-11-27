@@ -62,6 +62,24 @@ AirportSearch::AirportSearch(QMainWindow *parent, QTableView *tableView, si::Tab
   unitStringTool = new UnitStringTool;
   unitStringTool->init({ui->spinBoxAirportFlightplanMinSearch, ui->spinBoxAirportFlightplanMaxSearch});
 
+  /* *INDENT-OFF* */
+  ui->pushButtonAirportHelpSearch->setToolTip(
+    "<p>All set search conditions have to match.</p>"
+    "<p>Search tips for text fields:</p>"
+    "<ul>"
+      "<li>Default is to search for airports that contain entered text or words in all data fields like ident or city name, for example.</li>"
+      "<li>Use &quot;*&quot; as a placeholder for any text.</li>"
+      "<li>Use double quotes like &quot;FRA&quot; or &quot;EDDF&quot; to force exact search.</li>"
+      "<li>Only fields that search for idents: Enter a space separated list of words or idents to look for more than one airport.</li>"
+    "</ul>"
+    "<p>Check boxes: </p>"
+    "<ul>"
+      "<li>Gray means: Condition is ignored.</li>"
+      "<li>Checked means: Condition must match.</li>"
+      "<li>Unchecked means: Condition must not match.</li>"
+    "</ul>" );
+  /* *INDENT-ON* */
+
   // All widgets that will have their state and visibility saved and restored
   airportSearchWidgets =
   {
@@ -260,9 +278,11 @@ AirportSearch::AirportSearch(QMainWindow *parent, QTableView *tableView, si::Tab
   // First query builder having matching columns in the list is used
   columns->setQueryBuilder(QueryBuilder(std::bind(&SearchBaseTable::queryBuilderFunc, this, std::placeholders::_1), {
     QueryWidget(ui->lineEditAirportTextSearch,
-                {"ident", "icao", "iata", "faa", "local", "name", "city", "state", "country"}, false /* allowOverride */),
+                {"ident", "icao", "iata", "faa", "local", "name", "city", "state", "country"},
+                false /* allowOverride */, false /* allowExclude */),
     QueryWidget(ui->lineEditAirportIcaoSearch,
-                {"ident", "icao", "iata", "faa", "local"}, true /* allowOverride */)}));
+                {"ident", "icao", "iata", "faa", "local"},
+                true /* allowOverride */, false /* allowExclude */)}));
 
   SearchBaseTable::initViewAndController(NavApp::getDatabaseSim());
 
