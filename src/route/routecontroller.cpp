@@ -5036,7 +5036,7 @@ void RouteController::highlightNextWaypoint(int activeLegIdx)
         if(item->font().bold() && col != 0)
         {
           QFont font = item->font();
-          font.setBold(false);
+          font.setBold(tableViewRoute->font().bold());
           item->setFont(font);
         }
       }
@@ -5174,7 +5174,7 @@ void RouteController::updateModelHighlightsAndErrors()
           {
             // No airway or no errors - leave font bold if this is the active
             QFont font = item->font();
-            font.setBold(false);
+            font.setBold(tableViewRoute->font().bold());
             item->setFont(font);
             item->setToolTip(QString());
           }

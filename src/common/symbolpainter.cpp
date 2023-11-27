@@ -1525,11 +1525,11 @@ QRectF SymbolPainter::textBoxSize(QPainter *painter, const QStringList& texts, t
 
   if(atts.testFlag(textatt::ITALIC) || atts.testFlag(textatt::BOLD) || atts.testFlag(textatt::UNDERLINE))
   {
-    QFont f = painter->font();
-    f.setBold(atts.testFlag(textatt::BOLD));
-    f.setItalic(atts.testFlag(textatt::ITALIC));
-    f.setUnderline(atts.testFlag(textatt::UNDERLINE));
-    painter->setFont(f);
+    QFont font = painter->font();
+    font.setBold(atts.testFlag(textatt::BOLD) || font.bold());
+    font.setItalic(atts.testFlag(textatt::ITALIC));
+    font.setUnderline(atts.testFlag(textatt::UNDERLINE));
+    painter->setFont(font);
   }
 
   QFontMetricsF metrics(painter->font());

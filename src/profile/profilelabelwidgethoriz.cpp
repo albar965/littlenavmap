@@ -94,7 +94,7 @@ void ProfileLabelWidgetHoriz::paintEvent(QPaintEvent *)
     // Prepare normal font sligthly smaller ============
     QFont fontNormal = QApplication::font();
     fontNormal.setPointSizeF(fontNormal.pointSizeF() * 0.85);
-    fontNormal.setBold(false);
+    fontNormal.setBold(QApplication::font().bold());
     QFontMetrics metricsNormal(fontNormal);
 
     QPoint offset = scrollArea->getOffset();
