@@ -1655,8 +1655,8 @@ void MainWindow::actionShortcutAirportSearchTriggered()
   qDebug() << Q_FUNC_INFO;
   dockHandler->activateWindow(ui->dockWidgetSearch);
   searchController->setCurrentSearchTabId(si::SEARCH_AIRPORT);
-  ui->lineEditAirportIcaoSearch->setFocus();
-  ui->lineEditAirportIcaoSearch->selectAll();
+  ui->lineEditAirportTextSearch->setFocus();
+  ui->lineEditAirportTextSearch->selectAll();
 }
 
 void MainWindow::actionShortcutNavaidSearchTriggered()
