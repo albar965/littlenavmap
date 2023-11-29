@@ -95,9 +95,13 @@ public:
   void setCacheMapThemeDir(const QString& mapThemesDir);
   void setCacheOfflineDataPath(const QString& globeDir);
 
+  void fontChanged(const QFont& font);
+
 signals:
   /* Emitted whenever OK or Apply is pressed on the dialog window */
   void optionsChanged();
+
+  /* QGuiApplication::fontChanged is emitted for font changes */
 
 private:
   /* Catch close button too since dialog is kept alive */
@@ -257,7 +261,7 @@ private:
   void resetGuiFontClicked();
   void selectMapFontClicked();
   void resetMapFontClicked();
-  void buildFontDialog();
+  void buildFontDialog(const QFont& initialFont);
   void toolbarSizeClicked();
 
   void flightplanPatterShortClicked();

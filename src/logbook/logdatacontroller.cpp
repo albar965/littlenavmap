@@ -184,6 +184,11 @@ void LogdataController::optionsChanged()
   statsDialog->optionsChanged();
 }
 
+void LogdataController::fontChanged(const QFont& font)
+{
+  statsDialog->fontChanged(font);
+}
+
 void LogdataController::styleChanged()
 {
   statsDialog->styleChanged();

@@ -490,6 +490,12 @@ void RouteStringDialog::addRouteDescription(const QString& routeString)
   ui->textEditRouteString->setFocus();
 }
 
+void RouteStringDialog::fontChanged(const QFont& font)
+{
+  atools::gui::updateAllFonts(this, font);
+  ui->textEditRouteString->document()->setDefaultFont(atools::gui::getBestFixedFont());
+}
+
 void RouteStringDialog::styleChanged()
 {
   if(sytaxHighlighter != nullptr)

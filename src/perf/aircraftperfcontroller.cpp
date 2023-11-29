@@ -68,8 +68,6 @@ AircraftPerfController::AircraftPerfController(MainWindow *parent)
   fuelFlowGroundspeedAverage = new atools::util::MovingAverageTime(10000);
 
   lastSimData = new atools::fs::sc::SimConnectData();
-  // Remember original font for resizing in options
-  infoFontPtSize = static_cast<float>(ui->textBrowserAircraftPerformanceReport->font().pointSizeF());
 
   QStringList paths({QApplication::applicationDirPath()});
   ui->textBrowserAircraftPerformanceReport->setSearchPaths(paths);
@@ -1429,14 +1427,9 @@ void AircraftPerfController::optionsChanged()
 {
   Ui::MainWindow *ui = NavApp::getMainUi();
 
-  QFont f = ui->textBrowserAircraftPerformanceReport->font();
-  float newSize = infoFontPtSize * OptionData::instance().getGuiPerfReportTextSize() / 100.f;
-  if(newSize > 0.1f)
-  {
-    f.setPointSizeF(newSize);
-    ui->textBrowserAircraftPerformanceReport->setFont(f);
-    ui->textBrowserAircraftPerformanceCurrent->setFont(f);
-  }
+  int sizePercent = OptionData::instance().getGuiPerfReportTextSize();
+  atools::gui::setWidgetFontSize(ui->textBrowserAircraftPerformanceReport, sizePercent);
+  atools::gui::setWidgetFontSize(ui->textBrowserAircraftPerformanceCurrent, sizePercent);
 
   symbolSize = ui->textBrowserAircraftPerformanceReport->fontMetrics().height() * 4 / 3;
 

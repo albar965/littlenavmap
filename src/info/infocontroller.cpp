@@ -87,9 +87,6 @@ InfoController::InfoController(MainWindow *parent)
                                                          tr("Open or close tabs"));
   tabHandlerAircraft->init(ic::TabAircraftIds, lnm::INFOWINDOW_WIDGET_AIRCRAFT_TABS);
 
-  infoFontPtSize = static_cast<float>(ui->textBrowserAirportInfo->font().pointSizeF());
-  simInfoFontPtSize = static_cast<float>(ui->textBrowserAircraftInfo->font().pointSizeF());
-
   // Set search path to silence text browser warnings
   QStringList paths({QApplication::applicationDirPath()});
   ui->textBrowserAirportInfo->setSearchPaths(paths);
@@ -1424,50 +1421,44 @@ void InfoController::optionsChanged()
   updateAircraftInfo();
 }
 
+void InfoController::fontChanged(const QFont&)
+{
+  optionsChanged();
+}
+
 /* Update font size in text browsers if options have changed */
 void InfoController::updateTextEditFontSizes()
 {
   Ui::MainWindow *ui = NavApp::getMainUi();
 
-  int sizePercent = OptionData::instance().getGuiInfoTextSize();
-  setTextEditFontSize(ui->textBrowserAirportInfo, infoFontPtSize, sizePercent);
-  setTextEditFontSize(ui->textBrowserRunwayInfo, infoFontPtSize, sizePercent);
-  setTextEditFontSize(ui->textBrowserComInfo, infoFontPtSize, sizePercent);
-  setTextEditFontSize(ui->textBrowserApproachInfo, infoFontPtSize, sizePercent);
-  setTextEditFontSize(ui->textBrowserNearestInfo, infoFontPtSize, sizePercent);
-  setTextEditFontSize(ui->textBrowserWeatherInfo, infoFontPtSize, sizePercent);
-  setTextEditFontSize(ui->textBrowserNavaidInfo, infoFontPtSize, sizePercent);
-  setTextEditFontSize(ui->textBrowserUserpointInfo, infoFontPtSize, sizePercent);
-  setTextEditFontSize(ui->textBrowserAirspaceInfo, infoFontPtSize, sizePercent);
-  setTextEditFontSize(ui->textBrowserLogbookInfo, infoFontPtSize, sizePercent);
+  using atools::gui::setWidgetFontSize;
 
-  setTextEditFontSize(ui->textBrowserCenterInfo, infoFontPtSize, sizePercent);
-  setTextEditFontSize(ui->textBrowserClientInfo, infoFontPtSize, sizePercent);
+  int sizePercentInfo = OptionData::instance().getGuiInfoTextSize();
+  setWidgetFontSize(ui->textBrowserAirportInfo, sizePercentInfo);
+  setWidgetFontSize(ui->textBrowserRunwayInfo, sizePercentInfo);
+  setWidgetFontSize(ui->textBrowserComInfo, sizePercentInfo);
+  setWidgetFontSize(ui->textBrowserApproachInfo, sizePercentInfo);
+  setWidgetFontSize(ui->textBrowserNearestInfo, sizePercentInfo);
+  setWidgetFontSize(ui->textBrowserWeatherInfo, sizePercentInfo);
+  setWidgetFontSize(ui->textBrowserNavaidInfo, sizePercentInfo);
+  setWidgetFontSize(ui->textBrowserUserpointInfo, sizePercentInfo);
+  setWidgetFontSize(ui->textBrowserAirspaceInfo, sizePercentInfo);
+  setWidgetFontSize(ui->textBrowserLogbookInfo, sizePercentInfo);
+  setWidgetFontSize(ui->textBrowserCenterInfo, sizePercentInfo);
+  setWidgetFontSize(ui->textBrowserClientInfo, sizePercentInfo);
 
-  sizePercent = OptionData::instance().getGuiInfoSimSize();
-  setTextEditFontSize(ui->textBrowserAircraftInfo, simInfoFontPtSize, sizePercent);
-  setTextEditFontSize(ui->textBrowserAircraftProgressInfo, simInfoFontPtSize, sizePercent);
-  setTextEditFontSize(ui->textBrowserAircraftAiInfo, simInfoFontPtSize, sizePercent);
+  int sizePercentSim = OptionData::instance().getGuiInfoSimSize();
+  setWidgetFontSize(ui->textBrowserAircraftInfo, sizePercentSim);
+  setWidgetFontSize(ui->textBrowserAircraftProgressInfo, sizePercentSim);
+  setWidgetFontSize(ui->textBrowserAircraftAiInfo, sizePercentSim);
 
   // Adjust symbol sizes
-  int infoFontPixelSize = ui->textBrowserAirportInfo->fontMetrics().height();
+  int infoFontPixelSize = atools::roundToInt(QFontMetricsF(ui->textBrowserAirportInfo->font()).height() * 1.2);
   infoBuilder->setSymbolSize(QSize(infoFontPixelSize, infoFontPixelSize));
-  infoBuilder->setSymbolSizeTitle(QSize(infoFontPixelSize, infoFontPixelSize) * 3 / 2);
+  infoBuilder->setSymbolSizeTitle(QSize(infoFontPixelSize, infoFontPixelSize));
 
-  int simInfoFontPixelSize = ui->textBrowserAircraftInfo->fontMetrics().height();
-  infoBuilder->setSymbolSizeVehicle(QSize(simInfoFontPixelSize, simInfoFontPixelSize) * 3 / 2);
-}
-
-/* Set font size in text edit based on percent of original size */
-void InfoController::setTextEditFontSize(QTextEdit *textEdit, float origSize, int percent)
-{
-  QFont f = textEdit->font();
-  float newSize = origSize * percent / 100.f;
-  if(newSize > 0.1f)
-  {
-    f.setPointSizeF(newSize);
-    textEdit->setFont(f);
-  }
+  infoFontPixelSize = atools::roundToInt(QFontMetricsF(ui->textBrowserAircraftInfo->font()).height() * 1.4);
+  infoBuilder->setSymbolSizeVehicle(QSize(infoFontPixelSize, infoFontPixelSize));
 }
 
 QStringList InfoController::getAirportTextFull(const QString& ident) const

@@ -107,6 +107,7 @@ public:
 
   void optionsChanged();
   void styleChanged();
+  void fontChanged(const QFont& font);
 
   void saveState();
   void restoreState();
@@ -265,7 +266,7 @@ private:
 
   void updateTooltip();
 
-  void buildTooltip(int x, bool force);
+  void buildTooltipText(int x, bool force);
 
   /* Get either indicated or real */
   float aircraftAlt(const atools::fs::sc::SimConnectUserAircraft& aircraft);

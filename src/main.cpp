@@ -282,9 +282,7 @@ int main(int argc, char *argv[])
       if(!fontStr.isEmpty())
       {
         font.fromString(fontStr);
-
-        if(font != QApplication::font())
-          QApplication::setFont(font);
+        QApplication::setFont(font);
       }
       qInfo() << "Loaded font" << font.toString() << "from options. Stored font info" << fontStr;
 
@@ -381,9 +379,7 @@ int main(int argc, char *argv[])
       QApplication::setEffectEnabled(Qt::UI_FadeTooltip, false);
       QApplication::setEffectEnabled(Qt::UI_AnimateTooltip, false);
 
-#if QT_VERSION > QT_VERSION_CHECK(5, 10, 0)
       QApplication::setAttribute(Qt::AA_DisableWindowContextHelpButton);
-#endif
 
       // =============================================================================================
       // Check if database is compatible and ask the user to erase all incompatible ones

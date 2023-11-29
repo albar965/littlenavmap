@@ -159,20 +159,7 @@ bool TableSortProxyModel::lessThan(const QModelIndex& leftIndex, const QModelInd
     bool rightData = sourceModel()->data(rightIndex, CHECK_STATE_ROLE).toBool();
 
     // Workaround a bug in older Qt versions where rows jump after changing
-#if QT_VERSION < QT_VERSION_CHECK(5, 12, 0)
-    if(leftData == rightData)
-    {
-      QString leftData = sourceModel()->data(sourceModel()->index(leftIndex.row(), DESCRIPTION)).toString();
-      QString rightData = sourceModel()->data(sourceModel()->index(rightIndex.row(), DESCRIPTION)).toString();
-      return QString::localeAwareCompare(leftData, rightData) < 0;
-    }
-    else
-      return leftData > rightData;
-
-#else
     return leftData < rightData;
-
-#endif
   }
   else
     return QString::localeAwareCompare(sourceModel()->data(leftIndex).toString(),
@@ -216,9 +203,7 @@ RouteMultiExportDialog::RouteMultiExportDialog(QWidget *parent, RouteExportForma
 
   // Allow moving of section except the first BUTTON section
   ui->tableViewRouteExport->horizontalHeader()->setSectionsMovable(true);
-#if QT_VERSION >= QT_VERSION_CHECK(5, 11, 0)
   ui->tableViewRouteExport->horizontalHeader()->setFirstSectionMovable(false);
-#endif
 
   // Resize widget to get rid of the too large default margins and allow to change size from context menu
   zoomHandler = new atools::gui::ItemViewZoomHandler(ui->tableViewRouteExport, ui->actionIncreaseTextSize,
@@ -331,6 +316,11 @@ void RouteMultiExportDialog::restoreState()
   updateActions();
 
   loadTableLayout();
+}
+
+void RouteMultiExportDialog::fontChanged(const QFont&)
+{
+  zoomHandler->zoomPercent();
 }
 
 void RouteMultiExportDialog::saveDialogState()

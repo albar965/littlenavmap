@@ -22,7 +22,6 @@
 
 #include <QDialog>
 #include <QMap>
-#include <functional>
 
 namespace Ui {
 class RouteMultiExportDialog;
@@ -64,6 +63,8 @@ public:
   /* Save and restore dialog state */
   void saveState();
   void restoreState();
+
+  void fontChanged(const QFont&);
 
   enum ExportOptions
   {

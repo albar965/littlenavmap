@@ -130,7 +130,7 @@ ProcedureSearch::ProcedureSearch(QMainWindow *main, QTreeWidget *treeWidgetParam
   currentAirportSim = new map::MapAirport;
 
   zoomHandler = new atools::gui::ItemViewZoomHandler(treeWidget);
-  connect(NavApp::navAppInstance(), &atools::gui::Application::fontChanged, this, &ProcedureSearch::fontChanged);
+  connect(NavApp::navAppInstance(), &QGuiApplication::fontChanged, this, &ProcedureSearch::fontChanged);
   gridDelegate = new atools::gui::GridDelegate(treeWidget);
   gridDelegate->setHeightIncrease(0);
   treeWidget->setItemDelegate(gridDelegate);
@@ -217,12 +217,12 @@ void ProcedureSearch::airportLabelLinkActivated(const QString& link)
   }
 }
 
-void ProcedureSearch::fontChanged()
+void ProcedureSearch::fontChanged(const QFont&)
 {
   qDebug() << Q_FUNC_INFO;
 
-  zoomHandler->fontChanged();
   optionsChanged();
+  zoomHandler->zoomPercent(OptionData::instance().getGuiSearchTableTextSize());
 }
 
 void ProcedureSearch::resetSearch()

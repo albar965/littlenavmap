@@ -133,16 +133,6 @@ const QFont OptionData::getMapFont() const
   return font;
 }
 
-const QFont OptionData::getGuiFont() const
-{
-  QFont font;
-  if(!guiFont.isEmpty())
-    font.fromString(guiFont);
-  else
-    font = QFontDatabase::systemFont(QFontDatabase::GeneralFont);
-  return font;
-}
-
 int OptionData::getOnlineReload(opts::OnlineNetwork network) const
 {
   switch(network)

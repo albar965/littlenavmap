@@ -103,6 +103,7 @@ public:
 
   /* Program options have changed */
   void optionsChanged();
+  void fontChanged(const QFont&);
 
   /* Get airport information as HTML in the string list. Order is main, runway, com, procedure and weather.
    * List is empty if airport does not exist. Uses own white background color for tables. */
@@ -139,7 +140,6 @@ private:
   bool updateUserpointInternal(const map::MapResult& result, bool bearingChanged, bool scrollToTop);
 
   void updateTextEditFontSizes();
-  void setTextEditFontSize(QTextEdit *textEdit, float origSize, int percent);
   void anchorClicked(const QUrl& url);
   void clearInfoTextBrowsers();
   void showInformationInternal(map::MapResult result, bool showWindows, bool scrollToTop, bool forceUpdate);
@@ -188,7 +188,6 @@ private:
   AirspaceController *airspaceController = nullptr;
   HtmlInfoBuilder *infoBuilder = nullptr;
 
-  float simInfoFontPtSize = 10.f, infoFontPtSize = 10.f;
   bool lessAircraftProgress = false;
 
   AircraftProgressConfig *aircraftProgressConfig;

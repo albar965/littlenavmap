@@ -261,6 +261,12 @@ void LogStatisticsDialog::styleChanged()
   atools::gui::adjustSelectionColors(ui->tableViewLogStatsGrouped);
 }
 
+void LogStatisticsDialog::fontChanged(const QFont& font)
+{
+  atools::gui::updateAllFonts(this, font);
+  zoomHandler->zoomPercent();
+}
+
 void LogStatisticsDialog::buttonBoxClicked(QAbstractButton *button)
 {
   QDialogButtonBox::StandardButton buttonType = ui->buttonBoxLogStats->standardButton(button);

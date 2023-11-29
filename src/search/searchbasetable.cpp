@@ -136,9 +136,7 @@ SearchBaseTable::SearchBaseTable(QMainWindow *parent, QTableView *tableView, Col
   airportQuery = NavApp::getAirportQuerySim();
 
   zoomHandler = new atools::gui::ItemViewZoomHandler(view);
-#if QT_VERSION >= QT_VERSION_CHECK(5, 11, 0)
   connect(NavApp::navAppInstance(), &atools::gui::Application::fontChanged, this, &SearchBaseTable::fontChanged);
-#endif
 
   // Avoid stealing of Ctrl-C from other default menus
   ui->actionSearchTableCopy->setShortcutContext(Qt::WidgetWithChildrenShortcut);
@@ -243,8 +241,8 @@ void SearchBaseTable::fontChanged()
 {
   qDebug() << Q_FUNC_INFO;
 
-  zoomHandler->fontChanged();
   optionsChanged();
+  zoomHandler->zoomPercent(OptionData::instance().getGuiSearchTableTextSize());
 }
 
 /* Copy the selected rows of the table view as CSV into clipboard */

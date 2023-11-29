@@ -1231,9 +1231,6 @@ public:
   /* Get selected font for map. Falls back to GUI font and then back to system font. */
   const QFont getMapFont() const;
 
-  /* Get user interface font */
-  const QFont getGuiFont() const;
-
   /* User set online refresh rate in seconds for custom configurations or stock networks in seconds
    * or -1 for auto value fetched from whazzup or JSON */
   int getOnlineReload(opts::OnlineNetwork network) const;

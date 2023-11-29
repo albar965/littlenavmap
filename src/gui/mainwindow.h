@@ -271,6 +271,9 @@ public:
   /* Set current and default path for the LNMPLN export */
   void setLnmplnExportDir(const QString& dir);
 
+  /* Called by QApplication::fontChanged() */
+  void fontChanged(const QFont& font);
+
 signals:
   /* Emitted when window is shown the first time */
   void windowShown();

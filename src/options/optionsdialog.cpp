@@ -756,6 +756,17 @@ void OptionsDialog::setCacheOfflineDataPath(const QString& globeDir)
   }
 }
 
+void OptionsDialog::fontChanged(const QFont& font)
+{
+  atools::gui::updateAllFonts(this, font);
+
+  zoomHandlerMapThemeKeysTable->zoomPercent();
+  zoomHandlerLabelTree->zoomPercent();
+  zoomHandlerDatabaseInclude->zoomPercent();
+  zoomHandlerDatabaseExclude->zoomPercent();
+  zoomHandlerDatabaseAddonExclude->zoomPercent();
+}
+
 void OptionsDialog::open()
 {
   qDebug() << Q_FUNC_INFO;
@@ -2983,13 +2994,15 @@ void OptionsDialog::resetMapFontClicked()
   updateMapFontLabel();
 }
 
-void OptionsDialog::buildFontDialog()
+void OptionsDialog::buildFontDialog(const QFont& initialFont)
 {
   if(fontDialog == nullptr)
   {
-    fontDialog = new QFontDialog(this);
+    fontDialog = new QFontDialog(initialFont, this);
     fontDialog->setWindowTitle(tr("%1 - Select font").arg(QApplication::applicationName()));
   }
+
+  fontDialog->setCurrentFont(initialFont);
 }
 
 void OptionsDialog::selectMapFontClicked()
@@ -3005,8 +3018,7 @@ void OptionsDialog::selectMapFontClicked()
     // Fall back to system font
     font = QFontDatabase::systemFont(QFontDatabase::GeneralFont);
 
-  buildFontDialog();
-  fontDialog->setCurrentFont(font);
+  buildFontDialog(font);
   NavApp::setStayOnTop(fontDialog);
   if(fontDialog->exec())
   {
@@ -3021,40 +3033,30 @@ void OptionsDialog::resetGuiFontClicked()
   guiFont.clear();
 
   // Set GUI back to system font
-  QFont font = QFontDatabase::systemFont(QFontDatabase::GeneralFont);
-  qDebug() << Q_FUNC_INFO << font;
-  QApplication::setFont(font);
+  QApplication::setFont(QFontDatabase::systemFont(QFontDatabase::GeneralFont));
 
   updateGuiFontLabel();
 }
 
 void OptionsDialog::selectGuiFontClicked()
 {
-  QFont font;
-  if(guiFont.isEmpty())
-    // Empty description means system font
-    font = QFontDatabase::systemFont(QFontDatabase::GeneralFont);
-  else
-    font.fromString(guiFont);
-
-  buildFontDialog();
-  fontDialog->setCurrentFont(font);
+  buildFontDialog(QApplication::font());
   NavApp::setStayOnTop(fontDialog);
   if(fontDialog->exec())
   {
-    QFont selfont = fontDialog->selectedFont();
+    QFont selectedFont = fontDialog->selectedFont();
 
     // Limit size to keep the user from messing up the UI without an option to change
     bool corrected = false;
-    if(selfont.pointSizeF() > 30.)
+    if(selectedFont.pointSizeF() > 30.)
     {
-      selfont.setPointSizeF(30.);
+      selectedFont.setPointSizeF(30.);
       corrected = true;
     }
 
-    if(selfont.pixelSize() > 30)
+    if(selectedFont.pixelSize() > 30)
     {
-      selfont.setPixelSize(30);
+      selectedFont.setPixelSize(30);
       corrected = true;
     }
 
@@ -3062,12 +3064,12 @@ void OptionsDialog::selectGuiFontClicked()
       QMessageBox::warning(this, QApplication::applicationName(),
                            tr("Font too large for user interface. Size was corrected. Maximum is 30 pixels/points."));
 
-    guiFont = selfont.toString();
-    qDebug() << Q_FUNC_INFO << guiFont;
+    guiFont = selectedFont.toString();
+    qDebug() << Q_FUNC_INFO << selectedFont;
 
     // the user clicked OK and font is set to the font the user selected
-    if(QApplication::font() != selfont)
-      QApplication::setFont(selfont);
+    QApplication::setFont(selectedFont);
+
     updateGuiFontLabel();
   }
 }
@@ -3083,8 +3085,7 @@ void OptionsDialog::updateFontFromData()
   else
     font.fromString(data.guiFont);
 
-  if(QApplication::font() != font)
-    QApplication::setFont(font);
+  QApplication::setFont(font);
 }
 
 void OptionsDialog::mapboxUserMapClicked()

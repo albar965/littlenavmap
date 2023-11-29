@@ -16,6 +16,7 @@
 *****************************************************************************/
 
 #include "profile/profilescrollarea.h"
+#include "gui/tools.h"
 #include "profile/profilewidget.h"
 #include "profile/profilelabelwidgetvert.h"
 #include "profile/profilelabelwidgethoriz.h"
@@ -905,6 +906,11 @@ void ProfileScrollArea::optionsChanged()
   hideTooltip();
   profileLabelWidgetHoriz->optionsChanged();
   profileLabelWidgetVert->optionsChanged();
+}
+
+void ProfileScrollArea::fontChanged(const QFont& font)
+{
+  atools::gui::updateAllFonts(this, font);
 }
 
 void ProfileScrollArea::setMaxVertZoom()

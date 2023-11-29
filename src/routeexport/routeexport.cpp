@@ -60,6 +60,8 @@ RouteExport::RouteExport(MainWindow *parent)
 
   // Export all selected in button bar
   connect(multiExportDialog, &RouteMultiExportDialog::saveSelectedButtonClicked, this, &RouteExport::routeMultiExport);
+
+  connect(NavApp::navAppInstance(), &QGuiApplication::fontChanged, multiExportDialog, &RouteMultiExportDialog::fontChanged);
 }
 
 RouteExport::~RouteExport()

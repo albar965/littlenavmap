@@ -43,6 +43,7 @@
 #include "gui/stylehandler.h"
 #include "gui/tabwidgethandler.h"
 #include "gui/timedialog.h"
+#include "gui/tools.h"
 #include "gui/translator.h"
 #include "gui/widgetstate.h"
 #include "info/infocontroller.h"
@@ -972,6 +973,20 @@ void MainWindow::connectAllSlots()
   connect(optionsDialog, &OptionsDialog::optionsChanged, NavApp::getTrackController(), &TrackController::optionsChanged);
   connect(optionsDialog, &OptionsDialog::optionsChanged, this, &MainWindow::saveStateNow);
   connect(optionsDialog, &OptionsDialog::optionsChanged, this, &MainWindow::optionsChanged);
+
+  // Options dialog font ===================================================================
+  QGuiApplication *app = dynamic_cast<QGuiApplication *>(QCoreApplication::instance());
+  if(app != nullptr)
+  {
+    connect(app, &QGuiApplication::fontChanged, this, &MainWindow::fontChanged);
+    connect(app, &QGuiApplication::fontChanged, NavApp::getLogdataController(), &LogdataController::fontChanged);
+    connect(app, &QGuiApplication::fontChanged, routeController, &RouteController::fontChanged);
+    connect(app, &QGuiApplication::fontChanged, infoController, &InfoController::fontChanged);
+    connect(app, &QGuiApplication::fontChanged, routeStringDialog, &RouteStringDialog::fontChanged);
+    connect(app, &QGuiApplication::fontChanged, optionsDialog, &OptionsDialog::fontChanged);
+    connect(app, &QGuiApplication::fontChanged, profileWidget, &ProfileWidget::fontChanged);
+    connect(app, &QGuiApplication::fontChanged, menuWidget(), &QWidget::setFont);
+  }
 
   // Warning when selecting export options ===================================================================
   connect(ui->actionRouteSaveApprWaypointsOpt, &QAction::toggled, routeExport, &RouteExport::warnExportOptionsFromMenu);
@@ -3185,7 +3200,7 @@ void MainWindow::mainWindowShown()
   // Show a warning if map theme folders do not exist
   QTimer::singleShot(0, this, &MapThemeHandler::validateMapThemeDirectories);
 
-  // Need to set the font again to pass it on to all menus
+  // Need to set the font again to pass it on to all menus since these are opened later
   qDebug() << Q_FUNC_INFO << "QApplication::font()" << QApplication::font();
   QApplication::setFont(QApplication::font());
 
@@ -3946,6 +3961,11 @@ void MainWindow::optionsChanged()
 
   if(mapThemeHandler != nullptr)
     mapThemeHandler->optionsChanged();
+}
+
+void MainWindow::fontChanged(const QFont& font)
+{
+  atools::gui::updateAllFonts(this, font);
 }
 
 void MainWindow::updateMapKeys()

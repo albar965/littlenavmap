@@ -174,7 +174,7 @@ void MapPainterTop::paintCopyright()
     Marble::GeoPainter *painter = context->painter;
     atools::util::PainterContextSaver saver(painter);
 
-    painter->setFont(OptionData::instance().getGuiFont());
+    painter->setFont(QApplication::font());
     mapcolors::scaleFont(painter, 0.9f);
 
     // Move text more into the center for web apps

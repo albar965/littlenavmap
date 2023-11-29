@@ -889,7 +889,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
   // Nothing to show label =========================
   if(NavApp::getRouteConst().isEmpty())
   {
-    setFont(optionData.getGuiFont());
+    setFont(QApplication::font());
     painter.fillRect(rect(), QApplication::palette().color(QPalette::Base));
     symPainter.textBox(&painter, {tr("No Flight Plan")}, QApplication::palette().color(QPalette::PlaceholderText),
                        4, painter.fontMetrics().ascent(), textatt::RIGHT, 0);
@@ -898,7 +898,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
   }
   else if(!hasValidRouteForDisplay())
   {
-    QFont font = optionData.getGuiFont();
+    QFont font = QApplication::font();
     font.setBold(true);
     setFont(font);
     painter.fillRect(rect(), QApplication::palette().color(QPalette::Base));
@@ -2221,7 +2221,7 @@ void ProfileWidget::mouseMoveEvent(QMouseEvent *mouseEvent)
   rubberBand->setGeometry(x - 1, 0, 2, rect().height());
   rubberBand->show();
 
-  buildTooltip(x, false /* force */);
+  buildTooltipText(x, false /* force */);
   lastTooltipScreenPos = mouseEvent->globalPos();
   // Show tooltip
   if(!lastTooltipString.isEmpty())
@@ -2247,13 +2247,13 @@ void ProfileWidget::updateTooltip()
 {
   if(scrollArea->isTooltipVisible())
   {
-    buildTooltip(lastTooltipX, true /* force */);
+    buildTooltipText(lastTooltipX, true /* force */);
     if(!lastTooltipString.isEmpty())
       scrollArea->showTooltip(lastTooltipScreenPos, lastTooltipString);
   }
 }
 
-void ProfileWidget::buildTooltip(int x, bool force)
+void ProfileWidget::buildTooltipText(int x, bool force)
 {
   // Nothing to show label =========================
   if(!hasValidRouteForDisplay())
@@ -2694,6 +2694,11 @@ void ProfileWidget::optionsChanged()
 void ProfileWidget::styleChanged()
 {
   scrollArea->styleChanged();
+}
+
+void ProfileWidget::fontChanged(const QFont& font)
+{
+  scrollArea->fontChanged(font);
 }
 
 void ProfileWidget::saveState()

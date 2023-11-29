@@ -245,9 +245,6 @@ RouteController::RouteController(QMainWindow *parentWindow, QTableView *tableVie
 
   // Set default table cell and font size to avoid Qt overly large cell sizes
   zoomHandler = new atools::gui::ItemViewZoomHandler(tableViewRoute);
-#if QT_VERSION >= QT_VERSION_CHECK(5, 11, 0)
-  connect(NavApp::navAppInstance(), &atools::gui::Application::fontChanged, this, &RouteController::fontChanged);
-#endif
 
   entryBuilder = new FlightplanEntryBuilder();
 
@@ -434,14 +431,6 @@ RouteController::~RouteController()
   ATOOLS_DELETE_LOG(symbolPainter);
   ATOOLS_DELETE_LOG(routeLabel);
   ATOOLS_DELETE_LOG(flightplanIO);
-}
-
-void RouteController::fontChanged()
-{
-  qDebug() << Q_FUNC_INFO;
-
-  zoomHandler->fontChanged();
-  optionsChanged();
 }
 
 void RouteController::undoTriggered()
@@ -3220,6 +3209,13 @@ void RouteController::optionsChanged()
   tableViewRoute->update();
 
   updateCleanupTimer();
+}
+
+void RouteController::fontChanged(const QFont& font)
+{
+  atools::gui::updateAllFonts(routeCalcDialog, font);
+  zoomHandler->zoomPercent(OptionData::instance().getGuiRouteTableTextSize());
+  updateTableModelAndErrors();
 }
 
 void RouteController::tracksChanged()

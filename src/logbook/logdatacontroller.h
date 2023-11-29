@@ -141,6 +141,7 @@ public:
   /* Update units */
   void optionsChanged();
 
+  void fontChanged(const QFont& font);
   void styleChanged();
 
   /* Convert legacy logbook entries from userdata to the new logbook */

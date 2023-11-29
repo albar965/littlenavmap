@@ -248,7 +248,6 @@ private:
   MainWindow *mainWindow;
 
   /* Default font size - can be changed in settings */
-  float infoFontPtSize = 10.f;
   int symbolSize = 16;
 
   /* true if data was changed */

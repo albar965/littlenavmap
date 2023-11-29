@@ -66,6 +66,8 @@ public:
 
   void styleChanged();
 
+  void fontChanged(const QFont& font);
+
 private:
   /* Use events to update data and disconnect from database if not visible. */
   /* Also enable or disable toolbar/menu action. */

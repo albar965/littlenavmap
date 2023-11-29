@@ -214,6 +214,7 @@ public:
 
   /* Change in options dialog */
   void optionsChanged();
+  void fontChanged(const QFont& font);
 
   /* Tracks downloaded or deleted */
   void tracksChanged();
@@ -492,7 +493,6 @@ private:
   void selectAllTriggered();
 
   void activateLegTriggered();
-  void fontChanged();
 
   void routeTableOptions();
   void contextMenu(const QPoint& pos);

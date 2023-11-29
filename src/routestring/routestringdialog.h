@@ -95,6 +95,8 @@ public:
   /* Prepends to list */
   void addRouteDescription(const QString& routeString);
 
+  void fontChanged(const QFont& font);
+
 signals:
   /* Emitted when user clicks "Create flight plan" */
   void routeFromFlightplan(const atools::fs::pln::Flightplan& flightplan, bool adjustAltitude, bool changed, bool undo);
