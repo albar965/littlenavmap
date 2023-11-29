@@ -4896,7 +4896,7 @@ Does not apply to lines originating from airports or navaids.</string>
                <item row="3" column="2" rowspan="2">
                 <widget class="QLabel" name="labelOptionsMapDistanceMeasurement">
                  <property name="text">
-                  <string>&amp;Distance measurments:</string>
+                  <string>&amp;Distance measurements:</string>
                  </property>
                  <property name="alignment">
                   <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
