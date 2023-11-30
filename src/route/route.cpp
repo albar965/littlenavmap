@@ -2409,8 +2409,7 @@ bool Route::isAirportRoundTrip(const QString& ident) const
   return isAirportDeparture(ident) && isAirportDestination(ident);
 }
 
-void Route::getAirportProcedureFlags(const map::MapAirport& airport, int index, bool& departureFilter,
-                                     bool& arrivalFilter) const
+void Route::getAirportProcedureFlags(const map::MapAirport& airport, int index, bool& departureFilter, bool& arrivalFilter) const
 {
   bool hasDeparture, hasAnyArrival, airportDeparture, airportDestination, airportRoundTrip;
   getAirportProcedureFlags(airport, index, departureFilter, arrivalFilter, hasDeparture,

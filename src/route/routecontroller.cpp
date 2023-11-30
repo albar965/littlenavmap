@@ -3895,15 +3895,20 @@ void RouteController::showCustomApproach(map::MapAirport airport, QString dialog
 
   if(result == QDialog::Accepted)
   {
-    map::MapRunway runway;
-    map::MapRunwayEnd end;
-    dialog.getSelected(runway, end);
-    qDebug() << Q_FUNC_INFO << runway.primaryName << runway.secondaryName << end.id << end.name;
+    if(dialog.isShowProceduresSelected())
+      emit showProcedures(airport, false /* departureFilter */, true /* arrivalFilter */);
+    else
+    {
+      map::MapRunway runway;
+      map::MapRunwayEnd end;
+      dialog.getSelected(runway, end);
+      qDebug() << Q_FUNC_INFO << runway.primaryName << runway.secondaryName << end.id << end.name;
 
-    proc::MapProcedureLegs procedure;
-    NavApp::getProcedureQuery()->createCustomApproach(procedure, airport, end, dialog.getLegDistance(),
-                                                      dialog.getEntryAltitude(), dialog.getLegOffsetAngle());
-    routeAddProcedure(procedure);
+      proc::MapProcedureLegs procedure;
+      NavApp::getProcedureQuery()->createCustomApproach(procedure, airport, end, dialog.getLegDistance(),
+                                                        dialog.getEntryAltitude(), dialog.getLegOffsetAngle());
+      routeAddProcedure(procedure);
+    }
   }
 }
 
@@ -3932,15 +3937,20 @@ void RouteController::showCustomDeparture(map::MapAirport airport, QString dialo
 
   if(result == QDialog::Accepted)
   {
-    map::MapRunway runway;
-    map::MapRunwayEnd end;
-    dialog.getSelected(runway, end);
+    if(dialog.isShowProceduresSelected())
+      emit showProcedures(airport, true /* departureFilter */, false /* arrivalFilter */);
+    else
+    {
+      map::MapRunway runway;
+      map::MapRunwayEnd end;
+      dialog.getSelected(runway, end);
 
-    qDebug() << Q_FUNC_INFO << runway.primaryName << runway.secondaryName << end.id << end.name;
+      qDebug() << Q_FUNC_INFO << runway.primaryName << runway.secondaryName << end.id << end.name;
 
-    proc::MapProcedureLegs procedure;
-    NavApp::getProcedureQuery()->createCustomDeparture(procedure, airport, end, dialog.getLegDistance());
-    routeAddProcedure(procedure);
+      proc::MapProcedureLegs procedure;
+      NavApp::getProcedureQuery()->createCustomDeparture(procedure, airport, end, dialog.getLegDistance());
+      routeAddProcedure(procedure);
+    }
   }
 }
 

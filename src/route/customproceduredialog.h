@@ -63,6 +63,11 @@ public:
   /* Altitude at entry point above airport elevation in feet */
   float getEntryAltitude() const;
 
+  bool isShowProceduresSelected() const
+  {
+    return showProceduresSelected;
+  }
+
 private:
   void restoreState();
   void saveState();
@@ -75,7 +80,7 @@ private:
   RunwaySelection *runwaySelection = nullptr;
 
   UnitStringTool *units = nullptr;
-  bool departure = false;
+  bool departure = false, showProceduresSelected = false;
 };
 
 #endif // LNM_CUSTOMPROCEDUREDIALOG_H

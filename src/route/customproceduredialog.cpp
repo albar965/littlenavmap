@@ -25,7 +25,9 @@
 #include "gui/helphandler.h"
 #include "gui/runwayselection.h"
 #include "gui/widgetstate.h"
+#include "query/mapquery.h"
 #include "ui_customproceduredialog.h"
+#include "app/navapp.h"
 
 #include <QPushButton>
 #include <QStringBuilder>
@@ -41,6 +43,15 @@ CustomProcedureDialog::CustomProcedureDialog(QWidget *parent, const map::MapAirp
 
   runwaySelection = new RunwaySelection(parent, mapAirport, ui->tableWidgetCustomProcRunway);
   runwaySelection->setAirportLabel(ui->labelCustomProcAirport);
+
+  // YES is show procedures button
+  ui->buttonBoxCustomProc->button(QDialogButtonBox::Yes)->setText(departureParam ? tr("Show Departure &Procedures") :
+                                                                  tr("Show Arrival &Procedures"));
+
+  if(!NavApp::getMapQueryGui()->hasDepartureProcedures(mapAirport) && departureParam)
+    ui->buttonBoxCustomProc->button(QDialogButtonBox::Yes)->setDisabled(true);
+  else if(!NavApp::getMapQueryGui()->hasArrivalProcedures(mapAirport) && !departureParam)
+    ui->buttonBoxCustomProc->button(QDialogButtonBox::Yes)->setDisabled(true);
 
   connect(runwaySelection, &RunwaySelection::doubleClicked, this, &CustomProcedureDialog::doubleClicked);
   connect(runwaySelection, &RunwaySelection::itemSelectionChanged, this, &CustomProcedureDialog::updateWidgets);
@@ -145,9 +156,14 @@ void CustomProcedureDialog::buttonBoxClicked(QAbstractButton *button)
     saveState();
     QDialog::accept();
   }
+  if(button == ui->buttonBoxCustomProc->button(QDialogButtonBox::Yes))
+  {
+    showProceduresSelected = true;
+    saveState();
+    QDialog::accept();
+  }
   else if(button == ui->buttonBoxCustomProc->button(QDialogButtonBox::Help))
-    atools::gui::HelpHandler::openHelpUrlWeb(
-      parentWidget(), lnm::helpOnlineUrl + "CUSTOMPROCEDURE.html", lnm::helpLanguageOnline());
+    atools::gui::HelpHandler::openHelpUrlWeb(parentWidget(), lnm::helpOnlineUrl + "CUSTOMPROCEDURE.html", lnm::helpLanguageOnline());
   else if(button == ui->buttonBoxCustomProc->button(QDialogButtonBox::Cancel))
     QDialog::reject();
 }
