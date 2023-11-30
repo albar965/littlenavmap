@@ -531,7 +531,7 @@ void HtmlInfoBuilder::airportText(const MapAirport& airport, const map::WeatherC
   if(!info)
     routeWindText(html, *route, airport.routeIndex);
 
-#ifdef DEBUG_INFORMATION
+#ifdef DEBUG_INFORMATION_INFO
   if(info)
   {
     MapAirport airportNav = mapQuery->getAirportNav(airport);
@@ -705,7 +705,7 @@ void HtmlInfoBuilder::comText(const MapAirport& airport, HtmlBuilder& html) cons
         html.td(map::comTypeName(rec.valueStr("type")));
         // Round frequencies to nearest valid value to workaround for a compiler rounding bug
         html.td(locale.toString(roundComFrequency(rec.valueInt("frequency")), 'f', 3) % tr(" MHz")
-#ifdef DEBUG_INFORMATION
+#ifdef DEBUG_INFORMATION_INFO
                 % " [" % QString::number(rec.valueInt("frequency")) % "]"
 #endif
                 );
@@ -806,7 +806,8 @@ void HtmlInfoBuilder::runwayText(const MapAirport& airport, HtmlBuilder& html, b
   {
     if(!print)
       airportTitle(airport, html, -1, true /* procedures */);
-    html.br().br().b(tr("Elevation: ")).text(Unit::altFeet(airport.getAltitude())).br();
+
+    html.p().b(tr("Elevation: ")).text(Unit::altFeet(airport.getAltitude())).pEnd();
 
     const SqlRecordList *recVector = infoQuery->getRunwayInformation(airport.id);
     if(recVector != nullptr)
@@ -822,11 +823,11 @@ void HtmlInfoBuilder::runwayText(const MapAirport& airport, HtmlBuilder& html, b
         bool closedPrim = recPrim->valueBool("has_closed_markings");
         bool closedSec = recSec->valueBool("has_closed_markings");
 
-        html.br().text(tr("Runway ") % recPrim->valueStr("name") % ", " % recSec->valueStr("name"),
-                       ((closedPrim && closedSec) ? ahtml::STRIKEOUT : ahtml::NONE)
-                       | ahtml::UNDERLINE | ahtml::BIG | ahtml::BOLD);
-        html.table();
+        html.hr();
+        html.text(tr("Runways ") % recPrim->valueStr("name") % ", " % recSec->valueStr("name"),
+                  ((closedPrim && closedSec) ? ahtml::STRIKEOUT : ahtml::NONE) | ahtml::UNDERLINE | ahtml::BIG | ahtml::BOLD);
 
+        html.table();
         html.row2(tr("Size:"), Unit::distShortFeet(rec.valueFloat("length"), false) %
                   tr(" x ") %
                   Unit::distShortFeet(rec.valueFloat("width")));
@@ -905,7 +906,7 @@ void HtmlInfoBuilder::runwayText(const MapAirport& airport, HtmlBuilder& html, b
         }
         if(info)
         {
-#ifdef DEBUG_INFORMATION
+#ifdef DEBUG_INFORMATION_INFO
           html.small(QString("Database: runway_id = %1").arg(rec.valueInt("runway_id"))).br();
           html.small(QString("Database: Primary runway_end_id = %1").arg(recPrim->valueInt("runway_end_id"))).br();
           html.small(QString("Database: Secondary runway_end_id = %1").arg(recSec->valueInt("runway_end_id"))).br();
@@ -1005,9 +1006,9 @@ void HtmlInfoBuilder::runwayEndText(HtmlBuilder& html, const MapAirport& airport
   bool closed = rec->valueBool("has_closed_markings");
 
   QString name = rec->valueStr("name");
-  html.br().br().text(name, (closed ? (ahtml::STRIKEOUT) : ahtml::NONE) | ahtml::BOLD | ahtml::BIG);
-  html.table();
+  html.p().text(tr("Runway ") % name, (closed ? (ahtml::STRIKEOUT) : ahtml::NONE) | ahtml::BOLD | ahtml::UNDERLINE | ahtml::BIG).pEnd();
 
+  html.table();
   if(name.endsWith('T'))
     html.row2(tr("Uses true course"), QString());
 
@@ -1072,7 +1073,7 @@ void HtmlInfoBuilder::runwayEndText(HtmlBuilder& html, const MapAirport& airport
   if(!lights.isEmpty())
     html.row2(tr("Runway End Lights:"), lights.join(tr(", ")));
 
-#ifdef DEBUG_INFORMATION
+#ifdef DEBUG_INFORMATION_INFO
   html.row2("[secondary]", secondary);
 #else
   Q_UNUSED(secondary)
@@ -1087,24 +1088,22 @@ void HtmlInfoBuilder::runwayEndText(HtmlBuilder& html, const MapAirport& airport
 
 void HtmlInfoBuilder::ilsTextProcInfo(const map::MapIls& ils, atools::util::HtmlBuilder& html) const
 {
-  ilsTextInternal(ils, html, true /* procInfo */, false /* runwayInfo */, false /* infoOrTooltip */);
+  ilsTextInternal(ils, html, true /* procInfo */, false /* infoOrTooltip */);
 }
 
 void HtmlInfoBuilder::ilsTextRunwayInfo(const map::MapIls& ils, atools::util::HtmlBuilder& html) const
 {
-  ilsTextInternal(ils, html, false /* procInfo */, true /* runwayInfo */, false /* infoOrTooltip */);
+  ilsTextInternal(ils, html, false /* procInfo */, false /* infoOrTooltip */);
 }
 
 void HtmlInfoBuilder::ilsTextInfo(const map::MapIls& ils, atools::util::HtmlBuilder& html) const
 {
-  ilsTextInternal(ils, html, false /* procInfo */, false /* runwayInfo */, true /* infoOrTooltip */);
+  ilsTextInternal(ils, html, false /* procInfo */, true /* infoOrTooltip */);
 }
 
 void HtmlInfoBuilder::ilsTextInternal(const map::MapIls& ils, atools::util::HtmlBuilder& html, bool procInfo,
-                                      bool runwayInfo, bool infoOrTooltip) const
+                                      bool infoOrTooltip) const
 {
-  Q_UNUSED(runwayInfo)
-
   // Add ILS information
 
   // Prefix for procedure information
@@ -1134,7 +1133,8 @@ void HtmlInfoBuilder::ilsTextInternal(const map::MapIls& ils, atools::util::Html
       html.row2(prefix % tr("Type: "), map::ilsType(ils, true /* gs */, true /* dme */, tr(", ")));
     else
     {
-      html.br().br().text(text, ahtml::BOLD | ahtml::BIG);
+      // Runway information
+      html.text(text, ahtml::BOLD | ahtml::BIG);
       html.table();
     }
   }
@@ -1232,7 +1232,7 @@ void HtmlInfoBuilder::ilsTextInternal(const map::MapIls& ils, atools::util::Html
     // Add scenery indicator to clear source - either nav or sim
     addScenery(nullptr, html, DATASOURCE_NAV);
 
-#ifdef DEBUG_INFORMATION
+#ifdef DEBUG_INFORMATION_INFO
   if(info && !procInfo)
   {
     html.small(QString("Database: ils_id = %1, corrected %2").arg(ils.id).arg(ils.corrected)).br();
@@ -1241,8 +1241,15 @@ void HtmlInfoBuilder::ilsTextInternal(const map::MapIls& ils, atools::util::Html
   }
 #endif
 
-  if(info && !procInfo)
-    html.br();
+  if(!infoOrTooltip && !procInfo)
+  {
+    // Runway
+  }
+  else
+  {
+    if(info && !procInfo)
+      html.br();
+  }
 }
 
 void HtmlInfoBuilder::helipadText(const MapHelipad& helipad, HtmlBuilder& html) const
@@ -1267,7 +1274,7 @@ void HtmlInfoBuilder::windText(const atools::grib::WindPosList& windStack, HtmlB
   QString source = windReporter->getSourceText();
 
   const static int WIND_LAYERS_AT_WAYPOINT = 4;
-#ifdef DEBUG_INFORMATION
+#ifdef DEBUG_INFORMATION_INFO
   qDebug() << Q_FUNC_INFO;
 #endif
 
@@ -1379,7 +1386,7 @@ void HtmlInfoBuilder::windText(const atools::grib::WindPosList& windStack, HtmlB
         trEnd();
       }
 
-#ifdef DEBUG_INFORMATION
+#ifdef DEBUG_INFORMATION_INFO
       html.row2(tr("Pos:"), QString("Pos(%1, %2)").arg(windStack.first().pos.getLonX()).arg(windStack.first().pos.getLatY()), ahtml::PRE);
 #endif
 
@@ -1409,9 +1416,7 @@ void HtmlInfoBuilder::procedureText(const MapAirport& airport, HtmlBuilder& html
 
         // Build header ===============================================
         QString procType = recApp.valueStr("type");
-        proc::MapProcedureTypes type = proc::procedureType(NavApp::hasSidStarInDatabase(),
-                                                           procType,
-                                                           recApp.valueStr("suffix"),
+        proc::MapProcedureTypes type = proc::procedureType(NavApp::hasSidStarInDatabase(), procType, recApp.valueStr("suffix"),
                                                            recApp.valueBool("has_gps_overlay"));
 
         if(type & proc::PROCEDURE_STAR_ALL || type & proc::PROCEDURE_SID_ALL)
@@ -1433,11 +1438,10 @@ void HtmlInfoBuilder::procedureText(const MapAirport& airport, HtmlBuilder& html
         else if(type & proc::PROCEDURE_STAR)
           header = tr("STAR %1 %2").arg(fix).arg(runwayTxt);
         else
-          header = tr("Approach %1 %2 %3 %4").arg(proc::procedureType(procType)).
-                   arg(recApp.valueStr("suffix")).arg(fix).arg(runwayTxt);
+          header = tr("Approach %1 %2 %3 %4").arg(proc::procedureType(procType)).arg(recApp.valueStr("suffix")).arg(fix).arg(runwayTxt);
 
         html.hr();
-        html.h3(header, ahtml::UNDERLINE);
+        html.text(header, ahtml::UNDERLINE | ahtml::BIG | ahtml::BOLD);
 
         // Fill table ==========================================================
         html.table();
@@ -1527,7 +1531,7 @@ void HtmlInfoBuilder::procedureText(const MapAirport& airport, HtmlBuilder& html
             html.row2(tr("GLS data not found"));
         }
         html.tableEnd();
-#ifdef DEBUG_INFORMATION
+#ifdef DEBUG_INFORMATION_INFO
         if(info)
           html.small(QString("Database: approach_id = %1").arg(recApp.valueInt("approach_id"))).br();
 #endif
@@ -1539,7 +1543,7 @@ void HtmlInfoBuilder::procedureText(const MapAirport& airport, HtmlBuilder& html
           for(const SqlRecord& recTrans : *recTransVector)
           {
             if(!(type & proc::PROCEDURE_SID))
-              html.br().text(tr("Transition ") % recTrans.valueStr("fix_ident"), ahtml::BOLD | ahtml::BIG);
+              html.br().br().text(tr("Transition ") % recTrans.valueStr("fix_ident"), ahtml::BOLD | ahtml::BIG | ahtml::UNDERLINE);
 
             html.table();
 
@@ -1576,7 +1580,7 @@ void HtmlInfoBuilder::procedureText(const MapAirport& airport, HtmlBuilder& html
 
             addRadionavFixType(html, recTrans);
             html.tableEnd();
-#ifdef DEBUG_INFORMATION
+#ifdef DEBUG_INFORMATION_INFO
             if(info)
               html.small(QString("Database: transition_id = %1").arg(recTrans.valueInt("transition_id"))).br();
 #endif
@@ -1636,7 +1640,7 @@ void HtmlInfoBuilder::addRadionavFixType(HtmlBuilder& html, const SqlRecord& rec
         addMorse(html, tr("VOR Morse:"), vor.ident);
       }
     }
-#ifdef DEBUG_INFORMATION
+#ifdef DEBUG_INFORMATION_INFO
     else
       qWarning() << "VOR data not found";
 #endif
@@ -1664,7 +1668,7 @@ void HtmlInfoBuilder::addRadionavFixType(HtmlBuilder& html, const SqlRecord& rec
 
       addMorse(html, tr("NDB Morse:"), ndb.ident);
     }
-#ifdef DEBUG_INFORMATION
+#ifdef DEBUG_INFORMATION_INFO
     else
       qWarning() << "NDB data not found";
 #endif
@@ -2098,7 +2102,7 @@ void HtmlInfoBuilder::decodedMetar(HtmlBuilder& html, const map::MapAirport& air
 
   bestRunwaysText(airport, html, parsed, 8 /* max entries */, true /* details */);
 
-#ifdef DEBUG_INFORMATION
+#ifdef DEBUG_INFORMATION_INFO
   if(info)
     html.p().small(tr("Source: %1").arg(metar.getMetar())).br();
 #endif
@@ -2186,7 +2190,7 @@ void HtmlInfoBuilder::vorText(const MapVor& vor, HtmlBuilder& html) const
   if(!info)
     routeWindText(html, NavApp::getRouteConst(), vor.routeIndex);
 
-#ifdef DEBUG_INFORMATION
+#ifdef DEBUG_INFORMATION_INFO
   if(info)
     html.small(QString("Database: vor_id = %1").arg(vor.getId())).br();
 #endif
@@ -2261,7 +2265,7 @@ void HtmlInfoBuilder::ndbText(const MapNdb& ndb, HtmlBuilder& html) const
   if(!info)
     routeWindText(html, NavApp::getRouteConst(), ndb.routeIndex);
 
-#ifdef DEBUG_INFORMATION
+#ifdef DEBUG_INFORMATION_INFO
   if(info)
     html.small(QString("Database: ndb_id = %1 waypoint_id = %2").arg(ndb.getId()).arg(wp.getId())).br();
 #endif
@@ -2536,7 +2540,7 @@ bool HtmlInfoBuilder::userpointText(MapUserpoint userpoint, HtmlBuilder& html) c
       html.tableEnd();
     }
 
-#ifdef DEBUG_INFORMATION
+#ifdef DEBUG_INFORMATION_INFO
     if(info)
       html.small(QString("Database: uerpoint_id = %1").arg(userpoint.getId())).br();
 #endif
@@ -2759,7 +2763,7 @@ bool HtmlInfoBuilder::logEntryText(MapLogbookEntry logEntry, HtmlBuilder& html) 
     } // if(info)
     html.tableEnd();
 
-#ifdef DEBUG_INFORMATION
+#ifdef DEBUG_INFORMATION_INFO
     if(info)
       html.small(QString("Database: logbook_id = %1").arg(logEntry.id)).br();
 #endif
@@ -2879,7 +2883,7 @@ void HtmlInfoBuilder::waypointText(const MapWaypoint& waypoint, HtmlBuilder& htm
   if(!info)
     routeWindText(html, NavApp::getRouteConst(), waypoint.routeIndex);
 
-#ifdef DEBUG_INFORMATION
+#ifdef DEBUG_INFORMATION_INFO
   if(info)
     html.small(QString("Database: waypoint_id = %1, artificial = %2").arg(waypoint.getId()).arg(waypoint.artificial)).br();
 #endif
@@ -2994,7 +2998,7 @@ bool HtmlInfoBuilder::bearingToUserText(const ageo::Pos& pos, float magVar, Html
                 arg(Unit::distMeter(distance)),
                 ahtml::NO_ENTITIES);
 
-#ifdef DEBUG_INFORMATION
+#ifdef DEBUG_INFORMATION_INFO
       static bool heartbeat = false;
       html.row2(heartbeat ? " X" : " 0");
       heartbeat = !heartbeat;
@@ -3113,7 +3117,7 @@ void HtmlInfoBuilder::airspaceText(const MapAirspace& airspace, const atools::sq
       else
         freqTxt.append(locale.toString(roundComFrequency(freq), 'f', 3));
 
-#ifdef DEBUG_INFORMATION
+#ifdef DEBUG_INFORMATION_INFO
       if(info)
         freqTxt.last().append(QString(" [%1]").arg(freq));
 #endif
@@ -3147,7 +3151,7 @@ void HtmlInfoBuilder::airspaceText(const MapAirspace& airspace, const atools::sq
       addScenery(&rec, html, DATASOURCE_NAV);
   }
 
-#ifdef DEBUG_INFORMATION
+#ifdef DEBUG_INFORMATION_INFO
   if(info)
   {
     html.small(QString("Database: source = %1, boundary_id = %2").
@@ -3293,7 +3297,7 @@ void HtmlInfoBuilder::airwayText(const MapAirway& airway, HtmlBuilder& html) con
   }
   html.tableEnd();
 
-#ifdef DEBUG_INFORMATION
+#ifdef DEBUG_INFORMATION_INFO
   if(info)
   {
     if(!trackMeta.isEmpty())
@@ -3359,7 +3363,7 @@ void HtmlInfoBuilder::parkingText(const MapParking& parking, HtmlBuilder& html) 
 
 void HtmlInfoBuilder::userpointTextRoute(const MapUserpointRoute& userpoint, HtmlBuilder& html) const
 {
-#ifdef DEBUG_INFORMATION
+#ifdef DEBUG_INFORMATION_INFO
   qDebug() << Q_FUNC_INFO;
 #endif
 
@@ -3499,7 +3503,7 @@ void HtmlInfoBuilder::procedurePointText(const map::MapProcedurePoint& procPoint
 
 void HtmlInfoBuilder::aircraftText(const atools::fs::sc::SimConnectAircraft& aircraft, HtmlBuilder& html, int num, int total)
 {
-#ifdef DEBUG_INFORMATION
+#ifdef DEBUG_INFORMATION_INFO
   html.textBr("[HtmlInfoBuilder::aircraftText()]").textBr(QString("[online %1 shadow %2 id %3]").
                                                           arg(aircraft.isOnline()).
                                                           arg(aircraft.isOnlineShadow()).
@@ -3624,7 +3628,7 @@ void HtmlInfoBuilder::aircraftText(const atools::fs::sc::SimConnectAircraft& air
     html.row2(tr("Wingspan:"), Unit::distShortFeet(aircraft.getWingSpan()));
   html.tableEnd();
 
-#ifdef DEBUG_INFORMATION
+#ifdef DEBUG_INFORMATION_INFO
   if(info)
   {
     html.small(QString("Object ID: %1").arg(aircraft.getId())).br();
@@ -3649,13 +3653,13 @@ void HtmlInfoBuilder::aircraftText(const atools::fs::sc::SimConnectAircraft& air
 void HtmlInfoBuilder::aircraftOnlineText(const atools::fs::sc::SimConnectAircraft& aircraft,
                                          const atools::sql::SqlRecord& onlineRec, HtmlBuilder& html)
 {
-#ifdef DEBUG_INFORMATION
+#ifdef DEBUG_INFORMATION_INFO
   html.textBr("[HtmlInfoBuilder::aircraftOnlineText()]");
 #endif
 
   if(!onlineRec.isEmpty() && info)
   {
-#ifdef DEBUG_INFORMATION
+#ifdef DEBUG_INFORMATION_INFO
     qDebug() << Q_FUNC_INFO << onlineRec;
 #endif
 
@@ -3860,7 +3864,7 @@ void HtmlInfoBuilder::aircraftTrailText(const AircraftTrailSegment& trailSegment
     html.row2(tr("On ground"));
   html.tableEnd();
 
-#ifdef DEBUG_INFORMATION
+#ifdef DEBUG_INFORMATION_INFO
   html.small("[Index]" % QString::number(trailSegment.index) %
              " [length]" % Unit::distMeter(static_cast<float>(trailSegment.length)) %
              " [Time]" % QString::number(trailSegment.timestampPos) %
@@ -3890,7 +3894,7 @@ void HtmlInfoBuilder::dateTimeAndFlown(const SimConnectUserAircraft *userAircraf
                                 locale.toString(userAircraft->getLocalTime().time(), QLocale::ShortFormat) % tr(" ") %
                                 userAircraft->getLocalTime().timeZoneAbbreviation()
 
-#ifdef DEBUG_INFORMATION
+#ifdef DEBUG_INFORMATION_INFO
                                 + "[" + locale.toString(userAircraft->getLocalTime(), QLocale::ShortFormat) + "]"
 #endif
                                 );
@@ -4457,7 +4461,7 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
       float hoursRemaining = 0.f, distanceRemaining = 0.f;
       perfController->getEnduranceAverage(hoursRemaining, distanceRemaining);
 
-#ifdef DEBUG_INFORMATION
+#ifdef DEBUG_INFORMATION_INFO
       qDebug() << Q_FUNC_INFO << "hoursRemaining" << hoursRemaining;
       qDebug() << Q_FUNC_INFO << "distanceRemaining" << distanceRemaining;
 #endif
@@ -4781,7 +4785,7 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
       "distanceToFlightPlan " + QString::number(route.getDistanceToFlightPlan(), 'f', 2) +
       " distFromStartNm " + QString::number(distFromStartNm, 'f', 2) +
       " distToDestNm " + QString::number(distToDestNm, 'f', 1) +
-      "\nnearestLegDistance " + QString::number(nearestLegDistance, 'f', 2) +
+      "\nnextLegDistance " + QString::number(nextLegDistance, 'f', 2) +
       " crossTrackDistance " + QString::number(crossTrackDistance, 'f', 2) +
       "\nfuelToDestinationLbs " + QString::number(fuelTime.fuelLbsToDest, 'f', 2) +
       " fuelToDestinationGal " + QString::number(fuelTime.fuelGalToDest, 'f', 2) +
@@ -4789,8 +4793,8 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
        ("\ndistanceToTod " + QString::number(distanceToTod, 'f', 2) +
         " fuelToTodLbs " + QString::number(fuelTime.fuelLbsToTod, 'f', 2) +
         " fuelToTodGal " + QString::number(fuelTime.fuelGalToTod, 'f', 2)) : QString()) +
-      (nearestLegDistance > 0.f ?
-       ("\ndistanceToNext " + QString::number(nearestLegDistance, 'f', 2) +
+      (nextLegDistance > 0.f ?
+       ("\nnextLegDistance " + QString::number(nextLegDistance, 'f', 2) +
         " fuelToNextLbs " + QString::number(fuelTime.fuelLbsToNext, 'f', 2) +
         " fuelToNextGal " + QString::number(fuelTime.fuelGalToNext, 'f', 2)) : QString())
       );
@@ -4877,7 +4881,7 @@ void HtmlInfoBuilder::aircraftTitle(const atools::fs::sc::SimConnectAircraft& ai
   if(!title3.isEmpty())
     title += tr(" (%1)").arg(title3);
 
-#ifdef DEBUG_INFORMATION
+#ifdef DEBUG_INFORMATION_INFO
   static bool heartbeat = false;
 
   title += (heartbeat ? " X" : " 0");
@@ -5059,7 +5063,7 @@ void HtmlInfoBuilder::addCoordinates(const Pos& pos, HtmlBuilder& html) const
   if(pos.isValid())
     html.row2(tr("Coordinates:"), Unit::coords(pos));
 
-#ifdef DEBUG_INFORMATION
+#ifdef DEBUG_INFORMATION_INFO
   if(info)
     html.row2(tr("Pos:"), QString("Pos(%1, %2)").arg(pos.getLonX()).arg(pos.getLatY()), ahtml::PRE);
 #endif
@@ -5251,7 +5255,7 @@ void HtmlInfoBuilder::addMorse(atools::util::HtmlBuilder& html, const QString& n
 
 void HtmlInfoBuilder::routeWindText(HtmlBuilder& html, const Route& route, int index) const
 {
-#ifdef DEBUG_INFORMATION
+#ifdef DEBUG_INFORMATION_INFO
   qDebug() << Q_FUNC_INFO;
 #endif
   const WindReporter *windReporter = NavApp::getWindReporter();
@@ -5306,7 +5310,7 @@ QString HtmlInfoBuilder::highlightText(const QString& text) const
 
 void HtmlInfoBuilder::routeInfoText(HtmlBuilder& html, int routeIndex, bool recommended) const
 {
-#ifdef DEBUG_INFORMATION
+#ifdef DEBUG_INFORMATION_INFO
   qDebug() << Q_FUNC_INFO;
 #endif
 

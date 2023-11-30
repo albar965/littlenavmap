@@ -421,7 +421,7 @@ private:
 
   void ilsTextProcInfo(const map::MapIls& ils, atools::util::HtmlBuilder& html) const;
   void ilsTextRunwayInfo(const map::MapIls& ils, atools::util::HtmlBuilder& html) const;
-  void ilsTextInternal(const map::MapIls& ils, atools::util::HtmlBuilder& html, bool procInfo, bool runwayInfo, bool infoOrTooltip) const;
+  void ilsTextInternal(const map::MapIls& ils, atools::util::HtmlBuilder& html, bool procInfo, bool infoOrTooltip) const;
 
   /* Add wind text for flight plan waypoints */
   void routeWindText(atools::util::HtmlBuilder& html, const Route& route, int index) const;
