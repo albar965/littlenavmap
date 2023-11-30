@@ -146,6 +146,11 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
   list->addItem(pageListItem(list, tr("Scenery Library Database"), tr("Exclude scenery files from loading and\nadd-on recognition."), ":/littlenavmap/resources/icons/database.svg"));
   /* *INDENT-ON* */
 
+#ifdef DEBUG_INFORMATION
+  for(int i = 0; i < list->count(); i++)
+    qDebug() << Q_FUNC_INFO << i << list->item(i)->text();
+#endif
+
   // Build tree settings to map tab =====================================================
   /* *INDENT-OFF* */
   // Top of map =====================================================
@@ -696,6 +701,52 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
   connect(ui->tableWidgetOptionsMapKeys, &QTableWidget::itemDoubleClicked, this, &OptionsDialog::mapThemeKeyEdited);
 
   connect(ui->lineEditOptionSearch, &QLineEdit::textEdited, this, &OptionsDialog::searchTextEdited);
+
+  // Hint widgets with anchors ===========================================================================
+  // 0 "Startup and Updates"
+  // 1 "User Interface"
+  // 2 "Display and Text"
+  // 3 "Units"
+  // 4 "Files"
+  // 5 "Map"
+  // 6 "Map Tooltips and Clicks"
+  // 7 "Map Navigation"
+  // 8 "Map Display"
+  // 9 "Map Flight Plan"
+  // 10 "Map Aircraft Trail"
+  // 11 "Map User"
+  // 12 "Map Labels"
+  // 13 "Map Keys"
+  // 14 "Map Online"
+  // 15 "Simulator Aircraft"
+  // 16 "Flight Plan"
+  // 17 "Weather"
+  // 18 "Weather Files"
+  // 19 "Online Flying"
+  // 20 "Web Server"
+  // 21 "Cache and Files"
+  // 22 "Scenery Library Database"
+  connect(ui->labelOptionsUnitsHint, &QLabel::linkActivated, this, &OptionsDialog::hintLinkActivated);
+  connect(ui->labelOptionsGuiFontHint, &QLabel::linkActivated, this, &OptionsDialog::hintLinkActivated);
+  connect(ui->labelOptionsGuiTooltipHint, &QLabel::linkActivated, this, &OptionsDialog::hintLinkActivated);
+  connect(ui->labelOptionsFilePatternsHint, &QLabel::linkActivated, this, &OptionsDialog::hintLinkActivated);
+  connect(ui->labelOptionsResetLayoutHint, &QLabel::linkActivated, this, &OptionsDialog::hintLinkActivated);
+  connect(ui->labelOptionsNavigationAidsHint, &QLabel::linkActivated, this, &OptionsDialog::hintLinkActivated);
+  connect(ui->labelOptionsAirportSettingsHint, &QLabel::linkActivated, this, &OptionsDialog::hintLinkActivated);
+  connect(ui->labelOptionsAirspaceSettingsHint, &QLabel::linkActivated, this, &OptionsDialog::hintLinkActivated);
+  connect(ui->labelOptionsUserAircraftSettingsHint, &QLabel::linkActivated, this, &OptionsDialog::hintLinkActivated);
+  connect(ui->labelOptionsAiHint, &QLabel::linkActivated, this, &OptionsDialog::hintLinkActivated);
+  connect(ui->labelOptionsLabelHint, &QLabel::linkActivated, this, &OptionsDialog::hintLinkActivated);
+  connect(ui->labelOptionsFlightPlanLabelHint, &QLabel::linkActivated, this, &OptionsDialog::hintLinkActivated);
+  connect(ui->labelOptionsProfileHint, &QLabel::linkActivated, this, &OptionsDialog::hintLinkActivated);
+  connect(ui->labelOptionsTrailHint, &QLabel::linkActivated, this, &OptionsDialog::hintLinkActivated);
+  connect(ui->labelOptionsMeasurmentHint, &QLabel::linkActivated, this, &OptionsDialog::hintLinkActivated);
+  connect(ui->labelOptionsCompassRoseHint, &QLabel::linkActivated, this, &OptionsDialog::hintLinkActivated);
+  connect(ui->labelOptionsMapThemesHint, &QLabel::linkActivated, this, &OptionsDialog::hintLinkActivated);
+  connect(ui->labelOptionsSimUpdatesHint, &QLabel::linkActivated, this, &OptionsDialog::hintLinkActivated);
+  connect(ui->labelOptionsWeatherHint, &QLabel::linkActivated, this, &OptionsDialog::hintLinkActivated);
+  connect(ui->labelOptionsCacheDiskExpirationHint, &QLabel::linkActivated, this, &OptionsDialog::hintLinkActivated);
+  connect(ui->labelOptionsApiKeysHint, &QLabel::linkActivated, this, &OptionsDialog::hintLinkActivated);
 }
 
 /* called at program end */
@@ -713,6 +764,18 @@ OptionsDialog::~OptionsDialog()
   ATOOLS_DELETE_LOG(units);
   ATOOLS_DELETE_LOG(ui);
   ATOOLS_DELETE_LOG(fontDialog);
+}
+
+void OptionsDialog::hintLinkActivated(const QString& link)
+{
+  qDebug() << Q_FUNC_INFO << link;
+  if(link.startsWith("lnm://"))
+  {
+    bool ok;
+    int index = link.midRef(6).toInt(&ok);
+    if(ok && index < ui->listWidgetOptionPages->count())
+      ui->listWidgetOptionPages->setCurrentRow(index);
+  }
 }
 
 void OptionsDialog::styleChanged()
