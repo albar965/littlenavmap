@@ -7,7 +7,7 @@
   Booleans values like "AirportIdent" are yes/no or true/false.
 
   You can put a copy of this file into the Little Navmap settings folder
-  ("C:\Users\YOURUSERNAME\AppData\Roaming\ABarthel\" on Windows) to override the stock settings.
+  ("C:/Users/YOURUSERNAME/AppData/Roaming/ABarthel/" on Windows) to override the default settings.
   Little Navmap will watch the file, reload it and redraw the map when it is changed.
 
   Using wrong settings in this file can crash or freeze the program.
