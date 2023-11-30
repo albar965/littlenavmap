@@ -251,7 +251,7 @@ MainWindow::MainWindow()
     setupUi();
 
     // Load all map feature colors
-    mapcolors::syncColors();
+    mapcolors::loadColors();
 
     Unit::init();
 

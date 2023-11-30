@@ -37,8 +37,8 @@ class QSettings;
  * Colors are partially loaded from a configuration file. */
 namespace mapcolors {
 
-/* Load/save colors from/to configuration file */
-void syncColors();
+/* Load colors from configuration file in resources or settings folder. */
+void loadColors();
 
 /* Update some colors on GUI style change */
 void styleChanged();

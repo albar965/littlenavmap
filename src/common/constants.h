@@ -459,8 +459,10 @@ const QLatin1String STARTUP_COMMAND_ACTIVATE("activate"); /* Bring window to fro
 const QLatin1String AIRCRAFT_TRACK_SUFFIX(".track");
 const QLatin1String PROFILE_TRACK_SUFFIX("_profile.track");
 const QLatin1String LOGBOOK_TRACK_SUFFIX(".logbooktrack");
-const QLatin1String MAPSTYLE_INI_SUFFIX("_mapstyle.ini");
 const QLatin1String NIGHTSTYLE_INI_SUFFIX("_nightstyle.ini");
+
+const QLatin1String MAPSTYLE_INI_SUFFIX("_mapstyle.ini");
+const QLatin1String MAPSTYLE_CONFIG(":/littlenavmap/resources/config/little_navmap_mapstyle.ini");
 
 /*
  * Supported language for the online help system. Will be determined by presence of the file

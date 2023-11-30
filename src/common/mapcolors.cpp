@@ -30,6 +30,7 @@
 #include <QPalette>
 #include <QSettings>
 #include <QPainter>
+#include <QStringBuilder>
 
 namespace mapcolors {
 
@@ -651,47 +652,34 @@ const QColor& colorForAirwayOrTrack(const map::MapAirway& airway)
 }
 
 /* Read ARGB color if value exists in settings or update in settings with given value */
-void syncColorArgb(QSettings& settings, const QString& key, QColor& color)
+void loadColorArgb(const QSettings& settings, const QString& key, QColor& color)
 {
   if(settings.contains(key))
     color.setNamedColor(settings.value(key).toString());
-  else
-    settings.setValue(key, color.name(QColor::HexArgb));
 }
 
 /* Read color if value exists in settings or update in settings with given value */
-void syncColor(QSettings& settings, const QString& key, QColor& color)
+void loadColor(const QSettings& settings, const QString& key, QColor& color)
 {
   if(settings.contains(key))
     color.setNamedColor(settings.value(key).toString());
-  else
-    settings.setValue(key, color.name());
 }
 
 /* Read color and pen width if value exists in settings or update in settings with values of given pen */
-void syncPen(QSettings& settings, const QString& key, QPen& pen)
+void loadPen(const QSettings& settings, const QString& key, QPen& pen)
 {
-  static QHash<QString, Qt::PenStyle> penToStyle(
-    {
+  const static QHash<QString, Qt::PenStyle> PEN_TO_STYLE({
       {"Solid", Qt::SolidLine},
       {"Dash", Qt::DashLine},
       {"Dot", Qt::DotLine},
       {"DashDot", Qt::DashDotLine},
-      {"DashDotDot", Qt::DashDotDotLine},
-    });
-  static QHash<Qt::PenStyle, QString> styleToPen(
-    {
-      {Qt::SolidLine, "Solid"},
-      {Qt::DashLine, "Dash"},
-      {Qt::DotLine, "Dot"},
-      {Qt::DashDotLine, "DashDot"},
-      {Qt::DashDotDotLine, "DashDotDot"},
+      {"DashDotDot", Qt::DashDotDotLine}
     });
 
   if(settings.contains(key))
   {
-    QStringList list = settings.value(key).toStringList();
-    if(list.size() >= 1)
+    const QStringList list = settings.value(key).toStringList();
+    if(!list.isEmpty())
     {
       pen.setColor(QColor(list.at(0)));
 
@@ -699,207 +687,173 @@ void syncPen(QSettings& settings, const QString& key, QPen& pen)
         pen.setWidthF(list.at(1).toFloat());
 
       if(list.size() >= 3)
-        pen.setStyle(penToStyle.value(list.at(2), Qt::SolidLine));
+        pen.setStyle(PEN_TO_STYLE.value(list.at(2), Qt::SolidLine));
     }
   }
-  else
-    settings.setValue(key, QStringList({pen.color().name(),
-                                        QString::number(pen.widthF()),
-                                        styleToPen.value(pen.style(), "Solid")}));
 }
 
-void syncColors()
+void loadColors()
 {
 #ifndef DEBUG_DISABLE_SYNC_COLORS
-  QString filename = atools::settings::Settings::getConfigFilename(lnm::MAPSTYLE_INI_SUFFIX);
+  QString filename = atools::settings::Settings::getOverloadedPath(lnm::MAPSTYLE_CONFIG);
+  qInfo() << Q_FUNC_INFO << "Loading mapstyle from" << filename;
 
-  QSettings colorSettings(filename, QSettings::IniFormat);
-  colorSettings.setValue("Options/Version", QApplication::applicationVersion());
+  const QSettings colorSettings(filename, QSettings::IniFormat);
 
-  colorSettings.beginGroup("FlightPlan");
-  syncColor(colorSettings, "RouteProcedureMissedTableColorDark", routeProcedureMissedTableColorDark);
-  syncColor(colorSettings, "RouteProcedureMissedTableColor", routeProcedureMissedTableColor);
-  syncColor(colorSettings, "RouteProcedureTableColorDark", routeProcedureTableColorDark);
-  syncColor(colorSettings, "RouteProcedureTableColor", routeProcedureTableColor);
-  syncColor(colorSettings, "RouteAlternateTableColor", routeAlternateTableColor);
-  syncColor(colorSettings, "RouteAlternateTableColorDark", routeAlternateTableColorDark);
-  syncColor(colorSettings, "RouteInvalidTableColor", routeInvalidTableColor);
-  syncColor(colorSettings, "RouteInvalidTableColorDark", routeInvalidTableColorDark);
-  syncColor(colorSettings, "NextWaypointColor", nextWaypointColor);
-  syncColor(colorSettings, "NextWaypointColorDark", nextWaypointColorDark);
-  colorSettings.endGroup();
+  loadColor(colorSettings, "FlightPlan/RouteProcedureMissedTableColorDark", routeProcedureMissedTableColorDark);
+  loadColor(colorSettings, "FlightPlan/RouteProcedureMissedTableColor", routeProcedureMissedTableColor);
+  loadColor(colorSettings, "FlightPlan/RouteProcedureTableColorDark", routeProcedureTableColorDark);
+  loadColor(colorSettings, "FlightPlan/RouteProcedureTableColor", routeProcedureTableColor);
+  loadColor(colorSettings, "FlightPlan/RouteAlternateTableColor", routeAlternateTableColor);
+  loadColor(colorSettings, "FlightPlan/RouteAlternateTableColorDark", routeAlternateTableColorDark);
+  loadColor(colorSettings, "FlightPlan/RouteInvalidTableColor", routeInvalidTableColor);
+  loadColor(colorSettings, "FlightPlan/RouteInvalidTableColorDark", routeInvalidTableColorDark);
+  loadColor(colorSettings, "FlightPlan/NextWaypointColor", nextWaypointColor);
+  loadColor(colorSettings, "FlightPlan/NextWaypointColorDark", nextWaypointColorDark);
 
-  colorSettings.beginGroup("Aircraft");
-  syncColorArgb(colorSettings, "UserLabelColor", aircraftUserLabelColor);
-  syncColorArgb(colorSettings, "UserLabelBackgroundColor", aircraftUserLabelColorBg);
-  syncColorArgb(colorSettings, "AiLabelColor", aircraftAiLabelColor);
-  syncColorArgb(colorSettings, "AiLabelBackgroundColor", aircraftAiLabelColorBg);
-  colorSettings.endGroup();
+  loadColorArgb(colorSettings, "Aircraft/UserLabelColor", aircraftUserLabelColor);
+  loadColorArgb(colorSettings, "Aircraft/UserLabelBackgroundColor", aircraftUserLabelColorBg);
+  loadColorArgb(colorSettings, "Aircraft/AiLabelColor", aircraftAiLabelColor);
+  loadColorArgb(colorSettings, "Aircraft/AiLabelBackgroundColor", aircraftAiLabelColorBg);
 
-  colorSettings.beginGroup("Airport");
-  syncColor(colorSettings, "DiagramBackgroundColor", airportDetailBackColor);
-  syncColor(colorSettings, "EmptyColor", airportEmptyColor);
-  syncColor(colorSettings, "ToweredColor", toweredAirportColor);
-  syncColor(colorSettings, "UnToweredColor", unToweredAirportColor);
-  syncColor(colorSettings, "AddonBackgroundColor", addonAirportBackgroundColor);
-  syncColor(colorSettings, "AddonFrameColor", addonAirportFrameColor);
-  syncPen(colorSettings, "TaxiwayLinePen", taxiwayLinePen);
-  syncColor(colorSettings, "TaxiwayNameColor", taxiwayNameColor);
-  syncColor(colorSettings, "TaxiwayNameBackgroundColor", taxiwayNameBackgroundColor);
-  colorSettings.endGroup();
+  loadColor(colorSettings, "Airport/DiagramBackgroundColor", airportDetailBackColor);
+  loadColor(colorSettings, "Airport/EmptyColor", airportEmptyColor);
+  loadColor(colorSettings, "Airport/ToweredColor", toweredAirportColor);
+  loadColor(colorSettings, "Airport/UnToweredColor", unToweredAirportColor);
+  loadColor(colorSettings, "Airport/AddonBackgroundColor", addonAirportBackgroundColor);
+  loadColor(colorSettings, "Airport/AddonFrameColor", addonAirportFrameColor);
+  loadPen(colorSettings, "Airport/TaxiwayLinePen", taxiwayLinePen);
+  loadColor(colorSettings, "Airport/TaxiwayNameColor", taxiwayNameColor);
+  loadColor(colorSettings, "Airport/TaxiwayNameBackgroundColor", taxiwayNameBackgroundColor);
 
-  colorSettings.beginGroup("Navaid");
-  syncColor(colorSettings, "VorColor", vorSymbolColor);
-  syncColor(colorSettings, "NdbColor", ndbSymbolColor);
-  syncColor(colorSettings, "MarkerColor", markerSymbolColor);
-  syncColor(colorSettings, "IlsColor", ilsSymbolColor);
-  syncColorArgb(colorSettings, "IlsFillColor", ilsFillColor);
-  syncColor(colorSettings, "IlsTextColor", ilsTextColor);
-  syncPen(colorSettings, "IlsCenterPen", ilsCenterPen);
+  loadColor(colorSettings, "Navaid/VorColor", vorSymbolColor);
+  loadColor(colorSettings, "Navaid/NdbColor", ndbSymbolColor);
+  loadColor(colorSettings, "Navaid/MarkerColor", markerSymbolColor);
+  loadColor(colorSettings, "Navaid/IlsColor", ilsSymbolColor);
+  loadColorArgb(colorSettings, "Navaid/IlsFillColor", ilsFillColor);
+  loadColor(colorSettings, "Navaid/IlsTextColor", ilsTextColor);
+  loadPen(colorSettings, "Navaid/IlsCenterPen", ilsCenterPen);
 
-  syncColor(colorSettings, "GlsGbasColor", glsSymbolColor);
-  syncColorArgb(colorSettings, "GlsGbasFillColor", glsFillColor);
-  syncColor(colorSettings, "GlsTextColor", glsTextColor);
-  syncPen(colorSettings, "GlsCenterPen", glsCenterPen);
+  loadColor(colorSettings, "Navaid/GlsGbasColor", glsSymbolColor);
+  loadColorArgb(colorSettings, "Navaid/GlsGbasFillColor", glsFillColor);
+  loadColor(colorSettings, "Navaid/GlsTextColor", glsTextColor);
+  loadPen(colorSettings, "Navaid/GlsCenterPen", glsCenterPen);
 
-  syncColor(colorSettings, "MsaTextColor", msaTextColor);
-  syncColorArgb(colorSettings, "MsaFillColor", msaFillColor);
-  syncColor(colorSettings, "MsaSymbolColor", msaSymbolColor);
+  loadColor(colorSettings, "Navaid/MsaTextColor", msaTextColor);
+  loadColorArgb(colorSettings, "Navaid/MsaFillColor", msaFillColor);
+  loadColor(colorSettings, "Navaid/MsaSymbolColor", msaSymbolColor);
 
-  syncPen(colorSettings, "MsaDiagramLinePen", msaDiagramLinePen);
-  syncColorArgb(colorSettings, "MsaDiagramNumberColor", msaDiagramNumberColor);
-  syncPen(colorSettings, "MsaDiagramLinePenDark", msaDiagramLinePenDark);
-  syncColorArgb(colorSettings, "MsaDiagramNumberColorDark", msaDiagramNumberColorDark);
-  syncColorArgb(colorSettings, "MsaDiagramFillColor", msaDiagramFillColor);
-  syncColorArgb(colorSettings, "MsaDiagramFillColorDark", msaDiagramFillColorDark);
+  loadPen(colorSettings, "Navaid/MsaDiagramLinePen", msaDiagramLinePen);
+  loadColorArgb(colorSettings, "Navaid/MsaDiagramNumberColor", msaDiagramNumberColor);
+  loadPen(colorSettings, "Navaid/MsaDiagramLinePenDark", msaDiagramLinePenDark);
+  loadColorArgb(colorSettings, "Navaid/MsaDiagramNumberColorDark", msaDiagramNumberColorDark);
+  loadColorArgb(colorSettings, "Navaid/MsaDiagramFillColor", msaDiagramFillColor);
+  loadColorArgb(colorSettings, "Navaid/MsaDiagramFillColorDark", msaDiagramFillColorDark);
 
-  syncColor(colorSettings, "WaypointColor", waypointSymbolColor);
-  syncColor(colorSettings, "HoldingColor", holdingColor);
-  colorSettings.endGroup();
+  loadColor(colorSettings, "Navaid/WaypointColor", waypointSymbolColor);
+  loadColor(colorSettings, "Navaid/HoldingColor", holdingColor);
 
-  colorSettings.beginGroup("Airway");
-  syncColor(colorSettings, "VictorColor", airwayVictorColor);
-  syncColor(colorSettings, "JetColor", airwayJetColor);
-  syncColor(colorSettings, "BothColor", airwayBothColor);
-  syncColor(colorSettings, "TrackColor", airwayTrackColor);
-  syncColor(colorSettings, "TrackColorEast", airwayTrackColorEast);
-  syncColor(colorSettings, "TrackColorWest", airwayTrackColorWest);
-  syncColor(colorSettings, "TextColor", airwayTextColor);
-  colorSettings.endGroup();
+  loadColor(colorSettings, "Airway/VictorColor", airwayVictorColor);
+  loadColor(colorSettings, "Airway/JetColor", airwayJetColor);
+  loadColor(colorSettings, "Airway/BothColor", airwayBothColor);
+  loadColor(colorSettings, "Airway/TrackColor", airwayTrackColor);
+  loadColor(colorSettings, "Airway/TrackColorEast", airwayTrackColorEast);
+  loadColor(colorSettings, "Airway/TrackColorWest", airwayTrackColorWest);
+  loadColor(colorSettings, "Airway/TextColor", airwayTextColor);
 
-  colorSettings.beginGroup("Marker");
-  syncColor(colorSettings, "RangeRingColor", rangeRingColor);
-  syncColor(colorSettings, "RangeRingTextColor", rangeRingTextColor);
-  syncColor(colorSettings, "CompassRoseColor", compassRoseColor);
-  syncColor(colorSettings, "CompassRoseTextColor", compassRoseTextColor);
-  syncPen(colorSettings, "SearchCenterBackPen", searchCenterBackPen);
-  syncPen(colorSettings, "SearchCenterFillPen", searchCenterFillPen);
-  syncPen(colorSettings, "TouchMarkBackPen", touchMarkBackPen);
-  syncPen(colorSettings, "TouchMarkFillPen", touchMarkFillPen);
-  syncPen(colorSettings, "EndurancePen", markEndurancePen);
-  syncPen(colorSettings, "SelectedAltitudeRangePen", markSelectedAltitudeRangePen);
-  syncPen(colorSettings, "TurnPathPen", markTurnPathPen);
-  syncColorArgb(colorSettings, "TouchRegionFillColor", touchRegionFillColor);
-  syncColor(colorSettings, "DistanceMarkerTextColor", distanceMarkerTextColor);
-  syncColorArgb(colorSettings, "DistanceMarkerTextBackgroundColor", distanceMarkerTextBackgroundColor);
-  colorSettings.endGroup();
+  loadColor(colorSettings, "Marker/RangeRingColor", rangeRingColor);
+  loadColor(colorSettings, "Marker/RangeRingTextColor", rangeRingTextColor);
+  loadColor(colorSettings, "Marker/CompassRoseColor", compassRoseColor);
+  loadColor(colorSettings, "Marker/CompassRoseTextColor", compassRoseTextColor);
+  loadPen(colorSettings, "Marker/SearchCenterBackPen", searchCenterBackPen);
+  loadPen(colorSettings, "Marker/SearchCenterFillPen", searchCenterFillPen);
+  loadPen(colorSettings, "Marker/TouchMarkBackPen", touchMarkBackPen);
+  loadPen(colorSettings, "Marker/TouchMarkFillPen", touchMarkFillPen);
+  loadPen(colorSettings, "Marker/EndurancePen", markEndurancePen);
+  loadPen(colorSettings, "Marker/SelectedAltitudeRangePen", markSelectedAltitudeRangePen);
+  loadPen(colorSettings, "Marker/TurnPathPen", markTurnPathPen);
+  loadColorArgb(colorSettings, "Marker/TouchRegionFillColor", touchRegionFillColor);
+  loadColor(colorSettings, "Marker/DistanceMarkerTextColor", distanceMarkerTextColor);
+  loadColorArgb(colorSettings, "Marker/DistanceMarkerTextBackgroundColor", distanceMarkerTextBackgroundColor);
 
-  colorSettings.beginGroup("Highlight");
-  syncColor(colorSettings, "HighlightBackColor", highlightBackColor);
-  syncColor(colorSettings, "RouteHighlightBackColor", routeHighlightBackColor);
-  syncColor(colorSettings, "ProfileHighlightBackColor", profileHighlightBackColor);
-  colorSettings.endGroup();
+  loadColor(colorSettings, "Highlight/HighlightBackColor", highlightBackColor);
+  loadColor(colorSettings, "Highlight/RouteHighlightBackColor", routeHighlightBackColor);
+  loadColor(colorSettings, "Highlight/ProfileHighlightBackColor", profileHighlightBackColor);
 
-  colorSettings.beginGroup("Print");
-  syncColor(colorSettings, "MapPrintRowColor", mapPrintRowColor);
-  syncColor(colorSettings, "MapPrintRowColorAlt", mapPrintRowColorAlt);
-  syncColor(colorSettings, "MapPrintHeaderColor", mapPrintHeaderColor);
-  colorSettings.endGroup();
+  loadColor(colorSettings, "Print/MapPrintRowColor", mapPrintRowColor);
+  loadColor(colorSettings, "Print/MapPrintRowColorAlt", mapPrintRowColorAlt);
+  loadColor(colorSettings, "Print/MapPrintHeaderColor", mapPrintHeaderColor);
 
-  colorSettings.beginGroup("Weather");
-  syncColor(colorSettings, "WeatherBackgoundColor", weatherBackgoundColor);
-  syncColor(colorSettings, "WeatherWindColor", weatherWindColor);
-  syncColor(colorSettings, "WeatherWindGustColor", weatherWindGustColor);
-  syncColor(colorSettings, "WeatherLifrColor", weatherLifrColor);
-  syncColor(colorSettings, "WeatherIfrColor", weatherIfrColor);
-  syncColor(colorSettings, "WeatherMvfrColor", weatherMvfrColor);
-  syncColor(colorSettings, "WeatherVfrColor", weatherVfrColor);
-  colorSettings.endGroup();
+  loadColor(colorSettings, "Weather/WeatherBackgoundColor", weatherBackgoundColor);
+  loadColor(colorSettings, "Weather/WeatherWindColor", weatherWindColor);
+  loadColor(colorSettings, "Weather/WeatherWindGustColor", weatherWindGustColor);
+  loadColor(colorSettings, "Weather/WeatherLifrColor", weatherLifrColor);
+  loadColor(colorSettings, "Weather/WeatherIfrColor", weatherIfrColor);
+  loadColor(colorSettings, "Weather/WeatherMvfrColor", weatherMvfrColor);
+  loadColor(colorSettings, "Weather/WeatherVfrColor", weatherVfrColor);
 
-  colorSettings.beginGroup("AltitudeGrid");
-  syncPen(colorSettings, "MinimumAltitudeGridPen", minimumAltitudeGridPen);
-  syncColorArgb(colorSettings, "MinimumAltitudeNumberColor", minimumAltitudeNumberColor);
-  syncPen(colorSettings, "MinimumAltitudeGridPenDark", minimumAltitudeGridPenDark);
-  syncColorArgb(colorSettings, "MinimumAltitudeNumberColorDark", minimumAltitudeNumberColorDark);
-  colorSettings.endGroup();
+  loadPen(colorSettings, "AltitudeGrid/MinimumAltitudeGridPen", minimumAltitudeGridPen);
+  loadColorArgb(colorSettings, "AltitudeGrid/MinimumAltitudeNumberColor", minimumAltitudeNumberColor);
+  loadPen(colorSettings, "AltitudeGrid/MinimumAltitudeGridPenDark", minimumAltitudeGridPenDark);
+  loadColorArgb(colorSettings, "AltitudeGrid/MinimumAltitudeNumberColorDark", minimumAltitudeNumberColorDark);
 
-  colorSettings.beginGroup("Profile");
-  syncColor(colorSettings, "SkyColor", profileSkyColor);
-  syncColor(colorSettings, "LandColor", profileLandColor);
-  syncColor(colorSettings, "LabelColor", profileLabelColor);
-  syncColorArgb(colorSettings, "VasiAboveColor", profileVasiAboveColor);
-  syncColorArgb(colorSettings, "VasiBelowColor", profileVasiBelowColor);
-  syncColor(colorSettings, "AltRestrictionFill", profileAltRestrictionFill);
-  syncColor(colorSettings, "AltRestrictionOutline", profileAltRestrictionOutline);
-  syncPen(colorSettings, "LandOutlinePen", profileLandOutlinePen);
-  syncPen(colorSettings, "WaypointLinePen", profileWaypointLinePen);
-  syncPen(colorSettings, "ElevationScalePen", profileElevationScalePen);
-  syncPen(colorSettings, "SafeAltLinePen", profileSafeAltLinePen);
-  syncPen(colorSettings, "SafeAltLegLinePen", profileSafeAltLegLinePen);
-  syncPen(colorSettings, "VasiCenterPen", profileVasiCenterPen);
-  colorSettings.endGroup();
+  loadColor(colorSettings, "Profile/SkyColor", profileSkyColor);
+  loadColor(colorSettings, "Profile/LandColor", profileLandColor);
+  loadColor(colorSettings, "Profile/LabelColor", profileLabelColor);
+  loadColorArgb(colorSettings, "Profile/VasiAboveColor", profileVasiAboveColor);
+  loadColorArgb(colorSettings, "Profile/VasiBelowColor", profileVasiBelowColor);
+  loadColor(colorSettings, "Profile/AltRestrictionFill", profileAltRestrictionFill);
+  loadColor(colorSettings, "Profile/AltRestrictionOutline", profileAltRestrictionOutline);
+  loadPen(colorSettings, "Profile/LandOutlinePen", profileLandOutlinePen);
+  loadPen(colorSettings, "Profile/WaypointLinePen", profileWaypointLinePen);
+  loadPen(colorSettings, "Profile/ElevationScalePen", profileElevationScalePen);
+  loadPen(colorSettings, "Profile/SafeAltLinePen", profileSafeAltLinePen);
+  loadPen(colorSettings, "Profile/SafeAltLegLinePen", profileSafeAltLegLinePen);
+  loadPen(colorSettings, "Profile/VasiCenterPen", profileVasiCenterPen);
 
-  colorSettings.beginGroup("Route");
-  syncColor(colorSettings, "TextColor", routeTextColor);
-  syncColor(colorSettings, "TextColorGray", routeTextColorGray);
-  syncColor(colorSettings, "TextBackgroundColor", routeTextBackgroundColor);
-  syncColor(colorSettings, "ProcedureMissedTextColor", routeProcedureMissedTextColor);
-  syncColor(colorSettings, "ProcedureTextColor", routeProcedureTextColor);
-  syncColor(colorSettings, "ProcedurePointColor", routeProcedurePointColor);
-  syncColor(colorSettings, "ProcedurePointFlyoverColor", routeProcedurePointFlyoverColor);
-  syncColor(colorSettings, "UserPointColor", routeUserPointColor);
-  syncColor(colorSettings, "InvalidPointColor", routeInvalidPointColor);
-  colorSettings.endGroup();
+  loadColor(colorSettings, "Route/TextColor", routeTextColor);
+  loadColor(colorSettings, "Route/TextColorGray", routeTextColorGray);
+  loadColor(colorSettings, "Route/TextBackgroundColor", routeTextBackgroundColor);
+  loadColor(colorSettings, "Route/ProcedureMissedTextColor", routeProcedureMissedTextColor);
+  loadColor(colorSettings, "Route/ProcedureTextColor", routeProcedureTextColor);
+  loadColor(colorSettings, "Route/ProcedurePointColor", routeProcedurePointColor);
+  loadColor(colorSettings, "Route/ProcedurePointFlyoverColor", routeProcedurePointFlyoverColor);
+  loadColor(colorSettings, "Route/UserPointColor", routeUserPointColor);
+  loadColor(colorSettings, "Route/InvalidPointColor", routeInvalidPointColor);
 
-  colorSettings.beginGroup("Surface");
-  syncColorArgb(colorSettings, "Concrete", surfaceConcrete);
-  syncColorArgb(colorSettings, "Grass", surfaceGrass);
-  syncColorArgb(colorSettings, "Water", surfaceWater);
-  syncColorArgb(colorSettings, "Asphalt", surfaceAsphalt);
-  syncColorArgb(colorSettings, "Cement", surfaceCement);
-  syncColorArgb(colorSettings, "Clay", surfaceClay);
-  syncColorArgb(colorSettings, "Snow", surfaceSnow);
-  syncColorArgb(colorSettings, "Ice", surfaceIce);
-  syncColorArgb(colorSettings, "Dirt", surfaceDirt);
-  syncColorArgb(colorSettings, "Coral", surfaceCoral);
-  syncColorArgb(colorSettings, "Gravel", surfaceGravel);
-  syncColorArgb(colorSettings, "OilTreated", surfaceOilTreated);
-  syncColorArgb(colorSettings, "SteelMats", surfaceSteelMats);
-  syncColorArgb(colorSettings, "Bituminous", surfaceBituminous);
-  syncColorArgb(colorSettings, "Brick", surfaceBrick);
-  syncColorArgb(colorSettings, "Macadam", surfaceMacadam);
-  syncColorArgb(colorSettings, "Planks", surfacePlanks);
-  syncColorArgb(colorSettings, "Sand", surfaceSand);
-  syncColorArgb(colorSettings, "Shale", surfaceShale);
-  syncColorArgb(colorSettings, "Tarmac", surfaceTarmac);
-  syncColorArgb(colorSettings, "Unknown", surfaceUnknown);
-  syncColorArgb(colorSettings, "Transparent", surfaceTransparent);
-  colorSettings.endGroup();
+  loadColorArgb(colorSettings, "Surface/Concrete", surfaceConcrete);
+  loadColorArgb(colorSettings, "Surface/Grass", surfaceGrass);
+  loadColorArgb(colorSettings, "Surface/Water", surfaceWater);
+  loadColorArgb(colorSettings, "Surface/Asphalt", surfaceAsphalt);
+  loadColorArgb(colorSettings, "Surface/Cement", surfaceCement);
+  loadColorArgb(colorSettings, "Surface/Clay", surfaceClay);
+  loadColorArgb(colorSettings, "Surface/Snow", surfaceSnow);
+  loadColorArgb(colorSettings, "Surface/Ice", surfaceIce);
+  loadColorArgb(colorSettings, "Surface/Dirt", surfaceDirt);
+  loadColorArgb(colorSettings, "Surface/Coral", surfaceCoral);
+  loadColorArgb(colorSettings, "Surface/Gravel", surfaceGravel);
+  loadColorArgb(colorSettings, "Surface/OilTreated", surfaceOilTreated);
+  loadColorArgb(colorSettings, "Surface/SteelMats", surfaceSteelMats);
+  loadColorArgb(colorSettings, "Surface/Bituminous", surfaceBituminous);
+  loadColorArgb(colorSettings, "Surface/Brick", surfaceBrick);
+  loadColorArgb(colorSettings, "Surface/Macadam", surfaceMacadam);
+  loadColorArgb(colorSettings, "Surface/Planks", surfacePlanks);
+  loadColorArgb(colorSettings, "Surface/Sand", surfaceSand);
+  loadColorArgb(colorSettings, "Surface/Shale", surfaceShale);
+  loadColorArgb(colorSettings, "Surface/Tarmac", surfaceTarmac);
+  loadColorArgb(colorSettings, "Surface/Unknown", surfaceUnknown);
+  loadColorArgb(colorSettings, "Surface/Transparent", surfaceTransparent);
 
   // Sync airspace colors ============================================
-  colorSettings.beginGroup("Airspace");
-  syncColorArgb(colorSettings, "TextBoxColorAirspace", textBoxColorAirspace);
+  loadColorArgb(colorSettings, "Airspace/TextBoxColorAirspace", textBoxColorAirspace);
 
   for(auto it = airspaceConfigNames.constBegin(); it != airspaceConfigNames.constEnd(); ++it)
   {
     const QString& name = it.key();
     map::MapAirspaceTypes type = it.value();
-    syncPen(colorSettings, name + "Pen", airspacePens[type]);
-    syncColorArgb(colorSettings, name + "FillColor", airspaceFillColors[type]);
+    loadPen(colorSettings, "Airspace/" % name % "Pen", airspacePens[type]);
+    loadColorArgb(colorSettings, "Airspace/" % name % "FillColor", airspaceFillColors[type]);
   }
-  colorSettings.endGroup();
-
-  colorSettings.sync();
 #endif
 }
 
