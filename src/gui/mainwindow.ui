@@ -549,8 +549,18 @@
     <addaction name="menuMapShowAirportWeatherSource"/>
     <addaction name="menuHighAltitudeWindSource"/>
    </widget>
+   <widget class="QMenu" name="menuSearch">
+    <property name="title">
+     <string>&amp;Search</string>
+    </property>
+    <addaction name="actionShortcutAirportSearch"/>
+    <addaction name="actionShortcutNavaidSearch"/>
+    <addaction name="actionShortcutUserpointSearch"/>
+    <addaction name="actionShortcutLogbookSearch"/>
+   </widget>
    <addaction name="menuFile"/>
    <addaction name="menuRoute"/>
+   <addaction name="menuSearch"/>
    <addaction name="menuMap"/>
    <addaction name="menuMapView"/>
    <addaction name="menuWeather"/>
