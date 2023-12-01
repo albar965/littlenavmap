@@ -75,6 +75,59 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
 
   ui->setupUi(this);
 
+  // 0 "Startup and Updates"
+  // 1 "User Interface"
+  // 2 "Display and Text"
+  // 3 "Units"
+  // 4 "Files"
+  // 5 "Map"
+  // 6 "Map Tooltips and Clicks"
+  // 7 "Map Navigation"
+  // 8 "Map Display"
+  // 9 "Map Flight Plan"
+  // 10 "Map Aircraft Trail"
+  // 11 "Map User"
+  // 12 "Map Labels"
+  // 13 "Map Keys"
+  // 14 "Map Online"
+  // 15 "Simulator Aircraft"
+  // 16 "Flight Plan"
+  // 17 "Weather"
+  // 18 "Weather Files"
+  // 19 "Online Flying"
+  // 20 "Web Server"
+  // 21 "Cache and Files"
+  // 22 "Scenery Library Database"
+
+  const static QVector<QLabel *> HINT_LABELS({
+    ui->labelOptionsUnitsHint,
+    ui->labelOptionsGuiFontHint,
+    ui->labelOptionsGuiTooltipHint,
+    ui->labelOptionsFilePatternsHint,
+    ui->labelOptionsResetLayoutHint,
+    ui->labelOptionsNavigationAidsHint,
+    ui->labelOptionsAirportSettingsHint,
+    ui->labelOptionsAirspaceSettingsHint,
+    ui->labelOptionsUserAircraftSettingsHint,
+    ui->labelOptionsAiHint,
+    ui->labelOptionsLabelHint,
+    ui->labelOptionsFlightPlanLabelHint,
+    ui->labelOptionsProfileHint,
+    ui->labelOptionsTrailHint,
+    ui->labelOptionsMeasurmentHint,
+    ui->labelOptionsCompassRoseHint,
+    ui->labelOptionsMapThemesHint,
+    ui->labelOptionsSimUpdatesHint,
+    ui->labelOptionsWeatherHint,
+    ui->labelOptionsCacheDiskExpirationHint,
+    ui->labelOptionsApiKeysHint,
+    ui->labelOptionsUnitsTextSizeHint,
+    ui->labelOptionsAppFontHint,
+    ui->labelOptionsOnlineHint,
+    ui->labelOptionsUnitsOnlineAirspaces,
+    ui->labelOptionsWeatherDefaultsHint
+  });
+
   ui->buttonBoxOptions->button(QDialogButtonBox::Ok)->setToolTip(tr("Apply changes and close dialog."));
   ui->buttonBoxOptions->button(QDialogButtonBox::Cancel)->setToolTip(tr("Discard all changes and close dialog."));
   ui->buttonBoxOptions->button(QDialogButtonBox::RestoreDefaults)->setToolTip(tr("Reset all settings back to default.\n"
@@ -703,50 +756,8 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
   connect(ui->lineEditOptionSearch, &QLineEdit::textEdited, this, &OptionsDialog::searchTextEdited);
 
   // Hint widgets with anchors ===========================================================================
-  // 0 "Startup and Updates"
-  // 1 "User Interface"
-  // 2 "Display and Text"
-  // 3 "Units"
-  // 4 "Files"
-  // 5 "Map"
-  // 6 "Map Tooltips and Clicks"
-  // 7 "Map Navigation"
-  // 8 "Map Display"
-  // 9 "Map Flight Plan"
-  // 10 "Map Aircraft Trail"
-  // 11 "Map User"
-  // 12 "Map Labels"
-  // 13 "Map Keys"
-  // 14 "Map Online"
-  // 15 "Simulator Aircraft"
-  // 16 "Flight Plan"
-  // 17 "Weather"
-  // 18 "Weather Files"
-  // 19 "Online Flying"
-  // 20 "Web Server"
-  // 21 "Cache and Files"
-  // 22 "Scenery Library Database"
-  connect(ui->labelOptionsUnitsHint, &QLabel::linkActivated, this, &OptionsDialog::hintLinkActivated);
-  connect(ui->labelOptionsGuiFontHint, &QLabel::linkActivated, this, &OptionsDialog::hintLinkActivated);
-  connect(ui->labelOptionsGuiTooltipHint, &QLabel::linkActivated, this, &OptionsDialog::hintLinkActivated);
-  connect(ui->labelOptionsFilePatternsHint, &QLabel::linkActivated, this, &OptionsDialog::hintLinkActivated);
-  connect(ui->labelOptionsResetLayoutHint, &QLabel::linkActivated, this, &OptionsDialog::hintLinkActivated);
-  connect(ui->labelOptionsNavigationAidsHint, &QLabel::linkActivated, this, &OptionsDialog::hintLinkActivated);
-  connect(ui->labelOptionsAirportSettingsHint, &QLabel::linkActivated, this, &OptionsDialog::hintLinkActivated);
-  connect(ui->labelOptionsAirspaceSettingsHint, &QLabel::linkActivated, this, &OptionsDialog::hintLinkActivated);
-  connect(ui->labelOptionsUserAircraftSettingsHint, &QLabel::linkActivated, this, &OptionsDialog::hintLinkActivated);
-  connect(ui->labelOptionsAiHint, &QLabel::linkActivated, this, &OptionsDialog::hintLinkActivated);
-  connect(ui->labelOptionsLabelHint, &QLabel::linkActivated, this, &OptionsDialog::hintLinkActivated);
-  connect(ui->labelOptionsFlightPlanLabelHint, &QLabel::linkActivated, this, &OptionsDialog::hintLinkActivated);
-  connect(ui->labelOptionsProfileHint, &QLabel::linkActivated, this, &OptionsDialog::hintLinkActivated);
-  connect(ui->labelOptionsTrailHint, &QLabel::linkActivated, this, &OptionsDialog::hintLinkActivated);
-  connect(ui->labelOptionsMeasurmentHint, &QLabel::linkActivated, this, &OptionsDialog::hintLinkActivated);
-  connect(ui->labelOptionsCompassRoseHint, &QLabel::linkActivated, this, &OptionsDialog::hintLinkActivated);
-  connect(ui->labelOptionsMapThemesHint, &QLabel::linkActivated, this, &OptionsDialog::hintLinkActivated);
-  connect(ui->labelOptionsSimUpdatesHint, &QLabel::linkActivated, this, &OptionsDialog::hintLinkActivated);
-  connect(ui->labelOptionsWeatherHint, &QLabel::linkActivated, this, &OptionsDialog::hintLinkActivated);
-  connect(ui->labelOptionsCacheDiskExpirationHint, &QLabel::linkActivated, this, &OptionsDialog::hintLinkActivated);
-  connect(ui->labelOptionsApiKeysHint, &QLabel::linkActivated, this, &OptionsDialog::hintLinkActivated);
+  for(QLabel *label :HINT_LABELS)
+    connect(label, &QLabel::linkActivated, this, &OptionsDialog::hintLinkActivated);
 }
 
 /* called at program end */
@@ -774,7 +785,11 @@ void OptionsDialog::hintLinkActivated(const QString& link)
     bool ok;
     int index = link.midRef(6).toInt(&ok);
     if(ok && index < ui->listWidgetOptionPages->count())
+    {
+      ui->lineEditOptionSearch->clear();
+      searchTextEdited(QString());
       ui->listWidgetOptionPages->setCurrentRow(index);
+    }
   }
 }
 

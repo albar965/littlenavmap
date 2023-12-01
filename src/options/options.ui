@@ -243,7 +243,7 @@ This is the file on top of the list &quot;Recent Window Layouts&quot;.</string>
                   <string>Show last used map position on startup.</string>
                  </property>
                  <property name="text">
-                  <string>&amp;Last position</string>
+                  <string>Show &amp;last position</string>
                  </property>
                  <property name="checked">
                   <bool>true</bool>
@@ -256,7 +256,7 @@ This is the file on top of the list &quot;Recent Window Layouts&quot;.</string>
                   <string>Show the map home position after startup.</string>
                  </property>
                  <property name="text">
-                  <string>&amp;Home position</string>
+                  <string>Show &amp;home position</string>
                  </property>
                 </widget>
                </item>
@@ -266,7 +266,7 @@ This is the file on top of the list &quot;Recent Window Layouts&quot;.</string>
                   <string>Center the last used flight plan on the map on startup.</string>
                  </property>
                  <property name="text">
-                  <string>&amp;Flight plan</string>
+                  <string>Show and center &amp;flight plan</string>
                  </property>
                 </widget>
                </item>
@@ -415,7 +415,7 @@ This is the file on top of the list &quot;Recent Window Layouts&quot;.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>613</width>
+             <width>599</width>
              <height>421</height>
             </rect>
            </property>
@@ -608,8 +608,8 @@ opening files, modifying the flight plan and other operations.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>570</width>
-             <height>726</height>
+             <width>585</width>
+             <height>768</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_23">
@@ -917,24 +917,8 @@ This does not affect the map window which can be changed separately on the optio
                <property name="spacing">
                 <number>2</number>
                </property>
-               <item row="1" column="0">
-                <widget class="QLabel" name="labelOptionsGuiRouteText">
-                 <property name="text">
-                  <string>Text size for &amp;flight plan table:</string>
-                 </property>
-                 <property name="buddy">
-                  <cstring>spinBoxOptionsGuiRouteText</cstring>
-                 </property>
-                </widget>
-               </item>
-               <item row="1" column="1">
-                <widget class="QSpinBox" name="spinBoxOptionsGuiRouteText">
-                 <property name="sizePolicy">
-                  <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-                   <horstretch>0</horstretch>
-                   <verstretch>0</verstretch>
-                  </sizepolicy>
-                 </property>
+               <item row="4" column="1">
+                <widget class="QSpinBox" name="spinBoxOptionsGuiInfoText">
                  <property name="readOnly">
                   <bool>false</bool>
                  </property>
@@ -952,6 +936,48 @@ This does not affect the map window which can be changed separately on the optio
                  </property>
                  <property name="value">
                   <number>100</number>
+                 </property>
+                </widget>
+               </item>
+               <item row="3" column="0">
+                <widget class="QLabel" name="labelOptionsGuiSearchText">
+                 <property name="text">
+                  <string>Text size for &amp;search result tables and procedure view:</string>
+                 </property>
+                 <property name="buddy">
+                  <cstring>spinBoxOptionsGuiSearchText</cstring>
+                 </property>
+                </widget>
+               </item>
+               <item row="2" column="1">
+                <widget class="QSpinBox" name="spinBoxOptionsGuiAircraftPerf">
+                 <property name="readOnly">
+                  <bool>false</bool>
+                 </property>
+                 <property name="suffix">
+                  <string> %</string>
+                 </property>
+                 <property name="minimum">
+                  <number>50</number>
+                 </property>
+                 <property name="maximum">
+                  <number>200</number>
+                 </property>
+                 <property name="singleStep">
+                  <number>10</number>
+                 </property>
+                 <property name="value">
+                  <number>100</number>
+                 </property>
+                </widget>
+               </item>
+               <item row="4" column="0">
+                <widget class="QLabel" name="labelOptionsGuiInfoText">
+                 <property name="text">
+                  <string>Text size for &amp;information dock window:</string>
+                 </property>
+                 <property name="buddy">
+                  <cstring>spinBoxOptionsGuiInfoText</cstring>
                  </property>
                 </widget>
                </item>
@@ -965,30 +991,14 @@ This does not affect the map window which can be changed separately on the optio
                  </property>
                 </widget>
                </item>
-               <item row="3" column="1">
-                <widget class="QSpinBox" name="spinBoxOptionsGuiSearchText">
-                 <property name="readOnly">
-                  <bool>false</bool>
+               <item row="1" column="1">
+                <widget class="QSpinBox" name="spinBoxOptionsGuiRouteText">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
                  </property>
-                 <property name="suffix">
-                  <string> %</string>
-                 </property>
-                 <property name="minimum">
-                  <number>50</number>
-                 </property>
-                 <property name="maximum">
-                  <number>200</number>
-                 </property>
-                 <property name="singleStep">
-                  <number>10</number>
-                 </property>
-                 <property name="value">
-                  <number>100</number>
-                 </property>
-                </widget>
-               </item>
-               <item row="4" column="1">
-                <widget class="QSpinBox" name="spinBoxOptionsGuiInfoText">
                  <property name="readOnly">
                   <bool>false</bool>
                  </property>
@@ -1031,38 +1041,21 @@ This does not affect the map window which can be changed separately on the optio
                  </property>
                 </widget>
                </item>
-               <item row="2" column="0">
-                <widget class="QLabel" name="labelOptionsGuiAircraftPerf">
-                 <property name="text">
-                  <string>Text size for &amp;flight plan fuel report:</string>
+               <item row="4" column="2">
+                <spacer name="horizontalSpacer_3">
+                 <property name="orientation">
+                  <enum>Qt::Horizontal</enum>
                  </property>
-                 <property name="buddy">
-                  <cstring>spinBoxOptionsGuiAircraftPerf</cstring>
+                 <property name="sizeHint" stdset="0">
+                  <size>
+                   <width>40</width>
+                   <height>20</height>
+                  </size>
                  </property>
-                </widget>
+                </spacer>
                </item>
-               <item row="4" column="0">
-                <widget class="QLabel" name="labelOptionsGuiInfoText">
-                 <property name="text">
-                  <string>Text size for &amp;information dock window:</string>
-                 </property>
-                 <property name="buddy">
-                  <cstring>spinBoxOptionsGuiInfoText</cstring>
-                 </property>
-                </widget>
-               </item>
-               <item row="3" column="0">
-                <widget class="QLabel" name="labelOptionsGuiSearchText">
-                 <property name="text">
-                  <string>Text size for &amp;search result tables and procedure view:</string>
-                 </property>
-                 <property name="buddy">
-                  <cstring>spinBoxOptionsGuiSearchText</cstring>
-                 </property>
-                </widget>
-               </item>
-               <item row="2" column="1">
-                <widget class="QSpinBox" name="spinBoxOptionsGuiAircraftPerf">
+               <item row="3" column="1">
+                <widget class="QSpinBox" name="spinBoxOptionsGuiSearchText">
                  <property name="readOnly">
                   <bool>false</bool>
                  </property>
@@ -1083,18 +1076,41 @@ This does not affect the map window which can be changed separately on the optio
                  </property>
                 </widget>
                </item>
-               <item row="4" column="2">
-                <spacer name="horizontalSpacer_3">
-                 <property name="orientation">
-                  <enum>Qt::Horizontal</enum>
+               <item row="2" column="0">
+                <widget class="QLabel" name="labelOptionsGuiAircraftPerf">
+                 <property name="text">
+                  <string>Text size for &amp;flight plan fuel report:</string>
                  </property>
-                 <property name="sizeHint" stdset="0">
-                  <size>
-                   <width>40</width>
-                   <height>20</height>
-                  </size>
+                 <property name="buddy">
+                  <cstring>spinBoxOptionsGuiAircraftPerf</cstring>
                  </property>
-                </spacer>
+                </widget>
+               </item>
+               <item row="1" column="0">
+                <widget class="QLabel" name="labelOptionsGuiRouteText">
+                 <property name="text">
+                  <string>Text size for &amp;flight plan table:</string>
+                 </property>
+                 <property name="buddy">
+                  <cstring>spinBoxOptionsGuiRouteText</cstring>
+                 </property>
+                </widget>
+               </item>
+               <item row="7" column="0" colspan="3">
+                <widget class="QLabel" name="labelOptionsUnitsTextSizeHint">
+                 <property name="text">
+                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/littlenavmap/resources/icons/bulb.svg&quot;/&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;You can temporarily change the text size for information and progress pages using Ctrl+Mouse Wheel.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                 </property>
+                 <property name="wordWrap">
+                  <bool>true</bool>
+                 </property>
+                 <property name="margin">
+                  <number>10</number>
+                 </property>
+                 <property name="textInteractionFlags">
+                  <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
+                 </property>
+                </widget>
                </item>
               </layout>
              </widget>
@@ -1145,7 +1161,7 @@ This does not affect the map window which can be changed separately on the optio
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>584</width>
+             <width>599</width>
              <height>421</height>
             </rect>
            </property>
@@ -1466,7 +1482,7 @@ Also affects labels at holds and traffic patterns.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>584</width>
+             <width>599</width>
              <height>421</height>
             </rect>
            </property>
@@ -1682,7 +1698,7 @@ Example: &quot;IFR Frankfurt Am Main (EDDF) to Fiumicino (LIRF).lnmpln&quot;</st
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>584</width>
+             <width>599</width>
              <height>421</height>
             </rect>
            </property>
@@ -1743,7 +1759,7 @@ Restart the program after changing this option. You might also need to reset the
                <item>
                 <widget class="QLabel" name="labelOptionsResetLayoutHint">
                  <property name="text">
-                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/littlenavmap/resources/icons/bulb.svg&quot;/&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Use &amp;quot;Window&amp;quot; -&amp;gt; &amp;quot;Reset Window Layout&amp;quot; in the main menu to clean up the layout after a restart, if necessary.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/littlenavmap/resources/icons/bulb.svg&quot;/&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Use &amp;quot;Window&amp;quot; -&amp;gt; &amp;quot;Reset Window Layout&amp;quot; in the main menu to clean up the layout after the restart, if necessary.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                  </property>
                  <property name="wordWrap">
                   <bool>true</bool>
@@ -2711,9 +2727,9 @@ Map views might be shown with a larger zoom distance than expected if this optio
            <property name="geometry">
             <rect>
              <x>0</x>
-             <y>-89</y>
+             <y>0</y>
              <width>585</width>
-             <height>898</height>
+             <height>944</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_20">
@@ -2722,10 +2738,7 @@ Map views might be shown with a larger zoom distance than expected if this optio
               <property name="title">
                <string>Map and Elevation Profile Font</string>
               </property>
-              <layout class="QHBoxLayout" name="horizontalLayout">
-               <property name="spacing">
-                <number>2</number>
-               </property>
+              <layout class="QGridLayout" name="gridLayout_5">
                <property name="leftMargin">
                 <number>2</number>
                </property>
@@ -2738,28 +2751,7 @@ Map views might be shown with a larger zoom distance than expected if this optio
                <property name="bottomMargin">
                 <number>2</number>
                </property>
-               <item>
-                <widget class="QPushButton" name="pushButtonOptionsDisplaySelectFont">
-                 <property name="toolTip">
-                  <string>Select a font for the map and the elevation profile.
-Note that some fonts, especially large fonts, can result in display errors on the map.</string>
-                 </property>
-                 <property name="text">
-                  <string>Select &amp;Font ...</string>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QPushButton" name="pushButtonOptionsDisplayResetFont">
-                 <property name="toolTip">
-                  <string>Reset font for the map and the elevation profile back to default</string>
-                 </property>
-                 <property name="text">
-                  <string>&amp;Reset Font to Default</string>
-                 </property>
-                </widget>
-               </item>
-               <item>
+               <item row="0" column="3">
                 <widget class="QLabel" name="labelOptionsDisplayFont">
                  <property name="sizePolicy">
                   <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
@@ -2775,6 +2767,43 @@ Note that some fonts, especially large fonts, can result in display errors on th
                  </property>
                  <property name="margin">
                   <number>5</number>
+                 </property>
+                </widget>
+               </item>
+               <item row="0" column="0">
+                <widget class="QPushButton" name="pushButtonOptionsDisplaySelectFont">
+                 <property name="toolTip">
+                  <string>Select a font for the map and the elevation profile.
+Note that some fonts, especially large fonts, can result in display errors on the map.</string>
+                 </property>
+                 <property name="text">
+                  <string>Select &amp;Font ...</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="0" column="1">
+                <widget class="QPushButton" name="pushButtonOptionsDisplayResetFont">
+                 <property name="toolTip">
+                  <string>Reset font for the map and the elevation profile back to default</string>
+                 </property>
+                 <property name="text">
+                  <string>&amp;Reset Font to Default</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="0" colspan="4">
+                <widget class="QLabel" name="labelOptionsAppFontHint">
+                 <property name="text">
+                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/littlenavmap/resources/icons/bulb.svg&quot;/&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Change the font for the whole application on page &lt;/span&gt;&lt;a href=&quot;lnm://2&quot;&gt;&lt;span style=&quot; font-style:italic; text-decoration: underline; color:#0057ae;&quot;&gt;Display and Text&lt;/span&gt;&lt;/a&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                 </property>
+                 <property name="wordWrap">
+                  <bool>true</bool>
+                 </property>
+                 <property name="margin">
+                  <number>10</number>
+                 </property>
+                 <property name="textInteractionFlags">
+                  <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
                  </property>
                 </widget>
                </item>
@@ -5135,8 +5164,8 @@ Do not show this information publicly in forums on screenshots.&lt;/b&gt;&lt;/p&
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>599</width>
-             <height>421</height>
+             <width>585</width>
+             <height>519</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_39">
@@ -5189,6 +5218,22 @@ airspace filename has to match the callsign of the online center.</string>
                  </property>
                 </widget>
                </item>
+               <item>
+                <widget class="QLabel" name="labelOptionsUnitsOnlineAirspaces">
+                 <property name="text">
+                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/littlenavmap/resources/icons/bulb.svg&quot;/&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Load airspaces and select airspace libraries in menu &amp;quot;Scenery Library&amp;quot;. Click the help button for more information.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                 </property>
+                 <property name="wordWrap">
+                  <bool>true</bool>
+                 </property>
+                 <property name="margin">
+                  <number>10</number>
+                 </property>
+                 <property name="textInteractionFlags">
+                  <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
+                 </property>
+                </widget>
+               </item>
               </layout>
              </widget>
             </item>
@@ -5226,6 +5271,13 @@ airspace filename has to match the callsign of the online center.</string>
                <property name="spacing">
                 <number>2</number>
                </property>
+               <item row="0" column="1">
+                <widget class="QLabel" name="label_3">
+                 <property name="text">
+                  <string>Range Circle Size</string>
+                 </property>
+                </widget>
+               </item>
                <item row="4" column="0">
                 <widget class="QLabel" name="labelDisplayOnlineGround">
                  <property name="text">
@@ -5236,19 +5288,6 @@ airspace filename has to match the callsign of the online center.</string>
                  </property>
                 </widget>
                </item>
-               <item row="7" column="2">
-                <widget class="QCheckBox" name="checkBoxDisplayOnlineAreaRange">
-                 <property name="toolTip">
-                  <string>Use visual range provided from online network</string>
-                 </property>
-                 <property name="text">
-                  <string/>
-                 </property>
-                 <property name="checked">
-                  <bool>false</bool>
-                 </property>
-                </widget>
-               </item>
                <item row="0" column="2">
                 <widget class="QLabel" name="label_4">
                  <property name="text">
@@ -5256,40 +5295,8 @@ airspace filename has to match the callsign of the online center.</string>
                  </property>
                 </widget>
                </item>
-               <item row="4" column="1">
-                <widget class="QSpinBox" name="spinBoxDisplayOnlineGround">
-                 <property name="suffix">
-                  <string> %dist%</string>
-                 </property>
-                 <property name="minimum">
-                  <number>2</number>
-                 </property>
-                 <property name="maximum">
-                  <number>2000</number>
-                 </property>
-                 <property name="value">
-                  <number>10</number>
-                 </property>
-                </widget>
-               </item>
-               <item row="1" column="1">
-                <widget class="QSpinBox" name="spinBoxDisplayOnlineObserver">
-                 <property name="suffix">
-                  <string> %dist%</string>
-                 </property>
-                 <property name="minimum">
-                  <number>2</number>
-                 </property>
-                 <property name="maximum">
-                  <number>2000</number>
-                 </property>
-                 <property name="value">
-                  <number>20</number>
-                 </property>
-                </widget>
-               </item>
-               <item row="3" column="2">
-                <widget class="QCheckBox" name="checkBoxDisplayOnlineClearanceRange">
+               <item row="8" column="2">
+                <widget class="QCheckBox" name="checkBoxDisplayOnlineDepartureRange">
                  <property name="toolTip">
                   <string>Use visual range provided from online network</string>
                  </property>
@@ -5298,120 +5305,6 @@ airspace filename has to match the callsign of the online center.</string>
                  </property>
                  <property name="checked">
                   <bool>true</bool>
-                 </property>
-                </widget>
-               </item>
-               <item row="5" column="1">
-                <widget class="QSpinBox" name="spinBoxDisplayOnlineTower">
-                 <property name="suffix">
-                  <string> %dist%</string>
-                 </property>
-                 <property name="minimum">
-                  <number>2</number>
-                 </property>
-                 <property name="maximum">
-                  <number>2000</number>
-                 </property>
-                 <property name="value">
-                  <number>20</number>
-                 </property>
-                </widget>
-               </item>
-               <item row="8" column="0">
-                <widget class="QLabel" name="labelDisplayOnlineDeparture">
-                 <property name="text">
-                  <string>&amp;Departure Control:</string>
-                 </property>
-                 <property name="buddy">
-                  <cstring>spinBoxDisplayOnlineDeparture</cstring>
-                 </property>
-                </widget>
-               </item>
-               <item row="5" column="2">
-                <widget class="QCheckBox" name="checkBoxDisplayOnlineTowerRange">
-                 <property name="toolTip">
-                  <string>Use visual range provided from online network</string>
-                 </property>
-                 <property name="text">
-                  <string/>
-                 </property>
-                 <property name="checked">
-                  <bool>false</bool>
-                 </property>
-                </widget>
-               </item>
-               <item row="8" column="1">
-                <widget class="QSpinBox" name="spinBoxDisplayOnlineDeparture">
-                 <property name="suffix">
-                  <string> %dist%</string>
-                 </property>
-                 <property name="minimum">
-                  <number>1</number>
-                 </property>
-                 <property name="maximum">
-                  <number>2000</number>
-                 </property>
-                 <property name="value">
-                  <number>20</number>
-                 </property>
-                </widget>
-               </item>
-               <item row="3" column="1">
-                <widget class="QSpinBox" name="spinBoxDisplayOnlineClearance">
-                 <property name="suffix">
-                  <string> %dist%</string>
-                 </property>
-                 <property name="minimum">
-                  <number>2</number>
-                 </property>
-                 <property name="maximum">
-                  <number>2000</number>
-                 </property>
-                 <property name="value">
-                  <number>20</number>
-                 </property>
-                </widget>
-               </item>
-               <item row="7" column="0">
-                <widget class="QLabel" name="labelDisplayOnlineArea">
-                 <property name="text">
-                  <string>&amp;Area Control Center:</string>
-                 </property>
-                 <property name="buddy">
-                  <cstring>spinBoxDisplayOnlineArea</cstring>
-                 </property>
-                </widget>
-               </item>
-               <item row="4" column="2">
-                <widget class="QCheckBox" name="checkBoxDisplayOnlineGroundRange">
-                 <property name="toolTip">
-                  <string>Use visual range provided from online network</string>
-                 </property>
-                 <property name="text">
-                  <string/>
-                 </property>
-                 <property name="checked">
-                  <bool>false</bool>
-                 </property>
-                </widget>
-               </item>
-               <item row="1" column="2">
-                <widget class="QCheckBox" name="checkBoxDisplayOnlineObserverRange">
-                 <property name="toolTip">
-                  <string>Use visual range provided from online network</string>
-                 </property>
-                 <property name="text">
-                  <string/>
-                 </property>
-                 <property name="checked">
-                  <bool>true</bool>
-                 </property>
-                </widget>
-               </item>
-               <item row="0" column="1">
-                <widget class="QLabel" name="label_3">
-                 <property name="text">
-                  <string>Range Circle Size</string>
                  </property>
                 </widget>
                </item>
@@ -5428,39 +5321,16 @@ airspace filename has to match the callsign of the online center.</string>
                  </property>
                 </widget>
                </item>
-               <item row="6" column="0">
-                <widget class="QLabel" name="labelDisplayOnlineApproach">
+               <item row="6" column="2">
+                <widget class="QCheckBox" name="checkBoxDisplayOnlineApproachRange">
+                 <property name="toolTip">
+                  <string>Use visual range provided from online network</string>
+                 </property>
                  <property name="text">
-                  <string>&amp;Approach Control:</string>
+                  <string/>
                  </property>
-                 <property name="buddy">
-                  <cstring>spinBoxDisplayOnlineApproach</cstring>
-                 </property>
-                </widget>
-               </item>
-               <item row="6" column="1">
-                <widget class="QSpinBox" name="spinBoxDisplayOnlineApproach">
-                 <property name="suffix">
-                  <string> %dist%</string>
-                 </property>
-                 <property name="minimum">
-                  <number>2</number>
-                 </property>
-                 <property name="maximum">
-                  <number>2000</number>
-                 </property>
-                 <property name="value">
-                  <number>40</number>
-                 </property>
-                </widget>
-               </item>
-               <item row="5" column="0">
-                <widget class="QLabel" name="labelDisplayOnlineTower">
-                 <property name="text">
-                  <string>&amp;Tower:</string>
-                 </property>
-                 <property name="buddy">
-                  <cstring>spinBoxDisplayOnlineTower</cstring>
+                 <property name="checked">
+                  <bool>false</bool>
                  </property>
                 </widget>
                </item>
@@ -5490,8 +5360,34 @@ airspace filename has to match the callsign of the online center.</string>
                  </property>
                 </widget>
                </item>
-               <item row="6" column="2">
-                <widget class="QCheckBox" name="checkBoxDisplayOnlineApproachRange">
+               <item row="7" column="0">
+                <widget class="QLabel" name="labelDisplayOnlineArea">
+                 <property name="text">
+                  <string>&amp;Area Control Center:</string>
+                 </property>
+                 <property name="buddy">
+                  <cstring>spinBoxDisplayOnlineArea</cstring>
+                 </property>
+                </widget>
+               </item>
+               <item row="4" column="1">
+                <widget class="QSpinBox" name="spinBoxDisplayOnlineGround">
+                 <property name="suffix">
+                  <string> %dist%</string>
+                 </property>
+                 <property name="minimum">
+                  <number>2</number>
+                 </property>
+                 <property name="maximum">
+                  <number>2000</number>
+                 </property>
+                 <property name="value">
+                  <number>10</number>
+                 </property>
+                </widget>
+               </item>
+               <item row="4" column="2">
+                <widget class="QCheckBox" name="checkBoxDisplayOnlineGroundRange">
                  <property name="toolTip">
                   <string>Use visual range provided from online network</string>
                  </property>
@@ -5503,13 +5399,26 @@ airspace filename has to match the callsign of the online center.</string>
                  </property>
                 </widget>
                </item>
-               <item row="3" column="0">
-                <widget class="QLabel" name="labelDisplayOnlineClearance">
+               <item row="1" column="2">
+                <widget class="QCheckBox" name="checkBoxDisplayOnlineObserverRange">
+                 <property name="toolTip">
+                  <string>Use visual range provided from online network</string>
+                 </property>
                  <property name="text">
-                  <string>&amp;Clearance Delivery:</string>
+                  <string/>
+                 </property>
+                 <property name="checked">
+                  <bool>true</bool>
+                 </property>
+                </widget>
+               </item>
+               <item row="8" column="0">
+                <widget class="QLabel" name="labelDisplayOnlineDeparture">
+                 <property name="text">
+                  <string>&amp;Departure Control:</string>
                  </property>
                  <property name="buddy">
-                  <cstring>spinBoxDisplayOnlineClearance</cstring>
+                  <cstring>spinBoxDisplayOnlineDeparture</cstring>
                  </property>
                 </widget>
                </item>
@@ -5520,6 +5429,80 @@ airspace filename has to match the callsign of the online center.</string>
                  </property>
                  <property name="buddy">
                   <cstring>spinBoxDisplayOnlineFir</cstring>
+                 </property>
+                </widget>
+               </item>
+               <item row="8" column="1">
+                <widget class="QSpinBox" name="spinBoxDisplayOnlineDeparture">
+                 <property name="suffix">
+                  <string> %dist%</string>
+                 </property>
+                 <property name="minimum">
+                  <number>1</number>
+                 </property>
+                 <property name="maximum">
+                  <number>2000</number>
+                 </property>
+                 <property name="value">
+                  <number>20</number>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="1">
+                <widget class="QSpinBox" name="spinBoxDisplayOnlineObserver">
+                 <property name="suffix">
+                  <string> %dist%</string>
+                 </property>
+                 <property name="minimum">
+                  <number>2</number>
+                 </property>
+                 <property name="maximum">
+                  <number>2000</number>
+                 </property>
+                 <property name="value">
+                  <number>20</number>
+                 </property>
+                </widget>
+               </item>
+               <item row="5" column="2">
+                <widget class="QCheckBox" name="checkBoxDisplayOnlineTowerRange">
+                 <property name="toolTip">
+                  <string>Use visual range provided from online network</string>
+                 </property>
+                 <property name="text">
+                  <string/>
+                 </property>
+                 <property name="checked">
+                  <bool>false</bool>
+                 </property>
+                </widget>
+               </item>
+               <item row="7" column="2">
+                <widget class="QCheckBox" name="checkBoxDisplayOnlineAreaRange">
+                 <property name="toolTip">
+                  <string>Use visual range provided from online network</string>
+                 </property>
+                 <property name="text">
+                  <string/>
+                 </property>
+                 <property name="checked">
+                  <bool>false</bool>
+                 </property>
+                </widget>
+               </item>
+               <item row="6" column="1">
+                <widget class="QSpinBox" name="spinBoxDisplayOnlineApproach">
+                 <property name="suffix">
+                  <string> %dist%</string>
+                 </property>
+                 <property name="minimum">
+                  <number>2</number>
+                 </property>
+                 <property name="maximum">
+                  <number>2000</number>
+                 </property>
+                 <property name="value">
+                  <number>40</number>
                  </property>
                 </widget>
                </item>
@@ -5539,8 +5522,50 @@ airspace filename has to match the callsign of the online center.</string>
                  </property>
                 </widget>
                </item>
-               <item row="8" column="2">
-                <widget class="QCheckBox" name="checkBoxDisplayOnlineDepartureRange">
+               <item row="3" column="1">
+                <widget class="QSpinBox" name="spinBoxDisplayOnlineClearance">
+                 <property name="suffix">
+                  <string> %dist%</string>
+                 </property>
+                 <property name="minimum">
+                  <number>2</number>
+                 </property>
+                 <property name="maximum">
+                  <number>2000</number>
+                 </property>
+                 <property name="value">
+                  <number>20</number>
+                 </property>
+                </widget>
+               </item>
+               <item row="3" column="0">
+                <widget class="QLabel" name="labelDisplayOnlineClearance">
+                 <property name="text">
+                  <string>&amp;Clearance Delivery:</string>
+                 </property>
+                 <property name="buddy">
+                  <cstring>spinBoxDisplayOnlineClearance</cstring>
+                 </property>
+                </widget>
+               </item>
+               <item row="5" column="1">
+                <widget class="QSpinBox" name="spinBoxDisplayOnlineTower">
+                 <property name="suffix">
+                  <string> %dist%</string>
+                 </property>
+                 <property name="minimum">
+                  <number>2</number>
+                 </property>
+                 <property name="maximum">
+                  <number>2000</number>
+                 </property>
+                 <property name="value">
+                  <number>20</number>
+                 </property>
+                </widget>
+               </item>
+               <item row="3" column="2">
+                <widget class="QCheckBox" name="checkBoxDisplayOnlineClearanceRange">
                  <property name="toolTip">
                   <string>Use visual range provided from online network</string>
                  </property>
@@ -5549,6 +5574,42 @@ airspace filename has to match the callsign of the online center.</string>
                  </property>
                  <property name="checked">
                   <bool>true</bool>
+                 </property>
+                </widget>
+               </item>
+               <item row="5" column="0">
+                <widget class="QLabel" name="labelDisplayOnlineTower">
+                 <property name="text">
+                  <string>&amp;Tower:</string>
+                 </property>
+                 <property name="buddy">
+                  <cstring>spinBoxDisplayOnlineTower</cstring>
+                 </property>
+                </widget>
+               </item>
+               <item row="6" column="0">
+                <widget class="QLabel" name="labelDisplayOnlineApproach">
+                 <property name="text">
+                  <string>&amp;Approach Control:</string>
+                 </property>
+                 <property name="buddy">
+                  <cstring>spinBoxDisplayOnlineApproach</cstring>
+                 </property>
+                </widget>
+               </item>
+               <item row="9" column="0" colspan="3">
+                <widget class="QLabel" name="labelOptionsOnlineHint">
+                 <property name="text">
+                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/littlenavmap/resources/icons/bulb.svg&quot;/&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Enable online networks on page &lt;/span&gt;&lt;a href=&quot;lnm://19&quot;&gt;&lt;span style=&quot; font-style:italic; color:#0057ae;&quot;&gt;Online Flying&lt;/span&gt;&lt;/a&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                 </property>
+                 <property name="wordWrap">
+                  <bool>true</bool>
+                 </property>
+                 <property name="margin">
+                  <number>10</number>
+                 </property>
+                 <property name="textInteractionFlags">
+                  <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
                  </property>
                 </widget>
                </item>
@@ -6179,7 +6240,7 @@ Note that this value does not affect flight plan calculation or saving of flight
            <property name="geometry">
             <rect>
              <x>0</x>
-             <y>0</y>
+             <y>-140</y>
              <width>585</width>
              <height>561</height>
             </rect>
@@ -6380,7 +6441,7 @@ Note that this value does not affect flight plan calculation or saving of flight
             <item>
              <widget class="QLabel" name="labelOptionsWeatherHint">
               <property name="text">
-               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/littlenavmap/resources/icons/bulb.svg&quot;/&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;See in the main menu &amp;quot;Weather&amp;quot; for more options to display winds aloft and weather at airports.&lt;br/&gt;The page &amp;quot;Weather Files&amp;quot; allows to select paths if non-standard simulator installations are used.&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Disable unneeded options to improve performance.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/littlenavmap/resources/icons/bulb.svg&quot;/&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;See in the main menu &amp;quot;Weather&amp;quot; for more options to display winds aloft and weather at airports.&lt;br/&gt;The page &lt;/span&gt;&lt;a href=&quot;lnm://18&quot;&gt;&lt;span style=&quot; font-style:italic; text-decoration: underline; color:#0057ae;&quot;&gt;Weather Files&lt;/span&gt;&lt;/a&gt;&lt;span style=&quot; font-style:italic;&quot;&gt; allows to select paths if non-standard simulator installations are used.&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Disable unneeded options to improve performance.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
               </property>
               <property name="wordWrap">
                <bool>true</bool>
@@ -6422,7 +6483,7 @@ Note that this value does not affect flight plan calculation or saving of flight
              <x>0</x>
              <y>0</y>
              <width>585</width>
-             <height>727</height>
+             <height>789</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_28">
@@ -6954,6 +7015,22 @@ Entering a wrong value will cause errors when downloading weather reports.</stri
                 </widget>
                </item>
               </layout>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLabel" name="labelOptionsWeatherDefaultsHint">
+              <property name="text">
+               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/littlenavmap/resources/icons/bulb.svg&quot;/&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Leave these options at default or empty (press &amp;quot;Reset&amp;quot;) if you are not running special setups such as networked connections where weather needs to be loaded from network shares, for example.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              </property>
+              <property name="wordWrap">
+               <bool>true</bool>
+              </property>
+              <property name="margin">
+               <number>10</number>
+              </property>
+              <property name="textInteractionFlags">
+               <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
+              </property>
              </widget>
             </item>
             <item>
