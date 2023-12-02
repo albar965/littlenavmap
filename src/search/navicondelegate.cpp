@@ -36,8 +36,7 @@ NavIconDelegate::~NavIconDelegate()
   delete symbolPainter;
 }
 
-void NavIconDelegate::paint(QPainter *painter, const QStyleOptionViewItem& option,
-                            const QModelIndex& index) const
+void NavIconDelegate::paint(QPainter *painter, const QStyleOptionViewItem& option, const QModelIndex& index) const
 {
   QModelIndex idx(index);
   const SqlModel *sqlModel = dynamic_cast<const SqlModel *>(index.model());
@@ -67,13 +66,13 @@ void NavIconDelegate::paint(QPainter *painter, const QStyleOptionViewItem& optio
   QString navtype = sqlModel->getSqlRecord(idx.row()).valueStr("nav_type");
   map::MapTypes type = map::navTypeToMapType(navtype);
 
-  int symbolSize = option.rect.height() - 4;
-  int x = option.rect.x() + symbolSize;
-  int y = option.rect.y() + symbolSize / 2 + 2;
+  float symbolSize = option.rect.height() - 4.f;
+  float x = option.rect.x() + symbolSize;
+  float y = option.rect.y() + symbolSize / 2.f + 2.f;
 
   if(type == map::WAYPOINT)
     // An empty waypoint is enough to draw the symbol
-    symbolPainter->drawWaypointSymbol(painter, QColor(), x, y, symbolSize, false);
+    symbolPainter->drawWaypointSymbol(painter, QColor(), x, y, symbolSize * 0.7f, false);
   else if(type == map::NDB)
     symbolPainter->drawNdbSymbol(painter, x, y, symbolSize, false, false);
   else if(type == map::VOR)
@@ -83,6 +82,6 @@ void NavIconDelegate::paint(QPainter *painter, const QStyleOptionViewItem& optio
     vor.hasDme = navtype == "VD" || navtype == "D";
     vor.tacan = map::navTypeTacan(navtype);
     vor.vortac = map::navTypeVortac(navtype);
-    symbolPainter->drawVorSymbol(painter, vor, x, y, symbolSize, 0.f, false /* routeFill */, false /* fast */);
+    symbolPainter->drawVorSymbol(painter, vor, x, y, symbolSize * 0.9f, 0.f, false /* routeFill */, false /* fast */);
   }
 }
