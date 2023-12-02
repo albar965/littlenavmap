@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2022 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -192,7 +192,7 @@ void OnlinedataController::startDownloadInternal()
     // No online functionality set in options
     return;
 
-  // Get URLs from configuration which are already set accoding to selected network
+  // Get URLs from configuration which are already set according to selected network
   QString onlineStatusUrl = od.getOnlineStatusUrl();
   QString onlineWhazzupUrl = od.getOnlineWhazzupUrl();
   bool whazzupGzipped = false, whazzupJson = false;
@@ -273,8 +273,14 @@ void OnlinedataController::downloadFinished(const QByteArray& data, QString url)
     if(verbose)
       qDebug() << Q_FUNC_INFO << "DOWNLOADING_STATUS";
 
+    QString statusTxt = uncompress(data, Q_FUNC_INFO, false /* utf8 */);
+
+#ifdef DEBUG_INFORMATION_ONLINE
+    atools::strToFile(QDir::tempPath() + "/lnm_status.txt", statusTxt);
+#endif
+
     // Parse status file
-    manager->readFromStatus(uncompress(data, Q_FUNC_INFO, false /* utf8 */));
+    manager->readFromStatus(statusTxt);
 
     // Get URL from status file
     bool whazzupGzipped = false, whazzupJson = false;
@@ -312,8 +318,13 @@ void OnlinedataController::downloadFinished(const QByteArray& data, QString url)
     if(verbose)
       qDebug() << Q_FUNC_INFO << "DOWNLOADING_TRANSCEIVERS";
 
+    QString tranceiversTxt = uncompress(data, Q_FUNC_INFO, true /* utf8 */);
+
+#ifdef DEBUG_INFORMATION_ONLINE
+    atools::strToFile(QDir::tempPath() + "/lnm_tranceivers.json", tranceiversTxt);
+#endif
     // transceivers.json downloaded ============================================
-    manager->readFromTransceivers(uncompress(data, Q_FUNC_INFO, true /* utf8 */));
+    manager->readFromTransceivers(tranceiversTxt);
 
     // Next in chain after transceivers is JSON
     currentState = DOWNLOADING_WHAZZUP;
@@ -333,8 +344,13 @@ void OnlinedataController::downloadFinished(const QByteArray& data, QString url)
     bool vatsimJson = format == atools::fs::online::VATSIM_JSON3;
     bool ivaoJson = format == atools::fs::online::IVAO_JSON2;
 
-    if(manager->readFromWhazzup(uncompress(data, Q_FUNC_INFO, ivaoJson || vatsimJson /* utf8 */),
-                                format, manager->getLastUpdateTimeFromWhazzup()))
+    QString whazzupTxt = uncompress(data, Q_FUNC_INFO, ivaoJson || vatsimJson /* utf8 */);
+
+#ifdef DEBUG_INFORMATION_ONLINE
+    atools::strToFile(QDir::tempPath() + "/lnm_whazzup." + (ivaoJson || vatsimJson ? "json" : "txt"), whazzupTxt);
+#endif
+
+    if(manager->readFromWhazzup(whazzupTxt, format, manager->getLastUpdateTimeFromWhazzup()))
     {
       QString whazzupVoiceUrlFromStatus = manager->getWhazzupVoiceUrlFromStatus();
       if(!vatsimJson && !ivaoJson && !whazzupVoiceUrlFromStatus.isEmpty() &&
@@ -378,9 +394,28 @@ void OnlinedataController::downloadFinished(const QByteArray& data, QString url)
     if(verbose)
       qDebug() << Q_FUNC_INFO << "DOWNLOADING_WHAZZUP_SERVERS";
 
-    manager->readServersFromWhazzup(uncompress(data, Q_FUNC_INFO, false /* utf8 */),
-                                    convertFormat(OptionData::instance().getOnlineFormat()),
-                                    manager->getLastUpdateTimeFromWhazzup());
+    QString serversTxt = uncompress(data, Q_FUNC_INFO, false /* utf8 */);
+    atools::fs::online::Format format = convertFormat(OptionData::instance().getOnlineFormat());
+
+#ifdef DEBUG_INFORMATION_ONLINE
+    QString suffix;
+    switch(format)
+    {
+      case atools::fs::online::UNKNOWN:
+      case atools::fs::online::VATSIM:
+      case atools::fs::online::IVAO:
+        suffix = "txt";
+        break;
+
+      case atools::fs::online::VATSIM_JSON3:
+      case atools::fs::online::IVAO_JSON2:
+        suffix = "json";
+        break;
+    }
+    atools::strToFile(QDir::tempPath() + "/lnm_servers." + suffix, serversTxt);
+#endif
+
+    manager->readServersFromWhazzup(serversTxt, format, manager->getLastUpdateTimeFromWhazzup());
     lastServerDownload = now;
 
     // Done after downloading server.txt - start timer for next session
