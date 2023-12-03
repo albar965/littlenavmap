@@ -1783,7 +1783,7 @@ QString comTypeName(const QString& type)
   return comTypeNames.value(type);
 }
 
-QString magvarText(float magvar, bool shortText)
+QString magvarText(float magvar, bool shortText, bool degSign)
 {
   QString num = QLocale().toString(std::abs(magvar), 'f', 1);
 
@@ -1796,13 +1796,15 @@ QString magvarText(float magvar, bool shortText)
     if(num.endsWith(pt % "0"))
       num.chop(2);
 
+    const QString txt = degSign ? QObject::tr("%1°%2") : QObject::tr("%1%2");
+
     if(magvar < -0.04f)
-      return QObject::tr("%1°%2").arg(num).arg(shortText ? QObject::tr("W") : QObject::tr(" West"));
+      return txt.arg(num).arg(shortText ? QObject::tr("W") : QObject::tr(" West"));
     else if(magvar > 0.04f)
       // positive" (or "easterly") variation
-      return QObject::tr("%1°%2").arg(num).arg(shortText ? QObject::tr("E") : QObject::tr(" East"));
+      return txt.arg(num).arg(shortText ? QObject::tr("E") : QObject::tr(" East"));
     else
-      return QObject::tr("0°");
+      return degSign ? QObject::tr("0°") : QObject::tr("0");
   }
   return QString();
 }

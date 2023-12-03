@@ -168,7 +168,7 @@ NavSearch::NavSearch(QMainWindow *parent, QTableView *tableView, si::TabSearchId
   append(Column("range", ui->spinBoxNavMaxRangeSearch, tr("Range\n%dist%")).
          filter().condition(">").convertFunc(Unit::distNmF)).
   append(Column("mag_var", tr("Mag.\nDecl.°"))).
-  append(Column("altitude", tr("Elevation\n%alt%")).convertFunc(Unit::altFeetF)).
+  append(Column("altitude", tr("Elev.\n%alt%")).convertFunc(Unit::altFeetF)).
   append(Column("scenery_local_path", ui->lineEditNavScenerySearch,
                 tr("Scenery Path")).filter(true, ui->actionNavSearchShowSceneryOptions)).
   append(Column("bgl_filename", ui->lineEditNavFileSearch,
@@ -367,7 +367,7 @@ QString NavSearch::formatModelData(const Column *col, const QVariant& displayRol
       return "Invalid";
   }
   else if(col->getColumnName() == "mag_var")
-    return map::magvarText(displayRoleValue.toFloat());
+    return map::magvarText(displayRoleValue.toFloat(), true /* shortText */, false /* degSign */);
   else if(displayRoleValue.type() == QVariant::Int || displayRoleValue.type() == QVariant::UInt)
     return QLocale().toString(displayRoleValue.toInt());
   else if(displayRoleValue.type() == QVariant::LongLong || displayRoleValue.type() == QVariant::ULongLong)

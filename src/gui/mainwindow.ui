@@ -972,7 +972,7 @@ Not available for all simulators.</string>
                 <string>Military airports</string>
                </property>
                <property name="text">
-                <string>Militar&amp;y</string>
+                <string>&amp;Mil.</string>
                </property>
                <property name="tristate">
                 <bool>true</bool>

@@ -204,7 +204,7 @@ AirportSearch::AirportSearch(QMainWindow *parent, QTableView *tableView, si::Tab
 
   append(Column("rating", ui->comboBoxAirportRatingSearch, tr("Rating")).includesName().indexCondMap(ratingCondMap)).
 
-  append(Column("altitude", tr("Elevation\n%alt%")).convertFunc(Unit::altFeetF)).
+  append(Column("altitude", tr("Elev.\n%alt%")).convertFunc(Unit::altFeetF)).
   append(Column("mag_var", tr("Mag.\nDecl.°"))).
   append(Column("has_avgas", ui->checkBoxAirportAvgasSearch, tr("Avgas")).hidden()).
   append(Column("has_jetfuel", ui->checkBoxAirportJetASearch, tr("Jetfuel")).hidden()).
@@ -519,7 +519,7 @@ QString AirportSearch::formatModelData(const Column *col, const QVariant& displa
   else if(col->getColumnName() == "longest_runway_length")
     return Unit::distShortFeet(displayRoleValue.toFloat(), false);
   else if(col->getColumnName() == "mag_var")
-    return map::magvarText(displayRoleValue.toFloat());
+    return map::magvarText(displayRoleValue.toFloat(), true /* shortText */, false /* degSign */);
   else if(AIRPORT_NUMBER_COLUMNS.contains(col->getColumnName()))
     return displayRoleValue.toInt() > 0 ? displayRoleValue.toString() : QString();
   else if(col->getColumnName() == "longest_runway_surface")
