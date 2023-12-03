@@ -364,7 +364,12 @@ public:
   }
 
   /* true if airway given but not found in database. Also true if one-way direction is violated */
-  bool isAirwaySetAndInvalid(float altitudeFt, QStringList *errors = nullptr, bool *trackError = nullptr) const;
+  bool isAirwaySetAndInvalid(float minAltLegFt, float maxAltLegFt, QStringList *errors = nullptr, bool *trackError = nullptr) const;
+
+  bool isAirwaySetAndInvalid(float legAltFt, QStringList *errors = nullptr, bool *trackError = nullptr) const
+  {
+    return isAirwaySetAndInvalid(legAltFt, legAltFt, errors, trackError);
+  }
 
   bool isTrack() const
   {

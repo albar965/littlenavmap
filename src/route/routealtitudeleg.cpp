@@ -27,8 +27,17 @@ float RouteAltitudeLeg::getMaxAltitude() const
   if(geometry.isEmpty())
     return map::INVALID_ALTITUDE_VALUE;
   else
-    // Rectangle bottom and top are revered since this is no screen coordinate system
+    // Rectangle bottom and top are reversed since this is no screen coordinate system
     return static_cast<float>(geometry.boundingRect().bottom());
+}
+
+float RouteAltitudeLeg::getMinAltitude() const
+{
+  if(geometry.isEmpty())
+    return map::INVALID_ALTITUDE_VALUE;
+  else
+    // Rectangle bottom and top are reversed since this is no screen coordinate system
+    return static_cast<float>(geometry.boundingRect().top());
 }
 
 float RouteAltitudeLeg::getDistanceFromStart() const

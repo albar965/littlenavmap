@@ -43,6 +43,9 @@ public:
   /* Maximum altitude for this leg in feet */
   float getMaxAltitude() const;
 
+  /* Minimum altitude for this leg in feet */
+  float getMinAltitude() const;
+
   /* Distance from departure to waypoint (i.e. end of leg) in NM */
   float getDistanceFromStart() const;
 

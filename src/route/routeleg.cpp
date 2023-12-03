@@ -1006,12 +1006,12 @@ bool RouteLeg::isApproachPoint() const
          (procedureLeg.geometry.isPoint() || procedureLeg.isInitialFix() || procedureLeg.type == proc::START_OF_PROCEDURE);
 }
 
-bool RouteLeg::isAirwaySetAndInvalid(float altitudeFt, QStringList *errors, bool *trackError) const
+bool RouteLeg::isAirwaySetAndInvalid(float minAltLegFt, float maxAltLegFt, QStringList *errors, bool *trackError) const
 {
   bool invalid = true;
   if(airway.isValid())
   {
-    QString legText = tr("Leg to \"%1\" violates restriction for airway \"%2\":").arg(getDisplayIdent()).arg(getAirwayName());
+    const QString legText = tr("Leg to \"%1\" violates restriction for airway \"%2\":").arg(getDisplayIdent()).arg(getAirwayName());
 
     // Set and valid - check direction
     if(airway.direction == map::DIR_BOTH)
@@ -1027,23 +1027,17 @@ bool RouteLeg::isAirwaySetAndInvalid(float altitudeFt, QStringList *errors, bool
     if(errors != nullptr && invalid)
       errors->append(legText % tr("Wrong direction in one-way segment."));
 
-    if(altitudeFt < map::INVALID_ALTITUDE_VALUE)
+    // Check altitude only if valid
+    if(minAltLegFt < map::INVALID_ALTITUDE_VALUE && maxAltLegFt < map::INVALID_ALTITUDE_VALUE)
     {
       // Use a buffer for comparison to avoid rounding errors
-      if(altitudeFt < airway.minAltitude - 10.f)
+      if(maxAltLegFt < airway.minAltitude - 10.f || (airway.maxAltitude > 0 && minAltLegFt > airway.maxAltitude + 10.f))
       {
         invalid = true;
         if(errors != nullptr)
-          errors->append(legText % tr("Cruise altitude %1 is below minimum altitude of %2.").
-                         arg(Unit::altFeet(altitudeFt)).arg(Unit::altFeet(airway.minAltitude)));
-      }
-
-      if(airway.maxAltitude > 0 && altitudeFt > airway.maxAltitude + 10.f)
-      {
-        invalid = true;
-        if(errors != nullptr)
-          errors->append(legText % tr("Cruise altitude %1 is above maximum altitude of %2.").
-                         arg(Unit::altFeet(altitudeFt)).arg(Unit::altFeet(airway.maxAltitude)));
+          errors->append(legText % tr("Leg altitudes %1 to %2 are violating restriction. Airway: %3.").
+                         arg(Unit::altFeet(minAltLegFt, false /* addUnit */)).arg(Unit::altFeet(maxAltLegFt)).
+                         arg(map::airwayAltText(airway)));
       }
     }
 

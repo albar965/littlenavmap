@@ -5106,6 +5106,14 @@ void RouteController::updateModelHighlightsAndErrors()
   for(int row = 0; row < model->rowCount(); row++)
   {
     const RouteLeg& leg = route.value(row);
+    const RouteAltitudeLeg& altLeg = route.getAltitudeLegAt(row);
+    float maxAlt = altLeg.getMaxAltitude();
+    float minAlt = altLeg.getMinAltitude();
+
+    if(!(minAlt < map::INVALID_ALTITUDE_VALUE) || !(maxAlt < map::INVALID_ALTITUDE_VALUE))
+      // Use cruise altitude if either is invalid
+      minAlt = maxAlt = route.getCruiseAltitudeFt();
+
     if(!leg.isValid())
     {
       // Have to check here since sim updates can still happen while building the flight plan
@@ -5163,7 +5171,7 @@ void RouteController::updateModelHighlightsAndErrors()
         {
           QStringList airwayErrors;
           bool trackError = false;
-          if(leg.isAirwaySetAndInvalid(route.getCruiseAltitudeFt(), &airwayErrors, &trackError))
+          if(leg.isAirwaySetAndInvalid(minAlt, maxAlt, &airwayErrors, &trackError))
           {
             // Has airway but errors
             item->setForeground(invalidColor);
