@@ -38,7 +38,13 @@ QString helpOnlineUrl;
 QString helpOnlineMainUrl;
 QString helpOnlineTutorialsUrl;
 QString helpOnlineDownloadsUrl;
+QString helpOnlineMainMenuUrl;
+QString helpOnlineMapDisplayUrl;
 QString helpOnlineLegendUrl;
+QString helpOnlineFlightPlanningUrl;
+QString helpOnlineAircraftPerfUrl;
+QString helpOnlineUserInterfaceUrl;
+
 QString helpOnlineInstallRedistUrl;
 QString helpOnlineInstallGlobeUrl;
 QString helpOnlineInstallDirUrl;
@@ -105,9 +111,13 @@ void loadHelpUrls()
     QString base = QUrl::fromLocalFile(localFile.path()).toString() % "/";
     helpOnlineUrl = base;
     helpOnlineMainUrl = base % "index.html";
-
+    helpOnlineMainMenuUrl = base % "MENUS.html";
+    helpOnlineMapDisplayUrl = base % "MAPDISPLAY.html";
     helpOnlineTutorialsUrl = base % "TUTORIALS.html";
     helpOnlineLegendUrl = base % "LEGEND.html";
+    helpOnlineFlightPlanningUrl = base % "FLIGHTPLAN.html";
+    helpOnlineAircraftPerfUrl = base % "AIRCRAFTPERF.html";
+    helpOnlineUserInterfaceUrl = base % "INTRO.html";
     helpOnlineInstallRedistUrl = base % "INSTALLATION.html#windows";
     helpOnlineInstallGlobeUrl = base % "OPTIONS.html#cache-elevation";
     helpOnlineInstallDirUrl = base % "FOLDERS.html";
@@ -119,12 +129,15 @@ void loadHelpUrls()
     // Use online help links from configuration
     // [help] - Online help URLs
     QString base = "https://www.littlenavmap.org/manuals/littlenavmap/release/latest/${LANG}/";
-
     helpOnlineUrl = settings.value("help/base", base).toString();
     helpOnlineMainUrl = helpOnlineUrl;
-
     helpOnlineTutorialsUrl = settings.value("help/tutorials", base + "TUTORIALS.html").toString();
+    helpOnlineMainMenuUrl = settings.value("help/mainmenu", base + "MENUS.html").toString();
+    helpOnlineMapDisplayUrl = settings.value("help/mapdisplay", base + "MAPDISPLAY.html").toString();
     helpOnlineLegendUrl = settings.value("help/legend", base + "LEGEND.html").toString();
+    helpOnlineFlightPlanningUrl = settings.value("help/flightplanning", base + "FLIGHTPLAN.html").toString();
+    helpOnlineAircraftPerfUrl = settings.value("help/aircraftperf", base + "AIRCRAFTPERF.html").toString();
+    helpOnlineUserInterfaceUrl = settings.value("help/userinterface", base + "INTRO.html").toString();
     helpOnlineInstallRedistUrl = settings.value("help/installredist", base + "INSTALLATION.html#windows").toString();
     helpOnlineInstallGlobeUrl = settings.value("help/installglobe", base + "OPTIONS.html#cache-elevation").toString();
     helpOnlineInstallDirUrl = settings.value("help/installdir", base + "FOLDERS.html").toString();

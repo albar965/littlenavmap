@@ -197,9 +197,23 @@
     <property name="title">
      <string>&amp;Help</string>
     </property>
-    <addaction name="actionHelpContents"/>
-    <addaction name="actionHelpTutorials"/>
-    <addaction name="actionHelpNavmapLegend"/>
+    <widget class="QMenu" name="menuHelpUserManualImportantChapters">
+     <property name="title">
+      <string>User Manual - Helpful Chapters (Online)</string>
+     </property>
+     <addaction name="actionHelpUserManualStart"/>
+     <addaction name="actionHelpUserManualTutorials"/>
+     <addaction name="separator"/>
+     <addaction name="actionHelpUserManualUserInterface"/>
+     <addaction name="actionHelpUserManualMainMenu"/>
+     <addaction name="separator"/>
+     <addaction name="actionHelpUserManualFlightPlanning"/>
+     <addaction name="actionHelpUserManualAircraftPerf"/>
+     <addaction name="actionHelpUserManualMapDisplay"/>
+     <addaction name="actionHelpUserManualLegend"/>
+    </widget>
+    <addaction name="actionHelpUserManualContents"/>
+    <addaction name="menuHelpUserManualImportantChapters"/>
     <addaction name="separator"/>
     <addaction name="actionHelpContentsOffline"/>
     <addaction name="separator"/>
@@ -6839,7 +6853,7 @@ relation to shown airport</string>
     <string>Show the statusbar</string>
    </property>
   </action>
-  <action name="actionHelpContents">
+  <action name="actionHelpUserManualContents">
    <property name="icon">
     <iconset resource="../../littlenavmap.qrc">
      <normaloff>:/littlenavmap/resources/icons/help.svg</normaloff>:/littlenavmap/resources/icons/help.svg</iconset>
@@ -7839,22 +7853,19 @@ relation to shown airport</string>
     <string>Remove all recent flight plans from menu</string>
    </property>
   </action>
-  <action name="actionHelpNavmapLegend">
+  <action name="actionHelpUserManualLegend">
    <property name="icon">
     <iconset resource="../../littlenavmap.qrc">
      <normaloff>:/littlenavmap/resources/icons/help.svg</normaloff>:/littlenavmap/resources/icons/help.svg</iconset>
    </property>
    <property name="text">
-    <string>&amp;User Manual - Map Legend (Online)</string>
+    <string>Map &amp;Legend</string>
    </property>
    <property name="toolTip">
     <string>Show the navigation map legend online in a browser</string>
    </property>
    <property name="statusTip">
-    <string>Show the navigation map legend online in a browser</string>
-   </property>
-   <property name="shortcut">
-    <string>Shift+F1</string>
+    <string>Show the navigation map legend</string>
    </property>
   </action>
   <action name="actionResetMessages">
@@ -8660,19 +8671,19 @@ relation to shown airport</string>
     <string>Reset the window layout and all dock windows back to default</string>
    </property>
   </action>
-  <action name="actionHelpTutorials">
+  <action name="actionHelpUserManualTutorials">
    <property name="icon">
     <iconset resource="../../littlenavmap.qrc">
      <normaloff>:/littlenavmap/resources/icons/help.svg</normaloff>:/littlenavmap/resources/icons/help.svg</iconset>
    </property>
    <property name="text">
-    <string>&amp;User Manual - Tutorials (Online)</string>
+    <string>&amp;Tutorials</string>
    </property>
    <property name="toolTip">
     <string>Show the online tutorials in a browser</string>
    </property>
    <property name="statusTip">
-    <string>Show the online tutorials in a browser</string>
+    <string>Show the online tutorials</string>
    </property>
   </action>
   <action name="actionExport">
@@ -11950,7 +11961,7 @@ relation to shown airport</string>
      <normaloff>:/littlenavmap/resources/icons/help.svg</normaloff>:/littlenavmap/resources/icons/help.svg</iconset>
    </property>
    <property name="text">
-    <string>&amp;Changelog</string>
+    <string>&amp;Changelog (Offline, Text)</string>
    </property>
    <property name="toolTip">
     <string>Open changelog in text editor</string>
@@ -12134,6 +12145,96 @@ relation to shown airport</string>
    </property>
    <property name="statusTip">
     <string>Show airport administrative search options like city names or countries</string>
+   </property>
+  </action>
+  <action name="actionHelpUserManualMainMenu">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/help.svg</normaloff>:/littlenavmap/resources/icons/help.svg</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Main Menu and Toolbar Items</string>
+   </property>
+   <property name="toolTip">
+    <string>Show information about all main menu and toolbar items online in a browser</string>
+   </property>
+   <property name="statusTip">
+    <string>Show information about all main menu and toolbar items</string>
+   </property>
+  </action>
+  <action name="actionHelpUserManualMapDisplay">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/help.svg</normaloff>:/littlenavmap/resources/icons/help.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Map &amp;Display and Context Menu</string>
+   </property>
+   <property name="toolTip">
+    <string>Show information about the map display and its context menu online in a browser</string>
+   </property>
+   <property name="statusTip">
+    <string>Show information about the map display and its context menu</string>
+   </property>
+  </action>
+  <action name="actionHelpUserManualStart">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/help.svg</normaloff>:/littlenavmap/resources/icons/help.svg</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Start and first Steps</string>
+   </property>
+   <property name="toolTip">
+    <string>Show the start and first steps page online in a browser</string>
+   </property>
+   <property name="statusTip">
+    <string>Show the start and first steps page</string>
+   </property>
+  </action>
+  <action name="actionHelpUserManualUserInterface">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/help.svg</normaloff>:/littlenavmap/resources/icons/help.svg</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;User Interface</string>
+   </property>
+   <property name="toolTip">
+    <string>Show general help about the user interface in a browser</string>
+   </property>
+   <property name="statusTip">
+    <string>Show general help about the user interface</string>
+   </property>
+  </action>
+  <action name="actionHelpUserManualFlightPlanning">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/help.svg</normaloff>:/littlenavmap/resources/icons/help.svg</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Flight Planning</string>
+   </property>
+   <property name="toolTip">
+    <string>Show help about flight planning in a browser</string>
+   </property>
+   <property name="statusTip">
+    <string>Show help about flight planning</string>
+   </property>
+  </action>
+  <action name="actionHelpUserManualAircraftPerf">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/help.svg</normaloff>:/littlenavmap/resources/icons/help.svg</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Aircraft Performance</string>
+   </property>
+   <property name="toolTip">
+    <string>Show information about aircraft performance in a browser</string>
+   </property>
+   <property name="statusTip">
+    <string>Show information about aircraft performance</string>
    </property>
   </action>
  </widget>

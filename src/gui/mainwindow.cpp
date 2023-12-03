@@ -629,16 +629,6 @@ void MainWindow::checkForUpdates()
   NavApp::checkForUpdates(OptionData::instance().getUpdateChannels(), true /* manual */, false /* startup */, false /* forceDebug */);
 }
 
-void MainWindow::showOnlineHelp()
-{
-  HelpHandler::openHelpUrlWeb(this, lnm::helpOnlineMainUrl, lnm::helpLanguageOnline());
-}
-
-void MainWindow::showOnlineTutorials()
-{
-  HelpHandler::openHelpUrlWeb(this, lnm::helpOnlineTutorialsUrl, lnm::helpLanguageOnline());
-}
-
 void MainWindow::showOnlineDownloads()
 {
   HelpHandler::openHelpUrlWeb(this, lnm::helpOnlineDownloadsUrl, lnm::helpLanguageOnline());
@@ -1322,8 +1312,43 @@ void MainWindow::connectAllSlots()
   connect(ui->actionRouteAdjustAltitude, &QAction::triggered, routeController, &RouteController::adjustFlightplanAltitude);
 
   // Help menu ========================================================================
-  connect(ui->actionHelpContents, &QAction::triggered, this, &MainWindow::showOnlineHelp);
-  connect(ui->actionHelpTutorials, &QAction::triggered, this, &MainWindow::showOnlineTutorials);
+  connect(ui->actionHelpUserManualContents, &QAction::triggered, this, [this](bool)->void {
+    helpHandler->openHelpUrlWeb(lnm::helpOnlineMainUrl, lnm::helpLanguageOnline());
+  });
+
+  connect(ui->actionHelpUserManualStart, &QAction::triggered, this, [this](bool)->void {
+    helpHandler->openHelpUrlWeb(lnm::helpOnlineStartUrl, lnm::helpLanguageOnline());
+  });
+
+  connect(ui->actionHelpUserManualTutorials, &QAction::triggered, this, [this](bool)->void {
+    helpHandler->openHelpUrlWeb(lnm::helpOnlineTutorialsUrl, lnm::helpLanguageOnline());
+  });
+
+  connect(ui->actionHelpUserManualMainMenu, &QAction::triggered, this, [this](bool)->void {
+    helpHandler->openHelpUrlWeb(lnm::helpOnlineMainMenuUrl, lnm::helpLanguageOnline());
+  });
+
+  connect(ui->actionHelpUserManualMapDisplay, &QAction::triggered, this, [this](bool)->void {
+    helpHandler->openHelpUrlWeb(lnm::helpOnlineMapDisplayUrl, lnm::helpLanguageOnline());
+  });
+
+  connect(ui->actionHelpUserManualAircraftPerf, &QAction::triggered, this, [this](bool)->void {
+    helpHandler->openHelpUrlWeb(lnm::helpOnlineAircraftPerfUrl, lnm::helpLanguageOnline());
+  });
+
+  connect(ui->actionHelpUserManualFlightPlanning, &QAction::triggered, this, [this](bool)->void {
+    helpHandler->openHelpUrlWeb(lnm::helpOnlineFlightPlanningUrl, lnm::helpLanguageOnline());
+  });
+
+  connect(ui->actionHelpUserManualUserInterface, &QAction::triggered, this, [this](bool)->void {
+    helpHandler->openHelpUrlWeb(lnm::helpOnlineUserInterfaceUrl, lnm::helpLanguageOnline());
+  });
+
+  // Legend ===============================================
+  connect(ui->actionHelpUserManualLegend, &QAction::triggered, this, [this](bool)->void {
+    helpHandler->openHelpUrlWeb(lnm::helpOnlineLegendUrl, lnm::helpLanguageOnline());
+  });
+
   connect(ui->actionHelpContentsOffline, &QAction::triggered, this, &MainWindow::showOfflineHelp);
   connect(ui->actionHelpDownloads, &QAction::triggered, this, &MainWindow::showOnlineDownloads);
   connect(ui->actionHelpChangelog, &QAction::triggered, this, &MainWindow::showChangelog);
@@ -1613,9 +1638,6 @@ void MainWindow::connectAllSlots()
   connect(windReporter, &WindReporter::windDisplayUpdated, this, &MainWindow::updateMapObjectsShown);
   connect(windReporter, &WindReporter::windDisplayUpdated, this, &MainWindow::updateActionStates);
   connect(windReporter, &WindReporter::windDisplayUpdated, mapWidget, &MapWidget::windDisplayUpdated);
-
-  // Legend ===============================================
-  connect(ui->actionHelpNavmapLegend, &QAction::triggered, this, &MainWindow::showNavmapLegend);
 
   connect(&weatherUpdateTimer, &QTimer::timeout, this, &MainWindow::weatherUpdateTimeout);
 

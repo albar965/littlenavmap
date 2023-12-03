@@ -408,8 +408,6 @@ private:
 
   void trailLoadGpxFile(const QString& file);
 
-  void showOnlineHelp();
-  void showOnlineTutorials();
   void showOfflineHelp();
   void showOnlineDownloads();
   void showChangelog();

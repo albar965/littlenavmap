@@ -43,8 +43,14 @@ namespace lnm {
 extern QString helpOnlineUrl;
 extern QString helpOnlineMainUrl;
 extern QString helpOnlineTutorialsUrl;
-extern QString helpOnlineDownloadsUrl;
+extern QString helpOnlineMainMenuUrl;
+extern QString helpOnlineMapDisplayUrl;
 extern QString helpOnlineLegendUrl;
+extern QString helpOnlineFlightPlanningUrl;
+extern QString helpOnlineAircraftPerfUrl;
+extern QString helpOnlineUserInterfaceUrl;
+
+extern QString helpOnlineDownloadsUrl;
 extern QString helpOnlineInstallRedistUrl;
 extern QString helpOnlineInstallGlobeUrl;
 extern QString helpOnlineInstallDirUrl;
