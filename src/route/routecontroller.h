@@ -394,7 +394,7 @@ private:
 
   void tableContextMenu(const QPoint& pos);
 
-  void tableSelectionChanged(const QItemSelection& selected, const QItemSelection& deselected);
+  void tableSelectionChanged(const QItemSelection&, const QItemSelection&);
 
   void moveSelectedLegsDownTriggered();
   void moveSelectedLegsUpTriggered();
@@ -416,6 +416,7 @@ private:
   void routeSetDepartureInternal(const map::MapAirport& airport);
   void routeSetDestinationInternal(const map::MapAirport& airport);
 
+  /* Update table view model completely */
   void updateTableModelAndErrors();
 
   void routeAltChanged();
@@ -529,6 +530,10 @@ private:
 
   void updateComboBoxFromFlightplanType();
 
+  /* Do not send model updates while modifying it */
+  void blockModel();
+  void unBlockModel();
+
   /* Selected rows in table. Updated on selection change. */
   QList<int> selectedRows;
 
@@ -606,6 +611,9 @@ private:
   /* String to save flight plan temporarily in LNMPLN format when switching databases */
   QString tempFlightplanStr;
   bool trackErrors = false;
+
+  /* Do not send model updates while modifying it */
+  bool modelUpdatesBlocked = false;
 };
 
 #endif // LITTLENAVMAP_ROUTECONTROLLER_H

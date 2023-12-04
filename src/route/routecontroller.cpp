@@ -3091,10 +3091,10 @@ void RouteController::updateCleanupTimer()
   }
 }
 
-void RouteController::tableSelectionChanged(const QItemSelection& selected, const QItemSelection& deselected)
+void RouteController::tableSelectionChanged(const QItemSelection&, const QItemSelection&)
 {
-  Q_UNUSED(selected)
-  Q_UNUSED(deselected)
+  if(modelUpdatesBlocked)
+    return;
 
   // Get selected rows in ascending order
   selectedRows.clear();
@@ -3307,6 +3307,9 @@ void RouteController::moveSelectedLegsInternal(MoveDirection direction)
     // Remove selection
     if(tableViewRoute->selectionModel() != nullptr)
       tableViewRoute->selectionModel()->clear();
+
+    // Avoid callback selection changed which can result in crashes due to inconsistent route
+    blockModel();
     for(int row : qAsConst(rows))
     {
       // Change flight plan
@@ -3314,8 +3317,9 @@ void RouteController::moveSelectedLegsInternal(MoveDirection direction)
       route.move(row, row + direction);
 
       // Move row
-      model->insertRow(row + direction, model->takeRow(row));
+      model->insertRow(row + direction, model->takeRow(row)); // Can send tableSelectionChanged() which has to be blocked
     }
+    unBlockModel();
 
     int firstRow = rows.constFirst();
     int lastRow = rows.constLast();
@@ -3358,6 +3362,7 @@ void RouteController::moveSelectedLegsInternal(MoveDirection direction)
 
     // Restore current position at new moved position
     tableViewRoute->setCurrentIndex(model->index(curIdx.row() + direction, curIdx.column()));
+
     // Restore previous selection at new moved position
     selectList(rows, direction);
 
@@ -3415,15 +3420,16 @@ void RouteController::deleteSelectedLegsInternal(const QList<int>& rows)
 
     int currentRow = tableViewRoute->currentIndex().isValid() ? tableViewRoute->currentIndex().row() : -1;
 
+    // Avoid callback selection changed which can result in crashes due to inconsistent route
+    blockModel();
     for(int row : rows)
     {
       route.getFlightplan().removeAt(row);
-
       route.eraseAirway(row);
-
       route.removeLegAt(row);
-      model->removeRow(row);
+      model->removeRow(row); // Can send tableSelectionChanged() which has to be blocked
     }
+    unBlockModel();
 
     if(procs & proc::PROCEDURE_ALL)
     {
@@ -3485,8 +3491,7 @@ void RouteController::selectList(const QList<int>& rows, int offset)
 
   for(int row : rows)
     // Need to select all columns
-    newSel.append(QItemSelectionRange(model->index(row + offset, rcol::FIRST_COLUMN),
-                                      model->index(row + offset, rcol::LAST_COLUMN)));
+    newSel.append(QItemSelectionRange(model->index(row + offset, rcol::FIRST_COLUMN), model->index(row + offset, rcol::LAST_COLUMN)));
 
   tableViewRoute->selectionModel()->select(newSel, QItemSelectionModel::ClearAndSelect);
 }
@@ -3507,8 +3512,7 @@ void RouteController::selectRange(int from, int to)
   from = std::min(std::max(from, 0), maxRows);
   to = std::min(std::max(to, 0), maxRows);
 
-  newSel.append(QItemSelectionRange(model->index(from, rcol::FIRST_COLUMN),
-                                    model->index(to, rcol::LAST_COLUMN)));
+  newSel.append(QItemSelectionRange(model->index(from, rcol::FIRST_COLUMN), model->index(to, rcol::LAST_COLUMN)));
 
   tableViewRoute->selectionModel()->select(newSel, QItemSelectionModel::ClearAndSelect);
 }
@@ -4483,12 +4487,14 @@ void RouteController::updatePlaceholderWidget()
   ui->textBrowserViewRoute->setVisible(showPlaceholder);
 }
 
-/* Update table view model completely */
 void RouteController::updateTableModelAndErrors()
 {
   Ui::MainWindow *ui = NavApp::getMainUi();
 
+  // Avoid callback selection changed which can result in crashes due to inconsistent route
+  blockModel();
   model->removeRows(0, model->rowCount());
+
   float totalDistance = route.getTotalDistance();
 
   int row = 0;
@@ -4696,6 +4702,9 @@ void RouteController::updateTableModelAndErrors()
     row++;
   }
 
+  // No need to update selection
+  unBlockModel();
+
   updateModelTimeFuelWindAlt();
 
   Flightplan& flightplan = route.getFlightplan();
@@ -4757,7 +4766,6 @@ void RouteController::updateModelTimeFuelWindAlt()
 
   int row = 0;
   float cumulatedTravelTime = 0.f;
-
   bool setValues = !altitudeLegs.hasErrors();
   const AircraftPerf& perf = NavApp::getAircraftPerformance();
   float totalFuelLbsOrGal = altitudeLegs.getTripFuel() + altitudeLegs.getAlternateFuel();
@@ -5526,6 +5534,18 @@ void RouteController::clearAllErrors()
   flightplanErrors.clear();
   parkingErrors.clear();
   trackErrors = false;
+}
+
+void RouteController::blockModel()
+{
+  // model->blockSignals(true);
+  modelUpdatesBlocked = true;
+}
+
+void RouteController::unBlockModel()
+{
+  // model->blockSignals(false);
+  modelUpdatesBlocked = false;
 }
 
 #ifdef DEBUG_NETWORK_INFORMATION
