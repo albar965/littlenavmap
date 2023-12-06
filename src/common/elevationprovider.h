@@ -81,6 +81,9 @@ public:
   /* Connect marble model or initializes GLOBE reader */
   void init(const Marble::ElevationModel *model);
 
+  /* Show errors after init() */
+  void showErrors();
+
   bool isValid() const
   {
     return isGlobeOfflineProvider() || marbleModel != nullptr;
@@ -93,10 +96,12 @@ signals:
 
 private:
   void marbleUpdateAvailable();
-  void updateReader(bool startup);
+  void updateReader(bool startupParam);
 
   const Marble::ElevationModel *marbleModel = nullptr;
   atools::fs::common::GlobeReader *globeReader = nullptr;
+
+  bool warnWrongGlobePath = false, warnOpenFiles = false, startup = false;
 
   /* Need to synchronize here since it is called from profile widget thread */
   mutable QMutex mutex;

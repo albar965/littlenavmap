@@ -155,6 +155,7 @@ public:
 
   /* Needs map widget first */
   static void initElevationProvider();
+  static void showElevationProviderErrors();
 
   /* Deletes all aggregated objects */
   static void deInit();

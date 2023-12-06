@@ -3217,7 +3217,7 @@ void MainWindow::mainWindowShown()
   qDebug() << Q_FUNC_INFO << "enter";
 
   // This shows a warning dialog if failing - start it later within the event loop to avoid a freeze
-  QTimer::singleShot(0, this, &NavApp::initElevationProvider);
+  QTimer::singleShot(0, this, &NavApp::showElevationProviderErrors);
 
   // Show a warning if map theme folders do not exist
   QTimer::singleShot(0, this, &MapThemeHandler::validateMapThemeDirectories);
@@ -3865,6 +3865,10 @@ void MainWindow::restoreStateMain()
 
   // Need to be loaded in constructor first since it reads all options
   // optionsDialog->restoreState();
+
+  // Initalize early to allow altitude adaption when loading flight plans
+  // Errors are show later in MainWindow::mainWindowShown()
+  NavApp::initElevationProvider();
 
   qDebug() << "kmlFileHistory";
   kmlFileHistory->restoreState();

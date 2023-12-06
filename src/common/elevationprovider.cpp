@@ -185,10 +185,12 @@ void ElevationProvider::init(const Marble::ElevationModel *model)
   updateReader(true /* startup */);
 }
 
-void ElevationProvider::updateReader(bool startup)
+void ElevationProvider::updateReader(bool startupParam)
 {
-  bool warnWrongGlobePath = false, warnOpenFiles = false,
-       useOffline = OptionData::instance().getFlags().testFlag(opts::CACHE_USE_OFFLINE_ELEVATION);
+  startup = startupParam;
+  warnWrongGlobePath = warnOpenFiles = false;
+
+  bool useOffline = OptionData::instance().getFlags().testFlag(opts::CACHE_USE_OFFLINE_ELEVATION);
   const QString& path = OptionData::instance().getOfflineElevationPath();
 
   {
@@ -227,6 +229,14 @@ void ElevationProvider::updateReader(bool startup)
     }
   }
 
+  emit updateAvailable();
+}
+
+void ElevationProvider::showErrors()
+{
+  const QString& path = OptionData::instance().getOfflineElevationPath();
+  bool useOffline = OptionData::instance().getFlags().testFlag(opts::CACHE_USE_OFFLINE_ELEVATION);
+
   // Show this warning at startup and when changing options
   if(warnOpenFiles)
   {
@@ -262,6 +272,4 @@ void ElevationProvider::updateReader(bool startup)
     atools::gui::Dialog(NavApp::getQMainWidget()).showInfoMsgBox(lnm::ACTIONS_SHOW_INSTALL_GLOBE, message,
                                                                  tr("Do not &show this dialog again."));
   }
-
-  emit updateAvailable();
 }

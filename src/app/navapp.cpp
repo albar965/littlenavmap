@@ -216,6 +216,13 @@ void NavApp::initQueries()
   procedureQuery->initQueries();
 }
 
+void NavApp::showElevationProviderErrors()
+{
+  qDebug() << Q_FUNC_INFO;
+  if(elevationProvider != nullptr)
+    elevationProvider->showErrors();
+}
+
 void NavApp::initElevationProvider()
 {
   qDebug() << Q_FUNC_INFO;
