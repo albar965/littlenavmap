@@ -457,7 +457,7 @@ public:
   void removeMissedLegs();
 
   /* Deletes flight plan properties too */
-  void removeProcedureLegs();
+  void removeAllProcedureLegs();
   void removeProcedureLegs(proc::MapProcedureTypes type);
 
   /* Needed to activate missed approach sequencing or not depending on visibility state */

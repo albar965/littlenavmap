@@ -412,7 +412,9 @@ void RouteLeg::updateDepartAndDestAltitude(atools::fs::pln::FlightplanEntry *fli
   atools::fs::pln::entry::WaypointType wptype = flightplanEntry->getWaypointType();
   if(wptype == atools::fs::pln::entry::USER || wptype == atools::fs::pln::entry::WAYPOINT || // These never have altitude
      // VOR and NDB in MSFS have no altitude assigned
-     ((wptype == atools::fs::pln::entry::VOR || wptype == atools::fs::pln::entry::NDB) && atools::almostEqual(getAltitude(), 0.f)))
+     ((wptype == atools::fs::pln::entry::VOR || wptype == atools::fs::pln::entry::NDB) && atools::almostEqual(getAltitude(), 0.f)) ||
+     // Fix altitude for invalid airports
+     type == map::INVALID)
     flightplanEntry->setAltitude(NavApp::getElevationProvider()->getElevationFt(getFlightplanEntry()->getPosition()));
   else
     flightplanEntry->setAltitude(getAltitude());
@@ -785,7 +787,8 @@ float RouteLeg::getAltitude() const
   else if(!procedureLeg.displayText.isEmpty())
     return 0.f;
   else if(type == map::INVALID)
-    return 0.f;
+    // Set in entry for invalid departure and/or destination
+    return getFlightplanEntry().getAltitude();
   else if(getFlightplanEntry().getWaypointType() == atools::fs::pln::entry::USER)
     return getFlightplanEntry().getAltitude();
   else if(getFlightplanEntry().getWaypointType() == atools::fs::pln::entry::UNKNOWN)

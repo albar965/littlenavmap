@@ -1178,9 +1178,9 @@ void RouteController::loadFlightplan(atools::fs::pln::Flightplan flightplan, ato
   {
     NavApp::closeSplashScreen();
     atools::gui::Dialog(mainWindow).showInfoMsgBox(lnm::ACTIONS_SHOW_LOAD_ALT_WARN,
-                                                   tr("Can not determine the cruising altitude from this flight plan.<br/>"
-                                                      "Applying best guess for cruising altitude.<br/>"
-                                                      "Adjust it manually as needed."), tr("Do not &show this dialog again."));
+                                                   tr("Can not determine the cruising altitude from this flight plan.<br/><br/>"
+                                                      "Applying best guess for cruising altitude.<br/><br/>"
+                                                      "Adjust the altitude manually as needed."), tr("Do not &show this dialog again."));
   }
 
   if(undo)
@@ -1239,6 +1239,20 @@ void RouteController::loadFlightplan(atools::fs::pln::Flightplan flightplan, ato
   fileCruiseAltFt = route.getCruiseAltitudeFt();
 
   route.updateLegAltitudes();
+
+  if(!route.isValidProfile() && warnAltitude)
+  {
+    route.updateAirwaysAndAltitude(true /* adjustRouteAltitude */);
+    route.updateLegAltitudes();
+
+    NavApp::closeSplashScreen();
+    atools::gui::Dialog(mainWindow).showInfoMsgBox(lnm::ACTIONS_SHOW_LOAD_ALT_WARN,
+                                                   tr("Could not use cruising altitude from flight plan. "
+                                                      "It may conflict with airport elevation, "
+                                                      "procedure and/or airway restrictions.<br/><br/>"
+                                                      "Applied best guess for cruising altitude.<br/><br/>"
+                                                      "Adjust the altitude manually as needed."), tr("Do not &show this dialog again."));
+  }
 
   // Get number from user waypoint from user defined waypoint in fs flight plan
   entryBuilder->setCurUserpointNumber(route.getNextUserWaypointNumber());
@@ -1595,7 +1609,7 @@ bool RouteController::saveFlightplanLnmSelectionAs(const QString& filename, int 
     saveRoute.updateIndicesAndOffsets();
 
     // Procedures are never saved for a selection
-    saveRoute.removeProcedureLegs();
+    saveRoute.removeAllProcedureLegs();
 
     // Get plan without alternates and all altitude values erased
     Flightplan saveplan = saveRoute.zeroedAltitudes().adjustedToOptions(rf::DEFAULT_OPTS_LNMPLN_SAVE_SELECTED).getFlightplanConst();

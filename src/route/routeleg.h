@@ -256,6 +256,11 @@ public:
     return validWaypoint;
   }
 
+  bool isValidPos() const
+  {
+    return getPosition().isValid();
+  }
+
   /* @return false if this is default constructed */
   bool isValid() const
   {

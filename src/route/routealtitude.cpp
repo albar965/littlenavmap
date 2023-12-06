@@ -1034,7 +1034,7 @@ void RouteAltitude::calculateAll(const atools::fs::perf::AircraftPerf& perf, flo
     }
 
     const RouteLeg destinationLeg = route->getDestinationAirportLeg();
-    if(!destinationLeg.isValidWaypoint())
+    if(!destinationLeg.isValidPos())
     {
       errors.append(tr("Destination is not valid."));
       qWarning() << Q_FUNC_INFO << "Destination is not valid or neither airport nor runway";
@@ -1042,7 +1042,7 @@ void RouteAltitude::calculateAll(const atools::fs::perf::AircraftPerf& perf, flo
     }
 
     const RouteLeg departureLeg = route->getDepartureAirportLeg();
-    if(!departureLeg.isValidWaypoint())
+    if(!departureLeg.isValidPos())
     {
       errors.append(tr("Departure is not valid."));
       qWarning() << Q_FUNC_INFO << "Departure is not valid or neither airport nor runway";
@@ -1667,7 +1667,7 @@ float RouteAltitude::getDestinationAltitude() const
 {
   const RouteLeg& destLeg = route->getDestinationLeg();
 
-  if(!destLeg.isValidWaypoint())
+  if(!destLeg.isValidPos())
     qWarning() << Q_FUNC_INFO << "dest leg not valid";
   else
   {
@@ -1778,9 +1778,7 @@ void RouteAltitude::calculateTrip(const atools::fs::perf::AircraftPerf& perf)
       // Alternate legs are calculated from destination airport - use cruise if alternate speed is not set
       float averageSpeedKts = perf.getAlternateSpeed() > 1.f ? perf.getAlternateSpeed() : perf.getCruiseSpeed();
       leg.cruiseTime = legDist / averageSpeedKts;
-      leg.cruiseFuel = (perf.getAlternateFuelFlow() > 0.f ?
-                        perf.getAlternateFuelFlow() :
-                        perf.getCruiseFuelFlow()) * leg.cruiseTime;
+      leg.cruiseFuel = (perf.getAlternateFuelFlow() > 0.f ? perf.getAlternateFuelFlow() : perf.getCruiseFuelFlow()) * leg.cruiseTime;
 
       // No wind data here since altitude is unknown
     }

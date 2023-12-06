@@ -151,8 +151,6 @@ void Route::copy(const Route& other)
 
 void Route::clearAll()
 {
-  removeProcedureLegs();
-  removeAlternateLegs();
   getFlightplan().clearAll();
   resetActive();
   clear();
@@ -1555,7 +1553,7 @@ void Route::reloadProcedures(proc::MapProcedureTypes procs)
                                                 approachLegs.ref.procedureId);
 }
 
-void Route::removeProcedureLegs()
+void Route::removeAllProcedureLegs()
 {
   removeProcedureLegs(proc::PROCEDURE_ALL);
 }
