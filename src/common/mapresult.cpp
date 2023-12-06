@@ -1106,4 +1106,27 @@ MapResultIndex& MapResultIndex::remove(const atools::geo::Pos& pos, float maxDis
   return *this;
 }
 
+void MapResultIndex::eraseNonRouteIndexLegs()
+{
+  erase(std::remove_if(begin(), end(), [](const map::MapBase *base) -> bool {
+      return map::routeIndex(base) == -1;
+    }), end());
+}
+
+void MapResultIndex::eraseDuplicateProcedures(bool base)
+{
+  // Erase duplicate occasions of procedures which can appear in double used waypoints
+  erase(std::unique(begin(), end(), [base](const map::MapBase *base1, const map::MapBase *base2) -> bool {
+      const map::MapProcedurePoint *procPt1 = base1->asPtr<map::MapProcedurePoint>();
+      if(procPt1 != nullptr)
+      {
+        const map::MapProcedurePoint *procPt2 = base2->asPtr<map::MapProcedurePoint>();
+        if(procPt2 != nullptr)
+          return base ? procPt1->compoundIdBase() == procPt2->compoundIdBase() : procPt1->compoundId() == procPt2->compoundId();
+      }
+      return false;
+    }), end());
+
+}
+
 } // namespace map

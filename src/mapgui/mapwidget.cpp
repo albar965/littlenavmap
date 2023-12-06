@@ -2049,6 +2049,10 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
           NavApp::getRouteController()->editUserWaypointName(contextMenu.getSelectedRouteIndex());
           break;
 
+        case mc::CONVERTPROCEDURE:
+          NavApp::getRouteController()->convertProcedure(contextMenu.getSelectedRouteIndex());
+          break;
+
         case mc::MARKAIRPORTADDON:
           if(NavApp::isGlobeOfflineProvider())
             pos.setAltitude(NavApp::getElevationProvider()->getElevationFt(pos));

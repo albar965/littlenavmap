@@ -95,6 +95,7 @@ enum MenuActionType
   APPENDROUTE, /* Append airport, navid or position to end of flight plan */
   DELETEROUTEWAYPOINT, /* Remove flight plan leg */
   EDITROUTEUSERPOINT, /* Edit user defined route waypoint or remarks for any flight plan point */
+  CONVERTPROCEDURE, /* Convert procedure to waypoints */
   MARKAIRPORTADDON, /* Mark airport as add-on */
   USERPOINTADD, /* Add userpoint (in sub-menu) */
   USERPOINTEDIT, /* Edit userpoint (in sub-menu) */
@@ -214,6 +215,8 @@ private:
   void insertAppendRouteMenu(QMenu& menu);
   void insertDeleteRouteWaypointMenu(QMenu& menu);
   void insertEditRouteUserpointMenu(QMenu& menu);
+
+  void insertConvertProcedureMenu(QMenu& menu);
 
   void insertMarkAddonAirportMenu(QMenu& menu);
 

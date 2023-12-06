@@ -327,6 +327,13 @@ struct MapResultIndex
   /* Remove all objects which are more far away  from pos than max distance */
   MapResultIndex& remove(const atools::geo::Pos& pos, float maxDistanceNm);
 
+  /* Remove all objects having a routeIndex = -1 */
+  void eraseNonRouteIndexLegs();
+
+  /* Remove duplicate MapProcedurePoint objects.
+   * Ignore transitions and erase duplicates based on airport and approaches if true */
+  void eraseDuplicateProcedures(bool base = false);
+
 private:
   /* Last index is including */
   template<typename TYPE>

@@ -326,6 +326,9 @@ public:
   /* Update travel times, fuel, wind and calculated altitude values in table view model after update */
   void updateModelTimeFuelWindAlt();
 
+  /* Convert given procedure type at leg index to waypoints */
+  void convertProcedure(int routeIndex);
+
 signals:
   /* Show airport on map */
   void showRect(const atools::geo::Rect& rect, bool doubleClick);
@@ -395,6 +398,9 @@ private:
   void tableContextMenu(const QPoint& pos);
 
   void tableSelectionChanged(const QItemSelection&, const QItemSelection&);
+
+  /* Convert given procedure type to waypoints */
+  void convertProcedure(proc::MapProcedureTypes types);
 
   void moveSelectedLegsDownTriggered();
   void moveSelectedLegsUpTriggered();

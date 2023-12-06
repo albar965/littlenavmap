@@ -65,6 +65,7 @@ void messages::resetAllMessages()
   settings.setValue(lnm::ACTIONS_SHOW_SSL_WARNING_TRACK, true);
   settings.setValue(lnm::ACTIONS_SHOW_SSL_WARNING_WEATHER, true);
   settings.setValue(lnm::ACTIONS_SHOW_SSL_WARNING_WIND, true);
+  settings.setValue(lnm::ACTIONS_SHOW_FLIGHTPLAN_WARN_CONVERT, true);
 
   settings.setValue(lnm::ACTIONS_SHOW_DATABASE_BACKGROUND_HINT, true);
   settings.setValue(lnm::ROUTE_STRING_DIALOG_BACKGROUND_HINT, true);

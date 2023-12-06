@@ -93,8 +93,7 @@ MapContextMenu::MapContextMenu(QMainWindow *mainWindowParam, MapWidget *mapWidge
   mapBasePos = new map::MapPos(atools::geo::EMPTY_POS);
 
   ui = NavApp::getMainUi();
-  QList<QAction *> actions(
-  {
+  const static QList<QAction *> ACTIONS({
     // Save state since widgets are shared with others
     ui->actionMapCopyCoordinates,
     ui->actionMapHold,
@@ -110,10 +109,10 @@ MapContextMenu::MapContextMenu(QMainWindow *mainWindowParam, MapWidget *mapWidge
   });
 
   // Texts with % will be replaced save them and let the ActionTextSaver restore them on return
-  textSaver = new atools::gui::ActionTextSaver(actions);
+  textSaver = new atools::gui::ActionTextSaver(ACTIONS);
 
   // Re-enable actions on exit to allow keystrokes
-  stateSaver = new atools::gui::ActionStateSaver(actions);
+  stateSaver = new atools::gui::ActionStateSaver(ACTIONS);
 }
 
 MapContextMenu::~MapContextMenu()
@@ -178,6 +177,9 @@ void MapContextMenu::buildMainMenu()
   insertAppendRouteMenu(mapMenu);
   insertDeleteRouteWaypointMenu(mapMenu);
   insertEditRouteUserpointMenu(mapMenu);
+  mapMenu.addSeparator();
+
+  insertConvertProcedureMenu(mapMenu);
   mapMenu.addSeparator();
 
   insertDirectToMenu(mapMenu);
@@ -924,16 +926,7 @@ void MapContextMenu::insertDeleteRouteWaypointMenu(QMenu& menu)
   }), index.end());
 
   // Erase duplicate occasions of procedures which can appear in double used waypoints
-  index.erase(std::unique(index.begin(), index.end(), [](const map::MapBase *base1, const map::MapBase *base2) -> bool {
-    const map::MapProcedurePoint *procPt1 = base1->asPtr<map::MapProcedurePoint>();
-    if(procPt1 != nullptr)
-    {
-      const map::MapProcedurePoint *procPt2 = base2->asPtr<map::MapProcedurePoint>();
-      if(procPt2 != nullptr)
-        return procPt1->compoundId() == procPt2->compoundId();
-    }
-    return false;
-  }), index.end());
+  index.eraseDuplicateProcedures();
 
   index.sort(DEFAULT_TYPE_SORT, alphaSort);
 
@@ -976,17 +969,64 @@ void MapContextMenu::insertDeleteRouteWaypointMenu(QMenu& menu)
                      callback);
 }
 
+void MapContextMenu::insertConvertProcedureMenu(QMenu& menu)
+{
+  // Create index ============================
+  MapResultIndex index;
+  index.addRef(*result, map::PROCEDURE_POINT);
+
+  // Erase all points which are not route legs and are not procedure points ============================
+  index.erase(std::remove_if(index.begin(), index.end(), [this](const map::MapBase *base) -> bool {
+    return map::routeIndex(base) == -1 || (base->objType != map::PROCEDURE_POINT && isProcedure(base));
+  }), index.end());
+
+  // Erase duplicate occasions of procedures which can appear in double used waypoints
+  index.eraseDuplicateProcedures(true /* base */);
+
+  index.sort(DEFAULT_TYPE_SORT, alphaSort);
+
+  ActionCallback callback =
+    [this](const map::MapBase *base, QString& text, QIcon&, bool& disable, bool) -> void {
+      disable = true;
+      if(base != nullptr && base->objType == map::PROCEDURE_POINT)
+      {
+        const map::MapProcedurePoint *procPt = base->asPtr<map::MapProcedurePoint>();
+        if(procPt != nullptr)
+        {
+          proc::MapProcedureTypes baseType = procPt->legs->getProcedureTypeBase();
+
+          // Get two names in case of converting approach. Then also convert the STAR as well
+          QString procName1, procName2;
+          if(baseType == proc::PROCEDURE_APPROACH && route.hasAnyStarProcedure())
+            procName2 = route.getProcedureLegText(proc::PROCEDURE_STAR, false /* includeRunway */,
+                                                  true /* missedAsApproach */, true /* transitionAsProcedure */);
+
+          procName1 = route.getProcedureLegText(baseType, false /* includeRunway */,
+                                                true /* missedAsApproach */, true /* transitionAsProcedure */);
+          text = text.arg(atools::strJoin({procName1, procName2}, tr(", "), tr(" and ")));
+          disable = false;
+        }
+      }
+
+      if(disable)
+        text = text.arg(tr("Procedure"));
+    };
+
+  insertMenuOrAction(menu, mc::CONVERTPROCEDURE, index,
+                     tr("&Convert %1 to &Waypoints"), tr("Convert the procedure to waypoints which allows editing"),
+                     QString(), QIcon(":/littlenavmap/resources/icons/approachconvert.svg"), false /* allowNoMapObject */,
+                     callback);
+
+}
+
 void MapContextMenu::insertEditRouteUserpointMenu(QMenu& menu)
 {
   MapResultIndex index;
   index.addRef(*result, map::AIRPORT | map::VOR | map::NDB | map::WAYPOINT | map::USERPOINTROUTE).
   sort(DEFAULT_TYPE_SORT, alphaSort);
 
-  // Erase all points which are not route legs
-  index.erase(std::remove_if(index.begin(), index.end(), [](const map::MapBase *base) -> bool
-  {
-    return map::routeIndex(base) == -1;
-  }), index.end());
+  // Erase all points having route index of -1
+  index.eraseNonRouteIndexLegs();
 
   ActionCallback callback =
     [this](const map::MapBase *base, QString& text, QIcon&, bool& disable, bool) -> void {

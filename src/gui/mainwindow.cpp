@@ -1056,11 +1056,11 @@ void MainWindow::connectAllSlots()
   connect(routeController, &RouteController::routeChanged, infoController, &InfoController::routeChanged);
 
   // Add departure and dest runway actions separately to windows since their shortcuts overlap with context menu shortcuts
-  QList<QAction *> actions({ui->actionShowDepartureCustom, ui->actionShowApproachCustom});
-  mapWidget->addActions(actions);
-  ui->dockWidgetInformation->addActions(actions);
-  ui->dockWidgetAircraft->addActions(actions);
-  ui->dockWidgetProfile->addActions(actions);
+  const static QList<QAction *> ACTIONS({ui->actionShowDepartureCustom, ui->actionShowApproachCustom});
+  mapWidget->addActions(ACTIONS);
+  ui->dockWidgetInformation->addActions(ACTIONS);
+  ui->dockWidgetAircraft->addActions(ACTIONS);
+  ui->dockWidgetProfile->addActions(ACTIONS);
   ui->actionShowDepartureCustom->setShortcutContext(Qt::WidgetWithChildrenShortcut);
   ui->actionShowApproachCustom->setShortcutContext(Qt::WidgetWithChildrenShortcut);
   connect(ui->actionShowDepartureCustom, &QAction::triggered, routeController, &RouteController::showCustomDepartureMainMenu);

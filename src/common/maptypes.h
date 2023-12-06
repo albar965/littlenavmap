@@ -1472,6 +1472,9 @@ struct MapProcedurePoint
    * Does not contain leg id. */
   std::tuple<int, int, int> compoundId() const;
 
+  /* Same as above but ignoring transition */
+  std::tuple<int, int> compoundIdBase() const;
+
   /* Use pointer to avoid recursive includes */
   proc::MapProcedureLegs *legs = nullptr;
 

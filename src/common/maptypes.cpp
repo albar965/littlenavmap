@@ -2777,6 +2777,11 @@ std::tuple<int, int, int> MapProcedurePoint::compoundId() const
   return std::make_tuple(legs->ref.airportId, legs->ref.procedureId, getLeg().isAnyTransition() ? legs->ref.transitionId : -1);
 }
 
+std::tuple<int, int> MapProcedurePoint::compoundIdBase() const
+{
+  return std::make_tuple(legs->ref.airportId, legs->ref.procedureId);
+}
+
 const proc::MapProcedureLeg& MapProcedurePoint::getLeg() const
 {
   return legs->at(legIndex);

@@ -2275,6 +2275,7 @@ void RouteController::updateActions()
   ui->actionRouteLegUp->setEnabled(false);
   ui->actionRouteLegDown->setEnabled(false);
   ui->actionRouteDeleteLeg->setEnabled(false);
+  ui->actionRouteConvertProcedure->setEnabled(false);
 
   // Empty - nothing to move or delete
   if(model->rowCount() == 0)
@@ -2300,6 +2301,7 @@ void RouteController::updateActions()
     else if(model->rowCount() > 1)
     {
       ui->actionRouteDeleteLeg->setEnabled(true);
+      ui->actionRouteConvertProcedure->setEnabled(containsProc);
 
       if(sm->hasSelection())
       {
@@ -2514,17 +2516,19 @@ void RouteController::tableContextMenu(const QPoint& pos)
 
   qDebug() << "tableContextMenu";
 
-  QList<QAction *> actions({ui->actionRouteShowInformation, ui->actionRouteShowApproaches, ui->actionRouteShowApproachCustom,
-                            ui->actionRouteShowDepartureCustom, ui->actionRouteShowOnMap, ui->actionRouteActivateLeg,
-                            ui->actionRouteDirectTo, ui->actionRouteFollowSelection, ui->actionRouteLegUp, ui->actionRouteLegDown,
-                            ui->actionRouteDeleteLeg, ui->actionRouteEditUserWaypoint, ui->actionRouteInsert, ui->actionRouteTableAppend,
-                            ui->actionRouteSaveSelection, ui->actionRouteCalcSelected, ui->actionMapRangeRings, ui->actionMapNavaidRange,
-                            ui->actionMapTrafficPattern, ui->actionMapHold, ui->actionMapAirportMsa, ui->actionRouteTableCopy,
-                            ui->actionRouteTableSelectAll, ui->actionRouteTableSelectNothing, ui->actionRouteResetView,
-                            ui->actionRouteDisplayOptions, ui->actionRouteSetMark, ui->actionRouteMarkAddon});
+  const static QList<QAction *> ACTIONS({ui->actionRouteShowInformation, ui->actionRouteShowApproaches, ui->actionRouteShowApproachCustom,
+                                         ui->actionRouteShowDepartureCustom, ui->actionRouteShowOnMap, ui->actionRouteActivateLeg,
+                                         ui->actionRouteDirectTo, ui->actionRouteFollowSelection, ui->actionRouteLegUp,
+                                         ui->actionRouteLegDown, ui->actionRouteDeleteLeg, ui->actionRouteEditUserWaypoint,
+                                         ui->actionRouteInsert, ui->actionRouteTableAppend, ui->actionRouteSaveSelection,
+                                         ui->actionRouteCalcSelected, ui->actionMapRangeRings, ui->actionMapNavaidRange,
+                                         ui->actionMapTrafficPattern, ui->actionMapHold, ui->actionMapAirportMsa,
+                                         ui->actionRouteTableCopy, ui->actionRouteTableSelectAll, ui->actionRouteTableSelectNothing,
+                                         ui->actionRouteResetView, ui->actionRouteDisplayOptions, ui->actionRouteSetMark,
+                                         ui->actionRouteMarkAddon, ui->actionRouteConvertProcedure});
 
   // Save text which will be changed below - Re-enable actions on exit to allow keystrokes
-  atools::gui::ActionTool actionTool(actions);
+  atools::gui::ActionTool actionTool(ACTIONS);
 
   // Get table index ===========================================================
   QModelIndex index = tableViewRoute->indexAt(pos);
@@ -2584,12 +2588,18 @@ void RouteController::tableContextMenu(const QPoint& pos)
   ui->actionRouteEditUserWaypoint->setEnabled(false);
   ui->actionRouteShowInformation->setEnabled(false);
   ui->actionRouteMarkAddon->setEnabled(false);
+  ui->actionRouteConvertProcedure->setEnabled(false);
 
   // Collect information for selected leg =======================================================================
+  proc::MapProcedureTypes baseType = proc::PROCEDURE_NONE;
+
   // Menu above a row
   map::MapResult msaResult;
   if(routeLeg != nullptr)
   {
+    // Get base type with transitions removed
+    baseType = proc::MapProcedureLegs::getProcedureTypeBase(routeLeg->getProcedureType());
+
     if(routeLeg->getVor().isValid() || routeLeg->getNdb().isValid() || routeLeg->getWaypoint().isValid() || routeLeg->isAirport())
       NavApp::getMapQueryGui()->getMapObjectByIdent(msaResult, map::AIRPORT_MSA, routeLeg->getIdent(),
                                                     routeLeg->getRegion(), QString(), routeLeg->getPosition());
@@ -2598,11 +2608,26 @@ void RouteController::tableContextMenu(const QPoint& pos)
     {
       if(routeLeg->getProcedureLeg().navaids.hasTypes(map::AIRPORT | map::WAYPOINT | map::VOR | map::NDB))
         ui->actionRouteShowInformation->setEnabled(true);
+
+      ui->actionRouteConvertProcedure->setEnabled(true);
+
+      // Get two names in case of converting approach. Then also convert the STAR as well
+      QString procName1, procName2;
+      if(baseType == proc::PROCEDURE_APPROACH && route.hasAnyStarProcedure())
+        procName2 = route.getProcedureLegText(proc::PROCEDURE_STAR, false /* includeRunway */,
+                                              true /* missedAsApproach */, true /* transitionAsProcedure */);
+
+      procName1 = route.getProcedureLegText(baseType, false /* includeRunway */,
+                                            true /* missedAsApproach */, true /* transitionAsProcedure */);
+
+      ActionTool::setText(ui->actionRouteConvertProcedure, true, atools::strJoin({procName1, procName2}, tr(", "), tr(" and ")));
     }
     else
-      ui->actionRouteShowInformation->setEnabled(routeLeg->isValidWaypoint() &&
-                                                 routeLeg->getMapType() != map::USERPOINTROUTE &&
+    {
+      ui->actionRouteConvertProcedure->setText(ui->actionRouteConvertProcedure->text().arg(tr("Procedure")));
+      ui->actionRouteShowInformation->setEnabled(routeLeg->isValidWaypoint() && routeLeg->getMapType() != map::USERPOINTROUTE &&
                                                  routeLeg->getMapType() != map::INVALID);
+    }
 
     if(routeLeg->isValidWaypoint())
     {
@@ -2823,6 +2848,9 @@ void RouteController::tableContextMenu(const QPoint& pos)
   menu.addAction(ui->actionRouteEditUserWaypoint);
   menu.addSeparator();
 
+  menu.addAction(ui->actionRouteConvertProcedure);
+  menu.addSeparator();
+
   menu.addAction(ui->actionRouteDirectTo);
   menu.addSeparator();
 
@@ -2917,19 +2945,13 @@ void RouteController::tableContextMenu(const QPoint& pos)
           }
 
           if(routeLegSel.getRange() > 0)
-            NavApp::getMapWidgetGui()->addNavRangeMark(routeLegSel.getPosition(), type,
-                                                       routeLegSel.getDisplayIdent(),
-                                                       routeLegSel.getFrequencyOrChannel(),
-                                                       routeLegSel.getRange());
+            NavApp::getMapWidgetGui()->addNavRangeMark(routeLegSel.getPosition(), type, routeLegSel.getDisplayIdent(),
+                                                       routeLegSel.getFrequencyOrChannel(), routeLegSel.getRange());
         }
       }
     }
-    // else if(action == ui->actionMapHideRangeRings)
-    // NavApp::getMapWidget()->clearRangeRingsAndDistanceMarkers(); // Connected directly
-    // else if(action == ui->actionRouteEditUserWaypoint)
-    // editUserWaypointName(index.row());
-    // else if(action == ui->actionRouteTableAppend) // Done by signal from action
-    // emit routeAppend();
+    else if(action == ui->actionRouteConvertProcedure)
+      convertProcedure(baseType);
     else if(action == ui->actionRouteMarkAddon)
     {
       QModelIndex curIndex = tableViewRoute->currentIndex();
@@ -2946,6 +2968,12 @@ void RouteController::tableContextMenu(const QPoint& pos)
       emit routeInsert(row);
     else if(action == ui->actionRouteCalcSelected)
       calculateRouteWindowSelection();
+    // else if(action == ui->actionMapHideRangeRings)
+    // NavApp::getMapWidget()->clearRangeRingsAndDistanceMarkers(); // Connected directly
+    // else if(action == ui->actionRouteEditUserWaypoint)
+    // editUserWaypointName(index.row());
+    // else if(action == ui->actionRouteTableAppend) // Done by signal from action
+    // emit routeAppend();
     // Other actions emit signals directly
   }
   contextMenuOpen = false;
@@ -3472,6 +3500,69 @@ void RouteController::deleteSelectedLegsInternal(const QList<int>& rows)
     tableViewRoute->selectionModel()->setCurrentIndex(
       model->index(currentRow, 0), QItemSelectionModel::SelectCurrent | QItemSelectionModel::Rows);
   }
+}
+
+void RouteController::convertProcedure(int routeIndex)
+{
+  convertProcedure(proc::MapProcedureLegs::getProcedureTypeBase(route.getLegAt(routeIndex).getProcedureType()));
+}
+
+void RouteController::convertProcedure(proc::MapProcedureTypes types)
+{
+  qDebug() << Q_FUNC_INFO << types;
+
+  QString message = tr("<p>You can use this feature to allow editing of a procedure or to avoid problems with simulators or "
+                         "add-ons when loading an exported flight plan.</p>"
+                         "<p>Note that you can undo this conversion.</p>"
+                           "<p>Converting a procedure to waypoints loses information:</p>"
+                             "<ul>"
+                               "<li>Several approach procedure leg types like holds and turns cannot be converted and will appear as straight lines.</li>"
+                                 "<li>Speed and altitude restrictions are included as remarks and are not followed in the elevation profile.</li>"
+                                 "</ul>");
+
+  atools::gui::Dialog(mainWindow).showWarnMsgBox(lnm::ACTIONS_SHOW_FLIGHTPLAN_WARN_CONVERT, message, tr("Do not &show this dialog again."));
+
+  RouteCommand *undoCommand = preChange(tr("Convert Procedure"), rctype::EDIT);
+
+  // Also convert STAR if approach is converted
+  if(types.testFlag(proc::PROCEDURE_APPROACH) && route.hasAnyStarProcedure())
+    types |= proc::PROCEDURE_STAR;
+
+  // Build conversion options from procedure types
+  rf::RouteAdjustOptions opts = rf::RESTRICTIONS_TO_REMARKS;
+
+  if(types.testFlag(proc::PROCEDURE_SID))
+    opts |= rf::SAVE_SID_WP;
+
+  if(types.testFlag(proc::PROCEDURE_STAR))
+    opts |= rf::SAVE_STAR_WP;
+
+  if(types.testFlag(proc::PROCEDURE_APPROACH))
+    opts |= rf::SAVE_APPROACH_WP;
+
+  // Convert flight plan
+  route = route.adjustedToOptions(opts);
+
+  // Reload other procedures
+  loadProceduresFromFlightplan(false /* clearOldProcedureProperties */, false /* cleanupRoute */, false /* autoresolveTransition */);
+
+  route.updateAll();
+  route.updateAirwaysAndAltitude(false /* adjustRouteAltitude */);
+  route.updateLegAltitudes();
+
+  route.updateDepartureAndDestination(false /* clearInvalidStart */);
+
+  // Get type and cruise altitude from widgets
+  updateFlightplanFromWidgets();
+
+  updateActiveLeg();
+  updateTableModelAndErrors();
+
+  postChange(undoCommand);
+
+  emit routeChanged(true);
+
+  NavApp::setStatusMessage(tr("Procedure converted."));
 }
 
 /* Get selected row numbers from the table model */

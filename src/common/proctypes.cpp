@@ -361,9 +361,17 @@ QStringList restrictionText(const MapProcedureLeg& procedureLeg)
     restrictions.append(proc::speedRestrictionTextShort(procedureLeg.speedRestriction));
 
   if(procedureLeg.isVerticalAngleValid())
-    restrictions.append(QObject::tr("%L1°").arg(procedureLeg.verticalAngle, 0, 'g', 3));
+    restrictions.append(proc::vertRestrictionText(procedureLeg));
 
   return restrictions;
+}
+
+QString vertRestrictionText(const MapProcedureLeg& procedureLeg)
+{
+  if(procedureLeg.isVerticalAngleValid())
+    return QObject::tr("%L1°").arg(procedureLeg.verticalAngle, 0, 'g', 3);
+
+  return QString();
 }
 
 QString altRestrictionText(const MapAltRestriction& restriction)
@@ -642,6 +650,20 @@ float MapProcedureLeg::legTrueCourse() const
     return trueCourse ? course : atools::geo::normalizeCourse(course + magvar);
 
   return map::INVALID_COURSE_VALUE;
+}
+
+MapProcedureTypes MapProcedureLegs::getProcedureTypeBase(MapProcedureTypes procType)
+{
+  if(procType.testFlag(proc::PROCEDURE_SID_TRANSITION))
+    return proc::PROCEDURE_SID;
+
+  if(procType.testFlag(proc::PROCEDURE_STAR_TRANSITION))
+    return proc::PROCEDURE_STAR;
+
+  if(procType.testFlag(proc::PROCEDURE_TRANSITION) || procType.testFlag(proc::PROCEDURE_MISSED))
+    return proc::PROCEDURE_APPROACH;
+
+  return procType;
 }
 
 bool MapProcedureLeg::isFinalApproachFix() const

@@ -596,6 +596,14 @@ struct MapProcedureLegs
     return transitionLegs.isEmpty();
   }
 
+  /* Remove transition type or missed and convert to SID, STAR or approach */
+  proc::MapProcedureTypes getProcedureTypeBase() const
+  {
+    return getProcedureTypeBase(mapType);
+  }
+
+  static proc::MapProcedureTypes getProcedureTypeBase(proc::MapProcedureTypes type);
+
 private:
   MapProcedureLeg& atInternal(int i)
   {
@@ -657,6 +665,7 @@ QString procedureLegTypeShortStr(ProcedureLegType type);
 QString procedureLegTypeFullStr(ProcedureLegType type);
 QString procedureLegRemarks(proc::ProcedureLegType);
 QString altRestrictionText(const MapAltRestriction& restriction);
+QString vertRestrictionText(const MapProcedureLeg& procedureLeg);
 
 /* Slash separated list of all restrictions, altitude, speed and angle */
 QStringList restrictionText(const MapProcedureLeg& procedureLeg);

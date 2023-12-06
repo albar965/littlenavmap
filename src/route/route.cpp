@@ -2793,14 +2793,19 @@ Route Route::adjustedToOptions(const Route& origRoute, rf::RouteAdjustOptions op
   qDebug() << Q_FUNC_INFO << "options" << options;
 #endif
   bool saveApproachWp = options.testFlag(rf::SAVE_APPROACH_WP),
-       saveSidWp = options.testFlag(rf::SAVE_SIDSTAR_WP), saveStarWp = options.testFlag(rf::SAVE_SIDSTAR_WP),
+       saveSidWp = options.testFlag(rf::SAVE_SID_WP), saveStarWp = options.testFlag(rf::SAVE_STAR_WP),
        replaceCustomWp = options.testFlag(rf::REPLACE_CUSTOM_WP), msfs = options.testFlag(rf::SAVE_MSFS),
-       removeCustom = options.testFlag(rf::REMOVE_RUNWAY_PROC);
+       removeCustom = options.testFlag(rf::REMOVE_RUNWAY_PROC), restrToRemarks = options.testFlag(rf::RESTRICTIONS_TO_REMARKS);
 
   // Create copy which allows to modify the plan ==============
   Route route(origRoute);
   atools::fs::pln::Flightplan& plan = route.getFlightplan();
   FlightplanEntryBuilder entryBuilder;
+
+  // Get names before properties are deleted ==========================
+  QString sidName, sidTransName, starName, starTransName, apprArincName, apprTransName, apprSuffixName;
+  route.getSidStarNames(sidName, sidTransName, starName, starTransName);
+  route.getApproachNames(apprArincName, apprTransName, apprSuffixName);
 
   // Clear unresolved parking/start names depending on flag
   route.updateDepartureAndDestination(!options.testFlag(rf::SAVE_KEEP_INVALID_START));
@@ -2998,22 +3003,24 @@ Route Route::adjustedToOptions(const Route& origRoute, rf::RouteAdjustOptions op
     // Replace procedures with waypoints =======================================================================
     // Now replace all entries with either valid waypoints or user defined waypoints
     int wpNum = 1;
+
     for(int i = 0; i < plan.size(); i++)
     {
       FlightplanEntry& entry = plan[i];
       const RouteLeg& leg = route.value(i);
       const proc::MapProcedureLeg& procedureLeg = leg.getProcedureLeg();
+      proc::MapProcedureTypes procedureType = leg.getProcedureType();
 
-      bool isAppr = leg.getProcedureType() & proc::PROCEDURE_APPROACH_ALL;
-      bool isSid = leg.getProcedureType() & proc::PROCEDURE_SID_ALL;
-      bool isStar = leg.getProcedureType() & proc::PROCEDURE_STAR_ALL;
+      bool anyAppr = procedureType & proc::PROCEDURE_APPROACH_ALL;
+      bool anySid = procedureType & proc::PROCEDURE_SID_ALL;
+      bool anyStar = procedureType & proc::PROCEDURE_STAR_ALL;
 
-      bool legMatches = (saveApproachWp && isAppr) || (saveSidWp && isSid) || (saveStarWp && isStar);
+      bool legMatches = (saveApproachWp && anyAppr) || (saveSidWp && anySid) || (saveStarWp && anyStar);
 
       if( // Save approach or SID/STAR waypoints and this leg is part of a procedure
         legMatches ||
         // MSFS - save SID/STAR legs and this leg is one
-        (msfs && (isSid || isStar)))
+        (msfs && (anySid || anyStar)))
       {
         entry.setFlag(atools::fs::pln::entry::TRACK, false);
 
@@ -3023,6 +3030,28 @@ Route Route::adjustedToOptions(const Route& origRoute, rf::RouteAdjustOptions op
         entry.setIdent(QString());
         entry.setRegion(QString());
         entry.setAirway(QString());
+
+        // Copy restrictions to the remarks section
+        if(restrToRemarks)
+        {
+          QStringList comment;
+          // Add procedure name
+          if(anySid)
+            comment.append(atools::strJoin({sidName, procedureType & proc::PROCEDURE_SID_TRANSITION ? sidTransName : QString()}, '.'));
+          else if(anyStar)
+            comment.append(atools::strJoin({starName, procedureType & proc::PROCEDURE_STAR_TRANSITION ? starTransName : QString()}, '.'));
+          else if(anyAppr)
+            comment.append(atools::strJoin({apprArincName, procedureType & proc::PROCEDURE_TRANSITION ? apprTransName : QString()}, '.'));
+
+          // Add restrictions
+          comment.append(proc::altRestrictionText(leg.getProcedureLeg().altRestriction));
+          comment.append(proc::speedRestrictionText(leg.getProcedureLeg().speedRestriction));
+          comment.append(proc::vertRestrictionText(leg.getProcedureLeg()));
+
+          // Remarks from leg
+          comment.append(proc::procedureLegRemark(leg.getProcedureLeg()));
+          entry.setComment(atools::strJoin(comment, tr(" / ")));
+        }
 
         if(!msfs || legMatches)
           // Clear procedure flag to keep legs in plan
@@ -3034,7 +3063,7 @@ Route Route::adjustedToOptions(const Route& origRoute, rf::RouteAdjustOptions op
           QString rw, designator;
 
           // Keep SID and STAR waypoints but keep transition waypoints
-          if(leg.getProcedureType() & proc::PROCEDURE_SID_ALL)
+          if(procedureType & proc::PROCEDURE_SID_ALL)
           {
             // Clear procedure flag to keep SID and transition legs in plan
             entry.setFlag(atools::fs::pln::entry::PROCEDURE, false);
@@ -3043,7 +3072,7 @@ Route Route::adjustedToOptions(const Route& origRoute, rf::RouteAdjustOptions op
             entry.setSid(sid.procedureFixIdent);
             rw = sid.runway;
           }
-          else if(leg.getProcedureType() & proc::PROCEDURE_STAR_ALL)
+          else if(procedureType & proc::PROCEDURE_STAR_ALL)
           {
             // Clear procedure flag to keep STAR and transition legs in plan
             entry.setFlag(atools::fs::pln::entry::PROCEDURE, false);
@@ -3096,13 +3125,15 @@ Route Route::adjustedToOptions(const Route& origRoute, rf::RouteAdjustOptions op
           // Make a user defined waypoint from manual, altitude or other points
           entry.setWaypointType(atools::fs::pln::entry::USER);
 
-          if((replaceCustomWp || saveApproachWp) && customApproach && leg.getProcedureType() & proc::PROCEDURE_APPROACH)
+          if((replaceCustomWp || saveApproachWp) && customApproach && procedureType & proc::PROCEDURE_APPROACH)
             entry.setIdent(procedureLeg.fixIdent);
-          else if((replaceCustomWp || saveSidWp) && customDeparture && leg.getProcedureType() & proc::PROCEDURE_SID)
+          else if((replaceCustomWp || saveSidWp) && customDeparture && procedureType & proc::PROCEDURE_SID)
+            entry.setIdent(procedureLeg.fixIdent);
+          else if((replaceCustomWp || saveStarWp) && procedureType & proc::PROCEDURE_STAR)
             entry.setIdent(procedureLeg.fixIdent);
           else
           {
-            QString legText = procedureLeg.displayText.join(" ");
+            QString legText = procedureLeg.displayText.join(' ');
             if(msfs)
               // More relaxed than FSX
               entry.setIdent(atools::fs::util::adjustMsfsUserWpName(legText, 10, &wpNum));
@@ -3114,15 +3145,18 @@ Route Route::adjustedToOptions(const Route& origRoute, rf::RouteAdjustOptions op
         if(leg.isAnyProcedure())
         {
           // Correct coordinates for all distance or otherwise terminated legs ============================
-          if(atools::contains(procedureLeg.type, {
-            proc::COURSE_TO_ALTITUDE, proc::COURSE_TO_DME_DISTANCE, proc::COURSE_TO_INTERCEPT, proc::COURSE_TO_RADIAL_TERMINATION,
-            proc::FIX_TO_ALTITUDE, proc::TRACK_FROM_FIX_FROM_DISTANCE, proc::TRACK_FROM_FIX_TO_DME_DISTANCE,
-            proc::FROM_FIX_TO_MANUAL_TERMINATION, proc::HEADING_TO_ALTITUDE_TERMINATION, proc::HEADING_TO_DME_DISTANCE_TERMINATION,
-            proc::HEADING_TO_INTERCEPT, proc::HEADING_TO_MANUAL_TERMINATION, proc::HEADING_TO_RADIAL_TERMINATION}))
+          if(atools::contains(procedureLeg.type,
+                              {proc::COURSE_TO_ALTITUDE, proc::COURSE_TO_DME_DISTANCE, proc::COURSE_TO_INTERCEPT,
+                               proc::COURSE_TO_RADIAL_TERMINATION, proc::FIX_TO_ALTITUDE, proc::TRACK_FROM_FIX_FROM_DISTANCE,
+                               proc::TRACK_FROM_FIX_TO_DME_DISTANCE, proc::FROM_FIX_TO_MANUAL_TERMINATION,
+                               proc::HEADING_TO_ALTITUDE_TERMINATION, proc::HEADING_TO_DME_DISTANCE_TERMINATION, proc::HEADING_TO_INTERCEPT,
+                               proc::HEADING_TO_MANUAL_TERMINATION, proc::HEADING_TO_RADIAL_TERMINATION}))
           {
-            // Set user waypoint
+            // Set user waypoint for procedure - set ident if still empty
             entry.setWaypointType(atools::fs::pln::entry::USER);
-            entry.setIdent(proc::procedureLegFixStr(procedureLeg));
+            QString legFixStr = proc::procedureLegFixStr(procedureLeg);
+            if(!legFixStr.isEmpty())
+              entry.setIdent(legFixStr);
 
             // Leg does not carry altitude in case of procedure points. Take this from the flight plan entry
             entry.setPosition(leg.getPosition().alt(entry.getAltitude()));

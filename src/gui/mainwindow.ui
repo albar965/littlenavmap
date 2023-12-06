@@ -12237,6 +12237,21 @@ relation to shown airport</string>
     <string>Show information about aircraft performance</string>
    </property>
   </action>
+  <action name="actionRouteConvertProcedure">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/approachconvert.svg</normaloff>:/littlenavmap/resources/icons/approachconvert.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Convert %1 to &amp;Waypoints</string>
+   </property>
+   <property name="toolTip">
+    <string>Convert the procedure to waypoints which allows editing</string>
+   </property>
+   <property name="statusTip">
+    <string>Convert the procedure to waypoints which allows editing</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <tabstops>

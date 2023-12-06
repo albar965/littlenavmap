@@ -27,11 +27,12 @@ enum RouteAdjustOption
 {
   NONE = 0,
   SAVE_APPROACH_WP = 1 << 0, /* Save approach as waypoints and remove approach information. */
-  SAVE_SIDSTAR_WP = 1 << 1, /* Save SID and STAR as waypoints and remove procedure information. */
-  SAVE_AIRWAY_WP = 1 << 2, /* Remove airway information and save waypoints only. */
-  REPLACE_CUSTOM_WP = 1 << 3, /* Replace custom approach with user defined waypoints */
-  REMOVE_ALTERNATE = 1 << 4, /* Remove all alternate legs. */
-  REMOVE_TRACKS = 1 << 5, /* Empty track name to force direct */
+  SAVE_SID_WP = 1 << 1, /* Save SID as waypoints and remove procedure information. */
+  SAVE_STAR_WP = 1 << 2, /* As above for STAR. */
+  SAVE_AIRWAY_WP = 1 << 3, /* Remove airway information and save waypoints only. */
+  REPLACE_CUSTOM_WP = 1 << 4, /* Replace custom approach with user defined waypoints */
+  REMOVE_ALTERNATE = 1 << 5, /* Remove all alternate legs. */
+  REMOVE_TRACKS = 1 << 6, /* Empty track name to force direct */
   FIX_CIRCLETOLAND = 1 << 7, /* Add a dummy best guess runway for circle-to-land approaches for X-Plane */
   FIX_PROC_ENTRY_EXIT = 1 << 8, /* Add any removed procedure entry and exit points back
                                  * if they are attached to an airway. */
@@ -50,6 +51,7 @@ enum RouteAdjustOption
   REMOVE_MISSED = 1 << 15, /* Remove missed approach */
   CLEAN_CUSTOM_DEPART = 1 << 16, /* Remove first runway waypoint from selected departure runway for X-Plane */
   SAVE_KEEP_INVALID_START = 1 << 17, /* Do not remove parking/start position names which were not resolved against database */
+  RESTRICTIONS_TO_REMARKS = 1 << 18, /* Put procedure restrictions into the remarks section when converting procedures to waypoints */
 
   /* Flag combinations =========================================================================== */
 
@@ -89,7 +91,7 @@ enum RouteAdjustOption
   DEFAULT_OPTS_CIVA_FMS = rf::DEFAULT_OPTS_NO_PROC | rf::REMOVE_ALTERNATE | rf::REMOVE_RUNWAY_PROC | rf::REMOVE_MISSED,
 
   /* Garmin GPX */
-  DEFAULT_OPTS_GPX = rf::DEFAULT_OPTS | rf::SAVE_AIRWAY_WP | rf::SAVE_SIDSTAR_WP | rf::SAVE_APPROACH_WP
+  DEFAULT_OPTS_GPX = rf::DEFAULT_OPTS | rf::SAVE_AIRWAY_WP | rf::SAVE_SID_WP | rf::SAVE_STAR_WP | rf::SAVE_APPROACH_WP
 };
 
 Q_DECLARE_FLAGS(RouteAdjustOptions, rf::RouteAdjustOption);

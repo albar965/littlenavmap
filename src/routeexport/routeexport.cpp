@@ -2042,8 +2042,13 @@ Route RouteExport::buildAdjustedRoute(rf::RouteAdjustOptions options)
   {
     if(NavApp::getMainUi()->actionRouteSaveApprWaypointsOpt->isChecked())
       options |= rf::SAVE_APPROACH_WP;
+
     if(NavApp::getMainUi()->actionRouteSaveSidStarWaypointsOpt->isChecked())
-      options |= rf::SAVE_SIDSTAR_WP;
+    {
+      options |= rf::SAVE_SID_WP;
+      options |= rf::SAVE_STAR_WP;
+    }
+
     if(NavApp::getMainUi()->actionRouteSaveAirwayWaypointsOpt->isChecked())
       options |= rf::SAVE_AIRWAY_WP;
   }
