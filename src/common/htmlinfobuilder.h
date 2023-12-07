@@ -49,7 +49,7 @@ class HtmlBuilder;
 
 namespace map {
 
-class AircraftTrailSegment;
+struct AircraftTrailSegment;
 struct MapAirport;
 struct MapAirportMsa;
 struct MapVor;

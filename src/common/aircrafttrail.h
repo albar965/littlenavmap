@@ -25,7 +25,7 @@ namespace Marble {
 class GeoDataLatLonAltBox;
 }
 namespace map {
-class AircraftTrailSegment;
+struct AircraftTrailSegment;
 }
 namespace atools {
 namespace fs {
@@ -35,7 +35,7 @@ class Flightplan;
 }
 
 namespace gpx {
-class GpxData;
+struct GpxData;
 }
 namespace sc {
 class SimConnectUserAircraft;

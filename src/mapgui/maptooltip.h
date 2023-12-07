@@ -23,7 +23,7 @@
 
 namespace map {
 
-class AircraftTrailSegment;
+struct AircraftTrailSegment;
 struct MapResult;
 
 }
