@@ -69,6 +69,7 @@
 #include "settings/settings.h"
 #include "track/trackcontroller.h"
 #include "ui_mainwindow.h"
+#include "util/contextsaver.h"
 #include "util/htmlbuilder.h"
 
 #include <QClipboard>
@@ -792,7 +793,7 @@ void RouteController::aircraftPerformanceChanged()
   routeLabel->updateFooterSelectionLabel();
 
   // Emit also for empty route to catch performance changes
-  emit routeChanged(true);
+  emit routeChanged(true /* geometryChanged */);
 }
 
 void RouteController::windUpdated()
@@ -814,8 +815,7 @@ void RouteController::windUpdated()
   routeLabel->updateFooterSelectionLabel();
 
   // Emit also for empty route to catch performance changes
-  emit routeChanged(false);
-  // emit routeChanged(true);
+  emit routeChanged(false /* geometryChanged */);
 }
 
 /* Spin box altitude has changed value */
@@ -876,7 +876,7 @@ void RouteController::routeTypeChanged()
 
   if(!route.isEmpty())
   {
-    emit routeChanged(false);
+    emit routeChanged(false /* geometryChanged */);
     Ui::MainWindow *ui = NavApp::getMainUi();
     NavApp::setStatusMessage(tr("Flight plan type changed to %1.").arg(ui->comboBoxRouteType->currentText()));
   }
@@ -1079,9 +1079,10 @@ void RouteController::getSelectedRouteLegs(QList<int>& selLegIndexes) const
 void RouteController::newFlightplan()
 {
   qDebug() << "newFlightplan";
-  clearRouteAndUndo();
 
+  clearRouteAndUndo();
   clearAllErrors();
+  clearTableSelection();
 
   // Avoid warning when saving
   route.getFlightplan().setLnmFormat(true);
@@ -1099,7 +1100,7 @@ void RouteController::newFlightplan()
   updateActions();
   remarksFlightPlanToWidget();
 
-  emit routeChanged(true /* geometry changed */, true /* new flight plan */);
+  emit routeChanged(true /* geometryChanged */, true /* newFlightPlan */);
 }
 
 void RouteController::loadFlightplan(atools::fs::pln::Flightplan flightplan, atools::fs::pln::FileFormat format,
@@ -1115,6 +1116,7 @@ void RouteController::loadFlightplan(atools::fs::pln::Flightplan flightplan, ato
   // Stored plan uses local unit (meter or feet)
 
   clearAllErrors();
+  clearTableSelection();
 
   RouteCommand *undoCommand = nullptr;
   if(undo)
@@ -1269,7 +1271,7 @@ void RouteController::loadFlightplan(atools::fs::pln::Flightplan flightplan, ato
   if(undoCommand != nullptr)
     postChange(undoCommand);
 
-  emit routeChanged(true /* geometry changed */, true /* new flight plan */);
+  emit routeChanged(true /* geometryChanged */, true /* newFlightPlan */);
 }
 
 void RouteController::loadProceduresFromFlightplan(bool clearOldProcedureProperties, bool cleanupRoute, bool autoresolveTransition)
@@ -1380,6 +1382,9 @@ bool RouteController::insertFlightplan(const QString& filename, int insertBefore
   pln::Flightplan& routePlan = route.getFlightplan();
   try
   {
+    // Avoid spurious selection changed events calling follow selection
+    atools::util::ContextSaver<bool> saver(ignoreSelectionEvent, true /* value */, false /* resetValue */);
+
     // Will throw an exception if something goes wrong
     flightplanIO->load(flightplan, filename);
     RouteCommand *undoCommand = preChange(insertBefore >= route.getDestinationAirportLegIndex() ? tr("Insert") : tr("Append"));
@@ -1505,7 +1510,7 @@ bool RouteController::insertFlightplan(const QString& filename, int insertBefore
 
     updateActions();
 
-    emit routeChanged(true);
+    emit routeChanged(true /* geometryChanged */);
   }
   catch(atools::Exception& e)
   {
@@ -1727,7 +1732,7 @@ bool RouteController::saveFlightplanLnmInternal(const QString& filename, bool si
     NavApp::updateWindowTitle();
 
     if(routeHasChanged)
-      emit routeChanged(false, false);
+      emit routeChanged(false /* geometryChanged */, false /* newFlightPlan */);
 
     qDebug() << "saveFlightplan undoIndex" << undoIndex << "undoIndexClean" << undoIndexClean;
   }
@@ -1755,6 +1760,7 @@ void RouteController::calculateDirect()
 
   RouteCommand *undoCommand = preChange(tr("Direct Calculation"));
 
+  clearTableSelection();
   route.removeRouteLegs();
 
   route.updateAll();
@@ -1764,7 +1770,7 @@ void RouteController::calculateDirect()
   updateTableModelAndErrors();
   updateActions();
   postChange(undoCommand);
-  emit routeChanged(true);
+  emit routeChanged(true /* geometryChanged */);
   NavApp::setStatusMessage(tr("Calculated direct flight plan."));
 }
 
@@ -1811,6 +1817,9 @@ void RouteController::calculateRoute()
   QString command;
   atools::routing::Modes mode = atools::routing::MODE_NONE;
   bool fetchAirways = false;
+
+  // Avoid spurious selection changed events calling follow selection
+  atools::util::ContextSaver<bool> saver(ignoreSelectionEvent, true /* value */, false /* resetValue */);
 
   // Build configuration for route finder =======================================
   if(routeCalcDialog->getRoutingType() == rd::AIRWAY)
@@ -2065,12 +2074,15 @@ bool RouteController::calculateRouteInternal(atools::routing::RouteFinder *route
 
       if(calcRange)
       {
+        // Avoid spurious selection changed events calling follow selection
+        atools::util::ContextSaver<bool> saver(ignoreSelectionEvent, true /* value */, false /* resetValue */);
+
         // will also update route window
         int newToIndex = toIndex - (oldRouteSize - route.size());
         selectRange(fromIndex, newToIndex);
       }
 
-      emit routeChanged(true);
+      emit routeChanged(true /* geometryChanged */);
     }
     else
       // Too long
@@ -2134,9 +2146,10 @@ void RouteController::showInRoute(int index)
   qDebug() << Q_FUNC_INFO << index;
   if(index >= 0 && index < map::INVALID_INDEX_VALUE)
   {
-    // Ignore follow selection in tableSelectionChanged() if its origin is from here
-    ignoreSelectionEvent = true;
+    // Avoid spurious selection changed events calling follow selection
+    atools::util::ContextSaver<bool> saver(ignoreSelectionEvent, true /* value */, false /* resetValue */);
 
+    // Triggers tableSelectionChanged() immediately
     tableViewRoute->selectRow(index);
   }
 }
@@ -2146,6 +2159,8 @@ void RouteController::reverseRoute()
   qDebug() << Q_FUNC_INFO;
 
   RouteCommand *undoCommand = preChange(tr("Reverse"), rctype::REVERSE);
+
+  clearTableSelection();
 
   // Remove all procedures and properties
   route.removeProcedureLegs(proc::PROCEDURE_ALL);
@@ -2184,7 +2199,7 @@ void RouteController::reverseRoute()
   updateActions();
 
   postChange(undoCommand);
-  emit routeChanged(true);
+  emit routeChanged(true /* geometryChanged */);
   NavApp::setStatusMessage(tr("Reversed flight plan."));
 }
 
@@ -3002,7 +3017,7 @@ void RouteController::activateLegManually(int index)
   route.setActiveLeg(index);
   highlightNextWaypoint(route.getActiveLegIndex());
   // Use geometry changed flag to force redraw
-  emit routeChanged(true);
+  emit routeChanged(true /* geometryChanged */);
 }
 
 void RouteController::resetActiveLeg()
@@ -3011,7 +3026,7 @@ void RouteController::resetActiveLeg()
   route.resetActive();
   highlightNextWaypoint(route.getActiveLegIndex());
   // Use geometry changed flag to force redraw
-  emit routeChanged(true);
+  emit routeChanged(true /* geometryChanged */);
 }
 
 void RouteController::updateActiveLeg()
@@ -3037,6 +3052,9 @@ void RouteController::editUserWaypointName(int index)
     {
       RouteCommand *undoCommand = nullptr;
 
+      // Avoid spurious selection changed events calling follow selection
+      atools::util::ContextSaver<bool> saver(ignoreSelectionEvent, true /* value */, false /* resetValue */);
+
       // if(route.getFlightplan().canSaveUserWaypointName())
       undoCommand = preChange(tr("Waypoint Change"));
 
@@ -3050,7 +3068,7 @@ void RouteController::editUserWaypointName(int index)
       updateActions();
 
       postChange(undoCommand);
-      emit routeChanged(true);
+      emit routeChanged(true /* geometryChanged */);
       NavApp::setStatusMessage(tr("Changed waypoint in flight plan."));
     }
   }
@@ -3109,6 +3127,8 @@ void RouteController::cleanupTableTimeout()
 
 void RouteController::clearTableSelection()
 {
+  // Avoid spurious selection changed events calling follow selection
+  atools::util::ContextSaver<bool> saver(ignoreSelectionEvent, true /* value */, false /* resetValue */);
   tableViewRoute->clearSelection();
 }
 
@@ -3174,8 +3194,6 @@ void RouteController::tableSelectionChanged(const QItemSelection&, const QItemSe
   if(!ignoreSelectionEvent && NavApp::getMainUi()->actionRouteFollowSelection->isChecked() &&
      sm->currentIndex().isValid() && sm->isSelected(sm->currentIndex()))
     emit showPos(route.value(sm->currentIndex().row()).getPosition(), map::INVALID_DISTANCE_VALUE, false /* doubleClick */);
-
-  ignoreSelectionEvent = false;
 }
 
 void RouteController::changeRouteUndo(const atools::fs::pln::Flightplan& newFlightplan)
@@ -3198,6 +3216,9 @@ void RouteController::changeRouteRedo(const atools::fs::pln::Flightplan& newFlig
 void RouteController::changeRouteUndoRedo(const atools::fs::pln::Flightplan& newFlightplan)
 {
   int currentRow = tableViewRoute->currentIndex().isValid() ? tableViewRoute->currentIndex().row() : -1;
+
+  // Avoid spurious selection changed events calling follow selection
+  atools::util::ContextSaver<bool> saver(ignoreSelectionEvent, true /* value */, false /* resetValue */);
 
   clearAllErrors();
   route.clearAll();
@@ -3225,7 +3246,7 @@ void RouteController::changeRouteUndoRedo(const atools::fs::pln::Flightplan& new
   tableViewRoute->selectionModel()->setCurrentIndex(
     model->index(currentRow, 0), QItemSelectionModel::SelectCurrent | QItemSelectionModel::Rows);
 
-  emit routeChanged(true);
+  emit routeChanged(true /* geometryChanged */);
 }
 
 void RouteController::styleChanged()
@@ -3343,6 +3364,9 @@ void RouteController::moveSelectedLegsInternal(MoveDirection direction)
 
   if(!rows.isEmpty())
   {
+    // Avoid spurious selection changed events calling follow selection
+    atools::util::ContextSaver<bool> saver(ignoreSelectionEvent, true /* value */, false /* resetValue */);
+
     RouteCommand *undoCommand = preChange(tr("Move Waypoints"), rctype::MOVE);
 
     QModelIndex curIdx = tableViewRoute->currentIndex();
@@ -3411,7 +3435,7 @@ void RouteController::moveSelectedLegsInternal(MoveDirection direction)
     updateActions();
 
     postChange(undoCommand);
-    emit routeChanged(true);
+    emit routeChanged(true /* geometryChanged */);
     NavApp::setStatusMessage(tr("Moved flight plan legs."));
   }
 }
@@ -3430,12 +3454,10 @@ void RouteController::deleteSelectedLegs(const QList<int>& rows)
 {
   if(!rows.isEmpty())
   {
-    if(tableViewRoute->selectionModel() != nullptr)
-      tableViewRoute->selectionModel()->clear();
-
-    proc::MapProcedureTypes procs = affectedProcedures(rows);
+    clearTableSelection();
 
     // Do not merge for procedure deletes
+    proc::MapProcedureTypes procs = affectedProcedures(rows);
     RouteCommand *undoCommand = preChange(procs & proc::PROCEDURE_ALL ? tr("Delete Procedure") : tr("Delete Waypoints"),
                                           procs & proc::PROCEDURE_ALL ? rctype::EDIT : rctype::DELETE);
 
@@ -3447,7 +3469,7 @@ void RouteController::deleteSelectedLegs(const QList<int>& rows)
     updateActions();
 
     postChange(undoCommand);
-    emit routeChanged(true);
+    emit routeChanged(true /* geometryChanged */);
     NavApp::setStatusMessage(tr("Removed flight plan legs."));
   }
 }
@@ -3536,6 +3558,9 @@ void RouteController::convertProcedure(proc::MapProcedureTypes types)
 
   atools::gui::Dialog(mainWindow).showWarnMsgBox(lnm::ACTIONS_SHOW_FLIGHTPLAN_WARN_CONVERT, message, tr("Do not &show this dialog again."));
 
+  // Avoid spurious selection changed events calling follow selection
+  atools::util::ContextSaver<bool> saver(ignoreSelectionEvent, true /* value */, false /* resetValue */);
+
   RouteCommand *undoCommand = preChange(tr("Convert Procedure"), rctype::EDIT);
 
   // Also convert STAR if approach is converted
@@ -3574,7 +3599,7 @@ void RouteController::convertProcedure(proc::MapProcedureTypes types)
 
   postChange(undoCommand);
 
-  emit routeChanged(true);
+  emit routeChanged(true /* geometryChanged */);
 
   NavApp::setStatusMessage(tr("Procedure converted."));
 }
@@ -3661,7 +3686,7 @@ void RouteController::routeClearParkingAndStart()
   updateActions();
 
   postChange(undoCommand);
-  emit routeChanged(true);
+  emit routeChanged(true /* geometryChanged */);
 
   NavApp::setStatusMessage(tr("Start postition set to airport."));
 }
@@ -3704,7 +3729,7 @@ void RouteController::routeSetParking(const map::MapParking& parking)
   updateActions();
 
   postChange(undoCommand);
-  emit routeChanged(true);
+  emit routeChanged(true /* geometryChanged */);
 
   NavApp::setStatusMessage(tr("Start position set to %1 parking %2.").arg(route.getDepartureAirportLeg().getDisplayIdent()).
                            arg(map::parkingNameOrNumber(parking)));
@@ -3753,7 +3778,7 @@ void RouteController::routeSetStartPosition(map::MapStart start)
   updateActions();
 
   postChange(undoCommand);
-  emit routeChanged(true);
+  emit routeChanged(true /* geometryChanged */);
 
   NavApp::setStatusMessage(tr("Start position set to %1 position %2.").
                            arg(route.getDepartureAirportLeg().getDisplayIdent()).
@@ -3766,6 +3791,9 @@ void RouteController::routeSetDeparture(map::MapAirport airport)
 
   if(!airport.isValid())
     return;
+
+  // Avoid spurious selection changed events calling follow selection
+  atools::util::ContextSaver<bool> saver(ignoreSelectionEvent, true /* value */, false /* resetValue */);
 
   RouteCommand *undoCommand = preChange(tr("Set Departure"));
   NavApp::showFlightPlan();
@@ -3787,7 +3815,7 @@ void RouteController::routeSetDeparture(map::MapAirport airport)
   updateActions();
 
   postChange(undoCommand);
-  emit routeChanged(true);
+  emit routeChanged(true /* geometryChanged */);
   NavApp::setStatusMessage(tr("Departure set to %1.").arg(route.getDepartureAirportLeg().getDisplayIdent()));
 }
 
@@ -3836,6 +3864,9 @@ void RouteController::routeSetDestination(map::MapAirport airport)
   if(!airport.isValid())
     return;
 
+  // Avoid spurious selection changed events calling follow selection
+  atools::util::ContextSaver<bool> saver(ignoreSelectionEvent, true /* value */, false /* resetValue */);
+
   RouteCommand *undoCommand = preChange(tr("Set Destination"));
   NavApp::showFlightPlan();
 
@@ -3856,7 +3887,7 @@ void RouteController::routeSetDestination(map::MapAirport airport)
   updateActions();
 
   postChange(undoCommand);
-  emit routeChanged(true);
+  emit routeChanged(true /* geometryChanged */);
   NavApp::setStatusMessage(tr("Destination set to %1.").arg(airport.ident));
 }
 
@@ -3869,6 +3900,9 @@ void RouteController::routeAddAlternate(map::MapAirport airport)
 
   if(route.isAirportAlternate(airport.ident) || route.isAirportDestination(airport.ident))
     return;
+
+  // Avoid spurious selection changed events calling follow selection
+  atools::util::ContextSaver<bool> saver(ignoreSelectionEvent, true /* value */, false /* resetValue */);
 
   RouteCommand *undoCommand = preChange(tr("Add Alternate"));
   NavApp::showFlightPlan();
@@ -3901,7 +3935,7 @@ void RouteController::routeAddAlternate(map::MapAirport airport)
   updateTableModelAndErrors();
 
   postChange(undoCommand);
-  emit routeChanged(true);
+  emit routeChanged(true /* geometryChanged */);
   NavApp::setStatusMessage(tr("Alternate %1 added.").arg(airport.ident));
 }
 
@@ -4147,7 +4181,10 @@ void RouteController::routeAddProcedure(proc::MapProcedureLegs legs)
     NavApp::showFlightPlan();
 
   RouteCommand *undoCommand = nullptr;
-  // if(route.getFlightplan().canSaveProcedures())
+
+  // Avoid spurious selection changed events calling follow selection
+  atools::util::ContextSaver<bool> saver(ignoreSelectionEvent, true /* value */, false /* resetValue */);
+
   undoCommand = preChange(tr("Add Procedure"));
 
   // Inserting new ones does not produce errors - only loading
@@ -4210,7 +4247,7 @@ void RouteController::routeAddProcedure(proc::MapProcedureLegs legs)
 
   qDebug() << Q_FUNC_INFO << route.getFlightplanConst().getProperties();
 
-  emit routeChanged(true);
+  emit routeChanged(true /* geometryChanged */);
 
   NavApp::setStatusMessage(tr("Added procedure to flight plan."));
 }
@@ -4232,6 +4269,9 @@ void RouteController::routeDirectTo(int id, atools::geo::Pos userPos, map::MapTy
 
   if(!disable)
   {
+    // Avoid spurious selection changed events calling follow selection
+    atools::util::ContextSaver<bool> saver(ignoreSelectionEvent, true /* value */, false /* resetValue */);
+
     RouteCommand *undoCommand = preChange(tr("Direct to"));
     updateActiveLeg();
 
@@ -4327,7 +4367,7 @@ void RouteController::routeDirectTo(int id, atools::geo::Pos userPos, map::MapTy
     updateActions();
 
     postChange(undoCommand);
-    emit routeChanged(true);
+    emit routeChanged(true /* geometryChanged */);
     NavApp::setStatusMessage(tr("Changed flight plan for direct to."));
   }
 }
@@ -4335,6 +4375,9 @@ void RouteController::routeDirectTo(int id, atools::geo::Pos userPos, map::MapTy
 void RouteController::routeAdd(int id, atools::geo::Pos userPos, map::MapTypes type, int legIndex)
 {
   qDebug() << Q_FUNC_INFO << "user pos" << userPos << "id" << id << "type" << type << "leg index" << legIndex;
+
+  // Avoid spurious selection changed events calling follow selection
+  atools::util::ContextSaver<bool> saver(ignoreSelectionEvent, true /* value */, false /* resetValue */);
 
   RouteCommand *undoCommand = preChange(tr("Add Waypoint"));
 
@@ -4347,7 +4390,7 @@ void RouteController::routeAdd(int id, atools::geo::Pos userPos, map::MapTypes t
   updateActions();
 
   postChange(undoCommand);
-  emit routeChanged(true);
+  emit routeChanged(true /* geometryChanged */);
   NavApp::setStatusMessage(tr("Added waypoint to flight plan."));
 }
 
@@ -4426,6 +4469,9 @@ void RouteController::routeReplace(int id, atools::geo::Pos userPos, map::MapTyp
   if(alternate && !(type & map::AIRPORT))
     return;
 
+  // Avoid spurious selection changed events calling follow selection
+  atools::util::ContextSaver<bool> saver(ignoreSelectionEvent, true /* value */, false /* resetValue */);
+
   RouteCommand *undoCommand = preChange(tr("Change Waypoint"));
 
   FlightplanEntry entry;
@@ -4481,7 +4527,7 @@ void RouteController::routeReplace(int id, atools::geo::Pos userPos, map::MapTyp
   updateActions();
 
   postChange(undoCommand);
-  emit routeChanged(true);
+  emit routeChanged(true /* geometryChanged */);
   NavApp::setStatusMessage(tr("Replaced waypoint in flight plan."));
 }
 
@@ -5076,7 +5122,7 @@ void RouteController::disconnectedFromSimulator()
 
   route.resetActive();
   highlightNextWaypoint(-1);
-  emit routeChanged(false);
+  emit routeChanged(false /* geometryChanged */);
 }
 
 void RouteController::simDataChanged(const atools::fs::sc::SimConnectData& simulatorData)
