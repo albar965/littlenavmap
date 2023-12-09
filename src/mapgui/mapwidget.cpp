@@ -2030,11 +2030,11 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
           break;
 
         case mc::ADDROUTE:
-          emit routeAdd(id, pos, type, -1 /* leg index */);
+          emit routeAdd(id, pos, type, legindex::AUTO);
           break;
 
         case mc::APPENDROUTE:
-          emit routeAdd(id, pos, type, map::INVALID_INDEX_VALUE);
+          emit routeAdd(id, pos, type, legindex::APPEND);
           break;
 
         case mc::DIRECT:
@@ -2168,13 +2168,13 @@ void MapWidget::updateRoute(const QPoint& point, int leg, int pointIndex, bool f
   if((id != -1 && type != map::NONE) || type == map::USERPOINTROUTE)
   {
     if(fromClickAdd)
-      emit routeAdd(id, pos, type, -1 /* leg index */);
+      emit routeAdd(id, pos, type, legindex::AUTO);
     else if(fromClickAppend)
-      emit routeAdd(id, pos, type, map::INVALID_INDEX_VALUE);
+      emit routeAdd(id, pos, type, legindex::APPEND);
     else
     {
       // From drag
-      if(leg != -1)
+      if(leg != legindex::AUTO)
         emit routeAdd(id, pos, type, leg);
       else if(pointIndex != -1)
         emit routeReplace(id, pos, type, pointIndex);

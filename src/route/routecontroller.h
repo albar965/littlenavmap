@@ -187,7 +187,7 @@ public:
   /* Called by action */
   void deleteSelectedLegsTriggered();
 
-  void routeDirectTo(int id, atools::geo::Pos userPos, map::MapTypes type, int legIndexDirectTo);
+  void routeDirectTo(int id, const atools::geo::Pos& userPos, map::MapTypes type, int legIndexDirectTo);
   void directToTriggered();
 
   /* Set departure parking position. If the airport of the parking spot is different to

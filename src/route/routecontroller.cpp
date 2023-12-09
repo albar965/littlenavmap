@@ -2822,7 +2822,7 @@ void RouteController::tableContextMenu(const QPoint& pos)
   if(!selectedRows.isEmpty())
   {
     bool disableDirect = true;
-    QString suffix = proc::procedureTextSuffixDirectTo(disableDirect, route, selectedRows.constFirst(), &routeLeg->getAirport());
+    QString suffix = proc::procedureTextSuffixDirectTo(route, selectedRows.constFirst(), &routeLeg->getAirport(), &disableDirect);
     ui->actionRouteDirectTo->setDisabled(disableDirect);
     ActionTool::setText(ui->actionRouteDirectTo, !disableDirect, objectText, suffix);
   }
@@ -4259,14 +4259,14 @@ void RouteController::directToTriggered()
     routeDirectTo(-1, atools::geo::EMPTY_POS, map::NONE, index.row());
 }
 
-void RouteController::routeDirectTo(int id, atools::geo::Pos userPos, map::MapTypes type, int legIndexDirectTo)
+void RouteController::routeDirectTo(int id, const atools::geo::Pos& userPos, map::MapTypes type, int legIndexDirectTo)
 {
   qDebug() << Q_FUNC_INFO << "id" << id << "userPos" << userPos << "type" << type << "legIndexDirectTo" << legIndexDirectTo
            << "route.getActiveLegIndex()" << route.getActiveLegIndex();
 
   bool disable = false;
-  proc::procedureTextSuffixDirectTo(disable, route, legIndexDirectTo, &route.getLegAt(legIndexDirectTo).getAirport());
-
+  proc::procedureTextSuffixDirectTo(route, legIndexDirectTo, &route.getLegAt(legIndexDirectTo).getAirport(), &disable);
+  const Pos& userAicraftPos = NavApp::getUserAircraftPos();
   if(!disable)
   {
     // Avoid spurious selection changed events calling follow selection
@@ -4275,92 +4275,117 @@ void RouteController::routeDirectTo(int id, atools::geo::Pos userPos, map::MapTy
     RouteCommand *undoCommand = preChange(tr("Direct to"));
     updateActiveLeg();
 
-    if(legIndexDirectTo != -1 && legIndexDirectTo < map::INVALID_INDEX_VALUE)
+    if(route.getSizeWithoutAlternates() == 0)
     {
-      // To route leg: id 482 userPos Pos(-120.370773,49.381542,0.000000) type VOR legIndexDirectTo 15
-      // legIndexDirectTo leg index which will be connect from PPOS to legIndexDirectTo
+      // Empty route case ============================================================
+      // Append positions to empty flight plan
+      // Current aircraft position
+      routeAddInternal(-1, userAicraftPos, map::USERPOINTROUTE, legindex::APPEND, true /* presentPos */);
 
-      // Index of active leg - departure airport is leg 0, first leg is index 1
-      int actIdx = route.getActiveLegIndex();
-      QList<int> rows;
-      bool addPresentPos = false;
-
-      if(route.getLegAt(legIndexDirectTo).isAlternate())
-      {
-#ifdef DEBUG_INFORMATION
-        qDebug() << Q_FUNC_INFO << "forward to alternate";
-#endif
-        // Direct to is an alterate ======================================
-        // Remember old alternate
-        const RouteLeg& altDest = route.getLegAt(legIndexDirectTo);
-        Pos pos = altDest.getPosition();
-        map::MapTypes altType = altDest.getMapType();
-        int altId = altDest.getId();
-
-        // Put alternate to delete on top of list
-        rows.append(legIndexDirectTo);
-
-        if(route.getSizeWithoutAlternates() > 1)
-        {
-          // Other legs to delete including procedures in reverse order
-          int deleteFromIdx = route.getDestinationAirportLegIndex();
-          for(int i = deleteFromIdx; i >= actIdx; i--)
-            rows.append(i);
-        }
-
-        // Delete legs
-        deleteSelectedLegsInternal(rows);
-
-        // Append previously saved alternate as new destination
-        routeAddInternal(altId, pos, altType, map::INVALID_INDEX_VALUE, true /* presentPos */);
-
-        addPresentPos = true;
-      }
-      else
-      {
-        // Direct to is an intermediate waypoint or the destination ======================================
-
-        if(legIndexDirectTo == actIdx)
-        {
-#ifdef DEBUG_INFORMATION
-          qDebug() << Q_FUNC_INFO << "forward legIndexDirectTo == actIdx";
-#endif
-          // Insert current position for user aircraft into nearest leg
-          addPresentPos = true;
-        }
-        if(legIndexDirectTo > actIdx)
-        {
-#ifdef DEBUG_INFORMATION
-          qDebug() << Q_FUNC_INFO << "forward legIndexDirectTo > actIdx";
-#endif
-
-          // Direct to waypoint ahead ==================
-          for(int i = legIndexDirectTo - 1; i >= actIdx; i--)
-            rows.append(i);
-
-#ifdef DEBUG_INFORMATION
-          qDebug() << Q_FUNC_INFO << "forward legIndexDirectTo > actIdx" << rows;
-#endif
-
-          // Delete legs until direct to including current one
-          // Do not delete if direct to is current leg
-          deleteSelectedLegsInternal(rows);
-          addPresentPos = true;
-        }
-        // else Direct to waypoint back - invalid
-      }
-
-      // Insert current position for user aircraft into nearest leg
-      if(addPresentPos)
-        routeAddInternal(-1, NavApp::getUserAircraftPos(), map::USERPOINTROUTE, -1, true /* presentPos */);
+      // Clicked position or feature
+      routeAddInternal(id, userPos, type, legindex::APPEND);
     }
-    else // if(id == -1 && userPos.isValid() && type == map::NONE)
+    else if(route.getSizeWithoutAlternates() == 1)
     {
-      // To any pos: id -1 userPos Pos(-120.346367,49.243427,0.000000) type NONE legIndexDirectTo -1
-      // To any airport or navaid: id 10366 userPos Pos(-120.513565,49.468750,0.000000) type AIRPORT legIndexDirectTo -1
-      int insertIndex = routeAddInternal(-1, NavApp::getUserAircraftPos(), map::USERPOINTROUTE, -1, true /* presentPos */);
-      routeAddInternal(id, userPos, type, insertIndex);
+      // One destination only case ============================================================
+      // Clicked position or feature
+      if(route.getDestinationAirportLegIndex() != legIndexDirectTo)
+        // Prepend only if not destination airport
+        routeAddInternal(id, userPos, type, legindex::PREPEND);
+
+      // Current aircraft position - prepend before next
+      routeAddInternal(-1, userAicraftPos, map::USERPOINTROUTE, legindex::PREPEND, true /* presentPos */);
     }
+    else
+    {
+      // Normal flight plan with legs =================================================================
+      if(legIndexDirectTo != -1 && legIndexDirectTo < map::INVALID_INDEX_VALUE)
+      {
+        // To route leg: id 482 userPos Pos(-120.370773,49.381542,0.000000) type VOR legIndexDirectTo 15
+        // legIndexDirectTo leg index which will be connect from PPOS to legIndexDirectTo
+
+        // Index of active leg - departure airport is leg 0, first leg is index 1
+        int actIdx = route.getActiveLegIndex();
+        QList<int> rowsToDelete;
+        bool addPresentPos = false;
+
+        if(route.getLegAt(legIndexDirectTo).isAlternate())
+        {
+#ifdef DEBUG_INFORMATION
+          qDebug() << Q_FUNC_INFO << "forward to alternate";
+#endif
+          // Direct to is an alterate ======================================
+          // Remember old alternate
+          const RouteLeg& altDest = route.getLegAt(legIndexDirectTo);
+          Pos pos = altDest.getPosition();
+          map::MapTypes altType = altDest.getMapType();
+          int altId = altDest.getId();
+
+          // Put alternate to delete on top of list
+          rowsToDelete.append(legIndexDirectTo);
+
+          if(route.getSizeWithoutAlternates() > 1)
+          {
+            // Other legs to delete including procedures in reverse order
+            int deleteFromIdx = route.getDestinationAirportLegIndex();
+            for(int i = deleteFromIdx; i >= actIdx; i--)
+              rowsToDelete.append(i);
+          }
+
+          // Delete legs
+          deleteSelectedLegsInternal(rowsToDelete);
+
+          // Append previously saved alternate as new destination
+          routeAddInternal(altId, pos, altType, legindex::APPEND, true /* presentPos */);
+
+          addPresentPos = true;
+        } // if(route.getLegAt(legIndexDirectTo).isAlternate())
+        else
+        {
+          // Direct to is an intermediate waypoint or the destination ======================================
+
+          if(legIndexDirectTo == actIdx)
+          {
+#ifdef DEBUG_INFORMATION
+            qDebug() << Q_FUNC_INFO << "forward legIndexDirectTo == actIdx";
+#endif
+            // Insert current position for user aircraft into nearest leg
+            addPresentPos = true;
+          }
+          else if(legIndexDirectTo > actIdx)
+          {
+#ifdef DEBUG_INFORMATION
+            qDebug() << Q_FUNC_INFO << "forward legIndexDirectTo > actIdx";
+#endif
+
+            // Direct to waypoint ahead ==================
+            for(int i = legIndexDirectTo - 1; i >= actIdx; i--)
+              rowsToDelete.append(i);
+
+#ifdef DEBUG_INFORMATION
+            qDebug() << Q_FUNC_INFO << "forward legIndexDirectTo > actIdx" << rowsToDelete;
+#endif
+
+            // Delete legs until direct to including current one
+            // Do not delete if direct to is current leg
+            deleteSelectedLegsInternal(rowsToDelete);
+            addPresentPos = true;
+          }
+          // else Direct to waypoint back - invalid
+        }
+
+        // Insert current position for user aircraft into nearest leg
+        if(addPresentPos)
+          routeAddInternal(-1, userAicraftPos, map::USERPOINTROUTE, legindex::AUTO, true /* presentPos */);
+      }
+      else // if(id == -1 && userPos.isValid() && type == map::NONE)
+      {
+        // To any pos: id -1 userPos Pos(-120.346367,49.243427,0.000000) type NONE legIndexDirectTo -1
+        // To any airport or navaid: id 10366 userPos Pos(-120.513565,49.468750,0.000000) type AIRPORT legIndexDirectTo -1
+        int insertIndex = routeAddInternal(-1, userAicraftPos, map::USERPOINTROUTE, legindex::AUTO, true /* presentPos */);
+        routeAddInternal(id, userPos, type, insertIndex);
+      }
+    } // else if(route.getSizeWithoutAlternates() == 1)
 
     updateActiveLeg();
     updateTableModelAndErrors();
@@ -4536,10 +4561,11 @@ int RouteController::calculateInsertIndex(const atools::geo::Pos& pos, int legIn
   Flightplan& flightplan = route.getFlightplan();
 
   int insertIndex = -1;
-  if(legIndex == map::INVALID_INDEX_VALUE)
-    // Append
+  if(legIndex == legindex::APPEND)
     insertIndex = route.getSizeWithoutAlternates();
-  else if(legIndex == -1)
+  else if(legIndex == legindex::PREPEND)
+    insertIndex = 0;
+  else if(legIndex == legindex::AUTO)
   {
     if(flightplan.isEmpty())
       // First is  departure
@@ -4682,10 +4708,10 @@ void RouteController::updateTableModelAndErrors()
     itemRow[rcol::REGION] = new QStandardItem(leg.getRegion());
     itemRow[rcol::NAME] = new QStandardItem(leg.getName());
 
-    if(row == route.getDepartureAirportLegIndex() && !route.getDepartureAirportLeg().isAnyProcedure())
-      itemRow[rcol::PROCEDURE] = new QStandardItem(tr("Departure"));
-    else if(row == route.getDestinationAirportLegIndex() && !route.getDestinationAirportLeg().isAnyProcedure())
+    if(row == route.getDestinationAirportLegIndex() && !route.getDestinationAirportLeg().isAnyProcedure())
       itemRow[rcol::PROCEDURE] = new QStandardItem(tr("Destination"));
+    else if(row == route.getDepartureAirportLegIndex() && !route.getDepartureAirportLeg().isAnyProcedure())
+      itemRow[rcol::PROCEDURE] = new QStandardItem(tr("Departure"));
     else if(leg.isAlternate())
       itemRow[rcol::PROCEDURE] = new QStandardItem(tr("Alternate"));
     else if(leg.isAnyProcedure())

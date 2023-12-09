@@ -19,6 +19,18 @@
 #define LNM_ROUTEFLAGS_H
 
 #include <QFlags>
+#include <limits>
+
+namespace legindex {
+/* Special index values for adding legs */
+enum LegIndex
+{
+  PREPEND = -2,
+  AUTO = -1,
+  APPEND = std::numeric_limits<int>::max()
+};
+
+}
 
 namespace rf {
 

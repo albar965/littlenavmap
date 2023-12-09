@@ -656,11 +656,14 @@ void MapContextMenu::insertDirectToMenu(QMenu& menu)
   ActionCallback callback =
     [this](const map::MapBase *base, QString& text, QIcon&, bool& disable, bool) -> void {
       disable = !visibleOnMap;
-      if(base == nullptr)
-        // Any position
-        text = text.arg(tr("here"));
-      else
-        text.append(proc::procedureTextSuffixDirectTo(disable, route, map::routeIndex(base), base->asPtr<map::MapAirport>()));
+      if(!disable)
+      {
+        if(base == nullptr)
+          // Any position
+          text = text.arg(tr("here"));
+        else
+          text.append(proc::procedureTextSuffixDirectTo(route, map::routeIndex(base), base->asPtr<map::MapAirport>(), &disable));
+      }
     };
 
   insertMenuOrAction(menu, mc::DIRECT, MapResultIndex().
@@ -824,15 +827,15 @@ void MapContextMenu::insertDepartureMenu(QMenu& menu)
         bool departure = false, destination = false, alternate = false;
         proc::procedureFlags(route, &airport, &departure, &destination, &alternate);
 
-        if(departure)
+        if(destination)
+          text.append(tr(" (is destination)"));
+        else if(departure)
         {
           if(base->getType() != map::HELIPAD && base->getType() != map::PARKING)
             // Is already departure airport and no parking clicked
             text.append(tr(" (is departure)"));
           // else user clicked parking spot
         }
-        else if(destination)
-          text.append(tr(" (is destination)"));
         else if(alternate)
           text.append(tr(" (is alternate)"));
       }
@@ -848,7 +851,7 @@ void MapContextMenu::insertDestinationMenu(QMenu& menu)
     [this](const map::MapBase *base, QString& text, QIcon&, bool& disable, bool) -> void {
       disable = base == nullptr;
       if(base != nullptr)
-        text.append(proc::procedureTextSuffixDepartDest(route, base->asObj<map::MapAirport>(), disable));
+        text.append(proc::procedureTextSuffixDepartDest(route, base->asObj<map::MapAirport>(), &disable));
     };
 
   insertMenuOrAction(menu, mc::DESTINATION, MapResultIndex().addRef(*result, map::AIRPORT).sort(alphaSort),
@@ -869,7 +872,7 @@ void MapContextMenu::insertAlternateMenu(QMenu& menu)
           text.append(tr(" (no destination)"));
         }
         else
-          text.append(proc::procedureTextSuffixAlternate(route, base->asObj<map::MapAirport>(), disable));
+          text.append(proc::procedureTextSuffixAlternate(route, base->asObj<map::MapAirport>(), &disable));
       }
     };
 

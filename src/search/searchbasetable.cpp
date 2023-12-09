@@ -1224,9 +1224,9 @@ void SearchBaseTable::contextMenu(const QPoint& pos)
 
   // Airport actions ==============================================================
   bool disableDepartDest = false, disableAlternate = false, disableDirectTo = false;
-  QString departDestSuffix = proc::procedureTextSuffixDepartDest(route, airport, disableDepartDest);
-  QString alternateSuffix = proc::procedureTextSuffixAlternate(route, airport, disableAlternate);
-  QString directToSuffix = proc::procedureTextSuffixDirectTo(disableDirectTo, route, routeIndex, &airport);
+  QString departDestSuffix = proc::procedureTextSuffixDepartDest(route, airport, &disableDepartDest);
+  QString alternateSuffix = proc::procedureTextSuffixAlternate(route, airport, &disableAlternate);
+  QString directToSuffix = proc::procedureTextSuffixDirectTo(route, routeIndex, &airport, &disableDirectTo);
 
   // Airport search
   ui->actionSearchRouteAirportStart->setDisabled(disableDepartDest);
@@ -1716,9 +1716,9 @@ void SearchBaseTable::contextMenu(const QPoint& pos)
         emit addUserpointFromMap(map::MapResult::createFromMapBase(&ap), ap.position, true /* airportAddon */);
     }
     else if(action == ui->actionRouteAddPos)
-      emit routeAdd(id, atools::geo::EMPTY_POS, mapObjType, -1);
+      emit routeAdd(id, atools::geo::EMPTY_POS, mapObjType, legindex::AUTO);
     else if(action == ui->actionRouteAppendPos)
-      emit routeAdd(id, atools::geo::EMPTY_POS, mapObjType, map::INVALID_INDEX_VALUE);
+      emit routeAdd(id, atools::geo::EMPTY_POS, mapObjType, legindex::APPEND);
     else if(action == ui->actionSearchLogShowInformationAirport)
       emit showInformation(map::MapResult::createFromMapBase(&airport));
     else if(action == ui->actionSearchLogShowOnMapAirport)

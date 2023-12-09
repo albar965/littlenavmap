@@ -156,17 +156,17 @@ void HtmlInfoBuilder::airportTitle(const MapAirport& airport, HtmlBuilder& html,
         proc::procedureFlags(NavApp::getRouteConst(), &airport, &departure, &destination, nullptr, nullptr, &arrivalProc, &departureProc);
 
         QString linkText, link;
-        if(departure && departureProc)
-        {
-          // Is departure airport and has procedures
-          linkText = tr("Departure Procedures");
-          link = "showprocsdepart";
-        }
-        else if(destination && arrivalProc)
+        if(destination && arrivalProc)
         {
           // Is destination airport and has procedures
           linkText = tr("Arrival Procedures");
           link = "showprocsarrival";
+        }
+        else if(departure && departureProc)
+        {
+          // Is departure airport and has procedures
+          linkText = tr("Departure Procedures");
+          link = "showprocsdepart";
         }
         else if(arrivalProc || departureProc)
         {
@@ -212,10 +212,10 @@ void HtmlInfoBuilder::airportText(const MapAirport& airport, const map::WeatherC
   if(!info && route != nullptr && !route->isEmpty() && airport.routeIndex != -1)
   {
     // Add flight plan information if airport is a part of it
-    if(airport.routeIndex == route->getDepartureAirportLegIndex())
-      html.row2(tr("Departure Airport"), QString());
-    else if(airport.routeIndex == route->getDestinationAirportLegIndex())
+    if(airport.routeIndex == route->getDestinationAirportLegIndex())
       html.row2(tr("Destination Airport"), QString());
+    else if(airport.routeIndex == route->getDepartureAirportLegIndex())
+      html.row2(tr("Departure Airport"), QString());
     else if(airport.routeIndex >= route->getAlternateLegsOffset())
       html.row2(tr("Alternate Airport"), QString());
     else

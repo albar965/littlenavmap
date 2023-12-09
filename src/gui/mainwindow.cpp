@@ -4212,15 +4212,18 @@ void MainWindow::saveActionStates()
 QList<QAction *> MainWindow::getMainWindowActions()
 {
   QList<QAction *> actions;
-  for(QAction *menuBarAction : ui->menuBar->actions())
+  const QList<QAction *> menuBarActions = ui->menuBar->actions();
+  for(QAction *menuBarAction : menuBarActions)
   {
     if(menuBarAction->menu() != nullptr)
     {
-      for(QAction *menuAction : menuBarAction->menu()->actions())
+      const QList<QAction *> menuActions = menuBarAction->menu()->actions();
+      for(QAction *menuAction : menuActions)
       {
         if(menuAction->menu() != nullptr)
         {
-          for(QAction *subMenuAction : menuAction->menu()->actions())
+          const QList<QAction *> subMenuActions = menuAction->menu()->actions();
+          for(QAction *subMenuAction : subMenuActions)
           {
             if(!subMenuAction->text().isEmpty() && !subMenuAction->shortcut().isEmpty())
               actions.append(subMenuAction);
@@ -4251,7 +4254,8 @@ void MainWindow::printShortcuts()
 
   int c1 = 80, c2 = 25;
 
-  for(const QAction *mainmenus : ui->menuBar->actions())
+  const QList<QAction *> actions = ui->menuBar->actions();
+  for(const QAction *mainmenus : actions)
   {
     if(mainmenus->menu() != nullptr)
     {
@@ -4268,12 +4272,14 @@ void MainWindow::printShortcuts()
       streamShortcuts << "+" << QString("=").repeated(c1) << "+" << QString("=").repeated(c2) << "+" << endl;
 
       QString mainmenu = mainmenus->text().remove(QChar('&'));
-      for(const QAction *mainAction : mainmenus->menu()->actions())
+      const QList<QAction *> menuActions = mainmenus->menu()->actions();
+      for(const QAction *mainAction : menuActions)
       {
         if(mainAction->menu() != nullptr)
         {
           QString submenu = mainAction->text().remove(QChar('&'));
-          for(const QAction *subAction : mainAction->menu()->actions())
+          const QList<QAction *> subMenuActions = mainAction->menu()->actions();
+          for(const QAction *subAction : subMenuActions)
           {
             if(!subAction->text().isEmpty() && !subAction->shortcut().isEmpty())
             {

@@ -1206,28 +1206,30 @@ bool procedureLegFrom(ProcedureLegType type)
     });
 }
 
-QString  procedureTextSuffixDepartDest(const Route& route, const map::MapAirport& airport, bool& disable)
+QString  procedureTextSuffixDepartDest(const Route& route, const map::MapAirport& airport, bool *disable)
 {
-  bool departure = false, destination = false, alternate = false;
-  proc::procedureFlags(route, &airport, &departure, &destination, &alternate);
-
   QString text;
   if(airport.isValid())
   {
-    if(departure)
-      text = QObject::tr(" (is departure)");
-    else if(destination)
+    bool departure = false, destination = false, alternate = false;
+    proc::procedureFlags(route, &airport, &departure, &destination, &alternate);
+
+    if(destination)
       text = QObject::tr(" (is destination)");
+    else if(departure)
+      text = QObject::tr(" (is departure)");
     else if(alternate)
       text = QObject::tr(" (is alternate)");
-    disable = false;
+
+    if(disable != nullptr)
+      *disable = false;
   }
-  else
-    disable = true;
+  else if(disable != nullptr)
+    *disable = true;
   return text;
 }
 
-QString  procedureTextSuffixAlternate(const Route& route, const map::MapAirport& airport, bool& disable)
+QString  procedureTextSuffixAlternate(const Route& route, const map::MapAirport& airport, bool *disable)
 {
   bool departure = false, destination = false, alternate = false;
   proc::procedureFlags(route, &airport, &departure, &destination, &alternate);
@@ -1237,71 +1239,84 @@ QString  procedureTextSuffixAlternate(const Route& route, const map::MapAirport&
   {
     if(destination)
     {
-      disable = true;
+      if(disable != nullptr)
+        *disable = true;
       text = QObject::tr(" (is destination)");
     }
     else if(departure)
       text = QObject::tr(" (is departure)");
     else if(alternate)
     {
-      disable = true;
+      if(disable != nullptr)
+        *disable = true;
       text = QObject::tr(" (is alternate)");
     }
   }
-  else
-    disable = true;
+  else if(disable != nullptr)
+    *disable = true;
   return text;
 }
 
-QString  procedureTextSuffixDirectTo(bool& disable, const Route& route, int legIndex, const map::MapAirport *airport)
+QString  procedureTextSuffixDirectTo(const Route& route, int legIndex, const map::MapAirport *airport, bool *disable)
 {
   QString text;
   int activeLegIndex = route.getActiveLegIndex();
+  bool disableItem = false;
+#ifdef DEBUG_INFORMATION
+  qDebug() << Q_FUNC_INFO << "legIndex" << legIndex << "activeLegIndex" << activeLegIndex;
+#endif
   if(!NavApp::isConnectedAndAircraft())
   {
-    disable = true;
+    disableItem = true;
     text = QObject::tr(" (not connected to simulator)");
   }
-  else if(activeLegIndex == -1 || activeLegIndex == map::INVALID_INDEX_VALUE)
+  else if((activeLegIndex == -1 || activeLegIndex == map::INVALID_INDEX_VALUE) && route.getSizeWithoutAlternates() > 1)
   {
-    // Active is required for PPOS
-    disable = true;
+    // Check only for valid plan having legs
+    // Active is required for PPOS - but only if flight plan has valid legs
+    disableItem = true;
     text = QObject::tr(" (no active flight plan segment)");
   }
-  else if((legIndex != -1 && legIndex < activeLegIndex) || (route.getSizeWithoutAlternates() == 1 && legIndex == 0))
+  else if(legIndex != -1 && legIndex < activeLegIndex && route.getSizeWithoutAlternates() > 1)
   {
+    // Check only for valid plan having legs
     // Do not allow to direct to back if leg index is given
     // Or circling with single airport - allow only another airport or navaid
-    disable = true;
+    disableItem = true;
     text = QObject::tr(" (past active)");
   }
   else if(legIndex != -1 && legIndex < map::INVALID_INDEX_VALUE)
   {
-    // Index for route leg given
+    // Index for route leg given ======================================
     bool containsProc, moveDownTouchesProc, moveUpTouchesProc;
     route.selectionFlagsProcedures(QList<int>({legIndex}), containsProc, moveDownTouchesProc, moveUpTouchesProc);
 
-    bool procOk = (containsProc && !moveUpTouchesProc) || // First point of approach or arrival procedure
-                  !containsProc; // Selected leg is no procedure
-    bool departOk = legIndex > 0 || activeLegIndex > 0; // Back to departure only if active after direct to leg
+    // Airport given - try to find "is destination" and other texts
+    if(airport != nullptr && airport->isValid())
+      text = procedureTextSuffixDepartDest(route, *airport);
 
-    disable = !procOk || !departOk;
-    if(disable)
-      text = QObject::tr(" (is procedure)");
-    else
+    if(route.getSizeWithoutAlternates() > 1)
     {
-      // Airport given - try to find "is destination" and other texts
-      if(airport != nullptr && airport->isValid())
-      {
-        bool disableDummy;
-        text = procedureTextSuffixDepartDest(route, *airport, disableDummy);
-      }
+      // Legs and intermediate waypoints present
+      bool procOk = (containsProc && !moveUpTouchesProc) || // First point of approach or arrival procedure
+                    !containsProc; // Selected leg is no procedure
+      bool departOk = legIndex > 0 || activeLegIndex > 0; // Back to departure only if active after direct to leg
 
-      if(text.isEmpty())
-        // No specific text but it is still a part of the plan
-        text = QObject::tr(" (flight plan)");
+      disableItem = !procOk || !departOk;
+      if(disableItem)
+        text = QObject::tr(" (is procedure)");
+      else
+      {
+
+        if(text.isEmpty())
+          // No specific text but it is still a part of the plan - can be waypoint or other
+          text = QObject::tr(" (flight plan)");
+      }
     }
   }
+
+  if(disable != nullptr)
+    *disable = disableItem;
 
   return text;
 }
