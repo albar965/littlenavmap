@@ -125,7 +125,8 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
     ui->labelOptionsAppFontHint,
     ui->labelOptionsOnlineHint,
     ui->labelOptionsUnitsOnlineAirspaces,
-    ui->labelOptionsWeatherDefaultsHint
+    ui->labelOptionsWeatherDefaultsHint,
+    ui->labelOptionsAirportSettingsExcludeHint
   });
 
   ui->buttonBoxOptions->button(QDialogButtonBox::Ok)->setToolTip(tr("Apply changes and close dialog."));
@@ -1161,6 +1162,9 @@ QString OptionsDialog::getLocale()
 void OptionsDialog::updateTrailStates()
 {
   ui->comboBoxOptionsDisplayTrailGradient->setEnabled(ui->checkBoxOptionsDisplayTrailGradient->isChecked());
+  ui->pushButtonOptionsDisplayTrailColor->setDisabled(ui->checkBoxOptionsDisplayTrailGradient->isChecked());
+  ui->comboBoxOptionsDisplayTrailType->setDisabled(ui->checkBoxOptionsDisplayTrailGradient->isChecked());
+  updateButtonColors();
 }
 
 void OptionsDialog::updateWidgetStates()
