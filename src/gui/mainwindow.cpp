@@ -38,6 +38,7 @@
 #include "gui/errorhandler.h"
 #include "gui/filehistoryhandler.h"
 #include "gui/helphandler.h"
+#include "gui/messagebox.h"
 #include "gui/messagesettings.h"
 #include "gui/statusbareventfilter.h"
 #include "gui/stylehandler.h"
@@ -3795,13 +3796,29 @@ void MainWindow::createIssueReport()
   QUrl crashReportUrl = QUrl::fromLocalFile(crashReportFileinfo.absoluteFilePath());
 
   QString message = tr("<p style=\"white-space:pre\">An issue report was generated and saved with all related files in a Zip archive.</p>"
-                         "<p style=\"white-space:pre\"><a href=\"%1\"><b>Click here to open the issue report \"%2\"</b></a></p>"
-                           "<p style=\"white-space:pre\">You can send this file to the author to investigate a problem.</p>"
-                             "<p style=\"white-space:pre\">%3</p>").
-                    arg(crashReportUrl.toString()).arg(crashReportFileinfo.fileName()).arg(NavApp::getContactHtml());
+                         "<p style=\"white-space:pre\"><a href=\"%1\"><b>Click here to open the directory containing the report \"%2\"</b></a></p>"
+                           "<p style=\"white-space:pre\">You can send this file to the author of %3 to investigate a problem.</p>"
+                             "<p style=\"white-space:pre\">%4</p>").
+                    arg(crashReportUrl.toString()).arg(crashReportFileinfo.fileName()).
+                    arg(QApplication::applicationName()).arg(NavApp::getContactHtml());
 
-  // Notify use with links
-  QMessageBox::information(this, NavApp::applicationName(), message);
+  atools::gui::MessageBox box(this, QApplication::applicationName(), "ISSUEREPORT.html");
+  box.setHelpOnlineUrl(lnm::helpOnlineUrl);
+  box.setHelpLanguageOnline(lnm::helpLanguageOnline());
+
+  box.addAcceptButton(QDialogButtonBox::Ok);
+  box.addButton(QDialogButtonBox::Help);
+  box.setText(message);
+  box.setIcon(QMessageBox::Information);
+
+  connect(&box, &atools::gui::MessageBox::linkActivated, [&box](const QString& link) {
+    if(link.startsWith("https://") || link.startsWith("http://"))
+      atools::gui::HelpHandler::openUrl(&box, QUrl(link));
+    else
+      atools::gui::showInFileManager(link, &box);
+  });
+
+  box.exec();
 }
 
 void MainWindow::resetWindowLayout()
@@ -3845,7 +3862,7 @@ void MainWindow::restoreStateMain()
 
   applyToolBarSize();
 
-  if(settings.contains(lnm::MAINWINDOW_WIDGET_DOCKHANDLER))
+  if(!NavApp::isSafeMode() && settings.contains(lnm::MAINWINDOW_WIDGET_DOCKHANDLER))
   {
     dockHandler->restoreState(settings.valueVar(lnm::MAINWINDOW_WIDGET_DOCKHANDLER).toByteArray());
 
@@ -3860,7 +3877,7 @@ void MainWindow::restoreStateMain()
     ui->actionShowStatusbar->blockSignals(false);
   }
   else
-    // Use default state saved in application
+    // Use default state saved in application resources
     resetWindowLayout();
 
   // Need to be loaded in constructor first since it reads all options

@@ -67,8 +67,7 @@ const QString helpLanguageOnline()
   {
     // Get the online indicator file
     QString onlineFlagFile = atools::gui::HelpHandler::getHelpFile(
-      QLatin1String("help") % atools::SEP % "little-navmap-user-manual-${LANG}.online",
-      OptionData::instance().getLanguage());
+      QLatin1String("help") % atools::SEP % "little-navmap-user-manual-${LANG}.online", OptionData::getLanguage());
 
     // Extract language from the file
     QRegularExpressionMatch match = INDICATOR_FILE.match(onlineFlagFile);

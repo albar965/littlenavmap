@@ -880,7 +880,7 @@ void NavApp::recordStartNavApp()
   getCrashReportFiles(crashReportFiles, reportFilename, false /* manual */);
 
   Application::recordStart(nullptr, Settings::getConfigFilename(".running"), reportFilename, crashReportFiles,
-                           lnm::helpOnlineUrl, "en");
+                           lnm::helpOnlineUrl, lnm::helpLanguageOnline());
 #endif
   // Keep command line options to avoid using the wrong configuration folder
 }

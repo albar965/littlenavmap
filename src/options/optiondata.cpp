@@ -17,11 +17,13 @@
 
 #include "optiondata.h"
 
+#include "common/constants.h"
 #include "exception.h"
 
 #include <QDebug>
 #include <QFont>
 #include <QFontDatabase>
+#include <QSettings>
 #include <QSize>
 
 OptionData *OptionData::optionData = nullptr;
@@ -36,6 +38,11 @@ const QString OptionData::WEATHER_NOAA_WIND_BASE_DEFAULT_URL = "https://nomads.n
 OptionData::OptionData()
 {
 
+}
+
+QString OptionData::getLanguage()
+{
+  return QSettings(QSettings::IniFormat, QSettings::UserScope, "ABarthel", "little_navmap").value(lnm::OPTIONS_DIALOG_LANGUAGE).toString();
 }
 
 OptionData::~OptionData()
