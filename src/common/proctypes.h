@@ -174,7 +174,7 @@ inline uint qHash(const proc::MapProcedureRef& ref)
 /* Procedure leg */
 struct MapProcedureLeg
 {
-  QString fixType, fixIdent, fixRegion,
+  QString fixType, fixIdent, fixAirportIdent, fixRegion,
           recFixType, recFixIdent, recFixRegion, /* Recommended fix also used by rho and theta */
           turnDirection, /* Turn to this fix*/
           arincDescrCode /* 5.17 */;

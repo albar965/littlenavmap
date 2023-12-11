@@ -196,6 +196,7 @@ void ProcedureQuery::buildLegEntry(atools::sql::SqlQuery *query, proc::MapProced
 
   leg.fixType = query->valueStr("fix_type");
   leg.fixIdent = query->valueStr("fix_ident");
+  leg.fixAirportIdent = query->valueStr("fix_airport_ident");
   leg.fixRegion = query->valueStr("fix_region");
   leg.fixPos.setLonX(query->valueFloat("fix_lonx", Pos::INVALID_VALUE));
   leg.fixPos.setLatY(query->valueFloat("fix_laty", Pos::INVALID_VALUE));
@@ -329,7 +330,13 @@ void ProcedureQuery::buildLegEntry(atools::sql::SqlQuery *query, proc::MapProced
   // Load full navaid information for fix and set fix position
   if(leg.fixType == "W" || leg.fixType == "TW")
   {
-    mapObjectByIdent(leg.navaids, map::WAYPOINT, leg.fixIdent, leg.fixRegion, QString(), fixPos);
+    mapObjectByIdent(leg.navaids, map::WAYPOINT, leg.fixIdent, leg.fixRegion, leg.fixAirportIdent, fixPos);
+    if(leg.navaids.waypoints.isEmpty() && !leg.fixAirportIdent.isEmpty())
+    {
+      // Try again without airport id if nothing found and airport id given
+      mapObjectByIdent(leg.navaids, map::WAYPOINT, leg.fixIdent, leg.fixRegion, QString(), fixPos);
+    }
+
     if(!leg.navaids.waypoints.isEmpty())
     {
       leg.fixPos = leg.navaids.waypoints.constFirst().position;
@@ -400,7 +407,7 @@ void ProcedureQuery::buildLegEntry(atools::sql::SqlQuery *query, proc::MapProced
 
     if(!leg.navaids.airports.isEmpty())
     {
-      leg.fixIdent = leg.navaids.airports.constFirst().ident;
+      leg.fixAirportIdent = leg.fixIdent = leg.navaids.airports.constFirst().ident;
       leg.fixPos = leg.navaids.airports.constFirst().position;
       leg.magvar = leg.navaids.airports.constFirst().magvar;
     }
@@ -1186,6 +1193,7 @@ void ProcedureQuery::postProcessLegsForRoute(proc::MapProcedureLegs& starLegs, c
 
       // Clear ident to avoid display
       curLeg.fixIdent.clear();
+      curLeg.fixAirportIdent.clear();
       curLeg.fixRegion.clear();
       curLeg.fixType.clear();
 
@@ -1807,6 +1815,7 @@ void ProcedureQuery::processLegs(proc::MapProcedureLegs& legs) const
 
       // Do not draw ident for manual legs
       leg.fixIdent.clear();
+      leg.fixAirportIdent.clear();
       leg.fixRegion.clear();
       leg.fixType.clear();
 
@@ -3298,6 +3307,7 @@ proc::MapProcedureLeg ProcedureQuery::createStartLeg(const proc::MapProcedureLeg
 
   sleg.fixPos = leg.fixPos;
   sleg.fixIdent = leg.fixIdent;
+  sleg.fixAirportIdent = leg.fixAirportIdent;
   sleg.fixRegion = leg.fixRegion;
   sleg.fixType = leg.fixType;
   sleg.navaids = leg.navaids;
