@@ -415,8 +415,8 @@ This is the file on top of the list &quot;Recent Window Layouts&quot;.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>514</width>
-             <height>371</height>
+             <width>599</width>
+             <height>421</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_22">
@@ -608,8 +608,8 @@ opening files, modifying the flight plan and other operations.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>419</width>
-             <height>800</height>
+             <width>585</width>
+             <height>768</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_23">
@@ -1161,8 +1161,8 @@ This does not affect the map window which can be changed separately on the optio
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>568</width>
-             <height>386</height>
+             <width>599</width>
+             <height>421</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_36">
@@ -1482,8 +1482,8 @@ Also affects labels at holds and traffic patterns.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>471</width>
-             <height>375</height>
+             <width>599</width>
+             <height>421</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_59">
@@ -1698,8 +1698,8 @@ Example: &quot;IFR Frankfurt Am Main (EDDF) to Fiumicino (LIRF).lnmpln&quot;</st
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>321</width>
-             <height>420</height>
+             <width>599</width>
+             <height>421</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout">
@@ -1967,8 +1967,8 @@ The aiports toolbar button can be used to hide empty airports if this box is che
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>595</width>
-             <height>344</height>
+             <width>599</width>
+             <height>421</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_2">
@@ -2399,7 +2399,7 @@ Smaller values will allow a finer selection.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>501</width>
+             <width>585</width>
              <height>526</height>
             </rect>
            </property>
@@ -2728,8 +2728,8 @@ Map views might be shown with a larger zoom distance than expected if this optio
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>508</width>
-             <height>1018</height>
+             <width>585</width>
+             <height>1002</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_20">
@@ -3592,8 +3592,8 @@ Lower values make the airspace more opaque and higher values more transparent.</
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>424</width>
-             <height>493</height>
+             <width>585</width>
+             <height>477</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_35">
@@ -3621,8 +3621,7 @@ Lower values make the airspace more opaque and higher values more transparent.</
                <item row="0" column="1">
                 <widget class="QSpinBox" name="spinBoxOptionsDisplayThicknessFlightplan">
                  <property name="toolTip">
-                  <string>Flight plan line width on the map.
-Not used in the elevation profile.</string>
+                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Flight plan line width on the map.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                  </property>
                  <property name="suffix">
                   <string> %</string>
@@ -3647,8 +3646,7 @@ Not used in the elevation profile.</string>
                <item row="0" column="2">
                 <widget class="QSpinBox" name="spinBoxOptionsDisplayTextSizeFlightplan">
                  <property name="toolTip">
-                  <string>Label size for flight plan navaids as well as labels along flight plan lines.
-Not used in the elevation profile.</string>
+                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Label size for flight plan navaids as well as labels along flight plan lines.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                  </property>
                  <property name="suffix">
                   <string> %</string>
@@ -3673,8 +3671,7 @@ Not used in the elevation profile.</string>
                <item row="1" column="2">
                 <widget class="QCheckBox" name="checkBoxOptionsMapFlightplanText">
                  <property name="toolTip">
-                  <string>Draw bright yellow background for flight plan labels.
-Not used in the elevation profile.</string>
+                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Draw bright yellow background for flight plan labels.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                  </property>
                  <property name="text">
                   <string>Text &amp;Background</string>
@@ -3694,6 +3691,106 @@ Not used in the elevation profile.</string>
                  </property>
                  <property name="buddy">
                   <cstring>spinBoxOptionsDisplayThicknessFlightplan</cstring>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </widget>
+            </item>
+            <item>
+             <widget class="QGroupBox" name="groupBox_29">
+              <property name="title">
+               <string>Flight Plan in the Elevation Profile</string>
+              </property>
+              <layout class="QGridLayout" name="gridLayout_45">
+               <property name="leftMargin">
+                <number>2</number>
+               </property>
+               <property name="topMargin">
+                <number>2</number>
+               </property>
+               <property name="rightMargin">
+                <number>2</number>
+               </property>
+               <property name="bottomMargin">
+                <number>2</number>
+               </property>
+               <property name="spacing">
+                <number>2</number>
+               </property>
+               <item row="0" column="0">
+                <widget class="QLabel" name="labelOptionsMapSizeFlightplanProfile">
+                 <property name="text">
+                  <string>&amp;Flight plan line:</string>
+                 </property>
+                 <property name="buddy">
+                  <cstring>spinBoxOptionsDisplayThicknessFlightplanProfile</cstring>
+                 </property>
+                </widget>
+               </item>
+               <item row="0" column="2">
+                <widget class="QSpinBox" name="spinBoxOptionsDisplayThicknessFlightplanProfile">
+                 <property name="toolTip">
+                  <string>Flight plan and aircraft trail line width in the elevation profile</string>
+                 </property>
+                 <property name="suffix">
+                  <string> %</string>
+                 </property>
+                 <property name="prefix">
+                  <string>Line Width </string>
+                 </property>
+                 <property name="minimum">
+                  <number>50</number>
+                 </property>
+                 <property name="maximum">
+                  <number>200</number>
+                 </property>
+                 <property name="singleStep">
+                  <number>10</number>
+                 </property>
+                 <property name="value">
+                  <number>100</number>
+                 </property>
+                </widget>
+               </item>
+               <item row="0" column="3">
+                <widget class="QSpinBox" name="spinBoxOptionsDisplayTextSizeFlightplanProfile">
+                 <property name="toolTip">
+                  <string>Label and symbol size for flight plan navaids and airports in the elevation profile.</string>
+                 </property>
+                 <property name="suffix">
+                  <string> %</string>
+                 </property>
+                 <property name="prefix">
+                  <string>Text and Symbols </string>
+                 </property>
+                 <property name="minimum">
+                  <number>50</number>
+                 </property>
+                 <property name="maximum">
+                  <number>200</number>
+                 </property>
+                 <property name="singleStep">
+                  <number>10</number>
+                 </property>
+                 <property name="value">
+                  <number>100</number>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="0" colspan="4">
+                <widget class="QLabel" name="labelOptionsProfileHint">
+                 <property name="text">
+                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/littlenavmap/resources/icons/bulb.svg&quot;/&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Label options for the elevation profile can be found in menu &amp;quot;Tools&amp;quot; -&amp;gt; &amp;quot;Elevation Profile Display Options&amp;quot;.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                 </property>
+                 <property name="wordWrap">
+                  <bool>true</bool>
+                 </property>
+                 <property name="margin">
+                  <number>10</number>
+                 </property>
+                 <property name="textInteractionFlags">
+                  <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
                  </property>
                 </widget>
                </item>
@@ -3899,106 +3996,6 @@ Also used in the elevation profile.</string>
              </widget>
             </item>
             <item>
-             <widget class="QGroupBox" name="groupBox_29">
-              <property name="title">
-               <string>Flight Plan in the Elevation Profile</string>
-              </property>
-              <layout class="QGridLayout" name="gridLayout_45">
-               <property name="leftMargin">
-                <number>2</number>
-               </property>
-               <property name="topMargin">
-                <number>2</number>
-               </property>
-               <property name="rightMargin">
-                <number>2</number>
-               </property>
-               <property name="bottomMargin">
-                <number>2</number>
-               </property>
-               <property name="spacing">
-                <number>2</number>
-               </property>
-               <item row="0" column="0">
-                <widget class="QLabel" name="labelOptionsMapSizeFlightplanProfile">
-                 <property name="text">
-                  <string>&amp;Flight plan line:</string>
-                 </property>
-                 <property name="buddy">
-                  <cstring>spinBoxOptionsDisplayThicknessFlightplanProfile</cstring>
-                 </property>
-                </widget>
-               </item>
-               <item row="0" column="2">
-                <widget class="QSpinBox" name="spinBoxOptionsDisplayThicknessFlightplanProfile">
-                 <property name="toolTip">
-                  <string>Flight plan and aircraft trail line width in the elevation profile</string>
-                 </property>
-                 <property name="suffix">
-                  <string> %</string>
-                 </property>
-                 <property name="prefix">
-                  <string>Line Width </string>
-                 </property>
-                 <property name="minimum">
-                  <number>50</number>
-                 </property>
-                 <property name="maximum">
-                  <number>200</number>
-                 </property>
-                 <property name="singleStep">
-                  <number>10</number>
-                 </property>
-                 <property name="value">
-                  <number>100</number>
-                 </property>
-                </widget>
-               </item>
-               <item row="0" column="3">
-                <widget class="QSpinBox" name="spinBoxOptionsDisplayTextSizeFlightplanProfile">
-                 <property name="toolTip">
-                  <string>Label and symbol size for flight plan navaids and airports in the elevation profile.</string>
-                 </property>
-                 <property name="suffix">
-                  <string> %</string>
-                 </property>
-                 <property name="prefix">
-                  <string>Text and Symbols </string>
-                 </property>
-                 <property name="minimum">
-                  <number>50</number>
-                 </property>
-                 <property name="maximum">
-                  <number>200</number>
-                 </property>
-                 <property name="singleStep">
-                  <number>10</number>
-                 </property>
-                 <property name="value">
-                  <number>100</number>
-                 </property>
-                </widget>
-               </item>
-               <item row="1" column="0" colspan="4">
-                <widget class="QLabel" name="labelOptionsProfileHint">
-                 <property name="text">
-                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/littlenavmap/resources/icons/bulb.svg&quot;/&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Label options for the elevation profile can be found in menu &amp;quot;Tools&amp;quot; -&amp;gt; &amp;quot;Elevation Profile Display Options&amp;quot;.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-                 </property>
-                 <property name="wordWrap">
-                  <bool>true</bool>
-                 </property>
-                 <property name="margin">
-                  <number>10</number>
-                 </property>
-                 <property name="textInteractionFlags">
-                  <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
-                 </property>
-                </widget>
-               </item>
-              </layout>
-             </widget>
-            </item>
-            <item>
              <spacer name="verticalSpacer_17">
               <property name="orientation">
                <enum>Qt::Vertical</enum>
@@ -4029,15 +4026,15 @@ Also used in the elevation profile.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>593</width>
-             <height>281</height>
+             <width>599</width>
+             <height>421</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_57">
             <item>
              <widget class="QGroupBox" name="groupBoxOptionsDisplay_2">
               <property name="title">
-               <string>User Aircraft Trail Style</string>
+               <string>User Aircraft Trail Style on Map and Elevation Profile</string>
               </property>
               <layout class="QGridLayout" name="gridLayout_48">
                <property name="leftMargin">
@@ -4065,7 +4062,7 @@ Also used in the elevation profile.</string>
                <item row="13" column="3">
                 <widget class="QComboBox" name="comboBoxOptionsDisplayTrailType">
                  <property name="toolTip">
-                  <string>Also used in the elevation profile.</string>
+                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Line style&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                  </property>
                  <item>
                   <property name="text">
@@ -4118,8 +4115,7 @@ Also used in the elevation profile.</string>
                   </sizepolicy>
                  </property>
                  <property name="toolTip">
-                  <string>Set color for aircraft trail in map.
-Also used in the elevation profile.</string>
+                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Set color for aircraft trail in map and elevation profile.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                  </property>
                  <property name="text">
                   <string>Color</string>
@@ -4129,7 +4125,7 @@ Also used in the elevation profile.</string>
                <item row="13" column="0">
                 <widget class="QLabel" name="labelOptionsMapSizeTrail">
                  <property name="text">
-                  <string>User aircraft &amp;trail for map display and elevation profile:</string>
+                  <string>User aircraft &amp;trail:</string>
                  </property>
                  <property name="wordWrap">
                   <bool>true</bool>
@@ -4142,17 +4138,14 @@ Also used in the elevation profile.</string>
                <item row="17" column="0">
                 <widget class="QCheckBox" name="checkBoxOptionsDisplayTrailGradient">
                  <property name="text">
-                  <string>&amp;Use gradient to indicate flown altitude.
-Note that this applies only to the map display:</string>
+                  <string>&amp;Use gradient to indicate flown altitude.</string>
                  </property>
                 </widget>
                </item>
                <item row="17" column="1" colspan="3">
                 <widget class="QComboBox" name="comboBoxOptionsDisplayTrailGradient">
                  <property name="toolTip">
-                  <string>Shows a color gradient indicating the flown actual altitude 
-between minimum and maximum altitude in the trail.
-Uses always a solid line. Not used in the elevation profile.</string>
+                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Shows a color gradient indicating the flown actual altitude between minimum and maximum altitude in the trail. Always uses a solid line.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                  </property>
                  <item>
                   <property name="text">
@@ -4293,8 +4286,8 @@ Lower this value to avoid too long tracks and avoid stutters in map display.</st
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>452</width>
-             <height>690</height>
+             <width>585</width>
+             <height>597</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_35">
@@ -5180,8 +5173,8 @@ Do not show this information publicly in forums on screenshots.&lt;/b&gt;&lt;/p&
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>328</width>
-             <height>535</height>
+             <width>585</width>
+             <height>519</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_39">
@@ -5650,7 +5643,7 @@ airspace filename has to match the callsign of the online center.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>572</width>
+             <width>585</width>
              <height>629</height>
             </rect>
            </property>
@@ -6097,8 +6090,8 @@ put the active leg back on top after the given timeout while flying.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>318</width>
-             <height>241</height>
+             <width>599</width>
+             <height>421</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_26">
@@ -6257,8 +6250,8 @@ Note that this value does not affect flight plan calculation or saving of flight
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>272</width>
-             <height>689</height>
+             <width>585</width>
+             <height>561</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_27">
@@ -6498,8 +6491,8 @@ Note that this value does not affect flight plan calculation or saving of flight
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>360</width>
-             <height>821</height>
+             <width>585</width>
+             <height>789</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_28">
@@ -7080,8 +7073,8 @@ Entering a wrong value will cause errors when downloading weather reports.</stri
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>389</width>
-             <height>375</height>
+             <width>599</width>
+             <height>421</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_29">
@@ -7382,8 +7375,8 @@ Entering a wrong value will cause errors when downloading weather reports.</stri
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>363</width>
-             <height>258</height>
+             <width>599</width>
+             <height>421</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_37">
@@ -7575,8 +7568,8 @@ Little Navmap GIT repository.
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>454</width>
-             <height>706</height>
+             <width>585</width>
+             <height>651</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_30">
@@ -7953,8 +7946,8 @@ Source data has many errors.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>395</width>
-             <height>506</height>
+             <width>585</width>
+             <height>490</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_38">

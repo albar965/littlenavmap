@@ -607,7 +607,7 @@ void ProcedureQuery::mapObjectByIdent(map::MapResult& result, map::MapTypes type
   mapQuery->getMapObjectByIdent(result, type, ident, region, airport, sortByDistancePos,
                                 nmToMeter(1000.f), true /* airport from nav database */);
   if(result.isEmpty(type))
-    // Try again in 200 nm radius by excluding the region - result sorted by distance
+    // Try again in 1000 nm radius by excluding the region - result sorted by distance
     mapQuery->getMapObjectByIdent(result, type, ident, QString(), airport, sortByDistancePos,
                                   nmToMeter(1000.f), true /* airport from nav database */);
 }

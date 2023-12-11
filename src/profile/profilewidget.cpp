@@ -19,6 +19,7 @@
 
 #include "atools.h"
 #include "app/navapp.h"
+#include "common/aircrafttrail.h"
 #include "geo/calculations.h"
 #include "common/mapcolors.h"
 #include "profile/profilescrollarea.h"
@@ -1625,8 +1626,35 @@ void ProfileWidget::paintEvent(QPaintEvent *)
   // Draw user aircraft trail =========================================================
   if(!aircraftTrailPoints.isEmpty() && showAircraftTrail)
   {
-    painter.setPen(mapcolors::aircraftTrailPenProfile(optionData.getDisplayThicknessFlightplanProfile() / 100.f * 2.f));
-    painter.drawPolyline(toScreen(aircraftTrailPoints));
+    if(OptionData::instance().getFlags().testFlag(opts::MAP_TRAIL_GRADIENT))
+    {
+      // Gradient line - draw outline first ======================================================================
+      painter.setPen(mapcolors::aircraftTrailPenOuter(optionData.getDisplayThicknessTrail() / 100.f * 2.f));
+      painter.drawPolyline(toScreen(aircraftTrailPoints));
+
+      // Draw gradient inner line segments ======================================================================
+      for(int i = 0; i < aircraftTrailPoints.size() - 1; i++)
+      {
+        const QPointF& pt1 = aircraftTrailPoints.value(i);
+        const QPointF& pt2 = aircraftTrailPoints.value(i + 1);
+        float altAverageFt = static_cast<float>((pt1.y() + pt2.y()) / 2.);
+
+        float maxAltitudeFt = NavApp::getAircraftTrail().getMaxAltitude();
+        // Use flight plan cruise as max altitude if valid
+        if(route.getSizeWithoutAlternates() > 2)
+          maxAltitudeFt = std::max(route.getCruiseAltitudeFt(), maxAltitudeFt);
+
+        painter.setPen(mapcolors::aircraftTrailPen(optionData.getDisplayThicknessTrail() / 100.f * 2.f,
+                                                   NavApp::getAircraftTrail().getMinAltitude(), maxAltitudeFt, altAverageFt));
+        painter.drawLine(toScreen(pt1), toScreen(pt2));
+      }
+    }
+    else
+    {
+      // Normal line ===================================================
+      painter.setPen(mapcolors::aircraftTrailPen(optionData.getDisplayThicknessTrail() / 100.f * 2.f));
+      painter.drawPolyline(toScreen(aircraftTrailPoints));
+    }
   }
 
   // Draw user aircraft =========================================================
