@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -105,7 +105,7 @@ void RequestHandler::service(HttpRequest& request, HttpResponse& response)
     handleWebApiRequest(request, response);
   else
   {
-    Parameter params(request);
+    Parameter params(request, verbose);
 
     HttpSession session = getSession(request, response);
     if(path == QLatin1String("/refresh"))
@@ -190,7 +190,7 @@ void RequestHandler::service(HttpRequest& request, HttpResponse& response)
 
 inline void RequestHandler::handleMapImage(HttpRequest& request, HttpResponse& response)
 {
-  Parameter params(request);
+  Parameter params(request, verbose);
 
   // Extract values from parameter list ===========================================
   int width = params.asInt(QStringLiteral(u"width"), 0);
@@ -210,7 +210,7 @@ inline void RequestHandler::handleMapImage(HttpRequest& request, HttpResponse& r
     // Distance as KM
     float requestedDistanceKm;
     float requestedDistance = params.asFloat(QStringLiteral(u"distance"), -1.0f);
-    if(requestedDistance == -1.0f) {
+    if(atools::almostEqual(requestedDistance, -1.0f)) {
       requestedDistanceKm = session.get("requested_distance").toFloat();
     }
     else

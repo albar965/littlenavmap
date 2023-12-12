@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -31,7 +31,7 @@ class Parameter
 {
 public:
   /* Copies the parameters internally */
-  Parameter(const stefanfrings::HttpRequest& request);
+  Parameter(const stefanfrings::HttpRequest& request, bool verboseParam);
 
   /* Get key value. Returns default value if parameters do not contain
    * key or value does not fit in list of allowed. */
@@ -53,6 +53,7 @@ public:
 
 private:
   QMultiMap<QByteArray, QByteArray> params;
+  bool verbose = false;
 };
 
 #endif // LNM_WEBTOOLS_H

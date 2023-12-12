@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -23,7 +23,8 @@
 
 using namespace stefanfrings;
 
-Parameter::Parameter(const HttpRequest& request)
+Parameter::Parameter(const HttpRequest& request, bool verboseParam)
+  : verbose(verboseParam)
 {
   /*
    * QMap is faster than QHash for "few" elements
@@ -50,7 +51,8 @@ QString Parameter::asEnum(const QString& key, const QString& defaultValue, const
     return str;
   else
   {
-    qWarning() << Q_FUNC_INFO << "Wrong enum value for" << key << ":" << str << "allowed" << allowed;
+    if(verbose)
+      qWarning() << Q_FUNC_INFO << "Wrong enum value for" << key << ":" << str << "allowed" << allowed;
     return str;
   }
 }
@@ -70,7 +72,8 @@ int Parameter::asInt(const QString& key, int defaultValue) const
     return value;
   else
   {
-    qWarning() << Q_FUNC_INFO << "Wrong int value for" << key << ":" << str;
+    if(verbose)
+      qWarning() << Q_FUNC_INFO << "Wrong int value for" << key << ":" << str;
     return defaultValue;
   }
 }
@@ -90,9 +93,8 @@ float Parameter::asFloat(const QString& key, float defaultValue) const
     return value;
   else
   {
-#ifdef DEBUG_INFORMATION_WEB
-    qWarning() << Q_FUNC_INFO << "Wrong float value for" << key << ":" << str;
-#endif
+    if(verbose)
+      qWarning() << Q_FUNC_INFO << "Wrong float value for" << key << ":" << str;
     return defaultValue;
   }
 }

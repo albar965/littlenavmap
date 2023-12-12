@@ -248,7 +248,7 @@ void WebController::openPage()
 {
   if(!getUrl(false /* useIpAddress */).isEmpty())
     atools::gui::HelpHandler::openUrl(parentWidget, getUrl(false));
-  else
+  else if(verbose)
     qWarning() << Q_FUNC_INFO << "No valid URL found";
 }
 
