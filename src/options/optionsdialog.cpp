@@ -126,7 +126,8 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
     ui->labelOptionsOnlineHint,
     ui->labelOptionsUnitsOnlineAirspaces,
     ui->labelOptionsWeatherDefaultsHint,
-    ui->labelOptionsAirportSettingsExcludeHint
+    ui->labelOptionsAirportSettingsExcludeHint,
+    ui->labelOptionsResetEmptyHint
   });
 
   ui->buttonBoxOptions->button(QDialogButtonBox::Ok)->setToolTip(tr("Apply changes and close dialog."));
