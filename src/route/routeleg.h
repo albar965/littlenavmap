@@ -148,6 +148,12 @@ public:
     return magvarEnd;
   }
 
+  /* Get magnetic variation at leg end (waypoint) or VOR calibrated declination if present. Source is always database. */
+  float getMagvarEndOrCalibrated() const
+  {
+    return isCalibratedVor() ? getVor().magvar : getMagvarEnd();
+  }
+
   /* Get range of radio navaid. -1 if not a radio navaid. Source is always database. */
   int getRange() const;
 

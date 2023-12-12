@@ -114,6 +114,7 @@ enum RouteColumns
   SAFE_ALTITUDE,
   LATITUDE,
   LONGITUDE,
+  MAGVAR,
   RECOMMENDED,
   REMARKS,
   LAST_COLUMN = REMARKS,
@@ -179,6 +180,7 @@ RouteController::RouteController(QMainWindow *parentWindow, QTableView *tableVie
     tr("Leg Safe Alt.\n%alt%"),
     tr("Latitude"),
     tr("Longitude"),
+    tr("Mag.\nDecl.°"),
     tr("Related\nIdent/Freq./Dist./Bearing"),
     tr("Remarks")});
 
@@ -226,6 +228,7 @@ RouteController::RouteController(QMainWindow *parentWindow, QTableView *tableVie
        "and options on page \"Flight Plan\"."),
     tr("Waypoint latitude in format as selected in options."),
     tr("Waypoint longitude in format as selected in options."),
+    tr("Magnetic declination at waypoint or VOR calibrated declination."),
     tr("Related or recommended navaid for procedure legs.\n"
        "Shown with navaid ident, navaid frequency, distance and bearing defining a fix."),
     tr("Turn instructions, flyover, related navaid for procedure legs or\n"
@@ -4824,6 +4827,7 @@ void RouteController::updateTableModelAndErrors()
 
     itemRow[rcol::LATITUDE] = new QStandardItem(Unit::coordsLatY(leg.getPosition()));
     itemRow[rcol::LONGITUDE] = new QStandardItem(Unit::coordsLonX(leg.getPosition()));
+    itemRow[rcol::MAGVAR] = new QStandardItem(map::magvarText(leg.getMagvarEndOrCalibrated(), true /* shortText */, false /* degSign */));
 
     itemRow[rcol::RECOMMENDED] = new QStandardItem(atools::elideTextShort(proc::procedureLegRecommended(procedureLeg).join(tr(", ")), 80));
 
@@ -4871,6 +4875,7 @@ void RouteController::updateTableModelAndErrors()
     itemRow[rcol::SAFE_ALTITUDE]->setTextAlignment(Qt::AlignRight);
     itemRow[rcol::LATITUDE]->setTextAlignment(Qt::AlignRight);
     itemRow[rcol::LONGITUDE]->setTextAlignment(Qt::AlignRight);
+    itemRow[rcol::MAGVAR]->setTextAlignment(Qt::AlignRight);
 
     model->appendRow(itemRow);
 
