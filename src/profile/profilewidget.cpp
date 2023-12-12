@@ -1629,7 +1629,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
     if(OptionData::instance().getFlags().testFlag(opts::MAP_TRAIL_GRADIENT))
     {
       // Gradient line - draw outline first ======================================================================
-      painter.setPen(mapcolors::aircraftTrailPenOuter(optionData.getDisplayThicknessTrail() / 100.f * 2.f));
+      painter.setPen(mapcolors::aircraftTrailPenOuter(optionData.getDisplayThicknessTrail() / 100.f * 1.6f));
       painter.drawPolyline(toScreen(aircraftTrailPoints));
 
       // Draw gradient inner line segments ======================================================================
@@ -1644,7 +1644,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
         if(route.getSizeWithoutAlternates() > 2)
           maxAltitudeFt = std::max(route.getCruiseAltitudeFt(), maxAltitudeFt);
 
-        painter.setPen(mapcolors::aircraftTrailPen(optionData.getDisplayThicknessTrail() / 100.f * 2.f,
+        painter.setPen(mapcolors::aircraftTrailPen(optionData.getDisplayThicknessTrail() / 100.f * 1.6f,
                                                    NavApp::getAircraftTrail().getMinAltitude(), maxAltitudeFt, altAverageFt));
         painter.drawLine(toScreen(pt1), toScreen(pt2));
       }
