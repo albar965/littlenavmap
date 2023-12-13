@@ -129,9 +129,31 @@ enum RouteColumns
   HEADER_DIST_TIME,
 
   FOOTER_SELECTION = 1500,
-  FOOTER_ERROR,
+  FOOTER_ERROR
 };
 
+/* Default columns which are shown on first startup. Others are hidden. */
+const static QSet<RouteColumns> DEFAULT_COLUMNS({
+    IDENT,
+    NAME,
+    PROCEDURE,
+    AIRWAY_OR_LEGTYPE,
+    RESTRICTION,
+    TYPE,
+    FREQ,
+    RANGE,
+    COURSE,
+    DIST,
+    REMAINING_DISTANCE,
+    LEG_TIME,
+    ETA,
+    FUEL_WEIGHT,
+    FUEL_VOLUME,
+    WIND,
+    WIND_HEAD_TAIL,
+    RECOMMENDED,
+    REMARKS
+  });
 }
 
 /* Maximum lines in flight plan and waypoint remarks for printing and HTML export */
@@ -942,8 +964,10 @@ void RouteController::saveState()
 {
   Ui::MainWindow *ui = NavApp::getMainUi();
 
-  atools::gui::WidgetState(lnm::ROUTE_VIEW).save({tableViewRoute, ui->comboBoxRouteType, ui->spinBoxRouteAlt,
-                                                  ui->actionRouteFollowSelection});
+  atools::gui::WidgetState(lnm::ROUTE_VIEW).save({ui->comboBoxRouteType, ui->spinBoxRouteAlt, ui->actionRouteFollowSelection});
+
+  // Use own state for table
+  atools::gui::WidgetState(lnm::ROUTE_VIEW_TABLE).save(tableViewRoute);
 
   atools::settings::Settings& settings = atools::settings::Settings::instance();
   settings.setValue(lnm::ROUTE_FILENAME, routeFilename);
@@ -957,11 +981,23 @@ void RouteController::restoreState()
 {
   tabHandlerRoute->restoreState();
   routeCalcDialog->restoreState();
-  Ui::MainWindow *ui = NavApp::getMainUi();
   updateTableHeaders();
 
+  Ui::MainWindow *ui = NavApp::getMainUi();
   atools::gui::WidgetState state(lnm::ROUTE_VIEW, true, true);
-  state.restore({tableViewRoute, ui->comboBoxRouteType, ui->spinBoxRouteAlt, ui->actionRouteFollowSelection});
+  state.restore({ui->comboBoxRouteType, ui->spinBoxRouteAlt, ui->actionRouteFollowSelection});
+
+  // Use own state for table
+  atools::gui::WidgetState stateTable(lnm::ROUTE_VIEW_TABLE, true, true);
+  if(stateTable.contains(tableViewRoute))
+    stateTable.restore(tableViewRoute);
+  else
+  {
+    // Hide non-default columns on first startup
+    QHeaderView *header = tableViewRoute->horizontalHeader();
+    for(int col = rcol::LAST_COLUMN; col >= rcol::FIRST_COLUMN; col--)
+      header->setSectionHidden(col, !rcol::DEFAULT_COLUMNS.contains(static_cast<rcol::RouteColumns>(col)));
+  }
 
   routeLabel->restoreState();
 
