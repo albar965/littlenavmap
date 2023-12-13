@@ -414,29 +414,6 @@ const QPen aircraftTrailPenOuter(float size)
   return QPen(NavApp::isDarkMapTheme() ? Qt::white : Qt::black, size + 3., Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
 }
 
-const QPen aircraftTrailPenProfile(float size)
-{
-  const OptionData& optionData = OptionData::instance();
-  QPen pen(optionData.getTrailColor(), size, Qt::SolidLine, Qt::SquareCap, Qt::MiterJoin);
-
-  // Styled pens ===========================================================
-  switch(optionData.getDisplayTrailType())
-  {
-    case opts::TRAIL_TYPE_DASHED:
-      pen.setStyle(Qt::DashLine);
-      break;
-
-    case opts::TRAIL_TYPE_DOTTED:
-      pen.setStyle(Qt::DotLine);
-      break;
-
-    case opts::TRAIL_TYPE_SOLID:
-      pen.setStyle(Qt::SolidLine);
-      break;
-  }
-  return pen;
-}
-
 const QPen aircraftTrailPen(float size, float minAlt, float maxAlt, float alt)
 {
   const OptionData& optionData = OptionData::instance();
@@ -448,7 +425,7 @@ const QPen aircraftTrailPen(float size, float minAlt, float maxAlt, float alt)
     alt -= minAlt;
     int hue, saturation, value;
     QColor col;
-    QPen pen(col, size, Qt::SolidLine, Qt::SquareCap, Qt::MiterJoin);
+    QPen pen(col, size, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
     switch(optionData.getDisplayTrailGradientType())
     {
       case opts::TRAIL_GRADIENT_COLOR_YELLOW_BLUE:
@@ -480,8 +457,21 @@ const QPen aircraftTrailPen(float size, float minAlt, float maxAlt, float alt)
     return pen;
   }
   else
+  {
     // Styled pens ===========================================================
-    return aircraftTrailPenProfile(size);
+    switch(optionData.getDisplayTrailType())
+    {
+      case opts::TRAIL_TYPE_DASHED:
+        return QPen(optionData.getTrailColor(), size, Qt::DashLine, Qt::FlatCap, Qt::MiterJoin);
+
+      case opts::TRAIL_TYPE_DOTTED:
+        return QPen(optionData.getTrailColor(), size, Qt::DotLine, Qt::FlatCap, Qt::MiterJoin);
+
+      case opts::TRAIL_TYPE_SOLID:
+        return QPen(optionData.getTrailColor(), size, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
+    }
+  }
+  return QPen();
 }
 
 /* Default colors. Saved to little_navmap_mapstyle.ini and can be overridden there */
