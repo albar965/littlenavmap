@@ -135,7 +135,7 @@ void ProfileLabelWidgetHoriz::paintEvent(QPaintEvent *)
           else
             painter.setPen(mapcolors::profileElevationScalePen);
 
-          const RouteLeg& leg = route.getLegAt(i);
+          const RouteLeg& leg = route.value(i);
           int legWidth = x - x0;
           int pos = x0 + legWidth / 2;
 

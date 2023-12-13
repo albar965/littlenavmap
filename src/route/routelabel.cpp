@@ -617,7 +617,7 @@ void RouteLabel::updateFooterSelectionLabel()
       // Distance to first waypoint in selection is ignored
       for(int index = selectLegIndexes.first() + 1; index <= selectLegIndexes.last(); index++)
       {
-        const RouteLeg& leg = route.getLegAt(index);
+        const RouteLeg& leg = route.value(index);
         if(leg.isValid())
         {
           // Check if missed approach is covered
@@ -672,7 +672,7 @@ void RouteLabel::updateFooterSelectionLabel()
     // Two entries selected equals to one flight plan leg
     int numLegs = last - first;
 
-    QString from = route.getLegAt(first).getIdent(), to = route.getLegAt(last).getIdent();
+    QString from = route.value(first).getIdent(), to = route.value(last).getIdent();
     QString legText = numLegs == 1 ? tr("leg") : tr("legs");
 
     ui->labelRouteSelection->setVisible(true);

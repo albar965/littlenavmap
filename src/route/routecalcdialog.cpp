@@ -229,8 +229,8 @@ void RouteCalcDialog::updateHeader()
     // Selection calculation ====================================================
     if(canCalculateSelection)
     {
-      const RouteLeg& fromLeg = route.getLegAt(fromIndex);
-      const RouteLeg& toLeg = route.getLegAt(toIndex);
+      const RouteLeg& fromLeg = route.value(fromIndex);
+      const RouteLeg& toLeg = route.value(toIndex);
       departure = tr("%1 (%2)").arg(fromLeg.getDisplayIdent()).arg(fromLeg.getMapTypeName());
       destination = tr("%1 (%2)").arg(toLeg.getDisplayIdent()).arg(toLeg.getMapTypeName());
       title = tr("<b>Calculate flight plan between legs<br/>%1 and %2</b>").arg(departure).arg(destination);

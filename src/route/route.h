@@ -172,9 +172,6 @@ public:
     return constFirst();
   }
 
-  /* Returns an empty leg if the index is not valid */
-  const RouteLeg& getLegAt(int index) const;
-
   /* First leg of departure procedure. 1 if SID used otherwise 0. */
   int getSidLegIndex() const;
   const RouteLeg& getSidLeg() const;
@@ -661,7 +658,7 @@ public:
   /* Procedure leg is not valid if en-route leg */
   const proc::MapProcedureLeg& getProcedureLegAt(int i) const
   {
-    return getLegAt(i).getProcedureLeg();
+    return value(i).getProcedureLeg();
   }
 
   /* Assign index and pointer to flight plan for all objects and also update all procedure and alternate offsets */

@@ -3543,7 +3543,7 @@ void RouteController::deleteSelectedLegsInternal(const QList<int>& rows)
 
 void RouteController::convertProcedure(int routeIndex)
 {
-  convertProcedure(proc::MapProcedureLegs::getProcedureTypeBase(route.getLegAt(routeIndex).getProcedureType()));
+  convertProcedure(proc::MapProcedureLegs::getProcedureTypeBase(route.value(routeIndex).getProcedureType()));
 }
 
 void RouteController::convertProcedure(proc::MapProcedureTypes types)
@@ -4268,7 +4268,7 @@ void RouteController::routeDirectTo(int id, const atools::geo::Pos& userPos, map
            << "route.getActiveLegIndex()" << route.getActiveLegIndex();
 
   bool disable = false;
-  proc::procedureTextSuffixDirectTo(route, legIndexDirectTo, &route.getLegAt(legIndexDirectTo).getAirport(), &disable);
+  proc::procedureTextSuffixDirectTo(route, legIndexDirectTo, &route.value(legIndexDirectTo).getAirport(), &disable);
   const Pos& userAicraftPos = NavApp::getUserAircraftPos();
   if(!disable)
   {
@@ -4312,14 +4312,14 @@ void RouteController::routeDirectTo(int id, const atools::geo::Pos& userPos, map
         QList<int> rowsToDelete;
         bool addPresentPos = false;
 
-        if(route.getLegAt(legIndexDirectTo).isAlternate())
+        if(route.value(legIndexDirectTo).isAlternate())
         {
 #ifdef DEBUG_INFORMATION
           qDebug() << Q_FUNC_INFO << "forward to alternate";
 #endif
           // Direct to is an alterate ======================================
           // Remember old alternate
-          const RouteLeg& altDest = route.getLegAt(legIndexDirectTo);
+          const RouteLeg& altDest = route.value(legIndexDirectTo);
           Pos pos = altDest.getPosition();
           map::MapTypes altType = altDest.getMapType();
           int altId = altDest.getId();
@@ -4433,7 +4433,7 @@ int RouteController::routeAddInternal(int id, atools::geo::Pos userPos, map::Map
     // Look into flight plan for an PPOS at the same position - return index if found
     for(int i = 0; i < route.size(); i++)
     {
-      const RouteLeg& leg = route.getLegAt(i);
+      const RouteLeg& leg = route.value(i);
       if(leg.getMapType() == map::USERPOINTROUTE && leg.getIdent() == userpointIdent &&
          leg.getPosition().almostEqual(userPos, atools::geo::Pos::POS_EPSILON_1NM))
         return i;

@@ -473,7 +473,7 @@ void MapPainterRoute::paintRouteInternal(QStringList routeTexts, QVector<Line> l
   {
     // Make all approach points except the last one invisible to avoid text and symbol overlay over approach
     // Also clear hidden alternates
-    const RouteLeg& leg = route->getLegAt(i);
+    const RouteLeg& leg = route->value(i);
     if(leg.isAnyProcedure() || (leg.isAlternate() && !drawAlternate))
       visibleStartPointsBuf.clearBit(i);
   }
@@ -1748,7 +1748,7 @@ void MapPainterRoute::paintProcedurePoint(QSet<map::MapRef>& idMap, const proc::
     // Legs are drawn reversed from route.size() (destination) to 0 (departure)
     // +1 is closer to the destination
     // Loop moves from prevLeg to leg to nextLeg to destination
-    const proc::MapProcedureLeg& prevLeg = context->route->getLegAt(routeIndex - 1).getProcedureLeg();
+    const proc::MapProcedureLeg& prevLeg = context->route->value(routeIndex - 1).getProcedureLeg();
 
     // Merge texts between approach and transition fixes ========================================
     if(prevLeg.isAlmostEqual(leg) && prevLeg.isTransition() && leg.isApproach())
@@ -1779,7 +1779,7 @@ void MapPainterRoute::paintProcedurePoint(QSet<map::MapRef>& idMap, const proc::
       }
 
       // Omit drawing of double labels when transitioning from SID to approach transition, for example
-      const proc::MapProcedureLeg& nextLeg = context->route->getLegAt(routeIndex + 1).getProcedureLeg();
+      const proc::MapProcedureLeg& nextLeg = context->route->value(routeIndex + 1).getProcedureLeg();
       if(nextLeg.isAlmostEqual(leg) && !contains(nextLeg.type, CALCULATED_END_POS_TYPES))
         // Draw symbol but not labels
         drawText = false;
@@ -2162,9 +2162,10 @@ textatt::TextAttributes MapPainterRoute::textPlacementAttributes(int routeIndex)
   if(routeIndex == -1)
     return textatt::PLACE_LEFT;
 
-  const RouteLeg *curLeg = &context->route->value(routeIndex);
+  const Route *route = context->route;
+  const RouteLeg *curLeg = &route->value(routeIndex);
   int nextIndex = routeIndex + 1;
-  const RouteLeg *nextLeg = &context->route->getLegAt(nextIndex);
+  const RouteLeg *nextLeg = nextIndex < route->size() ? &route->value(nextIndex) : nullptr;
 
   float courseEndTrue = map::INVALID_COURSE_VALUE, courseStartTrue = map::INVALID_COURSE_VALUE;
 
@@ -2177,17 +2178,25 @@ textatt::TextAttributes MapPainterRoute::textPlacementAttributes(int routeIndex)
     // Try to skip initial fix and other legs without geometry or course
     if(!(courseEndTrue < map::INVALID_COURSE_VALUE) && !curLeg->isAlternate())
     {
-      curLeg = &context->route->getLegAt(--routeIndex);
-      courseEndTrue = curLeg->getGeometryEndCourse();
+      if(routeIndex > 0)
+      {
+        curLeg = &route->value(routeIndex - 1);
+        courseEndTrue = curLeg->getGeometryEndCourse();
+      }
     }
 
     // Get outbound course for the waypoint at the end of this leg
-    courseStartTrue = nextLeg->getGeometryStartCourse();
+    if(nextLeg != nullptr)
+      courseStartTrue = nextLeg->getGeometryStartCourse();
+
     if(!(courseStartTrue < map::INVALID_COURSE_VALUE))
     {
       // Skip initial fix or others without course or geometry
-      nextLeg = &context->route->getLegAt(++nextIndex);
-      courseStartTrue = nextLeg->getGeometryStartCourse();
+      if(nextIndex < route->size() - 1)
+      {
+        nextLeg = &route->value(nextIndex + 1);
+        courseStartTrue = nextLeg->getGeometryStartCourse();
+      }
     }
   }
 

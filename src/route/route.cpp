@@ -1691,7 +1691,7 @@ void Route::cleanupFlightPlanForProcedures(map::MapAirway& starAirway)
 
   if(fromIdx > 0 && toIdx > 0)
   {
-    starAirway = getLegAt(toIdx).getAirway();
+    starAirway = value(toIdx).getAirway();
     removeLegs(fromIdx, toIdx);
   }
 }
@@ -2377,14 +2377,6 @@ map::MapStart Route::getDepartureStart() const
   else
     qWarning() << Q_FUNC_INFO << "invalid index" << idx;
   return map::MapStart();
-}
-
-const RouteLeg& Route::getLegAt(int index) const
-{
-  if(index >= 0 && index < size())
-    return at(index);
-  else
-    return EMPTY_ROUTELEG;
 }
 
 bool Route::isAirportDeparture(const QString& ident) const
@@ -3296,7 +3288,7 @@ Route Route::adjustedToOptions(const Route& origRoute, rf::RouteAdjustOptions op
       if(entry.getWaypointType() == atools::fs::pln::entry::AIRPORT)
       {
         // Use display ident in legs to avoid user confusion
-        QString displayIdent = route.getLegAt(i).getAirport().displayIdent();
+        QString displayIdent = route.value(i).getAirport().displayIdent();
         if(displayIdent.isEmpty())
           // Fall back to flight plan if RouteLeg is invalid or empty (not resolved against database)
           displayIdent = route.getFlightplanConst().at(i).getIdent();
@@ -3313,7 +3305,7 @@ Route Route::adjustedToOptions(const Route& origRoute, rf::RouteAdjustOptions op
     for(int i = 0; i < plan.size(); i++)
     {
       FlightplanEntry& entry = plan[i];
-      const map::MapAirport& airport = route.getLegAt(i).getAirport();
+      const map::MapAirport& airport = route.value(i).getAirport();
       if(entry.getWaypointType() == atools::fs::pln::entry::AIRPORT)
       {
         // All airport idents will be truncated to six characters on export
