@@ -22,6 +22,7 @@
 #include "fs/sc/simconnectreply.h"
 #include "fs/sc/datareaderthread.h"
 #include "gui/dialog.h"
+#include "gui/helphandler.h"
 #include "online/onlinedatacontroller.h"
 #include "gui/mainwindow.h"
 #include "geo/calculations.h"
@@ -30,6 +31,7 @@
 #include "fs/sc/xpconnecthandler.h"
 #include "fs/scenery/languagejson.h"
 #include "fs/scenery/aircraftindex.h"
+#include "util/version.h"
 
 #include <QDataStream>
 #include <QTcpSocket>
@@ -38,6 +40,7 @@
 #include <QThread>
 #include <QDir>
 #include <QHostAddress>
+#include <QStringBuilder>
 
 using atools::fs::sc::DataReaderThread;
 
@@ -48,18 +51,20 @@ const static int WEATHER_TIMEOUT_FS_SECS = 15;
 const static int NOT_AVAILABLE_TIMEOUT_FS_SECS = 300;
 
 ConnectClient::ConnectClient(MainWindow *parent)
-  : QObject(parent), mainWindow(parent), metarIdentCache(WEATHER_TIMEOUT_FS_SECS), notAvailableStations(NOT_AVAILABLE_TIMEOUT_FS_SECS)
+  : QObject(parent), mainWindow(parent), metarIdentCache(WEATHER_TIMEOUT_FS_SECS), notAvailableStations(NOT_AVAILABLE_TIMEOUT_FS_SECS),
+
+  // VERSION_NUMBER_TODO
+  minimumXpconnectVersion("1.0.39")
 {
   atools::settings::Settings& settings = atools::settings::Settings::instance();
   verbose = settings.getAndStoreValue(lnm::OPTIONS_CONNECTCLIENT_DEBUG, false).toBool();
 
-  errorMessageBox = new QMessageBox(QMessageBox::Critical, QApplication::applicationName(),
-                                    QString(), QMessageBox::Ok, mainWindow);
+  errorMessageBox = new QMessageBox(QMessageBox::Critical, QApplication::applicationName(), QString(), QMessageBox::Ok, mainWindow);
 
   // Create FSX/P3D handler for SimConnect
   simConnectHandler = new atools::fs::sc::SimConnectHandler(verbose);
-  simConnectHandler->loadSimConnect(QApplication::applicationDirPath() +
-                                    atools::SEP + "simconnect" + atools::SEP + "simconnect.manifest");
+  simConnectHandler->loadSimConnect(QApplication::applicationDirPath() %
+                                    atools::SEP % "simconnect" % atools::SEP % "simconnect.manifest");
 
   // Create X-Plane handler for shared memory
   xpConnectHandler = new atools::fs::sc::XpConnectHandler();
@@ -370,12 +375,22 @@ void ConnectClient::postSimConnectData(atools::fs::sc::SimConnectData dataPacket
   } // if(dataPacket.getStatus() == atools::fs::sc::OK)
   else
   {
+    // Get flags before disconnecting
     bool xplane = dataReader != nullptr ? dataReader->isXplaneHandler() : false, network = isNetworkConnect();
     atools::fs::sc::SimConnectStatus status = dataPacket.getStatus();
     QString statusText = simConnectData->getStatusText();
 
     disconnectClicked();
     handleError(status, statusText, xplane, network);
+  }
+
+  if(isXpConnect())
+  {
+    const atools::util::Prop versionProp =
+      dataPacket.getUserAircraftConst().getProperties().getProp(atools::fs::sc::PROP_XPCONNECT_VERSION);
+
+    if(!versionProp.isValid() || atools::util::Version(versionProp.getValueString()) < minimumXpconnectVersion)
+      showXpconnectVersionWarning(versionProp.getValueString());
   }
 }
 
@@ -631,6 +646,33 @@ void ConnectClient::connectInternalAuto()
     connectInternal();
 }
 
+void ConnectClient::showXpconnectVersionWarning(const QString& xpconnectVersion)
+{
+  if(!xpconnectVersionWarningShown)
+  {
+    xpconnectVersionWarningShown = true;
+
+    QString message;
+    if(xpconnectVersion.isEmpty())
+      message = tr("<p>You are running an outdated version of the X-Plane Little Xpconnect plugin.<br/>"
+                   "Minimum recommended version is \"%1\".</p>"
+                   "<p>Please remove the old plugin and install the included Little Xpconnect in X-Plane directory \"plugins\".</p>").
+                arg(minimumXpconnectVersion.getVersionString());
+    else
+      message = tr("<p>You are running an outdated version \"%1\" of the X-Plane Little Xpconnect plugin.<br/>"
+                   "Minimum recommended version is \"%2\".<p>"
+                   "<p>Please remove the old plugin and install the included Little Xpconnect in X-Plane directory \"plugins\".</p>").
+                arg(xpconnectVersion).arg(minimumXpconnectVersion.getVersionString());
+
+    qWarning() << Q_FUNC_INFO << message;
+
+    int retval = QMessageBox::warning(mainWindow, QApplication::applicationName(), message, QMessageBox::Ok | QMessageBox::Help);
+
+    if(retval == QMessageBox::Help)
+      atools::gui::HelpHandler::openHelpUrlWeb(mainWindow, lnm::helpOnlineUrl + "XPCONNECT.html", lnm::helpLanguageOnline());
+  }
+}
+
 void ConnectClient::showTerminalError()
 {
   if(dataReader->isFailedTerminally())
@@ -756,8 +798,7 @@ void ConnectClient::readFromSocketError(QAbstractSocket::SocketError)
                     arg(connectDialog->isAutoConnect() ? tr("\nWill retry to connect.") : QString());
 
       // Closed due to error
-      QMessageBox::critical(mainWindow, QApplication::applicationName(), msg,
-                            QMessageBox::Close, QMessageBox::NoButton);
+      QMessageBox::critical(mainWindow, QApplication::applicationName(), msg, QMessageBox::Close);
     }
   }
 
@@ -847,8 +888,7 @@ void ConnectClient::writeReplyToSocket(atools::fs::sc::SimConnectReply& reply)
     if(reply.getStatus() != atools::fs::sc::OK)
     {
       // Something went wrong - shutdown
-      QMessageBox::critical(mainWindow, QApplication::applicationName(),
-                            QString(tr("Error writing reply to Little Navconnect: %1.")).
+      QMessageBox::critical(mainWindow, QApplication::applicationName(), tr("Error writing reply to Little Navconnect: %1.").
                             arg(reply.getStatusText()));
       closeSocket(false);
       return;

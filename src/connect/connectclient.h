@@ -21,6 +21,7 @@
 #include "fs/sc/simconnectdata.h"
 #include "util/timedcache.h"
 #include "connectdialog.h"
+#include "util/version.h"
 
 #include <QAbstractSocket>
 #include <QCache>
@@ -146,6 +147,7 @@ private:
 
   void statusPosted(atools::fs::sc::SimConnectStatus status, QString statusText);
   void showTerminalError();
+  void showXpconnectVersionWarning(const QString& xpconnectVersion);
 
   bool silent = false, manualDisconnect = false;
   ConnectDialog *connectDialog = nullptr;
@@ -180,7 +182,7 @@ private:
   // have to remember state separately to avoid sending signals when autoconnect fails
   bool socketConnected = false;
 
-  bool errorState = false, terminalErrorShown = false;
+  bool errorState = false, terminalErrorShown = false, xpconnectVersionWarningShown = false;
 
   /* Try to reconnect every 10 seconds when network connection is lost */
   int socketReconnectSec = 10;
@@ -190,6 +192,8 @@ private:
 
   /* Try to reconnect every 5 seconds when the X-Plane connection is lost */
   int directReconnectXpSec = 5;
+
+  atools::util::Version minimumXpconnectVersion;
 };
 
 #endif // LITTLENAVMAP_CONNECTCLIENT_H
