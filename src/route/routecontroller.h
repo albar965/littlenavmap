@@ -425,6 +425,9 @@ private:
   /* Update table view model completely */
   void updateTableModelAndErrors();
 
+  /* Remove all airways violating restrictions after altitude calculation during climb and/or descent */
+  void clearAirwayViolations();
+
   void routeAltChanged();
   void routeAltChangedDelayed();
 

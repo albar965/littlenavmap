@@ -1411,12 +1411,21 @@ bool Route::isFlightplanEmpty() const
   return getFlightplanConst().isEmpty();
 }
 
-void Route::eraseAirway(int row)
+void Route::eraseAirwayFlightplan(int i)
 {
-  if(0 <= row && row < getFlightplanConst().size())
+  if(0 <= i && i < getFlightplanConst().size())
   {
-    getFlightplan()[row].setAirway(QString());
-    getFlightplan()[row].setFlag(atools::fs::pln::entry::TRACK, false);
+    getFlightplan()[i].setAirway(QString());
+    getFlightplan()[i].setFlag(atools::fs::pln::entry::TRACK, false);
+  }
+}
+
+void Route::eraseAirwayLeg(int i)
+{
+  if(0 <= i && i < size())
+  {
+    eraseAirwayFlightplan(i);
+    (*this)[i].clearAirwayOrTrack();
   }
 }
 
@@ -2156,10 +2165,10 @@ int Route::getSizeWithoutAlternates() const
 
 void Route::removeAllExceptRange(int from, int to)
 {
-  for(int row = size() - 1; row > to; row--)
-    removeAllAt(row);
-  for(int row = from - 1; row >= 0; row--)
-    removeAllAt(row);
+  for(int index = size() - 1; index > to; index--)
+    removeAllAt(index);
+  for(int index = from - 1; index >= 0; index--)
+    removeAllAt(index);
 }
 
 void Route::updateDistancesAndCourse()

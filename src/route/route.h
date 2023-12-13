@@ -292,7 +292,11 @@ public:
   void getNearestRecommended(const CoordinateConverter& conv, int xs, int ys, int screenDistance, map::MapResult& mapobjects,
                              map::MapObjectQueryTypes types, const QVector<map::MapRef>& routeDrawnNavaids) const;
 
-  void eraseAirway(int row);
+  /* Removes airway from flight plan entry */
+  void eraseAirwayFlightplan(int row);
+
+  /* Removes airway from flight plan entry and route leg */
+  void eraseAirwayLeg(int i);
 
   /* @return true if any leg has an airway name */
   bool hasAirways() const;

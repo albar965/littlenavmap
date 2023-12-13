@@ -1446,7 +1446,7 @@ bool RouteController::insertFlightplan(const QString& filename, int insertBefore
         // Copy SID properties from source
         atools::fs::pln::copySidProcedureProperties(routePlan.getProperties(), flightplan.getPropertiesConst());
 
-        route.eraseAirway(1);
+        route.eraseAirwayFlightplan(1);
       }
       else if(insertBefore >= route.getSizeWithoutAlternates() - 1)
       {
@@ -1468,7 +1468,7 @@ bool RouteController::insertFlightplan(const QString& filename, int insertBefore
         middleInsert = true;
 
         // No airway at start leg
-        route.eraseAirway(insertBefore);
+        route.eraseAirwayFlightplan(insertBefore);
 
         // No procedures taken from the loaded plan
       }
@@ -2062,6 +2062,9 @@ bool RouteController::calculateRouteInternal(atools::routing::RouteFinder *route
       updateActiveLeg();
 
       route.updateLegAltitudes();
+
+      // Remove all airways violation restrictions during climb or descent
+      clearAirwayViolations();
 
       updateTableModelAndErrors();
       updateActions();
@@ -3399,11 +3402,11 @@ void RouteController::moveSelectedLegsInternal(MoveDirection direction)
       // Departure moved down and was replaced by something else jumping up
 
       // Erase airway names at start of the moved block - last is smaller here
-      route.eraseAirway(lastRow);
-      route.eraseAirway(lastRow + 1);
+      route.eraseAirwayFlightplan(lastRow);
+      route.eraseAirwayFlightplan(lastRow + 1);
 
       // Erase airway name at end of the moved block
-      route.eraseAirway(firstRow + 2);
+      route.eraseAirwayFlightplan(firstRow + 2);
     }
     else if(direction == MOVE_UP)
     {
@@ -3411,11 +3414,11 @@ void RouteController::moveSelectedLegsInternal(MoveDirection direction)
       // Something moved up and departure jumped up
 
       // Erase airway name at start of the moved block - last is larger here
-      route.eraseAirway(firstRow - 1);
+      route.eraseAirwayFlightplan(firstRow - 1);
 
       // Erase airway names at end of the moved block
-      route.eraseAirway(lastRow);
-      route.eraseAirway(lastRow + 1);
+      route.eraseAirwayFlightplan(lastRow);
+      route.eraseAirwayFlightplan(lastRow + 1);
     }
 
     route.updateAll();
@@ -3492,7 +3495,7 @@ void RouteController::deleteSelectedLegsInternal(const QList<int>& rows)
     for(int row : rows)
     {
       route.getFlightplan().removeAt(row);
-      route.eraseAirway(row);
+      route.eraseAirwayFlightplan(row);
       route.removeLegAt(row);
       model->removeRow(row); // Can send tableSelectionChanged() which has to be blocked
     }
@@ -4449,8 +4452,8 @@ int RouteController::routeAddInternal(int id, atools::geo::Pos userPos, map::Map
   Flightplan& flightplan = route.getFlightplan();
   int insertIndex = calculateInsertIndex(entry.getPosition(), legIndex);
   flightplan.insert(insertIndex, entry);
-  route.eraseAirway(insertIndex);
-  route.eraseAirway(insertIndex + 1);
+  route.eraseAirwayFlightplan(insertIndex);
+  route.eraseAirwayFlightplan(insertIndex + 1);
 
   const RouteLeg *lastLeg = nullptr;
 
@@ -4533,8 +4536,8 @@ void RouteController::routeReplace(int id, atools::geo::Pos userPos, map::MapTyp
   routeLeg.createFromDatabaseByEntry(legIndex, lastLeg);
 
   route.replace(legIndex, routeLeg);
-  route.eraseAirway(legIndex);
-  route.eraseAirway(legIndex + 1);
+  route.eraseAirwayFlightplan(legIndex);
+  route.eraseAirwayFlightplan(legIndex + 1);
 
   if(legIndex == route.getDestinationAirportLegIndex())
     route.removeProcedureLegs(proc::PROCEDURE_ARRIVAL_ALL);
@@ -5259,6 +5262,36 @@ void RouteController::highlightNextWaypoint(int activeLegIdx)
             item->setFont(font);
           }
         }
+      }
+    }
+  }
+}
+
+void RouteController::clearAirwayViolations()
+{
+  const RouteAltitude& altitudeLegs = route.getAltitudeLegs();
+  int tocIndex = altitudeLegs.getTopOfClimbLegIndex();
+  int todIndex = altitudeLegs.getTopOfDescentLegIndex();
+
+  for(int i = 0; i < route.size(); i++)
+  {
+    if(i > tocIndex && i < todIndex)
+      continue;
+
+    const RouteLeg& leg = route.value(i);
+    const RouteAltitudeLeg& altLeg = altitudeLegs.value(i);
+    float maxAlt = altLeg.getMaxAltitude();
+    float minAlt = altLeg.getMinAltitude();
+
+    if(!(minAlt < map::INVALID_ALTITUDE_VALUE) || !(maxAlt < map::INVALID_ALTITUDE_VALUE))
+    {
+      if(leg.isAirwaySetAndInvalid(minAlt, maxAlt, nullptr, nullptr))
+      {
+#ifdef DEBUG_INFORMATION
+        qDebug() << Q_FUNC_INFO << "Violating restrictions" << i << leg;
+#endif
+        // Has airway but errors - remove airway in flight plan and leg
+        route.eraseAirwayLeg(i);
       }
     }
   }
