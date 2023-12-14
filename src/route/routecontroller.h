@@ -543,6 +543,9 @@ private:
   void blockModel();
   void unBlockModel();
 
+  /* Set and select current row */
+  void setCurrentRow(int row);
+
   /* Selected rows in table. Updated on selection change. */
   QList<int> selectedRows;
 
@@ -619,7 +622,7 @@ private:
   bool trackErrors = false;
 
   /* Ignore follow selection in tableSelectionChanged() if its origin is from showInRoute() */
-  bool ignoreSelectionEvent = false;
+  bool ignoreFollowSelection = false;
 
   /* Do not send model updates while modifying it */
   bool modelUpdatesBlocked = false;

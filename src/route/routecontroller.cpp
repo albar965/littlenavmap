@@ -1417,12 +1417,13 @@ bool RouteController::insertFlightplan(const QString& filename, int insertBefore
 {
   qDebug() << Q_FUNC_INFO << filename << insertBefore;
 
-  Flightplan flightplan;
-  pln::Flightplan& routePlan = route.getFlightplan();
   try
   {
-    // Avoid spurious selection changed events calling follow selection
-    atools::util::ContextSaver<bool> saver(ignoreSelectionEvent, true /* value */, false /* resetValue */);
+    Flightplan flightplan;
+    pln::Flightplan& routePlan = route.getFlightplan();
+
+    // Ignore events triggering follow due to selection changes
+    atools::util::ContextSaverBool saver(ignoreFollowSelection);
 
     // Will throw an exception if something goes wrong
     flightplanIO->load(flightplan, filename);
@@ -1857,8 +1858,8 @@ void RouteController::calculateRoute()
   atools::routing::Modes mode = atools::routing::MODE_NONE;
   bool fetchAirways = false;
 
-  // Avoid spurious selection changed events calling follow selection
-  atools::util::ContextSaver<bool> saver(ignoreSelectionEvent, true /* value */, false /* resetValue */);
+  // Ignore events triggering follow due to selection changes
+  atools::util::ContextSaverBool saver(ignoreFollowSelection);
 
   // Build configuration for route finder =======================================
   if(routeCalcDialog->getRoutingType() == rd::AIRWAY)
@@ -2116,13 +2117,12 @@ bool RouteController::calculateRouteInternal(atools::routing::RouteFinder *route
 
       if(calcRange)
       {
-        // Avoid spurious selection changed events calling follow selection
-        atools::util::ContextSaver<bool> saver(ignoreSelectionEvent, true /* value */, false /* resetValue */);
-
         // will also update route window
         int newToIndex = toIndex - (oldRouteSize - route.size());
         selectRange(fromIndex, newToIndex);
       }
+
+      tableSelectionChanged(QItemSelection(), QItemSelection());
 
       emit routeChanged(true /* geometryChanged */);
     }
@@ -2188,8 +2188,8 @@ void RouteController::showInRoute(int index)
   qDebug() << Q_FUNC_INFO << index;
   if(index >= 0 && index < map::INVALID_INDEX_VALUE)
   {
-    // Avoid spurious selection changed events calling follow selection
-    atools::util::ContextSaver<bool> saver(ignoreSelectionEvent, true /* value */, false /* resetValue */);
+    // Ignore events triggering follow due to selection changes
+    atools::util::ContextSaverBool saver(ignoreFollowSelection);
 
     // Triggers tableSelectionChanged() immediately
     tableViewRoute->selectRow(index);
@@ -2353,8 +2353,8 @@ void RouteController::updateActions()
     return;
 
   // One or more legs - check for details like procedures or procedure boundary
-  QItemSelectionModel *sm = tableViewRoute->selectionModel();
-  if(sm != nullptr && sm->hasSelection())
+  QItemSelectionModel *selectionModel = tableViewRoute->selectionModel();
+  if(selectionModel != nullptr && selectionModel->hasSelection())
   {
     bool containsProc, containsAlternate, moveDownTouchesProc, moveUpTouchesProc, moveDownTouchesAlt, moveUpTouchesAlt, moveDownLeavesAlt,
          moveUpLeavesAlt;
@@ -2374,12 +2374,12 @@ void RouteController::updateActions()
       ui->actionRouteDeleteLeg->setEnabled(true);
       ui->actionRouteConvertProcedure->setEnabled(containsProc);
 
-      if(sm->hasSelection())
+      if(selectionModel->hasSelection())
       {
-        ui->actionRouteLegUp->setEnabled(!sm->isRowSelected(0, QModelIndex()) &&
+        ui->actionRouteLegUp->setEnabled(!selectionModel->isRowSelected(0, QModelIndex()) &&
                                          !containsProc && !containsAlternate && !moveUpTouchesProc && !moveUpTouchesAlt);
 
-        ui->actionRouteLegDown->setEnabled(!sm->isRowSelected(model->rowCount() - 1, QModelIndex()) &&
+        ui->actionRouteLegDown->setEnabled(!selectionModel->isRowSelected(model->rowCount() - 1, QModelIndex()) &&
                                            !containsProc && !containsAlternate && !moveDownTouchesProc &&
                                            !moveDownTouchesAlt);
       }
@@ -2603,11 +2603,12 @@ void RouteController::tableContextMenu(const QPoint& pos)
 
   // Get table index ===========================================================
   QModelIndex index = tableViewRoute->indexAt(pos);
-  if(model->rowCount() > 0)
+  QItemSelectionModel *selectionModel = tableViewRoute->selectionModel();
+  if(selectionModel != nullptr && model->rowCount() > 0)
   {
     if(index.isValid())
       // Click spot is valid - set current but do not update selection
-      tableViewRoute->selectionModel()->setCurrentIndex(index, QItemSelectionModel::NoUpdate | QItemSelectionModel::Rows);
+      selectionModel->setCurrentIndex(index, QItemSelectionModel::NoUpdate | QItemSelectionModel::Rows);
     else
     {
       // Invalid click spot - fall back to selection and get first field there
@@ -2617,7 +2618,7 @@ void RouteController::tableContextMenu(const QPoint& pos)
       {
         // Move current to one selected row
         index = model->index(rows.constFirst(), 0);
-        tableViewRoute->selectionModel()->setCurrentIndex(index, QItemSelectionModel::NoUpdate | QItemSelectionModel::Rows);
+        selectionModel->setCurrentIndex(index, QItemSelectionModel::NoUpdate | QItemSelectionModel::Rows);
       }
       else
         // Use current - keep all disabled if this is not valid
@@ -3094,8 +3095,8 @@ void RouteController::editUserWaypointName(int index)
     {
       RouteCommand *undoCommand = nullptr;
 
-      // Avoid spurious selection changed events calling follow selection
-      atools::util::ContextSaver<bool> saver(ignoreSelectionEvent, true /* value */, false /* resetValue */);
+      // Ignore events triggering follow due to selection changes
+      atools::util::ContextSaverBool saver(ignoreFollowSelection);
 
       // if(route.getFlightplan().canSaveUserWaypointName())
       undoCommand = preChange(tr("Waypoint Change"));
@@ -3118,8 +3119,6 @@ void RouteController::editUserWaypointName(int index)
 
 void RouteController::shownMapFeaturesChanged(map::MapTypes types)
 {
-  // qDebug() << Q_FUNC_INFO;
-  route.setShownMapFeatures(types);
   route.setShownMapFeatures(types);
 }
 
@@ -3154,10 +3153,15 @@ void RouteController::cleanupTableTimeout()
       opts2::Flags2 flags2 = OptionData::instance().getFlags2();
       if(hasTableSelection() && flags2.testFlag(opts2::ROUTE_CLEAR_SELECTION))
       {
+        // Ignore events triggering follow due to selection changes
+        atools::util::ContextSaverBool saver(ignoreFollowSelection);
+
         // Clear selection and move cursor to current row and first column
         QModelIndex idx = tableViewRoute->model()->index(tableViewRoute->currentIndex().row(),
                                                          tableViewRoute->horizontalHeader()->logicalIndex(0));
-        tableViewRoute->selectionModel()->setCurrentIndex(idx, QItemSelectionModel::Clear);
+
+        if(tableViewRoute->selectionModel() != nullptr)
+          tableViewRoute->selectionModel()->setCurrentIndex(idx, QItemSelectionModel::Clear);
       }
 
       if(flags2.testFlag(opts2::ROUTE_CENTER_ACTIVE_LEG))
@@ -3169,8 +3173,6 @@ void RouteController::cleanupTableTimeout()
 
 void RouteController::clearTableSelection()
 {
-  // Avoid spurious selection changed events calling follow selection
-  atools::util::ContextSaver<bool> saver(ignoreSelectionEvent, true /* value */, false /* resetValue */);
   tableViewRoute->clearSelection();
 }
 
@@ -3197,33 +3199,30 @@ void RouteController::updateCleanupTimer()
 
 void RouteController::tableSelectionChanged(const QItemSelection&, const QItemSelection&)
 {
-  if(modelUpdatesBlocked)
-    return;
-
   // Get selected rows in ascending order
   selectedRows.clear();
   selectedRows = getSelectedRows(false /* reverse */);
 
   updateActions();
-  QItemSelectionModel *sm = tableViewRoute->selectionModel();
+  QItemSelectionModel *selectionModel = tableViewRoute->selectionModel();
 
-  if(sm == nullptr)
+  if(selectionModel == nullptr || modelUpdatesBlocked)
     return;
 
   int selectedRowSize = 0;
-  if(sm != nullptr && sm->hasSelection())
-    selectedRowSize = sm->selectedRows().size();
+  if(selectionModel != nullptr && selectionModel->hasSelection())
+    selectedRowSize = selectionModel->selectedRows().size();
 
 #ifdef DEBUG_INFORMATION
-  if(sm != nullptr && sm->hasSelection())
+  if(selectionModel != nullptr && selectionModel->hasSelection())
   {
-    int r = sm->currentIndex().row();
+    int r = selectionModel->currentIndex().row();
     if(r != -1)
       qDebug() << r << "#" << route.value(r);
   }
 #endif
 
-  NavApp::getMainUi()->pushButtonRouteClearSelection->setEnabled(sm != nullptr && sm->hasSelection());
+  NavApp::getMainUi()->pushButtonRouteClearSelection->setEnabled(selectionModel != nullptr && selectionModel->hasSelection());
 
   routeCalcDialog->selectionChanged();
   routeLabel->updateFooterSelectionLabel();
@@ -3233,9 +3232,9 @@ void RouteController::tableSelectionChanged(const QItemSelection&, const QItemSe
   updateCleanupTimer();
 
   // Ignore follow selection if its origin is from showInRoute()
-  if(!ignoreSelectionEvent && NavApp::getMainUi()->actionRouteFollowSelection->isChecked() &&
-     sm->currentIndex().isValid() && sm->isSelected(sm->currentIndex()))
-    emit showPos(route.value(sm->currentIndex().row()).getPosition(), map::INVALID_DISTANCE_VALUE, false /* doubleClick */);
+  if(!ignoreFollowSelection && NavApp::getMainUi()->actionRouteFollowSelection->isChecked() &&
+     selectionModel->currentIndex().isValid() && selectionModel->isSelected(selectionModel->currentIndex()))
+    emit showPos(route.value(selectionModel->currentIndex().row()).getPosition(), map::INVALID_DISTANCE_VALUE, false /* doubleClick */);
 }
 
 void RouteController::changeRouteUndo(const atools::fs::pln::Flightplan& newFlightplan)
@@ -3259,8 +3258,8 @@ void RouteController::changeRouteUndoRedo(const atools::fs::pln::Flightplan& new
 {
   int currentRow = tableViewRoute->currentIndex().isValid() ? tableViewRoute->currentIndex().row() : -1;
 
-  // Avoid spurious selection changed events calling follow selection
-  atools::util::ContextSaver<bool> saver(ignoreSelectionEvent, true /* value */, false /* resetValue */);
+  // Ignore events triggering follow due to selection changes
+  atools::util::ContextSaverBool saver(ignoreFollowSelection);
 
   clearAllErrors();
   route.clearAll();
@@ -3285,8 +3284,7 @@ void RouteController::changeRouteUndoRedo(const atools::fs::pln::Flightplan& new
   if(currentRow == -1 || currentRow > tableViewRoute->model()->rowCount() - 1)
     currentRow = tableViewRoute->model()->rowCount() - 1;
 
-  tableViewRoute->selectionModel()->setCurrentIndex(
-    model->index(currentRow, 0), QItemSelectionModel::SelectCurrent | QItemSelectionModel::Rows);
+  setCurrentRow(currentRow);
 
   emit routeChanged(true /* geometryChanged */);
 }
@@ -3386,7 +3384,11 @@ void RouteController::moveSelectedLegsDownTriggered()
     return;
 
   qDebug() << "Leg down";
+  // Ignore events triggering follow due to selection changes
+  atools::util::ContextSaverBool saver(ignoreFollowSelection);
+
   moveSelectedLegsInternal(MOVE_DOWN);
+  tableSelectionChanged(QItemSelection(), QItemSelection());
 }
 
 /* Called by action */
@@ -3396,7 +3398,11 @@ void RouteController::moveSelectedLegsUpTriggered()
     return;
 
   qDebug() << "Leg up";
+  // Ignore events triggering follow due to selection changes
+  atools::util::ContextSaverBool saver(ignoreFollowSelection);
+
   moveSelectedLegsInternal(MOVE_UP);
+  tableSelectionChanged(QItemSelection(), QItemSelection());
 }
 
 void RouteController::moveSelectedLegsInternal(MoveDirection direction)
@@ -3406,9 +3412,6 @@ void RouteController::moveSelectedLegsInternal(MoveDirection direction)
 
   if(!rows.isEmpty())
   {
-    // Avoid spurious selection changed events calling follow selection
-    atools::util::ContextSaver<bool> saver(ignoreSelectionEvent, true /* value */, false /* resetValue */);
-
     RouteCommand *undoCommand = preChange(tr("Move Waypoints"), rctype::MOVE);
 
     QModelIndex curIdx = tableViewRoute->currentIndex();
@@ -3496,6 +3499,9 @@ void RouteController::deleteSelectedLegs(const QList<int>& rows)
 {
   if(!rows.isEmpty())
   {
+    // Ignore events triggering follow due to selection changes
+    atools::util::ContextSaverBool saver(ignoreFollowSelection);
+
     clearTableSelection();
 
     // Do not merge for procedure deletes
@@ -3503,12 +3509,13 @@ void RouteController::deleteSelectedLegs(const QList<int>& rows)
     RouteCommand *undoCommand = preChange(procs & proc::PROCEDURE_ALL ? tr("Delete Procedure") : tr("Delete Waypoints"),
                                           procs & proc::PROCEDURE_ALL ? rctype::EDIT : rctype::DELETE);
 
-    tableViewRoute->selectionModel()->setCurrentIndex(
-      model->index(rows.constLast(), 0), QItemSelectionModel::SelectCurrent | QItemSelectionModel::Rows);
     deleteSelectedLegsInternal(rows);
     updateActiveLeg();
     updateTableModelAndErrors();
     updateActions();
+
+    setCurrentRow(rows.constLast());
+    tableSelectionChanged(QItemSelection(), QItemSelection());
 
     postChange(undoCommand);
     emit routeChanged(true /* geometryChanged */);
@@ -3523,8 +3530,6 @@ void RouteController::deleteSelectedLegsInternal(const QList<int>& rows)
   if(!rows.isEmpty())
   {
     proc::MapProcedureTypes procs = affectedProcedures(rows);
-
-    int currentRow = tableViewRoute->currentIndex().isValid() ? tableViewRoute->currentIndex().row() : -1;
 
     // Avoid callback selection changed which can result in crashes due to inconsistent route
     blockModel();
@@ -3566,18 +3571,16 @@ void RouteController::deleteSelectedLegsInternal(const QList<int>& rows)
 
     // Get type and cruise altitude from widgets
     updateFlightplanFromWidgets();
-
-    // Update current position at the beginning of the former selection but do not update selection
-    if(currentRow == -1 || currentRow > tableViewRoute->model()->rowCount() - 1)
-      currentRow = tableViewRoute->model()->rowCount() - 1;
-
-#ifdef DEBUG_INFORMATION
-    qDebug() << Q_FUNC_INFO << "currentRow" << currentRow;
-#endif
-
-    tableViewRoute->selectionModel()->setCurrentIndex(
-      model->index(currentRow, 0), QItemSelectionModel::SelectCurrent | QItemSelectionModel::Rows);
   }
+}
+
+void RouteController::setCurrentRow(int row)
+{
+  if(row < 0)
+    row = 0;
+  if(row > model->rowCount() - 1)
+    row = model->rowCount() - 1;
+  tableViewRoute->selectionModel()->setCurrentIndex(model->index(row, 0), QItemSelectionModel::SelectCurrent | QItemSelectionModel::Rows);
 }
 
 void RouteController::convertProcedure(int routeIndex)
@@ -3600,8 +3603,8 @@ void RouteController::convertProcedure(proc::MapProcedureTypes types)
 
   atools::gui::Dialog(mainWindow).showWarnMsgBox(lnm::ACTIONS_SHOW_FLIGHTPLAN_WARN_CONVERT, message, tr("Do not &show this dialog again."));
 
-  // Avoid spurious selection changed events calling follow selection
-  atools::util::ContextSaver<bool> saver(ignoreSelectionEvent, true /* value */, false /* resetValue */);
+  // Ignore events triggering follow due to selection changes
+  atools::util::ContextSaverBool saver(ignoreFollowSelection);
 
   RouteCommand *undoCommand = preChange(tr("Convert Procedure"), rctype::EDIT);
 
@@ -3665,7 +3668,8 @@ void RouteController::selectList(const QList<int>& rows, int offset)
     // Need to select all columns
     newSel.append(QItemSelectionRange(model->index(row + offset, rcol::FIRST_COLUMN), model->index(row + offset, rcol::LAST_COLUMN)));
 
-  tableViewRoute->selectionModel()->select(newSel, QItemSelectionModel::ClearAndSelect);
+  if(tableViewRoute->selectionModel() != nullptr)
+    tableViewRoute->selectionModel()->select(newSel, QItemSelectionModel::ClearAndSelect);
 }
 
 void RouteController::selectRange(int from, int to)
@@ -3686,7 +3690,8 @@ void RouteController::selectRange(int from, int to)
 
   newSel.append(QItemSelectionRange(model->index(from, rcol::FIRST_COLUMN), model->index(to, rcol::LAST_COLUMN)));
 
-  tableViewRoute->selectionModel()->select(newSel, QItemSelectionModel::ClearAndSelect);
+  if(tableViewRoute->selectionModel() != nullptr)
+    tableViewRoute->selectionModel()->select(newSel, QItemSelectionModel::ClearAndSelect);
 }
 
 void RouteController::routeSetHelipad(const map::MapHelipad& helipad)
@@ -3834,8 +3839,8 @@ void RouteController::routeSetDeparture(map::MapAirport airport)
   if(!airport.isValid())
     return;
 
-  // Avoid spurious selection changed events calling follow selection
-  atools::util::ContextSaver<bool> saver(ignoreSelectionEvent, true /* value */, false /* resetValue */);
+  // Ignore events triggering follow due to selection changes
+  atools::util::ContextSaverBool saver(ignoreFollowSelection);
 
   RouteCommand *undoCommand = preChange(tr("Set Departure"));
   NavApp::showFlightPlan();
@@ -3906,8 +3911,8 @@ void RouteController::routeSetDestination(map::MapAirport airport)
   if(!airport.isValid())
     return;
 
-  // Avoid spurious selection changed events calling follow selection
-  atools::util::ContextSaver<bool> saver(ignoreSelectionEvent, true /* value */, false /* resetValue */);
+  // Ignore events triggering follow due to selection changes
+  atools::util::ContextSaverBool saver(ignoreFollowSelection);
 
   RouteCommand *undoCommand = preChange(tr("Set Destination"));
   NavApp::showFlightPlan();
@@ -3943,8 +3948,8 @@ void RouteController::routeAddAlternate(map::MapAirport airport)
   if(route.isAirportAlternate(airport.ident) || route.isAirportDestination(airport.ident))
     return;
 
-  // Avoid spurious selection changed events calling follow selection
-  atools::util::ContextSaver<bool> saver(ignoreSelectionEvent, true /* value */, false /* resetValue */);
+  // Ignore events triggering follow due to selection changes
+  atools::util::ContextSaverBool saver(ignoreFollowSelection);
 
   RouteCommand *undoCommand = preChange(tr("Add Alternate"));
   NavApp::showFlightPlan();
@@ -4224,8 +4229,8 @@ void RouteController::routeAddProcedure(proc::MapProcedureLegs legs)
 
   RouteCommand *undoCommand = nullptr;
 
-  // Avoid spurious selection changed events calling follow selection
-  atools::util::ContextSaver<bool> saver(ignoreSelectionEvent, true /* value */, false /* resetValue */);
+  // Ignore events triggering follow due to selection changes
+  atools::util::ContextSaverBool saver(ignoreFollowSelection);
 
   undoCommand = preChange(tr("Add Procedure"));
 
@@ -4311,8 +4316,8 @@ void RouteController::routeDirectTo(int id, const atools::geo::Pos& userPos, map
   const Pos& userAicraftPos = NavApp::getUserAircraftPos();
   if(!disable)
   {
-    // Avoid spurious selection changed events calling follow selection
-    atools::util::ContextSaver<bool> saver(ignoreSelectionEvent, true /* value */, false /* resetValue */);
+    // Ignore events triggering follow due to selection changes
+    atools::util::ContextSaverBool saver(ignoreFollowSelection);
 
     RouteCommand *undoCommand = preChange(tr("Direct to"));
     updateActiveLeg();
@@ -4432,6 +4437,7 @@ void RouteController::routeDirectTo(int id, const atools::geo::Pos& userPos, map
     updateActiveLeg();
     updateTableModelAndErrors();
     updateActions();
+    tableSelectionChanged(QItemSelection(), QItemSelection());
 
     postChange(undoCommand);
     emit routeChanged(true /* geometryChanged */);
@@ -4443,8 +4449,8 @@ void RouteController::routeAdd(int id, atools::geo::Pos userPos, map::MapTypes t
 {
   qDebug() << Q_FUNC_INFO << "user pos" << userPos << "id" << id << "type" << type << "leg index" << legIndex;
 
-  // Avoid spurious selection changed events calling follow selection
-  atools::util::ContextSaver<bool> saver(ignoreSelectionEvent, true /* value */, false /* resetValue */);
+  // Ignore events triggering follow due to selection changes
+  atools::util::ContextSaverBool saver(ignoreFollowSelection);
 
   RouteCommand *undoCommand = preChange(tr("Add Waypoint"));
 
@@ -4536,8 +4542,8 @@ void RouteController::routeReplace(int id, atools::geo::Pos userPos, map::MapTyp
   if(alternate && !(type & map::AIRPORT))
     return;
 
-  // Avoid spurious selection changed events calling follow selection
-  atools::util::ContextSaver<bool> saver(ignoreSelectionEvent, true /* value */, false /* resetValue */);
+  // Ignore events triggering follow due to selection changes
+  atools::util::ContextSaverBool saver(ignoreFollowSelection);
 
   RouteCommand *undoCommand = preChange(tr("Change Waypoint"));
 
