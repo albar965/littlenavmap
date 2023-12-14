@@ -59,10 +59,10 @@ void removeAndLog(const QString& key)
   removeAndLog(Settings::getQSettings(), key);
 }
 
-void backupFileAndLog(const QString& filename)
+void backupFileAndLog(const QString& filename, bool keepOriginalFile)
 {
   qDebug() << Q_FUNC_INFO << "Backing up" << filename;
-  atools::io::FileRoller(3, "${base}.${ext}_update-backup.${num}", true /* keepOriginalFile */).rollFile(filename);
+  atools::io::FileRoller(3, "${base}.${ext}_update-backup.${num}", keepOriginalFile).rollFile(filename);
 }
 
 void checkAndMigrateSettings()
@@ -88,10 +88,10 @@ void checkAndMigrateSettings()
       QString nightstyleFile = atools::settings::Settings::getConfigFilename(lnm::NIGHTSTYLE_INI_SUFFIX);
 
       // Backup most important files with from/to version suffix ============================================
-      backupFileAndLog(trackFile);
-      backupFileAndLog(mapstyleFile);
-      backupFileAndLog(nightstyleFile);
-      backupFileAndLog(Settings::getFilename());
+      backupFileAndLog(trackFile, true /* keepOriginalFile */);
+      backupFileAndLog(mapstyleFile, true /* keepOriginalFile */);
+      backupFileAndLog(nightstyleFile, true /* keepOriginalFile */);
+      backupFileAndLog(Settings::getFilename(), true /* keepOriginalFile */);
 
       QSettings mapstyleSettings(mapstyleFile, QSettings::IniFormat);
       QSettings nightstyleSettings(nightstyleFile, QSettings::IniFormat);
@@ -282,6 +282,15 @@ void checkAndMigrateSettings()
         removeAndLog(lnm::OPTIONS_TRACK_PACOTS_PARAM);
         removeAndLog(lnm::OPTIONS_TRACK_AUSOTS_URL);
         removeAndLog(lnm::OPTIONS_TRACK_AUSOTS_PARAM);
+        removeAndLog(lnm::OPTIONS_ONLINE_NETWORK_MAX_SHADOW_DIST_NM);
+        removeAndLog(lnm::OPTIONS_ONLINE_NETWORK_MAX_SHADOW_ALT_DIFF_FT);
+        removeAndLog(lnm::OPTIONS_ONLINE_NETWORK_MAX_SHADOW_GS_DIFF_KTS);
+        removeAndLog(lnm::OPTIONS_ONLINE_NETWORK_MAX_SHADOW_HDG_DIFF_DEG);
+      }
+
+      if(optionsVersion <= Version("2.8.12"))
+      {
+        QFile::remove(mapstyleFile);
         removeAndLog(lnm::OPTIONS_ONLINE_NETWORK_MAX_SHADOW_DIST_NM);
         removeAndLog(lnm::OPTIONS_ONLINE_NETWORK_MAX_SHADOW_ALT_DIFF_FT);
         removeAndLog(lnm::OPTIONS_ONLINE_NETWORK_MAX_SHADOW_GS_DIFF_KTS);

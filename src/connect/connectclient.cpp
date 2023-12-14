@@ -54,7 +54,7 @@ ConnectClient::ConnectClient(MainWindow *parent)
   : QObject(parent), mainWindow(parent), metarIdentCache(WEATHER_TIMEOUT_FS_SECS), notAvailableStations(NOT_AVAILABLE_TIMEOUT_FS_SECS),
 
   // VERSION_NUMBER_TODO
-  minimumXpconnectVersion("1.0.39")
+  minimumXpconnectVersion("1.2.0.beta")
 {
   atools::settings::Settings& settings = atools::settings::Settings::instance();
   verbose = settings.getAndStoreValue(lnm::OPTIONS_CONNECTCLIENT_DEBUG, false).toBool();
