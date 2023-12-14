@@ -4188,6 +4188,8 @@ void RouteController::routeAddProcedure(proc::MapProcedureLegs legs)
     return;
   }
 
+  clearTableSelection();
+
   map::MapAirport airportSim;
   QString sidStarRunway;
 
