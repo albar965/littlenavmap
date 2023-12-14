@@ -151,8 +151,9 @@ void Route::copy(const Route& other)
 
 void Route::clearAll()
 {
-  getFlightplan().clearAll();
   resetActive();
+  getFlightplan().clearAll();
+  clearProcedures(proc::PROCEDURE_ALL);
   clear();
 
   altitude->clearAll();
