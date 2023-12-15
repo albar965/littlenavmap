@@ -3281,10 +3281,7 @@ void RouteController::changeRouteUndoRedo(const atools::fs::pln::Flightplan& new
   updateActiveLeg();
   highlightNextWaypoint(route.getActiveLegIndexCorrected());
 
-  if(currentRow == -1 || currentRow > tableViewRoute->model()->rowCount() - 1)
-    currentRow = tableViewRoute->model()->rowCount() - 1;
-
-  setCurrentRow(currentRow);
+  setCurrentRow(currentRow, false /* select */);
 
   emit routeChanged(true /* geometryChanged */);
 }
@@ -3490,6 +3487,7 @@ void RouteController::routeDelete(int index)
   deleteSelectedLegs({index});
 }
 
+
 void RouteController::deleteSelectedLegsTriggered()
 {
   deleteSelectedLegs(getSelectedRows(true /* reverse */));
@@ -3514,7 +3512,7 @@ void RouteController::deleteSelectedLegs(const QList<int>& rows)
     updateTableModelAndErrors();
     updateActions();
 
-    setCurrentRow(rows.constLast());
+    setCurrentRow(rows.constLast(), true /* select */);
     tableSelectionChanged(QItemSelection(), QItemSelection());
 
     postChange(undoCommand);
@@ -3574,13 +3572,18 @@ void RouteController::deleteSelectedLegsInternal(const QList<int>& rows)
   }
 }
 
-void RouteController::setCurrentRow(int row)
+void RouteController::setCurrentRow(int row, bool select)
 {
   if(row < 0)
     row = 0;
   if(row > model->rowCount() - 1)
     row = model->rowCount() - 1;
-  tableViewRoute->selectionModel()->setCurrentIndex(model->index(row, 0), QItemSelectionModel::SelectCurrent | QItemSelectionModel::Rows);
+
+  QItemSelectionModel::SelectionFlags flags = QItemSelectionModel::Rows | QItemSelectionModel::Current;
+  if(select)
+    flags |= QItemSelectionModel::Select;
+
+  tableViewRoute->selectionModel()->setCurrentIndex(model->index(row, 0), flags);
 }
 
 void RouteController::convertProcedure(int routeIndex)

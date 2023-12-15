@@ -181,10 +181,10 @@ public:
   /* Same as above but replaces waypoint at legIndex */
   void routeReplace(int id, atools::geo::Pos userPos, map::MapTypes type, int legIndex);
 
-  /* Delete waypoint at the given index. Will also delete departure or destination */
+  /* Delete waypoint at the given index. Will also delete departure or destination. From map click or map context menu. */
   void routeDelete(int index);
 
-  /* Called by action */
+  /* Called by action ui->actionRouteDeleteLeg */
   void deleteSelectedLegsTriggered();
 
   void routeDirectTo(int id, const atools::geo::Pos& userPos, map::MapTypes type, int legIndexDirectTo);
@@ -544,7 +544,7 @@ private:
   void unBlockModel();
 
   /* Set and select current row */
-  void setCurrentRow(int row);
+  void setCurrentRow(int row, bool select);
 
   /* Selected rows in table. Updated on selection change. */
   QList<int> selectedRows;
