@@ -182,7 +182,7 @@ private:
   // have to remember state separately to avoid sending signals when autoconnect fails
   bool socketConnected = false;
 
-  bool errorState = false, terminalErrorShown = false, xpconnectVersionWarningShown = false;
+  bool errorState = false, terminalErrorShown = false, xpconnectVersionChecked = false;
 
   /* Try to reconnect every 10 seconds when network connection is lost */
   int socketReconnectSec = 10;

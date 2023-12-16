@@ -372,6 +372,21 @@ void ConnectClient::postSimConnectData(atools::fs::sc::SimConnectData dataPacket
       if(!dataPacket.getMetars().isEmpty())
         emit weatherUpdated();
     } // if(!dataPacket.getMetars().isEmpty())
+
+    // Check for an obsolete Xpconnect plugin ========================================
+    if(!xpconnectVersionChecked)
+    {
+      if(isXpConnect())
+      {
+        xpconnectVersionChecked = true;
+        const atools::util::Prop version =
+          dataPacket.getUserAircraftConst().getProperties().getProp(atools::fs::sc::PROP_XPCONNECT_VERSION);
+
+        // Either no version given (very old) or version is below recommended
+        if(!version.isValid() || atools::util::Version(version.getValueString()) < minimumXpconnectVersion)
+          showXpconnectVersionWarning(version.getValueString());
+      }
+    }
   } // if(dataPacket.getStatus() == atools::fs::sc::OK)
   else
   {
@@ -384,14 +399,6 @@ void ConnectClient::postSimConnectData(atools::fs::sc::SimConnectData dataPacket
     handleError(status, statusText, xplane, network);
   }
 
-  if(isXpConnect())
-  {
-    const atools::util::Prop versionProp =
-      dataPacket.getUserAircraftConst().getProperties().getProp(atools::fs::sc::PROP_XPCONNECT_VERSION);
-
-    if(!versionProp.isValid() || atools::util::Version(versionProp.getValueString()) < minimumXpconnectVersion)
-      showXpconnectVersionWarning(versionProp.getValueString());
-  }
 }
 
 void ConnectClient::handleError(atools::fs::sc::SimConnectStatus status, const QString& error, bool xplane, bool network)
@@ -648,29 +655,26 @@ void ConnectClient::connectInternalAuto()
 
 void ConnectClient::showXpconnectVersionWarning(const QString& xpconnectVersion)
 {
-  if(!xpconnectVersionWarningShown)
-  {
-    xpconnectVersionWarningShown = true;
+  QString message;
+  if(xpconnectVersion.isEmpty())
+    message = tr("<p>You are using an outdated version of the X-Plane Little Xpconnect plugin.<br/>"
+                 "Minimum recommended version is \"%1\".</p>"
+                 "<p>It is recommended to remove the old plugin and "
+                   "install the included Little Xpconnect in the X-Plane directory \"plugins\".</p>").
+              arg(minimumXpconnectVersion.getVersionString());
+  else
+    message = tr("<p>You are using an outdated version \"%1\" of the X-Plane Little Xpconnect plugin.<br/>"
+                 "Minimum recommended version is \"%2\".<p>"
+                 "<p>It is recommended to remove the old plugin and "
+                   "install the included Little Xpconnect in X-Plane directory \"plugins\".</p>").
+              arg(xpconnectVersion).arg(minimumXpconnectVersion.getVersionString());
 
-    QString message;
-    if(xpconnectVersion.isEmpty())
-      message = tr("<p>You are running an outdated version of the X-Plane Little Xpconnect plugin.<br/>"
-                   "Minimum recommended version is \"%1\".</p>"
-                   "<p>Please remove the old plugin and install the included Little Xpconnect in X-Plane directory \"plugins\".</p>").
-                arg(minimumXpconnectVersion.getVersionString());
-    else
-      message = tr("<p>You are running an outdated version \"%1\" of the X-Plane Little Xpconnect plugin.<br/>"
-                   "Minimum recommended version is \"%2\".<p>"
-                   "<p>Please remove the old plugin and install the included Little Xpconnect in X-Plane directory \"plugins\".</p>").
-                arg(xpconnectVersion).arg(minimumXpconnectVersion.getVersionString());
+  qWarning() << Q_FUNC_INFO << message;
 
-    qWarning() << Q_FUNC_INFO << message;
+  int retval = QMessageBox::warning(mainWindow, QApplication::applicationName(), message, QMessageBox::Ok | QMessageBox::Help);
 
-    int retval = QMessageBox::warning(mainWindow, QApplication::applicationName(), message, QMessageBox::Ok | QMessageBox::Help);
-
-    if(retval == QMessageBox::Help)
-      atools::gui::HelpHandler::openHelpUrlWeb(mainWindow, lnm::helpOnlineUrl + "XPCONNECT.html", lnm::helpLanguageOnline());
-  }
+  if(retval == QMessageBox::Help)
+    atools::gui::HelpHandler::openHelpUrlWeb(mainWindow, lnm::helpOnlineUrl + "XPCONNECT.html", lnm::helpLanguageOnline());
 }
 
 void ConnectClient::showTerminalError()
@@ -758,12 +762,14 @@ bool ConnectClient::isConnected() const
 
 bool ConnectClient::isSimConnect() const
 {
-  return dataReader != nullptr && dataReader->isSimConnectHandler();
+  // Other handlers are always present - even if connected by network
+  return dataReader != nullptr && dataReader->isSimConnectHandler() && !isNetworkConnect();
 }
 
 bool ConnectClient::isXpConnect() const
 {
-  return dataReader != nullptr && dataReader->isXplaneHandler();
+  // Other handlers are always present - even if connected by network
+  return dataReader != nullptr && dataReader->isXplaneHandler() && !isNetworkConnect();
 }
 
 bool ConnectClient::isNetworkConnect() const
