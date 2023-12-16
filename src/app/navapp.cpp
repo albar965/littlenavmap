@@ -880,19 +880,20 @@ void NavApp::recordStartNavApp()
   getCrashReportFiles(crashReportFiles, reportFilename, false /* manual */);
 
   Application::recordStart(nullptr, Settings::getConfigFilename(".running"), reportFilename, crashReportFiles,
-                           lnm::helpOnlineUrl, lnm::helpLanguageOnline());
+                           lnm::helpOnlineUrl, "CRASHREPORT.html", lnm::helpLanguageOnline());
 #endif
   // Keep command line options to avoid using the wrong configuration folder
 }
 
-QString NavApp::buildCrashReportNavAppManual()
+void NavApp::createIssueReport()
 {
+  qDebug() << Q_FUNC_INFO;
   QString reportFilename;
   QStringList crashReportFiles;
   getCrashReportFiles(crashReportFiles, reportFilename, true /* manual */);
 
-  Application::buildCrashReport(reportFilename, crashReportFiles);
-  return reportFilename;
+  Application::createIssueReport(mainWindow, reportFilename, crashReportFiles, lnm::helpOnlineUrl, "ISSUEREPORT.html",
+                                 lnm::helpLanguageOnline(), getContactHtml());
 }
 
 void NavApp::setToolTipsEnabledMainMenu(bool enabled)

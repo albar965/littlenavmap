@@ -373,8 +373,6 @@ private:
   void resetMessages();
   void resetAllSettings();
 
-  /* Manual issue report triggered from the menu */
-  void createIssueReport();
   void showDatabaseFiles();
   void showShowMapCache();
   void showMapInstallation();

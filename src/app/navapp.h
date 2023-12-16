@@ -445,8 +445,8 @@ public:
    * Always creates a crash report in case of previous unsafe exit. */
   static void recordStartNavApp();
 
-  /* Record files and pack them into a zip for a crash report */
-  static QString buildCrashReportNavAppManual();
+  /* Create manual issue report */
+  static void createIssueReport();
 
   /* true if tooltips in menus are visible */
   static bool isMenuToolTipsVisible();

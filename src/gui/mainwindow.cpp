@@ -1218,7 +1218,7 @@ void MainWindow::connectAllSlots()
   connect(ui->actionResetLayout, &QAction::triggered, this, &MainWindow::resetWindowLayout);
   connect(ui->actionResetTabs, &QAction::triggered, this, &MainWindow::resetTabLayout);
   connect(ui->actionResetAllSettings, &QAction::triggered, this, &MainWindow::resetAllSettings);
-  connect(ui->actionCreateACrashReport, &QAction::triggered, this, &MainWindow::createIssueReport);
+  connect(ui->actionCreateACrashReport, &QAction::triggered, &NavApp::createIssueReport);
 
   connect(infoController, &InfoController::showPos, mapWidget, &MapPaintWidget::showPos);
   connect(infoController, &InfoController::showRect, mapWidget, &MapPaintWidget::showRect);
@@ -3783,42 +3783,6 @@ void MainWindow::resetAllSettings()
   }
   else if(retval == QMessageBox::Help)
     atools::gui::HelpHandler::openHelpUrlWeb(this, lnm::helpOnlineUrl % "MENUS.html#reset-and-restart", lnm::helpLanguageOnline());
-}
-
-void MainWindow::createIssueReport()
-{
-  qDebug() << Q_FUNC_INFO;
-
-  // Build report and get file path
-  QString crashReportFile = NavApp::buildCrashReportNavAppManual();
-
-  QFileInfo crashReportFileinfo(crashReportFile);
-  QUrl crashReportUrl = QUrl::fromLocalFile(crashReportFileinfo.absoluteFilePath());
-
-  QString message = tr("<p style=\"white-space:pre\">An issue report was generated and saved with all related files in a Zip archive.</p>"
-                         "<p style=\"white-space:pre\"><a href=\"%1\"><b>Click here to open the directory containing the report \"%2\"</b></a></p>"
-                           "<p style=\"white-space:pre\">You can send this file to the author of %3 to investigate a problem.</p>"
-                             "<p style=\"white-space:pre\">%4</p>").
-                    arg(crashReportUrl.toString()).arg(crashReportFileinfo.fileName()).
-                    arg(QApplication::applicationName()).arg(NavApp::getContactHtml());
-
-  atools::gui::MessageBox box(this, QApplication::applicationName(), "ISSUEREPORT.html");
-  box.setHelpOnlineUrl(lnm::helpOnlineUrl);
-  box.setHelpLanguageOnline(lnm::helpLanguageOnline());
-
-  box.addAcceptButton(QDialogButtonBox::Ok);
-  box.addButton(QDialogButtonBox::Help);
-  box.setText(message);
-  box.setIcon(QMessageBox::Information);
-
-  connect(&box, &atools::gui::MessageBox::linkActivated, [&box](const QString& link) {
-    if(link.startsWith("https://") || link.startsWith("http://"))
-      atools::gui::HelpHandler::openUrl(&box, QUrl(link));
-    else
-      atools::gui::showInFileManager(link, &box);
-  });
-
-  box.exec();
 }
 
 void MainWindow::resetWindowLayout()
