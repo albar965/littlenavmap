@@ -242,7 +242,7 @@
     <string>&amp;Enable %1 for Export</string>
    </property>
    <property name="toolTip">
-    <string>Select for multi export</string>
+    <string>Select for multiexport</string>
    </property>
    <property name="shortcut">
     <string>Space</string>
