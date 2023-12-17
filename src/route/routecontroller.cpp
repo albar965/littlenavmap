@@ -5330,7 +5330,7 @@ void RouteController::clearAirwayViolations()
     float maxAlt = altLeg.getMaxAltitude();
     float minAlt = altLeg.getMinAltitude();
 
-    if(!(minAlt < map::INVALID_ALTITUDE_VALUE) || !(maxAlt < map::INVALID_ALTITUDE_VALUE))
+    if(minAlt < map::INVALID_ALTITUDE_VALUE && maxAlt < map::INVALID_ALTITUDE_VALUE)
     {
       if(leg.isAirwaySetAndInvalid(minAlt, maxAlt, nullptr, nullptr))
       {
