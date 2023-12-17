@@ -1112,10 +1112,10 @@ void DatabaseManager::checkForChangedNavAndSimDatabases()
 
       QStringList files;
       if(databaseSim != nullptr && databaseSim->isOpen() && databaseSim->isFileModified())
-        files.append(QDir::toNativeSeparators(databaseSim->databaseName()));
+        files.append(atools::nativeCleanPath(databaseSim->databaseName()));
 
       if(databaseNav != nullptr && databaseNav->isOpen() && databaseNav->isFileModified())
-        files.append(QDir::toNativeSeparators(databaseNav->databaseName()));
+        files.append(atools::nativeCleanPath(databaseNav->databaseName()));
       files.removeDuplicates();
       if(!files.isEmpty())
       {

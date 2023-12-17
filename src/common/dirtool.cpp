@@ -82,7 +82,7 @@ void DirTool::run(bool manual, bool& created)
                           "<p><b>%1</b><br/>"
                           "Top level directory for all files of Little Navmap "
                           "containing the following sub-directories:</p>").
-                 arg(QDir::toNativeSeparators(documentsDir + atools::SEP + applicationDir)));
+                 arg(atools::nativeCleanPath(documentsDir + atools::SEP + applicationDir)));
 
   if(manual)
     message.append(tr("<p>One or more of these directories are missing.</p>"));
@@ -140,7 +140,7 @@ void DirTool::runIfMissing(bool manual, bool& complete, bool& created)
 
 QString DirTool::getApplicationDir() const
 {
-  return QDir::toNativeSeparators(QFileInfo(documentsDir + atools::SEP + applicationDir).absoluteFilePath());
+  return atools::nativeCleanPath(QFileInfo(documentsDir + atools::SEP + applicationDir).absoluteFilePath());
 }
 
 bool DirTool::createAllDirs()
@@ -171,7 +171,7 @@ void DirTool::mkdir(const QString& dir)
   {
     if(fi.isFile())
       errors.append(tr("Cannot create directory \"%1\". File with same name already exists.").
-                    arg(QDir::toNativeSeparators(fi.filePath())));
+                    arg(atools::nativeCleanPath(fi.filePath())));
   }
 }
 
@@ -181,7 +181,7 @@ void DirTool::mkdirBase()
   if(!fi.exists())
   {
     if(!QDir(documentsDir).mkdir(applicationDir))
-      errors.append(tr("Cannot create directory \"%1\"").arg(QDir::toNativeSeparators(fi.filePath())));
+      errors.append(tr("Cannot create directory \"%1\"").arg(atools::nativeCleanPath(fi.filePath())));
   }
   else
   {
@@ -197,7 +197,7 @@ bool DirTool::hasDir(const QString& dir)
 
 QString DirTool::d(const QString& dir)
 {
-  return QDir::toNativeSeparators(documentsDir + atools::SEP + applicationDir + atools::SEP + dir);
+  return atools::nativeCleanPath(documentsDir + atools::SEP + applicationDir + atools::SEP + dir);
 }
 
 bool DirTool::hasAllDirs()

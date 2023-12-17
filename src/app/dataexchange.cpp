@@ -45,7 +45,7 @@ DataExchange::DataExchange()
   // Detect other running application instance with same settings - this is unsafe on Unix since shm can remain after crashes
   if(sharedMemory == nullptr)
     sharedMemory = new QSharedMemory(PROGRAM_GUID + "-" +
-                                     QDir::cleanPath(QFileInfo(atools::settings::Settings::getPath()).canonicalFilePath()));
+                                     atools::cleanPath(QFileInfo(atools::settings::Settings::getPath()).canonicalFilePath()));
 
   // Create and attach
   if(sharedMemory->create(SHARED_MEMORY_SIZE, QSharedMemory::ReadWrite))

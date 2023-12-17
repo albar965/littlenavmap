@@ -1947,9 +1947,9 @@ void OptionsDialog::widgetsToOptionData()
 
   toFlags2(ui->checkBoxOptionsSimZoomOnLanding, opts2::ROUTE_ZOOM_LANDING);
   toFlags2(ui->checkBoxOptionsSimZoomOnTakeoff, opts2::ROUTE_ZOOM_TAKEOFF);
-  data.weatherXplane11Path = QDir::toNativeSeparators(ui->lineEditOptionsWeatherXplanePath->text());
-  data.weatherXplane12Path = QDir::toNativeSeparators(ui->lineEditOptionsWeatherXplane12Path->text());
-  data.weatherActiveSkyPath = QDir::toNativeSeparators(ui->lineEditOptionsWeatherAsnPath->text());
+  data.weatherXplane11Path = atools::nativeCleanPath(ui->lineEditOptionsWeatherXplanePath->text());
+  data.weatherXplane12Path = atools::nativeCleanPath(ui->lineEditOptionsWeatherXplane12Path->text());
+  data.weatherActiveSkyPath = atools::nativeCleanPath(ui->lineEditOptionsWeatherAsnPath->text());
   data.weatherNoaaUrl = ui->lineEditOptionsWeatherNoaaStationsUrl->text();
   data.weatherVatsimUrl = ui->lineEditOptionsWeatherVatsimUrl->text();
   data.weatherIvaoUrl = ui->lineEditOptionsWeatherIvaoUrl->text();
@@ -2251,9 +2251,9 @@ void OptionsDialog::optionDataToWidgets(const OptionData& data)
   ui->checkBoxOptionsMapClickAirspace->setChecked(data.displayClickOptions.testFlag(optsd::CLICK_AIRSPACE));
   ui->checkBoxOptionsMapClickFlightplan->setChecked(data.displayClickOptions.testFlag(optsd::CLICK_FLIGHTPLAN));
 
-  ui->lineEditOptionsWeatherXplanePath->setText(QDir::toNativeSeparators(data.weatherXplane11Path));
-  ui->lineEditOptionsWeatherXplane12Path->setText(QDir::toNativeSeparators(data.weatherXplane12Path));
-  ui->lineEditOptionsWeatherAsnPath->setText(QDir::toNativeSeparators(data.weatherActiveSkyPath));
+  ui->lineEditOptionsWeatherXplanePath->setText(atools::nativeCleanPath(data.weatherXplane11Path));
+  ui->lineEditOptionsWeatherXplane12Path->setText(atools::nativeCleanPath(data.weatherXplane12Path));
+  ui->lineEditOptionsWeatherAsnPath->setText(atools::nativeCleanPath(data.weatherActiveSkyPath));
   ui->lineEditOptionsWeatherNoaaStationsUrl->setText(data.weatherNoaaUrl);
   ui->lineEditOptionsWeatherVatsimUrl->setText(data.weatherVatsimUrl);
   ui->lineEditOptionsWeatherIvaoUrl->setText(data.weatherIvaoUrl);
@@ -2403,7 +2403,7 @@ void OptionsDialog::optionDataToWidgets(const OptionData& data)
 
   ui->spinBoxOptionsWebPort->setValue(data.webPort);
   ui->checkBoxOptionsWebEncrypted->setChecked(data.webEncrypted);
-  ui->lineEditOptionsWebDocroot->setText(QDir::toNativeSeparators(data.webDocumentRoot));
+  ui->lineEditOptionsWebDocroot->setText(atools::nativeCleanPath(data.webDocumentRoot));
 
   ui->lineEditOptionsWeatherXplaneWind->setText(data.weatherXplaneWind);
   ui->lineEditOptionsWeatherNoaaWindUrl->setText(data.weatherNoaaWindBaseUrl);
@@ -2552,7 +2552,7 @@ void OptionsDialog::mapThemeDirSelectClicked()
                  openDirectoryDialog(tr("Select directory for map themes"), QString(), ui->lineEditCacheMapThemeDir->text());
 
   if(!path.isEmpty())
-    ui->lineEditCacheMapThemeDir->setText(QDir::toNativeSeparators(path));
+    ui->lineEditCacheMapThemeDir->setText(atools::nativeCleanPath(path));
 
   updateCacheMapThemeDir();
 }
@@ -2570,7 +2570,7 @@ void OptionsDialog::offlineDataSelectClicked()
                  openDirectoryDialog(tr("Open GLOBE data directory"), QString(), ui->lineEditCacheOfflineDataPath->text());
 
   if(!path.isEmpty())
-    ui->lineEditCacheOfflineDataPath->setText(QDir::toNativeSeparators(path));
+    ui->lineEditCacheOfflineDataPath->setText(atools::nativeCleanPath(path));
 
   updateCacheElevationStates();
 }
@@ -2761,7 +2761,7 @@ void OptionsDialog::selectActiveSkyPathClicked()
     lnm::OPTIONS_DIALOG_AS_FILE_DLG, ui->lineEditOptionsWeatherAsnPath->text());
 
   if(!path.isEmpty())
-    ui->lineEditOptionsWeatherAsnPath->setText(QDir::toNativeSeparators(path));
+    ui->lineEditOptionsWeatherAsnPath->setText(atools::nativeCleanPath(path));
 
   updateWeatherButtonState();
 }
@@ -2780,7 +2780,7 @@ void OptionsDialog::selectXplane11PathClicked()
                                                   lnm::OPTIONS_DIALOG_XPLANE_DLG, path);
 
   if(!path.isEmpty())
-    ui->lineEditOptionsWeatherXplanePath->setText(QDir::toNativeSeparators(path));
+    ui->lineEditOptionsWeatherXplanePath->setText(atools::nativeCleanPath(path));
 
   updateWeatherButtonState();
 }
@@ -2800,7 +2800,7 @@ void OptionsDialog::selectXplane12PathClicked()
   path = atools::gui::Dialog(this).openDirectoryDialog(tr("Select X-Plane 12 Weather Directory"), lnm::OPTIONS_DIALOG_XPLANE12_DLG, path);
 
   if(!path.isEmpty())
-    ui->lineEditOptionsWeatherXplane12Path->setText(QDir::toNativeSeparators(path));
+    ui->lineEditOptionsWeatherXplane12Path->setText(atools::nativeCleanPath(path));
 
   updateWeatherButtonState();
 }
@@ -2819,7 +2819,7 @@ void OptionsDialog::weatherXplane11WindPathSelectClicked()
                                                   lnm::OPTIONS_DIALOG_XPLANE_WIND_FILE_DLG, path);
 
   if(!path.isEmpty())
-    ui->lineEditOptionsWeatherXplaneWind->setText(QDir::toNativeSeparators(path));
+    ui->lineEditOptionsWeatherXplaneWind->setText(atools::nativeCleanPath(path));
 
   updateWeatherButtonState();
 }
@@ -2931,7 +2931,7 @@ void OptionsDialog::selectWebDocrootClicked()
     tr("Open Document Root Directory"), lnm::OPTIONS_DIALOG_WEB_DOCROOT_DLG, ui->lineEditOptionsWebDocroot->text());
 
   if(!path.isEmpty())
-    ui->lineEditOptionsWebDocroot->setText(QDir::toNativeSeparators(path));
+    ui->lineEditOptionsWebDocroot->setText(atools::nativeCleanPath(path));
 
   updateWebDocrootStatus();
   updateWebServerStatus();
@@ -3268,7 +3268,7 @@ void OptionsDialog::addDatabaseTableItem(QTableWidget *widget, const QString& pa
   if(!path.isEmpty())
   {
     widget->insertRow(widget->rowCount());
-    widget->setItem(widget->rowCount() - 1, 0, new QTableWidgetItem(QDir::toNativeSeparators(path)));
+    widget->setItem(widget->rowCount() - 1, 0, new QTableWidgetItem(atools::nativeCleanPath(path)));
     widget->resizeColumnToContents(0);
   }
 }

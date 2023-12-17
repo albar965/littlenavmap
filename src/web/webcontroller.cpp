@@ -324,9 +324,9 @@ bool WebController::updateSettings()
 QString WebController::getAbsoluteWebrootFilePath() const
 {
   if(documentRoot.isEmpty())
-    return QDir::toNativeSeparators(getDefaultDocumentRoot());
+    return atools::nativeCleanPath(getDefaultDocumentRoot());
   else
-    return QDir::toNativeSeparators(QFileInfo(documentRoot).canonicalFilePath());
+    return atools::nativeCleanPath(QFileInfo(documentRoot).canonicalFilePath());
 }
 
 QString WebController::getDefaultDocumentRoot() const

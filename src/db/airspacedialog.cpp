@@ -103,7 +103,7 @@ void AirspaceDialog::airspacePathSelectClicked()
     tr("Select Directory for User Airspaces"), lnm::DATABASE_USER_AIRSPACE_PATH, defaultPath);
 
   if(!path.isEmpty())
-    ui->lineEditAirspacePath->setText(QDir::toNativeSeparators(path));
+    ui->lineEditAirspacePath->setText(atools::nativeCleanPath(path));
 
   updateAirspaceStates();
 }

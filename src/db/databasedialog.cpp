@@ -17,6 +17,7 @@
 
 #include "db/databasedialog.h"
 
+#include "atools.h"
 #include "common/constants.h"
 #include "fs/fspaths.h"
 #include "gui/dialog.h"
@@ -89,7 +90,7 @@ void DatabaseDialog::basePathEdited(const QString& text)
 
 void DatabaseDialog::sceneryConfigFileEdited(const QString& text)
 {
-  simulators[currentFsType].sceneryCfg = QDir::toNativeSeparators(text);
+  simulators[currentFsType].sceneryCfg = atools::nativeCleanPath(text);
 }
 
 /* Show help in browser */
@@ -101,8 +102,8 @@ void DatabaseDialog::helpClicked()
 /* Reset paths of the current simulator back to default */
 void DatabaseDialog::resetPathsClicked()
 {
-  simulators[currentFsType].basePath = QDir::toNativeSeparators(FsPaths::getBasePath(currentFsType));
-  simulators[currentFsType].sceneryCfg = QDir::toNativeSeparators(FsPaths::getSceneryLibraryPath(currentFsType));
+  simulators[currentFsType].basePath = atools::nativeCleanPath(FsPaths::getBasePath(currentFsType));
+  simulators[currentFsType].sceneryCfg = atools::nativeCleanPath(FsPaths::getSceneryLibraryPath(currentFsType));
   updateWidgets();
 }
 
@@ -140,7 +141,7 @@ void DatabaseDialog::selectSceneryConfigClicked()
 
   if(!path.isEmpty())
   {
-    simulators[currentFsType].sceneryCfg = QDir::toNativeSeparators(path);
+    simulators[currentFsType].sceneryCfg = atools::nativeCleanPath(path);
     updateWidgets();
   }
 }
@@ -233,5 +234,5 @@ QString DatabaseDialog::fixBasePath(QString path)
 {
   if(!path.isEmpty() && !QDir(path).isRoot() && (path.endsWith("/") || path.endsWith("\\")))
     path.remove(path.size() - 1, 1);
-  return QDir::toNativeSeparators(path);
+  return atools::nativeCleanPath(path);
 }

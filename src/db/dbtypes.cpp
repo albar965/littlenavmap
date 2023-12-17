@@ -16,6 +16,7 @@
 *****************************************************************************/
 
 #include "db/dbtypes.h"
+#include "atools.h"
 
 #include <QDebug>
 #include <QDataStream>
@@ -137,8 +138,8 @@ QDataStream& operator>>(QDataStream& in, FsPathType& obj)
   quint8 navStatus;
   in >> obj.basePath >> obj.sceneryCfg >> navStatus;
 
-  obj.basePath = QDir::toNativeSeparators(obj.basePath);
-  obj.sceneryCfg = QDir::toNativeSeparators(obj.sceneryCfg);
+  obj.basePath = atools::nativeCleanPath(obj.basePath);
+  obj.sceneryCfg = atools::nativeCleanPath(obj.sceneryCfg);
   obj.navDatabaseStatus = static_cast<navdb::Status>(navStatus);
 
   return in;
