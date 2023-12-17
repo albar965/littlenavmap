@@ -330,8 +330,11 @@ QueryBuilderResult SearchBaseTable::queryBuilderFunc(const QueryWidget& queryWid
       }
 
       if(text.startsWith('"') && text.endsWith('"'))
+      {
         // Exact match "like 'TEXT'"
         text = text.chopped(1).mid(1);
+        text = text.replace("_", "\\_").replace("%", "\\%").replace('*', '%');
+      }
       else
       {
         // Check text length without placeholders for override
@@ -342,7 +345,7 @@ QueryBuilderResult SearchBaseTable::queryBuilderFunc(const QueryWidget& queryWid
           overrideQuery |= overrideText.size() >= 3;
         }
 
-        text = text.replace('*', '%');
+        text = text.replace("_", "\\_").replace("%", "\\%").replace('*', '%');
 
         // Partial search "like '%TEXT%'"
         text = '%' % text % '%';
@@ -357,9 +360,9 @@ QueryBuilderResult SearchBaseTable::queryBuilderFunc(const QueryWidget& queryWid
         QStringList clauses;
         for(const QString& col: queryWidget.getColumns())
           if(exclude)
-            clauses.append("coalesce(" % col % ", '') not like \''" % text % '\'');
+            clauses.append("coalesce(" % col % ", '') not like \''" % text % "\' escape '\\'");
           else
-            clauses.append(col % " like " % '\'' % text % '\'');
+            clauses.append(col % " like " % '\'' % text % "\' escape '\\'");
         clauses.removeAll(QString());
         clauses.removeDuplicates();
 
