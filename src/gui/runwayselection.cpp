@@ -144,7 +144,7 @@ void RunwaySelection::fillAirportLabel()
 
     QString title, runwayText, sourceText;
     NavApp::getWeatherReporter()->getBestRunwaysTextShort(title, runwayText, sourceText, *airport);
-    if(!title.isEmpty())
+    if(!sourceText.isEmpty())
       label.append(tr("<p>%1</p>").arg(atools::strJoin({title, runwayText, sourceText}, tr(" "))));
   }
 

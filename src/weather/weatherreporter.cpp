@@ -740,6 +740,9 @@ const QString& WeatherReporter::getActiveSkyDestinationIdent()
 void WeatherReporter::updateAirportWeather()
 {
   updateTimeouts();
+
+  // Update weather display in procedure search
+  emit weatherUpdated();
 }
 
 void WeatherReporter::weatherDownloadSslErrors(const QStringList& errors, const QString& downloadUrl)
