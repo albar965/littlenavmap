@@ -109,10 +109,10 @@ SqlModel::~SqlModel()
 {
 }
 
-void SqlModel::filterByBuilder(const QWidget *widget)
+void SqlModel::filterByBuilder()
 {
   qDebug() << Q_FUNC_INFO;
-  buildQuery(widget);
+  buildQuery();
 }
 
 void SqlModel::filterIncluding(QModelIndex index, bool forceQueryBuilder, bool exact)
@@ -363,7 +363,7 @@ void SqlModel::filter(const Column *col, const QVariant& variantDisp, const QVar
     // Insert new condition or replace values in existing condition
     whereConditionMap.insert(colName, WhereCondition(oper, escape, variantSql, variantDisp, col));
   }
-  buildQuery(col->getLineEditWidget());
+  buildQuery();
 }
 
 void SqlModel::buildSqlWhereValue(QVariant& whereValue, bool exact) const
@@ -528,10 +528,8 @@ QString SqlModel::buildColumnList(const atools::sql::SqlRecord& tableCols)
 }
 
 /* Create SQL query and set it into the model */
-void SqlModel::buildQuery(const QWidget *widgetFromBuilder)
+void SqlModel::buildQuery()
 {
-  Q_UNUSED(widgetFromBuilder)
-
   // Ignore signals/messages from values set in widgets
   if(updatingWidgets)
     return;
@@ -716,7 +714,7 @@ QString SqlModel::buildWhere(const atools::sql::SqlRecord& tableCols, QVector<co
       queryWhere += cond.getColumnName() % ' ' % cond.getOperator() % ' ';
 
     if(!cond.getValueSql().isNull())
-      queryWhere += buildWhereValue(cond) % ESCAPE;
+      queryWhere += buildWhereValue(cond) % cond.getEscape();
   }
 
   if(isDistanceSearchActive() && !overrideModeActive)

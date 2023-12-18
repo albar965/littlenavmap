@@ -54,7 +54,7 @@ public:
   virtual ~SqlModel() override;
 
   /* Filter by using query builder callback */
-  void filterByBuilder(const QWidget *widget);
+  void filterByBuilder();
 
   /* Creates an include filer for value at index in the table. Uses exact query value in double
    * quotes resulting in like "AAA" instead of like "%AAA%" */
@@ -205,7 +205,7 @@ private:
   QString buildColumnList(const atools::sql::SqlRecord& tableCols);
   QString buildWhere(const atools::sql::SqlRecord& tableCols, QVector<const Column *>& overridingColumns);
   QString buildWhereValue(const WhereCondition& cond);
-  void buildQuery(const QWidget *widgetFromBuilder = nullptr);
+  void buildQuery();
   void clearWhereConditions();
 
   /* Filter by value at index (context menu in table view). forceQueryBuilder to always use it. */

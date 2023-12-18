@@ -503,8 +503,8 @@ void SearchBaseTable::connectSearchWidgets()
         // Only line edit allowed for now
         if(lineEdit != nullptr)
         {
-          connect(lineEdit, &QLineEdit::textChanged, this, [this, lineEdit](const QString&) {
-            controller->filterByBuilder(lineEdit);
+          connect(lineEdit, &QLineEdit::textChanged, this, [this](const QString&) {
+            controller->filterByBuilder();
             updateButtonMenu();
             editStartTimer();
           });
