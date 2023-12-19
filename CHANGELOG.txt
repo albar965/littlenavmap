@@ -27,6 +27,8 @@ map display and the rest of the application.
 
 A big thank you to all who reported bugs and issues!
 
+**🎄🎄🎄🎄 Happy Holidays to all of you! 🎄🎄🎄🎄**
+
 ## Changes from 2.8.12 to 3.0.0.beta
 
 ### Crash and Issue Report
