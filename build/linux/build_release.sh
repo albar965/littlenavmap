@@ -97,6 +97,7 @@ export ATOOLS_NO_USERDATA=true
 export ATOOLS_NO_WEATHER=true
 export ATOOLS_NO_WEB=true
 export ATOOLS_NO_WMM=true
+export ATOOLS_NO_NAVSERVER=true
 
 ${QMAKE_STATIC} ${APROJECTS}/atools/atools.pro -spec linux-g++ CONFIG+=${CONF_TYPE}
 make -j4
