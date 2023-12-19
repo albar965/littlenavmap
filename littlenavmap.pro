@@ -721,7 +721,6 @@ OTHER_FILES += \
   $$files(.github/*, true) \
   $$files(simconnect/*, true) \
   $$files(etc/*, true) \
-  .travis.yml \
   .gitignore \
   *.ts \
   BUILD.txt \
