@@ -76,20 +76,18 @@ MapPixmap WebMapController::getPixmapObject(int width, int height, web::ObjectTy
   MapPixmap mapPixmap;
   switch(type)
   {
-    case web::USER_AIRCRAFT: {
+    case web::USER_AIRCRAFT:
       mapPixmap = getPixmapPosDistance(width, height, NavApp::getUserAircraftPos(), distanceKm, QLatin1String(""), tr("No user aircraft"));
       break;
-    }
 
-    case web::ROUTE: {
+    case web::ROUTE:
       mapPixmap = getPixmapRect(width, height, NavApp::getRouteRect(), tr("No flight plan"));
       break;
-    }
 
-    case web::AIRPORT: {
-      mapPixmap = getPixmapPosDistance(width, height, NavApp::getAirportPos(ident), distanceKm, QLatin1String(""), tr("Airport %1 not found").arg(ident));
+    case web::AIRPORT:
+      mapPixmap = getPixmapPosDistance(width, height, NavApp::getAirportPos(ident), distanceKm, QLatin1String(""), tr(
+                                         "Airport %1 not found").arg(ident));
       break;
-    }
   }
   return mapPixmap;
 }
@@ -110,7 +108,8 @@ MapPixmap WebMapController::getPixmapPosDistance(int width, int height, atools::
     }
     else
     {
-      qWarning() << Q_FUNC_INFO << errorCase;
+      if(verbose)
+        qWarning() << Q_FUNC_INFO << errorCase;
       MapPixmap mappixmap;
       mappixmap.error = errorCase;
       return mappixmap;
@@ -147,7 +146,8 @@ MapPixmap WebMapController::getPixmapPosDistance(int width, int height, atools::
         mapPaintWidget->zoomOut(Marble::Instant);
       else
       {
-        qWarning() << Q_FUNC_INFO << "Invalid map command" << mapCommand;
+        if(verbose)
+          qWarning() << Q_FUNC_INFO << "Invalid map command" << mapCommand;
         return MapPixmap();
       }
     }
@@ -176,7 +176,8 @@ MapPixmap WebMapController::getPixmapPosDistance(int width, int height, atools::
   }
   else
   {
-    qWarning() << Q_FUNC_INFO << "mapPaintWidget is null";
+    if(verbose)
+      qWarning() << Q_FUNC_INFO << "mapPaintWidget is null";
     return MapPixmap();
   }
 }
@@ -211,13 +212,15 @@ MapPixmap WebMapController::getPixmapRect(int width, int height, atools::geo::Re
     }
     else
     {
-      qWarning() << Q_FUNC_INFO << "mapPaintWidget is null";
+      if(verbose)
+        qWarning() << Q_FUNC_INFO << "mapPaintWidget is null";
       return MapPixmap();
     }
   }
   else
   {
-    qWarning() << Q_FUNC_INFO << errorCase;
+    if(verbose)
+      qWarning() << Q_FUNC_INFO << errorCase;
     MapPixmap mapPixmap;
     mapPixmap.error = errorCase;
     return mapPixmap;

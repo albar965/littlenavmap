@@ -1210,7 +1210,6 @@ QString MapPainterAirport::parkingNameForSize(const map::MapParking& parking, fl
         {
           // "A 11" to "A11"
           shortText = parkingCompressDigits(shortText);
-          qDebug() << Q_FUNC_INFO << shortText;
 
           if(metrics.horizontalAdvance(shortText) > width)
           {

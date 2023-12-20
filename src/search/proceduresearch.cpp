@@ -250,20 +250,17 @@ void ProcedureSearch::updateFilter()
 
 void ProcedureSearch::filterIndexChanged(int index)
 {
-  qDebug() << Q_FUNC_INFO;
   filterIndex = static_cast<FilterIndex>(index);
   updateFilter();
 }
 
 void ProcedureSearch::filterIndexRunwayChanged(int)
 {
-  qDebug() << Q_FUNC_INFO;
   updateFilter();
 }
 
 void ProcedureSearch::filterChanged(const QString&)
 {
-  qDebug() << Q_FUNC_INFO;
   updateFilter();
 }
 
@@ -846,8 +843,6 @@ void ProcedureSearch::itemSelectionChangedInternal(bool noFollow)
     for(QTreeWidgetItem *item : selectedItems)
     {
       MapProcedureRef ref = itemIndex.at(item->type());
-
-      qDebug() << Q_FUNC_INFO << ref.runwayEndId << ref.procedureId << ref.transitionId << ref.legId;
 
       if(ref.hasProcedureOrTransitionIds())
       {
