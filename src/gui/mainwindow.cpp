@@ -2030,13 +2030,16 @@ void MainWindow::updateWindowTitle()
 
   // Database information  ==========================================
   // Simulator database =========
+  QString simDb = NavApp::getCurrentSimulatorShortName(), simDbText;
+  simDbText = simDb.isEmpty() ? tr("Empty") : simDb;
+
   if(navDbStatus == navdb::ALL)
-    newTitle += tr(" - (%1)").arg(NavApp::getCurrentSimulatorShortName());
+    newTitle += tr(" — (%1)").arg(simDbText);
   else
   {
-    newTitle += tr(" - %1").arg(NavApp::getCurrentSimulatorShortName());
+    newTitle += tr(" — %1").arg(simDbText);
 
-    if(!NavApp::getDatabaseAiracCycleSim().isEmpty())
+    if(!NavApp::getDatabaseAiracCycleSim().isEmpty() && !simDb.isEmpty())
       newTitle += tr(" %1").arg(NavApp::getDatabaseAiracCycleSim());
   }
 
@@ -2048,31 +2051,30 @@ void MainWindow::updateWindowTitle()
   else if(navDbStatus == navdb::OFF)
     newTitle += tr(" / (N)");
 
-  if((navDbStatus == navdb::ALL || navDbStatus == navdb::MIXED) &&
-     !NavApp::getDatabaseAiracCycleNav().isEmpty())
+  if((navDbStatus == navdb::ALL || navDbStatus == navdb::MIXED) && !NavApp::getDatabaseAiracCycleNav().isEmpty())
     newTitle += tr(" %1").arg(NavApp::getDatabaseAiracCycleNav());
 
   // Flight plan name  ==========================================
   if(!routeController->getRouteFilepath().isEmpty())
-    newTitle += tr(" - %1%2").
+    newTitle += tr(" — %1%2").
                 arg(QFileInfo(routeController->getRouteFilepath()).fileName()).
                 arg(routeController->hasChanged() ? tr(" *") : QString());
   else if(routeController->hasChanged())
-    newTitle += tr(" - *");
+    newTitle += tr(" — *");
 
   // Performance name  ==========================================
   if(!NavApp::getCurrentAircraftPerfFilepath().isEmpty())
-    newTitle += tr(" - %1%2").
+    newTitle += tr(" — %1%2").
                 arg(QFileInfo(NavApp::getCurrentAircraftPerfFilepath()).fileName()).
                 arg(NavApp::getAircraftPerfController()->hasChanged() ? tr(" *") : QString());
   else if(NavApp::getAircraftPerfController()->hasChanged())
-    newTitle += tr(" - *");
+    newTitle += tr(" — *");
 
   if(!NavApp::getOnlineNetworkTranslated().isEmpty())
-    newTitle += tr(" - %1").arg(NavApp::getOnlineNetworkTranslated());
+    newTitle += tr(" — %1").arg(NavApp::getOnlineNetworkTranslated());
 
 #ifndef QT_NO_DEBUG
-  newTitle += " - DEBUG";
+  newTitle += " — DEBUG";
 #endif
 
   // Add a star to the flight plan tab if changed

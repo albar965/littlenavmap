@@ -27,7 +27,7 @@ map display and the rest of the application.
 
 A big thank you to all who reported bugs and issues!
 
-**🎄🎄🎄🎄 Happy Holidays to all of you! 🎄🎄🎄🎄**
+**🎁🎁🎁 🎄🎄🎄 Happy Holidays to all of you! 🎄🎄🎄 🎁🎁🎁**
 
 ## Changes from 2.8.12 to 3.0.0.beta
 
@@ -324,6 +324,12 @@ A big thank you to all who reported bugs and issues!
 
 * Added version check for Little Xpconnect. Now showing a warning message if an outdated version of
   the plugin was found.
+
+
+### Linux
+
+* Little Navmap supports the Wayland compositor which is used on some of the newer Linux distributions
+  but you have to install the package `qwayland5`.
 
 ==<<=============================================================================
 
