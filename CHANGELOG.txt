@@ -209,6 +209,7 @@ A big thank you to all who reported bugs and issues!
   nearest airport with procedure indications.
 * New performance checking options for drawing in `little_navmap.ini` in group `[Options]`, key
   `MapLayerDebugDraw`. This will print draw times to the map display.
+* Fixed random crash when calculating best runway by wind for tooltip.
 * Further optimizations and drawing improvements.
 
 ### Elevation Profile

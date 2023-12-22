@@ -68,10 +68,7 @@ void RwVector::appendRwEnd(const QString& name, const QString& surface, int leng
     atools::geo::windForCourse(headWind, crossWind, speed, direction, heading);
 
     if(headWind >= minSpeed)
-    {
-      RwEnd end(name, surface, length, headWind, crossWind);
-      append(end);
-    }
+      append(RwEnd(name, surface, length, headWind, crossWind));
   }
 }
 
@@ -83,7 +80,7 @@ void RwVector::sortRunwayEnds()
   {
     QMap<RwKey, RwEnd> endMap;
 
-    for(const RwEnd& end : *this)
+    for(const RwEnd& end : qAsConst(*this))
     {
       RwKey key(end);
       if(endMap.contains(key))
@@ -111,10 +108,10 @@ void RwVector::sortRunwayEnds()
     totalNumber = constFirst().names.size();
 }
 
-QStringList RwVector::getSortedRunways(int minHeadWind)
+QStringList RwVector::getSortedRunways(int minHeadWind) const
 {
   QStringList runways;
-  for(const maptools::RwEnd& end : *this)
+  for(const maptools::RwEnd& end : qAsConst(*this))
   {
     if(end.headWind <= minHeadWind)
       break;

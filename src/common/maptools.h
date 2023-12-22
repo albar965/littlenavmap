@@ -376,7 +376,7 @@ public:
   }
 
   /* Get names numerically sorted having minHeadWind */
-  QStringList getSortedRunways(int minHeadWind);
+  QStringList getSortedRunways(int minHeadWind) const;
 
 private:
   float speed, direction, minSpeed = 0.5f;
