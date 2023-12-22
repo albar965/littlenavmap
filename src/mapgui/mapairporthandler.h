@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2021 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -50,7 +50,7 @@ public:
   MapAirportHandler& operator=(const MapAirportHandler& other) = delete;
 
   /* Initialize, create actions and add button to toolbar. */
-  void addToolbarButton();
+  void insertToolbarButton();
 
   /* Save and load flags if requested in options */
   void saveState();

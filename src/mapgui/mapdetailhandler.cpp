@@ -17,13 +17,11 @@
 
 #include "mapgui/mapdetailhandler.h"
 
-#include "atools.h"
 #include "common/constants.h"
 #include "app/navapp.h"
 #include "options/optiondata.h"
 #include "settings/settings.h"
 #include "mapgui/maplayersettings.h"
-#include "mapgui/mappaintwidget.h"
 #include "ui_mainwindow.h"
 #include "gui/signalblocker.h"
 
@@ -105,7 +103,7 @@ void DetailSliderAction::setSliderValue(int value)
 {
   sliderValue = value;
   atools::gui::SignalBlocker blocker(sliders);
-  for(QSlider *slider : sliders)
+  for(QSlider *slider : qAsConst(sliders))
     slider->setValue(value);
 }
 
@@ -144,7 +142,7 @@ void DetailLabelAction::setText(const QString& textParam)
 {
   text = textParam;
   // Set text to all registered labels
-  for(QLabel *label : labels)
+  for(QLabel *label : qAsConst(labels))
     label->setText(text);
 }
 
@@ -203,7 +201,7 @@ void MapDetailHandler::setDetailLevel(int level)
   detailSliderChanged();
 }
 
-void MapDetailHandler::addToolbarButton()
+void MapDetailHandler::insertToolbarButton()
 {
   Ui::MainWindow *ui = NavApp::getMainUi();
 

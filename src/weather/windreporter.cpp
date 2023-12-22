@@ -105,7 +105,7 @@ int WindSliderAction::maxValue() const
 void WindSliderAction::setSliderValue(int value)
 {
   sliderValue = value;
-  for(QSlider *slider : sliders)
+  for(QSlider *slider : qAsConst(sliders))
   {
     slider->blockSignals(true);
     slider->setValue(sliderValue);
@@ -142,7 +142,7 @@ void WindLabelAction::setText(const QString& textParam)
 {
   text = textParam;
   // Set text to all registered labels
-  for(QLabel *label : labels)
+  for(QLabel *label : qAsConst(labels))
     label->setText(text);
 }
 
@@ -407,7 +407,7 @@ void WindReporter::addToolbarButton()
   buttonMenu->setTearOffEnabled(true);
 
   // Insert before show route
-  ui->toolBarMapOptions->insertWidget(ui->actionMapShowSunShading, windlevelToolButton);
+  ui->toolBarMapOptions->addWidget(windlevelToolButton);
   ui->menuHighAltitudeWindLevels->clear();
 
   // Create and add flight plan action =====================================

@@ -140,7 +140,7 @@ void MapMarkHandler::addToolbarButton()
   buttonMenu->setToolTipsVisible(true);
   buttonMenu->setTearOffEnabled(true);
 
-  ui->toolBarMapOptions->insertWidget(ui->actionMapShowRoute, toolButton);
+  ui->toolBarMapOptions->addWidget(toolButton);
 
   // Create and add actions to toolbar and menu =================================
   actionAll = new QAction(tr("&All User Features"), buttonMenu);

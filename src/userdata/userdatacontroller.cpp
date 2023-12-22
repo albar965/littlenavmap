@@ -188,8 +188,7 @@ void UserdataController::addToolbarButton()
   buttonMenu->setTearOffEnabled(true);
 
   // Insert before show route
-  ui->toolBarMapOptions->insertWidget(ui->actionMapShowRoute, userdataToolButton);
-  ui->toolBarMapOptions->insertSeparator(ui->actionMapShowRoute);
+  ui->toolBarMapOptions->addWidget(userdataToolButton);
 
   // Create and add select all action =====================================
   actionAll = new QAction(tr("&All Userpoints"), buttonMenu);

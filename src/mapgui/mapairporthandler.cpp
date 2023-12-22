@@ -86,7 +86,7 @@ void AirportSliderAction::optionsChanged()
   }
 
   atools::gui::SignalBlocker blocker(sliders);
-  for(QSlider *slider : sliders)
+  for(QSlider *slider : qAsConst(sliders))
   {
     slider->setValue(sliderValue);
     slider->setMinimum(minValue());
@@ -164,7 +164,7 @@ int AirportSliderAction::maxValue() const
 
 void AirportSliderAction::setValue(int value)
 {
-  for(QSlider *slider : sliders)
+  for(QSlider *slider : qAsConst(sliders))
   {
     slider->blockSignals(true);
     slider->setValue(value);
@@ -207,7 +207,7 @@ void AirportLabelAction::setText(const QString& textParam)
 {
   text = textParam;
   // Set text to all registered labels
-  for(QLabel *label : labels)
+  for(QLabel *label : qAsConst(labels))
     label->setText(text);
 }
 
@@ -286,7 +286,7 @@ void MapAirportHandler::optionsChanged()
   runwaySliderValueChanged();
 }
 
-void MapAirportHandler::addToolbarButton()
+void MapAirportHandler::insertToolbarButton()
 {
   Ui::MainWindow *ui = NavApp::getMainUi();
 
@@ -309,8 +309,7 @@ void MapAirportHandler::addToolbarButton()
   buttonMenu->setToolTipsVisible(true);
   buttonMenu->setTearOffEnabled(true);
 
-  ui->toolBarMapOptions->insertWidget(ui->actionMapShowVor, toolButton);
-  ui->toolBarMapOptions->insertSeparator(ui->actionMapShowVor);
+  ui->toolBarMapOptions->insertWidget(ui->actionMapShowAirportWeather, toolButton);
 
   // Create and add actions to toolbar and menu =================================
   actionReset = new QAction(tr("&Reset airport display options"), buttonMenu);

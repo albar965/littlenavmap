@@ -23279,7 +23279,7 @@ Versuche in drei Minuten wieder.</translation>
     <message>
         <location filename="src/options/options.ui" line="180"/>
         <source>Restore aircraft &amp;trail</source>
-        <translation>Flugzeug und Flugpfad &amp;wiederherstellen</translation>
+        <translation>Flugpfad &amp;wiederherstellen</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="136"/>

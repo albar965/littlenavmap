@@ -12,6 +12,8 @@ This text is partially Markdown, hence sometimes strange formatting.
 
 **Note that the program translations and the user manual have not been updated yet.**
 
+**Toolbar layout has changed. See below in section "User Interface" for more information.**
+
 **See here if you would like to run the beta release besides your stable installation:
 [Little Navmap - User Manual - Portable Execution](https://www.littlenavmap.org/manuals/littlenavmap/release/latest/en/INSTALLATION.html#portable-execution).**
 
@@ -274,8 +276,14 @@ A big thank you to all who reported bugs and issues!
 
 ### User Interface
 
+* Split toolbars into smaller sections and reorganized toolbar buttons for a more logical order.
+  The smaller toolbars can now be better arranged to user needs.
+  Note that the initial state after the update is not defined. You either have to re-arrange
+  the toolbars manually or use the function in main menu `Window` -> `Reset Window Layout to Default`
+  which also resets the toolbar layout to default.
 * Added sub-menu `User Manual - Helpful Chapters` with important help links.
 * Added new menu `Search` for quick access to most used search functions.
+* Moved toolbars and dock window actions in menu `Window` to sub-menus.
 * Now applying a font change to all tables and widgets instantly. Fixed issue where not all font
   attributes were taken in program windows.
 * Fixed issue where bold font attribute was not considered in flight plan table and map labels.

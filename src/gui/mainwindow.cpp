@@ -206,8 +206,8 @@ MainWindow::MainWindow()
     helpHandler = new atools::gui::HelpHandler(this, aboutMessage, GIT_REVISION_LITTLENAVMAP);
 
     // Create dock and mainwindow handler ============================================
-    toolbars.append({ui->toolBarMain, ui->toolBarMap, ui->toolBarMapOptions, ui->toolBarRoute, ui->toolBarView, ui->toolBarAirspaces,
-                     ui->toolBarTools});
+    toolbars.append({ui->toolBarMain, ui->toolBarMap, ui->toolBarMapOptions, ui->toolBarMapOptionsRouteAircraft, ui->toolBarMapOptionsOther,
+                     ui->toolBarRoute, ui->toolBarView, ui->toolBarAirspaces, ui->toolBarTools});
 
     atools::settings::Settings& settings = atools::settings::Settings::instance();
     dockHandler =
@@ -287,7 +287,6 @@ MainWindow::MainWindow()
 
     qDebug() << Q_FUNC_INFO << "Creating WindReporter";
     windReporter = new WindReporter(this, NavApp::getCurrentSimulatorDb());
-    windReporter->addToolbarButton();
 
     qDebug() << Q_FUNC_INFO << "Creating FileHistoryHandler for flight plans";
     routeFileHistory = new FileHistoryHandler(this, lnm::ROUTE_FILENAMES_RECENT, ui->menuRecentRoutes, ui->actionRecentRoutesClear);
@@ -358,14 +357,21 @@ MainWindow::MainWindow()
     connectAllSlots();
     NavApp::getAircraftPerfController()->connectAllSlots();
 
-    // Add toolbar button for map marks like holds, patterns and others
-    // Order here defines order of buttons on toolbar
-    NavApp::getMapMarkHandler()->addToolbarButton();
-    NavApp::getMapAirportHandler()->addToolbarButton();
-    NavApp::getMapDetailHandler()->addToolbarButton();
+    // Append toolbar buttons/widgets ===========================================================
+    // Add wind dropdown button
+    windReporter->addToolbarButton();
+    ui->toolBarMapOptions->addSeparator();
 
     // Add user defined points toolbar button and submenu items
     NavApp::getUserdataController()->addToolbarButton();
+
+    // Add toolbar button for map marks like holds, patterns and others
+    // Order here defines order of buttons on toolbar
+    NavApp::getMapMarkHandler()->addToolbarButton();
+
+    // These are inserted at defined positions
+    NavApp::getMapAirportHandler()->insertToolbarButton();
+    NavApp::getMapDetailHandler()->insertToolbarButton();
 
     qDebug() << Q_FUNC_INFO << "Reading settings";
     restoreStateMain();
@@ -765,27 +771,25 @@ void MainWindow::setupUi()
   dockHandler->connectDockWindows();
 
   // Add dock actions to main menu
-  ui->menuView->insertActions(ui->actionShowStatusbar,
-                              {ui->dockWidgetSearch->toggleViewAction(),
-                               ui->dockWidgetRoute->toggleViewAction(),
-                               ui->dockWidgetInformation->toggleViewAction(),
-                               ui->dockWidgetProfile->toggleViewAction(),
-                               ui->dockWidgetAircraft->toggleViewAction()});
-
-  ui->menuView->insertSeparator(ui->actionShowStatusbar);
+  ui->menuWindowDock->addActions({ui->dockWidgetSearch->toggleViewAction(),
+                                  ui->dockWidgetRoute->toggleViewAction(),
+                                  ui->dockWidgetInformation->toggleViewAction(),
+                                  ui->dockWidgetProfile->toggleViewAction(),
+                                  ui->dockWidgetAircraft->toggleViewAction()});
 
   // Add toobar actions to menu
-  ui->menuView->insertActions(ui->actionShowStatusbar,
-                              {ui->toolBarMain->toggleViewAction(),
-                               ui->toolBarMap->toggleViewAction(),
-                               ui->toolBarMapOptions->toggleViewAction(),
-                               ui->toolBarRoute->toggleViewAction(),
-                               ui->toolBarAirspaces->toggleViewAction(),
-                               ui->toolBarView->toggleViewAction(),
-                               ui->toolBarTools->toggleViewAction()});
+  ui->menuWindowToolbars->addActions({ui->toolBarMain->toggleViewAction(),
+                                      ui->toolBarMap->toggleViewAction(),
+                                      ui->toolBarMapOptions->toggleViewAction(),
+                                      ui->toolBarMapOptionsOther->toggleViewAction(),
+                                      ui->toolBarRoute->toggleViewAction(),
+                                      ui->toolBarMapOptionsRouteAircraft->toggleViewAction(),
+                                      ui->toolBarAirspaces->toggleViewAction(),
+                                      ui->toolBarView->toggleViewAction(),
+                                      ui->toolBarTools->toggleViewAction()});
   ui->menuView->insertSeparator(ui->actionShowStatusbar);
 
-  // Add toobar actions to toolbar
+  // Add toolbar actions to toolbar
   ui->toolBarView->addAction(ui->dockWidgetSearch->toggleViewAction());
   ui->toolBarView->addAction(ui->dockWidgetRoute->toggleViewAction());
   ui->toolBarView->addAction(ui->dockWidgetInformation->toggleViewAction());

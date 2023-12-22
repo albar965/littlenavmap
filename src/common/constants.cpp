@@ -56,12 +56,11 @@ QString helpDonateUrl;
 QString helpFaqUrl;
 QString updateDefaultUrl;
 
-const QSize DEFAULT_MAINWINDOW_SIZE(1280, 800);
+const QSize DEFAULT_MAINWINDOW_SIZE(1360, 800);
 
 const QString helpLanguageOnline()
 {
-  const static QRegularExpression INDICATOR_FILE("little-navmap-user-manual-(.+)\\.online",
-                                                 QRegularExpression::CaseInsensitiveOption);
+  const static QRegularExpression INDICATOR_FILE("little-navmap-user-manual-(.+)\\.online", QRegularExpression::CaseInsensitiveOption);
 
   if(supportedLanguageOnline.isEmpty())
   {
