@@ -220,7 +220,7 @@ void AircraftProgressConfig::progressConfiguration()
 
   // Check all items from enabled
   treeDialog.setAllChecked(false);
-  for(pid::ProgressConfId id : enabledIds)
+  for(pid::ProgressConfId id : qAsConst(enabledIds))
     treeDialog.setItemChecked(id);
 
   if(treeDialog.exec() == QDialog::Accepted)
@@ -263,7 +263,7 @@ void AircraftProgressConfig::updateBits()
 {
   // Update bitfield for HtmlBuilder
   enabledBits.fill(false, pid::LAST + 1);
-  for(pid::ProgressConfId id : enabledIds)
+  for(pid::ProgressConfId id : qAsConst(enabledIds))
     enabledBits.setBit(id, true);
 
   // Update separate bitfield with required additional fields

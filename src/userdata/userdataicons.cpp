@@ -175,8 +175,7 @@ void UserdataIcons::loadIcons()
 {
   // First get new and overloaded icons from the configuration directory
   QDir configDir(atools::settings::Settings::getPath());
-  for(const QFileInfo& entry : configDir.entryInfoList({"userpoint_*.svg", "userpoint_*.png",
-                                                        "userpoint_*.jpg", "userpoint_*.gif"}))
+  for(const QFileInfo& entry : configDir.entryInfoList({"userpoint_*.svg", "userpoint_*.png", "userpoint_*.jpg", "userpoint_*.gif"}))
     loadIcon(entry);
 
   // Get default icons from resources if not already loaded before

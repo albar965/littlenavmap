@@ -52,7 +52,7 @@ DatabaseDialog::DatabaseDialog(QWidget *parent, const SimulatorTypeMap& pathMap)
 
   // Add an item to the combo box for each installed simulator
   bool simFound = false;
-  for(atools::fs::FsPaths::SimulatorType type : keys)
+  for(atools::fs::FsPaths::SimulatorType type : qAsConst(keys))
   {
     if(simulators.value(type).isInstalled)
     {

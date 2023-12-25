@@ -79,7 +79,7 @@ int CsvExporter::selectionAsCsv(QTableView *view, bool header, bool rows, QStrin
       if(header)
         stream << buildHeader(view, exporter, additionalHeader, additionalFields) << endl;
 
-      for(QItemSelectionRange rng : selection->selection())
+      for(const QItemSelectionRange& rng : selection->selection())
       {
         // Add data
         for(int row = rng.top(); row <= rng.bottom(); ++row)

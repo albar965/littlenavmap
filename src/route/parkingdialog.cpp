@@ -243,7 +243,7 @@ void ParkingDialog::updateTable()
             // Add ILS and similar approach aids
             if(departureAirport.isValid())
             {
-              for(map::MapIls ils : NavApp::getMapQueryGui()->getIlsByAirportAndRunway(departureAirport.ident, end.name))
+              for(const map::MapIls& ils : NavApp::getMapQueryGui()->getIlsByAirportAndRunway(departureAirport.ident, end.name))
                 atts.append(map::ilsTypeShort(ils));
             }
             atts.removeAll(QString());

@@ -134,7 +134,7 @@ void TrackController::startDownloadInternal()
   QVector<atools::track::TrackType> trackTypes = enabledTracks();
   downloadQueue.append(trackTypes);
 
-  for(atools::track::TrackType trackType: trackTypes)
+  for(atools::track::TrackType trackType : qAsConst(trackTypes))
     downloader->startDownload(trackType);
 
   NavApp::setStatusMessage(tr("Track download started."));

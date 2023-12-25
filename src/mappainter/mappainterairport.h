@@ -24,7 +24,7 @@ class SymbolPainter;
 
 namespace map {
 
-class MapParking;
+struct MapParking;
 struct MapAirport;
 struct MapApron;
 struct MapRunway;

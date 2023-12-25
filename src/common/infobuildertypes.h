@@ -26,7 +26,7 @@
 
 class Route;
 
-namespace map { class WeatherContext; }
+namespace map { struct WeatherContext; }
 namespace atools {
     namespace sql {
         class SqlRecord;
