@@ -7796,13 +7796,13 @@ relation to shown airport</string>
      <normaloff>:/littlenavmap/resources/icons/centeraircraft.svg</normaloff>:/littlenavmap/resources/icons/centeraircraft.svg</iconset>
    </property>
    <property name="text">
-    <string>Keep &amp;User Aircraft centered</string>
+    <string>Map follows &amp;User Aircraft</string>
    </property>
    <property name="toolTip">
-    <string>Keep the user aircraft centered on the map</string>
+    <string>Keep the user aircraft visible on the map</string>
    </property>
    <property name="statusTip">
-    <string>Keep the user aircraft centered on the map</string>
+    <string>Keep the user aircraft visible on the map</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+Alt+A</string>
@@ -9468,7 +9468,7 @@ relation to shown airport</string>
      <normaloff>:/littlenavmap/resources/icons/centeraircraft.svg</normaloff>:/littlenavmap/resources/icons/centeraircraft.svg</iconset>
    </property>
    <property name="text">
-    <string>&amp;Keep User Aircraft Centered</string>
+    <string>&amp;Elevation Profile follows User Aircraft</string>
    </property>
    <property name="toolTip">
     <string>Center the user aircraft on the elevation profile</string>

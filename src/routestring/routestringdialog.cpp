@@ -110,7 +110,7 @@ RouteStringDialog::RouteStringDialog(QWidget *parent, const QString& settingsSuf
     tr("<p><b><big>Quick Help</big></b></p>"
        "<p><b>Format:</b> FROM[ETD][/DEPARTRWY] [SPEEDALT] [SIDTRANS] [ENROUTE] [STARTRANS] TO[ETA][/APPROACH] [ALTERNATES]<br/>"
               "<b>Optional fields</b> are enclosed in <b>&quot;[]&quot;</b>.<br/>"
-              "All text until the first empty line is read as route descrtiption. Lines below can be used as a scratchpad.</p>"
+              "All text until the first empty line is read as route description. Lines below can be used as a scratchpad.</p>"
        "<ul>"
          "<li><b>FROM</b> is the required departure airport. Departure time <b>&quot;ETD&quot;</b> is ignored.</li>"
          "<li><b>DEPARTRWY</b> is an optional departure runway separated by a <b>&quot;/&quot;</b>. Example <b>&quot;EDDF/07R&quot;</b>. "

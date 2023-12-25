@@ -241,7 +241,7 @@ AirportSearch::AirportSearch(QMainWindow *parent, QTableView *tableView, si::Tab
   append(Column("num_parking_mil_combat", tr("Ramps\nMil Combat")).hidden()).
 
   append(Column("longest_runway_length", tr("Longest\nRunway Length %distshort%")).convertFunc(Unit::distShortFeetF)).
-  append(Column("longest_runway_width", tr("Longest\nRunway Width ft")).hidden()).
+  append(Column("longest_runway_width", tr("Longest\nRunway Width %distshort%")).hidden()).
   append(Column("longest_runway_surface", tr("Longest\nRunway Surface")).hidden()).
   append(Column("longest_runway_heading").hidden()).
   append(Column("num_runway_end_closed").hidden()).
