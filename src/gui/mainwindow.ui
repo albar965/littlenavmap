@@ -6496,6 +6496,7 @@ relation to shown airport</string>
     <bool>false</bool>
    </attribute>
    <addaction name="actionShowFullscreenMap"/>
+   <addaction name="separator"/>
   </widget>
   <widget class="QToolBar" name="toolBarTools">
    <property name="windowTitle">

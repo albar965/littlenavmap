@@ -771,11 +771,11 @@ void MainWindow::setupUi()
   dockHandler->connectDockWindows();
 
   // Add dock actions to main menu
-  ui->menuWindowDock->addActions({ui->dockWidgetSearch->toggleViewAction(),
-                                  ui->dockWidgetRoute->toggleViewAction(),
-                                  ui->dockWidgetInformation->toggleViewAction(),
+  ui->menuWindowDock->addActions({ui->dockWidgetRoute->toggleViewAction(),
+                                  ui->dockWidgetSearch->toggleViewAction(),
+                                  ui->dockWidgetAircraft->toggleViewAction(),
                                   ui->dockWidgetProfile->toggleViewAction(),
-                                  ui->dockWidgetAircraft->toggleViewAction()});
+                                  ui->dockWidgetInformation->toggleViewAction()});
 
   // Add toobar actions to menu
   ui->menuWindowToolbars->addActions({ui->toolBarMain->toggleViewAction(),
@@ -790,11 +790,11 @@ void MainWindow::setupUi()
   ui->menuView->insertSeparator(ui->actionShowStatusbar);
 
   // Add toolbar actions to toolbar
-  ui->toolBarView->addAction(ui->dockWidgetSearch->toggleViewAction());
   ui->toolBarView->addAction(ui->dockWidgetRoute->toggleViewAction());
-  ui->toolBarView->addAction(ui->dockWidgetInformation->toggleViewAction());
-  ui->toolBarView->addAction(ui->dockWidgetProfile->toggleViewAction());
+  ui->toolBarView->addAction(ui->dockWidgetSearch->toggleViewAction());
   ui->toolBarView->addAction(ui->dockWidgetAircraft->toggleViewAction());
+  ui->toolBarView->addAction(ui->dockWidgetProfile->toggleViewAction());
+  ui->toolBarView->addAction(ui->dockWidgetInformation->toggleViewAction());
 
   // ==============================================================
   // Create labels for the statusbar
