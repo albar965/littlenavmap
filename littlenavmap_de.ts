@@ -2873,7 +2873,7 @@ FSX, Prepar3D and MSFS allow a maxium of 105 NM.</source>
 Using higher values with a lot of AI or multiplayer aircraft might induce stutters in the simulator.
 The unit is always nautical miles (1 NM equals to 1852 km).
 FSX, Prepar3D and MSFS allow a maxium of 105 NM.</oldsource>
-        <translation>Ändert den Radius um das Benutzerflugzeug, der verwendet wird, um KI- oder Mehrspielerflugzeuge einzubeziehen.
+        <translation>Ändert den Radius um das Nutzerflugzeug, der verwendet wird, um KI- oder Mehrspielerflugzeuge einzubeziehen.
 Die Verwendung höherer Werte bei vielen KI- oder Multiplayer-Flugzeugen kann zu Stottern im Simulator führen.
 Die Einheit ist immer nautische Meilen (1 NM entspricht 1,852 km).
 FSX, Prepar3D und MSFS erlauben ein Maximum von 105 NM.</translation>
@@ -11267,7 +11267,7 @@ Die Windgeschwindigkeit wird zwischen dieser Höhe und der Bodenhöhe interpolie
         <location filename="src/gui/mainwindow.ui" line="7799"/>
         <source>Map follows &amp;User Aircraft</source>
         <oldsource>Keep &amp;User Aircraft centered</oldsource>
-        <translation>Benutzerflugzeug auf der Karte &amp;sichtbar halten</translation>
+        <translation>Nutzerflugzeug auf der Karte &amp;sichtbar halten</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="7802"/>
@@ -25022,7 +25022,7 @@ Ignoriert, wenn &quot;Zentriere Karte auf Flugzeug und nächsten Wegpunkt des Fl
     <message>
         <location filename="src/options/options.ui" line="7223"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Little Navmap fetches data from online networks using an interval of 15 to 180 seconds depending on settings and network.&lt;/p&gt;&lt;p&gt;The program also fetches AI or multiplayer aircraft from the simulator which are updated several times a second. These aircraft are injected into the simulator by the various online clients so they are visible there. Therefore, the user aircraft and other multiplayer aircraft can appear duplicated on the map.&lt;/p&gt;&lt;p&gt;Little Navmap tries to remove these duplicates by matching the aircraft position, altitude and more parameters if this option is enabled.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Little Navmap holt sich Daten aus Online-Netzwerken in einem Intervall von 15 bis 180 Sekunden, je nach Einstellungen und Netzwerk.&lt;/p&gt;&lt;p&gt;Das Programm holt sich auch KI- oder Mehrspielerflugzeuge aus dem Simulator, die mehrmals pro Sekunde aktualisiert werden. Diese Flugzeuge werden von den verschiedenen Online-Clients in den Simulator injiziert, so dass sie dort sichtbar sind. Daher können das Benutzerflugzeug und andere Mehrspielerflugzeuge doppelt auf der Karte erscheinen.&lt;/p&gt;&lt;p&gt;Little Navmap versucht, diese Duplikate zu entfernen, indem es die Flugzeugposition, die Höhe und weitere Parameter abgleicht, wenn diese Einstellung aktiviert ist.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Little Navmap holt sich Daten aus Online-Netzwerken in einem Intervall von 15 bis 180 Sekunden, je nach Einstellungen und Netzwerk.&lt;/p&gt;&lt;p&gt;Das Programm holt sich auch KI- oder Mehrspielerflugzeuge aus dem Simulator, die mehrmals pro Sekunde aktualisiert werden. Diese Flugzeuge werden von den verschiedenen Online-Clients in den Simulator injiziert, so dass sie dort sichtbar sind. Daher können das Nutzerflugzeug und andere Mehrspielerflugzeuge doppelt auf der Karte erscheinen.&lt;/p&gt;&lt;p&gt;Little Navmap versucht, diese Duplikate zu entfernen, indem es die Flugzeugposition, die Höhe und weitere Parameter abgleicht, wenn diese Einstellung aktiviert ist.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="7226"/>
@@ -25666,7 +25666,7 @@ Dies hat keinen Einfluss auf das Kartenfenster, dessen Kurzinfos separat auf der
     <message>
         <location filename="src/options/options.ui" line="2198"/>
         <source>Show tooltips for the user aircraft when hovering the cursor over the map</source>
-        <translation>Kurzinfos für das Benutzerflugzeug anzeigen, wenn der Mauszeiger über die Karte bewegt wird</translation>
+        <translation>Kurzinfos für das Nutzerflugzeug anzeigen, wenn der Mauszeiger über die Karte bewegt wird</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="2034"/>
@@ -26737,7 +26737,7 @@ options page &quot;Map Labels&quot; to display a screen center hint.</source>
     <message>
         <location filename="src/options/options.ui" line="3417"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/littlenavmap/resources/icons/bulb.svg&quot;/&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Label settings for the user aircraft can be found on page &lt;/span&gt;&lt;a href=&quot;lnm://12&quot;&gt;&lt;span style=&quot; font-style:italic; text-decoration: underline; color:#0057ae;&quot;&gt;Map Labels&lt;/span&gt;&lt;/a&gt;&lt;span style=&quot; font-style:italic;&quot;&gt; in branch &amp;quot;User Aircraft&amp;quot;.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/littlenavmap/resources/icons/bulb.svg&quot;/&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Beschriftungseinstellungen für das Benutzerflugzeug finden Sie auf Seite &lt;/span&gt;&lt;a href=&quot;lnm://12&quot;&gt;&lt;span style=&quot; font-style:italic; text-decoration: underline; color:#0057ae;&quot;&gt;Kartenbeschriftungen&lt;/span&gt;&lt;/a&gt;&lt;span style=&quot; font-style:italic;&quot;&gt; im Zweig &amp;quot;Nutzerflugzeug&amp;quot;.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/littlenavmap/resources/icons/bulb.svg&quot;/&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Beschriftungseinstellungen für das Nutzerflugzeug finden Sie auf Seite &lt;/span&gt;&lt;a href=&quot;lnm://12&quot;&gt;&lt;span style=&quot; font-style:italic; text-decoration: underline; color:#0057ae;&quot;&gt;Kartenbeschriftungen&lt;/span&gt;&lt;/a&gt;&lt;span style=&quot; font-style:italic;&quot;&gt; im Zweig &amp;quot;Nutzerflugzeug&amp;quot;.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="2889"/>
@@ -27863,7 +27863,7 @@ Wird bei Prozedurabschnitten nicht angezeigt.</translation>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="196"/>
         <source>Update and movement options for the user aircraft.</source>
-        <translation>Aktualisierungs- und Bewegungsoptionen für das Benutzerflugzeug.</translation>
+        <translation>Aktualisierungs- und Bewegungsoptionen für das Nutzerflugzeug.</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="197"/>
@@ -28072,7 +28072,7 @@ mit dem Präfix &quot;Vom Nutzer&quot;.</translation>
         <location filename="src/options/optionsdialog.cpp" line="328"/>
         <source>Show the heading for the user aircraft as a
 small magenta circle.</source>
-        <translation>Zeige den Steuerkurs für das Benutzerflugzeug
+        <translation>Zeige den Steuerkurs für das Nutzerflugzeug
 als kleinen magentafarbenen Kreis.</translation>
     </message>
     <message>
@@ -28650,12 +28650,12 @@ Wird mit &quot;GC&quot; angezeigt, wenn Loxodrome und Großkreis ausgewählt sin
     <message>
         <location filename="src/options/optionsdialog.cpp" line="325"/>
         <source>Show the dashed heading line for user aircraft.</source>
-        <translation>Zeige gestrichelte Steuerkurslinie für das Benutzerflugzeug.</translation>
+        <translation>Zeige gestrichelte Steuerkurslinie für das Nutzerflugzeug.</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="326"/>
         <source>Show the solid track line for user aircraft.</source>
-        <translation>Zeige Spur für das Benutzerflugzeug.</translation>
+        <translation>Zeige Spur für das Nutzerflugzeug.</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="327"/>
@@ -28665,7 +28665,7 @@ Wird mit &quot;GC&quot; angezeigt, wenn Loxodrome und Großkreis ausgewählt sin
     <message>
         <location filename="src/options/optionsdialog.cpp" line="327"/>
         <source>Show track label for user aircraft.</source>
-        <translation>Zeige die Spurbeschriftung für das Benutzerflugzeug.</translation>
+        <translation>Zeige die Spurbeschriftung für das Nutzerflugzeug.</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="328"/>
@@ -28675,7 +28675,7 @@ Wird mit &quot;GC&quot; angezeigt, wenn Loxodrome und Großkreis ausgewählt sin
     </message>
     <message>
         <source>Show the crab angle for the user aircraft as a small magenta circle.</source>
-        <translation type="vanished">Zeige den Schiebewinkel für das Benutzerflugzeug als kleinen magentafarbenen Kreis.</translation>
+        <translation type="vanished">Zeige den Schiebewinkel für das Nutzerflugzeug als kleinen magentafarbenen Kreis.</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="330"/>
@@ -29179,7 +29179,7 @@ Optionen für die Anzeige von Kurs und Richtung.</translation>
     </message>
     <message>
         <source>Change map display and elevation profile label options for marks, user aircraft and more.</source>
-        <translation type="vanished">Einstellungen für die Kartenanzeige und die Beschriftung des Höhenprofils für Markierungen, Benutzerflugzeuge und mehr.</translation>
+        <translation type="vanished">Einstellungen für die Kartenanzeige und die Beschriftung des Höhenprofils für Markierungen, Nutzerflugzeuge und mehr.</translation>
     </message>
     <message>
         <source>Map Display Keys</source>
@@ -29192,7 +29192,7 @@ Optionen für die Anzeige von Kurs und Richtung.</translation>
     </message>
     <message>
         <source>Update and movement options for the user aircraft and trail.</source>
-        <translation type="vanished">Aktualisierungs- und Bewegungsoptionen für das Benutzerflugzeug und den Flugzeugpfad.</translation>
+        <translation type="vanished">Aktualisierungs- und Bewegungsoptionen für das Nutzerflugzeug und den Flugzeugpfad.</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="198"/>
@@ -29277,7 +29277,7 @@ Abhängig von der Verfügbarkeit kann die Kennung die interne, ICAO, FAA, IATA o
     </message>
     <message>
         <source>Show the heading for the user aircraft as a small magenta circle.</source>
-        <translation type="vanished">Zeige den Steuerkurs für das Benutzerflugzeug als kleinen magentafarbenen Kreis.</translation>
+        <translation type="vanished">Zeige den Steuerkurs für das Nutzerflugzeug als kleinen magentafarbenen Kreis.</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="1065"/>
@@ -30737,7 +30737,7 @@ Changes to &quot;Required angle&quot; if mandatory in approach procedures.</sour
         <source>Vertical speed needed to arrive at the calculated altitude at the next waypoint.
 Shown on descent only at user aircraft symbol suffixed with &quot;N&quot;.</source>
         <translation>Vertikale Geschwindigkeit, die benötigt wird, um die berechnete Höhe am nächsten Wegpunkt zu erreichen.
-Wird nur im Sinkflug am Benutzerflugzeugsymbol mit dem Zusatz &quot;N&quot; gezeigt.</translation>
+Wird nur im Sinkflug am Nutzerflugzeugsymbol mit dem Zusatz &quot;N&quot; gezeigt.</translation>
     </message>
     <message>
         <location filename="src/profile/profileoptions.cpp" line="67"/>
@@ -40579,7 +40579,7 @@ Beachten Sie, dass die resultierende Beschreibung nicht in einen Flugplan eingel
     <message>
         <location filename="src/routestring/routestringdialog.cpp" line="110"/>
         <source>&lt;p&gt;&lt;b&gt;&lt;big&gt;Quick Help&lt;/big&gt;&lt;/b&gt;&lt;/p&gt;&lt;p&gt;&lt;b&gt;Format:&lt;/b&gt; FROM[ETD][/DEPARTRWY] [SPEEDALT] [SIDTRANS] [ENROUTE] [STARTRANS] TO[ETA][/APPROACH] [ALTERNATES]&lt;br/&gt;&lt;b&gt;Optional fields&lt;/b&gt; are enclosed in &lt;b&gt;&amp;quot;[]&amp;quot;&lt;/b&gt;.&lt;br/&gt;All text until the first empty line is read as route description. Lines below can be used as a scratchpad.&lt;/p&gt;&lt;ul&gt;&lt;li&gt;&lt;b&gt;FROM&lt;/b&gt; is the required departure airport. Departure time &lt;b&gt;&amp;quot;ETD&amp;quot;&lt;/b&gt; is ignored.&lt;/li&gt;&lt;li&gt;&lt;b&gt;DEPARTRWY&lt;/b&gt; is an optional departure runway separated by a &lt;b&gt;&amp;quot;/&amp;quot;&lt;/b&gt;. Example &lt;b&gt;&amp;quot;EDDF/07R&amp;quot;&lt;/b&gt;. Must match available runways in SID if used.&lt;/li&gt;&lt;li&gt;&lt;b&gt;SPEEDALT&lt;/b&gt; optionally describes the flight plan cruise altitude and speed. Press the help button to open the user manual for format details.&lt;/li&gt;&lt;li&gt;&lt;b&gt;SIDTRANS&lt;/b&gt; is a SID and an optional transition, which can be specified as &lt;b&gt;&amp;quot;SID.TRANS&amp;quot;&lt;/b&gt; or &lt;b&gt;&amp;quot;SID TRANS&amp;quot;&lt;/b&gt;.&lt;/li&gt;&lt;li&gt;&lt;b&gt;ENROUTE&lt;/b&gt; is a space-separated list of navaids, navaid/airway/navaid combinations or user-defined waypoints as coordinates.&lt;/li&gt;&lt;li&gt;&lt;b&gt;STARTRANS&lt;/b&gt; is a STAR and an optional transition which can be specified as &lt;b&gt;&amp;quot;STAR.TRANS&amp;quot;&lt;/b&gt;, &lt;b&gt;&amp;quot;STAR TRANS&amp;quot;&lt;/b&gt;, &lt;b&gt;&amp;quot;TRANS.STAR&amp;quot;&lt;/b&gt; or &lt;b&gt;&amp;quot;TRANS STAR&amp;quot;&lt;/b&gt;&lt;/li&gt;&lt;li&gt;&lt;b&gt;TO&lt;/b&gt; is the required destination airport. The arrival time &lt;b&gt;&amp;quot;ETA&amp;quot;&lt;/b&gt; is ignored.&lt;/li&gt;&lt;li&gt;&lt;b&gt;APPROACH&lt;/b&gt; this is either the destination runway such as &lt;b&gt;&amp;quot;EDDH/08L&amp;quot;&lt;/b&gt; or an optional transition and approach separated by &lt;b&gt;&amp;quot;.&amp;quot;&lt;/b&gt;. The approach/runway field is optional.For example, &lt;b&gt;&amp;quot;CYLW/HUMEK.I16-Z&amp;quot;&lt;/b&gt; with a transition or &lt;b&gt;&amp;quot;CYLW/R16-Z&amp;quot;&lt;/b&gt; without a transition. Note that the approach must be entered in ARINC notation, which is shown in parentheses in the dock window &amp;quot;Search&amp;quot; on tab &amp;quot;Procedures&amp;quot;. The approach runway must match the allowed runways for a SID, if used.&lt;/li&gt;&lt;li&gt;&lt;b&gt;ALTERNATES&lt;/b&gt; is a list of alternate or en-route airports depending on the selected option.&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;&lt;b&gt;Click on the button &amp;quot;Menu&amp;quot; (&lt;img height=&quot;%1&quot; src=&quot;:/littlenavmap/resources/icons/menubutton.svg&quot; /&gt;) for options to customize the reading and writing of the route description.&lt;/b&gt;&lt;/p&gt;&lt;p&gt;&lt;b&gt;Click the button &amp;quot;Help&amp;quot; below to open the online manual for more information.&lt;/b&gt;&lt;/p&gt;</source>
-        <translation>&lt;p&gt;&lt;b&gt;&lt;big&gt;Schnellhilfe&lt;/big&gt;&lt;/b&gt;&lt;/p&gt;&lt;p&gt;&lt;b&gt;Format:&lt;/b&gt; FROM[ETD][/DEPARTRWY] [SPEEDALT] [SIDTRANS] [ENROUTE] [STARTRANS] TO[ETA][/APPROACH] [ALTERNATES]&lt;br/&gt;&lt;b&gt;Optionale Felder&lt;/b&gt; sind in &lt;b&gt;&amp;quot;[]&amp;quot; eingefasst&lt;/b&gt;.&lt;br/&gt;Der gesamte Text bis zur ersten Leerzeile wird als Routenbeschreibung gelesen. Die Zeilen darunter können als Notizblock verwendet werden.&lt;/p&gt;&lt;ul&gt;&lt;li&gt;&lt;b&gt;FROM&lt;/b&gt; ist der notwendige Startflugplatz. Startzeit &lt;b&gt;&amp;quot;ETD&amp;quot;&lt;/b&gt; wird ignoriert.&lt;/li&gt;&lt;li&gt;&lt;b&gt;DEPARTRWY&lt;/b&gt; ist der optinale Start-Runway mit einen &lt;b&gt;&amp;quot;/&amp;quot; abgetrennt&lt;/b&gt;. Beispiel &lt;b&gt;&amp;quot;EDDF/07R&amp;quot;&lt;/b&gt;. Muss immer zur SID passen, wenn vorhanden.&lt;/li&gt;&lt;li&gt;&lt;b&gt;SPEEDALT&lt;/b&gt; Beschreibt optional die Reiseflughöhe und -geschwindigkeit des Flugplans. Klicken Sie auf die Hilfe-Schaltfläche, um das Benutzerhandbuch für Formatdetails zu öffnen.&lt;/li&gt;&lt;li&gt;&lt;b&gt;SIDTRANS&lt;/b&gt; ist eine SID mit optionalen Übergang, die als &lt;b&gt;&amp;quot;SID.TRANS&amp;quot;&lt;/b&gt; oder &lt;b&gt;&amp;quot;SID TRANS&amp;quot;&lt;/b&gt; eingegeben werden kann.&lt;/li&gt;&lt;li&gt;&lt;b&gt;ENROUTE&lt;/b&gt; ist eine durch Leerzeichen getrennte Liste von Navigationshilfen, Kombinationen von Navigationshilfen/Luftstraßen/Navigationshilfen oder benutzerdefinierten Wegpunkten als Koordinaten.&lt;/li&gt;&lt;li&gt;&lt;b&gt;STARTRANS&lt;/b&gt; ist eine STAR mit optionalen Übergang, die als&lt;b&gt;&amp;quot;STAR.TRANS&amp;quot;&lt;/b&gt;, &lt;b&gt;&amp;quot;STAR TRANS&amp;quot;&lt;/b&gt;, &lt;b&gt;&amp;quot;TRANS.STAR&amp;quot;&lt;/b&gt; oder &lt;b&gt;&amp;quot;TRANS STAR&amp;quot;&lt;/b&gt; eingegeben werden kann&lt;/li&gt;&lt;li&gt;&lt;b&gt;TO&lt;/b&gt; ist der notwendige Zielflugplatz. Die Ankunftszeit &lt;b&gt;&amp;quot;ETA&amp;quot;&lt;/b&gt; wird ignoriert.&lt;/li&gt;&lt;li&gt;&lt;b&gt;APPROACH&lt;/b&gt; ist entweder der Ziel-Runway, wie &lt;b&gt;&amp;quot;EDDH/08L&amp;quot;&lt;/b&gt; oder eine optionaler Übergangund Anflug, die mit &lt;b&gt;&amp;quot;.&amp;quot;&lt;/b&gt; getrennt sind. Der Anflug bzw. Ziel-Runway ist optional. Zum Beispiel &lt;b&gt;&amp;quot;CYLW/HUMEK.I16-Z&amp;quot;&lt;/b&gt; mit einen Übergang oder &lt;b&gt;&amp;quot;CYLW/R16-Z&amp;quot;&lt;/b&gt; ohne Übergang. Beachten Sie, dass der Anflug in ARINC-Notation eingegeben werden muss, die im Andockfenster &amp;quot;Suche&amp;quot; auf dem Reiter &amp;quot;Prozeduren&amp;quot; in Klammern angezeigt wird. Der Anflug-Runway muss mit dem erlaubten Runway für eine SID übereinstimmen, falls verwendet.&lt;/li&gt;&lt;li&gt;&lt;b&gt;ALTERNATES&lt;/b&gt;ist eine Liste von alternativen Flugplätzen oder Flugplätzen auf der Strecke, abhängig von der gewählten Einstellung.&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;&lt;b&gt;Klicken Sie auf die Schaltfläche &amp;quot;Menü&amp;quot; (&lt;img height=&quot;%1&quot; src=&quot;:/littlenavmap/resources/icons/menubutton.svg&quot; /&gt;) für Einstellungen zum Anpassen des Lesens und Schreibens der Routenbeschreibung.&lt;/b&gt;&lt;/p&gt;&lt;p&gt;&lt;b&gt;Klicken Sie &amp;quot;Help&amp;quot; unten, um das Online-Handbuch für weitere Informationen zu öffnen.&lt;/b&gt;&lt;/p&gt;</translation>
+        <translation>&lt;p&gt;&lt;b&gt;&lt;big&gt;Schnellhilfe&lt;/big&gt;&lt;/b&gt;&lt;/p&gt;&lt;p&gt;&lt;b&gt;Format:&lt;/b&gt; FROM[ETD][/DEPARTRWY] [SPEEDALT] [SIDTRANS] [ENROUTE] [STARTRANS] TO[ETA][/APPROACH] [ALTERNATES]&lt;br/&gt;&lt;b&gt;Optionale Felder&lt;/b&gt; sind in &lt;b&gt;&amp;quot;[]&amp;quot; eingefasst&lt;/b&gt;.&lt;br/&gt;Der gesamte Text bis zur ersten Leerzeile wird als Routenbeschreibung gelesen. Die Zeilen darunter können als Notizbereich verwendet werden.&lt;/p&gt;&lt;ul&gt;&lt;li&gt;&lt;b&gt;FROM&lt;/b&gt; ist der notwendige Startflugplatz. Startzeit &lt;b&gt;&amp;quot;ETD&amp;quot;&lt;/b&gt; wird ignoriert.&lt;/li&gt;&lt;li&gt;&lt;b&gt;DEPARTRWY&lt;/b&gt; ist der optionale Startrunway mit einen &lt;b&gt;&amp;quot;/&amp;quot;&lt;/b&gt; abgetrennt. Beispiel &lt;b&gt;&amp;quot;EDDF/07R&amp;quot;&lt;/b&gt;. Muss immer zur SID passen, wenn vorhanden.&lt;/li&gt;&lt;li&gt;&lt;b&gt;SPEEDALT&lt;/b&gt; Beschreibt optional die Reiseflughöhe und -geschwindigkeit des Flugplans. Klicken Sie auf die Hilfe-Schaltfläche, um das Benutzerhandbuch mit Details zum Format zu öffnen.&lt;/li&gt;&lt;li&gt;&lt;b&gt;SIDTRANS&lt;/b&gt; ist eine SID mit optionalen Übergang, die als &lt;b&gt;&amp;quot;SID.TRANS&amp;quot;&lt;/b&gt; oder &lt;b&gt;&amp;quot;SID TRANS&amp;quot;&lt;/b&gt; eingegeben werden kann.&lt;/li&gt;&lt;li&gt;&lt;b&gt;ENROUTE&lt;/b&gt; ist eine durch Leerzeichen getrennte Liste von Navigationshilfen, Kombinationen von Navigationshilfen/Luftstraßen/Navigationshilfen oder benutzerdefinierten Wegpunkten als Koordinaten.&lt;/li&gt;&lt;li&gt;&lt;b&gt;STARTRANS&lt;/b&gt; ist eine STAR mit optionalen Übergang, die als &lt;b&gt;&amp;quot;STAR.TRANS&amp;quot;&lt;/b&gt;, &lt;b&gt;&amp;quot;STAR TRANS&amp;quot;&lt;/b&gt;, &lt;b&gt;&amp;quot;TRANS.STAR&amp;quot;&lt;/b&gt; oder &lt;b&gt;&amp;quot;TRANS STAR&amp;quot;&lt;/b&gt; eingegeben werden kann.&lt;/li&gt;&lt;li&gt;&lt;b&gt;TO&lt;/b&gt; ist der notwendige Zielflugplatz. Die Ankunftszeit &lt;b&gt;&amp;quot;ETA&amp;quot;&lt;/b&gt; wird ignoriert.&lt;/li&gt;&lt;li&gt;&lt;b&gt;APPROACH&lt;/b&gt; ist entweder der Zielrunway, wie &lt;b&gt;&amp;quot;EDDH/08L&amp;quot;&lt;/b&gt; oder ein optionaler Übergang und Anflug, die mit &lt;b&gt;&amp;quot;.&amp;quot;&lt;/b&gt; getrennt sind. Der Anflug bzw. Zielrunway ist optional. Zum Beispiel &lt;b&gt;&amp;quot;CYLW/HUMEK.I16-Z&amp;quot;&lt;/b&gt; mit einen Übergang oder &lt;b&gt;&amp;quot;CYLW/R16-Z&amp;quot;&lt;/b&gt; ohne Übergang. Beachten Sie, dass der Anflug in ARINC-Notation eingegeben werden muss, die im Dockfenster &amp;quot;Suche&amp;quot; auf dem Reiter &amp;quot;Prozeduren&amp;quot; in Klammern angezeigt wird. Der Anflugrunway muss mit dem erlaubten Runways für eine SID übereinstimmen, falls verwendet.&lt;/li&gt;&lt;li&gt;&lt;b&gt;ALTERNATES&lt;/b&gt; ist eine Liste von alternativen Flugplätzen oder Flugplätzen auf der Strecke, abhängig von der gewählten Einstellung.&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;&lt;b&gt;Klicken Sie auf die Schaltfläche &amp;quot;Menü&amp;quot; (&lt;img height=&quot;%1&quot; src=&quot;:/littlenavmap/resources/icons/menubutton.svg&quot; /&gt;) für Einstellungen zum Anpassen des Lesens und Schreibens der Routenbeschreibung.&lt;/b&gt;&lt;/p&gt;&lt;p&gt;&lt;b&gt;Klicken Sie &amp;quot;Hilfe&amp;quot; unten, um das Online-Handbuch für weitere Informationen zu öffnen.&lt;/b&gt;&lt;/p&gt;</translation>
     </message>
     <message>
         <location filename="src/routestring/routestringdialog.cpp" line="162"/>
