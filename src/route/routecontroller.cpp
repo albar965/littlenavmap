@@ -5370,8 +5370,8 @@ void RouteController::updateModelHighlightsAndErrors()
   }
 
   bool night = NavApp::isCurrentGuiStyleNight();
-  const QColor& defaultColor = QApplication::palette().color(QPalette::Normal, QPalette::Text);
-  const QColor& invalidColor = night ? mapcolors::routeInvalidTableColorDark : mapcolors::routeInvalidTableColor;
+  const QColor defaultColor = QApplication::palette().color(QPalette::Normal, QPalette::Text);
+  const QColor invalidColor = night ? mapcolors::routeInvalidTableColorDark : mapcolors::routeInvalidTableColor;
 
   for(int row = 0; row < model->rowCount(); row++)
   {
