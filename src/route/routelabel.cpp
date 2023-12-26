@@ -565,11 +565,11 @@ void RouteLabel::updateFooterErrorLabel()
   if(!toolTipText.isEmpty())
   {
     ui->labelRouteError->setVisible(true);
-    ui->labelRouteError->setText(HtmlBuilder::errorMessage(tr("Found problems. Click here for details.")));
+    ui->labelRouteError->setText(HtmlBuilder::errorMessage(tr("Found problems in flight plan. Click here for details.")));
 
     // Disallow text wrapping
     ui->labelRouteError->setToolTip(toolTipText);
-    ui->labelRouteError->setStatusTip(tr("Found problems."));
+    ui->labelRouteError->setStatusTip(tr("Found problems in flight plan."));
   }
   else
   {
