@@ -854,9 +854,11 @@ macx {
          -change  $$INSTALL_MARBLE_DYLIB \
           @executable_path/../Frameworks/libmarblewidget-qt5.25.dylib $$OUT_PWD/littlenavmap.app/Contents/PlugIns
 
+# Needs "-rpath" in GUI
 #  INSTALL_MARBLE_DYLIB_CMD=install_name_tool \
-#         -change $$clean_path($$MARBLE_BUILD_PATH/src/lib/marble/libmarblewidget-qt5.25.dylib) \
-#          @executable_path/../Frameworks/libmarblewidget-qt5.25.dylib $$OUT_PWD/littlenavmap.app/Contents/PlugIns
+#         -change  $$INSTALL_MARBLE_DYLIB \
+#         -rpath @executable_path/../Frameworks/libmarblewidget-qt5.25.dylib $$OUT_PWD/littlenavmap.app/Contents/PlugIns
+
 
   DEPLOY_APP=\"$$PWD/../deploy/Little Navmap.app\"
   DEPLOY_DIR=\"$$PWD/../deploy\"
