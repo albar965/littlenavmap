@@ -27,7 +27,7 @@
 
 #include <QLineF>
 
-// Altitude resuling from vertical angle is adjusted to restriction if close with this limit
+// Altitude resulting from vertical angle is adjusted to restriction if close with this limit
 const float VERT_ANGLE_ALT_ADJUST_LIMIT_FT = 100.f;
 
 // Tolerance when checking vertical angle with restrictions
@@ -1417,9 +1417,9 @@ void RouteAltitude::calculateArrival()
   // Need to step from procedure over missed so that airport is caught too
   for(int i = destinationAirportLegIndex; i >= 0; i--)
   {
-    RouteAltitudeLeg& alt = (*this)[i];
+    RouteAltitudeLeg& altLeg = (*this)[i];
 
-    if(alt.isMissed())
+    if(altLeg.isMissed())
       continue;
 
     RouteAltitudeLeg *lastAltLeg = i < destinationLegIdx ? &(*this)[i + 1] : nullptr;
@@ -1457,17 +1457,17 @@ void RouteAltitude::calculateArrival()
       {
         // Calculate next altitude from vertical angle and use this as new altitude
         // tan(alpha)=a/b - looking for b
-        alt.restriction.verticalAngleAlt = lastAlt + ageo::nmToFeet(ageo::tanDeg(-lastAltLeg->verticalAngle) * distFromRight);
+        altLeg.restriction.verticalAngleAlt = lastAlt + ageo::nmToFeet(ageo::tanDeg(-lastAltLeg->verticalAngle) * distFromRight);
 
         // Correct calculated verticalAngleAlt since there might be small differences causing validation errors
-        adjustVertAngleAltForRestriction(alt.restriction);
-        newAltitude = alt.restriction.verticalAngleAlt;
+        adjustVertAngleAltForRestriction(altLeg.restriction);
+        newAltitude = altLeg.restriction.verticalAngleAlt;
       }
       else
       {
         // Use a default value of 3 nm per 1000 ft if performance is not available
         newAltitude = lastAlt + distFromRight * descentRateWindFtPerNm;
-        alt.restriction.verticalAngleAlt = map::INVALID_ALTITUDE_VALUE;
+        altLeg.restriction.verticalAngleAlt = map::INVALID_ALTITUDE_VALUE;
       }
     }
 
@@ -1475,21 +1475,21 @@ void RouteAltitude::calculateArrival()
     qDebug() << Q_FUNC_INFO << "newAltitude" << newAltitude;
 #endif
 
-    if(!alt.isEmpty())
+    if(!altLeg.isEmpty())
     {
       // Remember geometry which is not changed by altitude restrictions for calculation of cruise intersection
       float uncorrectedAltitude = newAltitude;
 
       // Get new altitude corrected by restrictions
-      newAltitude = adjustAltitudeForRestriction(newAltitude, alt.restriction);
+      newAltitude = adjustAltitudeForRestriction(newAltitude, altLeg.restriction);
 
 #ifdef DEBUG_INFORMATION_ROUTE_ALT
       qDebug() << Q_FUNC_INFO << "newAltitude adjusted" << newAltitude;
 #endif
 
       // Correct calculated altitude restriction if the result from the path angle is not accurate
-      if(alt.restriction.verticalAngleAlt < map::INVALID_ALTITUDE_VALUE)
-        alt.restriction.verticalAngleAlt = newAltitude;
+      if(altLeg.restriction.verticalAngleAlt < map::INVALID_ALTITUDE_VALUE)
+        altLeg.restriction.verticalAngleAlt = newAltitude;
 
       // Avoid climbing (up the descent slope) above any below/at/between restrictions
       float maxAlt = findApproachMaxAltitude(i + 1);
@@ -1498,6 +1498,14 @@ void RouteAltitude::calculateArrival()
         // Adjust only if there is no vertical angle restriction on the next/right leg
         if(lastAltLeg == nullptr || !lastAltLeg->isVerticalProcAngleValid())
           newAltitude = std::min(newAltitude, maxAlt);
+
+        // Have a vertical angle but the resulting altitude is above the maximum found ahead
+        // Example: MMBT MMGL/PLADE.I29-Z
+        if(altLeg.restriction.verticalAngleAlt < map::INVALID_ALTITUDE_VALUE && maxAlt < altLeg.restriction.verticalAngleAlt)
+        {
+          altLeg.restriction.verticalAngleAlt = maxAlt;
+          newAltitude = maxAlt;
+        }
       }
 
 #ifdef DEBUG_INFORMATION_ROUTE_ALT
@@ -1529,7 +1537,7 @@ void RouteAltitude::calculateArrival()
 
         // Reached TOD - calculate distance
         distanceTopOfDescent = distanceForAltitude(value(i + 1).getGeometry().constLast(),
-                                                   QPointF(alt.getDistanceFromStart(), uncorrectedAltitude), cruiseAltitude);
+                                                   QPointF(altLeg.getDistanceFromStart(), uncorrectedAltitude), cruiseAltitude);
         legIndexTopOfDescent = i + 1;
 
 #ifdef DEBUG_INFORMATION_ROUTE_ALT
@@ -1540,10 +1548,10 @@ void RouteAltitude::calculateArrival()
         {
           if(!lastAltLeg->topOfClimb)
             // Adjust only if not modified by TOC calculation
-            alt.setY2(std::min(newAltitude, cruiseAltitude));
+            altLeg.setY2(std::min(newAltitude, cruiseAltitude));
 
           // Adjust neighbor too
-          lastAltLeg->setY1(alt.y2());
+          lastAltLeg->setY1(altLeg.y2());
 
           // Append point to allow drawing the bend at TOD - TOC position might be already included in leg
           lastAltLeg->geometry.insert(lastAltLeg->geometry.size() - 1, QPointF(distanceTopOfDescent, cruiseAltitude));
@@ -1560,18 +1568,18 @@ void RouteAltitude::calculateArrival()
       }
 
       // Adjust altitude to be above last and below cruise
-      alt.setY2(newAltitude);
-      alt.setY2(std::min(alt.y2(), cruiseAltitude));
+      altLeg.setY2(newAltitude);
+      altLeg.setY2(std::min(altLeg.y2(), cruiseAltitude));
 
       if(lastAltLeg != nullptr)
-        alt.setY2(std::max(alt.y2(), lastLegAlt));
-      if(i == destinationLegIdx && i != departureLegIndex && !alt.topOfClimb)
-        alt.setY1(alt.y2());
+        altLeg.setY2(std::max(altLeg.y2(), lastLegAlt));
+      if(i == destinationLegIdx && i != departureLegIndex && !altLeg.topOfClimb)
+        altLeg.setY1(altLeg.y2());
 
       if(lastAltLeg != nullptr)
-        lastAltLeg->setY1(alt.y2());
+        lastAltLeg->setY1(altLeg.y2());
 
-      lastAlt = alt.y2();
+      lastAlt = altLeg.y2();
     }
   }
 }
