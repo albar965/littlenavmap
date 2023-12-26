@@ -76,7 +76,8 @@ const static float MAX_RUNWAY_DISTANCE_METER = 150.f; // First iteration
 const static float MAX_RUNWAY_DISTANCE_METER_2 = 2000.f; // Second iteration if first failed
 const static float MAX_RUNWAY_DISTANCE_METER_3 = 10000.f; // Third iteration if second failed
 
-const static float MAX_FUZZY_AIRPORT_DISTANCE_METER = 500.f;
+const static float MAX_FUZZY_AIRPORT_DISTANCE_METER = 2000.f;
+const static float MAX_FUZZY_AIRPORT_DISTANCE_METER_UNIQUE = 10000.f;
 
 AirportQuery::AirportQuery(atools::sql::SqlDatabase *sqlDb, bool nav)
   : navdata(nav), db(sqlDb)
@@ -350,12 +351,18 @@ void AirportQuery::getAirportFuzzy(map::MapAirport& airport, const map::MapAirpo
     getAirportByIdent(airportByIdent, airportCopy.ident);
 
     // Try other codes if given as second attempt
+    bool foundByIdent = false;
     if(airportByIdent.isValid())
+    {
       airports.append(airportByIdent);
+      foundByIdent = true;
+    }
 
     // Sort by distance and remove too far away in case an ident was assigned to a new airport
+    // Allow more distance if result is unique
     maptools::sortByDistance(airports, airportCopy.position);
-    maptools::removeByDistance(airports, airportCopy.position, MAX_FUZZY_AIRPORT_DISTANCE_METER);
+    maptools::removeByDistance(airports, airportCopy.position,
+                               foundByIdent ? MAX_FUZZY_AIRPORT_DISTANCE_METER_UNIQUE : MAX_FUZZY_AIRPORT_DISTANCE_METER);
 
     if(airports.isEmpty())
     {
@@ -392,7 +399,8 @@ void AirportQuery::getAirportFuzzy(map::MapAirport& airport, const map::MapAirpo
     {
       // Sort by distance and remove too far away
       maptools::sortByDistance(airports, airportCopy.position);
-      maptools::removeByDistance(airports, airportCopy.position, MAX_FUZZY_AIRPORT_DISTANCE_METER);
+      maptools::removeByDistance(airports, airportCopy.position, foundByIdent ?
+                                 MAX_FUZZY_AIRPORT_DISTANCE_METER_UNIQUE : MAX_FUZZY_AIRPORT_DISTANCE_METER);
 
       if(!airports.isEmpty())
         // Assign to cache object
