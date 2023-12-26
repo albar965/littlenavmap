@@ -1283,7 +1283,7 @@ void RouteStringReader::destinationInternal(map::MapAirport& destinationAirport,
   airportSim(destinationAirport, airportIdent);
 
   // Check if list is large enough to hold a destination
-  if(destinationAirport.isValid() && items.size() > 1 && index > 0)
+  if(destinationAirport.isValid() && !items.isEmpty() && index >= 0)
   {
     // Resolve approach information =================================
     if(!approach.isEmpty())
