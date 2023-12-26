@@ -1214,7 +1214,7 @@ void ProcedureQuery::postProcessLegsForRoute(proc::MapProcedureLegs& starLegs, c
 bool ProcedureQuery::doesRunwayMatchSidOrStar(const proc::MapProcedureLegs& procedure, const QString& runway)
 {
   return doesSidStarRunwayMatch(runway, procedure.arincName, {runway}) ||
-         atools::fs::util::runwayEqual(runway, procedure.arincName);
+         atools::fs::util::runwayAlmostEqual(runway, procedure.arincName);
 }
 
 void ProcedureQuery::processLegErrors(proc::MapProcedureLegs& legs) const
