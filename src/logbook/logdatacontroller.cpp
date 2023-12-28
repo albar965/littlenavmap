@@ -669,7 +669,7 @@ void LogdataController::cleanupLogEntries()
   qDebug() << Q_FUNC_INFO;
 
   // Create a dialog with tree checkboxes =====================
-  atools::gui::ChoiceDialog choiceDialog(mainWindow, QApplication::applicationName() + tr(" - Cleanup Logbook"),
+  atools::gui::ChoiceDialog choiceDialog(mainWindow, QCoreApplication::applicationName() + tr(" - Cleanup Logbook"),
                                          tr("Select criteria for cleanup.\nNote that you can undo this change."),
                                          lnm::SEARCHTAB_LOGDATA_CLEANUP_DIALOG, "LOGBOOK.html#logbook-cleanup");
 
@@ -926,7 +926,7 @@ void LogdataController::exportCsv()
     };
 
     // Build a choice dialog with several checkboxes =========================
-    atools::gui::ChoiceDialog choiceDialog(mainWindow, QApplication::applicationName() + tr(" - Logbook Export"),
+    atools::gui::ChoiceDialog choiceDialog(mainWindow, QCoreApplication::applicationName() + tr(" - Logbook Export"),
                                            tr("Select export options for logbook"), lnm::LOGDATA_EXPORT_CSV,
                                            "LOGBOOK.html#import-and-export");
     choiceDialog.setHelpOnlineUrl(lnm::helpOnlineUrl);
@@ -1041,7 +1041,7 @@ void LogdataController::convertUserdata()
         html.li(err, atools::util::html::NO_ENTITIES);
       html.olEnd();
 
-      TextDialog error(mainWindow, QApplication::applicationName() + tr(" - Conversion Errors"),
+      TextDialog error(mainWindow, QCoreApplication::applicationName() + tr(" - Conversion Errors"),
                        "LOGBOOK.html#convert-errors"); // anchor for future use
       error.setHtmlMessage(html.getHtml(), true /* print to log */);
       QGuiApplication::restoreOverrideCursor();
@@ -1051,7 +1051,7 @@ void LogdataController::convertUserdata()
     {
       // No errors ======================
       QGuiApplication::restoreOverrideCursor();
-      QMessageBox::information(mainWindow, QApplication::applicationName(), resultText);
+      atools::gui::Dialog::information(mainWindow, resultText);
     }
 
     mainWindow->showLogbookSearch();

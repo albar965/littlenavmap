@@ -963,7 +963,7 @@ bool UserdataController::exportSelectedQuestion(bool& selected, bool& append, bo
     SELECTED, APPEND, HEADER, XP12
   };
 
-  atools::gui::ChoiceDialog choiceDialog(mainWindow, QApplication::applicationName() + tr(" - Userpoint Export Options"),
+  atools::gui::ChoiceDialog choiceDialog(mainWindow, QCoreApplication::applicationName() + tr(" - Userpoint Export Options"),
                                          tr("Select export options for userpoints.\n\n"
                                             "Note that the field \"Tags\" is used for the ID of the airport "
                                             "terminal area and the waypoint type.\n"
@@ -1032,7 +1032,7 @@ void UserdataController::cleanupUserdata()
   };
 
   // Create a dialog with tree checkboxes =====================
-  atools::gui::ChoiceDialog choiceDialog(mainWindow, QApplication::applicationName() + tr(" - Cleanup Userpoints"),
+  atools::gui::ChoiceDialog choiceDialog(mainWindow, QCoreApplication::applicationName() + tr(" - Cleanup Userpoints"),
                                          tr("Select criteria for cleanup.\nNote that you can undo this change."),
                                          lnm::SEARCHTAB_USERDATA_CLEANUP_DIALOG, "USERPOINT.html#userpoint-cleanup");
 

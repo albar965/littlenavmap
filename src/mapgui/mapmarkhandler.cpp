@@ -32,8 +32,6 @@
 #include "settings/settings.h"
 #include "ui_mainwindow.h"
 
-#include <QMessageBox>
-
 MapMarkHandler::MapMarkHandler(MainWindow *mainWindowParam)
   : QObject(mainWindowParam), mainWindow(mainWindowParam)
 {
@@ -280,7 +278,7 @@ void MapMarkHandler::routeResetAll()
   qDebug() << Q_FUNC_INFO;
 
   // Create a dialog with four checkboxes
-  atools::gui::ChoiceDialog choiceDialog(mainWindow, QApplication::applicationName() + tr(" - Reset for new Flight"),
+  atools::gui::ChoiceDialog choiceDialog(mainWindow, QCoreApplication::applicationName() + tr(" - Reset for new Flight"),
                                          tr("Select items to reset for a new flight"), lnm::RESET_FOR_NEW_FLIGHT_DIALOG, "RESET.html");
   choiceDialog.setHelpOnlineUrl(lnm::helpOnlineUrl);
   choiceDialog.setHelpLanguageOnline(lnm::helpLanguageOnline());

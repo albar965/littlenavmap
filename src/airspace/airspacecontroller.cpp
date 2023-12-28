@@ -29,6 +29,7 @@
 #include "fs/userdata/airspacereadervatsim.h"
 #include "gui/errorhandler.h"
 #include "gui/mainwindow.h"
+#include "gui/dialog.h"
 #include "gui/textdialog.h"
 #include "gui/widgetstate.h"
 #include "app/navapp.h"
@@ -41,7 +42,6 @@
 #include <QAction>
 #include <QDir>
 #include <QDirIterator>
-#include <QMessageBox>
 #include <QProgressDialog>
 
 AirspaceController::AirspaceController(MainWindow *mainWindowParam,
@@ -468,13 +468,13 @@ void AirspaceController::loadAirspaces()
           html.li(err);
         html.olEnd();
 
-        TextDialog error(mainWindow, QApplication::applicationName() + tr(" - Errors"));
+        TextDialog error(mainWindow, QCoreApplication::applicationName() + tr(" - Errors"));
         error.setHtmlMessage(html.getHtml(), true /* print to log */);
         error.exec();
       }
       else
         // No errors ======================
-        QMessageBox::information(mainWindow, QApplication::applicationName(), message);
+        atools::gui::Dialog::information(mainWindow, message);
     }
 
     // Re-initialize queries again

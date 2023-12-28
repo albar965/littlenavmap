@@ -59,7 +59,10 @@ ConnectClient::ConnectClient(MainWindow *parent)
   atools::settings::Settings& settings = atools::settings::Settings::instance();
   verbose = settings.getAndStoreValue(lnm::OPTIONS_CONNECTCLIENT_DEBUG, false).toBool();
 
-  errorMessageBox = new QMessageBox(QMessageBox::Critical, QApplication::applicationName(), QString(), QMessageBox::Ok, mainWindow);
+  errorMessageBox = new QMessageBox(QMessageBox::Critical, QCoreApplication::applicationName(), QString(), QMessageBox::Ok, mainWindow);
+  errorMessageBox->setWindowFlag(Qt::WindowContextHelpButtonHint, false);
+  errorMessageBox->setWindowModality(Qt::ApplicationModal);
+  errorMessageBox->setTextInteractionFlags(Qt::TextSelectableByMouse);
 
   // Create FSX/P3D handler for SimConnect
   simConnectHandler = new atools::fs::sc::SimConnectHandler(verbose);
@@ -671,7 +674,7 @@ void ConnectClient::showXpconnectVersionWarning(const QString& xpconnectVersion)
 
   qWarning() << Q_FUNC_INFO << message;
 
-  int retval = QMessageBox::warning(mainWindow, QApplication::applicationName(), message, QMessageBox::Ok | QMessageBox::Help);
+  int retval = atools::gui::Dialog::warning(mainWindow, message, QMessageBox::Ok | QMessageBox::Help);
 
   if(retval == QMessageBox::Help)
     atools::gui::HelpHandler::openHelpUrlWeb(mainWindow, lnm::helpOnlineUrl + "XPCONNECT.html", lnm::helpLanguageOnline());
@@ -684,13 +687,13 @@ void ConnectClient::showTerminalError()
     if(!terminalErrorShown)
     {
       terminalErrorShown = true;
-      QMessageBox::warning(mainWindow, QApplication::applicationName(),
-                           tr("Too many errors when trying to connect to simulator.\n\n"
-                              "Not matching simulator interface or other SimConnect problem.\n\n"
-                              "Make sure to use the right version of %1 with the right simulator:\n"
-                              "%1 32-bit: FSX and P3D\n"
-                              "%1 64-bit: MSFS\n"
-                              "You have to restart %1 to resume.").arg(QApplication::applicationName()));
+      atools::gui::Dialog::warning(mainWindow,
+                                   tr("Too many errors when trying to connect to simulator.\n\n"
+                                      "Not matching simulator interface or other SimConnect problem.\n\n"
+                                      "Make sure to use the right version of %1 with the right simulator:\n"
+                                      "%1 32-bit: FSX and P3D\n"
+                                      "%1 64-bit: MSFS\n"
+                                      "You have to restart %1 to resume.").arg(QCoreApplication::applicationName()));
     }
   }
 }
@@ -804,7 +807,7 @@ void ConnectClient::readFromSocketError(QAbstractSocket::SocketError)
                     arg(connectDialog->isAutoConnect() ? tr("\nWill retry to connect.") : QString());
 
       // Closed due to error
-      QMessageBox::critical(mainWindow, QApplication::applicationName(), msg, QMessageBox::Close);
+      atools::gui::Dialog::critical(mainWindow, msg, QMessageBox::Close);
     }
   }
 
@@ -894,8 +897,7 @@ void ConnectClient::writeReplyToSocket(atools::fs::sc::SimConnectReply& reply)
     if(reply.getStatus() != atools::fs::sc::OK)
     {
       // Something went wrong - shutdown
-      QMessageBox::critical(mainWindow, QApplication::applicationName(), tr("Error writing reply to Little Navconnect: %1.").
-                            arg(reply.getStatusText()));
+      atools::gui::Dialog::critical(mainWindow, tr("Error writing reply to Little Navconnect: %1.").arg(reply.getStatusText()));
       closeSocket(false);
       return;
     }

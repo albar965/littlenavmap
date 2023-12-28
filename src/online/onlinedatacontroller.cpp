@@ -35,7 +35,6 @@
 #include "fs/sc/simconnectdata.h"
 
 #include <QDebug>
-#include <QMessageBox>
 #include <QTextCodec>
 #include <QCoreApplication>
 
@@ -492,8 +491,7 @@ void OnlinedataController::stopAllProcesses()
 
 void OnlinedataController::showMessageDialog()
 {
-  QMessageBox::information(mainWindow, QApplication::applicationName(),
-                           tr("Message from downloaded status file:\n\n%2\n").arg(manager->getMessageFromStatus()));
+  atools::gui::Dialog::information(mainWindow, tr("Message from downloaded status file:\n\n%2\n").arg(manager->getMessageFromStatus()));
 }
 
 const LineString *OnlinedataController::airspaceGeometryCallback(const QString& callsign, atools::fs::online::fac::FacilityType type)

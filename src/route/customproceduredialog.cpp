@@ -64,7 +64,7 @@ CustomProcedureDialog::CustomProcedureDialog(QWidget *parent, const map::MapAirp
 
   restoreState();
 
-  setWindowTitle(QApplication::applicationName() % tr(" - Select Runway"));
+  setWindowTitle(QCoreApplication::applicationName() % tr(" - Select Runway"));
   ui->labelCustomProcRunway->setText(dialogHeader);
 
   // Show or hide widgets not relevant for departure

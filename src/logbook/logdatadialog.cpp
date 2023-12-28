@@ -55,13 +55,13 @@ LogdataDialog::LogdataDialog(QWidget *parent, ld::LogdataDialogMode mode)
     showCheckbox = false;
 
     if(mode == ld::EDIT_ONE)
-      setWindowTitle(QApplication::applicationName() + tr(" - Edit Logbook Entry"));
+      setWindowTitle(QCoreApplication::applicationName() + tr(" - Edit Logbook Entry"));
     else if(mode == ld::ADD)
-      setWindowTitle(QApplication::applicationName() + tr(" - Add Logbook Entry"));
+      setWindowTitle(QCoreApplication::applicationName() + tr(" - Add Logbook Entry"));
   }
   else if(mode == ld::EDIT_MULTIPLE)
   {
-    setWindowTitle(QApplication::applicationName() + tr(" - Edit Logbook Entries"));
+    setWindowTitle(QCoreApplication::applicationName() + tr(" - Edit Logbook Entries"));
     showCheckbox = true;
 
     // Hide all widgets that are not applicable to multi edit

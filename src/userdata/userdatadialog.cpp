@@ -60,16 +60,16 @@ UserdataDialog::UserdataDialog(QWidget *parent, ud::UserdataDialogMode mode, Use
     showLatLon = true;
 
     if(mode == ud::EDIT_ONE)
-      setWindowTitle(QApplication::applicationName() + tr(" - Edit Userpoint"));
+      setWindowTitle(QCoreApplication::applicationName() + tr(" - Edit Userpoint"));
     else if(mode == ud::ADD)
     {
-      setWindowTitle(QApplication::applicationName() + tr(" - Add Userpoint"));
+      setWindowTitle(QCoreApplication::applicationName() + tr(" - Add Userpoint"));
       ui->comboBoxUserdataType->setCurrentText(DEFAULT_TYPE);
     }
   }
   else if(mode == ud::EDIT_MULTIPLE)
   {
-    setWindowTitle(QApplication::applicationName() + tr(" - Edit Userpoints"));
+    setWindowTitle(QCoreApplication::applicationName() + tr(" - Edit Userpoints"));
     showCheckbox = true;
     showLatLon = false;
   }

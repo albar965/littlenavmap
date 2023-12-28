@@ -44,7 +44,6 @@
 #include "web/webcontroller.h"
 
 #include <QFileInfo>
-#include <QMessageBox>
 #include <QDesktopServices>
 #include <QColorDialog>
 #include <QGuiApplication>
@@ -930,8 +929,8 @@ void OptionsDialog::buttonBoxClicked(QAbstractButton *button)
   {
     qDebug() << "OptionsDialog::resetDefaultClicked";
 
-    int result = QMessageBox::question(this, QApplication::applicationName(), tr("Reset all options to default?"),
-                                       QMessageBox::No | QMessageBox::Yes, QMessageBox::No);
+    int result = atools::gui::Dialog::question(this, tr("Reset all options to default?"),
+                                               QMessageBox::No | QMessageBox::Yes, QMessageBox::No);
 
     if(result == QMessageBox::Yes)
     {
@@ -1021,10 +1020,9 @@ void OptionsDialog::checkOfficialOnlineUrls()
         qWarning() << Q_FUNC_INFO << "Update of" << ui->spinBoxOptionsOnlineUpdate->value()
                    << "s for url" << url << "host" << host;
         NavApp::closeSplashScreen();
-        QMessageBox::warning(this, QApplication::applicationName(),
-                             tr("Do not use an update period smaller than %1 seconds "
-                                "for official networks like VATSIM, IVAO or PilotEdge.\n\n"
-                                "Resetting update period back to %1 seconds.").arg(MIN_ONLINE_UPDATE));
+        atools::gui::Dialog::warning(this, tr("Do not use an update period smaller than %1 seconds "
+                                              "for official networks like VATSIM, IVAO or PilotEdge.\n\n"
+                                              "Resetting update period back to %1 seconds.").arg(MIN_ONLINE_UPDATE));
 
         // Reset both widget and data
         ui->spinBoxOptionsOnlineUpdate->setValue(MIN_ONLINE_UPDATE);
@@ -1061,9 +1059,8 @@ void OptionsDialog::onlineTestUrl(const QString& url, bool statusFile)
     }
 
     if(ok)
-      QMessageBox::information(this, QApplication::applicationName(),
-                               tr("<p>Success. First lines in file:</p><hr/><code>%1</code><hr/><br/>").
-                               arg(result.mid(0, 6).join("<br/>")));
+      atools::gui::Dialog::information(this, tr("<p>Success. First lines in file:</p><hr/><code>%1</code><hr/><br/>").
+                                       arg(result.mid(0, 6).join("<br/>")));
     else
     {
       if(statusFile)
@@ -1619,9 +1616,8 @@ void OptionsDialog::testWeatherNoaaUrlClicked()
   QGuiApplication::restoreOverrideCursor();
 
   if(result)
-    QMessageBox::information(this, QApplication::applicationName(),
-                             tr("<p>Success. First lines in file:</p><hr/><code>%1</code><hr/><br/>").
-                             arg(resultStr.join("<br/>")));
+    atools::gui::Dialog::information(this, tr("<p>Success. First lines in file:</p><hr/><code>%1</code><hr/><br/>").
+                                     arg(resultStr.join("<br/>")));
   else
     atools::gui::Dialog::warning(this, tr("Failed. Reason:\n%1").arg(resultStr.join("\n")));
 }
@@ -1637,9 +1633,8 @@ void OptionsDialog::testWeatherVatsimUrlClicked()
   QGuiApplication::restoreOverrideCursor();
 
   if(result)
-    QMessageBox::information(this, QApplication::applicationName(),
-                             tr("<p>Success. First lines in file:</p><hr/><code>%1</code><hr/><br/>").
-                             arg(resultStr.join("<br/>")));
+    atools::gui::Dialog::information(this, tr("<p>Success. First lines in file:</p><hr/><code>%1</code><hr/><br/>").
+                                     arg(resultStr.join("<br/>")));
   else
     atools::gui::Dialog::warning(this, tr("Failed. Reason:\n%1").arg(resultStr.join("\n")));
 }
@@ -1661,8 +1656,8 @@ void OptionsDialog::testWeatherIvaoUrlClicked()
   QGuiApplication::restoreOverrideCursor();
 
   if(result)
-    QMessageBox::information(this, QApplication::applicationName(),
-                             tr("<p>Success. First lines in file:</p><hr/><code>%1</code><hr/><br/>").arg(resultStr.join("<br/>")));
+    atools::gui::Dialog::information(this,
+                                     tr("<p>Success. First lines in file:</p><hr/><code>%1</code><hr/><br/>").arg(resultStr.join("<br/>")));
   else
     atools::gui::Dialog::warning(this, tr("Failed. Reason:\n%1").arg(resultStr.join("\n")));
 }
@@ -1676,7 +1671,7 @@ void OptionsDialog::testWeatherNoaaWindUrlClicked()
   bool result = WeatherReporter::testUrl(resultStr, ui->lineEditOptionsWeatherNoaaWindUrl->text(), QString());
   QGuiApplication::restoreOverrideCursor();
   if(result)
-    QMessageBox::information(this, QApplication::applicationName(), tr("Success."));
+    atools::gui::Dialog::information(this, tr("Success."));
   else
     atools::gui::Dialog::warning(this, tr("Failed. Reason:\n%1").arg(resultStr.join("\n")));
 }
@@ -3084,7 +3079,7 @@ void OptionsDialog::buildFontDialog(const QFont& initialFont)
   if(fontDialog == nullptr)
   {
     fontDialog = new QFontDialog(initialFont, this);
-    fontDialog->setWindowTitle(tr("%1 - Select font").arg(QApplication::applicationName()));
+    fontDialog->setWindowTitle(tr("%1 - Select font").arg(QCoreApplication::applicationName()));
   }
 
   fontDialog->setCurrentFont(initialFont);
@@ -3146,8 +3141,7 @@ void OptionsDialog::selectGuiFontClicked()
     }
 
     if(corrected)
-      QMessageBox::warning(this, QApplication::applicationName(),
-                           tr("Font too large for user interface. Size was corrected. Maximum is 30 pixels/points."));
+      atools::gui::Dialog::warning(this, tr("Font too large for user interface. Size was corrected. Maximum is 30 pixels/points."));
 
     guiFont = selectedFont.toString();
     qDebug() << Q_FUNC_INFO << selectedFont;
@@ -3207,7 +3201,7 @@ void OptionsDialog::mapboxUserMapClicked()
 
   if(userNameItem != nullptr && userStyleItem != nullptr && tokenItem != nullptr)
   {
-    TextEditDialog dialog(this, QApplication::applicationName() % tr(" - Enter Mapbox Keys"), label, label2,
+    TextEditDialog dialog(this, QCoreApplication::applicationName() % tr(" - Enter Mapbox Keys"), label, label2,
                           "OPTIONS.html#mapboxtheme");
 
     // Prefill with present keys ==============
@@ -3238,21 +3232,21 @@ void OptionsDialog::mapboxUserMapClicked()
               tokenItem->setText(dialog.getText2().trimmed());
             }
             else
-              QMessageBox::warning(this, QApplication::applicationName(), tr("Mapbox Token is empty."));
+              atools::gui::Dialog::warning(this, tr("Mapbox Token is empty."));
           }
           else
-            QMessageBox::warning(this, QApplication::applicationName(), tr("Mapbox User Style not found in URL."));
+            atools::gui::Dialog::warning(this, tr("Mapbox User Style not found in URL."));
         }
         else
-          QMessageBox::warning(this, QApplication::applicationName(), tr("Mapbox Username not found in URL."));
+          atools::gui::Dialog::warning(this, tr("Mapbox Username not found in URL."));
       }
       else
-        QMessageBox::warning(this, QApplication::applicationName(), tr("Style URL has to start with \"mapbox://styles/\"."));
+        atools::gui::Dialog::warning(this, tr("Style URL has to start with \"mapbox://styles/\"."));
     }
   }
   else
-    QMessageBox::warning(this, QApplication::applicationName(), tr("One or more Mapbox keys are missing. "
-                                                                   "Installation might be incomplete since map themes are missing."));
+    atools::gui::Dialog::warning(this, tr("One or more Mapbox keys are missing. "
+                                          "Installation might be incomplete since map themes are missing."));
 }
 
 void OptionsDialog::removeSelectedDatabaseTableItems(QTableWidget *widget)

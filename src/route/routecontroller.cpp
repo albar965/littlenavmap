@@ -655,14 +655,14 @@ QString RouteController::getFlightplanTableAsHtmlDoc(float iconSizePixel) const
                            "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />"});
 
   atools::util::HtmlBuilder html(true);
-  html.doc(tr("%1 - %2").arg(QApplication::applicationName()).arg(QFileInfo(routeFilename).fileName()),
+  html.doc(tr("%1 - %2").arg(QCoreApplication::applicationName()).arg(QFileInfo(routeFilename).fileName()),
            css, QString() /* bodyStyle */, headerLines);
   html.text(NavApp::getRouteController()->getFlightplanTableAsHtml(iconSizePixel, true /* print */),
             atools::util::html::NO_ENTITIES);
 
   // Add footer ==============================
   html.p().small(tr("%1 Version %2 (revision %3) on %4 ").
-                 arg(QApplication::applicationName()).
+                 arg(QCoreApplication::applicationName()).
                  arg(QApplication::applicationVersion()).
                  arg(GIT_REVISION_LITTLENAVMAP).
                  arg(QLocale().toString(QDateTime::currentDateTime()))).pEnd();
@@ -1026,8 +1026,8 @@ void RouteController::restoreState()
           // Not a flight plan file
           clearFlightplan();
           NavApp::closeSplashScreen();
-          QMessageBox::warning(mainWindow, QApplication::applicationName(),
-                               tr("File \"%1\" is a not supported flight plan format or not a flight plan.").arg(cmdLineFlightplanFile));
+          atools::gui::Dialog::warning(mainWindow, tr("File \"%1\" is a not supported flight plan format or not a flight plan.").
+                                       arg(cmdLineFlightplanFile));
         }
       }
       else
@@ -1035,7 +1035,7 @@ void RouteController::restoreState()
         // No file or not readable
         clearFlightplan();
         NavApp::closeSplashScreen();
-        QMessageBox::warning(mainWindow, QApplication::applicationName(), message);
+        atools::gui::Dialog::warning(mainWindow, message);
       }
     }
     else if(!cmdLineFlightplanDescr.isEmpty())
@@ -1382,9 +1382,9 @@ void RouteController::loadFlightplanRouteStr(const QString& routeString)
                    false /* changed */, !altIncluded /* adjustAltitude */, false /* undo */, false /* warnAltitude */);
 
   if(reader.hasErrorMessages() || reader.hasWarningMessages())
-    QMessageBox::warning(mainWindow, QApplication::applicationName(),
-                         tr("<p>Errors reading flight plan route description<br/><b>%1</b><br/>from command line:</p><p>%2</p>").
-                         arg(routeString).arg(reader.getAllMessages().join("<br>")));
+    atools::gui::Dialog::warning(mainWindow,
+                                 tr("<p>Errors reading flight plan route description<br/><b>%1</b><br/>from command line:</p><p>%2</p>").
+                                 arg(routeString).arg(reader.getAllMessages().join("<br>")));
 }
 
 bool RouteController::loadFlightplan(const QString& filename)
@@ -2454,7 +2454,7 @@ void RouteController::routeTableOptions()
 {
   qDebug() << Q_FUNC_INFO;
 
-  atools::gui::TreeDialog treeDialog(mainWindow, QApplication::applicationName() % tr(" - Flight Plan Table"),
+  atools::gui::TreeDialog treeDialog(mainWindow, QCoreApplication::applicationName() % tr(" - Flight Plan Table"),
                                      tr("Select header lines and flight plan table columns to show.\n"
                                         "You can move and resize columns by clicking into the flight plan column headers."),
                                      lnm::ROUTE_FLIGHTPLAN_COLUMS_DIALOG, "FLIGHTPLAN.html#flight-plan-table-columns",
@@ -3486,7 +3486,6 @@ void RouteController::routeDelete(int index)
 {
   deleteSelectedLegs({index});
 }
-
 
 void RouteController::deleteSelectedLegsTriggered()
 {

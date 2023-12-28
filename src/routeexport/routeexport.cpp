@@ -131,13 +131,13 @@ void RouteExport::routeMultiExport()
   if(!errorFormats.isEmpty())
   {
     // One or more paths are not valid - do not export
-    QMessageBox::warning(mainWindow, QApplication::applicationName(),
-                         tr("<p>The following export formats have an invalid path or filename pattern:</p>"
-                              "<ul><li>%1</li></ul>"
-                                "<p>Export stopped.</p>"
-                                  "<p>Go to: Main menu -&gt; &quot;File&quot; -&gt; &quot;Multiexport Flight Plan Options&quot; or "
-                                    "press Ctrl+Alt+Shift+M and correct the fields highlighted in red.</p>").
-                         arg(errorFormats.join("</li><li>")));
+    atools::gui::Dialog::warning(mainWindow,
+                                 tr("<p>The following export formats have an invalid path or filename pattern:</p>"
+                                      "<ul><li>%1</li></ul>"
+                                        "<p>Export stopped.</p>"
+                                          "<p>Go to: Main menu -&gt; &quot;File&quot; -&gt; &quot;Multiexport Flight Plan Options&quot; or "
+                                            "press Ctrl+Alt+Shift+M and correct the fields highlighted in red.</p>").
+                                 arg(errorFormats.join("</li><li>")));
   }
   else
   {

@@ -158,12 +158,12 @@ void MapThemeHandler::loadThemes()
     qWarning() << Q_FUNC_INFO << errors;
 
     NavApp::closeSplashScreen();
-    QMessageBox::warning(mainWindow, QApplication::applicationName(),
-                         tr("<p>Found errors in map %2:</p>"
-                              "<ul><li>%1</li></ul>"
-                                "<p>Ignoring duplicate or incorrect %2.</p>"
-                                  "<p>Note that all other valid map themes are loaded and can be used despite this message.</p>").
-                         arg(errors.join("</li><li>")).arg(errors.size() == 1 ? tr("map theme") : tr("map themes")));
+    atools::gui::Dialog::warning(mainWindow,
+                                 tr("<p>Found errors in map %2:</p>"
+                                      "<ul><li>%1</li></ul>"
+                                        "<p>Ignoring duplicate or incorrect %2.</p>"
+                                          "<p>Note that all other valid map themes are loaded and can be used despite this message.</p>").
+                                 arg(errors.join("</li><li>")).arg(errors.size() == 1 ? tr("map theme") : tr("map themes")));
   }
 
   // Sort themes first by online/offline status and then case insensitive by name
@@ -853,8 +853,7 @@ void MapThemeHandler::validateMapThemeDirectories()
   if(!msg.isEmpty())
   {
     NavApp::closeSplashScreen();
-    QMessageBox::warning(NavApp::getQMainWidget(),
-                         QCoreApplication::applicationName(), tr("Base path(s) for map themes not found.\n%1").arg(msg.join(tr(",\n"))));
+    atools::gui::Dialog::warning(NavApp::getQMainWidget(), tr("Base path(s) for map themes not found.\n%1").arg(msg.join(tr(",\n"))));
   }
 }
 

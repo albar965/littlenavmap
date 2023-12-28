@@ -282,7 +282,7 @@ void TrackController::tracksLoaded()
     QString boxMessage = tr("<p>Tracks downloaded.</p><ul>%1</ul>%2").arg(str.join("")).arg(err);
 
     NavApp::closeSplashScreen();
-    QMessageBox::warning(mainWindow, QApplication::applicationName(), boxMessage);
+    atools::gui::Dialog::warning(mainWindow, boxMessage);
     NavApp::setStatusMessage(tr("Track download finished with errors."), true /* addToLog */);
   }
   else

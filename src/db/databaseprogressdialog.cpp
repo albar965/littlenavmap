@@ -30,7 +30,7 @@ DatabaseProgressDialog::DatabaseProgressDialog(QWidget *parent, const QString& s
 
   ui->setupUi(this);
 
-  setWindowTitle(tr("%1 - Loading %2").arg(QApplication::applicationName()).arg(simulatorName));
+  setWindowTitle(tr("%1 - Loading %2").arg(QCoreApplication::applicationName()).arg(simulatorName));
 
   connect(ui->buttonBoxDatabaseProgress, &QDialogButtonBox::clicked, this, &DatabaseProgressDialog::buttonBoxClicked);
   restoreState();

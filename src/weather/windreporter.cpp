@@ -29,7 +29,6 @@
 #include "gui/dialog.h"
 
 #include <QToolButton>
-#include <QMessageBox>
 #include <QDir>
 
 static const double queryRectInflationFactor = 0.2;
@@ -381,8 +380,7 @@ void WindReporter::windDownloadFailed(const QString& error, int errorCode)
   {
     // Get rid of splash in case this happens on startup
     NavApp::closeSplashScreen();
-    QMessageBox::warning(NavApp::getQMainWidget(), QApplication::applicationName(),
-                         tr("Error downloading or reading wind data: %1 (%2)").arg(error).arg(errorCode));
+    atools::gui::Dialog::warning(NavApp::getQMainWidget(), tr("Error downloading or reading wind data: %1 (%2)").arg(error).arg(errorCode));
     downloadErrorReported = true;
   }
   updateToolButtonState();

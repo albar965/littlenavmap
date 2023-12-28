@@ -56,7 +56,7 @@ ImageExportDialog::ImageExportDialog(QWidget *parent, const QString& titleParam,
   setWindowModality(Qt::ApplicationModal);
 
   ui->setupUi(this);
-  setWindowTitle(QApplication::applicationName() + titleParam);
+  setWindowTitle(QCoreApplication::applicationName() + titleParam);
 
   ui->buttonBox->button(QDialogButtonBox::Ok)->setDefault(true);
   ui->comboBoxResolution->setFocus();

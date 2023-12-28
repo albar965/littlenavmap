@@ -1265,9 +1265,8 @@ void ProcedureSearch::attachProcedure()
   {
     if(procedureLegs->hasHardError)
     {
-      QMessageBox::warning(mainWindow, QApplication::applicationName(),
-                           tr("Procedure has errors and cannot be added to the flight plan.\n"
-                              "This can happen due to inconsistent navdata, missing waypoints or other reasons."));
+      atools::gui::Dialog::warning(mainWindow, tr("Procedure has errors and cannot be added to the flight plan.\n"
+                                                  "This can happen due to inconsistent navdata, missing waypoints or other reasons."));
     }
     else if(procedureLegs->hasError)
     {

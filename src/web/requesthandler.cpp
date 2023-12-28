@@ -380,7 +380,7 @@ inline void RequestHandler::handleHtmlFileRequest(HttpRequest& request, HttpResp
       t.enableWarnings();
 
     // Set general variables ==============================
-    t.setVariable(QStringLiteral(u"applicationName"), QApplication::applicationName());
+    t.setVariable(QStringLiteral(u"applicationName"), QCoreApplication::applicationName());
     t.setVariable(QStringLiteral(u"applicationVersion"), QApplication::applicationVersion());
     t.setVariable(QStringLiteral(u"helpUrl"),
                   atools::gui::HelpHandler::getHelpUrlWeb(lnm::helpOnlineUrl + QStringLiteral(u"WEBSERVER.html"),
@@ -535,7 +535,7 @@ void RequestHandler::showError(HttpRequest& request, HttpResponse& response, int
 
   // Get error template and fill it ======================
   Template t = WebApp::getTemplateCache()->getTemplate("error", request.getHeader("Accept-Language"));
-  t.setVariable("applicationName", QApplication::applicationName());
+  t.setVariable("applicationName", QCoreApplication::applicationName());
   t.setVariable("applicationVersion", QApplication::applicationVersion());
   t.setVariable("statuscode", QString::number(status));
   t.setVariable("statustext", text);

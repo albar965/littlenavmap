@@ -220,7 +220,7 @@ MainWindow::MainWindow()
                                          settings.getAndStoreValue(lnm::OPTIONS_DOCKHANDLER_DEBUG, false).toBool());
 
     marbleAboutDialog = new Marble::MarbleAboutDialog(this);
-    marbleAboutDialog->setApplicationTitle(QApplication::applicationName());
+    marbleAboutDialog->setApplicationTitle(QCoreApplication::applicationName());
 
     routeExport = new RouteExport(this);
     simbriefHandler = new SimBriefHandler(this);
@@ -658,7 +658,7 @@ void MainWindow::showFaqPage()
 
 void MainWindow::showOfflineHelp()
 {
-  HelpHandler::openFile(this, HelpHandler::getHelpFile(lnm::helpOfflineFile, OptionData::instance().getLanguage()));
+  HelpHandler::openFile(this, HelpHandler::getHelpFile(lnm::helpOfflineFile, OptionData::getLanguage()));
 }
 
 void MainWindow::openLogFile()
@@ -1813,8 +1813,7 @@ void MainWindow::showMapInstallation()
   if(msg.isEmpty())
     helpHandler->openFile(cacheMapThemeDir);
   else
-    QMessageBox::warning(this, QApplication::applicationName(),
-                         msg % tr("\n\nSet the path to additional map themes in options on page \"Cache and Files\""));
+    atools::gui::Dialog::warning(this, msg % tr("\n\nSet the path to additional map themes in options on page \"Cache and Files\""));
 }
 
 /* Updates label and tooltip for connection status */
@@ -2134,13 +2133,16 @@ bool MainWindow::routeCheckForChanges()
     return true;
 
   QMessageBox msgBox(this);
-  msgBox.setWindowTitle(QApplication::applicationName());
+  msgBox.setWindowTitle(QCoreApplication::applicationName());
   msgBox.setText(routeController->getRouteConst().isEmpty() ?
                  tr("Flight Plan has been changed.\n"
                     "There are changes which can be restored by using undo.") :
                  tr("Flight Plan has been changed."));
   msgBox.setInformativeText(tr("Save changes?"));
   msgBox.setStandardButtons(QMessageBox::Save | QMessageBox::No | QMessageBox::Cancel);
+  msgBox.setWindowFlag(Qt::WindowContextHelpButtonHint, false);
+  msgBox.setWindowModality(Qt::ApplicationModal);
+  msgBox.setTextInteractionFlags(Qt::TextSelectableByMouse);
 
   int retval = msgBox.exec();
 
@@ -2358,7 +2360,7 @@ void MainWindow::trailLoadGpxFile(const QString& file)
         mapWidget->loadAircraftTrail(file);
     }
     else
-      QMessageBox::warning(this, QApplication::applicationName(), tr("The file \"%1\" is no valid GPX file.").arg(file));
+      atools::gui::Dialog::warning(this, tr("The file \"%1\" is no valid GPX file.").arg(file));
   }
 }
 
@@ -2374,7 +2376,7 @@ void MainWindow::trailAppendGpx()
     if(atools::fs::gpx::GpxIO::isGpxFile(file))
       mapWidget->appendAircraftTrail(file);
     else
-      QMessageBox::warning(this, QApplication::applicationName(), tr("The file \"%1\" is no valid GPX file.").arg(file));
+      atools::gui::Dialog::warning(this, tr("The file \"%1\" is no valid GPX file.").arg(file));
   }
 }
 
@@ -2604,8 +2606,7 @@ void MainWindow::kmlOpen()
 
   }
   else
-    QMessageBox::warning(this, QApplication::applicationName(),
-                         tr("Cannot load file. Reason:\n\n%1").arg(kmlFile));
+    atools::gui::Dialog::warning(this, tr("Cannot load file. Reason:\n\n%1").arg(kmlFile));
 }
 
 /* Called from menu or toolbar by action */
@@ -2626,8 +2627,7 @@ void MainWindow::kmlOpenRecent(const QString& kmlFile)
     }
   }
   else
-    QMessageBox::warning(this, QApplication::applicationName(),
-                         tr("Cannot load file. Reason:\n\n%1").arg(kmlFile));
+    atools::gui::Dialog::warning(this, tr("Cannot load file. Reason:\n\n%1").arg(kmlFile));
 }
 
 void MainWindow::layoutOpen()
@@ -2897,14 +2897,12 @@ void MainWindow::mapSaveImageAviTab()
         }
       }
       else
-        QMessageBox::warning(this, QApplication::applicationName(),
-                             tr("Map does not cover window.\n"
-                                "Ensure that the map fills the window completely."));
+        atools::gui::Dialog::warning(this, tr("Map does not cover window.\n"
+                                              "Ensure that the map fills the window completely."));
     }
   }
   else
-    QMessageBox::warning(this, QApplication::applicationName(),
-                         tr("You have to switch to the Mercator map projection before saving the image."));
+    atools::gui::Dialog::warning(this, tr("You have to switch to the Mercator map projection before saving the image."));
 }
 
 void MainWindow::mapCopyToClipboard()
@@ -3140,8 +3138,7 @@ void MainWindow::openOptionsDialog()
 #if defined(Q_OS_MACOS)
   if(QApplication::activeModalWidget() != nullptr)
   {
-    QMessageBox::warning(this, QApplication::applicationName(),
-                         tr("Close other dialog boxes before opening preferences"));
+    atools::gui::Dialog::warning(this, tr("Close other dialog boxes before opening preferences"));
     return;
   }
 #endif
@@ -3442,8 +3439,7 @@ void MainWindow::mainWindowShownDelayed()
                                   "</body>"
                                 "</html>");
 
-    int retval = QMessageBox::information(this, tr("%1 - Introduction").arg(QApplication::applicationName()), text,
-                                          QMessageBox::Ok, QMessageBox::Cancel);
+    int retval = atools::gui::Dialog::information(this, text, QMessageBox::Ok, QMessageBox::Cancel);
 
     if(retval == QMessageBox::Ok)
     {
@@ -3503,15 +3499,14 @@ void MainWindow::runDirToolManual()
 void MainWindow::runDirTool(bool manual)
 {
   bool alreadyComplete, created;
-  DirTool dirTool(this, atools::documentsDir(), QApplication::applicationName(), lnm::ACTIONS_SHOW_INSTALL_DIRS);
+  DirTool dirTool(this, atools::documentsDir(), QCoreApplication::applicationName(), lnm::ACTIONS_SHOW_INSTALL_DIRS);
   dirTool.runIfMissing(manual, alreadyComplete, created);
 
   qDebug() << Q_FUNC_INFO << "alreadyComplete" << alreadyComplete << "manual" << manual << "created" << created;
 
   if(alreadyComplete && manual && !created)
-    QMessageBox::information(this, QApplication::applicationName(),
-                             tr("<p>Directory structure for Little Navmap files is already complete.</p>"
-                                  "<p>Base directory is<br/>\"%1\"</p>").arg(dirTool.getApplicationDir()));
+    atools::gui::Dialog::information(this, tr("<p>Directory structure for Little Navmap files is already complete.</p>"
+                                                "<p>Base directory is<br/>\"%1\"</p>").arg(dirTool.getApplicationDir()));
 }
 
 void MainWindow::exitFullScreenPressed()
@@ -3768,19 +3763,19 @@ void MainWindow::resetAllSettings()
   QString settingPath = Settings::getPath();
 
   QMessageBox::StandardButton retval =
-    QMessageBox::warning(this, QApplication::applicationName() % tr("Reset all Settings "),
-                         tr("<b>This will reset all options, window layout, dialog layout, "
-                              "aircraft trail, map position history and file histories "
-                              "back to default and restart %1.</b><br/><br/>"
-                              "User features like range rings or patterns as well as "
-                              "scenery, logbook and userpoint databases are not affected.<br/><br/>"
-                              "A copy of the settings file<br/><br/>"
-                              "\"%2\"<br/><br/>"
-                              "will be created in the folder<br/><br/>"
-                              "\"%3\"<br/><br/>"
-                              "which allows you to undo this change."
-                            ).arg(QApplication::applicationName()).arg(settingFile).arg(settingPath),
-                         QMessageBox::Ok | QMessageBox::Cancel | QMessageBox::Help, QMessageBox::Cancel);
+    atools::gui::Dialog::warning(this,
+                                 tr("<b>This will reset all options, window layout, dialog layout, "
+                                      "aircraft trail, map position history and file histories "
+                                      "back to default and restart %1.</b><br/><br/>"
+                                      "User features like range rings or patterns as well as "
+                                      "scenery, logbook and userpoint databases are not affected.<br/><br/>"
+                                      "A copy of the settings file<br/><br/>"
+                                      "\"%2\"<br/><br/>"
+                                      "will be created in the folder<br/><br/>"
+                                      "\"%3\"<br/><br/>"
+                                      "which allows you to undo this change."
+                                    ).arg(QCoreApplication::applicationName()).arg(settingFile).arg(settingPath),
+                                 QMessageBox::Ok | QMessageBox::Cancel | QMessageBox::Help, QMessageBox::Cancel);
 
   if(retval == QMessageBox::Ok)
   {
@@ -4428,7 +4423,7 @@ void MainWindow::closeEvent(QCloseEvent *event)
       // Database compiling in background ==========================
       int result = dialog->showQuestionMsgBox(lnm::ACTIONS_SHOW_QUIT_LOADING,
                                               tr("%1 is loading the scenery library database in the background.\n"
-                                                 "Really quit and cancel the loading process?").arg(QApplication::applicationName()),
+                                                 "Really quit and cancel the loading process?").arg(QCoreApplication::applicationName()),
                                               tr("Do not &show this dialog again and cancel loading."),
                                               QMessageBox::Yes | QMessageBox::No, QMessageBox::No, QMessageBox::Yes);
 

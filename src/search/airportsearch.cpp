@@ -27,6 +27,7 @@
 #include "common/unit.h"
 #include "common/unitstringtool.h"
 #include "fs/util/fsutil.h"
+#include "gui/dialog.h"
 #include "gui/mainwindow.h"
 #include "gui/widgetstate.h"
 #include "gui/widgetutil.h"
@@ -41,7 +42,6 @@
 #include "sql/sqlrecord.h"
 #include "ui_mainwindow.h"
 
-#include <QMessageBox>
 #include <QProgressDialog>
 #include <QStringBuilder>
 
@@ -791,6 +791,9 @@ void AirportSearch::dataRandomAirportsReceived(bool isSuccess, int indexDepartur
       // Rename yes and no buttons
       box.setButtonText(QMessageBox::Yes, tr("&Use as Flight Plan"));
       box.setButtonText(QMessageBox::No, tr("&Search again"));
+      box.setWindowFlag(Qt::WindowContextHelpButtonHint, false);
+      box.setWindowModality(Qt::ApplicationModal);
+      box.setTextInteractionFlags(Qt::TextSelectableByMouse);
 
       int result = box.exec();
 
@@ -804,11 +807,7 @@ void AirportSearch::dataRandomAirportsReceived(bool isSuccess, int indexDepartur
       // Nothing to do
     }
     else
-    {
-      QMessageBox msgBox;
-      msgBox.setText(tr("No airports found in the search result satisfying the criteria."));
-      msgBox.exec();
-    }
+      atools::gui::Dialog::information(NavApp::getMainWindow(), tr("No airports found in the search result satisfying the criteria."));
   }
 
   delete data; // delete data created for threads

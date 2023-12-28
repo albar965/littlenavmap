@@ -187,7 +187,7 @@ void UpdateHandler::updateFound(atools::util::UpdateList updates)
   }
   else
     // Nothing found but notification requested for manual trigger
-    QMessageBox::information(mainWindow, QApplication::applicationName(), QObject::tr("No Updates available."));
+    atools::gui::Dialog::information(mainWindow, QObject::tr("No Updates available."));
 }
 
 /* Called by update checker */
@@ -201,7 +201,7 @@ void UpdateHandler::updateFailed(QString errorString)
                     arg(updateCheck->getUrl().toDisplayString()).arg(errorString);
 
   if(updateReason == UPDATE_REASON_MANUAL)
-    QMessageBox::warning(mainWindow, QApplication::applicationName(), message);
+    atools::gui::Dialog::warning(mainWindow, message);
   else
     atools::gui::Dialog(mainWindow).showWarnMsgBox(lnm::ACTIONS_SHOW_UPDATE_FAILED, message, tr("Do not &show this dialog again."));
 }

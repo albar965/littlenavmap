@@ -49,7 +49,7 @@ RunwaySelectionDialog::RunwaySelectionDialog(QWidget *parent, const map::MapAirp
 
   restoreState();
 
-  setWindowTitle(QApplication::applicationName() % tr(" - Select Runway"));
+  setWindowTitle(QCoreApplication::applicationName() % tr(" - Select Runway"));
 }
 
 RunwaySelectionDialog::~RunwaySelectionDialog()

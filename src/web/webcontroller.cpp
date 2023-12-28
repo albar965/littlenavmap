@@ -26,12 +26,12 @@
 #include "httpserver/httplistener.h"
 #include "common/htmlinfobuilder.h"
 #include "common/constants.h"
+#include "gui/dialog.h"
 
 #include <QSettings>
 #include <QCoreApplication>
 #include <QStandardPaths>
 #include <QDir>
-#include <QMessageBox>
 #include <QWidget>
 #include <QHostInfo>
 #include <QNetworkInterface>
@@ -134,8 +134,7 @@ void WebController::startServer()
   if(!listener->isListening())
   {
     // Not listening - display error dialog ====================================================
-    QMessageBox::warning(parentWidget, QCoreApplication::applicationName(),
-                         tr("Unable to start the server. Error:\n%1.").arg(listener->errorString()));
+    atools::gui::Dialog::warning(parentWidget, tr("Unable to start the server. Error:\n%1.").arg(listener->errorString()));
     stopServer();
   }
   else

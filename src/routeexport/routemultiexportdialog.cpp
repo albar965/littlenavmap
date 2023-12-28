@@ -782,9 +782,12 @@ void RouteMultiExportDialog::resetPathsAndSelection()
 {
   // Ask before resetting user data ==============
   QMessageBox msgBox(this);
-  msgBox.setWindowTitle(QApplication::applicationName());
+  msgBox.setWindowTitle(QCoreApplication::applicationName());
   msgBox.setText(tr("Reset selection, paths and filename patterns back to default?"));
   msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::Cancel);
+  msgBox.setWindowFlag(Qt::WindowContextHelpButtonHint, false);
+  msgBox.setWindowModality(Qt::ApplicationModal);
+  msgBox.setTextInteractionFlags(Qt::TextSelectableByMouse);
 
   if(msgBox.exec() == QMessageBox::Yes)
   {

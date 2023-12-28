@@ -566,10 +566,11 @@ bool AircraftPerfController::checkForChanges()
     return true;
 
   QMessageBox msgBox(mainWindow);
-  msgBox.setWindowTitle(QApplication::applicationName());
+  msgBox.setWindowTitle(QCoreApplication::applicationName());
   msgBox.setText(tr("Aircraft Performance has been changed."));
   msgBox.setInformativeText(tr("Save changes?"));
   msgBox.setStandardButtons(QMessageBox::Save | QMessageBox::No | QMessageBox::Cancel);
+  msgBox.setTextInteractionFlags(Qt::TextSelectableByMouse);
 
   int retval = msgBox.exec();
 
@@ -1406,7 +1407,7 @@ void AircraftPerfController::restoreState()
       {
         // No file or not readable
         NavApp::closeSplashScreen();
-        QMessageBox::warning(mainWindow, QApplication::applicationName(), message);
+        atools::gui::Dialog::warning(mainWindow,  message);
       }
     }
   }

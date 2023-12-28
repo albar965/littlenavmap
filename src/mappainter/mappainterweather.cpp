@@ -129,8 +129,7 @@ void MapPainterWeather::render()
   WeatherReporter *reporter = NavApp::getWeatherReporter();
   for(const PaintAirportType& airportWeather: qAsConst(visibleAirportWeather))
   {
-    atools::fs::weather::Metar metar =
-      reporter->getAirportWeather(*airportWeather.airport, true /* stationOnly */);
+    atools::fs::weather::Metar metar = reporter->getAirportWeather(*airportWeather.airport, true /* stationOnly */);
 
     if(metar.isValid())
       drawAirportWeather(metar, static_cast<float>(airportWeather.point.x()), static_cast<float>(airportWeather.point.y()));

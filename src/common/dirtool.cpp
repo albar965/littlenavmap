@@ -117,8 +117,7 @@ void DirTool::run(bool manual, bool& created)
     createAllDirs();
 
     if(!errors.isEmpty())
-      QMessageBox::warning(parentWidget, QCoreApplication::applicationName(),
-                           tr("Errors creating directory structure:\n%1").arg(errors.join("\n")));
+      atools::gui::Dialog::warning(parentWidget, tr("Errors creating directory structure:\n%1").arg(errors.join("\n")));
     else
     {
       updateOptions();

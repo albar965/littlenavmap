@@ -323,10 +323,13 @@ bool DatabaseManager::checkIncompatibleDatabases(bool *databasesErased)
       // Avoid the splash screen hiding the dialog
       NavApp::closeSplashScreen();
 
-      QMessageBox box(QMessageBox::Question, QApplication::applicationName(), msg.arg(databaseNames.join("<br/>")).arg(trailingMsg),
+      QMessageBox box(QMessageBox::Question, QCoreApplication::applicationName(), msg.arg(databaseNames.join("<br/>")).arg(trailingMsg),
                       QMessageBox::No | QMessageBox::Yes, mainWindow);
       box.button(QMessageBox::No)->setText(tr("&No and Exit Application"));
       box.button(QMessageBox::Yes)->setText(tr("&Erase"));
+      box.setWindowFlag(Qt::WindowContextHelpButtonHint, false);
+      box.setWindowModality(Qt::ApplicationModal);
+      box.setTextInteractionFlags(Qt::TextSelectableByMouse);
 
       int result = box.exec();
 
@@ -997,14 +1000,14 @@ void DatabaseManager::openWriteableDatabase(atools::sql::SqlDatabase *database, 
   }
   catch(atools::sql::SqlException& e)
   {
-    QMessageBox::critical(mainWindow, QApplication::applicationName(),
-                          tr("Cannot open %1 database. Reason:<br/><br/>"
-                             "%2<br/><br/>"
-                             "Is another instance of <i>%3</i> running?<br/><br/>"
-                             "Exiting now.").
-                          arg(displayName).
-                          arg(e.getSqlError().databaseText()).
-                          arg(QApplication::applicationName()));
+    atools::gui::Dialog::critical(mainWindow,
+                                  tr("Cannot open %1 database. Reason:<br/><br/>"
+                                     "%2<br/><br/>"
+                                     "Is another instance of <i>%3</i> running?<br/><br/>"
+                                     "Exiting now.").
+                                  arg(displayName).
+                                  arg(e.getSqlError().databaseText()).
+                                  arg(QCoreApplication::applicationName()));
 
     std::exit(1);
   }
@@ -1051,7 +1054,7 @@ void DatabaseManager::clearLanguageIndex()
 void DatabaseManager::loadLanguageIndex()
 {
   if(SqlUtil(databaseSim).hasTableAndRows("translation"))
-    languageIndex->readFromDb(databaseSim, OptionData::instance().getLanguage());
+    languageIndex->readFromDb(databaseSim, OptionData::getLanguage());
 }
 
 void DatabaseManager::clearAircraftIndex()
@@ -1119,14 +1122,14 @@ void DatabaseManager::checkForChangedNavAndSimDatabases()
       files.removeDuplicates();
       if(!files.isEmpty())
       {
-        QMessageBox::warning(mainWindow, QApplication::applicationName(),
-                             tr("<p style=\"white-space:pre\">"
-                                  "Detected a modification of one or more database files:<br/><br/>"
-                                  "&quot;%1&quot;"
-                                  "<br/><br/>"
-                                  "Always close <i>%2</i> before copying, overwriting or updating scenery library databases.</p>").
-                             arg(files.join(tr("&quot;<br/>&quot;"))).
-                             arg(QApplication::applicationName()));
+        atools::gui::Dialog::warning(mainWindow,
+                                     tr("<p style=\"white-space:pre\">"
+                                          "Detected a modification of one or more database files:<br/><br/>"
+                                          "&quot;%1&quot;"
+                                          "<br/><br/>"
+                                          "Always close <i>%2</i> before copying, overwriting or updating scenery library databases.</p>").
+                                     arg(files.join(tr("&quot;<br/>&quot;"))).
+                                     arg(QCoreApplication::applicationName()));
 
         databaseNav->recordFileMetadata();
         databaseSim->recordFileMetadata();
@@ -1357,18 +1360,18 @@ void DatabaseManager::checkSceneryOptions(bool manualCheck)
   {
     case navdb::CORRECT_NONE:
       if(manualCheck)
-        QMessageBox::information(mainWindow, tr("%1 - Validate scenery library mode").arg(QApplication::applicationName()),
-                                 navDbActionAuto->isChecked() ?
-                                 tr("Scenery library mode is correct. Mode is set automatically.") :
-                                 tr("No issues found. Scenery library mode is correct."));
+        atools::gui::Dialog::information(mainWindow,
+                                         navDbActionAuto->isChecked() ?
+                                         tr("Scenery library mode is correct. Mode is set automatically.") :
+                                         tr("No issues found. Scenery library mode is correct."));
       break;
 
     case navdb::CORRECT_EMPTY:
       if(manualCheck)
-        QMessageBox::information(mainWindow, tr("%1 - Validate Scenery Library Settings").arg(QApplication::applicationName()),
-                                 tr("Showing Navigraph airports since simulator database is empty.\n\n"
-                                    "You can load the simulator scenery library database in the menu\n"
-                                    "\"Scenery Library\" -> \"Load Scenery Library\"."));
+        atools::gui::Dialog::information(mainWindow,
+                                         tr("Showing Navigraph airports since simulator database is empty.\n\n"
+                                            "You can load the simulator scenery library database in the menu\n"
+                                            "\"Scenery Library\" -> \"Load Scenery Library\"."));
       break;
 
     case navdb::CORRECT_MSFS_HAS_NAVIGRAPH:
