@@ -50,7 +50,7 @@ static const int RUNWAY_HEADING_FONT_SIZE = 12;
 static const int RUNWAY_TEXT_FONT_SIZE = 16;
 static const int RUNWAY_NUMBER_FONT_SIZE = 20;
 static const int RUNWAY_NUMBER_SMALL_FONT_SIZE = 12;
-static const int TAXIWAY_TEXT_MIN_LENGTH = 15;
+static const int TAXIWAY_TEXT_MIN_LENGTH = 10;
 static const int RUNWAY_OVERVIEW_MIN_LENGTH_FEET = 8000;
 static const float AIRPORT_DIAGRAM_BACKGROUND_METER = 200.f;
 
@@ -471,10 +471,6 @@ void MapPainterAirport::drawAirportDiagram(const map::MapAirport& airport)
     // Draw taxiway names ---------------------------------
     if(!fast && mapLayerEffective->isAirportDiagramDetail())
     {
-      QFontMetricsF taxiMetrics(painter->font());
-      painter->setBackgroundMode(Qt::TransparentMode);
-      painter->setPen(QPen(mapcolors::taxiwayNameColor, 2, Qt::SolidLine, Qt::FlatCap));
-
       // Map all visible names to paths
       QMultiMap<QString, MapTaxiPath> map;
       for(const MapTaxiPath& taxipath : *taxipaths)
@@ -489,13 +485,10 @@ void MapPainterAirport::drawAirportDiagram(const map::MapAirport& airport)
         }
       }
 
-      painter->setBackgroundMode(Qt::OpaqueMode);
-      painter->setBackground(mapcolors::taxiwayNameBackgroundColor);
-
       QVector<MapTaxiPath> pathsToLabel;
       QList<MapTaxiPath> paths;
       const QStringList keys = map.uniqueKeys();
-      for(QString taxiname : keys)
+      for(const QString& taxiname : keys)
       {
         paths = map.values(taxiname);
         pathsToLabel.clear();
@@ -507,24 +500,24 @@ void MapPainterAirport::drawAirportDiagram(const map::MapAirport& airport)
           pathsToLabel.append(paths.at(paths.size() / 2));
         pathsToLabel.append(paths.constLast());
 
-        // Add space at start and end to avoid letters touching the background rectangle border
-        taxiname = " " % taxiname % " ";
-
         for(const MapTaxiPath& taxipath : pathsToLabel)
         {
-          bool visible;
-          QPointF start = wToSF(taxipath.start, DEFAULT_WTOS_SIZE, &visible);
-          QPointF end = wToSF(taxipath.end, DEFAULT_WTOS_SIZE, &visible);
+          bool visibleStart, visibleEnd;
+          QPointF start = wToSF(taxipath.start, DEFAULT_WTOS_SIZE, &visibleStart);
+          QPointF end = wToSF(taxipath.end, DEFAULT_WTOS_SIZE, &visibleEnd);
 
-          QRectF textrect = taxiMetrics.boundingRect(taxiname);
-
-          int length = atools::geo::simpleDistance(start.x(), start.y(), end.x(), end.y());
-          if(length > TAXIWAY_TEXT_MIN_LENGTH)
+          if(visibleStart && visibleEnd)
           {
-            // Only draw if segment is longer than 15 pixels
-            double x = (start.x() + end.x()) / 2. - textrect.width() / 2.;
-            double y = (start.y() + end.y()) / 2. + textrect.height() / 2. - taxiMetrics.descent();
-            painter->drawText(QPointF(x, y), taxiname);
+            QLineF line(start, end);
+
+            if(line.length() > TAXIWAY_TEXT_MIN_LENGTH)
+            {
+              // Only draw if segment is longer than 15 pixels
+              float x = static_cast<float>(line.center().x());
+              float y = static_cast<float>(line.center().y());
+              symbolPainter->textBoxF(painter, {taxiname}, mapcolors::taxiwayNameColor, x, y, textatt::CENTER /*| textatt::BOLD*/, 255,
+                                      mapcolors::taxiwayNameBackgroundColor);
+            }
           }
         }
       } // for(QString taxiname : map.keys())
