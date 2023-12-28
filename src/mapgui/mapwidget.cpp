@@ -802,15 +802,15 @@ void MapWidget::mousePressEvent(QMouseEvent *event)
            << "noRender()" << noRender();
 #endif
 
-  // Skip unneeded rendering after single mouseclick
-  skipRender = true;
-
   if(noRender())
   {
     // Zoomed to far out - reset cursor and ignore input
     setCursor(Qt::ArrowCursor);
     return;
   }
+
+  // Skip unneeded rendering after single mouseclick
+  skipRender = true;
 
 #ifdef DEBUG_MOVING_AIRPLANE
   debugMovingPlane(event);
@@ -1266,9 +1266,6 @@ void MapWidget::wheelEvent(QWheelEvent *event)
       }
     }
   }
-  else
-    // Skip unneeded rendering after single mouseclick
-    skipRender = true;
 
 #ifdef DEBUG_INFORMATION
   qDebug() << Q_FUNC_INFO << "distance NM" << atools::geo::kmToNm(distance())
