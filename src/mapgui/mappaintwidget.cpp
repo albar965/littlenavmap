@@ -1278,6 +1278,7 @@ void MapPaintWidget::paintEvent(QPaintEvent *paintEvent)
              << "noRender" << noRender() << "mapCoversViewport" << viewport()->mapCoversViewport();
   }
 
+#ifdef DEBUG_SKIP_RENDER
 #ifndef Q_OS_MACOS
   // This does not work on macOS due to different click and update handling
   if(skipRender)
@@ -1290,6 +1291,7 @@ void MapPaintWidget::paintEvent(QPaintEvent *paintEvent)
     if(viewport()->mapCoversViewport())
       return;
   }
+#endif
 #endif
 
   if(!painting)
