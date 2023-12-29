@@ -400,7 +400,12 @@ const QVector<QPolygonF *> CoordinateConverter::createPolygons(const atools::geo
 {
   QVector<QPolygonF *> polys;
   for(const LineString& ls : linestring.splitAtAntiMeridianList())
-    polys.append(createPolygonsInternal(ls, screenRect));
+  {
+    const QVector<QPolygonF *> polyVector = createPolygonsInternal(ls, screenRect);
+
+    if(!polyVector.isEmpty())
+      polys.append(polyVector);
+  }
   return polys;
 }
 
@@ -436,7 +441,7 @@ const QVector<QPolygonF *> CoordinateConverter::createPolygonsInternal(const ato
       }), polygon->end());
 
       // Close again
-      if(!polygon->isClosed())
+      if(!polygon->isClosed() && !polygon->isEmpty())
         polygon->append(polygon->constFirst());
     }
   }

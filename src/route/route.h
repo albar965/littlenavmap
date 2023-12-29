@@ -161,17 +161,6 @@ public:
   map::MapParking getDepartureParking() const;
   map::MapStart getDepartureStart() const;
 
-  /* Create copies of first and last to ease tracking */
-  const RouteLeg& getLastLeg() const
-  {
-    return constLast();
-  }
-
-  const RouteLeg& getFirstLeg() const
-  {
-    return constFirst();
-  }
-
   /* First leg of departure procedure. 1 if SID used otherwise 0. */
   int getSidLegIndex() const;
   const RouteLeg& getSidLeg() const;
@@ -547,6 +536,7 @@ public:
   using QList::move;
   using QList::clear;
   using QList::size;
+  using QList::constFirst;
 
   int getSizeWithoutAlternates() const;
 
@@ -746,7 +736,8 @@ private:
    * Used after route calculation. */
   void removeDuplicateRouteLegs();
 
-  /* Corrects the airways at the procedure entry and exit points as well as first leg */
+  /* Corrects the airways at the procedure entry and exit points as well as first leg.
+   * Needs updateIndex called before */
   void validateAirways();
 
   /* Remove any waypoints which positions overlap with procedures. Requires a flight plan that is cleaned up and contains

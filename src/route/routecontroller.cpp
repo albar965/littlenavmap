@@ -1621,7 +1621,8 @@ Route RouteController::getRouteForSelection() const
 {
   QList<int> rows = getSelectedRows(false /* reverse */);
   Route saveRoute(route);
-  saveRoute.removeAllExceptRange(rows.constFirst(), rows.constLast());
+  if(!rows.isEmpty())
+    saveRoute.removeAllExceptRange(rows.constFirst(), rows.constLast());
   saveRoute.updateIndicesAndOffsets();
   saveRoute.getFlightplan().adjustDepartureAndDestination(true /* force */); // Fill departure and destination fields
   return saveRoute;
@@ -1632,7 +1633,11 @@ bool RouteController::saveFlightplanLnmAsSelection(const QString& filename)
   // Range must not contains procedures or alternates.
   QList<int> rows = getSelectedRows(false /* reverse */);
   qDebug() << Q_FUNC_INFO << filename << rows;
-  return saveFlightplanLnmSelectionAs(filename, rows.constFirst(), rows.constLast());
+
+  if(!rows.isEmpty())
+    return saveFlightplanLnmSelectionAs(filename, rows.constFirst(), rows.constLast());
+  else
+    return false;
 }
 
 bool RouteController::saveFlightplanLnm()
@@ -2186,7 +2191,8 @@ void RouteController::adjustFlightplanAltitude()
 void RouteController::showInRoute(int index)
 {
   qDebug() << Q_FUNC_INFO << index;
-  if(index >= 0 && index < map::INVALID_INDEX_VALUE)
+
+  if(index >= 0 && index < model->rowCount())
   {
     // Ignore events triggering follow due to selection changes
     atools::util::ContextSaverBool saver(ignoreFollowSelection);
@@ -4507,7 +4513,7 @@ int RouteController::routeAddInternal(int id, atools::geo::Pos userPos, map::Map
     lastLeg = &route.value(insertIndex - 1);
   RouteLeg routeLeg(&flightplan);
   routeLeg.createFromDatabaseByEntry(insertIndex, lastLeg);
-  if(!userpointIdent.isEmpty())
+  if(!userpointIdent.isEmpty() && routeLeg.getFlightplanEntry() != nullptr)
     routeLeg.getFlightplanEntry()->setIdent(userpointIdent);
 
   route.insert(insertIndex, routeLeg);

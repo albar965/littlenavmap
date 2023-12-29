@@ -770,21 +770,25 @@ void MapPainterMark::paintAirspace(const map::MapAirspace& airspace)
     {
       const QVector<QPolygonF *> polygons = createPolygons(*lineString, context->screenRect);
 
-      if(!context->drawFast)
+      // Can be empty for online centers
+      if(!polygons.isEmpty())
       {
-        // Draw black background for outline
-        painter->setPen(outerPen);
+        if(!context->drawFast)
+        {
+          // Draw black background for outline
+          painter->setPen(outerPen);
+          for(const QPolygonF *polygon : polygons)
+            painter->drawPolygon(*polygon);
+          painter->setPen(innerPen);
+        }
+
         for(const QPolygonF *polygon : polygons)
           painter->drawPolygon(*polygon);
-        painter->setPen(innerPen);
+
+        QPointF center = polygons.constFirst()->boundingRect().center();
+        symbolPainter->textBoxF(painter, {map::airspaceNameMap(airspace, 20, true, true, true, true, true)}, innerPen,
+                                static_cast<float>(center.x()), static_cast<float>(center.y()), textatt::CENTER);
       }
-
-      for(const QPolygonF *polygon : polygons)
-        painter->drawPolygon(*polygon);
-
-      QPointF center = polygons.constFirst()->boundingRect().center();
-      symbolPainter->textBoxF(painter, {map::airspaceNameMap(airspace, 20, true, true, true, true, true)}, innerPen,
-                              static_cast<float>(center.x()), static_cast<float>(center.y()), textatt::CENTER);
 
       releasePolygons(polygons);
     }

@@ -522,6 +522,9 @@ void LogdataController::editLogEntries(const QVector<int>& ids)
 {
   qDebug() << Q_FUNC_INFO << ids;
 
+  if(ids.isEmpty())
+    return;
+
   SqlRecord rec = manager->getRecord(ids.constFirst());
   if(!rec.isEmpty())
   {

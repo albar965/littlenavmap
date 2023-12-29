@@ -601,20 +601,23 @@ void SymbolPainter::drawWindBarbs(QPainter *painter, float wind, float gust, flo
 void SymbolPainter::drawBarbFeathers(QPainter *painter, const QVector<int>& barbs, float lineLength, float barbLength5,
                                      float barbLength10, float barbLength50, float barbStep) const
 {
-  // Lenghten the line for the rectangle
-  float barbPos = barbs.constFirst() == 50 ? -lineLength + barbLength50 / 2.f : -lineLength;
-  for(int barb : barbs)
+  if(!barbs.isEmpty())
   {
-    if(barb == 50)
-      painter->drawPolygon(QPolygonF({QPointF(0.f, barbPos),
-                                      QPointF(-barbLength50, barbPos - barbLength50 / 2.f),
-                                      QPointF(0.f, barbPos - barbLength50 / 2.f)}));
-    else if(barb == 10)
-      painter->drawLine(QLineF(0.f, barbPos, -barbLength10, barbPos - barbLength10 / 2.f));
-    else if(barb == 5)
-      painter->drawLine(QLineF(0.f, barbPos, -barbLength5, barbPos - barbLength5 / 2.f));
+    // Lenghten the line for the rectangle
+    float barbPos = barbs.constFirst() == 50 ? -lineLength + barbLength50 / 2.f : -lineLength;
+    for(int barb : barbs)
+    {
+      if(barb == 50)
+        painter->drawPolygon(QPolygonF({QPointF(0.f, barbPos),
+                                        QPointF(-barbLength50, barbPos - barbLength50 / 2.f),
+                                        QPointF(0.f, barbPos - barbLength50 / 2.f)}));
+      else if(barb == 10)
+        painter->drawLine(QLineF(0.f, barbPos, -barbLength10, barbPos - barbLength10 / 2.f));
+      else if(barb == 5)
+        painter->drawLine(QLineF(0.f, barbPos, -barbLength5, barbPos - barbLength5 / 2.f));
 
-    barbPos += barbStep;
+      barbPos += barbStep;
+    }
   }
 }
 

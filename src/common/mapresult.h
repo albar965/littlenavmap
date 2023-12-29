@@ -245,6 +245,31 @@ struct MapResult
     return !aiAircraft.isEmpty();
   }
 
+  bool hasRangeMarks() const
+  {
+    return !rangeMarks.isEmpty();
+  }
+
+  bool hasDistanceMarks() const
+  {
+    return !distanceMarks.isEmpty();
+  }
+
+  bool hasHoldingMarks() const
+  {
+    return !holdingMarks.isEmpty();
+  }
+
+  bool hasPatternMarks() const
+  {
+    return !patternMarks.isEmpty();
+  }
+
+  bool hasMsaMarks() const
+  {
+    return !msaMarks.isEmpty();
+  }
+
   /* Special methods for the online and navdata airspaces which are stored mixed */
   bool hasSimNavUserAirspaces() const;
   bool hasOnlineAirspaces() const;

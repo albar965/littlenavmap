@@ -1531,28 +1531,29 @@ bool RouteExport::exportFlighplanAsUFmc(const QString& filename)
   // Q818
   // WOZEE
   // 99
-  QFile file(filename);
-  if(file.open(QFile::WriteOnly | QIODevice::Text))
+  if(!list.isEmpty())
   {
-    QTextStream stream(&file);
-    // Save start and destination
-    stream << list.constFirst() << endl << list.constLast() << endl;
+    QFile file(filename);
+    if(file.open(QFile::WriteOnly | QIODevice::Text))
+    {
+      QTextStream stream(&file);
+      // Save start and destination
+      stream << list.constFirst() << endl << list.constLast() << endl;
 
-    // Waypoints and airways
-    for(int i = 1; i < list.size() - 1; i++)
-      stream << list.at(i) << endl;
+      // Waypoints and airways
+      for(int i = 1; i < list.size() - 1; i++)
+        stream << list.at(i) << endl;
 
-    // File end
-    stream << "99" << endl;
+      // File end
+      stream << "99" << endl;
 
-    file.close();
-    return true;
+      file.close();
+      return true;
+    }
+    else
+      atools::gui::ErrorHandler(mainWindow).handleIOError(file, tr("While saving UFMC file:"));
   }
-  else
-  {
-    atools::gui::ErrorHandler(mainWindow).handleIOError(file, tr("While saving UFMC file:"));
-    return false;
-  }
+  return false;
 }
 
 bool RouteExport::exportFlighplanAsRxpGns(const QString& filename, bool saveAsUserWaypoints)

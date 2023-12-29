@@ -507,7 +507,8 @@ void MapPainter::drawPolygons(Marble::GeoPainter *painter, const QVector<QPolygo
 
 void MapPainter::drawPolygon(Marble::GeoPainter *painter, const QPolygonF& polygon)
 {
-  painter->drawPolygon(polygon, Qt::OddEvenFill);
+  if(!polygon.isEmpty())
+    painter->drawPolygon(polygon, Qt::OddEvenFill);
 
 #ifdef DEBUG_INFORMATION_PAINT_POLYGON
   {

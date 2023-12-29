@@ -2578,7 +2578,8 @@ void Route::validateAirways()
   if(isEmpty())
     return;
 
-  first().getFlightplanEntry()->setAirway(QString());
+  if(first().getFlightplanEntry() != nullptr)
+    first().getFlightplanEntry()->setAirway(QString());
   first().setAirway(map::MapAirway());
 
   // Check arrival airway ===========================================================================
@@ -3439,8 +3440,14 @@ void Route::updateAirways(float& minAltitudeFt, float& maxAltitudeFt, bool adjus
       if(i == 1 && prevLeg.getMapType() == map::AIRPORT)
       {
         routeLeg.setAirway(map::MapAirway());
-        routeLeg.getFlightplanEntry()->setAirway(QString());
-        routeLeg.getFlightplanEntry()->setFlag(atools::fs::pln::entry::TRACK, false);
+
+        FlightplanEntry *flightplanEntry = routeLeg.getFlightplanEntry();
+
+        if(flightplanEntry != nullptr)
+        {
+          flightplanEntry->setAirway(QString());
+          flightplanEntry->setFlag(atools::fs::pln::entry::TRACK, false);
+        }
         continue;
       }
 

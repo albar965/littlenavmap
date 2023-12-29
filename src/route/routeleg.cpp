@@ -275,7 +275,8 @@ void RouteLeg::createFromDatabaseByEntry(int entryIndex, const RouteLeg *prevLeg
               qWarning() << Q_FUNC_INFO << "Found multiple parking spots for" << name;
 
             // Found one and position is close enough
-            parking = parkings.constFirst();
+            if(!parkings.isEmpty())
+              parking = parkings.constFirst();
 
             // Update flightplan with found name
             if(translateName)
@@ -407,17 +408,20 @@ void RouteLeg::updateMagvar(const RouteLeg *prevLeg)
 
 void RouteLeg::updateDepartAndDestAltitude(atools::fs::pln::FlightplanEntry *flightplanEntry)
 {
-  // Update altitude for all waypoint types having no altitude information
-  // Set to ground if not available
-  atools::fs::pln::entry::WaypointType wptype = flightplanEntry->getWaypointType();
-  if(wptype == atools::fs::pln::entry::USER || wptype == atools::fs::pln::entry::WAYPOINT || // These never have altitude
-     // VOR and NDB in MSFS have no altitude assigned
-     ((wptype == atools::fs::pln::entry::VOR || wptype == atools::fs::pln::entry::NDB) && atools::almostEqual(getAltitude(), 0.f)) ||
-     // Fix altitude for invalid airports
-     type == map::INVALID)
-    flightplanEntry->setAltitude(NavApp::getElevationProvider()->getElevationFt(getFlightplanEntry()->getPosition()));
-  else
-    flightplanEntry->setAltitude(getAltitude());
+  if(flightplanEntry != nullptr)
+  {
+    // Update altitude for all waypoint types having no altitude information
+    // Set to ground if not available
+    atools::fs::pln::entry::WaypointType wptype = flightplanEntry->getWaypointType();
+    if(wptype == atools::fs::pln::entry::USER || wptype == atools::fs::pln::entry::WAYPOINT || // These never have altitude
+       // VOR and NDB in MSFS have no altitude assigned
+       ((wptype == atools::fs::pln::entry::VOR || wptype == atools::fs::pln::entry::NDB) && atools::almostEqual(getAltitude(), 0.f)) ||
+       // Fix altitude for invalid airports
+       type == map::INVALID)
+      flightplanEntry->setAltitude(NavApp::getElevationProvider()->getElevationFt(getFlightplanEntry()->getPosition()));
+    else
+      flightplanEntry->setAltitude(getAltitude());
+  }
 }
 
 void RouteLeg::updateDistanceAndCourse(int entryIndex, const RouteLeg *prevLeg)
@@ -979,10 +983,7 @@ int RouteLeg::getFrequency() const
 const atools::fs::pln::FlightplanEntry& RouteLeg::getFlightplanEntry() const
 {
   if(index >= 0)
-  {
-    // if(isRoute())
     return flightplan->at(index);
-  }
   else
     qWarning() << Q_FUNC_INFO << "invalid index" << index;
 
@@ -992,10 +993,7 @@ const atools::fs::pln::FlightplanEntry& RouteLeg::getFlightplanEntry() const
 atools::fs::pln::FlightplanEntry *RouteLeg::getFlightplanEntry()
 {
   if(index >= 0)
-  {
-    // if(isRoute())
     return &(*flightplan)[index];
-  }
   else
     qWarning() << Q_FUNC_INFO << "invalid index" << index;
 

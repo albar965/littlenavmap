@@ -183,11 +183,8 @@ void FlightplanEntryBuilder::entryFromWaypoint(const map::MapWaypoint& waypoint,
   }
 }
 
-void FlightplanEntryBuilder::buildFlightplanEntry(const atools::geo::Pos& userPos,
-                                                  const map::MapResult& result,
-                                                  FlightplanEntry& entry,
-                                                  bool resolveWaypoints,
-                                                  map::MapTypes type)
+void FlightplanEntryBuilder::buildFlightplanEntry(const atools::geo::Pos& userPos, const map::MapResult& result, FlightplanEntry& entry,
+                                                  bool resolveWaypoints, map::MapTypes type)
 {
   map::MapTypes moType = type;
 

@@ -1245,10 +1245,8 @@ const proc::MapProcedureLegs *ProcedureSearch::fetchProcData(MapProcedureRef& re
 
 void ProcedureSearch::showProcedureTriggered()
 {
-  if(treeWidget->selectedItems().isEmpty())
-    return;
-
-  showEntry(treeWidget->selectedItems().constFirst(), false /* double click*/, true /* zoom */);
+  if(!treeWidget->selectedItems().isEmpty())
+    showEntry(treeWidget->selectedItems().constFirst(), false /* double click*/, true /* zoom */);
 }
 
 void ProcedureSearch::attachProcedure()

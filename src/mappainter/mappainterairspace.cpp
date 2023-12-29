@@ -216,7 +216,7 @@ void MapPainterAirspace::render()
         const map::MapAirspace *airspace = visibleAirspace.airspace;
 
         // Check if layer option enables text display for this airspace type
-        if(airspace->type & context->airspaceTextsByLayer)
+        if(airspace->type & context->airspaceTextsByLayer && !visibleAirspace.polygons.isEmpty())
         {
           // Build text depending on options
           QString airspaceText =

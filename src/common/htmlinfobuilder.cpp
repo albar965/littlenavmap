@@ -2942,8 +2942,7 @@ void HtmlInfoBuilder::waypointAirwayText(const MapWaypoint& waypoint, HtmlBuilde
       {
         // Sort airways by name
         std::sort(airwayTexts.begin(), airwayTexts.end(),
-                  [](const QStringList& item1, const QStringList& item2)
-        {
+                  [](const QStringList& item1, const QStringList& item2) {
           return item1.constFirst() == item2.constFirst() ? item1.at(1) < item2.at(1) : item1.constFirst() < item2.constFirst();
         });
 
@@ -4273,7 +4272,7 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
           }
           else if(route.getSizeWithoutAlternates() == 1)
             // Get altitude for single point plan
-            altitude = route.getFirstLeg().getAltitude();
+            altitude = route.constFirst().getAltitude();
 
           if(altitude < map::INVALID_ALTITUDE_VALUE)
             html.id(pid::NEXT_ALTITUDE).row2(tr("Altitude:"), Unit::altFeet(altitude));

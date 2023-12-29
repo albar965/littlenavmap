@@ -1811,7 +1811,6 @@ void MapPainterRoute::paintProcedurePoint(QSet<map::MapRef>& idMap, const proc::
   }
   else if(!navaids.vors.isEmpty() && wToSBuf(navaids.vors.constFirst().position, x, y, MARGINS))
   {
-
     const map::MapVor& vor = navaids.vors.constFirst();
     if(!idMap.contains(vor.getRef()))
     {
@@ -1826,7 +1825,6 @@ void MapPainterRoute::paintProcedurePoint(QSet<map::MapRef>& idMap, const proc::
   }
   else if(!navaids.ndbs.isEmpty() && wToSBuf(navaids.ndbs.constFirst().position, x, y, MARGINS))
   {
-
     const map::MapNdb& ndb = navaids.ndbs.constFirst();
     if(!idMap.contains(ndb.getRef()))
     {

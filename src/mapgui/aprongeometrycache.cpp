@@ -87,8 +87,7 @@ QPainterPath ApronGeometryCache::getApronGeometry(const map::MapApron& apron, fl
 
     // Calculate the coordinates of the reference point (first one) and move the whole path into required place for drawing
     bool visible;
-    QPointF refPoint = converter->wToSF(apron.geometry.boundary.constFirst().node,
-                                        CoordinateConverter::DEFAULT_WTOS_SIZE, &visible);
+    QPointF refPoint = converter->wToSF(apron.geometry.boundary.constFirst().node, CoordinateConverter::DEFAULT_WTOS_SIZE, &visible);
     boundaryPath.translate(refPoint.x(), refPoint.y());
 
     return boundaryPath;
@@ -109,8 +108,7 @@ QPainterPath ApronGeometryCache::getApronGeometry(const map::MapApron& apron, fl
 
     // Calculate reference point (first)
     bool visible;
-    QPointF refPoint = converter->wToSF(
-      apron.geometry.boundary.constFirst().node, CoordinateConverter::DEFAULT_WTOS_SIZE, &visible);
+    QPointF refPoint = converter->wToSF(apron.geometry.boundary.constFirst().node, CoordinateConverter::DEFAULT_WTOS_SIZE, &visible);
 
     // Create a copy for the cache
     painterPath = new QPainterPath(boundaryPath);

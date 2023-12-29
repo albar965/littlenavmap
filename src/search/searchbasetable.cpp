@@ -1924,42 +1924,42 @@ void SearchBaseTable::showOnMapTriggered()
       map::MapResult result;
       mapQuery->getMapObjectById(result, navType, airspaceSource, id, false /* airport from nav database */);
 
-      if(!result.airports.isEmpty())
+      if(result.hasAirports())
       {
         emit showRect(result.airports.constFirst().bounding, false);
         NavApp::setStatusMessage(tr("Showing airport on map."));
       }
-      else if(!result.airspaces.isEmpty())
+      else if(result.hasAirspaces())
       {
         emit showRect(result.airspaces.constFirst().bounding, false);
         NavApp::setStatusMessage(tr("Showing airspace on map."));
       }
-      else if(!result.vors.isEmpty())
+      else if(result.hasVor())
       {
         emit showPos(result.vors.constFirst().getPosition(), 0.f, false);
         NavApp::setStatusMessage(tr("Showing VOR on map."));
       }
-      else if(!result.ndbs.isEmpty())
+      else if(result.hasNdb())
       {
         emit showPos(result.ndbs.constFirst().getPosition(), 0.f, false);
         NavApp::setStatusMessage(tr("Showing NDB on map."));
       }
-      else if(!result.waypoints.isEmpty())
+      else if(result.hasWaypoints())
       {
         emit showPos(result.waypoints.constFirst().getPosition(), 0.f, false);
         NavApp::setStatusMessage(tr("Showing waypoint on map."));
       }
-      else if(!result.userpoints.isEmpty())
+      else if(result.hasUserpoints())
       {
         emit showPos(result.userpoints.constFirst().getPosition(), 0.f, false);
         NavApp::setStatusMessage(tr("Showing userpoint on map."));
       }
-      else if(!result.logbookEntries.isEmpty())
+      else if(result.hasLogEntries())
       {
         emit showRect(result.logbookEntries.constFirst().bounding(), false);
         NavApp::setStatusMessage(tr("Showing logbook entry on map."));
       }
-      else if(!result.onlineAircraft.isEmpty())
+      else if(result.hasOnlineAircraft())
       {
         emit showPos(result.onlineAircraft.constFirst().getPosition(), 0.f, false);
         NavApp::setStatusMessage(tr("Showing online client/aircraft on map."));

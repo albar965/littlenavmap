@@ -3043,7 +3043,7 @@ QString ProcedureQuery::anyMatchingRunwayForSidStar(const QString& arincName, co
     }
   }
 
-  return airportRunways.constFirst();
+  return airportRunways.isEmpty() ? QString() : airportRunways.constFirst();
 }
 
 void ProcedureQuery::insertSidStarRunway(proc::MapProcedureLegs& legs, const QString& runway)

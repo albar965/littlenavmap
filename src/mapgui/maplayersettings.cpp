@@ -81,11 +81,11 @@ const MapLayer *MapLayerSettings::getLayer(float distanceKm, int detailLevel) co
   else if(detailLevel < MAP_DEFAULT_DETAIL_LEVEL)
     it += MAP_DEFAULT_DETAIL_LEVEL - detailLevel;
 
-  if(it >= layers.end())
+  if(it >= layers.constEnd())
     return &layers.constLast();
 
-  if(it < layers.begin())
-    return &(*(layers.begin()));
+  if(it < layers.constBegin())
+    return &(*(layers.constBegin()));
 
   return &(*it);
 }

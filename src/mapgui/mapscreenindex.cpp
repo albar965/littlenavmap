@@ -180,11 +180,14 @@ void MapScreenIndex::updateAirspaceScreenGeometryInternal(QSet<map::MapAirspaceI
         if(lines != nullptr)
         {
           const QVector<QPolygonF *> polys = conv.createPolygons(*lines, mapWidget->rect());
-          for(const QPolygonF *poly : qAsConst(polys))
+          for(const QPolygonF *poly : polys)
           {
-            // Cut off all polygon parts that are not visible on screen
-            airspacePolygons.append(std::make_pair(airspace->combinedId(), poly->intersected(QPolygon(mapWidget->rect())).toPolygon()));
-            ids.insert(airspace->combinedId());
+            if(!poly->isEmpty())
+            {
+              // Cut off all polygon parts that are not visible on screen
+              airspacePolygons.append(std::make_pair(airspace->combinedId(), poly->intersected(QPolygon(mapWidget->rect())).toPolygon()));
+              ids.insert(airspace->combinedId());
+            }
           }
           conv.releasePolygons(polys);
         }

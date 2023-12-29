@@ -611,6 +611,9 @@ void UserdataController::editUserpoints(const QVector<int>& ids)
 {
   qDebug() << Q_FUNC_INFO;
 
+  if(ids.isEmpty())
+    return;
+
   SqlRecord rec = manager->getRecord(ids.constFirst());
   if(!rec.isEmpty())
   {

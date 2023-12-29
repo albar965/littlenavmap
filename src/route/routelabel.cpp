@@ -419,7 +419,7 @@ void RouteLabel::buildHeaderRunwayTakeoff(atools::util::HtmlBuilder& html)
           QList<map::MapRunwayEnd> runwayEnds;
           mapQuery->getRunwayEndByNameFuzzy(runwayEnds, end.name, departLeg.getAirport(), false /* navdata */);
           if(!runwayEnds.isEmpty())
-            end = runwayEnds.first();
+            end = runwayEnds.constFirst();
 
           html.b(tr("Takeoff")).text(tr(" from ")).b(end.name).text(tr(", "));
           html.text(formatter::courseTextFromTrue(end.heading, departLeg.getMagvarStart()), ahtml::NO_ENTITIES);
@@ -465,7 +465,7 @@ void RouteLabel::buildHeaderRunwayLand(atools::util::HtmlBuilder& html)
             QList<map::MapRunwayEnd> runwayEnds;
             mapQuery->getRunwayEndByNameFuzzy(runwayEnds, end.name, destLeg.getAirport(), false /* navdata */);
             if(!runwayEnds.isEmpty())
-              end = runwayEnds.first();
+              end = runwayEnds.constFirst();
 
             if(end.isFullyValid())
             {
@@ -615,7 +615,7 @@ void RouteLabel::updateFooterSelectionLabel()
       std::sort(selectLegIndexes.begin(), selectLegIndexes.end());
 
       // Distance to first waypoint in selection is ignored
-      for(int index = selectLegIndexes.first() + 1; index <= selectLegIndexes.last(); index++)
+      for(int index = selectLegIndexes.constFirst() + 1; index <= selectLegIndexes.constLast(); index++)
       {
         const RouteLeg& leg = route.value(index);
         if(leg.isValid())
@@ -662,8 +662,8 @@ void RouteLabel::updateFooterSelectionLabel()
     tooltip.append(tr("<b>Fuel consumption:</b> %1").arg(Unit::fuelLbsAndGalLocalOther(aircraftPerformance.toFuelLbs(fuelGalLbs),
                                                                                        aircraftPerformance.toFuelGal(fuelGalLbs))));
 
-    int first = selectLegIndexes.first();
-    int last = selectLegIndexes.last();
+    int first = selectLegIndexes.constFirst();
+    int last = selectLegIndexes.constLast();
 
     // Ignore airport after missed approach
     if(last == route.getDestinationAirportLegIndex() && missed)
