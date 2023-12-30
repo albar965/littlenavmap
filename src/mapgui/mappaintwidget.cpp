@@ -142,9 +142,6 @@ void MapPaintWidget::copySettings(const MapPaintWidget& other)
   if(projection() != Marble::Mercator)
     setProjection(Marble::Mercator);
 
-  if(mapThemeId() != other.mapThemeId())
-    setTheme(other.mapThemeId(), other.currentThemeId);
-
   // Unused options
   // setAnimationsEnabled(other.animationsEnabled());
   // setShowDebugPolygons(other.showDebugPolygons());
@@ -182,7 +179,6 @@ void MapPaintWidget::copySettings(const MapPaintWidget& other)
   setSunShadingDimFactor(static_cast<double>(OptionData::instance().getDisplaySunShadingDimFactor()) / 100.);
 
   // Copy own/internal settings
-  currentThemeId = other.currentThemeId;
   *aircraftTrail = *other.aircraftTrail;
   *aircraftTrailLogbook = *other.aircraftTrailLogbook;
   searchMarkPos = other.searchMarkPos;
@@ -193,6 +189,9 @@ void MapPaintWidget::copySettings(const MapPaintWidget& other)
 
   if(size() != other.size())
     resize(other.size());
+
+  // Set theme from GUI map if not already done
+  setTheme(NavApp::getMapThemeHandler()->getCurrentTheme());
 }
 
 void MapPaintWidget::copyView(const MapPaintWidget& other)
@@ -200,14 +199,16 @@ void MapPaintWidget::copyView(const MapPaintWidget& other)
   currentViewBoundingBox = other.viewport()->viewLatLonAltBox();
 }
 
-void MapPaintWidget::setTheme(const QString& themePath, const QString& themeId)
+void MapPaintWidget::setTheme(const MapTheme& theme)
 {
   // themeId: "google-maps-def",  themePath: "earth/google-maps-def/google-maps-def.dgml" or full path
-  qDebug() << Q_FUNC_INFO << "setting map theme to" << themeId << themePath;
+  qDebug() << Q_FUNC_INFO << "setting map theme to" << theme;
 
-  currentThemeId = themeId;
-
-  setThemeInternal(themePath);
+  if(currentThemeId.isEmpty() || currentThemeId != theme.getThemeId())
+  {
+    currentThemeId = theme.getThemeId();
+    setThemeInternal(theme);
+  }
 }
 
 bool MapPaintWidget::noRender() const
@@ -215,14 +216,14 @@ bool MapPaintWidget::noRender() const
   return paintLayer->noRender();
 }
 
-void MapPaintWidget::setThemeInternal(const QString& themePath)
+void MapPaintWidget::setThemeInternal(const MapTheme& theme)
 {
   // Ignore any overlay state signals the widget sends while switching theme
   ignoreOverlayUpdates = true;
 
   updateThemeUi(currentThemeId);
 
-  setMapThemeId(themePath);
+  setMapThemeId(theme.getDgmlFilepath());
   setShowClouds(false);
 
   if(NavApp::getMapThemeHandler()->hasPlacemarks(currentThemeId))

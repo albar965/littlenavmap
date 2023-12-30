@@ -36,150 +36,161 @@
 
 using InfoBuilderTypes::MapFeaturesData;
 
-MapActionsController::MapActionsController(QObject *parent, bool verboseParam, AbstractInfoBuilder* infoBuilder) :
-    AbstractLnmActionsController(parent, verboseParam, infoBuilder), parentWidget((QWidget *)parent) // WARNING: Uncertain cast (QWidget *) QObject
+MapActionsController::MapActionsController(QWidget *parent, bool verboseParam, AbstractInfoBuilder *infoBuilderParam)
+  : AbstractLnmActionsController(parent, verboseParam, infoBuilderParam), parentWidget(parent)
 {
-    qDebug() << Q_FUNC_INFO;
-    init();
+  qDebug() << Q_FUNC_INFO;
+  init();
 }
 
-WebApiResponse MapActionsController::imageAction(WebApiRequest request){
+WebApiResponse MapActionsController::imageAction(WebApiRequest request)
+{
 
-    WebApiResponse response = getResponse();
+  WebApiResponse response = getResponse();
 
-    atools::geo::Rect rect(
-        request.parameters.value("leftlon").toFloat(),
-        request.parameters.value("toplat").toFloat(),
-        request.parameters.value("rightlon").toFloat(),
-        request.parameters.value("bottomlat").toFloat()
+  atools::geo::Rect rect(
+    request.parameters.value("leftlon").toFloat(),
+    request.parameters.value("toplat").toFloat(),
+    request.parameters.value("rightlon").toFloat(),
+    request.parameters.value("bottomlat").toFloat()
     );
 
-    int detailFactor = request.parameters.value("detailfactor").toInt();
+  int detailFactor = request.parameters.value("detailfactor").toInt();
 
-    MapPixmap map = getPixmapRect(
-        request.parameters.value("width").toInt(),
-        request.parameters.value("height").toInt(),
-        rect,
-        detailFactor
+  MapPixmap map = getPixmapRect(
+    request.parameters.value("width").toInt(),
+    request.parameters.value("height").toInt(),
+    rect,
+    detailFactor
     );
 
-    QString format = QString(request.parameters.value("format"));
-    int quality = request.parameters.value("quality").toInt();
+  QString format = QString(request.parameters.value("format"));
+  int quality = request.parameters.value("quality").toInt();
 
-    if(map.isValid())
+  if(map.isValid())
+  {
+    // ===========================================================================
+    // Write pixmap as image
+    QByteArray bytes;
+    QBuffer buffer(&bytes);
+    buffer.open(QIODevice::WriteOnly);
+
+    if(format == QLatin1String("jpg"))
     {
-      // ===========================================================================
-      // Write pixmap as image
-      QByteArray bytes;
-      QBuffer buffer(&bytes);
-      buffer.open(QIODevice::WriteOnly);
-
-      if(format == QLatin1String("jpg"))
-      {
-          response.headers.replace("Content-Type", "image/jpg");
-          map.pixmap.save(&buffer, "PNG", quality);
-      }
-      else if(format == QLatin1String("png"))
-      {
-          response.headers.replace("Content-Type", "image/png");
-          map.pixmap.save(&buffer, "PNG", quality);
-      }
-      else
-        // Should never happen
-        qWarning() << Q_FUNC_INFO << "invalid format";
-
-      // Add copyright/attributions to header
-      response.headers.insert("Image-Attributions",
-                              NavApp::getMapThemeHandler()->getTheme(mapPaintWidget->getCurrentThemeId()).getCopyright().toUtf8());
-
-      response.status = 200;
-      response.body = bytes;
+      response.headers.replace("Content-Type", "image/jpg");
+      map.pixmap.save(&buffer, "PNG", quality);
     }
-    return response;
+    else if(format == QLatin1String("png"))
+    {
+      response.headers.replace("Content-Type", "image/png");
+      map.pixmap.save(&buffer, "PNG", quality);
+    }
+    else
+      // Should never happen
+      qWarning() << Q_FUNC_INFO << "invalid format";
+
+    // Add copyright/attributions to header
+    response.headers.insert("Image-Attributions",
+                            NavApp::getMapThemeHandler()->getTheme(mapPaintWidget->getCurrentThemeId()).getCopyright().toUtf8());
+
+    response.status = 200;
+    response.body = bytes;
+  }
+  return response;
 
 }
 
-WebApiResponse MapActionsController::featuresAction(WebApiRequest request){
+WebApiResponse MapActionsController::featuresAction(WebApiRequest request)
+{
+  WebApiResponse response = getResponse();
 
-    WebApiResponse response = getResponse();
-
-    atools::geo::Rect rect(
-        request.parameters.value("leftlon").toFloat(),
-        request.parameters.value("toplat").toFloat(),
-        request.parameters.value("rightlon").toFloat(),
-        request.parameters.value("bottomlat").toFloat()
+  atools::geo::Rect rect(
+    request.parameters.value("leftlon").toFloat(),
+    request.parameters.value("toplat").toFloat(),
+    request.parameters.value("rightlon").toFloat(),
+    request.parameters.value("bottomlat").toFloat()
     );
 
-    bool overflow = false;
+  bool overflow = false;
 
-    // Init dummy image request
-    WebApiRequest *imageRequest = new WebApiRequest();
-    imageRequest->parameters = QMap<QByteArray,QByteArray>();
-    imageRequest->parameters.insert("leftlon",request.parameters.value("leftlon")),
-    imageRequest->parameters.insert("toplat",request.parameters.value("toplat")),
-    imageRequest->parameters.insert("rightlon",request.parameters.value("rightlon")),
-    imageRequest->parameters.insert("bottomlat",request.parameters.value("bottomlat")),
-    imageRequest->parameters.insert("detailfactor",request.parameters.value("detailfactor"));
-    imageRequest->parameters.insert("width","300");
-    imageRequest->parameters.insert("height","300");
-    imageRequest->parameters.insert("format","jpg");
-    imageRequest->parameters.insert("quality","1");
+  // Init dummy image request
+  WebApiRequest *imageRequest = new WebApiRequest();
+  imageRequest->parameters = QMap<QByteArray, QByteArray>();
+  imageRequest->parameters.insert("leftlon", request.parameters.value("leftlon"));
+  imageRequest->parameters.insert("toplat", request.parameters.value("toplat"));
+  imageRequest->parameters.insert("rightlon", request.parameters.value("rightlon"));
+  imageRequest->parameters.insert("bottomlat", request.parameters.value("bottomlat"));
+  imageRequest->parameters.insert("detailfactor", request.parameters.value("detailfactor"));
+  imageRequest->parameters.insert("width", "300");
+  imageRequest->parameters.insert("height", "300");
+  imageRequest->parameters.insert("format", "jpg");
+  imageRequest->parameters.insert("quality", "1");
 
-    // Perform dummy image request
-    imageAction(*imageRequest);
+  // Perform dummy image request
+  imageAction(*imageRequest);
 
-    // Extract results created during dummy image request
-    const QList<map::MapAirport> airports = *mapPaintWidget->getMapQuery()->getAirportsByRect(rect,mapPaintWidget->getMapPaintLayer()->getMapLayer(), false,map::NONE,overflow);
+  // Extract results created during dummy image request
+  const QList<map::MapAirport> airports = *mapPaintWidget->getMapQuery()->getAirportsByRect(rect,
+                                                                                            mapPaintWidget->getMapPaintLayer()->getMapLayer(), false, map::NONE,
+                                                                                            overflow);
 
-    const QList<map::MapNdb> ndbs = *mapPaintWidget->getMapQuery()->getNdbsByRect(rect,mapPaintWidget->getMapPaintLayer()->getMapLayer(), false,overflow);
-    const QList<map::MapVor> vors = *mapPaintWidget->getMapQuery()->getVorsByRect(rect,mapPaintWidget->getMapPaintLayer()->getMapLayer(), false,overflow);
-    const QList<map::MapMarker> markers = *mapPaintWidget->getMapQuery()->getMarkersByRect(rect,mapPaintWidget->getMapPaintLayer()->getMapLayer(), false,overflow);
-    const QList<map::MapWaypoint> waypoints = mapPaintWidget->getWaypointTrackQuery()->getWaypointsByRect(rect,mapPaintWidget->getMapPaintLayer()->getMapLayer(), false,overflow);
+  const QList<map::MapNdb> ndbs = *mapPaintWidget->getMapQuery()->getNdbsByRect(rect,
+                                                                                mapPaintWidget->getMapPaintLayer()->getMapLayer(), false,
+                                                                                overflow);
+  const QList<map::MapVor> vors = *mapPaintWidget->getMapQuery()->getVorsByRect(rect,
+                                                                                mapPaintWidget->getMapPaintLayer()->getMapLayer(), false,
+                                                                                overflow);
+  const QList<map::MapMarker> markers = *mapPaintWidget->getMapQuery()->getMarkersByRect(rect,
+                                                                                         mapPaintWidget->getMapPaintLayer()->getMapLayer(), false,
+                                                                                         overflow);
+  const QList<map::MapWaypoint> waypoints = mapPaintWidget->getWaypointTrackQuery()->getWaypointsByRect(rect,
+                                                                                                        mapPaintWidget->getMapPaintLayer()->getMapLayer(), false,
+                                                                                                        overflow);
 
-    MapFeaturesData data = {
-        airports,
-        ndbs,
-        vors,
-        markers,
-        waypoints
-    };
+  MapFeaturesData data = {
+    airports,
+    ndbs,
+    vors,
+    markers,
+    waypoints
+  };
 
-    response.body = infoBuilder->features(data);
+  response.body = infoBuilder->features(data);
 
-    return response;
+  return response;
 
 }
 
-WebApiResponse MapActionsController::featureAction(WebApiRequest request){
+WebApiResponse MapActionsController::featureAction(WebApiRequest request)
+{
+  WebApiResponse response = getResponse();
 
-    WebApiResponse response = getResponse();
+  int object_id = request.parameters.value("object_id").toInt();
+  int type_id = request.parameters.value("type_id").toInt();
 
-    int object_id = request.parameters.value("object_id").toInt();
-    int type_id = request.parameters.value("type_id").toInt();
+  map::MapResult result;
 
-    map::MapResult result;
+  switch(type_id)
+  {
+    case map::WAYPOINT:
+      result.waypoints.append(mapPaintWidget->getWaypointTrackQuery()->getWaypointById(object_id));
+      break;
+    default:
+      mapPaintWidget->getMapQuery()->getMapObjectById(result, type_id, map::AIRSPACE_SRC_NONE, object_id, false);
+      break;
+  }
 
-    switch (type_id) {
-        case map::WAYPOINT:
-            result.waypoints.append(mapPaintWidget->getWaypointTrackQuery()->getWaypointById(object_id));
-            break;
-        default:
-            mapPaintWidget->getMapQuery()->getMapObjectById(result,type_id,map::AIRSPACE_SRC_NONE,object_id,false);
-            break;
-    }
+  MapFeaturesData data = {
+    result.airports,
+    result.ndbs,
+    result.vors,
+    result.markers,
+    result.waypoints
+  };
 
-    MapFeaturesData data = {
-        result.airports,
-        result.ndbs,
-        result.vors,
-        result.markers,
-        result.waypoints
-    };
+  response.body = infoBuilder->feature(data);
 
-    response.body = infoBuilder->feature(data);
-
-    return response;
-
+  return response;
 }
 
 MapActionsController::~MapActionsController()
@@ -221,7 +232,7 @@ MapPixmap MapActionsController::getPixmap(int width, int height)
 }
 
 MapPixmap MapActionsController::getPixmapPosDistance(int width, int height, atools::geo::Pos pos, float distanceKm,
-                                                 const QString& mapCommand, const QString& errorCase)
+                                                     const QString& mapCommand, const QString& errorCase)
 {
   if(verbose)
     qDebug() << Q_FUNC_INFO << width << "x" << height << pos << "distanceKm" << distanceKm << "cmd" << mapCommand;
@@ -236,7 +247,8 @@ MapPixmap MapActionsController::getPixmapPosDistance(int width, int height, atoo
     }
     else
     {
-      qWarning() << Q_FUNC_INFO << errorCase;
+      if(verbose)
+        qWarning() << Q_FUNC_INFO << errorCase;
       MapPixmap mappixmap;
       mappixmap.error = errorCase;
       return mappixmap;
@@ -273,7 +285,8 @@ MapPixmap MapActionsController::getPixmapPosDistance(int width, int height, atoo
         mapPaintWidget->zoomOut(Marble::Instant);
       else
       {
-        qWarning() << Q_FUNC_INFO << "Invalid map command" << mapCommand;
+        if(verbose)
+          qWarning() << Q_FUNC_INFO << "Invalid map command" << mapCommand;
         return MapPixmap();
       }
     }
@@ -302,7 +315,8 @@ MapPixmap MapActionsController::getPixmapPosDistance(int width, int height, atoo
   }
   else
   {
-    qWarning() << Q_FUNC_INFO << "mapPaintWidget is null";
+    if(verbose)
+      qWarning() << Q_FUNC_INFO << "mapPaintWidget is null";
     return MapPixmap();
   }
 }
@@ -347,13 +361,15 @@ MapPixmap MapActionsController::getPixmapRect(int width, int height, atools::geo
     }
     else
     {
-      qWarning() << Q_FUNC_INFO << "mapPaintWidget is null";
+      if(verbose)
+        qWarning() << Q_FUNC_INFO << "mapPaintWidget is null";
       return MapPixmap();
     }
   }
   else
   {
-    qWarning() << Q_FUNC_INFO << errorCase;
+    if(verbose)
+      qWarning() << Q_FUNC_INFO << errorCase;
     MapPixmap mapPixmap;
     mapPixmap.error = errorCase;
     return mapPixmap;

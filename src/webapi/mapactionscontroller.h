@@ -44,7 +44,7 @@ class MapActionsController :
 {
     Q_OBJECT
 public:
-    Q_INVOKABLE MapActionsController(QObject *parent, bool verboseParam, AbstractInfoBuilder* infoBuilder);
+    Q_INVOKABLE MapActionsController(QWidget* parent, bool verboseParam, AbstractInfoBuilder* infoBuilder);
     /**
      * @brief get map image by rect
      */

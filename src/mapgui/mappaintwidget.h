@@ -24,6 +24,8 @@
 #include <marble/GeoDataLatLonAltBox.h>
 #include <marble/MarbleWidget.h>
 
+class MapTheme;
+
 namespace map {
 struct MapResult;
 struct MapRef;
@@ -94,7 +96,8 @@ public:
   MapPaintWidget(const MapPaintWidget& other) = delete;
   MapPaintWidget& operator=(const MapPaintWidget& other) = delete;
 
-  /* Copy all map display settings, projection, theme, highlights and marks from the other widget. */
+  /* Copy all map display settings, highlights and marks from the other widget.
+   * Theme is set from MapThemeManager and projection is always set to Mercator. */
   void copySettings(const MapPaintWidget& other);
 
   /* Copies the bounding rectangle to this one which will be centered on next resize. */
@@ -208,8 +211,8 @@ public:
   /* Update map */
   void postDatabaseLoad();
 
-  /* Set map theme. * themeId: "google-maps-def",  themePath: "earth/google-maps-def/google-maps-def.dgml" or full path */
-  void setTheme(const QString& themePath, const QString& themeId);
+  /* Set map theme. * themeId: "google-maps-def",  theme: "earth/google-maps-def/google-maps-def.dgml" or full path */
+  void setTheme(const MapTheme& theme);
 
   /* Show points of interest and other labels for certain map themes */
   void setShowMapPois(bool show);
@@ -565,8 +568,8 @@ protected:
   bool skipRender = false;
 
 private:
-  /* Set map theme and adjust properties accordingly. themePath is the full path to the DGML */
-  void setThemeInternal(const QString& themePath);
+  /* Set map theme and adjust properties accordingly. theme is the full path to the DGML */
+  void setThemeInternal(const MapTheme& theme);
 
   /* Override widget events */
   virtual void paintEvent(QPaintEvent *paintEvent) override;
@@ -595,7 +598,5 @@ private:
   /* true if inside paint event - avoids crashes due to nested calls */
   bool painting = false;
 };
-
-
 
 #endif // LITTLENAVMAP_NAVMAPPAINTWIDGET_H

@@ -40,10 +40,12 @@ void WebMapController::init()
 {
   qDebug() << Q_FUNC_INFO;
 
-  deInit();
+  // Create a map widget if not already done and clone with the desired resolution
+  if(mapPaintWidget == nullptr)
+    mapPaintWidget = new MapPaintWidget(parentWidget, false /* no real widget - hidden */);
 
-  // Create a map widget clone with the desired resolution
-  mapPaintWidget = new MapPaintWidget(parentWidget, false /* no real widget - hidden */);
+  // Copy all map settings
+  mapPaintWidget->copySettings(*NavApp::getMapWidgetGui());
 
   // Activate painting
   mapPaintWidget->setActive();

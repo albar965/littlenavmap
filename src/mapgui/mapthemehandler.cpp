@@ -510,7 +510,8 @@ const QList<QFileInfo> MapThemeHandler::findMapThemes(const QStringList& paths)
     if(dir.exists())
     {
       // Get all folders from "earth"
-      for(const QFileInfo& themeDirInfo : dir.entryInfoList(QDir::Dirs | QDir::NoDotAndDotDot))
+      const QFileInfoList themeDirs = dir.entryInfoList(QDir::Dirs | QDir::NoDotAndDotDot);
+      for(const QFileInfo& themeDirInfo : themeDirs)
       {
         // Check if folder is accessible
         if(atools::checkDir(Q_FUNC_INFO, themeDirInfo, true /* warn */))
@@ -520,7 +521,8 @@ const QList<QFileInfo> MapThemeHandler::findMapThemes(const QStringList& paths)
 
           // Get all DGML files in folder - should be only one
           int found = 0;
-          for(const QFileInfo& themeFile : themeDir.entryInfoList({"*.dgml"}, QDir::Files | QDir::NoDotAndDotDot))
+          const QFileInfoList themeFiles = themeDir.entryInfoList({"*.dgml"}, QDir::Files | QDir::NoDotAndDotDot);
+          for(const QFileInfo& themeFile : themeFiles)
           {
             if(atools::checkFile(Q_FUNC_INFO, themeFile, true /* warn */))
             {
@@ -599,7 +601,8 @@ void MapThemeHandler::setupMapThemesUi()
   if(actionGroupMapTheme != nullptr)
   {
     // Delete all actions from the menu
-    for(QAction *action : actionGroupMapTheme->actions())
+    const QList<QAction *> actions = actionGroupMapTheme->actions();
+    for(QAction *action : actions)
     {
       actionGroupMapTheme->removeAction(action);
       delete action;
@@ -675,7 +678,8 @@ void MapThemeHandler::changeMapThemeActions(const QString& themeId)
   if(!themeId.isEmpty())
   {
     // Search for actions entry with index for MapThemeHandler
-    for(QAction *action : toolButtonMapTheme->menu()->actions())
+    const QList<QAction *> actions = toolButtonMapTheme->menu()->actions();
+    for(QAction *action : actions)
     {
       QVariant data = action->data();
       if(data.isValid() && data.toString() == themeId)
@@ -747,9 +751,9 @@ void MapThemeHandler::changeMapTheme()
 
   qDebug() << Q_FUNC_INFO << themeId << theme;
 
-  mapWidget->setTheme(theme.getDgmlFilepath(), themeId);
+  mapWidget->setTheme(theme);
   if(NavApp::getMapPaintWidgetWeb() != nullptr)
-    NavApp::getMapPaintWidgetWeb()->setTheme(theme.getDgmlFilepath(), themeId);
+    NavApp::getMapPaintWidgetWeb()->setTheme(theme);
 
   NavApp::setStatusMessage(tr("Map theme changed to %1.").arg(actionGroupMapTheme->checkedAction()->text()));
 }
@@ -803,10 +807,10 @@ void MapThemeHandler::optionsChanged()
   {
     // Assign the default theme if the current one was removed
     currentThemeId = defaultTheme.getThemeId();
-    NavApp::getMapWidgetGui()->setTheme(defaultTheme.getDgmlFilepath(), currentThemeId);
+    NavApp::getMapWidgetGui()->setTheme(defaultTheme);
 
     if(NavApp::getMapPaintWidgetWeb() != nullptr)
-      NavApp::getMapPaintWidgetWeb()->setTheme(defaultTheme.getDgmlFilepath(), currentThemeId);
+      NavApp::getMapPaintWidgetWeb()->setTheme(defaultTheme);
   }
 
   // Check the theme action
@@ -821,7 +825,8 @@ QString MapThemeHandler::getStatusTextForDir(const QString& path)
   {
     int numThemes = 0;
     QDir dir(path);
-    for(const QFileInfo& themeDir : dir.entryInfoList(QDir::Dirs | QDir::NoDotAndDotDot))
+    const QFileInfoList themeDirs = dir.entryInfoList(QDir::Dirs | QDir::NoDotAndDotDot);
+    for(const QFileInfo& themeDir : themeDirs)
     {
       if(atools::checkFile(Q_FUNC_INFO, themeDir.absoluteFilePath() % atools::SEP % themeDir.fileName() % ".dgml"))
         numThemes++;

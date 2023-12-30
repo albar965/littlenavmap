@@ -195,6 +195,11 @@ public:
   /* Currently selected theme id from actions */
   QString getCurrentThemeId() const;
 
+  const MapTheme& getCurrentTheme() const
+  {
+    return getTheme(getCurrentThemeId());
+  }
+
   /* Sort order is always online/offline and then alphabetical */
   const QVector<MapTheme>& getThemes() const
   {
