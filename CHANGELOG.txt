@@ -2,9 +2,15 @@
 For example: #3 is https://github.com/albar965/littlenavmap/issues/3.
 This text is partially Markdown, hence sometimes strange formatting.
 
+
+
+
+
+
 ==>>=============================================================================
 
-# Version 3.0.0.beta
+
+# Version 3.0.1.beta
 
 ## Notes
 
@@ -29,7 +35,38 @@ map display and the rest of the application.
 
 A big thank you to all who reported bugs and issues!
 
-**🎁🎁🎁 🎄🎄🎄 Happy Holidays to all of you! 🎄🎄🎄 🎁🎁🎁**
+## Changes from 3.0.0.beta to 3.0.1.beta
+
+* Fixed issues where web-server map reverted back to Atlas map themes when using external map
+  themes like Google.
+* Fix for missing map updates when using touchpad for zooming.
+* Fixed map drawing since it may cause frozen screens or missing updates on some systems.
+* Fixed blank map screen in macOS after click.
+* Fixed crash when zooming out with airspace highlights visible.
+* More internal fixes for potential crashes when accessing empty lists.
+* Improved taxiway labels and increased number of labels.
+* Adjusted airspace boundaries and made lines thinner for some types.
+* Fixed issues with wrong error messages with runway mismatches. The logic is now more tolerant for
+  airports where renamed runway numbers do not match exactly the runways in the navigation data.
+* Fixed route string reader which did not recognize approach for short plans.
+  Example: MMBT MMGL/PLADE.I29-Z
+* Corrected a problem where procedures could not be found in Navigraph database for airports that
+  had moved. Examples are GAKL and DAUU in MSFS.
+* Fixed issue with wrong error message that kept the program from building the elevation profile.
+  Example: Approach I29-Z via PLADE at MMGL.
+* Changed dock window menu items and tool buttons to have same order as docks.
+* First draft of German translation.
+* More small fixes and text changes.
+* Updated all message dialogs to make text in dialog boxes selectable by mouse click and
+  right-click context menu. Text can now copied and pasted from all message boxes. No need
+  to make screenshots.
+* All message box messages are now logged.
+* Fixed large font in tables on macOS.
+* Fix for excessive warnings in HTTP server flooding the log.
+
+==<<=============================================================================
+
+# Version 3.0.0.beta
 
 ## Changes from 2.8.12 to 3.0.0.beta
 
@@ -340,7 +377,7 @@ A big thank you to all who reported bugs and issues!
 * Little Navmap supports the Wayland compositor which is used on some of the newer Linux distributions
   but you have to install the package `qwayland5`.
 
-==<<=============================================================================
+=================================================================================
 
 
 # Version 2.8.12
