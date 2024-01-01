@@ -64,7 +64,7 @@ A big thank you to all who reported bugs and issues!
 * All message box messages are now logged.
 * Fixed large font in tables on macOS.
 * Fix for excessive warnings in HTTP server flooding the log.
-
+* Updated Italian translation by Flavio Borgna.
 
 **🎉🎉🎉 A Happy New Year to all of you! 🎉🎉🎉**
 
