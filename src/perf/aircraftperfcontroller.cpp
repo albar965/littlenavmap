@@ -567,8 +567,7 @@ bool AircraftPerfController::checkForChanges()
 
   QMessageBox msgBox(mainWindow);
   msgBox.setWindowTitle(QCoreApplication::applicationName());
-  msgBox.setText(tr("Aircraft Performance has been changed."));
-  msgBox.setInformativeText(tr("Save changes?"));
+  msgBox.setText(tr("Aircraft Performance has been changed.\n\nSave changes?"));
   msgBox.setStandardButtons(QMessageBox::Save | QMessageBox::No | QMessageBox::Cancel);
   msgBox.setTextInteractionFlags(Qt::TextSelectableByMouse);
 
@@ -1407,7 +1406,7 @@ void AircraftPerfController::restoreState()
       {
         // No file or not readable
         NavApp::closeSplashScreen();
-        atools::gui::Dialog::warning(mainWindow,  message);
+        atools::gui::Dialog::warning(mainWindow, message);
       }
     }
   }

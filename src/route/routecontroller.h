@@ -33,6 +33,8 @@ class RouteFinder;
 class RouteNetwork;
 }
 namespace gui {
+
+class Dialog;
 class ItemViewZoomHandler;
 class TabWidgetHandler;
 }
@@ -110,8 +112,8 @@ public:
   bool saveFlightplanLnmAs(const QString& filename);
   bool saveFlightplanLnmAsSelection(const QString& filename);
 
-  /* Save temporary to settings folder or delete temp if plan is empty */
-  void saveFlightplanLnmDefault();
+  /* Save temporary to settings folder or delete temp if plan is empty on shutdown */
+  void saveFlightplanLnmDefaultShutdown();
 
   /* Called if export dialog saved an LNMPLN file */
   void saveFlightplanLnmExported(const QString& filename);
@@ -375,7 +377,7 @@ private:
   };
 
   /* Saves flight plan using LNM format. Returns true on success. */
-  bool saveFlightplanLnmInternal(const QString& filename, bool silent);
+  bool saveFlightplanLnmInternal(const QString& filename, bool silentShutdown);
 
   /* Saves flight plan sippet using LNM format to given name. Given range must not contains procedures or alternates. */
   bool saveFlightplanLnmSelectionAs(const QString& filename, int from, int to) const;
@@ -387,7 +389,10 @@ private:
   void changeRouteRedo(const atools::fs::pln::Flightplan& newFlightplan);
 
   /* Save undo state before and after change */
+  /* Call this before doing any change to the flight plan that should be undoable */
   RouteCommand *preChange(const QString& text = QString(), rctype::RouteCmdType rcType = rctype::EDIT);
+
+  /* Call this after doing a change to the flight plan that should be undoable */
   void postChange(RouteCommand *undoCommand);
 
   void routeSetStartPosition(map::MapStart start);
@@ -585,6 +590,7 @@ private:
   QUndoStack *undoStack = nullptr;
   FlightplanEntryBuilder *entryBuilder = nullptr;
   atools::fs::pln::FlightplanIO *flightplanIO = nullptr;
+  atools::gui::Dialog *dialog = nullptr;
 
   QAction *undoAction = nullptr, *redoAction = nullptr;
 

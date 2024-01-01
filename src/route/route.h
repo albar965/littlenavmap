@@ -265,8 +265,9 @@ public:
     return flightplan.getFlightplanType() == atools::fs::pln::IFR;
   }
 
-  /* Value in flight plan is stored in local unit */
+  /* Value in flight plan is stored in ft */
   float getCruiseAltitudeFt() const;
+  void setCruiseAltitudeFt(float cruiseAlt);
 
   void setFlightplan(const atools::fs::pln::Flightplan& value)
   {
@@ -633,7 +634,7 @@ public:
   bool isValidProfile() const;
 
   /* Calculate route leg altitudes that are needed for the elevation profile */
-  void updateLegAltitudes();
+  void calculateLegAltitudes();
 
   /* general distance in NM which is either cross track, previous or next waypoint */
   float getDistanceToFlightPlan() const;

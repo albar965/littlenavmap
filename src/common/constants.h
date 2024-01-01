@@ -71,7 +71,7 @@ void loadHelpUrls();
 /* State of "do not show again" dialog buttons */
 const QLatin1String ACTIONS_SHOW_DISCONNECT_INFO("Actions/ShowDisconnectInfo");
 const QLatin1String ACTIONS_SHOW_LOAD_FLP_WARN("Actions/ShowLoadFlpWarn");
-const QLatin1String ACTIONS_SHOW_LOAD_ALT_WARN("Actions/ShowLoadAltitudeWarn");
+const QLatin1String ACTIONS_SHOW_LOAD_ALT_WARN("Actions/ShowLoadAltitudeWarn2");
 const QLatin1String ACTIONS_SHOW_LOAD_ALT_CORRECTED("Actions/ShowLoadAltitudeCorrected");
 const QLatin1String ACTIONS_SHOW_QUIT("Actions/ShowQuit");
 const QLatin1String ACTIONS_SHOW_QUIT_LOADING("Actions/ShowQuitLoading");
@@ -204,6 +204,7 @@ const QLatin1String RANGE_MARKER_DIALOG_RADII("Map/RangeMarkerDialogRadii");
 const QLatin1String NAVCONNECT_REMOTEHOSTS("NavConnect/RemoteHosts");
 const QLatin1String NAVCONNECT_REMOTE("NavConnect/Remote");
 const QLatin1String ROUTE_FILENAME("Route/Filename");
+const QLatin1String ROUTE_DEFAULT_FILE_LNMPLN("Route/DefaultLnmpln");
 
 const QLatin1String ROUTE_HEADER_AIRPORTS("Route/HeaderAirports");
 const QLatin1String ROUTE_HEADER_DEPARTURE("Route/HeaderDeparture");

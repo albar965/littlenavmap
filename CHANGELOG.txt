@@ -2,11 +2,6 @@
 For example: #3 is https://github.com/albar965/littlenavmap/issues/3.
 This text is partially Markdown, hence sometimes strange formatting.
 
-
-
-
-
-
 ==>>=============================================================================
 
 
@@ -57,6 +52,12 @@ A big thank you to all who reported bugs and issues!
 * Changed dock window menu items and tool buttons to have same order as docks.
 * First draft of German translation.
 * More small fixes and text changes.
+* Now trying to find a cruise altitude which does not violate restrictions if it cannot be loaded
+  from a flight plan or if the plan has an invalid cruise altitude. This applies to all plans
+  which are loaded manually by a user. The change is now stored in the undo/redo stack and can be
+  undone to revert to the previously invalid cruise altitude.
+* Fixed issue wher PLN, FMS or other imported flight plan files were wrongly overwritten in LNMPLN
+  format in some cases.
 * Updated all message dialogs to make text in dialog boxes selectable by mouse click and
   right-click context menu. Text can now copied and pasted from all message boxes. No need
   to make screenshots.
@@ -65,7 +66,7 @@ A big thank you to all who reported bugs and issues!
 * Fix for excessive warnings in HTTP server flooding the log.
 
 
-**A Happy New Year to all of you!**
+**🎉🎉🎉 A Happy New Year to all of you! 🎉🎉🎉**
 
 ==<<=============================================================================
 

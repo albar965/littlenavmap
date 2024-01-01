@@ -738,6 +738,11 @@ float Route::getCruiseAltitudeFt() const
   return flightplan.getCruiseAltitudeFt();
 }
 
+void Route::setCruiseAltitudeFt(float cruiseAlt)
+{
+  flightplan.setCruiseAltitudeFt(cruiseAlt);
+}
+
 float Route::getAltitudeForDistance(float currentDistToDest) const
 {
   return altitude->getAltitudeForDistance(currentDistToDest);
@@ -1577,7 +1582,7 @@ void Route::removeProcedureLegs(proc::MapProcedureTypes type)
   clearFlightplanProcedureProperties(type);
 
   updateAll();
-  updateLegAltitudes();
+  calculateLegAltitudes();
 }
 
 void Route::clearFlightplanProcedureProperties(proc::MapProcedureTypes type)
@@ -2216,7 +2221,7 @@ void Route::updateMagvar()
     (*this)[i].updateMagvar(i > 0 ? &at(i - 1) : nullptr);
 }
 
-void Route::updateLegAltitudes()
+void Route::calculateLegAltitudes()
 {
   // Calculate also with empty route to allow updating of error messages
   altitude->calculateAll(NavApp::getAircraftPerformance(), getCruiseAltitudeFt());

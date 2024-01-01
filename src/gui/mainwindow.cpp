@@ -2136,9 +2136,8 @@ bool MainWindow::routeCheckForChanges()
   msgBox.setWindowTitle(QCoreApplication::applicationName());
   msgBox.setText(routeController->getRouteConst().isEmpty() ?
                  tr("Flight Plan has been changed.\n"
-                    "There are changes which can be restored by using undo.") :
-                 tr("Flight Plan has been changed."));
-  msgBox.setInformativeText(tr("Save changes?"));
+                    "The plan is empty but there are changes which can be restored by using undo.\n\nSave changes?") :
+                 tr("Flight Plan has been changed.\n\nSave changes?"));
   msgBox.setStandardButtons(QMessageBox::Save | QMessageBox::No | QMessageBox::Cancel);
   msgBox.setWindowFlag(Qt::WindowContextHelpButtonHint, false);
   msgBox.setWindowModality(Qt::ApplicationModal);
@@ -2506,7 +2505,7 @@ bool MainWindow::routeSaveLnm()
     // Ask before saving file
     int result = dialog->showQuestionMsgBox(lnm::ACTIONS_SHOW_SAVE_WARNING,
                                             tr("<p>You cannot save this file directly.<br/>"
-                                               "Use the export function instead.</p>"
+                                               "Use the export or multiexport functions in menu \"File\" instead.</p>"
                                                "<p>Save using the LNMPLN format now?</p>"),
                                             tr("Do not &show this dialog again and save as LNMPLN."),
                                             buttonList, QMessageBox::Cancel, QMessageBox::Save);
@@ -4386,7 +4385,7 @@ void MainWindow::closeEvent(QCloseEvent *event)
   // Save to default file in options or delete the default file if plan is empty
   if(OptionData::instance().getFlags().testFlag(opts::STARTUP_LOAD_ROUTE))
     // Save automatically
-    routeController->saveFlightplanLnmDefault();
+    routeController->saveFlightplanLnmDefaultShutdown();
   else if(routeController->hasChanged())
   {
     // Changed flight plan found - ask for confirmation
