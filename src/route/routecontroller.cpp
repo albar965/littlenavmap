@@ -1263,7 +1263,7 @@ void RouteController::loadFlightplan(atools::fs::pln::Flightplan flightplan, ato
   // Update type if loaded file does not support a type
   if(loadedFlightplanType == atools::fs::pln::NO_TYPE)
   {
-    if(route.hasAirways() || route.hasAnyProcedure())
+    if(route.hasAirways() || route.hasAnyRealProcedure())
       routeFlightplan.setFlightplanType(atools::fs::pln::IFR);
     else
       routeFlightplan.setFlightplanType(atools::fs::pln::VFR);
@@ -4120,14 +4120,17 @@ void RouteController::showCustomDepartureMainMenu()
 void RouteController::showCustomApproachRouteTriggered()
 {
   QModelIndex index = tableViewRoute->currentIndex();
-  if(index.isValid() && route.getDepartureAirportLegIndex() != index.row())
+
+  // Allow for departure airport only or single airport plan where airport can be used both as departure and destination
+  if(index.isValid() && (route.getDepartureAirportLegIndex() != index.row() || route.getSizeWithoutAlternates() == 1))
     showCustomApproach(route.value(index.row()).getAirport(), QString());
 }
 
 void RouteController::showCustomDepartureRouteTriggered()
 {
   QModelIndex index = tableViewRoute->currentIndex();
-  if(index.isValid() && route.getDestinationAirportLegIndex() != index.row())
+  // Allow for destination airport only or single airport plan where airport can be used both as departure and destination
+  if(index.isValid() && (route.getDestinationAirportLegIndex() != index.row() || route.getSizeWithoutAlternates() == 1))
     showCustomDeparture(route.value(index.row()).getAirport(), QString());
 }
 

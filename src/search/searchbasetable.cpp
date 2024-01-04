@@ -305,7 +305,9 @@ QueryBuilderResult SearchBaseTable::queryBuilderFunc(const QueryWidget& queryWid
 
     // Split at space boundaries considering quoted texts
     // "ABC DEF" GHI "JK" -> {"ABC DEF", GHI, "JK"}
-    const QStringList textList = atools::splitStringAtQuotes(lineEdit->text().trimmed());
+    // Keep double spaces in search strings but replace linefeed, tab and cr
+    const QStringList textList = atools::splitStringAtQuotes(lineEdit->text().trimmed().
+                                                             replace('\n', ' ').replace('\r', ' ').replace('\t', ' '));
     QStringList queryList, excludeQueryList;
     bool overrideQuery = false;
 
@@ -1874,6 +1876,7 @@ void SearchBaseTable::showApproaches(bool customApproach, bool customDeparture)
     QModelIndex index = selectedOrFirstIndex();
     if(index.isValid())
     {
+      const Route& route = NavApp::getRouteConst();
       map::MapTypes navType = map::NONE;
       int id = -1;
       getNavTypeAndId(index.row(), navType, id);
@@ -1883,22 +1886,22 @@ void SearchBaseTable::showApproaches(bool customApproach, bool customDeparture)
       if(airport.isValid())
       {
         bool departure, destination;
-        proc::procedureFlags(NavApp::getRouteConst(), &airport, &departure, &destination);
+        proc::procedureFlags(route, &airport, &departure, &destination);
 
         if(customApproach)
         {
-          if(!departure)
+          if(!departure || route.getSizeWithoutAlternates() == 1)
             emit showCustomApproach(airport, QString());
         }
         else if(customDeparture)
         {
-          if(!destination)
+          if(!destination || route.getSizeWithoutAlternates() == 1)
             emit showCustomDeparture(airport, QString());
         }
         else
         {
           bool departureFilter, arrivalFilter;
-          NavApp::getRouteConst().getAirportProcedureFlags(airport, -1, departureFilter, arrivalFilter);
+          route.getAirportProcedureFlags(airport, -1, departureFilter, arrivalFilter);
           emit showProcedures(airport, departureFilter, arrivalFilter);
         }
       }

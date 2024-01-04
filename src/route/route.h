@@ -346,9 +346,18 @@ public:
   /* Index from 0 (departure) to size() -1. true if a comment can be attached to the waypoint of the leg */
   bool canEditComment(int index) const;
 
+  /* Any procedure including custom */
   bool hasAnyProcedure() const
   {
     return hasAnyApproachProcedure() || hasAnySidProcedure() || hasAnyStarProcedure();
+  }
+
+  /* Real procedures ignoring custom approach and departure */
+  bool hasAnyRealProcedure() const
+  {
+    return (hasAnyApproachProcedure() && !hasCustomApproach()) ||
+           (hasAnySidProcedure() && !hasCustomDeparture()) ||
+           hasAnyStarProcedure();
   }
 
   bool hasCustomApproach() const
