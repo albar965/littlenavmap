@@ -17,8 +17,8 @@
 
 #include "routeexport/routeexport.h"
 
-#include "fs/gpx/gpxio.h"
 #include "fs/gpx/gpxtypes.h"
+#include "fs/gpx/gpxio.h"
 #include "routeexport/routeexportformat.h"
 #include "routeexport/routeexportdialog.h"
 #include "atools.h"
@@ -1338,7 +1338,7 @@ bool RouteExport::routeValidate(const QVector<RouteExportFormat>& formats, bool 
   if(multi)
     doNotShowAgainText = tr("Do not &show this dialog again and export all files.");
   else
-    doNotShowAgainText = tr("Do not &show this dialog again and save flight plan.");
+    doNotShowAgainText = tr("Do not &show this dialog again and save the flight plan.");
   QString reallyContinue = tr("\n\nReally continue?");
 
   // Check for valid airports for departure and destination ================================
@@ -1408,7 +1408,7 @@ bool RouteExport::routeValidate(const QVector<RouteExportFormat>& formats, bool 
   }
 
   // Check for VFR export to MSFS with procedures or airways  ================================
-  if(validateVfr && route.isTypeVfr() && (route.hasAirways() || route.hasAnyProcedure()))
+  if(validateVfr && route.isTypeVfr() && (route.hasAirways() || route.hasAnyRealProcedure()))
   {
     QString message;
     if(multi)
@@ -1450,7 +1450,7 @@ bool RouteExport::routeValidate(const QVector<RouteExportFormat>& formats, bool 
 
     message += tr("The departure airport has parking spots but no parking was selected for this Flight plan.");
     int result = dialog->showQuestionMsgBox(lnm::ACTIONS_SHOW_ROUTE_PARKING_WARNING, message,
-                                            tr("Do not &show this dialog again and save flight plan."), BUTTONS, QMessageBox::Yes,
+                                            tr("Do not &show this dialog again and save the flight plan."), BUTTONS, QMessageBox::Yes,
                                             QMessageBox::Save);
 
     if(result == QMessageBox::Yes)
