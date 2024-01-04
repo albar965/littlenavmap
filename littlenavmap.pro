@@ -76,7 +76,7 @@
 # =============================================================================
 
 # Define program version here VERSION_NUMBER_TODO
-VERSION_NUMBER=3.0.1.beta
+VERSION_NUMBER=3.0.2.beta
 
 QT += core gui sql xml network svg printsupport
 
