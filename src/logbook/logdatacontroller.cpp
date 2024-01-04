@@ -774,13 +774,12 @@ void LogdataController::cleanupLogEntries()
       previewDialog.setHelpOnlineUrl(lnm::helpOnlineUrl);
       previewDialog.setHelpLanguageOnline(lnm::helpLanguageOnline());
       previewDialog.initQuery(manager->getDatabase(), queryStr, previewCols, dataFunc);
+
       if(previewDialog.exec() == QDialog::Accepted)
         deleteEntries = true;
     }
     else
       deleteEntries = true;
-
-    manager->postCleanup();
 
     int removed = 0;
     if(deleteEntries)
