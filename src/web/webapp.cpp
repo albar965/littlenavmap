@@ -37,7 +37,7 @@ QString WebApp::htmlExtension = ".html";
 void copyKeyValuesFromGroup(QSettings& settings, const QString& group, QSettings *toSettings)
 {
   settings.beginGroup(group);
-  const QStringList keys = settings.allKeys();
+  const QStringList keys = settings.childKeys();
   for(const QString& key : keys)
     toSettings->setValue(key, settings.value(key));
   settings.endGroup();
@@ -53,7 +53,7 @@ void WebApp::init(QObject *parent, const QString& configFileName, const QString&
   // Configure template loader and cache - copy settings from group to hash
   QHash<QString, QVariant> templateCacheSettings;
   settings.beginGroup("templates");
-  const QStringList keys = settings.allKeys();
+  const QStringList keys = settings.childKeys();
   for(const QString& key : keys)
     templateCacheSettings.insert(key, settings.value(key).toString());
   settings.endGroup();

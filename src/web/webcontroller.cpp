@@ -57,7 +57,7 @@ WebController::WebController(QWidget *parent) :
   // Copy from config file and remove group name
   QSettings settings(configFileName, QSettings::IniFormat);
   settings.beginGroup("listener");
-  const QStringList keys = settings.allKeys();
+  const QStringList keys = settings.childKeys();
   for(const QString& key : keys)
     listenerSettings->setValue(key, settings.value(key));
   settings.endGroup();
