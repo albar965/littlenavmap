@@ -266,6 +266,7 @@
     <addaction name="separator"/>
     <addaction name="actionResetAllSettings"/>
     <addaction name="actionSaveAllNow"/>
+    <addaction name="separator"/>
     <addaction name="actionCreateACrashReport"/>
     <addaction name="separator"/>
     <addaction name="actionCreateDirStructure"/>
@@ -275,7 +276,6 @@
     <addaction name="actionInfoDisplayOptions"/>
     <addaction name="actionProfileDisplayOptions"/>
     <addaction name="separator"/>
-    <addaction name="actionOptions"/>
    </widget>
    <widget class="QMenu" name="menuMap">
     <property name="title">
@@ -12135,7 +12135,7 @@ relation to shown airport</string>
   </action>
   <action name="actionCreateACrashReport">
    <property name="text">
-    <string>&amp;Create an Issue Report</string>
+    <string>&amp;Create an Issue Report ...</string>
    </property>
    <property name="toolTip">
     <string>Builds an issue report package containing all related files to report a problem</string>
