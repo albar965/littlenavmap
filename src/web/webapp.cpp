@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -19,6 +19,7 @@
 
 #include <QSettings>
 
+#include "atools.h"
 #include "httpserver/httpsessionstore.h"
 #include "templateengine/templatecache.h"
 #include "httpserver/staticfilecontroller.h"
@@ -27,45 +28,65 @@ stefanfrings::TemplateCache *WebApp::templateCache = nullptr;
 stefanfrings::HttpSessionStore *WebApp::sessionStore = nullptr;
 stefanfrings::StaticFileController *WebApp::staticFileController = nullptr;
 
-atools::io::IniKeyValues WebApp::templateCacheSettings;
-atools::io::IniKeyValues WebApp::sessionSettings;
-atools::io::IniKeyValues WebApp::staticFileControllerSettings;
+QSettings *WebApp::sessionSettings = nullptr;
+QSettings *WebApp::staticFileControllerSettings = nullptr;
 
 QString WebApp::documentRoot;
 QString WebApp::htmlExtension = ".html";
+
+void copyKeyValuesFromGroup(QSettings& settings, const QString& group, QSettings *toSettings)
+{
+  settings.beginGroup(group);
+  const QStringList keys = settings.allKeys();
+  for(const QString& key : keys)
+    toSettings->setValue(key, settings.value(key));
+  settings.endGroup();
+}
 
 void WebApp::init(QObject *parent, const QString& configFileName, const QString& docrootParam)
 {
   qDebug() << Q_FUNC_INFO;
   documentRoot = docrootParam;
 
-  atools::io::IniReader reader;
-  reader.setCommentCharacters({";", "#"});
-  reader.setPreserveCase(true);
-  reader.read(configFileName);
+  QSettings settings(configFileName, QSettings::IniFormat);
 
-  // Configure template loader and cache
-  templateCacheSettings = reader.getKeyValuePairs("templates");
+  // Configure template loader and cache - copy settings from group to hash
+  QHash<QString, QVariant> templateCacheSettings;
+  settings.beginGroup("templates");
+  const QStringList keys = settings.allKeys();
+  for(const QString& key : keys)
+    templateCacheSettings.insert(key, settings.value(key).toString());
+  settings.endGroup();
+
   if(!templateCacheSettings.contains("path"))
     templateCacheSettings.insert("path", documentRoot);
   templateCacheSettings.insert("filename", configFileName);
+
+  // Cache creates a copy of the settings
   templateCache = new stefanfrings::TemplateCache(templateCacheSettings, parent);
   htmlExtension = templateCacheSettings.value("suffix").toString();
 
   // Configure session store
-  sessionSettings = reader.getKeyValuePairs("sessions");
-  sessionSettings.insert("filename", configFileName);
+  sessionSettings = new QSettings();
+  copyKeyValuesFromGroup(settings, "sessions", sessionSettings);
+  sessionSettings->setValue("filename", configFileName);
+
+  // Session store gets a reference to the settings
   sessionStore = new stefanfrings::HttpSessionStore(sessionSettings, parent);
 
   // Configure static file controller
-  staticFileControllerSettings = reader.getKeyValuePairs("docroot");
-  if(!staticFileControllerSettings.contains("path"))
-    staticFileControllerSettings.insert("path", docrootParam);
-  staticFileControllerSettings.insert("filename", configFileName);
+  staticFileControllerSettings = new QSettings();
+  copyKeyValuesFromGroup(settings, "docroot", staticFileControllerSettings);
+  if(!staticFileControllerSettings->contains("path"))
+    staticFileControllerSettings->setValue("path", docrootParam);
+  staticFileControllerSettings->setValue("filename", configFileName);
+
+  // File controller gets a reference to the settings
   staticFileController = new stefanfrings::StaticFileController(staticFileControllerSettings, parent);
 }
 
 void WebApp::deinit()
 {
-  qDebug() << Q_FUNC_INFO;
+  ATOOLS_DELETE_LOG(sessionSettings);
+  ATOOLS_DELETE_LOG(staticFileControllerSettings);
 }

@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -44,7 +44,7 @@ class MapActionsController :
 {
     Q_OBJECT
 public:
-    Q_INVOKABLE MapActionsController(QWidget* parent, bool verboseParam, AbstractInfoBuilder* infoBuilder);
+    Q_INVOKABLE MapActionsController(QObject* parent, bool verboseParam, AbstractInfoBuilder* infoBuilder);
     /**
      * @brief get map image by rect
      */
@@ -77,14 +77,11 @@ protected:
      * "in", "out", "left", "right", "up" and "down".  */
     MapPixmap getPixmapPosDistance(int width, int height, atools::geo::Pos pos, float distanceKm, const QString& mapCommand, const QString& errorCase = QLatin1String(""));
 
-    /* Zoom to rectangel on map. */
+    /* Zoom to rectangel on map. Neither draws wind pointer at top nor copyright. */
     MapPixmap getPixmapRect(int width, int height, atools::geo::Rect rect, int detailFactor = MapLayerSettings::MAP_DEFAULT_DETAIL_LEVEL, const QString& errorCase = tr("Invalid rectangle"));
 
     MapPaintWidget *mapPaintWidget = nullptr;
     QMutex mapPaintWidgetMutex;
-
-    QWidget *parentWidget;
-    bool verbose = false;
 };
 
 #endif // MAPACTIONSCONTROLLER_H

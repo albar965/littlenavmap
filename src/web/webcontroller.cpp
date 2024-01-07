@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -49,17 +49,21 @@ WebController::WebController(QWidget *parent) :
   QString confPath = ":/littlenavmap/resources/config/webserver.cfg";
   configFileName = atools::settings::Settings::getOverloadedPath(confPath);
 
-  atools::io::IniReader reader;
-  reader.setCommentCharacters({";", "#"});
-  reader.setPreserveCase(true);
-  reader.read(configFileName);
-  listenerSettings = reader.getKeyValuePairs("listener");
-
   verbose = atools::settings::Settings::instance().getAndStoreValue(lnm::OPTIONS_WEBSERVER_DEBUG, false).toBool();
 
   // Remember any custom set certificates for later
-  sslKeyFile = listenerSettings.value("sslKeyFile").toString();
-  sslCertFile = listenerSettings.value("sslCertFile").toString();
+  listenerSettings = new QSettings();
+
+  // Copy from config file and remove group name
+  QSettings settings(configFileName, QSettings::IniFormat);
+  settings.beginGroup("listener");
+  const QStringList keys = settings.allKeys();
+  for(const QString& key : keys)
+    listenerSettings->setValue(key, settings.value(key));
+  settings.endGroup();
+
+  sslKeyFile = listenerSettings->value("sslKeyFile").toString();
+  sslCertFile = listenerSettings->value("sslCertFile").toString();
 
   mapController = new WebMapController(parentWidget, verbose);
   apiController = new WebApiController(parentWidget, verbose);
@@ -74,16 +78,17 @@ WebController::~WebController()
 
   stopServer();
 
-  delete mapController;
-  delete apiController;
-  delete htmlInfoBuilder;
+  ATOOLS_DELETE_LOG(mapController);
+  ATOOLS_DELETE_LOG(apiController);
+  ATOOLS_DELETE_LOG(htmlInfoBuilder);
+  ATOOLS_DELETE_LOG(listenerSettings);
 }
 
 void WebController::startServer()
 {
   qDebug() << Q_FUNC_INFO;
 
-  if(isRunning())
+  if(isListenerRunning())
   {
     qWarning() << Q_FUNC_INFO << "Web server already running";
     return;
@@ -103,31 +108,28 @@ void WebController::startServer()
   qDebug() << Q_FUNC_INFO << "Docroot" << docroot << "port" << port << "SSL" << encrypted;
 
   // Start map
-  mapController->init();
+  mapController->initMapPaintWidget();
 
   requestHandler = new RequestHandler(this, mapController, apiController, htmlInfoBuilder, verbose);
 
   // Set port - always override configuration file
-  listenerSettings.insert("port", port);
+  listenerSettings->setValue("port", port);
 
   if(encrypted)
   {
-    listenerSettings.insert("sslKeyFile", sslKeyFile.isEmpty() ?
-                            ":/littlenavmap/resources/config/ssl/lnm.key" : sslKeyFile);
-    listenerSettings.insert("sslCertFile", sslCertFile.isEmpty() ?
-                            ":/littlenavmap/resources/config/ssl/lnm.cert" : sslCertFile);
+    listenerSettings->setValue("sslKeyFile", sslKeyFile.isEmpty() ? ":/littlenavmap/resources/config/ssl/lnm.key" : sslKeyFile);
+    listenerSettings->setValue("sslCertFile", sslCertFile.isEmpty() ? ":/littlenavmap/resources/config/ssl/lnm.cert" : sslCertFile);
   }
   else
   {
-    listenerSettings.remove("sslKeyFile");
-    listenerSettings.remove("sslCertFile");
+    listenerSettings->remove("sslKeyFile");
+    listenerSettings->remove("sslCertFile");
   }
 
-  listenerSettings.insert("filename", configFileName);
+  listenerSettings->setValue("filename", configFileName);
 
-  qDebug() << "Using" <<
-    "sslKeyFile" << listenerSettings.value("sslKeyFile").toString() <<
-    "sslCertFile" << listenerSettings.value("sslCertFile").toString();
+  qDebug() << "Using" << "sslKeyFile" << listenerSettings->value("sslKeyFile").toString()
+           << "sslCertFile" << listenerSettings->value("sslCertFile").toString();
 
   listener = new HttpListener(listenerSettings, requestHandler, this);
 
@@ -211,32 +213,29 @@ void WebController::stopServer()
 {
   qDebug() << Q_FUNC_INFO;
 
-  if(!isRunning())
+  if(!isListenerRunning())
     return;
-
-  mapController->deInit();
 
   if(listener != nullptr)
     listener->close();
 
-  delete listener;
-  listener = nullptr;
-
-  delete requestHandler;
-  requestHandler = nullptr;
+  ATOOLS_DELETE_LOG(listener);
+  ATOOLS_DELETE_LOG(requestHandler);
 
   hosts.clear();
 
   WebApp::deinit();
+
+  mapController->deInitMapPaintWidget();
 
   emit webserverStatusChanged(false);
 }
 
 void WebController::restartServer(bool force)
 {
-  qDebug() << Q_FUNC_INFO << "isRunning()" << isRunning() << "force" << force;
+  qDebug() << Q_FUNC_INFO << "isRunning()" << isListenerRunning() << "force" << force;
 
-  if(isRunning() || force)
+  if(isListenerRunning() || force)
   {
     stopServer();
     startServer();
@@ -251,7 +250,7 @@ void WebController::openPage()
     qWarning() << Q_FUNC_INFO << "No valid URL found";
 }
 
-bool WebController::isRunning() const
+bool WebController::isListenerRunning() const
 {
   return listener != nullptr && listener->isListening();
 }

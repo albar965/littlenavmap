@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -17,9 +17,11 @@
 
 #include "web/webmapcontroller.h"
 
+#include "atools.h"
 #include "mapgui/mappaintwidget.h"
 #include "mapgui/mapwidget.h"
 #include "app/navapp.h"
+#include "mappainter/mappaintlayer.h"
 
 #include <QDebug>
 #include <QPixmap>
@@ -33,30 +35,34 @@ WebMapController::WebMapController(QWidget *parent, bool verboseParam)
 WebMapController::~WebMapController()
 {
   qDebug() << Q_FUNC_INFO;
-  deInit();
+  deInitMapPaintWidget();
 }
 
-void WebMapController::init()
+void WebMapController::initMapPaintWidget()
 {
   qDebug() << Q_FUNC_INFO;
 
   // Create a map widget if not already done and clone with the desired resolution
   if(mapPaintWidget == nullptr)
-    mapPaintWidget = new MapPaintWidget(parentWidget, false /* no real widget - hidden */);
+    mapPaintWidget = new MapPaintWidget(parentWidget, false /* no real widget - hidden */, true /* web */);
 
   // Copy all map settings
   mapPaintWidget->copySettings(*NavApp::getMapWidgetGui());
+
+  // Ensure MapPaintLayer::mapLayer initialisation
+  mapPaintWidget->getMapPaintLayer()->updateLayers();
 
   // Activate painting
   mapPaintWidget->setActive();
 }
 
-void WebMapController::deInit()
+void WebMapController::deInitMapPaintWidget()
 {
-  qDebug() << Q_FUNC_INFO;
+  // Close queries to allow closing the databases
+  if(mapPaintWidget != nullptr)
+    mapPaintWidget->preDatabaseLoad();
 
-  delete mapPaintWidget;
-  mapPaintWidget = nullptr;
+  ATOOLS_DELETE_LOG(mapPaintWidget);
 }
 
 MapPixmap WebMapController::getPixmap(int width, int height)

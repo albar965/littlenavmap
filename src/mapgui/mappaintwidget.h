@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -90,7 +90,7 @@ class MapPaintWidget :
   Q_OBJECT
 
 public:
-  explicit MapPaintWidget(QWidget *parent, bool visible);
+  explicit MapPaintWidget(QWidget *parent, bool visible, bool webParam);
   virtual ~MapPaintWidget() override;
 
   MapPaintWidget(const MapPaintWidget& other) = delete;
@@ -357,6 +357,16 @@ public:
     paintCopyright = value;
   }
 
+  bool isPaintWindHeader() const
+  {
+    return paintWindHeader;
+  }
+
+  void setPaintWindHeader(bool value)
+  {
+    paintWindHeader = value;
+  }
+
   ApronGeometryCache *getApronGeometryCache();
 
   /* true if real map display widget - false if hidden for online services or other applications */
@@ -421,6 +431,12 @@ public:
 
   /* Do not show anything above this zoom distance except user features */
   bool isDistanceCutOff() const;
+
+  /* Instances having web = true do not render additional stuff like navigation areas */
+  bool isWeb() const
+  {
+    return web;
+  }
 
 signals:
   /* Emitted whenever the result exceeds the limit clause in the queries */
@@ -555,6 +571,9 @@ protected:
   /* Paint copyright note into image */
   bool paintCopyright = true;
 
+  /* Paint wind header arrow and label */
+  bool paintWindHeader = true;
+
   /* Update screen index after painting */
   bool screenIndexUpdateReqired = false;
 
@@ -597,6 +616,9 @@ private:
 
   /* true if inside paint event - avoids crashes due to nested calls */
   bool painting = false;
+
+  /* true if web instance */
+  bool web;
 };
 
 #endif // LITTLENAVMAP_NAVMAPPAINTWIDGET_H

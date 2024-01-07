@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -107,7 +107,7 @@ struct PaintContext
   opts2::Flags2 flags2;
   map::MapWeatherSource weatherSource;
   bool visibleWidget;
-  bool paintCopyright = true;
+  bool paintCopyright = true, paintWindHeader = true, webMap = false;
   int mimimumRunwayLengthFt = -1; /* Value from toolbar */
   QVector<map::MapRef> *routeDrawnNavaids; /* All navaids drawn for route and procedures. Points to vector in MapScreenIndex */
   int currentDistanceMarkerId = -1;

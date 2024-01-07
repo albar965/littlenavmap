@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -18,9 +18,8 @@
 #ifndef LNM_WEBCONTROLLER_H
 #define LNM_WEBCONTROLLER_H
 
-#include "io/inireader.h"
-
 #include <QObject>
+#include <QSettings>
 #include <QUrl>
 #include <QVector>
 
@@ -63,7 +62,7 @@ public:
   void openPage();
 
   /* True if server is listening */
-  bool isRunning() const;
+  bool isListenerRunning() const;
 
   /* Get the default url. Usually hostname and port or IP and port as fallback. */
   QUrl getUrl(bool useIpAddress) const;
@@ -140,7 +139,7 @@ private:
   HtmlInfoBuilder *htmlInfoBuilder = nullptr;
 
   /* Configuration file and file name. Default is :/littlenavmap/resources/config/webserver.cfg */
-  atools::io::IniKeyValues listenerSettings;
+  QSettings *listenerSettings = nullptr;
   QString configFileName;
 
   /* Full canonical path containing only "/" as separator */

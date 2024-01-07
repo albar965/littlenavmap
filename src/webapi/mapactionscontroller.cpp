@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -17,6 +17,7 @@
 
 #include "mapactionscontroller.h"
 #include "abstractlnmactionscontroller.h"
+#include "atools.h"
 #include "common/infobuildertypes.h"
 #include "common/abstractinfobuilder.h"
 
@@ -36,8 +37,8 @@
 
 using InfoBuilderTypes::MapFeaturesData;
 
-MapActionsController::MapActionsController(QWidget *parent, bool verboseParam, AbstractInfoBuilder *infoBuilderParam)
-  : AbstractLnmActionsController(parent, verboseParam, infoBuilderParam), parentWidget(parent)
+MapActionsController::MapActionsController(QObject *parent, bool verboseParam, AbstractInfoBuilder *infoBuilderParam)
+  : AbstractLnmActionsController(parent, verboseParam, infoBuilderParam)
 {
   qDebug() << Q_FUNC_INFO;
   init();
@@ -45,7 +46,6 @@ MapActionsController::MapActionsController(QWidget *parent, bool verboseParam, A
 
 WebApiResponse MapActionsController::imageAction(WebApiRequest request)
 {
-
   WebApiResponse response = getResponse();
 
   atools::geo::Rect rect(
@@ -57,12 +57,7 @@ WebApiResponse MapActionsController::imageAction(WebApiRequest request)
 
   int detailFactor = request.parameters.value("detailfactor").toInt();
 
-  MapPixmap map = getPixmapRect(
-    request.parameters.value("width").toInt(),
-    request.parameters.value("height").toInt(),
-    rect,
-    detailFactor
-    );
+  MapPixmap map = getPixmapRect(request.parameters.value("width").toInt(), request.parameters.value("height").toInt(), rect, detailFactor);
 
   QString format = QString(request.parameters.value("format"));
   int quality = request.parameters.value("quality").toInt();
@@ -175,6 +170,7 @@ WebApiResponse MapActionsController::featureAction(WebApiRequest request)
     case map::WAYPOINT:
       result.waypoints.append(mapPaintWidget->getWaypointTrackQuery()->getWaypointById(object_id));
       break;
+
     default:
       mapPaintWidget->getMapQuery()->getMapObjectById(result, type_id, map::AIRSPACE_SRC_NONE, object_id, false);
       break;
@@ -203,10 +199,13 @@ void MapActionsController::init()
 {
   qDebug() << Q_FUNC_INFO;
 
-  deInit();
-
   // Create a map widget clone with the desired resolution
-  mapPaintWidget = new MapPaintWidget(parentWidget, false /* no real widget - hidden */);
+  if(mapPaintWidget == nullptr)
+    mapPaintWidget = new MapPaintWidget(dynamic_cast<QWidget *>(parent()), false /* no real widget - hidden */, true /* web */);
+
+  // Copy all map settings
+  mapPaintWidget->copySettings(*NavApp::getMapWidgetGui());
+
   // Ensure MapPaintLayer::mapLayer initialisation
   mapPaintWidget->getMapPaintLayer()->updateLayers();
 
@@ -216,10 +215,11 @@ void MapActionsController::init()
 
 void MapActionsController::deInit()
 {
-  qDebug() << Q_FUNC_INFO;
+  // Close queries to allow closing the databases
+  if(mapPaintWidget != nullptr)
+    mapPaintWidget->preDatabaseLoad();
 
-  delete mapPaintWidget;
-  mapPaintWidget = nullptr;
+  ATOOLS_DELETE_LOG(mapPaintWidget);
 }
 
 MapPixmap MapActionsController::getPixmap(int width, int height)
@@ -347,8 +347,9 @@ MapPixmap MapActionsController::getPixmapRect(int width, int height, atools::geo
       // Set detail factor
       mapPaintWidget->getMapPaintLayer()->setDetailLevel(detailFactor);
 
-      // Disable copyright note
+      // Disable copyright note and wind
       mapPaintWidget->setPaintCopyright(false);
+      mapPaintWidget->setPaintWindHeader(false);
 
       MapPixmap mapPixmap;
 

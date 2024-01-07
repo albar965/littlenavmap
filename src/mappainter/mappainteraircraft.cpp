@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -162,6 +162,6 @@ void MapPainterAircraft::render()
   } // if(context->objectTypes & map::AIRCRAFT_ALL)
 
   // Wind display depends only on option
-  if(context->dOptUserAc(optsac::ITEM_USER_AIRCRAFT_WIND_POINTER) && userAircraft.isValid())
+  if(context->paintWindHeader && context->dOptUserAc(optsac::ITEM_USER_AIRCRAFT_WIND_POINTER) && userAircraft.isValid())
     paintWindPointer(userAircraft, context->screenRect.width() / 2.f, 2.f);
 }

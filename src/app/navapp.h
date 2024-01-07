@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -159,6 +159,9 @@ public:
 
   /* Deletes all aggregated objects */
   static void deInit();
+
+  /* Have to delete early before deleting map widget */
+  static void deInitWebController();
 
   static void checkForUpdates(int channelOpts, bool manual, bool startup, bool forceDebug);
   static void updateChannels(int channelOpts);
@@ -420,6 +423,7 @@ public:
   static const QString& getCurrentAircraftPerfName();
   static const QString& getCurrentAircraftPerfAircraftType();
 
+  static bool isWebControllerRunning();
   static WebController *getWebController();
   static MapPaintWidget *getMapPaintWidgetWeb();
 

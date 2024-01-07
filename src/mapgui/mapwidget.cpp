@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -171,7 +171,7 @@ const double MAP_ZOOM_OUT_LIMIT_KM = 10000.;
 using atools::geo::Pos;
 
 MapWidget::MapWidget(MainWindow *parent)
-  : MapPaintWidget(parent, true /* real visible widget */), mainWindow(parent)
+  : MapPaintWidget(parent, true /* real visible widget */, false /* web */), mainWindow(parent)
 {
   takeoffLandingLastAircraft = new atools::fs::sc::SimConnectUserAircraft;
   mapSearchResultTooltip = new map::MapResult;

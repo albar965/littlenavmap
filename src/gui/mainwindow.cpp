@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -2728,7 +2728,7 @@ bool MainWindow::createMapImage(QPixmap& pixmap, const QString& dialogTitle, con
     else
     {
       // Create a map widget clone with the desired resolution
-      MapPaintWidget paintWidget(this, false /* no real widget - hidden */);
+      MapPaintWidget paintWidget(this, false /* no real widget - hidden */, false /* web */);
       paintWidget.setActive(); // Activate painting
       paintWidget.setKeepWorldRect(); // Center world rectangle when resizing
 
@@ -3286,7 +3286,7 @@ void MainWindow::mainWindowShown()
     NavApp::getWebController()->startServer();
     updateMapKeys(); // Update API keys and theme dir in web map widget
   }
-  webserverStatusChanged(NavApp::getWebController()->isRunning());
+  webserverStatusChanged(NavApp::isWebControllerRunning());
 
   renderStatusUpdateLabel(Marble::Complete, true /* forceUpdate */);
 
@@ -4460,6 +4460,10 @@ void MainWindow::closeEvent(QCloseEvent *event)
   }
 
   saveStateMain();
+
+  /* Have to delete early before deleting main map widget */
+  if(quit)
+    NavApp::deInitWebController();
 }
 
 void MainWindow::showEvent(QShowEvent *event)
@@ -4486,7 +4490,6 @@ void MainWindow::preDatabaseLoad()
     routeController->preDatabaseLoad();
 
     mapWidget->preDatabaseLoad();
-    NavApp::getWebController()->postDatabaseLoad();
 
     profileWidget->preDatabaseLoad();
     infoController->preDatabaseLoad();

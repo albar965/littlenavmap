@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -55,45 +55,48 @@ void MapPainterTop::render()
   int size = context->sz(context->symbolSizeAirport, 10);
   int size2 = context->sz(context->symbolSizeAirport, 9);
 
-  // Draw center cross =====================================
-  // Usable in all modes
-  Marble::GeoPainter *painter = context->painter;
-  if(opts & optsd::NAVAIDS_CENTER_CROSS)
+  if(!context->webMap)
   {
-    QRect vp = painter->viewport();
-    int x = vp.center().x();
-    int y = vp.center().y();
-
-    painter->setPen(mapcolors::touchMarkBackPen);
-    drawCross(painter, x, y, size);
-
-    painter->setPen(mapcolors::touchMarkFillPen);
-    drawCross(painter, x, y, size2);
-  }
-
-  // Screen navigation areas =====================================
-  // Show only if touch areas are enabled
-  if(nav == opts::MAP_NAV_TOUCHSCREEN)
-  {
-    int areaSize = OptionData::instance().getMapNavTouchArea();
-    if(opts & optsd::NAVAIDS_TOUCHSCREEN_REGIONS)
-      drawTouchRegions(areaSize);
-
-    if(opts & optsd::NAVAIDS_TOUCHSCREEN_AREAS)
+    // Draw center cross =====================================
+    // Usable in all modes
+    Marble::GeoPainter *painter = context->painter;
+    if(opts & optsd::NAVAIDS_CENTER_CROSS)
     {
+      QRect vp = painter->viewport();
+      int x = vp.center().x();
+      int y = vp.center().y();
+
       painter->setPen(mapcolors::touchMarkBackPen);
-      drawTouchMarks(size, areaSize);
+      drawCross(painter, x, y, size);
 
       painter->setPen(mapcolors::touchMarkFillPen);
-      drawTouchMarks(size2, areaSize);
+      drawCross(painter, x, y, size2);
     }
 
-    // Navigation icons in the corners
-    if(opts & optsd::NAVAIDS_TOUCHSCREEN_ICONS)
+    // Screen navigation areas =====================================
+    // Show only if touch areas are enabled
+    if(nav == opts::MAP_NAV_TOUCHSCREEN)
     {
-      // Make icon size dependent on screen size but limit min and max
-      int iconSize = std::max(painter->viewport().height(), painter->viewport().width()) / 20;
-      drawTouchIcons(std::max(std::min(iconSize, 30), 10));
+      int areaSize = OptionData::instance().getMapNavTouchArea();
+      if(opts & optsd::NAVAIDS_TOUCHSCREEN_REGIONS)
+        drawTouchRegions(areaSize);
+
+      if(opts & optsd::NAVAIDS_TOUCHSCREEN_AREAS)
+      {
+        painter->setPen(mapcolors::touchMarkBackPen);
+        drawTouchMarks(size, areaSize);
+
+        painter->setPen(mapcolors::touchMarkFillPen);
+        drawTouchMarks(size2, areaSize);
+      }
+
+      // Navigation icons in the corners
+      if(opts & optsd::NAVAIDS_TOUCHSCREEN_ICONS)
+      {
+        // Make icon size dependent on screen size but limit min and max
+        int iconSize = std::max(painter->viewport().height(), painter->viewport().width()) / 20;
+        drawTouchIcons(std::max(std::min(iconSize, 30), 10));
+      }
     }
   }
 
@@ -147,7 +150,7 @@ void MapPainterTop::render()
   }
 #endif
 
-  if(context->verboseDraw)
+  if(context->verboseDraw && !context->webMap)
   {
     atools::util::PainterContextSaver dbgsaver(context->painter);
     context->szFont(0.8f);
@@ -168,26 +171,29 @@ void MapPainterTop::render()
 
 void MapPainterTop::paintCopyright()
 {
-  QString mapCopyright = NavApp::getMapThemeHandler()->getTheme(mapPaintWidget->getCurrentThemeId()).getCopyright();
-  if(!mapCopyright.isEmpty() && context->paintCopyright)
+  if(context->paintCopyright)
   {
-    Marble::GeoPainter *painter = context->painter;
-    atools::util::PainterContextSaver saver(painter);
+    QString mapCopyright = NavApp::getMapThemeHandler()->getTheme(mapPaintWidget->getCurrentThemeId()).getCopyright();
+    if(!mapCopyright.isEmpty())
+    {
+      Marble::GeoPainter *painter = context->painter;
+      atools::util::PainterContextSaver saver(painter);
 
-    painter->setFont(QApplication::font());
-    mapcolors::scaleFont(painter, 0.9f);
+      painter->setFont(QApplication::font());
+      mapcolors::scaleFont(painter, 0.9f);
 
-    // Move text more into the center for web apps
-    int rightOffset = context->visibleWidget ? 0 : 20;
-    int bottomOffset = context->visibleWidget ? 0 : 4;
+      // Move text more into the center for web apps
+      int rightOffset = context->visibleWidget ? 0 : 20;
+      int bottomOffset = context->visibleWidget ? 0 : 4;
 
-    // Draw text
-    painter->setPen(Qt::black);
-    painter->setBackground(QColor("#b0ffffff"));
-    painter->setBrush(Qt::NoBrush);
-    painter->setBackgroundMode(Qt::OpaqueMode);
-    painter->drawText(painter->viewport().width() - painter->fontMetrics().horizontalAdvance(mapCopyright) - rightOffset,
-                      painter->viewport().height() - painter->fontMetrics().descent() - bottomOffset, mapCopyright);
+      // Draw text
+      painter->setPen(Qt::black);
+      painter->setBackground(QColor("#b0ffffff"));
+      painter->setBrush(Qt::NoBrush);
+      painter->setBackgroundMode(Qt::OpaqueMode);
+      painter->drawText(painter->viewport().width() - painter->fontMetrics().horizontalAdvance(mapCopyright) - rightOffset,
+                        painter->viewport().height() - painter->fontMetrics().descent() - bottomOffset, mapCopyright);
+    }
   }
 }
 

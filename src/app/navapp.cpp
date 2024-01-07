@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -230,10 +230,14 @@ void NavApp::initElevationProvider()
     elevationProvider->init(mainWindow->getElevationModel());
 }
 
+void NavApp::deInitWebController()
+{
+  ATOOLS_DELETE_LOG(webController);
+}
+
 void NavApp::deInit()
 {
   ATOOLS_DELETE_LOG(dataExchange);
-  ATOOLS_DELETE_LOG(webController);
   ATOOLS_DELETE_LOG(styleHandler);
   ATOOLS_DELETE_LOG(userdataController);
   ATOOLS_DELETE_LOG(mapMarkHandler);
@@ -1195,6 +1199,11 @@ const QString& NavApp::getCurrentAircraftPerfAircraftType()
 WebController *NavApp::getWebController()
 {
   return webController;
+}
+
+bool NavApp::isWebControllerRunning()
+{
+  return webController != nullptr ? webController->isListenerRunning() : false;
 }
 
 MapPaintWidget *NavApp::getMapPaintWidgetWeb()

@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -47,7 +47,8 @@ using namespace stefanfrings;
 
 RequestHandler::RequestHandler(QObject *parent, WebMapController *webMapController, WebApiController *webApiController,
                                HtmlInfoBuilder *htmlInfoBuilderParam, bool verboseParam)
-  : HttpRequestHandler(parent), webApiController(webApiController), htmlInfoBuilder(htmlInfoBuilderParam), verbose(verboseParam)
+  : HttpRequestHandler(parent), webApiController(webApiController), webMapController(webMapController),
+  htmlInfoBuilder(htmlInfoBuilderParam), verbose(verboseParam)
 {
   if(verbose)
     qDebug() << Q_FUNC_INFO;
@@ -57,9 +58,7 @@ RequestHandler::RequestHandler(QObject *parent, WebMapController *webMapControll
   connect(this, &RequestHandler::getUserAircraft,
           NavApp::getMapPaintWidgetGui(), &MapPaintWidget::getUserAircraft, Qt::BlockingQueuedConnection);
   connect(this, &RequestHandler::getRoute,
-          NavApp::getRouteController(),
-          static_cast<const Route& (RouteController::*)() const>(&RouteController::getRouteConst),
-          Qt::BlockingQueuedConnection);
+          NavApp::getRouteController(), &RouteController::getRouteConst, Qt::BlockingQueuedConnection);
   connect(this, &RequestHandler::getFlightplanTableAsHtml,
           NavApp::getRouteController(), &RouteController::getFlightplanTableAsHtml, Qt::BlockingQueuedConnection);
   connect(this, &RequestHandler::getAirportText,
@@ -389,19 +388,19 @@ inline void RequestHandler::handleHtmlFileRequest(HttpRequest& request, HttpResp
     // Put refresh values back in page by inserting select control ==============================
     if(t.contains(QStringLiteral(u"{aircraftrefreshsel}")))
       t.setVariable(QStringLiteral(u"aircraftrefreshsel"),
-                    buildRefreshSelect(session.get("aircraftrefresh").toInt()));        // does session entry exist?
+                    buildRefreshSelect(session.get("aircraftrefresh").toInt())); // does session entry exist?
 
     if(t.contains(QStringLiteral(u"{flightplanrefreshsel}")))
       t.setVariable(QStringLiteral(u"flightplanrefreshsel"),
-                    buildRefreshSelect(session.get("flightplanrefresh").toInt()));      // does session entry exist?
+                    buildRefreshSelect(session.get("flightplanrefresh").toInt())); // does session entry exist?
 
     if(t.contains(QStringLiteral(u"{maprefreshsel}")))
       t.setVariable(QStringLiteral(u"maprefreshsel"),
-                    buildRefreshSelect(session.get("maprefresh").toInt()));             // does session entry exist?
+                    buildRefreshSelect(session.get("maprefresh").toInt())); // does session entry exist?
 
     if(t.contains(QStringLiteral(u"{progressrefreshsel}")))
       t.setVariable(QStringLiteral(u"progressrefreshsel"),
-                    buildRefreshSelect(session.get("progressrefresh").toInt()));        // does session entry exist?
+                    buildRefreshSelect(session.get("progressrefresh").toInt())); // does session entry exist?
 
     // ===========================================================================
     // Aircraft registration, weight, etc.

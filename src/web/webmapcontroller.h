@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -88,8 +88,8 @@ public:
   WebMapController& operator=(const WebMapController& other) = delete;
 
   /* Create or delete the map paint widget */
-  void init();
-  void deInit();
+  void initMapPaintWidget();
+  void deInitMapPaintWidget();
 
   /* Get pixmap with given width and height from current position. */
   MapPixmap getPixmap(int width, int height);
