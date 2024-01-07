@@ -74,8 +74,8 @@ void MapThemeHandler::loadThemes()
       {
         MapTheme otherTheme = ids.value(theme.theme);
         errors.append(tr("Duplicate theme id \"%1\" in element \"&lt;theme&gt;\".<br/><br/>"
-                         "File with first occurence<br/>\"%2\".<br/><br/>"
-                         "File with second occurence being ignored<br/>\"%3\".<br/><br/>"
+                         "File with first occurrence<br/>\"%2\".<br/><br/>"
+                         "File with second occurrence being ignored<br/>\"%3\".<br/><br/>"
                          "Theme ids have to be unique across all map themes.<br/><br/>"
                          "<b>Remove one of these two map themes to avoid this message.</b><br/>").
                       arg(theme.theme).arg(otherTheme.dgmlFilepath).arg(theme.dgmlFilepath));
@@ -103,8 +103,8 @@ void MapThemeHandler::loadThemes()
         otherDgmlFilepaths.removeDuplicates();
 
         errors.append(tr("Duplicate source directory or directories \"%1\" in element \"&lt;sourcedir&gt;\".<br/><br/>"
-                         "File with first occurence<br/>\"%2\".<br/><br/>"
-                         "File(s) with second occurence being ignored<br/>\"%3\".<br/><br/>"
+                         "File with first occurrence<br/>\"%2\".<br/><br/>"
+                         "File(s) with second occurrence being ignored<br/>\"%3\".<br/><br/>"
                          "Source directories are used to cache map tiles and have to be unique across all map themes.<br/><br/>"
                          "<b>Remove one of these two map themes to avoid this message.</b><br/>").
                       arg(theme.sourceDirs.join(tr("\", \""))).arg(otherDgmlFilepaths.join(tr("\", \""))).arg(theme.dgmlFilepath));
