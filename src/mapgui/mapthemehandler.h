@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -22,6 +22,7 @@
 #include <QMap>
 #include <QCoreApplication>
 #include <QDir>
+#include <QSet>
 
 class QFileInfo;
 class QToolButton;
@@ -158,8 +159,7 @@ private:
 
   int index = -1;
   QString dgmlFilepath, name, copyright, theme, target, urlName, urlRef;
-  QStringList sourceDirs;
-  QStringList keys;
+  QStringList sourceDirs, keys, downloadHosts;
   bool textureLayer = false, geodataLayer = false, discrete = false, visible = false, online = false;
 };
 
@@ -255,7 +255,7 @@ public:
   void optionsChanged();
 
   /* Check path if it is a directory and counts map themes in it */
-  static QString getStatusTextForDir(const QString& path);
+  static QString getStatusTextForDir(const QString& path, bool& error);
 
   /* Checks default and user folder and shows an error dialog if any is invalid */
   static void validateMapThemeDirectories();
@@ -293,6 +293,8 @@ private:
   QWidget *mainWindow;
 
   QActionGroup *mapProjectionActionGroup = nullptr;
+
+  QSet<QRegularExpression> rejectDownloadUrlList;
 };
 
 QDebug operator<<(QDebug out, const MapTheme& theme);

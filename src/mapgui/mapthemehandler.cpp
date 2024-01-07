@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -38,6 +38,7 @@
 #include <QDataStream>
 #include <QActionGroup>
 #include <QStringBuilder>
+#include <QSettings>
 
 const static quint64 KEY = 0x19CB0467EBD391CC;
 const static QLatin1String FILENAME("mapthemekeys.bin");
@@ -45,6 +46,30 @@ const static QLatin1String FILENAME("mapthemekeys.bin");
 MapThemeHandler::MapThemeHandler(QWidget *mainWindowParam)
   : QObject(mainWindowParam), mainWindow(mainWindowParam)
 {
+  // Load list of themes to reject from configuration file
+  QSettings settings(atools::settings::Settings::getOverloadedPath(":/littlenavmap/resources/config/mapthemes.cfg"), QSettings::IniFormat);
+  settings.beginGroup("RejectDownloadUrl");
+  const QStringList keys = settings.childKeys();
+  for(const QString& key : keys)
+  {
+    QString regexpStr = settings.value(key).toString();
+    if(!regexpStr.isEmpty())
+    {
+#ifdef DEBUG_INFORMATION
+      qDebug().noquote().nospace() << Q_FUNC_INFO << " key " << key << " regexpStr " << regexpStr;
+#endif
+
+      QRegularExpression regexp(regexpStr);
+
+      if(regexp.isValid())
+        rejectDownloadUrlList.insert(regexp);
+      else
+        qWarning() << Q_FUNC_INFO << "Invalid regular expression" << regexpStr << "for key" << key;
+    }
+    else
+      qWarning() << Q_FUNC_INFO << "Empty value for key" << key;
+  }
+  settings.endGroup();
 }
 
 MapThemeHandler::~MapThemeHandler()
@@ -136,6 +161,26 @@ void MapThemeHandler::loadThemes()
         continue;
       }
 
+      bool rejected = false;
+      for(const QString& host : qAsConst(theme.downloadHosts))
+      {
+        for(const QRegularExpression& rejectExpr : qAsConst(rejectDownloadUrlList))
+        {
+          if(rejectExpr.match(host).hasMatch())
+          {
+            rejected = true;
+            break;
+          }
+        }
+      }
+
+      if(rejected)
+      {
+        errors.append(tr("Theme in file \"%1\" was rejected since the service is discontinued.<br/><br/>"
+                         "<b>Remove this map theme to avoid this message.</b><br/>").arg(theme.dgmlFilepath));
+        continue;
+      }
+
       ids.insert(theme.theme, theme);
       for(const QString& dir : qAsConst(theme.sourceDirs))
         sourceDirs.insert(dir, theme);
@@ -161,7 +206,7 @@ void MapThemeHandler::loadThemes()
     atools::gui::Dialog::warning(mainWindow,
                                  tr("<p>Found errors in map %2:</p>"
                                       "<ul><li>%1</li></ul>"
-                                        "<p>Ignoring duplicate or incorrect %2.</p>"
+                                        "<p>Ignoring duplicate, incorrect or rejected %2.</p>"
                                           "<p>Note that all other valid map themes are loaded and can be used despite this message.</p>").
                                  arg(errors.join("</li><li>")).arg(errors.size() == 1 ? tr("map theme") : tr("map themes")));
   }
@@ -439,9 +484,10 @@ MapTheme MapThemeHandler::loadTheme(const QFileInfo& dgml)
                 {
                   if(reader.name() == "downloadUrl")
                   {
+                    QString host = reader.attributes().value("host").toString();
+
                     // Put all attributes of the download URL into one string
-                    QString atts = reader.attributes().value("protocol").toString() % reader.attributes().value("host").toString() %
-                                   reader.attributes().value("path").toString();
+                    QString atts = reader.attributes().value("protocol").toString() % host % reader.attributes().value("path").toString();
 
                     // Extract keywords from download URL
                     QRegularExpressionMatchIterator regexpIter = KEYSREGEXP.globalMatch(atts);
@@ -454,6 +500,8 @@ MapTheme MapThemeHandler::loadTheme(const QFileInfo& dgml)
                          key != "west" && key != "south" && key != "east" && key != "north")
                         theme.keys.append(key);
                     }
+
+                    theme.downloadHosts.append(host);
 
                     // Online theme of download URL is given
                     theme.online = true;
@@ -817,28 +865,39 @@ void MapThemeHandler::optionsChanged()
   changeMapThemeActions(currentThemeId);
 }
 
-QString MapThemeHandler::getStatusTextForDir(const QString& path)
+QString MapThemeHandler::getStatusTextForDir(const QString& path, bool& error)
 {
   QString message = atools::checkDirMsg(path);
 
   if(message.isEmpty())
   {
-    int numThemes = 0;
-    QDir dir(path);
-    const QFileInfoList themeDirs = dir.entryInfoList(QDir::Dirs | QDir::NoDotAndDotDot);
-    for(const QFileInfo& themeDir : themeDirs)
+    QString stockPath = atools::canonicalFilePath(atools::buildPathNoCase({QApplication::applicationDirPath(), "data", "maps", "earth"}));
+    if(atools::canonicalFilePath(path).compare(stockPath, Qt::CaseInsensitive) == 0)
     {
-      if(atools::checkFile(Q_FUNC_INFO, themeDir.absoluteFilePath() % atools::SEP % themeDir.fileName() % ".dgml"))
-        numThemes++;
+      message = tr("Directory is set to the included stock themes. You have to set a directory outside of the installation.");
+      error = true;
     }
-
-    if(numThemes == 0)
-      message = tr("Directory is valid. No map themes found inside.");
     else
-      message = tr("Directory is valid. %1 %2 found.").arg(numThemes).arg(numThemes > 1 ? tr("map themes") : tr("map theme"));
-  }
-  return message;
+    {
+      int numThemes = 0;
+      QDir dir(path);
+      const QFileInfoList themeDirs = dir.entryInfoList(QDir::Dirs | QDir::NoDotAndDotDot);
+      for(const QFileInfo& themeDir : themeDirs)
+      {
+        if(atools::checkFile(Q_FUNC_INFO, themeDir.absoluteFilePath() % atools::SEP % themeDir.fileName() % ".dgml"))
+          numThemes++;
+      }
 
+      if(numThemes == 0)
+        message = tr("Directory is valid. No map themes found inside.");
+      else
+        message = tr("Directory is valid. %1 %2 found.").arg(numThemes).arg(numThemes > 1 ? tr("map themes") : tr("map theme"));
+      error = false;
+    }
+  }
+  else
+    error = true;
+  return message;
 }
 
 void MapThemeHandler::validateMapThemeDirectories()

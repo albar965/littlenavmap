@@ -341,5 +341,6 @@
         <file>resources/config/little_navmap_mapstyle.ini</file>
         <file>resources/icons/approachconvert.svg</file>
         <file>resources/icons/airportweather.svg</file>
+        <file>resources/config/mapthemes.cfg</file>
     </qresource>
 </RCC>
