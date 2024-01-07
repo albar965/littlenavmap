@@ -2556,7 +2556,13 @@ void OptionsDialog::mapThemeDirSelectClicked()
 
 void OptionsDialog::updateCacheMapThemeDir()
 {
-  ui->labelCacheMapThemeDir->setText(MapThemeHandler::getStatusTextForDir(ui->lineEditCacheMapThemeDir->text()));
+  bool error;
+  QString statusText = MapThemeHandler::getStatusTextForDir(ui->lineEditCacheMapThemeDir->text(), error);
+
+  if(error)
+    ui->labelCacheMapThemeDir->setText(atools::util::HtmlBuilder::errorMessage(statusText));
+  else
+    ui->labelCacheMapThemeDir->setText(statusText);
 }
 
 void OptionsDialog::offlineDataSelectClicked()

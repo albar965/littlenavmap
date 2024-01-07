@@ -2759,9 +2759,9 @@ Map views might be shown with a larger zoom distance than expected if this optio
            <property name="geometry">
             <rect>
              <x>0</x>
-             <y>0</y>
+             <y>-592</y>
              <width>585</width>
-             <height>968</height>
+             <height>1013</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_20">
@@ -3607,7 +3607,7 @@ For VOR, NDB, ILS, waypoints and holdings. Not for flight plan labels.</string>
            <property name="geometry">
             <rect>
              <x>0</x>
-             <y>0</y>
+             <y>-20</y>
              <width>585</width>
              <height>485</height>
             </rect>
@@ -4301,7 +4301,7 @@ Lower this value to avoid too long tracks and avoid stutters in map display.</st
            <property name="geometry">
             <rect>
              <x>0</x>
-             <y>0</y>
+             <y>-230</y>
              <width>585</width>
              <height>651</height>
             </rect>
@@ -5204,7 +5204,7 @@ Do not show this information publicly in forums on screenshots.&lt;/b&gt;&lt;/p&
            <property name="geometry">
             <rect>
              <x>0</x>
-             <y>0</y>
+             <y>-106</y>
              <width>585</width>
              <height>527</height>
             </rect>
@@ -5674,7 +5674,7 @@ airspace filename has to match the callsign of the online center.</string>
            <property name="geometry">
             <rect>
              <x>0</x>
-             <y>0</y>
+             <y>-212</y>
              <width>585</width>
              <height>633</height>
             </rect>
@@ -6281,7 +6281,7 @@ Note that this value does not affect flight plan calculation or saving of flight
            <property name="geometry">
             <rect>
              <x>0</x>
-             <y>-140</y>
+             <y>0</y>
              <width>585</width>
              <height>610</height>
             </rect>
@@ -6522,7 +6522,7 @@ Note that this value does not affect flight plan calculation or saving of flight
            <property name="geometry">
             <rect>
              <x>0</x>
-             <y>-218</y>
+             <y>-454</y>
              <width>585</width>
              <height>875</height>
             </rect>
@@ -6642,7 +6642,7 @@ The default X-Plane weather file in the X-Plane base path will be used if this f
                  </property>
                 </widget>
                </item>
-               <item row="5" column="0">
+               <item row="5" column="0" colspan="2">
                 <widget class="QLabel" name="labelOptionsWeatherXplaneWindPathState">
                  <property name="sizePolicy">
                   <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
@@ -6701,31 +6701,6 @@ The default X-Plane weather file in the X-Plane base path will be used if this f
                  </property>
                 </widget>
                </item>
-               <item row="2" column="0">
-                <widget class="QLabel" name="labelOptionsWeatherXplane12PathState">
-                 <property name="sizePolicy">
-                  <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                   <horstretch>0</horstretch>
-                   <verstretch>0</verstretch>
-                  </sizepolicy>
-                 </property>
-                 <property name="text">
-                  <string>Valid</string>
-                 </property>
-                 <property name="alignment">
-                  <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
-                 </property>
-                 <property name="wordWrap">
-                  <bool>true</bool>
-                 </property>
-                 <property name="margin">
-                  <number>10</number>
-                 </property>
-                 <property name="textInteractionFlags">
-                  <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
-                 </property>
-                </widget>
-               </item>
                <item row="1" column="0">
                 <widget class="QLineEdit" name="lineEditOptionsWeatherXplane12Path">
                  <property name="toolTip">
@@ -6747,6 +6722,31 @@ The default X-Plane 12 weather directory in the X-Plane base path will be used i
                  </property>
                  <property name="buddy">
                   <cstring>lineEditOptionsWeatherXplane12Path</cstring>
+                 </property>
+                </widget>
+               </item>
+               <item row="2" column="0" colspan="2">
+                <widget class="QLabel" name="labelOptionsWeatherXplane12PathState">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="text">
+                  <string>Valid</string>
+                 </property>
+                 <property name="alignment">
+                  <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+                 </property>
+                 <property name="wordWrap">
+                  <bool>true</bool>
+                 </property>
+                 <property name="margin">
+                  <number>10</number>
+                 </property>
+                 <property name="textInteractionFlags">
+                  <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
                  </property>
                 </widget>
                </item>
@@ -7615,7 +7615,7 @@ Little Navmap GIT repository.
            <property name="geometry">
             <rect>
              <x>0</x>
-             <y>0</y>
+             <y>-235</y>
              <width>585</width>
              <height>659</height>
             </rect>
@@ -7769,19 +7769,6 @@ Little Navmap GIT repository.
                <property name="spacing">
                 <number>2</number>
                </property>
-               <item row="2" column="1">
-                <widget class="QLabel" name="labelCacheMapThemeDir">
-                 <property name="text">
-                  <string>Valid</string>
-                 </property>
-                 <property name="wordWrap">
-                  <bool>true</bool>
-                 </property>
-                 <property name="margin">
-                  <number>10</number>
-                 </property>
-                </widget>
-               </item>
                <item row="1" column="0">
                 <widget class="QLabel" name="labelOptionsMapThemeDir">
                  <property name="text">
@@ -7838,6 +7825,19 @@ Little Navmap GIT repository.
                  </property>
                  <property name="textInteractionFlags">
                   <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
+                 </property>
+                </widget>
+               </item>
+               <item row="2" column="1" colspan="2">
+                <widget class="QLabel" name="labelCacheMapThemeDir">
+                 <property name="text">
+                  <string>Valid</string>
+                 </property>
+                 <property name="wordWrap">
+                  <bool>true</bool>
+                 </property>
+                 <property name="margin">
+                  <number>10</number>
                  </property>
                 </widget>
                </item>
