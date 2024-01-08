@@ -42,6 +42,7 @@
 
 const static quint64 KEY = 0x19CB0467EBD391CC;
 const static QLatin1String FILENAME("mapthemekeys.bin");
+const static int MAX_ERRORS = 5;
 
 MapThemeHandler::MapThemeHandler(QWidget *mainWindowParam)
   : QObject(mainWindowParam), mainWindow(mainWindowParam)
@@ -98,10 +99,10 @@ void MapThemeHandler::loadThemes()
       if(ids.contains(theme.theme))
       {
         MapTheme otherTheme = ids.value(theme.theme);
-        errors.append(tr("Duplicate theme id \"%1\" in element \"&lt;theme&gt;\".<br/><br/>"
-                         "File with first occurrence<br/>\"%2\".<br/><br/>"
-                         "File with second occurrence being ignored<br/>\"%3\".<br/><br/>"
-                         "Theme ids have to be unique across all map themes.<br/><br/>"
+        errors.append(tr("Duplicate theme id \"%1\" in element \"&lt;theme&gt;\".<br/>"
+                         "File with first occurrence<br/>\"%2\".<br/>"
+                         "File with second occurrence being ignored<br/>\"%3\".<br/>"
+                         "Theme ids have to be unique across all map themes.<br/>"
                          "<b>Remove one of these two map themes to avoid this message.</b><br/>").
                       arg(theme.theme).arg(otherTheme.dgmlFilepath).arg(theme.dgmlFilepath));
         continue;
@@ -127,10 +128,10 @@ void MapThemeHandler::loadThemes()
         otherDgmlFilepaths.removeAll(QString());
         otherDgmlFilepaths.removeDuplicates();
 
-        errors.append(tr("Duplicate source directory or directories \"%1\" in element \"&lt;sourcedir&gt;\".<br/><br/>"
-                         "File with first occurrence<br/>\"%2\".<br/><br/>"
-                         "File(s) with second occurrence being ignored<br/>\"%3\".<br/><br/>"
-                         "Source directories are used to cache map tiles and have to be unique across all map themes.<br/><br/>"
+        errors.append(tr("Duplicate source directory or directories<br/>\"%1\"<br/>in element \"&lt;sourcedir&gt;\".<br/>"
+                         "File with first occurrence<br/>\"%2\".<br/>"
+                         "File(s) with second occurrence being ignored<br/>\"%3\".<br/>"
+                         "Source directories are used to cache map tiles and have to be unique across all map themes.<br/>"
                          "<b>Remove one of these two map themes to avoid this message.</b><br/>").
                       arg(theme.sourceDirs.join(tr("\", \""))).arg(otherDgmlFilepaths.join(tr("\", \""))).arg(theme.dgmlFilepath));
         continue;
@@ -139,7 +140,7 @@ void MapThemeHandler::loadThemes()
       if(theme.theme.isEmpty())
       {
         errors.append(tr("Empty theme id in in element \"&lt;theme&gt;\".<br/>"
-                         "File \"%1\".<br/><br/>"
+                         "File<br/>\"%1\".<br/>"
                          "<b>Remove or repair this map theme to avoid this message.</b><br/>").arg(theme.dgmlFilepath));
         continue;
       }
@@ -147,7 +148,7 @@ void MapThemeHandler::loadThemes()
       if(theme.online && theme.sourceDirs.isEmpty())
       {
         errors.append(tr("Empty source directory in in element \"&lt;sourcedir&gt;\".<br/>"
-                         "File \"%1\".<br/><br/>"
+                         "File<br/>\"%1\".<br/>"
                          "<b>Remove or repair this map theme to avoid this message.</b><br/>").arg(theme.dgmlFilepath));
         continue;
       }
@@ -155,8 +156,8 @@ void MapThemeHandler::loadThemes()
       if(theme.target != "earth")
       {
         errors.append(tr("Invalid target \"%1\" in element \"&lt;target&gt;\".<br/>"
-                         "File \"%2\".<br/>"
-                         "Element must contain text \"earth\".<br/><br/>"
+                         "File<br/>\"%2\".<br/>"
+                         "Element must contain text \"earth\".<br/>"
                          "<b>Remove or repair this map theme to avoid this message.</b><br/>").arg(theme.target).arg(theme.dgmlFilepath));
         continue;
       }
@@ -176,7 +177,7 @@ void MapThemeHandler::loadThemes()
 
       if(rejected)
       {
-        errors.append(tr("Theme in file \"%1\" was rejected since the service is discontinued.<br/><br/>"
+        errors.append(tr("Theme in file<br/>\"%1\"<br/>was rejected since the service is discontinued.<br/>"
                          "<b>Remove this map theme to avoid this message.</b><br/>").arg(theme.dgmlFilepath));
         continue;
       }
@@ -202,12 +203,20 @@ void MapThemeHandler::loadThemes()
   {
     qWarning() << Q_FUNC_INFO << errors;
 
+    if(errors.size() > MAX_ERRORS)
+    {
+      int numMore = errors.size() - MAX_ERRORS;
+      errors = errors.mid(0, MAX_ERRORS);
+      errors.append(tr("<b>%1 more errors found ...</b>").arg(numMore));
+    }
+
     NavApp::closeSplashScreen();
     atools::gui::Dialog::warning(mainWindow,
                                  tr("<p>Found errors in map %2:</p>"
                                       "<ul><li>%1</li></ul>"
                                         "<p>Ignoring duplicate, incorrect or rejected %2.</p>"
-                                          "<p>Note that all other valid map themes are loaded and can be used despite this message.</p>").
+                                          "<p>Note that all other valid map themes are loaded and can be used despite this message.</p>"
+                                            "<p>Restart Little Navmap after fixing the issues.</p>").
                                  arg(errors.join("</li><li>")).arg(errors.size() == 1 ? tr("map theme") : tr("map themes")));
   }
 
