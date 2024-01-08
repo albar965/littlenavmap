@@ -202,7 +202,9 @@ void MapPaintWidget::copyView(const MapPaintWidget& other)
 void MapPaintWidget::setTheme(const MapTheme& theme)
 {
   // themeId: "google-maps-def",  themePath: "earth/google-maps-def/google-maps-def.dgml" or full path
+#ifdef DEBUG_INFORMATION
   qDebug() << Q_FUNC_INFO << "setting map theme to" << theme;
+#endif
 
   if(currentThemeId.isEmpty() || currentThemeId != theme.getThemeId())
   {
