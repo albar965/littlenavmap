@@ -48,7 +48,13 @@ void WebApiController::registerInfoBuilders()
 
 WebApiController::~WebApiController()
 {
-  // qDebug() << Q_FUNC_INFO;
+  qDebug() << Q_FUNC_INFO;
+
+  // Have to delete all controllers here instead of leaving them deleted by the parent relationship to MainWindow
+  // Done to avoid locked databases since MapPaintWidget keeps queries open.
+  const QList<QString> keys = controllerInstances.keys();
+  for(const QString& key : keys)
+    deleteControllerInstance(key.toUtf8());
 }
 
 WebApiResponse WebApiController::service(WebApiRequest& request)
@@ -165,4 +171,15 @@ QObject *WebApiController::getControllerInstance(QByteArray controllerName)
     return controller;
   }
   return nullptr;
+}
+
+void WebApiController::deleteControllerInstance(QByteArray controllerName)
+{
+  // Return stored controller if available
+  if(controllerInstances.contains(controllerName))
+  {
+    qDebug() << Q_FUNC_INFO << "deleting" << controllerName;
+    delete controllerInstances[controllerName];
+    controllerInstances.remove(controllerName);
+  }
 }

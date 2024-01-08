@@ -104,6 +104,7 @@ private:
    * @param the response to add headers to
    */
   void addCommonResponseHeaders(WebApiResponse& response);
+  void deleteControllerInstance(QByteArray controllerName);
 };
 
 #endif // LNM_WebApiController_H

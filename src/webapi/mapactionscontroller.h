@@ -44,6 +44,7 @@ class MapActionsController :
 {
     Q_OBJECT
 public:
+    /* Parent has to be an instance of QWidget to be used by the MapPaintWidget */
     Q_INVOKABLE MapActionsController(QObject* parent, bool verboseParam, AbstractInfoBuilder* infoBuilder);
     /**
      * @brief get map image by rect
