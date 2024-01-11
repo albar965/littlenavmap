@@ -1,4 +1,5 @@
 ﻿// =====================================================================================================
+// Inno Setup installer script https://jrsoftware.org
 // Script to create the Little Navmap installer for the 32-bit and 64-bit versions.
 //
 // This file has to be encoded using UTF-8 with BOM.
@@ -11,7 +12,7 @@
 // Command line parameters with defaults ==========================================================================
 // Set defaults for debugging if not given on the command line
 #ifndef LnmAppVersion
-  #define LnmAppVersion "2.8.12.rc2"
+  #define LnmAppVersion "3.0.2.beta"
 #endif
 
 #ifndef LnmAppArch
@@ -168,9 +169,17 @@ Source: "{#LnmAppSourceDir}"; DestDir: "{app}"; Flags: ignoreversion recursesubd
 #elif LnmAppArch == "win32"
   Source: "{#LnmAppProjects}\Redist\vcredist_2005_x86.exe"; DestDir: {tmp}; Flags: deleteafterinstall
 #endif
-
 Source: "{#LnmAppProjects}\littlenavmap\build\win\Little Navmap User Manual Online.url"; DestDir: "{app}\help";
 Source: "{#LnmAppProjects}\littlenavmap\build\win\Little Navmap User Manual Online Start.url"; DestDir: "{app}\help";
+
+// Delete obsolete files before installation ==========================================================================
+[InstallDelete]
+Type: files; Name: "{app}/data/maps/earth/stamenterrain/stamenterrain.dgml"
+Type: files; Name: "{app}/data/maps/earth/stamenterrain/stamenterrain-preview.png"
+Type: files; Name: "{app}/data/maps/earth/stamenterrain/0/0/0.png"
+Type: dirifempty; Name: "{app}/data/maps/earth/stamenterrain/0/0"
+Type: dirifempty; Name: "{app}/data/maps/earth/stamenterrain/0"
+Type: dirifempty; Name: "{app}/data/maps/earth/stamenterrain"
 
 // File associations ==========================================================================
 [Registry]
