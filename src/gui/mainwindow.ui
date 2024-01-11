@@ -11471,13 +11471,13 @@ relation to shown airport</string>
      <normaloff>:/littlenavmap/resources/icons/runwaydest.svg</normaloff>:/littlenavmap/resources/icons/runwaydest.svg</iconset>
    </property>
    <property name="text">
-    <string>Select Destination &amp;Runway ...</string>
+    <string>Select Destination &amp;Runway or Procedures ...</string>
    </property>
    <property name="toolTip">
-    <string>Select runway for destination airport in flight plan</string>
+    <string>Select runway or procedures for destination airport in flight plan</string>
    </property>
    <property name="statusTip">
-    <string>Select runway for destination airport in flight plan</string>
+    <string>Select runway or procedures for destination airport in flight plan</string>
    </property>
    <property name="shortcut">
     <string>Alt+Shift+U</string>
@@ -11489,13 +11489,13 @@ relation to shown airport</string>
      <normaloff>:/littlenavmap/resources/icons/runwaydepart.svg</normaloff>:/littlenavmap/resources/icons/runwaydepart.svg</iconset>
    </property>
    <property name="text">
-    <string>Select &amp;Departure Runway ...</string>
+    <string>Select &amp;Departure Runway or Procedure ...</string>
    </property>
    <property name="toolTip">
-    <string>Select runway for departure airport in flight plan</string>
+    <string>Select runway or a procedure for departure airport in flight plan</string>
    </property>
    <property name="statusTip">
-    <string>Select runway for departure airport in flight plan</string>
+    <string>Select runway or a procedure for departure airport in flight plan</string>
    </property>
    <property name="shortcut">
     <string>Alt+Shift+R</string>
