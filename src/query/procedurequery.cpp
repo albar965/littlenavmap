@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -3055,10 +3055,8 @@ void ProcedureQuery::insertSidStarRunway(proc::MapProcedureLegs& legs, const QSt
       // Assign first matching runway for this sid if not assigned yet
       legs.runway = anyMatchingRunwayForSidStar(legs.arincName, runwayNames);
     else
-    {
       // Assign given runway
       legs.runway = atools::fs::util::runwayBestFitFromList(runway, runwayNames);
-    }
 
     legs.runwayEnd = airportQueryNav->getRunwayEndByName(legs.ref.airportId, legs.runway);
 

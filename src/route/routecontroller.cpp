@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -4276,25 +4276,48 @@ void RouteController::routeAddProcedure(proc::MapProcedureLegs legs)
     NavApp::getAirportQueryNav()->getAirportById(airportSim, legs.ref.airportId);
     NavApp::getMapQueryGui()->getAirportSimReplace(airportSim);
 
+    if(legs.mapType & proc::PROCEDURE_APPROACH_ALL && route.hasAnyStarProcedure())
+    {
+      QStringList starRunways;
+      atools::fs::util::sidStarMultiRunways(airportQuery->getRunwayNames(airportSim.id), route.getStarLegs().arincName,
+                                            tr("All"), &starRunways);
+      // Check if the runway of an an already present STAR can be changed to match the approach
+      if(atools::fs::util::runwayContains(starRunways, legs.runway))
+      {
+        // Adjust STAR runway to approach runway
+        proc::MapProcedureLegs starLegs = route.getStarLegs();
+
+        NavApp::getProcedureQuery()->insertSidStarRunway(starLegs, legs.runway);
+        route.setStarProcedureLegs(starLegs);
+      }
+    }
+
     if(legs.mapType & proc::PROCEDURE_SID_STAR_ALL)
     {
       // Get runways for all or parallel runway procedures ===============================
       QStringList sidStarRunways;
-      atools::fs::util::sidStarMultiRunways(airportQuery->getRunwayNames(airportSim.id), legs.arincName, tr("All"),
-                                            &sidStarRunways);
+      atools::fs::util::sidStarMultiRunways(airportQuery->getRunwayNames(airportSim.id), legs.arincName, tr("All"), &sidStarRunways);
 
       if(!sidStarRunways.isEmpty())
       {
-        // Show dialog allowing the user to select a runway
-        QString text = proc::procedureLegsText(legs, proc::PROCEDURE_NONE,
-                                               false /* narrow */, true /* includeRunway*/, false /* missedAsApproach*/,
-                                               false /* transitionAsProcedure */);
-        RunwaySelectionDialog runwaySelectionDialog(mainWindow, airportSim, sidStarRunways, text);
-        if(runwaySelectionDialog.exec() == QDialog::Accepted)
-          sidStarRunway = runwaySelectionDialog.getSelectedName();
+        // Check if an already present approach matches the new STAR runway
+        if((legs.mapType & proc::PROCEDURE_STAR_ALL) && route.hasAnyApproachProcedure() &&
+           atools::fs::util::runwayContains(sidStarRunways, route.getApproachLegs().runway))
+          // No runway selection dialog
+          sidStarRunway = route.getApproachLegs().runway;
         else
-          // Cancel out
-          return;
+        {
+          // Show dialog allowing the user to select a runway
+          QString text = proc::procedureLegsText(legs, proc::PROCEDURE_NONE,
+                                                 false /* narrow */, true /* includeRunway*/, false /* missedAsApproach*/,
+                                                 false /* transitionAsProcedure */);
+          RunwaySelectionDialog runwaySelectionDialog(mainWindow, airportSim, sidStarRunways, text);
+          if(runwaySelectionDialog.exec() == QDialog::Accepted)
+            sidStarRunway = runwaySelectionDialog.getSelectedName();
+          else
+            // Cancel out
+            return;
+        }
       }
     }
   }
