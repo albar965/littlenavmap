@@ -4788,9 +4788,9 @@ QIcon RouteController::iconForLeg(const RouteLeg& leg, int size) const
   if(leg.getMapType() == map::AIRPORT)
     icon = SymbolPainter::createAirportIcon(leg.getAirport(), size - 2);
   else if(leg.getVor().isValid())
-    icon = SymbolPainter::createVorIcon(leg.getVor(), size);
+    icon = SymbolPainter::createVorIcon(leg.getVor(), size, NavApp::isGuiStyleDark());
   else if(leg.getNdb().isValid())
-    icon = SymbolPainter::createNdbIcon(size);
+    icon = SymbolPainter::createNdbIcon(size, NavApp::isGuiStyleDark());
   else if(leg.getWaypoint().isValid())
     icon = SymbolPainter::createWaypointIcon(size);
   else if(leg.getMapType() == map::USERPOINTROUTE)
@@ -5388,7 +5388,7 @@ void RouteController::highlightNextWaypoint(int activeLegIdx)
     // Add magenta brush for all columns in active row ======================
     if(activeLegIndex >= 0 && activeLegIndex < route.size())
     {
-      QColor color = NavApp::isCurrentGuiStyleNight() ? mapcolors::nextWaypointColorDark : mapcolors::nextWaypointColor;
+      QColor color = NavApp::isGuiStyleDark() ? mapcolors::nextWaypointColorDark : mapcolors::nextWaypointColor;
 
       for(int col = 0; col < model->columnCount(); col++)
       {
@@ -5463,9 +5463,9 @@ void RouteController::updateModelHighlightsAndErrors()
     parkingErrors.append(tr("Parking or start position \"%1\" not found at departure airport.").arg(departureParkingName));
   }
 
-  bool night = NavApp::isCurrentGuiStyleNight();
+  bool dark = NavApp::isGuiStyleDark();
   const QColor defaultColor = QApplication::palette().color(QPalette::Normal, QPalette::Text);
-  const QColor invalidColor = night ? mapcolors::routeInvalidTableColorDark : mapcolors::routeInvalidTableColor;
+  const QColor invalidColor = dark ? mapcolors::routeInvalidTableColorDark : mapcolors::routeInvalidTableColor;
 
   for(int row = 0; row < model->rowCount(); row++)
   {
@@ -5494,13 +5494,13 @@ void RouteController::updateModelHighlightsAndErrors()
         item->setForeground(defaultColor);
 
         if(leg.isAlternate())
-          item->setForeground(night ? mapcolors::routeAlternateTableColorDark : mapcolors::routeAlternateTableColor);
+          item->setForeground(dark ? mapcolors::routeAlternateTableColorDark : mapcolors::routeAlternateTableColor);
         else if(leg.isAnyProcedure())
         {
           if(leg.getProcedureLeg().isMissed())
-            item->setForeground(night ? mapcolors::routeProcedureMissedTableColorDark : mapcolors::routeProcedureMissedTableColor);
+            item->setForeground(dark ? mapcolors::routeProcedureMissedTableColorDark : mapcolors::routeProcedureMissedTableColor);
           else
-            item->setForeground(night ? mapcolors::routeProcedureTableColorDark : mapcolors::routeProcedureTableColor);
+            item->setForeground(dark ? mapcolors::routeProcedureTableColorDark : mapcolors::routeProcedureTableColor);
         }
 
         // Ident colum ==========================================

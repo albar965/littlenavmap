@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -56,7 +56,7 @@ public:
   void styleChanged()
   {
     formatHighlight.setFontWeight(QFont::Bold);
-    formatNormal.setForeground(NavApp::isCurrentGuiStyleNight() ? QColor(180, 180, 180) : QColor(100, 100, 100));
+    formatNormal.setForeground(NavApp::isGuiStyleDark() ? QColor(180, 180, 180) : QColor(100, 100, 100));
   }
 
 private:

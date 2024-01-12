@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -2114,7 +2114,7 @@ void HtmlInfoBuilder::vorText(const MapVor& vor, HtmlBuilder& html) const
   if(info && infoQuery != nullptr)
     rec = infoQuery->getVorInformation(vor.id);
 
-  QIcon icon = SymbolPainter::createVorIcon(vor, symbolSizeTitle.height());
+  QIcon icon = SymbolPainter::createVorIcon(vor, symbolSizeTitle.height(), NavApp::isGuiStyleDark());
   html.img(icon, QString(), QString(), symbolSizeTitle);
   html.nbsp().nbsp();
 
@@ -2205,7 +2205,7 @@ void HtmlInfoBuilder::ndbText(const MapNdb& ndb, HtmlBuilder& html) const
   if(info && infoQuery != nullptr)
     rec = infoQuery->getNdbInformation(ndb.id);
 
-  QIcon icon = SymbolPainter::createNdbIcon(symbolSizeTitle.height());
+  QIcon icon = SymbolPainter::createNdbIcon(symbolSizeTitle.height(), NavApp::isGuiStyleDark());
   html.img(icon, QString(), QString(), symbolSizeTitle);
   html.nbsp().nbsp();
 

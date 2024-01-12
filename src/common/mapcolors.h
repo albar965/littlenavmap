@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -289,7 +289,7 @@ QPen penForAirspace(const map::MapAirspace& airspace, int lineThickness);
 QColor colorForAirspaceFill(const map::MapAirspace& airspace, int transparency);
 
 /* Color for airway or track */
-const QColor& colorForAirwayOrTrack(const map::MapAirway& airway);
+const QColor colorForAirwayOrTrack(const map::MapAirway& airway, bool darkMap);
 
 /* Convert current pen into dotted pen leaving style and color as is */
 void adjustPenForCircleToLand(QPainter *painter);

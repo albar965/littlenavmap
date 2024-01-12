@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -469,7 +469,7 @@ const QLatin1String STARTUP_COMMAND_ACTIVATE("activate"); /* Bring window to fro
 const QLatin1String AIRCRAFT_TRACK_SUFFIX(".track");
 const QLatin1String PROFILE_TRACK_SUFFIX("_profile.track");
 const QLatin1String LOGBOOK_TRACK_SUFFIX(".logbooktrack");
-const QLatin1String NIGHTSTYLE_INI_SUFFIX("_nightstyle.ini");
+const QLatin1String DARKSTYLE_INI_SUFFIX("_nightstyle.ini");
 
 const QLatin1String MAPSTYLE_INI_SUFFIX("_mapstyle.ini");
 const QLatin1String MAPSTYLE_CONFIG(":/littlenavmap/resources/config/little_navmap_mapstyle.ini");

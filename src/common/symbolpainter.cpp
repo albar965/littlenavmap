@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -84,36 +84,37 @@ QIcon SymbolPainter::createAirportMsaIcon(const map::MapAirportMsa& airportMsa, 
   return QIcon(pixmap);
 }
 
-QIcon SymbolPainter::createVorIcon(const map::MapVor& vor, int size)
+QIcon SymbolPainter::createVorIcon(const map::MapVor& vor, int size, bool darkMap)
 {
   QPixmap pixmap(size, size);
   pixmap.fill(QColor(Qt::transparent));
   QPainter painter(&pixmap);
   prepareForIcon(painter);
 
-  SymbolPainter().drawVorSymbol(&painter, vor, size / 2.f, size / 2.f, size * 7.f / 10.f, 0.f, false /* routeFill */, false /* fast */);
+  SymbolPainter().drawVorSymbol(&painter, vor, size / 2.f, size / 2.f, size * 7.f / 10.f, 0.f,
+                                false /* routeFill */, false /* fast */, darkMap);
   return QIcon(pixmap);
 }
 
-QIcon SymbolPainter::createNdbIcon(int size)
+QIcon SymbolPainter::createNdbIcon(int size, bool darkMap)
 {
   QPixmap pixmap(size, size);
   pixmap.fill(QColor(Qt::transparent));
   QPainter painter(&pixmap);
   prepareForIcon(painter);
 
-  SymbolPainter().drawNdbSymbol(&painter, size / 2.f, size / 2.f, size * 8.f / 10.f, false, false);
+  SymbolPainter().drawNdbSymbol(&painter, size / 2.f, size / 2.f, size * 8.f / 10.f, false /* routeFill */, false /* fast */, darkMap);
   return QIcon(pixmap);
 }
 
-QIcon SymbolPainter::createAirwayIcon(const map::MapAirway& airway, int size)
+QIcon SymbolPainter::createAirwayIcon(const map::MapAirway& airway, int size, bool darkMap)
 {
   QPixmap pixmap(size, size);
   pixmap.fill(QColor(Qt::transparent));
   QPainter painter(&pixmap);
   prepareForIcon(painter);
 
-  painter.setPen(QPen(mapcolors::colorForAirwayOrTrack(airway), 1.5));
+  painter.setPen(QPen(mapcolors::colorForAirwayOrTrack(airway, darkMap), 1.5));
 
   painter.drawLine(0, 0, size, size);
 
@@ -900,7 +901,7 @@ void SymbolPainter::drawProcedureFaf(QPainter *painter, float x, float y, float 
 }
 
 void SymbolPainter::drawVorSymbol(QPainter *painter, const map::MapVor& vor, float x, float y, float size, float sizeLarge, bool routeFill,
-                                  bool fast)
+                                  bool fast, bool darkMap)
 {
   atools::util::PainterContextSaver saver(painter);
 
@@ -913,13 +914,14 @@ void SymbolPainter::drawVorSymbol(QPainter *painter, const map::MapVor& vor, flo
   // Use double to avoid type conversions
   double sizeD = static_cast<double>(size);
   double sizeLargeD = static_cast<double>(sizeLarge);
+  QColor symbolColor = mapcolors::vorSymbolColor.lighter(darkMap ? 250 : 100);
 
   if(size > 4)
   {
     float lineWidth = std::max(size / 16.f, 1.5f);
     float roseLineWidth = std::max(size / 20.f, 0.8f);
 
-    painter->setPen(QPen(mapcolors::vorSymbolColor, lineWidth, Qt::SolidLine, Qt::SquareCap));
+    painter->setPen(QPen(symbolColor, lineWidth, Qt::SolidLine, Qt::SquareCap));
 
     painter->translate(x, y);
 
@@ -959,8 +961,8 @@ void SymbolPainter::drawVorSymbol(QPainter *painter, const map::MapVor& vor, flo
       if(vor.vortac)
       {
         // Draw the filled VORTAC blocks
-        painter->setBrush(mapcolors::vorSymbolColor);
-        painter->setPen(QPen(mapcolors::vorSymbolColor, lineWidth, Qt::SolidLine, Qt::SquareCap));
+        painter->setBrush(symbolColor);
+        painter->setPen(QPen(symbolColor, lineWidth, Qt::SolidLine, Qt::SquareCap));
 
         polygon.clear();
         polygon
@@ -1017,7 +1019,7 @@ void SymbolPainter::drawVorSymbol(QPainter *painter, const map::MapVor& vor, flo
     {
       // Draw compass circle and ticks
       painter->setBrush(Qt::NoBrush);
-      painter->setPen(QPen(mapcolors::vorSymbolColor, roseLineWidth, Qt::SolidLine, Qt::SquareCap));
+      painter->setPen(QPen(symbolColor, roseLineWidth, Qt::SolidLine, Qt::SquareCap));
       painter->drawEllipse(QPointF(0., 0.), radiusLargeD, radiusLargeD);
 
       if(!fast)
@@ -1038,17 +1040,17 @@ void SymbolPainter::drawVorSymbol(QPainter *painter, const map::MapVor& vor, flo
 
     // Draw dot in center
     if(size > 14)
-      painter->setPen(QPen(mapcolors::vorSymbolColor, sizeD / 4., Qt::SolidLine, Qt::RoundCap));
+      painter->setPen(QPen(symbolColor, sizeD / 4., Qt::SolidLine, Qt::RoundCap));
     else
-      painter->setPen(QPen(mapcolors::vorSymbolColor, sizeD / 3., Qt::SolidLine, Qt::RoundCap));
+      painter->setPen(QPen(symbolColor, sizeD / 3., Qt::SolidLine, Qt::RoundCap));
   }
   else
-    painter->setPen(QPen(mapcolors::vorSymbolColor, sizeD, Qt::SolidLine, Qt::SquareCap));
+    painter->setPen(QPen(symbolColor, sizeD, Qt::SolidLine, Qt::SquareCap));
 
   painter->drawPoint(QPointF(x, y));
 }
 
-void SymbolPainter::drawNdbSymbol(QPainter *painter, float x, float y, float size, bool routeFill, bool fast)
+void SymbolPainter::drawNdbSymbol(QPainter *painter, float x, float y, float size, bool routeFill, bool fast, bool darkMap)
 {
   atools::util::PainterContextSaver saver(painter);
 
@@ -1058,12 +1060,14 @@ void SymbolPainter::drawNdbSymbol(QPainter *painter, float x, float y, float siz
   else
     painter->setBrush(Qt::NoBrush);
 
+  QColor symbolColor = mapcolors::ndbSymbolColor.lighter(darkMap ? 250 : 100);
+
   if(size > 4.f)
   {
     float lineWidth = std::max(size / 16.f, 1.5f);
 
     // Use dotted or solid line depending on size
-    painter->setPen(QPen(mapcolors::ndbSymbolColor, lineWidth,
+    painter->setPen(QPen(symbolColor, lineWidth,
                          (size > 12.f && !fast) ? Qt::DotLine : Qt::SolidLine, Qt::SquareCap));
 
     double radius = size / 2.;
@@ -1076,10 +1080,10 @@ void SymbolPainter::drawNdbSymbol(QPainter *painter, float x, float y, float siz
       painter->drawEllipse(QPointF(x, y), radius * 2. / 3., radius * 2. / 3.);
 
     double pointSize = size > 12 ? size / 4. : size / 3.;
-    painter->setPen(QPen(mapcolors::ndbSymbolColor, pointSize, Qt::SolidLine, Qt::RoundCap));
+    painter->setPen(QPen(symbolColor, pointSize, Qt::SolidLine, Qt::RoundCap));
   }
   else
-    painter->setPen(QPen(mapcolors::ndbSymbolColor, size, Qt::SolidLine, Qt::RoundCap));
+    painter->setPen(QPen(symbolColor, size, Qt::SolidLine, Qt::RoundCap));
 
   painter->drawPoint(QPointF(x, y));
 }
@@ -1108,7 +1112,7 @@ void SymbolPainter::drawMarkerSymbol(QPainter *painter, const map::MapMarker& ma
 }
 
 void SymbolPainter::drawNdbText(QPainter *painter, const map::MapNdb& ndb, float x, float y, textflags::TextFlags flags, float size,
-                                bool fill, textatt::TextAttributes atts, const QStringList *addtionalText)
+                                bool fill, bool darkMap, textatt::TextAttributes atts, const QStringList *addtionalText)
 {
   QStringList texts;
 
@@ -1147,11 +1151,11 @@ void SymbolPainter::drawNdbText(QPainter *painter, const map::MapNdb& ndb, float
       texts.append(*addtionalText);
   }
 
-  textBoxF(painter, texts, mapcolors::ndbSymbolColor, x, y, atts, fill ? 255 : 0);
+  textBoxF(painter, texts, mapcolors::ndbSymbolColor.lighter(darkMap ? 250 : 100), x, y, atts, fill ? 255 : 0);
 }
 
 void SymbolPainter::drawVorText(QPainter *painter, const map::MapVor& vor, float x, float y, textflags::TextFlags flags, float size,
-                                bool fill, textatt::TextAttributes atts, const QStringList *addtionalText)
+                                bool fill, bool darkMap, textatt::TextAttributes atts, const QStringList *addtionalText)
 {
   QStringList texts;
 
@@ -1195,7 +1199,7 @@ void SymbolPainter::drawVorText(QPainter *painter, const map::MapVor& vor, float
       texts.append(*addtionalText);
   }
 
-  textBoxF(painter, texts, mapcolors::vorSymbolColor, x, y, atts, fill ? 255 : 0);
+  textBoxF(painter, texts, mapcolors::vorSymbolColor.lighter(darkMap ? 250 : 100), x, y, atts, fill ? 255 : 0);
 }
 
 void SymbolPainter::adjustPos(float& x, float& y, float size, textatt::TextAttributes atts)

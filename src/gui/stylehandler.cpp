@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -33,7 +33,7 @@
 #include <QStringBuilder>
 
 const QLatin1String StyleHandler::STYLE_FUSION("Fusion");
-const QLatin1String StyleHandler::STYLE_NIGHT("Night");
+const QLatin1String StyleHandler::STYLE_DARK("Dark");
 const QLatin1String StyleHandler::STYLE_WINDOWSVISTA("windowsvista");
 const QLatin1String StyleHandler::STYLE_WINDOWS("Windows");
 
@@ -86,7 +86,7 @@ StyleHandler::StyleHandler(QMainWindow *mainWindowParam)
     else if(styleName == STYLE_WINDOWSVISTA || styleName == STYLE_WINDOWS)
       stylesheet = vistaStyleSheet;
 
-    styles.append(Style(styleName, styleName, stylesheet, palette, false /* night */));
+    styles.append(Style(styleName, styleName, stylesheet, palette, false /* dark */));
     delete style;
   }
 
@@ -94,7 +94,7 @@ StyleHandler::StyleHandler(QMainWindow *mainWindowParam)
   createDarkPalette(darkPalette);
 
   // Add stylesheet for better checkbox radio button and toolbutton visibility
-  QString nightStyleSheet(
+  QString darkStyleSheet(
     // Menu item separator ===============
     QString("QMenu::separator { background-color: %1; }").arg(darkPalette.color(QPalette::Light).name()) %
 
@@ -131,11 +131,11 @@ StyleHandler::StyleHandler(QMainWindow *mainWindowParam)
     );
 
   // Store dark palette settings a in a separate ini file
-  QString filename = Settings::getConfigFilename(lnm::NIGHTSTYLE_INI_SUFFIX);
+  QString filename = Settings::getConfigFilename(lnm::DARKSTYLE_INI_SUFFIX);
   atools::gui::PaletteSettings paletteSettings(filename, "StyleColors");
   paletteSettings.syncPalette(darkPalette);
 
-  styles.append(Style(STYLE_NIGHT, STYLE_FUSION, nightStyleSheet, darkPalette, true /* night */));
+  styles.append(Style(STYLE_DARK, STYLE_FUSION, darkStyleSheet, darkPalette, true /* dark */));
 }
 
 StyleHandler::~StyleHandler()
@@ -148,9 +148,9 @@ QString StyleHandler::getCurrentGuiStyleDisplayName() const
   return styles.at(currentStyleIndex).displayName;
 }
 
-bool StyleHandler::isCurrentGuiStyleNight() const
+bool StyleHandler::isGuiStyleDark() const
 {
-  return styles.at(currentStyleIndex).night;
+  return styles.at(currentStyleIndex).dark;
 }
 
 void StyleHandler::insertMenuItems(QMenu *menu)
@@ -161,7 +161,7 @@ void StyleHandler::insertMenuItems(QMenu *menu)
   int index = 0;
   for(const Style& style : qAsConst(styles))
   {
-    QAction *action = new QAction(style.displayName, menu);
+    QAction *action = new QAction('&' % style.displayName, menu);
     action->setData(index);
     action->setCheckable(true);
     action->setChecked(index == currentStyleIndex);
@@ -173,7 +173,7 @@ void StyleHandler::insertMenuItems(QMenu *menu)
       action->setShortcut(QKeySequence(tr("Shift+F2")));
       action->setShortcutContext(Qt::ApplicationShortcut);
     }
-    else if(style.displayName == STYLE_NIGHT)
+    else if(style.displayName == STYLE_DARK)
     {
       action->setShortcut(QKeySequence(tr("Shift+F3")));
       action->setShortcutContext(Qt::ApplicationShortcut);
@@ -203,7 +203,7 @@ void StyleHandler::applyCurrentStyle()
   qDebug() << Q_FUNC_INFO << "index" << currentStyleIndex;
 
   const Style& style = styles.at(currentStyleIndex);
-  emit preStyleChange(style.displayName, style.night);
+  emit preStyleChange(style.displayName, style.dark);
 
   QApplication::setStyle(QStyleFactory::create(style.styleName));
 
@@ -213,7 +213,7 @@ void StyleHandler::applyCurrentStyle()
   // Need to clear due to Qt bug
   QPixmapCache::clear();
 
-  emit styleChanged(style.displayName, style.night);
+  emit styleChanged(style.displayName, style.dark);
 }
 
 void StyleHandler::saveState()

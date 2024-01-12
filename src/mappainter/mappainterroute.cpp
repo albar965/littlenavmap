@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -1952,7 +1952,7 @@ void MapPainterRoute::paintVor(float x, float y, const map::MapVor& obj, bool pr
   context->routeDrawnNavaids->append(obj.getRef());
   float size = context->szF(context->symbolSizeNavaid, context->mapLayerRoute->getVorSymbolSizeRoute());
   float sizeLarge = context->szF(context->symbolSizeNavaid, context->mapLayerRoute->getVorSymbolSizeLarge());
-  symbolPainter->drawVorSymbol(context->painter, obj, x, y, size, sizeLarge, !preview, false /* fast */);
+  symbolPainter->drawVorSymbol(context->painter, obj, x, y, size, sizeLarge, !preview, false /* fast */, context->darkMap);
 }
 
 void MapPainterRoute::paintVorText(float x, float y, const map::MapVor& obj, bool drawTextDetails, textatt::TextAttributes atts,
@@ -1979,7 +1979,7 @@ void MapPainterRoute::paintVorText(float x, float y, const map::MapVor& obj, boo
     fill = false;
   }
 
-  symbolPainter->drawVorText(context->painter, obj, x, y, flags, size, fill, atts, additionalText);
+  symbolPainter->drawVorText(context->painter, obj, x, y, flags, size, fill, context->darkMap, atts, additionalText);
 }
 
 void MapPainterRoute::paintNdb(float x, float y, const map::MapNdb& obj, bool preview)
@@ -1987,7 +1987,7 @@ void MapPainterRoute::paintNdb(float x, float y, const map::MapNdb& obj, bool pr
   context->routeDrawnNavaids->append(obj.getRef());
   float size = context->szF(context->symbolSizeNavaid, context->mapLayerRoute->getNdbSymbolSize());
   size = std::max(size, 8.f);
-  symbolPainter->drawNdbSymbol(context->painter, x, y, size, !preview, false);
+  symbolPainter->drawNdbSymbol(context->painter, x, y, size, !preview, false /* fast */, context->darkMap);
 }
 
 void MapPainterRoute::paintNdbText(float x, float y, const map::MapNdb& obj, bool drawTextDetails, textatt::TextAttributes atts,
@@ -2014,7 +2014,7 @@ void MapPainterRoute::paintNdbText(float x, float y, const map::MapNdb& obj, boo
     fill = false;
   }
 
-  symbolPainter->drawNdbText(context->painter, obj, x, y, flags, size * 1.5f, fill, atts, additionalText);
+  symbolPainter->drawNdbText(context->painter, obj, x, y, flags, size * 1.5f, fill, context->darkMap, atts, additionalText);
 }
 
 /* paint intermediate approach point */

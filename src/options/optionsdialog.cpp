@@ -806,7 +806,7 @@ void OptionsDialog::styleChanged()
   gridDelegate->styleChanged();
 
   // Update potential search hightlights with new color
-  listWidgetIndex->setHighlightColor(NavApp::isCurrentGuiStyleNight() ? QColor(200, 0, 0, 200) : QColor(255, 255, 0, 200));
+  listWidgetIndex->setHighlightColor(NavApp::isGuiStyleDark() ? QColor(200, 0, 0, 200) : QColor(255, 255, 0, 200));
   listWidgetIndex->find(QString());
   listWidgetIndex->find(ui->lineEditOptionSearch->text());
 }

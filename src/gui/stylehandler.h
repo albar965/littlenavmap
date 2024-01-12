@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -51,34 +51,34 @@ public:
   void saveState();
   void restoreState();
 
-  /* Name like "Night" or "Fusion" */
+  /* Name like "Dark" or "Fusion" */
   QString getCurrentGuiStyleDisplayName() const;
 
   /* true if style requires darkening the map */
-  bool isCurrentGuiStyleNight() const;
+  bool isGuiStyleDark() const;
 
   const static QLatin1String STYLE_FUSION; /* Fusion */
-  const static QLatin1String STYLE_NIGHT; /* Night */
+  const static QLatin1String STYLE_DARK; /* Dark / Fusion */
   const static QLatin1String STYLE_WINDOWSVISTA; /* Windows 10 and 11 */
   const static QLatin1String STYLE_WINDOWS; /* Old Windows */
 
 signals:
   /* Sent on change */
-  void preStyleChange(const QString& name, bool night);
-  void styleChanged(const QString& name, bool night);
+  void preStyleChange(const QString& name, bool dark);
+  void styleChanged(const QString& name, bool dark);
 
 private:
   struct Style
   {
     Style(const QString& displayNameParam, const QString& styleNameParam, const QString& stylesheetParam,
-          const QPalette& paletteParam, bool nightParam) : displayName(displayNameParam),
-      styleName(styleNameParam), stylesheet(stylesheetParam), palette(paletteParam), night(nightParam)
+          const QPalette& paletteParam, bool darkParam) : displayName(displayNameParam),
+      styleName(styleNameParam), stylesheet(stylesheetParam), palette(paletteParam), dark(darkParam)
     {
     }
 
     QString displayName, styleName, stylesheet;
     QPalette palette;
-    bool night;
+    bool dark;
   };
 
   void applyCurrentStyle();

@@ -695,7 +695,6 @@ void MapPainter::paintHoldWithText(QPainter *painter, float x, float y, float di
     painter->restore();
   }
   painter->resetTransform();
-
 }
 
 void MapPainter::paintProcedureTurnWithText(QPainter *painter, float x, float y, float turnHeading, float distanceNm,
@@ -1025,7 +1024,7 @@ void MapPainter::paintMsaMarks(const QList<map::MapAirportMsa>& airportMsa, bool
   }
 }
 
-void MapPainter::paintHoldingMarks(const QList<map::MapHolding>& holdings, bool user, bool drawFast)
+void MapPainter::paintHoldingMarks(const QList<map::MapHolding>& holdings, bool user, bool drawFast, bool darkMap)
 {
   if(holdings.isEmpty())
     return;
@@ -1043,6 +1042,8 @@ void MapPainter::paintHoldingMarks(const QList<map::MapHolding>& holdings, bool 
   else
     context->szFont(context->textSizeNavaid);
 
+  QColor holdingColor = mapcolors::holdingColor.lighter(darkMap ? 250 : 100);
+
   for(const map::MapHolding& holding : holdings)
   {
     bool visible, hidden;
@@ -1050,7 +1051,7 @@ void MapPainter::paintHoldingMarks(const QList<map::MapHolding>& holdings, bool 
     if(hidden)
       continue;
 
-    QColor color = user ? holding.color : mapcolors::holdingColor;
+    QColor color = user ? holding.color : holdingColor;
 
     float dist = holding.distance();
     float distPixel = scale->getPixelForNm(dist);

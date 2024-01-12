@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -1453,9 +1453,11 @@ void ProfileWidget::paintEvent(QPaintEvent *)
            type == map::USERPOINTROUTE || type == map::INVALID)
           continue;
         else if(type == map::NDB || leg.getNdb().isValid())
-          symPainter.drawNdbSymbol(&painter, symPt.x(), symPt.y(), navaidSize, true, false);
+          symPainter.drawNdbSymbol(&painter, symPt.x(), symPt.y(), navaidSize,
+                                   true /* routeFill */, false /* fast */, false /* darkMap */);
         else if(type == map::VOR || leg.getVor().isValid())
-          symPainter.drawVorSymbol(&painter, leg.getVor(), symPt.x(), symPt.y(), navaidSize, 0.f, true /* routeFill */, false /* fast */);
+          symPainter.drawVorSymbol(&painter, leg.getVor(), symPt.x(), symPt.y(), navaidSize, 0.f,
+                                   true /* routeFill */, false /* fast */, false /* darkMap */);
       }
 
       // Procedure symbols ========================================================

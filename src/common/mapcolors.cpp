@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -608,7 +608,7 @@ QPen penForAirspace(const map::MapAirspace& airspace, int lineThickness)
   return pen;
 }
 
-const QColor& colorForAirwayOrTrack(const map::MapAirway& airway)
+const QColor colorForAirwayOrTrack(const map::MapAirway& airway, bool darkMap)
 {
   static QColor EMPTY_COLOR;
 
@@ -620,23 +620,23 @@ const QColor& colorForAirwayOrTrack(const map::MapAirway& airway)
     case map::TRACK_NAT:
     case map::TRACK_PACOTS:
       if(airway.westCourse)
-        return airwayTrackColorWest;
+        return airwayTrackColorWest.lighter(darkMap ? 200 : 100);
       else if(airway.eastCourse)
-        return airwayTrackColorEast;
+        return airwayTrackColorEast.lighter(darkMap ? 200 : 100);
       else
-        return airwayTrackColor;
+        return airwayTrackColor.lighter(darkMap ? 200 : 100);
 
     case map::TRACK_AUSOTS:
-      return airwayTrackColor;
+      return airwayTrackColor.lighter(darkMap ? 200 : 100);
 
     case map::AIRWAY_VICTOR:
-      return airwayVictorColor;
+      return airwayVictorColor.darker(darkMap ? 180 : 100);
 
     case map::AIRWAY_JET:
-      return airwayJetColor;
+      return airwayJetColor.lighter(darkMap ? 180 : 100);
 
     case map::AIRWAY_BOTH:
-      return airwayBothColor;
+      return airwayBothColor.lighter(darkMap ? 150 : 100);
   }
   return EMPTY_COLOR;
 }
@@ -915,7 +915,7 @@ void scaleFont(QPainter *painter, float scale, const QFont *defaultFont)
 void darkenPainterRect(QPainter& painter)
 {
   // Dim the map by drawing a semi-transparent black rectangle
-  if(NavApp::isCurrentGuiStyleNight())
+  if(NavApp::isGuiStyleDark())
   {
     int dim = OptionData::instance().getGuiStyleMapDimming();
     QColor col = QColor::fromRgb(0, 0, 0, 255 - (255 * dim / 100));

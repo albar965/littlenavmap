@@ -1876,7 +1876,7 @@ Restart the program after changing this option. You might also need to reset the
                <item row="1" column="0">
                 <widget class="QLabel" name="labelOptionsGuiThemeMapDimming">
                  <property name="text">
-                  <string>Map &amp;dimming in night style:</string>
+                  <string>Map &amp;dimming in dark style:</string>
                  </property>
                  <property name="buddy">
                   <cstring>spinBoxOptionsGuiThemeMapDimming</cstring>
@@ -1886,7 +1886,7 @@ Restart the program after changing this option. You might also need to reset the
                <item row="1" column="1">
                 <widget class="QSpinBox" name="spinBoxOptionsGuiThemeMapDimming">
                  <property name="toolTip">
-                  <string>Darken the map and the flight plan elevation profile for the style &quot;Night&quot;. Lower values result in a darker display.</string>
+                  <string>Darken the map and the flight plan elevation profile for the user interface style &quot;Dark&quot;. Lower values result in a darker display.</string>
                  </property>
                  <property name="readOnly">
                   <bool>false</bool>

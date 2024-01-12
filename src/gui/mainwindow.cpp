@@ -855,7 +855,7 @@ void MainWindow::updateStatusBarStyle()
       shape = QFrame::StyledPanel;
       adjustFrame = true;
     }
-    else if(style.compare(StyleHandler::STYLE_NIGHT, Qt::CaseInsensitive) == 0)
+    else if(style.compare(StyleHandler::STYLE_DARK, Qt::CaseInsensitive) == 0)
     {
       shadow = QFrame::Sunken;
       shape = QFrame::Box;

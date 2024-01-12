@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -67,7 +67,7 @@ void MapPainterNav::render()
     airwayQuery->getAirways(airways, curBox, context->mapLayer, context->lazyUpdate);
     context->endTimer("Airway fetch");
 
-    paintAirways(&airways, context->drawFast, false /* track */);
+    paintAirways(&airways, context->drawFast, false /* track */, context->darkMap);
   }
 
   // Tracks -------------------------------------------------
@@ -80,7 +80,7 @@ void MapPainterNav::render()
     airwayQuery->getTracks(tracks, curBox, context->mapLayer, context->lazyUpdate);
     context->endTimer("Track fetch");
 
-    paintAirways(&tracks, context->drawFast, true /* track */);
+    paintAirways(&tracks, context->drawFast, true /* track */, context->darkMap);
   }
 
   context->szFont(context->textSizeNavaid);
@@ -169,13 +169,13 @@ void MapPainterNav::render()
     context->setQueryOverflow(overflow);
 
     if(holds != nullptr)
-      paintHoldingMarks(*holds, false /* user */, context->drawFast);
+      paintHoldingMarks(*holds, false /* user */, context->drawFast, context->darkMap);
   }
   context->endTimer("Hold");
 }
 
 /* Draw airways and texts */
-void MapPainterNav::paintAirways(const QList<map::MapAirway> *airways, bool fast, bool track)
+void MapPainterNav::paintAirways(const QList<map::MapAirway> *airways, bool fast, bool track, bool darkMap)
 {
 #ifdef Q_OS_WIN
   bool rotateText = context->viewContext == Marble::Still;
@@ -224,7 +224,7 @@ void MapPainterNav::paintAirways(const QList<map::MapAirway> *airways, bool fast
     bool ident = (!isTrack && context->mapLayer->isAirwayIdent()) || (isTrack && context->mapLayer->isTrackIdent());
     bool info = (!isTrack && context->mapLayer->isAirwayInfo()) || (isTrack && context->mapLayer->isTrackInfo());
 
-    painter->setPen(QPen(mapcolors::colorForAirwayOrTrack(airway), isTrack ? linewidthTrack : linewidthAirway));
+    painter->setPen(QPen(mapcolors::colorForAirwayOrTrack(airway, context->darkMap), isTrack ? linewidthTrack : linewidthAirway));
     painter->setBrush(painter->pen().color());
 
     // Get start and end point of airway segment in screen coordinates
@@ -431,7 +431,7 @@ void MapPainterNav::paintVors(const QHash<int, map::MapVor>& vors, bool drawFast
       if(context->objCount())
         return;
 
-      symbolPainter->drawVorSymbol(context->painter, vor, x, y, size, sizeLarge, false /* routeFill */, drawFast);
+      symbolPainter->drawVorSymbol(context->painter, vor, x, y, size, sizeLarge, false /* routeFill */, drawFast, context->darkMap);
 
       textflags::TextFlags flags;
 
@@ -440,7 +440,7 @@ void MapPainterNav::paintVors(const QHash<int, map::MapVor>& vors, bool drawFast
       else if(context->mapLayer->isVorIdent())
         flags = textflags::IDENT;
 
-      symbolPainter->drawVorText(context->painter, vor, x, y, flags, size, fill);
+      symbolPainter->drawVorText(context->painter, vor, x, y, flags, size, fill, context->darkMap);
     }
   }
 }
@@ -466,7 +466,7 @@ void MapPainterNav::paintNdbs(const QHash<int, map::MapNdb>& ndbs, bool drawFast
       if(context->objCount())
         return;
 
-      symbolPainter->drawNdbSymbol(context->painter, x, y, size, false, drawFast);
+      symbolPainter->drawNdbSymbol(context->painter, x, y, size, false, drawFast, context->darkMap);
 
       textflags::TextFlags flags;
 
@@ -475,7 +475,7 @@ void MapPainterNav::paintNdbs(const QHash<int, map::MapNdb>& ndbs, bool drawFast
       else if(context->mapLayer->isNdbIdent())
         flags = textflags::IDENT;
 
-      symbolPainter->drawNdbText(context->painter, ndb, x, y, flags, size, fill);
+      symbolPainter->drawNdbText(context->painter, ndb, x, y, flags, size, fill, context->darkMap);
     }
   }
 }

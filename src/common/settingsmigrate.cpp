@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -84,17 +84,17 @@ void checkAndMigrateSettings()
 
       // Get file names =====================================================================
       QString trackFile = atools::settings::Settings::getConfigFilename(lnm::AIRCRAFT_TRACK_SUFFIX);
-      QString mapstyleFile = atools::settings::Settings::getConfigFilename(lnm::MAPSTYLE_INI_SUFFIX);
-      QString nightstyleFile = atools::settings::Settings::getConfigFilename(lnm::NIGHTSTYLE_INI_SUFFIX);
+      QString mapStyleFile = atools::settings::Settings::getConfigFilename(lnm::MAPSTYLE_INI_SUFFIX);
+      QString darkStyleFile = atools::settings::Settings::getConfigFilename(lnm::DARKSTYLE_INI_SUFFIX);
 
       // Backup most important files with from/to version suffix ============================================
       backupFileAndLog(trackFile, true /* keepOriginalFile */);
-      backupFileAndLog(mapstyleFile, true /* keepOriginalFile */);
-      backupFileAndLog(nightstyleFile, true /* keepOriginalFile */);
+      backupFileAndLog(mapStyleFile, true /* keepOriginalFile */);
+      backupFileAndLog(darkStyleFile, true /* keepOriginalFile */);
       backupFileAndLog(Settings::getFilename(), true /* keepOriginalFile */);
 
-      QSettings mapstyleSettings(mapstyleFile, QSettings::IniFormat);
-      QSettings nightstyleSettings(nightstyleFile, QSettings::IniFormat);
+      QSettings mapStyleSettings(mapStyleFile, QSettings::IniFormat);
+      QSettings darkStyleSettings(darkStyleFile, QSettings::IniFormat);
 
       // ===============================================================
       if(optionsVersion < Version("2.4.0"))
@@ -265,14 +265,14 @@ void checkAndMigrateSettings()
 
       if(optionsVersion <= Version("2.8.1.beta"))
       {
-        removeAndLog(&mapstyleSettings, "Marker/TurnPathPen");
-        removeAndLog(&mapstyleSettings, "Marker/SelectedAltitudeRangePen");
+        removeAndLog(&mapStyleSettings, "Marker/TurnPathPen");
+        removeAndLog(&mapStyleSettings, "Marker/SelectedAltitudeRangePen");
         removeAndLog("Map/WindSource");
         removeAndLog("Actions/DeleteTrail");
       }
 
       if(optionsVersion <= Version("2.8.4.beta"))
-        removeAndLog(&mapstyleSettings, "MainWindow/Widget_actionAircraftPerformanceWarnMismatch");
+        removeAndLog(&mapStyleSettings, "MainWindow/Widget_actionAircraftPerformanceWarnMismatch");
 
       if(optionsVersion <= Version("2.8.7"))
       {
@@ -290,7 +290,7 @@ void checkAndMigrateSettings()
 
       if(optionsVersion <= Version("2.8.12"))
       {
-        QFile::remove(mapstyleFile);
+        QFile::remove(mapStyleFile);
         removeAndLog(lnm::OPTIONS_ONLINE_NETWORK_MAX_SHADOW_DIST_NM);
         removeAndLog(lnm::OPTIONS_ONLINE_NETWORK_MAX_SHADOW_ALT_DIFF_FT);
         removeAndLog(lnm::OPTIONS_ONLINE_NETWORK_MAX_SHADOW_GS_DIFF_KTS);
@@ -304,8 +304,8 @@ void checkAndMigrateSettings()
       settings.setValue(lnm::OPTIONS_VERSION, programVersion.getVersionString());
       Settings::syncSettings();
 
-      mapstyleSettings.sync();
-      nightstyleSettings.sync();
+      mapStyleSettings.sync();
+      darkStyleSettings.sync();
     } // if(optionsVersion != programVersion)
   } // if(optionsVersion.isValid())
   else

@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -84,7 +84,7 @@ void MapPainterMark::render()
     paintPatternMarks();
 
   if(context->objectTypes.testFlag(map::MARK_HOLDING))
-    paintHoldingMarks(mapPaintWidget->getHoldingMarksFiltered(), true /* user */, context->drawFast);
+    paintHoldingMarks(mapPaintWidget->getHoldingMarksFiltered(), true /* user */, context->drawFast, false /* darkMap */);
 
   // Airport MSA set by user
   if(context->objectTypes.testFlag(map::MARK_MSA))
@@ -718,7 +718,7 @@ void MapPainterMark::paintAirwayTextList(const QList<map::MapAirway>& airwayList
   {
     if(airway.isValid())
     {
-      QPen innerPen = mapcolors::colorForAirwayOrTrack(airway);
+      QPen innerPen = mapcolors::colorForAirwayOrTrack(airway, context->darkMap);
 
       // Draw text  at center position of a line
       int x, y;

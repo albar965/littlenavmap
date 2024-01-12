@@ -409,7 +409,7 @@ public:
   static bool isLoadingDatabase();
 
   static QString getCurrentGuiStyleDisplayName();
-  static bool isCurrentGuiStyleNight();
+  static bool isGuiStyleDark();
 
   static bool isDarkMapTheme();
 

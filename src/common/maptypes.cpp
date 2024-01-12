@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -2591,10 +2591,10 @@ QIcon mapBaseIcon(const map::MapBase *base, int size)
         return QIcon(":/littlenavmap/resources/icons/msa.svg");
 
       case map::VOR:
-        return SymbolPainter::createVorIcon(*base->asPtr<map::MapVor>(), size);
+        return SymbolPainter::createVorIcon(*base->asPtr<map::MapVor>(), size, NavApp::isGuiStyleDark());
 
       case map::NDB:
-        return SymbolPainter::createNdbIcon(size);
+        return SymbolPainter::createNdbIcon(size, NavApp::isGuiStyleDark());
 
       case map::ILS:
         return map::ilsIcon(base->asObj<map::MapIls>());
@@ -2606,7 +2606,7 @@ QIcon mapBaseIcon(const map::MapBase *base, int size)
         return SymbolPainter::createWaypointIcon(size);
 
       case map::AIRWAY:
-        return SymbolPainter::createAirwayIcon(*base->asPtr<map::MapAirway>(), size);
+        return SymbolPainter::createAirwayIcon(*base->asPtr<map::MapAirway>(), size, NavApp::isGuiStyleDark());
 
       case map::AIRCRAFT:
         return vehicleIcons->iconFromCache(base->asPtr<map::MapUserAircraft>()->getAircraft(), size, 45 /* rotate */);

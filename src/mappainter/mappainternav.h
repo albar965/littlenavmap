@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -44,7 +44,7 @@ private:
   void paintWaypoints(const QHash<int, map::MapWaypoint>& waypoints);
 
   void paintMarkers(const QList<map::MapMarker> *markers, bool drawFast);
-  void paintAirways(const QList<map::MapAirway> *airways, bool fast, bool track);
+  void paintAirways(const QList<map::MapAirway> *airways, bool fast, bool track, bool darkMap);
 
 };
 

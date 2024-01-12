@@ -2201,13 +2201,15 @@ bool MapWidget::showFeatureSelectionMenu(int& id, map::MapTypes& type, const map
 
   for(const map::MapVor& obj : result.vors)
   {
-    QAction *action = new QAction(SymbolPainter::createVorIcon(obj, ICON_SIZE), menuText.arg(map::vorText(obj)), this);
+    QAction *action = new QAction(SymbolPainter::createVorIcon(obj, ICON_SIZE, NavApp::isGuiStyleDark()),
+                                  menuText.arg(map::vorText(obj)), this);
     action->setData(QVariant::fromValue(map::MapRef(obj.id, map::VOR)));
     menu.addAction(action);
   }
   for(const map::MapNdb& obj : result.ndbs)
   {
-    QAction *action = new QAction(SymbolPainter::createNdbIcon(ICON_SIZE), menuText.arg(map::ndbText(obj)), this);
+    QAction *action = new QAction(SymbolPainter::createNdbIcon(ICON_SIZE, NavApp::isGuiStyleDark()),
+                                  menuText.arg(map::ndbText(obj)), this);
     action->setData(QVariant::fromValue(map::MapRef(obj.id, map::NDB)));
     menu.addAction(action);
   }

@@ -402,7 +402,7 @@ protected:
   void getPixmap(QPixmap& pixmap, const QString& resource, int size);
 
   /* Draw enroute as well as user defined holdings */
-  void paintHoldingMarks(const QList<map::MapHolding>& holdings, bool user, bool drawFast);
+  void paintHoldingMarks(const QList<map::MapHolding>& holdings, bool user, bool drawFast, bool darkMap);
 
   /* Draw large semi-transparent MSA enabled by user */
   void paintMsaMarks(const QList<map::MapAirportMsa>& airportMsa, bool user, bool drawFast);

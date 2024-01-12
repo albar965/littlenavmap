@@ -897,7 +897,7 @@ void NavApp::createIssueReport()
   getCrashReportFiles(crashReportFiles, reportFilename, true /* manual */);
 
   Application::createIssueReport(mainWindow, reportFilename, crashReportFiles, lnm::helpOnlineUrl, "ISSUEREPORT.html",
-                                 lnm::helpLanguageOnline(), getContactHtml());
+                                 lnm::helpLanguageOnline());
 }
 
 void NavApp::setToolTipsEnabledMainMenu(bool enabled)
@@ -1001,9 +1001,9 @@ QString NavApp::getCurrentGuiStyleDisplayName()
   return styleHandler->getCurrentGuiStyleDisplayName();
 }
 
-bool NavApp::isCurrentGuiStyleNight()
+bool NavApp::isGuiStyleDark()
 {
-  return styleHandler->isCurrentGuiStyleNight();
+  return styleHandler->isGuiStyleDark();
 }
 
 StyleHandler *NavApp::getStyleHandler()

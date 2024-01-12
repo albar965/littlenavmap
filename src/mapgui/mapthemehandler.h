@@ -43,7 +43,7 @@ public:
   /* Use bright colors for MORA and other texts on map */
   bool isDarkTheme() const
   {
-    return theme == "cartodark";
+    return theme == "cartodark" || theme == "mapboxdark";
   }
 
   /* Enable show city and other POIs button if true */
