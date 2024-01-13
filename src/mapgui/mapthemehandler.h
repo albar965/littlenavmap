@@ -153,12 +153,16 @@ public:
     return online;
   }
 
+  /* Native separators for display */
+  QString displayPath() const;
+
 private:
   friend class MapThemeHandler;
   friend QDebug operator<<(QDebug out, const MapTheme& theme);
 
   int index = -1;
-  QString dgmlFilepath, name, copyright, theme, target, urlName, urlRef;
+  QString dgmlFilepath, /* Canonical path of DGML file */
+          name, copyright, theme, target, urlName, urlRef;
   QStringList sourceDirs, keys, downloadHosts;
   bool textureLayer = false, geodataLayer = false, discrete = false, visible = false, online = false;
 };

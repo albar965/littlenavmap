@@ -104,7 +104,7 @@ void MapThemeHandler::loadThemes()
                          "File with second occurrence being ignored<br/>\"%3\".<br/>"
                          "Theme ids have to be unique across all map themes.<br/>"
                          "<b>Remove one of these two map themes to avoid this message.</b><br/>").
-                      arg(theme.theme).arg(otherTheme.dgmlFilepath).arg(theme.dgmlFilepath));
+                      arg(theme.theme).arg(otherTheme.displayPath()).arg(theme.displayPath()));
         continue;
       }
 
@@ -124,7 +124,7 @@ void MapThemeHandler::loadThemes()
         // Get file paths for DGML
         QStringList otherDgmlFilepaths;
         for(const MapTheme& t : otherThemes)
-          otherDgmlFilepaths.append(t.dgmlFilepath);
+          otherDgmlFilepaths.append(t.displayPath());
         otherDgmlFilepaths.removeAll(QString());
         otherDgmlFilepaths.removeDuplicates();
 
@@ -133,7 +133,7 @@ void MapThemeHandler::loadThemes()
                          "File(s) with second occurrence being ignored<br/>\"%3\".<br/>"
                          "Source directories are used to cache map tiles and have to be unique across all map themes.<br/>"
                          "<b>Remove one of these two map themes to avoid this message.</b><br/>").
-                      arg(theme.sourceDirs.join(tr("\", \""))).arg(otherDgmlFilepaths.join(tr("\", \""))).arg(theme.dgmlFilepath));
+                      arg(theme.sourceDirs.join(tr("\", \""))).arg(otherDgmlFilepaths.join(tr("\", \""))).arg(theme.displayPath()));
         continue;
       }
 
@@ -141,7 +141,7 @@ void MapThemeHandler::loadThemes()
       {
         errors.append(tr("Empty theme id in in element \"&lt;theme&gt;\".<br/>"
                          "File<br/>\"%1\".<br/>"
-                         "<b>Remove or repair this map theme to avoid this message.</b><br/>").arg(theme.dgmlFilepath));
+                         "<b>Remove or repair this map theme to avoid this message.</b><br/>").arg(theme.displayPath()));
         continue;
       }
 
@@ -149,7 +149,7 @@ void MapThemeHandler::loadThemes()
       {
         errors.append(tr("Empty source directory in in element \"&lt;sourcedir&gt;\".<br/>"
                          "File<br/>\"%1\".<br/>"
-                         "<b>Remove or repair this map theme to avoid this message.</b><br/>").arg(theme.dgmlFilepath));
+                         "<b>Remove or repair this map theme to avoid this message.</b><br/>").arg(theme.displayPath()));
         continue;
       }
 
@@ -158,7 +158,8 @@ void MapThemeHandler::loadThemes()
         errors.append(tr("Invalid target \"%1\" in element \"&lt;target&gt;\".<br/>"
                          "File<br/>\"%2\".<br/>"
                          "Element must contain text \"earth\".<br/>"
-                         "<b>Remove or repair this map theme to avoid this message.</b><br/>").arg(theme.target).arg(theme.dgmlFilepath));
+                         "<b>Remove or repair this map theme to avoid this message.</b><br/>").
+                      arg(theme.target).arg(theme.displayPath()));
         continue;
       }
 
@@ -178,7 +179,7 @@ void MapThemeHandler::loadThemes()
       if(rejected)
       {
         errors.append(tr("Theme in file<br/>\"%1\"<br/>was rejected since the service is discontinued.<br/>"
-                         "<b>Remove this map theme to avoid this message.</b><br/>").arg(theme.dgmlFilepath));
+                         "<b>Remove this map theme to avoid this message.</b><br/>").arg(theme.displayPath()));
         continue;
       }
 
@@ -470,9 +471,6 @@ MapTheme MapThemeHandler::loadTheme(const QFileInfo& dgml)
             xmlStream.skipCurrentElement();
         }
 
-        theme.dgmlFilepath = dgml.filePath();
-
-        // Create a new entry with path relative to "earth"
         theme.dgmlFilepath = dgml.canonicalFilePath();
       }
       // map ====================================================================
@@ -938,4 +936,9 @@ QString MapThemeHandler::getMapThemeDefaultDir()
 QString MapThemeHandler::getMapThemeUserDir()
 {
   return OptionData::instance().getCacheMapThemeDir();
+}
+
+QString MapTheme::displayPath() const
+{
+  return atools::nativeCleanPath(dgmlFilepath);
 }
