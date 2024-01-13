@@ -248,6 +248,7 @@ public:
   /* Currently selected simulator database */
   static atools::fs::FsPaths::SimulatorType getCurrentSimulatorDb();
   static bool isAirportDatabaseXPlane(bool navdata);
+  static bool isDatabaseXPlane();
   static QString getCurrentSimulatorBasePath();
   static QString getSimulatorBasePath(atools::fs::FsPaths::SimulatorType type);
   static QString getSimulatorBasePathBest(const QVector<atools::fs::FsPaths::SimulatorType>& types);

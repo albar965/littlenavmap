@@ -28,6 +28,7 @@
 #include "common/settingsmigrate.h"
 #include "common/unit.h"
 #include "connect/connectclient.h"
+#include "connect/xpconnectinstaller.h"
 #include "db/databasemanager.h"
 #include "exception.h"
 #include "fs/gpx/gpxio.h"
@@ -1245,6 +1246,7 @@ void MainWindow::connectAllSlots()
   connect(ui->actionOptions, &QAction::triggered, this, &MainWindow::openOptionsDialog);
   connect(ui->actionResetMessages, &QAction::triggered, this, &MainWindow::resetMessages);
   connect(ui->actionCreateDirStructure, &QAction::triggered, this, &MainWindow::runDirToolManual);
+  connect(ui->actionInstallXpconnect, &QAction::triggered, this, &MainWindow::installXpconnect);
   connect(ui->actionSaveAllNow, &QAction::triggered, this, &MainWindow::saveStateNow);
 
   // Windows menu ============================================================
@@ -3495,6 +3497,13 @@ void MainWindow::runDirToolManual()
   runDirTool(true /* manual */);
 }
 
+void MainWindow::installXpconnect()
+{
+  XpconnectInstaller installer(this);
+  if(installer.install())
+    setStatusMessage(tr("Little Xpconnect successfully installed."));
+}
+
 void MainWindow::runDirTool(bool manual)
 {
   bool alreadyComplete, created;
@@ -3738,6 +3747,7 @@ void MainWindow::updateActionStates()
   ui->actionConnectSimulatorToggle->blockSignals(true);
   ui->actionConnectSimulatorToggle->setChecked(NavApp::isConnected());
   ui->actionConnectSimulatorToggle->blockSignals(false);
+  ui->actionInstallXpconnect->setEnabled(NavApp::hasAnyXplaneSimulator() && NavApp::isDatabaseXPlane());
 
   ui->actionMapShowAircraftTrack->setEnabled(true);
   ui->actionMapDeleteAircraftTrack->setEnabled(mapWidget->getAircraftTrailSize() > 0 || profileWidget->hasTrailPoints());

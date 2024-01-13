@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -71,6 +71,8 @@ void messages::resetAllMessages()
   settings.setValue(lnm::ACTIONS_SHOW_DATABASE_BACKGROUND_HINT, true);
   settings.setValue(lnm::ROUTE_STRING_DIALOG_BACKGROUND_HINT, true);
 
+  settings.setValue(lnm::ACTIONS_INSTALL_XPCONNECT_WARN_XPL, true);
+  settings.setValue(lnm::ACTIONS_INSTALL_XPCONNECT_INFO, true);
 }
 
 void messages::resetEssentialMessages()

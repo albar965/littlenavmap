@@ -190,6 +190,8 @@ public:
   /* Only true if airports come from X-Plane database as default */
   bool isAirportDatabaseXPlane(bool navdata) const;
 
+  bool isDatabaseXPlane() const;
+
   /* Base paths which might also be changed by the user */
   QString getCurrentSimulatorBasePath() const;
   QString getSimulatorBasePath(atools::fs::FsPaths::SimulatorType type) const;

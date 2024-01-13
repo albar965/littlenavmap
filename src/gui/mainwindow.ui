@@ -211,7 +211,7 @@
     </property>
     <widget class="QMenu" name="menuHelpUserManualImportantChapters">
      <property name="title">
-      <string>User Manual - Helpful Chapters (Online)</string>
+      <string>User Manual - Helpful &amp;Chapters (Online)</string>
      </property>
      <addaction name="actionHelpUserManualStart"/>
      <addaction name="actionHelpUserManualTutorials"/>
@@ -259,6 +259,9 @@
     <addaction name="actionConnectSimulator"/>
     <addaction name="actionConnectSimulatorToggle"/>
     <addaction name="separator"/>
+    <addaction name="actionCreateDirStructure"/>
+    <addaction name="actionInstallXpconnect"/>
+    <addaction name="separator"/>
     <addaction name="actionRunWebserver"/>
     <addaction name="actionOpenWebserver"/>
     <addaction name="separator"/>
@@ -269,13 +272,13 @@
     <addaction name="separator"/>
     <addaction name="actionCreateACrashReport"/>
     <addaction name="separator"/>
-    <addaction name="actionCreateDirStructure"/>
     <addaction name="menuHelpFilesAndFolders"/>
     <addaction name="separator"/>
     <addaction name="actionRouteDisplayOptions"/>
     <addaction name="actionInfoDisplayOptions"/>
     <addaction name="actionProfileDisplayOptions"/>
     <addaction name="separator"/>
+    <addaction name="actionOptions"/>
    </widget>
    <widget class="QMenu" name="menuMap">
     <property name="title">
@@ -10538,7 +10541,7 @@ relation to shown airport</string>
   </action>
   <action name="actionResetAllSettings">
    <property name="text">
-    <string>&amp;Reset all Settings and Restart</string>
+    <string>&amp;Reset all Settings and Restart ...</string>
    </property>
    <property name="toolTip">
     <string>Reset all settings and window layout back to default and restart program.</string>
@@ -12286,6 +12289,17 @@ relation to shown airport</string>
    </property>
    <property name="statusTip">
     <string>Convert the procedure to waypoints which allows editing</string>
+   </property>
+  </action>
+  <action name="actionInstallXpconnect">
+   <property name="text">
+    <string>Install Little &amp;Xpconnect in X-Plane Plugins ...</string>
+   </property>
+   <property name="toolTip">
+    <string>Install the Little Xpconnect X-Plane plugin in the currently selected X-Plane instance</string>
+   </property>
+   <property name="statusTip">
+    <string>Install the Little Xpconnect X-Plane plugin in the currently selected X-Plane instance</string>
    </property>
   </action>
  </widget>

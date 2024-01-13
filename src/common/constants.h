@@ -132,6 +132,9 @@ const QLatin1String ACTIONS_SHOW_SAVE_LNMPLN_WARNING("Actions/ShowSaveLnmplnWarn
 const QLatin1String ACTIONS_SHOW_SAVE_WARNING("Actions/ShowSaveWarning");
 const QLatin1String ACTIONS_SHOW_ZOOM_WARNING("Actions/ShowZoomsWarning");
 
+const QLatin1String ACTIONS_INSTALL_XPCONNECT_WARN_XPL("Actions/ShowInstallXpconnectXplWarning");
+const QLatin1String ACTIONS_INSTALL_XPCONNECT_INFO("Actions/ShowInstallXpconnectInfo");
+
 /* Other setting key names */
 const QLatin1String DATABASE_BASEPATH("Database/BasePath");
 const QLatin1String DATABASE_LOADINGSIMULATOR("Database/LoadingSimulator");

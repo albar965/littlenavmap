@@ -628,6 +628,11 @@ bool NavApp::isAirportDatabaseXPlane(bool navdata)
   return getDatabaseManager()->isAirportDatabaseXPlane(navdata);
 }
 
+bool NavApp::isDatabaseXPlane()
+{
+  return getDatabaseManager()->isDatabaseXPlane();
+}
+
 QString NavApp::getCurrentSimulatorFilesPath()
 {
   return atools::fs::FsPaths::getFilesPath(getCurrentSimulatorDb());

@@ -323,6 +323,8 @@ private:
   void runDirToolManual();
   void runDirTool(bool manual = true);
 
+  void installXpconnect();
+
   /* Update status bar section for online status */
   void updateConnectionStatusMessageText();
 

@@ -540,6 +540,11 @@ void DatabaseManager::checkCopyAndPrepareDatabases()
   }
 }
 
+bool DatabaseManager::isDatabaseXPlane() const
+{
+  return atools::fs::FsPaths::isAnyXplane(currentFsType);
+}
+
 bool DatabaseManager::isAirportDatabaseXPlane(bool navdata) const
 {
   if(navdata)

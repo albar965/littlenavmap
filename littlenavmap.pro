@@ -295,6 +295,7 @@ SOURCES += \
   src/common/vehicleicons.cpp \
   src/connect/connectclient.cpp \
   src/connect/connectdialog.cpp \
+  src/connect/xpconnectinstaller.cpp \
   src/db/airspacedialog.cpp \
   src/db/databasedialog.cpp \
   src/db/databaseloader.cpp \
@@ -496,6 +497,7 @@ HEADERS  += \
   src/common/vehicleicons.h \
   src/connect/connectclient.h \
   src/connect/connectdialog.h \
+  src/connect/xpconnectinstaller.h \
   src/db/airspacedialog.h \
   src/db/databasedialog.h \
   src/db/databaseloader.h \
