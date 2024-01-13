@@ -67,7 +67,7 @@ void NavIconDelegate::paint(QPainter *painter, const QStyleOptionViewItem& optio
   QString navtype = sqlModel->getSqlRecord(idx.row()).valueStr("nav_type");
   map::MapTypes type = map::navTypeToMapType(navtype);
 
-  float symbolSize = option.rect.height() - 4.f;
+  float symbolSize = option.rect.height() - 6.f;
   float x = option.rect.x() + symbolSize;
   float y = option.rect.y() + symbolSize / 2.f + 2.f;
 
