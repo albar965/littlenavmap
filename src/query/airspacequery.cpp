@@ -27,6 +27,7 @@
 #include "sql/sqlutil.h"
 
 #include <QFileInfo>
+#include <QRegularExpression>
 #include <QStringBuilder>
 
 using namespace Marble;
@@ -110,6 +111,9 @@ const QList<map::MapAirspace> *AirspaceQuery::getAirspaces(const GeoDataLatLonBo
                                                            const map::MapAirspaceFilter& filter, float flightPlanAltitude,
                                                            bool lazy, bool& overflow)
 {
+  const static QRegularExpression REGEXP_FBZ_NAME("(\\bFBZ\\b|\\bFLIGHT PLAN BUFFER\\b)");
+  const static QRegularExpression REGEXP_FBZ_RESTR_DESIG("[0-9A-Y]+Z[0-9]?$");
+
   airspaceCache.updateCache(rect, mapLayer, queryRectInflationFactor, queryRectInflationIncrement, lazy,
                             [](const MapLayer *curLayer, const MapLayer *newLayer) -> bool
   {
@@ -199,8 +203,16 @@ const QList<map::MapAirspace> *AirspaceQuery::getAirspaces(const GeoDataLatLonBo
               if(ids.contains(query->valueInt("boundary_id")))
                 continue;
 
-              if(hasMultipleCode && filter.flags.testFlag(map::AIRSPACE_NO_MULTIPLE_Z) && query->valueStr("multiple_code") == "Z")
-                continue;
+              if(filter.flags.testFlag(map::AIRSPACE_NO_MULTIPLE_Z))
+              {
+                if(hasMultipleCode && query->valueStr("multiple_code") == "Z")
+                  continue;
+
+                if(atools::contains(query->valueStr("restrictive_type", QString()), {"T", "D", "R"}) &&
+                   (REGEXP_FBZ_RESTR_DESIG.match(query->valueStr("restrictive_designation", QString())).hasMatch() ||
+                    REGEXP_FBZ_NAME.match(query->valueStr("name", QString())).hasMatch()))
+                  continue;
+              }
 
               if(hasFirUir)
               {
@@ -213,7 +225,6 @@ const QList<map::MapAirspace> *AirspaceQuery::getAirspaces(const GeoDataLatLonBo
               map::MapAirspace airspace;
               mapTypesFactory->fillAirspace(query->record(), airspace, source);
               airspaceCache.list.append(airspace);
-
               ids.insert(airspace.id);
             }
           }

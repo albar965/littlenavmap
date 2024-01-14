@@ -2759,7 +2759,7 @@ Map views might be shown with a larger zoom distance than expected if this optio
            <property name="geometry">
             <rect>
              <x>0</x>
-             <y>-592</y>
+             <y>-378</y>
              <width>585</width>
              <height>1013</height>
             </rect>
@@ -3471,10 +3471,10 @@ Lower values make the airspace more opaque and higher values more transparent.</
                <item row="20" column="1" colspan="2">
                 <widget class="QCheckBox" name="checkBoxOptionsMapAirspaceNoMultZ">
                  <property name="toolTip">
-                  <string>Hide redundant airspaces having a multiple code of &quot;Z&quot;.</string>
+                  <string>Hide flight buffer zones (FBZ) and redundant airspaces having a multiple code of &quot;Z&quot;.</string>
                  </property>
                  <property name="text">
-                  <string>Hide Multiple Code &amp;Z airspaces</string>
+                  <string>Hide Multiple Code &amp;Z airspaces and FBZ areas</string>
                  </property>
                  <property name="checked">
                   <bool>true</bool>
@@ -3607,7 +3607,7 @@ For VOR, NDB, ILS, waypoints and holdings. Not for flight plan labels.</string>
            <property name="geometry">
             <rect>
              <x>0</x>
-             <y>-20</y>
+             <y>-64</y>
              <width>585</width>
              <height>485</height>
             </rect>
@@ -4301,7 +4301,7 @@ Lower this value to avoid too long tracks and avoid stutters in map display.</st
            <property name="geometry">
             <rect>
              <x>0</x>
-             <y>-230</y>
+             <y>0</y>
              <width>585</width>
              <height>651</height>
             </rect>
@@ -5204,7 +5204,7 @@ Do not show this information publicly in forums on screenshots.&lt;/b&gt;&lt;/p&
            <property name="geometry">
             <rect>
              <x>0</x>
-             <y>-106</y>
+             <y>0</y>
              <width>585</width>
              <height>527</height>
             </rect>
@@ -5674,7 +5674,7 @@ airspace filename has to match the callsign of the online center.</string>
            <property name="geometry">
             <rect>
              <x>0</x>
-             <y>-212</y>
+             <y>0</y>
              <width>585</width>
              <height>633</height>
             </rect>
@@ -6522,7 +6522,7 @@ Note that this value does not affect flight plan calculation or saving of flight
            <property name="geometry">
             <rect>
              <x>0</x>
-             <y>-454</y>
+             <y>0</y>
              <width>585</width>
              <height>875</height>
             </rect>
@@ -7615,7 +7615,7 @@ Little Navmap GIT repository.
            <property name="geometry">
             <rect>
              <x>0</x>
-             <y>-235</y>
+             <y>0</y>
              <width>585</width>
              <height>659</height>
             </rect>
