@@ -21,6 +21,7 @@
 #include "atools.h"
 #include "common/constants.h"
 #include "gui/dialog.h"
+#include "gui/helphandler.h"
 #include "util/fileoperations.h"
 
 #include <QStringBuilder>
@@ -68,9 +69,11 @@ bool XpconnectInstaller::install()
                                                "<p>The X-Plane target installation is as selected in the menu \"Scenery Library\".</p>").
                                         arg(NavApp::getCurrentSimulatorName()).arg(pluginsPath),
                                         tr("Do not &show this dialog again and install in the future."),
-                                        QMessageBox::Yes | QMessageBox::No, QMessageBox::No, QMessageBox::Yes);
+                                        QMessageBox::Yes | QMessageBox::No | QMessageBox::Help, QMessageBox::No, QMessageBox::Yes);
 
-  if(cont == QMessageBox::Yes)
+  if(cont == QMessageBox::Help)
+    atools::gui::HelpHandler::openHelpUrlWeb(parent, lnm::helpOnlineUrl + "XPCONNECT.html", lnm::helpLanguageOnline());
+  else if(cont == QMessageBox::Yes)
   {
     // Check if plugins are accessible
     QString errors = atools::checkDirMsg(pluginsPath);
