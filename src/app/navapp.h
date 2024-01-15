@@ -173,7 +173,11 @@ public:
   static Ui::MainWindow *getMainUi();
 
   /* true if startup is completed and main window is visible */
-  static bool isMainWindowVisible();
+  static bool isMainWindowVisible()
+  {
+    return mainWindowVisible;
+  }
+
   static void setMainWindowVisible();
 
   static void setStayOnTop(QWidget *widget);

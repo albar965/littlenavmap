@@ -746,6 +746,9 @@ void AircraftPerfController::updateActionStates()
   ui->actionAircraftPerformanceRestart->setEnabled(perfHandler->hasFlightSegment());
   ui->pushButtonAircraftPerfCollectRestart->setEnabled(perfHandler->hasFlightSegment());
 
+  ui->pushButtonAircraftPerfCollectMerge->setEnabled(perfHandler->hasFlightSegment());
+  ui->actionAircraftPerformanceMerge->setEnabled(perfHandler->hasFlightSegment());
+
   bool manualWind = isWindManual();
   ui->spinBoxAircraftPerformanceWindDirection->setEnabled(manualWind);
   ui->spinBoxAircraftPerformanceWindSpeed->setEnabled(manualWind);

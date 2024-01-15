@@ -401,10 +401,7 @@ Ui::MainWindow *NavApp::getMainUi()
   return mainWindow->getUi();
 }
 
-bool NavApp::isMainWindowVisible()
-{
-  return mainWindowVisible;
-}
+
 
 bool NavApp::isFetchAiAircraft()
 {
