@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -499,16 +499,16 @@ const LineString *OnlinedataController::airspaceGeometryCallback(const QString& 
   opts2::Flags2 flags2 = OptionData::instance().getFlags2();
 
   const LineString *lineString = nullptr;
-
+  AirspaceController *airspaceController = NavApp::getAirspaceController();
   // Try to get airspace boundary by name vs. callsign if set in options
   if(flags2 & opts2::ONLINE_AIRSPACE_BY_NAME)
-    lineString = NavApp::getAirspaceController()->getOnlineAirspaceGeoByName(callsign, atools::fs::online::facilityTypeToDb(type));
+    lineString = airspaceController->getOnlineAirspaceGeoByName(callsign, atools::fs::online::facilityTypeToDb(type));
 
   // Try to get airspace boundary by file name vs. callsign if set in options
   if(flags2 & opts2::ONLINE_AIRSPACE_BY_FILE)
   {
     if(lineString == nullptr)
-      lineString = NavApp::getAirspaceController()->getOnlineAirspaceGeoByFile(callsign);
+      lineString = airspaceController->getOnlineAirspaceGeoByFile(callsign);
   }
 
   return lineString;

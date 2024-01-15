@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -321,22 +321,29 @@ const LineString *AirspaceQuery::getAirspaceGeometryByName(QString callsign, con
   {
     QStringList callsignSplit = callsign.split('_');
 
-    // Work on middle section
+    // Work on middle section if there is one like "DKB" in "EDGG_DKB_CTR"
     if(callsignSplit.size() > 2)
     {
       if(callsign.section('_', 1, 1).size() > 1)
       {
         // Shorten middle initial: "EDGG_DKB_CTR" to "EDGG_D_CTR"
         callsignSplit[1] = callsignSplit[1].mid(1);
-        geometry = airspaceGeometryByNameInternal(callsignSplit.join('_'), facilityType);
+
+        // Escape "_" to avoid using it as a placeholder
+        geometry = airspaceGeometryByNameInternal(callsignSplit.join("\\_"), facilityType);
       }
 
       if(geometry == nullptr)
       {
-        // Remove middle initial "EDGG_D_CTR" to "EDGG_CTR"
+        // Remove middle initial "EDGG_D_CTR" to "EDGG_CTR" and query exact
         callsignSplit.removeAt(1);
-        geometry = airspaceGeometryByNameInternal(callsignSplit.join('_'), facilityType);
+        geometry = airspaceGeometryByNameInternal(callsignSplit.join("\\_"), facilityType);
       }
+
+      if(geometry == nullptr)
+        // Look for "EDGG_%_CTR" - escape "_"
+        geometry = airspaceGeometryByNameInternal(callsignSplit.join("\\_%\\_"), facilityType);
+
     }
   }
   return geometry;
@@ -489,7 +496,7 @@ void AirspaceQuery::initQueries()
   if(!(source & map::AIRSPACE_SRC_ONLINE))
   {
     airspaceGeoByNameQuery = new SqlQuery(db);
-    airspaceGeoByNameQuery->prepare("select geometry from " % table % " where name like :name and type like :type");
+    airspaceGeoByNameQuery->prepare("select geometry from " % table % " where name like :name escape '\\' and type like :type");
 
     airspaceGeoByFileQuery = new SqlQuery(db);
     airspaceGeoByFileQuery->prepare("select b.geometry, f.filepath from " % table %
