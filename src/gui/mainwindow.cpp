@@ -3490,6 +3490,15 @@ void MainWindow::mainWindowShownDelayed()
   qDebug() << "timeLabel->size()" << timeLabel->size();
 #endif
   qDebug() << Q_FUNC_INFO << "leave";
+
+  // Simulate various crashes in the event loop
+  // throw std::exception();
+
+  // char*ptr=nullptr;
+  // *ptr='\0';
+
+  // QVector<int> vector;
+  // vector.constFirst();
 }
 
 void MainWindow::runDirToolManual()

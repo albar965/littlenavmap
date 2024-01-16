@@ -434,11 +434,6 @@ int main(int argc, char *argv[])
   delete dbManager;
   dbManager = nullptr;
 
-#ifndef DEBUG_DISABLE_CRASH_REPORT
-  // Remove lock file which is used to detect a previously crash
-  NavApp::recordExit();
-#endif
-
   qInfo() << "About to shut down logging";
   atools::logging::LoggingHandler::shutdown();
 
