@@ -37,6 +37,7 @@
 #include <QDebug>
 #include <QTextCodec>
 #include <QCoreApplication>
+#include <QDir>
 
 static const int MIN_SERVER_DOWNLOAD_INTERVAL_MIN = 15;
 static const int MIN_TRANSCEIVER_DOWNLOAD_INTERVAL_MIN = 5;

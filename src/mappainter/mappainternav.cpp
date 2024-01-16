@@ -67,7 +67,7 @@ void MapPainterNav::render()
     airwayQuery->getAirways(airways, curBox, context->mapLayer, context->lazyUpdate);
     context->endTimer("Airway fetch");
 
-    paintAirways(&airways, context->drawFast, false /* track */, context->darkMap);
+    paintAirways(&airways, context->drawFast, false /* track */);
   }
 
   // Tracks -------------------------------------------------
@@ -80,7 +80,7 @@ void MapPainterNav::render()
     airwayQuery->getTracks(tracks, curBox, context->mapLayer, context->lazyUpdate);
     context->endTimer("Track fetch");
 
-    paintAirways(&tracks, context->drawFast, true /* track */, context->darkMap);
+    paintAirways(&tracks, context->drawFast, true /* track */);
   }
 
   context->szFont(context->textSizeNavaid);
@@ -175,7 +175,7 @@ void MapPainterNav::render()
 }
 
 /* Draw airways and texts */
-void MapPainterNav::paintAirways(const QList<map::MapAirway> *airways, bool fast, bool track, bool darkMap)
+void MapPainterNav::paintAirways(const QList<map::MapAirway> *airways, bool fast, bool track)
 {
 #ifdef Q_OS_WIN
   bool rotateText = context->viewContext == Marble::Still;
