@@ -25,6 +25,7 @@
 #include "util/fileoperations.h"
 
 #include <QStringBuilder>
+#include <QDir>
 
 XpconnectInstaller::XpconnectInstaller(QWidget *parentWidget)
   : parent(parentWidget)
