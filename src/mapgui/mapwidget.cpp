@@ -809,9 +809,6 @@ void MapWidget::mousePressEvent(QMouseEvent *event)
     return;
   }
 
-  // Skip unneeded rendering after single mouseclick
-  skipRender = true;
-
 #ifdef DEBUG_MOVING_AIRPLANE
   debugMovingPlane(event);
 #endif
@@ -870,9 +867,6 @@ void MapWidget::mouseReleaseEvent(QMouseEvent *event)
 #ifdef DEBUG_INFORMATION
   qDebug() << Q_FUNC_INFO << "state" << mouseState << "modifiers" << event->modifiers() << "pos" << event->pos();
 #endif
-
-  // Skip unneeded rendering after single mouseclick
-  skipRender = false;
 
   if(noRender())
   {
@@ -1851,9 +1845,6 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
 
   if(mouseState != mw::NONE)
     return;
-
-  // Skip unneeded rendering after single mouseclick
-  skipRender = true;
 
   // Disable any automatic scrolling
   contextMenuActive = true;

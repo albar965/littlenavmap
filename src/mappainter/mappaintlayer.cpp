@@ -293,10 +293,10 @@ void MapPaintLayer::dumpMapLayers() const
   qDebug() << Q_FUNC_INFO << *layers;
 }
 
-bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport, const QString& renderPos, GeoSceneLayer *layer)
+bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport, const QString&, GeoSceneLayer *)
 {
-  Q_UNUSED(renderPos)
-  Q_UNUSED(layer)
+  if(!mapPaintWidget->isActive())
+    return true;
 
   if(!databaseLoadStatus && !mapPaintWidget->isNoNavPaint())
   {

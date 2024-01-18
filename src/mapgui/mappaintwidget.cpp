@@ -1277,8 +1277,8 @@ void MapPaintWidget::paintEvent(QPaintEvent *paintEvent)
     // Avoid excessive logging on visible widget
     qDebug() << Q_FUNC_INFO << "Viewport" << getCurrentViewBoundingBox().toString(GeoDataCoordinates::Degree);
     qDebug() << Q_FUNC_INFO << "currentViewBoundingBox" << currentViewBoundingBox.toString(GeoDataCoordinates::Degree);
-    qDebug() << Q_FUNC_INFO << "skipRender" << skipRender << "painting" << painting
-             << "noRender" << noRender() << "mapCoversViewport" << viewport()->mapCoversViewport();
+    qDebug() << Q_FUNC_INFO << "painting" << painting << "noRender" << noRender() << "isActive" << isActive()
+             << "mapCoversViewport" << viewport()->mapCoversViewport();
   }
 
 #ifdef DEBUG_SKIP_RENDER
@@ -1301,11 +1301,8 @@ void MapPaintWidget::paintEvent(QPaintEvent *paintEvent)
   {
     painting = true;
     if(!active)
-    {
-      // No map yet - clear area
-      QPainter painter(this);
-      painter.fillRect(paintEvent->rect(), QGuiApplication::palette().color(QPalette::Window));
-    }
+      // Not active yet - draw only background map
+      MarbleWidget::paintEvent(paintEvent);
     else
     {
       bool changed = false;
@@ -1339,9 +1336,6 @@ void MapPaintWidget::paintEvent(QPaintEvent *paintEvent)
 
       // Erase map window to avoid black rectangle but do a dummy draw call to have everything initialized
       MarbleWidget::paintEvent(paintEvent);
-
-      if(!NavApp::isMainWindowVisible())
-        QPainter(this).fillRect(paintEvent->rect(), QGuiApplication::palette().color(QPalette::Window));
 
       if(changed)
       {

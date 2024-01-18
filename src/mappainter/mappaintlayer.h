@@ -197,8 +197,7 @@ private:
   }
 
   // Implemented from LayerInterface
-  virtual bool render(Marble::GeoPainter *painter, Marble::ViewportParams *viewport,
-                      const QString& renderPos = "NONE", Marble::GeoSceneLayer *layer = nullptr) override;
+  virtual bool render(Marble::GeoPainter *painter, Marble::ViewportParams *viewport, const QString&, Marble::GeoSceneLayer *) override;
 
   /* Disable font anti-aliasing for default and painter font */
   void setNoAntiAliasFont(PaintContext *context);

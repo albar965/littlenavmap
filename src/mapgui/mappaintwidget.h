@@ -299,6 +299,11 @@ public:
     active = value;
   }
 
+  bool isActive() const
+  {
+    return active;
+  }
+
   /* Will keep the shown bounding rectangle on resize if true */
   void setKeepWorldRect(bool value = true)
   {
@@ -582,9 +587,6 @@ protected:
 
   /* Trail/track of user aircraft */
   AircraftTrail *aircraftTrail = nullptr, *aircraftTrailLogbook = nullptr;
-
-  /* Skip the first unneeded render event after mouse events */
-  bool skipRender = false;
 
 private:
   /* Set map theme and adjust properties accordingly. theme is the full path to the DGML */
