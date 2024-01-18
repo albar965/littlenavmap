@@ -19,6 +19,7 @@
 
 #include "airspace/airspacecontroller.h"
 #include "app/dataexchange.h"
+#include "app/navapp.h"
 #include "atools.h"
 #include "common/constants.h"
 #include "common/dirtool.h"
@@ -27,6 +28,7 @@
 #include "common/mapcolors.h"
 #include "common/settingsmigrate.h"
 #include "common/unit.h"
+#include "common/updatehandler.h"
 #include "connect/connectclient.h"
 #include "connect/xpconnectinstaller.h"
 #include "db/databasemanager.h"
@@ -58,7 +60,6 @@
 #include "mapgui/mapmarkhandler.h"
 #include "mapgui/mapthemehandler.h"
 #include "mapgui/mapwidget.h"
-#include "app/navapp.h"
 #include "online/onlinedatacontroller.h"
 #include "options/optionsdialog.h"
 #include "perf/aircraftperfcontroller.h"
@@ -84,12 +85,12 @@
 #include "track/trackcontroller.h"
 #include "userdata/userdatacontroller.h"
 #include "util/htmlbuilder.h"
+#include "util/signalhandler.h"
 #include "util/version.h"
 #include "weather/weathercontexthandler.h"
 #include "weather/weatherreporter.h"
 #include "weather/windreporter.h"
 #include "web/webcontroller.h"
-#include "common/updatehandler.h"
 
 #include <marble/MarbleAboutDialog.h>
 #include <marble/MarbleModel.h>
@@ -190,6 +191,14 @@ MainWindow::MainWindow()
         }
       }
     }
+#endif
+
+#if defined(Q_OS_LINUX)
+    // Catch Ctrl+C and other signals to avoid data loss on Linux/Unix systems
+    const atools::util::SignalHandler& signalHandler = atools::util::SignalHandler::instance();
+    connect(&signalHandler, &atools::util::SignalHandler::sigHupReceived, this, &MainWindow::close, Qt::QueuedConnection);
+    connect(&signalHandler, &atools::util::SignalHandler::sigTermReceived, this, &MainWindow::close, Qt::QueuedConnection);
+    connect(&signalHandler, &atools::util::SignalHandler::sigIntReceived, this, &MainWindow::close, Qt::QueuedConnection);
 #endif
 
     // Try to avoid short popping up on startup
@@ -554,6 +563,11 @@ MainWindow::~MainWindow()
 
   // Free translations
   atools::gui::Translator::unload();
+
+#if defined(Q_OS_LINUX)
+  // Remove signal handler
+  atools::util::SignalHandler::deleteInstance();
+#endif
 
   atools::logging::LoggingGuiAbortHandler::resetGuiAbortFunction();
 }
