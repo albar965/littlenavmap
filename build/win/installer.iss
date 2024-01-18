@@ -1,5 +1,5 @@
 ﻿// =====================================================================================================
-// Inno Setup installer script https://jrsoftware.org
+// Inno Setup installer script https://jrsoftware.org/isinfo.php
 // Script to create the Little Navmap installer for the 32-bit and 64-bit versions.
 //
 // This file has to be encoded using UTF-8 with BOM.
