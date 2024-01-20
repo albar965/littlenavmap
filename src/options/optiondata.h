@@ -807,6 +807,12 @@ public:
     return guiRouteTableTextSize;
   }
 
+  /* Route remarks input field text size in percent */
+  int getGuiRouteRemarksTextSize() const
+  {
+    return guiRouteRemarksTextSize;
+  }
+
   /* Search result table view text size in percent */
   int getGuiSearchTableTextSize() const
   {
@@ -1418,6 +1424,9 @@ private:
 
   // ui->spinBoxOptionsGuiRouteText
   int guiRouteTableTextSize = 100;
+
+  // ui->spinBoxOptionsGuiRouteRemarksText
+  int guiRouteRemarksTextSize = 100;
 
   // ui->spinBoxOptionsGuiSearchText
   int guiSearchTableTextSize = 100;

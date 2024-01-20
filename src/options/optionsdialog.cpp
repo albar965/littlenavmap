@@ -447,6 +447,7 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
      ui->spinBoxOptionsGuiInfoText,
      ui->spinBoxOptionsGuiAircraftPerf,
      ui->spinBoxOptionsGuiRouteText,
+     ui->spinBoxOptionsGuiRouteRemarksText,
      ui->spinBoxOptionsGuiSearchText,
      ui->spinBoxOptionsGuiSimInfoText,
      ui->spinBoxOptionsGuiThemeMapDimming,
@@ -1995,6 +1996,7 @@ void OptionsDialog::widgetsToOptionData()
   data.guiInfoTextSize = ui->spinBoxOptionsGuiInfoText->value();
   data.guiPerfReportTextSize = ui->spinBoxOptionsGuiAircraftPerf->value();
   data.guiRouteTableTextSize = ui->spinBoxOptionsGuiRouteText->value();
+  data.guiRouteRemarksTextSize = ui->spinBoxOptionsGuiRouteRemarksText->value();
   data.guiSearchTableTextSize = ui->spinBoxOptionsGuiSearchText->value();
   data.guiInfoSimSize = ui->spinBoxOptionsGuiSimInfoText->value();
   data.guiToolbarSize = ui->spinBoxOptionsGuiToolbarSize->value();
@@ -2304,6 +2306,7 @@ void OptionsDialog::optionDataToWidgets(const OptionData& data)
   ui->spinBoxOptionsGuiInfoText->setValue(data.guiInfoTextSize);
   ui->spinBoxOptionsGuiAircraftPerf->setValue(data.guiPerfReportTextSize);
   ui->spinBoxOptionsGuiRouteText->setValue(data.guiRouteTableTextSize);
+  ui->spinBoxOptionsGuiRouteRemarksText->setValue(data.guiRouteRemarksTextSize);
   ui->spinBoxOptionsGuiSearchText->setValue(data.guiSearchTableTextSize);
   ui->spinBoxOptionsGuiSimInfoText->setValue(data.guiInfoSimSize);
   ui->spinBoxOptionsGuiToolbarSize->setValue(data.guiToolbarSize);

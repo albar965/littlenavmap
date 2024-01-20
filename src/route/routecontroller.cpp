@@ -281,6 +281,7 @@ RouteController::RouteController(QMainWindow *parentWindow, QTableView *tableVie
 
   // Use saved font size for table view
   zoomHandler->zoomPercent(OptionData::instance().getGuiRouteTableTextSize());
+  updateRemarksFont();
 
   tableViewRoute->setContextMenuPolicy(Qt::CustomContextMenu);
 
@@ -3364,9 +3365,19 @@ void RouteController::styleChanged()
   highlightNextWaypoint(route.getActiveLegIndexCorrected());
 }
 
+void RouteController::updateRemarksFont()
+{
+  QFont font = NavApp::getMainUi()->labelRouteRemarksHeader->font();
+  font.setPointSizeF(font.pointSizeF() * OptionData::instance().getGuiRouteRemarksTextSize() / 100.f);
+  NavApp::getMainUi()->plainTextEditRouteRemarks->setFont(font);
+}
+
 void RouteController::optionsChanged()
 {
   zoomHandler->zoomPercent(OptionData::instance().getGuiRouteTableTextSize());
+
+  updateRemarksFont();
+
   routeCalcDialog->optionsChanged();
 
   tableCleanupTimer.setInterval(OptionData::instance().getSimCleanupTableTime() * 1000);
