@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -1816,8 +1816,7 @@ bool RouteExport::exportFlighplanAsIvap(const RouteExportData& exportData, const
 }
 
 bool RouteExport::exportFlighplan(const QString& filename, rf::RouteAdjustOptions options,
-                                  std::function<void(const atools::fs::pln::Flightplan& plan,
-                                                     const QString& file)> exportFunc)
+                                  std::function<void(const atools::fs::pln::Flightplan& plan, const QString& file)> exportFunc)
 {
   try
   {

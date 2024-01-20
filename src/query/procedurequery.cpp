@@ -2081,6 +2081,7 @@ void ProcedureQuery::clearFlightplanProcedureProperties(QHash<QString, QString>&
   {
     properties.remove(pln::TRANSITION);
     properties.remove(pln::TRANSITION_TYPE);
+    properties.remove(pln::TRANSITION_WP);
   }
 
   if(type & proc::PROCEDURE_APPROACH)
@@ -2753,12 +2754,20 @@ void ProcedureQuery::getLegsForFlightplanProperties(const QHash<QString, QString
     }
   }
 
-  // Get approach transition if missing and requested - have STAR and approach but no approach transition
-  if(autoresolveTransition && starId != -1 && transitionId == -1 && approachId != -1)
+  // Get approach transition if missing and requested - have approach but no transition
+  if(autoresolveTransition && transitionId == -1 && approachId != -1)
   {
-    const proc::MapProcedureLegs *tempStarLegs = getProcedureLegs(destinationNav, starId);
-    if(procedureValid(tempStarLegs, &errors) && !tempStarLegs->isEmpty() && !tempStarLegs->constLast().fixIdent.isEmpty())
-      transitionId = getApprOrStarTransitionIdByWp(destinationNav, tempStarLegs->constLast().fixIdent, approachId);
+    if(starId != -1)
+    {
+      // Try first by last STAR waypoint
+      const proc::MapProcedureLegs *tempStarLegs = getProcedureLegs(destinationNav, starId);
+      if(procedureValid(tempStarLegs, &errors) && !tempStarLegs->isEmpty() && !tempStarLegs->constLast().fixIdent.isEmpty())
+        transitionId = getApprOrStarTransitionIdByWp(destinationNav, tempStarLegs->constLast().fixIdent, approachId);
+    }
+
+    // Try by property of last waypoint before destination (not including approach waypoints)
+    if(transitionId == -1 && !properties.value(atools::fs::pln::TRANSITION_WP).isEmpty())
+      transitionId = getApprOrStarTransitionIdByWp(destinationNav, properties.value(atools::fs::pln::TRANSITION_WP), approachId);
   }
 
   // =================================================================================================
