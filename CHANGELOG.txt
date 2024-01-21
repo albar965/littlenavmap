@@ -2,8 +2,118 @@
 For example: #3 is https://github.com/albar965/littlenavmap/issues/3.
 This text is partially Markdown, hence sometimes strange formatting.
 
+
 ==>>=============================================================================
 
+# Version 3.0.2.beta
+
+## Notes
+
+**This is a beta/test release of Little Navmap which adds new features, user interface improvements and fixes bugs.**
+
+**Note that the program translations and the user manual have not been updated yet.**
+
+**See here if you would like to run the beta release besides your stable installation:
+[Little Navmap - User Manual - Portable Execution](https://www.littlenavmap.org/manuals/littlenavmap/release/latest/en/INSTALLATION.html#portable-execution).**
+
+**Also update Little Navconnect and Little Xpconnect if you're using one of these.
+Little Navmap will show a notification dialog if you use an outdated version of Little Xpconnect.
+You can still continue to use it, though.**
+
+**macOS users: Keep in mind that you have to clear the quarantine flag when updating Little Xpconnect. See
+[Little Navmap - User Manual - Clearing the Quarantine Flag on macOS](https://www.littlenavmap.org/manuals/littlenavmap/release/latest/en/XPCONNECT.html#clearing-the-quarantine-flag-on-macos).**
+
+If you think the overall appearance of fonts in Little Navmap on Windows is blurry:
+Remove the file `qt.conf` in the Little Navmap installation folder.
+Keep in mind that this will revert map display and performance improvements.
+
+A big thank you to all who reported bugs and issues!
+
+## Changes from 3.0.1.beta to 3.0.2.beta
+
+
+### Flight Plan and Export
+
+* Fixed issue where no departure runway could be selected if a plan consisted of only one airport.
+  This can happen when starting to build a flight plan and left menu items in context menus disabled.
+* Corrected wrong warning about VFR when exporting a PLN flight plan for MSFS. This appeared when
+  using a departure or destination runway selection.
+* Now assigning runway automatically for STAR and approaches to avoid error messages about runway
+  mismatches. This means that a selected STAR runway changes automatically to the one used by a
+  newly selected approach if the STAR allows multiple runways.
+  The runway of a multi-runway STAR will also be automatically selected for an approach runway
+  already inserted avoiding the runway selection dialog.
+* Fix for PLN flight plan export in MSFS where transitions were not loaded by MSFS due to a missing
+  waypoint. Example: EDDV, using STAR NIE27 and approach NIE.I27RY or approach SAS.I27RZ.
+* Better transition detection now when importing MSFS PLN files. Using last STAR waypoint or last
+  en-route waypoint to automatically find a matching approach transition.
+
+### Map Display
+
+* Added a reject list for map themes. You will see a warning for broken and discontinued
+  map themes. Uninstall these to silence the warning.
+* Better error checking for theme path in options dialog to avoid accidental selection of the stock
+  theme folder.
+* Updated installer to remove the now unsupported StamenTerrain map theme on update to avoid
+  error messages.
+* Added MapBox Dark and Light map themes. Note that you need a free MapBox account and an API key
+  to use these.
+* Map themes MapBox Outdoors and Satellite Streets updated to latest MapBox theme address.
+* Added option for filtering out FBZ (flight buffer zone) airspaces on page `Map Display` in section
+  `Airspaces`. This is on per default and reduces clutter when showing airspaces.
+* Better airspace matching for online airspaces. You can load the files
+  [firboundaries.json](https://map.vatsim.net/livedata/firboundaries.json) and
+  [traconboundaries.json](https://map.vatsim.net/livedata/traconboundaries.json) into the
+  Little Navmap user airspace library to get more real boundaries for VATSIM online centers
+  instead of the generic circles. #490
+* Removed drawing of empty white rectangle on map on startup.
+* Adjusted display of navaids for better visibility on dark maps like CARTO Dark Matter or
+  Mapbox Dark.
+* Reduced size of minor airports like helipads and water ports.
+
+### User Interface
+
+* Added Xpconnect installation option from main menu `Tools` -> `Install Little Xpconnect in X-Plane plugins`.
+  This can be used to install or update the X-Plane plugin from the installation folder.
+  Note that the plugin will be installed in the currently selected X-Plane instance from
+  menu `Scenery Library`.
+* Improved text and icon display for the dark user interface style.
+* Renamed user interface style `Night` to `Dark`.
+* Added option to adjust text size for flight plan remarks tab in options on page `Display and Text`.
+* Fixed bug where cleanup did not work properly in logbook and left over logbook entries which could
+  not be removed.
+* Changed application to catch program stopping during Windows shutdown which resulted in wrong
+  crash reports. Now shutting program cleanly down when shutting down Windows with Little Navmap
+  running.
+* Now safely catching termination signals on Linux. This avoids data loss due to unsaved files when
+  terminating with Ctrl+C from the command line.
+
+### Web Server
+
+* Fixed deadlock resulting in program freeze in HTTP server which appeared when shutting down with
+  parallel incoming requests.
+* Updated internal HTTP server by Stefan Frings to latest version from 1.9.0.
+* Corrected excessive logging in HTTP server.
+
+### Scenery Library
+
+* MSFS: Fixed issues with moved or updated airports when reading scenery library.
+* Doubled number or arc and circle segments for more accuracy in map display airspaces.
+
+
+### Navigraph Navdata Compiler
+
+Note that these changes will be deployed in a future cycle (most likely 2402) and need an
+updated navdatabase.
+
+* Runways marked as closed are now shown as such when using mode `Use Navigraph for all Features`.
+* Airport patterns now correctly marked as not available.
+* Runways having one end closed are now positioned correctly. This also resulted in misplaced
+  departure procedures. Example: EDDF runway 18.
+* Fixed issue where circular airspace arcs resulted in self crossing polygons and wrong
+  text placement.
+
+==>>=============================================================================
 
 # Version 3.0.1.beta
 

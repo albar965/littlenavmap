@@ -44141,12 +44141,12 @@ passen Sie den X-Plane Wetterpfad in den Einstellungen auf der Seite &quot;Wette
         <location filename="src/connect/xpconnectinstaller.cpp" line="68"/>
         <source>&lt;p&gt;Note to Apple macOS users:&lt;br/&gt;You must remove the quarantine flag from the plugin to prevent Apple Gatekeeper from blocking the plugin from loading.&lt;br/&gt;Click the help button for more information.&lt;/p&gt;</source>
         <oldsource>&lt;p&gt;Install or update the Little Xpconnect plugin for %1 in the directory below?&lt;/p&gt;&lt;p&gt;&quot;%2&quot;&lt;/p&gt;&lt;p&gt;The X-Plane target installation is as selected in the menu &quot;Scenery Library&quot;.&lt;/p&gt;&lt;p&gt;Note to Apple macOS users:&lt;br/&gt;You still need to remove the quarantine flag from the plugin to avoid Apple Gatekeeper blocking X-Plane from loading it.&lt;br/&gt;Click the help button for more information.&lt;/p&gt;</oldsource>
-        <translation>&lt;p&gt;Hinweis für Apple macOS Benutzer:&lt;br/&gt;Sie müssen das Quarantäne-Flag aus dem Plugin entfernen, um zu verhindern, dass Apple Gatekeeper das Laden des Plugins blockiert.&lt;br/&gt;Klicken Sie auf die Hilfe-Schaltfläche für weitere Informationen.&lt;/p&gt;</translation>
+        <translation type="unfinished">&lt;p&gt;Das Little Xpconnect Plugin für %1 im folgenden Verzeichnis installieren oder aktualisieren?&lt;/p&gt;&lt;p&gt;&quot;%2&quot;&lt;/p&gt;&lt;p&gt;Die X-Plane Zielinstallation ist wie im Menü &quot; Szeneriebibliothek&quot; ausgewählt.&lt;/p&gt;&lt;p&gt;Hinweis für Apple macOS-Benutzer:&lt;br/&gt;Sie müssen noch das Quarantäne-Flag aus dem Plugin entfernen, um zu vermeiden, dass der Apple Gatekeeper das Laden des Plugins in X-Plane blockiert.&lt;br/&gt;Klicken Sie auf die Hilfe-Schaltfläche für weitere Informationen.&lt;/p&gt;</translation>
     </message>
     <message>
         <location filename="src/connect/xpconnectinstaller.cpp" line="75"/>
         <source>&lt;p&gt;Install or update the Little Xpconnect plugin for %1 in the directory below?&lt;/p&gt;&lt;p&gt;&quot;%2&quot;&lt;/p&gt;&lt;p&gt;The X-Plane target installation is as selected in the menu &quot;Scenery Library&quot;.&lt;/p&gt;%3</source>
-        <translation>&lt;p&gt;Das Little Xpconnect Plugin für %1 im untenstehenden Verzeichnis installieren oder aktualisieren?&lt;/p&gt;&lt;p&gt;&quot;%2&quot;&lt;/p&gt;&lt;p&gt;Die X-Plane Zielinstallation wird im Menü &quot;Szeneriebibliothek&quot; ausgewählt.&lt;/p&gt;%3</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="src/connect/xpconnectinstaller.cpp" line="80"/>
