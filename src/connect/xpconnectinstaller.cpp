@@ -63,12 +63,20 @@ bool XpconnectInstaller::install()
   // .../X-Plane 11/Resources/plugins
   QString pluginsPath = atools::buildPathNoCase({NavApp::getCurrentSimulatorBasePath(), "resources", "plugins"});
 
+  QString macOsNote;
+#ifdef Q_OS_MACOS
+  macOsNote = tr("<p>Note to Apple macOS users:<br/>"
+                 "You must remove the quarantine flag from the plugin to prevent "
+                 "Apple Gatekeeper from blocking the plugin from loading.<br/>Click the help button for more information.</p>");
+#endif
+
   // Ask general question ==========================================
   int cont = dialog->showQuestionMsgBox(lnm::ACTIONS_INSTALL_XPCONNECT_INFO,
                                         tr("<p>Install or update the Little Xpconnect plugin for %1 in the directory below?</p>"
                                              "<p>\"%2\"</p>"
-                                               "<p>The X-Plane target installation is as selected in the menu \"Scenery Library\".</p>").
-                                        arg(NavApp::getCurrentSimulatorName()).arg(pluginsPath),
+                                               "<p>The X-Plane target installation is as selected in the menu \"Scenery Library\".</p>"
+                                                 "%3").
+                                        arg(NavApp::getCurrentSimulatorName()).arg(pluginsPath).arg(macOsNote),
                                         tr("Do not &show this dialog again and install in the future."),
                                         QMessageBox::Yes | QMessageBox::No | QMessageBox::Help, QMessageBox::No, QMessageBox::Yes);
 

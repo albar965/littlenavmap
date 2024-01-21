@@ -44361,57 +44361,63 @@ adapter le chemin météo de X-Plane dans les options de la page &quot;Fichiers 
     <name>XpconnectInstaller</name>
     <message>
         <location filename="src/connect/xpconnectinstaller.cpp" line="68"/>
-        <source>&lt;p&gt;Install or update the Little Xpconnect plugin for %1 in the directory below?&lt;/p&gt;&lt;p&gt;&quot;%2&quot;&lt;/p&gt;&lt;p&gt;The X-Plane target installation is as selected in the menu &quot;Scenery Library&quot;.&lt;/p&gt;</source>
+        <source>&lt;p&gt;Note to Apple macOS users:&lt;br/&gt;You must remove the quarantine flag from the plugin to prevent Apple Gatekeeper from blocking the plugin from loading.&lt;br/&gt;Click the help button for more information.&lt;/p&gt;</source>
+        <oldsource>&lt;p&gt;Install or update the Little Xpconnect plugin for %1 in the directory below?&lt;/p&gt;&lt;p&gt;&quot;%2&quot;&lt;/p&gt;&lt;p&gt;The X-Plane target installation is as selected in the menu &quot;Scenery Library&quot;.&lt;/p&gt;&lt;p&gt;Note to Apple macOS users:&lt;br/&gt;You still need to remove the quarantine flag from the plugin to avoid Apple Gatekeeper blocking X-Plane from loading it.&lt;br/&gt;Click the help button for more information.&lt;/p&gt;</oldsource>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/connect/xpconnectinstaller.cpp" line="72"/>
+        <location filename="src/connect/xpconnectinstaller.cpp" line="75"/>
+        <source>&lt;p&gt;Install or update the Little Xpconnect plugin for %1 in the directory below?&lt;/p&gt;&lt;p&gt;&quot;%2&quot;&lt;/p&gt;&lt;p&gt;The X-Plane target installation is as selected in the menu &quot;Scenery Library&quot;.&lt;/p&gt;%3</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/connect/xpconnectinstaller.cpp" line="80"/>
         <source>Do not &amp;show this dialog again and install in the future.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/connect/xpconnectinstaller.cpp" line="89"/>
+        <location filename="src/connect/xpconnectinstaller.cpp" line="97"/>
         <source>&lt;p&gt;A stray X-Plane plugin file was found:&lt;/p&gt;&lt;p&gt;&quot;%1&quot;&lt;/p&gt;&lt;p&gt;This is not neccessarily from Little Xpconnect but it is usually a result from an incorrect plugin installation which can cause problems.&lt;br/&gt;Removing this file is recommended.&lt;/p&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/connect/xpconnectinstaller.cpp" line="94"/>
+        <location filename="src/connect/xpconnectinstaller.cpp" line="102"/>
         <source>Do not &amp;show this dialog again.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/connect/xpconnectinstaller.cpp" line="110"/>
+        <location filename="src/connect/xpconnectinstaller.cpp" line="118"/>
         <source>&lt;p&gt;Found one or more previous installations of Little Xpconnect using a non-standard name:&lt;/p&gt;&lt;p&gt;%1&lt;/p&gt;&lt;p&gt;Check these plugins manually if you are not sure what they are.&lt;/p&gt;&lt;p&gt;Delete these plugins now to avoid issues?&lt;/p&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/connect/xpconnectinstaller.cpp" line="114"/>
+        <location filename="src/connect/xpconnectinstaller.cpp" line="122"/>
         <source>&quot;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/connect/xpconnectinstaller.cpp" line="114"/>
+        <location filename="src/connect/xpconnectinstaller.cpp" line="122"/>
         <source>&quot;&lt;br/&gt;&quot;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/connect/xpconnectinstaller.cpp" line="124"/>
+        <location filename="src/connect/xpconnectinstaller.cpp" line="132"/>
         <source>Error(s) while deleting directory: %1 installation stopped.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/connect/xpconnectinstaller.cpp" line="125"/>
-        <location filename="src/connect/xpconnectinstaller.cpp" line="139"/>
+        <location filename="src/connect/xpconnectinstaller.cpp" line="133"/>
+        <location filename="src/connect/xpconnectinstaller.cpp" line="147"/>
         <source>, </source>
         <translation type="unfinished">, </translation>
     </message>
     <message>
-        <location filename="src/connect/xpconnectinstaller.cpp" line="139"/>
+        <location filename="src/connect/xpconnectinstaller.cpp" line="147"/>
         <source>Error(s) while copying directory: %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/connect/xpconnectinstaller.cpp" line="145"/>
+        <location filename="src/connect/xpconnectinstaller.cpp" line="153"/>
         <source>X-Plane plugins path &quot;%1&quot; not valid.
 Reason: %2.</source>
         <translation type="unfinished"></translation>
