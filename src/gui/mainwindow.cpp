@@ -3796,17 +3796,18 @@ void MainWindow::resetAllSettings()
 
   QMessageBox::StandardButton retval =
     atools::gui::Dialog::warning(this,
-                                 tr("<b>This will reset all options, window layout, dialog layout, "
+                                 tr("<p><b>This will reset all options, window layout, dialog layout, "
                                       "aircraft trail, map position history and file histories "
-                                      "back to default and restart %1.</b><br/><br/>"
-                                      "User features like range rings or patterns as well as "
-                                      "scenery, logbook and userpoint databases are not affected.<br/><br/>"
-                                      "A copy of the settings file<br/><br/>"
-                                      "\"%2\"<br/><br/>"
-                                      "will be created in the folder<br/><br/>"
-                                      "\"%3\"<br/><br/>"
-                                      "which allows you to undo this change."
-                                    ).arg(QCoreApplication::applicationName()).arg(settingFile).arg(settingPath),
+                                      "back to default and restart %1.</b></p>"
+                                      "<p>User features like range rings or traffic patterns as well as "
+                                        "scenery, logbook and userpoint databases are not affected.</p>"
+                                        "<p>A copy of the settings file<br/>"
+                                        "\"%2\"<br/>"
+                                        "will be created in the folder<br/>"
+                                        "\"%3\".</p>"
+                                        "<p>This allows you to undo this change.</p>"
+                                          "<p>Reset and restart now?</p>").
+                                 arg(QCoreApplication::applicationName()).arg(settingFile).arg(settingPath),
                                  QMessageBox::Ok | QMessageBox::Cancel | QMessageBox::Help, QMessageBox::Cancel);
 
   if(retval == QMessageBox::Ok)
