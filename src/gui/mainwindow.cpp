@@ -992,7 +992,6 @@ void MainWindow::connectAllSlots()
     connect(app, &QGuiApplication::fontChanged, NavApp::getLogdataController(), &LogdataController::fontChanged);
     connect(app, &QGuiApplication::fontChanged, routeController, &RouteController::fontChanged);
     connect(app, &QGuiApplication::fontChanged, infoController, &InfoController::fontChanged);
-    connect(app, &QGuiApplication::fontChanged, routeStringDialog, &RouteStringDialog::fontChanged);
     connect(app, &QGuiApplication::fontChanged, optionsDialog, &OptionsDialog::fontChanged);
     connect(app, &QGuiApplication::fontChanged, profileWidget, &ProfileWidget::fontChanged);
     connect(app, &QGuiApplication::fontChanged, menuWidget(), &QWidget::setFont);
@@ -2208,6 +2207,7 @@ void MainWindow::routeFromStringCurrent()
 
     // Connect signals from and to non-modal dialog
     connect(routeStringDialog, &RouteStringDialog::routeFromFlightplan, this, &MainWindow::routeFromFlightplan);
+    connect(NavApp::navAppInstance(), &QGuiApplication::fontChanged, routeStringDialog, &RouteStringDialog::fontChanged);
     connect(routeController, &RouteController::routeChanged, routeStringDialog, &RouteStringDialog::updateButtonState);
     connect(NavApp::getStyleHandler(), &StyleHandler::styleChanged, routeStringDialog, &RouteStringDialog::styleChanged);
   }
