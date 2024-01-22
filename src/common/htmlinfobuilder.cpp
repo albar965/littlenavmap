@@ -4986,17 +4986,25 @@ void HtmlInfoBuilder::addAirportSceneryAndLinks(const MapAirport& airport, HtmlB
     links.append(html.cleared().a(tr("AirNav.com"),
                                   QString("https://www.airnav.com/airport/%1").arg(airportNav.displayIdent()), flags).getHtml());
 
-    links.append(html.cleared().a(tr("ChartFox"), QString("https://chartfox.org/%1").arg(airportNav.displayIdent()), flags).
+    links.append(html.cleared().a(tr("ChartFox"),
+                                  QString("https://chartfox.org/%1").arg(airportNav.displayIdent()), flags).
                  text(tr("&nbsp;(needs&nbsp;login)"), ahtml::SMALL | ahtml::NO_ENTITIES).getHtml());
 
-    links.append(html.cleared().a(tr("FltPlan"),
-                                  QString("https://fltplan.com/Airport.cgi?%1").arg(airportNav.displayIdent()), flags).getHtml());
-
     links.append(html.cleared().a(tr("FlightAware"),
-                                  QString("https://www.flightaware.com/live/airport/%1").arg(airportNav.displayIdent()), flags).getHtml());
+                                  QString("https://www.flightaware.com/live/airport/%1").
+                                  arg(airportNav.displayIdent()), flags).getHtml());
+
+    links.append(html.cleared().a(tr("FltPlan"),
+                                  QString("https://fltplan.com/Airport.cgi?%1").
+                                  arg(airportNav.displayIdent()), flags).getHtml());
 
     links.append(html.cleared().a(tr("OpenNav"),
-                                  QString("https://opennav.com/airport/%1").arg(airportNav.displayIdent()), flags).getHtml());
+                                  QString("https://opennav.com/airport/%1").
+                                  arg(airportNav.displayIdent()), flags).getHtml());
+
+    links.append(html.cleared().a(tr("World Airport Codes"),
+                                  QString("https://www.world-airport-codes.com/search/?s=%1").
+                                  arg(airportNav.displayIdent()), flags).getHtml());
 
     // Removed Pilot Nav since it tricks you into a commercial service
     // links.append(html.cleared().a(tr("Pilot&nbsp;Nav"), QString("https://www.pilotnav.com/airport/%1").
