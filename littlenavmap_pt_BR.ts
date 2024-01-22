@@ -4180,124 +4180,123 @@ Você pode carregar o banco de dados da biblioteca de cenários do simulador no 
 <context>
     <name>DirTool</name>
     <message>
-        <location filename="src/common/dirtool.cpp" line="39"/>
+        <location filename="src/common/dirtool.cpp" line="40"/>
         <source>%1 Files</source>
         <extracomment>Default folder name which might be created initially by program. * Change only once. Otherwise program might suggest the user to create the new folders again</extracomment>
         <translation>Arquivos %1</translation>
     </message>
     <message>
-        <location filename="src/common/dirtool.cpp" line="47"/>
+        <location filename="src/common/dirtool.cpp" line="48"/>
         <source>Flight Plans</source>
         <extracomment>Default folder name which might be created initially by program. * Change only once. Otherwise program might suggest the user to create the new folders again</extracomment>
         <translation>Planos de Voo</translation>
     </message>
     <message>
-        <location filename="src/common/dirtool.cpp" line="51"/>
+        <location filename="src/common/dirtool.cpp" line="52"/>
         <source>Aircraft Performance</source>
         <extracomment>Default folder name which might be created initially by program. * Change only once. Otherwise program might suggest the user to create the new folders again</extracomment>
         <translation>Performance de Aeronaves</translation>
     </message>
     <message>
-        <location filename="src/common/dirtool.cpp" line="55"/>
+        <location filename="src/common/dirtool.cpp" line="56"/>
         <source>Window Layouts</source>
         <extracomment>Default folder name which might be created initially by program. * Change only once. Otherwise program might suggest the user to create the new folders again</extracomment>
         <translation>Layouts de janela</translation>
     </message>
     <message>
-        <location filename="src/common/dirtool.cpp" line="59"/>
+        <location filename="src/common/dirtool.cpp" line="60"/>
         <source>User Airspaces</source>
         <extracomment>Default folder name which might be created initially by program. * Change only once. Otherwise program might suggest the user to create the new folders again</extracomment>
         <translation>Espaços Aéreos do Usuário</translation>
     </message>
     <message>
-        <location filename="src/common/dirtool.cpp" line="63"/>
+        <location filename="src/common/dirtool.cpp" line="64"/>
         <source>GLOBE Elevation Data</source>
         <extracomment>Default folder name which might be created initially by program. * Change only once. Otherwise program might suggest the user to create the new folders again</extracomment>
         <translation>GLOBE Dados de Elevação</translation>
     </message>
     <message>
-        <location filename="src/common/dirtool.cpp" line="67"/>
+        <location filename="src/common/dirtool.cpp" line="68"/>
         <source>Airports</source>
         <extracomment>Default folder name which might be created initially by program. * Change only once. Otherwise program might suggest the user to create the new folders again</extracomment>
         <translation>Aeroportos</translation>
     </message>
     <message>
-        <location filename="src/common/dirtool.cpp" line="71"/>
+        <location filename="src/common/dirtool.cpp" line="72"/>
         <source>Map Themes</source>
         <extracomment>Default folder name which might be created initially by program. * Change only once. Otherwise program might suggest the user to create the new folders again</extracomment>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/common/dirtool.cpp" line="78"/>
+        <location filename="src/common/dirtool.cpp" line="79"/>
         <source>&lt;p style=&apos;white-space:pre&apos;&gt;&lt;b&gt;Little Navmap can create a recommended directory structure to store all your files&lt;br/&gt;in your documents folder.&lt;/b&gt;&lt;/p&gt;&lt;p&gt;The following folders will be created:&lt;/p&gt;&lt;p&gt;&lt;b&gt;%1&lt;/b&gt;&lt;br/&gt;Top level directory for all files of Little Navmap containing the following sub-directories:&lt;/p&gt;</source>
         <oldsource>&lt;p style=&apos;white-space:pre&apos;&gt;&lt;b&gt;&lt;i&gt;Little Navmap&lt;/i&gt; can create a recommended directory structure to store all your files&lt;br/&gt;in your documents folder.&lt;/b&gt;&lt;/p&gt;&lt;p&gt;The following folders will be created:&lt;/p&gt;&lt;p&gt;&lt;b&gt;%1&lt;/b&gt;&lt;br/&gt;Top level directory for all files of &lt;i&gt;Little Navmap&lt;/i&gt; containing the following sub-directories:&lt;/p&gt;</oldsource>
         <translatorcomment>&lt;p style=&apos;white-space:pre&apos;&gt;&lt;b&gt;Little Navmap pode criar uma estrutura de diretório recomendada para armazenar todos os seus arquivos&lt;br/&gt;na pasta de documentos.&lt;/b&gt;&lt;/p&gt;&lt;p&gt;O seguinte pastas serão criadas:&lt;/p&gt;&lt;p&gt;&lt;b&gt;%1&lt;/b&gt;&lt;br/&gt;Diretório de nível superior para todos os arquivos do Little Navmap contendo os seguintes subdiretórios:&lt;/p&gt;</translatorcomment>
         <translation>&lt;p style=&apos;white-space:pre&apos;&gt;&lt;b&gt;&lt;i&gt;Little Navmap&lt;/i&gt; pode criar uma estrutura de diretório recomendada para armazenar todos os seus arquivos&lt;br/&gt;na pasta de documentos.&lt;/b&gt;&lt;/p&gt;&lt;p&gt;As seguintes pastas serão criadas:&lt;/p&gt;&lt;p&gt;&lt;b&gt;%1&lt;/b&gt;&lt;br/&gt;Diretório de privilégio superior para todos os arquivos do &lt;i&gt;Little Navmap&lt;/i&gt; contendo o seguintes subdiretórios:&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="src/common/dirtool.cpp" line="88"/>
+        <location filename="src/common/dirtool.cpp" line="89"/>
         <source>&lt;p&gt;One or more of these directories are missing.&lt;/p&gt;</source>
         <translation>&lt;p&gt;Um ou mais desses diretórios estão ausentes.&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="src/common/dirtool.cpp" line="91"/>
+        <location filename="src/common/dirtool.cpp" line="92"/>
         <source>&lt;ul&gt;</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/common/dirtool.cpp" line="92"/>
+        <location filename="src/common/dirtool.cpp" line="93"/>
         <source>&lt;li&gt;&lt;b&gt;%1&lt;/b&gt;&lt;br/&gt;For flight plans in Little Navmap&apos;s own format &lt;code&gt;.lnmpln&lt;/code&gt;&lt;/li&gt;</source>
         <oldsource>&lt;li&gt;&lt;b&gt;%1&lt;/b&gt;&lt;br/&gt;For flight plans in &lt;i&gt;Little Navmap&lt;/i&gt;&apos;s own format &lt;code&gt;.lnmpln&lt;/code&gt;&lt;/li&gt;</oldsource>
         <translation>&lt;li&gt;&lt;b&gt;%1&lt;/b&gt;&lt;br/&gt;Para planos de voo no formato próprio do Little Navmap &lt;code&gt;.lnmpln&lt;/code&gt;&lt;/li&gt;</translation>
     </message>
     <message>
-        <location filename="src/common/dirtool.cpp" line="93"/>
+        <location filename="src/common/dirtool.cpp" line="94"/>
         <source>&lt;li&gt;&lt;b&gt;%1&lt;/b&gt;&lt;br/&gt;Directory for aircraft performance files (&lt;code&gt;.lnmperf&lt;/code&gt;)&lt;/li&gt;</source>
         <translation>&lt;li&gt;&lt;b&gt;%1&lt;/b&gt;&lt;br/&gt;Diretório para os arquivos de performance das aeronaves(&lt;code&gt;.lnmperf&lt;/code&gt;)&lt;/li&gt;</translation>
     </message>
     <message>
-        <location filename="src/common/dirtool.cpp" line="94"/>
+        <location filename="src/common/dirtool.cpp" line="95"/>
         <source>&lt;li&gt;&lt;b&gt;%1&lt;/b&gt;&lt;br/&gt;For saved window layouts (&lt;code&gt;.lnmlayout&lt;/code&gt;)&lt;/li&gt;</source>
         <translation>&lt;li&gt;&lt;b&gt;%1&lt;/b&gt;&lt;br/&gt;Para layouts de janela salvos(&lt;code&gt;.lnmlayout&lt;/code&gt;)&lt;/li&gt;</translation>
     </message>
     <message>
-        <location filename="src/common/dirtool.cpp" line="95"/>
+        <location filename="src/common/dirtool.cpp" line="96"/>
         <source>&lt;li&gt;&lt;b&gt;%1&lt;/b&gt;&lt;br/&gt;A place to store PDF, text, image or other files that are linked in the aiport information</source>
         <translation>&lt;li&gt;&lt;b&gt;%1&lt;/b&gt;&lt;br/&gt;Um local para armazenar PDF, texto, imagem ou outros arquivos que estão vinculados nas informações do aeroporto</translation>
     </message>
     <message>
-        <location filename="src/common/dirtool.cpp" line="97"/>
+        <location filename="src/common/dirtool.cpp" line="98"/>
         <source>&lt;li&gt;&lt;b&gt;%1&lt;/b&gt;&lt;br/&gt;User defined airspaces in OpenAir format&lt;/li&gt;</source>
         <translation>&lt;li&gt;&lt;b&gt;%1&lt;/b&gt;&lt;br/&gt;Espaços aéreos definidos pelo usuário em formato OpenAir&lt;/li&gt;</translation>
     </message>
     <message>
-        <location filename="src/common/dirtool.cpp" line="98"/>
+        <location filename="src/common/dirtool.cpp" line="99"/>
         <source>&lt;li&gt;&lt;b&gt;%1&lt;/b&gt;&lt;br/&gt;A place for the GLOBE data used by the flight plan elevation profile&lt;/li&gt;</source>
         <translation>&lt;li&gt;&lt;b&gt;%1&lt;/b&gt;&lt;br/&gt;Um lugar para os dados GLOBE usados pelo perfil de elevação do plano de voo&lt;/li&gt;</translation>
     </message>
     <message>
-        <location filename="src/common/dirtool.cpp" line="99"/>
+        <location filename="src/common/dirtool.cpp" line="100"/>
         <source>&lt;li&gt;&lt;b&gt;%1&lt;/b&gt;&lt;br/&gt;Folder to store additional map themes&lt;/li&gt;</source>
         <translation>&lt;li&gt;&lt;b&gt;%1&lt;/b&gt;&lt;br/&gt;Pasta para armazenar temas de mapa adicionais&lt;/li&gt;</translation>
     </message>
     <message>
-        <location filename="src/common/dirtool.cpp" line="100"/>
+        <location filename="src/common/dirtool.cpp" line="101"/>
         <source>&lt;/li&gt;&lt;/ul&gt;</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/common/dirtool.cpp" line="101"/>
+        <location filename="src/common/dirtool.cpp" line="102"/>
         <source>&lt;p&gt;This step is optional.&lt;/p&gt;</source>
         <translation>&lt;p&gt;Esta etapa é opcional.&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="src/common/dirtool.cpp" line="104"/>
         <source>&lt;p&gt;&lt;a href=&quot;%1&quot;&gt;Click here for more information in the Little Navmap online manual&lt;/a&gt;&lt;/p&gt;</source>
         <oldsource>&lt;p&gt;&lt;a href=&quot;%1&quot;&gt;&lt;b&gt;Click here for more information in the &lt;i&gt;Little Navmap&lt;/i&gt; online manual&lt;/b&gt;&lt;/a&gt;&lt;/p&gt;</oldsource>
-        <translation>&lt;p&gt;&lt;a href=&quot;%1&quot;&gt;Clique aqui para obter mais informações no manual on-line do Little Navmap&lt;/a&gt;&lt;/p&gt;</translation>
+        <translation type="vanished">&lt;p&gt;&lt;a href=&quot;%1&quot;&gt;Clique aqui para obter mais informações no manual on-line do Little Navmap&lt;/a&gt;&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="src/common/dirtool.cpp" line="105"/>
+        <location filename="src/common/dirtool.cpp" line="103"/>
         <source>&lt;p&gt;Should Little Navmap create these directories now?&lt;/p&gt;</source>
         <translation>&lt;p&gt;O Little Navmap deve criar esses diretórios agora?&lt;/p&gt;</translation>
     </message>
@@ -4306,21 +4305,21 @@ Você pode carregar o banco de dados da biblioteca de cenários do simulador no 
         <translation type="vanished">&lt;p&gt;O &lt;i&gt;Little Navmap&lt;/i&gt; deve criar esses diretórios agora? &lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="src/common/dirtool.cpp" line="120"/>
+        <location filename="src/common/dirtool.cpp" line="122"/>
         <source>Errors creating directory structure:
 %1</source>
         <translation>Erros ao criar estrutura do diretório:
 %1</translation>
     </message>
     <message>
-        <location filename="src/common/dirtool.cpp" line="167"/>
-        <location filename="src/common/dirtool.cpp" line="183"/>
+        <location filename="src/common/dirtool.cpp" line="169"/>
+        <location filename="src/common/dirtool.cpp" line="185"/>
         <source>Cannot create directory &quot;%1&quot;</source>
         <translation>Não é possível criar diretório &quot;%1&quot;</translation>
     </message>
     <message>
-        <location filename="src/common/dirtool.cpp" line="172"/>
-        <location filename="src/common/dirtool.cpp" line="188"/>
+        <location filename="src/common/dirtool.cpp" line="174"/>
+        <location filename="src/common/dirtool.cpp" line="190"/>
         <source>Cannot create directory &quot;%1&quot;. File with same name already exists.</source>
         <translation>Não é possível criar o diretório &quot;%1&quot;. Não é possível criar o diretório.</translation>
     </message>
@@ -7322,8 +7321,13 @@ Defina o caminho para temas adicionais de mapas nas opções na página &quot;Ca
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="3799"/>
-        <source>&lt;p&gt;&lt;b&gt;This will reset all options, window layout, dialog layout, aircraft trail, map position history and file histories back to default and restart %1.&lt;/b&gt;&lt;/p&gt;&lt;p&gt;User features like range rings or traffic patterns as well as scenery, logbook and userpoint databases are not affected.&lt;/p&gt;&lt;p&gt;A copy of the settings file&lt;br/&gt;&quot;%2&quot;&lt;br/&gt;will be created in the folder&lt;br/&gt;&quot;%3&quot;.&lt;/p&gt;&lt;p&gt;This allows you to undo this change.&lt;/p&gt;&lt;p&gt;Reset and restart now?&lt;/p&gt;</source>
+        <location filename="src/gui/mainwindow.cpp" line="3542"/>
+        <source>&lt;p&gt;Directory structure for Little Navmap files is already complete.&lt;/p&gt;&lt;p&gt;The base directory is&lt;br/&gt;&lt;a href=&quot;%1&quot;&gt;%1&lt;/a&gt; (click to show)&lt;/p&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/gui/mainwindow.cpp" line="3804"/>
+        <source>&lt;p&gt;&lt;b&gt;This will reset all options, window layout, dialog layout, aircraft trail, map position history and file histories back to default and restart %1.&lt;/b&gt;&lt;/p&gt;&lt;p&gt;User features like range rings or traffic patterns as well as scenery, logbook and userpoint databases are not affected.&lt;/p&gt;&lt;p&gt;A copy of the settings file&lt;br/&gt;&lt;a href=&quot;%2&quot;&gt;%2&lt;/a&gt;&lt;br/&gt;will be created in the folder&lt;br/&gt;&lt;a href=&quot;%3&quot;&gt;%3&lt;/a&gt; (click to show).&lt;/p&gt;&lt;p&gt;This allows you to undo this change.&lt;/p&gt;&lt;p&gt;Reset and restart now?&lt;/p&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -7331,7 +7335,7 @@ Defina o caminho para temas adicionais de mapas nas opções na página &quot;Ca
         <translation type="vanished">&lt;b&gt;Isso redefinirá todas as opções, layout da janela, layout da caixa de diálogo, trilha da aeronave, histórico de posição do mapa e histórico de arquivos de volta ao padrão e reiniciará %1.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;Recursos do usuário, como anéis de alcance ou padrões, bem como cenários, logbook e bancos de dados de userpoints não são afetados.&lt;br/&gt;&lt;br/&gt;Uma cópia do arquivo de configurações&lt;br/&gt;&lt;br/&gt;&quot;%2&quot;&lt;br/&gt;&lt;br/&gt;será criado na pasta&lt;br/&gt;&lt;br/&gt;&quot;%3&quot;&lt;br/&gt;&lt;br/&gt;que permite desfazer esta alteração.</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="4458"/>
+        <location filename="src/gui/mainwindow.cpp" line="4465"/>
         <source>%1 is loading the scenery library database in the background.
 Really quit and cancel the loading process?</source>
         <translatorcomment>%1 está carregando o banco de dados da biblioteca de cenários em segundo plano.
@@ -7339,17 +7343,17 @@ Realmente sair e cancelar o processo de carregamento?</translatorcomment>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="4460"/>
+        <location filename="src/gui/mainwindow.cpp" line="4467"/>
         <source>Do not &amp;show this dialog again and cancel loading.</source>
         <translation>Não &amp;mostre esta caixa de diálogo novamente e cancele o carregamento.</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="4475"/>
+        <location filename="src/gui/mainwindow.cpp" line="4482"/>
         <source>Really quit?</source>
         <translation>Deseja Realmente Encerrar?</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="4476"/>
+        <location filename="src/gui/mainwindow.cpp" line="4483"/>
         <source>Do not &amp;show this dialog again and quit.</source>
         <translation>Não &amp;mostre esta caixa de diálogo novamente e saia.</translation>
     </message>
@@ -7630,9 +7634,8 @@ Há alterações que podem ser restauradas usando desfazer.</translation>
         <translation type="vanished">&lt;p&gt;Os dados de elevação online que são usados por padrão para o perfil de elevação são limitados e possuem muitos erros.&lt;br/&gt;Portanto, é recomendável baixar e usar os dados de elevação offline do GLOBE, que fornecem cobertura mundial.&lt;/p&gt;&lt;p&gt;vá ao menu principal -&amp;gt; &quot;Configurações&quot; -&amp;gt; &quot;e, em seguida, para a página &quot;Cache e arquivos&quot; para adicionar os dados GLOBE.&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;%1&quot;&gt;Clique aqui para mais informações no manual online do Little Navmap&lt;/a&gt;&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="3539"/>
         <source>&lt;p&gt;Directory structure for Little Navmap files is already complete.&lt;/p&gt;&lt;p&gt;Base directory is&lt;br/&gt;&quot;%1&quot;&lt;/p&gt;</source>
-        <translation>&lt;p&gt;A estrutura do diretório para os arquivos Little Navmap já está completa.&lt;/p&gt;&lt;p&gt;O diretório base é&lt;br/&gt;&quot;%1&quot;&lt;/p&gt;</translation>
+        <translation type="vanished">&lt;p&gt;A estrutura do diretório para os arquivos Little Navmap já está completa.&lt;/p&gt;&lt;p&gt;O diretório base é&lt;br/&gt;&quot;%1&quot;&lt;/p&gt;</translation>
     </message>
     <message>
         <source>More ...</source>
@@ -21318,210 +21321,220 @@ kHz/MHz</translation>
         <translation type="vanished">esses temas de mapas</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapthemehandler.cpp" line="102"/>
-        <source>Duplicate theme id &quot;%1&quot; in element &quot;&amp;lt;theme&amp;gt;&quot;.&lt;br/&gt;File with first occurrence&lt;br/&gt;&quot;%2&quot;.&lt;br/&gt;File with second occurrence being ignored&lt;br/&gt;&quot;%3&quot;.&lt;br/&gt;Theme ids have to be unique across all map themes.&lt;br/&gt;&lt;b&gt;Remove one of these two map themes to avoid this message.&lt;/b&gt;&lt;br/&gt;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="src/mapgui/mapthemehandler.cpp" line="131"/>
-        <source>Duplicate source directory or directories&lt;br/&gt;&quot;%1&quot;&lt;br/&gt;in element &quot;&amp;lt;sourcedir&amp;gt;&quot;.&lt;br/&gt;File with first occurrence&lt;br/&gt;&quot;%2&quot;.&lt;br/&gt;File(s) with second occurrence being ignored&lt;br/&gt;&quot;%3&quot;.&lt;br/&gt;Source directories are used to cache map tiles and have to be unique across all map themes.&lt;br/&gt;&lt;b&gt;Remove one of these two map themes to avoid this message.&lt;/b&gt;&lt;br/&gt;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="src/mapgui/mapthemehandler.cpp" line="142"/>
-        <source>Empty theme id in in element &quot;&amp;lt;theme&amp;gt;&quot;.&lt;br/&gt;File&lt;br/&gt;&quot;%1&quot;.&lt;br/&gt;&lt;b&gt;Remove or repair this map theme to avoid this message.&lt;/b&gt;&lt;br/&gt;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="src/mapgui/mapthemehandler.cpp" line="150"/>
-        <source>Empty source directory in in element &quot;&amp;lt;sourcedir&amp;gt;&quot;.&lt;br/&gt;File&lt;br/&gt;&quot;%1&quot;.&lt;br/&gt;&lt;b&gt;Remove or repair this map theme to avoid this message.&lt;/b&gt;&lt;br/&gt;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="src/mapgui/mapthemehandler.cpp" line="158"/>
-        <source>Invalid target &quot;%1&quot; in element &quot;&amp;lt;target&amp;gt;&quot;.&lt;br/&gt;File&lt;br/&gt;&quot;%2&quot;.&lt;br/&gt;Element must contain text &quot;earth&quot;.&lt;br/&gt;&lt;b&gt;Remove or repair this map theme to avoid this message.&lt;/b&gt;&lt;br/&gt;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="src/mapgui/mapthemehandler.cpp" line="181"/>
-        <source>Theme in file&lt;br/&gt;&quot;%1&quot;&lt;br/&gt;was rejected since the service is discontinued.&lt;br/&gt;&lt;b&gt;Remove this map theme to avoid this message.&lt;/b&gt;&lt;br/&gt;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="src/mapgui/mapthemehandler.cpp" line="211"/>
+        <location filename="src/mapgui/mapthemehandler.cpp" line="216"/>
         <source>&lt;b&gt;%1 more errors found ...&lt;/b&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapthemehandler.cpp" line="216"/>
+        <location filename="src/mapgui/mapthemehandler.cpp" line="222"/>
         <source>&lt;p&gt;Found errors in map %2:&lt;/p&gt;&lt;ul&gt;&lt;li&gt;%1&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;Ignoring duplicate, incorrect or rejected %2.&lt;/p&gt;&lt;p&gt;Note that all other valid map themes are loaded and can be used despite this message.&lt;/p&gt;&lt;p&gt;Restart Little Navmap after fixing the issues.&lt;/p&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapthemehandler.cpp" line="313"/>
+        <location filename="src/mapgui/mapthemehandler.cpp" line="321"/>
         <source>Failed encrypting key for %1. Reason: %2</source>
         <translation>Falha ao criptografar a chave para %1. Motivo: %2</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapthemehandler.cpp" line="327"/>
+        <location filename="src/mapgui/mapthemehandler.cpp" line="335"/>
         <source>Failed writing to %1. Reason: %2</source>
         <translation>Falha ao gravar em %1. Motivo: %2</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapthemehandler.cpp" line="335"/>
+        <location filename="src/mapgui/mapthemehandler.cpp" line="343"/>
         <source>Cannot open file for writing %1. Reason: %2</source>
         <translation>Não é possível abrir o arquivo para gravar %1. Motivo: %2</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapthemehandler.cpp" line="396"/>
+        <location filename="src/mapgui/mapthemehandler.cpp" line="404"/>
         <source>Failed decrypting key from %1. Reason: %2</source>
         <translation>Falha ao descriptografar a chave de %1. Motivo: %2</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapthemehandler.cpp" line="403"/>
+        <location filename="src/mapgui/mapthemehandler.cpp" line="411"/>
         <source>Failed reading from %1. Reason: %2</source>
         <translation>Falha na leitura de %1. Motivo: %2</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapthemehandler.cpp" line="411"/>
+        <location filename="src/mapgui/mapthemehandler.cpp" line="419"/>
         <source>Cannot open file for reading %1. Reason: %2</source>
         <translation>Não é possível abrir o arquivo para leitura %1. Motivo: %2</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapthemehandler.cpp" line="544"/>
+        <location filename="src/mapgui/mapthemehandler.cpp" line="552"/>
         <source>Cannot open file %1. Reason: %2</source>
         <translation>Não é possível abrir o arquivo %1. Motivo: %2</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapthemehandler.cpp" line="641"/>
+        <location filename="src/mapgui/mapthemehandler.cpp" line="649"/>
         <source>Select map theme and map projection</source>
         <translation>Selecione o tema do mapa e a projeção do mapa</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapthemehandler.cpp" line="693"/>
+        <location filename="src/mapgui/mapthemehandler.cpp" line="701"/>
         <source>%1 (offline)</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapthemehandler.cpp" line="696"/>
+        <location filename="src/mapgui/mapthemehandler.cpp" line="704"/>
         <source> *</source>
         <translation> como</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapthemehandler.cpp" line="701"/>
+        <location filename="src/mapgui/mapthemehandler.cpp" line="709"/>
         <source>online</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapthemehandler.cpp" line="701"/>
+        <location filename="src/mapgui/mapthemehandler.cpp" line="709"/>
         <source>offline</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapthemehandler.cpp" line="702"/>
+        <location filename="src/mapgui/mapthemehandler.cpp" line="710"/>
         <source>* requires registration</source>
         <translation>* requer registro</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapthemehandler.cpp" line="702"/>
+        <location filename="src/mapgui/mapthemehandler.cpp" line="710"/>
         <source>free</source>
         <translation>gratuito</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapthemehandler.cpp" line="707"/>
+        <location filename="src/mapgui/mapthemehandler.cpp" line="715"/>
         <source>, </source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapthemehandler.cpp" line="716"/>
+        <location filename="src/mapgui/mapthemehandler.cpp" line="724"/>
         <source>Ctrl+Alt+%1</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapthemehandler.cpp" line="790"/>
+        <location filename="src/mapgui/mapthemehandler.cpp" line="798"/>
         <source>&lt;p&gt;Click here to create an account: &lt;a href=&quot;%1&quot;&gt;%2&lt;/a&gt;&lt;/p&gt;</source>
         <translation>&lt;p&gt;Clique aqui para criar uma conta: &lt;a href=&quot;%1&quot;&gt;%2&lt;/a&gt;&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapthemehandler.cpp" line="791"/>
+        <location filename="src/mapgui/mapthemehandler.cpp" line="799"/>
         <source>Link</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapthemehandler.cpp" line="795"/>
+        <location filename="src/mapgui/mapthemehandler.cpp" line="803"/>
         <source>&lt;p&gt;The map theme &quot;%1&quot; requires additional information.&lt;/p&gt;&lt;p&gt;You have to create an user account at the related website and then create an username, an access key or a token.&lt;br/&gt;Most of these services offer a free plan for hobbyists.&lt;/p&gt;&lt;p&gt;Then go to menu &quot;Tools&quot; -&gt; &quot;Options&quot; and to page &quot;Map Display Keys&quot; in Little Navmap and enter the information for the key(s) below:&lt;/p&gt;&lt;ul&gt;&lt;li&gt;%2&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;The map will not show correctly until this is done.&lt;/p&gt;%3</source>
         <translation>&lt;p&gt;O tema do mapa &quot;%1&quot; requer informações adicionais.&lt;/p&gt;&lt;p&gt;Você deve criar uma conta de usuário no site relacionado e, em seguida, criar um nome de usuário, uma chave de acesso ou um token.&lt;br/&gt;A maioria desses serviços oferecem um plano gratuito para amadores.&lt;/p&gt;&lt;p&gt;Em seguida, vá ao menu &quot;Configurações&quot; -&gt; &quot;Opções&quot; e à página &quot;Chaves de exibição do mapa&quot; no Little Navmap e insira as informações para a(s) chave(s) abaixo:&lt;/p&gt;&lt;ul&gt;&lt;li&gt;%2&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;O mapa não será exibido corretamente até que isso seja feito.&lt;/p&gt;%3</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapthemehandler.cpp" line="802"/>
+        <location filename="src/mapgui/mapthemehandler.cpp" line="810"/>
         <source>&lt;/li&gt;&lt;li&gt;</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapthemehandler.cpp" line="803"/>
+        <location filename="src/mapgui/mapthemehandler.cpp" line="811"/>
         <source>Do not &amp;show this dialog again.</source>
         <translation>Não &amp;mostre este diálogo novamente.</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapthemehandler.cpp" line="813"/>
+        <location filename="src/mapgui/mapthemehandler.cpp" line="821"/>
         <source>Map theme changed to %1.</source>
         <translation>Tema do mapa mudou para %1.</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapthemehandler.cpp" line="828"/>
+        <location filename="src/mapgui/mapthemehandler.cpp" line="836"/>
         <source>Mercator</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapthemehandler.cpp" line="833"/>
+        <location filename="src/mapgui/mapthemehandler.cpp" line="841"/>
         <source>Spherical</source>
         <translation>Esférico</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapthemehandler.cpp" line="839"/>
+        <location filename="src/mapgui/mapthemehandler.cpp" line="847"/>
         <source>Map projection changed to %1.</source>
         <translation>Projeção do mapa mudou para %1.</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapthemehandler.cpp" line="884"/>
+        <location filename="src/mapgui/mapthemehandler.cpp" line="892"/>
         <source>Directory is set to the included stock themes. You have to set a directory outside of the installation.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapthemehandler.cpp" line="899"/>
+        <location filename="src/mapgui/mapthemehandler.cpp" line="907"/>
         <source>Directory is valid. No map themes found inside.</source>
         <translation>O diretório é válido. Nenhum tema de mapa encontrado no interior.</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapthemehandler.cpp" line="901"/>
+        <location filename="src/mapgui/mapthemehandler.cpp" line="909"/>
         <source>Directory is valid. %1 %2 found.</source>
         <translation>O diretório é válido. %1 %2 encontrado(s).</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapthemehandler.cpp" line="221"/>
-        <location filename="src/mapgui/mapthemehandler.cpp" line="901"/>
+        <location filename="src/mapgui/mapthemehandler.cpp" line="227"/>
+        <location filename="src/mapgui/mapthemehandler.cpp" line="909"/>
         <source>map themes</source>
         <translation>temas do mapa</translation>
     </message>
     <message>
+        <location filename="src/mapgui/mapthemehandler.cpp" line="103"/>
+        <source>Duplicate theme id &quot;%1&quot; in element &quot;&amp;lt;theme&amp;gt;&quot;.&lt;br/&gt;File with first occurrence&lt;br/&gt;&lt;a href=&quot;%2&quot;&gt;%2&lt;/a&gt; (click to show).&lt;br/&gt;File with second occurrence being ignored&lt;br/&gt;&lt;a href=&quot;%3&quot;&gt;%3&lt;/a&gt; (click to show).&lt;br/&gt;Theme ids have to be unique across all map themes.&lt;br/&gt;&lt;b&gt;Remove one of these two map themes to avoid this message.&lt;/b&gt;&lt;br/&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/mapgui/mapthemehandler.cpp" line="134"/>
+        <source>&lt;a href=&quot;%1&quot;&gt;%1&lt;/a&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <location filename="src/mapgui/mapthemehandler.cpp" line="136"/>
+        <source>Duplicate source directory or directories &quot;%1&quot; in element &quot;&amp;lt;sourcedir&amp;gt;&quot;.&lt;br/&gt;File with first occurrence&lt;br/&gt;&lt;a href=&quot;%2&quot;&gt;%2&lt;/a&gt; (click to show).&lt;br/&gt;File(s) with second occurrence being ignored&lt;br/&gt;%3 (click to show).&lt;br/&gt;Source directories are used to cache map tiles and have to be unique across all map themes.&lt;br/&gt;&lt;b&gt;Remove one or more of these map themes to avoid this message.&lt;/b&gt;&lt;br/&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/mapgui/mapthemehandler.cpp" line="141"/>
         <source>&quot;, &quot;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapthemehandler.cpp" line="221"/>
-        <location filename="src/mapgui/mapthemehandler.cpp" line="901"/>
+        <location filename="src/mapgui/mapthemehandler.cpp" line="141"/>
+        <source>&lt;br/&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/mapgui/mapthemehandler.cpp" line="147"/>
+        <source>Empty theme id in in element &quot;&amp;lt;theme&amp;gt;&quot;.&lt;br/&gt;File&lt;br/&gt;&lt;a href=&quot;%1&quot;&gt;%1&lt;/a&gt; (click to show).&lt;br/&gt;&lt;b&gt;Remove or repair this map theme to avoid this message.&lt;/b&gt;&lt;br/&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/mapgui/mapthemehandler.cpp" line="155"/>
+        <source>Empty source directory in in element &quot;&amp;lt;sourcedir&amp;gt;&quot;.&lt;br/&gt;File&lt;br/&gt;&lt;a href=&quot;%1&quot;&gt;%1&lt;/a&gt; (click to show).&lt;br/&gt;&lt;b&gt;Remove or repair this map theme to avoid this message.&lt;/b&gt;&lt;br/&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/mapgui/mapthemehandler.cpp" line="163"/>
+        <source>Invalid target &quot;%1&quot; in element &quot;&amp;lt;target&amp;gt;&quot;.&lt;br/&gt;File&lt;br/&gt;&lt;a href=&quot;%2&quot;&gt;%2&lt;/a&gt; (click to show).&lt;br/&gt;Element must contain text &quot;earth&quot;.&lt;br/&gt;&lt;b&gt;Remove or repair this map theme to avoid this message.&lt;/b&gt;&lt;br/&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/mapgui/mapthemehandler.cpp" line="186"/>
+        <source>Theme in file&lt;br/&gt;&lt;a href=&quot;%1&quot;&gt;%1&lt;/a&gt; (click to show)&lt;br/&gt;was rejected since the service is discontinued.&lt;br/&gt;&lt;b&gt;Remove this map theme to avoid this message.&lt;/b&gt;&lt;br/&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/mapgui/mapthemehandler.cpp" line="227"/>
+        <location filename="src/mapgui/mapthemehandler.cpp" line="909"/>
         <source>map theme</source>
         <translation>tema do mapa</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapthemehandler.cpp" line="927"/>
+        <location filename="src/mapgui/mapthemehandler.cpp" line="935"/>
         <source>Base path(s) for map themes not found.
 %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapthemehandler.cpp" line="927"/>
+        <location filename="src/mapgui/mapthemehandler.cpp" line="935"/>
         <source>,
 </source>
         <translation type="unfinished"></translation>
@@ -43157,64 +43170,59 @@ ajuste o caminho do clima do X-Plane nas opções, na página &quot;Arquivos de 
 <context>
     <name>XpconnectInstaller</name>
     <message>
-        <location filename="src/connect/xpconnectinstaller.cpp" line="68"/>
+        <location filename="src/connect/xpconnectinstaller.cpp" line="69"/>
         <source>&lt;p&gt;Note to Apple macOS users:&lt;br/&gt;You must remove the quarantine flag from the plugin to prevent Apple Gatekeeper from blocking the plugin from loading.&lt;br/&gt;Click the help button for more information.&lt;/p&gt;</source>
         <oldsource>&lt;p&gt;Install or update the Little Xpconnect plugin for %1 in the directory below?&lt;/p&gt;&lt;p&gt;&quot;%2&quot;&lt;/p&gt;&lt;p&gt;The X-Plane target installation is as selected in the menu &quot;Scenery Library&quot;.&lt;/p&gt;&lt;p&gt;Note to Apple macOS users:&lt;br/&gt;You still need to remove the quarantine flag from the plugin to avoid Apple Gatekeeper blocking X-Plane from loading it.&lt;br/&gt;Click the help button for more information.&lt;/p&gt;</oldsource>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/connect/xpconnectinstaller.cpp" line="75"/>
-        <source>&lt;p&gt;Install or update the Little Xpconnect plugin for %1 in the directory below?&lt;/p&gt;&lt;p&gt;&quot;%2&quot;&lt;/p&gt;&lt;p&gt;The X-Plane target installation is as selected in the menu &quot;Scenery Library&quot;.&lt;/p&gt;%3</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="src/connect/xpconnectinstaller.cpp" line="80"/>
+        <location filename="src/connect/xpconnectinstaller.cpp" line="76"/>
         <source>Do not &amp;show this dialog again and install in the future.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/connect/xpconnectinstaller.cpp" line="97"/>
-        <source>&lt;p&gt;A stray X-Plane plugin file was found:&lt;/p&gt;&lt;p&gt;&quot;%1&quot;&lt;/p&gt;&lt;p&gt;This is not neccessarily from Little Xpconnect but it is usually a result from an incorrect plugin installation which can cause problems.&lt;br/&gt;Removing this file is recommended.&lt;/p&gt;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="src/connect/xpconnectinstaller.cpp" line="102"/>
+        <location filename="src/connect/xpconnectinstaller.cpp" line="107"/>
         <source>Do not &amp;show this dialog again.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/connect/xpconnectinstaller.cpp" line="118"/>
-        <source>&lt;p&gt;Found one or more previous installations of Little Xpconnect using a non-standard name:&lt;/p&gt;&lt;p&gt;%1&lt;/p&gt;&lt;p&gt;Check these plugins manually if you are not sure what they are.&lt;/p&gt;&lt;p&gt;Delete these plugins now to avoid issues?&lt;/p&gt;</source>
+        <location filename="src/connect/xpconnectinstaller.cpp" line="78"/>
+        <source>&lt;p&gt;Install or update the Little Xpconnect plugin for %1 in the directory below?&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;%2&quot;&gt;%2&lt;/a&gt;&amp;nbsp;(click to show)&lt;/p&gt;&lt;p&gt;The X-Plane target installation is as selected in the menu &quot;Scenery Library&quot;.&lt;/p&gt;%3</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/connect/xpconnectinstaller.cpp" line="122"/>
-        <source>&quot;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="src/connect/xpconnectinstaller.cpp" line="122"/>
-        <source>&quot;&lt;br/&gt;&quot;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="src/connect/xpconnectinstaller.cpp" line="132"/>
-        <source>Error(s) while deleting directory: %1 installation stopped.</source>
+        <location filename="src/connect/xpconnectinstaller.cpp" line="109"/>
+        <source>&lt;p&gt;A stray X-Plane plugin file was found:&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;%1&quot;&gt;%1&lt;/a&gt;&amp;nbsp;(click to show)&lt;/p&gt;&lt;p&gt;This is not neccessarily from Little Xpconnect but it is usually a result from an incorrect plugin installation which can cause problems.&lt;br/&gt;Removing this file is recommended.&lt;/p&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="src/connect/xpconnectinstaller.cpp" line="133"/>
-        <location filename="src/connect/xpconnectinstaller.cpp" line="147"/>
+        <source>&lt;li&gt;&lt;a href=&quot;%1&quot;&gt;%1&lt;/a&gt;&lt;/li&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/connect/xpconnectinstaller.cpp" line="137"/>
+        <source>&lt;p&gt;Found one or more previous installations of Little Xpconnect using a non-standard name:&lt;/p&gt;&lt;p&gt;&lt;ul&gt;%1&lt;/ul&gt;(click to show)&lt;/p&gt;&lt;p&gt;Check these plugins manually if you are not sure what they are.&lt;/p&gt;&lt;p&gt;Delete these plugins now to avoid issues?&lt;/p&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/connect/xpconnectinstaller.cpp" line="150"/>
+        <source>Error(s) while deleting directory: %1 installation stopped.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/connect/xpconnectinstaller.cpp" line="151"/>
+        <location filename="src/connect/xpconnectinstaller.cpp" line="165"/>
         <source>, </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/connect/xpconnectinstaller.cpp" line="147"/>
+        <location filename="src/connect/xpconnectinstaller.cpp" line="165"/>
         <source>Error(s) while copying directory: %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/connect/xpconnectinstaller.cpp" line="153"/>
+        <location filename="src/connect/xpconnectinstaller.cpp" line="171"/>
         <source>X-Plane plugins path &quot;%1&quot; not valid.
 Reason: %2.</source>
         <translation type="unfinished"></translation>
