@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -23,6 +23,7 @@
 #include "gui/dialog.h"
 #include "gui/helphandler.h"
 #include "gui/mainwindow.h"
+#include "gui/messagebox.h"
 #include "options/optionsdialog.h"
 #include "settings/settings.h"
 
@@ -99,19 +100,20 @@ void DirTool::run(bool manual, bool& created)
   message.append(tr("<li><b>%1</b><br/>Folder to store additional map themes</li>").arg(mapThemesDir));
   message.append(tr("</li></ul>"));
   message.append(tr("<p>This step is optional.</p>"));
-
-  QUrl url = atools::gui::HelpHandler::getHelpUrlWeb(lnm::helpOnlineInstallDirUrl, lnm::helpLanguageOnline());
-  message.append(tr("<p><a href=\"%1\">Click here for more information in the Little Navmap online manual</a></p>").arg(url.toString()));
   message.append(tr("<p>Should Little Navmap create these directories now?</p>"));
 
   created = false;
-  // Save "do not again" checkbox state only if called automatically
-  int result = atools::gui::Dialog(parentWidget).showQuestionMsgBox(manual ? QString() : settingsPrefix, message,
-                                                                    manual ? QString() : QObject::tr("Do not &show this dialog again."),
-                                                                    QMessageBox::Yes | QMessageBox::No,
-                                                                    QMessageBox::No, QMessageBox::No);
 
-  if(result == QMessageBox::Yes)
+  // Save "do not again" checkbox state only if called automatically
+  atools::gui::MessageBox box(parentWidget, QCoreApplication::applicationName(),
+                              manual ? QString() : settingsPrefix,
+                              manual ? QString() : QObject::tr("Do not &show this dialog again."));
+  box.setMessage(message);
+  box.setIcon(QMessageBox::Question);
+  box.setHelpUrl(lnm::helpOnlineInstallDirUrl, lnm::helpLanguageOnline());
+  box.setDefaultButton(QDialogButtonBox::No);
+
+  if(box.exec() == QDialogButtonBox::Yes)
   {
     qDebug() << Q_FUNC_INFO;
     createAllDirs();

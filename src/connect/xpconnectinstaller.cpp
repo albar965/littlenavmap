@@ -23,6 +23,7 @@
 #include "gui/dialog.h"
 #include "gui/helphandler.h"
 #include "util/fileoperations.h"
+#include "gui/messagebox.h"
 
 #include <QStringBuilder>
 #include <QDir>
@@ -71,18 +72,17 @@ bool XpconnectInstaller::install()
 #endif
 
   // Ask general question ==========================================
-  int cont = dialog->showQuestionMsgBox(lnm::ACTIONS_INSTALL_XPCONNECT_INFO,
-                                        tr("<p>Install or update the Little Xpconnect plugin for %1 in the directory below?</p>"
-                                             "<p>\"%2\"</p>"
-                                               "<p>The X-Plane target installation is as selected in the menu \"Scenery Library\".</p>"
-                                                 "%3").
-                                        arg(NavApp::getCurrentSimulatorName()).arg(pluginsPath).arg(macOsNote),
-                                        tr("Do not &show this dialog again and install in the future."),
-                                        QMessageBox::Yes | QMessageBox::No | QMessageBox::Help, QMessageBox::No, QMessageBox::Yes);
+  atools::gui::MessageBox box(parent, QCoreApplication::applicationName(), lnm::ACTIONS_INSTALL_XPCONNECT_INFO,
+                              tr("Do not &show this dialog again and install in the future."), true /* openLinkAuto */);
+  box.setHelpUrl(lnm::helpOnlineUrl + "XPCONNECT.html", lnm::helpLanguageOnline());
+  box.setMessage(tr("<p>Install or update the Little Xpconnect plugin for %1 in the directory below?</p>"
+                      "<p><a href=\"%2\">%2</a>&nbsp;(click to show)</p>"
+                        "<p>The X-Plane target installation is as selected in the menu \"Scenery Library\".</p>"
+                          "%3").arg(NavApp::getCurrentSimulatorName()).arg(pluginsPath).arg(macOsNote));
+  box.setIcon(QMessageBox::Question);
+  box.setDefaultButton(QDialogButtonBox::Yes);
 
-  if(cont == QMessageBox::Help)
-    atools::gui::HelpHandler::openHelpUrlWeb(parent, lnm::helpOnlineUrl + "XPCONNECT.html", lnm::helpLanguageOnline());
-  else if(cont == QMessageBox::Yes)
+  if(box.exec() == QMessageBox::Yes)
   {
     // Check if plugins are accessible
     QString errors = atools::checkDirMsg(pluginsPath);
@@ -90,16 +90,30 @@ bool XpconnectInstaller::install()
     {
       QDir pluginsDir(pluginsPath);
 
+      QString strayPluginName;
+#if defined(Q_OS_WIN32)
+      strayPluginName = "win.xpl";
+#elif defined(Q_OS_LINUX)
+      strayPluginName = "lin.xpl";
+#elif defined(Q_OS_MACOS)
+      strayPluginName = "mac.xpl";
+#endif
+
       // Look for stray plugin files and let user know
-      QStringList xpl = pluginsDir.entryList({"*.xpl"}, QDir::Files | QDir::NoDotAndDotDot);
+      QStringList xpl = pluginsDir.entryList({strayPluginName}, QDir::Files | QDir::NoDotAndDotDot);
       if(!xpl.isEmpty())
-        dialog->showWarnMsgBox(lnm::ACTIONS_INSTALL_XPCONNECT_WARN_XPL,
-                               tr("<p>A stray X-Plane plugin file was found:</p>"
-                                    "<p>\"%1\"</p>"
-                                      "<p>This is not neccessarily from Little Xpconnect but it is usually a "
-                                        "result from an incorrect plugin installation which can cause problems.<br/>"
-                                        "Removing this file is recommended.</p>").arg(pluginsDir.filePath(xpl.constFirst())),
-                               tr("Do not &show this dialog again."));
+      {
+        atools::gui::MessageBox warnBox(parent, QCoreApplication::applicationName(), lnm::ACTIONS_INSTALL_XPCONNECT_WARN_XPL,
+                                        tr("Do not &show this dialog again."));
+        warnBox.setHelpUrl(lnm::helpOnlineUrl + "XPCONNECT.html", lnm::helpLanguageOnline());
+        warnBox.setMessage(tr("<p>A stray X-Plane plugin file was found:</p>"
+                                "<p><a href=\"%1\">%1</a>&nbsp;(click to show)</p>"
+                                  "<p>This is not neccessarily from Little Xpconnect but it is usually a "
+                                    "result from an incorrect plugin installation which can cause problems.<br/>"
+                                    "Removing this file is recommended.</p>").arg(pluginsDir.filePath(xpl.constFirst())));
+        warnBox.setIcon(QMessageBox::Warning);
+        warnBox.exec();
+      }
 
       // Read previous installations but exclude name of current installation since it will be overwritten anyway
       QStringList xpconnects = pluginsDir.entryList({"*Xpconnect*"}, QDir::Dirs | QDir::NoDotAndDotDot);
@@ -112,17 +126,21 @@ bool XpconnectInstaller::install()
       if(!xpconnects.isEmpty())
       {
         // Convert paths to display paths using native notation
+        QStringList xpconnectsText;
         for(QString& xpconnect : xpconnects)
+        {
           xpconnect = atools::nativeCleanPath(pluginsDir.absoluteFilePath(xpconnect));
+          xpconnectsText.append(tr("<li><a href=\"%1\">%1</a></li>").arg(xpconnect));
+        }
 
-        int del = dialog->question(tr("<p>Found one or more previous installations of Little Xpconnect using a non-standard name:</p>"
-                                        "<p>%1</p>"
-                                          "<p>Check these plugins manually if you are not sure what they are.</p>"
-                                            "<p>Delete these plugins now to avoid issues?</p>").
-                                   arg(atools::strJoin(tr("\""), xpconnects, tr("\"<br/>\""), tr("\"<br/>\""), tr("\""))),
-                                   QMessageBox::Yes | QMessageBox::No, QMessageBox::No);
+        atools::gui::MessageBox questionBox(parent);
+        questionBox.setMessage(tr("<p>Found one or more previous installations of Little Xpconnect using a non-standard name:</p>"
+                                    "<p><ul>%1</ul>(click to show)</p>"
+                                      "<p>Check these plugins manually if you are not sure what they are.</p>"
+                                        "<p>Delete these plugins now to avoid issues?</p>").arg(xpconnectsText.join(QString())));
+        questionBox.setIcon(QMessageBox::Question);
 
-        if(del == QMessageBox::Yes)
+        if(questionBox.exec() == QMessageBox::Yes)
         {
           // Delete all found plugins
           for(const QString& xpconnect : qAsConst(xpconnects))

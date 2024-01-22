@@ -20,6 +20,7 @@
 #include "atools.h"
 #include "common/constants.h"
 #include "exception.h"
+#include "gui/messagebox.h"
 #include "settings/settings.h"
 #include "util/simplecrypt.h"
 #include "util/xmlstream.h"
@@ -100,8 +101,8 @@ void MapThemeHandler::loadThemes()
       {
         MapTheme otherTheme = ids.value(theme.theme);
         errors.append(tr("Duplicate theme id \"%1\" in element \"&lt;theme&gt;\".<br/>"
-                         "File with first occurrence<br/>\"%2\".<br/>"
-                         "File with second occurrence being ignored<br/>\"%3\".<br/>"
+                         "File with first occurrence<br/><a href=\"%2\">%2</a> (click to show).<br/>"
+                         "File with second occurrence being ignored<br/><a href=\"%3\">%3</a> (click to show).<br/>"
                          "Theme ids have to be unique across all map themes.<br/>"
                          "<b>Remove one of these two map themes to avoid this message.</b><br/>").
                       arg(theme.theme).arg(otherTheme.displayPath()).arg(theme.displayPath()));
@@ -128,19 +129,23 @@ void MapThemeHandler::loadThemes()
         otherDgmlFilepaths.removeAll(QString());
         otherDgmlFilepaths.removeDuplicates();
 
-        errors.append(tr("Duplicate source directory or directories<br/>\"%1\"<br/>in element \"&lt;sourcedir&gt;\".<br/>"
-                         "File with first occurrence<br/>\"%2\".<br/>"
-                         "File(s) with second occurrence being ignored<br/>\"%3\".<br/>"
+        QStringList otherDgmlFilepathsText;
+        for(const QString& otherDgmlFilepath : otherDgmlFilepaths)
+          otherDgmlFilepathsText.append(tr("<a href=\"%1\">%1</a>").arg(otherDgmlFilepath));
+
+        errors.append(tr("Duplicate source directory or directories \"%1\" in element \"&lt;sourcedir&gt;\".<br/>"
+                         "File with first occurrence<br/><a href=\"%2\">%2</a> (click to show).<br/>"
+                         "File(s) with second occurrence being ignored<br/>%3 (click to show).<br/>"
                          "Source directories are used to cache map tiles and have to be unique across all map themes.<br/>"
-                         "<b>Remove one of these two map themes to avoid this message.</b><br/>").
-                      arg(theme.sourceDirs.join(tr("\", \""))).arg(otherDgmlFilepaths.join(tr("\", \""))).arg(theme.displayPath()));
+                         "<b>Remove one or more of these map themes to avoid this message.</b><br/>").
+                      arg(theme.sourceDirs.join(tr("\", \""))).arg(theme.displayPath()).arg(otherDgmlFilepathsText.join(tr("<br/>"))));
         continue;
       }
 
       if(theme.theme.isEmpty())
       {
         errors.append(tr("Empty theme id in in element \"&lt;theme&gt;\".<br/>"
-                         "File<br/>\"%1\".<br/>"
+                         "File<br/><a href=\"%1\">%1</a> (click to show).<br/>"
                          "<b>Remove or repair this map theme to avoid this message.</b><br/>").arg(theme.displayPath()));
         continue;
       }
@@ -148,7 +153,7 @@ void MapThemeHandler::loadThemes()
       if(theme.online && theme.sourceDirs.isEmpty())
       {
         errors.append(tr("Empty source directory in in element \"&lt;sourcedir&gt;\".<br/>"
-                         "File<br/>\"%1\".<br/>"
+                         "File<br/><a href=\"%1\">%1</a> (click to show).<br/>"
                          "<b>Remove or repair this map theme to avoid this message.</b><br/>").arg(theme.displayPath()));
         continue;
       }
@@ -156,7 +161,7 @@ void MapThemeHandler::loadThemes()
       if(theme.target != "earth")
       {
         errors.append(tr("Invalid target \"%1\" in element \"&lt;target&gt;\".<br/>"
-                         "File<br/>\"%2\".<br/>"
+                         "File<br/><a href=\"%2\">%2</a> (click to show).<br/>"
                          "Element must contain text \"earth\".<br/>"
                          "<b>Remove or repair this map theme to avoid this message.</b><br/>").
                       arg(theme.target).arg(theme.displayPath()));
@@ -178,7 +183,7 @@ void MapThemeHandler::loadThemes()
 
       if(rejected)
       {
-        errors.append(tr("Theme in file<br/>\"%1\"<br/>was rejected since the service is discontinued.<br/>"
+        errors.append(tr("Theme in file<br/><a href=\"%1\">%1</a> (click to show)<br/>was rejected since the service is discontinued.<br/>"
                          "<b>Remove this map theme to avoid this message.</b><br/>").arg(theme.displayPath()));
         continue;
       }
@@ -212,13 +217,16 @@ void MapThemeHandler::loadThemes()
     }
 
     NavApp::closeSplashScreen();
-    atools::gui::Dialog::warning(mainWindow,
-                                 tr("<p>Found errors in map %2:</p>"
-                                      "<ul><li>%1</li></ul>"
-                                        "<p>Ignoring duplicate, incorrect or rejected %2.</p>"
-                                          "<p>Note that all other valid map themes are loaded and can be used despite this message.</p>"
-                                            "<p>Restart Little Navmap after fixing the issues.</p>").
-                                 arg(errors.join("</li><li>")).arg(errors.size() == 1 ? tr("map theme") : tr("map themes")));
+    atools::gui::MessageBox box(mainWindow);
+    box.setIcon(QMessageBox::Warning);
+    box.setMessage(tr("<p>Found errors in map %2:</p>"
+                        "<ul><li>%1</li></ul>"
+                          "<p>Ignoring duplicate, incorrect or rejected %2.</p>"
+                            "<p>Note that all other valid map themes are loaded and can be used despite this message.</p>"
+                              "<p>Restart Little Navmap after fixing the issues.</p>").
+                   arg(errors.join("</li><li>")).arg(errors.size() == 1 ? tr("map theme") : tr("map themes")));
+    box.setHelpUrl(lnm::helpOnlineUrl + "MAPTHEMES.html", lnm::helpLanguageOnline());
+    box.exec();
   }
 
   // Sort themes first by online/offline status and then case insensitive by name

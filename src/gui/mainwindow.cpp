@@ -3536,8 +3536,14 @@ void MainWindow::runDirTool(bool manual)
   qDebug() << Q_FUNC_INFO << "alreadyComplete" << alreadyComplete << "manual" << manual << "created" << created;
 
   if(alreadyComplete && manual && !created)
-    atools::gui::Dialog::information(this, tr("<p>Directory structure for Little Navmap files is already complete.</p>"
-                                                "<p>Base directory is<br/>\"%1\"</p>").arg(dirTool.getApplicationDir()));
+  {
+    atools::gui::MessageBox box(this);
+    box.setIcon(QMessageBox::Information);
+    box.setMessage(tr("<p>Directory structure for Little Navmap files is already complete.</p>"
+                        "<p>The base directory is<br/>"
+                        "<a href=\"%1\">%1</a> (click to show)</p>").arg(dirTool.getApplicationDir()));
+    box.exec();
+  }
 }
 
 void MainWindow::exitFullScreenPressed()
@@ -3794,23 +3800,24 @@ void MainWindow::resetAllSettings()
   QString settingFile = Settings::getFilename();
   QString settingPath = Settings::getPath();
 
-  QMessageBox::StandardButton retval =
-    atools::gui::Dialog::warning(this,
-                                 tr("<p><b>This will reset all options, window layout, dialog layout, "
-                                      "aircraft trail, map position history and file histories "
-                                      "back to default and restart %1.</b></p>"
-                                      "<p>User features like range rings or traffic patterns as well as "
-                                        "scenery, logbook and userpoint databases are not affected.</p>"
-                                        "<p>A copy of the settings file<br/>"
-                                        "\"%2\"<br/>"
-                                        "will be created in the folder<br/>"
-                                        "\"%3\".</p>"
-                                        "<p>This allows you to undo this change.</p>"
-                                          "<p>Reset and restart now?</p>").
-                                 arg(QCoreApplication::applicationName()).arg(settingFile).arg(settingPath),
-                                 QMessageBox::Ok | QMessageBox::Cancel | QMessageBox::Help, QMessageBox::Cancel);
+  atools::gui::MessageBox box(this);
+  box.setMessage(tr("<p><b>This will reset all options, window layout, dialog layout, "
+                      "aircraft trail, map position history and file histories "
+                      "back to default and restart %1.</b></p>"
+                      "<p>User features like range rings or traffic patterns as well as "
+                        "scenery, logbook and userpoint databases are not affected.</p>"
+                        "<p>A copy of the settings file<br/>"
+                        "<a href=\"%2\">%2</a><br/>"
+                        "will be created in the folder<br/>"
+                        "<a href=\"%3\">%3</a> (click to show).</p>"
+                          "<p>This allows you to undo this change.</p>"
+                            "<p>Reset and restart now?</p>").arg(QCoreApplication::applicationName()).arg(settingFile).arg(settingPath));
+  box.setIcon(QMessageBox::Question);
+  box.setHelpUrl(lnm::helpOnlineUrl % "MENUS.html#reset-and-restart", lnm::helpLanguageOnline());
 
-  if(retval == QMessageBox::Ok)
+  int retval = box.exec();
+
+  if(retval == QDialogButtonBox::Yes)
   {
     NavApp::setRestartProcess(true);
     close();
