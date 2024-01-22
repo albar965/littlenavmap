@@ -1128,11 +1128,9 @@ void DatabaseManager::checkForChangedNavAndSimDatabases()
       if(!files.isEmpty())
       {
         atools::gui::Dialog::warning(mainWindow,
-                                     tr("<p style=\"white-space:pre\">"
-                                          "Detected a modification of one or more database files:<br/><br/>"
-                                          "&quot;%1&quot;"
-                                          "<br/><br/>"
-                                          "Always close <i>%2</i> before copying, overwriting or updating scenery library databases.</p>").
+                                     tr("<p>Detected a modification of one or more database files:<br/>"
+                                        "\"%1\"<br/><br/>"
+                                        "Always close %2 before copying, overwriting or updating scenery library databases.</p>").
                                      arg(files.join(tr("&quot;<br/>&quot;"))).
                                      arg(QCoreApplication::applicationName()));
 
