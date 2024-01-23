@@ -70,6 +70,7 @@ A big thank you to all who reported bugs and issues!
 * Adjusted display of navaids for better visibility on dark maps like CARTO Dark Matter or
   Mapbox Dark.
 * Reduced size of minor airports like helipads and water ports.
+* The empty airport display option is now disabled per default on new installations.
 
 ### User Interface
 
@@ -99,6 +100,7 @@ A big thank you to all who reported bugs and issues!
 
 * MSFS: Fixed issues with moved or updated airports when reading scenery library.
 * Doubled number or arc and circle segments for more accuracy in map display airspaces.
+* Fixed wrong calculation for airport rating which did not update add-on airports for MSFS, FSX and P3D.
 
 
 ### Navigraph Navdata Compiler

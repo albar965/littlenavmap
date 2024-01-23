@@ -623,7 +623,7 @@ opening files, modifying the flight plan and other operations.</string>
            <property name="geometry">
             <rect>
              <x>0</x>
-             <y>-387</y>
+             <y>0</y>
              <width>585</width>
              <height>808</height>
             </rect>
@@ -1215,8 +1215,8 @@ This does not affect the map window which can be changed separately on the optio
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>568</width>
-             <height>386</height>
+             <width>599</width>
+             <height>421</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_36">
@@ -1536,8 +1536,8 @@ Also affects labels at holds and traffic patterns.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>471</width>
-             <height>375</height>
+             <width>599</width>
+             <height>421</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_59">
@@ -1752,8 +1752,8 @@ Example: &quot;IFR Frankfurt Am Main (EDDF) to Fiumicino (LIRF).lnmpln&quot;</st
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>317</width>
-             <height>510</height>
+             <width>585</width>
+             <height>454</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout">
@@ -1981,7 +1981,7 @@ The aiports toolbar button can be used to hide empty airports if this box is che
                   <string>&amp;Treat empty airports special</string>
                  </property>
                  <property name="checked">
-                  <bool>true</bool>
+                  <bool>false</bool>
                  </property>
                 </widget>
                </item>
@@ -1996,7 +1996,7 @@ The aiports toolbar button can be used to hide empty airports if this box is che
                   <string>&amp;X-Plane 2D airports are shown as empty</string>
                  </property>
                  <property name="checked">
-                  <bool>true</bool>
+                  <bool>false</bool>
                  </property>
                 </widget>
                </item>
@@ -8032,8 +8032,8 @@ Source data has many errors.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>585</width>
-             <height>490</height>
+             <width>395</width>
+             <height>506</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_38">
