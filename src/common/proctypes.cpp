@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -927,8 +927,12 @@ QStringList procedureLegRemark(const MapProcedureLeg& leg)
   return remarks;
 }
 
-proc::MapProcedureTypes procedureType(bool hasSidStar, const QString& type,
-                                      const QString& suffix, bool gpsOverlay)
+proc::MapProcedureTypes procedureType(bool hasSidStar, const atools::sql::SqlRecord& recApp)
+{
+  return proc::procedureType(hasSidStar, recApp.valueStr("type"), recApp.valueStr("suffix"), recApp.valueBool("has_gps_overlay"));
+}
+
+proc::MapProcedureTypes procedureType(bool hasSidStar, const QString& type, const QString& suffix, bool gpsOverlay)
 {
   // STARS use the suffix="A" while SIDS use the suffix="D".
   if(hasSidStar && type == "GPS" && (suffix == "A" || suffix == "D") && gpsOverlay)

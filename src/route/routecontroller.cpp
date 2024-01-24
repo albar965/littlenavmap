@@ -4290,8 +4290,7 @@ void RouteController::routeAddProcedure(proc::MapProcedureLegs legs)
     if(legs.mapType & proc::PROCEDURE_APPROACH_ALL && route.hasAnyStarProcedure())
     {
       QStringList starRunways;
-      atools::fs::util::sidStarMultiRunways(airportQuery->getRunwayNames(airportSim.id), route.getStarLegs().arincName,
-                                            tr("All"), &starRunways);
+      atools::fs::util::sidStarMultiRunways(airportQuery->getRunwayNames(airportSim.id), route.getStarLegs().arincName, &starRunways);
       // Check if the runway of an an already present STAR can be changed to match the approach
       if(atools::fs::util::runwayContains(starRunways, legs.runway))
       {
@@ -4307,7 +4306,7 @@ void RouteController::routeAddProcedure(proc::MapProcedureLegs legs)
     {
       // Get runways for all or parallel runway procedures ===============================
       QStringList sidStarRunways;
-      atools::fs::util::sidStarMultiRunways(airportQuery->getRunwayNames(airportSim.id), legs.arincName, tr("All"), &sidStarRunways);
+      atools::fs::util::sidStarMultiRunways(airportQuery->getRunwayNames(airportSim.id), legs.arincName, &sidStarRunways);
 
       if(!sidStarRunways.isEmpty())
       {

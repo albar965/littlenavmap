@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -85,10 +85,10 @@ public:
   const atools::sql::SqlRecordList *getStartInformation(int airportId);
 
   /* Get runway name and all columns from table approach */
-  const atools::sql::SqlRecordList *getApproachInformation(int airportId);
+  const atools::sql::SqlRecordList *getProcedureInformation(int airportId);
 
   /* Get record for table transition */
-  const atools::sql::SqlRecordList *getTransitionInformation(int approachId);
+  const atools::sql::SqlRecordList *getTransitionInformation(int procedureId);
 
   /* Get a record from table trackmeta for given track id */
   atools::sql::SqlRecord getTrackMetadata(int trackId);
@@ -103,7 +103,7 @@ private:
   /* Caches */
   QCache<int, atools::sql::SqlRecord> airportCache, vorCache, ndbCache, runwayEndCache, msaCache, holdingCache;
 
-  QCache<int, atools::sql::SqlRecordList> comCache, runwayCache, helipadCache, startCache, approachCache,
+  QCache<int, atools::sql::SqlRecordList> comCache, runwayCache, helipadCache, startCache, procedureCache,
                                           transitionCache;
 
   QCache<QString, atools::sql::SqlRecordList> airportSceneryCache;
@@ -114,7 +114,7 @@ private:
   atools::sql::SqlQuery *airportQuery = nullptr, *airportSceneryQuery = nullptr, *vorQuery = nullptr, *msaQuery = nullptr,
                         *holdingQuery = nullptr, *ndbQuery = nullptr, *comQuery = nullptr, *runwayQuery = nullptr,
                         *runwayEndQuery = nullptr, *helipadQuery = nullptr, *startQuery = nullptr, *vorIdentRegionQuery = nullptr,
-                        *approachQuery = nullptr, *transitionQuery = nullptr;
+                        *procedureQuery = nullptr, *transitionQuery = nullptr;
 
 };
 

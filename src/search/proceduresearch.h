@@ -129,7 +129,7 @@ private:
     FILTER_SID_PROCEDURES,
     FILTER_STAR_PROCEDURES,
     FILTER_ARRIVAL_PROCEDURES,
-    FILTER_SEPARATOR_1,
+    FILTER_SEPARATOR,
     FILTER_APPROACH_ALL
     /* Approach types follow */
   };
@@ -137,7 +137,8 @@ private:
   enum RunwayFilterIndex
   {
     FILTER_ALL_RUNWAYS,
-    FILTER_NO_RUNWAYS /* Only if empty runways exist */
+    FILTER_NO_RUNWAYS, /* Only if empty runways exist */
+    FILTER_RUNWAYS_SEPARATOR,
     /* Runways follow */
   };
 

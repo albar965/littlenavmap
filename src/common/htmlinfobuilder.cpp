@@ -1405,7 +1405,7 @@ void HtmlInfoBuilder::procedureText(const MapAirport& airport, HtmlBuilder& html
     if(!print)
       airportTitle(airport, html, -1, true /* procedures */);
 
-    const SqlRecordList *recAppVector = infoQuery->getApproachInformation(navAirport.id);
+    const SqlRecordList *recAppVector = infoQuery->getProcedureInformation(navAirport.id);
     if(recAppVector != nullptr)
     {
       QStringList runwayNames = airportQueryNav->getRunwayNames(navAirport.id);
@@ -1415,9 +1415,7 @@ void HtmlInfoBuilder::procedureText(const MapAirport& airport, HtmlBuilder& html
         // Approach information ==============================
 
         // Build header ===============================================
-        QString procType = recApp.valueStr("type");
-        proc::MapProcedureTypes type = proc::procedureType(NavApp::hasSidStarInDatabase(), procType, recApp.valueStr("suffix"),
-                                                           recApp.valueBool("has_gps_overlay"));
+        proc::MapProcedureTypes type = proc::procedureType(NavApp::hasSidStarInDatabase(), recApp);
 
         if(type & proc::PROCEDURE_STAR_ALL || type & proc::PROCEDURE_SID_ALL)
           continue;
@@ -1433,6 +1431,7 @@ void HtmlInfoBuilder::procedureText(const MapAirport& airport, HtmlBuilder& html
         QString fix = recApp.valueStr("fix_ident");
         QString header;
 
+        QString procType = recApp.valueStr("type");
         if(type & proc::PROCEDURE_SID)
           header = tr("SID %1 %2").arg(fix).arg(runwayTxt);
         else if(type & proc::PROCEDURE_STAR)

@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -29,6 +29,12 @@ class Route;
 /*
  * Procedure types for approach, transition, SID and STAR.
  */
+
+namespace atools {
+namespace sql {
+class SqlRecord;
+}
+}
 namespace proc {
 
 /* Initialize all text that are translateable after loading the translation files */
@@ -699,6 +705,8 @@ QString procedureLegRemDistance(const MapProcedureLeg& leg, float& remainingDist
 QString procedureLegDistance(const MapProcedureLeg& leg);
 QString procedureLegCourse(const MapProcedureLeg& leg);
 
+/* determine type from database fields, Either PROCEDURE_STAR, PROCEDURE_SID or PROCEDURE_APPROACH */
+proc::MapProcedureTypes procedureType(bool hasSidStar, const atools::sql::SqlRecord& recApp);
 proc::MapProcedureTypes procedureType(bool hasSidStar, const QString& type, const QString& suffix, bool gpsOverlay);
 
 /* Put altitude restriction texts into list */
