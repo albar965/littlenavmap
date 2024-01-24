@@ -47,6 +47,8 @@ A big thank you to all who reported bugs and issues!
   waypoint. Example: EDDV, using STAR NIE27 and approach NIE.I27RY or approach SAS.I27RZ.
 * Better transition detection now when importing MSFS PLN files. Using last STAR waypoint or last
   en-route waypoint to automatically find a matching approach transition.
+* Fixed issue where runway filters were missing in some cases in procedure search.
+  Example: KIAD and 15L where the runway has only SID and STAR but no approaches.
 
 ### Map Display
 
