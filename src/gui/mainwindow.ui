@@ -9757,7 +9757,7 @@ relation to shown airport</string>
   </action>
   <action name="actionMapCopyClipboard">
    <property name="text">
-    <string>Copy Map &amp;Image to Clipboard ...</string>
+    <string>Copy Map Image to &amp;Clipboard ...</string>
    </property>
    <property name="toolTip">
     <string>Save current map view as an image to the clipboard</string>
@@ -10002,7 +10002,7 @@ relation to shown airport</string>
      <normaloff>:/littlenavmap/resources/icons/mapsaveasimage.svg</normaloff>:/littlenavmap/resources/icons/mapsaveasimage.svg</iconset>
    </property>
    <property name="text">
-    <string>Save Map as &amp;Image for AviTab ...</string>
+    <string>Save Map as Image for Avi&amp;Tab ...</string>
    </property>
    <property name="toolTip">
     <string>Save current map view as an image for AviTab</string>
