@@ -66,11 +66,13 @@ A big thank you to all who reported bugs and issues!
   [traconboundaries.json](https://map.vatsim.net/livedata/traconboundaries.json) into the
   Little Navmap user airspace library to get more real boundaries for VATSIM online centers
   instead of the generic circles. #490
-* Removed drawing of empty white rectangle on map on startup.
+* Removed drawing of empty white rectangle on map on startup. Now showing background map like the
+  OpenStreetMap first.
 * Adjusted display of navaids for better visibility on dark maps like CARTO Dark Matter or
   Mapbox Dark.
 * Reduced size of minor airports like helipads and water ports.
-* The empty airport display option is now disabled per default on new installations.
+* The empty airport display option is now disabled per default on new installations to avoid
+  confusion also with wrongly labeled 2D airports in X-Plane 12.
 
 ### User Interface
 
@@ -80,19 +82,19 @@ A big thank you to all who reported bugs and issues!
   menu `Scenery Library`.
 * Improved text and icon display for the dark user interface style.
 * Renamed user interface style `Night` to `Dark`.
-* Added option to adjust text size for flight plan remarks tab in options on page `Display and Text`.
+* Added option to adjust text size for tab 'Flight Plan Remarks' in options on page `Display and Text`.
 * Fixed bug where cleanup did not work properly in logbook and left over logbook entries which could
   not be removed.
 * Changed application to catch program stopping during Windows shutdown which resulted in wrong
-  crash reports. Now shutting program cleanly down when shutting down Windows with Little Navmap
+  crash reports. Now exiting program cleanly when shutting down Windows with Little Navmap
   running.
 * Now safely catching termination signals on Linux. This avoids data loss due to unsaved files when
   terminating with Ctrl+C from the command line.
 
 ### Web Server
 
-* Fixed deadlock resulting in program freeze in HTTP server which appeared when shutting down with
-  parallel incoming requests.
+* Fixed a deadlock resulting in program freeze in HTTP server. This appeared when shutting down with
+  parallel incoming web requests.
 * Updated internal HTTP server by Stefan Frings to latest version from 1.9.0.
 * Corrected excessive logging in HTTP server.
 
@@ -101,7 +103,8 @@ A big thank you to all who reported bugs and issues!
 * MSFS: Fixed issues with moved or updated airports when reading scenery library.
 * Doubled number or arc and circle segments for more accuracy in map display airspaces.
 * Fixed wrong calculation for airport rating which did not update add-on airports for MSFS, FSX and P3D.
-
+* Deleting duplicate navaids now by region, ident and position. This allows to update frequency or
+  type for VOR and NDB on P3D or FSX by add-on.
 
 ### Navigraph Navdata Compiler
 
