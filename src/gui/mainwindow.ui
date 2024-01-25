@@ -10010,6 +10010,9 @@ relation to shown airport</string>
    <property name="statusTip">
     <string>Save current map view as an image for AviTab</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+Alt+Shift+P</string>
+   </property>
   </action>
   <action name="actionRunWebserver">
    <property name="checkable">
