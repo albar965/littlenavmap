@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -145,10 +145,11 @@ QString RouteStringWriter::createGfpStringForRouteInternalProc(const Route& rout
   }
 
   // Add procedures and airports
-  QString sid, sidTrans, star, starTrans, departureRw, approachRwDummy, starRw;
+  QString sid, sidTrans, star, starTrans;
   route.getSidStarNames(sid, sidTrans, star, starTrans);
-  route.getRunwayNames(departureRw, approachRwDummy);
-  starRw = route.getStarRunwayName();
+
+  QString departureRw = atools::fs::util::normalizeRunway(route.getDepartureRunwayName());
+  QString starRw = atools::fs::util::normalizeRunway(route.getStarRunwayName());
 
   if(route.hasCustomDeparture())
   {
@@ -281,10 +282,12 @@ QStringList RouteStringWriter::createStringForRouteInternal(const Route& routePa
   Route route = routeParam.adjustedToOptions(rf::DEFAULT_OPTS_ROUTESTRING);
 
   QStringList items;
-  QString sid, sidTrans, star, starTrans, depRwy, destRwy, approachName, approachTransition, approachSuffix, customApprRw, customDepRw;
+  QString sid, sidTrans, star, starTrans, approachName, approachTransition, approachSuffix, customApprRw, customDepRw;
   route.getSidStarNames(sid, sidTrans, star, starTrans);
-  route.getRunwayNames(depRwy, destRwy);
   route.getApproachNames(approachName, approachTransition, approachSuffix);
+
+  QString depRwy = atools::fs::util::normalizeRunway(route.getDepartureRunwayName());
+  QString destRwy = atools::fs::util::normalizeRunway(route.getStarRunwayName());
 
   // Keep runways in case there is a custom approach or custom departure
   customDepRw = depRwy;
@@ -512,7 +515,7 @@ QStringList RouteStringWriter::createStringForRouteInternal(const Route& routePa
           approachDest += route.getFullApproachName();
       }
       else if(route.hasAnyStarProcedure())
-        approachDest += '/' % route.getStarRunwayName();
+        approachDest += '/' % atools::fs::util::normalizeRunway(route.getStarRunwayName());
     }
 
     items.append(lastId % approachDest % (gfpCoords ? ',' % coords::toGfpFormat(lastPos) : QString()));

@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -51,8 +51,7 @@ void AirwayTrackQuery::getAirwaysForWaypoints(QList<map::MapAirway>& airways, in
   airwayQuery->getAirwaysForWaypoints(airways, waypointId1, waypointId2, airwayName);
 }
 
-void AirwayTrackQuery::getWaypointsForAirway(QList<map::MapWaypoint>& waypoints, const QString& airwayName,
-                                             const QString& waypointIdent)
+void AirwayTrackQuery::getWaypointsForAirway(QList<map::MapWaypoint>& waypoints, const QString& airwayName, const QString& waypointIdent)
 {
   if(useTracks)
     trackQuery->getWaypointsForAirway(waypoints, airwayName, waypointIdent);
@@ -60,8 +59,7 @@ void AirwayTrackQuery::getWaypointsForAirway(QList<map::MapWaypoint>& waypoints,
   maptools::removeDuplicatesById(waypoints);
 }
 
-void AirwayTrackQuery::getWaypointListForAirwayName(QList<map::MapAirwayWaypoint>& waypoints, const QString& airwayName,
-                                                    int airwayFragment)
+void AirwayTrackQuery::getWaypointListForAirwayName(QList<map::MapAirwayWaypoint>& waypoints, const QString& airwayName, int airwayFragment)
 {
   if(useTracks)
     trackQuery->getWaypointListForAirwayName(waypoints, airwayName, airwayFragment);
@@ -70,14 +68,23 @@ void AirwayTrackQuery::getWaypointListForAirwayName(QList<map::MapAirwayWaypoint
     airwayQuery->getWaypointListForAirwayName(waypoints, airwayName, airwayFragment);
 }
 
+void AirwayTrackQuery::getWaypointListForAirwayName(QStringList& waypoints, const QString& airwayName, int airwayFragment)
+{
+  QList<map::MapAirwayWaypoint> waypointList;
+  getWaypointListForAirwayName(waypointList, airwayName, airwayFragment);
+
+  waypoints.clear();
+  for(const map::MapAirwayWaypoint& wp : qAsConst(waypointList))
+    waypoints.append(wp.waypoint.ident);
+}
+
 void AirwayTrackQuery::getAirwayFull(QList<map::MapAirway>& airways, const QString& airwayName, int fragment)
 {
   atools::geo::Rect boundingDummy;
   getAirwayFull(airways, boundingDummy, airwayName, fragment);
 }
 
-void AirwayTrackQuery::getAirwayFull(QList<map::MapAirway>& airways, atools::geo::Rect& bounding,
-                                     const QString& airwayName, int fragment)
+void AirwayTrackQuery::getAirwayFull(QList<map::MapAirway>& airways, atools::geo::Rect& bounding, const QString& airwayName, int fragment)
 {
   if(useTracks)
     trackQuery->getAirwayFull(airways, bounding, airwayName, fragment);
@@ -123,8 +130,7 @@ void AirwayTrackQuery::getAirwaysByNameAndWaypoint(QList<map::MapAirway>& airway
   airwayQuery->getAirwaysByNameAndWaypoint(airways, airwayName, waypoint1, waypoint2);
 }
 
-bool AirwayTrackQuery::hasAirwayForNameAndWaypoint(const QString& airwayName, const QString& waypoint1,
-                                                   const QString& waypoint2)
+bool AirwayTrackQuery::hasAirwayForNameAndWaypoint(const QString& airwayName, const QString& waypoint1, const QString& waypoint2)
 {
   QList<map::MapAirway> airways;
   getAirwaysByNameAndWaypoint(airways, airwayName, waypoint1, waypoint2);

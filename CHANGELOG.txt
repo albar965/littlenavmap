@@ -49,6 +49,11 @@ A big thank you to all who reported bugs and issues!
   en-route waypoint to automatically find a matching approach transition.
 * Fixed issue where runway filters were missing in some cases in procedure search.
   Example: KIAD and 15L where the runway has only SID and STAR but no approaches.
+* Fixed route description to recognize a STAR which is equal to waypoint after an airway.
+  Example: `RJAA OOITA Y40 KAZMA RJFT` resulted in `No waypoint after airway Y40`.
+  KAZMA is STAR as well as a waypoint ending airway Y40.
+* Now generating correct route description for single digit runway.
+  Example: KYKM runway 9 to 'KYKM/09'.
 
 ### Map Display
 

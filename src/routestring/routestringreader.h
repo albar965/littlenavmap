@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -82,7 +82,8 @@ public:
    * Fills either flightplan and/or mapObjectRefs if not null.
    * Get error, warning and information messages with getMessages() */
   bool createRouteFromString(const QString& routeString, rs::RouteStringOptions options, atools::fs::pln::Flightplan *flightplan,
-                             map::MapRefExtVector *mapObjectRefs = nullptr, float *speedKtsParam = nullptr, bool *altIncludedParam = nullptr);
+                             map::MapRefExtVector *mapObjectRefs = nullptr, float *speedKtsParam = nullptr,
+                             bool *altIncludedParam = nullptr);
 
   /* Set to true to generate non HTML messages */
   void setPlaintextMessages(bool value)

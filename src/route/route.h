@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -401,8 +401,11 @@ public:
   /* Get the various procedure names */
   void getSidStarNames(QString& sid, QString& sidTrans, QString& star, QString& starTrans) const;
 
-  /* Arrival rw is either STAR or approach */
-  void getRunwayNames(QString& departure, QString& arrival) const;
+  /* SID or custom departure runway */
+  QString getDepartureRunwayName() const;
+
+  /* Arrival rw is either STAR or approach (also custom) */
+  QString getArrivalRunwayName() const;
 
   /* Get approach ARINC name including suffix and suffix separately */
   void getApproachNames(QString& approachArincName, QString& approachTransition, QString& approachSuffix) const;

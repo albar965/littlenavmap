@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2022 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -214,16 +214,19 @@ void Route::getSidStarNames(QString& sid, QString& sidTrans, QString& star, QStr
   starTrans = starLegs.transitionFixIdent;
 }
 
-void Route::getRunwayNames(QString& departure, QString& arrival) const
+QString Route::getArrivalRunwayName() const
 {
-  departure = sidLegs.runwayEnd.name;
-
   if(hasAnyApproachProcedure())
-    arrival = approachLegs.runwayEnd.name;
+    return approachLegs.runwayEnd.name;
   else if(hasAnyStarProcedure())
-    arrival = starLegs.runwayEnd.name;
-  else
-    arrival.clear();
+    return starLegs.runwayEnd.name;
+
+  return QString();
+}
+
+QString Route::getDepartureRunwayName() const
+{
+  return sidLegs.runwayEnd.name;
 }
 
 const QString& Route::getSidRunwayName() const

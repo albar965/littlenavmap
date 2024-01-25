@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -242,6 +242,7 @@ bool RouteStringReader::createRouteFromString(const QString& routeString, rs::Ro
     qDebug() << Q_FUNC_INFO << "cleanItems" << cleanItems;
 #endif
 
+    QString star = flightplan->getProperties().value(atools::fs::pln::STAR);
     if(sidTransWp == starTransWp && !cleanItems.isEmpty() && cleanItems.first() == sidTransWp)
       // Item was appended and consumed for SID an STAR transition
       // Example: "MAXIM" in "MUHA EPMAR3 MAXIM SNDBR2 KMIA"
@@ -250,6 +251,19 @@ bool RouteStringReader::createRouteFromString(const QString& routeString, rs::Ro
       // Add STAR transition waypoint in case of airway presence
       // Example: "ZZIPR" in "7L2 UFFDA Q156 ZZIPR FYTTE7 KORD"
       cleanItems.append(starTransWp);
+    else if(!star.isEmpty() && cleanItems.size() >= 2)
+    {
+      // Alternates are already consumed at this stage
+      // Check if the STAR name matches a waypoint after the last airway
+      // Example: RJAA OOITA Y40 KAZMA RJFT
+      QString maybeAirway = cleanItems.at(cleanItems.size() - 1), maybeAirwayWp1 = cleanItems.at(cleanItems.size() - 2);
+      QStringList waypoints;
+      airwayQuery->getWaypointListForAirwayName(waypoints, maybeAirway);
+
+      // Add STAR name equals to waypoint if the STAR/waypoint match
+      if(waypoints.contains(maybeAirwayWp1) && waypoints.contains(star))
+        cleanItems.append(star);
+    }
 
     lastPos = fp->getDeparturePosition();
   }
@@ -1242,7 +1256,7 @@ void RouteStringReader::readStarAndTrans(QStringList& items, QString& startTrans
     if(starId == -1)
       // Read "STAR TRANS" notation ======================================================
       readStarAndTransSpace(item2, item1, runway, starId, starTransId, destination);
-    else
+    else if(starTransId != -1)
       // Remember item which was consumed as a STAR transition in space separated notation "TRANS STAR"
       startTransWp = item2;
   }
