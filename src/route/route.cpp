@@ -2375,6 +2375,13 @@ void Route::setDepartureStart(const map::MapStart& departureStart)
     qWarning() << Q_FUNC_INFO << "invalid index" << idx;
 }
 
+void Route::clearDepartureStartAndParking()
+{
+  setDepartureParking(map::MapParking());
+  setDepartureStart(map::MapStart());
+  flightplan.clearDepartureParking();
+}
+
 map::MapParking Route::getDepartureParking() const
 {
   int idx = getDepartureAirportLegIndex();

@@ -54,6 +54,7 @@ A big thank you to all who reported bugs and issues!
   KAZMA is STAR as well as a waypoint ending airway Y40.
 * Now generating correct route description for single digit runway.
   Example: KYKM runway 9 to 'KYKM/09'.
+* Fixed wrong error message about parking not found after deleting or replacing departure airport.
 
 ### Map Display
 

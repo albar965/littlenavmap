@@ -3612,6 +3612,9 @@ void RouteController::deleteSelectedLegsInternal(const QList<int>& rows)
     blockModel();
     for(int row : rows)
     {
+      if(row == 0)
+        route.clearDepartureStartAndParking();
+
       route.getFlightplan().removeAt(row);
       route.eraseAirwayFlightplan(row);
       route.removeLegAt(row);
@@ -3875,10 +3878,9 @@ void RouteController::routeSetStartPosition(map::MapStart start)
   if(route.isEmpty() || route.getDepartureAirportLeg().getMapType() != map::AIRPORT ||
      route.getDepartureAirportLeg().getId() != start.airportId)
   {
-    // No route, no start airport or different airport
-    map::MapAirport ap;
-    airportQuery->getAirportById(ap, start.airportId);
-    routeSetDepartureInternal(ap);
+    map::MapAirport airport;
+    airportQuery->getAirportById(airport, start.airportId);
+    routeSetDepartureInternal(airport);
     route.removeProcedureLegs(proc::PROCEDURE_DEPARTURE);
   }
 
@@ -3958,8 +3960,7 @@ void RouteController::routeSetDepartureInternal(const map::MapAirport& airport)
   {
     // Replace current departure
     const FlightplanEntry& first = flightplan.constFirst();
-    if(first.getWaypointType() == pln::entry::AIRPORT &&
-       flightplan.getDepartureIdent() == first.getIdent())
+    if(first.getWaypointType() == pln::entry::AIRPORT && flightplan.getDepartureIdent() == first.getIdent())
     {
       // Replace first airport
       FlightplanEntry entry;
@@ -4377,6 +4378,7 @@ void RouteController::routeAddProcedure(proc::MapProcedureLegs legs)
       // No route, no departure airport or different airport
       route.removeProcedureLegs(proc::PROCEDURE_DEPARTURE);
       routeSetDepartureInternal(airportSim);
+      route.clearDepartureStartAndParking();
     }
 
     // Assign runway for SID/STAR than can have multiple runways
@@ -4643,8 +4645,7 @@ int RouteController::routeAddInternal(int id, atools::geo::Pos userPos, map::Map
 
 void RouteController::routeReplace(int id, atools::geo::Pos userPos, map::MapTypes type, int legIndex)
 {
-  qDebug() << Q_FUNC_INFO << "user pos" << userPos << "id" << id
-           << "type" << type << "leg index" << legIndex;
+  qDebug() << Q_FUNC_INFO << "user pos" << userPos << "id" << id << "type" << type << "leg index" << legIndex;
   const FlightplanEntry oldEntry = route.getFlightplanConst().at(legIndex);
   bool alternate = oldEntry.getFlags() & atools::fs::pln::entry::ALTERNATE;
 
@@ -4663,8 +4664,7 @@ void RouteController::routeReplace(int id, atools::geo::Pos userPos, map::MapTyp
     entry.setFlag(atools::fs::pln::entry::ALTERNATE);
 
   // Transfer user properties
-  if(oldEntry.getWaypointType() == atools::fs::pln::entry::USER &&
-     entry.getWaypointType() == atools::fs::pln::entry::USER)
+  if(oldEntry.getWaypointType() == atools::fs::pln::entry::USER && entry.getWaypointType() == atools::fs::pln::entry::USER)
   {
     entry.setIdent(oldEntry.getIdent());
     entry.setRegion(oldEntry.getRegion());
