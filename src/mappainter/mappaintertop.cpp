@@ -157,6 +157,7 @@ void MapPainterTop::render()
 
     QStringList labels;
     labels.append(QString("Layer %1").arg(context->mapLayer->getMaxRange()));
+    labels.append(QString("Layer effective %1").arg(context->mapLayerEffective->getMaxRange()));
     labels.append(QString("Layer route %1").arg(context->mapLayerRoute->getMaxRange()));
     labels.append(QString("Airport sym %1").arg(context->mapLayer->getAirportSymbolSize()));
     labels.append(QString("Min RW %1").arg(context->mapLayer->getMinRunwayLength()));

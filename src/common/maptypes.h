@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -1731,8 +1731,8 @@ int airspaceDrawingOrder(map::MapAirspaceTypes type);
 QString airspaceSourceText(map::MapAirspaceSources src);
 QString airspaceName(const map::MapAirspace& airspace);
 QString airspaceRestrictiveName(const map::MapAirspace& airspace);
-QStringList airspaceNameMap(const map::MapAirspace& airspace, int maxTextLength, bool name, bool restrictiveName, bool type, bool altitude,
-                            bool com);
+QStringList airspaceNameMap(const map::MapAirspace& airspace, int maxTextLength, bool name = true, bool restrictiveName = true,
+                            bool type = true, bool altitude = true, bool com = true);
 QString airspaceText(const map::MapAirspace& airspace);
 
 QString aircraftTypeString(const atools::fs::sc::SimConnectAircraft& aircraft); /* Helicopter, etc. */

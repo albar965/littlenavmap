@@ -3086,17 +3086,24 @@ void HtmlInfoBuilder::airspaceText(const MapAirspace& airspace, const atools::sq
     if(airspace.minAltitudeType.isEmpty())
       html.row2(tr("Min altitude:"), tr("Unknown"));
     else
-      html.row2(tr("Min altitude:"), Unit::altFeet(airspace.minAltitude) % tr(" ") % airspace.minAltitudeType);
+    {
+      QString minAltText;
+      minAltText = Unit::altFeet(airspace.minAltitude);
+      if(airspace.minAltitude > 0 && !airspace.minAltitudeType.isEmpty())
+        minAltText += tr(" ") % airspace.minAltitudeType;
+
+      html.row2If(tr("Min altitude:"), minAltText);
+    }
 
     QString maxAlt;
     if(airspace.maxAltitudeType.isEmpty())
       maxAlt = tr("Unknown");
-    else if(airspace.maxAltitudeType == "UL")
+    else if(airspace.maxAltitudeType == "UL" || airspace.maxAltitude >= 60000)
       maxAlt = tr("Unlimited");
     else
       maxAlt = Unit::altFeet(airspace.maxAltitude) % tr(" ") % airspace.maxAltitudeType;
 
-    html.row2(tr("Max altitude:"), maxAlt);
+    html.row2If(tr("Max altitude:"), maxAlt);
   }
 
   html.row2If(tr("Multiple code:"), airspace.multipleCode);

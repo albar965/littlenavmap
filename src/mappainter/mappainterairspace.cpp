@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -187,11 +187,12 @@ void MapPainterAirspace::render()
 
     // Draw airspace labels ==================================================================================
     // Collection from options dialog
-    bool name = optionData.getDisplayOptionsAirspace().testFlag(optsd::AIRSPACE_NAME),
-         restrictiveName = optionData.getDisplayOptionsAirspace().testFlag(optsd::AIRSPACE_RESTRICTIVE_NAME),
-         type = optionData.getDisplayOptionsAirspace().testFlag(optsd::AIRSPACE_TYPE),
-         altitude = optionData.getDisplayOptionsAirspace().testFlag(optsd::AIRSPACE_ALTITUDE),
-         com = optionData.getDisplayOptionsAirspace().testFlag(optsd::AIRSPACE_COM);
+    const optsd::DisplayOptionsAirspace displayOptionsAirspace = optionData.getDisplayOptionsAirspace();
+    bool name = displayOptionsAirspace.testFlag(optsd::AIRSPACE_NAME),
+         restrictiveName = displayOptionsAirspace.testFlag(optsd::AIRSPACE_RESTRICTIVE_NAME),
+         type = displayOptionsAirspace.testFlag(optsd::AIRSPACE_TYPE),
+         altitude = displayOptionsAirspace.testFlag(optsd::AIRSPACE_ALTITUDE),
+         com = displayOptionsAirspace.testFlag(optsd::AIRSPACE_COM);
 
     // Do not draw while moving . Also all text options have to be enabled
     if(context->viewContext == Marble::Still && (name || restrictiveName || type || altitude || com) && !context->drawFast)

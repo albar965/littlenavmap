@@ -2334,18 +2334,25 @@ QStringList airspaceNameMap(const MapAirspace& airspace, int maxTextLength, bool
   {
     QString altTextLower, altTextUpper;
 
-    if(!airspace.maxAltitudeType.isEmpty() && airspace.maxAltitudeType != "UL" && airspace.maxAltitude < 60000)
-      altTextUpper = Unit::altFeet(airspace.maxAltitude, false /* addUnit */, true /* narrow */) %
-                     QObject::tr(" ") % airspace.maxAltitudeType;
+    if(airspace.maxAltitudeType != "UL" && airspace.maxAltitude < 60000)
+      // Upper altitude text if not unlimited
+      altTextUpper = Unit::altFeet(airspace.maxAltitude, false /* addUnit */, true /* narrow */);
 
-    if(!airspace.minAltitudeType.isEmpty() && airspace.minAltitude > 0)
-      altTextLower = Unit::altFeet(airspace.minAltitude, false /* addUnit */, true /* narrow */);
-
-    if(airspace.maxAltitudeType != airspace.minAltitudeType && !altTextLower.isEmpty() && !altTextUpper.isEmpty())
-      altTextLower = QObject::tr(" ") % airspace.minAltitudeType;
+    if(!altTextUpper.isEmpty() && !airspace.maxAltitudeType.isEmpty())
+      altTextUpper += QObject::tr(" ") % airspace.maxAltitudeType;
 
     if(!airspace.minAltitudeType.isEmpty() && airspace.minAltitude == 0 && !altTextUpper.isEmpty())
+      // 0 is zero. No matter if AGL or MSL
       altTextLower = QObject::tr("0");
+    else if(airspace.minAltitude > 0)
+    {
+      // Lower altitiude text
+      altTextLower = Unit::altFeet(airspace.minAltitude, false /* addUnit */, true /* narrow */);
+
+      if(!altTextLower.isEmpty() && !airspace.minAltitudeType.isEmpty() && airspace.maxAltitudeType != airspace.minAltitudeType)
+        // Add MSL/AGL to lower text if given or different from max type
+        altTextLower += QObject::tr(" ") % airspace.minAltitudeType;
+    }
 
     if(!altTextLower.isEmpty() || !altTextUpper.isEmpty())
       texts.append(altTextLower % QObject::tr("-") % altTextUpper);

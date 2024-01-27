@@ -786,7 +786,7 @@ void MapPainterMark::paintAirspace(const map::MapAirspace& airspace)
           painter->drawPolygon(*polygon);
 
         QPointF center = polygons.constFirst()->boundingRect().center();
-        symbolPainter->textBoxF(painter, {map::airspaceNameMap(airspace, 20, true, true, true, true, true)}, innerPen,
+        symbolPainter->textBoxF(painter, {map::airspaceNameMap(airspace, 20)}, innerPen,
                                 static_cast<float>(center.x()), static_cast<float>(center.y()), textatt::CENTER);
       }
 

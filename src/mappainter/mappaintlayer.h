@@ -200,10 +200,10 @@ private:
   virtual bool render(Marble::GeoPainter *painter, Marble::ViewportParams *viewport, const QString&, Marble::GeoSceneLayer *) override;
 
   /* Disable font anti-aliasing for default and painter font */
-  void setNoAntiAliasFont(PaintContext *context);
+  void setNoAntiAliasFont();
 
   /* Restore normal font anti-aliasing for default and painter font */
-  void resetNoAntiAliasFont(PaintContext *context);
+  void resetNoAntiAliasFont();
 
   /* Map objects currently shown */
   map::MapTypes objectTypes = map::NONE;
