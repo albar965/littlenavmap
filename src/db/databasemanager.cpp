@@ -48,6 +48,7 @@
 #include "gui/signalblocker.h"
 
 #include <QDir>
+#include <QStringBuilder>
 
 using atools::sql::SqlUtil;
 using atools::fs::NavDatabase;
@@ -77,7 +78,7 @@ DatabaseManager::DatabaseManager(MainWindow *parent)
   // Also loads list of simulators from settings ======================================
   restoreState();
 
-  databaseDirectory = Settings::getPath() + QDir::separator() + lnm::DATABASE_DIR;
+  databaseDirectory = Settings::getPath() % QDir::separator() % lnm::DATABASE_DIR;
   if(!QDir().mkpath(databaseDirectory))
     qWarning() << "Cannot create db dir" << databaseDirectory;
 
@@ -282,7 +283,7 @@ bool DatabaseManager::checkIncompatibleDatabases(bool *databasesErased)
         else if(!meta.isDatabaseCompatible())
         {
           // Not compatible add to list
-          databaseNames.append("<i>" + FsPaths::typeToDisplayName(it.key()) + "</i>");
+          databaseNames.append("<i>" % FsPaths::typeToDisplayName(it.key()) % "</i>");
           databaseFiles.append(dbName);
           qWarning() << "Incompatible database" << dbName;
         }
@@ -703,7 +704,7 @@ void DatabaseManager::insertSimSwitchActions()
       suffix += tr(" (database is empty)");
 
 #ifdef DEBUG_INFORMATION
-    suffix += " (" + meta.getLastLoadTime().toString() + " | " + meta.getDataSource() + ")";
+    suffix += " (" % meta.getLastLoadTime().toString() % " | " % meta.getDataSource() % ")";
 #endif
 
     QString dbname = FsPaths::typeToDisplayName(FsPaths::NAVIGRAPH);
@@ -980,9 +981,9 @@ void DatabaseManager::switchSimInternal(atools::fs::FsPaths::SimulatorType type)
 void DatabaseManager::openWriteableDatabase(atools::sql::SqlDatabase *database, const QString& name,
                                             const QString& displayName, bool backup)
 {
-  QString databaseName = databaseDirectory + QDir::separator() + lnm::DATABASE_PREFIX + name + lnm::DATABASE_SUFFIX;
+  QString databaseName = databaseDirectory % QDir::separator() % lnm::DATABASE_PREFIX % name % lnm::DATABASE_SUFFIX;
 
-  QString databaseNameBackup = databaseDirectory + QDir::separator() + QFileInfo(databaseName).baseName() + "_backup" +
+  QString databaseNameBackup = databaseDirectory % QDir::separator() % QFileInfo(databaseName).baseName() % "_backup" %
                                lnm::DATABASE_SUFFIX;
 
   try
@@ -1590,7 +1591,7 @@ void DatabaseManager::loadSceneryInternal()
         else
           qWarning() << "Removing" << tempFilename << "failed";
 
-        QFile journal(tempFilename + "-journal");
+        QFile journal(tempFilename % "-journal");
         if(journal.exists() && journal.size() == 0)
         {
           if(journal.remove())
@@ -1706,7 +1707,7 @@ void DatabaseManager::loadSceneryInternalPost()
     else
       qWarning() << "Removing" << dbFilename << "failed";
 
-    QFile journal2(dbFilename + "-journal");
+    QFile journal2(dbFilename % "-journal");
     if(journal2.exists() && journal2.size() == 0)
     {
       if(journal2.remove())
@@ -1872,8 +1873,7 @@ void DatabaseManager::updateDialogInfo(atools::fs::FsPaths::SimulatorType value)
     optionsHeader.append(tr("Included and excluded directories can be changed in options on page \"Scenery Library Database\"."));
   }
 
-  databaseDialog->setHeader(metaText +
-                            atools::strJoin(tr("<p>"), optionsHeader, tr("<br/>"), tr("<br/>"), tr("</p>")) +
+  databaseDialog->setHeader(metaText % atools::strJoin(tr("<p>"), optionsHeader, tr("<br/>"), tr("<br/>"), tr("</p>")) %
                             tr("<p><big>Currently Loaded:</big></p><p>%1</p>").arg(tableText));
 
   if(tempDb.isOpen())
@@ -1883,69 +1883,38 @@ void DatabaseManager::updateDialogInfo(atools::fs::FsPaths::SimulatorType value)
 /* Create database name including simulator short name */
 QString DatabaseManager::buildDatabaseFileName(atools::fs::FsPaths::SimulatorType type) const
 {
-  return databaseDirectory +
-         QDir::separator() + lnm::DATABASE_PREFIX +
-         atools::fs::FsPaths::typeToShortName(type).toLower() + lnm::DATABASE_SUFFIX;
+  return databaseDirectory %
+         QDir::separator() % lnm::DATABASE_PREFIX %
+         atools::fs::FsPaths::typeToShortName(type).toLower() % lnm::DATABASE_SUFFIX;
 }
 
 /* Create database name including simulator short name in application directory */
 QString DatabaseManager::buildDatabaseFileNameAppDir(atools::fs::FsPaths::SimulatorType type) const
 {
-  return QCoreApplication::applicationDirPath() +
-         QDir::separator() + lnm::DATABASE_DIR +
-         QDir::separator() + lnm::DATABASE_PREFIX +
-         atools::fs::FsPaths::typeToShortName(type).toLower() + lnm::DATABASE_SUFFIX;
+  return QCoreApplication::applicationDirPath() %
+         QDir::separator() % lnm::DATABASE_DIR %
+         QDir::separator() % lnm::DATABASE_PREFIX %
+         atools::fs::FsPaths::typeToShortName(type).toLower() % lnm::DATABASE_SUFFIX;
 }
 
 QString DatabaseManager::buildCompilingDatabaseFileName() const
 {
-  return databaseDirectory + QDir::separator() + lnm::DATABASE_PREFIX + "compiling" + lnm::DATABASE_SUFFIX;
+  return databaseDirectory % QDir::separator() % lnm::DATABASE_PREFIX % "compiling" % lnm::DATABASE_SUFFIX;
 }
 
 void DatabaseManager::freeActions()
 {
-  if(menuDbSeparator != nullptr)
-  {
-    menuDbSeparator->deleteLater();
-    menuDbSeparator = nullptr;
-  }
-  if(menuNavDbSeparator != nullptr)
-  {
-    menuNavDbSeparator->deleteLater();
-    menuNavDbSeparator = nullptr;
-  }
-  if(simDbGroup != nullptr)
-  {
-    simDbGroup->deleteLater();
-    simDbGroup = nullptr;
-  }
-  if(navDbActionAll != nullptr)
-  {
-    navDbActionAll->deleteLater();
-    navDbActionAll = nullptr;
-  }
-  if(navDbActionMixed != nullptr)
-  {
-    navDbActionMixed->deleteLater();
-    navDbActionMixed = nullptr;
-  }
-  if(navDbActionOff != nullptr)
-  {
-    navDbActionOff->deleteLater();
-    navDbActionOff = nullptr;
-  }
-  if(navDbSubMenu != nullptr)
-  {
-    navDbSubMenu->deleteLater();
-    navDbSubMenu = nullptr;
-  }
-  if(navDbGroup != nullptr)
-  {
-    navDbGroup->deleteLater();
-    navDbGroup = nullptr;
-  }
+  ATOOLS_DELETE_LATER_LOG(menuDbSeparator);
+  ATOOLS_DELETE_LATER_LOG(menuNavDbSeparator);
+  ATOOLS_DELETE_LATER_LOG(simDbGroup);
+  ATOOLS_DELETE_LATER_LOG(navDbActionAll);
+  ATOOLS_DELETE_LATER_LOG(navDbActionMixed);
+  ATOOLS_DELETE_LATER_LOG(navDbActionOff);
+  ATOOLS_DELETE_LATER_LOG(navDbSubMenu);
+  ATOOLS_DELETE_LATER_LOG(navDbGroup);
+
   for(QAction *action : qAsConst(simDbActions))
-    action->deleteLater();
+    ATOOLS_DELETE_LATER_LOG(action);
   simDbActions.clear();
 }
 

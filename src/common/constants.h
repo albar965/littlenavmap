@@ -147,6 +147,7 @@ const QLatin1String DATABASE_LOAD_INACTIVE("Database/LoadInactive");
 const QLatin1String DATABASE_LOAD_ADDONXML("Database/LoadAddOnXml");
 const QLatin1String DATABASE_USER_AIRSPACE_PATH("Database/UserAirspacePathFileDialog");
 const QLatin1String DATABASE_AIRSPACECONFIG("Database/AirspaceConfig");
+const QLatin1String DATABASE_DIALOG("Database/DatabaseDialog");
 
 const QLatin1String EXPORT_FILEDIALOG("Export/FileDialog");
 const QLatin1String INFOWINDOW_CURRENTMAPOBJECTS("InfoWindow/CurrentMapObjects");
@@ -206,9 +207,10 @@ const QLatin1String RANGE_MARKER_DIALOG_RADII("Map/RangeMarkerDialogRadii");
 
 const QLatin1String NAVCONNECT_REMOTEHOSTS("NavConnect/RemoteHosts");
 const QLatin1String NAVCONNECT_REMOTE("NavConnect/Remote");
+const QLatin1String NAVCONNECT_DIALOG("NavConnect/ConnectDialog");
+
 const QLatin1String ROUTE_FILENAME("Route/Filename");
 const QLatin1String ROUTE_DEFAULT_FILE_LNMPLN("Route/DefaultLnmpln");
-
 const QLatin1String ROUTE_HEADER_AIRPORTS("Route/HeaderAirports");
 const QLatin1String ROUTE_HEADER_DEPARTURE("Route/HeaderDeparture");
 const QLatin1String ROUTE_HEADER_ARRIVAL("Route/HeaderArrival");

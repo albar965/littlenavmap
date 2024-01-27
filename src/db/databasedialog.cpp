@@ -22,6 +22,7 @@
 #include "fs/fspaths.h"
 #include "gui/dialog.h"
 #include "gui/helphandler.h"
+#include "gui/widgetstate.h"
 #include "ui_databasedialog.h"
 
 #include <QDebug>
@@ -186,6 +187,31 @@ void DatabaseDialog::setCurrentFsType(atools::fs::FsPaths::SimulatorType value)
   currentFsType = value;
   updateComboBox();
   updateWidgets();
+}
+
+int DatabaseDialog::exec()
+{
+  restoreState();
+  int retval = QDialog::exec();
+  saveState();
+  return retval;
+}
+
+void DatabaseDialog::restoreState()
+{
+  atools::gui::WidgetState dialogState(lnm::DATABASE_DIALOG);
+  if(!dialogState.contains(this))
+  {
+    QCoreApplication::processEvents(QEventLoop::ExcludeUserInputEvents);
+    adjustSize();
+  }
+  else
+    dialogState.restore(this);
+}
+
+void DatabaseDialog::saveState()
+{
+  atools::gui::WidgetState(lnm::DATABASE_DIALOG).save(this);
 }
 
 void DatabaseDialog::updateComboBox()

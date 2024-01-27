@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>478</width>
-    <height>331</height>
+    <width>504</width>
+    <height>393</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -17,7 +17,7 @@
    <item>
     <widget class="QTabWidget" name="tabWidgetConnect">
      <property name="currentIndex">
-      <number>0</number>
+      <number>1</number>
      </property>
      <widget class="QWidget" name="tabConnectFsx">
       <attribute name="title">
@@ -167,6 +167,59 @@ Lower values will result in a more fluid aircraft movement but can potentially i
        <string>&amp;X-Plane</string>
       </attribute>
       <layout class="QGridLayout" name="gridLayout_3">
+       <item row="2" column="0" colspan="2">
+        <widget class="QCheckBox" name="checkBoxConnectFetchAiAircraftXp">
+         <property name="toolTip">
+          <string>Deselect to disable fetching and transmission of AI or multiplayer aircraft</string>
+         </property>
+         <property name="text">
+          <string>Fetch AI or multiplayer &amp;aircraft</string>
+         </property>
+         <property name="checked">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item row="5" column="0" colspan="2">
+        <widget class="QLabel" name="labelOptionsUpdatesHint">
+         <property name="text">
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/littlenavmap/resources/icons/bulb.svg&quot;/&gt;&lt;span style=&quot; font-style:italic;&quot;&gt; You will need to install the Little Xpconnect X-Plane plugin to connect to the simulator. Go to the main menu -&amp;gt; &amp;quot;Tools&amp;quot; -&amp;gt; &amp;quot;Install Little Xpconnect in X-Plane Plugins ...&amp;quot; to let Little Navmap do this for you.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         </property>
+         <property name="wordWrap">
+          <bool>true</bool>
+         </property>
+         <property name="margin">
+          <number>10</number>
+         </property>
+         <property name="textInteractionFlags">
+          <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="1">
+        <widget class="QSpinBox" name="spinBoxConnectUpdateRateXp">
+         <property name="toolTip">
+          <string>Allowed range is 50 up to 5000 milliseconds (5 seconds).
+Little Navmap fetches data from the flight simulator using this time interval.
+Lower values will result in a more fluid aircraft movement but can potentially induce stutters in the simulator.</string>
+         </property>
+         <property name="suffix">
+          <string> ms</string>
+         </property>
+         <property name="minimum">
+          <number>50</number>
+         </property>
+         <property name="maximum">
+          <number>5000</number>
+         </property>
+         <property name="singleStep">
+          <number>50</number>
+         </property>
+         <property name="value">
+          <number>500</number>
+         </property>
+        </widget>
+       </item>
        <item row="0" column="0" colspan="2">
         <widget class="QLabel" name="labelConnectXp">
          <property name="font">
@@ -205,30 +258,6 @@ Lower values will result in a more fluid aircraft movement but can potentially i
          </property>
         </widget>
        </item>
-       <item row="1" column="1">
-        <widget class="QSpinBox" name="spinBoxConnectUpdateRateXp">
-         <property name="toolTip">
-          <string>Allowed range is 50 up to 5000 milliseconds (5 seconds).
-Little Navmap fetches data from the flight simulator using this time interval.
-Lower values will result in a more fluid aircraft movement but can potentially induce stutters in the simulator.</string>
-         </property>
-         <property name="suffix">
-          <string> ms</string>
-         </property>
-         <property name="minimum">
-          <number>50</number>
-         </property>
-         <property name="maximum">
-          <number>5000</number>
-         </property>
-         <property name="singleStep">
-          <number>50</number>
-         </property>
-         <property name="value">
-          <number>500</number>
-         </property>
-        </widget>
-       </item>
        <item row="3" column="0" colspan="2">
         <widget class="QCheckBox" name="checkBoxConnectFetchAiShipXp">
          <property name="toolTip">
@@ -242,20 +271,7 @@ Lower values will result in a more fluid aircraft movement but can potentially i
          </property>
         </widget>
        </item>
-       <item row="2" column="0" colspan="2">
-        <widget class="QCheckBox" name="checkBoxConnectFetchAiAircraftXp">
-         <property name="toolTip">
-          <string>Deselect to disable fetching and transmission of AI or multiplayer aircraft</string>
-         </property>
-         <property name="text">
-          <string>Fetch AI or multiplayer &amp;aircraft</string>
-         </property>
-         <property name="checked">
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
-       <item row="4" column="0">
+       <item row="6" column="0">
         <spacer name="verticalSpacer">
          <property name="orientation">
           <enum>Qt::Vertical</enum>

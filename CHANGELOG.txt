@@ -97,6 +97,7 @@ A big thank you to all who reported bugs and issues!
   running.
 * Now safely catching termination signals on Linux. This avoids data loss due to unsaved files when
   terminating with Ctrl+C from the command line.
+* Now resizing connection and load scenery dialogs to avoid cutting off content. Saving size now.
 
 ### Web Server
 
