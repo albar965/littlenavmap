@@ -7872,10 +7872,10 @@ relation to shown airport</string>
     <string>&amp;Edit Flight Plan on Map</string>
    </property>
    <property name="toolTip">
-    <string>Enable or disable flight plan edit mode on map</string>
+    <string>Toggle flight plan click and drag edit mode on the map</string>
    </property>
    <property name="statusTip">
-    <string>Enable or disable flight plan edit mode on map</string>
+    <string>Toggle flight plan click and drag edit mode on the map</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+Shift+E</string>
