@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -29,6 +29,7 @@
 #include "gui/tabwidgethandler.h"
 #include "gui/tools.h"
 #include "gui/widgetutil.h"
+#include "gui/desktopservices.h"
 #include "info/aircraftprogressconfig.h"
 #include "mapgui/mapwidget.h"
 #include "online/onlinedatacontroller.h"
@@ -329,7 +330,7 @@ void InfoController::anchorClicked(const QUrl& url)
 
   if(url.scheme() == "http" || url.scheme() == "https" || url.scheme() == "ftp" || url.scheme() == "file")
     // Open a normal link or file from the userpoint description
-    atools::gui::anchorClicked(mainWindow, url);
+    atools::gui::DesktopServices::openUrl(mainWindow, url);
   else if(url.scheme() == "lnm")
   {
     // Internal link like "show on map"
@@ -447,7 +448,7 @@ void InfoController::anchorClicked(const QUrl& url)
       }
       else if(query.hasQueryItem("filepath"))
         // Show path in any OS dependent file manager. Selects the file in Windows Explorer.
-        atools::gui::showInFileManager(query.queryItemValue("filepath"), mainWindow);
+        atools::gui::DesktopServices::openFile(mainWindow, query.queryItemValue("filepath"), true /* showInFileManager */);
       else
         qWarning() << Q_FUNC_INFO << "Unknwown URL" << url;
     }

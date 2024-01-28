@@ -27,6 +27,7 @@
 
 #include <QStringBuilder>
 #include <QDir>
+#include <QUrl>
 
 XpconnectInstaller::XpconnectInstaller(QWidget *parentWidget)
   : parent(parentWidget)
@@ -72,17 +73,20 @@ bool XpconnectInstaller::install()
 #endif
 
   // Ask general question ==========================================
-  atools::gui::MessageBox box(parent, QCoreApplication::applicationName(), lnm::ACTIONS_INSTALL_XPCONNECT_INFO,
-                              tr("Do not &show this dialog again and install in the future."), true /* openLinkAuto */);
-  box.setHelpUrl(lnm::helpOnlineUrl + "XPCONNECT.html", lnm::helpLanguageOnline());
-  box.setMessage(tr("<p>Install or update the Little Xpconnect plugin for %1 in the directory below?</p>"
-                      "<p><a href=\"%2\">%2</a>&nbsp;(click to show)</p>"
-                        "<p>The X-Plane target installation is as selected in the menu \"Scenery Library\".</p>"
-                          "%3").arg(NavApp::getCurrentSimulatorName()).arg(pluginsPath).arg(macOsNote));
-  box.setIcon(QMessageBox::Question);
-  box.setDefaultButton(QDialogButtonBox::Yes);
+  QUrl fileUrl = QUrl::fromLocalFile(pluginsPath);
+  atools::gui::MessageBox infoBox(parent, QCoreApplication::applicationName(), lnm::ACTIONS_INSTALL_XPCONNECT_INFO,
+                                  tr("Do not &show this dialog again and install in the future."), true /* openLinkAuto */);
+  infoBox.setHelpUrl(lnm::helpOnlineUrl + "XPCONNECT.html", lnm::helpLanguageOnline());
+  infoBox.setMessage(tr("<p>Install or update the Little Xpconnect plugin for %1 in the directory below?</p>"
+                          "<p><a href=\"%2\">%3</a>&nbsp;(click to open)</p>"
+                            "<p>The X-Plane target installation is as selected in the menu \"Scenery Library\".</p>"
+                              "%4").arg(NavApp::getCurrentSimulatorName()).arg(fileUrl.toString()).
+                     arg(atools::nativeCleanPath(pluginsPath)).arg(macOsNote));
 
-  if(box.exec() == QMessageBox::Yes)
+  infoBox.setIcon(QMessageBox::Question);
+  infoBox.setDefaultButton(QDialogButtonBox::Yes);
+
+  if(infoBox.exec() == QMessageBox::Yes)
   {
     // Check if plugins are accessible
     QString errors = atools::checkDirMsg(pluginsPath);
@@ -103,14 +107,17 @@ bool XpconnectInstaller::install()
       QStringList xpl = pluginsDir.entryList({strayPluginName}, QDir::Files | QDir::NoDotAndDotDot);
       if(!xpl.isEmpty())
       {
+        fileUrl = QUrl::fromLocalFile(pluginsDir.filePath(xpl.constFirst()));
         atools::gui::MessageBox warnBox(parent, QCoreApplication::applicationName(), lnm::ACTIONS_INSTALL_XPCONNECT_WARN_XPL,
                                         tr("Do not &show this dialog again."));
+        warnBox.setShowInFileManager();
         warnBox.setHelpUrl(lnm::helpOnlineUrl + "XPCONNECT.html", lnm::helpLanguageOnline());
         warnBox.setMessage(tr("<p>A stray X-Plane plugin file was found:</p>"
-                                "<p><a href=\"%1\">%1</a>&nbsp;(click to show)</p>"
+                                "<p><a href=\"%1\">%2</a>&nbsp;(click to show)</p>"
                                   "<p>This is not neccessarily from Little Xpconnect but it is usually a "
                                     "result from an incorrect plugin installation which can cause problems.<br/>"
-                                    "Removing this file is recommended.</p>").arg(pluginsDir.filePath(xpl.constFirst())));
+                                    "Removing this file is recommended.</p>").
+                           arg(fileUrl.toString()).arg(atools::nativeCleanPath(pluginsDir.filePath(xpl.constFirst()))));
         warnBox.setIcon(QMessageBox::Warning);
         warnBox.exec();
       }
@@ -130,10 +137,12 @@ bool XpconnectInstaller::install()
         for(QString& xpconnect : xpconnects)
         {
           xpconnect = atools::nativeCleanPath(pluginsDir.absoluteFilePath(xpconnect));
-          xpconnectsText.append(tr("<li><a href=\"%1\">%1</a></li>").arg(xpconnect));
+          xpconnectsText.append(tr("<li><a href=\"%1\">%2</a></li>").
+                                arg(QUrl::fromLocalFile(xpconnect).toString()).arg(atools::nativeCleanPath(xpconnect)));
         }
 
         atools::gui::MessageBox questionBox(parent);
+        questionBox.setShowInFileManager();
         questionBox.setMessage(tr("<p>Found one or more previous installations of Little Xpconnect using a non-standard name:</p>"
                                     "<p><ul>%1</ul>(click to show)</p>"
                                       "<p>Check these plugins manually if you are not sure what they are.</p>"

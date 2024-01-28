@@ -21,7 +21,6 @@
 #include "atools.h"
 #include "common/constants.h"
 #include "gui/dialog.h"
-#include "gui/helphandler.h"
 #include "gui/mainwindow.h"
 #include "gui/messagebox.h"
 #include "options/optionsdialog.h"

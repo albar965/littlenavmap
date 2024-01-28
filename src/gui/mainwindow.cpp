@@ -41,6 +41,7 @@
 #include "gui/errorhandler.h"
 #include "gui/filehistoryhandler.h"
 #include "gui/helphandler.h"
+#include "gui/desktopservices.h"
 #include "gui/messagebox.h"
 #include "gui/messagesettings.h"
 #include "gui/statusbareventfilter.h"
@@ -133,27 +134,25 @@ MainWindow::MainWindow()
        "for X-Plane 11, X-Plane 12, Flight Simulator X, Prepar3D and Microsoft Flight Simulator 2020.</p>"
        "<p>"
          "<b>"
-           "If you would like to show your appreciation you can donate&nbsp;"
-           "<a href=\"%1\">here"
+           "<a href=\"%1\">Donate here to support the development of %2</a>."
+           "</b>"
+         "</p>"
+         "<p>This software is licensed under "
+           "<a href=\"http://www.gnu.org/licenses/gpl-3.0\">GPL3"
+           "</a> or any later version."
+         "</p>"
+         "<p>The source code for this application is available at "
+           "<a href=\"https://github.com/albar965\">GitHub"
            "</a>."
-         "</b>"
-       "</p>"
-       "<p>This software is licensed under "
-         "<a href=\"http://www.gnu.org/licenses/gpl-3.0\">GPL3"
-         "</a> or any later version."
-       "</p>"
-       "<p>The source code for this application is available at "
-         "<a href=\"https://github.com/albar965\">GitHub"
-         "</a>."
-       "</p>"
-       "<p>More about my projects at "
-         "<a href=\"https://www.littlenavmap.org\">www.littlenavmap.org"
-         "</a>."
-       "</p>"
-       "<p>"
-         "<b>Copyright 2015-2023 Alexander Barthel"
-         "</b>"
-       "</p>").arg(lnm::helpDonateUrl);
+         "</p>"
+         "<p>More about my projects at "
+           "<a href=\"https://www.littlenavmap.org\">www.littlenavmap.org"
+           "</a>."
+         "</p>"
+         "<p>"
+           "<b>Copyright 2015-2024 Alexander Barthel"
+           "</b>"
+         "</p>").arg(lnm::helpDonateUrl).arg(QCoreApplication::applicationName());
 
   layoutWarnText = tr("The option \"Allow to undock map window\" in the layout file is "
                       "different than the currently set option.\n"
@@ -214,6 +213,7 @@ MainWindow::MainWindow()
     dialog = new atools::gui::Dialog(this);
     errorHandler = new atools::gui::ErrorHandler(this);
     helpHandler = new atools::gui::HelpHandler(this, aboutMessage, GIT_REVISION_LITTLENAVMAP);
+    desktopServices = new atools::gui::DesktopServices(this);
 
     // Create dock and mainwindow handler ============================================
     toolbars.append({ui->toolBarMain, ui->toolBarMap, ui->toolBarMapOptions, ui->toolBarMapOptionsRouteAircraft, ui->toolBarMapOptionsOther,
@@ -534,6 +534,7 @@ MainWindow::~MainWindow()
   ATOOLS_DELETE_LOG(dialog);
   ATOOLS_DELETE_LOG(errorHandler);
   ATOOLS_DELETE_LOG(helpHandler);
+  ATOOLS_DELETE_LOG(desktopServices);
   ATOOLS_DELETE_LOG(actionGroupMapProjection);
   ATOOLS_DELETE_LOG(actionGroupMapSunShading);
   ATOOLS_DELETE_LOG(actionGroupMapWeatherSource);
@@ -603,12 +604,12 @@ void MainWindow::debugActionTriggered4()
 
 void MainWindow::debugActionTriggered5()
 {
-  helpHandler->openFile(routeController->getRouteFilepath());
+  desktopServices->openFile(routeController->getRouteFilepath());
 }
 
 void MainWindow::debugActionTriggered6()
 {
-  helpHandler->openFile(NavApp::getAircraftPerfController()->getCurrentFilepath());
+  desktopServices->openFile(NavApp::getAircraftPerfController()->getCurrentFilepath());
 }
 
 void MainWindow::debugActionTriggered7()
@@ -637,14 +638,6 @@ void MainWindow::updateClock() const
   timeLabel->setMinimumWidth(timeLabel->width());
 }
 
-/* Show map legend and bring information dock to front */
-void MainWindow::showNavmapLegend()
-{
-  // Show it in browser
-  HelpHandler::openHelpUrlWeb(this, lnm::helpOnlineLegendUrl, lnm::helpLanguageOnline());
-  setStatusMessage(tr("Opened map legend in browser."));
-}
-
 /* Check manually for updates as triggered by the action */
 void MainWindow::checkForUpdates()
 {
@@ -653,49 +646,38 @@ void MainWindow::checkForUpdates()
 
 void MainWindow::showOnlineDownloads()
 {
-  HelpHandler::openHelpUrlWeb(this, lnm::helpOnlineDownloadsUrl, lnm::helpLanguageOnline());
+  helpHandler->openHelpUrlWeb(lnm::helpOnlineDownloadsUrl, lnm::helpLanguageOnline());
 }
 
 void MainWindow::showChangelog()
 {
-  HelpHandler::openFile(this, QApplication::applicationDirPath() % atools::SEP % "CHANGELOG.txt");
+  desktopServices->openFile(QApplication::applicationDirPath() % atools::SEP % "CHANGELOG.txt");
 }
 
 void MainWindow::showDonationPage()
 {
-  HelpHandler::openUrlWeb(this, lnm::helpDonateUrl);
+  desktopServices->openUrl(lnm::helpDonateUrl);
 }
 
 void MainWindow::showFaqPage()
 {
-  HelpHandler::openUrlWeb(this, lnm::helpFaqUrl);
+  desktopServices->openUrl(lnm::helpFaqUrl);
 }
 
 void MainWindow::showOfflineHelp()
 {
-  HelpHandler::openFile(this, HelpHandler::getHelpFile(lnm::helpOfflineFile, OptionData::getLanguage()));
+  desktopServices->openFile(HelpHandler::getHelpFile(lnm::helpOfflineFile, OptionData::getLanguage()));
 }
 
 void MainWindow::openLogFile()
 {
   for(const QString& log : atools::logging::LoggingHandler::getLogFiles())
-    HelpHandler::openFile(this, log);
+    desktopServices->openFile(log);
 }
 
 void MainWindow::openConfigFile()
 {
-  HelpHandler::openFile(this, Settings::getFilename());
-}
-
-/* User clicked "show in browser" in legend */
-void MainWindow::legendAnchorClicked(const QUrl& url)
-{
-  if(url.scheme() == "lnm" && url.host() == "legend")
-    HelpHandler::openHelpUrlWeb(this, lnm::helpOnlineUrl % "LEGEND.html", lnm::helpLanguageOnline());
-  else
-    HelpHandler::openUrl(this, url);
-
-  setStatusMessage(tr("Opened legend link in browser."));
+  desktopServices->openFile(Settings::getFilename());
 }
 
 void MainWindow::setupUi()
@@ -1255,6 +1237,7 @@ void MainWindow::connectAllSlots()
   connect(ui->actionDatabaseFiles, &QAction::triggered, this, &MainWindow::showDatabaseFiles);
   connect(ui->actionShowMapCache, &QAction::triggered, this, &MainWindow::showShowMapCache);
   connect(ui->actionShowMapInstallation, &QAction::triggered, this, &MainWindow::showMapInstallation);
+  connect(ui->actionShowGlobeInstallation, &QAction::triggered, this, &MainWindow::showGlobeInstallation);
 
   connect(ui->actionOptions, &QAction::triggered, this, &MainWindow::openOptionsDialog);
   connect(ui->actionResetMessages, &QAction::triggered, this, &MainWindow::resetMessages);
@@ -1808,7 +1791,7 @@ void MainWindow::weatherUpdateTimeout()
 /* Menu item */
 void MainWindow::showDatabaseFiles()
 {
-  helpHandler->openFile(NavApp::getDatabaseManager()->getDatabaseDirectory());
+  desktopServices->openFile(NavApp::getDatabaseManager()->getDatabaseDirectory());
 }
 
 /* Menu item */
@@ -1816,7 +1799,7 @@ void MainWindow::showShowMapCache()
 {
   // Windows: C:\Users\YOURUSERNAME\AppData\Local\.marble\data
   // Linux and macOS: $HOME/.local/share/marble
-  helpHandler->openFile(Marble::MarbleDirs::localPath() % atools::SEP % "maps" % atools::SEP % "earth");
+  desktopServices->openFile(Marble::MarbleDirs::localPath() % atools::SEP % "maps" % atools::SEP % "earth");
 }
 
 /* Menu item */
@@ -1826,9 +1809,21 @@ void MainWindow::showMapInstallation()
 
   QString msg = atools::checkDirMsg(cacheMapThemeDir);
   if(msg.isEmpty())
-    helpHandler->openFile(cacheMapThemeDir);
+    desktopServices->openFile(cacheMapThemeDir);
   else
     atools::gui::Dialog::warning(this, msg % tr("\n\nSet the path to additional map themes in options on page \"Cache and Files\""));
+}
+
+/* Menu item */
+void MainWindow::showGlobeInstallation()
+{
+  QString globeDir = OptionData::instance().getOfflineElevationPath();
+
+  QString msg = atools::checkDirMsg(globeDir);
+  if(msg.isEmpty())
+    desktopServices->openFile(globeDir);
+  else
+    atools::gui::Dialog::warning(this, msg % tr("\n\nSet the path to the offline elevation data in options on page \"Cache and Files\""));
 }
 
 /* Updates label and tooltip for connection status */
@@ -2587,7 +2582,7 @@ bool MainWindow::openInSkyVector()
   QString route = RouteStringWriter().createStringForRoute(NavApp::getRouteConst(), NavApp::getRouteCruiseSpeedKts(),
                                                            rs::START_AND_DEST | rs::SKYVECTOR_COORDS);
 
-  HelpHandler::openUrlWeb(this, "https://skyvector.com/?fpl=" % route);
+  desktopServices->openUrl(QUrl("https://skyvector.com/?fpl=" % route));
   return true;
 }
 
@@ -3539,9 +3534,11 @@ void MainWindow::runDirTool(bool manual)
   {
     atools::gui::MessageBox box(this);
     box.setIcon(QMessageBox::Information);
+    QString displayPath(atools::nativeCleanPath(dirTool.getApplicationDir()));
+    QUrl url = QUrl::fromLocalFile(displayPath);
     box.setMessage(tr("<p>Directory structure for Little Navmap files is already complete.</p>"
                         "<p>The base directory is<br/>"
-                        "<a href=\"%1\">%1</a> (click to show)</p>").arg(dirTool.getApplicationDir()));
+                        "<a href=\"%1\">%2</a> (click to open)</p>").arg(url.toString()).arg(displayPath));
     box.exec();
   }
 }
@@ -3807,11 +3804,14 @@ void MainWindow::resetAllSettings()
                       "<p>User features like range rings or traffic patterns as well as "
                         "scenery, logbook and userpoint databases are not affected.</p>"
                         "<p>A copy of the settings file<br/>"
-                        "<a href=\"%2\">%2</a><br/>"
+                        "<a href=\"%2\">%3</a> (click to open)<br/>"
                         "will be created in the folder<br/>"
-                        "<a href=\"%3\">%3</a> (click to show).</p>"
+                        "<a href=\"%4\">%5</a> (click to open).</p>"
                           "<p>This allows you to undo this change.</p>"
-                            "<p>Reset and restart now?</p>").arg(QCoreApplication::applicationName()).arg(settingFile).arg(settingPath));
+                            "<p>Reset and restart now?</p>").arg(QCoreApplication::applicationName()).
+                 arg(QUrl::fromLocalFile(settingFile).toString()).arg(settingFile).
+                 arg(QUrl::fromLocalFile(settingPath).toString()).arg(settingPath));
+
   box.setIcon(QMessageBox::Question);
   box.setHelpUrl(lnm::helpOnlineUrl % "MENUS.html#reset-and-restart", lnm::helpLanguageOnline());
 

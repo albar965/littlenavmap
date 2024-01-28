@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -17,13 +17,14 @@
 
 #include "routeexport/simbriefhandler.h"
 
+#include "app/navapp.h"
 #include "common/constants.h"
 #include "common/unit.h"
 #include "fs/perf/aircraftperf.h"
+#include "gui/desktopservices.h"
 #include "gui/dialog.h"
 #include "gui/helphandler.h"
 #include "gui/mainwindow.h"
-#include "app/navapp.h"
 #include "route/route.h"
 #include "routeexport/fetchroutedialog.h"
 #include "routestring/routestringwriter.h"
@@ -84,7 +85,7 @@ void SimBriefHandler::sendRouteToSimBrief()
 
   if(result == QMessageBox::Yes)
   {
-    atools::gui::HelpHandler::openUrl(mainWindow, url);
+    atools::gui::DesktopServices::openUrl(mainWindow, url);
     NavApp::setStatusMessage(QString(tr("SimBrief flight plan sent to web browser.")));
   }
   else if(result == QMessageBox::YesToAll)

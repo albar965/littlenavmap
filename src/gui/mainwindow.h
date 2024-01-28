@@ -73,6 +73,7 @@ namespace gui {
 class Dialog;
 class ErrorHandler;
 class HelpHandler;
+class DesktopServices;
 class FileHistoryHandler;
 class DockWidgetHandler;
 }
@@ -378,6 +379,7 @@ private:
   void showDatabaseFiles();
   void showShowMapCache();
   void showMapInstallation();
+  void showGlobeInstallation();
 
   /* Save map as images */
   void mapSaveImage();
@@ -404,14 +406,11 @@ private:
   bool layoutOpenInternal(const QString& layoutFile);
   void loadLayoutDelayed(const QString& filename);
 
-  void legendAnchorClicked(const QUrl& url);
-
   void trailLoadGpxFile(const QString& file);
 
   void showOfflineHelp();
   void showOnlineDownloads();
   void showChangelog();
-  void showNavmapLegend();
   bool openInSkyVector();
   void clearProcedureCache();
 
@@ -531,6 +530,7 @@ private:
   atools::gui::Dialog *dialog = nullptr;
   atools::gui::ErrorHandler *errorHandler = nullptr;
   atools::gui::HelpHandler *helpHandler = nullptr;
+  atools::gui::DesktopServices *desktopServices = nullptr;
   atools::gui::DockWidgetHandler *dockHandler = nullptr;
 
   /* Managment and controller classes */

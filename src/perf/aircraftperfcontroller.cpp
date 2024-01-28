@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -19,34 +19,35 @@
 #include "common/filecheck.h"
 #include "perf/aircraftperfdialog.h"
 
-#include "gui/mainwindow.h"
-#include "gui/helphandler.h"
-#include "common/constants.h"
-#include "settings/settings.h"
-#include "gui/widgetutil.h"
-#include "util/average.h"
 #include "app/navapp.h"
-#include "common/fueltool.h"
-#include "route/route.h"
-#include "geo/calculations.h"
-#include "weather/windreporter.h"
+#include "common/constants.h"
 #include "common/formatter.h"
-#include "fs/perf/aircraftperf.h"
-#include "gui/tools.h"
-#include "gui/dialog.h"
-#include "ui_mainwindow.h"
-#include "common/unit.h"
+#include "common/fueltool.h"
 #include "common/tabindexes.h"
-#include "util/htmlbuilder.h"
-#include "gui/filehistoryhandler.h"
-#include "gui/errorhandler.h"
+#include "common/unit.h"
 #include "exception.h"
-#include "perf/perfmergedialog.h"
-#include "route/routealtitude.h"
-#include "gui/widgetstate.h"
+#include "fs/perf/aircraftperf.h"
 #include "fs/perf/aircraftperfhandler.h"
 #include "fs/sc/simconnectdata.h"
+#include "geo/calculations.h"
+#include "gui/desktopservices.h"
+#include "gui/dialog.h"
+#include "gui/errorhandler.h"
+#include "gui/filehistoryhandler.h"
+#include "gui/helphandler.h"
+#include "gui/mainwindow.h"
 #include "gui/tabwidgethandler.h"
+#include "gui/tools.h"
+#include "gui/widgetstate.h"
+#include "gui/widgetutil.h"
+#include "perf/perfmergedialog.h"
+#include "route/route.h"
+#include "route/routealtitude.h"
+#include "settings/settings.h"
+#include "ui_mainwindow.h"
+#include "util/average.h"
+#include "util/htmlbuilder.h"
+#include "weather/windreporter.h"
 
 #include <QDebug>
 #include <QUrlQuery>
@@ -1536,13 +1537,7 @@ void AircraftPerfController::noPerfLoaded()
 
 void AircraftPerfController::anchorClicked(const QUrl& url)
 {
-  QUrlQuery query(url);
-
-  if(url.scheme() == "lnm" && url.host() == "show" && query.hasQueryItem("filepath"))
-    // Show path in any OS dependent file manager. Selects the file in Windows Explorer.
-    atools::gui::showInFileManager(query.queryItemValue("filepath"), mainWindow);
-  else
-    atools::gui::anchorClicked(mainWindow, url);
+  atools::gui::DesktopServices::openUrl(mainWindow, url);
 }
 
 void AircraftPerfController::tabVisibilityChanged()

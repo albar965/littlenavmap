@@ -22,7 +22,7 @@
 #include "web/webmapcontroller.h"
 #include "webapi/webapicontroller.h"
 #include "web/webapp.h"
-#include "gui/helphandler.h"
+#include "gui/desktopservices.h"
 #include "httpserver/httplistener.h"
 #include "common/htmlinfobuilder.h"
 #include "common/constants.h"
@@ -245,7 +245,7 @@ void WebController::restartServer(bool force)
 void WebController::openPage()
 {
   if(!getUrl(false /* useIpAddress */).isEmpty())
-    atools::gui::HelpHandler::openUrl(parentWidget, getUrl(false));
+    atools::gui::DesktopServices::openUrl(parentWidget, getUrl(false));
   else if(verbose)
     qWarning() << Q_FUNC_INFO << "No valid URL found";
 }

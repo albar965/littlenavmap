@@ -252,9 +252,12 @@
      </property>
      <addaction name="actionHelpOpenLogFile"/>
      <addaction name="actionHelpOpenConfigFile"/>
-     <addaction name="actionDatabaseFiles"/>
+     <addaction name="separator"/>
      <addaction name="actionShowMapCache"/>
      <addaction name="actionShowMapInstallation"/>
+     <addaction name="separator"/>
+     <addaction name="actionDatabaseFiles"/>
+     <addaction name="actionShowGlobeInstallation"/>
     </widget>
     <addaction name="actionConnectSimulator"/>
     <addaction name="actionConnectSimulatorToggle"/>
@@ -12303,6 +12306,17 @@ relation to shown airport</string>
    </property>
    <property name="statusTip">
     <string>Install the Little Xpconnect X-Plane plugin in the currently selected X-Plane instance</string>
+   </property>
+  </action>
+  <action name="actionShowGlobeInstallation">
+   <property name="text">
+    <string>Show &amp;GLOBE Offline Elevation Data Installation Directory</string>
+   </property>
+   <property name="toolTip">
+    <string>Show the installation directory for GLOBE offline elevation data</string>
+   </property>
+   <property name="statusTip">
+    <string>Show the installation directory for GLOBE offline elevation data</string>
    </property>
   </action>
  </widget>
