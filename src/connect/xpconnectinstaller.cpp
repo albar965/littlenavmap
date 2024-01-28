@@ -154,7 +154,7 @@ bool XpconnectInstaller::install()
           // Delete all found plugins
           for(const QString& xpconnect : qAsConst(xpconnects))
           {
-            if(!fileOperations.removeDirectory(xpconnect))
+            if(!fileOperations.removeDirectory(xpconnect, false /* keepDirs */, true /* hidden */, true /* system */))
             {
               dialog->warning(tr("Error(s) while deleting directory: %1 installation stopped.").
                               arg(fileOperations.getErrors().join(tr(", "))));
@@ -168,9 +168,17 @@ bool XpconnectInstaller::install()
 
       if(deleteOk)
       {
+#ifdef Q_OS_MACOS
+        QDir bundleDir(QCoreApplication::applicationDirPath());
+        bundleDir.cdUp(); // MacOS
+        bundleDir.cdUp(); // Contents
+        bundleDir.cdUp(); // Little Navmap.app
+        QString sourcePath = bundleDir.path() % QDir::separator() % xpconnectName;
+#else
+        QString sourcePath = QCoreApplication::applicationDirPath() % QDir::separator() % xpconnectName;
+#endif
         // Copy from installation folder recursively
-        if(!fileOperations.copyDirectory(QCoreApplication::applicationDirPath() % QDir::separator() % xpconnectName,
-                                         pluginsPath % QDir::separator() % xpconnectName, true /* overwrite */))
+        if(!fileOperations.copyDirectory(sourcePath, pluginsPath % QDir::separator() % xpconnectName, true /* overwrite */))
           dialog->warning(tr("Error(s) while copying directory: %1").arg(fileOperations.getErrors().join(tr(", "))));
         else
           retval = true;

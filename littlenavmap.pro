@@ -764,6 +764,7 @@ unix:!macx {
 
 # Mac OS X - Copy help and Marble plugins and data
 macx {
+  copydata.commands += cp -Rv $$PWD/CHANGELOG.txt $$OUT_PWD/littlenavmap.app/Contents/MacOS &&
   copydata.commands += cp -Rv $$PWD/help $$OUT_PWD/littlenavmap.app/Contents/MacOS &&
   copydata.commands += cp -Rv $$PWD/web $$OUT_PWD/littlenavmap.app/Contents/MacOS &&
   copydata.commands += cp -Rv $$PWD/customize $$OUT_PWD/littlenavmap.app/Contents/MacOS &&
@@ -854,7 +855,7 @@ macx {
 
   INSTALL_MARBLE_DYLIB_CMD=install_name_tool \
          -change  $$INSTALL_MARBLE_DYLIB \
-          @executable_path/../Frameworks/libmarblewidget-qt5.25.dylib $$OUT_PWD/littlenavmap.app/Contents/PlugIns
+         @executable_path/../Frameworks/libmarblewidget-qt5.25.dylib $$OUT_PWD/littlenavmap.app/Contents/PlugIns
 
 # Needs "-rpath" in GUI
 #  INSTALL_MARBLE_DYLIB_CMD=install_name_tool \

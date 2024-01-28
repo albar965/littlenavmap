@@ -651,7 +651,11 @@ void MainWindow::showOnlineDownloads()
 
 void MainWindow::showChangelog()
 {
+#ifdef Q_OS_MACOS
   desktopServices->openFile(QApplication::applicationDirPath() % atools::SEP % "CHANGELOG.txt");
+#else
+  desktopServices->openFile(QApplication::applicationDirPath() % atools::SEP % "CHANGELOG.txt");
+#endif
 }
 
 void MainWindow::showDonationPage()
