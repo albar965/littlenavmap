@@ -410,6 +410,8 @@ MainWindow::MainWindow()
 
     updateWindowTitle();
 
+    updateXpconnectInstallOptions();
+
     // Enable or disable tooltips - call later since it needs the map window
     optionsDialog->updateTooltipOption();
 
@@ -3523,7 +3525,10 @@ void MainWindow::installXpconnect()
 {
   XpconnectInstaller installer(this);
   if(installer.install())
-    setStatusMessage(tr("Little Xpconnect successfully installed."));
+  {
+    dialog->information(tr("Little Xpconnect successfully installed."));
+    setStatusMessage(tr("Little Xpconnect installed."));
+  }
 }
 
 void MainWindow::runDirTool(bool manual)
@@ -3777,7 +3782,6 @@ void MainWindow::updateActionStates()
   ui->actionConnectSimulatorToggle->blockSignals(true);
   ui->actionConnectSimulatorToggle->setChecked(NavApp::isConnected());
   ui->actionConnectSimulatorToggle->blockSignals(false);
-  ui->actionInstallXpconnect->setEnabled(NavApp::hasAnyXplaneSimulator() && NavApp::isDatabaseXPlane());
 
   ui->actionMapShowAircraftTrack->setEnabled(true);
   ui->actionMapDeleteAircraftTrack->setEnabled(mapWidget->getAircraftTrailSize() > 0 || profileWidget->hasTrailPoints());
@@ -3793,6 +3797,12 @@ void MainWindow::updateActionStates()
 
   ui->actionShowApproachCustom->setEnabled(route.hasValidDestinationAndRunways());
   ui->actionShowDepartureCustom->setEnabled(route.hasValidDepartureAndRunways());
+}
+
+void MainWindow::updateXpconnectInstallOptions()
+{
+  ui->actionInstallXpconnect->setEnabled(NavApp::hasAnyXplaneSimulator() && NavApp::isDatabaseXPlane() &&
+                                         XpconnectInstaller::isXpconnectAvailable());
 }
 
 void MainWindow::resetAllSettings()
@@ -4585,6 +4595,8 @@ void MainWindow::postDatabaseLoad(atools::fs::FsPaths::SimulatorType type)
 
   // Need to clear caches again and redraw after enabling queries
   updateMapObjectsShown();
+
+  updateXpconnectInstallOptions();
 
   NavApp::logDatabaseMeta();
 }

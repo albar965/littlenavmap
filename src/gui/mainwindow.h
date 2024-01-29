@@ -455,6 +455,7 @@ private:
   void openWebserver();
   void saveStateNow();
   void optionsChanged();
+  void updateXpconnectInstallOptions();
 
   /* Update API keys or tokens in GUI map widget and web API map widget */
   void updateMapKeys();

@@ -33,20 +33,45 @@ XpconnectInstaller::XpconnectInstaller(QWidget *parentWidget)
 {
   dialog = new atools::gui::Dialog(parent);
 
-  // Use name in macOS depending on system version
+}
+
+QString XpconnectInstaller::xpconnectName()
+{
 #ifdef Q_OS_MACOS
+
   if(QSysInfo::productVersion().toFloat() >= 10.14)
     // "Little Xpconnect arm64":
     // This is for Apple computers having an Apple Silicon or an Intel CPU.
     // It supports only newer macOS releases from Mojave 10.14 and later.
-    xpconnectName = "Little Xpconnect arm64";
+    return "Little Xpconnect arm64";
   else
     // "Little Xpconnect x86":
     // This is for Apple computers having an Intel CPU. This supports
     // older macOS releases from High Sierra 10.13.
-    xpconnectName = "Little Xpconnect x86";
+    return "Little Xpconnect x86";
+
 #else
-  xpconnectName = "Little Xpconnect";
+  return "Little Xpconnect";
+
+#endif
+
+}
+
+QString XpconnectInstaller::xpconnectPath()
+{
+  // Use name in macOS depending on system version
+#ifdef Q_OS_MACOS
+
+  QDir bundleDir(QCoreApplication::applicationDirPath()); // littlenavmap
+  bundleDir.cdUp(); // MacOS
+  bundleDir.cdUp(); // Contents
+  bundleDir.cdUp(); // Little Navmap.app
+
+  return bundleDir.path() % atools::SEP % xpconnectName();
+
+#else
+  return QCoreApplication::applicationDirPath() % atools::SEP % xpconnectName();
+
 #endif
 }
 
@@ -122,8 +147,8 @@ bool XpconnectInstaller::install()
       }
 
       // Read previous installations but exclude name of current installation since it will be overwritten anyway
-      QStringList xpconnects = pluginsDir.entryList({"*Xpconnect*"}, QDir::Dirs | QDir::NoDotAndDotDot);
-      xpconnects.removeAll(xpconnectName);
+      QStringList xpconnects = pluginsDir.entryList({"*little*xpconnect*"}, QDir::Dirs | QDir::NoDotAndDotDot);
+      xpconnects.removeAll(xpconnectName());
 
       // Log all file operations
       atools::util::FileOperations fileOperations(true /* verbose */);
@@ -133,11 +158,11 @@ bool XpconnectInstaller::install()
       {
         // Convert paths to display paths using native notation
         QStringList xpconnectsText;
-        for(QString& xpconnect : xpconnects)
+        for(QString& xpc : xpconnects)
         {
-          xpconnect = atools::nativeCleanPath(pluginsDir.absoluteFilePath(xpconnect));
+          xpc = atools::nativeCleanPath(pluginsDir.absoluteFilePath(xpc));
           xpconnectsText.append(tr("<li><a href=\"%1\">%2</a></li>").
-                                arg(QUrl::fromLocalFile(xpconnect).toString()).arg(atools::nativeCleanPath(xpconnect)));
+                                arg(QUrl::fromLocalFile(xpc).toString()).arg(atools::nativeCleanPath(xpc)));
         }
 
         atools::gui::MessageBox questionBox(parent);
@@ -152,9 +177,9 @@ bool XpconnectInstaller::install()
         if(questionBox.exec() == QMessageBox::Yes)
         {
           // Delete all found plugins
-          for(const QString& xpconnect : qAsConst(xpconnects))
+          for(const QString& xpc : qAsConst(xpconnects))
           {
-            fileOperations.removeDirectoryToTrash(xpconnect);
+            fileOperations.removeDirectoryToTrash(xpc);
             if(fileOperations.hasErrors())
             {
               dialog->warning(tr("Error(s) while moving directory to trash: %1 installation stopped.").
@@ -169,17 +194,8 @@ bool XpconnectInstaller::install()
 
       if(deleteOk)
       {
-#ifdef Q_OS_MACOS
-        QDir bundleDir(QCoreApplication::applicationDirPath());
-        bundleDir.cdUp(); // MacOS
-        bundleDir.cdUp(); // Contents
-        bundleDir.cdUp(); // Little Navmap.app
-        QString sourcePath = bundleDir.path() % QDir::separator() % xpconnectName;
-#else
-        QString sourcePath = QCoreApplication::applicationDirPath() % QDir::separator() % xpconnectName;
-#endif
         // Copy from installation folder recursively
-        fileOperations.copyDirectory(sourcePath, pluginsPath % QDir::separator() % xpconnectName,
+        fileOperations.copyDirectory(xpconnectPath(), pluginsPath % atools::SEP % xpconnectName(),
                                      true /* overwrite */, true /* hidden */, true /* system */);
 
         if(fileOperations.hasErrors())
@@ -193,4 +209,9 @@ bool XpconnectInstaller::install()
   }
 
   return retval;
+}
+
+bool XpconnectInstaller::isXpconnectAvailable()
+{
+  return QFile::exists(xpconnectPath());
 }

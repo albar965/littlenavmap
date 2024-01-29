@@ -44,12 +44,16 @@ public:
    * Returns true if successfull. */
   bool install();
 
+  /* true if the plugin can be found in the installation folder */
+  static bool isXpconnectAvailable();
+
 private:
+  /* Plugin name which can differ between OS */
+  static QString xpconnectPath();
+  static QString xpconnectName();
+
   QWidget *parent;
   atools::gui::Dialog *dialog;
-
-  /* Plugin name which can differ between OS */
-  QString xpconnectName;
 };
 
 #endif // XPCONNECTINSTALLER_H
