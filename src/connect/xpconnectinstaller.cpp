@@ -21,7 +21,6 @@
 #include "atools.h"
 #include "common/constants.h"
 #include "gui/dialog.h"
-#include "gui/helphandler.h"
 #include "util/fileoperations.h"
 #include "gui/messagebox.h"
 
@@ -146,7 +145,8 @@ bool XpconnectInstaller::install()
         questionBox.setMessage(tr("<p>Found one or more previous installations of Little Xpconnect using a non-standard name:</p>"
                                     "<p><ul>%1</ul>(click to show)</p>"
                                       "<p>Check these plugins manually if you are not sure what they are.</p>"
-                                        "<p>Delete these plugins now to avoid issues?</p>").arg(xpconnectsText.join(QString())));
+                                        "<p>Move these plugins to the system trash now to avoid issues?</p>").
+                               arg(xpconnectsText.join(QString())));
         questionBox.setIcon(QMessageBox::Question);
 
         if(questionBox.exec() == QMessageBox::Yes)
@@ -154,9 +154,10 @@ bool XpconnectInstaller::install()
           // Delete all found plugins
           for(const QString& xpconnect : qAsConst(xpconnects))
           {
-            if(!fileOperations.removeDirectory(xpconnect, false /* keepDirs */, true /* hidden */, true /* system */))
+            fileOperations.removeDirectoryToTrash(xpconnect);
+            if(fileOperations.hasErrors())
             {
-              dialog->warning(tr("Error(s) while deleting directory: %1 installation stopped.").
+              dialog->warning(tr("Error(s) while moving directory to trash: %1 installation stopped.").
                               arg(fileOperations.getErrors().join(tr(", "))));
 
               // Stop copying
@@ -178,7 +179,10 @@ bool XpconnectInstaller::install()
         QString sourcePath = QCoreApplication::applicationDirPath() % QDir::separator() % xpconnectName;
 #endif
         // Copy from installation folder recursively
-        if(!fileOperations.copyDirectory(sourcePath, pluginsPath % QDir::separator() % xpconnectName, true /* overwrite */))
+        fileOperations.copyDirectory(sourcePath, pluginsPath % QDir::separator() % xpconnectName,
+                                     true /* overwrite */, true /* hidden */, true /* system */);
+
+        if(fileOperations.hasErrors())
           dialog->warning(tr("Error(s) while copying directory: %1").arg(fileOperations.getErrors().join(tr(", "))));
         else
           retval = true;
