@@ -187,6 +187,9 @@ public:
   /* Load all theme files into Theme objects. Not visible themes will be excluded */
   void loadThemes();
 
+  /* Show errors in dialog stored by loadThemes() */
+  void showThemeLoadingErrors();
+
   /* Get theme by theme id (element <theme> in DGML. */
   const MapTheme& getTheme(const QString& themeId) const;
 
@@ -299,6 +302,8 @@ private:
   QActionGroup *mapProjectionActionGroup = nullptr;
 
   QSet<QRegularExpression> rejectDownloadUrlList;
+
+  QStringList errors;
 };
 
 QDebug operator<<(QDebug out, const MapTheme& theme);
