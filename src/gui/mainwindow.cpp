@@ -3546,10 +3546,10 @@ void MainWindow::runDirTool(bool manual)
     atools::gui::MessageBox box(this);
     box.setIcon(QMessageBox::Information);
     QString displayPath(atools::nativeCleanPath(dirTool.getApplicationDir()));
-    QUrl url = QUrl::fromLocalFile(displayPath);
     box.setMessage(tr("<p>Directory structure for Little Navmap files is already complete.</p>"
-                        "<p>The base directory is<br/>"
-                        "<a href=\"%1\">%2</a> (click to open)</p>").arg(url.toString()).arg(displayPath));
+                        "The base directory is"
+                          "%1&nbsp;(click to open)<br/>").
+                   arg(atools::util::HtmlBuilder::aFilePath(displayPath, atools::util::html::NOBR_WHITESPACE)));
     box.exec();
   }
 }
@@ -3819,14 +3819,14 @@ void MainWindow::resetAllSettings()
                       "back to default and restart %1.</b></p>"
                       "<p>User features like range rings or traffic patterns as well as "
                         "scenery, logbook and userpoint databases are not affected.</p>"
-                        "<p>A copy of the settings file<br/>"
-                        "<a href=\"%2\">%3</a> (click to open)<br/>"
-                        "will be created in the folder<br/>"
-                        "<a href=\"%4\">%5</a> (click to open).</p>"
-                          "<p>This allows you to undo this change.</p>"
-                            "<p>Reset and restart now?</p>").arg(QCoreApplication::applicationName()).
-                 arg(QUrl::fromLocalFile(settingFile).toString()).arg(settingFile).
-                 arg(QUrl::fromLocalFile(settingPath).toString()).arg(settingPath));
+                        "<p>A copy of the settings file</p>"
+                          "%2&nbsp;(click to open)"
+                          "<p>will be created in the folder</p>"
+                            "%3&nbsp;(click to open)."
+                            "<p>This allows you to undo this change.</p>"
+                              "<p>Reset and restart now?</p>").arg(QCoreApplication::applicationName()).
+                 arg(atools::util::HtmlBuilder::aFilePath(settingFile, atools::util::html::NOBR_WHITESPACE)).
+                 arg(atools::util::HtmlBuilder::aFilePath(settingPath, atools::util::html::NOBR_WHITESPACE)));
 
   box.setIcon(QMessageBox::Question);
   box.setHelpUrl(lnm::helpOnlineUrl % "MENUS.html#reset-and-restart", lnm::helpLanguageOnline());

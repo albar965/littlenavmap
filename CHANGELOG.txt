@@ -100,8 +100,9 @@ A big thank you to all who reported bugs and issues!
 * Now safely catching termination signals on Linux. This avoids data loss due to unsaved files when
   terminating with Ctrl+C from the command line.
 * Now resizing connection and load scenery dialogs to avoid cutting off content. Saving size now.
-* Fixed opening and selecting of files in system file manager when clicking on links in dialogs.
 * Added `Tools` -> `Files and Directories` -> `Show GLOBE Offline Elevation Data Installation Directory`.
+* Now opening and selecting files in system file manager when clicking on links in dialogs. This is
+  working now for Linux and macOS too.
 
 ### Web Server
 
