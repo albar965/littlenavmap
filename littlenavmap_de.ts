@@ -21863,27 +21863,27 @@ kHz/MHz</translation>
     <message>
         <location filename="src/mapgui/mapthemehandler.cpp" line="107"/>
         <source>Duplicate theme id &quot;%1&quot; in element &quot;&amp;lt;theme&amp;gt;&quot;. File with first occurrence%2&amp;nbsp;(click to show).&lt;br/&gt;File with second occurrence being ignored%3&amp;nbsp;(click to show).&lt;br/&gt;Theme ids have to be unique across all map themes.&lt;br/&gt;&lt;b&gt;Remove one of these two map themes to avoid this message.&lt;/b&gt;&lt;br/&gt;</source>
-        <translation>Doppelte Kartenthemenkennung &quot;%1&quot; in Element &quot;&lt;theme&gt;&quot;. Datei mit ersten Vorkommen%2 (zum Anzeigen klicken).&lt;br/&gt;Die Datei mit zweiten Vorkommen wird ignoriert%3 (zum Anzeigen klicken).&lt;br/&gt;Themenkennungen müssen eindeutig zu allen Kartenthemen sein.&lt;br/&gt;&lt;b&gt;Entfernen Sie eines dieser beiden Kartenthemen, um diese Nachricht zu vermeiden.&lt;/b&gt;&lt;br/&gt;</translation>
+        <translation>Doppelte Kartenthemenkennung &quot;%1&quot; in Element &quot;&amp;lt;theme&amp;gt;&quot;. Datei mit ersten Vorkommen%2 (zum Anzeigen klicken).&lt;br/&gt;Die Datei mit zweiten Vorkommen wird ignoriert%3 (zum Anzeigen klicken).&lt;br/&gt;Themenkennungen müssen eindeutig zu allen Kartenthemen sein.&lt;br/&gt;&lt;b&gt;Entfernen Sie eines dieser beiden Kartenthemen, um diese Nachricht zu vermeiden.&lt;/b&gt;&lt;br/&gt;</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapthemehandler.cpp" line="143"/>
         <source>Duplicate source directory or directories &quot;%1&quot; in element &quot;&amp;lt;sourcedir&amp;gt;&quot;.&lt;br/&gt;File with first occurrence%2&amp;nbsp;(click to show).&lt;br/&gt;File(s) with second occurrence being ignored%3 (click to show).&lt;br/&gt;Source directories are used to cache map tiles and have to be unique across all map themes.&lt;br/&gt;&lt;b&gt;Remove one or more of these map themes to avoid this message.&lt;/b&gt;&lt;br/&gt;</source>
-        <translation>Doppeltes Quellverzeichnis oder Verzeichnisse &quot;%1&quot; in Element &quot;&lt;sourcedir&gt;&quot;.&lt;br/&gt;Datei mit erstem Ereignis%2 (zum Anzeigen klicken).&lt;br/&gt;Datei(en) mit zweitem Vorkommen werden oder wird ignoriert%3 (zum Anzeigen klicken).&lt;br/&gt;Quellenverzeichnisse werden verwendet, um Kartenkacheln zischen zu speichern und müssen eindeutig über alle Kartenthemen sein.&lt;br/&gt;&lt;b&gt;Entfernen Sie ein oder mehrere dieser Kartenthemen, um diese Nachricht zu vermeiden.&lt;/b&gt;&lt;br/&gt;</translation>
+        <translation>Doppeltes Quellverzeichnis oder Verzeichnisse &quot;%1&quot; in Element &quot;&amp;lt;sourcedir&amp;gt;&quot;.&lt;br/&gt;Datei mit erstem Ereignis%2 (zum Anzeigen klicken).&lt;br/&gt;Datei(en) mit zweitem Vorkommen werden oder wird ignoriert%3 (zum Anzeigen klicken).&lt;br/&gt;Quellenverzeichnisse werden verwendet, um Kartenkacheln zischen zu speichern und müssen eindeutig über alle Kartenthemen sein.&lt;br/&gt;&lt;b&gt;Entfernen Sie ein oder mehrere dieser Kartenthemen, um diese Nachricht zu vermeiden.&lt;/b&gt;&lt;br/&gt;</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapthemehandler.cpp" line="158"/>
         <source>Empty theme id in in element &quot;&amp;lt;theme&amp;gt;&quot; in file%1&amp;nbsp;(click to show).&lt;br/&gt;&lt;b&gt;Remove or repair this map theme to avoid this message.&lt;/b&gt;&lt;br/&gt;</source>
-        <translation>Leeres Kennung in Kartenthema im Element &quot;&lt;theme&gt;&quot; in Datei%1 (zum Anzeigen klicken).&lt;br/&gt;&lt;b&gt;Entfernen oder reparieren Sie dieses Kartenthema, um diese Nachricht zu vermeiden.&lt;/b&gt;&lt;br/&gt;</translation>
+        <translation>Leeres Kennung in Kartenthema im Element &quot;&amp;lt;theme&amp;gt;&quot; in Datei%1 (zum Anzeigen klicken).&lt;br/&gt;&lt;b&gt;Entfernen oder reparieren Sie dieses Kartenthema, um diese Nachricht zu vermeiden.&lt;/b&gt;&lt;br/&gt;</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapthemehandler.cpp" line="167"/>
         <source>Empty source directory in in element &quot;&amp;lt;sourcedir&amp;gt;&quot; in file%1&amp;nbsp;(click to show).&lt;br/&gt;&lt;b&gt;Remove or repair this map theme to avoid this message.&lt;/b&gt;&lt;br/&gt;</source>
-        <translation>Leeres Quellverzeichnis im Element &quot;&lt;sourcedir&gt;&quot; in Datei%1 (zum Anzeigen klicken).&lt;br/&gt;&lt;b&gt;Entfernen oder reparieren Sie dieses Kartenthema, um diese Nachricht zu vermeiden.&lt;/b&gt;&lt;br/&gt;</translation>
+        <translation>Leeres Quellverzeichnis im Element &quot;&amp;lt;sourcedir&amp;gt;&quot; in Datei%1 (zum Anzeigen klicken).&lt;br/&gt;&lt;b&gt;Entfernen oder reparieren Sie dieses Kartenthema, um diese Nachricht zu vermeiden.&lt;/b&gt;&lt;br/&gt;</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapthemehandler.cpp" line="176"/>
         <source>Invalid target &quot;%1&quot; in element &quot;&amp;lt;target&amp;gt;&quot; in file %2&amp;nbsp;(click to show).&lt;br/&gt;Element must contain text &quot;earth&quot;.&lt;br/&gt;&lt;b&gt;Remove or repair this map theme to avoid this message.&lt;/b&gt;&lt;br/&gt;</source>
-        <translation>Ungültiges Ziel &quot;%1&quot; im Element &quot;&lt;target&gt;&quot; in der Datei %2 (zum Anzeigen klicken).&lt;br/&gt;Das Element muss den Text &quot;earth&quot; enthalten.&lt;br/&gt;&lt;b&gt;Entfernen oder reparieren Sie dieses Kartenthema, um diese Nachricht zu vermeiden.&lt;/b&gt;&lt;br/&gt;</translation>
+        <translation>Ungültiges Ziel &quot;%1&quot; im Element &quot;&amp;lt;target&amp;gt;&quot; in der Datei %2 (zum Anzeigen klicken).&lt;br/&gt;Das Element muss den Text &quot;earth&quot; enthalten.&lt;br/&gt;&lt;b&gt;Entfernen oder reparieren Sie dieses Kartenthema, um diese Nachricht zu vermeiden.&lt;/b&gt;&lt;br/&gt;</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapthemehandler.cpp" line="200"/>
