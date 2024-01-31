@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -215,7 +215,7 @@ void MapPainterIls::drawIlsSymbol(const map::MapIls& ils, bool fast)
       // get an approximation of the ILS length
       int featherLen = static_cast<int>(std::roundf(scale->getPixelForMeter(nmToMeter(FEATHER_LEN_NM), rotate)));
 
-      if(featherLen > MIN_LENGHT_FOR_TEXT)
+      if(featherLen > MIN_LENGTH_FOR_TEXT)
       {
         if(context->flags2 & opts2::MAP_NAVAID_TEXT_BACKGROUND)
         {

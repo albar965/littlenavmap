@@ -167,12 +167,12 @@ public:
 
   int getShownMinimumRunwayFt() const
   {
-    return minimumRunwayLenghtFt;
+    return minimumRunwayLengthFt;
   }
 
   void setShowMinimumRunwayFt(int value)
   {
-    minimumRunwayLenghtFt = value;
+    minimumRunwayLengthFt = value;
   }
 
   /* No drawing at all and not map interactions except moving and zooming if true.
@@ -216,7 +216,7 @@ private:
   QSet<int> shownDetailAirportIds;
 
   /* Value from toolbar */
-  int minimumRunwayLenghtFt = 0;
+  int minimumRunwayLengthFt = 0;
 
   /* Default detail factor. Range is from 5 to 15 */
   int detailLevel = 10;

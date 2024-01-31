@@ -347,7 +347,7 @@ bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport, const 
       context.webMap = mapPaintWidget->isWeb();
       context.currentDistanceMarkerId = NavApp::getMapWidgetGui()->getCurrentDistanceMarkerId();
 
-      context.mimimumRunwayLengthFt = minimumRunwayLenghtFt;
+      context.mimimumRunwayLengthFt = minimumRunwayLengthFt;
 
       // Copy default font
       context.defaultFont = painter->font();
