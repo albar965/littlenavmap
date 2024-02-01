@@ -34,10 +34,6 @@ A big thank you to all who reported bugs and issues!
 
 ### Flight Plan and Export
 
-* Fixed issue where no departure runway could be selected if a plan consisted of only one airport.
-  This can happen when starting to build a flight plan and left menu items in context menus disabled.
-* Corrected wrong warning about VFR when exporting a PLN flight plan for MSFS. This appeared when
-  using a departure or destination runway selection.
 * Now assigning runway automatically for STAR and approaches to avoid error messages about runway
   mismatches. This means that a selected STAR runway changes automatically to the one used by a
   newly selected approach if the STAR allows multiple runways.
@@ -45,13 +41,17 @@ A big thank you to all who reported bugs and issues!
   already inserted avoiding the runway selection dialog.
 * Fix for PLN flight plan export in MSFS where transitions were not loaded by MSFS due to a missing
   waypoint. Example: EDDV, using STAR NIE27 and approach NIE.I27RY or approach SAS.I27RZ.
+* Fixed issue where no departure runway could be selected if a plan consisted of only one airport.
+  This can happen when starting to build a flight plan and left menu items in context menus disabled.
+* Corrected wrong warning about VFR when exporting a PLN flight plan for MSFS. This appeared when
+  using a departure or destination runway selection.
 * Better transition detection now when importing MSFS PLN files. Using last STAR waypoint or last
   en-route waypoint to automatically find a matching approach transition.
 * Fixed issue where runway filters were missing in some cases in procedure search.
   Example: KIAD and 15L where the runway has only SID and STAR but no approaches.
 * Fixed route description to recognize a STAR which is equal to waypoint after an airway.
   Example: `RJAA OOITA Y40 KAZMA RJFT` resulted in `No waypoint after airway Y40`.
-  KAZMA is STAR as well as a waypoint ending airway Y40.
+  KAZMA is STAR as well as a waypoint ending airway Y40. Now adding STAR to plan for these cases.
 * Now generating correct route description for single digit runway.
   Example: KYKM runway 9 to 'KYKM/09'.
 * Fixed wrong error message about parking not found after deleting or replacing departure airport.
@@ -78,29 +78,32 @@ A big thank you to all who reported bugs and issues!
   OpenStreetMap first.
 * Adjusted display of navaids for better visibility on dark maps like CARTO Dark Matter or
   Mapbox Dark.
-* Reduced size of minor airports like helipads and water ports.
 * The empty airport display option is now disabled per default on new installations to avoid
   confusion also with wrongly labeled 2D airports in X-Plane 12.
 * Fixes for airspace altitude display in information and in map.
+* Other small improvements in map display.
 
 ### User Interface
 
-* Added Xpconnect installation option from main menu `Tools` -> `Install Little Xpconnect in X-Plane plugins`.
+* Added installation option for Little Xpconnect from main menu
+  `Tools` -> `Install Little Xpconnect in X-Plane plugins`.
   This can be used to install or update the X-Plane plugin from the installation folder.
   Note that the plugin will be installed in the currently selected X-Plane instance from
   menu `Scenery Library`.
-* Improved text and icon display for the dark user interface style.
-* Renamed user interface style `Night` to `Dark`.
+  Do not download the plugin manually. It is included in the Little Navmap download archive.
+  * Renamed user interface style `Night` to `Dark`.
+* Improved text and icon display for the user interface style `Dark`.
 * Added option to adjust text size for tab 'Flight Plan Remarks' in options on page `Display and Text`.
 * Fixed bug where cleanup did not work properly in logbook and left over logbook entries which could
   not be removed.
-* Changed application to catch program stopping during Windows shutdown which resulted in wrong
-  crash reports. Now exiting program cleanly when shutting down Windows with Little Navmap
-  running.
+* Changed application to catch Windows shutdown which resulted in wrong crash reports.
+  Now exiting program cleanly when shutting down Windows with Little Navmap running.
 * Now safely catching termination signals on Linux. This avoids data loss due to unsaved files when
   terminating with Ctrl+C from the command line.
-* Now resizing connection and load scenery dialogs to avoid cutting off content. Saving size now.
-* Added `Tools` -> `Files and Directories` -> `Show GLOBE Offline Elevation Data Installation Directory`.
+* Now resizing connection and load scenery dialogs to avoid cut off content. Saving size now.
+* Added menu item in `Tools` -> `Files and Directories` ->
+  `Show GLOBE Offline Elevation Data Installation Directory` to open the GLOBE installation folder.
+* Added more clickable blue links for files and folders in information, warning or question dialog windows.
 * Now opening and selecting files in system file manager when clicking on links in dialogs. This is
   working now for Linux and macOS too.
 
@@ -109,20 +112,21 @@ A big thank you to all who reported bugs and issues!
 * Fixed a deadlock resulting in program freeze in HTTP server. This appeared when shutting down with
   parallel incoming web requests.
 * Updated internal HTTP server by Stefan Frings to latest version from 1.9.0.
-* Corrected excessive logging in HTTP server.
+* Corrected excessive logging in HTTP server which can cause stutters.
 
 ### Scenery Library
 
 * MSFS: Fixed issues with moved or updated airports when reading scenery library.
-* Doubled number or arc and circle segments for more accuracy in map display airspaces.
-* Fixed wrong calculation for airport rating which did not update add-on airports for MSFS, FSX and P3D.
+* Doubled number of airspace arc and circle segments for more accuracy.
+* Fixed wrong calculation for airport rating which did not update add-on airports in some cases
+  for MSFS, FSX and P3D.
 * Deleting duplicate navaids now by region, ident and position. This allows to update frequency or
   type for VOR and NDB on P3D or FSX by add-on.
 
-### Navigraph Navdata Compiler
+### Navigraph Navdatabase
 
 Note that these changes will be deployed in a future cycle (most likely 2402) and need an
-updated navdatabase.
+updated Navigraph navdatabase.
 
 * Runways marked as closed are now shown as such when using mode `Use Navigraph for all Features`.
 * Airport patterns now correctly marked as not available.
