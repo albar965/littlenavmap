@@ -46,6 +46,17 @@ const static quint64 KEY = 0x19CB0467EBD391CC;
 const static QLatin1String FILENAME("mapthemekeys.bin");
 const static int MAX_ERRORS = 5;
 
+QString MapTheme::dgmlDisplayPath() const
+{
+  return atools::nativeCleanPath(dgmlFilepath);
+}
+
+QString MapTheme::displayPath() const
+{
+  return atools::nativeCleanPath(QFileInfo(dgmlFilepath).path());
+}
+
+// ==================================================================================
 MapThemeHandler::MapThemeHandler(QWidget *mainWindowParam)
   : QObject(mainWindowParam), mainWindow(mainWindowParam)
 {
@@ -104,9 +115,9 @@ void MapThemeHandler::loadThemes()
       if(ids.contains(theme.theme))
       {
         MapTheme otherTheme = ids.value(theme.theme);
-        errors.append(tr("Duplicate theme id \"%1\" in element \"&lt;theme&gt;\". File with first occurrence"
+        errors.append(tr("Duplicate map theme id \"%1\" in element \"&lt;theme&gt;\". Theme with first occurrence"
                          "%2&nbsp;(click to show).<br/>"
-                         "File with second occurrence being ignored"
+                         "Theme with second occurrence being ignored"
                          "%3&nbsp;(click to show).<br/>"
                          "Theme ids have to be unique across all map themes.<br/>"
                          "<b>Remove one of these two map themes to avoid this message.</b><br/>").
@@ -141,10 +152,10 @@ void MapThemeHandler::loadThemes()
           otherDgmlFilepathsText.append(HtmlBuilder::aFilePath(otherDgmlFilepath, FLAGS));
 
         errors.append(tr("Duplicate source directory or directories \"%1\" in element \"&lt;sourcedir&gt;\".<br/>"
-                         "File with first occurrence"
+                         "Map theme with first occurrence"
                          "%2&nbsp;(click to show).<br/>"
-                         "File(s) with second occurrence being ignored"
-                         "%3 (click to show).<br/>"
+                         "Theme(s) with second occurrence being ignored"
+                         "%3&nbsp;(click to show).<br/>"
                          "Source directories are used to cache map tiles and have to be unique across all map themes.<br/>"
                          "<b>Remove one or more of these map themes to avoid this message.</b><br/>").
                       arg(theme.sourceDirs.join(tr("\", \""))).
@@ -155,7 +166,7 @@ void MapThemeHandler::loadThemes()
 
       if(theme.theme.isEmpty())
       {
-        errors.append(tr("Empty theme id in in element \"&lt;theme&gt;\" in file"
+        errors.append(tr("Empty id in in element \"&lt;theme&gt;\" in map theme"
                          "%1&nbsp;(click to show).<br/>"
                          "<b>Remove or repair this map theme to avoid this message.</b><br/>").
                       arg(HtmlBuilder::aFilePath(theme.displayPath(), FLAGS)));
@@ -164,7 +175,7 @@ void MapThemeHandler::loadThemes()
 
       if(theme.online && theme.sourceDirs.isEmpty())
       {
-        errors.append(tr("Empty source directory in in element \"&lt;sourcedir&gt;\" in file"
+        errors.append(tr("Empty source directory in in element \"&lt;sourcedir&gt;\" in map theme"
                          "%1&nbsp;(click to show).<br/>"
                          "<b>Remove or repair this map theme to avoid this message.</b><br/>").
                       arg(HtmlBuilder::aFilePath(theme.displayPath(), FLAGS)));
@@ -173,7 +184,7 @@ void MapThemeHandler::loadThemes()
 
       if(theme.target != "earth")
       {
-        errors.append(tr("Invalid target \"%1\" in element \"&lt;target&gt;\" in file "
+        errors.append(tr("Invalid target \"%1\" in element \"&lt;target&gt;\" in map theme "
                          "%2&nbsp;(click to show).<br/>"
                          "Element must contain text \"earth\".<br/>"
                          "<b>Remove or repair this map theme to avoid this message.</b><br/>").
@@ -197,7 +208,7 @@ void MapThemeHandler::loadThemes()
 
       if(rejected)
       {
-        errors.append(tr("Theme in file"
+        errors.append(tr("Map theme"
                          "%1&nbsp;(click to show)<br/>"
                          "was rejected since the service is discontinued.<br/>"
                          "<b>Remove this map theme to avoid this message.</b><br/>").
@@ -963,9 +974,4 @@ QString MapThemeHandler::getMapThemeDefaultDir()
 QString MapThemeHandler::getMapThemeUserDir()
 {
   return OptionData::instance().getCacheMapThemeDir();
-}
-
-QString MapTheme::displayPath() const
-{
-  return atools::nativeCleanPath(dgmlFilepath);
 }

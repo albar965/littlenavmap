@@ -153,7 +153,10 @@ public:
     return online;
   }
 
-  /* Native separators for display */
+  /* Native separators for display filepath of DGML file. */
+  QString dgmlDisplayPath() const;
+
+  /* Native separators for display path of the theme folder. */
   QString displayPath() const;
 
 private:
