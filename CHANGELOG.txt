@@ -122,6 +122,8 @@ A big thank you to all who reported bugs and issues!
   for MSFS, FSX and P3D.
 * Deleting duplicate navaids now by region, ident and position. This allows to update frequency or
   type for VOR and NDB on P3D or FSX by add-on.
+* Wrongly built airports like the MS MKJS now keep their procedure information in MSFS despite
+  trying to override it with an empty procedure set. #1085
 
 ### Navigraph Navdatabase
 
