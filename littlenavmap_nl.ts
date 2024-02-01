@@ -20565,225 +20565,226 @@ kHz/MHz</translation>
 <context>
     <name>MapThemeHandler</name>
     <message>
-        <location filename="src/mapgui/mapthemehandler.cpp" line="107"/>
-        <source>Duplicate theme id &quot;%1&quot; in element &quot;&amp;lt;theme&amp;gt;&quot;. File with first occurrence%2&amp;nbsp;(click to show).&lt;br/&gt;File with second occurrence being ignored%3&amp;nbsp;(click to show).&lt;br/&gt;Theme ids have to be unique across all map themes.&lt;br/&gt;&lt;b&gt;Remove one of these two map themes to avoid this message.&lt;/b&gt;&lt;br/&gt;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="src/mapgui/mapthemehandler.cpp" line="143"/>
-        <source>Duplicate source directory or directories &quot;%1&quot; in element &quot;&amp;lt;sourcedir&amp;gt;&quot;.&lt;br/&gt;File with first occurrence%2&amp;nbsp;(click to show).&lt;br/&gt;File(s) with second occurrence being ignored%3 (click to show).&lt;br/&gt;Source directories are used to cache map tiles and have to be unique across all map themes.&lt;br/&gt;&lt;b&gt;Remove one or more of these map themes to avoid this message.&lt;/b&gt;&lt;br/&gt;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="src/mapgui/mapthemehandler.cpp" line="158"/>
-        <source>Empty theme id in in element &quot;&amp;lt;theme&amp;gt;&quot; in file%1&amp;nbsp;(click to show).&lt;br/&gt;&lt;b&gt;Remove or repair this map theme to avoid this message.&lt;/b&gt;&lt;br/&gt;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="src/mapgui/mapthemehandler.cpp" line="167"/>
-        <source>Empty source directory in in element &quot;&amp;lt;sourcedir&amp;gt;&quot; in file%1&amp;nbsp;(click to show).&lt;br/&gt;&lt;b&gt;Remove or repair this map theme to avoid this message.&lt;/b&gt;&lt;br/&gt;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="src/mapgui/mapthemehandler.cpp" line="176"/>
-        <source>Invalid target &quot;%1&quot; in element &quot;&amp;lt;target&amp;gt;&quot; in file %2&amp;nbsp;(click to show).&lt;br/&gt;Element must contain text &quot;earth&quot;.&lt;br/&gt;&lt;b&gt;Remove or repair this map theme to avoid this message.&lt;/b&gt;&lt;br/&gt;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="src/mapgui/mapthemehandler.cpp" line="200"/>
-        <source>Theme in file%1&amp;nbsp;(click to show)&lt;br/&gt;was rejected since the service is discontinued.&lt;br/&gt;&lt;b&gt;Remove this map theme to avoid this message.&lt;/b&gt;&lt;br/&gt;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="src/mapgui/mapthemehandler.cpp" line="258"/>
+        <location filename="src/mapgui/mapthemehandler.cpp" line="269"/>
         <source>&lt;b&gt;%1 more %2 found ...&lt;/b&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapthemehandler.cpp" line="258"/>
+        <location filename="src/mapgui/mapthemehandler.cpp" line="269"/>
         <source>error</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapthemehandler.cpp" line="258"/>
+        <location filename="src/mapgui/mapthemehandler.cpp" line="269"/>
         <source>errors</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapthemehandler.cpp" line="264"/>
+        <location filename="src/mapgui/mapthemehandler.cpp" line="275"/>
         <source>&lt;p&gt;Found errors in map %2:&lt;/p&gt;&lt;ul&gt;&lt;li&gt;%1&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;Ignoring duplicate, incorrect or rejected %2.&lt;/p&gt;&lt;p&gt;Note that all other valid map themes are loaded and can be used despite this message.&lt;/p&gt;&lt;p&gt;Restart Little Navmap after fixing the issues.&lt;/p&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapthemehandler.cpp" line="340"/>
+        <location filename="src/mapgui/mapthemehandler.cpp" line="351"/>
         <source>Failed encrypting key for %1. Reason: %2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapthemehandler.cpp" line="354"/>
+        <location filename="src/mapgui/mapthemehandler.cpp" line="365"/>
         <source>Failed writing to %1. Reason: %2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapthemehandler.cpp" line="362"/>
+        <location filename="src/mapgui/mapthemehandler.cpp" line="373"/>
         <source>Cannot open file for writing %1. Reason: %2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapthemehandler.cpp" line="423"/>
+        <location filename="src/mapgui/mapthemehandler.cpp" line="434"/>
         <source>Failed decrypting key from %1. Reason: %2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapthemehandler.cpp" line="430"/>
+        <location filename="src/mapgui/mapthemehandler.cpp" line="441"/>
         <source>Failed reading from %1. Reason: %2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapthemehandler.cpp" line="438"/>
+        <location filename="src/mapgui/mapthemehandler.cpp" line="449"/>
         <source>Cannot open file for reading %1. Reason: %2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapthemehandler.cpp" line="571"/>
+        <location filename="src/mapgui/mapthemehandler.cpp" line="582"/>
         <source>Cannot open file %1. Reason: %2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapthemehandler.cpp" line="668"/>
+        <location filename="src/mapgui/mapthemehandler.cpp" line="679"/>
         <source>Select map theme and map projection</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapthemehandler.cpp" line="720"/>
+        <location filename="src/mapgui/mapthemehandler.cpp" line="731"/>
         <source>%1 (offline)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapthemehandler.cpp" line="723"/>
+        <location filename="src/mapgui/mapthemehandler.cpp" line="734"/>
         <source> *</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapthemehandler.cpp" line="728"/>
+        <location filename="src/mapgui/mapthemehandler.cpp" line="739"/>
         <source>online</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapthemehandler.cpp" line="728"/>
+        <location filename="src/mapgui/mapthemehandler.cpp" line="739"/>
         <source>offline</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapthemehandler.cpp" line="729"/>
+        <location filename="src/mapgui/mapthemehandler.cpp" line="740"/>
         <source>* requires registration</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapthemehandler.cpp" line="729"/>
+        <location filename="src/mapgui/mapthemehandler.cpp" line="740"/>
         <source>free</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapthemehandler.cpp" line="734"/>
+        <location filename="src/mapgui/mapthemehandler.cpp" line="745"/>
         <source>, </source>
         <translation type="unfinished">, </translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapthemehandler.cpp" line="743"/>
+        <location filename="src/mapgui/mapthemehandler.cpp" line="754"/>
         <source>Ctrl+Alt+%1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapthemehandler.cpp" line="817"/>
+        <location filename="src/mapgui/mapthemehandler.cpp" line="828"/>
         <source>&lt;p&gt;Click here to create an account: &lt;a href=&quot;%1&quot;&gt;%2&lt;/a&gt;&lt;/p&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapthemehandler.cpp" line="818"/>
+        <location filename="src/mapgui/mapthemehandler.cpp" line="829"/>
         <source>Link</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapthemehandler.cpp" line="822"/>
+        <location filename="src/mapgui/mapthemehandler.cpp" line="833"/>
         <source>&lt;p&gt;The map theme &quot;%1&quot; requires additional information.&lt;/p&gt;&lt;p&gt;You have to create an user account at the related website and then create an username, an access key or a token.&lt;br/&gt;Most of these services offer a free plan for hobbyists.&lt;/p&gt;&lt;p&gt;Then go to menu &quot;Tools&quot; -&gt; &quot;Options&quot; and to page &quot;Map Display Keys&quot; in Little Navmap and enter the information for the key(s) below:&lt;/p&gt;&lt;ul&gt;&lt;li&gt;%2&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;The map will not show correctly until this is done.&lt;/p&gt;%3</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapthemehandler.cpp" line="829"/>
+        <location filename="src/mapgui/mapthemehandler.cpp" line="840"/>
         <source>&lt;/li&gt;&lt;li&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapthemehandler.cpp" line="830"/>
+        <location filename="src/mapgui/mapthemehandler.cpp" line="841"/>
         <source>Do not &amp;show this dialog again.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapthemehandler.cpp" line="840"/>
+        <location filename="src/mapgui/mapthemehandler.cpp" line="851"/>
         <source>Map theme changed to %1.</source>
         <translation type="unfinished">Kaartthema veranderd naar %1.</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapthemehandler.cpp" line="855"/>
+        <location filename="src/mapgui/mapthemehandler.cpp" line="866"/>
         <source>Mercator</source>
         <translation type="unfinished">Mercator</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapthemehandler.cpp" line="860"/>
+        <location filename="src/mapgui/mapthemehandler.cpp" line="871"/>
         <source>Spherical</source>
         <translation type="unfinished">Sferisch</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapthemehandler.cpp" line="866"/>
+        <location filename="src/mapgui/mapthemehandler.cpp" line="877"/>
         <source>Map projection changed to %1.</source>
         <translation type="unfinished">Projectie kaart veranderd naar %1.</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapthemehandler.cpp" line="911"/>
+        <location filename="src/mapgui/mapthemehandler.cpp" line="922"/>
         <source>Directory is set to the included stock themes. You have to set a directory outside of the installation.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapthemehandler.cpp" line="926"/>
+        <location filename="src/mapgui/mapthemehandler.cpp" line="937"/>
         <source>Directory is valid. No map themes found inside.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapthemehandler.cpp" line="928"/>
+        <location filename="src/mapgui/mapthemehandler.cpp" line="939"/>
         <source>Directory is valid. %1 %2 found.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapthemehandler.cpp" line="269"/>
-        <location filename="src/mapgui/mapthemehandler.cpp" line="928"/>
+        <location filename="src/mapgui/mapthemehandler.cpp" line="280"/>
+        <location filename="src/mapgui/mapthemehandler.cpp" line="939"/>
         <source>map themes</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapthemehandler.cpp" line="150"/>
+        <location filename="src/mapgui/mapthemehandler.cpp" line="118"/>
+        <source>Duplicate map theme id &quot;%1&quot; in element &quot;&amp;lt;theme&amp;gt;&quot;. Theme with first occurrence%2&amp;nbsp;(click to show).&lt;br/&gt;Theme with second occurrence being ignored%3&amp;nbsp;(click to show).&lt;br/&gt;Theme ids have to be unique across all map themes.&lt;br/&gt;&lt;b&gt;Remove one of these two map themes to avoid this message.&lt;/b&gt;&lt;br/&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/mapgui/mapthemehandler.cpp" line="154"/>
+        <source>Duplicate source directory or directories &quot;%1&quot; in element &quot;&amp;lt;sourcedir&amp;gt;&quot;.&lt;br/&gt;Map theme with first occurrence%2&amp;nbsp;(click to show).&lt;br/&gt;Theme(s) with second occurrence being ignored%3&amp;nbsp;(click to show).&lt;br/&gt;Source directories are used to cache map tiles and have to be unique across all map themes.&lt;br/&gt;&lt;b&gt;Remove one or more of these map themes to avoid this message.&lt;/b&gt;&lt;br/&gt;</source>
+        <oldsource>Duplicate source directory or directories &quot;%1&quot; in element &quot;&amp;lt;sourcedir&amp;gt;&quot;.&lt;br/&gt;Map theme with first occurrence%2&amp;nbsp;(click to show).&lt;br/&gt;Theme(s) with second occurrence being ignored%3 (click to show).&lt;br/&gt;Source directories are used to cache map tiles and have to be unique across all map themes.&lt;br/&gt;&lt;b&gt;Remove one or more of these map themes to avoid this message.&lt;/b&gt;&lt;br/&gt;</oldsource>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/mapgui/mapthemehandler.cpp" line="161"/>
         <source>&quot;, &quot;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapthemehandler.cpp" line="152"/>
+        <location filename="src/mapgui/mapthemehandler.cpp" line="163"/>
         <source>&lt;br/&gt;</source>
         <translation type="unfinished">&lt;br/&gt;</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapthemehandler.cpp" line="269"/>
-        <location filename="src/mapgui/mapthemehandler.cpp" line="928"/>
+        <location filename="src/mapgui/mapthemehandler.cpp" line="169"/>
+        <source>Empty id in in element &quot;&amp;lt;theme&amp;gt;&quot; in map theme%1&amp;nbsp;(click to show).&lt;br/&gt;&lt;b&gt;Remove or repair this map theme to avoid this message.&lt;/b&gt;&lt;br/&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/mapgui/mapthemehandler.cpp" line="178"/>
+        <source>Empty source directory in in element &quot;&amp;lt;sourcedir&amp;gt;&quot; in map theme%1&amp;nbsp;(click to show).&lt;br/&gt;&lt;b&gt;Remove or repair this map theme to avoid this message.&lt;/b&gt;&lt;br/&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/mapgui/mapthemehandler.cpp" line="187"/>
+        <source>Invalid target &quot;%1&quot; in element &quot;&amp;lt;target&amp;gt;&quot; in map theme %2&amp;nbsp;(click to show).&lt;br/&gt;Element must contain text &quot;earth&quot;.&lt;br/&gt;&lt;b&gt;Remove or repair this map theme to avoid this message.&lt;/b&gt;&lt;br/&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/mapgui/mapthemehandler.cpp" line="211"/>
+        <source>Map theme%1&amp;nbsp;(click to show)&lt;br/&gt;was rejected since the service is discontinued.&lt;br/&gt;&lt;b&gt;Remove this map theme to avoid this message.&lt;/b&gt;&lt;br/&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/mapgui/mapthemehandler.cpp" line="280"/>
+        <location filename="src/mapgui/mapthemehandler.cpp" line="939"/>
         <source>map theme</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapthemehandler.cpp" line="954"/>
+        <location filename="src/mapgui/mapthemehandler.cpp" line="965"/>
         <source>Base path(s) for map themes not found.
 %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapthemehandler.cpp" line="954"/>
+        <location filename="src/mapgui/mapthemehandler.cpp" line="965"/>
         <source>,
 </source>
         <translation type="unfinished"></translation>
