@@ -81,6 +81,7 @@ A big thank you to all who reported bugs and issues!
 * The empty airport display option is now disabled per default on new installations to avoid
   confusion also with wrongly labeled 2D airports in X-Plane 12.
 * Fixes for airspace altitude display in information and in map.
+* Adjusted aircraft trail recording to generate more accurate points when flying slow aircraft.
 * Other small improvements in map display.
 
 ### User Interface

@@ -297,6 +297,19 @@ void checkAndMigrateSettings()
         removeAndLog(lnm::OPTIONS_ONLINE_NETWORK_MAX_SHADOW_HDG_DIFF_DEG);
       }
 
+      if(optionsVersion <= Version("3.0.1.beta"))
+      {
+        removeAndLog(lnm::SETTINGS_AIRCRAFT_TRAIL + "MinGroundDistanceMeter");
+        removeAndLog(lnm::SETTINGS_AIRCRAFT_TRAIL + "MaxGroundTimeMs");
+        removeAndLog(lnm::SETTINGS_AIRCRAFT_TRAIL + "MinFlyingDistanceMeter");
+        removeAndLog(lnm::SETTINGS_AIRCRAFT_TRAIL + "MaxFlyingTimeMs");
+        removeAndLog(lnm::SETTINGS_AIRCRAFT_TRAIL + "MaxHeadingDiffDeg");
+        removeAndLog(lnm::SETTINGS_AIRCRAFT_TRAIL + "MaxGsDiffKts");
+        removeAndLog(lnm::SETTINGS_AIRCRAFT_TRAIL + "MaxAltDiffFtUpper");
+        removeAndLog(lnm::SETTINGS_AIRCRAFT_TRAIL + "MaxAltDiffFtLower");
+        removeAndLog(lnm::SETTINGS_AIRCRAFT_TRAIL + "AglThresholdFt");
+      }
+
       qInfo() << Q_FUNC_INFO << "Clearing all essential messages since version differs";
       messages::resetEssentialMessages();
 
