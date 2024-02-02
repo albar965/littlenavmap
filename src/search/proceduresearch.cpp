@@ -309,7 +309,7 @@ void ProcedureSearch::postDatabaseLoad()
   updateFilterBoxes();
   updateHeaderLabel();
   updateProcedureWind();
-  updateWidgets();
+  clearSelection();
 }
 
 void ProcedureSearch::showProcedures(const map::MapAirport& airport, bool departureFilter, bool arrivalFilter)
