@@ -1339,7 +1339,7 @@ void RouteController::loadFlightplan(atools::fs::pln::Flightplan flightplan, ato
                               "It may conflict with airport elevation, "
                               "procedure and/or airway restrictions.<br/><br/>"
                               "Applied best guess for cruising altitude, trying to avoid errors.<br/>"
-                              "Note that can undo this change.<br/><br/>"
+                              "Note that you can undo this change.<br/><br/>"
                               "Adjust the altitude manually as needed."), tr("Do not &show this dialog again."));
   }
 
