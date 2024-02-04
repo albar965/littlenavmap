@@ -109,22 +109,16 @@ AircraftTrail::AircraftTrail()
   // All conditions are combined using OR
   atools::settings::Settings& settings = atools::settings::Settings::instance();
 
-  // Minimum distance - no points closer
-  minGroundDistMeter = settings.getAndStoreValue(lnm::SETTINGS_AIRCRAFT_TRAIL + "MinGroundDistanceMeter", 20.).toFloat();
-
   // Force point after time passed
   maxGroundTimeMs = settings.getAndStoreValue(lnm::SETTINGS_AIRCRAFT_TRAIL + "MaxGroundTimeMs", 10000).toInt();
 
   // Load settings for trail point density when flying ===========================
-  // Minimum distance - no points closer even if parameters have changed
-  minFlyingDistMeter = settings.getAndStoreValue(lnm::SETTINGS_AIRCRAFT_TRAIL + "MinFlyingDistanceMeter", 50.).toFloat();
-
   // Force point after time passed
   maxFlyingTimeMs = settings.getAndStoreValue(lnm::SETTINGS_AIRCRAFT_TRAIL + "MaxFlyingTimeMs", 30000).toInt();
 
   // Changes in aircraft parameters trigger a new point
-  maxHeadingDiffDeg = settings.getAndStoreValue(lnm::SETTINGS_AIRCRAFT_TRAIL + "MaxHeadingDiffDeg", 3.).toFloat();
-  maxSpeedDiffKts = settings.getAndStoreValue(lnm::SETTINGS_AIRCRAFT_TRAIL + "MaxGsDiffKts", 5.).toFloat();
+  maxHeadingDiffDeg = settings.getAndStoreValue(lnm::SETTINGS_AIRCRAFT_TRAIL + "MaxHeadingDiffDeg", 5.).toFloat();
+  maxSpeedDiffKts = settings.getAndStoreValue(lnm::SETTINGS_AIRCRAFT_TRAIL + "MaxGsDiffKts", 10.).toFloat();
 
   maxAltDiffFtUpper = settings.getAndStoreValue(lnm::SETTINGS_AIRCRAFT_TRAIL + "MaxAltDiffFtUpper", 500.).toFloat();
   maxAltDiffFtLower = settings.getAndStoreValue(lnm::SETTINGS_AIRCRAFT_TRAIL + "MaxAltDiffFtLower", 50.).toFloat();
@@ -427,32 +421,18 @@ bool AircraftTrail::appendTrailPos(const atools::fs::sc::SimConnectUserAircraft&
   else
   {
     // Use a smaller distance on ground before storing position - distance depends on ground speed
-    float minDistanceMeter;
-    qint64 maxTimeMs;
-    if(onGround)
-    {
-      minDistanceMeter = minGroundDistMeter;
-      maxTimeMs = maxGroundTimeMs;
-    }
-    else
-    {
-      minDistanceMeter = minFlyingDistMeter;
-      maxTimeMs = maxFlyingTimeMs;
-    }
-
+    qint64 maxTimeMs = onGround ? maxGroundTimeMs : maxFlyingTimeMs;
     float actualAltitudeFt = userAircraft.getActualAltitudeFt();
     float maxAltDiffFt = userAircraft.getAltitudeAboveGroundFt() < aglThresholdFt ? maxAltDiffFtLower : maxAltDiffFtUpper;
 
-    Pos pos = posD.asPos();
     const AircraftTrailPos& last = constLast();
-    float distanceToLastMeter = pos.distanceMeterTo(last.getPosition());
 
-    // Test if any aircraft parameters have changed to create a point before max time or max distance is exceeded
-    bool speedChanged = almostNotEqual(lastUserAircraft->getGroundSpeedKts(), userAircraft.getGroundSpeedKts(), maxSpeedDiffKts);
-    bool altChanged = almostNotEqual(lastUserAircraft->getActualAltitudeFt(), actualAltitudeFt, maxAltDiffFt);
-    bool headingChanged =
-      atools::geo::angleAbsDiff(lastUserAircraft->getHeadingDegTrue(), userAircraft.getHeadingDegTrue()) > maxHeadingDiffDeg;
-    bool aboveMinDistance = distanceToLastMeter > minDistanceMeter;
+    // Test if any aircraft parameters have changed to create a point
+    bool speedChanged = almostNotEqual(lastGroundSpeedKts, userAircraft.getGroundSpeedKts(), maxSpeedDiffKts);
+    bool altChanged = almostNotEqual(lastActualAltitudeFt, actualAltitudeFt, maxAltDiffFt);
+    bool headingChanged = atools::geo::angleAbsDiff(lastHeadingDegTrue, userAircraft.getHeadingDegTrue()) > maxHeadingDiffDeg;
+
+    // bool aboveMinDistance = pos.distanceMeterTo(last.getPosition()) > minDistanceMeter;
     bool maxTimeExceeded = almostNotEqual(last.getTimestampMs(), timestampMs, maxTimeMs);
 
 #ifdef DEBUG_INFORMATION_TRAIL
@@ -469,14 +449,14 @@ bool AircraftTrail::appendTrailPos(const atools::fs::sc::SimConnectUserAircraft&
 #endif
 
     // New point if maximum time is exceeded or parameter change above minimum point distance
-    if(maxTimeExceeded || ((speedChanged || altChanged || headingChanged) && aboveMinDistance))
+    if(maxTimeExceeded || speedChanged || altChanged || headingChanged)
     {
 #ifdef DEBUG_INFORMATION_TRAIL
       qDebug() << Q_FUNC_INFO << "CHANGED ######################";
 #endif
       bool lastValid = lastUserAircraft->isValid();
       bool aircraftChanged = lastValid && lastUserAircraft->hasAircraftChanged(userAircraft);
-      bool jumped = !isEmpty() && pos.distanceMeterTo(last.getPosition()) > atools::geo::nmToMeter(MAX_POINT_DISTANCE_NM);
+      bool jumped = !isEmpty() && posD.asPos().distanceMeterTo(last.getPosition()) > atools::geo::nmToMeter(MAX_POINT_DISTANCE_NM);
 
       // Points where the track is interrupted (new flight) are indicated by invalid coordinates.
       // Warping at altitude does not interrupt a track.
@@ -506,8 +486,14 @@ bool AircraftTrail::appendTrailPos(const atools::fs::sc::SimConnectUserAircraft&
         }
         append(AircraftTrailPos(posD, timestampMs, onGround));
       }
-      *lastUserAircraft = userAircraft;
-    } // if(maxDistanceExceeded || maxTimeExceeded || speedChanged || altChanged || headingChanged)
+
+      // Update changed values for new added point
+      lastGroundSpeedKts = userAircraft.getGroundSpeedKts();
+      lastActualAltitudeFt = userAircraft.getActualAltitudeFt();
+      lastHeadingDegTrue = userAircraft.getHeadingDegTrue();
+    } // if(maxTimeExceeded || speedChanged || altChanged || headingChanged)
+
+    *lastUserAircraft = userAircraft;
   } // if(isEmpty() && userAircraft.isValid()) ... else
 
   if(!isEmpty())

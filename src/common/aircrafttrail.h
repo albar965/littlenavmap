@@ -224,10 +224,13 @@ private:
   atools::geo::Rect bounding;
 
   /* Trail density settings which depends on ground speed */
-  float minGroundDistMeter, minFlyingDistMeter, maxHeadingDiffDeg, maxSpeedDiffKts, maxAltDiffFtUpper, maxAltDiffFtLower, aglThresholdFt;
+  float maxHeadingDiffDeg, maxSpeedDiffKts, maxAltDiffFtUpper, maxAltDiffFtLower, aglThresholdFt;
   qint64 maxFlyingTimeMs, maxGroundTimeMs;
 
   atools::fs::sc::SimConnectUserAircraft *lastUserAircraft;
+
+  // Remember last values to detect changes in altitude or direction when recording points
+  float lastGroundSpeedKts = 0.f, lastActualAltitudeFt = 0.f, lastHeadingDegTrue = 0.f;
 
   /* Needed in RouteExportFormat stream operators to read different formats */
   static quint16 version;

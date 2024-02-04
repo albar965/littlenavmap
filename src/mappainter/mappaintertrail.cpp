@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -44,8 +44,10 @@ void MapPainterTrail::render()
 {
   if(context->objectTypes.testFlag(map::AIRCRAFT_TRAIL))
   {
+    const atools::geo::Pos& aircraftPos = mapPaintWidget->getUserAircraft().getPosition();
     const AircraftTrail& aircraftTrail = NavApp::getAircraftTrail();
-    const atools::geo::Rect& bounding = aircraftTrail.getBounding();
+    atools::geo::Rect bounding = aircraftTrail.getBounding();
+    bounding.extend(aircraftPos); // Add aircraft since this is not neccesarily a part of the trail
 
     // Have to do separate check for single point rect which appears right after deleting the trail
     if(!aircraftTrail.isEmpty() && (resolves(bounding) || (bounding.isPoint() && context->viewportRect.overlaps(bounding))))
@@ -67,7 +69,7 @@ void MapPainterTrail::render()
         maxAltitude = std::max(context->route->getCruiseAltitudeFt(), maxAltitude);
 
       atools::util::PainterContextSaver saver(context->painter);
-      const QVector<atools::geo::LineString> lineStrings = aircraftTrail.getLineStrings(mapPaintWidget->getUserAircraft().getPosition());
+      const QVector<atools::geo::LineString> lineStrings = aircraftTrail.getLineStrings(aircraftPos);
       paintAircraftTrail(lineStrings, aircraftTrail.getMinAltitude(), maxAltitude);
     }
   }
