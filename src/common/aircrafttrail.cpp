@@ -123,8 +123,8 @@ AircraftTrail::AircraftTrail()
   maxAltDiffFtUpper = settings.getAndStoreValue(lnm::SETTINGS_AIRCRAFT_TRAIL + "MaxAltDiffFtUpper", 500.).toFloat();
   maxAltDiffFtLower = settings.getAndStoreValue(lnm::SETTINGS_AIRCRAFT_TRAIL + "MaxAltDiffFtLower", 50.).toFloat();
 
-  // Use maxAltDiffFtLower if below or maxAltDiffFtUpper if above
-  aglThresholdFt = settings.getAndStoreValue(lnm::SETTINGS_AIRCRAFT_TRAIL + "AglThresholdFt", 5000.).toFloat();
+  // Use maxAltDiffFtLower if below or maxAltDiffFtUpper if above - interpolated
+  aglThresholdFt = settings.getAndStoreValue(lnm::SETTINGS_AIRCRAFT_TRAIL + "AglThresholdFt", 10000.).toFloat();
 }
 
 AircraftTrail::~AircraftTrail()
@@ -423,9 +423,15 @@ bool AircraftTrail::appendTrailPos(const atools::fs::sc::SimConnectUserAircraft&
     // Use a smaller distance on ground before storing position - distance depends on ground speed
     qint64 maxTimeMs = onGround ? maxGroundTimeMs : maxFlyingTimeMs;
     float actualAltitudeFt = userAircraft.getActualAltitudeFt();
-    float maxAltDiffFt = userAircraft.getAltitudeAboveGroundFt() < aglThresholdFt ? maxAltDiffFtLower : maxAltDiffFtUpper;
 
-    const AircraftTrailPos& last = constLast();
+    float maxAltDiffFt;
+    if(userAircraft.getAltitudeAboveGroundFt() < aglThresholdFt)
+      maxAltDiffFt =
+        atools::interpolate(maxAltDiffFtLower, maxAltDiffFtUpper, 0.f, aglThresholdFt, userAircraft.getAltitudeAboveGroundFt());
+    else
+      maxAltDiffFt = maxAltDiffFtUpper;
+
+    qDebug() << Q_FUNC_INFO << "maxAltDiffFt" << maxAltDiffFt;
 
     // Test if any aircraft parameters have changed to create a point
     bool speedChanged = almostNotEqual(lastGroundSpeedKts, userAircraft.getGroundSpeedKts(), maxSpeedDiffKts);
@@ -433,6 +439,7 @@ bool AircraftTrail::appendTrailPos(const atools::fs::sc::SimConnectUserAircraft&
     bool headingChanged = atools::geo::angleAbsDiff(lastHeadingDegTrue, userAircraft.getHeadingDegTrue()) > maxHeadingDiffDeg;
 
     // bool aboveMinDistance = pos.distanceMeterTo(last.getPosition()) > minDistanceMeter;
+    const AircraftTrailPos& last = constLast();
     bool maxTimeExceeded = almostNotEqual(last.getTimestampMs(), timestampMs, maxTimeMs);
 
 #ifdef DEBUG_INFORMATION_TRAIL

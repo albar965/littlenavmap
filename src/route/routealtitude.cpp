@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -40,7 +40,6 @@ const float AT_RESTRICTION_TOLERANCE_FT = 10.f;
 const float MIN_CRUISE_ALTITUDE_FT = 100.f;
 const float MIN_FLIGHTPLAN_DIST_NM = 0.5f;
 
-using atools::interpolate;
 namespace ageo = atools::geo;
 
 RouteAltitude::RouteAltitude(const Route *routeParam)
