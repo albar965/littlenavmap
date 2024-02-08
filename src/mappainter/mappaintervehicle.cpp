@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -142,8 +142,8 @@ void MapPainterVehicle::paintTurnPath(const atools::fs::sc::SimConnectUserAircra
 
       if(groundSpeedKts > 20.f)
       {
-        // Draw one line segment every 0.1 NM
-        double distanceStepNm = 0.1;
+        // Draw one line segment every distanceStepNm
+        double distanceStepNm = groundSpeedKts < 120.f ? 0.02 : 0.1;
 
         // Turn in degree at each node
         double turnStep = turnSpeedDegPerSec * (distanceStepNm * 3600. / groundSpeedKts);
@@ -156,8 +156,11 @@ void MapPainterVehicle::paintTurnPath(const atools::fs::sc::SimConnectUserAircra
         context->painter->setPen(mapcolors::adjustWidth(mapcolors::markTurnPathPen, static_cast<float>(lineWidth)));
         context->painter->setBrush(QBrush(mapcolors::markTurnPathPen.color()));
 
-        // One step is 0.1 NM
+        // One step is 0.1 or 0.01NM
         int step = 0;
+
+        // Step to draw mark
+        const int stepMark = atools::roundToInt(1. / distanceStepNm);
 
         float pixelForMaxTurnPath = scale->getPixelForNm(MAX_TURN_PATH_NM);
         if(pixelForMaxTurnPath > 40)
@@ -174,8 +177,8 @@ void MapPainterVehicle::paintTurnPath(const atools::fs::sc::SimConnectUserAircra
             atools::geo::Pos newPos = curPos.endpointDouble(atools::geo::nmToMeter(distanceStepNm), curHeading);
             line.append(newPos);
 
-            // Draw mark at each 0.5 NM
-            if(step > 0 && (step % 10) == 0)
+            // Draw mark at each 1 NM
+            if(step > 0 && (step % stepMark) == 0)
             {
               double length = lineWidth * 1.2;
 
