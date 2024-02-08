@@ -743,108 +743,116 @@ void ProfileWidget::paintVasi(QPainter& painter, const Route& route)
 
   if(runwayEnd.isValid())
   {
-    const RouteLeg& leg = route.getDestinationLeg();
-    const proc::MapProcedureLeg& procLeg = leg.getProcedureLeg();
+    int destIndex = route.getDestinationLegIndex();
+    const RouteLeg *leg = &route.value(destIndex);
 
-    // Do not show VASI if approach leg has a large offset compared to the runway
-    if(procLeg.isValid() && procLeg.calculatedTrueCourse < map::INVALID_COURSE_VALUE &&
-       atools::geo::angleAbsDiff(procLeg.calculatedTrueCourse, runwayEnd.heading) > 45.f)
-      return;
+    if(leg->getDistanceTo() < 0.5f)
+      // Unreliable if leg is too short might be misplaced from threshold
+      leg = &route.value(destIndex - 1);
 
-    // Get origin on screen
-    int x = distanceX(altitudeLegs.getDestinationDistance());
-    int y = altitudeY(altitudeLegs.getDestinationAltitude());
-
-    // Collect left and right VASI
-    QVector<std::pair<float, QString> > vasiList;
-
-    if(runwayEnd.hasRightVasi())
-      vasiList.append(std::make_pair(runwayEnd.rightVasiPitch, runwayEnd.rightVasiTypeStr()));
-
-    if(runwayEnd.hasLeftVasi())
-      vasiList.append(std::make_pair(runwayEnd.leftVasiPitch, runwayEnd.leftVasiTypeStr()));
-
-    if(vasiList.isEmpty())
-      return;
-
-    if(vasiList.size() == 2)
+    if(leg != nullptr && leg->isValid())
     {
-      // VASI on both sides
-      if(atools::almostEqual(vasiList.at(0).first, vasiList.at(1).first))
+      const proc::MapProcedureLeg& procLeg = leg->getProcedureLeg();
+      // Do not show VASI if approach leg has a large offset compared to the runway
+      if(procLeg.isValid() && procLeg.calculatedTrueCourse < map::INVALID_COURSE_VALUE &&
+         atools::geo::angleAbsDiff(procLeg.calculatedTrueCourse, runwayEnd.heading) > 45.f)
+        return;
+
+      // Get origin on screen
+      int x = distanceX(altitudeLegs.getDestinationDistance());
+      int y = altitudeY(altitudeLegs.getDestinationAltitude());
+
+      // Collect left and right VASI
+      QVector<std::pair<float, QString> > vasiList;
+
+      if(runwayEnd.hasRightVasi())
+        vasiList.append(std::make_pair(runwayEnd.rightVasiPitch, runwayEnd.rightVasiTypeStr()));
+
+      if(runwayEnd.hasLeftVasi())
+        vasiList.append(std::make_pair(runwayEnd.leftVasiPitch, runwayEnd.leftVasiTypeStr()));
+
+      if(vasiList.isEmpty())
+        return;
+
+      if(vasiList.size() == 2)
       {
-        if(vasiList.at(0).second != vasiList.at(1).second)
-          // Merge type if the angle is the same but type is different
-          vasiList[0].second = tr("%1 / %2").arg(vasiList.at(0).second).arg(vasiList.at(1).second);
-
-        // Remove duplicate
-        vasiList.removeLast();
-      }
-    }
-
-    // Draw all VASI =================================================
-    for(const std::pair<float, QString>& vasi : qAsConst(vasiList))
-    {
-      // VASI has shorted visibility than ILS range
-      float featherLen = atools::geo::nmToFeet(6.f);
-
-      // Calculate altitude at end of guide
-      // tan a = GK / AK; // tan a * AK = GK;
-      float ydiff1 = atools::geo::tanDeg(vasi.first) * featherLen;
-
-      // Calculate screen points for end of guide
-      int yUpper = altitudeY(altitudeLegs.getDestinationAltitude() + ydiff1);
-      int xUpper = distanceX(altitudeLegs.getDestinationDistance() - 6.f);
-
-      if(xUpper < map::INVALID_INDEX_VALUE && yUpper < map::INVALID_INDEX_VALUE)
-      {
-        // Screen difference for +/- one degree
-        // float ydiffUpper = std::tan(atools::geo::toRadians(vasi.first + 1.5f)) * featherLen - ydiff1;
-
-        // Build geometry
-        QLineF center(x, y, xUpper, yUpper);
-        QLineF lower(x, y, xUpper, yUpper + 30 /*(ydiffUpper *verticalScale)*/);
-        QLineF upper(x, y, xUpper, yUpper - 30 /*(ydiffUpper *verticalScale)*/);
-
-        lower.setLength(center.length());
-        upper.setLength(center.length());
-
-        // Draw lower red guide
-        painter.setPen(Qt::NoPen);
-        painter.setBrush(mapcolors::profileVasiBelowColor);
-        painter.drawPolygon(QPolygonF({lower.p1(), lower.p2(), center.p2(), center.p1()}));
-
-        // Draw above white guide
-        painter.setBrush(mapcolors::profileVasiAboveColor);
-        painter.drawPolygon(QPolygonF({upper.p1(), upper.p2(), center.p2(), center.p1()}));
-
-        // Draw dashed center line
-        painter.setPen(mapcolors::profileVasiCenterPen);
-        painter.drawLine(center);
-
-        painter.setPen(Qt::black);
-        if(OptionData::instance().getFlags2() & opts2::MAP_NAVAID_TEXT_BACKGROUND)
+        // VASI on both sides
+        if(atools::almostEqual(vasiList.at(0).first, vasiList.at(1).first))
         {
-          painter.setBackground(Qt::white);
-          painter.setBackgroundMode(Qt::OpaqueMode);
+          if(vasiList.at(0).second != vasiList.at(1).second)
+            // Merge type if the angle is the same but type is different
+            vasiList[0].second = tr("%1 / %2").arg(vasiList.at(0).second).arg(vasiList.at(1).second);
+
+          // Remove duplicate
+          vasiList.removeLast();
         }
-        else
-          painter.setBackgroundMode(Qt::TransparentMode);
-
-        // Draw VASI text ========================
-        double angle = atools::geo::angleFromQt(upper.angle());
-        painter.translate(upper.p2());
-        painter.rotate(angle + 90.);
-
-        QString txt;
-        if(vasi.second.isEmpty())
-          txt = tr("%1° ►").arg(QLocale().toString(vasi.first, 'f', 1));
-        else
-          txt = tr("%1° / %2 ►").arg(QLocale().toString(vasi.first, 'f', 1)).arg(vasi.second);
-        painter.drawText(10, -painter.fontMetrics().descent(), txt);
-        painter.resetTransform();
       }
-    }
-  }
+
+      // Draw all VASI =================================================
+      for(const std::pair<float, QString>& vasi : qAsConst(vasiList))
+      {
+        // VASI has shorted visibility than ILS range
+        float featherLen = atools::geo::nmToFeet(6.f);
+
+        // Calculate altitude at end of guide
+        // tan a = GK / AK; // tan a * AK = GK;
+        float ydiff1 = atools::geo::tanDeg(vasi.first) * featherLen;
+
+        // Calculate screen points for end of guide
+        int yUpper = altitudeY(altitudeLegs.getDestinationAltitude() + ydiff1);
+        int xUpper = distanceX(altitudeLegs.getDestinationDistance() - 6.f);
+
+        if(xUpper < map::INVALID_INDEX_VALUE && yUpper < map::INVALID_INDEX_VALUE)
+        {
+          // Screen difference for +/- one degree
+          // float ydiffUpper = std::tan(atools::geo::toRadians(vasi.first + 1.5f)) * featherLen - ydiff1;
+
+          // Build geometry
+          QLineF center(x, y, xUpper, yUpper);
+          QLineF lower(x, y, xUpper, yUpper + 30 /*(ydiffUpper *verticalScale)*/);
+          QLineF upper(x, y, xUpper, yUpper - 30 /*(ydiffUpper *verticalScale)*/);
+
+          lower.setLength(center.length());
+          upper.setLength(center.length());
+
+          // Draw lower red guide
+          painter.setPen(Qt::NoPen);
+          painter.setBrush(mapcolors::profileVasiBelowColor);
+          painter.drawPolygon(QPolygonF({lower.p1(), lower.p2(), center.p2(), center.p1()}));
+
+          // Draw above white guide
+          painter.setBrush(mapcolors::profileVasiAboveColor);
+          painter.drawPolygon(QPolygonF({upper.p1(), upper.p2(), center.p2(), center.p1()}));
+
+          // Draw dashed center line
+          painter.setPen(mapcolors::profileVasiCenterPen);
+          painter.drawLine(center);
+
+          painter.setPen(Qt::black);
+          if(OptionData::instance().getFlags2() & opts2::MAP_NAVAID_TEXT_BACKGROUND)
+          {
+            painter.setBackground(Qt::white);
+            painter.setBackgroundMode(Qt::OpaqueMode);
+          }
+          else
+            painter.setBackgroundMode(Qt::TransparentMode);
+
+          // Draw VASI text ========================
+          double angle = atools::geo::angleFromQt(upper.angle());
+          painter.translate(upper.p2());
+          painter.rotate(angle + 90.);
+
+          QString txt;
+          if(vasi.second.isEmpty())
+            txt = tr("%1° ►").arg(QLocale().toString(vasi.first, 'f', 1));
+          else
+            txt = tr("%1° / %2 ►").arg(QLocale().toString(vasi.first, 'f', 1)).arg(vasi.second);
+          painter.drawText(10, -painter.fontMetrics().descent(), txt);
+          painter.resetTransform();
+        }
+      } // for(const std::pair<float, QString>& vasi : qAsConst(vasiList))
+    } // if(leg != nullptr && leg->isValid())
+  } // if(runwayEnd.isValid())
 }
 
 void ProfileWidget::calcLeftMargin()
