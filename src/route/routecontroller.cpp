@@ -1281,7 +1281,7 @@ void RouteController::loadFlightplan(atools::fs::pln::Flightplan flightplan, ato
 
   bool showWarnDialog = false;
   // Check if profile is valid, has to be adjusted and warnings (= manual load) are required
-  if((!route.isValidProfile() || adjustAltAfterLoad || adjustAltitude) && warnAltitude)
+  if(!route.isValidProfile() || adjustAltAfterLoad || adjustAltitude)
   {
     // Remember the original cruise altitude before adapting
     float origCruiseAlt = route.getCruiseAltitudeFt();
@@ -1325,8 +1325,8 @@ void RouteController::loadFlightplan(atools::fs::pln::Flightplan flightplan, ato
       }
       // else there is an undo step anyway which has the altitude change included now
 
-      // Show dialog if something has changed
-      showWarnDialog = true;
+      // Show dialog if requested and if something has changed
+      showWarnDialog = warnAltitude;
     }
   }
 

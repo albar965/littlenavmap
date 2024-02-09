@@ -551,7 +551,7 @@ void RouteStringDialog::textChangedInternal(bool forceUpdate)
 
     if(!currentRouteString.isEmpty())
     {
-      if(currentRouteString.size() < 1024)
+      if(currentRouteString.size() < 2048)
       {
         flightplan->clearAll();
         flightplan->setFlightplanType(atools::fs::pln::NO_TYPE); // Set type to none to take it from GUI when creating plan
@@ -560,6 +560,10 @@ void RouteStringDialog::textChangedInternal(bool forceUpdate)
         routeStringReader->createRouteFromString(currentRouteString, options | rs::REPORT, flightplan, nullptr, &speedKts,
                                                  &altitudeIncluded);
         QGuiApplication::restoreOverrideCursor();
+
+        if(!altitudeIncluded)
+          // Zero to force auto adjustment if no altitude given in string
+          flightplan->setCruiseAltitudeFt(0.f);
 
         // Fill report into widget
         errorString.append(routeStringReader->getAllMessages().join("<br/>"));
