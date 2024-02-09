@@ -141,7 +141,7 @@ bool XpconnectInstaller::install()
         warnBox.setMessage(tr("<p>A stray X-Plane plugin file was found:</p>"
                                 "<p>%1&nbsp;(click to show)</p>"
                                   "<p>This is not neccessarily from Little Xpconnect but it is usually a "
-                                    "result from an incorrect plugin installation which can cause problems.<br/>"
+                                    "result from an incorrect plugin installation which can cause X-Plane to crash.<br/>"
                                     "Removing this file is recommended.</p>").
                            arg(HtmlBuilder::aFilePath(pluginsDir.filePath(xpl.constFirst()), atools::util::html::NOBR_WHITESPACE)));
         warnBox.setIcon(QMessageBox::Warning);
@@ -171,7 +171,7 @@ bool XpconnectInstaller::install()
         questionBox.setMessage(tr("<p>Found one or more previous installations of Little Xpconnect using a non-standard name:</p>"
                                     "<p><ul>%1</ul>(click to show)</p>"
                                       "<p>Check these plugins manually if you are not sure what they are.</p>"
-                                        "<p>Move these plugins to the system trash now to avoid issues?</p>").
+                                        "<p>Move these plugins to the system trash now to avoid issues like X-Plane crashes?</p>").
                                arg(xpconnectsText.join(QString())));
         questionBox.setIcon(QMessageBox::Question);
 

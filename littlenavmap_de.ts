@@ -21433,9 +21433,9 @@ kHz/MHz</translation>
     <message>
         <location filename="src/mappainter/mappainternav.cpp" line="334"/>
         <location filename="src/mappainter/mappainternav.cpp" line="356"/>
-        <location filename="src/mappainter/mappaintervehicle.cpp" line="290"/>
-        <location filename="src/mappainter/mappaintervehicle.cpp" line="376"/>
-        <location filename="src/mappainter/mappaintervehicle.cpp" line="481"/>
+        <location filename="src/mappainter/mappaintervehicle.cpp" line="293"/>
+        <location filename="src/mappainter/mappaintervehicle.cpp" line="379"/>
+        <location filename="src/mappainter/mappaintervehicle.cpp" line="484"/>
         <source>, </source>
         <translation>, </translation>
     </message>
@@ -21516,7 +21516,7 @@ kHz/MHz</translation>
         <translation>…</translation>
     </message>
     <message>
-        <location filename="src/mappainter/mappaintervehicle.cpp" line="254"/>
+        <location filename="src/mappainter/mappaintervehicle.cpp" line="257"/>
         <source>%1 to %2</source>
         <translation>%1 nach %2</translation>
     </message>
@@ -21525,8 +21525,8 @@ kHz/MHz</translation>
         <translation type="vanished">Kein</translation>
     </message>
     <message>
-        <location filename="src/mappainter/mappaintervehicle.cpp" line="269"/>
-        <location filename="src/mappainter/mappaintervehicle.cpp" line="356"/>
+        <location filename="src/mappainter/mappaintervehicle.cpp" line="272"/>
+        <location filename="src/mappainter/mappaintervehicle.cpp" line="359"/>
         <source>HDG %3°M</source>
         <translation>HDG %3°M</translation>
     </message>
@@ -21535,7 +21535,7 @@ kHz/MHz</translation>
         <translation type="vanished">HDG %3°T</translation>
     </message>
     <message>
-        <location filename="src/mappainter/mappaintervehicle.cpp" line="287"/>
+        <location filename="src/mappainter/mappaintervehicle.cpp" line="290"/>
         <source>ALT %1%2</source>
         <translation>ALT %1%2</translation>
     </message>
@@ -21549,80 +21549,80 @@ kHz/MHz</translation>
         <translation>%1%2</translation>
     </message>
     <message>
-        <location filename="src/mappainter/mappaintervehicle.cpp" line="279"/>
-        <location filename="src/mappainter/mappaintervehicle.cpp" line="367"/>
+        <location filename="src/mappainter/mappaintervehicle.cpp" line="282"/>
+        <location filename="src/mappainter/mappaintervehicle.cpp" line="370"/>
         <source>IND %1</source>
         <translation>IND %1</translation>
     </message>
     <message>
-        <location filename="src/mappainter/mappaintervehicle.cpp" line="370"/>
+        <location filename="src/mappainter/mappaintervehicle.cpp" line="373"/>
         <source>ALT %1</source>
         <translation>ALT %1</translation>
     </message>
     <message>
-        <location filename="src/mappainter/mappaintervehicle.cpp" line="373"/>
+        <location filename="src/mappainter/mappaintervehicle.cpp" line="376"/>
         <source>AGL %1</source>
         <translation>AGL %1</translation>
     </message>
     <message>
-        <location filename="src/mappainter/mappaintervehicle.cpp" line="255"/>
-        <location filename="src/mappainter/mappaintervehicle.cpp" line="256"/>
+        <location filename="src/mappainter/mappaintervehicle.cpp" line="258"/>
+        <location filename="src/mappainter/mappaintervehicle.cpp" line="259"/>
         <source>Unknown</source>
         <translation>Unbekannt</translation>
     </message>
     <message>
-        <location filename="src/mappainter/mappaintervehicle.cpp" line="303"/>
+        <location filename="src/mappainter/mappaintervehicle.cpp" line="306"/>
         <source>From User %1 %2°M</source>
         <translation>Vom Nutzer %1 %2°M</translation>
     </message>
     <message>
-        <location filename="src/mappainter/mappaintervehicle.cpp" line="399"/>
+        <location filename="src/mappainter/mappaintervehicle.cpp" line="402"/>
         <source>Ice %</source>
         <translation>Eis %</translation>
     </message>
     <message>
-        <location filename="src/mappainter/mappaintervehicle.cpp" line="415"/>
+        <location filename="src/mappainter/mappaintervehicle.cpp" line="418"/>
         <source> ▲</source>
         <translation> ▲</translation>
     </message>
     <message>
-        <location filename="src/mappainter/mappaintervehicle.cpp" line="417"/>
+        <location filename="src/mappainter/mappaintervehicle.cpp" line="420"/>
         <source> ▼</source>
         <translation> ▼</translation>
     </message>
     <message>
-        <location filename="src/mappainter/mappaintervehicle.cpp" line="457"/>
+        <location filename="src/mappainter/mappaintervehicle.cpp" line="460"/>
         <source>XPDR %1</source>
         <oldsource>TCAS %1</oldsource>
         <translation>XPDR %1</translation>
     </message>
     <message>
-        <location filename="src/mappainter/mappaintervehicle.cpp" line="472"/>
+        <location filename="src/mappainter/mappaintervehicle.cpp" line="475"/>
         <source>IAS %1</source>
         <translation>IAS %1</translation>
     </message>
     <message>
-        <location filename="src/mappainter/mappaintervehicle.cpp" line="475"/>
+        <location filename="src/mappainter/mappaintervehicle.cpp" line="478"/>
         <source>GS %2</source>
         <translation>GS %2</translation>
     </message>
     <message>
-        <location filename="src/mappainter/mappaintervehicle.cpp" line="478"/>
+        <location filename="src/mappainter/mappaintervehicle.cpp" line="481"/>
         <source>TAS %1</source>
         <translation>TAS %1</translation>
     </message>
     <message>
-        <location filename="src/mappainter/mappaintervehicle.cpp" line="509"/>
+        <location filename="src/mappainter/mappaintervehicle.cpp" line="512"/>
         <source>%1 °M</source>
         <translation>%1 °M</translation>
     </message>
     <message>
-        <location filename="src/mappainter/mappaintervehicle.cpp" line="512"/>
+        <location filename="src/mappainter/mappaintervehicle.cpp" line="515"/>
         <source>%2</source>
         <translation>%2</translation>
     </message>
     <message>
-        <location filename="src/mappainter/mappaintervehicle.cpp" line="520"/>
+        <location filename="src/mappainter/mappaintervehicle.cpp" line="523"/>
         <source>No wind</source>
         <translation>Kein Wind</translation>
     </message>
@@ -31208,7 +31208,7 @@ Wird nur im Sinkflug am Nutzerflugzeugsymbol mit dem Zusatz &quot;N&quot; gezeig
 <context>
     <name>ProfileWidget</name>
     <message>
-        <location filename="src/profile/profilewidget.cpp" line="895"/>
+        <location filename="src/profile/profilewidget.cpp" line="903"/>
         <source>No Flight Plan</source>
         <translation>Kein Flugplan</translation>
     </message>
@@ -31218,17 +31218,17 @@ Wird nur im Sinkflug am Nutzerflugzeugsymbol mit dem Zusatz &quot;N&quot; gezeig
         <translation> ►</translation>
     </message>
     <message>
-        <location filename="src/profile/profilewidget.cpp" line="777"/>
+        <location filename="src/profile/profilewidget.cpp" line="784"/>
         <source>%1 / %2</source>
         <translation>%1 / %2</translation>
     </message>
     <message>
-        <location filename="src/profile/profilewidget.cpp" line="840"/>
+        <location filename="src/profile/profilewidget.cpp" line="847"/>
         <source>%1° ►</source>
         <translation>%1° ►</translation>
     </message>
     <message>
-        <location filename="src/profile/profilewidget.cpp" line="842"/>
+        <location filename="src/profile/profilewidget.cpp" line="849"/>
         <source>%1° / %2 ►</source>
         <translation>%1° / %2 ►</translation>
     </message>
@@ -31246,18 +31246,18 @@ Wird nur im Sinkflug am Nutzerflugzeugsymbol mit dem Zusatz &quot;N&quot; gezeig
         <translation type="vanished">,</translation>
     </message>
     <message>
-        <location filename="src/profile/profilewidget.cpp" line="1261"/>
+        <location filename="src/profile/profilewidget.cpp" line="1269"/>
         <source> %1° ► </source>
         <translation> %1° ► </translation>
     </message>
     <message>
-        <location filename="src/profile/profilewidget.cpp" line="1263"/>
+        <location filename="src/profile/profilewidget.cpp" line="1271"/>
         <source> /</source>
         <translation> /</translation>
     </message>
     <message>
-        <location filename="src/profile/profilewidget.cpp" line="1270"/>
-        <location filename="src/profile/profilewidget.cpp" line="1273"/>
+        <location filename="src/profile/profilewidget.cpp" line="1278"/>
+        <location filename="src/profile/profilewidget.cpp" line="1281"/>
         <source> / </source>
         <translation> / </translation>
     </message>
@@ -31270,53 +31270,53 @@ Wird nur im Sinkflug am Nutzerflugzeugsymbol mit dem Zusatz &quot;N&quot; gezeig
         <translation type="vanished">TOD</translation>
     </message>
     <message>
-        <location filename="src/profile/profilewidget.cpp" line="1587"/>
+        <location filename="src/profile/profilewidget.cpp" line="1595"/>
         <source>TOC %1</source>
         <translation>TOC %1</translation>
     </message>
     <message>
-        <location filename="src/profile/profilewidget.cpp" line="1604"/>
+        <location filename="src/profile/profilewidget.cpp" line="1612"/>
         <source>TOD %1</source>
         <translation>TOD %1</translation>
     </message>
     <message>
-        <location filename="src/profile/profilewidget.cpp" line="1708"/>
+        <location filename="src/profile/profilewidget.cpp" line="1716"/>
         <source> ▲</source>
         <translation> ▲</translation>
     </message>
     <message>
-        <location filename="src/profile/profilewidget.cpp" line="1710"/>
+        <location filename="src/profile/profilewidget.cpp" line="1718"/>
         <source> ▼</source>
         <translation> ▼</translation>
     </message>
     <message>
-        <location filename="src/profile/profilewidget.cpp" line="1728"/>
+        <location filename="src/profile/profilewidget.cpp" line="1736"/>
         <source> ▼ N</source>
         <translation> ▼ N</translation>
     </message>
     <message>
-        <location filename="src/profile/profilewidget.cpp" line="2307"/>
+        <location filename="src/profile/profilewidget.cpp" line="2315"/>
         <source>to</source>
         <translation>nach</translation>
     </message>
     <message>
-        <location filename="src/profile/profilewidget.cpp" line="2325"/>
+        <location filename="src/profile/profilewidget.cpp" line="2333"/>
         <source>from</source>
         <translation>von</translation>
     </message>
     <message>
-        <location filename="src/profile/profilewidget.cpp" line="2341"/>
-        <location filename="src/profile/profilewidget.cpp" line="2343"/>
+        <location filename="src/profile/profilewidget.cpp" line="2349"/>
+        <location filename="src/profile/profilewidget.cpp" line="2351"/>
         <source> ► </source>
         <translation> ► </translation>
     </message>
     <message>
-        <location filename="src/profile/profilewidget.cpp" line="2346"/>
+        <location filename="src/profile/profilewidget.cpp" line="2354"/>
         <source>, %1, %2 %3</source>
         <translation>, %1, %2 %3</translation>
     </message>
     <message>
-        <location filename="src/profile/profilewidget.cpp" line="2351"/>
+        <location filename="src/profile/profilewidget.cpp" line="2359"/>
         <source>Course: </source>
         <translation>Kurs: </translation>
     </message>
@@ -31325,108 +31325,108 @@ Wird nur im Sinkflug am Nutzerflugzeugsymbol mit dem Zusatz &quot;N&quot; gezeig
         <translation type="vanished">Steuerkurs: </translation>
     </message>
     <message>
-        <location filename="src/profile/profilewidget.cpp" line="906"/>
+        <location filename="src/profile/profilewidget.cpp" line="914"/>
         <source>Flight Plan not valid</source>
         <translation>Flugplan nicht gültig</translation>
     </message>
     <message>
-        <location filename="src/profile/profilewidget.cpp" line="2368"/>
+        <location filename="src/profile/profilewidget.cpp" line="2376"/>
         <source>Heading: </source>
         <comment>Aircraft heading</comment>
         <translation>Steuerkurs: </translation>
     </message>
     <message>
-        <location filename="src/profile/profilewidget.cpp" line="2379"/>
+        <location filename="src/profile/profilewidget.cpp" line="2387"/>
         <source>Required Flight Path Angle: </source>
         <translation>Erforderlicher Flugpfadwinkel: </translation>
     </message>
     <message>
-        <location filename="src/profile/profilewidget.cpp" line="2379"/>
+        <location filename="src/profile/profilewidget.cpp" line="2387"/>
         <source>Flight path angle: </source>
         <translation>Flugpfadwinkel: </translation>
     </message>
     <message>
-        <location filename="src/profile/profilewidget.cpp" line="2380"/>
+        <location filename="src/profile/profilewidget.cpp" line="2388"/>
         <source>%L1 °</source>
         <translation>%L1 °</translation>
     </message>
     <message>
-        <location filename="src/profile/profilewidget.cpp" line="2392"/>
+        <location filename="src/profile/profilewidget.cpp" line="2400"/>
         <source>%1 above</source>
         <translation>%1 über</translation>
     </message>
     <message>
-        <location filename="src/profile/profilewidget.cpp" line="2396"/>
+        <location filename="src/profile/profilewidget.cpp" line="2404"/>
         <source>, </source>
         <translation>, </translation>
     </message>
     <message>
-        <location filename="src/profile/profilewidget.cpp" line="2396"/>
+        <location filename="src/profile/profilewidget.cpp" line="2404"/>
         <source>Ground: </source>
         <translation>Grund: </translation>
     </message>
     <message>
-        <location filename="src/profile/profilewidget.cpp" line="2400"/>
+        <location filename="src/profile/profilewidget.cpp" line="2408"/>
         <source>Leg Safe Altitude: </source>
         <translation>Sichere Abschnittshöhe: </translation>
     </message>
     <message>
-        <location filename="src/profile/profilewidget.cpp" line="2410"/>
+        <location filename="src/profile/profilewidget.cpp" line="2418"/>
         <source>%1°M, %2</source>
         <translation>%1°M, %2</translation>
     </message>
     <message>
-        <location filename="src/profile/profilewidget.cpp" line="2420"/>
+        <location filename="src/profile/profilewidget.cpp" line="2428"/>
         <source>▼</source>
         <translation>▼</translation>
     </message>
     <message>
-        <location filename="src/profile/profilewidget.cpp" line="2422"/>
+        <location filename="src/profile/profilewidget.cpp" line="2430"/>
         <source>▲</source>
         <translation>▲</translation>
     </message>
     <message>
-        <location filename="src/profile/profilewidget.cpp" line="2428"/>
+        <location filename="src/profile/profilewidget.cpp" line="2436"/>
         <source> %L1 °]</source>
         <translation> %L1 °]</translation>
     </message>
     <message>
-        <location filename="src/profile/profilewidget.cpp" line="2584"/>
+        <location filename="src/profile/profilewidget.cpp" line="2592"/>
         <source>&lt;b&gt;Alternate:&lt;/b&gt; %1</source>
         <translation>&lt;b&gt;Ausweichflugplatz:&lt;/b&gt; %1</translation>
     </message>
     <message>
-        <location filename="src/profile/profilewidget.cpp" line="2602"/>
+        <location filename="src/profile/profilewidget.cpp" line="2610"/>
         <source>&lt;b&gt;Destination:&lt;/b&gt; %1 (%2)</source>
         <translation>&lt;b&gt;Ziel:&lt;/b&gt; %1 (%2)</translation>
     </message>
     <message>
-        <location filename="src/profile/profilewidget.cpp" line="2611"/>
+        <location filename="src/profile/profilewidget.cpp" line="2619"/>
         <source>&lt;b&gt;Top of Descent:&lt;/b&gt; %1%2</source>
         <translation>&lt;b&gt;Beginn des Sinkfluges:&lt;/b&gt; %1%2</translation>
     </message>
     <message>
-        <location filename="src/profile/profilewidget.cpp" line="2623"/>
+        <location filename="src/profile/profilewidget.cpp" line="2631"/>
         <source>&lt;b&gt;Vert. Path Deviation:&lt;/b&gt; %1</source>
         <translation>&lt;b&gt;Vert. Pfadabweichung:&lt;/b&gt; %1</translation>
     </message>
     <message>
-        <location filename="src/profile/profilewidget.cpp" line="2627"/>
+        <location filename="src/profile/profilewidget.cpp" line="2635"/>
         <source>&lt;b&gt;Required Angle and Speed:&lt;/b&gt; %1</source>
         <translation>&lt;b&gt;Erforderlicher Winkel und Geschwindigkeit:&lt;/b&gt; %1</translation>
     </message>
     <message>
-        <location filename="src/profile/profilewidget.cpp" line="2627"/>
+        <location filename="src/profile/profilewidget.cpp" line="2635"/>
         <source>&lt;b&gt;Angle and Speed:&lt;/b&gt; %1</source>
         <translation>&lt;b&gt;Winkel und Geschwindigkeit:&lt;/b&gt; %1</translation>
     </message>
     <message>
-        <location filename="src/profile/profilewidget.cpp" line="2633"/>
+        <location filename="src/profile/profilewidget.cpp" line="2641"/>
         <source>&lt;b&gt;Destination:&lt;/b&gt; %1</source>
         <translation>&lt;b&gt;Ziel:&lt;/b&gt; %1</translation>
     </message>
     <message>
-        <location filename="src/profile/profilewidget.cpp" line="2642"/>
+        <location filename="src/profile/profilewidget.cpp" line="2650"/>
         <source>,&amp;nbsp;&amp;nbsp;&amp;nbsp;</source>
         <comment>Separator for profile header</comment>
         <translation>,&amp;nbsp;&amp;nbsp;&amp;nbsp;</translation>
@@ -31440,7 +31440,7 @@ Wird nur im Sinkflug am Nutzerflugzeugsymbol mit dem Zusatz &quot;N&quot; gezeig
         <translation type="vanished">&lt;b&gt;Ziel: %1 (%2). Anfang vom Sinkflug: %3%4.&lt;/b&gt;&amp;nbsp;&amp;nbsp;</translation>
     </message>
     <message>
-        <location filename="src/profile/profilewidget.cpp" line="2613"/>
+        <location filename="src/profile/profilewidget.cpp" line="2621"/>
         <source> (%1)</source>
         <oldsource>(%1)</oldsource>
         <translation> (%1)</translation>
@@ -31466,12 +31466,12 @@ Wird nur im Sinkflug am Nutzerflugzeugsymbol mit dem Zusatz &quot;N&quot; gezeig
         <translation type="vanished">, %1Wind %2°M, %3</translation>
     </message>
     <message>
-        <location filename="src/profile/profilewidget.cpp" line="2413"/>
+        <location filename="src/profile/profilewidget.cpp" line="2421"/>
         <source>Manual </source>
         <translation>Manuell </translation>
     </message>
     <message>
-        <location filename="src/profile/profilewidget.cpp" line="2413"/>
+        <location filename="src/profile/profilewidget.cpp" line="2421"/>
         <source>%1Wind: </source>
         <translation>%1Wind: </translation>
     </message>
@@ -31484,7 +31484,7 @@ Wird nur im Sinkflug am Nutzerflugzeugsymbol mit dem Zusatz &quot;N&quot; gezeig
         <translation type="vanished">►</translation>
     </message>
     <message>
-        <location filename="src/profile/profilewidget.cpp" line="2423"/>
+        <location filename="src/profile/profilewidget.cpp" line="2431"/>
         <source>, %1 %2</source>
         <translation>, %1 %2</translation>
     </message>
@@ -31497,7 +31497,7 @@ Wird nur im Sinkflug am Nutzerflugzeugsymbol mit dem Zusatz &quot;N&quot; gezeig
         <translation type="vanished">&lt;b&gt;Zum Ziel: %1, Zum Anfang vom Sinkflug: %2.&lt;/b&gt;&amp;nbsp;&amp;nbsp;</translation>
     </message>
     <message>
-        <location filename="src/profile/profilewidget.cpp" line="2612"/>
+        <location filename="src/profile/profilewidget.cpp" line="2620"/>
         <source>Passed</source>
         <translation>Vorbei</translation>
     </message>
@@ -35783,12 +35783,12 @@ Der Flugplan ist entweder zu kurz oder die Reiseflughöhe ist zu hoch.
 Überprüfen Sie auch die Steig- und Sinkfluggeschwindigkeiten in der Flugzeugleistung.</translation>
     </message>
     <message>
-        <location filename="src/route/routealtitude.cpp" line="664"/>
+        <location filename="src/route/routealtitude.cpp" line="663"/>
         <source>Leg number %1, %2 (%3) at %4 violates altitude restriction &quot;%5&quot;.</source>
         <translation>Abschnitt Nummer %1, %2 (%3) bei %4 verletzt Restriktion &quot;%5&quot;.</translation>
     </message>
     <message>
-        <location filename="src/route/routealtitude.cpp" line="980"/>
+        <location filename="src/route/routealtitude.cpp" line="979"/>
         <source>Check the cruise altitude and procedures of the flight plan.</source>
         <translation>Reiseflughöhe und Prozeduren des Flugplanes überprüfen.</translation>
     </message>
@@ -35797,35 +35797,35 @@ Der Flugplan ist entweder zu kurz oder die Reiseflughöhe ist zu hoch.
         <translation type="vanished">Kann Steig- oder Sinkflug nicht berechnen. Der Flugplan ist entweder zu kurz oder die Reiseflughöhe ist zu hoch. Überprüfen Sie auch die Steig- und Sinkfluggeschwindigkeiten in der Flugzeugleistung.</translation>
     </message>
     <message>
-        <location filename="src/route/routealtitude.cpp" line="984"/>
+        <location filename="src/route/routealtitude.cpp" line="983"/>
         <source>Cannot calculate top of climb or top of descent. Possible reasons:&lt;ul&gt;&lt;li&gt;The flight plan is too short or the cruise altitude is too high.&lt;/li&gt;&lt;li&gt;Climb and descent speeds in the aircraft performance data are too low.&lt;/li&gt;&lt;li&gt;Departure or destination airport elevation is above cruise altitude.&lt;/li&gt;&lt;li&gt;Cruise altitude violates one or more procedure altitude restrictions.&lt;/li&gt;&lt;/ul&gt;</source>
         <oldsource>Cannot calculate top of climb or top of descent. Possible reasons:&lt;ul&gt;&lt;li&gt;The flight plan is too short or the cruise altitude is too high.&lt;/li&gt;&lt;li&gt;Climb and descent speeds in the aircraft performance data are too low.&lt;/li&gt;&lt;li&gt;Departure or destination elevation is above cruise altitude.&lt;/li&gt;&lt;li&gt;Cruise altitude violates one or more procedure altitude restrictions.&lt;/li&gt;&lt;/ul&gt;</oldsource>
         <translation>Die Auf- und Abstiegspunkte können nicht berechnet werden. Mögliche Gründe:&lt;ul&gt;&lt;li&gt;Der Flugplan ist zu kurz oder die Reiseflughöhe ist zu groß.&lt;/li&gt;&lt;li&gt;Die Steig- und Sinkgeschwindigkeiten in den Flugzeugleistungsdaten sind zu niedrig.&lt;/li&gt;&lt;li&gt;Die Höhe des Start- oder Zielflugplatzes liegt über der Reiseflughöhe.&lt;/li&gt;&lt;li&gt;Die Reiseflughöhe verstößt gegen eine oder mehrere Prozedurhöhenbeschränkungen.&lt;/li&gt;&lt;/ul&gt;</translation>
     </message>
     <message>
-        <location filename="src/route/routealtitude.cpp" line="1024"/>
+        <location filename="src/route/routealtitude.cpp" line="1023"/>
         <source>Flight plan is too short.</source>
         <translation>Flugplan ist zu kurz.</translation>
     </message>
     <message>
-        <location filename="src/route/routealtitude.cpp" line="1031"/>
+        <location filename="src/route/routealtitude.cpp" line="1030"/>
         <source>Cruise altitude is too low.</source>
         <translation>Reiseflughöhe ist zu niedrig.</translation>
     </message>
     <message>
-        <location filename="src/route/routealtitude.cpp" line="1039"/>
+        <location filename="src/route/routealtitude.cpp" line="1038"/>
         <source>Destination is not valid.</source>
         <oldsource>Destination is not valid. Must be an airport.</oldsource>
         <translation>Ziel ist nicht gültig.</translation>
     </message>
     <message>
-        <location filename="src/route/routealtitude.cpp" line="1047"/>
+        <location filename="src/route/routealtitude.cpp" line="1046"/>
         <source>Departure is not valid.</source>
         <oldsource>Departure is not valid. Must be an airport.</oldsource>
         <translation>Start ist nicht gültig.</translation>
     </message>
     <message>
-        <location filename="src/route/routealtitude.cpp" line="1175"/>
+        <location filename="src/route/routealtitude.cpp" line="1174"/>
         <source>STAR might not fit to the approach procedure due to altitude or vertical path restrictions.</source>
         <oldsource>STAR does not fit to the approach procedure due to altitude or vertical path restrictions.</oldsource>
         <translation>STAR passt evtl. nicht zur Anflugprozedur aufgrund von Restriktionen für die Flughöhe oder des vertikalen Pfades.</translation>
@@ -41039,7 +41039,7 @@ Andernfalls werden die Flugplätze als Wegpunkte hinzugefügt.</translation>
         <translation>Erwartet keine Flugplatzkennung als ersten und letzten Eintrag, wenn ausgewählt</translation>
     </message>
     <message>
-        <location filename="src/routestring/routestringdialog.cpp" line="569"/>
+        <location filename="src/routestring/routestringdialog.cpp" line="573"/>
         <source>Description is too long.</source>
         <translation>Beschreibung ist zu lang</translation>
     </message>
@@ -44375,8 +44375,9 @@ passen Sie den X-Plane Wetterpfad in den Einstellungen auf der Seite &quot;Wette
     </message>
     <message>
         <location filename="src/connect/xpconnectinstaller.cpp" line="141"/>
-        <source>&lt;p&gt;A stray X-Plane plugin file was found:&lt;/p&gt;&lt;p&gt;%1&amp;nbsp;(click to show)&lt;/p&gt;&lt;p&gt;This is not neccessarily from Little Xpconnect but it is usually a result from an incorrect plugin installation which can cause problems.&lt;br/&gt;Removing this file is recommended.&lt;/p&gt;</source>
-        <translation>&lt;p&gt;Eine einzelne X-Plane Plugindatei wurde gefunden:&lt;/p&gt;&lt;p&gt;%1 (zum Anzeigen klicken)&lt;/p&gt;&lt;p&gt;Dies ist nicht notwendigerweise von Little Xpconnect, aber es ist in der Regel das Ergebnis einer falschen Plugin-Installation, die Probleme verursachen kann.&lt;br/&gt;Das Entfernen dieser Datei wird empfohlen.&lt;/p&gt;</translation>
+        <source>&lt;p&gt;A stray X-Plane plugin file was found:&lt;/p&gt;&lt;p&gt;%1&amp;nbsp;(click to show)&lt;/p&gt;&lt;p&gt;This is not neccessarily from Little Xpconnect but it is usually a result from an incorrect plugin installation which can cause X-Plane to crash.&lt;br/&gt;Removing this file is recommended.&lt;/p&gt;</source>
+        <oldsource>&lt;p&gt;A stray X-Plane plugin file was found:&lt;/p&gt;&lt;p&gt;%1&amp;nbsp;(click to show)&lt;/p&gt;&lt;p&gt;This is not neccessarily from Little Xpconnect but it is usually a result from an incorrect plugin installation which can cause problems.&lt;br/&gt;Removing this file is recommended.&lt;/p&gt;</oldsource>
+        <translation>&lt;p&gt;Eine einzelne X-Plane Plugindatei wurde gefunden:&lt;/p&gt;&lt;p&gt;%1 (zum Anzeigen klicken)&lt;/p&gt;&lt;p&gt;Dies ist nicht notwendigerweise von Little Xpconnect, aber es ist in der Regel das Ergebnis einer falschen Plugin-Installation, die Probleme, wie X-Plane Abstürze, verursachen kann.&lt;br/&gt;Das Entfernen dieser Datei wird empfohlen.&lt;/p&gt;</translation>
     </message>
     <message>
         <location filename="src/connect/xpconnectinstaller.cpp" line="166"/>
@@ -44385,8 +44386,9 @@ passen Sie den X-Plane Wetterpfad in den Einstellungen auf der Seite &quot;Wette
     </message>
     <message>
         <location filename="src/connect/xpconnectinstaller.cpp" line="171"/>
-        <source>&lt;p&gt;Found one or more previous installations of Little Xpconnect using a non-standard name:&lt;/p&gt;&lt;p&gt;&lt;ul&gt;%1&lt;/ul&gt;(click to show)&lt;/p&gt;&lt;p&gt;Check these plugins manually if you are not sure what they are.&lt;/p&gt;&lt;p&gt;Move these plugins to the system trash now to avoid issues?&lt;/p&gt;</source>
-        <translation>&lt;p&gt;Eine oder mehrere frühere Installationen von Little Xpconnect mit einem nicht standardisierten Namen gefunden:&lt;/p&gt;&lt;p&gt;&lt;ul&gt;%1&lt;/ul&gt;(zum Anzeigen klicken)&lt;/p&gt;&lt;p&gt;Überprüfen Sie diese Plugins manuell, wenn Sie nicht sicher sind, um welche es sich handelt. &lt;/p&gt;&lt;p&gt;Diese Plugins jetzt in den Papierkorb verschieben, um Probleme zu vermeiden?&lt;/p&gt;</translation>
+        <source>&lt;p&gt;Found one or more previous installations of Little Xpconnect using a non-standard name:&lt;/p&gt;&lt;p&gt;&lt;ul&gt;%1&lt;/ul&gt;(click to show)&lt;/p&gt;&lt;p&gt;Check these plugins manually if you are not sure what they are.&lt;/p&gt;&lt;p&gt;Move these plugins to the system trash now to avoid issues like X-Plane crashes?&lt;/p&gt;</source>
+        <oldsource>&lt;p&gt;Found one or more previous installations of Little Xpconnect using a non-standard name:&lt;/p&gt;&lt;p&gt;&lt;ul&gt;%1&lt;/ul&gt;(click to show)&lt;/p&gt;&lt;p&gt;Check these plugins manually if you are not sure what they are.&lt;/p&gt;&lt;p&gt;Move these plugins to the system trash now to avoid issues?&lt;/p&gt;</oldsource>
+        <translation>&lt;p&gt;Eine oder mehrere frühere Installationen von Little Xpconnect mit einem nicht standardisierten Namen gefunden:&lt;/p&gt;&lt;p&gt;&lt;ul&gt;%1&lt;/ul&gt;(zum Anzeigen klicken)&lt;/p&gt;&lt;p&gt;Überprüfen Sie diese Plugins manuell, wenn Sie nicht sicher sind, um welche es sich handelt. &lt;/p&gt;&lt;p&gt;Diese Plugins jetzt in den Papierkorb verschieben, um Probleme, wie X-Plane Abstürze, zu vermeiden?&lt;/p&gt;</translation>
     </message>
     <message>
         <location filename="src/connect/xpconnectinstaller.cpp" line="186"/>
