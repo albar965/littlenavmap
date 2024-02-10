@@ -373,11 +373,11 @@ bool CoordinateConverter::wToSInternal(const Marble::GeoDataCoordinates& coords,
 {
   bool hidden;
   int numPoints;
-  qreal xordinates[100];
-  bool visible = viewport->screenCoordinates(coords, xordinates, y, numPoints, size, hidden);
+  QVarLengthArray<qreal, 100> xordinates(100);
+  bool visible = viewport->screenCoordinates(coords, xordinates.data(), y, numPoints, size, hidden);
 
   if(numPoints == 0)
-    visible = viewport->screenCoordinates(coords, xordinates[0], y, hidden);
+    visible = viewport->screenCoordinates(coords, x, y, hidden);
   else
   {
     int foundIndex = -1;
@@ -385,12 +385,12 @@ bool CoordinateConverter::wToSInternal(const Marble::GeoDataCoordinates& coords,
     // Determine the smallest one
     for(int i = 0; i < numPoints; i++)
     {
-      if(foundIndex == -1 || std::abs(xordinates[i]) < std::abs(xordinates[foundIndex]))
+      if(foundIndex == -1 || std::abs(xordinates.at(i)) < std::abs(xordinates.at(foundIndex)))
         foundIndex = i;
     }
 
     if(foundIndex != -1)
-      x = xordinates[foundIndex];
+      x = xordinates.at(foundIndex);
   }
 
 #ifdef DEBUG_INFORMATION_COORDS
