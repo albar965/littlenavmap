@@ -1610,7 +1610,7 @@ void OptionsDialog::testWeatherNoaaUrlClicked()
 
   QDateTime datetime = QDateTime::currentDateTimeUtc();
   datetime.setTime(QTime(datetime.time().hour(), 0, 0));
-  QString url = ui->lineEditOptionsWeatherNoaaStationsUrl->text().arg(datetime.time().hour(), 2, 10, QChar('0'));
+  QString url = ui->lineEditOptionsWeatherNoaaStationsUrl->text().arg(datetime.time().hour(), 2, 10, QChar('0')).trimmed();
 
   bool result = WeatherReporter::testUrl(resultStr, url, QString());
 
@@ -1630,7 +1630,7 @@ void OptionsDialog::testWeatherVatsimUrlClicked()
   QStringList resultStr;
 
   QGuiApplication::setOverrideCursor(Qt::WaitCursor);
-  bool result = WeatherReporter::testUrl(resultStr, ui->lineEditOptionsWeatherVatsimUrl->text(), QString());
+  bool result = WeatherReporter::testUrl(resultStr, ui->lineEditOptionsWeatherVatsimUrl->text().trimmed(), QString());
   QGuiApplication::restoreOverrideCursor();
 
   if(result)
@@ -1647,7 +1647,7 @@ void OptionsDialog::testWeatherIvaoUrlClicked()
   QStringList resultStr;
 
   QGuiApplication::setOverrideCursor(Qt::WaitCursor);
-  bool result = WeatherReporter::testUrl(resultStr, ui->lineEditOptionsWeatherIvaoUrl->text(), QString(), {
+  bool result = WeatherReporter::testUrl(resultStr, ui->lineEditOptionsWeatherIvaoUrl->text().trimmed(), QString(), {
     {"accept", "application/json"},
     {"apiKey",
      atools::strFromCryptFile(":/littlenavmap/little_navmap_keys/ivao_weather_api_key.bin",
@@ -1669,7 +1669,7 @@ void OptionsDialog::testWeatherNoaaWindUrlClicked()
   qDebug() << Q_FUNC_INFO;
   QStringList resultStr;
   QGuiApplication::setOverrideCursor(Qt::WaitCursor);
-  bool result = WeatherReporter::testUrl(resultStr, ui->lineEditOptionsWeatherNoaaWindUrl->text(), QString());
+  bool result = WeatherReporter::testUrl(resultStr, ui->lineEditOptionsWeatherNoaaWindUrl->text().trimmed(), QString());
   QGuiApplication::restoreOverrideCursor();
   if(result)
     atools::gui::Dialog::information(this, tr("Success."));
@@ -1948,9 +1948,9 @@ void OptionsDialog::widgetsToOptionData()
   data.weatherXplane11Path = atools::nativeCleanPath(ui->lineEditOptionsWeatherXplanePath->text());
   data.weatherXplane12Path = atools::nativeCleanPath(ui->lineEditOptionsWeatherXplane12Path->text());
   data.weatherActiveSkyPath = atools::nativeCleanPath(ui->lineEditOptionsWeatherAsnPath->text());
-  data.weatherNoaaUrl = ui->lineEditOptionsWeatherNoaaStationsUrl->text();
-  data.weatherVatsimUrl = ui->lineEditOptionsWeatherVatsimUrl->text();
-  data.weatherIvaoUrl = ui->lineEditOptionsWeatherIvaoUrl->text();
+  data.weatherNoaaUrl = ui->lineEditOptionsWeatherNoaaStationsUrl->text().trimmed();
+  data.weatherVatsimUrl = ui->lineEditOptionsWeatherVatsimUrl->text().trimmed();
+  data.weatherIvaoUrl = ui->lineEditOptionsWeatherIvaoUrl->text().trimmed();
 
   data.databaseInclude.clear();
   for(int row = 0; row < ui->tableWidgetOptionsDatabaseInclude->rowCount(); row++)
@@ -2102,7 +2102,7 @@ void OptionsDialog::widgetsToOptionData()
   data.webEncrypted = ui->checkBoxOptionsWebEncrypted->isChecked();
 
   data.weatherXplaneWind = ui->lineEditOptionsWeatherXplaneWind->text();
-  data.weatherNoaaWindBaseUrl = ui->lineEditOptionsWeatherNoaaWindUrl->text();
+  data.weatherNoaaWindBaseUrl = ui->lineEditOptionsWeatherNoaaWindUrl->text().trimmed();
 
   widgetToMapThemeKeys(data);
 
@@ -2253,9 +2253,9 @@ void OptionsDialog::optionDataToWidgets(const OptionData& data)
   ui->lineEditOptionsWeatherXplanePath->setText(atools::nativeCleanPath(data.weatherXplane11Path));
   ui->lineEditOptionsWeatherXplane12Path->setText(atools::nativeCleanPath(data.weatherXplane12Path));
   ui->lineEditOptionsWeatherAsnPath->setText(atools::nativeCleanPath(data.weatherActiveSkyPath));
-  ui->lineEditOptionsWeatherNoaaStationsUrl->setText(data.weatherNoaaUrl);
-  ui->lineEditOptionsWeatherVatsimUrl->setText(data.weatherVatsimUrl);
-  ui->lineEditOptionsWeatherIvaoUrl->setText(data.weatherIvaoUrl);
+  ui->lineEditOptionsWeatherNoaaStationsUrl->setText(data.weatherNoaaUrl.trimmed());
+  ui->lineEditOptionsWeatherVatsimUrl->setText(data.weatherVatsimUrl.trimmed());
+  ui->lineEditOptionsWeatherIvaoUrl->setText(data.weatherIvaoUrl.trimmed());
 
   addDatabaseTableItems(ui->tableWidgetOptionsDatabaseInclude, data.databaseInclude);
   addDatabaseTableItems(ui->tableWidgetOptionsDatabaseExclude, data.databaseExclude);
@@ -2406,7 +2406,7 @@ void OptionsDialog::optionDataToWidgets(const OptionData& data)
   ui->lineEditOptionsWebDocroot->setText(atools::nativeCleanPath(data.webDocumentRoot));
 
   ui->lineEditOptionsWeatherXplaneWind->setText(data.weatherXplaneWind);
-  ui->lineEditOptionsWeatherNoaaWindUrl->setText(data.weatherNoaaWindBaseUrl);
+  ui->lineEditOptionsWeatherNoaaWindUrl->setText(data.weatherNoaaWindBaseUrl.trimmed());
 
   mapThemeKeysToWidget(data);
 }
@@ -2618,10 +2618,10 @@ void OptionsDialog::updateWeatherButtonState()
     ui->checkBoxOptionsWeatherInfoAsn->setEnabled(hasAs);
     ui->checkBoxOptionsWeatherTooltipAsn->setEnabled(hasAs);
 
-    ui->pushButtonOptionsWeatherNoaaTest->setEnabled(!ui->lineEditOptionsWeatherNoaaStationsUrl->text().isEmpty());
-    ui->pushButtonOptionsWeatherVatsimTest->setEnabled(!ui->lineEditOptionsWeatherVatsimUrl->text().isEmpty());
-    ui->pushButtonOptionsWeatherIvaoTest->setEnabled(!ui->lineEditOptionsWeatherIvaoUrl->text().isEmpty());
-    ui->pushButtonOptionsWeatherNoaaWindTest->setEnabled(!ui->lineEditOptionsWeatherNoaaWindUrl->text().isEmpty());
+    ui->pushButtonOptionsWeatherNoaaTest->setEnabled(!ui->lineEditOptionsWeatherNoaaStationsUrl->text().trimmed().isEmpty());
+    ui->pushButtonOptionsWeatherVatsimTest->setEnabled(!ui->lineEditOptionsWeatherVatsimUrl->text().trimmed().isEmpty());
+    ui->pushButtonOptionsWeatherIvaoTest->setEnabled(!ui->lineEditOptionsWeatherIvaoUrl->text().trimmed().isEmpty());
+    ui->pushButtonOptionsWeatherNoaaWindTest->setEnabled(!ui->lineEditOptionsWeatherNoaaWindUrl->text().trimmed().isEmpty());
 
     updateActiveSkyPathStatus();
     updateXplane11PathStatus();
@@ -2701,7 +2701,7 @@ void OptionsDialog::updateActiveSkyPathStatus()
 
 void OptionsDialog::updateXplane11PathStatus()
 {
-  const QString& path = ui->lineEditOptionsWeatherXplanePath->text();
+  const QString path = ui->lineEditOptionsWeatherXplanePath->text();
 
   if(!path.isEmpty())
   {
@@ -2720,7 +2720,7 @@ void OptionsDialog::updateXplane11PathStatus()
 
 void OptionsDialog::updateXplane12PathStatus()
 {
-  const QString& path = ui->lineEditOptionsWeatherXplane12Path->text();
+  const QString path = ui->lineEditOptionsWeatherXplane12Path->text();
 
   if(!path.isEmpty())
   {
@@ -2740,7 +2740,7 @@ void OptionsDialog::updateXplane12PathStatus()
 /* Checks the path to the X-Plane wind GRIB file. Display an error message in the label */
 void OptionsDialog::updateXplaneWindStatus()
 {
-  const QString& path = ui->lineEditOptionsWeatherXplaneWind->text();
+  const QString path = ui->lineEditOptionsWeatherXplaneWind->text();
   if(!path.isEmpty())
   {
     QFileInfo fileinfo(path);
@@ -3029,11 +3029,12 @@ void OptionsDialog::updateLinks()
 
 void OptionsDialog::updateFlightplanExample()
 {
-  if(!ui->lineEditOptionsRouteFilename->text().isEmpty())
+  const QString patternText = ui->lineEditOptionsRouteFilename->text();
+  if(!patternText.isEmpty())
   {
     QString errorMsg;
-    QString example = atools::fs::pln::Flightplan::getFilenamePatternExample(ui->lineEditOptionsRouteFilename->text() + ".lnmpln",
-                                                                             ".lnmpln", true /* html */, &errorMsg);
+    QString example =
+      atools::fs::pln::Flightplan::getFilenamePatternExample(patternText + ".lnmpln", ".lnmpln", true /* html */, &errorMsg);
 
     QString text = tr("Example: \"%1\"").arg(example);
 
