@@ -623,9 +623,9 @@ opening files, modifying the flight plan and other operations.</string>
            <property name="geometry">
             <rect>
              <x>0</x>
-             <y>0</y>
+             <y>-387</y>
              <width>585</width>
-             <height>808</height>
+             <height>836</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_23">
@@ -933,99 +933,7 @@ This does not affect the map window which can be changed separately on the optio
                <property name="spacing">
                 <number>2</number>
                </property>
-               <item row="4" column="1">
-                <widget class="QSpinBox" name="spinBoxOptionsGuiSearchText">
-                 <property name="readOnly">
-                  <bool>false</bool>
-                 </property>
-                 <property name="suffix">
-                  <string> %</string>
-                 </property>
-                 <property name="minimum">
-                  <number>50</number>
-                 </property>
-                 <property name="maximum">
-                  <number>300</number>
-                 </property>
-                 <property name="singleStep">
-                  <number>10</number>
-                 </property>
-                 <property name="value">
-                  <number>100</number>
-                 </property>
-                </widget>
-               </item>
-               <item row="3" column="1">
-                <widget class="QSpinBox" name="spinBoxOptionsGuiAircraftPerf">
-                 <property name="readOnly">
-                  <bool>false</bool>
-                 </property>
-                 <property name="suffix">
-                  <string> %</string>
-                 </property>
-                 <property name="minimum">
-                  <number>50</number>
-                 </property>
-                 <property name="maximum">
-                  <number>300</number>
-                 </property>
-                 <property name="singleStep">
-                  <number>10</number>
-                 </property>
-                 <property name="value">
-                  <number>100</number>
-                 </property>
-                </widget>
-               </item>
-               <item row="7" column="1">
-                <widget class="QSpinBox" name="spinBoxOptionsGuiSimInfoText">
-                 <property name="readOnly">
-                  <bool>false</bool>
-                 </property>
-                 <property name="suffix">
-                  <string> %</string>
-                 </property>
-                 <property name="minimum">
-                  <number>50</number>
-                 </property>
-                 <property name="maximum">
-                  <number>300</number>
-                 </property>
-                 <property name="singleStep">
-                  <number>10</number>
-                 </property>
-                 <property name="value">
-                  <number>100</number>
-                 </property>
-                </widget>
-               </item>
-               <item row="8" column="0" colspan="3">
-                <widget class="QLabel" name="labelOptionsUnitsTextSizeHint">
-                 <property name="text">
-                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/littlenavmap/resources/icons/bulb.svg&quot;/&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;You can temporarily change the text size for information and progress pages using Ctrl+Mouse Wheel.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-                 </property>
-                 <property name="wordWrap">
-                  <bool>true</bool>
-                 </property>
-                 <property name="margin">
-                  <number>10</number>
-                 </property>
-                 <property name="textInteractionFlags">
-                  <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
-                 </property>
-                </widget>
-               </item>
                <item row="4" column="0">
-                <widget class="QLabel" name="labelOptionsGuiSearchText">
-                 <property name="text">
-                  <string>Text size for &amp;search result tables and procedure view:</string>
-                 </property>
-                 <property name="buddy">
-                  <cstring>spinBoxOptionsGuiSearchText</cstring>
-                 </property>
-                </widget>
-               </item>
-               <item row="3" column="0">
                 <widget class="QLabel" name="labelOptionsGuiAircraftPerf">
                  <property name="text">
                   <string>Text size for &amp;flight plan fuel report:</string>
@@ -1035,52 +943,7 @@ This does not affect the map window which can be changed separately on the optio
                  </property>
                 </widget>
                </item>
-               <item row="5" column="1">
-                <widget class="QSpinBox" name="spinBoxOptionsGuiInfoText">
-                 <property name="readOnly">
-                  <bool>false</bool>
-                 </property>
-                 <property name="suffix">
-                  <string> %</string>
-                 </property>
-                 <property name="minimum">
-                  <number>50</number>
-                 </property>
-                 <property name="maximum">
-                  <number>300</number>
-                 </property>
-                 <property name="singleStep">
-                  <number>10</number>
-                 </property>
-                 <property name="value">
-                  <number>100</number>
-                 </property>
-                </widget>
-               </item>
-               <item row="7" column="0">
-                <widget class="QLabel" name="labelOptionsGuiSimInfoText">
-                 <property name="text">
-                  <string>Text size for &amp;simulator aircraft information dock window:</string>
-                 </property>
-                 <property name="buddy">
-                  <cstring>spinBoxOptionsGuiSimInfoText</cstring>
-                 </property>
-                </widget>
-               </item>
-               <item row="5" column="2">
-                <spacer name="horizontalSpacer_3">
-                 <property name="orientation">
-                  <enum>Qt::Horizontal</enum>
-                 </property>
-                 <property name="sizeHint" stdset="0">
-                  <size>
-                   <width>40</width>
-                   <height>20</height>
-                  </size>
-                 </property>
-                </spacer>
-               </item>
-               <item row="5" column="0">
+               <item row="6" column="0">
                 <widget class="QLabel" name="labelOptionsGuiInfoText">
                  <property name="text">
                   <string>Text size for &amp;information dock window:</string>
@@ -1118,6 +981,105 @@ This does not affect the map window which can be changed separately on the optio
                  </property>
                 </widget>
                </item>
+               <item row="5" column="0">
+                <widget class="QLabel" name="labelOptionsGuiSearchText">
+                 <property name="text">
+                  <string>Text size for &amp;search result tables and procedure view:</string>
+                 </property>
+                 <property name="buddy">
+                  <cstring>spinBoxOptionsGuiSearchText</cstring>
+                 </property>
+                </widget>
+               </item>
+               <item row="6" column="2">
+                <spacer name="horizontalSpacer_3">
+                 <property name="orientation">
+                  <enum>Qt::Horizontal</enum>
+                 </property>
+                 <property name="sizeHint" stdset="0">
+                  <size>
+                   <width>40</width>
+                   <height>20</height>
+                  </size>
+                 </property>
+                </spacer>
+               </item>
+               <item row="3" column="1">
+                <widget class="QSpinBox" name="spinBoxOptionsGuiRouteRemarksText">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="readOnly">
+                  <bool>false</bool>
+                 </property>
+                 <property name="suffix">
+                  <string> %</string>
+                 </property>
+                 <property name="minimum">
+                  <number>50</number>
+                 </property>
+                 <property name="maximum">
+                  <number>300</number>
+                 </property>
+                 <property name="singleStep">
+                  <number>10</number>
+                 </property>
+                 <property name="value">
+                  <number>100</number>
+                 </property>
+                </widget>
+               </item>
+               <item row="9" column="0" colspan="3">
+                <widget class="QLabel" name="labelOptionsUnitsTextSizeHint">
+                 <property name="text">
+                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/littlenavmap/resources/icons/bulb.svg&quot;/&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;You can temporarily change the text size for information and progress pages using Ctrl+Mouse Wheel.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                 </property>
+                 <property name="wordWrap">
+                  <bool>true</bool>
+                 </property>
+                 <property name="margin">
+                  <number>10</number>
+                 </property>
+                 <property name="textInteractionFlags">
+                  <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
+                 </property>
+                </widget>
+               </item>
+               <item row="8" column="0">
+                <widget class="QLabel" name="labelOptionsGuiSimInfoText">
+                 <property name="text">
+                  <string>Text size for &amp;simulator aircraft information dock window:</string>
+                 </property>
+                 <property name="buddy">
+                  <cstring>spinBoxOptionsGuiSimInfoText</cstring>
+                 </property>
+                </widget>
+               </item>
+               <item row="4" column="1">
+                <widget class="QSpinBox" name="spinBoxOptionsGuiAircraftPerf">
+                 <property name="readOnly">
+                  <bool>false</bool>
+                 </property>
+                 <property name="suffix">
+                  <string> %</string>
+                 </property>
+                 <property name="minimum">
+                  <number>50</number>
+                 </property>
+                 <property name="maximum">
+                  <number>300</number>
+                 </property>
+                 <property name="singleStep">
+                  <number>10</number>
+                 </property>
+                 <property name="value">
+                  <number>100</number>
+                 </property>
+                </widget>
+               </item>
                <item row="1" column="0">
                 <widget class="QLabel" name="labelOptionsGuiRouteText">
                  <property name="text">
@@ -1128,7 +1090,73 @@ This does not affect the map window which can be changed separately on the optio
                  </property>
                 </widget>
                </item>
-               <item row="2" column="0">
+               <item row="5" column="1">
+                <widget class="QSpinBox" name="spinBoxOptionsGuiSearchText">
+                 <property name="readOnly">
+                  <bool>false</bool>
+                 </property>
+                 <property name="suffix">
+                  <string> %</string>
+                 </property>
+                 <property name="minimum">
+                  <number>50</number>
+                 </property>
+                 <property name="maximum">
+                  <number>300</number>
+                 </property>
+                 <property name="singleStep">
+                  <number>10</number>
+                 </property>
+                 <property name="value">
+                  <number>100</number>
+                 </property>
+                </widget>
+               </item>
+               <item row="6" column="1">
+                <widget class="QSpinBox" name="spinBoxOptionsGuiInfoText">
+                 <property name="readOnly">
+                  <bool>false</bool>
+                 </property>
+                 <property name="suffix">
+                  <string> %</string>
+                 </property>
+                 <property name="minimum">
+                  <number>50</number>
+                 </property>
+                 <property name="maximum">
+                  <number>300</number>
+                 </property>
+                 <property name="singleStep">
+                  <number>10</number>
+                 </property>
+                 <property name="value">
+                  <number>100</number>
+                 </property>
+                </widget>
+               </item>
+               <item row="8" column="1">
+                <widget class="QSpinBox" name="spinBoxOptionsGuiSimInfoText">
+                 <property name="readOnly">
+                  <bool>false</bool>
+                 </property>
+                 <property name="suffix">
+                  <string> %</string>
+                 </property>
+                 <property name="minimum">
+                  <number>50</number>
+                 </property>
+                 <property name="maximum">
+                  <number>300</number>
+                 </property>
+                 <property name="singleStep">
+                  <number>10</number>
+                 </property>
+                 <property name="value">
+                  <number>100</number>
+                 </property>
+                </widget>
+               </item>
+               <item row="3" column="0">
                 <widget class="QLabel" name="labelOptionsGuiRouteRemarksText">
                  <property name="text">
                   <string>Text size for flight plan &amp;remarks:</string>
@@ -1138,8 +1166,18 @@ This does not affect the map window which can be changed separately on the optio
                  </property>
                 </widget>
                </item>
+               <item row="2" column="0">
+                <widget class="QLabel" name="labelOptionsGuiRouteInfoText">
+                 <property name="text">
+                  <string>Text size for flight plan &amp;header:</string>
+                 </property>
+                 <property name="buddy">
+                  <cstring>spinBoxOptionsGuiRouteText</cstring>
+                 </property>
+                </widget>
+               </item>
                <item row="2" column="1">
-                <widget class="QSpinBox" name="spinBoxOptionsGuiRouteRemarksText">
+                <widget class="QSpinBox" name="spinBoxOptionsGuiRouteInfoText">
                  <property name="sizePolicy">
                   <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
                    <horstretch>0</horstretch>
@@ -1536,8 +1574,8 @@ Also affects labels at holds and traffic patterns.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>599</width>
-             <height>421</height>
+             <width>471</width>
+             <height>375</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_59">
@@ -1752,8 +1790,8 @@ Example: &quot;IFR Frankfurt Am Main (EDDF) to Fiumicino (LIRF).lnmpln&quot;</st
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>585</width>
-             <height>454</height>
+             <width>317</width>
+             <height>510</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout">
@@ -2799,7 +2837,7 @@ Map views might be shown with a larger zoom distance than expected if this optio
              <x>0</x>
              <y>0</y>
              <width>499</width>
-             <height>1005</height>
+             <height>1009</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_20">
@@ -4081,7 +4119,7 @@ Also used in the elevation profile.</string>
              <x>0</x>
              <y>0</y>
              <width>554</width>
-             <height>260</height>
+             <height>264</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_57">
@@ -5714,7 +5752,7 @@ airspace filename has to match the callsign of the online center.</string>
              <x>0</x>
              <y>0</y>
              <width>572</width>
-             <height>629</height>
+             <height>633</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_25">
@@ -6321,7 +6359,7 @@ Note that this value does not affect flight plan calculation or saving of flight
              <x>0</x>
              <y>0</y>
              <width>272</width>
-             <height>750</height>
+             <height>754</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_27">
@@ -6562,7 +6600,7 @@ Note that this value does not affect flight plan calculation or saving of flight
              <x>0</x>
              <y>0</y>
              <width>360</width>
-             <height>931</height>
+             <height>939</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_28">
@@ -8032,8 +8070,8 @@ Source data has many errors.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>395</width>
-             <height>506</height>
+             <width>585</width>
+             <height>490</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_38">

@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -56,11 +56,7 @@ RouteLabel::RouteLabel(QWidget *parent, const Route& routeParam)
 
   ui->labelRouteSelection->setVisible(false);
   ui->labelRouteInfo->setVisible(false); // Will be shown if route is created
-}
-
-RouteLabel::~RouteLabel()
-{
-
+  updateFont();
 }
 
 void RouteLabel::saveState()
@@ -96,6 +92,18 @@ void RouteLabel::styleChanged()
 
   // Update later in event queue to avoid obscure problem of disappearing labels
   QTimer::singleShot(0, this, &RouteLabel::updateAll);
+}
+
+void RouteLabel::optionsChanged()
+{
+  updateFont();
+}
+
+void RouteLabel::updateFont()
+{
+  QFont font = QApplication::font();
+  font.setPointSizeF(font.pointSizeF() * OptionData::instance().getGuiRouteInfoTextSize() / 100.f);
+  NavApp::getMainUi()->labelRouteInfo->setFont(font);
 }
 
 void RouteLabel::updateAll()

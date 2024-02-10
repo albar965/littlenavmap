@@ -813,6 +813,12 @@ public:
     return guiRouteRemarksTextSize;
   }
 
+  /* Route header label text size in percent */
+  int getGuiRouteInfoTextSize() const
+  {
+    return guiRouteInfoTextSize;
+  }
+
   /* Search result table view text size in percent */
   int getGuiSearchTableTextSize() const
   {
@@ -1427,6 +1433,9 @@ private:
 
   // ui->spinBoxOptionsGuiRouteRemarksText
   int guiRouteRemarksTextSize = 100;
+
+  // ui->spinBoxOptionsGuiRouteInfoText
+  int guiRouteInfoTextSize = 100;
 
   // ui->spinBoxOptionsGuiSearchText
   int guiSearchTableTextSize = 100;

@@ -3367,7 +3367,7 @@ void RouteController::styleChanged()
 
 void RouteController::updateRemarksFont()
 {
-  QFont font = NavApp::getMainUi()->labelRouteRemarksHeader->font();
+  QFont font = QApplication::font();
   font.setPointSizeF(font.pointSizeF() * OptionData::instance().getGuiRouteRemarksTextSize() / 100.f);
   NavApp::getMainUi()->plainTextEditRouteRemarks->setFont(font);
 }
@@ -3377,6 +3377,8 @@ void RouteController::optionsChanged()
   zoomHandler->zoomPercent(OptionData::instance().getGuiRouteTableTextSize());
 
   updateRemarksFont();
+
+  routeLabel->optionsChanged();
 
   routeCalcDialog->optionsChanged();
 
