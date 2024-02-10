@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -378,10 +378,20 @@ bool CoordinateConverter::wToSInternal(const Marble::GeoDataCoordinates& coords,
 
   if(numPoints == 0)
     visible = viewport->screenCoordinates(coords, xordinates[0], y, hidden);
+  else
+  {
+    int foundIndex = -1;
+    // Do not paint repetitions for the Mercator projection
+    // Determine the smallest one
+    for(int i = 0; i < numPoints; i++)
+    {
+      if(foundIndex == -1 || std::abs(xordinates[i]) < std::abs(xordinates[foundIndex]))
+        foundIndex = i;
+    }
 
-  // Do not paint repetitions for the Mercator projection
-  // The fist coordinate is good enough here
-  x = xordinates[0];
+    if(foundIndex != -1)
+      x = xordinates[foundIndex];
+  }
 
 #ifdef DEBUG_INFORMATION_COORDS
   if(x < -5000 || x > 5000)

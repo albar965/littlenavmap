@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -34,6 +34,9 @@ using atools::geo::Line;
 using atools::geo::LineString;
 using atools::geo::Pos;
 
+// Need a bigger buffer here
+const static QSize TEXT_PLACEMENT_WTOS_SIZE(10000, 10000);
+
 TextPlacement::TextPlacement(QPainter *painterParam, const CoordinateConverter *coordinateConverter,
                              const QRect& screenRectParam)
   : painter(painterParam), converter(coordinateConverter)
@@ -53,7 +56,7 @@ void TextPlacement::calculateTextPositions(const atools::geo::LineString& points
     int x1 = 0, y1 = 0;
     bool hidden = false;
     bool visibleStart = points.at(i).isValid() ?
-                        converter->wToS(points.at(i), x1, y1, CoordinateConverter::DEFAULT_WTOS_SIZE, &hidden) : false;
+                        converter->wToS(points.at(i), x1, y1, TEXT_PLACEMENT_WTOS_SIZE, &hidden) : false;
 
     if(!visibleStart && !screenRect.isNull() && !hidden)
       // Not visible - try the (extended) screen rectangle if not hidden behind the globe
@@ -62,6 +65,10 @@ void TextPlacement::calculateTextPositions(const atools::geo::LineString& points
     visibleStartPoints.setBit(i, visibleStart);
     startPoints.append(QPointF(x1, y1));
   }
+
+#ifdef DEBUG_TEXPLACEMENT_PAINT
+  qDebug() << Q_FUNC_INFO << "startPoints" << startPoints;
+#endif
 }
 
 void TextPlacement::calculateTextAlongLines(const QVector<atools::geo::Line>& lines, const QStringList& lineTexts)
@@ -69,22 +76,25 @@ void TextPlacement::calculateTextAlongLines(const QVector<atools::geo::Line>& li
   visibleStartPoints.resize(lines.size() + 1);
 
   QFontMetricsF metrics(painter->font());
-  float x1, y1, x2, y2;
-  for(int i = 0; i < lines.size(); i++)
+  QPoint pt1, pt2;
+  if(!fast)
   {
-    const Line& line = lines.at(i);
-
-    if(!fast)
+    for(int i = 0; i < lines.size(); i++)
     {
-      converter->wToS(line.getPos1(), x1, y1);
-      converter->wToS(line.getPos2(), x2, y2);
+      const Line& line = lines.at(i);
+      bool visible1, hidden1, visible2, hidden2;
+      pt1 = converter->wToS(line.getPos1(), TEXT_PLACEMENT_WTOS_SIZE, &visible1, &hidden1);
+      pt2 = converter->wToS(line.getPos2(), TEXT_PLACEMENT_WTOS_SIZE, &visible2, &hidden2);
+      float lineLength = atools::geo::simpleDistanceF(pt1.x(), pt1.y(), pt2.x(), pt2.y());
 
-      float lineLength = atools::geo::simpleDistanceF(x1, y1, x2, y2);
-
-      if(line.isValid() && lineLength > minLengthForText)
+      if(line.isValid() && lineLength > minLengthForText && !hidden1 && !hidden2)
       {
         // Build temporary elided text to get the right length - use any arrow
         QString text = elideText(lineTexts.at(i), arrowLeft, metrics, lineLength);
+
+#ifdef DEBUG_TEXPLACEMENT_PAINT
+        qDebug() << Q_FUNC_INFO << "text" << text << "lineLength" << lineLength;
+#endif
 
         float xt, yt, brg;
         if(findTextPos(lines.at(i), lines.at(i).lengthMeter(), horizontalAdvance(text, metrics),
@@ -115,7 +125,7 @@ void TextPlacement::calculateTextAlongLines(const QVector<atools::geo::Line>& li
   {
     // Add last point
     const Line& line = lines.constLast();
-    converter->wToS(line.getPos2(), x2, y2);
+    pt2 = converter->wToS(line.getPos2(), TEXT_PLACEMENT_WTOS_SIZE);
 
     if(!colors.isEmpty())
       colors2.append(colors.at(lines.size() - 1));
@@ -265,6 +275,9 @@ bool TextPlacement::findTextPos(const Line& line, float distanceMeter, float tex
   if(bearing != nullptr)
     *bearing = brg;
 
+#ifdef DEBUG_TEXPLACEMENT_PAINT
+  qDebug() << Q_FUNC_INFO << "brg" << brg;
+#endif
   return retval;
 }
 
@@ -325,11 +338,12 @@ bool TextPlacement::findTextPosInternal(const Line& line, float distanceMeter, f
     const Pos& pos = positions.at(i);
     bool hidden = false;
     float xt, yt;
-    bool visible = converter->wToS(pos, xt, yt, QSize(0, 0), &hidden);
+    bool visible = converter->wToS(pos, xt, yt, TEXT_PLACEMENT_WTOS_SIZE, &hidden);
     if(!hidden)
     {
       if(!points.isEmpty())
         lineLength += QLineF(QPointF(xt, yt), points.constLast()).length();
+
       points.append(QPointF(xt, yt));
 
       // Remember visibility for first and last point
@@ -339,6 +353,10 @@ bool TextPlacement::findTextPosInternal(const Line& line, float distanceMeter, f
         lastVisible = visible;
     }
   }
+
+#ifdef DEBUG_TEXPLACEMENT_PAINT
+  qDebug() << Q_FUNC_INFO << "points" << points << "firstVisible" << firstVisible << "lastVisible" << lastVisible;
+#endif
 
   if(!points.isEmpty())
   {
@@ -386,6 +404,10 @@ bool TextPlacement::findTextPosInternal(const Line& line, float distanceMeter, f
       }
     }
 
+#ifdef DEBUG_TEXPLACEMENT_PAINT
+    qDebug() << Q_FUNC_INFO << "bearingsValid" << bearingsValid;
+#endif
+
     if(!pointsIdxValid.isEmpty())
     {
       // Now to precise filtering using the rotated text polygons ============================================
@@ -418,7 +440,7 @@ bool TextPlacement::findTextPosInternal(const Line& line, float distanceMeter, f
 #ifdef DEBUG_TEXPLACEMENT_PAINT
           painter->setPen(QPen(Qt::red, 0.8));
           painter->drawPolyline(textPolygon);
-          painter->drawText(textPolygon.constFirst(), QString("ptIdx %1 i %2").arg(ptIdx).arg(i));
+          painter->drawText(textPolygon.constFirst(), QString("ptIdx %1 i %2").arg(pointsIdxValid.at(i)).arg(i));
 #endif
         }
         // Check partial visibility ================
@@ -428,7 +450,7 @@ bool TextPlacement::findTextPosInternal(const Line& line, float distanceMeter, f
 #ifdef DEBUG_TEXPLACEMENT_PAINT
           painter->setPen(QPen(Qt::blue, 0.8, Qt::DotLine));
           painter->drawPolyline(textPolygon);
-          painter->drawText(textPolygon.constFirst(), QString("ptIdx %1 i %2").arg(ptIdx).arg(i));
+          painter->drawText(textPolygon.constFirst(), QString("ptIdx %1 i %2").arg(pointsIdxValid.at(i)).arg(i));
 #endif
         }
       }
