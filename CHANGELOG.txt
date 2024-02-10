@@ -2,10 +2,7 @@
 For example: #3 is https://github.com/albar965/littlenavmap/issues/3.
 This text is partially Markdown, hence sometimes strange formatting.
 
-
 ==>>=============================================================================
-
-# Version 3.0.2.beta
 
 ## Notes
 
@@ -27,10 +24,28 @@ If you think the overall appearance of fonts in Little Navmap on Windows is blur
 Remove the file `qt.conf` in the Little Navmap installation folder.
 Keep in mind that this will revert map display and performance improvements.
 
-A big thank you to all who reported bugs and issues!
+A big Thank You! to all who reported bugs and issues.
+
+# Version 3.0.3.rc1
+
+## Changes from 3.0.2.beta to 3.0.3.rc1
+
+* Fixed several issues with flight plan labels if crossing anti-meridian.
+* Now removing leading and trailing white space from URLs in options to avoid issues with wrong
+  user input. #1089
+* Improved altitude correction after reading flight plan description without altitude designation.
+  Now using lowest possible altitude depending on airway and procedure restrictions if present.
+  Otherwise falls back to defaults for 10000 ft when using VFR or 20000 ft for IFR. Adjust in the
+  flight plan table as needed.
+* Missing PAPI in profile fixed when last procedure leg is short circle-to-land.
+* Fixed turn indicator curve at low aircraft speeds.
+* Added text size option for flight plan header.
+
+==<<=============================================================================
+
+# Version 3.0.2.beta
 
 ## Changes from 3.0.1.beta to 3.0.2.beta
-
 
 ### Flight Plan and Export
 
@@ -138,7 +153,7 @@ updated Navigraph navdatabase.
 * Fixed issue where circular airspace arcs resulted in self crossing polygons and wrong
   text placement.
 
-==>>=============================================================================
+=================================================================================
 
 # Version 3.0.1.beta
 
@@ -203,7 +218,7 @@ A big thank you to all who reported bugs and issues!
 
 **🎉🎉🎉 A Happy New Year to all of you! 🎉🎉🎉**
 
-==<<=============================================================================
+=================================================================================
 
 # Version 3.0.0.beta
 
