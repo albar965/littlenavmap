@@ -17,18 +17,20 @@
 
 #include "query/procedurequery.h"
 
+#include "app/navapp.h"
+#include "common/constants.h"
 #include "common/proctypes.h"
 #include "common/unit.h"
+#include "fs/pln/flightplanconstants.h"
 #include "fs/util/fsutil.h"
 #include "geo/calculations.h"
 #include "geo/line.h"
-#include "app/navapp.h"
 #include "query/airportquery.h"
 #include "query/mapquery.h"
+#include "settings/settings.h"
 #include "sql/sqldatabase.h"
 #include "sql/sqlquery.h"
 #include "sql/sqlrecord.h"
-#include "fs/pln/flightplanconstants.h"
 
 #include <QStringBuilder>
 
@@ -53,6 +55,7 @@ namespace ageo = atools::geo;
 ProcedureQuery::ProcedureQuery(atools::sql::SqlDatabase *sqlDbNav)
   : dbNav(sqlDbNav)
 {
+  verbose = atools::settings::Settings::instance().getAndStoreValue(lnm::OPTIONS_PROCEDURE_DEBUG, false).toBool();
 }
 
 ProcedureQuery::~ProcedureQuery()
@@ -109,7 +112,10 @@ const proc::MapProcedureLeg *ProcedureQuery::getProcedureLeg(const map::MapAirpo
       // Use index to get leg
       return &legs->at(procedureLegIndex.value(legId).second);
   }
-  qWarning() << "approach leg with id" << legId << "not found";
+
+  if(verbose)
+    qWarning() << "approach leg with id" << legId << "not found";
+
   return nullptr;
 }
 
@@ -144,7 +150,10 @@ const proc::MapProcedureLeg *ProcedureQuery::getTransitionLeg(const map::MapAirp
       transitionIdForLegQuery->finish();
     }
   }
-  qWarning() << "transition leg with id" << legId << "not found";
+
+  if(verbose)
+    qWarning() << "transition leg with id" << legId << "not found";
+
   return nullptr;
 }
 
@@ -613,10 +622,18 @@ void ProcedureQuery::mapObjectByIdent(map::MapResult& result, map::MapTypes type
 
   mapQuery->getMapObjectByIdent(result, type, ident, region, airport, sortByDistancePos,
                                 nmToMeter(1000.f), true /* airport from nav database */);
-  if(result.isEmpty(type))
-    // Try again in 1000 nm radius by excluding the region - result sorted by distance
+
+  if(result.isEmpty(type) && !region.isEmpty())
+    // Try again in 1000 nm radius by excluding the region if given
     mapQuery->getMapObjectByIdent(result, type, ident, QString(), airport, sortByDistancePos,
                                   nmToMeter(1000.f), true /* airport from nav database */);
+
+  if(result.isEmpty(type) && !airport.isEmpty())
+    // Try again in 1000 nm radius by excluding the region and airport
+    mapQuery->getMapObjectByIdent(result, type, ident, QString(), QString(), sortByDistancePos,
+                                  nmToMeter(1000.f), true /* airport from nav database */);
+
+  // result always sorted by distance
 }
 
 void ProcedureQuery::updateMagvar(const map::MapAirport& airport, proc::MapProcedureLegs& legs) const
@@ -841,9 +858,9 @@ proc::MapProcedureLegs *ProcedureQuery::buildProcedureLegs(const map::MapAirport
   if(!runwayFound)
   {
     // Nothing found in the database - search by name fuzzy or add a dummy entry if nothing was found by name
-#ifdef DEBUG_INFORMATION
-    qWarning() << Q_FUNC_INFO << procedureId << "not found";
-#endif
+    if(verbose)
+      qWarning() << Q_FUNC_INFO << procedureId << "not found";
+
     map::MapResult result;
     runwayEndByName(result, legs->runway, airport);
 
@@ -1087,8 +1104,9 @@ void ProcedureQuery::processArtificialLegs(const map::MapAirport& airport, proc:
               const proc::MapAltRestriction& lastAltRestr = legs.procedureLegs.at(insertPosition - 1).altRestriction;
               if(lastAltRestr.descriptor == proc::MapAltRestriction::AT)
               {
-                qWarning() << Q_FUNC_INFO << "Leg altitude below airport altitude" << airport.ident << rwleg.fixIdent
-                           << "rwleg.altRestriction.alt1" << rwleg.altRestriction.alt1 << "lastAltRestr.alt1" << lastAltRestr.alt1;
+                if(verbose)
+                  qWarning() << Q_FUNC_INFO << "Leg altitude below airport altitude" << airport.ident << rwleg.fixIdent
+                             << "rwleg.altRestriction.alt1" << rwleg.altRestriction.alt1 << "lastAltRestr.alt1" << lastAltRestr.alt1;
 
                 rwleg.altRestriction.alt1 = std::min(rwleg.altRestriction.alt1, lastAltRestr.alt1);
               }
@@ -1244,8 +1262,9 @@ void ProcedureQuery::processLegsFixRestrictions(const map::MapAirport& airport, 
     // Test if MAP is below airport altitude
     if(leg.isMissedApproachPoint() && leg.altRestriction.alt1 < airportAlt)
     {
-      qWarning() << Q_FUNC_INFO << "MAP altitude below airport altitude" << airport.ident << leg.fixIdent
-                 << " leg.altRestriction.alt1" << leg.altRestriction.alt1 << "airportAlt" << airportAlt;
+      if(verbose)
+        qWarning() << Q_FUNC_INFO << "MAP altitude below airport altitude" << airport.ident << leg.fixIdent
+                   << " leg.altRestriction.alt1" << leg.altRestriction.alt1 << "airportAlt" << airportAlt;
       leg.altRestriction.alt1 = std::ceil(airportAlt);
     }
   }
@@ -1273,8 +1292,9 @@ void ProcedureQuery::processLegsFixRestrictions(const map::MapAirport& airport, 
     {
       // Last leg before missed approach - usually runway
       // Correct restriction to used simulator airport where it is wrongly below airport altitude for some
-      qWarning() << Q_FUNC_INFO << "Final leg altitude below airport altitude" << airport.ident << prevLeg.fixIdent
-                 << " prevLeg.altRestriction.alt1" << prevLeg.altRestriction.alt1 << "airportAlt" << airportAlt;
+      if(verbose)
+        qWarning() << Q_FUNC_INFO << "Final leg altitude below airport altitude" << airport.ident << prevLeg.fixIdent
+                   << " prevLeg.altRestriction.alt1" << prevLeg.altRestriction.alt1 << "airportAlt" << airportAlt;
       prevLeg.altRestriction.alt1 = std::ceil(airportAlt);
     }
   }
@@ -1320,7 +1340,7 @@ void ProcedureQuery::processLegsDistanceAndCourse(proc::MapProcedureLegs& legs) 
 
     leg.geometry.clear();
 
-    if(!leg.line.isValid())
+    if(!leg.line.isValid() && verbose)
       qWarning() << "leg line for leg is invalid" << leg;
 
     // ===========================================================
@@ -1374,7 +1394,9 @@ void ProcedureQuery::processLegsDistanceAndCourse(proc::MapProcedureLegs& legs) 
         leg.calculatedDistance = meterToNm(leg.line.lengthMeter());
         leg.calculatedTrueCourse = normalizeCourse(leg.line.angleDeg());
         leg.geometry << leg.line.getPos1() << leg.line.getPos2();
-        qWarning() << "ARC_TO_FIX or CONSTANT_RADIUS_ARC has invalid recommended fix" << leg;
+
+        if(verbose)
+          qWarning() << "ARC_TO_FIX or CONSTANT_RADIUS_ARC has invalid recommended fix" << leg;
       }
     }
     // ===========================================================
@@ -1520,7 +1542,7 @@ void ProcedureQuery::processLegs(proc::MapProcedureLegs& legs) const
         if(leg.rho > 0.f)
           leg.remarks << tr("DME %1").arg(Unit::distNm(leg.rho, true, 20, true));
       }
-      else
+      else if(verbose)
         qWarning() << Q_FUNC_INFO << "leg line type" << leg.type << "fix" << leg.fixIdent << "invalid rho or theta"
                    << "procedureId" << leg.procedureId << "transitionId" << leg.transitionId << "legId" << leg.legId;
 
@@ -1622,7 +1644,7 @@ void ProcedureQuery::processLegs(proc::MapProcedureLegs& legs) const
             // Fly to start of leg
             lastPos = extended;
           }
-          else
+          else if(verbose)
             qWarning() << Q_FUNC_INFO << "leg line type" << leg.type << "fix" << leg.fixIdent
                        << "invalid cross track"
                        << "approachId" << leg.procedureId
@@ -1735,8 +1757,9 @@ void ProcedureQuery::processLegs(proc::MapProcedureLegs& legs) const
       else
       {
         curPos = lastPos;
-        qWarning() << Q_FUNC_INFO << "leg line type" << type << "fix" << leg.fixIdent << "no intersectingRadials found"
-                   << "approachId" << leg.procedureId << "transitionId" << leg.transitionId << "legId" << leg.legId;
+        if(verbose)
+          qWarning() << Q_FUNC_INFO << "leg line type" << type << "fix" << leg.fixIdent << "no intersectingRadials found"
+                     << "approachId" << leg.procedureId << "transitionId" << leg.transitionId << "legId" << leg.legId;
       }
     }
     // ===========================================================
@@ -1788,8 +1811,9 @@ void ProcedureQuery::processLegs(proc::MapProcedureLegs& legs) const
       else
       {
         curPos = center;
-        qWarning() << Q_FUNC_INFO << "leg line type" << type << "fix" << leg.fixIdent << "no intersectionWithCircle found"
-                   << "approachId" << leg.procedureId << "transitionId" << leg.transitionId << "legId" << leg.legId;
+        if(verbose)
+          qWarning() << Q_FUNC_INFO << "leg line type" << type << "fix" << leg.fixIdent << "no intersectionWithCircle found"
+                     << "approachId" << leg.procedureId << "transitionId" << leg.transitionId << "legId" << leg.legId;
       }
 
       leg.displayText << (leg.recFixIdent % tr("/") % Unit::distNm(leg.distance, true, 20, true) % tr("/") %
@@ -1848,7 +1872,7 @@ void ProcedureQuery::processLegs(proc::MapProcedureLegs& legs) const
     else
       leg.line = Line(lastPos.isValid() ? lastPos : curPos, curPos);
 
-    if(!leg.line.isValid())
+    if(!leg.line.isValid() && verbose)
       qWarning() << Q_FUNC_INFO << "leg line type" << type << "fix" << leg.fixIdent << "invalid line"
                  << "approachId" << leg.procedureId << "transitionId" << leg.transitionId << "legId" << leg.legId;
     lastPos = curPos;
@@ -1934,7 +1958,7 @@ void ProcedureQuery::processCourseInterceptLegs(proc::MapProcedureLegs& legs) co
               next->line.setPos2(next->line.getPos2());
               leg.displayText << tr("Intercept");
             }
-            else
+            else if(verbose)
               qWarning() << Q_FUNC_INFO << "leg line type" << leg.type << "fix" << leg.fixIdent
                          << "invalid cross track"
                          << "approachId" << leg.procedureId
@@ -1943,9 +1967,11 @@ void ProcedureQuery::processCourseInterceptLegs(proc::MapProcedureLegs& legs) co
           }
           else
           {
-            qWarning() << Q_FUNC_INFO << "leg line type" << leg.type << "fix" << leg.fixIdent
-                       << "no intersectingRadials/intersectionWithCircle found"
-                       << "approachId" << leg.procedureId << "transitionId" << leg.transitionId << "legId" << leg.legId;
+            if(verbose)
+              qWarning() << Q_FUNC_INFO << "leg line type" << leg.type << "fix" << leg.fixIdent
+                         << "no intersectingRadials/intersectionWithCircle found"
+                         << "approachId" << leg.procedureId << "transitionId" << leg.transitionId << "legId" << leg.legId;
+
             leg.displayText << tr("Intercept") << tr("Leg");
             leg.line.setPos2(next->line.getPos1());
           }
@@ -2216,7 +2242,7 @@ int ProcedureQuery::getSidId(map::MapAirport departure, const QString& sid, cons
       // Try again without runway
       sidApprId = findProcedureId(departure, procedureIdByNameQuery, "D", QString(), strict);
 
-    if(sidApprId == -1)
+    if(sidApprId == -1 && verbose)
       qWarning() << "Loading of SID" << sid << "failed";
   }
   return sidApprId;
@@ -2235,7 +2261,7 @@ int ProcedureQuery::getSidTransitionId(map::MapAirport departure, const QString&
     transitionIdByNameQuery->bindValue(":apprid", sidId);
 
     sidTransId = findTransitionId(departure, transitionIdByNameQuery, strict);
-    if(sidTransId == -1)
+    if(sidTransId == -1 && verbose)
       qWarning() << "Loading of SID transition" << sidTrans << "failed";
   }
 
@@ -2254,7 +2280,7 @@ int ProcedureQuery::getSidTransitionIdByWp(map::MapAirport departure, const QStr
     sidTransIdByWpQuery->bindValue(":apprid", sidId);
 
     sidTransId = findTransitionId(departure, sidTransIdByWpQuery, strict);
-    if(sidTransId == -1)
+    if(sidTransId == -1 && verbose)
       qWarning() << "Loading of SID transition by waypoint" << transWaypoint << "failed";
   }
 
@@ -2279,7 +2305,7 @@ int ProcedureQuery::getStarId(map::MapAirport destination, const QString& star, 
       // Try again without runway
       starId = findProcedureId(destination, procedureIdByNameQuery, "A", QString(), strict);
 
-    if(starId == -1)
+    if(starId == -1 && verbose)
       qWarning() << "Loading of STAR" << star << "failed";
   }
   return starId;
@@ -2298,7 +2324,7 @@ int ProcedureQuery::getStarTransitionId(map::MapAirport destination, const QStri
     transitionIdByNameQuery->bindValue(":apprid", starId);
 
     starTransId = findTransitionId(destination, transitionIdByNameQuery, strict);
-    if(starTransId == -1)
+    if(starTransId == -1 && verbose)
       qWarning() << "Loading of STAR transition" << starTrans << "failed";
   }
   return starTransId;
@@ -2316,7 +2342,7 @@ int ProcedureQuery::getApprOrStarTransitionIdByWp(map::MapAirport destination, c
     starTransIdByWpQuery->bindValue(":apprid", starId);
 
     starTransId = findTransitionId(destination, starTransIdByWpQuery, strict);
-    if(starTransId == -1)
+    if(starTransId == -1 && verbose)
       qWarning() << "Loading of STAR transition by waypoint" << transWaypoint << "failed";
   }
   return starTransId;
@@ -2629,7 +2655,7 @@ void ProcedureQuery::getLegsForFlightplanProperties(const QHash<QString, QString
           {
             sidTransId = getSidTransitionIdByWp(departureNav, transWp, sidId, true);
 
-            if(sidTransId == -1)
+            if(sidTransId == -1 && verbose)
               // Do not warn user
               qWarning() << Q_FUNC_INFO << "Error loading SID transition waypoint" << transWp;
           }
@@ -2747,7 +2773,8 @@ void ProcedureQuery::getLegsForFlightplanProperties(const QHash<QString, QString
           if(starTransId != -1)
             break;
         }
-        if(starTransId == -1)
+
+        if(starTransId == -1 && verbose)
           // Do not warn user
           qWarning() << Q_FUNC_INFO << "Error loading STAR transition waypoint(s)" << properties.value(pln::STAR_TRANS_WP);
       }
@@ -2789,7 +2816,7 @@ void ProcedureQuery::getLegsForFlightplanProperties(const QHash<QString, QString
         insertSidStarRunway(sidLegs, sidRw);
       }
     }
-    else
+    else if(verbose)
       qWarning() << Q_FUNC_INFO << "legs not found for" << departureNav.id << sidTransId;
   }
   else if(sidId != -1 && sidId != CUSTOM_DEPARTURE_ID) // Fetch and copy SID only from cache
@@ -2806,7 +2833,7 @@ void ProcedureQuery::getLegsForFlightplanProperties(const QHash<QString, QString
         insertSidStarRunway(sidLegs, sidRw);
       }
     }
-    else
+    else if(verbose)
       qWarning() << Q_FUNC_INFO << "legs not found for" << departureNav.id << sidId;
   }
 
@@ -2816,7 +2843,7 @@ void ProcedureQuery::getLegsForFlightplanProperties(const QHash<QString, QString
     const proc::MapProcedureLegs *legs = getTransitionLegs(destinationNav, transitionId);
     if(procedureValid(legs, &errors))
       approachLegs = *legs;
-    else
+    else if(verbose)
       qWarning() << Q_FUNC_INFO << "legs not found for" << destinationNav.id << transitionId;
   }
   else if(approachId != -1 && approachId != CUSTOM_APPROACH_ID) // Fetch and copy approach only from cache
@@ -2824,7 +2851,7 @@ void ProcedureQuery::getLegsForFlightplanProperties(const QHash<QString, QString
     const proc::MapProcedureLegs *legs = getProcedureLegs(destinationNav, approachId);
     if(procedureValid(legs, &errors))
       approachLegs = *legs;
-    else
+    else if(verbose)
       qWarning() << Q_FUNC_INFO << "legs not found for" << destinationNav.id << approachId;
   }
 
@@ -2843,7 +2870,7 @@ void ProcedureQuery::getLegsForFlightplanProperties(const QHash<QString, QString
         insertSidStarRunway(starLegs, starRw);
       }
     }
-    else
+    else if(verbose)
       qWarning() << Q_FUNC_INFO << "legs not found for" << destinationNav.id << starTransId;
   }
   else if(starId != -1)
@@ -2860,11 +2887,11 @@ void ProcedureQuery::getLegsForFlightplanProperties(const QHash<QString, QString
         insertSidStarRunway(starLegs, starRw);
       }
     }
-    else
+    else if(verbose)
       qWarning() << Q_FUNC_INFO << "legs not found for" << destinationNav.id << starId;
   }
 
-  if(!errors.isEmpty())
+  if(!errors.isEmpty() && verbose)
     qWarning() << Q_FUNC_INFO << errors;
 }
 
@@ -3090,7 +3117,7 @@ void ProcedureQuery::insertSidStarRunway(proc::MapProcedureLegs& legs, const QSt
       // Re-calculate all legs, positions and distances again
       postProcessLegs(airportQueryNav->getAirportById(legs.ref.airportId), legs, false /*addArtificialLegs*/);
     }
-    else
+    else if(verbose)
       qWarning() << Q_FUNC_INFO << "Cannot get runway for" << legs.runway;
   }
 }

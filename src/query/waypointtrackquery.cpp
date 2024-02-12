@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -59,13 +59,14 @@ MapWaypoint WaypointTrackQuery::getWaypointByNavId(int navId, map::MapType type)
   return waypoint;
 }
 
-void WaypointTrackQuery::getWaypointByIdent(QList<map::MapWaypoint>& waypoints, const QString& ident, const QString& region)
+void WaypointTrackQuery::getWaypointByIdent(QList<map::MapWaypoint>& waypoints, const QString& ident, const QString& region,
+                                            const QString& airport)
 {
   if(useTracks)
-    trackQuery->getWaypointByByIdent(waypoints, ident, region);
+    trackQuery->getWaypointByByIdent(waypoints, ident, region, airport);
 
   QList<map::MapWaypoint> navWaypoints;
-  waypointQuery->getWaypointByByIdent(navWaypoints, ident, region);
+  waypointQuery->getWaypointByByIdent(navWaypoints, ident, region, airport);
   copy(navWaypoints, waypoints);
 }
 

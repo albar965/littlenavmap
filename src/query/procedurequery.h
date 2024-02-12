@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -23,7 +23,6 @@
 
 #include <QCache>
 #include <QCoreApplication>
-#include <functional>
 
 namespace atools {
 namespace geo {
@@ -267,22 +266,24 @@ private:
 
   AirportQuery *airportQueryNav = nullptr;
 
+  bool verbose = false;
+
   /* Dummy used for custom approaches. */
-  Q_DECL_CONSTEXPR static int CUSTOM_APPROACH_ID = 1000000000;
-  Q_DECL_CONSTEXPR static int CUSTOM_DEPARTURE_ID = 1000000001;
+  const static int CUSTOM_APPROACH_ID = 1000000000;
+  const static int CUSTOM_DEPARTURE_ID = 1000000001;
 
   /* Use this value as an id base for the artifical vector legs. */
-  Q_DECL_CONSTEXPR static int VECTOR_LEG_ID_BASE = 1250000000;
+  const static int VECTOR_LEG_ID_BASE = 1250000000;
 
   /* Base id for artificial transition/procedure connections */
-  Q_DECL_CONSTEXPR static int TRANS_CONNECT_LEG_ID_BASE = 1000000000;
+  const static int TRANS_CONNECT_LEG_ID_BASE = 1000000000;
 
   /* Use this value as an id base for the artifical runway legs. Add id of the predecessor to it to be able to find the
    * leg again */
-  Q_DECL_CONSTEXPR static int RUNWAY_LEG_ID_BASE = 750000000;
+  const static int RUNWAY_LEG_ID_BASE = 750000000;
 
   /* Base id for artificial start legs */
-  Q_DECL_CONSTEXPR static int START_LEG_ID_BASE = 500000000;
+  const static int START_LEG_ID_BASE = 500000000;
 };
 
 #endif // LITTLENAVMAP_PROCEDUREQUERY_H

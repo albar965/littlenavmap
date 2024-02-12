@@ -385,6 +385,7 @@ const QLatin1String OPTIONS_ONLINE_NETWORK_MAX_SHADOW_HDG_DIFF_DEG("Options/MaxS
 const QLatin1String OPTIONS_TRACK_DEBUG("Options/TrackDebug");
 const QLatin1String OPTIONS_WIND_DEBUG("Options/WindDebug");
 const QLatin1String OPTIONS_WEBSERVER_DEBUG("Options/WebserverDebug");
+const QLatin1String OPTIONS_PROCEDURE_DEBUG("Options/ProcedureDebug");
 const QLatin1String OPTIONS_STORAGE_DEBUG("Options/StorageDebug");
 const QLatin1String OPTIONS_VERSION("Options/Version");
 const QLatin1String OPTIONS_NO_USER_AGENT("Options/NoUserAgent");
