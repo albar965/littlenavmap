@@ -184,6 +184,8 @@ void UserdataController::addToolbarButton()
   // Add tear off menu to button =======
   userdataToolButton->setMenu(new QMenu(userdataToolButton));
   QMenu *buttonMenu = userdataToolButton->menu();
+  QMenu *mainMenu = ui->menuViewUserpoints;
+
   buttonMenu->setToolTipsVisible(true);
   buttonMenu->setTearOffEnabled(true);
 
@@ -195,7 +197,7 @@ void UserdataController::addToolbarButton()
   actionAll->setToolTip(tr("Toggle all / current selection of userpoints"));
   actionAll->setStatusTip(actionAll->toolTip());
   buttonMenu->addAction(actionAll);
-  ui->menuViewUserpoints->addAction(actionAll);
+  mainMenu->addAction(actionAll);
   buttonHandler->setAllAction(actionAll);
 
   // Create and add select none action =====================================
@@ -203,11 +205,11 @@ void UserdataController::addToolbarButton()
   actionNone->setToolTip(tr("Toggle none / current selection of userpoints"));
   actionNone->setStatusTip(actionNone->toolTip());
   buttonMenu->addAction(actionNone);
-  ui->menuViewUserpoints->addAction(actionNone);
+  mainMenu->addAction(actionNone);
   buttonHandler->setNoneAction(actionNone);
 
   buttonMenu->addSeparator();
-  ui->menuViewUserpoints->addSeparator();
+  mainMenu->addSeparator();
 
   // Create and add select unknown action =====================================
   actionUnknown = new QAction(tr("&Unknown Types"), buttonMenu);
@@ -215,35 +217,44 @@ void UserdataController::addToolbarButton()
   actionUnknown->setStatusTip(actionUnknown->toolTip());
   actionUnknown->setCheckable(true);
   buttonMenu->addAction(actionUnknown);
-  ui->menuViewUserpoints->addAction(actionUnknown);
-  ui->menuViewUserpoints->addSeparator();
+  mainMenu->addAction(actionUnknown);
+  mainMenu->addSeparator();
   buttonHandler->addOtherAction(actionUnknown);
 
   buttonMenu->addSeparator();
-  ui->menuViewUserpoints->addSeparator();
+  mainMenu->addSeparator();
 
   // Create and add select an action for each registered type =====================================
-  QMenu *menu = buttonMenu;
   int screenHeight = std::max(800, mainWindow->screen()->geometry().height());
   for(const QString& type : icons->getAllTypes())
   {
     QIcon icon(icons->getIconPath(type));
-    QAction *action = new QAction(icon, type, menu);
+    QAction *action = new QAction(icon, type, buttonMenu);
     action->setData(QVariant(type));
     action->setCheckable(true);
     action->setToolTip(tr("Show or hide %1 userpoints").arg(type));
     action->setStatusTip(action->toolTip());
-    menu->addAction(action);
-    ui->menuViewUserpoints->addAction(action);
+
+    buttonMenu->addAction(action);
+    mainMenu->addAction(action);
+
     buttonHandler->addOtherAction(action);
     actions.append(action);
 
-    // Create an overflow menu item if the menu exceeds the screen height
-    if(menu->sizeHint().height() > screenHeight * 9 / 10)
+    // Create an overflow menu item for the button if the menu exceeds the screen height
+    if(buttonMenu->sizeHint().height() > screenHeight * 9 / 10)
     {
-      menu = menu->addMenu(tr("More ..."));
-      menu->setToolTipsVisible(true);
-      menu->setTearOffEnabled(true);
+      buttonMenu = buttonMenu->addMenu(tr("More ..."));
+      buttonMenu->setToolTipsVisible(userdataToolButton->menu()->toolTipsVisible());
+      buttonMenu->setTearOffEnabled(userdataToolButton->menu()->isTearOffEnabled());
+    }
+
+    // Create an overflow menu item for the main menu if the menu exceeds the screen height
+    if(mainMenu->sizeHint().height() > screenHeight * 9 / 10)
+    {
+      mainMenu = mainMenu->addMenu(tr("More ..."));
+      mainMenu->setToolTipsVisible(ui->menuViewUserpoints->toolTipsVisible());
+      mainMenu->setTearOffEnabled(ui->menuViewUserpoints->isTearOffEnabled());
     }
   }
 
