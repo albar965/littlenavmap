@@ -396,14 +396,18 @@ bool AircraftTrail::appendTrailPos(const atools::fs::sc::SimConnectUserAircraft&
 
   if(!userAircraft.isValid())
   {
+#ifdef DEBUG_INFORMATION_TRAIL
     qDebug() << Q_FUNC_INFO << "Aircraft not valid";
+#endif
     return false;
   }
 
   if(!lastUserAircraft->isValid() && !userAircraft.isFullyValid())
   {
     // Avoid spurious aircraft repositioning to 0/0 like done by MSFS
+#ifdef DEBUG_INFORMATION_TRAIL
     qDebug() << Q_FUNC_INFO << "Aircraft not fully valid";
+#endif
     return false;
   }
 
@@ -431,7 +435,9 @@ bool AircraftTrail::appendTrailPos(const atools::fs::sc::SimConnectUserAircraft&
     else
       maxAltDiffFt = maxAltDiffFtUpper;
 
+#ifdef DEBUG_INFORMATION_TRAIL
     qDebug() << Q_FUNC_INFO << "maxAltDiffFt" << maxAltDiffFt;
+#endif
 
     // Test if any aircraft parameters have changed to create a point
     bool speedChanged = almostNotEqual(lastGroundSpeedKts, userAircraft.getGroundSpeedKts(), maxSpeedDiffKts);
