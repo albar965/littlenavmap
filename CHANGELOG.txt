@@ -41,6 +41,17 @@ A big Thank You! to all who reported bugs and issues.
 * Fixed turn indicator curve at low aircraft speeds.
 * Added text size option for flight plan header.
 
+* Fixed aircraft index flooding log with messages when loading MSFS aircraft files. Now avoiding
+  re-reading if files are not available.
+* Now writing ICAOIdent field for userpoints in FSX/P3D flight plan export to fix userpoint display
+  in GPS.
+* Removed log flooding with messages when adding points to aircraft trail.
+* Adding `More` sub-menus in menu `View` -> `Userpoints` to avoid overflow.
+* Fixed wrong distance calculation for procedure leg sequence intercept, intitial fix and following legs.
+  This resulted in wrong distance, time and ETA calculations as well as a wrong elevation profile.
+
+
+
 ==<<=============================================================================
 
 # Version 3.0.2.beta
@@ -107,7 +118,7 @@ A big Thank You! to all who reported bugs and issues.
   Note that the plugin will be installed in the currently selected X-Plane instance from
   menu `Scenery Library`.
   Do not download the plugin manually. It is included in the Little Navmap download archive.
-  * Renamed user interface style `Night` to `Dark`.
+* Renamed user interface style `Night` to `Dark`.
 * Improved text and icon display for the user interface style `Dark`.
 * Added option to adjust text size for tab 'Flight Plan Remarks' in options on page `Display and Text`.
 * Fixed bug where cleanup did not work properly in logbook and left over logbook entries which could
@@ -524,7 +535,6 @@ A big thank you to all who reported bugs and issues!
 
 * Added version check for Little Xpconnect. Now showing a warning message if an outdated version of
   the plugin was found.
-
 
 ### Linux
 

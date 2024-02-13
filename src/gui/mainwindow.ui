@@ -439,6 +439,7 @@
      <addaction name="actionMapShowVor"/>
      <addaction name="actionMapShowNdb"/>
      <addaction name="actionMapShowWp"/>
+     <addaction name="separator"/>
      <addaction name="actionMapShowIls"/>
      <addaction name="actionMapShowGls"/>
      <addaction name="separator"/>
@@ -515,7 +516,7 @@
     </property>
     <widget class="QMenu" name="menuAircraftPerformanceRecent">
      <property name="title">
-      <string>&amp;Recent Performance Files</string>
+      <string>&amp;Recent Aircraft Performance Files</string>
      </property>
      <addaction name="actionAircraftPerformanceClearMenu"/>
     </widget>
@@ -7923,7 +7924,7 @@ relation to shown airport</string>
   </action>
   <action name="actionDatabaseFiles">
    <property name="text">
-    <string>&amp;Show Database Files</string>
+    <string>&amp;Show Databases</string>
    </property>
    <property name="toolTip">
     <string>Open the Little Navmap database directory in the default file manager</string>
@@ -10618,7 +10619,7 @@ relation to shown airport</string>
      <normaloff>:/littlenavmap/resources/icons/airwaytrack.svg</normaloff>:/littlenavmap/resources/icons/airwaytrack.svg</iconset>
    </property>
    <property name="text">
-    <string>Show &amp;Tracks</string>
+    <string>Show Oceanic &amp;Tracks</string>
    </property>
    <property name="toolTip">
     <string>Show tracks on the map</string>
@@ -12017,7 +12018,7 @@ relation to shown airport</string>
   </action>
   <action name="actionShowMapInstallation">
    <property name="text">
-    <string>Show Map Theme &amp;Installation Directory</string>
+    <string>Show Map Theme &amp;Installation</string>
    </property>
    <property name="toolTip">
     <string>Open the Little Navmap map installation directory for additional maps</string>
@@ -12310,7 +12311,7 @@ relation to shown airport</string>
   </action>
   <action name="actionShowGlobeInstallation">
    <property name="text">
-    <string>Show &amp;GLOBE Offline Elevation Data Installation Directory</string>
+    <string>Show &amp;GLOBE Offline Elevation Data Installation</string>
    </property>
    <property name="toolTip">
     <string>Show the installation directory for GLOBE offline elevation data</string>
