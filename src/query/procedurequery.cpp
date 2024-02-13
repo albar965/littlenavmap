@@ -1402,17 +1402,30 @@ void ProcedureQuery::processLegsDistanceAndCourse(proc::MapProcedureLegs& legs) 
     // ===========================================================
     else if(type == proc::COURSE_TO_FIX || type == proc::CUSTOM_APP_RUNWAY || type == proc::CUSTOM_DEP_END)
     {
-      if(leg.interceptPos.isValid())
+      const proc::MapProcedureLeg *prevLeg2 = i > 1 ? &legs[i - 2] : nullptr;
+      if(prevLeg2 != nullptr && prevLeg != nullptr && prevLeg->disabled)
       {
-        leg.geometry << leg.line.getPos1() << leg.interceptPos << leg.line.getPos2();
+        // Previous IF leg is disabled because of intercept. Use leg before.
+        // Adapt geometry accordingly to use intercept position as starting point
+        leg.geometry << prevLeg2->line.getPos2() << leg.line.getPos2();
         leg.calculatedDistance = meterToNm(leg.geometry.lengthMeter());
-        leg.calculatedTrueCourse = normalizeCourse(leg.interceptPos.angleDegTo(leg.line.getPos2()));
+        leg.calculatedTrueCourse = normalizeCourse(leg.line.angleDeg());
       }
       else
       {
-        leg.geometry << prevLeg->line.getPos2() << leg.line.getPos1() << leg.line.getPos2();
-        leg.calculatedDistance = meterToNm(leg.geometry.lengthMeter());
-        leg.calculatedTrueCourse = normalizeCourse(leg.line.angleDeg());
+        if(leg.interceptPos.isValid())
+        {
+          // Calculate all values based on intercept position
+          leg.geometry << leg.line.getPos1() << leg.interceptPos << leg.line.getPos2();
+          leg.calculatedDistance = meterToNm(leg.geometry.lengthMeter());
+          leg.calculatedTrueCourse = normalizeCourse(leg.interceptPos.angleDegTo(leg.line.getPos2()));
+        }
+        else if(prevLeg != nullptr)
+        {
+          leg.geometry << prevLeg->line.getPos2() << leg.line.getPos1() << leg.line.getPos2();
+          leg.calculatedDistance = meterToNm(leg.geometry.lengthMeter());
+          leg.calculatedTrueCourse = normalizeCourse(leg.line.angleDeg());
+        }
       }
     }
     // ===========================================================
@@ -1478,11 +1491,17 @@ void ProcedureQuery::processLegsDistanceAndCourse(proc::MapProcedureLegs& legs) 
 
     if(prevLeg != nullptr && !leg.intercept && leg.isInitialFix())
     {
-      // Add distance from any existing gaps, bows or turns except for intercept legs
-      // Use first position (MAP) of last leg for circle-to-land approaches
-      Pos lastPos = (prevLeg->isCircleToLand() || prevLeg->isStraightIn()) &&
-                    leg.isMissed() ? prevLeg->line.getPos1() : prevLeg->line.getPos2();
-      leg.calculatedDistance += meterToNm(lastPos.distanceMeterTo(leg.line.getPos1()));
+      if(leg.disabled)
+        // Leg is a disabled IF after a intercept - no distance
+        leg.calculatedDistance = 0.f;
+      else
+      {
+        // Add distance from any existing gaps, bows or turns except for intercept legs
+        // Use first position (MAP) of last leg for circle-to-land approaches
+        Pos lastPos = (prevLeg->isCircleToLand() || prevLeg->isStraightIn()) &&
+                      leg.isMissed() ? prevLeg->line.getPos1() : prevLeg->line.getPos2();
+        leg.calculatedDistance += meterToNm(lastPos.distanceMeterTo(leg.line.getPos1()));
+      }
     }
 
     if(leg.calculatedDistance >= map::INVALID_DISTANCE_VALUE / 2)
@@ -1888,93 +1907,90 @@ void ProcedureQuery::processCourseInterceptLegs(proc::MapProcedureLegs& legs) co
     proc::MapProcedureLeg *nextLeg = i < legs.size() - 1 ? &legs[i + 1] : nullptr;
     proc::MapProcedureLeg *secondNextLeg = i < legs.size() - 2 ? &legs[i + 2] : nullptr;
 
-    if(contains(leg.type, {proc::COURSE_TO_INTERCEPT, proc::HEADING_TO_INTERCEPT}))
+    if(contains(leg.type, {proc::COURSE_TO_INTERCEPT, proc::HEADING_TO_INTERCEPT}) && nextLeg != nullptr)
     {
-      if(nextLeg != nullptr)
+      proc::MapProcedureLeg *next = nextLeg->isInitialFix() ? secondNextLeg : nextLeg;
+
+      if(nextLeg->isInitialFix())
+        // Do not show the cut-off initial fix
+        nextLeg->disabled = true;
+
+      if(next != nullptr)
       {
-        proc::MapProcedureLeg *next = nextLeg->isInitialFix() ? secondNextLeg : nextLeg;
+        bool nextIsCircular = next->isCircular();
+        Pos start = prevLeg != nullptr ? prevLeg->line.getPos2() : leg.fixPos;
 
-        if(nextLeg->isInitialFix())
-          // Do not show the cut-off initial fix
-          nextLeg->disabled = true;
+        if(prevLeg != nullptr && (prevLeg->isCircleToLand() || prevLeg->isStraightIn()) && leg.isMissed())
+          // Use first position (MAP) of last leg for circle-to-land approaches
+          start = prevLeg->line.getPos1();
 
-        if(next != nullptr)
+        Pos intersect;
+        if(nextIsCircular)
         {
-          bool nextIsCircular = next->isCircular();
-          Pos start = prevLeg != nullptr ? prevLeg->line.getPos2() : leg.fixPos;
+          Line line(start, start.endpoint(nmToMeter(200), leg.legTrueCourse()));
+          intersect = line.intersectionWithCircle(next->recFixPos, nmToMeter(next->rho), 20);
+        }
+        else
+          intersect = Pos::intersectingRadials(start, leg.legTrueCourse(), next->line.getPos1(),
+                                               // Leg might have no course and calculated is not available yet
+                                               atools::almostEqual(next->course, 0.f) ||
+                                               !(next->course < map::INVALID_COURSE_VALUE) ?
+                                               next->line.angleDeg() : next->legTrueCourse());
 
-          if(prevLeg != nullptr && (prevLeg->isCircleToLand() || prevLeg->isStraightIn()) && leg.isMissed())
-            // Use first position (MAP) of last leg for circle-to-land approaches
-            start = prevLeg->line.getPos1();
+        leg.line.setPos1(start);
 
-          Pos intersect;
-          if(nextIsCircular)
+        if(intersect.isValid() && intersect.distanceMeterTo(start) < nmToMeter(200.f))
+        {
+          ageo::LineDistance result;
+
+          next->line.distanceMeterToLine(intersect, result);
+
+          if(result.status == ageo::ALONG_TRACK)
           {
-            Line line(start, start.endpoint(nmToMeter(200), leg.legTrueCourse()));
-            intersect = line.intersectionWithCircle(next->recFixPos, nmToMeter(next->rho), 20);
+            // Intercepting the next leg
+            next->intercept = true;
+            next->line.setPos1(intersect);
+
+            leg.line.setPos2(intersect);
+            leg.displayText << tr("Intercept");
+
+            if(nextIsCircular && next->rho < map::INVALID_DISTANCE_VALUE)
+              leg.displayText << (next->recFixIdent % tr("/") % Unit::distNm(next->rho, true, 20, true));
+            else
+              leg.displayText << tr("Leg");
           }
-          else
-            intersect = Pos::intersectingRadials(start, leg.legTrueCourse(), next->line.getPos1(),
-                                                 // Leg might have no course and calculated is not available yet
-                                                 atools::almostEqual(next->course, 0.f) ||
-                                                 !(next->course < map::INVALID_COURSE_VALUE) ?
-                                                 next->line.angleDeg() : next->legTrueCourse());
-
-          leg.line.setPos1(start);
-
-          if(intersect.isValid() && intersect.distanceMeterTo(start) < nmToMeter(200.f))
+          else if(result.status == ageo::BEFORE_START)
           {
-            ageo::LineDistance result;
-
-            next->line.distanceMeterToLine(intersect, result);
-
-            if(result.status == ageo::ALONG_TRACK)
-            {
-              // Intercepting the next leg
-              next->intercept = true;
-              next->line.setPos1(intersect);
-
-              leg.line.setPos2(intersect);
-              leg.displayText << tr("Intercept");
-
-              if(nextIsCircular && next->rho < map::INVALID_DISTANCE_VALUE)
-                leg.displayText << (next->recFixIdent % tr("/") % Unit::distNm(next->rho, true, 20, true));
-              else
-                leg.displayText << tr("Leg");
-            }
-            else if(result.status == ageo::BEFORE_START)
-            {
-              // Link directly to start of next leg
-              next->intercept = true;
-              leg.line.setPos2(next->line.getPos1());
-              leg.displayText << tr("Intercept");
-            }
-            else if(result.status == ageo::AFTER_END)
-            {
-              // Link directly to end of next leg
-              next->intercept = true;
-              leg.line.setPos2(next->line.getPos2());
-              next->line.setPos1(next->line.getPos2());
-              next->line.setPos2(next->line.getPos2());
-              leg.displayText << tr("Intercept");
-            }
-            else if(verbose)
-              qWarning() << Q_FUNC_INFO << "leg line type" << leg.type << "fix" << leg.fixIdent
-                         << "invalid cross track"
-                         << "approachId" << leg.procedureId
-                         << "transitionId" << leg.transitionId << "legId" << leg.legId;
-
-          }
-          else
-          {
-            if(verbose)
-              qWarning() << Q_FUNC_INFO << "leg line type" << leg.type << "fix" << leg.fixIdent
-                         << "no intersectingRadials/intersectionWithCircle found"
-                         << "approachId" << leg.procedureId << "transitionId" << leg.transitionId << "legId" << leg.legId;
-
-            leg.displayText << tr("Intercept") << tr("Leg");
+            // Link directly to start of next leg
+            next->intercept = true;
             leg.line.setPos2(next->line.getPos1());
+            leg.displayText << tr("Intercept");
           }
+          else if(result.status == ageo::AFTER_END)
+          {
+            // Link directly to end of next leg
+            next->intercept = true;
+            leg.line.setPos2(next->line.getPos2());
+            next->line.setPos1(next->line.getPos2());
+            next->line.setPos2(next->line.getPos2());
+            leg.displayText << tr("Intercept");
+          }
+          else if(verbose)
+            qWarning() << Q_FUNC_INFO << "leg line type" << leg.type << "fix" << leg.fixIdent
+                       << "invalid cross track"
+                       << "approachId" << leg.procedureId
+                       << "transitionId" << leg.transitionId << "legId" << leg.legId;
+
+        }
+        else
+        {
+          if(verbose)
+            qWarning() << Q_FUNC_INFO << "leg line type" << leg.type << "fix" << leg.fixIdent
+                       << "no intersectingRadials/intersectionWithCircle found"
+                       << "approachId" << leg.procedureId << "transitionId" << leg.transitionId << "legId" << leg.legId;
+
+          leg.displayText << tr("Intercept") << tr("Leg");
+          leg.line.setPos2(next->line.getPos1());
         }
       }
     }
