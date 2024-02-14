@@ -30,7 +30,7 @@ A big Thank You! to all who reported bugs and issues.
 
 ## Changes from 3.0.2.beta to 3.0.3.rc1
 
-* Fixed several issues with flight plan labels if crossing anti-meridian.
+* Fixed several issues with flight plan labels when crossing the anti-meridian.
 * Now removing leading and trailing white space from URLs in options to avoid issues with wrong
   user input. #1089
 * Improved altitude correction after reading flight plan description without altitude designation.
@@ -38,19 +38,19 @@ A big Thank You! to all who reported bugs and issues.
   Otherwise falls back to defaults for 10000 ft when using VFR or 20000 ft for IFR. Adjust in the
   flight plan table as needed.
 * Missing PAPI in profile fixed when last procedure leg is short circle-to-land.
+  Example: EGPF via GOW and D23.
 * Fixed turn indicator curve at low aircraft speeds.
-* Added text size option for flight plan header.
-
+* Added text size option for flight plan table header text.
 * Fixed aircraft index flooding log with messages when loading MSFS aircraft files. Now avoiding
-  re-reading if files are not available.
+  re-reading if aircraft files are not available.
 * Now writing ICAOIdent field for userpoints in FSX/P3D flight plan export to fix userpoint display
   in GPS.
 * Removed log flooding with messages when adding points to aircraft trail.
-* Adding `More` sub-menus in menu `View` -> `Userpoints` to avoid overflow.
+* Adding `More` sub-menus in menu `View` -> `Userpoints` to avoid overflow on screen when using many
+  custom userpoint icons.
 * Fixed wrong distance calculation for procedure leg sequence intercept, intitial fix and following legs.
   This resulted in wrong distance, time and ETA calculations as well as a wrong elevation profile.
-
-
+  Example: EFVA via AXUTI and I16-Y.
 
 ==<<=============================================================================
 
