@@ -29,6 +29,7 @@
 #include <QDir>
 #include <QDebug>
 #include <QUrl>
+#include <QStringBuilder>
 
 DirTool::DirTool(QWidget *parent, const QString& base, const QString& appName, const QString& settingsKeyPrefix)
   : parentWidget(parent), documentsDir(base), settingsPrefix(settingsKeyPrefix)
@@ -82,7 +83,7 @@ void DirTool::run(bool manual, bool& created)
                           "<p><b>%1</b><br/>"
                           "Top level directory for all files of Little Navmap "
                           "containing the following sub-directories:</p>").
-                 arg(atools::nativeCleanPath(documentsDir + atools::SEP + applicationDir)));
+                 arg(atools::nativeCleanPath(documentsDir % atools::SEP % applicationDir)));
 
   if(manual)
     message.append(tr("<p>One or more of these directories are missing.</p>"));
@@ -140,7 +141,7 @@ void DirTool::runIfMissing(bool manual, bool& complete, bool& created)
 
 QString DirTool::getApplicationDir() const
 {
-  return atools::nativeCleanPath(QFileInfo(documentsDir + atools::SEP + applicationDir).absoluteFilePath());
+  return atools::nativeCleanPath(QFileInfo(documentsDir % atools::SEP % applicationDir).absoluteFilePath());
 }
 
 bool DirTool::createAllDirs()
@@ -153,7 +154,7 @@ bool DirTool::createAllDirs()
   mkdir(layoutDir);
   mkdir(airspaceDir);
   mkdir(airportsDir);
-  mkdir(globeDir);
+  mkdir(globeDir % atools::SEP % "all10");
   mkdir(mapThemesDir);
 
   return errors.isEmpty();
@@ -161,10 +162,10 @@ bool DirTool::createAllDirs()
 
 void DirTool::mkdir(const QString& dir)
 {
-  QFileInfo fi(documentsDir + atools::SEP + applicationDir + atools::SEP + dir);
+  QFileInfo fi(documentsDir % atools::SEP % applicationDir % atools::SEP % dir);
   if(!fi.exists())
   {
-    if(!QDir(documentsDir + atools::SEP + applicationDir).mkdir(dir))
+    if(!QDir(documentsDir % atools::SEP % applicationDir).mkdir(dir))
       errors.append(tr("Cannot create directory \"%1\"").arg(fi.filePath()));
   }
   else
@@ -177,7 +178,7 @@ void DirTool::mkdir(const QString& dir)
 
 void DirTool::mkdirBase()
 {
-  QFileInfo fi(documentsDir + atools::SEP + applicationDir);
+  QFileInfo fi(documentsDir % atools::SEP % applicationDir);
   if(!fi.exists())
   {
     if(!QDir(documentsDir).mkdir(applicationDir))
@@ -197,7 +198,7 @@ bool DirTool::hasDir(const QString& dir)
 
 QString DirTool::d(const QString& dir)
 {
-  return atools::nativeCleanPath(documentsDir + atools::SEP + applicationDir + atools::SEP + dir);
+  return atools::nativeCleanPath(documentsDir % atools::SEP % applicationDir % atools::SEP % dir);
 }
 
 bool DirTool::hasAllDirs()
