@@ -174,12 +174,14 @@ Source: "{#LnmAppProjects}\littlenavmap\build\win\Little Navmap User Manual Onli
 
 // Delete obsolete files before installation ==========================================================================
 [InstallDelete]
-Type: files; Name: "{app}/data/maps/earth/stamenterrain/stamenterrain.dgml"
-Type: files; Name: "{app}/data/maps/earth/stamenterrain/stamenterrain-preview.png"
-Type: files; Name: "{app}/data/maps/earth/stamenterrain/0/0/0.png"
-Type: dirifempty; Name: "{app}/data/maps/earth/stamenterrain/0/0"
-Type: dirifempty; Name: "{app}/data/maps/earth/stamenterrain/0"
-Type: dirifempty; Name: "{app}/data/maps/earth/stamenterrain"
+Type: files; Name: "{app}\Little Navmap Portable.cmd"
+Type: files; Name: "{autoprograms}\{#LnmAppName} {#AppSuffix}\Little Navmap {cm:UserManualMessage} PDF (Offline)"
+Type: files; Name: "{app}\data\maps\earth\stamenterrain\stamenterrain.dgml"
+Type: files; Name: "{app}\data\maps\earth\stamenterrain\stamenterrain-preview.png"
+Type: files; Name: "{app}\data\maps\earth\stamenterrain\0\0\0.png"
+Type: dirifempty; Name: "{app}\data\maps\earth\stamenterrain\0\0"
+Type: dirifempty; Name: "{app}\data\maps\earth\stamenterrain\0"
+Type: dirifempty; Name: "{app}\data\maps\earth\stamenterrain"
 
 // File associations ==========================================================================
 [Registry]
@@ -202,7 +204,6 @@ Root: HKCR; Subkey: "{#LnmAppNameReg}\shell\open\command"; ValueType: string; Va
 [Icons]
 Name: "{autoprograms}\{#LnmAppName} {#AppSuffix}\{#LnmAppName}"; Filename: "{app}\{#LnmAppExeName}"
 Name: "{autoprograms}\{#LnmAppName} {#AppSuffix}\{#LnmAppConnectName}"; Filename: "{app}\{#LnmAppConnectName}\{#LnmAppConnectExeName}"
-Name: "{autoprograms}\{#LnmAppName} {#AppSuffix}\Little Navmap {cm:UserManualMessage} PDF (Offline)"; Filename: "{app}\help\little-navmap-user-manual-en.pdf"
 Name: "{autoprograms}\{#LnmAppName} {#AppSuffix}\Little Navmap {cm:UserManualMessage} (Online)"; Filename: "{app}\help\Little Navmap User Manual Online.url"
 Name: "{autoprograms}\{#LnmAppName} {#AppSuffix}\{cm:ChangelogMessage}"; Filename: "{app}\CHANGELOG.TXT"
 Name: "{autoprograms}\{#LnmAppName} {#AppSuffix}\{cm:ReadmeMessage}"; Filename: "{app}\README.TXT"
