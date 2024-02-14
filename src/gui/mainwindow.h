@@ -391,6 +391,7 @@ private:
 
   void distanceChanged();
   void showDonationPage();
+  void showManualDownloadPage();
   void showFaqPage();
 
   /* Loading of KML files */

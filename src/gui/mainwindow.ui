@@ -225,12 +225,12 @@
      <addaction name="actionHelpUserManualLegend"/>
     </widget>
     <addaction name="actionHelpUserManualContents"/>
-    <addaction name="menuHelpUserManualImportantChapters"/>
-    <addaction name="separator"/>
     <addaction name="actionHelpContentsOffline"/>
+    <addaction name="menuHelpUserManualImportantChapters"/>
     <addaction name="separator"/>
     <addaction name="actionHelpFaq"/>
     <addaction name="actionHelpDownloads"/>
+    <addaction name="actionHelpUserManualDownload"/>
     <addaction name="separator"/>
     <addaction name="actionHelpChangelog"/>
     <addaction name="separator"/>
@@ -12318,6 +12318,21 @@ relation to shown airport</string>
    </property>
    <property name="statusTip">
     <string>Show the installation directory for GLOBE offline elevation data</string>
+   </property>
+  </action>
+  <action name="actionHelpUserManualDownload">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/helpdownload.svg</normaloff>:/littlenavmap/resources/icons/helpdownload.svg</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Download User Manuals</string>
+   </property>
+   <property name="toolTip">
+    <string>Download the user manual in other formats like PDF</string>
+   </property>
+   <property name="statusTip">
+    <string>Show the start and first steps page</string>
    </property>
   </action>
  </widget>

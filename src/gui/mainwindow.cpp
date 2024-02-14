@@ -167,6 +167,10 @@ MainWindow::MainWindow()
 
     ui->setupUi(this);
 
+    QString helpFileOffline = HelpHandler::getHelpFile(lnm::helpOfflineFile, OptionData::getLanguage());
+    qDebug() << Q_FUNC_INFO << "Offline help" << helpFileOffline;
+    ui->actionHelpContentsOffline->setVisible(!helpFileOffline.isEmpty() && QFile::exists(helpFileOffline));
+
 #if defined(Q_OS_MACOS)
     // Reset menu roles to no role if not manually set to avoid side effects from goofy Qt behavior on macOS
     QList<QAction *> stack;
@@ -663,6 +667,11 @@ void MainWindow::showChangelog()
 void MainWindow::showDonationPage()
 {
   desktopServices->openUrl(lnm::helpDonateUrl);
+}
+
+void MainWindow::showManualDownloadPage()
+{
+  desktopServices->openUrl(lnm::helpManualDownloadUrl);
 }
 
 void MainWindow::showFaqPage()
@@ -1365,6 +1374,7 @@ void MainWindow::connectAllSlots()
   connect(ui->actionHelpAboutQt, &QAction::triggered, helpHandler, &atools::gui::HelpHandler::aboutQt);
   connect(ui->actionHelpCheckUpdates, &QAction::triggered, this, &MainWindow::checkForUpdates);
   connect(ui->actionHelpDonate, &QAction::triggered, this, &MainWindow::showDonationPage);
+  connect(ui->actionHelpUserManualDownload, &QAction::triggered, this, &MainWindow::showManualDownloadPage);
   connect(ui->actionHelpFaq, &QAction::triggered, this, &MainWindow::showFaqPage);
   connect(ui->actionHelpOpenLogFile, &QAction::triggered, this, &MainWindow::openLogFile);
   connect(ui->actionHelpOpenConfigFile, &QAction::triggered, this, &MainWindow::openConfigFile);
@@ -3548,7 +3558,7 @@ void MainWindow::runDirTool(bool manual)
     QString displayPath(atools::nativeCleanPath(dirTool.getApplicationDir()));
     box.setMessage(tr("<p>Directory structure for Little Navmap files is already complete.</p>"
                         "The base directory is"
-                          "%1&nbsp;(click to open)<br/>").
+                        "%1&nbsp;(click to open)<br/>").
                    arg(atools::util::HtmlBuilder::aFilePath(displayPath, atools::util::html::NOBR_WHITESPACE)));
     box.exec();
   }

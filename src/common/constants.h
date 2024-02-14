@@ -59,6 +59,7 @@ extern QString helpOnlineStartUrl;
 extern QString helpLegendLocalFile;
 extern QString helpOfflineFile;
 extern QString helpDonateUrl;
+extern QString helpManualDownloadUrl;
 extern QString helpFaqUrl;
 extern QString updateDefaultUrl;
 

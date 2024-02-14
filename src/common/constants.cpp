@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -53,6 +53,7 @@ QString helpOnlineStartUrl;
 QString helpLegendLocalFile;
 QString helpOfflineFile;
 QString helpDonateUrl;
+QString helpManualDownloadUrl;
 QString helpFaqUrl;
 QString updateDefaultUrl;
 
@@ -149,6 +150,7 @@ void loadHelpUrls()
 
   // [help] - Other URLs
   helpDonateUrl = settings.value("help/donate", "https://www.littlenavmap.org/donate.html").toString();
+  helpManualDownloadUrl = settings.value("help/downloadmanual", "https://albar965.github.io/manuals.html").toString();
   helpFaqUrl = settings.value("help/faq", "https://www.littlenavmap.org/littlenavmap-faq.html").toString();
 
   // [local] - local files

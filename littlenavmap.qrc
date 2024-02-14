@@ -342,5 +342,6 @@
         <file>resources/icons/approachconvert.svg</file>
         <file>resources/icons/airportweather.svg</file>
         <file>resources/config/mapthemes.cfg</file>
+        <file>resources/icons/helpdownload.svg</file>
     </qresource>
 </RCC>
