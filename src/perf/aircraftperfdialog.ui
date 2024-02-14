@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>601</width>
-    <height>732</height>
+    <width>611</width>
+    <height>774</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -32,7 +32,7 @@
             <string>&amp;Simulator</string>
            </property>
            <property name="buddy">
-            <cstring>lineEditName</cstring>
+            <cstring>comboBoxSimulator</cstring>
            </property>
           </widget>
          </item>
@@ -61,9 +61,9 @@ A performance file can often be used for all simulators.</string>
             </property>
            </item>
            <item>
-           <property name="text">
+            <property name="text">
              <string notr="true">XP12</string>
-           </property>
+            </property>
            </item>
            <item>
             <property name="text">

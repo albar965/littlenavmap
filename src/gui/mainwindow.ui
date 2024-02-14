@@ -12366,11 +12366,22 @@ relation to shown airport</string>
   <tabstop>textBrowserAircraftProgressInfo</tabstop>
   <tabstop>textBrowserAircraftAiInfo</tabstop>
   <tabstop>tabWidgetSearch</tabstop>
+  <tabstop>lineEditAirportTextSearch</tabstop>
+  <tabstop>pushButtonAirportSearchReset</tabstop>
+  <tabstop>pushButtonAirportSearchClearSelection</tabstop>
+  <tabstop>pushButtonAirportHelpSearch</tabstop>
+  <tabstop>toolButtonAirportSearch</tabstop>
+  <tabstop>lineEditAirportIcaoSearch</tabstop>
+  <tabstop>lineEditAirportNameSearch</tabstop>
+  <tabstop>lineEditAirportCitySearch</tabstop>
+  <tabstop>lineEditAirportStateSearch</tabstop>
+  <tabstop>lineEditAirportCountrySearch</tabstop>
   <tabstop>checkBoxAirportAddonSearch</tabstop>
   <tabstop>checkBoxAirportLightSearch</tabstop>
   <tabstop>checkBoxAirportIlsSearch</tabstop>
   <tabstop>checkBoxAirportMilSearch</tabstop>
   <tabstop>checkBoxAirportAvgasSearch</tabstop>
+  <tabstop>comboBoxAirportRatingSearch</tabstop>
   <tabstop>checkBoxAirportTowerSearch</tabstop>
   <tabstop>checkBoxAirportApprSearch</tabstop>
   <tabstop>checkBoxAirportClosedSearch</tabstop>
@@ -12413,6 +12424,7 @@ relation to shown airport</string>
   <tabstop>tableViewNavSearch</tabstop>
   <tabstop>comboBoxProcedureSearchFilter</tabstop>
   <tabstop>comboBoxProcedureRunwayFilter</tabstop>
+  <tabstop>lineEditProcedureSearchIdentFilter</tabstop>
   <tabstop>pushButtonProcedureShowAll</tabstop>
   <tabstop>pushButtonProcedureSearchReset</tabstop>
   <tabstop>pushButtonProcedureSearchClearSelection</tabstop>

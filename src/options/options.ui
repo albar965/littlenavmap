@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>900</width>
-    <height>490</height>
+    <width>946</width>
+    <height>527</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -74,7 +74,7 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>585</width>
+             <width>617</width>
              <height>503</height>
             </rect>
            </property>
@@ -431,8 +431,8 @@ This is the file on top of the list &quot;Recent Window Layouts&quot;.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>599</width>
-             <height>421</height>
+             <width>514</width>
+             <height>371</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_22">
@@ -623,9 +623,9 @@ opening files, modifying the flight plan and other operations.</string>
            <property name="geometry">
             <rect>
              <x>0</x>
-             <y>-387</y>
-             <width>585</width>
-             <height>836</height>
+             <y>0</y>
+             <width>419</width>
+             <height>856</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_23">
@@ -1162,7 +1162,7 @@ This does not affect the map window which can be changed separately on the optio
                   <string>Text size for flight plan &amp;remarks:</string>
                  </property>
                  <property name="buddy">
-                  <cstring>spinBoxOptionsGuiRouteText</cstring>
+                  <cstring>spinBoxOptionsGuiRouteRemarksText</cstring>
                  </property>
                 </widget>
                </item>
@@ -1172,7 +1172,7 @@ This does not affect the map window which can be changed separately on the optio
                   <string>Text size for flight plan &amp;header:</string>
                  </property>
                  <property name="buddy">
-                  <cstring>spinBoxOptionsGuiRouteText</cstring>
+                  <cstring>spinBoxOptionsGuiRouteInfoText</cstring>
                  </property>
                 </widget>
                </item>
@@ -1253,8 +1253,8 @@ This does not affect the map window which can be changed separately on the optio
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>599</width>
-             <height>421</height>
+             <width>568</width>
+             <height>386</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_36">
@@ -2837,7 +2837,7 @@ Map views might be shown with a larger zoom distance than expected if this optio
              <x>0</x>
              <y>0</y>
              <width>499</width>
-             <height>1009</height>
+             <height>1005</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_20">
@@ -3591,7 +3591,7 @@ Lower values make the airspace more opaque and higher values more transparent.</
                   <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
                  </property>
                  <property name="buddy">
-                  <cstring>spinBoxOptionsDisplayThicknessAirway</cstring>
+                  <cstring>spinBoxOptionsDisplayThicknessAirspace</cstring>
                  </property>
                 </widget>
                </item>
@@ -4119,7 +4119,7 @@ Also used in the elevation profile.</string>
              <x>0</x>
              <y>0</y>
              <width>554</width>
-             <height>264</height>
+             <height>260</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_57">
@@ -4210,7 +4210,7 @@ Also used in the elevation profile.</string>
                   <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Set color for aircraft trail in map and elevation profile.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                  </property>
                  <property name="text">
-                  <string>Color</string>
+                  <string>&amp;Color</string>
                  </property>
                 </widget>
                </item>
@@ -5752,7 +5752,7 @@ airspace filename has to match the callsign of the online center.</string>
              <x>0</x>
              <y>0</y>
              <width>572</width>
-             <height>633</height>
+             <height>629</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_25">
@@ -6359,7 +6359,7 @@ Note that this value does not affect flight plan calculation or saving of flight
              <x>0</x>
              <y>0</y>
              <width>272</width>
-             <height>754</height>
+             <height>750</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_27">
@@ -6600,7 +6600,7 @@ Note that this value does not affect flight plan calculation or saving of flight
              <x>0</x>
              <y>0</y>
              <width>360</width>
-             <height>939</height>
+             <height>931</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_28">
@@ -7967,7 +7967,7 @@ Resolution is lower than the online source but updates are very fast.
 Has a 30 arc second grid (approximately 900 meter near the equator).</string>
                  </property>
                  <property name="text">
-                  <string>Use Offline GLOBE Elevation Data</string>
+                  <string>Use Offline &amp;GLOBE Elevation Data</string>
                  </property>
                 </widget>
                </item>
@@ -8014,7 +8014,7 @@ Has a higher resolution than the offline data source but updates are slow.
 Source data has many errors.</string>
                  </property>
                  <property name="text">
-                  <string>Use Online Elevation Data</string>
+                  <string>Use &amp;Online Elevation Data</string>
                  </property>
                  <property name="checked">
                   <bool>true</bool>
@@ -8070,8 +8070,8 @@ Source data has many errors.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>585</width>
-             <height>490</height>
+             <width>395</width>
+             <height>506</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_38">
@@ -8437,6 +8437,7 @@ You have to reload the scenery library so that the changes take effect.</string>
   </layout>
  </widget>
  <tabstops>
+  <tabstop>lineEditOptionSearch</tabstop>
   <tabstop>listWidgetOptionPages</tabstop>
   <tabstop>scrollArea_2</tabstop>
   <tabstop>checkBoxOptionsStartupLoadRoute</tabstop>
@@ -8456,11 +8457,10 @@ You have to reload the scenery library so that the changes take effect.</string>
   <tabstop>pushButtonOptionsStartupCheckUpdate</tabstop>
   <tabstop>scrollArea_3</tabstop>
   <tabstop>comboBoxOptionsGuiLanguage</tabstop>
+  <tabstop>checkBoxOptionsGuiOverrideLocale</tabstop>
   <tabstop>checkBoxOptionsGuiRaiseWindows</tabstop>
   <tabstop>checkBoxOptionsGuiRaiseDockWindows</tabstop>
   <tabstop>checkBoxOptionsGuiRaiseMainWindow</tabstop>
-  <tabstop>checkBoxOptionsGuiCenterKml</tabstop>
-  <tabstop>checkBoxOptionsGuiWheel</tabstop>
   <tabstop>scrollArea_4</tabstop>
   <tabstop>pushButtonOptionsGuiSelectFont</tabstop>
   <tabstop>pushButtonOptionsGuiResetFont</tabstop>
@@ -8470,6 +8470,8 @@ You have to reload the scenery library so that the changes take effect.</string>
   <tabstop>checkBoxOptionsGuiToolbarSize</tabstop>
   <tabstop>spinBoxOptionsGuiToolbarSize</tabstop>
   <tabstop>spinBoxOptionsGuiRouteText</tabstop>
+  <tabstop>spinBoxOptionsGuiRouteInfoText</tabstop>
+  <tabstop>spinBoxOptionsGuiRouteRemarksText</tabstop>
   <tabstop>spinBoxOptionsGuiAircraftPerf</tabstop>
   <tabstop>spinBoxOptionsGuiSearchText</tabstop>
   <tabstop>spinBoxOptionsGuiInfoText</tabstop>
@@ -8484,13 +8486,25 @@ You have to reload the scenery library so that the changes take effect.</string>
   <tabstop>checkBoxOptionsUnitFuelOther</tabstop>
   <tabstop>comboBoxOptionsUnitCoords</tabstop>
   <tabstop>checkBoxOptionsUnitTrueCourse</tabstop>
+  <tabstop>scrollArea_18</tabstop>
+  <tabstop>checkBoxOptionsGuiCenterRoute</tabstop>
+  <tabstop>checkBoxOptionsGuiAvoidOverwrite</tabstop>
+  <tabstop>lineEditOptionsRouteFilename</tabstop>
+  <tabstop>pushButtonOptionsRouteFilenameShort</tabstop>
+  <tabstop>pushButtonOptionsRouteFilenameLong</tabstop>
+  <tabstop>checkBoxOptionsGuiCenterKml</tabstop>
   <tabstop>scrollArea</tabstop>
   <tabstop>checkBoxOptionsMapUndock</tabstop>
   <tabstop>checkBoxOptionsMapEmptyAirports</tabstop>
   <tabstop>checkBoxOptionsMapEmptyAirports3D</tabstop>
-  <tabstop>comboBoxMapScrollZoomDetails</tabstop>
+  <tabstop>spinBoxOptionsDisplaySunShadeDarkness</tabstop>
+  <tabstop>spinBoxOptionsGuiThemeMapDimming</tabstop>
+  <tabstop>scrollArea_20</tabstop>
+  <tabstop>spinBoxOptionsMapTooltipRect</tabstop>
+  <tabstop>spinBoxOptionsMapClickRect</tabstop>
   <tabstop>checkBoxOptionsMapTooltipVerbose</tabstop>
   <tabstop>checkBoxOptionsMapTooltipUserAircraft</tabstop>
+  <tabstop>checkBoxOptionsMapTooltipTrail</tabstop>
   <tabstop>checkBoxOptionsMapTooltipAiAircraft</tabstop>
   <tabstop>checkBoxOptionsMapTooltipAirport</tabstop>
   <tabstop>checkBoxOptionsMapTooltipNavaid</tabstop>
@@ -8502,6 +8516,8 @@ You have to reload the scenery library so that the changes take effect.</string>
   <tabstop>checkBoxOptionsMapClickAirport</tabstop>
   <tabstop>checkBoxOptionsMapClickNavaid</tabstop>
   <tabstop>checkBoxOptionsMapClickAirspace</tabstop>
+  <tabstop>checkBoxOptionsMapClickAirportProcs</tabstop>
+  <tabstop>checkBoxOptionsMapClickFlightplan</tabstop>
   <tabstop>scrollArea_5</tabstop>
   <tabstop>radioButtonOptionsMapNavDragMove</tabstop>
   <tabstop>radioButtonOptionsMapNavClickCenter</tabstop>
@@ -8510,7 +8526,8 @@ You have to reload the scenery library so that the changes take effect.</string>
   <tabstop>doubleSpinBoxOptionsMapZoomShowMap</tabstop>
   <tabstop>doubleSpinBoxOptionsMapZoomShowMapMenu</tabstop>
   <tabstop>checkBoxOptionsMapZoomAvoidBlurred</tabstop>
-  <tabstop>spinBoxOptionsMapTooltipRect</tabstop>
+  <tabstop>comboBoxMapScrollZoomDetails</tabstop>
+  <tabstop>checkBoxOptionsGuiWheel</tabstop>
   <tabstop>scrollAreaMapDisplay</tabstop>
   <tabstop>pushButtonOptionsDisplaySelectFont</tabstop>
   <tabstop>pushButtonOptionsDisplayResetFont</tabstop>
@@ -8526,6 +8543,10 @@ You have to reload the scenery library so that the changes take effect.</string>
   <tabstop>spinBoxOptionsDisplayThicknessAirway</tabstop>
   <tabstop>spinBoxOptionsDisplayTextSizeAirway</tabstop>
   <tabstop>checkBoxOptionsMapAirwayText</tabstop>
+  <tabstop>spinBoxOptionsDisplayThicknessAirspace</tabstop>
+  <tabstop>spinBoxOptionsDisplayTextSizeAirspace</tabstop>
+  <tabstop>spinBoxOptionsDisplayTransparencyAirspace</tabstop>
+  <tabstop>checkBoxOptionsMapAirspaceNoMultZ</tabstop>
   <tabstop>spinBoxOptionsDisplaySymbolSizeAircraftUser</tabstop>
   <tabstop>spinBoxOptionsDisplayTextSizeAircraftUser</tabstop>
   <tabstop>checkBoxOptionsMapUserAircraftText</tabstop>
@@ -8537,6 +8558,8 @@ You have to reload the scenery library so that the changes take effect.</string>
   <tabstop>spinBoxOptionsDisplayThicknessFlightplan</tabstop>
   <tabstop>spinBoxOptionsDisplayTextSizeFlightplan</tabstop>
   <tabstop>checkBoxOptionsMapFlightplanText</tabstop>
+  <tabstop>spinBoxOptionsDisplayThicknessFlightplanProfile</tabstop>
+  <tabstop>spinBoxOptionsDisplayTextSizeFlightplanProfile</tabstop>
   <tabstop>pushButtonOptionsDisplayFlightplanColor</tabstop>
   <tabstop>pushButtonOptionsDisplayFlightplanProcedureColor</tabstop>
   <tabstop>checkBoxOptionsMapFlightplanHighlightActive</tabstop>
@@ -8546,8 +8569,13 @@ You have to reload the scenery library so that the changes take effect.</string>
   <tabstop>checkBoxOptionsMapFlightplanTransparent</tabstop>
   <tabstop>spinBoxOptionsDisplayTransparencyFlightplan</tabstop>
   <tabstop>pushButtonOptionsDisplayFlightplanOutlineColor</tabstop>
-  <tabstop>spinBoxOptionsDisplayThicknessFlightplanProfile</tabstop>
-  <tabstop>spinBoxOptionsDisplayTextSizeFlightplanProfile</tabstop>
+  <tabstop>scrollArea_19</tabstop>
+  <tabstop>spinBoxOptionsDisplayThicknessTrail</tabstop>
+  <tabstop>pushButtonOptionsDisplayTrailColor</tabstop>
+  <tabstop>comboBoxOptionsDisplayTrailType</tabstop>
+  <tabstop>checkBoxOptionsDisplayTrailGradient</tabstop>
+  <tabstop>comboBoxOptionsDisplayTrailGradient</tabstop>
+  <tabstop>spinBoxSimMaxTrackPoints</tabstop>
   <tabstop>scrollArea_6</tabstop>
   <tabstop>spinBoxOptionsDisplayThicknessUserFeature</tabstop>
   <tabstop>spinBoxOptionsDisplayTextSizeUserFeature</tabstop>
@@ -8569,8 +8597,6 @@ You have to reload the scenery library so that the changes take effect.</string>
   <tabstop>spinBoxOptionsDisplayTextSizeMora</tabstop>
   <tabstop>spinBoxOptionsDisplayTransparencyAirportMsa</tabstop>
   <tabstop>spinBoxOptionsDisplayTextSizeAirportMsa</tabstop>
-  <tabstop>spinBoxOptionsDisplaySunShadeDarkness</tabstop>
-  <tabstop>spinBoxOptionsGuiThemeMapDimming</tabstop>
   <tabstop>treeWidgetOptionsDisplayTextOptions</tabstop>
   <tabstop>tableWidgetOptionsMapKeys</tabstop>
   <tabstop>pushButtonOptionsMapboxUser</tabstop>
@@ -8614,9 +8640,6 @@ You have to reload the scenery library so that the changes take effect.</string>
   <tabstop>scrollArea_10</tabstop>
   <tabstop>checkBoxOptionsRouteEastWestRule</tabstop>
   <tabstop>comboBoxOptionsRouteAltitudeRuleType</tabstop>
-  <tabstop>checkBoxOptionsGuiCenterRoute</tabstop>
-  <tabstop>checkBoxOptionsGuiAvoidOverwrite</tabstop>
-  <tabstop>lineEditOptionsRouteFilename</tabstop>
   <tabstop>spinBoxOptionsRouteGroundBuffer</tabstop>
   <tabstop>scrollArea_11</tabstop>
   <tabstop>checkBoxOptionsWeatherInfoFs</tabstop>
@@ -8657,6 +8680,7 @@ You have to reload the scenery library so that the changes take effect.</string>
   <tabstop>radioButtonOptionsOnlinePilotEdge</tabstop>
   <tabstop>radioButtonOptionsOnlineCustomStatus</tabstop>
   <tabstop>radioButtonOptionsOnlineCustom</tabstop>
+  <tabstop>checkBoxOptionsOnlineRemoveShadow</tabstop>
   <tabstop>lineEditOptionsOnlineStatusUrl</tabstop>
   <tabstop>pushButtonOptionsOnlineTestStatusUrl</tabstop>
   <tabstop>lineEditOptionsOnlineWhazzupUrl</tabstop>
@@ -8691,7 +8715,6 @@ You have to reload the scenery library so that the changes take effect.</string>
   <tabstop>tableWidgetOptionsDatabaseExcludeAddon</tabstop>
   <tabstop>pushButtonOptionsDatabaseAddAddon</tabstop>
   <tabstop>pushButtonOptionsDatabaseRemoveAddon</tabstop>
-  <tabstop>checkBoxOptionsOnlineRemoveShadow</tabstop>
  </tabstops>
  <resources>
   <include location="../../littlenavmap.qrc"/>

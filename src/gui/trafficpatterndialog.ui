@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>460</width>
-    <height>400</height>
+    <height>415</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -294,7 +294,7 @@ i.e. length of the final segment</string>
       <string>&amp;Departure from threshold:</string>
      </property>
      <property name="buddy">
-      <cstring>doubleSpinBoxTrafficPatternBaseDistance</cstring>
+      <cstring>doubleSpinBoxTrafficPatternDepartureDistance</cstring>
      </property>
     </widget>
    </item>
@@ -334,6 +334,7 @@ Measured from the start of the runway, i.e. the end of the final leg.</string>
   <tabstop>comboBoxTrafficPatternTurnDirection</tabstop>
   <tabstop>checkBoxTrafficPattern45Degree</tabstop>
   <tabstop>doubleSpinBoxTrafficPatternBaseDistance</tabstop>
+  <tabstop>doubleSpinBoxTrafficPatternDepartureDistance</tabstop>
   <tabstop>doubleSpinBoxDownwindDistance</tabstop>
   <tabstop>spinBoxTrafficPatternAltitude</tabstop>
   <tabstop>checkBoxTrafficPatternEntryExit</tabstop>

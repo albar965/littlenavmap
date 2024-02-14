@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>733</width>
-    <height>587</height>
+    <height>588</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -852,9 +852,6 @@ This is only a file path reference and does not attach the file to the logbook e
             <property name="text">
              <string>Attached &amp;GPX file:</string>
             </property>
-            <property name="buddy">
-             <cstring>lineEditFlightPlanFile</cstring>
-            </property>
            </widget>
           </item>
           <item row="4" column="1" colspan="2">
@@ -914,10 +911,10 @@ This is only a file path reference and does not attach the file to the logbook e
              </size>
             </property>
             <property name="text">
-             <string>&amp;Attached file:</string>
+             <string>Attached file:</string>
             </property>
             <property name="buddy">
-             <cstring>lineEditFlightPlanFile</cstring>
+             <cstring>labelAttachedPlan</cstring>
             </property>
            </widget>
           </item>
@@ -1008,10 +1005,7 @@ This is only a file path reference and does not attach the file to the logbook e
              </size>
             </property>
             <property name="text">
-             <string>&amp;Attached file:</string>
-            </property>
-            <property name="buddy">
-             <cstring>lineEditFlightPerfFile</cstring>
+             <string>Attached file:</string>
             </property>
            </widget>
           </item>
