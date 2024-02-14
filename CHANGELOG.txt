@@ -51,6 +51,11 @@ A big Thank You! to all who reported bugs and issues.
 * Fixed wrong distance calculation for procedure leg sequence intercept, intitial fix and following legs.
   This resulted in wrong distance, time and ETA calculations as well as a wrong elevation profile.
   Example: EFVA via AXUTI and I16-Y.
+* Windows installer now removes portable execution script `Little Navmap Portable.cmd` since this cannot
+  be used with the installer. Download one of Zip archives of Little Navmap to use the portable mode.
+* Removed offline PDF manual in program and installer. You can download the user manual in PDF and other
+  formats from the page [User Manuals](https://albar965.github.io/manuals.html).
+* Now ignoring empty GRIB files from the X-Plane weather folder.
 
 ==<<=============================================================================
 
