@@ -141,8 +141,7 @@ int main(int argc, char *argv[])
   }
   renderOptMessages.append("RenderOpt " + renderOpt);
 
-  int checkState = earlySettings.value("OptionsDialog/Widget_checkBoxOptionsGuiHighDpi", 2).toInt();
-  if(checkState == 2)
+  if(earlySettings.value("OptionsDialog/Widget_checkBoxOptionsGuiHighDpi", 2).toInt() == 2)
   {
     renderOptMessages.append("High DPI scaling enabled");
     QGuiApplication::setAttribute(Qt::AA_EnableHighDpiScaling, true);
@@ -160,9 +159,32 @@ int main(int argc, char *argv[])
   // Show dialog on exception in main event queue - can be disabled for debugging purposes
   NavApp::setShowExceptionDialog(earlySettings.value("Options/ExceptionDialog", true).toBool());
 
+  // Add freetype font engine arguments for Windows ===========================================================
+#if defined(Q_OS_WIN32)
+  // Get checkbox value
+  bool freetype = earlySettings.value("OptionsDialog/Widget_checkBoxOptionsFreetype", 2).toInt() == 2;
+#else
+  bool freetype =false;
+#endif
+
+  // Byte arrays have to remain for the whole runtime
+  QByteArray argument = QString("-platform").toLatin1(), value = QString("windows:fontengine=freetype").toLatin1();
+
+  // Copy pointers to regular arguments - add two for freetype options if needed
+  int appArgc = freetype ? argc + 2 : argc;
+  char *appArgv[appArgc];
+  for(int i = 0; i < argc; i++)
+    appArgv[i] = argv[i];
+
+  if(freetype)
+  {
+    appArgv[appArgc - 2] = argument.data();
+    appArgv[appArgc - 1] = value.data();
+  }
+
   // Create application object ===========================================================
   int retval = 0;
-  NavApp app(argc, argv);
+  NavApp app(appArgc, appArgv);
 
   DatabaseManager *dbManager = nullptr;
 
