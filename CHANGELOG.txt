@@ -56,6 +56,10 @@ A big Thank You! to all who reported bugs and issues.
 * Removed offline PDF manual in program and installer. You can download the user manual in PDF and other
   formats from the page [User Manuals](https://albar965.github.io/manuals.html).
 * Now ignoring empty GRIB files from the X-Plane weather folder.
+* Moved option to enable or disable Freetype font engine on Windows into options on page `Display and Text`.
+  Enabling this option results in better and faster text display on the map, especially for rotated labels.
+  As a result, the text will appear slightly blurred throughout the whole application. Deselect this to
+  avoid the slightly blurred text in menus and application windows.
 
 ==<<=============================================================================
 

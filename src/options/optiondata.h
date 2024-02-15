@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -104,9 +104,8 @@ enum Flag
   /* checkBoxOptionsDisplayTrailGradient */
   MAP_TRAIL_GRADIENT = 1 << 22,
 
-  /* checkBoxOptionsRouteDeclination */
-  // DELETED from 2.8.1.beta AND FREE
-  // ROUTE_IGNORE_VOR_DECLINATION = 1 << 23,
+  /* checkBoxOptionsFreetype */
+  GUI_FREETYPE_FONT_ENGINE = 1 << 23,
 
   /* Reload aircraft performance on startup.
    * ui->checkBoxOptionsStartupLoadperf */
@@ -1352,7 +1351,7 @@ private:
                       opts::GUI_CENTER_KML | opts::GUI_CENTER_ROUTE | opts::ROUTE_ALTITUDE_RULE |
                       opts::CACHE_USE_ONLINE_ELEVATION | opts::STARTUP_LOAD_INFO | opts::STARTUP_LOAD_SEARCH | opts::STARTUP_LOAD_TRAIL |
                       opts::STARTUP_SHOW_SPLASH | opts::ONLINE_REMOVE_SHADOW | opts::ENABLE_TOOLTIPS_ALL | opts::STARTUP_LOAD_PERF |
-                      opts::GUI_AVOID_OVERWRITE_FLIGHTPLAN | opts::MAP_AIRSPACE_NO_MULT_Z;
+                      opts::GUI_AVOID_OVERWRITE_FLIGHTPLAN | opts::MAP_AIRSPACE_NO_MULT_Z | opts::GUI_FREETYPE_FONT_ENGINE;
 
   // Defines the defaults used for reset
   optsw::FlagsWeather flagsWeather = optsw::WEATHER_INFO_FS | optsw::WEATHER_INFO_ACTIVESKY | optsw::WEATHER_INFO_NOAA |

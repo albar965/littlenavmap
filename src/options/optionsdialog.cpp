@@ -99,36 +99,39 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
   // 22 "Scenery Library Database"
 
   const static QVector<QLabel *> HINT_LABELS({
+    ui->labelOptionsUpdatesHint,
     ui->labelOptionsUnitsHint,
     ui->labelOptionsGuiFontHint,
+    ui->labelOptionsFreetypeHint,
+    ui->labelOptionsGuiHighDpiNoteHint,
     ui->labelOptionsGuiTooltipHint,
+    ui->labelOptionsUnitsTextSizeHint,
     ui->labelOptionsFilePatternsHint,
     ui->labelOptionsResetLayoutHint,
+    ui->labelOptionsResetEmptyHint,
     ui->labelOptionsNavigationAidsHint,
+    ui->labelOptionsAppFontHint,
     ui->labelOptionsAirportSettingsHint,
     ui->labelOptionsAirspaceSettingsHint,
     ui->labelOptionsUserAircraftSettingsHint,
     ui->labelOptionsAiHint,
     ui->labelOptionsLabelHint,
-    ui->labelOptionsFlightPlanLabelHint,
     ui->labelOptionsProfileHint,
+    ui->labelOptionsFlightPlanLabelHint,
     ui->labelOptionsTrailHint,
-    ui->labelOptionsMeasurmentHint,
     ui->labelOptionsCompassRoseHint,
+    ui->labelOptionsMeasurmentHint,
+    ui->labelOptionsMsaHint,
+    ui->labelMapApiKeysHint,
     ui->labelOptionsMapThemesHint,
+    ui->labelOptionsUnitsOnlineAirspaceHint,
+    ui->labelOptionsOnlineHint,
     ui->labelOptionsSimUpdatesHint,
     ui->labelOptionsWeatherHint,
-    ui->labelOptionsCacheDiskExpirationHint,
-    ui->labelOptionsApiKeysHint,
-    ui->labelOptionsUnitsTextSizeHint,
-    ui->labelOptionsAppFontHint,
-    ui->labelOptionsOnlineHint,
-    ui->labelOptionsUnitsOnlineAirspaces,
+    ui->labelOptionsFileXplaneHint,
     ui->labelOptionsWeatherDefaultsHint,
-    ui->labelOptionsResetEmptyHint,
-    ui->labelOptionsMsaHint,
-    ui->labelOptionsUpdatesHint,
-    ui->labelOptionsFileXplaneHint
+    ui->labelOptionsCacheDiskExpirationHint,
+    ui->labelOptionsMapThemeDirRestartHint
   });
 
   ui->buttonBoxOptions->button(QDialogButtonBox::Ok)->setToolTip(tr("Apply changes and close dialog."));
@@ -147,6 +150,13 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
             "image: url(:/littlenavmap/resources/icons/splitterhandhoriz.png);"
             " }").
     arg(QApplication::palette().color(QPalette::Window).darker(120).name()));
+#endif
+
+#ifndef Q_OS_WIN32
+  // No freetype font selection except Windows
+  ui->checkBoxOptionsFreetype->hide();
+  ui->labelOptionsFreetypeHint->hide();
+  ui->lineOptionsGuiFreetype->hide();
 #endif
 
 #ifdef Q_OS_MACOS
@@ -356,7 +366,8 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
      ui->checkBoxOptionsGuiCenterRoute,
      ui->checkBoxOptionsGuiAvoidOverwrite,
      ui->checkBoxOptionsGuiOverrideLocale,
-     ui->checkBoxOptionsGuiHighDpi,
+     ui->checkBoxOptionsGuiHighDpi, // Read in main.cpp
+     ui->checkBoxOptionsFreetype, // Read in main.cpp
      ui->checkBoxOptionsGuiTooltipsAll,
      ui->checkBoxOptionsGuiTooltipsMenu,
      ui->checkBoxOptionsGuiToolbarSize,
@@ -801,7 +812,7 @@ void OptionsDialog::hintLinkActivated(const QString& link)
 void OptionsDialog::styleChanged()
 {
   // Remember text, clear label and set text again to force update after style changes
-  atools::gui::util::labelForcedUpdate(ui->labelMapApiKeys);
+  atools::gui::util::labelForcedUpdate(ui->labelMapApiKeysHint);
   atools::gui::util::labelForcedUpdate(ui->labelCacheGlobePathDownload);
   atools::gui::util::labelForcedUpdate(ui->labelOptionsWebStatus);
 
@@ -1885,6 +1896,7 @@ void OptionsDialog::widgetsToOptionData()
   toFlags2(ui->checkBoxOptionsMapUndock, opts2::MAP_ALLOW_UNDOCK);
   toFlags2(ui->checkBoxOptionsGuiHighDpi, opts2::HIGH_DPI_DISPLAY_SUPPORT);
   toFlags2(ui->checkBoxOptionsGuiToolbarSize, opts2::OVERRIDE_TOOLBAR_SIZE);
+  toFlags(ui->checkBoxOptionsFreetype, opts::GUI_FREETYPE_FONT_ENGINE);
 
   toFlags(ui->radioButtonCacheUseOffineElevation, opts::CACHE_USE_OFFLINE_ELEVATION);
   toFlags(ui->radioButtonCacheUseOnlineElevation, opts::CACHE_USE_ONLINE_ELEVATION);
@@ -2194,6 +2206,7 @@ void OptionsDialog::optionDataToWidgets(const OptionData& data)
   fromFlags2(data, ui->checkBoxOptionsMapUndock, opts2::MAP_ALLOW_UNDOCK);
   fromFlags2(data, ui->checkBoxOptionsGuiHighDpi, opts2::HIGH_DPI_DISPLAY_SUPPORT);
   fromFlags2(data, ui->checkBoxOptionsGuiToolbarSize, opts2::OVERRIDE_TOOLBAR_SIZE);
+  fromFlags(data, ui->checkBoxOptionsFreetype, opts::GUI_FREETYPE_FONT_ENGINE);
 
   fromFlags(data, ui->radioButtonCacheUseOffineElevation, opts::CACHE_USE_OFFLINE_ELEVATION);
   fromFlags(data, ui->radioButtonCacheUseOnlineElevation, opts::CACHE_USE_ONLINE_ELEVATION);
