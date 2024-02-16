@@ -73,7 +73,8 @@ DatabaseManager::DatabaseManager(MainWindow *parent)
   languageIndex = new atools::fs::scenery::LanguageJson;
 
   // Aircraft config read from MSFS folders to get more user aircraft details
-  aircraftIndex = new atools::fs::scenery::AircraftIndex;
+  atools::settings::Settings& settings = atools::settings::Settings::instance();
+  aircraftIndex = new atools::fs::scenery::AircraftIndex(settings.getAndStoreValue(lnm::OPTIONS_AIRCRAFTINDEX_DEBUG, false).toBool());
 
   // Also loads list of simulators from settings ======================================
   restoreState();

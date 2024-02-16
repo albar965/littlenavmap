@@ -105,7 +105,8 @@ bool XpconnectInstaller::install()
   infoBox.setMessage(tr("<p>Install or update the Little Xpconnect plugin for %1 in the directory below?</p>"
                           "<p>%2&nbsp;(click to open)</p>"
                             "<p>The X-Plane target installation is as selected in the menu \"Scenery Library\".</p>"
-                              "%3").
+                              "<p><b>Note that you have to close X-Plane while installing the plugin.</b></p>"
+                                "%3").
                      arg(NavApp::getCurrentSimulatorName()).
                      arg(HtmlBuilder::aFilePath(pluginsPath, atools::util::html::NOBR_WHITESPACE)).
                      arg(macOsNote));
