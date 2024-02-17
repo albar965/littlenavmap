@@ -176,7 +176,7 @@ Source: "{#LnmAppProjects}\littlenavmap\build\win\Little Navmap User Manual Onli
 [InstallDelete]
 Type: files; Name: "{app}\Little Navmap Portable.cmd"
 Type: files; Name: "{app}\Little Navmap\help\little-navmap-user-manual-en.pdf"
-Type: files; Name: "{autoprograms}\{#LnmAppName} {#AppSuffix}\Little Navmap {cm:UserManualMessage} PDF (Offline).lnk"
+Type: files; Name: "{autoprograms}\{#LnmAppName} {#AppSuffix}\Little Navmap*PDF*.lnk"
 Type: files; Name: "{app}\data\maps\earth\stamenterrain\stamenterrain.dgml"
 Type: files; Name: "{app}\data\maps\earth\stamenterrain\stamenterrain-preview.png"
 Type: files; Name: "{app}\data\maps\earth\stamenterrain\0\0\0.png"
