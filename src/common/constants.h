@@ -51,12 +51,10 @@ extern QString helpOnlineAircraftPerfUrl;
 extern QString helpOnlineUserInterfaceUrl;
 
 extern QString helpOnlineDownloadsUrl;
-extern QString helpOnlineInstallRedistUrl;
 extern QString helpOnlineInstallGlobeUrl;
 extern QString helpOnlineInstallDirUrl;
 extern QString helpOnlineNavdatabasesUrl;
 extern QString helpOnlineStartUrl;
-extern QString helpLegendLocalFile;
 extern QString helpOfflineFile;
 extern QString helpDonateUrl;
 extern QString helpManualDownloadUrl;

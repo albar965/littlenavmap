@@ -45,12 +45,10 @@ QString helpOnlineFlightPlanningUrl;
 QString helpOnlineAircraftPerfUrl;
 QString helpOnlineUserInterfaceUrl;
 
-QString helpOnlineInstallRedistUrl;
 QString helpOnlineInstallGlobeUrl;
 QString helpOnlineInstallDirUrl;
 QString helpOnlineNavdatabasesUrl;
 QString helpOnlineStartUrl;
-QString helpLegendLocalFile;
 QString helpOfflineFile;
 QString helpDonateUrl;
 QString helpManualDownloadUrl;
@@ -117,8 +115,7 @@ void loadHelpUrls()
     helpOnlineFlightPlanningUrl = base % "FLIGHTPLAN.html";
     helpOnlineAircraftPerfUrl = base % "AIRCRAFTPERF.html";
     helpOnlineUserInterfaceUrl = base % "INTRO.html";
-    helpOnlineInstallRedistUrl = base % "INSTALLATION.html#windows";
-    helpOnlineInstallGlobeUrl = base % "OPTIONS.html#cache-elevation";
+    helpOnlineInstallGlobeUrl = base % "GLOBE.html";
     helpOnlineInstallDirUrl = base % "FOLDERS.html";
     helpOnlineNavdatabasesUrl = base % "NAVDATA.html";
     helpOnlineStartUrl = base % "START.html";
@@ -137,8 +134,7 @@ void loadHelpUrls()
     helpOnlineFlightPlanningUrl = settings.value("help/flightplanning", base + "FLIGHTPLAN.html").toString();
     helpOnlineAircraftPerfUrl = settings.value("help/aircraftperf", base + "AIRCRAFTPERF.html").toString();
     helpOnlineUserInterfaceUrl = settings.value("help/userinterface", base + "INTRO.html").toString();
-    helpOnlineInstallRedistUrl = settings.value("help/installredist", base + "INSTALLATION.html#windows").toString();
-    helpOnlineInstallGlobeUrl = settings.value("help/installglobe", base + "OPTIONS.html#cache-elevation").toString();
+    helpOnlineInstallGlobeUrl = settings.value("help/installglobe", base + "GLOBE.html").toString();
     helpOnlineInstallDirUrl = settings.value("help/installdir", base + "FOLDERS.html").toString();
     helpOnlineNavdatabasesUrl = settings.value("help/navdata", base + "NAVDATA.html").toString();
     helpOnlineStartUrl = settings.value("help/start", base + "START.html").toString();
@@ -154,7 +150,6 @@ void loadHelpUrls()
   helpFaqUrl = settings.value("help/faq", "https://www.littlenavmap.org/littlenavmap-faq.html").toString();
 
   // [local] - local files
-  helpLegendLocalFile = settings.value("local/legend", "help/legend-${LANG}.html").toString();
   helpOfflineFile = settings.value("local/help", "help/little-navmap-user-manual-${LANG}.pdf").toString();
 
   // [update] - Update control file
