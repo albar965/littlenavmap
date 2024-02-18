@@ -30,6 +30,40 @@ A big Thank You! to all who reported bugs and issues.
 
 ## Changes from 3.0.2.beta to 3.0.3.rc1
 
+### User Manual
+
+* [Map Display - New handling of file little_navmap_mapstyle.ini](https://www.littlenavmap.org/manuals/littlenavmap/release/3.0/en/CUSTOMIZE.html#customize-map-display)
+* [Web and internal links in dialog windows](https://www.littlenavmap.org/manuals/littlenavmap/release/3.0/en/INTRO.html#links)
+* [Copy and paste formatted text from dialog windows](https://www.littlenavmap.org/manuals/littlenavmap/release/3.0/en/INTRO.html#copy-and-paste)
+* [Map overlays](https://www.littlenavmap.org/manuals/littlenavmap/release/3.0/en/MAPDISPLAY.html#overlays-map)
+* [Convert procedure to waypoints function](https://www.littlenavmap.org/manuals/littlenavmap/release/3.0/en/MAPDISPLAY.html#convert-to-waypoints)
+* [Direct to here function](https://www.littlenavmap.org/manuals/littlenavmap/release/3.0/en/MAPDISPLAY.html#direct-to-here)
+* [Select leg in flight plan function](https://www.littlenavmap.org/manuals/littlenavmap/release/3.0/en/MAPDISPLAY.html#show-in-flight-plan)
+* [GPX exchange format (GPX) menu for load and export](https://www.littlenavmap.org/manuals/littlenavmap/release/3.0/en/MENUS.html#menu-gpx)
+* [Search menu for quick access](https://www.littlenavmap.org/manuals/littlenavmap/release/3.0/en/MENUS.html#search-menu)
+* [Changed map display filter for add-on airports](https://www.littlenavmap.org/manuals/littlenavmap/release/3.0/en/MENUS.html#add-on)
+* [Show or hide alternate airports](https://www.littlenavmap.org/manuals/littlenavmap/release/3.0/en/MENUS.html#show-alternate-airports)
+* [Automatic installation of Little Xpconnect menu item](https://www.littlenavmap.org/manuals/littlenavmap/release/3.0/en/MENUS.html#install-xpconnect)
+* [Manually create an issue report menu item](https://www.littlenavmap.org/manuals/littlenavmap/release/3.0/en/MENUS.html#create-issue-report)
+* [New menu items to show map cache and more](https://www.littlenavmap.org/manuals/littlenavmap/release/3.0/en/MENUS.html#files-and-directories)
+* [Links to helpful user manual chapters](https://www.littlenavmap.org/manuals/littlenavmap/release/3.0/en/MENUS.html#help-chapters)
+* [Search in options dialog](https://www.littlenavmap.org/manuals/littlenavmap/release/3.0/en/OPTIONS.html#options-search)
+* [Hints in options dialog](https://www.littlenavmap.org/manuals/littlenavmap/release/3.0/en/OPTIONS.html#options-hints)
+* [Improved route description for runways and approaches](https://www.littlenavmap.org/manuals/littlenavmap/release/3.0/en/ROUTEDESCR.html)
+* [Changed text search in airport and navaid search windows](https://www.littlenavmap.org/manuals/littlenavmap/release/3.0/en/SEARCH.html)
+* [Changed search for hidden options and new suffixes](https://www.littlenavmap.org/manuals/littlenavmap/release/3.0/en/SEARCH.html#menu-button-search)
+* [Changed handling of runways to avoid error messages when adding procedures](https://www.littlenavmap.org/manuals/littlenavmap/release/3.0/en/SEARCHPROCS.html#procedure-runways)
+* [Showing preferred runways as well as head and cross winds in procedure search](https://www.littlenavmap.org/manuals/littlenavmap/release/3.0/en/SEARCHPROCS.html#procedure-preferred-runways)
+* [Search for approach idents](https://www.littlenavmap.org/manuals/littlenavmap/release/3.0/en/SEARCHPROCS.html#filter-ident-procs)
+* [New departure leg option in traffic pattern](https://www.littlenavmap.org/manuals/littlenavmap/release/3.0/en/TRAFFICPATTERN.html)
+* [Install the Little Xpconnect plugin from the tools menu](https://www.littlenavmap.org/manuals/littlenavmap/release/3.0/en/XPCONNECT.html#xpconnect-installation)
+* [New chapter for GLOBE installation](https://www.littlenavmap.org/manuals/littlenavmap/release/3.0/en/GLOBE.html)
+* [New chapter for user aircraft trail loading, saving and display options](https://www.littlenavmap.org/manuals/littlenavmap/release/3.0/en/AIRCRAFTTRAIL.html)
+* [Create a manual issue report](https://www.littlenavmap.org/manuals/littlenavmap/release/3.0/en/ISSUEREPORT.html)
+* [Automatic crash report after improper shutdown](https://www.littlenavmap.org/manuals/littlenavmap/release/3.0/en/CRASHREPORT.html)
+
+### General
+
 * Fixed several issues with flight plan labels when crossing the anti-meridian.
 * Now removing leading and trailing white space from URLs in options to avoid issues with wrong
   user input. #1089
@@ -39,13 +73,13 @@ A big Thank You! to all who reported bugs and issues.
   flight plan table as needed.
 * Missing PAPI in profile fixed when last procedure leg is short circle-to-land.
   Example: EGPF via GOW and D23.
-* Fixed turn indicator curve at low aircraft speeds.
-* Added text size option for flight plan table header text.
-* Fixed aircraft index flooding log with messages when loading MSFS aircraft files. Now avoiding
-  re-reading if aircraft files are not available.
+* Fixed turn indicator curve at low aircraft speeds and small turn radii.
+* Added text size option for flight plan table header text in options on page `Display and Text`.
+* Fixed aircraft index flooding log with messages when loading MSFS aircraft files to get ICAO type.
+  Now avoiding re-reading if aircraft files are not available.
 * Now writing ICAOIdent field for userpoints in FSX/P3D flight plan export to fix userpoint display
   in GPS.
-* Removed log flooding with messages when adding points to aircraft trail.
+* Removed log flooding with messages when adding points to aircraft trail while flying.
 * Adding `More` sub-menus in menu `View` -> `Userpoints` to avoid overflow on screen when using many
   custom userpoint icons.
 * Fixed wrong distance calculation for procedure leg sequence intercept, intitial fix and following legs.
@@ -55,10 +89,11 @@ A big Thank You! to all who reported bugs and issues.
   be used with the installer. Download one of Zip archives of Little Navmap to use the portable mode.
 * Removed offline PDF manual in program and installer. You can download the user manual in PDF and other
   formats from the page [User Manuals](https://albar965.github.io/manuals.html).
-* Now ignoring empty GRIB files from the X-Plane weather folder.
-* Moved option to enable or disable Freetype font engine on Windows into options on page `Display and Text`.
+* Now ignoring empty GRIB files from the X-Plane weather folder. Replaced error dialog window with
+  warning message in log.
+* Moved option to enable or disable the Freetype font engine on Windows into options on page `Display and Text`.
   Enabling this option results in better and faster text display on the map, especially for rotated labels.
-  As a result, the text will appear slightly blurred throughout the whole application. Deselect this to
+  But the text will appear slightly blurred throughout the whole application. Deselect this to
   avoid the slightly blurred text in menus and application windows.
 
 ==<<=============================================================================
