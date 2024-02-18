@@ -49,6 +49,7 @@ A big Thank You! to all who reported bugs and issues.
 * [Links to helpful user manual chapters](https://www.littlenavmap.org/manuals/littlenavmap/release/3.0/en/MENUS.html#help-chapters)
 * [Search in options dialog](https://www.littlenavmap.org/manuals/littlenavmap/release/3.0/en/OPTIONS.html#options-search)
 * [Hints in options dialog](https://www.littlenavmap.org/manuals/littlenavmap/release/3.0/en/OPTIONS.html#options-hints)
+* [Option to toggle Freetype font engine](https://www.littlenavmap.org/manuals/littlenavmap/release/3.0/en/OPTIONS.html#options-freetype)
 * [Improved route description for runways and approaches](https://www.littlenavmap.org/manuals/littlenavmap/release/3.0/en/ROUTEDESCR.html)
 * [Changed text search in airport and navaid search windows](https://www.littlenavmap.org/manuals/littlenavmap/release/3.0/en/SEARCH.html)
 * [Changed search for hidden options and new suffixes](https://www.littlenavmap.org/manuals/littlenavmap/release/3.0/en/SEARCH.html#menu-button-search)
