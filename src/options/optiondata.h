@@ -1348,10 +1348,11 @@ private:
 
   // Defines the defaults used for reset
   opts::Flags flags = opts::STARTUP_LOAD_KML | opts::STARTUP_LOAD_MAP_SETTINGS | opts::STARTUP_LOAD_ROUTE | opts::STARTUP_SHOW_LAST |
-                      opts::GUI_CENTER_KML | opts::GUI_CENTER_ROUTE | opts::ROUTE_ALTITUDE_RULE |
-                      opts::CACHE_USE_ONLINE_ELEVATION | opts::STARTUP_LOAD_INFO | opts::STARTUP_LOAD_SEARCH | opts::STARTUP_LOAD_TRAIL |
-                      opts::STARTUP_SHOW_SPLASH | opts::ONLINE_REMOVE_SHADOW | opts::ENABLE_TOOLTIPS_ALL | opts::STARTUP_LOAD_PERF |
-                      opts::GUI_AVOID_OVERWRITE_FLIGHTPLAN | opts::MAP_AIRSPACE_NO_MULT_Z | opts::GUI_FREETYPE_FONT_ENGINE;
+                      opts::GUI_CENTER_KML | opts::GUI_CENTER_ROUTE | opts::ROUTE_ALTITUDE_RULE | opts::CACHE_USE_ONLINE_ELEVATION |
+                      opts::STARTUP_LOAD_INFO | opts::STARTUP_LOAD_SEARCH | opts::STARTUP_LOAD_TRAIL | opts::STARTUP_SHOW_SPLASH |
+                      opts::ONLINE_REMOVE_SHADOW | opts::ENABLE_TOOLTIPS_ALL | opts::STARTUP_LOAD_PERF |
+                      opts::GUI_AVOID_OVERWRITE_FLIGHTPLAN | opts::MAP_AIRSPACE_NO_MULT_Z | opts::GUI_FREETYPE_FONT_ENGINE |
+                      opts::MAP_TRAIL_GRADIENT;
 
   // Defines the defaults used for reset
   optsw::FlagsWeather flagsWeather = optsw::WEATHER_INFO_FS | optsw::WEATHER_INFO_ACTIVESKY | optsw::WEATHER_INFO_NOAA |
