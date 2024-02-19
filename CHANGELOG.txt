@@ -15,13 +15,13 @@ This text is partially Markdown, hence sometimes strange formatting.
 
 **Also update Little Navconnect and Little Xpconnect if you're using one of these.
 Little Navmap will show a notification dialog if you use an outdated version of Little Xpconnect.
-You can still continue to use it, though.**
+You can update and install Litte Xpconnect from the menu `Tools` in Little Navmap now.**
 
 **macOS users: Keep in mind that you have to clear the quarantine flag when updating Little Xpconnect. See
 [Little Navmap - User Manual - Clearing the Quarantine Flag on macOS](https://www.littlenavmap.org/manuals/littlenavmap/release/latest/en/XPCONNECT.html#clearing-the-quarantine-flag-on-macos).**
 
 If you think the overall appearance of fonts in Little Navmap on Windows is blurry:
-Remove the file `qt.conf` in the Little Navmap installation folder.
+See options on page `Display and Text` and deselect `Use FreeType font engine on Windows`.
 Keep in mind that this will revert map display and performance improvements.
 
 A big Thank You! to all who reported bugs and issues.
@@ -32,34 +32,57 @@ A big Thank You! to all who reported bugs and issues.
 
 ### User Manual
 
-* [Map Display - New handling of file little_navmap_mapstyle.ini](https://www.littlenavmap.org/manuals/littlenavmap/release/3.0/en/CUSTOMIZE.html#customize-map-display)
-* [Web and internal links in dialog windows](https://www.littlenavmap.org/manuals/littlenavmap/release/3.0/en/INTRO.html#links)
-* [Copy and paste formatted text from dialog windows](https://www.littlenavmap.org/manuals/littlenavmap/release/3.0/en/INTRO.html#copy-and-paste)
-* [Map overlays](https://www.littlenavmap.org/manuals/littlenavmap/release/3.0/en/MAPDISPLAY.html#overlays-map)
+#### Map Display and Map Context Menu
+
 * [Convert procedure to waypoints function](https://www.littlenavmap.org/manuals/littlenavmap/release/3.0/en/MAPDISPLAY.html#convert-to-waypoints)
 * [Direct to here function](https://www.littlenavmap.org/manuals/littlenavmap/release/3.0/en/MAPDISPLAY.html#direct-to-here)
-* [Select leg in flight plan function](https://www.littlenavmap.org/manuals/littlenavmap/release/3.0/en/MAPDISPLAY.html#show-in-flight-plan)
-* [GPX exchange format (GPX) menu for load and export](https://www.littlenavmap.org/manuals/littlenavmap/release/3.0/en/MENUS.html#menu-gpx)
+* [Map overlays](https://www.littlenavmap.org/manuals/littlenavmap/release/3.0/en/MAPDISPLAY.html#overlays-map)
+* [Select leg in flight plan on click](https://www.littlenavmap.org/manuals/littlenavmap/release/3.0/en/MAPDISPLAY.html#show-in-flight-plan)
+* [Map Display - New handling of file little_navmap_mapstyle.ini](https://www.littlenavmap.org/manuals/littlenavmap/release/3.0/en/CUSTOMIZE.html#customize-map-display)
+
+#### Flight Plan Route Description
+
+* [Improved route description now able to use runways and approaches](https://www.littlenavmap.org/manuals/littlenavmap/release/3.0/en/ROUTEDESCR.html)
+
+#### User Interface
+
+* [Web and internal links in dialog windows explained](https://www.littlenavmap.org/manuals/littlenavmap/release/3.0/en/INTRO.html#links)
+* [Copy and paste formatted text from all dialog windows](https://www.littlenavmap.org/manuals/littlenavmap/release/3.0/en/INTRO.html#copy-and-paste)
+
+#### New Menu Items
+
 * [Search menu for quick access](https://www.littlenavmap.org/manuals/littlenavmap/release/3.0/en/MENUS.html#search-menu)
-* [Changed map display filter for add-on airports](https://www.littlenavmap.org/manuals/littlenavmap/release/3.0/en/MENUS.html#add-on)
+* [Changed map display filter for add-on airports as requested by users](https://www.littlenavmap.org/manuals/littlenavmap/release/3.0/en/MENUS.html#add-on)
 * [Show or hide alternate airports](https://www.littlenavmap.org/manuals/littlenavmap/release/3.0/en/MENUS.html#show-alternate-airports)
 * [Automatic installation of Little Xpconnect menu item](https://www.littlenavmap.org/manuals/littlenavmap/release/3.0/en/MENUS.html#install-xpconnect)
 * [Manually create an issue report menu item](https://www.littlenavmap.org/manuals/littlenavmap/release/3.0/en/MENUS.html#create-issue-report)
 * [New menu items to show map cache and more](https://www.littlenavmap.org/manuals/littlenavmap/release/3.0/en/MENUS.html#files-and-directories)
 * [Links to helpful user manual chapters](https://www.littlenavmap.org/manuals/littlenavmap/release/3.0/en/MENUS.html#help-chapters)
+
+#### Aircraft Trail
+
+* [New chapter for user aircraft trail loading, saving and display options](https://www.littlenavmap.org/manuals/littlenavmap/release/3.0/en/AIRCRAFTTRAIL.html)
+* [GPX exchange format (GPX) menu for load and export](https://www.littlenavmap.org/manuals/littlenavmap/release/3.0/en/MENUS.html#menu-gpx)
+
+#### Options
+
 * [Search in options dialog](https://www.littlenavmap.org/manuals/littlenavmap/release/3.0/en/OPTIONS.html#options-search)
 * [Hints in options dialog](https://www.littlenavmap.org/manuals/littlenavmap/release/3.0/en/OPTIONS.html#options-hints)
 * [Option to toggle Freetype font engine](https://www.littlenavmap.org/manuals/littlenavmap/release/3.0/en/OPTIONS.html#options-freetype)
-* [Improved route description for runways and approaches](https://www.littlenavmap.org/manuals/littlenavmap/release/3.0/en/ROUTEDESCR.html)
+
+#### Changed Search
+
 * [Changed text search in airport and navaid search windows](https://www.littlenavmap.org/manuals/littlenavmap/release/3.0/en/SEARCH.html)
 * [Changed search for hidden options and new suffixes](https://www.littlenavmap.org/manuals/littlenavmap/release/3.0/en/SEARCH.html#menu-button-search)
 * [Changed handling of runways to avoid error messages when adding procedures](https://www.littlenavmap.org/manuals/littlenavmap/release/3.0/en/SEARCHPROCS.html#procedure-runways)
 * [Showing preferred runways as well as head and cross winds in procedure search](https://www.littlenavmap.org/manuals/littlenavmap/release/3.0/en/SEARCHPROCS.html#procedure-preferred-runways)
 * [Search for approach idents](https://www.littlenavmap.org/manuals/littlenavmap/release/3.0/en/SEARCHPROCS.html#filter-ident-procs)
+
+#### Other
+
 * [New departure leg option in traffic pattern](https://www.littlenavmap.org/manuals/littlenavmap/release/3.0/en/TRAFFICPATTERN.html)
 * [Install the Little Xpconnect plugin from the tools menu](https://www.littlenavmap.org/manuals/littlenavmap/release/3.0/en/XPCONNECT.html#xpconnect-installation)
 * [New chapter for GLOBE installation](https://www.littlenavmap.org/manuals/littlenavmap/release/3.0/en/GLOBE.html)
-* [New chapter for user aircraft trail loading, saving and display options](https://www.littlenavmap.org/manuals/littlenavmap/release/3.0/en/AIRCRAFTTRAIL.html)
 * [Create a manual issue report](https://www.littlenavmap.org/manuals/littlenavmap/release/3.0/en/ISSUEREPORT.html)
 * [Automatic crash report after improper shutdown](https://www.littlenavmap.org/manuals/littlenavmap/release/3.0/en/CRASHREPORT.html)
 
