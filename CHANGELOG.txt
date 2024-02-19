@@ -119,6 +119,9 @@ A big Thank You! to all who reported bugs and issues.
   Enabling this option results in better and faster text display on the map, especially for rotated labels.
   But the text will appear slightly blurred throughout the whole application. Deselect this to
   avoid the slightly blurred text in menus and application windows.
+* More fixes in PLN flight plan export for MSFS where transitions were not loaded by MSFS due to a missing
+  waypoint. This case without a STAR. Example: EDDV, using approach NIE.I27RY or approach SAS.I27RZ both
+  without STAR.
 
 ==<<=============================================================================
 

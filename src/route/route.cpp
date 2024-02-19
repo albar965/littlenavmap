@@ -2955,36 +2955,67 @@ Route Route::adjustedToOptions(const Route& origRoute, rf::RouteAdjustOptions op
   RouteLeg transWaypointLeg;
   if(msfs)
   {
-    if(route.hasAnyStarProcedure() && route.hasTransitionProcedure())
+    if(route.hasTransitionProcedure())
     {
-      // MSFS needs an extra waypoint between STAR and approach to be able to select the right transition
-      // This is the case for manual STAR legs which do not end at a waypoint
-      const proc::MapProcedureLeg& lastStarLeg = route.getStarLegs().constLast();
-      const proc::MapProcedureLeg& firstApproachLeg = route.getApproachLegs().constFirst();
-
-      if((lastStarLeg.fixIdent != firstApproachLeg.fixIdent ||
-          lastStarLeg.fixType != firstApproachLeg.fixType) ||
-         (proc::procedureLegFixAtStart(lastStarLeg.type) || lastStarLeg.type == proc::VECTORS))
+      if(route.hasAnyStarProcedure())
       {
-        int approachLegsOffset = route.getApproachLegsOffset();
-        if(approachLegsOffset >= 0 && approachLegsOffset < map::INVALID_INDEX_VALUE)
+        // MSFS needs an extra waypoint between STAR and approach to be able to select the right transition
+        // This is the case for manual STAR legs which do not end at a waypoint
+        const proc::MapProcedureLeg& lastStarLeg = route.getStarLegs().constLast();
+        const proc::MapProcedureLeg& firstApproachLeg = route.getApproachLegs().constFirst();
+
+        // Only for vector or manual legs
+        if((lastStarLeg.fixIdent != firstApproachLeg.fixIdent ||
+            lastStarLeg.fixType != firstApproachLeg.fixType) ||
+           (proc::procedureLegFixAtStart(lastStarLeg.type) || lastStarLeg.type == proc::VECTORS))
         {
-          // Create a plain waypoint not having procedure flag
-          transWaypointEntry = route.getFlightplanConst().at(approachLegsOffset);
-          transWaypointEntry.setFlag(atools::fs::pln::entry::PROCEDURE, false);
+          int approachLegsOffset = route.getApproachLegsOffset();
+          if(approachLegsOffset >= 0 && approachLegsOffset < map::INVALID_INDEX_VALUE)
+          {
+            // Create a plain waypoint not having procedure flag
+            transWaypointEntry = route.getFlightplanConst().at(approachLegsOffset);
+            transWaypointEntry.setFlag(atools::fs::pln::entry::PROCEDURE, false);
 
-          // Assign STAR attributes
-          QString designator;
-          int number;
-          if(atools::fs::util::runwayNameSplit(route.getStarRunwayName(), &number, &designator))
-            transWaypointEntry.setRunway(QString::number(number), atools::fs::util::runwayDesignatorLong(designator));
-          transWaypointEntry.setStar(route.getStarLegs().procedureFixIdent);
+            // Assign STAR attributes
+            QString designator;
+            int number;
+            if(atools::fs::util::runwayNameSplit(route.getStarRunwayName(), &number, &designator))
+              transWaypointEntry.setRunway(QString::number(number), atools::fs::util::runwayDesignatorLong(designator));
+            transWaypointEntry.setStar(route.getStarLegs().procedureFixIdent);
 
-          // Create a dummy copy of the leg to have the route and flightplan in sync
-          transWaypointLeg = route.value(approachLegsOffset);
+            // Create a dummy copy of the leg to have the route and flightplan in sync
+            transWaypointLeg = route.value(approachLegsOffset);
+          }
+        }
+      } // if(route.hasAnyStarProcedure())
+      else
+      {
+        // MSFS needs an extra waypoint between en-route and approach to be able to select the right transition
+        int approachLegsOffset = route.getApproachLegsOffset();
+        if(approachLegsOffset > 1 && approachLegsOffset < map::INVALID_INDEX_VALUE)
+        {
+          const RouteLeg& enrouteLeg = route.value(approachLegsOffset - 1);
+          const proc::MapProcedureLeg& firstApproachLeg = route.getApproachLegs().constFirst();
+
+          if(enrouteLeg.getIdent() != firstApproachLeg.fixIdent)
+          {
+            // Create a plain waypoint not having procedure flag
+            transWaypointEntry = route.getFlightplanConst().at(approachLegsOffset);
+            transWaypointEntry.setFlag(atools::fs::pln::entry::PROCEDURE, false);
+
+            // Assign STAR attributes
+            QString designator;
+            int number;
+            if(atools::fs::util::runwayNameSplit(route.getStarRunwayName(), &number, &designator))
+              transWaypointEntry.setRunway(QString::number(number), atools::fs::util::runwayDesignatorLong(designator));
+            transWaypointEntry.setStar(route.getStarLegs().procedureFixIdent);
+
+            // Create a dummy copy of the leg to have the route and flightplan in sync
+            transWaypointLeg = route.value(approachLegsOffset);
+          }
         }
       }
-    }
+    } // if(route.hasTransitionProcedure())
 
     // Remove approach transitions and missed- these are not saved
     route.clearProcedureLegs(proc::PROCEDURE_MISSED | proc::PROCEDURE_TRANSITION);
