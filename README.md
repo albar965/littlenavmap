@@ -11,9 +11,7 @@
 
 Zipped Windows releases without installer are available in the alternative download locations below or from the release assets at [GitHub - Little Navmap Releases - Version 2.8.12](https://github.com/albar965/littlenavmap/releases/v2.8.12) \(scroll down to `Assets`\).
 
-**Alternative Download Locations - Look into sub-folders for beta, development or release candidates:**
-
-**►** [**Box**](https://app.box.com/s/8c9x2f91enpkn41cmc4b5tkzlil9ouhy) / [**Dropbox**](https://www.dropbox.com/sh/eh446yent4rz3uq/AACg8vMEmX8AxY_5Hjpt90kWa) / [**Mega.nz**](https://mega.nz/#F!iOZHlIab!65qqRGToUUCxiSMmzbab1w)
+**► [Alternative Download Locations](https://albar965.github.io/downloads.html)**
 
 ### Little Navmap Links
 
