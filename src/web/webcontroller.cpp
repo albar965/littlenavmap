@@ -126,8 +126,6 @@ void WebController::startServer()
     listenerSettings->remove("sslCertFile");
   }
 
-  listenerSettings->setValue("filename", configFileName);
-
   qDebug() << "Using" << "sslKeyFile" << listenerSettings->value("sslKeyFile").toString()
            << "sslCertFile" << listenerSettings->value("sslCertFile").toString();
 

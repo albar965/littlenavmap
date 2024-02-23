@@ -83,8 +83,6 @@ private:
   /* Controller for static files */
   static stefanfrings::StaticFileController *staticFileController;
 
-  static QSettings *sessionSettings, *staticFileControllerSettings;
-
   static QString documentRoot, htmlExtension;
 };
 

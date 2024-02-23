@@ -310,6 +310,14 @@ void checkAndMigrateSettings()
         removeAndLog(lnm::SETTINGS_AIRCRAFT_TRAIL + "AglThresholdFt");
       }
 
+      if(optionsVersion <= Version("3.0.2.beta"))
+      {
+#if defined(Q_OS_WIN32)
+        QSettings settings;
+        settings.clear();
+#endif
+      }
+
       qInfo() << Q_FUNC_INFO << "Clearing all essential messages since version differs";
       messages::resetEssentialMessages();
 
