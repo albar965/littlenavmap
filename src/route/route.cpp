@@ -3296,45 +3296,39 @@ Route Route::adjustedToOptions(const Route& origRoute, rf::RouteAdjustOptions op
     // Copy flight plan entries to route legs - will also add coordinates
     route.createRouteLegsFromFlightplan();
     route.updateAll();
-
-    // Assign airport idents to waypoints where available - for MSFS =======================================
-    if(msfs)
-    {
-      MapQuery *mapQuery = NavApp::getMapQueryGui();
-      bool found = false;
-      for(FlightplanEntry& entry : plan)
-      {
-        // Get airport for every navaid
-        QString airportIdent;
-        const QString& ident = entry.getIdent(), region = entry.getRegion();
-        const atools::geo::Pos& pos = entry.getPosition();
-
-        switch(entry.getWaypointType())
-        {
-          case atools::fs::pln::entry::WAYPOINT:
-            airportIdent = mapQuery->getAirportIdentFromWaypoint(ident, region, pos, found);
-            break;
-
-          case atools::fs::pln::entry::VOR:
-            airportIdent = mapQuery->getAirportIdentFromVor(ident, region, pos, found);
-            break;
-
-          case atools::fs::pln::entry::NDB:
-            airportIdent = mapQuery->getAirportIdentFromNdb(ident, region, pos, found);
-            break;
-
-          case atools::fs::pln::entry::UNKNOWN:
-          case atools::fs::pln::entry::AIRPORT:
-          case atools::fs::pln::entry::USER:
-            break;
-        }
-
-        if(!airportIdent.isEmpty())
-          entry.setAirport(airportIdent);
-      } // for(FlightplanEntry& entry : entries)
-    } // if(msfs)
-      // Airways are updated in route controller
   } // if(saveApproachWp || saveSidStarWp || msfs)
+
+  // Assign airport idents to waypoints where available - used on export for MSFS and FSX PLN =======================================
+  MapQuery *mapQuery = NavApp::getMapQueryGui();
+  bool found = false;
+  for(FlightplanEntry& entry : plan)
+  {
+    // Get airport for every navaid
+    const QString& ident = entry.getIdent(), region = entry.getRegion();
+    const atools::geo::Pos& pos = entry.getPosition();
+
+    switch(entry.getWaypointType())
+    {
+      case atools::fs::pln::entry::WAYPOINT:
+        entry.setAirport(mapQuery->getAirportIdentFromWaypoint(ident, region, pos, found));
+        break;
+
+      case atools::fs::pln::entry::VOR:
+        entry.setAirport(mapQuery->getAirportIdentFromVor(ident, region, pos, found));
+        break;
+
+      case atools::fs::pln::entry::NDB:
+        entry.setAirport(mapQuery->getAirportIdentFromNdb(ident, region, pos, found));
+        break;
+
+      case atools::fs::pln::entry::UNKNOWN:
+      case atools::fs::pln::entry::AIRPORT:
+      case atools::fs::pln::entry::USER:
+        break;
+    }
+  } // for(FlightplanEntry& entry : entries)
+
+  // Airways are updated in route controller
 
   if(options.testFlag(rf::FIX_CIRCLETOLAND))
   {
