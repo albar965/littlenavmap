@@ -40556,12 +40556,12 @@ Falls nicht anwendbar, wird die beste Schätzung aus den installierten Simulator
     <message>
         <location filename="src/routestring/routestringreader.cpp" line="641"/>
         <source>airport is</source>
-        <translation>Flugplatz ist</translation>
+        <translation>ist</translation>
     </message>
     <message>
         <location filename="src/routestring/routestringreader.cpp" line="641"/>
         <source>airports are</source>
-        <translation>Flugplätze sind</translation>
+        <translation>sind</translation>
     </message>
     <message>
         <location filename="src/routestring/routestringreader.cpp" line="642"/>
