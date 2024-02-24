@@ -310,11 +310,12 @@ void checkAndMigrateSettings()
         removeAndLog(lnm::SETTINGS_AIRCRAFT_TRAIL + "AglThresholdFt");
       }
 
-      if(optionsVersion <= Version("3.0.2.beta"))
+      if(optionsVersion <= Version("3.0.3.rc1"))
       {
 #if defined(Q_OS_WIN32)
-        QSettings settings;
-        settings.clear();
+        QSettings registrySettings(QCoreApplication::organizationName());
+        registrySettings.clear();
+        registrySettings.sync();
 #endif
       }
 
