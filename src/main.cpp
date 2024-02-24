@@ -108,7 +108,7 @@ int main(int argc, char *argv[])
 
   // Tasks that have to be done before creating the application object and logging system =================
   QStringList renderOptMessages;
-  QSettings earlySettings(QSettings::IniFormat, QSettings::UserScope, "ABarthel", "little_navmap");
+  QSettings earlySettings(QSettings::IniFormat, QSettings::UserScope, lnm::OPTIONS_APPLICATION_ORGANIZATION, lnm::OPTIONS_APPLICATION);
 
   // The loading mechanism can be configured through the QT_OPENGL environment variable and the following application attributes:
   // Qt::AA_UseDesktopOpenGL Equivalent to setting QT_OPENGL to desktop.

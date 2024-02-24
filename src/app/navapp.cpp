@@ -126,7 +126,7 @@ void NavApp::initApplication()
 {
   setWindowIcon(QIcon(":/littlenavmap/resources/icons/littlenavmap.svg"));
   setApplicationName("Little Navmap");
-  setOrganizationName("ABarthel");
+  setOrganizationName(lnm::OPTIONS_APPLICATION_ORGANIZATION);
   setOrganizationDomain("littlenavmap.org");
   setApplicationVersion(VERSION_NUMBER_LITTLENAVMAP);
 }
@@ -400,8 +400,6 @@ Ui::MainWindow *NavApp::getMainUi()
 {
   return mainWindow->getUi();
 }
-
-
 
 bool NavApp::isFetchAiAircraft()
 {
