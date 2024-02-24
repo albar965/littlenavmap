@@ -2919,27 +2919,44 @@ void OptionsDialog::updateWebServerStatus()
 
 void OptionsDialog::updateWebDocrootStatus()
 {
-  const QString& path = ui->lineEditOptionsWebDocroot->text();
+  const QString& lineEditPath = ui->lineEditOptionsWebDocroot->text();
 
-  if(!path.isEmpty())
+  if(!lineEditPath.isEmpty())
   {
-    QFileInfo fileinfo(path);
-    if(!fileinfo.exists())
-      ui->labelOptionWebDocrootStatus->setText(HtmlBuilder::errorMessage(tr("Error: Directory does not exist.")));
-    else if(!fileinfo.isDir())
-      ui->labelOptionWebDocrootStatus->setText(HtmlBuilder::errorMessage(tr("Error: Is not a directory.")));
-    else if(!QFileInfo::exists(path + atools::SEP + "index.html"))
-      ui->labelOptionWebDocrootStatus->setText(HtmlBuilder::warningMessage(tr("Warning: No file \"index.html\" found.")));
+    // Check for valid folder
+    QString msg = atools::checkDirMsg(lineEditPath);
+    if(!msg.isEmpty())
+      ui->labelOptionWebDocrootStatus->setText(HtmlBuilder::errorMessage(msg));
     else
-      ui->labelOptionWebDocrootStatus->setText(tr("Document root is valid."));
+    {
+      // Check for index.html
+      QString msgIndex = atools::checkFileMsg(lineEditPath + atools::SEP + "index.html");
+      if(!msgIndex.isEmpty())
+        ui->labelOptionWebDocrootStatus->setText(HtmlBuilder::errorMessage(msgIndex));
+      else
+        ui->labelOptionWebDocrootStatus->setText(tr("Document root is valid."));
+    }
   }
   else
   {
     // Use default path
     WebController *webController = NavApp::getWebController();
     if(webController != nullptr)
-      ui->labelOptionWebDocrootStatus->setText(tr("Using default document root \"%1\".").arg(
-                                                 webController->getAbsoluteWebrootFilePath()));
+    {
+      QString defaultRoot = webController->getDefaultDocumentRoot();
+      QString msg = atools::checkDirMsg(defaultRoot);
+      if(!msg.isEmpty())
+        ui->labelOptionWebDocrootStatus->setText(HtmlBuilder::errorMessage(msg));
+      else
+      {
+        // Check for index.html
+        QString msgIndex = atools::checkFileMsg(defaultRoot + atools::SEP + "index.html");
+        if(!msgIndex.isEmpty())
+          ui->labelOptionWebDocrootStatus->setText(HtmlBuilder::errorMessage(msgIndex));
+        else
+          ui->labelOptionWebDocrootStatus->setText(tr("Using default document root \"%1\".").arg(defaultRoot));
+      }
+    }
     else
       // Might happen only at startup
       ui->labelOptionWebDocrootStatus->setText(tr("Not initialized."));

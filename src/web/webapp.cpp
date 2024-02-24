@@ -22,6 +22,7 @@
 #include "httpserver/httpsessionstore.h"
 #include "templateengine/templatecache.h"
 #include "httpserver/staticfilecontroller.h"
+#include "web/webtools.h"
 
 stefanfrings::TemplateCache *WebApp::templateCache = nullptr;
 stefanfrings::HttpSessionStore *WebApp::sessionStore = nullptr;
@@ -29,19 +30,6 @@ stefanfrings::StaticFileController *WebApp::staticFileController = nullptr;
 
 QString WebApp::documentRoot;
 QString WebApp::htmlExtension = ".html";
-
-void copyKeyValuesFromGroup(QSettings& settings, const QString& group, QHash<QString, QVariant>& toSettings)
-{
-  settings.beginGroup(group);
-  const QStringList childKeys = settings.childKeys();
-  for(const QString& childKey : childKeys)
-  {
-    QString key = childKey.trimmed();
-    if(!key.startsWith('#') && !key.startsWith(';') && !key.startsWith("//"))
-      toSettings.insert(key, settings.value(childKey));
-  }
-  settings.endGroup();
-}
 
 void WebApp::init(QObject *parent, const QString& configFileName, const QString& docrootParam)
 {

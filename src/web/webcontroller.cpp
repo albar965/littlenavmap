@@ -27,16 +27,16 @@
 #include "common/htmlinfobuilder.h"
 #include "common/constants.h"
 #include "gui/dialog.h"
+#include "options/optiondata.h"
+#include "web/webtools.h"
 
-#include <QSettings>
 #include <QCoreApplication>
 #include <QStandardPaths>
 #include <QDir>
 #include <QWidget>
 #include <QHostInfo>
 #include <QNetworkInterface>
-
-#include <options/optiondata.h>
+#include <QSettings>
 
 using namespace stefanfrings;
 
@@ -52,23 +52,19 @@ WebController::WebController(QWidget *parent) :
   verbose = atools::settings::Settings::instance().getAndStoreValue(lnm::OPTIONS_WEBSERVER_DEBUG, false).toBool();
 
   // Remember any custom set certificates for later
-  listenerSettings = new QSettings();
 
   // Copy from config file and remove group name
   QSettings settings(configFileName, QSettings::IniFormat);
-  settings.beginGroup("listener");
-  const QStringList keys = settings.childKeys();
-  for(const QString& key : keys)
-    listenerSettings->setValue(key, settings.value(key));
-  settings.endGroup();
 
-  sslKeyFile = listenerSettings->value("sslKeyFile").toString();
-  sslCertFile = listenerSettings->value("sslCertFile").toString();
+  copyKeyValuesFromGroup(settings, "listener", listenerSettings);
+
+  sslKeyFile = listenerSettings.value("sslKeyFile").toString();
+  sslCertFile = listenerSettings.value("sslCertFile").toString();
 
   mapController = new WebMapController(parentWidget, verbose);
   apiController = new WebApiController(parentWidget, verbose);
-
   htmlInfoBuilder = new HtmlInfoBuilder(parent, mapController->getMapPaintWidget(), true /*info*/, true /*print*/);
+
   updateSettings();
 }
 
@@ -81,7 +77,6 @@ WebController::~WebController()
   ATOOLS_DELETE_LOG(mapController);
   ATOOLS_DELETE_LOG(apiController);
   ATOOLS_DELETE_LOG(htmlInfoBuilder);
-  ATOOLS_DELETE_LOG(listenerSettings);
 }
 
 void WebController::startServer()
@@ -97,7 +92,7 @@ void WebController::startServer()
   QString docroot = documentRoot;
   if(docroot.isEmpty())
     // Build full canonical path with / as separator only on all systems and no "/" at the end
-    docroot = QDir::fromNativeSeparators(getDefaultDocumentRoot());
+    docroot = atools::canonicalFilePath(getDefaultDocumentRoot());
 
   if(docroot.endsWith("/"))
     docroot.chop(1);
@@ -113,21 +108,21 @@ void WebController::startServer()
   requestHandler = new RequestHandler(this, mapController, apiController, htmlInfoBuilder, verbose);
 
   // Set port - always override configuration file
-  listenerSettings->setValue("port", port);
+  listenerSettings.insert("port", port);
 
   if(encrypted)
   {
-    listenerSettings->setValue("sslKeyFile", sslKeyFile.isEmpty() ? ":/littlenavmap/resources/config/ssl/lnm.key" : sslKeyFile);
-    listenerSettings->setValue("sslCertFile", sslCertFile.isEmpty() ? ":/littlenavmap/resources/config/ssl/lnm.cert" : sslCertFile);
+    listenerSettings.insert("sslKeyFile", sslKeyFile.isEmpty() ? ":/littlenavmap/resources/config/ssl/lnm.key" : sslKeyFile);
+    listenerSettings.insert("sslCertFile", sslCertFile.isEmpty() ? ":/littlenavmap/resources/config/ssl/lnm.cert" : sslCertFile);
   }
   else
   {
-    listenerSettings->remove("sslKeyFile");
-    listenerSettings->remove("sslCertFile");
+    listenerSettings.remove("sslKeyFile");
+    listenerSettings.remove("sslCertFile");
   }
 
-  qDebug() << "Using" << "sslKeyFile" << listenerSettings->value("sslKeyFile").toString()
-           << "sslCertFile" << listenerSettings->value("sslCertFile").toString();
+  qDebug() << "Using" << "sslKeyFile" << listenerSettings.value("sslKeyFile").toString()
+           << "sslCertFile" << listenerSettings.value("sslCertFile").toString();
 
   listener = new HttpListener(listenerSettings, requestHandler, this);
 
@@ -317,17 +312,9 @@ bool WebController::updateSettings()
   return changed;
 }
 
-QString WebController::getAbsoluteWebrootFilePath() const
-{
-  if(documentRoot.isEmpty())
-    return atools::nativeCleanPath(getDefaultDocumentRoot());
-  else
-    return atools::nativeCleanPath(QFileInfo(documentRoot).canonicalFilePath());
-}
-
 QString WebController::getDefaultDocumentRoot() const
 {
-  return QFileInfo(QCoreApplication::applicationDirPath() + QDir::separator() + "web").canonicalFilePath();
+  return atools::nativeCleanPath(QCoreApplication::applicationDirPath() + QDir::separator() + "web");
 }
 
 WebMapController *WebController::getWebMapController() const

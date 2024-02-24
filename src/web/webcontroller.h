@@ -18,8 +18,8 @@
 #ifndef LNM_WEBCONTROLLER_H
 #define LNM_WEBCONTROLLER_H
 
+#include <QHash>
 #include <QObject>
-#include <QSettings>
 #include <QUrl>
 #include <QVector>
 
@@ -75,9 +75,6 @@ public:
 
   /* Update settings from option data but do not restart. Returns true if any changes. */
   bool updateSettings();
-
-  /* Get canonical path of document root with system separators for display */
-  QString getAbsoluteWebrootFilePath() const;
 
   void setDocumentRoot(const QString& value)
   {
@@ -139,7 +136,7 @@ private:
   HtmlInfoBuilder *htmlInfoBuilder = nullptr;
 
   /* Configuration file and file name. Default is :/littlenavmap/resources/config/webserver.cfg */
-  QSettings *listenerSettings = nullptr;
+  QHash<QString, QVariant> listenerSettings;
   QString configFileName;
 
   /* Full canonical path containing only "/" as separator */
