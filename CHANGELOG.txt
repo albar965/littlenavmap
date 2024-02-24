@@ -4,13 +4,15 @@ This text is partially Markdown, hence sometimes strange formatting.
 
 ==>>=============================================================================
 
+# Version 3.0.3.rc2
+
 ## Notes
 
-**This is a beta/test release of Little Navmap which adds new features, user interface improvements and fixes bugs.**
+**This is a release candidate of Little Navmap.**
 
 **Note that the program translations and the user manual have not been updated yet.**
 
-**See here if you would like to run the beta release besides your stable installation:
+**See here if you would like to run the release candidate besides your stable installation:
 [Little Navmap - User Manual - Portable Execution](https://www.littlenavmap.org/manuals/littlenavmap/release/latest/en/INSTALLATION.html#portable-execution).**
 
 **Also update Little Navconnect and Little Xpconnect if you're using one of these.
@@ -20,11 +22,21 @@ You can update and install Litte Xpconnect from the menu `Tools` in Little Navma
 **macOS users: Keep in mind that you have to clear the quarantine flag when updating Little Xpconnect. See
 [Little Navmap - User Manual - Clearing the Quarantine Flag on macOS](https://www.littlenavmap.org/manuals/littlenavmap/release/latest/en/XPCONNECT.html#clearing-the-quarantine-flag-on-macos).**
 
-If you think the overall appearance of fonts in Little Navmap on Windows is blurry:
-See options on page `Display and Text` and deselect `Use FreeType font engine on Windows`.
-Keep in mind that this will revert map display and performance improvements.
 
-A big Thank You! to all who reported bugs and issues.
+## Changes from 3.0.3.rc1 to 3.0.3.rc2
+
+### Web Server
+
+* Fixed creating of unwanted registry entries. These are now removed on update.
+* Document root folder chage in options on page `Web Server` is now handled correctly.
+* Better error checking and display for wrong document root folder in options on page `Web Server`.
+* Fixed help in web interface which now opens new window or tab in browser.
+
+### Flight Plan Export
+
+* Fix for missing airport idents in PLN flight plan export
+
+==<<=============================================================================
 
 # Version 3.0.3.rc1
 
@@ -123,7 +135,7 @@ A big Thank You! to all who reported bugs and issues.
   waypoint. This case without a STAR. Example: EDDV, using approach NIE.I27RY or approach SAS.I27RZ both
   without STAR.
 
-==<<=============================================================================
+=================================================================================
 
 # Version 3.0.2.beta
 
