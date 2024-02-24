@@ -313,9 +313,13 @@ void checkAndMigrateSettings()
       if(optionsVersion <= Version("3.0.3.rc1"))
       {
 #if defined(Q_OS_WIN32)
-        QSettings registrySettings(QCoreApplication::organizationName());
-        registrySettings.clear();
-        registrySettings.sync();
+        QSettings registrySettings("HKEY_CURRENT_USER\\SOFTWARE\\ABarthel", QSettings::NativeFormat);
+        if(registrySettings.contains("Little Navmap/cleanupInterval"))
+        {
+          registrySettings.remove(QString());
+          registrySettings.clear();
+          registrySettings.sync();
+        }
 #endif
       }
 
