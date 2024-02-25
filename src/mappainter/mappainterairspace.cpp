@@ -198,7 +198,7 @@ void MapPainterAirspace::render()
     if(context->viewContext == Marble::Still && (name || restrictiveName || type || altitude || com) && !context->drawFast)
     {
       QFontMetrics metrics(painter->fontMetrics());
-      context->szFont(context->textSizeAirspace * context->mapLayer->getAirspaceFontScale() * 0.8f);
+      context->szFont(context->textSizeAirspace * context->mapLayer->getAirspaceFontScale() * 0.85f);
 
       // Prepare text placement without arrows
       TextPlacement textPlacement(painter, this, context->screenRect);
