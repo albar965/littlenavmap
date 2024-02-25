@@ -3904,7 +3904,7 @@ void HtmlInfoBuilder::dateTimeAndFlown(const SimConnectUserAircraft *userAircraf
   float distanceFlownNm = NavApp::getTakeoffFlownDistanceNm();
   QDateTime takeoffDateTime = NavApp::getTakeoffDateTime();
   if(distanceFlownNm > 0.f && distanceFlownNm < map::INVALID_DISTANCE_VALUE && takeoffDateTime.isValid())
-    html.id(pid::FLOWN).row2(tr("Flown:"), tr("%1 since takoff at %2").arg(Unit::distNm(distanceFlownNm)).
+    html.id(pid::FLOWN).row2(tr("Flown:"), tr("%1 since takeoff at %2").arg(Unit::distNm(distanceFlownNm)).
                              arg(locale.toString(takeoffDateTime.time(), QLocale::ShortFormat)) %
                              tr(" ") % takeoffDateTime.timeZoneAbbreviation());
 }
