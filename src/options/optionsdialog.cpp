@@ -2575,13 +2575,18 @@ void OptionsDialog::mapThemeDirSelectClicked()
 
 void OptionsDialog::updateCacheMapThemeDir()
 {
-  bool error;
-  QString statusText = MapThemeHandler::getStatusTextForDir(ui->lineEditCacheMapThemeDir->text(), error);
+  if(!ui->lineEditCacheMapThemeDir->text().isEmpty())
+  {
+    bool error;
+    QString statusText = MapThemeHandler::getStatusTextForDir(ui->lineEditCacheMapThemeDir->text(), error);
 
-  if(error)
-    ui->labelCacheMapThemeDir->setText(atools::util::HtmlBuilder::errorMessage(statusText));
+    if(error)
+      ui->labelCacheMapThemeDir->setText(atools::util::HtmlBuilder::errorMessage(statusText));
+    else
+      ui->labelCacheMapThemeDir->setText(statusText);
+  }
   else
-    ui->labelCacheMapThemeDir->setText(statusText);
+    ui->labelCacheMapThemeDir->setText(tr("No map theme directory set."));
 }
 
 void OptionsDialog::offlineDataSelectClicked()
