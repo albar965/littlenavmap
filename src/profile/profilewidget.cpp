@@ -2259,6 +2259,7 @@ void ProfileWidget::mouseMoveEvent(QMouseEvent *mouseEvent)
   rubberBand->setGeometry(x - 1, 0, 2, rect().height());
   rubberBand->show();
 
+  // Also updates lastTooltipPos
   buildTooltipText(x, false /* force */);
   lastTooltipScreenPos = mouseEvent->globalPos();
   // Show tooltip
@@ -2269,16 +2270,15 @@ void ProfileWidget::mouseMoveEvent(QMouseEvent *mouseEvent)
   mouseEvent->ignore();
 
   // Follow cursor on map if enabled ==========================
-  if(NavApp::getMainUi()->actionProfileFollow->isChecked())
+  if(lastTooltipPos.isValid())
   {
-    atools::geo::Pos pos = calculatePos(x);
-    if(pos.isValid())
-      emit showPos(pos, map::INVALID_DISTANCE_VALUE, false);
-  }
+    if(NavApp::getMainUi()->actionProfileFollow->isChecked())
+      emit showPos(lastTooltipPos, map::INVALID_DISTANCE_VALUE, false);
 
-  // Tell map widget to create a highlight on the map
-  if(profileOptions->getDisplayOptions().testFlag(optsp::PROFILE_HIGHLIGHT))
-    emit highlightProfilePoint(lastTooltipPos);
+    // Tell map widget to create a highlight on the map
+    if(profileOptions->getDisplayOptions().testFlag(optsp::PROFILE_HIGHLIGHT))
+      emit highlightProfilePoint(lastTooltipPos);
+  }
 }
 
 void ProfileWidget::updateTooltip()
@@ -2299,8 +2299,9 @@ void ProfileWidget::buildTooltipText(int x, bool force)
 
   optsp::DisplayOptionsProfile displayOpts = profileOptions->getDisplayOptions();
 
-  if(!displayOpts.testFlag(optsp::PROFILE_TOOLTIP) && !displayOpts.testFlag(optsp::PROFILE_HIGHLIGHT))
-    // Neither tooltip nor highlight selected
+  if(!displayOpts.testFlag(optsp::PROFILE_TOOLTIP) && !displayOpts.testFlag(optsp::PROFILE_HIGHLIGHT) &&
+     !NavApp::getMainUi()->actionProfileFollow->isChecked())
+    // Neither tooltip nor highlight nor follow selected
     return;
 
   if(atools::almostEqual(lastTooltipX, x, 3) && !force)
@@ -2310,8 +2311,6 @@ void ProfileWidget::buildTooltipText(int x, bool force)
     lastTooltipX = x;
 
   // Get from/to text
-  // QString fromWaypoint = atools::elideTextShort(  legList->route.value(index).getIdent(), 20);
-
   QString fromTo(tr("to"));
 
   // Fetch all parameters =======================
@@ -2320,7 +2319,7 @@ void ProfileWidget::buildTooltipText(int x, bool force)
   calculateDistancesAndPos(x, lastTooltipPos, index, distance, distanceToGo, groundElevation, maxElev);
 
   if(!displayOpts.testFlag(optsp::PROFILE_TOOLTIP))
-    // No tooltip but highlight selected. hightlight needs calculateDistancesAndPos() and lastTooltipPos
+    // No tooltip but highlight selected. hightlight and follow need calculateDistancesAndPos() and lastTooltipPos
     return;
 
 #ifdef DEBUG_INFORMATION_PROFILE
