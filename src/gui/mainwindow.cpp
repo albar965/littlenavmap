@@ -4218,8 +4218,6 @@ void MainWindow::saveMainWindowStates()
 {
   qDebug() << Q_FUNC_INFO;
 
-  atools::gui::WidgetState widgetState(lnm::MAINWINDOW_WIDGET);
-
   Settings& settings = Settings::instance();
   settings.setValueVar(lnm::MAINWINDOW_WIDGET_DOCKHANDLER, dockHandler->saveState());
 

@@ -8713,6 +8713,9 @@ relation to shown airport</string>
    <property name="statusTip">
     <string>Reset the window layout and all dock windows back to default</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+Alt+Shift+W</string>
+   </property>
   </action>
   <action name="actionHelpUserManualTutorials">
    <property name="icon">
