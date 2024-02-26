@@ -1185,6 +1185,7 @@ QString MapPainterAirport::parkingNameForSize(const map::MapParking& parking, fl
     // X-Plane style names =========
     text = parking.name;
 
+  // Try to extract and/or shorten keywords and numbers =============
   QString shortText = text;
   if(width > 0.f)
   {
@@ -1205,22 +1206,26 @@ QString MapPainterAirport::parkingNameForSize(const map::MapParking& parking, fl
           shortText = parkingCompressDigits(shortText);
 
           if(metrics.horizontalAdvance(shortText) > width)
-          {
             // "A11" to "11"
             shortText = parkingExtractNumber(shortText);
-            if(metrics.horizontalAdvance(shortText) > width)
-            {
-              // No keyword found
-              // "Gate A 11" to "Ga..."
-              shortText = atools::elidedText(metrics, text, Qt::ElideRight, width);
-              if(shortText.size() == 1)
-                shortText.clear();
-            }
-          }
         }
       }
     }
-    return shortText.simplified();
+
+    if(shortText.isEmpty())
+      // Nothing found elide original text
+      shortText = atools::elidedText(metrics, text, Qt::ElideRight, width);
+    else if(metrics.horizontalAdvance(shortText) > width)
+      // Shortened but still too long
+      shortText = atools::elidedText(metrics, shortText, Qt::ElideRight, width);
+
+    shortText = shortText.simplified();
+
+    // Clear if only a dot or ellipse
+    if(shortText == atools::elidedStrDot() || shortText == atools::elidedStrDots())
+      shortText.clear();
+
+    return shortText;
   }
   else
     return atools::elideTextShort(text, 30);
