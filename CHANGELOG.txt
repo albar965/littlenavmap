@@ -10,6 +10,8 @@ This text is partially Markdown, hence sometimes strange formatting.
 
 **This is a release candidate of Little Navmap.**
 
+**User manual is updated to all new functions. All help buttons and links point to the right chapters.**
+
 **Note that not all program translations are updated.**
 
 **See here if you would like to run the release candidate besides your stable installation:
@@ -26,23 +28,20 @@ Version 3.0.3.rc2 was an inofficial intermediate release.
 
 ## Changes from 3.0.3.rc1 to 3.0.3.rc2
 
-### Help
-
-* User manual is updated to all new functions. All help buttons and link should point to the right chapters.
-
 ### Web Server
 
-* Fixed creating of unwanted registry entries. These are now removed on update.
-* Document root folder chage in options on page `Web Server` is now handled correctly.
+* Fixed creating of unwanted registry entries in `HKEY_CURRENT_USER\SOFTWARE\ABarthel\Little Navmap`.
+  These are now removed on update.
+* Document root folder change in options on page `Web Server` is now handled correctly.
 * Better error checking and display for wrong document root folder in options on page `Web Server`.
 * Fixed help in web interface which now opens new window or tab in browser.
 
 ### Other
 
 * Assigned `Ctrl+Alt+Shift+W` to `Reset Window Layout to Default` to restore the main window if
-  hidden or off-screen.
-* Adjustments to airspace colors and labels in map.
-* Fix for missing airport idents in PLN flight plan export.
+  *Little Navmap* is hidden or off-screen.
+* Adjustments to airspace colors and labels in map. Made centers darker and label font slightly bigger.
+* Fix for missing airport idents in PLN flight plan export for FSX/P3D.
 * Fixed inaccuracy where highlight point differed from center position when using `Follow on map`
   in the elevation profile.
 * Fixed wrong error reporting for empty map theme folder.

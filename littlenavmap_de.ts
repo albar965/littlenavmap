@@ -20176,7 +20176,7 @@ kHz/MHz</translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="3912"/>
-        <source>%1 since takoff at %2</source>
+        <source>%1 since takeoff at %2</source>
         <translation>%1 seit dem Abheben um %2</translation>
     </message>
     <message>
