@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -275,7 +275,7 @@ QString MapTooltip::buildTooltip(const map::MapResult& mapSearchResult, const at
   }
 
   // Departure parking ===========================================================================
-  if(!overflow && opts.testFlag(optsd::TOOLTIP_AIRPORT) && mapSearchResult.parkings.size() == 1)
+  if(!overflow && opts.testFlag(optsd::TOOLTIP_AIRPORT) && mapSearchResult.parkings.size() == 1 && !route.isEmpty())
   {
     // Do not show distance if departure parking is the only one in the list
     if(mapSearchResult.parkings.constFirst().id == route.getDepartureParking().id)

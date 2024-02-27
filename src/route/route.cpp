@@ -2384,23 +2384,29 @@ void Route::clearDepartureStartAndParking()
 
 map::MapParking Route::getDepartureParking() const
 {
-  int idx = getDepartureAirportLegIndex();
+  if(!isEmpty())
+  {
+    int idx = getDepartureAirportLegIndex();
 
-  if(idx != map::INVALID_INDEX_VALUE)
-    return at(idx).getDepartureParking();
-  else
-    qWarning() << Q_FUNC_INFO << "invalid index" << idx;
+    if(idx != map::INVALID_INDEX_VALUE)
+      return at(idx).getDepartureParking();
+    else
+      qWarning() << Q_FUNC_INFO << "invalid index" << idx;
+  }
   return map::MapParking();
 }
 
 map::MapStart Route::getDepartureStart() const
 {
-  int idx = getDepartureAirportLegIndex();
+  if(!isEmpty())
+  {
+    int idx = getDepartureAirportLegIndex();
 
-  if(idx != map::INVALID_INDEX_VALUE)
-    return at(idx).getDepartureStart();
-  else
-    qWarning() << Q_FUNC_INFO << "invalid index" << idx;
+    if(idx != map::INVALID_INDEX_VALUE)
+      return at(idx).getDepartureStart();
+    else
+      qWarning() << Q_FUNC_INFO << "invalid index" << idx;
+  }
   return map::MapStart();
 }
 

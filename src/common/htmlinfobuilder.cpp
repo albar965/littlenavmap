@@ -3343,7 +3343,7 @@ void HtmlInfoBuilder::parkingText(const MapParking& parking, HtmlBuilder& html) 
 {
   head(html, map::parkingName(parking.name) % (parking.number != -1 ? " " % locale.toString(parking.number) % parking.suffix : QString()));
 
-  if(NavApp::getRouteConst().getDepartureParking().id == parking.id)
+  if(!NavApp::getRouteConst().isEmpty() && NavApp::getRouteConst().getDepartureParking().id == parking.id)
     html.brText(tr("Flight plan departure parking"), ahtml::BOLD);
 
   if(!parking.type.isEmpty())
