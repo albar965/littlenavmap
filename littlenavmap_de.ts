@@ -35779,34 +35779,34 @@ Klicken oder neu laden, um fortzufahren.</translation>
         <translation> (nicht gefunden)</translation>
     </message>
     <message>
-        <location filename="src/route/route.cpp" line="3133"/>
+        <location filename="src/route/route.cpp" line="3139"/>
         <source> / </source>
         <translation> / </translation>
     </message>
     <message>
-        <location filename="src/route/route.cpp" line="3799"/>
+        <location filename="src/route/route.cpp" line="3805"/>
         <source>, above ▼</source>
         <translation>, über ▼</translation>
     </message>
     <message>
-        <location filename="src/route/route.cpp" line="3801"/>
+        <location filename="src/route/route.cpp" line="3807"/>
         <source>, below ▲</source>
         <translation>, unter ▲</translation>
     </message>
     <message>
-        <location filename="src/route/route.cpp" line="3821"/>
-        <location filename="src/route/route.cpp" line="3832"/>
+        <location filename="src/route/route.cpp" line="3827"/>
+        <location filename="src/route/route.cpp" line="3838"/>
         <source>%L1°, %L2</source>
         <translation>%L1°, %L2</translation>
     </message>
     <message>
-        <location filename="src/route/route.cpp" line="3821"/>
-        <location filename="src/route/route.cpp" line="3832"/>
+        <location filename="src/route/route.cpp" line="3827"/>
+        <location filename="src/route/route.cpp" line="3838"/>
         <source> ▼</source>
         <translation> ▼</translation>
     </message>
     <message>
-        <location filename="src/route/route.cpp" line="3867"/>
+        <location filename="src/route/route.cpp" line="3873"/>
         <source>EMPTY</source>
         <translation>LEER</translation>
     </message>
@@ -35823,7 +35823,7 @@ Klicken oder neu laden, um fortzufahren.</translation>
         <translation type="vanished">-</translation>
     </message>
     <message>
-        <location filename="src/route/route.cpp" line="3846"/>
+        <location filename="src/route/route.cpp" line="3852"/>
         <source>Empty Flightplan</source>
         <translation>Leerer Flugplan</translation>
     </message>
