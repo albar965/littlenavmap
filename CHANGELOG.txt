@@ -13,7 +13,7 @@ improvements as well as new features.**
 
 **Also update Little Navconnect and Little Xpconnect if you're using one of them.
 Little Navmap will show a notification dialog if you use an outdated version of Little Xpconnect.
-You can update and install Litte Xpconnect from the menu `Tools` in Little Navmap now.**
+You can update and install Little Xpconnect from the menu `Tools` in Little Navmap now.**
 
 **Little Navmap will show a reminder to reload the scenery library databases to get improvements.**
 
@@ -140,7 +140,7 @@ A big thank you to all who reported bugs and issues!
   from a flight plan or if the plan has an invalid cruise altitude. This applies to all plans
   which are loaded manually by a user. The change is now stored in the undo/redo stack and can be
   undone to revert to the previously invalid cruise altitude.
-* Fixed issue wher PLN, FMS or other imported flight plan files were wrongly overwritten in LNMPLN
+* Fixed issue where PLN, FMS or other imported flight plan files were wrongly overwritten in LNMPLN
   format in some cases.
 * Now assigning runway automatically for STAR and approaches to avoid error messages about runway
   mismatches. This means that a selected STAR runway changes automatically to the one used by a
@@ -151,7 +151,7 @@ A big thank you to all who reported bugs and issues!
   This can happen when starting to build a flight plan and left menu items in context menus disabled.
 * Better transition detection now when importing MSFS PLN files. Using last STAR waypoint or last
   en-route waypoint to automatically find a matching approach transition.
-* Fixed wrong distance calculation for procedure leg sequence intercept, intitial fix and following legs.
+* Fixed wrong distance calculation for procedure leg sequence intercept, initial fix and following legs.
   This resulted in wrong distance, time and ETA calculations as well as a wrong elevation profile.
   Example: EFVA via AXUTI and I16-Y.
 * Fixed issue with too late loading of elevation data possibly resulting in wrong flight plan
@@ -199,7 +199,7 @@ A big thank you to all who reported bugs and issues!
 * Fixed issue where export did not stop when answering `No` in warning dialog.
 * Now prefixing one digit runway numbers with zero for X-Plane FMS export to avoid issues when
   loading into the GPS or FMS.
-* Now writing ICAOIdent field for userpoints in FSX/P3D flight plan export to fix userpoint display
+* Now writing field `ICAOIdent` for userpoints in FSX/P3D flight plan export to fix userpoint display
   in GPS.
 * Fix for PLN flight plan export in MSFS where transitions were not loaded by MSFS due to a missing
   waypoint. Example: EDDV, using STAR NIE27 and approach NIE.I27RY or approach SAS.I27RZ. Same fix for
@@ -228,7 +228,7 @@ A big thank you to all who reported bugs and issues!
 
 ### Map Display
 
-* Added new map theme `Stadia StamenTerrain` now requiring an API key. Delete the old StamenTerrain
+* Added new map theme `Stadia StamenTerrain` requiring an API key. Delete the old StamenTerrain
   files in your map themes folder which can be seen in options on page `Cache and Files` or in the
   installation folder `.../Little Navmap/data/maps/earth` to avoid error messages when starting
   Little Navmap.
@@ -320,7 +320,7 @@ A big thank you to all who reported bugs and issues!
   Example: Approach I29-Z via PLADE at MMGL.
 * Missing PAPI in profile fixed when last procedure leg is short circle-to-land.
   Example: EGPF via GOW and D23.
-* Fixed inaccuracy where highlight point differed from center position and was sometimes hidde
+* Fixed inaccuracy where highlight point differed from center position and was sometimes hide
   when using `Follow on map` in the elevation profile.
 
 ### Information
@@ -340,7 +340,7 @@ A big thank you to all who reported bugs and issues!
 * Added text size option for flight plan table header text in options on page `Display and Text`.
 * Better error checking for theme path in options dialog to avoid accidental selection of the stock
   theme folder.
-* Added hints prefixed with a lightbulb in the options dialog pointing to other related settings.
+* Added hints prefixed with a light bulb in the options dialog pointing to other related settings.
   Some hints contain a link which directly opens the related page. Bold text is still an important
   note like `Restart required`.
 * Extended minimum and maximum line widths that can be set in options dialog for map features.
@@ -451,7 +451,7 @@ Note that these changes were first published in AIRAC cycle 2402 and need an upd
 
 * Added functionality to automatically generate a crash report on startup. Little Navmap will show
   a notification dialog if it detects an improper shutdown of the last session, i.e. a crash. You can
-  then choose to skip loading last used files such as the flightplan or window layout that may have caused
+  then choose to skip loading last used files such as the flight plan or window layout that may have caused
   the crash. A Zip file with all important settings and other files is created and can be shown by
   clicking the blue link in the dialog. Upload this file to a platform like
   [FileTransfer.io](https://filetransfer.io/) and send me the link so I can try to reproduce the

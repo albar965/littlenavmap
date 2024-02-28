@@ -10026,15 +10026,15 @@ relation to shown airport</string>
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>Run &amp;Webserver</string>
+    <string>Run &amp;Web Server</string>
    </property>
   </action>
   <action name="actionOpenWebserver">
    <property name="text">
-    <string>Open Webserver &amp;Page in Browser</string>
+    <string>Open Web Server &amp;Page in Browser</string>
    </property>
    <property name="toolTip">
-    <string>Open Webserver Page in Browser</string>
+    <string>Open Web Server Page in Browser</string>
    </property>
   </action>
   <action name="actionMapShowWindSimulator">
