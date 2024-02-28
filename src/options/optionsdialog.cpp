@@ -2894,30 +2894,39 @@ void OptionsDialog::changePage(QListWidgetItem *current, QListWidgetItem *previo
   if(!current)
     current = previous;
   ui->stackedWidgetOptions->setCurrentIndex(ui->listWidgetOptionPages->row(current));
+
+  // Update now if current page is web server to do the costly name resolution late
+  updateWebServerStatus();
 }
 
 void OptionsDialog::updateWebServerStatus()
 {
-  WebController *webController = NavApp::getWebController();
-  if(webController != nullptr)
+  if(ui->stackedWidgetOptions->currentWidget() == ui->stackedWidgetOptionsWebServer)
   {
-    if(webController->isListenerRunning())
+    WebController *webController = NavApp::getWebController();
+    if(webController != nullptr)
     {
-      QStringList urls = webController->getUrlStr();
+      if(webController->isListenerRunning())
+      {
+        QStringList urls = webController->getUrlStr();
 
-      if(urls.isEmpty())
-        ui->labelOptionsWebStatus->setText(tr("No valid address found."));
-      else if(urls.size() == 1)
-        ui->labelOptionsWebStatus->setText(tr("Web Server is running at the address:<br/>%1").arg(urls.constFirst()));
-      if(urls.size() > 1)
-        ui->labelOptionsWebStatus->setText(tr("Web Server is running at addresses:<br/>%1").arg(urls.join("<br/>")));
+#ifdef DEBUG_INFORMATION
+        qDebug() << Q_FUNC_INFO << urls;
+#endif
+        if(urls.isEmpty())
+          ui->labelOptionsWebStatus->setText(tr("No valid address found."));
+        else if(urls.size() == 1)
+          ui->labelOptionsWebStatus->setText(tr("Web Server is running at the address:<br/>%1").arg(urls.constFirst()));
+        if(urls.size() > 1)
+          ui->labelOptionsWebStatus->setText(tr("Web Server is running at addresses:<br/>%1").arg(urls.join("<br/>")));
 
-      ui->pushButtonOptionsWebStart->setText(tr("&Stop Web Server"));
-    }
-    else
-    {
-      ui->labelOptionsWebStatus->setText(tr("Web Server is not running."));
-      ui->pushButtonOptionsWebStart->setText(tr("&Start Web Server"));
+        ui->pushButtonOptionsWebStart->setText(tr("&Stop Web Server"));
+      }
+      else
+      {
+        ui->labelOptionsWebStatus->setText(tr("Web Server is not running."));
+        ui->pushButtonOptionsWebStart->setText(tr("&Start Web Server"));
+      }
     }
   }
 }

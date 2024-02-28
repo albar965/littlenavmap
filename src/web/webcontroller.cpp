@@ -40,6 +40,18 @@
 
 using namespace stefanfrings;
 
+struct Host
+{
+  Host(QHostAddress addrParam, QString nameParam = QString())
+    : addr(addrParam), name(nameParam)
+  {
+  }
+
+  QHostAddress addr;
+  QString name;
+};
+
+// =================================================================
 WebController::WebController(QWidget *parent) :
   QObject(parent), parentWidget(parent)
 {
@@ -137,11 +149,7 @@ void WebController::startServer()
     // Listening ====================================================
     qInfo() << Q_FUNC_INFO << "Listening on" << listener->serverAddress().toString() << listener->serverPort();
 
-    QString scheme = encrypted ? "https" : "http";
     QHostAddress listenerAddress = listener->serverAddress(), localhostIpv4, localhostIpv6;
-    QUrl urlName;
-    urlName.setScheme(scheme);
-    urlName.setPort(port);
 
     if(listenerAddress == QHostAddress::Any)
     {
@@ -165,23 +173,11 @@ void WebController::startServer()
         QString ipStr = hostAddr.toString();
         if(hostAddr.protocol() == QAbstractSocket::IPv4Protocol || hostAddr.protocol() == QAbstractSocket::IPv6Protocol)
         {
-          QString name = QHostInfo::fromName(ipStr).hostName();
-          qDebug() << "Found valid IP" << ipStr << "name" << name
+          qDebug() << "Found valid IP" << ipStr
                    << "isLinkLocal" << hostAddr.isLinkLocal() << "isSiteLocal" << hostAddr.isSiteLocal()
                    << "isUniqueLocalUnicast" << hostAddr.isUniqueLocalUnicast() << "isGlobal" << hostAddr.isGlobal();
 
-          if(!name.isEmpty() && name != ipStr)
-            urlName.setHost(name);
-          else
-            urlName.setHost(ipStr);
-
-          QUrl urlIp(urlName);
-          if(hostAddr.protocol() == QAbstractSocket::IPv6Protocol && hostAddr.isLinkLocal())
-            urlIp.setHost(ipStr.section('%', 0, 0)); // Remove interface from local IPv6 addresses
-          else
-            urlIp.setHost(ipStr);
-
-          hosts.append(Host(urlName, urlIp, hostAddr.protocol() == QAbstractSocket::IPv6Protocol));
+          hosts.append(Host(hostAddr));
         }
         else
           qDebug() << "Found IP" << ipStr;
@@ -190,12 +186,11 @@ void WebController::startServer()
 
     // Add IPv4 localhost if nothing was found =================================
     if(hosts.isEmpty() && !localhostIpv4.isNull())
-      hosts.append(Host(QString("%1://localhost:%2").arg(scheme).arg(port),
-                        QString("%1://%2:%3").arg(scheme).arg(QHostAddress(QHostAddress::LocalHost).toString()).arg(port), false));
+      hosts.append(Host(QHostAddress(QHostAddress::LocalHost), "localhost"));
 
     // Ensure IPv4 in front
     std::sort(hosts.begin(), hosts.end(), [](const Host& host1, const Host& host2) {
-      return host1.ipv6 < host2.ipv6;
+      return host1.addr.protocol() < host2.addr.protocol();
     });
   }
 
@@ -237,8 +232,10 @@ void WebController::restartServer(bool force)
 
 void WebController::openPage()
 {
-  if(!getUrl(false /* useIpAddress */).isEmpty())
-    atools::gui::DesktopServices::openUrl(parentWidget, getUrl(false));
+  const QUrl url = getUrl(false /* useIpAddress */);
+
+  if(!url.isEmpty())
+    atools::gui::DesktopServices::openUrl(parentWidget, url);
   else if(verbose)
     qWarning() << Q_FUNC_INFO << "No valid URL found";
 }
@@ -248,28 +245,50 @@ bool WebController::isListenerRunning() const
   return listener != nullptr && listener->isListening();
 }
 
-QUrl WebController::getUrl(bool useIpAddress) const
+QUrl WebController::getUrl(bool useIpAddress)
 {
-  if(hosts.isEmpty())
-    return QUrl();
-  else
-    return useIpAddress ? hosts.constFirst().urlIp : hosts.constFirst().urlName;
+  QUrl url;
+  if(!hosts.isEmpty())
+  {
+    const QHostAddress& addr = hosts.constFirst().addr;
+    if(useIpAddress)
+    {
+      url.setScheme(encrypted ? "https" : "http");
+      url.setHost(addr.toString());
+      url.setPort(port);
+    }
+    else
+    {
+      url.setScheme(encrypted ? "https" : "http");
+      url.setHost(hostName(addr));
+      url.setPort(port);
+    }
+  }
+  return url;
 }
 
-QStringList WebController::getUrlStr() const
+QStringList WebController::getUrlStr()
 {
   QStringList retval;
   int num = 1;
-  for(const Host& host : hosts)
+
+  for(const Host& host : qAsConst(hosts))
   {
-    const QUrl& hostname = host.urlName;
-    const QUrl& ip = host.urlIp;
+    const QHostAddress& addr = host.addr;
+    QUrl nameUrl, ipUrl;
+    nameUrl.setScheme(encrypted ? "https" : "http");
+    nameUrl.setHost(hostName(addr));
+    nameUrl.setPort(port);
+
+    ipUrl.setScheme(encrypted ? "https" : "http");
+    ipUrl.setHost(addr.toString());
+    ipUrl.setPort(port);
 
     retval.append(tr("%1. %2 <a href=\"%3\"><b>%4:%5</b></a> <small>(<a href=\"%6\">%7:%8</a>)</small>").
                   arg(num++).
-                  arg(host.ipv6 ? tr("IPv6") : tr("IPv4")).
-                  arg(hostname.toString(QUrl::None).toHtmlEscaped()).arg(hostname.host().toHtmlEscaped()).arg(hostname.port()).
-                  arg(ip.toString(QUrl::None).toHtmlEscaped()).arg(ip.host().toHtmlEscaped()).arg(ip.port()));
+                  arg(addr.protocol() == QAbstractSocket::IPv6Protocol ? tr("IPv6") : tr("IPv4")).
+                  arg(nameUrl.toString(QUrl::None).toHtmlEscaped()).arg(nameUrl.host().toHtmlEscaped()).arg(nameUrl.port()).
+                  arg(ipUrl.toString(QUrl::None).toHtmlEscaped()).arg(ipUrl.host().toHtmlEscaped()).arg(ipUrl.port()));
   }
   return retval;
 }
@@ -331,4 +350,24 @@ void WebController::preDatabaseLoad()
 void WebController::postDatabaseLoad()
 {
   mapController->postDatabaseLoad();
+}
+
+QString WebController::hostName(const QHostAddress& hostAddr)
+{
+  // Look for host in list
+  auto it = std::find_if(hosts.begin(), hosts.end(), [hostAddr](const Host& host) -> bool {
+    return host.addr == hostAddr;
+  });
+
+  if(it != hosts.end())
+  {
+    // Found host
+    if(it->name.isEmpty())
+      // Name is empty - update
+      it->name = QHostInfo::fromName(hostAddr.toString()).hostName();
+
+    return it->name;
+  }
+
+  return QString();
 }

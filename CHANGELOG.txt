@@ -487,6 +487,7 @@ Note that these changes were first published in AIRAC cycle 2402 and need an upd
 
 * Enabled IPv6 for webserver and added additional IPv6 addresses to display. This might affect startup
   time depending on your configuration. Disable the web server if you don't need it.
+* Delaying name resolution to avoid slow startup.
 * Fixed additional map theme not used on web server map which was stuck to OpenStreetMap.
 * Removed display of loopback or localhost devices which are not accessible from other computers on a
   local network. This is now added only if no other address was found, i.e. no network interfaces available.
