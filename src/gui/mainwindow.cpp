@@ -748,36 +748,41 @@ void MainWindow::setupUi()
                           ui->actionMapShowWindSimulator, ui->actionMapShowWindNOAA});
 
   // Update dock widget actions with tooltip, status tip and keypress
-  ui->dockWidgetSearch->toggleViewAction()->setIcon(QIcon(":/littlenavmap/resources/icons/searchdock.svg"));
-  ui->dockWidgetSearch->toggleViewAction()->setShortcut(QKeySequence(tr("Alt+1")));
-  ui->dockWidgetSearch->toggleViewAction()->setToolTip(tr("Open or show the %1 dock window").
-                                                       arg(ui->dockWidgetSearch->windowTitle()));
-  ui->dockWidgetSearch->toggleViewAction()->setStatusTip(ui->dockWidgetSearch->toggleViewAction()->toolTip());
-
+  // Flight Planning ==================================
   ui->dockWidgetRoute->toggleViewAction()->setIcon(QIcon(":/littlenavmap/resources/icons/routedock.svg"));
-  ui->dockWidgetRoute->toggleViewAction()->setShortcut(QKeySequence(tr("Alt+2")));
+  ui->dockWidgetRoute->toggleViewAction()->setShortcut(QKeySequence(tr("Alt+1")));
   ui->dockWidgetRoute->toggleViewAction()->setToolTip(tr("Open or show the %1 dock window").
                                                       arg(ui->dockWidgetRoute->windowTitle()));
   ui->dockWidgetRoute->toggleViewAction()->setStatusTip(ui->dockWidgetRoute->toggleViewAction()->toolTip());
 
-  ui->dockWidgetInformation->toggleViewAction()->setIcon(QIcon(":/littlenavmap/resources/icons/infodock.svg"));
-  ui->dockWidgetInformation->toggleViewAction()->setShortcut(QKeySequence(tr("Alt+4")));
-  ui->dockWidgetInformation->toggleViewAction()->setToolTip(tr("Open or show the %1 dock window").
-                                                            arg(ui->dockWidgetInformation->windowTitle().
-                                                                toLower()));
-  ui->dockWidgetInformation->toggleViewAction()->setStatusTip(ui->dockWidgetInformation->toggleViewAction()->toolTip());
+  // Search ==================================
+  ui->dockWidgetSearch->toggleViewAction()->setIcon(QIcon(":/littlenavmap/resources/icons/searchdock.svg"));
+  ui->dockWidgetSearch->toggleViewAction()->setShortcut(QKeySequence(tr("Alt+2")));
+  ui->dockWidgetSearch->toggleViewAction()->setToolTip(tr("Open or show the %1 dock window").
+                                                       arg(ui->dockWidgetSearch->windowTitle()));
+  ui->dockWidgetSearch->toggleViewAction()->setStatusTip(ui->dockWidgetSearch->toggleViewAction()->toolTip());
 
+  // Progress ==================================
+  ui->dockWidgetAircraft->toggleViewAction()->setIcon(QIcon(":/littlenavmap/resources/icons/aircraftdock.svg"));
+  ui->dockWidgetAircraft->toggleViewAction()->setShortcut(QKeySequence(tr("Alt+3")));
+  ui->dockWidgetAircraft->toggleViewAction()->setToolTip(tr("Open or show the %1 dock window").
+                                                         arg(ui->dockWidgetAircraft->windowTitle()));
+  ui->dockWidgetAircraft->toggleViewAction()->setStatusTip(ui->dockWidgetAircraft->toggleViewAction()->toolTip());
+
+  // Profile ==================================
   ui->dockWidgetProfile->toggleViewAction()->setIcon(QIcon(":/littlenavmap/resources/icons/profiledock.svg"));
-  ui->dockWidgetProfile->toggleViewAction()->setShortcut(QKeySequence(tr("Alt+5")));
+  ui->dockWidgetProfile->toggleViewAction()->setShortcut(QKeySequence(tr("Alt+4")));
   ui->dockWidgetProfile->toggleViewAction()->setToolTip(tr("Open or show the %1 dock window").
                                                         arg(ui->dockWidgetProfile->windowTitle()));
   ui->dockWidgetProfile->toggleViewAction()->setStatusTip(ui->dockWidgetProfile->toggleViewAction()->toolTip());
 
-  ui->dockWidgetAircraft->toggleViewAction()->setIcon(QIcon(":/littlenavmap/resources/icons/aircraftdock.svg"));
-  ui->dockWidgetAircraft->toggleViewAction()->setShortcut(QKeySequence(tr("Alt+6")));
-  ui->dockWidgetAircraft->toggleViewAction()->setToolTip(tr("Open or show the %1 dock window").
-                                                         arg(ui->dockWidgetAircraft->windowTitle()));
-  ui->dockWidgetAircraft->toggleViewAction()->setStatusTip(ui->dockWidgetAircraft->toggleViewAction()->toolTip());
+  // Information ==================================
+  ui->dockWidgetInformation->toggleViewAction()->setIcon(QIcon(":/littlenavmap/resources/icons/infodock.svg"));
+  ui->dockWidgetInformation->toggleViewAction()->setShortcut(QKeySequence(tr("Alt+5")));
+  ui->dockWidgetInformation->toggleViewAction()->setToolTip(tr("Open or show the %1 dock window").
+                                                            arg(ui->dockWidgetInformation->windowTitle().
+                                                                toLower()));
+  ui->dockWidgetInformation->toggleViewAction()->setStatusTip(ui->dockWidgetInformation->toggleViewAction()->toolTip());
 
   // Connect to methods internally
   dockHandler->connectDockWindows();
