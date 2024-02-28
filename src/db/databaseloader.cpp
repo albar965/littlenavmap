@@ -234,9 +234,6 @@ void DatabaseLoader::loadScenery()
   navDatabaseOpts->setProgressCallback(std::bind(&DatabaseLoader::progressCallbackThread, this, std::placeholders::_1));
   navDatabaseOpts->setCallDefaultCallback(true);
 
-  // Print all options to log file =================================
-  qInfo() << Q_FUNC_INFO << *navDatabaseOpts;
-
   // ==================================================================================
   // Compile navdata in background ==================================================================
   atools::fs::NavDatabase navDatabase(navDatabaseOpts, compileDb, navDatabaseErrors, GIT_REVISION_LITTLENAVMAP);
