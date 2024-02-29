@@ -31,10 +31,6 @@ WaypointTrackQuery::WaypointTrackQuery(WaypointQuery *waypointQueryParam, Waypoi
 {
 }
 
-WaypointTrackQuery::~WaypointTrackQuery()
-{
-}
-
 map::MapWaypoint WaypointTrackQuery::getWaypointById(int id)
 {
   map::MapWaypoint waypoint;

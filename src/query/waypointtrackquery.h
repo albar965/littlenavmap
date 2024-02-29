@@ -43,7 +43,6 @@ public:
    * @param sqlDbNav for updated navaids
    */
   WaypointTrackQuery(WaypointQuery *waypointQueryParam, WaypointQuery *trackQueryParam);
-  ~WaypointTrackQuery();
 
   WaypointTrackQuery(const WaypointTrackQuery& other)
   {

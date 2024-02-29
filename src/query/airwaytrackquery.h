@@ -48,7 +48,6 @@ public:
    * @param sqlDbTrack for tracks. May be null.
    */
   AirwayTrackQuery(AirwayQuery *airwayQueryParam, AirwayQuery *trackQueryParam);
-  ~AirwayTrackQuery();
 
   AirwayTrackQuery(const AirwayTrackQuery& other)
   {

@@ -30,10 +30,6 @@ AirwayTrackQuery::AirwayTrackQuery(AirwayQuery *airwayQueryParam, AirwayQuery *t
 {
 }
 
-AirwayTrackQuery::~AirwayTrackQuery()
-{
-}
-
 void AirwayTrackQuery::getAirwaysForWaypoint(QList<map::MapAirway>& airways, int waypointId)
 {
   if(useTracks)

@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -108,7 +108,7 @@ private:
   void fromClipboardClicked();
   void toClipboardClicked();
   void buttonBoxClicked(QAbstractButton *button);
-  void toolButtonOptionTriggered(QAction *);
+  void toolButtonOptionTriggered(QAction *act);
   void loadFromFlightplanButtonClicked();
   void showHelpButtonToggled(bool checked);
   void splitterMoved();
@@ -125,6 +125,7 @@ private:
   virtual void hideEvent(QHideEvent *) override;
 
   QMenu *advancedMenu = nullptr;
+  QList<QAction *> actions;
 
   Ui::RouteStringDialog *ui;
   atools::fs::pln::Flightplan *flightplan = nullptr;

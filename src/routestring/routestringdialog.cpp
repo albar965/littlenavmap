@@ -188,7 +188,6 @@ RouteStringDialog::RouteStringDialog(QWidget *parent, const QString& settingsSuf
   connect(ui->pushButtonRouteStringToClipboard, &QPushButton::clicked, this, &RouteStringDialog::toClipboardClicked);
   connect(QGuiApplication::clipboard(), &QClipboard::dataChanged, this, &RouteStringDialog::updateButtonState);
   connect(ui->buttonBoxRouteString, &QDialogButtonBox::clicked, this, &RouteStringDialog::buttonBoxClicked);
-  connect(ui->toolButtonRouteStringOptions->menu(), &QMenu::triggered, this, &RouteStringDialog::toolButtonOptionTriggered);
   connect(ui->pushButtonRouteStringUpdate, &QPushButton::clicked, this, &RouteStringDialog::loadFromFlightplanButtonClicked);
 
   connect(ui->textEditRouteString, &QTextEdit::textChanged, this, &RouteStringDialog::updateButtonState);
@@ -233,6 +232,7 @@ void RouteStringDialog::buildButtonMenu()
   buttonMenu->setTearOffEnabled(true);
 
   // Writing to string ===========================================
+  actions.clear();
   QAction *action;
 
   if(!blocking) // Do not show write options if opened from SimBrief
@@ -244,6 +244,7 @@ void RouteStringDialog::buildButtonMenu()
     action->setCheckable(true);
     action->setData(static_cast<int>(rs::WRITE_APPROACH_RUNWAYS));
     buttonMenu->addAction(action);
+    actions.append(action);
 
     action = new QAction(tr("Write &cruise speed and altitude instruction"), buttonMenu);
     action->setObjectName("actionSpeedAlt");
@@ -253,6 +254,7 @@ void RouteStringDialog::buildButtonMenu()
     action->setCheckable(true);
     action->setData(static_cast<int>(rs::ALT_AND_SPEED));
     buttonMenu->addAction(action);
+    actions.append(action);
 
     action = new QAction(tr("Write &DCT (direct) instructions"), buttonMenu);
     action->setObjectName("actionDct");
@@ -260,6 +262,7 @@ void RouteStringDialog::buildButtonMenu()
     action->setCheckable(true);
     action->setData(static_cast<int>(rs::DCT));
     buttonMenu->addAction(action);
+    actions.append(action);
 
     action = new QAction(tr("Write &alternates"), buttonMenu);
     action->setObjectName("actionAlternates");
@@ -267,6 +270,7 @@ void RouteStringDialog::buildButtonMenu()
     action->setCheckable(true);
     action->setData(static_cast<int>(rs::ALTERNATES));
     buttonMenu->addAction(action);
+    actions.append(action);
 
     buttonMenu->addSeparator();
     // SID/STAR group ===========================================
@@ -278,8 +282,10 @@ void RouteStringDialog::buildButtonMenu()
       action->setToolTip(tr("Write SID, STAR and the respective transitions to the description"));
       action->setCheckable(true);
       action->setData(static_cast<int>(rs::SID_STAR));
+
       buttonMenu->addAction(action);
       procActionGroup->addAction(action);
+      actions.append(action);
     }
 
     action = new QAction(tr("Write &generic SID and STAR"), buttonMenu);
@@ -289,6 +295,7 @@ void RouteStringDialog::buildButtonMenu()
     action->setData(static_cast<int>(rs::SID_STAR_GENERIC));
     buttonMenu->addAction(action);
     procActionGroup->addAction(action);
+    actions.append(action);
 
     action = new QAction(tr("Write &no SID and STAR"), buttonMenu);
     action->setObjectName("actionNoSidStar");
@@ -297,6 +304,7 @@ void RouteStringDialog::buildButtonMenu()
     action->setData(static_cast<int>(rs::SID_STAR_NONE));
     buttonMenu->addAction(action);
     procActionGroup->addAction(action);
+    actions.append(action);
 
     buttonMenu->addSeparator();
 
@@ -306,6 +314,7 @@ void RouteStringDialog::buildButtonMenu()
     action->setCheckable(true);
     action->setData(static_cast<int>(rs::STAR_REV_TRANSITION));
     buttonMenu->addAction(action);
+    actions.append(action);
 
     action = new QAction(tr("&Write SID/STAR and transition space separated"), buttonMenu);
     action->setObjectName("actionSpaceSidStar");
@@ -313,6 +322,7 @@ void RouteStringDialog::buildButtonMenu()
     action->setCheckable(true);
     action->setData(static_cast<int>(rs::SID_STAR_SPACE));
     buttonMenu->addAction(action);
+    actions.append(action);
 
     buttonMenu->addSeparator();
   }
@@ -326,10 +336,13 @@ void RouteStringDialog::buildButtonMenu()
   action->setCheckable(true);
   action->setData(static_cast<int>(rs::READ_ALTERNATES));
   buttonMenu->addAction(action);
+  actions.append(action);
 
   buttonMenu->addSeparator();
   delete advancedMenu;
   advancedMenu = new QMenu(tr("&Advanced"));
+  advancedMenu->setToolTipsVisible(buttonMenu->toolTipsVisible());
+  advancedMenu->setTearOffEnabled(buttonMenu->isTearOffEnabled());
   buttonMenu->addMenu(advancedMenu);
 
   action = new QAction(tr("Write &waypoints instead of airways"), advancedMenu);
@@ -338,6 +351,7 @@ void RouteStringDialog::buildButtonMenu()
   action->setCheckable(true);
   action->setData(static_cast<int>(rs::NO_AIRWAYS));
   advancedMenu->addAction(action);
+  actions.append(action);
 
   action = new QAction(tr("Write &departure and destination airport"), advancedMenu);
   action->setObjectName("actionDepartDest");
@@ -346,6 +360,8 @@ void RouteStringDialog::buildButtonMenu()
   action->setCheckable(true);
   action->setData(static_cast<int>(rs::START_AND_DEST));
   advancedMenu->addAction(action);
+  actions.append(action);
+
   advancedMenu->addSeparator();
 
   action = new QAction(tr("Read: Match coordinates to &waypoints"), advancedMenu);
@@ -354,6 +370,7 @@ void RouteStringDialog::buildButtonMenu()
   action->setCheckable(true);
   action->setData(static_cast<int>(rs::READ_MATCH_WAYPOINTS));
   advancedMenu->addAction(action);
+  actions.append(action);
 
   action = new QAction(tr("Read first and last item as &navaid"), advancedMenu);
   action->setObjectName("actionNavaid");
@@ -361,7 +378,10 @@ void RouteStringDialog::buildButtonMenu()
   action->setCheckable(true);
   action->setData(static_cast<int>(rs::READ_NO_AIRPORTS));
   advancedMenu->addAction(action);
+  actions.append(action);
 
+  connect(buttonMenu, &QMenu::triggered, this, &RouteStringDialog::toolButtonOptionTriggered);
+  connect(advancedMenu, &QMenu::triggered, this, &RouteStringDialog::toolButtonOptionTriggered);
 }
 
 void RouteStringDialog::splitterMoved()
@@ -410,14 +430,17 @@ void RouteStringDialog::loadFromFlightplanButtonClicked()
   ui->textEditRouteString->setFocus();
 }
 
-void RouteStringDialog::toolButtonOptionTriggered(QAction *)
+void RouteStringDialog::toolButtonOptionTriggered(QAction *act)
 {
+#ifdef DEBUG_INFORMATION
+  qDebug() << Q_FUNC_INFO << act->objectName();
+#endif
+
   if(updatingActions)
     return;
 
   // Copy menu state for options bitfield
-  const QList<QAction *> actions = ui->toolButtonRouteStringOptions->menu()->actions();
-  for(const QAction *action : actions)
+  for(const QAction *action : qAsConst(actions))
     options.setFlag(static_cast<rs::RouteStringOption>(action->data().toInt()), action->isChecked());
 
   // Call immediately and update even if string is unchanged
@@ -666,9 +689,9 @@ void RouteStringDialog::updateButtonState()
 
   // Copy option flags to dropdown menu items
   updatingActions = true;
-  const QList<QAction *> actions = ui->toolButtonRouteStringOptions->menu()->actions();
-  for(QAction *act : actions)
-    act->setChecked(rs::RouteStringOptions(act->data().toInt()) & options);
+  for(QAction *action : qAsConst(actions))
+    action->setChecked(rs::RouteStringOptions(action->data().toInt()) & options);
+
   updatingActions = false;
 }
 
@@ -682,5 +705,6 @@ void RouteStringDialog::hideEvent(QHideEvent *)
 {
   // Hide tear off menu - otherwise it cannot be opened again
   ui->toolButtonRouteStringOptions->menu()->hideTearOffMenu();
+  advancedMenu->hideTearOffMenu();
   position = geometry().topLeft();
 }
