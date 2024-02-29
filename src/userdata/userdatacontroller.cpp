@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -225,9 +225,25 @@ void UserdataController::addToolbarButton()
   mainMenu->addSeparator();
 
   // Create and add select an action for each registered type =====================================
-  int screenHeight = std::max(800, mainWindow->screen()->geometry().height());
+  int screenHeight = mainWindow->screen()->geometry().height();
   for(const QString& type : icons->getAllTypes())
   {
+    // Create an overflow menu item for the button if the menu exceeds the screen height
+    if(buttonMenu->sizeHint().height() > screenHeight * 8 / 10)
+    {
+      buttonMenu = buttonMenu->addMenu(tr("More ..."));
+      buttonMenu->setToolTipsVisible(userdataToolButton->menu()->toolTipsVisible());
+      buttonMenu->setTearOffEnabled(userdataToolButton->menu()->isTearOffEnabled());
+    }
+
+    // Create an overflow menu item for the main menu if the menu exceeds the screen height
+    if(mainMenu->sizeHint().height() > screenHeight * 8 / 10)
+    {
+      mainMenu = mainMenu->addMenu(tr("More ..."));
+      mainMenu->setToolTipsVisible(ui->menuViewUserpoints->toolTipsVisible());
+      mainMenu->setTearOffEnabled(ui->menuViewUserpoints->isTearOffEnabled());
+    }
+
     QIcon icon(icons->getIconPath(type));
     QAction *action = new QAction(icon, type, buttonMenu);
     action->setData(QVariant(type));
@@ -240,22 +256,6 @@ void UserdataController::addToolbarButton()
 
     buttonHandler->addOtherAction(action);
     actions.append(action);
-
-    // Create an overflow menu item for the button if the menu exceeds the screen height
-    if(buttonMenu->sizeHint().height() > screenHeight * 9 / 10)
-    {
-      buttonMenu = buttonMenu->addMenu(tr("More ..."));
-      buttonMenu->setToolTipsVisible(userdataToolButton->menu()->toolTipsVisible());
-      buttonMenu->setTearOffEnabled(userdataToolButton->menu()->isTearOffEnabled());
-    }
-
-    // Create an overflow menu item for the main menu if the menu exceeds the screen height
-    if(mainMenu->sizeHint().height() > screenHeight * 9 / 10)
-    {
-      mainMenu = mainMenu->addMenu(tr("More ..."));
-      mainMenu->setToolTipsVisible(ui->menuViewUserpoints->toolTipsVisible());
-      mainMenu->setTearOffEnabled(ui->menuViewUserpoints->isTearOffEnabled());
-    }
   }
 
   // Add all signals from actions to the same handler method
