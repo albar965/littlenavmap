@@ -157,7 +157,14 @@ void WebController::startServer()
       const QList<QHostAddress> addresses = QNetworkInterface::allAddresses();
       for(const QHostAddress& hostAddr : addresses)
       {
-        if(hostAddr.isNull())
+#ifdef DEBUG_INFORMATION
+        qDebug() << Q_FUNC_INFO << hostAddr << hostAddr.protocol()
+                 << "global" << hostAddr.isGlobal() << "link local" << hostAddr.isLinkLocal();
+#endif
+
+        // Ignore null, broad- and multicas and IPv6 link local
+        if(hostAddr.isNull() || hostAddr.isBroadcast() || hostAddr.isMulticast() ||
+           (hostAddr.protocol() == QAbstractSocket::IPv6Protocol && hostAddr.isLinkLocal()))
           continue;
 
         if(hostAddr.isLoopback())

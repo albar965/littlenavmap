@@ -2908,7 +2908,9 @@ void OptionsDialog::updateWebServerStatus()
     {
       if(webController->isListenerRunning())
       {
+        QGuiApplication::setOverrideCursor(Qt::WaitCursor);
         QStringList urls = webController->getUrlStr();
+        QGuiApplication::restoreOverrideCursor();
 
 #ifdef DEBUG_INFORMATION
         qDebug() << Q_FUNC_INFO << urls;
