@@ -104,11 +104,15 @@ void SearchController::styleChanged()
 
 void SearchController::dockVisibilityChanged(bool visible)
 {
-  // Have to remember dock widget visibility since it cannot be determined from QWidget::isVisisble()
-  dockVisible = visible;
+  // Avoid spurious events that appear on shutdown and cause crashes
+  if(!NavApp::isShuttingDown())
+  {
+    // Have to remember dock widget visibility since it cannot be determined from QWidget::isVisisble()
+    dockVisible = visible;
 
-  // Show or remove marks
-  tabChanged(getCurrentSearchTabId());
+    // Show or remove marks
+    tabChanged(getCurrentSearchTabId());
+  }
 }
 
 void SearchController::helpPressed()

@@ -3197,9 +3197,11 @@ void RouteController::dockVisibilityChanged(bool visible)
 {
   Q_UNUSED(visible)
 
-  // Visible - send update to show map highlights
-  // Not visible - send update to hide highlights
-  tableSelectionChanged(QItemSelection(), QItemSelection());
+  // Avoid spurious events that appear on shutdown and cause crashes
+  if(!NavApp::isShuttingDown())
+    // Visible - send update to show map highlights
+    // Not visible - send update to hide highlights
+    tableSelectionChanged(QItemSelection(), QItemSelection());
 }
 
 bool RouteController::canCleanupTable()

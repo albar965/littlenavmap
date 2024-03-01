@@ -1281,6 +1281,10 @@ void MapPaintWidget::paintEvent(QPaintEvent *paintEvent)
              << "mapCoversViewport" << viewport()->mapCoversViewport();
   }
 
+  // Avoid spurious events that appear on shutdown and cause crashes
+  if(NavApp::isShuttingDown())
+    return;
+
 #ifdef DEBUG_SKIP_RENDER
 #ifndef Q_OS_MACOS
   // This does not work on macOS due to different click and update handling

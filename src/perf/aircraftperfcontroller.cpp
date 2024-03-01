@@ -1543,8 +1543,12 @@ void AircraftPerfController::anchorClicked(const QUrl& url)
 void AircraftPerfController::tabVisibilityChanged()
 {
   qDebug() << Q_FUNC_INFO;
-  updateReport();
-  updateReportCurrent();
+
+  if(!NavApp::isShuttingDown())
+  {
+    updateReport();
+    updateReportCurrent();
+  }
 }
 
 bool AircraftPerfController::hasErrors() const

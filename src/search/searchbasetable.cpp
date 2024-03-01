@@ -799,7 +799,9 @@ void SearchBaseTable::tableSelectionChanged(const QItemSelection&, const QItemSe
 /* Update highlights if dock is hidden or shown (does not change for dock tab stacks) */
 void SearchBaseTable::dockVisibilityChanged(bool)
 {
-  tableSelectionChangedInternal(true /* noFollow */);
+  // Avoid spurious events that appear on shutdown and cause crashes
+  if(!NavApp::isShuttingDown())
+    tableSelectionChangedInternal(true /* noFollow */);
 }
 
 void SearchBaseTable::fetchedMore()

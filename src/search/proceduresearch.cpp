@@ -1716,15 +1716,19 @@ void ProcedureSearch::weatherUpdated()
 /* Update highlights if dock is hidden or shown (does not change for dock tab stacks) */
 void ProcedureSearch::dockVisibilityChanged(bool visible)
 {
-  if(!visible)
+  // Avoid spurious events that appear on shutdown and cause crashes
+  if(!NavApp::isShuttingDown())
   {
-    // Hide preview if dock is closed
-    emit procedureSelected(proc::MapProcedureRef());
-    emit proceduresSelected(QVector<proc::MapProcedureRef>());
-    emit procedureLegSelected(proc::MapProcedureRef());
+    if(!visible)
+    {
+      // Hide preview if dock is closed
+      emit procedureSelected(proc::MapProcedureRef());
+      emit proceduresSelected(QVector<proc::MapProcedureRef>());
+      emit procedureLegSelected(proc::MapProcedureRef());
+    }
+    else
+      itemSelectionChangedInternal(true /* do not follow selection */);
   }
-  else
-    itemSelectionChangedInternal(true /* do not follow selection */);
 }
 
 void ProcedureSearch::tabDeactivated()
