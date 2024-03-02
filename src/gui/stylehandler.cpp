@@ -115,6 +115,13 @@ StyleHandler::StyleHandler(QMainWindow *mainWindowParam)
     "QCheckBox::indicator:unchecked { image: url(:/littlenavmap/resources/icons/checkbox_dark_unchecked.png); }" %
     "QCheckBox::indicator:unchecked:!enabled { image: url(:/littlenavmap/resources/icons/checkbox_dark_unchecked_disabled.png); }" %
 
+    // Tree view checkboxes ====================
+    "QTreeView::indicator:checked {image: url(:/littlenavmap/resources/icons/checkbox_dark_checked.png);}"
+    "QTreeView::indicator:checked:!enabled {image: url(:/littlenavmap/resources/icons/checkbox_dark_checked_disabled.png);}"
+
+    "QTreeView::indicator:unchecked {image: url(:/littlenavmap/resources/icons/checkbox_dark_unchecked.png);}"
+    "QTreeView::indicator:unchecked:!enabled {image: url(:/littlenavmap/resources/icons/checkbox_dark_unchecked_disabled.png);}"
+
     // Radio button images ====================
     "QRadioButton::indicator:checked { image: url(:/littlenavmap/resources/icons/radiobutton_dark_checked.png); }" %
     "QRadioButton::indicator:checked:!enabled { image: url(:/littlenavmap/resources/icons/radiobutton_dark_checked_disabled.png); }" %
