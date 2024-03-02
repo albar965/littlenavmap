@@ -22593,18 +22593,18 @@ Assegure-se de que o mapa preencha a janela completamente.</translation>
 <context>
     <name>NavApp</name>
     <message>
-        <location filename="src/app/navapp.cpp" line="328"/>
-        <location filename="src/app/navapp.cpp" line="334"/>
+        <location filename="src/app/navapp.cpp" line="327"/>
+        <location filename="src/app/navapp.cpp" line="333"/>
         <source>While reading magnetic declination from database:</source>
         <translation>Ao ler a declinação magnética do banco de dados:</translation>
     </message>
     <message>
-        <location filename="src/app/navapp.cpp" line="1373"/>
+        <location filename="src/app/navapp.cpp" line="1372"/>
         <source> 64-bit</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/app/navapp.cpp" line="1375"/>
+        <location filename="src/app/navapp.cpp" line="1374"/>
         <source> 32-bit</source>
         <translation></translation>
     </message>
@@ -34546,7 +34546,7 @@ Calculado com base no perfil de performance da aeronave.</translation>
         <translation>Veículos</translation>
     </message>
     <message>
-        <location filename="src/app/navapp.cpp" line="1380"/>
+        <location filename="src/app/navapp.cpp" line="1379"/>
         <source>Version %5 (revision %6)</source>
         <translation>Versão %5 (revisão %6)</translation>
     </message>

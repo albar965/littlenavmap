@@ -21375,18 +21375,18 @@ Ensure that the map fills the window completely.</source>
 <context>
     <name>NavApp</name>
     <message>
-        <location filename="src/app/navapp.cpp" line="328"/>
-        <location filename="src/app/navapp.cpp" line="334"/>
+        <location filename="src/app/navapp.cpp" line="327"/>
+        <location filename="src/app/navapp.cpp" line="333"/>
         <source>While reading magnetic declination from database:</source>
         <translation>从数据库读取磁偏角时：</translation>
     </message>
     <message>
-        <location filename="src/app/navapp.cpp" line="1373"/>
+        <location filename="src/app/navapp.cpp" line="1372"/>
         <source> 64-bit</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/app/navapp.cpp" line="1375"/>
+        <location filename="src/app/navapp.cpp" line="1374"/>
         <source> 32-bit</source>
         <translation type="unfinished"></translation>
     </message>
@@ -32420,7 +32420,7 @@ Spaces are replaced with underscores.</oldsource>
         <translation type="vanished">%1 已经在运行了。</translation>
     </message>
     <message>
-        <location filename="src/app/navapp.cpp" line="1380"/>
+        <location filename="src/app/navapp.cpp" line="1379"/>
         <source>Version %5 (revision %6)</source>
         <translation>版本 %5（修订版本 %6）</translation>
     </message>

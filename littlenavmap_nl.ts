@@ -21792,18 +21792,18 @@ Maak dat de kaart het venster volledig vult.</translation>
 <context>
     <name>NavApp</name>
     <message>
-        <location filename="src/app/navapp.cpp" line="328"/>
-        <location filename="src/app/navapp.cpp" line="334"/>
+        <location filename="src/app/navapp.cpp" line="327"/>
+        <location filename="src/app/navapp.cpp" line="333"/>
         <source>While reading magnetic declination from database:</source>
         <translation>Tijdens het lezen van de magnetische declinatie uit database:</translation>
     </message>
     <message>
-        <location filename="src/app/navapp.cpp" line="1373"/>
+        <location filename="src/app/navapp.cpp" line="1372"/>
         <source> 64-bit</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/app/navapp.cpp" line="1375"/>
+        <location filename="src/app/navapp.cpp" line="1374"/>
         <source> 32-bit</source>
         <translation type="unfinished"></translation>
     </message>
@@ -32646,7 +32646,7 @@ Spaces are replaced with underscores.</oldsource>
         <translation type="vanished">%1 is reeds gestart.</translation>
     </message>
     <message>
-        <location filename="src/app/navapp.cpp" line="1380"/>
+        <location filename="src/app/navapp.cpp" line="1379"/>
         <source>Version %5 (revision %6)</source>
         <translation>Versie %5 (revisie %6)</translation>
     </message>

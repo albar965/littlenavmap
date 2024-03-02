@@ -23273,18 +23273,18 @@ Assurez-vous que la carte remplit complètement la fenêtre.</translation>
 <context>
     <name>NavApp</name>
     <message>
-        <location filename="src/app/navapp.cpp" line="328"/>
-        <location filename="src/app/navapp.cpp" line="334"/>
+        <location filename="src/app/navapp.cpp" line="327"/>
+        <location filename="src/app/navapp.cpp" line="333"/>
         <source>While reading magnetic declination from database:</source>
         <translation type="unfinished">En lisant la déclinaison magnétique de la base de données:</translation>
     </message>
     <message>
-        <location filename="src/app/navapp.cpp" line="1373"/>
+        <location filename="src/app/navapp.cpp" line="1372"/>
         <source> 64-bit</source>
         <translation type="unfinished"> 64-bit</translation>
     </message>
     <message>
-        <location filename="src/app/navapp.cpp" line="1375"/>
+        <location filename="src/app/navapp.cpp" line="1374"/>
         <source> 32-bit</source>
         <translation type="unfinished"> 32-bit</translation>
     </message>
@@ -35211,7 +35211,7 @@ Les espaces sont remplacés par des traits de soulignement.</translation>
         <translation type="vanished">%1 est déjà en cours d&apos;exécution.</translation>
     </message>
     <message>
-        <location filename="src/app/navapp.cpp" line="1380"/>
+        <location filename="src/app/navapp.cpp" line="1379"/>
         <source>Version %5 (revision %6)</source>
         <translation>Version %5 (révision %6)</translation>
     </message>

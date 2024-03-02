@@ -23071,18 +23071,18 @@ Assicurati che la mappa riempia completamente la finestra.</translation>
 <context>
     <name>NavApp</name>
     <message>
-        <location filename="src/app/navapp.cpp" line="328"/>
-        <location filename="src/app/navapp.cpp" line="334"/>
+        <location filename="src/app/navapp.cpp" line="327"/>
+        <location filename="src/app/navapp.cpp" line="333"/>
         <source>While reading magnetic declination from database:</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/app/navapp.cpp" line="1373"/>
+        <location filename="src/app/navapp.cpp" line="1372"/>
         <source> 64-bit</source>
         <translation> 64-bit</translation>
     </message>
     <message>
-        <location filename="src/app/navapp.cpp" line="1375"/>
+        <location filename="src/app/navapp.cpp" line="1374"/>
         <source> 32-bit</source>
         <translation> 32-bit</translation>
     </message>
@@ -35030,7 +35030,7 @@ Spaces are replaced with underscores.</oldsource>
         <translation type="vanished">%1 è già avviato.</translation>
     </message>
     <message>
-        <location filename="src/app/navapp.cpp" line="1380"/>
+        <location filename="src/app/navapp.cpp" line="1379"/>
         <source>Version %5 (revision %6)</source>
         <translation>Versione %5 (revisione %6)</translation>
     </message>
