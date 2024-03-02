@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -82,13 +82,13 @@ CustomProcedureDialog::CustomProcedureDialog(QWidget *parent, const map::MapAirp
 
   if(departure)
   {
-    ui->labelCustomProcRunwayDist->setText(("&Length of the exended runway center line:"));
-    ui->doubleSpinBoxCustomProcDist->setToolTip(("Distance from the takeoff position at the runway end to the end of the departure."));
+    ui->labelCustomProcRunwayDist->setText(tr("&Length of the extended runway center line:"));
+    ui->doubleSpinBoxCustomProcDist->setToolTip(tr("Distance from the takeoff position at the runway end to the end of the departure."));
   }
   else
   {
-    ui->labelCustomProcRunwayDist->setText(("&Start of final to runway threshold:"));
-    ui->doubleSpinBoxCustomProcDist->setToolTip(("Distance from the start of the final leg to the runway threshold."));
+    ui->labelCustomProcRunwayDist->setText(tr("&Start of final to runway threshold:"));
+    ui->doubleSpinBoxCustomProcDist->setToolTip(tr("Distance from the start of the final leg to the runway threshold."));
   }
 
   // Saves original texts and restores them on deletion
