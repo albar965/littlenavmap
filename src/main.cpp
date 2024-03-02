@@ -164,7 +164,7 @@ int main(int argc, char *argv[])
   // Get checkbox value
   bool freetype = earlySettings.value("OptionsDialog/Widget_checkBoxOptionsFreetype", 2).toInt() == 2;
 #else
-  bool freetype =false;
+  bool freetype = false;
 #endif
 
   // Byte arrays have to remain for the whole runtime
@@ -432,6 +432,8 @@ int main(int argc, char *argv[])
         qDebug() << "Before app.exec()";
         retval = QApplication::exec();
       }
+      else
+        NavApp::recordExit();
     } // if(!NavApp::initSharedMemory())
     else
       retval = 0;

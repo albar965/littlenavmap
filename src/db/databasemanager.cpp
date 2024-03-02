@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -1744,23 +1744,6 @@ bool DatabaseManager::hasData(atools::sql::SqlDatabase *db) const
   try
   {
     return DatabaseMeta(db).hasData();
-  }
-  catch(atools::Exception& e)
-  {
-    ATOOLS_HANDLE_EXCEPTION(e);
-  }
-  catch(...)
-  {
-    ATOOLS_HANDLE_UNKNOWN_EXCEPTION;
-  }
-}
-
-/* Checks if the current database is compatible with this program. Exits program if this fails */
-bool DatabaseManager::isDatabaseCompatible(atools::sql::SqlDatabase *db) const
-{
-  try
-  {
-    return DatabaseMeta(db).isDatabaseCompatible();
   }
   catch(atools::Exception& e)
   {
