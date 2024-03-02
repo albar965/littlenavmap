@@ -453,6 +453,7 @@ Note that these changes were first published in AIRAC cycle 2402 and need an upd
 * Adding `More` sub-menus in menu `View` -> `Userpoints` to avoid overflow on screen when using many
   custom userpoint icons.
 * More improvements for user interface font changes, dark mode and style `windowsvista`.
+* Fixed tab order in all dialog windows.
 * Updated Italian translation by Flavio Borgna.
 
 ### Crash and Issue Report
@@ -519,6 +520,23 @@ Note that these changes were first published in AIRAC cycle 2402 and need an upd
   terminating the program with Ctrl+C from the command line.
 * Little Navmap supports the Wayland compositor which is used on newer Linux distributions
   but you have to install the package `qwayland5`.
+
+## Changes from 3.0.3.rc1 to 3.0.4
+
+These are fixes for bugs introduced with the 3.0 versions.
+
+* Adapted style of checkboxes in tree view elements like options page `Map Labels`.  Now better
+  visible in dark mode.
+* AI aircraft altitude now appears at higher zoom distance on the map.
+* Corrected not translatable texts in runway dialog.
+* Fixed issues in route description when opening from SimBrief. Now hiding advanced menu and adding
+  runways to route description when opening dialog after download.
+* Attempt to fix crashes on Windows shutdown with Little Navmap open.
+* The program now checks for obsolete database versions. You need at least a version of 14.24.
+  Otherwise the program will show a notification dialog where it offers to erase the database on startup.
+* Fixed issue where a wrong crash report was triggered after identifying incompatible database.
+* Now omitting IPv6 link local addresses in display in options on page `Web Server`.
+
 
 ==<<=============================================================================
 
