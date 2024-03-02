@@ -232,7 +232,7 @@ void MapPainterVehicle::paintTextLabelAi(float x, float y, float size, const Sim
      forceLabelNearby)
   {
     bool text = layer->isAiAircraftText();
-    bool detail = layer->isAiAircraftTextDetail(); // Lowest detail
+    bool detail = layer->isAiAircraftTextDetail(); // Lowest detail level
     bool detail2 = layer->isAiAircraftTextDetail2(); // Higher detail
     bool detail3 = layer->isAiAircraftTextDetail3(); // Highest detail
 
@@ -272,26 +272,6 @@ void MapPainterVehicle::paintTextLabelAi(float x, float y, float size, const Sim
             texts.append(tr("HDG %3°M").arg(QString::number(heading, 'f', 0)));
         }
 
-        // Vertical speed ====================================================================================
-        if(context->dOptAiAc(optsac::ITEM_AI_AIRCRAFT_CLIMB_SINK))
-          appendClimbSinkText(texts, aircraft);
-
-        QStringList altTexts;
-        if(context->dOptAiAc(optsac::ITEM_AI_AIRCRAFT_INDICATED_ALTITUDE) &&
-           aircraft.getIndicatedAltitudeFt() < map::INVALID_ALTITUDE_VALUE && detail3)
-          altTexts.append(tr("IND %1").arg(Unit::altFeet(aircraft.getIndicatedAltitudeFt())));
-
-        // Altitude ====================================================================================
-        if(context->dOptAiAc(optsac::ITEM_AI_AIRCRAFT_ALTITUDE) && aircraft.getActualAltitudeFt() < map::INVALID_ALTITUDE_VALUE)
-        {
-          QString upDown;
-          if(!context->dOptAiAc(optsac::ITEM_AI_AIRCRAFT_CLIMB_SINK))
-            climbSinkPointer(upDown, aircraft);
-          altTexts.append(tr("ALT %1%2").arg(Unit::altFeet(aircraft.getActualAltitudeFt())).arg(upDown));
-        }
-        if(!altTexts.isEmpty())
-          texts.append(altTexts.join(tr(", ")));
-
         // Bearing to user ====================================================================================
         const Pos& userPos = mapPaintWidget->getUserAircraft().getPosition();
         const Pos& aiPos = aircraft.getPosition();
@@ -313,7 +293,34 @@ void MapPainterVehicle::paintTextLabelAi(float x, float y, float size, const Sim
         if(context->dOptAiAc(optsac::ITEM_AI_AIRCRAFT_COORDINATES) && detail3)
           texts.append(Unit::coords(aiPos));
       } // if(flying)
-    } // if(detail)
+    } // if(detail2)
+
+    if(detail && flying)
+    {
+      // Vertical speed ====================================================================================
+      if(detail2 && context->dOptAiAc(optsac::ITEM_AI_AIRCRAFT_CLIMB_SINK))
+        appendClimbSinkText(texts, aircraft);
+
+      // Indicated altitude ====================================================================================
+      QStringList altTexts;
+      if(context->dOptAiAc(optsac::ITEM_AI_AIRCRAFT_INDICATED_ALTITUDE) &&
+         aircraft.getIndicatedAltitudeFt() < map::INVALID_ALTITUDE_VALUE && detail3)
+        altTexts.append(tr("IND %1").arg(Unit::altFeet(aircraft.getIndicatedAltitudeFt())));
+
+      // Actual altitude ====================================================================================
+      if(context->dOptAiAc(optsac::ITEM_AI_AIRCRAFT_ALTITUDE) && aircraft.getActualAltitudeFt() < map::INVALID_ALTITUDE_VALUE)
+        altTexts.append(tr("ALT %1%2").arg(Unit::altFeet(aircraft.getActualAltitudeFt())).arg(QString()));
+
+      QString upDown;
+      if(!context->dOptAiAc(optsac::ITEM_AI_AIRCRAFT_CLIMB_SINK))
+        climbSinkPointer(upDown, aircraft);
+
+      if(!altTexts.isEmpty())
+      {
+        texts.append(altTexts.join(tr(", ")));
+        texts.last().append(upDown);
+      }
+    }
 
     // Aircraft information ====================================================================================
     // Formatting depends on list size
@@ -433,7 +440,6 @@ void MapPainterVehicle::appendClimbSinkText(QStringList& texts, const SimConnect
     {
       QString upDown;
       climbSinkPointer(upDown, aircraft);
-
       texts.append(Unit::speedVertFpm(vspeed) % upDown);
     }
   }
