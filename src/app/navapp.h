@@ -470,6 +470,7 @@ public:
 private:
   static void initApplication();
   static void readMagDecFromDatabase();
+  static void getReportFiles(QStringList& crashReportFiles, QString& reportFilename, bool issueReport);
 
   /* Database query helpers and caches */
   static AirportQuery *airportQuerySim, *airportQueryNav;

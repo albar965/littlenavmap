@@ -273,7 +273,7 @@
     <addaction name="actionResetAllSettings"/>
     <addaction name="actionSaveAllNow"/>
     <addaction name="separator"/>
-    <addaction name="actionCreateACrashReport"/>
+    <addaction name="actionCreateIssueReport"/>
     <addaction name="separator"/>
     <addaction name="menuHelpFilesAndFolders"/>
     <addaction name="separator"/>
@@ -12146,7 +12146,7 @@ relation to shown airport</string>
     <string>Show legs to alternate airports and airports for flight plan on the map</string>
    </property>
   </action>
-  <action name="actionCreateACrashReport">
+  <action name="actionCreateIssueReport">
    <property name="text">
     <string>&amp;Create an Issue Report ...</string>
    </property>

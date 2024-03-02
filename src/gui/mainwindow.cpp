@@ -1238,7 +1238,7 @@ void MainWindow::connectAllSlots()
   connect(ui->actionResetLayout, &QAction::triggered, this, &MainWindow::resetWindowLayout);
   connect(ui->actionResetTabs, &QAction::triggered, this, &MainWindow::resetTabLayout);
   connect(ui->actionResetAllSettings, &QAction::triggered, this, &MainWindow::resetAllSettings);
-  connect(ui->actionCreateACrashReport, &QAction::triggered, &NavApp::createIssueReport);
+  connect(ui->actionCreateIssueReport, &QAction::triggered, &NavApp::createIssueReport);
 
   connect(infoController, &InfoController::showPos, mapWidget, &MapPaintWidget::showPos);
   connect(infoController, &InfoController::showRect, mapWidget, &MapPaintWidget::showRect);

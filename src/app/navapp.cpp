@@ -34,6 +34,7 @@
 #include "gui/errorhandler.h"
 #include "gui/mainwindow.h"
 #include "gui/stylehandler.h"
+#include "io/tempfile.h"
 #include "mapgui/mapthemehandler.h"
 #include "route/routealtitude.h"
 #include "util/properties.h"
@@ -398,7 +399,7 @@ void NavApp::postDatabaseLoad()
 
 Ui::MainWindow *NavApp::getMainUi()
 {
-  return mainWindow->getUi();
+  return mainWindow != nullptr ? mainWindow->getUi() : nullptr;
 }
 
 bool NavApp::isFetchAiAircraft()
@@ -859,8 +860,16 @@ void NavApp::clearStartupOptions()
   startupOptions->clear();
 }
 
-void getCrashReportFiles(QStringList& crashReportFiles, QString& reportFilename, bool manual)
+void NavApp::getReportFiles(QStringList& crashReportFiles, QString& reportFilename, bool issueReport)
 {
+
+  // Create a temporary file with the HTML content of the airport overview info
+  Ui::MainWindow *ui = getMainUi();
+  atools::io::TempFile *tempFileAirportInfo = nullptr;
+  if(ui != nullptr && !ui->textBrowserAirportInfo->toPlainText().isEmpty())
+    tempFileAirportInfo =
+      new atools::io::TempFile(ui->textBrowserAirportInfo->toHtml().toUtf8(), "_lnm_airport.html", false /* deleteOnExit */);
+
   // Collect all files which should be skipped on startup
   Settings& settings = Settings::instance();
   crashReportFiles.append(settings.valueStr(lnm::ROUTE_FILENAME));
@@ -869,10 +878,15 @@ void getCrashReportFiles(QStringList& crashReportFiles, QString& reportFilename,
   crashReportFiles.append(Settings::getFilename());
   crashReportFiles.append(Settings::getConfigFilename(".lnmpln"));
 
-  // Add log files last to catch any error which appear while compressing
+  if(tempFileAirportInfo != nullptr)
+    crashReportFiles.append(tempFileAirportInfo->getFilePath());
+
+  // Add all log files last to catch any error which appear while compressing
   crashReportFiles.append(atools::logging::LoggingHandler::getLogFiles());
 
-  reportFilename = Settings::getConfigFilename(manual ? "_issuereport.zip" : "_crashreport.zip", "crashreports");
+  reportFilename = Settings::getConfigFilename(issueReport ? "_issuereport.zip" : "_crashreport.zip", "crashreports");
+
+  delete tempFileAirportInfo;
 }
 
 void NavApp::recordStartNavApp()
@@ -881,10 +895,10 @@ void NavApp::recordStartNavApp()
 
   QStringList crashReportFiles;
   QString reportFilename;
-  getCrashReportFiles(crashReportFiles, reportFilename, false /* manual */);
+  getReportFiles(crashReportFiles, reportFilename, false /* issueReport */);
 
-  Application::recordStart(nullptr, Settings::getConfigFilename(".running"), reportFilename, crashReportFiles,
-                           lnm::helpOnlineUrl, "CRASHREPORT.html", lnm::helpLanguageOnline());
+  Application::recordStartAndDetectCrash(nullptr, Settings::getConfigFilename(".running"), reportFilename, crashReportFiles,
+                                         lnm::helpOnlineUrl, "CRASHREPORT.html", lnm::helpLanguageOnline());
 #endif
   // Keep command line options to avoid using the wrong configuration folder
 }
@@ -894,10 +908,10 @@ void NavApp::createIssueReport()
   qDebug() << Q_FUNC_INFO;
   QString reportFilename;
   QStringList crashReportFiles;
-  getCrashReportFiles(crashReportFiles, reportFilename, true /* manual */);
+  getReportFiles(crashReportFiles, reportFilename, true /* issueReport */);
 
-  Application::createIssueReport(mainWindow, reportFilename, crashReportFiles, lnm::helpOnlineUrl, "ISSUEREPORT.html",
-                                 lnm::helpLanguageOnline());
+  Application::createReport(mainWindow, reportFilename, crashReportFiles, lnm::helpOnlineUrl, "ISSUEREPORT.html",
+                            lnm::helpLanguageOnline());
 }
 
 void NavApp::setToolTipsEnabledMainMenu(bool enabled)
