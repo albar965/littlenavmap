@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2022 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -76,10 +76,10 @@ private:
 
   atools::util::HttpDownloader *downloader;
 
-  /* Plan is empty if parsing failed */
+  /* Plan is empty if parsing failed. Used to create new route. */
   atools::fs::pln::Flightplan *flightplan;
 
-  QString routeString, /* Route string is empty if download failed */
+  QString routeString, /* Route string is empty if download failed. Sent to RouteStringDialog if requested. */
           fetcherUrl; /* URL can be overridden in settings */
 
   Ui::FetchRouteDialog *ui;

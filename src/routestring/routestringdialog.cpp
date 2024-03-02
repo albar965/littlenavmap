@@ -218,6 +218,7 @@ RouteStringDialog::~RouteStringDialog()
   delete routeStringReader;
   delete procActionGroup;
   delete advancedMenu;
+  delete buttonMenu;
   delete ui;
   delete flightplan;
 }
@@ -226,10 +227,11 @@ void RouteStringDialog::buildButtonMenu()
 {
   // Build options dropdown menu ====================================================
   // Add tear off menu =======
-  ui->toolButtonRouteStringOptions->setMenu(new QMenu(ui->toolButtonRouteStringOptions));
-  QMenu *buttonMenu = ui->toolButtonRouteStringOptions->menu();
+  delete buttonMenu;
+  buttonMenu = new QMenu(ui->toolButtonRouteStringOptions);
   buttonMenu->setToolTipsVisible(true);
   buttonMenu->setTearOffEnabled(true);
+  ui->toolButtonRouteStringOptions->setMenu(buttonMenu);
 
   // Writing to string ===========================================
   actions.clear();
@@ -338,50 +340,55 @@ void RouteStringDialog::buildButtonMenu()
   buttonMenu->addAction(action);
   actions.append(action);
 
-  buttonMenu->addSeparator();
-  delete advancedMenu;
-  advancedMenu = new QMenu(tr("&Advanced"));
-  advancedMenu->setToolTipsVisible(buttonMenu->toolTipsVisible());
-  advancedMenu->setTearOffEnabled(buttonMenu->isTearOffEnabled());
-  buttonMenu->addMenu(advancedMenu);
+  if(!blocking)
+  {
+    buttonMenu->addSeparator();
 
-  action = new QAction(tr("Write &waypoints instead of airways"), advancedMenu);
-  action->setObjectName("actionWaypoints");
-  action->setToolTip(tr("Ignore airways and add all waypoints instead"));
-  action->setCheckable(true);
-  action->setData(static_cast<int>(rs::NO_AIRWAYS));
-  advancedMenu->addAction(action);
-  actions.append(action);
+    delete advancedMenu;
+    advancedMenu = new QMenu(tr("&Advanced"));
+    advancedMenu->setToolTipsVisible(buttonMenu->toolTipsVisible());
+    advancedMenu->setTearOffEnabled(buttonMenu->isTearOffEnabled());
+    buttonMenu->addMenu(advancedMenu);
 
-  action = new QAction(tr("Write &departure and destination airport"), advancedMenu);
-  action->setObjectName("actionDepartDest");
-  action->setToolTip(tr("Omit departure and destination airport ident.\n"
-                        "Note that the resulting description cannot be read into a flight plan."));
-  action->setCheckable(true);
-  action->setData(static_cast<int>(rs::START_AND_DEST));
-  advancedMenu->addAction(action);
-  actions.append(action);
+    action = new QAction(tr("Write &waypoints instead of airways"), advancedMenu);
+    action->setObjectName("actionWaypoints");
+    action->setToolTip(tr("Ignore airways and add all waypoints instead"));
+    action->setCheckable(true);
+    action->setData(static_cast<int>(rs::NO_AIRWAYS));
+    advancedMenu->addAction(action);
+    actions.append(action);
 
-  advancedMenu->addSeparator();
+    action = new QAction(tr("Write &departure and destination airport"), advancedMenu);
+    action->setObjectName("actionDepartDest");
+    action->setToolTip(tr("Omit departure and destination airport ident.\n"
+                          "Note that the resulting description cannot be read into a flight plan."));
+    action->setCheckable(true);
+    action->setData(static_cast<int>(rs::START_AND_DEST));
+    advancedMenu->addAction(action);
+    actions.append(action);
 
-  action = new QAction(tr("Read: Match coordinates to &waypoints"), advancedMenu);
-  action->setObjectName("actionMatchCoords");
-  action->setToolTip(tr("Coordinates will be converted to navaids if nearby"));
-  action->setCheckable(true);
-  action->setData(static_cast<int>(rs::READ_MATCH_WAYPOINTS));
-  advancedMenu->addAction(action);
-  actions.append(action);
+    advancedMenu->addSeparator();
 
-  action = new QAction(tr("Read first and last item as &navaid"), advancedMenu);
-  action->setObjectName("actionNavaid");
-  action->setToolTip(tr("Does not expect the first and last string item to be an airport ICAO ident if checked"));
-  action->setCheckable(true);
-  action->setData(static_cast<int>(rs::READ_NO_AIRPORTS));
-  advancedMenu->addAction(action);
-  actions.append(action);
+    action = new QAction(tr("Read: Match coordinates to &waypoints"), advancedMenu);
+    action->setObjectName("actionMatchCoords");
+    action->setToolTip(tr("Coordinates will be converted to navaids if nearby"));
+    action->setCheckable(true);
+    action->setData(static_cast<int>(rs::READ_MATCH_WAYPOINTS));
+    advancedMenu->addAction(action);
+    actions.append(action);
+
+    action = new QAction(tr("Read first and last item as &navaid"), advancedMenu);
+    action->setObjectName("actionNavaid");
+    action->setToolTip(tr("Does not expect the first and last string item to be an airport ICAO ident if checked"));
+    action->setCheckable(true);
+    action->setData(static_cast<int>(rs::READ_NO_AIRPORTS));
+    advancedMenu->addAction(action);
+    actions.append(action);
+
+    connect(advancedMenu, &QMenu::triggered, this, &RouteStringDialog::toolButtonOptionTriggered);
+  }
 
   connect(buttonMenu, &QMenu::triggered, this, &RouteStringDialog::toolButtonOptionTriggered);
-  connect(advancedMenu, &QMenu::triggered, this, &RouteStringDialog::toolButtonOptionTriggered);
 }
 
 void RouteStringDialog::splitterMoved()
@@ -704,7 +711,11 @@ void RouteStringDialog::showEvent(QShowEvent *)
 void RouteStringDialog::hideEvent(QHideEvent *)
 {
   // Hide tear off menu - otherwise it cannot be opened again
-  ui->toolButtonRouteStringOptions->menu()->hideTearOffMenu();
-  advancedMenu->hideTearOffMenu();
+  if(buttonMenu != nullptr)
+    buttonMenu->hideTearOffMenu();
+
+  if(advancedMenu != nullptr)
+    advancedMenu->hideTearOffMenu();
+
   position = geometry().topLeft();
 }

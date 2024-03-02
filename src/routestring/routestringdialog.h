@@ -124,7 +124,7 @@ private:
   virtual void showEvent(QShowEvent *) override;
   virtual void hideEvent(QHideEvent *) override;
 
-  QMenu *advancedMenu = nullptr;
+  QMenu *advancedMenu = nullptr, *buttonMenu = nullptr;
   QList<QAction *> actions;
 
   Ui::RouteStringDialog *ui;
@@ -143,7 +143,7 @@ private:
   // Save different settings depending on suffix
   QString settingsSuffix;
 
-  // blocking if parent is not null
+  // blocking if parent is not null, i.e. from SimBrief
   bool blocking = false;
 
   // Notify RouteStringDialog::textChanged() to a direct update instead of a delayed one

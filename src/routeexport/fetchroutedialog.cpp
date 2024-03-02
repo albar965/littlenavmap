@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -293,7 +293,9 @@ void FetchRouteDialog::downloadFinished(const QByteArray& data, QString)
   if(alternate == departure || alternate == destination)
     alternate.clear();
 
-  routeString = departure % " " % route % " " % destination % " " % alternate;
+  routeString = departure % (departureRunway.isEmpty() ? QString() : '/' % departureRunway) % ' ' %
+                route % ' ' %
+                destination % (destinationRunway.isEmpty() ? QString() : '/' % destinationRunway) % ' ' % alternate;
 
   // Read string to flight plan
   RouteStringReader routeStringReader(NavApp::getRouteController()->getFlightplanEntryBuilder());
