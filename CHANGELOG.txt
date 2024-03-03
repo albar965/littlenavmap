@@ -8,7 +8,7 @@ This text is partially Markdown, hence sometimes strange formatting.
 
 ## Notes
 
-**This is a stable release of *Little Navmap* which fixes several bugs and adds
+**This is a stable release of Little Navmap which fixes several bugs and adds
 improvements as well as new features.**
 
 **Notable changes:** Direct to waypoint function, search refined and simplyfied,
@@ -35,6 +35,8 @@ See here for user manual downloads:
 A big thank you to all who reported bugs and issues!
 
 ## Changes from 2.8.12 to 3.0.4
+
+See below for changes from 3.0.3.rc1 to 3.0.4.
 
 ### User Manual
 
@@ -409,7 +411,11 @@ A big thank you to all who reported bugs and issues!
   type for VOR and NDB on P3D or FSX by add-on.
 * Wrongly built MSFS airports like the Microsoft MKJS now keep their procedure information despite
   trying to override it with an empty procedure set. #1085
-* Updated database version to 28. Little Navmap will show a reminder to reload scenery library databases.
+* Updated database version to 14.28. Little Navmap will show a reminder to reload scenery library databases.
+* The program now checks for obsolete database versions. You need at least a version later than 14.24
+  to avoid crashes. Little Navmap will show a notification dialog on startup where it offers to erase and
+  reload the outdated database.
+* Added new approach markings for XP12.
 
 ### Navigraph Navdatabase
 
@@ -532,11 +538,10 @@ These are fixes for bugs introduced with the 3.0 versions.
 * Fixed issues in route description when opening from SimBrief. Now hiding advanced menu and adding
   runways to route description when opening dialog after download.
 * Attempt to fix crashes on Windows shutdown with Little Navmap open.
-* The program now checks for obsolete database versions. You need at least a version of 14.24.
-  Otherwise the program will show a notification dialog where it offers to erase the database on startup.
 * Fixed issue where a wrong crash report was triggered after identifying incompatible database.
 * Now omitting IPv6 link local addresses in display in options on page `Web Server`.
 * Reworked issue report to include up-to-date files now as well as flight plan as loaded in memory.
+* Removed ILS deduplication from X-Plane data compiler and adjusted it for MSFS, P3D and FSX.
 
 ==<<=============================================================================
 
