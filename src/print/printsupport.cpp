@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -178,10 +178,7 @@ void PrintSupport::createFlightplanDocuments()
   NavApp::getRouteController()->flightplanHeaderPrint(html, !(opts & prt::HEADER));
 
   if(opts & prt::HEADER)
-  {
-    html.p().b(tr("Flight Plan File:")).nbsp().nbsp().
-    small(NavApp::getRouteController()->getRouteFilepath()).pEnd();
-  }
+    html.p().b(tr("Flight Plan File:")).nbsp().nbsp().small(NavApp::getRouteController()->getRouteFilename()).pEnd();
 
   cursor.insertHtml(html.getHtml());
   if(newPage)

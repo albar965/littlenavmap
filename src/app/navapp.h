@@ -455,7 +455,7 @@ public:
   static void recordStartNavApp();
 
   /* Create manual issue report */
-  static void createIssueReport();
+  static void createIssueReport(const QStringList& additionalFiles);
 
   /* true if tooltips in menus are visible */
   static bool isMenuToolTipsVisible();

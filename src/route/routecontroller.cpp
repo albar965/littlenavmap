@@ -1642,6 +1642,11 @@ void RouteController::saveFlightplanLnmExported(const QString& filename)
   NavApp::updateWindowTitle();
 }
 
+void RouteController::saveFlightplanLnmToFileQuiet(const QString& filename)
+{
+  saveFlightplanLnmInternal(filename, true /* silentShutdown */, false /* clearUndo */);
+}
+
 void RouteController::saveFlightplanLnmDefaultShutdown()
 {
   qDebug() << Q_FUNC_INFO << routeFilenameDefault;
@@ -1653,7 +1658,7 @@ void RouteController::saveFlightplanLnmDefaultShutdown()
     atools::settings::Settings::instance().setValue(lnm::ROUTE_DEFAULT_FILE_LNMPLN, isLnmFormatFlightplan());
 
     // Save plan to default file
-    saveFlightplanLnmInternal(routeFilenameDefault, true /* silentShutdown */);
+    saveFlightplanLnmInternal(routeFilenameDefault, true /* silentShutdown */, true /* clearUndo */);
   }
   else if(QFileInfo::exists(routeFilenameDefault))
   {
@@ -1669,7 +1674,7 @@ void RouteController::saveFlightplanLnmDefaultShutdown()
 bool RouteController::saveFlightplanLnmAs(const QString& filename)
 {
   qDebug() << Q_FUNC_INFO << filename;
-  bool success = saveFlightplanLnmInternal(filename, false /* silentShutdown */);
+  bool success = saveFlightplanLnmInternal(filename, false /* silentShutdown */, true /* clearUndo */);
 
   if(success)
     // Keep filename only if process was not canceled out or failed otherwise
@@ -1704,7 +1709,7 @@ bool RouteController::saveFlightplanLnmAsSelection(const QString& filename)
 bool RouteController::saveFlightplanLnm()
 {
   qDebug() << Q_FUNC_INFO << routeFilename;
-  return saveFlightplanLnmInternal(routeFilename, false /* silentShutdown */);
+  return saveFlightplanLnmInternal(routeFilename, false /* silentShutdown */, true /* clearUndo */);
 }
 
 bool RouteController::saveFlightplanLnmSelectionAs(const QString& filename, int from, int to) const
@@ -1750,7 +1755,7 @@ bool RouteController::saveFlightplanLnmSelectionAs(const QString& filename, int 
   return true;
 }
 
-bool RouteController::saveFlightplanLnmInternal(const QString& filename, bool silentShutdown)
+bool RouteController::saveFlightplanLnmInternal(const QString& filename, bool silentShutdown, bool clearUndo)
 {
   qDebug() << Q_FUNC_INFO << filename << silentShutdown;
 
@@ -1830,13 +1835,16 @@ bool RouteController::saveFlightplanLnmInternal(const QString& filename, bool si
     // Set format to original route since it is saved as LNM now
     route.getFlightplan().setLnmFormat(true);
 
-    // Set clean undo state index since QUndoStack only returns weird values
-    undoIndexClean = undoIndex;
-    undoStack->setClean();
-    updateRemarkHeader();
+    if(clearUndo)
+    {
+      // Set clean undo state index since QUndoStack only returns weird values
+      undoIndexClean = undoIndex;
+      undoStack->setClean();
+    }
 
     if(!silentShutdown)
     {
+      updateRemarkHeader();
       NavApp::updateWindowTitle();
 
       if(routeHasChanged)

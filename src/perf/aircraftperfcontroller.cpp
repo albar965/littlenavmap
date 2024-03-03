@@ -122,7 +122,7 @@ void AircraftPerfController::create()
     if(editInternal(editPerf, tr("Create"), true /* newPerf */, saveClicked))
     {
       // New profile created
-      currentFilepath.clear();
+      currentFilename.clear();
       *perf = editPerf;
       edited = true;
       changed = true;
@@ -196,7 +196,7 @@ void AircraftPerfController::loadStr(const QString& string)
   {
     if(checkForChanges())
     {
-      currentFilepath.clear();
+      currentFilename.clear();
       perf->loadXmlStr(string);
       changed = false;
       windChangeTimer.stop();
@@ -232,7 +232,7 @@ void AircraftPerfController::loadFile(const QString& perfFile)
     {
       if(!perfFile.isEmpty())
       {
-        currentFilepath = perfFile;
+        currentFilename = perfFile;
         perf->load(perfFile);
         changed = false;
         fileHistory->addFile(perfFile);
@@ -369,7 +369,7 @@ void AircraftPerfController::load()
 
       if(!perfFile.isEmpty())
       {
-        currentFilepath = perfFile;
+        currentFilename = perfFile;
         perf->load(perfFile);
         changed = false;
         fileHistory->addFile(perfFile);
@@ -400,7 +400,7 @@ bool AircraftPerfController::save()
 {
   qDebug() << Q_FUNC_INFO;
 
-  if(currentFilepath.isEmpty())
+  if(currentFilename.isEmpty())
     // Not save yet - use save as
     return saveAs();
   else
@@ -408,8 +408,8 @@ bool AircraftPerfController::save()
     bool retval = true;
     try
     {
-      perf->saveXml(currentFilepath);
-      fileHistory->addFile(currentFilepath);
+      perf->saveXml(currentFilename);
+      fileHistory->addFile(currentFilename);
       changed = false;
       NavApp::setStatusMessage(tr("Aircraft performance saved."));
     }
@@ -512,12 +512,12 @@ bool AircraftPerfController::saveAs()
   try
   {
     bool oldFormat = false;
-    QString perfFile = saveAsFileDialog(currentFilepath.isEmpty() ?
+    QString perfFile = saveAsFileDialog(currentFilename.isEmpty() ?
                                         atools::cleanFilename(perf->getName()) % ".lnmperf" :
-                                        QFileInfo(currentFilepath).fileName(), &oldFormat);
+                                          QFileInfo(currentFilename).fileName(), &oldFormat);
     if(!perfFile.isEmpty())
     {
-      currentFilepath = perfFile;
+      currentFilename = perfFile;
       if(oldFormat)
         perf->saveIni(perfFile);
       else
@@ -577,7 +577,7 @@ bool AircraftPerfController::checkForChanges()
   switch(retval)
   {
     case QMessageBox::Save:
-      if(currentFilepath.isEmpty())
+      if(currentFilename.isEmpty())
         return saveAs();
       else
         return save();
@@ -956,9 +956,9 @@ void AircraftPerfController::updateReportCurrent()
 
 void AircraftPerfController::fuelReportFilepath(atools::util::HtmlBuilder& html, bool print)
 {
-  if(!currentFilepath.isEmpty() && print)
+  if(!currentFilename.isEmpty() && print)
     // Use a simple layout for printing
-    html.p().b(tr("Performance File:")).nbsp().nbsp().small(currentFilepath).pEnd();
+    html.p().b(tr("Performance File:")).nbsp().nbsp().small(currentFilename).pEnd();
 }
 
 bool AircraftPerfController::isPerformanceFile(const QString& file)
@@ -1374,7 +1374,7 @@ void AircraftPerfController::saveState()
   atools::settings::Settings& settings = atools::settings::Settings::instance();
 
   fileHistory->saveState();
-  settings.setValue(lnm::AIRCRAFT_PERF_FILENAME, currentFilepath);
+  settings.setValue(lnm::AIRCRAFT_PERF_FILENAME, currentFilename);
 
   Ui::MainWindow *ui = NavApp::getMainUi();
   atools::gui::WidgetState(lnm::AIRCRAFT_PERF_WIDGETS).save({ui->spinBoxAircraftPerformanceWindSpeed,
@@ -1532,7 +1532,7 @@ void AircraftPerfController::noPerfLoaded()
   // Invalidate performance file after an error - state "none loaded"
   perf->resetToDefault(QString());
   changed = false;
-  currentFilepath.clear();
+  currentFilename.clear();
 }
 
 void AircraftPerfController::anchorClicked(const QUrl& url)

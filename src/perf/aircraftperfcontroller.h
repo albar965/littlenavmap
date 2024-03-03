@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2022 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -89,9 +89,9 @@ public:
   }
 
   /* Currently loaded performance filepath */
-  const QString& getCurrentFilepath() const
+  const QString& getCurrentFilename() const
   {
-    return currentFilepath;
+    return currentFilename;
   }
 
   void connectAllSlots();
@@ -254,7 +254,7 @@ private:
   bool changed = false;
 
   /* Filename or empty if not saved yet */
-  QString currentFilepath;
+  QString currentFilename;
   atools::fs::perf::AircraftPerf *perf = nullptr;
 
   /* Collects aircraft data */

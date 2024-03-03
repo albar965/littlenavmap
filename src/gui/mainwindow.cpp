@@ -52,6 +52,7 @@
 #include "gui/translator.h"
 #include "gui/widgetstate.h"
 #include "info/infocontroller.h"
+#include "io/tempfile.h"
 #include "logbook/logdatacontroller.h"
 #include "logging/loggingguiabort.h"
 #include "logging/logginghandler.h"
@@ -604,18 +605,18 @@ void MainWindow::debugActionTriggered3()
 
 void MainWindow::debugActionTriggered4()
 {
-  QString file = routeController->getRouteFilepath();
+  QString file = routeController->getRouteFilename();
   routeController->loadFlightplan(file);
 }
 
 void MainWindow::debugActionTriggered5()
 {
-  desktopServices->openFile(routeController->getRouteFilepath());
+  desktopServices->openFile(routeController->getRouteFilename());
 }
 
 void MainWindow::debugActionTriggered6()
 {
-  desktopServices->openFile(NavApp::getAircraftPerfController()->getCurrentFilepath());
+  desktopServices->openFile(NavApp::getAircraftPerfController()->getCurrentFilename());
 }
 
 void MainWindow::debugActionTriggered7()
@@ -1238,7 +1239,8 @@ void MainWindow::connectAllSlots()
   connect(ui->actionResetLayout, &QAction::triggered, this, &MainWindow::resetWindowLayout);
   connect(ui->actionResetTabs, &QAction::triggered, this, &MainWindow::resetTabLayout);
   connect(ui->actionResetAllSettings, &QAction::triggered, this, &MainWindow::resetAllSettings);
-  connect(ui->actionCreateIssueReport, &QAction::triggered, &NavApp::createIssueReport);
+
+  connect(ui->actionCreateIssueReport, &QAction::triggered, this, &MainWindow::createIssueReport);
 
   connect(infoController, &InfoController::showPos, mapWidget, &MapPaintWidget::showPos);
   connect(infoController, &InfoController::showRect, mapWidget, &MapPaintWidget::showRect);
@@ -2089,9 +2091,9 @@ void MainWindow::updateWindowTitle()
     newTitle += tr(" %1").arg(NavApp::getDatabaseAiracCycleNav());
 
   // Flight plan name  ==========================================
-  if(!routeController->getRouteFilepath().isEmpty())
+  if(!routeController->getRouteFilename().isEmpty())
     newTitle += tr(" — %1%2").
-                arg(QFileInfo(routeController->getRouteFilepath()).fileName()).
+                arg(QFileInfo(routeController->getRouteFilename()).fileName()).
                 arg(routeController->hasChanged() ? tr(" *") : QString());
   else if(routeController->hasChanged())
     newTitle += tr(" — *");
@@ -2179,7 +2181,7 @@ bool MainWindow::routeCheckForChanges()
   switch(retval)
   {
     case QMessageBox::Save:
-      if(routeController->getRouteFilepath().isEmpty())
+      if(routeController->getRouteFilename().isEmpty())
         return routeSaveAsLnm();
       else
         return routeSaveLnm();
@@ -2551,7 +2553,7 @@ bool MainWindow::routeSaveLnm()
     }
   }
 
-  if(routeController->getRouteFilepath().isEmpty() || !routeController->doesLnmFilenameMatchRoute() ||
+  if(routeController->getRouteFilename().isEmpty() || !routeController->doesLnmFilenameMatchRoute() ||
      !routeController->isLnmFormatFlightplan())
     // No filename or plan has changed - save as ================================
     return routeSaveAsLnm();
@@ -2560,7 +2562,7 @@ bool MainWindow::routeSaveLnm()
     // Save as LNMPLN =====================================================
     if(routeController->saveFlightplanLnm())
     {
-      routeFileHistory->addFile(routeController->getRouteFilepath());
+      routeFileHistory->addFile(routeController->getRouteFilename());
       updateActionStates();
       setStatusMessage(tr("Flight plan saved."));
       saveFileHistoryStates();
@@ -3815,6 +3817,36 @@ void MainWindow::updateXpconnectInstallOptions()
                                          XpconnectInstaller::isXpconnectAvailable());
 }
 
+void MainWindow::createIssueReport()
+{
+  QStringList additionalReportFiles;
+
+  // Save flight plan to temporary file
+  if(!routeController->getRouteConst().isEmpty())
+  {
+    QString tempFlightplanFile = atools::io::TempFile::getTempFilename("-report.lnmpln");
+    routeController->saveFlightplanLnmToFileQuiet(tempFlightplanFile);
+    additionalReportFiles.append(tempFlightplanFile);
+  }
+
+  // Save airport info to temporary file
+  if(!ui->textBrowserAirportInfo->toPlainText().isEmpty())
+  {
+    QString tempAirportFile = atools::io::TempFile::getTempFilename("-report-airport.html");
+    atools::strToFile(tempAirportFile, ui->textBrowserAirportInfo->toHtml());
+    additionalReportFiles.append(tempAirportFile);
+  }
+
+  // Save trail and all settings now
+  saveStateNow();
+
+  NavApp::createIssueReport(additionalReportFiles);
+
+  // Remove temp files which are now packed into Zip
+  for(const QString& file : qAsConst(additionalReportFiles))
+    QFile::remove(file);
+}
+
 void MainWindow::resetAllSettings()
 {
   qDebug() << Q_FUNC_INFO;
@@ -4076,7 +4108,6 @@ void MainWindow::saveStateMain()
       stateFile.write(saveState());
       stateFile.close();
     }
-
 #endif
 
 #ifdef DEBUG_DUMP_SHORTCUTS

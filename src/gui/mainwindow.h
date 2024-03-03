@@ -376,6 +376,9 @@ private:
   void resetMessages();
   void resetAllSettings();
 
+  /* Save all and create an issue report */
+  void createIssueReport();
+
   void showDatabaseFiles();
   void showShowMapCache();
   void showMapInstallation();

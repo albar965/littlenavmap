@@ -112,6 +112,9 @@ public:
   bool saveFlightplanLnmAs(const QString& filename);
   bool saveFlightplanLnmAsSelection(const QString& filename);
 
+  /* Used for issue report. Does not show warning dialogs */
+  void saveFlightplanLnmToFileQuiet(const QString& filename);
+
   /* Save temporary to settings folder or delete temp if plan is empty on shutdown */
   void saveFlightplanLnmDefaultShutdown();
 
@@ -287,10 +290,16 @@ public:
   void showCustomApproachMainMenu();
   void showCustomDepartureMainMenu();
 
-  /* Name of currently loaded flight plan file */
-  const QString& getRouteFilepath() const
+  /* Name of currently loaded flight plan file full path */
+  const QString& getRouteFilename() const
   {
     return routeFilename;
+  }
+
+  /* Name of default flight plan file in settings full path */
+  const QString& getRouteFilenameDefault() const
+  {
+    return routeFilenameDefault;
   }
 
   /* Update the changed file indication in the flight plan tab header */
@@ -377,7 +386,7 @@ private:
   };
 
   /* Saves flight plan using LNM format. Returns true on success. */
-  bool saveFlightplanLnmInternal(const QString& filename, bool silentShutdown);
+  bool saveFlightplanLnmInternal(const QString& filename, bool silentShutdown, bool clearUndo);
 
   /* Saves flight plan sippet using LNM format to given name. Given range must not contains procedures or alternates. */
   bool saveFlightplanLnmSelectionAs(const QString& filename, int from, int to) const;

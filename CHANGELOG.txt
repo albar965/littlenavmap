@@ -536,7 +536,7 @@ These are fixes for bugs introduced with the 3.0 versions.
   Otherwise the program will show a notification dialog where it offers to erase the database on startup.
 * Fixed issue where a wrong crash report was triggered after identifying incompatible database.
 * Now omitting IPv6 link local addresses in display in options on page `Web Server`.
-
+* Reworked issue report to include up-to-date files now as well as flight plan as loaded in memory.
 
 ==<<=============================================================================
 
