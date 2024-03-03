@@ -589,7 +589,7 @@ void MapWidget::updateTooltip()
 
 void MapWidget::showTooltip(bool update)
 {
-  if(databaseLoadStatus || noRender())
+  if(databaseLoadStatus || noRender() || NavApp::isShuttingDown())
     return;
 
 #ifdef DEBUG_INFORMATION
@@ -626,6 +626,9 @@ void MapWidget::showTooltip(bool update)
 /* Stop all line drag and drop if the map loses focus */
 void MapWidget::focusOutEvent(QFocusEvent *)
 {
+  if(NavApp::isShuttingDown())
+    return;
+
   hideTooltip();
 
   if(!(mouseState & mw::DRAG_POST_MENU))
@@ -637,6 +640,9 @@ void MapWidget::focusOutEvent(QFocusEvent *)
 
 void MapWidget::leaveEvent(QEvent *)
 {
+  if(NavApp::isShuttingDown())
+    return;
+
   hideTooltip();
   mainWindow->updateMapPosLabel(Pos(), -1, -1);
 }
