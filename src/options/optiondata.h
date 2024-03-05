@@ -648,9 +648,13 @@ public:
   OptionData(const OptionData& other) = delete;
   OptionData& operator=(const OptionData& other) = delete;
 
-  /* Get locale name like "en_US" or "de" for user interface language.
-   *  This uses the settings directly and does not need an OptionData instance. */
-  static QString getLanguage();
+  /* Get locale name like "en_US" or "de" for user interface language. Empty on first start.
+   * This uses the settings directly and does not need an OptionData instance.
+   * Can be overridden by command line. */
+  static QString getLanguageFromConfigFile();
+
+  /* Write directly to settings file */
+  static void saveLanguageToConfigFile(const QString& language);
 
   /* Get option flags */
   const opts::Flags getFlags() const
@@ -661,12 +665,6 @@ public:
   const opts2::Flags2 getFlags2() const
   {
     return flags2;
-  }
-
-  /* Get short user interface language code name like "en" or "de" suitable for help URLs */
-  const QString getLanguageShort() const
-  {
-    return guiLanguage.section('_', 0, 0).section('-', 0, 0);
   }
 
   opts::UnitDist getUnitDist() const

@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -68,6 +68,9 @@ public:
   OptionsDialog(const OptionsDialog& other) = delete;
   OptionsDialog& operator=(const OptionsDialog& other) = delete;
 
+  /* Load and select best language option and fill combo box. */
+  void initLanguage();
+
   /* Saves the state of all widgets */
   void saveState();
 
@@ -79,9 +82,6 @@ public:
 
   /* Get override region settings options directly from settings file*/
   static bool isOverrideRegion();
-
-  /* Get locale name like "en_US" or "de" directly from settings file */
-  static QString getLocale();
 
   /* Test if a public network is used with a too low update rate */
   void checkOfficialOnlineUrls();
@@ -111,7 +111,11 @@ private:
   void updateTrailStates();
 
   void buttonBoxClicked(QAbstractButton *button);
+
+  /* Copy widget states to OptionData object */
   void widgetsToOptionData();
+
+  /* Copy OptionData object to widget */
   void optionDataToWidgets(const OptionData& data);
 
   void widgetToMapThemeKeys(OptionData& data);
@@ -253,7 +257,7 @@ private:
   void mapboxUserMapClicked();
 
   /* Fill combo box with available languages and select best match. English, otherwise.*/
-  void udpdateLanguageComboBox(const QString& guiLanguage);
+  void udpdateLanguageComboBox(const QString& lang);
   void languageChanged(int);
 
   /* Font selection for map and GUI */

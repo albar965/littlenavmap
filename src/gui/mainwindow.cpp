@@ -168,7 +168,7 @@ MainWindow::MainWindow()
 
     ui->setupUi(this);
 
-    QString helpFileOffline = HelpHandler::getHelpFile(lnm::helpOfflineFile, OptionData::getLanguage());
+    QString helpFileOffline = HelpHandler::getHelpFile(lnm::helpOfflineFile, OptionData::getLanguageFromConfigFile());
     qDebug() << Q_FUNC_INFO << "Offline help" << helpFileOffline;
     ui->actionHelpContentsOffline->setVisible(!helpFileOffline.isEmpty() && QFile::exists(helpFileOffline));
 
@@ -242,6 +242,10 @@ MainWindow::MainWindow()
 
     qDebug() << Q_FUNC_INFO << "Creating OptionsDialog";
     optionsDialog = new OptionsDialog(this);
+
+    // get best language and fill options combo box
+    optionsDialog->initLanguage();
+
     // Has to load the state now so options are available for all controller and manager classes
     optionsDialog->restoreState();
     optionsChanged();
@@ -682,7 +686,7 @@ void MainWindow::showFaqPage()
 
 void MainWindow::showOfflineHelp()
 {
-  desktopServices->openFile(HelpHandler::getHelpFile(lnm::helpOfflineFile, OptionData::getLanguage()));
+  desktopServices->openFile(HelpHandler::getHelpFile(lnm::helpOfflineFile, OptionData::getLanguageFromConfigFile()));
 }
 
 void MainWindow::openLogFile()

@@ -416,6 +416,8 @@ See below for changes from 3.0.3.rc1 to 3.0.4.
   to avoid crashes. Little Navmap will show a notification dialog on startup where it offers to erase and
   reload the outdated database.
 * Added new approach markings for XP12.
+* Fixed wrong language settings used to load MSFS database on first startup. Now always using the
+  language set in options by the user.
 
 ### Navigraph Navdatabase
 

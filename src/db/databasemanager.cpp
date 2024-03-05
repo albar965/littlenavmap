@@ -1061,7 +1061,7 @@ void DatabaseManager::clearLanguageIndex()
 void DatabaseManager::loadLanguageIndex()
 {
   if(SqlUtil(databaseSim).hasTableAndRows("translation"))
-    languageIndex->readFromDb(databaseSim, OptionData::getLanguage());
+    languageIndex->readFromDb(databaseSim, OptionData::getLanguageFromConfigFile());
 }
 
 void DatabaseManager::clearAircraftIndex()

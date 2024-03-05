@@ -41,10 +41,16 @@ OptionData::OptionData()
 
 }
 
-QString OptionData::getLanguage()
+QString OptionData::getLanguageFromConfigFile()
 {
   return QSettings(QSettings::IniFormat, QSettings::UserScope, QCoreApplication::organizationName(),
                    lnm::OPTIONS_APPLICATION).value(lnm::OPTIONS_DIALOG_LANGUAGE).toString();
+}
+
+void OptionData::saveLanguageToConfigFile(const QString& language)
+{
+  QSettings(QSettings::IniFormat, QSettings::UserScope, QCoreApplication::organizationName(),
+            lnm::OPTIONS_APPLICATION).setValue(lnm::OPTIONS_DIALOG_LANGUAGE, language);
 }
 
 OptionData::~OptionData()

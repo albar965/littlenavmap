@@ -232,11 +232,12 @@ int main(int argc, char *argv[])
       // ==============================================
       // Set language from command line into options - will be saved
       if(!commandLine.getLanguage().isEmpty())
-        settings.setValue(lnm::OPTIONS_DIALOG_LANGUAGE, commandLine.getLanguage());
+        OptionData::saveLanguageToConfigFile(commandLine.getLanguage());
 
       // Load available translations early ============================================
-      QString language = earlySettings.value(lnm::OPTIONS_DIALOG_LANGUAGE).toString();
+      QString language = OptionData::getLanguageFromConfigFile();
       if(language.isEmpty())
+        // Use system default for now if not given in settings yet
         language = QLocale().name();
 
       qInfo() << "Loading translations for" << language;
@@ -316,7 +317,7 @@ int main(int argc, char *argv[])
         QLocale::setDefault(QLocale("en"));
       }
 
-      qDebug() << "Locale after setting to" << OptionsDialog::getLocale() << QLocale()
+      qDebug() << "Locale after setting to" << OptionData::getLanguageFromConfigFile() << QLocale()
                << "decimal point" << QString(QLocale().decimalPoint())
                << "group separator" << QString(QLocale().groupSeparator());
 

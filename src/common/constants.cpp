@@ -65,7 +65,7 @@ const QString helpLanguageOnline()
   {
     // Get the online indicator file
     QString onlineFlagFile = atools::gui::HelpHandler::getHelpFile(
-      QLatin1String("help") % atools::SEP % "little-navmap-user-manual-${LANG}.online", OptionData::getLanguage());
+      QLatin1String("help") % atools::SEP % "little-navmap-user-manual-${LANG}.online", OptionData::getLanguageFromConfigFile());
 
     // Extract language from the file
     QRegularExpressionMatch match = INDICATOR_FILE.match(onlineFlagFile);
@@ -87,19 +87,19 @@ void loadHelpUrls()
 
   QSettings settings(urlsPath, QSettings::IniFormat);
 
-  QSettings optionsettings(atools::settings::Settings::getFilename(), QSettings::IniFormat);
+  QString lang = QLocale().name();
 
-  QString guiLanguage = optionsettings.value(lnm::OPTIONS_DIALOG_LANGUAGE, QLocale().name()).toString();
-  guiLanguage = guiLanguage.section('_', 0, 0);
+  qDebug() << Q_FUNC_INFO << lang;
+
+  if(!OptionData::getLanguageFromConfigFile().isEmpty())
+    lang = OptionData::getLanguageFromConfigFile().section('_', 0, 0);
 
   // .../help/en/index.html
-  QFileInfo localFile(QCoreApplication::applicationDirPath() % atools::SEP % "help" % atools::SEP %
-                      guiLanguage % atools::SEP % "index.html");
+  QFileInfo localFile(QCoreApplication::applicationDirPath() % atools::SEP % "help" % atools::SEP % lang % atools::SEP % "index.html");
 
   if(!localFile.exists())
     // Try English manual
-    localFile.setFile(QCoreApplication::applicationDirPath() % atools::SEP % "help" % atools::SEP %
-                      "en" % atools::SEP % "index.html");
+    localFile.setFile(QCoreApplication::applicationDirPath() % atools::SEP % "help" % atools::SEP % "en" % atools::SEP % "index.html");
 
   // Check if local index.html exists
   if(localFile.exists())

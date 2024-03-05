@@ -1167,11 +1167,6 @@ bool OptionsDialog::isOverrideRegion()
   return Settings::instance().valueBool(lnm::OPTIONS_GUI_OVERRIDE_LOCALE, false);
 }
 
-QString OptionsDialog::getLocale()
-{
-  return Settings::instance().valueStr(lnm::OPTIONS_DIALOG_LANGUAGE, QLocale().name());
-}
-
 void OptionsDialog::updateTrailStates()
 {
   ui->comboBoxOptionsDisplayTrailGradient->setEnabled(ui->checkBoxOptionsDisplayTrailGradient->isChecked());
@@ -1397,9 +1392,7 @@ void OptionsDialog::udpdateLanguageComboBox(const QString& lang)
     {
       // Usedata for item is locale object
       const QLocale& locale = locales.at(i);
-      ui->comboBoxOptionsGuiLanguage->addItem(tr("%1, %2").
-                                              arg(locale.nativeLanguageName()).
-                                              arg(locale.nativeCountryName()), locale);
+      ui->comboBoxOptionsGuiLanguage->addItem(tr("%1, %2").arg(locale.nativeLanguageName()).arg(locale.nativeCountryName()), locale);
     }
   }
 
@@ -1422,8 +1415,7 @@ void OptionsDialog::udpdateLanguageComboBox(const QString& lang)
     if(locale.language() == QLocale::English)
       englishLocale = i;
   }
-  qDebug() << Q_FUNC_INFO << "currentIndexLangCountry" << currentIndexLangCountry
-           << "currentIndexLang" << currentIndexLang;
+  qDebug() << Q_FUNC_INFO << "currentIndexLangCountry" << currentIndexLangCountry << "currentIndexLang" << currentIndexLang;
 
   // Use the best match to change the current combo box entry
   if(currentIndexLangCountry != -1)
@@ -1811,7 +1803,6 @@ void OptionsDialog::updateWhileFlyingWidgets(bool)
                                                     ui->checkBoxOptionsSimClearSelection->isChecked());
 }
 
-/* Copy widget states to OptionData object */
 void OptionsDialog::widgetsToOptionData()
 {
   OptionData& data = OptionData::instanceInternal();
@@ -2134,13 +2125,21 @@ void OptionsDialog::displayOnlineRangeFromData(QSpinBox *spinBox, QCheckBox *che
   checkButton->setChecked(value == -1);
 }
 
-/* Copy OptionData object to widget */
+void OptionsDialog::initLanguage()
+{
+  udpdateLanguageComboBox(OptionData::getLanguageFromConfigFile());
+  OptionData::saveLanguageToConfigFile(guiLanguage);
+
+  qDebug() << Q_FUNC_INFO << guiLanguage;
+}
+
 void OptionsDialog::optionDataToWidgets(const OptionData& data)
 {
   guiLanguage = data.guiLanguage;
+  udpdateLanguageComboBox(guiLanguage);
+
   guiFont = data.guiFont;
   mapFont = data.mapFont;
-  udpdateLanguageComboBox(data.guiLanguage);
   updateGuiFontLabel();
   updateMapFontLabel();
 
