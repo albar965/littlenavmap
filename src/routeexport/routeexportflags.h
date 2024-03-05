@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -57,7 +57,7 @@ enum RouteExportFormatType : quint16
   RXPGTNUWP = 33, /* Reality XP GTN with user defined waypoints */
   GFP = 8, /* Garmin GFP Format */
   GFPUWP = 34, /* Garmin GFP Format with user defined waypoints */
-  PMS50 = 39, /* Garmin PMS50 GTN750  */
+  PMS50 = 39, /* Garmin PMS50 GTN750. Modified MSFS PLN.  */
   TDSGTNXI = 43, /* TDS GTNXi - GFP format */
   TDSGTNXIWP = 46, /* TDS GTNXi - GFP format */
 

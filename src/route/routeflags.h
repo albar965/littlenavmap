@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -95,6 +95,9 @@ enum RouteAdjustOption
 
   /* Microsoft Flight Simulator 2020 */
   DEFAULT_OPTS_MSFS = DEFAULT_OPTS | SAVE_MSFS,
+
+  /* PMS50 GTN750 */
+  DEFAULT_OPTS_PMS50 = DEFAULT_OPTS_MSFS,
 
   /* Export adjust options for XP11 and old FMS3 */
   DEFAULT_OPTS_FMS3 = rf::DEFAULT_OPTS_NO_PROC,
