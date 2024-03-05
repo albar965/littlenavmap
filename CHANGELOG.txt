@@ -170,6 +170,7 @@ See below for changes from 3.0.3.rc1 to 3.0.4.
   waypoints.
 * Added option to adjust text size for tab 'Flight Plan Remarks' in options on page `Display and Text`.
 * Added text size option for flight plan table header text in options on page `Display and Text`.
+* Replaced `°` in MSFS flight plan export with `*` to avoid issues on computers with Asian locale.
 
 ### Flight Plan Route Description
 
