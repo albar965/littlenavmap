@@ -172,7 +172,7 @@ int main(int argc, char *argv[])
   // Add freetype font engine arguments for Windows ===========================================================
 #if defined(Q_OS_WIN32)
   // Get checkbox value
-  bool freetype = earlySettings.value("OptionsDialog/Widget_checkBoxOptionsFreetype", 2).toInt() == 2;
+  bool freetype = settings.valueInt("OptionsDialog/Widget_checkBoxOptionsFreetype", 2) == 2;
 #else
   bool freetype = false;
 #endif
