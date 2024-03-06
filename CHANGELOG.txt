@@ -11,10 +11,10 @@ This text is partially Markdown, hence sometimes strange formatting.
 **This is a stable release of Little Navmap which fixes several bugs and adds
 improvements as well as new features.**
 
-**Notable changes:** Direct to waypoint function, search refined and simplyfied,
+**Notable changes:** Direct to waypoint function, search refined and simplified,
 convert procedure to waypoints for editing, route description using runways and approaches,
 load and save aircraft trail as GPX, search in options dialog window, hints in options,
-wind in runway and procedure selection, install xpconnect from menu `Tools`,
+wind in runway and procedure selection, install Little Xpconnect from menu `Tools`,
 crash and issue reports, colored aircraft trail and more.
 
 **Also update Little Navconnect and Little Xpconnect if you're using one of them.
@@ -82,7 +82,7 @@ See below for changes from 3.0.3.rc1 to 3.0.4.
 
 * [Search in options dialog](https://www.littlenavmap.org/manuals/littlenavmap/release/3.0/en/OPTIONS.html#options-search)
 * [Hints in options dialog](https://www.littlenavmap.org/manuals/littlenavmap/release/3.0/en/OPTIONS.html#options-hints)
-* [Option to toggle Freetype font engine](https://www.littlenavmap.org/manuals/littlenavmap/release/3.0/en/OPTIONS.html#options-freetype)
+* [Option to toggle FreeType font engine](https://www.littlenavmap.org/manuals/littlenavmap/release/3.0/en/OPTIONS.html#options-freetype)
 
 #### Changed Search
 
@@ -147,7 +147,7 @@ See below for changes from 3.0.3.rc1 to 3.0.4.
   to magnetic drift.
 * Now trying to find a cruise altitude which does not violate restrictions if it cannot be loaded
   from a flight plan or if the plan has an invalid cruise altitude. This applies to all plans
-  which are loaded manually by a user. The change can be undone to revert to the previously
+  which are loaded manually by an user. The change can be undone to revert to the previously
   invalid cruise altitude.
 * Fixed issue where PLN, FMS or other imported flight plan files were wrongly overwritten in LNMPLN
   format in some cases.
@@ -269,7 +269,7 @@ See below for changes from 3.0.3.rc1 to 3.0.4.
 * Fixed performance issues when drawing airway and other rotated text labels on Windows which
   resulted in jerky map movement with airways or ILS visible.
 * Now disabling font anti-aliasing for all labels when moving map to get a smoother movement.
-* Now using Freetype as font engine for better text labels and better performance on Windows.
+* Now using FreeType as font engine for better text labels and better performance on Windows.
   Rotated texts are better readable now. You can disable this in options on page `Display and Text`.
 * Improved placement of flight plan text labels to minimize overlap.
 * Added airspace labels. Note that labels might still overlap. Disable the labels or
@@ -354,7 +354,7 @@ See below for changes from 3.0.3.rc1 to 3.0.4.
   map features.
 * Now removing leading and trailing white space from URLs in options to avoid issues with wrong
   user input. #1089
-* New option to enable or disable the Freetype font engine on Windows on options on page `Display and Text`.
+* New option to enable or disable the FreeType font engine on Windows on options on page `Display and Text`.
   Enabling this results in better and faster text display on the map, especially for rotated labels.
   But the text will appear slightly blurred throughout the whole application. Deselect this to
   avoid the blurred text in menus and application windows.
@@ -365,7 +365,7 @@ See below for changes from 3.0.3.rc1 to 3.0.4.
   using partial match for quick search. Separate search fields are still available. The same rules as
   mentioned in the point below apply.
 * Completely reworked search functions for all search tabs. Now looking for partial text matches
-  per default in all input fiels instead of requiring stars as wildcards. This means that a search
+  per default in all input fields instead of requiring stars as wildcards. This means that a search
   term of `Chicago` will find Gary Chicago as well as KORD. `EDDE` will find Erfurt-Weimar (EDDE)
   as well as Wedderburn. Stars `*` act as wildcards and double quotes `"` force an exact search.
   You can also enter a space separated list of names or idents and Little Navmap will show the
@@ -492,15 +492,20 @@ Note that these changes were first published in AIRAC cycle 2402 and need an upd
 * Enabled IPv6 for remote connections to Little Navconnect.
 * Added semicolon to invalid characters in filename. This will be replaced in file names when
   exporting flight plans.
+* Removed command line option `-s` (`--settings-directory`). Use `-p` (`--settings-path`) instead which uses
+  either the full path or a path relative to the application executable.
+* Fixed settings like high DPI mode not read when using command line options to relocate the settings folder
+  like it is used in portable mode.
 
 ### Web Server
 
-* Enabled IPv6 for webserver and added additional IPv6 addresses to display. This might affect startup
+* Enabled IPv6 for web server and added additional IPv6 addresses to display. This might affect startup
   time depending on your configuration. Disable the web server if you don't need it.
 * Delaying name resolution to avoid slow startup.
 * Fixed additional map theme not used on web server map which was stuck to OpenStreetMap.
-* Removed display of loopback or localhost devices which are not accessible from other computers on a
-  local network. This is now added only if no other address was found, i.e. no network interfaces available.
+* Removed display of loopback or localhost devices in options on page `Web Server` which are not
+  accessible from other computers on a local network. This is now added only if no other
+  address was found, i.e. no network interfaces available.
 * Fixed issues where the web server map reverted back to the Atlas map theme when using external map
   themes.
 * Fixed a deadlock resulting in program freeze in HTTP server. This appeared when shutting down with
@@ -544,7 +549,7 @@ These are fixes for bugs introduced with the 3.0 versions.
 * Fixed issue where a wrong crash report was triggered after identifying incompatible database.
 * Now omitting IPv6 link local addresses in display in options on page `Web Server`.
 * Reworked issue report to include up-to-date files now as well as flight plan as loaded in memory.
-* Removed ILS deduplication from X-Plane data compiler and adjusted it for MSFS, P3D and FSX.
+* Removed ILS de-duplication from X-Plane data compiler and adjusted it for MSFS, P3D and FSX.
 
 ==<<=============================================================================
 
@@ -590,7 +595,7 @@ These are fixes for bugs introduced with the 3.0 versions.
 
 * [Search in options dialog](https://www.littlenavmap.org/manuals/littlenavmap/release/3.0/en/OPTIONS.html#options-search)
 * [Hints in options dialog](https://www.littlenavmap.org/manuals/littlenavmap/release/3.0/en/OPTIONS.html#options-hints)
-* [Option to toggle Freetype font engine](https://www.littlenavmap.org/manuals/littlenavmap/release/3.0/en/OPTIONS.html#options-freetype)
+* [Option to toggle FreeType font engine](https://www.littlenavmap.org/manuals/littlenavmap/release/3.0/en/OPTIONS.html#options-freetype)
 
 #### Changed Search
 
@@ -637,7 +642,7 @@ These are fixes for bugs introduced with the 3.0 versions.
   formats from the page [User Manuals](https://albar965.github.io/manuals.html).
 * Now ignoring empty GRIB files from the X-Plane weather folder. Replaced error dialog window with
   warning message in log.
-* Moved option to enable or disable the Freetype font engine on Windows into options on page `Display and Text`.
+* Moved option to enable or disable the FreeType font engine on Windows into options on page `Display and Text`.
   Enabling this option results in better and faster text display on the map, especially for rotated labels.
   But the text will appear slightly blurred throughout the whole application. Deselect this to
   avoid the slightly blurred text in menus and application windows.
@@ -808,7 +813,7 @@ A big thank you to all who reported bugs and issues!
 * More small fixes and text changes.
 * Now trying to find a cruise altitude which does not violate restrictions if it cannot be loaded
   from a flight plan or if the plan has an invalid cruise altitude. This applies to all plans
-  which are loaded manually by a user. The change is now stored in the undo/redo stack and can be
+  which are loaded manually by an user. The change is now stored in the undo/redo stack and can be
   undone to revert to the previously invalid cruise altitude.
 * Fixed issue wher PLN, FMS or other imported flight plan files were wrongly overwritten in LNMPLN
   format in some cases.
@@ -1468,7 +1473,7 @@ A big thank you to all who reported bugs and issues!
 ### Userpoints
 
 * Added quick `Mark Airport as Add-on` function in all related context menus in map, flight plan
-  table and airport search result table. This inserts a userpoint of type `Addon` without additional
+  table and airport search result table. This inserts an userpoint of type `Addon` without additional
   editing. The labels of this userpoint type (yellow ring) are not shown on map to avoid overlap
   with the airport labels. You can add your own types starting with text `Addon`. These will be
   treated the same way.
@@ -1513,7 +1518,7 @@ A big thank you to all who reported bugs and issues!
 * Avoiding flickering course values while dragging measurement line.
 * Better measurement line handling: Tooltip and hotspot for measurement lines is now origin and end.
   The line can be moved from both ends.
-* Measurement lines can now be the origin of a userpoint showing its label.
+* Measurement lines can now be the origin of an userpoint showing its label.
 * Added option for airway display at flight plan legs in options on page `Map Display Labels` in
   branch `Flight Plan`. This is disabled per default.
 * Adjusted settings for offset localizer to also detect slightly offset KJFK 22R. This is indicated
@@ -1584,7 +1589,7 @@ A big thank you to all who reported bugs and issues!
 * More accuracy for flight plan calculation preference slider.
 * Added blue question mark help buttons to information and aircraft progress windows linking to the
   related user manual chapters.
-* Fixed userpoints category not being enabled after assigning a new type to a userpoint.
+* Fixed userpoints category not being enabled after assigning a new type to an userpoint.
   This avoids the confusing disappearance of a userpoint after changing the type.
 * Added workaround for missing translations in MSFS for AI or multiplayer aircraft. Needs a reload
   of the scenery library.
