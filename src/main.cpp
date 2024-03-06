@@ -48,7 +48,6 @@
 #include <QSslSocket>
 #include <QStyleFactory>
 #include <QPixmapCache>
-#include <QSettings>
 #include <QScreen>
 #include <QProcessEnvironment>
 
@@ -107,14 +106,24 @@ int main(int argc, char *argv[])
   atools::fs::FsPaths::intitialize();
 
   // Tasks that have to be done before creating the application object and logging system =================
-  QStringList renderOptMessages;
-  QSettings earlySettings(QSettings::IniFormat, QSettings::UserScope, lnm::OPTIONS_APPLICATION_ORGANIZATION, lnm::OPTIONS_APPLICATION);
+  // Application name is not available yet
 
+  // Create settings instance - no QCoreApplication needed so far =========================================
+  QString settingsPath = CommandLine::getOption(argc, argv, "p", "settings-path");
+  Settings::setOverridePath(settingsPath);
+  Settings::setOrganizationName(lnm::OPTIONS_APPLICATION_ORGANIZATION);
+  Settings::setApplicationName(lnm::OPTIONS_APPLICATION);
+
+  Settings& settings = Settings::instance();
+
+  QStringList logMessages;
+
+  // Render options =================================================
   // The loading mechanism can be configured through the QT_OPENGL environment variable and the following application attributes:
   // Qt::AA_UseDesktopOpenGL Equivalent to setting QT_OPENGL to desktop.
   // Qt::AA_UseOpenGLES Equivalent to setting QT_OPENGL to angle.
   // Qt::AA_UseSoftwareOpenGL Equivalent to setting QT_OPENGL to software.
-  QString renderOpt = earlySettings.value("Options/RenderOpt", "none").toString();
+  QString renderOpt = settings.valueStr("Options/RenderOpt", "none");
   if(!renderOpt.isEmpty())
   {
     // QT_OPENGL does not work - so do this ourselves
@@ -137,19 +146,20 @@ int main(int argc, char *argv[])
       QApplication::setAttribute(Qt::AA_UseSoftwareOpenGL, true);
     }
     else if(renderOpt != "none")
-      renderOptMessages.append("Wrong renderer " + renderOpt);
+      logMessages.append("Wrong renderer " + renderOpt);
   }
-  renderOptMessages.append("RenderOpt " + renderOpt);
+  logMessages.append("RenderOpt " + renderOpt);
 
-  if(earlySettings.value("OptionsDialog/Widget_checkBoxOptionsGuiHighDpi", 2).toInt() == 2)
+  // High DPI option =================================================
+  if(settings.valueInt("OptionsDialog/Widget_checkBoxOptionsGuiHighDpi", 2) == 2)
   {
-    renderOptMessages.append("High DPI scaling enabled");
-    QGuiApplication::setAttribute(Qt::AA_EnableHighDpiScaling, true);
+    logMessages.append("High DPI scaling enabled");
+    QGuiApplication::setAttribute(Qt::AA_EnableHighDpiScaling, true); // Set before QGuiApplication is constructed.
     QGuiApplication::setAttribute(Qt::AA_UseHighDpiPixmaps, true);
   }
   else
   {
-    renderOptMessages.append("High DPI scaling disabled");
+    logMessages.append("High DPI scaling disabled");
     QGuiApplication::setAttribute(Qt::AA_EnableHighDpiScaling, false);
     // QGuiApplication::setAttribute(Qt::AA_DisableHighDpiScaling, true); // Freezes with QT_SCALE_FACTOR=2 on Linux
     QGuiApplication::setAttribute(Qt::AA_UseHighDpiPixmaps, false);
@@ -157,7 +167,7 @@ int main(int argc, char *argv[])
   }
 
   // Show dialog on exception in main event queue - can be disabled for debugging purposes
-  NavApp::setShowExceptionDialog(earlySettings.value("Options/ExceptionDialog", true).toBool());
+  NavApp::setShowExceptionDialog(settings.valueBool("Options/ExceptionDialog", true));
 
   // Add freetype font engine arguments for Windows ===========================================================
 #if defined(Q_OS_WIN32)
@@ -222,12 +232,11 @@ int main(int argc, char *argv[])
 
       // ==============================================
       // Print some information which can be useful for debugging
+      Settings::logMessages();
       LoggingUtil::logSystemInformation();
-      for(const QString& message : renderOptMessages)
-        qInfo() << message;
 
-      // Create settings instance =========================================
-      Settings& settings = Settings::instance();
+      for(const QString& message : logMessages)
+        qInfo() << message;
 
       // ==============================================
       // Set language from command line into options - will be saved
@@ -259,7 +268,6 @@ int main(int argc, char *argv[])
                                   << Application::applicationName() << " revision " << GIT_REVISION_LITTLENAVMAP;
 
       LoggingUtil::logStandardPaths();
-      Settings::logSettingsInformation();
 
       qInfo() << "SSL supported" << QSslSocket::supportsSsl()
               << "build library" << QSslSocket::sslLibraryBuildVersionString()

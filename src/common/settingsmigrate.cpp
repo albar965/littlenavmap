@@ -336,7 +336,7 @@ void checkAndMigrateSettings()
   } // if(optionsVersion.isValid())
   else
   {
-    qWarning() << Q_FUNC_INFO << "No version information found in settings file. Updating to" << programVersion;
+    qWarning() << Q_FUNC_INFO << "No version information found in settings file. Setting to" << programVersion;
     settings.setValue(lnm::OPTIONS_VERSION, programVersion.getVersionString());
     Settings::syncSettings();
   }

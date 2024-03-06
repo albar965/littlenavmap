@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -23,6 +23,7 @@
 
 #include <QDebug>
 #include <QCommandLineParser>
+#include <QStringBuilder>
 
 CommandLine::CommandLine()
 {
@@ -34,12 +35,6 @@ CommandLine::CommandLine()
                                                                 QCoreApplication::applicationVersion()));
   parser->addHelpOption();
   parser->addVersionOption();
-
-  settingsDirOpt = new QCommandLineOption({"s", "settings-directory"},
-                                          QObject::tr("Use <settings-directory> instead of \"%1\". This does *not* override the full path. "
-                                                      "Spaces are replaced with underscores.").arg(NavApp::organizationName()),
-                                          QObject::tr("settings-directory"));
-  parser->addOption(*settingsDirOpt);
 
   settingsPathOpt = new QCommandLineOption({"p", "settings-path"},
                                            QObject::tr("Use <settings-path> to store options and databases into the given directory. "
@@ -96,7 +91,6 @@ CommandLine::CommandLine()
 CommandLine::~CommandLine()
 {
   delete parser;
-  delete settingsDirOpt;
   delete settingsPathOpt;
   delete logPathOpt;
   delete cachePathOpt;
@@ -107,6 +101,34 @@ CommandLine::~CommandLine()
   delete languageOpt;
 }
 
+QString CommandLine::getOption(int argc, char *argv[], const QString& name, const QString& longname)
+{
+  for(int i = 0; i < argc; i++)
+  {
+    QString arg(argv[i]);
+    arg = arg.trimmed();
+
+    if((arg == '-' % name || arg == "--" % longname) && i < argc - 1)
+      // Next argument
+      return QString(argv[i + 1]).trimmed();
+    else if(arg.startsWith("--" % longname % '='))
+    {
+      // Argument after equals
+      QString argstr = arg.section('=', 1, 1).trimmed();
+      if(argstr.startsWith('"'))
+        argstr.remove(0, 1);
+
+      if(argstr.endsWith('"'))
+        argstr.chop(1);
+      argstr = argstr.trimmed();
+
+      return argstr;
+    }
+  }
+
+  return QString();
+}
+
 void CommandLine::process()
 {
   // ==============================================
@@ -114,12 +136,6 @@ void CommandLine::process()
   parser->process(*QCoreApplication::instance());
 
   // Settings directory
-  if(parser->isSet(*settingsDirOpt) && parser->isSet(*settingsPathOpt))
-    qWarning() << QObject::tr("Only one of options -s and -p can be used");
-
-  if(parser->isSet(*settingsDirOpt) && !parser->value(*settingsDirOpt).isEmpty())
-    atools::settings::Settings::setOverrideOrganisation(parser->value(*settingsDirOpt));
-
   if(parser->isSet(*settingsPathOpt) && !parser->value(*settingsPathOpt).isEmpty())
     atools::settings::Settings::setOverridePath(parser->value(*settingsPathOpt));
 

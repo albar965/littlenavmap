@@ -643,8 +643,6 @@ public:
    * OptionsDialog.restoreState() has to be called before getting an instance */
   static const OptionData& instance();
 
-  ~OptionData();
-
   OptionData(const OptionData& other) = delete;
   OptionData& operator=(const OptionData& other) = delete;
 

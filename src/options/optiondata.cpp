@@ -19,6 +19,7 @@
 
 #include "common/constants.h"
 #include "exception.h"
+#include "settings/settings.h"
 
 #include <QCoreApplication>
 #include <QDebug>
@@ -43,19 +44,12 @@ OptionData::OptionData()
 
 QString OptionData::getLanguageFromConfigFile()
 {
-  return QSettings(QSettings::IniFormat, QSettings::UserScope, QCoreApplication::organizationName(),
-                   lnm::OPTIONS_APPLICATION).value(lnm::OPTIONS_DIALOG_LANGUAGE).toString();
+  return atools::settings::Settings::instance().valueStr(lnm::OPTIONS_DIALOG_LANGUAGE);
 }
 
 void OptionData::saveLanguageToConfigFile(const QString& language)
 {
-  QSettings(QSettings::IniFormat, QSettings::UserScope, QCoreApplication::organizationName(),
-            lnm::OPTIONS_APPLICATION).setValue(lnm::OPTIONS_DIALOG_LANGUAGE, language);
-}
-
-OptionData::~OptionData()
-{
-
+  atools::settings::Settings::instance().setValue(lnm::OPTIONS_DIALOG_LANGUAGE, language);
 }
 
 opts::OnlineFormat OptionData::getOnlineFormat() const

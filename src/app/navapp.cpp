@@ -125,9 +125,9 @@ NavApp::~NavApp()
 void NavApp::initApplication()
 {
   setWindowIcon(QIcon(":/littlenavmap/resources/icons/littlenavmap.svg"));
-  setApplicationName("Little Navmap");
+  setApplicationName(lnm::OPTIONS_APPLICATION);
   setOrganizationName(lnm::OPTIONS_APPLICATION_ORGANIZATION);
-  setOrganizationDomain("littlenavmap.org");
+  setOrganizationDomain(lnm::OPTIONS_APPLICATION_DOMAIN);
   setApplicationVersion(VERSION_NUMBER_LITTLENAVMAP);
 }
 

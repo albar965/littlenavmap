@@ -225,14 +225,13 @@ MainWindow::MainWindow()
                      ui->toolBarRoute, ui->toolBarView, ui->toolBarAirspaces, ui->toolBarTools});
 
     atools::settings::Settings& settings = atools::settings::Settings::instance();
-    dockHandler =
-      new atools::gui::DockWidgetHandler(this,
-                                         // Add all available dock widgets here ==========================
-                                         {ui->dockWidgetAircraft, ui->dockWidgetSearch, ui->dockWidgetProfile,
-                                          ui->dockWidgetInformation, ui->dockWidgetRoute},
-                                         // Add all available toolbars  here =============================
-                                         toolbars,
-                                         settings.getAndStoreValue(lnm::OPTIONS_DOCKHANDLER_DEBUG, false).toBool());
+    dockHandler = new atools::gui::DockWidgetHandler(this,
+                                                     // Add all available dock widgets here ==========================
+                                                     {ui->dockWidgetAircraft, ui->dockWidgetSearch, ui->dockWidgetProfile,
+                                                      ui->dockWidgetInformation, ui->dockWidgetRoute},
+                                                     // Add all available toolbars  here =============================
+                                                     toolbars,
+                                                     settings.getAndStoreValue(lnm::OPTIONS_DOCKHANDLER_DEBUG, false).toBool());
 
     marbleAboutDialog = new Marble::MarbleAboutDialog(this);
     marbleAboutDialog->setApplicationTitle(QCoreApplication::applicationName());
