@@ -26,6 +26,7 @@
 #include "fs/util/fsutil.h"
 #include "gui/actionstatesaver.h"
 #include "gui/actiontextsaver.h"
+#include "gui/clicktooltiphandler.h"
 #include "gui/dialog.h"
 #include "gui/griddelegate.h"
 #include "gui/itemviewzoomhandler.h"
@@ -140,6 +141,9 @@ ProcedureSearch::ProcedureSearch(QMainWindow *main, QTreeWidget *treeWidgetParam
   transitionIndicatorOne = tr(" (one transition)");
 
   Ui::MainWindow *ui = NavApp::getMainUi();
+
+  ui->labelProcedureSearch->installEventFilter(new atools::gui::ClickToolTipHandler(ui->labelProcedureSearch));
+
   ui->comboBoxProcedureSearchFilter->insertSeparator(FILTER_SEPARATOR);
 
   ui->actionSearchProcedureSelectNothing->setShortcutContext(Qt::WidgetWithChildrenShortcut);
@@ -379,7 +383,7 @@ void ProcedureSearch::updateHeaderLabel()
   for(QTreeWidgetItem *item : items)
     procs.append(procedureAndTransitionText(item, true /* header */));
 
-  QString tooltip, statusTip;
+  QString tooltip, warningTooltip, statusTip;
   Ui::MainWindow *ui = NavApp::getMainUi();
   atools::util::HtmlBuilder html;
 
@@ -410,9 +414,24 @@ void ProcedureSearch::updateHeaderLabel()
     statusTip = tr("Select \"Show Procedures\" for an airport to fill this list");
   }
 
+  if(!runwayMismatches.isEmpty())
+  {
+    html.br().warning(tr("Runway mismatches found. Click here for details."));
+
+    warningTooltip = tr("<p style='white-space:pre'>Procedure %1 %2 not found for simulator airport.<br/>"
+                        "This means that runways from navigation data do not match runways of the simulator airport data.<br/>"
+                        "Update your navigation data or update or install an add-on airport to fix this.</p>"
+                        "<p style='white-space:pre'>You can still use procedures for this airport since %3<br/>"
+                        "uses a best guess to cross reference simulator runways.</p>").
+                     arg(runwayMismatches.size() == 1 ? tr("runway") : tr("runways")).
+                     arg(atools::strJoin(runwayMismatches, tr(", "), tr(" and "))).
+                     arg(QCoreApplication::applicationName());
+  }
+
   ui->labelProcedureSearch->setText(html.getHtml());
-  ui->labelProcedureSearch->setToolTip(tooltip);
+  ui->labelProcedureSearch->setToolTip(tooltip + warningTooltip);
   ui->labelProcedureSearch->setStatusTip(statusTip);
+
   treeWidget->setToolTip(tooltip);
   treeWidget->setStatusTip(statusTip);
 
@@ -498,13 +517,25 @@ void ProcedureSearch::clearTypeFilter()
 void ProcedureSearch::updateFilterBoxes()
 {
   Ui::MainWindow *ui = NavApp::getMainUi();
+  runwayMismatches.clear();
 
   clearRunwayFilter();
   clearTypeFilter();
 
   if(currentAirportNav->isValid())
   {
-    QStringList runwayNames = airportQueryNav->getRunwayNames(currentAirportNav->id);
+    // Get runway list from navdata
+    const QStringList runwayNamesNav = airportQueryNav->getRunwayNames(currentAirportNav->id);
+
+    // Get runway list from simulator
+    const QStringList runwayNamesSim = NavApp::getAirportQuerySim()->getRunwayNames(currentAirportSim->id);
+
+    // Now collect all procedure runways which do not exist in simulator
+    for(const QString& runwayNav : runwayNamesNav)
+    {
+      if(!atools::fs::util::runwayContains(runwayNamesSim, runwayNav))
+        runwayMismatches.append(runwayNav);
+    }
 
     // Add a tree of transitions and approaches
     const SqlRecordList *recProcList = infoQuery->getProcedureInformation(currentAirportNav->id);
@@ -521,13 +552,13 @@ void ProcedureSearch::updateFilterBoxes()
         {
           // SID or STAR - have to resolve for ALL and parallel runways
           QStringList sidStarRunways;
-          atools::fs::util::sidStarMultiRunways(runwayNames, recProc.valueStr("arinc_name"), &sidStarRunways);
+          atools::fs::util::sidStarMultiRunways(runwayNamesNav, recProc.valueStr("arinc_name"), &sidStarRunways);
           for(const QString& sidStarRunway : qAsConst(sidStarRunways))
             runways.insert(sidStarRunway);
         }
         else
           // Approach with or without runway (circle-to-land)
-          runways.insert(atools::fs::util::runwayBestFit(recProc.valueStr("runway_name"), runwayNames));
+          runways.insert(atools::fs::util::runwayBestFit(recProc.valueStr("runway_name"), runwayNamesNav));
       }
 
       // Sort list of runways

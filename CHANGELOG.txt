@@ -237,6 +237,11 @@ See below for changes from 3.0.3.rc1 to 3.0.4.
   had moved. Examples are GAKL and DAUU in MSFS.
 * Now considering airport ident when resolving procedure leg fixes to work around invalid duplicate
   waypoint names in a region. This is to avoid malformed procedures.
+* Added warning message if procedure runways cannot be not found for simulator airport. This means
+  that runways from navigation data do not match runways of the simulator airport data. You can
+  update the navigation data or update or install an add-on airport to fix this. Procedures can still
+  be used for such airports since Little Navmap uses a best guess to cross reference simulator
+  runways. As a result you will see slightly differring runway numbers in portions of the program.
 
 ### Map Display
 

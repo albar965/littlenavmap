@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -251,6 +251,9 @@ private:
   ProcedureQuery *procedureQuery = nullptr;
   AirportQuery *airportQueryNav = nullptr;
   QTreeWidget *treeWidget = nullptr;
+
+  /* Navdata runways having no equivalent to simulator */
+  QStringList runwayMismatches;
 
   /* Fonts for tree elements */
   QFont procedureBoldFont, procedureNormalFont, legFont, missedLegFont, invalidLegFont, identFont;
