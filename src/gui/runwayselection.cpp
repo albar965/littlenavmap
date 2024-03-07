@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -57,11 +57,19 @@ struct RunwayIdxEntry
   map::MapRunwayEnd end;
 };
 
-RunwaySelection::RunwaySelection(QObject *parent, const map::MapAirport& mapAirport, QTableWidget *runwayTableWidgetParam)
-  : QObject(parent), runwayTableWidget(runwayTableWidgetParam)
+RunwaySelection::RunwaySelection(QObject *parent, const map::MapAirport& mapAirport, QTableWidget *runwayTableWidgetParam,
+                                 bool navdataParam)
+  : QObject(parent), runwayTableWidget(runwayTableWidgetParam), navdata(navdataParam)
 {
   airport = new map::MapAirport;
   *airport = mapAirport;
+
+  mapQuery = NavApp::getMapQueryGui();
+
+  if(navdata)
+    mapQuery->getAirportNavReplace(*airport);
+  else
+    mapQuery->getAirportSimReplace(*airport);
 
   connect(runwayTableWidget, &QTableWidget::itemSelectionChanged, this, &RunwaySelection::itemSelectionChanged);
   connect(runwayTableWidget, &QTableWidget::doubleClicked, this, &RunwaySelection::doubleClicked);
@@ -137,9 +145,7 @@ void RunwaySelection::fillAirportLabel()
   QString label;
   if(airportLabel != nullptr)
   {
-    label = tr("<p><b>%1, elevation %2</b></p>").
-            arg(map::airportTextShort(*airport)).
-            arg(Unit::altFeet(airport->position.getAltitude()));
+    label = tr("<p><b>%1, elevation %2</b></p>").arg(map::airportTextShort(*airport)).arg(Unit::altFeet(airport->position.getAltitude()));
 
     QString title, runwayText, sourceText;
     NavApp::getWeatherReporter()->getBestRunwaysTextShort(title, runwayText, sourceText, *airport);
@@ -152,20 +158,20 @@ void RunwaySelection::fillAirportLabel()
 
 void RunwaySelection::fillRunwayList()
 {
-  AirportQuery *airportQuerySim = NavApp::getAirportQuerySim();
+  AirportQuery *airportQuery = navdata ? NavApp::getAirportQueryNav() : NavApp::getAirportQuerySim();
 
   // Get all runways from airport ==================================
-  const QList<map::MapRunway> *rw = airportQuerySim->getRunways(airport->id);
+  const QList<map::MapRunway> *rw = airportQuery->getRunways(airport->id);
   if(rw != nullptr)
   {
     // Append each runway twice with primary and secondary ends and apply filter ==========
     for(const map::MapRunway& r : *rw)
     {
-      map::MapRunwayEnd prim = airportQuerySim->getRunwayEndById(r.primaryEndId);
+      map::MapRunwayEnd prim = airportQuery->getRunwayEndById(r.primaryEndId);
       if(includeRunway(prim.name))
         runways.append(RunwayIdxEntry(r, prim));
 
-      map::MapRunwayEnd sec = airportQuerySim->getRunwayEndById(r.secondaryEndId);
+      map::MapRunwayEnd sec = airportQuery->getRunwayEndById(r.secondaryEndId);
       if(includeRunway(sec.name))
         runways.append(RunwayIdxEntry(r, sec));
     }
@@ -248,7 +254,7 @@ void RunwaySelection::addItem(const RunwayIdxEntry& entry, const QString& windTe
     atts.append(tr("Closed"));
 
   // Add ILS and similar approach aids
-  for(const map::MapIls& ils : NavApp::getMapQueryGui()->getIlsByAirportAndRunway(airport->ident, entry.end.name))
+  for(const map::MapIls& ils : mapQuery->getIlsByAirportAndRunway(airport->ident, entry.end.name))
     atts.append(map::ilsTypeShort(ils));
   atts.removeAll(QString());
   atts.removeDuplicates();
@@ -303,7 +309,7 @@ bool RunwaySelection::includeRunway(const QString& runwayName)
   {
     for(const QString& filter : qAsConst(runwayNameFilter))
     {
-      if(atools::fs::util::runwayEqual(runwayName, filter))
+      if(atools::fs::util::runwayEqual(runwayName, filter, false /* fuzzy */))
         return true;
     }
   }

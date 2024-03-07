@@ -1232,7 +1232,7 @@ void ProcedureQuery::postProcessLegsForRoute(proc::MapProcedureLegs& starLegs, c
 bool ProcedureQuery::doesRunwayMatchSidOrStar(const proc::MapProcedureLegs& procedure, const QString& runway)
 {
   return doesSidStarRunwayMatch(runway, procedure.arincName, {runway}) ||
-         atools::fs::util::runwayAlmostEqual(runway, procedure.arincName);
+         atools::fs::util::runwayEqual(runway, procedure.arincName, true /* fuzzy */);
 }
 
 void ProcedureQuery::processLegErrors(proc::MapProcedureLegs& legs) const
@@ -3044,7 +3044,7 @@ bool ProcedureQuery::doesRunwayMatch(const QString& runway, const QString& runwa
     // Nothing to match - get all procedures
     return true;
 
-  if(atools::fs::util::runwayEqual(runway, runwayFromQuery))
+  if(atools::fs::util::runwayEqual(runway, runwayFromQuery, false /* fuzzy */))
     return true;
 
   return doesSidStarRunwayMatch(runway, arincName, airportRunways);
@@ -3060,15 +3060,15 @@ bool ProcedureQuery::doesSidStarRunwayMatch(const QString& runway, const QString
   {
     // Check which runways are assigned from values like "RW12B"
     QString rwBaseName = arincName.mid(2, 2);
-    bool airportHasRw = atools::fs::util::runwayContains(airportRunways, runway);
+    bool airportHasRw = atools::fs::util::runwayContains(airportRunways, runway, false /* fuzzy */);
 
-    if(airportHasRw && atools::fs::util::runwayEqual(runway, rwBaseName % "L"))
+    if(airportHasRw && atools::fs::util::runwayEqual(runway, rwBaseName % "L", false /* fuzzy */))
       return true;
 
-    if(airportHasRw && atools::fs::util::runwayEqual(runway, rwBaseName % "R"))
+    if(airportHasRw && atools::fs::util::runwayEqual(runway, rwBaseName % "R", false /* fuzzy */))
       return true;
 
-    if(airportHasRw && atools::fs::util::runwayEqual(runway, rwBaseName % "C"))
+    if(airportHasRw && atools::fs::util::runwayEqual(runway, rwBaseName % "C", false /* fuzzy */))
       return true;
   }
 

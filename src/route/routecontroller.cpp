@@ -4288,59 +4288,72 @@ void RouteController::routeAddProcedure(proc::MapProcedureLegs legs)
 
   clearTableSelection();
 
-  map::MapAirport airportSim;
-  QString sidStarRunway;
-
+  AirportQuery *airportQueryNav = NavApp::getAirportQueryNav(), *airportQuerySim = NavApp::getAirportQuerySim();
+  ProcedureQuery *procedureQuery = NavApp::getProcedureQuery();
+  MapQuery *mapQuery = NavApp::getMapQueryGui();
+  map::MapAirport airportSim, airportNav;
   if(legs.isAnyCustom())
-    // Custom procedures are always from sim database
-    NavApp::getAirportQuerySim()->getAirportById(airportSim, legs.ref.airportId);
+  {
+    // Airport id in legs is from sim database - get airport and convert to nav database
+    airportSim = airportQuerySim->getAirportById(legs.ref.airportId);
+    airportNav = mapQuery->getAirportNav(airportSim);
+  }
   else
   {
-    // Airport id in legs is from nav database - convert to simulator database
-    NavApp::getAirportQueryNav()->getAirportById(airportSim, legs.ref.airportId);
-    NavApp::getMapQueryGui()->getAirportSimReplace(airportSim);
+    // Airport id in legs is from nav database - get airport and convert to simulator database
+    airportNav = airportQueryNav->getAirportById(legs.ref.airportId);
+    airportSim = mapQuery->getAirportSim(airportNav);
+  }
 
-    if(legs.mapType & proc::PROCEDURE_APPROACH_ALL && route.hasAnyStarProcedure())
+  QString sidStarRunwayNav;
+
+  if(legs.mapType & proc::PROCEDURE_APPROACH_ALL && route.hasAnyStarProcedure())
+  {
+    // STAR already assigned and adding approach - try to adjust STAR to approach =====================================
+    QStringList starRunwaysNav;
+    atools::fs::util::sidStarMultiRunways(airportQueryNav->getRunwayNames(airportNav.id), route.getStarLegs().arincName, &starRunwaysNav);
+
+    // Check if the runway of an an already present STAR can be changed to match the approach
+    if(atools::fs::util::runwayContains(starRunwaysNav, legs.runway, legs.isAnyCustom() /* fuzzy */))
     {
-      QStringList starRunways;
-      atools::fs::util::sidStarMultiRunways(airportQuery->getRunwayNames(airportSim.id), route.getStarLegs().arincName, &starRunways);
-      // Check if the runway of an an already present STAR can be changed to match the approach
-      if(atools::fs::util::runwayContains(starRunways, legs.runway))
-      {
-        // Adjust STAR runway to approach runway
-        proc::MapProcedureLegs starLegs = route.getStarLegs();
+      // Adjust STAR runway to approach runway
+      proc::MapProcedureLegs starLegs = route.getStarLegs();
 
-        NavApp::getProcedureQuery()->insertSidStarRunway(starLegs, legs.runway);
-        route.setStarProcedureLegs(starLegs);
-      }
+      // Convert to matching list of STAR nav runway from sim runway
+      QString starRunway = legs.isAnyCustom() ? atools::fs::util::runwayBestFit(legs.runway, starRunwaysNav) : legs.runway;
+      procedureQuery->insertSidStarRunway(starLegs, starRunway);
+      route.setStarProcedureLegs(starLegs);
     }
+  }
 
-    if(legs.mapType & proc::PROCEDURE_SID_STAR_ALL)
+  if(legs.mapType & proc::PROCEDURE_SID_STAR_ALL)
+  {
+    // Get runways for all or parallel runway procedures ===============================
+    QStringList sidStarRunwaysNav;
+    atools::fs::util::sidStarMultiRunways(airportQueryNav->getRunwayNames(airportNav.id), legs.arincName, &sidStarRunwaysNav);
+
+    if(!sidStarRunwaysNav.isEmpty())
     {
-      // Get runways for all or parallel runway procedures ===============================
-      QStringList sidStarRunways;
-      atools::fs::util::sidStarMultiRunways(airportQuery->getRunwayNames(airportSim.id), legs.arincName, &sidStarRunways);
-
-      if(!sidStarRunways.isEmpty())
+      // Approach already assigned and adding STAR - try to adjust STAR to approach =====================================
+      // Check if an already present approach matches the new STAR runway
+      QString apprRw = route.getApproachLegs().runway;
+      if((legs.mapType & proc::PROCEDURE_STAR_ALL) && route.hasAnyApproachProcedure() &&
+         atools::fs::util::runwayContains(sidStarRunwaysNav, apprRw, route.hasCustomApproach() /* fuzzy */))
+        // No runway selection dialog
+        sidStarRunwayNav = route.hasCustomApproach() ? atools::fs::util::runwayBestFit(apprRw, sidStarRunwaysNav) : apprRw;
+      else
       {
-        // Check if an already present approach matches the new STAR runway
-        if((legs.mapType & proc::PROCEDURE_STAR_ALL) && route.hasAnyApproachProcedure() &&
-           atools::fs::util::runwayContains(sidStarRunways, route.getApproachLegs().runway))
-          // No runway selection dialog
-          sidStarRunway = route.getApproachLegs().runway;
+        // Show runway selection dialog allowing the user to select a runway
+        QString text = proc::procedureLegsText(legs, proc::PROCEDURE_NONE,
+                                               false /* narrow */, true /* includeRunway*/, false /* missedAsApproach*/,
+                                               false /* transitionAsProcedure */);
+
+        RunwaySelectionDialog runwaySelectionDialog(mainWindow, airportNav, sidStarRunwaysNav, text, true /* navdata */);
+        if(runwaySelectionDialog.exec() == QDialog::Accepted)
+          sidStarRunwayNav = runwaySelectionDialog.getSelectedName();
         else
-        {
-          // Show dialog allowing the user to select a runway
-          QString text = proc::procedureLegsText(legs, proc::PROCEDURE_NONE,
-                                                 false /* narrow */, true /* includeRunway*/, false /* missedAsApproach*/,
-                                                 false /* transitionAsProcedure */);
-          RunwaySelectionDialog runwaySelectionDialog(mainWindow, airportSim, sidStarRunways, text);
-          if(runwaySelectionDialog.exec() == QDialog::Accepted)
-            sidStarRunway = runwaySelectionDialog.getSelectedName();
-          else
-            // Cancel out
-            return;
-        }
+          // Cancel out
+          return;
       }
     }
   }
@@ -4373,7 +4386,7 @@ void RouteController::routeAddProcedure(proc::MapProcedureLegs legs)
     if(legs.mapType & proc::PROCEDURE_STAR)
     {
       // Assign runway for SID/STAR than can have multiple runways
-      NavApp::getProcedureQuery()->insertSidStarRunway(legs, sidStarRunway);
+      procedureQuery->insertSidStarRunway(legs, sidStarRunwayNav);
       route.setStarProcedureLegs(legs);
     }
 
@@ -4394,7 +4407,7 @@ void RouteController::routeAddProcedure(proc::MapProcedureLegs legs)
     }
 
     // Assign runway for SID/STAR than can have multiple runways
-    NavApp::getProcedureQuery()->insertSidStarRunway(legs, sidStarRunway);
+    procedureQuery->insertSidStarRunway(legs, sidStarRunwayNav);
 
     route.setSidProcedureLegs(legs);
 

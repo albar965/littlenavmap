@@ -41,7 +41,7 @@ CustomProcedureDialog::CustomProcedureDialog(QWidget *parent, const map::MapAirp
 
   ui->setupUi(this);
 
-  runwaySelection = new RunwaySelection(parent, mapAirport, ui->tableWidgetCustomProcRunway);
+  runwaySelection = new RunwaySelection(parent, mapAirport, ui->tableWidgetCustomProcRunway, false /* navdata */);
   runwaySelection->setAirportLabel(ui->labelCustomProcAirport);
 
   // YES is show procedures button

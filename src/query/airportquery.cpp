@@ -1113,10 +1113,10 @@ map::MapRunwayEnd AirportQuery::runwayEndByName(int airportId, const QString& ru
   {
     for(const map::MapRunway& mr : *aprunways)
     {
-      if(atools::fs::util::runwayEqual(mr.primaryName, runway))
+      if(atools::fs::util::runwayEqual(mr.primaryName, runway, false /* fuzzy */))
         return getRunwayEndById(mr.primaryEndId);
 
-      if(atools::fs::util::runwayEqual(mr.secondaryName, runway))
+      if(atools::fs::util::runwayEqual(mr.secondaryName, runway, false /* fuzzy */))
         return getRunwayEndById(mr.secondaryEndId);
     }
   }

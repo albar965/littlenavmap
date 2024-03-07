@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -44,7 +44,7 @@ class RunwaySelectionDialog :
   Q_OBJECT
 
 public:
-  explicit RunwaySelectionDialog(QWidget *parent, const map::MapAirport& mapAirport, const QStringList& runwayNames, const QString& header);
+  explicit RunwaySelectionDialog(QWidget *parent, const map::MapAirport& mapAirport, const QStringList& runwayNames, const QString& header, bool navdata);
   virtual ~RunwaySelectionDialog() override;
 
   RunwaySelectionDialog(const RunwaySelectionDialog& other) = delete;

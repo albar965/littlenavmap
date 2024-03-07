@@ -555,6 +555,11 @@ These are fixes for bugs introduced with the 3.0 versions.
 * Now omitting IPv6 link local addresses in display in options on page `Web Server`.
 * Reworked issue report to include up-to-date files now as well as flight plan as loaded in memory.
 * Removed ILS de-duplication from X-Plane data compiler and adjusted it for MSFS, P3D and FSX.
+* Fixed issue where procedures having runways not matching simulator runways resulted in a wrong
+  runway warning. Example: SKBO in X-Plane 11/12 having 13L, 13R, 31L and 31R while latest
+  navigation data (cycle 2402) refers to 14L, 14R, 32L and 32R. In December 2022 the runways at
+  SKBO (Bogotá El Dorado International Airport) were renamed due to magnetic heading drift.
+  This can occiasinally happen at airports.
 
 ==<<=============================================================================
 

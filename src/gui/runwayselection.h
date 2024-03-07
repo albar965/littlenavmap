@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@
 
 #include <QObject>
 
+class MapQuery;
 namespace map {
 struct MapRunway;
 struct MapRunwayEnd;
@@ -47,7 +48,7 @@ class RunwaySelection :
 
 public:
   /* The table should allow only single row selection */
-  explicit RunwaySelection(QObject *parent, const map::MapAirport& mapAirport, QTableWidget *runwayTableWidgetParam);
+  explicit RunwaySelection(QObject *parent, const map::MapAirport& mapAirport, QTableWidget *runwayTableWidgetParam, bool navdataParam);
   virtual ~RunwaySelection() override;
 
   RunwaySelection(const RunwaySelection& other) = delete;
@@ -111,6 +112,9 @@ private:
   QLabel *airportLabel = nullptr;
   QTableWidget *runwayTableWidget = nullptr;
   atools::gui::ItemViewZoomHandler *zoomHandler = nullptr;
+
+  MapQuery *mapQuery;
+  bool navdata;
 };
 
 #endif // LNM_RUNWAYSELECTION_H

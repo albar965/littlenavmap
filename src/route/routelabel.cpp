@@ -397,7 +397,8 @@ void RouteLabel::buildHeaderArrival(atools::util::HtmlBuilder& html, bool widget
         html.append(arrHtml);
 
       // Check STAR and approach runways - these have to match
-      if(!approachRunway.isEmpty() && !starRunway.isEmpty() && !atools::fs::util::runwayAlmostEqual(approachRunway, starRunway))
+      if(!approachRunway.isEmpty() && !starRunway.isEmpty() &&
+         !atools::fs::util::runwayEqual(approachRunway, starRunway, true /* fuzzy */))
         html.br().error(tr("STAR runway \"%1\" not equal to approach runway \"%2\".").arg(starRunway).arg(approachRunway));
     }
     else

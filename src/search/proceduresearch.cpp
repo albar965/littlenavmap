@@ -533,7 +533,7 @@ void ProcedureSearch::updateFilterBoxes()
     // Now collect all procedure runways which do not exist in simulator
     for(const QString& runwayNav : runwayNamesNav)
     {
-      if(!atools::fs::util::runwayContains(runwayNamesSim, runwayNav))
+      if(!atools::fs::util::runwayContains(runwayNamesSim, runwayNav, false /* fuzzy */))
         runwayMismatches.append(runwayNav);
     }
 
