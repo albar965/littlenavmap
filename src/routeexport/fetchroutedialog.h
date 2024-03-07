@@ -53,6 +53,9 @@ public:
   explicit FetchRouteDialog(QWidget *parent);
   virtual ~FetchRouteDialog() override;
 
+  FetchRouteDialog(const FetchRouteDialog& other) = delete;
+  FetchRouteDialog& operator=(const FetchRouteDialog& other) = delete;
+
 signals:
   /* User clicked "Create Flight Plan" */
   void routeNewFromFlightplan(const atools::fs::pln::Flightplan& flightplan, bool adjustAltitude, bool changed, bool undo);

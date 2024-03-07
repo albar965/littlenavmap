@@ -42,6 +42,9 @@ public:
   explicit DatabaseDialog(QWidget *parent, const SimulatorTypeMap& pathMap);
   virtual ~DatabaseDialog() override;
 
+  DatabaseDialog(const DatabaseDialog& other) = delete;
+  DatabaseDialog& operator=(const DatabaseDialog& other) = delete;
+
   /* Get the base path of the currently selected simulator in the combo box */
   QString getBasePath() const;
 

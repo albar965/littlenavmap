@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -55,6 +55,9 @@ class ParkingDialog :
 public:
   explicit ParkingDialog(QWidget *parent, const map::MapAirport& departureAirportParam);
   virtual ~ParkingDialog() override;
+
+  ParkingDialog(const ParkingDialog& other) = delete;
+  ParkingDialog& operator=(const ParkingDialog& other) = delete;
 
   /* Get selected parking spot. Valid if parking was selected */
   map::MapParking getSelectedParking() const;

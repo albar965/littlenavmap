@@ -79,6 +79,9 @@ public:
   explicit PrintDialog(QWidget *parent);
   virtual ~PrintDialog() override;
 
+  PrintDialog(const PrintDialog& other) = delete;
+  PrintDialog& operator=(const PrintDialog& other) = delete;
+
   /* Get options as set in the dialog */
   prt::PrintFlightPlanOpts getPrintOptions() const;
 

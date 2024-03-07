@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -37,6 +37,9 @@ class DatabaseProgressDialog :
 public:
   explicit DatabaseProgressDialog(QWidget *parent, const QString& simulatorName);
   virtual ~DatabaseProgressDialog() override;
+
+  DatabaseProgressDialog(const DatabaseProgressDialog& other) = delete;
+  DatabaseProgressDialog& operator=(const DatabaseProgressDialog& other) = delete;
 
   /* Set text for framed label */
   void setLabelText(const QString& text);
