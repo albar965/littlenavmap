@@ -689,6 +689,8 @@ These are fixes for bugs introduced with the 3.0 versions.
 * Now generating correct route description for single digit runway.
   Example: KYKM runway 9 to 'KYKM/09'.
 * Fixed wrong error message about parking not found after deleting or replacing departure airport.
+* Now omitting the first runway waypoint for a user defined departure (`Set Departure Runway`) to avoid
+  issues with simulators.
 
 ### Map Display
 

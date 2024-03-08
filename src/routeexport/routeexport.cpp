@@ -326,11 +326,11 @@ bool RouteExport::routeExportInternalPln(const RouteExportFormat& format)
       switch(format.getType())
       {
         case rexp::PLNANNOTATED:
-          result = exportFlighplan(routeFile, rf::DEFAULT_OPTS_NO_PROC, std::bind(&FlightplanIO::savePlnAnnotated, flightplanIO, _1, _2));
+          result = exportFlighplan(routeFile, rf::DEFAULT_OPTS_FSX_P3D, std::bind(&FlightplanIO::savePlnAnnotated, flightplanIO, _1, _2));
           break;
 
         case rexp::PLN:
-          result = exportFlighplan(routeFile, rf::DEFAULT_OPTS_NO_PROC, std::bind(&FlightplanIO::savePln, flightplanIO, _1, _2));
+          result = exportFlighplan(routeFile, rf::DEFAULT_OPTS_FSX_P3D, std::bind(&FlightplanIO::savePln, flightplanIO, _1, _2));
           break;
 
         case rexp::PLNMSFS:
@@ -338,7 +338,7 @@ bool RouteExport::routeExportInternalPln(const RouteExportFormat& format)
           break;
 
         case rexp::PLNISG:
-          result = exportFlighplan(routeFile, rf::DEFAULT_OPTS_NO_PROC | rf::ISG_USER_WP_NAMES | rf::REMOVE_RUNWAY_PROC,
+          result = exportFlighplan(routeFile, rf::DEFAULT_OPTS_FSX_P3D | rf::ISG_USER_WP_NAMES | rf::REMOVE_RUNWAY_PROC,
                                    std::bind(&FlightplanIO::savePlnIsg, flightplanIO, _1, _2));
           break;
 
@@ -1564,8 +1564,7 @@ bool RouteExport::exportFlighplanAsRxpGns(const QString& filename, bool saveAsUs
   {
     // Regions are required for the export
     NavApp::getRoute().updateAirportRegions();
-    FlightplanIO().saveGarminFpl(buildAdjustedRoute(rf::DEFAULT_OPTS_NO_PROC).getFlightplanConst(), filename,
-                                 saveAsUserWaypoints);
+    FlightplanIO().saveGarminFpl(buildAdjustedRoute(rf::DEFAULT_OPTS_NO_PROC).getFlightplanConst(), filename, saveAsUserWaypoints);
   }
   catch(atools::Exception& e)
   {
