@@ -542,8 +542,8 @@ void ProcedureSearch::updateFilterBoxes()
 
     if(recProcList != nullptr) // Deduplicate runways
     {
+      QStringList runways;
       // Update runway name filter combo box ============================================
-      QSet<QString> runways;
       for(const SqlRecord& recProc : *recProcList)
       {
         proc::MapProcedureTypes type = proc::procedureType(NavApp::hasSidStarInDatabase(), recProc);
@@ -553,19 +553,22 @@ void ProcedureSearch::updateFilterBoxes()
           // SID or STAR - have to resolve for ALL and parallel runways
           QStringList sidStarRunways;
           atools::fs::util::sidStarMultiRunways(runwayNamesNav, recProc.valueStr("arinc_name"), &sidStarRunways);
-          for(const QString& sidStarRunway : qAsConst(sidStarRunways))
-            runways.insert(sidStarRunway);
+
+          if(sidStarRunways.isEmpty())
+            runways.append(recProc.valueStr("runway_name"));
+          else
+            runways.append(sidStarRunways);
         }
         else
           // Approach with or without runway (circle-to-land)
-          runways.insert(atools::fs::util::runwayBestFit(recProc.valueStr("runway_name"), runwayNamesNav));
+          runways.append(recProc.valueStr("runway_name"));
       }
 
-      // Sort list of runways
-      QList<QString> runwaylist = runways.values();
-      std::sort(runwaylist.begin(), runwaylist.end());
+      // Sort list of runways and erase duplicates
+      std::sort(runways.begin(), runways.end());
+      runways.erase(std::unique(runways.begin(), runways.end()), runways.end());
 
-      for(const QString& rw : qAsConst(runwaylist))
+      for(const QString& rw : qAsConst(runways))
       {
         if(rw.isEmpty())
           // Insert item before separator
@@ -652,6 +655,7 @@ void ProcedureSearch::fillProcedureTreeWidget()
         if(type & proc::PROCEDURE_SID_STAR_ALL)
           atools::fs::util::sidStarMultiRunways(runwayNames, procedureRec.valueStr("arinc_name", QString()),
                                                 &sidStarRunways, allRunwayDispText, &sidStarArincDispNames);
+
         QString rwName;
         if(!procedureRec.valueStr("runway_name").isEmpty())
           rwName = atools::fs::util::runwayBestFit(procedureRec.valueStr("runway_name"), runwayNames);

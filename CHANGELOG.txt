@@ -232,7 +232,7 @@ See below for changes from 3.0.3.rc1 to 3.0.4.
 * Showing head and crosswind components for approach procedures in procedure tree based on
   `Airport Weather Source`.
 * Fixed issue where runway filters were missing in some cases in procedure search.
-  Example: KIAD and 15L where the runway has only SID and STAR but no approaches.
+  Example: KIAD and runway 30 where the runway has only SID and STAR but no approaches.
 * Corrected a problem where procedures could not be found in Navigraph database for airports that
   had moved. Examples are GAKL and DAUU in MSFS.
 * Now considering airport ident when resolving procedure leg fixes to work around invalid duplicate
