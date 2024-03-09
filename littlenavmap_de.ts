@@ -30685,53 +30685,53 @@ Die Spaltenreihenfolge im Druck entspricht der Reihenfolge in der Flugplantabell
         <translation>Alle Runways</translation>
     </message>
     <message>
-        <location filename="src/search/proceduresearch.cpp" line="572"/>
+        <location filename="src/search/proceduresearch.cpp" line="575"/>
         <source>No Runway</source>
         <translation>Kein Runway</translation>
     </message>
     <message>
-        <location filename="src/search/proceduresearch.cpp" line="575"/>
+        <location filename="src/search/proceduresearch.cpp" line="578"/>
         <source>Runway %1</source>
         <translation>Runway %1</translation>
     </message>
     <message>
-        <location filename="src/search/proceduresearch.cpp" line="595"/>
+        <location filename="src/search/proceduresearch.cpp" line="598"/>
         <source>%1 Approaches</source>
         <translation>%1 Anflüge</translation>
     </message>
     <message>
-        <location filename="src/search/proceduresearch.cpp" line="651"/>
+        <location filename="src/search/proceduresearch.cpp" line="654"/>
         <source>All</source>
         <translation>Alle</translation>
     </message>
     <message>
-        <location filename="src/search/proceduresearch.cpp" line="738"/>
+        <location filename="src/search/proceduresearch.cpp" line="742"/>
         <source> (%1)</source>
         <translation> (%1)</translation>
     </message>
     <message>
-        <location filename="src/search/proceduresearch.cpp" line="831"/>
+        <location filename="src/search/proceduresearch.cpp" line="835"/>
         <source>Description</source>
         <translation>Beschreibung</translation>
     </message>
     <message>
-        <location filename="src/search/proceduresearch.cpp" line="832"/>
+        <location filename="src/search/proceduresearch.cpp" line="836"/>
         <source>Procedure instruction.</source>
         <translation>Prozeduranweisung.</translation>
     </message>
     <message>
-        <location filename="src/search/proceduresearch.cpp" line="834"/>
+        <location filename="src/search/proceduresearch.cpp" line="838"/>
         <source>Ident</source>
         <translation>Kennung</translation>
     </message>
     <message>
-        <location filename="src/search/proceduresearch.cpp" line="1413"/>
+        <location filename="src/search/proceduresearch.cpp" line="1417"/>
         <source>&lt;/b&gt;</source>
         <translation>&lt;/b&gt;</translation>
     </message>
     <message>
-        <location filename="src/search/proceduresearch.cpp" line="1520"/>
-        <location filename="src/search/proceduresearch.cpp" line="1521"/>
+        <location filename="src/search/proceduresearch.cpp" line="1524"/>
+        <location filename="src/search/proceduresearch.cpp" line="1525"/>
         <source>transition</source>
         <translation>Übergang</translation>
     </message>
@@ -30742,38 +30742,38 @@ Die Spaltenreihenfolge im Druck entspricht der Reihenfolge in der Flugplantabell
 %1/%2</translation>
     </message>
     <message>
-        <location filename="src/search/proceduresearch.cpp" line="840"/>
+        <location filename="src/search/proceduresearch.cpp" line="844"/>
         <source>Course
 °M</source>
         <translation>Kurs
 °M</translation>
     </message>
     <message>
-        <location filename="src/search/proceduresearch.cpp" line="841"/>
+        <location filename="src/search/proceduresearch.cpp" line="845"/>
         <source>Magnetic course to fly.</source>
         <translation>Magnetischen Kurs zu fliegen.</translation>
     </message>
     <message>
-        <location filename="src/search/proceduresearch.cpp" line="843"/>
+        <location filename="src/search/proceduresearch.cpp" line="847"/>
         <source>Dist./Time
 %1/min</source>
         <translation>Dist./Zeit
 %1/min</translation>
     </message>
     <message>
-        <location filename="src/search/proceduresearch.cpp" line="844"/>
+        <location filename="src/search/proceduresearch.cpp" line="848"/>
         <source>Distance to fly in %1 or flying time in minutes.</source>
         <translation>Distanz zu fliegen in %1 oder Flugzeit in Minuten.</translation>
     </message>
     <message>
-        <location filename="src/search/proceduresearch.cpp" line="846"/>
+        <location filename="src/search/proceduresearch.cpp" line="850"/>
         <source>Head- and Crosswind
 %1</source>
         <translation>Gegen- oder Seitenwind
 %1</translation>
     </message>
     <message>
-        <location filename="src/search/proceduresearch.cpp" line="847"/>
+        <location filename="src/search/proceduresearch.cpp" line="851"/>
         <source>Head- and crosswind components in %1 for departure or arrival runway.
 Weather source is selected in menu &quot;Weather&quot; -&gt; &quot;Airport Weather Source&quot;.
 Tailwinds are omitted.</source>
@@ -30782,60 +30782,60 @@ Die Wetterquelle wird im Menü &quot;Wetter&quot; -&gt; &quot;Quelle für Flugpl
 Rückenwinde werden weggelassen.</translation>
     </message>
     <message>
-        <location filename="src/search/proceduresearch.cpp" line="851"/>
+        <location filename="src/search/proceduresearch.cpp" line="855"/>
         <source>Remarks</source>
         <translation>Anmerkungen</translation>
     </message>
     <message>
-        <location filename="src/search/proceduresearch.cpp" line="852"/>
+        <location filename="src/search/proceduresearch.cpp" line="856"/>
         <source>Turn instructions, flyover or related navaid for procedure legs.</source>
         <translation>Wendeanweisungen, Überflug oder zugehörige Navigationshilfe für Prozedurabschnitte.</translation>
     </message>
     <message>
-        <location filename="src/search/proceduresearch.cpp" line="1117"/>
+        <location filename="src/search/proceduresearch.cpp" line="1121"/>
         <source>Position</source>
         <translation>Position</translation>
     </message>
     <message>
-        <location filename="src/search/proceduresearch.cpp" line="1127"/>
+        <location filename="src/search/proceduresearch.cpp" line="1131"/>
         <source>&amp;Insert %1 into Flight Plan</source>
         <translation>&amp;Füge %1 in Flugplan ein</translation>
     </message>
     <message>
-        <location filename="src/search/proceduresearch.cpp" line="1131"/>
+        <location filename="src/search/proceduresearch.cpp" line="1135"/>
         <source>&amp;Use %1 and %2 as Destination</source>
         <translation>&amp;Nutze %1 und %2 als Ziel</translation>
     </message>
     <message>
-        <location filename="src/search/proceduresearch.cpp" line="1134"/>
+        <location filename="src/search/proceduresearch.cpp" line="1138"/>
         <source>&amp;Use %1 and %2 as Departure</source>
         <translation>&amp;Nutze %1 und %2 als Start</translation>
     </message>
     <message>
-        <location filename="src/search/proceduresearch.cpp" line="1143"/>
-        <location filename="src/search/proceduresearch.cpp" line="1144"/>
+        <location filename="src/search/proceduresearch.cpp" line="1147"/>
+        <location filename="src/search/proceduresearch.cpp" line="1148"/>
         <source>Procedure</source>
         <translation>Prozedur</translation>
     </message>
     <message>
-        <location filename="src/search/proceduresearch.cpp" line="1152"/>
+        <location filename="src/search/proceduresearch.cpp" line="1156"/>
         <source>Airport</source>
         <translation>Flugplatz</translation>
     </message>
     <message>
-        <location filename="src/search/proceduresearch.cpp" line="1231"/>
+        <location filename="src/search/proceduresearch.cpp" line="1235"/>
         <source>Tree view reset to defaults.</source>
         <translation>Baumansicht auf Standardwerte zurücksetzen.</translation>
     </message>
     <message>
-        <location filename="src/search/proceduresearch.cpp" line="1315"/>
+        <location filename="src/search/proceduresearch.cpp" line="1319"/>
         <source>Procedure has errors and cannot be added to the flight plan.
 This can happen due to inconsistent navdata, missing waypoints or other reasons.</source>
         <translation>Die Prozedur ist fehlerhaft und kann nicht in den Flugplan aufgenommen werden.
 Dies kann aufgrund inkonsistenter Navigationsdaten, fehlender Wegpunkte oder aus anderen Gründen passieren.</translation>
     </message>
     <message>
-        <location filename="src/search/proceduresearch.cpp" line="1322"/>
+        <location filename="src/search/proceduresearch.cpp" line="1326"/>
         <source>Procedure has errors and will not display correctly.
 This can happen due to inconsistent navdata, missing waypoints or other reasons.
 
@@ -30850,24 +30850,24 @@ Wirklich benutzen?</translation>
         <translation type="vanished">%L1 Übergänge</translation>
     </message>
     <message>
-        <location filename="src/search/proceduresearch.cpp" line="1416"/>
+        <location filename="src/search/proceduresearch.cpp" line="1420"/>
         <source>GPS Overlay</source>
         <translation>GPS Überlagerung</translation>
     </message>
     <message>
-        <location filename="src/search/proceduresearch.cpp" line="1421"/>
-        <location filename="src/search/proceduresearch.cpp" line="1427"/>
+        <location filename="src/search/proceduresearch.cpp" line="1425"/>
+        <location filename="src/search/proceduresearch.cpp" line="1431"/>
         <source> %1</source>
         <translation> %1</translation>
     </message>
     <message>
-        <location filename="src/search/proceduresearch.cpp" line="1422"/>
-        <location filename="src/search/proceduresearch.cpp" line="1428"/>
+        <location filename="src/search/proceduresearch.cpp" line="1426"/>
+        <location filename="src/search/proceduresearch.cpp" line="1432"/>
         <source> &lt;b&gt;%1&lt;/b&gt;</source>
         <translation> &lt;b&gt;%1&lt;/b&gt;</translation>
     </message>
     <message>
-        <location filename="src/search/proceduresearch.cpp" line="1443"/>
+        <location filename="src/search/proceduresearch.cpp" line="1447"/>
         <source>RNP</source>
         <translation>RNP</translation>
     </message>
@@ -30882,21 +30882,21 @@ Wirklich benutzen?</translation>
     </message>
     <message>
         <location filename="src/search/proceduresearch.cpp" line="427"/>
-        <location filename="src/search/proceduresearch.cpp" line="1481"/>
-        <location filename="src/search/proceduresearch.cpp" line="1515"/>
-        <location filename="src/search/proceduresearch.cpp" line="1544"/>
-        <location filename="src/search/proceduresearch.cpp" line="1557"/>
-        <location filename="src/search/proceduresearch.cpp" line="1566"/>
+        <location filename="src/search/proceduresearch.cpp" line="1485"/>
+        <location filename="src/search/proceduresearch.cpp" line="1519"/>
+        <location filename="src/search/proceduresearch.cpp" line="1548"/>
+        <location filename="src/search/proceduresearch.cpp" line="1561"/>
+        <location filename="src/search/proceduresearch.cpp" line="1570"/>
         <source>, </source>
         <translation>, </translation>
     </message>
     <message>
-        <location filename="src/search/proceduresearch.cpp" line="1509"/>
+        <location filename="src/search/proceduresearch.cpp" line="1513"/>
         <source>Full</source>
         <translation>Voll</translation>
     </message>
     <message>
-        <location filename="src/search/proceduresearch.cpp" line="1511"/>
+        <location filename="src/search/proceduresearch.cpp" line="1515"/>
         <source>DME</source>
         <translation>DME</translation>
     </message>
@@ -30923,7 +30923,7 @@ Really use it?</source>
 Wollen Sie diese Prozedur wirklich verwenden?</translation>
     </message>
     <message>
-        <location filename="src/search/proceduresearch.cpp" line="1326"/>
+        <location filename="src/search/proceduresearch.cpp" line="1330"/>
         <source>Do not &amp;show this dialog again.</source>
         <oldsource>Do &amp;not show this dialog again.</oldsource>
         <translation>Diesen Dialog &amp;nicht mehr anzeigen.</translation>
@@ -30945,17 +30945,17 @@ Wollen Sie diese Prozedur wirklich verwenden?</translation>
         <translation type="vanished">Wähle Ankunft-Runway für diese STAR</translation>
     </message>
     <message>
-        <location filename="src/search/proceduresearch.cpp" line="1400"/>
+        <location filename="src/search/proceduresearch.cpp" line="1404"/>
         <source>SID</source>
         <translation>SID</translation>
     </message>
     <message>
-        <location filename="src/search/proceduresearch.cpp" line="1402"/>
+        <location filename="src/search/proceduresearch.cpp" line="1406"/>
         <source>STAR</source>
         <translation>STAR</translation>
     </message>
     <message>
-        <location filename="src/search/proceduresearch.cpp" line="726"/>
+        <location filename="src/search/proceduresearch.cpp" line="730"/>
         <source>Approach </source>
         <translation>Anflug </translation>
     </message>
@@ -30970,32 +30970,32 @@ Wollen Sie diese Prozedur wirklich verwenden?</translation>
         <translation> (ein Übergang)</translation>
     </message>
     <message>
-        <location filename="src/search/proceduresearch.cpp" line="835"/>
+        <location filename="src/search/proceduresearch.cpp" line="839"/>
         <source>ICAO ident of the navaid,</source>
         <translation>ICAO-Kennung der Navigationshilfe,</translation>
     </message>
     <message>
-        <location filename="src/search/proceduresearch.cpp" line="837"/>
+        <location filename="src/search/proceduresearch.cpp" line="841"/>
         <source>Restriction
 %1/%2/angle</source>
         <translation>Beschränkung
 %1/%2/Winkel</translation>
     </message>
     <message>
-        <location filename="src/search/proceduresearch.cpp" line="838"/>
+        <location filename="src/search/proceduresearch.cpp" line="842"/>
         <source>Altitude restriction, speed limit or
 required descent flight path angle.</source>
         <translation>Höhenrestriktion, Geschwindigkeitsrestriktion oder
 erforderlicher Flugpfadwinkel für den Sinkflug.</translation>
     </message>
     <message>
-        <location filename="src/search/proceduresearch.cpp" line="1406"/>
+        <location filename="src/search/proceduresearch.cpp" line="1410"/>
         <source>&lt;b&gt;%1</source>
         <translation>&lt;b&gt;%1</translation>
     </message>
     <message>
-        <location filename="src/search/proceduresearch.cpp" line="1410"/>
-        <location filename="src/search/proceduresearch.cpp" line="1411"/>
+        <location filename="src/search/proceduresearch.cpp" line="1414"/>
+        <location filename="src/search/proceduresearch.cpp" line="1415"/>
         <source>-%1</source>
         <translation>-%1</translation>
     </message>
@@ -31004,7 +31004,7 @@ erforderlicher Flugpfadwinkel für den Sinkflug.</translation>
         <translation type="vanished"> (GPS Überlagerung)</translation>
     </message>
     <message>
-        <location filename="src/search/proceduresearch.cpp" line="1514"/>
+        <location filename="src/search/proceduresearch.cpp" line="1518"/>
         <source>Transition</source>
         <translation>Übergang</translation>
     </message>
@@ -31803,7 +31803,7 @@ Wird nur im Sinkflug am Nutzerflugzeugsymbol mit dem Zusatz &quot;N&quot; gezeig
         <location filename="src/common/maptypes.cpp" line="2166"/>
         <location filename="src/common/maptypes.cpp" line="2438"/>
         <location filename="src/common/maptypes.cpp" line="2709"/>
-        <location filename="src/search/proceduresearch.cpp" line="1551"/>
+        <location filename="src/search/proceduresearch.cpp" line="1555"/>
         <source>, </source>
         <translation>, </translation>
     </message>
@@ -34979,7 +34979,7 @@ Wird nur im Sinkflug am Nutzerflugzeugsymbol mit dem Zusatz &quot;N&quot; gezeig
         <translation>°M</translation>
     </message>
     <message>
-        <location filename="src/search/proceduresearch.cpp" line="1551"/>
+        <location filename="src/search/proceduresearch.cpp" line="1555"/>
         <source>Related: %1</source>
         <translation>Zugehörig: %1</translation>
     </message>
@@ -38668,7 +38668,7 @@ Stellen Sie die Flugplanart im Fenster &quot;Flugplanung&quot; auf &quot;IFR&quo
     </message>
     <message>
         <location filename="src/routeexport/routeexport.cpp" line="1489"/>
-        <location filename="src/routeexport/routeexport.cpp" line="1601"/>
+        <location filename="src/routeexport/routeexport.cpp" line="1600"/>
         <source>While saving GFP file:</source>
         <translation>Während des Speicherns der GFP-Datei:</translation>
     </message>
@@ -38683,32 +38683,32 @@ Stellen Sie die Flugplanart im Fenster &quot;Flugplanung&quot; auf &quot;IFR&quo
         <translation>Während des Speicherns der UFMC-Datei:</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexport.cpp" line="1684"/>
+        <location filename="src/routeexport/routeexport.cpp" line="1683"/>
         <source>While saving VFP file:</source>
         <translation>Während des Speicherns der VFP-Datei:</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexport.cpp" line="1813"/>
+        <location filename="src/routeexport/routeexport.cpp" line="1812"/>
         <source>While saving FPL file:</source>
         <translation>Während des Speicherns der FPL-Datei:</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexport.cpp" line="1867"/>
+        <location filename="src/routeexport/routeexport.cpp" line="1866"/>
         <source>While reading file &quot;%1&quot;:</source>
         <translation>Während des Dateilesens &quot;%1&quot;:</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexport.cpp" line="1899"/>
+        <location filename="src/routeexport/routeexport.cpp" line="1898"/>
         <source>While saving to file &quot;%1&quot;:</source>
         <translation>Während des Dateischreibens &quot;%1&quot;:</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexport.cpp" line="2118"/>
+        <location filename="src/routeexport/routeexport.cpp" line="2117"/>
         <source>&lt;p&gt;Note that saving flight plans with one or more enabled options in menu &quot;File&quot; -&gt; &quot;Export Options&quot; can cause unexpected issues:&lt;/p&gt;&lt;ul&gt;&lt;li&gt;Procedure and/or airway information will be missing when reloading the exported flight plans.&lt;/li&gt;&lt;li&gt;Several approach procedure leg types like holds and turns cannot be shown properly in simulators or aircraft.&lt;/li&gt;&lt;li&gt;Speed and altitude restrictions are not included in the exported flight plan.&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;This does not apply to the the native LNMPLN file format.&lt;/p&gt;&lt;p&gt;&lt;b&gt;Normally you should not use these export options.&lt;/b&gt;&lt;/p&gt;</source>
         <translation>&lt;p&gt;Beachten Sie, dass das Speichern von Flugplänen mit einer oder mehreren aktivierten Optionen im Menü &quot;Datei&quot; -&gt; &quot;Exporteinstellungen&quot; zu unerwarteten Problemen führen kann:&lt;/p&gt;&lt;ul&gt;&lt;li&gt;Beim Neuladen der exportierten Flugpläne fehlen Prozedur- und/oder Luftstraßeninformationen.&lt;/li&gt;&lt;li&gt;Mehrere Arten von Anflugprozeduren wie Halten und Wenden können in Simulatoren oder Flugzeugen nicht richtig dargestellt werden.&lt;/li&gt;&lt;li&gt;Geschwindigkeits- und Höhenbeschränkungen sind im exportierten Flugplan nicht enthalten.&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;Dies gilt nicht für das native LNMPLN-Dateiformat.&lt;/p&gt;&lt;p&gt;&lt;b&gt;Normalerweise sollten Sie diese Exporteinstellungen nicht verwenden.&lt;/b&gt;&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexport.cpp" line="2128"/>
+        <location filename="src/routeexport/routeexport.cpp" line="2127"/>
         <source>Do not &amp;show this dialog again.</source>
         <oldsource>Do &amp;not show this dialog again.</oldsource>
         <translation>Diesen Dialog &amp;nicht mehr anzeigen.</translation>
@@ -38722,12 +38722,12 @@ Stellen Sie die Flugplanart im Fenster &quot;Flugplanung&quot; auf &quot;IFR&quo
         <translation type="vanished">Während des Speicherns der corte.in-Datei:</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexport.cpp" line="1945"/>
+        <location filename="src/routeexport/routeexport.cpp" line="1944"/>
         <source>While reading from companyroutes.xml file:</source>
         <translation>Während des Lesens der companyroutes.xml-Datei:</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexport.cpp" line="2002"/>
+        <location filename="src/routeexport/routeexport.cpp" line="2001"/>
         <source>While saving to companyroutes.xml file:</source>
         <translation>Während des Speicherns der companyroutes.xml-Datei:</translation>
     </message>

@@ -470,6 +470,8 @@ Note that these changes were first published in AIRAC cycle 2402 and need an upd
 * More improvements for user interface font changes, dark mode and style `windowsvista`.
 * Fixed tab order in all dialog windows.
 * Updated Italian translation by Flavio Borgna.
+* Updated translation for Brazilian Portuguese by Ricardo Vitor.
+* Updated German translation.
 
 ### Crash and Issue Report
 
