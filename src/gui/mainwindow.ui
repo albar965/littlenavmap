@@ -2816,6 +2816,19 @@ Not available for all simulators.</string>
           </widget>
          </item>
          <item>
+          <widget class="QLabel" name="labelProcedureSearchWarn">
+           <property name="text">
+            <string/>
+           </property>
+           <property name="wordWrap">
+            <bool>true</bool>
+           </property>
+           <property name="textInteractionFlags">
+            <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
+           </property>
+          </widget>
+         </item>
+         <item>
           <widget class="QTreeWidget" name="treeWidgetApproachSearch">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Expanding" vsizetype="Expanding">

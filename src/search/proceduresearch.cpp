@@ -110,7 +110,7 @@ bool TreeEventFilter::eventFilter(QObject *object, QEvent *event)
     if(mouseEvent != nullptr && mouseEvent->button() == Qt::LeftButton)
     {
       QTreeWidgetItem *item = search->treeWidget->itemAt(mouseEvent->pos());
-      if(item == nullptr || object == NavApp::getMainUi()->labelProcedureSearch)
+      if(item == nullptr || object == NavApp::getMainUi()->labelProcedureSearch || object == NavApp::getMainUi()->labelProcedureSearchWarn)
         search->treeWidget->clearSelection();
     }
 
@@ -142,7 +142,8 @@ ProcedureSearch::ProcedureSearch(QMainWindow *main, QTreeWidget *treeWidgetParam
 
   Ui::MainWindow *ui = NavApp::getMainUi();
 
-  ui->labelProcedureSearch->installEventFilter(new atools::gui::ClickToolTipHandler(ui->labelProcedureSearch));
+  ui->labelProcedureSearchWarn->installEventFilter(new atools::gui::ClickToolTipHandler(ui->labelProcedureSearchWarn));
+  ui->labelProcedureSearchWarn->hide();
 
   ui->comboBoxProcedureSearchFilter->insertSeparator(FILTER_SEPARATOR);
 
@@ -377,15 +378,16 @@ void ProcedureSearch::updateWidgets()
 
 void ProcedureSearch::updateHeaderLabel()
 {
+  using atools::util::HtmlBuilder;
   QString procs;
 
   const QList<QTreeWidgetItem *> items = treeWidget->selectedItems();
   for(QTreeWidgetItem *item : items)
     procs.append(procedureAndTransitionText(item, true /* header */));
 
-  QString tooltip, warningTooltip, statusTip;
+  QString tooltip, statusTip;
   Ui::MainWindow *ui = NavApp::getMainUi();
-  atools::util::HtmlBuilder html;
+  HtmlBuilder html;
 
   if(currentAirportSim->isValid())
   {
@@ -416,20 +418,27 @@ void ProcedureSearch::updateHeaderLabel()
 
   if(!runwayMismatches.isEmpty())
   {
-    html.br().warning(tr("Runway mismatches found. Click here for details."));
+    QString warningTooltip = tr("<p style='white-space:pre'>Procedure %1 %2 not found for simulator airport.<br/>"
+                                "This means that runways from navigation data do not match runways of the simulator airport data.<br/>"
+                                "Update your navigation data or update or install an add-on airport to fix this.</p>"
+                                "<p style='white-space:pre'>You can still use procedures for this airport since %3<br/>"
+                                "uses a best guess to cross reference simulator runways.</p>").
+                             arg(runwayMismatches.size() == 1 ? tr("runway") : tr("runways")).
+                             arg(atools::strJoin(runwayMismatches, tr(", "), tr(" and "))).
+                             arg(QCoreApplication::applicationName());
 
-    warningTooltip = tr("<p style='white-space:pre'>Procedure %1 %2 not found for simulator airport.<br/>"
-                        "This means that runways from navigation data do not match runways of the simulator airport data.<br/>"
-                        "Update your navigation data or update or install an add-on airport to fix this.</p>"
-                        "<p style='white-space:pre'>You can still use procedures for this airport since %3<br/>"
-                        "uses a best guess to cross reference simulator runways.</p>").
-                     arg(runwayMismatches.size() == 1 ? tr("runway") : tr("runways")).
-                     arg(atools::strJoin(runwayMismatches, tr(", "), tr(" and "))).
-                     arg(QCoreApplication::applicationName());
+    ui->labelProcedureSearchWarn->setText(HtmlBuilder::warningMessage(tr("Runway mismatches found. Click here for details.")));
+    ui->labelProcedureSearchWarn->setToolTip(warningTooltip);
+    ui->labelProcedureSearchWarn->show();
+  }
+  else
+  {
+    ui->labelProcedureSearchWarn->clear();
+    ui->labelProcedureSearchWarn->hide();
   }
 
   ui->labelProcedureSearch->setText(html.getHtml());
-  ui->labelProcedureSearch->setToolTip(tooltip + warningTooltip);
+  ui->labelProcedureSearch->setToolTip(tooltip);
   ui->labelProcedureSearch->setStatusTip(statusTip);
 
   treeWidget->setToolTip(tooltip);
