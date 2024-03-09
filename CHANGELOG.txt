@@ -38,8 +38,9 @@ A big thank you to all who reported bugs and issues!
 
 See below for changes from 3.0.3.rc1 to 3.0.4.
 
-### User Manual
+### User Manual and FAQ
 
+* [Frequently asked questions](https://albar965.github.io/littlenavmap-faq.html) updated.
 * User manual is updated for all new functions. All help buttons and links point to the right chapters.
 * Added sub-menu `User Manual - Helpful Chapters` with important help links.
 * Removed offline PDF manual in program and installer. You can download the user manual in PDF and other
@@ -538,7 +539,7 @@ Note that these changes were first published in AIRAC cycle 2402 and need an upd
 * Now safely catching termination signals on Linux. This avoids data loss due to unsaved files when
   terminating the program with Ctrl+C from the command line.
 * Little Navmap supports the Wayland compositor which is used on newer Linux distributions
-  but you have to install the package `qwayland5`.
+  but you have to install the package `qtwayland5`.
 
 ## Changes from 3.0.3.rc1 to 3.0.4
 
@@ -1149,7 +1150,7 @@ A big thank you to all who reported bugs and issues!
 ### Linux
 
 * Little Navmap supports the Wayland compositor which is used on some of the newer Linux distributions
-  but you have to install the package `qwayland5`.
+  but you have to install the package `qtwayland5`.
 
 =================================================================================
 
