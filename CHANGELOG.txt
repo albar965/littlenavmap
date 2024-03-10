@@ -41,8 +41,10 @@ See below for changes from 3.0.3.rc1 to 3.0.4.
 ### User Manual and FAQ
 
 * [Frequently asked questions](https://albar965.github.io/littlenavmap-faq.html) updated.
+
+* Revised the user manual. Added more tips, hints and screenshots.
 * User manual is updated for all new functions. All help buttons and links point to the right chapters.
-* Added sub-menu `User Manual - Helpful Chapters` with important help links.
+* Added sub-menu `User Manual - Helpful Chapters` with important help links in main menu.
 * Removed offline PDF manual in program and installer. You can download the user manual in PDF and other
   formats from the page [User Manuals](https://albar965.github.io/manuals.html). This page is also linked
   from the menu `Help` -> `Download User Manuals`.
@@ -100,6 +102,13 @@ See below for changes from 3.0.3.rc1 to 3.0.4.
 * [New chapter for GLOBE installation](https://www.littlenavmap.org/manuals/littlenavmap/release/3.0/en/GLOBE.html)
 * [Create a manual issue report](https://www.littlenavmap.org/manuals/littlenavmap/release/3.0/en/ISSUEREPORT.html)
 * [Automatic crash report after improper shutdown](https://www.littlenavmap.org/manuals/littlenavmap/release/3.0/en/CRASHREPORT.html)
+
+### Translations
+
+* Updated Italian translation by Flavio Borgna.
+* Updated translation for Brazilian Portuguese by Ricardo Vitor.
+* Updated French translation by Patrick.
+* Updated German translation.
 
 ### Flight Plan
 
@@ -469,9 +478,6 @@ Note that these changes were first published in AIRAC cycle 2402 and need an upd
   custom userpoint icons.
 * More improvements for user interface font changes, dark mode and style `windowsvista`.
 * Fixed tab order in all dialog windows.
-* Updated Italian translation by Flavio Borgna.
-* Updated translation for Brazilian Portuguese by Ricardo Vitor.
-* Updated German translation.
 
 ### Crash and Issue Report
 
