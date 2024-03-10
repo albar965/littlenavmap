@@ -154,6 +154,7 @@ bool DirTool::createAllDirs()
   mkdir(layoutDir);
   mkdir(airspaceDir);
   mkdir(airportsDir);
+  mkdir(globeDir);
   mkdir(globeDir % atools::SEP % "all10");
   mkdir(mapThemesDir);
 
