@@ -1,15 +1,17 @@
 #### Latest Stable Release
 
-[**► Windows 64-bit Installer \(*MSFS and X-Plane*\)** - LittleNavmap-win64-2.8.12-Install.exe](https://github.com/albar965/littlenavmap/releases/download/v2.8.12/LittleNavmap-win64-2.8.12-Install.exe)<br/>
-[**► macOS** - LittleNavmap-macOS-2.8.12.zip](https://github.com/albar965/littlenavmap/releases/download/v2.8.12/LittleNavmap-macOS-2.8.12.zip)<br/>
-[**► Linux \(64 bit, based on Ubuntu 22.04\)** - LittleNavmap-linux-22.04-2.8.12.tar.gz](https://github.com/albar965/littlenavmap/releases/download/v2.8.12/LittleNavmap-linux-22.04-2.8.12.tar.gz)
+<!-- VERSION_NUMBER_TODO -->
+
+[**► Windows 64-bit Installer \(*MSFS and X-Plane*\)** - LittleNavmap-win64-3.0.4-Install.exe](https://github.com/albar965/littlenavmap/releases/download/v3.0.4/LittleNavmap-win64-3.0.4-Install.exe)<br/>
+[**► macOS** - LittleNavmap-macOS-3.0.4.zip](https://github.com/albar965/littlenavmap/releases/download/v3.0.4/LittleNavmap-macOS-3.0.4.zip)<br/>
+[**► Linux \(64 bit, based on Ubuntu 22.04\)** - LittleNavmap-linux-22.04-3.0.4.tar.gz](https://github.com/albar965/littlenavmap/releases/download/v3.0.4/LittleNavmap-linux-22.04-3.0.4.tar.gz)
 
 **Other Versions:**
 
-[► Windows 32-bit Installer \(*only for FSX and P3D*\) - LittleNavmap-win32-2.8.12-Install.exe](https://github.com/albar965/littlenavmap/releases/download/v2.8.12/LittleNavmap-win32-2.8.12-Install.exe)<br/>
-[► Linux \(64 bit, based on Ubuntu 20.04 for Debian or older systems\) - LittleNavmap-linux-20.04-2.8.12.tar.gz](https://github.com/albar965/littlenavmap/releases/download/v2.8.12/LittleNavmap-linux-20.04-2.8.12.tar.gz)
+[► Windows 32-bit Installer \(*only for FSX and P3D*\) - LittleNavmap-win32-3.0.4-Install.exe](https://github.com/albar965/littlenavmap/releases/download/v3.0.4/LittleNavmap-win32-3.0.4-Install.exe)<br/>
+[► Linux \(64 bit, based on Ubuntu 20.04 for Debian or older systems\) - LittleNavmap-linux-20.04-3.0.4.tar.gz](https://github.com/albar965/littlenavmap/releases/download/v3.0.4/LittleNavmap-linux-20.04-3.0.4.tar.gz)
 
-Zipped Windows releases without installer are available in the alternative download locations below or from the release assets at [GitHub - Little Navmap Releases - Version 2.8.12](https://github.com/albar965/littlenavmap/releases/v2.8.12) \(scroll down to `Assets`\).
+Zipped Windows releases without installer are available in the alternative download locations below or from the release assets at [GitHub - Little Navmap Releases - Version 3.0.4](https://github.com/albar965/littlenavmap/releases/v3.0.4) \(scroll down to `Assets`\).
 
 **► [Alternative Download Locations](https://albar965.github.io/downloads.html)**
 
