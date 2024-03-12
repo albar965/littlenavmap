@@ -1,8 +1,23 @@
 ﻿Numbers (#) refer to GitHub issues.
 For example: #3 is https://github.com/albar965/littlenavmap/issues/3.
-This text is partially Markdown, hence sometimes strange formatting.
+This text is partially Markdown, so the formatting is sometimes strange.
 
 ==>>=============================================================================
+
+# Version 3.0.5
+
+**This is a hotfix for Little Navmap which fixes a problem loading MSFS flight plan files.**
+
+See
+[Little Navmap 3.0.4 released](https://albar965.github.io/release/2024/03/11/littlenavmap-stable-304-released.html)
+or below for the full changelog from 2.8.12.
+
+## Changes from 3.0.4 to 3.0.5
+
+* Hotfix to avoid error message `Caught exception: Invalid lat/long format`
+  when loading the new MSFS PLN files with `*` as degree sign, as used since 3.0.4.
+
+----
 
 # Version 3.0.4
 
