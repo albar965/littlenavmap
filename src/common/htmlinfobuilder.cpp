@@ -589,22 +589,20 @@ void HtmlInfoBuilder::nearestMapObjectsTextRow(const MapAirport& airport, HtmlBu
   // Create table row ==========================
   html.tr(QColor());
 
-  if(airportCol)
-  {
-    // Airports have no type and link is on name
-    html.td(displayIdent, ahtml::BOLD);
-    html.tdF(ahtml::ALIGN_RIGHT).a(name, url, ahtml::LINK_NO_UL).tdEnd();
-  }
+  QString displayText;
+  if(name.isEmpty())
+    displayText = displayIdent;
   else
-  {
+    displayText = tr("%1 (%2)").arg(name).arg(displayIdent);
+
+  html.tdF(ahtml::ALIGN_LEFT).a(displayText, url, ahtml::LINK_NO_UL).tdEnd();
+
+  if(!airportCol)
     // Navaid type
     html.td(type, ahtml::BOLD);
-    html.td(displayIdent, ahtml::BOLD);
-    html.tdF(ahtml::ALIGN_RIGHT).a(name, url, ahtml::LINK_NO_UL).tdEnd();
-  }
 
   if(frequencyCol)
-    html.td(freq, ahtml::ALIGN_RIGHT);
+    html.td(freq, ahtml::ALIGN_CENTER);
 
   html.td(courseTextFromTrue(bearingTrue, magVar), ahtml::ALIGN_RIGHT | ahtml::NO_ENTITIES).
   td(Unit::distMeter(distance, false), ahtml::ALIGN_RIGHT).
@@ -622,11 +620,10 @@ bool HtmlInfoBuilder::nearestMapObjectsText(const MapAirport& airport, HtmlBuild
     // Create table header ==========================
     html.tr(QColor());
 
+    html.th(tr("Name") % tr(" ") % tr("Ident"));
+
     if(!airportCol)
       html.th(tr("Type"));
-
-    html.th(tr("Ident")).
-    th(tr("Name"));
 
     if(frequencyCol)
       // Only for navaids
@@ -637,10 +634,10 @@ bool HtmlInfoBuilder::nearestMapObjectsText(const MapAirport& airport, HtmlBuild
     trEnd();
 
     // Go through mixed list of map objects ============================================
-    int row = 1;
+    int row = 0;
     for(const map::MapBase *baseNav : *nearestNav)
     {
-      if(row++ > maxRows)
+      if(row > maxRows)
         // Stop at max
         break;
 
@@ -654,29 +651,44 @@ bool HtmlInfoBuilder::nearestMapObjectsText(const MapAirport& airport, HtmlBuild
 
         // Omit center airport used as reference
         if(apSim.isValid() && apSim.id != airport.id)
+        {
           nearestMapObjectsTextRow(airport, html, QString(), apSim.displayIdent(), apSim.name, QString(), &apSim, apSim.magvar,
                                    frequencyCol, airportCol);
+          row++;
+        }
       }
 
       const map::MapVor *vor = baseNav->asPtr<map::MapVor>();
       if(vor != nullptr)
+      {
         nearestMapObjectsTextRow(airport, html, map::vorType(*vor), vor->ident, vor->name, locale.toString(vor->frequency / 1000., 'f', 2),
                                  vor, vor->magvar, frequencyCol, airportCol);
+        row++;
+      }
 
       const map::MapNdb *ndb = baseNav->asPtr<map::MapNdb>();
       if(ndb != nullptr)
+      {
         nearestMapObjectsTextRow(airport, html, tr("NDB"), ndb->ident, ndb->name, locale.toString(ndb->frequency / 100., 'f', 1),
                                  ndb, ndb->magvar, frequencyCol, airportCol);
+        row++;
+      }
 
       const map::MapWaypoint *waypoint = baseNav->asPtr<map::MapWaypoint>();
       if(waypoint != nullptr)
+      {
         nearestMapObjectsTextRow(airport, html, tr("Waypoint"), waypoint->ident, QString(), QString(), waypoint, waypoint->magvar,
                                  frequencyCol, airportCol);
+        row++;
+      }
 
       const map::MapIls *ils = baseNav->asPtr<map::MapIls>();
       if(ils != nullptr && !ils->isAnyGlsRnp())
+      {
         nearestMapObjectsTextRow(airport, html, map::ilsType(*ils, true /* gs */, true /* dme */, tr(", ")), ils->ident, ils->name,
                                  ils->freqMHzLocale(), ils, ils->magvar, frequencyCol, airportCol);
+        row++;
+      }
     }
     html.tableEnd();
     return true;

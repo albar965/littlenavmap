@@ -329,7 +329,9 @@ map::MapResultIndex *MapQuery::nearestNavaidsInternal(const Pos& pos, float dist
         query::fetchObjectsForRect(rect, ilsByRectQuery, [ =, &ilsRes](atools::sql::SqlQuery *query) -> void {
           MapIls obj;
           mapTypesFactory->fillIls(query->record(), obj);
-          ilsRes.append(obj);
+
+          if(!obj.isAnyGlsRnp())
+            ilsRes.append(obj);
         });
         maptools::removeByDistance(ilsRes, pos, atools::geo::nmToMeter(maxIlsDist));
         maptools::sortByDistance(ilsRes, pos);

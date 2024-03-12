@@ -16,6 +16,7 @@ or below for the full changelog from 2.8.12.
 
 * Hotfix to avoid error message `Caught exception: Invalid lat/long format`
   when loading the new MSFS PLN files with `*` as degree sign, as used since 3.0.4.
+* Fixed missing navaids in tabs `Airport` -> `Nearest` and added missing links to navaids.
 
 ----
 
