@@ -163,7 +163,10 @@ int main(int argc, char *argv[])
     QGuiApplication::setAttribute(Qt::AA_EnableHighDpiScaling, false);
     // QGuiApplication::setAttribute(Qt::AA_DisableHighDpiScaling, true); // Freezes with QT_SCALE_FACTOR=2 on Linux
     QGuiApplication::setAttribute(Qt::AA_UseHighDpiPixmaps, false);
+#if !defined(Q_OS_WIN32)
+    // Causes weird font effects on Windows
     QGuiApplication::setAttribute(Qt::AA_Use96Dpi, true);
+#endif
   }
 
   // Show dialog on exception in main event queue - can be disabled for debugging purposes
