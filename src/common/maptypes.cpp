@@ -1203,7 +1203,10 @@ bool MapAirport::noRunways() const
 bool MapAirport::isVisible(map::MapTypes types, int minRunwayFt, const MapLayer *layer) const
 {
   // Show addon independent of layer if flag is set
-  bool overrideAddon = addon() && types.testFlag(map::AIRPORT_ADDON);
+  if(addon() && types.testFlag(map::AIRPORT_ADDON_ZOOM_FILTER))
+    return true;
+
+  bool overrideAddon = addon() && types.testFlag(map::AIRPORT_ADDON_ZOOM);
 
   if(!overrideAddon)
     // Use max of layer and GUI min runway length if not overrideing addon
@@ -1903,103 +1906,6 @@ const QString& airspaceFlagToStringLong(map::MapAirspaceFlags type)
   return airspaceFlagNameMapLong[type];
 }
 
-QString mapTypeToString(MapTypes type)
-{
-  if(type == NONE)
-    return QObject::tr("None");
-  else
-  {
-    QStringList str;
-
-    if(type.testFlag(map::AIRCRAFT))
-      str.append("AIRCRAFT");
-    if(type.testFlag(map::AIRCRAFT_AI))
-      str.append("AIRCRAFT_AI");
-    if(type.testFlag(map::AIRCRAFT_AI_SHIP))
-      str.append("AIRCRAFT_AI_SHIP");
-    if(type.testFlag(map::AIRCRAFT_ONLINE))
-      str.append("AIRCRAFT_ONLINE");
-    if(type.testFlag(map::AIRPORT))
-      str.append("AIRPORT");
-    if(type.testFlag(map::AIRPORT_ADDON))
-      str.append("AIRPORT_ADDON");
-    if(type.testFlag(map::AIRPORT_EMPTY))
-      str.append("AIRPORT_EMPTY");
-    if(type.testFlag(map::AIRPORT_HARD))
-      str.append("AIRPORT_HARD");
-    if(type.testFlag(map::AIRPORT_HELIPAD))
-      str.append("AIRPORT_HELIPAD");
-    if(type.testFlag(map::AIRPORT_MSA))
-      str.append("AIRPORT_MSA");
-    if(type.testFlag(map::AIRPORT_NO_PROCS))
-      str.append("AIRPORT_NO_PROCS");
-    if(type.testFlag(map::AIRPORT_SOFT))
-      str.append("AIRPORT_SOFT");
-    if(type.testFlag(map::AIRPORT_UNLIGHTED))
-      str.append("AIRPORT_UNLIGHTED");
-    if(type.testFlag(map::AIRPORT_WATER))
-      str.append("AIRPORT_WATER");
-    if(type.testFlag(map::AIRSPACE))
-      str.append("AIRSPACE");
-    if(type.testFlag(map::AIRWAY))
-      str.append("AIRWAY");
-    if(type.testFlag(map::AIRWAYJ))
-      str.append("AIRWAYJ");
-    if(type.testFlag(map::AIRWAYV))
-      str.append("AIRWAYV");
-    if(type.testFlag(map::HELIPAD))
-      str.append("HELIPAD");
-    if(type.testFlag(map::HOLDING))
-      str.append("HOLDING");
-    if(type.testFlag(map::ILS))
-      str.append("ILS");
-    if(type.testFlag(map::INVALID))
-      str.append("INVALID");
-    if(type.testFlag(map::LOGBOOK))
-      str.append("LOGBOOK");
-    if(type.testFlag(map::MARKER))
-      str.append("MARKER");
-    if(type.testFlag(map::MARK_DISTANCE))
-      str.append("MARK_DISTANCE");
-    if(type.testFlag(map::MARK_HOLDING))
-      str.append("MARK_HOLDING");
-    if(type.testFlag(map::MARK_MSA))
-      str.append("MARK_MSA");
-    if(type.testFlag(map::MARK_PATTERNS))
-      str.append("MARK_PATTERNS");
-    if(type.testFlag(map::MARK_RANGE))
-      str.append("MARK_RANGE");
-    if(type.testFlag(map::MISSED_APPROACH))
-      str.append("MISSED_APPROACH");
-    if(type.testFlag(map::NDB))
-      str.append("NDB");
-    if(type.testFlag(map::PARKING))
-      str.append("PARKING");
-    if(type.testFlag(map::PROCEDURE))
-      str.append("PROCEDURE");
-    if(type.testFlag(map::PROCEDURE_POINT))
-      str.append("PROCEDURE_POINT");
-    if(type.testFlag(map::RUNWAYEND))
-      str.append("RUNWAYEND");
-    if(type.testFlag(map::RUNWAY))
-      str.append("RUNWAY");
-    if(type.testFlag(map::TRACK))
-      str.append("TRACK");
-    if(type.testFlag(map::USERPOINT))
-      str.append("USERPOINT");
-    if(type.testFlag(map::USERPOINTROUTE))
-      str.append("USERPOINTROUTE");
-    if(type.testFlag(map::USER_FEATURE))
-      str.append("USER_FEATURE");
-    if(type.testFlag(map::VOR))
-      str.append("VOR");
-    if(type.testFlag(map::WAYPOINT))
-      str.append("WAYPOINT");
-
-    return str.join(",");
-  }
-}
-
 const QString& airspaceRemark(map::MapAirspaceTypes type)
 {
   Q_ASSERT(!airspaceRemarkMap.isEmpty());
@@ -2052,30 +1958,20 @@ QString airspaceSourceText(MapAirspaceSources src)
 QDebug operator<<(QDebug out, const MapBase& obj)
 {
   QDebugStateSaver saver(out);
-  out.noquote().nospace() << "MapBase["
-                          << "id " << obj.id
-                          << ", type " << mapTypeToString(obj.objType)
-                          << ", " << obj.position
-                          << "]";
+  out.noquote().nospace() << "MapBase[" << "id " << obj.id << ", type " << obj.objType << ", " << obj.position << "]";
   return out;
 }
 
 QDebug operator<<(QDebug out, const MapRef& ref)
 {
   QDebugStateSaver saver(out);
-  out.noquote().nospace() << "MapObjectRef["
-                          << "id " << ref.id
-                          << ", type " << mapTypeToString(ref.objType)
-                          << "]";
-  return out;
+  out.noquote().nospace() << "MapObjectRef[" << "id " << ref.id << ", type " << ref.objType << "]"; return out;
 }
 
 QDebug operator<<(QDebug out, const MapRefExt& ref)
 {
   QDebugStateSaver saver(out);
-  out.noquote().nospace() << "MapObjectRefExt["
-                          << "id " << ref.id
-                          << ", type " << mapTypeToString(ref.objType);
+  out.noquote().nospace() << "MapObjectRefExt[" << "id " << ref.id << ", type " << ref.objType;
 
   if(!ref.name.isEmpty())
     out.noquote().nospace() << ", name " << ref.name;

@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -117,7 +117,7 @@ enum MapType : unsigned long long
   AIRPORT_WATER =        0x0000'0040'0000'0000, /* Display flag for water only airports */
   AIRPORT_HELIPAD =      0x0000'0080'0000'0000, /* Display flag for helipad only airports */
   AIRPORT_EMPTY =        0x0000'0100'0000'0000, /* Filter flag for empty airports */
-  AIRPORT_ADDON =        0x0000'0200'0000'0000, /* Force addon airport display at all times */
+  // 0x0000'0200'0000'0000 FREE
   AIRPORT_UNLIGHTED =    0x0000'0400'0000'0000, /* Filter flag. Show airports having no lighting */
   AIRPORT_NO_PROCS =     0x0000'0800'0000'0000, /* Filter flag. Show airports without approach procedure */
   AIRPORT_CLOSED =       0x0000'1000'0000'0000, /* Filter flag. Show closed airports */
@@ -126,7 +126,12 @@ enum MapType : unsigned long long
   /* Procedure flags ================================  */
   PROCEDURE_POINT =      0x0000'2000'0000'0000, /* Type flag for map base and context menu */
 
-  AIRCRAFT_TRAIL = 0x0000'8000'0000'0000, /* Simulator aircraft track.  */
+  AIRCRAFT_TRAIL =       0x0000'8000'0000'0000, /* Simulator aircraft track.  */
+
+  /* Add-on airport flags ================================  */
+  AIRPORT_ADDON_ZOOM =            0x0001'0000'0000'0000, /* Add-on airports override zoom distance but but not filter */
+  AIRPORT_ADDON_ZOOM_FILTER = 0x0002'0000'0000'0000, /* Add-on airports override zoom distance and filters */
+
 
   // NEXT = 0x0001'0000'0000'0000
 
@@ -134,15 +139,21 @@ enum MapType : unsigned long long
   /* Pure visibiliy flags. Nothing is shown if not at least one of these is set */
   AIRPORT_ALL_VISIBLE = AIRPORT_HARD | AIRPORT_SOFT | AIRPORT_WATER | AIRPORT_HELIPAD,
 
+  /* Any add-on override */
+  AIRPORT_ADDON_ANY = AIRPORT_ADDON_ZOOM | AIRPORT_ADDON_ZOOM_FILTER,
+
   /* All available filters in drop down button */
   AIRPORT_FILTER_ALL = AIRPORT_ALL_VISIBLE | AIRPORT_EMPTY | AIRPORT_UNLIGHTED | AIRPORT_NO_PROCS |
-                       AIRPORT_CLOSED | AIRPORT_MILITARY | AIRPORT_ADDON,
+                       AIRPORT_CLOSED | AIRPORT_MILITARY | AIRPORT_ADDON_ANY,
 
   /* Visible and filter flags */
   AIRPORT_ALL = AIRPORT_ALL_VISIBLE | AIRPORT | AIRPORT_EMPTY | AIRPORT_UNLIGHTED | AIRPORT_NO_PROCS | AIRPORT_CLOSED | AIRPORT_MILITARY,
 
-  /* Also default value on first start */
-  AIRPORT_ALL_AND_ADDON = AIRPORT_ALL | AIRPORT_ADDON,
+/* Used to mask airport values */
+  AIRPORT_ALL_MASK = AIRPORT_ALL | AIRPORT_ADDON_ANY,
+
+  /* Default value on first start */
+  AIRPORT_DEFAULT = AIRPORT_ALL | AIRPORT_ADDON_ZOOM_FILTER,
 
   /* All online, AI and multiplayer aircraft ========================================= */
   AIRCRAFT_ALL = AIRCRAFT | AIRCRAFT_AI | AIRCRAFT_AI_SHIP | AIRCRAFT_ONLINE,

@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -155,11 +155,17 @@ void MapVisible::updateVisibleObjectsStatusBar()
           apShort.append(tr("M"));
         }
 
-        if(shown.testFlag(map::AIRPORT_ADDON))
+        if(shown.testFlag(map::AIRPORT_ADDON_ZOOM))
         {
-          features.append(tr("add-on display forced (A)"));
-          apShort.append(tr("A"));
+          features.append(tr("add-on overrides zoom (AZ)"));
+          apShort.append(tr("AZ"));
         }
+        else if(shown.testFlag(map::AIRPORT_ADDON_ZOOM_FILTER))
+        {
+          features.append(tr("add-on overrides zoom and filter (AF)"));
+          apShort.append(tr("AF"));
+        }
+
         if(!features.isEmpty())
           tooltip.text(tr("Showing ") % atools::strJoin(features, tr(", "), tr(" and "), tr(".")));
         tooltip.tdEnd().trEnd();

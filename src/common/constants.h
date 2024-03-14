@@ -194,7 +194,7 @@ const QLatin1String MAP_TRAFFICPATTERNS("Map/TrafficPatterns2");
 const QLatin1String MAP_HOLDINGS("Map/Holdings1");
 const QLatin1String MAP_AIRPORT_MSA("Map/AirportMsa1");
 const QLatin1String MAP_MARK_DISPLAY("Map/MarkDisplay1");
-const QLatin1String MAP_AIRPORT("Map/Airports2");
+const QLatin1String MAP_AIRPORT("Map/Airports3");
 const QLatin1String MAP_AIRPORT_RUNWAY_LENGTH("Map/AirportsRunwayLength");
 const QLatin1String MAP_DETAIL_LEVEL("Map/DetailLevel");
 

@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -113,8 +113,10 @@ QDebug operator<<(QDebug out, const map::MapTypes& type)
       flags.append("AIRPORT_HELIPAD");
     if(type.testFlag(AIRPORT_EMPTY))
       flags.append("AIRPORT_EMPTY");
-    if(type.testFlag(AIRPORT_ADDON))
-      flags.append("AIRPORT_ADDON");
+    if(type.testFlag(AIRPORT_ADDON_ZOOM_FILTER))
+      flags.append("AIRPORT_ADDON_ZOOM_AND_FILTER");
+    if(type.testFlag(AIRPORT_ADDON_ZOOM))
+      flags.append("AIRPORT_ADDON_ZOOM");
     if(type.testFlag(AIRPORT_UNLIGHTED))
       flags.append("AIRPORT_UNLIGHTED");
     if(type.testFlag(AIRPORT_NO_PROCS))

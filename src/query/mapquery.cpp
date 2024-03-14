@@ -862,22 +862,24 @@ const QList<map::MapAirport> *MapQuery::getAirports(const Marble::GeoDataLatLonB
                                                     map::MapTypes types, bool& overflow)
 {
   // Get flags for running separate queries for add-on and normal airports
-  bool addon = types.testFlag(map::AIRPORT_ADDON);
+  bool addonZoom = types.testFlag(map::AIRPORT_ADDON_ZOOM);
+  bool addonZoomFilter = types.testFlag(map::AIRPORT_ADDON_ZOOM_FILTER);
   bool normal = types & map::AIRPORT_ALL;
 
   airportCache.updateCache(rect, mapLayer, queryRectInflationFactor, queryRectInflationIncrement, lazy,
-                           [this, addon, normal](const MapLayer *curLayer, const MapLayer *newLayer) -> bool
+                           [this, addonZoom, addonZoomFilter, normal](const MapLayer *curLayer, const MapLayer *newLayer) -> bool
   {
     return curLayer->hasSameQueryParametersAirport(newLayer) &&
     // Invalidate cache if settings differ
-    airportCacheAddonFlag == addon && airportCacheNormalFlag == normal;
+    airportCacheAddonZoomFlag == addonZoom && airportCacheAddonZoomFilterFlag == addonZoomFilter && airportCacheNormalFlag == normal;
   });
 
-  airportCacheAddonFlag = addon;
+  airportCacheAddonZoomFlag = addonZoom;
+  airportCacheAddonZoomFilterFlag = addonZoomFilter;
   airportCacheNormalFlag = normal;
 
   airportByRectQuery->bindValue(":minlength", mapLayer->getMinRunwayLength());
-  return fetchAirports(rect, airportByRectQuery, lazy, false /* overview */, addon, normal, overflow);
+  return fetchAirports(rect, airportByRectQuery, lazy, false /* overview */, addonZoom || addonZoomFilter, normal, overflow);
 }
 
 const QList<map::MapAirport> *MapQuery::getAirportsByRect(const atools::geo::Rect& rect, const MapLayer *mapLayer, bool lazy,
@@ -889,14 +891,16 @@ const QList<map::MapAirport> *MapQuery::getAirportsByRect(const atools::geo::Rec
   const GeoDataLatLonBox latLonBox = GeoDataLatLonBox(rect.getNorth(), rect.getSouth(), rect.getEast(), rect.getWest());
 
   // Get flags for running separate queries for add-on and normal airports
-  bool addon = types.testFlag(map::AIRPORT_ADDON);
+  bool addonZoom = types.testFlag(map::AIRPORT_ADDON_ZOOM);
+  bool addonZoomFilter = types.testFlag(map::AIRPORT_ADDON_ZOOM_FILTER);
   bool normal = types & map::AIRPORT_ALL;
 
-  airportCacheAddonFlag = addon;
+  airportCacheAddonZoomFlag = addonZoom;
+  airportCacheAddonZoomFilterFlag = addonZoomFilter;
   airportCacheNormalFlag = normal;
 
   airportByRectQuery->bindValue(":minlength", mapLayer->getMinRunwayLength());
-  return fetchAirports(latLonBox, airportByRectQuery, lazy, false /* overview */, addon, normal, overflow);
+  return fetchAirports(latLonBox, airportByRectQuery, lazy, false /* overview */, addonZoom || addonZoomFilter, normal, overflow);
 }
 
 const QList<map::MapVor> *MapQuery::getVors(const GeoDataLatLonBox& rect, const MapLayer *mapLayer,

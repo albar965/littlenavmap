@@ -2119,7 +2119,7 @@ void MapWidget::updateRoute(const QPoint& point, int leg, int pointIndex, bool f
   }
 
   // Count number of all objects
-  int totalSize = result.size(map::AIRPORT_ALL_AND_ADDON | map::VOR | map::NDB | map::WAYPOINT | map::USERPOINT);
+  int totalSize = result.size(map::AIRPORT_ALL_MASK | map::VOR | map::NDB | map::WAYPOINT | map::USERPOINT);
 
   int id = -1;
   map::MapTypes type = map::NONE;
@@ -3378,7 +3378,7 @@ void MapWidget::updateMapObjectsShown()
   setShowMapObjectDisplay(map::GLS, ui->actionMapShowGls->isChecked());
 
   setShowMapObjects(NavApp::getMapMarkHandler()->getMarkTypes(), map::MARK_ALL);
-  setShowMapObjects(NavApp::getMapAirportHandler()->getAirportTypes(), map::AIRPORT_ALL_AND_ADDON);
+  setShowMapObjects(NavApp::getMapAirportHandler()->getAirportTypes(), map::AIRPORT_ALL_MASK);
   paintLayer->setShowMinimumRunwayFt(NavApp::getMapAirportHandler()->getMinimumRunwayFt());
 
   updateGeometryIndex(oldTypes, oldDisplayTypes, oldMinRunwayLength);

@@ -343,5 +343,8 @@
         <file>resources/icons/airportweather.svg</file>
         <file>resources/config/mapthemes.cfg</file>
         <file>resources/icons/helpdownload.svg</file>
+        <file>resources/icons/airportaddonzoom.svg</file>
+        <file>resources/icons/airportaddonnone.svg</file>
+        <file>resources/icons/airportaddonall.svg</file>
     </qresource>
 </RCC>

@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -191,18 +191,10 @@ WindReporter::WindReporter(QObject *parent, atools::fs::FsPaths::SimulatorType t
 
 WindReporter::~WindReporter()
 {
-  qDebug() << Q_FUNC_INFO << "delete windQueryOnline";
-  delete windQueryOnline;
-  windQueryOnline = nullptr;
-  qDebug() << Q_FUNC_INFO << "delete windQueryManual";
-  delete windQueryManual;
-  windQueryManual = nullptr;
-  qDebug() << Q_FUNC_INFO << "delete actionGroup";
-  delete actionGroup;
-  actionGroup = nullptr;
-  qDebug() << Q_FUNC_INFO << "delete windlevelToolButton";
-  delete windlevelToolButton;
-  windlevelToolButton = nullptr;
+  ATOOLS_DELETE_LOG(windQueryOnline);
+  ATOOLS_DELETE_LOG(windQueryManual);
+  ATOOLS_DELETE_LOG(actionGroup);
+  ATOOLS_DELETE_LOG(windlevelToolButton);
 }
 
 void WindReporter::preDatabaseLoad()

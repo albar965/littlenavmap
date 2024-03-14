@@ -57,7 +57,7 @@ struct MapAirportMsa;
 
 }
 
-/* Struct that is passed to all painters */
+/* Struct that is passed to all painters. It is created from scratch for each paint event. */
 struct PaintContext
 {
   const MapLayer *mapLayer; /* layer for the current zoom distance also affected by detail level
@@ -69,18 +69,18 @@ struct PaintContext
   Marble::ViewportParams *viewport;
   Marble::ViewContext viewContext;
   float zoomDistanceMeter;
+
   bool drawFast; /* true if reduced details should be used */
   bool lazyUpdate; /* postpone reloading until map is still */
   bool darkMap; /* CartoDark or similar. Not Night mode */
+
   map::MapTypes objectTypes; /* Object types that should be drawn */
   map::MapDisplayTypes objectDisplayTypes; /* Object types that should be drawn */
   map::MapAirspaceFilter airspaceFilterByLayer; /* Airspaces */
   map::MapAirspaceTypes airspaceTextsByLayer;
+
   atools::geo::Rect viewportRect; /* Rectangle of current viewport */
   QRect screenRect; /* Screen coordinate rect */
-
-  /* Airports drawn having parking spots which require tooltips and more */
-  QSet<int> *shownDetailAirportIds;
 
   opts::MapScrollDetail mapScrollDetail; /* Option that indicates the detail level when drawFast is true */
   QFont defaultFont /* Default widget font */;
@@ -92,27 +92,40 @@ struct PaintContext
 
   const Route *route;
 
-  // All waypoints from the route and add them to the map to avoid duplicate drawing
-  // Same for procedure preview
-  QSet<map::MapRef> routeProcIdMap, /* Navaids on plan */
-                    routeProcIdMapRec /* Recommended navaids */;
-
   optsac::DisplayOptionsUserAircraft dispOptsUser;
   optsac::DisplayOptionsAiAircraft dispOptsAi;
   optsd::DisplayOptionsAirport dispOptsAirport;
   optsd::DisplayOptionsRose dispOptsRose;
   optsd::DisplayOptionsMeasurement dispOptsMeasurement;
   optsd::DisplayOptionsRoute dispOptsRoute;
+
+  /* ===============================================================================
+   * Flags from options dialog */
   opts::Flags flags;
   opts2::Flags2 flags2;
+
   map::MapWeatherSource weatherSource;
   bool visibleWidget;
   bool paintCopyright = true, paintWindHeader = true, webMap = false;
   int mimimumRunwayLengthFt = -1; /* Value from toolbar */
-  QVector<map::MapRef> *routeDrawnNavaids; /* All navaids drawn for route and procedures. Points to vector in MapScreenIndex */
   int currentDistanceMarkerId = -1;
 
-  /* Text sizes and line thickness in percent / 100 as set in options dialog */
+  /* ===============================================================================
+   * Ids which are filled during painting and are passes between painters */
+
+  // All waypoints from the route and add them to the map to avoid duplicate drawing
+  // Same for procedure preview
+  QSet<map::MapRef> routeProcIdMap, /* Navaids on plan */
+                    routeProcIdMapRec /* Recommended navaids */;
+
+  /* Airports drawn having parking spots which require tooltips and more */
+  QSet<int> *shownDetailAirportIds;
+
+  /* All navaids drawn for route and procedures. Points to vector in MapScreenIndex */
+  QVector<map::MapRef> *routeDrawnNavaids;
+
+  /* ===============================================================================
+   * Text sizes and line thickness in percent / 100 as set in options dialog */
   float textSizeAircraftAi = 1.f;
   float symbolSizeNavaid = 1.f;
   float symbolSizeUserpoint = 1.f;

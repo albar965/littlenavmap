@@ -62,6 +62,7 @@ void MapPainterIls::render()
 
     const GeoDataLatLonBox& curBox = context->viewport->viewLatLonAltBox();
     Marble::GeoPainter *painter = context->painter;
+    map::MapAirport airport;
 
     int x, y;
     if((context->objectTypes.testFlag(map::ILS) || context->objectDisplayTypes.testFlag(map::GLS)) &&
@@ -99,10 +100,9 @@ void MapPainterIls::render()
             if(context->objCount())
               return;
 
-            // Check if airport is to be shown - hide ILS if not - show ILS if no airport ident in navaid
             if(!ils.airportIdent.isEmpty())
             {
-              map::MapAirport airport = airportQuery->getAirportByIdent(ils.airportIdent);
+              airportQuery->getAirportByIdent(airport, ils.airportIdent);
               if(airport.isValid() && !airport.isVisible(context->objectTypes, context->mimimumRunwayLengthFt, context->mapLayer))
                 continue;
             }

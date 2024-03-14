@@ -1724,7 +1724,6 @@ QString parkingNameForFlightplan(const MapParking& parking);
 const QString& airspaceTypeToString(map::MapAirspaceTypes type);
 const QString& airspaceFlagToString(map::MapAirspaceFlags type); /* Includes mnemonics */
 const QString& airspaceFlagToStringLong(map::MapAirspaceFlags type); /* For tooltips */
-QString mapTypeToString(MapTypes type); /* For debugging purposes. Not translated */
 const QString& airspaceRemark(map::MapAirspaceTypes type);
 
 int airspaceDrawingOrder(map::MapAirspaceTypes type);

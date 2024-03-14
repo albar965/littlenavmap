@@ -391,7 +391,7 @@ void MapPaintWidget::updateGeometryIndex(map::MapTypes oldTypes, map::MapDisplay
     screenIndex->updateAirspaceScreenGeometry(getCurrentViewBoundingBox());
 
   if(minRunwayLength != oldMinRunwayLength || // Airport visibility also changes ILS
-     (types& map::AIRPORT_ALL_AND_ADDON) != (oldTypes & map::AIRPORT_ALL_AND_ADDON) || // ILS are disabled with airports
+     (types& map::AIRPORT_ALL_MASK) != (oldTypes & map::AIRPORT_ALL_MASK) ||   // ILS are disabled with airports
      (types.testFlag(map::ILS) != oldTypes.testFlag(map::ILS)) ||
      (displayTypes.testFlag(map::GLS) != oldDisplayTypes.testFlag(map::GLS)) ||
      (displayTypes.testFlag(map::FLIGHTPLAN) != oldDisplayTypes.testFlag(map::FLIGHTPLAN)))

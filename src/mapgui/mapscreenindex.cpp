@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -961,7 +961,7 @@ void MapScreenIndex::getAllNearest(const QPoint& point, int maxDistance, map::Ma
   // Get objects from cache - already present objects will be skipped
   // Airway included to fetch waypoints
   map::MapTypes mapTypes = shown &
-                           (map::AIRPORT_ALL_AND_ADDON | map::AIRPORT_MSA | map::VOR | map::NDB | map::WAYPOINT | map::MARKER |
+                           (map::AIRPORT_ALL_MASK | map::AIRPORT_MSA | map::VOR | map::NDB | map::WAYPOINT | map::MARKER |
                             map::HOLDING | map::AIRWAYJ | map::TRACK | map::AIRWAYV | map::USERPOINT | map::LOGBOOK);
 
   map::MapDisplayTypes displayTypes = shownDisplay;

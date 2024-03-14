@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -274,8 +274,10 @@ private:
   atools::sql::SqlDatabase *dbSim, *dbNav, *dbUser;
 
   /* Simple bounding rectangle caches */
-  bool airportCacheAddonFlag = false; // Keep addon status flag for comparing
+  bool airportCacheAddonZoomFlag = false; // Keep addon status flag for comparing
+  bool airportCacheAddonZoomFilterFlag = false; // Keep addon status flag for comparing
   bool airportCacheNormalFlag = false; // Keep normal (non add-on) status flag for comparing
+
   query::SimpleRectCache<map::MapAirport> airportCache;
   query::SimpleRectCache<map::MapUserpoint> userpointCache;
   query::SimpleRectCache<map::MapVor> vorCache;

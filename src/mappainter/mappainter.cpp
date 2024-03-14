@@ -879,7 +879,11 @@ bool MapPainter::sortAirportFunction(const PaintAirportType& pap1, const PaintAi
   // returns ​true if the first argument is less than (i.e. is ordered before) the second.
   // ">" puts true behind
   const OptionData& od = OptionData::instance();
-  bool addonFlag = context->objectTypes.testFlag(map::AIRPORT_ADDON);
+
+  // Put add-on on top if any add-on filter is set
+  bool addonFlag = context->objectTypes.testFlag(map::AIRPORT_ADDON_ZOOM) ||
+                   context->objectTypes.testFlag(map::AIRPORT_ADDON_ZOOM_FILTER);
+
   bool empty3dFlag = od.getFlags2().testFlag(opts2::MAP_EMPTY_AIRPORTS_3D);
   bool emptyFlag = od.getFlags().testFlag(opts::MAP_EMPTY_AIRPORTS);
   int priority1 = pap1.airport->paintPriority(addonFlag, emptyFlag, empty3dFlag);
