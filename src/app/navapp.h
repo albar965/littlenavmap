@@ -45,7 +45,6 @@ class OnlinedataController;
 class OptionsDialog;
 class ProcedureQuery;
 class QMainWindow;
-class QSplashScreen;
 class Route;
 class RouteAltitude;
 class RouteController;
@@ -366,14 +365,6 @@ public:
   static const AircraftTrail& getAircraftTrailLogbook();
   static void deleteAircraftTrailLogbook();
 
-  static void initSplashScreen();
-
-  /* Called by main application once startup is done */
-  static void finishSplashScreen();
-
-  /* Remove splash when showing error messages, etc. to avoid overlay */
-  static void closeSplashScreen();
-
   /* Main window close event about to exit */
   static bool isCloseCalled();
   static void setCloseCalled(bool value = true);
@@ -500,7 +491,6 @@ private:
 
   static atools::fs::db::DatabaseMeta *databaseMetaSim;
   static atools::fs::db::DatabaseMeta *databaseMetaNav;
-  static QSplashScreen *splashScreen;
 
   static UpdateHandler *updateHandler;
   static VehicleIcons *vehicleIcons;

@@ -67,7 +67,6 @@
 #include <marble/MarbleModel.h>
 
 #include <QIcon>
-#include <QSplashScreen>
 
 AirportQuery *NavApp::airportQuerySim = nullptr;
 AirportQuery *NavApp::airportQueryNav = nullptr;
@@ -80,7 +79,6 @@ MainWindow *NavApp::mainWindow = nullptr;
 ElevationProvider *NavApp::elevationProvider = nullptr;
 atools::fs::db::DatabaseMeta *NavApp::databaseMetaSim = nullptr;
 atools::fs::db::DatabaseMeta *NavApp::databaseMetaNav = nullptr;
-QSplashScreen *NavApp::splashScreen = nullptr;
 
 atools::fs::common::MagDecReader *NavApp::magDecReader = nullptr;
 atools::fs::common::MoraReader *NavApp::moraReader = nullptr;
@@ -261,7 +259,6 @@ void NavApp::deInit()
   ATOOLS_DELETE_LOG(magDecReader);
   ATOOLS_DELETE_LOG(moraReader);
   ATOOLS_DELETE_LOG(vehicleIcons);
-  ATOOLS_DELETE_LOG(splashScreen);
 }
 
 const DataExchange *NavApp::getDataExchangeConst()
@@ -321,13 +318,13 @@ void NavApp::readMagDecFromDatabase()
     }
     catch(atools::Exception& e)
     {
-      closeSplashScreen();
+      Application::closeSplashScreen();
       // Show dialog if something went wrong but do not exit
       atools::gui::ErrorHandler(mainWindow).handleException(e, tr("While reading magnetic declination from database:"));
     }
     catch(...)
     {
-      closeSplashScreen();
+      Application::closeSplashScreen();
       atools::gui::ErrorHandler(mainWindow).
       handleUnknownException(tr("While reading magnetic declination from database:"));
     }
@@ -1352,47 +1349,4 @@ float NavApp::getMagVar(const atools::geo::Pos& pos, float defaultValue)
 UpdateHandler *NavApp::getUpdateHandler()
 {
   return updateHandler;
-}
-
-void NavApp::initSplashScreen()
-{
-  qDebug() << Q_FUNC_INFO;
-
-  QPixmap pixmap(":/littlenavmap/resources/icons/splash.png");
-  splashScreen = new QSplashScreen(pixmap);
-  splashScreen->show();
-
-  processEvents();
-
-#if defined(WINARCH64)
-  QString applicationVersion = QApplication::applicationVersion() + tr(" 64-bit");
-#elif defined(WINARCH32)
-  QString applicationVersion = QApplication::applicationVersion() + tr(" 32-bit");
-#else
-  QString applicationVersion = QApplication::applicationVersion();
-#endif
-
-  splashScreen->showMessage(QObject::tr("Version %5 (revision %6)").
-                            arg(applicationVersion).arg(GIT_REVISION_LITTLENAVMAP),
-                            Qt::AlignRight | Qt::AlignBottom, Qt::black);
-
-  processEvents(QEventLoop::ExcludeUserInputEvents);
-}
-
-void NavApp::finishSplashScreen()
-{
-  qDebug() << Q_FUNC_INFO;
-
-  if(splashScreen != nullptr)
-    splashScreen->finish(mainWindow);
-}
-
-void NavApp::closeSplashScreen()
-{
-#ifdef DEBUG_INFORMATION
-  qDebug() << Q_FUNC_INFO;
-#endif
-
-  if(splashScreen != nullptr)
-    splashScreen->close();
 }

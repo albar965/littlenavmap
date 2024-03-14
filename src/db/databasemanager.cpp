@@ -45,6 +45,7 @@
 #include "track/trackmanager.h"
 #include "ui_mainwindow.h"
 #include "util/version.h"
+#include "gui/application.h"
 #include "gui/signalblocker.h"
 
 #include <QDir>
@@ -323,7 +324,7 @@ bool DatabaseManager::checkIncompatibleDatabases(bool *databasesErased)
       }
 
       // Avoid the splash screen hiding the dialog
-      NavApp::closeSplashScreen();
+      atools::gui::Application::closeSplashScreen();
 
       QMessageBox box(QMessageBox::Question, QCoreApplication::applicationName(), msg.arg(databaseNames.join("<br/>")).arg(trailingMsg),
                       QMessageBox::No | QMessageBox::Yes, mainWindow);
@@ -340,7 +341,7 @@ bool DatabaseManager::checkIncompatibleDatabases(bool *databasesErased)
         ok = false;
       else if(result == QMessageBox::Yes)
       {
-        NavApp::closeSplashScreen();
+        atools::gui::Application::closeSplashScreen();
         QMessageBox *simpleProgressDialog = atools::gui::Dialog::showSimpleProgressDialog(mainWindow, tr("Deleting ..."));
         atools::gui::Application::processEventsExtended();
 

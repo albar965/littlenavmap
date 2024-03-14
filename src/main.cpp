@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -264,7 +264,7 @@ int main(int argc, char *argv[])
       // ==============================================
       // Start splash screen
       if(settings.valueBool(lnm::OPTIONS_DIALOG_SHOW_SPLASH, true))
-        NavApp::initSplashScreen();
+        Application::initSplashScreen(":/littlenavmap/resources/icons/splash.png", GIT_REVISION_LITTLENAVMAP);
 
       // Log system information ========================================
       qInfo().noquote().nospace() << "atools revision " << atools::gitRevision() << " "
@@ -437,7 +437,7 @@ int main(int argc, char *argv[])
         mainWindow.show();
 
         // Hide splash once main window is shown
-        NavApp::finishSplashScreen();
+        NavApp::finishSplashScreen(&mainWindow);
 
         // =============================================================================================
         // Run application

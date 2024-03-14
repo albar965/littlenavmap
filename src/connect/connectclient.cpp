@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -32,6 +32,7 @@
 #include "fs/scenery/languagejson.h"
 #include "fs/scenery/aircraftindex.h"
 #include "util/version.h"
+#include "gui/application.h"
 
 #include <QDataStream>
 #include <QTcpSocket>
@@ -435,6 +436,7 @@ void ConnectClient::handleError(atools::fs::sc::SimConnectStatus status, const Q
       break;
   }
 
+  atools::gui::Application::closeSplashScreen();
   errorMessageBox->setText(tr("<p>Error receiving data from %1:</p><p>%2</p><p>%3</p>").arg(program).arg(error).arg(hint));
   errorMessageBox->show();
 }
