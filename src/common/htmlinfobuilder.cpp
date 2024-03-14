@@ -595,11 +595,11 @@ void HtmlInfoBuilder::nearestMapObjectsTextRow(const MapAirport& airport, HtmlBu
   else
     displayText = tr("%1 (%2)").arg(name).arg(displayIdent);
 
-  html.tdF(ahtml::ALIGN_LEFT).a(displayText, url, ahtml::LINK_NO_UL).tdEnd();
+  html.tdF(ahtml::ALIGN_LEFT).a(displayText, url, ahtml::LINK_NO_UL|ahtml::BOLD).tdEnd();
 
   if(!airportCol)
     // Navaid type
-    html.td(type, ahtml::BOLD);
+    html.td(type);
 
   if(frequencyCol)
     html.td(freq, ahtml::ALIGN_CENTER);
