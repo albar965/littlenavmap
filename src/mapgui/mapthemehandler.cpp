@@ -88,11 +88,8 @@ MapThemeHandler::MapThemeHandler(QWidget *mainWindowParam)
 
 MapThemeHandler::~MapThemeHandler()
 {
-  qDebug() << Q_FUNC_INFO << "delete actionGroupMapTheme";
-  delete actionGroupMapTheme;
-
-  qDebug() << Q_FUNC_INFO << "delete comboBoxMapTheme";
-  delete toolButtonMapTheme;
+  ATOOLS_DELETE_LOG(actionGroupMapTheme);
+  ATOOLS_DELETE_LOG(toolButtonMapTheme);
 }
 
 void MapThemeHandler::loadThemes()
@@ -269,7 +266,6 @@ void MapThemeHandler::showThemeLoadingErrors()
       errors.append(tr("<b>%1 more %2 found ...</b>").arg(numMore).arg(numMore == 1 ? tr("error") : tr("errors")));
     }
 
-    NavApp::closeSplashScreen();
     atools::gui::MessageBox box(mainWindow);
     box.setIcon(QMessageBox::Warning);
     box.setMessage(tr("<p>Found errors in map %2:</p>"
@@ -820,8 +816,6 @@ void MapThemeHandler::changeMapTheme()
     if(!allValid)
     {
       // One or more keys are not present or empty - show info dialog =================================
-      NavApp::closeSplashScreen();
-
       // Fetch all keys for map theme
       QString url;
       if(!theme.getUrlRef().isEmpty())
@@ -945,7 +939,7 @@ QString MapThemeHandler::getStatusTextForDir(const QString& path, bool& error)
   return message;
 }
 
-void MapThemeHandler::validateMapThemeDirectories()
+void MapThemeHandler::validateMapThemeDirectories(QWidget *parent)
 {
   QStringList msg;
 
@@ -960,10 +954,7 @@ void MapThemeHandler::validateMapThemeDirectories()
   msg.removeAll(QString());
 
   if(!msg.isEmpty())
-  {
-    NavApp::closeSplashScreen();
-    atools::gui::Dialog::warning(NavApp::getQMainWidget(), tr("Base path(s) for map themes not found.\n%1").arg(msg.join(tr(",\n"))));
-  }
+    atools::gui::Dialog::warning(parent, tr("Base path(s) for map themes not found.\n%1").arg(msg.join(tr(",\n"))));
 }
 
 QString MapThemeHandler::getMapThemeDefaultDir()

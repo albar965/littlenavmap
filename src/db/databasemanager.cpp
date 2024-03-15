@@ -341,7 +341,6 @@ bool DatabaseManager::checkIncompatibleDatabases(bool *databasesErased)
         ok = false;
       else if(result == QMessageBox::Yes)
       {
-        atools::gui::Application::closeSplashScreen();
         QMessageBox *simpleProgressDialog = atools::gui::Dialog::showSimpleProgressDialog(mainWindow, tr("Deleting ..."));
         atools::gui::Application::processEventsExtended();
 
@@ -430,7 +429,7 @@ void DatabaseManager::checkCopyAndPrepareDatabases()
     {
       if(hasSettings)
       {
-        NavApp::closeSplashScreen();
+        atools::gui::Application::closeSplashScreen();
         result = dialog->showQuestionMsgBox(
           lnm::ACTIONS_SHOW_OVERWRITE_DATABASE,
           tr("Your current navdata is older than the navdata included in the Little Navmap download archive.<br/><br/>"
@@ -518,7 +517,7 @@ void DatabaseManager::checkCopyAndPrepareDatabases()
 
   if(settingsNeedsPreparation && hasSettings)
   {
-    NavApp::closeSplashScreen();
+    atools::gui::Application::closeSplashScreen();
     QMessageBox *simpleProgressDialog = atools::gui::Dialog::showSimpleProgressDialog(mainWindow, tr("Preparing %1 Database ...").
                                                                                       arg(FsPaths::typeToDisplayName(FsPaths::NAVIGRAPH)));
     atools::gui::Application::processEventsExtended();

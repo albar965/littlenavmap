@@ -268,7 +268,7 @@ public:
   static QString getStatusTextForDir(const QString& path, bool& error);
 
   /* Checks default and user folder and shows an error dialog if any is invalid */
-  static void validateMapThemeDirectories();
+  static void validateMapThemeDirectories(QWidget *parent);
 
 private:
   static QString getMapThemeDefaultDir();

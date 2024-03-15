@@ -451,12 +451,10 @@ MainWindow::MainWindow()
   // Exit application if something goes wrong
   catch(atools::Exception& e)
   {
-    NavApp::closeSplashScreen();
     ATOOLS_HANDLE_EXCEPTION(e);
   }
   catch(...)
   {
-    NavApp::closeSplashScreen();
     ATOOLS_HANDLE_UNKNOWN_EXCEPTION;
   }
 
@@ -2497,8 +2495,6 @@ void MainWindow::routeOpenRecent(const QString& routeFile)
     }
     else
     {
-      NavApp::closeSplashScreen();
-
       // File not valid remove from history
       atools::gui::Dialog::warning(this, tr("File \"%1\" does not exist").arg(routeFile));
       routeFileHistory->removeFile(routeFile);
@@ -2697,7 +2693,6 @@ void MainWindow::layoutSaveAs()
     }
     catch(atools::Exception& e)
     {
-      NavApp::closeSplashScreen();
       atools::gui::ErrorHandler(this).handleException(e);
     }
   }
@@ -2740,7 +2735,6 @@ bool MainWindow::layoutOpenInternal(const QString& layoutFile)
   }
   catch(atools::Exception& e)
   {
-    NavApp::closeSplashScreen();
     atools::gui::ErrorHandler(this).handleException(e);
   }
   return false;
@@ -3260,7 +3254,7 @@ void MainWindow::mainWindowShown()
   QTimer::singleShot(0, this, &NavApp::showElevationProviderErrors);
 
   // Show a warning if map theme folders do not exist
-  QTimer::singleShot(0, this, &MapThemeHandler::validateMapThemeDirectories);
+  QTimer::singleShot(0, this, std::bind(&MapThemeHandler::validateMapThemeDirectories, this));
 
   // Need to set the font again to pass it on to all menus since these are opened later
   qDebug() << Q_FUNC_INFO << "QApplication::font()" << QApplication::font();
@@ -3282,16 +3276,11 @@ void MainWindow::mainWindowShown()
 
   // Show a warning if SSL was not intiaized properly. Can happen if the redist packages are not installed.
   if(!QSslSocket::supportsSsl())
-  {
-    NavApp::closeSplashScreen();
-
-    QString message = tr("<p>Error initializing SSL subsystem.</p>"
-                           "<p>The program will not be able to use encrypted network connections<br/>"
-                           "(i.e. HTTPS) that are needed to check for updates or<br/>"
-                           "to load online maps.</p>");
-
-    dialog->showWarnMsgBox(lnm::ACTIONS_SHOW_SSL_FAILED, message, tr("Do not &show this dialog again."));
-  }
+    dialog->showWarnMsgBox(lnm::ACTIONS_SHOW_SSL_FAILED, tr("<p>Error initializing SSL subsystem.</p>"
+                                                              "<p>The program will not be able to use encrypted network connections<br/>"
+                                                              "(i.e. HTTPS) that are needed to check for updates or<br/>"
+                                                              "to load online maps.</p>"),
+                           tr("Do not &show this dialog again."));
 
   NavApp::logDatabaseMeta();
 
@@ -3360,8 +3349,6 @@ void MainWindow::loadLayoutDelayed(const QString& filename)
 void MainWindow::mainWindowShownDelayed()
 {
   qDebug() << Q_FUNC_INFO << "enter";
-
-  NavApp::closeSplashScreen();
 
   if(OptionData::instance().getFlags().testFlag(opts::STARTUP_LOAD_LAYOUT) && !layoutFileHistory->isEmpty() && !NavApp::isSafeMode())
     loadLayoutDelayed(layoutFileHistory->getTopFile());
@@ -4224,12 +4211,10 @@ void MainWindow::saveStateMain()
   }
   catch(atools::Exception& e)
   {
-    NavApp::closeSplashScreen();
     ATOOLS_HANDLE_EXCEPTION(e);
   }
   catch(...)
   {
-    NavApp::closeSplashScreen();
     ATOOLS_HANDLE_UNKNOWN_EXCEPTION;
   }
 }

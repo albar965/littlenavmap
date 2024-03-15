@@ -346,7 +346,6 @@ void WindReporter::windDownloadProgress(qint64 bytesReceived, qint64 bytesTotal,
 void WindReporter::windDownloadSslErrors(const QStringList& errors, const QString& downloadUrl)
 {
   qWarning() << Q_FUNC_INFO;
-  NavApp::closeSplashScreen();
 
   int result = atools::gui::Dialog(NavApp::getQMainWindow()).
                showQuestionMsgBox(lnm::ACTIONS_SHOW_SSL_WARNING_WIND,
@@ -371,7 +370,6 @@ void WindReporter::windDownloadFailed(const QString& error, int errorCode)
   if(!downloadErrorReported)
   {
     // Get rid of splash in case this happens on startup
-    NavApp::closeSplashScreen();
     atools::gui::Dialog::warning(NavApp::getQMainWidget(), tr("Error downloading or reading wind data: %1 (%2)").arg(error).arg(errorCode));
     downloadErrorReported = true;
   }

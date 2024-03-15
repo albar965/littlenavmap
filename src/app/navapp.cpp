@@ -318,13 +318,11 @@ void NavApp::readMagDecFromDatabase()
     }
     catch(atools::Exception& e)
     {
-      Application::closeSplashScreen();
       // Show dialog if something went wrong but do not exit
       atools::gui::ErrorHandler(mainWindow).handleException(e, tr("While reading magnetic declination from database:"));
     }
     catch(...)
     {
-      Application::closeSplashScreen();
       atools::gui::ErrorHandler(mainWindow).
       handleUnknownException(tr("While reading magnetic declination from database:"));
     }
