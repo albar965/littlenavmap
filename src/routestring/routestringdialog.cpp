@@ -244,7 +244,7 @@ void RouteStringDialog::buildButtonMenu()
     action->setToolTip(tr("Write departure runway and approach plus transition separated by a \"/\".\n"
                           "Example: \"GCLA/36 ... GCTS/TES2.I07-Y\""));
     action->setCheckable(true);
-    action->setData(static_cast<int>(rs::WRITE_APPROACH_RUNWAYS));
+    action->setData(static_cast<int>(rs::WRITE_RUNWAYS));
     buttonMenu->addAction(action);
     actions.append(action);
 

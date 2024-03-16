@@ -282,39 +282,30 @@ QStringList RouteStringWriter::createStringForRouteInternal(const Route& routePa
   Route route = routeParam.adjustedToOptions(rf::DEFAULT_OPTS_ROUTESTRING);
 
   QStringList items;
-  QString sid, sidTrans, star, starTrans, approachName, approachTransition, approachSuffix, customApprRw, customDepRw;
-  route.getSidStarNames(sid, sidTrans, star, starTrans);
-  route.getApproachNames(approachName, approachTransition, approachSuffix);
+  QString sid, sidTrans, star, starTrans, approachName, approachTransition, approachSuffix, departureRunway, destinationRunway;
 
-  QString depRwy = atools::fs::util::normalizeRunway(route.getDepartureRunwayName());
-  QString destRwy = atools::fs::util::normalizeRunway(route.getStarRunwayName());
-
-  // Keep runways in case there is a custom approach or custom departure
-  customDepRw = depRwy;
-  customApprRw = destRwy;
-
+  // Get approach runway and information
   if(route.hasCustomApproach())
+    destinationRunway = atools::fs::util::normalizeRunway(route.getApproachRunwayName());
+  else
   {
-    approachName.clear();
-    approachTransition.clear();
-    approachSuffix.clear();
-    destRwy.clear();
+    route.getApproachNames(approachName, approachTransition, approachSuffix);
+    destinationRunway = atools::fs::util::normalizeRunway(route.getStarRunwayName());
   }
 
-  if(route.hasCustomDeparture())
-  {
-    sid.clear();
-    sidTrans.clear();
-    depRwy.clear();
-  }
+  // Get departure runway and/or information
+  if(!route.hasCustomDeparture())
+    route.getSidStarNames(sid, sidTrans, star, starTrans);
+
+  departureRunway = atools::fs::util::normalizeRunway(route.getDepartureRunwayName());
 
   if(route.hasAnyApproachProcedure() && !route.getApproachLegs().type.isEmpty() && !route.hasCustomApproach())
   {
     // Flight factor specialities - there are probably more to guess
     if(route.getApproachLegs().type == "RNAV")
-      approachName = "RNV" % destRwy;
+      approachName = "RNV" % destinationRunway;
     else
-      approachName = route.getApproachLegs().type % destRwy;
+      approachName = route.getApproachLegs().type % destinationRunway;
   }
 
   if(route.getSizeWithoutAlternates() == 0)
@@ -367,9 +358,9 @@ QStringList RouteStringWriter::createStringForRouteInternal(const Route& routePa
         else
           items.append(lastId % (gfpCoords && lastType != map::USERPOINTROUTE ? ',' % coords::toGfpFormat(lastPos) : QString()));
 
-        if(lastIndex == 0 && options.testFlag(rs::CORTEIN_DEPARTURE_RUNWAY) && !depRwy.isEmpty())
+        if(lastIndex == 0 && options.testFlag(rs::CORTEIN_DEPARTURE_RUNWAY) && !departureRunway.isEmpty() && !route.hasCustomDeparture())
           // Add runway after departure
-          items.append(depRwy);
+          items.append(departureRunway);
       }
 
       if(i > 0 && options.testFlag(rs::DCT))
@@ -397,8 +388,8 @@ QStringList RouteStringWriter::createStringForRouteInternal(const Route& routePa
 
     // Append runway descriptor to departure airport if a custom runway is given
     // SID runway for real departure procedures is added above
-    if(i == 0 && options.testFlag(rs::WRITE_APPROACH_RUNWAYS) && !customDepRw.isEmpty())
-      ident += '/' % customDepRw;
+    if(i == 0 && options.testFlag(rs::WRITE_RUNWAYS) && !departureRunway.isEmpty())
+      ident += '/' % departureRunway;
 
     lastId = ident;
     lastPos = leg.getPosition();
@@ -419,7 +410,7 @@ QStringList RouteStringWriter::createStringForRouteInternal(const Route& routePa
       // Remove last DCT if approach information is desired
       items.removeLast();
 
-    if(options.testFlag(rs::CORTEIN_DEPARTURE_RUNWAY) && !depRwy.isEmpty())
+    if(options.testFlag(rs::CORTEIN_DEPARTURE_RUNWAY) && !departureRunway.isEmpty())
       insertPosition++;
   }
 
@@ -505,17 +496,24 @@ QStringList RouteStringWriter::createStringForRouteInternal(const Route& routePa
   {
     // Append slash separated approach descriptor if requested
     QString approachDest;
-    if(options.testFlag(rs::WRITE_APPROACH_RUNWAYS))
+    if(options.testFlag(rs::WRITE_RUNWAYS))
     {
       if(route.hasAnyApproachProcedure())
       {
         if(route.hasCustomApproach())
-          approachDest = '/' % customApprRw;
+        {
+          if(!destinationRunway.isEmpty())
+            approachDest = '/' % destinationRunway;
+        }
         else
-          approachDest += route.getFullApproachName();
+          approachDest = route.getFullApproachName();
       }
       else if(route.hasAnyStarProcedure())
-        approachDest += '/' % atools::fs::util::normalizeRunway(route.getStarRunwayName());
+      {
+        QString starRunway = atools::fs::util::normalizeRunway(route.getStarRunwayName());
+        if(!starRunway.isEmpty())
+          approachDest = '/' % starRunway;
+      }
     }
 
     items.append(lastId % approachDest % (gfpCoords ? ',' % coords::toGfpFormat(lastPos) : QString()));

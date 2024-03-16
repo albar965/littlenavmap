@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -65,12 +65,13 @@ enum RouteStringOption
 
   ALT_AND_SPEED_METRIC = 1 << 23, /* Allow altitude and speed restriction in metric if set in user interface. Only in GUI. */
 
-  WRITE_APPROACH_RUNWAYS = 1 << 24, /* Add departure runway and approach ARINC name. Example "GCLA/36 TFS3T TFS GCTS/TES2.I07-Y" */
+  WRITE_RUNWAYS = 1 << 24, /* Add departure runway and approach ARINC name or approach runway.
+                            * Example "GCLA/36 TFS3T TFS GCTS/TES2.I07-Y" or "GCLA/36 TFS3T TFS GCTS/07" */
 
   // Next is 25
 
   /* Default on startup */
-  DEFAULT_OPTIONS = START_AND_DEST | ALT_AND_SPEED | SID_STAR | ALTERNATES | READ_ALTERNATES | REPORT | WRITE_APPROACH_RUNWAYS,
+  DEFAULT_OPTIONS = START_AND_DEST | ALT_AND_SPEED | SID_STAR | ALTERNATES | READ_ALTERNATES | REPORT | WRITE_RUNWAYS,
 
   /* Default for logbook entries */
   DEFAULT_OPTIONS_LOGBOOK = DEFAULT_OPTIONS | ALT_AND_SPEED_METRIC,
