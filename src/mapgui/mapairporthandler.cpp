@@ -237,8 +237,8 @@ MapAirportHandler::MapAirportHandler(QWidget *parent)
 
 MapAirportHandler::~MapAirportHandler()
 {
-  ATOOLS_DELETE_LOG(toolButton);
   ATOOLS_DELETE_LOG(actionGroupAddon);
+  ATOOLS_DELETE_LOG(toolButton);
 }
 
 void MapAirportHandler::saveState()
