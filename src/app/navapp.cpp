@@ -1091,9 +1091,9 @@ void NavApp::updateErrorLabel()
   getRouteController()->updateFooterErrorLabel();
 }
 
-void NavApp::setStatusMessage(const QString& message, bool addToLog)
+void NavApp::setStatusMessage(const QString& message, bool addToLog, bool popup)
 {
-  mainWindow->setStatusMessage(message, addToLog);
+  mainWindow->setStatusMessage(message, addToLog, popup);
 }
 
 QWidget *NavApp::getQMainWidget()

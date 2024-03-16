@@ -915,7 +915,7 @@ void DatabaseManager::switchNavFromMainMenu()
 
     emit postDatabaseLoad(currentFsType);
 
-    mainWindow->setStatusMessage(text.arg(FsPaths::typeToDisplayName(FsPaths::NAVIGRAPH)));
+    NavApp::setStatusMessage(text.arg(FsPaths::typeToDisplayName(FsPaths::NAVIGRAPH)));
 
     saveState();
   } // if(switchDatabase)
@@ -966,7 +966,7 @@ void DatabaseManager::switchSimInternal(atools::fs::FsPaths::SimulatorType type)
 
   // Reopen all with new database
   emit postDatabaseLoad(currentFsType);
-  mainWindow->setStatusMessage(tr("Switched to %1.").arg(FsPaths::typeToDisplayName(currentFsType)));
+  NavApp::setStatusMessage(tr("Switched to %1.").arg(FsPaths::typeToDisplayName(currentFsType)));
 
   saveState();
   checkDatabaseVersion();

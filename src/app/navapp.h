@@ -318,7 +318,7 @@ public:
 
   static void updateWindowTitle();
   static void updateErrorLabel();
-  static void setStatusMessage(const QString& message, bool addToLog = false);
+  static void setStatusMessage(const QString& message, bool addToLog = false, bool popup = false);
 
   /* Get main window in different variations to avoid including it */
   static QWidget *getQMainWidget();

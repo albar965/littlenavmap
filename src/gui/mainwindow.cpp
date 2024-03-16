@@ -109,10 +109,11 @@
 #include <QProgressDialog>
 #include <QThread>
 #include <QStringBuilder>
+#include <QToolTip>
 
 #include "ui_mainwindow.h"
 
-const static int MAX_STATUS_MESSAGES = 10;
+const static int MAX_STATUS_MESSAGES = 20;
 const static int CLOCK_TIMER_MS = 1000;
 const static int RENDER_STATUS_TIMER_MS = 5000;
 const static int SHRINK_STATUS_BAR_TIMER_MS = 10000;
@@ -3193,10 +3194,12 @@ void MainWindow::resetMessages()
 }
 
 /* Set a general status message */
-void MainWindow::setStatusMessage(const QString& message, bool addToLog)
+void MainWindow::setStatusMessage(const QString& message, bool addToLog, bool popup)
 {
   if(addToLog && !message.isEmpty())
   {
+    qInfo() << Q_FUNC_INFO << "Message" << message;
+
     statusMessages.append({QDateTime::currentDateTime(), message});
 
     bool removed = false;
@@ -3215,14 +3218,15 @@ void MainWindow::setStatusMessage(const QString& message, bool addToLog)
     for(int i = 0; i < statusMessages.size(); i++)
       msg.append(tr("%1: %2").arg(QLocale().toString(statusMessages.at(i).timestamp.time(), tr("hh:mm:ss"))).
                  arg(statusMessages.at(i).message));
+
     ui->statusBar->setToolTip(msg.join(tr("<br/>")) % tr("</p>"));
+
+    if(popup)
+      // Always shown with offset relative to point
+      QToolTip::showText(ui->statusBar->mapToGlobal(QPoint(0, 0)), message, ui->statusBar, QRect(), 4000);
   }
 
   ui->statusBar->showMessage(message);
-
-#ifdef DEBUG_INFORMATION
-  qDebug() << Q_FUNC_INFO << "Message" << message;
-#endif
 }
 
 void MainWindow::statusMessageChanged(const QString& text)

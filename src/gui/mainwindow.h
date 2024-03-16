@@ -163,7 +163,7 @@ public:
   void setOnlineConnectionStatusMessageText(const QString& text, const QString& tooltipText);
 
   /* Sets a general status bar message which is shared with all widgets/actions status text */
-  void setStatusMessage(const QString& message, bool addToLog = false);
+  void setStatusMessage(const QString& message, bool addToLog = false, bool popup = false);
   void statusMessageChanged(const QString& text);
 
   void setDetailLabelText(const QString& text);
