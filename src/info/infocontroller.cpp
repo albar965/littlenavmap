@@ -352,6 +352,7 @@ void InfoController::anchorClicked(const QUrl& url)
 
     if(url.host() == "do")
     {
+      // "lnm://do?hideairspaces"
       if(query.hasQueryItem("hideairspaces") || query.hasQueryItem("hideonlineairspaces"))
       {
         // Hide normal airspace highlights from information window =========================================
@@ -370,6 +371,16 @@ void InfoController::anchorClicked(const QUrl& url)
         lessAircraftProgress = !lessAircraftProgress;
         NavApp::getMainUi()->textBrowserAircraftProgressInfo->setTextCursor(QTextCursor());
         updateAircraftProgressText();
+      }
+    }
+    else if(url.host() == "info")
+    {
+      // "lnm://info?id=%1&type=%2"
+      if(id != -1 && type != map::NONE)
+      {
+        map::MapResult result;
+        mapQuery->getMapObjectById(result, type, map::MapAirspaceSources(), id, false /* airportFromNavDatabase */);
+        showInformation(result);
       }
     }
     else if(url.host() == "show")

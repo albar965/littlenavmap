@@ -99,22 +99,22 @@ public:
   }
 
   /* Get all shown map objects like airports, VOR, NDB, etc. */
-  map::MapTypes getShownMapTypes() const
+  const map::MapTypes getShownMapTypes() const
   {
     return objectTypes;
   }
 
   /* Additional types like wind barbs or minimum altitude grid */
-  map::MapDisplayTypes getShownMapDisplayTypes() const
+  const map::MapDisplayTypes getShownMapDisplayTypes() const
   {
     return objectDisplayTypes;
   }
 
   /* Adjusted by layer visibility */
-  map::MapAirspaceFilter getShownAirspacesTypesByLayer() const;
+  const map::MapAirspaceFilter getShownAirspacesTypesByLayer() const;
 
   /* Flags for airspace having labels */
-  map::MapAirspaceTypes getShownAirspaceTextsByLayer() const;
+  const map::MapAirspaceTypes getShownAirspaceTextsByLayer() const;
 
   const map::MapAirspaceFilter& getShownAirspaces() const
   {

@@ -391,7 +391,7 @@ void MapPaintWidget::updateGeometryIndex(map::MapTypes oldTypes, map::MapDisplay
     screenIndex->updateAirspaceScreenGeometry(getCurrentViewBoundingBox());
 
   if(minRunwayLength != oldMinRunwayLength || // Airport visibility also changes ILS
-     (types& map::AIRPORT_ALL_MASK) != (oldTypes & map::AIRPORT_ALL_MASK) ||   // ILS are disabled with airports
+     (types& map::AIRPORT_ALL_MASK) != (oldTypes & map::AIRPORT_ALL_MASK) || // ILS are disabled with airports
      (types.testFlag(map::ILS) != oldTypes.testFlag(map::ILS)) ||
      (displayTypes.testFlag(map::GLS) != oldDisplayTypes.testFlag(map::GLS)) ||
      (displayTypes.testFlag(map::FLIGHTPLAN) != oldDisplayTypes.testFlag(map::FLIGHTPLAN)))
@@ -478,7 +478,7 @@ bool MapPaintWidget::checkPos(const atools::geo::Pos&)
   // No-op
 }
 
-map::MapTypes MapPaintWidget::getShownMapTypes() const
+const map::MapTypes MapPaintWidget::getShownMapTypes() const
 {
   return paintLayer->getShownMapTypes();
 }
@@ -488,7 +488,7 @@ int MapPaintWidget::getShownMinimumRunwayFt() const
   return paintLayer->getShownMinimumRunwayFt();
 }
 
-map::MapDisplayTypes MapPaintWidget::getShownMapDisplayTypes() const
+const map::MapDisplayTypes MapPaintWidget::getShownMapDisplayTypes() const
 {
   return paintLayer->getShownMapDisplayTypes();
 }
@@ -498,7 +498,7 @@ const map::MapAirspaceFilter& MapPaintWidget::getShownAirspaces() const
   return paintLayer->getShownAirspaces();
 }
 
-map::MapAirspaceFilter MapPaintWidget::getShownAirspaceTypesByLayer() const
+const map::MapAirspaceFilter MapPaintWidget::getShownAirspaceTypesByLayer() const
 {
   return paintLayer->getShownAirspacesTypesByLayer();
 }

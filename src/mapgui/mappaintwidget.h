@@ -229,10 +229,10 @@ public:
   void setShowMapAirspaces(const map::MapAirspaceFilter& types);
 
   /* All currently set map display filters */
-  map::MapTypes getShownMapTypes() const;
-  map::MapDisplayTypes getShownMapDisplayTypes() const;
+  const map::MapTypes getShownMapTypes() const;
+  const map::MapDisplayTypes getShownMapDisplayTypes() const;
   const map::MapAirspaceFilter& getShownAirspaces() const;
-  map::MapAirspaceFilter getShownAirspaceTypesByLayer() const;
+  const map::MapAirspaceFilter getShownAirspaceTypesByLayer() const;
   int getShownMinimumRunwayFt() const;
 
   /* User aircraft as shown on the map */

@@ -1294,12 +1294,12 @@ bool NavApp::isAircraftTrailEmpty()
   return getAircraftTrail().isEmpty();
 }
 
-map::MapTypes NavApp::getShownMapTypes()
+const map::MapTypes NavApp::getShownMapTypes()
 {
   return mainWindow->getMapWidget()->getShownMapTypes();
 }
 
-map::MapDisplayTypes NavApp::getShownMapDisplayTypes()
+const map::MapDisplayTypes NavApp::getShownMapDisplayTypes()
 {
   return mainWindow->getMapWidget()->getShownMapDisplayTypes();
 }

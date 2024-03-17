@@ -162,7 +162,7 @@ void MapPaintLayer::setDetailLevel(int level)
   updateLayers();
 }
 
-map::MapAirspaceFilter MapPaintLayer::getShownAirspacesTypesByLayer() const
+const map::MapAirspaceFilter MapPaintLayer::getShownAirspacesTypesByLayer() const
 {
   if(mapLayer == nullptr)
     return map::MapAirspaceFilter();
@@ -195,7 +195,7 @@ map::MapAirspaceFilter MapPaintLayer::getShownAirspacesTypesByLayer() const
   return filter;
 }
 
-map::MapAirspaceTypes MapPaintLayer::getShownAirspaceTextsByLayer() const
+const map::MapAirspaceTypes MapPaintLayer::getShownAirspaceTextsByLayer() const
 {
   map::MapAirspaceTypes types = map::AIRSPACE_NONE;
 

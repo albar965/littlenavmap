@@ -4008,7 +4008,8 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
                                                              destLeg.getMapTypeName());
 
         html.mark();
-        head(html, headText);
+        head(html, headText, destLeg.getId(), destLeg.getMapType(), destLeg.getPosition());
+
         html.table();
 
         // ================================================================================
@@ -4069,50 +4070,9 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
       if(route.getSizeWithoutAlternates() > 1 && !alternate) // No TOD display when flying an alternate leg
       {
         // ================================================================================
-        // Top of descent  ===============================================================
-        html.mark();
-        head(html, tr("Top of Descent%1").arg(distanceToTod < 0.f ? tr(" (passed)") : QString()));
-        html.table();
-
-        if(!(distanceToTod < map::INVALID_DISTANCE_VALUE))
-          html.id(pid::TOD_DIST_TIME_ARR).row2Error(QString(), tr("Not valid."));
-
-        if(distanceToTod > 0.f && distanceToTod < map::INVALID_DISTANCE_VALUE)
-        {
-          QStringList todValues, todHeader;
-          todValues.append(Unit::distNm(distanceToTod));
-          todHeader.append(tr("Distance"));
-
-          if(fuelTime.isTimeToTodValid())
-          {
-            todValues.append(formatter::formatMinutesHoursLong(fuelTime.timeToTod));
-            todHeader.append(tr("Time"));
-
-            QDateTime arrival = userAircraft->getZuluTime().addSecs(static_cast<int>(fuelTime.timeToTod * 3600.f));
-            todValues.append(locale.toString(arrival.time(), QLocale::ShortFormat) % tr(" ") % arrival.timeZoneAbbreviation());
-            todHeader.append(tr("Arrival"));
-          }
-          html.id(pid::TOD_DIST_TIME_ARR).row2(strJoinHdr(todHeader), strJoinVal(todValues));
-
-          if(fuelTime.isFuelToTodValid())
-          {
-            // Calculate remaining fuel at TOD
-            float remainingFuelTodLbs = userAircraft->getFuelTotalWeightLbs() - fuelTime.fuelLbsToTod;
-            float remainingFuelTodGal = userAircraft->getFuelTotalQuantityGallons() - fuelTime.fuelGalToTod;
-
-            html.id(pid::TOD_FUEL).row2(tr("Fuel:"), Unit::fuelLbsAndGal(remainingFuelTodLbs, remainingFuelTodGal), ahtml::NO_ENTITIES);
-          }
-        } // if(distanceToTod > 0 && distanceToTod < map::INVALID_DISTANCE_VALUE)
-
-        if(route.getTopOfDescentFromDestination() < map::INVALID_DISTANCE_VALUE)
-          html.id(pid::TOD_TO_DESTINATION).row2(tr("To Destination:"), Unit::distNm(route.getTopOfDescentFromDestination()));
-
-        html.tableEndIf();
-
-        // ================================================================================
         // Top of climb  ===============================================================
         html.mark();
-        head(html, tr("Top of Climb%1").arg(distanceToToc < 0.f ? tr(" (passed)") : QString()));
+        head(html, tr("Top of Climb%1").arg(distanceToToc < 0.f ? tr(" (passed)") : QString()), route.getTopOfClimbPos());
         html.table();
 
         if(!(distanceToToc < map::INVALID_DISTANCE_VALUE))
@@ -4147,6 +4107,47 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
 
         if(route.getTopOfClimbDistance() < map::INVALID_DISTANCE_VALUE)
           html.id(pid::TOC_FROM_DESTINATION).row2(tr("From Departure:"), Unit::distNm(route.getTopOfClimbDistance()));
+
+        html.tableEndIf();
+
+        // ================================================================================
+        // Top of descent  ===============================================================
+        html.mark();
+        head(html, tr("Top of Descent%1").arg(distanceToTod < 0.f ? tr(" (passed)") : QString()), route.getTopOfDescentPos());
+        html.table();
+
+        if(!(distanceToTod < map::INVALID_DISTANCE_VALUE))
+          html.id(pid::TOD_DIST_TIME_ARR).row2Error(QString(), tr("Not valid."));
+
+        if(distanceToTod > 0.f && distanceToTod < map::INVALID_DISTANCE_VALUE)
+        {
+          QStringList todValues, todHeader;
+          todValues.append(Unit::distNm(distanceToTod));
+          todHeader.append(tr("Distance"));
+
+          if(fuelTime.isTimeToTodValid())
+          {
+            todValues.append(formatter::formatMinutesHoursLong(fuelTime.timeToTod));
+            todHeader.append(tr("Time"));
+
+            QDateTime arrival = userAircraft->getZuluTime().addSecs(static_cast<int>(fuelTime.timeToTod * 3600.f));
+            todValues.append(locale.toString(arrival.time(), QLocale::ShortFormat) % tr(" ") % arrival.timeZoneAbbreviation());
+            todHeader.append(tr("Arrival"));
+          }
+          html.id(pid::TOD_DIST_TIME_ARR).row2(strJoinHdr(todHeader), strJoinVal(todValues));
+
+          if(fuelTime.isFuelToTodValid())
+          {
+            // Calculate remaining fuel at TOD
+            float remainingFuelTodLbs = userAircraft->getFuelTotalWeightLbs() - fuelTime.fuelLbsToTod;
+            float remainingFuelTodGal = userAircraft->getFuelTotalQuantityGallons() - fuelTime.fuelGalToTod;
+
+            html.id(pid::TOD_FUEL).row2(tr("Fuel:"), Unit::fuelLbsAndGal(remainingFuelTodLbs, remainingFuelTodGal), ahtml::NO_ENTITIES);
+          }
+        } // if(distanceToTod > 0 && distanceToTod < map::INVALID_DISTANCE_VALUE)
+
+        if(route.getTopOfDescentFromDestination() < map::INVALID_DISTANCE_VALUE)
+          html.id(pid::TOD_TO_DESTINATION).row2(tr("To Destination:"), Unit::distNm(route.getTopOfDescentFromDestination()));
 
         html.tableEndIf();
       } // if(route.getSizeWithoutAlternates() > 1 && !alternate) // No TOC display when flying an alternate leg
@@ -4195,7 +4196,8 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
         fromTo = tr(" - ");
 
       html.mark();
-      head(html, tr("Next Waypoint%1%2%3").arg(wpText).arg(fromTo).arg(nextName));
+      head(html, tr("Next Waypoint%1%2%3").arg(wpText).arg(fromTo).arg(nextName),
+           routeLegCorrected.getId(), routeLegCorrected.getMapType(), routeLegCorrected.getPosition());
       html.table();
 
       if(activeLegIdxCorrected != map::INVALID_INDEX_VALUE)
@@ -5106,10 +5108,47 @@ void HtmlInfoBuilder::addCoordinates(const Pos& pos, HtmlBuilder& html) const
 #endif
 }
 
-void HtmlInfoBuilder::head(HtmlBuilder& html, const QString& text) const
+void HtmlInfoBuilder::head(HtmlBuilder& html, const QString& text, const atools::geo::Pos& pos)
+{
+  // Show head with map link and no info link
+  head(html, text, -1, map::NONE, pos);
+}
+
+void HtmlInfoBuilder::head(HtmlBuilder& html, const QString& text, int id, map::MapType type, const atools::geo::Pos& pos)
+{
+  if(type == map::AIRPORT)
+    // Center on airport bounding rect and add info link
+    head(html, text,
+         tr("Map"), QString("lnm://show?id=%1&type=%2").arg(id).arg(type),
+         tr("Information"), QString("lnm://info?id=%1&type=%2").arg(id).arg(type));
+  else if(atools::contains(type, {map::VOR, map::NDB, map::WAYPOINT}))
+    // Center navaid by position and add info link
+    head(html, text,
+         tr("Map"), QString("lnm://show?lonx=%1&laty=%2").arg(pos.getLonX()).arg(pos.getLatY()),
+         tr("Information"), QString("lnm://info?id=%1&type=%2").arg(id).arg(type));
+  else if(pos.isValid())
+    // Show map link for position
+    head(html, text, tr("Map"), QString("lnm://show?lonx=%1&laty=%2").arg(pos.getLonX()).arg(pos.getLatY()));
+  else
+    // No links
+    head(html, text);
+}
+
+void HtmlInfoBuilder::head(HtmlBuilder& html, const QString& text, const QString& mapText, const QString& mapHref, const QString& infoText,
+                           const QString& infoHref) const
 {
   if(info)
-    html.h4(text);
+  {
+    html.h(4, text);
+
+    if(!mapText.isEmpty() && !mapHref.isEmpty())
+      html.text(tr(", ")).a(mapText, mapHref, ahtml::LINK_NO_UL);
+
+    if(!infoText.isEmpty() && !infoHref.isEmpty())
+      html.text(tr(", ")).a(infoText, infoHref, ahtml::LINK_NO_UL);
+
+    html.hEnd(4);
+  }
   else
     html.b(text);
 }
