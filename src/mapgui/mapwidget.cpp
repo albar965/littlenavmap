@@ -3912,6 +3912,7 @@ void MapWidget::debugMovingPlane(QMouseEvent *event)
         altFt = NavApp::getRouteController()->getCruiseAltitudeWidget();
         tas = perf.getCruiseSpeed();
         fuelflow = perf.getCruiseFuelFlowLbs();
+        ground = altFt < NavApp::getElevationProvider()->getElevationFt(pos) + 500.f;
       }
       else
       {

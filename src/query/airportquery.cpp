@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -74,7 +74,6 @@ const static float MAX_HEADING_RUNWAY_DEVIATION_DEG_2 = 45.f;
 const static float MAX_HEADING_RUNWAY_DEVIATION_DEG_3 = map::INVALID_HEADING_VALUE; // Ignore heading and get nearest runway end
 const static float MAX_RUNWAY_DISTANCE_METER = 150.f; // First iteration
 const static float MAX_RUNWAY_DISTANCE_METER_2 = 2000.f; // Second iteration if first failed
-const static float MAX_RUNWAY_DISTANCE_METER_3 = 10000.f; // Third iteration if second failed
 
 const static float MAX_FUZZY_AIRPORT_DISTANCE_METER = 2000.f;
 const static float MAX_FUZZY_AIRPORT_DISTANCE_METER_UNIQUE = 10000.f;
@@ -1134,7 +1133,7 @@ bool AirportQuery::getBestRunwayEndForPosAndCourse(map::MapRunwayEnd& runwayEnd,
   // Get all airports without runways and runways nearby ordered by distance between pos and runway line
   // Use inflated rectangle for query
   map::MapResultIndex runwayAirports;
-  getRunwaysAndAirports(runwayAirports, ageo::Rect(pos, MAX_RUNWAY_DISTANCE_METER_3, true /* fast */), pos, true /* noRunway */);
+  getRunwaysAndAirports(runwayAirports, ageo::Rect(pos, MAX_RUNWAY_DISTANCE_METER_2, true /* fast */), pos, true /* noRunway */);
   qDebug() << Q_FUNC_INFO << "Found" << runwayAirports.size() << "runways and/or airports";
 
   if(!runwayAirports.isEmpty())
@@ -1153,17 +1152,6 @@ bool AirportQuery::getBestRunwayEndForPosAndCourse(map::MapRunwayEnd& runwayEnd,
       airport.reset();
       bestRunwayEndAndAirport(runwayEnd, airport, runwayAirports, pos, trackTrue,
                               MAX_RUNWAY_DISTANCE_METER_2, helicopter ? map::INVALID_HEADING_VALUE : MAX_HEADING_RUNWAY_DEVIATION_DEG_2);
-    }
-
-    if(!airport.isValid())
-    {
-      // Get closest airport and runway that matches heading with largest distance - third iteration
-      // Ignore heading value and get closest runway end
-      qDebug() << Q_FUNC_INFO << "No airport found. Third iteration.";
-      runwayEnd.reset();
-      airport.reset();
-      bestRunwayEndAndAirport(runwayEnd, airport, runwayAirports, pos, trackTrue,
-                              MAX_RUNWAY_DISTANCE_METER_3, helicopter ? map::INVALID_HEADING_VALUE : MAX_HEADING_RUNWAY_DEVIATION_DEG_3);
     }
 
     if(airport.isValid())

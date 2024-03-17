@@ -32,6 +32,7 @@
 #include "fs/bgl/ap/rw/runway.h"
 #include "fs/online/onlinetypes.h"
 #include "fs/userdata/userdatamanager.h"
+#include "fs/util/coordinates.h"
 #include "fs/util/fsutil.h"
 #include "fs/util/morsecode.h"
 #include "fs/util/tacanfrequencies.h"
@@ -595,7 +596,7 @@ void HtmlInfoBuilder::nearestMapObjectsTextRow(const MapAirport& airport, HtmlBu
   else
     displayText = tr("%1 (%2)").arg(name).arg(displayIdent);
 
-  html.tdF(ahtml::ALIGN_LEFT).a(displayText, url, ahtml::LINK_NO_UL|ahtml::BOLD).tdEnd();
+  html.tdF(ahtml::ALIGN_LEFT).a(displayText, url, ahtml::LINK_NO_UL | ahtml::BOLD).tdEnd();
 
   if(!airportCol)
     // Navaid type
@@ -2596,6 +2597,7 @@ bool HtmlInfoBuilder::logEntryText(MapLogbookEntry logEntry, HtmlBuilder& html) 
               (logEntry.departureIdent.isEmpty() ? QString() :
                tr(", %1").arg(Unit::altFeet(rec.valueFloat("departure_alt")))),
               ahtml::NO_ENTITIES | ahtml::BOLD);
+
     html.row2(tr("To:"),
               airportLink(html, logEntry.destinationIdent, logEntry.destinationName, logEntry.destinationPos) %
               (logEntry.destinationIdent.isEmpty() ? QString() :
@@ -4841,20 +4843,30 @@ QString HtmlInfoBuilder::airportLink(const HtmlBuilder& html, const QString& ide
   {
     if(info)
     {
-      QString link = QString("lnm://show?airport=%1").arg(ident);
-      if(pos.isValid())
-        link += QString("&aplonx=%1&aplaty=%2").arg(pos.getLonX()).arg(pos.getLatY());
+      QString link;
 
-      if(name.isEmpty())
-        // Ident only
-        builder.a(ident, link, ahtml::LINK_NO_UL);
+      if(atools::fs::util::fromDegMinFormat(ident).isValid())
+        // Use deg min format which is inserted for off-airport logbook entries
+        link = QString("lnm://show?lonx=%1&laty=%2").arg(pos.getLonX()).arg(pos.getLatY());
       else
       {
-        // Name and ident
-        builder.text(tr("%1 (").arg(name));
-        builder.a(ident, link, ahtml::LINK_NO_UL);
-        builder.text(tr(")"));
+        // Normal airport
+        link = QString("lnm://show?airport=%1").arg(ident);
+        if(pos.isValid())
+          link += QString("&aplonx=%1&aplaty=%2").arg(pos.getLonX()).arg(pos.getLatY());
       }
+
+      if(!link.isEmpty())
+      {
+        if(name.isEmpty())
+          // Ident only
+          builder.a(ident, link, ahtml::LINK_NO_UL);
+        else
+          // Name and ident
+          builder.a(name.isEmpty() ? ident : tr("%1 (%2)").arg(name).arg(ident), link, ahtml::LINK_NO_UL);
+      }
+      else
+        builder.text(name.isEmpty() ? ident : tr("%1 (%2)").arg(name).arg(ident));
     }
     else
       builder.text(name.isEmpty() ? ident : tr("%1 (%2)").arg(name).arg(ident));

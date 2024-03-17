@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -193,6 +193,18 @@ private:
   /* Create a logbook entry on takeoff and update it on landing */
   void createTakeoffLanding(const atools::fs::sc::SimConnectUserAircraft& aircraft, bool takeoff,
                             float flownDistanceNm);
+  void recordTakeoff(const atools::fs::sc::SimConnectUserAircraft& aircraft, const map::MapAirport& airport,
+                     const map::MapRunwayEnd& runwayEnd);
+  void recordLanding(atools::sql::SqlRecord& record, const atools::fs::sc::SimConnectUserAircraft& aircraft, const map::MapAirport& airport,
+                     const map::MapRunwayEnd& runwayEnd, float flownDistanceNm);
+  QString recordAirportOrCoordinates(atools::sql::SqlRecord& record, const atools::fs::sc::SimConnectUserAircraft& aircraft,
+                                     const map::MapAirport& airport, const map::MapRunwayEnd& runwayEnd, const QString& prefix);
+
+  /* Needs departure set but no destination */
+  bool recordIsTakeoff(const atools::sql::SqlRecord& record);
+
+  /* Matches if same aircraft and same simulator */
+  bool doesFlightMatchRecord(const atools::sql::SqlRecord& record, const atools::fs::sc::SimConnectUserAircraft& aircraft);
 
   /* Prefill record for add dialog with values from current program state */
   void prefillLogEntry(atools::sql::SqlRecord& rec);
@@ -218,9 +230,14 @@ private:
   void undoTriggered();
   void redoTriggered();
 
+  /* Load and save logEntryId to configuration file */
+  void saveLogEntryId();
+  void restoreLogEntryId();
+
+  int logEntryId = -1;
+
   /* Remember last aircraft for fuel calculations */
   const atools::fs::sc::SimConnectUserAircraft *aircraftAtTakeoff = nullptr;
-  int logEntryId = -1;
 
   LogStatisticsDialog *statsDialog = nullptr;
 

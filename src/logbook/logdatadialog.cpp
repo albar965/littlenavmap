@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -18,24 +18,25 @@
 #include "logbook/logdatadialog.h"
 #include "ui_logdatadialog.h"
 
-#include "common/maptypes.h"
+#include "app/navapp.h"
 #include "common/constants.h"
 #include "common/dialogrecordhelper.h"
-#include "geo/calculations.h"
-#include "gui/helphandler.h"
-#include "common/unitstringtool.h"
-#include "sql/sqlrecord.h"
-#include "query/airportquery.h"
-#include "gui/widgetstate.h"
-#include "app/navapp.h"
-#include "util/htmlbuilder.h"
-#include "fs/pln/flightplanio.h"
-#include "gui/dialog.h"
+#include "common/maptypes.h"
 #include "common/unit.h"
-#include "gui/signalblocker.h"
-#include "gui/errorhandler.h"
+#include "common/unitstringtool.h"
 #include "exception.h"
+#include "fs/pln/flightplanio.h"
+#include "fs/util/coordinates.h"
+#include "geo/calculations.h"
+#include "gui/dialog.h"
+#include "gui/errorhandler.h"
+#include "gui/helphandler.h"
+#include "gui/signalblocker.h"
+#include "gui/widgetstate.h"
 #include "perf/aircraftperfcontroller.h"
+#include "query/airportquery.h"
+#include "sql/sqlrecord.h"
+#include "util/htmlbuilder.h"
 
 #include <QFileInfo>
 
@@ -325,16 +326,23 @@ void LogdataDialog::airportUpdated(QLineEdit *lineEdit, QLabel *label)
     label->setText(atools::util::HtmlBuilder::warningMessage(tr("No airport selected.")));
   else
   {
-    // Try to get airport for ident
-    QList<map::MapAirport> airports = NavApp::getAirportQuerySim()->getAirportsByOfficialIdent(ident.toUpper());
-
-    if(!airports.isEmpty())
-      label->setText(tr("%1,   elevation %2%3").
-                     arg(airports.constFirst().name).
-                     arg(Unit::altFeet(airports.constFirst().position.getAltitude())).
-                     arg(airports.size() > 1 ? tr(" (more found)") : QString()));
+    atools::geo::Pos pos = atools::fs::util::fromDegMinFormat(ident);
+    if(pos.isValid())
+      // Use deg min format which is inserted for off-airport logbook entries
+      label->setText(tr("Off airport at %1.").arg(Unit::coords(pos)));
     else
-      label->setText(atools::util::HtmlBuilder::errorMessage(tr("No airport found.").arg(ident)));
+    {
+      // Try to get airport for ident
+      QList<map::MapAirport> airports = NavApp::getAirportQuerySim()->getAirportsByOfficialIdent(ident.toUpper());
+
+      if(!airports.isEmpty())
+        label->setText(tr("%1,   elevation %2%3").
+                       arg(airports.constFirst().name).
+                       arg(Unit::altFeet(airports.constFirst().position.getAltitude())).
+                       arg(airports.size() > 1 ? tr(" (more found)") : QString()));
+      else
+        label->setText(atools::util::HtmlBuilder::errorMessage(tr("No airport found.").arg(ident)));
+    }
   }
 }
 
@@ -351,6 +359,7 @@ void LogdataDialog::perfFileUpdated()
 void LogdataDialog::flightplanFileClicked()
 {
   qDebug() << Q_FUNC_INFO;
+
   QString filepath = atools::gui::Dialog(this).openFileDialog(
     tr("Open Flight Plan"),
     tr("Flight Plan Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_FLIGHTPLAN_LOAD),

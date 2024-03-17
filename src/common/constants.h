@@ -316,7 +316,7 @@ const QLatin1String ROUTE_PARKING_DIALOG("Route/ParkingDialog");
 const QLatin1String LOGDATA_EDIT_ADD_DIALOG("LogdataDialog/Widget");
 const QLatin1String LOGDATA_STATS_DIALOG("LogdataStatsDialog/Widget");
 const QLatin1String LOGDATA_EXPORT_CSV("Logdata/CsvExport");
-const QLatin1String LOGDATA_ENTRY_ID("Logdata/EntryId");
+const QLatin1String LOGDATA_ENTRY_ID("Logdata/LogEntryIdTakeoff");
 
 /* Options dialog */
 const QLatin1String OPTIONS_DIALOG_WIDGET("OptionsDialog/Widget");

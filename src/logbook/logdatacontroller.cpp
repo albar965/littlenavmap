@@ -25,6 +25,7 @@
 #include "exception.h"
 #include "fs/gpx/gpxio.h"
 #include "fs/userdata/logdatamanager.h"
+#include "fs/util/coordinates.h"
 #include "geo/calculations.h"
 #include "gui/dialog.h"
 #include "gui/errorhandler.h"
@@ -59,6 +60,7 @@
 
 #include <QDebug>
 #include <QStandardPaths>
+#include <QStringBuilder>
 
 using atools::sql::SqlTransaction;
 using atools::sql::SqlRecord;
@@ -169,19 +171,28 @@ void LogdataController::showSearch()
 
 void LogdataController::saveState()
 {
-  // Not used yet
-  atools::settings::Settings::instance().setValue(lnm::LOGDATA_ENTRY_ID, logEntryId);
+  saveLogEntryId();
 }
 
 void LogdataController::restoreState()
 {
-  // logEntryId = atools::settings::Settings::instance().valueInt(lnm::LOGDATA_ENTRY_ID);
+  restoreLogEntryId();
   manager->updateUndoRedoActions();
 }
 
 void LogdataController::optionsChanged()
 {
   statsDialog->optionsChanged();
+}
+
+void LogdataController::saveLogEntryId()
+{
+  atools::settings::Settings::instance().setValue(lnm::LOGDATA_ENTRY_ID, logEntryId);
+}
+
+void LogdataController::restoreLogEntryId()
+{
+  logEntryId = atools::settings::Settings::instance().valueInt(lnm::LOGDATA_ENTRY_ID);
 }
 
 void LogdataController::fontChanged(const QFont& font)
@@ -269,154 +280,227 @@ void LogdataController::createTakeoffLanding(const atools::fs::sc::SimConnectUse
 {
   if(NavApp::getMainUi()->actionLogdataCreateLogbook->isChecked())
   {
-    // Get nearest airport on takeoff/landing and runway
+    // Get nearest airport on takeoff/landing and runway ==============================================
     map::MapRunwayEnd runwayEnd;
     map::MapAirport airport;
     if(!NavApp::getAirportQuerySim()->getBestRunwayEndForPosAndCourse(runwayEnd, airport, aircraft.getPosition(),
                                                                       aircraft.getTrackDegTrue(), aircraft.isHelicopter()))
     {
-      // Not even an airport was found
-      qWarning() << Q_FUNC_INFO << "No runway found for aircraft" << aircraft.getPosition() << aircraft.getTrackDegTrue();
-      return;
+      // Not even an airport was found - log but continue anyway
+      qWarning() << Q_FUNC_INFO << "No airport found near aircraft at" << (takeoff ? "takeoff" : "landing")
+                 << aircraft.getPosition() << aircraft.getTrackDegTrue();
+
+      // Log warning message in status bar but continue
+      NavApp::setStatusMessage(tr("No airport found near aircraft after detecting %1.").arg(takeoff ? tr("takeoff") : tr("landing")),
+                               true /* addToLog */);
     }
 
-    QString departureArrivalText = takeoff ? tr("Departure") : tr("Arrival");
-    QString runwayText = runwayEnd.isValid() ? tr(" runway %1").arg(runwayEnd.name) : QString();
+    // Get last record if there is already one ==============================================
+    atools::sql::SqlRecord record;
+    if(logEntryId >= 0)
+      record = manager->getRecord(logEntryId);
 
     if(takeoff)
     {
-      // Build record for new logbook entry =======================================
-      SqlRecord record = manager->getEmptyRecord();
-      record.setNull("logbook_id"); // Set to null to avoid unique constraint mismatches - select id automatically
-      record.setValue("aircraft_name", aircraft.getAirplaneType()); // varchar(250),
-      record.setValue("aircraft_type", aircraft.getAirplaneModel()); // varchar(250),
-      record.setValue("aircraft_registration", aircraft.getAirplaneRegistration()); // varchar(50),
-      record.setValue("flightplan_number", aircraft.getAirplaneFlightnumber()); // varchar(100),
-      record.setValue("flightplan_cruise_altitude", NavApp::getRouteCruiseAltitudeFt()); // integer,
-      record.setValue("flightplan_file", atools::nativeCleanPath(NavApp::getCurrentRouteFilepath())); // varchar(1024),
-      record.setValue("performance_file", atools::nativeCleanPath(NavApp::getCurrentAircraftPerfFilepath())); // varchar(1024),
-      record.setValue("block_fuel", NavApp::getAltitudeLegs().getBlockFuel(NavApp::getAircraftPerformance())); // integer,
-      record.setValue("trip_fuel", NavApp::getAltitudeLegs().getTripFuel()); // integer,
-      record.setValue("grossweight", aircraft.getAirplaneTotalWeightLbs()); // integer,
-      record.setValue("departure_ident", airport.displayIdent()); // varchar(10),
-      record.setValue("departure_name", airport.name); // varchar(200),
-      record.setValue("departure_runway", runwayEnd.name); // varchar(200),
-      record.setValue("departure_lonx", airport.position.getLonX()); // integer,
-      record.setValue("departure_laty", airport.position.getLatY()); // integer,
-      record.setValue("departure_alt", airport.position.getAltitude()); // integer,
-
-      // Sqlite TEXT as ISO8601 strings (2021-05-16T23:55:00.259+02:00).
-      // TEXT as ISO8601 strings ("YYYY-MM-DD HH:MM:SS.SSS")
-      record.setValue("departure_time", atools::currentIsoWithOffset()); // varchar(100),
-
-      // 2021-05-16T21:50:24.973Z
-      record.setValue("departure_time_sim", aircraft.getZuluTime()); // varchar(100),
-
-      record.setValue("simulator", NavApp::getCurrentSimulatorShortName()); // varchar(50),
-      record.setValue("route_string", NavApp::getRouteStringLogbook()); // varchar(1024),
-
-      // Clear separate logbook track =========================
-      NavApp::deleteAircraftTrailLogbook();
-
-      // Record flight plan and aircraft performance =========================
-      recordFlightplanAndPerf(record);
-
-      // Determine fuel type =========================
-      float weightVolRatio = 0.f;
-      bool jetfuel = aircraft.isJetfuel(weightVolRatio);
-      if(weightVolRatio > 0.f)
-        record.setValue("is_jetfuel", jetfuel); // integer,
-
-      // Add to database and remember created id
-      SqlTransaction transaction(manager->getDatabase());
-      manager->insertOneRecord(record);
-      logEntryId = manager->getCurrentId();
-      transaction.commit();
-
-      logChanged(false /* load all */, true /* keep selection */);
-
-      mainWindow->setStatusMessage(tr("Logbook Entry for %1 at %2%3 added.").
-                                   arg(departureArrivalText).
-                                   arg(airport.displayIdent()).
-                                   arg(runwayText), true /* addToLog */);
-    }
-    else if(logEntryId >= 0)
-    {
-      if(manager->hasRecord(logEntryId))
-      {
-        // Update takeoff record with landing data ===========================================
-        atools::sql::SqlRecord record = manager->getRecord(logEntryId);
-        record.setValue("distance", NavApp::getRouteConst().getTotalDistance()); // integer,
-        record.setValue("distance_flown", flownDistanceNm); // integer,
-        if(aircraftAtTakeoff != nullptr)
-          record.setValue("used_fuel", aircraftAtTakeoff->getFuelTotalWeightLbs() - aircraft.getFuelTotalWeightLbs()); // integer,
-        record.setValue("destination_ident", airport.displayIdent()); // varchar(10),
-        record.setValue("destination_name", airport.name); // varchar(200),
-        record.setValue("destination_runway", runwayEnd.name); // varchar(200),
-        record.setValue("destination_lonx", airport.position.getLonX()); // integer,
-        record.setValue("destination_laty", airport.position.getLatY()); // integer,
-        record.setValue("destination_alt", airport.position.getAltitude()); // integer,
-
-        QDateTime destinationTime = QDateTime::fromString(atools::currentIsoWithOffset(), Qt::ISODateWithMs);
-        QDateTime destinationTimeSim = aircraft.getZuluTime();
-
-        // Adapt times that are a result of wrong time jumps/warps resulting in one day offset
-        // If the destinationTime is earlier than departure_time, the value returned is negative.
-        if(record.valueDateTime("departure_time").secsTo(destinationTime) < 0)
-          destinationTime = destinationTime.addDays(1);
-
-        // If the destinationTimeSim is earlier than departure_time_sim, the value returned is negative.
-        if(record.valueDateTime("departure_time_sim").secsTo(destinationTimeSim) < 0)
-          destinationTimeSim = destinationTimeSim.addDays(1);
-
-        // Sqlite TEXT as ISO8601 strings (2021-05-16T23:55:00.259+02:00).
-        // TEXT as ISO8601 strings ("YYYY-MM-DD HH:MM:SS.SSS")
-        record.setValue("destination_time", destinationTime); // varchar(100),
-
-        // 2021-05-16T21:50:24.973Z
-        record.setValue("destination_time_sim", destinationTimeSim); // varchar(100),
-
-        // Update flight plan and aircraft performance =========================
-        recordFlightplanAndPerf(record);
-
-        // Save GPX with simplified flight plan and trail =========================
-        const atools::fs::pln::Flightplan flightplan =
-          NavApp::getRouteConst().updatedAltitudes().adjustedToOptions(rf::DEFAULT_OPTS_GPX).getFlightplanConst();
-        record.setValue("aircraft_trail", atools::fs::gpx::GpxIO().saveGpxGz(NavApp::getAircraftTrailLogbook().toGpxData(flightplan)));
-
-        // Clear separate logbook track =========================
-        NavApp::deleteAircraftTrailLogbook();
-
-        // Determine fuel type again =========================
-        float weightVolRatio = 0.f;
-        bool jetfuel = aircraft.isJetfuel(weightVolRatio);
-        if(weightVolRatio > 0.f)
-          record.setValue("is_jetfuel", jetfuel); // integer,
-
-        SqlTransaction transaction(manager->getDatabase());
-        manager->updateRecords(record, {logEntryId});
-        transaction.commit();
-
-        logChanged(false /* load all */, false /* keep selection */);
-
-        mainWindow->setStatusMessage(tr("Logbook Entry for %1 at %2%3 updated.").
-                                     arg(departureArrivalText).
-                                     arg(airport.displayIdent()).
-                                     arg(runwayText), true /* addToLog */);
-
-        logEntryId = -1;
-      }
+      // Record takeoff ==============================================
+      if(recordIsTakeoff(record) && doesFlightMatchRecord(record, aircraft))
+        // There is already a takeoff and the flight matches by aircraft type and simulator
+        NavApp::setStatusMessage(tr("Ignoring takeoff since last logbook entry already recorded one."), true /* addToLog */);
       else
-        qWarning() << Q_FUNC_INFO << "Log entry ID not found" << logEntryId;
+        // Always create a new record and a new logEntryId on takeoff
+        recordTakeoff(aircraft, airport, runwayEnd);
+    }
+    else if(!record.isEmpty())
+    {
+      // Record landing ==============================================
+#ifdef DEBUG_INFORMATION
+      qDebug() << Q_FUNC_INFO << record;
+#endif
+
+      if(doesFlightMatchRecord(record, aircraft) && recordIsTakeoff(record))
+        // Found previous record without landing and aircraft and sim are still the same - update previous record with landing
+        recordLanding(record, aircraft, airport, runwayEnd, flownDistanceNm);
+      else
+        NavApp::setStatusMessage(tr("Previous logbook entry with takeoff does not match current flight."), true /* addToLog */);
     }
     else
-      qWarning() << Q_FUNC_INFO << "no previous takeoff for ID" << logEntryId;
+      NavApp::setStatusMessage(tr("Previous takeoff logbook entry not found for landing."), true /* addToLog */);
   }
 
-  resetTakeoffLandingDetection();
+  qInfo() << Q_FUNC_INFO << "takeoff" << takeoff << "logEntryId" << logEntryId;
+}
 
-  if(takeoff)
-    aircraftAtTakeoff = new atools::fs::sc::SimConnectUserAircraft(aircraft);
+bool LogdataController::doesFlightMatchRecord(const atools::sql::SqlRecord& record, const atools::fs::sc::SimConnectUserAircraft& aircraft)
+{
+  return record.valueStr("aircraft_type", QString()) == aircraft.getAirplaneModel() &&
+         record.valueStr("simulator", QString()) == NavApp::getCurrentSimulatorShortName();
+}
+
+bool LogdataController::recordIsTakeoff(const atools::sql::SqlRecord& record)
+{
+  // Requires not empty record, departure set and destination empty
+  return !record.isEmpty() &&
+         !record.valueStr("departure_ident", QString()).isEmpty() &&
+         record.valueStr("destination_ident", QString()).isEmpty();
+}
+
+void LogdataController::recordTakeoff(const atools::fs::sc::SimConnectUserAircraft& aircraft, const map::MapAirport& airport,
+                                      const map::MapRunwayEnd& runwayEnd)
+{
+  // Build record for new logbook entry =======================================
+  SqlRecord record = manager->getEmptyRecord();
+
+  record.setNull("logbook_id"); // Set to null to avoid unique constraint mismatches - select id automatically
+  record.setValue("aircraft_name", aircraft.getAirplaneType()); // varchar(250),
+  record.setValue("aircraft_type", aircraft.getAirplaneModel()); // varchar(250),
+  record.setValue("aircraft_registration", aircraft.getAirplaneRegistration()); // varchar(50),
+  record.setValue("flightplan_number", aircraft.getAirplaneFlightnumber()); // varchar(100),
+  record.setValue("flightplan_cruise_altitude", NavApp::getRouteCruiseAltitudeFt()); // integer,
+  record.setValue("flightplan_file", atools::nativeCleanPath(NavApp::getCurrentRouteFilepath())); // varchar(1024),
+  record.setValue("performance_file", atools::nativeCleanPath(NavApp::getCurrentAircraftPerfFilepath())); // varchar(1024),
+  record.setValue("block_fuel", NavApp::getAltitudeLegs().getBlockFuel(NavApp::getAircraftPerformance())); // integer,
+  record.setValue("trip_fuel", NavApp::getAltitudeLegs().getTripFuel()); // integer,
+  record.setValue("grossweight", aircraft.getAirplaneTotalWeightLbs()); // integer,
+
+  QString ident = recordAirportOrCoordinates(record, aircraft, airport, runwayEnd, "departure");
+
+  // Sqlite TEXT as ISO8601 strings (2021-05-16T23:55:00.259+02:00).
+  // TEXT as ISO8601 strings ("YYYY-MM-DD HH:MM:SS.SSS")
+  record.setValue("departure_time", atools::currentIsoWithOffset()); // varchar(100),
+
+  // 2021-05-16T21:50:24.973Z
+  record.setValue("departure_time_sim", aircraft.getZuluTime()); // varchar(100),
+
+  record.setValue("simulator", NavApp::getCurrentSimulatorShortName()); // varchar(50),
+  record.setValue("route_string", NavApp::getRouteStringLogbook()); // varchar(1024),
+
+  // Clear separate logbook track =========================
+  NavApp::deleteAircraftTrailLogbook();
+
+  // Record flight plan and aircraft performance =========================
+  recordFlightplanAndPerf(record);
+
+  // Determine fuel type =========================
+  float weightVolRatio = 0.f;
+  bool jetfuel = aircraft.isJetfuel(weightVolRatio);
+  if(weightVolRatio > 0.f)
+    record.setValue("is_jetfuel", jetfuel); // integer,
+
+  // Add to database and remember created id
+  SqlTransaction transaction(manager->getDatabase());
+  manager->insertOneRecord(record);
+  transaction.commit();
+
+  logEntryId = manager->getCurrentId();
+  saveLogEntryId();
+
+  logChanged(false /* load all */, true /* keep selection */);
+
+#ifdef DEBUG_INFORMATION
+  qDebug() << Q_FUNC_INFO << record;
+#endif
+
+  aircraftAtTakeoff = new atools::fs::sc::SimConnectUserAircraft(aircraft);
+
+  NavApp::setStatusMessage(tr("Logbook entry for %1 at %2%3 added.").arg(tr("departure")).arg(ident).
+                           arg(runwayEnd.isValid() ? tr(" runway %1").arg(runwayEnd.name) : QString()), true /* addToLog */);
+}
+
+void LogdataController::recordLanding(atools::sql::SqlRecord& record, const atools::fs::sc::SimConnectUserAircraft& aircraft,
+                                      const map::MapAirport& airport, const map::MapRunwayEnd& runwayEnd, float flownDistanceNm)
+{
+  // Update takeoff record with landing data ===========================================
+  record.setValue("distance", NavApp::getRouteConst().getTotalDistance()); // integer,
+  record.setValue("distance_flown", flownDistanceNm); // integer,
+  if(aircraftAtTakeoff != nullptr)
+    record.setValue("used_fuel", aircraftAtTakeoff->getFuelTotalWeightLbs() - aircraft.getFuelTotalWeightLbs()); // integer,
+
+  QString ident = recordAirportOrCoordinates(record, aircraft, airport, runwayEnd, "destination");
+
+  QDateTime destinationTime = QDateTime::fromString(atools::currentIsoWithOffset(), Qt::ISODateWithMs);
+  QDateTime destinationTimeSim = aircraft.getZuluTime();
+
+  // Adapt times that are a result of wrong time jumps/warps resulting in one day offset
+  // If the destinationTime is earlier than departure_time, the value returned is negative.
+  if(record.valueDateTime("departure_time").secsTo(destinationTime) < 0)
+    destinationTime = destinationTime.addDays(1);
+
+  // If the destinationTimeSim is earlier than departure_time_sim, the value returned is negative.
+  if(record.valueDateTime("departure_time_sim").secsTo(destinationTimeSim) < 0)
+    destinationTimeSim = destinationTimeSim.addDays(1);
+
+  // Sqlite TEXT as ISO8601 strings (2021-05-16T23:55:00.259+02:00).
+  // TEXT as ISO8601 strings ("YYYY-MM-DD HH:MM:SS.SSS")
+  record.setValue("destination_time", destinationTime); // varchar(100),
+
+  // 2021-05-16T21:50:24.973Z
+  record.setValue("destination_time_sim", destinationTimeSim); // varchar(100),
+
+  // Update flight plan and aircraft performance =========================
+  recordFlightplanAndPerf(record);
+
+  // Save GPX with simplified flight plan and trail =========================
+  const atools::fs::pln::Flightplan flightplan =
+    NavApp::getRouteConst().updatedAltitudes().adjustedToOptions(rf::DEFAULT_OPTS_GPX).getFlightplanConst();
+  record.setValue("aircraft_trail", atools::fs::gpx::GpxIO().saveGpxGz(NavApp::getAircraftTrailLogbook().toGpxData(flightplan)));
+
+  // Clear separate logbook track =========================
+  NavApp::deleteAircraftTrailLogbook();
+
+  // Determine fuel type again =========================
+  float weightVolRatio = 0.f;
+  bool jetfuel = aircraft.isJetfuel(weightVolRatio);
+  if(weightVolRatio > 0.f)
+    record.setValue("is_jetfuel", jetfuel); // integer,
+
+  SqlTransaction transaction(manager->getDatabase());
+  manager->updateRecords(record, {logEntryId});
+  transaction.commit();
+
+  logChanged(false /* load all */, false /* keep selection */);
+
+#ifdef DEBUG_INFORMATION
+  qDebug() << Q_FUNC_INFO << record;
+#endif
+
+  NavApp::setStatusMessage(tr("Logbook entry for %1 at %2%3 updated.").
+                           arg(tr("arrival")).
+                           arg(ident).
+                           arg(runwayEnd.isValid() ? tr(" runway %1").arg(runwayEnd.name) : QString()), true /* addToLog */);
+
+  logEntryId = -1;
+  saveLogEntryId();
+}
+
+QString LogdataController::recordAirportOrCoordinates(atools::sql::SqlRecord& record,
+                                                      const atools::fs::sc::SimConnectUserAircraft& aircraft,
+                                                      const map::MapAirport& airport, const map::MapRunwayEnd& runwayEnd,
+                                                      const QString& prefix)
+{
+  QString ident;
+  if(airport.isValid())
+  {
+    // Record airport ==================================
+    ident = airport.displayIdent();
+    record.setValue(prefix % "_ident", ident); // varchar(10),
+    record.setValue(prefix % "_name", airport.name); // varchar(200),
+    record.setValue(prefix % "_lonx", airport.position.getLonX()); // integer,
+    record.setValue(prefix % "_laty", airport.position.getLatY()); // integer,
+    record.setValue(prefix % "_alt", airport.position.getAltitude()); // integer,
+
+    if(runwayEnd.isValid())
+      record.setValue(prefix % "_runway", runwayEnd.name); // varchar(200),
+  }
+  else
+  {
+    // Record off airport coordinates ==================================
+    ident = atools::fs::util::toDegMinFormat(aircraft.getPosition());
+    record.setValue(prefix % "_ident", ident); // varchar(10),
+    record.setValue(prefix % "_lonx", aircraft.getPosition().getLonX()); // integer,
+    record.setValue(prefix % "_laty", aircraft.getPosition().getLatY()); // integer,
+    record.setValue(prefix % "_alt", aircraft.getActualAltitudeFt()); // integer,
+  }
+  return ident;
 }
 
 void LogdataController::logChanged(bool loadAll, bool keepSelection)
@@ -446,8 +530,10 @@ void LogdataController::recordFlightplanAndPerf(atools::sql::SqlRecord& record)
 
 void LogdataController::resetTakeoffLandingDetection()
 {
-  delete aircraftAtTakeoff;
-  aircraftAtTakeoff = nullptr;
+  ATOOLS_DELETE_LOG(aircraftAtTakeoff);
+
+  logEntryId = -1;
+  saveLogEntryId();
 }
 
 bool LogdataController::isDirectPreviewShown()
@@ -548,7 +634,7 @@ void LogdataController::editLogEntries(const QVector<int>& ids)
 
       logChanged(false /* load all */, true /* keep selection */);
 
-      mainWindow->setStatusMessage(tr("%1 logbook %2 updated.").arg(ids.size()).arg(ids.size() == 1 ? tr("entry") : tr("entries")));
+      NavApp::setStatusMessage(tr("%1 logbook %2 updated.").arg(ids.size()).arg(ids.size() == 1 ? tr("entry") : tr("entries")));
     }
     dlg.saveState();
   }
@@ -653,7 +739,7 @@ void LogdataController::addLogEntry()
 
     logChanged(false /* load all */, false /* keep selection */);
 
-    mainWindow->setStatusMessage(tr("Logbook entry added."));
+    NavApp::setStatusMessage(tr("Logbook entry added."));
   }
   dlg.saveState();
 }
@@ -671,7 +757,7 @@ void LogdataController::cleanupLogEntries()
   qDebug() << Q_FUNC_INFO;
 
   // Create a dialog with tree checkboxes =====================
-  atools::gui::ChoiceDialog choiceDialog(mainWindow, QCoreApplication::applicationName() + tr(" - Cleanup Logbook"),
+  atools::gui::ChoiceDialog choiceDialog(mainWindow, QCoreApplication::applicationName() % tr(" - Cleanup Logbook"),
                                          tr("Select criteria for cleanup.\nNote that you can undo this change."),
                                          lnm::SEARCHTAB_LOGDATA_CLEANUP_DIALOG, "LOGBOOK.html#logbook-cleanup");
 
@@ -766,7 +852,7 @@ void LogdataController::cleanupLogEntries()
         });
 
       // Build preview dialog ===============================================
-      atools::gui::SqlQueryDialog previewDialog(mainWindow, QCoreApplication::applicationName() + tr(" - Cleanup Preview"),
+      atools::gui::SqlQueryDialog previewDialog(mainWindow, QCoreApplication::applicationName() % tr(" - Cleanup Preview"),
                                                 tr("These logbook entries will be deleted.\nNote that you can undo this change."),
                                                 lnm::SEARCHTAB_USERDATA_CLEANUP_PREVIEW, "LOGBOOK.html#cleanup-logbook-entries",
                                                 tr("&Delete Logbook entries"));
@@ -801,7 +887,7 @@ void LogdataController::cleanupLogEntries()
       // Send messages ===============================================
       if(removed > 0)
         logChanged(false /* load all */, false /* keep selection */);
-      mainWindow->setStatusMessage(tr("%1 logbook %2 deleted.").arg(removed).arg(removed == 1 ? tr("entry") : tr("entries")));
+      NavApp::setStatusMessage(tr("%1 logbook %2 deleted.").arg(removed).arg(removed == 1 ? tr("entry") : tr("entries")));
     }
   }
 }
@@ -817,7 +903,7 @@ void LogdataController::deleteLogEntries(const QSet<int>& ids)
 
   logChanged(false /* load all */, false /* keep selection */);
 
-  mainWindow->setStatusMessage(tr("%1 logbook %2 deleted.").arg(ids.size()).arg(txt));
+  NavApp::setStatusMessage(tr("%1 logbook %2 deleted.").arg(ids.size()).arg(txt));
 }
 
 void LogdataController::importXplane()
@@ -848,8 +934,8 @@ void LogdataController::importXplane()
       transaction.commit();
       QGuiApplication::restoreOverrideCursor();
 
-      mainWindow->setStatusMessage(tr("Imported %1 %2 X-Plane logbook.").arg(numImported).
-                                   arg(numImported == 1 ? tr("entry") : tr("entries")));
+      NavApp::setStatusMessage(tr("Imported %1 %2 X-Plane logbook.").arg(numImported).
+                               arg(numImported == 1 ? tr("entry") : tr("entries")));
 
       logChanged(false /* load all */, false /* keep selection */);
 
@@ -895,8 +981,8 @@ void LogdataController::importCsv()
       transaction.commit();
       QGuiApplication::restoreOverrideCursor();
 
-      mainWindow->setStatusMessage(tr("Imported %1 %2 from CSV file.").arg(numImported).
-                                   arg(numImported == 1 ? tr("entry") : tr("entries")));
+      NavApp::setStatusMessage(tr("Imported %1 %2 from CSV file.").arg(numImported).
+                               arg(numImported == 1 ? tr("entry") : tr("entries")));
       mainWindow->showLogbookSearch();
       logChanged(false /* load all */, false /* keep selection */);
     }
@@ -927,7 +1013,7 @@ void LogdataController::exportCsv()
     };
 
     // Build a choice dialog with several checkboxes =========================
-    atools::gui::ChoiceDialog choiceDialog(mainWindow, QCoreApplication::applicationName() + tr(" - Logbook Export"),
+    atools::gui::ChoiceDialog choiceDialog(mainWindow, QCoreApplication::applicationName() % tr(" - Logbook Export"),
                                            tr("Select export options for logbook"), lnm::LOGDATA_EXPORT_CSV,
                                            "LOGBOOK.html#import-and-export");
     choiceDialog.setHelpOnlineUrl(lnm::helpOnlineUrl);
@@ -978,8 +1064,8 @@ void LogdataController::exportCsv()
                                              choiceDialog.isChecked(EXPORTGPX),
                                              choiceDialog.isChecked(HEADER) && !choiceDialog.isChecked(APPEND),
                                              choiceDialog.isChecked(APPEND));
-        mainWindow->setStatusMessage(tr("%1 logbook %2 exported.").
-                                     arg(numExported).arg(numExported == 1 ? tr("entry") : tr("entries")));
+        NavApp::setStatusMessage(tr("%1 logbook %2 exported.").
+                                 arg(numExported).arg(numExported == 1 ? tr("entry") : tr("entries")));
       }
     }
   }
@@ -1042,7 +1128,7 @@ void LogdataController::convertUserdata()
         html.li(err, atools::util::html::NO_ENTITIES);
       html.olEnd();
 
-      TextDialog error(mainWindow, QCoreApplication::applicationName() + tr(" - Conversion Errors"),
+      TextDialog error(mainWindow, QCoreApplication::applicationName() % tr(" - Conversion Errors"),
                        "LOGBOOK.html#convert-errors"); // anchor for future use
       error.setHtmlMessage(html.getHtml(), true /* print to log */);
       QGuiApplication::restoreOverrideCursor();
@@ -1068,7 +1154,7 @@ void LogdataController::convertUserdata()
                       false /* select */);
   }
   else if(result == QMessageBox::Help)
-    atools::gui::HelpHandler::openHelpUrlWeb(mainWindow, lnm::helpOnlineUrl + "LOGBOOK.html#convert",
+    atools::gui::HelpHandler::openHelpUrlWeb(mainWindow, lnm::helpOnlineUrl % "LOGBOOK.html#convert",
                                              lnm::helpLanguageOnline());
 }
 
@@ -1255,7 +1341,7 @@ QString LogdataController::buildFilename(const atools::sql::SqlRecord *record,
                                                            atools::roundToInt(Unit::altFeetF(route.getCruiseAltitudeFt())));
   }
 
-  return tr("Empty Flightplan") + suffix;
+  return tr("Empty Flightplan") % suffix;
 }
 
 void LogdataController::gpxSaveAs(atools::sql::SqlRecord *record, QWidget *parent)
