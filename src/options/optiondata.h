@@ -918,6 +918,16 @@ public:
     return displayTextSizeAirport;
   }
 
+  int getDisplayTextSizeAirportRunway() const
+  {
+    return displayTextSizeAirportRunway;
+  }
+
+  int getDisplayTextSizeAirportTaxiway() const
+  {
+    return displayTextSizeAirportTaxiway;
+  }
+
   int getDisplayThicknessTrail() const
   {
     return displayThicknessTrail;
@@ -1548,6 +1558,12 @@ private:
 
   // spinBoxOptionsDisplayTextSizeAirport
   int displayTextSizeAirport = 100;
+
+  // spinBoxOptionsDisplayTextSizeAirportRunway
+  int displayTextSizeAirportRunway = 100;
+
+  // spinBoxOptionsDisplayTextSizeAirportTaxiway
+  int displayTextSizeAirportTaxiway = 100;
 
   // spinBoxOptionsDisplayThicknessTrail
   int displayThicknessTrail = 100;

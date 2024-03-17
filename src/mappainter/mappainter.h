@@ -147,6 +147,8 @@ struct PaintContext
   float textSizeAircraftUser = 1.f;
   float symbolSizeAircraftUser = 1.f;
   float textSizeAirport = 1.f;
+  float textSizeAirportRunway = 1.f;
+  float textSizeAirportTaxiway = 1.f;
   float thicknessTrail = 1.f;
   float thicknessUserFeature = 1.f;
   float thicknessMeasurement = 1.f;

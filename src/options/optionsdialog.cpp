@@ -489,6 +489,8 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
      ui->spinBoxOptionsDisplayTextSizeAircraftUser,
      ui->spinBoxOptionsDisplaySymbolSizeAircraftUser,
      ui->spinBoxOptionsDisplayTextSizeAirport,
+     ui->spinBoxOptionsDisplayTextSizeAirportRunway,
+     ui->spinBoxOptionsDisplayTextSizeAirportTaxiway,
      ui->spinBoxOptionsDisplayThicknessTrail,
      ui->spinBoxOptionsDisplayThicknessUserFeature,
      ui->spinBoxOptionsDisplayThicknessMeasurement,
@@ -2038,6 +2040,8 @@ void OptionsDialog::widgetsToOptionData()
   data.displayTextSizeAircraftUser = ui->spinBoxOptionsDisplayTextSizeAircraftUser->value();
   data.displaySymbolSizeAircraftUser = ui->spinBoxOptionsDisplaySymbolSizeAircraftUser->value();
   data.displayTextSizeAirport = ui->spinBoxOptionsDisplayTextSizeAirport->value();
+  data.displayTextSizeAirportRunway = ui->spinBoxOptionsDisplayTextSizeAirportRunway->value();
+  data.displayTextSizeAirportTaxiway = ui->spinBoxOptionsDisplayTextSizeAirportTaxiway->value();
   data.displayThicknessTrail = ui->spinBoxOptionsDisplayThicknessTrail->value();
   data.displayThicknessUserFeature = ui->spinBoxOptionsDisplayThicknessUserFeature->value();
   data.displayThicknessMeasurement = ui->spinBoxOptionsDisplayThicknessMeasurement->value();
@@ -2353,6 +2357,8 @@ void OptionsDialog::optionDataToWidgets(const OptionData& data)
   ui->spinBoxOptionsDisplayTextSizeAircraftUser->setValue(data.displayTextSizeAircraftUser);
   ui->spinBoxOptionsDisplaySymbolSizeAircraftUser->setValue(data.displaySymbolSizeAircraftUser);
   ui->spinBoxOptionsDisplayTextSizeAirport->setValue(data.displayTextSizeAirport);
+  ui->spinBoxOptionsDisplayTextSizeAirportRunway->setValue(data.displayTextSizeAirportRunway);
+  ui->spinBoxOptionsDisplayTextSizeAirportTaxiway->setValue(data.displayTextSizeAirportTaxiway);
   ui->spinBoxOptionsDisplayThicknessTrail->setValue(data.displayThicknessTrail);
   ui->spinBoxOptionsDisplayThicknessUserFeature->setValue(data.displayThicknessUserFeature);
   ui->spinBoxOptionsDisplayThicknessMeasurement->setValue(data.displayThicknessMeasurement);

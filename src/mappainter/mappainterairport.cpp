@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -471,6 +471,8 @@ void MapPainterAirport::drawAirportDiagram(const map::MapAirport& airport)
     // Draw taxiway names ---------------------------------
     if(!fast && mapLayerEffective->isAirportDiagramDetail())
     {
+      context->szFont(context->textSizeAirportTaxiway);
+
       // Map all visible names to paths
       QMultiMap<QString, MapTaxiPath> map;
       for(const MapTaxiPath& taxipath : *taxipaths)
@@ -578,6 +580,7 @@ void MapPainterAirport::drawAirportDiagram(const map::MapAirport& airport)
     // Draw black runway outlines --------------------------------
     painter->setPen(QPen(mapcolors::runwayOutlineColor, 3, Qt::SolidLine, Qt::FlatCap));
     painter->setBrush(Qt::NoBrush);
+
     for(int i = 0; i < runwayCenters.size(); i++)
     {
       if(runways->at(i).surface != "W")
@@ -805,19 +808,15 @@ void MapPainterAirport::drawAirportDiagram(const map::MapAirport& airport)
   // Draw runway texts ===========================================================
   if(!fast && runways != nullptr)
   {
-    painter->setBackgroundMode(Qt::TransparentMode);
-
-    QFont rwTextFont = context->defaultFont;
-    rwTextFont.setPixelSize(RUNWAY_TEXT_FONT_SIZE);
-    painter->setFont(rwTextFont);
-    QFontMetricsF rwMetrics(painter->font());
-
-    painter->setPen(QPen(mapcolors::runwayDimsTextColor, 3, Qt::SolidLine, Qt::FlatCap));
-
     const static QMarginsF RUNWAY_DIMENSION_MARGINS(4., 0., 4., 0.);
+    painter->setBackgroundMode(Qt::TransparentMode);
+    painter->setPen(QPen(mapcolors::runwayDimsTextColor, 3, Qt::SolidLine, Qt::FlatCap));
 
     if(mapLayer->isAirportDiagram())
     {
+      context->szFont(context->textSizeAirportRunway * 1.5f);
+      QFontMetricsF rwMetrics(painter->font());
+
       QVector<double> runwayTextLengths;
 
       // Draw dimensions at runway side ===========================================================
@@ -826,34 +825,34 @@ void MapPainterAirport::drawAirportDiagram(const map::MapAirport& airport)
         const MapRunway& runway = runways->at(i);
         const QRectF& runwayRect = runwayRects.at(i);
 
-        QString text = QString::number(Unit::distShortFeetF(runway.length), 'f', 0);
+        QString runwayText = QString::number(Unit::distShortFeetF(runway.length), 'f', 0);
 
         if(runway.width > 8.f)
           // Skip dummy lines where the runway is done by photo scenery or similar
-          text.append(tr(" x ") % QString::number(Unit::distShortFeetF(runway.width), 'f', 0));
-        text.append(" " % Unit::getUnitShortDistStr());
+          runwayText.append(tr(" x ") % QString::number(Unit::distShortFeetF(runway.width), 'f', 0));
+        runwayText.append(" " % Unit::getUnitShortDistStr());
 
         // Add light indicator
         if(!runway.edgeLight.isEmpty())
-          text.append(tr(" / L"));
+          runwayText.append(tr(" / L"));
 
         if(!runway.surface.isEmpty() && runway.surface != "TR" && runway.surface != "UNKNOWN" && runway.surface != "INVALID")
         {
           // Draw only if valid
           QString surface = map::surfaceName(runway.surface);
           if(!surface.isEmpty())
-            text.append(tr(" / ") % surface);
+            runwayText.append(tr(" / ") % surface);
         }
 
         // Truncate text to runway length
-        text = rwMetrics.elidedText(text, Qt::ElideRight,
-                                    runwayRect.height() - RUNWAY_DIMENSION_MARGINS.left() - RUNWAY_DIMENSION_MARGINS.right());
+        runwayText = rwMetrics.elidedText(runwayText, Qt::ElideRight,
+                                          runwayRect.height() - RUNWAY_DIMENSION_MARGINS.left() - RUNWAY_DIMENSION_MARGINS.right());
 
         painter->translate(runwayCenters.at(i));
         painter->rotate(runway.heading > 180.f ? runway.heading + 90.f : runway.heading - 90.f);
 
         // Draw semi-transparent rectangle behind text
-        QRectF textBackRect = rwMetrics.boundingRect(text);
+        QRectF textBackRect = rwMetrics.boundingRect(runwayText);
         textBackRect = textBackRect.marginsAdded(RUNWAY_DIMENSION_MARGINS);
 
         // Remember width to exclude end arrows or not
@@ -864,16 +863,15 @@ void MapPainterAirport::drawAirportDiagram(const map::MapAirport& airport)
         painter->fillRect(textBackRect, mapcolors::runwayTextBackgroundColor);
 
         // Draw runway length x width / L / surface
-        painter->drawText(QPointF(textx + RUNWAY_DIMENSION_MARGINS.left(), texty - rwMetrics.descent() - 5.), text);
+        painter->drawText(QPointF(textx + RUNWAY_DIMENSION_MARGINS.left(), texty - rwMetrics.descent() - 5.), runwayText);
         painter->resetTransform();
       }
 
       // Draw runway heading numbers with arrows at ends ========================================================================
-      QFont rwHdgTextFont = painter->font();
+
       const static QMarginsF RUNWAY_HEADING_MARGINS(2., 0., 2., 0.);
 
-      rwHdgTextFont.setPixelSize(RUNWAY_HEADING_FONT_SIZE);
-      painter->setFont(rwHdgTextFont);
+      context->szFont(context->textSizeAirportRunway);
       QFontMetricsF rwHdgMetrics(painter->font());
 
       for(int i = 0; i < runwayCenters.size(); i++)
@@ -934,11 +932,10 @@ void MapPainterAirport::drawAirportDiagram(const map::MapAirport& airport)
     // Draw runway numbers at end ========================================================================
     const static QMarginsF RUNWAY_NUMBER_MARGINS(2., 0., 2., 0.);
 
-    int numSize = mapLayer->isAirportDiagram() ? RUNWAY_NUMBER_FONT_SIZE : RUNWAY_NUMBER_SMALL_FONT_SIZE;
-    rwTextFont.setPixelSize(numSize);
-    painter->setFont(rwTextFont);
+    context->szFont(context->textSizeAirportRunway * (mapLayer->isAirportDiagram() ? 1.8f : 1.2f));
     QFontMetricsF rwTextMetrics(painter->font());
     QMargins margins(20, 20, 20, 20);
+
     for(int i = 0; i < runwayCenters.size(); i++)
     {
       const MapRunway& runway = runways->at(i);
