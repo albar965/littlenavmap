@@ -69,7 +69,7 @@ public:
   bool isAirportSelected() const;
 
 private:
-  void saveState();
+  void saveState() const;
   void restoreState();
   void updateButtonsAndHeader();
   void updateTable();

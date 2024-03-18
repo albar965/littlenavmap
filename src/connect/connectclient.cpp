@@ -451,7 +451,7 @@ void ConnectClient::statusPosted(atools::fs::sc::SimConnectStatus status, QStrin
     mainWindow->setConnectionStatusMessageText(QString(), statusText);
 }
 
-void ConnectClient::saveState()
+void ConnectClient::saveState() const
 {
   connectDialog->saveState();
 }

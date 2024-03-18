@@ -128,7 +128,7 @@ public:
   /* value or -1 for leftmost in local units */
   int getSliderValue() const;
 
-  void saveState();
+  void saveState() const;
   void restoreState();
 
   void optionsChanged();

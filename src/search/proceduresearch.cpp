@@ -775,8 +775,9 @@ void ProcedureSearch::fillProcedureTreeWidget()
 void ProcedureSearch::saveState()
 {
   Ui::MainWindow *ui = NavApp::getMainUi();
-  WidgetState(lnm::APPROACHTREE_WIDGET).save({ui->comboBoxProcedureSearchFilter, ui->comboBoxProcedureRunwayFilter,
-                                              ui->actionSearchProcedureFollowSelection, ui->lineEditProcedureSearchIdentFilter});
+  WidgetState(lnm::APPROACHTREE_WIDGET).save(QList<const QObject *>({ui->comboBoxProcedureSearchFilter, ui->comboBoxProcedureRunwayFilter,
+                                                                     ui->actionSearchProcedureFollowSelection,
+                                                                     ui->lineEditProcedureSearchIdentFilter}));
 
   atools::settings::Settings& settings = atools::settings::Settings::instance();
 
@@ -1613,7 +1614,7 @@ void ProcedureSearch::setItemStyle(QTreeWidgetItem *item, const MapProcedureLeg&
   }
 }
 
-QBitArray ProcedureSearch::saveTreeViewState()
+QBitArray ProcedureSearch::saveTreeViewState() const
 {
   QList<const QTreeWidgetItem *> itemStack;
   const QTreeWidgetItem *root = treeWidget->invisibleRootItem();

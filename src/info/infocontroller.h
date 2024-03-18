@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -83,7 +83,7 @@ public:
   void routeChanged(bool, bool = false);
 
   /* Save ids of the objects shown in the tabs to content can be restored on startup */
-  void saveState();
+  void saveState() const;
   void restoreState();
 
   /* Reload panel information which might also trigger weather reading or downloads */

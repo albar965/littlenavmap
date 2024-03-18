@@ -54,7 +54,7 @@ public:
 private:
   void currentResolutionIndexChanged();
   void buttonBoxClicked(QAbstractButton *button);
-  void saveState();
+  void saveState() const;
   void restoreState();
 
   /* Prefix for save widget states */

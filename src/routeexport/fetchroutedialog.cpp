@@ -149,7 +149,7 @@ void FetchRouteDialog::restoreState()
   updateButtonStates();
 }
 
-void FetchRouteDialog::saveState()
+void FetchRouteDialog::saveState() const
 {
   atools::gui::WidgetState widgetState(lnm::FETCH_SIMBRIEF_DIALOG, false);
   widgetState.save({this, ui->comboBoxLoginType, ui->lineEditLogin});

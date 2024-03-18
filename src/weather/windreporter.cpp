@@ -217,7 +217,7 @@ void WindReporter::optionsChanged()
   updateDataSource();
 }
 
-void WindReporter::saveState()
+void WindReporter::saveState() const
 {
   atools::settings::Settings::instance().setValue(lnm::MAP_WIND_LEVEL, sliderActionAltitude->getAltitudeFt());
   atools::settings::Settings::instance().setValue(lnm::MAP_WIND_SELECTION, currentWindSelection);

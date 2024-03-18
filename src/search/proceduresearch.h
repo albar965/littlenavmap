@@ -166,7 +166,7 @@ private:
   void showProcedureTriggered();
 
   // Save and restore expanded and selected item state
-  QBitArray saveTreeViewState();
+  QBitArray saveTreeViewState() const;
   void restoreTreeViewState(const QBitArray& state, bool blockSignals);
 
   /* Build full approach or transition items for the tree view */

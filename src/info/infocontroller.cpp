@@ -478,7 +478,7 @@ void InfoController::anchorClicked(const QUrl& url)
   }
 }
 
-void InfoController::saveState()
+void InfoController::saveState() const
 {
   // Store currently shown map objects in a string list containing id and type
   map::MapRefVector refs;

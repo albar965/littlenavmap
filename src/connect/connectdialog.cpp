@@ -331,13 +331,14 @@ quint16 ConnectDialog::getRemotePort() const
   return static_cast<quint16>(ui->spinBoxConnectPort->value());
 }
 
-void ConnectDialog::saveState()
+void ConnectDialog::saveState() const
 {
   atools::gui::WidgetState widgetState(lnm::NAVCONNECT_REMOTE);
-  widgetState.save({ui->comboBoxConnectHostname, ui->spinBoxConnectPort, ui->spinBoxConnectUpdateRateFsx,
-                    ui->spinBoxConnectAiFetchRadius, ui->spinBoxConnectUpdateRateXp, ui->checkBoxConnectOnStartup,
-                    ui->tabWidgetConnect, ui->checkBoxConnectFetchAiAircraftXp, ui->checkBoxConnectFetchAiAircraftFsx,
-                    ui->checkBoxConnectFetchAiShipFsx, ui->checkBoxConnectFetchAiShipXp});
+  widgetState.save(QList<const QObject *>({ui->comboBoxConnectHostname, ui->spinBoxConnectPort, ui->spinBoxConnectUpdateRateFsx,
+                                           ui->spinBoxConnectAiFetchRadius, ui->spinBoxConnectUpdateRateXp, ui->checkBoxConnectOnStartup,
+                                           ui->tabWidgetConnect, ui->checkBoxConnectFetchAiAircraftXp,
+                                           ui->checkBoxConnectFetchAiAircraftFsx, ui->checkBoxConnectFetchAiShipFsx,
+                                           ui->checkBoxConnectFetchAiShipXp}));
 
   // Save combo entries separately
   QStringList entries;

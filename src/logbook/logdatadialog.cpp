@@ -710,7 +710,7 @@ void LogdataDialog::updateAttachementWidgets()
   }
 }
 
-void LogdataDialog::saveState()
+void LogdataDialog::saveState() const
 {
   atools::gui::WidgetState(lnm::LOGDATA_EDIT_ADD_DIALOG).save({this, ui->tabWidgetLogbook});
 }

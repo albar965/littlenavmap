@@ -252,7 +252,7 @@ public:
    * sharing their keys with the .ini configuration file.
    * Adds only keys which are available from map configuration when loading. Others are ignored */
   void restoreState();
-  void saveState();
+  void saveState() const;
 
   /* Sets up the toolbutton, menu and actions for the toolbar and the main menu */
   void setupMapThemesUi();
@@ -286,7 +286,7 @@ private:
   void changeMapThemeActions(const QString& themeId);
 
   void restoreKeyfile();
-  void saveKeyfile();
+  void saveKeyfile() const;
 
   /* Sorted list of all loaded themes */
   QVector<MapTheme> themes;

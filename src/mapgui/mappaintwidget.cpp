@@ -1123,7 +1123,7 @@ void MapPaintWidget::overlayStateFromMenu()
   }
 }
 
-void MapPaintWidget::overlayStateToMenu()
+void MapPaintWidget::overlayStateToMenu() const
 {
   // No-op
 }

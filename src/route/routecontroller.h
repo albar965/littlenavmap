@@ -122,7 +122,7 @@ public:
   void saveFlightplanLnmExported(const QString& filename);
 
   /* Save and reload widgets state and current flight plan name */
-  void saveState();
+  void saveState() const;
   void restoreState();
 
   /* Get the route only */

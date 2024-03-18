@@ -454,7 +454,7 @@ void RouteStringDialog::toolButtonOptionTriggered(QAction *act)
   textChangedInternal(true /* forceUpdate */);
 }
 
-void RouteStringDialog::saveState()
+void RouteStringDialog::saveState() const
 {
   saveStateWidget();
 
@@ -464,10 +464,10 @@ void RouteStringDialog::saveState()
                                                     ui->textEditRouteString->toPlainText());
 }
 
-void RouteStringDialog::saveStateWidget()
+void RouteStringDialog::saveStateWidget() const
 {
-  atools::gui::WidgetState(lnm::ROUTE_STRING_DIALOG_SPLITTER + settingsSuffix).save({this, ui->splitterRouteString,
-                                                                                     ui->comboBoxRouteStringFlightplanType});
+  atools::gui::WidgetState(lnm::ROUTE_STRING_DIALOG_SPLITTER + settingsSuffix).save(
+    QList<const QObject *>({this, ui->splitterRouteString, ui->comboBoxRouteStringFlightplanType}));
   atools::settings::Settings::instance().setValue(lnm::ROUTE_STRING_DIALOG_OPTIONS + settingsSuffix, static_cast<int>(options));
 }
 

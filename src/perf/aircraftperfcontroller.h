@@ -96,7 +96,7 @@ public:
 
   void connectAllSlots();
 
-  void saveState();
+  void saveState() const;
   void restoreState();
 
   /* Update background colors in report */

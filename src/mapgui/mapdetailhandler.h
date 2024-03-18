@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -50,7 +50,7 @@ public:
   void insertToolbarButton();
 
   /* Save and load flags if requested in options */
-  void saveState();
+  void saveState() const;
   void restoreState();
 
   /* Detail level in range MAP_MIN_DETAIL_LEVEL = 8 -> MAP_DEFAULT_DETAIL_LEVEL = 10 -> MAP_MAX_DETAIL_LEVEL = 15 */
@@ -100,7 +100,7 @@ public:
   /* MAP_MIN_DETAIL_LEVEL = 8 -> MAP_DEFAULT_DETAIL_LEVEL = 10 -> MAP_MAX_DETAIL_LEVEL = 15 */
   int getSliderValue() const;
 
-  void saveState();
+  void saveState() const;
   void restoreState();
 
   void setSliderValue(int value);

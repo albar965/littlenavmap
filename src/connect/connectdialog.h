@@ -59,7 +59,7 @@ public:
   quint16 getRemotePort() const;
 
   /* Saves and restores all values */
-  void saveState();
+  void saveState() const;
   void restoreState();
 
   /* Set status to connected */

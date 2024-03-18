@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -710,15 +710,14 @@ void ProfileScrollArea::showScrollbarsToggled(bool show)
   resizeEvent();
 }
 
-void ProfileScrollArea::saveState()
+void ProfileScrollArea::saveState() const
 {
   Ui::MainWindow *ui = NavApp::getMainUi();
 
-  atools::gui::WidgetState(lnm::PROFILE_WINDOW_OPTIONS).save({ui->splitterProfile, ui->actionProfileCenterAircraft,
-                                                              ui->actionProfileZoomAircraft, ui->actionProfileFollow,
-                                                              ui->actionProfileShowScrollbars, ui->actionProfileShowZoom,
-                                                              ui->actionProfileShowIls, ui->actionProfileShowVasi,
-                                                              ui->actionProfileShowVerticalTrack});
+  atools::gui::WidgetState(lnm::PROFILE_WINDOW_OPTIONS).save(
+    QList<const QObject *>({ui->splitterProfile, ui->actionProfileCenterAircraft, ui->actionProfileZoomAircraft, ui->actionProfileFollow,
+                            ui->actionProfileShowScrollbars, ui->actionProfileShowZoom, ui->actionProfileShowIls, ui->actionProfileShowVasi,
+                            ui->actionProfileShowVerticalTrack}));
 }
 
 void ProfileScrollArea::restoreState()

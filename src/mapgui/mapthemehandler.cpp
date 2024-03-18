@@ -324,7 +324,7 @@ void MapThemeHandler::setMapThemeKeys(const QMap<QString, QString>& keys)
   mapThemeKeys = keys;
 }
 
-void MapThemeHandler::saveKeyfile()
+void MapThemeHandler::saveKeyfile() const
 {
   // Save keys ===================================================
   QFile keyFile(atools::settings::Settings::getPath() % atools::SEP % FILENAME);
@@ -370,7 +370,7 @@ void MapThemeHandler::saveKeyfile()
   }
 }
 
-void MapThemeHandler::saveState()
+void MapThemeHandler::saveState() const
 {
   qDebug() << Q_FUNC_INFO;
 

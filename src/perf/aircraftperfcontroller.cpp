@@ -514,7 +514,7 @@ bool AircraftPerfController::saveAs()
     bool oldFormat = false;
     QString perfFile = saveAsFileDialog(currentFilename.isEmpty() ?
                                         atools::cleanFilename(perf->getName()) % ".lnmperf" :
-                                          QFileInfo(currentFilename).fileName(), &oldFormat);
+                                        QFileInfo(currentFilename).fileName(), &oldFormat);
     if(!perfFile.isEmpty())
     {
       currentFilename = perfFile;
@@ -1369,7 +1369,7 @@ void AircraftPerfController::windText(atools::util::HtmlBuilder& html, const QSt
               tr("No head- or tailwind") : tr("No wind"), ahtml::ALIGN_RIGHT);
 }
 
-void AircraftPerfController::saveState()
+void AircraftPerfController::saveState() const
 {
   atools::settings::Settings& settings = atools::settings::Settings::instance();
 
@@ -1377,9 +1377,9 @@ void AircraftPerfController::saveState()
   settings.setValue(lnm::AIRCRAFT_PERF_FILENAME, currentFilename);
 
   Ui::MainWindow *ui = NavApp::getMainUi();
-  atools::gui::WidgetState(lnm::AIRCRAFT_PERF_WIDGETS).save({ui->spinBoxAircraftPerformanceWindSpeed,
-                                                             ui->spinBoxAircraftPerformanceWindDirection,
-                                                             ui->spinBoxAircraftPerformanceWindAlt});
+  atools::gui::WidgetState(lnm::AIRCRAFT_PERF_WIDGETS).save(QList<const QObject *>({ui->spinBoxAircraftPerformanceWindSpeed,
+                                                                                    ui->spinBoxAircraftPerformanceWindDirection,
+                                                                                    ui->spinBoxAircraftPerformanceWindAlt}));
 }
 
 void AircraftPerfController::restoreState()

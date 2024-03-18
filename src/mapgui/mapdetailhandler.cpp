@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -40,7 +40,7 @@ int DetailSliderAction::getSliderValue() const
   return sliderValue;
 }
 
-void DetailSliderAction::saveState()
+void DetailSliderAction::saveState() const
 {
   atools::settings::Settings::instance().setValue(lnm::MAP_DETAIL_LEVEL, sliderValue);
 }
@@ -176,7 +176,7 @@ MapDetailHandler::~MapDetailHandler()
   delete toolButton;
 }
 
-void MapDetailHandler::saveState()
+void MapDetailHandler::saveState() const
 {
   sliderActionDetailLevel->saveState();
 }

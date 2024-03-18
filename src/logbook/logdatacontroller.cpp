@@ -169,7 +169,7 @@ void LogdataController::showSearch()
   NavApp::getSearchController()->setCurrentSearchTabId(si::SEARCH_LOG);
 }
 
-void LogdataController::saveState()
+void LogdataController::saveState() const
 {
   saveLogEntryId();
 }
@@ -185,7 +185,7 @@ void LogdataController::optionsChanged()
   statsDialog->optionsChanged();
 }
 
-void LogdataController::saveLogEntryId()
+void LogdataController::saveLogEntryId() const
 {
   atools::settings::Settings::instance().setValue(lnm::LOGDATA_ENTRY_ID, logEntryId);
 }

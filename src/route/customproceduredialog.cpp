@@ -123,7 +123,7 @@ void CustomProcedureDialog::restoreState()
   ui->tableWidgetCustomProcRunway->setFocus();
 }
 
-void CustomProcedureDialog::saveState()
+void CustomProcedureDialog::saveState() const
 {
   atools::gui::WidgetState widgetState(departure ? lnm::CUSTOM_DEPARTURE_DIALOG : lnm::CUSTOM_APPROACH_DIALOG, false);
   widgetState.save({this, ui->doubleSpinBoxCustomProcDist, ui->spinBoxCustomProcAlt});

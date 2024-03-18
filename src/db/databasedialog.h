@@ -95,7 +95,7 @@ private:
   void updateWidgets();
   QString fixBasePath(QString path);
   void restoreState();
-  void saveState();
+  void saveState() const;
 
   Ui::DatabaseDialog *ui;
   atools::fs::FsPaths::SimulatorType currentFsType = atools::fs::FsPaths::NONE;

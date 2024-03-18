@@ -2738,7 +2738,7 @@ void ProfileWidget::fontChanged(const QFont& font)
   scrollArea->fontChanged(font);
 }
 
-void ProfileWidget::saveState()
+void ProfileWidget::saveState() const
 {
   scrollArea->saveState();
   profileOptions->saveState();
@@ -2844,7 +2844,7 @@ void ProfileWidget::updateErrorLabel()
   NavApp::updateErrorLabel();
 }
 
-void ProfileWidget::saveAircraftTrail()
+void ProfileWidget::saveAircraftTrail() const
 {
   QFile trailFile(atools::settings::Settings::getConfigFilename(lnm::PROFILE_TRACK_SUFFIX));
 

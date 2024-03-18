@@ -88,7 +88,7 @@ namespace rcol {
 // Route table column indexes
 enum RouteColumns
 {
-  /* Column indexes. Saved through view in RouteLabel::saveState()
+  /* Column indexes. Saved through view in RouteLabel::saveState() const
    * Update RouteController::routeColumns and RouteController::routeColumnDescription when adding new values */
   FIRST_COLUMN,
   IDENT = FIRST_COLUMN,
@@ -964,11 +964,12 @@ void RouteController::updateTableHeaders()
   model->setHorizontalHeaderLabels(routeHeaders);
 }
 
-void RouteController::saveState()
+void RouteController::saveState() const
 {
   Ui::MainWindow *ui = NavApp::getMainUi();
 
-  atools::gui::WidgetState(lnm::ROUTE_VIEW).save({ui->comboBoxRouteType, ui->spinBoxRouteAlt, ui->actionRouteFollowSelection});
+  atools::gui::WidgetState(lnm::ROUTE_VIEW).save(
+    QList<const QObject *>({ui->comboBoxRouteType, ui->spinBoxRouteAlt, ui->actionRouteFollowSelection}));
 
   // Use own state for table
   atools::gui::WidgetState(lnm::ROUTE_VIEW_TABLE).save(tableViewRoute);

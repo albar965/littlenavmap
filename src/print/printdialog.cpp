@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -159,30 +159,13 @@ const QBitArray& PrintDialog::getSelectedRouteTableColumns() const
 
 void PrintDialog::saveState()
 {
-  atools::gui::WidgetState(lnm::ROUTE_PRINT_DIALOG).save(
-  {
-    this,
-    ui->checkBoxPrintDepartureOverview,
-    ui->checkBoxPrintDepartureRunways,
-    ui->checkBoxPrintDepartureDetailRunways,
-    ui->checkBoxPrintDepartureSoftRunways,
-    ui->checkBoxPrintDepartureCom,
-    ui->checkBoxPrintDepartureAppr,
-    ui->checkBoxPrintDepartureWeather,
-    ui->checkBoxPrintDestinationOverview,
-    ui->checkBoxPrintDestinationRunways,
-    ui->checkBoxPrintDestinationDetailRunways,
-    ui->checkBoxPrintDestinationSoftRunways,
-    ui->checkBoxPrintDestinationCom,
-    ui->checkBoxPrintDestinationAppr,
-    ui->checkBoxPrintDestinationWeather,
-    ui->checkBoxPrintFlightplan,
-    ui->checkBoxPrintHeader,
-    ui->checkBoxPrintFuel,
-    ui->checkBoxPrintNewPage,
-    ui->spinBoxPrintTextSize,
-    ui->spinBoxPrintTextSizeFlightplan
-  });
+  atools::gui::WidgetState(lnm::ROUTE_PRINT_DIALOG).save(QList<const QObject *>({
+    this, ui->checkBoxPrintDepartureOverview, ui->checkBoxPrintDepartureRunways, ui->checkBoxPrintDepartureDetailRunways,
+    ui->checkBoxPrintDepartureSoftRunways, ui->checkBoxPrintDepartureCom, ui->checkBoxPrintDepartureAppr, ui->checkBoxPrintDepartureWeather,
+    ui->checkBoxPrintDestinationOverview, ui->checkBoxPrintDestinationRunways, ui->checkBoxPrintDestinationDetailRunways,
+    ui->checkBoxPrintDestinationSoftRunways, ui->checkBoxPrintDestinationCom, ui->checkBoxPrintDestinationAppr,
+    ui->checkBoxPrintDestinationWeather, ui->checkBoxPrintFlightplan, ui->checkBoxPrintHeader, ui->checkBoxPrintFuel,
+    ui->checkBoxPrintNewPage, ui->spinBoxPrintTextSize, ui->spinBoxPrintTextSizeFlightplan}));
 
   // Save selection to bitarray
   selectedRows = QBitArray(ui->tableWidgetPrintFlightplanCols->rowCount());

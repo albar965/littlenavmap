@@ -60,7 +60,7 @@ public:
 
 private:
   /* Save and restore dialog size. Called in constructor and destructor. */
-  void saveState();
+  void saveState() const;
   void restoreState();
 
   /* Overload and call manually to avoid closing on cancel. Sets canceled to true */

@@ -400,7 +400,7 @@ void PrintSupport::paintRequestedMap(QPrinter *)
   QGuiApplication::restoreOverrideCursor();
 }
 
-void PrintSupport::saveState()
+void PrintSupport::saveState() const
 {
   printDialog->saveState();
 }

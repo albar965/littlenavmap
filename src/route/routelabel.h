@@ -56,7 +56,7 @@ public:
   void buildHtmlText(atools::util::HtmlBuilder& html);
 
   /* Save and load configuration */
-  void saveState();
+  void saveState() const;
   void restoreState();
 
   void styleChanged();

@@ -93,7 +93,7 @@ public:
   bool isLoadingProgress();
 
   /* Save and restore all paths and current simulator settings */
-  void saveState();
+  void saveState() const;
 
   /* Returns true if there are any flight simulator installations found in the registry */
   bool hasInstalledSimulators() const

@@ -49,7 +49,7 @@ public:
   QString getAirspaceFilePatterns() const;
 
 private:
-  void saveState();
+  void saveState() const;
   void restoreState();
   void buttonBoxClicked(QAbstractButton *button);
 

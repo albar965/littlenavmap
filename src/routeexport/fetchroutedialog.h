@@ -65,7 +65,7 @@ signals:
 
 private:
   void restoreState();
-  void saveState();
+  void saveState() const;
 
   void buttonBoxClicked(QAbstractButton *button);
 

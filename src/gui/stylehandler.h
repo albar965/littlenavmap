@@ -48,7 +48,7 @@ public:
   void insertMenuItems(QMenu *menu);
 
   /* Save and load last used style */
-  void saveState();
+  void saveState() const;
   void restoreState();
 
   /* Name like "Dark" or "Fusion" */

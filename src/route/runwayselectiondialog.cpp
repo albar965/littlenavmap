@@ -78,7 +78,7 @@ void RunwaySelectionDialog::restoreState()
   ui->tableWidgetRunwaySelection->setFocus();
 }
 
-void RunwaySelectionDialog::saveState()
+void RunwaySelectionDialog::saveState() const
 {
   atools::gui::WidgetState widgetState(lnm::RUNWAY_SELECTION_DIALOG, false);
   widgetState.save(this);

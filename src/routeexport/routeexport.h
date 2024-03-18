@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -67,7 +67,7 @@ public:
   RouteExport& operator=(const RouteExport& other) = delete;
 
   /* Save and restore state of multiexport dialog and format map (custom paths and selection state) */
-  void saveState();
+  void saveState() const;
   void restoreState();
 
   /* Update simulator dependent default paths. */

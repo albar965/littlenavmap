@@ -223,7 +223,7 @@ void StyleHandler::applyCurrentStyle()
   emit styleChanged(style.displayName, style.dark);
 }
 
-void StyleHandler::saveState()
+void StyleHandler::saveState() const
 {
   Settings& settings = Settings::instance();
   settings.setValue(lnm::OPTIONS_DIALOG_GUI_STYLE_INDEX, currentStyleIndex);

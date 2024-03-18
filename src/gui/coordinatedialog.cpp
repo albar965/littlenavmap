@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -61,7 +61,7 @@ CoordinateDialog::CoordinateDialog(QWidget *parent, const atools::geo::Pos& pos)
 
 CoordinateDialog::~CoordinateDialog()
 {
-  atools::gui::WidgetState(lnm::MAP_COORDINATE_DIALOG).save({this, ui->doubleSpinBoxMapCoordinateZoom});
+  atools::gui::WidgetState(lnm::MAP_COORDINATE_DIALOG).save(QList<const QObject *>({this, ui->doubleSpinBoxMapCoordinateZoom}));
 
   delete position;
   delete units;

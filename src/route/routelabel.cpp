@@ -59,7 +59,7 @@ RouteLabel::RouteLabel(QWidget *parent, const Route& routeParam)
   updateFont();
 }
 
-void RouteLabel::saveState()
+void RouteLabel::saveState() const
 {
   atools::settings::Settings& settings = atools::settings::Settings::instance();
   settings.setValue(lnm::ROUTE_HEADER_AIRPORTS, headerAirports);

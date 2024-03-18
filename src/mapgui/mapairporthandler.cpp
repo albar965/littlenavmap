@@ -50,7 +50,7 @@ int AirportSliderAction::getSliderValue() const
   return sliderValue == minValue() ? -1 : sliderValue;
 }
 
-void AirportSliderAction::saveState()
+void AirportSliderAction::saveState() const
 {
   atools::settings::Settings::instance().setValue(lnm::MAP_AIRPORT_RUNWAY_LENGTH, sliderValue);
 }

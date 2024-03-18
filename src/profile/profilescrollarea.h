@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -64,7 +64,7 @@ public:
   /* Update label widget */
   void updateLabelWidgets();
 
-  void saveState();
+  void saveState() const;
   void restoreState();
 
   /* Check if position is outside margins and position it into left third of the profile if yes */

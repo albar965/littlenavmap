@@ -83,7 +83,7 @@ RouteExport::~RouteExport()
   exportFormatMap = nullptr;
 }
 
-void RouteExport::saveState()
+void RouteExport::saveState() const
 {
   exportFormatMap->saveState();
 }

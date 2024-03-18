@@ -2908,7 +2908,7 @@ void MapWidget::showOverlays(bool show, bool showScalebar)
   }
 }
 
-void MapWidget::overlayStateToMenu()
+void MapWidget::overlayStateToMenu() const
 {
   qDebug() << Q_FUNC_INFO << "ignoreOverlayUpdates" << ignoreOverlayUpdates;
   if(!ignoreOverlayUpdates)
@@ -2990,7 +2990,7 @@ void MapWidget::optionsChanged()
   MapPaintWidget::optionsChanged();
 }
 
-void MapWidget::saveState()
+void MapWidget::saveState() const
 {
   atools::settings::Settings& settings = atools::settings::Settings::instance();
 

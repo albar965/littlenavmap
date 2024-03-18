@@ -299,7 +299,7 @@ void UserdataController::typesToActions()
   userdataToolButton->setChecked(!selectedTypes.isEmpty() || selectedUnknownType);
 }
 
-void UserdataController::saveState()
+void UserdataController::saveState() const
 {
   atools::settings::Settings::instance().setValue(lnm::MAP_USERDATA, selectedTypes);
   atools::settings::Settings::instance().setValue(lnm::MAP_USERDATA_ALL, allLastFoundTypes);

@@ -1755,7 +1755,7 @@ bool DatabaseManager::hasData(atools::sql::SqlDatabase *db) const
   }
 }
 
-void DatabaseManager::saveState()
+void DatabaseManager::saveState() const
 {
   Settings& settings = Settings::instance();
   settings.setValueVar(lnm::DATABASE_PATHS, QVariant::fromValue(simulators));

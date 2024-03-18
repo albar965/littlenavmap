@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -105,7 +105,7 @@ bool ProfileOptions::showOptions()
   return false;
 }
 
-void ProfileOptions::saveState()
+void ProfileOptions::saveState() const
 {
   atools::settings::Settings::instance().setValue(lnm::PROFILE_DISPLAY_OPTIONS, static_cast<int>(displayOptions));
 }

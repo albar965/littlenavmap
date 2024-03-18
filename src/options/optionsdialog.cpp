@@ -1205,6 +1205,7 @@ void OptionsDialog::saveState()
 
   // Save widgets to settings
   atools::gui::WidgetState state(lnm::OPTIONS_DIALOG_WIDGET, false /* save visibility */, true /* block signals */);
+
   state.save(widgets);
   state.save(this);
 

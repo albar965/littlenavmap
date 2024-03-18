@@ -63,10 +63,10 @@ public:
   }
 
   /* Saves dialog and menu action states */
-  void saveStateWidget();
+  void saveStateWidget() const;
 
   /* Saves route string */
-  void saveState();
+  void saveState() const;
 
   /* Restores last route string too */
   void restoreState();

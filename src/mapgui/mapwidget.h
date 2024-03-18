@@ -102,7 +102,7 @@ public:
   void historyBack();
 
   /* Save and restore markers, Marble plug-in settings, loaded KML files and more */
-  void saveState();
+  void saveState() const;
   void restoreState();
 
   /* Get zoom and scroll position history */
@@ -410,7 +410,7 @@ private:
   /* MapPaintWidget overrides for UI updates mostly ============================================================ */
   virtual void optionsChanged() override;
   virtual void overlayStateFromMenu() override;
-  virtual void overlayStateToMenu() override;
+  virtual void overlayStateToMenu() const override;
 
   virtual void updateThemeUi(const QString& themeId) override;
   virtual void updateMapVisibleUi() const override;

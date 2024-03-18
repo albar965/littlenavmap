@@ -114,7 +114,7 @@ void TrafficPatternDialog::restoreState()
   runwaySelection->restoreState();
 }
 
-void TrafficPatternDialog::saveState()
+void TrafficPatternDialog::saveState() const
 {
   atools::gui::WidgetState widgetState(lnm::TRAFFIC_PATTERN_DIALOG, false);
   widgetState.save({

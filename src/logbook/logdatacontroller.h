@@ -100,7 +100,7 @@ public:
   /* Show search tab and raise window */
   void  showSearch();
 
-  void saveState();
+  void saveState() const;
   void restoreState();
 
   /* Edit and delete log entries from map context menu */
@@ -231,7 +231,7 @@ private:
   void redoTriggered();
 
   /* Load and save logEntryId to configuration file */
-  void saveLogEntryId();
+  void saveLogEntryId() const;
   void restoreLogEntryId();
 
   int logEntryId = -1;

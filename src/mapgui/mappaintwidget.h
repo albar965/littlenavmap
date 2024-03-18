@@ -485,7 +485,7 @@ protected:
   virtual void overlayStateFromMenu();
 
   /* Send visibility of overlays to menu items - default is no-op */
-  virtual void overlayStateToMenu();
+  virtual void overlayStateToMenu() const;
 
   /* Start jump back time - default is no-op */
   virtual void jumpBackToAircraftStart();
