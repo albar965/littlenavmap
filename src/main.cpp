@@ -333,8 +333,7 @@ int main(int argc, char *argv[])
                << "group separator" << QString(QLocale().groupSeparator());
 
       // Add paths here to allow translation =================================
-      Application::addReportPath(QObject::tr("Log files:"), LoggingHandler::getLogFiles());
-
+      Application::addReportPath(QObject::tr("Log files:"), LoggingHandler::getLogFiles(false /* includeBackups */));
       Application::addReportPath(QObject::tr("Database directory:"), {Settings::getPath() + atools::SEP + lnm::DATABASE_DIR});
       Application::addReportPath(QObject::tr("Configuration:"), {Settings::getFilename()});
 

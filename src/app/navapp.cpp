@@ -865,7 +865,7 @@ void NavApp::getReportFiles(QStringList& crashReportFiles, QString& reportFilena
   crashReportFiles.append(Settings::getFilename());
 
   // Add all log files last to catch any error which appear while compressing
-  crashReportFiles.append(atools::logging::LoggingHandler::getLogFiles());
+  crashReportFiles.append(atools::logging::LoggingHandler::getLogFiles(true /* includeBackups */));
 
   reportFilename = Settings::getConfigFilename(issueReport ? "_issuereport.zip" : "_crashreport.zip", "crashreports");
 

@@ -689,7 +689,7 @@ void MainWindow::showOfflineHelp()
 
 void MainWindow::openLogFile()
 {
-  for(const QString& log : atools::logging::LoggingHandler::getLogFiles())
+  for(const QString& log : atools::logging::LoggingHandler::getLogFiles(false /* includeBackups */))
     desktopServices->openFile(log);
 }
 
