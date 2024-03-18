@@ -699,13 +699,11 @@ void UserdataController::importCsv()
   catch(atools::Exception& e)
   {
     QGuiApplication::restoreOverrideCursor();
-    NavApp::closeSplashScreen();
     atools::gui::ErrorHandler(mainWindow).handleException(e);
   }
   catch(...)
   {
     QGuiApplication::restoreOverrideCursor();
-    NavApp::closeSplashScreen();
     atools::gui::ErrorHandler(mainWindow).handleUnknownException();
   }
 }
@@ -737,13 +735,11 @@ void UserdataController::importXplaneUserFixDat()
   catch(atools::Exception& e)
   {
     QGuiApplication::restoreOverrideCursor();
-    NavApp::closeSplashScreen();
     atools::gui::ErrorHandler(mainWindow).handleException(e);
   }
   catch(...)
   {
     QGuiApplication::restoreOverrideCursor();
-    NavApp::closeSplashScreen();
     atools::gui::ErrorHandler(mainWindow).handleUnknownException();
   }
 }
@@ -775,13 +771,11 @@ void UserdataController::importGarmin()
   catch(atools::Exception& e)
   {
     QGuiApplication::restoreOverrideCursor();
-    NavApp::closeSplashScreen();
     atools::gui::ErrorHandler(mainWindow).handleException(e);
   }
   catch(...)
   {
     QGuiApplication::restoreOverrideCursor();
-    NavApp::closeSplashScreen();
     atools::gui::ErrorHandler(mainWindow).handleUnknownException();
   }
 }
@@ -815,12 +809,10 @@ void UserdataController::exportCsv()
   }
   catch(atools::Exception& e)
   {
-    NavApp::closeSplashScreen();
     atools::gui::ErrorHandler(mainWindow).handleException(e);
   }
   catch(...)
   {
-    NavApp::closeSplashScreen();
     atools::gui::ErrorHandler(mainWindow).handleUnknownException();
   }
 }
@@ -851,12 +843,10 @@ void UserdataController::exportXplaneUserFixDat()
   }
   catch(atools::Exception& e)
   {
-    NavApp::closeSplashScreen();
     atools::gui::ErrorHandler(mainWindow).handleException(e);
   }
   catch(...)
   {
-    NavApp::closeSplashScreen();
     atools::gui::ErrorHandler(mainWindow).handleUnknownException();
   }
 }
@@ -889,12 +879,10 @@ void UserdataController::exportGarmin()
   }
   catch(atools::Exception& e)
   {
-    NavApp::closeSplashScreen();
     atools::gui::ErrorHandler(mainWindow).handleException(e);
   }
   catch(...)
   {
-    NavApp::closeSplashScreen();
     atools::gui::ErrorHandler(mainWindow).handleUnknownException();
   }
 }
@@ -925,12 +913,10 @@ void UserdataController::exportBglXml()
   }
   catch(atools::Exception& e)
   {
-    NavApp::closeSplashScreen();
     atools::gui::ErrorHandler(mainWindow).handleException(e);
   }
   catch(...)
   {
-    NavApp::closeSplashScreen();
     atools::gui::ErrorHandler(mainWindow).handleUnknownException();
   }
 }

@@ -257,7 +257,6 @@ void DatabaseLoader::compileDatabasePost()
   catch(std::exception& e)
   {
     // Show dialog if something went wrong but do not exit program
-    NavApp::closeSplashScreen();
     ErrorHandler(progressDialog).handleException(e, currentBglFilePath.isEmpty() ?
                                                  QString() : tr("Processed files:\n%1\n").arg(currentBglFilePath));
     resultFlagsShared |= atools::fs::COMPILE_FAILED;

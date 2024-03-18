@@ -1034,7 +1034,6 @@ void OptionsDialog::checkOfficialOnlineUrls()
       {
         qWarning() << Q_FUNC_INFO << "Update of" << ui->spinBoxOptionsOnlineUpdate->value()
                    << "s for url" << url << "host" << host;
-        NavApp::closeSplashScreen();
         atools::gui::Dialog::warning(this, tr("Do not use an update period smaller than %1 seconds "
                                               "for official networks like VATSIM, IVAO or PilotEdge.\n\n"
                                               "Resetting update period back to %1 seconds.").arg(MIN_ONLINE_UPDATE));

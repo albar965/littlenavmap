@@ -32,7 +32,6 @@
 #include "fs/scenery/languagejson.h"
 #include "fs/scenery/aircraftindex.h"
 #include "util/version.h"
-#include "gui/application.h"
 
 #include <QDataStream>
 #include <QTcpSocket>

@@ -45,7 +45,6 @@
 #include "track/trackmanager.h"
 #include "ui_mainwindow.h"
 #include "util/version.h"
-#include "gui/application.h"
 #include "gui/signalblocker.h"
 
 #include <QDir>
@@ -429,7 +428,6 @@ void DatabaseManager::checkCopyAndPrepareDatabases()
     {
       if(hasSettings)
       {
-        atools::gui::Application::closeSplashScreen();
         result = dialog->showQuestionMsgBox(
           lnm::ACTIONS_SHOW_OVERWRITE_DATABASE,
           tr("Your current navdata is older than the navdata included in the Little Navmap download archive.<br/><br/>"
@@ -517,7 +515,6 @@ void DatabaseManager::checkCopyAndPrepareDatabases()
 
   if(settingsNeedsPreparation && hasSettings)
   {
-    atools::gui::Application::closeSplashScreen();
     QMessageBox *simpleProgressDialog = atools::gui::Dialog::showSimpleProgressDialog(mainWindow, tr("Preparing %1 Database ...").
                                                                                       arg(FsPaths::typeToDisplayName(FsPaths::NAVIGRAPH)));
     atools::gui::Application::processEventsExtended();

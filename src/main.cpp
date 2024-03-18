@@ -31,7 +31,6 @@
 #include "fs/sc/simconnectreply.h"
 #include "fs/weather/metarparser.h"
 #include "geo/calculations.h"
-#include "gui/application.h"
 #include "gui/dockwidgethandler.h"
 #include "gui/mainwindow.h"
 #include "gui/mapposhistory.h"

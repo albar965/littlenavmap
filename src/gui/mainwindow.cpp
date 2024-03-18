@@ -35,7 +35,6 @@
 #include "exception.h"
 #include "fs/gpx/gpxio.h"
 #include "fs/perf/aircraftperf.h"
-#include "gui/application.h"
 #include "gui/dialog.h"
 #include "gui/dockwidgethandler.h"
 #include "gui/errorhandler.h"

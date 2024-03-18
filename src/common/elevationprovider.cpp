@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -239,28 +239,21 @@ void ElevationProvider::showErrors()
 
   // Show this warning at startup and when changing options
   if(warnOpenFiles)
-  {
-    NavApp::closeSplashScreen();
     atools::gui::Dialog::warning(NavApp::getQMainWidget(), tr("Cannot open GLOBE data in directory<br/>\"%1\"").arg(path));
-  }
 
   // Show this warning at startup and when changing options
   if(warnWrongGlobePath)
-  {
     // Warn outside the mutex lock to avoid deadlocks
-    NavApp::closeSplashScreen();
     atools::gui::Dialog::warning(NavApp::getQMainWidget(),
                                  tr("GLOBE elevation data directory is not valid:<br/>\"%1\"<br/><br/>"
                                     "Go to main menu -&gt; \"Tools\" -&gt; \"Options\" and then<br/>"
                                     "to page \"Cache and Files\". Then click \"Select GLOBE Directory\" and<br/>"
                                     "select the correct place with the GLOBE elevation files.",
                                     "Keep instructions in sync with translated menus").arg(path));
-  }
 
   // Show this only on startup
   if(!useOffline && startup)
   {
-    NavApp::closeSplashScreen();
     QUrl url = atools::gui::HelpHandler::getHelpUrlWeb(lnm::helpOnlineInstallGlobeUrl, lnm::helpLanguageOnline());
     QString message = tr(
       "<p>The online elevation data which is used by default for the elevation profile is limited and has a lot of errors.<br/>"

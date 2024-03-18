@@ -366,7 +366,6 @@ void FetchRouteDialog::downloadFailed(const QString& error, int errorCode, QStri
 void FetchRouteDialog::downloadSslErrors(const QStringList& errors, const QString& downloadUrl)
 {
   qDebug() << Q_FUNC_INFO;
-  NavApp::closeSplashScreen();
 
   int result = atools::gui::Dialog(this).
                showQuestionMsgBox(lnm::ACTIONS_SHOW_SSL_WARNING_SIMBRIEF,

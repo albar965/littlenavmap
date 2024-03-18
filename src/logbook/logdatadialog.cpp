@@ -428,12 +428,10 @@ void LogdataDialog::fileUpdated(QLineEdit *lineEdit, QLabel *label, bool perf)
   }
   catch(atools::Exception& e)
   {
-    NavApp::closeSplashScreen();
     atools::gui::ErrorHandler(this).handleException(e);
   }
   catch(...)
   {
-    NavApp::closeSplashScreen();
     atools::gui::ErrorHandler(this).handleUnknownException();
   }
 }

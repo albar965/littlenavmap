@@ -434,12 +434,10 @@ void AirspaceController::loadAirspaces()
     }
     catch(atools::Exception& e)
     {
-      NavApp::closeSplashScreen();
       atools::gui::ErrorHandler(mainWindow).handleException(e);
     }
     catch(...)
     {
-      NavApp::closeSplashScreen();
       atools::gui::ErrorHandler(mainWindow).handleUnknownException();
     }
 

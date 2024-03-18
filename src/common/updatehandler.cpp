@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -152,8 +152,6 @@ void UpdateHandler::updateFound(atools::util::UpdateList updates)
   for(const atools::util::Update& update:updates)
     qDebug() << Q_FUNC_INFO << update.version;
 
-  NavApp::closeSplashScreen();
-
   if(!updates.isEmpty())
   {
     // Found updates - fill the HTML text for the dialog =============================
@@ -165,7 +163,7 @@ void UpdateHandler::updateFound(atools::util::UpdateList updates)
     if(!update.changelog.isEmpty())
       html.text(update.changelog, atools::util::html::NO_ENTITIES);
 
-    NavApp::closeSplashScreen();
+    atools::gui::Application::closeSplashScreen();
 
     // Show dialog
     UpdateDialog updateDialog(mainWindow, updateReason == UPDATE_REASON_MANUAL);
@@ -194,8 +192,6 @@ void UpdateHandler::updateFound(atools::util::UpdateList updates)
 void UpdateHandler::updateFailed(QString errorString)
 {
   qDebug() << Q_FUNC_INFO;
-
-  NavApp::closeSplashScreen();
 
   QString message = tr("Error while checking for updates at\n\"%1\":\n%2").
                     arg(updateCheck->getUrl().toDisplayString()).arg(errorString);

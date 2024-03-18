@@ -1030,7 +1030,6 @@ void RouteController::restoreState()
         {
           // Not a flight plan file
           clearFlightplan();
-          NavApp::closeSplashScreen();
           dialog->warning(tr("File \"%1\" is a not supported flight plan format or not a flight plan.").arg(cmdLineFlightplanFile));
         }
       }
@@ -1038,7 +1037,6 @@ void RouteController::restoreState()
       {
         // No file or not readable
         clearFlightplan();
-        NavApp::closeSplashScreen();
         dialog->warning(message);
       }
     }
@@ -1084,13 +1082,11 @@ void RouteController::restoreState()
   }
   catch(atools::Exception& e)
   {
-    NavApp::closeSplashScreen();
     atools::gui::ErrorHandler(mainWindow).handleException(e);
     clearFlightplan();
   }
   catch(...)
   {
-    NavApp::closeSplashScreen();
     atools::gui::ErrorHandler(mainWindow).handleUnknownException();
     clearFlightplan();
   }
@@ -1334,7 +1330,6 @@ void RouteController::loadFlightplan(atools::fs::pln::Flightplan flightplan, ato
   if(showWarnDialog)
   {
     // Let user know
-    NavApp::closeSplashScreen();
     dialog->showInfoMsgBox(lnm::ACTIONS_SHOW_LOAD_ALT_WARN,
                            tr("Cruising altitude from flight plan is not valid. "
                               "It may conflict with airport elevation, "
@@ -1405,13 +1400,11 @@ bool RouteController::loadFlightplanLnmStr(const QString& string)
   }
   catch(atools::Exception& e)
   {
-    NavApp::closeSplashScreen();
     atools::gui::ErrorHandler(mainWindow).handleException(e);
     return false;
   }
   catch(...)
   {
-    NavApp::closeSplashScreen();
     atools::gui::ErrorHandler(mainWindow).handleUnknownException();
     return false;
   }
@@ -1453,13 +1446,11 @@ bool RouteController::loadFlightplan(const QString& filename)
   }
   catch(atools::Exception& e)
   {
-    NavApp::closeSplashScreen();
     atools::gui::ErrorHandler(mainWindow).handleException(e);
     return false;
   }
   catch(...)
   {
-    NavApp::closeSplashScreen();
     atools::gui::ErrorHandler(mainWindow).handleUnknownException();
     return false;
   }
@@ -1607,13 +1598,11 @@ bool RouteController::insertFlightplan(const QString& filename, int insertBefore
   }
   catch(atools::Exception& e)
   {
-    NavApp::closeSplashScreen();
     atools::gui::ErrorHandler(mainWindow).handleException(e);
     return false;
   }
   catch(...)
   {
-    NavApp::closeSplashScreen();
     atools::gui::ErrorHandler(mainWindow).handleUnknownException();
     return false;
   }
@@ -1743,13 +1732,11 @@ bool RouteController::saveFlightplanLnmSelectionAs(const QString& filename, int 
   }
   catch(atools::Exception& e)
   {
-    NavApp::closeSplashScreen();
     atools::gui::ErrorHandler(mainWindow).handleException(e);
     return false;
   }
   catch(...)
   {
-    NavApp::closeSplashScreen();
     atools::gui::ErrorHandler(mainWindow).handleUnknownException();
     return false;
   }
@@ -1856,13 +1843,11 @@ bool RouteController::saveFlightplanLnmInternal(const QString& filename, bool si
   }
   catch(atools::Exception& e)
   {
-    NavApp::closeSplashScreen();
     atools::gui::ErrorHandler(mainWindow).handleException(e);
     return false;
   }
   catch(...)
   {
-    NavApp::closeSplashScreen();
     atools::gui::ErrorHandler(mainWindow).handleUnknownException();
     return false;
   }

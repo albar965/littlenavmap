@@ -952,13 +952,11 @@ void LogdataController::importXplane()
   catch(atools::Exception& e)
   {
     QGuiApplication::restoreOverrideCursor();
-    NavApp::closeSplashScreen();
     atools::gui::ErrorHandler(mainWindow).handleException(e);
   }
   catch(...)
   {
     QGuiApplication::restoreOverrideCursor();
-    NavApp::closeSplashScreen();
     atools::gui::ErrorHandler(mainWindow).handleUnknownException();
   }
 }
@@ -990,13 +988,11 @@ void LogdataController::importCsv()
   catch(atools::Exception& e)
   {
     QGuiApplication::restoreOverrideCursor();
-    NavApp::closeSplashScreen();
     atools::gui::ErrorHandler(mainWindow).handleException(e);
   }
   catch(...)
   {
     QGuiApplication::restoreOverrideCursor();
-    NavApp::closeSplashScreen();
     atools::gui::ErrorHandler(mainWindow).handleUnknownException();
   }
 }
@@ -1071,12 +1067,10 @@ void LogdataController::exportCsv()
   }
   catch(atools::Exception& e)
   {
-    NavApp::closeSplashScreen();
     atools::gui::ErrorHandler(mainWindow).handleException(e);
   }
   catch(...)
   {
-    NavApp::closeSplashScreen();
     atools::gui::ErrorHandler(mainWindow).handleUnknownException();
   }
 }
@@ -1179,12 +1173,10 @@ void LogdataController::planOpen(atools::sql::SqlRecord *record, QWidget *parent
   }
   catch(atools::Exception& e)
   {
-    NavApp::closeSplashScreen();
     atools::gui::ErrorHandler(parent).handleException(e);
   }
   catch(...)
   {
-    NavApp::closeSplashScreen();
     atools::gui::ErrorHandler(parent).handleUnknownException();
   }
 }
@@ -1218,12 +1210,10 @@ void LogdataController::planAttachLnmpln(atools::sql::SqlRecord *record, const Q
   }
   catch(atools::Exception& e)
   {
-    NavApp::closeSplashScreen();
     atools::gui::ErrorHandler(parent).handleException(e);
   }
   catch(...)
   {
-    NavApp::closeSplashScreen();
     atools::gui::ErrorHandler(parent).handleUnknownException();
   }
 }
@@ -1245,12 +1235,10 @@ void LogdataController::planSaveAs(atools::sql::SqlRecord *record, QWidget *pare
   }
   catch(atools::Exception& e)
   {
-    NavApp::closeSplashScreen();
     atools::gui::ErrorHandler(parent).handleException(e);
   }
   catch(...)
   {
-    NavApp::closeSplashScreen();
     atools::gui::ErrorHandler(parent).handleUnknownException();
   }
 }
@@ -1273,12 +1261,10 @@ void LogdataController::gpxAttach(atools::sql::SqlRecord *record, QWidget *paren
   }
   catch(atools::Exception& e)
   {
-    NavApp::closeSplashScreen();
     atools::gui::ErrorHandler(parent).handleException(e);
   }
   catch(...)
   {
-    NavApp::closeSplashScreen();
     atools::gui::ErrorHandler(parent).handleUnknownException();
   }
 }
@@ -1312,12 +1298,10 @@ void LogdataController::gpxAdd(atools::sql::SqlRecord *record, QWidget *parent)
   }
   catch(atools::Exception& e)
   {
-    NavApp::closeSplashScreen();
     atools::gui::ErrorHandler(parent).handleException(e);
   }
   catch(...)
   {
-    NavApp::closeSplashScreen();
     atools::gui::ErrorHandler(parent).handleUnknownException();
   }
 }
@@ -1386,12 +1370,10 @@ void LogdataController::gpxSaveAs(atools::sql::SqlRecord *record, QWidget *paren
   }
   catch(atools::Exception& e)
   {
-    NavApp::closeSplashScreen();
     atools::gui::ErrorHandler(parent).handleException(e);
   }
   catch(...)
   {
-    NavApp::closeSplashScreen();
     atools::gui::ErrorHandler(parent).handleUnknownException();
   }
 }
@@ -1420,12 +1402,10 @@ void LogdataController::perfAttachLnmperf(atools::sql::SqlRecord *record, const 
   }
   catch(atools::Exception& e)
   {
-    NavApp::closeSplashScreen();
     atools::gui::ErrorHandler(parent).handleException(e);
   }
   catch(...)
   {
-    NavApp::closeSplashScreen();
     atools::gui::ErrorHandler(parent).handleUnknownException();
   }
 }
@@ -1440,12 +1420,10 @@ void LogdataController::perfOpen(atools::sql::SqlRecord *record, QWidget *parent
   }
   catch(atools::Exception& e)
   {
-    NavApp::closeSplashScreen();
     atools::gui::ErrorHandler(parent).handleException(e);
   }
   catch(...)
   {
-    NavApp::closeSplashScreen();
     atools::gui::ErrorHandler(mainWindow).handleUnknownException();
   }
 }
@@ -1459,12 +1437,10 @@ void LogdataController::perfSaveAs(atools::sql::SqlRecord *record, QWidget *pare
   }
   catch(atools::Exception& e)
   {
-    NavApp::closeSplashScreen();
     atools::gui::ErrorHandler(parent).handleException(e);
   }
   catch(...)
   {
-    NavApp::closeSplashScreen();
     atools::gui::ErrorHandler(mainWindow).handleUnknownException();
   }
 }

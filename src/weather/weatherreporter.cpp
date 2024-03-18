@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -336,8 +336,6 @@ void WeatherReporter::showXplaneWarningDialog(const QString& message)
 {
   // Avoid repeated entry
   showingXplaneFileWarning = true;
-
-  NavApp::closeSplashScreen();
 
   if(NavApp::hasInstalledSimulator(simType))
     // Path not valid ==========
@@ -748,7 +746,6 @@ void WeatherReporter::updateAirportWeather()
 void WeatherReporter::weatherDownloadSslErrors(const QStringList& errors, const QString& downloadUrl)
 {
   qWarning() << Q_FUNC_INFO;
-  NavApp::closeSplashScreen();
 
   int result = atools::gui::Dialog(mainWindow).
                showQuestionMsgBox(lnm::ACTIONS_SHOW_SSL_WARNING_WEATHER,
