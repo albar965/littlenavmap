@@ -444,6 +444,10 @@ const QLatin1String DATABASE_PREFIX("little_navmap_");
 const QLatin1String DATABASE_SUFFIX(".sqlite");
 const QLatin1String DATABASE_BACKUP_SUFFIX("-backup");
 
+/* Default filename suffixes used to save files in settings folder */
+const QLatin1String ROUTE_DEFAULT_SUFFIX(".lnmpln");
+const QLatin1String PERF_COLLECTED_SUFFIX("_collected.lnmperf");
+
 const QLatin1String ROUTE_LNMPLN_EXPORTDIR("Route/LnmPlnFileDialogDir");
 
 /* This is the default configuration file for reading the scenery library.

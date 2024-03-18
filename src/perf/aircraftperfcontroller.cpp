@@ -97,11 +97,11 @@ AircraftPerfController::AircraftPerfController(MainWindow *parent)
 AircraftPerfController::~AircraftPerfController()
 {
   windChangeTimer.stop();
-  delete fileHistory;
-  delete perfHandler;
-  delete perf;
-  delete lastSimData;
-  delete fuelFlowGroundspeedAverage;
+  ATOOLS_DELETE_LOG(fileHistory);
+  ATOOLS_DELETE_LOG(perfHandler);
+  ATOOLS_DELETE_LOG(perf);
+  ATOOLS_DELETE_LOG(lastSimData);
+  ATOOLS_DELETE_LOG(fuelFlowGroundspeedAverage);
 }
 
 void AircraftPerfController::create()
@@ -889,6 +889,10 @@ void AircraftPerfController::updateReportCurrent()
       html.p().b(tr("No flight detected.")).pEnd();
     else
     {
+      if(perfHandler->isFinished())
+        html.p(tr("Performance collecton done. You can now merge the current data and "
+                  "then restart the collection using the buttons above to record a new flight."));
+
       html.p().b(tr("Aircraft")).pEnd();
       html.table();
       html.row2(tr("Current flight segment: "), perfHandler->getCurrentFlightSegmentString() %
@@ -911,6 +915,7 @@ void AircraftPerfController::updateReportCurrent()
     if(segment >= atools::fs::perf::CLIMB)
     {
       html.p().b(tr("Average Performance")).br().b(tr("Climb")).pEnd();
+
       html.table();
       html.row2(tr("True Airspeed:"), Unit::speedKts(curPerfLbs.getClimbSpeed()), flags);
       html.row2(tr("Vertical Speed:"), Unit::speedVertFpm(curPerfLbs.getClimbVertSpeed()) % tr(" <b>▲</b>"), ahtml::NO_ENTITIES | flags);
@@ -1361,6 +1366,19 @@ void AircraftPerfController::saveState() const
 {
   atools::settings::Settings& settings = atools::settings::Settings::instance();
 
+  try
+  {
+    perfHandler->saveCollected(atools::settings::Settings::getConfigFilename(lnm::PERF_COLLECTED_SUFFIX));
+  }
+  catch(atools::Exception& e)
+  {
+    atools::gui::ErrorHandler(mainWindow).handleException(e);
+  }
+  catch(...)
+  {
+    atools::gui::ErrorHandler(mainWindow).handleUnknownException();
+  }
+
   fileHistory->saveState();
   settings.setValue(lnm::AIRCRAFT_PERF_FILENAME, currentFilename);
 
@@ -1408,6 +1426,26 @@ void AircraftPerfController::restoreState()
 
   perfHandler->setCruiseAltitude(cruiseAlt());
   perfHandler->start();
+
+  if(!NavApp::isSafeMode())
+  {
+    QString defaultFilename = atools::settings::Settings::getConfigFilename(lnm::PERF_COLLECTED_SUFFIX);
+    if(atools::checkFile(Q_FUNC_INFO, defaultFilename))
+    {
+      try
+      {
+        perfHandler->restoreCollected(defaultFilename);
+      }
+      catch(atools::Exception& e)
+      {
+        atools::gui::ErrorHandler(mainWindow).handleException(e);
+      }
+      catch(...)
+      {
+        atools::gui::ErrorHandler(mainWindow).handleUnknownException();
+      }
+    }
+  }
 
   optionsChanged();
 }

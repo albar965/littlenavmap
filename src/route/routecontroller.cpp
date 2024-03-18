@@ -176,7 +176,7 @@ RouteController::RouteController(QMainWindow *parentWindow, QTableView *tableVie
 {
   airportQuery = NavApp::getAirportQuerySim();
 
-  routeFilenameDefault = atools::settings::Settings::getConfigFilename(".lnmpln");
+  routeFilenameDefault = atools::settings::Settings::getConfigFilename(lnm::ROUTE_DEFAULT_SUFFIX);
 
   dialog = new atools::gui::Dialog(mainWindow);
 
