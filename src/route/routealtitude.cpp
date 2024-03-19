@@ -436,7 +436,7 @@ void RouteAltitude::calculateFuelAndTimeTo(FuelTimeResult& result, float distanc
     } // if(!alternate)
 
     // Calculate time and fuel to Next waypoint ============================================
-    if(distanceToNext >= 0.f && distanceToNext < map::INVALID_DISTANCE_VALUE)
+    if(!missed && distanceToNext >= 0.f && distanceToNext < map::INVALID_DISTANCE_VALUE)
     {
       float distFromStart = activeLeg.getDistanceFromStart() - distanceToNext;
 
@@ -529,6 +529,10 @@ void RouteAltitude::calculateFuelAndTimeTo(FuelTimeResult& result, float distanc
     result.fuelGalToDest = distanceToDest / aircraftGroundSpeed * aircraftFuelFlowGal;
     result.timeToDest = distanceToDest / aircraftGroundSpeed;
   }
+
+#ifdef DEBUG_INFORMATION
+  qDebug() << Q_FUNC_INFO << result;
+#endif
 }
 
 float RouteAltitude::adjustAltitudeForRestriction(float altitude, const proc::MapAltRestriction& restriction) const
@@ -2085,17 +2089,17 @@ QDebug operator<<(QDebug out, const FuelTimeResult& obj)
   QDebugStateSaver saver(out);
   out.noquote().nospace()
     << "FuelTimeResult["
-    << "fuelLbsToDest" << (obj.isFuelToDestValid() ? obj.fuelLbsToDest : -1.f)
-    << "fuelGalToDest" << (obj.isFuelToDestValid() ? obj.fuelGalToDest : -1.f)
-    << "timeToDest" << (obj.isTimeToDestValid() ? obj.timeToDest : -1.f)
-    << "fuelLbsToTod" << (obj.isFuelToTodValid() ? obj.fuelLbsToTod : -1.f)
-    << "fuelGalToTod" << (obj.isFuelToTodValid() ? obj.fuelGalToTod : -1.f)
-    << "timeToTod" << (obj.isTimeToTodValid() ? obj.timeToTod : -1.f)
-    << "fuelLbsToNext" << (obj.isFuelToNextValid() ? obj.fuelLbsToNext : -1.f)
-    << "fuelGalToNext" << (obj.isFuelToNextValid() ? obj.fuelGalToNext : -1.f)
-    << "timeToNext" << (obj.isTimeToNextValid() ? obj.timeToNext : -1.f)
-    << "estimatedFuel" << obj.estimatedFuel
-    << "estimatedTime" << obj.estimatedTime
+    << "fuelLbsToDest " << (obj.isFuelToDestValid() ? obj.fuelLbsToDest : -1.f)
+    << ", fuelGalToDest " << (obj.isFuelToDestValid() ? obj.fuelGalToDest : -1.f)
+    << ", timeToDest " << (obj.isTimeToDestValid() ? obj.timeToDest : -1.f)
+    << ", fuelLbsToTod " << (obj.isFuelToTodValid() ? obj.fuelLbsToTod : -1.f)
+    << ", fuelGalToTod " << (obj.isFuelToTodValid() ? obj.fuelGalToTod : -1.f)
+    << ", timeToTod " << (obj.isTimeToTodValid() ? obj.timeToTod : -1.f)
+    << ", fuelLbsToNext " << (obj.isFuelToNextValid() ? obj.fuelLbsToNext : -1.f)
+    << ", fuelGalToNext " << (obj.isFuelToNextValid() ? obj.fuelGalToNext : -1.f)
+    << ", timeToNext " << (obj.isTimeToNextValid() ? obj.timeToNext : -1.f)
+    << ", estimatedFuel " << obj.estimatedFuel
+    << ", estimatedTime " << obj.estimatedTime
     << "]";
   return out;
 }
@@ -2103,16 +2107,16 @@ QDebug operator<<(QDebug out, const FuelTimeResult& obj)
 QDebug operator<<(QDebug out, const RouteAltitude& obj)
 {
   QDebugStateSaver saver(out);
-  out << "TOC dist" << obj.getTopOfClimbDistance()
-      << "index" << obj.getTopOfClimbLegIndex()
-      << "TOD dist" << obj.getTopOfDescentDistance()
-      << "index" << obj.getTopOfDescentLegIndex()
-      << "travelTime " << obj.getTravelTimeHours()
-      << "averageSpeed" << obj.getAverageGroundSpeed()
-      << "tripFuel" << obj.getTripFuel()
-      << "alternateFuel" << obj.getAlternateFuel()
-      << "totalDistance" << obj.route->getTotalDistance()
-      << endl;
+  out.noquote().nospace() << "TOC dist " << obj.getTopOfClimbDistance()
+                          << ", index " << obj.getTopOfClimbLegIndex()
+                          << ", TOD dist " << obj.getTopOfDescentDistance()
+                          << ", index " << obj.getTopOfDescentLegIndex()
+                          << ", travelTime  " << obj.getTravelTimeHours()
+                          << ", averageSpeed " << obj.getAverageGroundSpeed()
+                          << ", tripFuel " << obj.getTripFuel()
+                          << ", alternateFuel " << obj.getAlternateFuel()
+                          << ", totalDistance " << obj.route->getTotalDistance()
+                          << endl;
 
   for(int i = 0; i < obj.size(); i++)
     out << "++++++++++++++++++++++" << endl << i << obj.value(i) << endl;
