@@ -173,13 +173,13 @@ void HtmlInfoBuilder::airportProcedureLinkTexts(QString& text, QString& href, co
   if(destination && arrivalProc)
   {
     // Is destination airport and has procedures
-    text = tr("Arrival Procedures");
+    text = tr("Arrival Proc.");
     href = QString("lnm://showprocsarrival?id=%1&type=%2").arg(airport.id).arg(map::AIRPORT);
   }
   else if(departure && departureProc)
   {
     // Is departure airport and has procedures
-    text = tr("Departure Procedures");
+    text = tr("Departure Proc.");
     href = QString("lnm://showprocsdepart?id=%1&type=%2").arg(airport.id).arg(map::AIRPORT);
   }
   else if(arrivalProc || departureProc)
@@ -4256,7 +4256,7 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
           recHtml.textBr(tr(", ")).
           a(tr("Map"), QString("lnm://show?lonx=%1&laty=%2").arg(recPos.getLonX()).arg(recPos.getLatY()), ahtml::LINK_NO_UL | ahtml::BOLD);
           recHtml.text(tr(", ")).
-          a(tr("Information"), QString("lnm://info?id=%1&type=%2").arg(id).arg(procMapType), ahtml::LINK_NO_UL | ahtml::BOLD);
+          a(tr("Info"), QString("lnm://info?id=%1&type=%2").arg(id).arg(procMapType), ahtml::LINK_NO_UL | ahtml::BOLD);
         }
         else if(recPos.isValid())
           // Only map
@@ -5171,14 +5171,14 @@ void HtmlInfoBuilder::head(HtmlBuilder& html, const QString& text, int id, map::
 
     // Center on airport bounding rect and add info link
     head(html, text, {tr("Map"), QString("lnm://show?id=%1&type=%2").arg(id).arg(type),
-                      tr("Information"), QString("lnm://info?id=%1&type=%2").arg(id).arg(type),
+                      tr("Info"), QString("lnm://info?id=%1&type=%2").arg(id).arg(type),
                       procText, procHref});
 
   }
   else if(atools::contains(type, {map::VOR, map::NDB, map::WAYPOINT}))
     // Center navaid by position and add info link
     head(html, text, {tr("Map"), QString("lnm://show?lonx=%1&laty=%2").arg(pos.getLonX()).arg(pos.getLatY()),
-                      tr("Information"), QString("lnm://info?id=%1&type=%2").arg(id).arg(type)});
+                      tr("Info"), QString("lnm://info?id=%1&type=%2").arg(id).arg(type)});
   else if(pos.isValid())
     // Show map link for position
     head(html, text, QStringList({tr("Map"), QString("lnm://show?lonx=%1&laty=%2").arg(pos.getLonX()).arg(pos.getLatY())}));
