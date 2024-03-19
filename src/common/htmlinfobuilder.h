@@ -333,9 +333,10 @@ private:
             const QString& infoText = QString(), const QString& infoHref = QString()) const;
 
   /* Header with map and information link depending on type */
+  void head(atools::util::HtmlBuilder& html, const QString& text, const RouteLeg& leg);
   void head(atools::util::HtmlBuilder& html, const QString& text, int id, map::MapType type, const atools::geo::Pos& pos);
 
-  /* Header with map link */
+  /* Header with map link to position */
   void head(atools::util::HtmlBuilder& html, const QString& text, const atools::geo::Pos& pos);
 
   bool nearestMapObjectsText(const map::MapAirport& airport, atools::util::HtmlBuilder& html,

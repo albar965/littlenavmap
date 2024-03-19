@@ -33,6 +33,7 @@ class QTextEdit;
 class AirspaceController;
 class AircraftProgressConfig;
 
+class QTextBrowser;
 namespace atools {
 namespace gui {
 class TabWidgetHandler;
@@ -140,6 +141,8 @@ private:
   bool updateUserpointInternal(const map::MapResult& result, bool bearingChanged, bool scrollToTop);
 
   void updateTextEditFontSizes();
+
+  /* User clicked on "Map" link in text browsers */
   void anchorClicked(const QUrl& url);
   void clearInfoTextBrowsers();
   void showInformationInternal(map::MapResult result, bool showWindows, bool scrollToTop, bool forceUpdate);
@@ -167,10 +170,21 @@ private:
                       void (HtmlInfoBuilder::*func)(const TYPE&, atools::util::HtmlBuilder&) const) const;
 
   void showProgressContextMenu(const QPoint& point);
+
+  /* MSFS, X-Plane, etc. */
   QString getConnectionTypeText();
 
+  /* Blue help button in information dock clicked */
   void helpInfoClicked();
+
+  /* Blue help button in progress dock clicked */
   void helpAircraftClicked();
+
+  /* Update a text edit and clears selection after clicking a link */
+  void updateTextEdit(QTextEdit *textEdit, const QString& text, bool scrollToTop, bool keepSelection);
+
+  /* Text edits are stored here after anchors were clicked. Needed to clear unwanted selections after clicking a link. */
+  QSet<QTextEdit *> anchorsClicked;
 
   QString waitingForUpdateText, notConnectedText;
 
@@ -187,8 +201,6 @@ private:
   AirportQuery *airportQuery = nullptr;
   AirspaceController *airspaceController = nullptr;
   HtmlInfoBuilder *infoBuilder = nullptr;
-
-  bool lessAircraftProgress = false;
 
   AircraftProgressConfig *aircraftProgressConfig;
 

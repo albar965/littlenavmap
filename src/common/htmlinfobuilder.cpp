@@ -4008,7 +4008,7 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
                                                              destLeg.getMapTypeName());
 
         html.mark();
-        head(html, headText, destLeg.getId(), destLeg.getMapType(), destLeg.getPosition());
+        head(html, headText, destLeg);
 
         html.table();
 
@@ -4196,8 +4196,7 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
         fromTo = tr(" - ");
 
       html.mark();
-      head(html, tr("Next Waypoint%1%2%3").arg(wpText).arg(fromTo).arg(nextName),
-           routeLegCorrected.getId(), routeLegCorrected.getMapType(), routeLegCorrected.getPosition());
+      head(html, tr("Next Waypoint%1%2%3").arg(wpText).arg(fromTo).arg(nextName), routeLegCorrected);
       html.table();
 
       if(activeLegIdxCorrected != map::INVALID_INDEX_VALUE)
@@ -5112,6 +5111,28 @@ void HtmlInfoBuilder::head(HtmlBuilder& html, const QString& text, const atools:
 {
   // Show head with map link and no info link
   head(html, text, -1, map::NONE, pos);
+}
+
+void HtmlInfoBuilder::head(HtmlBuilder& html, const QString& text, const RouteLeg& leg)
+{
+  const MapTypes mapType = leg.getMapType();
+
+  if(mapType == map::PROCEDURE)
+  {
+    // Is procedure leg, get fix information if available
+    int id = -1;
+    MapTypes procMapType = map::NONE;
+    leg.getProcedureLeg().navaids.getIdAndType(id, procMapType, {map::VOR, map::NDB, map::WAYPOINT});
+
+    if(id != -1)
+      // Has valid navaid
+      head(html, text, id, procMapType, leg.getPosition());
+    else
+      // No navaid, like altitude leg - show only position
+      head(html, text, leg.getPosition());
+  }
+  else
+    head(html, text, leg.getId(), mapType, leg.getPosition());
 }
 
 void HtmlInfoBuilder::head(HtmlBuilder& html, const QString& text, int id, map::MapType type, const atools::geo::Pos& pos)

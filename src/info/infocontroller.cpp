@@ -329,7 +329,6 @@ void InfoController::progressConfigurationClicked()
   updateProgress();
 }
 
-/* User clicked on "Map" link in text browsers */
 void InfoController::anchorClicked(const QUrl& url)
 {
   qDebug() << Q_FUNC_INFO << url;
@@ -364,13 +363,6 @@ void InfoController::anchorClicked(const QUrl& url)
         // Hide airway highlights from information window =========================================
         mapWidget->clearAirwayHighlights();
         mainWindow->updateHighlightActionStates();
-      }
-      else if(query.hasQueryItem("lessprogress"))
-      {
-        // Handle more/less switch =====================================
-        lessAircraftProgress = !lessAircraftProgress;
-        NavApp::getMainUi()->textBrowserAircraftProgressInfo->setTextCursor(QTextCursor());
-        updateAircraftProgressText();
       }
     }
     else if(url.host() == "info")
@@ -476,6 +468,11 @@ void InfoController::anchorClicked(const QUrl& url)
     else if(url.host() == "showprocs" && id != -1 && type != map::NONE)
       emit showProcedures(airportQuery->getAirportById(id), false /* departureFilter */, false /* arrivalFilter */);
   }
+
+  // Remember clicked text edit to clear the unwanted selection on next update when calling updateTextEdit()
+  QTextEdit *textEdit = dynamic_cast<QTextEdit *>(sender());
+  if(textEdit != nullptr)
+    anchorsClicked.insert(textEdit);
 }
 
 void InfoController::saveState() const
@@ -604,8 +601,7 @@ void InfoController::updateProgress()
     html.clear();
     html.setIdBits(aircraftProgressConfig->getEnabledBits());
     infoBuilder->aircraftProgressText(lastSimData.getUserAircraftConst(), html, NavApp::getRouteConst());
-    atools::gui::util::updateTextEdit(ui->textBrowserAircraftProgressInfo, html.getHtml(),
-                                      false /* scroll to top*/, true /* keep selection */);
+    updateTextEdit(ui->textBrowserAircraftProgressInfo, html.getHtml(), false /* scroll to top*/, true /* keep selection */);
   }
 }
 
@@ -635,8 +631,7 @@ void InfoController::updateAirportInternal(bool newAirport, bool bearingChange, 
 
       Ui::MainWindow *ui = NavApp::getMainUi();
       // Leave position for weather or bearing updates
-      atools::gui::util::updateTextEdit(ui->textBrowserAirportInfo, html.getHtml(),
-                                        scrollToTop, !scrollToTop /* keep selection */);
+      updateTextEdit(ui->textBrowserAirportInfo, html.getHtml(), scrollToTop, !scrollToTop /* keep selection */);
 
       if(newAirport || weatherChanged || forceWeatherUpdate)
       {
@@ -644,8 +639,7 @@ void InfoController::updateAirportInternal(bool newAirport, bool bearingChange, 
         infoBuilder->weatherText(currentWeatherContext, airport, html);
 
         // Leave position for weather updates
-        atools::gui::util::updateTextEdit(ui->textBrowserWeatherInfo, html.getHtml(),
-                                          scrollToTop, !scrollToTop /* keep selection */);
+        updateTextEdit(ui->textBrowserWeatherInfo, html.getHtml(), scrollToTop, !scrollToTop /* keep selection */);
       }
     }
   }
@@ -819,7 +813,7 @@ void InfoController::showInformationInternal(map::MapResult result, bool showWin
         currentSearchResult.onlineAircraft.append(map::MapOnlineAircraft(ac));
       }
     }
-    atools::gui::util::updateTextEdit(ui->textBrowserClientInfo, html.getHtml(), false /* scroll to top*/, true /* keep selection */);
+    updateTextEdit(ui->textBrowserClientInfo, html.getHtml(), false /* scroll to top*/, true /* keep selection */);
 
     // User or AI shadowed
     foundOnlineClient = true;
@@ -851,19 +845,19 @@ void InfoController::showInformationInternal(map::MapResult result, bool showWin
       // Update parts that have now weather or bearing depenedency =====================
       html.clear();
       infoBuilder->runwayText(airport, html);
-      atools::gui::util::updateTextEdit(ui->textBrowserRunwayInfo, html.getHtml(), scrollToTop, !scrollToTop /* keep selection */);
+      updateTextEdit(ui->textBrowserRunwayInfo, html.getHtml(), scrollToTop, !scrollToTop /* keep selection */);
 
       html.clear();
       infoBuilder->comText(airport, html);
-      atools::gui::util::updateTextEdit(ui->textBrowserComInfo, html.getHtml(), scrollToTop, !scrollToTop /* keep selection */);
+      updateTextEdit(ui->textBrowserComInfo, html.getHtml(), scrollToTop, !scrollToTop /* keep selection */);
 
       html.clear();
       infoBuilder->procedureText(airport, html);
-      atools::gui::util::updateTextEdit(ui->textBrowserApproachInfo, html.getHtml(), scrollToTop, !scrollToTop /* keep selection */);
+      updateTextEdit(ui->textBrowserApproachInfo, html.getHtml(), scrollToTop, !scrollToTop /* keep selection */);
 
       html.clear();
       infoBuilder->nearestText(airport, html);
-      atools::gui::util::updateTextEdit(ui->textBrowserNearestInfo, html.getHtml(), scrollToTop, !scrollToTop /* keep selection */);
+      updateTextEdit(ui->textBrowserNearestInfo, html.getHtml(), scrollToTop, !scrollToTop /* keep selection */);
     }
 
     foundAirport = true;
@@ -902,8 +896,7 @@ void InfoController::showInformationInternal(map::MapResult result, bool showWin
 
     if(foundAirspace)
       // Update and keep scroll position
-      atools::gui::util::updateTextEdit(ui->textBrowserAirspaceInfo, html.getHtml(),
-                                        false /* scroll to top*/, true /* keep selection */);
+      updateTextEdit(ui->textBrowserAirspaceInfo, html.getHtml(), false /* scroll to top*/, true /* keep selection */);
 
     // Online Center ==================================
     if(result.hasOnlineAirspaces())
@@ -947,8 +940,7 @@ void InfoController::showInformationInternal(map::MapResult result, bool showWin
 
     if(foundOnlineCenter)
       // Update and keep scroll position
-      atools::gui::util::updateTextEdit(ui->textBrowserCenterInfo, html.getHtml(),
-                                        false /* scroll to top*/, true /* keep selection */);
+      updateTextEdit(ui->textBrowserCenterInfo, html.getHtml(), false /* scroll to top*/, true /* keep selection */);
   }
 
   // Logbook Entries ================================================================
@@ -969,8 +961,7 @@ void InfoController::showInformationInternal(map::MapResult result, bool showWin
 
     if(foundLogbookEntry)
       // Update and keep scroll position
-      atools::gui::util::updateTextEdit(ui->textBrowserLogbookInfo, html.getHtml(),
-                                        false /* scroll to top*/, true /* keep selection */);
+      updateTextEdit(ui->textBrowserLogbookInfo, html.getHtml(), false /* scroll to top*/, true /* keep selection */);
     else
       ui->textBrowserLogbookInfo->clear();
 
@@ -1139,8 +1130,7 @@ bool InfoController::updateNavaidInternal(const map::MapResult& result, bool bea
     html.clear();
 
   if(foundNavaid || forceUpdate)
-    atools::gui::util::updateTextEdit(ui->textBrowserNavaidInfo, html.getHtml(),
-                                      scrollToTop, !scrollToTop /* keep selection */);
+    updateTextEdit(ui->textBrowserNavaidInfo, html.getHtml(), scrollToTop, !scrollToTop /* keep selection */);
 
   return foundNavaid;
 }
@@ -1164,8 +1154,7 @@ bool InfoController::updateUserpointInternal(const map::MapResult& result, bool 
   }
 
   if(foundUserpoint)
-    atools::gui::util::updateTextEdit(ui->textBrowserUserpointInfo, html.getHtml(),
-                                      scrollToTop, !scrollToTop /* keep selection */);
+    updateTextEdit(ui->textBrowserUserpointInfo, html.getHtml(), scrollToTop, !scrollToTop /* keep selection */);
   else
     ui->textBrowserUserpointInfo->clear();
 
@@ -1223,8 +1212,7 @@ void InfoController::updateUserAircraftText()
         HtmlBuilder html(true /* has background color */);
         infoBuilder->aircraftText(lastSimData.getUserAircraftConst(), html);
         infoBuilder->aircraftTextWeightAndFuel(lastSimData.getUserAircraftConst(), html);
-        atools::gui::util::updateTextEdit(ui->textBrowserAircraftInfo, html.getHtml(),
-                                          false /* scroll to top*/, true /* keep selection */);
+        updateTextEdit(ui->textBrowserAircraftInfo, html.getHtml(), false /* scroll to top*/, true /* keep selection */);
       }
       ui->textBrowserAircraftInfo->setToolTip(QString());
       ui->textBrowserAircraftInfo->setStatusTip(QString());
@@ -1259,8 +1247,7 @@ void InfoController::updateAircraftProgressText()
         HtmlBuilder html(true /* has background color */);
         html.setIdBits(aircraftProgressConfig->getEnabledBits());
         infoBuilder->aircraftProgressText(lastSimData.getUserAircraftConst(), html, NavApp::getRouteConst());
-        atools::gui::util::updateTextEdit(ui->textBrowserAircraftProgressInfo, html.getHtml(),
-                                          false /* scroll to top*/, true /* keep selection */);
+        updateTextEdit(ui->textBrowserAircraftProgressInfo, html.getHtml(), false /* scroll to top*/, true /* keep selection */);
       }
       ui->textBrowserAircraftProgressInfo->setToolTip(QString());
       ui->textBrowserAircraftProgressInfo->setStatusTip(QString());
@@ -1305,8 +1292,7 @@ void InfoController::updateAiAircraftText()
             num++;
           }
 
-          atools::gui::util::updateTextEdit(ui->textBrowserAircraftAiInfo, html.getHtml(),
-                                            false /* scroll to top*/, true /* keep selection */);
+          updateTextEdit(ui->textBrowserAircraftAiInfo, html.getHtml(), false /* scroll to top*/, true /* keep selection */);
         }
         else
         {
@@ -1319,8 +1305,7 @@ void InfoController::updateAiAircraftText()
           text += tr("No AI or multiplayer aircraft selected.<br/>"
                      "Found %1 AI or multiplayer aircraft.").
                   arg(numAi > 0 ? QLocale().toString(numAi) : tr("no"));
-          atools::gui::util::updateTextEdit(ui->textBrowserAircraftAiInfo, text,
-                                            false /* scroll to top*/, true /* keep selection */);
+          updateTextEdit(ui->textBrowserAircraftAiInfo, text, false /* scroll to top*/, true /* keep selection */);
         }
       }
       ui->textBrowserAircraftAiInfo->setToolTip(QString());
@@ -1545,4 +1530,10 @@ const QBitArray& InfoController::getEnabledProgressBits() const
 const QBitArray& InfoController::getEnabledProgressBitsWeb() const
 {
   return aircraftProgressConfig->getEnabledBitsWeb();
+}
+
+void InfoController::updateTextEdit(QTextEdit *textEdit, const QString& text, bool scrollToTop, bool keepSelection)
+{
+  // Clear selection if textEdit was in anchorsClicked and removed
+  atools::gui::util::updateTextEdit(textEdit, text, scrollToTop, keepSelection, anchorsClicked.remove(textEdit));
 }
