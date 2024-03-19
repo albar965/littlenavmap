@@ -328,9 +328,7 @@ public:
 
 private:
   /* Section header. <h4> for information and <b> for tooltip */
-  void head(atools::util::HtmlBuilder& html, const QString& text,
-            const QString& mapText = QString(), const QString& mapHref = QString(),
-            const QString& infoText = QString(), const QString& infoHref = QString()) const;
+  void head(atools::util::HtmlBuilder& html, const QString& text, const QStringList& textHref = QStringList()) const;
 
   /* Header with map and information link depending on type */
   void head(atools::util::HtmlBuilder& html, const QString& text, const RouteLeg& leg);
@@ -449,6 +447,8 @@ private:
   void routeInfoText(atools::util::HtmlBuilder& html, int routeIndex, bool recommended) const;
 
   void waypointAirwayText(const map::MapWaypoint& waypoint, atools::util::HtmlBuilder& html) const;
+  void airportProcedureLinkTexts(QString& text, QString& href, const map::MapAirport& airport) const;
+  void airportProcedureLinks(atools::util::HtmlBuilder& html, const map::MapAirport& airport) const;
 
   /* Airport, navaid and userpoint icon size */
   QSize symbolSize = QSize(18, 18);
