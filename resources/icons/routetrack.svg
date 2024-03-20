@@ -2,19 +2,19 @@
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
 
 <svg
-   xmlns:dc="http://purl.org/dc/elements/1.1/"
-   xmlns:cc="http://creativecommons.org/ns#"
-   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-   xmlns:svg="http://www.w3.org/2000/svg"
-   xmlns="http://www.w3.org/2000/svg"
-   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
-   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    version="1.0"
    width="149.92134"
    height="140.26547"
    id="svg2"
-   inkscape:version="0.92.4 (5da689c313, 2019-01-14)"
-   sodipodi:docname="routetrack.svg">
+   inkscape:version="1.2.2 (b0a8486541, 2022-12-01)"
+   sodipodi:docname="routetrack.svg"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:dc="http://purl.org/dc/elements/1.1/">
   <metadata
      id="metadata17">
     <rdf:RDF>
@@ -23,7 +23,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -52,7 +52,10 @@
      fit-margin-top="0"
      fit-margin-left="0"
      fit-margin-right="0"
-     fit-margin-bottom="0">
+     fit-margin-bottom="0"
+     inkscape:showpageshadow="2"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1">
     <inkscape:grid
        type="xygrid"
        id="grid8410"
@@ -99,16 +102,14 @@
        height="73.095222"
        x="71.12944"
        y="200.63742" />
-    <text
-       xml:space="preserve"
-       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;line-height:0%;font-family:'Courier New';-inkscape-font-specification:'Courier New Bold';letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       x="74.579124"
-       y="265.89548"
-       id="text17213"><tspan
-         sodipodi:role="line"
-         id="tspan17215"
-         x="74.579124"
-         y="265.89548"
-         style="font-size:93.33885956px;line-height:1.25">T</tspan></text>
+    <g
+       aria-label="T"
+       id="text17213"
+       style="font-weight:bold;line-height:0%;font-family:'Courier New';-inkscape-font-specification:'Courier New Bold';letter-spacing:0px;word-spacing:0px;stroke-width:1px">
+      <path
+         d="m 107.12013,220.00081 v 36.55166 h 6.28943 q 3.3726,0 4.78545,1.3217 1.45842,1.27611 1.45842,3.37259 0,2.05091 -1.45842,3.3726 -1.41285,1.27612 -4.78545,1.27612 h -21.8763 q -3.372597,0 -4.831017,-1.27612 -1.412845,-1.32169 -1.412845,-3.41817 0,-2.05091 1.412845,-3.32702 1.45842,-1.3217 4.831017,-1.3217 h 6.243862 V 220.00081 H 87.659331 v 8.84168 q 0,3.37259 -1.321693,4.83101 -1.276118,1.41285 -3.372597,1.41285 -2.050903,0 -3.372597,-1.41285 -1.276118,-1.45842 -1.276118,-4.83101 v -18.23026 l 48.401324,0.0456 v 18.18468 q 0,3.37259 -1.32169,4.83101 -1.27612,1.41285 -3.3726,1.41285 -2.0509,0 -3.3726,-1.41285 -1.27612,-1.45842 -1.27612,-4.83101 v -8.84168 z"
+         style="font-size:93.3389px;line-height:1.25"
+         id="path399" />
+    </g>
   </g>
 </svg>

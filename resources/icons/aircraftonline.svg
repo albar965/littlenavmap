@@ -6,7 +6,7 @@
    width="128"
    height="128"
    id="svg1655"
-   inkscape:version="1.1.2 (0a00cf5339, 2022-02-04)"
+   inkscape:version="1.2.2 (b0a8486541, 2022-12-01)"
    sodipodi:docname="aircraftonline.svg"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
@@ -46,7 +46,9 @@
      inkscape:window-y="24"
      inkscape:window-maximized="1"
      inkscape:current-layer="svg1655"
-     inkscape:pagecheckerboard="0" />
+     inkscape:pagecheckerboard="0"
+     inkscape:showpageshadow="2"
+     inkscape:deskcolor="#d1d1d1" />
   <defs
      id="defs1658" />
   <g
@@ -121,15 +123,13 @@
      height="61.546532"
      x="63.441055"
      y="61.074009" />
-  <text
-     xml:space="preserve"
-     style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;line-height:0%;font-family:'Courier New';-inkscape-font-specification:'Courier New Bold';letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-     x="71.294769"
-     y="113.44746"
-     id="text17209"><tspan
-       sodipodi:role="line"
-       id="tspan17211"
-       x="71.294769"
-       y="113.44746"
-       style="font-size:72.0074px;line-height:1.25">O</tspan></text>
+  <g
+     aria-label="O"
+     id="text17209"
+     style="font-weight:bold;line-height:0%;font-family:'Courier New';-inkscape-font-specification:'Courier New Bold';letter-spacing:0px;word-spacing:0px;stroke-width:1px">
+    <path
+       d="m 113.13501,92.140579 q 0,9.598641 -6.11782,15.997741 -6.08266,6.36393 -14.099105,6.36393 -7.207772,0 -13.009149,-5.30914 -7.172612,-6.57489 -7.172612,-17.052531 0,-10.477639 7.172612,-17.087694 5.801377,-5.309139 13.009149,-5.309139 8.016445,0 14.099105,6.399095 6.11782,6.363935 6.11782,15.997738 z m -7.20778,0 q 0,-6.574894 -3.97306,-10.864398 -3.973064,-4.324663 -9.036085,-4.324663 -5.02786,0 -9.000925,4.324663 -3.973064,4.324663 -3.973064,10.864398 0,6.539735 3.973064,10.864401 3.973065,4.2895 9.000925,4.2895 5.063021,0 9.036085,-4.2895 3.97306,-4.289506 3.97306,-10.864401 z"
+       style="font-size:72.0074px;line-height:1.25"
+       id="path254" />
+  </g>
 </svg>

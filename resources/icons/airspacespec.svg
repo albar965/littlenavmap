@@ -2,19 +2,19 @@
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
 
 <svg
-   xmlns:dc="http://purl.org/dc/elements/1.1/"
-   xmlns:cc="http://creativecommons.org/ns#"
-   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-   xmlns:svg="http://www.w3.org/2000/svg"
-   xmlns="http://www.w3.org/2000/svg"
-   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
-   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    version="1.0"
    width="300"
    height="300"
    id="svg2"
-   inkscape:version="0.91 r13725"
-   sodipodi:docname="airspacespec.svg">
+   inkscape:version="1.2.2 (b0a8486541, 2022-12-01)"
+   sodipodi:docname="airspacespec.svg"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:dc="http://purl.org/dc/elements/1.1/">
   <metadata
      id="metadata17">
     <rdf:RDF>
@@ -52,7 +52,10 @@
      fit-margin-top="0"
      fit-margin-left="0"
      fit-margin-right="0"
-     fit-margin-bottom="0">
+     fit-margin-bottom="0"
+     inkscape:showpageshadow="2"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1">
     <inkscape:grid
        type="xygrid"
        id="grid8410"
@@ -279,16 +282,26 @@
        height="90.584045"
        x="9.2706184"
        y="183.4227" />
-    <text
-       xml:space="preserve"
-       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:70px;line-height:125%;font-family:sans-serif;-inkscape-font-specification:'sans-serif Bold';letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       x="14.520279"
-       y="254.57913"
+    <g
+       aria-label="SPEC"
        id="text4422"
-       sodipodi:linespacing="125%"><tspan
-         sodipodi:role="line"
-         id="tspan4424"
-         x="14.520279"
-         y="254.57913">SPEC</tspan></text>
+       style="font-weight:bold;line-height:0%;-inkscape-font-specification:'sans-serif Bold';letter-spacing:0px;word-spacing:0px;stroke-width:1px">
+      <path
+         d="m 50.290279,240.71913 q 0,6.65 -4.83,10.64 -4.76,3.92 -13.58,3.92 -7.91,0 -14.14,-3.01 v -9.87 q 3.57,1.54 7.35,2.87 3.85,1.26 7.63,1.26 3.92,0 5.53,-1.47 1.68,-1.54 1.68,-3.85 0,-1.89 -1.33,-3.22 -1.26,-1.33 -3.43,-2.45 -2.17,-1.19 -4.97,-2.52 -1.75,-0.84 -3.78,-1.96 -2.03,-1.19 -3.92,-2.87 -1.82,-1.75 -3.01,-4.2 -1.19,-2.45 -1.19,-5.88 0,-6.72 4.55,-10.43 4.55,-3.78 12.39,-3.78 3.92,0 7.42,0.91 3.57,0.91 7.42,2.59 l -3.43,8.26 q -3.43,-1.4 -6.16,-2.17 -2.73,-0.77 -5.6,-0.77 -3.01,0 -4.62,1.4 -1.61,1.4 -1.61,3.64 0,2.66 2.38,4.2 2.38,1.54 7.07,3.78 3.85,1.82 6.51,3.78 2.73,1.96 4.2,4.62 1.47,2.66 1.47,6.58 z"
+         style="font-size:70px;line-height:1.25"
+         id="path381" />
+      <path
+         d="m 75.350321,204.59913 q 9.66,0 14.07,4.2 4.48,4.13 4.48,11.41 0,4.34 -1.82,8.19 -1.82,3.78 -6.09,6.09 -4.2,2.31 -11.48,2.31 h -4.55 v 17.78 h -10.57 v -49.98 z m -0.56,8.68 h -4.83 v 14.84 h 3.5 q 4.48,0 7.07,-1.75 2.66,-1.82 2.66,-5.81 0,-7.28 -8.4,-7.28 z"
+         style="font-size:70px;line-height:1.25"
+         id="path383" />
+      <path
+         d="m 132.12034,254.57913 h -28.77 v -49.98 h 28.77 v 8.68 h -18.2 v 10.99 h 16.94 v 8.68 h -16.94 v 12.88 h 18.2 z"
+         style="font-size:70px;line-height:1.25"
+         id="path385" />
+      <path
+         d="m 163.76031,212.71913 q -6.09,0 -9.31,4.55 -3.22,4.55 -3.22,12.46 0,7.98 2.94,12.39 3.01,4.34 9.59,4.34 3.08,0 6.09,-0.7 3.08,-0.7 6.65,-1.96 v 8.89 q -3.29,1.33 -6.51,1.96 -3.22,0.63 -7.21,0.63 -7.7,0 -12.74,-3.15 -4.97,-3.22 -7.35,-8.96 -2.38,-5.81 -2.38,-13.51 0,-7.56 2.73,-13.37 2.73,-5.81 7.91,-9.1 5.25,-3.29 12.81,-3.29 3.71,0 7.42,0.98 3.78,0.91 7.21,2.52 l -3.43,8.61 q -2.8,-1.33 -5.67,-2.31 -2.8,-0.98 -5.53,-0.98 z"
+         style="font-size:70px;line-height:1.25"
+         id="path387" />
+    </g>
   </g>
 </svg>
