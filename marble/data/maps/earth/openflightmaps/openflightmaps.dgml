@@ -21,6 +21,7 @@
       <license short="© open flightmaps">open flightmaps and Open Flight Maps Database (OFMDb) under the OFMA General Users License</license>
       <description><![CDATA[<p>High quality VFR maps provided by the open flightmaps association (OFMA).</p>]]></description>
       <icon pixmap="openflightmaps.png"/>
+      <shortcut>Ctrl+Alt+2</shortcut>
       <zoom>
         <discrete>true</discrete>
         <minimum>900</minimum>

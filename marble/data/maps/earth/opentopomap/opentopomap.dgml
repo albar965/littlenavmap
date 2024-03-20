@@ -14,6 +14,7 @@
       <target>earth</target>
       <theme>opentopomap</theme>
       <icon pixmap="opentopomap-preview.png"/>
+      <shortcut>Ctrl+Alt+4</shortcut>
       <visible>true</visible>
       <description><![CDATA[<p><i>OpenTopoMap</i> is a free topographic map which has been created from OpenStreetMap and SRTM data. The map style is inspired by official maps and focuses on legibility through high contrast and balanced signatures.</p>]]></description>
       <zoom>

@@ -485,6 +485,8 @@ MapTheme MapThemeHandler::loadTheme(const QFileInfo& dgml)
             theme.theme = reader.readElementText().simplified();
           else if(reader.name() == "visible")
             theme.visible = reader.readElementText().simplified().toLower() == "true";
+          else if(reader.name() == "shortcut")
+            theme.shortcut = reader.readElementText().simplified();
           else if(reader.name() == "url")
           {
             theme.urlRef = reader.attributes().value("href").toString();
@@ -649,6 +651,7 @@ QDebug operator<<(QDebug out, const MapTheme& theme)
       << "textureLayer" << theme.textureLayer
       << "geodataLayer" << theme.geodataLayer
       << "discrete" << theme.discrete
+      << "shortcut" << theme.shortcut
       << ")";
   return out;
 }
@@ -711,6 +714,7 @@ void MapThemeHandler::setupMapThemesUi()
   // Add all found map themes ====================================
   bool online = true;
   int index = 0;
+  QSet<QString> shortcuts;
   // Sort order is always online/offline and then alphabetical
   for(const MapTheme& theme : getThemes())
   {
@@ -745,9 +749,17 @@ void MapThemeHandler::setupMapThemesUi()
     // Attach theme name for theme in MapThemeHandler
     action->setData(theme.getThemeId());
 
-    // Add keyboard shortcut for top 10 themes
-    if(index < 10)
-      action->setShortcut(tr("Ctrl+Alt+%1").arg(index));
+    if(!theme.getShortcut().isEmpty())
+    {
+      if(!shortcuts.contains(theme.getShortcut().toLower()))
+      {
+        shortcuts.insert(theme.getShortcut().toLower());
+        // Add keyboard shortcut from DGML
+        action->setShortcut(theme.getShortcut());
+      }
+      else
+        qWarning() << Q_FUNC_INFO << "Duplicate shortcut in theme" << theme;
+    }
 
     buttonMenu->addAction(action);
 

@@ -13,6 +13,7 @@
             <target>earth</target>
             <theme>plain</theme>
             <icon pixmap="plain-preview.png"/>
+            <shortcut>Ctrl+Alt+6</shortcut>
 
             <!-- describes whether the map theme item will be hidden (e.g.
                 for a clouds layer): -->

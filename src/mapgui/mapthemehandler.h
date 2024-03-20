@@ -100,6 +100,12 @@ public:
     return target;
   }
 
+  /* Keyboard shortcut */
+  const QString& getShortcut() const
+  {
+    return shortcut;
+  }
+
   /* Name as found in the DGML file for tag "url" in "header". */
   const QString& getUrlName() const
   {
@@ -165,7 +171,7 @@ private:
 
   int index = -1;
   QString dgmlFilepath, /* Canonical path of DGML file */
-          name, copyright, theme, target, urlName, urlRef;
+          name, copyright, theme, target, urlName, urlRef, shortcut;
   QStringList sourceDirs, keys, downloadHosts;
   bool textureLayer = false, geodataLayer = false, discrete = false, visible = false, online = false;
 };
