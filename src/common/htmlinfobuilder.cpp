@@ -546,10 +546,10 @@ void HtmlInfoBuilder::airportText(const MapAirport& airport, const map::WeatherC
   {
     MapAirport airportNav = mapQuery->getAirportNav(airport);
 
-    html.small(QString("Database: airport_id = %1, ident = %2, navdata %3, xp %4)").
-               arg(airport.getId()).arg(airport.ident).arg(airport.navdata).arg(airport.xplane)).br();
-    html.small(QString("Navdatabase: airport_id = %1, ident = %2, navdata %3, xp %4)").
-               arg(airportNav.getId()).arg(airportNav.ident).arg(airportNav.navdata).arg(airportNav.xplane)).br();
+    html.small(QString("Database: airport_id = %1, ident = %2, navdata %3, xp %4, magvar %5").
+               arg(airport.getId()).arg(airport.ident).arg(airport.navdata).arg(airport.xplane).arg(airport.magvar)).br();
+    html.small(QString("Navdatabase: airport_id = %1, ident = %2, navdata %3, xp %4, magvar %5").
+               arg(airportNav.getId()).arg(airportNav.ident).arg(airportNav.navdata).arg(airportNav.xplane).arg(airport.magvar)).br();
   }
 #endif
 }
@@ -930,8 +930,10 @@ void HtmlInfoBuilder::runwayText(const MapAirport& airport, HtmlBuilder& html, b
         {
 #ifdef DEBUG_INFORMATION_INFO
           html.small(QString("Database: runway_id = %1").arg(rec.valueInt("runway_id"))).br();
-          html.small(QString("Database: Primary runway_end_id = %1").arg(recPrim->valueInt("runway_end_id"))).br();
-          html.small(QString("Database: Secondary runway_end_id = %1").arg(recSec->valueInt("runway_end_id"))).br();
+          html.small(QString("Database: Primary runway_end_id = %1, heading = %2").
+                     arg(recPrim->valueInt("runway_end_id")).arg(recPrim->valueFloat("heading"))).br();
+          html.small(QString("Database: Secondary runway_end_id = %1, heading = %2").
+                     arg(recSec->valueInt("runway_end_id")).arg(recSec->valueFloat("heading"))).br();
 #endif
         }
       }
