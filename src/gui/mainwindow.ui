@@ -7502,13 +7502,13 @@ relation to shown airport</string>
      <normaloff>:/littlenavmap/resources/icons/airwayvictor.svg</normaloff>:/littlenavmap/resources/icons/airwayvictor.svg</iconset>
    </property>
    <property name="text">
-    <string>Show &amp;Victor Airways</string>
+    <string>Show &amp;Low Airways</string>
    </property>
    <property name="toolTip">
-    <string>Show Victor airways on map</string>
+    <string>Show low (Victor) airways on map</string>
    </property>
    <property name="statusTip">
-    <string>Show Victor airways on map</string>
+    <string>Show low (Victor) airways on map</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+V</string>
@@ -7523,13 +7523,13 @@ relation to shown airport</string>
      <normaloff>:/littlenavmap/resources/icons/airwayjet.svg</normaloff>:/littlenavmap/resources/icons/airwayjet.svg</iconset>
    </property>
    <property name="text">
-    <string>Show &amp;Jet Airways</string>
+    <string>Show &amp;High Airways</string>
    </property>
    <property name="toolTip">
-    <string>Show Jet airways on map</string>
+    <string>Show high (Jet) airways on map</string>
    </property>
    <property name="statusTip">
-    <string>Show Jet airways on map</string>
+    <string>Show high (Jet) airways on map</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+J</string>

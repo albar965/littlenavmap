@@ -209,14 +209,14 @@ void MapVisible::updateVisibleObjectsStatusBar()
 
       if(layer->isAirway() && shown.testFlag(map::AIRWAYV))
       {
-        navaidLabel.append(tr("VA"));
-        navaidsTooltip.append(tr("Victor Airways (VA)"));
+        navaidLabel.append(tr("LA"));
+        navaidsTooltip.append(tr("Low Airways (LA)"));
       }
 
       if(layer->isAirway() && shown.testFlag(map::AIRWAYJ))
       {
-        navaidLabel.append(tr("JA"));
-        navaidsTooltip.append(tr("Jet Airways (JA)"));
+        navaidLabel.append(tr("HA"));
+        navaidsTooltip.append(tr("High Airways (HA)"));
       }
 
       if(layer->isTrack() && shown.testFlag(map::TRACK))

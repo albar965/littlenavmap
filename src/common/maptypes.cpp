@@ -1291,10 +1291,10 @@ QString airwayTrackTypeToShortString(MapAirwayTrackType type)
       return QObject::tr("A");
 
     case map::AIRWAY_VICTOR:
-      return QObject::tr("V");
+      return QObject::tr("L");
 
     case map::AIRWAY_JET:
-      return QObject::tr("J");
+      return QObject::tr("H");
 
     case map::AIRWAY_BOTH:
       return QObject::tr("B");
@@ -1320,10 +1320,10 @@ QString airwayTrackTypeToString(MapAirwayTrackType type)
       return QObject::tr("AUSOTS");
 
     case map::AIRWAY_VICTOR:
-      return QObject::tr("Victor");
+      return QObject::tr("Low");
 
     case map::AIRWAY_JET:
-      return QObject::tr("Jet");
+      return QObject::tr("High");
 
     case map::AIRWAY_BOTH:
       return QObject::tr("Both");
@@ -1334,17 +1334,17 @@ QString airwayTrackTypeToString(MapAirwayTrackType type)
 
 MapAirwayTrackType airwayTrackTypeFromString(const QString& typeStr)
 {
-  if(typeStr.startsWith("V"))
+  if(typeStr.startsWith('V') || typeStr.startsWith('L'))
     return map::AIRWAY_VICTOR;
-  else if(typeStr.startsWith("J"))
+  else if(typeStr.startsWith('J') || typeStr.startsWith('H'))
     return map::AIRWAY_JET;
-  else if(typeStr.startsWith("B"))
+  else if(typeStr.startsWith('B'))
     return map::AIRWAY_BOTH;
-  else if(typeStr.startsWith("N"))
+  else if(typeStr.startsWith('N'))
     return map::TRACK_NAT;
-  else if(typeStr.startsWith("P"))
+  else if(typeStr.startsWith('P'))
     return map::TRACK_PACOTS;
-  else if(typeStr.startsWith("A"))
+  else if(typeStr.startsWith('A'))
     return map::TRACK_AUSOTS;
   else
     return map::NO_AIRWAY;
@@ -1965,7 +1965,8 @@ QDebug operator<<(QDebug out, const MapBase& obj)
 QDebug operator<<(QDebug out, const MapRef& ref)
 {
   QDebugStateSaver saver(out);
-  out.noquote().nospace() << "MapObjectRef[" << "id " << ref.id << ", type " << ref.objType << "]"; return out;
+  out.noquote().nospace() << "MapObjectRef[" << "id " << ref.id << ", type " << ref.objType << "]";
+  return out;
 }
 
 QDebug operator<<(QDebug out, const MapRefExt& ref)
