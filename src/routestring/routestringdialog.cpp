@@ -17,6 +17,7 @@
 
 #include "routestring/routestringdialog.h"
 
+#include "atools.h"
 #include "common/constants.h"
 #include "gui/helphandler.h"
 #include "gui/tools.h"
@@ -43,6 +44,7 @@ const static int TEXT_CHANGE_DELAY_MS = 500;
 using atools::gui::HelpHandler;
 namespace apln = atools::fs::pln;
 
+// =================================================================================================
 /* Makes first block bold and rest gray to indicate active description text. */
 class SyntaxHighlighter :
   public QSyntaxHighlighter
@@ -87,9 +89,38 @@ void SyntaxHighlighter::highlightBlock(const QString& text)
 }
 
 // =================================================================================================
-// =================================================================================================
-// =================================================================================================
+class TextEditEventFilter :
+  public QObject
+{
 
+public:
+  TextEditEventFilter(RouteStringDialog *parent)
+    : QObject(parent), dialog(parent)
+  {
+  }
+
+private:
+  virtual bool eventFilter(QObject *object, QEvent *event) override;
+
+  RouteStringDialog *dialog;
+};
+
+bool TextEditEventFilter::eventFilter(QObject *object, QEvent *event)
+{
+  if(event->type() == QEvent::KeyPress)
+  {
+    QKeyEvent *keyEvent = dynamic_cast<QKeyEvent *>(event);
+    if(keyEvent != nullptr && keyEvent->key() == Qt::Key_Return && keyEvent->modifiers() == Qt::ControlModifier)
+    {
+      dialog->createPlanAndKeepOpen();
+      return true;
+    }
+  }
+
+  return QObject::eventFilter(object, event);
+}
+
+// =================================================================================================
 RouteStringDialog::RouteStringDialog(QWidget *parent, const QString& settingsSuffixParam)
   : QDialog(parent), ui(new Ui::RouteStringDialog), settingsSuffix(settingsSuffixParam)
 {
@@ -204,23 +235,28 @@ RouteStringDialog::RouteStringDialog(QWidget *parent, const QString& settingsSuf
   connect(&textUpdateTimer, &QTimer::timeout, this, &RouteStringDialog::textChangedDelayed);
   textUpdateTimer.setSingleShot(true);
 
+  eventFilter = new TextEditEventFilter(this);
+  ui->textEditRouteString->installEventFilter(eventFilter);
+
   // Apply splitter and text formats
   styleChanged();
 }
 
 RouteStringDialog::~RouteStringDialog()
 {
+  ui->textEditRouteString->removeEventFilter(eventFilter);
   sytaxHighlighter->setDocument(nullptr);
-  delete sytaxHighlighter;
+  ATOOLS_DELETE_LOG(sytaxHighlighter);
 
   textUpdateTimer.stop();
-  delete routeStringWriter;
-  delete routeStringReader;
-  delete procActionGroup;
-  delete advancedMenu;
-  delete buttonMenu;
-  delete ui;
-  delete flightplan;
+  ATOOLS_DELETE_LOG(routeStringWriter);
+  ATOOLS_DELETE_LOG(routeStringReader);
+  ATOOLS_DELETE_LOG(procActionGroup);
+  ATOOLS_DELETE_LOG(advancedMenu);
+  ATOOLS_DELETE_LOG(buttonMenu);
+  ATOOLS_DELETE_LOG(ui);
+  ATOOLS_DELETE_LOG(flightplan);
+  ATOOLS_DELETE_LOG(eventFilter);
 }
 
 void RouteStringDialog::buildButtonMenu()
@@ -655,20 +691,22 @@ void RouteStringDialog::buttonBoxClicked(QAbstractButton *button)
     }
   }
   else if(button == ui->buttonBoxRouteString->button(QDialogButtonBox::Apply))
-  {
     // Create and keep open - only on non-modal, not on SimBrief =====================================
-
-    // Plan type from combo box
-    updateTypeToFlightplan();
-
-    // Floating window - Create a new flight plan and use undo/redo - keep non-modal dialog open - do not mark plan as changed
-    emit routeFromFlightplan(*flightplan, !isAltitudeIncluded() /* adjustAltitude */, false /* changed */, true /* undo */);
-  }
+    createPlanAndKeepOpen();
   else if(button == ui->buttonBoxRouteString->button(QDialogButtonBox::Help))
     HelpHandler::openHelpUrlWeb(this, lnm::helpOnlineUrl + "ROUTEDESCR.html", lnm::helpLanguageOnline());
   else if(button == ui->buttonBoxRouteString->button(QDialogButtonBox::Close) ||
           button == ui->buttonBoxRouteString->button(QDialogButtonBox::Cancel))
     QDialog::reject();
+}
+
+void RouteStringDialog::createPlanAndKeepOpen()
+{
+  // Plan type from combo box
+  updateTypeToFlightplan();
+
+  // Floating window - Create a new flight plan and use undo/redo - keep non-modal dialog open - do not mark plan as changed
+  emit routeFromFlightplan(*flightplan, !isAltitudeIncluded() /* adjustAltitude */, false /* changed */, true /* undo */);
 }
 
 void RouteStringDialog::textEditRouteStringPrepend(const QString& text, bool newline)

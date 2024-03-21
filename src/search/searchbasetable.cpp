@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -54,6 +54,7 @@ using atools::gui::ActionTool;
 /* When using distance search delay the update the table after 500 milliseconds */
 const int DISTANCE_EDIT_UPDATE_TIMEOUT_MS = 500;
 
+// ==================================================================================
 class ViewEventFilter :
   public QObject
 {
@@ -74,21 +75,18 @@ bool ViewEventFilter::eventFilter(QObject *object, QEvent *event)
 {
   if(event->type() == QEvent::KeyPress)
   {
-    QKeyEvent *pKeyEvent = dynamic_cast<QKeyEvent *>(event);
-    if(pKeyEvent != nullptr)
+    QKeyEvent *keyEvent = dynamic_cast<QKeyEvent *>(event);
+    if(keyEvent != nullptr && keyEvent->key() == Qt::Key_Return)
     {
-      switch(pKeyEvent->key())
-      {
-        case Qt::Key_Return:
-          searchBase->showSelectedEntry();
-          return true;
-      }
+      searchBase->showSelectedEntry();
+      return true;
     }
   }
 
   return QObject::eventFilter(object, event);
 }
 
+// ==================================================================================
 class SearchWidgetEventFilter :
   public QObject
 {
@@ -109,10 +107,10 @@ bool SearchWidgetEventFilter::eventFilter(QObject *object, QEvent *event)
 {
   if(event->type() == QEvent::KeyPress)
   {
-    QKeyEvent *pKeyEvent = dynamic_cast<QKeyEvent *>(event);
-    if(pKeyEvent != nullptr)
+    QKeyEvent *keyEvent = dynamic_cast<QKeyEvent *>(event);
+    if(keyEvent != nullptr)
     {
-      switch(pKeyEvent->key())
+      switch(keyEvent->key())
       {
         case Qt::Key_Down:
           searchBase->activateView();
@@ -128,6 +126,7 @@ bool SearchWidgetEventFilter::eventFilter(QObject *object, QEvent *event)
   return QObject::eventFilter(object, event);
 }
 
+// ==================================================================================
 SearchBaseTable::SearchBaseTable(QMainWindow *parent, QTableView *tableView, ColumnList *columnList,
                                  si::TabSearchId tabWidgetIndex)
   : AbstractSearch(parent, tabWidgetIndex), columns(columnList), view(tableView)

@@ -228,6 +228,11 @@ bool RouteStringReader::createRouteFromString(const QString& routeString, rs::Ro
     if(!addDeparture(fp, mapObjectRefs, cleanItems, sidExitWp))
       return false;
 
+    // Add exit waypoint for potential airway matching - duplicates will be removed later
+    // Also needed for destination  selection (MUHA EPMAR3 MAXIM SNDBR3 KMIA)
+    if(!sidExitWp.isEmpty())
+      cleanItems.prepend(sidExitWp);
+
     // Get destination airport and probably STAR and alternates ============================================
     QString starEntryWp; // Entry waypoint of STAR returned to allow airway matching
     if(!addDestination(fp, &alternates, mapObjectRefs, cleanItems, starEntryWp, options))
@@ -237,9 +242,8 @@ bool RouteStringReader::createRouteFromString(const QString& routeString, rs::Ro
     qDebug() << Q_FUNC_INFO << "sidTransWp" << sidExitWp << "starTransWp" << starEntryWp << "cleanItems" << cleanItems;
 #endif
 
-    // Add entry and exit waypoints for potential airway matching - duplicates will be removed later
+    // Add entry waypoint for potential airway matching - duplicates will be removed later
     // Airports and procedures are already consumed from cleanItems at this stage
-    cleanItems.prepend(sidExitWp);
     cleanItems.append(starEntryWp);
 
     // Remove empty entries and all consecutive duplicates

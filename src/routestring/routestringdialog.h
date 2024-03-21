@@ -44,6 +44,7 @@ class RouteController;
 class RouteStringWriter;
 class RouteStringReader;
 class SyntaxHighlighter;
+class TextEditEventFilter;
 
 class RouteStringDialog :
   public QDialog
@@ -96,6 +97,9 @@ public:
   void addRouteDescription(const QString& routeString);
 
   void fontChanged(const QFont& font);
+
+  /* Create flight plan but keep dialog open */
+  void createPlanAndKeepOpen();
 
 signals:
   /* Emitted when user clicks "Create flight plan" */
@@ -157,6 +161,8 @@ private:
 
   /* Makes first section bold and other (scratchpad) gray */
   SyntaxHighlighter *sytaxHighlighter;
+
+  TextEditEventFilter *eventFilter = nullptr;
 };
 
 #endif // LITTLENAVMAP_ROUTESTRINGDIALOG_H
