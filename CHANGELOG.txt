@@ -2,6 +2,76 @@
 For example: #3 is https://github.com/albar965/littlenavmap/issues/3.
 This text is partially Markdown, so the formatting is sometimes strange.
 
+# Version 3.0.6.rc1
+
+## Notes
+
+**This is a stable release of Little Navmap which fixes several bugs and adds
+improvements as well as new features.**
+
+**Notable changes:** TODO
+
+**macOS users: Keep in mind that you have to clear the quarantine flag when updating Little Xpconnect. See
+[Clearing the Quarantine Flag on macOS](https://www.littlenavmap.org/manuals/littlenavmap/release/latest/en/XPCONNECT.html#clearing-the-quarantine-flag-on-macos).**
+
+The updated online user manual is available here:
+[Little Navmap - User Manual](https://www.littlenavmap.org/manuals/littlenavmap/release/3.0/en/).
+
+See here for user manual downloads:
+[User Manuals - Stable Releases](https://albar965.github.io/manuals.html#stable).
+
+A big thank you to all who reported bugs and issues!
+
+## Changes from 3.0.5 to 3.0.6.rc1
+
+TODO DRAFT
+
+* Fixed wrong warning for mismatches in procedure search.
+  Showed mismatch warning for runways without procedure.
+* Reworked route description reader
+  Simplified code. Fixed issue with alternate airports having the same STAR as destination: KVHN SSO
+  SUNSS8 KDVT KPHX Fixed issues where airways were not recognized: KCNM WHOLE EWM J4 SUNSS8.SSO KDVT
+  J4 was added as NDB
+* Map theme shortcuts for included themes now defined in DGML file.
+  Assigned Ctrl+Alt+X shortcuts for all free included themes.
+* Converted text in icons to path to avoid display issues in icons
+* Replaced airway types Victor with low and Jet with high
+* More debug output for runways
+* Fixed wrong next waypoint indication when flying missed
+* Shorter texts in progress
+* Added procedure link for destination airport and related navaids
+  Made all internal links like map and info bold.
+* Now clearing unwanted selection after clicking link in progress or info windows
+* Performance collection now saves results on restart.
+* More refactoring and cleanup
+  Removed now unneeded close splash screen code
+* Code cleanup more use of const
+* Now adding backup log file to issue/crash reports
+* Added options for airport runway and taxiway label size
+* Added map and information links in progress tab.
+* Logbook takeoff and landing detection now survive a program restart
+  Improved logbook entry creation to avoid creating of unneeded entries. Flight can now be continued
+  after program restart and logbook entry is updated accordingly. More messages when detecting
+  takeoff and landing. Now detecting off-airport takeoff and landing. Logbook entries get
+  coordinates in degree/minute format as departure and landing position in this case. Runway
+  detection narrowed down.
+* Fixed crash at exit in airport handler
+* Added option for popup messages in status bar.
+  Increased maximum number of messages to 20 Now logging all messages to log file
+* Fixed missing runway when generating route description from departure and approach runways.
+* Removed redundant closeSplashScreen calls
+* Added three add on airport map display options
+  Add-on airports are shown like normal airports Add-on airports override zoom distance only Add-on
+  airports override zoom distance and filters
+  Airport filter actions are now disabled if airports are hidden
+* Fix in Dutch shortcut translation (Ctrl+D vs. Ctrl+Down)
+  Updated German translation
+* Formatting changes in nearest tab
+* Moved splash screen handling to Application
+  Now also closing splash in all dialog windows.
+* Attempt to fix too small table cell height on Windows with high DPI off
+* Added Ctrl+Return key to create flight plan
+
 ==>>=============================================================================
 
 # Version 3.0.5
