@@ -539,13 +539,6 @@ void ProcedureSearch::updateFilterBoxes()
     // Get runway list from simulator
     const QStringList runwayNamesSim = NavApp::getAirportQuerySim()->getRunwayNames(currentAirportSim->id);
 
-    // Now collect all procedure runways which do not exist in simulator
-    for(const QString& runwayNav : runwayNamesNav)
-    {
-      if(!atools::fs::util::runwayContains(runwayNamesSim, runwayNav, false /* fuzzy */))
-        runwayMismatches.append(runwayNav);
-    }
-
     // Add a tree of transitions and approaches
     const SqlRecordList *recProcList = infoQuery->getProcedureInformation(currentAirportNav->id);
 
@@ -576,6 +569,13 @@ void ProcedureSearch::updateFilterBoxes()
       // Sort list of runways and erase duplicates
       std::sort(runways.begin(), runways.end());
       runways.erase(std::unique(runways.begin(), runways.end()), runways.end());
+
+      // Now collect all procedure runways which do not exist in simulator
+      for(const QString& runway : runways)
+      {
+        if(!runway.isEmpty() && !atools::fs::util::runwayContains(runwayNamesSim, runway, false /* fuzzy */))
+          runwayMismatches.append(runway);
+      }
 
       for(const QString& rw : qAsConst(runways))
       {
