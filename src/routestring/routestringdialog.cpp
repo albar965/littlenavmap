@@ -553,7 +553,12 @@ void RouteStringDialog::textChanged()
     // Update without delay timer
     textUpdateTimer.stop();
     immediateUpdate = false;
+
+#ifdef DEBUG_INFORMATION_ROUTE_DESCRIPTION_UPDATE
+    textChangedInternal(true /* forceUpdate */);
+#else
     textChangedInternal(false /* forceUpdate */);
+#endif
   }
   else
     // Calls RouteStringDialog::textChangedDelayed()
@@ -562,13 +567,17 @@ void RouteStringDialog::textChanged()
 
 void RouteStringDialog::textChangedDelayed()
 {
+#ifdef DEBUG_INFORMATION_ROUTE_DESCRIPTION_UPDATE
+  textChangedInternal(true /* forceUpdate */);
+#else
   textChangedInternal(false /* forceUpdate */);
+#endif
 }
 
 void RouteStringDialog::textChangedInternal(bool forceUpdate)
 {
 #ifdef DEBUG_INFORMATION
-  qDebug() << Q_FUNC_INFO;
+  qDebug() << Q_FUNC_INFO << "forceUpdate" << forceUpdate;
 #endif
 
   QString currentRouteString = rs::cleanRouteString(ui->textEditRouteString->toPlainText());
