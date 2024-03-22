@@ -4083,7 +4083,7 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
         // ================================================================================
         // Top of climb  ===============================================================
         html.mark();
-        head(html, tr("Top of Climb%1").arg(distanceToToc < 0.f ? tr(" (passed)") : QString()), route.getTopOfClimbPos());
+        head(html, tr("Top of Climb%1").arg(distanceToToc < 0.01f ? tr(" (passed)") : QString()), route.getTopOfClimbPos());
         html.table();
 
         if(!(distanceToToc < map::INVALID_DISTANCE_VALUE))
@@ -4124,7 +4124,7 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
         // ================================================================================
         // Top of descent  ===============================================================
         html.mark();
-        head(html, tr("Top of Descent%1").arg(distanceToTod < 0.f ? tr(" (passed)") : QString()), route.getTopOfDescentPos());
+        head(html, tr("Top of Descent%1").arg(distanceToTod < 0.01f ? tr(" (passed)") : QString()), route.getTopOfDescentPos());
         html.table();
 
         if(!(distanceToTod < map::INVALID_DISTANCE_VALUE))
