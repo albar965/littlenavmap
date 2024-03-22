@@ -692,10 +692,12 @@ void ProcedureQuery::updateBounding(proc::MapProcedureLegs& legs) const
     }
 
     legs.bounding.extend(leg.fixPos);
+    legs.bounding.extend(leg.recFixPos);
     legs.bounding.extend(leg.interceptPos);
     legs.bounding.extend(leg.line.boundingRect());
     legs.bounding.extend(leg.geometry);
   }
+  legs.bounding.inflate(2000.f, 2000.f);
 }
 
 proc::MapProcedureLegs *ProcedureQuery::fetchProcedureLegs(const map::MapAirport& airport, int procedureId)

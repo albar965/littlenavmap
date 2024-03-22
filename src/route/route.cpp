@@ -37,8 +37,6 @@
 #include <QRegularExpression>
 #include <QStringBuilder>
 
-#include <marble/GeoDataLineString.h>
-
 using atools::geo::Pos;
 using atools::geo::Line;
 using atools::geo::LineString;
@@ -2233,16 +2231,25 @@ void Route::calculateLegAltitudes()
 /* Update the bounding rect using marble functions to catch anti meridian overlap */
 void Route::updateBoundingRect()
 {
-  Marble::GeoDataLineString line;
+  const static std::initializer_list<map::MapTypes> TYPES =
+  {map::AIRPORT, map::VOR, map::NDB, map::WAYPOINT, map::PROCEDURE_POINT, map::USERPOINTROUTE};
 
-  for(const RouteLeg& routeLeg : qAsConst(*this))
-    if(routeLeg.getPosition().isValid())
-      line.append(Marble::GeoDataCoordinates(routeLeg.getPosition().getLonX(),
-                                             routeLeg.getPosition().getLatY(), 0., Marble::GeoDataCoordinates::Degree));
+  boundingRect = atools::geo::Rect();
 
-  Marble::GeoDataLatLonBox box = Marble::GeoDataLatLonBox::fromLineString(line);
-  boundingRect = atools::geo::Rect(box.west(), box.north(), box.east(), box.south());
-  boundingRect.toDeg();
+  for(const RouteLeg& leg : qAsConst(*this))
+  {
+    boundingRect.extend(leg.getPosition());
+
+    if(leg.isAnyProcedure())
+    {
+      const proc::MapProcedureLeg& procedureLeg = leg.getProcedureLeg();
+      boundingRect.extend(procedureLeg.navaids.getPosition(TYPES));
+      boundingRect.extend(procedureLeg.recNavaids.getPosition(TYPES));
+    }
+  }
+
+  // Inflate to avoid VOR disappearing
+  boundingRect.inflate(2000.f, 2000.f);
 }
 
 void Route::nearestAllLegIndex(const map::PosCourse& pos, float& crossTrackDistanceMeter,

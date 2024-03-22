@@ -260,7 +260,7 @@ void MapPainterRoute::paintRoute()
 void MapPainterRoute::paintRecommended(int passedRouteLeg, QSet<map::MapRef>& idMap)
 {
   // Margins for text at left (VOR), right (waypoints) and below (NDB)
-  const static QMargins MARGINS(50, 10, 50, 20);
+  const static QMargins MARGINS(100, 100, 100, 100);
 
   const Route& route = NavApp::getRouteConst();
   for(int i = passedRouteLeg; i < route.size(); i++)
