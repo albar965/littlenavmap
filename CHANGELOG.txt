@@ -24,53 +24,80 @@ A big thank you to all who reported bugs and issues!
 
 ## Changes from 3.0.5 to 3.0.6.rc1
 
-TODO DRAFT
+### Flight Plan Route Description
 
-* Fixed wrong warning for mismatches in procedure search.
-  Showed mismatch warning for runways without procedure.
-* Reworked route description reader
-  Simplified code. Fixed issue with alternate airports having the same STAR as destination: KVHN SSO
-  SUNSS8 KDVT KPHX Fixed issues where airways were not recognized: KCNM WHOLE EWM J4 SUNSS8.SSO KDVT
-  J4 was added as NDB
-* Map theme shortcuts for included themes now defined in DGML file.
-  Assigned Ctrl+Alt+X shortcuts for all free included themes.
-* Converted text in icons to path to avoid display issues in icons
-* Replaced airway types Victor with low and Jet with high
-* More debug output for runways
-* Fixed wrong next waypoint indication when flying missed
-* Shorter texts in progress
-* Added procedure link for destination airport and related navaids
-  Made all internal links like map and info bold.
-* Now clearing unwanted selection after clicking link in progress or info windows
-* Performance collection now saves results on restart.
-* More refactoring and cleanup
-  Removed now unneeded close splash screen code
-* Code cleanup more use of const
-* Now adding backup log file to issue/crash reports
-* Added options for airport runway and taxiway label size
-* Added map and information links in progress tab.
-* Logbook takeoff and landing detection now survive a program restart
-  Improved logbook entry creation to avoid creating of unneeded entries. Flight can now be continued
-  after program restart and logbook entry is updated accordingly. More messages when detecting
-  takeoff and landing. Now detecting off-airport takeoff and landing. Logbook entries get
-  coordinates in degree/minute format as departure and landing position in this case. Runway
-  detection narrowed down.
-* Fixed crash at exit in airport handler
-* Added option for popup messages in status bar.
-  Increased maximum number of messages to 20 Now logging all messages to log file
-* Fixed missing runway when generating route description from departure and approach runways.
-* Removed redundant closeSplashScreen calls
-* Added three add on airport map display options
-  Add-on airports are shown like normal airports Add-on airports override zoom distance only Add-on
-  airports override zoom distance and filters
-  Airport filter actions are now disabled if airports are hidden
-* Fix in Dutch shortcut translation (Ctrl+D vs. Ctrl+Down)
-  Updated German translation
-* Formatting changes in nearest tab
-* Moved splash screen handling to Application
-  Now also closing splash in all dialog windows.
-* Attempt to fix too small table cell height on Windows with high DPI off
-* Added Ctrl+Return key to create flight plan
+* Fixed issue where STAR keyword was not generated from flight plan in route description.
+  Now always adding generic SID/STAR keywords in export formats like the Rotate MD-80 .txt format
+  to avoid issues when loading plan in FMC.
+* Fixed issue with alternate airports having the same STAR as destination.
+  Example: `KVHN SSO SUNSS8 KDVT KPHX` showed a wrong error message and used KPHX as destination.
+* Fixes in route description where description `MUHA EPMAR3 MAXIM SNDBR3 KMIA` was not recognized
+* Added `Ctrl+Return` shortcut to create flight plan from route description.
+* Fixed issues where airways were not recognized. Example: `KCNM WHOLE EWM J4 SUNSS8.SSO KDVT` where
+  J4 was added as a far off NDB.
+* Fixed plan reset to VFR in route description. Flight plan type is now set from current flight plan
+  type in window `Flight Planning` when clicking `Load from Flight Plan`.
+
+### Flight Plan Export
+
+* Reverted change for degree sign `°` vs. `*` in MSFS PLN flight plan files to avoid issues with
+  third-party software not capable to read this MSFS compatible format.
+* Added new multiexport format `Microsoft Flight Simulator 2020 format using "*" as degree sign`
+  for cases where the simulator or add-ons  cannot deal with the `°` sign.
+* Removed obsolete annotated PLN export. Little Navmap can still read this format from old flight
+  plans.
+
+### Map Display
+
+* Added three add-on airport map display options to menu `View` and toolbar:
+  1. `Add-on no override` (`Ctrl+Alt+O`): Add-on airports are shown like normal airports.
+  2. `Add-on override zoom`  (`Ctrl+Alt+Z`): Add-on airports override zoom distance only but filters
+     like `Soft Surface` can still be used to hide them.
+  3. `Add-on override zoom and filter` (`Ctrl+Alt+Y`): Add-on airports override zoom distance and
+     filters, i.e. are always shown. Filters like `Soft Surface` have no effect on add-on airports.
+* Added airport filter preset `Show only add-on airports` in menu `View` and toolbar.
+* Map theme shortcuts for included themes can now be defined in DGML file.
+* Assigned shortcuts `Ctrl+Alt+0` to `Ctrl+Alt+7` for all default free included map themes.
+  These do not change when adding additional themes.
+* Fixed disappearing related navaids when drawing procedures. This happened when navaid was outside
+  the bounding box of the flight plan.
+* Added options for airport runway labels and taxiway label size on page `Map Display` in section
+  `Airports`.
+
+### User Interface
+
+* Replaced outdated airway types Victor and Jet with low and high everywhere in the program.
+* Fixed too small table cell height on Windows with the high DPI option switched off.
+* Now also closing the startup image splash window in all dialog windows to avoid being hidden.
+  As a result the program looked like frozen since the hidden dialog window blocked input.
+* Fix in Dutch shortcut translation ('Ctrl+D' vs. 'Ctrl+Down') which overlapped with other keys.
+* Fixed wrong warning for runway mismatches in procedure search. Showed unneeded mismatch warning
+  for runways without procedure. Example KSTK.
+* More user interface improvements.
+
+### Aircraft Progress
+
+* Added map, information and procedure links in progress tab for destination airport, top of climb,
+  top of descent, next waypoint and related navaids.
+* Fixed wrong next waypoint indication when flying missed approach.
+
+### Logbook
+
+* Logbook takeoff and landing detection is now kept for program restart.
+* Improved logbook entry creation to avoid creating of unneeded entries. A flight can now be continued
+  after program restart and logbook entry is updated accordingly.
+* Now detecting off-airport takeoff and landing. Logbook entries get coordinates in degree/minute
+  format as departure and landing position in this case.
+
+### Other
+
+* The aircraft performance collection now keeps results on restart. Note that you have to restart
+  the collection manually by clicking in menu `Aircraft` -> `Restart Aircraft Performance Collection`,
+  the button in the window or `File` -> `Reset all for a new Flight`.
+* Now adding backup log file `abarthel-little_navmap.log.1` to issue and crash reports
+* Added new X-Plane 12 VASI types `APAPI_L` and `APAPI_R`.
+* Fixed issue where X-Plane airways had wrong type assigned. Example:
+  EVMON to PAPAL airway Z8 was wrongly declared Jet. #1111
 
 ==>>=============================================================================
 
