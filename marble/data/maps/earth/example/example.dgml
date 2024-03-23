@@ -41,6 +41,10 @@
       <!-- Preview pixmap. Not used in LNM. -->
       <icon pixmap="example-preview.png"/>
 
+      <!-- Optional keyboard shortcut. Allowed are Ctrl+Alt+0 to Ctrl+Alt+9 to avoid overlap with default shortcuts.
+           Omit this element for no shortcut. -->
+      <shortcut>Ctrl+Alt+9</shortcut>
+
       <!-- Set this to "true" for real maps. Otherwise they will not be shown in the LNM menu and toolbar.
            This is set to "false" here to hide the example from the menu. -->
       <visible>false</visible>

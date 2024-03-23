@@ -96,6 +96,7 @@ void MapThemeHandler::loadThemes()
 {
   using atools::util::HtmlBuilder;
   const atools::util::html::Flags FLAGS = atools::util::html::NOBR_WHITESPACE;
+  const static QRegularExpression SHORTCUT_REGEXP("^Ctrl\\+Alt\\+[0-9]?$");
 
   // Load all these from folder
   themes.clear();
@@ -103,6 +104,7 @@ void MapThemeHandler::loadThemes()
   errors.clear();
 
   QHash<QString, MapTheme> ids, sourceDirs;
+  QSet<QString> shortcuts;
   for(const QFileInfo& dgml : findMapThemes({getMapThemeDefaultDir(), getMapThemeUserDir()}))
   {
     MapTheme theme = loadTheme(dgml);
@@ -211,6 +213,31 @@ void MapThemeHandler::loadThemes()
                          "<b>Remove this map theme to avoid this message.</b><br/>").
                       arg(HtmlBuilder::aFilePath(theme.displayPath(), FLAGS)));
         continue;
+      }
+
+      // Check shortcut ============================
+      if(!theme.getShortcut().isEmpty())
+      {
+        if(!SHORTCUT_REGEXP.match(theme.getShortcut()).hasMatch())
+        {
+          errors.append(tr("Map theme"
+                           "%1&nbsp;(click to show)<br/>"
+                           "has an invalid shortcut \"%2\". Only \"Ctrl+Alt+NUMBER\" allowed.<br/>"
+                           "<b>Remove this map theme or adjust element \"&lt;shortcut&gt;\" avoid this message.</b><br/>").
+                        arg(HtmlBuilder::aFilePath(theme.displayPath(), FLAGS)).arg(theme.getShortcut()));
+          continue;
+        }
+        else if(!shortcuts.contains(theme.getShortcut().toLower()))
+          shortcuts.insert(theme.getShortcut().toLower());
+        else
+        {
+          errors.append(tr("Map theme"
+                           "%1&nbsp;(click to show)<br/>"
+                           "has a duplicate shortcut \"%2\".<br/>"
+                           "<b>Remove this map theme or adjust element \"&lt;shortcut&gt;\" avoid this message.</b><br/>").
+                        arg(HtmlBuilder::aFilePath(theme.displayPath(), FLAGS)).arg(theme.getShortcut()));
+          continue;
+        }
       }
 
       ids.insert(theme.theme, theme);
@@ -658,9 +685,8 @@ QDebug operator<<(QDebug out, const MapTheme& theme)
 
 void MapThemeHandler::setupMapThemesUi()
 {
-  Ui::MainWindow *ui = NavApp::getMainUi();
-
   // Map projection =========================================
+  Ui::MainWindow *ui = NavApp::getMainUi();
   delete mapProjectionActionGroup;
   mapProjectionActionGroup = new QActionGroup(this);
   mapProjectionActionGroup->setObjectName("mapProjectionActionGroup");
@@ -714,7 +740,6 @@ void MapThemeHandler::setupMapThemesUi()
   // Add all found map themes ====================================
   bool online = true;
   int index = 0;
-  QSet<QString> shortcuts;
   // Sort order is always online/offline and then alphabetical
   for(const MapTheme& theme : getThemes())
   {
@@ -748,18 +773,7 @@ void MapThemeHandler::setupMapThemesUi()
 
     // Attach theme name for theme in MapThemeHandler
     action->setData(theme.getThemeId());
-
-    if(!theme.getShortcut().isEmpty())
-    {
-      if(!shortcuts.contains(theme.getShortcut().toLower()))
-      {
-        shortcuts.insert(theme.getShortcut().toLower());
-        // Add keyboard shortcut from DGML
-        action->setShortcut(theme.getShortcut());
-      }
-      else
-        qWarning() << Q_FUNC_INFO << "Duplicate shortcut in theme" << theme;
-    }
+    action->setShortcut(theme.getShortcut());
 
     buttonMenu->addAction(action);
 
