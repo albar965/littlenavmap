@@ -21578,222 +21578,232 @@ kHz/MHz</translation>
         <translation type="vanished">esses temas de mapas</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapthemehandler.cpp" line="266"/>
+        <location filename="src/mapgui/mapthemehandler.cpp" line="293"/>
         <source>&lt;b&gt;%1 more %2 found ...&lt;/b&gt;</source>
         <translation>&lt;b&gt;%1 mais %2 encontrado ...&lt;/b&gt;</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapthemehandler.cpp" line="266"/>
+        <location filename="src/mapgui/mapthemehandler.cpp" line="293"/>
         <source>error</source>
         <translation>Erro</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapthemehandler.cpp" line="266"/>
+        <location filename="src/mapgui/mapthemehandler.cpp" line="293"/>
         <source>errors</source>
         <translation>erros</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapthemehandler.cpp" line="271"/>
+        <location filename="src/mapgui/mapthemehandler.cpp" line="298"/>
         <source>&lt;p&gt;Found errors in map %2:&lt;/p&gt;&lt;ul&gt;&lt;li&gt;%1&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;Ignoring duplicate, incorrect or rejected %2.&lt;/p&gt;&lt;p&gt;Note that all other valid map themes are loaded and can be used despite this message.&lt;/p&gt;&lt;p&gt;Restart Little Navmap after fixing the issues.&lt;/p&gt;</source>
         <translation>&lt;p&gt;Erros encontrados no mapa %2:&lt;/p&gt;&lt;ul&gt;&lt;li&gt;%1&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;Ignorando duplicatas, incorreções ou %2 rejeitados.&lt;/p&gt;&lt;p&gt;Observe que todos os outros temas de mapa válidos estão carregados e podem ser usados apesar desta mensagem.&lt;/p&gt;&lt;p&gt;Reinicie o Little Navmap após corrigir os problemas.&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapthemehandler.cpp" line="347"/>
+        <location filename="src/mapgui/mapthemehandler.cpp" line="374"/>
         <source>Failed encrypting key for %1. Reason: %2</source>
         <translation>Falha ao criptografar a chave para %1. Motivo: %2</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapthemehandler.cpp" line="361"/>
+        <location filename="src/mapgui/mapthemehandler.cpp" line="388"/>
         <source>Failed writing to %1. Reason: %2</source>
         <translation>Falha ao gravar em %1. Motivo: %2</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapthemehandler.cpp" line="369"/>
+        <location filename="src/mapgui/mapthemehandler.cpp" line="396"/>
         <source>Cannot open file for writing %1. Reason: %2</source>
         <translation>Não é possível abrir o arquivo para gravar %1. Motivo: %2</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapthemehandler.cpp" line="430"/>
+        <location filename="src/mapgui/mapthemehandler.cpp" line="457"/>
         <source>Failed decrypting key from %1. Reason: %2</source>
         <translation>Falha ao descriptografar a chave de %1. Motivo: %2</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapthemehandler.cpp" line="437"/>
+        <location filename="src/mapgui/mapthemehandler.cpp" line="464"/>
         <source>Failed reading from %1. Reason: %2</source>
         <translation>Falha na leitura de %1. Motivo: %2</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapthemehandler.cpp" line="445"/>
+        <location filename="src/mapgui/mapthemehandler.cpp" line="472"/>
         <source>Cannot open file for reading %1. Reason: %2</source>
         <translation>Não é possível abrir o arquivo para leitura %1. Motivo: %2</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapthemehandler.cpp" line="580"/>
+        <location filename="src/mapgui/mapthemehandler.cpp" line="607"/>
         <source>Cannot open file %1. Reason: %2</source>
         <translation>Não é possível abrir o arquivo %1. Motivo: %2</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapthemehandler.cpp" line="678"/>
+        <location filename="src/mapgui/mapthemehandler.cpp" line="704"/>
         <source>Select map theme and map projection</source>
         <translation>Selecione o tema do mapa e a projeção do mapa</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapthemehandler.cpp" line="731"/>
+        <location filename="src/mapgui/mapthemehandler.cpp" line="756"/>
         <source>%1 (offline)</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapthemehandler.cpp" line="734"/>
+        <location filename="src/mapgui/mapthemehandler.cpp" line="759"/>
         <source> *</source>
         <translation> como</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapthemehandler.cpp" line="739"/>
+        <location filename="src/mapgui/mapthemehandler.cpp" line="764"/>
         <source>online</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapthemehandler.cpp" line="739"/>
+        <location filename="src/mapgui/mapthemehandler.cpp" line="764"/>
         <source>offline</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapthemehandler.cpp" line="740"/>
+        <location filename="src/mapgui/mapthemehandler.cpp" line="765"/>
         <source>* requires registration</source>
         <translation>* requer registro</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapthemehandler.cpp" line="740"/>
+        <location filename="src/mapgui/mapthemehandler.cpp" line="765"/>
         <source>free</source>
         <translation>gratuito</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapthemehandler.cpp" line="745"/>
+        <location filename="src/mapgui/mapthemehandler.cpp" line="770"/>
         <source>, </source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapthemehandler.cpp" line="834"/>
+        <location filename="src/mapgui/mapthemehandler.cpp" line="848"/>
         <source>&lt;p&gt;Click here to create an account: &lt;a href=&quot;%1&quot;&gt;%2&lt;/a&gt;&lt;/p&gt;</source>
         <translation>&lt;p&gt;Clique aqui para criar uma conta: &lt;a href=&quot;%1&quot;&gt;%2&lt;/a&gt;&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapthemehandler.cpp" line="835"/>
+        <location filename="src/mapgui/mapthemehandler.cpp" line="849"/>
         <source>Link</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapthemehandler.cpp" line="839"/>
+        <location filename="src/mapgui/mapthemehandler.cpp" line="853"/>
         <source>&lt;p&gt;The map theme &quot;%1&quot; requires additional information.&lt;/p&gt;&lt;p&gt;You have to create an user account at the related website and then create an username, an access key or a token.&lt;br/&gt;Most of these services offer a free plan for hobbyists.&lt;/p&gt;&lt;p&gt;Then go to menu &quot;Tools&quot; -&gt; &quot;Options&quot; and to page &quot;Map Display Keys&quot; in Little Navmap and enter the information for the key(s) below:&lt;/p&gt;&lt;ul&gt;&lt;li&gt;%2&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;The map will not show correctly until this is done.&lt;/p&gt;%3</source>
         <translation>&lt;p&gt;O tema do mapa &quot;%1&quot; requer informações adicionais.&lt;/p&gt;&lt;p&gt;Você deve criar uma conta de usuário no site relacionado e, em seguida, criar um nome de usuário, uma chave de acesso ou um token.&lt;br/&gt;A maioria desses serviços oferecem um plano gratuito para amadores.&lt;/p&gt;&lt;p&gt;Em seguida, vá ao menu &quot;Configurações&quot; -&gt; &quot;Opções&quot; e à página &quot;Chaves de exibição do mapa&quot; no Little Navmap e insira as informações para a(s) chave(s) abaixo:&lt;/p&gt;&lt;ul&gt;&lt;li&gt;%2&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;O mapa não será exibido corretamente até que isso seja feito.&lt;/p&gt;%3</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapthemehandler.cpp" line="846"/>
+        <location filename="src/mapgui/mapthemehandler.cpp" line="860"/>
         <source>&lt;/li&gt;&lt;li&gt;</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapthemehandler.cpp" line="847"/>
+        <location filename="src/mapgui/mapthemehandler.cpp" line="861"/>
         <source>Do not &amp;show this dialog again.</source>
         <translation>Não &amp;mostre este diálogo novamente.</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapthemehandler.cpp" line="857"/>
+        <location filename="src/mapgui/mapthemehandler.cpp" line="871"/>
         <source>Map theme changed to %1.</source>
         <translation>Tema do mapa mudou para %1.</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapthemehandler.cpp" line="872"/>
+        <location filename="src/mapgui/mapthemehandler.cpp" line="886"/>
         <source>Mercator</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapthemehandler.cpp" line="877"/>
+        <location filename="src/mapgui/mapthemehandler.cpp" line="891"/>
         <source>Spherical</source>
         <translation>Esférico</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapthemehandler.cpp" line="883"/>
+        <location filename="src/mapgui/mapthemehandler.cpp" line="897"/>
         <source>Map projection changed to %1.</source>
         <translation>Projeção do mapa mudou para %1.</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapthemehandler.cpp" line="928"/>
+        <location filename="src/mapgui/mapthemehandler.cpp" line="942"/>
         <source>Directory is set to the included stock themes. You have to set a directory outside of the installation.</source>
         <translation>O diretório está definido para os temas de estoque incluídos. Você precisa definir um diretório fora da instalação.</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapthemehandler.cpp" line="943"/>
+        <location filename="src/mapgui/mapthemehandler.cpp" line="957"/>
         <source>Directory is valid. No map themes found inside.</source>
         <translation>O diretório é válido. Nenhum tema de mapa encontrado no interior.</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapthemehandler.cpp" line="945"/>
+        <location filename="src/mapgui/mapthemehandler.cpp" line="959"/>
         <source>Directory is valid. %1 %2 found.</source>
         <translation>O diretório é válido. %1 %2 encontrado(s).</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapthemehandler.cpp" line="276"/>
-        <location filename="src/mapgui/mapthemehandler.cpp" line="945"/>
+        <location filename="src/mapgui/mapthemehandler.cpp" line="303"/>
+        <location filename="src/mapgui/mapthemehandler.cpp" line="959"/>
         <source>map themes</source>
         <translation>temas do mapa</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapthemehandler.cpp" line="115"/>
+        <location filename="src/mapgui/mapthemehandler.cpp" line="117"/>
         <source>Duplicate map theme id &quot;%1&quot; in element &quot;&amp;lt;theme&amp;gt;&quot;. Theme with first occurrence%2&amp;nbsp;(click to show).&lt;br/&gt;Theme with second occurrence being ignored%3&amp;nbsp;(click to show).&lt;br/&gt;Theme ids have to be unique across all map themes.&lt;br/&gt;&lt;b&gt;Remove one of these two map themes to avoid this message.&lt;/b&gt;&lt;br/&gt;</source>
         <translation>ID do tema de mapa duplicado &quot;%1&quot; no elemento &quot;&amp;lt;theme&amp;gt;&quot;. Tema com a primeira ocorrência%2&amp;nbsp; (clique para mostrar).&lt;br/&gt;Tema com segunda ocorrência sendo ignorado%3&amp;nbsp;(clique para mostrar).&lt;br/&gt;Os IDs de tema devem ser únicos em todos os temas de mapa.&lt;br/&gt;&lt;b&gt;Remova um destes dois temas de mapa para evitar esta mensagem.&lt;/b&gt;&lt;br/&gt;</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapthemehandler.cpp" line="151"/>
+        <location filename="src/mapgui/mapthemehandler.cpp" line="153"/>
         <source>Duplicate source directory or directories &quot;%1&quot; in element &quot;&amp;lt;sourcedir&amp;gt;&quot;.&lt;br/&gt;Map theme with first occurrence%2&amp;nbsp;(click to show).&lt;br/&gt;Theme(s) with second occurrence being ignored%3&amp;nbsp;(click to show).&lt;br/&gt;Source directories are used to cache map tiles and have to be unique across all map themes.&lt;br/&gt;&lt;b&gt;Remove one or more of these map themes to avoid this message.&lt;/b&gt;&lt;br/&gt;</source>
         <oldsource>Duplicate source directory or directories &quot;%1&quot; in element &quot;&amp;lt;sourcedir&amp;gt;&quot;.&lt;br/&gt;Map theme with first occurrence%2&amp;nbsp;(click to show).&lt;br/&gt;Theme(s) with second occurrence being ignored%3 (click to show).&lt;br/&gt;Source directories are used to cache map tiles and have to be unique across all map themes.&lt;br/&gt;&lt;b&gt;Remove one or more of these map themes to avoid this message.&lt;/b&gt;&lt;br/&gt;</oldsource>
         <translation>Diretório de origem ou diretórios duplicados &quot;%1&quot; no elemento &quot;&amp;lt;sourcedir&amp;gt;&quot;.&lt;br/&gt;Tema de mapa com a primeira ocorrência%2&amp;nbsp;(clique para mostrar).&lt;br/&gt;Tema(s) com segunda ocorrência sendo ignorada%3&amp;nbsp;(clique para mostrar).&lt;br/&gt;Os diretórios de origem são usados para armazenar em cache os azulejos do mapa e devem ser únicos em todos os temas de mapa.&lt;br/&gt;&lt;b&gt;Remova um ou mais destes temas de mapa para evitar esta mensagem.&lt;/b&gt;&lt;br/&gt;</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapthemehandler.cpp" line="158"/>
+        <location filename="src/mapgui/mapthemehandler.cpp" line="160"/>
         <source>&quot;, &quot;</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapthemehandler.cpp" line="160"/>
+        <location filename="src/mapgui/mapthemehandler.cpp" line="162"/>
         <source>&lt;br/&gt;</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapthemehandler.cpp" line="166"/>
+        <location filename="src/mapgui/mapthemehandler.cpp" line="168"/>
         <source>Empty id in in element &quot;&amp;lt;theme&amp;gt;&quot; in map theme%1&amp;nbsp;(click to show).&lt;br/&gt;&lt;b&gt;Remove or repair this map theme to avoid this message.&lt;/b&gt;&lt;br/&gt;</source>
         <translation>ID vazio no elemento &quot;&amp;lt;theme&amp;gt;&quot; no tema do mapa%1&amp;nbsp;(clique para mostrar).&lt;br/&gt;&lt;b&gt;Remova ou repare este tema de mapa para evitar esta mensagem.&lt;/b&gt;&lt;br/&gt;</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapthemehandler.cpp" line="175"/>
+        <location filename="src/mapgui/mapthemehandler.cpp" line="177"/>
         <source>Empty source directory in in element &quot;&amp;lt;sourcedir&amp;gt;&quot; in map theme%1&amp;nbsp;(click to show).&lt;br/&gt;&lt;b&gt;Remove or repair this map theme to avoid this message.&lt;/b&gt;&lt;br/&gt;</source>
         <translation>Diretório de origem vazio no elemento &quot;&amp;lt;sourcedir&amp;gt;&quot; no tema do mapa%1&amp;nbsp;(clique para mostrar).&lt;br/&gt;&lt;b&gt;Remova ou repare este tema de mapa para evitar esta mensagem.&lt;/b&gt;&lt;br/&gt;</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapthemehandler.cpp" line="184"/>
+        <location filename="src/mapgui/mapthemehandler.cpp" line="186"/>
         <source>Invalid target &quot;%1&quot; in element &quot;&amp;lt;target&amp;gt;&quot; in map theme %2&amp;nbsp;(click to show).&lt;br/&gt;Element must contain text &quot;earth&quot;.&lt;br/&gt;&lt;b&gt;Remove or repair this map theme to avoid this message.&lt;/b&gt;&lt;br/&gt;</source>
         <translation>Destino inválido &quot;%1&quot; no elemento &quot;&amp;lt;target&amp;gt;&quot; no tema do mapa %2%2&amp;nbsp;(clique para mostrar).&lt;br/&gt;O elemento deve conter o texto &quot;earth&quot;.&lt;br/&gt;&lt;b&gt;Remova ou repare este tema de mapa para evitar esta mensagem.&lt;/b&gt;&lt;br/&gt;</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapthemehandler.cpp" line="208"/>
+        <location filename="src/mapgui/mapthemehandler.cpp" line="210"/>
         <source>Map theme%1&amp;nbsp;(click to show)&lt;br/&gt;was rejected since the service is discontinued.&lt;br/&gt;&lt;b&gt;Remove this map theme to avoid this message.&lt;/b&gt;&lt;br/&gt;</source>
         <translation>O tema do mapa%1&amp;nbsp;(clique para mostrar)&lt;br/&gt;foi rejeitado, pois o serviço foi descontinuado.&lt;br/&gt;&lt;b&gt;Remova este tema de mapa para evitar esta mensagem.&lt;/b&gt;&lt;br/&gt;;</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapthemehandler.cpp" line="276"/>
-        <location filename="src/mapgui/mapthemehandler.cpp" line="945"/>
+        <location filename="src/mapgui/mapthemehandler.cpp" line="223"/>
+        <source>Map theme%1&amp;nbsp;(click to show)&lt;br/&gt;has an invalid shortcut &quot;%2&quot;. Only &quot;Ctrl+Alt+NUMBER&quot; allowed.&lt;br/&gt;&lt;b&gt;Remove this map theme or adjust element &quot;&amp;lt;shortcut&amp;gt;&quot; avoid this message.&lt;/b&gt;&lt;br/&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/mapgui/mapthemehandler.cpp" line="234"/>
+        <source>Map theme%1&amp;nbsp;(click to show)&lt;br/&gt;has a duplicate shortcut &quot;%2&quot;.&lt;br/&gt;&lt;b&gt;Remove this map theme or adjust element &quot;&amp;lt;shortcut&amp;gt;&quot; avoid this message.&lt;/b&gt;&lt;br/&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/mapgui/mapthemehandler.cpp" line="303"/>
+        <location filename="src/mapgui/mapthemehandler.cpp" line="959"/>
         <source>map theme</source>
         <translation>tema do mapa</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapthemehandler.cpp" line="969"/>
+        <location filename="src/mapgui/mapthemehandler.cpp" line="983"/>
         <source>Base path(s) for map themes not found.
 %1</source>
         <translation>Caminho(s) base para temas de mapa não encontrado(s).
 %1</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapthemehandler.cpp" line="969"/>
+        <location filename="src/mapgui/mapthemehandler.cpp" line="983"/>
         <source>,
 </source>
         <translation></translation>
@@ -30015,107 +30025,107 @@ Observe que a ordem das colunas é a selecionada na tabela do plano de voo.</tra
 <context>
     <name>ProcedureQuery</name>
     <message>
-        <location filename="src/query/procedurequery.cpp" line="1723"/>
-        <location filename="src/query/procedurequery.cpp" line="1871"/>
+        <location filename="src/query/procedurequery.cpp" line="1725"/>
+        <location filename="src/query/procedurequery.cpp" line="1873"/>
         <source>Altitude</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/query/procedurequery.cpp" line="1684"/>
+        <location filename="src/query/procedurequery.cpp" line="1686"/>
         <source>Course to Fix</source>
         <translation>Curso do fixo</translation>
     </message>
     <message>
-        <location filename="src/query/procedurequery.cpp" line="1562"/>
+        <location filename="src/query/procedurequery.cpp" line="1564"/>
         <source>DME %1</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/query/procedurequery.cpp" line="1684"/>
-        <location filename="src/query/procedurequery.cpp" line="1955"/>
-        <location filename="src/query/procedurequery.cpp" line="1967"/>
-        <location filename="src/query/procedurequery.cpp" line="1976"/>
-        <location filename="src/query/procedurequery.cpp" line="1992"/>
+        <location filename="src/query/procedurequery.cpp" line="1686"/>
+        <location filename="src/query/procedurequery.cpp" line="1957"/>
+        <location filename="src/query/procedurequery.cpp" line="1969"/>
+        <location filename="src/query/procedurequery.cpp" line="1978"/>
+        <location filename="src/query/procedurequery.cpp" line="1994"/>
         <source>Intercept</source>
         <translation>Interceptação</translation>
     </message>
     <message>
-        <location filename="src/query/procedurequery.cpp" line="1960"/>
-        <location filename="src/query/procedurequery.cpp" line="1992"/>
+        <location filename="src/query/procedurequery.cpp" line="1962"/>
+        <location filename="src/query/procedurequery.cpp" line="1994"/>
         <source>Leg</source>
         <translation>Fixo</translation>
     </message>
     <message>
-        <location filename="src/query/procedurequery.cpp" line="2609"/>
+        <location filename="src/query/procedurequery.cpp" line="2611"/>
         <source>no runway</source>
         <translation>nenhuma pista</translation>
     </message>
     <message>
-        <location filename="src/query/procedurequery.cpp" line="2609"/>
+        <location filename="src/query/procedurequery.cpp" line="2611"/>
         <source>runway %1</source>
         <translation>pista %1</translation>
     </message>
     <message>
-        <location filename="src/query/procedurequery.cpp" line="2647"/>
+        <location filename="src/query/procedurequery.cpp" line="2649"/>
         <source>SID %1 from %2</source>
         <translation>SID %1 de %2</translation>
     </message>
     <message>
-        <location filename="src/query/procedurequery.cpp" line="2694"/>
-        <location filename="src/query/procedurequery.cpp" line="2739"/>
+        <location filename="src/query/procedurequery.cpp" line="2696"/>
+        <location filename="src/query/procedurequery.cpp" line="2741"/>
         <source>Approach %1 to %2</source>
         <translation>Approach %1 para %2</translation>
     </message>
     <message>
-        <location filename="src/query/procedurequery.cpp" line="2764"/>
+        <location filename="src/query/procedurequery.cpp" line="2766"/>
         <source>STAR %1 to %2</source>
         <translation>STAR %1 para %2</translation>
     </message>
     <message>
-        <location filename="src/query/procedurequery.cpp" line="2827"/>
-        <location filename="src/query/procedurequery.cpp" line="2844"/>
+        <location filename="src/query/procedurequery.cpp" line="2829"/>
+        <location filename="src/query/procedurequery.cpp" line="2846"/>
         <source>SID %1 is using an invalid runway %2</source>
         <translation>SID %1 está usando uma pista inválida %2</translation>
     </message>
     <message>
-        <location filename="src/query/procedurequery.cpp" line="2881"/>
-        <location filename="src/query/procedurequery.cpp" line="2898"/>
+        <location filename="src/query/procedurequery.cpp" line="2883"/>
+        <location filename="src/query/procedurequery.cpp" line="2900"/>
         <source>STAR %1 is using an invalid runway %2</source>
         <translation>STAR %1 está usando uma pista inválida %2</translation>
     </message>
     <message>
-        <location filename="src/query/procedurequery.cpp" line="2921"/>
+        <location filename="src/query/procedurequery.cpp" line="2923"/>
         <source>Procedure %1 %2 in scenery library has errors</source>
         <translatorcomment>O procedimento %1 %2 na biblioteca de cenários contém erros</translatorcomment>
         <translation>Procedure %1 %2 in scenery library has errors</translation>
     </message>
     <message>
-        <location filename="src/query/procedurequery.cpp" line="2930"/>
+        <location filename="src/query/procedurequery.cpp" line="2932"/>
         <source>Procedure not found in scenery library</source>
         <translation>Procedimento não encontrado na biblioteca de cenários</translation>
     </message>
     <message>
-        <location filename="src/query/procedurequery.cpp" line="1865"/>
-        <location filename="src/query/procedurequery.cpp" line="1883"/>
+        <location filename="src/query/procedurequery.cpp" line="1867"/>
+        <location filename="src/query/procedurequery.cpp" line="1885"/>
         <source>Manual</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/query/procedurequery.cpp" line="1559"/>
-        <location filename="src/query/procedurequery.cpp" line="1774"/>
-        <location filename="src/query/procedurequery.cpp" line="1792"/>
-        <location filename="src/query/procedurequery.cpp" line="1838"/>
-        <location filename="src/query/procedurequery.cpp" line="1958"/>
+        <location filename="src/query/procedurequery.cpp" line="1561"/>
+        <location filename="src/query/procedurequery.cpp" line="1776"/>
+        <location filename="src/query/procedurequery.cpp" line="1794"/>
+        <location filename="src/query/procedurequery.cpp" line="1840"/>
+        <location filename="src/query/procedurequery.cpp" line="1960"/>
         <source>/</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/query/procedurequery.cpp" line="1877"/>
+        <location filename="src/query/procedurequery.cpp" line="1879"/>
         <source>Single</source>
         <translation>Sozinho</translation>
     </message>
     <message>
-        <location filename="src/query/procedurequery.cpp" line="2660"/>
+        <location filename="src/query/procedurequery.cpp" line="2662"/>
         <source>SID transition %1</source>
         <translation>Transição da SID %1</translation>
     </message>
@@ -30124,29 +30134,29 @@ Observe que a ordem das colunas é a selecionada na tabela do plano de voo.</tra
         <translation type="vanished">Aproximação %1</translation>
     </message>
     <message>
-        <location filename="src/query/procedurequery.cpp" line="2748"/>
+        <location filename="src/query/procedurequery.cpp" line="2750"/>
         <source>Transition %1</source>
         <translation>Transição %1</translation>
     </message>
     <message>
-        <location filename="src/query/procedurequery.cpp" line="2777"/>
+        <location filename="src/query/procedurequery.cpp" line="2779"/>
         <source>STAR transition %1</source>
         <translation>Transição da STAR %1</translation>
     </message>
     <message>
-        <location filename="src/query/procedurequery.cpp" line="1045"/>
+        <location filename="src/query/procedurequery.cpp" line="1047"/>
         <source>Start</source>
         <translation>Começar</translation>
     </message>
     <message>
-        <location filename="src/query/procedurequery.cpp" line="1793"/>
-        <location filename="src/query/procedurequery.cpp" line="1839"/>
+        <location filename="src/query/procedurequery.cpp" line="1795"/>
+        <location filename="src/query/procedurequery.cpp" line="1841"/>
         <source>°M</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/query/procedurequery.cpp" line="1793"/>
-        <location filename="src/query/procedurequery.cpp" line="1839"/>
+        <location filename="src/query/procedurequery.cpp" line="1795"/>
+        <location filename="src/query/procedurequery.cpp" line="1841"/>
         <source>°T</source>
         <translation></translation>
     </message>
@@ -34923,18 +34933,18 @@ Calculado com base no perfil de performance da aeronave.</translation>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="680"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="682"/>
         <source>Error reading multiexport configuration: Invalid magic number. Not a multiexport configuration.</source>
         <translation>Erro ao ler a configuração multiexport: Número mágico inválido. Não é uma configuração multiexport.</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="690"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="692"/>
         <source>Error reading multiexport configuration: Invalid version. Incompatible multiexport configuration.</source>
         <translation>Erro ao ler a configuração multiexport: Versão inválida. Configuração multiexport incompatível.</translation>
     </message>
     <message>
-        <location filename="src/query/procedurequery.cpp" line="2448"/>
-        <location filename="src/query/procedurequery.cpp" line="2542"/>
+        <location filename="src/query/procedurequery.cpp" line="2450"/>
+        <location filename="src/query/procedurequery.cpp" line="2544"/>
         <source>RW%1+%2</source>
         <translation></translation>
     </message>
@@ -35188,39 +35198,39 @@ Clique ou recarregue para continuar.</translation>
 <context>
     <name>Route</name>
     <message>
-        <location filename="src/route/route.cpp" line="1315"/>
+        <location filename="src/route/route.cpp" line="1313"/>
         <source> (not found)</source>
         <translation> (não encontrado)</translation>
     </message>
     <message>
-        <location filename="src/route/route.cpp" line="3139"/>
+        <location filename="src/route/route.cpp" line="3146"/>
         <source> / </source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/route/route.cpp" line="3805"/>
+        <location filename="src/route/route.cpp" line="3812"/>
         <source>, above ▼</source>
         <translation>, acima ▼</translation>
     </message>
     <message>
-        <location filename="src/route/route.cpp" line="3807"/>
+        <location filename="src/route/route.cpp" line="3814"/>
         <source>, below ▲</source>
         <translation>, abaixo ▲</translation>
     </message>
     <message>
-        <location filename="src/route/route.cpp" line="3827"/>
-        <location filename="src/route/route.cpp" line="3838"/>
+        <location filename="src/route/route.cpp" line="3834"/>
+        <location filename="src/route/route.cpp" line="3845"/>
         <source>%L1°, %L2</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/route/route.cpp" line="3827"/>
-        <location filename="src/route/route.cpp" line="3838"/>
+        <location filename="src/route/route.cpp" line="3834"/>
+        <location filename="src/route/route.cpp" line="3845"/>
         <source> ▼</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/route/route.cpp" line="3873"/>
+        <location filename="src/route/route.cpp" line="3880"/>
         <source>EMPTY</source>
         <translatorcomment>VAZIO</translatorcomment>
         <translation></translation>
@@ -35234,7 +35244,7 @@ Clique ou recarregue para continuar.</translation>
         <translation type="vanished">Aproximação</translation>
     </message>
     <message>
-        <location filename="src/route/route.cpp" line="3852"/>
+        <location filename="src/route/route.cpp" line="3859"/>
         <source>Empty Flightplan</source>
         <translation>Plano de Voo Vazio</translation>
     </message>
@@ -37850,14 +37860,13 @@ Defina o tipo de plano de voo na janela &quot;Planejamento de Voo&quot; para &qu
         <translation type="vanished">%1 Arquivos %2</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexport.cpp" line="351"/>
+        <location filename="src/routeexport/routeexport.cpp" line="352"/>
         <source>Flight plan saved as %1PLN.</source>
         <translation>Plano de voo salvo como %1 PLN.</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexport.cpp" line="352"/>
         <source>annotated </source>
-        <translation>anotado </translation>
+        <translation type="vanished">anotado </translation>
     </message>
     <message>
         <source>Flight plan saved as FMS.</source>
@@ -38198,22 +38207,22 @@ Isso pode acontecer se você salvar um plano de voo baseado no cenário FSX, Pre
         <translation type="vanished">O padrão está vazio.</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="576"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="578"/>
         <source>File &quot;%1&quot; does not exist.</source>
         <translation>Arquivo &quot;%1&quot; não existe.</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="579"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="581"/>
         <source>Expected file but &quot;%1&quot; is a directory.</source>
         <translation>Arquivo esperado, mas &quot;%1&quot; é um diretório.</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="587"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="589"/>
         <source>Directory &quot;%1&quot; does not exist</source>
         <translation>O diretório &quot;%1&quot; não existe</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="590"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="592"/>
         <source>Expected directory but &quot;%1&quot; is a file.</source>
         <translation>Diretório esperado, mas &quot;%1&quot; é um arquivo.</translation>
     </message>
@@ -38224,8 +38233,8 @@ Isso pode acontecer se você salvar um plano de voo baseado no cenário FSX, Pre
         <location filename="src/routeexport/routeexportformat.cpp" line="312"/>
         <location filename="src/routeexport/routeexportformat.cpp" line="313"/>
         <location filename="src/routeexport/routeexportformat.cpp" line="314"/>
-        <location filename="src/routeexport/routeexportformat.cpp" line="342"/>
-        <location filename="src/routeexport/routeexportformat.cpp" line="354"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="344"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="356"/>
         <source>pln</source>
         <translation></translation>
     </message>
@@ -38233,11 +38242,11 @@ Isso pode acontecer se você salvar um plano de voo baseado no cenário FSX, Pre
         <location filename="src/routeexport/routeexportformat.cpp" line="312"/>
         <location filename="src/routeexport/routeexportformat.cpp" line="313"/>
         <location filename="src/routeexport/routeexportformat.cpp" line="314"/>
-        <location filename="src/routeexport/routeexportformat.cpp" line="315"/>
-        <location filename="src/routeexport/routeexportformat.cpp" line="316"/>
         <location filename="src/routeexport/routeexportformat.cpp" line="317"/>
-        <location filename="src/routeexport/routeexportformat.cpp" line="322"/>
-        <location filename="src/routeexport/routeexportformat.cpp" line="341"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="318"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="319"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="324"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="343"/>
         <source>Simulator</source>
         <translation>Simulador</translation>
     </message>
@@ -38252,98 +38261,105 @@ Isso pode acontecer se você salvar um plano de voo baseado no cenário FSX, Pre
         <translation></translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="315"/>
-        <location filename="src/routeexport/routeexportformat.cpp" line="316"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="314"/>
+        <source>Microsoft Flight Simulator 2020 format using &quot;*&quot; as degree sign.
+Use this if you run into issues when importing flight plans or
+your operating system is set to Asian locale.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <location filename="src/routeexport/routeexportformat.cpp" line="317"/>
         <location filename="src/routeexport/routeexportformat.cpp" line="318"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="319"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="320"/>
         <source>fms</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="316"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="318"/>
         <source>X-Plane FMS 11</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="319"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="321"/>
         <source>flp</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="319"/>
-        <location filename="src/routeexport/routeexportformat.cpp" line="320"/>
         <location filename="src/routeexport/routeexportformat.cpp" line="321"/>
-        <location filename="src/routeexport/routeexportformat.cpp" line="325"/>
-        <location filename="src/routeexport/routeexportformat.cpp" line="326"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="322"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="323"/>
         <location filename="src/routeexport/routeexportformat.cpp" line="327"/>
         <location filename="src/routeexport/routeexportformat.cpp" line="328"/>
-        <location filename="src/routeexport/routeexportformat.cpp" line="331"/>
-        <location filename="src/routeexport/routeexportformat.cpp" line="332"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="329"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="330"/>
         <location filename="src/routeexport/routeexportformat.cpp" line="333"/>
-        <location filename="src/routeexport/routeexportformat.cpp" line="338"/>
-        <location filename="src/routeexport/routeexportformat.cpp" line="342"/>
-        <location filename="src/routeexport/routeexportformat.cpp" line="346"/>
-        <location filename="src/routeexport/routeexportformat.cpp" line="347"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="334"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="335"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="340"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="344"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="348"/>
         <location filename="src/routeexport/routeexportformat.cpp" line="349"/>
-        <location filename="src/routeexport/routeexportformat.cpp" line="350"/>
         <location filename="src/routeexport/routeexportformat.cpp" line="351"/>
         <location filename="src/routeexport/routeexportformat.cpp" line="352"/>
         <location filename="src/routeexport/routeexportformat.cpp" line="353"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="354"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="355"/>
         <source>Aircraft</source>
         <translation>Aeronave</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="319"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="321"/>
         <source>Aerosoft Airbus and others</source>
         <translation>Airbus Aerosoft e outros</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="320"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="322"/>
         <source>Aerosoft CRJ</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="322"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="324"/>
         <source>fgfp</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="322"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="324"/>
         <source>FlightGear</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="323"/>
-        <location filename="src/routeexport/routeexportformat.cpp" line="324"/>
-        <location filename="src/routeexport/routeexportformat.cpp" line="336"/>
-        <location filename="src/routeexport/routeexportformat.cpp" line="337"/>
-        <location filename="src/routeexport/routeexportformat.cpp" line="356"/>
-        <location filename="src/routeexport/routeexportformat.cpp" line="357"/>
-        <source>gfp</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="323"/>
-        <location filename="src/routeexport/routeexportformat.cpp" line="324"/>
-        <location filename="src/routeexport/routeexportformat.cpp" line="329"/>
-        <location filename="src/routeexport/routeexportformat.cpp" line="334"/>
-        <location filename="src/routeexport/routeexportformat.cpp" line="335"/>
-        <location filename="src/routeexport/routeexportformat.cpp" line="336"/>
-        <location filename="src/routeexport/routeexportformat.cpp" line="337"/>
-        <location filename="src/routeexport/routeexportformat.cpp" line="355"/>
-        <location filename="src/routeexport/routeexportformat.cpp" line="356"/>
-        <location filename="src/routeexport/routeexportformat.cpp" line="357"/>
-        <source>Garmin</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="323"/>
-        <source>Flight1 Garmin GTN 650/750</source>
         <translation></translation>
     </message>
     <message>
         <location filename="src/routeexport/routeexportformat.cpp" line="325"/>
         <location filename="src/routeexport/routeexportformat.cpp" line="326"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="338"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="339"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="358"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="359"/>
+        <source>gfp</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="src/routeexport/routeexportformat.cpp" line="325"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="326"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="331"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="336"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="337"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="338"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="339"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="357"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="358"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="359"/>
+        <source>Garmin</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="src/routeexport/routeexportformat.cpp" line="325"/>
+        <source>Flight1 Garmin GTN 650/750</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="src/routeexport/routeexportformat.cpp" line="327"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="328"/>
         <source>txt</source>
         <translation></translation>
     </message>
@@ -38352,26 +38368,26 @@ Isso pode acontecer se você salvar um plano de voo baseado no cenário FSX, Pre
         <translation type="vanished">Rotate MD-80, JARDesign e outros</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="327"/>
-        <location filename="src/routeexport/routeexportformat.cpp" line="328"/>
-        <location filename="src/routeexport/routeexportformat.cpp" line="347"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="329"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="330"/>
         <location filename="src/routeexport/routeexportformat.cpp" line="349"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="351"/>
         <source>rte</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="327"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="329"/>
         <source>PMDG aircraft</source>
         <translation>PMDG Aeronaves</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="329"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="331"/>
         <source>gpx</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="330"/>
-        <location filename="src/routeexport/routeexportformat.cpp" line="348"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="332"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="350"/>
         <source>Other</source>
         <translation>Outros</translation>
     </message>
@@ -38404,10 +38420,9 @@ Use este formato para salvar e fazer backup de seus planos, pois abrange todos o
 Observe que usar esta opção é o mesmo que usar &quot;Salvar&quot; ou &quot;Salvar como&quot; no menu de arquivo.</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="314"/>
         <source>FSX and Prepar3D annotated
 Only for old Little Navmap versions.</source>
-        <translation>FSX e Prepar3D anotados
+        <translation type="vanished">FSX e Prepar3D anotados
 Apenas para versões antigas do Little Navmap.</translation>
     </message>
     <message>
@@ -38417,12 +38432,12 @@ Old limited format.</source>
 Formato antigo limitado.</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="321"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="323"/>
         <source>Aerosoft CRJ for MSFS</source>
         <translation>Aerosoft CRJ para MSFS</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="324"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="326"/>
         <source>Flight1 Garmin GTN 650/750 with user defined waypoints</source>
         <translation>Flight1 Garmin GTN 650/750 com waypoints definidos pelo usuário</translation>
     </message>
@@ -38431,7 +38446,7 @@ Formato antigo limitado.</translation>
         <translation type="vanished">Rotate MD-80 e outros</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="326"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="328"/>
         <source>JARDesign aircraft</source>
         <translation>Aeronave JARDesign</translation>
     </message>
@@ -38497,35 +38512,35 @@ O mesmo formato do FMS 11, mas salvo na pasta X-Plane 12.</translation>
         <translation>Formato de plano de voo nativo do Little Navmap</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="315"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="317"/>
         <source>X-Plane FMS 3
 Old and limited format.</source>
         <translation>X-Plane FMS 3
 Formato antigo e limitado.</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="317"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="319"/>
         <source>X-Plane FMS 12</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="318"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="320"/>
         <source>X-Plane CIVA Navigation System</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="320"/>
-        <location filename="src/routeexport/routeexportformat.cpp" line="321"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="322"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="323"/>
         <source>01.flp</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="325"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="327"/>
         <source>Rotate MD-80, MD-11 and others</source>
         <translation>Rotate MD-80, MD-11 e outros</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="328"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="330"/>
         <source>PMDG aircraft for MSFS</source>
         <translation>Aeronave PMDG para MSFS</translation>
     </message>
@@ -38534,148 +38549,148 @@ Formato antigo e limitado.</translation>
         <translation type="vanished">Formato de troca Garmin para Google Earth e outros</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="330"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="332"/>
         <source>html</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="330"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="332"/>
         <source>HTML flight plan web page</source>
         <translation>Página da web do plano de voo em HTML</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="331"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="333"/>
         <source>fpr</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="331"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="333"/>
         <source>Majestic Dash MJC8 Q400</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="332"/>
         <location filename="src/routeexport/routeexportformat.cpp" line="334"/>
-        <location filename="src/routeexport/routeexportformat.cpp" line="335"/>
-        <location filename="src/routeexport/routeexportformat.cpp" line="339"/>
-        <location filename="src/routeexport/routeexportformat.cpp" line="344"/>
-        <location filename="src/routeexport/routeexportformat.cpp" line="345"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="336"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="337"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="341"/>
         <location filename="src/routeexport/routeexportformat.cpp" line="346"/>
-        <location filename="src/routeexport/routeexportformat.cpp" line="353"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="347"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="348"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="355"/>
         <source>fpl</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="332"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="334"/>
         <source>IXEG Boeing 737</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="333"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="335"/>
         <source>corte.in</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="333"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="335"/>
         <source>Flight Factor Airbus</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="334"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="336"/>
         <source>Reality XP GNS 530W/430W V2</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="335"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="337"/>
         <source>Reality XP GNS 530W/430W V2 with user defined waypoints</source>
         <translation>Reality XP GNS 530W/430W V2 com waypoints definidos pelo usuário</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="336"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="338"/>
         <source>Reality XP GTN 750/650 Touch</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="337"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="339"/>
         <source>Reality XP GTN 750/650 Touch with user defined waypoints</source>
         <translation>Reality XP GTN 750/650 Touch com waypoints definidos pelo usuário</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="338"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="340"/>
         <source>fltplan</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="338"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="340"/>
         <source>iFly</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="357"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="359"/>
         <source>TDS GTNXi with user defined waypoints</source>
         <translation>TDS GTNXi com waypoints definidos pelo usuário</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="318"/>
-        <location filename="src/routeexport/routeexportformat.cpp" line="339"/>
-        <location filename="src/routeexport/routeexportformat.cpp" line="340"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="320"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="341"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="342"/>
         <source>FMC</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="329"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="331"/>
         <source>Garmin GPX exchange format for Google Earth and others</source>
         <translation>Formato de troca GPX Garmin para Google Earth e outros</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="339"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="341"/>
         <source>X-FMC</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="340"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="342"/>
         <source>ufmc</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="340"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="342"/>
         <source>UFMC</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="341"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="343"/>
         <source>companyroutes.xml</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="341"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="343"/>
         <source>ProSim</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="342"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="344"/>
         <source>BlackBox Simulations Airbus</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="343"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="345"/>
         <source>vfp</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="343"/>
-        <location filename="src/routeexport/routeexportformat.cpp" line="344"/>
         <location filename="src/routeexport/routeexportformat.cpp" line="345"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="346"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="347"/>
         <source>Online</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="343"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="345"/>
         <source>VATSIM vPilot, xPilot or SWIFT</source>
         <translation>VATSIM vPilot, xPilot ou SWIFT</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="356"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="358"/>
         <source>TDS GTNXi</source>
         <translation>TDS GTNXi</translation>
     </message>
@@ -38684,92 +38699,92 @@ Formato antigo e limitado.</translation>
         <translation type="vanished">VATSIM vPilot ou SWIFT</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="344"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="346"/>
         <source>IvAp for IVAO</source>
         <translation>IvAp para IVAO</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="345"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="347"/>
         <source>X-IVAP for IVAO</source>
         <translation>X-IVAP para IVAO</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="346"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="348"/>
         <source>FeelThere or Wilco</source>
         <translation>FeelThere ou Wilco</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="347"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="349"/>
         <source>Level-D</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="348"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="350"/>
         <source>efbr</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="348"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="350"/>
         <source>AivlaSoft EFB</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="349"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="351"/>
         <source>QualityWings</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="350"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="352"/>
         <source>mdr</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="350"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="352"/>
         <source>Leonardo Maddog X</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="351"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="353"/>
         <source>xml</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="351"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="353"/>
         <source>TFDi Design 717</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="352"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="354"/>
         <source>route</source>
         <translation>rota</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="352"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="354"/>
         <source>iFly Jets Advanced Series</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="353"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="355"/>
         <source>IniBuilds Airbus for MSFS</source>
         <translation>IniBuilds Airbus para MSFS</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="354"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="356"/>
         <source>FMS</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="354"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="356"/>
         <source>ISG Integrated Simavionics gauges</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="355"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="357"/>
         <source>fpl.pln</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="355"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="357"/>
         <source>PMS50 GTN750</source>
         <translation></translation>
     </message>
@@ -40274,8 +40289,9 @@ ao ler uma descrição em um plano de voo.</translation>
     </message>
     <message>
         <location filename="src/routestring/routestringdialog.cpp" line="351"/>
-        <source>Write &quot;TRANS.STAR&quot; instead of &quot;STAR.TRANS&quot;</source>
-        <translation>Escreva &quot;TRANS.STAR&quot; em vez de &quot;STAR.TRANS&quot;</translation>
+        <source>Write &quot;TRANS.STAR&quot; instead of &quot;STAR.TRANS&quot; or &quot;TRANS STAR&quot; instead of &quot;STAR TRANS&quot;</source>
+        <oldsource>Write &quot;TRANS.STAR&quot; instead of &quot;STAR.TRANS&quot;</oldsource>
+        <translation type="unfinished">Escreva &quot;TRANS.STAR&quot; em vez de &quot;STAR.TRANS&quot;</translation>
     </message>
     <message>
         <source>Write SID/STAR and transition space separated</source>
@@ -40283,8 +40299,9 @@ ao ler uma descrição em um plano de voo.</translation>
     </message>
     <message>
         <location filename="src/routestring/routestringdialog.cpp" line="359"/>
-        <source>Use a space to separate SID, STAR and transition</source>
-        <translation>Use um espaço para separar SID, STAR e transição</translation>
+        <source>Use a space instead of &quot;.&quot; to separate SID, STAR and transition</source>
+        <oldsource>Use a space to separate SID, STAR and transition</oldsource>
+        <translation type="unfinished">Use um espaço para separar SID, STAR e transição</translation>
     </message>
     <message>
         <source>Read trailing Airports as Alternates</source>
@@ -40307,7 +40324,7 @@ Caso contrário, os aeroportos são adicionados como waypoints.</translation>
         <translation>Não espera que o primeiro e o último item da sequência sejam uma identificação ICAO do aeroporto, se marcado</translation>
     </message>
     <message>
-        <location filename="src/routestring/routestringdialog.cpp" line="648"/>
+        <location filename="src/routestring/routestringdialog.cpp" line="653"/>
         <source>Description is too long.</source>
         <translation>A descrição é muito longa.</translation>
     </message>
