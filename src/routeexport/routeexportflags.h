@@ -42,8 +42,9 @@ enum RouteExportFormatType : quint16
   LNMPLN = 35, /* LNM own plan format */
 
   PLN = 0, /* FSX/P3D XML PLN format */
-  PLNANNOTATED = 1, /* Save as above but with annotations for procedures as used by LNM before 2.4.5 */
-  PLNMSFS = 31, /* Microsoft Flight Simulator 2020 */
+  // PLNANNOTATED = 1, Removed
+  PLNMSFS = 31, /* Microsoft Flight Simulator 2020 with ° as degree sign. */
+  PLNMSFSCOMPAT = 47, /* Microsoft Flight Simulator 2020 with * as degree sign for add-ons */
   FMS3 = 2, /* Old X-Plane FMS 3 */
   FMS11 = 3, /* New X-Plane FMS 11 */
   FMS12 = 42, /* FMS 11 format in X-Plane 12 path */
@@ -98,7 +99,7 @@ enum RouteExportFormatType : quint16
   GPX = 28, /* Garmin exchange format. Not a flight plan format.  */
   HTML = 29, /* Export as HTML page */
 
-  // Next = 47
+  // Next = 48
 };
 
 /* Flags for export format. Some flags are saved to the configuration,

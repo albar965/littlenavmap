@@ -316,7 +316,8 @@ bool RouteExport::routeExportInternalPln(const RouteExportFormat& format)
 
     QString routeFile = exportFile(format, "Route/Pln" % shortName,
                                    NavApp::getCurrentSimulatorFilesPath(),
-                                   buildDefaultFilename(format, format.getType() == rexp::PLNMSFS),
+                                   buildDefaultFilename(format,
+                                                        format.getType() == rexp::PLNMSFS || format.getType() == rexp::PLNMSFSCOMPAT),
                                    false /* dontComfirmOverwrite */);
 
     if(!routeFile.isEmpty())
@@ -325,16 +326,16 @@ bool RouteExport::routeExportInternalPln(const RouteExportFormat& format)
       bool result = false;
       switch(format.getType())
       {
-        case rexp::PLNANNOTATED:
-          result = exportFlighplan(routeFile, rf::DEFAULT_OPTS_FSX_P3D, std::bind(&FlightplanIO::savePlnAnnotated, flightplanIO, _1, _2));
-          break;
-
         case rexp::PLN:
           result = exportFlighplan(routeFile, rf::DEFAULT_OPTS_FSX_P3D, std::bind(&FlightplanIO::savePln, flightplanIO, _1, _2));
           break;
 
         case rexp::PLNMSFS:
           result = exportFlighplan(routeFile, rf::DEFAULT_OPTS_MSFS, std::bind(&FlightplanIO::savePlnMsfs, flightplanIO, _1, _2));
+          break;
+
+        case rexp::PLNMSFSCOMPAT:
+          result = exportFlighplan(routeFile, rf::DEFAULT_OPTS_MSFS, std::bind(&FlightplanIO::savePlnMsfsCompat, flightplanIO, _1, _2));
           break;
 
         case rexp::PLNISG:
@@ -348,8 +349,7 @@ bool RouteExport::routeExportInternalPln(const RouteExportFormat& format)
 
       if(result)
       {
-        mainWindow->setStatusMessage(tr("Flight plan saved as %1PLN.").
-                                     arg(format.getType() == rexp::PLNANNOTATED ? tr("annotated ") : QString()));
+        mainWindow->setStatusMessage(tr("Flight plan saved as %1PLN.").arg(QString())); // Was annotated
         formatExportedCallback(format, routeFile);
         return true;
       }
