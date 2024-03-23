@@ -294,8 +294,14 @@ QStringList RouteStringWriter::createStringForRouteInternal(const Route& routePa
   }
 
   // Get departure runway and/or information
-  if(!route.hasCustomDeparture())
-    route.getSidStarNames(sid, sidTrans, star, starTrans);
+  route.getSidStarNames(sid, sidTrans, star, starTrans);
+
+  if(route.hasCustomDeparture())
+  {
+    // Omit SID for custom departure
+    sid.clear();
+    sidTrans.clear();
+  }
 
   departureRunway = atools::fs::util::normalizeRunway(route.getDepartureRunwayName());
 
@@ -417,29 +423,25 @@ QStringList RouteStringWriter::createStringForRouteInternal(const Route& routePa
   // Get transition separator
   bool sidStarSpace = options.testFlag(rs::SID_STAR_SPACE);
 
-  if(!route.getSidLegs().isCustomDeparture()) // Do not add custom departure as SID
+  if(!route.getSidLegs().isCustomDeparture() && options.testFlag(rs::SID_STAR) && !sid.isEmpty()) // Do not add custom departure as SID
   {
-    // Add SID
-    if(options.testFlag(rs::SID_STAR) && !sid.isEmpty())
+    if(!sidTrans.isEmpty() && sidStarSpace && sidTrans == items.value(insertPosition))
+      // Avoid duplicate of SID transition and next waypoint if using space separated notation
+      items.insert(insertPosition, sid);
+    else
     {
-      if(!sidTrans.isEmpty() && sidStarSpace && sidTrans == items.value(insertPosition))
-        // Avoid duplicate of SID transition and next waypoint if using space separated notation
-        items.insert(insertPosition, sid);
-      else
+      if(sidStarSpace)
       {
-        if(sidStarSpace)
-        {
-          if(!sidTrans.isEmpty())
-            items.insert(insertPosition, sidTrans);
-          items.insert(insertPosition, sid);
-        }
-        else
-          items.insert(insertPosition, sid % (sidTrans.isEmpty() ? QString() : '.' % sidTrans));
+        if(!sidTrans.isEmpty())
+          items.insert(insertPosition, sidTrans);
+        items.insert(insertPosition, sid);
       }
+      else
+        items.insert(insertPosition, sid % (sidTrans.isEmpty() ? QString() : '.' % sidTrans));
     }
-    else if(options.testFlag(rs::SID_STAR_GENERIC))
-      items.insert(insertPosition, "SID");
   }
+  else if(options.testFlag(rs::SID_STAR_GENERIC))
+    items.insert(insertPosition, "SID");
 
   // Add speed and altitude
   if(!items.isEmpty() && options.testFlag(rs::ALT_AND_SPEED))
