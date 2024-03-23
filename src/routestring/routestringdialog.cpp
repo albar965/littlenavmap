@@ -348,7 +348,7 @@ void RouteStringDialog::buildButtonMenu()
 
     action = new QAction(tr("Write STAR and &transition reversed"), buttonMenu);
     action->setObjectName("actionReversedStar");
-    action->setToolTip(tr("Write \"TRANS.STAR\" instead of \"STAR.TRANS\""));
+    action->setToolTip(tr("Write \"TRANS.STAR\" instead of \"STAR.TRANS\" or \"TRANS STAR\" instead of \"STAR TRANS\""));
     action->setCheckable(true);
     action->setData(static_cast<int>(rs::STAR_REV_TRANSITION));
     buttonMenu->addAction(action);
@@ -356,7 +356,7 @@ void RouteStringDialog::buildButtonMenu()
 
     action = new QAction(tr("&Write SID/STAR and transition space separated"), buttonMenu);
     action->setObjectName("actionSpaceSidStar");
-    action->setToolTip(tr("Use a space to separate SID, STAR and transition"));
+    action->setToolTip(tr("Use a space instead of \".\" to separate SID, STAR and transition"));
     action->setCheckable(true);
     action->setData(static_cast<int>(rs::SID_STAR_SPACE));
     buttonMenu->addAction(action);
@@ -467,6 +467,7 @@ void RouteStringDialog::showHelpButtonToggled(bool checked)
 void RouteStringDialog::loadFromFlightplanButtonClicked()
 {
   // Plan type to combo box
+  flightplan->setFlightplanType(NavApp::getRouteConst().getFlightplanConst().getFlightplanType());
   updateTypeFromFlightplan();
   textEditRouteStringPrepend(routeStringWriter->createStringForRoute(NavApp::getRouteConst(), NavApp::getRouteCruiseSpeedKts(),
                                                                      options | rs::ALT_AND_SPEED_METRIC), true /* newline*/);
@@ -541,8 +542,12 @@ void RouteStringDialog::updateTypeToFlightplan()
 
 void RouteStringDialog::updateTypeFromFlightplan()
 {
-  atools::gui::SignalBlocker blocker(ui->comboBoxRouteStringFlightplanType);
-  ui->comboBoxRouteStringFlightplanType->setCurrentIndex(flightplan->getFlightplanType() == apln::IFR ? 0 : 1);
+  // Do not change box if invalid
+  if(flightplan->getFlightplanType() != apln::NO_TYPE)
+  {
+    atools::gui::SignalBlocker blocker(ui->comboBoxRouteStringFlightplanType);
+    ui->comboBoxRouteStringFlightplanType->setCurrentIndex(flightplan->getFlightplanType() == apln::IFR ? 0 : 1);
+  }
 }
 
 void RouteStringDialog::addRouteDescription(const QString& routeString)
