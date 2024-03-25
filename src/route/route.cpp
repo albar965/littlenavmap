@@ -2247,9 +2247,6 @@ void Route::updateBoundingRect()
       boundingRect.extend(procedureLeg.recNavaids.getPosition(TYPES));
     }
   }
-
-  // Inflate to avoid VOR disappearing
-  boundingRect.inflate(2000.f, 2000.f);
 }
 
 void Route::nearestAllLegIndex(const map::PosCourse& pos, float& crossTrackDistanceMeter,

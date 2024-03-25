@@ -127,7 +127,9 @@ QString MapPainterRoute::buildLegText(float distance, float courseMag, float cou
 void MapPainterRoute::paintRoute()
 {
   const Route *route = context->route;
-  if(route->isEmpty() || (route->size() >= 2 && !resolves(route->getBoundingRect())))
+
+  // Add sufficient buffer to apoid navaids popping out
+  if(route->isEmpty() || (route->size() >= 2 && !resolves(route->getBoundingRect().inflatedMeter(15000.f, 15000.f))))
     return;
 
   atools::util::PainterContextSaver saver(context->painter);
