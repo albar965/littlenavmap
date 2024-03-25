@@ -2,14 +2,16 @@
 For example: #3 is https://github.com/albar965/littlenavmap/issues/3.
 This text is partially Markdown, so the formatting is sometimes strange.
 
-# Version 3.0.6.rc1
+# Version 3.0.6
 
 ## Notes
 
-**This is a stable release of Little Navmap which fixes several bugs and adds
-improvements as well as new features.**
+**This is a stable release of Little Navmap which fixes several bugs and adds a few
+improvements and new features.**
 
-**Notable changes:** TODO
+**Notable changes:** New add-on airport filter modes in menu View.
+Airport and navaid links in aircraft progress tab.
+Logbook status and collected aircraft performance now now kept between restarts.
 
 **macOS users: Keep in mind that you have to clear the quarantine flag when updating Little Xpconnect. See
 [Clearing the Quarantine Flag on macOS](https://www.littlenavmap.org/manuals/littlenavmap/release/latest/en/XPCONNECT.html#clearing-the-quarantine-flag-on-macos).**
@@ -22,7 +24,7 @@ See here for user manual downloads:
 
 A big thank you to all who reported bugs and issues!
 
-## Changes from 3.0.5 to 3.0.6.rc1
+## Changes from 3.0.5 to 3.0.6
 
 ### Flight Plan Route Description
 
@@ -49,7 +51,8 @@ A big thank you to all who reported bugs and issues!
 
 ### Map Display
 
-* Added three add-on airport map display options to menu `View` and toolbar:
+* Added three add-on airport map display options to menu `View` and toolbar.
+  See [User Manual - View Menu - Airports](https://www.littlenavmap.org/manuals/littlenavmap/release/latest/en/MENUS.html#airports).
   1. `Add-on no override` (`Ctrl+Alt+O`): Add-on airports are shown like normal airports.
   2. `Add-on override zoom`  (`Ctrl+Alt+Z`): Add-on airports override zoom distance only but filters
      like `Soft Surface` can still be used to hide them.
@@ -66,13 +69,13 @@ A big thank you to all who reported bugs and issues!
 
 ### User Interface
 
-* Replaced outdated airway types Victor and Jet with low and high everywhere in the program.
+* Replaced outdated airway types `Victor` and `Jet` with `Low` and `High` everywhere in the program.
 * Fixed too small table cell height on Windows with the high DPI option switched off.
 * Now also closing the startup image splash window in all dialog windows to avoid being hidden.
   As a result the program looked like frozen since the hidden dialog window blocked input.
 * Fix in Dutch shortcut translation ('Ctrl+D' vs. 'Ctrl+Down') which overlapped with other keys.
 * Fixed wrong warning for runway mismatches in procedure search. Showed unneeded mismatch warning
-  for runways without procedure. Example KSTK.
+  for runways without procedure. Example: KSTK.
 * More user interface improvements.
 
 ### Aircraft Progress
