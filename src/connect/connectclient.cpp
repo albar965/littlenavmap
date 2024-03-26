@@ -387,7 +387,8 @@ void ConnectClient::postSimConnectData(atools::fs::sc::SimConnectData dataPacket
 
         // Either no version given (very old) or version is below recommended
         if(!version.isValid() || atools::util::Version(version.getValueString()) < minimumXpconnectVersion)
-          showXpconnectVersionWarning(version.getValueString());
+          // Give a warning to the user but run this from the main loop
+          QTimer::singleShot(0, this, std::bind(&ConnectClient::showXpconnectVersionWarning, this, version.getValueString()));
       }
     }
   } // if(dataPacket.getStatus() == atools::fs::sc::OK)
@@ -673,12 +674,20 @@ void ConnectClient::showXpconnectVersionWarning(const QString& xpconnectVersion)
                    "install the included Little Xpconnect in X-Plane directory \"plugins\".</p>").
               arg(xpconnectVersion).arg(minimumXpconnectVersion.getVersionString());
 
-  qWarning() << Q_FUNC_INFO << message;
+  atools::gui::DialogButtonList buttonList =
+  {
+    atools::gui::DialogButton(QString(), QMessageBox::Ok),
+    atools::gui::DialogButton(tr("&Install Now ..."), QMessageBox::Save),
+    atools::gui::DialogButton(QString(), QMessageBox::Help)
+  };
 
-  int retval = atools::gui::Dialog::warning(mainWindow, message, QMessageBox::Ok | QMessageBox::Help);
+  int retval = atools::gui::Dialog(mainWindow).showQuestionMsgBox(QString(), message,
+                                                                  QString(), buttonList, QMessageBox::Ok, QMessageBox::Help);
 
   if(retval == QMessageBox::Help)
     atools::gui::HelpHandler::openHelpUrlWeb(mainWindow, lnm::helpOnlineUrl + "XPCONNECT.html", lnm::helpLanguageOnline());
+  else if(retval == QMessageBox::Save)
+    mainWindow->installXpconnect();
 }
 
 void ConnectClient::showTerminalError()

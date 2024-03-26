@@ -275,6 +275,9 @@ public:
   /* Called by QApplication::fontChanged() */
   void fontChanged(const QFont& font);
 
+  /* Start installation for Little Xpconnect */
+  void installXpconnect();
+
 signals:
   /* Emitted when window is shown the first time */
   void windowShown();
@@ -323,8 +326,6 @@ private:
 
   void runDirToolManual();
   void runDirTool(bool manual = true);
-
-  void installXpconnect();
 
   /* Update status bar section for online status */
   void updateConnectionStatusMessageText();
