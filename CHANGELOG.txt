@@ -26,6 +26,19 @@ A big thank you to all who reported bugs and issues!
 
 ## Changes from 3.0.5 to 3.0.6
 
+### Flight Plan and Procedures
+
+* Fixed wrong warning for runway mismatches in procedure search. Showed unneeded mismatch warning
+  for runways without procedure. Example: KSTK.
+* Fixed issue where SID/STAR could not be reloaded due to wrongly detected runway mismatch when
+  using the MSFS scenery library. Example: EDDE ERNE1V EDDK/I14L
+  could not load ERNE1V when loading the flight plan for MSFS.
+* Flight plan name now updated in window title bar when using `Save` or `Save as`.
+* Now correctly assigning `ALL` as runway designator to SID/STAR having no runway assignments in MSFS.
+  Reload the scenery library if you use MSFS.
+* Fixed issue where STAR could not be loaded from MSFS PLN file. Example: KIAD/30 ANJLL4.DNERO KLAX/06L.
+* Fixed crash when modifying flight plan.
+
 ### Flight Plan Route Description
 
 * Fixed issue where STAR keyword was not generated from flight plan in route description.
@@ -74,15 +87,6 @@ A big thank you to all who reported bugs and issues!
 * Now also closing the startup image splash window in all dialog windows to avoid being hidden.
   As a result the program looked like frozen since the hidden dialog window blocked input.
 * Fix in Dutch shortcut translation ('Ctrl+D' vs. 'Ctrl+Down') which overlapped with other keys.
-* Fixed wrong warning for runway mismatches in procedure search. Showed unneeded mismatch warning
-  for runways without procedure. Example: KSTK.
-* Fixed issue where SID/STAR could not be reloaded due to wrongly detected runway mismatch when
-  using the MSFS scenery library. Example: EDDE N0434A100 ERNE1V EDDK/I14L
-  could not load ERNE1V when loading the flight plan for MSFS.
-* Flight plan name now updated in window title bar when using `Save` or `Save as`.
-* Now correctly assigning `ALL` as runway designator to SID/STAR having no runway assignments in MSFS.
-  Reload the scenery library if you use MSFS.
-
 * More user interface improvements.
 
 ### Aircraft Progress
