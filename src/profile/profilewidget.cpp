@@ -2005,7 +2005,7 @@ bool ProfileWidget::fetchRouteElevations(atools::geo::LineString& elevations, co
   }
 
   // Add two null elevation dummy points if provider does not return any values
-  if(elevations.isEmpty())
+  if(elevations.isEmpty() && !geometry.isEmpty())
   {
     elevations.append(geometry.constFirst().alt(0.f));
     elevations.append(geometry.constLast().alt(0.f));
