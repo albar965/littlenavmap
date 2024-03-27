@@ -2046,9 +2046,8 @@ void MainWindow::updateMapPosLabel(const atools::geo::Pos& pos, int x, int y)
 /* Updates main window title with simulator type, flight plan name and change status */
 void MainWindow::updateWindowTitle()
 {
-  QString newTitle = mainWindowTitle;
+  QString title = mainWindowTitle;
   navdb::Status navDbStatus = NavApp::getDatabaseManager()->getNavDatabaseStatus();
-
   atools::util::Version version(NavApp::applicationVersion());
 
 #if defined(WINARCH64)
@@ -2061,9 +2060,9 @@ void MainWindow::updateWindowTitle()
 
   // Program version and revision ==========================================
   if(version.isStable() || version.isReleaseCandidate() || version.isBeta())
-    newTitle += tr(" %1").arg(applicationVersion);
+    title += tr(" %1").arg(applicationVersion);
   else
-    newTitle += tr(" %1 (%2)").arg(applicationVersion).arg(GIT_REVISION_LITTLENAVMAP);
+    title += tr(" %1 (%2)").arg(applicationVersion).arg(GIT_REVISION_LITTLENAVMAP);
 
   // Database information  ==========================================
   // Simulator database =========
@@ -2071,53 +2070,54 @@ void MainWindow::updateWindowTitle()
   simDbText = simDb.isEmpty() ? tr("Empty") : simDb;
 
   if(navDbStatus == navdb::ALL)
-    newTitle += tr(" — (%1)").arg(simDbText);
+    title += tr(" — (%1)").arg(simDbText);
   else
   {
-    newTitle += tr(" — %1").arg(simDbText);
+    title += tr(" — %1").arg(simDbText);
 
     if(!NavApp::getDatabaseAiracCycleSim().isEmpty() && !simDb.isEmpty())
-      newTitle += tr(" %1").arg(NavApp::getDatabaseAiracCycleSim());
+      title += tr(" %1").arg(NavApp::getDatabaseAiracCycleSim());
   }
 
   // Nav database =========
   if(navDbStatus == navdb::ALL)
-    newTitle += tr(" / N");
+    title += tr(" / N");
   else if(navDbStatus == navdb::MIXED)
-    newTitle += tr(" / N");
+    title += tr(" / N");
   else if(navDbStatus == navdb::OFF)
-    newTitle += tr(" / (N)");
+    title += tr(" / (N)");
 
   if((navDbStatus == navdb::ALL || navDbStatus == navdb::MIXED) && !NavApp::getDatabaseAiracCycleNav().isEmpty())
-    newTitle += tr(" %1").arg(NavApp::getDatabaseAiracCycleNav());
+    title += tr(" %1").arg(NavApp::getDatabaseAiracCycleNav());
 
   // Flight plan name  ==========================================
   if(!routeController->getRouteFilename().isEmpty())
-    newTitle += tr(" — %1%2").
-                arg(QFileInfo(routeController->getRouteFilename()).fileName()).
-                arg(routeController->hasChanged() ? tr(" *") : QString());
+    title += tr(" — %1%2").
+             arg(QFileInfo(routeController->getRouteFilename()).fileName()).
+             arg(routeController->hasChanged() ? tr(" *") : QString());
   else if(routeController->hasChanged())
-    newTitle += tr(" — *");
+    title += tr(" — *");
 
   // Performance name  ==========================================
   if(!NavApp::getCurrentAircraftPerfFilepath().isEmpty())
-    newTitle += tr(" — %1%2").
-                arg(QFileInfo(NavApp::getCurrentAircraftPerfFilepath()).fileName()).
-                arg(NavApp::getAircraftPerfController()->hasChanged() ? tr(" *") : QString());
+    title += tr(" — %1%2").
+             arg(QFileInfo(NavApp::getCurrentAircraftPerfFilepath()).fileName()).
+             arg(NavApp::getAircraftPerfController()->hasChanged() ? tr(" *") : QString());
   else if(NavApp::getAircraftPerfController()->hasChanged())
-    newTitle += tr(" — *");
+    title += tr(" — *");
 
   if(!NavApp::getOnlineNetworkTranslated().isEmpty())
-    newTitle += tr(" — %1").arg(NavApp::getOnlineNetworkTranslated());
+    title += tr(" — %1").arg(NavApp::getOnlineNetworkTranslated());
 
 #ifndef QT_NO_DEBUG
-  newTitle += " — DEBUG";
+  title += " — DEBUG";
 #endif
 
   // Add a star to the flight plan tab if changed
   routeController->updateRouteTabChangedStatus();
 
-  setWindowTitle(newTitle);
+  if(title != windowTitle())
+    setWindowTitle(title);
 }
 
 void MainWindow::setToolTipsEnabledMainMenu(bool enabled)
@@ -2268,8 +2268,7 @@ void MainWindow::routeFromFlightplan(const atools::fs::pln::Flightplan& flightpl
   {
     // Transfer flag to new flightplan to avoid silently overwriting non LNMPLN files with own format
     bool lnmpln = routeController->getRouteConst().getFlightplanConst().isLnmFormat();
-    routeController->loadFlightplan(flightplan, atools::fs::pln::LNM_PLN, QString(),
-                                    changed, adjustAltitude, undo, false /* warnAltitude */);
+    routeController->loadFlightplan(flightplan, atools::fs::pln::LNM_PLN, QString(), changed, adjustAltitude, undo);
     routeController->getRoute().getFlightplan().setLnmFormat(lnmpln);
     if(OptionData::instance().getFlags() & opts::GUI_CENTER_ROUTE)
       routeCenter();
@@ -2511,6 +2510,7 @@ void MainWindow::routeSaveLnmExported(const QString& filename)
   // Add to recent files
   routeFileHistory->addFile(filename);
 
+  updateWindowTitle();
   updateActionStates();
   saveFileHistoryStates();
 }
@@ -2563,6 +2563,7 @@ bool MainWindow::routeSaveLnm()
     {
       routeFileHistory->addFile(routeController->getRouteFilename());
       updateActionStates();
+      updateWindowTitle();
       setStatusMessage(tr("Flight plan saved."));
       saveFileHistoryStates();
       return true;
@@ -2588,6 +2589,7 @@ bool MainWindow::routeSaveAsLnm()
     if(routeController->saveFlightplanLnmAs(routeFile))
     {
       routeFileHistory->addFile(routeFile);
+      updateWindowTitle();
       updateActionStates();
       setStatusMessage(tr("Flight plan saved."));
       saveFileHistoryStates();

@@ -1068,7 +1068,8 @@ void RouteController::restoreState()
             atools::fs::pln::FileFormat format = flightplanIO->load(fp, flightplanToLoad);
 
             // Do not warn on missing altitude after loading - do not change altitude
-            loadFlightplan(fp, format, flightplanToLoad, changed, false /* adjustAltitude */, false /* undo */, false /* warnAltitude */);
+            loadFlightplanInternal(fp, format, flightplanToLoad, changed, false /* adjustAltitude */, false /* undo */,
+                                   false /* warnAltitude */);
 
             if(defaultLoad && settings.contains(lnm::ROUTE_DEFAULT_FILE_LNMPLN))
               // Restore LNMPLN status after loading since this set the status to true
@@ -1148,8 +1149,8 @@ void RouteController::newFlightplan()
   emit routeChanged(true /* geometryChanged */, true /* newFlightPlan */);
 }
 
-void RouteController::loadFlightplan(atools::fs::pln::Flightplan flightplan, atools::fs::pln::FileFormat format,
-                                     const QString& filename, bool changed, bool adjustAltitude, bool undo, bool warnAltitude)
+void RouteController::loadFlightplanInternal(atools::fs::pln::Flightplan flightplan, atools::fs::pln::FileFormat format,
+                                             const QString& filename, bool changed, bool adjustAltitude, bool undo, bool warnAltitude)
 {
   qDebug() << Q_FUNC_INFO << filename << "format" << format << "changed" << changed
            << "adjustAltitude" << adjustAltitude
@@ -1395,8 +1396,8 @@ bool RouteController::loadFlightplanLnmStr(const QString& string)
     // Will throw an exception if something goes wrong
     flightplanIO->loadLnmStr(fp, string);
 
-    loadFlightplan(fp, atools::fs::pln::LNM_PLN, QString(),
-                   false /*changed*/, false /* adjustAltitude */, false /* undo */, false /* warnAltitude */);
+    loadFlightplanInternal(fp, atools::fs::pln::LNM_PLN, QString(),
+                           false /*changed*/, false /* adjustAltitude */, false /* undo */, false /* warnAltitude */);
   }
   catch(atools::Exception& e)
   {
@@ -1425,8 +1426,8 @@ void RouteController::loadFlightplanRouteStr(const QString& routeString)
 
   // Use settings from dialog
   if(reader.createRouteFromString(routeString, RouteStringDialog::getOptionsFromSettings(), &fp, nullptr, nullptr, &altIncluded))
-    loadFlightplan(fp, atools::fs::pln::LNM_PLN, QString(),
-                   false /* changed */, !altIncluded /* adjustAltitude */, false /* undo */, false /* warnAltitude */);
+    loadFlightplanInternal(fp, atools::fs::pln::LNM_PLN, QString(),
+                           false /* changed */, !altIncluded /* adjustAltitude */, false /* undo */, false /* warnAltitude */);
 
   if(reader.hasErrorMessages() || reader.hasWarningMessages())
     dialog->warning(tr("<p>Errors reading flight plan route description<br/><b>%1</b><br/>from command line:</p><p>%2</p>").
@@ -1442,7 +1443,7 @@ bool RouteController::loadFlightplan(const QString& filename)
     qDebug() << Q_FUNC_INFO << "loadFlightplan" << filename;
     // Will throw an exception if something goes wrong
     atools::fs::pln::FileFormat format = flightplanIO->load(fp, filename);
-    loadFlightplan(fp, format, filename, false /*changed*/, false /* adjustAltitude */, false /* undo */, true /* warnAltitude */);
+    loadFlightplanInternal(fp, format, filename, false /*changed*/, false /* adjustAltitude */, false /* undo */, true /* warnAltitude */);
   }
   catch(atools::Exception& e)
   {

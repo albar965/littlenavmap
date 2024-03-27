@@ -93,8 +93,12 @@ public:
   /* Loads flight plan from FSX PLN file, checks for proper start position (shows notification dialog)
    * and emits routeChanged. Uses file name as new current name  */
   bool loadFlightplan(const QString& filename);
-  void loadFlightplan(atools::fs::pln::Flightplan flightplan, atools::fs::pln::FileFormat format,
-                      const QString& filename, bool changed, bool adjustAltitude, bool undo, bool warnAltitude);
+
+  void loadFlightplan(const atools::fs::pln::Flightplan& flightplan, atools::fs::pln::FileFormat format,
+                      const QString& filename, bool changed, bool adjustAltitude, bool undo)
+  {
+    loadFlightplanInternal(flightplan, format, filename, changed, adjustAltitude, undo, false /* warnAltitude */);
+  }
 
   /* Load the plan from a string in LNMPLN format */
   bool loadFlightplanLnmStr(const QString& string);
@@ -384,6 +388,9 @@ private:
     MOVE_DOWN = 1,
     MOVE_UP = -1
   };
+
+  void loadFlightplanInternal(atools::fs::pln::Flightplan flightplan, atools::fs::pln::FileFormat format,
+                              const QString& filename, bool changed, bool adjustAltitude, bool undo, bool warnAltitude);
 
   /* Saves flight plan using LNM format. Returns true on success. */
   bool saveFlightplanLnmInternal(const QString& filename, bool silentShutdown, bool clearUndo);
