@@ -76,6 +76,13 @@ A big thank you to all who reported bugs and issues!
 * Fix in Dutch shortcut translation ('Ctrl+D' vs. 'Ctrl+Down') which overlapped with other keys.
 * Fixed wrong warning for runway mismatches in procedure search. Showed unneeded mismatch warning
   for runways without procedure. Example: KSTK.
+* Fixed issue where SID/STAR could not be reloaded due to wrongly detected runway mismatch when
+  using the MSFS scenery library. Example: EDDE N0434A100 ERNE1V EDDK/I14L
+  could not load ERNE1V when loading the flight plan for MSFS.
+* Flight plan name now updated in window title bar when using `Save` or `Save as`.
+* Now correctly assigning `ALL` as runway designator to SID/STAR having no runway assignments in MSFS.
+  Reload the scenery library if you use MSFS.
+
 * More user interface improvements.
 
 ### Aircraft Progress
@@ -94,6 +101,7 @@ A big thank you to all who reported bugs and issues!
 
 ### Other
 
+* Translations updated. Thanks to Flavio, Patrick and Ricardo!
 * The aircraft performance collection now keeps results on restart. Note that you have to restart
   the collection manually by clicking in menu `Aircraft` -> `Restart Aircraft Performance Collection`,
   the button in the window or `File` -> `Reset all for a new Flight`.
