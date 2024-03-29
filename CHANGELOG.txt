@@ -88,6 +88,7 @@ A big thank you to all who reported bugs and issues!
   As a result the program looked like frozen since the hidden dialog window blocked input.
 * Fix in Dutch shortcut translation ('Ctrl+D' vs. 'Ctrl+Down') which overlapped with other keys.
 * More user interface improvements.
+* Minimum number of trail points lowered to 1000.
 
 ### Aircraft Progress
 
@@ -113,6 +114,7 @@ A big thank you to all who reported bugs and issues!
 * Added new X-Plane 12 VASI types `APAPI_L` and `APAPI_R`.
 * Fixed issue where X-Plane airways had wrong type assigned. Example:
   EVMON to PAPAL airway Z8 was wrongly declared Jet. #1111
+* Corrected VOR range for X-Plane data to use 130 NM for "unspecified but likely high power VOR".
 
 ==>>=============================================================================
 

@@ -442,7 +442,7 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
      ui->checkBoxOptionsSimUpdatesConstant,
      ui->spinBoxOptionsSimUpdateBox,
      ui->spinBoxOptionsSimCenterLegZoom,
-     ui->spinBoxSimMaxTrackPoints,
+     ui->spinBoxSimMaxTrailPoints,
      ui->radioButtonOptionsStartupShowHome,
      ui->radioButtonOptionsStartupShowLast,
      ui->radioButtonOptionsStartupShowFlightplan,
@@ -1995,7 +1995,7 @@ void OptionsDialog::widgetsToOptionData()
 
   data.simUpdateBox = ui->spinBoxOptionsSimUpdateBox->value();
   data.simUpdateBoxCenterLegZoom = ui->spinBoxOptionsSimCenterLegZoom->value();
-  data.aircraftTrailMaxPoints = ui->spinBoxSimMaxTrackPoints->value();
+  data.aircraftTrailMaxPoints = ui->spinBoxSimMaxTrailPoints->value();
 
   data.cacheSizeDisk = ui->spinBoxOptionsCacheDiskSize->value();
   data.cacheSizeMemory = ui->spinBoxOptionsCacheMemorySize->value();
@@ -2318,7 +2318,7 @@ void OptionsDialog::optionDataToWidgets(const OptionData& data)
   ui->spinBoxOptionsSimCleanupTableTime->setValue(data.simCleanupTableTime);
   ui->spinBoxOptionsSimUpdateBox->setValue(data.simUpdateBox);
   ui->spinBoxOptionsSimCenterLegZoom->setValue(data.simUpdateBoxCenterLegZoom);
-  ui->spinBoxSimMaxTrackPoints->setValue(data.aircraftTrailMaxPoints);
+  ui->spinBoxSimMaxTrailPoints->setValue(data.aircraftTrailMaxPoints);
   ui->spinBoxOptionsCacheDiskSize->setValue(data.cacheSizeDisk);
   ui->spinBoxOptionsCacheMemorySize->setValue(data.cacheSizeMemory);
   ui->spinBoxOptionsGuiInfoText->setValue(data.guiInfoTextSize);
