@@ -11,7 +11,7 @@ improvements and new features.**
 
 **Notable changes:** New add-on airport filter modes in menu View.
 Airport and navaid links in aircraft progress tab.
-Logbook status and collected aircraft performance now now kept between restarts.
+Logbook status and collected aircraft performance now kept between restarts.
 
 **macOS users: Keep in mind that you have to clear the quarantine flag when updating Little Xpconnect. See
 [Clearing the Quarantine Flag on macOS](https://www.littlenavmap.org/manuals/littlenavmap/release/latest/en/XPCONNECT.html#clearing-the-quarantine-flag-on-macos).**
@@ -85,7 +85,7 @@ A big thank you to all who reported bugs and issues!
 * Replaced outdated airway types `Victor` and `Jet` with `Low` and `High` everywhere in the program.
 * Fixed too small table cell height on Windows with the high DPI option switched off.
 * Now also closing the startup image splash window in all dialog windows to avoid being hidden.
-  As a result the program looked like frozen since the hidden dialog window blocked input.
+  As a result, the program looked like frozen since the hidden dialog window blocked input.
 * Fix in Dutch shortcut translation ('Ctrl+D' vs. 'Ctrl+Down') which overlapped with other keys.
 * More user interface improvements.
 * Minimum number of trail points lowered to 1000.
@@ -107,6 +107,7 @@ A big thank you to all who reported bugs and issues!
 ### Other
 
 * Translations updated. Thanks to Flavio, Patrick and Ricardo!
+* Updated user manual for new features and changes.
 * The aircraft performance collection now keeps results on restart. Note that you have to restart
   the collection manually by clicking in menu `Aircraft` -> `Restart Aircraft Performance Collection`,
   the button in the window or `File` -> `Reset all for a new Flight`.
