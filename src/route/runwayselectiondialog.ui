@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>406</width>
-    <height>286</height>
+    <height>359</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -108,7 +108,7 @@
    <item row="1" column="0" colspan="2">
     <widget class="QLabel" name="labelRunwaySelectionHeader">
      <property name="text">
-      <string></string>
+      <string/>
      </property>
      <property name="textInteractionFlags">
       <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>

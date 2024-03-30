@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>453</width>
-    <height>497</height>
+    <width>497</width>
+    <height>563</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -612,7 +612,7 @@ Erases procedures.</string>
  </resources>
  <connections/>
  <buttongroups>
-  <buttongroup name="buttonGroup"/>
   <buttongroup name="buttonGroup_2"/>
+  <buttongroup name="buttonGroup"/>
  </buttongroups>
 </ui>
