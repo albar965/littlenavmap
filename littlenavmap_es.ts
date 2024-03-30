@@ -22484,7 +22484,7 @@ Cambie el color con el &quot;Color del tramo volado&quot;.</translation>
         <translation type="vanished">Fondo blanco para etiquetas de navaids</translation>
     </message>
     <message>
-        <source>Thickness of the range ring and distance measurment lines</source>
+        <source>Thickness of the range ring and distance measurement lines</source>
         <translation type="vanished">Grosor del anillo de rango y líneas de medidas de distancia</translation>
     </message>
     <message>
@@ -23526,7 +23526,7 @@ Value 0 is opaque and 90 is most transparent.</source>
     </message>
     <message>
         <location filename="src/options/options.ui" line="3694"/>
-        <source>Color for distance measurment lines.
+        <source>Color for distance measurement lines.
 Does not apply to lines originating from airports or navaids.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -23588,7 +23588,7 @@ elevation profile hover:</source>
     </message>
     <message>
         <location filename="src/options/options.ui" line="4023"/>
-        <source>&amp;Distance measurments:</source>
+        <source>&amp;Distance measurements:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>

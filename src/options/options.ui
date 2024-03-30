@@ -4891,7 +4891,7 @@ if you hover over the elevation profile.</string>
                   </sizepolicy>
                  </property>
                  <property name="toolTip">
-                  <string>Color for distance measurment lines.
+                  <string>Color for distance measurement lines.
 Does not apply to lines originating from airports or navaids.</string>
                  </property>
                  <property name="text">
