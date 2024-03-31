@@ -22404,7 +22404,7 @@ Los valores más pequeños se acercarán más a un aeropuerto o una navaid.
         <location filename="src/options/options.ui" line="1781"/>
         <source>Empty airports are not add-ons, have no taxiways, no parking and no aprons.
 These are displayed underneath all other airports and use a gray symbol.
-The aiports toolbar button can be used to disable them if this checkbox is enabled.</source>
+The \bairports\b toolbar button can be used to disable them if this checkbox is enabled.</source>
         <oldsource>All X-Plane airports which are not 3D and not add-on
 will be displayed underneath all other airports, use a gray symbol and
 provide a toolbar button for disabling them if this checkbox is enabled
@@ -23449,7 +23449,7 @@ after the given timeout while flying.</source>
         <location filename="src/options/options.ui" line="1796"/>
         <source>All X-Plane airports which are not 3D and not add-on
 will be displayed underneath all other airports and use a gray symbol.
-The aiports toolbar button can be used to disable them if this checkbox is enabled.</source>
+The \bairports\b toolbar button can be used to disable them if this checkbox is enabled.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>

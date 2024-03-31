@@ -23188,15 +23188,21 @@ Does not apply to the flight plan loaded after startup.
     <message>
         <location filename="src/options/options.ui" line="2038"/>
         <source>Empty airports are not add-ons, have no taxiways, no parking and no aprons.
+Thes\bairports\bisplayed underneath all other airports and use a gray symbol.
+The airports toolbar button can be used to hide empty airports if this box is checked.</source>
+        <oldsource>Empty airports are not add-ons, have no taxiways, no parking and no aprons.
 These are displayed underneath all other airports and use a gray symbol.
-The aiports toolbar button can be used to hide empty airports if this box is checked.</source>
+The \bairports\b toolbar button can be used to hide empty airports if this box is checked.</oldsource>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="2053"/>
         <source>All X-Plane airports which are 2D and stock
+will\bairports\bplayed underneath all other airports and use a gray symbol.
+The airports toolbar button can be used to hide empty airports if this box is checked.</source>
+        <oldsource>All X-Plane airports which are 2D and stock
 will be displayed underneath all other airports and use a gray symbol.
-The aiports toolbar button can be used to hide empty airports if this box is checked.</source>
+The \bairports\b toolbar button can be used to hide empty airports if this box is checked.</oldsource>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -25185,7 +25191,7 @@ Kleinere waarden zullen meer inzoomen op een luchthaven of navaid.
     <message>
         <source>Empty airports are not add-ons, have no taxiways, no parking and no aprons.
 These are displayed underneath all other airports and use a gray symbol.
-The aiports toolbar button can be used to disable them if this checkbox is enabled.</source>
+The \bairports\b toolbar button can be used to disable them if this checkbox is enabled.</source>
         <oldsource>All X-Plane airports which are not 3D and not add-on
 will be displayed underneath all other airports, use a gray symbol and
 provide a toolbar button for disabling them if this checkbox is enabled

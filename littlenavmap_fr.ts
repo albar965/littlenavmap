@@ -24218,7 +24218,7 @@ Un anneau de porté est ajouté à chaque valeur de rayon.</translation>
     <message>
         <source>Empty airports are not add-ons, have no taxiways, no parking and no aprons.
 These are displayed underneath all other airports and use a gray symbol.
-The aiports toolbar button can be used to disable them if this checkbox is enabled.</source>
+The \bairports\b toolbar button can be used to disable them if this checkbox is enabled.</source>
         <oldsource>Empty airports are not add-ons, have no taxiways, no parking and no aprons.
 These are displayed underneath all other airports, use a gray symbol and
 provide a toolbar button for disabling them if this checkbox is enabled.</oldsource>
@@ -25530,7 +25530,7 @@ Des valeurs plus petites permettent de zoomer plus près d&apos;un aéroport ou 
     <message>
         <source>All X-Plane airports which are not 3D and not add-on
 will be displayed underneath all other airports and use a gray symbol.
-The aiports toolbar button can be used to disable them if this checkbox is enabled.</source>
+The \bairports\b toolbar button can be used to disable them if this checkbox is enabled.</source>
         <oldsource>All X-Plane airports which are not 3D and not add-on
 will be displayed underneath all other airports, use a gray symbol and
 provide a toolbar button for disabling them if this checkbox is enabled
@@ -27741,8 +27741,11 @@ CRUISEALT: Altitude de croisière</translation>
     <message>
         <location filename="src/options/options.ui" line="2038"/>
         <source>Empty airports are not add-ons, have no taxiways, no parking and no aprons.
+Thes\bairports\bisplayed underneath all other airports and use a gray symbol.
+The airports toolbar button can be used to hide empty airports if this box is checked.</source>
+        <oldsource>Empty airports are not add-ons, have no taxiways, no parking and no aprons.
 These are displayed underneath all other airports and use a gray symbol.
-The aiports toolbar button can be used to hide empty airports if this box is checked.</source>
+The \bairports\b toolbar button can be used to hide empty airports if this box is checked.</oldsource>
         <translation type="unfinished">Les aéroports vides ne sont pas des add-ons, ils n&apos;ont pas de voies de circulation, pas de parking et pas d&apos;aires de trafic.
 Ils sont affichés sous tous les autres aéroports et utilisent un symbole gris.
 Le bouton de la barre d&apos;outils Aéroports peut être utilisé pour masquer les aéroports vides si cette case est cochée.</translation>
@@ -27750,11 +27753,14 @@ Le bouton de la barre d&apos;outils Aéroports peut être utilisé pour masquer 
     <message>
         <location filename="src/options/options.ui" line="2053"/>
         <source>All X-Plane airports which are 2D and stock
+will\bairports\bplayed underneath all other airports and use a gray symbol.
+The airports toolbar button can be used to hide empty airports if this box is checked.</source>
+        <oldsource>All X-Plane airports which are 2D and stock
 will be displayed underneath all other airports and use a gray symbol.
-The aiports toolbar button can be used to hide empty airports if this box is checked.</source>
+The \bairports\b toolbar button can be used to hide empty airports if this box is checked.</oldsource>
         <translation type="unfinished">Tous les aéroports X-Plane qui sont en 2D et en stock
 seront affichés sous tous les autres aéroports et utiliseront un symbole gris.
-Le bouton de la barre d&apos;outils aiports peut être utilisé pour masquer les aéroports vides si cette case est cochée.</translation>
+Le bouton de la barre d&apos;outils \bairports\b peut être utilisé pour masquer les aéroports vides si cette case est cochée.</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="2058"/>

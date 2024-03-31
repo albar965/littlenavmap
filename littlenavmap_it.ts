@@ -25724,7 +25724,7 @@ Per VOR, NDB, ILS, punti rotta e circuiti di attesa. Non per le etichette dei pi
     <message>
         <source>All X-Plane airports which are not 3D and not add-on
 will be displayed underneath all other airports and use a gray symbol.
-The aiports toolbar button can be used to disable them if this checkbox is enabled.</source>
+The \bairports\b toolbar button can be used to disable them if this checkbox is enabled.</source>
         <translation type="vanished">Tutti gli aeroporti di X-Plane che non sono 3D e non sono add-on
 saranno visualizzati sotto tutti gli altri aeroporti e utilizzeranno un simbolo grigio.
 Il pulsante della barra degli strumenti aeroporti può essere utilizzato per disabilitarli se questa casella di controllo è attivata.</translation>
@@ -26318,18 +26318,24 @@ CRUISEALT: Altitudine di crociera</translation>
     <message>
         <location filename="src/options/options.ui" line="2038"/>
         <source>Empty airports are not add-ons, have no taxiways, no parking and no aprons.
+Thes\bairports\bisplayed underneath all other airports and use a gray symbol.
+The airports toolbar button can be used to hide empty airports if this box is checked.</source>
+        <oldsource>Empty airports are not add-ons, have no taxiways, no parking and no aprons.
 These are displayed underneath all other airports and use a gray symbol.
-The aiports toolbar button can be used to hide empty airports if this box is checked.</source>
-        <translation>Gli aeroporti vuoti non sono componenti aggiuntivi, non hanno vie di rullaggio, né parcheggi né piazzali.
+The \bairports\b toolbar button can be used to hide empty airports if this box is checked.</oldsource>
+        <translation type="unfinished">Gli aeroporti vuoti non sono componenti aggiuntivi, non hanno vie di rullaggio, né parcheggi né piazzali.
 Vengono visualizzati sotto tutti gli altri aeroporti e utilizzano un simbolo grigio.
 Il pulsante della barra degli strumenti aeroporti può essere utilizzato per disabilitarli se questa casella di controllo è attivata.</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="2053"/>
         <source>All X-Plane airports which are 2D and stock
+will\bairports\bplayed underneath all other airports and use a gray symbol.
+The airports toolbar button can be used to hide empty airports if this box is checked.</source>
+        <oldsource>All X-Plane airports which are 2D and stock
 will be displayed underneath all other airports and use a gray symbol.
-The aiports toolbar button can be used to hide empty airports if this box is checked.</source>
-        <translation>Tutti gli aeroporti di X-Plane che sono 2D e stock
+The \bairports\b toolbar button can be used to hide empty airports if this box is checked.</oldsource>
+        <translation type="unfinished">Tutti gli aeroporti di X-Plane che sono 2D e stock
 saranno visualizzati sotto tutti gli altri aeroporti e utilizzeranno un simbolo grigio.
 Il pulsante della barra degli strumenti aeroportii può essere utilizzato per nascondere gli aeroporti vuoti se questa casella è selezionata.</translation>
     </message>
@@ -27269,7 +27275,7 @@ Riavvia il programma dopo aver cambiato questa opzione. Potrebbe anche essere ne
     <message>
         <source>Empty airports are not add-ons, have no taxiways, no parking and no aprons.
 These are displayed underneath all other airports and use a gray symbol.
-The aiports toolbar button can be used to disable them if this checkbox is enabled.</source>
+The \bairports\b toolbar button can be used to disable them if this checkbox is enabled.</source>
         <oldsource>All X-Plane airports which are not 3D and not add-on
 will be displayed underneath all other airports, use a gray symbol and
 provide a toolbar button for disabling them if this checkbox is enabled
