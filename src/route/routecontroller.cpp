@@ -4881,9 +4881,7 @@ void RouteController::updateTableModelAndErrors()
     itemRow[rcol::REGION] = new QStandardItem(leg.getRegion());
     itemRow[rcol::NAME] = new QStandardItem(leg.getName());
 
-    if(route.getSizeWithoutAlternates() == 1)
-      itemRow[rcol::PROCEDURE] = new QStandardItem(tr("Airport"));
-    else
+    if(route.getSizeWithoutAlternates() > 1)
     {
       if(row == route.getDestinationAirportLegIndex() && !route.getDestinationAirportLeg().isAnyProcedure())
         itemRow[rcol::PROCEDURE] = new QStandardItem(tr("Destination"));
