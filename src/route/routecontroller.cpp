@@ -4292,8 +4292,7 @@ void RouteController::routeAddProcedure(proc::MapProcedureLegs legs)
     airportSim = mapQuery->getAirportSim(airportNav);
   }
 
-  QString sidStarRunwayNav;
-
+  // Adding approach or destination runway ==========================================================================
   if(legs.mapType & proc::PROCEDURE_APPROACH_ALL && route.hasAnyStarProcedure())
   {
     // STAR already assigned and adding approach - try to adjust STAR to approach =====================================
@@ -4313,7 +4312,10 @@ void RouteController::routeAddProcedure(proc::MapProcedureLegs legs)
     }
   }
 
-  if(legs.mapType & proc::PROCEDURE_SID_STAR_ALL)
+  // Adding SID or STAR ==========================================================================
+  // Do not check runways for custom deaparture
+  QString sidStarRunwayNav;
+  if(legs.mapType & proc::PROCEDURE_SID_STAR_ALL && !legs.isCustomDeparture())
   {
     // Get runways for all or parallel runway procedures ===============================
     QStringList sidStarRunwaysNav;
@@ -4394,7 +4396,9 @@ void RouteController::routeAddProcedure(proc::MapProcedureLegs legs)
     }
 
     // Assign runway for SID/STAR than can have multiple runways
-    procedureQuery->insertSidStarRunway(legs, sidStarRunwayNav);
+    // Not needed for departure runway selection
+    if(!legs.isCustomDeparture())
+      procedureQuery->insertSidStarRunway(legs, sidStarRunwayNav);
 
     route.setSidProcedureLegs(legs);
 
