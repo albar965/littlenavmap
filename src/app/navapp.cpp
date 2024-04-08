@@ -235,7 +235,6 @@ void NavApp::deInitWebController()
 
 void NavApp::deInit()
 {
-  ATOOLS_DELETE_LOG(dataExchange);
   ATOOLS_DELETE_LOG(styleHandler);
   ATOOLS_DELETE_LOG(userdataController);
   ATOOLS_DELETE_LOG(mapMarkHandler);
@@ -274,7 +273,8 @@ DataExchange *NavApp::getDataExchange()
 bool NavApp::initDataExchange()
 {
   if(dataExchange == nullptr)
-    dataExchange = new DataExchange;
+    dataExchange =
+      new DataExchange(Settings::instance().getAndStoreValue(lnm::OPTIONS_DATAEXCHANGE_DEBUG, false).toBool(), lnm::PROGRAM_GUID);
 
   return dataExchange->isExit();
 }

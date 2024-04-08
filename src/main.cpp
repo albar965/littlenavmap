@@ -41,6 +41,7 @@
 #include "routeexport/routeexportformat.h"
 #include "settings/settings.h"
 #include "userdata/userdataicons.h"
+#include "util/properties.h"
 
 #include <QDebug>
 #include <QSplashScreen>
@@ -71,6 +72,7 @@ int main(int argc, char *argv[])
   // Register all types to allow conversion from/to QVariant and thus reading/writing into settings
   atools::geo::registerMetaTypes();
   atools::fs::sc::registerMetaTypes();
+  atools::util::Properties::registerMetaTypes();
   atools::gui::MapPosHistory::registerMetaTypes();
   atools::gui::DockWidgetHandler::registerMetaTypes();
 
