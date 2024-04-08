@@ -2582,7 +2582,7 @@ QStringList aircraftIcing(const atools::fs::sc::SimConnectUserAircraft& aircraft
   if(aircraft.getInletIcePercent() >= 1.f)
     text.append((narrow ? QObject::tr("Inlt %L1") : QObject::tr("Inlet&nbsp;%L1")).arg(aircraft.getInletIcePercent(), 0, 'f', 0));
 
-  if(aircraft.getPropIcePercent() >= 1.f)
+  if(aircraft.getPropIcePercent() >= 1.f && aircraft.getEngineType() != atools::fs::sc::JET)
     text.append((narrow ? QObject::tr("Prop %L1") : QObject::tr("Prop&nbsp;%L1")).arg(aircraft.getPropIcePercent(), 0, 'f', 0));
 
   if(aircraft.getStatIcePercent() >= 1.f)
@@ -2591,7 +2591,7 @@ QStringList aircraftIcing(const atools::fs::sc::SimConnectUserAircraft& aircraft
   if(aircraft.getWindowIcePercent() >= 1.f)
     text.append((narrow ? QObject::tr("Wind %L1") : QObject::tr("Window&nbsp;%L1")).arg(aircraft.getWindowIcePercent(), 0, 'f', 0));
 
-  if(aircraft.getCarbIcePercent() >= 1.f)
+  if(aircraft.getCarbIcePercent() >= 1.f && aircraft.getEngineType() == atools::fs::sc::PISTON)
     text.append((narrow ? QObject::tr("Carb %L1") : QObject::tr("Carb.&nbsp;%L1")).arg(aircraft.getCarbIcePercent(), 0, 'f', 0));
 
   if(narrow)
