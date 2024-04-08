@@ -2,9 +2,13 @@
 For example: #3 is https://github.com/albar965/littlenavmap/issues/3.
 This text is partially Markdown, so the formatting is sometimes strange.
 
-# Version 3.0.6
+==>>=============================================================================
+
+# Version 3.0.7.rc1
 
 ## Notes
+
+TODO
 
 **This is a stable release of Little Navmap which fixes several bugs and adds a few
 improvements and new features.**
@@ -23,6 +27,14 @@ See here for user manual downloads:
 [User Manuals - Stable Releases](https://albar965.github.io/manuals.html#stable).
 
 A big thank you to all who reported bugs and issues!
+
+## Changes from 3.0.6 to 3.0.7.rc1
+
+TODO
+
+==<<=============================================================================
+
+# Version 3.0.6
 
 ## Changes from 3.0.5 to 3.0.6
 
@@ -119,7 +131,7 @@ A big thank you to all who reported bugs and issues!
 
 **🐇🐇🪺🪺 Happy Easter! 🪺🪺🐇🐇**
 
-==>>=============================================================================
+=================================================================================
 
 # Version 3.0.5
 
@@ -692,7 +704,7 @@ These are fixes for bugs introduced with the 3.0 versions.
 * Changed application to catch Windows shutdown correctly. Now exiting program cleanly when shutting
   down Windows with Little Navmap running.
 
-==<<=============================================================================
+=================================================================================
 
 # Version 3.0.3.rc1
 
