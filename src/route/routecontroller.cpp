@@ -1306,6 +1306,21 @@ void RouteController::loadFlightplanInternal(atools::fs::pln::Flightplan flightp
         // Try again with plus 2000 meter or feet
         route.setCruiseAltitudeFt(route.getCruiseAltitudeFt() + Unit::rev(2000.f, Unit::altFeetF));
         route.calculateLegAltitudes();
+
+        if(!route.isValidProfile())
+        {
+          // If all else fails round 2000 ft up to the max of departure and destination altitude
+          float alt = std::max(route.getDepartureAirportLeg().getAltitude(), route.getDestinationAirportLeg().getAltitude());
+
+          if(alt < map::INVALID_ALTITUDE_VALUE / 2.f)
+          {
+            alt = atools::roundToNearest(alt + 2000.f, 2000.f);
+
+            // Try again with plus 2000 meter or feet
+            route.setCruiseAltitudeFt(Unit::rev(alt, Unit::altFeetF));
+            route.calculateLegAltitudes();
+          }
+        }
       }
     }
 
