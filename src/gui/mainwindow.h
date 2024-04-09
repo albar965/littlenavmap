@@ -149,6 +149,7 @@ public:
   }
 
   /* Update the window title after switching simulators, flight plan name or change status. */
+  /* Updates main window title with simulator type, flight plan name and change status */
   void updateWindowTitle();
 
   /* Update tooltip state in recent menus */
@@ -159,10 +160,13 @@ public:
 
   /* Sets the text and tooltip of the statusbar label that indicates what objects are shown on the map */
   void setMapObjectsShownMessageText(const QString& text = QString(), const QString& tooltipText = QString());
+
+  /* Updates label and tooltip for connection status */
   void setConnectionStatusMessageText(const QString& text, const QString& tooltipText);
   void setOnlineConnectionStatusMessageText(const QString& text, const QString& tooltipText);
 
   /* Sets a general status bar message which is shared with all widgets/actions status text */
+  /* Set a general status message */
   void setStatusMessage(const QString& message, bool addToLog = false, bool popup = false);
   void statusMessageChanged(const QString& text);
 
@@ -190,7 +194,10 @@ public:
     return searchController;
   }
 
+  /* Enable or disable actions */
   void updateMarkActionStates();
+
+  /* Enable or disable actions */
   void updateHighlightActionStates();
 
   const InfoController *getInfoController() const
@@ -210,6 +217,7 @@ public:
   void showUserpointSearch();
 
   /* create a new flightplan from passed airports */
+  /* called from AirportSearch (random flight plan generator) */
   void routeNewFromAirports(map::MapAirport departure, map::MapAirport destination);
 
   /* Load a flight plan in LNMPLN format from a string */
@@ -292,6 +300,8 @@ private:
   virtual void dropEvent(QDropEvent *event) override;
 
   void connectAllSlots();
+
+  /* Called by window shown event when the main window is visible the first time */
   void mainWindowShown();
   void mainWindowShownDelayed();
 
@@ -314,14 +324,19 @@ private:
   void fullScreenOn();
   void fullScreenOff();
 
+  /* Write settings for all windows, docks, controller and manager classes */
   void saveStateMain();
   void saveActionStates();
   void saveMainWindowStates();
   void saveFileHistoryStates();
 
+  /* Read settings for all windows, docks, controller and manager classes */
   void restoreStateMain();
+
+  /* Enable or disable actions */
   void updateActionStates();
 
+  /* Enable or disable actions related to online networks */
   void updateOnlineActionStates();
 
   void runDirToolManual();
@@ -335,11 +350,16 @@ private:
 
   void updateStatusBarStyle();
 
+  /* Call other other classes to close queries and clear caches */
   void preDatabaseLoad();
+
+  /* Call other other classes to reopen queries */
   void postDatabaseLoad(atools::fs::FsPaths::SimulatorType type);
 
+  /* Map history has changed */
   void updateMapHistoryActions(int minIndex, int curIndex, int maxIndex);
 
+  /* A button like airport, vor, ndb, etc. was pressed - update the map */
   void updateMapObjectsShown();
 
   /* Reset drawing settings */
@@ -353,24 +373,37 @@ private:
   void proceduresSelected(const QVector<proc::MapProcedureRef>& refs); /* Multi preview for all procedures */
   void proceduresSelectedInternal(const QVector<proc::MapProcedureRef>& refs, bool previewAll);
 
+  /* Selection in flight plan table has changed */
   void routeSelectionChanged(int selected, int total);
 
   /* New flight plan from opening route string dialog using current plan for prefill */
   void routeFromStringCurrent();
 
+  /* Called from menu or toolbar by action */
   void routeOpen();
-  void routeOpenFile(QString filepath);
+  void routeOpenFile(QString filepath, bool correctAndWarn);
+
+  /* Called from menu or toolbar by action - append flight plan to current one */
   void routeAppend();
   bool routeSaveSelection();
+
+  /* Called by route controller - insert flight plan into current one */
   void routeInsert(int insertBefore);
+
+  /* Called from menu or toolbar by action */
   void routeOpenRecent(const QString& routeFile);
   void routeOpenDescr(const QString& routeString);
 
   /* Flight plan save functions */
+  /* Called from menu or toolbar by action */
   bool routeSaveLnm();
   bool routeSaveAsLnm();
 
+  /* Route center action */
   void routeCenter();
+
+  /* Ask user if flight plan can be deleted when quitting.
+   * @return true continue with new flight plan, exit, etc. */
   bool routeCheckForChanges();
 
   /* Reset all "do not show this again" message box status values */
@@ -380,9 +413,16 @@ private:
   /* Save all and create an issue report */
   void createIssueReport();
 
+  /* Menu item */
   void showDatabaseFiles();
+
+  /* Menu item */
   void showShowMapCache();
+
+  /* Menu item */
   void showMapInstallation();
+
+  /* Menu item */
   void showGlobeInstallation();
 
   /* Save map as images */
@@ -399,13 +439,20 @@ private:
   void showFaqPage();
 
   /* Loading of KML files */
+  /* Called from menu or toolbar by action */
   void kmlOpenRecent(const QString& kmlFile);
+
+  /* Called from menu or toolbar by action */
   void kmlOpen();
+
+  /* Called from menu or toolbar by action. Remove all KML from map */
   void kmlClear();
 
   /* Loading and saving of window layout files */
   void layoutOpen();
   void layoutSaveAs();
+
+  /* Called from menu or toolbar by action */
   void layoutOpenRecent(const QString& layoutFile);
   void layoutOpenDrag(const QString& layoutFile); /* Open from drag and drop event */
   bool layoutOpenInternal(const QString& layoutFile);
@@ -424,6 +471,8 @@ private:
 
   /* Emit a signal windowShown after first appearance */
   virtual void showEvent(QShowEvent *event) override;
+
+  /* Update the info weather */
   void weatherUpdateTimeout();
   void updateAirspaceTypes(const map::MapAirspaceFilter& filter);
   void updateAirspaceSources();

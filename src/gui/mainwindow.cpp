@@ -286,7 +286,8 @@ MainWindow::MainWindow()
     const DataExchange *dataExchange = NavApp::getDataExchangeConst();
     connect(dataExchange, &DataExchange::activateMain, this, &MainWindow::activateWindow);
     connect(dataExchange, &DataExchange::activateMain, this, &MainWindow::raise);
-    connect(dataExchange, &DataExchange::loadRoute, this, &MainWindow::routeOpenFile);
+    connect(dataExchange, &DataExchange::loadRoute,
+            this, std::bind(&MainWindow::routeOpenFile, this, std::placeholders::_1 /* filepath */, false /* correctAndWarn */));
     connect(dataExchange, &DataExchange::loadRouteDescr, this, &MainWindow::routeOpenDescr);
     connect(dataExchange, &DataExchange::loadLayout, this, &MainWindow::loadLayoutDelayed);
     connect(dataExchange, &DataExchange::loadPerf, NavApp::getAircraftPerfController(), &AircraftPerfController::loadFile);
@@ -607,7 +608,7 @@ void MainWindow::debugActionTriggered3()
 void MainWindow::debugActionTriggered4()
 {
   QString file = routeController->getRouteFilename();
-  routeController->loadFlightplan(file);
+  routeController->loadFlightplan(file, true /* correctAndWarn */);
 }
 
 void MainWindow::debugActionTriggered5()
@@ -1178,7 +1179,8 @@ void MainWindow::connectAllSlots()
   connect(ui->actionLogdataConvertUserdata, &QAction::triggered,
           logdataController, &LogdataController::convertUserdata);
 
-  connect(searchController->getLogdataSearch(), &SearchBaseTable::loadRouteFile, this, &MainWindow::routeOpenFile);
+  connect(searchController->getLogdataSearch(), &SearchBaseTable::loadRouteFile,
+          this, std::bind(&MainWindow::routeOpenFile, this, std::placeholders::_1 /* filepath */, true /* correctAndWarn */));
   connect(searchController->getLogdataSearch(), &SearchBaseTable::loadPerfFile,
           NavApp::getAircraftPerfController(), &AircraftPerfController::loadFile);
 
@@ -1805,20 +1807,17 @@ void MainWindow::actionShortcutAircraftProgressTriggered()
   ui->textBrowserAircraftProgressInfo->setFocus();
 }
 
-/* Update the info weather */
 void MainWindow::weatherUpdateTimeout()
 {
   // if(connectClient != nullptr && connectClient->isConnected() && infoController != nullptr)
   infoController->updateAirportWeather();
 }
 
-/* Menu item */
 void MainWindow::showDatabaseFiles()
 {
   desktopServices->openFile(NavApp::getDatabaseManager()->getDatabaseDirectory());
 }
 
-/* Menu item */
 void MainWindow::showShowMapCache()
 {
   // Windows: C:\Users\YOURUSERNAME\AppData\Local\.marble\data
@@ -1826,7 +1825,6 @@ void MainWindow::showShowMapCache()
   desktopServices->openFile(Marble::MarbleDirs::localPath() % atools::SEP % "maps" % atools::SEP % "earth");
 }
 
-/* Menu item */
 void MainWindow::showMapInstallation()
 {
   QString cacheMapThemeDir = OptionData::instance().getCacheMapThemeDir();
@@ -1838,7 +1836,6 @@ void MainWindow::showMapInstallation()
     atools::gui::Dialog::warning(this, msg % tr("\n\nSet the path to additional map themes in options on page \"Cache and Files\""));
 }
 
-/* Menu item */
 void MainWindow::showGlobeInstallation()
 {
   QString globeDir = OptionData::instance().getOfflineElevationPath();
@@ -1850,7 +1847,6 @@ void MainWindow::showGlobeInstallation()
     atools::gui::Dialog::warning(this, msg % tr("\n\nSet the path to the offline elevation data in options on page \"Cache and Files\""));
 }
 
-/* Updates label and tooltip for connection status */
 void MainWindow::setConnectionStatusMessageText(const QString& text, const QString& tooltipText)
 {
   if(!text.isEmpty())
@@ -1968,7 +1964,6 @@ void MainWindow::renderStatusChanged(const RenderState& state)
     renderStatusTimer.stop();
 }
 
-/* Route center action */
 void MainWindow::routeCenter()
 {
   if(!NavApp::getRouteConst().isFlightplanEmpty())
@@ -2043,7 +2038,6 @@ void MainWindow::updateMapPosLabel(const atools::geo::Pos& pos, int x, int y)
   }
 }
 
-/* Updates main window title with simulator type, flight plan name and change status */
 void MainWindow::updateWindowTitle()
 {
   QString title = mainWindowTitle;
@@ -2159,8 +2153,6 @@ void MainWindow::deleteAircraftTrail(bool quiet)
   }
 }
 
-/* Ask user if flight plan can be deleted when quitting.
- * @return true continue with new flight plan, exit, etc. */
 bool MainWindow::routeCheckForChanges()
 {
   if(!routeController->hasChanged())
@@ -2289,7 +2281,6 @@ void MainWindow::routeNew()
   }
 }
 
-/* called from AirportSearch (random flight plan generator) */
 void MainWindow::routeNewFromAirports(map::MapAirport departure, map::MapAirport destination)
 {
   if(routeCheckForChanges())
@@ -2304,10 +2295,9 @@ void MainWindow::routeNewFromAirports(map::MapAirport departure, map::MapAirport
   }
 }
 
-/* Called from menu or toolbar by action */
 void MainWindow::routeOpen()
 {
-  routeOpenFile(QString());
+  routeOpenFile(QString() /* filepath */, true /* correctAndWarn */);
 }
 
 QString MainWindow::routeOpenFileDialog()
@@ -2329,7 +2319,7 @@ void MainWindow::routeOpenDescr(const QString& routeString)
   }
 }
 
-void MainWindow::routeOpenFile(QString filepath)
+void MainWindow::routeOpenFile(QString filepath, bool correctAndWarn)
 {
   qDebug() << Q_FUNC_INFO << filepath;
   if(routeCheckForChanges())
@@ -2339,7 +2329,7 @@ void MainWindow::routeOpenFile(QString filepath)
 
     if(!filepath.isEmpty())
     {
-      if(routeController->loadFlightplan(filepath))
+      if(routeController->loadFlightplan(filepath, correctAndWarn))
       {
         routeFileHistory->addFile(filepath);
         if(OptionData::instance().getFlags().testFlag(opts::GUI_CENTER_ROUTE))
@@ -2434,7 +2424,6 @@ bool MainWindow::routeSaveSelection()
   return false;
 }
 
-/* Called from menu or toolbar by action - append flight plan to current one */
 void MainWindow::routeAppend()
 {
   QString routeFile = dialog->openFileDialog(tr("Append Flight Plan"),
@@ -2456,7 +2445,6 @@ void MainWindow::routeAppend()
   saveFileHistoryStates();
 }
 
-/* Called by route controller - insert flight plan into current one */
 void MainWindow::routeInsert(int insertBefore)
 {
   QString routeFile = dialog->openFileDialog(
@@ -2477,14 +2465,13 @@ void MainWindow::routeInsert(int insertBefore)
   saveFileHistoryStates();
 }
 
-/* Called from menu or toolbar by action */
 void MainWindow::routeOpenRecent(const QString& routeFile)
 {
   if(routeCheckForChanges())
   {
     if(QFile::exists(routeFile))
     {
-      if(routeController->loadFlightplan(routeFile))
+      if(routeController->loadFlightplan(routeFile, true /* correctAndWarn */))
       {
         if(OptionData::instance().getFlags() & opts::GUI_CENTER_ROUTE)
           routeCenter();
@@ -2515,7 +2502,6 @@ void MainWindow::routeSaveLnmExported(const QString& filename)
   saveFileHistoryStates();
 }
 
-/* Called from menu or toolbar by action */
 bool MainWindow::routeSaveLnm()
 {
   // Show a simple warning for the rare case that altitude is null ===============
@@ -2610,7 +2596,6 @@ bool MainWindow::openInSkyVector()
   return true;
 }
 
-/* Called from menu or toolbar by action. Remove all KML from map */
 void MainWindow::kmlClear()
 {
   mapWidget->clearKmlFiles();
@@ -2618,7 +2603,6 @@ void MainWindow::kmlClear()
   setStatusMessage(tr("Google Earth KML files removed from map."));
 }
 
-/* Called from menu or toolbar by action */
 void MainWindow::kmlOpen()
 {
   QString kmlFile = dialog->openFileDialog(
@@ -2643,7 +2627,6 @@ void MainWindow::kmlOpen()
     atools::gui::Dialog::warning(this, tr("Cannot load file. Reason:\n\n%1").arg(kmlFile));
 }
 
-/* Called from menu or toolbar by action */
 void MainWindow::kmlOpenRecent(const QString& kmlFile)
 {
   QString errors = atools::checkFileMsg(kmlFile);
@@ -2700,7 +2683,6 @@ void MainWindow::layoutSaveAs()
   }
 }
 
-/* Called from menu or toolbar by action */
 void MainWindow::layoutOpenRecent(const QString& layoutFile)
 {
   if(!layoutOpenInternal(layoutFile))
@@ -2977,7 +2959,6 @@ void MainWindow::sunShadingTimeSet()
   timeDialog.exec();
 }
 
-/* Selection in flight plan table has changed */
 void MainWindow::routeSelectionChanged(int selected, int total)
 {
   Q_UNUSED(selected)
@@ -3150,7 +3131,6 @@ void MainWindow::resetMapObjectsShown()
   setStatusMessage(tr("Map settings reset."));
 }
 
-/* A button like airport, vor, ndb, etc. was pressed - update the map */
 void MainWindow::updateMapObjectsShown()
 {
   mapWidget->updateMapObjectsShown();
@@ -3158,7 +3138,6 @@ void MainWindow::updateMapObjectsShown()
   updateActionStates();
 }
 
-/* Map history has changed */
 void MainWindow::updateMapHistoryActions(int minIndex, int curIndex, int maxIndex)
 {
   ui->actionMapBack->setEnabled(curIndex > minIndex);
@@ -3194,7 +3173,6 @@ void MainWindow::resetMessages()
   setStatusMessage(tr("All message dialogs reset."));
 }
 
-/* Set a general status message */
 void MainWindow::setStatusMessage(const QString& message, bool addToLog, bool popup)
 {
   if(addToLog && !message.isEmpty())
@@ -3250,7 +3228,6 @@ void MainWindow::setDetailLabelText(const QString& text)
   mapDetailLabel->setMinimumWidth(mapDetailLabel->width());
 }
 
-/* Called by window shown event when the main window is visible the first time */
 void MainWindow::mainWindowShown()
 {
   qDebug() << Q_FUNC_INFO << "enter";
@@ -3688,13 +3665,11 @@ void MainWindow::raiseFloatingWindows()
   mapWidget->setFocus();
 }
 
-/* Enable or disable actions related to online networks */
 void MainWindow::updateOnlineActionStates()
 {
   ui->actionViewAirspaceSrcOnline->setEnabled(NavApp::isOnlineNetworkActive());
 }
 
-/* Enable or disable actions */
 void MainWindow::updateMarkActionStates()
 {
   ui->actionMapHideAllDistanceMarkers->setEnabled(!mapWidget->getDistanceMarks().isEmpty());
@@ -3704,14 +3679,12 @@ void MainWindow::updateMarkActionStates()
   ui->actionMapHideAllHoldings->setEnabled(!mapWidget->getHoldingMarks().isEmpty());
 }
 
-/* Enable or disable actions */
 void MainWindow::updateHighlightActionStates()
 {
   ui->actionMapClearAllHighlights->setEnabled(mapWidget->hasHighlights() || searchController->hasSelection() ||
                                               routeController->hasTableSelection());
 }
 
-/* Enable or disable actions */
 void MainWindow::updateActionStates()
 {
 #ifdef DEBUG_INFORMATION
@@ -3907,7 +3880,6 @@ void MainWindow::resetTabLayout()
   routeController->resetTabLayout();
 }
 
-/* Read settings for all windows, docks, controller and manager classes */
 void MainWindow::restoreStateMain()
 {
   qDebug() << Q_FUNC_INFO << "enter";
@@ -4086,7 +4058,6 @@ void MainWindow::saveStateNow()
   saveStateMain();
 }
 
-/* Write settings for all windows, docks, controller and manager classes */
 void MainWindow::saveStateMain()
 {
   qDebug() << Q_FUNC_INFO;
@@ -4567,7 +4538,6 @@ void MainWindow::showEvent(QShowEvent *event)
   event->ignore();
 }
 
-/* Call other other classes to close queries and clear caches */
 void MainWindow::preDatabaseLoad()
 {
   qDebug() << Q_FUNC_INFO;
@@ -4594,7 +4564,6 @@ void MainWindow::preDatabaseLoad()
     qWarning() << "Already in database loading status";
 }
 
-/* Call other other classes to reopen queries */
 void MainWindow::postDatabaseLoad(atools::fs::FsPaths::SimulatorType type)
 {
   qDebug() << Q_FUNC_INFO;
@@ -4686,7 +4655,7 @@ void MainWindow::dropEvent(QDropEvent *event)
       trailLoadGpxFile(filepath);
     else
       // Load flight plan
-      routeOpenFile(filepath);
+      routeOpenFile(filepath, true /* correctAndWarn */);
   }
 }
 

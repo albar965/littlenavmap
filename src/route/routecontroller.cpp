@@ -1021,7 +1021,8 @@ void RouteController::restoreState()
       {
         if(atools::fs::pln::FlightplanIO::isFlightplanFile(cmdLineFlightplanFile))
         {
-          if(!loadFlightplan(cmdLineFlightplanFile))
+          // Load file silently without change and without correction
+          if(!loadFlightplan(cmdLineFlightplanFile, false /* correctAndWarn */))
             // Cannot be loaded - clear current filename
             clearFlightplan();
           // else Centered in MainWindow::mainWindowShownDelayed()
@@ -1052,24 +1053,24 @@ void RouteController::restoreState()
         {
           atools::settings::Settings& settings = atools::settings::Settings::instance();
           QString lastUsedFlightplanFile = settings.valueStr(lnm::ROUTE_FILENAME);
-          QString flightplanToLoad = lastUsedFlightplanFile;
+          QString flightplanFile = lastUsedFlightplanFile;
           bool changed = false, defaultLoad = false;
 
           if(atools::checkFile(Q_FUNC_INFO, routeFilenameDefault, false /* warn */))
           {
             // Default file "ABarthel/little_navmap.lnmpln" in settings exists from last save - load it and set new file to changed
-            flightplanToLoad = routeFilenameDefault;
+            flightplanFile = routeFilenameDefault;
             changed = defaultLoad = true;
           }
 
-          if(!flightplanToLoad.isEmpty())
+          if(!flightplanFile.isEmpty())
           {
             Flightplan fp;
-            atools::fs::pln::FileFormat format = flightplanIO->load(fp, flightplanToLoad);
+            atools::fs::pln::FileFormat format = flightplanIO->load(fp, flightplanFile);
 
             // Do not warn on missing altitude after loading - do not change altitude
-            loadFlightplanInternal(fp, format, flightplanToLoad, changed, false /* adjustAltitude */, false /* undo */,
-                                   false /* warnAltitude */);
+            loadFlightplanInternal(fp, format, flightplanFile, changed, false /* adjustAltitude */, false /* undo */,
+                                   false /* warnAltitude */, true /* correctProfile */);
 
             if(defaultLoad && settings.contains(lnm::ROUTE_DEFAULT_FILE_LNMPLN))
               // Restore LNMPLN status after loading since this set the status to true
@@ -1150,11 +1151,13 @@ void RouteController::newFlightplan()
 }
 
 void RouteController::loadFlightplanInternal(atools::fs::pln::Flightplan flightplan, atools::fs::pln::FileFormat format,
-                                             const QString& filename, bool changed, bool adjustAltitude, bool undo, bool warnAltitude)
+                                             const QString& filename, bool changed, bool adjustAltitude, bool undo, bool warnAltitude,
+                                             bool correctProfile)
 {
   qDebug() << Q_FUNC_INFO << filename << "format" << format << "changed" << changed
            << "adjustAltitude" << adjustAltitude
-           << "warnAltitude" << warnAltitude; // Loaded manually - show warning dialog
+           << "warnAltitude" << warnAltitude // Loaded manually - show warning dialog
+           << "correctProfile" << correctProfile;
 
 #ifdef DEBUG_INFORMATION_ROUTE
   qDebug() << flightplan;
@@ -1279,7 +1282,7 @@ void RouteController::loadFlightplanInternal(atools::fs::pln::Flightplan flightp
 
   bool showWarnDialog = false;
   // Check if profile is valid, has to be adjusted and warnings (= manual load) are required
-  if(!route.isValidProfile() || adjustAltAfterLoad || adjustAltitude)
+  if((!route.isValidProfile() && correctProfile) || adjustAltAfterLoad || adjustAltitude)
   {
     // Remember the original cruise altitude before adapting
     float origCruiseAlt = route.getCruiseAltitudeFt();
@@ -1397,7 +1400,8 @@ bool RouteController::loadFlightplanLnmStr(const QString& string)
     flightplanIO->loadLnmStr(fp, string);
 
     loadFlightplanInternal(fp, atools::fs::pln::LNM_PLN, QString(),
-                           false /*changed*/, false /* adjustAltitude */, false /* undo */, false /* warnAltitude */);
+                           false /*changed*/, false /* adjustAltitude */, false /* undo */, false /* warnAltitude */,
+                           true /* correctProfile */);
   }
   catch(atools::Exception& e)
   {
@@ -1427,14 +1431,15 @@ void RouteController::loadFlightplanRouteStr(const QString& routeString)
   // Use settings from dialog
   if(reader.createRouteFromString(routeString, RouteStringDialog::getOptionsFromSettings(), &fp, nullptr, nullptr, &altIncluded))
     loadFlightplanInternal(fp, atools::fs::pln::LNM_PLN, QString(),
-                           false /* changed */, !altIncluded /* adjustAltitude */, false /* undo */, false /* warnAltitude */);
+                           false /* changed */, !altIncluded /* adjustAltitude */, false /* undo */, false /* warnAltitude */,
+                           true /* correctProfile */);
 
   if(reader.hasErrorMessages() || reader.hasWarningMessages())
     dialog->warning(tr("<p>Errors reading flight plan route description<br/><b>%1</b><br/>from command line:</p><p>%2</p>").
                     arg(routeString).arg(reader.getAllMessages().join("<br>")));
 }
 
-bool RouteController::loadFlightplan(const QString& filename)
+bool RouteController::loadFlightplan(const QString& filename, bool correctAndWarn)
 {
   qDebug() << Q_FUNC_INFO << filename;
   Flightplan fp;
@@ -1443,7 +1448,9 @@ bool RouteController::loadFlightplan(const QString& filename)
     qDebug() << Q_FUNC_INFO << "loadFlightplan" << filename;
     // Will throw an exception if something goes wrong
     atools::fs::pln::FileFormat format = flightplanIO->load(fp, filename);
-    loadFlightplanInternal(fp, format, filename, false /*changed*/, false /* adjustAltitude */, false /* undo */, true /* warnAltitude */);
+    loadFlightplanInternal(fp, format, filename,
+                           false /*changed*/, false /* adjustAltitude */, false /* undo */, correctAndWarn /* warnAltitude */,
+                           correctAndWarn /* correctProfile */);
   }
   catch(atools::Exception& e)
   {
