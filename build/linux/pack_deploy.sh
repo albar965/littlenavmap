@@ -9,7 +9,7 @@ if [ -z "$APROJECTS" ] ; then echo APROJECTS environment variable not set ; exit
 if [ ! -d "$APROJECTS" ]; then echo "$APROJECTS" does not exist ; exit 1 ; fi
 
 # Override by envrionment variable for another target
-export SSH_DEPLOY_TARGET=${SSH_DEPLOY_TARGET:-"sol:/data/alex/Public/Releases"}
+export SSH_DEPLOY_TARGET=${SSH_DEPLOY_TARGET:-"sol.fritz.box:/data/alex/Public/Releases"}
 
 # LittleNavmap-linux-22.04-2.8.2.beta.tar.gz
 if [ -f "/etc/lsb-release" ]; then
