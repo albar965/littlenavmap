@@ -1888,14 +1888,17 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
     contextMenuActive = false;
 
     // Selected action - one of the fixed or created ones
-    QAction *action = contextMenu.getSelectedAction();
+    const QAction *action = contextMenu.getSelectedAction();
 
     // Selected map object
     const map::MapBase *base = contextMenu.getSelectedBase();
     map::MapAirport airport = base != nullptr ? base->asObj<map::MapAirport>() : map::MapAirport();
 
+    qDebug() << Q_FUNC_INFO << airport;
+
     bool departureFilter, arrivalFilter;
     NavApp::getRouteConst().getAirportProcedureFlags(airport, -1, departureFilter, arrivalFilter);
+    qDebug() << Q_FUNC_INFO << "departureFilter" << departureFilter << "arrivalFilter" << arrivalFilter;
 
     // Global position where clicked
     atools::geo::Pos pos = contextMenu.getPos();
@@ -1965,7 +1968,8 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
           break;
 
         case mc::PROCEDURE:
-          emit showProcedures(airport, departureFilter, arrivalFilter);
+          if(airport.isValid())
+            emit showProcedures(airport, departureFilter, arrivalFilter);
           break;
 
         case mc::PROCEDUREADD:
@@ -1974,11 +1978,13 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
           break;
 
         case mc::CUSTOMAPPROACH:
-          emit showCustomApproach(airport, QString());
+          if(airport.isValid())
+            emit showCustomApproach(airport, QString());
           break;
 
         case mc::CUSTOMDEPARTURE:
-          emit showCustomDeparture(airport, QString());
+          if(airport.isValid())
+            emit showCustomDeparture(airport, QString());
           break;
 
         case mc::MEASURE:

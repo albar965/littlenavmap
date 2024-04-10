@@ -469,6 +469,8 @@ private:
 
 };
 
+QDebug operator<<(QDebug out, const map::MapAirport& obj);
+
 // =====================================================================
 /* Airport runway. All dimensions are feet */
 /* Database id is runway.runway_id */

@@ -1955,6 +1955,18 @@ QString airspaceSourceText(MapAirspaceSources src)
   return retval.join(QObject::tr(", "));
 }
 
+QDebug operator<<(QDebug out, const map::MapAirport& obj)
+{
+  QDebugStateSaver saver(out);
+  out.noquote().nospace() << "MapAirport[" << "id " << obj.id
+                          << ", ident " << obj.ident
+                          << ", navdata " << obj.navdata
+                          << ", type " << obj.objType
+                          << ", procedure " << obj.procedure()
+                          << ", " << obj.position << "]";
+  return out;
+}
+
 QDebug operator<<(QDebug out, const MapBase& obj)
 {
   QDebugStateSaver saver(out);

@@ -200,13 +200,13 @@ ProcedureSearch::ProcedureSearch(QMainWindow *main, QTreeWidget *treeWidgetParam
 
 ProcedureSearch::~ProcedureSearch()
 {
-  delete zoomHandler;
+  ATOOLS_DELETE_LOG(zoomHandler);
   treeWidget->setItemDelegate(nullptr);
   treeWidget->viewport()->removeEventFilter(treeEventFilter);
-  delete treeEventFilter;
-  delete gridDelegate;
-  delete currentAirportNav;
-  delete currentAirportSim;
+  ATOOLS_DELETE_LOG(treeEventFilter);
+  ATOOLS_DELETE_LOG(gridDelegate);
+  ATOOLS_DELETE_LOG(currentAirportNav);
+  ATOOLS_DELETE_LOG(currentAirportSim);
 }
 
 void ProcedureSearch::airportLabelLinkActivated(const QString& link)
@@ -327,6 +327,8 @@ void ProcedureSearch::showProcedures(const map::MapAirport& airport, bool depart
   NavApp::getSearchController()->setCurrentSearchTabId(si::SEARCH_PROC);
   treeWidget->setFocus();
 
+  qDebug() << Q_FUNC_INFO << airport << navAirport;
+
   if(departureFilter)
   {
     ui->comboBoxProcedureSearchFilter->setCurrentIndex(FILTER_SID_PROCEDURES);
@@ -343,7 +345,7 @@ void ProcedureSearch::showProcedures(const map::MapAirport& airport, bool depart
   ui->lineEditProcedureSearchIdentFilter->clear();
   ui->pushButtonProcedureShowAll->setChecked(false);
 
-  if(currentAirportNav->isValid() && currentAirportNav->ident == navAirport.ident)
+  if(currentAirportNav->isValid() && navAirport.isValid() && currentAirportNav->id == navAirport.id)
     // Ignore if noting has changed - or jump out of the view mode
     return;
 
@@ -354,10 +356,10 @@ void ProcedureSearch::showProcedures(const map::MapAirport& airport, bool depart
   *currentAirportSim = airport;
 
   // Put state on stack and update tree
-  if(currentAirportNav->isValid())
+  if(currentAirportNav->isValid() && currentAirportSim->isValid())
     recentTreeState.insert(currentAirportNav->id, saveTreeViewState());
 
-  airportQueryNav->getAirportByIdent(*currentAirportNav, navAirport.ident);
+  *currentAirportNav = navAirport;
 
   updateFilterBoxes();
 
@@ -392,7 +394,7 @@ void ProcedureSearch::updateHeaderLabel()
   if(currentAirportSim->isValid())
   {
     html.a(map::airportTextShort(*currentAirportSim), "lnm://showairport", atools::util::html::BOLD | atools::util::html::LINK_NO_UL);
-    if(currentAirportNav->procedure())
+    if(currentAirportNav->isValid() && currentAirportNav->procedure())
     {
       QString title, runwayText, sourceText;
       NavApp::getWeatherReporter()->getBestRunwaysTextShort(title, runwayText, sourceText, *currentAirportSim);
@@ -783,16 +785,23 @@ void ProcedureSearch::saveState()
 
   // Use current state and update the map too
   QBitArray state = saveTreeViewState();
-  if(currentAirportNav->isValid())
+  if(currentAirportNav->isValid() && currentAirportSim->isValid())
     recentTreeState.insert(currentAirportNav->id, state);
   settings.setValueVar(lnm::APPROACHTREE_STATE, state);
 
   // Save column order and width
   WidgetState(lnm::APPROACHTREE_WIDGET).save(treeWidget);
-  if(currentAirportNav->isValid())
+
+  if(currentAirportSim->isValid() && currentAirportNav->isValid())
+  {
     settings.setValue(lnm::APPROACHTREE_AIRPORT_NAV, currentAirportNav->id);
-  if(currentAirportSim->isValid())
     settings.setValue(lnm::APPROACHTREE_AIRPORT_SIM, currentAirportSim->id);
+  }
+  else
+  {
+    settings.setValue(lnm::APPROACHTREE_AIRPORT_NAV, -1);
+    settings.setValue(lnm::APPROACHTREE_AIRPORT_SIM, -1);
+  }
 }
 
 void ProcedureSearch::restoreState()
@@ -805,6 +814,9 @@ void ProcedureSearch::restoreState()
       airportQueryNav->getAirportById(*currentAirportNav, settings.valueInt(lnm::APPROACHTREE_AIRPORT_NAV, -1));
       NavApp::getAirportQuerySim()->getAirportById(*currentAirportSim, settings.valueInt(lnm::APPROACHTREE_AIRPORT_SIM, -1));
     }
+
+    if(!currentAirportSim->isValid() || !currentAirportNav->isValid())
+      *currentAirportNav = *currentAirportSim = map::MapAirport();
   }
 
   updateFilterBoxes();
@@ -1249,8 +1261,11 @@ void ProcedureSearch::contextMenu(const QPoint& pos)
     ui->pushButtonProcedureShowAll->setChecked(ui->actionSearchProcedureShowAll->isChecked());
   else if(action == ui->actionSearchProcedureShowInSearch)
   {
-    NavApp::getSearchController()->setCurrentSearchTabId(si::SEARCH_AIRPORT);
-    emit showInSearch(map::AIRPORT, SqlRecord().appendFieldAndValue("ident", currentAirportSim->ident), true /* select */);
+    if(currentAirportSim->isValid())
+    {
+      NavApp::getSearchController()->setCurrentSearchTabId(si::SEARCH_AIRPORT);
+      emit showInSearch(map::AIRPORT, SqlRecord().appendFieldAndValue("ident", currentAirportSim->ident), true /* select */);
+    }
   }
 
   // else Other are done by the actions themselves
@@ -1291,6 +1306,9 @@ const MapProcedureRef& ProcedureSearch::fetchProcRef(const QTreeWidgetItem *item
 
 const proc::MapProcedureLegs *ProcedureSearch::fetchProcData(MapProcedureRef& ref, const QTreeWidgetItem *item) const
 {
+  if(!currentAirportNav->isValid())
+    return nullptr;
+
   ref = fetchProcRef(item);
 
   if(!ref.isEmpty())
@@ -1367,7 +1385,7 @@ void ProcedureSearch::showEntry(QTreeWidgetItem *item, bool doubleClick, bool zo
 {
   qDebug() << Q_FUNC_INFO;
 
-  if(item == nullptr)
+  if(item == nullptr || !currentAirportNav->isValid())
     return;
 
   MapProcedureRef ref = itemIndex.at(item->type());

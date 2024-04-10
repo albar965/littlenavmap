@@ -17,6 +17,8 @@
 
 #include "mappainter/mappainterroute.h"
 
+#include "app/navapp.h"
+#include "atools.h"
 #include "common/formatter.h"
 #include "common/mapcolors.h"
 #include "common/proctypes.h"
@@ -27,7 +29,6 @@
 #include "mapgui/maplayer.h"
 #include "mapgui/mappaintwidget.h"
 #include "mapgui/mapscale.h"
-#include "app/navapp.h"
 #include "route/route.h"
 #include "route/routealtitudeleg.h"
 #include "util/paintercontextsaver.h"
@@ -1781,10 +1782,13 @@ void MapPainterRoute::paintProcedurePoint(QSet<map::MapRef>& idMap, const proc::
       }
 
       // Omit drawing of double labels when transitioning from SID to approach transition, for example
-      const proc::MapProcedureLeg& nextLeg = context->route->value(routeIndex + 1).getProcedureLeg();
-      if(nextLeg.isAlmostEqual(leg) && !contains(nextLeg.type, CALCULATED_END_POS_TYPES))
-        // Draw symbol but not labels
-        drawText = false;
+      if(routeIndex + 1 < context->route->size())
+      {
+        const proc::MapProcedureLeg& nextLeg = context->route->value(routeIndex + 1).getProcedureLeg();
+        if(nextLeg.isAlmostEqual(leg) && !contains(nextLeg.type, CALCULATED_END_POS_TYPES))
+          // Draw symbol but not labels
+          drawText = false;
+      }
     }
   }
 
