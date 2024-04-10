@@ -287,7 +287,7 @@ MainWindow::MainWindow()
     connect(dataExchange, &DataExchange::activateMain, this, &MainWindow::activateWindow);
     connect(dataExchange, &DataExchange::activateMain, this, &MainWindow::raise);
     connect(dataExchange, &DataExchange::loadRoute,
-            this, std::bind(&MainWindow::routeOpenFile, this, std::placeholders::_1 /* filepath */, false /* correctAndWarn */));
+            this, std::bind(&MainWindow::routeOpenFile, this, std::placeholders::_1 /* filepath */, true /* correctAndWarn */));
     connect(dataExchange, &DataExchange::loadRouteDescr, this, &MainWindow::routeOpenDescr);
     connect(dataExchange, &DataExchange::loadLayout, this, &MainWindow::loadLayoutDelayed);
     connect(dataExchange, &DataExchange::loadPerf, NavApp::getAircraftPerfController(), &AircraftPerfController::loadFile);
