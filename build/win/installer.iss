@@ -12,7 +12,7 @@
 // Command line parameters with defaults ==========================================================================
 // Set defaults for debugging if not given on the command line
 #ifndef LnmAppVersion
-  #define LnmAppVersion "3.0.3.rc1"
+  #define LnmAppVersion "3.0.7.rc1"
 #endif
 
 #ifndef LnmAppArch
@@ -87,6 +87,8 @@ SetupIconFile={#LnmAppProjects}\littlenavmap\resources\icons\littlenavmap.ico
 Compression={#LnmAppCompress}
 SolidCompression=yes
 WizardStyle=modern
+CloseApplications=yes
+CloseApplicationsFilter=*.exe
 #if LnmAppArch == "win64"
   // "ArchitecturesAllowed=x64" specifies that Setup cannot run on
   // anything but x64.
@@ -141,6 +143,9 @@ de.DeleteSettingsMessage=Alle Einstellungen, Datenbanken und Dateien im Zwischen
 DeleteSettingsMessage2=This will delete all userpoints as well%nas the logbook and cannot be undone.%n%nAre your sure?
 en.DeleteSettingsMessage2=This will delete all userpoints as well%nas the logbook and cannot be undone.%n%nAre your sure?
 de.DeleteSettingsMessage2=Dies löscht alle Nutzerpunkte und das Logbuch und kann nicht rückgängig gemacht werden.%n%nWirklich löschen?
+QuitProgramMessage=Please quit Little Navmap and/or Little Navconnect if they are still running.%nOtherwise the uninstallation may be incomplete.%n%nTrying to quit the programs automatically now.
+en.QuitProgramMessage=Please quit Little Navmap and/or Little Navconnect if they are still running.%nOtherwise the uninstallation may be incomplete.%n%nTrying to quit the programs automatically now.
+de.QuitProgramMessage=Bitte beenden Sie Little Navmap bzw. Little Navconnect, falls sie noch laufen.%nAnsonsten kann die Deinstallation unvollständig sein.%n%nVersuche jetzt, die Programme automatisch zu beenden.
 
 // ==========================================================================
 [Tasks]
@@ -222,6 +227,15 @@ Filename: "{app}\CHANGELOG.txt"; Description: "{cm:ChangelogMessage}"; Flags: no
   Filename: "{tmp}\vcredist_2005_x86.exe"; StatusMsg: "{cm:InstallingRedistMessage}"; Parameters: "/Q"; Flags: runascurrentuser waituntilterminated
 #endif
 
+[Code]
+function InitializeUninstall(): Boolean;
+  var ErrorCode: Integer;
+begin
+  MsgBox(CustomMessage('QuitProgramMessage'), mbInformation, MB_OK)
+  ShellExec('open','taskkill.exe',' /im {#LnmAppExeName}', '', SW_HIDE, ewNoWait, ErrorCode);
+  ShellExec('open','taskkill.exe',' /im {#LnmAppConnectExeName}', '', SW_HIDE, ewNoWait, ErrorCode);
+  result := True;
+end;
 
 // ==========================================================================
 // Ask to delete 'ABarthel' settings and the Marble cache files on uninstall
