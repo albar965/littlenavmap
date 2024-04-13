@@ -2823,14 +2823,17 @@ void MapWidget::mainWindowShown()
   qDebug() << Q_FUNC_INFO;
 
   // Create a copy of KML files where all missing files will be removed from the recent list
-  QStringList copyKml(kmlFilePaths);
+  QStringList cleanKmlFilePaths(kmlFilePaths);
   for(const QString& kml : qAsConst(kmlFilePaths))
   {
     if(!loadKml(kml, false /* center */))
-      copyKml.removeAll(kml);
+      // Not found
+      cleanKmlFilePaths.removeAll(kml);
   }
 
-  kmlFilePaths = copyKml;
+  cleanKmlFilePaths.sort();
+
+  kmlFilePaths = cleanKmlFilePaths;
 
   // Set cache sizes from option data. This is done later in the startup process to avoid disk trashing.
   updateCacheSizes();
@@ -3087,7 +3090,11 @@ void MapWidget::restoreState()
   }
 
   if(OptionData::instance().getFlags() & opts::STARTUP_LOAD_KML && !NavApp::isSafeMode())
+  {
     kmlFilePaths = settings.valueStrList(lnm::MAP_KMLFILES);
+    for(QString& path : kmlFilePaths)
+      path = atools::nativeCleanPath(path);
+  }
 
   // Restore range rings, patterns, holds and more
   getScreenIndex()->restoreState();

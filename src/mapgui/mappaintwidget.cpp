@@ -184,8 +184,15 @@ void MapPaintWidget::copySettings(const MapPaintWidget& other)
   searchMarkPos = other.searchMarkPos;
   homePos = other.homePos;
   homeDistance = other.homeDistance;
-  kmlFilePaths = other.kmlFilePaths;
   avoidBlurredMap = other.avoidBlurredMap;
+
+  if(kmlFilePaths != other.kmlFilePaths)
+  {
+    clearKmlFiles();
+    for(const QString& kml : qAsConst(other.kmlFilePaths))
+      loadKml(kml, false /* center */);
+    kmlFilePaths = other.kmlFilePaths;
+  }
 
   if(size() != other.size())
     resize(other.size());
@@ -954,10 +961,11 @@ void MapPaintWidget::disconnectedFromSimulator()
 
 bool MapPaintWidget::addKmlFile(const QString& kmlFile)
 {
-  if(loadKml(kmlFile, true))
+  QString cleanFilename = atools::nativeCleanPath(kmlFile);
+  if(loadKml(cleanFilename, true /* center */))
   {
     // Add to the list of files that will be reloaded on startup
-    kmlFilePaths.append(kmlFile);
+    kmlFilePaths.append(cleanFilename);
     // Successfully loaded
     return true;
   }
