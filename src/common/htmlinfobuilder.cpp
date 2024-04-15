@@ -3016,7 +3016,7 @@ bool HtmlInfoBuilder::bearingToUserText(const ageo::Pos& pos, float magVar, Html
     float distance = pos.distanceMeterTo(userAircraft.getPosition());
     if(distance < MAX_DISTANCE_FOR_BEARING_METER)
     {
-      html.row2(tr("Bearing and distance to user aircraft:"),
+      html.row2(tr("Bearing and distance from user aircraft:"),
                 tr("%1, %2").
                 arg(courseTextFromTrue(normalizeCourse(userAircraft.getPosition().angleDegTo(pos)), magVar)).
                 arg(Unit::distMeter(distance)),

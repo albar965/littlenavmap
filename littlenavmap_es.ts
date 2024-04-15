@@ -17693,7 +17693,7 @@ kHz/MHz</translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="3039"/>
-        <source>Bearing and distance to user aircraft:</source>
+        <source>Bearing and distance from user aircraft:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
