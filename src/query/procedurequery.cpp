@@ -2219,14 +2219,14 @@ proc::MapProcedureTypes ProcedureQuery::getMissingProcedures(QHash<QString, QStr
     if(!properties.value(pln::SID).isEmpty() && sidLegs.procedureLegs.isEmpty())
       missing |= proc::PROCEDURE_SID;
 
-    if((!properties.value(pln::SID_TRANS).isEmpty() || !properties.value(pln::SID_TRANS_WP).isEmpty()) && sidLegs.transitionLegs.isEmpty())
+    if(!properties.value(pln::SID_TRANS).isEmpty() && sidLegs.transitionLegs.isEmpty())
       missing |= proc::PROCEDURE_SID_TRANSITION;
   }
 
   if(!properties.value(pln::STAR).isEmpty() && starLegs.procedureLegs.isEmpty())
     missing |= proc::PROCEDURE_STAR;
 
-  if((!properties.value(pln::STAR_TRANS).isEmpty() || !properties.value(pln::STAR_TRANS_WP).isEmpty()) && starLegs.transitionLegs.isEmpty())
+  if(!properties.value(pln::STAR_TRANS).isEmpty() && starLegs.transitionLegs.isEmpty())
     missing |= proc::PROCEDURE_STAR_TRANSITION;
 
   if(!procedureLegs.isCustomApproach())
