@@ -71,6 +71,7 @@ public:
 
   /* Restores last route string too */
   void restoreState();
+  void restoreStateWidget();
 
   /* Update splitter and syntax highlighter */
   void styleChanged();
@@ -152,9 +153,6 @@ private:
 
   // Notify RouteStringDialog::textChanged() to a direct update instead of a delayed one
   bool immediateUpdate = false;
-
-  /* Remember dialog position when reopening */
-  QPoint position;
 
   /* Remember to avoid unneeded parsing if user edits areas outside the active string. */
   QString lastCleanRouteString;

@@ -68,15 +68,15 @@ public:
 
   void fontChanged(const QFont& font);
 
+  /* Save and restore dialog size and tab selection */
+  void saveState() const;
+  void restoreState();
+
 private:
   /* Use events to update data and disconnect from database if not visible. */
   /* Also enable or disable toolbar/menu action. */
   virtual void showEvent(QShowEvent *) override;
   virtual void hideEvent(QHideEvent *) override;
-
-  /* Save and restore dialog size and tab selection */
-  void saveState() const;
-  void restoreState();
 
   /* Update tables and text browser */
   void updateWidgets();
@@ -109,10 +109,6 @@ private:
 
   /* Item delegate needed to change alignment */
   LogStatsDelegate *delegate = nullptr;
-
-  /* Remember dilalog position when reopening */
-  QPoint position;
-
 };
 
 #endif // LNM_LOGSTATISTICSDIALOG_H

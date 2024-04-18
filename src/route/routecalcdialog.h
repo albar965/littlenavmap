@@ -163,9 +163,6 @@ private:
 
   Ui::RouteCalcDialog *ui;
 
-  /* Remember dialog position when reopening */
-  QPoint position;
-
   /* Set to true before emitting calculateClicked() to avoid user clicking button twice. */
   bool calculating = false;
 };

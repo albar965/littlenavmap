@@ -283,6 +283,7 @@ void RouteCalcDialog::updateHeader()
 void RouteCalcDialog::restoreState()
 {
   atools::gui::WidgetState state(lnm::ROUTE_CALC_DIALOG);
+  state.setDialogOptions(true /* position */, true /* size */);
   state.restore(this);
   state.restore(widgets);
 
@@ -298,6 +299,7 @@ void RouteCalcDialog::restoreState()
 void RouteCalcDialog::saveState() const
 {
   atools::gui::WidgetState state(lnm::ROUTE_CALC_DIALOG);
+  state.setDialogOptions(true /* position */, true /* size */);
   state.save(widgets);
   state.save(this);
 }
@@ -373,13 +375,12 @@ void RouteCalcDialog::adjustAltitudePressed()
   ui->spinBoxRouteCalcCruiseAltitude->setValue(NavApp::getRouteConst().getAdjustedAltitude(ui->spinBoxRouteCalcCruiseAltitude->value()));
 }
 
-void RouteCalcDialog::showEvent(QShowEvent *)
+void RouteCalcDialog::showEvent(QShowEvent*)
 {
-  if(!position.isNull())
-    move(position);
+  restoreState();
 }
 
 void RouteCalcDialog::hideEvent(QHideEvent *)
 {
-  position = geometry().topLeft();
+  saveState();
 }

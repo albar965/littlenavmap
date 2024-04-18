@@ -503,14 +503,23 @@ void RouteStringDialog::saveState() const
 
 void RouteStringDialog::saveStateWidget() const
 {
-  atools::gui::WidgetState(lnm::ROUTE_STRING_DIALOG_SPLITTER + settingsSuffix).save(
-    QList<const QObject *>({this, ui->splitterRouteString, ui->comboBoxRouteStringFlightplanType}));
+  atools::gui::WidgetState state(lnm::ROUTE_STRING_DIALOG + settingsSuffix);
+  state.setDialogOptions(true /* position */, true /* size */);
+  state.save(QList<const QObject *>({this, ui->splitterRouteString, ui->comboBoxRouteStringFlightplanType}));
   atools::settings::Settings::instance().setValue(lnm::ROUTE_STRING_DIALOG_OPTIONS + settingsSuffix, static_cast<int>(options));
+}
+
+void RouteStringDialog::restoreStateWidget()
+{
+  atools::gui::WidgetState state(lnm::ROUTE_STRING_DIALOG + settingsSuffix);
+  state.setDialogOptions(true /* position */, true /* size */);
+  state.restore(this);
 }
 
 void RouteStringDialog::restoreState()
 {
-  atools::gui::WidgetState(lnm::ROUTE_STRING_DIALOG_SPLITTER + settingsSuffix).restore({this, ui->splitterRouteString,
+  restoreStateWidget();
+  atools::gui::WidgetState(lnm::ROUTE_STRING_DIALOG + settingsSuffix).restore({ui->splitterRouteString,
                                                                                         ui->comboBoxRouteStringFlightplanType});
   ui->splitterRouteString->setHandleWidth(6);
   options = getOptionsFromSettings();
@@ -754,10 +763,9 @@ void RouteStringDialog::updateButtonState()
   updatingActions = false;
 }
 
-void RouteStringDialog::showEvent(QShowEvent *)
+void RouteStringDialog::showEvent(QShowEvent*)
 {
-  if(!position.isNull())
-    move(position);
+  restoreStateWidget();
 }
 
 void RouteStringDialog::hideEvent(QHideEvent *)
@@ -769,5 +777,5 @@ void RouteStringDialog::hideEvent(QHideEvent *)
   if(advancedMenu != nullptr)
     advancedMenu->hideTearOffMenu();
 
-  position = geometry().topLeft();
+  saveStateWidget();
 }

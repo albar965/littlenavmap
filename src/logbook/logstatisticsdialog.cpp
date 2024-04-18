@@ -333,13 +333,16 @@ void LogStatisticsDialog::setModel()
 
 void LogStatisticsDialog::saveState() const
 {
-  atools::gui::WidgetState(lnm::LOGDATA_STATS_DIALOG).save({this, ui->tabWidget, ui->comboBoxLogStatsGrouped});
+  atools::gui::WidgetState state(lnm::LOGDATA_STATS_DIALOG);
+  state.setDialogOptions(true /* position */, true /* size */);
+  state.save({this, ui->tabWidget, ui->comboBoxLogStatsGrouped});
 }
 
 void LogStatisticsDialog::restoreState()
 {
-  atools::gui::WidgetState(lnm::LOGDATA_STATS_DIALOG, true, true).
-  restore({this, ui->tabWidget, ui->comboBoxLogStatsGrouped});
+  atools::gui::WidgetState state(lnm::LOGDATA_STATS_DIALOG, true, true);
+  state.setDialogOptions(true /* position */, true /* size */);
+  state.restore({this, ui->tabWidget, ui->comboBoxLogStatsGrouped});
 }
 
 void LogStatisticsDialog::groupChanged(int index)
@@ -568,16 +571,14 @@ void LogStatisticsDialog::initQueries()
 
 void LogStatisticsDialog::showEvent(QShowEvent *)
 {
-  if(!position.isNull())
-    move(position);
-
   setModel();
   updateWidgets();
+  restoreState();
 }
 
 void LogStatisticsDialog::hideEvent(QHideEvent *)
 {
-  position = geometry().topLeft();
+  saveState();
 
   // Disconnect from database if not shown
   clearModel();

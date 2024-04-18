@@ -227,7 +227,7 @@ const QLatin1String ROUTE_FILENAMESKML_RECENT("Route/FilenamesKmlRecent");
 const QLatin1String ROUTE_VIEW("Route/View");
 const QLatin1String ROUTE_VIEW_TABLE("Route/ViewTable");
 const QLatin1String ROUTE_PRINT_DIALOG("Route/PrintWidget");
-const QLatin1String ROUTE_STRING_DIALOG_SPLITTER("Route/StringDialogSplitter2");
+const QLatin1String ROUTE_STRING_DIALOG("Route/RouteStringDialogSplitter2");
 const QLatin1String ROUTE_STRING_DIALOG_OPTIONS("Route/StringDialogOptions");
 const QLatin1String ROUTE_STRING_DIALOG_DESCR("Route/StringDialogDescr");
 const QLatin1String ROUTE_STRING_DIALOG_BACKGROUND_HINT("Route/StringDialogBackgroundHint");
