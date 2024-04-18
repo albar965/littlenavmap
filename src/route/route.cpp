@@ -2818,6 +2818,7 @@ Route Route::adjustedToOptions(const Route& origRoute, rf::RouteAdjustOptions op
 #ifdef DEBUG_INFORMATION
   qDebug() << Q_FUNC_INFO << "options" << options;
 #endif
+
   bool saveApproachWp = options.testFlag(rf::SAVE_APPROACH_WP),
        saveSidWp = options.testFlag(rf::SAVE_SID_WP), saveStarWp = options.testFlag(rf::SAVE_STAR_WP),
        replaceCustomWp = options.testFlag(rf::REPLACE_CUSTOM_WP), msfs = options.testFlag(rf::SAVE_MSFS),
@@ -2861,14 +2862,16 @@ Route Route::adjustedToOptions(const Route& origRoute, rf::RouteAdjustOptions op
            proc::procedureLegFixAtStart(arrivalLeg.getProcedureLegType()) && !arrivalLeg.isNavaidEqualTo(routeLeg))
         {
           FlightplanEntry entry;
-          entryBuilder.buildFlightplanEntry(arrivalLeg.getProcedureLeg(), entry,
-                                            true /* resolve waypoints to VOR and others*/);
+          entryBuilder.buildFlightplanEntry(arrivalLeg.getProcedureLeg(), entry, true /* resolve waypoints to VOR and others*/);
           entry.setAirway(arrivalLeg.getAirwayName());
-          entry.setFlag(atools::fs::pln::entry::PROCEDURE, false);
+          entry.setFlag(atools::fs::pln::entry::PROCEDURE, msfs);
           entry.setAltitude(altVector.value(arrivaLegsOffset, 0.f));
 
           RouteLeg newLeg = RouteLeg(&route.flightplan);
-          newLeg.createCopyFromProcedureLeg(arrivaLegsOffset, arrivalLeg, &routeLeg);
+          if(msfs)
+            newLeg.createFromProcedureLeg(arrivaLegsOffset, arrivalLeg.getProcedureLeg(), &routeLeg);
+          else
+            newLeg.createCopyFromProcedureLeg(arrivaLegsOffset, arrivalLeg, &routeLeg);
           newLeg.setAirway(arrivalLeg.getAirway());
 
           route.insert(arrivaLegsOffset, newLeg);
@@ -3122,7 +3125,7 @@ Route Route::adjustedToOptions(const Route& origRoute, rf::RouteAdjustOptions op
         /// Coordinates are already set ok
         entry.setIdent(QString());
         entry.setRegion(QString());
-        entry.setAirway(QString());
+        entry.setAirway(leg.getAirwayName());
 
         // Copy restrictions to the remarks section
         if(restrToRemarks)
@@ -3264,26 +3267,15 @@ Route Route::adjustedToOptions(const Route& origRoute, rf::RouteAdjustOptions op
       return type.getFlags() & atools::fs::pln::entry::PROCEDURE;
     }), plan.end());
 
-    if(!msfs)
-    {
-      // Delete same consecutive =======================
-      for(int i = plan.size() - 1; i > 0; i--)
-      {
-        const FlightplanEntry& entry = plan.at(i);
-        const FlightplanEntry& prev = plan.at(i - 1);
-
-        if(entry.getIdent() == prev.getIdent() &&
-           entry.getRegion() == prev.getRegion() &&
-           entry.getPosition().almostEqual(prev.getPosition(), Pos::POS_EPSILON_100M))
-          plan.removeAt(i);
-      }
-    }
-    else
+    if(msfs)
     {
       // MSFS: Remove airway information for STAR entry waypoints ==============================
-      for(FlightplanEntry& entry : plan)
+      for(int i = 0; i < plan.size(); i++)
       {
-        if(!entry.getStar().isEmpty())
+        const FlightplanEntry *lastEntry = i > 0 ? &plan.at(i - 1) : nullptr;
+        FlightplanEntry& entry = plan[i];
+
+        if(lastEntry == nullptr || !lastEntry->getStar().isEmpty())
           entry.setAirway(QString());
       }
 
@@ -3303,6 +3295,20 @@ Route Route::adjustedToOptions(const Route& origRoute, rf::RouteAdjustOptions op
             entry.setRunway(QString::number(number), atools::fs::util::runwayDesignatorLong(designator));
         }
         entry.setApproach(appr.type, appr.suffix, appr.transitionFixIdent);
+      }
+    }
+    else
+    {
+      // Delete same consecutive =======================
+      for(int i = plan.size() - 1; i > 0; i--)
+      {
+        const FlightplanEntry& entry = plan.at(i);
+        const FlightplanEntry& prev = plan.at(i - 1);
+
+        if(entry.getIdent() == prev.getIdent() &&
+           entry.getRegion() == prev.getRegion() &&
+           entry.getPosition().almostEqual(prev.getPosition(), Pos::POS_EPSILON_100M))
+          plan.removeAt(i);
       }
     }
 
