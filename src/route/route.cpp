@@ -2836,6 +2836,9 @@ Route Route::adjustedToOptions(const Route& origRoute, rf::RouteAdjustOptions op
   // Clear unresolved parking/start names depending on flag
   route.updateDepartureAndDestination(!options.testFlag(rf::SAVE_KEEP_INVALID_START));
 
+  if(msfs && route.hasAnyStarProcedure() && route.hasCustomApproach())
+    route.removeProcedureLegs(proc::PROCEDURE_APPROACH_ALL);
+
   // Restore duplicate waypoints at route/procedure entry/exits which were removed after route calculation
   if(options.testFlag(rf::FIX_PROC_ENTRY_EXIT) || options.testFlag(rf::FIX_PROC_ENTRY_EXIT_ALWAYS))
   {
