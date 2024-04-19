@@ -30,7 +30,11 @@ A big thank you to all who reported bugs and issues!
 
 ## Changes from 3.0.6 to 3.0.7.rc1
 
-TODO
+See the GitHub changes:
+
+https://github.com/albar965/littlenavmap/commits/release/3.0/?since=2024-03-26
+
+https://github.com/albar965/atools/commits/release/4.0/?since=2024-03-27
 
 ==<<=============================================================================
 
