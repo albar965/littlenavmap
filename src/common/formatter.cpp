@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -233,9 +233,9 @@ QString windInformationTailHead(float headWindKts, bool addUnit)
     windPtr += Unit::speedKts(std::abs(headWindKts), addUnit);
 
     if(headWindKts <= -1.f)
-      windPtr += QObject::tr(" ▲"); // Tailwind
+      windPtr += QObject::tr(" ⮝"); // Tailwind
     else
-      windPtr += QObject::tr(" ▼"); // Headwind
+      windPtr += QObject::tr(" ⮟"); // Headwind
   }
   return windPtr;
 }
@@ -248,9 +248,9 @@ QString windInformationCross(float crossWindKts, bool addUnit)
     windPtr += Unit::speedKts(std::abs(crossWindKts), addUnit);
 
     if(crossWindKts > 0.f)
-      windPtr += QObject::tr(" ◄");
+      windPtr += QObject::tr(" ⮜");
     else if(crossWindKts < 0.f)
-      windPtr += QObject::tr(" ►");
+      windPtr += QObject::tr(" ⮞");
   }
   return windPtr;
 }
@@ -261,10 +261,11 @@ QString windInformation(float headWindKts, float crossWindKts, const QString& se
   windTxt.append(windInformationTailHead(headWindKts, addUnit));
   windTxt.append(windInformationCross(crossWindKts, addUnit));
   windTxt.removeAll(QString());
+
   return windTxt.join(separator);
 }
 
-QString windInformationShort(int windDirectionDeg, float windSpeedKts, float runwayEndHeading)
+QString windInformationShort(int windDirectionDeg, float windSpeedKts, float runwayEndHeading, float minHeadWind, bool addUnit)
 {
   QString windStr;
   if(windDirectionDeg != -1 && windSpeedKts >= 1.f && windSpeedKts < map::INVALID_METAR_VALUE)
@@ -273,8 +274,8 @@ QString windInformationShort(int windDirectionDeg, float windSpeedKts, float run
     atools::geo::windForCourse(headWindKts, crossWindKts, windSpeedKts, windDirectionDeg, runwayEndHeading);
 
     // Only show for head wind > 1
-    if(headWindKts >= 1.f)
-      windStr = formatter::windInformation(headWindKts, crossWindKts, QObject::tr(" "), false /* addUnit */);
+    if(headWindKts >= minHeadWind)
+      windStr = formatter::windInformation(headWindKts, crossWindKts, QObject::tr(" "), addUnit);
   }
   return windStr;
 }

@@ -119,14 +119,16 @@ enum RouteColumns
   REMARKS,
   LAST_COLUMN = REMARKS,
 
-  /* Not column names but identifiers for the tree dialog
-   * Not saved directly but state is saved in RouteLabel::saveState() */
+  /* Not column names but identifiers for the tree configuration dialog
+   * Not saved directly. */
   HEADER_AIRPORTS = 1000,
   HEADER_TAKEOFF,
   HEADER_DEPARTURE,
   HEADER_ARRIVAL,
   HEADER_LAND,
   HEADER_DIST_TIME,
+  HEADER_TAKEOFF_WIND,
+  HEADER_LAND_WIND,
 
   FOOTER_SELECTION = 1500,
   FOOTER_ERROR
@@ -845,6 +847,11 @@ void RouteController::windUpdated()
 
   // Emit also for empty route to catch performance changes
   emit routeChanged(false /* geometryChanged */);
+}
+
+void RouteController::weatherUpdated()
+{
+  routeLabel->updateHeaderLabel();
 }
 
 /* Spin box altitude has changed value */
@@ -2555,31 +2562,50 @@ void RouteController::routeTableOptions()
   QTreeWidgetItem *headerItem = treeDialog.addTopItem1(tr("Flight Plan Table Header"));
   treeDialog.addItem2(headerItem, rcol::HEADER_AIRPORTS, tr("Airports"),
                       tr("Departure and destination airports as links to show them on the map and in information."),
-                      routeLabel->isHeaderAirports());
+                      routeLabel->isFlag(routelabel::HEADER_AIRPORTS));
 
   treeDialog.addItem2(headerItem, rcol::HEADER_DIST_TIME, tr("Distance and Time"), tr("Flight plan total distance and flight time."),
-                      routeLabel->isHeaderDistTime());
+                      routeLabel->isFlag(routelabel::HEADER_DISTTIME));
 
   treeDialog.addItem2(headerItem, rcol::HEADER_TAKEOFF, tr("Takeoff Runway"),
-                      tr("Departure runway heading and length."), routeLabel->isHeaderRunwayTakeoff());
+                      tr("Departure runway heading and length."), routeLabel->isFlag(routelabel::HEADER_RUNWAY_TAKEOFF));
+
+  treeDialog.addItem2(headerItem, rcol::HEADER_TAKEOFF_WIND, tr("Takeoff Wind"),
+                      tr("Headwind on takeoff runway indicated by ⮟ and tailwind by ⮝\n"
+                         "as well as crosswind (⮞ or ⮜).\n"
+                         "The wind information is taken from the selected source in\n"
+                         "menu \"Weather\" -> \"Airport Weather Source\".\n"
+                         "Wind is taken from nearest airport if not available."),
+                      routeLabel->isFlag(routelabel::HEADER_RUNWAY_TAKEOFF_WIND));
 
   treeDialog.addItem2(headerItem, rcol::HEADER_DEPARTURE, tr("Departure"),
-                      tr("SID information."), routeLabel->isHeaderDeparture());
+                      tr("SID information."), routeLabel->isFlag(routelabel::HEADER_DEPARTURE));
 
   treeDialog.addItem2(headerItem, rcol::HEADER_ARRIVAL, tr("Arrival"),
-                      tr("STAR and approach procedure information."), routeLabel->isHeaderArrival());
+                      tr("STAR and approach procedure information."), routeLabel->isFlag(routelabel::HEADER_ARRIVAL));
 
   treeDialog.addItem2(headerItem, rcol::HEADER_LAND, tr("Landing Runway"),
                       tr("Destination runway heading, available distance for landing, elevation and facilities."),
-                      routeLabel->isHeaderRunwayLand());
+                      routeLabel->isFlag(routelabel::HEADER_RUNWAY_LAND));
+
+  treeDialog.addItem2(headerItem, rcol::HEADER_LAND_WIND, tr("Landing Wind"),
+                      tr("Destination runway heading, available distance for landing, elevation and facilities."),
+                      tr("Headwind on landing runway indicated by ⮟ and tailwind by ⮝\n"
+                         "as well as crosswind (⮞ or ⮜).\n"
+                         "The wind information is taken from the selected source in\n"
+                         "menu \"Weather\" -> \"Airport Weather Source\".\n"
+                         "Wind is taken from nearest airport if not available."),
+                      routeLabel->isFlag(routelabel::HEADER_RUNWAY_LAND_WIND));
 
   // Add footer options to tree ========================================
   QTreeWidgetItem *footerItem = treeDialog.addTopItem1(tr("Flight Plan Table Footer"));
   treeDialog.addItem2(footerItem, rcol::FOOTER_SELECTION, tr("Selected Flight Plan Legs"),
-                      tr("Show distance, time and fuel for selected flight plan legs."), routeLabel->isFooterSelection());
+                      tr("Show distance, time and fuel for selected flight plan legs."),
+                      routeLabel->isFlag(routelabel::FOOTER_SELECTION));
   treeDialog.addItem2(footerItem, rcol::FOOTER_ERROR, tr("Error Messages"),
                       tr("Show error messages for flight plan elements like missing airports and more.\n"
-                         "It is strongly recommended to keep the error label enabled."), routeLabel->isFooterError());
+                         "It is strongly recommended to keep the error label enabled."),
+                      routeLabel->isFlag(routelabel::FOOTER_ERROR));
 
   // Add column names and description texts to tree ====================
   QTreeWidgetItem *tableItem = treeDialog.addTopItem1(tr("Flight plan table columns"));
@@ -2601,15 +2627,19 @@ void RouteController::routeTableOptions()
       header->setSectionHidden(col, !treeDialog.isItemChecked(col));
 
     // Set label options ==========================
-    routeLabel->setHeaderAirports(treeDialog.isItemChecked(rcol::HEADER_AIRPORTS));
-    routeLabel->setHeaderRunwayTakeoff(treeDialog.isItemChecked(rcol::HEADER_TAKEOFF));
-    routeLabel->setHeaderDeparture(treeDialog.isItemChecked(rcol::HEADER_DEPARTURE));
-    routeLabel->setHeaderArrival(treeDialog.isItemChecked(rcol::HEADER_ARRIVAL));
-    routeLabel->setHeaderRunwayLand(treeDialog.isItemChecked(rcol::HEADER_LAND));
-    routeLabel->setHeaderDistTime(treeDialog.isItemChecked(rcol::HEADER_DIST_TIME));
+    routeLabel->setFlag(routelabel::HEADER_AIRPORTS, treeDialog.isItemChecked(rcol::HEADER_AIRPORTS));
+    routeLabel->setFlag(routelabel::HEADER_DISTTIME, treeDialog.isItemChecked(rcol::HEADER_DIST_TIME));
 
-    routeLabel->setFooterSelection(treeDialog.isItemChecked(rcol::FOOTER_SELECTION));
-    routeLabel->setFooterError(treeDialog.isItemChecked(rcol::FOOTER_ERROR));
+    routeLabel->setFlag(routelabel::HEADER_RUNWAY_TAKEOFF, treeDialog.isItemChecked(rcol::HEADER_TAKEOFF));
+    routeLabel->setFlag(routelabel::HEADER_RUNWAY_TAKEOFF_WIND, treeDialog.isItemChecked(rcol::HEADER_TAKEOFF_WIND));
+    routeLabel->setFlag(routelabel::HEADER_DEPARTURE, treeDialog.isItemChecked(rcol::HEADER_DEPARTURE));
+
+    routeLabel->setFlag(routelabel::HEADER_ARRIVAL, treeDialog.isItemChecked(rcol::HEADER_ARRIVAL));
+    routeLabel->setFlag(routelabel::HEADER_RUNWAY_LAND, treeDialog.isItemChecked(rcol::HEADER_LAND));
+    routeLabel->setFlag(routelabel::HEADER_RUNWAY_LAND_WIND, treeDialog.isItemChecked(rcol::HEADER_LAND_WIND));
+
+    routeLabel->setFlag(routelabel::FOOTER_SELECTION, treeDialog.isItemChecked(rcol::FOOTER_SELECTION));
+    routeLabel->setFlag(routelabel::FOOTER_ERROR, treeDialog.isItemChecked(rcol::FOOTER_ERROR));
 
     // Update all =====================
     updateModelTimeFuelWindAlt();
@@ -5273,9 +5303,9 @@ void RouteController::updateModelTimeFuelWindAlt()
           {
             QString ptr;
             if(headWind >= 1.f)
-              ptr = tr("▼");
+              ptr = tr("⮟");
             else if(headWind <= -1.f)
-              ptr = tr("▲");
+              ptr = tr("⮝");
             txt.append(tr("%1 %2").arg(ptr).arg(Unit::speedKts(std::abs(headWind), false /* addUnit */)));
           }
           model->item(row, rcol::WIND_HEAD_TAIL)->setText(txt);

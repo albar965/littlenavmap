@@ -1654,10 +1654,12 @@ void MainWindow::connectAllSlots()
   connect(weatherReporter, &WeatherReporter::weatherUpdated, infoController, &InfoController::updateAirportWeather);
   connect(weatherReporter, &WeatherReporter::weatherUpdated, mapWidget, &MapPaintWidget::weatherUpdated);
   connect(weatherReporter, &WeatherReporter::weatherUpdated, procedureSearch, &ProcedureSearch::weatherUpdated);
+  connect(weatherReporter, &WeatherReporter::weatherUpdated, routeController, &RouteController::weatherUpdated);
 
   connect(connectClient, &ConnectClient::weatherUpdated, mapWidget, &MapPaintWidget::weatherUpdated);
   connect(connectClient, &ConnectClient::weatherUpdated, mapWidget, &MapWidget::updateTooltip);
   connect(connectClient, &ConnectClient::weatherUpdated, infoController, &InfoController::updateAirportWeather);
+  connect(connectClient, &ConnectClient::weatherUpdated, routeController, &RouteController::weatherUpdated);
 
   // Wind update ===================================================
   connect(windReporter, &WindReporter::windUpdated, routeController, &RouteController::windUpdated);

@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -74,7 +74,8 @@ QString windInformationCross(float crossWindKts, bool addUnit = true);
 QString windInformationTailHead(float headWindKts, bool addUnit = true);
 
 /* Only headwind > 1 kts and crosswind */
-QString windInformationShort(int windDirectionDeg, float windSpeedKts, float runwayEndHeading);
+QString windInformationShort(int windDirectionDeg, float windSpeedKts, float runwayEndHeading, float minHeadWind = 1.f,
+                             bool addUnit = false);
 
 /* Get course or heading text with magnetic and/or true course depending on settings */
 QString courseText(float magCourse, float trueCourse, bool magBold = false, bool magBig = false, bool trueSmall = true, bool narrow = false,

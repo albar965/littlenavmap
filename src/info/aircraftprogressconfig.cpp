@@ -199,8 +199,8 @@ void AircraftProgressConfig::progressConfiguration()
   // Environment ==========================================================================================================
   QTreeWidgetItem *envItem = treeDialog.addTopItem1(tr("Environment"));
   treeDialog.addItem2(envItem, pid::ENV_WIND_DIR_SPEED,   tr("Wind Direction and Speed"), tr("Wind direction and speed at aircraft.\n"
-                                                                                            "Second line shows headwind indicated by ▼ and tailwind by ▲\n"
-                                                                                            "as well as crosswind (► or ◄)."));
+                                                                                            "Second line shows headwind indicated by ⮟ and tailwind by ⮝\n"
+                                                                                            "as well as crosswind (⮞ or ⮜)."));
   treeDialog.addItem2(envItem, pid::ENV_TAT,              tr("Total Air Temperature"), tr("Total air temperature (TAT).\n"
                                                                                          "Also indicated air temperature (IAT) or ram air temperature."));
   treeDialog.addItem2(envItem, pid::ENV_SAT,              tr("Static Air Temperature"), tr("Static air temperature (SAT).\n"

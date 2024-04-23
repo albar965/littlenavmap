@@ -2424,9 +2424,9 @@ void ProfileWidget::buildTooltipText(int x, bool force)
     {
       QString windPtr;
       if(headWind >= 1.f)
-        windPtr = tr("▼");
+        windPtr = tr("⮟");
       else if(headWind <= -1.f)
-        windPtr = tr("▲");
+        windPtr = tr("⮝");
       html.text(tr(", %1 %2").arg(windPtr).arg(Unit::speedKts(std::abs(headWind))));
     }
   }

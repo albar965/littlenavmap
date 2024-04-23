@@ -283,6 +283,7 @@ public:
 
   void aircraftPerformanceChanged();
   void windUpdated();
+  void weatherUpdated();
 
   /* Get all available table columns with linefeeds and units replaced. Fixed order independent of table view. */
   QStringList getAllRouteColumns() const;
