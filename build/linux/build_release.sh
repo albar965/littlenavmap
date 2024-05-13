@@ -41,6 +41,17 @@ export QMAKE_STATIC=${QMAKE_STATIC:-"${APROJECTS}/build-qt-5.15.2-release/bin/qm
 # Do not change the DEPLOY_BASE since some scripts depend on it
 export DEPLOY_BASE="${APROJECTS}/deploy"
 
+# some basic environment checks
+if [ ! -f "${QMAKE_SHARED}" ]; then echo "shared 'qmake' command not found" >&2; exit 1; fi
+if [ ! -f "${QMAKE_STATIC}" ]; then echo "static 'qmake' command not found" >&2; exit 1; fi
+if ! which patchelf; then echo "Command 'patchelf' not found" >&2; exit 1; fi
+if ! which cmake; then echo "Command 'cmake' not found" >&2; exit 1; fi
+
+if [ ! -d "${MARBLE_INC_PATH}" ]; then echo "Marble include path not found. Did you provide albar965/marble branch lnm/1.1?" >&2; exit 1; fi
+if [ ! -d "${MARBLE_LIB_PATH}" ]; then echo "Marble library path not found. Did you provide albar965/marble branch lnm/1.1?" >&2; exit 1; fi
+
+if [ ! -d "${XPSDK_BASE}" ]; then echo "XPlane SDK not found. Visit https://developer.x-plane.com/sdk/ for download" >&2; exit 1; fi
+
 # ===========================================================================
 # ========================== littlenavmap and littlenavconnect - shared Qt
 # ===========================================================================
