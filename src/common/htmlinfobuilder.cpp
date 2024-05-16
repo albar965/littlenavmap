@@ -103,7 +103,7 @@ const qint64 WEATHER_MAX_AGE_HOURS_ERR_OUTDATED = 24;
 // Maximum distance for bearing display to user aircraft
 const int MAX_DISTANCE_FOR_BEARING_METER = ageo::nmToMeter(8000);
 
-ahtml::Flags LINK_FLAGS = ahtml::LINK_NO_UL | ahtml::BOLD;
+const static ahtml::Flags LINK_FLAGS = ahtml::LINK_NO_UL | ahtml::BOLD;
 
 HtmlInfoBuilder::HtmlInfoBuilder(QWidget *parent, MapPaintWidget *mapWidgetParam, bool infoParam, bool printParam, bool verboseParam)
   : parentWidget(parent), mapWidget(mapWidgetParam), info(infoParam), print(printParam), verbose(verboseParam)
@@ -828,7 +828,7 @@ void HtmlInfoBuilder::runwayText(const MapAirport& airport, HtmlBuilder& html, b
     if(!print)
       airportTitle(airport, html, -1, true /* procedures */);
 
-    html.p().b(tr("Elevation: ")).text(Unit::altFeet(airport.getAltitude())).pEnd();
+    html.br().b(tr("Elevation: ")).text(Unit::altFeet(airport.getAltitude()));
 
     const SqlRecordList *recVector = infoQuery->getRunwayInformation(airport.id);
     if(recVector != nullptr)
@@ -944,8 +944,10 @@ void HtmlInfoBuilder::runwayText(const MapAirport& airport, HtmlBuilder& html, b
     {
       // Helipads ==============================================================
       const SqlRecordList *heliVector = infoQuery->getHelipadInformation(airport.id);
-      if(heliVector != nullptr)
+      if(heliVector != nullptr && !heliVector->isEmpty())
       {
+      html.hr();
+
         for(const SqlRecord& heliRec : *heliVector)
         {
           bool closed = heliRec.valueBool("is_closed");
@@ -1740,13 +1742,15 @@ void HtmlInfoBuilder::weatherText(const map::WeatherContext& context, const MapA
       // Simconnect or X-Plane weather file metar ===========================
       if(context.simMetar.hasAnyMetar())
       {
+        html.hr();
+
         // Only FSX/P3D allow remote requests for now - X-Plane is weather files
         const Metar& metar = context.simMetar;
         QString sim = tr("%1 ").arg(NavApp::getCurrentSimulatorShortName());
 
         if(checkMetar(html, metar.getStation()))
         {
-          html.p(tr("%1Station Weather").arg(sim), WEATHER_TITLE_FLAGS);
+          html.text(tr("%1Station Weather").arg(sim), WEATHER_TITLE_FLAGS);
           decodedMetar(html, airport,
                        map::MapAirport(), metar, src == WEATHER_SOURCE_SIMULATOR && weatherShown, atools::fs::weather::STATION);
         }
@@ -1754,7 +1758,7 @@ void HtmlInfoBuilder::weatherText(const map::WeatherContext& context, const MapA
         bool nearestOk = false;
         if(checkMetar(html, metar.getNearest()))
         {
-          html.p(tr("%2Nearest Weather - %1").arg(metar.getRequestIdent()).arg(sim), WEATHER_TITLE_FLAGS);
+          html.text(tr("%2Nearest Weather - %1").arg(metar.getRequestIdent()).arg(sim), WEATHER_TITLE_FLAGS);
 
           // Add link to airport station
           if(!print && airport.isValid())
@@ -1768,7 +1772,7 @@ void HtmlInfoBuilder::weatherText(const map::WeatherContext& context, const MapA
 
         if(nearestOk && checkMetar(html, metar.getInterpolated()))
         {
-          html.p(tr("%2Interpolated Weather - %1").arg(metar.getRequestIdent()).arg(sim), WEATHER_TITLE_FLAGS);
+          html.text(tr("%2Interpolated Weather - %1").arg(metar.getRequestIdent()).arg(sim), WEATHER_TITLE_FLAGS);
 
           // Add link to airport station
           if(!print && airport.isValid())
@@ -1783,28 +1787,41 @@ void HtmlInfoBuilder::weatherText(const map::WeatherContext& context, const MapA
       // Active Sky metar ===========================
       if(context.activeSkyMetar.hasAnyMetar())
       {
+        html.hr();
+
         if(context.isAsDeparture && context.isAsDestination)
-          html.p(context.asType % tr(" - Departure and Destination"), WEATHER_TITLE_FLAGS);
+          html.text(context.asType % tr(" - Departure and Destination"), WEATHER_TITLE_FLAGS);
         else if(context.isAsDeparture)
-          html.p(context.asType % tr(" - Departure"), WEATHER_TITLE_FLAGS);
+          html.text(context.asType % tr(" - Departure"), WEATHER_TITLE_FLAGS);
         else if(context.isAsDestination)
-          html.p(context.asType % tr(" - Destination"), WEATHER_TITLE_FLAGS);
+          html.text(context.asType % tr(" - Destination"), WEATHER_TITLE_FLAGS);
         else
-          html.p(context.asType, WEATHER_TITLE_FLAGS);
+          html.text(context.asType, WEATHER_TITLE_FLAGS);
 
         decodedMetar(html, airport, map::MapAirport(), context.activeSkyMetar, src == WEATHER_SOURCE_ACTIVE_SKY && weatherShown,
                      atools::fs::weather::STATION);
       }
 
       // NOAA, nearest and/or interpolated ===========================
-      decodedMetars(html, context.noaaMetar, airport, tr("NOAA"), src == WEATHER_SOURCE_NOAA && weatherShown);
+      if(context.noaaMetar.hasAnyMetar())
+      {
+        html.hr();
+        decodedMetars(html, context.noaaMetar, airport, tr("NOAA"), src == WEATHER_SOURCE_NOAA && weatherShown);
+      }
 
       // VATSIM, nearest and/or interpolated ===========================
-      decodedMetars(html, context.vatsimMetar, airport, tr("VATSIM"), src == WEATHER_SOURCE_VATSIM && weatherShown);
-
+      if(context.vatsimMetar.hasAnyMetar())
+      {
+        html.hr();
+        decodedMetars(html, context.vatsimMetar, airport, tr("VATSIM"), src == WEATHER_SOURCE_VATSIM && weatherShown);
+      }
       // IVAO, nearest and/or interpolated ===========================
-      decodedMetars(html, context.ivaoMetar, airport, tr("IVAO"), src == WEATHER_SOURCE_IVAO && weatherShown);
-    } // if(flags & optsw::WEATHER_INFO_ALL)
+      if(context.ivaoMetar.hasAnyMetar())
+      {
+        html.hr();
+        decodedMetars(html, context.ivaoMetar, airport, tr("IVAO"), src == WEATHER_SOURCE_IVAO && weatherShown);
+      }
+    }  // if(flags & optsw::WEATHER_INFO_ALL)
     else
       html.p().warning(tr("No weather display selected in options dialog on page \"Weather\"."));
   } // if(info)
@@ -1913,14 +1930,14 @@ void HtmlInfoBuilder::decodedMetars(HtmlBuilder& html, const atools::fs::weather
   {
     if(checkMetar(html, metar.getStation()))
     {
-      html.p(tr("%1 Station Weather").arg(name), WEATHER_TITLE_FLAGS);
+      html.text(tr("%1 Station Weather").arg(name), WEATHER_TITLE_FLAGS);
       decodedMetar(html, airport, map::MapAirport(), metar, mapDisplay, atools::fs::weather::STATION);
     }
 
     bool nearestOk = false;
     if(checkMetar(html, metar.getNearest()))
     {
-      html.p(tr("%1 Nearest Weather - %2").arg(name).arg(metar.getNearestIdent()), WEATHER_TITLE_FLAGS);
+      html.text(tr("%1 Nearest Weather - %2").arg(name).arg(metar.getNearestIdent()), WEATHER_TITLE_FLAGS);
 
       // Check if the station is an airport
       map::MapAirport reportAirport = airportQuerySim->getAirportByIdent(metar.getNearestIdent());
@@ -1937,7 +1954,7 @@ void HtmlInfoBuilder::decodedMetars(HtmlBuilder& html, const atools::fs::weather
 
     if(nearestOk && checkMetar(html, metar.getInterpolated()))
     {
-      html.p(tr("%1 Interpolated Weather").arg(name), WEATHER_TITLE_FLAGS);
+      html.text(tr("%1 Interpolated Weather").arg(name), WEATHER_TITLE_FLAGS);
 
       // Check if the station is an airport
       map::MapAirport reportAirport;
@@ -2168,8 +2185,8 @@ void HtmlInfoBuilder::decodedMetar(HtmlBuilder& html, const map::MapAirport& air
 
 #ifdef DEBUG_INFORMATION_INFO
   if(info)
-    html.p().small(tr("Source: \"%1\", \"%2\", \"%3\"").
-                   arg(metar.getStationMetar()).arg(metar.getNearestMetar()).arg(metar.getInterpolatedMetar())).br();
+    html.small(tr("Source: \"%1\", \"%2\", \"%3\"").
+               arg(metar.getStationMetar()).arg(metar.getNearestMetar()).arg(metar.getInterpolatedMetar())).br();
 #endif
 }
 
