@@ -1456,12 +1456,14 @@ void InfoController::updateTextEditFontSizes()
   setWidgetFontSize(ui->textBrowserAircraftAiInfo, sizePercentSim);
 
   // Adjust symbol sizes
-  int infoFontPixelSize = atools::roundToInt(QFontMetricsF(ui->textBrowserAirportInfo->font()).height() * 1.2);
-  infoBuilder->setSymbolSize(QSize(infoFontPixelSize, infoFontPixelSize));
-  infoBuilder->setSymbolSizeTitle(QSize(infoFontPixelSize, infoFontPixelSize));
+  int fontPixelSize = atools::roundToInt(QFontMetricsF(ui->textBrowserAirportInfo->font()).height());
+  infoBuilder->setSymbolSize(QSize(fontPixelSize, fontPixelSize));
 
-  infoFontPixelSize = atools::roundToInt(QFontMetricsF(ui->textBrowserAircraftInfo->font()).height() * 1.4);
-  infoBuilder->setSymbolSizeVehicle(QSize(infoFontPixelSize, infoFontPixelSize));
+  fontPixelSize = atools::roundToInt(QFontMetricsF(ui->textBrowserAirportInfo->font()).height() * 1.2);
+  infoBuilder->setSymbolSizeTitle(QSize(fontPixelSize, fontPixelSize));
+
+  fontPixelSize = atools::roundToInt(QFontMetricsF(ui->textBrowserAircraftInfo->font()).height() * 1.4);
+  infoBuilder->setSymbolSizeVehicle(QSize(fontPixelSize, fontPixelSize));
 }
 
 QStringList InfoController::getAirportTextFull(const QString& ident) const
