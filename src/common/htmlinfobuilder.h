@@ -439,6 +439,8 @@ private:
   void airportProcedureLinkTexts(QString& text, QString& href, const map::MapAirport& airport) const;
   void airportProcedureLinks(atools::util::HtmlBuilder& html, const map::MapAirport& airport) const;
 
+  QString sunriseSunsetText(const atools::geo::Pos& pos, const QDateTime& datetime) const;
+
   /* Airport, navaid and userpoint icon size */
   QSize symbolSize = QSize(18, 18);
 

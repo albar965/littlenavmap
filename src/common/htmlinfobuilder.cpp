@@ -208,6 +208,26 @@ void HtmlInfoBuilder::flightplanWaypointRemarks(HtmlBuilder& html, int index) co
                 atools::elideTextLinesShort(NavApp::getRouteConst().getFlightplanConst().at(index).getComment(), 5, 40));
 }
 
+QString HtmlInfoBuilder::sunriseSunsetText(const atools::geo::Pos& pos, const QDateTime& datetime) const
+{
+  bool neverRises, neverSets;
+  QTime sunrise = ageo::calculateSunriseSunset(neverRises, neverSets, pos, datetime.date(), ageo::SUNRISE_CIVIL);
+  QTime sunset = ageo::calculateSunriseSunset(neverRises, neverSets, pos, datetime.date(), ageo::SUNSET_CIVIL);
+  QString txt;
+
+  if(neverRises)
+    txt = tr("Sun never rises");
+  else if(neverSets)
+    txt = tr("Sun never sets");
+  else
+    txt = tr("%1, %2 UTC (civil twilight, %3)").
+          arg(locale.toString(sunrise, QLocale::ShortFormat)).
+          arg(locale.toString(sunset, QLocale::ShortFormat)).
+          arg(NavApp::isConnectedAndAircraft() ? tr("simulator date") : tr("real date"));
+
+  return txt;
+}
+
 void HtmlInfoBuilder::airportText(const MapAirport& airport, const map::WeatherContext& weatherContext,
                                   HtmlBuilder& html, const Route *route) const
 {
@@ -295,33 +315,10 @@ void HtmlInfoBuilder::airportText(const MapAirport& airport, const map::WeatherC
     QDateTime datetime = NavApp::isConnectedAndAircraft() ? NavApp::getUserAircraft().getZuluTime() : QDateTime::currentDateTimeUtc();
 
     if(datetime.isValid())
-    {
-      QString timesource = NavApp::isConnectedAndAircraft() ? tr("simulator date") : tr("real date");
+      html.row2(tr("Sunrise and sunset:"), sunriseSunsetText(Pos(rec->valueFloat("lonx"), rec->valueFloat("laty")), datetime));
 
-      Pos pos(rec->valueFloat("lonx"), rec->valueFloat("laty"));
-
-      bool neverRises, neverSets;
-      QTime sunrise = ageo::calculateSunriseSunset(neverRises, neverSets, pos,
-                                                   datetime.date(), ageo::SUNRISE_CIVIL);
-      QTime sunset = ageo::calculateSunriseSunset(neverRises, neverSets, pos,
-                                                  datetime.date(), ageo::SUNSET_CIVIL);
-      QString txt;
-
-      if(neverRises)
-        txt = tr("Sun never rises");
-      else if(neverSets)
-        txt = tr("Sun never sets");
-      else
-        txt = tr("%1, %2 UTC\n(civil twilight, %3)").
-              arg(locale.toString(sunrise, QLocale::ShortFormat)).
-              arg(locale.toString(sunset, QLocale::ShortFormat)).
-              arg(timesource);
-
-      html.row2(tr("Sunrise and sunset:"), txt);
-
-      // Coordinates ===============================================
-      addCoordinates(rec, html);
-    }
+    // Coordinates ===============================================
+    addCoordinates(rec, html);
   }
 
   html.tableEnd();
@@ -1722,6 +1719,15 @@ void HtmlInfoBuilder::weatherText(const map::WeatherContext& context, const MapA
 
     if(!transitionStr.isEmpty())
       html.br().br().b(tr("Transition: ")).text(transitionStr.join(tr(", ")));
+
+    // Sunrise and sunset ===========================
+    QDateTime datetime = NavApp::isConnectedAndAircraft() ? NavApp::getUserAircraft().getZuluTime() : QDateTime::currentDateTimeUtc();
+    if(datetime.isValid())
+    {
+      if(transitionStr.isEmpty())
+        html.br();
+      html.br().b(tr("Sunrise and sunset: ")).text(sunriseSunsetText(airport.position, datetime));
+    }
 
     optsw::FlagsWeather flags = OptionData::instance().getFlagsWeather();
 
