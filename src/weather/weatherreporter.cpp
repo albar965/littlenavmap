@@ -17,6 +17,7 @@
 
 #include "weather/weatherreporter.h"
 
+#include "app/navapp.h"
 #include "atools.h"
 #include "common/constants.h"
 #include "common/maptools.h"
@@ -29,13 +30,12 @@
 #include "fs/weather/xpweatherreader.h"
 #include "gui/dialog.h"
 #include "gui/mainwindow.h"
-#include "app/navapp.h"
 #include "options/optiondata.h"
 #include "query/airportquery.h"
 #include "query/infoquery.h"
 #include "settings/settings.h"
-#include "util/filesystemwatcher.h"
 #include "util/filechecker.h"
+#include "util/filesystemwatcher.h"
 
 #include <QDir>
 #include <QStandardPaths>
@@ -50,12 +50,11 @@
 // Checks the first line of an ASN file if it has valid content
 static const QRegularExpression ASN_VALIDATE_REGEXP("^[A-Z0-9]{3,4}::[A-Z0-9]{3,4} .+$");
 static const QRegularExpression ASN_VALIDATE_FLIGHTPLAN_REGEXP("^DepartureMETAR=.+$");
-static const QRegularExpression ASN_FLIGHTPLAN_REGEXP("^(DepartureMETAR|DestinationMETAR)=([A-Z0-9]{3,4})?(.*)$");
+static const QRegularExpression ASN_FLIGHTPLAN_REGEXP("^(DepartureMETAR|DestinationMETAR)=([A-Z0-9]{3,4})\\s+(.*)$");
 
 using atools::fs::FsPaths;
 using atools::fs::weather::NoaaWeatherDownloader;
 using atools::fs::weather::WeatherNetDownload;
-using atools::fs::weather::MetarResult;
 using atools::fs::weather::Metar;
 using atools::util::FileSystemWatcher;
 using atools::settings::Settings;
@@ -145,29 +144,12 @@ WeatherReporter::~WeatherReporter()
 {
   deleteActiveSkyFsWatcher();
 
-  qDebug() << Q_FUNC_INFO << "delete noaaWeather";
-  delete noaaWeather;
-  noaaWeather = nullptr;
-
-  qDebug() << Q_FUNC_INFO << "delete vatsimWeather";
-  delete vatsimWeather;
-  vatsimWeather = nullptr;
-
-  qDebug() << Q_FUNC_INFO << "delete ivaoWeather";
-  delete ivaoWeather;
-  ivaoWeather = nullptr;
-
-  qDebug() << Q_FUNC_INFO << "delete xpWeatherReader";
-  delete xpWeatherReader;
-  xpWeatherReader = nullptr;
-
-  qDebug() << Q_FUNC_INFO << "delete asSnapshotPathChecker";
-  delete asSnapshotPathChecker;
-  asSnapshotPathChecker = nullptr;
-
-  qDebug() << Q_FUNC_INFO << "delete asFlightplanPathChecker";
-  delete asFlightplanPathChecker;
-  asFlightplanPathChecker = nullptr;
+  ATOOLS_DELETE_LOG(noaaWeather);
+  ATOOLS_DELETE_LOG(vatsimWeather);
+  ATOOLS_DELETE_LOG(ivaoWeather);
+  ATOOLS_DELETE_LOG(xpWeatherReader);
+  ATOOLS_DELETE_LOG(asSnapshotPathChecker);
+  ATOOLS_DELETE_LOG(asFlightplanPathChecker);
 }
 
 void WeatherReporter::weatherDownloadProgress(qint64 bytesReceived, qint64 bytesTotal, QString downloadUrl)
@@ -242,12 +224,7 @@ void WeatherReporter::createActiveSkyFsWatcher()
 
   // Set path only if valid to avoid recursion through paint routine if files are not available
   if(asSnapshotPathChecker->checkFile(Q_FUNC_INFO, asSnapshotPath, false /* warn */))
-  {
-    // Call notification direct
-    activeSkyWeatherFilesChanged({asSnapshotPath});
-
     fsWatcherAsPath->setFilenameAndStart(asSnapshotPath);
-  }
 
   if(fsWatcherAsFlightplanPath == nullptr)
   {
@@ -261,6 +238,9 @@ void WeatherReporter::createActiveSkyFsWatcher()
   // Set path only if valid to avoid recursion through paint routine if files are not available
   if(asFlightplanPathChecker->checkFile(Q_FUNC_INFO, asFlightplanPath, false /* warn */))
     fsWatcherAsFlightplanPath->setFilenameAndStart(asFlightplanPath);
+
+  // Call notification direct
+  activeSkyWeatherFilesChanged({asSnapshotPath});
 }
 
 void WeatherReporter::disableXplane()
@@ -359,8 +339,8 @@ void WeatherReporter::initActiveSkyPaths()
 
   activeSkyType = NONE;
   activeSkyMetars.clear();
-  activeSkyDepartureMetar.clear();
-  activeSkyDestinationMetar.clear();
+  activeSkyDepartureMetar.clearAll();
+  activeSkyDestinationMetar.clearAll();
   activeSkyDepartureIdent.clear();
   activeSkyDestinationIdent.clear();
 
@@ -474,7 +454,6 @@ void WeatherReporter::loadAllActiveSkyFiles()
   }
   else if(verbose)
     qWarning() << Q_FUNC_INFO << "asSnapshotPath" << asSnapshotPath << "asFlightplanPath" << asFlightplanPath << "not found";
-
 }
 
 /* Loads complete ASN file into a hash map */
@@ -509,7 +488,9 @@ void WeatherReporter::loadActiveSkySnapshot(const QString& path)
       if(list.size() >= 2)
       {
         num++;
-        activeSkyMetars.insert(list.at(0), list.at(1));
+        Metar metar(list.at(0), fetchAirportCoordinates(list.at(0)), list.at(1));
+        metar.parseAll(true /* useTimestamp */);
+        activeSkyMetars.insert(list.at(0), metar);
       }
       else
       {
@@ -545,8 +526,8 @@ void WeatherReporter::loadActiveSkyFlightplanSnapshot(const QString& path)
   QFile file(path);
   if(file.open(QIODevice::ReadOnly | QIODevice::Text))
   {
-    activeSkyDepartureMetar.clear();
-    activeSkyDestinationMetar.clear();
+    activeSkyDepartureMetar.clearAll();
+    activeSkyDestinationMetar.clearAll();
     activeSkyDepartureIdent.clear();
     activeSkyDestinationIdent.clear();
 
@@ -563,26 +544,30 @@ void WeatherReporter::loadActiveSkyFlightplanSnapshot(const QString& path)
         if(type == "DepartureMETAR")
         {
           activeSkyDepartureIdent = match.captured(2);
-          activeSkyDepartureMetar = activeSkyDepartureIdent % match.captured(3);
+          activeSkyDepartureMetar.setRequestIdent(activeSkyDepartureIdent);
+          activeSkyDepartureMetar.setMetarForStation(activeSkyDepartureIdent % ' ' % match.captured(3));
+          activeSkyDepartureMetar.parseAll(true /* useTimestamp */);
 
-          if(MetarParser::extractDateTime(activeSkyDepartureMetar) <
-             MetarParser::extractDateTime(activeSkyMetars.value(activeSkyDepartureIdent, QString())))
+          if(activeSkyDepartureMetar.getStation().getTimestamp() <
+             activeSkyMetars.value(activeSkyDepartureIdent).getStation().getTimestamp())
           {
             // Do not use activeflightplanwx.txt if values are older
-            activeSkyDepartureMetar.clear();
+            activeSkyDepartureMetar.clearAll();
             activeSkyDepartureIdent.clear();
           }
         }
         else if(type == "DestinationMETAR")
         {
           activeSkyDestinationIdent = match.captured(2);
-          activeSkyDestinationMetar = activeSkyDestinationIdent % match.captured(3);
+          activeSkyDestinationMetar.setRequestIdent(activeSkyDestinationIdent);
+          activeSkyDestinationMetar.setMetarForStation(activeSkyDestinationIdent % ' ' % match.captured(3));
+          activeSkyDestinationMetar.parseAll(true /* useTimestamp */);
 
-          if(MetarParser::extractDateTime(activeSkyDestinationMetar) <
-             MetarParser::extractDateTime(activeSkyMetars.value(activeSkyDestinationIdent, QString())))
+          if(activeSkyDestinationMetar.getStation().getTimestamp() <
+             activeSkyMetars.value(activeSkyDestinationIdent).getStation().getTimestamp())
           {
             // Do not use activeflightplanwx.txt if values are older
-            activeSkyDestinationMetar.clear();
+            activeSkyDestinationMetar.clearAll();
             activeSkyDestinationIdent.clear();
           }
         }
@@ -786,21 +771,21 @@ void WeatherReporter::weatherDownloadFailed(const QString& error, int errorCode,
   }
 }
 
-QString WeatherReporter::getActiveSkyMetar(const QString& airportIcao)
+const atools::fs::weather::Metar& WeatherReporter::getActiveSkyMetar(const QString& station, const atools::geo::Pos&)
 {
   // Load on demand
   loadAllActiveSkyFiles();
 
-  if(activeSkyDepartureIdent == airportIcao)
+  if(activeSkyDepartureIdent == station)
     return activeSkyDepartureMetar;
-  else if(activeSkyDestinationIdent == airportIcao)
+  else if(activeSkyDestinationIdent == station)
     return activeSkyDestinationMetar;
   else
     // Return value or empty
-    return activeSkyMetars.value(airportIcao, QString());
+    return activeSkyMetars[station];
 }
 
-atools::fs::weather::MetarResult WeatherReporter::getXplaneMetar(const QString& station, const atools::geo::Pos& pos)
+const atools::fs::weather::Metar& WeatherReporter::getXplaneMetar(const QString& station, const atools::geo::Pos& pos)
 {
   if(xpWeatherReader->getWeatherPath().isEmpty())
     // Display warnings if path is empty
@@ -820,22 +805,22 @@ atools::fs::weather::MetarResult WeatherReporter::getXplaneMetar(const QString& 
   return xpWeatherReader->getXplaneMetar(station, pos);
 }
 
-atools::fs::weather::MetarResult WeatherReporter::getNoaaMetar(const QString& airportIcao, const atools::geo::Pos& pos)
+const atools::fs::weather::Metar& WeatherReporter::getNoaaMetar(const QString& airportIcao, const atools::geo::Pos& pos)
 {
   return noaaWeather->getMetar(airportIcao, pos);
 }
 
-atools::fs::weather::MetarResult WeatherReporter::getVatsimMetar(const QString& airportIcao, const atools::geo::Pos& pos)
+const atools::fs::weather::Metar& WeatherReporter::getVatsimMetar(const QString& airportIcao, const atools::geo::Pos& pos)
 {
   return vatsimWeather->getMetar(airportIcao, pos);
 }
 
-atools::fs::weather::MetarResult WeatherReporter::getIvaoMetar(const QString& airportIcao, const atools::geo::Pos& pos)
+const atools::fs::weather::Metar& WeatherReporter::getIvaoMetar(const QString& airportIcao, const atools::geo::Pos& pos)
 {
   return ivaoWeather->getMetar(airportIcao, pos);
 }
 
-atools::fs::weather::Metar WeatherReporter::getAirportWeather(const map::MapAirport& airport, bool stationOnly)
+const atools::fs::weather::Metar& WeatherReporter::getAirportWeather(const map::MapAirport& airport, bool stationOnly)
 {
   // Empty position forces station only instead of allowing nearest
   const atools::geo::Pos& pos = stationOnly ? atools::geo::EMPTY_POS : airport.position;
@@ -845,41 +830,43 @@ atools::fs::weather::Metar WeatherReporter::getAirportWeather(const map::MapAirp
   switch(source)
   {
     case map::WEATHER_SOURCE_DISABLED:
-      return atools::fs::weather::Metar();
+      return atools::fs::weather::Metar::EMPTY;
 
     case map::WEATHER_SOURCE_SIMULATOR:
       if(atools::fs::FsPaths::isAnyXplane(NavApp::getCurrentSimulatorDb()))
         // X-Plane weather file
-        return Metar(getXplaneMetar(ident, pos).getMetar(stationOnly));
+        return getXplaneMetar(ident, pos);
       else if(NavApp::isConnected() /*&& !NavApp::getConnectClient()->isConnectedNetwork()*/)
       {
-        atools::fs::weather::MetarResult res = NavApp::getConnectClient()->requestWeather(ident, pos, true);
+        const atools::fs::weather::Metar& metar = NavApp::getConnectClient()->requestWeather(ident, pos, true);
 
-        if(res.isValid() && !res.metarForStation.isEmpty())
+        if(metar.hasStationMetar())
           // FSX/P3D - Flight simulator fetched weather or network connection
-          return Metar(res.metarForStation, res.requestIdent, res.timestamp, true);
+          return metar;
       }
-      return Metar();
+      return Metar::EMPTY;
 
     case map::WEATHER_SOURCE_ACTIVE_SKY:
-      return Metar(getActiveSkyMetar(ident));
+      return getActiveSkyMetar(ident, pos);
 
     case map::WEATHER_SOURCE_NOAA:
-      return Metar(getNoaaMetar(ident, pos).getMetar(stationOnly));
+      return getNoaaMetar(ident, pos);
 
     case map::WEATHER_SOURCE_VATSIM:
-      return Metar(getVatsimMetar(ident, pos).getMetar(stationOnly));
+      return getVatsimMetar(ident, pos);
 
     case map::WEATHER_SOURCE_IVAO:
-      return Metar(getIvaoMetar(ident, pos).getMetar(stationOnly));
+      return getIvaoMetar(ident, pos);
   }
-  return Metar();
+  return Metar::EMPTY;
 }
 
 void WeatherReporter::getAirportWind(int& windDirectionDeg, float& windSpeedKts, const map::MapAirport& airport, bool stationOnly)
 {
-  atools::fs::weather::Metar metar = getAirportWeather(airport, stationOnly);
-  const atools::fs::weather::MetarParser& parsed = metar.getParsedMetar();
+  const atools::fs::weather::Metar& metar = getAirportWeather(airport, stationOnly);
+  const atools::fs::weather::MetarParser& parsed =
+    metar.getMetarParser(stationOnly ? atools::fs::weather::STATION : atools::fs::weather::BEST);
+
   windDirectionDeg = parsed.getWindDir();
   windSpeedKts = parsed.getWindSpeedKts();
 }

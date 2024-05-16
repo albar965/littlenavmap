@@ -97,6 +97,7 @@ QColor weatherLifrColor(QColor("#d000d0"));
 QColor weatherIfrColor(QColor("#d00000"));
 QColor weatherMvfrColor(QColor("#0000d0"));
 QColor weatherVfrColor(QColor("#00b000"));
+QColor weatherErrorColor(QColor("#808080"));
 
 QPen minimumAltitudeGridPen(QColor("#a0a0a0"), 1.);
 QColor minimumAltitudeNumberColor(QColor("#70000000"));

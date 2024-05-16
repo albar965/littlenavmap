@@ -30,6 +30,7 @@
 namespace atools {
 namespace fs {
 namespace weather {
+
 class Metar;
 class MetarParser;
 }
@@ -68,7 +69,7 @@ class SymbolPainter
 public:
   /* Create icons for tooltips, table views and more. Size is pixel. */
   static QIcon createAirportIcon(const map::MapAirport& airport, int size);
-  static QIcon createAirportWeatherIcon(const atools::fs::weather::Metar& metar, int size);
+  static QIcon createAirportWeatherIcon(const atools::fs::weather::MetarParser& metar, int size);
   static QIcon createVorIcon(const map::MapVor& vor, int size, bool darkMap);
   static QIcon createNdbIcon(int size, bool darkMap);
   static QIcon createAirwayIcon(const map::MapAirway& airway, int size, bool darkMap);
@@ -94,7 +95,7 @@ public:
   void drawWaypointSymbol(QPainter *painter, const QColor& col, float x, float y, float size, bool fill);
 
   /* Waypoint symbol. Can use a different color for invalid waypoints that were not found in the database */
-  void drawAirportWeather(QPainter *painter, const atools::fs::weather::Metar& metar,
+  void drawAirportWeather(QPainter *painter, const atools::fs::weather::MetarParser& metar,
                           float x, float y, float size, bool windPointer, bool windBarbs, bool fast);
 
   /* Wind arrow */

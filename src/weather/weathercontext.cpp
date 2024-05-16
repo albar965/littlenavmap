@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -24,13 +24,13 @@ QDebug operator<<(QDebug out, const WeatherContext& record)
   QDebugStateSaver saver(out);
 
   out << "WeatherContext["
-      << "Sim METAR" << record.fsMetar
+      << "Sim METAR" << record.simMetar
       << "IVAO METAR" << record.ivaoMetar
       << "NOAA METAR" << record.noaaMetar
       << "VATSIM METAR" << record.vatsimMetar
       << "AS departure" << record.isAsDeparture
       << "AS destination" << record.isAsDestination
-      << "AS METAR" << record.asMetar
+      << "AS METAR" << record.activeSkyMetar
       << "AS type" << record.asType
       << "ident" << record.ident << "]";
   return out;

@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -146,55 +146,55 @@ QByteArray JsonInfoBuilder::airport(AirportInfoData airportInfoData) const
     /* METAR */
 
     // Simulator
-    if(!data.weatherContext.fsMetar.isEmpty()){
+    if(data.weatherContext.simMetar.hasAnyMetar()){
         json["metar"].push_back({ "simulator", {
-                {"station", qUtf8Printable(data.weatherContext.fsMetar.metarForStation)},
-                {"nearest", qUtf8Printable(data.weatherContext.fsMetar.metarForNearest)},
-                {"interpolated", qUtf8Printable(data.weatherContext.fsMetar.metarForInterpolated)},
+                {"station", qUtf8Printable(data.weatherContext.simMetar.getStationMetar())},
+                {"nearest", qUtf8Printable(data.weatherContext.simMetar.getNearestMetar())},
+                {"interpolated", qUtf8Printable(data.weatherContext.simMetar.getInterpolatedMetar())},
             }
         });
     }
 
     // Active Sky
-    if(!data.weatherContext.asMetar.isEmpty()){
+    if(!data.weatherContext.activeSkyMetar.hasAnyMetar()){
         json["metar"].push_back({ "activesky", {
-                {"station", qUtf8Printable(data.weatherContext.asMetar)},
+                {"station", qUtf8Printable(data.weatherContext.activeSkyMetar.getStationMetar())},
             }
         });
     }
 
     // NOAA
     if(
-       !data.weatherContext.noaaMetar.metarForStation.isEmpty() ||
-       !data.weatherContext.noaaMetar.metarForNearest.isEmpty()
+       !data.weatherContext.noaaMetar.getStationMetar().isEmpty() ||
+       !data.weatherContext.noaaMetar.getNearestMetar().isEmpty()
       ){
         json["metar"].push_back({ "noaa", {
-                {"station", qUtf8Printable(data.weatherContext.noaaMetar.metarForStation)},
-                {"nearest", qUtf8Printable(data.weatherContext.noaaMetar.metarForNearest)},
+                {"station", qUtf8Printable(data.weatherContext.noaaMetar.getStationMetar())},
+                {"nearest", qUtf8Printable(data.weatherContext.noaaMetar.getNearestMetar())},
             }
         });
     }
 
     // VATSIM
     if(
-       !data.weatherContext.vatsimMetar.metarForStation.isEmpty() ||
-       !data.weatherContext.vatsimMetar.metarForNearest.isEmpty()
+       !data.weatherContext.vatsimMetar.getStationMetar().isEmpty() ||
+       !data.weatherContext.vatsimMetar.getNearestMetar().isEmpty()
       ){
         json["metar"].push_back({ "vatsim", {
-                {"station", qUtf8Printable(data.weatherContext.vatsimMetar.metarForStation)},
-                {"nearest", qUtf8Printable(data.weatherContext.vatsimMetar.metarForNearest)},
+                {"station", qUtf8Printable(data.weatherContext.vatsimMetar.getStationMetar())},
+                {"nearest", qUtf8Printable(data.weatherContext.vatsimMetar.getNearestMetar())},
             }
         });
     }
 
     // IVAO
     if(
-       !data.weatherContext.ivaoMetar.metarForStation.isEmpty() ||
-       !data.weatherContext.ivaoMetar.metarForStation.isEmpty()
+       !data.weatherContext.ivaoMetar.getStationMetar().isEmpty() ||
+       !data.weatherContext.ivaoMetar.getStationMetar().isEmpty()
       ){
         json["metar"].push_back({"ivao", {
-                {"station", qUtf8Printable(data.weatherContext.ivaoMetar.metarForStation)},
-                {"nearest", qUtf8Printable(data.weatherContext.ivaoMetar.metarForNearest)},
+                {"station", qUtf8Printable(data.weatherContext.ivaoMetar.getStationMetar())},
+                {"nearest", qUtf8Printable(data.weatherContext.ivaoMetar.getNearestMetar())},
             }
         });
     }

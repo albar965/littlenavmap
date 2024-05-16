@@ -36,7 +36,6 @@
 #include "fs/util/fsutil.h"
 #include "fs/util/morsecode.h"
 #include "fs/util/tacanfrequencies.h"
-#include "fs/weather/metar.h"
 #include "fs/weather/metarparser.h"
 #include "geo/calculations.h"
 #include "logbook/logdatacontroller.h"
@@ -68,23 +67,23 @@
 #include <QStringBuilder>
 
 using namespace map;
-using atools::sql::SqlRecord;
-using atools::sql::SqlRecordList;
-using atools::geo::normalizeCourse;
-using atools::geo::opposedCourseDeg;
 using atools::capString;
-using atools::fs::util::MorseCode;
-using atools::fs::util::frequencyForTacanChannel;
-using atools::util::HtmlBuilder;
-using atools::util::html::Flags;
 using atools::fs::sc::SimConnectAircraft;
 using atools::fs::sc::SimConnectUserAircraft;
-using atools::fs::weather::Metar;
-using atools::geo::Pos;
+using atools::fs::util::MorseCode;
+using atools::fs::util::frequencyForTacanChannel;
 using atools::fs::util::roundComFrequency;
-
-using formatter::courseText;
+using atools::fs::weather::Metar;
+using atools::fs::weather::MetarParser;
+using atools::geo::Pos;
+using atools::geo::normalizeCourse;
+using atools::geo::opposedCourseDeg;
+using atools::sql::SqlRecord;
+using atools::sql::SqlRecordList;
+using atools::util::HtmlBuilder;
+using atools::util::html::Flags;
 using formatter::courseSuffix;
+using formatter::courseText;
 using formatter::courseTextFromTrue;
 
 namespace ahtml = atools::util::html;
@@ -99,9 +98,12 @@ const int NEAREST_MAX_NUM_NAVAID = 15;
 // Print weather time in red or orange if older than this
 const qint64 WEATHER_MAX_AGE_HOURS_WARN = 3;
 const qint64 WEATHER_MAX_AGE_HOURS_ERR = 6;
+const qint64 WEATHER_MAX_AGE_HOURS_ERR_OUTDATED = 24;
 
 // Maximum distance for bearing display to user aircraft
 const int MAX_DISTANCE_FOR_BEARING_METER = ageo::nmToMeter(8000);
+
+ahtml::Flags LINK_FLAGS = ahtml::LINK_NO_UL | ahtml::BOLD;
 
 HtmlInfoBuilder::HtmlInfoBuilder(QWidget *parent, MapPaintWidget *mapWidgetParam, bool infoParam, bool printParam, bool verboseParam)
   : parentWidget(parent), mapWidget(mapWidgetParam), info(infoParam), print(printParam), verbose(verboseParam)
@@ -149,7 +151,7 @@ void HtmlInfoBuilder::airportTitle(const MapAirport& airport, HtmlBuilder& html,
     if(!print)
     {
       // Add link to map
-      html.a(tr("Map"), QString("lnm://show?id=%1&type=%2").arg(airport.id).arg(map::AIRPORT), ahtml::LINK_NO_UL | ahtml::BOLD);
+      html.a(tr("Map"), QString("lnm://show?id=%1&type=%2").arg(airport.id).arg(map::AIRPORT), LINK_FLAGS);
 
       if(procedures)
         airportProcedureLinks(html, airport);
@@ -196,7 +198,7 @@ void HtmlInfoBuilder::airportProcedureLinks(HtmlBuilder& html, const map::MapAir
   airportProcedureLinkTexts(linkText, href, airport);
 
   if(!href.isEmpty())
-    html.text(tr(", ")).a(linkText, href, ahtml::LINK_NO_UL | ahtml::BOLD);
+    html.text(tr(", ")).a(linkText, href, LINK_FLAGS);
 }
 
 void HtmlInfoBuilder::flightplanWaypointRemarks(HtmlBuilder& html, int index) const
@@ -437,15 +439,14 @@ void HtmlInfoBuilder::airportText(const MapAirport& airport, const map::WeatherC
   }
 
   // Weather ==================================================================================
-  if(!weatherContext.isEmpty())
+  if(weatherContext.hasAnyMetar())
   {
     if(info)
       head(html, tr("Weather"));
     html.table();
 
     // Source for map icon display
-    MapWeatherSource src = NavApp::getMapWeatherSource();
-    addMetarLines(html, weatherContext, src, airport);
+    addMetarLines(html, weatherContext, NavApp::getMapWeatherSource(), airport);
     html.tableEnd();
   }
 
@@ -605,7 +606,7 @@ void HtmlInfoBuilder::nearestMapObjectsTextRow(const MapAirport& airport, HtmlBu
   else
     displayText = tr("%1 (%2)").arg(name).arg(displayIdent);
 
-  html.tdF(ahtml::ALIGN_LEFT).a(displayText, url, ahtml::LINK_NO_UL | ahtml::BOLD).tdEnd();
+  html.tdF(ahtml::ALIGN_LEFT).a(displayText, url, LINK_FLAGS).tdEnd();
 
   if(!airportCol)
     // Navaid type
@@ -752,7 +753,7 @@ void HtmlInfoBuilder::comText(const MapAirport& airport, HtmlBuilder& html) cons
 }
 
 void HtmlInfoBuilder::bestRunwaysText(const MapAirport& airport, HtmlBuilder& html,
-                                      const atools::fs::weather::MetarParser& parsed, int max, bool details) const
+                                      const MetarParser& parsed, int max, bool details) const
 {
   int windDirectionDeg = parsed.getWindDir();
   float windSpeedKts = parsed.getWindSpeedKts();
@@ -963,8 +964,7 @@ void HtmlInfoBuilder::runwayText(const MapAirport& airport, HtmlBuilder& html, b
           Pos pos(heliRec.valueFloat("lonx"), heliRec.valueFloat("laty"));
 
           if(!print)
-            html.a(tr("Map"), QString("lnm://show?lonx=%1&laty=%2").
-                   arg(pos.getLonX()).arg(pos.getLatY()), ahtml::LINK_NO_UL | ahtml::BOLD).br();
+            html.a(tr("Map"), QString("lnm://show?lonx=%1&laty=%2").arg(pos.getLonX()).arg(pos.getLatY()), LINK_FLAGS).br();
 
           if(closed)
             html.text(tr("Is Closed"));
@@ -1147,8 +1147,7 @@ void HtmlInfoBuilder::ilsTextInternal(const map::MapIls& ils, atools::util::Html
     {
       // Add map link if not tooltip ==========================================
       html.nbsp().nbsp();
-      html.a(tr("Map"), QString("lnm://show?id=%1&type=%2").arg(ils.id).arg(map::ILS),
-             ahtml::LINK_NO_UL | ahtml::BOLD);
+      html.a(tr("Map"), QString("lnm://show?id=%1&type=%2").arg(ils.id).arg(map::ILS), LINK_FLAGS);
     }
     html.table();
   }
@@ -1716,6 +1715,7 @@ void HtmlInfoBuilder::weatherText(const map::WeatherContext& context, const MapA
     QStringList transitionStr;
     if(transitionAltitude > 0.f)
       transitionStr.append(tr("Altitude %1").arg(Unit::altFeet(transitionAltitude)));
+
     if(transitionLevel > 0.f)
       transitionStr.append(tr("Level %1 (FL%2)").
                            arg(Unit::altFeet(transitionLevel)).arg(transitionLevel / 100.f, 3, 'f', 0, QChar('0')));
@@ -1728,61 +1728,54 @@ void HtmlInfoBuilder::weatherText(const map::WeatherContext& context, const MapA
     if(flags & optsw::WEATHER_INFO_ALL)
     {
       // Source for map icon display
-      MapWeatherSource src = NavApp::getMapWeatherSource();
+      MapWeatherSource src = mapWidget->getMapWeatherSource();
       bool weatherShown = NavApp::isMapWeatherShown();
 
       // Simconnect or X-Plane weather file metar ===========================
-      if(context.fsMetar.isValid())
+      if(context.simMetar.hasAnyMetar())
       {
-        // Only FSX/P3D allow remote requests for now
-        bool fsxP3d = context.fsMetar.simulator;
-
-        const atools::fs::weather::MetarResult& metar = context.fsMetar;
+        // Only FSX/P3D allow remote requests for now - X-Plane is weather files
+        const Metar& metar = context.simMetar;
         QString sim = tr("%1 ").arg(NavApp::getCurrentSimulatorShortName());
 
-        if(!metar.metarForStation.isEmpty())
+        if(checkMetar(html, metar.getStation()))
         {
-          Metar met(metar.metarForStation, metar.requestIdent, metar.timestamp, true);
-
           html.p(tr("%1Station Weather").arg(sim), WEATHER_TITLE_FLAGS);
-          decodedMetar(html, airport, map::MapAirport(), met, false /* interpolated */, fsxP3d,
-                       src == WEATHER_SOURCE_SIMULATOR && weatherShown);
+          decodedMetar(html, airport,
+                       map::MapAirport(), metar, src == WEATHER_SOURCE_SIMULATOR && weatherShown, atools::fs::weather::STATION);
         }
 
-        if(!metar.metarForNearest.isEmpty())
+        bool nearestOk = false;
+        if(checkMetar(html, metar.getNearest()))
         {
-          Metar met(metar.metarForNearest, metar.requestIdent, metar.timestamp, true);
-          QString reportIcao = met.getParsedMetar().isValid() ? met.getParsedMetar().getId() : met.getStation();
+          html.p(tr("%2Nearest Weather - %1").arg(metar.getRequestIdent()).arg(sim), WEATHER_TITLE_FLAGS);
 
-          html.p(tr("%2Nearest Weather - %1").arg(reportIcao).arg(sim), WEATHER_TITLE_FLAGS);
+          // Add link to airport station
+          if(!print && airport.isValid())
+            html.nbsp().nbsp().a(tr("Map"), QString("lnm://show?id=%1&type=%2").arg(airport.id).arg(map::AIRPORT), LINK_FLAGS);
 
-          // Check if the station is an airport
           map::MapAirport reportAirport;
-          airportQuerySim->getAirportByIdent(reportAirport, reportIcao);
-          if(!print && reportAirport.isValid())
-          {
-            // Add link to airport
-            html.nbsp().nbsp();
-            html.a(tr("Map"), QString("lnm://show?id=%1&type=%2").arg(reportAirport.id).arg(map::AIRPORT),
-                   ahtml::LINK_NO_UL | ahtml::BOLD);
-          }
-
-          decodedMetar(html, airport, reportAirport, met, false /* interpolated */, fsxP3d,
-                       src == WEATHER_SOURCE_SIMULATOR && weatherShown);
+          airportQuerySim->getAirportByIdent(reportAirport, metar.getNearestIdent());
+          decodedMetar(html, airport, reportAirport, metar, src == WEATHER_SOURCE_SIMULATOR && weatherShown, atools::fs::weather::NEAREST);
+          nearestOk = true;
         }
 
-        if(!metar.metarForInterpolated.isEmpty())
+        if(nearestOk && checkMetar(html, metar.getInterpolated()))
         {
-          Metar met(metar.metarForInterpolated, metar.requestIdent, metar.timestamp, fsxP3d);
-          html.p(tr("%2Interpolated Weather - %1").arg(met.getStation()).arg(sim), WEATHER_TITLE_FLAGS);
-          decodedMetar(html, airport, map::MapAirport(), met, true /* interpolated */, fsxP3d, false /* map src */);
+          html.p(tr("%2Interpolated Weather - %1").arg(metar.getRequestIdent()).arg(sim), WEATHER_TITLE_FLAGS);
+
+          // Add link to airport station
+          if(!print && airport.isValid())
+            html.nbsp().nbsp().a(tr("Map"), QString("lnm://show?id=%1&type=%2").arg(airport.id).arg(map::AIRPORT), LINK_FLAGS);
+
+          decodedMetar(html, airport, map::MapAirport(), metar, false, atools::fs::weather::INTERPOLATED);
         }
       } // if(context.fsMetar.isValid())
       else if(!print && OptionData::instance().getFlags() & optsw::WEATHER_INFO_FS)
         html.p(tr("Not connected to simulator."), ahtml::BOLD);
 
       // Active Sky metar ===========================
-      if(!context.asMetar.isEmpty())
+      if(context.activeSkyMetar.hasAnyMetar())
       {
         if(context.isAsDeparture && context.isAsDestination)
           html.p(context.asType % tr(" - Departure and Destination"), WEATHER_TITLE_FLAGS);
@@ -1793,17 +1786,17 @@ void HtmlInfoBuilder::weatherText(const map::WeatherContext& context, const MapA
         else
           html.p(context.asType, WEATHER_TITLE_FLAGS);
 
-        decodedMetar(html, airport, map::MapAirport(), Metar(context.asMetar), false /* interpolated */,
-                     false /* FSX/P3D */, src == WEATHER_SOURCE_ACTIVE_SKY && weatherShown);
+        decodedMetar(html, airport, map::MapAirport(), context.activeSkyMetar, src == WEATHER_SOURCE_ACTIVE_SKY && weatherShown,
+                     atools::fs::weather::STATION);
       }
 
-      // NOAA or nearest ===========================
+      // NOAA, nearest and/or interpolated ===========================
       decodedMetars(html, context.noaaMetar, airport, tr("NOAA"), src == WEATHER_SOURCE_NOAA && weatherShown);
 
-      // Vatsim metar or nearest ===========================
+      // VATSIM, nearest and/or interpolated ===========================
       decodedMetars(html, context.vatsimMetar, airport, tr("VATSIM"), src == WEATHER_SOURCE_VATSIM && weatherShown);
 
-      // IVAO or nearest ===========================
+      // IVAO, nearest and/or interpolated ===========================
       decodedMetars(html, context.ivaoMetar, airport, tr("IVAO"), src == WEATHER_SOURCE_IVAO && weatherShown);
     } // if(flags & optsw::WEATHER_INFO_ALL)
     else
@@ -1853,8 +1846,7 @@ void HtmlInfoBuilder::airportMsaTextInternal(const map::MapAirportMsa& msa, atoo
   {
     // Add map link if not tooltip
     html.nbsp().nbsp();
-    html.a(tr("Map"), QString("lnm://show?lonx=%1&laty=%2").
-           arg(msa.position.getLonX()).arg(msa.position.getLatY()), ahtml::LINK_NO_UL | ahtml::BOLD);
+    html.a(tr("Map"), QString("lnm://show?lonx=%1&laty=%2").arg(msa.position.getLonX()).arg(msa.position.getLatY()), LINK_FLAGS);
   }
   html.table();
   html.row2(tr("Radius:"), Unit::distNm(msa.radius));
@@ -1897,77 +1889,107 @@ void HtmlInfoBuilder::airportMsaTextInternal(const map::MapAirportMsa& msa, atoo
     html.br();
 }
 
-void HtmlInfoBuilder::decodedMetars(HtmlBuilder& html, const atools::fs::weather::MetarResult& metar,
+bool HtmlInfoBuilder::checkMetar(HtmlBuilder& html, const atools::fs::weather::MetarParser& metar) const
+{
+  if(metar.hasErrors())
+  {
+    // Print error report if invalid
+    html.p().error(tr("Report is not valid.")).br().text(metar.getErrors().join(tr(", "))).pEnd();
+    return false;
+  }
+  return metar.isParsed();
+}
+
+void HtmlInfoBuilder::decodedMetars(HtmlBuilder& html, const atools::fs::weather::Metar& metar,
                                     const map::MapAirport& airport, const QString& name, bool mapDisplay) const
 {
-  if(metar.isValid())
+  if(metar.hasAnyMetar())
   {
-    if(!metar.metarForStation.isEmpty())
+    if(checkMetar(html, metar.getStation()))
     {
       html.p(tr("%1 Station Weather").arg(name), WEATHER_TITLE_FLAGS);
-      decodedMetar(html, airport, map::MapAirport(),
-                   Metar(metar.metarForStation, metar.requestIdent, metar.timestamp, true), false, false, mapDisplay);
+      decodedMetar(html, airport, map::MapAirport(), metar, mapDisplay, atools::fs::weather::STATION);
     }
 
-    if(!metar.metarForNearest.isEmpty())
+    bool nearestOk = false;
+    if(checkMetar(html, metar.getNearest()))
     {
-      Metar met(metar.metarForNearest, metar.requestIdent, metar.timestamp, true);
-      QString reportIcao = met.getParsedMetar().isValid() ? met.getParsedMetar().getId() : met.getStation();
-
-      html.p(tr("%1 Nearest Weather - %2").arg(name).arg(reportIcao), WEATHER_TITLE_FLAGS);
+      html.p(tr("%1 Nearest Weather - %2").arg(name).arg(metar.getNearestIdent()), WEATHER_TITLE_FLAGS);
 
       // Check if the station is an airport
-      map::MapAirport reportAirport;
-      airportQuerySim->getAirportByIdent(reportAirport, reportIcao);
+      map::MapAirport reportAirport = airportQuerySim->getAirportByIdent(metar.getNearestIdent());
       if(!print && reportAirport.isValid())
       {
         // Add link to airport
         html.nbsp().nbsp();
-        html.a(tr("Map"),
-               QString("lnm://show?id=%1&type=%2").arg(reportAirport.id).arg(map::AIRPORT),
-               ahtml::LINK_NO_UL | ahtml::BOLD);
+        html.a(tr("Map"), QString("lnm://show?id=%1&type=%2").arg(reportAirport.id).arg(map::AIRPORT), LINK_FLAGS);
       }
 
-      decodedMetar(html, airport, reportAirport, met, false, false, mapDisplay);
+      decodedMetar(html, airport, reportAirport, metar, mapDisplay, atools::fs::weather::NEAREST);
+      nearestOk = true;
+    }
+
+    if(nearestOk && checkMetar(html, metar.getInterpolated()))
+    {
+      html.p(tr("%1 Interpolated Weather").arg(name), WEATHER_TITLE_FLAGS);
+
+      // Check if the station is an airport
+      map::MapAirport reportAirport;
+      airportQuerySim->getAirportByIdent(reportAirport, metar.getNearestIdent());
+      if(!print && reportAirport.isValid())
+      {
+        // Add link to airport
+        html.nbsp().nbsp();
+        html.a(tr("Map"), QString("lnm://show?id=%1&type=%2").arg(reportAirport.id).arg(map::AIRPORT), LINK_FLAGS);
+      }
+
+      decodedMetar(html, airport, reportAirport, metar, mapDisplay, atools::fs::weather::INTERPOLATED);
     }
   }
 }
 
-void HtmlInfoBuilder::decodedMetar(HtmlBuilder& html, const map::MapAirport& airport,
-                                   const map::MapAirport& reportAirport,
-                                   const atools::fs::weather::Metar& metar, bool isInterpolated, bool isFsxP3d,
-                                   bool mapDisplay) const
+void HtmlInfoBuilder::decodedMetar(HtmlBuilder& html, const map::MapAirport& airport, const map::MapAirport& reportAirport,
+                                   const atools::fs::weather::Metar& metar,
+                                   bool mapDisplay, atools::fs::weather::MetarType type) const
 {
   using atools::fs::weather::INVALID_METAR_VALUE;
 
-  const atools::fs::weather::MetarParser& parsed = metar.getParsedMetar();
+  const MetarParser& parsed = metar.getMetarParser(type);
 
   QList<atools::fs::weather::MetarCloud> clouds = parsed.getClouds();
-  bool hasClouds = !clouds.isEmpty() && clouds.constFirst().getCoverage() != atools::fs::weather::MetarCloud::COVERAGE_CLEAR;
+  bool hasClouds = !clouds.isEmpty() && clouds.constFirst().getCoverage() != atools::fs::weather::MetarCloud::COVERAGE_CLEAR &&
+                   !parsed.isIncompleteInterpolation();
 
   html.table();
 
   if(reportAirport.isValid())
   {
-    html.row2(tr("Reporting airport: "), tr("%1 (%2), %3, %4").
-              arg(reportAirport.name).
-              arg(reportAirport.displayIdent()).
-              arg(Unit::altFeet(reportAirport.position.getAltitude())).
-              arg(Unit::distMeter(reportAirport.position.distanceMeterTo(airport.position))));
+    HtmlBuilder reportHtml = html.cleared();
+
+    QString airportText = tr("%1 (%2)").arg(reportAirport.name).arg(reportAirport.displayIdent());
+    if(!print)
+      reportHtml.a(airportText, QString("lnm://show?id=%1&type=%2").arg(reportAirport.id).arg(map::AIRPORT), LINK_FLAGS);
+    else
+      reportHtml.text(airportText);
+
+    reportHtml.text(tr(", %1, %2").
+                    arg(Unit::altFeet(reportAirport.position.getAltitude())).
+                    arg(Unit::distMeter(reportAirport.position.distanceMeterTo(airport.position))));
+
+    html.row2(tr("Reporting airport: "), reportHtml.getHtml(), ahtml::NO_ENTITIES);
   }
 
-  // Time and date =============================================================
-  if(!isInterpolated && !isFsxP3d)
+  // Time and date - not for FSX or P3D =============================================================
+  if(!parsed.isFsxP3dFormat())
   {
-    QDateTime time;
-    time.setOffsetFromUtc(0);
-    time.setDate(QDate(parsed.getYear(), parsed.getMonth(), parsed.getDay()));
-    time.setTime(QTime(parsed.getHour(), parsed.getMinute()));
-
-    QString text = locale.toString(time, QLocale::ShortFormat) % " " % time.timeZoneAbbreviation();
+    QDateTime time = parsed.getTimestamp();
+    QString text = locale.toString(time, QLocale::ShortFormat) % tr(" ") % time.timeZoneAbbreviation();
 
     qint64 secsTo = time.secsTo(QDateTime::currentDateTimeUtc());
-    if(secsTo > WEATHER_MAX_AGE_HOURS_ERR * 3600)
+
+    if(secsTo > WEATHER_MAX_AGE_HOURS_ERR_OUTDATED * 3600)
+      html.row2Error(tr("Time: "), text + tr(" (outdated)"));
+    else if(secsTo > WEATHER_MAX_AGE_HOURS_ERR * 3600)
       html.row2Error(tr("Time: "), text + tr(" (%1 hours old)").arg(secsTo / 3600));
     else if(secsTo > WEATHER_MAX_AGE_HOURS_WARN * 3600)
       html.row2Warning(tr("Time: "), text + tr(" (%1 hours old)").arg(secsTo / 3600));
@@ -1981,7 +2003,7 @@ void HtmlInfoBuilder::decodedMetar(HtmlBuilder& html, const map::MapAirport& air
   HtmlBuilder flightRulesHtml = html.cleared();
   if(mapDisplay)
     flightRulesHtml.b();
-  addFlightRulesSuffix(flightRulesHtml, metar, mapDisplay);
+  addFlightRulesSuffix(flightRulesHtml, parsed, mapDisplay);
   if(mapDisplay)
     flightRulesHtml.bEnd();
   if(!flightRulesHtml.isEmpty())
@@ -2049,22 +2071,21 @@ void HtmlInfoBuilder::decodedMetar(HtmlBuilder& html, const map::MapAirport& air
 
   // Visibility =============================================================
   const atools::fs::weather::MetarVisibility& minVis = parsed.getMinVisibility();
-  QString visiblity;
+  QStringList visiblity;
   if(minVis.getVisibilityMeter() < INVALID_METAR_VALUE)
-    visiblity.append(tr("%1 %2").
-                     arg(minVis.getModifierString()).
-                     arg(Unit::distMeter(minVis.getVisibilityMeter())));
+    visiblity.append(tr("%1 %2").arg(minVis.getModifierString()).arg(Unit::distMeter(minVis.getVisibilityMeter())));
 
   const atools::fs::weather::MetarVisibility& maxVis = parsed.getMaxVisibility();
   if(maxVis.getVisibilityMeter() < INVALID_METAR_VALUE)
-    visiblity.append(tr(" %1 %2").arg(maxVis.getModifierString()).arg(Unit::distMeter(maxVis.getVisibilityMeter())));
+    visiblity.append(tr("%1 %2").arg(maxVis.getModifierString()).arg(Unit::distMeter(maxVis.getVisibilityMeter())));
+  visiblity.removeDuplicates();
 
   if(!visiblity.isEmpty())
-    html.row2(tr("Visibility: "), visiblity);
+    html.row2(tr("Visibility: "), visiblity.join(tr(" and ")));
   else
     html.row2(tr("No visibility report"));
 
-  if(!hasClouds)
+  if(!hasClouds && !parsed.isIncompleteInterpolation())
     html.row2(tr("No clouds"));
 
   if(!hasWind)
@@ -2082,15 +2103,12 @@ void HtmlInfoBuilder::decodedMetar(HtmlBuilder& html, const map::MapAirport& air
 
     html.row2(tr("Conditions:"), wtr);
   }
-
   html.tableEnd();
 
   if(hasClouds)
-    html.p(tr("Clouds"), ahtml::BOLD);
-
-  html.table();
-  if(hasClouds)
   {
+    html.p(tr("Clouds"), ahtml::BOLD);
+    html.table();
     for(const atools::fs::weather::MetarCloud& cloud : parsed.getClouds())
     {
       float altMeter = cloud.getAltitudeMeter();
@@ -2101,34 +2119,51 @@ void HtmlInfoBuilder::decodedMetar(HtmlBuilder& html, const map::MapAirport& air
 
       html.row2(cloud.getCoverageString(), altStr);
     }
+    html.tableEnd();
   }
-  html.tableEnd();
 
   if(parsed.getCavok())
     html.p().text(tr("CAVOK:"), ahtml::BOLD).br().
     text(tr("No cloud below 5,000 ft (1,500 m), visibility of 10 km (6 NM) or more")).pEnd();
 
-  if(!metar.getParsedMetar().getRemark().isEmpty())
+  if(!metar.getStation().getRemark().isEmpty())
     html.p().text(tr("Remarks:"), ahtml::BOLD).br().
-    text(metar.getParsedMetar().getRemark()).pEnd();
-
-  if(!parsed.isValid())
-  {
-    // Print error report if invalid
-    html.p(tr("Report is not valid. Raw and clean METAR were:"), ahtml::BOLD, Qt::red);
-    html.pre(metar.getMetar());
-    if(metar.getMetar() != metar.getCleanMetar())
-      html.pre(metar.getCleanMetar());
-  }
+    text(metar.getStation().getRemark()).pEnd();
 
   if(!parsed.getUnusedData().isEmpty())
     html.p().text(tr("Additional information:"), ahtml::BOLD).br().text(parsed.getUnusedData()).pEnd();
 
+  // Runways ==================================
   bestRunwaysText(airport, html, parsed, 8 /* max entries */, true /* details */);
+
+  // Interpolated airports ==================================
+  if(type == atools::fs::weather::INTERPOLATED && info && !print)
+  {
+    HtmlBuilder reportHtml = html.cleared();
+
+    int reports = 0;
+    for(const QString& interpolationIdent : metar.getInterpolatedIdents())
+    {
+      map::MapAirport interpolationAirport = airportQuerySim->getAirportByIdent(interpolationIdent);
+      if(interpolationAirport.isValid())
+      {
+        // Add link to airport
+        if(reports > 0)
+          reportHtml.text(tr(", "));
+        reportHtml.a(interpolationAirport.displayIdent(), QString("lnm://show?id=%1&type=%2").
+                     arg(interpolationAirport.id).arg(map::AIRPORT), LINK_FLAGS);
+        reports++;
+      }
+    }
+
+    if(reports > 0)
+      html.p().text(tr("Interpolated from:"), ahtml::BOLD).br().textHtml(reportHtml).pEnd();
+  }
 
 #ifdef DEBUG_INFORMATION_INFO
   if(info)
-    html.p().small(tr("Source: %1").arg(metar.getMetar())).br();
+    html.p().small(tr("Source: \"%1\", \"%2\", \"%3\"").
+                   arg(metar.getStationMetar()).arg(metar.getNearestMetar()).arg(metar.getInterpolatedMetar())).br();
 #endif
 }
 
@@ -2149,8 +2184,7 @@ void HtmlInfoBuilder::vorText(const MapVor& vor, HtmlBuilder& html) const
   {
     // Add map link if not tooltip
     html.nbsp().nbsp();
-    html.a(tr("Map"), QString("lnm://show?lonx=%1&laty=%2").
-           arg(vor.position.getLonX()).arg(vor.position.getLatY()), ahtml::LINK_NO_UL | ahtml::BOLD);
+    html.a(tr("Map"), QString("lnm://show?lonx=%1&laty=%2").arg(vor.position.getLonX()).arg(vor.position.getLatY()), LINK_FLAGS);
   }
 
   html.table();
@@ -2239,8 +2273,7 @@ void HtmlInfoBuilder::ndbText(const MapNdb& ndb, HtmlBuilder& html) const
   {
     // Add map link if not tooltip
     html.nbsp().nbsp();
-    html.a(tr("Map"), QString("lnm://show?lonx=%1&laty=%2").
-           arg(ndb.position.getLonX()).arg(ndb.position.getLatY()), ahtml::LINK_NO_UL | ahtml::BOLD);
+    html.a(tr("Map"), QString("lnm://show?lonx=%1&laty=%2").arg(ndb.position.getLonX()).arg(ndb.position.getLatY()), LINK_FLAGS);
   }
 
   html.table();
@@ -2516,7 +2549,7 @@ bool HtmlInfoBuilder::userpointText(MapUserpoint userpoint, HtmlBuilder& html) c
       // Add map link if not tooltip
       html.nbsp().nbsp();
       html.a(tr("Map"), QString("lnm://show?lonx=%1&laty=%2").
-             arg(userpoint.position.getLonX()).arg(userpoint.position.getLatY()), ahtml::LINK_NO_UL | ahtml::BOLD);
+             arg(userpoint.position.getLonX()).arg(userpoint.position.getLatY()), LINK_FLAGS);
     }
 
     html.table();
@@ -2825,7 +2858,7 @@ void HtmlInfoBuilder::airportRow(const map::MapAirport& ap, HtmlBuilder& html) c
     if(apSim.isValid())
     {
       HtmlBuilder apHtml = html.cleared();
-      apHtml.a(apSim.displayIdent(), QString("lnm://show?airport=%1").arg(apSim.ident), ahtml::LINK_NO_UL | ahtml::BOLD);
+      apHtml.a(apSim.displayIdent(), QString("lnm://show?airport=%1").arg(apSim.ident), LINK_FLAGS);
       html.row2(tr("Airport:"), apHtml.getHtml(), ahtml::NO_ENTITIES);
     }
   }
@@ -2849,7 +2882,7 @@ void HtmlInfoBuilder::waypointText(const MapWaypoint& waypoint, HtmlBuilder& htm
     // Add map link if not tooltip
     html.nbsp().nbsp();
     html.a(tr("Map"), QString("lnm://show?lonx=%1&laty=%2").
-           arg(waypoint.position.getLonX()).arg(waypoint.position.getLatY()), ahtml::LINK_NO_UL | ahtml::BOLD);
+           arg(waypoint.position.getLonX()).arg(waypoint.position.getLatY()), LINK_FLAGS);
   }
 
   html.table();
@@ -3066,8 +3099,7 @@ void HtmlInfoBuilder::airspaceText(const MapAirspace& airspace, const atools::sq
   {
     // Add map link if not tooltip
     html.nbsp().nbsp();
-    html.a(tr("Map"), QString("lnm://show?id=%1&type=%2&source=%3").arg(airspace.id).arg(map::AIRSPACE).arg(airspace.src),
-           ahtml::LINK_NO_UL | ahtml::BOLD);
+    html.a(tr("Map"), QString("lnm://show?id=%1&type=%2&source=%3").arg(airspace.id).arg(map::AIRSPACE).arg(airspace.src), LINK_FLAGS);
   }
 
   QStringList header;
@@ -3213,8 +3245,7 @@ void HtmlInfoBuilder::airwayText(const MapAirway& airway, HtmlBuilder& html) con
   {
     // Add map link if not tooltip
     html.nbsp().nbsp();
-    html.a(tr("Map"), QString("lnm://show?id=%1&fragment=%2&type=%3").
-           arg(airway.id).arg(airway.fragment).arg(map::AIRWAY), ahtml::LINK_NO_UL | ahtml::BOLD);
+    html.a(tr("Map"), QString("lnm://show?id=%1&fragment=%2&type=%3").arg(airway.id).arg(airway.fragment).arg(map::AIRWAY), LINK_FLAGS);
   }
 
   html.table();
@@ -3245,10 +3276,10 @@ void HtmlInfoBuilder::airwayText(const MapAirway& airway, HtmlBuilder& html) con
   if(info)
   {
     tempHtml.a(identRegionText(from.ident, from.region), QString("lnm://show?lonx=%1&laty=%2").
-               arg(from.position.getLonX()).arg(from.position.getLatY()), ahtml::LINK_NO_UL | ahtml::BOLD);
+               arg(from.position.getLonX()).arg(from.position.getLatY()), LINK_FLAGS);
     tempHtml.text(connector);
     tempHtml.a(identRegionText(to.ident, to.region), QString("lnm://show?lonx=%1&laty=%2").
-               arg(to.position.getLonX()).arg(to.position.getLatY()), ahtml::LINK_NO_UL | ahtml::BOLD);
+               arg(to.position.getLonX()).arg(to.position.getLatY()), LINK_FLAGS);
   }
   else
     tempHtml.text(tr("%1%2%3").arg(identRegionText(from.ident, from.region)).arg(connector).arg(identRegionText(to.ident, to.region)));
@@ -3320,7 +3351,7 @@ void HtmlInfoBuilder::airwayText(const MapAirway& airway, HtmlBuilder& html) con
         tempLinkHtml.a(identRegionText(airwayWaypoint.waypoint.ident, airwayWaypoint.waypoint.region),
                        QString("lnm://show?lonx=%1&laty=%2").
                        arg(airwayWaypoint.waypoint.position.getLonX()).
-                       arg(airwayWaypoint.waypoint.position.getLatY()), ahtml::LINK_NO_UL | ahtml::BOLD);
+                       arg(airwayWaypoint.waypoint.position.getLatY()), LINK_FLAGS);
       }
 
       html.row2(tr("Waypoints Ident/Region:"), tempLinkHtml.getHtml(), ahtml::NO_ENTITIES);
@@ -4257,14 +4288,14 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
         {
           // Map and information
           recHtml.textBr(tr(", ")).
-          a(tr("Map"), QString("lnm://show?lonx=%1&laty=%2").arg(recPos.getLonX()).arg(recPos.getLatY()), ahtml::LINK_NO_UL | ahtml::BOLD);
+          a(tr("Map"), QString("lnm://show?lonx=%1&laty=%2").arg(recPos.getLonX()).arg(recPos.getLatY()), LINK_FLAGS);
           recHtml.text(tr(", ")).
-          a(tr("Info"), QString("lnm://info?id=%1&type=%2").arg(id).arg(procMapType), ahtml::LINK_NO_UL | ahtml::BOLD);
+          a(tr("Info"), QString("lnm://info?id=%1&type=%2").arg(id).arg(procMapType), LINK_FLAGS);
         }
         else if(recPos.isValid())
           // Only map
           recHtml.textBr(tr(", ")).
-          a(tr("Map"), QString("lnm://show?lonx=%1&laty=%2").arg(recPos.getLonX()).arg(recPos.getLatY()), ahtml::LINK_NO_UL | ahtml::BOLD);
+          a(tr("Map"), QString("lnm://show?lonx=%1&laty=%2").arg(recPos.getLonX()).arg(recPos.getLatY()), LINK_FLAGS);
 
         html.id(pid::NEXT_RELATED).row2If(tr("Related Navaid:"), proc::procedureLegRecommended(procLeg).join(tr(", ")) % recHtml.getHtml(),
                                           ahtml::NO_ENTITIES);
@@ -4895,10 +4926,10 @@ QString HtmlInfoBuilder::airportLink(const HtmlBuilder& html, const QString& ide
       {
         if(name.isEmpty())
           // Ident only
-          builder.a(ident, link, ahtml::LINK_NO_UL | ahtml::BOLD);
+          builder.a(ident, link, LINK_FLAGS);
         else
           // Name and ident
-          builder.a(name.isEmpty() ? ident : tr("%1 (%2)").arg(name).arg(ident), link, ahtml::LINK_NO_UL | ahtml::BOLD);
+          builder.a(name.isEmpty() ? ident : tr("%1 (%2)").arg(name).arg(ident), link, LINK_FLAGS);
       }
       else
         builder.text(name.isEmpty() ? ident : tr("%1 (%2)").arg(name).arg(ident));
@@ -4961,8 +4992,7 @@ void HtmlInfoBuilder::aircraftTitle(const atools::fs::sc::SimConnectAircraft& ai
     {
       html.nbsp().nbsp();
       html.a(tr("Map"), QString("lnm://show?lonx=%1&laty=%2").
-             arg(aircraft.getPosition().getLonX()).arg(aircraft.getPosition().getLatY()),
-             ahtml::LINK_NO_UL | ahtml::BOLD);
+             arg(aircraft.getPosition().getLonX()).arg(aircraft.getPosition().getLatY()), LINK_FLAGS);
     }
   }
   html.tdEnd();
@@ -5269,109 +5299,91 @@ void HtmlInfoBuilder::rowForStrCap(HtmlBuilder& html, const SqlRecord *rec, cons
 void HtmlInfoBuilder::addMetarLines(HtmlBuilder& html, const map::WeatherContext& weatherContext, MapWeatherSource src,
                                     const map::MapAirport& airport) const
 {
-  const atools::fs::weather::MetarResult& fsMetar = weatherContext.fsMetar;
-  if(!fsMetar.isEmpty())
+  const Metar& fsMetar = weatherContext.simMetar;
+  if(fsMetar.hasAnyMetar())
   {
     // Simulator weather =====================================================
+    bool mapDisplay = src == WEATHER_SOURCE_SIMULATOR;
     QString sim = tr("%1 ").arg(NavApp::getCurrentSimulatorShortName());
-    addMetarLine(html, tr("%1Station").arg(sim), airport, fsMetar.metarForStation,
-                 fsMetar.requestIdent, fsMetar.timestamp, true /* fs */, src == WEATHER_SOURCE_SIMULATOR);
-    addMetarLine(html, tr("%1Nearest").arg(sim), airport,
-                 fsMetar.metarForNearest, fsMetar.requestIdent, fsMetar.timestamp,
-                 true /* fs */, src == WEATHER_SOURCE_SIMULATOR);
-    addMetarLine(html, tr("%1Interpolated").arg(sim), airport,
-                 fsMetar.metarForInterpolated, fsMetar.requestIdent, fsMetar.timestamp,
-                 true /* fs */, src == WEATHER_SOURCE_SIMULATOR);
+    addMetarLine(html, tr("%1Station").arg(sim), airport, fsMetar.getStation(), mapDisplay);
+    addMetarLine(html, tr("%1Nearest").arg(sim), airport, fsMetar.getNearest(), mapDisplay);
+    addMetarLine(html, tr("%1Interpolated").arg(sim), airport, fsMetar.getInterpolated(), mapDisplay);
   }
 
   // Active Sky weather =====================================================
-  addMetarLine(html, weatherContext.asType, airport, weatherContext.asMetar, QString(), QDateTime(),
-               false /* fs */, src == WEATHER_SOURCE_ACTIVE_SKY);
+  addMetarLine(html, weatherContext.asType, airport, weatherContext.activeSkyMetar.getStation(), src == WEATHER_SOURCE_ACTIVE_SKY);
 
   // NOAA weather =====================================================
-  addMetarLine(html, tr("NOAA Station"), airport, weatherContext.noaaMetar.metarForStation,
-               weatherContext.noaaMetar.requestIdent, weatherContext.noaaMetar.timestamp,
-               false /* fs */, src == WEATHER_SOURCE_NOAA);
-  addMetarLine(html, tr("NOAA Nearest"), airport, weatherContext.noaaMetar.metarForNearest,
-               weatherContext.noaaMetar.requestIdent, weatherContext.noaaMetar.timestamp,
-               false /* fs */, src == WEATHER_SOURCE_NOAA);
+  addMetarLine(html, tr("NOAA Station"), airport, weatherContext.noaaMetar.getStation(), src == WEATHER_SOURCE_NOAA);
+  addMetarLine(html, tr("NOAA Nearest"), airport, weatherContext.noaaMetar.getNearest(), src == WEATHER_SOURCE_NOAA);
+  addMetarLine(html, tr("NOAA Interpolated"), airport, weatherContext.noaaMetar.getInterpolated(), src == WEATHER_SOURCE_NOAA);
 
   // VATSIM weather =====================================================
-  addMetarLine(html, tr("VATSIM Station"), airport, weatherContext.vatsimMetar.metarForStation,
-               weatherContext.vatsimMetar.requestIdent, weatherContext.vatsimMetar.timestamp,
-               false /* fs */, src == WEATHER_SOURCE_VATSIM);
-  addMetarLine(html, tr("VATSIM Nearest"), airport, weatherContext.vatsimMetar.metarForNearest,
-               weatherContext.vatsimMetar.requestIdent, weatherContext.vatsimMetar.timestamp,
-               false /* fs */, src == WEATHER_SOURCE_VATSIM);
+  addMetarLine(html, tr("VATSIM Station"), airport, weatherContext.vatsimMetar.getStation(), src == WEATHER_SOURCE_VATSIM);
+  addMetarLine(html, tr("VATSIM Nearest"), airport, weatherContext.vatsimMetar.getNearest(), src == WEATHER_SOURCE_VATSIM);
+  addMetarLine(html, tr("VATSIM Interpolated"), airport, weatherContext.vatsimMetar.getInterpolated(), src == WEATHER_SOURCE_VATSIM);
 
   // IVAO weather =====================================================
-  addMetarLine(html, tr("IVAO Station"), airport, weatherContext.ivaoMetar.metarForStation,
-               weatherContext.ivaoMetar.requestIdent, weatherContext.ivaoMetar.timestamp,
-               false /* fs */, src == WEATHER_SOURCE_IVAO);
-  addMetarLine(html, tr("IVAO Nearest"), airport, weatherContext.ivaoMetar.metarForNearest,
-               weatherContext.ivaoMetar.requestIdent, weatherContext.ivaoMetar.timestamp,
-               false /* fs */, src == WEATHER_SOURCE_IVAO);
+  addMetarLine(html, tr("IVAO Station"), airport, weatherContext.ivaoMetar.getStation(), src == WEATHER_SOURCE_IVAO);
+  addMetarLine(html, tr("IVAO Nearest"), airport, weatherContext.ivaoMetar.getNearest(), src == WEATHER_SOURCE_IVAO);
+  addMetarLine(html, tr("IVAO Interpolated"), airport, weatherContext.ivaoMetar.getInterpolated(), src == WEATHER_SOURCE_IVAO);
 }
 
 void HtmlInfoBuilder::addMetarLine(atools::util::HtmlBuilder& html, const QString& header,
-                                   const map::MapAirport& airport, const QString& metar, const QString& station,
-                                   const QDateTime& timestamp, bool fsMetar, bool mapDisplay) const
+                                   const map::MapAirport& airport, const atools::fs::weather::MetarParser& metar, bool mapDisplay) const
 {
-  if(!metar.isEmpty())
+  if(metar.hasMetarString())
   {
-    Metar m(metar, station, timestamp, fsMetar);
-    const atools::fs::weather::MetarParser& parsed = m.getParsedMetar();
-    QDateTime time;
-    time.setOffsetFromUtc(0);
-    time.setDate(QDate(parsed.getYear(), parsed.getMonth(), parsed.getDay()));
-    time.setTime(QTime(parsed.getHour(), parsed.getMinute()));
+    HtmlBuilder weatherHtml = html.cleared();
 
-    if(!parsed.isValid())
-      qWarning() << "Metar is not valid";
+    if(checkMetar(weatherHtml, metar))
+    {
+      weatherHtml.text(metar.getMetarDisplayString());
 
-    HtmlBuilder whtml = html.cleared();
+      qint64 secsTo = metar.getTimestamp().secsTo(QDateTime::currentDateTimeUtc());
+      if(secsTo > WEATHER_MAX_AGE_HOURS_ERR_OUTDATED * 3600)
+        weatherHtml.text(tr(" ")).error(tr("(outdated)"));
+      else if(secsTo > WEATHER_MAX_AGE_HOURS_ERR * 3600)
+        weatherHtml.text(tr(" ")).error(tr("(%1 hours old)").arg(secsTo / 3600));
+      else if(secsTo > WEATHER_MAX_AGE_HOURS_WARN * 3600)
+        weatherHtml.text(tr(" ")).warning(tr("(%1 hours old)").arg(secsTo / 3600));
 
-    whtml.text(fsMetar ? m.getCleanMetar() : metar);
+      weatherHtml.nbsp().nbsp();
+      if(mapDisplay)
+        weatherHtml.b();
+      else
+        weatherHtml.small();
+      weatherHtml.text(tr("("));
+      addFlightRulesSuffix(weatherHtml, metar, mapDisplay);
+      weatherHtml.text(tr(")"));
+      if(mapDisplay)
+        weatherHtml.bEnd();
+      else
+        weatherHtml.smallEnd();
 
-    qint64 secsTo = time.secsTo(QDateTime::currentDateTimeUtc());
-    if(secsTo > WEATHER_MAX_AGE_HOURS_ERR * 3600)
-      whtml.text(tr(" ")).error(tr("(%1 hours old)").arg(secsTo / 3600));
-    else if(secsTo > WEATHER_MAX_AGE_HOURS_WARN * 3600)
-      whtml.text(tr(" ")).warning(tr("(%1 hours old)").arg(secsTo / 3600));
+      // Add METAR suffix for tooltip
+      bestRunwaysText(airport, weatherHtml, metar, 4 /* max entries */, false /* details */);
+    }
 
-    whtml.nbsp().nbsp();
-    if(mapDisplay)
-      whtml.b();
-    else
-      whtml.small();
-    whtml.text(tr("("));
-    addFlightRulesSuffix(whtml, m, mapDisplay);
-    whtml.text(tr(")"));
-    if(mapDisplay)
-      whtml.bEnd();
-    else
-      whtml.smallEnd();
-
-    // Add METAR suffix for tooltip
-    bestRunwaysText(airport, whtml, parsed, 4 /* max entries */, false /* details */);
-    html.row2(header % (info ? tr(":") : tr(" METAR:")), whtml);
-
+    html.row2(header % (info ? tr(":") : tr(" METAR:")), weatherHtml);
   }
 }
 
-void HtmlInfoBuilder::addFlightRulesSuffix(atools::util::HtmlBuilder& html,
-                                           const atools::fs::weather::Metar& metar, bool mapDisplay) const
+void HtmlInfoBuilder::addFlightRulesSuffix(atools::util::HtmlBuilder& html, const atools::fs::weather::MetarParser& metar,
+                                           bool mapDisplay) const
 {
-  if(!print)
+  if(metar.hasMetarString())
   {
-    html.img(SymbolPainter::createAirportWeatherIcon(metar, symbolSize.height()),
-             QString(), QString(), symbolSize);
-    html.nbsp();
-  }
+    if(!print)
+    {
+      html.img(SymbolPainter::createAirportWeatherIcon(metar, symbolSize.height()), QString(), QString(), symbolSize);
+      html.nbsp();
+    }
 
-  html.text(metar.getParsedMetar().getFlightRulesString());
-  if(mapDisplay)
-    html.nbsp().text(tr("-")).nbsp().text(tr("Map"));
+    html.text(metar.getFlightRulesString());
+    if(mapDisplay)
+      html.nbsp().text(tr("-")).nbsp().text(tr("Map"));
+  }
 }
 
 void HtmlInfoBuilder::addMorse(atools::util::HtmlBuilder& html, const QString& name, const QString& code) const

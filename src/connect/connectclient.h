@@ -40,7 +40,6 @@ class SimConnectHandler;
 class XpConnectHandler;
 class ConnectHandler;
 class WeatherRequest;
-struct MetarResult;
 
 class SimConnectReply;
 }
@@ -91,7 +90,7 @@ public:
   /* Request weather. Return value will be empty and the request will be started in background.
    * Signal weatherUpdated is sent if request was finished. Than call this method again.
    * onlyStation: Do not return weather for interpolated or nearest only. Keeps an internal blacklist. */
-  atools::fs::weather::MetarResult requestWeather(const QString& station, const atools::geo::Pos& pos, bool onlyStation);
+  const atools::fs::weather::Metar& requestWeather(const QString& station, const atools::geo::Pos& pos, bool onlyStation);
 
   bool isFetchAiShip() const;
   bool isFetchAiAircraft() const;
@@ -165,7 +164,7 @@ private:
   QTimer reconnectNetworkTimer, flushQueuedRequestsTimer;
   MainWindow *mainWindow;
   bool verbose = false;
-  atools::util::TimedCache<QString, atools::fs::weather::MetarResult> metarIdentCache;
+  atools::util::TimedCache<QString, atools::fs::weather::Metar> metarIdentCache;
 
   /* Waiting for these replies for airport idents */
   QSet<QString> outstandingReplies;

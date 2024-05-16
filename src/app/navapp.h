@@ -93,9 +93,6 @@ class AircraftIndex;
 namespace perf {
 class AircraftPerf;
 }
-namespace weather {
-class Metar;
-}
 namespace sc {
 class SimConnectUserAircraft;
 class SimConnectAircraft;

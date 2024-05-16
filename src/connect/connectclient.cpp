@@ -21,6 +21,7 @@
 #include "common/constants.h"
 #include "fs/sc/simconnectreply.h"
 #include "fs/sc/datareaderthread.h"
+#include "fs/weather/metar.h"
 #include "gui/dialog.h"
 #include "gui/helphandler.h"
 #include "online/onlinedatacontroller.h"
@@ -339,38 +340,40 @@ void ConnectClient::postSimConnectData(atools::fs::sc::SimConnectData dataPacket
       emit dataPacketReceived(dataPacket);
     } // if(!dataPacket.isEmptyReply())
 
+    // Weather reports ========================================
     if(!dataPacket.getMetars().isEmpty())
     {
       if(verbose)
         qDebug() << "Metars number" << dataPacket.getMetars().size();
 
-      for(atools::fs::weather::MetarResult metar : dataPacket.getMetars())
+      for(atools::fs::weather::Metar metar : dataPacket.getMetars())
       {
-        QString ident = metar.requestIdent;
+        QString ident = metar.getRequestIdent();
         if(verbose)
         {
           qDebug() << "ConnectClient::postSimConnectData metar ident to cache ident"
-                   << ident << "pos" << metar.requestPos.toString();
-          qDebug() << "Station" << metar.metarForStation;
-          qDebug() << "Nearest" << metar.metarForNearest;
-          qDebug() << "Interpolated" << metar.metarForInterpolated;
+                   << ident << "pos" << metar.getRequestPos().toString();
+          qDebug() << "Station" << metar.getStationMetar();
+          qDebug() << "Nearest" << metar.getNearestMetar();
+          qDebug() << "Interpolated" << metar.getInterpolatedMetar();
         }
 
-        if(metar.metarForStation.isEmpty())
+        if(metar.getStationMetar().isEmpty())
         {
           if(verbose)
-            qDebug() << "Station" << metar.requestIdent << "not available";
+            qDebug() << "Station" << metar.getRequestIdent() << "not available";
 
           // Remember airports that have no station reports to avoid recurring requests by airport weather
-          notAvailableStations.insert(metar.requestIdent, metar.requestIdent);
+          notAvailableStations.insert(metar.getRequestIdent(), metar.getRequestIdent());
         }
-        else if(notAvailableStations.contains(metar.requestIdent))
+        else if(notAvailableStations.contains(metar.getRequestIdent()))
           // Remove from blacklist since it now has a station report
-          notAvailableStations.remove(metar.requestIdent);
+          notAvailableStations.remove(metar.getRequestIdent());
 
-        metar.simulator = true;
+        metar.cleanFsxP3dAll();
+        metar.parseAll(true /* useTimestamp */);
         metarIdentCache.insert(ident, metar);
-      } // for(atools::fs::weather::MetarResult metar : dataPacket.getMetars())
+      } // for(atools::fs::weather::Metar metar : dataPacket.getMetars())
 
       if(!dataPacket.getMetars().isEmpty())
         emit weatherUpdated();
@@ -514,36 +517,33 @@ void ConnectClient::fetchOptionsChanged(cd::ConnectSimType type)
   }
 }
 
-atools::fs::weather::MetarResult ConnectClient::requestWeather(const QString& station, const atools::geo::Pos& pos,
-                                                               bool onlyStation)
+const atools::fs::weather::Metar& ConnectClient::requestWeather(const QString& station, const atools::geo::Pos& pos, bool onlyStation)
 {
   if(verbose)
     qDebug() << "ConnectClient::requestWeather" << station << "onlyStation" << onlyStation;
 
-  atools::fs::weather::MetarResult retval;
-
   if(!isConnected())
     // Ignore cache if not connected
-    return retval;
+    return atools::fs::weather::Metar::EMPTY;
 
   if(isSimConnect() && !dataReader->canFetchWeather())
     // MSFS cannot fetch weather - disable to avoid stutters
-    return retval;
+    return atools::fs::weather::Metar::EMPTY;
 
   if(onlyStation && notAvailableStations.contains(station))
   {
     // No nearest or interpolated and airport is in blacklist
     if(verbose)
       qDebug() << "Station" << station << "in negative cache for only station";
-    return retval;
+    return atools::fs::weather::Metar::EMPTY;
   }
 
   // Get the old value without triggering the timeout dependent delete
-  atools::fs::weather::MetarResult *result = metarIdentCache.valueNoTimeout(station);
+  const atools::fs::weather::Metar *metar = metarIdentCache.valueNoTimeout(station);
 
-  if(result != nullptr)
+  if(metar != nullptr)
     // Return old result if there is any
-    retval = *result;
+    return *metar;
 
   // Check if the airport is already in the queue
   if(!queuedRequestIdents.contains(station))
@@ -578,7 +578,8 @@ atools::fs::weather::MetarResult ConnectClient::requestWeather(const QString& st
       }
     }
   }
-  return retval;
+
+  return atools::fs::weather::Metar::EMPTY;
 }
 
 bool ConnectClient::isFetchAiShip() const
@@ -987,8 +988,8 @@ void ConnectClient::readFromSocket()
           if(verbose)
             qDebug() << "readFromSocket id " << simConnectData->getPacketId() << "metars";
 
-          for(const atools::fs::weather::MetarResult& metar : simConnectData->getMetars())
-            outstandingReplies.remove(metar.requestIdent);
+          for(const atools::fs::weather::Metar& metar : simConnectData->getMetars())
+            outstandingReplies.remove(metar.getRequestIdent());
 
           // Start request on next invocation of the event queue
           QTimer::singleShot(0, this, &ConnectClient::flushQueuedRequests);

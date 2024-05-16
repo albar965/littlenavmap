@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -18,13 +18,14 @@
 #include "mappainter/mappainterweather.h"
 
 #include "common/symbolpainter.h"
+#include "fs/weather/metarparser.h"
+#include "fs/weather/metar.h"
 #include "mapgui/mapscale.h"
 #include "mapgui/maplayer.h"
 #include "query/mapquery.h"
 #include "util/paintercontextsaver.h"
 #include "app/navapp.h"
 #include "route/route.h"
-#include "fs/weather/metar.h"
 #include "weather/weatherreporter.h"
 
 #include <marble/GeoPainter.h>
@@ -129,18 +130,20 @@ void MapPainterWeather::render()
   WeatherReporter *reporter = NavApp::getWeatherReporter();
   for(const PaintAirportType& airportWeather: qAsConst(visibleAirportWeather))
   {
-    atools::fs::weather::Metar metar = reporter->getAirportWeather(*airportWeather.airport, true /* stationOnly */);
+    const atools::fs::weather::Metar& metar = reporter->getAirportWeather(*airportWeather.airport, true /* stationOnly */);
 
-    if(metar.isValid())
-      drawAirportWeather(metar, static_cast<float>(airportWeather.point.x()), static_cast<float>(airportWeather.point.y()));
+    if(metar.hasStationMetar())
+      drawAirportWeather(metar.getStation(), airportWeather.point);
   }
 }
 
-void MapPainterWeather::drawAirportWeather(const atools::fs::weather::Metar& metar, float x, float y)
+void MapPainterWeather::drawAirportWeather(const atools::fs::weather::MetarParser& metar, const QPointF& point)
 {
   float size = context->szF(context->symbolSizeAirportWeather, context->mapLayer->getAirportSymbolSize());
   bool windBarbs = context->mapLayer->isAirportWeatherDetails();
 
-  symbolPainter->drawAirportWeather(context->painter, metar, x - size * 4.f / 5.f, y - size * 4.f / 5.f, size,
+  symbolPainter->drawAirportWeather(context->painter, metar,
+                                    static_cast<float>(point.x() - size * 4. / 5.),
+                                    static_cast<float>(point.y() - size * 4. / 5.), size,
                                     true /* Wind pointer*/, windBarbs, context->drawFast);
 }

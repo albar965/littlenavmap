@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -23,7 +23,8 @@
 namespace atools {
 namespace fs {
 namespace weather {
-class Metar;
+
+class MetarParser;
 }
 }
 }
@@ -45,7 +46,7 @@ public:
   virtual void render() override;
 
 private:
-  void drawAirportWeather(const atools::fs::weather::Metar& metar, float x, float y);
+  void drawAirportWeather(const atools::fs::weather::MetarParser& metar, const QPointF& point);
 
 };
 

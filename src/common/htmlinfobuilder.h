@@ -19,6 +19,7 @@
 #define LITTLENAVMAP_MAPHTMLINFOBUILDER_H
 
 #include "grib/windtypes.h"
+#include "fs/weather/weathertypes.h"
 #include "common/mapflags.h"
 
 #include <QCoreApplication>
@@ -32,14 +33,13 @@ class WeatherReporter;
 class Route;
 class MainWindow;
 class MapPaintWidget;
-
 class QFileInfo;
 
 namespace atools {
 namespace fs {
 namespace weather {
-class Metar;
 class MetarParser;
+class Metar;
 }
 }
 namespace util {
@@ -48,7 +48,6 @@ class HtmlBuilder;
 }
 
 namespace map {
-
 struct AircraftTrailSegment;
 struct MapAirport;
 struct MapAirportMsa;
@@ -79,21 +78,13 @@ struct DistanceMarker;
 }
 
 namespace atools {
-
 namespace geo {
 class Pos;
 }
-
 namespace fs {
 namespace util {
 class MorseCode;
 }
-
-namespace weather {
-struct MetarResult;
-
-}
-
 namespace sc {
 class SimConnectUserAircraft;
 class SimConnectAircraft;
@@ -103,15 +94,12 @@ namespace sql {
 class SqlRecord;
 }
 }
-
 namespace map {
 struct WeatherContext;
-
 }
 
 namespace proc {
 struct MapProcedurePoint;
-
 }
 
 /*
@@ -396,15 +384,17 @@ private:
                      atools::util::HtmlBuilder& html);
 
   void dateTimeAndFlown(const atools::fs::sc::SimConnectUserAircraft *userAircraft, atools::util::HtmlBuilder& html) const;
+
+  bool checkMetar(atools::util::HtmlBuilder& html, const atools::fs::weather::MetarParser& metar) const;
   void addMetarLines(atools::util::HtmlBuilder& html, const map::WeatherContext& weatherContext, map::MapWeatherSource src,
                      const map::MapAirport& airport) const;
   void addMetarLine(atools::util::HtmlBuilder& html, const QString& header, const map::MapAirport& airport,
-                    const QString& metar, const QString& station, const QDateTime& timestamp, bool fsMetar, bool mapDisplay) const;
+                    const atools::fs::weather::MetarParser& metar, bool mapDisplay) const;
 
   void decodedMetar(atools::util::HtmlBuilder& html, const map::MapAirport& airport,
-                    const map::MapAirport& reportAirport, const atools::fs::weather::Metar& metar,
-                    bool isInterpolated, bool isFsxP3d, bool mapDisplay) const;
-  void decodedMetars(atools::util::HtmlBuilder& html, const atools::fs::weather::MetarResult& metar,
+                    const map::MapAirport& reportAirport, const atools::fs::weather::Metar& metar, bool mapDisplay,
+                    atools::fs::weather::MetarType type) const;
+  void decodedMetars(atools::util::HtmlBuilder& html, const atools::fs::weather::Metar& metar,
                      const map::MapAirport& airport, const QString& name, bool mapDisplay) const;
 
   void addRadionavFixType(atools::util::HtmlBuilder& html, const atools::sql::SqlRecord& recApp) const;
@@ -414,8 +404,7 @@ private:
 
   void airportRow(const map::MapAirport& ap, atools::util::HtmlBuilder& html) const;
 
-  void addFlightRulesSuffix(atools::util::HtmlBuilder& html, const atools::fs::weather::Metar& metar,
-                            bool mapDisplay) const;
+  void addFlightRulesSuffix(atools::util::HtmlBuilder& html, const atools::fs::weather::MetarParser& metar, bool mapDisplay) const;
 
   /* Insert airport link using ident and/or name */
   QString airportLink(const atools::util::HtmlBuilder& html, const QString& ident,

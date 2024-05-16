@@ -21,7 +21,6 @@
 #include "common/maptypes.h"
 #include "common/unit.h"
 #include "fs/util/fsutil.h"
-#include "fs/weather/metar.h"
 #include "fs/weather/metarparser.h"
 #include "geo/calculations.h"
 #include "options/optiondata.h"
@@ -46,7 +45,7 @@ QIcon SymbolPainter::createAirportIcon(const map::MapAirport& airport, int size)
   return QIcon(pixmap);
 }
 
-QIcon SymbolPainter::createAirportWeatherIcon(const atools::fs::weather::Metar& metar, int size)
+QIcon SymbolPainter::createAirportWeatherIcon(const atools::fs::weather::MetarParser& metar, int size)
 {
   QPixmap pixmap(size, size);
   pixmap.fill(QColor(Qt::transparent));
@@ -376,15 +375,13 @@ void SymbolPainter::drawWaypointSymbol(QPainter *painter, const QColor& col, flo
   painter->drawConvexPolygon(polygon);
 }
 
-void SymbolPainter::drawAirportWeather(QPainter *painter, const atools::fs::weather::Metar& metar, float x, float y,
+void SymbolPainter::drawAirportWeather(QPainter *painter, const atools::fs::weather::MetarParser& metar, float x, float y,
                                        float size, bool windPointer, bool windBarbs, bool fast)
 {
-  if(metar.isValid())
+  if(metar.isParsed() || metar.hasErrors())
   {
-    const atools::fs::weather::MetarParser& parsedMetar = metar.getParsedMetar();
-
     // Determine correct color for flight rules (IFR, etc.) =============================================
-    atools::fs::weather::MetarParser::FlightRules flightRules = parsedMetar.getFlightRules();
+    atools::fs::weather::MetarParser::FlightRules flightRules = metar.getFlightRules();
     atools::util::PainterContextSaver saver(painter);
 
     painter->setBackgroundMode(Qt::OpaqueMode);
@@ -400,99 +397,116 @@ void SymbolPainter::drawAirportWeather(QPainter *painter, const atools::fs::weat
     painter->drawEllipse(rect.marginsAdded(QMarginsF(margin, margin, margin, margin)));
 
     // Wind pointer and/or barbs =====================================================
-    if(windBarbs || windPointer)
-      drawWindBarbs(painter, parsedMetar, x, y, size, windBarbs, false /* altWind */, false /* route */, fast);
+    if((windBarbs || windPointer) && !metar.hasErrors())
+      drawWindBarbs(painter, metar, x, y, size, windBarbs, false /* altWind */, false /* route */, fast);
 
     // Draw coverage indicating pies or circles =====================================================
 
     // Color depending on flight rule
     QColor color;
-    switch(flightRules)
+    if(metar.hasErrors())
+      color = mapcolors::weatherErrorColor;
+    else
     {
-      case atools::fs::weather::MetarParser::UNKNOWN:
-        break;
-      case atools::fs::weather::MetarParser::LIFR:
-        color = mapcolors::weatherLifrColor;
-        break;
-      case atools::fs::weather::MetarParser::IFR:
-        color = mapcolors::weatherIfrColor;
-        break;
-      case atools::fs::weather::MetarParser::MVFR:
-        color = mapcolors::weatherMvfrColor;
-        break;
-      case atools::fs::weather::MetarParser::VFR:
-        color = mapcolors::weatherVfrColor;
-        break;
+      switch(flightRules)
+      {
+        case atools::fs::weather::MetarParser::UNKNOWN:
+          break;
+        case atools::fs::weather::MetarParser::LIFR:
+          color = mapcolors::weatherLifrColor;
+          break;
+        case atools::fs::weather::MetarParser::IFR:
+          color = mapcolors::weatherIfrColor;
+          break;
+        case atools::fs::weather::MetarParser::MVFR:
+          color = mapcolors::weatherMvfrColor;
+          break;
+        case atools::fs::weather::MetarParser::VFR:
+          color = mapcolors::weatherVfrColor;
+          break;
+      }
     }
 
     float lineWidth = size * 0.2f;
     painter->setPen(QPen(color, lineWidth, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
-    atools::fs::weather::MetarCloud::Coverage maxCoverage = parsedMetar.getMaxCoverage();
-    switch(maxCoverage)
+
+    if(metar.hasErrors())
     {
-      case atools::fs::weather::MetarCloud::COVERAGE_NIL:
-        painter->drawEllipse(rect);
-        if(!fast)
-        {
-          // Cross out for no information
-          painter->drawLine(QLineF(x - size / 2.f, y - size / 2.f, x + size / 2.f, y + size / 2.f));
-          painter->drawLine(QLineF(x + size / 2.f, y - size / 2.f, x - size / 2.f, y + size / 2.f));
-        }
-        break;
+      painter->drawEllipse(rect);
+      if(!fast)
+      {
+        // Cross out for no information
+        painter->drawLine(QLineF(x - size / 2.f, y - size / 2.f, x + size / 2.f, y + size / 2.f));
+        painter->drawLine(QLineF(x + size / 2.f, y - size / 2.f, x - size / 2.f, y + size / 2.f));
+      }
+    }
+    else
+    {
+      atools::fs::weather::MetarCloud::Coverage maxCoverage = metar.getMaxCoverage();
+      switch(maxCoverage)
+      {
+        case atools::fs::weather::MetarCloud::COVERAGE_NIL:
+          painter->drawEllipse(rect);
+          if(!fast)
+          {
+            // Cross out for no information
+            painter->drawLine(QLineF(x - size / 2.f, y - size / 2.f, x + size / 2.f, y + size / 2.f));
+            painter->drawLine(QLineF(x + size / 2.f, y - size / 2.f, x - size / 2.f, y + size / 2.f));
+          }
+          break;
 
-      case atools::fs::weather::MetarCloud::COVERAGE_CLEAR:
-        painter->drawEllipse(rect);
-        break;
+        case atools::fs::weather::MetarCloud::COVERAGE_CLEAR:
+          painter->drawEllipse(rect);
+          break;
 
-      case atools::fs::weather::MetarCloud::COVERAGE_FEW:
-        painter->drawEllipse(rect);
-        if(!fast)
-        {
+        case atools::fs::weather::MetarCloud::COVERAGE_FEW:
+          painter->drawEllipse(rect);
+          if(!fast)
+          {
+            painter->setBrush(color);
+            painter->setPen(Qt::NoPen);
+            painter->drawPie(rect, -270 * 16, -90 * 16);
+          }
+          break;
+
+        case atools::fs::weather::MetarCloud::COVERAGE_SCATTERED:
+          painter->drawEllipse(rect);
+          if(!fast)
+          {
+            painter->setBrush(color);
+            painter->setPen(Qt::NoPen);
+            painter->drawPie(rect, -270 * 16, -180 * 16);
+          }
+          break;
+
+        case atools::fs::weather::MetarCloud::COVERAGE_BROKEN:
+          painter->drawEllipse(rect);
+          if(!fast)
+          {
+            painter->setBrush(color);
+            painter->setPen(Qt::NoPen);
+            painter->drawPie(rect, -270 * 16, -270 * 16);
+          }
+          break;
+
+        case atools::fs::weather::MetarCloud::COVERAGE_OVERCAST:
           painter->setBrush(color);
-          painter->setPen(Qt::NoPen);
-          painter->drawPie(rect, -270 * 16, -90 * 16);
-        }
-        break;
-
-      case atools::fs::weather::MetarCloud::COVERAGE_SCATTERED:
-        painter->drawEllipse(rect);
-        if(!fast)
-        {
-          painter->setBrush(color);
-          painter->setPen(Qt::NoPen);
-          painter->drawPie(rect, -270 * 16, -180 * 16);
-        }
-        break;
-
-      case atools::fs::weather::MetarCloud::COVERAGE_BROKEN:
-        painter->drawEllipse(rect);
-        if(!fast)
-        {
-          painter->setBrush(color);
-          painter->setPen(Qt::NoPen);
-          painter->drawPie(rect, -270 * 16, -270 * 16);
-        }
-        break;
-
-      case atools::fs::weather::MetarCloud::COVERAGE_OVERCAST:
-        painter->setBrush(color);
-        painter->drawEllipse(QPointF(x, y), size / 2.f, size / 2.f);
-        break;
+          painter->drawEllipse(QPointF(x, y), size / 2.f, size / 2.f);
+          break;
+      }
     }
   }
 }
 
 void SymbolPainter::drawWindBarbs(QPainter *painter, const atools::fs::weather::MetarParser& parsedMetar,
-                                  float x, float y, float size, bool windBarbs, bool altWind, bool route,
-                                  bool fast) const
+                                  float x, float y, float size, bool windBarbs, bool altWind, bool route, bool fast) const
 {
   drawWindBarbs(painter, parsedMetar.getPrevailingWindSpeedKnots(), parsedMetar.getGustSpeedKts(),
                 parsedMetar.getPrevailingWindDir(), x, y, size, windBarbs, altWind, route, fast);
 }
 
 void SymbolPainter::drawWindBarbs(QPainter *painter, float wind, float gust, float dir,
-                                  float x, float y, float size, bool windBarbs, bool altWind, bool route,
-                                  bool fast) const
+                                  float x, float y, float size, bool windBarbs, bool altWind, bool route, bool fast) const
 {
   // Make lines thinner for high altitude wind barbs
   float lineWidth = size * (altWind ? 0.2f : 0.3f);

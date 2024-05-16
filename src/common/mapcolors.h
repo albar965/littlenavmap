@@ -99,6 +99,7 @@ extern QColor weatherLifrColor;
 extern QColor weatherIfrColor;
 extern QColor weatherMvfrColor;
 extern QColor weatherVfrColor;
+extern QColor weatherErrorColor;
 
 /* Minimum off route altitude (MORA) */
 extern QPen minimumAltitudeGridPen;
