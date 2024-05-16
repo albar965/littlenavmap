@@ -2423,7 +2423,7 @@ void MapWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorDa
 
   if(NavApp::getMainUi()->actionMapShowSunShadingSimulatorTime->isChecked())
     // Update sun shade on globe with simulator time
-    setSunShadingDateTime(aircraft.getZuluTime());
+    setSunShadingDateTime(aircraft.getZuluTime(), false /* force */);
 
 #ifdef DEBUG_INFORMATION_SIMUPDATE
   qDebug() << Q_FUNC_INFO << "=========================================================";

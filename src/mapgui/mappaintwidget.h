@@ -219,7 +219,7 @@ public:
 
   /* Globe shadow */
   void setShowMapSunShading(bool show);
-  void setSunShadingDateTime(const QDateTime& datetime);
+  void setSunShadingDateTime(const QDateTime& datetime, bool force);
   QDateTime getSunShadingDateTime() const;
 
   /* Define which airport or navaid types are shown on the map. Updates screen index on demand. */

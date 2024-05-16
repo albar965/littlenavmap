@@ -1623,6 +1623,7 @@ void MainWindow::connectAllSlots()
 
   connect(connectClient, &ConnectClient::disconnectedFromSimulator, routeController, &RouteController::disconnectedFromSimulator);
 
+  connect(connectClient, &ConnectClient::connectedToSimulator, this, &MainWindow::sunShadingTimeChanged);
   connect(connectClient, &ConnectClient::disconnectedFromSimulator, this, &MainWindow::sunShadingTimeChanged);
 
   // Map widget needs to clear track first
@@ -2940,13 +2941,14 @@ void MainWindow::sunShadingTimeChanged()
 
   if(ui->actionMapShowSunShadingRealTime->isChecked() || ui->actionMapShowSunShadingUserTime->isChecked())
     // User time defaults to current time until set
-    mapWidget->setSunShadingDateTime(QDateTime::currentDateTimeUtc());
+    mapWidget->setSunShadingDateTime(QDateTime::currentDateTimeUtc(), true /* force */);
   else if(ui->actionMapShowSunShadingSimulatorTime->isChecked())
   {
+    // Simulator time checked
     if(!NavApp::isConnectedAndAircraft())
       // Use current time if not connected
-      mapWidget->setSunShadingDateTime(QDateTime::currentDateTimeUtc());
-    // else  Updated by simDataChanged
+      mapWidget->setSunShadingDateTime(QDateTime::currentDateTimeUtc(), true /* force */);
+    // else - Updated by simDataChanged()
   }
 
   mapWidget->updateSunShadingOption();
@@ -2961,10 +2963,8 @@ void MainWindow::sunShadingTimeSet()
   timeDialog.exec();
 }
 
-void MainWindow::routeSelectionChanged(int selected, int total)
+void MainWindow::routeSelectionChanged(int, int)
 {
-  Q_UNUSED(selected)
-  Q_UNUSED(total)
   QList<int> result;
   routeController->getSelectedRouteLegs(result);
   mapWidget->changeRouteHighlights(result);

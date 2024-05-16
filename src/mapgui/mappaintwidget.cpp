@@ -361,11 +361,11 @@ QDateTime MapPaintWidget::getSunShadingDateTime() const
   return model()->clockDateTime();
 }
 
-void MapPaintWidget::setSunShadingDateTime(const QDateTime& datetime)
+void MapPaintWidget::setSunShadingDateTime(const QDateTime& datetime, bool force)
 {
-  if(std::abs(datetime.toSecsSinceEpoch() - model()->clockDateTime().toSecsSinceEpoch()) > 300)
+  if(force || std::abs(datetime.secsTo(model()->clockDateTime())) > 120)
   {
-    // Update only if difference more than 5 minutes
+    // Update time and map only if difference more than 2 minutes
     model()->setClockDateTime(datetime);
     update();
   }

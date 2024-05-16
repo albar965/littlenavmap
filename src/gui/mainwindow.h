@@ -374,7 +374,7 @@ private:
   void proceduresSelectedInternal(const QVector<proc::MapProcedureRef>& refs, bool previewAll);
 
   /* Selection in flight plan table has changed */
-  void routeSelectionChanged(int selected, int total);
+  void routeSelectionChanged(int, int);
 
   /* New flight plan from opening route string dialog using current plan for prefill */
   void routeFromStringCurrent();
