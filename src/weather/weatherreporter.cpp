@@ -838,7 +838,7 @@ const atools::fs::weather::Metar& WeatherReporter::getAirportWeather(const map::
         return getXplaneMetar(ident, pos);
       else if(NavApp::isConnected() /*&& !NavApp::getConnectClient()->isConnectedNetwork()*/)
       {
-        const atools::fs::weather::Metar& metar = NavApp::getConnectClient()->requestWeather(ident, pos, true);
+        const atools::fs::weather::Metar& metar = NavApp::getConnectClient()->requestWeatherFsxP3d(ident, pos, true);
 
         if(metar.hasStationMetar())
           // FSX/P3D - Flight simulator fetched weather or network connection

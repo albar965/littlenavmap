@@ -70,7 +70,7 @@ void WeatherContextHandler::buildWeatherContext(map::WeatherContext& weatherCont
     if(atools::fs::FsPaths::isAnyXplane(NavApp::getCurrentSimulatorDb()))
       weatherContext.simMetar = weatherReporter->getXplaneMetar(ident, airport.position);
     else
-      weatherContext.simMetar = connectClient->requestWeather(ident, airport.position, false /* station only */);
+      weatherContext.simMetar = connectClient->requestWeatherFsxP3d(ident, airport.position, false /* station only */);
   }
 
   if(activeSky)
@@ -126,7 +126,7 @@ bool WeatherContextHandler::buildWeatherContextInfoFull(map::WeatherContext& wea
     else if(NavApp::isConnected())
     {
       // FSX/P3D - Flight simulator fetched weather
-      Metar metar = connectClient->requestWeather(ident, airport.position, false /* station only */);
+      Metar metar = connectClient->requestWeatherFsxP3d(ident, airport.position, false /* station only */);
 
       if(newAirport || (metar.hasAnyMetar() && metar != currentWeatherContext->simMetar))
       {

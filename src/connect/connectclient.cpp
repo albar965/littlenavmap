@@ -134,7 +134,7 @@ void ConnectClient::flushQueuedRequests()
   {
     atools::fs::sc::WeatherRequest req = queuedRequests.takeLast();
     queuedRequestIdents.remove(req.getStation());
-    requestWeather(req.getStation(), req.getPosition(), false /* station only */);
+    requestWeatherFsxP3d(req.getStation(), req.getPosition(), false /* station only */);
   }
 }
 
@@ -370,6 +370,7 @@ void ConnectClient::postSimConnectData(atools::fs::sc::SimConnectData dataPacket
           // Remove from blacklist since it now has a station report
           notAvailableStations.remove(metar.getRequestIdent());
 
+        metar.setFsxP3dFormat();
         metar.cleanFsxP3dAll();
         metar.parseAll(true /* useTimestamp */);
         metarIdentCache.insert(ident, metar);
@@ -517,7 +518,7 @@ void ConnectClient::fetchOptionsChanged(cd::ConnectSimType type)
   }
 }
 
-const atools::fs::weather::Metar& ConnectClient::requestWeather(const QString& station, const atools::geo::Pos& pos, bool onlyStation)
+const atools::fs::weather::Metar& ConnectClient::requestWeatherFsxP3d(const QString& station, const atools::geo::Pos& pos, bool onlyStation)
 {
   if(verbose)
     qDebug() << "ConnectClient::requestWeather" << station << "onlyStation" << onlyStation;

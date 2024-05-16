@@ -90,7 +90,7 @@ public:
   /* Request weather. Return value will be empty and the request will be started in background.
    * Signal weatherUpdated is sent if request was finished. Than call this method again.
    * onlyStation: Do not return weather for interpolated or nearest only. Keeps an internal blacklist. */
-  const atools::fs::weather::Metar& requestWeather(const QString& station, const atools::geo::Pos& pos, bool onlyStation);
+  const atools::fs::weather::Metar& requestWeatherFsxP3d(const QString& station, const atools::geo::Pos& pos, bool onlyStation);
 
   bool isFetchAiShip() const;
   bool isFetchAiAircraft() const;

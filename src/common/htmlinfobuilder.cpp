@@ -5346,13 +5346,16 @@ void HtmlInfoBuilder::addMetarLine(atools::util::HtmlBuilder& html, const QStrin
     {
       weatherHtml.text(metar.getMetarDisplayString());
 
-      qint64 secsTo = metar.getTimestamp().secsTo(QDateTime::currentDateTimeUtc());
-      if(secsTo > WEATHER_MAX_AGE_HOURS_ERR_OUTDATED * 3600)
-        weatherHtml.text(tr(" ")).error(tr("(outdated)"));
-      else if(secsTo > WEATHER_MAX_AGE_HOURS_ERR * 3600)
-        weatherHtml.text(tr(" ")).error(tr("(%1 hours old)").arg(secsTo / 3600));
-      else if(secsTo > WEATHER_MAX_AGE_HOURS_WARN * 3600)
-        weatherHtml.text(tr(" ")).warning(tr("(%1 hours old)").arg(secsTo / 3600));
+      if(!metar.isFsxP3dFormat())
+      {
+        qint64 secsTo = metar.getTimestamp().secsTo(QDateTime::currentDateTimeUtc());
+        if(secsTo > WEATHER_MAX_AGE_HOURS_ERR_OUTDATED * 3600)
+          weatherHtml.text(tr(" ")).error(tr("(outdated)"));
+        else if(secsTo > WEATHER_MAX_AGE_HOURS_ERR * 3600)
+          weatherHtml.text(tr(" ")).error(tr("(%1 hours old)").arg(secsTo / 3600));
+        else if(secsTo > WEATHER_MAX_AGE_HOURS_WARN * 3600)
+          weatherHtml.text(tr(" ")).warning(tr("(%1 hours old)").arg(secsTo / 3600));
+      }
 
       weatherHtml.nbsp().nbsp();
       if(mapDisplay)
