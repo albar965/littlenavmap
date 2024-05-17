@@ -172,7 +172,7 @@ bool CoordinateConverter::wToS(const atools::geo::Pos& coords, double& x, double
   }
 
   bool hidden;
-  bool visible = wToS(Marble::GeoDataCoordinates(coords.getLonX(), coords.getLatY(), 0, DEG), x, y, size, &hidden);
+  bool visible = wToS(Marble::GeoDataCoordinates(coords.getLonX(), coords.getLatY(), 0., DEG), x, y, size, &hidden);
   if(isHidden != nullptr)
     *isHidden = hidden;
   return visible && !hidden;
@@ -189,7 +189,7 @@ bool CoordinateConverter::wToS(const atools::geo::PosD& coords, double& x, doubl
   }
 
   bool hidden;
-  bool visible = wToS(Marble::GeoDataCoordinates(coords.getLonX(), coords.getLatY(), 0, DEG), x, y, size, &hidden);
+  bool visible = wToS(Marble::GeoDataCoordinates(coords.getLonX(), coords.getLatY(), 0., DEG), x, y, size, &hidden);
   if(isHidden != nullptr)
     *isHidden = hidden;
   return visible && !hidden;
@@ -380,17 +380,34 @@ bool CoordinateConverter::wToSInternal(const Marble::GeoDataCoordinates& coords,
     visible = viewport->screenCoordinates(coords, x, y, hidden);
   else
   {
-    int foundIndex = -1;
+    int foundIndexMaybeOffScreen = -1, foundIndexOnScreen = -1;
     // Do not paint repetitions for the Mercator projection
-    // Determine the smallest one
+    // Determine the smallest one which is visible
     for(int i = 0; i < numPoints; i++)
     {
-      if(foundIndex == -1 || std::abs(xordinates.at(i)) < std::abs(xordinates.at(foundIndex)))
-        foundIndex = i;
+      qreal xordinate = xordinates.at(i);
+
+      if(foundIndexMaybeOffScreen == -1 || std::abs(xordinate) < std::abs(xordinate))
+        foundIndexMaybeOffScreen = i;
+
+      if((foundIndexOnScreen == -1 || std::abs(xordinate) < std::abs(xordinate)) && xordinate >= 0 && xordinate <= viewport->width())
+        foundIndexOnScreen = i;
     }
 
-    if(foundIndex != -1)
-      x = xordinates.at(foundIndex);
+    if(foundIndexOnScreen != -1)
+      // Found on screen
+      x = xordinates.at(foundIndexOnScreen);
+    else if(foundIndexMaybeOffScreen != -1)
+    {
+      x = xordinates.at(foundIndexMaybeOffScreen);
+      visible = false;
+    }
+    else
+    {
+      // nothing found - hidden
+      visible = false;
+      hidden = true;
+    }
   }
 
 #ifdef DEBUG_INFORMATION_COORDS
