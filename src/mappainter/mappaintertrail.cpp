@@ -69,8 +69,7 @@ void MapPainterTrail::render()
         maxAltitude = std::max(context->route->getCruiseAltitudeFt(), maxAltitude);
 
       atools::util::PainterContextSaver saver(context->painter);
-      const QVector<atools::geo::LineString> lineStrings = aircraftTrail.getLineStrings(aircraftPos);
-      paintAircraftTrail(lineStrings, aircraftTrail.getMinAltitude(), maxAltitude);
+      paintAircraftTrail(aircraftTrail.getLineStrings(), aircraftTrail.getMinAltitude(), maxAltitude, aircraftPos);
     }
   }
 }

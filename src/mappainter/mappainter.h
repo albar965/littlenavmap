@@ -403,7 +403,8 @@ protected:
                                   QLineF *extensionLine, const QString& text, const QColor& textColor,
                                   const QColor& textColorBackground);
 
-  void paintAircraftTrail(const QVector<atools::geo::LineString>& lineStrings, float minAlt, float maxAlt);
+  void paintAircraftTrail(const QVector<atools::geo::LineString>& lineStrings, float minAlt, float maxAlt,
+                          const atools::geo::Pos& aircraftPos);
 
   /* Arrow pointing upwards or downwards */
   QPolygonF buildArrow(float size, bool downwards = false);

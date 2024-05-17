@@ -2234,19 +2234,18 @@ void Route::updateBoundingRect()
   const static std::initializer_list<map::MapTypes> TYPES =
   {map::AIRPORT, map::VOR, map::NDB, map::WAYPOINT, map::PROCEDURE_POINT, map::USERPOINTROUTE};
 
-  boundingRect = atools::geo::Rect();
-
+  atools::geo::LineString positions;
   for(const RouteLeg& leg : qAsConst(*this))
   {
-    boundingRect.extend(leg.getPosition());
+    positions.append(leg.getPosition());
 
     if(leg.isAnyProcedure())
     {
-      const proc::MapProcedureLeg& procedureLeg = leg.getProcedureLeg();
-      boundingRect.extend(procedureLeg.navaids.getPosition(TYPES));
-      boundingRect.extend(procedureLeg.recNavaids.getPosition(TYPES));
+      positions.append(leg.getProcedureLeg().navaids.getPosition(TYPES));
+      positions.append(leg.getProcedureLeg().recNavaids.getPosition(TYPES));
     }
   }
+  boundingRect = atools::geo::bounding(positions);
 }
 
 void Route::nearestAllLegIndex(const map::PosCourse& pos, float& crossTrackDistanceMeter,

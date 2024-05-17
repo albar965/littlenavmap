@@ -792,16 +792,24 @@ void MapPainter::paintProcedureTurnWithText(QPainter *painter, float x, float y,
   painter->restore();
 }
 
-void MapPainter::paintAircraftTrail(const QVector<LineString>& lineStrings, float minAlt, float maxAlt)
+void MapPainter::paintAircraftTrail(const QVector<LineString>& lineStrings, float minAlt, float maxAlt, const atools::geo::Pos& aircraftPos)
 {
   if(!lineStrings.isEmpty())
   {
+    // Add aircraft position to avoid gap to current position
+    Line lastToAircraft;
+    if(aircraftPos.isValid() && !lineStrings.constLast().isEmpty())
+      lastToAircraft = Line(lineStrings.constLast().constLast(), aircraftPos);
+
     if(OptionData::instance().getFlags().testFlag(opts::MAP_TRAIL_GRADIENT))
     {
       // Draw black or white background as one single line ==========================
       context->painter->setPen(mapcolors::aircraftTrailPenOuter(context->szF(context->thicknessTrail, 2.f)));
       for(const LineString& lineString : lineStrings)
         drawPolyline(context->painter, lineString);
+
+      if(lastToAircraft.isValid())
+        drawLine(context->painter, lastToAircraft);
 
       // Split linestring and draw single line segments using different colors for gradient ==========================
       for(const LineString& lineString : lineStrings)
@@ -818,6 +826,9 @@ void MapPainter::paintAircraftTrail(const QVector<LineString>& lineStrings, floa
           // Draw line and force drawing also for very short segments
           drawLine(context->painter, line, true /* forceDraw */);
         }
+
+        if(lastToAircraft.isValid())
+          drawLine(context->painter, lastToAircraft);
       }
     }
     else
@@ -826,6 +837,9 @@ void MapPainter::paintAircraftTrail(const QVector<LineString>& lineStrings, floa
       context->painter->setPen(mapcolors::aircraftTrailPen(context->szF(context->thicknessTrail, 2.f)));
       for(const LineString& lineString : lineStrings)
         drawPolyline(context->painter, lineString);
+
+      if(lastToAircraft.isValid())
+        drawLine(context->painter, lastToAircraft);
     }
   }
 }

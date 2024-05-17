@@ -175,12 +175,14 @@ public:
 
   const atools::geo::Rect& getBounding() const
   {
-    return bounding;
+    return boundingRect;
   }
 
-  /* Copies the coordinates from the structs to a list of linestrings.
-   * More than one linestring might be returned if the trail is interrupted. */
-  const QVector<atools::geo::LineString> getLineStrings(const atools::geo::Pos& aircraftPos) const;
+  /* More than one linestring might be returned if the trail is interrupted. */
+  const QVector<atools::geo::LineString>& getLineStrings() const
+  {
+    return lineStrings;
+  }
 
   /* Track will be pruned if it contains more track entries than this value. Default is 20000. */
   void setMaxTrackEntries(int value)
@@ -193,14 +195,12 @@ public:
 
   bool readFromStream(QDataStream & in);
 
-  /* Pull only needed methods of the base class into public space */
+  /* Pull only needed read-only methods of the base class into public space */
   using QList<AircraftTrailPos>::isEmpty;
   using QList<AircraftTrailPos>::at;
   using QList<AircraftTrailPos>::size;
   using QList<AircraftTrailPos>::constBegin;
   using QList<AircraftTrailPos>::constEnd;
-  using QList<AircraftTrailPos>::begin;
-  using QList<AircraftTrailPos>::end;
   using QList<AircraftTrailPos>::constFirst;
   using QList<AircraftTrailPos>::constLast;
 
@@ -208,8 +208,12 @@ private:
   friend QDataStream& operator>>(QDataStream& dataStream, AircraftTrailPos& trackPos);
 
   void clearBoundaries();
-  void calculateBoundaries();
-  void calculateBoundary(const AircraftTrailPos& trackPos);
+  void updateBoundary();
+  void updateBoundary(const AircraftTrailPos& trackPos);
+
+  // Copies the coordinates from the structs to a list of lineStrings.
+  void updateLineStrings();
+  void updateLineStrings(const AircraftTrailPos& trackPos);
 
   /* Accurate positions for drawing */
   const QVector<QVector<atools::geo::PosD> > getPositionsD() const;
@@ -221,7 +225,7 @@ private:
   int maxTrackEntries = 20000;
 
   float maxAltitude, minAltitude;
-  atools::geo::Rect bounding;
+  atools::geo::Rect boundingRect;
 
   /* Trail density settings which depends on ground speed */
   float maxHeadingDiffDeg, maxSpeedDiffKts, maxAltDiffFtUpper, maxAltDiffFtLower, aglThresholdFt;
@@ -231,6 +235,9 @@ private:
 
   // Remember last values to detect changes in altitude or direction when recording points
   float lastGroundSpeedKts = 0.f, lastActualAltitudeFt = 0.f, lastHeadingDegTrue = 0.f;
+
+  // Cached for display
+  QVector<atools::geo::LineString> lineStrings;
 
   /* Needed in RouteExportFormat stream operators to read different formats */
   static quint16 version;

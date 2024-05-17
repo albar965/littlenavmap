@@ -1039,7 +1039,7 @@ void SearchBaseTable::showRow(int row, bool showInfo)
       atools::geo::Pos dest(controller->getRawData(row, "destination_lonx"), controller->getRawData(row, "destination_laty"));
 
       if(depart.isValid() && dest.isValid())
-        emit showRect(atools::geo::boundingRect({depart, dest}), true);
+        emit showRect(atools::geo::bounding(depart, dest), true);
       else if(depart.isValid())
         emit showPos(depart, 0.f, true);
       else if(dest.isValid())

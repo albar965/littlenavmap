@@ -536,7 +536,7 @@ void MapPainterMark::paintLogEntries(const QList<map::MapLogbookEntry>& entries)
       trackPen.setColor(mapcolors::routeLogEntryColor.darker(200));
       painter->setPen(trackPen);
 
-      paintAircraftTrail(visibleTrailGeometries, minAltitude, maxAltitude);
+      paintAircraftTrail(visibleTrailGeometries, minAltitude, maxAltitude, atools::geo::EMPTY_POS);
     }
   }
 
@@ -1468,10 +1468,8 @@ void MapPainterMark::paintPatternMarks()
       ageo::Pos crosswindToDownwind = departureToCrosswind.endpoint(parallelDist, pattern.courseTrue + (pattern.turnRight ? 90.f : -90.f));
 
       // Calculate bounding rectangle and check if it is at least partially visible
-      ageo::Rect rect(baseToFinal);
-      rect.extend(downwindToBase);
-      rect.extend(departureToCrosswind);
-      rect.extend(crosswindToDownwind);
+      ageo::Rect rect =
+        atools::geo::bounding(atools::geo::LineString({baseToFinal, downwindToBase, departureToCrosswind, crosswindToDownwind}));
 
       // Expand rect by approximately 2 NM
       rect.inflateMeter(ageo::nmToMeter(2.f), ageo::nmToMeter(2.f));
