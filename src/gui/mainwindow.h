@@ -493,6 +493,7 @@ private:
   void actionShortcutProfileTriggered();
   void actionShortcutAirportSearchTriggered();
   void actionShortcutNavaidSearchTriggered();
+  void actionShortcutProcedureSearchTriggered();
   void actionShortcutUserpointSearchTriggered();
   void actionShortcutLogbookSearchTriggered();
   void actionShortcutFlightPlanTriggered();

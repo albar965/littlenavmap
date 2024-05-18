@@ -1683,6 +1683,7 @@ void MainWindow::connectAllSlots()
   connect(ui->actionShortcutProfile, &QAction::triggered, this, &MainWindow::actionShortcutProfileTriggered);
   connect(ui->actionShortcutAirportSearch, &QAction::triggered, this, &MainWindow::actionShortcutAirportSearchTriggered);
   connect(ui->actionShortcutNavaidSearch, &QAction::triggered, this, &MainWindow::actionShortcutNavaidSearchTriggered);
+  connect(ui->actionShortcutProcedureSearch, &QAction::triggered, this, &MainWindow::actionShortcutProcedureSearchTriggered);
   connect(ui->actionShortcutUserpointSearch, &QAction::triggered, this, &MainWindow::actionShortcutUserpointSearchTriggered);
   connect(ui->actionShortcutLogbookSearch, &QAction::triggered, this, &MainWindow::actionShortcutLogbookSearchTriggered);
   connect(ui->actionShortcutFlightPlan, &QAction::triggered, this, &MainWindow::actionShortcutFlightPlanTriggered);
@@ -1737,13 +1738,21 @@ void MainWindow::actionShortcutNavaidSearchTriggered()
   ui->lineEditNavIcaoSearch->selectAll();
 }
 
+void MainWindow::actionShortcutProcedureSearchTriggered()
+{
+  qDebug() << Q_FUNC_INFO;
+  dockHandler->activateWindow(ui->dockWidgetSearch);
+  searchController->setCurrentSearchTabId(si::SEARCH_PROC);
+  ui->lineEditNavIcaoSearch->setFocus();
+  ui->lineEditNavIcaoSearch->selectAll();
+}
+
 void MainWindow::actionShortcutUserpointSearchTriggered()
 {
   qDebug() << Q_FUNC_INFO;
   dockHandler->activateWindow(ui->dockWidgetSearch);
   searchController->setCurrentSearchTabId(si::SEARCH_USER);
-  ui->lineEditUserdataIdent->setFocus();
-  ui->lineEditUserdataIdent->selectAll();
+  ui->treeWidgetApproachSearch->setFocus();
 }
 
 void MainWindow::actionShortcutLogbookSearchTriggered()
