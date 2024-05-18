@@ -8,8 +8,6 @@ This text is partially Markdown, so the formatting is sometimes strange.
 
 ## Notes
 
-TODO
-
 **This is a stable release of Little Navmap which fixes several bugs and adds a few
 improvements and new features.**
 
@@ -35,6 +33,9 @@ See the GitHub changes:
 https://github.com/albar965/littlenavmap/commits/release/3.0/?since=2024-03-26
 
 https://github.com/albar965/atools/commits/release/4.0/?since=2024-03-27
+
+Note that the GitHub changelogs for are more technical things and may be confusing for the general audience.
+Ask me if you'd like to know more about a note.
 
 ==<<=============================================================================
 

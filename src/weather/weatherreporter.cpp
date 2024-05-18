@@ -162,20 +162,29 @@ void WeatherReporter::weatherDownloadProgress(qint64 bytesReceived, qint64 bytes
 
 void WeatherReporter::noaaWeatherUpdated()
 {
-  mainWindow->setStatusMessage(tr("NOAA weather downloaded."), true /* addToLog */);
-  emit weatherUpdated();
+  if(!NavApp::isShuttingDown())
+  {
+    mainWindow->setStatusMessage(tr("NOAA weather downloaded."), true /* addToLog */);
+    emit weatherUpdated();
+  }
 }
 
 void WeatherReporter::ivaoWeatherUpdated()
 {
-  mainWindow->setStatusMessage(tr("IVAO weather downloaded."), true /* addToLog */);
-  emit weatherUpdated();
+  if(!NavApp::isShuttingDown())
+  {
+    mainWindow->setStatusMessage(tr("IVAO weather downloaded."), true /* addToLog */);
+    emit weatherUpdated();
+  }
 }
 
 void WeatherReporter::vatsimWeatherUpdated()
 {
-  mainWindow->setStatusMessage(tr("VATSIM weather downloaded."), true /* addToLog */);
-  emit weatherUpdated();
+  if(!NavApp::isShuttingDown())
+  {
+    mainWindow->setStatusMessage(tr("VATSIM weather downloaded."), true /* addToLog */);
+    emit weatherUpdated();
+  }
 }
 
 atools::geo::Pos WeatherReporter::fetchAirportCoordinates(const QString& metarAirportIdent)
@@ -722,10 +731,13 @@ const QString& WeatherReporter::getActiveSkyDestinationIdent()
 
 void WeatherReporter::updateAirportWeather()
 {
-  updateTimeouts();
+  if(!NavApp::isShuttingDown())
+  {
+    updateTimeouts();
 
-  // Update weather display in procedure search
-  emit weatherUpdated();
+    // Update weather display in procedure search
+    emit weatherUpdated();
+  }
 }
 
 void WeatherReporter::weatherDownloadSslErrors(const QStringList& errors, const QString& downloadUrl)
@@ -987,23 +999,29 @@ void WeatherReporter::activeSkyWeatherFilesChanged(const QStringList& paths)
   if(verbose)
     qDebug() << Q_FUNC_INFO << "file" << paths << "changed";
 
-  if(asSnapshotPathChecker->isValid())
-    loadActiveSkySnapshot(asSnapshotPath);
-
-  if(asFlightplanPathChecker->isValid())
-    loadActiveSkyFlightplanSnapshot(asFlightplanPath);
-
-  if(asSnapshotPathChecker->isValid())
+  if(!NavApp::isShuttingDown())
   {
-    mainWindow->setStatusMessage(tr("Active Sky weather information updated."), true /* addToLog */);
-    emit weatherUpdated();
+    if(asSnapshotPathChecker->isValid())
+      loadActiveSkySnapshot(asSnapshotPath);
+
+    if(asFlightplanPathChecker->isValid())
+      loadActiveSkyFlightplanSnapshot(asFlightplanPath);
+
+    if(asSnapshotPathChecker->isValid())
+    {
+      mainWindow->setStatusMessage(tr("Active Sky weather information updated."), true /* addToLog */);
+      emit weatherUpdated();
+    }
   }
 }
 
 void WeatherReporter::xplaneWeatherFileChanged()
 {
-  mainWindow->setStatusMessage(tr("X-Plane weather information updated."), true /* addToLog */);
-  emit weatherUpdated();
+  if(!NavApp::isShuttingDown())
+  {
+    mainWindow->setStatusMessage(tr("X-Plane weather information updated."), true /* addToLog */);
+    emit weatherUpdated();
+  }
 }
 
 void WeatherReporter::debugDumpContainerSizes() const

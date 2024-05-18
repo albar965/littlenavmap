@@ -284,8 +284,11 @@ void WindReporter::updateDataSource()
     updateToolButtonState();
     updateSliderLabel();
 
-    emit windUpdated();
-    emit windDisplayUpdated();
+    if(!NavApp::isShuttingDown())
+    {
+      emit windUpdated();
+      emit windDisplayUpdated();
+    }
   }
   else // disabled
   {
@@ -293,14 +296,18 @@ void WindReporter::updateDataSource()
     updateToolButtonState();
     updateSliderLabel();
 
-    emit windUpdated();
-    emit windDisplayUpdated();
+    if(!NavApp::isShuttingDown())
+    {
+      emit windUpdated();
+      emit windDisplayUpdated();
+    }
   }
 }
 
 void WindReporter::windDownloadFinished()
 {
   qDebug() << Q_FUNC_INFO;
+
   updateToolButtonState();
   updateSliderLabel();
 
@@ -330,8 +337,12 @@ void WindReporter::windDownloadFinished()
     }
     NavApp::setStatusMessage(msg, true /* addToLog */);
   }
-  emit windUpdated();
-  emit windDisplayUpdated();
+
+  if(!NavApp::isShuttingDown())
+  {
+    emit windUpdated();
+    emit windDisplayUpdated();
+  }
 }
 
 void WindReporter::windDownloadProgress(qint64 bytesReceived, qint64 bytesTotal, QString downloadUrl)
@@ -474,7 +485,9 @@ void WindReporter::addToolbarButton()
 void WindReporter::altSliderChanged()
 {
   updateSliderLabel();
-  emit windDisplayUpdated();
+
+  if(!NavApp::isShuttingDown())
+    emit windDisplayUpdated();
 }
 
 void WindReporter::updateSliderLabel()
@@ -519,8 +532,11 @@ void WindReporter::sourceActionTriggered()
     updateToolButtonState();
     updateSliderLabel();
 
-    emit windUpdated();
-    emit windDisplayUpdated();
+    if(!NavApp::isShuttingDown())
+    {
+      emit windUpdated();
+      emit windDisplayUpdated();
+    }
   }
 }
 
@@ -532,7 +548,8 @@ void WindReporter::toolbarActionFlightplanTriggered()
     updateToolButtonState();
     updateSliderLabel();
 
-    emit windDisplayUpdated();
+    if(!NavApp::isShuttingDown())
+      emit windDisplayUpdated();
   }
 }
 
@@ -544,7 +561,8 @@ void WindReporter::toolbarActionTriggered()
     updateToolButtonState();
     updateSliderLabel();
 
-    emit windDisplayUpdated();
+    if(!NavApp::isShuttingDown())
+      emit windDisplayUpdated();
   }
 }
 
@@ -671,8 +689,11 @@ void WindReporter::resetSettingsToDefault()
   updateToolButtonState();
   updateSliderLabel();
 
-  emit windUpdated();
-  emit windDisplayUpdated();
+  if(!NavApp::isShuttingDown())
+  {
+    emit windUpdated();
+    emit windDisplayUpdated();
+  }
 }
 
 void WindReporter::debugDumpContainerSizes() const
