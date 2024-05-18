@@ -68,8 +68,10 @@ void MapPainterTrail::render()
       if(context->route->getSizeWithoutAlternates() > 2)
         maxAltitude = std::max(context->route->getCruiseAltitudeFt(), maxAltitude);
 
+      context->startTimer("Aircraft Trail");
       atools::util::PainterContextSaver saver(context->painter);
       paintAircraftTrail(aircraftTrail.getLineStrings(), aircraftTrail.getMinAltitude(), maxAltitude, aircraftPos);
+      context->endTimer("Aircraft Trail");
     }
   }
 }

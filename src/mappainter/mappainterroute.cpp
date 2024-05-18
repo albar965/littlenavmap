@@ -63,21 +63,16 @@ void MapPainterRoute::render()
   // Clear before collecting duplicates
   routeProcIdMap.clear();
 
-  context->startTimer("Route");
   // Draw route including procedures =====================================
   if(context->objectDisplayTypes.testFlag(map::FLIGHTPLAN))
-  {
     // Plan, procedures and departure position
     paintRoute();
-
-    // Draw TOD and TOC markers ======================
-    if(context->objectDisplayTypes.testFlag(map::FLIGHTPLAN_TOC_TOD) && context->mapLayerRoute->isRouteTextAndDetail())
-      paintTopOfDescentAndClimb();
-  }
 
   // Draw the approach preview if any selected in the procedure search tab ========================
   if(context->mapLayerRoute->isApproach())
   {
+    context->startTimer("Approach Preview");
+
     // Draw multi preview ===========================================================
     QSet<map::MapRef> procIdMapDummy; // No need for de-duplication pass dummy map in
     for(const proc::MapProcedureLegs& procedure : mapPaintWidget->getProcedureHighlights())
@@ -89,8 +84,9 @@ void MapPainterRoute::render()
     if(!procedureHighlight.isEmpty())
       paintProcedure(procIdMapDummy, procedureHighlight, 0, procedureHighlight.previewColor,
                      true /* preview */, false /* previewAll */);
+
+    context->endTimer("Approach Preview");
   }
-  context->endTimer("Route");
 }
 
 QString MapPainterRoute::buildLegText(const RouteLeg& leg)
@@ -145,6 +141,8 @@ void MapPainterRoute::paintRoute()
     qWarning() << Q_FUNC_INFO;
     return;
   }
+
+  context->startTimer("Route");
 
   int passedRouteLeg = context->flags2.testFlag(opts2::MAP_ROUTE_DIM_PASSED) ? activeRouteLeg : 0;
 
@@ -206,6 +204,8 @@ void MapPainterRoute::paintRoute()
     // Remember last point across procedures to avoid overlaying text
     if(!mapPaintWidget->isDistanceCutOff())
     {
+      context->startTimer("Route Procedures");
+
       // Draw in reverse flying order to have close legs on top
       const QColor& flightplanProcedureColor = OptionData::instance().getFlightplanProcedureColor();
 
@@ -224,6 +224,7 @@ void MapPainterRoute::paintRoute()
         paintProcedure(routeProcIdMap, route->getSidLegs(), route->getSidLegsOffset(), flightplanProcedureColor,
                        false /* preview */, false /* previewAll */);
 
+      context->endTimer("Route Procedures");
     }
   }
 
@@ -257,7 +258,11 @@ void MapPainterRoute::paintRoute()
   }
   context->painter->restore();
 #endif
+  context->endTimer("Route");
 
+  // Draw TOD and TOC markers ======================
+  if(context->objectDisplayTypes.testFlag(map::FLIGHTPLAN_TOC_TOD) && context->mapLayerRoute->isRouteTextAndDetail())
+    paintTopOfDescentAndClimb();
 }
 
 void MapPainterRoute::paintRecommended(int passedRouteLeg, QSet<map::MapRef>& idMap)
@@ -675,6 +680,7 @@ void MapPainterRoute::paintTopOfDescentAndClimb()
   if(route->getSizeWithoutAlternates() >= 2)
   {
     atools::util::PainterContextSaver saver(context->painter);
+    context->startTimer("Route TOC TOD");
 
     float width = context->szF(context->symbolSizeNavaid, 3.f);
     float radius = context->szF(context->symbolSizeNavaid, 6.f);
@@ -730,6 +736,7 @@ void MapPainterRoute::paintTopOfDescentAndClimb()
         }
       }
     }
+    context->endTimer("Route TOC TOD");
   }
 }
 
