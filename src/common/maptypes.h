@@ -1846,21 +1846,21 @@ Q_DECLARE_TYPEINFO(map::PosCourse, Q_PRIMITIVE_TYPE);
 
 /* Type info and serializable objects */
 Q_DECLARE_TYPEINFO(map::MapRef, Q_PRIMITIVE_TYPE);
-Q_DECLARE_METATYPE(map::MapRef);
+Q_DECLARE_METATYPE(map::MapRef)
 
 Q_DECLARE_TYPEINFO(map::RangeMarker, Q_MOVABLE_TYPE);
-Q_DECLARE_METATYPE(map::RangeMarker);
+Q_DECLARE_METATYPE(map::RangeMarker)
 
 Q_DECLARE_TYPEINFO(map::DistanceMarker, Q_MOVABLE_TYPE);
-Q_DECLARE_METATYPE(map::DistanceMarker);
+Q_DECLARE_METATYPE(map::DistanceMarker)
 
 Q_DECLARE_TYPEINFO(map::PatternMarker, Q_MOVABLE_TYPE);
-Q_DECLARE_METATYPE(map::PatternMarker);
+Q_DECLARE_METATYPE(map::PatternMarker)
 
 Q_DECLARE_TYPEINFO(map::HoldingMarker, Q_MOVABLE_TYPE);
-Q_DECLARE_METATYPE(map::HoldingMarker);
+Q_DECLARE_METATYPE(map::HoldingMarker)
 
 Q_DECLARE_TYPEINFO(map::MsaMarker, Q_MOVABLE_TYPE);
-Q_DECLARE_METATYPE(map::MsaMarker);
+Q_DECLARE_METATYPE(map::MsaMarker)
 
 #endif // LITTLENAVMAP_MAPTYPES_H

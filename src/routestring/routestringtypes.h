@@ -84,8 +84,8 @@ enum RouteStringOption
   SIMBRIEF_READ_DEFAULTS = rs::READ_ALTERNATES | rs::REPORT
 };
 
-Q_DECLARE_FLAGS(RouteStringOptions, RouteStringOption);
-Q_DECLARE_OPERATORS_FOR_FLAGS(rs::RouteStringOptions);
+Q_DECLARE_FLAGS(RouteStringOptions, RouteStringOption)
+Q_DECLARE_OPERATORS_FOR_FLAGS(rs::RouteStringOptions)
 
 /* Remove all invalid characters and simplify string. Extracts all characters until the next empty line. */
 QStringList cleanRouteStringList(const QString& string);

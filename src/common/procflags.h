@@ -67,8 +67,8 @@ enum MapProcedureType
   PROCEDURE_ALL_BUT_MISSED = PROCEDURE_ALL & ~PROCEDURE_MISSED,
 };
 
-Q_DECLARE_FLAGS(MapProcedureTypes, MapProcedureType);
-Q_DECLARE_OPERATORS_FOR_FLAGS(proc::MapProcedureTypes);
+Q_DECLARE_FLAGS(MapProcedureTypes, MapProcedureType)
+Q_DECLARE_OPERATORS_FOR_FLAGS(proc::MapProcedureTypes)
 
 QDebug operator<<(QDebug out, const proc::MapProcedureTypes& type);
 

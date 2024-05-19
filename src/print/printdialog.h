@@ -62,8 +62,8 @@ enum PrintFlightPlanOpt
                     DESTINATION_COM | DESTINATION_APPR | DESTINATION_WEATHER
 };
 
-Q_DECLARE_FLAGS(PrintFlightPlanOpts, PrintFlightPlanOpt);
-Q_DECLARE_OPERATORS_FOR_FLAGS(prt::PrintFlightPlanOpts);
+Q_DECLARE_FLAGS(PrintFlightPlanOpts, PrintFlightPlanOpt)
+Q_DECLARE_OPERATORS_FOR_FLAGS(prt::PrintFlightPlanOpts)
 }
 
 /*

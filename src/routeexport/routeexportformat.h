@@ -252,7 +252,7 @@ private:
   QString defaultPath;
 };
 
-Q_DECLARE_METATYPE(RouteExportFormat);
+Q_DECLARE_METATYPE(RouteExportFormat)
 
 QDataStream& operator>>(QDataStream& dataStream, RouteExportFormat& obj);
 QDataStream& operator<<(QDataStream& dataStream, const RouteExportFormat& obj);
@@ -341,7 +341,7 @@ private:
   static quint16 version;
 };
 
-Q_DECLARE_METATYPE(RouteExportFormatMap);
+Q_DECLARE_METATYPE(RouteExportFormatMap)
 
 QDataStream& operator>>(QDataStream& dataStream, RouteExportFormatMap& obj);
 QDataStream& operator<<(QDataStream& dataStream, const RouteExportFormatMap& obj);

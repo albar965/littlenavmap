@@ -174,8 +174,8 @@ enum MapType : unsigned long long
 };
 /* *INDENT-ON* */
 
-ATOOLS_DECLARE_FLAGS(MapTypes, MapType);
-ATOOLS_DECLARE_OPERATORS_FOR_FLAGS(map::MapTypes);
+ATOOLS_DECLARE_FLAGS(MapTypes, MapType)
+ATOOLS_DECLARE_OPERATORS_FOR_FLAGS(map::MapTypes)
 
 QDebug operator<<(QDebug out, const map::MapTypes& type);
 
@@ -211,8 +211,8 @@ enum MapDisplayType
   LOGBOOK_ALL = LOGBOOK_DIRECT | LOGBOOK_ROUTE | LOGBOOK_TRACK
 };
 
-Q_DECLARE_FLAGS(MapDisplayTypes, MapDisplayType);
-Q_DECLARE_OPERATORS_FOR_FLAGS(map::MapDisplayTypes);
+Q_DECLARE_FLAGS(MapDisplayTypes, MapDisplayType)
+Q_DECLARE_OPERATORS_FOR_FLAGS(map::MapDisplayTypes)
 
 QDebug operator<<(QDebug out, const map::MapDisplayTypes& type);
 
@@ -239,8 +239,8 @@ enum MapObjectQueryType
   QUERY_MARK = QUERY_MARK_DISTANCE | QUERY_MARK_HOLDINGS | QUERY_MARK_PATTERNS | QUERY_MARK_RANGE | QUERY_MARK_MSA,
 };
 
-Q_DECLARE_FLAGS(MapObjectQueryTypes, MapObjectQueryType);
-Q_DECLARE_OPERATORS_FOR_FLAGS(map::MapObjectQueryTypes);
+Q_DECLARE_FLAGS(MapObjectQueryTypes, MapObjectQueryType)
+Q_DECLARE_OPERATORS_FOR_FLAGS(map::MapObjectQueryTypes)
 
 /* ================================================================================== */
 /* Ident queries for airport defines which ident columns should be used in the lookup */
@@ -251,8 +251,8 @@ enum DistanceMarkerFlag
   DIST_MARK_MAGVAR = 1 << 1 /* Has calibrated declination */
 };
 
-Q_DECLARE_FLAGS(DistanceMarkerFlags, DistanceMarkerFlag);
-Q_DECLARE_OPERATORS_FOR_FLAGS(map::DistanceMarkerFlags);
+Q_DECLARE_FLAGS(DistanceMarkerFlags, DistanceMarkerFlag)
+Q_DECLARE_OPERATORS_FOR_FLAGS(map::DistanceMarkerFlags)
 
 /* ================================================================================== */
 /* Ident queries for airport defines which ident columns should be used in the lookup */
@@ -271,8 +271,8 @@ enum AirportQueryFlag
   AP_QUERY_OFFICIAL = AP_QUERY_ICAO | AP_QUERY_IATA | AP_QUERY_FAA | AP_QUERY_LOCAL
 };
 
-Q_DECLARE_FLAGS(AirportQueryFlags, AirportQueryFlag);
-Q_DECLARE_OPERATORS_FOR_FLAGS(map::AirportQueryFlags);
+Q_DECLARE_FLAGS(AirportQueryFlags, AirportQueryFlag)
+Q_DECLARE_OPERATORS_FOR_FLAGS(map::AirportQueryFlags)
 
 /* ================================================================================== */
 /* Covers all airspace types */
@@ -331,8 +331,8 @@ enum MapAirspaceType : quint32
   AIRSPACE_DEFAULT = AIRSPACE_CLASS_ICAO | AIRSPACE_RESTRICTED
 };
 
-Q_DECLARE_FLAGS(MapAirspaceTypes, MapAirspaceType);
-Q_DECLARE_OPERATORS_FOR_FLAGS(map::MapAirspaceTypes);
+Q_DECLARE_FLAGS(MapAirspaceTypes, MapAirspaceType)
+Q_DECLARE_OPERATORS_FOR_FLAGS(map::MapAirspaceTypes)
 
 Q_DECL_CONSTEXPR int MAP_AIRSPACE_TYPE_BITS = 29;
 
@@ -350,8 +350,8 @@ enum MapAirspaceSource
   AIRSPACE_SRC_NOT_ONLINE = AIRSPACE_SRC_SIM | AIRSPACE_SRC_NAV | AIRSPACE_SRC_USER
 };
 
-Q_DECLARE_FLAGS(MapAirspaceSources, MapAirspaceSource);
-Q_DECLARE_OPERATORS_FOR_FLAGS(map::MapAirspaceSources);
+Q_DECLARE_FLAGS(MapAirspaceSources, MapAirspaceSource)
+Q_DECLARE_OPERATORS_FOR_FLAGS(map::MapAirspaceSources)
 
 extern const QVector<map::MapAirspaceSources> MAP_AIRSPACE_SRC_VALUES;
 extern const QVector<map::MapAirspaceSources> MAP_AIRSPACE_SRC_NO_ONLINE_VALUES;
@@ -375,8 +375,8 @@ enum MapAirspaceFlag
   AIRSPACE_FLAG_DEFAULT = AIRSPACE_ALTITUDE_ALL
 };
 
-Q_DECLARE_FLAGS(MapAirspaceFlags, MapAirspaceFlag);
-Q_DECLARE_OPERATORS_FOR_FLAGS(map::MapAirspaceFlags);
+Q_DECLARE_FLAGS(MapAirspaceFlags, MapAirspaceFlag)
+Q_DECLARE_OPERATORS_FOR_FLAGS(map::MapAirspaceFlags)
 
 /* Combines all airspace types and flags for display into a serializable object
  * Serialized in MapWidget::saveState() and aggregated by MapPaintLayer::airspaceTypes */
@@ -461,8 +461,8 @@ enum MapAirportFlag
   AP_ALL = 0xffffffff
 };
 
-Q_DECLARE_FLAGS(MapAirportFlags, MapAirportFlag);
-Q_DECLARE_OPERATORS_FOR_FLAGS(map::MapAirportFlags);
+Q_DECLARE_FLAGS(MapAirportFlags, MapAirportFlag)
+Q_DECLARE_OPERATORS_FOR_FLAGS(map::MapAirportFlags)
 
 /* X-Plane airport type. Matches values in apt.dat */
 enum MapAirportType
@@ -524,8 +524,8 @@ enum TextFlag
   ELLIPSE_IDENT = 0x0400 /* Add allipse to first text (ident) and ignore additional texts if additonal are not empty */
 };
 
-Q_DECLARE_FLAGS(TextFlags, TextFlag);
-Q_DECLARE_OPERATORS_FOR_FLAGS(textflags::TextFlags);
+Q_DECLARE_FLAGS(TextFlags, TextFlag)
+Q_DECLARE_OPERATORS_FOR_FLAGS(textflags::TextFlags)
 }
 
 namespace textatt {
@@ -578,17 +578,17 @@ enum TextAttribute
   PLACE_ALL = LEFT | RIGHT | CENTER | BELOW | ABOVE,
 };
 
-Q_DECLARE_FLAGS(TextAttributes, TextAttribute);
-Q_DECLARE_OPERATORS_FOR_FLAGS(TextAttributes);
+Q_DECLARE_FLAGS(TextAttributes, TextAttribute)
+Q_DECLARE_OPERATORS_FOR_FLAGS(TextAttributes)
 }
 
 Q_DECLARE_TYPEINFO(map::MapAirspaceFilter, Q_PRIMITIVE_TYPE);
-Q_DECLARE_METATYPE(map::MapAirspaceFilter);
+Q_DECLARE_METATYPE(map::MapAirspaceFilter)
 
 Q_DECLARE_TYPEINFO(map::MapAirspaceId, Q_PRIMITIVE_TYPE);
-Q_DECLARE_METATYPE(map::MapAirspaceId);
+Q_DECLARE_METATYPE(map::MapAirspaceId)
 
 Q_DECLARE_TYPEINFO(map::MapTypes, Q_PRIMITIVE_TYPE);
-Q_DECLARE_METATYPE(map::MapTypes);
+Q_DECLARE_METATYPE(map::MapTypes)
 
 #endif // LITTLENAVMAP_MAPFLAGS_H

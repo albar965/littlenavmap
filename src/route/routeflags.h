@@ -112,8 +112,8 @@ enum RouteAdjustOption
   DEFAULT_OPTS_GPX = rf::DEFAULT_OPTS | rf::SAVE_AIRWAY_WP | rf::SAVE_SID_WP | rf::SAVE_STAR_WP | rf::SAVE_APPROACH_WP
 };
 
-Q_DECLARE_FLAGS(RouteAdjustOptions, rf::RouteAdjustOption);
-Q_DECLARE_OPERATORS_FOR_FLAGS(rf::RouteAdjustOptions);
+Q_DECLARE_FLAGS(RouteAdjustOptions, rf::RouteAdjustOption)
+Q_DECLARE_OPERATORS_FOR_FLAGS(rf::RouteAdjustOptions)
 
 }
 

@@ -76,8 +76,8 @@ enum MouseState
              mw::DRAG_USER_POINT
 };
 
-Q_DECLARE_FLAGS(MouseStates, MouseState);
-Q_DECLARE_OPERATORS_FOR_FLAGS(mw::MouseStates);
+Q_DECLARE_FLAGS(MouseStates, MouseState)
+Q_DECLARE_OPERATORS_FOR_FLAGS(mw::MouseStates)
 }
 
 /*

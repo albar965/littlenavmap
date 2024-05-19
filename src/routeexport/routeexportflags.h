@@ -127,8 +127,8 @@ enum RouteExportFormatFlag : quint16
   SAVED_FLAGS = SELECTED /* Saved to configuration. */
 };
 
-Q_DECLARE_FLAGS(RouteExportFormatFlags, RouteExportFormatFlag);
-Q_DECLARE_OPERATORS_FOR_FLAGS(rexp::RouteExportFormatFlags);
+Q_DECLARE_FLAGS(RouteExportFormatFlags, RouteExportFormatFlag)
+Q_DECLARE_OPERATORS_FOR_FLAGS(rexp::RouteExportFormatFlags)
 
 } // namespace rexp
 

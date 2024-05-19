@@ -55,8 +55,8 @@ enum LabelFlag
               HEADER_RUNWAY_LAND | HEADER_RUNWAY_LAND_WIND | HEADER_DISTTIME | FOOTER_SELECTION | FOOTER_ERROR
 };
 
-Q_DECLARE_FLAGS(LabelFlags, LabelFlag);
-Q_DECLARE_OPERATORS_FOR_FLAGS(routelabel::LabelFlags);
+Q_DECLARE_FLAGS(LabelFlags, LabelFlag)
+Q_DECLARE_OPERATORS_FOR_FLAGS(routelabel::LabelFlags)
 } // namespace label
 
 /*

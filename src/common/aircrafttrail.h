@@ -115,7 +115,7 @@ QDataStream& operator>>(QDataStream& dataStream, AircraftTrailPos& obj);
 QDataStream& operator<<(QDataStream& dataStream, const AircraftTrailPos& obj);
 
 Q_DECLARE_TYPEINFO(AircraftTrailPos, Q_PRIMITIVE_TYPE);
-Q_DECLARE_METATYPE(AircraftTrailPos);
+Q_DECLARE_METATYPE(AircraftTrailPos)
 
 /*
  * Stores the trail points of the flight simulator user aircraft.

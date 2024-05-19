@@ -64,7 +64,7 @@ QDebug operator<<(QDebug out, const FsPathType& record);
 QDataStream& operator<<(QDataStream& out, const FsPathType& obj);
 QDataStream& operator>>(QDataStream& in, FsPathType& obj);
 
-Q_DECLARE_METATYPE(FsPathType);
+Q_DECLARE_METATYPE(FsPathType)
 Q_DECLARE_TYPEINFO(FsPathType, Q_MOVABLE_TYPE);
 
 /* Hash map for simulator type and FsPathType. Can be converted to QVariant */
@@ -119,6 +119,6 @@ private:
 QDataStream& operator<<(QDataStream& out, const SimulatorTypeMap& obj);
 QDataStream& operator>>(QDataStream& in, SimulatorTypeMap& obj);
 
-Q_DECLARE_METATYPE(SimulatorTypeMap);
+Q_DECLARE_METATYPE(SimulatorTypeMap)
 
 #endif // LITTLENAVMAP_DBTYPES_H
