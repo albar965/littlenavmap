@@ -136,7 +136,7 @@ isEmpty(MARBLE_LIB_PATH) : MARBLE_LIB_PATH=$$PWD/../Marble-$$CONF_TYPE/lib
 # =======================================================================
 # Set compiler flags and paths
 
-QMAKE_CXXFLAGS += -Wall -Wextra -Wpedantic -Wno-pragmas -Wno-unknown-warning -Wno-unknown-warning-option -Wdangling-pointer=2
+QMAKE_CXXFLAGS += -Wall -Wextra -Wpedantic -Wno-pragmas -Wno-unknown-warning -Wno-unknown-warning-option
 
 unix:!macx {
   isEmpty(GIT_PATH) : GIT_PATH=git
