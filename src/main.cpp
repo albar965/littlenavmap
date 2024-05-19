@@ -186,7 +186,8 @@ int main(int argc, char *argv[])
 
   // Copy pointers to regular arguments - add two for freetype options if needed
   int appArgc = freetype ? argc + 2 : argc;
-  char *appArgv[appArgc];
+  QVarLengthArray<char *> appArgv(appArgc);
+
   for(int i = 0; i < argc; i++)
     appArgv[i] = argv[i];
 
@@ -198,7 +199,7 @@ int main(int argc, char *argv[])
 
   // Create application object ===========================================================
   int retval = 0;
-  NavApp app(appArgc, appArgv);
+  NavApp app(appArgc, appArgv.data());
 
   DatabaseManager *dbManager = nullptr;
 
