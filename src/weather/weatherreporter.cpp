@@ -637,7 +637,7 @@ void WeatherReporter::findActiveSkyFiles(QString& asnSnapshot, QString& flightpl
   QString appdata = QProcessEnvironment::systemEnvironment().value("APPDATA");
 #else
   // Use $HOME/.config for testing
-  QString appdata = QStandardPaths::standardLocations(QStandardPaths::ConfigLocation).constFirst();
+  QString appdata = QStandardPaths::standardLocations(QStandardPaths::ConfigLocation).value(0);
 #endif
 
   QString simPathComponent;
