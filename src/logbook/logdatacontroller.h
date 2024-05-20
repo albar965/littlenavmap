@@ -20,9 +20,11 @@
 
 #include "common/maptypes.h"
 
+#include <QCache>
 #include <QObject>
 #include <QVector>
 
+class AircraftTrail;
 namespace atools {
 namespace sql {
 class SqlRecord;
@@ -151,6 +153,7 @@ public:
   void resetTakeoffLandingDetection();
 
   const atools::fs::gpx::GpxData *getGpxData(int id);
+  const AircraftTrail *getAircraftTrail(int id);
 
   /* Clear caches */
   void preDatabaseLoad();
@@ -244,6 +247,8 @@ private:
   atools::fs::userdata::LogdataManager *manager;
   atools::gui::Dialog *dialog;
   MainWindow *mainWindow;
+
+  QCache<int, AircraftTrail> aircraftTrailCache;
 };
 
 #endif // LNM_LOGDATACONTROLLER_H

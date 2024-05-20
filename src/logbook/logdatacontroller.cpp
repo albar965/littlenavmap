@@ -118,6 +118,7 @@ void LogdataController::undoTriggered()
       qDebug() << Q_FUNC_INFO << "Committing";
       transaction.commit();
       manager->clearGeometryCache();
+      aircraftTrailCache.clear();
 
       emit refreshLogSearch(false /* loadAll */, false /* keepSelection */, true /* force */);
       emit logDataChanged();
@@ -149,6 +150,7 @@ void LogdataController::redoTriggered()
       qDebug() << Q_FUNC_INFO << "Committing";
       transaction.commit();
       manager->clearGeometryCache();
+      aircraftTrailCache.clear();
 
       emit refreshLogSearch(false /* loadAll */, false /* keepSelection */, true /* force */);
       emit logDataChanged();
@@ -507,6 +509,7 @@ void LogdataController::logChanged(bool loadAll, bool keepSelection)
 {
   // Clear cache and update map screen index
   manager->clearGeometryCache();
+  aircraftTrailCache.clear();
   manager->updateUndoRedoActions();
 
   emit logDataChanged();
@@ -574,6 +577,7 @@ void LogdataController::preDatabaseLoad()
 void LogdataController::postDatabaseLoad()
 {
   manager->clearGeometryCache();
+  aircraftTrailCache.clear();
 }
 
 void LogdataController::displayOptionsChanged()
@@ -586,9 +590,22 @@ const atools::fs::gpx::GpxData *LogdataController::getGpxData(int id)
   return manager->getGpxData(id);
 }
 
+const AircraftTrail *LogdataController::getAircraftTrail(int id)
+{
+  AircraftTrail *aircraftTrail = aircraftTrailCache.object(id);
+  if(aircraftTrail == nullptr)
+  {
+    aircraftTrail = new AircraftTrail(true /* logbookTrail */);
+    aircraftTrail->fillTrailFromGpxData(*getGpxData(id));
+    aircraftTrailCache.insert(id, aircraftTrail);
+  }
+  return aircraftTrail;
+}
+
 void LogdataController::editLogEntryFromMap(int id)
 {
   qDebug() << Q_FUNC_INFO;
+
   editLogEntries({id});
 }
 

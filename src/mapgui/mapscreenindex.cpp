@@ -1020,16 +1020,10 @@ void MapScreenIndex::getAllNearest(const QPoint& point, int maxDistance, map::Ma
     // Trail is only shown for single selection
     if(types.testFlag(map::QUERY_AIRCRAFT_TRAIL_LOG) && searchHighlights->logbookEntries.size() == 1)
     {
-      const atools::fs::gpx::GpxData *gpxData =
-        NavApp::getLogdataController()->getGpxData(searchHighlights->logbookEntries.constFirst().id);
-      if(gpxData != nullptr)
-      {
-        AircraftTrail trail(false /* logbookTrail */);
-        trail.fillTrailFromGpxData(*gpxData);
-
+      const AircraftTrail *trail = NavApp::getLogdataController()->getAircraftTrail(searchHighlights->logbookEntries.constFirst().id);
+      if(trail != nullptr)
         // Get nearest (one) trail segment from logbook preview and provide screen coordinate conversion function
-        result.trailSegmentLog = trail.findNearest(point, pos, maxDistance, mapWidget->viewport()->viewLatLonAltBox(), coordinateFunc);
-      }
+        result.trailSegmentLog = trail->findNearest(point, pos, maxDistance, mapWidget->viewport()->viewLatLonAltBox(), coordinateFunc);
     }
   }
 }
