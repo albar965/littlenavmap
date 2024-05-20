@@ -455,10 +455,8 @@ void MapScreenIndex::updateAirwayScreenGeometryInternal(QSet<int>& ids, const Ma
   }
 }
 
-void MapScreenIndex::updateLineScreenGeometry(QList<std::pair<int, QLine> >& index,
-                                              int id, const atools::geo::Line& line,
-                                              const Marble::GeoDataLatLonBox& curBox,
-                                              const CoordinateConverter& conv)
+void MapScreenIndex::updateLineScreenGeometry(QList<std::pair<int, QLine> >& index, int id, const atools::geo::Line& line,
+                                              const Marble::GeoDataLatLonBox& curBox, const CoordinateConverter& conv)
 {
   Marble::GeoDataLineString geoLineStr = conv.toGdcStr(line);
   QRect mapGeo = mapWidget->rect();
@@ -1026,7 +1024,7 @@ void MapScreenIndex::getAllNearest(const QPoint& point, int maxDistance, map::Ma
         NavApp::getLogdataController()->getGpxData(searchHighlights->logbookEntries.constFirst().id);
       if(gpxData != nullptr)
       {
-        AircraftTrail trail;
+        AircraftTrail trail(false /* logbookTrail */);
         trail.fillTrailFromGpxData(*gpxData);
 
         // Get nearest (one) trail segment from logbook preview and provide screen coordinate conversion function

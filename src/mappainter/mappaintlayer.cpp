@@ -71,7 +71,7 @@ MapPaintLayer::MapPaintLayer(MapPaintWidget *widget)
   mapPainterMark = new MapPainterMark(mapPaintWidget, mapScale, &context);
   mapPainterRoute = new MapPainterRoute(mapPaintWidget, mapScale, &context);
   mapPainterAircraft = new MapPainterAircraft(mapPaintWidget, mapScale, &context);
-  mapPainterTrack = new MapPainterTrail(mapPaintWidget, mapScale, &context);
+  mapPainterTrail = new MapPainterTrail(mapPaintWidget, mapScale, &context);
   mapPainterShip = new MapPainterShip(mapPaintWidget, mapScale, &context);
   mapPainterUser = new MapPainterUser(mapPaintWidget, mapScale, &context);
   mapPainterAltitude = new MapPainterAltitude(mapPaintWidget, mapScale, &context);
@@ -95,7 +95,7 @@ MapPaintLayer::~MapPaintLayer()
   delete mapPainterMark;
   delete mapPainterRoute;
   delete mapPainterAircraft;
-  delete mapPainterTrack;
+  delete mapPainterTrail;
   delete mapPainterShip;
   delete mapPainterUser;
   delete mapPainterAltitude;
@@ -236,7 +236,7 @@ void MapPaintLayer::initQueries()
   mapPainterMark->initQueries();
   mapPainterRoute->initQueries();
   mapPainterAircraft->initQueries();
-  mapPainterTrack->initQueries();
+  mapPainterTrail->initQueries();
   mapPainterShip->initQueries();
   mapPainterUser->initQueries();
   mapPainterAltitude->initQueries();
@@ -593,7 +593,7 @@ bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport, const 
         mapPainterMsa->render();
 
       if(!context.isObjectOverflow())
-        mapPainterTrack->render();
+        mapPainterTrail->render();
 
       mapPainterAircraft->render();
 

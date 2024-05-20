@@ -127,7 +127,7 @@ class AircraftTrail :
   private QList<AircraftTrailPos>
 {
 public:
-  AircraftTrail();
+  AircraftTrail(bool logbookTrailParam);
   ~AircraftTrail();
 
   AircraftTrail(const AircraftTrail& other);
@@ -215,7 +215,7 @@ private:
   void updateLineStrings();
   void updateLineStrings(const AircraftTrailPos& trackPos);
 
-  /* Accurate positions for drawing */
+  /* Accurate positions for GPX export */
   const QVector<QVector<atools::geo::PosD> > getPositionsD() const;
 
   /* Same size as getLineStrings() but returns the timestamps in milliseconds since Epoch UTC for each position */
@@ -241,6 +241,8 @@ private:
 
   /* Needed in RouteExportFormat stream operators to read different formats */
   static quint16 version;
+
+  bool logbookTrail = false;
 };
 
 #endif // LITTLENAVMAP_AIRCRAFTTRACK_H

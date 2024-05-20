@@ -234,7 +234,7 @@ private:
   MapPainterMark *mapPainterMark;
   MapPainterRoute *mapPainterRoute;
   MapPainterAircraft *mapPainterAircraft;
-  MapPainterTrail *mapPainterTrack;
+  MapPainterTrail *mapPainterTrail;
   MapPainterTop *mapPainterTop;
   MapPainterShip *mapPainterShip;
   MapPainterUser *mapPainterUser;

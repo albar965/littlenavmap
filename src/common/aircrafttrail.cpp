@@ -101,7 +101,8 @@ QDataStream& operator<<(QDataStream& dataStream, const AircraftTrailPos& trackPo
 }
 
 // ==========================================================================================
-AircraftTrail::AircraftTrail()
+AircraftTrail::AircraftTrail(bool logbookTrailParam)
+  : logbookTrail(logbookTrailParam)
 {
   lastUserAircraft = new atools::fs::sc::SimConnectUserAircraft;
 
@@ -171,7 +172,7 @@ map::AircraftTrailSegment AircraftTrail::findNearest(const QPoint& point, const 
     atools::geo::Rect trackBounding = lineString.boundingRect();
 
 #ifdef DEBUG_INFORMATION_TRACK_NEAREST
-    qDebug() << Q_FUNC_INFO << "###############" << "bounding" << bounding << "viewportRect" << viewportRect;
+    qDebug() << Q_FUNC_INFO << "###############" << "bounding" << boundingRect << "viewportRect" << viewportRect;
 #endif
 
     if(trackBounding.overlaps(viewportRect))
@@ -198,7 +199,7 @@ map::AircraftTrailSegment AircraftTrail::findNearest(const QPoint& point, const 
   AircraftTrailPos posFrom, posTo;
   Pos pos;
 
-  if(trackIndex != -1 && resultShortest.status == atools::geo::ALONG_TRACK)
+  if(trackIndex >= 0 && trackIndex < size() - 1 && resultShortest.status == atools::geo::ALONG_TRACK)
   {
     posFrom = at(trackIndex);
     posTo = at(trackIndex + 1);
@@ -412,7 +413,7 @@ bool AircraftTrail::appendTrailPos(const atools::fs::sc::SimConnectUserAircraft&
     return false;
   }
 
-  bool pruned = false;
+  bool pruned = false, changed = false;
   qint64 timestampMs = userAircraft.getZuluTime().toMSecsSinceEpoch();
   atools::geo::PosD posD = userAircraft.getPositionD();
   bool onGround = userAircraft.isOnGround();
@@ -422,6 +423,7 @@ bool AircraftTrail::appendTrailPos(const atools::fs::sc::SimConnectUserAircraft&
     // First point
     append(AircraftTrailPos(posD, timestampMs, onGround));
     *lastUserAircraft = userAircraft;
+    changed = true;
   }
   else
   {
@@ -484,6 +486,7 @@ bool AircraftTrail::appendTrailPos(const atools::fs::sc::SimConnectUserAircraft&
         // Add an invalid position before indicating a break
         append(AircraftTrailPos(timestampMs, onGround));
         append(AircraftTrailPos(posD, timestampMs, onGround));
+        changed = true;
       }
       else
       {
@@ -499,6 +502,7 @@ bool AircraftTrail::appendTrailPos(const atools::fs::sc::SimConnectUserAircraft&
           pruned = true;
         }
         append(AircraftTrailPos(posD, timestampMs, onGround));
+        changed = true;
       }
 
       // Update changed values for new added point
@@ -510,12 +514,21 @@ bool AircraftTrail::appendTrailPos(const atools::fs::sc::SimConnectUserAircraft&
     *lastUserAircraft = userAircraft;
   } // if(isEmpty() && userAircraft.isValid()) ... else
 
-  if(!isEmpty())
+  if(!isEmpty() && changed)
   {
     // Last one is always valid
     updateBoundary(constLast());
     updateLineStrings(constLast());
   }
+
+#ifdef DEBUG_INFORMATION_TRAIL
+  if(!logbookTrail)
+  {
+    qDebug() << Q_FUNC_INFO << size();
+    qDebug() << Q_FUNC_INFO << constLast().getPosition();
+    qDebug() << Q_FUNC_INFO << lineStrings;
+  }
+#endif
 
   return pruned;
 }
