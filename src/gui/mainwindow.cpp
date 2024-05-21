@@ -3180,8 +3180,14 @@ void MainWindow::removeDialogFromDockHandler(QDialog *dialogWidget)
 
 void MainWindow::resetMessages()
 {
-  messages::resetAllMessages();
-  setStatusMessage(tr("All message dialogs reset."));
+  if(dialog->question(tr("This causes all message dialogs that were deactivated with the\n"
+                         "\"Do not show again\"\n"
+                          "button to be displayed again.\n\n"
+                         "Reset all messages to show up again now?")) == QMessageBox::Yes)
+  {
+    messages::resetAllMessages();
+    setStatusMessage(tr("All message dialogs reset."));
+  }
 }
 
 void MainWindow::setStatusMessage(const QString& message, bool addToLog, bool popup)

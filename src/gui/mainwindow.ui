@@ -7928,7 +7928,7 @@ relation to shown airport</string>
   </action>
   <action name="actionResetMessages">
    <property name="text">
-    <string>Reset all &amp;Messages</string>
+    <string>Reset all &amp;Messages ...</string>
    </property>
    <property name="toolTip">
     <string>Reset all messages that were disabled with the &quot;do not show again&quot; button</string>
