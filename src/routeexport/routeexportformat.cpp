@@ -260,6 +260,7 @@ void RouteExportFormatMap::initCallbacks(RouteExport *routeExport)
   (*this)[PMS50        ].CB(bind(&RouteExport::routeExportPms50Multi,         routeExport, _1));
   (*this)[TDSGTNXI     ].CB(bind(&RouteExport::routeExportTdsGtnXiMulti,      routeExport, _1));
   (*this)[TDSGTNXIWP   ].CB(bind(&RouteExport::routeExportTdsGtnXiMulti,      routeExport, _1));
+  (*this)[JFBAE        ].CB(bind(&RouteExport::routeExportQwRteMulti,         routeExport, _1));
   /* *INDENT-ON* */
 
 #undef CB
@@ -357,6 +358,7 @@ void RouteExportFormatMap::init()
   FMT(PMS50,         FILEREP|AIRPORTS,     tr("fpl.pln"),      tr("Garmin"),    tr("PMS50 GTN750")                                                       );
   FMT(TDSGTNXI,      AIRPORTS,             SU % tr("gfp"),     tr("Garmin"),    tr("TDS GTNXi")                                                          );
   FMT(TDSGTNXIWP,    AIRPORTS|GARMIN_WP,   SU % tr("gfp"),     tr("Garmin"),    tr("TDS GTNXi with user defined waypoints")                              );
+  FMT(JFBAE,         AIRPORTS,             S0 % tr("rte"),     tr("Aircraft"),  tr("JustFlight BAE-146")                                                 );
   /* *INDENT-ON* */
 
 #undef FMT
@@ -534,6 +536,7 @@ void RouteExportFormatMap::updateDefaultPaths()
   (*this)[PMS50        ].DP(msfsBasePath % SEP % "Community" % SEP % "pms50-instrument-gtn750" % SEP % "fpl" % SEP % "gtn750");
   (*this)[TDSGTNXI     ].DP(tdsGtmGfp);
   (*this)[TDSGTNXIWP   ].DP(tdsGtmGfp);
+  (*this)[JFBAE        ].DP(msfsBasePath % SEP % "Community" % SEP % "JustFlight BAE-146" % SEP % "justflight-aircraft-146" % SEP % "Work" % SEP % "JustFlight" % SEP % "FlightPlans");
   /* *INDENT-ON* */
 #undef DP
 

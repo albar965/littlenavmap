@@ -93,13 +93,14 @@ enum RouteExportFormatType : quint16
   TFDI = 26, /* TFDi Design 717 */
   IFLY = 40, /* iFly Jets Advanced Series */
   INIBUILDS = 44, /* MSFS IniBuilds Airbus - fpl */
+  JFBAE = 48, /* MSFS JustFlight BAE-146 (QualityWings) */
 
   /* Other ================ */
   EFBR = 27, /* AivlaSoft EFB */
   GPX = 28, /* Garmin exchange format. Not a flight plan format.  */
   HTML = 29, /* Export as HTML page */
 
-  // Next = 48
+  // Next = 49
 };
 
 /* Flags for export format. Some flags are saved to the configuration,
