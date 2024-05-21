@@ -2719,6 +2719,11 @@ void OptionsDialog::updateActiveSkyPathStatus()
         text = tr("No Active Sky weather snapshot file selected. "
                   "Using default for Active Sky XP 12 for %1.").arg(sim);
         break;
+
+      case WeatherReporter::ASFS:
+        text = tr("No Active Sky weather snapshot file selected. "
+                  "Using default for Active Sky FS for %1.").arg(sim);
+        break;
     }
 
     ui->labelOptionsWeatherAsnPathState->setText(text);

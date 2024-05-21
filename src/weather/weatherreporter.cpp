@@ -360,9 +360,13 @@ void WeatherReporter::initActiveSkyPaths()
   if(manualActiveSkySnapshotPath.isEmpty())
   {
     // Manual path setting is empty - detect files automatically =======================================================
-    QString asnSnapshotPath, asnFlightplanSnapshotPath, as16SnapshotPath, as16FlightplanSnapshotPath,
-            asp4SnapshotPath, asp4FlightplanSnapshotPath, asp5SnapshotPath, asp5FlightplanSnapshotPath,
-            asXpl11SnapshotPath, aspXpl11FlightplanSnapshotPath, asXpl12SnapshotPath, aspXpl12FlightplanSnapshotPath;
+    QString asnSnapshotPath, asnFlightplanSnapshotPath,
+            as16SnapshotPath, as16FlightplanSnapshotPath,
+            asp4SnapshotPath, asp4FlightplanSnapshotPath,
+            asp5SnapshotPath, asp5FlightplanSnapshotPath,
+            asXpl11SnapshotPath, asXpl11FlightplanSnapshotPath,
+            asXpl12SnapshotPath, asXpl12FlightplanSnapshotPath,
+            asFsSnapshotPath, asFsFlightplanSnapshotPath;
 
     // Find paths for old sim independent files ===================================================
     findActiveSkyFiles(asnSnapshotPath, asnFlightplanSnapshotPath, "ASN", QString());
@@ -387,31 +391,43 @@ void WeatherReporter::initActiveSkyPaths()
     else if(simType == atools::fs::FsPaths::XPLANE_11)
     {
       // C:\Users\USER\AppData\Roaming\Hifi\AS_XPL
-      findActiveSkyFiles(asXpl11SnapshotPath, aspXpl11FlightplanSnapshotPath, "AS_", "XPL");
-      qInfo() << Q_FUNC_INFO << "ASXPL11 snapshot" << asXpl11SnapshotPath << "flight plan weather" << aspXpl11FlightplanSnapshotPath;
+      findActiveSkyFiles(asXpl11SnapshotPath, asXpl11FlightplanSnapshotPath, "AS_", "XPL");
+      qInfo() << Q_FUNC_INFO << "ASXPL11 snapshot" << asXpl11SnapshotPath << "flight plan weather" << asXpl11FlightplanSnapshotPath;
     }
     else if(simType == atools::fs::FsPaths::XPLANE_12)
     {
       // C:\Users\USER\AppData\Roaming\Hifi\AS_XPL12
-      findActiveSkyFiles(asXpl12SnapshotPath, aspXpl12FlightplanSnapshotPath, "AS_", "XPL12");
+      findActiveSkyFiles(asXpl12SnapshotPath, asXpl12FlightplanSnapshotPath, "AS_", "XPL12");
 
       // Fall back to C:\Users\USER\AppData\Roaming\Hifi\AS_XPL since documentation is not clear
       if(asXpl12SnapshotPath.isEmpty())
-        findActiveSkyFiles(asXpl12SnapshotPath, aspXpl12FlightplanSnapshotPath, "AS_", "XPL");
-      qInfo() << Q_FUNC_INFO << "ASXPL12 snapshot" << asXpl12SnapshotPath << "flight plan weather" << aspXpl12FlightplanSnapshotPath;
+        findActiveSkyFiles(asXpl12SnapshotPath, asXpl12FlightplanSnapshotPath, "AS_", "XPL");
+      qInfo() << Q_FUNC_INFO << "ASXPL12 snapshot" << asXpl12SnapshotPath << "flight plan weather" << asXpl12FlightplanSnapshotPath;
+    }
+    else if(simType == atools::fs::FsPaths::MSFS)
+    {
+      // C:\Users\USER\AppData\Roaming\Hifi\AS_FS
+      findActiveSkyFiles(asFsSnapshotPath, asFsFlightplanSnapshotPath, "AS_", "FS");
+      qInfo() << Q_FUNC_INFO << "ASFS snapshot" << asFsSnapshotPath << "flight plan weather" << asFsFlightplanSnapshotPath;
     }
 
     // Assign status depending on found files ===================================================
-    if(!asXpl12SnapshotPath.isEmpty())
+    if(!asFsSnapshotPath.isEmpty())
+    {
+      asSnapshotPath = asFsSnapshotPath;
+      asFlightplanPath = asFsFlightplanSnapshotPath;
+      activeSkyType = ASFS;
+    }
+    else if(!asXpl12SnapshotPath.isEmpty())
     {
       asSnapshotPath = asXpl12SnapshotPath;
-      asFlightplanPath = aspXpl12FlightplanSnapshotPath;
+      asFlightplanPath = asXpl12FlightplanSnapshotPath;
       activeSkyType = ASXPL12;
     }
     else if(!asXpl11SnapshotPath.isEmpty())
     {
       asSnapshotPath = asXpl11SnapshotPath;
-      asFlightplanPath = aspXpl11FlightplanSnapshotPath;
+      asFlightplanPath = asXpl11FlightplanSnapshotPath;
       activeSkyType = ASXPL11;
     }
     else if(!asp5SnapshotPath.isEmpty())
@@ -712,6 +728,8 @@ QString WeatherReporter::getCurrentActiveSkyName() const
     return tr("ASXP11");
   else if(activeSkyType == WeatherReporter::ASXPL12)
     return tr("ASXP12");
+  else if(activeSkyType == WeatherReporter::ASFS)
+    return tr("ASFS");
   else
     // Manually selected
     return tr("Active Sky");

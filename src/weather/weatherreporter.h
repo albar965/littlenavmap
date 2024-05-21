@@ -142,7 +142,8 @@ public:
     ASP4, /* Active Sky for Prepar3D v4 */
     ASP5, /* Active Sky for Prepar3D v5 */
     ASXPL11, /* Active Sky for X-Plane 11 */
-    ASXPL12 /* Active Sky for X-Plane 12 */
+    ASXPL12, /* Active Sky for X-Plane 12 */
+    ASFS   /* Active Sky for MSFS */
   };
 
   /* Get type of active sky weather snapshot that was found */
