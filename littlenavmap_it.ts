@@ -5827,7 +5827,7 @@ Note that you can undo this change.</source>
     </message>
     <message>
         <location filename="src/logbook/logdatacontroller.cpp" line="788"/>
-        <source>&amp;Either departure or destinaion ident empty</source>
+        <source>&amp;Either departure or destination ident empty</source>
         <translation>&amp;Identificativo partenza o destinazione vuoto</translation>
     </message>
     <message>

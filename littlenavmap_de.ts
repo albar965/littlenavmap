@@ -5854,7 +5854,7 @@ Beachten Sie, dass Sie diese Änderung rückgängig machen können.</translation
     </message>
     <message>
         <location filename="src/logbook/logdatacontroller.cpp" line="788"/>
-        <source>&amp;Either departure or destinaion ident empty</source>
+        <source>&amp;Either departure or destination ident empty</source>
         <translation>&amp;Entweder leere Start- oder Zielflugplatzkennung</translation>
     </message>
     <message>

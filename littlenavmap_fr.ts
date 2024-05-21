@@ -5897,7 +5897,7 @@ Notez que vous pouvez annuler cette modification.</translation>
     </message>
     <message>
         <location filename="src/logbook/logdatacontroller.cpp" line="788"/>
-        <source>&amp;Either departure or destinaion ident empty</source>
+        <source>&amp;Either departure or destination ident empty</source>
         <translation type="unfinished">Soit l&apos;identifiant de départ ou de destination &amp;est vide</translation>
     </message>
     <message>

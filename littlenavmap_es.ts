@@ -5003,7 +5003,7 @@ Note that you can undo this change.</source>
     </message>
     <message>
         <location filename="src/logbook/logdatacontroller.cpp" line="678"/>
-        <source>&amp;Either departure or destinaion ident empty</source>
+        <source>&amp;Either departure or destination ident empty</source>
         <translation type="unfinished"></translation>
     </message>
     <message>

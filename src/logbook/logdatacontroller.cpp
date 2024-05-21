@@ -802,8 +802,8 @@ void LogdataController::cleanupLogEntries()
                            tr("Removes all entries having a too small flown distance."));
   choiceDialog.addCheckBox(DEPARTURE_AND_DESTINATION_EQUAL, tr("&Departure and destination ident equal"),
                            tr("Removes all entries where the idents of departure and destination are the same. E.g. pattern work."));
-  choiceDialog.addCheckBox(DEPARTURE_OR_DESTINATION_EMPTY, tr("&Either departure or destinaion ident empty"),
-                           tr("Removes incomplete entries where the flight was terminated early, for example."));
+  choiceDialog.addCheckBox(DEPARTURE_OR_DESTINATION_EMPTY, tr("&Departure or destination ident empty or not an airport"),
+                           tr("Removes incomplete entries where the flight was terminated early or off-airport, for example."));
   choiceDialog.addSpacer();
   choiceDialog.addLine();
   choiceDialog.addCheckBox(SHOW_PREVIEW, tr("Show a &preview before deleting logbook entries"),
