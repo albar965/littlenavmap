@@ -44,7 +44,8 @@ class RunwaySelectionDialog :
   Q_OBJECT
 
 public:
-  explicit RunwaySelectionDialog(QWidget *parent, const map::MapAirport& mapAirport, const QStringList& runwayNames, const QString& header, bool navdata);
+  explicit RunwaySelectionDialog(QWidget *parent, const map::MapAirport& mapAirport, const QStringList& runwayNames, const QString& header,
+                                 bool navdata, int preselectRunwayEndNav);
   virtual ~RunwaySelectionDialog() override;
 
   RunwaySelectionDialog(const RunwaySelectionDialog& other) = delete;

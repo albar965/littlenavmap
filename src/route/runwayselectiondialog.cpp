@@ -26,8 +26,8 @@
 #include <QPushButton>
 #include <QStringBuilder>
 
-RunwaySelectionDialog::RunwaySelectionDialog(QWidget *parent, const map::MapAirport& mapAirport,
-                                             const QStringList& runwayNameFilter, const QString& header, bool navdata)
+RunwaySelectionDialog::RunwaySelectionDialog(QWidget *parent, const map::MapAirport& mapAirport, const QStringList& runwayNameFilter,
+                                             const QString& header, bool navdata, int preselectRunwayEndNav)
   : QDialog(parent), ui(new Ui::RunwaySelectionDialog)
 {
   setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
@@ -42,6 +42,7 @@ RunwaySelectionDialog::RunwaySelectionDialog(QWidget *parent, const map::MapAirp
   runwaySelection = new RunwaySelection(parent, mapAirport, ui->tableWidgetRunwaySelection, navdata);
   runwaySelection->setAirportLabel(ui->labelRunwaySelectionAirport);
   runwaySelection->setRunwayNameFilter(runwayNameFilter);
+  runwaySelection->setPreSelectedRunwayEnd(preselectRunwayEndNav);
 
   connect(runwaySelection, &RunwaySelection::doubleClicked, this, &RunwaySelectionDialog::doubleClicked);
   connect(runwaySelection, &RunwaySelection::itemSelectionChanged, this, &RunwaySelectionDialog::updateWidgets);

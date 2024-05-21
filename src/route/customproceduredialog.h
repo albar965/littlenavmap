@@ -45,7 +45,8 @@ class CustomProcedureDialog :
   Q_OBJECT
 
 public:
-  explicit CustomProcedureDialog(QWidget *parent, const map::MapAirport& mapAirport, bool departureParam, const QString& dialogHeader);
+  explicit CustomProcedureDialog(QWidget *parent, const map::MapAirport& mapAirport, bool departureParam, const QString& dialogHeader,
+                                 int preselectRunwayEndSim);
   virtual ~CustomProcedureDialog() override;
 
   CustomProcedureDialog(const CustomProcedureDialog& other) = delete;

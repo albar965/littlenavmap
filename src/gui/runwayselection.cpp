@@ -92,13 +92,37 @@ void RunwaySelection::restoreState()
 
   QItemSelectionModel *selection = runwayTableWidget->selectionModel();
 
-  if(selection != nullptr)
+  if(selection != nullptr && !runways.isEmpty())
   {
     selection->clearSelection();
 
-    if(!runways.isEmpty())
+    // Try to find runway end and select row =======================================
+    bool selected = false;
+    if(preselectRunwayEndId != -1)
+    {
+      for(int i = 0; i < runwayTableWidget->rowCount(); i++)
+      {
+        int row = runwayTableWidget->item(i, 0)->data(Qt::UserRole).toInt();
+        if(runways.at(row).end.id == preselectRunwayEndId)
+        {
+          selection->select(runwayTableWidget->model()->index(row, 0), QItemSelectionModel::Select | QItemSelectionModel::Rows);
+          runwayTableWidget->setCurrentIndex(runwayTableWidget->model()->index(row, 0));
+          selected = true;
+          break;
+        }
+      }
+
+      if(!selected)
+        qDebug() << Q_FUNC_INFO << "Runway id" << preselectRunwayEndId << "not found" << "navdata" << navdata;
+    }
+
+    // Select first if nothing found =======================================
+    if(!selected)
+    {
       // Select first row
       selection->select(runwayTableWidget->model()->index(0, 0), QItemSelectionModel::Select | QItemSelectionModel::Rows);
+      runwayTableWidget->setCurrentIndex(runwayTableWidget->model()->index(0, 0));
+    }
   }
 }
 

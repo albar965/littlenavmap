@@ -33,7 +33,7 @@
 #include <QStringBuilder>
 
 CustomProcedureDialog::CustomProcedureDialog(QWidget *parent, const map::MapAirport& mapAirport, bool departureParam,
-                                             const QString& dialogHeader)
+                                             const QString& dialogHeader, int preselectRunwayEndSim)
   : QDialog(parent), ui(new Ui::CustomProcedureDialog), departure(departureParam)
 {
   setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
@@ -43,6 +43,7 @@ CustomProcedureDialog::CustomProcedureDialog(QWidget *parent, const map::MapAirp
 
   runwaySelection = new RunwaySelection(parent, mapAirport, ui->tableWidgetCustomProcRunway, false /* navdata */);
   runwaySelection->setAirportLabel(ui->labelCustomProcAirport);
+  runwaySelection->setPreSelectedRunwayEnd(preselectRunwayEndSim);
 
   // YES is show procedures button
   ui->buttonBoxCustomProc->button(QDialogButtonBox::Yes)->setText(departureParam ? tr("Show Departure &Procedures") :

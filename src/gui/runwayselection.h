@@ -63,6 +63,12 @@ public:
     airportLabel = value;
   }
 
+  /* Runway end id to be selected. Has to match navdataParam. Ignored if -1. Selected in restoreState(). */
+  void setPreSelectedRunwayEnd(int runwayEndId)
+  {
+    preselectRunwayEndId = runwayEndId;
+  }
+
   /* Get currently selected runway and runway end */
   void getCurrentSelected(map::MapRunway& runway, map::MapRunwayEnd& end) const;
 
@@ -115,6 +121,7 @@ private:
 
   MapQuery *mapQuery;
   bool navdata;
+  int preselectRunwayEndId = -1;
 };
 
 #endif // LNM_RUNWAYSELECTION_H

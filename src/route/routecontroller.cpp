@@ -4216,8 +4216,29 @@ void RouteController::showCustomApproach(map::MapAirport airport, QString dialog
       dialogHeader = tr("Select runway and use airport as destination:");
   }
 
+  // Get the simulator runway end id to pre-select runway end row in dialog =================================
+  // Check if there is already a STAR or an approach to fetch current runway selection
+  QList<map::MapRunwayEnd> runwayEnds;
+  const MapQuery *mapQuery = NavApp::getMapQueryGui();
+  if(!route.getApproachLegs().isEmpty())
+  {
+    if(route.hasCustomApproach())
+      // Custom departure is already sim id
+      runwayEnds.append(route.getApproachLegs().runwayEnd);
+    else
+      // Fetch sim id from procedure which uses nav id
+      mapQuery->getRunwayEndByNameFuzzy(runwayEnds, route.getApproachRunwayName(), airport, false /* navData */);
+  }
+  else if(!route.getStarLegs().isEmpty())
+    // Fetch sim id from procedure which uses nav id
+    mapQuery->getRunwayEndByNameFuzzy(runwayEnds, route.getStarRunwayName(), airport, false /* navData */);
+
+  int runwayEndId = -1;
+  if(!runwayEnds.isEmpty())
+    runwayEndId = runwayEnds.constFirst().id;
+
   // Show runway selection dialog to user
-  CustomProcedureDialog procedureDialog(mainWindow, airport, false /* departureParam */, dialogHeader);
+  CustomProcedureDialog procedureDialog(mainWindow, airport, false /* departureParam */, dialogHeader, runwayEndId);
   int result = procedureDialog.exec();
 
   if(result == QDialog::Accepted)
@@ -4258,8 +4279,25 @@ void RouteController::showCustomDeparture(map::MapAirport airport, QString dialo
       dialogHeader = tr("Select runway and use airport as departure:");
   }
 
+  // Get the simulator runway end id to pre-select runway end row in dialog =================================
+  // Check if there is already a SID to fetch current runway selection
+  int runwayEndId = -1;
+  if(!route.getSidLegs().isEmpty())
+  {
+    QList<map::MapRunwayEnd> runwayEnds;
+    if(route.hasCustomDeparture())
+      // Custom departure is already sim id
+      runwayEnds.append(route.getSidLegs().runwayEnd);
+    else
+      // Fetch sim id from procedure which uses nav id
+      NavApp::getMapQueryGui()->getRunwayEndByNameFuzzy(runwayEnds, route.getSidRunwayName(), airport, false /* navData */);
+
+    if(!runwayEnds.isEmpty())
+      runwayEndId = runwayEnds.constFirst().id;
+  }
+
   // Show runway selection dialog to user
-  CustomProcedureDialog procedureDialog(mainWindow, airport, true /* departureParam */, dialogHeader);
+  CustomProcedureDialog procedureDialog(mainWindow, airport, true /* departureParam */, dialogHeader, runwayEndId);
   int result = procedureDialog.exec();
 
   if(result == QDialog::Accepted)
@@ -4389,7 +4427,39 @@ void RouteController::routeAddProcedure(proc::MapProcedureLegs legs)
                                                false /* narrow */, true /* includeRunway*/, false /* missedAsApproach*/,
                                                false /* transitionAsProcedure */);
 
-        RunwaySelectionDialog runwaySelectionDialog(mainWindow, airportNav, sidStarRunwaysNav, text, true /* navdata */);
+        // Get navdata runway end id for preselection =============================================
+        QList<map::MapRunwayEnd> runwayEnds;
+
+        // Adding a SID and there is already one
+        if(legs.mapType & proc::PROCEDURE_SID_ALL && !route.getSidLegs().isEmpty())
+        {
+          if(route.hasCustomDeparture())
+            // Fetch nav id from procedure which uses sim id
+            mapQuery->getRunwayEndByNameFuzzy(runwayEnds, route.getSidRunwayName(), airportNav, true /* navData */);
+          else
+            // Custom departure is already sim id
+            runwayEnds.append(route.getSidLegs().runwayEnd);
+        }
+        else if(legs.mapType & proc::PROCEDURE_STAR_ALL)
+        {
+          if(!route.getApproachLegs().isEmpty())
+          {
+            if(route.hasCustomApproach())
+              // Fetch nav id from procedure which uses sim id
+              mapQuery->getRunwayEndByNameFuzzy(runwayEnds, route.getApproachRunwayName(), airportNav, true /* navData */);
+            else
+              // Custom approach is already sim id
+              runwayEnds.append(route.getApproachLegs().runwayEnd);
+          }
+          else if(!route.getStarLegs().isEmpty())
+            runwayEnds.append(route.getStarLegs().runwayEnd);
+        }
+
+        int runwayEndId = -1;
+        if(!runwayEnds.isEmpty())
+          runwayEndId = runwayEnds.constFirst().id;
+
+        RunwaySelectionDialog runwaySelectionDialog(mainWindow, airportNav, sidStarRunwaysNav, text, true /* navdata */, runwayEndId);
         if(runwaySelectionDialog.exec() == QDialog::Accepted)
           sidStarRunwayNav = runwaySelectionDialog.getSelectedName();
         else
