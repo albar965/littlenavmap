@@ -52,6 +52,7 @@ struct MapProcedureLeg;
 struct MapProcedureLegs;
 }
 
+class ProcIndexEntry;
 class InfoQuery;
 class QTreeWidget;
 class QTreeWidgetItem;
@@ -154,6 +155,7 @@ private:
   void itemDoubleClicked(QTreeWidgetItem *item, int);
 
   /* Load legs dynamically as approaches or transitions are expanded */
+  /* Load all approach or transition legs on demand - approaches and transitions are loaded after selecting the airport */
   void itemExpanded(QTreeWidgetItem *item);
 
   void contextMenu(const QPoint& pos);
@@ -166,8 +168,8 @@ private:
   void showProcedureTriggered();
 
   // Save and restore expanded and selected item state
-  QBitArray saveTreeViewState() const;
-  void restoreTreeViewState(const QBitArray& state, bool blockSignals);
+  QBitArray treeViewStateSave() const;
+  void treeViewStateRestore(const QBitArray& state, bool blockSignals);
 
   /* Build full approach or transition items for the tree view */
   QTreeWidgetItem *buildProcedureItem(QTreeWidgetItem *runwayItem, const QString& ident, const QString& procTypeText,
@@ -184,6 +186,7 @@ private:
   void showEntry(QTreeWidgetItem *item, bool doubleClick, bool zoom);
 
   /* Update course and distances in the approach legs when a preceding transition is selected */
+  /* Update course and distance for the parent approach of this leg item */
   void updateProcedureItem(QTreeWidgetItem *apprItem, int transitionId);
 
   QList<QTreeWidgetItem *> buildProcedureLegItems(const proc::MapProcedureLegs *legs, int transitionId);
@@ -237,10 +240,16 @@ private:
   /* Update wind columns for procedures after weather change */
   void updateProcedureWind();
 
+  /* Intial selection and expand items for current selection in route */
+  void treeViewStateFromRoute();
+
+  inline const proc::MapProcedureRef& refFromIndex(const QTreeWidgetItem *item) const;
+
   QString transitionIndicator, transitionIndicatorOne;
 
-  // item's types are the indexes into this array with approach, transition and leg ids
-  QVector<proc::MapProcedureRef> itemIndex;
+  /* Item type() is the keys into this hash */
+  QHash<int, ProcIndexEntry> itemIndex;
+  int nextIndexId = 1;
 
   // Item type is the index into this array
   // Approach or transition legs are already loaded in tree if bit is set
