@@ -118,7 +118,7 @@ public:
    * @param verboseParam Detailed tooltip text with info set to false
    * (i.e. generate alternating background color for tables)
    */
-  HtmlInfoBuilder(QWidget *parent, MapPaintWidget *mapWidgetParam, bool infoParam, bool printParam = false,
+  HtmlInfoBuilder(MapPaintWidget *mapWidgetParam, bool infoParam, bool printParam = false,
                   bool verboseParam = true);
 
   virtual ~HtmlInfoBuilder();
@@ -450,7 +450,6 @@ private:
   /* Aircraft size */
   QSize symbolSizeVehicle = QSize(28, 28);
 
-  QWidget *parentWidget = nullptr;
   MapPaintWidget *mapWidget = nullptr;
 
   AirportQuery *airportQuerySim, *airportQueryNav;

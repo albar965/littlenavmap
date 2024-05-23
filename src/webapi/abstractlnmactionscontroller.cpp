@@ -100,12 +100,12 @@ map::MapAirport AbstractLnmActionsController::getAirportByIdent(QByteArray ident
     map::MapAirport airport;
     getAirportQuery(AirportQueryType::SIM)->getAirportByIdent(airport,ident);
     return airport;
-};
+}
 map::WeatherContext AbstractLnmActionsController::getWeatherContext(map::MapAirport& airport){
     map::WeatherContext weatherContext;
     getMainWindow()->getWeatherContextHandler()->buildWeatherContextInfo(weatherContext, airport);
     return weatherContext;
-};
+}
 const SqlRecord* AbstractLnmActionsController::getAirportInformation(int id){
     return getInfoQuery()->getAirportInformation(id);
 }
@@ -128,16 +128,16 @@ int AbstractLnmActionsController::getTransitionAltitude(map::MapAirport& airport
 
 const QTime AbstractLnmActionsController::getSunset(const SqlRecord& airportInformation){
     return calculateSunriseSunset(getPosFromAirportInformation(airportInformation),ageo::SUNSET_CIVIL);
-};
+}
 const QTime AbstractLnmActionsController::getSunrise(const SqlRecord& airportInformation){
     return calculateSunriseSunset(getPosFromAirportInformation(airportInformation),ageo::SUNRISE_CIVIL);
-};
+}
 const QTime AbstractLnmActionsController::getSunset(const Pos& pos){
     return calculateSunriseSunset(pos,ageo::SUNSET_CIVIL);
-};
+}
 const QTime AbstractLnmActionsController::getSunrise(const Pos &pos){
     return calculateSunriseSunset(pos,ageo::SUNRISE_CIVIL);
-};
+}
 QTime AbstractLnmActionsController::calculateSunriseSunset(const Pos &pos, float zenith){
     QTime result;
     QDateTime datetime =
@@ -150,7 +150,7 @@ QTime AbstractLnmActionsController::calculateSunriseSunset(const Pos &pos, float
                                                  datetime.date(), zenith);
     }
     return result;
-};
+}
 Pos AbstractLnmActionsController::getPosFromAirportInformation(const SqlRecord &airportInformation){
     Pos pos(airportInformation.valueFloat("lonx"), airportInformation.valueFloat("laty"));
     return pos;
@@ -159,11 +159,11 @@ Pos AbstractLnmActionsController::getPosFromAirportInformation(const SqlRecord &
 const QDateTime AbstractLnmActionsController::getActiveDateTime(){
     return getNavApp()->isConnectedAndAircraft() ? getNavApp()->getUserAircraft().getZuluTime() : QDateTime::currentDateTimeUtc();
 
-};
+}
 const QString AbstractLnmActionsController::getActiveDateTimeSource(){
     return getNavApp()->isConnectedAndAircraft() ? tr("simulator date") : tr("real date");
-};
+}
 
 const SimConnectData AbstractLnmActionsController::getSimConnectData(){
     return getNavApp()->getSimConnectData();
-};
+}

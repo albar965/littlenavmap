@@ -101,8 +101,7 @@ QDataStream& operator<<(QDataStream& dataStream, const AircraftTrailPos& trackPo
 }
 
 // ==========================================================================================
-AircraftTrail::AircraftTrail(bool logbookTrailParam)
-  : logbookTrail(logbookTrailParam)
+AircraftTrail::AircraftTrail()
 {
   lastUserAircraft = new atools::fs::sc::SimConnectUserAircraft;
 
@@ -522,12 +521,9 @@ bool AircraftTrail::appendTrailPos(const atools::fs::sc::SimConnectUserAircraft&
   }
 
 #ifdef DEBUG_INFORMATION_TRAIL
-  if(!logbookTrail)
-  {
-    qDebug() << Q_FUNC_INFO << size();
-    qDebug() << Q_FUNC_INFO << constLast().getPosition();
-    qDebug() << Q_FUNC_INFO << lineStrings;
-  }
+  qDebug() << Q_FUNC_INFO << size();
+  qDebug() << Q_FUNC_INFO << constLast().getPosition();
+  qDebug() << Q_FUNC_INFO << lineStrings;
 #endif
 
   return pruned;

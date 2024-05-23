@@ -127,7 +127,7 @@ class AircraftTrail :
   private QList<AircraftTrailPos>
 {
 public:
-  AircraftTrail(bool logbookTrailParam);
+  AircraftTrail();
   ~AircraftTrail();
 
   AircraftTrail(const AircraftTrail& other);
@@ -241,8 +241,6 @@ private:
 
   /* Needed in RouteExportFormat stream operators to read different formats */
   static quint16 version;
-
-  bool logbookTrail = false;
 };
 
 #endif // LITTLENAVMAP_AIRCRAFTTRACK_H

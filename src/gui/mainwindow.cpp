@@ -860,12 +860,13 @@ void MainWindow::setupUi()
 void MainWindow::updateStatusBarStyle()
 {
   Qt::AlignmentFlag align = Qt::AlignCenter;
-  QFrame::Shadow shadow = connectStatusLabel->frameShadow();
-  QFrame::Shape shape = connectStatusLabel->frameShape();
-  bool adjustFrame = false;
 
   // Adjust shadow and shape of status bar labels but not for macOS
 #ifndef Q_OS_MACOS
+  bool adjustFrame = false;
+  QFrame::Shadow shadow = connectStatusLabel->frameShadow();
+  QFrame::Shape shape = connectStatusLabel->frameShape();
+
   if(NavApp::getStyleHandler() != nullptr)
   {
     QString style = NavApp::getStyleHandler()->getCurrentGuiStyleDisplayName();

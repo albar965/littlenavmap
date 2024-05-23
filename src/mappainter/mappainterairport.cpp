@@ -46,10 +46,6 @@ static const float RUNWAY_MIN_WIDTH_FT = 4.f;
 static const double RUNWAY_OVERVIEW_WIDTH_PIX = 6.;
 
 /* All sizes in pixel */
-static const int RUNWAY_HEADING_FONT_SIZE = 12;
-static const int RUNWAY_TEXT_FONT_SIZE = 16;
-static const int RUNWAY_NUMBER_FONT_SIZE = 20;
-static const int RUNWAY_NUMBER_SMALL_FONT_SIZE = 12;
 static const int TAXIWAY_TEXT_MIN_LENGTH = 10;
 static const int RUNWAY_OVERVIEW_MIN_LENGTH_FEET = 8000;
 static const float AIRPORT_DIAGRAM_BACKGROUND_METER = 200.f;

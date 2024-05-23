@@ -478,6 +478,8 @@ void RouteStringDialog::toolButtonOptionTriggered(QAction *act)
 {
 #ifdef DEBUG_INFORMATION
   qDebug() << Q_FUNC_INFO << act->objectName();
+#else
+  Q_UNUSED(act)
 #endif
 
   if(updatingActions)
@@ -520,7 +522,7 @@ void RouteStringDialog::restoreState()
 {
   restoreStateWidget();
   atools::gui::WidgetState(lnm::ROUTE_STRING_DIALOG + settingsSuffix).restore({ui->splitterRouteString,
-                                                                                        ui->comboBoxRouteStringFlightplanType});
+                                                                               ui->comboBoxRouteStringFlightplanType});
   ui->splitterRouteString->setHandleWidth(6);
   options = getOptionsFromSettings();
   updateButtonState();
@@ -763,7 +765,7 @@ void RouteStringDialog::updateButtonState()
   updatingActions = false;
 }
 
-void RouteStringDialog::showEvent(QShowEvent*)
+void RouteStringDialog::showEvent(QShowEvent *)
 {
   restoreStateWidget();
 }

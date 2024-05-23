@@ -52,10 +52,6 @@ const static float MAX_WAYPOINT_DISTANCE_NM = 5000.f;
 // Do not select alternate beyond 1000 NM
 const static float MAX_ALTERNATE_DISTANCE_NM = 1000.f;
 
-// Choose best navaid from a cluster with this distance.
-// Used to prioritize VOR and waypoints before NDB with the same name
-const static float MAX_CLOSE_NAVAIDS_DISTANCE_NM = 5.f;
-
 const static QRegularExpression SPDALT_WAYPOINT("^([A-Z0-9]+)/[NMK]\\d{3,4}[FSAM]\\d{3,4}$");
 
 // Time specification directly after airport - ignored

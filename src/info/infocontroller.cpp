@@ -60,7 +60,7 @@ InfoController::InfoController(MainWindow *parent)
 
   airspaceController = NavApp::getAirspaceController();
 
-  infoBuilder = new HtmlInfoBuilder(mainWindow, parent->getMapWidget(), true);
+  infoBuilder = new HtmlInfoBuilder(parent->getMapWidget(), true);
 
   // Get base font size for widgets
   Ui::MainWindow *ui = NavApp::getMainUi();
@@ -1478,7 +1478,7 @@ QStringList InfoController::getAirportTextFull(const QString& ident) const
     NavApp::getWeatherContextHandler()->buildWeatherContextInfo(weatherContext, airport);
 
     atools::util::HtmlBuilder html(mapcolors::webTableBackgroundColor, mapcolors::webTableAltBackgroundColor);
-    HtmlInfoBuilder builder(mainWindow, mainWindow->getMapWidget(), true /*info*/, true /*print*/);
+    HtmlInfoBuilder builder(mainWindow->getMapWidget(), true /*info*/, true /*print*/);
     builder.airportText(airport, weatherContext, html, nullptr);
     retval.append(html.getHtml());
 

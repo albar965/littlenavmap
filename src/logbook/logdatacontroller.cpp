@@ -595,7 +595,7 @@ const AircraftTrail *LogdataController::getAircraftTrail(int id)
   AircraftTrail *aircraftTrail = aircraftTrailCache.object(id);
   if(aircraftTrail == nullptr)
   {
-    aircraftTrail = new AircraftTrail(true /* logbookTrail */);
+    aircraftTrail = new AircraftTrail();
     aircraftTrail->fillTrailFromGpxData(*getGpxData(id));
     aircraftTrailCache.insert(id, aircraftTrail);
   }

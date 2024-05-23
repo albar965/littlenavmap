@@ -71,7 +71,6 @@ inline uint qHash(const NearestCacheKeyAirport& key)
 /* maximum difference in angle for aircraft to recognize the right runway */
 const static float MAX_HEADING_RUNWAY_DEVIATION_DEG = 20.f;
 const static float MAX_HEADING_RUNWAY_DEVIATION_DEG_2 = 45.f;
-const static float MAX_HEADING_RUNWAY_DEVIATION_DEG_3 = map::INVALID_HEADING_VALUE; // Ignore heading and get nearest runway end
 const static float MAX_RUNWAY_DISTANCE_METER = 150.f; // First iteration
 const static float MAX_RUNWAY_DISTANCE_METER_2 = 2000.f; // Second iteration if first failed
 

@@ -72,8 +72,8 @@ MapPaintWidget::MapPaintWidget(QWidget *parent, bool visible, bool webParam)
 {
   verbose = atools::settings::Settings::instance().getAndStoreValue(lnm::OPTIONS_MAPWIDGET_DEBUG, false).toBool();
 
-  aircraftTrail = new AircraftTrail(false /* logbookTrail */);
-  aircraftTrailLogbook = new AircraftTrail(true /* logbookTrail */);
+  aircraftTrail = new AircraftTrail();
+  aircraftTrailLogbook = new AircraftTrail();
 
   // Set the map quality to gain speed while moving
   setMapQualityForViewContext(HighQuality, Still);

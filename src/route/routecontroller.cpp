@@ -860,7 +860,7 @@ void RouteController::routeAltChanged()
   RouteCommand *undoCommand = nullptr;
 
   if(!route.isEmpty() /*&& route.getFlightplan().canSaveAltitude()*/)
-    undoCommand = preChange(tr("Change Altitude"), rctype::ALTITUDE);
+    undoCommand = preChange(tr("Change Altitude"));
 
   // Get type, speed and cruise altitude from widgets
   updateFlightplanFromWidgets();
@@ -2255,7 +2255,7 @@ void RouteController::adjustFlightplanAltitude()
   {
     RouteCommand *undoCommand = nullptr;
 
-    undoCommand = preChange(tr("Adjust altitude"), rctype::ALTITUDE);
+    undoCommand = preChange(tr("Adjust altitude"));
     // Convert local unit back to feet
     flightplan.setCruiseAltitudeFt(Unit::rev(adjustedAltitudeLocal, Unit::altFeetF));
 
@@ -2294,7 +2294,7 @@ void RouteController::reverseRoute()
 {
   qDebug() << Q_FUNC_INFO;
 
-  RouteCommand *undoCommand = preChange(tr("Reverse"), rctype::REVERSE);
+  RouteCommand *undoCommand = preChange(tr("Reverse"));
 
   clearTableSelection();
 
@@ -3540,7 +3540,7 @@ void RouteController::moveSelectedLegsInternal(MoveDirection direction)
 
   if(!rows.isEmpty())
   {
-    RouteCommand *undoCommand = preChange(tr("Move Waypoints"), rctype::MOVE);
+    RouteCommand *undoCommand = preChange(tr("Move Waypoints"));
 
     QModelIndex curIdx = tableViewRoute->currentIndex();
     // Remove selection
@@ -3634,8 +3634,7 @@ void RouteController::deleteSelectedLegs(const QList<int>& rows)
 
     // Do not merge for procedure deletes
     proc::MapProcedureTypes procs = affectedProcedures(rows);
-    RouteCommand *undoCommand = preChange(procs & proc::PROCEDURE_ALL ? tr("Delete Procedure") : tr("Delete Waypoints"),
-                                          procs & proc::PROCEDURE_ALL ? rctype::EDIT : rctype::DELETE);
+    RouteCommand *undoCommand = preChange(procs & proc::PROCEDURE_ALL ? tr("Delete Procedure") : tr("Delete Waypoints"));
 
     deleteSelectedLegsInternal(rows);
     updateActiveLeg();
@@ -3742,7 +3741,7 @@ void RouteController::convertProcedure(proc::MapProcedureTypes types)
   // Ignore events triggering follow due to selection changes
   atools::util::ContextSaverBool saver(ignoreFollowSelection);
 
-  RouteCommand *undoCommand = preChange(tr("Convert Procedure"), rctype::EDIT);
+  RouteCommand *undoCommand = preChange(tr("Convert Procedure"));
 
   // Also convert STAR if approach is converted
   if(types.testFlag(proc::PROCEDURE_APPROACH) && route.hasAnyStarProcedure())
@@ -5824,12 +5823,12 @@ void RouteController::clearRoute()
   updateFlightplanFromWidgets();
 }
 
-RouteCommand *RouteController::preChange(const QString& text, rctype::RouteCmdType rcType)
+RouteCommand *RouteController::preChange(const QString& text)
 {
   // Clean the flight plan from any procedure entries
   Flightplan flightplan = route.getFlightplanConst();
   flightplan.removeProcedureEntries();
-  return new RouteCommand(this, flightplan, text, rcType);
+  return new RouteCommand(this, flightplan, text);
 }
 
 void RouteController::postChange(RouteCommand *undoCommand)
@@ -5935,7 +5934,7 @@ void RouteController::remarksTextChanged()
   if(flightplan.getComment() != editText)
   {
     // Text is different add with undo
-    RouteCommand *undoCommand = preChange(tr("Remarks changed"), rctype::REMARKS);
+    RouteCommand *undoCommand = preChange(tr("Remarks changed"));
     flightplan.setComment(editText);
     postChange(undoCommand);
 

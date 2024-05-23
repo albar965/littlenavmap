@@ -105,8 +105,8 @@ const int MAX_DISTANCE_FOR_BEARING_METER = ageo::nmToMeter(8000);
 
 const static ahtml::Flags LINK_FLAGS = ahtml::LINK_NO_UL | ahtml::BOLD;
 
-HtmlInfoBuilder::HtmlInfoBuilder(QWidget *parent, MapPaintWidget *mapWidgetParam, bool infoParam, bool printParam, bool verboseParam)
-  : parentWidget(parent), mapWidget(mapWidgetParam), info(infoParam), print(printParam), verbose(verboseParam)
+HtmlInfoBuilder::HtmlInfoBuilder(MapPaintWidget *mapWidgetParam, bool infoParam, bool printParam, bool verboseParam)
+  : mapWidget(mapWidgetParam), info(infoParam), print(printParam), verbose(verboseParam)
 {
   if(info)
     verbose = true;

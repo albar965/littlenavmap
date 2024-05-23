@@ -594,6 +594,8 @@ void MapWidget::showTooltip(bool update)
 
 #ifdef DEBUG_INFORMATION
   qDebug() << Q_FUNC_INFO << "tooltipPos" << tooltipGlobalPos << "update" << update << "QToolTip::isVisible()" << QToolTip::isVisible();
+#else
+Q_UNUSED(update)
 #endif
 
   // Do not hide or show anything if position is outside map window

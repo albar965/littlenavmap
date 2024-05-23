@@ -409,7 +409,7 @@ private:
 
   /* Save undo state before and after change */
   /* Call this before doing any change to the flight plan that should be undoable */
-  RouteCommand *preChange(const QString& text = QString(), rctype::RouteCmdType rcType = rctype::EDIT);
+  RouteCommand *preChange(const QString& text = QString());
 
   /* Call this after doing a change to the flight plan that should be undoable */
   void postChange(RouteCommand *undoCommand);

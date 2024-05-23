@@ -33,7 +33,6 @@
 
 static const double queryRectInflationFactor = 0.2;
 static const double queryRectInflationIncrement = 0.1;
-static const int queryMaxRowsWind = 80000;
 
 namespace windinternal {
 

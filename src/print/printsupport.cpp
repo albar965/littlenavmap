@@ -243,7 +243,7 @@ void PrintSupport::addAirport(QTextCursor& cursor, const map::MapAirport& airpor
   QTextBlockFormat pageBreakBlock;
   pageBreakBlock.setPageBreakPolicy(QTextFormat::PageBreak_AlwaysBefore);
 
-  HtmlInfoBuilder builder(mainWindow, mainWindow->getMapWidget(), true /*info*/, true /*print*/);
+  HtmlInfoBuilder builder(mainWindow->getMapWidget(), true /*info*/, true /*print*/);
   map::WeatherContext weatherContext;
 
   prt::PrintFlightPlanOpts opts = printDialog->getPrintOptions();
