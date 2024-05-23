@@ -20,7 +20,6 @@
 
 #include "routing/routenetworktypes.h"
 #include "route/route.h"
-#include "route/routecommandflags.h"
 
 #include <QTimer>
 

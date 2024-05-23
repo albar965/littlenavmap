@@ -19,7 +19,6 @@
 #define LITTLENAVMAP_ROUTECOMMAND_H
 
 #include "fs/pln/flightplan.h"
-#include "route/routecommandflags.h"
 
 #include <QUndoCommand>
 
