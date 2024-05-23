@@ -826,10 +826,10 @@ void MapPainter::paintAircraftTrail(const QVector<LineString>& lineStrings, floa
           // Draw line and force drawing also for very short segments
           drawLine(context->painter, line, true /* forceDraw */);
         }
-
-        if(lastToAircraft.isValid())
-          drawLine(context->painter, lastToAircraft);
       }
+
+      if(lastToAircraft.isValid())
+        drawLine(context->painter, lastToAircraft);
     }
     else
     {

@@ -760,7 +760,7 @@ void ProcedureSearch::fillProcedureTreeWidget()
       QTreeWidgetItem *root = treeWidget->invisibleRootItem();
       QVector<SqlRecord> sortedProcedures;
 
-      // Collect all procedures from the database
+      // Collect all procedures from the database to sortedProcedures ===============================================
       for(SqlRecord procedureRec : *procedureRecords)
       {
 #ifdef DEBUG_INFORMATION_PROCSEARCH
@@ -830,6 +830,7 @@ void ProcedureSearch::fillProcedureTreeWidget()
       QString typefilter = ui->comboBoxProcedureSearchFilter->currentData(COMBOBOX_PROCEDURE_FILTER_ROLE).toString();
       int typeindex = ui->comboBoxProcedureSearchFilter->currentIndex();
 
+      // Now load sorted and filtered procedures
       for(const SqlRecord& recApp : sortedProcedures)
       {
 #ifdef DEBUG_INFORMATION_PROCSEARCH

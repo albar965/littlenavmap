@@ -25,8 +25,8 @@ class Route;
 
 namespace map {
 
-class MapRunwayEnd;
-class MapRunway;
+struct MapRunwayEnd;
+struct MapRunway;
 }
 namespace atools {
 namespace util {
