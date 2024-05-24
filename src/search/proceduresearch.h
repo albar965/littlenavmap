@@ -29,7 +29,6 @@
 
 namespace atools {
 namespace gui {
-class ItemViewZoomHandler;
 class GridDelegate;
 }
 
@@ -56,12 +55,8 @@ class ProcIndexEntry;
 class InfoQuery;
 class QTreeWidget;
 class QTreeWidgetItem;
-class QMainWindow;
-class QMenu;
-class QAction;
 class ProcedureQuery;
 class AirportQuery;
-class HtmlInfoBuilder;
 class TreeEventFilter;
 
 /* Takes care of the tree widget in approach tab on the informtaion window. */
@@ -169,7 +164,7 @@ private:
 
   // Save and restore expanded and selected item state
   QBitArray treeViewStateSave() const;
-  void treeViewStateRestore(const QBitArray& state, bool blockSignals);
+  void treeViewStateRestore(const QBitArray& state);
 
   /* Build full approach or transition items for the tree view */
   QTreeWidgetItem *buildProcedureItem(QTreeWidgetItem *runwayItem, const QString& ident, const QString& procTypeText,
