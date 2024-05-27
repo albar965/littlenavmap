@@ -59,18 +59,23 @@ enum TreeColumnIndex
   COL_DESCRIPTION = 0,
   COL_IDENT = 1,
   COL_RESTR = 2,
-  COL_COURSE = 3,
-  COL_DISTANCE = 4,
-  COL_WIND = 5,
-  COL_REMARKS = 6,
+  COL_FROMTO = 3,
+  COL_COURSE = 4,
+  COL_DISTANCE = 5,
+  COL_WIND = 6,
+  COL_REMARKS = 7,
   INVALID = -1
 };
 
-// Text for menu display of a procedure/transition without HTML. Attached to QTreeWidgetItem for procedures.
-const static int TREEWIDGET_MENU_ROLE = Qt::UserRole;
-
-// Text for header of a procedure/transition with HTML. Attached to QTreeWidgetItem for procedures.
-const static int TREEWIDGET_HEADER_ROLE = Qt::UserRole + 1;
+enum TreeRole
+{
+  // Text for menu display of a procedure/transition without HTML. Attached to QTreeWidgetItem for procedures.
+  TREEWIDGET_MENU_ROLE = Qt::UserRole,
+  // Text for header of a procedure/transition with HTML. Attached to QTreeWidgetItem for procedures.
+  TREEWIDGET_HEADER_ROLE = Qt::UserRole + 1,
+  // QStringList with first and last waypoint
+  TREEWIDGET_HEADER_FIRSTLAST_ROLE = Qt::UserRole + 2
+};
 
 const static int COMBOBOX_RUNWAY_FILTER_ROLE = Qt::UserRole;
 const static int COMBOBOX_PROCEDURE_FILTER_ROLE = Qt::UserRole;
@@ -491,7 +496,7 @@ void ProcedureSearch::treeViewStateFromRoute()
           for(int i = 0; i < procedureItem->childCount(); i++)
           {
             QTreeWidgetItem *transitionItem = procedureItem->child(i);
-            const MapProcedureRef& ref = refFromIndex(transitionItem);
+            const MapProcedureRef& ref = refFromItem(transitionItem);
             if(ref.hasTransitionId() && procRef.transitionId == ref.transitionId)
             {
               transitionItem->setExpanded(true);
@@ -591,23 +596,32 @@ QString ProcedureSearch::procedureAndTransitionText(const QTreeWidgetItem *item,
   const QString pattern(header ? tr("%1 <b>%2</b>") : tr("%1 %2")),
   patternSpace(header ? tr(" %1 <b>%2</b>") : tr(" %1 %2")), viaPattern(tr(" via "));
 
-  QString text;
-  if(item != nullptr)
+  // Get parent reference if this is a leg item
+  MapProcedureRef ref = refFromItem(item);
+  if(ref.isLeg() && item != nullptr)
   {
-    int role = header ? TREEWIDGET_HEADER_ROLE : TREEWIDGET_MENU_ROLE;
-    MapProcedureRef ref = refFromIndex(item);
-    if(ref.isLeg())
-    {
-      item = item->parent();
-      ref = refFromIndex(item);
-    }
+    item = item->parent();
+    ref = refFromItem(item);
+  }
+
+  QString text;
+  // Generate HTML text for header or menu text
+  const TreeRole role = header ? TREEWIDGET_HEADER_ROLE : TREEWIDGET_MENU_ROLE;
+
+  if(item != nullptr && ref.hasProcedureId())
+  {
+    // Get first and last waypoint for the procedure or transition
+    QStringList firstLastWp = item->data(COL_DESCRIPTION, TREEWIDGET_HEADER_FIRSTLAST_ROLE).toStringList();
 
     if(ref.hasProcedureOnlyIds())
     {
-      // Only approach
+      // Procedure ==============================
       text.append(pattern.arg(item->data(COL_DESCRIPTION, role).toString()).arg(item->text(COL_IDENT)));
 
-      if(item->childCount() == 1 && ref.mapType & proc::PROCEDURE_SID)
+      if(header)
+        text.append(atools::strJoin(tr(". From "), firstLastWp, tr(", "), tr(" to "), tr(".")));
+
+      if(item->childCount() == 1 && ref.mapType.testFlag(proc::PROCEDURE_SID))
       {
         // Special SID case that has only transition legs and only one transition
         const QTreeWidgetItem *child = item->child(0);
@@ -617,21 +631,46 @@ QString ProcedureSearch::procedureAndTransitionText(const QTreeWidgetItem *item,
           text.append(pattern.arg(child->data(COL_DESCRIPTION, role).toString()).arg(child->text(COL_IDENT)));
         }
       }
+
+      // Text here: "Approach ILS 10L BLAZR (I10L), from TRAYL to 10L"
     }
-    else
+    else if(ref.hasProcedureAndTransitionIds())
     {
-      if(ref.hasProcedureAndTransitionIds())
+      // Transition ==============================
+      const QTreeWidgetItem *procedure = item->parent();
+      if(procedure != nullptr)
       {
-        const QTreeWidgetItem *appr = item->parent();
-        if(appr != nullptr)
+        // Clear unneded intermediate waypoint to prepare for merge
+        if(firstLastWp.size() >= 2)
         {
-          text.append(pattern.arg(appr->data(COL_DESCRIPTION, role).toString()).arg(appr->text(COL_IDENT)));
-          text.append(viaPattern);
+          if(ref.mapType.testFlag(proc::PROCEDURE_SID))
+            firstLastWp.removeFirst();
+          else
+            firstLastWp.removeLast();
         }
+
+        // Merge first and last to have path from transition entry to approach last, for example
+        QStringList firstLastWpProc = procedure->data(COL_DESCRIPTION, TREEWIDGET_HEADER_FIRSTLAST_ROLE).toStringList();
+        if(!firstLastWpProc.isEmpty())
+        {
+          if(ref.mapType.testFlag(proc::PROCEDURE_SID))
+            firstLastWp.prepend(firstLastWpProc.constFirst());
+          else
+            firstLastWp.append(firstLastWpProc.constLast());
+        }
+
+        text.append(pattern.arg(procedure->data(COL_DESCRIPTION, role).toString()).arg(procedure->text(COL_IDENT)));
+        text.append(viaPattern);
       }
+
       text.append(patternSpace.arg(item->data(COL_DESCRIPTION, role).toString()).arg(item->text(COL_IDENT)));
+
+      if(header)
+        text.append(atools::strJoin(tr(". From "), firstLastWp, tr(", "), tr(" to "), tr(".")));
+
+      // Text here: "Approach ILS 10L BLAZR (I10L) via transition BUXOM, from BUXOM to 10L"
     }
-  }
+  } // if(item != nullptr)
   return text.simplified();
 }
 
@@ -643,7 +682,7 @@ void ProcedureSearch::clearRunwayFilter()
   ui->comboBoxProcedureRunwayFilter->setCurrentIndex(FILTER_ALL_RUNWAYS);
   ui->comboBoxProcedureRunwayFilter->clear();
   ui->comboBoxProcedureRunwayFilter->addItem(tr("All Runways"));
-  // No runways is maybe inserted here inbetween
+  // "No runways" is maybe inserted here inbetween
   ui->comboBoxProcedureRunwayFilter->insertSeparator(FILTER_RUNWAYS_SEPARATOR);
   ui->comboBoxProcedureRunwayFilter->blockSignals(false);
 }
@@ -760,6 +799,7 @@ void ProcedureSearch::fillProcedureTreeWidget()
   itemIndex.clear();
   nextIndexId = 1;
   itemLoadedIndex.clear();
+  QSet<QTreeWidgetItem *> itemsToExpand;
 
   if(currentAirportNav->isValid())
   {
@@ -771,17 +811,18 @@ void ProcedureSearch::fillProcedureTreeWidget()
       QStringList runwayNames = airportQueryNav->getRunwayNames(currentAirportNav->id);
       Ui::MainWindow *ui = NavApp::getMainUi();
       QTreeWidgetItem *root = treeWidget->invisibleRootItem();
-      QVector<SqlRecord> sortedProcedures;
+      QVector<SqlRecord> filteredProcedures;
 
-      // Collect all procedures from the database to sortedProcedures ===============================================
+      // Collect all procedures from the database to filteredProcedures ===============================================
       for(SqlRecord procedureRec : *procedureRecords)
       {
 #ifdef DEBUG_INFORMATION_PROCSEARCH
+        qDebug() << Q_FUNC_INFO << "PROCEDURE ==========================================================";
         qDebug() << Q_FUNC_INFO << "procedureRec " << procedureRec;
 #endif
 
+        // Filter out by type from the combo box ================================================
         proc::MapProcedureTypes type = buildTypeFromProcedureRec(procedureRec);
-
         bool filterOk = false;
 
         if(filterIndex == ProcedureSearch::FILTER_ALL_PROCEDURES)
@@ -795,121 +836,200 @@ void ProcedureSearch::fillProcedureTreeWidget()
         else if(filterIndex >= ProcedureSearch::FILTER_APPROACH_ALL) // More types after FILTER_APPROACH_ALL
           filterOk = type & proc::PROCEDURE_APPROACH_ALL_MISSED;
 
-        // Resolve parallel runway assignments
+        // Resolve parallel runway assignments for runway filter
         QStringList sidStarArincDispNames, sidStarRunways;
         QString allRunwayDispText(tr("All"));
         if(type & proc::PROCEDURE_SID_STAR_ALL)
           atools::fs::util::sidStarMultiRunways(runwayNames, procedureRec.valueStr("arinc_name", QString()),
                                                 &sidStarRunways, allRunwayDispText, &sidStarArincDispNames);
 
-        QString rwName;
+        QString runwayName;
         if(!procedureRec.valueStr("runway_name").isEmpty())
-          rwName = atools::fs::util::runwayBestFit(procedureRec.valueStr("runway_name"), runwayNames);
+          runwayName = atools::fs::util::runwayBestFit(procedureRec.valueStr("runway_name"), runwayNames);
 
-        QString rwNamefilter = ui->comboBoxProcedureRunwayFilter->currentData(COMBOBOX_RUNWAY_FILTER_ROLE).toString();
+        QString runwayNamefilter = ui->comboBoxProcedureRunwayFilter->currentData(COMBOBOX_RUNWAY_FILTER_ROLE).toString();
         int rwNameIndex = ui->comboBoxProcedureRunwayFilter->currentIndex();
 
+        // Filter out by runway from the combo box ================================================
         if(rwNameIndex == FILTER_ALL_RUNWAYS)
           // All selected - always first position
           filterOk &= true;
-        else if(rwNamefilter.isEmpty())
+        else if(runwayNamefilter.isEmpty())
           // No rwy selected - second position
-          filterOk &= rwName.isEmpty() && sidStarArincDispNames.isEmpty();
+          filterOk &= runwayName.isEmpty() && sidStarArincDispNames.isEmpty();
         else
-          filterOk &= rwName == rwNamefilter || // name equal
-                      (!sidStarArincDispNames.isEmpty() && sidStarArincDispNames.contains(rwNamefilter)) ||
+          filterOk &= runwayName == runwayNamefilter || // name equal
+                      (!sidStarArincDispNames.isEmpty() && sidStarArincDispNames.contains(runwayNamefilter)) ||
                       sidStarArincDispNames.contains(allRunwayDispText);
 
         if(filterOk)
         {
           // Add an extra field with the best airport runway name
-          procedureRec.appendField("airport_runway_name", QVariant::String);
-          procedureRec.setValue("airport_runway_name", rwName);
+          procedureRec.appendFieldAndValue("airport_runway_name", runwayName);
 
-          // Keep the runways for the context menu
-          procedureRec.appendField("sid_star_runways", QVariant::StringList);
-          procedureRec.setValue("sid_star_runways", sidStarRunways);
+          // Keep the runway list for the context menu
+          procedureRec.appendFieldAndValue("sid_star_runways", sidStarRunways);
 
           procedureRec.appendField("sid_star_arinc_name", QVariant::String);
-          if(type & proc::PROCEDURE_SID_STAR_ALL && rwName.isEmpty())
+          if(type & proc::PROCEDURE_SID_STAR_ALL && runwayName.isEmpty())
             procedureRec.setValue("sid_star_arinc_name", sidStarArincDispNames.join(", "));
 
-          sortedProcedures.append(procedureRec);
+          filteredProcedures.append(procedureRec);
         }
       }
 
-      std::sort(sortedProcedures.begin(), sortedProcedures.end(), procedureSortFunc);
+      // Sort all procedures by type, name and runways ===================================================
+      std::sort(filteredProcedures.begin(), filteredProcedures.end(), procedureSortFunc);
 
       QString typefilter = ui->comboBoxProcedureSearchFilter->currentData(COMBOBOX_PROCEDURE_FILTER_ROLE).toString();
       int typeindex = ui->comboBoxProcedureSearchFilter->currentIndex();
 
-      // Now load sorted and filtered procedures
-      for(const SqlRecord& recApp : sortedProcedures)
+      // Now load sorted and filtered procedures ==============================================================
+      for(SqlRecord& procedureRecFiltered : filteredProcedures)
       {
-#ifdef DEBUG_INFORMATION_PROCSEARCH
-        qDebug() << Q_FUNC_INFO << "recApp " << recApp;
-#endif
-
-        proc::MapProcedureTypes type = buildTypeFromProcedureRec(recApp);
-
-        // Check ident filter ==========================================
-        QString identFilter = ui->lineEditProcedureSearchIdentFilter->text();
-        if(!identFilter.isEmpty())
-        {
-          if(!recApp.valueStr("fix_ident").startsWith(identFilter, Qt::CaseInsensitive) &&
-             !(type & proc::PROCEDURE_APPROACH && recApp.valueStr("arinc_name").startsWith(identFilter, Qt::CaseInsensitive)))
-            continue;
-        }
-
-        // Check type name filter ==========================================
-        if(!(type & proc::PROCEDURE_SID_STAR_ALL) && typeindex > FILTER_APPROACH_ALL && recApp.valueStr("type") != typefilter)
+        // Check type filter ==========================================
+        proc::MapProcedureTypes type = buildTypeFromProcedureRec(procedureRecFiltered);
+        if(!(type & proc::PROCEDURE_SID_STAR_ALL) && typeindex > FILTER_APPROACH_ALL && procedureRecFiltered.valueStr("type") != typefilter)
           continue;
 
-        // Get transitions ======================================================
-        const SqlRecordList *transitionRecords = infoQuery->getTransitionInformation(recApp.valueInt("approach_id"));
+        // Get first and last waypoint ==========================================
+        int procedureId = procedureRecFiltered.valueInt("approach_id");
+        QString firstFix, lastFix;
+        procedureQuery->getProcedureFirstLastWp(firstFix, lastFix, procedureId);
 
-        QString prefix;
-        if(type & proc::PROCEDURE_APPROACH)
-          prefix = tr("Approach "); // SID and STAR prefix is already a part of the text
+        // Add first and last waypoint to record ======================
+        bool approach = type.testFlag(proc::PROCEDURE_APPROACH);
+        bool sid = type.testFlag(proc::PROCEDURE_SID);
+        int runwayEndId = procedureRecFiltered.valueInt("runway_end_id");
+        if(approach)
+        {
+          // Approach ends usually with runway
+          QString rw = airportQueryNav->getRunwayEndById(runwayEndId).name;
+          procedureRecFiltered.appendFieldAndValue("fix_first", firstFix);
+          procedureRecFiltered.appendFieldAndValue("fix_last", QVariant(rw.isEmpty() ? currentAirportNav->displayIdent() : rw));
+          lastFix = rw;
+        }
+        else if(sid)
+        {
+          // SID starts with runway
+          // Try to get multi runways list
+          QString rw = procedureRecFiltered.value("sid_star_runways").toStringList().join(tr(", "));
 
-        QString procTypeText, // "RNAV 32-Y" or "ILS 16 (one transition)"
-                headerText, // "RNAV 32-Y" or "ILS 16" in HTML
-                menuText, // "RNAV 32-Y" or "ILS 16" in plain text
-                ident; // Fix ident and ARINC name in () for approaches
-        QStringList attText; // "GPS Overlay", etc.
-        procedureDisplayText(procTypeText, headerText, menuText, attText, recApp, type,
-                             transitionRecords != nullptr ? transitionRecords->size() : 0);
+          // Otherwise single or no runway
+          if(rw.isEmpty())
+            rw = procedureRecFiltered.value("arinc_name").toString();
 
-        ident = recApp.valueStr("fix_ident");
-        if(type & proc::PROCEDURE_APPROACH && !recApp.valueStr("arinc_name").isEmpty())
-          ident.append(tr(" (%1)").arg(recApp.valueStr("arinc_name")));
+          firstFix = rw.startsWith("RW") ? rw.mid(2) : rw;
+          procedureRecFiltered.appendFieldAndValue("fix_first", firstFix);
+          procedureRecFiltered.appendFieldAndValue("fix_last", lastFix);
+        }
+        else
+        {
+          // STAR
+          procedureRecFiltered.appendFieldAndValue("fix_first", firstFix);
+          procedureRecFiltered.appendFieldAndValue("fix_last", lastFix);
+        }
 
-        QTreeWidgetItem *apprItem = buildProcedureItem(root, ident, prefix % procTypeText, prefix % headerText,
-                                                       prefix % menuText, attText);
+        // Check text filter for procedure ===========================================================
+        QString filter = ui->lineEditProcedureSearchIdentFilter->text();
+        QString ident = procedureRecFiltered.valueStr("fix_ident");
+        QString arinc = procedureRecFiltered.valueStr("arinc_name");
+        bool procFilterMatch = filter.isEmpty() || ident.startsWith(filter, Qt::CaseInsensitive) ||
+                               firstFix.startsWith(filter, Qt::CaseInsensitive) || lastFix.startsWith(filter, Qt::CaseInsensitive) ||
+                               (approach && arinc.startsWith(filter, Qt::CaseInsensitive));
 
-        int runwayEndId = recApp.valueInt("runway_end_id");
-        int apprId = recApp.valueInt("approach_id");
-        itemIndex.insert(apprItem->type(), ProcIndexEntry(apprItem, currentAirportNav->id, runwayEndId, apprId, -1, -1, type));
+#ifdef DEBUG_INFORMATION_PROCSEARCH
+        qDebug() << Q_FUNC_INFO << "PROCEDURE ==========================================================";
+        qDebug() << Q_FUNC_INFO << "procedureRecSorted " << procedureRecFiltered << "procFilterMatch" << procFilterMatch;
+#endif
 
+        // Load transitions for this procedure ==============================================================
+        const SqlRecordList *transitionRecords = infoQuery->getTransitionInformation(procedureId);
+        QVector<SqlRecord> filteredTransitions;
+        bool foundProceduresToExpand = false;
+        int numTransitions = 0;
         if(transitionRecords != nullptr)
         {
-          // Transitions for this approach
-          for(const SqlRecord& transitionRec : *transitionRecords)
+          // Keep number and do not consider filtered out transitions ======================================
+          numTransitions = transitionRecords->size();
+
+          // Transitions for this procedure
+          for(SqlRecord transitionRec : *transitionRecords)
           {
-            // Also add runway from parent approach to transition
-            QTreeWidgetItem *transItem = buildTransitionItem(apprItem, transitionRec,
-                                                             type & proc::PROCEDURE_DEPARTURE || type & proc::PROCEDURE_STAR_ALL);
-            itemIndex.insert(transItem->type(), ProcIndexEntry(transItem, currentAirportNav->id, runwayEndId, apprId,
-                                                               transitionRec.valueInt("transition_id"), -1, type));
+            QString firstTransFix, lastTransFix;
+            procedureQuery->getTransitionFirstLastWp(firstTransFix, lastTransFix, transitionRec.valueInt("transition_id"));
+
+            // Check text filter for transitions ==========================================
+            if(filter.isEmpty() || procFilterMatch || transitionRec.valueStr("fix_ident").startsWith(filter, Qt::CaseInsensitive) ||
+               firstTransFix.startsWith(filter, Qt::CaseInsensitive) || firstTransFix.startsWith(filter, Qt::CaseInsensitive))
+            {
+              transitionRec.appendFieldAndValue("fix_first", firstTransFix);
+              transitionRec.appendFieldAndValue("fix_last", lastTransFix);
+              filteredTransitions.append(transitionRec);
+
+              // Expand procedure if procedure was not selected but transition
+              foundProceduresToExpand |= !filter.isEmpty() && !procFilterMatch;
+
+#ifdef DEBUG_INFORMATION_PROCSEARCH
+              qDebug() << Q_FUNC_INFO << "TRANSITION ==========================================================";
+              qDebug() << Q_FUNC_INFO << "transitionRec " << transitionRec << "foundMatchingTransitions" << foundProceduresToExpand;
+#endif
+            }
           }
         }
-      }
-    }
-    itemLoadedIndex.resize(itemIndex.size());
-  }
 
+        // Sort transitions by name
+        std::sort(filteredTransitions.begin(), filteredTransitions.end(), transitionSortFunc);
+
+        // Add procedures and transitons to tree ============================================================
+        // Procedure has to be added if its filter matched or if one of its transitions matched
+        if(foundProceduresToExpand || procFilterMatch)
+        {
+          QString prefix;
+          if(approach)
+            prefix = tr("Approach "); // SID and STAR prefix is already a part of the text
+
+          QString procTypeText, // "RNAV 32-Y" or "ILS 16 (one transition)"
+                  headerText, // "RNAV 32-Y" or "ILS 16" in HTML
+                  menuText; // "RNAV 32-Y" or "ILS 16" in plain text
+          QStringList attText; // "GPS Overlay", etc.
+          procedureDisplayText(procTypeText, headerText, menuText, attText, procedureRecFiltered, type, numTransitions);
+
+          // Fix ident and ARINC name in () for approaches
+          if(approach && !arinc.isEmpty())
+            ident.append(tr(" (%1)").arg(arinc));
+
+          // also creates transition_id in type()
+          QTreeWidgetItem *procItem = buildProcedureItem(root, ident, procedureRecFiltered, prefix % procTypeText,
+                                                         prefix % headerText, prefix % menuText, attText);
+
+          itemIndex.insert(procItem->type(), ProcIndexEntry(procItem, currentAirportNav->id, runwayEndId, procedureId, -1, -1, type));
+
+          // Transitions for this approach ===============================
+          for(const SqlRecord& transitionRecFiltered : filteredTransitions)
+          {
+            // Also add runway from parent approach to transition - also creates transition_id in type()
+            QTreeWidgetItem *transItem = buildTransitionItem(procItem, transitionRecFiltered,
+                                                             type & proc::PROCEDURE_DEPARTURE || type & proc::PROCEDURE_STAR_ALL);
+            itemIndex.insert(transItem->type(), ProcIndexEntry(transItem, currentAirportNav->id, runwayEndId, procedureId,
+                                                               transitionRecFiltered.valueInt("transition_id"), -1, type));
+          }
+
+          if(foundProceduresToExpand)
+            itemsToExpand.insert(procItem);
+        }
+      } // for(SqlRecord procedureRecSorted : sortedProcedures)
+    } // if(procedureRecords != nullptr)
+  } // if(currentAirportNav->isValid())
+
+  itemLoadedIndex.resize(itemIndex.size());
   updateProcedureWind();
   treeWidget->blockSignals(false);
+
+  // Now expand any items which were collected from route procedures
+  // Use signals for updating and loading expanded items
+  for(QTreeWidgetItem *item : itemsToExpand)
+    item->setExpanded(true);
 }
 
 void ProcedureSearch::saveState()
@@ -1001,6 +1121,9 @@ void ProcedureSearch::updateTreeHeader()
   header->setText(COL_RESTR, tr("Restriction\n%1/%2/angle").arg(Unit::getUnitAltStr()).arg(Unit::getUnitSpeedStr()));
   header->setToolTip(COL_RESTR, tr("Altitude restriction, speed limit or\nrequired descent flight path angle."));
 
+  header->setText(COL_FROMTO, tr("First and last\nWaypoint"));
+  header->setToolTip(COL_FROMTO, tr("First and last waypoint of the procedure, transition or both."));
+
   header->setText(COL_COURSE, tr("Course\n°M"));
   header->setToolTip(COL_COURSE, tr("Magnetic course to fly."));
 
@@ -1055,7 +1178,7 @@ void ProcedureSearch::itemSelectionChangedInternal(bool noFollow)
   {
     for(QTreeWidgetItem *item : selectedItems)
     {
-      MapProcedureRef ref = refFromIndex(item);
+      MapProcedureRef ref = refFromItem(item);
 
       if(ref.hasProcedureOrTransitionIds())
       {
@@ -1078,7 +1201,7 @@ void ProcedureSearch::itemSelectionChangedInternal(bool noFollow)
         emit procedureLegSelected(proc::MapProcedureRef());
 
       if(ref.hasProcedureAndTransitionIds())
-        updateProcedureItem(item, ref.transitionId);
+        updateProcedureItemCourseDist(item, ref.transitionId);
     }
   }
 
@@ -1096,25 +1219,25 @@ void ProcedureSearch::itemSelectionChangedInternal(bool noFollow)
   updateWidgets();
 }
 
-void ProcedureSearch::updateProcedureItem(QTreeWidgetItem *apprItem, int transitionId)
+void ProcedureSearch::updateProcedureItemCourseDist(QTreeWidgetItem *procedureItem, int transitionId)
 {
-  if(apprItem != nullptr)
+  if(procedureItem != nullptr)
   {
-    for(int i = 0; i < apprItem->childCount(); i++)
+    for(int i = 0; i < procedureItem->childCount(); i++)
     {
-      QTreeWidgetItem *child = apprItem->child(i);
-      const MapProcedureRef& childRef = refFromIndex(child);
+      QTreeWidgetItem *child = procedureItem->child(i);
+      const MapProcedureRef& childRef = refFromItem(child);
       if(childRef.isLeg())
       {
         const proc::MapProcedureLegs *legs = procedureQuery->getTransitionLegs(*currentAirportNav, transitionId);
         if(legs != nullptr)
         {
-          const proc::MapProcedureLeg *aleg = legs->transitionLegById(childRef.legId);
+          const proc::MapProcedureLeg *procLeg = legs->transitionLegById(childRef.legId);
 
-          if(aleg != nullptr)
+          if(procLeg != nullptr)
           {
-            child->setText(COL_COURSE, proc::procedureLegCourse(*aleg));
-            child->setText(COL_DISTANCE, proc::procedureLegDistance(*aleg));
+            child->setText(COL_COURSE, proc::procedureLegCourse(*procLeg));
+            child->setText(COL_DISTANCE, proc::procedureLegDistance(*procLeg));
           }
           else
             qWarning() << Q_FUNC_INFO << "Transition legs not found" << childRef.legId;
@@ -1142,7 +1265,7 @@ void ProcedureSearch::itemExpanded(QTreeWidgetItem *item)
       return;
 
     // Get a copy since vector is rebuilt underneath
-    const MapProcedureRef ref = refFromIndex(item);
+    const MapProcedureRef ref = refFromItem(item);
 
     if(ref.legId == -1)
     {
@@ -1444,10 +1567,10 @@ const MapProcedureRef& ProcedureSearch::fetchProcRef(const QTreeWidgetItem *item
 {
   if(item != nullptr && !itemIndex.isEmpty())
   {
-    const MapProcedureRef& procData = refFromIndex(item);
+    const MapProcedureRef& procData = refFromItem(item);
     if(procData.isLeg() && item->parent() != nullptr)
       // Get parent approach data if approach is a leg
-      return refFromIndex(item->parent());
+      return refFromItem(item->parent());
     else
       return procData;
   }
@@ -1538,7 +1661,7 @@ void ProcedureSearch::showEntry(QTreeWidgetItem *item, bool doubleClick, bool zo
   if(item == nullptr || !currentAirportNav->isValid())
     return;
 
-  MapProcedureRef ref = refFromIndex(item);
+  MapProcedureRef ref = refFromItem(item);
   fetchSingleTransitionId(ref);
 
   if(ref.legId != -1)
@@ -1573,10 +1696,10 @@ void ProcedureSearch::showEntry(QTreeWidgetItem *item, bool doubleClick, bool zo
 }
 
 void ProcedureSearch::procedureDisplayText(QString& procTypeText, QString& headerText, QString& menuText, QStringList& attText,
-                                           const SqlRecord& recProc, proc::MapProcedureTypes maptype, int numTransitions)
+                                           const SqlRecord& recProcedure, proc::MapProcedureTypes maptype, int numTransitions)
 {
-  QString suffix = recProc.valueStr("suffix");
-  QString type = recProc.valueStr("type");
+  QString suffix = recProcedure.valueStr("suffix");
+  QString type = recProcedure.valueStr("type");
 
   if(maptype == proc::PROCEDURE_SID)
     headerText = procTypeText = tr("SID");
@@ -1594,20 +1717,20 @@ void ProcedureSearch::procedureDisplayText(QString& procTypeText, QString& heade
     }
     headerText += tr("</b>");
 
-    if(recProc.valueBool("has_gps_overlay"))
+    if(recProcedure.valueBool("has_gps_overlay"))
       attText.append(tr("GPS Overlay"));
   }
 
-  if(!recProc.valueStr("airport_runway_name", QString()).isEmpty())
+  if(!recProcedure.valueStr("airport_runway_name", QString()).isEmpty())
   {
-    procTypeText.append(tr(" %1").arg(recProc.valueStr("airport_runway_name")));
-    headerText.append(tr(" <b>%1</b>").arg(recProc.valueStr("airport_runway_name")));
+    procTypeText.append(tr(" %1").arg(recProcedure.valueStr("airport_runway_name")));
+    headerText.append(tr(" <b>%1</b>").arg(recProcedure.valueStr("airport_runway_name")));
   }
 
-  if(!recProc.valueStr("sid_star_arinc_name", QString()).isEmpty())
+  if(!recProcedure.valueStr("sid_star_arinc_name", QString()).isEmpty())
   {
-    procTypeText.append(tr(" %1").arg(recProc.valueStr("sid_star_arinc_name", QString())));
-    headerText.append(tr(" <b>%1</b>").arg(recProc.valueStr("sid_star_arinc_name", QString())));
+    procTypeText.append(tr(" %1").arg(recProcedure.valueStr("sid_star_arinc_name", QString())));
+    headerText.append(tr(" <b>%1</b>").arg(recProcedure.valueStr("sid_star_arinc_name", QString())));
   }
 
   // Menu text is no HTML and same as row text
@@ -1617,11 +1740,11 @@ void ProcedureSearch::procedureDisplayText(QString& procTypeText, QString& heade
   // if(recApp.valueBool("has_vertical_angle", false))
   // attText.append(tr("VNAV"));
 
-  QString cat = proc::aircraftCategoryText(recProc.valueStr("aircraft_category", QString()));
+  QString cat = proc::aircraftCategoryText(recProcedure.valueStr("aircraft_category", QString()));
   if(!cat.isEmpty())
     attText.append(cat);
 
-  if(recProc.valueBool("has_rnp", false))
+  if(recProcedure.valueBool("has_rnp", false))
     attText.append(tr("RNP"));
 
   if(numTransitions == 1)
@@ -1657,16 +1780,28 @@ void ProcedureSearch::updateProcedureWind()
   }
 }
 
-QTreeWidgetItem *ProcedureSearch::buildProcedureItem(QTreeWidgetItem *runwayItem, const QString& ident, const QString& procTypeText,
-                                                     const QString& headerText, const QString& menuText, const QStringList& attStr)
+QTreeWidgetItem *ProcedureSearch::buildProcedureItem(QTreeWidgetItem *rootItem, const QString& ident,
+                                                     const atools::sql::SqlRecord& recProcedure,
+                                                     const QString& procTypeText, const QString& headerText, const QString& menuText,
+                                                     const QStringList& attStr)
 {
-  QTreeWidgetItem *item = new QTreeWidgetItem({procTypeText, ident, QString(), QString(), QString(), QString(), attStr.join(tr(", "))},
-                                              nextIndexId++);
+  QStringList firstLastWp = firstLastWaypoint(recProcedure);
+  QTreeWidgetItem *item = new QTreeWidgetItem({procTypeText, // COL_DESCRIPTION
+                                               ident, // COL_IDENT
+                                               QString(), // COL_RESTR
+                                               atools::strJoin(tr(" "), firstLastWp, tr(", "), tr(" to ")), // COL_FROMTO
+                                               QString(), // COL_COURSE
+                                               QString(), // COL_DISTANCE
+                                               QString(), // COL_WIND
+                                               attStr.join(tr(", ")) // COL_REMARKS
+                                              }, nextIndexId++);
+
   item->setChildIndicatorPolicy(QTreeWidgetItem::ShowIndicator);
   item->setTextAlignment(COL_RESTR, Qt::AlignRight);
   item->setTextAlignment(COL_COURSE, Qt::AlignRight);
   item->setTextAlignment(COL_DISTANCE, Qt::AlignRight);
   item->setData(COL_DESCRIPTION, TREEWIDGET_HEADER_ROLE, headerText);
+  item->setData(COL_DESCRIPTION, TREEWIDGET_HEADER_FIRSTLAST_ROLE, firstLastWp);
   item->setData(COL_DESCRIPTION, TREEWIDGET_MENU_ROLE, menuText);
 
   // First columns bold
@@ -1677,7 +1812,7 @@ QTreeWidgetItem *ProcedureSearch::buildProcedureItem(QTreeWidgetItem *runwayItem
   for(int i = COL_RESTR; i <= COL_REMARKS; i++)
     item->setFont(i, procedureNormalFont);
 
-  runwayItem->addChild(item);
+  rootItem->addChild(item);
 
   return item;
 }
@@ -1693,13 +1828,23 @@ QTreeWidgetItem *ProcedureSearch::buildTransitionItem(QTreeWidgetItem *procItem,
       attStr.append(tr("DME"));
   }
 
-  QTreeWidgetItem *item = new QTreeWidgetItem({tr("Transition"), recTrans.valueStr("fix_ident"), QString(),
-                                               QString(), QString(), QString(), attStr.join(tr(", "))}, nextIndexId++);
+  QStringList firstLastWp = firstLastWaypoint(recTrans);
+  QTreeWidgetItem *item = new QTreeWidgetItem({tr("Transition"), // COL_DESCRIPTION
+                                               recTrans.valueStr("fix_ident"), // COL_IDENT
+                                               QString(), // COL_RESTR
+                                               atools::strJoin(tr(" "), firstLastWp, tr(", "), tr(" to ")), // COL_FROMTO
+                                               QString(), // COL_COURSE
+                                               QString(), // COL_DISTANCE
+                                               QString(), // COL_WIND
+                                               attStr.join(tr(", ")) // COL_REMARKS
+                                              }, nextIndexId++);
+
   item->setChildIndicatorPolicy(QTreeWidgetItem::ShowIndicator);
   item->setTextAlignment(COL_RESTR, Qt::AlignRight);
   item->setTextAlignment(COL_COURSE, Qt::AlignRight);
   item->setTextAlignment(COL_DISTANCE, Qt::AlignRight);
   item->setData(COL_DESCRIPTION, TREEWIDGET_HEADER_ROLE, tr("transition"));
+  item->setData(COL_DESCRIPTION, TREEWIDGET_HEADER_FIRSTLAST_ROLE, firstLastWp);
   item->setData(COL_DESCRIPTION, TREEWIDGET_MENU_ROLE, tr("transition"));
 
   // First columns bold
@@ -1721,10 +1866,13 @@ QTreeWidgetItem *ProcedureSearch::buildLegItem(const MapProcedureLeg& leg)
   int fontHeight = treeWidget->fontMetrics().height();
 
   QStringList texts;
-  texts << proc::procedureLegTypeStr(leg.type);
-  texts << proc::procedureLegFixStr(leg);
-  texts << proc::restrictionText(leg).join(tr(", ")) << proc::procedureLegCourse(leg) << proc::procedureLegDistance(leg);
-  texts << QString(); // Wind filled in updateProcedureWind()
+  texts.append(proc::procedureLegTypeStr(leg.type));
+  texts.append(proc::procedureLegFixStr(leg));
+  texts.append(proc::restrictionText(leg).join(tr(", ")));
+  texts.append(QString()); // From to not shown
+  texts.append(proc::procedureLegCourse(leg));
+  texts.append(proc::procedureLegDistance(leg));
+  texts.append(QString()); // Wind filled in updateProcedureWind()
 
   QStringList remarkStr = proc::procedureLegRemark(leg);
 
@@ -1803,7 +1951,7 @@ QBitArray ProcedureSearch::treeViewStateSave() const
     {
       const QTreeWidgetItem *item = itemStack.takeFirst();
 
-      if(item->type() < itemIndex.size() && refFromIndex(item).legId != -1)
+      if(item->type() < itemIndex.size() && refFromItem(item).legId != -1)
         // Do not save legs
         continue;
 
@@ -1942,7 +2090,7 @@ proc::MapProcedureTypes ProcedureSearch::buildTypeFromProcedureRec(const SqlReco
                              recApp.valueBool("has_gps_overlay"));
 }
 
-const MapProcedureRef& ProcedureSearch::refFromIndex(const QTreeWidgetItem *item) const
+const MapProcedureRef& ProcedureSearch::refFromItem(const QTreeWidgetItem *item) const
 {
   if(item != nullptr)
   {
@@ -1963,6 +2111,7 @@ bool ProcedureSearch::procedureSortFunc(const atools::sql::SqlRecord& rec1, cons
 
   int priority1 = priority.value(buildTypeFromProcedureRec(rec1));
   int priority2 = priority.value(buildTypeFromProcedureRec(rec2));
+
   // First SID, then STAR and then approaches
   if(priority1 == priority2)
   {
@@ -1987,4 +2136,22 @@ bool ProcedureSearch::procedureSortFunc(const atools::sql::SqlRecord& rec1, cons
   }
   else
     return priority1 < priority2;
+}
+
+bool ProcedureSearch::transitionSortFunc(const atools::sql::SqlRecord& rec1, const atools::sql::SqlRecord& rec2)
+{
+  return rec1.valueStr("fix_ident") < rec2.valueStr("fix_ident");
+}
+
+QStringList ProcedureSearch::firstLastWaypoint(const atools::sql::SqlRecord& record) const
+{
+  QStringList fromToString;
+  if(record.contains("fix_first"))
+    fromToString.append(record.valueStr("fix_first"));
+
+  if(record.contains("fix_last"))
+    fromToString.append(record.valueStr("fix_last"));
+  fromToString.removeAll(QString());
+
+  return fromToString;
 }

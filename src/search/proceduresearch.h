@@ -167,7 +167,8 @@ private:
   void treeViewStateRestore(const QBitArray& state);
 
   /* Build full approach or transition items for the tree view */
-  QTreeWidgetItem *buildProcedureItem(QTreeWidgetItem *runwayItem, const QString& ident, const QString& procTypeText,
+  QTreeWidgetItem *buildProcedureItem(QTreeWidgetItem *rootItem, const QString& ident, const atools::sql::SqlRecord& recProcedure,
+                                      const QString& procTypeText,
                                       const QString& headerText, const QString& menuText, const QStringList& attStr);
   QTreeWidgetItem *buildTransitionItem(QTreeWidgetItem *procItem, const atools::sql::SqlRecord& recTrans, bool sidOrStar);
 
@@ -182,7 +183,7 @@ private:
 
   /* Update course and distances in the approach legs when a preceding transition is selected */
   /* Update course and distance for the parent approach of this leg item */
-  void updateProcedureItem(QTreeWidgetItem *apprItem, int transitionId);
+  void updateProcedureItemCourseDist(QTreeWidgetItem *procedureItem, int transitionId);
 
   QList<QTreeWidgetItem *> buildProcedureLegItems(const proc::MapProcedureLegs *legs, int transitionId);
 
@@ -209,7 +210,12 @@ private:
   void fontChanged(const QFont&);
 
   static proc::MapProcedureTypes buildTypeFromProcedureRec(const atools::sql::SqlRecord& recApp);
+
+  /* Order by type, priority and name */
   static bool procedureSortFunc(const atools::sql::SqlRecord& rec1, const atools::sql::SqlRecord& rec2);
+
+  /* Order by name */
+  static bool transitionSortFunc(const atools::sql::SqlRecord& rec1, const atools::sql::SqlRecord& rec2);
 
   void fetchSingleTransitionId(proc::MapProcedureRef& ref) const;
 
@@ -230,7 +236,7 @@ private:
 
   /* Create display text for procedure column */
   void procedureDisplayText(QString& procTypeText, QString& headerText, QString& menuText, QStringList& attText,
-                            const atools::sql::SqlRecord& recApp, proc::MapProcedureTypes maptype, int numTransitions);
+                            const atools::sql::SqlRecord& recProcedure, proc::MapProcedureTypes maptype, int numTransitions);
 
   /* Update wind columns for procedures after weather change */
   void updateProcedureWind();
@@ -238,7 +244,10 @@ private:
   /* Intial selection and expand items for current selection in route */
   void treeViewStateFromRoute();
 
-  inline const proc::MapProcedureRef& refFromIndex(const QTreeWidgetItem *item) const;
+  /* Get first and last waypoint from record */
+  QStringList firstLastWaypoint(const atools::sql::SqlRecord& record) const;
+
+  inline const proc::MapProcedureRef& refFromItem(const QTreeWidgetItem *item) const;
 
   QString transitionIndicator, transitionIndicatorOne;
 
@@ -254,6 +263,9 @@ private:
   InfoQuery *infoQuery = nullptr;
   ProcedureQuery *procedureQuery = nullptr;
   AirportQuery *airportQueryNav = nullptr;
+
+  /* Contains initially all procedures and transitions loaded from fillProcedureTreeWidget().
+   * Legs are added when expaning the tree from itemExpanded() */
   QTreeWidget *treeWidget = nullptr;
 
   /* Navdata runways having no equivalent to simulator */

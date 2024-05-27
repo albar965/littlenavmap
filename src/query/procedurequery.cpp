@@ -240,7 +240,7 @@ void ProcedureQuery::buildLegEntry(atools::sql::SqlQuery *query, proc::MapProced
 
   if(!query->isNull("alt_descriptor") && (alt1 > 0.f || alt2 > 0.f))
   {
-    QString descriptor = query->value("alt_descriptor").toString();
+    QString descriptor = query->valueStr("alt_descriptor");
 
     if(descriptor == "A")
     {
@@ -297,11 +297,11 @@ void ProcedureQuery::buildLegEntry(atools::sql::SqlQuery *query, proc::MapProced
 
   if(query->hasField("speed_limit"))
   {
-    float speedLimit = query->value("speed_limit").toFloat();
+    float speedLimit = query->valueFloat("speed_limit");
 
     if(speedLimit > 1.f)
     {
-      QString type = query->value("speed_limit_type").toString();
+      QString type = query->valueStr("speed_limit_type");
 
       leg.speedRestriction.speed = speedLimit;
 
@@ -780,8 +780,8 @@ proc::MapProcedureLegs *ProcedureQuery::fetchTransitionLegs(const map::MapAirpor
     transitionQuery->exec();
     if(transitionQuery->next())
     {
-      legs->transitionType = transitionQuery->value("type").toString();
-      legs->transitionFixIdent = transitionQuery->value("fix_ident").toString();
+      legs->transitionType = transitionQuery->valueStr("type");
+      legs->transitionFixIdent = transitionQuery->valueStr("fix_ident");
     }
     transitionQuery->finish();
 
@@ -2068,6 +2068,23 @@ void ProcedureQuery::initQueries()
 
   transitionIdsForProcedureQuery = new SqlQuery(dbNav);
   transitionIdsForProcedureQuery->prepare("select transition_id from transition where approach_id = :id");
+
+  // First and last fixes ====================
+  firstFixForProcedureQuery = new SqlQuery(dbNav);
+  firstFixForProcedureQuery->prepare("select fix_ident from approach_leg "
+                                     "where approach_id = :id group by approach_id having min(approach_leg_id)");
+
+  lastFixForProcedureQuery = new SqlQuery(dbNav);
+  lastFixForProcedureQuery->prepare("select fix_ident from approach_leg "
+                                    "where approach_id = :id and is_missed = 0 group by approach_id having max(approach_leg_id)");
+
+  firstFixForTransitionQuery = new SqlQuery(dbNav);
+  firstFixForTransitionQuery->prepare("select fix_ident from transition_leg "
+                                      "where transition_id = :id group by transition_id having min(transition_leg_id)");
+
+  lastFixForTransitionQuery = new SqlQuery(dbNav);
+  lastFixForTransitionQuery->prepare("select fix_ident from transition_leg "
+                                     "where transition_id = :id group by transition_id having max(transition_leg_id)");
 }
 
 void ProcedureQuery::deInitQueries()
@@ -2090,6 +2107,10 @@ void ProcedureQuery::deInitQueries()
   ATOOLS_DELETE(sidTransIdByWpQuery);
   ATOOLS_DELETE(starTransIdByWpQuery);
   ATOOLS_DELETE(transitionIdsForProcedureQuery);
+  ATOOLS_DELETE(firstFixForProcedureQuery);
+  ATOOLS_DELETE(lastFixForProcedureQuery);
+  ATOOLS_DELETE(firstFixForTransitionQuery);
+  ATOOLS_DELETE(lastFixForTransitionQuery);
 }
 
 void ProcedureQuery::clearFlightplanProcedureProperties(QHash<QString, QString>& properties, const proc::MapProcedureTypes& type)
@@ -2413,6 +2434,42 @@ int ProcedureQuery::getTransitionId(map::MapAirport destination, const QString& 
     transitionId = findTransitionId(destination, transitionIdByNameQuery, false);
   }
   return transitionId;
+}
+
+void ProcedureQuery::getProcedureFirstLastWp(QString& firstFix, QString& lastFix, int procedureId)
+{
+  if(!query::valid(Q_FUNC_INFO, firstFixForProcedureQuery) || !query::valid(Q_FUNC_INFO, lastFixForProcedureQuery))
+    return;
+
+  firstFixForProcedureQuery->bindValue(":id", procedureId);
+  firstFixForProcedureQuery->exec();
+  if(firstFixForProcedureQuery->next())
+    firstFix = firstFixForProcedureQuery->valueStr("fix_ident");
+  firstFixForProcedureQuery->finish();
+
+  lastFixForProcedureQuery->bindValue(":id", procedureId);
+  lastFixForProcedureQuery->exec();
+  if(lastFixForProcedureQuery->next())
+    lastFix = lastFixForProcedureQuery->valueStr("fix_ident");
+  lastFixForProcedureQuery->finish();
+}
+
+void ProcedureQuery::getTransitionFirstLastWp(QString& firstFix, QString& lastFix, int transitionId)
+{
+  if(!query::valid(Q_FUNC_INFO, firstFixForTransitionQuery) || !query::valid(Q_FUNC_INFO, lastFixForTransitionQuery))
+    return;
+
+  firstFixForTransitionQuery->bindValue(":id", transitionId);
+  firstFixForTransitionQuery->exec();
+  if(firstFixForTransitionQuery->next())
+    firstFix = firstFixForTransitionQuery->valueStr("fix_ident");
+  firstFixForTransitionQuery->finish();
+
+  lastFixForTransitionQuery->bindValue(":id", transitionId);
+  lastFixForTransitionQuery->exec();
+  if(lastFixForTransitionQuery->next())
+    lastFix = lastFixForTransitionQuery->valueStr("fix_ident");
+  lastFixForTransitionQuery->finish();
 }
 
 void ProcedureQuery::createCustomApproach(proc::MapProcedureLegs& procedure, const map::MapAirport& airportSim,
@@ -3155,7 +3212,7 @@ int ProcedureQuery::findProcedureLegId(const map::MapAirport& airport, atools::s
   while(query->next())
   {
     // Compare the suffix manually since the ifnull function makes the query unstable (did not work with undo)
-    if(!transition && (suffix != query->value("suffix").toString() ||
+    if(!transition && (suffix != query->valueStr("suffix") ||
                        // Runway will be compared directly to the approach and not the airport runway
                        !doesRunwayMatch(runway, query->valueStr("runway_name"), query->valueStr("arinc_name", QString()),
                                         airportRunways, false /* Match empty rw */)))
@@ -3193,7 +3250,7 @@ int ProcedureQuery::findProcedureLegId(const map::MapAirport& airport, atools::s
     while(query->next())
     {
       // Compare the suffix manually since the ifnull function makes the query unstable (did not work with undo)
-      if(!transition && (suffix != query->value("suffix").toString() ||
+      if(!transition && (suffix != query->valueStr("suffix") ||
                          // Runway will be compared directly to the approach and not the airport runway
                          // The method will check here if the runway in the query result is empty
                          !doesRunwayMatch(runway, query->valueStr("runway_name"), query->valueStr("arinc_name", QString()),

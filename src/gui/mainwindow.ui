@@ -2699,31 +2699,19 @@ Not available for all simulators.</string>
            <item>
             <widget class="QLineEdit" name="lineEditProcedureSearchIdentFilter">
              <property name="toolTip">
-              <string>Filter procedures by idents beginning with given text</string>
+              <string>Filter procedures by idents, names and first/last waypoint names.
+Hides all items not beginning with the specified search term.</string>
              </property>
              <property name="statusTip">
-              <string>Filter procedures by idents beginning with text</string>
+              <string>Filter procedures by idents, names and first/last waypoint names.</string>
              </property>
              <property name="placeholderText">
-              <string>Ident</string>
+              <string>Search</string>
              </property>
              <property name="clearButtonEnabled">
               <bool>true</bool>
              </property>
             </widget>
-           </item>
-           <item>
-            <spacer name="horizontalSpacer">
-             <property name="orientation">
-              <enum>Qt::Horizontal</enum>
-             </property>
-             <property name="sizeHint" stdset="0">
-              <size>
-               <width>40</width>
-               <height>20</height>
-              </size>
-             </property>
-            </spacer>
            </item>
            <item>
             <widget class="QPushButton" name="pushButtonProcedureShowAll">

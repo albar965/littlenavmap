@@ -147,6 +147,12 @@ public:
   /* Get a transition only for an approach */
   int getTransitionId(map::MapAirport destination, const QString& fixIdent, const QString& type, int approachId);
 
+  /* Get first and last waypoint name for procedure */
+  void getProcedureFirstLastWp(QString& firstFix, QString& lastFix, int procedureId);
+
+  /* Get first and last waypoint name for transition. Does not include procedure waypoints. */
+  void getTransitionFirstLastWp(QString& firstFix, QString& lastFix, int transitionId);
+
   /* Creates a user defined approach procedure. Handled like an approach procedure. */
   void createCustomApproach(proc::MapProcedureLegs& procedure, const map::MapAirport& airport, const QString& runwayEnd,
                             float finalLegDistance, float entryAltitude, float offsetAngle);
@@ -255,7 +261,9 @@ private:
                         *runwayEndIdQuery = nullptr, *transitionQuery = nullptr, *procedureQuery = nullptr,
                         *transitionIdByNameQuery = nullptr, *sidTransIdByWpQuery = nullptr, *starTransIdByWpQuery = nullptr,
                         *procedureIdByNameQuery = nullptr, *procedureIdByArincNameQuery = nullptr,
-                        *transitionIdsForProcedureQuery = nullptr;
+                        *transitionIdsForProcedureQuery = nullptr,
+                        *firstFixForProcedureQuery = nullptr, *lastFixForProcedureQuery = nullptr,
+                        *firstFixForTransitionQuery = nullptr, *lastFixForTransitionQuery = nullptr;
 
   /* approach ID and transition ID to full lists
    * The procedure also has to be stored for transitions since the handover can modify procedure legs (CI legs, etc.) */

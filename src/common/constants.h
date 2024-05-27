@@ -289,12 +289,10 @@ const QLatin1String SETTINGS_DATABASE("Settings/Database");
 /* Aircraft trail densisity settings */
 const QLatin1String SETTINGS_AIRCRAFT_TRAIL("Settings/AircraftTrail2");
 
-const QLatin1String APPROACHTREE_WIDGET("ApproachTree/Widget");
-const QLatin1String APPROACHTREE_SELECTED_WIDGET("ApproachTree/WidgetSelected");
-const QLatin1String APPROACHTREE_STATE("ApproachTree/TreeState");
-const QLatin1String APPROACHTREE_AIRPORT_NAV("ApproachTree/AirportNav");
-const QLatin1String APPROACHTREE_AIRPORT_SIM("ApproachTree/AirportSim");
-const QLatin1String APPROACHTREE_SELECTED_APPR("ApproachTree/SeletedApproach");
+const QLatin1String APPROACHTREE_WIDGET("ApproachTree/Widget2");
+const QLatin1String APPROACHTREE_STATE("ApproachTree/TreeState2");
+const QLatin1String APPROACHTREE_AIRPORT_NAV("ApproachTree/AirportNav2");
+const QLatin1String APPROACHTREE_AIRPORT_SIM("ApproachTree/AirportSim2");
 
 /* Export settings dialog */
 const QLatin1String USERDATA_EXPORT_CHOICE_DIALOG("UserdataExport/ChoiceDialog");
