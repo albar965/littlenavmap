@@ -27,6 +27,7 @@
 #include <QObject>
 #include <QVector>
 
+class SearchWidgetEventFilter;
 namespace atools {
 namespace gui {
 class GridDelegate;
@@ -144,6 +145,10 @@ private:
   virtual void updateUnits() override;
 
   virtual void tabDeactivated() override;
+
+  virtual void showSelectedEntry() override;
+  virtual void activateView() override;
+  virtual void showFirstEntry() override;
 
   void itemSelectionChanged();
   void itemSelectionChangedInternal(bool noFollow);
@@ -282,7 +287,12 @@ private:
   atools::gui::GridDelegate *gridDelegate = nullptr;
 
   FilterIndex filterIndex = FILTER_ALL_PROCEDURES;
+
+  /* Event filter for tree object */
   TreeEventFilter *treeEventFilter = nullptr;
+
+  /* Event filter for line input */
+  SearchWidgetEventFilter *lineInputEventFilter = nullptr;
   bool errors = false;
 };
 

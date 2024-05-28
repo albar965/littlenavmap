@@ -32,7 +32,7 @@ class AirportQuery;
 class QTimer;
 class CsvExporter;
 class Column;
-class ViewEventFilter;
+class SearchViewEventFilter;
 class SearchWidgetEventFilter;
 class QLineEdit;
 class QAction;
@@ -110,10 +110,10 @@ public:
   virtual void clearSelection() override;
   virtual bool hasSelection() const override;
 
-  void showFirstEntry();
+  virtual void showFirstEntry() override;
 
-  void showSelectedEntry();
-  void activateView();
+  void showSelectedEntry() override;
+  void activateView() override;
 
   void nothingSelectedTriggered();
 
@@ -280,7 +280,7 @@ private:
   /* Used to delay search when using the time intensive distance search */
   QTimer *updateTimer;
 
-  ViewEventFilter *viewEventFilter = nullptr;
+  SearchViewEventFilter *viewEventFilter = nullptr;
   SearchWidgetEventFilter *widgetEventFilter = nullptr;
 
 };

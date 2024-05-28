@@ -39,6 +39,7 @@
 #include "route/route.h"
 #include "route/route.h"
 #include "search/searchcontroller.h"
+#include "search/searcheventfilter.h"
 #include "settings/settings.h"
 #include "sql/sqlrecord.h"
 #include "ui_mainwindow.h"
@@ -160,7 +161,6 @@ bool TreeEventFilter::eventFilter(QObject *object, QEvent *event)
       if(item == nullptr || object == NavApp::getMainUi()->labelProcedureSearch || object == NavApp::getMainUi()->labelProcedureSearchWarn)
         search->treeWidget->clearSelection();
     }
-
   }
   return QObject::eventFilter(object, event);
 }
@@ -243,10 +243,16 @@ ProcedureSearch::ProcedureSearch(QMainWindow *main, QTreeWidget *treeWidgetParam
 
   treeEventFilter = new TreeEventFilter(this);
   treeWidget->viewport()->installEventFilter(treeEventFilter);
+
+  lineInputEventFilter = new SearchWidgetEventFilter(this);
+  ui->lineEditProcedureSearchIdentFilter->installEventFilter(lineInputEventFilter);
 }
 
 ProcedureSearch::~ProcedureSearch()
 {
+  ui->lineEditProcedureSearchIdentFilter->removeEventFilter(lineInputEventFilter);
+  ATOOLS_DELETE_LOG(lineInputEventFilter);
+
   ATOOLS_DELETE_LOG(zoomHandler);
   treeWidget->setItemDelegate(nullptr);
   treeWidget->viewport()->removeEventFilter(treeEventFilter);
@@ -2077,6 +2083,19 @@ void ProcedureSearch::tabDeactivated()
   emit procedureSelected(proc::MapProcedureRef());
   emit proceduresSelected(QVector<proc::MapProcedureRef>());
   emit procedureLegSelected(proc::MapProcedureRef());
+}
+
+void ProcedureSearch::showSelectedEntry()
+{
+}
+
+void ProcedureSearch::activateView()
+{
+  treeWidget->setFocus();
+}
+
+void ProcedureSearch::showFirstEntry()
+{
 }
 
 void ProcedureSearch::itemSelectionChanged()

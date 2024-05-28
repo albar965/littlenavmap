@@ -429,6 +429,7 @@ SOURCES += \
   src/search/randomdestinationairportpickingbycriteria.cpp \
   src/search/searchbasetable.cpp \
   src/search/searchcontroller.cpp \
+  src/search/searcheventfilter.cpp \
   src/search/sqlcontroller.cpp \
   src/search/sqlmodel.cpp \
   src/search/sqlmodeltypes.cpp \
@@ -630,6 +631,7 @@ HEADERS  += \
   src/search/randomdestinationairportpickingbycriteria.h \
   src/search/searchbasetable.h \
   src/search/searchcontroller.h \
+  src/search/searcheventfilter.h \
   src/search/sqlcontroller.h \
   src/search/sqlmodel.h \
   src/search/sqlmodeltypes.h \

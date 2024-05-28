@@ -38,6 +38,7 @@
 #include "search/column.h"
 #include "search/columnlist.h"
 #include "search/searchcontroller.h"
+#include "search/searcheventfilter.h"
 #include "search/sqlcontroller.h"
 #include "search/sqlmodel.h"
 #include "sql/sqlrecord.h"
@@ -53,78 +54,6 @@ using atools::gui::ActionTool;
 
 /* When using distance search delay the update the table after 500 milliseconds */
 const int DISTANCE_EDIT_UPDATE_TIMEOUT_MS = 500;
-
-// ==================================================================================
-class ViewEventFilter :
-  public QObject
-{
-
-public:
-  ViewEventFilter(SearchBaseTable *parent)
-    : QObject(parent), searchBase(parent)
-  {
-  }
-
-private:
-  virtual bool eventFilter(QObject *object, QEvent *event) override;
-
-  SearchBaseTable *searchBase;
-};
-
-bool ViewEventFilter::eventFilter(QObject *object, QEvent *event)
-{
-  if(event->type() == QEvent::KeyPress)
-  {
-    QKeyEvent *keyEvent = dynamic_cast<QKeyEvent *>(event);
-    if(keyEvent != nullptr && keyEvent->key() == Qt::Key_Return)
-    {
-      searchBase->showSelectedEntry();
-      return true;
-    }
-  }
-
-  return QObject::eventFilter(object, event);
-}
-
-// ==================================================================================
-class SearchWidgetEventFilter :
-  public QObject
-{
-
-public:
-  SearchWidgetEventFilter(SearchBaseTable *parent)
-    : QObject(parent), searchBase(parent)
-  {
-  }
-
-private:
-  virtual bool eventFilter(QObject *object, QEvent *event) override;
-
-  SearchBaseTable *searchBase;
-};
-
-bool SearchWidgetEventFilter::eventFilter(QObject *object, QEvent *event)
-{
-  if(event->type() == QEvent::KeyPress)
-  {
-    QKeyEvent *keyEvent = dynamic_cast<QKeyEvent *>(event);
-    if(keyEvent != nullptr)
-    {
-      switch(keyEvent->key())
-      {
-        case Qt::Key_Down:
-          searchBase->activateView();
-          return true;
-
-        case Qt::Key_Return:
-          searchBase->showFirstEntry();
-          return true;
-      }
-    }
-  }
-
-  return QObject::eventFilter(object, event);
-}
 
 // ==================================================================================
 SearchBaseTable::SearchBaseTable(QMainWindow *parent, QTableView *tableView, ColumnList *columnList,
@@ -218,7 +147,7 @@ SearchBaseTable::SearchBaseTable(QMainWindow *parent, QTableView *tableView, Col
   // Load text size from options
   zoomHandler->zoomPercent(OptionData::instance().getGuiSearchTableTextSize());
 
-  viewEventFilter = new ViewEventFilter(this);
+  viewEventFilter = new SearchViewEventFilter(this);
   widgetEventFilter = new SearchWidgetEventFilter(this);
   view->installEventFilter(viewEventFilter);
   atools::gui::adjustSelectionColors(view);
