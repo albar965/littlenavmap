@@ -324,7 +324,7 @@ void ProcedureSearch::filterChanged(const QString&)
 
 void ProcedureSearch::optionsChanged()
 {
-  QBitArray state = treeViewStateSave();
+  QSet<int> state = treeViewStateSave();
 
   // Adapt table view text size
   gridDelegate->styleChanged();
@@ -357,7 +357,7 @@ void ProcedureSearch::preDatabaseLoad()
 
   itemIndex.clear();
   nextIndexId = 1;
-  itemLoadedIndex.clear();
+  itemExpandedIndex.clear();
   *currentAirportNav = *currentAirportSim = map::MapAirport();
   recentTreeState.clear();
 }
@@ -411,9 +411,7 @@ void ProcedureSearch::showProcedures(const map::MapAirport& airport, bool depart
     return;
 
   // Save current state on stack =========================================================
-  QBitArray savedState = treeViewStateSave();
-  if(!savedState.isEmpty())
-    recentTreeState.insert(currentAirportNav->id, savedState);
+  recentTreeState.insert(currentAirportNav->id, treeViewStateSave());
 
   // Remove all previews ===============
   treeWidget->clearSelection();
@@ -439,9 +437,7 @@ void ProcedureSearch::showProcedures(const map::MapAirport& airport, bool depart
     treeViewStateFromRoute();
 
     // Save this state
-    QBitArray state = treeViewStateSave();
-    if(!state.isEmpty())
-      recentTreeState.insert(currentAirportNav->id, state);
+    recentTreeState.insert(currentAirportNav->id, treeViewStateSave());
   }
   else
     treeViewStateRestore(recentTreeState.value(currentAirportNav->id));
@@ -804,7 +800,7 @@ void ProcedureSearch::fillProcedureTreeWidget()
   treeWidget->clear();
   itemIndex.clear();
   nextIndexId = 1;
-  itemLoadedIndex.clear();
+  itemExpandedIndex.clear();
   QSet<QTreeWidgetItem *> itemsToExpand;
 
   if(currentAirportNav->isValid())
@@ -1028,7 +1024,6 @@ void ProcedureSearch::fillProcedureTreeWidget()
     } // if(procedureRecords != nullptr)
   } // if(currentAirportNav->isValid())
 
-  itemLoadedIndex.resize(itemIndex.size());
   updateProcedureWind();
   treeWidget->blockSignals(false);
 
@@ -1048,10 +1043,9 @@ void ProcedureSearch::saveState()
   atools::settings::Settings& settings = atools::settings::Settings::instance();
 
   // Use current state and update the map too
-  QBitArray savedState = treeViewStateSave();
-  if(!savedState.isEmpty())
-    recentTreeState.insert(currentAirportNav->id, savedState);
-  settings.setValueVar(lnm::APPROACHTREE_STATE, savedState);
+  QSet<int> savedState = treeViewStateSave();
+  recentTreeState.insert(currentAirportNav->id, savedState);
+  settings.setValueVar(lnm::APPROACHTREE_STATE, atools::numSetToStrList(savedState));
 
   // Save column order and width
   WidgetState(lnm::APPROACHTREE_WIDGET).save(treeWidget);
@@ -1085,7 +1079,7 @@ void ProcedureSearch::restoreState()
 
   updateFilterBoxes();
 
-  QBitArray state;
+  QSet<int> state;
   if(OptionData::instance().getFlags() & opts::STARTUP_LOAD_SEARCH && !NavApp::isSafeMode())
   {
     Ui::MainWindow *ui = NavApp::getMainUi();
@@ -1095,7 +1089,7 @@ void ProcedureSearch::restoreState()
     fillProcedureTreeWidget();
     if(currentAirportNav->isValid() && currentAirportNav->procedure())
     {
-      state = settings.valueVar(lnm::APPROACHTREE_STATE).toBitArray();
+      state = atools::strListToNumSet<int>(settings.valueStrList(lnm::APPROACHTREE_STATE));
       recentTreeState.insert(currentAirportNav->id, state);
     }
   }
@@ -1264,10 +1258,9 @@ void ProcedureSearch::itemExpanded(QTreeWidgetItem *item)
 {
   if(item != nullptr)
   {
-    if(item->type() >= itemLoadedIndex.size())
-      return;
+    int type = item->type();
 
-    if(itemLoadedIndex.at(item->type()))
+    if(itemExpandedIndex.contains(type))
       return;
 
     // Get a copy since vector is rebuilt underneath
@@ -1281,7 +1274,7 @@ void ProcedureSearch::itemExpanded(QTreeWidgetItem *item)
         if(legs != nullptr)
         {
           QList<QTreeWidgetItem *> items = buildProcedureLegItems(legs, -1);
-          itemLoadedIndex.setBit(item->type());
+          itemExpandedIndex.insert(type);
 
           if(legs->mapType & proc::PROCEDURE_DEPARTURE)
             item->insertChildren(0, items);
@@ -1298,12 +1291,11 @@ void ProcedureSearch::itemExpanded(QTreeWidgetItem *item)
         {
           QList<QTreeWidgetItem *> items = buildTransitionLegItems(legs);
           item->addChildren(items);
-          itemLoadedIndex.setBit(item->type());
+          itemExpandedIndex.insert(type);
         }
         else
           qWarning() << Q_FUNC_INFO << "no legs found for" << currentAirportNav->id << ref.transitionId;
       }
-      itemLoadedIndex.resize(itemIndex.size());
     }
   }
 }
@@ -1936,13 +1928,13 @@ void ProcedureSearch::setItemStyle(QTreeWidgetItem *item, const MapProcedureLeg&
   }
 }
 
-QBitArray ProcedureSearch::treeViewStateSave() const
+QSet<int> ProcedureSearch::treeViewStateSave() const
 {
 #ifdef DEBUG_INFORMATION
   qDebug() << Q_FUNC_INFO;
 #endif
 
-  QBitArray state;
+  QSet<int> state;
 
   if(!itemIndex.isEmpty() && currentAirportNav->isValid() && currentAirportSim->isValid())
   {
@@ -1952,7 +1944,6 @@ QBitArray ProcedureSearch::treeViewStateSave() const
     for(int i = 0; i < root->childCount(); ++i)
       itemStack.append(root->child(i));
 
-    int itemIdx = 0;
     while(!itemStack.isEmpty())
     {
       const QTreeWidgetItem *item = itemStack.takeFirst();
@@ -1961,19 +1952,17 @@ QBitArray ProcedureSearch::treeViewStateSave() const
         // Do not save legs
         continue;
 
-      state.resize(itemIdx + 2);
-      state.setBit(itemIdx, item->isExpanded()); // Fist bit in triple: expanded or not
-      state.setBit(itemIdx + 1, 0); // Second bit: selection state - ignored
+      if(item->isExpanded())
+        state.insert(item->type());
 
       for(int i = 0; i < item->childCount(); ++i)
         itemStack.append(item->child(i));
-      itemIdx += 2;
     }
   }
   return state;
 }
 
-void ProcedureSearch::treeViewStateRestore(const QBitArray& state)
+void ProcedureSearch::treeViewStateRestore(const QSet<int>& state)
 {
 #ifdef DEBUG_INFORMATION
   qDebug() << Q_FUNC_INFO;
@@ -1988,19 +1977,17 @@ void ProcedureSearch::treeViewStateRestore(const QBitArray& state)
   // Find selected and expanded items first without tree modification to keep order
   for(int i = 0; i < root->childCount(); ++i)
     itemStack.append(root->child(i));
-  int itemIdx = 0;
   QVector<QTreeWidgetItem *> itemsToExpand;
   while(!itemStack.isEmpty())
   {
     QTreeWidgetItem *item = itemStack.takeFirst();
-    if(item != nullptr && itemIdx < state.size() - 1)
+    if(item != nullptr)
     {
-      if(state.at(itemIdx))
+      if(state.contains(item->type()))
         itemsToExpand.append(item);
 
       for(int i = 0; i < item->childCount(); ++i)
         itemStack.append(item->child(i));
-      itemIdx += 2;
     }
   }
 

@@ -168,8 +168,8 @@ private:
   void showProcedureTriggered();
 
   // Save and restore expanded and selected item state
-  QBitArray treeViewStateSave() const;
-  void treeViewStateRestore(const QBitArray& state);
+  QSet<int> treeViewStateSave() const;
+  void treeViewStateRestore(const QSet<int>& state);
 
   /* Build full approach or transition items for the tree view */
   QTreeWidgetItem *buildProcedureItem(QTreeWidgetItem *rootItem, const QString& ident, const atools::sql::SqlRecord& recProcedure,
@@ -260,10 +260,8 @@ private:
   QHash<int, ProcIndexEntry> itemIndex;
   int nextIndexId = 1;
 
-  // Item type is the index into this array
-  // Approach or transition legs are already loaded in tree if bit is set
-  // Fist bit in pair: expanded or not, Second bit: selection state
-  QBitArray itemLoadedIndex;
+  /* Numbers of items expanded by user having legs loaded */
+  QSet<int> itemExpandedIndex;
 
   InfoQuery *infoQuery = nullptr;
   ProcedureQuery *procedureQuery = nullptr;
@@ -282,7 +280,7 @@ private:
   map::MapAirport *currentAirportNav, *currentAirportSim;
 
   // Maps airport ID to expanded state of the tree widget items - bit array is same content as itemLoadedIndex
-  QHash<int, QBitArray> recentTreeState;
+  QHash<int, QSet<int> > recentTreeState;
 
   atools::gui::GridDelegate *gridDelegate = nullptr;
 
