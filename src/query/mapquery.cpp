@@ -976,13 +976,11 @@ const QList<map::MapNdb> *MapQuery::getNdbsByRect(const atools::geo::Rect& rect,
   return getNdbs(latLonBox, mapLayer, lazy, overflow);
 }
 
-const QList<map::MapUserpoint> MapQuery::getUserdataPoints(const GeoDataLatLonBox& rect, const QStringList& types,
-                                                           const QStringList& typesAll, bool unknownType, float distanceNm)
+const QList<map::MapUserpoint>& MapQuery::getUserdataPoints(const GeoDataLatLonBox& rect, const QStringList& types,
+                                                            const QStringList& typesAll, bool unknownType, float distanceNm)
 {
-  QList<MapUserpoint> retval;
-
-  if(!query::valid(Q_FUNC_INFO, userdataPointByRectQuery))
-    return retval;
+  if(!query::valid(Q_FUNC_INFO, userdataPointByRectQuery) || !query::valid(Q_FUNC_INFO, userdataPointByRectQueryNullType))
+    return userpointCache.list;
 
   // No caching here since points can change and the dataset is usually small
   userpointCache.clear();
@@ -994,43 +992,55 @@ const QList<map::MapUserpoint> MapQuery::getUserdataPoints(const GeoDataLatLonBo
 
     for(const GeoDataLatLonBox& r : query::splitAtAntiMeridian(rect, queryRectInflationFactor, queryRectInflationIncrement))
     {
-      query::bindRect(r, userdataPointByRectQuery);
-      userdataPointByRectQuery->bindValue(":dist", distanceNm);
-
+      QVector<SqlQuery *> queries;
       QStringList queryTypes;
       if(unknownType || (allTypesSelected && unknownType))
-        // Either query all unknows too and filter later or all and unknown are selected
-        queryTypes.append("%");
+      {
+        // Either query all unknowns too and filter later or all and unknown are selected
+        queryTypes.append("%"); // Only one query type "%"
+        queries.append(userdataPointByRectQueryNullType); // Extra for null types
+      }
       else
         queryTypes = types;
 
-      for(const QString& queryType : qAsConst(queryTypes))
+      queries.append(userdataPointByRectQuery); // Normal query to also catch unknown and empty types
+
+      // One or two queries
+      for(SqlQuery *query : queries)
       {
-        userdataPointByRectQuery->bindValue(":type", queryType);
-        userdataPointByRectQuery->exec();
-        while(userdataPointByRectQuery->next())
+        query::bindRect(r, query);
+        query->bindValue(":dist", distanceNm);
+
+        for(const QString& queryType : qAsConst(queryTypes))
         {
-          if(unknownType && !allTypesSelected)
+          if(query->hasPlaceholder(":type"))
+            query->bindValue(":type", queryType);
+
+          query->exec();
+          while(query->next())
           {
-            // Need to filter manually here
-            QString pointType = userdataPointByRectQuery->valueStr("type");
+            if(unknownType && !allTypesSelected)
+            {
+              // Need to filter manually here
+              QString pointType = query->valueStr("type");
 
-            // Ignore if not unknown and not in selected types
-            if(typesAll.contains(pointType) && !types.contains(pointType))
-              continue;
+              // Ignore if not unknown and not in selected types
+              if(typesAll.contains(pointType) && !types.contains(pointType))
+                continue;
+            }
+
+            MapUserpoint userPoint;
+            mapTypesFactory->fillUserdataPoint(query->record(), userPoint);
+
+            // Cache has to be kept for map screen index
+            userpointCache.list.append(userPoint);
           }
-
-          MapUserpoint userPoint;
-          mapTypesFactory->fillUserdataPoint(userdataPointByRectQuery->record(), userPoint);
-          retval.append(userPoint);
-
-          // Cache has to be kept for map screen index
-          userpointCache.list.append(userPoint);
         }
       }
     }
   }
-  return retval;
+
+  return userpointCache.list;
 }
 
 QString MapQuery::getAirportIdentFromWaypoint(const QString& ident, const QString& region, const Pos& pos, bool found) const
@@ -1516,8 +1526,11 @@ void MapQuery::initQueries()
 
   userdataPointByRectQuery = new SqlQuery(dbUser);
   userdataPointByRectQuery->prepare("select * from userdata "
-                                    "where " + whereRect + " and visible_from > :dist and type like :type " +
-                                    whereLimit);
+                                    "where " + whereRect + " and visible_from > :dist and type like :type " + whereLimit);
+
+  userdataPointByRectQueryNullType = new SqlQuery(dbUser);
+  userdataPointByRectQueryNullType->prepare("select * from userdata "
+                                            "where " + whereRect + " and visible_from > :dist and type is null " + whereLimit);
 
   markersByRectQuery = new SqlQuery(dbSim);
   markersByRectQuery->prepare(
@@ -1551,6 +1564,7 @@ void MapQuery::deInitQueries()
   ATOOLS_DELETE(markersByRectQuery);
   ATOOLS_DELETE(holdingByRectQuery);
   ATOOLS_DELETE(userdataPointByRectQuery);
+  ATOOLS_DELETE(userdataPointByRectQueryNullType);
   ATOOLS_DELETE(vorByIdentQuery);
   ATOOLS_DELETE(ndbByIdentQuery);
   ATOOLS_DELETE(vorByIdQuery);
