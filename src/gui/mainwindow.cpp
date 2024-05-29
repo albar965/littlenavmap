@@ -3183,7 +3183,7 @@ void MainWindow::resetMessages()
 {
   if(dialog->question(tr("This causes all message dialogs that were deactivated with the\n"
                          "\"Do not show again\"\n"
-                          "button to be displayed again.\n\n"
+                         "button to be displayed again.\n\n"
                          "Reset all messages to show up again now?")) == QMessageBox::Yes)
   {
     messages::resetAllMessages();
@@ -3888,6 +3888,11 @@ void MainWindow::resetWindowLayout()
   ui->actionShowStatusbar->setChecked(true);
   ui->statusBar->setVisible(true);
   ui->menuBar->setVisible(true);
+
+  // Reset non modal dialogs and center them on the main screen again
+  RouteStringDialog::resetWindowLayout(routeStringDialog, QString()); // RouteStringDialog is created on demand
+  routeController->resetWindowLayout(); // RouteCalcDialog is permanent
+  NavApp::getLogdataController()->resetWindowLayout(); // LogStatisticsDialog is permanent
 }
 
 void MainWindow::resetTabLayout()

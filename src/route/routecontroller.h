@@ -129,6 +129,9 @@ public:
   void saveState() const;
   void restoreState();
 
+  /* Reset saved settings and position of RouteCalcDialog */
+  void resetWindowLayout();
+
   /* Get the route only */
   const Route& getRouteConst() const
   {

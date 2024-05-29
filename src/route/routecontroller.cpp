@@ -1108,6 +1108,11 @@ void RouteController::restoreState()
   connect(NavApp::getRouteTabHandler(), &atools::gui::TabWidgetHandler::tabOpened, this, &RouteController::updateRouteTabChangedStatus);
 }
 
+void RouteController::resetWindowLayout()
+{
+  routeCalcDialog->resetWindowLayout();
+}
+
 void RouteController::clearFlightplan()
 {
   routeFilename.clear();

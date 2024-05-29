@@ -19,6 +19,7 @@
 #include "gui/tools.h"
 #include "ui_logstatisticsdialog.h"
 
+#include "app/navapp.h"
 #include "common/constants.h"
 #include "common/formatter.h"
 #include "common/unit.h"
@@ -27,8 +28,8 @@
 #include "gui/helphandler.h"
 #include "gui/itemviewzoomhandler.h"
 #include "gui/widgetstate.h"
+#include "gui/widgetutil.h"
 #include "logdatacontroller.h"
-#include "app/navapp.h"
 #include "sql/sqldatabase.h"
 #include "util/htmlbuilder.h"
 
@@ -343,6 +344,15 @@ void LogStatisticsDialog::restoreState()
   atools::gui::WidgetState state(lnm::LOGDATA_STATS_DIALOG, true, true);
   state.setDialogOptions(true /* position */, true /* size */);
   state.restore({this, ui->tabWidget, ui->comboBoxLogStatsGrouped});
+}
+
+void LogStatisticsDialog::resetWindowLayout()
+{
+  atools::gui::WidgetState state(lnm::LOGDATA_STATS_DIALOG);
+  state.clear(this);
+  state.syncSettings();
+
+  atools::gui::util::centerWidgetOnScreen(this);
 }
 
 void LogStatisticsDialog::groupChanged(int index)

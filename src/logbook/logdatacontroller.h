@@ -105,6 +105,9 @@ public:
   void saveState() const;
   void restoreState();
 
+  /* Reset saved settings and position of LogStatisticsDialog */
+  void resetWindowLayout();
+
   /* Edit and delete log entries from map context menu */
   void editLogEntryFromMap(int id);
   void deleteLogEntryFromMap(int id);

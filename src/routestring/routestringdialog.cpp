@@ -38,6 +38,7 @@
 #include <QScrollBar>
 #include <QFontDatabase>
 #include <QSyntaxHighlighter>
+#include <QMainWindow>
 
 const static int TEXT_CHANGE_DELAY_MS = 500;
 
@@ -516,6 +517,15 @@ void RouteStringDialog::restoreStateWidget()
   atools::gui::WidgetState state(lnm::ROUTE_STRING_DIALOG + settingsSuffix);
   state.setDialogOptions(true /* position */, true /* size */);
   state.restore(this);
+}
+
+void RouteStringDialog::resetWindowLayout(RouteStringDialog *routeStringDialog, const QString& settingsSuffix)
+{
+  atools::gui::WidgetState::clearDialog(lnm::ROUTE_STRING_DIALOG + settingsSuffix, RouteStringDialog::staticMetaObject.className());
+
+  // Check if instance alread open and center if needed
+  if(routeStringDialog != nullptr)
+    atools::gui::util::centerWidgetOnScreen(routeStringDialog);
 }
 
 void RouteStringDialog::restoreState()

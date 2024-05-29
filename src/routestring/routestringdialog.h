@@ -73,6 +73,9 @@ public:
   void restoreState();
   void restoreStateWidget();
 
+  /* Reset saved settings and position of RouteStringDialog. Also recenters if routeStringDialog is not null. */
+  static void resetWindowLayout(RouteStringDialog *routeStringDialog, const QString& settingsSuffix);
+
   /* Update splitter and syntax highlighter */
   void styleChanged();
 

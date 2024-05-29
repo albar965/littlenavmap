@@ -17,6 +17,7 @@
 
 #include "route/routecalcdialog.h"
 
+#include "app/navapp.h"
 #include "atools.h"
 #include "common/constants.h"
 #include "common/unit.h"
@@ -24,7 +25,7 @@
 #include "gui/clicktooltiphandler.h"
 #include "gui/helphandler.h"
 #include "gui/widgetstate.h"
-#include "app/navapp.h"
+#include "gui/widgetutil.h"
 #include "route/route.h"
 #include "route/routecontroller.h"
 #include "ui_routecalcdialog.h"
@@ -304,6 +305,15 @@ void RouteCalcDialog::saveState() const
   state.save(this);
 }
 
+void RouteCalcDialog::resetWindowLayout()
+{
+  atools::gui::WidgetState state(lnm::ROUTE_CALC_DIALOG);
+  state.clear(this);
+  state.syncSettings();
+
+  atools::gui::util::centerWidgetOnScreen(this);
+}
+
 void RouteCalcDialog::preDatabaseLoad()
 {
 
@@ -375,7 +385,7 @@ void RouteCalcDialog::adjustAltitudePressed()
   ui->spinBoxRouteCalcCruiseAltitude->setValue(NavApp::getRouteConst().getAdjustedAltitude(ui->spinBoxRouteCalcCruiseAltitude->value()));
 }
 
-void RouteCalcDialog::showEvent(QShowEvent*)
+void RouteCalcDialog::showEvent(QShowEvent *)
 {
   restoreState();
 }

@@ -72,6 +72,9 @@ public:
   void saveState() const;
   void restoreState();
 
+  /* Reset saved settings and position of dialog */
+  void resetWindowLayout();
+
 private:
   /* Use events to update data and disconnect from database if not visible. */
   /* Also enable or disable toolbar/menu action. */

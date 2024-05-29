@@ -85,6 +85,9 @@ public:
   void restoreState();
   void saveState() const;
 
+  /* Reset saved settings and position of dialog */
+  void resetWindowLayout();
+
   /* Clear routing network cache and disconnect all queries */
   void preDatabaseLoad();
   void postDatabaseLoad();

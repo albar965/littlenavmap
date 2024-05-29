@@ -182,6 +182,11 @@ void LogdataController::restoreState()
   manager->updateUndoRedoActions();
 }
 
+void LogdataController::resetWindowLayout()
+{
+  statsDialog->resetWindowLayout();
+}
+
 void LogdataController::optionsChanged()
 {
   statsDialog->optionsChanged();
