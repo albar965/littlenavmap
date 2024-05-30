@@ -1,4 +1,12 @@
 /*
+ * brings iframe to foreground
+ */
+function show(iframeName) {
+  document.querySelector('iframe.shown').classList.remove("shown");
+  document.querySelector('iframe[name="'+iframeName+'"]').classList.add("shown");
+}
+
+/*
  * set class of closest parent button of clicked element within children to active
  */
 function setActive(e) {
