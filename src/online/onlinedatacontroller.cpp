@@ -525,7 +525,7 @@ void OnlinedataController::optionsChanged()
   // Remove all from the database
   manager->clearData();
   aircraftCache.clear();
-  onlineAircraftSpatialIndex.clear();
+  onlineAircraftSpatialIndex.clearIndex();
   aircraftIdSimToOnline.clear();
   aircraftIdOnlineToSim.clear();
   currentDataPacketMap.clear();
@@ -790,7 +790,7 @@ OnlineAircraft OnlinedataController::shadowAircraftInternal(const atools::fs::sc
 
 void OnlinedataController::clearShadowIndexes()
 {
-  onlineAircraftSpatialIndex.clear();
+  onlineAircraftSpatialIndex.clearIndex();
   aircraftIdSimToOnline.clear();
   aircraftIdOnlineToSim.clear();
 }
