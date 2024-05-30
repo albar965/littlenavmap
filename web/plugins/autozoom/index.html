@@ -13,7 +13,7 @@
 
       var mapToggle, centerToggle;
 
-      var contentIframe;
+      var docMap;
       var enabled = true;
       var firstTime = true;
       var lastPower = -10;
@@ -28,11 +28,10 @@
           mapToggle.click();
         }
         originalZoom > -1 ? fetch("/mapimage?format=jpg&quality=1&width=1&height=1&distance=" + Math.pow(2, originalZoom) + "&session&cmd=" + Math.random()) : 0;
-        contentIframe.contentDocument.querySelector('[onclick="refreshMap()"]').click();
+        docMap.querySelector('[onclick="refreshMap()"]').click();
       }
 
       function stop() {
-        contentIframe.removeEventListener("load", checkIframeSrc);
         clearTimeout(timeout);
         running = false;
         restoreValuesPerhapsOverridden();
@@ -65,12 +64,13 @@
               if(mapToggle.checked) {
                 wasChecked = true;
                 mapToggle.checked = false;
-                contentIframe.contentWindow.checkRefresh();   // temporarily disable to prevent our fetch getting cancelled by refresh, but don't give away to user
+                docMap.defaultView.checkRefresh();   // temporarily disable to prevent our fetch getting cancelled by refresh, but don't give away to user
               }
+              // the webserver saves the view state, update that state, thus only request an 1x1 image for performance reason
               fetch("/mapimage?format=jpg&quality=1&width=1&height=1&distance=" + Math.pow(2, newPower) + "&session&cmd=" + Math.random()).then(function() {
                 if(wasChecked) {
                   mapToggle.checked = true;
-                  contentIframe.contentWindow.checkRefresh();
+                  docMap.defaultView.checkRefresh();
                 }
                 timeout = setTimeout(autozoom, zoomWaitForKnots[speedIndex] * 1000);
               });
@@ -102,9 +102,9 @@
 
       function checkIframeSrc() {
         try {
-          enabled = contentIframe.contentWindow.location.href.endsWith("/map.html");
+          enabled = docMap.defaultView.location.href.endsWith("/map.html");
         } catch(e) {
-          return;       // could occur if contentIFrame is loading and thus might have no contentWindow.location object yet; our load event will call this function again
+          return;       // cannot occur: plugins are loaded from the end of the map code and thus the map must be present
         }
         if(enabled) {
           if(firstTime) {
@@ -123,41 +123,43 @@
         }
       }
 
-      function init(callback, version) {
-        var returned_Value = callback(callback.TYPE_BACKGROUND, stop);
-        returned_Value.disable_AccessPrevention();
-
-        if(version !== 1) { // let all setup have completed by having called callback first
-          if(!confirm("New map version running possibly unsupported.\n\nDo you like to let run this plugin anyway?")) {
-            throw "aborted by user";
+      function init (message) {
+        var returned_Value = message.pluginParent.callback(message.pluginParent.callback.TYPE_BACKGROUND, stop);
+        docMap = returned_Value.request_MapAccess("to change zoom level");
+        if(docMap) {
+          if(message.pluginParent.version !== 1) { // let all setup have completed by having called callback first
+            if(!confirm("New map version running possibly unsupported.\n\nDo you like to let run this plugin anyway?")) {
+              throw "aborted by user";
+            }
           }
-        }
 
-        if(sessionStorage.getItem("autozoomRead") !== "true") {
-          if(confirm(
-            "This plugin attempts to set the zoom level of the\n" +
-            "map according to the level it deems most appro-\n" +
-            "priate for the circumstances you are in.\n\n" +
-            "It enables \"auto refresh\" and \"center is Aircraft\" and\n" +
-            "restores the value they are in now when you disable it.\n\n" +
-            "You can change the defining values it operates on\n" +
-            "inside the file \"configurationValues.js\" inside the\n" +
-            "folder \"web\\plugins\\autozoom\" in the folder of Little Navmap.\n\n" +
-            "If you continue, this message is dismissed for this session."
-            )) {
-            sessionStorage.setItem("autozoomRead", "true");
-          } else {
-            throw "cancelled by user";
+          if(sessionStorage.getItem("autozoomRead") !== "true") {
+            if(confirm(
+              "This plugin attempts to set the zoom level of the\n" +
+              "map according to the level it deems most appro-\n" +
+              "priate for the circumstances you are in.\n\n" +
+              "It enables \"auto refresh\" and \"center is Aircraft\" and\n" +
+              "restores the value they are in now when you disable it.\n\n" +
+              "You can change the defining values it operates on\n" +
+              "inside the file \"configurationValues.js\" inside the\n" +
+              "folder \"web\\plugins\\autozoom\" in the folder of Little Navmap.\n\n" +
+              "If you continue, this message is dismissed for this session."
+              )) {
+              sessionStorage.setItem("autozoomRead", "true");
+            } else {
+              throw "cancelled by user";
+            }
           }
+
+          docMap = parent.document.querySelector("iframe[name=contentiframe]").contentDocument;
+
+          mapToggle = docMap.querySelector("#refreshMapToggle");
+          centerToggle = docMap.querySelector("#refreshWithAircraft");
+
+          checkIframeSrc();
+        } else {
+          throw "necessary access not given";
         }
-
-        contentIframe = parent.document.querySelector("iframe[name=contentiframe]");
-        contentIframe.addEventListener("load", checkIframeSrc);
-
-        mapToggle = contentIframe.contentDocument.querySelector("#refreshMapToggle");
-        centerToggle = contentIframe.contentDocument.querySelector("#refreshWithAircraft");
-
-        checkIframeSrc();
       }
     </script>
   </body>
