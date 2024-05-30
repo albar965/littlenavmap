@@ -54,7 +54,7 @@ MapPainterVehicle::~MapPainterVehicle()
 
 }
 
-void MapPainterVehicle::paintAiVehicle(const SimConnectAircraft& vehicle, float x, float y, bool forceLabelNearby)
+void MapPainterVehicle::paintAiVehicle(const SimConnectAircraft& vehicle, float x, float y, bool forceLabelNearby) const
 {
   if(vehicle.isUser())
     return;
@@ -96,7 +96,7 @@ void MapPainterVehicle::paintAiVehicle(const SimConnectAircraft& vehicle, float 
   }
 }
 
-void MapPainterVehicle::paintUserAircraft(const SimConnectUserAircraft& userAircraft, float x, float y)
+void MapPainterVehicle::paintUserAircraft(const SimConnectUserAircraft& userAircraft, float x, float y) const
 {
   int size = std::max(context->sz(context->symbolSizeAircraftUser, 32), scale->getPixelIntForFeet(userAircraft.getModelSize()));
   context->szFont(context->textSizeAircraftUser);
@@ -130,7 +130,7 @@ void MapPainterVehicle::paintUserAircraft(const SimConnectUserAircraft& userAirc
   }
 }
 
-void MapPainterVehicle::paintTurnPath(const atools::fs::sc::SimConnectUserAircraft& userAircraft)
+void MapPainterVehicle::paintTurnPath(const atools::fs::sc::SimConnectUserAircraft& userAircraft) const
 {
   if(context->objectDisplayTypes & map::AIRCRAFT_TURN_PATH && userAircraft.isFlying())
   {
@@ -207,7 +207,7 @@ void MapPainterVehicle::paintTurnPath(const atools::fs::sc::SimConnectUserAircra
   } // if(context->objectDisplayTypes & map::AIRCRAFT_TURN_PATH && userAircraft.isFlying())
 }
 
-float MapPainterVehicle::calcRotation(const SimConnectAircraft& aircraft)
+float MapPainterVehicle::calcRotation(const SimConnectAircraft& aircraft) const
 {
   float rotate;
   if(aircraft.getHeadingDegTrue() < atools::fs::sc::SC_INVALID_FLOAT)
@@ -219,7 +219,7 @@ float MapPainterVehicle::calcRotation(const SimConnectAircraft& aircraft)
   return scale->getScreenRotation(rotate, aircraft.getPosition(), context->zoomDistanceMeter);
 }
 
-void MapPainterVehicle::paintTextLabelAi(float x, float y, float size, const SimConnectAircraft& aircraft, bool forceLabelNearby)
+void MapPainterVehicle::paintTextLabelAi(float x, float y, float size, const SimConnectAircraft& aircraft, bool forceLabelNearby) const
 {
   QStringList texts;
   bool flying = !aircraft.isOnGround();
@@ -229,90 +229,83 @@ void MapPainterVehicle::paintTextLabelAi(float x, float y, float size, const Sim
   if((!flying && layer->isAiAircraftGroundText()) || // All AI on ground
      (flying && layer->isAiAircraftText()) || // All AI in the air
      (aircraft.isOnline() && layer->isOnlineAircraftText()) || // All online
-     forceLabelNearby)
+     forceLabelNearby) // Close to user aircraft
   {
-    bool text = layer->isAiAircraftText();
-    bool detail = layer->isAiAircraftTextDetail(); // Lowest detail level
+    bool hidden = false; // Set by aiDisp() if any value is requested and available but excluded by detail level
+    bool text = layer->isAiAircraftText(); // Show any text
+    bool detail1 = layer->isAiAircraftTextDetail(); // Lowest detail level up to higher zoom
     bool detail2 = layer->isAiAircraftTextDetail2(); // Higher detail
-    bool detail3 = layer->isAiAircraftTextDetail3(); // Highest detail
+    bool detail3 = layer->isAiAircraftTextDetail3(); // Highest detail on lower zoom only
 
     if(forceLabelNearby)
-      detail = detail2 = text;
+      detail1 = detail2 = text;
 
-    if(detail2)
+    // Speeds ====================================================================================
+
+    if(!flying)
     {
-      // Speeds ====================================================================================
+      // Aircraft on ground ======================================================
+      // Omit IAS and TAS on ground
+      if(aircraft.getGroundSpeedKts() > 1.f)
+        appendSpeedText(texts, aircraft, false /* ias */,
+                        aiDisp(hidden, optsac::ITEM_AI_AIRCRAFT_GS, detail2, aircraft.getGroundSpeedKts()),
+                        false /* tas */);
+    }
+    else
+    {
+      // Aircraft flying ======================================================
       if(aircraft.getGroundSpeedKts() > 1.f)
         appendSpeedText(texts, aircraft,
-                        context->dOptAiAc(optsac::ITEM_AI_AIRCRAFT_IAS) && flying && detail3,
-                        context->dOptAiAc(optsac::ITEM_AI_AIRCRAFT_GS),
-                        context->dOptAiAc(optsac::ITEM_AI_AIRCRAFT_TAS) && flying && detail3);
+                        aiDisp(hidden, optsac::ITEM_AI_AIRCRAFT_IAS, detail3, aircraft.getIndicatedSpeedKts()),
+                        aiDisp(hidden, optsac::ITEM_AI_AIRCRAFT_GS, detail2, aircraft.getGroundSpeedKts()),
+                        aiDisp(hidden, optsac::ITEM_AI_AIRCRAFT_TAS, detail3, aircraft.getTrueAirspeedKts()));
 
-      if(flying)
+      // Departure and destination ====================================================================================
+      if(aiDisp(hidden, optsac::ITEM_AI_AIRCRAFT_DEP_DEST, detail3, aircraft.getFromIdent() % aircraft.getToIdent()))
       {
-        // Departure and destination ====================================================================================
-        if(context->dOptAiAc(optsac::ITEM_AI_AIRCRAFT_DEP_DEST) &&
-           (!aircraft.getFromIdent().isEmpty() || !aircraft.getToIdent().isEmpty()) && detail3)
-        {
-          texts.append(tr("%1 to %2").
-                       arg(aircraft.getFromIdent().isEmpty() ? tr("Unknown") : aircraft.getFromIdent()).
-                       arg(aircraft.getToIdent().isEmpty() ? tr("Unknown") : aircraft.getToIdent()));
-        }
+        texts.append(tr("%1 to %2").
+                     arg(aircraft.getFromIdent().isEmpty() ? tr("Unknown") : aircraft.getFromIdent()).
+                     arg(aircraft.getToIdent().isEmpty() ? tr("Unknown") : aircraft.getToIdent()));
+      }
 
-        // Heading ====================================================================================
-        if(context->dOptAiAc(optsac::ITEM_AI_AIRCRAFT_HEADING))
-        {
-          float heading = atools::fs::sc::SC_INVALID_FLOAT;
-          if(aircraft.getHeadingDegMag() < atools::fs::sc::SC_INVALID_FLOAT)
-            heading = aircraft.getHeadingDegMag();
-          else if(aircraft.getHeadingDegTrue() < atools::fs::sc::SC_INVALID_FLOAT)
-            heading = atools::geo::normalizeCourse(aircraft.getHeadingDegTrue() - NavApp::getMagVar(aircraft.getPosition()));
+      // Heading ====================================================================================
+      float heading = atools::fs::sc::SC_INVALID_FLOAT;
+      if(aircraft.getHeadingDegMag() < atools::fs::sc::SC_INVALID_FLOAT)
+        heading = aircraft.getHeadingDegMag();
+      else if(aircraft.getHeadingDegTrue() < atools::fs::sc::SC_INVALID_FLOAT)
+        heading = atools::geo::normalizeCourse(aircraft.getHeadingDegTrue() - NavApp::getMagVar(aircraft.getPosition()));
 
-          if(heading < atools::fs::sc::SC_INVALID_FLOAT)
-            texts.append(tr("HDG %3°M").arg(QString::number(heading, 'f', 0)));
-        }
+      if(aiDisp(hidden, optsac::ITEM_AI_AIRCRAFT_HEADING, detail2, heading))
+        texts.append(tr("HDG %3°M").arg(QString::number(heading, 'f', 0)));
 
-        // Bearing to user ====================================================================================
-        const Pos& userPos = mapPaintWidget->getUserAircraft().getPosition();
-        const Pos& aiPos = aircraft.getPosition();
-        if(context->dOptAiAc(optsac::ITEM_AI_AIRCRAFT_DIST_BEARING_FROM_USER) && detail3)
-        {
-          float distMeter = aiPos.distanceMeterTo(userPos);
+      // Bearing to user ====================================================================================
+      const Pos& userPos = mapPaintWidget->getUserAircraft().getPosition();
+      const Pos& aiPos = aircraft.getPosition();
+      float distMeter = aiPos.distanceMeterTo(userPos);
+      if(aiDisp(hidden, optsac::ITEM_AI_AIRCRAFT_DIST_BEARING_FROM_USER, detail3, distMeter < atools::geo::nmToMeter(8000.f)))
+        texts.append(tr("From User %1 %2°M").
+                     arg(Unit::distMeter(distMeter, true /* addUnit */, 5 /* minValPrec */, true /* narrow */)).
+                     arg(QString::number(atools::geo::normalizeCourse(userPos.angleDegTo(aiPos) - NavApp::getMagVar(userPos)), 'f', 0)));
 
-          if(distMeter < atools::geo::nmToMeter(8000.f))
-          {
-            QString dist = QString::number(atools::geo::normalizeCourse(userPos.angleDegTo(aiPos) - NavApp::getMagVar(userPos)), 'f', 0);
+      // Coordinates ====================================================================================
+      if(aiDisp(hidden, optsac::ITEM_AI_AIRCRAFT_COORDINATES, detail3))
+        texts.append(Unit::coords(aiPos));
 
-            texts.append(tr("From User %1 %2°M").
-                         arg(Unit::distMeter(distMeter, true /* addUnit */, 5 /* minValPrec */, true /* narrow */)).
-                         arg(dist));
-          }
-        }
-
-        // Coordinates ====================================================================================
-        if(context->dOptAiAc(optsac::ITEM_AI_AIRCRAFT_COORDINATES) && detail3)
-          texts.append(Unit::coords(aiPos));
-      } // if(flying)
-    } // if(detail2)
-
-    if(detail && flying)
-    {
       // Vertical speed ====================================================================================
-      if(detail2 && context->dOptAiAc(optsac::ITEM_AI_AIRCRAFT_CLIMB_SINK))
+      if(aiDisp(hidden, optsac::ITEM_AI_AIRCRAFT_CLIMB_SINK, detail2, aircraft.getVerticalSpeedFeetPerMin()))
         appendClimbSinkText(texts, aircraft);
 
       // Indicated altitude ====================================================================================
       QStringList altTexts;
-      if(context->dOptAiAc(optsac::ITEM_AI_AIRCRAFT_INDICATED_ALTITUDE) &&
-         aircraft.getIndicatedAltitudeFt() < map::INVALID_ALTITUDE_VALUE && detail3)
+      if(aiDisp(hidden, optsac::ITEM_AI_AIRCRAFT_INDICATED_ALTITUDE, detail3, aircraft.getIndicatedAltitudeFt()))
         altTexts.append(tr("IND %1").arg(Unit::altFeet(aircraft.getIndicatedAltitudeFt())));
 
       // Actual altitude ====================================================================================
-      if(context->dOptAiAc(optsac::ITEM_AI_AIRCRAFT_ALTITUDE) && aircraft.getActualAltitudeFt() < map::INVALID_ALTITUDE_VALUE)
+      if(aiDisp(hidden, optsac::ITEM_AI_AIRCRAFT_ALTITUDE, detail1, aircraft.getActualAltitudeFt()))
         altTexts.append(tr("ALT %1%2").arg(Unit::altFeet(aircraft.getActualAltitudeFt())).arg(QString()));
 
       QString upDown;
-      if(!context->dOptAiAc(optsac::ITEM_AI_AIRCRAFT_CLIMB_SINK))
+      if(!aiDisp(hidden, optsac::ITEM_AI_AIRCRAFT_CLIMB_SINK, detail1, aircraft.getVerticalSpeedFeetPerMin()))
         climbSinkPointer(upDown, aircraft);
 
       if(!altTexts.isEmpty())
@@ -320,16 +313,16 @@ void MapPainterVehicle::paintTextLabelAi(float x, float y, float size, const Sim
         texts.append(altTexts.join(tr(", ")));
         texts.last().append(upDown);
       }
-    }
+    } // else flying
 
     // Aircraft information ====================================================================================
     // Formatting depends on list size
     prependAtcText(texts, aircraft,
-                   context->dOptAiAc(optsac::ITEM_AI_AIRCRAFT_REGISTRATION) && text,
-                   context->dOptAiAc(optsac::ITEM_AI_AIRCRAFT_TYPE) && detail,
-                   context->dOptAiAc(optsac::ITEM_AI_AIRCRAFT_AIRLINE) && text,
-                   context->dOptAiAc(optsac::ITEM_AI_AIRCRAFT_FLIGHT_NUMBER) && text,
-                   context->dOptAiAc(optsac::ITEM_AI_AIRCRAFT_TRANSPONDER_CODE) && detail3 && flying,
+                   aiDisp(hidden, optsac::ITEM_AI_AIRCRAFT_REGISTRATION, text, aircraft.getAirplaneRegistration()),
+                   aiDisp(hidden, optsac::ITEM_AI_AIRCRAFT_TYPE, detail1, aircraft.getAirplaneModel()),
+                   aiDisp(hidden, optsac::ITEM_AI_AIRCRAFT_AIRLINE, text, aircraft.getAirplaneAirline()),
+                   aiDisp(hidden, optsac::ITEM_AI_AIRCRAFT_FLIGHT_NUMBER, text, aircraft.getAirplaneFlightnumber()),
+                   aiDisp(hidden, optsac::ITEM_AI_AIRCRAFT_TRANSPONDER_CODE, detail3, aircraft.isTransponderCodeValid() && flying),
                    detail2 ? 20 : 8, // elideAirline
                    detail3 ? 150 : 70 // maxTextWidth
                    );
@@ -345,13 +338,36 @@ void MapPainterVehicle::paintTextLabelAi(float x, float y, float size, const Sim
     // Do not place label far away from icon on lowest zoom levels
     size = std::min(40.f, size);
 
-    // Draw text label
-    symbolPainter->textBoxF(context->painter, texts, mapcolors::aircraftAiLabelColor, x + size / 2.f, y + size / 2.f,
-                            textatt::NONE, transparency, mapcolors::aircraftAiLabelColorBg);
+    if(!texts.isEmpty())
+    {
+      if(hidden)
+        texts.last().append(tr("…"));
+
+      // Draw text label
+      symbolPainter->textBoxF(context->painter, texts, mapcolors::aircraftAiLabelColor, x + size / 2.f, y + size / 2.f,
+                              textatt::NONE, transparency, mapcolors::aircraftAiLabelColorBg);
+    }
   } // if((!flying && layer->isAiAircraftGroundText()) ||
 }
 
-void MapPainterVehicle::paintTextLabelUser(float x, float y, int size, const SimConnectUserAircraft& aircraft)
+bool MapPainterVehicle::aiDisp(bool& hidden, optsac::DisplayOptionAiAircraft opts, bool detail, bool available) const
+{
+  bool enabled = context->dOptAiAc(opts);
+  hidden |= enabled && available && !detail;
+  return enabled && detail && available;
+}
+
+bool MapPainterVehicle::aiDisp(bool& hidden, optsac::DisplayOptionAiAircraft opts, bool detail, float value) const
+{
+  return aiDisp(hidden, opts, detail, value < atools::fs::sc::SC_INVALID_FLOAT / 2.f);
+}
+
+bool MapPainterVehicle::aiDisp(bool& hidden, optsac::DisplayOptionAiAircraft opts, bool detail, const QString& text) const
+{
+  return aiDisp(hidden, opts, detail, !text.isEmpty());
+}
+
+void MapPainterVehicle::paintTextLabelUser(float x, float y, int size, const SimConnectUserAircraft& aircraft) const
 {
   QStringList texts;
 
@@ -417,7 +433,7 @@ void MapPainterVehicle::paintTextLabelUser(float x, float y, int size, const Sim
                           textatt::NONE, transparency, mapcolors::aircraftUserLabelColorBg);
 }
 
-void MapPainterVehicle::climbSinkPointer(QString& upDown, const SimConnectAircraft& aircraft)
+void MapPainterVehicle::climbSinkPointer(QString& upDown, const SimConnectAircraft& aircraft) const
 {
   if(aircraft.getVerticalSpeedFeetPerMin() < atools::fs::sc::SC_INVALID_FLOAT)
   {
@@ -428,7 +444,7 @@ void MapPainterVehicle::climbSinkPointer(QString& upDown, const SimConnectAircra
   }
 }
 
-void MapPainterVehicle::appendClimbSinkText(QStringList& texts, const SimConnectAircraft& aircraft)
+void MapPainterVehicle::appendClimbSinkText(QStringList& texts, const SimConnectAircraft& aircraft) const
 {
   if(aircraft.getVerticalSpeedFeetPerMin() < atools::fs::sc::SC_INVALID_FLOAT)
   {
@@ -447,7 +463,7 @@ void MapPainterVehicle::appendClimbSinkText(QStringList& texts, const SimConnect
 
 void MapPainterVehicle::prependAtcText(QStringList& texts, const SimConnectAircraft& aircraft,
                                        bool registration, bool type, bool airline, bool flightnumber,
-                                       bool transponderCode, int elideAirline, int maxTextWidth)
+                                       bool transponderCode, int elideAirline, int maxTextWidth) const
 {
   QStringList atctexts;
   if(registration && !aircraft.getAirplaneRegistration().isEmpty())
@@ -473,8 +489,7 @@ void MapPainterVehicle::prependAtcText(QStringList& texts, const SimConnectAircr
   }
 }
 
-void MapPainterVehicle::appendSpeedText(QStringList& texts, const SimConnectAircraft& aircraft,
-                                        bool ias, bool gs, bool tas)
+void MapPainterVehicle::appendSpeedText(QStringList& texts, const SimConnectAircraft& aircraft, bool ias, bool gs, bool tas) const
 {
   QStringList line;
   if(ias && aircraft.getIndicatedSpeedKts() < atools::fs::sc::SC_INVALID_FLOAT / 2.f)
@@ -490,7 +505,7 @@ void MapPainterVehicle::appendSpeedText(QStringList& texts, const SimConnectAirc
     texts.append(line.join(tr(", ")));
 }
 
-void MapPainterVehicle::paintWindPointer(const atools::fs::sc::SimConnectUserAircraft& aircraft, float x, float y)
+void MapPainterVehicle::paintWindPointer(const atools::fs::sc::SimConnectUserAircraft& aircraft, float x, float y) const
 {
   if(aircraft.getWindDirectionDegT() < atools::fs::sc::SC_INVALID_FLOAT)
   {
@@ -503,7 +518,7 @@ void MapPainterVehicle::paintWindPointer(const atools::fs::sc::SimConnectUserAir
   }
 }
 
-void MapPainterVehicle::paintTextLabelWind(float x, float y, float size, const SimConnectUserAircraft& aircraft)
+void MapPainterVehicle::paintTextLabelWind(float x, float y, float size, const SimConnectUserAircraft& aircraft) const
 {
   if(aircraft.getWindDirectionDegT() < atools::fs::sc::SC_INVALID_FLOAT)
   {

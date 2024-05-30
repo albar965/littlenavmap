@@ -183,7 +183,8 @@ bool MapPainter::wToSBuf(const atools::geo::Pos& coords, QPointF& point, const Q
   return retval;
 }
 
-void MapPainter::paintArc(GeoPainter *painter, const Pos& centerPos, float radiusNm, float angleDegStart, float angleDegEnd, bool fast)
+void MapPainter::paintArc(GeoPainter *painter, const Pos& centerPos, float radiusNm, float angleDegStart, float angleDegEnd,
+                          bool fast) const
 {
   if(radiusNm > atools::geo::EARTH_CIRCUMFERENCE_METER / 4.f)
     return;
@@ -252,7 +253,7 @@ void MapPainter::paintArc(GeoPainter *painter, const Pos& centerPos, float radiu
   }
 }
 
-void MapPainter::paintCircle(GeoPainter *painter, const Pos& centerPos, float radiusNm, bool fast, QPoint *textPos)
+void MapPainter::paintCircle(GeoPainter *painter, const Pos& centerPos, float radiusNm, bool fast, QPoint *textPos) const
 {
   if(radiusNm > atools::geo::EARTH_CIRCUMFERENCE_METER / 4.f)
     return;
@@ -266,7 +267,7 @@ void MapPainter::paintCircle(GeoPainter *painter, const Pos& centerPos, float ra
     paintCircleLargeInternal(painter, centerPos, radiusNm, fast, textPos);
 }
 
-void MapPainter::paintCircleSmallInternal(GeoPainter *painter, const Pos& centerPos, float radiusNm, bool fast, QPoint *textPos)
+void MapPainter::paintCircleSmallInternal(GeoPainter *painter, const Pos& centerPos, float radiusNm, bool fast, QPoint *textPos) const
 {
   Q_UNUSED(fast)
 
@@ -302,7 +303,7 @@ void MapPainter::paintCircleSmallInternal(GeoPainter *painter, const Pos& center
   }
 }
 
-void MapPainter::paintCircleLargeInternal(GeoPainter *painter, const Pos& centerPos, float radiusNm, bool fast, QPoint *textPos)
+void MapPainter::paintCircleLargeInternal(GeoPainter *painter, const Pos& centerPos, float radiusNm, bool fast, QPoint *textPos) const
 {
   // Calculate the number of points to use depending on screen resolution
   int pixel = scale->getPixelIntForMeter(nmToMeter(radiusNm));
@@ -399,7 +400,7 @@ void MapPainter::paintCircleLargeInternal(GeoPainter *painter, const Pos& center
   }
 }
 
-void MapPainter::drawLineStraight(Marble::GeoPainter *painter, const atools::geo::Line& line)
+void MapPainter::drawLineStraight(Marble::GeoPainter *painter, const atools::geo::Line& line) const
 {
   double x1, y1, x2, y2;
   bool visible1 = wToS(line.getPos1(), x1, y1);
@@ -409,7 +410,7 @@ void MapPainter::drawLineStraight(Marble::GeoPainter *painter, const atools::geo
     drawLine(painter, QPointF(x1, y1), QPointF(x2, y2));
 }
 
-void MapPainter::drawLine(QPainter *painter, const QLineF& line)
+void MapPainter::drawLine(QPainter *painter, const QLineF& line) const
 {
   static const QMarginsF MARGINS(1., 1., 1., 1.);
   QRectF rect(line.p1(), line.p2());
@@ -426,7 +427,7 @@ void MapPainter::drawLine(QPainter *painter, const QLineF& line)
   }
 }
 
-void MapPainter::drawCircle(Marble::GeoPainter *painter, const atools::geo::Pos& center, float radius)
+void MapPainter::drawCircle(Marble::GeoPainter *painter, const atools::geo::Pos& center, float radius) const
 {
   QPointF pt = wToSF(center);
   if(!pt.isNull())
@@ -434,7 +435,7 @@ void MapPainter::drawCircle(Marble::GeoPainter *painter, const atools::geo::Pos&
 }
 
 void MapPainter::drawText(Marble::GeoPainter *painter, const Pos& pos, const QString& text, bool topCorner,
-                          bool leftCorner)
+                          bool leftCorner) const
 {
   QPoint pt = wToS(pos);
   if(!pt.isNull())
@@ -446,26 +447,26 @@ void MapPainter::drawText(Marble::GeoPainter *painter, const Pos& pos, const QSt
   }
 }
 
-void MapPainter::drawCross(Marble::GeoPainter *painter, int x, int y, int size)
+void MapPainter::drawCross(Marble::GeoPainter *painter, int x, int y, int size) const
 {
   painter->drawLine(x, y - size, x, y + size);
   painter->drawLine(x - size, y, x + size, y);
 }
 
-void MapPainter::drawPolyline(Marble::GeoPainter *painter, const atools::geo::LineString& linestring)
+void MapPainter::drawPolyline(Marble::GeoPainter *painter, const atools::geo::LineString& linestring) const
 {
   QVector<QPolygonF *> polygons = createPolylines(linestring, context->screenRect);
   drawPolylines(painter, polygons);
   releasePolylines(polygons);
 }
 
-void MapPainter::drawPolylines(Marble::GeoPainter *painter, const QVector<QPolygonF *>& polygons)
+void MapPainter::drawPolylines(Marble::GeoPainter *painter, const QVector<QPolygonF *>& polygons) const
 {
   for(const QPolygonF *polygon : polygons)
     drawPolyline(painter, *polygon);
 }
 
-void MapPainter::drawPolyline(Marble::GeoPainter *painter, const QPolygonF& polygon)
+void MapPainter::drawPolyline(Marble::GeoPainter *painter, const QPolygonF& polygon) const
 {
   painter->drawPolyline(polygon);
 
@@ -492,20 +493,20 @@ void MapPainter::drawPolyline(Marble::GeoPainter *painter, const QPolygonF& poly
 #endif
 }
 
-void MapPainter::drawPolygon(Marble::GeoPainter *painter, const atools::geo::LineString& linestring)
+void MapPainter::drawPolygon(Marble::GeoPainter *painter, const atools::geo::LineString& linestring) const
 {
   QVector<QPolygonF *> polygons = createPolygons(linestring, context->screenRect);
   drawPolygons(painter, polygons);
   releasePolygons(polygons);
 }
 
-void MapPainter::drawPolygons(Marble::GeoPainter *painter, const QVector<QPolygonF *>& polygons)
+void MapPainter::drawPolygons(Marble::GeoPainter *painter, const QVector<QPolygonF *>& polygons) const
 {
   for(const QPolygonF *polygon : polygons)
     drawPolygon(painter, *polygon);
 }
 
-void MapPainter::drawPolygon(Marble::GeoPainter *painter, const QPolygonF& polygon)
+void MapPainter::drawPolygon(Marble::GeoPainter *painter, const QPolygonF& polygon) const
 {
   if(!polygon.isEmpty())
     painter->drawPolygon(polygon, Qt::OddEvenFill);
@@ -533,7 +534,7 @@ void MapPainter::drawPolygon(Marble::GeoPainter *painter, const QPolygonF& polyg
 #endif
 }
 
-void MapPainter::drawLine(Marble::GeoPainter *painter, const atools::geo::Line& line, bool forceDraw)
+void MapPainter::drawLine(Marble::GeoPainter *painter, const atools::geo::Line& line, bool forceDraw) const
 {
   QVector<QPolygonF *> polygons = createPolylines(LineString(line.getPos1(), line.getPos2()), context->screenRect);
   if(!polygons.isEmpty())
@@ -551,7 +552,7 @@ void MapPainter::drawLine(Marble::GeoPainter *painter, const atools::geo::Line& 
   }
 }
 
-void MapPainter::paintArc(QPainter *painter, const QPointF& p1, const QPointF& p2, const QPointF& center, bool left)
+void MapPainter::paintArc(QPainter *painter, const QPointF& p1, const QPointF& p2, const QPointF& center, bool left) const
 {
   QRectF arcRect;
   float startAngle, spanAngle;
@@ -564,7 +565,7 @@ void MapPainter::paintHoldWithText(QPainter *painter, float x, float y, float di
                                    float lengthNm, float minutes, bool left,
                                    const QString& text, const QString& text2,
                                    const QColor& textColor, const QColor& textColorBackground,
-                                   QVector<float> inboundArrows, QVector<float> outboundArrows)
+                                   QVector<float> inboundArrows, QVector<float> outboundArrows) const
 {
   // Scale to total length given in the leg
   // length = 2 * p + 2 * PI * p / 2
@@ -699,7 +700,7 @@ void MapPainter::paintHoldWithText(QPainter *painter, float x, float y, float di
 
 void MapPainter::paintProcedureTurnWithText(QPainter *painter, float x, float y, float turnHeading, float distanceNm,
                                             bool left, QLineF *extensionLine, const QString& text,
-                                            const QColor& textColor, const QColor& textColorBackground)
+                                            const QColor& textColor, const QColor& textColorBackground) const
 {
   // One minute = 3.5 nm
   float pixel = scale->getPixelForFeet(atools::roundToInt(atools::geo::nmToFeet(3.f)));
@@ -792,7 +793,8 @@ void MapPainter::paintProcedureTurnWithText(QPainter *painter, float x, float y,
   painter->restore();
 }
 
-void MapPainter::paintAircraftTrail(const QVector<LineString>& lineStrings, float minAlt, float maxAlt, const atools::geo::Pos& aircraftPos)
+void MapPainter::paintAircraftTrail(const QVector<LineString>& lineStrings, float minAlt, float maxAlt,
+                                    const atools::geo::Pos& aircraftPos) const
 {
   if(!lineStrings.isEmpty())
   {
@@ -844,7 +846,7 @@ void MapPainter::paintAircraftTrail(const QVector<LineString>& lineStrings, floa
   }
 }
 
-QPolygonF MapPainter::buildArrow(float size, bool downwards)
+QPolygonF MapPainter::buildArrow(float size, bool downwards) const
 {
   if(downwards)
     // Pointing downwards
@@ -854,7 +856,8 @@ QPolygonF MapPainter::buildArrow(float size, bool downwards)
     return QPolygonF({QPointF(0., -size), QPointF(size, size), QPointF(0., size / 2.), QPointF(-size, size)});
 }
 
-void MapPainter::paintArrowAlongLine(QPainter *painter, const atools::geo::Line& line, const QPolygonF& arrow, float pos, float minLengthPx)
+void MapPainter::paintArrowAlongLine(QPainter *painter, const atools::geo::Line& line, const QPolygonF& arrow, float pos,
+                                     float minLengthPx) const
 {
   bool visible, hidden;
   QPointF pt = wToSF(line.interpolate(pos), DEFAULT_WTOS_SIZE, &visible, &hidden);
@@ -880,7 +883,7 @@ void MapPainter::paintArrowAlongLine(QPainter *painter, const atools::geo::Line&
   }
 }
 
-void MapPainter::paintArrowAlongLine(QPainter *painter, const QLineF& line, const QPolygonF& arrow, float pos)
+void MapPainter::paintArrowAlongLine(QPainter *painter, const QLineF& line, const QPolygonF& arrow, float pos) const
 {
   painter->translate(line.pointAt(pos));
   painter->rotate(atools::geo::angleFromQt(line.angle()));
@@ -917,7 +920,7 @@ void MapPainter::initQueries()
   waypointQuery = mapPaintWidget->getWaypointTrackQuery();
 }
 
-void MapPainter::getPixmap(QPixmap& pixmap, const QString& resource, int size)
+void MapPainter::getPixmap(QPixmap& pixmap, const QString& resource, int size) const
 {
   QPixmap *pixmapPtr = QPixmapCache::find(resource % "_" % QString::number(size));
   if(pixmapPtr == nullptr)
@@ -929,7 +932,7 @@ void MapPainter::getPixmap(QPixmap& pixmap, const QString& resource, int size)
     pixmap = *pixmapPtr;
 }
 
-void MapPainter::paintMsaMarks(const QList<map::MapAirportMsa>& airportMsa, bool user, bool drawFast)
+void MapPainter::paintMsaMarks(const QList<map::MapAirportMsa>& airportMsa, bool user, bool drawFast) const
 {
   Q_UNUSED(user)
 
@@ -1042,7 +1045,7 @@ void MapPainter::paintMsaMarks(const QList<map::MapAirportMsa>& airportMsa, bool
   }
 }
 
-void MapPainter::paintHoldingMarks(const QList<map::MapHolding>& holdings, bool user, bool drawFast, bool darkMap)
+void MapPainter::paintHoldingMarks(const QList<map::MapHolding>& holdings, bool user, bool drawFast, bool darkMap) const
 {
   if(holdings.isEmpty())
     return;
