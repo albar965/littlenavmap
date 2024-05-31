@@ -36,8 +36,8 @@
         alert("stopped");
       }
 
-      function init(callback, version) {
-        var returned_Value = callback(callback.TYPE_EXCLUSIVE, stop);
+      function init (message) {
+        var returned_Value = message.pluginParent.callback(message.pluginParent.callback.TYPE_EXCLUSIVE, stop);
         returned_Value.run();
         var toolbar = returned_Value.toolbarAPI.createToolbar(document.body);
         returned_Value.toolbarAPI.createCheckbox({

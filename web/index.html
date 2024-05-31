@@ -25,16 +25,17 @@
   <body onclick="bodyFunctions()">
     <div id="mainContainer" data-toolbarsplacement="top">
       <div id="contentContainer">
-        <iframe src="map.html" onload="attemptRun.call(this,'injectUpdates')" name="contentiframe" title="original content" data-id="theMap"></iframe>
+        <iframe src="map.html" onload="attemptRun.call(this,'injectUpdates')" name="contentiframe" class="shown" title="map content" data-id="theMap"></iframe>
+        <iframe src="about:blank" onload="attemptRun.call(this,'injectUpdates')" name="addoniframe" title="addon content"></iframe>
       </div>
       <div id="toolbarsContainer">
         <div id="toolbarOuter" class="toolbar" onclick="setActive(event)">
-          <button id="buttonMap" class="active"><a href="map.html" target="contentiframe">Map</a></button>
-          <button id="buttonFlightPlan"><a href="flightplan.html" target="contentiframe">Flight Plan</a></button>
-          <button id="buttonProgress"><a href="progress.html" target="contentiframe">Progress</a></button>
-          <button id="buttonAircraft"><a href="aircraft.html" target="contentiframe">Aircraft</a></button>
-          <button id="buttonAirport"><a href="airport.html" target="contentiframe">Airports</a></button>
-          <button id="buttonHelp"><a href="{helpUrl}" target="contentiframe">Help</a></button>
+          <button id="buttonMap" class="active"><a href="map.html" target="contentiframe" onclick="show(this.target)">Map</a></button>
+          <button id="buttonFlightPlan"><a href="flightplan.html" target="addoniframe" onclick="show(this.target)">Flight Plan</a></button>
+          <button id="buttonProgress"><a href="progress.html" target="addoniframe" onclick="show(this.target)">Progress</a></button>
+          <button id="buttonAircraft"><a href="aircraft.html" target="addoniframe" onclick="show(this.target)">Aircraft</a></button>
+          <button id="buttonAirport"><a href="airport.html" target="addoniframe" onclick="show(this.target)">Airports</a></button>
+          <button id="buttonHelp"><a href="{helpUrl}" target="_blank">Help</a></button>
         </div>
         <div id="toggleOptionsContainer">
           <div id="toggleOptionsToggle" onclick="toggleToolbarsOptions(event)">

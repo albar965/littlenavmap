@@ -37,7 +37,7 @@
   flex-direction: row-reverse;
 }
 
-[data-toolbarsplacement] > :first-child  {
+#contentContainer  {
   flex: 1 0;
   position: relative;
 }
@@ -46,7 +46,7 @@
   flex: 0 1;
   display: flex;
   flex-wrap: wrap;
-  z-index: 99999;
+  z-index: 300000000;
   position: relative;
 }
 
@@ -54,6 +54,30 @@ iframe {
   border: 0;
   width: 100%;
   height: 100%;
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+iframe[name="contentiframe"], iframe[name="addoniframe"] {
+  z-index: 200000000;
+}
+
+iframe[name="contentiframe"].shown {
+  z-index: 200000001;
+}
+
+iframe[data-type="unobtrusive"] {
+  z-index: 200000002;
+}
+
+iframe[data-type="exclusive"] {
+  z-index: 200000003;
+}
+
+iframe[name="addoniframe"].shown {
+  z-index: 200000004;
 }
 
 [data-toolbarsplacement="right"] #toolbarsContainer, [data-toolbarsplacement="left"] #toolbarsContainer {
@@ -106,13 +130,13 @@ iframe {
 }
 
 #toggleOptionsToggle::before {
-	content: "";
-	border-color: transparent;
-	border: solid transparent;
-	height: 0;
-	width: 0;
-	position: absolute;
-	pointer-events: none;
+  content: "";
+  border-color: transparent;
+  border: solid transparent;
+  height: 0;
+  width: 0;
+  position: absolute;
+  pointer-events: none;
 }
 
 #toolbarsOptions {
@@ -232,8 +256,9 @@ iframe {
 }
 
 [data-toolbarsplacement="top"] #exclusivePlugins {
-  height: calc(100% - 10px);
+  height: 26px;
   margin: 5px 2.5px;
+  align-self: center;
 }
 
 [data-toolbarsplacement="right"] #exclusivePlugins {
@@ -242,8 +267,9 @@ iframe {
 }
 
 [data-toolbarsplacement="bottom"] #exclusivePlugins {
-  height: calc(100% - 10px);
+  height: 26px;
   margin: 5px 2.5px;
+  align-self: center;
 }
 
 [data-toolbarsplacement="left"] #exclusivePlugins {

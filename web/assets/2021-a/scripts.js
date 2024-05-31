@@ -10,10 +10,16 @@ function injectUpdates(origin) {
   if(!ocd) {   // likely no CORS
     return;
   }
+  
+  function commonUpdate() {
+    // nothing to be done here currently
+  }
 
   function updateAirportPage(page) {
     page.querySelector("#airportform").style.fontSize = "0";
     page.querySelector("#icaoSelector").style.fontSize = "14px";
+    
+    commonUpdate();
   }
 
   function updateProgressPage(page) {
@@ -28,20 +34,24 @@ function injectUpdates(origin) {
       refresher.selectedIndex = refreshInterval;
       refresher.dispatchEvent(new Event("change"));
     }
+    
+    commonUpdate();
   }
 
   function updateGenericPage(page) {
     page.querySelector("#refreshform").style.display = "none";
+    
+    commonUpdate();
   }
 
   function updateMapPage(page) {
     /*
      * settings (developer modifiable)
      */
-    var defaultMapQuality = 70;                                                       // no observed difference across 30 to 100
-    var fastRefreshMapQuality = 50;                                                   // below 17 JPEG artifacts on vertical lines are significantly visible: doubled lines. 18 to 21 (something around these) are significantly more artifacted too including an off blue ocean color. space saved compared to default: around 150 KB or 40 % at 1080p; works in conjunction with fastRefreshMapThreshold
-    var zoomingMapQuality = 3;
-    var resizingMapQuality = 3;
+    var defaultMapQuality = 90;                                                       // no observed difference across 30 to 100
+    var fastRefreshMapQuality = 60;                                                   // below 17 JPEG artifacts on vertical lines are significantly visible: doubled lines. 18 to 21 (something around these) are significantly more artifacted too including an off blue ocean color. space saved compared to default: around 150 KB or 40 % at 1080p; works in conjunction with fastRefreshMapThreshold
+    var zoomingMapQuality = 30;
+    var resizingMapQuality = 30;
 
     var fastRefreshMapThreshold = 12;                                                 // time in seconds below which an auto-refreshing map's refresh interval is considered "fast"; works in conjunction with fastRefreshMapQuality
     var mapUpdateTimeoutWaitDuration = 10000;                                         // time in milliseconds to wait for the updated map image to have arrived, after this time a "map image updated" (= notifications are run and image update locks are released) is forced, this is server response time + download time! The main purpose is unlocking the locks on an image update when no image received for a reason like a server outage which if not handled would prevent new images to get requested which the server could handle again if the outage was only temporary.
@@ -442,7 +452,11 @@ function injectUpdates(origin) {
       }
     };
     if(retrieveState("preventingstandby", preventStandbyToggle.checked) !== preventStandbyToggle.checked) {
-      preventStandbyToggle.click();
+      if(true || confirm("try enable 'prevent device standby' like last time?")) {    // "confirm" isn't interaction in Chrome-based browsers, interaction first required to play a video
+        preventStandbyToggle.click();
+      } else {
+        storeState("preventingstandby", false);
+      }
     }
 
     /*ocw.toggleRetinaMap = function(innerorigin) {

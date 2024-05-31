@@ -29,8 +29,8 @@
         alert("stopped");
       }
 
-      function init(callback, version) {
-        var returned_Value = callback(callback.TYPE_UNOBTRUSIVE, stop);
+      function init (message) {
+        var returned_Value = message.pluginParent.callback(message.pluginParent.callback.TYPE_UNOBTRUSIVE, stop);
         returned_Value.run();
         var checkbox = returned_Value.toolbarAPI.createCheckbox({
           text: "yeha",
