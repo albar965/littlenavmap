@@ -30,11 +30,11 @@
       </div>
       <div id="toolbarsContainer">
         <div id="toolbarOuter" class="toolbar" onclick="setActive(event)">
-          <button id="buttonMap" class="active"><a href="map.html" target="contentiframe" onclick="show(this.target)">Map</a></button>
-          <button id="buttonFlightPlan"><a href="flightplan.html" target="addoniframe" onclick="show(this.target)">Flight Plan</a></button>
-          <button id="buttonProgress"><a href="progress.html" target="addoniframe" onclick="show(this.target)">Progress</a></button>
-          <button id="buttonAircraft"><a href="aircraft.html" target="addoniframe" onclick="show(this.target)">Aircraft</a></button>
-          <button id="buttonAirport"><a href="airport.html" target="addoniframe" onclick="show(this.target)">Airports</a></button>
+          <button id="buttonMap" class="active"><a href="map.html" target="contentiframe" onclick="showIframe(this);event.preventDefault()">Map</a></button>
+          <button id="buttonFlightPlan"><a href="flightplan.html" target="addoniframe" onclick="showIframe(this);event.preventDefault()">Flight Plan</a></button>
+          <button id="buttonProgress"><a href="progress.html" target="addoniframe" onclick="showIframe(this);event.preventDefault()">Progress</a></button>
+          <button id="buttonAircraft"><a href="aircraft.html" target="addoniframe" onclick="showIframe(this);event.preventDefault()">Aircraft</a></button>
+          <button id="buttonAirport"><a href="airport.html" target="addoniframe" onclick="showIframe(this);event.preventDefault()">Airports</a></button>
           <button id="buttonHelp"><a href="{helpUrl}" target="_blank">Help</a></button>
         </div>
         <div id="toggleOptionsContainer">
