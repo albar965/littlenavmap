@@ -2,7 +2,7 @@
  * Toggles to and from the legacy UI
  */
 function toggleLegacyUI() {
-  var activeUI = sessionStorage.getItem("activeUI");
+  var activeUI = retrieveState("activeUI", null);
   if(activeUI !== null) {
     switch(activeUI) {
       case "2021-a":
@@ -13,7 +13,6 @@ function toggleLegacyUI() {
         break;
       default:
         location.href = "index.html";
-
     }
   } else {
     location.href = "legacy.html";
@@ -24,17 +23,17 @@ function toggleLegacyUI() {
 var newUIToolbarsContainer = document.getElementById("toolbarsContainer");
 if(newUIToolbarsContainer) {      // on new ui
   if(newUIToolbarsContainer.clientHeight < 1) {               // new ui not rendering correctly
-    if(sessionStorage.getItem("activeUI") === "legacy") {     // if the user just was on the legacy ui, inform him (when back there) why he is back there
-      sessionStorage.setItem("noNewUIInformUser", "1");
+    if(retrieveState("activeUI", 0, true) === "legacy") {     // if the user just was on the legacy ui, inform him (when back there) why he is back there
+      storeState("noNewUIInformUser", "1", true);
     }
-    sessionStorage.setItem("noNewUI", "1");
+    storeState("noNewUI", "1", true);
     location.href = "/legacy.html";
   }
 } else {                          // on legacy ui
-  if(sessionStorage.getItem("noNewUI") === "1") {             // new ui not supported
-    if(sessionStorage.getItem("noNewUIInformUser") === "1") {
+  if(retrieveState("noNewUI", 0, true) === "1") {             // new ui not supported
+    if(retrieveState("noNewUIInformUser", 0, true) === "1") {
       alert("\"new ui\" not supported in this browser.");
-      sessionStorage.removeItem("noNewUIInformUser");         // only show once
+      deleteState("noNewUIInformUser", true);         				// only show once
     }
     setTimeout(function() {
       document.getElementById("extrasform").style.display = "none";       // don't show the "new ui" toggle

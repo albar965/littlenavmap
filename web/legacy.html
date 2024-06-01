@@ -36,6 +36,8 @@
 
     /*]]>*/
     </style>
+    <script type="text/javascript" src="/assets/base.js" xml:space="preserve">
+    </script>
     <script type="text/javascript" src="/assets/scripts.js" xml:space="preserve">
     </script>
     <script type="text/javascript" src="/assets/uitoggle.js" xml:space="preserve">
@@ -43,7 +45,7 @@
     <script type="text/javascript" xml:space="preserve">
     //<![CDATA[
 
-      sessionStorage.setItem("activeUI", "legacy");
+      storeState("activeUI", "legacy");
 
       var timeoutHandle = 0;
       var currentInterval = -1;

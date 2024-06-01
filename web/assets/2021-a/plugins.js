@@ -14,8 +14,8 @@ function findPlugins() {
                 return function(reason) {
                   var iframe = document.querySelector('iframe[data-id="' + currentlyStartedPlugin + '"]');
                   iframe.setAttribute("data-type", "background");
-                  if(sessionStorage.getItem("mapAccessGranted_" + currentlyStartedPlugin) === "true" || confirm("The plugin\n\n\"" + currentlyStartedPlugin + "\"\n\nis requesting access to the map.\n\nReason given:\n\n\"" + reason + "\"\n\nGrant it?\n\n\nNote:\n\nThis is a courtesy question only.\nBrowsers don't allow dynamically switching the\nsecurity settings of the technology employed\nto enable easy development of plugins.\nA plugin can change the map nevertheless if\nits author so instructed it.\n\nThis might change in the future.")) {
-                    sessionStorage.setItem("mapAccessGranted_" + currentlyStartedPlugin, true);
+                  if(retrieveState("mapAccessGranted_plugin_" + currentlyStartedPlugin, 0, true) === "true" || confirm("The plugin\n\n\"" + currentlyStartedPlugin + "\"\n\nis requesting access to the map.\n\nReason given:\n\n\"" + reason + "\"\n\nGrant it?\n\n\nNote:\n\nThis is a courtesy question only.\nBrowsers don't allow dynamically switching the\nsecurity settings of the technology employed\nto enable easy development of plugins.\nA plugin can change the map nevertheless if\nits author so instructed it.\n\nThis might change in the future.")) {
+                    storeState("mapAccessGranted_plugin_" + currentlyStartedPlugin, "true", true);
                     return document.querySelector("iframe[name=contentiframe]").contentDocument;
                   } else {
                     return false;
@@ -82,7 +82,7 @@ function findPlugins() {
                     select.id = "exclusivePlugins";
                     var option = document.createElement("option");
                     option.innerText = "no exclusive plugin";
-                    option.value = "theMap";
+                    option.value = "/";
                     select.add(option);
                     option = document.createElement("option");
                     option.innerText = currentlyStartedPlugin;
@@ -93,7 +93,10 @@ function findPlugins() {
                       Array.prototype.forEach.call(document.querySelectorAll(".displayable-content"), function(dc) {
                         dc.style.display = "none";
                       });
-                      document.querySelector('iframe[data-id="' + this.value + '"]').style.display = "block";
+                      if(this.value !== "/") {
+                        document.querySelector('iframe[data-id="' + this.value + '"]').style.display = "block";
+                      }
+                      storeState("activeExclusivePlugin", this.value);
                     };
                   } else {
                     var option = document.createElement("option");
@@ -132,7 +135,7 @@ function findPlugins() {
                   iframe.style.background = "#fff";
                   iframe.style.pointerEvents = "all";
                   var contentContainer = document.getElementById("contentContainer");
-                  var settings = JSON.parse(localStorage.getItem("lnmPlugin_" + currentlyStartedPlugin));
+                  var settings = retrieveState("plugin_" + currentlyStartedPlugin);
                   iframe.style.width = settings?.width ?? "205px";
                   iframe.style.height = settings?.height ?? "225px";
                   iframe.style.top = settings?.top ?? "100px";    // 50px is height of map HTML #header
@@ -143,21 +146,21 @@ function findPlugins() {
                   if(iframe.offsetTop + 20 >= contentContainer.clientHeight - iframe.clientHeight) {
                     iframe.style.top = "auto";
                     iframe.style.bottom = "0";
-                    localStorage.setItem("lnmPlugin_" + currentlyStartedPlugin, JSON.stringify(settings));
+                    storeState("plugin_" + currentlyStartedPlugin, settings);
                   }
                   if(iframe.offsetLeft >= contentContainer.clientWidth - iframe.clientWidth) {
                     iframe.style.left = "auto";
                     iframe.style.right = "0";
-                    localStorage.setItem("lnmPlugin_" + currentlyStartedPlugin, JSON.stringify(settings));
+                    storeState("plugin_" + currentlyStartedPlugin, settings);
                   }
                   // 50 = map toolbar height (without toolbar scrollbar)
                   if(iframe.clientHeight > contentContainer.clientHeight - 50) {
                     iframe.style.height = (contentContainer.clientHeight - 50) / 2 + "px";
-                    localStorage.setItem("lnmPlugin_" + currentlyStartedPlugin, JSON.stringify(settings));
+                    storeState("plugin_" + currentlyStartedPlugin, settings);
                   }
                   if(iframe.clientWidth > contentContainer.clientWidth) {
                     iframe.style.width = contentContainer.clientWidth / 2 + "px";
-                    localStorage.setItem("lnmPlugin_" + currentlyStartedPlugin, JSON.stringify(settings));
+                    storeState("plugin_" + currentlyStartedPlugin, settings);
                   }
                   iframe.style.visibility = "visible";
                   iframe.style.zIndex = "";
@@ -169,6 +172,34 @@ function findPlugins() {
         },
     };
     
+    
+    var activePlugins = [];
+    var wasActivePlugins;
+    var loadingOnInit;
+    var activeExclusivePlugin;
+    
+    function continueLoadingPlugins(firstCall) {
+      while(wasActivePlugins.length) {
+        var input = document.querySelector('#selectablePlugins input[value="' + wasActivePlugins.shift() + '"]');
+        if(input) {
+          input.click();
+          return;
+        }
+      }
+      if(firstCall) {
+        storeState("activePlugins", activePlugins);
+      }
+      var exclusivePlugins = document.querySelector("#exclusivePlugins");
+      if(exclusivePlugins !== null) {
+        if(activePlugins.includes(activeExclusivePlugin)) {
+          exclusivePlugins.value = activeExclusivePlugin;
+        } else {
+          exclusivePlugins.value = "/";
+        }
+        exclusivePlugins.dispatchEvent(new Event("change"));
+      }
+      loadingOnInit = false;
+    }
     
     var allowedTypes = [];
     function plugin(type, stop_Method) {
@@ -201,6 +232,9 @@ function findPlugins() {
           }
         });
         this.setAttribute("sandbox", "allow-forms allow-modals allow-orientation-lock allow-presentation allow-scripts");
+        activePlugins.push(currentlyStartedPlugin);
+        storeState("activePlugins", activePlugins);
+        loadingOnInit ? continueLoadingPlugins() : !1;
       } catch(e) {
         alert("Plugin \"" + this.dataset.id + "\" not initialised.\n\n\nReason given:\n\n\"" + e + "\"");
         document.querySelector('input[value="' + this.dataset.id + '"]').click();
@@ -223,7 +257,7 @@ function findPlugins() {
           try {
             stopMethods[plugin.value]();
           } catch(e) {}
-          Array.prototype.forEach.call(document.querySelector('iframe[data-id="theMap"]').contentDocument.querySelectorAll('#pluginform [data-source="' + plugin.value + '"]'), function(toolbarEntry) {
+          Array.prototype.forEach.call(document.querySelector('iframe[name="contentiframe"]').contentDocument.querySelectorAll('#pluginform [data-source="' + plugin.value + '"]'), function(toolbarEntry) {
             toolbarEntry.parentElement.removeChild(toolbarEntry);
           });
           var iframe = document.querySelector('iframe[data-id="' + plugin.value + '"]');
@@ -237,6 +271,11 @@ function findPlugins() {
                 select.parentElement.removeChild(select);
               }
             }
+          }
+          var spliceIndex = activePlugins.indexOf(plugin.value);
+          if(spliceIndex > -1) {
+            activePlugins.splice(spliceIndex, 1);
+            storeState("activePlugins", activePlugins);
           }
         }
       }
@@ -289,6 +328,10 @@ function findPlugins() {
           menuentry.appendChild(pluginlist);
           document.querySelector("#toolbarOuter").appendChild(menuentry);
           pluginlist.addEventListener("click", loadPlugin);
+          wasActivePlugins = retrieveState("activePlugins", []);
+          activeExclusivePlugin = retrieveState("activeExclusivePlugin", "/")
+          loadingOnInit = true;
+          continueLoadingPlugins(true);
         }
       });
     }

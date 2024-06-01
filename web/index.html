@@ -25,7 +25,7 @@
   <body onclick="bodyFunctions()">
     <div id="mainContainer" data-toolbarsplacement="top">
       <div id="contentContainer">
-        <iframe src="map.html" onload="attemptRun.call(this,'injectUpdates')" name="contentiframe" class="shown" title="map content" data-id="theMap"></iframe>
+        <iframe src="map.html" onload="attemptRun.call(this,'injectUpdates')" name="contentiframe" class="shown" title="map content"></iframe>
         <iframe src="about:blank" onload="attemptRun.call(this,'injectUpdates')" name="addoniframe" title="addon content"></iframe>
       </div>
       <div id="toolbarsContainer">
@@ -75,6 +75,7 @@
         </div>
       </div>
     </div>
+    <script src="/assets/base.js"></script>
     <script src="/assets/uitoggle.js"></script>
     <script src="/assets/2021-a/toolbarAPI.js"></script>
     <script src="/assets/2021-a/scripts.js"></script>

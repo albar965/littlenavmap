@@ -67,7 +67,7 @@ function toolbarAPI() {
       if(source.plugintype === "exclusive") {
         throw new Error("no toolbar given but toolbar required");
       }
-      return doc.querySelector('iframe[data-id="theMap"]').contentDocument.querySelector("#pluginform");
+      return doc.querySelector('iframe[name="contentiframe"]').contentDocument.querySelector("#pluginform");
     } else {
       if(["unobtrusive"].includes(source.plugintype)) {
         throw new Error("toolbar given but must be not given");

@@ -1,4 +1,5 @@
-sessionStorage.setItem("activeUI", "2021-a");
+storeState("activeUI", "2021-a");
+
 
 /*
  * adds look and functionality updates for the original HTML to the document loaded in the iframe origin
@@ -377,7 +378,9 @@ function injectUpdates(origin) {
         if(!refreshTypeWAC.classList.contains("enlarge")) {
           ocw.setTimeout(function() {
             ocw.setTimeout(function() {
-              refreshTypeWAC.checked = false;
+              if(refreshTypeWAC.checked) {
+                refreshTypeWAC.click();
+              }
               withFunction();
               ocw.setTimeout(function() {
                 refreshTypeWAC.classList.remove("enlarge");
@@ -531,18 +534,6 @@ function injectUpdates(origin) {
     }
   }
 
-
-  function storeState(key, state) {
-    sessionStorage.setItem(key, typeof state === "boolean" ? state ? "1" : "" : "" + state);
-    sessionStorage.setItem(key + "__type", typeof state === "boolean" ? "1" : typeof state === "number" ? "2" : "");
-  }
-
-  function retrieveState(key, defaultValue) {
-    var type = sessionStorage.getItem(key + "__type");
-    var value = sessionStorage.getItem(key);
-    return value === null ? defaultValue : type === "1" ? value === "1" : type === "2" ? parseFloat(value) : value;
-  }
-
 }
 
 
@@ -588,7 +579,7 @@ function injectUpdates(origin) {
   
   function moveResize (event) {
     if(movedElement) {
-      var settings = JSON.parse(localStorage.getItem("lnmPlugin_" + movedElement.dataset.id)) || {};
+      var settings = retrieveState("plugin_" + movedElement.dataset.id, {});
       // 20 = iframe border-top
       var newY = movedElement.offsetTop + event.screenY - oldScreenY + 20;
       // 50 = map toolbar height (without toolbar scrollbar)
@@ -617,11 +608,11 @@ function injectUpdates(origin) {
         settings.left = movedElement.style.left;
         settings.right = movedElement.style.right;
       }
-      localStorage.setItem("lnmPlugin_" + movedElement.dataset.id, JSON.stringify(settings));
+      storeState("plugin_" + movedElement.dataset.id, settings);
       oldScreenY = event.screenY;
       oldScreenX = event.screenX;
     } else if(resizedElement) {
-      var settings = JSON.parse(localStorage.getItem("lnmPlugin_" + resizedElement.dataset.id)) || {};
+      var settings = retrieveState("plugin_" + resizedElement.dataset.id, {});
       if(resizedElement.classList.contains("resizing-cursor-vert")) {
         // 25 = iframe vert borders
         var newH = resizedElement.clientHeight + event.screenY - oldScreenY + 25;
@@ -638,7 +629,7 @@ function injectUpdates(origin) {
           settings.width = resizedElement.style.width;
         }
       }
-      localStorage.setItem("lnmPlugin_" + resizedElement.dataset.id, JSON.stringify(settings));
+      storeState("plugin_" + resizedElement.dataset.id, settings);
       oldScreenY = event.screenY;
       oldScreenX = event.screenX;
     } else {

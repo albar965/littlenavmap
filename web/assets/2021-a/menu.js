@@ -56,9 +56,9 @@ function closeToolbarsOptions() {
  */
 function setToolbarPosition(e) {
   document.querySelector("[data-toolbarsplacement]").setAttribute("data-toolbarsplacement", e.target.value);
-  localStorage.setItem("toolbarsplacement", e.target.value);
+  storeState("toolbarsplacement", e.target.value);
 }
-var gotten = localStorage.getItem("toolbarsplacement");
+var gotten = retrieveState("toolbarsplacement", false);
 if(gotten) {
   var destination = document.querySelector("input[type=radio][name=position][value=" + gotten + "]");
   destination.checked = true;
@@ -80,9 +80,9 @@ function switchTheme(origin) {
     themeCSS.id = "themeCSS";
     document.head.appendChild(themeCSS);
   }
-  localStorage.setItem("themeCSS", origin.value);
+  storeState("themeCSS", origin.value);
 }
-gotten = localStorage.getItem("themeCSS");
+gotten = retrieveState("themeCSS", false);
 if(gotten) {
   var destination = document.querySelector("select[name=theme]");
   destination.value = gotten;
