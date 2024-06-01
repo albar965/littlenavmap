@@ -9,6 +9,7 @@
       }
       body {
         margin: 0;
+        font: sans-serif;
       }
       #display {
         display: flex;
@@ -19,17 +20,17 @@
       }
       .toolbar {
         position: fixed;
-        top: 4%;
-        left: 4%;
-        width: 50px;
-        height: 50px;
+        top: 5px;
+        left: 5px;
+        display: table;
+        padding: 2.5px;
         background: pink;
       }
     </style>
   </head>
   <body>
     <div id="display">
-      yeah
+      :) :)
     </div>
     <script>
       function stop() {
@@ -37,19 +38,28 @@
       }
 
       function init (message) {
-        var returned_Value = message.pluginParent.callback(message.pluginParent.callback.TYPE_EXCLUSIVE, stop);
+        var returned_Value = message.pluginParent.callback(message.pluginParent.callback.TYPE_WIDGET, stop);
         returned_Value.run();
-        var toolbar = returned_Value.toolbarAPI.createToolbar(document.body);
+        
+        var toolbar1 = returned_Value.toolbarAPI.createToolbar(document.body);
         returned_Value.toolbarAPI.createCheckbox({
           text: "yeha",
           handlerNames: "click",
           click: function() {
             alert(this.value);
-          },
-          attr: {
-            "id": "myid"
           }
-        }, toolbar);
+        }, toolbar1);
+        
+        returned_Value.toolbarAPI.createLabel({
+          text: "yeha ?",
+          for: returned_Value.toolbarAPI.createCheckbox({
+	          text: "yeha 2",
+	          handlerNames: "click",
+	          click: function() {
+	            alert(this.value);
+	          }
+	        })
+        });
       }
     </script>
   </body>

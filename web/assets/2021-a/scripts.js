@@ -209,13 +209,20 @@ function injectUpdates(origin) {
     /*
      * Event handling: mousewheel / finger pinch map
      */
+    var lastZoomInstructionTime = 0;
     var mapWheelZoomTimeout = null;
     var mapZoomCore = function(condition) {
-      ocw.clearTimeout(mapWheelZoomTimeout);
-      updateMapImage("mapcmd=" + (condition ? "in" : "out") + "&cmd", zoomingMapQuality, true);
-      mapWheelZoomTimeout = ocw.setTimeout(function() {
-        updateMapImage("reload", defaultMapQuality, true, 0, true);     // do not lock for event handling like a new zoom request to be able to take priority over waiting for the potentially longer loading higher-quality final quality
-      }, 750);
+      var currentZoomInstructionTime = performance.now();
+      if(currentZoomInstructionTime < lastZoomInstructionTime + 300) {
+        ocw.clearTimeout(mapWheelZoomTimeout);
+        updateMapImage("mapcmd=" + (condition ? "in" : "out") + "&cmd", zoomingMapQuality, true);
+        mapWheelZoomTimeout = ocw.setTimeout(function() {
+          updateMapImage("reload", defaultMapQuality, true, 0, true);     // do not lock for event handling like a new zoom request to be able to take priority over waiting for the potentially longer loading higher-quality final quality
+        }, 750);
+      } else {
+        updateMapImage("mapcmd=" + (condition ? "in" : "out") + "&cmd", defaultMapQuality, true, 0, true);     // do not lock, same reason like above
+      }
+      lastZoomInstructionTime = currentZoomInstructionTime;
     };
     mapElement.onwheel = function(e) {
       mapZoomCore(e.deltaY < 0);
@@ -537,3 +544,137 @@ function injectUpdates(origin) {
   }
 
 }
+
+
+(() => {
+  var contentContainer = document.getElementById("contentContainer");
+  var oldScreenY;
+  var oldScreenX;
+  var movedElement = null;
+  var respectOver = true;
+  var resizedElement = null;
+  
+  function chckMovableResizable (event) {
+    if (event.target?.classList.contains("movable-content")) {
+      if(movedElement == null) {
+        event.target.classList.remove("hover-move");
+      }
+      respectOver = true;
+    }
+    if (event.target?.classList.contains("resizable-content")) {
+      if(resizedElement == null) {
+        event.target.classList.remove("hover-resize");
+      }
+    }
+  }
+  
+  function flagMovableResizable (event) {
+    if(event.target?.classList.contains("hover-move")) {
+      event.target.classList.add("moving-cursor");
+      oldScreenY = event.screenY;
+      oldScreenX = event.screenX;
+      movedElement = event.target;
+    } else if(event.target?.classList.contains("hover-resize")) {
+      if(event.offsetY > event.target.clientHeight) {
+        event.target.classList.add("resizing-cursor-vert");
+      } else if(event.offsetX < 0 || event.offsetX > event.target.clientWidth) {
+        event.target.classList.add("resizing-cursor-hori");
+      }
+      oldScreenY = event.screenY;
+      oldScreenX = event.screenX;
+      resizedElement = event.target;
+    }
+  }
+  
+  function moveResize (event) {
+    if(movedElement) {
+      var settings = JSON.parse(localStorage.getItem("lnmPlugin_" + movedElement.dataset.id)) || {};
+      // 20 = iframe border-top
+      var newY = movedElement.offsetTop + event.screenY - oldScreenY + 20;
+      // 50 = map toolbar height (without toolbar scrollbar)
+      if(newY >= 50 && newY < contentContainer.clientHeight - movedElement.clientHeight) {
+        if(newY - 50 + movedElement.clientHeight / 2 < (contentContainer.clientHeight - 50) / 2) {
+          movedElement.style.top = newY + "px";
+          movedElement.style.bottom = "auto";
+        } else {
+          movedElement.style.top = "auto";
+          // 5 = resizable iframe border-bottom
+          movedElement.style.bottom = (contentContainer.clientHeight - (newY + movedElement.clientHeight) - 5) + "px";
+        }
+        settings.top = movedElement.style.top;
+        settings.bottom = movedElement.style.bottom;
+      }
+      var newX = movedElement.offsetLeft + event.screenX - oldScreenX;
+      if(newX >= 0 && newX < contentContainer.clientWidth - movedElement.clientWidth) {
+        if(newX + movedElement.clientWidth / 2 < contentContainer.clientWidth / 2) {
+          movedElement.style.left = newX + "px";
+          movedElement.style.right = "auto";
+        } else {
+          movedElement.style.left = "auto";
+          // 5 = resizable iframe border-right
+          movedElement.style.right = (contentContainer.clientWidth - (newX + movedElement.clientWidth) - 5) + "px";
+        }
+        settings.left = movedElement.style.left;
+        settings.right = movedElement.style.right;
+      }
+      localStorage.setItem("lnmPlugin_" + movedElement.dataset.id, JSON.stringify(settings));
+      oldScreenY = event.screenY;
+      oldScreenX = event.screenX;
+    } else if(resizedElement) {
+      var settings = JSON.parse(localStorage.getItem("lnmPlugin_" + resizedElement.dataset.id)) || {};
+      if(resizedElement.classList.contains("resizing-cursor-vert")) {
+        // 25 = iframe vert borders
+        var newH = resizedElement.clientHeight + event.screenY - oldScreenY + 25;
+        // 20 = iframe border-top
+        if(resizedElement.offsetTop + 20 < contentContainer.clientHeight - newH) {
+          resizedElement.style.height = newH + "px";
+          settings.height = resizedElement.style.height;
+        }
+      } else {
+        // 5 = iframe hori borders
+        var newW = resizedElement.clientWidth + event.screenX - oldScreenX + 5;
+        if(resizedElement.offsetLeft < contentContainer.clientWidth - newW) {
+          resizedElement.style.width = newW + "px";
+          settings.width = resizedElement.style.width;
+        }
+      }
+      localStorage.setItem("lnmPlugin_" + resizedElement.dataset.id, JSON.stringify(settings));
+      oldScreenY = event.screenY;
+      oldScreenX = event.screenX;
+    } else {
+      if (respectOver && event.target?.classList.contains("movable-content")) {
+        if(event.offsetY < -5) {    // -5 = allow for removing of class when moving towards iframe content
+          event.target.classList.add("hover-move");
+        } else {
+          event.target.classList.remove("hover-move");
+        }
+      }
+      if(event.target?.classList.contains("resizable-content")) {
+        if(event.offsetY > event.target.clientHeight + 2 || event.offsetX > event.target.clientWidth + 2) {   // +2 = allow for removing of class when moving towards iframe content
+          event.target.classList.add("hover-resize");
+        } else {
+          event.target.classList.remove("hover-resize");
+        }
+      }
+    }
+  }
+  
+  function stopMovableResizable () {
+    if(movedElement) {
+      movedElement.classList.remove("moving-cursor");
+      movedElement.classList.remove("hover-move");
+      movedElement = null;
+      respectOver = false;
+    } else if(resizedElement) {
+      resizedElement.classList.remove("resizing-cursor-vert");
+      resizedElement.classList.remove("resizing-cursor-hori");
+      resizedElement.classList.remove("hover-resize");
+      resizedElement = null;
+    }
+  }
+  
+  addEventListener("mouseout", chckMovableResizable);
+  addEventListener("mousedown", flagMovableResizable);
+  addEventListener("mousemove", moveResize);
+  addEventListener("mouseup", stopMovableResizable);
+})();

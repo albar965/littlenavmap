@@ -72,12 +72,16 @@ iframe[data-type="unobtrusive"] {
   z-index: 200000002;
 }
 
-iframe[data-type="exclusive"] {
+iframe[data-type="widget"] {
   z-index: 200000003;
 }
 
-iframe[name="addoniframe"].shown {
+iframe[data-type="exclusive"] {
   z-index: 200000004;
+}
+
+iframe[name="addoniframe"].shown {
+  z-index: 200000005;
 }
 
 [data-toolbarsplacement="right"] #toolbarsContainer, [data-toolbarsplacement="left"] #toolbarsContainer {

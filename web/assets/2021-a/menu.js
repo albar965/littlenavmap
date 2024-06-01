@@ -1,9 +1,15 @@
 /*
  * brings iframe to foreground
  */
-function show(iframeName) {
-  document.querySelector('iframe.shown').classList.remove("shown");
-  document.querySelector('iframe[name="'+iframeName+'"]').classList.add("shown");
+function showIframe(srcLink) {
+  var dstIframe = document.querySelector('iframe[name="' + srcLink.target + '"]');
+  if(dstIframe) {
+    if(dstIframe.src !== srcLink.href) {
+      dstIframe.src = srcLink.href;
+    }
+    document.querySelector('iframe.shown')?.classList.remove("shown");
+    dstIframe.classList.add("shown");
+  }
 }
 
 /*
