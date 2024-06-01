@@ -164,6 +164,9 @@ private:
   SyntaxHighlighter *sytaxHighlighter;
 
   TextEditEventFilter *eventFilter = nullptr;
+
+  /* Size as given in UI */
+  QSize defaultSize;
 };
 
 #endif // LITTLENAVMAP_ROUTESTRINGDIALOG_H

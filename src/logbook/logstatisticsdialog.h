@@ -112,6 +112,9 @@ private:
 
   /* Item delegate needed to change alignment */
   LogStatsDelegate *delegate = nullptr;
+
+  /* Size as given in UI */
+  QSize defaultSize;
 };
 
 #endif // LNM_LOGSTATISTICSDIALOG_H

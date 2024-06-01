@@ -197,6 +197,8 @@ LogStatisticsDialog::LogStatisticsDialog(QWidget *parent, LogdataController *log
   initQueries();
 
   ui->setupUi(this);
+  defaultSize = size();
+
   atools::gui::adjustSelectionColors(ui->tableViewLogStatsGrouped);
 
   // Copy main menu actions to allow using shortcuts in the non-modal dialog too
@@ -352,7 +354,7 @@ void LogStatisticsDialog::resetWindowLayout()
   state.clear(this);
   state.syncSettings();
 
-  atools::gui::util::centerWidgetOnScreen(this);
+  atools::gui::util::centerWidgetOnScreen(this, defaultSize);
 }
 
 void LogStatisticsDialog::groupChanged(int index)

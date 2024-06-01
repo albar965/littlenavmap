@@ -168,6 +168,9 @@ private:
 
   /* Set to true before emitting calculateClicked() to avoid user clicking button twice. */
   bool calculating = false;
+
+  /* Size as given in UI */
+  QSize defaultSize;
 };
 
 #endif // LNM_ROUTECALCWIN_H

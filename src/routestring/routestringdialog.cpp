@@ -135,6 +135,7 @@ RouteStringDialog::RouteStringDialog(QWidget *parent, const QString& settingsSuf
   controller = NavApp::getRouteController();
 
   ui->setupUi(this);
+  defaultSize = size();
 
   /* *INDENT-OFF* */
   // Need to set text programatically since Qt Designer adds garbage which messes up formatting on other platforms
@@ -525,7 +526,7 @@ void RouteStringDialog::resetWindowLayout(RouteStringDialog *routeStringDialog, 
 
   // Check if instance alread open and center if needed
   if(routeStringDialog != nullptr)
-    atools::gui::util::centerWidgetOnScreen(routeStringDialog);
+    atools::gui::util::centerWidgetOnScreen(routeStringDialog, routeStringDialog->defaultSize);
 }
 
 void RouteStringDialog::restoreState()

@@ -46,6 +46,7 @@ RouteCalcDialog::RouteCalcDialog(QWidget *parent)
   setWindowModality(Qt::NonModal);
 
   ui->setupUi(this);
+  defaultSize = size();
 
   // Copy main menu actions to allow using shortcuts in the non-modal dialog too
   addActions(NavApp::getMainWindowActions());
@@ -311,7 +312,7 @@ void RouteCalcDialog::resetWindowLayout()
   state.clear(this);
   state.syncSettings();
 
-  atools::gui::util::centerWidgetOnScreen(this);
+  atools::gui::util::centerWidgetOnScreen(this, defaultSize);
 }
 
 void RouteCalcDialog::preDatabaseLoad()
