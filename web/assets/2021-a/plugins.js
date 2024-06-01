@@ -8,10 +8,6 @@ function findPlugins() {
     var types = {
       type_background:
         function () {
-          if(this !== we) {
-            console?.error("no");
-            return;
-          }
           return {
             request_MapAccess:
               (function(currentlyStartedPlugin) {
@@ -30,16 +26,15 @@ function findPlugins() {
         },
       type_unobtrusive:
         function () {
-          if(this !== we) {
-            console?.error("no");
-            return;
-          }
           var theToolbarAPI = toolbarAPI();
           delete theToolbarAPI.createToolbar;
-          var descriptor = Object.create(null);
-          descriptor.value = currentlyStartedPlugin;
+          var descriptor1 = Object.create(null);
+          descriptor1.value = "unobtrusive";
+          var descriptor2 = Object.create(null);
+          descriptor2.value = currentlyStartedPlugin;
           for(var funcname in theToolbarAPI) {
-            Object.defineProperty(theToolbarAPI[funcname], "pluginname", descriptor);
+            Object.defineProperty(theToolbarAPI[funcname], "plugintype", descriptor1);
+            Object.defineProperty(theToolbarAPI[funcname], "pluginname", descriptor2);
           }
           return {
             run:
@@ -49,7 +44,6 @@ function findPlugins() {
                   iframe.className = "overlaying-content";
                   iframe.setAttribute("data-type", "unobtrusive");
                   iframe.setAttribute("allowtransparency", "true");   // appears to be unnecessary
-                  iframe.style.display = "block";
                   iframe.style.width = "100%";
                   iframe.style.height = "calc(100% - 50px)";    // 50px is height of map HTML #header
                   iframe.style.top = "50px";
@@ -63,10 +57,6 @@ function findPlugins() {
         },
       type_exclusive:
         function () {
-          if(this !== we) {
-            console?.error("no");
-            return;
-          }
           var theToolbarAPI = toolbarAPI();
           var descriptor = Object.create(null);
           descriptor.value = "exclusive";
@@ -119,19 +109,75 @@ function findPlugins() {
             toolbarAPI:
               theToolbarAPI
           };
-        }
+        },
+      type_widget:
+        function () {
+          var theToolbarAPI = toolbarAPI();
+          var descriptor1 = Object.create(null);
+          descriptor1.value = "widget";
+          var descriptor2 = Object.create(null);
+          descriptor2.value = currentlyStartedPlugin;
+          for(var funcname in theToolbarAPI) {
+            Object.defineProperty(theToolbarAPI[funcname], "plugintype", descriptor1);
+            Object.defineProperty(theToolbarAPI[funcname], "pluginname", descriptor2);
+          }
+          return {
+            run:
+              (function(currentlyStartedPlugin) {
+                return function() {
+                  var iframe = document.querySelector('iframe[data-id="' + currentlyStartedPlugin + '"]');
+                  iframe.className = "movable-content resizable-content";
+                  iframe.setAttribute("data-type", "widget");
+                  iframe.setAttribute("allowtransparency", "false");   // appears to be unnecessary
+                  iframe.style.background = "#fff";
+                  iframe.style.pointerEvents = "all";
+                  var contentContainer = document.getElementById("contentContainer");
+                  var settings = JSON.parse(localStorage.getItem("lnmPlugin_" + currentlyStartedPlugin));
+                  iframe.style.width = settings?.width ?? "205px";
+                  iframe.style.height = settings?.height ?? "225px";
+                  iframe.style.top = settings?.top ?? "100px";    // 50px is height of map HTML #header
+                  iframe.style.left = settings?.left ?? "50px";
+                  iframe.style.bottom = settings?.bottom ?? "auto";
+                  iframe.style.right = settings?.right ?? "auto";
+                  // 20 = iframe border-top
+                  if(iframe.offsetTop + 20 >= contentContainer.clientHeight - iframe.clientHeight) {
+                    iframe.style.top = "auto";
+                    iframe.style.bottom = "0";
+                    localStorage.setItem("lnmPlugin_" + currentlyStartedPlugin, JSON.stringify(settings));
+                  }
+                  if(iframe.offsetLeft >= contentContainer.clientWidth - iframe.clientWidth) {
+                    iframe.style.left = "auto";
+                    iframe.style.right = "0";
+                    localStorage.setItem("lnmPlugin_" + currentlyStartedPlugin, JSON.stringify(settings));
+                  }
+                  // 50 = map toolbar height (without toolbar scrollbar)
+                  if(iframe.clientHeight > contentContainer.clientHeight - 50) {
+                    iframe.style.height = (contentContainer.clientHeight - 50) / 2 + "px";
+                    localStorage.setItem("lnmPlugin_" + currentlyStartedPlugin, JSON.stringify(settings));
+                  }
+                  if(iframe.clientWidth > contentContainer.clientWidth) {
+                    iframe.style.width = contentContainer.clientWidth / 2 + "px";
+                    localStorage.setItem("lnmPlugin_" + currentlyStartedPlugin, JSON.stringify(settings));
+                  }
+                  iframe.style.visibility = "visible";
+                  iframe.style.zIndex = "";
+                };
+              })(currentlyStartedPlugin),
+            toolbarAPI:
+              theToolbarAPI
+          };
+        },
     };
     
     
+    var allowedTypes = [];
     function plugin(type, stop_Method) {
-      if([types.type_background, types.type_unobtrusive, types.type_exclusive].includes(type)) {
-        if(typeof stop_Method !== "function") {
-          throw "stop_Method invalid";
+      if(allowedTypes.includes(type)) {
+        if(typeof stop_Method === "function") {
+          stopMethods[currentlyStartedPlugin] = stop_Method;
+          return type.call(this);
         }
-        stopMethods[currentlyStartedPlugin] = stop_Method;
-        var rv = type.call(this);
-        currentlyStartedPlugin = "";
-        return rv;
+        throw "stop_Method invalid";
       }
       throw "callback type invalid";
     }
@@ -146,9 +192,7 @@ function findPlugins() {
         })(this.dataset.id);
         // use functions to prevent plugin change a value or rely on a current specific implemented value
         // also this allows having the code needed for setting up each types particularities be executable directly.
-        volatileDelegate.TYPE_BACKGROUND = types.type_background;
-        volatileDelegate.TYPE_UNOBTRUSIVE = types.type_unobtrusive;
-        volatileDelegate.TYPE_EXCLUSIVE = types.type_exclusive;
+        allowedTypes.forEach(typeFunc => {volatileDelegate[typeFunc.id] = typeFunc});
         this.setAttribute("sandbox", "allow-forms allow-modals allow-orientation-lock allow-presentation allow-scripts allow-same-origin");
         new this.contentWindow.init({
           pluginParent: {
@@ -222,6 +266,19 @@ function findPlugins() {
           }
         });
         if(pluginlist.childElementCount) {
+          Object.keys(types).forEach(type => {
+            var typeFunc = (function(typeFunc, context) {
+              return function() {
+                if(this === context) {
+                  return typeFunc();
+                }
+                console?.error("no");
+                return;
+              };
+            })(types[type], we);
+            typeFunc.id = type.toUpperCase();
+            allowedTypes.push(typeFunc);
+          });
           pluginlist.id = "selectablePlugins";
           var menuentry = document.createElement("button");
           menuentry.id = "buttonPlugins";

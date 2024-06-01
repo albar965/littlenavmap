@@ -107,47 +107,47 @@
 }
 
 #toggleOptionsToggle::before {
-	border-width: 13px;
+  border-width: 13px;
 }
 
 [data-toolbarsplacement="top"] #toggleOptionsToggle::before {
-	border-top-color: #d5e6ff;
-	top: calc(50% - 13px/2);      /* works in conjunction with #toggleOptionsToggle::before border-width */
-	left: calc(50% - 13px);       /* works in conjunction with #toggleOptionsToggle::before border-width */
+  border-top-color: #d5e6ff;
+  top: calc(50% - 13px/2);      /* works in conjunction with #toggleOptionsToggle::before border-width */
+  left: calc(50% - 13px);       /* works in conjunction with #toggleOptionsToggle::before border-width */
 }
 
 [data-toolbarsplacement="right"] #toggleOptionsToggle::before {
-	border-right-color: #d5e6ff;
-	right: calc(50% - 13px/2);    /* works in conjunction with #toggleOptionsToggle::before border-width */
-	top: calc(50% - 13px);        /* works in conjunction with #toggleOptionsToggle::before border-width */
+  border-right-color: #d5e6ff;
+  right: calc(50% - 13px/2);    /* works in conjunction with #toggleOptionsToggle::before border-width */
+  top: calc(50% - 13px);        /* works in conjunction with #toggleOptionsToggle::before border-width */
 }
 
 [data-toolbarsplacement="bottom"] #toggleOptionsToggle::before {
-	border-bottom-color: #d5e6ff;
-	bottom: calc(50% - 13px/2);   /* works in conjunction with #toggleOptionsToggle::before border-width */
-	left: calc(50% - 13px);       /* works in conjunction with #toggleOptionsToggle::before border-width */
+  border-bottom-color: #d5e6ff;
+  bottom: calc(50% - 13px/2);   /* works in conjunction with #toggleOptionsToggle::before border-width */
+  left: calc(50% - 13px);       /* works in conjunction with #toggleOptionsToggle::before border-width */
 }
 
 [data-toolbarsplacement="left"] #toggleOptionsToggle::before {
-	border-left-color: #d5e6ff;
-	top: calc(50% - 13px);      /* works in conjunction with #toggleOptionsToggle::before border-width */
-	left: calc(50% - 13px/2);       /* works in conjunction with #toggleOptionsToggle::before border-width */
+  border-left-color: #d5e6ff;
+  top: calc(50% - 13px);      /* works in conjunction with #toggleOptionsToggle::before border-width */
+  left: calc(50% - 13px/2);       /* works in conjunction with #toggleOptionsToggle::before border-width */
 }
 
 [data-toolbarsplacement="top"] #toggleOptionsToggle.shown::before {
-	border-top-color: #acf;
+  border-top-color: #acf;
 }
 
 [data-toolbarsplacement="right"] #toggleOptionsToggle.shown::before {
-	border-right-color: #acf;
+  border-right-color: #acf;
 }
 
 [data-toolbarsplacement="bottom"] #toggleOptionsToggle.shown::before {
-	border-bottom-color: #acf;
+  border-bottom-color: #acf;
 }
 
 [data-toolbarsplacement="left"] #toggleOptionsToggle.shown::before {
-	border-left-color: #acf;
+  border-left-color: #acf;
 }
 
 #toolbarsOptions {
@@ -247,4 +247,55 @@
 #exclusivePlugins option {
   padding: 5px;
   box-sizing: border-box;
+}
+
+.resizable-content {
+  border-right: 5px solid rgba(0,0,0,.004);
+  border-bottom: 5px solid rgba(0,0,0,.004);
+  background-clip: padding-box !important;
+  margin-top: -5px;
+  box-sizing: border-box;
+}
+
+.resizable-content.hover-resize {
+  border-color: mistyrose;
+  opacity: .75;
+  cursor: pointer;
+}
+
+.movable-content {
+  border-top: 20px solid rgba(0,0,0,.004);
+  background-clip: padding-box !important;
+  margin-top: -20px;
+  box-sizing: border-box;
+}
+
+.movable-content.hover-move {
+  border-top-color: pink;
+  opacity: .75;
+  cursor: pointer;
+}
+
+#contentContainer:has(.moving-cursor) {
+  cursor: move;
+}
+
+#contentContainer:has(.resizing-cursor-vert) {
+  cursor: ns-resize;
+}
+
+#contentContainer:has(.resizing-cursor-hori) {
+  cursor: ew-resize;
+}
+
+#contentContainer:has(.moving-cursor) iframe {
+  pointer-events: none !important;
+}
+
+#contentContainer:has(.resizing-cursor-vert) iframe {
+  pointer-events: none !important;
+}
+
+#contentContainer:has(.resizing-cursor-hori) iframe {
+  pointer-events: none !important;
 }

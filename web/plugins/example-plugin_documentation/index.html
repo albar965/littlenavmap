@@ -2,7 +2,7 @@
 <html>
   <head>
     <meta charset="UTF-8">
-    <title>unused plugin title (your plugin folders name is the title visible to the user)</title>
+    <title>unused plugin title (your plugin folder's name is your plugin's name, visible to the user)</title>
     <style>
       /*
         construct the HTML, CSS (inline or linked) validly to your liking
@@ -62,34 +62,51 @@
         var returned_Value = message.pluginParent.callback(message.pluginParent.callback.TYPE_XXX, stop_Method);
         /*
           3 callback types are available:
-          
+
+
           message.pluginParent.callback.TYPE_BACKGROUND :
-            your plugin runs in your file
+          
+            example use case:
+              a timer without ui alerts the user every 30 minutes about a task
+          
+            your plugin runs in your file.
+
             in the object returned by message.pluginParent.callback:
-            "toolbarAPI" not available
-            "run" not available
-            remember to call "request_MapAccess" if you want to
-            access the map DOM.
-        
+              "toolbarAPI" not available
+              "run" not available
+              remember to call "request_MapAccess" if you want to
+              access the map DOM.
+
+
           message.pluginParent.callback.TYPE_UNOBTRUSIVE :
+          
+            example use case:
+              an augmented map graphical display of a value
+              
             your plugin file is rendered above the whole map without
             interactivity in its display (pointer-events: none,
             background of iframe used, set to transparent),
             possibility to add your own toolbar entries to the existing
             map toolbar using the toolbar API but thats create_Toolbar
             method to create your own toolbars is disabled
-            (reason: no reduction of map screen estate wanted and a
+            (reason: no further reduction of map screen estate wanted and a
             toolbar toggle is some clicks too many, the author of this
             plugin interface feels such not warranted for an "unobtrusive"
             plugin).
+
             in the object returned by message.pluginParent.callback:
-            "request_MapAccess" not available
-            call "run" to make your plugin visible
-        
+              "request_MapAccess" not available
+              call "run" to make your plugin visible
+
+
           message.pluginParent.callback.TYPE_EXCLUSIVE :
+
+            example use case:
+              many visual instruments opaquely above the whole map
+
             your plugin has its own display instead of the map covering
-            the whole area except the menu for which a menu toggle entry
-            is added,
+            the whole area except the menu, the menu gets a toggle entry
+            added to switch back and forth between map and your running plugin,
             you have the toolbar API at your disposal to create a toolbar
             using the existing theme but you may create an entire ui yourself;
             if you use the toolbar API, call createToolbar first, otherwise
@@ -97,25 +114,41 @@
             exclusive plugin covers includes the map toolbar which would be
             used by default for new toolbar entries when you don't provide
             your own toolbar.
+
             in the object returned by message.pluginParent.callback:
-            "request_MapAccess" not available
-            call "run" to make your plugin visible
-          
-          
+              "request_MapAccess" not available
+              call "run" to make your plugin visible
+
+
+          message.pluginParent.callback.TYPE_WIDGET :
+
+            example use case:
+              a single visual instrument opaquely movable above the map
+
+            your plugin is in a movable, resizable opaque iframe above the map,
+            you have the toolbar API at your disposal to create a toolbar
+            using the existing theme.
+
+            in the object returned by message.pluginParent.callback:
+              "request_MapAccess" not available
+              call "run" to make your plugin visible
+
+
+
           stop_Method: function
-          
+
           The user has the possibility to disable your plugin at any time through
           the plugin menu at which point stop_Method() is called. Provide it and
           restore any state in the map's DOM pre-enablation of your plugin. 
           Except for message.pluginParent.callback.TYPE_BACKGROUND it is a
           courtesy function which might not need to do anything.
-          
+
           Note: stop_Method is attempted to be called when your plugin fails to
                 initialise, also, when you "throw" in init, safeguard stop_Method
                 to not "undo" anything which might not have been done in the
                 first place!
         */
-        
+
       }
     </script>
   </body>
