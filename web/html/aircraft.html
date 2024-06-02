@@ -5,11 +5,11 @@
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
     <meta name='viewport' content="width=device-width, initial-scale=1" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-    <link rel="stylesheet" href="/assets/styles.css" />
+    <link rel="stylesheet" href="/javascript_and_css/legacy/styles.css" />
     <title>
       {applicationName} {applicationVersion} - Web Server
     </title>
-    <script type="text/javascript" src="/assets/scripts.js" xml:space="preserve">
+    <script type="text/javascript" src="/javascript_and_css/legacy/scripts.js" xml:space="preserve">
     </script>
     <script type="text/javascript" xml:space="preserve">
     //<![CDATA[
@@ -17,19 +17,19 @@
       // Fill values for reload and refresh functions
       var timeoutHandle = 0;
       var currentInterval = -1;
-      var refreshkey = "progressrefresh";
-      var pageToReload = "/progress_doc.html";
+      var refreshkey = "aircraftrefresh";
+      var pageToReload = "/html/aircraft_doc.html";
 
     //]]>
     </script>
   </head>
-  <body id="progressPage" onload="refreshPage()">
+  <body id="aircraftPage" onload="refreshPage()">
     <div id="header">
       <form id="refreshform" name="refreshform">
         <p>
-          <span id="defaultCommands">- <a href="/legacy.html">Map</a> - <a href="/flightplan.html">Flight Plan</a> - <a href=
-          "/aircraft.html">Aircraft</a> - Aircraft Progress - <a href="/airport.html">Airport</a> - <a href=
-          "{helpUrl}">Help</a> - </span> {progressrefreshsel} <button type="button" onclick="reloadPage()">Reload</button>
+          - <a href="legacy/legacy.html">Map</a> - <a href="flightplan.html">Flight Plan</a> - Aircraft - <a href=
+          "progress.html">Aircraft Progress</a> - <a href="airport.html">Airport</a> - <a href="{helpUrl}">Help</a>
+          -  {aircraftrefreshsel} <button type="button" onclick="reloadPage()">Reload</button>
         </p>
       </form>
     </div>

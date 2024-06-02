@@ -102,7 +102,7 @@
 
       function checkIframeSrc() {
         try {
-          enabled = docMap.defaultView.location.href.endsWith("/map.html");
+          enabled = docMap.defaultView.location.href.endsWith("/html/2021-a/map.html");
         } catch(e) {
           return;       // cannot occur: plugins are loaded from the end of the map code and thus the map must be present
         }

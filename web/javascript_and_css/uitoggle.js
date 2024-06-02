@@ -6,16 +6,16 @@ function toggleLegacyUI() {
   if(activeUI !== null) {
     switch(activeUI) {
       case "2021-a":
-        location.href = "legacy.html";
+        location.href = "/html/legacy/legacy.html";
         break;
       case "legacy":
-        location.href = "index.html";
+        location.href = "/html/2021-a/index.html";
         break;
       default:
-        location.href = "index.html";
+        location.href = "/html/2021-a/index.html";
     }
   } else {
-    location.href = "legacy.html";
+    location.href = "/html/legacy/legacy.html";
   }
 }
 
@@ -27,7 +27,7 @@ if(newUIToolbarsContainer) {      // on new ui
       storeState("noNewUIInformUser", "1", true);
     }
     storeState("noNewUI", "1", true);
-    location.href = "/legacy.html";
+    location.href = "/html/legacy/legacy.html";
   }
 } else {                          // on legacy ui
   if(retrieveState("noNewUI", 0, true) === "1") {             // new ui not supported

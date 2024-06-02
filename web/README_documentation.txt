@@ -3,7 +3,7 @@ Features:
 	Web API		->	webapi.yaml
 	Plugins		->	plugins/example-plugin_documentation/index.html
 	Themes		->	themes/2021-a/look-userdefined-theme-template.css
-	Legacy mode	->	legacy.html
+	Legacy mode	->	html/legacy/legacy.html
 
 
 Web frontend version:
@@ -17,6 +17,9 @@ Web frontend version:
 		without quotes and increasing by 1 letter for every further
 		version created that YEAR
 
+        legacy :
+                name for the original, legacy web frontend
+
 	ATTENTION:
 		for compatibility reasons, all prior versions of the current
 		web frontend should remain accessible and looking and
@@ -25,17 +28,26 @@ Web frontend version:
 
 Folders:
 
-	/			HTML files, irrespective of version of the web frontend
-	/assets/		JS and CSS files of the original, legacy ui
-	/assets/*/		JS and CSS files belonging to the particular version of the web frontend
-	/images/		images native to the first party web frontend, irrespective of its version
-	/plugins/		plugins
-	/themes/*/		themes belonging to the particular version of the web frontend
+	/                               general-purpose files *1
+	/html/                          html files *1
+        /html/*/                        html files belonging to the particular version of the web frontend
+	/images/                        image files *1
+	/javascript_and_css/            general-purpose JS and CSS files *1
+	/javascript_and_css/*/          JS and CSS files belonging to the particular version of the web frontend
+	/plugins/                       plugins *1
+	/themes/*/                      themes belonging to the particular version of the web frontend
+
+        *1 = irrespective of version of the web frontend
+
+
+/index.html :
+
+        redirects to the index file of the current web frontend version
 
 
 Entry file of web frontend version 2021-a :
 
-	/index.html
+	/html/2021-a/index.html
 
 
 DISCLAIMER:
