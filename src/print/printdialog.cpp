@@ -82,16 +82,16 @@ void PrintDialog::updateButtonStates()
   ui->spinBoxPrintTextSizeFlightplan->setEnabled(ui->checkBoxPrintFlightplan->isChecked());
   ui->tableWidgetPrintFlightplanCols->setEnabled(ui->checkBoxPrintFlightplan->isChecked());
 
-  prt::PrintFlightPlanOpts opts = getPrintOptions();
+  prt::PrintFlightplanOpts opts = getPrintOptions();
   bool canPrint = opts & prt::DEPARTURE_ANY || opts & prt::DESTINATION_ANY || opts & prt::FLIGHTPLAN;
 
   ui->buttonBoxPrint->button(QDialogButtonBox::Ok)->setEnabled(canPrint);
   ui->buttonBoxPrint->button(QDialogButtonBox::Yes)->setEnabled(canPrint);
 }
 
-prt::PrintFlightPlanOpts PrintDialog::getPrintOptions() const
+prt::PrintFlightplanOpts PrintDialog::getPrintOptions() const
 {
-  prt::PrintFlightPlanOpts opts = prt::NONE;
+  prt::PrintFlightplanOpts opts = prt::NONE;
 
   opts |= ui->checkBoxPrintDepartureOverview->isChecked() ? prt::DEPARTURE_OVERVIEW : prt::NONE;
   opts |= ui->checkBoxPrintDepartureRunways->isChecked() ? prt::DEPARTURE_RUNWAYS : prt::NONE;

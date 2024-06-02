@@ -45,7 +45,7 @@ DirTool::DirTool(QWidget *parent, const QString& base, const QString& appName, c
 
   /*: Default folder name which might be created initially by program.
    * Change only once. Otherwise program might suggest the user to create the new folders again */
-  flightPlanDir = tr("Flight Plans");
+  flightplanDir = tr("Flight Plans");
 
   /*: Default folder name which might be created initially by program.
    * Change only once. Otherwise program might suggest the user to create the new folders again */
@@ -90,7 +90,7 @@ void DirTool::run(bool manual, bool& created)
 
   // Show list of folders and comment =========
   message.append(tr("<ul>"));
-  message.append(tr("<li><b>%1</b><br/>For flight plans in Little Navmap's own format <code>.lnmpln</code></li>").arg(flightPlanDir));
+  message.append(tr("<li><b>%1</b><br/>For flight plans in Little Navmap's own format <code>.lnmpln</code></li>").arg(flightplanDir));
   message.append(tr("<li><b>%1</b><br/>Directory for aircraft performance files (<code>.lnmperf</code>)</li>").arg(perfDir));
   message.append(tr("<li><b>%1</b><br/>For saved window layouts (<code>.lnmlayout</code>)</li>").arg(layoutDir));
   message.append(tr("<li><b>%1</b><br/>A place to store PDF, text, image or other files that are linked in the aiport information").
@@ -149,7 +149,7 @@ bool DirTool::createAllDirs()
   errors.clear();
 
   mkdirBase();
-  mkdir(flightPlanDir);
+  mkdir(flightplanDir);
   mkdir(perfDir);
   mkdir(layoutDir);
   mkdir(airspaceDir);
@@ -204,7 +204,7 @@ QString DirTool::d(const QString& dir)
 
 bool DirTool::hasAllDirs()
 {
-  return hasDir(flightPlanDir) && hasDir(perfDir) && hasDir(layoutDir) && hasDir(airspaceDir) && hasDir(globeDir) && hasDir(airportsDir) &&
+  return hasDir(flightplanDir) && hasDir(perfDir) && hasDir(layoutDir) && hasDir(airspaceDir) && hasDir(globeDir) && hasDir(airportsDir) &&
          hasDir(mapThemesDir);
 }
 
@@ -214,7 +214,7 @@ void DirTool::updateOptions()
   atools::settings::Settings& settings = atools::settings::Settings::instance();
 
   // File dialog default locations
-  settings.setValue(lnm::ROUTE_LNMPLN_EXPORTDIR, d(flightPlanDir)); // Generated key used by file dialog and multiexport
+  settings.setValue(lnm::ROUTE_LNMPLN_EXPORTDIR, d(flightplanDir)); // Generated key used by file dialog and multiexport
   settings.setValue("AircraftPerformance/FileDialogDir", d(perfDir)); // Generated key used by file dialog
   settings.setValue("WindowLayout/FileDialogDir", d(layoutDir)); // Generated key used by file dialog
 
@@ -224,7 +224,7 @@ void DirTool::updateOptions()
   atools::settings::Settings::syncSettings();
 
   // Set default and actual path for LNMPLN multiexport option - also uses nm::ROUTE_LNMPLN_EXPORTDIR above as default
-  NavApp::getMainWindow()->setLnmplnExportDir(d(flightPlanDir));
+  NavApp::getMainWindow()->setLnmplnExportDir(d(flightplanDir));
 
   // GLOBE data - file dialog uses path from line edit
   OptionsDialog *optionsDialog = NavApp::getOptionsDialog();

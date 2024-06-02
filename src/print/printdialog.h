@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -33,7 +33,7 @@ class ItemViewZoomHandler;
 }
 
 namespace prt {
-enum PrintFlightPlanOpt
+enum PrintFlightplanOpt
 {
   NONE = 0,
   DEPARTURE_OVERVIEW = 1 << 0,
@@ -62,8 +62,8 @@ enum PrintFlightPlanOpt
                     DESTINATION_COM | DESTINATION_APPR | DESTINATION_WEATHER
 };
 
-Q_DECLARE_FLAGS(PrintFlightPlanOpts, PrintFlightPlanOpt)
-Q_DECLARE_OPERATORS_FOR_FLAGS(prt::PrintFlightPlanOpts)
+Q_DECLARE_FLAGS(PrintFlightplanOpts, PrintFlightplanOpt)
+Q_DECLARE_OPERATORS_FOR_FLAGS(prt::PrintFlightplanOpts)
 }
 
 /*
@@ -83,7 +83,7 @@ public:
   PrintDialog& operator=(const PrintDialog& other) = delete;
 
   /* Get options as set in the dialog */
-  prt::PrintFlightPlanOpts getPrintOptions() const;
+  prt::PrintFlightplanOpts getPrintOptions() const;
 
   /* Save and restore dialog size and selected options */
   void saveState();

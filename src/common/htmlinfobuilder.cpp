@@ -4501,7 +4501,7 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
     } // if(activeLegCorrected != map::INVALID_INDEX_VALUE && ...
     else
     {
-      if(route.isTooFarToFlightPlan() && NavApp::isConnectedAndAircraftFlying())
+      if(route.isTooFarToFlightplan() && NavApp::isConnectedAndAircraftFlying())
         html.warning(tr("No Active Flight Plan Leg. Too far from flight plan."));
       else
         html.b(tr("No Active Flight Plan Leg."));
@@ -4890,7 +4890,7 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
   if(info)
   {
     html.hr().pre(
-      "distanceToFlightPlan " + QString::number(route.getDistanceToFlightPlan(), 'f', 2) +
+      "distanceToFlightPlan " + QString::number(route.getDistanceToFlightplan(), 'f', 2) +
       " distFromStartNm " + QString::number(distFromStartNm, 'f', 2) +
       " distToDestNm " + QString::number(distToDestNm, 'f', 1) +
       "\nnextLegDistance " + QString::number(nextLegDistance, 'f', 2) +

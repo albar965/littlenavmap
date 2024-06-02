@@ -211,7 +211,7 @@ public:
   }
 
   /* Show and raise windows after loading or creating new files */
-  void showFlightPlan();
+  void showFlightplan();
   void showAircraftPerformance();
   void showLogbookSearch();
   void showUserpointSearch();
@@ -496,7 +496,7 @@ private:
   void actionShortcutProcedureSearchTriggered();
   void actionShortcutUserpointSearchTriggered();
   void actionShortcutLogbookSearchTriggered();
-  void actionShortcutFlightPlanTriggered();
+  void actionShortcutFlightplanTriggered();
   void actionShortcutCalcRouteTriggered();
   void actionShortcutAircraftPerformanceTriggered();
   void actionShortcutAirportInformationTriggered();

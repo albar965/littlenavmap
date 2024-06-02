@@ -809,9 +809,9 @@ MapDetailHandler *NavApp::getMapDetailHandler()
   return mapDetailHandler;
 }
 
-void NavApp::showFlightPlan()
+void NavApp::showFlightplan()
 {
-  mainWindow->showFlightPlan();
+  mainWindow->showFlightplan();
 }
 
 void NavApp::showAircraftPerformance()

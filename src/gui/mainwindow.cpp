@@ -1401,7 +1401,7 @@ void MainWindow::connectAllSlots()
   connect(mapWidget, &MapWidget::showCustomApproach, routeController, &RouteController::showCustomApproach);
   connect(mapWidget, &MapWidget::showCustomDeparture, routeController, &RouteController::showCustomDeparture);
   connect(mapWidget, &MapPaintWidget::shownMapFeaturesChanged, routeController, &RouteController::shownMapFeaturesChanged);
-  connect(mapWidget, &MapWidget::showInRoute, this, &MainWindow::actionShortcutFlightPlanTriggered);
+  connect(mapWidget, &MapWidget::showInRoute, this, &MainWindow::actionShortcutFlightplanTriggered);
   connect(mapWidget, &MapWidget::showInRoute, routeController, &RouteController::showInRoute);
   connect(mapWidget, &MapWidget::addUserpointFromMap, NavApp::getUserdataController(), &UserdataController::addUserpointFromMap);
   connect(mapWidget, &MapWidget::editUserpointFromMap, NavApp::getUserdataController(), &UserdataController::editUserpointFromMap);
@@ -1687,7 +1687,7 @@ void MainWindow::connectAllSlots()
   connect(ui->actionShortcutProcedureSearch, &QAction::triggered, this, &MainWindow::actionShortcutProcedureSearchTriggered);
   connect(ui->actionShortcutUserpointSearch, &QAction::triggered, this, &MainWindow::actionShortcutUserpointSearchTriggered);
   connect(ui->actionShortcutLogbookSearch, &QAction::triggered, this, &MainWindow::actionShortcutLogbookSearchTriggered);
-  connect(ui->actionShortcutFlightPlan, &QAction::triggered, this, &MainWindow::actionShortcutFlightPlanTriggered);
+  connect(ui->actionShortcutFlightPlan, &QAction::triggered, this, &MainWindow::actionShortcutFlightplanTriggered);
   connect(ui->actionShortcutRouteCalc, &QAction::triggered, this, &MainWindow::actionShortcutCalcRouteTriggered);
   connect(ui->actionShortcutAircraftPerformance, &QAction::triggered, this, &MainWindow::actionShortcutAircraftPerformanceTriggered);
   connect(ui->actionShortcutAirportInformation, &QAction::triggered, this, &MainWindow::actionShortcutAirportInformationTriggered);
@@ -1765,7 +1765,7 @@ void MainWindow::actionShortcutLogbookSearchTriggered()
   ui->lineEditLogdataAirport->selectAll();
 }
 
-void MainWindow::actionShortcutFlightPlanTriggered()
+void MainWindow::actionShortcutFlightplanTriggered()
 {
   qDebug() << Q_FUNC_INFO;
   dockHandler->activateWindow(ui->dockWidgetRoute);
@@ -2277,7 +2277,7 @@ void MainWindow::routeFromFlightplan(const atools::fs::pln::Flightplan& flightpl
     routeController->getRoute().getFlightplan().setLnmFormat(lnmpln);
     if(OptionData::instance().getFlags() & opts::GUI_CENTER_ROUTE)
       routeCenter();
-    showFlightPlan();
+    showFlightplan();
     setStatusMessage(tr("Created new flight plan."));
   }
 }
@@ -2289,7 +2289,7 @@ void MainWindow::routeNew()
   {
     routeController->newFlightplan();
     mapWidget->update();
-    showFlightPlan();
+    showFlightplan();
     setStatusMessage(tr("Created new empty flight plan."));
   }
 }
@@ -2302,7 +2302,7 @@ void MainWindow::routeNewFromAirports(map::MapAirport departure, map::MapAirport
     routeController->routeSetDeparture(departure);
     routeController->routeSetDestination(destination);
     mapWidget->update();
-    showFlightPlan();
+    showFlightplan();
     routeCenter();
     setStatusMessage(tr("Created new flight plan with departure and destination airport."));
   }
@@ -2327,7 +2327,7 @@ void MainWindow::routeOpenDescr(const QString& routeString)
 
     if(OptionData::instance().getFlags().testFlag(opts::GUI_CENTER_ROUTE))
       routeCenter();
-    showFlightPlan();
+    showFlightplan();
     setStatusMessage(tr("Flight plan opened from route description."));
   }
 }
@@ -2347,7 +2347,7 @@ void MainWindow::routeOpenFile(QString filepath, bool correctAndWarn)
         routeFileHistory->addFile(filepath);
         if(OptionData::instance().getFlags().testFlag(opts::GUI_CENTER_ROUTE))
           routeCenter();
-        showFlightPlan();
+        showFlightplan();
         setStatusMessage(tr("Flight plan opened."));
       }
     }
@@ -2363,7 +2363,7 @@ void MainWindow::routeOpenFileLnmStr(const QString& string)
     {
       if(OptionData::instance().getFlags().testFlag(opts::GUI_CENTER_ROUTE))
         routeCenter();
-      showFlightPlan();
+      showFlightplan();
       setStatusMessage(tr("Flight plan opened."));
     }
   }
@@ -2451,7 +2451,7 @@ void MainWindow::routeAppend()
       routeFileHistory->addFile(routeFile);
       if(OptionData::instance().getFlags() & opts::GUI_CENTER_ROUTE)
         routeCenter();
-      showFlightPlan();
+      showFlightplan();
       setStatusMessage(tr("Flight plan appended."));
     }
   }
@@ -2488,7 +2488,7 @@ void MainWindow::routeOpenRecent(const QString& routeFile)
       {
         if(OptionData::instance().getFlags() & opts::GUI_CENTER_ROUTE)
           routeCenter();
-        showFlightPlan();
+        showFlightplan();
         setStatusMessage(tr("Flight plan opened."));
       }
     }
@@ -4691,10 +4691,10 @@ void MainWindow::resizeEvent(QResizeEvent *event)
 
 #endif
 
-void MainWindow::showFlightPlan()
+void MainWindow::showFlightplan()
 {
   if(NavApp::isMainWindowVisible() && OptionData::instance().getFlags2() & opts2::RAISE_WINDOWS)
-    actionShortcutFlightPlanTriggered();
+    actionShortcutFlightplanTriggered();
 }
 
 void MainWindow::showAircraftPerformance()

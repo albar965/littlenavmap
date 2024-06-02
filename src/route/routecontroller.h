@@ -501,7 +501,7 @@ private:
   /* Remarks changed */
   void remarksTextChanged();
 
-  void remarksFlightPlanToWidget();
+  void remarksFlightplanToWidget();
 
   void undoTriggered();
   void redoTriggered();

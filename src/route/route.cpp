@@ -135,7 +135,7 @@ void Route::copy(const Route& other)
 
   destRunwayIlsMap = other.destRunwayIlsMap;
   destRunwayIlsProfile = other.destRunwayIlsProfile;
-  destRunwayIlsFlightPlanTable = other.destRunwayIlsFlightPlanTable;
+  destRunwayIlsFlightplanTable = other.destRunwayIlsFlightplanTable;
   destRunwayEnd = other.destRunwayEnd;
 
   // Update flightplan pointers to this instance
@@ -157,7 +157,7 @@ void Route::clearAll()
   altitude->clearAll();
   destRunwayIlsMap.clear();
   destRunwayIlsProfile.clear();
-  destRunwayIlsFlightPlanTable.clear();
+  destRunwayIlsFlightplanTable.clear();
   destRunwayEnd = map::MapRunwayEnd();
   objectIndex.clear();
 
@@ -375,7 +375,7 @@ void Route::updateActiveLegAndPos(const map::PosCourse& pos)
       activePos.pos.distanceMeterToLine(getPrevPositionAt(activeLegIndex), getPositionAt(activeLegIndex), activeLegResult);
   }
 
-  if(isTooFarToFlightPlan())
+  if(isTooFarToFlightplan())
   {
     // Too far away from plan - remove active leg
     activeLegIndex = map::INVALID_INDEX_VALUE;
@@ -876,12 +876,12 @@ void Route::updateApproachIls()
 
   // Get recommended for flight plan table
   destRunwayEnd = map::MapRunwayEnd();
-  destRunwayIlsFlightPlanTable.clear();
-  updateApproachRunwayEndAndIls(destRunwayIlsFlightPlanTable, &destRunwayEnd, true /* recommended */, false /* map */, false /* profile */);
+  destRunwayIlsFlightplanTable.clear();
+  updateApproachRunwayEndAndIls(destRunwayIlsFlightplanTable, &destRunwayEnd, true /* recommended */, false /* map */, false /* profile */);
 
 #ifdef DEBUG_INFORMATION
   qDebug() << Q_FUNC_INFO << "destRunwayEnd" << destRunwayEnd;
-  qDebug() << Q_FUNC_INFO << "destRunwayIlsFlightPlanTable" << destRunwayIlsFlightPlanTable;
+  qDebug() << Q_FUNC_INFO << "destRunwayIlsFlightPlanTable" << destRunwayIlsFlightplanTable;
 #endif
 
   // Get ILS and runway from route for map
@@ -1674,7 +1674,7 @@ int Route::legIndexForPositions(const LineString& line, bool reverse)
   return -1;
 }
 
-void Route::cleanupFlightPlanForProcedures(map::MapAirway& starAirway)
+void Route::cleanupFlightplanForProcedures(map::MapAirway& starAirway)
 {
   updateIndices();
 
@@ -1724,7 +1724,7 @@ void Route::updateProcedureLegs(FlightplanEntryBuilder *entryBuilder, bool clear
   // Airway found on the first probably duplicate waypoint of a STAR
   map::MapAirway starAirway;
   if(cleanupRoute)
-    cleanupFlightPlanForProcedures(starAirway);
+    cleanupFlightplanForProcedures(starAirway);
 
   sidLegsOffset = map::INVALID_INDEX_VALUE;
   starLegsOffset = map::INVALID_INDEX_VALUE;
@@ -3758,12 +3758,12 @@ float Route::getAdjustedAltitude(float altitudeLocal) const
   return altitudeLocal;
 }
 
-bool Route::isTooFarToFlightPlan() const
+bool Route::isTooFarToFlightplan() const
 {
-  return getDistanceToFlightPlan() < map::INVALID_DISTANCE_VALUE && getDistanceToFlightPlan() > MAX_FLIGHT_PLAN_DIST_FOR_CENTER_NM;
+  return getDistanceToFlightplan() < map::INVALID_DISTANCE_VALUE && getDistanceToFlightplan() > MAX_FLIGHT_PLAN_DIST_FOR_CENTER_NM;
 }
 
-float Route::getDistanceToFlightPlan() const
+float Route::getDistanceToFlightplan() const
 {
   if(activeLegResult.status != atools::geo::INVALID)
     return atools::geo::meterToNm(std::abs(activeLegResult.distance));

@@ -108,7 +108,7 @@ void AirspaceQuery::getAirspaceById(map::MapAirspace& airspace, int airspaceId)
 }
 
 const QList<map::MapAirspace> *AirspaceQuery::getAirspaces(const GeoDataLatLonBox& rect, const MapLayer *mapLayer,
-                                                           const map::MapAirspaceFilter& filter, float flightPlanAltitude,
+                                                           const map::MapAirspaceFilter& filter, float flightplanAltitude,
                                                            bool lazy, bool& overflow)
 {
   const static QRegularExpression REGEXP_FBZ_NAME("(\\bFBZ\\b|\\bFLIGHT PLAN BUFFER\\b)");
@@ -120,12 +120,12 @@ const QList<map::MapAirspace> *AirspaceQuery::getAirspaces(const GeoDataLatLonBo
     return curLayer->hasSameQueryParametersAirspace(newLayer);
   });
 
-  if(filter != lastAirspaceFilter || atools::almostNotEqual(lastFlightplanAltitude, flightPlanAltitude))
+  if(filter != lastAirspaceFilter || atools::almostNotEqual(lastFlightplanAltitude, flightplanAltitude))
   {
     // Need a few more parameters to clear the cache which is different to other map features
     airspaceCache.list.clear();
     lastAirspaceFilter = filter;
-    lastFlightplanAltitude = flightPlanAltitude;
+    lastFlightplanAltitude = flightplanAltitude;
   }
 
   if(airspaceCache.list.isEmpty() && !lazy)
@@ -156,7 +156,7 @@ const QList<map::MapAirspace> *AirspaceQuery::getAirspaces(const GeoDataLatLonBo
       else if(filter.flags.testFlag(map::AIRSPACE_ALTITUDE_FLIGHTPLAN))
       {
         // One altitude query =========
-        minAlt = maxAlt = atools::roundToInt(flightPlanAltitude);
+        minAlt = maxAlt = atools::roundToInt(flightplanAltitude);
         query = airspaceByRectAltQuery;
       }
       else if(filter.flags.testFlag(map::AIRSPACE_ALTITUDE_SET))

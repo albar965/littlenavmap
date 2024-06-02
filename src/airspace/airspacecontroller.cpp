@@ -167,7 +167,7 @@ atools::sql::SqlRecord AirspaceController::getAirspaceInfoRecordById(map::MapAir
 }
 
 void AirspaceController::getAirspacesInternal(AirspaceVector& airspaceVector, const Marble::GeoDataLatLonBox& rect,
-                                              const MapLayer *mapLayer, const map::MapAirspaceFilter& filter, float flightPlanAltitude,
+                                              const MapLayer *mapLayer, const map::MapAirspaceFilter& filter, float flightplanAltitude,
                                               bool lazy, map::MapAirspaceSources src, bool& overflow)
 {
   if((src & map::AIRSPACE_SRC_USER) && loadingUserAirspaces)
@@ -181,7 +181,7 @@ void AirspaceController::getAirspacesInternal(AirspaceVector& airspaceVector, co
     if(query != nullptr)
     {
       // Get airspaces from cache
-      const QList<map::MapAirspace> *airspaces = query->getAirspaces(rect, mapLayer, filter, flightPlanAltitude, lazy, overflow);
+      const QList<map::MapAirspace> *airspaces = query->getAirspaces(rect, mapLayer, filter, flightplanAltitude, lazy, overflow);
 
       if(airspaces != nullptr)
       {
@@ -194,14 +194,14 @@ void AirspaceController::getAirspacesInternal(AirspaceVector& airspaceVector, co
 }
 
 void AirspaceController::getAirspaces(AirspaceVector& airspaces, const Marble::GeoDataLatLonBox& rect, const MapLayer *mapLayer,
-                                      const map::MapAirspaceFilter& filter, float flightPlanAltitude, bool lazy,
+                                      const map::MapAirspaceFilter& filter, float flightplanAltitude, bool lazy,
                                       map::MapAirspaceSources sourcesParam, bool& overflow)
 {
   // Merge airspace pointers from all sources/caches into one list
   for(map::MapAirspaceSources src : map::MAP_AIRSPACE_SRC_VALUES)
   {
     if(sourcesParam & src)
-      getAirspacesInternal(airspaces, rect, mapLayer, filter, flightPlanAltitude, lazy, src, overflow);
+      getAirspacesInternal(airspaces, rect, mapLayer, filter, flightplanAltitude, lazy, src, overflow);
 
     if(overflow)
       break;

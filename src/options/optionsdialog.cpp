@@ -708,9 +708,9 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
   connect(ui->pushButtonOptionsMapHighlightProfileColor, &QPushButton::clicked, this, &OptionsDialog::mapHighlightProfileColorClicked);
   connect(ui->pushButtonOptionsMapMeasurementColor, &QPushButton::clicked, this, &OptionsDialog::mapMeasurementColorClicked);
 
-  connect(ui->checkBoxOptionsMapFlightplanDimPassed, &QCheckBox::toggled, this, &OptionsDialog::updateFlightPlanColorWidgets);
-  connect(ui->checkBoxOptionsMapFlightplanHighlightActive, &QCheckBox::toggled, this, &OptionsDialog::updateFlightPlanColorWidgets);
-  connect(ui->checkBoxOptionsMapFlightplanTransparent, &QCheckBox::toggled, this, &OptionsDialog::updateFlightPlanColorWidgets);
+  connect(ui->checkBoxOptionsMapFlightplanDimPassed, &QCheckBox::toggled, this, &OptionsDialog::updateFlightplanColorWidgets);
+  connect(ui->checkBoxOptionsMapFlightplanHighlightActive, &QCheckBox::toggled, this, &OptionsDialog::updateFlightplanColorWidgets);
+  connect(ui->checkBoxOptionsMapFlightplanTransparent, &QCheckBox::toggled, this, &OptionsDialog::updateFlightplanColorWidgets);
 
   connect(ui->checkBoxOptionsMapHighlightTransparent, &QCheckBox::toggled, this, &OptionsDialog::updateHighlightWidgets);
 
@@ -884,7 +884,7 @@ void OptionsDialog::open()
   mapClickAirportProcsToggled();
   updateFlightplanExample();
   updateLinks();
-  updateFlightPlanColorWidgets();
+  updateFlightplanColorWidgets();
   updateHighlightWidgets();
   toolbarSizeClicked();
   styleChanged();
@@ -1192,7 +1192,7 @@ void OptionsDialog::updateWidgetStates()
   updateOnlineWidgetStatus();
   updateWeatherButtonState();
   updateWidgetUnits();
-  updateFlightPlanColorWidgets();
+  updateFlightplanColorWidgets();
   updateHighlightWidgets();
   toolbarSizeClicked();
   updateTrailStates();
@@ -1597,7 +1597,7 @@ void OptionsDialog::updateHighlightWidgets()
   ui->spinBoxOptionsMapHighlightTransparent->setEnabled(ui->checkBoxOptionsMapHighlightTransparent->isChecked());
 }
 
-void OptionsDialog::updateFlightPlanColorWidgets()
+void OptionsDialog::updateFlightplanColorWidgets()
 {
   ui->pushButtonOptionsDisplayFlightplanPassedColor->setEnabled(ui->checkBoxOptionsMapFlightplanDimPassed->isChecked());
   ui->pushButtonOptionsDisplayFlightplanActiveColor->setEnabled(ui->checkBoxOptionsMapFlightplanHighlightActive->isChecked());

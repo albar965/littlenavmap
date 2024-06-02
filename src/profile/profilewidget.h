@@ -70,7 +70,7 @@ public:
 
   /* If geometry has changed the elevation calculation is started after a short delay */
   void windUpdated();
-  void routeChanged(bool geometryChanged, bool newFlightPlan);
+  void routeChanged(bool geometryChanged, bool newFlightplan);
   void routeAltitudeChanged(int altitudeFeet);
 
   /* Update user aircraft on profile display */

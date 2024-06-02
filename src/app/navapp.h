@@ -424,7 +424,7 @@ public:
   static MapAirportHandler *getMapAirportHandler();
   static MapDetailHandler *getMapDetailHandler();
 
-  static void showFlightPlan();
+  static void showFlightplan();
   static void showAircraftPerformance();
   static void showLogbookSearch();
   static void showUserpointSearch();

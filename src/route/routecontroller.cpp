@@ -1157,7 +1157,7 @@ void RouteController::newFlightplan()
 
   updateTableModelAndErrors();
   updateActions();
-  remarksFlightPlanToWidget();
+  remarksFlightplanToWidget();
 
   emit routeChanged(true /* geometryChanged */, true /* newFlightPlan */);
 }
@@ -1379,7 +1379,7 @@ void RouteController::loadFlightplanInternal(atools::fs::pln::Flightplan flightp
   // Get number from user waypoint from user defined waypoint in fs flight plan
   entryBuilder->setCurUserpointNumber(route.getNextUserWaypointNumber());
 
-  remarksFlightPlanToWidget();
+  remarksFlightplanToWidget();
   updateTableModelAndErrors();
   updateActions();
   routeCalcDialog->setCruisingAltitudeFt(route.getCruiseAltitudeFt());
@@ -3395,7 +3395,7 @@ void RouteController::changeRouteUndoRedo(const atools::fs::pln::Flightplan& new
   route.updateAll();
   route.updateAirwaysAndAltitude(false /* adjustRouteAltitude */);
   route.calculateLegAltitudes();
-  remarksFlightPlanToWidget();
+  remarksFlightplanToWidget();
 
   updateTableModelAndErrors();
   updateActions();
@@ -3928,7 +3928,7 @@ void RouteController::routeSetStartPosition(map::MapStart start)
   qDebug() << "route set start id" << start.id;
 
   RouteCommand *undoCommand = preChange(tr("Set Start Position"));
-  NavApp::showFlightPlan();
+  NavApp::showFlightplan();
 
   if(route.isEmpty() || route.getDepartureAirportLeg().getMapType() != map::AIRPORT ||
      route.getDepartureAirportLeg().getId() != start.airportId)
@@ -3982,7 +3982,7 @@ void RouteController::routeSetDeparture(map::MapAirport airport)
   atools::util::ContextSaverBool saver(ignoreFollowSelection);
 
   RouteCommand *undoCommand = preChange(tr("Set Departure"));
-  NavApp::showFlightPlan();
+  NavApp::showFlightplan();
 
   routeSetDepartureInternal(airport);
 
@@ -4053,7 +4053,7 @@ void RouteController::routeSetDestination(map::MapAirport airport)
   atools::util::ContextSaverBool saver(ignoreFollowSelection);
 
   RouteCommand *undoCommand = preChange(tr("Set Destination"));
-  NavApp::showFlightPlan();
+  NavApp::showFlightplan();
 
   routeSetDestinationInternal(airport);
 
@@ -4090,7 +4090,7 @@ void RouteController::routeAddAlternate(map::MapAirport airport)
   atools::util::ContextSaverBool saver(ignoreFollowSelection);
 
   RouteCommand *undoCommand = preChange(tr("Add Alternate"));
-  NavApp::showFlightPlan();
+  NavApp::showFlightplan();
 
   FlightplanEntry entry;
   entryBuilder->buildFlightplanEntry(airport, entry, true /* alternate */);
@@ -4475,7 +4475,7 @@ void RouteController::routeAddProcedure(proc::MapProcedureLegs legs)
 
   // Raise window if requested
   if(route.isEmpty())
-    NavApp::showFlightPlan();
+    NavApp::showFlightplan();
 
   RouteCommand *undoCommand = nullptr;
 
@@ -4708,7 +4708,7 @@ void RouteController::routeAdd(int id, atools::geo::Pos userPos, map::MapTypes t
   RouteCommand *undoCommand = preChange(tr("Add Waypoint"));
 
   if(route.isEmpty())
-    NavApp::showFlightPlan();
+    NavApp::showFlightplan();
 
   routeAddInternal(id, userPos, type, legIndex);
   updateActiveLeg();
@@ -5057,7 +5057,7 @@ void RouteController::updateTableModelAndErrors()
     if(procedureLeg.isApproach() && leg.getRunwayEnd().isValid())
     {
       // Build string for ILS type - use recommended ILS which can also apply to non ILS approaches
-      for(const map::MapIls& ils : route.getDestRunwayIlsFlightPlanTable())
+      for(const map::MapIls& ils : route.getDestRunwayIlsFlightplanTable())
       {
         ilsTypeTexts.append(map::ilsType(ils, true /* gs */, true /* dme */, tr(", ")));
 
@@ -5918,7 +5918,7 @@ proc::MapProcedureTypes RouteController::affectedProcedures(const QList<int>& in
   return types;
 }
 
-void RouteController::remarksFlightPlanToWidget()
+void RouteController::remarksFlightplanToWidget()
 {
   Ui::MainWindow *ui = NavApp::getMainUi();
 

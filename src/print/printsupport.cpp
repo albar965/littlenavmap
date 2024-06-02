@@ -169,7 +169,7 @@ void PrintSupport::createFlightplanDocuments()
   QTextBlockFormat pageBreakBlock;
   pageBreakBlock.setPageBreakPolicy(QTextFormat::PageBreak_AlwaysBefore);
 
-  prt::PrintFlightPlanOpts opts = printDialog->getPrintOptions();
+  prt::PrintFlightplanOpts opts = printDialog->getPrintOptions();
   const Route& route = NavApp::getRouteConst();
   bool newPage = opts & prt::NEW_PAGE;
 
@@ -246,7 +246,7 @@ void PrintSupport::addAirport(QTextCursor& cursor, const map::MapAirport& airpor
   HtmlInfoBuilder builder(mainWindow->getMapWidget(), true /*info*/, true /*print*/);
   map::WeatherContext weatherContext;
 
-  prt::PrintFlightPlanOpts opts = printDialog->getPrintOptions();
+  prt::PrintFlightplanOpts opts = printDialog->getPrintOptions();
   bool newPage = opts & prt::NEW_PAGE;
 
   HtmlBuilder html(mapcolors::mapPrintRowColor, mapcolors::mapPrintRowColorAlt);

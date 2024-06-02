@@ -619,9 +619,9 @@ public:
   }
 
   /* Get ILS which are referenced from the recommended fix of the approach procedure for display in the flight plan table. */
-  const QVector<map::MapIls>& getDestRunwayIlsFlightPlanTable() const
+  const QVector<map::MapIls>& getDestRunwayIlsFlightplanTable() const
   {
-    return destRunwayIlsFlightPlanTable;
+    return destRunwayIlsFlightplanTable;
   }
 
   /* Get a list of matching ILS/LOC which are not too far away from runway (in case of CTL) */
@@ -653,8 +653,8 @@ public:
   void calculateLegAltitudes();
 
   /* general distance in NM which is either cross track, previous or next waypoint */
-  float getDistanceToFlightPlan() const;
-  bool isTooFarToFlightPlan() const;
+  float getDistanceToFlightplan() const;
+  bool isTooFarToFlightplan() const;
 
   /* SID RAMY6, Approach ILS 12, etc.
    * @param includeRunway Include runway information.
@@ -759,7 +759,7 @@ private:
 
   /* Remove any waypoints which positions overlap with procedures. Requires a flight plan that is cleaned up and contains
    * no procedure legs. CPU intense do not use often. */
-  void cleanupFlightPlanForProcedures(map::MapAirway& starAirway);
+  void cleanupFlightplanForProcedures(map::MapAirway& starAirway);
 
   /* Removes related properies in the flight plan only */
   void clearFlightplanProcedureProperties(proc::MapProcedureTypes type);
@@ -825,7 +825,7 @@ private:
    * These ones can be used for elevation profile display. */
     destRunwayIlsProfile,
   /* Get ILS which are referenced from the recommended fix of the approach procedure */
-    destRunwayIlsFlightPlanTable;
+    destRunwayIlsFlightplanTable;
 
   /* Get runway end at destination if any. Used to get the VASI information */
   map::MapRunwayEnd destRunwayEnd;

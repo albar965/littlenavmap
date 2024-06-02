@@ -1885,7 +1885,7 @@ void ProfileWidget::windUpdated()
   routeChanged(true, false);
 }
 
-void ProfileWidget::routeChanged(bool geometryChanged, bool newFlightPlan)
+void ProfileWidget::routeChanged(bool geometryChanged, bool newFlightplan)
 {
   if(databaseLoadStatus)
     return;
@@ -1893,7 +1893,7 @@ void ProfileWidget::routeChanged(bool geometryChanged, bool newFlightPlan)
   showIlsChanged();
   scrollArea->routeChanged(geometryChanged);
 
-  if(newFlightPlan)
+  if(newFlightplan)
     scrollArea->expandWidget();
 
   if(geometryChanged)

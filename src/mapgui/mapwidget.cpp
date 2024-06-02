@@ -161,7 +161,7 @@ const int FUEL_ON_OFF_TIMEOUT_MS = 1000;
 const int MAX_SIM_UPDATE_TOOLTIP_MS = 500;
 
 /* Disable center waypoint and aircraft if distance to flight plan is larger */
-const float MAX_FLIGHT_PLAN_DIST_FOR_CENTER_NM = 50.f;
+const float MAX_FLIGHTPLAN_DIST_FOR_CENTER_NM = 50.f;
 
 /* Default zoom distance if start position was not set (usually first start after installation */
 const double DEFAULT_MAP_DISTANCE_KM = 7000.;
@@ -595,7 +595,7 @@ void MapWidget::showTooltip(bool update)
 #ifdef DEBUG_INFORMATION
   qDebug() << Q_FUNC_INFO << "tooltipPos" << tooltipGlobalPos << "update" << update << "QToolTip::isVisible()" << QToolTip::isVisible();
 #else
-Q_UNUSED(update)
+  Q_UNUSED(update)
 #endif
 
   // Do not hide or show anything if position is outside map window
@@ -2991,7 +2991,7 @@ bool MapWidget::isCenterLegAndAircraftActive()
          !route.isEmpty() && // Have a route
          route.getActiveLegIndex() < map::INVALID_INDEX_VALUE && // Active leg present - special case 0 for one waypoint only
          getScreenIndexConst()->getUserAircraft().isFlying() && // Aircraft in air
-         route.getDistanceToFlightPlan() < MAX_FLIGHT_PLAN_DIST_FOR_CENTER_NM; // not too far away from flight plan
+         route.getDistanceToFlightplan() < MAX_FLIGHTPLAN_DIST_FOR_CENTER_NM; // not too far away from flight plan
 }
 
 void MapWidget::optionsChanged()

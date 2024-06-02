@@ -80,7 +80,7 @@ public:
 
   /* Get airspaces from all enabled sources for map display */
   void getAirspaces(AirspaceVector& airspaces, const Marble::GeoDataLatLonBox& rect, const MapLayer *mapLayer,
-                    const map::MapAirspaceFilter& filter, float flightPlanAltitude, bool lazy,
+                    const map::MapAirspaceFilter& filter, float flightplanAltitude, bool lazy,
                     map::MapAirspaceSources sourcesParam, bool& overflow);
 
   /* Get Geometry for any airspace and source database */
@@ -151,7 +151,7 @@ private:
   void sourceToActions();
 
   void getAirspacesInternal(AirspaceVector& airspaceVector, const Marble::GeoDataLatLonBox& rect,
-                            const MapLayer *mapLayer, const map::MapAirspaceFilter& filter, float flightPlanAltitude,
+                            const MapLayer *mapLayer, const map::MapAirspaceFilter& filter, float flightplanAltitude,
                             bool lazy, map::MapAirspaceSources src, bool& overflow);
   void preLoadAirspaces();
   void postLoadAirspaces();

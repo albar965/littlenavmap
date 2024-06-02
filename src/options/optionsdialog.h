@@ -144,7 +144,7 @@ private:
   void updateXplane11PathStatus();
   void updateXplane12PathStatus();
   void updateXplaneWindStatus();
-  void updateFlightPlanColorWidgets();
+  void updateFlightplanColorWidgets();
   void updateHighlightWidgets();
 
   void addDatabaseIncludeDirClicked();
