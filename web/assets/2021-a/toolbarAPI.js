@@ -5,7 +5,7 @@
 
       - every entry creation function can be given a toolbar as second parameter
       - the to be created entry is added to the given toolbar or the default map
-        toolbar otherwise
+        toolbar otherwise (not the Web frontend menu toolbar, that is different)
       - (if you did not pass a toolbar from an exclusive plugin or if you did pass
         a toolbar from an unobtrusive plugin an Error is thrown (see example plugin
         documentation))
