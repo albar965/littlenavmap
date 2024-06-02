@@ -353,9 +353,9 @@ void MapScreenIndex::updateLogEntryScreenGeometry(const Marble::GeoDataLatLonBox
             const atools::fs::gpx::GpxData *gpxData = NavApp::getLogdataController()->getGpxData(entry.id);
             if(gpxData != nullptr)
             {
-              for(int i = 0; i < gpxData->flightplan.size() - 1; i++)
-                updateLineScreenGeometry(logEntryLines, entry.id,
-                                         Line(gpxData->flightplan.at(i).getPosition(), gpxData->flightplan.at(i + 1).getPosition()),
+              const atools::fs::pln::Flightplan& flightplan = gpxData->getFlightplan();
+              for(int i = 0; i < flightplan.size() - 1; i++)
+                updateLineScreenGeometry(logEntryLines, entry.id, Line(flightplan.at(i).getPosition(), flightplan.at(i + 1).getPosition()),
                                          curBox, conv);
             }
           }

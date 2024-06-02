@@ -438,9 +438,10 @@ void MapPainterMark::paintLogEntries(const QList<map::MapLogbookEntry>& entries)
       if(gpxData != nullptr)
       {
         // Flight plan =========================================================
-        if(!gpxData->flightplan.isEmpty() && context->objectDisplayTypes.testFlag(map::LOGBOOK_ROUTE) && resolves(gpxData->flightplanRect))
+        if(!gpxData->getFlightplan().isEmpty() && context->objectDisplayTypes.testFlag(map::LOGBOOK_ROUTE) &&
+           resolves(gpxData->getFlightplanRect()))
         {
-          for(const atools::fs::pln::FlightplanEntry& entry : gpxData->flightplan)
+          for(const atools::fs::pln::FlightplanEntry& entry : gpxData->getFlightplan())
           {
             visibleRouteGeometries.append(entry.getPosition());
             visibleRouteTexts.append(entry.getIdent());
@@ -449,12 +450,12 @@ void MapPainterMark::paintLogEntries(const QList<map::MapLogbookEntry>& entries)
 
         // Trail =========================================================
         // Limit number of visible tracks
-        if(!gpxData->trails.isEmpty() && context->objectDisplayTypes.testFlag(map::LOGBOOK_TRACK) && resolves(gpxData->trailRect))
+        if(gpxData->hasTrails() && context->objectDisplayTypes.testFlag(map::LOGBOOK_TRACK) && resolves(gpxData->getTrailRect()))
         {
-          maxAltitude = std::max(maxAltitude, gpxData->maxTrailAltitude);
-          minAltitude = std::min(minAltitude, gpxData->minTrailAltitude);
+          maxAltitude = std::max(maxAltitude, gpxData->getMaxTrailAltitude());
+          minAltitude = std::min(minAltitude, gpxData->getMinTrailAltitude());
 
-          for(const atools::fs::gpx::TrailPoints& points : gpxData->trails)
+          for(const atools::fs::gpx::TrailPoints& points : gpxData->getTrails())
           {
             if(!points.isEmpty())
             {

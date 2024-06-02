@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -35,7 +35,7 @@ class Flightplan;
 }
 
 namespace gpx {
-struct GpxData;
+class GpxData;
 }
 namespace sc {
 class SimConnectUserAircraft;
@@ -75,7 +75,7 @@ struct AircraftTrailPos
   }
 
   /* Get single old precision coordinate */
-  atools::geo::Pos getPosition() const
+  const atools::geo::Pos getPosition() const
   {
     return pos.asPos();
   }
@@ -143,11 +143,13 @@ public:
   /* Build a GpxData from this object and assigns flight plan to it. */
   atools::fs::gpx::GpxData toGpxData(const atools::fs::pln::Flightplan& flightplan) const;
 
-  /* Erases trail and populates this with the given gpxData */
-  void fillTrailFromGpxData(const atools::fs::gpx::GpxData& gpxData);
+  /* Erases trail and populates this with the given gpxData.
+   * @return number of removed points if the track was truncated */
+  int fillTrailFromGpxData(const atools::fs::gpx::GpxData& gpxData);
 
-  /* Appends the given gpxData as new track segment without deleting the current one. */
-  void appendTrailFromGpxData(const atools::fs::gpx::GpxData& gpxData);
+  /* Appends the given gpxData as new track segment without deleting the current one.
+   * @return number of removed points if the track was truncated */
+  int appendTrailFromGpxData(const atools::fs::gpx::GpxData& gpxData);
 
   /* Saves and restores track into a separate file (little_navmap.track). Creates two additional backup files. */
   void saveState(const QString& suffix, int numBackupFiles);
@@ -158,9 +160,9 @@ public:
   /*
    * Add a track position. Accurracy depends on the ground flag which will cause more
    * or less points skipped.
-   * @return true if the track was pruned
+   * @return number of removed points if the track was truncated
    */
-  bool appendTrailPos(const atools::fs::sc::SimConnectUserAircraft& userAircraft, bool allowSplit);
+  int appendTrailPos(const atools::fs::sc::SimConnectUserAircraft& userAircraft, bool allowSplit);
 
   /* Get maximum altitude in all track points */
   float getMaxAltitude() const
@@ -184,7 +186,7 @@ public:
     return lineStrings;
   }
 
-  /* Track will be pruned if it contains more track entries than this value. Default is 20000. */
+  /* Track will be truncated if it contains more track entries than this value. Default is 20000. */
   void setMaxTrackEntries(int value)
   {
     maxTrackEntries = value;
@@ -220,6 +222,9 @@ private:
 
   /* Same size as getLineStrings() but returns the timestamps in milliseconds since Epoch UTC for each position */
   const QVector<QVector<qint64> > getTimestampsMs() const;
+
+  /* truncate and return removed number */
+  int truncateTrail();
 
   /* Maximum number of track points. If exceeded entries will be removed from beginning of the list */
   int maxTrackEntries = 20000;

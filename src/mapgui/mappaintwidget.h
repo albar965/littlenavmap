@@ -450,8 +450,8 @@ signals:
   /* Update action state in main window (disabled/enabled) */
   void updateActionStates();
 
-  /* Aircraft track was pruned and needs to be updated */
-  void aircraftTrackPruned();
+  /* Aircraft track was truncated and needs to be updated */
+  void aircraftTrackTruncated();
 
   void shownMapFeaturesChanged(map::MapTypes types);
 

@@ -102,4 +102,5 @@ void messages::resetEssentialMessages()
   settings.setValue(lnm::ACTIONS_SHOW_XP11_WEATHER_FILE_NO_SIM, true);
   settings.setValue(lnm::ACTIONS_SHOW_XP12_WEATHER_FILE_NO_SIM, true);
   settings.setValue(lnm::ACTIONS_SHOW_DATABASE_HINTS, true);
+  settings.setValue(lnm::ACTIONS_SHOW_TRAIL_POINTS, true);
 }

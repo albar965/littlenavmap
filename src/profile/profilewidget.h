@@ -77,7 +77,7 @@ public:
   void simDataChanged(const atools::fs::sc::SimConnectData& simulatorData);
 
   /* Track was shortened and needs a full update */
-  void aircraftTrailPruned();
+  void aircraftTrailTruncated();
 
   void simulatorStatusChanged();
 

@@ -2467,11 +2467,11 @@ void MapWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorDa
   qDebug() << "widgetRectSmall" << widgetRectSmall;
 #endif
 
-  bool pruned = aircraftTrail->appendTrailPos(aircraft, true /* allowSplit */);
-  pruned |= aircraftTrailLogbook->appendTrailPos(aircraft, false /* allowSplit */);
+  int numTruncated = aircraftTrail->appendTrailPos(aircraft, true /* allowSplit */);
+  numTruncated += aircraftTrailLogbook->appendTrailPos(aircraft, false /* allowSplit */);
 
-  if(pruned)
-    emit aircraftTrackPruned();
+  if(numTruncated > 0)
+    emit aircraftTrackTruncated();
 
   if(wasEmpty != aircraftTrail->isEmpty())
     // We have a track - update toolbar and menu
@@ -2996,8 +2996,13 @@ bool MapWidget::isCenterLegAndAircraftActive()
 
 void MapWidget::optionsChanged()
 {
-  screenSearchDistance = OptionData::instance().getMapClickSensitivity();
-  screenSearchDistanceTooltip = OptionData::instance().getMapTooltipSensitivity();
+  const OptionData& optiondata = OptionData::instance();
+  screenSearchDistance = optiondata.getMapClickSensitivity();
+  screenSearchDistanceTooltip = optiondata.getMapTooltipSensitivity();
+
+  aircraftTrail->setMaxTrackEntries(optiondata.getAircraftTrailMaxPoints());
+  aircraftTrailLogbook->setMaxTrackEntries(optiondata.getAircraftTrailMaxPoints());
+
   MapPaintWidget::optionsChanged();
 }
 
@@ -3836,34 +3841,40 @@ void MapWidget::clearAllMarkers(map::MapTypes types)
   mainWindow->setStatusMessage(tr("User features removed from map."));
 }
 
-void MapWidget::loadAircraftTrail(const QString& filename)
+int MapWidget::loadAircraftTrail(const QString& filename)
 {
   atools::fs::gpx::GpxData gpxData;
   atools::fs::gpx::GpxIO().loadGpx(gpxData, filename);
 
-  aircraftTrail->fillTrailFromGpxData(gpxData);
+  int numTruncated = aircraftTrail->fillTrailFromGpxData(gpxData);
+  qDebug() << Q_FUNC_INFO << "Num points" << gpxData.getNumPoints() << "numTruncated" << numTruncated;
 
   if(OptionData::instance().getFlags().testFlag(opts::GUI_CENTER_ROUTE))
-    showRect(gpxData.trailRect, false /* doubleClick */);
+    showRect(gpxData.getTrailRect(), false /* doubleClick */);
 
   update();
   emit updateActionStates();
   mainWindow->setStatusMessage(tr("User aircraft trail replaced."));
+
+  return numTruncated;
 }
 
-void MapWidget::appendAircraftTrail(const QString& filename)
+int MapWidget::appendAircraftTrail(const QString& filename)
 {
   atools::fs::gpx::GpxData gpxData;
   atools::fs::gpx::GpxIO().loadGpx(gpxData, filename);
 
-  aircraftTrail->appendTrailFromGpxData(gpxData);
+  int numTruncated = aircraftTrail->appendTrailFromGpxData(gpxData);
+  qDebug() << Q_FUNC_INFO << "Num points" << gpxData.getNumPoints() << "numTruncated" << numTruncated;
 
   if(OptionData::instance().getFlags().testFlag(opts::GUI_CENTER_ROUTE))
-    showRect(gpxData.trailRect, false /* doubleClick */);
+    showRect(gpxData.getTrailRect(), false /* doubleClick */);
 
   update();
   emit updateActionStates();
   mainWindow->setStatusMessage(tr("User aircraft trail appended."));
+
+  return numTruncated;
 }
 
 void MapWidget::deleteAircraftTrail()

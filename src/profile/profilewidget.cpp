@@ -226,7 +226,7 @@ ProfileWidget::~ProfileWidget()
   ATOOLS_DELETE_LOG(profileOptions);
 }
 
-void ProfileWidget::aircraftTrailPruned()
+void ProfileWidget::aircraftTrailTruncated()
 {
   if(!widgetVisible)
     return;

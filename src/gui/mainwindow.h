@@ -235,6 +235,7 @@ public:
   /* Load or append trail from GPX file */
   void trailLoadGpx();
   void trailAppendGpx();
+  void warnTrailPoints(int numTruncated, bool doNotShowAgain);
 
   /* true if map window is maximized */
   bool isFullScreen() const;

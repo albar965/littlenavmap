@@ -41,7 +41,7 @@ quint16 AircraftTrail::version = 0;
 static const float MAX_POINT_DISTANCE_NM = 5.f;
 
 /* Number of entries to remove at once */
-static const int PRUNE_TRACK_ENTRIES = 200;
+static const int TRUNCATE_TRACK_ENTRIES = 200;
 
 static const quint32 FILE_MAGIC_NUMBER = 0x5B6C1A2B;
 
@@ -249,7 +249,7 @@ map::AircraftTrailSegment AircraftTrail::findNearest(const QPoint& point, const 
 atools::fs::gpx::GpxData AircraftTrail::toGpxData(const atools::fs::pln::Flightplan& flightplan) const
 {
   atools::fs::gpx::GpxData gpxData;
-  gpxData.flightplan = flightplan;
+  gpxData.setFlightplan(flightplan);
 
   const QVector<QVector<atools::geo::PosD> >& positionList = getPositionsD();
   const QVector<QVector<qint64> >& timestampsList = getTimestampsMs();
@@ -265,34 +265,27 @@ atools::fs::gpx::GpxData AircraftTrail::toGpxData(const atools::fs::pln::Flightp
 
     atools::fs::gpx::TrailPoints points;
     for(int j = 0; j < positions.size(); j++)
-    {
-      const atools::geo::PosD& pos = positions.at(j);
-      points.append(atools::fs::gpx::TrailPoint(pos, timestamps.at(j)));
-      gpxData.updateBoundaries(pos.asPos());
-    }
-    gpxData.trails.append(points);
+      points.append(atools::fs::gpx::TrailPoint(positions.at(j), timestamps.at(j)));
+    gpxData.appendTrailPoints(points);
   }
-
-  for(const atools::fs::pln::FlightplanEntry& entry : flightplan)
-    gpxData.flightplanRect.extend(entry.getPosition());
 
   return gpxData;
 }
 
-void AircraftTrail::fillTrailFromGpxData(const atools::fs::gpx::GpxData& gpxData)
+int AircraftTrail::fillTrailFromGpxData(const atools::fs::gpx::GpxData& gpxData)
 {
   clear();
-  appendTrailFromGpxData(gpxData);
+  return appendTrailFromGpxData(gpxData);
 }
 
-void AircraftTrail::appendTrailFromGpxData(const atools::fs::gpx::GpxData& gpxData)
+int AircraftTrail::appendTrailFromGpxData(const atools::fs::gpx::GpxData& gpxData)
 {
   // Add separator
   if(!isEmpty())
     append(AircraftTrailPos());
 
   // Add track points
-  for(const atools::fs::gpx::TrailPoints& points : qAsConst(gpxData.trails))
+  for(const atools::fs::gpx::TrailPoints& points : gpxData.getTrails())
   {
     if(!points.isEmpty())
     {
@@ -301,8 +294,12 @@ void AircraftTrail::appendTrailFromGpxData(const atools::fs::gpx::GpxData& gpxDa
       append(AircraftTrailPos());
     }
   }
+  int numTruncated = truncateTrail();
+
   updateBoundary();
   updateLineStrings();
+
+  return numTruncated;
 }
 
 void AircraftTrail::saveState(const QString& suffix, int numBackupFiles)
@@ -338,6 +335,9 @@ void AircraftTrail::restoreState(const QString& suffix)
     else
       qWarning() << "Cannot read track" << trackFile.fileName() << ":" << trackFile.errorString();
   }
+
+  qDebug() << Q_FUNC_INFO << "Trail size" << size();
+
   updateBoundary();
   updateLineStrings();
 }
@@ -390,7 +390,7 @@ bool AircraftTrail::readFromStream(QDataStream& in)
   return retval;
 }
 
-bool AircraftTrail::appendTrailPos(const atools::fs::sc::SimConnectUserAircraft& userAircraft, bool allowSplit)
+int AircraftTrail::appendTrailPos(const atools::fs::sc::SimConnectUserAircraft& userAircraft, bool allowSplit)
 {
   using atools::almostNotEqual;
   using atools::geo::angleAbsDiff;
@@ -412,7 +412,8 @@ bool AircraftTrail::appendTrailPos(const atools::fs::sc::SimConnectUserAircraft&
     return false;
   }
 
-  bool pruned = false, changed = false;
+  int numTruncated = false;
+  bool changed = false;
   qint64 timestampMs = userAircraft.getZuluTime().toMSecsSinceEpoch();
   atools::geo::PosD posD = userAircraft.getPositionD();
   bool onGround = userAircraft.isOnGround();
@@ -489,17 +490,7 @@ bool AircraftTrail::appendTrailPos(const atools::fs::sc::SimConnectUserAircraft&
       }
       else
       {
-        if(size() > maxTrackEntries)
-        {
-          for(int i = 0; i < PRUNE_TRACK_ENTRIES; i++)
-            removeFirst();
-
-          // Remove invalid segments
-          while(!isEmpty() && !constFirst().isValid())
-            removeFirst();
-
-          pruned = true;
-        }
+        numTruncated += truncateTrail();
         append(AircraftTrailPos(posD, timestampMs, onGround));
         changed = true;
       }
@@ -526,7 +517,28 @@ bool AircraftTrail::appendTrailPos(const atools::fs::sc::SimConnectUserAircraft&
   qDebug() << Q_FUNC_INFO << lineStrings;
 #endif
 
-  return pruned;
+  return numTruncated;
+}
+
+int AircraftTrail::truncateTrail()
+{
+  int numTruncated = 0;
+  while(size() > maxTrackEntries)
+  {
+    for(int i = 0; i < TRUNCATE_TRACK_ENTRIES; i++)
+    {
+      numTruncated++;
+      removeFirst();
+    }
+
+    // Remove invalid segments
+    while(!isEmpty() && !constFirst().isValid())
+    {
+      numTruncated++;
+      removeFirst();
+    }
+  }
+  return numTruncated;
 }
 
 void AircraftTrail::clearTrail()

@@ -207,8 +207,9 @@ public:
   /* Removes all range rings and distance measurement lines */
   void clearAllMarkers(map::MapTypes types);
 
-  void loadAircraftTrail(const QString& filename);
-  void appendAircraftTrail(const QString& filename);
+  /* Return number of truncated points */
+  int loadAircraftTrail(const QString& filename);
+  int appendAircraftTrail(const QString& filename);
 
   /* Delete the current aircraft track. Will not stop collecting new track points */
   void deleteAircraftTrail();

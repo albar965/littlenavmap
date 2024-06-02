@@ -116,6 +116,7 @@ const static int MAX_STATUS_MESSAGES = 20;
 const static int CLOCK_TIMER_MS = 1000;
 const static int RENDER_STATUS_TIMER_MS = 5000;
 const static int SHRINK_STATUS_BAR_TIMER_MS = 10000;
+const static int AIRCRAFT_TRAIL_MAXPOINTS_WARNING = 100000;
 
 using namespace Marble;
 using atools::settings::Settings;
@@ -1649,7 +1650,7 @@ void MainWindow::connectAllSlots()
 
   connect(connectClient, &ConnectClient::aiFetchOptionsChanged, this, &MainWindow::updateActionStates);
 
-  connect(mapWidget, &MapPaintWidget::aircraftTrackPruned, profileWidget, &ProfileWidget::aircraftTrailPruned);
+  connect(mapWidget, &MapPaintWidget::aircraftTrackTruncated, profileWidget, &ProfileWidget::aircraftTrailTruncated);
 
   // Weather update ===================================================
   connect(weatherReporter, &WeatherReporter::weatherUpdated, mapWidget, &MapWidget::updateTooltip);
@@ -2393,7 +2394,13 @@ void MainWindow::trailLoadGpxFile(const QString& file)
                                              QMessageBox::Yes | QMessageBox::No, QMessageBox::No, QMessageBox::Yes) == QMessageBox::Yes;
 
       if(replace)
-        mapWidget->loadAircraftTrail(file);
+      {
+        QGuiApplication::setOverrideCursor(Qt::WaitCursor);
+        int numTruncated = mapWidget->loadAircraftTrail(file);
+        QGuiApplication::restoreOverrideCursor();
+
+        warnTrailPoints(numTruncated, false /* doNotShowAgain */);
+      }
     }
     else
       atools::gui::Dialog::warning(this, tr("The file \"%1\" is no valid GPX file.").arg(file));
@@ -2410,9 +2417,42 @@ void MainWindow::trailAppendGpx()
   if(!file.isEmpty())
   {
     if(atools::fs::gpx::GpxIO::isGpxFile(file))
-      mapWidget->appendAircraftTrail(file);
+    {
+      QGuiApplication::setOverrideCursor(Qt::WaitCursor);
+      int numTruncated = mapWidget->appendAircraftTrail(file);
+      QGuiApplication::restoreOverrideCursor();
+
+      warnTrailPoints(numTruncated, false /* doNotShowAgain */);
+    }
     else
       atools::gui::Dialog::warning(this, tr("The file \"%1\" is no valid GPX file.").arg(file));
+  }
+}
+
+void MainWindow::warnTrailPoints(int numTruncated, bool doNotShowAgain)
+{
+  int numPoints = mapWidget->getAircraftTrailSize();
+
+  qDebug() << Q_FUNC_INFO << "numTruncated" << numTruncated << "numPoints" << numPoints << "doNotShowAgain" << doNotShowAgain;
+
+  QString text;
+  if(numTruncated > 0)
+    text = tr("Truncated aircraft trail by %L1 points due to the\n"
+              "maximum number of %L2 points set in\n"
+              "options on page \"Map Aircraft Trail\".\n\n"
+              "Note that too many trail points can cause performance issues in map display.").
+           arg(numTruncated).arg(OptionData::instance().getAircraftTrailMaxPoints());
+  else if(numPoints > AIRCRAFT_TRAIL_MAXPOINTS_WARNING)
+    text = tr("Aircraft trail has %L1 points which can cause performance issues in map display.\n\n"
+              "Consider lowering the maximum number of points in the options on page \"Map Aircraft Trail\"\n"
+              "or delete the trail.").arg(numPoints);
+
+  if(!text.isEmpty())
+  {
+    if(doNotShowAgain)
+      dialog->showWarnMsgBox(lnm::ACTIONS_SHOW_TRAIL_POINTS, text, tr("Do not &show this dialog again."));
+    else
+      dialog->warning(text);
   }
 }
 
@@ -3495,6 +3535,8 @@ void MainWindow::mainWindowShownDelayed()
 
   // Update the information display later delayed to avoid long loading times due to weather timeout
   QTimer::singleShot(50, infoController, &InfoController::restoreInformation);
+
+  QTimer::singleShot(1000, std::bind(&MainWindow::warnTrailPoints, this, 0, true /* doNotShowAgain */));
 
 #ifdef DEBUG_INFORMATION
   qDebug() << "mapDistanceLabel->size()" << mapDistanceLabel->size();

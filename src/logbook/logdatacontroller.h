@@ -42,7 +42,7 @@ class HelpHandler;
 namespace fs {
 
 namespace gpx {
-struct GpxData;
+class GpxData;
 }
 namespace pln {
 class Flightplan;
