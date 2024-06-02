@@ -18,25 +18,48 @@
   <body>
     <script>
       /*
-        you have to provide this function !
+        you have to provide the following function !
 
 
         parameters:
-        
+
           message:  object having key "pluginParent" having object, having
                     following keys, as value:
-          
+
             callback: function you are requested to call passing the
                       type of your plugin and a stop_Method function
                       (see below for further documentation).
-                  
+                      
+              returns:
+
+                object: can have (regarding availability see below for callback
+                        documentation) key:
+
+                  request_MapAccess:  function, call that to get DOM access to the
+                                      map's HTML's code.
+                                      Can be denied by the user.
+                                      Returns false when so else the DOM document.
+                                      Pass it a string, will be shown to the user
+                                      as the "reason" for the plugin requesting
+                                      access.
+
+                  toolbarAPI:         object (see assets/2021-a/toolbarAPI.js in
+                                      the web folder of this Little Navmap
+                                      installation for the documentation of
+                                      the toolbar API).
+
+                  run:                function, call that to make your plugin visible,
+                                      necessary depending on the type of your plugin.
+
             version:  JS data type number representing the map's HTML's code
                       version to help you decide to possibly not letting continue
                       execution of your plugin if it is made for a different
                       version of the map's HTML's code, "throw" a string in that case
                       to have initialisation of your plugin be aborted (see example
-                      plugins), that string is shown to the user.
-                      The map's HTML's code contains the map's toolbar's HTML's code.
+                      plugins), that string is shown to the user as the "reason" for
+                      aborting.
+                      The map's HTML's code eg. contains the map's toolbar's HTML's
+                      code which you might want to modify.
                       The current map's HTML's version is 1. It is intended to not
                       be changed in the forseeable future by the first party.
                       Consider alerting the user when you not let continue
@@ -44,22 +67,8 @@
 
 
         returns:
-        
-          object: can have (regarding availability see below for callback documentation)
-                  key:
-          
-            request_MapAccess:  function, call that to get DOM access to the map's
-                                HTML's code.
-                                Can be denied by the user.
-                                Returns false when so else the DOM document.
-              
-            toolbarAPI:         object (see assets/2021-a/toolbarAPI.js in
-                                the web folder of this Little Navmap
-                                installation for the documentation of
-                                the toolbar API).
-                    
-            run:                function, call that to make your plugin visible,
-                                necessary depending on the type of your plugin
+
+          void
       */
       function init (message) {
         
@@ -69,10 +78,10 @@
 
 
           message.pluginParent.callback.TYPE_BACKGROUND :
-          
+
             example use case:
-              a timer without ui alerts the user every 30 minutes about a task
-          
+              a timer without ui which alerts the user every 30 minutes about a task
+
             your plugin runs in your file.
 
             in the object returned by message.pluginParent.callback:
@@ -83,10 +92,10 @@
 
 
           message.pluginParent.callback.TYPE_UNOBTRUSIVE :
-          
+
             example use case:
               an augmented map graphical display of a value
-              
+
             your plugin file is rendered above the whole map without
             interactivity in its display (pointer-events: none,
             background of iframe used, set to transparent),
@@ -131,7 +140,7 @@
 
             your plugin is in a movable, resizable opaque iframe above the map,
             you have the toolbar API at your disposal to create a toolbar
-            using the existing theme.
+            and toolbar entries using the existing theme.
 
             in the object returned by message.pluginParent.callback:
               "request_MapAccess" not available
@@ -139,18 +148,23 @@
 
 
 
-          stop_Method: function
+          stop_Method:
+          
+            function
 
-          The user has the possibility to disable your plugin at any time through
-          the plugin menu at which point stop_Method() is called. Provide it and
-          restore any state in the map's DOM pre-enablation of your plugin. 
-          Except for message.pluginParent.callback.TYPE_BACKGROUND it is a
-          courtesy function which might not need to do anything.
+            The user has the possibility to disable your plugin at
+            any time through the plugin menu at which point
+            stop_Method() is called. Provide it and restore any state
+            in the map's DOM pre-enablation of your plugin. 
+            Except for message.pluginParent.callback.TYPE_BACKGROUND
+            it is a courtesy function which might not need to do
+            anything.
 
-          Note: stop_Method is attempted to be called when your plugin fails to
-                initialise, also, when you "throw" in init, safeguard stop_Method
-                to not "undo" anything which might not have been done in the
-                first place!
+            Note: stop_Method is attempted to be called when your
+                  plugin fails to initialise, so, also for when
+                  you "throw" in init, safeguard stop_Method to
+                  not "undo" anything which might not have been
+                  done in the first place!
         */
 
       }
