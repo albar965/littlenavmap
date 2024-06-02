@@ -1,244 +1,244 @@
-openapi: 3.0.1
-info:
-  title: Little Navmap Web API
-  description: ''
-  version: 1.0.0
-servers:
-- url: http://localhost:8965/api
-tags:
-- name: Airport
-  description: AirportActionsController
-- name: Map
-  description: MapActionsController
-- name: Sim
-  description: SimActionsController
-- name: UI
-  description: UiActionsController
-paths:
-  /airport/info:
-    get:
-      tags:
+openapi			: 3.0.1
+info				:
+  title				: Little Navmap Web API
+  description	: ''
+  version			: 1.0.0
+servers			:
+- url					: http://localhost:8965/api
+tags				:
+- name				: Airport
+  description	: AirportActionsController
+- name				: Map
+  description	: MapActionsController
+- name				: Sim
+  description	: SimActionsController
+- name				: UI
+  description	: UiActionsController
+paths				:
+  /airport/info	:
+    get						:
+      tags					:
       - Airport
-      summary: Get airport information by ICAO code
-      operationId: airportInfoAction
-      parameters:
-      - name: ident
-        required: true
-        in: query
-        description: Airport ICAO code
-        schema:
-          type: string
-          example: eddm
-      responses:
-        200:
-          description: Airport information
-          content: 
-            application/json:
-              schema: 
-                $ref: '#/components/schemas/AirportInfoResponse'                 
-        400:
-          description: Airport not found
-          content: 
-            text/plain:
-              schema: 
-                type: string
-                example: "Airport not found" 
-  /map/image:
-    get:
-      tags:
+      summary				: Get airport information by ICAO code
+      operationId		: airportInfoAction
+      parameters		:
+      - name					: ident
+        required			: true
+        in						: query
+        description		: Airport ICAO code
+        schema				:
+          type					: string
+          example				: eddm
+      responses			:
+        200						:
+          description		: Airport information
+          content				: 
+            application/json	:
+              schema						: 
+                $ref							: '#/components/schemas/AirportInfoResponse'                 
+        400						:
+          description		: Airport not found
+          content				: 
+            text/plain		:
+              schema				: 
+                type					: string
+                example				: "Airport not found" 
+  /map/image		:
+    get						:
+      tags					:
       - Map
-      summary: Get map image by lat/lon rectangle
-      operationId: mapImageAction
-      parameters:
-      - name: toplat
-        required: true
-        in: query
-        description: Top latitude
-        schema:
-          type: number
-          example: 10
-      - name: bottomlat
-        required: true
-        in: query
-        description: Bottom latitude
-        schema:
-          type: number
-          example: 15
-      - name: leftlon
-        required: true
-        in: query
-        description: Left longitude
-        schema:
-          type: number
-          example: 40
-      - name: rightlon
-        required: true
-        in: query
-        description: Right longitude
-        schema:
-          type: number
-          example: 45
-      - name: width
-        required: true
-        in: query
-        description: Width in pixels
-        schema:
-          type: number
-          example: 256
-      - name: height
-        required: true
-        in: query
-        description: Height in pixels
-        schema:
-          type: number
-          example: 256
-      - name: quality
-        required: true
-        in: query
-        description: Image quality
-        schema:
-          type: number
-          example: 80
-      - name: format
-        required: true
-        in: query
-        description: Image format
-        schema:
-          type: string
-          enum: [png, jpg]
-      - name: detailfactor
-        required: true
-        in: query
-        description: Detail factor
-        schema:
-          type: integer
-          minimum: 8
-          maximum: 15
-          example: 10
-      responses:
-        200:
-          description: Resulting map image
-          content: 
-             image/png:
-              schema:
-                type: string
-                format: binary
-  /map/features:
-    get:
-      tags:
+      summary				: Get map image by lat/lon rectangle
+      operationId		: mapImageAction
+      parameters		:
+      - name					: toplat
+        required			: true
+        in						: query
+        description		: Top latitude
+        schema				:
+          type					: number
+          example				: 10
+      - name					: bottomlat
+        required			: true
+        in						: query
+        description		: Bottom latitude
+        schema				:
+          type					: number
+          example				: 15
+      - name					: leftlon
+        required			: true
+        in						: query
+        description		: Left longitude
+        schema				:
+          type					: number
+          example				: 40
+      - name					: rightlon
+        required			: true
+        in						: query
+        description		: Right longitude
+        schema				:
+          type					: number
+          example				: 45
+      - name					: width
+        required			: true
+        in						: query
+        description		: Width in pixels
+        schema				:
+          type					: number
+          example				: 256
+      - name					: height
+        required			: true
+        in						: query
+        description		: Height in pixels
+        schema				:
+          type					: number
+          example				: 256
+      - name					: quality
+        required			: true
+        in						: query
+        description		: Image quality
+        schema				:
+          type					: number
+          example				: 80
+      - name					: format
+        required			: true
+        in						: query
+        description		: Image format
+        schema				:
+          type					: string
+          enum					: [png, jpg]
+      - name					: detailfactor
+        required			: true
+        in						: query
+        description		: Detail factor
+        schema				:
+          type					: integer
+          minimum				: 8
+          maximum				: 15
+          example				: 10
+      responses			:
+        200						:
+          description		: Resulting map image
+          content				: 
+             image/png		:
+              schema				:
+                type					: string
+                format				: binary
+  /map/features	:
+    get						:
+      tags					:
       - Map
-      summary: Get features by lat/lon rectangle
-      operationId: mapFeaturesAction
-      parameters:
-      - name: toplat
-        required: true
-        in: query
-        description: Top latitude
-        schema:
-          type: number
-          example: 10
-      - name: bottomlat
-        required: true
-        in: query
-        description: Bottom latitude
-        schema:
-          type: number
-          example: 15
-      - name: leftlon
-        required: true
-        in: query
-        description: Left longitude
-        schema:
-          type: number
-          example: 40
-      - name: rightlon
-        required: true
-        in: query
-        description: Right longitude
-        schema:
-          type: number
-          example: 45
-      - name: detailfactor
-        required: true
-        in: query
-        description: Detail factor
-        schema:
-          type: integer
-          minimum: 8
-          maximum: 15
-          example: 10
-      responses:
-        200:
-          description: map feature list
-          content: 
-            application/json:
-              schema: 
-                $ref: '#/components/schemas/MapFeaturesResponse'
-  /map/feature:
-    get:
-      tags:
+      summary				: Get features by lat/lon rectangle
+      operationId		: mapFeaturesAction
+      parameters		:
+      - name					: toplat
+        required			: true
+        in						: query
+        description		: Top latitude
+        schema				:
+          type					: number
+          example				: 10
+      - name					: bottomlat
+        required			: true
+        in						: query
+        description		: Bottom latitude
+        schema				:
+          type					: number
+          example				: 15
+      - name					: leftlon
+        required			: true
+        in						: query
+        description		: Left longitude
+        schema				:
+          type					: number
+          example				: 40
+      - name					: rightlon
+        required			: true
+        in						: query
+        description		: Right longitude
+        schema				:
+          type					: number
+          example				: 45
+      - name					: detailfactor
+        required			: true
+        in						: query
+        description		: Detail factor
+        schema				:
+          type					: integer
+          minimum				: 8
+          maximum				: 15
+          example				: 10
+      responses			:
+        200						:
+          description		: map feature list
+          content				: 
+            application/json	:
+              schema						: 
+                $ref						: '#/components/schemas/MapFeaturesResponse'
+  /map/feature	:
+    get						:
+      tags					:
       - Map
-      summary: Get feature by map object id and object type id
-      operationId: mapFeatureAction
-      parameters:
-      - name: object_id
-        required: true
-        in: query
-        description: the map object id
-        schema:
-          type: number
-          example: 10
-      - name: type_id
-        required: true
-        in: query
-        description: the map object type id
-        schema:
-          type: number
-          example: 1
-      responses:
-        200:
-          description: map feature list
-          content: 
-            application/json:
-              schema: 
-                $ref: '#/components/schemas/MapFeaturesResponse'
-  /sim/info:
-    get:
-      tags:
+      summary				: Get feature by map object id and object type id
+      operationId		: mapFeatureAction
+      parameters		:
+      - name					: object_id
+        required			: true
+        in						: query
+        description		: the map object id
+        schema				:
+          type					: number
+          example				: 10
+      - name					: type_id
+        required			: true
+        in						: query
+        description		: the map object type id
+        schema				:
+          type					: number
+          example				: 1
+      responses			:
+        200						:
+          description		: map feature list
+          content				: 
+            application/json	:
+              schema						: 
+                $ref						: '#/components/schemas/MapFeaturesResponse'
+  /sim/info			:
+    get						:
+      tags					:
       - Sim
-      summary: Get active simulation information
-      operationId: simInfoAction
-      responses:
-        200:
-          description: Simulation information
-          content: 
-            application/json:
-              schema: 
-                $ref: '#/components/schemas/SimInfoResponse'
-  /ui/info:
-    get:
-      tags:
+      summary				: Get active simulation information
+      operationId		: simInfoAction
+      responses			:
+        200						:
+          description		: Simulation information
+          content				: 
+            application/json	:
+              schema						: 
+                $ref						: '#/components/schemas/SimInfoResponse'
+  /ui/info			:
+    get						:
+      tags					:
       - UI
-      summary: Get UI information
-      operationId: uiInfoAction
-      responses:
-        200:
-          description: UI information
-          content: 
-            application/json:
-              schema: 
-                $ref: '#/components/schemas/UiInfoResponse'
-components:
-  schemas:
-    Coordinates:
-      type: object
-      description: Common coordinates type
-      properties:
-        lat:
-          type: number
-        lon:
-          type: number
-    AirportInfoResponse:
+      summary				: Get UI information
+      operationId		: uiInfoAction
+      responses			:
+        200						:
+          description		: UI information
+          content				: 
+            application/json	:
+              schema						: 
+                $ref							: '#/components/schemas/UiInfoResponse'
+components	:
+  schemas			:
+    Coordinates					:
+      type								: object
+      description					: Common coordinates type
+      properties					:
+        lat									:
+          type								: number
+        lon									:
+          type								: number
+    AirportInfoResponse	:
       type: object
       properties:
         activeDateTime:
@@ -459,7 +459,7 @@ components:
           description: The airports transition altitude in feet
           type: number
           example: "5000"
-    SimInfoResponse:
+    SimInfoResponse			:
       type: object
       properties:
         active:
@@ -514,7 +514,7 @@ components:
           description: "kts"
           type: number
           example: 4.874995708465576
-    UiInfoResponse:
+    UiInfoResponse			:
       type: object
       description: Common UI info
       properties:
@@ -534,7 +534,7 @@ components:
           description: the distance value of the map inside LNM Web UI in km
           type: number
           example: 6.814605113425086
-    MapFeaturesResponse:
+    MapFeaturesResponse	:
       type: object
       description: List of map features
       properties:
@@ -598,7 +598,7 @@ components:
               items: 
                 type: object
                 $ref: '#/components/schemas/MapWaypointFeature'
-    MapObject:
+    MapObject						:
       type: object
       description: Identifiable map object
       properties:
@@ -610,7 +610,7 @@ components:
           description: the map object type id
           type: number
           example: 1
-    MapAirportFeature:
+    MapAirportFeature		:
       type: object
       description: Single airport list entry
       allOf:
@@ -631,7 +631,7 @@ components:
         position:
           description: The airports geographical position
           $ref: '#/components/schemas/Coordinates'
-    MapNDBFeature:
+    MapNDBFeature				:
       type: object
       description: Single NDB list entry
       allOf:
@@ -652,7 +652,7 @@ components:
         position:
           description: The NDB geographical position
           $ref: '#/components/schemas/Coordinates'
-    MapVORFeature:
+    MapVORFeature				:
       type: object
       description: Single VOR list entry
       allOf:
@@ -673,7 +673,7 @@ components:
         position:
           description: The VOR geographical position
           $ref: '#/components/schemas/Coordinates'
-    MapMarkerFeature:
+    MapMarkerFeature		:
       type: object
       description: Single marker list entry
       allOf:
@@ -694,7 +694,7 @@ components:
         position:
           description: The airports geographical position
           $ref: '#/components/schemas/Coordinates'
-    MapWaypointFeature:
+    MapWaypointFeature	:
       type: object
       description: Single waypoint list entry
       allOf:
