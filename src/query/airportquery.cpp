@@ -326,6 +326,13 @@ QString AirportQuery::getDisplayIdent(const QString& ident)
   return dispIdent.isEmpty() ? ident : dispIdent;
 }
 
+const MapAirport AirportQuery::getAirportFuzzy(const map::MapAirport& airport)
+{
+  map::MapAirport ap;
+  getAirportFuzzy(ap, airport);
+  return ap;
+}
+
 void AirportQuery::getAirportFuzzy(map::MapAirport& airport, const map::MapAirport airportCopy)
 {
   if(!airportCopy.isValid())

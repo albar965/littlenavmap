@@ -176,6 +176,7 @@ ProcedureSearch::ProcedureSearch(QMainWindow *main, QTreeWidget *treeWidgetParam
 
   currentAirportNav = new map::MapAirport;
   currentAirportSim = new map::MapAirport;
+  savedAirportSim = new map::MapAirport;
 
   zoomHandler = new atools::gui::ItemViewZoomHandler(treeWidget);
   connect(NavApp::navAppInstance(), &QGuiApplication::fontChanged, this, &ProcedureSearch::fontChanged);
@@ -260,6 +261,7 @@ ProcedureSearch::~ProcedureSearch()
   ATOOLS_DELETE_LOG(gridDelegate);
   ATOOLS_DELETE_LOG(currentAirportNav);
   ATOOLS_DELETE_LOG(currentAirportSim);
+  ATOOLS_DELETE_LOG(savedAirportSim);
 }
 
 void ProcedureSearch::airportLabelLinkActivated(const QString& link)
@@ -369,19 +371,36 @@ void ProcedureSearch::postDatabaseLoad()
   updateHeaderLabel();
   updateProcedureWind();
   clearSelection();
+
+  showProceduresInternal(NavApp::getAirportQuerySim()->getAirportFuzzy(*savedAirportSim), savedDepartureFilter, savedArrivalFilter,
+                         true /* silent */);
 }
 
 void ProcedureSearch::showProcedures(const map::MapAirport& airport, bool departureFilter, bool arrivalFilter)
 {
-  map::MapAirport navAirport = NavApp::getMapQueryGui()->getAirportNav(airport);
+  showProceduresInternal(airport, departureFilter, arrivalFilter, false /* silent */);
+}
 
-  Ui::MainWindow *ui = NavApp::getMainUi();
-  ui->dockWidgetSearch->show();
-  ui->dockWidgetSearch->raise();
-  NavApp::getSearchController()->setCurrentSearchTabId(si::SEARCH_PROC);
-  treeWidget->setFocus();
+void ProcedureSearch::showProceduresInternal(const map::MapAirport& airportSim, bool departureFilter, bool arrivalFilter, bool silent)
+{
+  map::MapAirport navAirport = NavApp::getMapQueryGui()->getAirportNav(airportSim);
+  qDebug() << Q_FUNC_INFO << "airport" << airportSim << "navAirport" << navAirport
+           << "departureFilter" << departureFilter << "arrivalFilter" << arrivalFilter;
 
-  qDebug() << Q_FUNC_INFO << airport << navAirport;
+  savedDepartureFilter = departureFilter;
+  savedArrivalFilter = arrivalFilter;
+  *savedAirportSim = airportSim;
+
+  if(!silent)
+  {
+    Ui::MainWindow *ui = NavApp::getMainUi();
+    ui->dockWidgetSearch->show();
+    ui->dockWidgetSearch->raise();
+    NavApp::getSearchController()->setCurrentSearchTabId(si::SEARCH_PROC);
+    treeWidget->setFocus();
+  }
+
+  qDebug() << Q_FUNC_INFO << airportSim << navAirport;
 
 #ifdef DEBUG_INFORMATION
   qDebug() << Q_FUNC_INFO << recentTreeState.keys();
@@ -420,7 +439,7 @@ void ProcedureSearch::showProcedures(const map::MapAirport& airport, bool depart
   emit procedureLegSelected(proc::MapProcedureRef());
 
   // Update fields with new data ===================
-  *currentAirportSim = airport;
+  *currentAirportSim = airportSim;
   *currentAirportNav = navAirport;
   ui->comboBoxProcedureSearchFilter->setCurrentIndex(searchFilterIndex);
   ui->comboBoxProcedureRunwayFilter->setCurrentIndex(runwayFilterIndex);
@@ -1101,7 +1120,10 @@ void ProcedureSearch::restoreState()
   {
     // Restoring state will emit above signal
     if(currentAirportNav->isValid() && currentAirportNav->procedure())
+    {
       treeViewStateRestore(state);
+      *savedAirportSim = *currentAirportSim;
+    }
   }
 
   updateHeaderLabel();

@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -114,6 +114,7 @@ public:
   /* Try to get airport by ident, icao or position as a fallback if pos is valid,
    * Need to get ident, icao and pos as copies to avoid overwriting.
    * Does not use cache. */
+  const map::MapAirport getAirportFuzzy(const map::MapAirport& airport);
   void getAirportFuzzy(map::MapAirport& airport, const map::MapAirport airportCopy);
 
   /* Get display ident (ICAO, IATA, FAA or local) based on internal ident */

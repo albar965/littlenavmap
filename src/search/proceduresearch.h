@@ -139,6 +139,8 @@ private:
     /* Runways follow */
   };
 
+  void showProceduresInternal(const map::MapAirport& airportSim, bool departureFilter, bool arrivalFilter, bool silent);
+
   /* No op overrides */
   virtual void getSelectedMapObjects(map::MapResult&) const override;
   virtual void connectSearchSlots() override;
@@ -277,7 +279,7 @@ private:
   /* Fonts for tree elements */
   QFont procedureBoldFont, procedureNormalFont, legFont, missedLegFont, invalidLegFont, identFont;
 
-  map::MapAirport *currentAirportNav, *currentAirportSim;
+  map::MapAirport *currentAirportNav, *currentAirportSim, *savedAirportSim;
 
   // Maps airport ID to expanded state of the tree widget items - bit array is same content as itemLoadedIndex
   QHash<int, QSet<int> > recentTreeState;
@@ -292,6 +294,8 @@ private:
   /* Event filter for line input */
   SearchWidgetEventFilter *lineInputEventFilter = nullptr;
   bool errors = false;
+
+  bool savedDepartureFilter = false, savedArrivalFilter = false;
 };
 
 #endif // LITTLENAVMAP_PROCTREECONTROLLER_H
