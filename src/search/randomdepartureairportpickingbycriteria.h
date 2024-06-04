@@ -22,22 +22,29 @@
 #include <QThread>
 
 namespace atools {
-namespace geo {
-class Pos;
-}
+  namespace geo {
+    class Pos;
+  }
 }
 
-// should only be instantiated 1 at a time
+// per destination thread a different departure airport is used
+// destination threads don't sync themselves
+// hence the multi-threading here is like multiple single searches
+// parallely because we can. Whichever thread first finds a match
+// results in all other threads getting timed out
+// this departure thread should only be instantiated 1 at a time
 class RandomDepartureAirportPickingByCriteria :
   public QThread
 {
   Q_OBJECT
 
 public:
-  explicit RandomDepartureAirportPickingByCriteria(QObject *parent);
+  explicit RandomDepartureAirportPickingByCriteria(QObject *parent,
+                                                   int predefinedAirportIndex);
 
-  // required calling !!
-  static void initStatics(int countResult, int randomLimit, QVector<std::pair<int, atools::geo::Pos> > *data, int distanceMinMeter,
+  // required calling !!!
+  static void initStatics(QVector<std::pair<int, atools::geo::Pos> > *data,
+                          int distanceMinMeter,
                           int distanceMaxMeter);
 
   void run() override;
@@ -47,19 +54,25 @@ public slots:
   void cancellationReceived();
 
 signals:
-  void resultReady(const bool isSuccess, const int indexDeparture, const int indexDestination, QVector<std::pair<int,
-                                                                                                                 atools::geo::Pos> > *data);
+  void resultReady(const bool isSuccess,
+                   const int indexDeparture,
+                   const int indexDestination,
+                   QVector<std::pair<int, atools::geo::Pos> > *data);
   void progressing();
 
 private:
+  int predefinedAirportIndex;
   bool noSuccess;
-  int indexDestination;
+  int foundIndexDestination;
   int associatedIndexDeparture;
-  static int countResult;
-  static int randomLimit;
   static QVector<std::pair<int, atools::geo::Pos> > *data;
   static int distanceMin;
   static int distanceMax;
+  static int countResult;
+  // randomLimit :  above this limit values are not tried to be found randomly
+  // because there will only be few "space" to "pick" from making random picks
+  // take long, instead values are taken linearly from the remaining values
+  static int randomLimit;
   int runningDestinationThreads;
 };
 

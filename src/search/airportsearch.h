@@ -59,7 +59,7 @@ public:
   virtual void resetSearch() override;
 
 public slots:
-  void progressing();
+  void randomFlightSearchProgressing();
   void dataRandomAirportsReceived(bool isSuccess, int indexDeparture, int indexDestination,
                                   QVector<std::pair<int, atools::geo::Pos> > *data);
 
@@ -79,11 +79,34 @@ private:
   QString formatModelData(const Column *col, const QVariant& displayRoleValue) const;
   void overrideMode(const QStringList& overrideColumnTitles);
 
-  /* UI push button clicked */
-  void randomFlightplanClicked();
 
-  /* Update min/max values in random flight plan spin boxes */
-  void updateRandomFlightplanDistance();
+  /*
+   * Random Flight Generator (RFG)
+   * (a generator for a flight plan of a single non-stop flight from
+   *  a random* departure to a random* destination airport)
+   * *either the departure or the destination airport can be non-random
+   *  optionally
+   * A range for the distance between departure and destination airport
+   * can be given.
+   */
+
+  /* RFG push button clicked */
+  void randomFlightClicked();
+
+  /* Update min/max values in RFG spin boxes */
+  void keepRandomFlightRangeSane();
+
+  /* RFG search progress feedback */
+  QProgressDialog *randomFlightSearchProgress = nullptr;
+
+  // following indices as in controller->getSqlModel()->getFullResultSet()
+  // ui must make sure only 1 is > -1
+  /* RFG predefined departure airport index */
+  int predefinedDeparture = -1;
+
+  /* RFG predefined destination airport index */
+  int predefinedDestination = -1;
+
 
   /* All layouts, lines and drop down menu items */
   QList<QObject *> airportSearchWidgets;
@@ -94,8 +117,6 @@ private:
   /* Draw airport icon into ident table column */
   AirportIconDelegate *iconDelegate = nullptr;
   UnitStringTool *unitStringTool;
-
-  QProgressDialog *progress = nullptr;
 };
 
 #endif // LITTLENAVMAP_AIRPORTSEARCH_H

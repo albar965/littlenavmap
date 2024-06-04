@@ -22,9 +22,9 @@
 #include <QThread>
 
 namespace atools {
-namespace geo {
-class Pos;
-}
+  namespace geo {
+    class Pos;
+  }
 }
 
 class RandomDestinationAirportPickingByCriteria :
@@ -35,9 +35,11 @@ class RandomDestinationAirportPickingByCriteria :
 public:
   RandomDestinationAirportPickingByCriteria(int indexDeparture);
 
-  // required calling !!
-  static void initStatics(int countResult, int randomLimit, std::pair<int, atools::geo::Pos> *data, int distanceMinMeter,
-                          int distanceMaxMeter);
+  // required calling !!!
+  static void initStatics(std::pair<int, atools::geo::Pos> *data,
+                          int distanceMinMeter,
+                          int distanceMaxMeter,
+                          int countResult);
 
   void run() override;
 
@@ -48,11 +50,14 @@ private:
   friend class RandomDepartureAirportPickingByCriteria;
   static bool stopExecution; // Qt has no way to finally stop a thread
   int indexDeparture;
-  static int countResult;
-  static int randomLimit;
   static std::pair<int, atools::geo::Pos> *data;
   static int distanceMin;
   static int distanceMax;
+  static int countResult;
+  // randomLimit :  above this limit values are not tried to be found randomly
+  // because there will only be few "space" to "pick" from making random picks
+  // take long, instead values are taken linearly from the remaining values
+  static int randomLimit;
 };
 
 #endif // RANDOMDESTINATIONAIRPORTPICKINGBYCRITERIA_H
