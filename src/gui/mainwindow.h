@@ -403,6 +403,9 @@ private:
   /* Route center action */
   void routeCenter();
 
+  /* Show airport search with random calc enabled */
+  void calculateRouteRandom();
+
   /* Ask user if flight plan can be deleted when quitting.
    * @return true continue with new flight plan, exit, etc. */
   bool routeCheckForChanges();

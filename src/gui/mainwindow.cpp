@@ -1337,6 +1337,7 @@ void MainWindow::connectAllSlots()
   // Flight plan calculation ========================================================================
   connect(ui->actionRouteCalcDirect, &QAction::triggered, routeController, &RouteController::calculateDirect);
   connect(ui->actionRouteCalc, &QAction::triggered, routeController, &RouteController::calculateRouteWindowShow);
+  connect(ui->actionRouteRandom, &QAction::triggered, this, &MainWindow::calculateRouteRandom);
   connect(ui->actionRouteReverse, &QAction::triggered, routeController, &RouteController::reverseRoute);
   connect(ui->actionRouteCopyString, &QAction::triggered, routeController, &RouteController::routeStringToClipboard);
   connect(ui->actionRouteAdjustAltitude, &QAction::triggered, routeController, &RouteController::adjustFlightplanAltitude);
@@ -1985,6 +1986,13 @@ void MainWindow::routeCenter()
     mapWidget->showRect(routeController->getBoundingRect(), false);
     setStatusMessage(tr("Flight plan shown on map."));
   }
+}
+
+void MainWindow::calculateRouteRandom()
+{
+  qDebug() << Q_FUNC_INFO;
+  dockHandler->activateWindow(ui->dockWidgetSearch);
+  searchController->showRandomRouteCalc();
 }
 
 void MainWindow::shrinkStatusBar()

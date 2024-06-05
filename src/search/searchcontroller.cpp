@@ -380,6 +380,12 @@ void SearchController::setCurrentSearchTabId(si::TabSearchId tabId)
   tabHandlerSearch->setCurrentTab(tabId);
 }
 
+void SearchController::showRandomRouteCalc()
+{
+  setCurrentSearchTabId(si::SEARCH_AIRPORT);
+  airportSearch->showRandomRouteCalc();
+}
+
 si::TabSearchId SearchController::getCurrentSearchTabId()
 {
   return static_cast<si::TabSearchId>(tabHandlerSearch->getCurrentTabId());

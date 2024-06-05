@@ -58,6 +58,8 @@ public:
   virtual void postDatabaseLoad() override;
   virtual void resetSearch() override;
 
+  void showRandomRouteCalc();
+
 public slots:
   void randomFlightSearchProgressing();
   void dataRandomAirportsReceived(bool isSuccess, int indexDeparture, int indexDestination,

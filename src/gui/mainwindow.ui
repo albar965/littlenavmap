@@ -334,6 +334,8 @@
     <addaction name="actionRouteEditMode"/>
     <addaction name="separator"/>
     <addaction name="actionRouteCalc"/>
+    <addaction name="actionRouteRandom"/>
+    <addaction name="separator"/>
     <addaction name="actionRouteCalcDirect"/>
     <addaction name="actionRouteReverse"/>
     <addaction name="actionRouteAdjustAltitude"/>
@@ -10572,7 +10574,7 @@ relation to shown airport</string>
      <normaloff>:/littlenavmap/resources/icons/routecalc.svg</normaloff>:/littlenavmap/resources/icons/routecalc.svg</iconset>
    </property>
    <property name="text">
-    <string>Flight Plan &amp;Calculation  ...</string>
+    <string>Flight Plan &amp;Calculation ...</string>
    </property>
    <property name="toolTip">
     <string>Shows the flight plan calculation window</string>
@@ -12356,6 +12358,21 @@ relation to shown airport</string>
    </property>
    <property name="shortcutContext">
     <enum>Qt::ApplicationShortcut</enum>
+   </property>
+  </action>
+  <action name="actionRouteRandom">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/routerandom.svg</normaloff>:/littlenavmap/resources/icons/routerandom.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Generate &amp;Random Flight ...</string>
+   </property>
+   <property name="toolTip">
+    <string>Generate a flight using random airports</string>
+   </property>
+   <property name="statusTip">
+    <string>Generate a flight using random airports</string>
    </property>
   </action>
  </widget>

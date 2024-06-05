@@ -164,6 +164,8 @@ public:
 
   void setCurrentSearchTabId(si::TabSearchId tabId);
 
+  void showRandomRouteCalc();
+
   si::TabSearchId getCurrentSearchTabId();
 
   /* Reset tab bar */

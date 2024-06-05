@@ -695,6 +695,12 @@ void AirportSearch::resetSearch()
   SearchBaseTable::resetSearch();
 }
 
+void AirportSearch::showRandomRouteCalc()
+{
+  qDebug() << Q_FUNC_INFO;
+  ui->actionAirportSearchShowFlightplanOptions->setChecked(true);
+}
+
 void AirportSearch::keepRandomFlightRangeSane()
 {
   ui->spinBoxAirportFlightplanMaxSearch->setMinimum(ui->spinBoxAirportFlightplanMinSearch->value() +
