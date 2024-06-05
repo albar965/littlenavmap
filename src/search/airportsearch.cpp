@@ -836,7 +836,7 @@ void AirportSearch::randomFlightClicked(bool showDialog)
     {
       std::pair<int, atools::geo::Pos> pair = std::make_pair(destinationAirport.id, destinationAirport.position);
       predefinedDestination = randomSearchAirports.indexOf(pair);
-      if(predefinedDeparture == -1)
+      if(predefinedDestination == -1)
       {
         // Append route destination airport id and set index to vector position
         predefinedDestination = randomSearchAirports.size();
