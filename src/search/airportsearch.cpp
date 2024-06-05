@@ -27,6 +27,7 @@
 #include "common/unit.h"
 #include "common/unitstringtool.h"
 #include "fs/util/fsutil.h"
+#include "gui/choicedialog.h"
 #include "gui/dialog.h"
 #include "gui/mainwindow.h"
 #include "gui/widgetstate.h"
@@ -41,6 +42,7 @@
 #include "settings/settings.h"
 #include "sql/sqlrecord.h"
 #include "ui_mainwindow.h"
+#include "route/route.h"
 
 #include <QProgressDialog>
 #include <QStringBuilder>
@@ -319,7 +321,8 @@ void AirportSearch::connectSearchSlots()
   connect(ui->pushButtonAirportSearchClearSelection, &QPushButton::clicked, this, &SearchBaseTable::nothingSelectedTriggered);
   connect(ui->pushButtonAirportSearchReset, &QPushButton::clicked, this, &AirportSearch::resetSearch);
 
-  connect(ui->pushButtonAirportFlightplanSearch, &QPushButton::clicked, this, &AirportSearch::randomFlightClicked);
+  connect(ui->pushButtonAirportFlightplanSearch, &QPushButton::clicked,
+          std::bind(&AirportSearch::randomFlightClicked, this, true /* showDialog */));
   connect(ui->spinBoxAirportFlightplanMinSearch, QOverload<int>::of(&QSpinBox::valueChanged),
           this, &AirportSearch::keepRandomFlightRangeSane);
   connect(ui->spinBoxAirportFlightplanMaxSearch, QOverload<int>::of(&QSpinBox::valueChanged),
@@ -700,51 +703,160 @@ void AirportSearch::keepRandomFlightRangeSane()
                                                     ui->spinBoxAirportFlightplanMaxSearch->singleStep());
 }
 
-void AirportSearch::randomFlightClicked()
+void AirportSearch::randomFlightClicked(bool showDialog)
 {
   if(randomFlightSearchProgress != nullptr) // previous search did not complete yet
     return;
 
-  // Disable button to avoid multiple clicks
-  ui->pushButtonAirportFlightplanSearch->setDisabled(true);
-  // TODO: lock predefined airport ui
+  // Get airports from flight plan =======================================
+  const Route& route = NavApp::getRouteConst();
+  const map::MapAirport& departureAirport = route.getDepartureAirportLeg().getAirport();
+  const map::MapAirport& destinationAirport = route.getDestinationAirportLeg().getAirport();
+  int dialogResult = QDialog::Accepted;
 
-  // Init progress bar, maximum equals seconds passed at 100% (per attempted departure)
-  randomFlightSearchProgress = new QProgressDialog(tr("random picking and criteria comparison running..."),
-                                                   tr("Abort running"), 0, 30, NavApp::getQMainWidget());
-  randomFlightSearchProgress->setValue(randomFlightSearchProgress->minimum());
-  randomFlightSearchProgress->setAutoClose(false);
-  randomFlightSearchProgress->setWindowModality(Qt::ApplicationModal);
-  // Let progress dialog pop up early to block application, allows to avoid waiting cursor
-  randomFlightSearchProgress->setMinimumDuration(200);      // see https://doc.qt.io/qt-5/qprogressdialog.html#value-prop
-                                                            // Issues with Modal include non-showing of the progress bar.
+  if(showDialog)
+  {
+    // Method called by user click and not "Search again" - show selection dialog
+    enum {RANDOM_ALL, RANDOM_FIXED_DEPARTURE, RANDOM_FIXED_DESTINATION, RANDOM_BUTTON_GROUP};
 
-  // Convert user selected display units to meter
-  float distanceMinMeter = Unit::rev(ui->spinBoxAirportFlightplanMinSearch->value(), Unit::distMeterF);
-  float distanceMaxMeter = Unit::rev(ui->spinBoxAirportFlightplanMaxSearch->value(), Unit::distMeterF);
-  // Log minimum and maximum distance from UI
-  qDebug() << Q_FUNC_INFO << "random flight, distance min: " << distanceMinMeter
-           << ", random flight, distance max: " << distanceMaxMeter;
+    QString label = tr("Create a flight using random airports from the airport search result table.\n"
+                       "Adjust the search criteria to select only airports having a minimum runway length, for example.");
 
-  // Fetch data from SQL model
-  // create new for usage in threads, delete in method receiving result
-  QVector<std::pair<int, atools::geo::Pos> > *result = new QVector<std::pair<int, atools::geo::Pos> >();
-  controller->getSqlModel()->getFullResultSet(*result);
-  qDebug() << Q_FUNC_INFO << "random flight, count source airports: " << result->size();
+    // Adjust label if plan is empty or not valid
+    if(!departureAirport.isValid() && !destinationAirport.isValid())
+      label += tr("\n\nAdd one or two airports to your current flight plan if you wish to have a fixed departure or destination.");
 
-  RandomDepartureAirportPickingByCriteria::initStatics(result,
-                                                       atools::roundToInt(distanceMinMeter),
-                                                       atools::roundToInt(distanceMaxMeter));
-  RandomDepartureAirportPickingByCriteria *departurePicker = new RandomDepartureAirportPickingByCriteria(this, predefinedDeparture > -1 ? predefinedDeparture : predefinedDestination);
-  connect(randomFlightSearchProgress, &QProgressDialog::canceled,
-          departurePicker, &RandomDepartureAirportPickingByCriteria::cancellationReceived);
-  connect(departurePicker, &RandomDepartureAirportPickingByCriteria::progressing,
-          this, &AirportSearch::randomFlightSearchProgressing);
-  connect(departurePicker, &RandomDepartureAirportPickingByCriteria::resultReady,
-          this, &AirportSearch::dataRandomAirportsReceived);
-  connect(departurePicker, &RandomDepartureAirportPickingByCriteria::finished,
-          departurePicker, &QObject::deleteLater);
-  departurePicker->start();
+    // Build selection dialog ===========================================================
+    atools::gui::ChoiceDialog choiceDialog(mainWindow, QCoreApplication::applicationName() % tr(" - Random Flight"), label,
+                                           lnm::SEARCHTAB_AIRPORT_RANDOM, "/SEARCH.html#random-flight-in-airport-search");
+    choiceDialog.setHelpOnlineUrl(lnm::helpOnlineUrl);
+    choiceDialog.setHelpLanguageOnline(lnm::helpLanguageOnline());
+
+    // Departure and destination random ================================
+    choiceDialog.addRadioButton(RANDOM_ALL, RANDOM_BUTTON_GROUP, tr("Use random departure and destination\n"
+                                                                    "from airport search result table."), QString(), true /* checked */);
+
+    if(route.getSizeWithoutAlternates() == 1 && departureAirport.isValid())
+    {
+      // Current flight plan has only one airport - use as fixed departure or destination ================================
+      choiceDialog.addRadioButton(RANDOM_FIXED_DEPARTURE, RANDOM_BUTTON_GROUP,
+                                  tr("Use current flight plan airport"
+                                     "\n%1\n"
+                                     "as fixed departure and select a random destination airport.").
+                                  arg(map::airportTextShort(departureAirport)));
+
+      choiceDialog.addRadioButton(RANDOM_FIXED_DESTINATION, RANDOM_BUTTON_GROUP,
+                                  tr("Use current flight plan airport"
+                                     "\n%1\n"
+                                     "as fixed destination and select a random departure airport.").
+                                  arg(map::airportTextShort(destinationAirport)));
+    }
+    else if(departureAirport.isValid() && destinationAirport.isValid())
+    {
+      // Current flight plan has valid departure and destination - use either one as fixed ================================
+      choiceDialog.addRadioButton(RANDOM_FIXED_DEPARTURE, RANDOM_BUTTON_GROUP,
+                                  tr("Keep current flight plan departure airport"
+                                     "\n%1\n"
+                                     "and select a random destination airport.").
+                                  arg(map::airportTextShort(departureAirport)));
+
+      choiceDialog.addRadioButton(RANDOM_FIXED_DESTINATION, RANDOM_BUTTON_GROUP,
+                                  tr("Keep current flight plan destination airport"
+                                     "\n%1\n"
+                                     "and select a random departure airport.").
+                                  arg(map::airportTextShort(destinationAirport)));
+    }
+    else
+    {
+      // Current flight plan has neither valid departure nor destination use all random and disable radio buttons =======
+      choiceDialog.addRadioButton(RANDOM_FIXED_DEPARTURE, RANDOM_BUTTON_GROUP,
+                                  tr("Keep current flight plan departure airport and\n"
+                                     "select a random destination airport."));
+
+      choiceDialog.addRadioButton(RANDOM_FIXED_DESTINATION, RANDOM_BUTTON_GROUP,
+                                  tr("Keep current flight plan destination airport and\n"
+                                     "select a random departure airport."));
+
+      choiceDialog.disableButton(RANDOM_ALL);
+      choiceDialog.disableButton(RANDOM_FIXED_DEPARTURE);
+      choiceDialog.disableButton(RANDOM_FIXED_DESTINATION);
+    }
+
+    choiceDialog.addSpacer();
+    choiceDialog.restoreState();
+    dialogResult = choiceDialog.exec();
+
+    // Remember selection if user clicks "Search again" =====================
+    randomFixedDeparture = randomFixedDestination = false;
+    if(choiceDialog.isButtonChecked(RANDOM_FIXED_DEPARTURE)) // Button has to be checked and enabled
+      randomFixedDeparture = true;
+    else if(choiceDialog.isButtonChecked(RANDOM_FIXED_DESTINATION))
+      randomFixedDestination = true;
+  } // if(showDialog)
+
+  // Also true if "Search again" was clicked ===============================
+  if(dialogResult == QDialog::Accepted)
+  {
+    // Disable button to avoid multiple clicks
+    ui->pushButtonAirportFlightplanSearch->setDisabled(true);
+    // TODO: lock predefined airport ui
+
+    // Init progress bar, maximum equals seconds passed at 100% (per attempted departure)
+    randomFlightSearchProgress = new QProgressDialog(tr("Random picking and criteria comparison running..."),
+                                                     tr("Abort running"), 0, 30, NavApp::getQMainWidget());
+    randomFlightSearchProgress->setValue(randomFlightSearchProgress->minimum());
+    randomFlightSearchProgress->setAutoClose(false);
+    randomFlightSearchProgress->setWindowModality(Qt::ApplicationModal);
+    // Let progress dialog pop up early to block application, allows to avoid waiting cursor
+    randomFlightSearchProgress->setMinimumDuration(200); // see https://doc.qt.io/qt-5/qprogressdialog.html#value-prop
+                                                         // Issues with Modal include non-showing of the progress bar.
+
+    // Convert user selected display units to meter
+    float distanceMinMeter = Unit::rev(ui->spinBoxAirportFlightplanMinSearch->value(), Unit::distMeterF);
+    float distanceMaxMeter = Unit::rev(ui->spinBoxAirportFlightplanMaxSearch->value(), Unit::distMeterF);
+    // Log minimum and maximum distance from UI
+    qDebug() << Q_FUNC_INFO << "random flight, distance min" << distanceMinMeter << "random flight, distance max" << distanceMaxMeter;
+
+    // Fetch data from SQL model
+    // create new for usage in threads, delete in method receiving result
+    randomSearchAirports.clear();
+    controller->getSqlModel()->getFullResultSet(randomSearchAirports);
+
+    if(randomFixedDeparture)
+    {
+      // Append route departure airport id and set index to vector position
+      randomSearchAirports.append(std::make_pair(departureAirport.id, departureAirport.position));
+      predefinedDeparture = randomSearchAirports.size() - 1;
+    }
+    else if(randomFixedDestination)
+    {
+      // Append route destination airport id and set index to vector position
+      randomSearchAirports.append(std::make_pair(destinationAirport.id, destinationAirport.position));
+      predefinedDestination = randomSearchAirports.size() - 1;
+    }
+    else
+      // Reset for all random - important to avoid crash
+      predefinedDeparture = predefinedDestination = -1;
+
+    qDebug() << Q_FUNC_INFO << "randomSearchAirports.size()" << randomSearchAirports.size()
+             << "predefinedDeparture" << predefinedDeparture << "predefinedDestination" << predefinedDestination;
+
+    RandomDepartureAirportPickingByCriteria::initStatics(&randomSearchAirports,
+                                                         atools::roundToInt(distanceMinMeter),
+                                                         atools::roundToInt(distanceMaxMeter));
+    RandomDepartureAirportPickingByCriteria *departurePicker =
+      new RandomDepartureAirportPickingByCriteria(this, predefinedDeparture > -1 ? predefinedDeparture : predefinedDestination);
+
+    connect(randomFlightSearchProgress, &QProgressDialog::canceled,
+            departurePicker, &RandomDepartureAirportPickingByCriteria::cancellationReceived);
+    connect(departurePicker, &RandomDepartureAirportPickingByCriteria::progressing,
+            this, &AirportSearch::randomFlightSearchProgressing);
+    connect(departurePicker, &RandomDepartureAirportPickingByCriteria::resultReady,
+            this, &AirportSearch::dataRandomAirportsReceived);
+    connect(departurePicker, &RandomDepartureAirportPickingByCriteria::finished,
+            departurePicker, &QObject::deleteLater);
+    departurePicker->start();
+  } // if(dialogResult == QDialog::Accepted)
 }
 
 void AirportSearch::randomFlightSearchProgressing()
@@ -779,15 +891,25 @@ void AirportSearch::dataRandomAirportsReceived(bool isSuccess, int indexDepartur
       qDebug() << Q_FUNC_INFO << "random flight, index departure: " << indexDeparture
                << ", random flight, index destination: " << indexDestination;
 
-      AirportQuery *airportQuery = NavApp::getAirportQuerySim();
-      map::MapAirport airportDeparture = airportQuery->getAirportById(data->at(indexDeparture).first);
-      map::MapAirport airportDestination = airportQuery->getAirportById(data->at(indexDestination).first);
+      map::MapAirport airportDeparture, airportDestination;
+      QString text;
+      if(!data->isEmpty())
+      {
+        AirportQuery *airportQuery = NavApp::getAirportQuerySim();
+        airportDeparture = airportQuery->getAirportById(data->at(indexDeparture).first);
+        airportDestination = airportQuery->getAirportById(data->at(indexDestination).first);
 
-      // Show a question dialog before taking over plan - avoids "flight plan has changed" nagging dialog
-      QString text(tr("<p><b>%1</b> to <b>%2</b></p><p>Direct distance: %3</p>").
-                   arg(map::airportTextShort(airportDeparture, 100 /* elide */)).
-                   arg(map::airportTextShort(airportDestination, 100 /* elide */)).
-                   arg(Unit::distMeter(airportDeparture.position.distanceMeterTo(airportDestination.position))));
+        // Show a question dialog before taking over plan - avoids "flight plan has changed" nagging dialog
+        text = tr("<p><b>%1</b> to <b>%2</b></p><p>Direct distance: %3</p>").
+               arg(map::airportTextShort(airportDeparture, 100 /* elide */)).
+               arg(map::airportTextShort(airportDestination, 100 /* elide */)).
+               arg(Unit::distMeter(airportDeparture.position.distanceMeterTo(airportDestination.position)));
+      }
+      else
+      {
+        qWarning() << Q_FUNC_INFO << "data is empty";
+        text = tr("Nothing found");
+      }
 
       QMessageBox box(QMessageBox::Question, tr("Little Navmap - Random flight found"), text,
                       QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel, NavApp::getQMainWidget());
@@ -801,28 +923,33 @@ void AirportSearch::dataRandomAirportsReceived(bool isSuccess, int indexDepartur
 
       int result = box.exec();
 
-      if(result == QMessageBox::Yes)
-        // Use data
-        NavApp::getMainWindow()->routeNewFromAirports(airportDeparture, airportDestination);
-      else if(result == QMessageBox::No)
-        // Start again in main event loop after leaving this method
-        tryAgain = true;
-      // else if(result == QMessageBox::Cancel)
-      // Nothing to do
+      if(airportDeparture.isValid() && airportDestination.isValid())
+      {
+        if(result == QMessageBox::Yes)
+          // Use data
+          NavApp::getMainWindow()->routeNewFromAirports(airportDeparture, airportDestination);
+        else if(result == QMessageBox::No)
+          // Start again in main event loop after leaving this method
+          tryAgain = true;
+        // else if(result == QMessageBox::Cancel)
+        // Nothing to do
+      }
     }
     else
       atools::gui::Dialog::information(NavApp::getMainWindow(), tr("No airports found in the search result satisfying the criteria."));
   }
   // Do not show any dialogs at all if user canceled
 
-  delete data;
-
   delete randomFlightSearchProgress;
   randomFlightSearchProgress = nullptr;
 
+  // Clear data from controller->getSqlModel()->getFullResultSet()
+  randomSearchAirports.clear();
+
   if(tryAgain)
   {
-    QTimer::singleShot(1, this, &AirportSearch::randomFlightClicked);
+    // Do again but do not show dialog
+    QTimer::singleShot(1, this, std::bind(&AirportSearch::randomFlightClicked, this, false /* showDialog */));
     // the documentation doesn't state asynchronity is guaranteed when passing 0
   }
   else

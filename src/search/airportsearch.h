@@ -79,7 +79,6 @@ private:
   QString formatModelData(const Column *col, const QVariant& displayRoleValue) const;
   void overrideMode(const QStringList& overrideColumnTitles);
 
-
   /*
    * Random Flight Generator (RFG)
    * (a generator for a flight plan of a single non-stop flight from
@@ -90,8 +89,8 @@ private:
    * can be given.
    */
 
-  /* RFG push button clicked */
-  void randomFlightClicked();
+  /* RFG push button clicked. showDialog is false if user clicked "Search again" */
+  void randomFlightClicked(bool showDialog);
 
   /* Update min/max values in RFG spin boxes */
   void keepRandomFlightRangeSane();
@@ -107,6 +106,11 @@ private:
   /* RFG predefined destination airport index */
   int predefinedDestination = -1;
 
+  /* Remember user selection in case user clicks "Search again" */
+  bool randomFixedDeparture = false, randomFixedDestination = false;
+
+  /* Airports have to persist during search. List is cleared in AirportSearch::dataRandomAirportsReceived() */
+  QVector<std::pair<int, atools::geo::Pos> > randomSearchAirports;
 
   /* All layouts, lines and drop down menu items */
   QList<QObject *> airportSearchWidgets;

@@ -111,7 +111,6 @@ const QLatin1String ACTIONS_SHOW_XP12_WEATHER_FILE_NO_SIM("Actions/Xplane12Weath
 const QLatin1String ACTIONS_SHOW_REPLACE_TRAIL("Actions/ReplaceTrail");
 const QLatin1String ACTIONS_SHOW_TRAIL_POINTS("Actions/TrailPoints");
 
-
 const QLatin1String ACTIONS_SHOW_DATABASE_HINTS("Actions/DatabaseLoadShowHints");
 const QLatin1String ACTIONS_SHOW_DATABASE_OLD("Actions/DatabaseOld");
 const QLatin1String ACTIONS_SHOW_CORRECT_MSFS_HAS_NAVIGRAPH("Actions/DatabaseMsfsNavigraph");
@@ -237,11 +236,14 @@ const QLatin1String CUSTOM_APPROACH_DIALOG("Route/CustomApproachDialog");
 const QLatin1String CUSTOM_DEPARTURE_DIALOG("Route/CustomDepartureDialog");
 const QLatin1String RUNWAY_SELECTION_DIALOG("Route/RunwaySelectionDialog");
 const QLatin1String ROUTE_CALC_DIALOG("Route/RouteCalcDialog");
-const QLatin1String SEARCHTAB_AIRPORT_WIDGET("SearchPaneAirport/Widget");
 const QLatin1String SEARCHTAB_WIDGET_TABS("SearchPaneAirport/WidgetTabs");
-const QLatin1String SEARCHTAB_NAV_WIDGET("SearchPaneNav/Widget");
+
+const QLatin1String SEARCHTAB_AIRPORT_WIDGET("SearchPaneAirport/Widget");
 const QLatin1String SEARCHTAB_AIRPORT_VIEW_WIDGET("SearchPaneAirport/WidgetView");
 const QLatin1String SEARCHTAB_AIRPORT_VIEW_DIST_WIDGET("SearchPaneAirport/WidgetDistView");
+const QLatin1String SEARCHTAB_AIRPORT_RANDOM("SearchPaneLogdata/RandomPlan");
+
+const QLatin1String SEARCHTAB_NAV_WIDGET("SearchPaneNav/Widget");
 const QLatin1String SEARCHTAB_NAV_VIEW_WIDGET("SearchPaneNav/WidgetView");
 const QLatin1String SEARCHTAB_NAV_VIEW_DIST_WIDGET("SearchPaneNav/WidgetDistView");
 
