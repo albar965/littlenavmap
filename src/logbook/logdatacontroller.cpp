@@ -768,13 +768,7 @@ void LogdataController::addLogEntry()
 
 void LogdataController::cleanupLogEntries()
 {
-  enum
-  {
-    SHORT_DISTANCE,
-    DEPARTURE_AND_DESTINATION_EQUAL,
-    DEPARTURE_OR_DESTINATION_EMPTY,
-    SHOW_PREVIEW
-  };
+  enum {SHORT_DISTANCE, DEPARTURE_AND_DESTINATION_EQUAL, DEPARTURE_OR_DESTINATION_EMPTY, SHOW_PREVIEW};
 
   qDebug() << Q_FUNC_INFO;
 
@@ -826,7 +820,7 @@ void LogdataController::cleanupLogEntries()
     manager->preCleanup();
 
     // Show preview table ===============================================
-    if(choiceDialog.isChecked(SHOW_PREVIEW))
+    if(choiceDialog.isButtonChecked(SHOW_PREVIEW))
     {
       QVector<atools::sql::SqlColumn> previewCols({
         SqlColumn("departure_time", tr("Departure\nReal Time")),
@@ -846,9 +840,9 @@ void LogdataController::cleanupLogEntries()
       });
 
       // Get query for preview
-      QString queryStr = manager->getCleanupPreview(choiceDialog.isChecked(DEPARTURE_AND_DESTINATION_EQUAL),
-                                                    choiceDialog.isChecked(DEPARTURE_OR_DESTINATION_EMPTY),
-                                                    choiceDialog.isChecked(SHORT_DISTANCE) ? distNm : -1.f, previewCols);
+      QString queryStr = manager->getCleanupPreview(choiceDialog.isButtonChecked(DEPARTURE_AND_DESTINATION_EQUAL),
+                                                    choiceDialog.isButtonChecked(DEPARTURE_OR_DESTINATION_EMPTY),
+                                                    choiceDialog.isButtonChecked(SHORT_DISTANCE) ? distNm : -1.f, previewCols);
 
       // Callback for data formatting
       atools::gui::SqlQueryDialogDataFunc dataFunc([&previewCols](int column, const QVariant& data, Qt::ItemDataRole role) -> QVariant {
@@ -894,9 +888,9 @@ void LogdataController::cleanupLogEntries()
       // Dialog ok - remove entries ===============================================
       QGuiApplication::setOverrideCursor(Qt::WaitCursor);
       SqlTransaction transaction(manager->getDatabase());
-      removed = manager->cleanupLogEntries(choiceDialog.isChecked(DEPARTURE_AND_DESTINATION_EQUAL),
-                                           choiceDialog.isChecked(DEPARTURE_OR_DESTINATION_EMPTY),
-                                           choiceDialog.isChecked(SHORT_DISTANCE) ? distNm : -1.f);
+      removed = manager->cleanupLogEntries(choiceDialog.isButtonChecked(DEPARTURE_AND_DESTINATION_EQUAL),
+                                           choiceDialog.isButtonChecked(DEPARTURE_OR_DESTINATION_EMPTY),
+                                           choiceDialog.isButtonChecked(SHORT_DISTANCE) ? distNm : -1.f);
       transaction.commit();
       QGuiApplication::restoreOverrideCursor();
     }
@@ -1025,10 +1019,7 @@ void LogdataController::exportCsv()
   try
   {
     // Checkbox ids
-    enum
-    {
-      SELECTED, APPEND, HEADER, EXPORTPLAN, EXPORTPERF, EXPORTGPX
-    };
+    enum {SELECTED, APPEND, HEADER, EXPORTPLAN, EXPORTPERF, EXPORTGPX};
 
     // Build a choice dialog with several checkboxes =========================
     atools::gui::ChoiceDialog choiceDialog(mainWindow, QCoreApplication::applicationName() % tr(" - Logbook Export"),
@@ -1056,11 +1047,10 @@ void LogdataController::exportCsv()
     choiceDialog.restoreState();
 
     // Disable/enable header depending on append option
-    choiceDialog.getCheckBox(HEADER)->setDisabled(choiceDialog.isChecked(APPEND));
-    atools::gui::ChoiceDialog *dlgPtr = &choiceDialog;
-    connect(&choiceDialog, &atools::gui::ChoiceDialog::checkBoxToggled, this, [dlgPtr](int id, bool checked) {
+    choiceDialog.disableButton(HEADER, choiceDialog.isButtonChecked(APPEND));
+    connect(&choiceDialog, &atools::gui::ChoiceDialog::buttonToggled, this, [&choiceDialog](int id, bool checked) {
       if(id == APPEND)
-        dlgPtr->getCheckBox(HEADER)->setDisabled(checked);
+        choiceDialog.disableButton(HEADER, checked);
     });
 
     if(choiceDialog.exec() == QDialog::Accepted)
@@ -1068,20 +1058,20 @@ void LogdataController::exportCsv()
       QString file = dialog->saveFileDialog(
         tr("Export Logbook Entry CSV File"),
         tr("CSV Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_USERDATA_CSV), ".csv", "Logdata/Csv",
-        QString(), QString(), choiceDialog.isChecked(APPEND));
+        QString(), QString(), choiceDialog.isButtonChecked(APPEND));
 
       if(!file.isEmpty())
       {
         QVector<int> ids;
-        if(choiceDialog.isChecked(SELECTED))
+        if(choiceDialog.isButtonChecked(SELECTED))
           ids = NavApp::getLogdataSearch()->getSelectedIds();
 
         int numExported = manager->exportCsv(file, ids,
-                                             choiceDialog.isChecked(EXPORTPLAN),
-                                             choiceDialog.isChecked(EXPORTPERF),
-                                             choiceDialog.isChecked(EXPORTGPX),
-                                             choiceDialog.isChecked(HEADER) && !choiceDialog.isChecked(APPEND),
-                                             choiceDialog.isChecked(APPEND));
+                                             choiceDialog.isButtonChecked(EXPORTPLAN),
+                                             choiceDialog.isButtonChecked(EXPORTPERF),
+                                             choiceDialog.isButtonChecked(EXPORTGPX),
+                                             choiceDialog.isButtonChecked(HEADER) && !choiceDialog.isButtonChecked(APPEND),
+                                             choiceDialog.isButtonChecked(APPEND));
         NavApp::setStatusMessage(tr("%1 logbook %2 exported.").
                                  arg(numExported).arg(numExported == 1 ? tr("entry") : tr("entries")));
       }

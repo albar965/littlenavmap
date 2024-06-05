@@ -958,10 +958,7 @@ bool UserdataController::exportSelectedQuestion(bool& selected, bool& append, bo
     return true;
 
   // Dialog options
-  enum
-  {
-    SELECTED, APPEND, HEADER, XP12
-  };
+  enum {SELECTED, APPEND, HEADER, XP12};
 
   atools::gui::ChoiceDialog choiceDialog(mainWindow, QCoreApplication::applicationName() + tr(" - Userpoint Export Options"),
                                          tr("Select export options for userpoints.\n\n"
@@ -997,19 +994,18 @@ bool UserdataController::exportSelectedQuestion(bool& selected, bool& append, bo
 
   choiceDialog.restoreState();
 
-  choiceDialog.getCheckBox(HEADER)->setDisabled(choiceDialog.isChecked(APPEND));
-  atools::gui::ChoiceDialog *dlgPtr = &choiceDialog;
-  connect(&choiceDialog, &atools::gui::ChoiceDialog::checkBoxToggled, this, [dlgPtr](int id, bool checked) {
+  choiceDialog.disableButton(HEADER, choiceDialog.isButtonChecked(APPEND));
+  connect(&choiceDialog, &atools::gui::ChoiceDialog::buttonToggled, this, [&choiceDialog](int id, bool checked) {
     if(id == APPEND)
-      dlgPtr->getCheckBox(HEADER)->setDisabled(checked);
+      choiceDialog.disableButton(HEADER, checked);
   });
 
   if(choiceDialog.exec() == QDialog::Accepted)
   {
-    selected = choiceDialog.isChecked(SELECTED); // Only true if enabled too
-    append = choiceDialog.isChecked(APPEND);
-    header = choiceDialog.isChecked(HEADER) && !choiceDialog.isChecked(APPEND);
-    xp12 = choiceDialog.isChecked(XP12);
+    selected = choiceDialog.isButtonChecked(SELECTED); // Only true if enabled too
+    append = choiceDialog.isButtonChecked(APPEND);
+    header = choiceDialog.isButtonChecked(HEADER) && !choiceDialog.isButtonChecked(APPEND);
+    xp12 = choiceDialog.isButtonChecked(XP12);
     return true;
   }
   else
@@ -1057,13 +1053,13 @@ void UserdataController::cleanupUserdata()
                            tr("Shows a dialog window with all userpoints to be deleted before removing them."), true /* checked */);
 
   // Disable duplicate cleanup parameters if top box is off
-  connect(&choiceDialog, &atools::gui::ChoiceDialog::checkBoxToggled, [&choiceDialog](int id, bool checked) {
+  connect(&choiceDialog, &atools::gui::ChoiceDialog::buttonToggled, [&choiceDialog](int id, bool checked) {
     if(id == COMPARE)
     {
-      choiceDialog.getCheckBox(REGION)->setEnabled(checked);
-      choiceDialog.getCheckBox(DESCRIPTION)->setEnabled(checked);
-      choiceDialog.getCheckBox(TAGS)->setEnabled(checked);
-      choiceDialog.getCheckBox(COORDINATES)->setEnabled(checked);
+      choiceDialog.enableButton(REGION, checked);
+      choiceDialog.enableButton(DESCRIPTION, checked);
+      choiceDialog.enableButton(TAGS, checked);
+      choiceDialog.enableButton(COORDINATES, checked);
     }
   });
 
@@ -1079,15 +1075,15 @@ void UserdataController::cleanupUserdata()
     // Create list for duplicate column check ===============================================
     // type name ident region description tags
     QStringList duplicateColumns;
-    if(choiceDialog.isChecked(COMPARE))
+    if(choiceDialog.isButtonChecked(COMPARE))
     {
       duplicateColumns << "type" << "ident" << "name";
 
-      if(choiceDialog.isChecked(REGION))
+      if(choiceDialog.isButtonChecked(REGION))
         duplicateColumns.append("region");
-      if(choiceDialog.isChecked(DESCRIPTION))
+      if(choiceDialog.isButtonChecked(DESCRIPTION))
         duplicateColumns.append("description");
-      if(choiceDialog.isChecked(TAGS))
+      if(choiceDialog.isButtonChecked(TAGS))
         duplicateColumns.append("tags");
     }
 
@@ -1095,7 +1091,7 @@ void UserdataController::cleanupUserdata()
     manager->preCleanup();
 
     // Show preview table ===============================================
-    if(choiceDialog.isChecked(SHOW_PREVIEW))
+    if(choiceDialog.isButtonChecked(SHOW_PREVIEW))
     {
       // Columns to be shown in the preview
       QVector<atools::sql::SqlColumn> previewCols({
@@ -1110,8 +1106,8 @@ void UserdataController::cleanupUserdata()
       });
 
       // Get query for preview
-      QString queryStr = manager->getCleanupPreview(duplicateColumns, choiceDialog.isChecked(COORDINATES), choiceDialog.isChecked(EMPTY),
-                                                    previewCols);
+      QString queryStr = manager->getCleanupPreview(duplicateColumns, choiceDialog.isButtonChecked(COORDINATES),
+                                                    choiceDialog.isButtonChecked(EMPTY), previewCols);
 
       // Callback for data formatting
       atools::gui::SqlQueryDialogDataFunc dataFunc([&previewCols](int column, const QVariant& data, Qt::ItemDataRole role) -> QVariant {
@@ -1146,7 +1142,7 @@ void UserdataController::cleanupUserdata()
       // Dialog ok - remove entries ===============================================
       QGuiApplication::setOverrideCursor(Qt::WaitCursor);
       SqlTransaction transaction(manager->getDatabase());
-      removed = manager->cleanupUserdata(duplicateColumns, choiceDialog.isChecked(COORDINATES), choiceDialog.isChecked(EMPTY));
+      removed = manager->cleanupUserdata(duplicateColumns, choiceDialog.isButtonChecked(COORDINATES), choiceDialog.isButtonChecked(EMPTY));
       transaction.commit();
       QGuiApplication::restoreOverrideCursor();
     }
