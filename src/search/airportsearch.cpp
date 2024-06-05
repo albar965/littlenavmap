@@ -818,21 +818,30 @@ void AirportSearch::randomFlightClicked(bool showDialog)
     qDebug() << Q_FUNC_INFO << "random flight, distance min" << distanceMinMeter << "random flight, distance max" << distanceMaxMeter;
 
     // Fetch data from SQL model
-    // create new for usage in threads, delete in method receiving result
     randomSearchAirports.clear();
     controller->getSqlModel()->getFullResultSet(randomSearchAirports);
 
     if(randomFixedDeparture)
     {
-      // Append route departure airport id and set index to vector position
-      randomSearchAirports.append(std::make_pair(departureAirport.id, departureAirport.position));
-      predefinedDeparture = randomSearchAirports.size() - 1;
+      std::pair<int, atools::geo::Pos> pair = std::make_pair(departureAirport.id, departureAirport.position);
+      predefinedDeparture = randomSearchAirports.indexOf(pair);
+      if(predefinedDeparture == -1)
+      {
+        // Append route departure airport id and set index to vector position
+        predefinedDeparture = randomSearchAirports.size();
+        randomSearchAirports.append(pair);
+      }
     }
     else if(randomFixedDestination)
     {
-      // Append route destination airport id and set index to vector position
-      randomSearchAirports.append(std::make_pair(destinationAirport.id, destinationAirport.position));
-      predefinedDestination = randomSearchAirports.size() - 1;
+      std::pair<int, atools::geo::Pos> pair = std::make_pair(destinationAirport.id, destinationAirport.position);
+      predefinedDestination = randomSearchAirports.indexOf(pair);
+      if(predefinedDeparture == -1)
+      {
+        // Append route destination airport id and set index to vector position
+        predefinedDestination = randomSearchAirports.size();
+        randomSearchAirports.append(pair);
+      }
     }
     else
       // Reset for all random - important to avoid crash
@@ -843,9 +852,9 @@ void AirportSearch::randomFlightClicked(bool showDialog)
 
     RandomDepartureAirportPickingByCriteria::initStatics(&randomSearchAirports,
                                                          atools::roundToInt(distanceMinMeter),
-                                                         atools::roundToInt(distanceMaxMeter));
-    RandomDepartureAirportPickingByCriteria *departurePicker =
-      new RandomDepartureAirportPickingByCriteria(this, predefinedDeparture > -1 ? predefinedDeparture : predefinedDestination);
+                                                         atools::roundToInt(distanceMaxMeter),
+                                                         predefinedDeparture > -1 ? predefinedDeparture : predefinedDestination);
+    departurePicker = new RandomDepartureAirportPickingByCriteria();
 
     connect(randomFlightSearchProgress, &QProgressDialog::canceled,
             departurePicker, &RandomDepartureAirportPickingByCriteria::cancellationReceived);
@@ -853,8 +862,6 @@ void AirportSearch::randomFlightClicked(bool showDialog)
             this, &AirportSearch::randomFlightSearchProgressing);
     connect(departurePicker, &RandomDepartureAirportPickingByCriteria::resultReady,
             this, &AirportSearch::dataRandomAirportsReceived);
-    connect(departurePicker, &RandomDepartureAirportPickingByCriteria::finished,
-            departurePicker, &QObject::deleteLater);
     departurePicker->start();
   } // if(dialogResult == QDialog::Accepted)
 }
@@ -945,6 +952,8 @@ void AirportSearch::dataRandomAirportsReceived(bool isSuccess, int indexDepartur
 
   // Clear data from controller->getSqlModel()->getFullResultSet()
   randomSearchAirports.clear();
+
+  delete departurePicker;
 
   if(tryAgain)
   {

@@ -24,89 +24,53 @@
 #include <QRandomGenerator>
 
 QVector<std::pair<int, atools::geo::Pos> > *RandomDepartureAirportPickingByCriteria::data = nullptr;
-int RandomDepartureAirportPickingByCriteria::distanceMin = 0;
-int RandomDepartureAirportPickingByCriteria::distanceMax = 0;
-int RandomDepartureAirportPickingByCriteria::countResult = 0;
-int RandomDepartureAirportPickingByCriteria::randomLimit = 0;
+int RandomDepartureAirportPickingByCriteria::predefinedAirportIndex = -1;
+int RandomDepartureAirportPickingByCriteria::numberDestinationsSetParts = 0;
+bool RandomDepartureAirportPickingByCriteria::stopExecution = false;
 
-RandomDepartureAirportPickingByCriteria::RandomDepartureAirportPickingByCriteria(QObject *parent,
-                                                                                 int predefinedAirportIndex) : QThread(parent)
+RandomDepartureAirportPickingByCriteria::RandomDepartureAirportPickingByCriteria()
 {
-  this->predefinedAirportIndex = predefinedAirportIndex;
-  foundIndexDestination = -1;
-  noSuccess = true;
+  runningDestinationThreads = 0;
 }
 
 void RandomDepartureAirportPickingByCriteria::initStatics(QVector<std::pair<int, atools::geo::Pos> > *data,
                                                           int distanceMinMeter,
-                                                          int distanceMaxMeter)
+                                                          int distanceMaxMeter,
+                                                          int predefinedAirportIndex)
 {
   RandomDepartureAirportPickingByCriteria::data = data;
-  RandomDepartureAirportPickingByCriteria::distanceMin = distanceMinMeter;
-  RandomDepartureAirportPickingByCriteria::distanceMax = distanceMaxMeter;
-  RandomDepartureAirportPickingByCriteria::countResult = data->size();
-  RandomDepartureAirportPickingByCriteria::randomLimit = (RandomDepartureAirportPickingByCriteria::countResult * 7) / 10;
-  RandomDestinationAirportPickingByCriteria::initStatics(data->data(),
-                                                         distanceMinMeter,
-                                                         distanceMaxMeter,
-                                                         RandomDepartureAirportPickingByCriteria::countResult);
+  RandomDepartureAirportPickingByCriteria::predefinedAirportIndex = predefinedAirportIndex;
+  RandomDepartureAirportPickingByCriteria::numberDestinationsSetParts = QThread::idealThreadCount();
+  RandomDepartureAirportPickingByCriteria::stopExecution = false;
+  RandomDestinationAirportPickingByCriteria::initStatics(distanceMinMeter,
+                                                         distanceMaxMeter);
 }
 
 void RandomDepartureAirportPickingByCriteria::run()
 {
-  std::pair<int, atools::geo::Pos> *data = this->data->data();
-  QMap<int, bool> triedIndexDeparture;      // acts as a lookup which indices have been tried already; QMap keys are sorted, lookup is very fast
   int indexDeparture;
   bool departureSuccess;
 
-  runningDestinationThreads = 0;
+  int numberDestinationThreadsStarted = 0;
+  int size = data->size();
 
   do
   {
     if(predefinedAirportIndex == -1)
     {
-        // split index finding into 2 approaches: random below threshold and linear above
-        if(triedIndexDeparture.count() < randomLimit)
+      do
+      {
+        departureSuccess = false;
+        indexDeparture = QRandomGenerator::global()->bounded(size);
+        if(data->at(indexDeparture).second.isValid())
         {
-          // random picking
-          // on small data sets, if all are invalid value, we wouldn't
-          // switch to the incremented random approach (because we
-          // never exit the while and the "if < randomLimit" is outside),
-          // but being a small data set, this approach might still
-          // try every index after some time
-          do
-          {
-            departureSuccess = false;
-            if(triedIndexDeparture.count() == countResult)
-              break;
-            do
-            {
-              indexDeparture = QRandomGenerator::global()->bounded(countResult);
-            }
-            while(triedIndexDeparture.contains(indexDeparture));
-            triedIndexDeparture.insert(indexDeparture, true);
-            departureSuccess = true;
-          }
-          while(!data[indexDeparture].second.isValid());
+          departureSuccess = true;
+          break;
         }
-        else
-        {
-          // pick start index randomly, then increment
-          indexDeparture = QRandomGenerator::global()->bounded(countResult);
-          do
-          {
-            departureSuccess = false;
-            if(triedIndexDeparture.count() == countResult)
-              break;
-            while(triedIndexDeparture.contains(indexDeparture))
-            {
-                ++indexDeparture %= countResult;
-            }
-            triedIndexDeparture.insert(indexDeparture, true);
-            departureSuccess = true;
-          }
-          while(!data[indexDeparture].second.isValid());
-        }
+        data->remove(indexDeparture);
+        size = data->size();
+      }
+      while(size && !stopExecution);
     }
     else
     {
@@ -116,64 +80,97 @@ void RandomDepartureAirportPickingByCriteria::run()
 
     if(departureSuccess)
     {
-      ++runningDestinationThreads;
-      RandomDestinationAirportPickingByCriteria *destinationPicker = new RandomDestinationAirportPickingByCriteria(indexDeparture);
-      connect(destinationPicker, &RandomDestinationAirportPickingByCriteria::resultReady,
-              this, &RandomDepartureAirportPickingByCriteria::dataReceived);
-      connect(destinationPicker, &RandomDestinationAirportPickingByCriteria::finished,
-              destinationPicker, &QObject::deleteLater);
       // if a CPU affinity tool is used on lnm.exe, all threads created by Qt
       // might be run on the designated core instead of being evenly distributed
       // (at least with Process Lasso)
+      int lengthDestinationsSetPart = size / numberDestinationsSetParts;
+      int counter = numberDestinationsSetParts - 1;
+      int lengthLastDestinationsSetPart = size - counter * lengthDestinationsSetPart;
+
+      RandomDestinationAirportPickingByCriteria::initData(data->data(), indexDeparture);
+
+      ++runningDestinationThreads;
+      ++numberDestinationThreadsStarted;
+      RandomDestinationAirportPickingByCriteria *destinationPicker = new RandomDestinationAirportPickingByCriteria(numberDestinationThreadsStarted,
+                                                                                                                   counter * lengthDestinationsSetPart,
+                                                                                                                   lengthLastDestinationsSetPart);
+      departureThreads.insert(numberDestinationThreadsStarted, destinationPicker);
+      connect(destinationPicker, &RandomDestinationAirportPickingByCriteria::resultReady,
+              this, &RandomDepartureAirportPickingByCriteria::dataReceived);
       destinationPicker->start();
+
+      if(lengthDestinationsSetPart)
+      {
+        while(counter && !stopExecution)
+        {
+          ++runningDestinationThreads;
+          ++numberDestinationThreadsStarted;
+          RandomDestinationAirportPickingByCriteria *destinationPicker = new RandomDestinationAirportPickingByCriteria(numberDestinationThreadsStarted,
+                                                                                                                        --counter * lengthDestinationsSetPart,
+                                                                                                                       lengthDestinationsSetPart);
+          departureThreads.insert(numberDestinationThreadsStarted, destinationPicker);
+          connect(destinationPicker, &RandomDestinationAirportPickingByCriteria::resultReady,
+                  this, &RandomDepartureAirportPickingByCriteria::dataReceived);
+          destinationPicker->start();
+        }
+      }
+
+      while(noSuccess && runningDestinationThreads && !stopExecution)
+      {
+        emit progressing();
+        msleep(15);
+      }
+
+      if(!noSuccess)
+        break;
     }
 
-    while(noSuccess &&
-          (
-             runningDestinationThreads >= QThread::idealThreadCount() ||
-             (triedIndexDeparture.count() == countResult && runningDestinationThreads != 0)
-          )
-         )
-    {
-      emit progressing();
-      sleep(1);
-    }
-
-    if(!noSuccess || triedIndexDeparture.count() == countResult)
-      break;
+    data->remove(indexDeparture);
+    size = data->size();
   }
-  while(true);
+  while(size && !stopExecution && predefinedAirportIndex == -1);
 
-  RandomDestinationAirportPickingByCriteria::stopExecution = true;
-  while(runningDestinationThreads > 0)
+  stopExecution = true;
+  while(runningDestinationThreads)
   {
-    sleep(1); // make sure all destination threads which still might use data have exited but not be a tight loop
+    // make sure all destination threads which still might
+    // send data have exited but not be a tight loop
+    // (1ms is not tight)
+    msleep(1);
   }
 
-  if(departureSuccess && foundIndexDestination > -1)
-  {
-    emit resultReady(true, associatedIndexDeparture, foundIndexDestination, this->data);
-  }
-  else
-  {
-    // on cancellation departureSuccess is true and noSuccess is false but foundIndexDestination is still -1
-    emit resultReady(false, -1, -1, this->data);
-  }
+  emit resultReady(foundIndexDestination > -1, indexDeparture, foundIndexDestination, data);
 }
 
-void RandomDepartureAirportPickingByCriteria::dataReceived(const bool isSuccess, const int indexDeparture, const int indexDestination)
+void RandomDepartureAirportPickingByCriteria::dataReceived(const bool isSuccess,
+                                                           const int indexDestination,
+                                                           const int threadId)
 {
+  // the object this method belongs to lives in the main thread
+  // the main thread runs methods called in it sequentially
+  // https://doc.qt.io/qt-5/qobject.html#thread-affinity
+  // the caller is a thread which was created in this run call which is a different thread from the main thread
+  // hence the signal-slot-connection type should be Qt::QueuedConnection automatically
+  // furthermore associatedIndexDeparture and foundIndexDestination are read after all potantial callers exited
+  // thus they ought always be from 1 caller and not possibly be from 2 caller (ie. the following ought not occur:
+  // caller thread 2 sets associatedIndexDeparture before it is read and foundIndexDestination is still from
+  // caller thread 1 and was read before)
   if(isSuccess)
   {
-    associatedIndexDeparture = indexDeparture;
     foundIndexDestination = indexDestination;
     noSuccess = false;
   }
+  // this thread does not have an event loop
+  // started threads would only be deleted when this thread is deleted
+  // https://doc.qt.io/qt-5/qobject.html#deleteLater
+  // this would keep resources in use unneccessarily and which could be used elsewhere better
+  // furthermore this thread used to be parented to the main thread and would only
+  // be deleted on program exit.
+  delete departureThreads.take(threadId);
   --runningDestinationThreads;
 }
 
 void RandomDepartureAirportPickingByCriteria::cancellationReceived()
 {
-  noSuccess = false;
-  RandomDestinationAirportPickingByCriteria::stopExecution = true;
+  stopExecution = true;
 }
