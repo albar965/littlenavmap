@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -389,6 +389,22 @@ private:
   static QString u(float num, const QString& un, bool addUnit, bool narrow = false);
   static QString localOtherText(bool localBold, bool otherSmall);
   static QString localOtherText2(bool localBold, bool otherSmall);
+
+  static QChar ns(float latY)
+  {
+    return latY > 0.f ? 'N' : 'S';
+  }
+
+  static QChar ew(float lonX)
+  {
+    return lonX > 0.f ? 'E' : 'W';
+  }
+
+  /* Negative sign or empty */
+  static QString s(float ord)
+  {
+    return ord < 0.f ? "-" : QString();
+  }
 
   static const OptionData *opts;
   static QLocale *locale, *clocale;

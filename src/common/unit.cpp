@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -784,22 +784,22 @@ QString Unit::coordsLonX(const ageo::Pos& pos, opts::UnitCoords coordUnit)
              arg(atools::absInt(pos.getLonXDeg())).
              arg(atools::absInt(pos.getLonXMin())).
              arg(std::abs(pos.getLonXSec()), 0, 'f', 2).
-             arg(pos.getLonX() > 0.f ? "E" : "W");
+             arg(ew(pos.getLonX()));
 
     case opts::COORDS_DEC:
       return COORDS_DEC_FORMAT_LONX.
              arg(std::abs(pos.getLonX()), 0, 'f', 4, QChar('0')).
-             arg(pos.getLonX() > 0.f ? "E" : "W");
+             arg(ew(pos.getLonX()));
 
     case opts::COORDS_DM:
       return COORDS_DM_FORMAT_LONX.
              arg(atools::absInt(pos.getLonXDeg())).
              arg(std::abs(pos.getLonXMin() + pos.getLonXSec() / 60.f), 0, 'f', 2).
-             arg(pos.getLonX() > 0.f ? "E" : "W");
+             arg(ew(pos.getLonX()));
 
     case opts::COORDS_DECIMAL_GOOGLE:
-      return COORDS_DM_GOOGLE_FORMAT_LONX.
-             arg(pos.getLonXDeg()).
+      return s(pos.getLonX()) % COORDS_DM_GOOGLE_FORMAT_LONX.
+             arg(std::abs(pos.getLonXDeg())).
              arg(std::abs(pos.getLonXMin() + pos.getLonXSec() / 60.f), 0, 'f', 2);
   }
   return QString();
@@ -826,22 +826,22 @@ QString Unit::coordsLatY(const ageo::Pos& pos, opts::UnitCoords coordUnit)
              arg(atools::absInt(pos.getLatYDeg())).
              arg(atools::absInt(pos.getLatYMin())).
              arg(std::abs(pos.getLatYSec()), 0, 'f', 2).
-             arg(pos.getLatY() > 0.f ? "N" : "S");
+             arg(ns(pos.getLatY()));
 
     case opts::COORDS_DEC:
       return COORDS_DEC_FORMAT_LATY.
              arg(std::abs(pos.getLatY()), 0, 'f', 4, QChar('0')).
-             arg(pos.getLatY() > 0.f ? "N" : "S");
+             arg(ns(pos.getLatY()));
 
     case opts::COORDS_DM:
       return COORDS_DM_FORMAT_LATY.
              arg(atools::absInt(pos.getLatYDeg())).
              arg(std::abs(pos.getLatYMin() + pos.getLatYSec() / 60.f), 0, 'f', 2).
-             arg(pos.getLatY() > 0.f ? "N" : "S");
+             arg(ns(pos.getLatY()));
 
     case opts::COORDS_DECIMAL_GOOGLE:
-      return COORDS_DM_GOOGLE_FORMAT_LATY.
-             arg(pos.getLatYDeg()).
+      return s(pos.getLatY()) % COORDS_DM_GOOGLE_FORMAT_LATY.
+             arg(std::abs(pos.getLatYDeg())).
              arg(std::abs(pos.getLatYMin() + pos.getLatYSec() / 60.f), 0, 'f', 2);
   }
   return QString();
