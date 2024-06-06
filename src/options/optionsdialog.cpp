@@ -324,6 +324,8 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
                                                                                                      "options page \"Units\"."), optsac::ITEM_AI_AIRCRAFT_COORDINATES);
   addItem<optsac::DisplayOptionsAiAircraft>(aiAircraft, displayOptItemIndexAi, tr("Distance and Bearing from User"), tr("Distance and magnetic bearing from user aircraft\n"
                                                                                                                         "prefixed with \"From User\"."), optsac::ITEM_AI_AIRCRAFT_DIST_BEARING_FROM_USER);
+  addItem<optsac::DisplayOptionsAiAircraft>(aiAircraft, displayOptItemIndexAi, tr("Object ID"), tr("Internal object ID for traffic development or debugging.\n"
+                                                                                                   "Value is prefixed with \"ID\" and depends on simulator."), optsac::ITEM_AI_AIRCRAFT_OBJECT_ID);
 
   // Compass rose =====================================================
   QTreeWidgetItem *compassRose = addTopItem(tr("Compass Rose"), tr("Select display options for the compass rose."));

@@ -232,13 +232,13 @@ void MapPainterVehicle::paintTextLabelAi(float x, float y, float size, const Sim
      forceLabelNearby) // Close to user aircraft
   {
     bool hidden = false; // Set by aiDisp() if any value is requested and available but excluded by detail level
-    bool text = layer->isAiAircraftText(); // Show any text
+    bool drawText = layer->isAiAircraftText(); // Show any text
     bool detail1 = layer->isAiAircraftTextDetail(); // Lowest detail level up to higher zoom
     bool detail2 = layer->isAiAircraftTextDetail2(); // Higher detail
     bool detail3 = layer->isAiAircraftTextDetail3(); // Highest detail on lower zoom only
 
     if(forceLabelNearby)
-      detail1 = detail2 = text;
+      detail1 = detail2 = drawText;
 
     // Speeds ====================================================================================
 
@@ -318,14 +318,18 @@ void MapPainterVehicle::paintTextLabelAi(float x, float y, float size, const Sim
     // Aircraft information ====================================================================================
     // Formatting depends on list size
     prependAtcText(texts, aircraft,
-                   aiDisp(hidden, optsac::ITEM_AI_AIRCRAFT_REGISTRATION, text, aircraft.getAirplaneRegistration()),
+                   aiDisp(hidden, optsac::ITEM_AI_AIRCRAFT_REGISTRATION, drawText, aircraft.getAirplaneRegistration()),
                    aiDisp(hidden, optsac::ITEM_AI_AIRCRAFT_TYPE, detail1, aircraft.getAirplaneModel()),
-                   aiDisp(hidden, optsac::ITEM_AI_AIRCRAFT_AIRLINE, text, aircraft.getAirplaneAirline()),
-                   aiDisp(hidden, optsac::ITEM_AI_AIRCRAFT_FLIGHT_NUMBER, text, aircraft.getAirplaneFlightnumber()),
+                   aiDisp(hidden, optsac::ITEM_AI_AIRCRAFT_AIRLINE, drawText, aircraft.getAirplaneAirline()),
+                   aiDisp(hidden, optsac::ITEM_AI_AIRCRAFT_FLIGHT_NUMBER, drawText, aircraft.getAirplaneFlightnumber()),
                    aiDisp(hidden, optsac::ITEM_AI_AIRCRAFT_TRANSPONDER_CODE, detail3, aircraft.isTransponderCodeValid() && flying),
                    detail2 ? 20 : 8, // elideAirline
                    detail3 ? 150 : 70 // maxTextWidth
                    );
+
+    // Object ID ====================================================================================
+    if(aiDisp(hidden, optsac::ITEM_AI_AIRCRAFT_OBJECT_ID, drawText))
+      texts.prepend(tr("ID %1").arg(aircraft.getObjectId()));
 
 #ifdef DEBUG_INFORMATION_AI
     texts.prepend(QString("[%1%2%3%4%5]").
