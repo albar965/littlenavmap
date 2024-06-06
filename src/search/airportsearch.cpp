@@ -110,7 +110,10 @@ AirportSearch::AirportSearch(QMainWindow *parent, QTableView *tableView, si::Tab
     ui->actionAirportSearchShowAltOptions,
     ui->actionAirportSearchShowDistOptions,
     ui->actionAirportSearchShowFlightplanOptions,
-    ui->actionAirportSearchShowSceneryOptions
+    ui->actionAirportSearchShowSceneryOptions,
+
+    ui->spinBoxAirportFlightplanMaxSearch,
+    ui->spinBoxAirportFlightplanMinSearch
   };
 
   // All drop down menu actions
