@@ -19,6 +19,7 @@
 #define LITTLENAVMAP_AIRPORTSEARCH_H
 
 #include "search/searchbasetable.h"
+#include "search/randomdepartureairportpickingbycriteria.h"
 
 class Column;
 class AirportIconDelegate;
@@ -96,6 +97,9 @@ private:
 
   /* Update min/max values in RFG spin boxes */
   void keepRandomFlightRangeSane();
+
+  /* RFG departure search thread */
+  RandomDepartureAirportPickingByCriteria *departurePicker;
 
   /* RFG search progress feedback */
   QProgressDialog *randomFlightSearchProgress = nullptr;

@@ -33,31 +33,37 @@ class RandomDestinationAirportPickingByCriteria :
   Q_OBJECT
 
 public:
-  RandomDestinationAirportPickingByCriteria(int indexDeparture);
+  RandomDestinationAirportPickingByCriteria(int threadId,
+                                            int dataRangeIndexStart,
+                                            int dataRangeLength);
 
-  // required calling !!!
-  static void initStatics(std::pair<int, atools::geo::Pos> *data,
-                          int distanceMinMeter,
-                          int distanceMaxMeter,
-                          int countResult);
+  // required calling !!! once, before first construction
+  static void initStatics(int distanceMinMeter,
+                          int distanceMaxMeter);
+
+  // required calling !!! per construction before constructing
+  // data is whole set
+  static void initData(std::pair<int, atools::geo::Pos> *data,
+                       int indexDeparture);
 
   void run() override;
 
 signals:
-  void resultReady(const bool isSuccess, const int indexDeparture, const int indexDestination);
+  void resultReady(const bool isSuccess, const int indexDestination, const int threadId);
 
 private:
-  friend class RandomDepartureAirportPickingByCriteria;
-  static bool stopExecution; // Qt has no way to finally stop a thread
-  int indexDeparture;
-  static std::pair<int, atools::geo::Pos> *data;
-  static int distanceMin;
-  static int distanceMax;
-  static int countResult;
+  int threadId;
+  int dataRangeIndexStart;
+  int dataRangeLength;
   // randomLimit :  above this limit values are not tried to be found randomly
   // because there will only be few "space" to "pick" from making random picks
   // take long, instead values are taken linearly from the remaining values
-  static int randomLimit;
+  int randomLimit;
+  std::pair<int, atools::geo::Pos> *offsettedData;
+  static std::pair<int, atools::geo::Pos> *data;
+  static int distanceMin;
+  static int distanceMax;
+  static int indexDeparture;
 };
 
 #endif // RANDOMDESTINATIONAIRPORTPICKINGBYCRITERIA_H

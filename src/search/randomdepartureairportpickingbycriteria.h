@@ -18,8 +18,11 @@
 #ifndef RANDOMDEPARTUREAIRPORTPICKINGBYCRITERIA_H
 #define RANDOMDEPARTUREAIRPORTPICKINGBYCRITERIA_H
 
+#include "search/randomdestinationairportpickingbycriteria.h"
+
 #include <QObject>
 #include <QThread>
+#include <QMap>
 
 namespace atools {
   namespace geo {
@@ -27,30 +30,34 @@ namespace atools {
   }
 }
 
-// per destination thread a different departure airport is used
-// destination threads don't sync themselves
-// hence the multi-threading here is like multiple single searches
-// parallely because we can. Whichever thread first finds a match
-// results in all other threads getting timed out
-// this departure thread should only be instantiated 1 at a time
+// 1 departure thread creates many destination threads.
+// destination threads each search on a different part of the data.
+// when a match is found, all other threads are timed out.
+// when no destination is found for a departure, that departure
+// is removed from the set of destinations for the next departure.
+// the departure thread should only be instantiated 1 at a time.
 class RandomDepartureAirportPickingByCriteria :
   public QThread
 {
   Q_OBJECT
 
 public:
-  explicit RandomDepartureAirportPickingByCriteria(QObject *parent,
-                                                   int predefinedAirportIndex);
+  explicit RandomDepartureAirportPickingByCriteria();
 
   // required calling !!!
+  // the number of items in data can have been reduced when search
+  // is done or cancelled
   static void initStatics(QVector<std::pair<int, atools::geo::Pos> > *data,
                           int distanceMinMeter,
-                          int distanceMaxMeter);
+                          int distanceMaxMeter,
+                          int predefinedAirportIndex);
 
   void run() override;
 
 public slots:
-  void dataReceived(const bool isSuccess, const int indexDeparture, const int indexDestination);
+  void dataReceived(const bool isSuccess,
+                    const int indexDestination,
+                    const int threadId);
   void cancellationReceived();
 
 signals:
@@ -61,19 +68,15 @@ signals:
   void progressing();
 
 private:
-  int predefinedAirportIndex;
-  bool noSuccess;
-  int foundIndexDestination;
-  int associatedIndexDeparture;
-  static QVector<std::pair<int, atools::geo::Pos> > *data;
-  static int distanceMin;
-  static int distanceMax;
-  static int countResult;
-  // randomLimit :  above this limit values are not tried to be found randomly
-  // because there will only be few "space" to "pick" from making random picks
-  // take long, instead values are taken linearly from the remaining values
-  static int randomLimit;
+  friend class RandomDestinationAirportPickingByCriteria;
+  QMap<int, RandomDestinationAirportPickingByCriteria*> departureThreads;
   int runningDestinationThreads;
+  int foundIndexDestination = -1;
+  bool noSuccess = true;
+  static QVector<std::pair<int, atools::geo::Pos> > *data;
+  static int predefinedAirportIndex;
+  static int numberDestinationsSetParts;
+  static bool stopExecution;
 };
 
 #endif // RANDOMDEPARTUREAIRPORTPICKINGBYCRITERIA_H
