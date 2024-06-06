@@ -400,7 +400,7 @@ void AirportSearch::saveState()
   atools::gui::WidgetState widgetState(lnm::SEARCHTAB_AIRPORT_WIDGET);
   widgetState.save(airportSearchWidgets);
   saveViewState(viewStateDistSearch);
-  // TODO: make sure RFG state (min, max, predefined) is saved and restored
+  // TODO: make sure RFG state (min, max, predefined) is saved and restored.
 }
 
 void AirportSearch::restoreState()
@@ -799,7 +799,7 @@ void AirportSearch::randomFlightClicked(bool showDialog)
   {
     // Disable button to avoid multiple clicks
     ui->pushButtonAirportFlightplanSearch->setDisabled(true);
-    // TODO: lock predefined airport ui
+    // TODO: lock predefined airport ui.
 
     // Init progress bar, maximum equals seconds passed at 100% (per attempted departure)
     randomFlightSearchProgress = new QProgressDialog(tr("Random picking and criteria comparison running..."),
@@ -967,6 +967,6 @@ void AirportSearch::dataRandomAirportsReceived(bool isSuccess, int indexDepartur
     // clicking an enabled button just before the "if true"-case does it too
     // when this enabling would occur prior
     ui->pushButtonAirportFlightplanSearch->setDisabled(false);
-    // TODO: unlock predefined airport ui
+    // TODO: unlock predefined airport ui.
   }
 }
