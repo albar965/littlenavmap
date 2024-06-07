@@ -33,7 +33,7 @@ class RandomDestinationAirportPickingByCriteria :
   Q_OBJECT
 
 public:
-  RandomDestinationAirportPickingByCriteria(int threadId,
+  RandomDestinationAirportPickingByCriteria(int threadIndex,
                                             int dataRangeIndexStart,
                                             int dataRangeLength);
 
@@ -49,10 +49,10 @@ public:
   void run() override;
 
 signals:
-  void resultReady(const bool isSuccess, const int indexDestination, const int threadId);
+  void resultReady(const bool isSuccess, const int indexDestination, const int threadIndex);
 
 private:
-  int threadId;
+  int threadIndex;
   int dataRangeIndexStart;
   int dataRangeLength;
   // randomLimit :  above this limit values are not tried to be found randomly

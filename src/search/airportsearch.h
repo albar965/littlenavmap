@@ -93,7 +93,7 @@ private:
    */
 
   /* RFG push button clicked. showDialog is false if user clicked "Search again" */
-  void randomFlightClicked(bool showDialog);
+  void randomFlightClicked(bool showDialog = true);
 
   /* Update min/max values in RFG spin boxes */
   void keepRandomFlightRangeSane();
@@ -105,14 +105,13 @@ private:
   QProgressDialog *randomFlightSearchProgress = nullptr;
 
   // following indices as in controller->getSqlModel()->getFullResultSet()
-  // ui must make sure only 1 is > -1
   /* RFG predefined departure airport index */
   int predefinedDeparture = -1;
 
   /* RFG predefined destination airport index */
   int predefinedDestination = -1;
 
-  /* Remember user selection in case user clicks "Search again" */
+  /* Remember RFG user selection in case user clicks "Search again" */
   bool randomFixedDeparture = false, randomFixedDestination = false;
 
   /* Airports have to persist during search. List is cleared in AirportSearch::dataRandomAirportsReceived() */
