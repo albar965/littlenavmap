@@ -1716,6 +1716,10 @@ Not available for all simulators.</string>
                <property name="text">
                 <string>&amp;Random Flight</string>
                </property>
+               <property name="icon">
+                <iconset resource="../../littlenavmap.qrc">
+                 <normaloff>:/littlenavmap/resources/icons/random.svg</normaloff>:/littlenavmap/resources/icons/random.svg</iconset>
+               </property>
               </widget>
              </item>
              <item>
@@ -1770,13 +1774,13 @@ Not available for all simulators.</string>
                 <number>10</number>
                </property>
                <property name="maximum">
-                <number>20500</number>
+                <number>10800</number>
                </property>
                <property name="singleStep">
                 <number>10</number>
                </property>
                <property name="value">
-                <number>20500</number>
+                <number>10800</number>
                </property>
               </widget>
              </item>

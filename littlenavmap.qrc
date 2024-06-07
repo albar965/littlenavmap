@@ -347,5 +347,6 @@
         <file>resources/icons/airportaddonnone.svg</file>
         <file>resources/icons/airportaddonall.svg</file>
         <file>resources/icons/routerandom.svg</file>
+        <file>resources/icons/random.svg</file>
     </qresource>
 </RCC>
