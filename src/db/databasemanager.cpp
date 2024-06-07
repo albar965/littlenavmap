@@ -150,7 +150,7 @@ DatabaseManager::DatabaseManager(MainWindow *parent)
     databaseNavAirspace = new SqlDatabase(dbtools::DATABASE_NAME_NAV_AIRSPACE);
 
     // Open user point database =================================
-    openWriteableDatabase(databaseUser, "userdata", "user", true /* backup */);
+    openWriteableDatabase(databaseUser, "userdata", true /* backup */);
     userdataManager = new atools::fs::userdata::UserdataManager(databaseUser);
     if(!userdataManager->hasSchema())
       userdataManager->createSchema(false /* verboseLogging */);
@@ -158,7 +158,7 @@ DatabaseManager::DatabaseManager(MainWindow *parent)
       userdataManager->updateSchema();
 
     // Open logbook database =================================
-    openWriteableDatabase(databaseLogbook, "logbook", "logbook", true /* backup */);
+    openWriteableDatabase(databaseLogbook, "logbook", true /* backup */);
     logdataManager = new atools::fs::userdata::LogdataManager(databaseLogbook);
     if(!logdataManager->hasSchema())
       logdataManager->createSchema(false /* verboseLogging */);
@@ -166,7 +166,7 @@ DatabaseManager::DatabaseManager(MainWindow *parent)
       logdataManager->updateSchema();
 
     // Open user airspace database =================================
-    openWriteableDatabase(databaseUserAirspace, "userairspace", "userairspace", false /* backup */);
+    openWriteableDatabase(databaseUserAirspace, "userairspace", false /* backup */);
     if(!SqlUtil(databaseUserAirspace).hasTable("boundary"))
     {
       SqlTransaction transaction(databaseUserAirspace);
@@ -176,16 +176,15 @@ DatabaseManager::DatabaseManager(MainWindow *parent)
     }
 
     // Open track database =================================
-    openWriteableDatabase(databaseTrack, "track", "track", false /* backup */);
+    openWriteableDatabase(databaseTrack, "track", false /* backup */);
     trackManager = new TrackManager(databaseTrack, databaseNav);
     trackManager->createSchema(false /* verboseLogging */);
     // trackManager->initQueries();
 
     // Open online network database ==============================
-    atools::settings::Settings& settings = atools::settings::Settings::instance();
     bool verbose = settings.getAndStoreValue(lnm::OPTIONS_WHAZZUP_PARSER_DEBUG, false).toBool();
 
-    openWriteableDatabase(databaseOnline, "onlinedata", "online network", false /* backup */);
+    openWriteableDatabase(databaseOnline, "onlinedata", false /* backup */);
     onlinedataManager = new atools::fs::online::OnlinedataManager(databaseOnline, verbose);
     onlinedataManager->createSchema();
     onlinedataManager->initQueries();
@@ -263,7 +262,7 @@ bool DatabaseManager::checkIncompatibleDatabases(bool *databasesErased)
   // Need empty block to delete sqlDb before removing driver
   {
     // Create a temporary database
-    SqlDatabase sqlDb(dbtools::DATABASE_NAME_TEMP);
+    SqlDatabase db(dbtools::DATABASE_NAME_TEMP);
     QStringList databaseNames, databaseFiles;
 
     // Collect all incompatible databases
@@ -274,13 +273,13 @@ bool DatabaseManager::checkIncompatibleDatabases(bool *databasesErased)
       if(QFile::exists(dbName))
       {
         // Database file exists
-        sqlDb.setDatabaseName(dbName);
-        sqlDb.open();
+        db.setDatabaseName(dbName);
+        db.open(false /* readonly */);
 
-        DatabaseMeta meta(&sqlDb);
+        DatabaseMeta meta(&db);
         if(!meta.hasSchema())
           // No schema create an empty one anyway
-          dbtools::createEmptySchema(&sqlDb);
+          dbtools::createEmptySchema(&db);
         else if(!meta.isDatabaseCompatible())
         {
           // Not compatible add to list
@@ -288,21 +287,21 @@ bool DatabaseManager::checkIncompatibleDatabases(bool *databasesErased)
           databaseFiles.append(dbName);
           qWarning() << "Incompatible database" << dbName;
         }
-        sqlDb.close();
+        db.close();
       }
     }
 
     // Delete the dummy database without dialog if needed
     QString dummyName = buildDatabaseFileName(atools::fs::FsPaths::NONE);
-    sqlDb.setDatabaseName(dummyName);
-    sqlDb.open();
-    DatabaseMeta meta(&sqlDb);
+    db.setDatabaseName(dummyName);
+    db.open(false /* readonly */);
+    DatabaseMeta meta(&db);
     if(!meta.hasSchema() || !meta.isDatabaseCompatible())
     {
       qDebug() << Q_FUNC_INFO << "Updating dummy database" << dummyName;
-      dbtools::createEmptySchema(&sqlDb);
+      dbtools::createEmptySchema(&db);
     }
-    sqlDb.close();
+    db.close();
 
     if(!databaseNames.isEmpty())
     {
@@ -356,10 +355,10 @@ bool DatabaseManager::checkIncompatibleDatabases(bool *databasesErased)
             qInfo() << "Removed" << dbfile;
 
             // Create new database
-            sqlDb.setDatabaseName(dbfile);
-            sqlDb.open();
-            dbtools::createEmptySchema(&sqlDb);
-            sqlDb.close();
+            db.setDatabaseName(dbfile);
+            db.open();
+            dbtools::createEmptySchema(&db);
+            db.close();
 
             if(databasesErased != nullptr)
               *databasesErased = true;
@@ -976,8 +975,7 @@ void DatabaseManager::switchSimInternal(atools::fs::FsPaths::SimulatorType type)
   }
 }
 
-void DatabaseManager::openWriteableDatabase(atools::sql::SqlDatabase *database, const QString& name,
-                                            const QString& displayName, bool backup)
+void DatabaseManager::openWriteableDatabase(atools::sql::SqlDatabase *database, const QString& name, bool backup)
 {
   QString databaseName = databaseDirectory % QDir::separator() % lnm::DATABASE_PREFIX % name % lnm::DATABASE_SUFFIX;
 
@@ -1005,12 +1003,12 @@ void DatabaseManager::openWriteableDatabase(atools::sql::SqlDatabase *database, 
   catch(atools::sql::SqlException& e)
   {
     atools::gui::Dialog::critical(mainWindow,
-                                  tr("Cannot open %1 database. Reason:<br/><br/>"
-                                     "%2<br/><br/>"
-                                     "Is another instance of <i>%3</i> running?<br/><br/>"
+                                  tr("Cannot open database. Error message:<br/><br/>"
+                                     "%1<br/><br/>"
+                                     "File is either malformed or this is an internal error.<br/><br/>"
+                                     "You might want to report this.<br/><br/>"
                                      "Exiting now.").
-                                  arg(displayName).
-                                  arg(e.getSqlError().databaseText()).
+                                  arg(QString(e.what()).replace("\n", "<br/>")).
                                   arg(QCoreApplication::applicationName()));
 
     std::exit(1);
@@ -1787,10 +1785,10 @@ void DatabaseManager::updateDialogInfo(atools::fs::FsPaths::SimulatorType value)
   SqlDatabase tempDb(dbtools::DATABASE_NAME_DLG_INFO_TEMP);
 
   if(QFileInfo::exists(databaseFile))
-  { // Open temp database to show statistics
+  {
+    // Open temp database to show statistics
     tempDb.setDatabaseName(databaseFile);
-    tempDb.setReadonly();
-    tempDb.open();
+    tempDb.open(true /* readonly */);
   }
 
   atools::util::Version applicationVersion = DatabaseMeta::getApplicationVersion();
