@@ -28,11 +28,11 @@ int RandomDestinationAirportPickingByCriteria::distanceMin = 0;
 int RandomDestinationAirportPickingByCriteria::distanceMax = 0;
 int RandomDestinationAirportPickingByCriteria::indexDeparture = -1;
 
-RandomDestinationAirportPickingByCriteria::RandomDestinationAirportPickingByCriteria(int threadId,
+RandomDestinationAirportPickingByCriteria::RandomDestinationAirportPickingByCriteria(int threadIndex,
                                                                                      int dataRangeIndexStart,
                                                                                      int dataRangeLength)
 {
-  this->threadId = threadId;
+  this->threadIndex = threadIndex;
   this->dataRangeIndexStart = dataRangeIndexStart;
   this->dataRangeLength = dataRangeLength;
   randomLimit = (dataRangeLength * 7) / 10;
@@ -58,7 +58,7 @@ void RandomDestinationAirportPickingByCriteria::run()
   QMap<int, bool> triedIndexDestination;                    // acts as a lookup which indices have been tried already; QMap keys are sorted, lookup is very fast
   if(indexDeparture >= dataRangeIndexStart && indexDeparture < dataRangeIndexStart + dataRangeLength)
   {
-    triedIndexDestination.insert(indexDeparture, true);     // destination shall != departure
+    triedIndexDestination.insert(indexDeparture - dataRangeIndexStart, true);     // destination shall != departure
   }
   int indexDestination = -1;
   bool destinationSuccess;
@@ -90,7 +90,7 @@ void RandomDestinationAirportPickingByCriteria::run()
         }
       }
       triedIndexDestination.insert(indexDestination, true);
-      distMeter = departureSecond.distanceMeterTo(offsettedData[indexDestination].second); // distanceMeterTo checks for isValid
+      distMeter = departureSecond.distanceMeterTo(offsettedData[indexDestination].second);    // distanceMeterTo checks for isValid
     }
     while(distMeter == atools::geo::Pos::INVALID_VALUE);
     destinationSuccess = true;
@@ -98,5 +98,5 @@ void RandomDestinationAirportPickingByCriteria::run()
   while(distMeter < distanceMin || distMeter > distanceMax);
 
 destinationsEnd:
-  emit resultReady(destinationSuccess, indexDestination, threadId);
+  emit resultReady(destinationSuccess, dataRangeIndexStart + indexDestination, threadIndex);
 }

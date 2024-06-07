@@ -18,7 +18,6 @@
 #include "search/randomdepartureairportpickingbycriteria.h"
 #include "search/randomdestinationairportpickingbycriteria.h"
 
-#include "search/airportsearch.h"
 #include "geo/pos.h"
 
 #include <QRandomGenerator>
@@ -30,7 +29,6 @@ bool RandomDepartureAirportPickingByCriteria::stopExecution = false;
 
 RandomDepartureAirportPickingByCriteria::RandomDepartureAirportPickingByCriteria()
 {
-  runningDestinationThreads = 0;
 }
 
 void RandomDepartureAirportPickingByCriteria::initStatics(QVector<std::pair<int, atools::geo::Pos> > *data,
@@ -51,16 +49,15 @@ void RandomDepartureAirportPickingByCriteria::run()
   int indexDeparture;
   bool departureSuccess;
 
-  int numberDestinationThreadsStarted = 0;
   int size = data->size();
 
   do
   {
     if(predefinedAirportIndex == -1)
     {
+      departureSuccess = false;
       do
       {
-        departureSuccess = false;
         indexDeparture = QRandomGenerator::global()->bounded(size);
         if(data->at(indexDeparture).second.isValid())
         {
@@ -68,7 +65,7 @@ void RandomDepartureAirportPickingByCriteria::run()
           break;
         }
         data->remove(indexDeparture);
-        size = data->size();
+        --size;
       }
       while(size && !stopExecution);
     }
@@ -82,69 +79,78 @@ void RandomDepartureAirportPickingByCriteria::run()
     {
       // if a CPU affinity tool is used on lnm.exe, all threads created by Qt
       // might be run on the designated core instead of being evenly distributed
-      // (at least with Process Lasso)
+      // (at least with a Process Lasso version used)
+
+      destinationPickerState.clear();
+      QVector<RandomDestinationAirportPickingByCriteria*> destinationThreads;
+
+      int runningDestinationThreads = 0;
+
       int lengthDestinationsSetPart = size / numberDestinationsSetParts;
       int counter = numberDestinationsSetParts - 1;
       int lengthLastDestinationsSetPart = size - counter * lengthDestinationsSetPart;
 
       RandomDestinationAirportPickingByCriteria::initData(data->data(), indexDeparture);
 
-      ++runningDestinationThreads;
-      ++numberDestinationThreadsStarted;
-      RandomDestinationAirportPickingByCriteria *destinationPicker = new RandomDestinationAirportPickingByCriteria(numberDestinationThreadsStarted,
+      RandomDestinationAirportPickingByCriteria *destinationPicker = new RandomDestinationAirportPickingByCriteria(runningDestinationThreads,
                                                                                                                    counter * lengthDestinationsSetPart,
                                                                                                                    lengthLastDestinationsSetPart);
-      departureThreads.insert(numberDestinationThreadsStarted, destinationPicker);
+      destinationThreads.append(destinationPicker);
+      destinationPickerState.append(false);
       connect(destinationPicker, &RandomDestinationAirportPickingByCriteria::resultReady,
               this, &RandomDepartureAirportPickingByCriteria::dataReceived);
-      destinationPicker->start();
+      ++runningDestinationThreads;
 
       if(lengthDestinationsSetPart)
       {
         while(counter && !stopExecution)
         {
-          ++runningDestinationThreads;
-          ++numberDestinationThreadsStarted;
-          RandomDestinationAirportPickingByCriteria *destinationPicker = new RandomDestinationAirportPickingByCriteria(numberDestinationThreadsStarted,
-                                                                                                                        --counter * lengthDestinationsSetPart,
-                                                                                                                       lengthDestinationsSetPart);
-          departureThreads.insert(numberDestinationThreadsStarted, destinationPicker);
+          destinationPicker = new RandomDestinationAirportPickingByCriteria(runningDestinationThreads,
+                                                                            --counter * lengthDestinationsSetPart,
+                                                                            lengthDestinationsSetPart);
+          destinationThreads.append(destinationPicker);
+          destinationPickerState.append(false);
           connect(destinationPicker, &RandomDestinationAirportPickingByCriteria::resultReady,
                   this, &RandomDepartureAirportPickingByCriteria::dataReceived);
-          destinationPicker->start();
+          ++runningDestinationThreads;
         }
       }
 
-      while(noSuccess && runningDestinationThreads && !stopExecution)
+      dataDestinationPickerState = destinationPickerState.data();
+      foreach (destinationPicker, destinationThreads)
+        destinationPicker->start();
+
+      while(destinationPickerState.contains(false))
       {
         emit progressing();
         msleep(15);
       }
+      // QThreads run was about to end (no false state anymore) but
+      // that it really did and not does wait in a limbo before it
+      // finally advances "1 instruction further" and hence QThread
+      // object can be safely deleted is not guaranteed.
+      // When using deleteLater we would have to wait for this thread
+      // to end for all resources be released. I don't want to wait.
+      msleep(30);
+      do
+        delete destinationThreads.takeLast();
+      while(!destinationThreads.isEmpty());
 
-      if(!noSuccess)
+      if(success)
         break;
     }
 
     data->remove(indexDeparture);
-    size = data->size();
+    --size;
   }
   while(size && !stopExecution && predefinedAirportIndex == -1);
-
-  stopExecution = true;
-  while(runningDestinationThreads)
-  {
-    // make sure all destination threads which still might
-    // send data have exited but not be a tight loop
-    // (1ms is not tight)
-    msleep(1);
-  }
 
   emit resultReady(foundIndexDestination > -1, indexDeparture, foundIndexDestination, data);
 }
 
 void RandomDepartureAirportPickingByCriteria::dataReceived(const bool isSuccess,
                                                            const int indexDestination,
-                                                           const int threadId)
+                                                           const int threadIndex)
 {
   // the object this method belongs to lives in the main thread
   // the main thread runs methods called in it sequentially
@@ -158,7 +164,7 @@ void RandomDepartureAirportPickingByCriteria::dataReceived(const bool isSuccess,
   if(isSuccess)
   {
     foundIndexDestination = indexDestination;
-    noSuccess = false;
+    success = true;
   }
   // this thread does not have an event loop
   // started threads would only be deleted when this thread is deleted
@@ -166,8 +172,8 @@ void RandomDepartureAirportPickingByCriteria::dataReceived(const bool isSuccess,
   // this would keep resources in use unneccessarily and which could be used elsewhere better
   // furthermore this thread used to be parented to the main thread and would only
   // be deleted on program exit.
-  delete departureThreads.take(threadId);
-  --runningDestinationThreads;
+  // QVector.replace is not marked as thread-safe in Qt documentation
+  dataDestinationPickerState[threadIndex] = true;
 }
 
 void RandomDepartureAirportPickingByCriteria::cancellationReceived()

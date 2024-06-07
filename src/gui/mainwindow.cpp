@@ -2303,9 +2303,9 @@ void MainWindow::routeNew()
   }
 }
 
-void MainWindow::routeNewFromAirports(map::MapAirport departure, map::MapAirport destination)
+void MainWindow::routeNewFromAirports(map::MapAirport departure, map::MapAirport destination, bool force)
 {
-  if(routeCheckForChanges())
+  if(force || routeCheckForChanges())
   {
     routeController->newFlightplan();
     routeController->routeSetDeparture(departure);

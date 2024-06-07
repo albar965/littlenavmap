@@ -57,7 +57,7 @@ public:
 public slots:
   void dataReceived(const bool isSuccess,
                     const int indexDestination,
-                    const int threadId);
+                    const int threadIndex);
   void cancellationReceived();
 
 signals:
@@ -69,10 +69,10 @@ signals:
 
 private:
   friend class RandomDestinationAirportPickingByCriteria;
-  QMap<int, RandomDestinationAirportPickingByCriteria*> departureThreads;
-  int runningDestinationThreads;
+  QVector<bool> destinationPickerState;   // false = running, true = done
+  bool* dataDestinationPickerState;
   int foundIndexDestination = -1;
-  bool noSuccess = true;
+  bool success = false;
   static QVector<std::pair<int, atools::geo::Pos> > *data;
   static int predefinedAirportIndex;
   static int numberDestinationsSetParts;
