@@ -49,7 +49,7 @@
 
 /* Default values for minimum and maximum random flight plan distance */
 const static float FLIGHTPLAN_MIN_DISTANCE_DEFAULT_NM = 0.f;
-const static float FLIGHTPLAN_MAX_DISTANCE_DEFAULT_NM = 20500.f;
+const static float FLIGHTPLAN_MAX_DISTANCE_DEFAULT_NM = 10800.f;
 
 // Align right and omit if value is 0
 const static QSet<QString> AIRPORT_NUMBER_COLUMNS({"num_approach", "num_runway_hard", "num_runway_soft", "num_runway_water",
@@ -403,7 +403,6 @@ void AirportSearch::saveState()
   atools::gui::WidgetState widgetState(lnm::SEARCHTAB_AIRPORT_WIDGET);
   widgetState.save(airportSearchWidgets);
   saveViewState(viewStateDistSearch);
-  // TODO: make sure RFG state (min, max, predefined) is saved and restored.
 }
 
 void AirportSearch::restoreState()
@@ -837,8 +836,8 @@ void AirportSearch::randomFlightClicked(bool showDialog)
     qDebug() << Q_FUNC_INFO << "random flight, distance min" << distanceMinMeter << "random flight, distance max" << distanceMaxMeter;
 
     // Fetch data from SQL model
-    randomSearchAirports.clear();
-    controller->getSqlModel()->getFullResultSet(randomSearchAirports);
+    if(randomSearchAirports.isEmpty())
+      controller->getSqlModel()->getFullResultSet(randomSearchAirports);
 
     // (re)set both to "no predefinition"
     predefinedDeparture = predefinedDestination = -1;
@@ -872,6 +871,7 @@ void AirportSearch::randomFlightClicked(bool showDialog)
              << "predefinedDeparture" << predefinedDeparture << "predefinedDestination" << predefinedDestination;
 
     RandomDepartureAirportPickingByCriteria::initStatics(&randomSearchAirports,
+                                                         &randomUnwantedAirports,
                                                          atools::roundToInt(distanceMinMeter),
                                                          atools::roundToInt(distanceMaxMeter),
                                                          predefinedDeparture > -1 ? predefinedDeparture : predefinedDestination);
@@ -901,6 +901,9 @@ void AirportSearch::dataRandomAirportsReceived(bool isSuccess, int indexDepartur
 
   if(!randomFlightSearchProgress->wasCanceled())
   {
+    // early delete, prevent show progressbar timeout is after search result found
+    delete randomFlightSearchProgress;
+
     if(isSuccess)
     {
       // only 1 predefined index should be > -1 if at all
@@ -963,9 +966,9 @@ void AirportSearch::dataRandomAirportsReceived(bool isSuccess, int indexDepartur
       }
     }
     else
-      atools::gui::Dialog::information(NavApp::getMainWindow(), tr("No airports found in the search result satisfying the criteria."));
+      atools::gui::Dialog::information(NavApp::getMainWindow(), tr("No (further) airports satisfying your criteria\nfound in the airport search result table."));
 
-    // we can delete, due to dialog gieving signalling thread
+    // we can delete, due to dialog giving signalling thread
     // breathing room to advance that "1 instruction further"
     // to be truly finished
     delete departurePicker;
@@ -974,25 +977,30 @@ void AirportSearch::dataRandomAirportsReceived(bool isSuccess, int indexDepartur
   {
     // Do not show any dialogs at all if user canceled.
 
+    delete randomFlightSearchProgress;
+
     // This will defer to application exit = main event
     // loop end as far as I understood Qt documentation
     departurePicker->deleteLater();
   }
 
-  // Clear data from controller->getSqlModel()->getFullResultSet()
-  randomSearchAirports.clear();
-
-  delete randomFlightSearchProgress;
   randomFlightSearchProgress = nullptr;
 
   if(tryAgain)
   {
+    // we don't want this pair of airport id anymore
+    randomUnwantedAirports.append(std::make_pair(data->at(indexDeparture).first, data->at(indexDestination).first));
+
     // Do again but do not show dialog
     QTimer::singleShot(1, this, std::bind(&AirportSearch::randomFlightClicked, this, false /* showDialog */));
     // the documentation doesn't state asynchronity is guaranteed when passing 0
   }
   else
   {
+    // Clear data from controller->getSqlModel()->getFullResultSet()
+    randomSearchAirports.clear();
+    randomUnwantedAirports.clear();
+
     // Enable button again, don't risk randomFlightClicked called due to user
     // clicking an enabled button just before the "if true"-case does it too
     // when this enabling would occur prior

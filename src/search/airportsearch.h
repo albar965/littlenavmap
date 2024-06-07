@@ -117,6 +117,9 @@ private:
   /* Airports have to persist during search. List is cleared in AirportSearch::dataRandomAirportsReceived() */
   QVector<std::pair<int, atools::geo::Pos> > randomSearchAirports;
 
+  /* for "Search again" */
+  QVector<std::pair<int, int> > randomUnwantedAirports;
+
   /* All layouts, lines and drop down menu items */
   QList<QObject *> airportSearchWidgets;
 
