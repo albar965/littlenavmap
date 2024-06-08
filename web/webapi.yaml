@@ -239,479 +239,479 @@ components  :
         lon                 :
           type                : number
     AirportInfoResponse :
-      type								: object
-      properties					:
-        activeDateTime				:
-          description						: The active LNM time
-          example								: "Fr Jul 9 19:54:59 2021 GMT"
-          type									: string
-          format								: date-time
-        activeDateTimeSource	:
-          description						: The active LNM time source
-          example								:
+      type                : object
+      properties          :
+        activeDateTime        :
+          description           : The active LNM time
+          example               : "Fr Jul 9 19:54:59 2021 GMT"
+          type                  : string
+          format                : date-time
+        activeDateTimeSource  :
+          description           : The active LNM time source
+          example               :
             - "simulator date"
             - "real date"
-          type									: string
-        city									:
-          description						: The airports city
-          example								: "München"
-          type									: string
-        closed								:
-          description						: airport closed
-          type									: boolean
-        com										: 
-          description						: The airports available COM frequencies
-          type									: object
-          properties						:
-            ATIS									:
-              type									: number
-              description						: Only set if available. (Format 000,000 MHz)
-              example								: "123450"
-            Tower									:
-              type									: number
-              description						: Only set if available. (Format 000,000 MHz)
-              example								: "123450"
-            AWOS									:
-              type									: number
-              description						: Only set if available. (Format 000,000 MHz)
-              example								: "123450"
-            ASOS									:
-              type									: number
-              description						: Only set if available. (Format 000,000 MHz)
-              example								: "123450"
-            UNICOM								:
-              type									: number
-              description						: Only set if available. (Format 000,000 MHz)
-              example								: "123450"
-        country								: 
-          description						: The airports country
-          type									: string
-          example								: ""
-        elevation							: 
-          description						: The airports elevation in feet
-          type									: number
-          example								: "1468"
-        facilities						:
-          description						: Array of airport facilities/features
-          type									: array 
-          items									:
-            type									: string
-            example								:
+          type                  : string
+        city                  :
+          description           : The airports city
+          example               : "München"
+          type                  : string
+        closed                :
+          description           : airport closed
+          type                  : boolean
+        com                   : 
+          description           : The airports available COM frequencies
+          type                  : object
+          properties            :
+            ATIS                  :
+              type                  : number
+              description           : Only set if available. (Format 000,000 MHz)
+              example               : "123450"
+            Tower                 :
+              type                  : number
+              description           : Only set if available. (Format 000,000 MHz)
+              example               : "123450"
+            AWOS                  :
+              type                  : number
+              description           : Only set if available. (Format 000,000 MHz)
+              example               : "123450"
+            ASOS                  :
+              type                  : number
+              description           : Only set if available. (Format 000,000 MHz)
+              example               : "123450"
+            UNICOM                :
+              type                  : number
+              description           : Only set if available. (Format 000,000 MHz)
+              example               : "123450"
+        country               : 
+          description           : The airports country
+          type                  : string
+          example               : ""
+        elevation             : 
+          description           : The airports elevation in feet
+          type                  : number
+          example               : "1468"
+        facilities            :
+          description           : Array of airport facilities/features
+          type                  : array 
+          items                 :
+            type                  : string
+            example               :
               - "Aprons"
               - "Taxiways"
               - "ILS"
               - "Avgas"
               - "Jetfuel"
-        iata									: 
-          description						: The airports IATA code
-          type									: string
-          example								: ""
-        icao									: 
-          description						: The airports ICAO code
-          type									: string
-          example								: ""
-        ident									: 
-          description						: The airports ident (ICAO)
-          type									: string
-          example								: "EDDM"
-        longestRunwayHeading	: 
-          description						: The airports longest runway heading
-          type									: string
-          example								: "81°M, 261°M"
-        longestRunwayLength		: 
-          description						: The airports longest runway length in metres
-          type									: number
-          example								: "13106"
-        longestRunwaySurface	: 
-          description						: The airports longest runway surface
-          type									: string
-          example								:  "CE"
-        longestRunwayWidth		: 
-          description						: The airports longest runway width in metres
-          type									: number
-          example								: "188"
-        magneticDeclination		: 
-          description						: The airports magnetic variation/declination (+/East, -/West)
-          type									: number
-          example								: "1.9"
-        metar									: 
-          description						: The airports METAR weather reports
-          type									: object
-          properties						:
-            simulator							: 
-              description						: Only set if available
-              type									: object
-              properties						:
-                nearest								: 
-                  type									: string
-                  example								: "EDDM 091920Z 35005KT 320V020 9999 -SHRA FEW015 SCT025CB 16/14 Q1022 RESHRA NOSIG"
-                station								: 
-                  type									: string
-                  example								: "EDDM 091920Z 35005KT 320V020 9999 -SHRA FEW015 SCT025CB 16/14 Q1022 RESHRA NOSIG"
-            activesky							: 
-              description						: Only set if available
-              type									: object
-              properties						:
-                nearest								: 
-                  type									: string
-                  example								: "EDDM 091920Z 35005KT 320V020 9999 -SHRA FEW015 SCT025CB 16/14 Q1022 RESHRA NOSIG"
-                station								: 
-                  type									: string
-                  example								: "EDDM 091920Z 35005KT 320V020 9999 -SHRA FEW015 SCT025CB 16/14 Q1022 RESHRA NOSIG"
-            noaa									: 
-              description						: Only set if available
-              type									: object
-              properties						:
-                nearest								: 
-                  type									: string
-                  example								: "EDDM 091920Z 35005KT 320V020 9999 -SHRA FEW015 SCT025CB 16/14 Q1022 RESHRA NOSIG"
-                station								: 
-                  type									: string
-                  example								: "EDDM 091920Z 35005KT 320V020 9999 -SHRA FEW015 SCT025CB 16/14 Q1022 RESHRA NOSIG"
-            vatsim								: 
-              description						: Only set if available
-              type									: object
-              properties						:
-                nearest								: 
-                  type									: string
-                  example								: "EDDM 091920Z 35005KT 320V020 9999 -SHRA FEW015 SCT025CB 16/14 Q1022 RESHRA NOSIG"
-                station								: 
-                  type									: string
-                  example								: "EDDM 091920Z 35005KT 320V020 9999 -SHRA FEW015 SCT025CB 16/14 Q1022 RESHRA NOSIG"
-            ivao									: 
-              description						: Only set if available
-              type									: object
-              properties						:
-                nearest								: 
-                  type									: string
-                  example								: "EDDM 091920Z 35005KT 320V020 9999 -SHRA FEW015 SCT025CB 16/14 Q1022 RESHRA NOSIG"
-                station								: 
-                  type									: string
-                  example								: "EDDM 091920Z 35005KT 320V020 9999 -SHRA FEW015 SCT025CB 16/14 Q1022 RESHRA NOSIG"
-        name									: 
-          description						: The airports name
-          type									: string
-          example								: "München"
-        parking								:
-          description						: The airports parking capacities
-          type									: object
-          properties						:
-            gates									:
-              type									: integer
-              description						: Only set if available
-              format								: int32
-            jetWays								: 
-              type									: integer
-              description						: Only set if available
-              format								: int32
-            gaRamps								: 
-              type									: integer
-              description						: Only set if available
-              format								: int32
-            cargo									: 
-              typ										: integer
-              description						: Only set if available
-              format								: int32
-            militaryCargo					: 
-              type									: integer
-              description						: Only set if available
-              format								: int32
-            militaryCombat				: 
-              type									: integer
-              description						: Only set if available
-              format								: int32
-            helipads							: 
-              type									: integer
-              description						: Only set if available
-              format								: int32
-        position							: 
-          description						: The airports geographical position
-          $ref									: '#/components/schemas/Coordinates'
-        rating								: 
-          description						: The airports rating
-          type									: integer
-          format								: int32
-        region								: 
-          description						: The airports region
-          type									: string
-          example								: ""
-        runways								:
-          description						: Array of airport runway flags
-          type									: array
-          items									:
-            type									: string
-            example								: 
+        iata                  : 
+          description           : The airports IATA code
+          type                  : string
+          example               : ""
+        icao                  : 
+          description           : The airports ICAO code
+          type                  : string
+          example               : ""
+        ident                 : 
+          description           : The airports ident (ICAO)
+          type                  : string
+          example               : "EDDM"
+        longestRunwayHeading  : 
+          description           : The airports longest runway heading
+          type                  : string
+          example               : "81°M, 261°M"
+        longestRunwayLength   : 
+          description           : The airports longest runway length in metres
+          type                  : number
+          example               : "13106"
+        longestRunwaySurface  : 
+          description           : The airports longest runway surface
+          type                  : string
+          example               :  "CE"
+        longestRunwayWidth    : 
+          description           : The airports longest runway width in metres
+          type                  : number
+          example               : "188"
+        magneticDeclination   : 
+          description           : The airports magnetic variation/declination (+/East, -/West)
+          type                  : number
+          example               : "1.9"
+        metar                 : 
+          description           : The airports METAR weather reports
+          type                  : object
+          properties            :
+            simulator             : 
+              description           : Only set if available
+              type                  : object
+              properties            :
+                nearest               : 
+                  type                  : string
+                  example               : "EDDM 091920Z 35005KT 320V020 9999 -SHRA FEW015 SCT025CB 16/14 Q1022 RESHRA NOSIG"
+                station               : 
+                  type                  : string
+                  example               : "EDDM 091920Z 35005KT 320V020 9999 -SHRA FEW015 SCT025CB 16/14 Q1022 RESHRA NOSIG"
+            activesky             : 
+              description           : Only set if available
+              type                  : object
+              properties            :
+                nearest               : 
+                  type                  : string
+                  example               : "EDDM 091920Z 35005KT 320V020 9999 -SHRA FEW015 SCT025CB 16/14 Q1022 RESHRA NOSIG"
+                station               : 
+                  type                  : string
+                  example               : "EDDM 091920Z 35005KT 320V020 9999 -SHRA FEW015 SCT025CB 16/14 Q1022 RESHRA NOSIG"
+            noaa                  : 
+              description           : Only set if available
+              type                  : object
+              properties            :
+                nearest               : 
+                  type                  : string
+                  example               : "EDDM 091920Z 35005KT 320V020 9999 -SHRA FEW015 SCT025CB 16/14 Q1022 RESHRA NOSIG"
+                station               : 
+                  type                  : string
+                  example               : "EDDM 091920Z 35005KT 320V020 9999 -SHRA FEW015 SCT025CB 16/14 Q1022 RESHRA NOSIG"
+            vatsim                : 
+              description           : Only set if available
+              type                  : object
+              properties            :
+                nearest               : 
+                  type                  : string
+                  example               : "EDDM 091920Z 35005KT 320V020 9999 -SHRA FEW015 SCT025CB 16/14 Q1022 RESHRA NOSIG"
+                station               : 
+                  type                  : string
+                  example               : "EDDM 091920Z 35005KT 320V020 9999 -SHRA FEW015 SCT025CB 16/14 Q1022 RESHRA NOSIG"
+            ivao                  : 
+              description           : Only set if available
+              type                  : object
+              properties            :
+                nearest               : 
+                  type                  : string
+                  example               : "EDDM 091920Z 35005KT 320V020 9999 -SHRA FEW015 SCT025CB 16/14 Q1022 RESHRA NOSIG"
+                station               : 
+                  type                  : string
+                  example               : "EDDM 091920Z 35005KT 320V020 9999 -SHRA FEW015 SCT025CB 16/14 Q1022 RESHRA NOSIG"
+        name                  : 
+          description           : The airports name
+          type                  : string
+          example               : "München"
+        parking               :
+          description           : The airports parking capacities
+          type                  : object
+          properties            :
+            gates                 :
+              type                  : integer
+              description           : Only set if available
+              format                : int32
+            jetWays               : 
+              type                  : integer
+              description           : Only set if available
+              format                : int32
+            gaRamps               : 
+              type                  : integer
+              description           : Only set if available
+              format                : int32
+            cargo                 : 
+              typ                   : integer
+              description           : Only set if available
+              format                : int32
+            militaryCargo         : 
+              type                  : integer
+              description           : Only set if available
+              format                : int32
+            militaryCombat        : 
+              type                  : integer
+              description           : Only set if available
+              format                : int32
+            helipads              : 
+              type                  : integer
+              description           : Only set if available
+              format                : int32
+        position              : 
+          description           : The airports geographical position
+          $ref                  : '#/components/schemas/Coordinates'
+        rating                : 
+          description           : The airports rating
+          type                  : integer
+          format                : int32
+        region                : 
+          description           : The airports region
+          type                  : string
+          example               : ""
+        runways               :
+          description           : Array of airport runway flags
+          type                  : array
+          items                 :
+            type                  : string
+            example               : 
               - "Hard"
               - "Lighted"
-        state									: 
-          description						: The airports state/province
-          type									: string
-          example								: ""
-        sunrise								:
-          description						: The airports sunrise time
-          type									: string
-          example								: "02:40:40"
-        sunset								:
-          description						: The airports sunset time
-          type									: string
-          example								: "19:54:52"
-        transitionAltitude		:
-          description						: The airports transition altitude in feet
-          type									: number
-          example								: "5000"
+        state                 : 
+          description           : The airports state/province
+          type                  : string
+          example               : ""
+        sunrise               :
+          description           : The airports sunrise time
+          type                  : string
+          example               : "02:40:40"
+        sunset                :
+          description           : The airports sunset time
+          type                  : string
+          example               : "19:54:52"
+        transitionAltitude    :
+          description           : The airports transition altitude in feet
+          type                  : number
+          example               : "5000"
     SimInfoResponse     :
-      type								: object
-      properties					:
-        active								:
-          type									: boolean
-        altitude_above_ground	:
-          description						: "ft"
-          type									: number
-          example								: 1737.796875
-        ground_altitude				:
-          description						: "meters (?)"
-          type									: number
-          example								: 0.05364101380109787
-        ground_speed					:
-          description						: "kts"
-          type									: number
-          example								: 178.37759399414062
-        heading								:
-          type									: number
-          description						: "degrees"
-          example								: 155.85145568847656
-        indicated_altitude		:
-          description						: "ft"
-          type									: number
-          example								: 1799.44482421875
-        indicated_speed				:
-          description						: "kts"
-          type									: number
-          example								: 173.4679718017578
-        position							:
-          description						: The user aircrafts geographical position
-          $ref									: '#/components/schemas/Coordinates'
-        sea_level_pressure		:
-          description						: "Mbar"
-          type									: number
-          example								: 1020
-        simconnect_status			:
-          type									: string
-          example								: "No error"
-        true_airspeed					:
-          description						: "kts"
-          type									: number
-          example								: 178.34288024902344
-        vertical_speed				:
-          description						: "fpm"
-          type									: number
-          example								: -4.088292598724365
-        wind_direction				:
-          description						: "degrees corrected by aircrafts position magvar"
-          type									: number
-          example								: 50.69130325317383
-        wind_speed						:
-          description						: "kts"
-          type									: number
-          example								: 4.874995708465576
+      type                : object
+      properties          :
+        active                :
+          type                  : boolean
+        altitude_above_ground :
+          description           : "ft"
+          type                  : number
+          example               : 1737.796875
+        ground_altitude       :
+          description           : "meters (?)"
+          type                  : number
+          example               : 0.05364101380109787
+        ground_speed          :
+          description           : "kts"
+          type                  : number
+          example               : 178.37759399414062
+        heading               :
+          type                  : number
+          description           : "degrees"
+          example               : 155.85145568847656
+        indicated_altitude    :
+          description           : "ft"
+          type                  : number
+          example               : 1799.44482421875
+        indicated_speed       :
+          description           : "kts"
+          type                  : number
+          example               : 173.4679718017578
+        position              :
+          description           : The user aircrafts geographical position
+          $ref                  : '#/components/schemas/Coordinates'
+        sea_level_pressure    :
+          description           : "Mbar"
+          type                  : number
+          example               : 1020
+        simconnect_status     :
+          type                  : string
+          example               : "No error"
+        true_airspeed         :
+          description           : "kts"
+          type                  : number
+          example               : 178.34288024902344
+        vertical_speed        :
+          description           : "fpm"
+          type                  : number
+          example               : -4.088292598724365
+        wind_direction        :
+          description           : "degrees corrected by aircrafts position magvar"
+          type                  : number
+          example               : 50.69130325317383
+        wind_speed            :
+          description           : "kts"
+          type                  : number
+          example               : 4.874995708465576
     UiInfoResponse      :
-      type								: object
-      description					: Common UI info
-      properties					:
-        zoom_ui							:
-          description					: the zoom value of the map inside LNM UI
-          type								: number
-          example							: 1803
-        zoom_web						:
-          description					: the zoom value of the map inside LNM Web UI
-          type								: number
-          example							: 1803
-        distance_ui					:
-          description					: the distance value of the map inside LNM UI in km
-          type								: number
-          example							: 6.814605113425086
-        distance_web				:
-          description					: the distance value of the map inside LNM Web UI in km
-          type								: number
-          example							: 6.814605113425086
+      type                : object
+      description         : Common UI info
+      properties          :
+        zoom_ui             :
+          description         : the zoom value of the map inside LNM UI
+          type                : number
+          example             : 1803
+        zoom_web            :
+          description         : the zoom value of the map inside LNM Web UI
+          type                : number
+          example             : 1803
+        distance_ui         :
+          description         : the distance value of the map inside LNM UI in km
+          type                : number
+          example             : 6.814605113425086
+        distance_web        :
+          description         : the distance value of the map inside LNM Web UI in km
+          type                : number
+          example             : 6.814605113425086
     MapFeaturesResponse :
-      type								: object
-      description					: List of map features
-      properties					:
-        airports						:
-          description					: airports list
-          type								: object
-          properties					:
-            count								:
-              type								: number
-              example							: 361
-            result							:
-              type								: array
-              items								: 
-                type								: object
-                $ref								: '#/components/schemas/MapAirportFeature'
-        ndbs								:
-          description					: NDBs list
-          type								: object
-          properties					:
-            count								:
-              type								: number
-              example							: 361
-            result							:
-              type								: array
-              items								: 
-                type								: object
-                $ref								: '#/components/schemas/MapNDBFeature'
-        vors								:
-          description					: VORs list
-          type								: object
-          properties					:
-            count								:
-              type								: number
-              example							: 361
-            result							:
-              type								: array
-              items								: 
-                type								: object
-                $ref								: '#/components/schemas/MapVORFeature'
-        markers							:
-          description					: markers list
-          type								: object
-          properties					:
-            count								:
-              type								: number
-              example							: 361
-            result							:
-              type								: array
-              items								: 
-                type								: object
-                $ref								: '#/components/schemas/MapMarkerFeature'
-        waypoints						:
-          description					: markers list
-          type								: object
-          properties					:
-            count								:
-              type								: number
-              example							: 361
-            result							:
-              type								: array
-              items								: 
-                type								: object
-                $ref								: '#/components/schemas/MapWaypointFeature'
+      type                : object
+      description         : List of map features
+      properties          :
+        airports            :
+          description         : airports list
+          type                : object
+          properties          :
+            count               :
+              type                : number
+              example             : 361
+            result              :
+              type                : array
+              items               : 
+                type                : object
+                $ref                : '#/components/schemas/MapAirportFeature'
+        ndbs                :
+          description         : NDBs list
+          type                : object
+          properties          :
+            count               :
+              type                : number
+              example             : 361
+            result              :
+              type                : array
+              items               : 
+                type                : object
+                $ref                : '#/components/schemas/MapNDBFeature'
+        vors                :
+          description         : VORs list
+          type                : object
+          properties          :
+            count               :
+              type                : number
+              example             : 361
+            result              :
+              type                : array
+              items               : 
+                type                : object
+                $ref                : '#/components/schemas/MapVORFeature'
+        markers             :
+          description         : markers list
+          type                : object
+          properties          :
+            count               :
+              type                : number
+              example             : 361
+            result              :
+              type                : array
+              items               : 
+                type                : object
+                $ref                : '#/components/schemas/MapMarkerFeature'
+        waypoints           :
+          description         : markers list
+          type                : object
+          properties          :
+            count               :
+              type                : number
+              example             : 361
+            result              :
+              type                : array
+              items               : 
+                type                : object
+                $ref                : '#/components/schemas/MapWaypointFeature'
     MapObject           :
-      type								: object
-      description					: Identifiable map object
-      properties					:
-        object_id						:
-          description					: the map object id
-          type								: number
-          example							: 1
-        type_id							:
-          description					: the map object type id
-          type								: number
-          example							: 1
+      type                : object
+      description         : Identifiable map object
+      properties          :
+        object_id           :
+          description         : the map object id
+          type                : number
+          example             : 1
+        type_id             :
+          description         : the map object type id
+          type                : number
+          example             : 1
     MapAirportFeature   :
-      type								: object
-      description					: Single airport list entry
-      allOf								:
-        - $ref							: '#/components/schemas/MapObject'
-      properties					:
-        elevation						:
-          description					: the airports elevation in ft
-          type								: number
-          example							: 1352
-        ident								:
-          description					: The airports ident (ICAO)
-          type								: string
-          example							: "LOIH"
-        name								:
-          description					: The airpotrts name
-          type								: string
-          example							: "Dornbirn"
-        position						:
-          description					: The airports geographical position
-          $ref								: '#/components/schemas/Coordinates'
+      type                : object
+      description         : Single airport list entry
+      allOf               :
+        - $ref              : '#/components/schemas/MapObject'
+      properties          :
+        elevation           :
+          description         : the airports elevation in ft
+          type                : number
+          example             : 1352
+        ident               :
+          description         : The airports ident (ICAO)
+          type                : string
+          example             : "LOIH"
+        name                :
+          description         : The airpotrts name
+          type                : string
+          example             : "Dornbirn"
+        position            :
+          description         : The airports geographical position
+          $ref                : '#/components/schemas/Coordinates'
     MapNDBFeature       :
-      type								: object
-      description					: Single NDB list entry
-      allOf								:
-        - $ref							: '#/components/schemas/MapObject'
-      properties				:
-        elevation					:
-          description				: the NDB elevation in ft
-          type							: number
-          example						: 3.40
-        ident							:
-          description				: The NDB ident (ICAO)
-          type							: string
-          example						: "OB"
-        name							:
-          description				: The NDB name
-          type							: string
-          example						: "Overberg"
-        position					:
-          description				: The NDB geographical position
-          $ref							: '#/components/schemas/Coordinates'
+      type                : object
+      description         : Single NDB list entry
+      allOf               :
+        - $ref              : '#/components/schemas/MapObject'
+      properties        :
+        elevation         :
+          description       : the NDB elevation in ft
+          type              : number
+          example           : 3.40
+        ident             :
+          description       : The NDB ident (ICAO)
+          type              : string
+          example           : "OB"
+        name              :
+          description       : The NDB name
+          type              : string
+          example           : "Overberg"
+        position          :
+          description       : The NDB geographical position
+          $ref              : '#/components/schemas/Coordinates'
     MapVORFeature       :
-      type								: object
-      description					: Single VOR list entry
-      allOf								:
-        - $ref							: '#/components/schemas/MapObject'
-      properties					:
-        elevation						:
-          description					: the VOR elevation in ft
-          type								: number
-          example							: 659
-        ident								:
-          description					: The VOR ident (ICAO)
-          type								: string
-          example							: "GRV"
-        name								:
-          description					: The VOR name
-          type								: string
-          example							: "George"
-        position						:
-          description					: The VOR geographical position
-          $ref								: '#/components/schemas/Coordinates'
+      type                : object
+      description         : Single VOR list entry
+      allOf               :
+        - $ref              : '#/components/schemas/MapObject'
+      properties          :
+        elevation           :
+          description         : the VOR elevation in ft
+          type                : number
+          example             : 659
+        ident               :
+          description         : The VOR ident (ICAO)
+          type                : string
+          example             : "GRV"
+        name                :
+          description         : The VOR name
+          type                : string
+          example             : "George"
+        position            :
+          description         : The VOR geographical position
+          $ref                : '#/components/schemas/Coordinates'
     MapMarkerFeature    :
-      type								: object
-      description					: Single marker list entry
-      allOf								:
-        - $ref							: '#/components/schemas/MapObject'
-      properties					:
-        elevation						:
-          description					: the marker elevation in ft
-          type								: number
-          example							: 0
-        ident								:
-          description					: The marker ident (ICAO)
-          type								: string
-          example							: "AL"
-        type								:
-          description					: The marker type
-          type								: string
-          example							: "OUTER"
-        position						:
-          description					: The airports geographical position
-          $ref								: '#/components/schemas/Coordinates'
+      type                : object
+      description         : Single marker list entry
+      allOf               :
+        - $ref              : '#/components/schemas/MapObject'
+      properties          :
+        elevation           :
+          description         : the marker elevation in ft
+          type                : number
+          example             : 0
+        ident               :
+          description         : The marker ident (ICAO)
+          type                : string
+          example             : "AL"
+        type                :
+          description         : The marker type
+          type                : string
+          example             : "OUTER"
+        position            :
+          description         : The airports geographical position
+          $ref                : '#/components/schemas/Coordinates'
     MapWaypointFeature  :
-      type								: object
-      description					: Single waypoint list entry
-      allOf								:
-        - $ref							: '#/components/schemas/MapObject'
-      properties					:
-        elevation						:
-          description					: the marker elevation in ft
-          type								: number
-          example							: 0
-        ident								:
-          description					: The marker ident (ICAO)
-          type								: string
-          example							: "AL"
-        type								:
-          description					: The marker type
-          type								: string
-          example							: "OUTER"
-        position						:
-          description					: The airports geographical position
-          $ref								: '#/components/schemas/Coordinates'
+      type                : object
+      description         : Single waypoint list entry
+      allOf               :
+        - $ref              : '#/components/schemas/MapObject'
+      properties          :
+        elevation           :
+          description         : the marker elevation in ft
+          type                : number
+          example             : 0
+        ident               :
+          description         : The marker ident (ICAO)
+          type                : string
+          example             : "AL"
+        type                :
+          description         : The marker type
+          type                : string
+          example             : "OUTER"
+        position            :
+          description         : The airports geographical position
+          $ref                : '#/components/schemas/Coordinates'
