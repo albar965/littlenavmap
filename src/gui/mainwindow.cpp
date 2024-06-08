@@ -2303,18 +2303,14 @@ void MainWindow::routeNew()
   }
 }
 
-void MainWindow::routeNewFromAirports(map::MapAirport departure, map::MapAirport destination, bool force)
+void MainWindow::routeNewFromAirports(const map::MapAirport& departure, const map::MapAirport& destination)
 {
-  if(force || routeCheckForChanges())
-  {
-    routeController->newFlightplan();
-    routeController->routeSetDeparture(departure);
-    routeController->routeSetDestination(destination);
-    mapWidget->update();
-    showFlightplan();
-    routeCenter();
-    setStatusMessage(tr("Created new flight plan with departure and destination airport."));
-  }
+  // Prefill flight plan from departure and destination
+  atools::fs::pln::Flightplan flightplan;
+  flightplan.setDepartureDestination(departure.ident, departure.position, destination.ident, destination.position);
+
+  // Create new plan but save the change to the undo/redo stack - keep clean undo state (changed = false)
+  routeFromFlightplan(flightplan, true /* adjustAltitude */, false /* changed */, true /* undo */);
 }
 
 void MainWindow::routeOpen()

@@ -86,8 +86,11 @@ public:
   RouteController(const RouteController& other) = delete;
   RouteController& operator=(const RouteController& other) = delete;
 
-  /* Creates a new plan and emits routeChanged */
+  /* Creates a new plan and emits routeChanged. Undo stack is cleared. */
   void newFlightplan();
+
+  /* Create a new plan from airports and put the change on the undo/redo stack */
+  void routeNewFromAirports(const map::MapAirport& departure, const map::MapAirport& destination);
 
   /* Loads flight plan from FSX PLN file, checks for proper start position (shows notification dialog)
    * and emits routeChanged. Uses file name as new current name  */

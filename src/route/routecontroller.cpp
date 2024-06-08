@@ -1162,6 +1162,31 @@ void RouteController::newFlightplan()
   emit routeChanged(true /* geometryChanged */, true /* newFlightPlan */);
 }
 
+void RouteController::routeNewFromAirports(const map::MapAirport& departure, const map::MapAirport& destination)
+{
+  RouteCommand *undoCommand = preChange(tr("Set Departure and Destination"));
+  NavApp::showFlightplan();
+
+  routeSetDepartureInternal(departure);
+  routeSetDestinationInternal(destination);
+
+  route.updateAll();
+  route.updateAirwaysAndAltitude(false /* adjustRouteAltitude */);
+  route.calculateLegAltitudes();
+  route.updateDepartureAndDestination(false /* clearInvalidStart */);
+
+  // Get type and cruise altitude from widgets
+  updateFlightplanFromWidgets();
+
+  updateActiveLeg();
+  updateTableModelAndErrors();
+  updateActions();
+
+  postChange(undoCommand);
+  emit routeChanged(true /* geometryChanged */);
+  NavApp::setStatusMessage(tr("New flight plan set."));
+}
+
 void RouteController::loadFlightplanInternal(atools::fs::pln::Flightplan flightplan, atools::fs::pln::FileFormat format,
                                              const QString& filename, bool changed, bool adjustAltitude, bool undo, bool warnAltitude,
                                              bool correctProfile)

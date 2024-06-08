@@ -733,7 +733,8 @@ void AirportSearch::randomFlightClicked(bool showDialog)
 
     // Adjust label if plan is empty or not valid
     if(!departureAirport.isValid() && !destinationAirport.isValid())
-      label += tr("\n\nPre-add a departure or destination airport to your current flight plan if you wish to have that fixed instead of random.");
+      label += tr(
+        "\n\nPre-add a departure or destination airport to your current flight plan if you wish to have that fixed instead of random.");
 
     // Build selection dialog ===========================================================
     atools::gui::ChoiceDialog choiceDialog(mainWindow, QCoreApplication::applicationName() % tr(" - Random Flight"), label,
@@ -743,7 +744,8 @@ void AirportSearch::randomFlightClicked(bool showDialog)
 
     // Departure and destination random ================================
     choiceDialog.addRadioButton(RANDOM_ALL, RANDOM_BUTTON_GROUP, tr("Let select departure and destination airport\n"
-                                                                    "from airport search result table at random."), QString(), true /* checked */);
+                                                                    "from airport search result table at random."), QString(),
+                                true /* checked */);
 
     if(route.getSizeWithoutAlternates() == 1 && departureAirport.isValid())
     {
@@ -940,7 +942,7 @@ void AirportSearch::dataRandomAirportsReceived(bool isSuccess, int indexDepartur
         text = tr("Nothing found");
       }
 
-      QMessageBox box(QMessageBox::Question, tr("Little Navmap - Random flight found !  :)"), text,
+      QMessageBox box(QMessageBox::Question, tr("Little Navmap - Random flight found:)"), text,
                       QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel, NavApp::getQMainWidget());
 
       // Rename yes and no buttons
@@ -956,8 +958,8 @@ void AirportSearch::dataRandomAirportsReceived(bool isSuccess, int indexDepartur
       {
         if(result == QMessageBox::Yes)
           // Use data
-          // Show a question dialog before taking over plan - avoids "flight plan has changed" nagging dialog -- now really
-          NavApp::getMainWindow()->routeNewFromAirports(airportDeparture, airportDestination, true);
+          // Does not show a question dialog if flight plan has changes since this is save to the undo/redo stack
+          NavApp::getMainWindow()->routeNewFromAirports(airportDeparture, airportDestination);
         else if(result == QMessageBox::No)
           // Start again in main event loop after leaving this method
           tryAgain = true;
@@ -966,7 +968,8 @@ void AirportSearch::dataRandomAirportsReceived(bool isSuccess, int indexDepartur
       }
     }
     else
-      atools::gui::Dialog::information(NavApp::getMainWindow(), tr("No (further) airports satisfying your criteria\nfound in the airport search result table."));
+      atools::gui::Dialog::information(NavApp::getMainWindow(),
+                                       tr("No (further) airports satisfying your criteria\nfound in the airport search result table."));
 
     // we can delete, due to dialog giving signalling thread
     // breathing room to advance that "1 instruction further"

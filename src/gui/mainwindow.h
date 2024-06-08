@@ -218,7 +218,7 @@ public:
 
   /* create a new flightplan from passed airports */
   /* called from AirportSearch (random flight generator) */
-  void routeNewFromAirports(map::MapAirport departure, map::MapAirport destination, bool force = false);
+  void routeNewFromAirports(const map::MapAirport& departure, const map::MapAirport& destination);
 
   /* Load a flight plan in LNMPLN format from a string */
   void routeOpenFileLnmStr(const QString& string);
