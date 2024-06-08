@@ -5,7 +5,7 @@
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
     <meta name='viewport' content="width=device-width, initial-scale=1" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-    <link rel="stylesheet" href="/assets/styles.css" />
+    <link rel="stylesheet" href="/javascript_and_css/legacy/styles.css" />
     <title>
       {applicationName} {applicationVersion} - Web Server
     </title>
@@ -36,11 +36,11 @@
 
     /*]]>*/
     </style>
-    <script type="text/javascript" src="/assets/base.js" xml:space="preserve">
+    <script type="text/javascript" src="/javascript_and_css/base.js" xml:space="preserve">
     </script>
-    <script type="text/javascript" src="/assets/scripts.js" xml:space="preserve">
+    <script type="text/javascript" src="/javascript_and_css/legacy/scripts.js" xml:space="preserve">
     </script>
-    <script type="text/javascript" src="/assets/uitoggle.js" xml:space="preserve">
+    <script type="text/javascript" src="/javascript_and_css/uitoggle.js" xml:space="preserve">
     </script>
     <script type="text/javascript" xml:space="preserve">
     //<![CDATA[
@@ -61,8 +61,8 @@
     <div id="header">
       <form id="refreshform" name="refreshform">
         <p>
-          - Map - <a href="/flightplan.html">Flight Plan</a> - <a href="/aircraft.html">Aircraft</a> - <a href=
-          "/progress.html">Aircraft Progress</a> - <a href="/airport.html">Airport</a> - <a href="{helpUrl}">Help</a>
+          - Map - <a href="../flightplan.html">Flight Plan</a> - <a href="../aircraft.html">Aircraft</a> - <a href=
+          "../progress.html">Aircraft Progress</a> - <a href="../airport.html">Airport</a> - <a href="{helpUrl}">Help</a>
           -  {maprefreshsel} <button type="button" onclick="reloadMap()">Reload Map</button> <button type="button"
           onclick="submitMapUserCmd()">User Aircraft</button> <button type="button" onclick=
           "submitMapRouteCmd()">Flight Plan</button> <button type="button" onclick=
@@ -78,42 +78,42 @@
       <form id="extrasform" name="extrasform">
         <p>
           <button type="button" onclick=
-          "toggleLegacyUI()">Toggle "new ui"</button>
+          "toggleLegacyUI()">Switch to new ui</button>
         </p>
       </form>
     </div>
     <div id="mapcontainer" style="width: 100%; height: 100%;">
-      <img id="map" src="images/littlenavmap.svg" alt="Map" />
+      <img id="map" src="/images/littlenavmap.svg" alt="Map" />
       <div id="navigation" style="width: 100%; height: 100%;">
         <table id="navtable" style="text-align: center; width: 100%; height: 100%;" border="0" cellspacing="0"
         cellpadding="20" summary="">
           <tbody>
             <tr>
               <td onclick="submitMapCmd('in')" style="cursor: zoom-in; text-align: left; vertical-align: top;">
-                <img src="images/in.svg" alt="In" />
+                <img src="/images/in.svg" alt="In" />
               </td>
               <td onclick="submitMapCmd('up')" style="cursor: n-resize; text-align: center; vertical-align: top;">
-                <img src="images/up.svg" alt="Up" />
+                <img src="/images/up.svg" alt="Up" />
               </td>
               <td onclick="submitMapCmd('out')" style="cursor: zoom-out; text-align: right; vertical-align: top;">
-                <a href="javascript:submitMapCmd('out')"><img src="images/out.svg" alt="Out" /></a>
+                <a href="javascript:submitMapCmd('out')"><img src="/images/out.svg" alt="Out" /></a>
               </td>
             </tr>
             <tr>
               <td onclick="submitMapCmd('left')" style="cursor: w-resize; text-align: left;">
-                <img src="images/left.svg" alt="Left" />
+                <img src="/images/left.svg" alt="Left" />
               </td>
               <td onclick="submitMapCmd('in')" style="cursor: zoom-in; text-align: left; vertical-align: bottom;"></td>
               <td onclick="submitMapCmd('right')" style="cursor: e-resize; text-align: right;">
-                <img src="images/right.svg" alt="Right" />
+                <img src="/images/right.svg" alt="Right" />
               </td>
             </tr>
             <tr>
               <td onclick="reloadMap()" style="cursor: pointer; text-align: left; vertical-align: bottom;">
-                <img src="images/reload.svg" alt="Reload" />
+                <img src="/images/reload.svg" alt="Reload" />
               </td>
               <td onclick="submitMapCmd('down')" style="cursor: s-resize; text-align: center; vertical-align: bottom;">
-                <img src="images/down.svg" alt="Down" />
+                <img src="/images/down.svg" alt="Down" />
               </td>
               <td onclick="reloadMap()" style="cursor: pointer; text-align: left; vertical-align: bottom;"></td>
             </tr>

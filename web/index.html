@@ -1,86 +1,9 @@
-<!DOCTYPE html>
-<html id="ui-2021-a" lang="en">
-  <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
-    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
-    <link rel="stylesheet" href="/assets/2021-a/layout-internal.css">
-    <link rel="stylesheet" href="/assets/2021-a/look-internal.css">
-    <title>
-      {applicationName} {applicationVersion} - Webserver
-    </title>
-    <script>
-      function attemptRun(attemptFunctionName) {
-        if(typeof window[attemptFunctionName] === "undefined") {
-          var t = this;
-          setTimeout(function() {
-            attemptRun.call(t, attemptFunctionName);
-          }, 0);
-        } else {
-          window[attemptFunctionName](this);
-        }
-      }
-    </script>
-  </head>
-  <body onclick="bodyFunctions()">
-    <div id="mainContainer" data-toolbarsplacement="top">
-      <div id="contentContainer">
-        <iframe src="map.html" onload="attemptRun.call(this,'injectUpdates')" name="contentiframe" class="shown" title="map content"></iframe>
-        <iframe src="about:blank" onload="attemptRun.call(this,'injectUpdates')" name="addoniframe" title="addon content"></iframe>
-      </div>
-      <div id="toolbarsContainer">
-        <div id="toolbarOuter" class="toolbar" onclick="setActive(event)">
-          <button id="buttonMap" class="active"><a href="map.html" target="contentiframe" onclick="showIframe(this);event.preventDefault()">Map</a></button>
-          <button id="buttonFlightPlan"><a href="flightplan.html" target="addoniframe" onclick="showIframe(this);event.preventDefault()">Flight Plan</a></button>
-          <button id="buttonProgress"><a href="progress.html" target="addoniframe" onclick="showIframe(this);event.preventDefault()">Progress</a></button>
-          <button id="buttonAircraft"><a href="aircraft.html" target="addoniframe" onclick="showIframe(this);event.preventDefault()">Aircraft</a></button>
-          <button id="buttonAirport"><a href="airport.html" target="addoniframe" onclick="showIframe(this);event.preventDefault()">Airports</a></button>
-          <button id="buttonHelp"><a href="{helpUrl}" target="_blank">Help</a></button>
-        </div>
-        <div id="toggleOptionsContainer">
-          <div id="toggleOptionsToggle" onclick="toggleToolbarsOptions(event)">
-            <div id="toolbarsOptions">
-              <form>
-                <fieldset class="has-legend" onchange="setToolbarPosition(event)">
-                  <legend>Position</legend>
-                  <div class="input-block">
-                    <input type="radio" id="toolbarPositionTop" name="position" value="top" checked><label for="toolbarPositionTop">top</label>
-                  </div>
-                  <div class="input-block">
-                    <input type="radio" id="toolbarPositionRight" name="position" value="right"><label for="toolbarPositionRight">right</label>
-                  </div>
-                  <div class="input-block">
-                    <input type="radio" id="toolbarPositionBottom" name="position" value="bottom"><label for="toolbarPositionBottom">bottom</label>
-                  </div>
-                  <div class="input-block">
-                    <input type="radio" id="toolbarPositionLeft" name="position" value="left"><label for="toolbarPositionLeft">left</label>
-                  </div>
-                </fieldset>
-                <fieldset class="has-legend">
-                  <legend>Theme</legend>
-                  <select onchange="switchTheme(this)" onclick="event.stopPropagation()" name="theme" title="theme switcher">
-                    <option value="">Default</option>
-                    <option value="doremi">Doremi</option>
-                  </select>
-                </fieldset>
-                <fieldset class="has-legend">
-                  <legend>Toggles</legend>
-                  <div class="input-block">
-                    <input type="checkbox" id="toolbarLegacyUIToggle" onclick="toggleLegacyUI()"><label for="toolbarLegacyUIToggle"><span class="keep-1-lined">"legacy ui"</span></label>
-                  </div>
-                </fieldset>
-              </form>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-    <script src="/assets/base.js"></script>
-    <script src="/assets/uitoggle.js"></script>
-    <script src="/assets/2021-a/toolbarAPI.js"></script>
-    <script src="/assets/2021-a/scripts.js"></script>
-    <script src="/assets/2021-a/menu.js"></script>
-    <script src="/assets/2021-a/plugins.js"></script>
-    <script src="/assets/2021-a/uncategorisedremainders.js"></script>
-  </body>
+<!doctype html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="refresh" content="0; url=/html/2021-a/index.html">
+        <title>redirect to current web frontend</title>
+    </head>
+    <body></body>
 </html>
