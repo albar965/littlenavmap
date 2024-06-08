@@ -1,0 +1,43 @@
+ARG UBUNTU_VERSION=24
+FROM ubuntu:${UBUNTU_VERSION}.04
+
+# install utils
+RUN apt update
+# needed for building this image
+RUN DEBIAN_FRONTEND=noninteractive apt -y --no-install-recommends install git ca-certificates unzip
+# basic compiling
+RUN DEBIAN_FRONTEND=noninteractive apt -y --no-install-recommends install patchelf cmake make gcc g++
+# qt compiling
+RUN DEBIAN_FRONTEND=noninteractive apt -y --no-install-recommends install qt5-qmake qtbase5-dev libqt5svg5-dev qtdeclarative5-dev qttranslations5-l10n qt5-image-formats-plugins qt5-gtk-platformtheme libqt5sql5-sqlite libqt5x11extras5
+# misc compiling
+RUN DEBIAN_FRONTEND=noninteractive apt -y --no-install-recommends install zlib1g-dev
+
+# predefine environments, override with "-e"
+ENV APROJECTS="/build"
+ENV CONF_TYPE="release"
+ENV QMAKE_SHARED="/usr/bin/qmake"
+ENV QMAKE_STATIC="/usr/bin/qmake"
+ENV MARBLE_PATH="/build/Marble-${CONF_TYPE}"
+ENV XPSDK_BASE="/build/SDK"
+
+# create dir layout
+RUN mkdir -p "${APROJECTS}"
+
+# build marble/lnm/1.1 into image
+# TODO: -DCMAKE_PREFIX_PATH=$HOME/Qt/5.9.3/gcc_64 is missing
+RUN cd "${APROJECTS}" && git clone --branch lnm/1.1 https://github.com/albar965/marble.git && cd marble && cmake -DCMAKE_BUILD_TYPE=Release -DSTATIC_BUILD=TRUE -DQTONLY=TRUE -DBUILD_MARBLE_EXAMPLES=NO -DBUILD_INHIBIT_SCREENSAVER_PLUGIN=NO -DBUILD_MARBLE_APPS=NO -DBUILD_MARBLE_EXAMPLES=NO -DBUILD_MARBLE_TESTS=NO -DBUILD_MARBLE_TOOLS=NO -DBUILD_TESTING=NO -DBUILD_WITH_DBUS=NO -DMARBLE_EMPTY_MAPTHEME=YES -DMOBILE=NO -DWITH_DESIGNER_PLUGIN=NO -DWITH_Phonon=NO -DWITH_Qt5Location=NO -DWITH_Qt5Positioning=NO -DWITH_Qt5SerialPort=NO -DWITH_ZLIB=NO -DWITH_libgps=NO -DWITH_libshp=NO -DWITH_libwlocate=NO -DCMAKE_INSTALL_PREFIX="${MARBLE_PATH}" -DEXEC_INSTALL_PREFIX="${MARBLE_PATH}" ../marble/ && make -j`nproc` && make install
+
+# add XP SDK
+ADD https://developer.x-plane.com/wp-content/plugins/code-sample-generation/sdk_zip_files/XPSDK401.zip /build/
+RUN unzip /build/XPSDK401.zip -d /build
+
+# external volumes containing source code
+VOLUME "${APROJECTS}/littlenavmap"
+VOLUME "${APROJECTS}/littlenavconnect"
+VOLUME "${APROJECTS}/littlexpconnect"
+VOLUME "${APROJECTS}/atools"
+VOLUME "${APROJECTS}/deploy"
+VOLUME "${APROJECTS}/deb"
+
+# add parameters by adding them to "docker container run"
+ENTRYPOINT "${APROJECTS}/littlenavmap/build/linux/docker/entrypoint.sh"
