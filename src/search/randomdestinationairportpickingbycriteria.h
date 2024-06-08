@@ -44,7 +44,9 @@ public:
   // required calling !!! per construction before constructing
   // data is whole set
   static void initData(std::pair<int, atools::geo::Pos> *data,
-                       int indexDeparture);
+                       int indexDeparture,
+                       int *idsNonGrata,
+                       int lengthIdsNonGrata);
 
   void run() override;
 
@@ -52,18 +54,19 @@ signals:
   void resultReady(const bool isSuccess, const int indexDestination, const int threadIndex);
 
 private:
+  // do the thing no C++ brain (std specifier) wanted to do before
+  // returns index when found searchFor, else -1
+  int binary_search(int searchFor, int* inArray, int arrayLength);
+
   int threadIndex;
   int dataRangeIndexStart;
   int dataRangeLength;
-  // randomLimit :  above this limit values are not tried to be found randomly
-  // because there will only be few "space" to "pick" from making random picks
-  // take long, instead values are taken linearly from the remaining values
-  int randomLimit;
-  std::pair<int, atools::geo::Pos> *offsettedData;
-  static std::pair<int, atools::geo::Pos> *data;
   static int distanceMin;
   static int distanceMax;
+  static std::pair<int, atools::geo::Pos> *data;
   static int indexDeparture;
+  static int *idsNonGrata;
+  static int lengthIdsNonGrata;
 };
 
 #endif // RANDOMDESTINATIONAIRPORTPICKINGBYCRITERIA_H

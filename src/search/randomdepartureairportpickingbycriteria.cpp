@@ -23,6 +23,7 @@
 #include <QRandomGenerator>
 
 QVector<std::pair<int, atools::geo::Pos> > *RandomDepartureAirportPickingByCriteria::data = nullptr;
+QVector<std::pair<int, int> > *RandomDepartureAirportPickingByCriteria::antiData = nullptr;
 int RandomDepartureAirportPickingByCriteria::predefinedAirportIndex = -1;
 int RandomDepartureAirportPickingByCriteria::numberDestinationsSetParts = 0;
 bool RandomDepartureAirportPickingByCriteria::stopExecution = false;
@@ -32,11 +33,13 @@ RandomDepartureAirportPickingByCriteria::RandomDepartureAirportPickingByCriteria
 }
 
 void RandomDepartureAirportPickingByCriteria::initStatics(QVector<std::pair<int, atools::geo::Pos> > *data,
+                                                          QVector<std::pair<int, int> > *antiData,
                                                           int distanceMinMeter,
                                                           int distanceMaxMeter,
                                                           int predefinedAirportIndex)
 {
   RandomDepartureAirportPickingByCriteria::data = data;
+  RandomDepartureAirportPickingByCriteria::antiData = antiData;
   RandomDepartureAirportPickingByCriteria::predefinedAirportIndex = predefinedAirportIndex;
   RandomDepartureAirportPickingByCriteria::numberDestinationsSetParts = QThread::idealThreadCount();
   RandomDepartureAirportPickingByCriteria::stopExecution = false;
@@ -46,12 +49,12 @@ void RandomDepartureAirportPickingByCriteria::initStatics(QVector<std::pair<int,
 
 void RandomDepartureAirportPickingByCriteria::run()
 {
-  int indexDeparture;
   bool departureSuccess;
 
+  int indexDeparture = -1;
   int size = data->size();
 
-  do
+  while(size && !stopExecution)
   {
     if(predefinedAirportIndex == -1)
     {
@@ -90,8 +93,6 @@ void RandomDepartureAirportPickingByCriteria::run()
       int counter = numberDestinationsSetParts - 1;
       int lengthLastDestinationsSetPart = size - counter * lengthDestinationsSetPart;
 
-      RandomDestinationAirportPickingByCriteria::initData(data->data(), indexDeparture);
-
       RandomDestinationAirportPickingByCriteria *destinationPicker = new RandomDestinationAirportPickingByCriteria(runningDestinationThreads,
                                                                                                                    counter * lengthDestinationsSetPart,
                                                                                                                    lengthLastDestinationsSetPart);
@@ -116,6 +117,27 @@ void RandomDepartureAirportPickingByCriteria::run()
         }
       }
 
+      QVector<int> idsNonGrata;
+      std::pair<int, int> antiDatum;
+      foreach(antiDatum, *antiData)
+      {
+        int first = data->at(indexDeparture).first;
+        if(antiDatum.first == first)
+        {
+          idsNonGrata.append(antiDatum.second);
+        }
+        else if(antiDatum.second == first)
+        {
+          idsNonGrata.append(antiDatum.first);
+        }
+      }
+      QVector<int> sortedIdsNonGrata = map_sort(idsNonGrata.data(), idsNonGrata.size());
+
+      RandomDestinationAirportPickingByCriteria::initData(data->data(),
+                                                          indexDeparture,
+                                                          sortedIdsNonGrata.data(),
+                                                          sortedIdsNonGrata.size());
+
       dataDestinationPickerState = destinationPickerState.data();
       foreach (destinationPicker, destinationThreads)
         destinationPicker->start();
@@ -136,14 +158,13 @@ void RandomDepartureAirportPickingByCriteria::run()
         delete destinationThreads.takeLast();
       while(!destinationThreads.isEmpty());
 
-      if(success)
+      if(success || predefinedAirportIndex > -1)
         break;
-    }
 
-    data->remove(indexDeparture);
-    --size;
+      data->remove(indexDeparture);
+      --size;
+    }
   }
-  while(size && !stopExecution && predefinedAirportIndex == -1);
 
   emit resultReady(foundIndexDestination > -1, indexDeparture, foundIndexDestination, data);
 }
@@ -179,4 +200,13 @@ void RandomDepartureAirportPickingByCriteria::dataReceived(const bool isSuccess,
 void RandomDepartureAirportPickingByCriteria::cancellationReceived()
 {
   stopExecution = true;
+}
+
+QVector<int> RandomDepartureAirportPickingByCriteria::map_sort(int* array, int arrayLength)
+{
+  QMap<int, int> sorter;
+  int index = -1;
+  while(++index < arrayLength)
+    sorter.insert(array[index], index);
+  return sorter.keys().toVector();
 }

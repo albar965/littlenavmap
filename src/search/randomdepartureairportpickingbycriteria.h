@@ -48,6 +48,7 @@ public:
   // the number of items in data can have been reduced when search
   // is done or cancelled
   static void initStatics(QVector<std::pair<int, atools::geo::Pos> > *data,
+                          QVector<std::pair<int, int> > *antiData,
                           int distanceMinMeter,
                           int distanceMaxMeter,
                           int predefinedAirportIndex);
@@ -69,11 +70,15 @@ signals:
 
 private:
   friend class RandomDestinationAirportPickingByCriteria;
+
+  QVector<int> map_sort(int* array, int arrayLength);
+
   QVector<bool> destinationPickerState;   // false = running, true = done
   bool* dataDestinationPickerState;
   int foundIndexDestination = -1;
   bool success = false;
   static QVector<std::pair<int, atools::geo::Pos> > *data;
+  static QVector<std::pair<int, int> > *antiData;
   static int predefinedAirportIndex;
   static int numberDestinationsSetParts;
   static bool stopExecution;
