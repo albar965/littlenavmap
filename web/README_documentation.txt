@@ -30,14 +30,15 @@ Folders:
 
 	/                               general-purpose files *1
 	/html/                          html files *1
-        /html/*/                        html files belonging to the particular version of the web frontend
+        /html/*/                        html files *2
 	/images/                        image files *1
-	/javascript_and_css/            general-purpose JS and CSS files *1
-	/javascript_and_css/*/          JS and CSS files belonging to the particular version of the web frontend
+	/javascript_and_css/            JS and CSS files *1
+	/javascript_and_css/*/          JS and CSS files *2
 	/plugins/                       plugins *1
-	/themes/*/                      themes belonging to the particular version of the web frontend
+	/themes/*/                      themes *2
 
         *1 = irrespective of version of the web frontend
+	*2 = belonging to a particular version of the web frontend
 
 
 /index.html :
