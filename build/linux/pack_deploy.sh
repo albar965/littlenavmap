@@ -12,9 +12,9 @@ if [ ! -d "$APROJECTS" ]; then echo "$APROJECTS" does not exist ; exit 1 ; fi
 export SSH_DEPLOY_TARGET=${SSH_DEPLOY_TARGET:-"sol:/data/alex/Public/Releases"}
 
 # LittleNavmap-linux-22.04-2.8.2.beta.tar.gz
-if [ -f "/etc/lsb-release" ]; then
-  source /etc/lsb-release
-  export FILENAME_LNM=$DISTRIB_RELEASE-$(head -n1 "${APROJECTS}/deploy/Little Navmap/version.txt")
+if [ -f "/etc/os-release" ]; then
+  source /etc/os-release
+  export FILENAME_LNM=$ID-$VERSION_ID-$(head -n1 "${APROJECTS}/deploy/Little Navmap/version.txt")
 else
   export FILENAME_LNM=$(head -n1 "${APROJECTS}/deploy/Little Navmap/version.txt")
 fi
