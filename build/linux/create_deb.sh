@@ -36,7 +36,7 @@ REVISION="1"
 ARCH="amd64"
 
 # clean setup workdir
-WORKDIR="${APROJECTS}/deb/${ID}_${VERSION_ID}/${PKG_NAME_NAVMAP}_${VERSION}-${REVISION}_${ARCH}"
+WORKDIR="${APROJECTS}/deploy/${ID}_${VERSION_ID}/${PKG_NAME_NAVMAP}_${VERSION}-${REVISION}_${ARCH}"
 rm -rf "${WORKDIR}" "${WORKDIR}.deb"
 mkdir -p "${WORKDIR}"
 
@@ -89,4 +89,13 @@ EOT
 chmod 0775 "${WORKDIR}/DEBIAN/postrm"
 
 dpkg-deb --build --root-owner-group "${WORKDIR}"
-rm -rf "${WORKDIR}"
+
+# No compression for debugging dpkg-deb -Znone --build --root-owner-group "${WORKDIR}"
+
+FILENAME_LNM=$VERSION_ID-$(head -n1 "${APROJECTS}/deploy/Little Navmap/version.txt")
+
+# Rename file to match other LNM archive names
+mv -v "${WORKDIR}".deb ${APROJECTS}/deploy/LittleNavmap-linux-${FILENAME_LNM}.deb
+
+rm -rf "${APROJECTS}/deploy/${ID}_${VERSION_ID}"
+

@@ -36,4 +36,6 @@ fi
 
 scp ${APROJECTS}/deploy/LittleNavmap-linux-${FILENAME_LNM}.tar.gz ${SSH_DEPLOY_TARGET}/LittleNavmap-linux-${FILENAME_LNM}.tar.gz
 
+scp ${APROJECTS}/deploy/LittleNavmap-linux-${FILENAME_LNM}.tar.gz ${SSH_DEPLOY_TARGET}/LittleNavmap-linux-${FILENAME_LNM}.deb
+
 
