@@ -9,117 +9,84 @@ if [ -z "${APROJECTS}" ] ; then echo APROJECTS environment variable not set ; ex
 if [ ! -d "${APROJECTS}" ]; then echo "${APROJECTS}" does not exist ; exit 1 ; fi
 
 # load system we are running on
-source /etc/lsb-release
+source /etc/os-release
+
+# define release build names and directories
+# little navmap
+DEPLOY_NAVMAP_NAME="Little Navmap"
+DEPLOY_NAVMAP_DIR="${APROJECTS}/deploy/${DEPLOY_NAVMAP_NAME}"
+PKG_NAME_NAVMAP="littlenavmap"
+
+# little navconnect
+DEPLOY_NAVCON_NAME="Little Navconnect"
+DEPLOY_NAVCON_DIR="${APROJECTS}/deploy/${DEPLOY_NAVCON_NAME}"
+PKG_NAME_NAVCON="littlenavconnect"
+
+# little xpconnect
+DEPLOY_XPCON_NAME="Little Xpconnect"
+DEPLOY_XPCON_DIR="${APROJECTS}/deploy/${DEPLOY_XPCON_NAME}"
 
 ############################################################
 # Little Navmap ############################################
 ############################################################
 
-# release build of little navmap
-DEPLOY_NAME="Little Navmap"
-DEPLOY_DIR="${APROJECTS}/deploy/${DEPLOY_NAME}"
-
 # package information
-NAME="littlenavmap"
-VERSION=$(head -n1 "${DEPLOY_DIR}/version.txt")
+VERSION=$(head -n1 "${DEPLOY_NAVMAP_DIR}/version.txt")
 REVISION="1"
 ARCH="amd64"
 
-# setup workdir
-WORKDIR="${APROJECTS}/deb/${DISTRIB_ID}_${DISTRIB_RELEASE}/${NAME}_${VERSION}-${REVISION}_${ARCH}"
+# clean setup workdir
+WORKDIR="${APROJECTS}/deb/${ID}_${VERSION_ID}/${PKG_NAME_NAVMAP}_${VERSION}-${REVISION}_${ARCH}"
 rm -rf "${WORKDIR}" "${WORKDIR}.deb"
 mkdir -p "${WORKDIR}"
 
-# copy release
+# copy navmap release
 mkdir "${WORKDIR}/opt"
-cp -ra "${DEPLOY_DIR}" "${WORKDIR}/opt"
+cp -ra "${DEPLOY_NAVMAP_DIR}" "${WORKDIR}/opt/"
+
+# copy navcon release
+cp -ra "${DEPLOY_NAVCON_DIR}" "${WORKDIR}/opt/${DEPLOY_NAVMAP_NAME}/"
+
+# copy xpcon release
+cp -ra "${DEPLOY_XPCON_DIR}" "${WORKDIR}/opt/${DEPLOY_NAVMAP_NAME}/"
 
 # create meta information
 mkdir "${WORKDIR}/DEBIAN"
 cat << EOT > "${WORKDIR}/DEBIAN/control"
-Package: ${NAME}
+Package: ${PKG_NAME_NAVMAP}
 Version: ${VERSION}
 Architecture: ${ARCH}
 Maintainer: Daniel Buschke <damage@devloop.de>
 Description: Little Navmap
- Little Navmap is a free open source flight planner, navigation tool, moving map, airport search and airport information system
+ Little Navmap is a free open source flight planner, navigation tool, moving map, airport search and airport information system.
+ This package includes Little Navconnect and Little Xpconnect
 Homepage: https://albar965.github.io
 EOT
 
-# add desktop file to global application directory
+# add navmap desktop file to global application directory
 mkdir -p "${WORKDIR}/usr/share/applications"
-cp "${WORKDIR}/opt/${DEPLOY_NAME}/${DEPLOY_NAME}.desktop" "${WORKDIR}/usr/share/applications/${NAME}.desktop"
-sed -i "s;YOUR_PATH_TO_LITTLENAVMAP;/opt/${DEPLOY_NAME};g" "${WORKDIR}/usr/share/applications/${NAME}.desktop"
+cp "${WORKDIR}/opt/${DEPLOY_NAVMAP_NAME}/${DEPLOY_NAVMAP_NAME}.desktop" "${WORKDIR}/usr/share/applications/${PKG_NAME_NAVMAP}.desktop"
+sed -i "s;YOUR_PATH_TO_LITTLENAVMAP;/opt/${DEPLOY_NAVMAP_NAME};g" "${WORKDIR}/usr/share/applications/${PKG_NAME_NAVMAP}.desktop"
+
+# add navcon desktop file to global application directory
+mkdir -p "${WORKDIR}/usr/share/applications"
+cp "${WORKDIR}/opt/${DEPLOY_NAVMAP_NAME}/${DEPLOY_NAVCON_NAME}/${DEPLOY_NAVCON_NAME}.desktop" "${WORKDIR}/usr/share/applications/${PKG_NAME_NAVCON}.desktop"
+sed -i "s;YOUR_PATH/Little Navmap/Little Navconnect;/opt/${DEPLOY_NAVMAP_NAME}/${DEPLOY_NAVCON_NAME};g" "${WORKDIR}/usr/share/applications/${PKG_NAME_NAVCON}.desktop"
+sed -i "s;YOUR_PATH/Little\\\\sNavmap/Little\\\\sNavconnect;/opt/${DEPLOY_NAVMAP_NAME}/${DEPLOY_NAVCON_NAME};g" "${WORKDIR}/usr/share/applications/${PKG_NAME_NAVCON}.desktop"
 
 # postinst file
 cat << EOT > "${WORKDIR}/DEBIAN/postinst"
-ln -s "/opt/${DEPLOY_NAME}/${NAME}" "/usr/bin/${NAME}"
+ln -s "/opt/${DEPLOY_NAVMAP_NAME}/${PKG_NAME_NAVMAP}" "/usr/bin/${PKG_NAME_NAVMAP}"
+ln -s "/opt/${DEPLOY_NAVMAP_NAME}/${DEPLOY_NAVCON_NAME}/${PKG_NAME_NAVCON}" "/usr/bin/${PKG_NAME_NAVCON}"
 EOT
 chmod 0775 "${WORKDIR}/DEBIAN/postinst"
 
 # postrm file
 cat << EOT > "${WORKDIR}/DEBIAN/postrm"
-rm "/usr/bin/${NAME}"
+rm "/usr/bin/${PKG_NAME_NAVMAP}"
+rm "/usr/bin/${PKG_NAME_NAVCON}"
 EOT
 chmod 0775 "${WORKDIR}/DEBIAN/postrm"
 
 dpkg-deb --build --root-owner-group "${WORKDIR}"
 rm -rf "${WORKDIR}"
-
-############################################################
-# Little Navconnect ########################################
-############################################################
-
-# release build of little navconnect
-DEPLOY_NAME="Little Navconnect"
-DEPLOY_DIR="${APROJECTS}/deploy/${DEPLOY_NAME}"
-
-# package information
-NAME="littlenavconnect"
-VERSION=$(head -n1 "${DEPLOY_DIR}/version.txt")
-REVISION="1"
-ARCH="amd64"
-
-# setup workdir
-WORKDIR="${APROJECTS}/deb/${DISTRIB_ID}_${DISTRIB_RELEASE}/${NAME}_${VERSION}-${REVISION}_${ARCH}"
-rm -rf "${WORKDIR}" "${WORKDIR}.deb"
-mkdir -p "${WORKDIR}"
-
-# copy release
-mkdir "${WORKDIR}/opt"
-cp -ra "${DEPLOY_DIR}" "${WORKDIR}/opt"
-
-# create meta information
-mkdir "${WORKDIR}/DEBIAN"
-cat << EOT > "${WORKDIR}/DEBIAN/control"
-Package: ${NAME}
-Version: ${VERSION}
-Architecture: ${ARCH}
-Maintainer: Daniel Buschke <damage@devloop.de>
-Description: Little Navconnect
- Little Navconnect is a free open source application that acts as an agent connecting Little Navmap
- with a FSX, Prepar3D, Microsoft Flight Simulator 2020 or X-Plane flight simulator.
-Homepage: https://albar965.github.io
-EOT
-
-# add desktop file to global application directory
-mkdir -p "${WORKDIR}/usr/share/applications"
-cp "${WORKDIR}/opt/${DEPLOY_NAME}/${DEPLOY_NAME}.desktop" "${WORKDIR}/usr/share/applications/${NAME}.desktop"
-sed -i "s;YOUR_PATH/Little Navmap/Little Navconnect;/opt/${DEPLOY_NAME};g" "${WORKDIR}/usr/share/applications/${NAME}.desktop"
-sed -i "s;YOUR_PATH/Little\\\\sNavmap/Little\\\\sNavconnect;/opt/${DEPLOY_NAME};g" "${WORKDIR}/usr/share/applications/${NAME}.desktop"
-
-# postinst file
-cat << EOT > "${WORKDIR}/DEBIAN/postinst"
-ln -s "/opt/${DEPLOY_NAME}/${NAME}" "/usr/bin/${NAME}"
-EOT
-chmod 0775 "${WORKDIR}/DEBIAN/postinst"
-
-# postrm file
-cat << EOT > "${WORKDIR}/DEBIAN/postrm"
-rm "/usr/bin/${NAME}"
-EOT
-chmod 0775 "${WORKDIR}/DEBIAN/postrm"
-
-dpkg-deb --build --root-owner-group "${WORKDIR}"
-rm -rf "${WORKDIR}"
-
