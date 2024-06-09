@@ -2781,7 +2781,8 @@ bool MainWindow::layoutOpenInternal(const QString& layoutFile)
   return false;
 }
 
-bool MainWindow::createMapImage(QPixmap& pixmap, const QString& dialogTitle, const QString& optionPrefx, QString *json)
+bool MainWindow::createMapImage(QPixmap& pixmap, const QString& dialogTitle, const QString& optionPrefx, QString *json,
+                                bool dynamicFeatures)
 {
   ImageExportDialog exportDialog(this, dialogTitle, optionPrefx, mapWidget->width(), mapWidget->height());
   int retval = exportDialog.exec();
@@ -2808,7 +2809,7 @@ bool MainWindow::createMapImage(QPixmap& pixmap, const QString& dialogTitle, con
       paintWidget.setAdjustOnResize(exportDialog.isAvoidBlurredMap());
 
       // Copy all map settings
-      paintWidget.copySettings(*mapWidget);
+      paintWidget.copySettings(*mapWidget, dynamicFeatures /* deep */);
 
       // Copy visible rectangle
       paintWidget.copyView(*mapWidget);
@@ -2870,7 +2871,7 @@ bool MainWindow::createMapImage(QPixmap& pixmap, const QString& dialogTitle, con
 void MainWindow::mapSaveImage()
 {
   QPixmap pixmap;
-  if(createMapImage(pixmap, tr(" - Save Map as Image"), lnm::IMAGE_EXPORT_DIALOG))
+  if(createMapImage(pixmap, tr(" - Save Map as Image"), lnm::IMAGE_EXPORT_DIALOG, nullptr, true /* dynamicFeatures */))
   {
     int filterIndex = -1;
 
@@ -2913,7 +2914,7 @@ void MainWindow::mapSaveImageAviTab()
   {
     QPixmap pixmap;
     QString json;
-    if(createMapImage(pixmap, tr(" - Save Map as Image for AviTab"), lnm::IMAGE_EXPORT_AVITAB_DIALOG, &json))
+    if(createMapImage(pixmap, tr(" - Save Map as Image for AviTab"), lnm::IMAGE_EXPORT_AVITAB_DIALOG, &json, true /* dynamicFeatures */))
     {
       if(!json.isEmpty())
       {
@@ -2979,7 +2980,7 @@ void MainWindow::mapSaveImageAviTab()
 void MainWindow::mapCopyToClipboard()
 {
   QPixmap pixmap;
-  if(createMapImage(pixmap, tr(" - Copy Map Image to Clipboard"), lnm::IMAGE_EXPORT_DIALOG))
+  if(createMapImage(pixmap, tr(" - Copy Map Image to Clipboard"), lnm::IMAGE_EXPORT_DIALOG, nullptr, true /* dynamicFeatures */))
   {
     // Copy formatted and plain text to clipboard
     QMimeData *data = new QMimeData;

@@ -133,7 +133,7 @@ MapPaintWidget::~MapPaintWidget()
   ATOOLS_DELETE_LOG(mapQuery);
 }
 
-void MapPaintWidget::copySettings(const MapPaintWidget& other)
+void MapPaintWidget::copySettings(const MapPaintWidget& other, bool deep)
 {
   paintLayer->copySettings(*other.paintLayer);
   screenIndex->copy(*other.screenIndex);
@@ -179,8 +179,16 @@ void MapPaintWidget::copySettings(const MapPaintWidget& other)
   setSunShadingDimFactor(static_cast<double>(OptionData::instance().getDisplaySunShadingDimFactor()) / 100.);
 
   // Copy own/internal settings
-  *aircraftTrail = *other.aircraftTrail;
-  *aircraftTrailLogbook = *other.aircraftTrailLogbook;
+  if(deep)
+  {
+    // Do a sufficient check if trails are different to avoid needless copying
+    if(!aircraftTrail->almostEqual(*other.aircraftTrail))
+      *aircraftTrail = *other.aircraftTrail;
+
+    // Not needed
+    // *aircraftTrailLogbook = *other.aircraftTrailLogbook;
+  }
+
   searchMarkPos = other.searchMarkPos;
   homePos = other.homePos;
   homeDistance = other.homeDistance;
@@ -277,9 +285,11 @@ void MapPaintWidget::unitsUpdated()
     case opts::DIST_NM:
       MarbleGlobal::getInstance()->locale()->setMeasurementSystem(MarbleLocale::NauticalSystem);
       break;
+
     case opts::DIST_KM:
       MarbleGlobal::getInstance()->locale()->setMeasurementSystem(MarbleLocale::MetricSystem);
       break;
+
     case opts::DIST_MILES:
       MarbleGlobal::getInstance()->locale()->setMeasurementSystem(MarbleLocale::ImperialSystem);
       break;

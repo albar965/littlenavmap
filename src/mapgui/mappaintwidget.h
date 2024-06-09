@@ -97,8 +97,9 @@ public:
   MapPaintWidget& operator=(const MapPaintWidget& other) = delete;
 
   /* Copy all map display settings, highlights and marks from the other widget.
-   * Theme is set from MapThemeManager and projection is always set to Mercator. */
-  void copySettings(const MapPaintWidget& other);
+   * Theme is set from MapThemeManager and projection is always set to Mercator.
+   * Also copies full aircraft trail if deep = true and trail is different. Does not copy profile trail. */
+  void copySettings(const MapPaintWidget& other, bool deep);
 
   /* Copies the bounding rectangle to this one which will be centered on next resize. */
   void copyView(const MapPaintWidget& other);

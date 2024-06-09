@@ -203,8 +203,8 @@ void MapActionsController::init()
   if(mapPaintWidget == nullptr)
     mapPaintWidget = new MapPaintWidget(dynamic_cast<QWidget *>(parent()), false /* no real widget - hidden */, true /* web */);
 
-  // Copy all map settings
-  mapPaintWidget->copySettings(*NavApp::getMapWidgetGui());
+  // Copy all map settings except trail
+  mapPaintWidget->copySettings(*NavApp::getMapWidgetGui(), false /* deep */);
 
   // Ensure MapPaintLayer::mapLayer initialisation
   mapPaintWidget->getMapPaintLayer()->updateLayers();
@@ -259,8 +259,8 @@ MapPixmap MapActionsController::getPixmapPosDistance(int width, int height, atoo
   {
     QMutexLocker locker(&mapPaintWidgetMutex);
 
-    // Copy all map settings
-    mapPaintWidget->copySettings(*NavApp::getMapWidgetGui());
+    // Copy all map settings except trail
+    mapPaintWidget->copySettings(*NavApp::getMapWidgetGui(), false /* deep */);
 
     // Do not center world rectangle when resizing map widget
     mapPaintWidget->setKeepWorldRect(false);
@@ -332,8 +332,8 @@ MapPixmap MapActionsController::getPixmapRect(int width, int height, atools::geo
     {
       QMutexLocker locker(&mapPaintWidgetMutex);
 
-      // Copy all map settings
-      mapPaintWidget->copySettings(*NavApp::getMapWidgetGui());
+      // Copy all map settings except trail
+      mapPaintWidget->copySettings(*NavApp::getMapWidgetGui(), false /* deep */);
 
       // Do not center world rectangle when resizing
       mapPaintWidget->setKeepWorldRect(false);

@@ -206,6 +206,9 @@ public:
   using QList<AircraftTrailPos>::constFirst;
   using QList<AircraftTrailPos>::constLast;
 
+  /* Shallow compare. Compares min, max, size and bounding rect */
+  bool almostEqual(const AircraftTrail& other) const;
+
 private:
   friend QDataStream& operator>>(QDataStream& dataStream, AircraftTrailPos& trackPos);
 

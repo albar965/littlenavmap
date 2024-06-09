@@ -435,7 +435,7 @@ private:
   void mapCopyToClipboard();
 
   /* Opens dialog for image resolution and returns pixmap and optionally AviTab JSON */
-  bool createMapImage(QPixmap& pixmap, const QString& dialogTitle, const QString& optionPrefx, QString *json = nullptr);
+  bool createMapImage(QPixmap& pixmap, const QString& dialogTitle, const QString& optionPrefx, QString *json, bool dynamicFeatures);
 
   void distanceChanged();
   void showDonationPage();

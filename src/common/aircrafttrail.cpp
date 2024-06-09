@@ -145,6 +145,22 @@ AircraftTrail& AircraftTrail::operator=(const AircraftTrail& other)
   append(other);
   maxTrackEntries = other.maxTrackEntries;
   *lastUserAircraft = *other.lastUserAircraft;
+
+  boundingRect = other.boundingRect;
+  maxHeadingDiffDeg = other.maxHeadingDiffDeg;
+  maxSpeedDiffKts = other.maxSpeedDiffKts;
+  maxAltDiffFtUpper = other.maxAltDiffFtUpper;
+  maxAltDiffFtLower = other.maxAltDiffFtLower;
+  aglThresholdFt = other.aglThresholdFt;
+  maxFlyingTimeMs = other.maxFlyingTimeMs;
+  maxGroundTimeMs = other.maxGroundTimeMs;
+
+  lastGroundSpeedKts = other.lastGroundSpeedKts;
+  lastActualAltitudeFt = other.lastActualAltitudeFt;
+  lastHeadingDegTrue = other.lastHeadingDegTrue;
+
+  lineStrings = other.lineStrings;
+
   return *this;
 }
 
@@ -388,6 +404,14 @@ bool AircraftTrail::readFromStream(QDataStream& in)
     qWarning() << "Cannot read track. Invalid magic number:" << magic;
 
   return retval;
+}
+
+bool AircraftTrail::almostEqual(const AircraftTrail& other) const
+{
+  return size() == other.size() &&
+         getBounding().almostEqual(other.getBounding(), atools::geo::Pos::POS_EPSILON_1M) &&
+         atools::almostEqual(getMaxAltitude(), other.getMaxAltitude(), 10.f) &&
+         atools::almostEqual(getMinAltitude(), other.getMinAltitude(), 10.f);
 }
 
 int AircraftTrail::appendTrailPos(const atools::fs::sc::SimConnectUserAircraft& userAircraft, bool allowSplit)

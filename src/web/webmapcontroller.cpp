@@ -46,8 +46,8 @@ void WebMapController::initMapPaintWidget()
   if(mapPaintWidget == nullptr)
     mapPaintWidget = new MapPaintWidget(parentWidget, false /* no real widget - hidden */, true /* web */);
 
-  // Copy all map settings
-  mapPaintWidget->copySettings(*NavApp::getMapWidgetGui());
+  // Copy all map settings including trail if changed
+  mapPaintWidget->copySettings(*NavApp::getMapWidgetGui(), true /* deep */);
 
   // Ensure MapPaintLayer::mapLayer initialisation
   mapPaintWidget->getMapPaintLayer()->updateLayers();
@@ -128,8 +128,8 @@ MapPixmap WebMapController::getPixmapPosDistance(int width, int height, atools::
   {
     QMutexLocker locker(&mapPaintWidgetMutex);
 
-    // Copy all map settings
-    mapPaintWidget->copySettings(*NavApp::getMapWidgetGui());
+    // Copy all map settings including trail if changed
+    mapPaintWidget->copySettings(*NavApp::getMapWidgetGui(), true /* deep */);
 
     // Do not center world rectangle when resizing map widget
     mapPaintWidget->setKeepWorldRect(false);
@@ -201,8 +201,8 @@ MapPixmap WebMapController::getPixmapRect(int width, int height, atools::geo::Re
     {
       QMutexLocker locker(&mapPaintWidgetMutex);
 
-      // Copy all map settings
-      mapPaintWidget->copySettings(*NavApp::getMapWidgetGui());
+      // Copy all map settings including trail if changed
+      mapPaintWidget->copySettings(*NavApp::getMapWidgetGui(), true /* deep */);
 
       // Do not center world rectangle when resizing
       mapPaintWidget->setKeepWorldRect(false);
