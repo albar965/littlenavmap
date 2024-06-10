@@ -1,0 +1,92 @@
+You must provide a config.json for the plugin to
+be offered for enabling by the user to the user.
+
+See the example config.json .
+
+Your plugin's entry (= main) file must be index.html .
+
+See the example index.html .
+
+
+
+Plugin types explained:
+
+
+	background :
+
+    example use case:
+      a timer without ui which alerts the user every 30 minutes
+      about a task
+
+    your plugin runs in your file.
+
+
+  unobtrusive :
+
+    example use case:
+      an augmented map graphical display of a value
+
+    your plugin file is rendered above the whole map without
+    interactivity in its display (pointer-events: none,
+    background of iframe used, set to transparent).
+
+
+  exclusive :
+
+    example use case:
+      many visual instruments opaquely above the whole map
+
+    your plugin has its own display instead of the map covering
+    the whole area except the menu, the menu gets a toggle entry
+    added to switch back and forth between map and your running plugin.
+
+
+  widget :
+
+    example use case:
+      a single visual instrument opaquely movable above the map
+
+    your plugin is in a movable, resizable opaque iframe above the map.
+
+
+
+Map version explained:
+
+	JS data type number representing the map's HTML's code
+	version to help you decide to possibly not letting continue
+	execution of your plugin if it is made for a different
+	version of the map's HTML's code, "throw" a string in that case
+	to have initialisation of your plugin be aborted, that string
+	is shown to the user as the "reason" for aborting.
+	The map's HTML's code eg. contains the map's toolbar's HTML's
+	code which you might want to modify.
+	The current map's HTML's version is 1. It is intended to not
+	be changed in the forseeable future by the first party.
+
+
+
+requestMapAccess explained:
+
+	Your plugin is sandboxed without access to the map.
+	You might like access for advanced operations.
+	If you provide a non-empty string, the user is shown
+	a message asking him to grant your plugin access to
+	the map for the non-empty string being the reason.
+	
+
+
+The cleanup command explained:
+
+	The user has the possibility to disable your plugin at
+  any time through the plugin menu at which point the
+  cleanup command message is posted.
+
+  Note: the cleanup command is also posted when you
+        "throw" to the plugin host, safeguard your
+        cleanup function to not "undo" anything which
+        might not have been done yet in the first place!
+
+
+
+See the example plugins. Have them available in the plugin
+menu by adding ?debug to the LNM web server url.
