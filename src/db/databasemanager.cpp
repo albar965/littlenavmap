@@ -1006,7 +1006,7 @@ void DatabaseManager::openWriteableDatabase(atools::sql::SqlDatabase *database, 
                                   tr("Cannot open database. Error message:<br/><br/>"
                                      "%1<br/><br/>"
                                      "File is either malformed or this is an internal error.<br/><br/>"
-                                     "You might want to report this.<br/><br/>"
+                                     "You might want to report this to the developer.<br/><br/>"
                                      "Exiting now.").
                                   arg(QString(e.what()).replace("\n", "<br/>")).
                                   arg(QCoreApplication::applicationName()));

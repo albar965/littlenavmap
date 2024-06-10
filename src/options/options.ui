@@ -2036,7 +2036,7 @@ Restart the program after changing this option. You might also need to reset the
                 <widget class="QCheckBox" name="checkBoxOptionsMapEmptyAirports">
                  <property name="toolTip">
                   <string>Empty airports are not add-ons, have no taxiways, no parking and no aprons.
-Thes\bairports\bisplayed underneath all other airports and use a gray symbol.
+These airports are drawn underneath all other airports and use a gray symbol.
 The airports toolbar button can be used to hide empty airports if this box is checked.</string>
                  </property>
                  <property name="text">
@@ -2050,8 +2050,8 @@ The airports toolbar button can be used to hide empty airports if this box is ch
                <item>
                 <widget class="QCheckBox" name="checkBoxOptionsMapEmptyAirports3D">
                  <property name="toolTip">
-                  <string>All X-Plane airports which are 2D and stock
-will\bairports\bplayed underneath all other airports and use a gray symbol.
+                  <string>All X-Plane airports which are 2D and stock airports
+are drawn underneath all other airports and use a gray symbol.
 The airports toolbar button can be used to hide empty airports if this box is checked.</string>
                  </property>
                  <property name="text">

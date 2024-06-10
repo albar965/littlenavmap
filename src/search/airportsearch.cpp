@@ -942,7 +942,7 @@ void AirportSearch::dataRandomAirportsReceived(bool isSuccess, int indexDepartur
         text = tr("Nothing found");
       }
 
-      QMessageBox box(QMessageBox::Question, tr("Little Navmap - Random flight found:)"), text,
+      QMessageBox box(QMessageBox::Question, tr("Little Navmap - Random flight found:"), text,
                       QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel, NavApp::getQMainWidget());
 
       // Rename yes and no buttons
