@@ -63,20 +63,22 @@
                     <option value="doremi">Doremi</option>
                   </select>
                 </fieldset>
-                <fieldset class="has-legend">
-                  <legend>Settings</legend>
-                  <div class="input-block">
-                    <input type="checkbox" id="toolbarLegacyUIToggle" onclick="toggleLegacyUI()"><label for="toolbarLegacyUIToggle"><span class="keep-1-lined">use legacy ui</span></label>
-                  </div>
-                </fieldset>
               </form>
             </div>
           </div>
         </div>
       </div>
     </div>
+    <script>
+        // switch to legacy if this ui doesn't show as intended
+        if(document.getElementById("toolbarsContainer").clientHeight < 1) {   // new ui not rendering correctly
+          if(confirm("user interface not rendering correctly, switch to its legacy version?")) {
+            localStorage.setItem("desiredWebFrontendVersion", "legacy");
+            parent.location.reload();
+          }
+        }
+    </script>
     <script src="/javascript_and_css/base.js"></script>
-    <script src="/javascript_and_css/uitoggle.js"></script>
     <script src="/javascript_and_css/2021-a/toolbarAPI.js"></script>
     <script src="/javascript_and_css/2021-a/scripts.js"></script>
     <script src="/javascript_and_css/2021-a/menu.js"></script>

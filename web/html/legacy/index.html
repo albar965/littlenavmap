@@ -40,12 +40,8 @@
     </script>
     <script type="text/javascript" src="/javascript_and_css/legacy/scripts.js" xml:space="preserve">
     </script>
-    <script type="text/javascript" src="/javascript_and_css/uitoggle.js" xml:space="preserve">
-    </script>
     <script type="text/javascript" xml:space="preserve">
     //<![CDATA[
-
-      storeState("activeUI", "legacy");
 
       var timeoutHandle = 0;
       var currentInterval = -1;
@@ -78,7 +74,7 @@
       <form id="extrasform" name="extrasform">
         <p>
           <button type="button" onclick=
-          "toggleLegacyUI()">Switch to new ui</button>
+          "localStorage.removeItem('desiredWebFrontendVersion');parent.location.reload()">Switch to new user interface</button>
         </p>
       </form>
     </div>

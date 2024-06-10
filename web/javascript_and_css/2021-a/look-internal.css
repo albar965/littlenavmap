@@ -7,6 +7,26 @@
   background: #555;
 }
 
+#toolbarOuter {
+  box-shadow: 0 1px 7px 0 #000;
+}
+
+[data-toolbarsplacement="top"] .toolbar {
+  border-bottom: 1px solid black;
+}
+
+[data-toolbarsplacement="right"] .toolbar {
+  border-left: 1px solid black;
+}
+
+[data-toolbarsplacement="bottom"] .toolbar {
+  border-top: 1px solid black;
+}
+
+[data-toolbarsplacement="left"] .toolbar {
+  border-right: 1px solid black;
+}
+
 [data-toolbarsplacement="top"] .toolbar, [data-toolbarsplacement="bottom"] .toolbar {
   padding: 0 2.5px;   /* works in conjunction with .toolbar button margin */
 }
