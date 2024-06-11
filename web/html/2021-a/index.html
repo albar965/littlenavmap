@@ -23,13 +23,13 @@
     </script>
   </head>
   <body onclick="bodyFunctions()">
-    <div id="mainContainer" data-toolbarsplacement="top">
+    <div id="mainContainer" data-menubarsplacement="top">
       <div id="contentContainer">
         <iframe src="map.html" onload="attemptRun.call(this,'injectUpdates')" name="contentiframe" class="shown" title="map content"></iframe>
         <iframe src="about:blank" onload="attemptRun.call(this,'injectUpdates')" name="addoniframe" title="addon content"></iframe>
       </div>
-      <div id="toolbarsContainer">
-        <div id="toolbarOuter" class="toolbar" onclick="setActive(event)">
+      <div id="menubarContainer">
+        <div id="menubarOuter" class="menubar" onclick="setActive(event)">
           <button id="buttonMap" class="active"><a href="map.html" target="contentiframe" onclick="showIframe(this);event.preventDefault()">Map</a></button>
           <button id="buttonFlightPlan"><a href="../flightplan.html" target="addoniframe" onclick="showIframe(this);event.preventDefault()">Flight Plan</a></button>
           <button id="buttonProgress"><a href="../progress.html" target="addoniframe" onclick="showIframe(this);event.preventDefault()">Progress</a></button>
@@ -38,22 +38,22 @@
           <button id="buttonHelp"><a href="{helpUrl}" target="_blank">Help</a></button>
         </div>
         <div id="toggleOptionsContainer">
-          <div id="toggleOptionsToggle" onclick="toggleToolbarsOptions(event)">
-            <div id="toolbarsOptions">
+          <div id="toggleOptionsToggle" onclick="toggleMenubarsOptions(event)">
+            <div id="menubarsOptions">
               <form>
-                <fieldset class="has-legend" onchange="setToolbarPosition(event)">
+                <fieldset class="has-legend" onchange="setMenubarPosition(event)">
                   <legend>Position</legend>
                   <div class="input-block">
-                    <input type="radio" id="toolbarPositionTop" name="position" value="top" checked><label for="toolbarPositionTop">top</label>
+                    <input type="radio" id="menubarPositionTop" name="position" value="top" checked><label for="menubarPositionTop">top</label>
                   </div>
                   <div class="input-block">
-                    <input type="radio" id="toolbarPositionRight" name="position" value="right"><label for="toolbarPositionRight">right</label>
+                    <input type="radio" id="menubarPositionRight" name="position" value="right"><label for="menubarPositionRight">right</label>
                   </div>
                   <div class="input-block">
-                    <input type="radio" id="toolbarPositionBottom" name="position" value="bottom"><label for="toolbarPositionBottom">bottom</label>
+                    <input type="radio" id="menubarPositionBottom" name="position" value="bottom"><label for="menubarPositionBottom">bottom</label>
                   </div>
                   <div class="input-block">
-                    <input type="radio" id="toolbarPositionLeft" name="position" value="left"><label for="toolbarPositionLeft">left</label>
+                    <input type="radio" id="menubarPositionLeft" name="position" value="left"><label for="menubarPositionLeft">left</label>
                   </div>
                 </fieldset>
                 <fieldset class="has-legend">
@@ -71,7 +71,7 @@
     </div>
     <script>
         // switch to legacy if this ui doesn't show as intended
-        if(document.getElementById("toolbarsContainer").clientHeight < 1) {   // new ui not rendering correctly
+        if(document.getElementById("menubarsContainer").clientHeight < 1) {   // new ui not rendering correctly
           if(confirm("user interface not rendering correctly, switch to its legacy version?")) {
             localStorage.setItem("desiredWebFrontendVersion", "legacy");
             parent.location.reload();

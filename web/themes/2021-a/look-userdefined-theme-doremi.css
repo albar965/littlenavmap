@@ -1,25 +1,27 @@
-/* toolbars container taking up a sides whole edge space */
-#toolbarsContainer {
+/* menubars container taking up a sides whole edge space */
+#menubarsContainer {
 
 }
 
-/* any toolbar; when wanting to modify gaps, take [data-toolbarsplacement="X"] from internal.css into consideration */
-.toolbar {
+/* any menubar; when wanting to modify gaps, take 
+   [data-menubarsplacement="X"] from internal.css into
+   consideration */
+.menubar {
 
 }
 
-/* outer toolbar */
-#toolbarOuter {
+/* outer menubar */
+#menubarOuter {
 
 }
 
-/* any toolbar's all buttons */
-.toolbar button:hover {
+/* any menubar's all buttons */
+.menubar button:hover {
   filter: brightness(1.5);
 }
 
-/* outer toolbar's all buttons */
-#toolbarOuter button {
+/* outer menubar's all buttons */
+#menubarOuter button {
 
 }
 
@@ -69,35 +71,35 @@
 }
 
 /* see internal.css for detailed cross-effects when changing :hover, ::before or .shown::before of below selector */
-[data-toolbarsplacement="top"] #toggleOptionsToggle::before {
+[data-menubarsplacement="top"] #toggleOptionsToggle::before {
 	border-top-color: #81a;
 }
 
-[data-toolbarsplacement="right"] #toggleOptionsToggle::before {
+[data-menubarsplacement="right"] #toggleOptionsToggle::before {
 	border-right-color: #81a;
 }
 
-[data-toolbarsplacement="bottom"] #toggleOptionsToggle::before {
+[data-menubarsplacement="bottom"] #toggleOptionsToggle::before {
 	border-bottom-color: #81a;
 }
 
-[data-toolbarsplacement="left"] #toggleOptionsToggle::before {
+[data-menubarsplacement="left"] #toggleOptionsToggle::before {
 	border-left-color: #81a;
 }
 
-[data-toolbarsplacement="top"] #toggleOptionsToggle.shown::before {
+[data-menubarsplacement="top"] #toggleOptionsToggle.shown::before {
 	border-top-color: #dad;
 }
 
-[data-toolbarsplacement="right"] #toggleOptionsToggle.shown::before {
+[data-menubarsplacement="right"] #toggleOptionsToggle.shown::before {
 	border-right-color: #dad;
 }
 
-[data-toolbarsplacement="bottom"] #toggleOptionsToggle.shown::before {
+[data-menubarsplacement="bottom"] #toggleOptionsToggle.shown::before {
 	border-bottom-color: #dad;
 }
 
-[data-toolbarsplacement="left"] #toggleOptionsToggle.shown::before {
+[data-menubarsplacement="left"] #toggleOptionsToggle.shown::before {
 	border-left-color: #dad;
 }
 

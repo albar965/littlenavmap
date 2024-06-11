@@ -68,7 +68,7 @@ function findPlugins() {
                 option.innerText = pluginsConfig[plugin.value].title;
                 option.value = plugin.value;
                 select.add(option);
-                document.querySelector("#toolbarOuter").appendChild(select);
+                document.querySelector("#menubarOuter").appendChild(select);
                 select.onchange = function() {
                   document.querySelectorAll(".displayable-content").forEach(dc => dc.style.display = "none");
                   if(this.value !== "/") {
@@ -110,7 +110,7 @@ function findPlugins() {
                 iframe.style.right = "0";
                 storeState("plugin_" + plugin.value, settings);
               }
-              if(iframe.clientHeight > contentContainer.clientHeight - 50) {    // 50 = map toolbar height (without toolbar scrollbar)
+              if(iframe.clientHeight > contentContainer.clientHeight - 50) {    // 50 = map menubar height (without toolbar scrollbar)
                 iframe.style.height = (contentContainer.clientHeight - 50) / 2 + "px";
                 storeState("plugin_" + plugin.value, settings);
               }
@@ -213,7 +213,7 @@ function findPlugins() {
             menuname.innerText = "Plugins";
             menuentry.appendChild(menuname);
             menuentry.appendChild(pluginlist);
-            document.querySelector("#toolbarOuter").appendChild(menuentry);
+            document.getElementById("menubarOuter").appendChild(menuentry);
             pluginlist.addEventListener("click", loadPlugin);
             onmessage = event => {
               Object.values(pluginsConfig).some(plugin => {

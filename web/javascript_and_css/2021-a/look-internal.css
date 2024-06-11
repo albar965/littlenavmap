@@ -3,39 +3,39 @@
   letter-spacing: 1px;
 }
 
-#toolbarsContainer {
+#menubarsContainer {
   background: #555;
 }
 
-#toolbarOuter {
+#menubarOuter {
   box-shadow: 0 1px 7px 0 #000;
 }
 
-[data-toolbarsplacement="top"] .toolbar {
+[data-menubarsplacement="top"] .menubar {
   border-bottom: 1px solid black;
 }
 
-[data-toolbarsplacement="right"] .toolbar {
+[data-menubarsplacement="right"] .menubar {
   border-left: 1px solid black;
 }
 
-[data-toolbarsplacement="bottom"] .toolbar {
+[data-menubarsplacement="bottom"] .menubar {
   border-top: 1px solid black;
 }
 
-[data-toolbarsplacement="left"] .toolbar {
+[data-menubarsplacement="left"] .menubar {
   border-right: 1px solid black;
 }
 
-[data-toolbarsplacement="top"] .toolbar, [data-toolbarsplacement="bottom"] .toolbar {
-  padding: 0 2.5px;   /* works in conjunction with .toolbar button margin */
+[data-menubarsplacement="top"] .menubar, [data-menubarsplacement="bottom"] .menubar {
+  padding: 0 2.5px;   /* works in conjunction with .menubar button margin */
 }
 
-[data-toolbarsplacement="right"] .toolbar, [data-toolbarsplacement="left"] .toolbar {
-  padding: 2.5px 0;   /* works in conjunction with .toolbar button margin */
+[data-menubarsplacement="right"] .menubar, [data-menubarsplacement="left"] .menubar {
+  padding: 2.5px 0;   /* works in conjunction with .menubar button margin */
 }
 
-.toolbar button {
+.menubar button {
   font-family: sans-serif;
   letter-spacing: 1px;
   padding: 0 15px;
@@ -50,59 +50,59 @@
   box-sizing: border-box;
 }
 
-.toolbar button:hover {
+.menubar button:hover {
   border: 1px solid #ff0;
 }
 
-[data-toolbarsplacement="top"] .toolbar button:hover, [data-toolbarsplacement="bottom"] .toolbar button:hover {
-  margin: 4px 2.5px;   /* works in conjunction with .toolbar button margin and :hover */
+[data-menubarsplacement="top"] .menubar button:hover, [data-menubarsplacement="bottom"] .menubar button:hover {
+  margin: 4px 2.5px;   /* works in conjunction with .menubar button margin and :hover */
 }
 
-[data-toolbarsplacement="right"] .toolbar button:hover, [data-toolbarsplacement="left"] .toolbar button:hover {
-  margin: 1.5px 5px;   /* works in conjunction with .toolbar button margin and :hover */
+[data-menubarsplacement="right"] .menubar button:hover, [data-menubarsplacement="left"] .menubar button:hover {
+  margin: 1.5px 5px;   /* works in conjunction with .menubar button margin and :hover */
 }
 
 @media (max-width: 1280px) {
-  [data-toolbarsplacement="top"] .toolbar button, [data-toolbarsplacement="bottom"] .toolbar button {
+  [data-menubarsplacement="top"] .menubar button, [data-menubarsplacement="bottom"] .menubar button {
      width: auto;
   }
 
-  [data-toolbarsplacement="top"] .toolbar button:hover, [data-toolbarsplacement="bottom"] .toolbar button:hover {
-    margin: 4px 1.5px;   /* works in conjunction with .toolbar button margin and :hover */
+  [data-menubarsplacement="top"] .menubar button:hover, [data-menubarsplacement="bottom"] .menubar button:hover {
+    margin: 4px 1.5px;   /* works in conjunction with .menubar button margin and :hover */
   }
 }
 
 @media (max-width: 840px) {
-  .toolbar button {
+  .menubar button {
     padding: 0 5px;
   }
 }
 
-[data-toolbarsplacement="top"] .toolbar button, [data-toolbarsplacement="bottom"] .toolbar button {
+[data-menubarsplacement="top"] .menubar button, [data-menubarsplacement="bottom"] .menubar button {
   margin: 5px 2.5px;
 }
 
-[data-toolbarsplacement="right"] .toolbar button, [data-toolbarsplacement="left"] .toolbar button {
+[data-menubarsplacement="right"] .menubar button, [data-menubarsplacement="left"] .menubar button {
   margin: 2.5px 5px;
 }
 
 @media (max-width: 420px) {
-  [data-toolbarsplacement="top"] .toolbar, [data-toolbarsplacement="bottom"] .toolbar {
+  [data-menubarsplacement="top"] .menubar, [data-menubarsplacement="bottom"] .menubar {
     padding-top: 2.5px;
     padding-bottom: 2.5px;
   }
 
-  [data-toolbarsplacement="top"] .toolbar button, [data-toolbarsplacement="bottom"] .toolbar button {
+  [data-menubarsplacement="top"] .menubar button, [data-menubarsplacement="bottom"] .menubar button {
      width: calc(50% - 5px);
      margin: 2.5px;
   }
 
-  [data-toolbarsplacement="right"] .toolbar button, [data-toolbarsplacement="left"] .toolbar button {
+  [data-menubarsplacement="right"] .menubar button, [data-menubarsplacement="left"] .menubar button {
      width: 125px;
   }
 }
 
-.toolbar button a {
+.menubar button a {
   text-decoration: none;
   color: inherit;
 }
@@ -114,11 +114,11 @@
   text-shadow: 0 0 5px rgba(192, 192, 0, .5) !important;
 }
 
-[data-toolbarsplacement="top"] #toggleOptionsToggle, [data-toolbarsplacement="bottom"] #toggleOptionsToggle {
+[data-menubarsplacement="top"] #toggleOptionsToggle, [data-menubarsplacement="bottom"] #toggleOptionsToggle {
   width: 52px;
 }
 
-[data-toolbarsplacement="right"] #toggleOptionsToggle, [data-toolbarsplacement="left"] #toggleOptionsToggle {
+[data-menubarsplacement="right"] #toggleOptionsToggle, [data-menubarsplacement="left"] #toggleOptionsToggle {
   height: 52px;
 }
 
@@ -130,115 +130,115 @@
   border-width: 13px;
 }
 
-[data-toolbarsplacement="top"] #toggleOptionsToggle::before {
+[data-menubarsplacement="top"] #toggleOptionsToggle::before {
   border-top-color: #d5e6ff;
   top: calc(50% - 13px/2);      /* works in conjunction with #toggleOptionsToggle::before border-width */
   left: calc(50% - 13px);       /* works in conjunction with #toggleOptionsToggle::before border-width */
 }
 
-[data-toolbarsplacement="right"] #toggleOptionsToggle::before {
+[data-menubarsplacement="right"] #toggleOptionsToggle::before {
   border-right-color: #d5e6ff;
   right: calc(50% - 13px/2);    /* works in conjunction with #toggleOptionsToggle::before border-width */
   top: calc(50% - 13px);        /* works in conjunction with #toggleOptionsToggle::before border-width */
 }
 
-[data-toolbarsplacement="bottom"] #toggleOptionsToggle::before {
+[data-menubarsplacement="bottom"] #toggleOptionsToggle::before {
   border-bottom-color: #d5e6ff;
   bottom: calc(50% - 13px/2);   /* works in conjunction with #toggleOptionsToggle::before border-width */
   left: calc(50% - 13px);       /* works in conjunction with #toggleOptionsToggle::before border-width */
 }
 
-[data-toolbarsplacement="left"] #toggleOptionsToggle::before {
+[data-menubarsplacement="left"] #toggleOptionsToggle::before {
   border-left-color: #d5e6ff;
   top: calc(50% - 13px);      /* works in conjunction with #toggleOptionsToggle::before border-width */
   left: calc(50% - 13px/2);       /* works in conjunction with #toggleOptionsToggle::before border-width */
 }
 
-[data-toolbarsplacement="top"] #toggleOptionsToggle.shown::before {
+[data-menubarsplacement="top"] #toggleOptionsToggle.shown::before {
   border-top-color: #acf;
 }
 
-[data-toolbarsplacement="right"] #toggleOptionsToggle.shown::before {
+[data-menubarsplacement="right"] #toggleOptionsToggle.shown::before {
   border-right-color: #acf;
 }
 
-[data-toolbarsplacement="bottom"] #toggleOptionsToggle.shown::before {
+[data-menubarsplacement="bottom"] #toggleOptionsToggle.shown::before {
   border-bottom-color: #acf;
 }
 
-[data-toolbarsplacement="left"] #toggleOptionsToggle.shown::before {
+[data-menubarsplacement="left"] #toggleOptionsToggle.shown::before {
   border-left-color: #acf;
 }
 
-#toolbarsOptions {
+#menubarsOptions {
   background: #707070;
   width: 170px;
 }
 
-#toolbarsOptions fieldset {
+#menubarsOptions fieldset {
   margin: 0 .5px;
 }
 
-#toolbarsOptions fieldset + fieldset {
+#menubarsOptions fieldset + fieldset {
   margin-top: 5px;
 }
 
-#toolbarsOptions fieldset + fieldset.has-legend {
+#menubarsOptions fieldset + fieldset.has-legend {
   margin-top: 2px;
 }
 
-#toolbarsOptions fieldset.has-legend:last-child {
+#menubarsOptions fieldset.has-legend:last-child {
   margin-bottom: 1px;
 }
 
-#toolbarsOptions fieldset:not(.has-legend):last-child {
+#menubarsOptions fieldset:not(.has-legend):last-child {
   margin-bottom: -2.5px;
 }
 
-#toolbarsOptions legend {
+#menubarsOptions legend {
   font-size: 10px;
   font-family: sans-serif;
 }
 
-#toolbarsOptions .input-block {
+#menubarsOptions .input-block {
   align-items: center;
   font-size: 12px;
   font-weight: bold;
   margin: 2.5px;
 }
 
-#toolbarsOptions .input-block:hover, #toolbarsOptions select:hover {
+#menubarsOptions .input-block:hover, #menubarsOptions select:hover {
   outline: 1px solid #ff0;
 }
 
-#toolbarsOptions input[type="radio"] {
+#menubarsOptions input[type="radio"] {
   margin: -1px 0 0 10px;
 }
 
-#toolbarsOptions input[type="checkbox"] {
+#menubarsOptions input[type="checkbox"] {
   margin-left: 10px;
 }
 
-#toolbarsOptions input[type="radio"] + label, #toolbarsOptions input[type="checkbox"] + label {
+#menubarsOptions input[type="radio"] + label, #menubarsOptions input[type="checkbox"] + label {
   padding: 3px 0 3px 32px;
 }
 
-#toolbarsOptions input[type="radio"]:checked + label {
+#menubarsOptions input[type="radio"]:checked + label {
   color: #ff0;
   text-shadow: 0 0 3px rgba(192, 192, 0, .5);
 }
 
-#toolbarsOptions .input-block label {
+#menubarsOptions .input-block label {
   color: #fff;
   font-family: sans-serif;
 }
 
 
-#toolbarsOptions select {
+#menubarsOptions select {
   padding: 5px;
 }
 
-#toolbarsOptions select, #toolbarsOptions option {
+#menubarsOptions select, #menubarsOptions option {
   font-family: sans-serif;
   font-size: 12px;
 }

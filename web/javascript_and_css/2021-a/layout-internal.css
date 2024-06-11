@@ -16,24 +16,24 @@
   height: 100%;
 }
 
-[data-toolbarsplacement] {
+[data-menubarsplacement] {
   display: flex;
   flex-wrap: wrap;
 }
 
-[data-toolbarsplacement="top"] {
+[data-menubarsplacement="top"] {
   flex-direction: column-reverse;
 }
 
-[data-toolbarsplacement="right"] {
+[data-menubarsplacement="right"] {
   flex-direction: row;
 }
 
-[data-toolbarsplacement="bottom"] {
+[data-menubarsplacement="bottom"] {
   flex-direction: column;
 }
 
-[data-toolbarsplacement="left"] {
+[data-menubarsplacement="left"] {
   flex-direction: row-reverse;
 }
 
@@ -42,7 +42,7 @@
   position: relative;
 }
 
-#toolbarsContainer {
+#menubarsContainer {
   flex: 0 1;
   display: flex;
   flex-wrap: wrap;
@@ -84,20 +84,20 @@ iframe[name="addoniframe"].shown {
   z-index: 200000005;
 }
 
-[data-toolbarsplacement="right"] #toolbarsContainer, [data-toolbarsplacement="left"] #toolbarsContainer {
+[data-menubarsplacement="right"] #menubarsContainer, [data-menubarsplacement="left"] #menubarsContainer {
   flex-direction: column;
 }
 
-.toolbar {
+.menubar {
   display: flex;
   flex-wrap: wrap;
 }
 
-[data-toolbarsplacement="top"] .toolbar , [data-toolbarsplacement="bottom"] .toolbar  {
+[data-menubarsplacement="top"] .menubar , [data-menubarsplacement="bottom"] .menubar  {
   flex: 1 1;
 }
 
-[data-toolbarsplacement="right"] .toolbar , [data-toolbarsplacement="left"] .toolbar  {
+[data-menubarsplacement="right"] .menubar , [data-menubarsplacement="left"] .menubar  {
   flex: 0 1;
 }
 
@@ -107,12 +107,12 @@ iframe[name="addoniframe"].shown {
   align-items: stretch;
 }
 
-.toolbar button {
+.menubar button {
   display: block;
   cursor: pointer;
 }
 
-.toolbar button a {
+.menubar button a {
   display: flex;
   height: 100%;
   width: 100%;
@@ -125,11 +125,11 @@ iframe[name="addoniframe"].shown {
   cursor: pointer;
 }
 
-[data-toolbarsplacement="top"] #toggleOptionsToggle, [data-toolbarsplacement="bottom"] #toggleOptionsToggle {
+[data-menubarsplacement="top"] #toggleOptionsToggle, [data-menubarsplacement="bottom"] #toggleOptionsToggle {
   height: 100%;
 }
 
-[data-toolbarsplacement="right"] #toggleOptionsToggle, [data-toolbarsplacement="left"] #toggleOptionsToggle {
+[data-menubarsplacement="right"] #toggleOptionsToggle, [data-menubarsplacement="left"] #toggleOptionsToggle {
   width: 100%;
 }
 
@@ -143,58 +143,58 @@ iframe[name="addoniframe"].shown {
   pointer-events: none;
 }
 
-#toolbarsOptions {
+#menubarsOptions {
   position: absolute;
   display: none;
 }
 
-[data-toolbarsplacement="top"] #toolbarsOptions {
+[data-menubarsplacement="top"] #menubarsOptions {
   top: 100%;
   right: 0;
 }
 
-[data-toolbarsplacement="right"] #toolbarsOptions {
+[data-menubarsplacement="right"] #menubarsOptions {
   right: 100%;
   bottom: 0;
 }
 
-[data-toolbarsplacement="bottom"] #toolbarsOptions {
+[data-menubarsplacement="bottom"] #menubarsOptions {
   bottom: 100%;
   right: 0;
 }
 
-[data-toolbarsplacement="left"] #toolbarsOptions {
+[data-menubarsplacement="left"] #menubarsOptions {
   left: 100%;
   bottom: 0;
 }
 
-.shown #toolbarsOptions {
+.shown #menubarsOptions {
   display: block !important;
 }
 
-#toolbarsOptions .input-block {
+#menubarsOptions .input-block {
   display: flex;
   position: relative;
 }
 
-#toolbarsOptions input[type="checkbox"] {
+#menubarsOptions input[type="checkbox"] {
   cursor: pointer;
   position: absolute;
   margin: 0;          /* is a default browser style "undo" */
 }
 
-#toolbarsOptions input[type="radio"] {
+#menubarsOptions input[type="radio"] {
   cursor: pointer;
   position: absolute;
   margin: 0;          /* is a default browser style "undo" */
 }
 
-#toolbarsOptions .input-block label {
+#menubarsOptions .input-block label {
   cursor: pointer;
   width: 100%;
 }
 
-#toolbarsOptions select {
+#menubarsOptions select {
   margin: auto;
   position: relative;
   display: table;
@@ -221,24 +221,24 @@ iframe[name="addoniframe"].shown {
   display: table;
 }
 
-[data-toolbarsplacement="top"] #selectablePlugins {
+[data-menubarsplacement="top"] #selectablePlugins {
   top: 100%;
   padding-top: 5px;
 }
 
-[data-toolbarsplacement="right"] #selectablePlugins {
+[data-menubarsplacement="right"] #selectablePlugins {
   right: calc(100% - 97px);
   left: auto;
   top: -3px;
   padding-right: 107px;
 }
 
-[data-toolbarsplacement="bottom"] #selectablePlugins {
+[data-menubarsplacement="bottom"] #selectablePlugins {
   bottom: 100%;
   padding-bottom: 5px;
 }
 
-[data-toolbarsplacement="left"] #selectablePlugins {
+[data-menubarsplacement="left"] #selectablePlugins {
   left: calc(100% - 97px);
   top: -3px;
   padding-left: 107px;
@@ -249,7 +249,7 @@ iframe[name="addoniframe"].shown {
   margin-top: 2px;
 }
 
-[data-toolbarsplacement="bottom"] .selectable-plugin {
+[data-menubarsplacement="bottom"] .selectable-plugin {
   margin-top: 0;
   margin-bottom: 2px;
 }
@@ -259,24 +259,24 @@ iframe[name="addoniframe"].shown {
   margin-right: 0;
 }
 
-[data-toolbarsplacement="top"] #exclusivePlugins {
+[data-menubarsplacement="top"] #exclusivePlugins {
   height: 26px;
   margin: 5px 2.5px;
   align-self: center;
 }
 
-[data-toolbarsplacement="right"] #exclusivePlugins {
+[data-menubarsplacement="right"] #exclusivePlugins {
   width: 100%;
   margin: 2.5px 5px;
 }
 
-[data-toolbarsplacement="bottom"] #exclusivePlugins {
+[data-menubarsplacement="bottom"] #exclusivePlugins {
   height: 26px;
   margin: 5px 2.5px;
   align-self: center;
 }
 
-[data-toolbarsplacement="left"] #exclusivePlugins {
+[data-menubarsplacement="left"] #exclusivePlugins {
   width: 100%;
   margin: 2.5px 5px;
 }

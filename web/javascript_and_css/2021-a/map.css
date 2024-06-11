@@ -7,7 +7,7 @@ body {
   background: #fff;
 }
 
-.toolbar {
+.menubar {
   background: lightgray;
   height: 50px;
   padding: 7px 0;
@@ -17,20 +17,20 @@ body {
 }
 
 @media (min-width: 1281px) {
-  .toolbar > * {
+  .menubar > * {
     padding-left: 19px;
     padding-right: 19px;
   }
 }
 
 @media (max-width: 1280px) {
-  .toolbar > * {
+  .menubar > * {
     padding-left: 11px;
     padding-right: 11px;
   }
 }
 
-.toolbar > div {
+.menubar > div {
   display: flex;
   align-items: center;
   white-space: nowrap;

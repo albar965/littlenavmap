@@ -1,39 +1,38 @@
 /*
-	menu's toolbar's container taking up a sides whole edge space
+	menu's menubar's container taking up a sides whole edge space
 */
-#toolbarsContainer {
+#menubarsContainer {
 
 }
 
 /*
-	any toolbar, ie. the menu toolbar, the default map toolbar, a
-	toolbar created with the toolbar API by a plugin;
-	when wanting to modify gaps, take [data-toolbarsplacement="X"]
+	the menubar, ie. the main menu menubar;
+	when wanting to modify gaps, take [data-menubarsplacement="X"]
 	from javascript_and_css/2021-a/layout-internal.css into account,
 	add selectors when necessary
 */
-.toolbar {
+.menubar {
 
 }
 
 /*
-	menu toolbar
+	menu menubar
 */
-#toolbarOuter {
+#menubarOuter {
 
 }
 
 /*
-	any toolbar's all buttons
+	any menubar's all buttons
 */
-.toolbar button {
+.menubar button {
 
 }
 
 /*
-	menu toolbar's all buttons
+	menu menubar's all buttons
 */
-#toolbarOuter button {
+#menubarOuter button {
 
 }
 
@@ -68,19 +67,19 @@
 
 /*
 	see javascript_and_css/2021-a/*-internal.css for detailed
-        cross-effects when changing following's :hover, ::before or
-        .shown::before
+  cross-effects when changing following's :hover, ::before or
+  .shown::before
 */
 #toggleOptionsToggle {
 
 }
 
 /*
-	the openable options to the toolbar, see
+	the openable options to the menubar, see
 	javascript_and_css/2021-a/*-internal.css for existing
-        children's style
+  children's style
 */
-#toolbarsOptions {
+#menubarsOptions {
 
 }
 
