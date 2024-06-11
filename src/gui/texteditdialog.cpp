@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@
 
 #include "common/constants.h"
 #include "gui/helphandler.h"
+#include "gui/desktopservices.h"
 
 #include <QMimeData>
 #include <QPushButton>
@@ -29,7 +30,7 @@
 #include <QUrl>
 
 TextEditDialog::TextEditDialog(QWidget *parent, const QString& title, const QString& labelText, const QString& labelText2,
-                               const QString& helpBaseUrlParam)
+                               const QString& labelText3, const QString& helpBaseUrlParam)
   : QDialog(parent), ui(new Ui::TextEditDialog), helpBaseUrl(helpBaseUrlParam)
 {
   ui->setupUi(this);
@@ -43,6 +44,13 @@ TextEditDialog::TextEditDialog(QWidget *parent, const QString& title, const QStr
   ui->lineEdit2->setVisible(!labelText2.isEmpty());
   ui->label2->setVisible(!labelText2.isEmpty());
   ui->label2->setText(labelText2);
+
+  ui->label3->setVisible(!labelText3.isEmpty());
+  ui->label3->setText(labelText3);
+
+  connect(ui->label, &QLabel::linkActivated, this, &TextEditDialog::linkActivated);
+  connect(ui->label2, &QLabel::linkActivated, this, &TextEditDialog::linkActivated);
+  connect(ui->label3, &QLabel::linkActivated, this, &TextEditDialog::linkActivated);
 
   if(helpBaseUrl.isEmpty())
     ui->buttonBox->button(QDialogButtonBox::Help)->hide();
@@ -90,4 +98,9 @@ void TextEditDialog::buttonBoxClicked(QAbstractButton *button)
   }
   else
     reject();
+}
+
+void TextEditDialog::linkActivated(const QString& link)
+{
+  atools::gui::DesktopServices::openUrl(this, link);
 }

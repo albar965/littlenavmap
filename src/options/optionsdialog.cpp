@@ -34,6 +34,7 @@
 #include "gui/translator.h"
 #include "gui/widgetstate.h"
 #include "gui/widgetutil.h"
+#include "gui/desktopservices.h"
 #include "mapgui/mapthemehandler.h"
 #include "mapgui/mapwidget.h"
 #include "app/navapp.h"
@@ -44,7 +45,6 @@
 #include "web/webcontroller.h"
 
 #include <QFileInfo>
-#include <QDesktopServices>
 #include <QColorDialog>
 #include <QGuiApplication>
 #include <QMainWindow>
@@ -2885,10 +2885,8 @@ void OptionsDialog::clearMemCachedClicked()
 /* Opens the disk cache in explorer, finder, whatever */
 void OptionsDialog::showDiskCacheClicked()
 {
-  QUrl url = QUrl::fromLocalFile(Marble::MarbleDirs::localPath() % atools::SEP % "maps" % atools::SEP % "earth");
-
-  if(!QDesktopServices::openUrl(url))
-    atools::gui::Dialog::warning(this, tr("Error opening disk cache \"%1\"").arg(url.toDisplayString()));
+  atools::gui::DesktopServices::openUrl(this, QUrl::fromLocalFile(Marble::MarbleDirs::localPath() % atools::SEP % "maps" %
+                                                                  atools::SEP % "earth").toString());
 }
 
 QListWidgetItem *OptionsDialog::pageListItem(QListWidget *parent, const QString& text, const QString& tooltip, const QString& iconPath)
@@ -3245,17 +3243,25 @@ void OptionsDialog::mapboxUserMapClicked()
   static const QLatin1String USERSTYLE_KEY("Mapbox User Style");
   static const QLatin1String TOKEN_KEY("Mapbox Token");
 
-  QString label = tr(
-    "<p>Here you can enter a Mapbox User Style URL.</p>"
-      "<p>Open the Mapbox Studio, login and click on the three-dot menu button of your style.<br/> "
-        "Then click on the copy icon of the \"Style URL\" to add it to the clipboard and enter it below.</p>"
-        "<p>A style URL looks like \"mapbox://styles/USERNAME/STYLEID\".</p>"
-          "<p><a href=\"https://studio.mapbox.com/\"><b>Click here to open the Mapbox Studio page in your browser</b></a></p>");
+  QString label =
+    tr("<p>Here you can enter a Mapbox User Style URL.</p>"
+         "<p>Open the Mapbox Studio, login and click on the three-dot menu button of your style.<br/> "
+           "Then click on the copy icon of the \"Style URL\" to add it to the clipboard and enter it below.</p>"
+           "<p>A style URL looks like \"mapbox://styles/USERNAME/STYLEID\".</p>"
+             "<p><a href=\"https://studio.mapbox.com/\"><b>Click here to open the Mapbox Studio page in your browser</b></a></p>");
 
-  QString label2 = tr(
-    "<p>You can also to provide you Mapbox Access Token below if not already done.<br/>"
-    "You can find the Token on your Mapbox Account page.</p>"
-    "<p><a href=\"https://account.mapbox.com/\"><b>Click here to open the Mapbox Account page in your browser</b></a></p>");
+  QString label2 =
+    tr("<p>You can also to provide you Mapbox Access Token below if not already done.<br/>"
+       "You can find the Token on your Mapbox Account page.</p>"
+       "<p><a href=\"https://account.mapbox.com/\"><b>Click here to open the Mapbox Account page in your browser</b></a></p>");
+
+  QUrl cacheUrl = QUrl::fromLocalFile(atools::cleanPath(Marble::MarbleDirs::localPath() % atools::SEP % "maps" % atools::SEP %
+                                                        "earth" % atools::SEP % "mapboxuser"));
+
+  QString label3 =
+    tr("<p><b>You have to clear the map cache manually after updating or changing your Mapbox style.</b></p>"
+         "<p><a href=\"%1\"><b>Click here to open cache folder for the Mapbox user style.</b></a> "
+           "Backup the folder if needed and then delete the folder contents manually to clear the cache.</p>").arg(cacheUrl.toString());
 
   // Collect all editable items by key ======================
   QTableWidgetItem *userNameItem = nullptr, *userStyleItem = nullptr, *tokenItem = nullptr;
@@ -3272,7 +3278,7 @@ void OptionsDialog::mapboxUserMapClicked()
 
   if(userNameItem != nullptr && userStyleItem != nullptr && tokenItem != nullptr)
   {
-    TextEditDialog dialog(this, QCoreApplication::applicationName() % tr(" - Enter Mapbox Keys"), label, label2,
+    TextEditDialog dialog(this, QCoreApplication::applicationName() % tr(" - Enter Mapbox Keys"), label, label2, label3,
                           "OPTIONS.html#mapboxtheme");
 
     // Prefill with present keys ==============

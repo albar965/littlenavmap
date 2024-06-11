@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -19,11 +19,11 @@
 #include "search/sqlcontroller.h"
 #include "gui/dialog.h"
 #include "gui/errorhandler.h"
+#include "gui/desktopservices.h"
 #include "search/column.h"
 
 #include <QDebug>
 #include <QUrl>
-#include <QDesktopServices>
 #include <QSqlField>
 #include <QSqlRecord>
 
@@ -87,14 +87,7 @@ QStringList Exporter::headerNames(int cnt)
 
 void Exporter::openDocument(const QString& file)
 {
-  QUrl url(QUrl::fromLocalFile(file));
-
-  qDebug() << "HtmlExporter opening" << url;
-  if(!QDesktopServices::openUrl(url))
-  {
-    qWarning() << "openUrl failed for" << url;
-    atools::gui::Dialog::warning(parentWidget, tr("Cannot open file \"%1\"").arg(file), QMessageBox::Close, QMessageBox::NoButton);
-  }
+  atools::gui::DesktopServices::openUrl(parentWidget, QUrl::fromLocalFile(file));
 }
 
 void Exporter::fillRecord(const QVariantList& values, const QStringList& cols, QSqlRecord& rec)
