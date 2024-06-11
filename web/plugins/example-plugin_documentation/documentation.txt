@@ -72,6 +72,8 @@ requestMapAccess explained:
 	If you provide a non-empty string, the user is shown
 	a message asking him to grant your plugin access to
 	the map for the non-empty string being the reason.
+	Your plugin will be delivered the map iframe's window
+	object on load of your plugin.
 	
 
 
@@ -88,5 +90,15 @@ The cleanup command explained:
 
 
 
+config.json :
+
+	All keys required.
+	Arrays may be left empty.
+	Handle at least 1 event like "click" to be able to
+	receive your toolbar's entry's value. That value is not
+	an event object property.
+	
+	
+	
 See the example plugins. Have them available in the plugin
 menu by adding ?debug to the LNM web server url.

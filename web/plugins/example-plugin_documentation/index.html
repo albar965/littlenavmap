@@ -61,6 +61,13 @@
     		}
     	}
     	
+    	// provide this if you have requested map access.
+    	// It will be delivered the map iframe's window object.
+    	var mapWindow = null;
+    	function setMapWindow(iframeWindow) {
+    		mapWindow = iframeWindow;
+    	}
+    	
       // code JS (inline or outsourced) validly to your liking
     </script>
   </body>
