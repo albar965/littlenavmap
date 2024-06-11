@@ -4605,9 +4605,8 @@ Activez l&apos;option &quot;Lire les entrées de scènes inactives ou désactiv�
 <context>
     <name>Exporter</name>
     <message>
-        <location filename="src/export/exporter.cpp" line="96"/>
         <source>Cannot open file &quot;%1&quot;</source>
-        <translation>Ne peut pas ouvrir le fichier &quot;%1&quot;</translation>
+        <translation type="vanished">Ne peut pas ouvrir le fichier &quot;%1&quot;</translation>
     </message>
 </context>
 <context>
@@ -29711,62 +29710,67 @@ VORTAC, TACAN ou NDB.</translation>
         <translation type="unfinished">Fichiers vent de X-Plane 11 %1;;Tous les fichiers (*)</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="2931"/>
+        <location filename="src/options/optionsdialog.cpp" line="2929"/>
         <source>No valid address found.</source>
         <translation type="unfinished">Aucune adresse valide trouvée.</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="2933"/>
+        <location filename="src/options/optionsdialog.cpp" line="2931"/>
         <source>Web Server is running at the address:&lt;br/&gt;%1</source>
         <translation type="unfinished">Le serveur Web fonctionne à l&apos;adresse suivante:&lt;br/&gt;%1</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="2935"/>
+        <location filename="src/options/optionsdialog.cpp" line="2933"/>
         <source>Web Server is running at addresses:&lt;br/&gt;%1</source>
         <translation type="unfinished">Le serveur Web fonctionne à l&apos;adresse:&lt;br/&gt;%1</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="3215"/>
+        <location filename="src/options/optionsdialog.cpp" line="3213"/>
         <source>Font too large for user interface. Size was corrected. Maximum is 30 pixels/points.</source>
         <translation type="unfinished">Police trop grande pour l&apos;interface utilisateur. La taille a été corrigée. Le maximum est de 30 pixels/points.</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="3248"/>
+        <location filename="src/options/optionsdialog.cpp" line="3247"/>
         <source>&lt;p&gt;Here you can enter a Mapbox User Style URL.&lt;/p&gt;&lt;p&gt;Open the Mapbox Studio, login and click on the three-dot menu button of your style.&lt;br/&gt; Then click on the copy icon of the &quot;Style URL&quot; to add it to the clipboard and enter it below.&lt;/p&gt;&lt;p&gt;A style URL looks like &quot;mapbox://styles/USERNAME/STYLEID&quot;.&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;https://studio.mapbox.com/&quot;&gt;&lt;b&gt;Click here to open the Mapbox Studio page in your browser&lt;/b&gt;&lt;/a&gt;&lt;/p&gt;</source>
         <translation type="unfinished">&lt;p&gt;Vous pouvez saisir ici une URL de style utilisateur Mapbox.&lt;/p&gt;&lt;p&gt;Ouvrez le Mapbox Studio, connectez-vous et cliquez sur le bouton de menu à trois points de votre style.&lt;br/&gt; Cliquez ensuite sur l&apos;icône de copie de l&apos;&quot;URL du style&quot; pour l&apos;ajouter au presse-papiers et saisissez-la ci-dessous.&lt;/p&gt;&lt;p&gt;A style URL looks like &quot;mapbox://styles/USERNAME/STYLEID&quot;.&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;https://studio.mapbox.com/&quot;&gt;&lt;b&gt;Cliquez ici pour ouvrir la page Mapbox Studio dans votre navigateur&lt;/b&gt;&lt;/a&gt;&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="3255"/>
+        <location filename="src/options/optionsdialog.cpp" line="3254"/>
         <source>&lt;p&gt;You can also to provide you Mapbox Access Token below if not already done.&lt;br/&gt;You can find the Token on your Mapbox Account page.&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;https://account.mapbox.com/&quot;&gt;&lt;b&gt;Click here to open the Mapbox Account page in your browser&lt;/b&gt;&lt;/a&gt;&lt;/p&gt;</source>
         <translation type="unfinished">&lt;p&gt;Vous pouvez également fournir votre Token d&apos;accès Mapbox ci-dessous si ce n&apos;est pas déjà fait.&lt;br/&gt;Vous pouvez trouver le code  sur votre page de compte Mapbox.&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;https://account.mapbox.com/&quot;&gt;&lt;b&gt;Cliquez ici pour ouvrir la page du compte Mapbox dans votre navigateur&lt;/b&gt;&lt;/a&gt;&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="3275"/>
+        <location filename="src/options/optionsdialog.cpp" line="3262"/>
+        <source>&lt;p&gt;&lt;b&gt;You have to clear the map cache manually after updating or changing your Mapbox style.&lt;/b&gt;&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;%1&quot;&gt;&lt;b&gt;Click here to open cache folder for the Mapbox user style.&lt;/b&gt;&lt;/a&gt; Backup the folder if needed and then delete the folder contents manually to clear the cache.&lt;/p&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/options/optionsdialog.cpp" line="3281"/>
         <source> - Enter Mapbox Keys</source>
         <translation type="unfinished"> - Entrez les touches Mapbox</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="3306"/>
+        <location filename="src/options/optionsdialog.cpp" line="3312"/>
         <source>Mapbox Token is empty.</source>
         <translation type="unfinished">Le code Mapbox est vide.</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="3309"/>
+        <location filename="src/options/optionsdialog.cpp" line="3315"/>
         <source>Mapbox User Style not found in URL.</source>
         <translation type="unfinished">Style d&apos;utilisateur Mapbox n&apos;a pas été trouvé dans l&apos;URL.</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="3312"/>
+        <location filename="src/options/optionsdialog.cpp" line="3318"/>
         <source>Mapbox Username not found in URL.</source>
         <translation type="unfinished">Le nom d&apos;utilisateur Mapbox n&apos;a pas été trouvé dans l&apos;URL.</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="3315"/>
+        <location filename="src/options/optionsdialog.cpp" line="3321"/>
         <source>Style URL has to start with &quot;mapbox://styles/&quot;.</source>
         <translation type="unfinished">L&apos;URL du style doit commencer par &quot;mapbox://styles/&quot;.</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="3319"/>
+        <location filename="src/options/optionsdialog.cpp" line="3325"/>
         <source>One or more Mapbox keys are missing. Installation might be incomplete since map themes are missing.</source>
         <translation type="unfinished">Une ou plusieurs touches  Mapbox sont manquantes. L&apos;installation peut être incomplète car des thèmes de carte sont manquants.</translation>
     </message>
@@ -29934,12 +29938,12 @@ Remettre la période de mise à jour à %1 seconde.</translation>
         <translation type="unfinished">Réussi avec succès.</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="3100"/>
+        <location filename="src/options/optionsdialog.cpp" line="3098"/>
         <source>Example: &quot;%1&quot;</source>
         <translation type="unfinished">Exemple: &quot;%1&quot;</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="3103"/>
+        <location filename="src/options/optionsdialog.cpp" line="3101"/>
         <source>&lt;br/&gt;</source>
         <translation type="unfinished">&lt;br/&gt;</translation>
     </message>
@@ -29962,7 +29966,7 @@ Remettre la période de mise à jour à %1 seconde.</translation>
         <translation type="obsolete"> </translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="3109"/>
+        <location filename="src/options/optionsdialog.cpp" line="3107"/>
         <source>Pattern is empty. Using default &quot;%1&quot;.</source>
         <translation type="unfinished">Le modèle est vide. En utilisant la valeur par défaut &quot;%1&quot;.</translation>
     </message>
@@ -29971,7 +29975,7 @@ Remettre la période de mise à jour à %1 seconde.</translation>
         <translation type="obsolete">Indiquez le cap de l&apos;aéronef utilisateur sous la forme d&apos;un petit cercle magenta.</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="3153"/>
+        <location filename="src/options/optionsdialog.cpp" line="3151"/>
         <source>%1 - Select font</source>
         <translation type="unfinished">%1 - Sélectionner la police</translation>
     </message>
@@ -30033,9 +30037,8 @@ Remettre la période de mise à jour à %1 seconde.</translation>
         <translation type="obsolete">Fichiers de vent X-Plane %1;;Tous les fichiers (*)</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="2891"/>
         <source>Error opening disk cache &quot;%1&quot;</source>
-        <translation type="unfinished">Erreur d&apos;ouverture du cache du disque &quot;%1&quot;</translation>
+        <translation type="obsolete">Erreur d&apos;ouverture du cache du disque &quot;%1&quot;</translation>
     </message>
     <message>
         <source>Web Server is running at&lt;ul&gt;&lt;li&gt;%1&lt;/li&gt;&lt;/ul&gt;</source>
@@ -30050,17 +30053,17 @@ Remettre la période de mise à jour à %1 seconde.</translation>
         <translation type="obsolete">, </translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="2937"/>
+        <location filename="src/options/optionsdialog.cpp" line="2935"/>
         <source>&amp;Stop Web Server</source>
         <translation type="unfinished">Arrêt du &amp;serveur Web</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="2941"/>
+        <location filename="src/options/optionsdialog.cpp" line="2939"/>
         <source>Web Server is not running.</source>
         <translation type="unfinished">Le serveur Web ne fonctionne pas.</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="2942"/>
+        <location filename="src/options/optionsdialog.cpp" line="2940"/>
         <source>&amp;Start Web Server</source>
         <translation type="unfinished">Démarrer le &amp;serveur Web</translation>
     </message>
@@ -30077,7 +30080,7 @@ Remettre la période de mise à jour à %1 seconde.</translation>
         <translation type="obsolete">Avertissement : Aucun fichier &quot;index.html&quot; trouvé.</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="2985"/>
+        <location filename="src/options/optionsdialog.cpp" line="2983"/>
         <source>Using default document root &quot;%1&quot;.</source>
         <translation type="unfinished">En utilisant la racine du document par défaut &quot;%1&quot;.</translation>
     </message>
@@ -30086,7 +30089,7 @@ Remettre la période de mise à jour à %1 seconde.</translation>
         <translation type="obsolete">Avertissement : Aucun index.html trouvé.</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="2965"/>
+        <location filename="src/options/optionsdialog.cpp" line="2963"/>
         <source>Document root is valid.</source>
         <translation type="unfinished">La racine du document est valide.</translation>
     </message>
@@ -30095,12 +30098,12 @@ Remettre la période de mise à jour à %1 seconde.</translation>
         <translation type="obsolete">Utilisation de la racine du document par défaut %1.</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="2990"/>
+        <location filename="src/options/optionsdialog.cpp" line="2988"/>
         <source>Not initialized.</source>
         <translation type="unfinished">Non initialisé.</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="2998"/>
+        <location filename="src/options/optionsdialog.cpp" line="2996"/>
         <source>Open Document Root Directory</source>
         <translation type="unfinished">Ouvrir le répertoire racine du document</translation>
     </message>
@@ -41478,7 +41481,6 @@ ETD et ETA sont ignorés. ALTERNATES ne fonctionne pas en combinaison avec une p
     </message>
     <message>
         <location filename="src/routestring/routestringdialog.ui" line="45"/>
-        <location filename="src/routestring/routestringdialog.ui" line="248"/>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
@@ -41560,6 +41562,15 @@ li.checked::marker { content: &quot;\2612&quot;; }
         <location filename="src/routestring/routestringdialog.ui" line="234"/>
         <source>Flight plan route description is empty. Press the help button for more information.</source>
         <translation type="unfinished">La description de la route du plan de vol est vide. Appuyez sur le bouton d&apos;aide pour obtenir plus d&apos;informations.</translation>
+    </message>
+    <message>
+        <location filename="src/routestring/routestringdialog.ui" line="248"/>
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Noto Sans&apos;; font-size:9pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Ubuntu&apos;;&quot;&gt;&lt;br /&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
