@@ -12,7 +12,7 @@ See the example index.html .
 Plugin types explained:
 
 
-	background :
+  background :
 
     example use case:
       a timer without ui which alerts the user every 30 minutes
@@ -52,34 +52,34 @@ Plugin types explained:
 
 Map version explained:
 
-	JS data type number representing the map's HTML's code
-	version to help you decide to possibly not letting continue
-	execution of your plugin if it is made for a different
-	version of the map's HTML's code, "throw" a string in that case
-	to have initialisation of your plugin be aborted, that string
-	is shown to the user as the "reason" for aborting.
-	The map's HTML's code eg. contains the map's toolbar's HTML's
-	code which you might want to modify.
-	The current map's HTML's version is 1. It is intended to not
-	be changed in the forseeable future by the first party.
+  JS data type number representing the map's HTML's code
+  version to help you decide to possibly not letting continue
+  execution of your plugin if it is made for a different
+  version of the map's HTML's code, "throw" a string in that case
+  to have initialisation of your plugin be aborted, that string
+  is shown to the user as the "reason" for aborting.
+  The map's HTML's code eg. contains the map's toolbar's HTML's
+  code which you might want to modify.
+  The current map's HTML's version is 1. It is intended to not
+  be changed in the forseeable future by the first party.
 
 
 
 requestMapAccess explained:
 
-	Your plugin is sandboxed without access to the map.
-	You might like access for advanced operations.
-	If you provide a non-empty string, the user is shown
-	a message asking him to grant your plugin access to
-	the map for the non-empty string being the reason.
-	Your plugin will be delivered the map iframe's window
-	object on load of your plugin.
-	
+  Your plugin is sandboxed without access to the map.
+  You might like access for advanced operations.
+  If you provide a non-empty string, the user is shown
+  a message asking him to grant your plugin access to
+  the map for the non-empty string being the reason.
+  Your plugin will be delivered the map iframe's window
+  object on load of your plugin.
+  
 
 
 The cleanup command explained:
 
-	The user has the possibility to disable your plugin at
+  The user has the possibility to disable your plugin at
   any time through the plugin menu at which point the
   cleanup command message is posted.
 
@@ -92,13 +92,13 @@ The cleanup command explained:
 
 config.json :
 
-	All keys required.
-	Arrays may be left empty.
-	Handle at least 1 event like "click" to be able to
-	receive your toolbar's entry's value. That value is not
-	an event object property.
-	
-	
-	
+  All keys required.
+  Arrays may be left empty.
+  Handle at least 1 event like "click" to be able to
+  receive your toolbar's entry's value. That value is not
+  an event object property.
+  
+  
+  
 See the example plugins. Have them available in the plugin
 menu by adding ?debug to the LNM web server url.

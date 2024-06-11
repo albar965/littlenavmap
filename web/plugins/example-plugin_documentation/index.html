@@ -10,64 +10,64 @@
     </style>
   </head>
   <body>
-  	<!-- construct HTML validly to your liking -->
+    <!-- construct HTML validly to your liking -->
     <script>
-    	// listen for callbacks from configured toolbar items or
-    	// the cleanup command when the user disables your plugin
-    	// evaluate the version message, see documentation
-    	onmessage = event => {
-    		if(let message = event.data.pluginParent) {
-    			switch(message.cause) {
-    				case "cleanup":
-    					stop();
-    					break;
-    				case "callback":
-    					handleEvents(message.cargo);
-    					break;
-    				default:
-    			}
-    			if(message.version !== 1) {
-    				// this version of this plugin is not intended for
-    				// versions of the map other than 1, ask user about
-    				// risking letting continue execution
-    				if(!confirm("continue?")) {
-    					event.origin.postMessage({"throw": "any text of \"throw\" is shown to the user as reason for aborting the plugin's execution"});
-    				}
-    			}
-    		}
-    	};
-    	
-    	// the cleanup function
-    	function stop() {
-    		// revert any changes by the plugin eg. to the map DOM,
-    		// .5 seconds are available for any asynchronity
-    	}
-    	
-    	// event handler
-    	function handleEvents(cargo) {
-    		switch (cargo.id) {
-    			case "an identificator of your choosing for you to be able to differentiate event handler returns":
-    				switch (cargo.event) {
-    					case "event type":
-    						if(confirm("Look! What do you want? My value is always \"" + cargo.value + "\".")) {
-    							// call JS function
-    							alert("\"" + cargo.data.join(", ") + "\" are the value of the properties of the event object I configured to get returned.");
-    						}
-    						break;
-    					default:
-    				}
-    				break;
-    			default:
-    		}
-    	}
-    	
-    	// provide this if you have requested map access.
-    	// It will be delivered the map iframe's window object.
-    	var mapWindow = null;
-    	function setMapWindow(iframeWindow) {
-    		mapWindow = iframeWindow;
-    	}
-    	
+      // listen for callbacks from configured toolbar items or
+      // the cleanup command when the user disables your plugin
+      // evaluate the version message, see documentation
+      onmessage = event => {
+        if(let message = event.data.pluginParent) {
+          switch(message.cause) {
+            case "cleanup":
+              stop();
+              break;
+            case "callback":
+              handleEvents(message.cargo);
+              break;
+            default:
+          }
+          if(message.version !== 1) {
+            // this version of this plugin is not intended for
+            // versions of the map other than 1, ask user about
+            // risking letting continue execution
+            if(!confirm("continue?")) {
+              event.origin.postMessage({"throw": "any text of \"throw\" is shown to the user as reason for aborting the plugin's execution"});
+            }
+          }
+        }
+      };
+      
+      // the cleanup function
+      function stop() {
+        // revert any changes by the plugin eg. to the map DOM,
+        // .5 seconds are available for any asynchronity
+      }
+      
+      // event handler
+      function handleEvents(cargo) {
+        switch (cargo.id) {
+          case "an identificator of your choosing for you to be able to differentiate event handler returns":
+            switch (cargo.event) {
+              case "event type":
+                if(confirm("Look! What do you want? My value is always \"" + cargo.value + "\".")) {
+                  // call JS function
+                  alert("\"" + cargo.data.join(", ") + "\" are the value of the properties of the event object I configured to get returned.");
+                }
+                break;
+              default:
+            }
+            break;
+          default:
+        }
+      }
+      
+      // provide this if you have requested map access.
+      // It will be delivered the map iframe's window object.
+      var mapWindow = null;
+      function setMapWindow(iframeWindow) {
+        mapWindow = iframeWindow;
+      }
+      
       // code JS (inline or outsourced) validly to your liking
     </script>
   </body>
