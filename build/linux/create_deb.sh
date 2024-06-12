@@ -92,10 +92,10 @@ dpkg-deb --build --root-owner-group "${WORKDIR}"
 
 # No compression for debugging dpkg-deb -Znone --build --root-owner-group "${WORKDIR}"
 
-FILENAME_LNM=$VERSION_ID-$(head -n1 "${APROJECTS}/deploy/Little Navmap/version.txt")
+FILENAME_LNM=$ID-$VERSION_ID-$(head -n1 "${APROJECTS}/deploy/Little Navmap/version.txt")
 
 # Rename file to match other LNM archive names
-cp -av "${WORKDIR}".deb ${APROJECTS}/deploy/LittleNavmap-linux-${FILENAME_LNM}-${REVISION}_${ARCH}.deb
+mv -v "${WORKDIR}".deb ${APROJECTS}/deploy/LittleNavmap-linux-${FILENAME_LNM}-${REVISION}_${ARCH}.deb
 
-#rm -rf "${APROJECTS}/deploy/${ID}_${VERSION_ID}"
+rm -rf "${APROJECTS}/deploy/${ID}_${VERSION_ID}"
 
