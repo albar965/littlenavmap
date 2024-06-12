@@ -1,26 +1,27 @@
-/* menubars container taking up a sides whole edge space */
-#menubarsContainer {
+/* menubar's container taking up a sides whole edge space
+   contains #menubarOuter and #toggleOptionsContainer */
+#menubarContainer {
+
+}
+
+/* the main .menubar */
+#menubarOuter {
 
 }
 
 /* any menubar; when wanting to modify gaps, take 
    [data-menubarsplacement="X"] from internal.css into
-   consideration */
+   account. Currently only 1 .menubar exists. */
 .menubar {
 
 }
 
-/* outer menubar */
-#menubarOuter {
-
-}
-
-/* any menubar's all buttons */
+/* menubars' all buttons */
 .menubar button:hover {
   filter: brightness(1.5);
 }
 
-/* outer menubar's all buttons */
+/* main menubar's all buttons */
 #menubarOuter button {
 
 }

@@ -9,7 +9,7 @@
         {
           "id": "an identificator of your choosing for you to be able to differentiate event handler returns"
           "type": "text, button, checkbox or gap",
-          "text": "becomes placeholder, innerText or label",
+          "text": "becomes placeholder, innerText, label or nothing",
           "handle": {
             "event type": [
               "properties of the event object to return, those type must be of either string, number or boolean"

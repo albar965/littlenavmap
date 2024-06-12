@@ -87,6 +87,10 @@ function injectUpdates(origin) {
     var mapUpdateTimeout = null;
     var valueMapUpdateCounterMustBeAbove = mapUpdateCounter;            // be able to not run code which should only run once per returned image and which was run for the "forced" update on timeout wait duration end if the image does still return after the timeout wait duration, see mapUpdateTimeoutWaitDuration
 
+    var mapSize = mapElement.parentElement.getBoundingClientRect();
+    var mapWidth = ~~mapSize.width;
+    var mapHeight = ~~mapSize.height;
+        
     mapElement.onload = function() {
       clearTimeout(mapUpdateTimeout);
       mapImageLoaded = true;
@@ -114,7 +118,7 @@ function injectUpdates(origin) {
       if(mapImageLoaded || force && !forceLock) {
         mapImageLoaded = false;
         forceLock = force && !nolock;
-        mapElement.src = "/mapimage?format=jpg&quality=" + quality + "&width=" + ~~(mapElement.parentElement.clientWidth * realPixelsPerCSSPixel) + "&height=" + ~~(mapElement.parentElement.clientHeight * realPixelsPerCSSPixel) + "&session&" + command + "=" + Math.random();
+        mapElement.src = "/mapimage?format=jpg&quality=" + quality + "&width=" + ~~(mapSize.width * realPixelsPerCSSPixel) + "&height=" + ~~(mapSize.height * realPixelsPerCSSPixel) + "&session&" + command + "=" + Math.random();
         clearTimeout(mapUpdateTimeout);
         mapUpdateTimeout = setTimeout((function(mapUpdateCounter) {
           return function() {
@@ -132,7 +136,7 @@ function injectUpdates(origin) {
       if(mapImageLoaded || force && !forceLock) {
         mapImageLoaded = false;
         forceLock = force && !nolock;
-        mapElement.src = "/mapimage?format=jpg&quality=" + quality + "&width=" + ~~mapElement.parentElement.clientWidth + "&height=" + ~~mapElement.parentElement.clientHeight + "&session&" + command + "=" + Math.random();
+        mapElement.src = "/mapimage?format=jpg&quality=" + quality + "&width=" + mapWidth + "&height=" + ~~mapHeight + "&session&" + command + "=" + Math.random();
         clearTimeout(mapUpdateTimeout);
         mapUpdateTimeout = setTimeout((function(mapUpdateCounter) {
           return function() {
@@ -171,6 +175,9 @@ function injectUpdates(origin) {
     var imageRequestTimeout = null;
     ocw.sizeMapToContainer = function() {
       ocw.clearTimeout(imageRequestTimeout);
+      mapSize = mapElement.parentElement.getBoundingClientRect();
+      mapWidth = ~~mapSize.width;
+      mapHeight = ~~mapSize.height;
       updateMapImage(mapCommand(), resizingMapQuality);
       imageRequestTimeout = ocw.setTimeout(function() {       // update after the resizing stopped to have an image for the final quality "for certain"
         updateMapImage(mapCommand(), defaultMapQuality, true, 0, true);     // do not lock for event handling like a new zoom request to be able to take priority over waiting for the potentially longer loading higher-quality final quality
@@ -265,7 +272,7 @@ function injectUpdates(origin) {
     /*
      * scrollable indicators of header options bar which is a toolbar
      */
-    enableToolbarIndicators(ocd.querySelector("#header"), ocw);
+    enableScrollIndicators(ocd.querySelector("#header"));
 
 
     /*

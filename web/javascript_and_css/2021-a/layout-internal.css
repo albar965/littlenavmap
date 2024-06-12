@@ -42,7 +42,7 @@
   position: relative;
 }
 
-#menubarsContainer {
+#menubarContainer {
   flex: 0 1;
   display: flex;
   flex-wrap: wrap;
@@ -50,17 +50,20 @@
   position: relative;
 }
 
-iframe {
+iframe, #toolbarsLayer {
   border: 0;
   width: 100%;
   height: 100%;
-  display: block;
   position: absolute;
   top: 0;
   left: 0;
 }
 
-iframe[name="contentiframe"], iframe[name="addoniframe"] {
+iframe {
+  display: block;
+}
+
+iframe[name="contentiframe"], iframe[name="addoniframe"], #toolbarsLayer {
   z-index: 200000000;
 }
 
@@ -80,11 +83,29 @@ iframe[data-type="exclusive"] {
   z-index: 200000004;
 }
 
-iframe[name="addoniframe"].shown {
+iframe[name="contentiframe"].shown ~ #toolbarsLayer {
   z-index: 200000005;
 }
 
-[data-menubarsplacement="right"] #menubarsContainer, [data-menubarsplacement="left"] #menubarsContainer {
+iframe[name="addoniframe"].shown {
+  z-index: 200000006;
+}
+
+#toolbarsLayer {
+  display: flex;
+  flex-wrap: wrap;
+  pointer-events: none;
+}
+
+#toolbarsLayer .toolbar {
+  pointer-events: all;
+}
+
+.toolbar {
+  flex: 0 0 auto;
+}
+
+[data-menubarsplacement="right"] #menubarContainer, [data-menubarsplacement="left"] #menubarContainer {
   flex-direction: column;
 }
 

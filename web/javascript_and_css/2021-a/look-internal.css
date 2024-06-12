@@ -3,7 +3,7 @@
   letter-spacing: 1px;
 }
 
-#menubarsContainer {
+#menubarContainer {
   background: #555;
 }
 
@@ -212,7 +212,7 @@
 }
 
 #menubarsOptions input[type="radio"] {
-  margin: -1px 0 0 10px;
+  margin: 1px 0 0 10px;
 }
 
 #menubarsOptions input[type="checkbox"] {

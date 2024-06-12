@@ -1,0 +1,24 @@
+.indicator-scrollable-toright, .indicator-scrollable-toleft {
+  position: relative;
+}
+
+.indicator-scrollable-toright::after, .indicator-scrollable-toleft::before {
+  position: absolute;
+  top: 0;
+  z-index: 300;
+  content: "";
+  display: block;
+  width: 10px;
+  pointer-events: none;
+  height: 100%;
+}
+
+.indicator-scrollable-toleft::before {
+  left: 0;
+  background: linear-gradient(90deg, rgba(255, 79, 0, .5), transparent);
+}
+
+.indicator-scrollable-toright::after {
+  right: 0;
+  background: linear-gradient(-90deg, rgba(255, 79, 0, .5), transparent);
+}

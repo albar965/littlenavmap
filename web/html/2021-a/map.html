@@ -3,34 +3,39 @@
   <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
+    <link rel="stylesheet" href="/javascript_and_css/2021-a/general_purpose.css">
+    <link rel="stylesheet" href="/javascript_and_css/2021-a/toolbar.css">
     <link rel="stylesheet" href="/javascript_and_css/2021-a/map.css">
     <title>
       {applicationName} {applicationVersion} - Web Server
     </title>
   </head>
   <body id="mapPage" onresize="sizeMapToContainer()" style="margin:0;height:100%;display:flex;flex-direction:column">
-    <div id="header" class="menubar">
-      <div>
-        <form id="refreshform" onsubmit="checkRefresh();return false" name="refreshform">
+    <div id="header">
+      <div class="scrollIndicatorHelperContainer" onwheel="this.scrollTo({left:this.scrollLeft+event.deltaY,top:0,behavior:'smooth'})">
+        <form id="refreshform" onsubmit="checkRefresh();return false" name="refreshform" class="toolbar">
           <input type="checkbox" onclick="checkRefresh()" id="refreshMapToggle">
           <label for="refreshMapToggle">auto<br>refresh</label>
           <input type="number" value="1" step="1" min="1" onchange="delayRefresh()" id="refreshDelay" style="width:40px;text-align:right" disabled>
-          <label>s delay</label>
+          <label for="refreshDelay">s delay</label>
           <button type="button" onclick="refreshMap()">Now</button>
+        </form>
+        <form id="locationform" name="locationform" class="toolbar">
           <span class="gap"></span>
           <input type="checkbox" onclick="toggleCenterAircraft()" id="refreshWithAircraft">
           <label for="refreshWithAircraft">center<br>is Aircraft</label>
           <button type="button" onclick="centerMapOnAircraft()">Here</button>
         </form>
-        <form id="flightplanform" name="flightplanform">
+        <form id="flightplanform" name="flightplanform" class="toolbar">
+          <span class="gap"></span>
           <button type="button" onclick="submitMapRouteCmd()">fit view to all Waypoints</button>
         </form>
-        <form id="airportform" onsubmit="submitMapAirportCmd();return false" name="airportform">
+        <form id="airportform" onsubmit="submitMapAirportCmd();return false" name="airportform" class="toolbar">
           <span class="gap"></span>
           <input id="airporttext" type="text" placeholder="ICAO" name="airportident" value="" style="width:50px;text-transform:uppercase;text-align:left">
           <button type="button" onclick="submitMapAirportCmd()">center Airport</button>
         </form>
-        <form id="optionsform">
+        <form id="optionsform" class="toolbar">
           <span class="gap"></span>
           <input type="checkbox" value="true" name="preventstandby" onclick="preventStandby(this)" id="preventstandby">
           <label for="preventstandby">prevent<br>device standby</label>
@@ -39,15 +44,15 @@
             <label for="retinaToggle">Retina map (bigger download, longer creation duration)</label>
           </span-->
         </form>
-        <form id="pluginform">
+        <form id="pluginform" class="toolbar">
           <span class="gap"></span>
         </form>
         <iframe src="about:blank" id="preventstandbyVideoContainer" title="cachable standby prevention resource"></iframe>
       </div>
     </div>
-    <div id="interactionParent" style="flex:1 0;overflow:hidden">
+    <div id="interactionParent" style="flex:1 0">
       <div id="mapcontainer" class="initially" onclick="handleInteraction(event)">
-        <img id="map" src="/images/littlenavmap.svg" alt="Map" style="width:100%;height:100%;object-fit:contain;display:block">
+        <img id="map" src="/images/littlenavmap.svg" alt="Map" style="display:block">
       </div>
     </div>
     <script>

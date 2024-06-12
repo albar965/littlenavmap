@@ -1,5 +1,7 @@
 function findPlugins() {
   new (function() {
+    var pluginsHost = this;
+    
     var pluginsConfig = {};
     
     var activePlugins = [];
@@ -7,9 +9,35 @@ function findPlugins() {
     var loadingOnInit;
     var activeExclusivePlugin;
     
+    var pluginlist;
+    
+    var contentContainer;
+    var contentIframe;
+    var exclusivePlugins;
+    
+    var tAPI;
+    var toolbarsLayer;
+    var mapToolbar;
+    
+    
+    this.pluginToolbarItemDelegate = function (plugin, id, germaneValue, values) {
+      pluginsConfig[plugin].iframe.contentWindow.postMessage({
+        pluginParent: {
+          message: {
+            cause: "callback",
+            cargo: {
+              id: id,
+              value: germaneValue,
+              data: values
+            }
+          }
+        }
+      });
+    };
+    
     function continueLoadingPlugins(firstCall) {
       while(wasActivePlugins.length) {
-        var input = document.querySelector('#selectablePlugins input[value="' + wasActivePlugins.shift() + '"]');
+        var input = pluginlist.querySelector('input[value="' + wasActivePlugins.shift() + '"]');
         if(input) {
           input.click();
           return;
@@ -18,7 +46,6 @@ function findPlugins() {
       if(firstCall) {
         storeState("activePlugins", activePlugins);
       }
-      var exclusivePlugins = document.querySelector("#exclusivePlugins");
       if(exclusivePlugins !== null) {
         if(activePlugins.includes(activeExclusivePlugin)) {
           exclusivePlugins.value = activeExclusivePlugin;
@@ -57,19 +84,19 @@ function findPlugins() {
               iframe.style.height = "100%";
               iframe.style.visibility = "visible";
               iframe.style.zIndex = "";
-              if(document.querySelector("#exclusivePlugins") === null) {
-                var select = document.createElement("select");
-                select.id = "exclusivePlugins";
+              if(!exclusivePlugins) {
+                exclusivePlugins = document.createElement("select");
+                exclusivePlugins.id = "exclusivePlugins";
                 var option = document.createElement("option");
                 option.innerText = "hide all whole-map-covering plugins";
                 option.value = "/";
-                select.add(option);
+                exclusivePlugins.add(option);
                 option = document.createElement("option");
                 option.innerText = pluginsConfig[plugin.value].title;
                 option.value = plugin.value;
-                select.add(option);
-                document.querySelector("#menubarOuter").appendChild(select);
-                select.onchange = function() {
+                exclusivePlugins.add(option);
+                document.getElementById("menubarOuter").appendChild(exclusivePlugins);
+                exclusivePlugins.onchange = function() {
                   document.querySelectorAll(".displayable-content").forEach(dc => dc.style.display = "none");
                   if(this.value !== "/") {
                     document.querySelector('iframe[data-id="' + this.value + '"]').style.display = "block";
@@ -80,18 +107,16 @@ function findPlugins() {
                 var option = document.createElement("option");
                 option.innerText = pluginsConfig[plugin.value].title;
                 option.value = plugin.value;
-                var select = document.querySelector("#exclusivePlugins");
-                select.add(option);
+                exclusivePlugins.add(option);
               }
-              select.selectedIndex = select.childElementCount - 1;
-              select.dispatchEvent(new Event("change"));
+              exclusivePlugins.selectedIndex = exclusivePlugins.childElementCount - 1;
+              exclusivePlugins.dispatchEvent(new Event("change"));
               break;
             case "widget":
               iframe.className = "movable-content resizable-content";
               iframe.setAttribute("allowtransparency", "false");    // appears to be unnecessary
               iframe.style.background = "#fff";
               iframe.style.pointerEvents = "all";
-              var contentContainer = document.getElementById("contentContainer");
               var settings = retrieveState("plugin_" + plugin.value);
               iframe.style.width = settings?.width ?? "205px";
               iframe.style.height = settings?.height ?? "225px";
@@ -133,7 +158,7 @@ function findPlugins() {
               storeState("mapAccessGranted_plugin_" + plugin.value, "true", true);
               allowMapAccess = " allow-same-origin";
               iframe.addEventListener("load", function() {
-                this.contentWindow.setMapWindow(document.querySelector("iframe[name=contentiframe]").contentDocument);
+                this.contentWindow.setMapWindow(contentIframe.contentDocument);
               });
             }
           }
@@ -142,27 +167,30 @@ function findPlugins() {
             if(!pluginsConfig[plugin.value]?.aborted) {
               activePlugins.push(plugin.value);
               storeState("activePlugins", activePlugins);
-              
+              pluginsConfig[plugin.value].foreach(toolbarConfig => {
+                var toolbar = tAPI.createToolbar(toolbarConfig.title.length ? toolbarsLayer : mapToolbar, toolbarConfig.title, toolbarConfig.type, plugin.value);
+                toolbarConfig.items.forEach(item => {
+                  tAPI[item.type]?.(item, plugin.value, toolbar);
+                });
+              });
               this.contentWindow.postMessage({pluginParent: {message: {version: MAP_VERSION}}});
-              loadingOnInit ? continueLoadingPlugins() : !1;
             }
+            loadingOnInit ? continueLoadingPlugins() : !1;
           });
-          pluginsConfig[plugin.value].window = iframe.contentWindow;
-          document.querySelector("#contentContainer").insertBefore(iframe, document.querySelector('iframe[name="addoniframe"]'));
+          pluginsConfig[plugin.value].iframe = iframe;
+          contentContainer.insertBefore(iframe, toolbarsLayer);
           iframe.src = "/plugins/" + plugin.value + "/index.html";
         } else {
-          document.querySelectorAll('#toolbarsContainer [data-source="' + plugin.value + '"]').forEach(toolbar => toolbar.remove());
-          var iframe = document.querySelector('iframe[data-id="' + plugin.value + '"]');
-          iframe.contentWindow.postMessage({pluginParent: {message: {cause: "cleanup"}}});
+          toolbarsLayer.querySelectorAll('[data-source="' + plugin.value + '"]').forEach(toolbar => toolbar.remove());
+          pluginsConfig[plugin.value].iframe.contentWindow.postMessage({pluginParent: {message: {cause: "cleanup"}}});
           setTimeout(() => {
-            iframe.remove();
-            var select = document.querySelector("#exclusivePlugins");
-            if(select !== null) {
-              var option = select.querySelector('option[value="' + plugin.value + '"]');
+            pluginsConfig[plugin.value].iframe.remove();
+            if(exclusivePlugins !== null) {
+              var option = exclusivePlugins.querySelector('option[value="' + plugin.value + '"]');
               if(option !== null) {
-                select.remove(Array.prototype.indexOf.call(select, option));
-                if(select.childElementCount < 2) {
-                  select.parentElement.removeChild(select);
+                exclusivePlugins.remove(Array.prototype.indexOf.call(exclusivePlugins, option));
+                if(exclusivePlugins.childElementCount < 2) {
+                  exclusivePlugins.parentElement.removeChild(exclusivePlugins);
                 }
               }
             }
@@ -177,14 +205,16 @@ function findPlugins() {
       }
     }
 
-    var pluginbutton = document.querySelector("#buttonPlugins");
+    var pluginbutton = document.getElementById("buttonPlugins");
     if(pluginbutton === null) {
       fetch("/plugins").then(response => response.text()).then(text => {
-        var pluginlist = document.createElement("div");
+        pluginlist = document.createElement("div");
         var configs = [];
-        text.split("/").forEach(function(dir) {
+        text.split("/").forEach(dir => {
           if(dir.substring(0, "example-".length) !== "example-" || location.search.substring(1) === "debug") {
-            configs.push(fetch("/plugins/" + dir + "/config.json").then(response => response.json()).then(json => {
+            configs.push(fetch("/plugins/" + dir + "/config.json").then(response => {
+            	return response.json();
+            }).then(json => {
               pluginsConfig[dir] = json;
               var plugin = document.createElement("div");
               plugin.className = "selectable-plugin plugin-" + json.type;
@@ -200,6 +230,8 @@ function findPlugins() {
               plugin.appendChild(checkbox);
               plugin.appendChild(label);
               pluginlist.appendChild(plugin);
+            }, () => {
+            	console?.error("Plugin folder \"" + dir + "\" present but no configuration file found within or that is incomplete or not well formed.");
             }));
           }
         });
@@ -217,7 +249,7 @@ function findPlugins() {
             pluginlist.addEventListener("click", loadPlugin);
             onmessage = event => {
               Object.values(pluginsConfig).some(plugin => {
-                if(plugin.window === event.origin) {
+                if(plugin.iframe.contentWindow === event.origin) {
                   plugin.aborted = true;
                   plugin.checkbox.click();
                   alert("Plugin \"" + plugin.title + "\" not initialised.\n\n\nReason given:\n\n\"" + event.data + "\"");
@@ -225,6 +257,11 @@ function findPlugins() {
                 }
               });
             };
+            contentContainer = document.getElementById("contentContainer");
+            contentIframe = document.querySelector("iframe[name=contentiframe]")
+            toolbarsLayer = document.getElementById("toolbarsLayer");
+            mapToolbar = contentIframe.contentDocument.getElementById("header").firstElementChild;
+            tAPI = toolbarAPI(pluginsHost);
             wasActivePlugins = retrieveState("activePlugins", []);
             activeExclusivePlugin = retrieveState("activeExclusivePlugin", "/")
             loadingOnInit = true;
