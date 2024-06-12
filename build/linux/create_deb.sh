@@ -83,8 +83,8 @@ chmod 0775 "${WORKDIR}/DEBIAN/postinst"
 
 # postrm file
 cat << EOT > "${WORKDIR}/DEBIAN/postrm"
-rm "/usr/bin/${PKG_NAME_NAVMAP}"
-rm "/usr/bin/${PKG_NAME_NAVCON}"
+rm -f "/usr/bin/${PKG_NAME_NAVMAP}"
+rm -f "/usr/bin/${PKG_NAME_NAVCON}"
 EOT
 chmod 0775 "${WORKDIR}/DEBIAN/postrm"
 
@@ -95,7 +95,7 @@ dpkg-deb --build --root-owner-group "${WORKDIR}"
 FILENAME_LNM=$VERSION_ID-$(head -n1 "${APROJECTS}/deploy/Little Navmap/version.txt")
 
 # Rename file to match other LNM archive names
-mv -v "${WORKDIR}".deb ${APROJECTS}/deploy/LittleNavmap-linux-${FILENAME_LNM}.deb
+cp -av "${WORKDIR}".deb ${APROJECTS}/deploy/LittleNavmap-linux-${FILENAME_LNM}-${REVISION}_${ARCH}.deb
 
-rm -rf "${APROJECTS}/deploy/${ID}_${VERSION_ID}"
+#rm -rf "${APROJECTS}/deploy/${ID}_${VERSION_ID}"
 
