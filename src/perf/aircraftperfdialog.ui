@@ -450,7 +450,7 @@ captain or the dispatcher</string>
           <item row="9" column="1">
            <widget class="QSpinBox" name="spinBoxContingencyFuel">
             <property name="toolTip">
-             <string>This accounts for additional enroute fuel consumption
+             <string>This accounts for additional en-route fuel consumption
 caused by wind or routing changes.
 This will increase the trip fuel by the given percentage.</string>
             </property>

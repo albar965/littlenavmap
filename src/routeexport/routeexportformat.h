@@ -194,7 +194,7 @@ public:
     return other;
   }
 
-  /* true if directoy or file exists */
+  /* true if directory or file exists */
   bool isPathValid(QString *errorMessage = nullptr) const;
 
   /* true if valid - means pattern is not empty and does not contain invalid characters */

@@ -448,7 +448,7 @@ void MapContextMenu::insertProcedureMenu(QMenu& menu)
           {
             if(arrivalProc)
               // Airport is destination and has approaches/STAR
-              text = submenu ? tr("%1 - Arrival/Approach Procedures") : tr("Show Arrival and/or Approach &Procedures for %1");
+              text = submenu ? tr("%1 - Arrival/Approach Procedures") : tr("Show Arrival/Approach &Procedures for %1");
             else
             {
               // Airport is destination and has no approaches/STAR - disable

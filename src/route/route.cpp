@@ -3861,7 +3861,7 @@ QString Route::buildDefaultFilename(const QString& suffix) const
 QString Route::buildDefaultFilename(QString pattern, QString suffix) const
 {
   if(isEmpty())
-    return tr("Empty Flightplan") + suffix;
+    return tr("Empty Flight Plan") + suffix;
 
   QString type = flightplan.getFlightplanTypeStr();
   QString departName = getDepartureAirportLeg().getName(), departIdent = getDepartureAirportLeg().getDisplayIdent(),

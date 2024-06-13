@@ -1826,10 +1826,10 @@ Not available for all simulators.</string>
              <item>
               <widget class="QLineEdit" name="lineEditAirportFileSearch">
                <property name="toolTip">
-                <string>Name of the scenery file containg the airport</string>
+                <string>Name of the scenery file containing the airport</string>
                </property>
                <property name="statusTip">
-                <string>Name of the scenery file containg the airport</string>
+                <string>Name of the scenery file containing the airport</string>
                </property>
                <property name="placeholderText">
                 <string>Filename</string>
@@ -2525,10 +2525,10 @@ Not available for all simulators.</string>
              <item>
               <widget class="QLineEdit" name="lineEditNavFileSearch">
                <property name="toolTip">
-                <string>Name of the scenery file containg the navaid</string>
+                <string>Name of the scenery file containing the navaid</string>
                </property>
                <property name="statusTip">
-                <string>Name of the scenery file containg the navaid</string>
+                <string>Name of the scenery file containing the navaid</string>
                </property>
                <property name="placeholderText">
                 <string>Filename</string>
@@ -5355,7 +5355,7 @@ Wind speed will be interpolated between this altitude and ground level.</string>
              <string>Overview</string>
             </attribute>
             <attribute name="toolTip">
-             <string>Aiport overview</string>
+             <string>Airport overview</string>
             </attribute>
             <layout class="QVBoxLayout" name="verticalLayout_8">
              <property name="spacing">
@@ -6287,7 +6287,7 @@ relation to shown airport</string>
          <string>AI / Multiplayer</string>
         </attribute>
         <attribute name="toolTip">
-         <string>Information about AI or multplayer aircraft or ships</string>
+         <string>Information about AI or multiplayer aircraft or ships</string>
         </attribute>
         <layout class="QVBoxLayout" name="verticalLayout_18">
          <property name="spacing">
@@ -7120,13 +7120,13 @@ relation to shown airport</string>
      <normaloff>:/littlenavmap/resources/icons/home.svg</normaloff>:/littlenavmap/resources/icons/home.svg</iconset>
    </property>
    <property name="text">
-    <string>Goto &amp;Home</string>
+    <string>Go to &amp;Home</string>
    </property>
    <property name="toolTip">
-    <string>Goto home view</string>
+    <string>Go to home view</string>
    </property>
    <property name="statusTip">
-    <string>Goto home view</string>
+    <string>Go to home view</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+Home</string>
@@ -7174,13 +7174,13 @@ relation to shown airport</string>
      <normaloff>:/littlenavmap/resources/icons/centermark.svg</normaloff>:/littlenavmap/resources/icons/centermark.svg</iconset>
    </property>
    <property name="text">
-    <string>Goto Center for &amp;Distance Search</string>
+    <string>Go to Center for &amp;Distance Search</string>
    </property>
    <property name="toolTip">
-    <string>Goto center mark for distance search</string>
+    <string>Go to center mark for distance search</string>
    </property>
    <property name="statusTip">
-    <string>Goto center mark for distance search</string>
+    <string>Go to center mark for distance search</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+End</string>
@@ -11388,7 +11388,7 @@ relation to shown airport</string>
      <normaloff>:/littlenavmap/resources/icons/aircraft.svg</normaloff>:/littlenavmap/resources/icons/aircraft.svg</iconset>
    </property>
    <property name="text">
-    <string>Goto &amp;User Aircraft</string>
+    <string>Go to &amp;User Aircraft</string>
    </property>
    <property name="toolTip">
     <string>Jump to the user aircraft</string>

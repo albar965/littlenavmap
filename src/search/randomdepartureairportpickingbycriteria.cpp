@@ -190,7 +190,7 @@ void RandomDepartureAirportPickingByCriteria::dataReceived(const bool isSuccess,
   // this thread does not have an event loop
   // started threads would only be deleted when this thread is deleted
   // https://doc.qt.io/qt-5/qobject.html#deleteLater
-  // this would keep resources in use unneccessarily and which could be used elsewhere better
+  // this would keep resources in use unnecessarily and which could be used elsewhere better
   // furthermore this thread used to be parented to the main thread and would only
   // be deleted on program exit.
   // QVector.replace is not marked as thread-safe in Qt documentation

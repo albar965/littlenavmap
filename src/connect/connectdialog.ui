@@ -69,7 +69,7 @@
           <string>Changes the radius around the user aircraft that is used to include AI or multiplayer aircraft.
 Using higher values with a lot of AI or multiplayer aircraft might induce stutters in the simulator.
 The unit is always nautical miles (1 NM equals to 1.852 km).
-FSX, Prepar3D and MSFS allow a maxium of 105 NM.</string>
+FSX, Prepar3D and MSFS allow a maximum of 105 NM.</string>
          </property>
          <property name="suffix">
           <string> NM</string>

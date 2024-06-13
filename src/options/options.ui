@@ -7623,7 +7623,7 @@ Entering a wrong value will cause errors when downloading weather reports.</stri
                  <property name="toolTip">
                   <string>Base directory of the web server. This is the directory containing the &quot;index.html&quot; file.
 There is usually no need to change this value.
-Use this to serve your own modifed Little Navmap web page.</string>
+Use this to serve your own modified Little Navmap web page.</string>
                  </property>
                 </widget>
                </item>
@@ -7925,7 +7925,7 @@ Little Navmap GIT repository.
                <item row="1" column="1">
                 <widget class="QLineEdit" name="lineEditCacheMapThemeDir">
                  <property name="toolTip">
-                  <string>Select a directoy to search for additional map themes.</string>
+                  <string>Select a directory to search for additional map themes.</string>
                  </property>
                  <property name="placeholderText">
                   <string>No themes directory selected.</string>
@@ -8012,7 +8012,7 @@ Little Navmap GIT repository.
                <item row="1" column="1">
                 <widget class="QLineEdit" name="lineEditCacheOfflineDataPath">
                  <property name="toolTip">
-                  <string>Select the directoy that contains the files &quot;a10g&quot; to &quot;p10g&quot;.</string>
+                  <string>Select the directory that contains the files &quot;a10g&quot; to &quot;p10g&quot;.</string>
                  </property>
                  <property name="placeholderText">
                   <string>No elevation data directory selected.</string>

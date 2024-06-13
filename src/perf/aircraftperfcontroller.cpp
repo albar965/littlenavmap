@@ -890,7 +890,7 @@ void AircraftPerfController::updateReportCurrent()
     else
     {
       if(perfHandler->isFinished())
-        html.p(tr("Performance collecton done. You can now merge the current data and "
+        html.p(tr("Performance collection done. You can now merge the current data and "
                   "then restart the collection using the buttons above to record a new flight."));
 
       html.p().b(tr("Aircraft")).pEnd();

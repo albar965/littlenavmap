@@ -309,14 +309,14 @@ bool DatabaseManager::checkIncompatibleDatabases(bool *databasesErased)
       if(databaseNames.size() == 1)
       {
         msg = tr("The database for the simulator "
-                 "below is not compatible with this program version or was incompletly loaded:<br/><br/>"
+                 "below is not compatible with this program version or was incompletely loaded:<br/><br/>"
                  "%1<br/><br/>Erase it?<br/><br/>%2");
         trailingMsg = tr("You can reload the Scenery Library Database again after erasing.");
       }
       else
       {
         msg = tr("The databases for the simulators "
-                 "below are not compatible with this program version or were incompletly loaded:<br/><br/>"
+                 "below are not compatible with this program version or were incompletely loaded:<br/><br/>"
                  "%1<br/><br/>Erase them?<br/><br/>%2");
         trailingMsg = tr("You can reload these Scenery Library Databases again after erasing.");
       }

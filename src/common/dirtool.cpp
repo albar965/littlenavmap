@@ -93,7 +93,7 @@ void DirTool::run(bool manual, bool& created)
   message.append(tr("<li><b>%1</b><br/>For flight plans in Little Navmap's own format <code>.lnmpln</code></li>").arg(flightplanDir));
   message.append(tr("<li><b>%1</b><br/>Directory for aircraft performance files (<code>.lnmperf</code>)</li>").arg(perfDir));
   message.append(tr("<li><b>%1</b><br/>For saved window layouts (<code>.lnmlayout</code>)</li>").arg(layoutDir));
-  message.append(tr("<li><b>%1</b><br/>A place to store PDF, text, image or other files that are linked in the aiport information").
+  message.append(tr("<li><b>%1</b><br/>A place to store PDF, text, image or other files that are linked in the Airport information").
                  arg(airportsDir));
   message.append(tr("<li><b>%1</b><br/>User defined airspaces in OpenAir format</li>").arg(airspaceDir));
   message.append(tr("<li><b>%1</b><br/>A place for the GLOBE data used by the flight plan elevation profile</li>").arg(globeDir));

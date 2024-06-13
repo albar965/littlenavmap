@@ -427,7 +427,7 @@ Save changes?</source>
     </message>
     <message>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="893"/>
-        <source>Performance collecton done. You can now merge the current data and then restart the collection using the buttons above to record a new flight.</source>
+        <source>Performance collection done. You can now merge the current data and then restart the collection using the buttons above to record a new flight.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -961,7 +961,7 @@ captain or the dispatcher</source>
     </message>
     <message>
         <location filename="src/perf/aircraftperfdialog.ui" line="453"/>
-        <source>This accounts for additional enroute fuel consumption
+        <source>This accounts for additional en-route fuel consumption
 caused by wind or routing changes.
 This will increase the trip fuel by the given percentage.</source>
         <translation>这可以解决额外的航路燃油消耗
@@ -1595,7 +1595,7 @@ calibrated declination.</source>
         <source>Estimated endurance based on current fuel flow and groundspeed
 considering reserves and contingency. Only shown if airborne.
 Shows orange warning if below reserve and red error text if insufficient
-when no flightplan is used.</source>
+when no flight plan is used.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -2415,8 +2415,8 @@ found in the airport search result table.</source>
     </message>
     <message>
         <location filename="src/db/airspacedialog.ui" line="58"/>
-        <source>Select the directoy that contains the user airspace text files.</source>
-        <oldsource>Select the directoy that contains the user airspace text files.
+        <source>Select the directory that contains the user airspace text files.</source>
+        <oldsource>Select the directory that contains the user airspace text files.
 Little Navmap can currently only read OpenAIR files.</oldsource>
         <translation type="unfinished">选择包含用户空域 txt 文件的目录。
 Little Navmap 当前只能读取 OpenAir 文件。</translation>
@@ -2874,11 +2874,11 @@ Little Navmap 每隔相应的时间会向模拟器获取数据。
         <source>Changes the radius around the user aircraft that is used to include AI or multiplayer aircraft.
 Using higher values with a lot of AI or multiplayer aircraft might induce stutters in the simulator.
 The unit is always nautical miles (1 NM equals to 1.852 km).
-FSX, Prepar3D and MSFS allow a maxium of 105 NM.</source>
+FSX, Prepar3D and MSFS allow a maximum of 105 NM.</source>
         <oldsource>Changes the radius around the user aircraft that is used to include AI or multiplayer aircraft.
 Using higher values with a lot of AI or multiplayer aircraft might induce stutters in the simulator.
 The unit is always nautical miles (1 NM equals to 1852 km).
-FSX, Prepar3D and MSFS allow a maxium of 105 NM.</oldsource>
+FSX, Prepar3D and MSFS allow a maximum of 105 NM.</oldsource>
         <translation>更改用户航空器周围包含 AI 或多人游戏航空器的半径。
 在 AI 或多人游戏玩家较多的时候使用较高的值可能会导致模拟器出现卡顿现象。
 单位始终为海里（1 海里等于 1.852 公里）。
@@ -3558,7 +3558,7 @@ Useful if you use tools to disable and enable certain scenery for each flight.</
     <name>DatabaseManager</name>
     <message>
         <location filename="src/db/databasemanager.cpp" line="311"/>
-        <source>The database for the simulator below is not compatible with this program version or was incompletly loaded:&lt;br/&gt;&lt;br/&gt;%1&lt;br/&gt;&lt;br/&gt;Erase it?&lt;br/&gt;&lt;br/&gt;%2</source>
+        <source>The database for the simulator below is not compatible with this program version or was incompletely loaded:&lt;br/&gt;&lt;br/&gt;%1&lt;br/&gt;&lt;br/&gt;Erase it?&lt;br/&gt;&lt;br/&gt;%2</source>
         <translation>下面列出的此模拟器数据库不能适配此程序或载入不全：&lt;br/&gt;&lt;br/&gt;%1&lt;br/&gt;&lt;br/&gt;是否要删除？&lt;br/&gt;&lt;br/&gt;%2</translation>
     </message>
     <message>
@@ -3568,7 +3568,7 @@ Useful if you use tools to disable and enable certain scenery for each flight.</
     </message>
     <message>
         <location filename="src/db/databasemanager.cpp" line="318"/>
-        <source>The databases for the simulators below are not compatible with this program version or were incompletly loaded:&lt;br/&gt;&lt;br/&gt;%1&lt;br/&gt;&lt;br/&gt;Erase them?&lt;br/&gt;&lt;br/&gt;%2</source>
+        <source>The databases for the simulators below are not compatible with this program version or were incompletely loaded:&lt;br/&gt;&lt;br/&gt;%1&lt;br/&gt;&lt;br/&gt;Erase them?&lt;br/&gt;&lt;br/&gt;%2</source>
         <translation>下面列出的此模拟器数据库不能适配此程序或载入不全：&lt;br/&gt;&lt;br/&gt;%1&lt;br/&gt;&lt;br/&gt;是否要全部删除？&lt;br/&gt;&lt;br/&gt;%2</translation>
     </message>
     <message>
@@ -4277,7 +4277,7 @@ Enable the option &quot;Read inactive or disabled Scenery Entries&quot; or start
     </message>
     <message>
         <location filename="src/common/dirtool.cpp" line="96"/>
-        <source>&lt;li&gt;&lt;b&gt;%1&lt;/b&gt;&lt;br/&gt;A place to store PDF, text, image or other files that are linked in the aiport information</source>
+        <source>&lt;li&gt;&lt;b&gt;%1&lt;/b&gt;&lt;br/&gt;A place to store PDF, text, image or other files that are linked in the Airport information</source>
         <translation>&lt;li&gt;&lt;b&gt;%1&lt;/b&gt;&lt;br/&gt;保存PDF、文本文件、图像或者其他链接到机场信息的文件</translation>
     </message>
     <message>
@@ -6005,7 +6005,7 @@ Columns will be empty on export if disabled.</source>
     </message>
     <message>
         <location filename="src/logbook/logdatacontroller.cpp" line="1340"/>
-        <source>Empty Flightplan</source>
+        <source>Empty Flight Plan</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -7576,7 +7576,7 @@ Altitude %alt%</source>
     <message>
         <location filename="src/gui/mainwindow.ui" line="1829"/>
         <location filename="src/gui/mainwindow.ui" line="1832"/>
-        <source>Name of the scenery file containg the airport</source>
+        <source>Name of the scenery file containing the airport</source>
         <translation>地景文件包含的机场名称</translation>
     </message>
     <message>
@@ -7834,7 +7834,7 @@ Altitude %alt%</source>
     <message>
         <location filename="src/gui/mainwindow.ui" line="2528"/>
         <location filename="src/gui/mainwindow.ui" line="2531"/>
-        <source>Name of the scenery file containg the navaid</source>
+        <source>Name of the scenery file containing the navaid</source>
         <translation>地景文件包含的助航设备名称</translation>
     </message>
     <message>
@@ -8441,8 +8441,9 @@ Wind speed will be interpolated between this altitude and ground level.</source>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="5358"/>
-        <source>Aiport overview</source>
-        <translation>机场概述</translation>
+        <source>Airport overview</source>
+        <oldsource>Airport overview</oldsource>
+        <translation type="unfinished">机场概述</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="5382"/>
@@ -8835,7 +8836,7 @@ Wind speed will be interpolated for climb and descent phases.</source>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="6290"/>
-        <source>Information about AI or multplayer aircraft or ships</source>
+        <source>Information about AI or multiplayer aircraft or ships</source>
         <translation>AI 或多人游戏航空器或航船的信息</translation>
     </message>
     <message>
@@ -10536,7 +10537,7 @@ Best track will be selected automatically.</source>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="11391"/>
-        <source>Goto &amp;User Aircraft</source>
+        <source>Go to &amp;User Aircraft</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -10984,18 +10985,21 @@ Best track will be selected automatically.</source>
     <message>
         <location filename="src/gui/mainwindow.ui" line="10859"/>
         <source>Save attached Aircraft &amp;Perfomance as ...</source>
-        <translation>另存附加的航空器性能文件为(&amp;P) ...</translation>
+        <oldsource>Save attached Aircraft &amp;Performance as ...</oldsource>
+        <translation type="unfinished">另存附加的航空器性能文件为(&amp;P) ...</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="10862"/>
         <source>Save aircraft perfomance as a new file</source>
-        <translation>另存航空器性能文件为新文件</translation>
+        <oldsource>Save aircraft performance as a new file</oldsource>
+        <translation type="unfinished">另存航空器性能文件为新文件</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="10865"/>
         <location filename="src/gui/mainwindow.ui" line="10868"/>
         <source>Save attached aircraft perfomance as a new file</source>
-        <translation>保存附加的航空器性能到新文件</translation>
+        <oldsource>Save attached aircraft performance as a new file</oldsource>
+        <translation type="unfinished">保存附加的航空器性能到新文件</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="10873"/>
@@ -11103,13 +11107,13 @@ Best track will be selected automatically.</source>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="7123"/>
-        <source>Goto &amp;Home</source>
+        <source>Go to &amp;Home</source>
         <translation>返回起始视图(&amp;H)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="7126"/>
         <location filename="src/gui/mainwindow.ui" line="7129"/>
-        <source>Goto home view</source>
+        <source>Go to home view</source>
         <translation>返回起始视图</translation>
     </message>
     <message>
@@ -11151,13 +11155,13 @@ Best track will be selected automatically.</source>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="7177"/>
-        <source>Goto Center for &amp;Distance Search</source>
+        <source>Go to Center for &amp;Distance Search</source>
         <translation>前往距离搜索中心(&amp;D)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="7180"/>
         <location filename="src/gui/mainwindow.ui" line="7183"/>
-        <source>Goto center mark for distance search</source>
+        <source>Go to center mark for distance search</source>
         <translation>前往距离搜索的中心标记</translation>
     </message>
     <message>
@@ -15537,8 +15541,8 @@ Button is highlighted if any filter is selected.</source>
     </message>
     <message>
         <location filename="src/mapgui/mapcontextmenu.cpp" line="451"/>
-        <source>Show Arrival and/or Approach &amp;Procedures for %1</source>
-        <translation type="unfinished"></translation>
+        <source>Show Arrival/Approach &amp;Procedures for %1</source>
+        <translation type="unfinished">显示 %1 的进场程序(&amp;P)</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapcontextmenu.cpp" line="455"/>
@@ -17786,7 +17790,7 @@ kHz/MHz</translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="2081"/>
-        <source>Dewpoint:</source>
+        <source>Dew point:</source>
         <translation>露点：</translation>
     </message>
     <message>
@@ -22925,7 +22929,7 @@ Enable &quot;Dim passed Legs&quot; to see his color.</source>
     </message>
     <message>
         <source>For VOR, NDB, waypoints, top of climb and top of descent (also for flight plan).
-Afftects map and elevation profile.</source>
+Affects map and elevation profile.</source>
         <translation type="vanished">适用于甚高频全向信标（VOR）、无方向性信标（NDB）、仪表着陆系统（ILS）、
 航路点、航路、爬升顶点（TOC）、降落顶点（TOD）（还包括飞行计划）。
 影响地图和纵剖图。</translation>
@@ -25282,7 +25286,7 @@ Change this if you get an error message like &quot;Bound address already in use&
         <location filename="src/options/options.ui" line="7624"/>
         <source>Base directory of the web server. This is the directory containing the &quot;index.html&quot; file.
 There is usually no need to change this value.
-Use this to serve your own modifed Little Navmap web page.</source>
+Use this to serve your own modified Little Navmap web page.</source>
         <translation>Web 服务器的根目录。这是有“index.html”文件的目录。
 通常不需要更改这个值。
 用以服务您自行修改过的 Little Navmap 网页。</translation>
@@ -25652,7 +25656,7 @@ You have to reload the scenery library so that the changes take effect.</source>
     </message>
     <message>
         <location filename="src/options/options.ui" line="7928"/>
-        <source>Select a directoy to search for additional map themes.</source>
+        <source>Select a directory to search for additional map themes.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -25687,7 +25691,7 @@ You have to reload the scenery library so that the changes take effect.</source>
     </message>
     <message>
         <location filename="src/options/options.ui" line="8015"/>
-        <source>Select the directoy that contains the files &quot;a10g&quot; to &quot;p10g&quot;.</source>
+        <source>Select the directory that contains the files &quot;a10g&quot; to &quot;p10g&quot;.</source>
         <translation>选择包含文件“a10g”到“p10g”的目录。</translation>
     </message>
     <message>
@@ -25746,7 +25750,7 @@ Has a 30 arc second grid (approximately 900 meter near the equator).</source>
         <translation type="vanished">选择(&amp;S)...</translation>
     </message>
     <message>
-        <source>Select the directoy that contains the user airspace text files.
+        <source>Select the directory that contains the user airspace text files.
 Little Navmap can currently only read OpenAIR files.</source>
         <translation type="vanished">选择包含用户空域 txt 文件的目录。
 Little Navmap 当前只能读取 OpenAir 文件。</translation>
@@ -25951,7 +25955,7 @@ and other user interface behavior.</source>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="193"/>
-        <source>Fuel, distance, speed and coordindate units as well as
+        <source>Fuel, distance, speed and coordinate units as well as
 options for course and heading display.</source>
         <translation>燃油、距离、速度及坐标单位，
 以及航道和航向显示的选项。</translation>
@@ -26133,7 +26137,7 @@ Only shown if &quot;Use map areas&quot; on page &quot;Map Navigation&quot; is en
         <translation>跑道信息</translation>
     </message>
     <message>
-        <source>Show runway length, width and light inidcator text.</source>
+        <source>Show runway length, width and light indicator text.</source>
         <translation type="vanished">显示跑道长度、宽度和灯光信号的文字。</translation>
     </message>
     <message>
@@ -26234,10 +26238,6 @@ Indicated with &quot;GC&quot; if rhumb and great circle are selected.</source>
     <message>
         <source>Crab Angle Indicator</source>
         <translation type="vanished">修正角指示器</translation>
-    </message>
-    <message>
-        <source>Show runway length, width and light indicator text.</source>
-        <translation type="vanished">显示跑道的长度、宽度和灯光指示器文本。</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="249"/>
@@ -26612,7 +26612,7 @@ Only shown if &quot;Use map areas&quot; on page &quot;Map Navigation&quot; is en
     <message>
         <location filename="src/options/optionsdialog.cpp" line="242"/>
         <source>Airport name and ident in brackets depending on zoom factor.
-Ident can be internal, ICAO, FAA, IATA or local depending on avilability.</source>
+Ident can be internal, ICAO, FAA, IATA or local depending on availability.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -33487,7 +33487,7 @@ Click or reload to continue.</source>
     </message>
     <message>
         <location filename="src/route/route.cpp" line="3864"/>
-        <source>Empty Flightplan</source>
+        <source>Empty Flight Plan</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -41734,8 +41734,8 @@ adapt the X-Plane weather path in &quot;Options&quot; on page &quot;Weather File
     </message>
     <message>
         <location filename="src/connect/xpconnectinstaller.cpp" line="142"/>
-        <source>&lt;p&gt;A stray X-Plane plugin file was found:&lt;/p&gt;&lt;p&gt;%1&amp;nbsp;(click to show)&lt;/p&gt;&lt;p&gt;This is not neccessarily from Little Xpconnect but it is usually a result from an incorrect plugin installation which can cause X-Plane to crash.&lt;br/&gt;Removing this file is recommended.&lt;/p&gt;</source>
-        <oldsource>&lt;p&gt;A stray X-Plane plugin file was found:&lt;/p&gt;&lt;p&gt;%1&amp;nbsp;(click to show)&lt;/p&gt;&lt;p&gt;This is not neccessarily from Little Xpconnect but it is usually a result from an incorrect plugin installation which can cause problems.&lt;br/&gt;Removing this file is recommended.&lt;/p&gt;</oldsource>
+        <source>&lt;p&gt;A stray X-Plane plugin file was found:&lt;/p&gt;&lt;p&gt;%1&amp;nbsp;(click to show)&lt;/p&gt;&lt;p&gt;This is not necessarily from Little Xpconnect but it is usually a result from an incorrect plugin installation which can cause X-Plane to crash.&lt;br/&gt;Removing this file is recommended.&lt;/p&gt;</source>
+        <oldsource>&lt;p&gt;A stray X-Plane plugin file was found:&lt;/p&gt;&lt;p&gt;%1&amp;nbsp;(click to show)&lt;/p&gt;&lt;p&gt;This is not necessarily from Little Xpconnect but it is usually a result from an incorrect plugin installation which can cause problems.&lt;br/&gt;Removing this file is recommended.&lt;/p&gt;</oldsource>
         <translation type="unfinished"></translation>
     </message>
     <message>

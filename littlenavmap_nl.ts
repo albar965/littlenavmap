@@ -471,7 +471,7 @@ Save changes?</source>
     </message>
     <message>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="893"/>
-        <source>Performance collecton done. You can now merge the current data and then restart the collection using the buttons above to record a new flight.</source>
+        <source>Performance collection done. You can now merge the current data and then restart the collection using the buttons above to record a new flight.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -849,10 +849,10 @@ een alternate luchthaven niet nodig is</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfdialog.ui" line="453"/>
-        <source>This accounts for additional enroute fuel consumption
+        <source>This accounts for additional en-route fuel consumption
 caused by wind or routing changes.
 This will increase the trip fuel by the given percentage.</source>
-        <oldsource>This accounts for additional enroute fuel consumption
+        <oldsource>This accounts for additional en-route fuel consumption
 caused by wind or routing changes.
 This will increase the trip fuel by the given percentage.</oldsource>
         <translation>Dit omvat bijkomend brandstof verbruik
@@ -1623,7 +1623,7 @@ calibrated declination.</source>
         <source>Estimated endurance based on current fuel flow and groundspeed
 considering reserves and contingency. Only shown if airborne.
 Shows orange warning if below reserve and red error text if insufficient
-when no flightplan is used.</source>
+when no flight plan is used.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -2448,8 +2448,8 @@ found in the airport search result table.</source>
     </message>
     <message>
         <location filename="src/db/airspacedialog.ui" line="58"/>
-        <source>Select the directoy that contains the user airspace text files.</source>
-        <oldsource>Select the directoy that contains the user airspace text files.
+        <source>Select the directory that contains the user airspace text files.</source>
+        <oldsource>Select the directory that contains the user airspace text files.
 Little Navmap can currently only read OpenAIR files.</oldsource>
         <translation type="unfinished"></translation>
     </message>
@@ -2890,15 +2890,15 @@ Lagere waardes zullen resulteren in een vloeiender vliegtuigbeweging maar kan po
         <source>Changes the radius around the user aircraft that is used to include AI or multiplayer aircraft.
 Using higher values with a lot of AI or multiplayer aircraft might induce stutters in the simulator.
 The unit is always nautical miles (1 NM equals to 1.852 km).
-FSX, Prepar3D and MSFS allow a maxium of 105 NM.</source>
+FSX, Prepar3D and MSFS allow a maximum of 105 NM.</source>
         <oldsource>Changes the radius around the user aircraft that is used to include AI or multiplayer aircraft.
 Using higher values with a lot of AI or multiplayer aircraft might induce stutters in the simulator.
 The unit is always nautical miles (1 NM equals to 1852 km).
-FSX, Prepar3D and MSFS allow a maxium of 105 NM.</oldsource>
+FSX, Prepar3D and MSFS allow a maximum of 105 NM.</oldsource>
         <translation>Verandert de raduis rond het gebruikersvliegtuig dat gebruikt wordt voor AI of multiplayer vliegtuigen.
 Hogere waardes met veel AI of mulitplayer vliegtuigen kunnen schokken in de simulator veroorzaken.
 De eenheid is altijd zeemijlen (1 NM is gelijk aan 1852 km).
-FSX, Prepar3D en MSFS laten een maxium van 105 NM toe.</translation>
+FSX, Prepar3D en MSFS laten een maximum van 105 NM toe.</translation>
     </message>
     <message>
         <location filename="src/connect/connectdialog.ui" line="75"/>
@@ -3586,7 +3586,7 @@ Makkelijk als je programma&apos;s gebruikt die scenery&apos;s in- en uitschakele
     <name>DatabaseManager</name>
     <message>
         <location filename="src/db/databasemanager.cpp" line="311"/>
-        <source>The database for the simulator below is not compatible with this program version or was incompletly loaded:&lt;br/&gt;&lt;br/&gt;%1&lt;br/&gt;&lt;br/&gt;Erase it?&lt;br/&gt;&lt;br/&gt;%2</source>
+        <source>The database for the simulator below is not compatible with this program version or was incompletely loaded:&lt;br/&gt;&lt;br/&gt;%1&lt;br/&gt;&lt;br/&gt;Erase it?&lt;br/&gt;&lt;br/&gt;%2</source>
         <translation>De database voor de simulator hieronder is niet compatibel met deze versie van het programma of werd niet compleet geladen:&lt;br/&gt;&lt;br/&gt;%1&lt;br/&gt;&lt;br/&gt;Wissen ?&lt;br/&gt;&lt;br/&gt;%2</translation>
     </message>
     <message>
@@ -3596,7 +3596,7 @@ Makkelijk als je programma&apos;s gebruikt die scenery&apos;s in- en uitschakele
     </message>
     <message>
         <location filename="src/db/databasemanager.cpp" line="318"/>
-        <source>The databases for the simulators below are not compatible with this program version or were incompletly loaded:&lt;br/&gt;&lt;br/&gt;%1&lt;br/&gt;&lt;br/&gt;Erase them?&lt;br/&gt;&lt;br/&gt;%2</source>
+        <source>The databases for the simulators below are not compatible with this program version or were incompletely loaded:&lt;br/&gt;&lt;br/&gt;%1&lt;br/&gt;&lt;br/&gt;Erase them?&lt;br/&gt;&lt;br/&gt;%2</source>
         <translation>De databases voor de simulatoren hieronder zijn niet compatibel met deze versie van het programma of werden niet compleet geladen:&lt;br/&gt;&lt;br/&gt;%1&lt;br/&gt;&lt;br/&gt;Wissen ?&lt;br/&gt;&lt;br/&gt;%2</translation>
     </message>
     <message>
@@ -4267,7 +4267,7 @@ Exiting now.</oldsource>
     </message>
     <message>
         <location filename="src/common/dirtool.cpp" line="96"/>
-        <source>&lt;li&gt;&lt;b&gt;%1&lt;/b&gt;&lt;br/&gt;A place to store PDF, text, image or other files that are linked in the aiport information</source>
+        <source>&lt;li&gt;&lt;b&gt;%1&lt;/b&gt;&lt;br/&gt;A place to store PDF, text, image or other files that are linked in the Airport information</source>
         <translation>&lt;li&gt;&lt;b&gt;%1&lt;/b&gt;&lt;br/&gt;Een plaats om PDF, tekst, afbeelding of andere bestanden te bewaren die gelinkt zijn aan de luchthaven informatie</translation>
     </message>
     <message>
@@ -5942,7 +5942,7 @@ Note that you can undo this change.</source>
     </message>
     <message>
         <location filename="src/logbook/logdatacontroller.cpp" line="1340"/>
-        <source>Empty Flightplan</source>
+        <source>Empty Flight Plan</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -7491,7 +7491,7 @@ Altitude %alt%</source>
     <message>
         <location filename="src/gui/mainwindow.ui" line="1829"/>
         <location filename="src/gui/mainwindow.ui" line="1832"/>
-        <source>Name of the scenery file containg the airport</source>
+        <source>Name of the scenery file containing the airport</source>
         <translation>Naam van de scenery van deze luchthaven</translation>
     </message>
     <message>
@@ -7801,7 +7801,7 @@ Altitude %alt%</source>
     <message>
         <location filename="src/gui/mainwindow.ui" line="2528"/>
         <location filename="src/gui/mainwindow.ui" line="2531"/>
-        <source>Name of the scenery file containg the navaid</source>
+        <source>Name of the scenery file containing the navaid</source>
         <translation>Naam van de scenery van deze navaid</translation>
     </message>
     <message>
@@ -8196,7 +8196,7 @@ Altitude %alt%</source>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="6290"/>
-        <source>Information about AI or multplayer aircraft or ships</source>
+        <source>Information about AI or multiplayer aircraft or ships</source>
         <translation>Informatie over AI of multiplayer vliegtuigen of schepen</translation>
     </message>
     <message>
@@ -9513,7 +9513,7 @@ Wind speed will be interpolated between this altitude and ground level.</source>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="11391"/>
-        <source>Goto &amp;User Aircraft</source>
+        <source>Go to &amp;User Aircraft</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -10412,17 +10412,20 @@ Wind speed will be interpolated between this altitude and ground level.</source>
     <message>
         <location filename="src/gui/mainwindow.ui" line="10859"/>
         <source>Save attached Aircraft &amp;Perfomance as ...</source>
+        <oldsource>Save attached Aircraft &amp;Performance as ...</oldsource>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="10862"/>
         <source>Save aircraft perfomance as a new file</source>
+        <oldsource>Save aircraft performance as a new file</oldsource>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="10865"/>
         <location filename="src/gui/mainwindow.ui" line="10868"/>
         <source>Save attached aircraft perfomance as a new file</source>
+        <oldsource>Save attached aircraft performance as a new file</oldsource>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -10714,13 +10717,13 @@ Wind speed will be interpolated between this altitude and ground level.</source>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="7123"/>
-        <source>Goto &amp;Home</source>
+        <source>Go to &amp;Home</source>
         <translation>Ga naar &amp;Home</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="7126"/>
         <location filename="src/gui/mainwindow.ui" line="7129"/>
-        <source>Goto home view</source>
+        <source>Go to home view</source>
         <translation>Ga naar home venster</translation>
     </message>
     <message>
@@ -10762,13 +10765,13 @@ Wind speed will be interpolated between this altitude and ground level.</source>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="7177"/>
-        <source>Goto Center for &amp;Distance Search</source>
+        <source>Go to Center for &amp;Distance Search</source>
         <translation>Ga naar Middelpunt voor Zoeken &amp;Afstand</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="7180"/>
         <location filename="src/gui/mainwindow.ui" line="7183"/>
-        <source>Goto center mark for distance search</source>
+        <source>Go to center mark for distance search</source>
         <translation>Ga naar markering middelpunt voor zoeken afstand</translation>
     </message>
     <message>
@@ -11898,7 +11901,8 @@ relation to shown airport</oldsource>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="5358"/>
-        <source>Aiport overview</source>
+        <source>Airport overview</source>
+        <oldsource>Airport overview</oldsource>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -15838,8 +15842,8 @@ Button is highlighted if any filter is selected.</source>
     </message>
     <message>
         <location filename="src/mapgui/mapcontextmenu.cpp" line="451"/>
-        <source>Show Arrival and/or Approach &amp;Procedures for %1</source>
-        <translation type="unfinished"></translation>
+        <source>Show Arrival/Approach &amp;Procedures for %1</source>
+        <translation type="unfinished">Toon Aankomst &amp;Procedures voor %1</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapcontextmenu.cpp" line="455"/>
@@ -17996,7 +18000,7 @@ kHz/MHz</translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="2081"/>
-        <source>Dewpoint:</source>
+        <source>Dew point:</source>
         <translation>Dauwpunt:</translation>
     </message>
     <message>
@@ -25502,7 +25506,7 @@ Verander kleur naar de &quot;Reeds gepasseerde Delen Kleur&quot;.</translation>
         <translation type="vanished">Dikte van de bereiksring en afstandsmetinglijen</translation>
     </message>
     <message>
-        <source>&amp;Range rings and distanc measurement lines:</source>
+        <source>&amp;Range rings and distance measurement lines:</source>
         <translation type="vanished">&amp;Bereikringen en lijne van de afstandsmetingen:</translation>
     </message>
     <message>
@@ -25950,7 +25954,7 @@ Herstart het programma nadat je deze optie gewijzigd hebt. Het zal misschien ook
     </message>
     <message>
         <source>For VOR, NDB, ILS,waypoints, airways, top of climb and top of descent (also for flight plan).
-Afftects map and elevation profile.</source>
+Affects map and elevation profile.</source>
         <translation type="vanished">Voor VOR, NDB, ILS, waypoints, airways, top of climb en top of descent (ook voor vluchtplan).
 Beinvloedt ook de kaart en het hoogteprofiel.</translation>
     </message>
@@ -26102,7 +26106,7 @@ Gebruik lagere waarden alleen voor private netwerken&lt;/b&gt;</translation>
         <location filename="src/options/options.ui" line="7624"/>
         <source>Base directory of the web server. This is the directory containing the &quot;index.html&quot; file.
 There is usually no need to change this value.
-Use this to serve your own modifed Little Navmap web page.</source>
+Use this to serve your own modified Little Navmap web page.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -26142,7 +26146,7 @@ Little Navmap GIT repository.
     </message>
     <message>
         <location filename="src/options/options.ui" line="7928"/>
-        <source>Select a directoy to search for additional map themes.</source>
+        <source>Select a directory to search for additional map themes.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -26177,7 +26181,7 @@ Little Navmap GIT repository.
     </message>
     <message>
         <location filename="src/options/options.ui" line="8015"/>
-        <source>Select the directoy that contains the files &quot;a10g&quot; to &quot;p10g&quot;.</source>
+        <source>Select the directory that contains the files &quot;a10g&quot; to &quot;p10g&quot;.</source>
         <translation>Selecteer de folder die de volgende bestanden bevat: &quot;a10g&quot; tot &quot;p10g&quot;.</translation>
     </message>
     <message>
@@ -26360,7 +26364,7 @@ Past enkel instellingen aan van dit venster.</translation>
         <translation>Informatie start- en landingsbaan</translation>
     </message>
     <message>
-        <source>Show runway length, width and light inidcator text.</source>
+        <source>Show runway length, width and light indicator text.</source>
         <translation type="vanished">Toon de lengte, breedte en verlichting voor de start- en landingsbaan.</translation>
     </message>
     <message>
@@ -26731,7 +26735,7 @@ Only shown if &quot;Use map areas&quot; on page &quot;Map Navigation&quot; is en
     <message>
         <location filename="src/options/optionsdialog.cpp" line="242"/>
         <source>Airport name and ident in brackets depending on zoom factor.
-Ident can be internal, ICAO, FAA, IATA or local depending on avilability.</source>
+Ident can be internal, ICAO, FAA, IATA or local depending on availability.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -27605,7 +27609,7 @@ Resetting update period back to %1 seconds.</source>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="193"/>
-        <source>Fuel, distance, speed and coordindate units as well as
+        <source>Fuel, distance, speed and coordinate units as well as
 options for course and heading display.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -33642,7 +33646,7 @@ Click or reload to continue.</source>
     </message>
     <message>
         <location filename="src/route/route.cpp" line="3864"/>
-        <source>Empty Flightplan</source>
+        <source>Empty Flight Plan</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -41201,8 +41205,8 @@ adapt the X-Plane weather path in &quot;Options&quot; on page &quot;Weather File
     </message>
     <message>
         <location filename="src/connect/xpconnectinstaller.cpp" line="142"/>
-        <source>&lt;p&gt;A stray X-Plane plugin file was found:&lt;/p&gt;&lt;p&gt;%1&amp;nbsp;(click to show)&lt;/p&gt;&lt;p&gt;This is not neccessarily from Little Xpconnect but it is usually a result from an incorrect plugin installation which can cause X-Plane to crash.&lt;br/&gt;Removing this file is recommended.&lt;/p&gt;</source>
-        <oldsource>&lt;p&gt;A stray X-Plane plugin file was found:&lt;/p&gt;&lt;p&gt;%1&amp;nbsp;(click to show)&lt;/p&gt;&lt;p&gt;This is not neccessarily from Little Xpconnect but it is usually a result from an incorrect plugin installation which can cause problems.&lt;br/&gt;Removing this file is recommended.&lt;/p&gt;</oldsource>
+        <source>&lt;p&gt;A stray X-Plane plugin file was found:&lt;/p&gt;&lt;p&gt;%1&amp;nbsp;(click to show)&lt;/p&gt;&lt;p&gt;This is not necessarily from Little Xpconnect but it is usually a result from an incorrect plugin installation which can cause X-Plane to crash.&lt;br/&gt;Removing this file is recommended.&lt;/p&gt;</source>
+        <oldsource>&lt;p&gt;A stray X-Plane plugin file was found:&lt;/p&gt;&lt;p&gt;%1&amp;nbsp;(click to show)&lt;/p&gt;&lt;p&gt;This is not necessarily from Little Xpconnect but it is usually a result from an incorrect plugin installation which can cause problems.&lt;br/&gt;Removing this file is recommended.&lt;/p&gt;</oldsource>
         <translation type="unfinished"></translation>
     </message>
     <message>

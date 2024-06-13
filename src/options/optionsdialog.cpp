@@ -190,7 +190,7 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
   list->addItem(pageListItem(list, tr("Startup and Updates"), tr("Select what should be reloaded on startup and change update settings."), ":/littlenavmap/resources/icons/littlenavmap.svg"));
   list->addItem(pageListItem(list, tr("User Interface"), tr("Change language settings, window options and other user interface behavior."), ":/littlenavmap/resources/icons/statusbar.svg"));
   list->addItem(pageListItem(list, tr("Display and Text"), tr("Change text sizes, user interface font, tooltips and more display options."), ":/littlenavmap/resources/icons/copy.svg"));
-  list->addItem(pageListItem(list, tr("Units"), tr("Fuel, distance, speed and coordindate units as well as\noptions for course and heading display."), ":/littlenavmap/resources/icons/units.svg"));
+  list->addItem(pageListItem(list, tr("Units"), tr("Fuel, distance, speed and coordinate units as well as\noptions for course and heading display."), ":/littlenavmap/resources/icons/units.svg"));
   list->addItem(pageListItem(list, tr("Files"), tr("Edit flight plan file pattern and more file related actions."), ":/littlenavmap/resources/icons/fileopen.svg"));
   list->addItem(pageListItem(list, tr("Map"), tr("Change map window behavior, handling of empty airports, and general display options."), ":/littlenavmap/resources/icons/mapsettings.svg"));
   list->addItem(pageListItem(list, tr("Map Tooltips and Clicks"), tr("Tooltip and map click settings."), ":/littlenavmap/resources/icons/mapclick.svg"));
@@ -240,7 +240,7 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
   // Airport =====================================================
   QTreeWidgetItem *airport = addTopItem(tr("Airports"), tr("Select airport labels to display on the map."));
   addItem<optsd::DisplayOptionsAirport>(airport, displayOptItemIndexAirport, tr("Name (Ident)"), tr("Airport name and ident in brackets depending on zoom factor.\n"
-                                                                                                    "Ident can be internal, ICAO, FAA, IATA or local depending on avilability."), optsd::ITEM_AIRPORT_NAME, true);
+                                                                                                    "Ident can be internal, ICAO, FAA, IATA or local depending on availability."), optsd::ITEM_AIRPORT_NAME, true);
   addItem<optsd::DisplayOptionsAirport>(airport, displayOptItemIndexAirport, tr("Tower Frequency"), QString(), optsd::ITEM_AIRPORT_TOWER, true);
   addItem<optsd::DisplayOptionsAirport>(airport, displayOptItemIndexAirport, tr("ATIS / ASOS / AWOS Frequency"), QString(), optsd::ITEM_AIRPORT_ATIS, true);
   addItem<optsd::DisplayOptionsAirport>(airport, displayOptItemIndexAirport, tr("Runway Information"), tr("Show runway elevation, light indicator \"L\" and length text."), optsd::ITEM_AIRPORT_RUNWAY, true);

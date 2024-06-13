@@ -157,7 +157,7 @@ void AircraftProgressConfig::progressConfiguration()
   treeDialog.addItem2(aircraftItem, pid::AIRCRAFT_ENDURANCE,    tr("Endurance"), tr("Estimated endurance based on current fuel flow and groundspeed\n"
                                                                                     "considering reserves and contingency. Only shown if airborne.\n"
                                                                                     "Shows orange warning if below reserve and red error text if insufficient\n"
-                                                                                    "when no flightplan is used."));
+                                                                                    "when no flight plan is used."));
   treeDialog.addItem2(aircraftItem, pid::AIRCRAFT_ICE,          tr("Ice"), tr("Aircraft icing, if any."));
 
   // Altitude ==========================================================================================================

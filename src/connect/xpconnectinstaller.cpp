@@ -141,7 +141,7 @@ bool XpconnectInstaller::install()
         warnBox.setHelpUrl(lnm::helpOnlineUrl + "XPCONNECT.html", lnm::helpLanguageOnline());
         warnBox.setMessage(tr("<p>A stray X-Plane plugin file was found:</p>"
                                 "<p>%1&nbsp;(click to show)</p>"
-                                  "<p>This is not neccessarily from Little Xpconnect but it is usually a "
+                                  "<p>This is not necessarily from Little Xpconnect but it is usually a "
                                     "result from an incorrect plugin installation which can cause X-Plane to crash.<br/>"
                                     "Removing this file is recommended.</p>").
                            arg(HtmlBuilder::aFilePath(pluginsDir.filePath(xpl.constFirst()), atools::util::html::NOBR_WHITESPACE)));

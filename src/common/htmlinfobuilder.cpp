@@ -2078,7 +2078,7 @@ void HtmlInfoBuilder::decodedMetar(HtmlBuilder& html, const map::MapAirport& air
 
   float dewpoint = parsed.getDewpointDegC();
   if(dewpoint < INVALID_METAR_VALUE)
-    html.row2(tr("Dewpoint:"), locale.toString(atools::roundToInt(dewpoint)) % tr("°C, ") %
+    html.row2(tr("Dew point:"), locale.toString(atools::roundToInt(dewpoint)) % tr("°C, ") %
               locale.toString(atools::roundToInt(ageo::degCToDegF(dewpoint))) % tr("°F"));
 
   // Pressure  =============================================================

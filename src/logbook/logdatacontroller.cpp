@@ -1337,7 +1337,7 @@ QString LogdataController::buildFilename(const atools::sql::SqlRecord *record,
                                                            atools::roundToInt(Unit::altFeetF(route.getCruiseAltitudeFt())));
   }
 
-  return tr("Empty Flightplan") % suffix;
+  return tr("Empty Flight Plan") % suffix;
 }
 
 void LogdataController::gpxSaveAs(atools::sql::SqlRecord *record, QWidget *parent)

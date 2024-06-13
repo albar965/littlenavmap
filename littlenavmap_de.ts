@@ -475,7 +475,7 @@ Auch die Steig- bzw. Sinkfluggeschwindigkeiten in der Flugzeugleistung überprü
     </message>
     <message>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="893"/>
-        <source>Performance collecton done. You can now merge the current data and then restart the collection using the buttons above to record a new flight.</source>
+        <source>Performance collection done. You can now merge the current data and then restart the collection using the buttons above to record a new flight.</source>
         <translation>Leistungserfassung ist abgeschlossen. Die aktuellen Daten können nun zusammengeführt werden. Dann die Erfassung mit den obigen Schaltflächen neu starten, um einen neuen Flug aufzuzeichnen.</translation>
     </message>
     <message>
@@ -859,10 +859,10 @@ an alternate is not required</oldsource>
     </message>
     <message>
         <location filename="src/perf/aircraftperfdialog.ui" line="453"/>
-        <source>This accounts for additional enroute fuel consumption
+        <source>This accounts for additional en-route fuel consumption
 caused by wind or routing changes.
 This will increase the trip fuel by the given percentage.</source>
-        <oldsource>This accounts for additional enroute fuel consumption
+        <oldsource>This accounts for additional en-route fuel consumption
 caused by wind or routing changes.
 This will increase the trip fuel by the given percentage.</oldsource>
         <translation>Dies berücksichtigt zusätzlichen Treibstoffverbrauch auf der Strecke,
@@ -1662,7 +1662,7 @@ und ◄ bedeutet rechts von der Strecke.</translation>
         <source>Estimated endurance based on current fuel flow and groundspeed
 considering reserves and contingency. Only shown if airborne.
 Shows orange warning if below reserve and red error text if insufficient
-when no flightplan is used.</source>
+when no flight plan is used.</source>
         <translation>Geschätzte Flugdauer auf der Grundlage des aktuellen Treibstoffflusses und
 der Grundgeschwindigkeit unter Berücksichtigung von Reserven und Streckenreserve
 Wird nur angezeigt, wenn das Flugzeug in der Luft ist. Zeigt orangefarbene Warnung bei
@@ -2546,8 +2546,8 @@ in der Ergebnistabelle der Flughafensuche gefunden.</translation>
     </message>
     <message>
         <location filename="src/db/airspacedialog.ui" line="58"/>
-        <source>Select the directoy that contains the user airspace text files.</source>
-        <oldsource>Select the directoy that contains the user airspace text files.
+        <source>Select the directory that contains the user airspace text files.</source>
+        <oldsource>Select the directory that contains the user airspace text files.
 Little Navmap can currently only read OpenAIR files.</oldsource>
         <translation>Verzeichnis auswählen, das die Textdateien der Benutzerlufträume enthält.</translation>
     </message>
@@ -3015,11 +3015,11 @@ Niedrigere Werte führen zu einer flüssigeren Flugzeugbewegung, können aber zu
         <source>Changes the radius around the user aircraft that is used to include AI or multiplayer aircraft.
 Using higher values with a lot of AI or multiplayer aircraft might induce stutters in the simulator.
 The unit is always nautical miles (1 NM equals to 1.852 km).
-FSX, Prepar3D and MSFS allow a maxium of 105 NM.</source>
+FSX, Prepar3D and MSFS allow a maximum of 105 NM.</source>
         <oldsource>Changes the radius around the user aircraft that is used to include AI or multiplayer aircraft.
 Using higher values with a lot of AI or multiplayer aircraft might induce stutters in the simulator.
 The unit is always nautical miles (1 NM equals to 1852 km).
-FSX, Prepar3D and MSFS allow a maxium of 105 NM.</oldsource>
+FSX, Prepar3D and MSFS allow a maximum of 105 NM.</oldsource>
         <translation>Ändert den Radius um das Nutzerflugzeug, der verwendet wird, um KI- oder Mehrspielerflugzeuge einzubeziehen.
 Die Verwendung höherer Werte bei vielen KI- oder Multiplayer-Flugzeugen kann zu Stottern im Simulator führen.
 Die Einheit ist immer nautische Meilen (1 NM entspricht 1,852 km).
@@ -3758,7 +3758,7 @@ Hilfreich wenn Sie Werkzeuge benutzen, um bestimmte Szenerien für jeden Flug zu
     <name>DatabaseManager</name>
     <message>
         <location filename="src/db/databasemanager.cpp" line="311"/>
-        <source>The database for the simulator below is not compatible with this program version or was incompletly loaded:&lt;br/&gt;&lt;br/&gt;%1&lt;br/&gt;&lt;br/&gt;Erase it?&lt;br/&gt;&lt;br/&gt;%2</source>
+        <source>The database for the simulator below is not compatible with this program version or was incompletely loaded:&lt;br/&gt;&lt;br/&gt;%1&lt;br/&gt;&lt;br/&gt;Erase it?&lt;br/&gt;&lt;br/&gt;%2</source>
         <translation>Die Datenbank für den unten genannten Simulator ist nicht kompatibel mit dieser Programmversion oder wurde unvollständig geladen:&lt;br/&gt;&lt;br/&gt;%1&lt;br/&gt;&lt;br/&gt;Datenbank löschen?&lt;br/&gt;&lt;br/&gt;%2</translation>
     </message>
     <message>
@@ -3768,7 +3768,7 @@ Hilfreich wenn Sie Werkzeuge benutzen, um bestimmte Szenerien für jeden Flug zu
     </message>
     <message>
         <location filename="src/db/databasemanager.cpp" line="318"/>
-        <source>The databases for the simulators below are not compatible with this program version or were incompletly loaded:&lt;br/&gt;&lt;br/&gt;%1&lt;br/&gt;&lt;br/&gt;Erase them?&lt;br/&gt;&lt;br/&gt;%2</source>
+        <source>The databases for the simulators below are not compatible with this program version or were incompletely loaded:&lt;br/&gt;&lt;br/&gt;%1&lt;br/&gt;&lt;br/&gt;Erase them?&lt;br/&gt;&lt;br/&gt;%2</source>
         <translation>Die Datenbanken für den unten genannten Simulator sind nicht kompatibel mit dieser Programmversion oder wurden unvollständig geladen:&lt;br/&gt;&lt;br/&gt;%1&lt;br/&gt;&lt;br/&gt;Datenbanken löschen?&lt;br/&gt;&lt;br/&gt;%2</translation>
     </message>
     <message>
@@ -4492,7 +4492,7 @@ Aktivieren Sie die Option &quot;Inaktive Szenerieeinträge lesen&quot; oder star
     </message>
     <message>
         <location filename="src/common/dirtool.cpp" line="96"/>
-        <source>&lt;li&gt;&lt;b&gt;%1&lt;/b&gt;&lt;br/&gt;A place to store PDF, text, image or other files that are linked in the aiport information</source>
+        <source>&lt;li&gt;&lt;b&gt;%1&lt;/b&gt;&lt;br/&gt;A place to store PDF, text, image or other files that are linked in the Airport information</source>
         <translation>&lt;li&gt;&lt;b&gt;%1&lt;/b&gt;&lt;br/&gt;Ein Ort zum Speichern von PDF-, Text-, Bild- oder anderen Dateien, die mit den Flugplatzinformationen verlinkt sind</translation>
     </message>
     <message>
@@ -6261,7 +6261,7 @@ Die Spalten sind beim Export leer, wenn deaktiviert.</translation>
     </message>
     <message>
         <location filename="src/logbook/logdatacontroller.cpp" line="1340"/>
-        <source>Empty Flightplan</source>
+        <source>Empty Flight Plan</source>
         <translation>Leerer Flugplan</translation>
     </message>
     <message>
@@ -7872,7 +7872,7 @@ Altitude %alt%</source>
     <message>
         <location filename="src/gui/mainwindow.ui" line="1829"/>
         <location filename="src/gui/mainwindow.ui" line="1832"/>
-        <source>Name of the scenery file containg the airport</source>
+        <source>Name of the scenery file containing the airport</source>
         <translation>Name der Szeneriedatei, die den Flugplatz enthält</translation>
     </message>
     <message>
@@ -8184,7 +8184,7 @@ Altitude %alt%</source>
     <message>
         <location filename="src/gui/mainwindow.ui" line="2528"/>
         <location filename="src/gui/mainwindow.ui" line="2531"/>
-        <source>Name of the scenery file containg the navaid</source>
+        <source>Name of the scenery file containing the navaid</source>
         <translation>Name der Szeneriedatei, welche die Navigationshilfe enthält</translation>
     </message>
     <message>
@@ -9001,7 +9001,7 @@ Die Windgeschwindigkeit wird für Steig- und Sinkflug interpoliert.</translation
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="6290"/>
-        <source>Information about AI or multplayer aircraft or ships</source>
+        <source>Information about AI or multiplayer aircraft or ships</source>
         <translation>Informationen über KI- oder Mehrspielerflugzeuge bzw. -schiffe</translation>
     </message>
     <message>
@@ -10022,7 +10022,7 @@ Der beste Track wird automatisch ausgewählt.</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="11391"/>
-        <source>Goto &amp;User Aircraft</source>
+        <source>Go to &amp;User Aircraft</source>
         <translation>&amp;Springe zum Nutzerflugzeug</translation>
     </message>
     <message>
@@ -10938,18 +10938,21 @@ Der beste Track wird automatisch ausgewählt.</translation>
     <message>
         <location filename="src/gui/mainwindow.ui" line="10859"/>
         <source>Save attached Aircraft &amp;Perfomance as ...</source>
-        <translation>Angehängte Flugzeugleistung speichern &amp;als ...</translation>
+        <oldsource>Save attached Aircraft &amp;Performance as ...</oldsource>
+        <translation>Anhängende Flugzeugleistung speichern &amp;als ...</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="10862"/>
         <source>Save aircraft perfomance as a new file</source>
+        <oldsource>Save aircraft performance as a new file</oldsource>
         <translation>Speichert die Flugzeugleistung in eine neue Datei</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="10865"/>
         <location filename="src/gui/mainwindow.ui" line="10868"/>
         <source>Save attached aircraft perfomance as a new file</source>
-        <translation>Speichert die angehängte Flugzeugleistung in eine neue Datei</translation>
+        <oldsource>Save attached aircraft performance as a new file</oldsource>
+        <translation>Speichert die anhängende Flugzeugleistung in eine neue Datei</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="10873"/>
@@ -11073,13 +11076,13 @@ Der beste Track wird automatisch ausgewählt.</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="7123"/>
-        <source>Goto &amp;Home</source>
+        <source>Go to &amp;Home</source>
         <translation>Gehe zur &amp;Heimposition</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="7126"/>
         <location filename="src/gui/mainwindow.ui" line="7129"/>
-        <source>Goto home view</source>
+        <source>Go to home view</source>
         <translation>Gehe zu Heimansicht</translation>
     </message>
     <message>
@@ -11121,13 +11124,13 @@ Der beste Track wird automatisch ausgewählt.</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="7177"/>
-        <source>Goto Center for &amp;Distance Search</source>
+        <source>Go to Center for &amp;Distance Search</source>
         <translation>Gehe zum Zentrum der &amp;Distanzsuche</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="7180"/>
         <location filename="src/gui/mainwindow.ui" line="7183"/>
-        <source>Goto center mark for distance search</source>
+        <source>Go to center mark for distance search</source>
         <translation>Gehe zur Markierung für das Zentrum der Distanzsuche</translation>
     </message>
     <message>
@@ -14245,7 +14248,8 @@ Passt zu jedem besuchten Flugplatz.</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="5358"/>
-        <source>Aiport overview</source>
+        <source>Airport overview</source>
+        <oldsource>Airport overview</oldsource>
         <translation>Flugplatzübersicht</translation>
     </message>
     <message>
@@ -16983,8 +16987,8 @@ Die Schaltfläche ist hervorgehoben, wenn ein Filter ausgewählt ist.</translati
     </message>
     <message>
         <location filename="src/mapgui/mapcontextmenu.cpp" line="451"/>
-        <source>Show Arrival and/or Approach &amp;Procedures for %1</source>
-        <translation type="unfinished"></translation>
+        <source>Show Arrival/Approach &amp;Procedures for %1</source>
+        <translation>Zeige Ankunft-/Anflug&amp;prozeduren für %1</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapcontextmenu.cpp" line="455"/>
@@ -19002,7 +19006,7 @@ kHz/MHz</translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="2081"/>
-        <source>Dewpoint:</source>
+        <source>Dew point:</source>
         <translation>Taupunkt:</translation>
     </message>
     <message>
@@ -24803,7 +24807,7 @@ Die Eingabe eines falschen Wertes führt zu Fehlern beim Download.</translation>
         <location filename="src/options/options.ui" line="7624"/>
         <source>Base directory of the web server. This is the directory containing the &quot;index.html&quot; file.
 There is usually no need to change this value.
-Use this to serve your own modifed Little Navmap web page.</source>
+Use this to serve your own modified Little Navmap web page.</source>
         <translation>Basisverzeichnis des Webservers. Dies ist das Verzeichnis, in dem sich die Datei &quot;index.html&quot; befindet.
 In der Regel ist es nicht notwendig, diesen Wert zu ändern.
 Verwenden Sie dies, um Ihre eigene, modifizierte Little Navmap-Webseite zu erstellen.</translation>
@@ -24973,7 +24977,7 @@ Luftstraßen:</translation>
     </message>
     <message>
         <source>For VOR, NDB, waypoints, top of climb and top of descent (also for flight plan).
-Afftects map and elevation profile.</source>
+Affects map and elevation profile.</source>
         <translation type="vanished">Für VOR, NDB, Wegpunkte, Steig- und Sinkflugmarkierungen (auch für den Flugplan).
 Betrifft die Karte und das Höhenprofil.</translation>
     </message>
@@ -25543,7 +25547,7 @@ Farbe mit der &quot;Farbe für zurückgelegte Streckenteile&quot; ändern.</tran
         <translation type="vanished">Breite des Entfernungsrings und der Linien zur Distanzmessung</translation>
     </message>
     <message>
-        <source>&amp;Range rings and distanc measurement lines:</source>
+        <source>&amp;Range rings and distance measurement lines:</source>
         <translation type="vanished">&amp;Distanzkreise und Linien zur Distanzmessung:</translation>
     </message>
     <message>
@@ -25989,7 +25993,7 @@ Das Programm muss neu gestartet werden, nachdem diese Option geändert wurde. Un
     </message>
     <message>
         <source>For VOR, NDB, ILS,waypoints, airways, top of climb and top of descent (also for flight plan).
-Afftects map and elevation profile.</source>
+Affects map and elevation profile.</source>
         <translation type="vanished">Für VOR, NDB, ILS, Wegpunkte, Luftstraßen, Steig- und Sinkflugmarkierungen (auch für den Flugplan).
 Betrifft die Karte und das Höhenprofil.</translation>
     </message>
@@ -26784,7 +26788,7 @@ Laden Sie die Datei &lt;b&gt;&lt;i&gt;All Tiles in One .zip (all10g.zip)&lt;/i&g
         <translation type="vanished">&amp;Auswählen ...</translation>
     </message>
     <message>
-        <source>Select the directoy that contains the user airspace text files.
+        <source>Select the directory that contains the user airspace text files.
 Little Navmap can currently only read OpenAIR files.</source>
         <translation type="vanished">Wählen Sie das Verzeichnis, das die Textdateien der Benutzerlufträume enthält.
 Little Navmap kann derzeit nur OpenAIR-Dateien lesen.</translation>
@@ -28301,7 +28305,7 @@ Die Eingabe eines falschen Wertes führt zu Fehlern beim Download.</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="7928"/>
-        <source>Select a directoy to search for additional map themes.</source>
+        <source>Select a directory to search for additional map themes.</source>
         <translation>Verzeichnis für zusätzliche Kartenthemen auswählen.</translation>
     </message>
     <message>
@@ -28340,7 +28344,7 @@ Die Eingabe eines falschen Wertes führt zu Fehlern beim Download.</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="8015"/>
-        <source>Select the directoy that contains the files &quot;a10g&quot; to &quot;p10g&quot;.</source>
+        <source>Select the directory that contains the files &quot;a10g&quot; to &quot;p10g&quot;.</source>
         <translation>Bitte wählen Sie das Verzeichnis aus, das die Dateien &quot;a10g&quot; bis &quot;p10g&quot; enthält.</translation>
     </message>
     <message>
@@ -28530,7 +28534,7 @@ Changes only settings that can be done with this dialog.</source>
         <translation>Runwayinformationen</translation>
     </message>
     <message>
-        <source>Show runway length, width and light inidcator text.</source>
+        <source>Show runway length, width and light indicator text.</source>
         <translation type="vanished">Zeige Runwaylängen, -breiten und Indikator für Beleuchtung.</translation>
     </message>
     <message>
@@ -30048,7 +30052,7 @@ und anderem Verhalten der Benutzeroberfläche.</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="193"/>
-        <source>Fuel, distance, speed and coordindate units as well as
+        <source>Fuel, distance, speed and coordinate units as well as
 options for course and heading display.</source>
         <translation>Treibstoff-, Strecken-, Geschwindigkeits- und Koordinateneinheiten sowie
 Optionen für die Anzeige von Kurs und Richtung.</translation>
@@ -30161,13 +30165,9 @@ Wird nur angezeigt, wenn auch &quot;Benutze aktive Kartenregionen&quot; auf der 
     <message>
         <location filename="src/options/optionsdialog.cpp" line="242"/>
         <source>Airport name and ident in brackets depending on zoom factor.
-Ident can be internal, ICAO, FAA, IATA or local depending on avilability.</source>
+Ident can be internal, ICAO, FAA, IATA or local depending on availability.</source>
         <translation>Flugplatzname und -kennung abhängig vom Zoomfaktor.
 Abhängig von der Verfügbarkeit kann die Kennung die interne, ICAO, FAA, IATA oder Lokale sein.</translation>
-    </message>
-    <message>
-        <source>Show runway length, width and light indicator text.</source>
-        <translation type="vanished">Zeige Runwaylängen, -breiten und Indikator für Beleuchtung.</translation>
     </message>
     <message>
         <source>Show magnetic great circle start course at flight plan leg.</source>
@@ -36406,7 +36406,7 @@ Klicken oder neu laden, um fortzufahren.</translation>
     </message>
     <message>
         <location filename="src/route/route.cpp" line="3864"/>
-        <source>Empty Flightplan</source>
+        <source>Empty Flight Plan</source>
         <translation>Leerer Flugplan</translation>
     </message>
 </context>
@@ -45057,7 +45057,7 @@ passen Sie den X-Plane Wetterpfad in den Einstellungen auf der Seite &quot;Wette
         <translation>Diese Dialog &amp;nicht mehr anzeigen und zukünftig installieren.</translation>
     </message>
     <message>
-        <source>&lt;p&gt;A stray X-Plane plugin file was found:&lt;/p&gt;&lt;p&gt;&quot;%1&quot;&lt;/p&gt;&lt;p&gt;This is not neccessarily from Little Xpconnect but it is usually a result from an incorrect plugin installation which can cause problems.&lt;br/&gt;Removing this file is recommended.&lt;/p&gt;</source>
+        <source>&lt;p&gt;A stray X-Plane plugin file was found:&lt;/p&gt;&lt;p&gt;&quot;%1&quot;&lt;/p&gt;&lt;p&gt;This is not necessarily from Little Xpconnect but it is usually a result from an incorrect plugin installation which can cause problems.&lt;br/&gt;Removing this file is recommended.&lt;/p&gt;</source>
         <translation type="vanished">&lt;p&gt;Eine fehlplatzierte X-Plane-Plugin-Datei wurde gefunden:&lt;/p&gt;&lt;p&gt;&quot;%1&quot;&lt;/p&gt;&lt;p&gt;Diese muss nicht unbedingt von Little Xpconnect stammen, aber ist in der Regel das Ergebnis einer fehlerhaften Plugin-Installation, die Probleme verursachen kann.&lt;/p&gt;&lt;p&gt;Es wird empfohlen, diese Datei zu entfernen.&lt;/p&gt;</translation>
     </message>
     <message>
@@ -45082,7 +45082,7 @@ passen Sie den X-Plane Wetterpfad in den Einstellungen auf der Seite &quot;Wette
         <translation type="vanished">&lt;p&gt;Das Little Xpconnect-Plugin für %1 im Verzeichnis unten installieren oder aktualisieren?&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;%2&quot;&gt;%2&lt;/a&gt;&amp;nbsp;(zum Anzeigen klicken)&lt;/p &gt;&lt;p&gt;Die X-Plane-Zielinstallation ist wie im Menü &quot;Szeneriebibliothek&quot; ausgewählt.&lt;/p&gt;%3</translation>
     </message>
     <message>
-        <source>&lt;p&gt;A stray X-Plane plugin file was found:&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;%1&quot;&gt;%1&lt;/a&gt;&amp;nbsp;(click to show)&lt;/p&gt;&lt;p&gt;This is not neccessarily from Little Xpconnect but it is usually a result from an incorrect plugin installation which can cause problems.&lt;br/&gt;Removing this file is recommended.&lt;/p&gt;</source>
+        <source>&lt;p&gt;A stray X-Plane plugin file was found:&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;%1&quot;&gt;%1&lt;/a&gt;&amp;nbsp;(click to show)&lt;/p&gt;&lt;p&gt;This is not necessarily from Little Xpconnect but it is usually a result from an incorrect plugin installation which can cause problems.&lt;br/&gt;Removing this file is recommended.&lt;/p&gt;</source>
         <translation type="vanished">&lt;p&gt;Eine einzelne X-Plane Plugin-Datei wurde gefunden:&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;%1&quot;&gt;%1&lt;/a&gt;&amp;nbsp;(zum Anzeigen klicken)&lt;/p&gt;&lt;p&gt;Dies muss nicht unbedingt von Little Xpconnect kommen, sondern ist in der Regel eine Folge einer fehlerhaften Plugin-Installation, die Probleme verursachen kann.&lt;br/&gt;Es wird empfohlen, diese Datei zu entfernen.&lt;/p&gt;</translation>
     </message>
     <message>
@@ -45102,7 +45102,7 @@ passen Sie den X-Plane Wetterpfad in den Einstellungen auf der Seite &quot;Wette
         <translation type="vanished">&lt;p&gt;Das Little Xpconnect Plugin für %1 im untenstehenden Verzeichnis installieren oder aktualisieren?&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;%2&quot;&gt;%3&lt;/a&gt;&amp;nbsp;(zum Öffnen klicken)&lt;/p&gt;&lt;p&gt;Die X-Plane Zielinstallation ist wie im Menü &quot;Szeneriebibliothek&quot; ausgewählt.&lt;/p&gt;%4</translation>
     </message>
     <message>
-        <source>&lt;p&gt;A stray X-Plane plugin file was found:&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;%1&quot;&gt;%2&lt;/a&gt;&amp;nbsp;(click to show)&lt;/p&gt;&lt;p&gt;This is not neccessarily from Little Xpconnect but it is usually a result from an incorrect plugin installation which can cause problems.&lt;br/&gt;Removing this file is recommended.&lt;/p&gt;</source>
+        <source>&lt;p&gt;A stray X-Plane plugin file was found:&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;%1&quot;&gt;%2&lt;/a&gt;&amp;nbsp;(click to show)&lt;/p&gt;&lt;p&gt;This is not necessarily from Little Xpconnect but it is usually a result from an incorrect plugin installation which can cause problems.&lt;br/&gt;Removing this file is recommended.&lt;/p&gt;</source>
         <translation type="vanished">&lt;p&gt;Eine einzelne X-Plane Plugin-Datei wurde gefunden:&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;%1&quot;&gt;%2&lt;/a&gt;&amp;nbsp;(zum Anzeigen klicken)&lt;/p&gt;&lt;p&gt;Diese muss nicht von Little Xpconnect stammen, sondern ist in der Regel die Folge einer fehlerhaften Plugin-Installation, die Probleme verursachen kann.&lt;br/&gt;Es wird empfohlen, diese Datei zu entfernen.&lt;/p&gt;</translation>
     </message>
     <message>
@@ -45117,8 +45117,8 @@ passen Sie den X-Plane Wetterpfad in den Einstellungen auf der Seite &quot;Wette
     </message>
     <message>
         <location filename="src/connect/xpconnectinstaller.cpp" line="142"/>
-        <source>&lt;p&gt;A stray X-Plane plugin file was found:&lt;/p&gt;&lt;p&gt;%1&amp;nbsp;(click to show)&lt;/p&gt;&lt;p&gt;This is not neccessarily from Little Xpconnect but it is usually a result from an incorrect plugin installation which can cause X-Plane to crash.&lt;br/&gt;Removing this file is recommended.&lt;/p&gt;</source>
-        <oldsource>&lt;p&gt;A stray X-Plane plugin file was found:&lt;/p&gt;&lt;p&gt;%1&amp;nbsp;(click to show)&lt;/p&gt;&lt;p&gt;This is not neccessarily from Little Xpconnect but it is usually a result from an incorrect plugin installation which can cause problems.&lt;br/&gt;Removing this file is recommended.&lt;/p&gt;</oldsource>
+        <source>&lt;p&gt;A stray X-Plane plugin file was found:&lt;/p&gt;&lt;p&gt;%1&amp;nbsp;(click to show)&lt;/p&gt;&lt;p&gt;This is not necessarily from Little Xpconnect but it is usually a result from an incorrect plugin installation which can cause X-Plane to crash.&lt;br/&gt;Removing this file is recommended.&lt;/p&gt;</source>
+        <oldsource>&lt;p&gt;A stray X-Plane plugin file was found:&lt;/p&gt;&lt;p&gt;%1&amp;nbsp;(click to show)&lt;/p&gt;&lt;p&gt;This is not necessarily from Little Xpconnect but it is usually a result from an incorrect plugin installation which can cause problems.&lt;br/&gt;Removing this file is recommended.&lt;/p&gt;</oldsource>
         <translation>&lt;p&gt;Eine einzelne X-Plane Plugindatei wurde gefunden:&lt;/p&gt;&lt;p&gt;%1 (zum Anzeigen klicken)&lt;/p&gt;&lt;p&gt;Dies ist nicht notwendigerweise von Little Xpconnect, aber es ist in der Regel das Ergebnis einer falschen Plugin-Installation, die Probleme, wie X-Plane Abstürze, verursachen kann.&lt;br/&gt;Das Entfernen dieser Datei wird empfohlen.&lt;/p&gt;</translation>
     </message>
     <message>
