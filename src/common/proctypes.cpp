@@ -935,7 +935,7 @@ proc::MapProcedureTypes procedureType(bool hasSidStar, const atools::sql::SqlRec
 proc::MapProcedureTypes procedureType(bool hasSidStar, const QString& type, const QString& suffix, bool gpsOverlay)
 {
   // STARS use the suffix="A" while SIDS use the suffix="D".
-  if(hasSidStar && type == "GPS" && (suffix == "A" || suffix == "D") && gpsOverlay)
+  if(hasSidStar && type == "GPS" && gpsOverlay)
   {
     if(suffix == "A")
       return proc::PROCEDURE_STAR;
@@ -1344,20 +1344,25 @@ void procedureFlags(const Route& route, const map::MapBase *base, bool *departur
   if(base != nullptr && base->getType() == map::AIRPORT)
   {
     const map::MapAirport *airport = base->asPtr<map::MapAirport>();
+    MapQuery *mapQueryGui = NavApp::getMapQueryGui();
 
     if(departure != nullptr)
       *departure = route.isAirportDeparture(airport->ident);
+
     if(destination != nullptr)
       *destination = route.isAirportDestination(airport->ident);
+
     if(alternate != nullptr)
       *alternate = route.isAirportAlternate(airport->ident) || route.isAirportDestination(airport->ident);
+
     if(roundtrip != nullptr)
       *roundtrip = route.isAirportRoundTrip(airport->ident);
 
     if(arrivalProc != nullptr)
-      *arrivalProc = NavApp::getMapQueryGui()->hasArrivalProcedures(*airport);
+      *arrivalProc = mapQueryGui->hasArrivalProcedures(*airport);
+
     if(departureProc != nullptr)
-      *departureProc = NavApp::getMapQueryGui()->hasDepartureProcedures(*airport);
+      *departureProc = mapQueryGui->hasDepartureProcedures(*airport);
   }
 }
 

@@ -1289,12 +1289,15 @@ void AirportQuery::initQueries()
   airportProcByIdQuery = new SqlQuery(db);
   airportProcByIdQuery->prepare("select 1 from approach where airport_id = :id limit 1");
 
+  // STAR and approach - "not SID"
   procArrivalByAirportIdQuery = new SqlQuery(db);
   procArrivalByAirportIdQuery->prepare("select 1 from approach where airport_id = :id and  "
-                                       "((type = 'GPS' and suffix = 'A') or (suffix <> 'D' or suffix is null)) limit 1");
+                                       "not (type = 'GPS' and suffix = 'D' and has_gps_overlay == 1) limit 1");
 
+  // SID only
   procDepartureByAirportIdQuery = new SqlQuery(db);
-  procDepartureByAirportIdQuery->prepare("select 1 from approach where airport_id = :id and type = 'GPS' and suffix = 'D' limit 1");
+  procDepartureByAirportIdQuery->prepare("select 1 from approach "
+                                         "where airport_id = :id and type = 'GPS' and suffix = 'D' and has_gps_overlay == 1 limit 1");
 
   airportByIdentQuery = new SqlQuery(db);
   airportByIdentQuery->prepare("select " % airportQueryBase.join(", ") % " from airport where ident = :ident ");
