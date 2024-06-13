@@ -18,11 +18,10 @@
 #ifndef LITTLENAVMAP_INFOCONTROLLER_H
 #define LITTLENAVMAP_INFOCONTROLLER_H
 
-#include "fs/sc/simconnectdata.h"
-#include "common/mapresult.h"
 #include "common/tabindexes.h"
 
 #include <QObject>
+#include <QSet>
 
 class MainWindow;
 class MapQuery;
@@ -34,7 +33,25 @@ class AirspaceController;
 class AircraftProgressConfig;
 
 class QTextBrowser;
+
+namespace map {
+
+class MapAirport;
+class MapResult;
+}
 namespace atools {
+
+namespace geo {
+
+class Rect;
+class Pos;
+}
+
+namespace fs {
+namespace sc {
+class SimConnectData;
+}
+}
 namespace gui {
 class TabWidgetHandler;
 }
@@ -189,12 +206,12 @@ private:
   QString waitingForUpdateText, notConnectedText;
 
   bool databaseLoadStatus = false;
-  atools::fs::sc::SimConnectData lastSimData;
+  atools::fs::sc::SimConnectData *lastSimData;
   qint64 lastSimUpdate = 0;
   qint64 lastSimBearingUpdate = 0;
 
   /* Airport and navaids that are currently shown in the tabs */
-  map::MapResult currentSearchResult;
+  map::MapResult *currentSearchResult, *savedSearchResult;
 
   MainWindow *mainWindow = nullptr;
   MapQuery *mapQuery = nullptr;
