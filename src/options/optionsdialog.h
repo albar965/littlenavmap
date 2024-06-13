@@ -252,8 +252,6 @@ private:
   /* Update web server with saved parameters */
   void updateWebOptionsFromData();
 
-  void mapClickAirportProcsToggled();
-
   void mapboxUserMapClicked();
 
   /* Fill combo box with available languages and select best match. English, otherwise.*/

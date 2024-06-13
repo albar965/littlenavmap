@@ -657,7 +657,6 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
 
   // ===========================================================================
   // Map
-  connect(ui->checkBoxOptionsMapClickAirport, &QCheckBox::toggled, this, &OptionsDialog::mapClickAirportProcsToggled);
   connect(ui->checkBoxOptionsDisplayTrailGradient, &QCheckBox::toggled, this, &OptionsDialog::updateTrailStates);
 
   // Map navigation
@@ -883,7 +882,6 @@ void OptionsDialog::open()
   updateWebServerStatus();
   eastWestRuleClicked();
   updateWidgetUnits();
-  mapClickAirportProcsToggled();
   updateFlightplanExample();
   updateLinks();
   updateFlightplanColorWidgets();
@@ -3056,11 +3054,6 @@ void OptionsDialog::updateWebOptionsFromGui()
     webController->setEncrypted(ui->checkBoxOptionsWebEncrypted->isChecked());
     webController->restartServer(true /* force */); // Restart always
   }
-}
-
-void OptionsDialog::mapClickAirportProcsToggled()
-{
-  ui->checkBoxOptionsMapClickAirportProcs->setEnabled(ui->checkBoxOptionsMapClickAirport->isChecked());
 }
 
 void OptionsDialog::flightplanPatterShortClicked()

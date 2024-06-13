@@ -361,12 +361,6 @@ void MapWidget::handleInfoClick(const QPoint& point)
     mapSearchResultInfoClick->onlineAircraftIds.clear();
   }
 
-  if(!opts.testFlag(optsd::CLICK_AIRPORT))
-  {
-    mapSearchResultInfoClick->airports.clear();
-    mapSearchResultInfoClick->airportIds.clear();
-  }
-
   if(!(opts.testFlag(optsd::CLICK_NAVAID)))
   {
     mapSearchResultInfoClick->vors.clear();
@@ -386,12 +380,18 @@ void MapWidget::handleInfoClick(const QPoint& point)
   if(!opts.testFlag(optsd::CLICK_AIRSPACE))
     mapSearchResultInfoClick->airspaces.clear();
 
-  if(opts.testFlag(optsd::CLICK_AIRPORT) && opts.testFlag(optsd::CLICK_AIRPORT_PROC) && mapSearchResultInfoClick->hasAirports())
+  if(opts.testFlag(optsd::CLICK_AIRPORT_PROC) && mapSearchResultInfoClick->hasAirports())
   {
     bool departureFilter, arrivalFilter;
     NavApp::getRouteConst().getAirportProcedureFlags(mapSearchResultInfoClick->airports.constFirst(), -1, departureFilter, arrivalFilter);
 
     emit showProcedures(mapSearchResultInfoClick->airports.constFirst(), departureFilter, arrivalFilter);
+  }
+
+  if(!opts.testFlag(optsd::CLICK_AIRPORT))
+  {
+    mapSearchResultInfoClick->airports.clear();
+    mapSearchResultInfoClick->airportIds.clear();
   }
 
   emit showInformation(*mapSearchResultInfoClick);
