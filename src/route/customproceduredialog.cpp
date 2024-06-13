@@ -47,7 +47,7 @@ CustomProcedureDialog::CustomProcedureDialog(QWidget *parent, const map::MapAirp
 
   // YES is show procedures button
   ui->buttonBoxCustomProc->button(QDialogButtonBox::Yes)->setText(departureParam ? tr("Show Departure &Procedures") :
-                                                                  tr("Show Arrival &Procedures"));
+                                                                  tr("Show Arrival/Approach &Procedures"));
 
   if(!NavApp::getMapQueryGui()->hasDepartureProcedures(mapAirport) && departureParam)
     ui->buttonBoxCustomProc->button(QDialogButtonBox::Yes)->setDisabled(true);

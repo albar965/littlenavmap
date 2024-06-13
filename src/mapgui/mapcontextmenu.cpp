@@ -448,11 +448,11 @@ void MapContextMenu::insertProcedureMenu(QMenu& menu)
           {
             if(arrivalProc)
               // Airport is destination and has approaches/STAR
-              text = submenu ? tr("%1 - Arrival Procedures") : tr("Show Arrival &Procedures for %1");
+              text = submenu ? tr("%1 - Arrival/Approach Procedures") : tr("Show Arrival and/or Approach &Procedures for %1");
             else
             {
               // Airport is destination and has no approaches/STAR - disable
-              text = submenu ? tr("%1 (no arrival)") : tr("Show Arrival &Procedures for %1 (no arrival)");
+              text = submenu ? tr("%1 (no arrival/approach)") : tr("Show Arrival/Approach &Procedures for %1 (no arrival/approach)");
               disable = true;
             }
           }
@@ -785,7 +785,7 @@ void MapContextMenu::insertDepartureMenu(QMenu& menu)
   // Erase all helipads without start position
   index.erase(std::remove_if(index.begin(), index.end(), [](const map::MapBase *base) -> bool {
     return base != nullptr && base->getType() == map::HELIPAD &&
-    base->asPtr<map::MapHelipad>()->startId == -1;
+           base->asPtr<map::MapHelipad>()->startId == -1;
   }), index.end());
 
   ActionCallback callback =

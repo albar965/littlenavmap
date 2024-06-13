@@ -2611,7 +2611,7 @@ void RouteController::routeTableOptions()
   treeDialog.addItem2(headerItem, rcol::HEADER_DEPARTURE, tr("Departure"),
                       tr("SID information."), routeLabel->isFlag(routelabel::HEADER_DEPARTURE));
 
-  treeDialog.addItem2(headerItem, rcol::HEADER_ARRIVAL, tr("Arrival"),
+  treeDialog.addItem2(headerItem, rcol::HEADER_ARRIVAL, tr("Arrival and Approach"),
                       tr("STAR and approach procedure information."), routeLabel->isFlag(routelabel::HEADER_ARRIVAL));
 
   treeDialog.addItem2(headerItem, rcol::HEADER_LAND, tr("Landing Runway"),
@@ -2890,11 +2890,11 @@ void RouteController::tableContextMenu(const QPoint& pos)
         {
           if(hasAnyArrival)
           {
-            ui->actionRouteShowApproaches->setText(tr("Show Arrival &Procedures for %1"));
+            ui->actionRouteShowApproaches->setText(tr("Show Arrival/Approach &Procedures for %1"));
             ActionTool::setText(ui->actionRouteShowApproaches, true, objectText);
           }
           else
-            ui->actionRouteShowApproaches->setText(tr("Show &Procedures (no arrival procedure)"));
+            ui->actionRouteShowApproaches->setText(tr("Show &Procedures (no arrival/approch procedure)"));
         }
         else
         {

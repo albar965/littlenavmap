@@ -1222,11 +1222,11 @@ void SearchBaseTable::contextMenu(const QPoint& pos)
       {
         if(hasAnyArrival)
         {
-          ui->actionSearchShowApproaches->setText(tr("Show Arrival &Procedures for %1"));
+          ui->actionSearchShowApproaches->setText(tr("Show Arrival/Approach &Procedures for %1"));
           ActionTool::setText(ui->actionSearchShowApproaches, true, objectText);
         }
         else
-          ui->actionSearchShowApproaches->setText(tr("Show procedures (no arrival procedure)"));
+          ui->actionSearchShowApproaches->setText(tr("Show procedures (no arrival/approach procedure)"));
       }
       else
         ui->actionSearchShowApproaches->setEnabled(true);

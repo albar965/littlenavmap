@@ -175,7 +175,7 @@ void HtmlInfoBuilder::airportProcedureLinkTexts(QString& text, QString& href, co
   if(destination && arrivalProc)
   {
     // Is destination airport and has procedures
-    text = tr("Arrival Proc.");
+    text = tr("Arrival/Appr. Proc.");
     href = QString("lnm://showprocsarrival?id=%1&type=%2").arg(airport.id).arg(map::AIRPORT);
   }
   else if(departure && departureProc)
