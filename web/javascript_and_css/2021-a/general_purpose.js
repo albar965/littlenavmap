@@ -18,7 +18,7 @@ function enableScrollIndicators(forElement) {
       forElement.classList.remove("indicator-scrollable-toright");
     }
   }
-  var examinedElement = scrollableContainer;
+  var examinedElement = forElement;
   while(examinedElement.tagName.toLowerCase() !== "html") {
     examinedElement = examinedElement.parentElement;
   }

@@ -13,26 +13,25 @@ function findPlugins() {
     
     var contentContainer;
     var contentIframe;
-    var exclusivePlugins;
+    var exclusivePlugins = null;
     
     var tAPI;
     var toolbarsLayer;
     var mapToolbar;
     
     
-    this.pluginToolbarItemDelegate = function (plugin, id, germaneValue, values) {
+    this.pluginToolbarItemDelegate = function (plugin, id, eventtype, germaneValue, values) {
       pluginsConfig[plugin].iframe.contentWindow.postMessage({
         pluginParent: {
-          message: {
-            cause: "callback",
-            cargo: {
-              id: id,
-              value: germaneValue,
-              data: values
-            }
+          cause: "callback",
+          cargo: {
+            id: id,
+            event: eventtype,
+            value: germaneValue,
+            data: values
           }
         }
-      });
+      }, "*");
     };
     
     function continueLoadingPlugins(firstCall) {
@@ -99,7 +98,12 @@ function findPlugins() {
                 exclusivePlugins.onchange = function() {
                   document.querySelectorAll(".displayable-content").forEach(dc => dc.style.display = "none");
                   if(this.value !== "/") {
-                    document.querySelector('iframe[data-id="' + this.value + '"]').style.display = "block";
+                    (document.querySelector('iframe[data-id="' + this.value + '"]')??{style:{display:""}}).style.display = "block";
+                    toolbarsLayer.querySelectorAll('.toolbar').forEach(tb => tb.style.display = "none");
+                    toolbarsLayer.querySelectorAll('.toolbar[data-source="' + this.value + '"]').forEach(tb => tb.style.display = "");
+                  } else {
+                    toolbarsLayer.querySelectorAll('.toolbar[data-type="exclusive"]').forEach(tb => tb.style.display = "none");
+                    toolbarsLayer.querySelectorAll('.toolbar:not([data-type="exclusive"])').forEach(tb => tb.style.display = "");
                   }
                   storeState("activeExclusivePlugin", this.value);
                 };
@@ -152,13 +156,17 @@ function findPlugins() {
           iframe.setAttribute("data-type", pluginsConfig[plugin.value].type);
           iframe.setAttribute("data-id", plugin.value);
           iframe.setAttribute("allow", "accelerometer *; ambient-light-sensor *; attribution-reporting *; autoplay *; battery *; bluetooth *; browsing-topics *; camera *; compute-pressure *; display-capture *; document-domain *; encrypted-media *; execution-while-not-rendered *; execution-while-out-of-viewport *; fullscreen *; gamepad *; geolocation *; gyroscope *; hid *; identity-credentials-get *; idle-detection *; local-fonts *; magnetometer *; microphone *; midi *; otp-credentials *; payment *; picture-in-picture *; publickey-credentials-create *; publickey-credentials-get *; screen-wake-lock *; serial *; speaker-selection *; storage-access *; usb *; web-share *; window-management *; xr-spatial-tracking *");
-          var allowMapAccess = "";
+          var allowMapAccess = " allow-same-origin";			// this should be empty string. parent access is wished to be prevented. without "allow-same-origin" that is achieved. it also blocks iframes within iframes to communicate with each other directly which is not wished. also localStorage is not accessible then.
           if(pluginsConfig[plugin.value].requestMapAccess.length) {
-            if(retrieveState("mapAccessGranted_plugin_" + plugin.value, 0, true) === "true" || confirm("The plugin\n\n\"" + pluginsConfig[plugin.value].title + "\"\n\nis requesting access to the map.\n\nReason given:\n\n\"" + pluginsConfig[plugin.value].requestMapAccess + "\"\n\nGrant it?\n\n\nNote:\n\nThe plugin then will be able to access anything else inside the Little Navmap web frontend.")) {
+            if(retrieveState("mapAccessGranted_plugin_" + plugin.value, 0, true) === "true" || confirm("The plugin\n\n\"" + pluginsConfig[plugin.value].title + "\"\n\nis requesting access to the map.\n\nReason given:\n\n\"" + pluginsConfig[plugin.value].requestMapAccess + "\"\n\nGrant it?\n\n\nNote:\n\nThe plugin then will be able to access anything else inside the Little Navmap web frontend.\n\nWhen you deny access, a plugin still can find access due to web browsers ungranular\nsecurity model which needed to be configured for plugins to work at all.")) {
               storeState("mapAccessGranted_plugin_" + plugin.value, "true", true);
               allowMapAccess = " allow-same-origin";
               iframe.addEventListener("load", function() {
-                this.contentWindow.setMapWindow(contentIframe.contentDocument);
+                this.contentWindow.setMapDocument(contentIframe.contentDocument);
+              });
+            } else {
+              iframe.addEventListener("load", function() {
+                this.contentWindow.postMessage({pluginParent: {cause: "mapAccessReply", cargo: false}}, "*");
               });
             }
           }
@@ -167,22 +175,22 @@ function findPlugins() {
             if(!pluginsConfig[plugin.value]?.aborted) {
               activePlugins.push(plugin.value);
               storeState("activePlugins", activePlugins);
-              pluginsConfig[plugin.value].foreach(toolbarConfig => {
-                var toolbar = tAPI.createToolbar(toolbarConfig.title.length ? toolbarsLayer : mapToolbar, toolbarConfig.title, toolbarConfig.type, plugin.value);
+              pluginsConfig[plugin.value].toolbars.forEach(toolbarConfig => {
+                var toolbar = tAPI.createToolbar(toolbarConfig.title.length ? toolbarsLayer : mapToolbar, toolbarConfig.title, pluginsConfig[plugin.value].type, plugin.value);
                 toolbarConfig.items.forEach(item => {
                   tAPI[item.type]?.(item, plugin.value, toolbar);
                 });
               });
-              this.contentWindow.postMessage({pluginParent: {message: {version: MAP_VERSION}}});
+              this.contentWindow.postMessage({pluginParent: {version: MAP_VERSION}}, "*");
             }
             loadingOnInit ? continueLoadingPlugins() : !1;
           });
           pluginsConfig[plugin.value].iframe = iframe;
-          contentContainer.insertBefore(iframe, toolbarsLayer);
           iframe.src = "/plugins/" + plugin.value + "/index.html";
+          contentContainer.insertBefore(iframe, toolbarsLayer.parentElement);
         } else {
           toolbarsLayer.querySelectorAll('[data-source="' + plugin.value + '"]').forEach(toolbar => toolbar.remove());
-          pluginsConfig[plugin.value].iframe.contentWindow.postMessage({pluginParent: {message: {cause: "cleanup"}}});
+          pluginsConfig[plugin.value].iframe.contentWindow.postMessage({pluginParent: {cause: "cleanup"}}, "*");
           setTimeout(() => {
             pluginsConfig[plugin.value].iframe.remove();
             if(exclusivePlugins !== null) {
@@ -191,6 +199,7 @@ function findPlugins() {
                 exclusivePlugins.remove(Array.prototype.indexOf.call(exclusivePlugins, option));
                 if(exclusivePlugins.childElementCount < 2) {
                   exclusivePlugins.parentElement.removeChild(exclusivePlugins);
+                  exclusivePlugins = null;
                 }
               }
             }
@@ -199,7 +208,6 @@ function findPlugins() {
               activePlugins.splice(spliceIndex, 1);
               storeState("activePlugins", activePlugins);
             }
-            delete pluginsConfig[plugin.value];
           }, 500);
         }
       }
@@ -212,30 +220,31 @@ function findPlugins() {
         var configs = [];
         text.split("/").forEach(dir => {
           if(dir.substring(0, "example-".length) !== "example-" || location.search.substring(1) === "debug") {
-            configs.push(fetch("/plugins/" + dir + "/config.json").then(response => {
-            	return response.json();
-            }).then(json => {
+            configs.push(fetch("/plugins/" + dir + "/config.json").then(response => response.json()).then(json => {
               pluginsConfig[dir] = json;
-              var plugin = document.createElement("div");
-              plugin.className = "selectable-plugin plugin-" + json.type;
-              var checkbox = document.createElement("input");
-              var id = "a" + (Math.random() + "").substring(2);
-              checkbox.type = "checkbox";
-              checkbox.id = id;
-              checkbox.value = dir;
-              var label = document.createElement("label");
-              label.setAttribute("for", id);
-              label.innerText = json.title;
-              pluginsConfig[dir].checkbox = checkbox;
-              plugin.appendChild(checkbox);
-              plugin.appendChild(label);
-              pluginlist.appendChild(plugin);
             }, () => {
-            	console?.error("Plugin folder \"" + dir + "\" present but no configuration file found within or that is incomplete or not well formed.");
+              console?.error("Plugin folder \"" + dir + "\" present but no configuration file found within or that is incomplete or not well formed.");
             }));
           }
         });
         Promise.all(configs).then(() => {
+        	Object.keys(pluginsConfig).sort().forEach(key => {
+	          var plugin = document.createElement("div");
+	          plugin.className = "selectable-plugin plugin-" + pluginsConfig[key].type;
+	          var checkbox = document.createElement("input");
+	          var id = "a" + (Math.random() + "").substring(2);
+	          checkbox.type = "checkbox";
+	          checkbox.id = id;
+	          checkbox.value = key;
+	          var label = document.createElement("label");
+	          label.setAttribute("for", id);
+	          label.innerText = pluginsConfig[key].title;
+	          pluginsConfig[key].checkbox = checkbox;
+	          plugin.appendChild(checkbox);
+	          plugin.appendChild(label);
+	          pluginlist.appendChild(plugin);
+        	});
+        }).then(() => {
           if(pluginlist.childElementCount) {
             pluginlist.id = "selectablePlugins";
             var menuentry = document.createElement("button");
@@ -249,18 +258,19 @@ function findPlugins() {
             pluginlist.addEventListener("click", loadPlugin);
             onmessage = event => {
               Object.values(pluginsConfig).some(plugin => {
-                if(plugin.iframe.contentWindow === event.origin) {
+                if(plugin.iframe.contentWindow === event.source && event.data.throw) {
                   plugin.aborted = true;
                   plugin.checkbox.click();
-                  alert("Plugin \"" + plugin.title + "\" not initialised.\n\n\nReason given:\n\n\"" + event.data + "\"");
+                  alert("Plugin \"" + plugin.title + "\" not initialised.\n\n\nReason given:\n\n\"" + event.data.throw + "\"");
                   return true;
                 }
               });
             };
             contentContainer = document.getElementById("contentContainer");
             contentIframe = document.querySelector("iframe[name=contentiframe]")
-            toolbarsLayer = document.getElementById("toolbarsLayer");
             mapToolbar = contentIframe.contentDocument.getElementById("header").firstElementChild;
+            toolbarsLayer = document.getElementById("toolbarsLayer").firstElementChild;
+            enableScrollIndicators(toolbarsLayer.parentElement);
             tAPI = toolbarAPI(pluginsHost);
             wasActivePlugins = retrieveState("activePlugins", []);
             activeExclusivePlugin = retrieveState("activeExclusivePlugin", "/")

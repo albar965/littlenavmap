@@ -38,7 +38,7 @@
 .menubar button {
   font-family: sans-serif;
   letter-spacing: 1px;
-  padding: 0 15px;
+  padding: 0;
   border: 0;
   text-align: center;
   font-size: 20px;
@@ -51,30 +51,12 @@
 }
 
 .menubar button:hover {
-  border: 1px solid #ff0;
-}
-
-[data-menubarsplacement="top"] .menubar button:hover, [data-menubarsplacement="bottom"] .menubar button:hover {
-  margin: 4px 2.5px;   /* works in conjunction with .menubar button margin and :hover */
-}
-
-[data-menubarsplacement="right"] .menubar button:hover, [data-menubarsplacement="left"] .menubar button:hover {
-  margin: 1.5px 5px;   /* works in conjunction with .menubar button margin and :hover */
+  outline: 1px solid #ff0;
 }
 
 @media (max-width: 1280px) {
   [data-menubarsplacement="top"] .menubar button, [data-menubarsplacement="bottom"] .menubar button {
      width: auto;
-  }
-
-  [data-menubarsplacement="top"] .menubar button:hover, [data-menubarsplacement="bottom"] .menubar button:hover {
-    margin: 4px 1.5px;   /* works in conjunction with .menubar button margin and :hover */
-  }
-}
-
-@media (max-width: 840px) {
-  .menubar button {
-    padding: 0 5px;
   }
 }
 
@@ -105,6 +87,18 @@
 .menubar button a {
   text-decoration: none;
   color: inherit;
+}
+
+@media (min-width: 841px) {
+  .menubar button a {
+    padding: 0 15px
+  }
+}
+
+@media (max-width: 840px) {
+  .menubar button a {
+    padding: 0 5px;
+  }
 }
 
 .active {
@@ -246,18 +240,25 @@
 #selectablePlugins {
   text-align: left;
   font-size: 15px;
+  width: 180px;
 }
 
 .selectable-plugin {
   background: grey;
-  padding: 0 10px;
   cursor: pointer;
   border-radius: 14px;
   border: 1px solid #000;
+  padding-right: 20px;
 }
 
 .selectable-plugin label {
-  padding-left: 12px;
+  padding-left: 40px;
+  flex: 1 0;
+  margin: 0;
+}
+
+.selectable-plugin:hover label {
+  text-shadow: 0 0 4px yellowgreen;
 }
 
 .selectable-plugin * {

@@ -92,9 +92,14 @@ iframe[name="addoniframe"].shown {
 }
 
 #toolbarsLayer {
-  display: flex;
-  flex-wrap: wrap;
   pointer-events: none;
+  height: 50px;
+}
+
+#toolbarsLayer > .scrollIndicatorHelperContainer {
+  display: flex;
+  width: 100%;
+  overflow: auto;
 }
 
 #toolbarsLayer .toolbar {
@@ -137,6 +142,7 @@ iframe[name="addoniframe"].shown {
   display: flex;
   height: 100%;
   width: 100%;
+  box-sizing: border-box;
   align-items: center;
   justify-content: center;
 }
@@ -266,7 +272,7 @@ iframe[name="addoniframe"].shown {
 }
 
 .selectable-plugin {
-  display: flex;
+  display: inline-flex;
   margin-top: 2px;
 }
 
@@ -276,8 +282,8 @@ iframe[name="addoniframe"].shown {
 }
 
 .selectable-plugin input {
-  margin-top: 4px;
-  margin-right: 0;
+  margin: 6px 0 0 20px;
+  position: absolute;
 }
 
 [data-menubarsplacement="top"] #exclusivePlugins {

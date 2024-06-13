@@ -28,7 +28,7 @@
     <div id="mainContainer" data-menubarsplacement="top">
       <div id="contentContainer">
         <iframe src="map.html" onload="attemptRun.call(this,'injectUpdates')" name="contentiframe" class="shown" title="map content"></iframe>
-        <div id="toolbarsLayer"></div>
+        <div id="toolbarsLayer"><div class="scrollIndicatorHelperContainer" onwheel="this.scrollTo({left:this.scrollLeft+event.deltaY,top:0,behavior:'smooth'})"></div></div>
         <iframe src="about:blank" onload="attemptRun.call(this,'injectUpdates')" name="addoniframe" title="addon content"></iframe>
       </div>
       <div id="menubarContainer">

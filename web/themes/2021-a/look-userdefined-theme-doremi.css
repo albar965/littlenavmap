@@ -18,7 +18,7 @@
 
 /* menubars' all buttons */
 .menubar button:hover {
-  filter: brightness(1.5);
+  filter: brightness(1.25);
 }
 
 /* main menubar's all buttons */
@@ -46,9 +46,14 @@
   background: #41c;
 }
 
+
+#ui-2021-a #buttonProgress:hover  {
+  text-shadow: 1px 1px 0 rgba(0,0,0,.5), -1px -1px 0 rgba(0,0,0,.5), -1px 1px 0 rgba(0,0,0,.5), 1px -1px 0 rgba(0,0,0,.5) !important;
+}
+
 /* button active style, use !important for each property's value */
 .active {
-  filter: brightness(2) !important;
+  filter: brightness(1.5) !important;
 }
 #ui-2021-a #buttonMap.active  {
   background: #d00 !important;
@@ -73,35 +78,35 @@
 
 /* see internal.css for detailed cross-effects when changing :hover, ::before or .shown::before of below selector */
 [data-menubarsplacement="top"] #toggleOptionsToggle::before {
-	border-top-color: #81a;
+  border-top-color: #81a;
 }
 
 [data-menubarsplacement="right"] #toggleOptionsToggle::before {
-	border-right-color: #81a;
+  border-right-color: #81a;
 }
 
 [data-menubarsplacement="bottom"] #toggleOptionsToggle::before {
-	border-bottom-color: #81a;
+  border-bottom-color: #81a;
 }
 
 [data-menubarsplacement="left"] #toggleOptionsToggle::before {
-	border-left-color: #81a;
+  border-left-color: #81a;
 }
 
 [data-menubarsplacement="top"] #toggleOptionsToggle.shown::before {
-	border-top-color: #dad;
+  border-top-color: #dad;
 }
 
 [data-menubarsplacement="right"] #toggleOptionsToggle.shown::before {
-	border-right-color: #dad;
+  border-right-color: #dad;
 }
 
 [data-menubarsplacement="bottom"] #toggleOptionsToggle.shown::before {
-	border-bottom-color: #dad;
+  border-bottom-color: #dad;
 }
 
 [data-menubarsplacement="left"] #toggleOptionsToggle.shown::before {
-	border-left-color: #dad;
+  border-left-color: #dad;
 }
 
 #toggleOptionsToggle:hover {

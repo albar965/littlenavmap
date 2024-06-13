@@ -7,7 +7,7 @@ function toolbarAPI(pluginsHost) {
   function assignEventHandlers(element, handle, id, source) {
   	for(let eventtype in handle) {
   		element["on" + eventtype] = function(eventObject) {
-  			pluginsHost.pluginToolbarItemDelegate(source, id, element[germaneValue[element.type]], handle[eventtype].map(property => eventObject[property]));
+  			pluginsHost.pluginToolbarItemDelegate(source, id, eventtype, element[germaneValue[element.type]], handle[eventtype].map(property => eventObject[property]));
   		};
   	}
   }

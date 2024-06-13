@@ -68,7 +68,7 @@ config.json :
     If you provide a non-empty string, the user is shown
     a message asking him to grant your plugin access to
     the map for the non-empty string being the reason.
-    Your plugin will be messaged the map iframe's window
+    Your plugin will be messaged the map iframe's document
     object on load of your plugin if the user grants.
 
 

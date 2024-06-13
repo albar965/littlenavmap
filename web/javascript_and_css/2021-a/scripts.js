@@ -1,3 +1,10 @@
+if(retrieveState("notClearedStorageAfterUpdate", true)) {
+	sessionStorage.clear();
+	localStorage.clear();
+	storeState("notClearedStorageAfterUpdate", false);
+}
+
+
 storeState("activeUI", "2021-a");
 
 
@@ -515,7 +522,7 @@ function injectUpdates(origin) {
         transitionElement.classList.add("transition");
         setTimeout(function() {
           transitionElement.classList.remove("toshow");
-          setTimeout(initiallyShowMap, 3000);
+          setTimeout(initiallyShowMap, 7777);
         }, 0);
       }, 0);
     } else {
