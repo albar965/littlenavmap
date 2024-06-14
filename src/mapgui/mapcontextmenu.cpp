@@ -895,7 +895,7 @@ void MapContextMenu::insertAddRouteMenu(QMenu& menu)
                      MapResultIndex().
                      addRef(*result, map::AIRPORT | map::VOR | map::NDB | map::WAYPOINT | map::USERPOINT).
                      sort(DEFAULT_TYPE_SORT, alphaSort),
-                     tr("Add %1 to Flight &Plan"), tr("Add airport, navaid or position to nearest flight plan leg"),
+                     tr("Add %1 to Flight &Plan"), tr("Add airport, navaid or position to the nearest flight plan leg"),
                      tr("Ctrl+Alt+Click"), QIcon(":/littlenavmap/resources/icons/routeadd.svg"), true /* allowNoMapObject */, callback);
 }
 

@@ -632,7 +632,7 @@ void ConnectClient::autoConnectToggled(bool state)
       dataReader->terminateThread();
       qDebug() << "Stopping reconnect done";
     }
-    mainWindow->setConnectionStatusMessageText(tr("Disconnected"), tr("Autoconnect switched off."));
+    mainWindow->setConnectionStatusMessageText(tr("Disconnected"), tr("Auto connect switched off."));
   }
 }
 

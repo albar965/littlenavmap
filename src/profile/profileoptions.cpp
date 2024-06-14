@@ -74,7 +74,7 @@ bool ProfileOptions::showOptions()
   QTreeWidgetItem *profileItem = treeDialog.addTopItem1(tr("Elevation Profile"));
   treeDialog.addItem2(profileItem, optsp::PROFILE_GROUND, tr("Ground"), tr("Green ground display."));
   treeDialog.addItem2(profileItem, optsp::PROFILE_SAFE_ALTITUDE, tr("Safe Altitude Line"), tr("Red safe altitude line for whole flight plan."));
-  treeDialog.addItem2(profileItem, optsp::PROFILE_LEG_SAFE_ALTITUDE, tr("Leg Safe Altitude Lines"), tr("Orange safe altitude lines for for each flight plan leg."));
+  treeDialog.addItem2(profileItem, optsp::PROFILE_LEG_SAFE_ALTITUDE, tr("Leg Safe Altitude Lines"), tr("Orange safe altitude lines for each flight plan leg."));
 
   QTreeWidgetItem *lineItem = treeDialog.addTopItem1(tr("Flight Plan Line"));
   treeDialog.addItem2(lineItem, optsp::PROFILE_FP_DIST, tr("Distance"), tr("Distance of flight plan leg."));

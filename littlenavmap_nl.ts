@@ -2260,22 +2260,25 @@ Modify the selection criteria to your liking by setting the controls in the airp
         <location filename="src/search/airportsearch.cpp" line="736"/>
         <source>
 
-Pre-add a departure or destination airport to your current flight plan if you wish to have that fixed instead of random.</source>
+Add a departure or destination airport to your current flight plan if you wish to have that fixed instead of random.</source>
+        <oldsource>
+
+Pre-add a departure or destination airport to your current flight plan if you wish to have that fixed instead of random.</oldsource>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/search/airportsearch.cpp" line="740"/>
+        <location filename="src/search/airportsearch.cpp" line="739"/>
         <source> - Random Flight</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/search/airportsearch.cpp" line="746"/>
+        <location filename="src/search/airportsearch.cpp" line="745"/>
         <source>Let select departure and destination airport
 from airport search result table at random.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/search/airportsearch.cpp" line="754"/>
+        <location filename="src/search/airportsearch.cpp" line="753"/>
         <source>Use current flight plan&apos;s departure airport
 %1
 as fixed departure airport and let select a
@@ -2284,7 +2287,7 @@ table at random.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/search/airportsearch.cpp" line="762"/>
+        <location filename="src/search/airportsearch.cpp" line="761"/>
         <source>Use current flight plan&apos;s departure airport
 %1
 as fixed destination airport and let select a
@@ -2293,7 +2296,7 @@ table at random.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/search/airportsearch.cpp" line="773"/>
+        <location filename="src/search/airportsearch.cpp" line="772"/>
         <source>Keep current flight plan&apos;s departure airport
 %1
 as fixed departure airport and let select a
@@ -2302,7 +2305,7 @@ table at random.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/search/airportsearch.cpp" line="781"/>
+        <location filename="src/search/airportsearch.cpp" line="780"/>
         <source>Keep current flight plan&apos;s destination airport
 %1
 as fixed destination airport and let select a
@@ -2311,56 +2314,58 @@ table at random.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/search/airportsearch.cpp" line="792"/>
+        <location filename="src/search/airportsearch.cpp" line="791"/>
         <source>Let select only a destination airport from
 airport search result table at random.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/search/airportsearch.cpp" line="796"/>
-        <source>Let select only a departure airport fromairport search result table at random.
-</source>
+        <location filename="src/search/airportsearch.cpp" line="795"/>
+        <source>Let select only a departure airport from
+airport search result table at random.</source>
+        <oldsource>Let select only a departure airport fromairport search result table at random.
+</oldsource>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/search/airportsearch.cpp" line="825"/>
+        <location filename="src/search/airportsearch.cpp" line="824"/>
         <source>Random picking and criteria comparison running...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/search/airportsearch.cpp" line="942"/>
+        <location filename="src/search/airportsearch.cpp" line="941"/>
         <source>Nothing found</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/search/airportsearch.cpp" line="945"/>
+        <location filename="src/search/airportsearch.cpp" line="944"/>
         <source>Little Navmap - Random flight found:</source>
         <oldsource>Little Navmap - Random flight found:)</oldsource>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/search/airportsearch.cpp" line="972"/>
+        <location filename="src/search/airportsearch.cpp" line="971"/>
         <source>No (further) airports satisfying your criteria
 found in the airport search result table.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/search/airportsearch.cpp" line="826"/>
+        <location filename="src/search/airportsearch.cpp" line="825"/>
         <source>Abort running</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/search/airportsearch.cpp" line="934"/>
+        <location filename="src/search/airportsearch.cpp" line="933"/>
         <source>&lt;p&gt;&lt;b&gt;%1&lt;/b&gt; to &lt;b&gt;%2&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Direct distance: %3&lt;/p&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/search/airportsearch.cpp" line="949"/>
+        <location filename="src/search/airportsearch.cpp" line="948"/>
         <source>&amp;Use as Flight Plan</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/search/airportsearch.cpp" line="950"/>
+        <location filename="src/search/airportsearch.cpp" line="949"/>
         <source>&amp;Search again</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2732,7 +2737,7 @@ compatible file types and are loaded if possible.</source>
     </message>
     <message>
         <location filename="src/connect/connectclient.cpp" line="635"/>
-        <source>Autoconnect switched off.</source>
+        <source>Auto connect switched off.</source>
         <translation>Automatisch verbinden uitgeschakeld.</translation>
     </message>
     <message>
@@ -3044,13 +3049,13 @@ Werk met je X-Plane computernaam als je de Litte Xpconnect X-Plane plugin gebrui
         <location filename="src/connect/connectdialog.ui" line="432"/>
         <source>Automatically connect to given address and port of a remote simulator or to the local flight simulator.
 You have to click &quot;Connect&quot; to start the constant connection checking.
-Unchecking this will stop all automatic connection attempts immediately.</source>
+Deselecting this will stop all automatic connection attempts immediately.</source>
         <translation>Automatisch verbinden met een bepaald adres of poort van een computer op afstand of met de lokale vluchtsimulator.
 Klikken op &quot;Connect&quot; om constant de verbinding te checken.
 Niet-aanklikken zal het automatisch verbinden stoppen.</translation>
     </message>
     <message>
-        <source>Automatically connect to given address/port of a remote simulator or to the local flight simulator when program starts.\nYou have to click &quot;Connect&quot; to start the constant connection checking.\nUnchecking this will stop all automatic connection attempts immediately.</source>
+        <source>Automatically connect to given address/port of a remote simulator or to the local flight simulator when program starts.\nYou have to click &quot;Connect&quot; to start the constant connection checking.\nDeselecting this will stop all automatic connection attempts immediately.</source>
         <translation type="vanished">Automatisch verbinden met een bepaald adres of poort van een computer op afstand of met de lokale vluchtsimulator.\nKlikken op &quot;Connect&quot; om constant de verbinding te checken.\nNiet-aanklikken zal het automatisch verbinden stoppen.</translation>
     </message>
     <message>
@@ -3247,7 +3252,7 @@ Bovenstaande formaten moet exact ingevoerd worden zoals in de voorbeelden.</tran
     </message>
     <message>
         <location filename="src/route/customproceduredialog.ui" line="239"/>
-        <source>Positive angles turn the final leg clockwise in relation to the runway heading and negative values turn it counter clockwise.</source>
+        <source>Positive angles turn the final leg clockwise in relation to the runway heading and negative values turn it counterclockwise.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -4954,17 +4959,17 @@ Then choose the simulator and click &quot;Connect&quot;.
         <translation type="vanished">Verbonden. Wachten op update.</translation>
     </message>
     <message>
-        <location filename="src/info/infocontroller.cpp" line="1324"/>
+        <location filename="src/info/infocontroller.cpp" line="1331"/>
         <source>&lt;b&gt;AI and multiplayer aircraft are not shown on map.&lt;/b&gt;&lt;br/&gt;</source>
         <translation>&lt;b&gt;AI en multiplayer vliegtuigen niet getoond op kaart.&lt;/b&gt;&lt;br/&gt;</translation>
     </message>
     <message>
-        <location filename="src/info/infocontroller.cpp" line="1326"/>
+        <location filename="src/info/infocontroller.cpp" line="1333"/>
         <source>No AI or multiplayer aircraft selected.&lt;br/&gt;Found %1 AI or multiplayer aircraft.</source>
         <translation>Geen Ai of multiplayer vliegtuigen geselecteerd.&lt;br/&gt;%1 AI of vliegtuigen gevonden.</translation>
     </message>
     <message>
-        <location filename="src/info/infocontroller.cpp" line="1328"/>
+        <location filename="src/info/infocontroller.cpp" line="1335"/>
         <source>no</source>
         <translation>neen</translation>
     </message>
@@ -5461,7 +5466,7 @@ uren</translation>
         <location filename="src/logbook/logstatisticsdialog.cpp" line="537"/>
         <location filename="src/logbook/logstatisticsdialog.cpp" line="548"/>
         <location filename="src/logbook/logstatisticsdialog.cpp" line="558"/>
-        <source>Total realtime
+        <source>Total real time
 hours</source>
         <translation>Totale reële tijd
 uren</translation>
@@ -5921,7 +5926,8 @@ Note that you can undo this change.</source>
     </message>
     <message>
         <location filename="src/logbook/logdatacontroller.cpp" line="1095"/>
-        <source>This will convert all userpoints of type &quot;Logbook&quot; to logbook entries.&lt;br/&gt;&lt;br/&gt;This works best if you did not modify the field &quot;Description&quot; in the userpoints and if you did not insert entries manually.&lt;br/&gt;&lt;br/&gt;Note that not all fields can be converted automatically.&lt;br/&gt;&lt;br/&gt;The created log entries can be found by searchingfor&lt;br/&gt;&quot;*Converted from userdata*&quot;&lt;br/&gt;in the field &amp;quot;Remarks&amp;quot;.&lt;br/&gt;&lt;br/&gt;Continue?</source>
+        <source>This will convert all userpoints of type &quot;Logbook&quot; to logbook entries.&lt;br/&gt;&lt;br/&gt;This works best if you did not modify the field &quot;Description&quot; in the userpoints and if you did not insert entries manually.&lt;br/&gt;&lt;br/&gt;Note that not all fields can be converted automatically.&lt;br/&gt;&lt;br/&gt;The created log entries can be found by searching for&lt;br/&gt;&quot;*Converted from userdata*&quot;&lt;br/&gt;in the field &amp;quot;Remarks&amp;quot;.&lt;br/&gt;&lt;br/&gt;Continue?</source>
+        <oldsource>This will convert all userpoints of type &quot;Logbook&quot; to logbook entries.&lt;br/&gt;&lt;br/&gt;This works best if you did not modify the field &quot;Description&quot; in the userpoints and if you did not insert entries manually.&lt;br/&gt;&lt;br/&gt;Note that not all fields can be converted automatically.&lt;br/&gt;&lt;br/&gt;The created log entries can be found by searchingfor&lt;br/&gt;&quot;*Converted from userdata*&quot;&lt;br/&gt;in the field &amp;quot;Remarks&amp;quot;.&lt;br/&gt;&lt;br/&gt;Continue?</oldsource>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -6030,7 +6036,7 @@ Note that you can undo this change.</source>
     </message>
     <message>
         <location filename="src/logbook/logdatacontroller.cpp" line="1130"/>
-        <source>Some warnings might appear because of terminated flights, repeated langings and/or takeoffs. These can be ignored.</source>
+        <source>Some warnings might appear because of terminated flights, repeated landings and/or takeoffs. These can be ignored.</source>
         <translation>Sommige waarschuwingen kunnen zichtbaar zijn wegens afgebroken vluchten, herhaalde landingen en/of vertrekken. Deze kunnen genegeerd worden.</translation>
     </message>
     <message>
@@ -6563,7 +6569,7 @@ This updates only the path and does not attach the file to the logbook entry.</s
     </message>
     <message>
         <location filename="src/logbook/logdatadialog.ui" line="1186"/>
-        <source>&amp;Grossweight at takeoff:</source>
+        <source>&amp;Gross weight at takeoff:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -9988,7 +9994,7 @@ Wind speed will be interpolated between this altitude and ground level.</source>
     <message>
         <location filename="src/gui/mainwindow.ui" line="11176"/>
         <location filename="src/gui/mainwindow.ui" line="11179"/>
-        <source>Download tracks for Australian Organised Track Structure</source>
+        <source>Download tracks for Australian Organized Track Structure</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -10411,20 +10417,20 @@ Wind speed will be interpolated between this altitude and ground level.</source>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="10859"/>
-        <source>Save attached Aircraft &amp;Perfomance as ...</source>
+        <source>Save attached Aircraft &amp;Performance as ...</source>
         <oldsource>Save attached Aircraft &amp;Performance as ...</oldsource>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="10862"/>
-        <source>Save aircraft perfomance as a new file</source>
+        <source>Save aircraft performance as a new file</source>
         <oldsource>Save aircraft performance as a new file</oldsource>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="10865"/>
         <location filename="src/gui/mainwindow.ui" line="10868"/>
-        <source>Save attached aircraft perfomance as a new file</source>
+        <source>Save attached aircraft performance as a new file</source>
         <oldsource>Save attached aircraft performance as a new file</oldsource>
         <translation type="unfinished"></translation>
     </message>
@@ -12977,7 +12983,7 @@ Windsnelheid wordt geinterpoleerd uit de klim-en daalfases.</translation>
         <location filename="src/gui/mainwindow.ui" line="8617"/>
         <location filename="src/gui/mainwindow.ui" line="8632"/>
         <location filename="src/gui/mainwindow.ui" line="8635"/>
-        <source>Unselect all entries in the table</source>
+        <source>Deselect all entries in the table</source>
         <translation>Deselecteer alle gegevens in de tabel</translation>
     </message>
     <message>
@@ -15948,7 +15954,7 @@ Button is highlighted if any filter is selected.</source>
     </message>
     <message>
         <location filename="src/mapgui/mapcontextmenu.cpp" line="898"/>
-        <source>Add airport, navaid or position to nearest flight plan leg</source>
+        <source>Add airport, navaid or position to the nearest flight plan leg</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -25237,8 +25243,8 @@ wanneer overgegaan wordt van luchthaven naar airway.</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="6307"/>
-        <source>East / West: Rounds up  cruise altitude to nearest odd thousand feet for eastward flight plans and nearest even thousand feet for westward flight plans.
-North / South: Rounds up  cruise altitude to nearest odd thousand feet for southward flight plans and nearest even thousand feet for northward flight plans.
+        <source>East / West: Rounds up  cruise altitude to the nearest odd thousand feet for eastward flight plans and nearest even thousand feet for westward flight plans.
+North / South: Rounds up  cruise altitude to the nearest odd thousand feet for southward flight plans and nearest even thousand feet for northward flight plans.
 South / North: Same as North / South but reverses odd and even.</source>
         <translation>Oost / West: Afronden cruise hoogte naar de eerstvolgende ONEVEN-1000 feet voor oostwaartse vluchtplannen en de eerstvolgende EVEN-1000 feet voor westwaartse vluchtplannen.
 Noord / Zuid: Afronden cruise hoogte naar de eerstvolgende ONEVEN-1000 feet voor zuidwaartse vluchtplannen en de eerstvolgende EVEN-1000 feet voor noordwaartse vluchtplannen.
@@ -26151,7 +26157,7 @@ Little Navmap GIT repository.
     </message>
     <message>
         <location filename="src/options/options.ui" line="7931"/>
-        <source>No themes directory selected.</source>
+        <source>No map theme directory selected.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -29262,7 +29268,7 @@ Changes to &quot;Required angle&quot; if mandatory in approach procedures.</sour
     </message>
     <message>
         <location filename="src/profile/profileoptions.cpp" line="77"/>
-        <source>Orange safe altitude lines for for each flight plan leg.</source>
+        <source>Orange safe altitude lines for each flight plan leg.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -38728,7 +38734,7 @@ Travel Totals: %1.</source>
     </message>
     <message>
         <location filename="src/routeexport/simbriefhandler.cpp" line="66"/>
-        <source>&lt;p&gt;&lt;b&gt;Export this flight plan to SimBrief?&lt;/b&gt;&lt;/p&gt;&lt;p&gt;The information below will be sent:&lt;/p&gt;&lt;table&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td&gt;Route description:&lt;/td&gt;&lt;td&gt;%1&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Cruise altitide:&lt;/td&gt;&lt;td&gt;%2&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Aircraft type:&lt;/td&gt;&lt;td&gt;%3&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;p&gt;Open your web browser and log into SimBrief before exporting the flight plan.&lt;/p&gt;</source>
+        <source>&lt;p&gt;&lt;b&gt;Export this flight plan to SimBrief?&lt;/b&gt;&lt;/p&gt;&lt;p&gt;The information below will be sent:&lt;/p&gt;&lt;table&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td&gt;Route description:&lt;/td&gt;&lt;td&gt;%1&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Cruise altitude:&lt;/td&gt;&lt;td&gt;%2&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Aircraft type:&lt;/td&gt;&lt;td&gt;%3&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;p&gt;Open your web browser and log into SimBrief before exporting the flight plan.&lt;/p&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>

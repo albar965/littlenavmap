@@ -6304,8 +6304,8 @@ put the active leg back on top after the given timeout while flying.</string>
                <item row="1" column="0">
                 <widget class="QComboBox" name="comboBoxOptionsRouteAltitudeRuleType">
                  <property name="toolTip">
-                  <string>East / West: Rounds up  cruise altitude to nearest odd thousand feet for eastward flight plans and nearest even thousand feet for westward flight plans.
-North / South: Rounds up  cruise altitude to nearest odd thousand feet for southward flight plans and nearest even thousand feet for northward flight plans.
+                  <string>East / West: Rounds up  cruise altitude to the nearest odd thousand feet for eastward flight plans and nearest even thousand feet for westward flight plans.
+North / South: Rounds up  cruise altitude to the nearest odd thousand feet for southward flight plans and nearest even thousand feet for northward flight plans.
 South / North: Same as North / South but reverses odd and even.</string>
                  </property>
                  <item>
@@ -7928,7 +7928,7 @@ Little Navmap GIT repository.
                   <string>Select a directory to search for additional map themes.</string>
                  </property>
                  <property name="placeholderText">
-                  <string>No themes directory selected.</string>
+                  <string>No map theme directory selected.</string>
                  </property>
                 </widget>
                </item>

@@ -431,7 +431,7 @@ Use your X-Plane computer name if you are running the Little Xpconnect X-Plane p
      <property name="toolTip">
       <string>Automatically connect to given address and port of a remote simulator or to the local flight simulator.
 You have to click &quot;Connect&quot; to start the constant connection checking.
-Unchecking this will stop all automatic connection attempts immediately.</string>
+Deselecting this will stop all automatic connection attempts immediately.</string>
      </property>
      <property name="text">
       <string>Connect &amp;automatically</string>

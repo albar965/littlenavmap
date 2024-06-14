@@ -3717,9 +3717,9 @@ float Route::getAdjustedAltitude(float altitudeLocal) const
     {
       qDebug() << Q_FUNC_INFO << "minAltitude" << altitudeLocal << "fp dir" << fpDir;
 
-      // East / West: Rounds up  cruise altitude to nearest odd thousand feet for eastward flight plans
+      // East / West: Rounds up  cruise altitude to the nearest odd thousand feet for eastward flight plans
       // and nearest even thousand feet for westward flight plans.
-      // North / South: Rounds up  cruise altitude to nearest odd thousand feet for southward flight plans
+      // North / South: Rounds up  cruise altitude to the nearest odd thousand feet for southward flight plans
       // and nearest even thousand feet for northward flight plans.
 
       // In Italy, France and Portugal, for example, southbound traffic uses odd flight levels;

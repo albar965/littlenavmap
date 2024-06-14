@@ -1098,7 +1098,7 @@ void LogdataController::convertUserdata()
                                              "\"Description\" in the userpoints and if "
                                              "you did not insert entries manually.<br/><br/>"
                                              "Note that not all fields can be converted automatically.<br/><br/>"
-                                             "The created log entries can be found by searching"
+                                             "The created log entries can be found by searching "
                                              "for<br/>\"*Converted from userdata*\"<br/>"
                                              "in the field &quot;Remarks&quot;.<br/><br/>"
                                              "Continue?"),
@@ -1128,7 +1128,7 @@ void LogdataController::convertUserdata()
 
       html.p(tr("Conversion Errors/Warnings"), atools::util::html::BOLD | atools::util::html::BIG);
       html.p(tr("Some warnings might appear because of terminated flights, "
-                "repeated langings and/or takeoffs. These can be ignored."));
+                "repeated landings and/or takeoffs. These can be ignored."));
       html.ol();
       for(const QString& err : converter.getErrors())
         html.li(err, atools::util::html::NO_ENTITIES);

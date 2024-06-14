@@ -66,7 +66,7 @@ void SimBriefHandler::sendRouteToSimBrief()
   QString message = tr("<p><b>Export this flight plan to SimBrief?</b></p>"
                          "<p>The information below will be sent:</p>"
                            "<table><tbody><tr><td>Route description:</td><td>%1</td></tr>"
-                             "<tr><td>Cruise altitide:</td><td>%2</td></tr>"
+                             "<tr><td>Cruise altitude:</td><td>%2</td></tr>"
                                "<tr><td>Aircraft type:</td><td>%3</td></tr></tbody></table>"
                                  "<p>Open your web browser and log into SimBrief before exporting the flight plan.</p>").
                     arg(routeString).arg(Unit::altFeet(route.getCruiseAltitudeFt())).arg(aircraftType);

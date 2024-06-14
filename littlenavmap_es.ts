@@ -2515,7 +2515,7 @@ You have to restart %1 to resume.</source>
     </message>
     <message>
         <location filename="src/connect/connectclient.cpp" line="593"/>
-        <source>Autoconnect switched off.</source>
+        <source>Auto connect switched off.</source>
         <translation>Autoconexión desactivada.</translation>
     </message>
     <message>
@@ -2608,7 +2608,7 @@ FSX, Prepar3D and MSFS allow a maximum of 105 NM.</oldsource>
         <location filename="src/connect/connectdialog.ui" line="416"/>
         <source>Automatically connect to given address and port of a remote simulator or to the local flight simulator.
 You have to click &quot;Connect&quot; to start the constant connection checking.
-Unchecking this will stop all automatic connection attempts immediately.</source>
+Deselecting this will stop all automatic connection attempts immediately.</source>
         <translation>Conectarse automáticamente a la dirección y puerto dados de un simulador remoto o al simulador de vuelo local.
 Debe hacer clic en &quot;Conectar&quot; para iniciar la comprobación de conexión constante.
 Desmarcar esto detendrá todos los intentos de conexión automática de inmediato.</translation>
@@ -2815,7 +2815,7 @@ Los valores más bajos darán como resultado un movimiento más fluido de la aer
         <translation>Intervalo de actualización &amp;U:</translation>
     </message>
     <message>
-        <source>Automatically connect to given address/port of a remote simulator or to the local flight simulator when program starts.\nYou have to click &quot;Connect&quot; to start the constant connection checking.\nUnchecking this will stop all automatic connection attempts immediately.</source>
+        <source>Automatically connect to given address/port of a remote simulator or to the local flight simulator when program starts.\nYou have to click &quot;Connect&quot; to start the constant connection checking.\nDeselecting this will stop all automatic connection attempts immediately.</source>
         <translation type="vanished">Conéctese automáticamente a una dirección/puerto determinado de un simulador remoto o al simulador de vuelo local cuando se inicie el programa.\nTiene que hacer clic en &quot;Conectar&quot; para iniciar la comprobación de conexión constante.\nDesmarcar esto detendrá inmediatamente todos los intentos de conexión automática.</translation>
     </message>
 </context>
@@ -2919,7 +2919,7 @@ Los formatos anteriores deben darse exactamente como se muestra en los ejemplos.
     </message>
     <message>
         <location filename="src/route/customproceduredialog.ui" line="69"/>
-        <source>Positive angles turn the final leg clockwise in relation to the runway heading and negative values turn it counter clockwise.</source>
+        <source>Positive angles turn the final leg clockwise in relation to the runway heading and negative values turn it counterclockwise.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -4881,7 +4881,7 @@ hours</source>
         <location filename="src/logbook/logstatisticsdialog.cpp" line="440"/>
         <location filename="src/logbook/logstatisticsdialog.cpp" line="452"/>
         <location filename="src/logbook/logstatisticsdialog.cpp" line="464"/>
-        <source>Total realtime
+        <source>Total real time
 hours</source>
         <translation type="unfinished"></translation>
     </message>
@@ -5214,7 +5214,7 @@ Columns will be empty on export if disabled.</source>
     </message>
     <message>
         <location filename="src/logbook/logdatacontroller.cpp" line="924"/>
-        <source>Some warnings might appear because of terminated flights, repeated langings and/or takeoffs. These can be ignored.</source>
+        <source>Some warnings might appear because of terminated flights, repeated landings and/or takeoffs. These can be ignored.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -5733,7 +5733,7 @@ This updates only the path and does not attach the file to the logbook entry.</s
     </message>
     <message>
         <location filename="src/logbook/logdatadialog.ui" line="1192"/>
-        <source>&amp;Grossweight at takeoff:</source>
+        <source>&amp;Gross weight at takeoff:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -8544,7 +8544,7 @@ A simulator might not be able to load the flight plan.</source>
         <location filename="src/gui/mainwindow.ui" line="8515"/>
         <location filename="src/gui/mainwindow.ui" line="8530"/>
         <location filename="src/gui/mainwindow.ui" line="8533"/>
-        <source>Unselect all entries in the table</source>
+        <source>Deselect all entries in the table</source>
         <translation>Deseleccionar todas las entradas en la tabla</translation>
     </message>
     <message>
@@ -12735,7 +12735,7 @@ Online Network:
     <message>
         <location filename="src/gui/mainwindow.ui" line="11068"/>
         <location filename="src/gui/mainwindow.ui" line="11071"/>
-        <source>Download tracks for Australian Organised Track Structure</source>
+        <source>Download tracks for Australian Organized Track Structure</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -14244,7 +14244,7 @@ Button is highlighted if any filter is selected.</source>
     </message>
     <message>
         <location filename="src/mapgui/mapcontextmenu.cpp" line="882"/>
-        <source>Add airport, navaid or position to nearest flight plan leg</source>
+        <source>Add airport, navaid or position to the nearest flight plan leg</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -21607,8 +21607,8 @@ userpoints and logbook entries when hovering the cursor over the map</source>
     </message>
     <message>
         <location filename="src/options/options.ui" line="5277"/>
-        <source>East / West: Rounds up  cruise altitude to nearest odd thousand feet for eastward flight plans and nearest even thousand feet for westward flight plans.
-North / South: Rounds up  cruise altitude to nearest odd thousand feet for southward flight plans and nearest even thousand feet for northward flight plans.
+        <source>East / West: Rounds up  cruise altitude to the nearest odd thousand feet for eastward flight plans and nearest even thousand feet for westward flight plans.
+North / South: Rounds up  cruise altitude to the nearest odd thousand feet for southward flight plans and nearest even thousand feet for northward flight plans.
 South / North: Same as North / South but reverses odd and even.</source>
         <translation>Este / Oeste:Redondea la altitud de crucero a los mil pies impares más cercanos para los planes de vuelo hacia el este y los mil pies más cercanos para los planes de vuelo hacia el oeste..
 Norte / Sur: Redondea la altitud de crucero a los mil pies impares más cercanos para los planes de vuelo hacia el sur y los mil pies más cercanos para los planes de vuelo hacia el norte..
@@ -26314,7 +26314,7 @@ Shown on descent only at user aircraft symbol suffixed with &quot;N&quot;.</sour
     </message>
     <message>
         <location filename="src/profile/profileoptions.cpp" line="67"/>
-        <source>Orange safe altitude lines for for each flight plan leg.</source>
+        <source>Orange safe altitude lines for each flight plan leg.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -34800,7 +34800,7 @@ Travel Totals: %1.</source>
     </message>
     <message>
         <location filename="src/routeexport/simbriefhandler.cpp" line="65"/>
-        <source>&lt;p&gt;&lt;b&gt;Export this flight plan to SimBrief?&lt;/b&gt;&lt;/p&gt;&lt;p&gt;The information below will be sent:&lt;/p&gt;&lt;table&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td&gt;Route description:&lt;/td&gt;&lt;td&gt;%1&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Cruise altitide:&lt;/td&gt;&lt;td&gt;%2&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Aircraft type:&lt;/td&gt;&lt;td&gt;%3&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;p&gt;Open your web browser and log into SimBrief before exporting the flight plan.&lt;/p&gt;</source>
+        <source>&lt;p&gt;&lt;b&gt;Export this flight plan to SimBrief?&lt;/b&gt;&lt;/p&gt;&lt;p&gt;The information below will be sent:&lt;/p&gt;&lt;table&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td&gt;Route description:&lt;/td&gt;&lt;td&gt;%1&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Cruise altitude:&lt;/td&gt;&lt;td&gt;%2&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Aircraft type:&lt;/td&gt;&lt;td&gt;%3&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;p&gt;Open your web browser and log into SimBrief before exporting the flight plan.&lt;/p&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>

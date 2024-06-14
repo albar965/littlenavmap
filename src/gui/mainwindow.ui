@@ -8593,10 +8593,10 @@ relation to shown airport</string>
     <string>Clear &amp;Selection</string>
    </property>
    <property name="toolTip">
-    <string>Unselect all entries in the table</string>
+    <string>Deselect all entries in the table</string>
    </property>
    <property name="statusTip">
-    <string>Unselect all entries in the table</string>
+    <string>Deselect all entries in the table</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+Shift+A</string>
@@ -8611,10 +8611,10 @@ relation to shown airport</string>
     <string>Clear &amp;Selection</string>
    </property>
    <property name="toolTip">
-    <string>Unselect all entries in the table</string>
+    <string>Deselect all entries in the table</string>
    </property>
    <property name="statusTip">
-    <string>Unselect all entries in the table</string>
+    <string>Deselect all entries in the table</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+Shift+A</string>
@@ -8629,10 +8629,10 @@ relation to shown airport</string>
     <string>Clear &amp;Selection</string>
    </property>
    <property name="toolTip">
-    <string>Unselect all entries in the table</string>
+    <string>Deselect all entries in the table</string>
    </property>
    <property name="statusTip">
-    <string>Unselect all entries in the table</string>
+    <string>Deselect all entries in the table</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+Shift+A</string>
@@ -10856,16 +10856,16 @@ relation to shown airport</string>
   </action>
   <action name="actionSearchLogdataSavePerfAs">
    <property name="text">
-    <string>Save attached Aircraft &amp;Perfomance as ...</string>
+    <string>Save attached Aircraft &amp;Performance as ...</string>
    </property>
    <property name="iconText">
-    <string>Save aircraft perfomance as a new file</string>
+    <string>Save aircraft performance as a new file</string>
    </property>
    <property name="toolTip">
-    <string>Save attached aircraft perfomance as a new file</string>
+    <string>Save attached aircraft performance as a new file</string>
    </property>
    <property name="statusTip">
-    <string>Save attached aircraft perfomance as a new file</string>
+    <string>Save attached aircraft performance as a new file</string>
    </property>
   </action>
   <action name="actionSearchLogdataOpenPerf">
@@ -11173,10 +11173,10 @@ relation to shown airport</string>
     <string>&amp;AUSOTS</string>
    </property>
    <property name="toolTip">
-    <string>Download tracks for Australian Organised Track Structure</string>
+    <string>Download tracks for Australian Organized Track Structure</string>
    </property>
    <property name="statusTip">
-    <string>Download tracks for Australian Organised Track Structure</string>
+    <string>Download tracks for Australian Organized Track Structure</string>
    </property>
   </action>
   <action name="actionConnectSimulatorToggle">

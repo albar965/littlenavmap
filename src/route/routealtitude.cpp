@@ -1114,7 +1114,7 @@ void RouteAltitude::calculateAll(const atools::fs::perf::AircraftPerf& perf, flo
   qDebug() << "legIndexTopOfClimb" << legIndexTopOfClimb << "legIndexTopOfDescent" << legIndexTopOfDescent;
   qDebug() << "validProfile" << validProfile << "unflyableLegs" << unflyableLegs;
   qDebug() << "climbRateWindFtPerNm" << climbRateWindFtPerNm << "descentRateWindFtPerNm" << descentRateWindFtPerNm
-           << "cruiseAltitide" << cruiseAltitude;
+           << "cruiseAltitude" << cruiseAltitude;
 
   qDebug() << Q_FUNC_INFO << "exit";
 #endif

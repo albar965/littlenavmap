@@ -534,7 +534,7 @@ void LogStatisticsDialog::initQueries()
 
     Query(tr("Aircraft usage"),
           {tr("Number of\nflights"), tr("Simulator"), tr("Total flight\nplan distance %dist%"),
-           tr("Total simulator time\nhours"), tr("Total realtime\nhours"), tr("Model"), tr("Type"), tr(
+           tr("Total simulator time\nhours"), tr("Total real time\nhours"), tr("Model"), tr("Type"), tr(
              "Registration")},
           {RIGHT, LEFT, RIGHT, RIGHT, RIGHT, LEFT, LEFT, LEFT},
           {"cnt", "simulator", "dist", "time", "simtime", "aircraft_name", "aircraft_type", "aircraft_registration"}, 0, Qt::DescendingOrder,
@@ -545,7 +545,7 @@ void LogStatisticsDialog::initQueries()
           "from logbook group by simulator, aircraft_name, aircraft_type, aircraft_registration"),
 
     Query(tr("Aircraft usage by type"),
-          {tr("Number of\nflights"), tr("Simulator"), tr("Total flight\nplan distance %dist%"), tr("Total realtime\nhours"),
+          {tr("Number of\nflights"), tr("Simulator"), tr("Total flight\nplan distance %dist%"), tr("Total real time\nhours"),
            tr("Total simulator time\nhours"), tr("Type")},
           {RIGHT, LEFT, RIGHT, RIGHT, RIGHT, LEFT},
           {"cnt", "simulator", "dist", "time", "simtime", "aircraft_type"}, 0, Qt::DescendingOrder,
@@ -555,7 +555,7 @@ void LogStatisticsDialog::initQueries()
           "aircraft_type from logbook group by simulator, aircraft_type"),
 
     Query(tr("Aircraft usage by registration"),
-          {tr("Number of\nflights"), tr("Simulator"), tr("Total flight\nplan distance %dist%"), tr("Total realtime\nhours"),
+          {tr("Number of\nflights"), tr("Simulator"), tr("Total flight\nplan distance %dist%"), tr("Total real time\nhours"),
            tr("Total simulator time\nhours"), tr("Type")},
           {RIGHT, LEFT, RIGHT, RIGHT, RIGHT, LEFT},
           {"cnt", "simulator", "dist", "time", "simtime", "aircraft_registration"}, 0, Qt::DescendingOrder,

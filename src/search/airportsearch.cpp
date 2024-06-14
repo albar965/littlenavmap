@@ -733,8 +733,7 @@ void AirportSearch::randomFlightClicked(bool showDialog)
 
     // Adjust label if plan is empty or not valid
     if(!departureAirport.isValid() && !destinationAirport.isValid())
-      label += tr(
-        "\n\nPre-add a departure or destination airport to your current flight plan if you wish to have that fixed instead of random.");
+      label += tr( "\n\nAdd a departure or destination airport to your current flight plan if you wish to have that fixed instead of random.");
 
     // Build selection dialog ===========================================================
     atools::gui::ChoiceDialog choiceDialog(mainWindow, QCoreApplication::applicationName() % tr(" - Random Flight"), label,
@@ -793,8 +792,8 @@ void AirportSearch::randomFlightClicked(bool showDialog)
                                      "airport search result table at random."));
 
       choiceDialog.addRadioButton(RANDOM_FIXED_DESTINATION, RANDOM_BUTTON_GROUP,
-                                  tr("Let select only a departure airport from"
-                                     "airport search result table at random.\n"));
+                                  tr("Let select only a departure airport from\n"
+                                     "airport search result table at random."));
 
       choiceDialog.disableButton(RANDOM_ALL);
       choiceDialog.disableButton(RANDOM_FIXED_DEPARTURE);

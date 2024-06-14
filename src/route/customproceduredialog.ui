@@ -236,7 +236,7 @@
    <item row="5" column="1">
     <widget class="QSpinBox" name="spinBoxCustomProcAngle">
      <property name="toolTip">
-      <string>Positive angles turn the final leg clockwise in relation to the runway heading and negative values turn it counter clockwise.</string>
+      <string>Positive angles turn the final leg clockwise in relation to the runway heading and negative values turn it counterclockwise.</string>
      </property>
      <property name="statusTip">
       <string>Altitude at the initial fix</string>
