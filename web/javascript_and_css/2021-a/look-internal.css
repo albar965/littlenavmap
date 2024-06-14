@@ -270,6 +270,14 @@
   box-sizing: border-box;
 }
 
+#toolbarsLayer {
+  font-family: sans-serif;
+}
+
+#toolbarsLayer .toolbar {
+  background: rgba(255,255,255,0.4);
+}
+
 .resizable-content {
   border-right: 5px solid rgba(0,0,0,.004);
   border-bottom: 5px solid rgba(0,0,0,.004);

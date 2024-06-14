@@ -83,6 +83,7 @@ function findPlugins() {
               iframe.style.height = "100%";
               iframe.style.visibility = "visible";
               iframe.style.zIndex = "";
+              toolbarsLayer.parentElement.classList.add("exclusive-active");
               if(!exclusivePlugins) {
                 exclusivePlugins = document.createElement("select");
                 exclusivePlugins.id = "exclusivePlugins";
@@ -101,10 +102,13 @@ function findPlugins() {
                     (document.querySelector('iframe[data-id="' + this.value + '"]')??{style:{display:""}}).style.display = "block";
                     toolbarsLayer.querySelectorAll('.toolbar').forEach(tb => tb.style.display = "none");
                     toolbarsLayer.querySelectorAll('.toolbar[data-source="' + this.value + '"]').forEach(tb => tb.style.display = "");
+                    toolbarsLayer.parentElement.classList.add("exclusive-active");
                   } else {
                     toolbarsLayer.querySelectorAll('.toolbar[data-type="exclusive"]').forEach(tb => tb.style.display = "none");
                     toolbarsLayer.querySelectorAll('.toolbar:not([data-type="exclusive"])').forEach(tb => tb.style.display = "");
+                    toolbarsLayer.parentElement.classList.remove("exclusive-active");
                   }
+                  activeExclusivePlugin = loadingOnInit ? activeExclusivePlugin : this.value;
                   storeState("activeExclusivePlugin", this.value);
                 };
               } else {
@@ -156,9 +160,9 @@ function findPlugins() {
           iframe.setAttribute("data-type", pluginsConfig[plugin.value].type);
           iframe.setAttribute("data-id", plugin.value);
           iframe.setAttribute("allow", "accelerometer *; ambient-light-sensor *; attribution-reporting *; autoplay *; battery *; bluetooth *; browsing-topics *; camera *; compute-pressure *; display-capture *; document-domain *; encrypted-media *; execution-while-not-rendered *; execution-while-out-of-viewport *; fullscreen *; gamepad *; geolocation *; gyroscope *; hid *; identity-credentials-get *; idle-detection *; local-fonts *; magnetometer *; microphone *; midi *; otp-credentials *; payment *; picture-in-picture *; publickey-credentials-create *; publickey-credentials-get *; screen-wake-lock *; serial *; speaker-selection *; storage-access *; usb *; web-share *; window-management *; xr-spatial-tracking *");
-          var allowMapAccess = " allow-same-origin";			// this should be empty string. parent access is wished to be prevented. without "allow-same-origin" that is achieved. it also blocks iframes within iframes to communicate with each other directly which is not wished. also localStorage is not accessible then.
+          var allowMapAccess = " allow-same-origin";      // this should be empty string. parent access is wished to be prevented. without "allow-same-origin" that is achieved. it also blocks iframes within iframes to communicate with each other directly which is not wished. also localStorage is not accessible then.
           if(pluginsConfig[plugin.value].requestMapAccess.length) {
-            if(retrieveState("mapAccessGranted_plugin_" + plugin.value, 0, true) === "true" || confirm("The plugin\n\n\"" + pluginsConfig[plugin.value].title + "\"\n\nis requesting access to the map.\n\nReason given:\n\n\"" + pluginsConfig[plugin.value].requestMapAccess + "\"\n\nGrant it?\n\n\nNote:\n\nThe plugin then will be able to access anything else inside the Little Navmap web frontend.\n\nWhen you deny access, a plugin still can find access due to web browsers ungranular\nsecurity model which needed to be configured for plugins to work at all.")) {
+            if(retrieveState("mapAccessGranted_plugin_" + plugin.value, 0, true) === "true" || confirm("The plugin\n\n\"" + pluginsConfig[plugin.value].title + "\"\n\nis requesting access to the map.\n\nReason given:\n\n\"" + pluginsConfig[plugin.value].requestMapAccess + "\"\n\nGrant it?\n\n\nNote:\n\nThe plugin then will be able to access anything else inside the Little Navmap web frontend.\n\nWhen you deny access, a plugin still can find access due to web\nbrowsers ungranular security model which needed to be configured\nfor plugins to be able to do non-trivial tasks.")) {
               storeState("mapAccessGranted_plugin_" + plugin.value, "true", true);
               allowMapAccess = " allow-same-origin";
               iframe.addEventListener("load", function() {
@@ -177,6 +181,9 @@ function findPlugins() {
               storeState("activePlugins", activePlugins);
               pluginsConfig[plugin.value].toolbars.forEach(toolbarConfig => {
                 var toolbar = tAPI.createToolbar(toolbarConfig.title.length ? toolbarsLayer : mapToolbar, toolbarConfig.title, pluginsConfig[plugin.value].type, plugin.value);
+                if(activeExclusivePlugin !== "/" && activeExclusivePlugin !== plugin.value) {
+                  toolbar.style.display = "none";
+                }
                 toolbarConfig.items.forEach(item => {
                   tAPI[item.type]?.(item, plugin.value, toolbar);
                 });
@@ -190,6 +197,7 @@ function findPlugins() {
           contentContainer.insertBefore(iframe, toolbarsLayer.parentElement);
         } else {
           toolbarsLayer.querySelectorAll('[data-source="' + plugin.value + '"]').forEach(toolbar => toolbar.remove());
+          mapToolbar.querySelectorAll('[data-source="' + plugin.value + '"]').forEach(toolbar => toolbar.remove());
           pluginsConfig[plugin.value].iframe.contentWindow.postMessage({pluginParent: {cause: "cleanup"}}, "*");
           setTimeout(() => {
             pluginsConfig[plugin.value].iframe.remove();
@@ -228,22 +236,22 @@ function findPlugins() {
           }
         });
         Promise.all(configs).then(() => {
-        	Object.keys(pluginsConfig).sort().forEach(key => {
-	          var plugin = document.createElement("div");
-	          plugin.className = "selectable-plugin plugin-" + pluginsConfig[key].type;
-	          var checkbox = document.createElement("input");
-	          var id = "a" + (Math.random() + "").substring(2);
-	          checkbox.type = "checkbox";
-	          checkbox.id = id;
-	          checkbox.value = key;
-	          var label = document.createElement("label");
-	          label.setAttribute("for", id);
-	          label.innerText = pluginsConfig[key].title;
-	          pluginsConfig[key].checkbox = checkbox;
-	          plugin.appendChild(checkbox);
-	          plugin.appendChild(label);
-	          pluginlist.appendChild(plugin);
-        	});
+          Object.keys(pluginsConfig).sort((a, b) => pluginsConfig[a].title.localeCompare(pluginsConfig[b].title)).forEach(key => {
+            var plugin = document.createElement("div");
+            plugin.className = "selectable-plugin plugin-" + pluginsConfig[key].type;
+            var checkbox = document.createElement("input");
+            var id = "a" + (Math.random() + "").substring(2);
+            checkbox.type = "checkbox";
+            checkbox.id = id;
+            checkbox.value = key;
+            var label = document.createElement("label");
+            label.setAttribute("for", id);
+            label.innerText = pluginsConfig[key].title;
+            pluginsConfig[key].checkbox = checkbox;
+            plugin.appendChild(checkbox);
+            plugin.appendChild(label);
+            pluginlist.appendChild(plugin);
+          });
         }).then(() => {
           if(pluginlist.childElementCount) {
             pluginlist.id = "selectablePlugins";

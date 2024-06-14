@@ -16,7 +16,7 @@
       // the cleanup command when the user disables your plugin
       // evaluate the version message, see documentation
       onmessage = event => {
-      	let message = event.data.pluginParent;
+        let message = event.data.pluginParent;
         if(message) {
           switch(message.cause) {
             case "cleanup":
@@ -26,10 +26,10 @@
               handleEvents(message.cargo);
               return;
             case "mapAccessReply":
-            	if(message.cargo === false) {
-            		// user not granted map access
-            	}
-            	return;
+              if(message.cargo === false) {
+                // user not granted map access
+              }
+              return;
             default:
           }
           if(message.version !== 1) {

@@ -1,7 +1,7 @@
 if(retrieveState("notClearedStorageAfterUpdate", true)) {
-	sessionStorage.clear();
-	localStorage.clear();
-	storeState("notClearedStorageAfterUpdate", false);
+  sessionStorage.clear();
+  localStorage.clear();
+  storeState("notClearedStorageAfterUpdate", false);
 }
 
 

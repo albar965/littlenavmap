@@ -10,11 +10,13 @@
 }
 
 .toolbar::before {
-	content: attr(title);
-	font-size: 8px;
-	position: absolute;
-	top: 4px;
-	left: 4px;
+  content: attr(title);
+  font-size: 8px;
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  display: table;
+  background: lightyellow;
 }
 
 @media (min-width: 1281px) {
@@ -44,15 +46,19 @@ input[type="checkbox"] {
 }
 
 input[type="text"] {
-  text-align: center;
+  text-align: left;
 }
 
 input:not([type=text]), button, label[for] {
   cursor: pointer;
 }
 
-input + label, label + input, input + button, label + button {
+input + button, button + input {
   margin-left: 3px;
+}
+
+label {
+  padding: 0 3px;
 }
 
 button {

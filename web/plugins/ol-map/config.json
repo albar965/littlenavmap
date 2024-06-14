@@ -15,7 +15,8 @@
               "key"
             ],
             "input": []
-          }
+          },
+          "style": "width:46px;text-transform:uppercase"
         },
         {
           "id": "icaob",

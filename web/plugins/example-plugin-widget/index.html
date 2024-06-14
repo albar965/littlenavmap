@@ -1,8 +1,8 @@
 <!doctype html>
-<html>
+<html lang="en">
   <head>
     <meta charset="UTF-8">
-    <title>unused plugin title (your plugin folders name is the title visible to the user)</title>
+    <title>unused</title>
     <style>
       html, body, #display {
         height: 100%;
@@ -11,21 +11,6 @@
         margin: 0;
         font: sans-serif;
       }
-      #display {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 100px;
-        color: grey;
-      }
-      .toolbar {
-        position: fixed;
-        top: 5px;
-        left: 5px;
-        display: table;
-        padding: 2.5px;
-        background: pink;
-      }
     </style>
   </head>
   <body>
@@ -33,33 +18,37 @@
       :) :)
     </div>
     <script>
+      onmessage = event => {
+        let message = event.data.pluginParent;
+        if(message) {
+          switch(message.cause) {
+            case "cleanup":
+              stop();
+              return;
+            case "callback":
+              handleEvents(message.cargo);
+              return;
+            default:
+          }
+        }
+      };
+      
       function stop() {
         alert("stopped");
       }
-
-      function init (message) {
-        var returned_Value = message.pluginParent.callback(message.pluginParent.callback.TYPE_WIDGET, stop);
-        returned_Value.run();
-        
-        var toolbar1 = returned_Value.toolbarAPI.createToolbar(document.body);
-        returned_Value.toolbarAPI.createCheckbox({
-          text: "yeha",
-          handlerNames: "click",
-          click: function() {
-            alert(this.value);
-          }
-        }, toolbar1);
-        
-        returned_Value.toolbarAPI.createLabel({
-          text: "yeha ?",
-          for: returned_Value.toolbarAPI.createCheckbox({
-	          text: "yeha 2",
-	          handlerNames: "click",
-	          click: function() {
-	            alert(this.value);
-	          }
-	        })
-        });
+      
+      function handleEvents(cargo) {
+        switch (cargo.id) {
+          case "check1":
+            switch (cargo.event) {
+              case "click":
+                alert("\"" + cargo.value + "\"");
+                break;
+              default:
+            }
+            break;
+          default:
+        }
       }
     </script>
   </body>

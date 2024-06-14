@@ -126,7 +126,7 @@ body {
 }
 
 #interactionParent:has(.transition) {
-	overflow: hidden;
+  overflow: hidden;
 }
 
 .transition {
@@ -151,7 +151,7 @@ body {
     --colorstop: 0%;
   }
   100% {
-  	--colorstop: 100%;
+    --colorstop: 100%;
   }
 }
 

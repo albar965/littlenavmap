@@ -1,20 +1,22 @@
 function toolbarAPI(pluginsHost) {
   var germaneValue = {
-  	"text": "value",
-  	"checkbox": "checked"
+    "text": "value",
+    "checkbox": "checked"
   };
 
   function assignEventHandlers(element, handle, id, source) {
-  	for(let eventtype in handle) {
-  		element["on" + eventtype] = function(eventObject) {
-  			pluginsHost.pluginToolbarItemDelegate(source, id, eventtype, element[germaneValue[element.type]], handle[eventtype].map(property => eventObject[property]));
-  		};
-  	}
+    for(let eventtype in handle) {
+      element["on" + eventtype] = function(eventObject) {
+        pluginsHost.pluginToolbarItemDelegate(source, id, eventtype, element[germaneValue[element.type]], handle[eventtype].map(property => eventObject[property]));
+      	eventObject.stopPropagation();
+      };
+    }
   }
 
   function createXFrame(config, source, toolbar, XCode) {
     var x = XCode();
     assignEventHandlers(x, config.handle, config.id, source);
+    config.style ? x.style = config.style : !1;
     toolbar.appendChild(x);
     return x;
   }
@@ -27,6 +29,7 @@ function toolbarAPI(pluginsHost) {
       toolbar.title = title;
       toolbar.setAttribute("data-type", type);
       toolbar.setAttribute("data-source", source);
+      toolbar.onsubmit = eventObject => eventObject.preventDefault();
       parentElement.appendChild(toolbar);
       return toolbar;
     },
@@ -53,22 +56,18 @@ function toolbarAPI(pluginsHost) {
         return input;
       });
       do {
-      	var id = ("c" + Math.random()).substring(2);
+        var id = "c" + ("" + Math.random()).substring(2);
       } while(document.getElementById(id) || toolbar.querySelector("#" + id));
       checkbox.id = id;
-      createXFrame(config, source, toolbar, function() {
-        var label = document.createElement("label");
-        label.setAttribute("for", id);
-        label.innerText = config.text;
-        return label;
-      });
+      var label = document.createElement("label");
+      label.setAttribute("for", id);
+      label.innerText = config.text;
+      toolbar.appendChild(label);
     },
     gap: function(config, source, toolbar) {
-      createXFrame(config, source, toolbar, function() {
-        var span = document.createElement("span");
-        span.className = "gap";
-        return span;
-      });
+      var span = document.createElement("span");
+      span.className = "gap";
+      toolbar.appendChild(span);
     }
   }
 }

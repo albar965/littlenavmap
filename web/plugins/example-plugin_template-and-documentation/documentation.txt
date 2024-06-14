@@ -12,8 +12,9 @@ See the example index.html .
 
 config.json :
 
-  All keys required.
+  All keys except "style" required.
   Arrays may be left empty.
+  "handle" may have no keys.
   Handle at least 1 event like "click" to be able to
   receive your toolbar's item's germane value. That value
   is not an event object property.
