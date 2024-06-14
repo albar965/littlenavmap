@@ -1192,6 +1192,13 @@ void InfoController::postDatabaseLoad()
       currentSearchResult->ndbs.append(result.ndbs.constFirst());
   }
 
+  // Reload all features which are not bound to a database ID ==================================
+  currentSearchResult->userpoints.append(savedSearchResult->userpoints);
+  currentSearchResult->logbookEntries.append(savedSearchResult->logbookEntries);
+  currentSearchResult->userAircraft = savedSearchResult->userAircraft;
+  currentSearchResult->aiAircraft.append(savedSearchResult->aiAircraft);
+  currentSearchResult->onlineAircraft.append(savedSearchResult->onlineAircraft);
+
   savedSearchResult->clear();
   updateAllInformation();
 }
