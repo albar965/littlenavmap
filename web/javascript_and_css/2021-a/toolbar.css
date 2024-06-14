@@ -1,0 +1,70 @@
+.toolbar {
+  height: 50px;
+  padding: 7px 0;
+  box-sizing: border-box;
+  font-size: 13.333px;
+  user-select: none;
+  display: flex;
+  align-items: center;
+  white-space: nowrap;
+}
+
+.toolbar::before {
+  content: attr(title);
+  font-size: 8px;
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  display: table;
+  background: lightyellow;
+}
+
+@media (min-width: 1281px) {
+  .toolbar > :first-child {
+    margin-left: 19px;
+  }
+  .toolbar > :last-child {
+    margin-right: 19px;
+  }
+}
+
+@media (max-width: 1280px) {
+  .toolbar > :first-child {
+    margin-left: 11px;
+  }
+  .toolbar > :last-child {
+    margin-right: 11px;
+  }
+}
+
+.toolbar > * {
+  display: block;
+}
+
+input[type="checkbox"] {
+  margin: 0 0 -2px;
+}
+
+input[type="text"] {
+  text-align: left;
+}
+
+input:not([type=text]), button, label[for] {
+  cursor: pointer;
+}
+
+input + button, button + input {
+  margin-left: 3px;
+}
+
+label {
+  padding: 0 3px;
+}
+
+button {
+  margin-right: 3px;
+}
+
+.gap {
+  width: 10px;
+}

@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
     <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="/javascript_and_css/2021-a/general_purpose.css">
+    <link rel="stylesheet" href="/javascript_and_css/2021-a/toolbar.css">
     <link rel="stylesheet" href="/javascript_and_css/2021-a/layout-internal.css">
     <link rel="stylesheet" href="/javascript_and_css/2021-a/look-internal.css">
     <title>
@@ -23,13 +25,14 @@
     </script>
   </head>
   <body onclick="bodyFunctions()">
-    <div id="mainContainer" data-toolbarsplacement="top">
+    <div id="mainContainer" data-menubarsplacement="top">
       <div id="contentContainer">
         <iframe src="map.html" onload="attemptRun.call(this,'injectUpdates')" name="contentiframe" class="shown" title="map content"></iframe>
+        <div id="toolbarsLayer"><div class="scrollIndicatorHelperContainer" onwheel="this.scrollTo({left:this.scrollLeft+event.deltaY,top:0,behavior:'smooth'})"></div></div>
         <iframe src="about:blank" onload="attemptRun.call(this,'injectUpdates')" name="addoniframe" title="addon content"></iframe>
       </div>
-      <div id="toolbarsContainer">
-        <div id="toolbarOuter" class="toolbar" onclick="setActive(event)">
+      <div id="menubarContainer">
+        <div id="menubarOuter" class="menubar" onclick="setActive(event)">
           <button id="buttonMap" class="active"><a href="map.html" target="contentiframe" onclick="showIframe(this);event.preventDefault()">Map</a></button>
           <button id="buttonFlightPlan"><a href="../flightplan.html" target="addoniframe" onclick="showIframe(this);event.preventDefault()">Flight Plan</a></button>
           <button id="buttonProgress"><a href="../progress.html" target="addoniframe" onclick="showIframe(this);event.preventDefault()">Progress</a></button>
@@ -38,22 +41,22 @@
           <button id="buttonHelp"><a href="{helpUrl}" target="_blank">Help</a></button>
         </div>
         <div id="toggleOptionsContainer">
-          <div id="toggleOptionsToggle" onclick="toggleToolbarsOptions(event)">
-            <div id="toolbarsOptions">
+          <div id="toggleOptionsToggle" onclick="toggleMenubarsOptions(event)">
+            <div id="menubarsOptions">
               <form>
-                <fieldset class="has-legend" onchange="setToolbarPosition(event)">
+                <fieldset class="has-legend" onchange="setMenubarPosition(event)">
                   <legend>Position</legend>
                   <div class="input-block">
-                    <input type="radio" id="toolbarPositionTop" name="position" value="top" checked><label for="toolbarPositionTop">top</label>
+                    <input type="radio" id="menubarPositionTop" name="position" value="top" checked><label for="menubarPositionTop">top</label>
                   </div>
                   <div class="input-block">
-                    <input type="radio" id="toolbarPositionRight" name="position" value="right"><label for="toolbarPositionRight">right</label>
+                    <input type="radio" id="menubarPositionRight" name="position" value="right"><label for="menubarPositionRight">right</label>
                   </div>
                   <div class="input-block">
-                    <input type="radio" id="toolbarPositionBottom" name="position" value="bottom"><label for="toolbarPositionBottom">bottom</label>
+                    <input type="radio" id="menubarPositionBottom" name="position" value="bottom"><label for="menubarPositionBottom">bottom</label>
                   </div>
                   <div class="input-block">
-                    <input type="radio" id="toolbarPositionLeft" name="position" value="left"><label for="toolbarPositionLeft">left</label>
+                    <input type="radio" id="menubarPositionLeft" name="position" value="left"><label for="menubarPositionLeft">left</label>
                   </div>
                 </fieldset>
                 <fieldset class="has-legend">
@@ -63,20 +66,23 @@
                     <option value="doremi">Doremi</option>
                   </select>
                 </fieldset>
-                <fieldset class="has-legend">
-                  <legend>Settings</legend>
-                  <div class="input-block">
-                    <input type="checkbox" id="toolbarLegacyUIToggle" onclick="toggleLegacyUI()"><label for="toolbarLegacyUIToggle"><span class="keep-1-lined">use legacy ui</span></label>
-                  </div>
-                </fieldset>
               </form>
             </div>
           </div>
         </div>
       </div>
     </div>
+    <script>
+      // switch to legacy if this ui doesn't show as intended
+      if(document.getElementById("menubarContainer").clientHeight < 1) {   // new ui not rendering correctly
+        if(confirm("user interface not rendering correctly, switch to its legacy version?")) {
+          localStorage.setItem("desiredWebFrontendVersion", "legacy");
+          parent.location.reload();
+        }
+      }
+    </script>
     <script src="/javascript_and_css/base.js"></script>
-    <script src="/javascript_and_css/uitoggle.js"></script>
+    <script src="/javascript_and_css/2021-a/general_purpose.js"></script>
     <script src="/javascript_and_css/2021-a/toolbarAPI.js"></script>
     <script src="/javascript_and_css/2021-a/scripts.js"></script>
     <script src="/javascript_and_css/2021-a/menu.js"></script>

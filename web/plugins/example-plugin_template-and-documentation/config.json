@@ -1,0 +1,23 @@
+{
+  "title": "Your plugin's name",
+  "type": "one of background, unobtrusive, exclusive, widget",
+  "requestMapAccess": "reason shown to user or empty when none required",
+  "toolbars": [
+    {
+      "title": "empty when to add to the existing map toolbar, else a text visible to the user as the title of the created toolbar",
+      "items": [
+        {
+          "id": "an identificator of your choosing for you to be able to differentiate event handler returns",
+          "type": "text, button, checkbox or gap",
+          "text": "becomes placeholder, innerText, label or nothing",
+          "handle": {
+            "event type": [
+              "properties of the event object to return, those type must be of either string, number or boolean"
+            ]
+          },
+          "style": "inline-style to apply"
+        }
+      ]
+    }
+  ]
+}

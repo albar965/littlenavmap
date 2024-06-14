@@ -1,31 +1,37 @@
 <!doctype html>
-<html>
+<html lang="en">
   <head>
     <meta charset="UTF-8">
-    <title>unused plugin title (your plugin folders name is the title visible to the user)</title>
+    <title>unused</title>
   </head>
   <body>
-    <script>
-      var originalTitle;
-
+    <script>      
+      parent.alert("you shouldn't get me");
+      top.alert("you shouldn't get me either");
+      
+      onmessage = event => {
+      	let message = event.data.pluginParent;
+        if(message) {
+          switch(message.cause) {
+            case "cleanup":
+              stop();
+              return;
+            case "mapAccessReply":
+            	if(message.cargo === false) {
+            		// user not granted map access
+            	}
+            	return;
+            default:
+          }
+        }
+      };
+      
       function stop() {
         alert("stopped");
       }
-
-      function init (message) {
-        var returned_Value = message.pluginParent.callback(message.pluginParent.callback.TYPE_BACKGROUND, stop);
-        try {
-          parent.alert("you shouldn't get me");
-        } catch(e) {}
-        try {
-          top.alert("you shouldn't get me either");
-        } catch(e) {}
-        var mapDoc = returned_Value.request_MapAccess("demo");
-        if(mapDoc) {
-          try {
-            mapDoc.defaultView.alert("you should get me");
-          } catch(e) {}
-        }
+      
+      function setMapDocument(iframeDocument) {
+        iframeDocument.defaultView.alert("you should get me");
       }
     </script>
   </body>

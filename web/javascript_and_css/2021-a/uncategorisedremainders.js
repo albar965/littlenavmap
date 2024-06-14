@@ -3,5 +3,5 @@
  * possibly from other JS files
  */
 function bodyFunctions() {
-  closeToolbarsOptions();
+  closeMenubarsOptions();
 }

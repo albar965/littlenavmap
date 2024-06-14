@@ -1,0 +1,20 @@
+{
+  "title": "Example plugin \"unobtrusive\"",
+  "type": "unobtrusive",
+  "requestMapAccess": "",
+  "toolbars": [
+    {
+      "title": "",
+      "items": [
+        {
+          "id": "myha",
+          "type": "checkbox",
+          "text": "yeha !",
+          "handle": {
+            "click": []
+          }
+        }
+      ]
+    }
+  ]
+}

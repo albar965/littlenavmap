@@ -7,102 +7,17 @@ body {
   background: #fff;
 }
 
-.toolbar {
-  box-shadow: 0px 0px 18px gray;
+
+#header {
   background: lightgray;
-  border-radius: 25px;
-  border: none;
-  margin: 7px;
-  flex: 0 1;
-  user-select: none;
+  height: 50px;
 }
 
-@media (min-width: 1281px) {
-  .toolbar {
-    padding: 0 12px;
-  }
-}
-
-@media (max-width: 1280px) {
-  .toolbar {
-    padding: 0 4px;
-  }
-}
-
-.toolbar > div {
+#header > .scrollIndicatorHelperContainer {
   display: flex;
-  align-items: center;
-  white-space: nowrap;
+  width: 100%;
   overflow: auto;
 }
-
-
-.indicator-scrollable-toright, .indicator-scrollable-toleft {
-  position: relative;
-}
-
-.indicator-scrollable-toright::after, .indicator-scrollable-toleft::before {
-  position: absolute;
-  top: 0;
-  z-index: 300;
-  content: "";
-  display: block;
-  width: 53px;
-  pointer-events: none;
-  height: 100%;
-  border-radius: 27px;
-  z-index: -1;
-}
-
-.indicator-scrollable-toleft::before {
-  left: 0;
-  box-shadow: -4px 0 5px 0 rgba(255, 79, 0, .5);
-}
-
-.indicator-scrollable-toright::after {
-  right: 0;
-  box-shadow: 4px 0 5px 0 rgba(255, 79, 0, .5);
-}
-
-
-form {
-  font-size: 13.333px;
-  display: flex;
-  align-items: center;
-}
-
-form > * {
-  display: block;
-}
-
-input[type="checkbox"] {
-  margin: 0 0 -2px;
-}
-
-input[type="text"] {
-  text-align: center;
-}
-
-input:not([type=text]), button, label[for] {
-  cursor: pointer;
-}
-
-input[disabled]:hover {
-  cursor: url(/images/there.cur), auto;
-}
-
-input + label, label + input, input + button, label + button {
-  margin-left: 3px;
-}
-
-button {
-  margin-right: 3px;
-}
-
-.gap {
-  width: 10px;
-}
-
 
 #refreshWithAircraft {
   transition: all 1.5s;
@@ -131,6 +46,11 @@ button {
 }
 
 
+#refreshDelay[disabled]:hover {
+  cursor: url(/images/there.cur), auto;
+}
+
+
 #preventstandbyVideoContainer {
   width: 48px;
   height: 36px;
@@ -145,6 +65,8 @@ button {
 #interactionParent {
   display: flex;
   perspective: 1000px;
+  box-shadow: 0px -1px 14px 0px #000;
+  min-height: 0;
 }
 
 #interactionParent[disabled] {
@@ -195,14 +117,42 @@ button {
   position: relative;
   opacity: 1;
   transform: scale(1);
+  overflow: hidden;
+  height: 100%;
 }
 
 #mapcontainer.initially {
   opacity: 0;
 }
 
+#interactionParent:has(.transition) {
+  overflow: hidden;
+}
+
 .transition {
-  transition: transform 2s linear;
+  transition: transform 5s linear;
+  overflow: visible !important;
+}
+
+.transition img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+@property --colorstop {
+  syntax: '<percentage>';
+  inherits: false;
+  initial-value: 0%;
+}
+
+@keyframes reflect {
+  0% {
+    --colorstop: 0%;
+  }
+  100% {
+    --colorstop: 100%;
+  }
 }
 
 @keyframes clearview {
@@ -215,20 +165,21 @@ button {
 }
 
 .transition::after {
-  animation: clearview 1s 2s both;
+  animation: reflect 5s 1s both, clearview 2s 5s both;
   content: "";
   display: block;
-  height: 100vh;
-  width: 100vw;
+  height: min(100vh, 100vw);
+  width: min(100vh, 100vw);
   position: absolute;
   z-index: 2;
-  top: 0;
-  left: 0;
-  transform: translate3d(0px, 0px, 400px);
+  top: 50vh;
+  left: 50vw;
+  transform: translate3d(-50%, -50%, 250px);
   border-radius: 50%;
-  opacity: 0;
+  opacity: 1;
   pointer-events: none;
-  background: linear-gradient(135deg, rgba(255,255,255,0) 0%, rgba(255,150,255,.13) 74%, rgba(255,0,255,.5) 100%);
+  --colorstop: 0%;
+  background: linear-gradient(135deg, rgba(255,100,255,.5) 0%, rgba(255,255,255,1) var(--colorstop), rgba(255,100,255,.5) 100%);
 }
 
 #mapcontainer.toshow {

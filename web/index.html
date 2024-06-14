@@ -1,9 +1,26 @@
 <!doctype html>
-<html>
+<html lang="en">
     <head>
         <meta charset="UTF-8">
-        <meta http-equiv="refresh" content="0; url=/html/2021-a/index.html">
-        <title>redirect to current web frontend</title>
+        <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
+        <link rel="icon" href="favicon.svg" type="image/svg+xml">
+        <title>{applicationName} {applicationVersion} - Webserver</title>
+        <style>
+          html, body, iframe {
+            display: block;
+            width: 100vw;
+            height: 100vh;
+            margin: 0;
+            border: 0;
+          }
+        </style>
     </head>
-    <body></body>
+    <body>
+      <iframe src="about:blank" id="webFrontend" title="web frontend" allow="accelerometer *; ambient-light-sensor *; attribution-reporting *; autoplay *; battery *; bluetooth *; browsing-topics *; camera *; compute-pressure *; display-capture *; document-domain *; encrypted-media *; execution-while-not-rendered *; execution-while-out-of-viewport *; fullscreen *; gamepad *; geolocation *; gyroscope *; hid *; identity-credentials-get *; idle-detection *; local-fonts *; magnetometer *; microphone *; midi *; otp-credentials *; payment *; picture-in-picture *; publickey-credentials-create *; publickey-credentials-get *; screen-wake-lock *; serial *; speaker-selection *; storage-access *; usb *; web-share *; window-management *; xr-spatial-tracking *"></iframe>
+      <script>
+        var defaultWebFrontendVersion = "2021-a";
+        
+        document.getElementById("webFrontend").src = "html/" + (localStorage.getItem("desiredWebFrontendVersion") || defaultWebFrontendVersion) + "/index.html" + ((location.search.length - 1) ? location.search : "") + ((location.hash.length - 1) ? location.hash : "");
+      </script>
+    </body>
 </html>

@@ -37,28 +37,28 @@ function setActive(e) {
 }
 
 /*
- * toggles display of toolbars options
+ * toggles display of menubars options
  */
-function toggleToolbarsOptions(e) {
+function toggleMenubarsOptions(e) {
   document.querySelector("#toggleOptionsToggle").classList.toggle("shown");
   (e || window.event).stopPropagation();
 }
 
 /*
- * closes display of toolbars options
+ * closes display of menubars options
  */
-function closeToolbarsOptions() {
+function closeMenubarsOptions() {
   document.querySelector("#toggleOptionsToggle").classList.remove("shown");
 }
 
 /*
- * sets value of [data-toolbarsplacement] according to origin's value
+ * sets value of [data-menubarsplacement] according to origin's value
  */
-function setToolbarPosition(e) {
-  document.querySelector("[data-toolbarsplacement]").setAttribute("data-toolbarsplacement", e.target.value);
-  storeState("toolbarsplacement", e.target.value);
+function setMenubarPosition(e) {
+  document.querySelector("[data-menubarsplacement]").setAttribute("data-menubarsplacement", e.target.value);
+  storeState("menubarsplacement", e.target.value);
 }
-var gotten = retrieveState("toolbarsplacement", false);
+var gotten = retrieveState("menubarsplacement", false);
 if(gotten) {
   var destination = document.querySelector("input[type=radio][name=position][value=" + gotten + "]");
   destination.checked = true;

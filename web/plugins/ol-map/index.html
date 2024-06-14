@@ -39,48 +39,72 @@
      * - /web/ol (dist of littlenavmap-openlayers)
      */
 
-    var littlenavmap;
-
-    function init(message) {
-      var ppi = message.pluginParent.callback(message.pluginParent.callback.TYPE_EXCLUSIVE, stop);
-      
-      var toolbar = ppi.toolbarAPI.createToolbar(document.body);
-      var b;
-      var ti = ppi.toolbarAPI.createTextInput({
-        text: "ICAO",
-        handlerNames: "keydown",
-        "keydown": e => {
-          if(e.key === "Enter") {
-            b.click();
-            e.stopPropagation();
-            e.preventDefault();
-          }
+    onmessage = event => {
+      let message = event.data.pluginParent;
+      if(message) {
+        switch(message.cause) {
+          case "cleanup":
+            stop();
+            return;
+          case "callback":
+            handleEvents(message.cargo);
+            return;
+          default:
         }
-      }, toolbar);
-      b = ppi.toolbarAPI.createButton({
-        text: "Find",
-        handlerNames: "click",
-        click: () => {
-          var ident = ti.value;
-          fetch("/api/airport/info?ident=" + ident).then((response) => {
-            return response.json();
-          }).then((json) => {
-            // turn off aircraft follow
-            if (littlenavmap.following) {
-              littlenavmap.map.getControls().getArray()[0].handleFollow();
-            }
-            // move to airport position
-            littlenavmap.moveTo([json.position.lon, json.position.lat]);
-          }).catch((error) => {
-            console.log(error);
-          })
-        }
-      }, toolbar);
-      
-      ppi.run()
-    }
+      }
+    };
 
     function stop() {}
+    
+    
+    var latestInput = "";
+    
+    // event handler
+    function handleEvents(cargo) {
+      switch (cargo.id) {
+        case "icaot":
+          switch (cargo.event) {
+            case "input":
+              latestInput = cargo.value;
+              break;
+            case "keydown":
+              evalICAOSearch (cargo.data[0]);
+              break;
+            default:
+          }
+          break;
+        case "icaob":
+          switch (cargo.event) {
+            case "click":
+              doICAOSearch ();
+              break;
+          }
+        default:
+      }
+    }
+    
+    function evalICAOSearch(key) {
+      if(key === "Enter") {
+        doICAOSearch ();
+      }
+    }
+      
+    var littlenavmap;
+    
+    function doICAOSearch () {
+      fetch("/api/airport/info?ident=" + latestInput).then((response) => {
+        return response.json();
+      }).then((json) => {
+        // turn off aircraft follow
+        if (littlenavmap.following) {
+          littlenavmap.map.getControls().getArray()[0].handleFollow();
+        }
+        // move to airport position
+        littlenavmap.moveTo([json.position.lon, json.position.lat]);
+      }).catch((error) => {
+        console?.log(error);
+      })
+    }
 
     function lnm(iframe) {
       littlenavmap = iframe.contentWindow.littlenavmap;

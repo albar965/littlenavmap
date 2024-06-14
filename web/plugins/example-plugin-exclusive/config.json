@@ -1,0 +1,20 @@
+{
+  "title": "Example plugin \"exclusive\"",
+  "type": "exclusive",
+  "requestMapAccess": "",
+  "toolbars": [
+    {
+      "title": "demo bar",
+      "items": [
+        {
+          "id": "myha",
+          "type": "checkbox",
+          "text": "yeha ?",
+          "handle": {
+            "click": []
+          }
+        }
+      ]
+    }
+  ]
+}

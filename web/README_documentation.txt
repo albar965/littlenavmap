@@ -3,7 +3,7 @@ Features:
 	Web API		->	webapi.yaml
 	Plugins		->	plugins/example-plugin_documentation/index.html
 	Themes		->	themes/2021-a/look-userdefined-theme-template.css
-	Legacy mode	->	html/legacy/legacy.html
+	Legacy mode	->	html/legacy/index.html
 
 
 Web frontend version:
@@ -43,7 +43,7 @@ Folders:
 
 /index.html :
 
-        redirects to the index file of the current web frontend version
+        loads the index file of the current web frontend version
 
 
 Entry file of web frontend version 2021-a :
