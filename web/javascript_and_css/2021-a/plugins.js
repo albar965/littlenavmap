@@ -181,7 +181,7 @@ function findPlugins() {
               storeState("activePlugins", activePlugins);
               pluginsConfig[plugin.value].toolbars.forEach(toolbarConfig => {
                 var toolbar = tAPI.createToolbar(toolbarConfig.title.length ? toolbarsLayer : mapToolbar, toolbarConfig.title, pluginsConfig[plugin.value].type, plugin.value);
-                if(activeExclusivePlugin !== "/" && activeExclusivePlugin !== plugin.value) {
+                if(activeExclusivePlugin !== "/" && activeExclusivePlugin !== plugin.value && toolbarConfig.title.length) {
                   toolbar.style.display = "none";
                 }
                 toolbarConfig.items.forEach(item => {
@@ -205,10 +205,14 @@ function findPlugins() {
               var option = exclusivePlugins.querySelector('option[value="' + plugin.value + '"]');
               if(option !== null) {
                 exclusivePlugins.remove(Array.prototype.indexOf.call(exclusivePlugins, option));
-                if(exclusivePlugins.childElementCount < 2) {
-                  exclusivePlugins.parentElement.removeChild(exclusivePlugins);
-                  exclusivePlugins = null;
-                }
+                exclusivePlugins.value = "/";
+                exclusivePlugins.dispatchEvent(new Event("change"));
+                setTimeout(() => {
+                  if(exclusivePlugins.childElementCount < 2) {
+                    exclusivePlugins.parentElement.removeChild(exclusivePlugins);
+                    exclusivePlugins = null;
+                  }
+                }, 500);
               }
             }
             var spliceIndex = activePlugins.indexOf(plugin.value);
