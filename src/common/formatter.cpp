@@ -111,11 +111,6 @@ QString formatElapsed(const QElapsedTimer& timer)
   }
 }
 
-QString capNavString(const QString& str)
-{
-  return atools::fs::util::capNavString(str);
-}
-
 bool checkCoordinates(QString& message, const QString& text, atools::geo::Pos *pos)
 {
   bool hemisphere = false;

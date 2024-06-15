@@ -731,7 +731,7 @@ void HtmlInfoBuilder::comText(const MapAirport& airport, HtmlBuilder& html) cons
 #endif
                 );
         if(rec.valueStr("type") != tr("ATIS"))
-          html.td(capString(rec.valueStr("name")));
+          html.td(atools::fs::util::capNavString(rec.valueStr("name")));
         else
           // ATIS contains the airport code - do not capitalize this
           html.td(rec.valueStr("name"));
@@ -3111,7 +3111,7 @@ void HtmlInfoBuilder::airspaceText(const MapAirspace& airspace, const atools::sq
   else
   {
     // Do not capitalize online network center names
-    QString name = map::airspaceName(airspace);
+    QString name = airspace.name;
     if(!info)
       name = atools::elideTextShort(name, 40);
 
@@ -3188,7 +3188,7 @@ void HtmlInfoBuilder::airspaceText(const MapAirspace& airspace, const atools::sq
   }
 
   html.row2If(tr("Multiple code:"), airspace.multipleCode);
-  html.row2If(tr("COM:"), formatter::capNavString(airspace.comName));
+  html.row2If(tr("COM:"), airspace.comName);
   html.row2If(tr("COM Type:"), map::comTypeName(airspace.comType));
   if(!airspace.comFrequencies.isEmpty())
   {

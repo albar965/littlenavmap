@@ -41,9 +41,6 @@ QDateTime readDateTime(QString str);
  * Position is returned in pos if not null. */
 bool checkCoordinates(QString& message, const QString& text, atools::geo::Pos *pos = nullptr);
 
-/* Capitalize the string using exceptions for any aviation acronyms */
-QString capNavString(const QString& str);
-
 /* All formatters are locale aware */
 
 /* Format a decimal time in hours to h:mm format */

@@ -2198,17 +2198,12 @@ atools::geo::LineString MapIls::boundary() const
     return atools::geo::EMPTY_LINESTRING;
 }
 
-QString airspaceName(const MapAirspace& airspace)
-{
-  return airspace.isOnline() ? airspace.name : formatter::capNavString(airspace.name);
-}
-
 QString airspaceRestrictiveNameMap(const MapAirspace& airspace)
 {
   QString restrictedName;
   if(!airspace.restrictiveDesignation.isEmpty())
   {
-    QString name = formatter::capNavString(airspace.restrictiveDesignation).trimmed();
+    QString name = airspace.restrictiveDesignation;
 
     if(name.endsWith('*'))
       name = name.remove('*').trimmed();
@@ -2234,8 +2229,7 @@ QStringList airspaceNameMap(const MapAirspace& airspace, int maxTextLength, bool
 
   // Name if requested but always for FIR and UIR spaces
   if(name || airspace.type == map::FIR || airspace.type == map::UIR)
-    texts.append(atools::elideTextShort(airspace.isOnline() ? airspace.name : formatter::capNavString(airspace.name), maxTextLength));
-
+    texts.append(atools::elideTextShort(airspace.name, maxTextLength));
   if(restrictiveName)
     texts.append(restrNameStr);
 
@@ -2287,7 +2281,7 @@ QStringList airspaceNameMap(const MapAirspace& airspace, int maxTextLength, bool
 
 QString airspaceText(const MapAirspace& airspace)
 {
-  return QObject::tr("Airspace %1 (%2)").arg(airspaceName(airspace)).arg(airspaceTypeToString(airspace.type));
+  return QObject::tr("Airspace %1 (%2)").arg(airspace.name).arg(airspaceTypeToString(airspace.type));
 }
 
 QString aircraftType(const atools::fs::sc::SimConnectAircraft& aircraft)
@@ -2745,7 +2739,7 @@ QString airspaceRestrictiveName(const MapAirspace& airspace)
 {
   if(!airspace.restrictiveDesignation.isEmpty())
   {
-    QString name = formatter::capNavString(airspace.restrictiveDesignation).trimmed();
+    QString name = airspace.restrictiveDesignation;
 
     if(name.endsWith('*'))
       name = name.remove('*').trimmed();

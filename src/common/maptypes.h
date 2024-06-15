@@ -1730,7 +1730,6 @@ const QString& airspaceRemark(map::MapAirspaceTypes type);
 
 int airspaceDrawingOrder(map::MapAirspaceTypes type);
 QString airspaceSourceText(map::MapAirspaceSources src);
-QString airspaceName(const map::MapAirspace& airspace);
 QString airspaceRestrictiveName(const map::MapAirspace& airspace);
 QStringList airspaceNameMap(const map::MapAirspace& airspace, int maxTextLength, bool name = true, bool restrictiveName = true,
                             bool type = true, bool altitude = true, bool com = true);
