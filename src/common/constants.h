@@ -471,10 +471,12 @@ const QLatin1String STARTUP_FLIGHTPLAN("flight-plan");
 const QLatin1String STARTUP_FLIGHTPLAN_DESCR("flight-plan-descr");
 const QLatin1String STARTUP_AIRCRAFT_PERF("aircraft-perf");
 const QLatin1String STARTUP_LAYOUT("layout");
+const QLatin1String STARTUP_QUIT("quit"); /* Exit application */
 
 /* Not used as long options */
 const QLatin1String STARTUP_OTHER_ARGUMENTS("others"); /* Positional arguments not found after option - string list */
 const QLatin1String STARTUP_COMMAND_ACTIVATE("activate"); /* Bring window to front */
+const QLatin1String STARTUP_COMMAND_QUIT("quit"); /* Exit application */
 
 /* Suffixes for common configuration files.
  * Used for atools::settings::Settings::getConfigFilename() */

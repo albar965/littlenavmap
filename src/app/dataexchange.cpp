@@ -159,7 +159,8 @@ DataExchange::DataExchange(bool verboseParam, const QString& programGuid)
         {
           // Copy command line parameters and add activate option to bring other to front
           atools::util::Properties properties(NavApp::getStartupOptionsConst());
-          properties.setPropertyBool(lnm::STARTUP_COMMAND_ACTIVATE, true); // Always raise other window
+          if(!properties.contains(lnm::STARTUP_COMMAND_QUIT))
+            properties.setPropertyBool(lnm::STARTUP_COMMAND_ACTIVATE, true); // Always raise other window except on qut
 
           if(verbose)
             qDebug() << Q_FUNC_INFO << "Sending" << properties;
@@ -242,22 +243,28 @@ void DataExchange::loadData(atools::util::Properties properties)
     QString flightplan, flightplanDescr, perf, layout;
     fc::fromStartupProperties(properties, &flightplan, &flightplanDescr, &perf, &layout);
 
-    // Load files if found and exist ===========================================
-    if(!flightplan.isEmpty() && atools::checkFile(Q_FUNC_INFO, flightplan, true /* warn */))
-      emit loadRoute(flightplan);
+    // Quit without activate =====================================================
+    if(properties.contains(lnm::STARTUP_COMMAND_QUIT))
+      emit quit();
+    else
+    {
+      // Load files if found and exist ===========================================
+      if(!flightplan.isEmpty() && atools::checkFile(Q_FUNC_INFO, flightplan, true /* warn */))
+        emit loadRoute(flightplan);
 
-    if(!flightplanDescr.isEmpty())
-      emit loadRouteDescr(flightplanDescr);
+      if(!flightplanDescr.isEmpty())
+        emit loadRouteDescr(flightplanDescr);
 
-    if(!layout.isEmpty() && atools::checkFile(Q_FUNC_INFO, layout, true /* warn */))
-      emit loadLayout(layout);
+      if(!layout.isEmpty() && atools::checkFile(Q_FUNC_INFO, layout, true /* warn */))
+        emit loadLayout(layout);
 
-    if(!perf.isEmpty() && atools::checkFile(Q_FUNC_INFO, perf, true /* warn */))
-      emit loadPerf(perf);
+      if(!perf.isEmpty() && atools::checkFile(Q_FUNC_INFO, perf, true /* warn */))
+        emit loadPerf(perf);
 
-    // Activate window - always sent by other instance =====================================================
-    if(properties.getPropertyBool(lnm::STARTUP_COMMAND_ACTIVATE))
-      emit activateMain();
+      // Activate window - always sent by other instance =====================================================
+      if(properties.getPropertyBool(lnm::STARTUP_COMMAND_ACTIVATE))
+        emit activateMain();
+    }
   }
   else if(verbose)
     qDebug() << Q_FUNC_INFO << "properties empty";

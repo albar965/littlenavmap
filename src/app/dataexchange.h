@@ -62,6 +62,7 @@ signals:
   void loadRoute(const QString& filename);
   void loadRouteDescr(const QString& description);
   void loadPerf(const QString& filename);
+  void quit();
 
   /* Activate and raise main window */
   void activateMain();

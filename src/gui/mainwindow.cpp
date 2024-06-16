@@ -287,6 +287,7 @@ MainWindow::MainWindow()
     const DataExchange *dataExchange = NavApp::getDataExchangeConst();
     connect(dataExchange, &DataExchange::activateMain, this, &MainWindow::activateWindow);
     connect(dataExchange, &DataExchange::activateMain, this, &MainWindow::raise);
+    connect(dataExchange, &DataExchange::quit, this, &MainWindow::close);
     connect(dataExchange, &DataExchange::loadRoute,
             this, std::bind(&MainWindow::routeOpenFile, this, std::placeholders::_1 /* filepath */, true /* correctAndWarn */));
     connect(dataExchange, &DataExchange::loadRouteDescr, this, &MainWindow::routeOpenDescr);

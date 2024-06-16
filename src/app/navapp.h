@@ -426,7 +426,7 @@ public:
   static void showUserpointSearch();
 
   /* Command line options */
-  static atools::util::Properties& getStartupOptionsConst();
+  static const atools::util::Properties& getStartupOptionsConst();
   static QString getStartupOptionStr(const QString& key);
   static QStringList getStartupOptionStrList(const QString& key);
   static void addStartupOptionStr(const QString& key, const QString& value);

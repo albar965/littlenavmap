@@ -930,7 +930,7 @@ void NavApp::setToolTipsEnabledMainMenu(bool enabled)
     mainWindow->setToolTipsEnabledMainMenu(enabled);
 }
 
-atools::util::Properties& NavApp::getStartupOptionsConst()
+const atools::util::Properties& NavApp::getStartupOptionsConst()
 {
   return *startupOptions;
 }

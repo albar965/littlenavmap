@@ -81,6 +81,10 @@ CommandLine::CommandLine()
                                      lnm::STARTUP_LAYOUT);
   parser->addOption(*layoutOpt);
 
+  quitOpt = new QCommandLineOption({"q", lnm::STARTUP_QUIT}, QObject::tr("Quit an already running instance. "
+                                                                         "The running instance might still ask about exiting or saving files."));
+  parser->addOption(*quitOpt);
+
   languageOpt = new QCommandLineOption({"g", "language"},
                                        QObject::tr("Use language code <language> like \"de\" or \"en_US\" for the user interface. "
                                                    "The code is not checked for existence or validity and "
@@ -99,6 +103,7 @@ CommandLine::~CommandLine()
   delete performanceOpt;
   delete layoutOpt;
   delete languageOpt;
+  delete quitOpt;
 }
 
 QString CommandLine::getOption(int argc, char *argv[], const QString& name, const QString& longname)
@@ -158,6 +163,9 @@ void CommandLine::process()
   if(parser->isSet(*layoutOpt) && !parser->value(*layoutOpt).isEmpty())
     NavApp::addStartupOptionStr(lnm::STARTUP_LAYOUT, parser->value(*layoutOpt));
 
+  if(parser->isSet(*quitOpt))
+    NavApp::addStartupOptionStr(lnm::STARTUP_QUIT, QString());
+
   // Other arguments without option
   if(!parser->positionalArguments().isEmpty())
     NavApp::addStartupOptionStrList(lnm::STARTUP_OTHER_ARGUMENTS, parser->positionalArguments());
@@ -168,6 +176,6 @@ void CommandLine::process()
   // "/home/USER/.local/share" ("/home/USER/.local/share/marble/maps/earth/openstreetmap")
   // "C:/Users/USER/AppData/Local" ("C:\Users\USER\AppData\Local\.marble\data\maps\earth\openstreetmap")
   if(parser->isSet(*cachePathOpt) && !parser->value(*cachePathOpt).isEmpty())
-    ///home/USER/.local/share/marble
+    // . /home/USER/.local/share/marble
     cachePath = parser->value(*cachePathOpt);
 }
