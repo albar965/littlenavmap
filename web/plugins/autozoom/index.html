@@ -19,10 +19,10 @@
         var running = true;
         
         runWhenAllowed.stop = function () {
-	        clearTimeout(timeout);
-	        running = false;
-	        restoreValuesPerhapsOverridden();
-	      };
+          clearTimeout(timeout);
+          running = false;
+          restoreValuesPerhapsOverridden();
+        };
 
         function restoreValuesPerhapsOverridden() {
           if(!originalCenterAircraft && runWhenAllowed.centerToggle.checked) {
@@ -147,7 +147,6 @@
           if(message.version !== 1) {
             if(!confirm("New map version running possibly unsupported.\n\nDo you like to let run this plugin anyway?")) {
               event.source.postMessage({"throw": "aborted by user"}, "*");
-              throw "aborted by user";
             }
           }
         }
