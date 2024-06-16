@@ -125,6 +125,10 @@ body {
   opacity: 0;
 }
 
+#map {
+  cursor: crosshair;
+}
+
 #interactionParent:has(.transition) {
   overflow: hidden;
 }

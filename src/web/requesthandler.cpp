@@ -231,6 +231,14 @@ inline void RequestHandler::handleMapImage(HttpRequest& request, HttpResponse& r
       // Show an airport by ident
       mapPixmap = emit getPixmapObject(width, height, web::AIRPORT, params.asStr(
                                          QStringLiteral(u"airport")).toUpper(), requestedDistanceKm);
+    else if(mapcmd == QLatin1String("center"))
+    {
+      // Center map around given postion
+      atools::geo::Pos pos(0.0, 0.0);
+      pos.setLonX(params.asFloat(QStringLiteral(u"lon")));
+      pos.setLatY(params.asFloat(QStringLiteral(u"lat")));
+      mapPixmap = emit getPixmapPosDistance(width, height, pos, requestedDistanceKm, QLatin1String(""));
+    }
     else
     {
       // When zooming in or out use the last corrected distance (i.e. actual distance) as a base
