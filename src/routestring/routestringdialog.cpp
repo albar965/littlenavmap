@@ -630,6 +630,9 @@ void RouteStringDialog::textChanged()
 
 void RouteStringDialog::textChangedDelayed()
 {
+  if(atools::gui::Application::isShuttingDown())
+    return;
+
 #ifdef DEBUG_INFORMATION_ROUTE_DESCRIPTION_UPDATE
   textChangedInternal(true /* forceUpdate */);
 #else

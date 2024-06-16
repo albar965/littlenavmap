@@ -183,6 +183,9 @@ public:
   /* Show jump to coordinates dialog called from context menu */
   void jumpCoordinatesPos(const atools::geo::Pos& pos);
 
+  /* Stop jump back timer on shutdown */
+  void cancelJumpBack();
+
   /* Save current position and zoom distance as home */
   void changeHome();
 

@@ -283,7 +283,7 @@ void WindReporter::updateDataSource()
     updateToolButtonState();
     updateSliderLabel();
 
-    if(!NavApp::isShuttingDown())
+    if(!atools::gui::Application::isShuttingDown())
     {
       emit windUpdated();
       emit windDisplayUpdated();
@@ -295,7 +295,7 @@ void WindReporter::updateDataSource()
     updateToolButtonState();
     updateSliderLabel();
 
-    if(!NavApp::isShuttingDown())
+    if(!atools::gui::Application::isShuttingDown())
     {
       emit windUpdated();
       emit windDisplayUpdated();
@@ -337,7 +337,7 @@ void WindReporter::windDownloadFinished()
     NavApp::setStatusMessage(msg, true /* addToLog */);
   }
 
-  if(!NavApp::isShuttingDown())
+  if(!atools::gui::Application::isShuttingDown())
   {
     emit windUpdated();
     emit windDisplayUpdated();
@@ -485,7 +485,7 @@ void WindReporter::altSliderChanged()
 {
   updateSliderLabel();
 
-  if(!NavApp::isShuttingDown())
+  if(!atools::gui::Application::isShuttingDown())
     emit windDisplayUpdated();
 }
 
@@ -531,7 +531,7 @@ void WindReporter::sourceActionTriggered()
     updateToolButtonState();
     updateSliderLabel();
 
-    if(!NavApp::isShuttingDown())
+    if(!atools::gui::Application::isShuttingDown())
     {
       emit windUpdated();
       emit windDisplayUpdated();
@@ -547,7 +547,7 @@ void WindReporter::toolbarActionFlightplanTriggered()
     updateToolButtonState();
     updateSliderLabel();
 
-    if(!NavApp::isShuttingDown())
+    if(!atools::gui::Application::isShuttingDown())
       emit windDisplayUpdated();
   }
 }
@@ -560,7 +560,7 @@ void WindReporter::toolbarActionTriggered()
     updateToolButtonState();
     updateSliderLabel();
 
-    if(!NavApp::isShuttingDown())
+    if(!atools::gui::Application::isShuttingDown())
       emit windDisplayUpdated();
   }
 }
@@ -688,7 +688,7 @@ void WindReporter::resetSettingsToDefault()
   updateToolButtonState();
   updateSliderLabel();
 
-  if(!NavApp::isShuttingDown())
+  if(!atools::gui::Application::isShuttingDown())
   {
     emit windUpdated();
     emit windDisplayUpdated();

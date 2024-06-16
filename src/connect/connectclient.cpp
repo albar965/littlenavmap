@@ -130,7 +130,7 @@ ConnectClient::~ConnectClient()
 
 void ConnectClient::flushQueuedRequests()
 {
-  if(!queuedRequests.isEmpty() && !NavApp::isShuttingDown())
+  if(!queuedRequests.isEmpty() && !atools::gui::Application::isShuttingDown())
   {
     atools::fs::sc::WeatherRequest req = queuedRequests.takeLast();
     queuedRequestIdents.remove(req.getStation());
@@ -258,7 +258,7 @@ void ConnectClient::disconnectedFromSimulatorDirect()
   queuedRequestIdents.clear();
   notAvailableStations.clear();
 
-  if(!NavApp::isShuttingDown())
+  if(!atools::gui::Application::isShuttingDown())
   {
     mainWindow->setStatusMessage(tr("Disconnected from simulator."), true /* addLog */);
     emit disconnectedFromSimulator();
@@ -656,7 +656,7 @@ void ConnectClient::disconnectClicked()
 
 void ConnectClient::connectInternalAuto()
 {
-  if(!errorState && !NavApp::isShuttingDown())
+  if(!errorState && !atools::gui::Application::isShuttingDown())
     connectInternal();
 }
 
@@ -881,7 +881,7 @@ void ConnectClient::closeSocket(bool allowRestart)
   {
     qDebug() << Q_FUNC_INFO << "emit disconnectedFromSimulator();";
 
-    if(!NavApp::isShuttingDown())
+    if(!atools::gui::Application::isShuttingDown())
     {
       mainWindow->setStatusMessage(tr("Disconnected from simulator."), true /* addLog */);
       emit disconnectedFromSimulator();

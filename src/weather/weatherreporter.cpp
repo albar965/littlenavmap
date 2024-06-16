@@ -162,7 +162,7 @@ void WeatherReporter::weatherDownloadProgress(qint64 bytesReceived, qint64 bytes
 
 void WeatherReporter::noaaWeatherUpdated()
 {
-  if(!NavApp::isShuttingDown())
+  if(!atools::gui::Application::isShuttingDown())
   {
     mainWindow->setStatusMessage(tr("NOAA weather downloaded."), true /* addToLog */);
     emit weatherUpdated();
@@ -171,7 +171,7 @@ void WeatherReporter::noaaWeatherUpdated()
 
 void WeatherReporter::ivaoWeatherUpdated()
 {
-  if(!NavApp::isShuttingDown())
+  if(!atools::gui::Application::isShuttingDown())
   {
     mainWindow->setStatusMessage(tr("IVAO weather downloaded."), true /* addToLog */);
     emit weatherUpdated();
@@ -180,7 +180,7 @@ void WeatherReporter::ivaoWeatherUpdated()
 
 void WeatherReporter::vatsimWeatherUpdated()
 {
-  if(!NavApp::isShuttingDown())
+  if(!atools::gui::Application::isShuttingDown())
   {
     mainWindow->setStatusMessage(tr("VATSIM weather downloaded."), true /* addToLog */);
     emit weatherUpdated();
@@ -749,7 +749,7 @@ const QString& WeatherReporter::getActiveSkyDestinationIdent()
 
 void WeatherReporter::updateAirportWeather()
 {
-  if(!NavApp::isShuttingDown())
+  if(!atools::gui::Application::isShuttingDown())
   {
     updateTimeouts();
 
@@ -1017,7 +1017,7 @@ void WeatherReporter::activeSkyWeatherFilesChanged(const QStringList& paths)
   if(verbose)
     qDebug() << Q_FUNC_INFO << "file" << paths << "changed";
 
-  if(!NavApp::isShuttingDown())
+  if(!atools::gui::Application::isShuttingDown())
   {
     if(asSnapshotPathChecker->isValid())
       loadActiveSkySnapshot(asSnapshotPath);
@@ -1035,7 +1035,7 @@ void WeatherReporter::activeSkyWeatherFilesChanged(const QStringList& paths)
 
 void WeatherReporter::xplaneWeatherFileChanged()
 {
-  if(!NavApp::isShuttingDown())
+  if(!atools::gui::Application::isShuttingDown())
   {
     mainWindow->setStatusMessage(tr("X-Plane weather information updated."), true /* addToLog */);
     emit weatherUpdated();

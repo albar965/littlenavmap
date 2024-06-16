@@ -366,10 +366,6 @@ public:
   static bool isCloseCalled();
   static void setCloseCalled(bool value = true);
 
-  /* Main window destructor called - appears later than isCloseCalled() */
-  static bool isShuttingDown();
-  static void setShuttingDown(bool value = true);
-
   /* true if map window is maximized */
   static bool isFullScreen();
 
@@ -499,7 +495,6 @@ private:
   static DataExchange *dataExchange;
 
   static bool loadingDatabase;
-  static bool shuttingDown;
   static bool closeCalled;
   static bool mainWindowVisible;
 };

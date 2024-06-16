@@ -105,7 +105,7 @@ void SearchController::styleChanged()
 void SearchController::dockVisibilityChanged(bool visible)
 {
   // Avoid spurious events that appear on shutdown and cause crashes
-  if(!NavApp::isShuttingDown())
+  if(!atools::gui::Application::isShuttingDown())
   {
     // Have to remember dock widget visibility since it cannot be determined from QWidget::isVisisble()
     dockVisible = visible;

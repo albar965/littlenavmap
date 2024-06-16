@@ -234,14 +234,14 @@ void InfoController::showProgressContextMenu(const QPoint& point)
 void InfoController::visibilityChangedAircraft(bool visible)
 {
   // Avoid spurious events that appear on shutdown and cause crashes
-  if(!NavApp::isShuttingDown() && visible)
+  if(!atools::gui::Application::isShuttingDown() && visible)
     currentAircraftTabChanged(tabHandlerAircraft->getCurrentTabId());
 }
 
 void InfoController::visibilityChangedInfo(bool visible)
 {
   // Avoid spurious events that appear on shutdown and cause crashes
-  if(!NavApp::isShuttingDown() && visible)
+  if(!atools::gui::Application::isShuttingDown() && visible)
   {
     currentInfoTabChanged(tabHandlerInfo->getCurrentTabId());
     currentAirportInfoTabChanged(tabHandlerAirportInfo->getCurrentTabId());
@@ -251,7 +251,7 @@ void InfoController::visibilityChangedInfo(bool visible)
 void InfoController::currentAircraftTabChanged(int id)
 {
   // Avoid spurious events that appear on shutdown and cause crashes
-  if(!NavApp::isShuttingDown())
+  if(!atools::gui::Application::isShuttingDown())
   {
     // Update new tab to avoid half a second delay or obsolete information
     switch(static_cast<ic::TabAircraftId>(id))

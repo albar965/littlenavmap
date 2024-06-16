@@ -516,11 +516,12 @@ MainWindow::~MainWindow()
 {
   qDebug() << Q_FUNC_INFO;
 
-  NavApp::setShuttingDown();
+  atools::gui::Application::setShuttingDown();
 
   clockTimer.stop();
-
   weatherUpdateTimer.stop();
+  mapWidget->cancelJumpBack();
+  profileWidget->cancelJumpBack();
 
   // Close all queries
   preDatabaseLoad();
@@ -641,11 +642,14 @@ void MainWindow::updateMap() const
 
 void MainWindow::updateClock() const
 {
-  timeLabel->setText(QDateTime::currentDateTimeUtc().toString("d   HH:mm:ss UTC "));
-  timeLabel->setToolTip(tr("Day of month and UTC time.\n%1\nLocal: %2")
-                        .arg(QDateTime::currentDateTimeUtc().toString())
-                        .arg(QDateTime::currentDateTime().toString()));
-  timeLabel->setMinimumWidth(timeLabel->width());
+  if(!atools::gui::Application::isShuttingDown())
+  {
+    timeLabel->setText(QDateTime::currentDateTimeUtc().toString("d   HH:mm:ss UTC "));
+    timeLabel->setToolTip(tr("Day of month and UTC time.\n%1\nLocal: %2")
+                          .arg(QDateTime::currentDateTimeUtc().toString())
+                          .arg(QDateTime::currentDateTime().toString()));
+    timeLabel->setMinimumWidth(timeLabel->width());
+  }
 }
 
 /* Check manually for updates as triggered by the action */
@@ -1825,7 +1829,8 @@ void MainWindow::actionShortcutAircraftProgressTriggered()
 void MainWindow::weatherUpdateTimeout()
 {
   // if(connectClient != nullptr && connectClient->isConnected() && infoController != nullptr)
-  infoController->updateAirportWeather();
+  if(!atools::gui::Application::isShuttingDown())
+    infoController->updateAirportWeather();
 }
 
 void MainWindow::showDatabaseFiles()
@@ -1939,8 +1944,9 @@ void MainWindow::distanceChanged()
 
 void MainWindow::renderStatusReset()
 {
-  // Force reset to complete to avoid forever "Waiting"
-  renderStatusUpdateLabel(Marble::Complete, false /* forceUpdate */);
+  if(!atools::gui::Application::isShuttingDown())
+    // Force reset to complete to avoid forever "Waiting"
+    renderStatusUpdateLabel(Marble::Complete, false /* forceUpdate */);
 }
 
 void MainWindow::renderStatusUpdateLabel(RenderStatus status, bool forceUpdate)
@@ -1997,13 +2003,11 @@ void MainWindow::calculateRouteRandom()
 
 void MainWindow::shrinkStatusBar()
 {
-
-  if(!NavApp::isShuttingDown())
+  if(!atools::gui::Application::isShuttingDown())
   {
 #ifdef DEBUG_INFORMATION
     qDebug() << Q_FUNC_INFO << statusBar()->geometry() << QCursor::pos();
 #endif
-
 
     // Do not shrink status bar if cursor is above
     if(!statusBar()->rect().contains(statusBar()->mapFromGlobal(QCursor::pos())))
@@ -3761,7 +3765,7 @@ void MainWindow::updateActionStates()
   qDebug() << Q_FUNC_INFO;
 #endif
 
-  if(NavApp::isShuttingDown())
+  if(atools::gui::Application::isShuttingDown())
     return;
 
   ui->actionClearKml->setEnabled(!mapWidget->getKmlFiles().isEmpty());

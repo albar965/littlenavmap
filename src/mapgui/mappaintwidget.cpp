@@ -1300,7 +1300,7 @@ void MapPaintWidget::paintEvent(QPaintEvent *paintEvent)
   }
 
   // Avoid spurious events that appear on shutdown and cause crashes
-  if(NavApp::isShuttingDown())
+  if(atools::gui::Application::isShuttingDown())
     return;
 
 #ifdef DEBUG_SKIP_RENDER

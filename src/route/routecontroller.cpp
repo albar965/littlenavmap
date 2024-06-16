@@ -881,6 +881,9 @@ void RouteController::routeAltChanged()
 
 void RouteController::routeAltChangedDelayed()
 {
+  if(atools::gui::Application::isShuttingDown())
+    return;
+
   route.calculateLegAltitudes();
 
   // Update performance
@@ -3275,7 +3278,7 @@ void RouteController::dockVisibilityChanged(bool visible)
   Q_UNUSED(visible)
 
   // Avoid spurious events that appear on shutdown and cause crashes
-  if(!NavApp::isShuttingDown())
+  if(!atools::gui::Application::isShuttingDown())
     // Visible - send update to show map highlights
     // Not visible - send update to hide highlights
     tableSelectionChanged(QItemSelection(), QItemSelection());
@@ -3291,6 +3294,9 @@ void RouteController::cleanupTableTimeout()
 #ifdef DEBUG_INFORMATION
   qDebug() << Q_FUNC_INFO;
 #endif
+
+  if(atools::gui::Application::isShuttingDown())
+    return;
 
   if(NavApp::isConnectedAndAircraftFlying())
   {

@@ -175,6 +175,9 @@ void OnlinedataController::startProcessing()
 
 void OnlinedataController::startDownloadInternal()
 {
+  if(atools::gui::Application::isShuttingDown())
+    return;
+
   if(verbose)
     qDebug() << Q_FUNC_INFO;
 

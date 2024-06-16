@@ -670,6 +670,9 @@ void SearchBaseTable::editStartTimer()
 /* Delayed update timeout. Update result if distance search is active */
 void SearchBaseTable::editTimeout()
 {
+  if(atools::gui::Application::isShuttingDown())
+    return;
+
   qDebug() << "editTimeout";
   controller->loadAllRowsForDistanceSearch();
 }
@@ -728,7 +731,7 @@ void SearchBaseTable::tableSelectionChanged(const QItemSelection&, const QItemSe
 void SearchBaseTable::dockVisibilityChanged(bool)
 {
   // Avoid spurious events that appear on shutdown and cause crashes
-  if(!NavApp::isShuttingDown())
+  if(!atools::gui::Application::isShuttingDown())
     tableSelectionChangedInternal(true /* noFollow */);
 }
 

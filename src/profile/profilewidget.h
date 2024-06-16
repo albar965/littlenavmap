@@ -182,6 +182,9 @@ public:
 
   void showIlsChanged();
 
+  /* Stop jump back timer on shutdown */
+  void cancelJumpBack();
+
 signals:
   /* Emitted when the mouse cursor hovers over the map profile.
    * @param pos Position on the map display.

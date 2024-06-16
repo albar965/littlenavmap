@@ -1912,6 +1912,9 @@ void ProfileWidget::routeChanged(bool geometryChanged, bool newFlightplan)
 /* Called by updateTimer after any route or elevation updates and starts the thread */
 void ProfileWidget::updateTimeout()
 {
+  if(atools::gui::Application::isShuttingDown())
+    return;
+
   if(databaseLoadStatus)
     return;
 
@@ -2837,6 +2840,11 @@ void ProfileWidget::jumpBackToAircraftTimeout()
   }
   else
     jumpBack->cancel();
+}
+
+void ProfileWidget::cancelJumpBack()
+{
+  jumpBack->cancel();
 }
 
 void ProfileWidget::updateErrorLabel()

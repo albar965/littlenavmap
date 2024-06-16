@@ -2073,7 +2073,7 @@ void ProcedureSearch::weatherUpdated()
 void ProcedureSearch::dockVisibilityChanged(bool visible)
 {
   // Avoid spurious events that appear on shutdown and cause crashes
-  if(!NavApp::isShuttingDown())
+  if(!atools::gui::Application::isShuttingDown())
   {
     if(!visible)
     {

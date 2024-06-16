@@ -425,6 +425,9 @@ void MapWidget::handleRouteClick(const QPoint& point)
 
 void MapWidget::fuelOnOffTimeout()
 {
+  if(atools::gui::Application::isShuttingDown())
+    return;
+
   const atools::fs::sc::SimConnectUserAircraft aircraft = getScreenIndexConst()->getLastUserAircraft();
 
   if(aircraft.hasFuelFlow())
@@ -589,7 +592,7 @@ void MapWidget::updateTooltip()
 
 void MapWidget::showTooltip(bool update)
 {
-  if(databaseLoadStatus || noRender() || NavApp::isShuttingDown())
+  if(databaseLoadStatus || noRender() || atools::gui::Application::isShuttingDown())
     return;
 
 #ifdef DEBUG_INFORMATION
@@ -628,7 +631,7 @@ void MapWidget::showTooltip(bool update)
 /* Stop all line drag and drop if the map loses focus */
 void MapWidget::focusOutEvent(QFocusEvent *)
 {
-  if(NavApp::isShuttingDown())
+  if(atools::gui::Application::isShuttingDown())
     return;
 
   hideTooltip();
@@ -642,7 +645,7 @@ void MapWidget::focusOutEvent(QFocusEvent *)
 
 void MapWidget::leaveEvent(QEvent *)
 {
-  if(NavApp::isShuttingDown())
+  if(atools::gui::Application::isShuttingDown())
     return;
 
   hideTooltip();
@@ -1386,16 +1389,19 @@ bool MapWidget::handleTouchAreaClick(QMouseEvent *event)
 
 void MapWidget::elevationDisplayTimerTimeout()
 {
-  qreal lon, lat;
-  QPoint point = mapFromGlobal(QCursor::pos());
-
-  if(rect().contains(point))
+  if(!atools::gui::Application::isShuttingDown())
   {
-    if(geoCoordinates(point.x(), point.y(), lon, lat, Marble::GeoDataCoordinates::Degree))
+    qreal lon, lat;
+    QPoint point = mapFromGlobal(QCursor::pos());
+
+    if(rect().contains(point))
     {
-      Pos pos(lon, lat);
-      pos.setAltitude(NavApp::getElevationProvider()->getElevationMeter(pos));
-      mainWindow->updateMapPosLabel(pos, point.x(), point.y());
+      if(geoCoordinates(point.x(), point.y(), lon, lat, Marble::GeoDataCoordinates::Degree))
+      {
+        Pos pos(lon, lat);
+        pos.setAltitude(NavApp::getElevationProvider()->getElevationMeter(pos));
+        mainWindow->updateMapPosLabel(pos, point.x(), point.y());
+      }
     }
   }
 }
@@ -1731,6 +1737,9 @@ void MapWidget::mouseMoveEvent(QMouseEvent *event)
 
 void MapWidget::resetPaintForDrag()
 {
+  if(atools::gui::Application::isShuttingDown())
+    return;
+
   // Reset context for full redraw when using drag and drop
   if(mouseState & mw::DRAG_ALL)
   {
@@ -2330,6 +2339,9 @@ void MapWidget::simDataCalcTakeoffLanding(const atools::fs::sc::SimConnectUserAi
 
 void MapWidget::takeoffLandingTimeout()
 {
+  if(atools::gui::Application::isShuttingDown())
+    return;
+
   const atools::fs::sc::SimConnectUserAircraft aircraft = getScreenIndexConst()->getLastUserAircraft();
 
   if(aircraft.isFlying())
@@ -3656,6 +3668,11 @@ void MapWidget::jumpCoordinatesPos(const atools::geo::Pos& pos)
     showPos(dialog.getPosition(), dialog.getZoomDistanceKm(), false /* doubleClick */);
     mainWindow->setStatusMessage(tr("Showing coordinates."));
   }
+}
+
+void MapWidget::cancelJumpBack()
+{
+  jumpBack->cancel();
 }
 
 void MapWidget::changeSearchMark(const atools::geo::Pos& pos)

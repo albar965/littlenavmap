@@ -57,7 +57,8 @@ UpdateHandler::~UpdateHandler()
 
 void UpdateHandler::updateCheckTimeout()
 {
-  checkForUpdates(UPDATE_REASON_TIMER);
+  if(!atools::gui::Application::isShuttingDown())
+    checkForUpdates(UPDATE_REASON_TIMER);
 }
 
 void UpdateHandler::checkForUpdates(UpdateReason reason)

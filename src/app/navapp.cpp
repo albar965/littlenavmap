@@ -101,7 +101,6 @@ atools::util::Properties *NavApp::startupOptions = nullptr;
 DataExchange *NavApp::dataExchange = nullptr;
 
 bool NavApp::closeCalled = false;
-bool NavApp::shuttingDown = false;
 bool NavApp::loadingDatabase = false;
 bool NavApp::mainWindowVisible = false;
 
@@ -1307,18 +1306,6 @@ const map::MapDisplayTypes NavApp::getShownMapDisplayTypes()
 const map::MapAirspaceFilter& NavApp::getShownMapAirspaces()
 {
   return mainWindow->getMapWidget()->getShownAirspaces();
-}
-
-bool NavApp::isShuttingDown()
-{
-  return shuttingDown;
-}
-
-void NavApp::setShuttingDown(bool value)
-{
-  qDebug() << Q_FUNC_INFO << value;
-
-  shuttingDown = value;
 }
 
 bool NavApp::isCloseCalled()

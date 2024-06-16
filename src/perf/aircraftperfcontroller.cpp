@@ -1542,6 +1542,9 @@ void AircraftPerfController::windBoxesChanged()
 
 void AircraftPerfController::windChangedDelayed()
 {
+  if(atools::gui::Application::isShuttingDown())
+    return;
+
 #ifdef DEBUG_INFORMATION
   qDebug() << Q_FUNC_INFO;
 #endif
@@ -1567,7 +1570,7 @@ void AircraftPerfController::tabVisibilityChanged()
 {
   qDebug() << Q_FUNC_INFO;
 
-  if(!NavApp::isShuttingDown())
+  if(!atools::gui::Application::isShuttingDown())
   {
     updateReport();
     updateReportCurrent();
