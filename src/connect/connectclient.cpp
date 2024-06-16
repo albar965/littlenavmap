@@ -130,7 +130,7 @@ ConnectClient::~ConnectClient()
 
 void ConnectClient::flushQueuedRequests()
 {
-  if(!queuedRequests.isEmpty())
+  if(!queuedRequests.isEmpty() && !NavApp::isShuttingDown())
   {
     atools::fs::sc::WeatherRequest req = queuedRequests.takeLast();
     queuedRequestIdents.remove(req.getStation());
@@ -656,7 +656,7 @@ void ConnectClient::disconnectClicked()
 
 void ConnectClient::connectInternalAuto()
 {
-  if(!errorState)
+  if(!errorState && !NavApp::isShuttingDown())
     connectInternal();
 }
 

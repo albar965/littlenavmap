@@ -1997,25 +1997,30 @@ void MainWindow::calculateRouteRandom()
 
 void MainWindow::shrinkStatusBar()
 {
+
+  if(!NavApp::isShuttingDown())
+  {
 #ifdef DEBUG_INFORMATION
-  qDebug() << Q_FUNC_INFO << statusBar()->geometry() << QCursor::pos();
+    qDebug() << Q_FUNC_INFO << statusBar()->geometry() << QCursor::pos();
 #endif
 
-  // Do not shrink status bar if cursor is above
-  if(!statusBar()->rect().contains(statusBar()->mapFromGlobal(QCursor::pos())))
-  {
-    mapPositionLabel->clear();
-    mapPositionLabel->setText(tr(" — "));
-    mapPositionLabel->setMinimumWidth(20);
-    mapPositionLabel->resize(20, mapPositionLabel->height());
 
-    mapMagvarLabel->clear();
-    mapMagvarLabel->setText(tr(" — "));
-    mapMagvarLabel->setMinimumWidth(20);
-    mapMagvarLabel->resize(20, mapMagvarLabel->height());
+    // Do not shrink status bar if cursor is above
+    if(!statusBar()->rect().contains(statusBar()->mapFromGlobal(QCursor::pos())))
+    {
+      mapPositionLabel->clear();
+      mapPositionLabel->setText(tr(" — "));
+      mapPositionLabel->setMinimumWidth(20);
+      mapPositionLabel->resize(20, mapPositionLabel->height());
+
+      mapMagvarLabel->clear();
+      mapMagvarLabel->setText(tr(" — "));
+      mapMagvarLabel->setMinimumWidth(20);
+      mapMagvarLabel->resize(20, mapMagvarLabel->height());
+    }
+    else
+      shrinkStatusBarTimer.start();
   }
-  else
-    shrinkStatusBarTimer.start();
 }
 
 void MainWindow::updateMapPosLabel(const atools::geo::Pos& pos, int x, int y)
