@@ -9,7 +9,7 @@
   white-space: nowrap;
 }
 
-.toolbar::before {
+.toolbar:not([data-type="exclusive"])::before {
   content: attr(title);
   font-size: 8px;
   position: absolute;

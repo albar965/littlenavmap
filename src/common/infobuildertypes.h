@@ -86,6 +86,8 @@ namespace InfoBuilderTypes {
         const int zoomWeb;
         const qreal distanceUi;
         const qreal distanceWeb;
+        const float latLonRectUi[4];
+        const float latLonRectWeb[4];
     };
 
     /**

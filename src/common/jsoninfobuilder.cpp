@@ -321,14 +321,14 @@ QByteArray JsonInfoBuilder::uiinfo(UiInfoData uiInfoData) const
 
     UiInfoData data = uiInfoData;
 
-    JSON json;
-
-       json = {
-           { "zoom_ui", data.zoomUi},
-           { "zoom_web", data.zoomWeb},
-           { "distance_ui", data.distanceUi},
-           { "distance_web", data.distanceWeb},
-       };
+    JSON json = {
+      { "zoom_ui", data.zoomUi},
+      { "zoom_web", data.zoomWeb},
+      { "distance_ui", data.distanceUi},
+      { "distance_web", data.distanceWeb},
+      { "latLonRect_ui", data.latLonRectUi},
+      { "latLonRect_web", data.latLonRectWeb}
+    };
 
     return json.dump().data();
 }

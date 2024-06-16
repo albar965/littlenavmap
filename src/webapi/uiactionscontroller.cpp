@@ -21,15 +21,23 @@ Q_UNUSED(request)
     if(verbose)
         qDebug() << Q_FUNC_INFO;
 
-    // Get a new response object
-    WebApiResponse response = getResponse();
+    MapWidget *mw = getMainWindow()->getMapWidget();
+    MapPaintWidget *mpw = NavApp::getMapPaintWidgetWeb();
+
+    atools::geo::Rect ru = mw->getCurrentViewRect();
+    atools::geo::Rect rw = mpw->getCurrentViewRect();
 
     UiInfoData data = {
-        getMainWindow()->getMapWidget()->zoom(),
-        NavApp::getMapPaintWidgetWeb()->zoom(),
-        getMainWindow()->getMapWidget()->distance(),
-        NavApp::getMapPaintWidgetWeb()->distance()
+        mw->zoom(),
+        mpw->zoom(),
+        mw->distance(),
+        mpw->distance(),
+        {ru.getNorth(), ru.getEast(), ru.getSouth(), ru.getWest()},
+        {rw.getNorth(), rw.getEast(), rw.getSouth(), rw.getWest()}
     };
+
+    // Get a new response object
+    WebApiResponse response = getResponse();
 
     response.body = infoBuilder->uiinfo(data);
     response.status = 200;

@@ -1,115 +1,93 @@
 <!doctype html>
-<html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <title>unused</title>
+    <style>
+      html, body, iframe {
+        height: 100%;
+      }
+      body {
+        margin: 0;
+      }
+      iframe {
+        width: 100%;
+        border: 0;
+        display: block;
+      }
+    </style>
+  </head>
+  <body>
+    <iframe onload="lnm(this)" src="ol/index.html" title="OpenLayers Map"></iframe>
+    <script>
+      /**
+       * Plugin embedding the littlenavmap-openlayers implementation
+       * 
+       * See: 
+       * - https://github.com/KOKAProduktion/littlenavmap-openlayers
+       */
 
-<head>
-  <meta charset="UTF-8">
-  <title>OpenLayers Map</title>
-  <style>
-    html, body, iframe {
-      height: 100%;
-    }
-    body {
-      margin: 0;
-    }
-    iframe {
-      width: 100%;
-      border: 0;
-      display: block;
-    }
-    .toolbar {
-      position: fixed;
-      top: 1cm;
-      left: 1cm;
-    }
-    input[placeholder="ICAO"] {
-      text-transform: uppercase;
-      width: 1.2cm;
-    }
-  </style>
-</head>
+      onmessage = event => {
+        let message = event.data.pluginParent;
+        if(message) {
+          switch(message.cause) {
+            case "cleanup":
+              return stop();
+            case "callback":
+              return handleEvents(message.cargo);
+            default:
+          }
+        }
+      };
 
-<body>
-  <iframe onload="lnm(this)" src="ol/index.html" title="OpenLayers Map"></iframe>
-  <script>
-    /**
-     * Plugin embedding the littlenavmap-openlayers implementation
-     * 
-     * See: 
-     * - https://github.com/KOKAProduktion/littlenavmap-openlayers
-     * - /web/ol (dist of littlenavmap-openlayers)
-     */
-
-    onmessage = event => {
-      let message = event.data.pluginParent;
-      if(message) {
-        switch(message.cause) {
-          case "cleanup":
-            stop();
-            return;
-          case "callback":
-            handleEvents(message.cargo);
-            return;
+      function stop() {}
+      
+      
+      var latestInput = "";
+      
+      function handleEvents(cargo) {
+        switch (cargo.id) {
+          case "icaot":
+            switch (cargo.event) {
+              case "input":
+                latestInput = cargo.value;
+                break;
+              case "keydown":
+                evalICAOSearch (cargo.data[0]);
+                break;
+              default:
+            }
+            break;
+          case "icaob":
+            switch (cargo.event) {
+              case "click":
+                doICAOSearch ();
+                break;
+            }
           default:
         }
       }
-    };
-
-    function stop() {}
-    
-    
-    var latestInput = "";
-    
-    // event handler
-    function handleEvents(cargo) {
-      switch (cargo.id) {
-        case "icaot":
-          switch (cargo.event) {
-            case "input":
-              latestInput = cargo.value;
-              break;
-            case "keydown":
-              evalICAOSearch (cargo.data[0]);
-              break;
-            default:
-          }
-          break;
-        case "icaob":
-          switch (cargo.event) {
-            case "click":
-              doICAOSearch ();
-              break;
-          }
-        default:
-      }
-    }
-    
-    function evalICAOSearch(key) {
-      if(key === "Enter") {
-        doICAOSearch ();
-      }
-    }
       
-    var littlenavmap;
-    
-    function doICAOSearch () {
-      fetch("/api/airport/info?ident=" + latestInput).then((response) => {
-        return response.json();
-      }).then((json) => {
-        // turn off aircraft follow
-        if (littlenavmap.following) {
-          littlenavmap.map.getControls().getArray()[0].handleFollow();
-        }
-        // move to airport position
-        littlenavmap.moveTo([json.position.lon, json.position.lat]);
-      }).catch((error) => {
-        console?.log(error);
-      })
-    }
+      function evalICAOSearch(key) {
+        key === "Enter" ? doICAOSearch () : !1;
+      }
+        
+      var littlenavmap;
+      
+      function doICAOSearch () {
+        fetch("/api/airport/info?ident=" + latestInput).then(response => response.json(), error => console?.log(error)).then(json => {
+          // turn off aircraft follow
+          if (littlenavmap.following) {
+            littlenavmap.map.getControls().getArray()[0].handleFollow();
+          }
+          // move to airport position
+          littlenavmap.moveTo([json.position.lon, json.position.lat]);
+        }, error => console?.log(error)).catch(error => console?.log(error));
+      }
 
-    function lnm(iframe) {
-      littlenavmap = iframe.contentWindow.littlenavmap;
-    }
-  </script>
-</body>
-
+      function lnm(iframe) {
+        littlenavmap = iframe.contentWindow.littlenavmap;
+      }
+    </script>
+  </body>
 </html>
