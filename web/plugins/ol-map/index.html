@@ -18,7 +18,7 @@
     </style>
   </head>
   <body>
-    <iframe onload="lnm(this)" src="ol/index.html" title="OpenLayers Map"></iframe>
+    <iframe id="OLM" title="OpenLayers Map"></iframe>
     <script>
       /**
        * Plugin embedding the littlenavmap-openlayers implementation
@@ -31,10 +31,14 @@
         let message = event.data.pluginParent;
         if(message) {
           switch(message.cause) {
-            case "cleanup":
-              return stop();
             case "callback":
               return handleEvents(message.cargo);
+            case "cleanup":
+              return stop();
+            case "commence":
+              var OLM = document.getElementById("OLM");
+              OLM.onload = lnm;
+              return OLM.src = "ol/index.html";
             default:
           }
         }
@@ -42,6 +46,9 @@
 
       function stop() {}
       
+      function nop() {}
+      
+      var doICAOSearch = nop;
       
       var latestInput = "";
       
@@ -74,7 +81,7 @@
         
       var littlenavmap;
       
-      function doICAOSearch () {
+      function reallyDoICAOSearch () {
         fetch("/api/airport/info?ident=" + latestInput).then(response => response.json(), error => console?.log(error)).then(json => {
           // turn off aircraft follow
           if (littlenavmap.following) {
@@ -85,8 +92,9 @@
         }, error => console?.log(error)).catch(error => console?.log(error));
       }
 
-      function lnm(iframe) {
-        littlenavmap = iframe.contentWindow.littlenavmap;
+      function lnm() {
+        littlenavmap = this.contentWindow.littlenavmap;
+        doICAOSearch = reallyDoICAOSearch;
       }
     </script>
   </body>

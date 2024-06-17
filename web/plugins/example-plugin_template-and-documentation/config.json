@@ -1,7 +1,7 @@
 {
   "title": "Your plugin's name",
   "type": "one of background, unobtrusive, exclusive, widget",
-  "requestMapAccess": "reason shown to user or empty when none required",
+  "requestMapAccess": "reason currently not shown to user but required if wanted or empty when none required",
   "toolbars": [
     {
       "title": "empty when to add to the existing map toolbar, else a text visible to the user as the title of the created toolbar",

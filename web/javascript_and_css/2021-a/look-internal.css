@@ -20,7 +20,7 @@
 }
 
 [data-menubarsplacement="bottom"] .menubar {
-  border-top: 1px solid black;
+  /*border-top: 1px solid black;*/      /* white line between border and box-shadow visible in Chrome used as of typing due to 1px border rendered as .6px */
 }
 
 [data-menubarsplacement="left"] .menubar {

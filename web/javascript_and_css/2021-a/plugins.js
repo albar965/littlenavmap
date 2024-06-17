@@ -156,6 +156,8 @@ function findPlugins() {
                 iframe.style.zIndex = "";
                 break;
               default:
+                console?.error("configured type of plugin wrong");
+                plugin.checked = false;
                 return;
             }
             iframe.setAttribute("data-type", pluginsConfig[plugin.value].type);
@@ -164,15 +166,11 @@ function findPlugins() {
             pluginsConfig[plugin.value].aborted = false;
             var allowMapAccess = " allow-same-origin";      // this should be empty string. parent access is wished to be prevented. without "allow-same-origin" that is achieved. it also blocks iframes within iframes to communicate with each other directly which is not wished. also localStorage is not accessible then.
             if(pluginsConfig[plugin.value].requestMapAccess.length) {
-              if(retrieveState("mapAccessGranted_plugin_" + plugin.value, 0, true) === "true" || confirm("The plugin\n\n\"" + pluginsConfig[plugin.value].title + "\"\n\nis requesting access to the map.\n\nReason given:\n\n\"" + pluginsConfig[plugin.value].requestMapAccess + "\"\n\nGrant it?\n\n\nNote:\n\nThe plugin then will be able to access anything else inside the Little Navmap web frontend.\n\nWhen you deny access, a plugin still can find access due to web\nbrowsers ungranular security model which needed to be configured\nfor plugins to be able to do non-trivial tasks.")) {
+              if(true || retrieveState("mapAccessGranted_plugin_" + plugin.value, 0, true) === "true" || confirm("The plugin\n\n\"" + pluginsConfig[plugin.value].title + "\"\n\nis requesting access to the map.\n\nReason given:\n\n\"" + pluginsConfig[plugin.value].requestMapAccess + "\"\n\nGrant it?\n\n\nNote:\n\nThe plugin then will be able to access anything else inside the Little Navmap web frontend.\n\nWhen you deny access, a plugin still can find access due to web\nbrowsers ungranular security model which needed to be configured\nfor plugins to be able to do non-trivial tasks.")) {    // no nagging for now
                 storeState("mapAccessGranted_plugin_" + plugin.value, "true", true);
                 allowMapAccess = " allow-same-origin";
                 iframe.addEventListener("load", function() {
-                  this.contentWindow.setMapDocument(contentIframe.contentDocument);
-                });
-              } else {
-                iframe.addEventListener("load", function() {
-                  this.contentWindow.postMessage({pluginParent: {cause: "mapAccessReply", cargo: false}}, "*");
+                  this.contentWindow.setMapDocument(contentIframe.contentDocument, MAP_VERSION);
                 });
               }
             }
@@ -190,7 +188,7 @@ function findPlugins() {
                     tAPI[item.type]?.(item, plugin.value, toolbar);
                   });
                 });
-                this.contentWindow.postMessage({pluginParent: {version: MAP_VERSION}}, "*");
+                this.contentWindow.postMessage({pluginParent: {cause: "commence"}}, "*");
               }
               loadingOnInit ? continueLoadingPlugins() : !1;
             });
@@ -286,7 +284,7 @@ function findPlugins() {
             onmessage = event => {
               if(event.data.throw) {
                 Object.values(pluginsConfig).some(plugin => {
-                  if(plugin.iframe.contentWindow === event.source && !plugin.aborted) {
+                  if(plugin.iframe?.contentWindow === event.source && !plugin.aborted) {
                     plugin.aborted = true;
                     plugin.checkbox.click();
                     alert("Plugin \"" + plugin.title + "\" not initialised.\n\n\nReason given:\n\n\"" + event.data.throw + "\"");

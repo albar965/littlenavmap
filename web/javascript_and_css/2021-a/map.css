@@ -29,7 +29,7 @@ body {
 }
 
 
-[data-shift="up"] {
+/*[data-shift="up"] {
   cursor: url(/images/point-up.cur), auto;
 }
 
@@ -43,7 +43,7 @@ body {
 
 [data-shift="down"] {
   cursor: url(/images/point-down.cur), auto;
-}
+}*/
 
 
 #refreshDelay[disabled]:hover {

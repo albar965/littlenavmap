@@ -194,7 +194,7 @@ function injectUpdates(origin) {
     /*
      * Event handling: mousemove over map (parent)
      */
-    /*mapElement.parentElement.onmousemove = function(e) {
+    mapElement.parentElement.onmousemove = function(e) {
       var s = e.currentTarget.clientHeight / e.currentTarget.clientWidth;
       var x = e.offsetX - e.currentTarget.clientWidth / 2;
       var y = -(e.offsetY - e.currentTarget.clientHeight / 2);
@@ -211,22 +211,29 @@ function injectUpdates(origin) {
           e.currentTarget.setAttribute("data-shift", "down");       // south
         }
       }
-    };*/
+    };
 
     /*
      * Event handling: click map
      */
     var notGettingMapViewRect = true;
     ocw.handleInteraction = function(e) {
-      /*var shift = e.currentTarget.getAttribute("data-shift");
-      shift !== null ? updateMapImage("mapcmd=" + shift + "&cmd", defaultMapQuality, true) : 0;*/         // on touch devices, without initial HTML attribute, shift === null when pinching for zoom in
+      var currentTarget = e.currentTarget;
       if(notGettingMapViewRect) {
         notGettingMapViewRect = false;
         fetch("/api/ui/info").then(response => response.json(), error => {
           console?.log(error);
           notGettingMapViewRect = true;
         }).then(json => {
-          updateMapImage("mapcmd=center&lon=" + (json.latLonRect_web[3] + (json.latLonRect_web[1] - json.latLonRect_web[3]) * (e.offsetX / mapElement.clientWidth)) + "&lat=" + (json.latLonRect_web[0] + (json.latLonRect_web[2] - json.latLonRect_web[0]) * (e.offsetY / mapElement.clientHeight)) + "&cmd", defaultMapQuality, true);
+          if(json.zoom_web >= 1386) {
+            json.latLonRect_web[1] += json.latLonRect_web[1] < json.latLonRect_web[3] ? 360 : 0;
+            var newLon = json.latLonRect_web[3] + (json.latLonRect_web[1] - json.latLonRect_web[3]) * (e.offsetX / mapElement.clientWidth);
+            newLon -= newLon > 180 ? 360 : 0;
+            updateMapImage("mapcmd=center&lon=" + newLon + "&lat=" + (json.latLonRect_web[0] + (json.latLonRect_web[2] - json.latLonRect_web[0]) * (e.offsetY / mapElement.clientHeight)) + "&cmd", defaultMapQuality, true);
+          } else {
+            var shift = currentTarget.getAttribute("data-shift");
+            shift !== null ? updateMapImage("mapcmd=" + shift + "&cmd", defaultMapQuality, true) : !1;
+          }
           notGettingMapViewRect = true;
         }, error => {
           console?.log(error);
