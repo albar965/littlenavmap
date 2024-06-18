@@ -122,13 +122,22 @@ inline QString pointerDown()
 
 inline QString pointerRight()
 {
+#ifdef Q_OS_MACOS
+  // Black and white on macOS and colored on other systems
+  return QObject::tr("▶︎"); // BLACK RIGHT-POINTING TRIANGLE Unicode: U+25B6 U+FE0E, UTF-8: E2 96 B6 EF B8 8E
+#else
   return QObject::tr("►"); // U+25BA Name: BLACK RIGHT-POINTING POINTER
-
+#endif
 }
 
 inline QString pointerLeft()
 {
+#ifdef Q_OS_MACOS
+  // Black and white on macOS and colored on other systems
+  return QObject::tr("◀︎"); // BLACK LEFT-POINTING TRIANGLE Unicode: U+25C0 U+FE0E, UTF-8: E2 97 80 EF B8 8E
+#else
   return QObject::tr("◄"); // U+25C4 Name: BLACK LEFT-POINTING POINTER
+#endif
 }
 
 /* Only headwind > 1 kts and crosswind */
