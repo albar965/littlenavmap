@@ -29,12 +29,10 @@
         let message = event.data.pluginParent;
         if(message) {
           switch(message.cause) {
-            case "cleanup":
-              stop();
-              return;
             case "callback":
-              handleEvents(message.cargo);
-              return;
+              return handleEvents(message.cargo);
+            case "cleanup":
+              return stop();
             default:
           }
         }

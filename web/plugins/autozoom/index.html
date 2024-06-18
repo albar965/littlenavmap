@@ -7,6 +7,9 @@
   <body>
     <script id="configVals" onload="runWhenAllowed()"></script>
     <script>
+      var pluginHost;
+      var mapDocument = null;
+
       function runWhenAllowed() {
         var originalZoom = -1;
         var originalCenterAircraft = -1;
@@ -130,53 +133,57 @@
         runWhenAllowed.stop?.();
       }
       
+      function start() {
+        if(mapDocument !== null) {
+          if(mapsVersion !== 1 && !confirm("New map version running possibly unsupported.\n\nDo you like to let run this plugin anyway?")) {
+            return pluginHost.postMessage({"throw": "aborted by user"}, "*");
+          }
+          if(sessionStorage.getItem("autozoomRead") !== "true") {
+            if(confirm(
+              "This plugin attempts to set the zoom level of the\n" +
+              "map according to the level it deems most appro-\n" +
+              "priate for the circumstances you are in.\n\n" +
+              "It enables \"auto refresh\" and \"center is Aircraft\" and\n" +
+              "restores the value they are in now when you disable it.\n\n" +
+              "You can change the defining values it operates on\n" +
+              "inside the file \"configurationValues.js\" inside the\n" +
+              "folder \"web\\plugins\\autozoom\" in the folder of Little Navmap.\n\n" +
+              "If you continue, this message is dismissed for this session."
+              )) {
+              sessionStorage.setItem("autozoomRead", "true");
+            } else {
+              parent.postMessage({"throw": "cancelled by user"}, "*");
+            }
+          }
+
+          runWhenAllowed.docMap = mapDocument;
+
+          runWhenAllowed.mapToggle = runWhenAllowed.docMap.querySelector("#refreshMapToggle");
+          runWhenAllowed.centerToggle = runWhenAllowed.docMap.querySelector("#refreshWithAircraft");
+          
+          document.getElementById("configVals").src = "configurationValues.js";
+        } else {
+          pluginHost.postMessage({"throw": "neccessary access not given"}, "*");
+        }
+      }
+      
       onmessage = event => {
         let message = event.data.pluginParent;
         if(message) {
           switch(message.cause) {
             case "cleanup":
-              stop();
-              return;
-            case "mapAccessReply":
-              if(message.cargo === false) {
-                event.source.postMessage({"throw": "necessary access not given"}, "*");
-              }
-              return;
+              return stop();
+            case "commence":
+              pluginHost = event.source;
+              return start();
             default:
-          }
-          if(message.version !== 1) {
-            if(!confirm("New map version running possibly unsupported.\n\nDo you like to let run this plugin anyway?")) {
-              event.source.postMessage({"throw": "aborted by user"}, "*");
-            }
           }
         }
       };
       
-      function setMapDocument(iframeDocument) {
-        if(sessionStorage.getItem("autozoomRead") !== "true") {
-          if(confirm(
-            "This plugin attempts to set the zoom level of the\n" +
-            "map according to the level it deems most appro-\n" +
-            "priate for the circumstances you are in.\n\n" +
-            "It enables \"auto refresh\" and \"center is Aircraft\" and\n" +
-            "restores the value they are in now when you disable it.\n\n" +
-            "You can change the defining values it operates on\n" +
-            "inside the file \"configurationValues.js\" inside the\n" +
-            "folder \"web\\plugins\\autozoom\" in the folder of Little Navmap.\n\n" +
-            "If you continue, this message is dismissed for this session."
-            )) {
-            sessionStorage.setItem("autozoomRead", "true");
-          } else {
-            parent.postMessage({"throw": "cancelled by user"}, "*");
-          }
-        }
-
-        runWhenAllowed.docMap = iframeDocument;
-
-        runWhenAllowed.mapToggle = runWhenAllowed.docMap.querySelector("#refreshMapToggle");
-        runWhenAllowed.centerToggle = runWhenAllowed.docMap.querySelector("#refreshWithAircraft");
-        
-        document.getElementById("configVals").src = "configurationValues.js";
+      function setMapDocument(iframeDocument, mapVersion) {
+        mapDocument = iframeDocument;
+        mapsVersion = mapVersion;
       }
     </script>
   </body>

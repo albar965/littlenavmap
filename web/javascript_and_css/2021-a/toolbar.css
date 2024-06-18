@@ -7,6 +7,7 @@
   display: flex;
   align-items: center;
   white-space: nowrap;
+  position: relative;
 }
 
 .toolbar:not([data-type="exclusive"])::before {
