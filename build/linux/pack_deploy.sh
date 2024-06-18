@@ -30,8 +30,7 @@ fi
   cp -av "Little Navconnect" "LittleNavmap-linux-${FILENAME_LNM}"
   cp -av "Little Xpconnect" "LittleNavmap-linux-${FILENAME_LNM}"
 
-
-  tar cfvJ LittleNavmap-linux-${FILENAME_LNM}.tar.xz "LittleNavmap-linux-${FILENAME_LNM}"
+  tar cv "LittleNavmap-linux-${FILENAME_LNM}" | xz -9 > LittleNavmap-linux-${FILENAME_LNM}.tar.xz
 )
 
 REVISION="1"
