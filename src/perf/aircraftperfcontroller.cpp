@@ -1342,12 +1342,12 @@ void AircraftPerfController::windText(atools::util::HtmlBuilder& html, const QSt
       QString windPtr;
       if(headWind >= 1.f)
       {
-        windPtr = tr("⮟");
+        windPtr = formatter::windPointerSouth();
         windType = tr("headwind");
       }
       else if(headWind <= -1.f)
       {
-        windPtr = tr("⮝");
+        windPtr = formatter::windPointerNorth();
         windType = tr("tailwind");
       }
       windText.append(tr("%1 %2 %3").arg(windPtr).arg(Unit::speedKts(std::abs(headWind))).arg(windType));

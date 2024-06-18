@@ -228,11 +228,11 @@ QString windInformationTailHead(float headWindKts, bool addUnit)
     windPtr += Unit::speedKts(std::abs(headWindKts), addUnit);
 
     if(headWindKts <= -1.f)
-      windPtr += QObject::tr(" ⮝"); // Tailwind
+      windPtr += windPointerNorth(); // Tailwind
     else
-      windPtr += QObject::tr(" ⮟"); // Headwind
+      windPtr += windPointerSouth(); // Headwind
   }
-  return windPtr;
+  return QObject::tr(" %1").arg(windPtr);
 }
 
 QString windInformationCross(float crossWindKts, bool addUnit)
@@ -243,11 +243,11 @@ QString windInformationCross(float crossWindKts, bool addUnit)
     windPtr += Unit::speedKts(std::abs(crossWindKts), addUnit);
 
     if(crossWindKts > 0.f)
-      windPtr += QObject::tr(" ⮜");
+      windPtr += windPointerWest();
     else if(crossWindKts < 0.f)
-      windPtr += QObject::tr(" ⮞");
+      windPtr += windPointerEast();
   }
-  return windPtr;
+  return QObject::tr(" %1").arg(windPtr);
 }
 
 QString windInformation(float headWindKts, float crossWindKts, const QString& separator, bool addUnit)

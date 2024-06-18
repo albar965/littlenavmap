@@ -2604,11 +2604,13 @@ void RouteController::routeTableOptions()
                       tr("Departure runway heading and length."), routeLabel->isFlag(routelabel::HEADER_RUNWAY_TAKEOFF));
 
   treeDialog.addItem2(headerItem, rcol::HEADER_TAKEOFF_WIND, tr("Takeoff Wind"),
-                      tr("Headwind on takeoff runway indicated by ⮟ and tailwind by ⮝\n"
-                         "as well as crosswind (⮞ or ⮜).\n"
+                      tr("Headwind on takeoff runway indicated by %1 and tailwind by %2\n"
+                         "as well as crosswind (%3 or %4).\n"
                          "The wind information is taken from the selected source in\n"
                          "menu \"Weather\" -> \"Airport Weather Source\".\n"
-                         "Wind is taken from nearest airport if not available."),
+                         "Wind is taken from nearest airport if not available.").
+                      arg(formatter::windPointerSouth()).arg(formatter::windPointerNorth()).
+                      arg(formatter::windPointerEast()).arg(formatter::windPointerWest()),
                       routeLabel->isFlag(routelabel::HEADER_RUNWAY_TAKEOFF_WIND));
 
   treeDialog.addItem2(headerItem, rcol::HEADER_DEPARTURE, tr("Departure"),
@@ -2623,11 +2625,13 @@ void RouteController::routeTableOptions()
 
   treeDialog.addItem2(headerItem, rcol::HEADER_LAND_WIND, tr("Landing Wind"),
                       tr("Destination runway heading, available distance for landing, elevation and facilities."),
-                      tr("Headwind on landing runway indicated by ⮟ and tailwind by ⮝\n"
-                         "as well as crosswind (⮞ or ⮜).\n"
+                      tr("Headwind on landing runway indicated by %1 and tailwind by %2\n"
+                         "as well as crosswind (%3 or %4).\n"
                          "The wind information is taken from the selected source in\n"
                          "menu \"Weather\" -> \"Airport Weather Source\".\n"
-                         "Wind is taken from nearest airport if not available."),
+                         "Wind is taken from nearest airport if not available.").
+                      arg(formatter::windPointerSouth()).arg(formatter::windPointerNorth()).
+                      arg(formatter::windPointerEast()).arg(formatter::windPointerWest()),
                       routeLabel->isFlag(routelabel::HEADER_RUNWAY_LAND_WIND));
 
   // Add footer options to tree ========================================
@@ -5408,9 +5412,9 @@ void RouteController::updateModelTimeFuelWindAlt()
           {
             QString ptr;
             if(headWind >= 1.f)
-              ptr = tr("⮟");
+              ptr = formatter::windPointerSouth();
             else if(headWind <= -1.f)
-              ptr = tr("⮝");
+              ptr = formatter::windPointerNorth();
             txt.append(tr("%1 %2").arg(ptr).arg(Unit::speedKts(std::abs(headWind), false /* addUnit */)));
           }
           model->item(row, rcol::WIND_HEAD_TAIL)->setText(txt);

@@ -18,6 +18,7 @@
 #ifndef LITTLENAVMAP_FORMATTER_H
 #define LITTLENAVMAP_FORMATTER_H
 
+#include <QObject>
 #include <QString>
 
 namespace atools {
@@ -69,6 +70,42 @@ QString windInformationCross(float crossWindKts, bool addUnit = true);
 
 /* Tail and headwind > 1 kts */
 QString windInformationTailHead(float headWindKts, bool addUnit = true);
+
+inline QString windPointerNorth()
+{
+#ifdef Q_OS_MACOS
+  return QObject::tr("▲");
+#else
+  return QObject::tr("⮝");
+#endif
+}
+
+inline QString windPointerSouth()
+{
+#ifdef Q_OS_MACOS
+  return QObject::tr("▼");
+#else
+  return QObject::tr("⮟");
+#endif
+}
+
+inline QString windPointerEast()
+{
+#ifdef Q_OS_MACOS
+  return QObject::tr("►");
+#else
+  return QObject::tr("⮞");
+#endif
+}
+
+inline QString windPointerWest()
+{
+#ifdef Q_OS_MACOS
+  return QObject::tr("◄");
+#else
+  return QObject::tr("⮜");
+#endif
+}
 
 /* Only headwind > 1 kts and crosswind */
 QString windInformationShort(int windDirectionDeg, float windSpeedKts, float runwayEndHeading, float minHeadWind = 1.f,
