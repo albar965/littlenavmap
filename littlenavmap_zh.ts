@@ -546,10 +546,9 @@ Save changes?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="1345"/>
         <source>⮟</source>
         <oldsource>▼</oldsource>
-        <translation type="unfinished">▼</translation>
+        <translation type="obsolete">▼</translation>
     </message>
     <message>
         <source>Performance data collection started.</source>
@@ -596,10 +595,9 @@ Load the matching aircraft performance file or adapt the field &quot;Aircraft ty
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="1350"/>
         <source>⮝</source>
         <oldsource>▲</oldsource>
-        <translation type="unfinished">▲</translation>
+        <translation type="obsolete">▲</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="1351"/>
@@ -1237,361 +1235,361 @@ Default is cruise speed.</source>
 <context>
     <name>AircraftProgressConfig</name>
     <message>
-        <location filename="src/info/aircraftprogressconfig.cpp" line="86"/>
+        <location filename="src/info/aircraftprogressconfig.cpp" line="87"/>
         <source> - Aircraft Progress Configuration</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/info/aircraftprogressconfig.cpp" line="87"/>
+        <location filename="src/info/aircraftprogressconfig.cpp" line="88"/>
         <source>Select the fields to show in the aircraft progress tab.
 Note that some fields are only shown if certain conditions apply.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/info/aircraftprogressconfig.cpp" line="94"/>
+        <location filename="src/info/aircraftprogressconfig.cpp" line="95"/>
         <source>Field or Header</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/info/aircraftprogressconfig.cpp" line="94"/>
+        <location filename="src/info/aircraftprogressconfig.cpp" line="95"/>
         <source>Description</source>
         <translation type="unfinished">描述</translation>
     </message>
     <message>
-        <location filename="src/info/aircraftprogressconfig.cpp" line="103"/>
+        <location filename="src/info/aircraftprogressconfig.cpp" line="104"/>
         <source>Real Date and Time</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/info/aircraftprogressconfig.cpp" line="103"/>
+        <location filename="src/info/aircraftprogressconfig.cpp" line="104"/>
         <source>Real date and UTC time.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/info/aircraftprogressconfig.cpp" line="104"/>
+        <location filename="src/info/aircraftprogressconfig.cpp" line="105"/>
         <source>Real local Date and Time</source>
         <oldsource>Real Local Time</oldsource>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/info/aircraftprogressconfig.cpp" line="104"/>
+        <location filename="src/info/aircraftprogressconfig.cpp" line="105"/>
         <source>Real local date and time.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/info/aircraftprogressconfig.cpp" line="105"/>
+        <location filename="src/info/aircraftprogressconfig.cpp" line="106"/>
         <source>Simulator Date and Time</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/info/aircraftprogressconfig.cpp" line="105"/>
+        <location filename="src/info/aircraftprogressconfig.cpp" line="106"/>
         <source>Simulator date and UTC time.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/info/aircraftprogressconfig.cpp" line="106"/>
+        <location filename="src/info/aircraftprogressconfig.cpp" line="107"/>
         <source>Simulator local Date and Time</source>
         <oldsource>Simulator Local Time</oldsource>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/info/aircraftprogressconfig.cpp" line="106"/>
+        <location filename="src/info/aircraftprogressconfig.cpp" line="107"/>
         <source>Simulator local date and time.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/info/aircraftprogressconfig.cpp" line="107"/>
+        <location filename="src/info/aircraftprogressconfig.cpp" line="108"/>
         <source>Flown</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/info/aircraftprogressconfig.cpp" line="107"/>
+        <location filename="src/info/aircraftprogressconfig.cpp" line="108"/>
         <source>Flown distance since takeoff.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/info/aircraftprogressconfig.cpp" line="110"/>
+        <location filename="src/info/aircraftprogressconfig.cpp" line="111"/>
         <source>Destination</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="src/info/aircraftprogressconfig.cpp" line="111"/>
-        <location filename="src/info/aircraftprogressconfig.cpp" line="118"/>
-        <location filename="src/info/aircraftprogressconfig.cpp" line="124"/>
-        <location filename="src/info/aircraftprogressconfig.cpp" line="136"/>
-        <source>Distance, Time and Arrival</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="src/info/aircraftprogressconfig.cpp" line="111"/>
-        <source>Distance to, time to and arrival time in UTC at destination.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="src/info/aircraftprogressconfig.cpp" line="112"/>
         <location filename="src/info/aircraftprogressconfig.cpp" line="119"/>
         <location filename="src/info/aircraftprogressconfig.cpp" line="125"/>
-        <location filename="src/info/aircraftprogressconfig.cpp" line="138"/>
-        <location filename="src/info/aircraftprogressconfig.cpp" line="155"/>
+        <location filename="src/info/aircraftprogressconfig.cpp" line="137"/>
+        <source>Distance, Time and Arrival</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/info/aircraftprogressconfig.cpp" line="112"/>
+        <source>Distance to, time to and arrival time in UTC at destination.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/info/aircraftprogressconfig.cpp" line="113"/>
+        <location filename="src/info/aircraftprogressconfig.cpp" line="120"/>
+        <location filename="src/info/aircraftprogressconfig.cpp" line="126"/>
+        <location filename="src/info/aircraftprogressconfig.cpp" line="139"/>
+        <location filename="src/info/aircraftprogressconfig.cpp" line="156"/>
         <source>Fuel</source>
         <translation type="unfinished">燃油</translation>
     </message>
     <message>
-        <location filename="src/info/aircraftprogressconfig.cpp" line="112"/>
+        <location filename="src/info/aircraftprogressconfig.cpp" line="113"/>
         <source>Estimated fuel at destination.
 Shows orange warning if below reserve and red error text if insufficient.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/info/aircraftprogressconfig.cpp" line="114"/>
-        <location filename="src/info/aircraftprogressconfig.cpp" line="156"/>
+        <location filename="src/info/aircraftprogressconfig.cpp" line="115"/>
+        <location filename="src/info/aircraftprogressconfig.cpp" line="157"/>
         <source>Gross Weight</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/info/aircraftprogressconfig.cpp" line="114"/>
+        <location filename="src/info/aircraftprogressconfig.cpp" line="115"/>
         <source>Estimated aircraft gross weight at destination.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/info/aircraftprogressconfig.cpp" line="117"/>
+        <location filename="src/info/aircraftprogressconfig.cpp" line="118"/>
         <source>Top of Climb</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/info/aircraftprogressconfig.cpp" line="118"/>
+        <location filename="src/info/aircraftprogressconfig.cpp" line="119"/>
         <source>Distance to, time to and arrival time in UTC at the top of climb.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/info/aircraftprogressconfig.cpp" line="119"/>
+        <location filename="src/info/aircraftprogressconfig.cpp" line="120"/>
         <source>Estimated fuel at top of climb.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/info/aircraftprogressconfig.cpp" line="120"/>
+        <location filename="src/info/aircraftprogressconfig.cpp" line="121"/>
         <source>From Departure</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/info/aircraftprogressconfig.cpp" line="120"/>
+        <location filename="src/info/aircraftprogressconfig.cpp" line="121"/>
         <source>Distance from departure to top of climb.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/info/aircraftprogressconfig.cpp" line="123"/>
+        <location filename="src/info/aircraftprogressconfig.cpp" line="124"/>
         <source>Top of Descent</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/info/aircraftprogressconfig.cpp" line="124"/>
+        <location filename="src/info/aircraftprogressconfig.cpp" line="125"/>
         <source>Distance to, time to and arrival time in UTC at the top of descent.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/info/aircraftprogressconfig.cpp" line="125"/>
+        <location filename="src/info/aircraftprogressconfig.cpp" line="126"/>
         <source>Estimated fuel at top of descent.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/info/aircraftprogressconfig.cpp" line="126"/>
+        <location filename="src/info/aircraftprogressconfig.cpp" line="127"/>
         <source>To Destination</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/info/aircraftprogressconfig.cpp" line="126"/>
+        <location filename="src/info/aircraftprogressconfig.cpp" line="127"/>
         <source>Distance from top of descent to destination.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/info/aircraftprogressconfig.cpp" line="129"/>
+        <location filename="src/info/aircraftprogressconfig.cpp" line="130"/>
         <source>Next Waypoint</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/info/aircraftprogressconfig.cpp" line="130"/>
+        <location filename="src/info/aircraftprogressconfig.cpp" line="131"/>
         <source>Leg Type</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/info/aircraftprogressconfig.cpp" line="130"/>
+        <location filename="src/info/aircraftprogressconfig.cpp" line="131"/>
         <source>Type of a procedure leg describing the flying path.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/info/aircraftprogressconfig.cpp" line="131"/>
+        <location filename="src/info/aircraftprogressconfig.cpp" line="132"/>
         <source>Instructions</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/info/aircraftprogressconfig.cpp" line="131"/>
+        <location filename="src/info/aircraftprogressconfig.cpp" line="132"/>
         <source>Procedure instructions showing how to fly,
 like turn direction or required overfly.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/info/aircraftprogressconfig.cpp" line="133"/>
+        <location filename="src/info/aircraftprogressconfig.cpp" line="134"/>
         <source>Related Navaid</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/info/aircraftprogressconfig.cpp" line="133"/>
+        <location filename="src/info/aircraftprogressconfig.cpp" line="134"/>
         <source>A related navaid for a procedure fix describing
 the fix position relative to the navaid.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/info/aircraftprogressconfig.cpp" line="135"/>
+        <location filename="src/info/aircraftprogressconfig.cpp" line="136"/>
         <source>Restriction</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/info/aircraftprogressconfig.cpp" line="135"/>
+        <location filename="src/info/aircraftprogressconfig.cpp" line="136"/>
         <source>Altitude, speed or vertical angle restriction.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/info/aircraftprogressconfig.cpp" line="136"/>
+        <location filename="src/info/aircraftprogressconfig.cpp" line="137"/>
         <source>Distance to, time to and arrival time in UTC at the next waypoint.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/info/aircraftprogressconfig.cpp" line="137"/>
-        <location filename="src/info/aircraftprogressconfig.cpp" line="164"/>
+        <location filename="src/info/aircraftprogressconfig.cpp" line="138"/>
+        <location filename="src/info/aircraftprogressconfig.cpp" line="165"/>
         <source>Altitude</source>
         <translation type="unfinished">高度</translation>
     </message>
     <message>
-        <location filename="src/info/aircraftprogressconfig.cpp" line="137"/>
+        <location filename="src/info/aircraftprogressconfig.cpp" line="138"/>
         <source>Calculated altitude at the next waypoint.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/info/aircraftprogressconfig.cpp" line="138"/>
+        <location filename="src/info/aircraftprogressconfig.cpp" line="139"/>
         <source>Estimated fuel at the next waypoint.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/info/aircraftprogressconfig.cpp" line="139"/>
+        <location filename="src/info/aircraftprogressconfig.cpp" line="140"/>
         <source>Course to waypoint</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/info/aircraftprogressconfig.cpp" line="139"/>
+        <location filename="src/info/aircraftprogressconfig.cpp" line="140"/>
         <source>Direct course to the next waypoint.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/info/aircraftprogressconfig.cpp" line="140"/>
+        <location filename="src/info/aircraftprogressconfig.cpp" line="141"/>
         <source>Leg course from</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/info/aircraftprogressconfig.cpp" line="140"/>
+        <location filename="src/info/aircraftprogressconfig.cpp" line="141"/>
         <source>Outbound course from last VOR considering
 calibrated declination.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/info/aircraftprogressconfig.cpp" line="142"/>
+        <location filename="src/info/aircraftprogressconfig.cpp" line="143"/>
         <source>Leg course to</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/info/aircraftprogressconfig.cpp" line="142"/>
+        <location filename="src/info/aircraftprogressconfig.cpp" line="143"/>
         <source>Inbound course to next VOR considering
 calibrated declination.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/info/aircraftprogressconfig.cpp" line="144"/>
+        <location filename="src/info/aircraftprogressconfig.cpp" line="145"/>
         <source>Leg Course</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/info/aircraftprogressconfig.cpp" line="144"/>
+        <location filename="src/info/aircraftprogressconfig.cpp" line="145"/>
         <source>Course of the current active flight plan leg.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/info/aircraftprogressconfig.cpp" line="145"/>
-        <location filename="src/info/aircraftprogressconfig.cpp" line="152"/>
+        <location filename="src/info/aircraftprogressconfig.cpp" line="146"/>
+        <location filename="src/info/aircraftprogressconfig.cpp" line="153"/>
         <source>Heading</source>
         <translation type="unfinished">航向</translation>
     </message>
     <message>
-        <location filename="src/info/aircraftprogressconfig.cpp" line="145"/>
+        <location filename="src/info/aircraftprogressconfig.cpp" line="146"/>
         <source>Heading to fly to the next waypoint considering wind.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/info/aircraftprogressconfig.cpp" line="146"/>
+        <location filename="src/info/aircraftprogressconfig.cpp" line="147"/>
         <source>Cross Track Distance</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/info/aircraftprogressconfig.cpp" line="146"/>
+        <location filename="src/info/aircraftprogressconfig.cpp" line="147"/>
         <source>Distance to flight plan leg.
 ► means aircraft is left of flight plan leg (fly right) and ◄ means right of leg.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/info/aircraftprogressconfig.cpp" line="148"/>
+        <location filename="src/info/aircraftprogressconfig.cpp" line="149"/>
         <source>Remarks</source>
         <translation type="unfinished">备注</translation>
     </message>
     <message>
-        <location filename="src/info/aircraftprogressconfig.cpp" line="148"/>
+        <location filename="src/info/aircraftprogressconfig.cpp" line="149"/>
         <source>User entered remarks for an user flight plan position.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/info/aircraftprogressconfig.cpp" line="151"/>
+        <location filename="src/info/aircraftprogressconfig.cpp" line="152"/>
         <source>Aircraft</source>
         <translation type="unfinished">航空器</translation>
     </message>
     <message>
-        <location filename="src/info/aircraftprogressconfig.cpp" line="152"/>
+        <location filename="src/info/aircraftprogressconfig.cpp" line="153"/>
         <source>Aircraft heading.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/info/aircraftprogressconfig.cpp" line="153"/>
+        <location filename="src/info/aircraftprogressconfig.cpp" line="154"/>
         <source>Track</source>
         <translation type="unfinished">航迹</translation>
     </message>
     <message>
-        <location filename="src/info/aircraftprogressconfig.cpp" line="153"/>
+        <location filename="src/info/aircraftprogressconfig.cpp" line="154"/>
         <source>Flown aircraft track considering wind.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/info/aircraftprogressconfig.cpp" line="154"/>
+        <location filename="src/info/aircraftprogressconfig.cpp" line="155"/>
         <source>Fuel Flow</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/info/aircraftprogressconfig.cpp" line="154"/>
+        <location filename="src/info/aircraftprogressconfig.cpp" line="155"/>
         <source>Current fuel flow for all engines.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/info/aircraftprogressconfig.cpp" line="155"/>
+        <location filename="src/info/aircraftprogressconfig.cpp" line="156"/>
         <source>Current fuel amount on board.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/info/aircraftprogressconfig.cpp" line="156"/>
+        <location filename="src/info/aircraftprogressconfig.cpp" line="157"/>
         <source>Current aircraft gross weight.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/info/aircraftprogressconfig.cpp" line="157"/>
+        <location filename="src/info/aircraftprogressconfig.cpp" line="158"/>
         <source>Endurance</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/info/aircraftprogressconfig.cpp" line="157"/>
+        <location filename="src/info/aircraftprogressconfig.cpp" line="158"/>
         <source>Estimated endurance based on current fuel flow and groundspeed
 considering reserves and contingency. Only shown if airborne.
 Shows orange warning if below reserve and red error text if insufficient
@@ -1599,303 +1597,303 @@ when no flight plan is used.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/info/aircraftprogressconfig.cpp" line="161"/>
+        <location filename="src/info/aircraftprogressconfig.cpp" line="162"/>
         <source>Ice</source>
         <translation type="unfinished">冰面</translation>
     </message>
     <message>
-        <location filename="src/info/aircraftprogressconfig.cpp" line="161"/>
+        <location filename="src/info/aircraftprogressconfig.cpp" line="162"/>
         <source>Aircraft icing, if any.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/info/aircraftprogressconfig.cpp" line="165"/>
-        <location filename="src/info/aircraftprogressconfig.cpp" line="177"/>
+        <location filename="src/info/aircraftprogressconfig.cpp" line="166"/>
+        <location filename="src/info/aircraftprogressconfig.cpp" line="178"/>
         <source>Indicated</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/info/aircraftprogressconfig.cpp" line="165"/>
+        <location filename="src/info/aircraftprogressconfig.cpp" line="166"/>
         <source>Indicated altitude considering aircraft barometer setting.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/info/aircraftprogressconfig.cpp" line="166"/>
-        <location filename="src/info/aircraftprogressconfig.cpp" line="179"/>
+        <location filename="src/info/aircraftprogressconfig.cpp" line="167"/>
+        <location filename="src/info/aircraftprogressconfig.cpp" line="180"/>
         <source>Indicated Alternate</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/info/aircraftprogressconfig.cpp" line="166"/>
+        <location filename="src/info/aircraftprogressconfig.cpp" line="167"/>
         <source>Indicated altitude additional display in other
 than selected default units (ft or m).</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/info/aircraftprogressconfig.cpp" line="168"/>
+        <location filename="src/info/aircraftprogressconfig.cpp" line="169"/>
         <source>Actual</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/info/aircraftprogressconfig.cpp" line="168"/>
+        <location filename="src/info/aircraftprogressconfig.cpp" line="169"/>
         <source>Actual altitude.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/info/aircraftprogressconfig.cpp" line="169"/>
+        <location filename="src/info/aircraftprogressconfig.cpp" line="170"/>
         <source>Actual Alternate</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/info/aircraftprogressconfig.cpp" line="169"/>
+        <location filename="src/info/aircraftprogressconfig.cpp" line="170"/>
         <source>Actual altitude additional display in other
 than selected default units (ft or m).</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/info/aircraftprogressconfig.cpp" line="171"/>
+        <location filename="src/info/aircraftprogressconfig.cpp" line="172"/>
         <source>Above Ground</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/info/aircraftprogressconfig.cpp" line="171"/>
+        <location filename="src/info/aircraftprogressconfig.cpp" line="172"/>
         <source>Altitude above ground as reported by simulator.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/info/aircraftprogressconfig.cpp" line="172"/>
+        <location filename="src/info/aircraftprogressconfig.cpp" line="173"/>
         <source>Ground Elevation</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/info/aircraftprogressconfig.cpp" line="172"/>
+        <location filename="src/info/aircraftprogressconfig.cpp" line="173"/>
         <source>Ground elevation above normal as reported by simulator.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/info/aircraftprogressconfig.cpp" line="173"/>
+        <location filename="src/info/aircraftprogressconfig.cpp" line="174"/>
         <source>Autopilot Selected</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/info/aircraftprogressconfig.cpp" line="173"/>
+        <location filename="src/info/aircraftprogressconfig.cpp" line="174"/>
         <source>Preselected altitude in autopilot.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/info/aircraftprogressconfig.cpp" line="176"/>
+        <location filename="src/info/aircraftprogressconfig.cpp" line="177"/>
         <source>Speed</source>
         <translation type="unfinished">速度</translation>
     </message>
     <message>
-        <location filename="src/info/aircraftprogressconfig.cpp" line="177"/>
+        <location filename="src/info/aircraftprogressconfig.cpp" line="178"/>
         <source>Aircraft indicated airspeed.
 Shows orange and red if faster than %L1 kts below %L2 ft.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/info/aircraftprogressconfig.cpp" line="179"/>
+        <location filename="src/info/aircraftprogressconfig.cpp" line="180"/>
         <source>Aircraft indicated airspeed additional display in other
 than selected default units (kts, km/h or mph).</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/info/aircraftprogressconfig.cpp" line="181"/>
+        <location filename="src/info/aircraftprogressconfig.cpp" line="182"/>
         <source>Ground</source>
         <translation type="unfinished">地面</translation>
     </message>
     <message>
-        <location filename="src/info/aircraftprogressconfig.cpp" line="181"/>
+        <location filename="src/info/aircraftprogressconfig.cpp" line="182"/>
         <source>Aircraft groundspeed.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/info/aircraftprogressconfig.cpp" line="182"/>
+        <location filename="src/info/aircraftprogressconfig.cpp" line="183"/>
         <source>Ground Alternate</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/info/aircraftprogressconfig.cpp" line="182"/>
+        <location filename="src/info/aircraftprogressconfig.cpp" line="183"/>
         <source>Aircraft groundspeed additional display in other
 than selected default units (kts, km/h or mph).</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/info/aircraftprogressconfig.cpp" line="184"/>
+        <location filename="src/info/aircraftprogressconfig.cpp" line="185"/>
         <source>True Airspeed</source>
         <translation type="unfinished">真空速</translation>
     </message>
     <message>
-        <location filename="src/info/aircraftprogressconfig.cpp" line="184"/>
+        <location filename="src/info/aircraftprogressconfig.cpp" line="185"/>
         <source>Aircraft true airspeed.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/info/aircraftprogressconfig.cpp" line="185"/>
+        <location filename="src/info/aircraftprogressconfig.cpp" line="186"/>
         <source>Mach</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/info/aircraftprogressconfig.cpp" line="185"/>
+        <location filename="src/info/aircraftprogressconfig.cpp" line="186"/>
         <source>Aircraft mach number.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/info/aircraftprogressconfig.cpp" line="186"/>
+        <location filename="src/info/aircraftprogressconfig.cpp" line="187"/>
         <source>Vertical</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/info/aircraftprogressconfig.cpp" line="186"/>
+        <location filename="src/info/aircraftprogressconfig.cpp" line="187"/>
         <source>Aircraft vertical speed.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/info/aircraftprogressconfig.cpp" line="187"/>
+        <location filename="src/info/aircraftprogressconfig.cpp" line="188"/>
         <source>Vertical Alternate</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/info/aircraftprogressconfig.cpp" line="187"/>
+        <location filename="src/info/aircraftprogressconfig.cpp" line="188"/>
         <source>Aircraft vertical speed additional display in other
 than selected default units (fpm or m/s).</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/info/aircraftprogressconfig.cpp" line="191"/>
+        <location filename="src/info/aircraftprogressconfig.cpp" line="192"/>
         <source>Descent Path</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/info/aircraftprogressconfig.cpp" line="192"/>
+        <location filename="src/info/aircraftprogressconfig.cpp" line="193"/>
         <source>Deviation</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/info/aircraftprogressconfig.cpp" line="192"/>
+        <location filename="src/info/aircraftprogressconfig.cpp" line="193"/>
         <source>Vertical altitude deviation from descent path.
 ▼ means above (increase sink rate) and ▲ means below (decrease sink rate).</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/info/aircraftprogressconfig.cpp" line="194"/>
+        <location filename="src/info/aircraftprogressconfig.cpp" line="195"/>
         <source>Angle and Speed</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/info/aircraftprogressconfig.cpp" line="194"/>
+        <location filename="src/info/aircraftprogressconfig.cpp" line="195"/>
         <source>Vertical flight path angle needed to keep the vertical path angle.
 Changes to &quot;Required angle&quot; if mandatory in approach procedures.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/info/aircraftprogressconfig.cpp" line="196"/>
+        <location filename="src/info/aircraftprogressconfig.cpp" line="197"/>
         <source>Angle and Speed to Next</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/info/aircraftprogressconfig.cpp" line="196"/>
+        <location filename="src/info/aircraftprogressconfig.cpp" line="197"/>
         <source>Vertical descent angle and speed needed to arrive at
 the calculated altitude at the next waypoint.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/info/aircraftprogressconfig.cpp" line="200"/>
+        <location filename="src/info/aircraftprogressconfig.cpp" line="201"/>
         <source>Environment</source>
         <translation type="unfinished">环境</translation>
     </message>
     <message>
-        <location filename="src/info/aircraftprogressconfig.cpp" line="201"/>
+        <location filename="src/info/aircraftprogressconfig.cpp" line="202"/>
         <source>Wind Direction and Speed</source>
         <translation type="unfinished">风向和风速</translation>
     </message>
     <message>
-        <location filename="src/info/aircraftprogressconfig.cpp" line="201"/>
+        <location filename="src/info/aircraftprogressconfig.cpp" line="202"/>
         <source>Wind direction and speed at aircraft.
-Second line shows headwind indicated by ⮟ and tailwind by ⮝
-as well as crosswind (⮞ or ⮜).</source>
+Second line shows headwind indicated by %1 and tailwind by %2
+as well as crosswind (%3 or %4).</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/info/aircraftprogressconfig.cpp" line="204"/>
+        <location filename="src/info/aircraftprogressconfig.cpp" line="207"/>
         <source>Total Air Temperature</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/info/aircraftprogressconfig.cpp" line="204"/>
+        <location filename="src/info/aircraftprogressconfig.cpp" line="207"/>
         <source>Total air temperature (TAT).
 Also indicated air temperature (IAT) or ram air temperature.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/info/aircraftprogressconfig.cpp" line="206"/>
+        <location filename="src/info/aircraftprogressconfig.cpp" line="209"/>
         <source>Static Air Temperature</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/info/aircraftprogressconfig.cpp" line="206"/>
+        <location filename="src/info/aircraftprogressconfig.cpp" line="209"/>
         <source>Static air temperature (SAT).
 Also outside air temperature (OAT) or true air temperature.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/info/aircraftprogressconfig.cpp" line="208"/>
+        <location filename="src/info/aircraftprogressconfig.cpp" line="211"/>
         <source>ISA Deviation</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/info/aircraftprogressconfig.cpp" line="208"/>
+        <location filename="src/info/aircraftprogressconfig.cpp" line="211"/>
         <source>Deviation from standard temperature model.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/info/aircraftprogressconfig.cpp" line="209"/>
+        <location filename="src/info/aircraftprogressconfig.cpp" line="212"/>
         <source>Sea Level Pressure</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/info/aircraftprogressconfig.cpp" line="209"/>
+        <location filename="src/info/aircraftprogressconfig.cpp" line="212"/>
         <source>Barometric pressure at sea level.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/info/aircraftprogressconfig.cpp" line="210"/>
+        <location filename="src/info/aircraftprogressconfig.cpp" line="213"/>
         <source>Density Altitude</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/info/aircraftprogressconfig.cpp" line="210"/>
+        <location filename="src/info/aircraftprogressconfig.cpp" line="213"/>
         <source>Air density depending on pressure and temperature.
 Only shown on ground.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/info/aircraftprogressconfig.cpp" line="212"/>
+        <location filename="src/info/aircraftprogressconfig.cpp" line="215"/>
         <source>Conditions</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/info/aircraftprogressconfig.cpp" line="212"/>
+        <location filename="src/info/aircraftprogressconfig.cpp" line="215"/>
         <source>Rain, snow or other weather conditions.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/info/aircraftprogressconfig.cpp" line="213"/>
+        <location filename="src/info/aircraftprogressconfig.cpp" line="216"/>
         <source>Visibility</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/info/aircraftprogressconfig.cpp" line="213"/>
+        <location filename="src/info/aircraftprogressconfig.cpp" line="216"/>
         <source>Horizontal visibility at aircraft.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/info/aircraftprogressconfig.cpp" line="216"/>
+        <location filename="src/info/aircraftprogressconfig.cpp" line="219"/>
         <source>Coordinates</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/info/aircraftprogressconfig.cpp" line="216"/>
+        <location filename="src/info/aircraftprogressconfig.cpp" line="219"/>
         <source>Aircraft coordinates.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -29215,16 +29213,14 @@ Changes to &quot;Required angle&quot; if mandatory in approach procedures.</sour
         <translation>%1°M, %2</translation>
     </message>
     <message>
-        <location filename="src/profile/profilewidget.cpp" line="2430"/>
         <source>⮟</source>
         <oldsource>▼</oldsource>
-        <translation type="unfinished">▼</translation>
+        <translation type="obsolete">▼</translation>
     </message>
     <message>
-        <location filename="src/profile/profilewidget.cpp" line="2432"/>
         <source>⮝</source>
         <oldsource>▲</oldsource>
-        <translation type="unfinished">▲</translation>
+        <translation type="obsolete">▲</translation>
     </message>
     <message>
         <location filename="src/profile/profilewidget.cpp" line="2438"/>
@@ -29459,28 +29455,24 @@ Changes to &quot;Required angle&quot; if mandatory in approach procedures.</sour
         <translation>座标是有效的。</translation>
     </message>
     <message>
-        <location filename="src/common/formatter.cpp" line="231"/>
         <source> ⮝</source>
         <oldsource> ▲</oldsource>
-        <translation type="unfinished"> ▲</translation>
+        <translation type="obsolete"> ▲</translation>
     </message>
     <message>
-        <location filename="src/common/formatter.cpp" line="233"/>
         <source> ⮟</source>
         <oldsource> ▼</oldsource>
-        <translation type="unfinished"> ▼</translation>
+        <translation type="obsolete"> ▼</translation>
     </message>
     <message>
-        <location filename="src/common/formatter.cpp" line="246"/>
         <source> ⮜</source>
         <oldsource> ◄</oldsource>
-        <translation type="unfinished"> ◄</translation>
+        <translation type="obsolete"> ◄</translation>
     </message>
     <message>
-        <location filename="src/common/formatter.cpp" line="248"/>
         <source> ⮞</source>
         <oldsource> ►</oldsource>
-        <translation type="unfinished"> ►</translation>
+        <translation type="obsolete"> ►</translation>
     </message>
     <message>
         <location filename="src/common/formatter.cpp" line="381"/>
@@ -32484,6 +32476,8 @@ Changes to &quot;Required angle&quot; if mandatory in approach procedures.</sour
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <location filename="src/common/formatter.cpp" line="235"/>
+        <location filename="src/common/formatter.cpp" line="250"/>
         <location filename="src/common/proctypes.cpp" line="1025"/>
         <source> %1</source>
         <translation type="unfinished"> %1</translation>
@@ -33208,6 +33202,46 @@ Calculated based on the aircraft performance profile.</source>
         <location filename="src/route/routelabel.cpp" line="544"/>
         <source>/</source>
         <translation type="unfinished">/</translation>
+    </message>
+    <message>
+        <location filename="src/common/formatter.h" line="77"/>
+        <source>▲</source>
+        <translation type="unfinished">▲</translation>
+    </message>
+    <message>
+        <location filename="src/common/formatter.h" line="79"/>
+        <source>⮝</source>
+        <translation type="unfinished">▲</translation>
+    </message>
+    <message>
+        <location filename="src/common/formatter.h" line="86"/>
+        <source>▼</source>
+        <translation type="unfinished">▼</translation>
+    </message>
+    <message>
+        <location filename="src/common/formatter.h" line="88"/>
+        <source>⮟</source>
+        <translation type="unfinished">▼</translation>
+    </message>
+    <message>
+        <location filename="src/common/formatter.h" line="95"/>
+        <source>►</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/common/formatter.h" line="97"/>
+        <source>⮞</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/common/formatter.h" line="104"/>
+        <source>◄</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/common/formatter.h" line="106"/>
+        <source>⮜</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -34196,7 +34230,7 @@ to select departure and destination first.</oldsource>
         <location filename="src/route/routecontroller.cpp" line="1257"/>
         <location filename="src/route/routecontroller.cpp" line="1398"/>
         <location filename="src/route/routecontroller.cpp" line="2268"/>
-        <location filename="src/route/routecontroller.cpp" line="3775"/>
+        <location filename="src/route/routecontroller.cpp" line="3779"/>
         <source>Do not &amp;show this dialog again.</source>
         <translation>不要再显示此对话框 (&amp;S)。</translation>
     </message>
@@ -34347,7 +34381,7 @@ The start position is now set to the longest primary runway of the departure air
         <translation type="vanished">（已在地图上隐藏）</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="3133"/>
+        <location filename="src/route/routecontroller.cpp" line="3137"/>
         <source>Table view reset to defaults.</source>
         <translation>表格视图重置到默认值。</translation>
     </message>
@@ -34373,7 +34407,7 @@ The start position is now set to the longest primary runway of the departure air
     </message>
     <message>
         <location filename="src/route/routecontroller.cpp" line="189"/>
-        <location filename="src/route/routecontroller.cpp" line="2849"/>
+        <location filename="src/route/routecontroller.cpp" line="2853"/>
         <source>Procedure</source>
         <translation type="unfinished">进离场程序</translation>
     </message>
@@ -34684,37 +34718,46 @@ create the flight plan manually.</source>
 手动创建飞行计划。</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="3033"/>
+        <location filename="src/route/routecontroller.cpp" line="2628"/>
+        <source>Headwind on landing runway indicated by %1 and tailwind by %2
+as well as crosswind (%3 or %4).
+The wind information is taken from the selected source in
+menu &quot;Weather&quot; -&gt; &quot;Airport Weather Source&quot;.
+Wind is taken from nearest airport if not available.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/route/routecontroller.cpp" line="3037"/>
         <source>selected navaids</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="3766"/>
+        <location filename="src/route/routecontroller.cpp" line="3770"/>
         <source>&lt;p&gt;You can use this feature to allow editing of a procedure or to avoid problems with simulators or add-ons when loading an exported flight plan.&lt;/p&gt;&lt;p&gt;Note that you can undo this conversion.&lt;/p&gt;&lt;p&gt;Converting a procedure to waypoints loses information:&lt;/p&gt;&lt;ul&gt;&lt;li&gt;Several approach procedure leg types like holds and turns cannot be converted and will appear as straight lines.&lt;/li&gt;&lt;li&gt;Speed and altitude restrictions are included as remarks and are not followed in the elevation profile.&lt;/li&gt;&lt;/ul&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="3780"/>
+        <location filename="src/route/routecontroller.cpp" line="3784"/>
         <source>Convert Procedure</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="3820"/>
+        <location filename="src/route/routecontroller.cpp" line="3824"/>
         <source>Procedure converted.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="4606"/>
+        <location filename="src/route/routecontroller.cpp" line="4610"/>
         <source>Direct to</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="4728"/>
+        <location filename="src/route/routecontroller.cpp" line="4732"/>
         <source>Changed flight plan for direct to.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="4760"/>
+        <location filename="src/route/routecontroller.cpp" line="4764"/>
         <source>PPOS</source>
         <translation type="unfinished"></translation>
     </message>
@@ -34723,41 +34766,41 @@ create the flight plan manually.</source>
         <translation type="obsolete">机场</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="5649"/>
+        <location filename="src/route/routecontroller.cpp" line="5653"/>
         <source>Parking or start position &quot;%1&quot; not found at departure airport.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="5780"/>
+        <location filename="src/route/routecontroller.cpp" line="5784"/>
         <source>Download oceanic tracks in menu &quot;Flight Plan&quot;
 or calculate the flight plan again if the flight plan uses tracks.</source>
         <comment>Keep in sync with menu names</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="6004"/>
+        <location filename="src/route/routecontroller.cpp" line="6008"/>
         <source>Aircraft Performance: </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="6015"/>
-        <location filename="src/route/routecontroller.cpp" line="6018"/>
+        <location filename="src/route/routecontroller.cpp" line="6019"/>
+        <location filename="src/route/routecontroller.cpp" line="6022"/>
         <source>%1%2</source>
         <translation type="unfinished">%1%2</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="6015"/>
-        <location filename="src/route/routecontroller.cpp" line="6018"/>
+        <location filename="src/route/routecontroller.cpp" line="6019"/>
+        <location filename="src/route/routecontroller.cpp" line="6022"/>
         <source> cycle %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="6024"/>
+        <location filename="src/route/routecontroller.cpp" line="6028"/>
         <source>Scenery data: </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="6052"/>
+        <location filename="src/route/routecontroller.cpp" line="6056"/>
         <source>No flight plan.
 
 Remarks for the flight plan.</source>
@@ -34776,7 +34819,7 @@ Remarks for the flight plan.</source>
         <translation type="vanished">创建进近程序并用机场作为到达机场(&amp;A)</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2935"/>
+        <location filename="src/route/routecontroller.cpp" line="2939"/>
         <source>Show &amp;Procedures</source>
         <oldsource>Create &amp;approach</oldsource>
         <translation>显示进离场程序(&amp;P)</translation>
@@ -34786,37 +34829,37 @@ Remarks for the flight plan.</source>
         <translation type="vanished">编辑飞行计划位置的备注(&amp;P)...</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="3252"/>
+        <location filename="src/route/routecontroller.cpp" line="3256"/>
         <source>Waypoint Change</source>
         <translation>更改航路点</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="3265"/>
+        <location filename="src/route/routecontroller.cpp" line="3269"/>
         <source>Changed waypoint in flight plan.</source>
         <translation>更改飞行计划中的航路点。</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="3579"/>
+        <location filename="src/route/routecontroller.cpp" line="3583"/>
         <source>Move Waypoints</source>
         <translation>移动导航点</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="3648"/>
+        <location filename="src/route/routecontroller.cpp" line="3652"/>
         <source>Moved flight plan legs.</source>
         <translation>飞行计划航段已移动。</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="3673"/>
+        <location filename="src/route/routecontroller.cpp" line="3677"/>
         <source>Delete Procedure</source>
         <translation>删除进离场程序</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="3673"/>
+        <location filename="src/route/routecontroller.cpp" line="3677"/>
         <source>Delete Waypoints</source>
         <translation>删除导航点</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="3685"/>
+        <location filename="src/route/routecontroller.cpp" line="3689"/>
         <source>Removed flight plan legs.</source>
         <translation>移除飞行计划航段。</translation>
     </message>
@@ -34829,8 +34872,8 @@ Remarks for the flight plan.</source>
         <translation type="vanished">离场机场设置为 %1 停机位 %2。</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="3918"/>
-        <location filename="src/route/routecontroller.cpp" line="3961"/>
+        <location filename="src/route/routecontroller.cpp" line="3922"/>
+        <location filename="src/route/routecontroller.cpp" line="3965"/>
         <source>Set Start Position</source>
         <translation>设置起始位置</translation>
     </message>
@@ -34839,72 +34882,72 @@ Remarks for the flight plan.</source>
         <translation type="vanished">离场机场设置为 %1 起始位置 %2。</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="4015"/>
+        <location filename="src/route/routecontroller.cpp" line="4019"/>
         <source>Set Departure</source>
         <translation>设置离场机场</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="4036"/>
+        <location filename="src/route/routecontroller.cpp" line="4040"/>
         <source>Departure set to %1.</source>
         <translation>离场机场设置为 %1。</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="4086"/>
+        <location filename="src/route/routecontroller.cpp" line="4090"/>
         <source>Set Destination</source>
         <translation>设置到达机场</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="4107"/>
+        <location filename="src/route/routecontroller.cpp" line="4111"/>
         <source>Destination set to %1.</source>
         <translation>将到达机场设置为 %1。</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="4123"/>
+        <location filename="src/route/routecontroller.cpp" line="4127"/>
         <source>Add Alternate</source>
         <translation>添加备降机场</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="4155"/>
+        <location filename="src/route/routecontroller.cpp" line="4159"/>
         <source>Alternate %1 added.</source>
         <translation>备降机场 %1 已添加。</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="4367"/>
-        <location filename="src/route/routecontroller.cpp" line="4368"/>
         <location filename="src/route/routecontroller.cpp" line="4371"/>
-        <location filename="src/route/routecontroller.cpp" line="4381"/>
-        <location filename="src/route/routecontroller.cpp" line="4382"/>
+        <location filename="src/route/routecontroller.cpp" line="4372"/>
+        <location filename="src/route/routecontroller.cpp" line="4375"/>
         <location filename="src/route/routecontroller.cpp" line="4385"/>
+        <location filename="src/route/routecontroller.cpp" line="4386"/>
+        <location filename="src/route/routecontroller.cpp" line="4389"/>
         <source> *</source>
         <translation> *</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="4516"/>
+        <location filename="src/route/routecontroller.cpp" line="4520"/>
         <source>Add Procedure</source>
         <translation>添加进离场程序</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="4583"/>
+        <location filename="src/route/routecontroller.cpp" line="4587"/>
         <source>Added procedure to flight plan.</source>
         <translation>已将进离场程序加入到飞行计划。</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="4739"/>
+        <location filename="src/route/routecontroller.cpp" line="4743"/>
         <source>Add Waypoint</source>
         <translation>添加导航点</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="4751"/>
+        <location filename="src/route/routecontroller.cpp" line="4755"/>
         <source>Added waypoint to flight plan.</source>
         <translation>已将导航点加入到飞行计划。</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="4831"/>
+        <location filename="src/route/routecontroller.cpp" line="4835"/>
         <source>Change Waypoint</source>
         <translation>改变导航点</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="4886"/>
+        <location filename="src/route/routecontroller.cpp" line="4890"/>
         <source>Replaced waypoint in flight plan.</source>
         <translation>在飞行计划中替换航路点。</translation>
     </message>
@@ -34950,7 +34993,7 @@ Remarks for the flight plan.</source>
         <translation type="vanished">编辑飞行计划位置(&amp;P)...</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2988"/>
+        <location filename="src/route/routecontroller.cpp" line="2992"/>
         <source>Edit name and coordinates of user defined flight plan position</source>
         <translation>编辑用户定义飞行计划航点的名称和坐标</translation>
     </message>
@@ -34959,13 +35002,13 @@ Remarks for the flight plan.</source>
         <translation type="vanished">编辑飞行计划位置的备注(&amp;P)...</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2995"/>
+        <location filename="src/route/routecontroller.cpp" line="2999"/>
         <source>Edit remarks for selected flight plan leg</source>
         <translation>编辑选中的飞行计划航段的备注</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2614"/>
-        <location filename="src/route/routecontroller.cpp" line="5046"/>
+        <location filename="src/route/routecontroller.cpp" line="2616"/>
+        <location filename="src/route/routecontroller.cpp" line="5050"/>
         <source>Departure</source>
         <translation>离场机场</translation>
     </message>
@@ -35137,31 +35180,36 @@ You can move and resize columns by clicking into the flight plan column headers.
     </message>
     <message>
         <location filename="src/route/routecontroller.cpp" line="2607"/>
-        <source>Headwind on takeoff runway indicated by ⮟ and tailwind by ⮝
-as well as crosswind (⮞ or ⮜).
+        <source>Headwind on takeoff runway indicated by %1 and tailwind by %2
+as well as crosswind (%3 or %4).
 The wind information is taken from the selected source in
 menu &quot;Weather&quot; -&gt; &quot;Airport Weather Source&quot;.
 Wind is taken from nearest airport if not available.</source>
+        <oldsource>Headwind on takeoff runway indicated by ⮟ and tailwind by ⮝
+as well as crosswind (⮞ or ⮜).
+The wind information is taken from the selected source in
+menu &quot;Weather&quot; -&gt; &quot;Airport Weather Source&quot;.
+Wind is taken from nearest airport if not available.</oldsource>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2615"/>
+        <location filename="src/route/routecontroller.cpp" line="2617"/>
         <source>SID information.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2618"/>
+        <location filename="src/route/routecontroller.cpp" line="2620"/>
         <source>STAR and approach procedure information.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2620"/>
+        <location filename="src/route/routecontroller.cpp" line="2622"/>
         <source>Landing Runway</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2621"/>
-        <location filename="src/route/routecontroller.cpp" line="2625"/>
+        <location filename="src/route/routecontroller.cpp" line="2623"/>
+        <location filename="src/route/routecontroller.cpp" line="2627"/>
         <source>Destination runway heading, available distance for landing, elevation and facilities.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -35181,174 +35229,165 @@ Wind is taken from nearest airport if not available.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2617"/>
+        <location filename="src/route/routecontroller.cpp" line="2619"/>
         <source>Arrival and Approach</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2624"/>
+        <location filename="src/route/routecontroller.cpp" line="2626"/>
         <source>Landing Wind</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2626"/>
-        <source>Headwind on landing runway indicated by ⮟ and tailwind by ⮝
-as well as crosswind (⮞ or ⮜).
-The wind information is taken from the selected source in
-menu &quot;Weather&quot; -&gt; &quot;Airport Weather Source&quot;.
-Wind is taken from nearest airport if not available.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="src/route/routecontroller.cpp" line="2634"/>
+        <location filename="src/route/routecontroller.cpp" line="2638"/>
         <source>Flight Plan Table Footer</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2635"/>
+        <location filename="src/route/routecontroller.cpp" line="2639"/>
         <source>Selected Flight Plan Legs</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2636"/>
+        <location filename="src/route/routecontroller.cpp" line="2640"/>
         <source>Show distance, time and fuel for selected flight plan legs.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2638"/>
+        <location filename="src/route/routecontroller.cpp" line="2642"/>
         <source>Error Messages</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2639"/>
+        <location filename="src/route/routecontroller.cpp" line="2643"/>
         <source>Show error messages for flight plan elements like missing airports and more.
 It is strongly recommended to keep the error label enabled.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2644"/>
+        <location filename="src/route/routecontroller.cpp" line="2648"/>
         <source>Flight plan table columns</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2845"/>
+        <location filename="src/route/routecontroller.cpp" line="2849"/>
         <source> and </source>
         <translation type="unfinished"> 及 </translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2886"/>
+        <location filename="src/route/routecontroller.cpp" line="2890"/>
         <source>Show Departure &amp;Procedures for %1</source>
         <translation type="unfinished">显示 %1 的离场程序(&amp;P)</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2890"/>
+        <location filename="src/route/routecontroller.cpp" line="2894"/>
         <source>Show procedures (no departure procedure)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2896"/>
+        <location filename="src/route/routecontroller.cpp" line="2900"/>
         <source>Show Arrival/Approach &amp;Procedures for %1</source>
         <oldsource>Show Arrival &amp;Procedures for %1</oldsource>
         <translation type="unfinished">显示 %1 的进场程序(&amp;P)</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2900"/>
+        <location filename="src/route/routecontroller.cpp" line="2904"/>
         <source>Show &amp;Procedures (no arrival/approch procedure)</source>
         <oldsource>Show &amp;Procedures (no arrival procedure)</oldsource>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2904"/>
+        <location filename="src/route/routecontroller.cpp" line="2908"/>
         <source>Show Procedures for %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2909"/>
+        <location filename="src/route/routecontroller.cpp" line="2913"/>
         <source>Show Procedures (no procedure)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2913"/>
-        <location filename="src/route/routecontroller.cpp" line="2936"/>
+        <location filename="src/route/routecontroller.cpp" line="2917"/>
+        <location filename="src/route/routecontroller.cpp" line="2940"/>
         <source>Select Destination &amp;Runway for %1 ...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2918"/>
+        <location filename="src/route/routecontroller.cpp" line="2922"/>
         <source>Select &amp;Runway and use %1 as Destination ...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2924"/>
-        <location filename="src/route/routecontroller.cpp" line="2937"/>
+        <location filename="src/route/routecontroller.cpp" line="2928"/>
+        <location filename="src/route/routecontroller.cpp" line="2941"/>
         <source>Select &amp;Departure Runway for %1 ...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2929"/>
+        <location filename="src/route/routecontroller.cpp" line="2933"/>
         <source>Select Runway and use %1 as &amp;Departure ...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2942"/>
-        <location filename="src/route/routecontroller.cpp" line="3040"/>
+        <location filename="src/route/routecontroller.cpp" line="2946"/>
+        <location filename="src/route/routecontroller.cpp" line="3044"/>
         <source> (no runway)</source>
         <translation type="unfinished">（没有跑道）</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2981"/>
+        <location filename="src/route/routecontroller.cpp" line="2985"/>
         <source>Edit &amp;Position or Remarks ...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2987"/>
+        <location filename="src/route/routecontroller.cpp" line="2991"/>
         <source>&amp;Edit %1 ...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2994"/>
+        <location filename="src/route/routecontroller.cpp" line="2998"/>
         <source>Edit &amp;Remarks for %1 ...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="3884"/>
+        <location filename="src/route/routecontroller.cpp" line="3888"/>
         <source>Set Start Position to Airport</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="3909"/>
+        <location filename="src/route/routecontroller.cpp" line="3913"/>
         <source>Start postition set to airport.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="3952"/>
+        <location filename="src/route/routecontroller.cpp" line="3956"/>
         <source>Start position set to %1 parking %2.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="4000"/>
+        <location filename="src/route/routecontroller.cpp" line="4004"/>
         <source>Start position set to %1 position %2.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="4208"/>
-        <location filename="src/route/routecontroller.cpp" line="4249"/>
+        <location filename="src/route/routecontroller.cpp" line="4212"/>
+        <location filename="src/route/routecontroller.cpp" line="4253"/>
         <source>Select runway for destination:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="4215"/>
-        <location filename="src/route/routecontroller.cpp" line="4312"/>
+        <location filename="src/route/routecontroller.cpp" line="4219"/>
+        <location filename="src/route/routecontroller.cpp" line="4316"/>
         <source>Select runway for departure:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="4251"/>
+        <location filename="src/route/routecontroller.cpp" line="4255"/>
         <source>Select runway and use airport as destination:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="4314"/>
+        <location filename="src/route/routecontroller.cpp" line="4318"/>
         <source>Select runway and use airport as departure:</source>
         <translation type="unfinished"></translation>
     </message>
@@ -35357,23 +35396,23 @@ It is strongly recommended to keep the error label enabled.</source>
         <translation type="obsolete">全部</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="5044"/>
+        <location filename="src/route/routecontroller.cpp" line="5048"/>
         <source>Destination</source>
         <translation>到达机场</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="5048"/>
+        <location filename="src/route/routecontroller.cpp" line="5052"/>
         <source>Alternate</source>
         <translation>备降机场</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="5061"/>
+        <location filename="src/route/routecontroller.cpp" line="5065"/>
         <source>Track %1</source>
         <translation>航迹 %1</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="5075"/>
-        <location filename="src/route/routecontroller.cpp" line="5167"/>
+        <location filename="src/route/routecontroller.cpp" line="5079"/>
+        <location filename="src/route/routecontroller.cpp" line="5171"/>
         <source> / </source>
         <translation> / </translation>
     </message>
@@ -35394,7 +35433,7 @@ It is strongly recommended to keep the error label enabled.</source>
         <translation type="vanished">LOC</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="5398"/>
+        <location filename="src/route/routecontroller.cpp" line="5402"/>
         <source>%1 / %2</source>
         <oldsource>%1, %2</oldsource>
         <translation>%1, %2</translation>
@@ -35410,73 +35449,71 @@ It is strongly recommended to keep the error label enabled.</source>
         <translation type="vanished">▲</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="5414"/>
+        <location filename="src/route/routecontroller.cpp" line="5418"/>
         <source>%1 %2</source>
         <translation>%1 %2</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="5698"/>
+        <location filename="src/route/routecontroller.cpp" line="5702"/>
         <source>Waypoint &quot;%1&quot; not found.</source>
         <translation>航路点“%1”没有找到。</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="5733"/>
+        <location filename="src/route/routecontroller.cpp" line="5737"/>
         <source>
 </source>
         <translation>
 </translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="5768"/>
-        <location filename="src/route/routecontroller.cpp" line="5775"/>
+        <location filename="src/route/routecontroller.cpp" line="5772"/>
+        <location filename="src/route/routecontroller.cpp" line="5779"/>
         <source>Cannot load %1: %2</source>
         <translation>无法载入 %1: %2</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="5769"/>
+        <location filename="src/route/routecontroller.cpp" line="5773"/>
         <source>procedures</source>
         <translation>进离场程序</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="5769"/>
+        <location filename="src/route/routecontroller.cpp" line="5773"/>
         <source>procedure</source>
         <translation>进离场程序</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2845"/>
-        <location filename="src/route/routecontroller.cpp" line="5082"/>
-        <location filename="src/route/routecontroller.cpp" line="5083"/>
-        <location filename="src/route/routecontroller.cpp" line="5093"/>
-        <location filename="src/route/routecontroller.cpp" line="5162"/>
-        <location filename="src/route/routecontroller.cpp" line="5770"/>
-        <location filename="src/route/routecontroller.cpp" line="5777"/>
-        <location filename="src/route/routecontroller.cpp" line="6002"/>
-        <location filename="src/route/routecontroller.cpp" line="6024"/>
+        <location filename="src/route/routecontroller.cpp" line="2849"/>
+        <location filename="src/route/routecontroller.cpp" line="5086"/>
+        <location filename="src/route/routecontroller.cpp" line="5087"/>
+        <location filename="src/route/routecontroller.cpp" line="5097"/>
+        <location filename="src/route/routecontroller.cpp" line="5166"/>
+        <location filename="src/route/routecontroller.cpp" line="5774"/>
+        <location filename="src/route/routecontroller.cpp" line="5781"/>
+        <location filename="src/route/routecontroller.cpp" line="6006"/>
+        <location filename="src/route/routecontroller.cpp" line="6028"/>
         <source>, </source>
         <translation>, </translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="5411"/>
         <source>⮟</source>
-        <translation type="unfinished">▼</translation>
+        <translation type="obsolete">▼</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="5413"/>
         <source>⮝</source>
-        <translation type="unfinished">▲</translation>
+        <translation type="obsolete">▲</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="5771"/>
+        <location filename="src/route/routecontroller.cpp" line="5775"/>
         <source>Save and reload flight plan or select new procedures to fix this.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="5776"/>
+        <location filename="src/route/routecontroller.cpp" line="5780"/>
         <source>alternates</source>
         <translation>备降机场</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="5776"/>
+        <location filename="src/route/routecontroller.cpp" line="5780"/>
         <source>alternate</source>
         <translation>备降机场</translation>
     </message>
@@ -35624,7 +35661,7 @@ or calculate the flight plan again if your plan uses tracks.</source>
 </translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="6057"/>
+        <location filename="src/route/routecontroller.cpp" line="6061"/>
         <source>Remarks for the flight plan.</source>
         <translation>飞行计划的备注。</translation>
     </message>
@@ -35651,7 +35688,7 @@ to select departure and destination.</oldsource>
         <translation type="vanished">%1 下降顶点至到达机场</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="5973"/>
+        <location filename="src/route/routecontroller.cpp" line="5977"/>
         <source>Remarks changed</source>
         <translation>备注已更改</translation>
     </message>
