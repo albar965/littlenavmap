@@ -27286,18 +27286,21 @@ Spunta questo se fai affidamento sul GPS quando voli.</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="7319"/>
-        <source>Use the VATSIM network pre-defined configuration for online flying</source>
-        <translation>Utilizza la configurazione predefinita della rete VATSIM per il volo online</translation>
+        <source>Use the VATSIM network predefined configuration for online flying</source>
+        <oldsource>Use the VATSIM network pre-defined configuration for online flying</oldsource>
+        <translation type="unfinished">Utilizza la configurazione predefinita della rete VATSIM per il volo online</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="7329"/>
-        <source>Use the IVAO network pre-defined configuration for online flying</source>
-        <translation>Utilizza la configurazione predefinita della rete IVAO per il volo online</translation>
+        <source>Use the IVAO network predefined configuration for online flying</source>
+        <oldsource>Use the IVAO network pre-defined configuration for online flying</oldsource>
+        <translation type="unfinished">Utilizza la configurazione predefinita della rete IVAO per il volo online</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="7339"/>
-        <source>Use the PilotEdge network pre-defined configuration for online flying</source>
-        <translation>Utilizzare la configurazione predefinita della rete PilotEdge per il volo online</translation>
+        <source>Use the PilotEdge network predefined configuration for online flying</source>
+        <oldsource>Use the PilotEdge network pre-defined configuration for online flying</oldsource>
+        <translation type="unfinished">Utilizzare la configurazione predefinita della rete PilotEdge per il volo online</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="7342"/>

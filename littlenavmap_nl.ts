@@ -25742,17 +25742,20 @@ Wanneer &quot;Centreer kaart op vliegtuig en volgende waypoint van het vluchtpla
     </message>
     <message>
         <location filename="src/options/options.ui" line="7319"/>
-        <source>Use the VATSIM network pre-defined configuration for online flying</source>
-        <translation>Gebruik de VATSIM voorgedefinieerde netwerk-configuratie voor online vliegen</translation>
+        <source>Use the VATSIM network predefined configuration for online flying</source>
+        <oldsource>Use the VATSIM network pre-defined configuration for online flying</oldsource>
+        <translation type="unfinished">Gebruik de VATSIM voorgedefinieerde netwerk-configuratie voor online vliegen</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="7329"/>
-        <source>Use the IVAO network pre-defined configuration for online flying</source>
-        <translation>Gebruik de IVAO voorgedefinieerde netwerk-configuratie voor online vliegen</translation>
+        <source>Use the IVAO network predefined configuration for online flying</source>
+        <oldsource>Use the IVAO network pre-defined configuration for online flying</oldsource>
+        <translation type="unfinished">Gebruik de IVAO voorgedefinieerde netwerk-configuratie voor online vliegen</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="7339"/>
-        <source>Use the PilotEdge network pre-defined configuration for online flying</source>
+        <source>Use the PilotEdge network predefined configuration for online flying</source>
+        <oldsource>Use the PilotEdge network pre-defined configuration for online flying</oldsource>
         <translation type="unfinished"></translation>
     </message>
     <message>

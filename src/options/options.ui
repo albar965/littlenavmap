@@ -7316,7 +7316,7 @@ Entering a wrong value will cause errors when downloading weather reports.</stri
                <item>
                 <widget class="QRadioButton" name="radioButtonOptionsOnlineVatsim">
                  <property name="toolTip">
-                  <string>Use the VATSIM network pre-defined configuration for online flying</string>
+                  <string>Use the VATSIM network predefined configuration for online flying</string>
                  </property>
                  <property name="text">
                   <string>&amp;VATSIM</string>
@@ -7326,7 +7326,7 @@ Entering a wrong value will cause errors when downloading weather reports.</stri
                <item>
                 <widget class="QRadioButton" name="radioButtonOptionsOnlineIvao">
                  <property name="toolTip">
-                  <string>Use the IVAO network pre-defined configuration for online flying</string>
+                  <string>Use the IVAO network predefined configuration for online flying</string>
                  </property>
                  <property name="text">
                   <string>&amp;IVAO</string>
@@ -7336,7 +7336,7 @@ Entering a wrong value will cause errors when downloading weather reports.</stri
                <item>
                 <widget class="QRadioButton" name="radioButtonOptionsOnlinePilotEdge">
                  <property name="toolTip">
-                  <string>Use the PilotEdge network pre-defined configuration for online flying</string>
+                  <string>Use the PilotEdge network predefined configuration for online flying</string>
                  </property>
                  <property name="text">
                   <string>&amp;PilotEdge</string>

@@ -25122,18 +25122,21 @@ Default is &quot;https://nomads.ncep.noaa.gov/cgi-bin/filter_gfs_1p00.pl&quot;.<
     </message>
     <message>
         <location filename="src/options/options.ui" line="7319"/>
-        <source>Use the VATSIM network pre-defined configuration for online flying</source>
-        <translation>使用 VATSIM 网络预设的配置来在线飞行</translation>
+        <source>Use the VATSIM network predefined configuration for online flying</source>
+        <oldsource>Use the VATSIM network pre-defined configuration for online flying</oldsource>
+        <translation type="unfinished">使用 VATSIM 网络预设的配置来在线飞行</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="7329"/>
-        <source>Use the IVAO network pre-defined configuration for online flying</source>
-        <translation>使用 IVAO 网络预设的配置来在线飞行</translation>
+        <source>Use the IVAO network predefined configuration for online flying</source>
+        <oldsource>Use the IVAO network pre-defined configuration for online flying</oldsource>
+        <translation type="unfinished">使用 IVAO 网络预设的配置来在线飞行</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="7339"/>
-        <source>Use the PilotEdge network pre-defined configuration for online flying</source>
-        <translation>使用 PilotEdge 网络预设的配置来在线飞行</translation>
+        <source>Use the PilotEdge network predefined configuration for online flying</source>
+        <oldsource>Use the PilotEdge network pre-defined configuration for online flying</oldsource>
+        <translation type="unfinished">使用 PilotEdge 网络预设的配置来在线飞行</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="7342"/>

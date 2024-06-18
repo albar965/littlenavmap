@@ -8,34 +8,181 @@ This text is partially Markdown, so the formatting is sometimes strange.
 
 ## Notes
 
-**This is a stable release of Little Navmap which fixes several bugs and adds a few
+**This is a release candidate of Little Navmap which fixes several bugs and adds a few
 improvements and new features.**
 
-**Notable changes:** New add-on airport filter modes in menu View.
-Airport and navaid links in aircraft progress tab.
-Logbook status and collected aircraft performance now kept between restarts.
+**Note that the program translations and the user manual have not been updated yet.**
 
 **macOS users: Keep in mind that you have to clear the quarantine flag when updating Little Xpconnect. See
 [Clearing the Quarantine Flag on macOS](https://www.littlenavmap.org/manuals/littlenavmap/release/latest/en/XPCONNECT.html#clearing-the-quarantine-flag-on-macos).**
 
-The updated online user manual is available here:
-[Little Navmap - User Manual](https://www.littlenavmap.org/manuals/littlenavmap/release/3.0/en/).
-
-See here for user manual downloads:
-[User Manuals - Stable Releases](https://albar965.github.io/manuals.html#stable).
+**Reload the scenery library to see fixes like the duplicate COM frequencies for MSFS airports.**
 
 A big thank you to all who reported bugs and issues!
 
 ## Changes from 3.0.6 to 3.0.7.rc1
 
-See the GitHub changes:
+### Flight Plan Loading and Export
 
-https://github.com/albar965/littlenavmap/commits/release/3.0/?since=2024-03-26
+* Added export option for MSFS [KLN 90B](https://github.com/falcon71/kln90b) #1136
+* Added multiexport option for MSFS JustFlight BAE-14. This uses the QualityWings format.
+* Made loading of MSFS PLN flight plan files more tolerant for missing altitude in element
+  `WorldPosition`.
+* Fixed issue where a wrong error message about invalid procedures appeared after loading a MSFS
+  PLN file. The message appeared when saving loaded PLN as LNMPLN.
+* Better cruise altitude estimate if altitude could not determined from the flight plan after
+  loading. Altitude is rounded up to 2000 ft to the maximum of departure and destination elevation if
+  all else fails.
+* Changed file extensions in multiexport to be untranslatable for local language to avoid issues.
+* Now adding STAR entry waypoint plus airway to MSFS PLN export in certain cases. Removing
+  destination runway waypoints from MSFS PLN export if STAR is used.
 
-https://github.com/albar965/atools/commits/release/4.0/?since=2024-03-27
+### Weather
 
-Note that the GitHub changelogs for are more technical things and may be confusing for the general audience.
-Ask me if you'd like to know more about a note.
+* Added interpolated weather reports for for NOAA, VATSIM, IVAO and X-Plane weather. These appear
+  at airports having no METAR reports. Note that this does not cover cloud layers.
+* Added wind display for landing and takeoff runway in flight plan table header. This uses station
+  or interpolated winds as as selected in menu `Weather` -> `Airport Weather Source`.
+* Added support for Active Sky FS (MSFS).
+* Fixed issue where ActiveSky weather was not updated.
+* Fixed crash that happened randomly when updating METAR data or switching between simulators with
+  weather enabled.
+* Added sunrise and sunset to weather report page in information dock window.
+* Now showing weather stations with invalid reports crossed out on the map.
+* Fixed wrong time zone for METAR reports from FSX/P3D.
+* Better error messages for METAR decoding and outdated weather.
+* More optimizations to weather handling.
+
+### Random Flight Generation
+
+* Added shortcut to random flight creation: Menu `Flight Plan` -> `Generate Random Flight`. This
+  opens the search dock window and activates the controls to generate a random flight.
+* Added a dialog window where a user can select either a fixed departure or a fixed destination
+  airport for the random plan generation. Add at least one airport to your flight plan to enable this
+  function. #1013
+* Random plan generation now puts the change on the undo/redo stack once the user accepts a
+  generated flight. This is the same behavior as used in the flight plan route description which
+  allows to restore a previous flight plan and its changes.
+* Adjusted the maximum distance for random flight plan to realistic values.
+  The maximum is 10.800 NM.
+* Fixed the minimum and maximum distance for random flight search not being saved on exit.
+* Performance improvements and random selection for departure and destionation functionality
+  by [u-an-i](https://github.com/u-an-i).
+
+### Procedures and Runway Selection
+
+* Improved procedure search. Now showing the first and last waypoint of procedures in the procedure
+  tree. Also showing the first and last waypoint of a selected procedure in the header. The header
+  shows first and last for the full path including the procedure when selecting a transition.
+* Search now also looks for first and last waypoint of procedures. Procedures and and transitions
+  are hidden if no criteria match text search. Procedures are expanded if a transition matches the
+  search text. This allows to find matching STAR for a selected approach and vice versa, for example.
+* Procedure view now tries to keep content when switching simulators, provided the airport exists
+  in both simulators.
+* The procedure search tab now expands procedure branches already added to the flight plan.
+  Procedures and/or respective transitions are expanded when showing procedures for departure or
+  destination airport.
+* Runway selection dialogs windows now have the current runway end from the flight plan preselected.
+* The selection in procedure search is not saved anymore when changing airports to avoid unwanted
+  highlighting on the map.
+* Added `Shift+F5` shortcut for procedure search.
+* Fixed issue where switching between simulator databases left the procedure search in an invalid
+  state resulting in a crash.
+* Fixed issue where the show procedure menu item was not enabled in map context menu and others.
+  Example: Weston (EIWT) on X-Plane. #1154
+* Procedures for a clicked airport can now be shown with checkbox `Airports` disabled in options on
+  page `Map Tooltips and Clicks`.
+* Added keyboard shortcuts in procedure search. Hit `Return` to show a procedure or a waypoint in
+  the tree. Use the `Down` key to activate the tree from text input field.
+
+### Logbook
+
+* Added cruise altitude from used flight plan to logbook table. The logbook table layout is reset
+  back to default.
+* Logbook cleanup method improved. Extended function to cleanup off-airport coordinates like
+  2956N10702E 4831N12255W in addition to empty airport idents.
+* Optimizations for aircraft trail loading and display for logbook entries.
+
+### Map Display
+
+* Added warning dialog if aircraft trail is too long after startup as a hint for performance
+  issues. Also showing warning if trail was truncated after loading a GPX file.
+* Fixed issue where updated maximum number of trail points was not applied until restart.
+* Fixed crash when fetching tooltip information for short aircraft trails.
+* Fixed disappearing flight plans and aircraft trails on high zoom distances or long flight plans.
+  #1126
+* Fixed display issue where userpoints without type were hidden. Optimized code for userpoint
+  display.
+* Added internal object ID as optional aircraft label for AI/multiplayer. Enable this in options on
+  page `Map Labels` in branch `AI, Multiplayer and Online Client Aircraft`.
+* Fixed wrong bearing for nearest radio navaids of airport in information dock window. Used wrong
+  magnetic declination instead of airport value.
+* Attempt to fix not updating sun shading. #1125
+* Optimizations for airspace name and aircraft trail display.
+
+### Scenery Library
+
+* Now bailing out early when reading malformed BGL files from MSFS resulting in endless loop.
+  Example: Broken `UWLS.bgl`.
+* Fix for crash when reading BGL files having invalid airports.
+* Fixed COM frequency duplicates in MSFS scenery library with Navigraph navdata update installed.
+  Reload the scenery library to see the fix.
+
+### Information and Aircraft Progress
+
+* Now keeping airport, VOR, NDB, procedure, waypoint, userpoint and logbook information when
+  switching between simulators.
+* Omitting wrong X-Plane propeller ice indications for jets in user aircraft progress now.
+* Better formatting in weather and runway information.
+* Corrected wrong text for bearing from user aircraft. Now showing bearing and distance `from` user
+  aircraft instead of `to`.
+
+### User Interface
+
+* Added hint and link to clear the map tile cache in add Mapbox style dialog when changing or
+  updating the Mapbox user map.
+* Fixed issues where coordinates received the wrong sign near Meridian line when using Google
+  coordinates. This resulted in misplaced userpoints or distance rings.
+* Corrected inconsistent naming for arrival/approach. Now using both in related user interface
+  elements.
+* Reworked database error reporting to include more information. SQLite scenery library databases
+  open read only now.
+* Non-blocking dialog windows now remember position. This covers `Flight Plan Calculation`,
+  `Logbook Statistics` and `Flight Plan Route Description` dialog windows.
+* Resetting all non-blocking windows to default size and center position now when using `Reset
+  window layout` to avoid windows being lost off-screen. Also re-centering the main window when
+  resetting layout from window menu.
+* Added message dialog to `Reset all Messages` for clarification.
+* Fixed issue where application was still detected as running when trying to send a command through
+  the command line.
+* Added `-q` / `--quit` command line argument to exit an already running instance.
+* More checks to avoid crashes.
+
+### Web Interface
+
+* Fixed missing aircraft trail in web interface.
+* Fixed KML overlays not shown on the web interface.
+
+#### Improvements and fixes by [u-an-i](https://github.com/u-an-i) and [KOKAProduktion](https://github.com/KOKAProduktion)
+
+* Default display mode now uses a new navigation method. Click to center the map around the
+  click-spot and use the mouse wheel to zoom in or out.
+* The plugin `Dynamic touch and drag map` enables a dynamic map which has smooth scrolling
+  (click-and-move) as well as zooming with the mouse wheel. Note that neither the AI/multiplayer
+  aircraft nor the flight tracks of the user aircraft are shown in this mode. Small display errors
+  like duplicate labels can appear.
+* Legacy map removed.
+* More restructuring, performance improvements and updated documentation for the web API.
+
+### Installation
+
+* Windows installer now checks for running program on install and uninstall to avoid a broken
+  installation.
+* Changed Linux archive to XZ format for smaller files.
+* Added Debian installation packages provided by Daniel Buschke
+  [tuxmainy](https://github.com/tuxmainy). This package installs Little Navmap and Little Navconnect.
+  Little Xpconnect can still be installed using the menu item `Install Little Xpconnect in X-Plane plugins`
+  in the menu `Tools`.
 
 ==<<=============================================================================
 
@@ -2430,7 +2577,7 @@ See also
 * Added footer line to logbook search which shows summed up values for travel times and distances
   for selected logbook entries.
 * Added simulator and real travel time to logbook search result table.
-* Logbook entry dialog is now pre-filled with all data (flight plan, performance and trail) from
+* Logbook entry dialog is now prefilled with all data (flight plan, performance and trail) from
   current session. This can be removed by pressing reset.
 * Added cleanup function for logbook which removes invalid logbook entries that can result from
   pattern work or repeated approaches. Main menu `Logbook` -> `Cleanup Logbook Entries` or logbook
@@ -5832,7 +5979,7 @@ Flight Plan:
 
 Flight Plan Export:
 * Added separate export menu item for X-IvAp since format differs slightly from IvAp. #395
-  Fixed more issues with IVAP export. Alternate airports are now pre-filled in online format export.
+  Fixed more issues with IVAP export. Alternate airports are now prefilled in online format export.
 * Added TFDi Design 717 flight plan export format. #399
 * Now omitting final DCT for flight factor aircraft export to `corte.in`.
   Should fix loading of flight plans without STAR. #394

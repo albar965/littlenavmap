@@ -26123,17 +26123,20 @@ Ignoré lorsque &quot;Centrer la carte sur l&apos;avion et le prochain waypoint 
     </message>
     <message>
         <location filename="src/options/options.ui" line="7319"/>
-        <source>Use the VATSIM network pre-defined configuration for online flying</source>
+        <source>Use the VATSIM network predefined configuration for online flying</source>
+        <oldsource>Use the VATSIM network pre-defined configuration for online flying</oldsource>
         <translation type="unfinished">Utiliser la configuration prédéfinie du réseau VATSIM pour le vol connecté</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="7329"/>
-        <source>Use the IVAO network pre-defined configuration for online flying</source>
+        <source>Use the IVAO network predefined configuration for online flying</source>
+        <oldsource>Use the IVAO network pre-defined configuration for online flying</oldsource>
         <translation type="unfinished">Utiliser la configuration prédéfinie du réseau IVAO pour le vol sur internet</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="7339"/>
-        <source>Use the PilotEdge network pre-defined configuration for online flying</source>
+        <source>Use the PilotEdge network predefined configuration for online flying</source>
+        <oldsource>Use the PilotEdge network pre-defined configuration for online flying</oldsource>
         <translation type="unfinished">Utiliser la configuration réseau PilotEdge prédéfinie pour le vol en ligne</translation>
     </message>
     <message>

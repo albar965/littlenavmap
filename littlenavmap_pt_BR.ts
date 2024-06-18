@@ -25934,8 +25934,9 @@ O padrão é &quot;https://nomads.ncep.noaa.gov/cgi-bin/filter_gfs_1p00.pl&quot;
     </message>
     <message>
         <location filename="src/options/options.ui" line="7339"/>
-        <source>Use the PilotEdge network pre-defined configuration for online flying</source>
-        <translation>Use as configurações predefinida da rede PilotEdge para voar online</translation>
+        <source>Use the PilotEdge network predefined configuration for online flying</source>
+        <oldsource>Use the PilotEdge network pre-defined configuration for online flying</oldsource>
+        <translation type="unfinished">Use as configurações predefinida da rede PilotEdge para voar online</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="7342"/>
@@ -27801,13 +27802,15 @@ Os dados originais têm muitos erros.</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="7329"/>
-        <source>Use the IVAO network pre-defined configuration for online flying</source>
-        <translation>Use a configuração pré-definida da rede IVAO para voos on-line</translation>
+        <source>Use the IVAO network predefined configuration for online flying</source>
+        <oldsource>Use the IVAO network pre-defined configuration for online flying</oldsource>
+        <translation type="unfinished">Use a configuração pré-definida da rede IVAO para voos on-line</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="7319"/>
-        <source>Use the VATSIM network pre-defined configuration for online flying</source>
-        <translation>Use a configuração pré-definida da rede VATSIM para voos on-line</translation>
+        <source>Use the VATSIM network predefined configuration for online flying</source>
+        <oldsource>Use the VATSIM network pre-defined configuration for online flying</oldsource>
+        <translation type="unfinished">Use a configuração pré-definida da rede VATSIM para voos on-line</translation>
     </message>
     <message>
         <source>User Interface</source>
