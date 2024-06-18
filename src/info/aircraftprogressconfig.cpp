@@ -145,7 +145,7 @@ void AircraftProgressConfig::progressConfiguration()
   treeDialog.addItem2(nextItem, pid::NEXT_LEG_COURSE,       tr("Leg Course"), tr("Course of the current active flight plan leg."));
   treeDialog.addItem2(nextItem, pid::NEXT_HEADING,          tr("Heading"), tr("Heading to fly to the next waypoint considering wind."));
   treeDialog.addItem2(nextItem, pid::NEXT_CROSS_TRACK_DIST, tr("Cross Track Distance"), tr("Distance to flight plan leg.\n"
-                                                                                           "► means aircraft is left of flight plan leg (fly right) and ◄ means right of leg."));
+                                                                                           "%1 means aircraft is left of flight plan leg (fly right) and %2 means right of leg.").arg(formatter::pointerRight()).arg(formatter::pointerLeft()));
   treeDialog.addItem2(nextItem, pid::NEXT_REMARKS,              tr("Remarks"), tr("User entered remarks for an user flight plan position."));
 
   // Aircraft ==========================================================================================================
@@ -191,7 +191,7 @@ void AircraftProgressConfig::progressConfiguration()
   // Descent ==========================================================================================================
   QTreeWidgetItem *descentItem = treeDialog.addTopItem1(tr("Descent Path"));
   treeDialog.addItem2(descentItem, pid::DESCENT_DEVIATION,   tr("Deviation"), tr("Vertical altitude deviation from descent path.\n"
-                                                                                 "▼ means above (increase sink rate) and ▲ means below (decrease sink rate)."));
+                                                                                 "%1 means above (increase sink rate) and %2 means below (decrease sink rate).").arg(formatter::pointerDown()).arg(formatter::pointerUp()));
   treeDialog.addItem2(descentItem, pid::DESCENT_ANGLE_SPEED, tr("Angle and Speed"), tr("Vertical flight path angle needed to keep the vertical path angle.\n"
                                                                                        "Changes to \"Required angle\" if mandatory in approach procedures."));
   treeDialog.addItem2(descentItem, pid::DESCENT_VERT_ANGLE_NEXT, tr("Angle and Speed to Next"), tr("Vertical descent angle and speed needed to arrive at\n"

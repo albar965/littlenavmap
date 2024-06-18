@@ -17,6 +17,7 @@
 
 #include "symbolpainter.h"
 
+#include "common/formatter.h"
 #include "common/mapcolors.h"
 #include "common/maptypes.h"
 #include "common/unit.h"
@@ -746,9 +747,9 @@ void SymbolPainter::drawAirportMsa(QPainter *painter, const map::MapAirportMsa& 
         bearing = atools::geo::normalizeCourse(bearing + 180.f + magvar);
 
         if(bearing < 180.f)
-          text.prepend(tr("◄"));
+          text.prepend(formatter::pointerLeft());
         else
-          text.append(tr("►"));
+          text.append(formatter::pointerRight());
 
         // Line from center to top
         QLineF line(x, y, x, y - radius + 2.f);

@@ -17,6 +17,7 @@
 
 #include "mappainter/mappainternav.h"
 
+#include "common/formatter.h"
 #include "common/symbolpainter.h"
 #include "common/mapcolors.h"
 #include "common/textplacement.h"
@@ -346,7 +347,8 @@ void MapPainterNav::paintAirways(const QList<map::MapAirway> *airways, bool fast
           if(aw.direction != map::DIR_BOTH && rotateText)
             // Turn arrow depending on text angle, direction and depending if text segment is reversed compared to first
             // Omit arrow if no rotation
-            txt.prepend(((textBearing < 180.f) ^ place.positionReversed.at(j) ^ (aw.direction == map::DIR_FORWARD)) ? tr("◄ ") : tr("► "));
+            txt.prepend(((textBearing < 180.f) ^ place.positionReversed.at(j) ^ (aw.direction == map::DIR_FORWARD)) ?
+                        tr("%1 ").arg(formatter::pointerLeft()) : tr("%1 ").arg(formatter::pointerRight()));
           else
             // Elide for not rotated texts
             txt = atools::elideTextShort(txt, 20);

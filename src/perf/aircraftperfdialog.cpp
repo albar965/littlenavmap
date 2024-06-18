@@ -50,6 +50,9 @@ AircraftPerfDialog::AircraftPerfDialog(QWidget *parent, const atools::fs::perf::
   perf = new AircraftPerf;
   *perf = aircraftPerformance;
 
+  ui->doubleSpinBoxClimbVertSpeed->setSuffix(tr(" %vspeed% %1").arg(formatter::pointerUp()));
+  ui->doubleSpinBoxDescentVertSpeed->setSuffix(tr(" %vspeed% %1").arg(formatter::pointerDown()));
+
   // All widgets that need their unit placeholders replaced on unit changes
   unitWidgets.append({
     ui->comboBoxFuelUnit,

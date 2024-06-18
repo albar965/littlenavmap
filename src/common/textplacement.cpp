@@ -18,6 +18,7 @@
 #include "common/coordinateconverter.h"
 #include "common/textplacement.h"
 
+#include "common/formatter.h"
 #include "geo/line.h"
 #include "common/mapflags.h"
 #include "geo/calculations.h"
@@ -41,8 +42,8 @@ TextPlacement::TextPlacement(QPainter *painterParam, const CoordinateConverter *
                              const QRect& screenRectParam)
   : painter(painterParam), converter(coordinateConverter)
 {
-  arrowRight = tr(" ►");
-  arrowLeft = tr("◄ ");
+  arrowRight = tr(" %1").arg(formatter::pointerRight());
+  arrowLeft = tr("%1 ").arg(formatter::pointerLeft());
   sectionSeparator = tr(" / ");
   screenRect = screenRectParam;
 }

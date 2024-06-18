@@ -17,6 +17,7 @@
 
 #include "route/route.h"
 
+#include "common/formatter.h"
 #include "common/maptools.h"
 #include "common/unit.h"
 #include "fs/db/databasemeta.h"
@@ -3814,9 +3815,9 @@ void Route::getVerticalPathDeviationTexts(QString *descentDeviation, QString *ve
           float diff = userAircraft.getActualAltitudeFt() - vertAlt;
           QString upDown;
           if(diff >= 100.f)
-            upDown = tr(", above ▼");
+            upDown = tr(", above %1").arg(formatter::pointerDown());
           else if(diff <= -100)
-            upDown = tr(", below ▲");
+            upDown = tr(", below %1").arg(formatter::pointerUp());
 
           *descentDeviation = Unit::altFeet(diff) % upDown;
         }
@@ -3836,7 +3837,7 @@ void Route::getVerticalPathDeviationTexts(QString *descentDeviation, QString *ve
     if(vertAngle < map::INVALID_ANGLE_VALUE)
     {
       QString speedText = Unit::speedVertFpm(-atools::geo::descentSpeedForPathAngle(userAircraft.getGroundSpeedKts(), vertAngle));
-      *verticalAngle = tr("%L1°, %L2").arg(vertAngle, 0, 'g', required ? 3 : 2).arg(speedText % tr(" ▼"));
+      *verticalAngle = tr("%L1°, %L2").arg(vertAngle, 0, 'g', required ? 3 : 2).arg(speedText % tr(" %1").arg(formatter::pointerDown()));
     }
   }
 
@@ -3847,7 +3848,7 @@ void Route::getVerticalPathDeviationTexts(QString *descentDeviation, QString *ve
     if(vertAngleToNext < map::INVALID_ANGLE_VALUE)
     {
       QString speedText = Unit::speedVertFpm(-atools::geo::descentSpeedForPathAngle(userAircraft.getGroundSpeedKts(), vertAngleToNext));
-      *verticalAngleNext = tr("%L1°, %L2").arg(vertAngleToNext, 0, 'g', 2).arg(speedText % tr(" ▼"));
+      *verticalAngleNext = tr("%L1°, %L2").arg(vertAngleToNext, 0, 'g', 2).arg(speedText % tr(" %1").arg(formatter::pointerDown()));
     }
   }
 

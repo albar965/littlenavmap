@@ -127,25 +127,25 @@ Salvare le modifiche?</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="907"/>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="1191"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="1194"/>
         <source>Fuel</source>
         <translation>Carburante</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="909"/>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="1194"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="1197"/>
         <source>Fuel Type:</source>
         <translation>Tipo di Carburante:</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="909"/>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="1194"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="1197"/>
         <source>Avgas</source>
         <translation>Benzina avio</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="909"/>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="1194"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="1197"/>
         <source>Jetfuel</source>
         <translation>Carburante per Jet</translation>
     </message>
@@ -156,7 +156,7 @@ Salvare le modifiche?</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="911"/>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="1225"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="1228"/>
         <source>Taxi Fuel:</source>
         <translation>Carburante per il Taxi:</translation>
     </message>
@@ -172,43 +172,41 @@ Salvare le modifiche?</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="920"/>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="930"/>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="938"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="931"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="939"/>
         <source>True Airspeed:</source>
         <translation>Velocità aerea Reale:</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="921"/>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="940"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="941"/>
         <source>Vertical Speed:</source>
         <translation>Velocità Verticale:</translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="921"/>
         <source> &lt;b&gt;▲&lt;/b&gt;</source>
-        <translation> &lt;b&gt;▲&lt;/b&gt;</translation>
+        <translation type="vanished"> &lt;b&gt;▲&lt;/b&gt;</translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="922"/>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="931"/>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="941"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="923"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="932"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="944"/>
         <source>Fuel Flow:</source>
         <translation>Consumo Carburante:</translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="928"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="929"/>
         <source>Cruise</source>
         <translation>Crociera</translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="936"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="937"/>
         <source>Descent</source>
         <translation>Discesa</translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="940"/>
         <source> &lt;b&gt;▼&lt;/b&gt;</source>
-        <translation> &lt;b&gt;▼&lt;/b&gt;</translation>
+        <translation type="vanished"> &lt;b&gt;▼&lt;/b&gt;</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="787"/>
@@ -228,65 +226,65 @@ Salvare le modifiche?</translation>
         <translation type="vanished">File delle Prestazioni</translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="954"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="957"/>
         <source>Performance File:</source>
         <translation>File delle Prestazioni:</translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="1015"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="1018"/>
         <source>Aircraft Performance %1 - %2</source>
         <translation>Prestazioni dell&apos;Aereo %1 - %2</translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="1029"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="1032"/>
         <source>reserve fuel</source>
         <translation>carburante di riserva</translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="1031"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="1034"/>
         <source>climb fuel flow</source>
         <translation>consumo carburante in salita</translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="1033"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="1036"/>
         <source>cruise fuel flow</source>
         <translation>consumo carburante in crociera</translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="1035"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="1038"/>
         <source>descent fuel flow</source>
         <translation>consumo carburante in discesa</translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="1041"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="1044"/>
         <source>Invalid value for %1.</source>
         <translation>Valore non valido per %1.</translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="1041"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="1044"/>
         <source>Invalid values for %1.</source>
         <translation>Valori non validi per %1.</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="900"/>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="1002"/>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="1041"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="1005"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="1044"/>
         <source>, </source>
         <translation>, </translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="1163"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="1166"/>
         <source>Flight Plan</source>
         <translation>Piano di volo</translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="1167"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="1170"/>
         <source>Distance and Time:</source>
         <translation>Distanza e Ora:</translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="1146"/>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="1167"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="1149"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="1170"/>
         <source>%1, %2</source>
         <translation>%1, %2</translation>
     </message>
@@ -355,7 +353,7 @@ Salvare le modifiche?</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="809"/>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="1281"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="1284"/>
         <source>Remarks</source>
         <translation>Note</translation>
     </message>
@@ -366,7 +364,7 @@ Salvare le modifiche?</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="896"/>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="1133"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="1136"/>
         <source>Aircraft</source>
         <translation>Aereo</translation>
     </message>
@@ -396,44 +394,50 @@ Salvare le modifiche?</translation>
         <translation>La raccolta delle prestazioni è terminata. È ora possibile unire i dati attuali e riavviare la raccolta utilizzando i pulsanti in alto per registrare un nuovo volo.</translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="986"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="921"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="942"/>
+        <source> &lt;b&gt;%1&lt;/b&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="989"/>
         <source>Hard and soft surface</source>
         <translation>Superficie dura e morbida</translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="989"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="992"/>
         <source>Hard surface</source>
         <translation>Superficie dura</translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="992"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="995"/>
         <source>Water</source>
         <translation>Acqua</translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="995"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="998"/>
         <source>Amphibian</source>
         <translation>Anfibio</translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="1002"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="1005"/>
         <source>Minimum runway:</source>
         <translation>Pista minima:</translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="1058"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="1061"/>
         <source>Descent fuel flow is much higher than cruise fuel flow.</source>
         <translation>Il flusso di carburante di discesa è molto superiore al flusso di carburante di crociera.</translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="1117"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="1120"/>
         <source>User aircraft type &quot;%1&quot; in simulator is not equal to type &quot;%2&quot; used in performance file.
 Load the matching aircraft performance file or adapt the field &quot;Aircraft type&quot; in the currently loaded file.</source>
         <translation>Il tipo di aereo utente &quot;%1&quot; nel simulatore non è uguale al tipo &quot;%2&quot; utilizzato nel file delle prestazioni.
 Caricare il file delle prestazioni dell&apos;aeromobile corrispondente o adattare il campo &quot;Tipo di aeromobile&quot; nel file attualmente caricato.</translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="1357"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="1360"/>
         <source>%1 (%2):</source>
         <translation>%1 (%2):</translation>
     </message>
@@ -442,12 +446,12 @@ Caricare il file delle prestazioni dell&apos;aeromobile corrispondente o adattar
         <translation type="vanished">Piano di Volo non valido.</translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="1027"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="1030"/>
         <source>usable fuel</source>
         <translation>carburante utilizzabile</translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="1037"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="1040"/>
         <source>alternate fuel flow</source>
         <translation>flusso di carburante per alternato</translation>
     </message>
@@ -472,17 +476,17 @@ Caricare il file delle prestazioni dell&apos;aeromobile corrispondente o adattar
         <translation type="vanished">Simulatore &quot;%1&quot; ≠ File Prestazioni &quot;%2&quot;.</translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="1135"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="1138"/>
         <source>Estimated range with reserve:</source>
         <translation>Portata stimata con la riserva:</translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="1197"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="1200"/>
         <source>Usable Fuel:</source>
         <translation>Carburante Utilizzabile:</translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="1149"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="1152"/>
         <source>Cruise fuel flow not set</source>
         <translation>Flusso carburante in crociera non impostato</translation>
     </message>
@@ -497,12 +501,12 @@ Caricare il file delle prestazioni dell&apos;aeromobile corrispondente o adattar
         <translation>Nessun Piano di Volo.</translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="1025"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="1028"/>
         <source>aircraft type</source>
         <translation>tipo aereo</translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="1056"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="1059"/>
         <source>Climb fuel flow is smaller than cruise fuel flow.</source>
         <translation>Il flusso di carburante di salita è inferiore al flusso di carburante di crociera.</translation>
     </message>
@@ -511,17 +515,17 @@ Caricare il file delle prestazioni dell&apos;aeromobile corrispondente o adattar
         <translation type="vanished">Il flusso di carburante di discesa è superiore al flusso di carburante di crociera.</translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="1065"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="1068"/>
         <source>Climb speed is higher than cruise speed.</source>
         <translation>La velocità di salita è superiore alla velocità di crociera.</translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="1067"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="1070"/>
         <source>Descent speed is much smaller than cruise speed.</source>
         <translation>La velocità di discesa è molto inferiore alla velocità di crociera.</translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="1072"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="1075"/>
         <source>Aircraft type is empty. Use an official ICAO code like &quot;B738&quot;, &quot;BE9L&quot; or &quot;C172&quot;.</source>
         <translation>Il tipo di aeromobile è vuoto. Usa un codice ICAO ufficiale come &quot;B738&quot;, &quot;BE9L&quot; o &quot;C172&quot;.</translation>
     </message>
@@ -530,17 +534,17 @@ Caricare il file delle prestazioni dell&apos;aeromobile corrispondente o adattar
         <translation type="vanished">Il tipo di aeromobile &quot;%1&quot; non è valido. Usa un codice ICAO ufficiale come &quot;B738&quot;, &quot;BE9L&quot; o &quot;C172&quot;.</translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="1080"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="1083"/>
         <source>Possible problems found:</source>
         <translation>Possibili problemi trovati:</translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="1090"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="1093"/>
         <source>Block fuel of %1 exceeds usable of %2.</source>
         <translation>Carburante ai blocchi di %1 eccede quello utilizzabile di %2.</translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="1101"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="1104"/>
         <source>Reserve fuel of %1 exceeds usable of %2.</source>
         <translation>Carburante di riserva di %1 eccede quello utilizzabile di %2.</translation>
     </message>
@@ -549,57 +553,57 @@ Caricare il file delle prestazioni dell&apos;aeromobile corrispondente o adattar
         <translation type="vanished">Il tipo di aeromobile utente &quot;%1&quot; nel simulatore non è uguale al tipo &quot;%2&quot; utilizzato nel file delle prestazioni.</translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="1152"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="1155"/>
         <source>Cruise speed not set</source>
         <translation>Velocità di crociera non impostata</translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="1155"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="1158"/>
         <source>Usable fuel not set</source>
         <translation>Carburante utilizzabile non impostato</translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="1171"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="1174"/>
         <source>Distance:</source>
         <translation>Distanza:</translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="1171"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="1174"/>
         <source>%1</source>
         <translation>%1</translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="1174"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="1177"/>
         <source>Average Ground Speed:</source>
         <translation>Velocità al suolo Media:</translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="1175"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="1178"/>
         <source>True Airspeed at Cruise:</source>
         <translation>Velocità aerea Reale in Crociera:</translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="1179"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="1182"/>
         <source>Mach at cruise:</source>
         <translation>Mach in crociera:</translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="1182"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="1185"/>
         <source>Average wind total</source>
         <translation>Totale vento medio</translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="1184"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="1187"/>
         <source>Average wind at cruise</source>
         <translation>Vento medio in crociera</translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="1206"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="1209"/>
         <source>&lt;br/&gt;&lt;b&gt;%1 % of usable Fuel&lt;/b&gt;</source>
         <translation>&lt;br/&gt;&lt;b&gt;%1 % di Carburante utilizzabile&lt;/b&gt;</translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="1334"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="1337"/>
         <source>%1°T, %2</source>
         <translation>%1°T, %2</translation>
     </message>
@@ -620,7 +624,7 @@ Caricare il file delle prestazioni dell&apos;aeromobile corrispondente o adattar
         <translation type="vanished">◄</translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="1346"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="1349"/>
         <source>headwind</source>
         <translation>vento contrario</translation>
     </message>
@@ -629,12 +633,12 @@ Caricare il file delle prestazioni dell&apos;aeromobile corrispondente o adattar
         <translation type="vanished">►</translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="1351"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="1354"/>
         <source>tailwind</source>
         <translation>vento di coda</translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="1353"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="1356"/>
         <source>%1 %2 %3</source>
         <translation>%1 %2 %3</translation>
     </message>
@@ -643,29 +647,29 @@ Caricare il file delle prestazioni dell&apos;aeromobile corrispondente o adattar
         <translation type="vanished">Vento medio (%1):</translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="1359"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="1362"/>
         <source>
 </source>
         <translation>
 </translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="1362"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="1365"/>
         <source>No head- or tailwind</source>
         <translation>Nessun vento in testa o in coda</translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="1362"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="1365"/>
         <source>No wind</source>
         <translation>Senza vento</translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="1191"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="1194"/>
         <source>Fuel Plan</source>
         <translation>Calcolo Carburante</translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="1201"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="1204"/>
         <source>Trip Fuel:</source>
         <translation>Carburante per il Volo:</translation>
     </message>
@@ -674,7 +678,7 @@ Caricare il file delle prestazioni dell&apos;aeromobile corrispondente o adattar
         <translation type="vanished">&lt;br/&gt;%1 % di Carburante utilizzabile</translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="1211"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="1214"/>
         <source>Block Fuel:</source>
         <translation>Carburante ai Blocchi:</translation>
     </message>
@@ -683,84 +687,84 @@ Caricare il file delle prestazioni dell&apos;aeromobile corrispondente o adattar
         <translation type="vanished">%1%2</translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="1213"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="1216"/>
         <source>Fuel at Destination:</source>
         <translation>Carburante a Destinazione:</translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="1216"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="1219"/>
         <source>Alternate Fuel:</source>
         <translation>Carburante per Alternato:</translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="1222"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="1225"/>
         <source>Reserve Fuel:</source>
         <translation>Carburante di Riserva:</translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="1228"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="1231"/>
         <source>Extra Fuel:</source>
         <translation>Carburante Extra:</translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="1233"/>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="1237"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="1236"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="1240"/>
         <source>Contingency Fuel:</source>
         <translation>Carburante di Emergenza:</translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="1233"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="1236"/>
         <source>%1 %, %2</source>
         <translation>%1 %, %2</translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="1237"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="1240"/>
         <source>%1 %</source>
         <translation>%1 %</translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="1245"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="1248"/>
         <source>Climb and Descent</source>
         <translation>Salita e Discesa</translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="1249"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="1252"/>
         <source>Climb:</source>
         <translation>Salita:</translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="1249"/>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="1264"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="1252"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="1267"/>
         <source>%1 at %2, %3° Flight Path Angle</source>
         <translation>%1 a %2, %3° Angolo del Percorso di Volo</translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="1255"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="1258"/>
         <source>Time to Climb:</source>
         <translation>Tempo di Salita:</translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="1259"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="1262"/>
         <source>Climb not valid</source>
         <translation>Salita non valida</translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="1264"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="1267"/>
         <source>Descent:</source>
         <translation>Discesa:</translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="1269"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="1272"/>
         <source>Descent Rule of Thumb:</source>
         <translation>Regola Generale di Discesa:</translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="1269"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="1272"/>
         <source>%1 per %2 %3</source>
         <translation>%1 per %2 %3</translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfcontroller.cpp" line="1275"/>
+        <location filename="src/perf/aircraftperfcontroller.cpp" line="1278"/>
         <source>Descent not valid</source>
         <translation>Discesa non valida</translation>
     </message>
@@ -935,9 +939,9 @@ Questo aumenterà il carburante di viaggio in base alla percentuale indicata.</t
     </message>
     <message>
         <location filename="src/perf/aircraftperfdialog.ui" line="601"/>
-        <location filename="src/perf/aircraftperfdialog.ui" line="758"/>
-        <location filename="src/perf/aircraftperfdialog.ui" line="868"/>
-        <location filename="src/perf/aircraftperfdialog.ui" line="1037"/>
+        <location filename="src/perf/aircraftperfdialog.ui" line="755"/>
+        <location filename="src/perf/aircraftperfdialog.ui" line="865"/>
+        <location filename="src/perf/aircraftperfdialog.ui" line="1031"/>
         <source> %speed% true airspeed</source>
         <translation> %speed% velocità aerea reale</translation>
     </message>
@@ -952,9 +956,8 @@ Questo aumenterà il carburante di viaggio in base alla percentuale indicata.</t
         <translation>Velocità media verticale di &amp;Salita:</translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfdialog.ui" line="693"/>
         <source> %vspeed% ▲</source>
-        <translation> %vspeed% ▲</translation>
+        <translation type="vanished"> %vspeed% ▲</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfdialog.ui" line="658"/>
@@ -1103,9 +1106,9 @@ Basato sulla velocità di crociera e sul flusso di carburante.</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfdialog.ui" line="674"/>
-        <location filename="src/perf/aircraftperfdialog.ui" line="796"/>
-        <location filename="src/perf/aircraftperfdialog.ui" line="906"/>
-        <location filename="src/perf/aircraftperfdialog.ui" line="996"/>
+        <location filename="src/perf/aircraftperfdialog.ui" line="793"/>
+        <location filename="src/perf/aircraftperfdialog.ui" line="903"/>
+        <location filename="src/perf/aircraftperfdialog.ui" line="990"/>
         <source> %fuel% per hour</source>
         <translation> %fuel% per ora</translation>
     </message>
@@ -1115,54 +1118,53 @@ Basato sulla velocità di crociera e sul flusso di carburante.</translation>
         <translation>Velocità verticale media di salita all&apos;altitudine tipica di crociera.</translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfdialog.ui" line="718"/>
+        <location filename="src/perf/aircraftperfdialog.ui" line="715"/>
         <source>Cruise</source>
         <translation>Crociera</translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfdialog.ui" line="745"/>
+        <location filename="src/perf/aircraftperfdialog.ui" line="742"/>
         <source>C&amp;ruise speed at typical cruise altitude:</source>
         <translation>Velocità di c&amp;rociera alla tipica altitudine di Crociera:</translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfdialog.ui" line="783"/>
+        <location filename="src/perf/aircraftperfdialog.ui" line="780"/>
         <source>Fuel flow in c&amp;ruise:</source>
         <translation>Consumo carburante in C&amp;rociera:</translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfdialog.ui" line="812"/>
+        <location filename="src/perf/aircraftperfdialog.ui" line="809"/>
         <source>Descent</source>
         <translation>Discesa</translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfdialog.ui" line="839"/>
+        <location filename="src/perf/aircraftperfdialog.ui" line="836"/>
         <source>Average vertical &amp;descent speed:</source>
         <translation>Velocità media verticale di &amp;discesa:</translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfdialog.ui" line="922"/>
         <source> %vspeed% ▼</source>
-        <translation> %vspeed% ▼</translation>
+        <translation type="vanished"> %vspeed% ▼</translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfdialog.ui" line="1060"/>
+        <location filename="src/perf/aircraftperfdialog.ui" line="1054"/>
         <source>Remarks</source>
         <translation>Note</translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfdialog.ui" line="855"/>
+        <location filename="src/perf/aircraftperfdialog.ui" line="852"/>
         <source>Average &amp;descent speed:</source>
         <translation>Velocità media di &amp;Discesa:</translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfdialog.ui" line="944"/>
+        <location filename="src/perf/aircraftperfdialog.ui" line="938"/>
         <source>Equivalent rule of thumb for
 the given descent speeds</source>
         <translation>Regola generale equivalente per
 la velocità di discesa data</translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfdialog.ui" line="893"/>
+        <location filename="src/perf/aircraftperfdialog.ui" line="890"/>
         <source>Average fuel flow for &amp;descent:</source>
         <translation>Consumo carburante medio di &amp;Discesa:</translation>
     </message>
@@ -1196,12 +1198,12 @@ Il rapporto sul carburante mostrerà un avviso se questo non corrisponde al tipo
         <translation>Questo è solo a scopo informativo.</translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfdialog.ui" line="967"/>
+        <location filename="src/perf/aircraftperfdialog.ui" line="961"/>
         <source>Alternate</source>
         <translation>Alternato</translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfdialog.ui" line="988"/>
+        <location filename="src/perf/aircraftperfdialog.ui" line="982"/>
         <source>Fuel flow  when flying to an alternate typically at low altitudes.
 The farthest alternate is used to calculate the fuel requirement.
 The default is the cruise fuel flow.</source>
@@ -1210,17 +1212,17 @@ L&apos;alternato più lontano viene utilizzato per calcolare il fabbisogno di ca
 L&apos;impostazione predefinita è il flusso di carburante da crociera.</translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfdialog.ui" line="1009"/>
+        <location filename="src/perf/aircraftperfdialog.ui" line="1003"/>
         <source>Average speed for &amp;alternate:</source>
         <translation>Velocità media per l&apos;&amp;Alternato:</translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfdialog.ui" line="1019"/>
+        <location filename="src/perf/aircraftperfdialog.ui" line="1013"/>
         <source>Average fuel flow for &amp;alternate:</source>
         <translation>Consumo carburante medio per l&apos;&amp;Alternato:</translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfdialog.ui" line="1029"/>
+        <location filename="src/perf/aircraftperfdialog.ui" line="1023"/>
         <source>Average true airspeed when flying to alternate typically at low altitudes.
 The farthest alternate is used to calculate the fuel requirement.
 Default is cruise speed.</source>
@@ -1242,7 +1244,13 @@ L&apos;impostazione predefinita è la velocità di crociera.</translation>
         <translation>OK e &amp;Salva</translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfdialog.cpp" line="213"/>
+        <location filename="src/perf/aircraftperfdialog.cpp" line="53"/>
+        <location filename="src/perf/aircraftperfdialog.cpp" line="54"/>
+        <source> %vspeed% %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/perf/aircraftperfdialog.cpp" line="216"/>
         <source>Aircraft type is empty. It is recommended to use official ICAO codes like &quot;B738&quot;, &quot;BE9L&quot; or &quot;C172&quot;.</source>
         <oldsource>Aircraft type seems to be invalid. Use official ICAO codes like &quot;B738&quot;, &quot;BE9L&quot; or &quot;C172&quot;.</oldsource>
         <translation>Il tipo di aeromobile è vuoto. Si consiglia di utilizzare i codici ufficiali ICAO come &quot;B738&quot;, &quot;BE9L&quot; o &quot;C172&quot;.</translation>
@@ -1252,37 +1260,37 @@ L&apos;impostazione predefinita è la velocità di crociera.</translation>
         <translation type="vanished">Il tipo di aeromobile è vuoto. Usa un codice ICAO ufficiale come &quot;B738&quot;, &quot;BE9L&quot; o &quot;C172&quot;.</translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfdialog.cpp" line="220"/>
+        <location filename="src/perf/aircraftperfdialog.cpp" line="223"/>
         <source>Aircraft type is probably not valid. It is recommended to use official ICAO codes like &quot;B738&quot;, &quot;BE9L&quot; or &quot;C172&quot;.</source>
         <translation>Il tipo di aeromobile probabilmente non è valido. Si consiglia di utilizzare i codici ufficiali ICAO come &quot;B738&quot;, &quot;BE9L&quot; o &quot;C172&quot;.</translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfdialog.cpp" line="232"/>
+        <location filename="src/perf/aircraftperfdialog.cpp" line="235"/>
         <source>Usable fuel not set.</source>
         <translation>Carburante utilizzabile non impostato.</translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfdialog.cpp" line="234"/>
+        <location filename="src/perf/aircraftperfdialog.cpp" line="237"/>
         <source>Usable fuel smaller than reserve.</source>
         <translation>Carburante utilizzabile inferiore alla riserva.</translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfdialog.cpp" line="236"/>
+        <location filename="src/perf/aircraftperfdialog.cpp" line="239"/>
         <source>Cruise speed not set.</source>
         <translation>Velocità di crociera non impostata.</translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfdialog.cpp" line="238"/>
+        <location filename="src/perf/aircraftperfdialog.cpp" line="241"/>
         <source>Cruise fuel flow not set.</source>
         <translation>Flusso carburante in crociera non impostato.</translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfdialog.cpp" line="249"/>
+        <location filename="src/perf/aircraftperfdialog.cpp" line="252"/>
         <source>Estimated range with reserve %1, %2.</source>
         <translation>Portata stimata con la riserva %1, %2.</translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfdialog.cpp" line="263"/>
+        <location filename="src/perf/aircraftperfdialog.cpp" line="266"/>
         <source>Descent Rule of Thumb: %1 per %2 %3.</source>
         <translation>Regola Generale di Discesa: %1 per %2 %3.</translation>
     </message>
@@ -1591,8 +1599,19 @@ declinazione calibrata.</translation>
     <message>
         <location filename="src/info/aircraftprogressconfig.cpp" line="147"/>
         <source>Distance to flight plan leg.
+%1 means aircraft is left of flight plan leg (fly right) and %2 means right of leg.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/info/aircraftprogressconfig.cpp" line="193"/>
+        <source>Vertical altitude deviation from descent path.
+%1 means above (increase sink rate) and %2 means below (decrease sink rate).</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Distance to flight plan leg.
 ► means aircraft is left of flight plan leg (fly right) and ◄ means right of leg.</source>
-        <translation>Distanza dal tratto del piano di volo.
+        <translation type="vanished">Distanza dal tratto del piano di volo.
 ► significa che l&apos;aereo è a sinistra del tratto del piano di volo (vai a destra) e ◄ significa a destra del tratto.</translation>
     </message>
     <message>
@@ -1841,10 +1860,9 @@ diverse dalle unità predefinite (fpm o m/s).</translation>
         <translation>Scostamento</translation>
     </message>
     <message>
-        <location filename="src/info/aircraftprogressconfig.cpp" line="193"/>
         <source>Vertical altitude deviation from descent path.
 ▼ means above (increase sink rate) and ▲ means below (decrease sink rate).</source>
-        <translation>Deviazione verticale dall&apos;altitudine rispetto al sentiero di discesa.
+        <translation type="vanished">Deviazione verticale dall&apos;altitudine rispetto al sentiero di discesa.
 ▼ significa sopra (aumento del rateo di discesa) e ▲ significa sotto (diminuzione del rateo di discesa).</translation>
     </message>
     <message>
@@ -19352,9 +19370,8 @@ kHz/MHz</translation>
         <translation>Tipo Segmento:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3298"/>
         <source> ► </source>
-        <translation> ► </translation>
+        <translation type="vanished"> ► </translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="3349"/>
@@ -20557,13 +20574,10 @@ kHz/MHz</translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="4473"/>
-        <source>&lt;b&gt;◄&lt;/b&gt;</source>
-        <translation>&lt;b&gt;◄&lt;/b&gt;</translation>
-    </message>
-    <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="4475"/>
-        <source>&lt;b&gt;►&lt;/b&gt;</source>
-        <translation>&lt;b&gt;►&lt;/b&gt;</translation>
+        <source>&lt;b&gt;%1&lt;/b&gt;</source>
+        <oldsource>&lt;b&gt;◄&lt;/b&gt;</oldsource>
+        <translation type="unfinished">&lt;b&gt;◄&lt;/b&gt;</translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="4477"/>
@@ -21023,6 +21037,11 @@ kHz/MHz</translation>
         <translation>All&apos;ultima tratta del piano di volo:</translation>
     </message>
     <message>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3298"/>
+        <source> %1 </source>
+        <translation type="unfinished"> %1 </translation>
+    </message>
+    <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="3427"/>
         <source>Flight plan departure parking</source>
         <translation>Parcheggio di partenza del piano di volo</translation>
@@ -21157,13 +21176,10 @@ kHz/MHz</translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="4735"/>
-        <source> &lt;b&gt;▲&lt;/b&gt;</source>
-        <translation> &lt;b&gt;▲&lt;/b&gt;</translation>
-    </message>
-    <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="4737"/>
-        <source> &lt;b&gt;▼&lt;/b&gt;</source>
-        <translation> &lt;b&gt;▼&lt;/b&gt;</translation>
+        <source> &lt;b&gt;%1&lt;/b&gt;</source>
+        <oldsource> &lt;b&gt;▲&lt;/b&gt;</oldsource>
+        <translation type="unfinished"> &lt;b&gt;▲&lt;/b&gt;</translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="4746"/>
@@ -21210,8 +21226,9 @@ kHz/MHz</translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="4778"/>
-        <source> ▼</source>
-        <translation> ▼</translation>
+        <source> %1</source>
+        <oldsource> ▼</oldsource>
+        <translation type="unfinished"> ▼</translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="4776"/>
@@ -21751,8 +21768,8 @@ kHz/MHz</translation>
     </message>
     <message>
         <location filename="src/mappainter/mappainterairport.cpp" line="840"/>
-        <location filename="src/mappainter/mappainternav.cpp" line="262"/>
-        <location filename="src/mappainter/mappainternav.cpp" line="272"/>
+        <location filename="src/mappainter/mappainternav.cpp" line="263"/>
+        <location filename="src/mappainter/mappainternav.cpp" line="273"/>
         <location filename="src/mappainter/mappainterroute.cpp" line="104"/>
         <location filename="src/mappainter/mappainterroute.cpp" line="121"/>
         <source> / </source>
@@ -21760,16 +21777,21 @@ kHz/MHz</translation>
     </message>
     <message>
         <location filename="src/mappainter/mappainterairport.cpp" line="887"/>
-        <location filename="src/mappainter/mappainterairport.cpp" line="896"/>
-        <location filename="src/mappainter/mappainternav.cpp" line="349"/>
-        <source>► </source>
-        <translation>► </translation>
+        <location filename="src/mappainter/mappainterairport.cpp" line="898"/>
+        <location filename="src/mappainter/mappainternav.cpp" line="351"/>
+        <location filename="src/mappainter/mappainterroute.cpp" line="1242"/>
+        <location filename="src/mappainter/mappainterroute.cpp" line="1252"/>
+        <location filename="src/mappainter/mappainterroute.cpp" line="1276"/>
+        <source>%1 </source>
+        <translation type="unfinished">%1 </translation>
     </message>
     <message>
-        <location filename="src/mappainter/mappainterairport.cpp" line="891"/>
-        <location filename="src/mappainter/mappainterairport.cpp" line="899"/>
+        <source>► </source>
+        <translation type="vanished">► </translation>
+    </message>
+    <message>
         <source> ◄</source>
-        <translation> ◄</translation>
+        <translation type="vanished"> ◄</translation>
     </message>
     <message>
         <location filename="src/mappainter/mappainter.cpp" line="982"/>
@@ -21865,21 +21887,17 @@ kHz/MHz</translation>
         <translation type="vanished">°M/T</translation>
     </message>
     <message>
-        <location filename="src/mappainter/mappainternav.cpp" line="334"/>
-        <location filename="src/mappainter/mappainternav.cpp" line="356"/>
-        <location filename="src/mappainter/mappaintervehicle.cpp" line="313"/>
-        <location filename="src/mappainter/mappaintervehicle.cpp" line="406"/>
-        <location filename="src/mappainter/mappaintervehicle.cpp" line="509"/>
+        <location filename="src/mappainter/mappainternav.cpp" line="335"/>
+        <location filename="src/mappainter/mappainternav.cpp" line="358"/>
+        <location filename="src/mappainter/mappaintervehicle.cpp" line="314"/>
+        <location filename="src/mappainter/mappaintervehicle.cpp" line="407"/>
+        <location filename="src/mappainter/mappaintervehicle.cpp" line="510"/>
         <source>, </source>
         <translation>, </translation>
     </message>
     <message>
-        <location filename="src/mappainter/mappainternav.cpp" line="349"/>
-        <location filename="src/mappainter/mappainterroute.cpp" line="1242"/>
-        <location filename="src/mappainter/mappainterroute.cpp" line="1252"/>
-        <location filename="src/mappainter/mappainterroute.cpp" line="1276"/>
         <source>◄ </source>
-        <translation>◄ </translation>
+        <translation type="vanished">◄ </translation>
     </message>
     <message>
         <location filename="src/mappainter/mappainterroute.cpp" line="709"/>
@@ -21921,11 +21939,16 @@ kHz/MHz</translation>
         <translation type="vanished">°T GC</translation>
     </message>
     <message>
+        <location filename="src/mappainter/mappainterairport.cpp" line="893"/>
+        <location filename="src/mappainter/mappainterairport.cpp" line="903"/>
         <location filename="src/mappainter/mappainterroute.cpp" line="1240"/>
         <location filename="src/mappainter/mappainterroute.cpp" line="1254"/>
         <location filename="src/mappainter/mappainterroute.cpp" line="1274"/>
-        <source> ►</source>
-        <translation> ►</translation>
+        <location filename="src/mappainter/mappaintervehicle.cpp" line="446"/>
+        <location filename="src/mappainter/mappaintervehicle.cpp" line="448"/>
+        <source> %1</source>
+        <oldsource> ►</oldsource>
+        <translation type="unfinished"> ►</translation>
     </message>
     <message>
         <location filename="src/mappainter/mappainterroute.cpp" line="1245"/>
@@ -21950,7 +21973,7 @@ kHz/MHz</translation>
         <translation>...</translation>
     </message>
     <message>
-        <location filename="src/mappainter/mappaintervehicle.cpp" line="266"/>
+        <location filename="src/mappainter/mappaintervehicle.cpp" line="267"/>
         <source>%1 to %2</source>
         <translation>%1 a %2</translation>
     </message>
@@ -21959,8 +21982,8 @@ kHz/MHz</translation>
         <translation type="vanished">Nessuno</translation>
     </message>
     <message>
-        <location filename="src/mappainter/mappaintervehicle.cpp" line="279"/>
-        <location filename="src/mappainter/mappaintervehicle.cpp" line="386"/>
+        <location filename="src/mappainter/mappaintervehicle.cpp" line="280"/>
+        <location filename="src/mappainter/mappaintervehicle.cpp" line="387"/>
         <source>HDG %3°M</source>
         <translation>HDG %3°M</translation>
     </message>
@@ -21969,7 +21992,7 @@ kHz/MHz</translation>
         <translation type="vanished">HDG %3°T</translation>
     </message>
     <message>
-        <location filename="src/mappainter/mappaintervehicle.cpp" line="305"/>
+        <location filename="src/mappainter/mappaintervehicle.cpp" line="306"/>
         <source>ALT %1%2</source>
         <translation>ALT %1%2</translation>
     </message>
@@ -21983,90 +22006,88 @@ kHz/MHz</translation>
         <translation>%1%2</translation>
     </message>
     <message>
-        <location filename="src/mappainter/mappaintervehicle.cpp" line="301"/>
-        <location filename="src/mappainter/mappaintervehicle.cpp" line="397"/>
+        <location filename="src/mappainter/mappaintervehicle.cpp" line="302"/>
+        <location filename="src/mappainter/mappaintervehicle.cpp" line="398"/>
         <source>IND %1</source>
         <translation>IND %1</translation>
     </message>
     <message>
-        <location filename="src/mappainter/mappaintervehicle.cpp" line="400"/>
+        <location filename="src/mappainter/mappaintervehicle.cpp" line="401"/>
         <source>ALT %1</source>
         <translation>ALT %1</translation>
     </message>
     <message>
-        <location filename="src/mappainter/mappaintervehicle.cpp" line="403"/>
+        <location filename="src/mappainter/mappaintervehicle.cpp" line="404"/>
         <source>AGL %1</source>
         <translation>AGL %1</translation>
     </message>
     <message>
-        <location filename="src/mappainter/mappaintervehicle.cpp" line="267"/>
         <location filename="src/mappainter/mappaintervehicle.cpp" line="268"/>
+        <location filename="src/mappainter/mappaintervehicle.cpp" line="269"/>
         <source>Unknown</source>
         <translation>Sconosciuto</translation>
     </message>
     <message>
-        <location filename="src/mappainter/mappaintervehicle.cpp" line="286"/>
+        <location filename="src/mappainter/mappaintervehicle.cpp" line="287"/>
         <source>From User %1 %2°M</source>
         <translation>Dall&apos;Utente %1 %2°M</translation>
     </message>
     <message>
-        <location filename="src/mappainter/mappaintervehicle.cpp" line="332"/>
+        <location filename="src/mappainter/mappaintervehicle.cpp" line="333"/>
         <source>ID %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/mappainter/mappaintervehicle.cpp" line="348"/>
+        <location filename="src/mappainter/mappaintervehicle.cpp" line="349"/>
         <source>…</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/mappainter/mappaintervehicle.cpp" line="429"/>
+        <location filename="src/mappainter/mappaintervehicle.cpp" line="430"/>
         <source>Ice %</source>
         <translation>Ghiaccio %</translation>
     </message>
     <message>
-        <location filename="src/mappainter/mappaintervehicle.cpp" line="445"/>
         <source> ▲</source>
-        <translation> ▲</translation>
+        <translation type="vanished"> ▲</translation>
     </message>
     <message>
-        <location filename="src/mappainter/mappaintervehicle.cpp" line="447"/>
         <source> ▼</source>
-        <translation> ▼</translation>
+        <translation type="vanished"> ▼</translation>
     </message>
     <message>
-        <location filename="src/mappainter/mappaintervehicle.cpp" line="486"/>
+        <location filename="src/mappainter/mappaintervehicle.cpp" line="487"/>
         <source>XPDR %1</source>
         <oldsource>TCAS %1</oldsource>
         <translation>XPDR %1</translation>
     </message>
     <message>
-        <location filename="src/mappainter/mappaintervehicle.cpp" line="500"/>
+        <location filename="src/mappainter/mappaintervehicle.cpp" line="501"/>
         <source>IAS %1</source>
         <translation>IAS %1</translation>
     </message>
     <message>
-        <location filename="src/mappainter/mappaintervehicle.cpp" line="503"/>
+        <location filename="src/mappainter/mappaintervehicle.cpp" line="504"/>
         <source>GS %2</source>
         <translation>GS %2</translation>
     </message>
     <message>
-        <location filename="src/mappainter/mappaintervehicle.cpp" line="506"/>
+        <location filename="src/mappainter/mappaintervehicle.cpp" line="507"/>
         <source>TAS %1</source>
         <translation>TAS %1</translation>
     </message>
     <message>
-        <location filename="src/mappainter/mappaintervehicle.cpp" line="537"/>
+        <location filename="src/mappainter/mappaintervehicle.cpp" line="538"/>
         <source>%1 °M</source>
         <translation>%1 °M</translation>
     </message>
     <message>
-        <location filename="src/mappainter/mappaintervehicle.cpp" line="540"/>
+        <location filename="src/mappainter/mappaintervehicle.cpp" line="541"/>
         <source>%2</source>
         <translation>%2</translation>
     </message>
     <message>
-        <location filename="src/mappainter/mappaintervehicle.cpp" line="548"/>
+        <location filename="src/mappainter/mappaintervehicle.cpp" line="549"/>
         <source>No wind</source>
         <translation>Senza vento</translation>
     </message>
@@ -31376,140 +31397,139 @@ Utilizzare comunque?</translation>
 <context>
     <name>ProfileOptions</name>
     <message>
-        <location filename="src/profile/profileoptions.cpp" line="36"/>
+        <location filename="src/profile/profileoptions.cpp" line="37"/>
         <source> - Elevation Profile</source>
         <translation> - Profilo Altimetrico</translation>
     </message>
     <message>
-        <location filename="src/profile/profileoptions.cpp" line="37"/>
+        <location filename="src/profile/profileoptions.cpp" line="38"/>
         <source>Select options for Elevation Profile.</source>
         <translation>Selezionare le opzioni per il Profilo Altimetrico.</translation>
     </message>
     <message>
-        <location filename="src/profile/profileoptions.cpp" line="42"/>
+        <location filename="src/profile/profileoptions.cpp" line="43"/>
         <source>Option</source>
         <translation>Opzione</translation>
     </message>
     <message>
-        <location filename="src/profile/profileoptions.cpp" line="42"/>
+        <location filename="src/profile/profileoptions.cpp" line="43"/>
         <source>Description</source>
         <translation>Descrizione</translation>
     </message>
     <message>
-        <location filename="src/profile/profileoptions.cpp" line="47"/>
+        <location filename="src/profile/profileoptions.cpp" line="48"/>
         <source>Show Tooltip</source>
         <translation>Mostra Suggerimento</translation>
     </message>
     <message>
-        <location filename="src/profile/profileoptions.cpp" line="47"/>
+        <location filename="src/profile/profileoptions.cpp" line="48"/>
         <source>Display a tooltip with elevation and more information when hovering the mouse over the profile.</source>
         <translation>Visualizzazione di un suggerimento con l&apos;elevazione e altre informazioni quando si passa il mouse sul profilo.</translation>
     </message>
     <message>
-        <location filename="src/profile/profileoptions.cpp" line="48"/>
+        <location filename="src/profile/profileoptions.cpp" line="49"/>
         <source>Highlight Position on Map</source>
         <translation>Evidenzia la Posizione sulla Mappa</translation>
     </message>
     <message>
-        <location filename="src/profile/profileoptions.cpp" line="48"/>
+        <location filename="src/profile/profileoptions.cpp" line="49"/>
         <source>Highlight the flight plan position on the map while hovering the mouse over the profile.</source>
         <translation>Evidenziare la posizione del piano di volo sulla mappa passando il mouse sul profilo.</translation>
     </message>
     <message>
-        <location filename="src/profile/profileoptions.cpp" line="50"/>
+        <location filename="src/profile/profileoptions.cpp" line="51"/>
         <source>Header Line</source>
         <translation>Linea di Intestazione</translation>
     </message>
     <message>
-        <location filename="src/profile/profileoptions.cpp" line="51"/>
+        <location filename="src/profile/profileoptions.cpp" line="52"/>
         <source>Destination</source>
         <translation>Destinazione</translation>
     </message>
     <message>
-        <location filename="src/profile/profileoptions.cpp" line="51"/>
+        <location filename="src/profile/profileoptions.cpp" line="52"/>
         <source>Distance and time to destination.</source>
         <translation>Distanza e tempo per la destinazione.</translation>
     </message>
     <message>
-        <location filename="src/profile/profileoptions.cpp" line="52"/>
+        <location filename="src/profile/profileoptions.cpp" line="53"/>
         <source>Top of Descent</source>
         <translation>Punto Inizio Discesa</translation>
     </message>
     <message>
-        <location filename="src/profile/profileoptions.cpp" line="52"/>
+        <location filename="src/profile/profileoptions.cpp" line="53"/>
         <source>Distance and time to top of descent.
 Not shown if passed.</source>
         <translation>Distanza e tempo fino al punto inizio discesa.
 Non indicato se superato.</translation>
     </message>
     <message>
-        <location filename="src/profile/profileoptions.cpp" line="54"/>
+        <location filename="src/profile/profileoptions.cpp" line="55"/>
         <source>Deviation</source>
         <translation>Scostamento</translation>
     </message>
     <message>
-        <location filename="src/profile/profileoptions.cpp" line="54"/>
         <source>Vertical altitude deviation from descent path.
 ▼ means above (increase sink rate) and ▲ means below (decrease sink rate).</source>
-        <translation>Scostamento verticale dell&apos;altitudine rispetto al sentiero di discesa.
+        <translation type="vanished">Scostamento verticale dell&apos;altitudine rispetto al sentiero di discesa.
 ▼ significa sopra (aumento del rateo di discesa) e ▲ significa sotto (diminuzione del rateo di discesa).</translation>
     </message>
     <message>
-        <location filename="src/profile/profileoptions.cpp" line="56"/>
+        <location filename="src/profile/profileoptions.cpp" line="57"/>
         <source>Angle and Speed</source>
         <translation>Angolo e Velocità</translation>
     </message>
     <message>
-        <location filename="src/profile/profileoptions.cpp" line="56"/>
+        <location filename="src/profile/profileoptions.cpp" line="57"/>
         <source>Vertical flight path angle needed to keep the vertical path angle.
 Changes to &quot;Required angle&quot; if mandatory in approach procedures.</source>
         <translation>Angolo di traiettoria verticale necessario per mantenere l&apos;angolo di traiettoria verticale.
 Cambia in &quot;Angolo richiesto&quot; se obbligatorio nelle procedure di avvicinamento.</translation>
     </message>
     <message>
-        <location filename="src/profile/profileoptions.cpp" line="60"/>
+        <location filename="src/profile/profileoptions.cpp" line="61"/>
         <source>User Aircraft Labels</source>
         <translation>Etichette dell&apos;Aereo Utente</translation>
     </message>
     <message>
-        <location filename="src/profile/profileoptions.cpp" line="61"/>
+        <location filename="src/profile/profileoptions.cpp" line="62"/>
         <source>Altitude</source>
         <translation>Altitudine</translation>
     </message>
     <message>
-        <location filename="src/profile/profileoptions.cpp" line="61"/>
+        <location filename="src/profile/profileoptions.cpp" line="62"/>
         <source>Show actual user aircraft altitude at symbol.</source>
         <translation>Mostra l&apos;altitudine effettiva dell&apos;aereo utente al simbolo.</translation>
     </message>
     <message>
-        <location filename="src/profile/profileoptions.cpp" line="62"/>
+        <location filename="src/profile/profileoptions.cpp" line="63"/>
         <source>Vertical Speed</source>
         <translation>Velocità Verticale</translation>
     </message>
     <message>
-        <location filename="src/profile/profileoptions.cpp" line="62"/>
+        <location filename="src/profile/profileoptions.cpp" line="63"/>
         <source>Show vertical speed of at user aircraft symbol.</source>
         <translation>Mostra la velocità verticale del simbolo dell&apos;aereo utente.</translation>
     </message>
     <message>
-        <location filename="src/profile/profileoptions.cpp" line="63"/>
+        <location filename="src/profile/profileoptions.cpp" line="64"/>
         <source>Vertical Speed to Next</source>
         <translation>Velocità Verticale al Successivo</translation>
     </message>
     <message>
-        <location filename="src/profile/profileoptions.cpp" line="64"/>
+        <location filename="src/profile/profileoptions.cpp" line="65"/>
         <source>Vertical speed needed to arrive at the calculated altitude at the next waypoint.
 Shown on descent only at user aircraft symbol suffixed with &quot;N&quot;.</source>
         <translation>Velocità verticale necessaria per raggiungere l&apos;altitudine calcolata al punto rotta successivo.
 Mostrato in discesa solo in corrispondenza del simbolo dell&apos;aeromobile utente con il suffisso &quot;N&quot;.</translation>
     </message>
     <message>
-        <location filename="src/profile/profileoptions.cpp" line="67"/>
+        <location filename="src/profile/profileoptions.cpp" line="68"/>
         <source>Labels</source>
         <translation>Etichette</translation>
     </message>
     <message>
-        <location filename="src/profile/profileoptions.cpp" line="68"/>
+        <location filename="src/profile/profileoptions.cpp" line="69"/>
         <source>Show Altitude</source>
         <translation>Mostra Altitudine</translation>
     </message>
@@ -31518,19 +31538,19 @@ Mostrato in discesa solo in corrispondenza del simbolo dell&apos;aeromobile uten
         <translation type="vanished">Mostra o nasconde le etichette sul lato sinistro del profilo altimetrico.</translation>
     </message>
     <message>
-        <location filename="src/profile/profileoptions.cpp" line="69"/>
-        <location filename="src/profile/profileoptions.cpp" line="80"/>
+        <location filename="src/profile/profileoptions.cpp" line="70"/>
+        <location filename="src/profile/profileoptions.cpp" line="81"/>
         <source>Distance</source>
         <translation>Distanza</translation>
     </message>
     <message>
-        <location filename="src/profile/profileoptions.cpp" line="80"/>
+        <location filename="src/profile/profileoptions.cpp" line="81"/>
         <source>Distance of flight plan leg.</source>
         <translation>Distanza della tratta del piano di volo.</translation>
     </message>
     <message>
-        <location filename="src/profile/profileoptions.cpp" line="70"/>
-        <location filename="src/profile/profileoptions.cpp" line="81"/>
+        <location filename="src/profile/profileoptions.cpp" line="71"/>
+        <location filename="src/profile/profileoptions.cpp" line="82"/>
         <source>Magnetic Course</source>
         <translation>Rotta Magnetica</translation>
     </message>
@@ -31539,8 +31559,8 @@ Mostrato in discesa solo in corrispondenza del simbolo dell&apos;aeromobile uten
         <translation type="vanished">Mostra la rotta magnetica iniziale del GC della tratta del piano di volo.</translation>
     </message>
     <message>
-        <location filename="src/profile/profileoptions.cpp" line="71"/>
-        <location filename="src/profile/profileoptions.cpp" line="82"/>
+        <location filename="src/profile/profileoptions.cpp" line="72"/>
+        <location filename="src/profile/profileoptions.cpp" line="83"/>
         <source>True Course</source>
         <translation>Rotta Reale</translation>
     </message>
@@ -31549,7 +31569,7 @@ Mostrato in discesa solo in corrispondenza del simbolo dell&apos;aeromobile uten
         <translation type="vanished">Mostra la rotta reale iniziale del GC della tratta del piano di volo.</translation>
     </message>
     <message>
-        <location filename="src/profile/profileoptions.cpp" line="72"/>
+        <location filename="src/profile/profileoptions.cpp" line="73"/>
         <source>Related Navaid</source>
         <translation>Radioassistenza Correlata</translation>
     </message>
@@ -31558,117 +31578,123 @@ Mostrato in discesa solo in corrispondenza del simbolo dell&apos;aeromobile uten
         <translation type="vanished">Aiuto alla navigazione correlata per un fix di procedura, compresi orientamento e distanza.</translation>
     </message>
     <message>
-        <location filename="src/profile/profileoptions.cpp" line="68"/>
+        <location filename="src/profile/profileoptions.cpp" line="55"/>
+        <source>Vertical altitude deviation from descent path.
+%1 means above (increase sink rate) and %2 means below (decrease sink rate).</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/profile/profileoptions.cpp" line="69"/>
         <source>Show or hide the altitude labels at the left side of the elevation profile.</source>
         <translation>Mostra o nasconde le etichette di altitudine sul lato sinistro del profilo altimetrico.</translation>
     </message>
     <message>
-        <location filename="src/profile/profileoptions.cpp" line="69"/>
+        <location filename="src/profile/profileoptions.cpp" line="70"/>
         <source>Distance of flight plan leg in the elevation profile header.</source>
         <translation>Distanza della tratta del piano di volo nell&apos;intestazione del profilo altimetrico.</translation>
     </message>
     <message>
-        <location filename="src/profile/profileoptions.cpp" line="70"/>
+        <location filename="src/profile/profileoptions.cpp" line="71"/>
         <source>Show magnetic great circle start course for flight plan leg in the header.</source>
         <translation>Mostra la rotta magnetica di partenza per la tratta del piano di volo nell&apos;intestazione.</translation>
     </message>
     <message>
-        <location filename="src/profile/profileoptions.cpp" line="71"/>
+        <location filename="src/profile/profileoptions.cpp" line="72"/>
         <source>Show true great circle start course for flight plan leg in the header.</source>
         <translation>Mostra la rotta reale di partenza per la tratta del piano di volo nell&apos;intestazione.</translation>
     </message>
     <message>
-        <location filename="src/profile/profileoptions.cpp" line="72"/>
+        <location filename="src/profile/profileoptions.cpp" line="73"/>
         <source>Related navaid for a procedure fix including bearing and distance in the header.</source>
         <translation>Radioassistenza correlata per un fix di procedura compresi orientamento e distanza nell&apos;intestazione.</translation>
     </message>
     <message>
-        <location filename="src/profile/profileoptions.cpp" line="74"/>
+        <location filename="src/profile/profileoptions.cpp" line="75"/>
         <source>Elevation Profile</source>
         <translation>Profilo Altimetrico</translation>
     </message>
     <message>
-        <location filename="src/profile/profileoptions.cpp" line="75"/>
+        <location filename="src/profile/profileoptions.cpp" line="76"/>
         <source>Ground</source>
         <translation>Suolo</translation>
     </message>
     <message>
-        <location filename="src/profile/profileoptions.cpp" line="75"/>
+        <location filename="src/profile/profileoptions.cpp" line="76"/>
         <source>Green ground display.</source>
         <translation>Mostra il suolo in verde.</translation>
     </message>
     <message>
-        <location filename="src/profile/profileoptions.cpp" line="76"/>
+        <location filename="src/profile/profileoptions.cpp" line="77"/>
         <source>Safe Altitude Line</source>
         <translation>Linea di Altitudine di Sicurezza</translation>
     </message>
     <message>
-        <location filename="src/profile/profileoptions.cpp" line="76"/>
+        <location filename="src/profile/profileoptions.cpp" line="77"/>
         <source>Red safe altitude line for whole flight plan.</source>
         <translation>Linea rossa di altitudine di sicurezza per l&apos;intero piano di volo.</translation>
     </message>
     <message>
-        <location filename="src/profile/profileoptions.cpp" line="77"/>
+        <location filename="src/profile/profileoptions.cpp" line="78"/>
         <source>Leg Safe Altitude Lines</source>
         <translation>Linee di Altitudine di Sicurezza per le tratte</translation>
     </message>
     <message>
-        <location filename="src/profile/profileoptions.cpp" line="77"/>
+        <location filename="src/profile/profileoptions.cpp" line="78"/>
         <source>Orange safe altitude lines for each flight plan leg.</source>
         <translation>Linee arancioni di altitudine di sicurezza per ogni tratta del piano di volo.</translation>
     </message>
     <message>
-        <location filename="src/profile/profileoptions.cpp" line="79"/>
+        <location filename="src/profile/profileoptions.cpp" line="80"/>
         <source>Flight Plan Line</source>
         <translation>Linea del Piano di Volo</translation>
     </message>
     <message>
-        <location filename="src/profile/profileoptions.cpp" line="81"/>
+        <location filename="src/profile/profileoptions.cpp" line="82"/>
         <source>Show magnetic great circle start course.</source>
         <translation>Mostra il percorso magnetico iniziale del GC.</translation>
     </message>
     <message>
-        <location filename="src/profile/profileoptions.cpp" line="82"/>
+        <location filename="src/profile/profileoptions.cpp" line="83"/>
         <source>Show true great circle start course.</source>
         <translation>Mostra il percorso reale iniziale del GC.</translation>
     </message>
     <message>
-        <location filename="src/profile/profileoptions.cpp" line="83"/>
+        <location filename="src/profile/profileoptions.cpp" line="84"/>
         <source>Descent Flight Path Angle</source>
         <translation>Angolo del Percorso di Discesa</translation>
     </message>
     <message>
-        <location filename="src/profile/profileoptions.cpp" line="83"/>
+        <location filename="src/profile/profileoptions.cpp" line="84"/>
         <source>Vertical descent path angle only in the descent phase.</source>
         <translation>Angolo del percorso di discesa verticale solo nella fase di discesa.</translation>
     </message>
     <message>
-        <location filename="src/profile/profileoptions.cpp" line="84"/>
+        <location filename="src/profile/profileoptions.cpp" line="85"/>
         <source>Altitude Restriction</source>
         <translation>Restrizione di Altitudine</translation>
     </message>
     <message>
-        <location filename="src/profile/profileoptions.cpp" line="84"/>
+        <location filename="src/profile/profileoptions.cpp" line="85"/>
         <source>Display procedure altitude restrictions at the navaid label.</source>
         <translation>Visualizzare le limitazioni di altitudine della procedura sull&apos;etichetta dell&apos;aiuto alla navigazione.</translation>
     </message>
     <message>
-        <location filename="src/profile/profileoptions.cpp" line="85"/>
+        <location filename="src/profile/profileoptions.cpp" line="86"/>
         <source>Altitude Restriction Indicator</source>
         <translation>Indicatore di Restrizione di Altitudine</translation>
     </message>
     <message>
-        <location filename="src/profile/profileoptions.cpp" line="85"/>
+        <location filename="src/profile/profileoptions.cpp" line="86"/>
         <source>Altitude restrictions shown as blocks in diagram.</source>
         <translation>Le limitazioni di altitudine sono indicate come blocchi nel diagramma.</translation>
     </message>
     <message>
-        <location filename="src/profile/profileoptions.cpp" line="86"/>
+        <location filename="src/profile/profileoptions.cpp" line="87"/>
         <source>Speed Restriction</source>
         <translation>Restrizione Velocità</translation>
     </message>
     <message>
-        <location filename="src/profile/profileoptions.cpp" line="86"/>
+        <location filename="src/profile/profileoptions.cpp" line="87"/>
         <source>Show procedure speed restrictions at the navaid label.</source>
         <translation>Mostrare le limitazioni di velocità della procedura sull&apos;etichetta dell&apos;aiuto alla navigazione.</translation>
     </message>
@@ -31690,8 +31716,11 @@ Mostrato in discesa solo in corrispondenza del simbolo dell&apos;aeromobile uten
     </message>
     <message>
         <location filename="src/profile/profilewidget.cpp" line="729"/>
-        <source> ►</source>
-        <translation> ►</translation>
+        <location filename="src/profile/profilewidget.cpp" line="1717"/>
+        <location filename="src/profile/profilewidget.cpp" line="1719"/>
+        <source> %1</source>
+        <oldsource> ►</oldsource>
+        <translation type="unfinished"> ►</translation>
     </message>
     <message>
         <location filename="src/profile/profilewidget.cpp" line="784"/>
@@ -31700,13 +31729,15 @@ Mostrato in discesa solo in corrispondenza del simbolo dell&apos;aeromobile uten
     </message>
     <message>
         <location filename="src/profile/profilewidget.cpp" line="847"/>
-        <source>%1° ►</source>
-        <translation>%1° ►</translation>
+        <source>%1° %2</source>
+        <oldsource>%1° ►</oldsource>
+        <translation type="unfinished">%1° ►</translation>
     </message>
     <message>
         <location filename="src/profile/profilewidget.cpp" line="849"/>
-        <source>%1° / %2 ►</source>
-        <translation>%1° / %2 ►</translation>
+        <source>%1° / %2 %3</source>
+        <oldsource>%1° / %2 ►</oldsource>
+        <translation type="unfinished">%1° / %2 ►</translation>
     </message>
     <message>
         <source>No Flight Plan.</source>
@@ -31722,18 +31753,17 @@ Mostrato in discesa solo in corrispondenza del simbolo dell&apos;aeromobile uten
         <translation type="vanished">,</translation>
     </message>
     <message>
-        <location filename="src/profile/profilewidget.cpp" line="1269"/>
         <source> %1° ► </source>
-        <translation> %1° ► </translation>
+        <translation type="vanished"> %1° ► </translation>
     </message>
     <message>
-        <location filename="src/profile/profilewidget.cpp" line="1271"/>
+        <location filename="src/profile/profilewidget.cpp" line="1272"/>
         <source> /</source>
         <translation> /</translation>
     </message>
     <message>
-        <location filename="src/profile/profilewidget.cpp" line="1278"/>
-        <location filename="src/profile/profilewidget.cpp" line="1281"/>
+        <location filename="src/profile/profilewidget.cpp" line="1279"/>
+        <location filename="src/profile/profilewidget.cpp" line="1282"/>
         <source> / </source>
         <translation> / </translation>
     </message>
@@ -31746,53 +31776,48 @@ Mostrato in discesa solo in corrispondenza del simbolo dell&apos;aeromobile uten
         <translation type="vanished">TOD</translation>
     </message>
     <message>
-        <location filename="src/profile/profilewidget.cpp" line="1595"/>
+        <location filename="src/profile/profilewidget.cpp" line="1596"/>
         <source>TOC %1</source>
         <translation>TOC %1</translation>
     </message>
     <message>
-        <location filename="src/profile/profilewidget.cpp" line="1612"/>
+        <location filename="src/profile/profilewidget.cpp" line="1613"/>
         <source>TOD %1</source>
         <translation>TOD %1</translation>
     </message>
     <message>
-        <location filename="src/profile/profilewidget.cpp" line="1716"/>
         <source> ▲</source>
-        <translation> ▲</translation>
+        <translation type="vanished"> ▲</translation>
     </message>
     <message>
-        <location filename="src/profile/profilewidget.cpp" line="1718"/>
         <source> ▼</source>
-        <translation> ▼</translation>
+        <translation type="vanished"> ▼</translation>
     </message>
     <message>
-        <location filename="src/profile/profilewidget.cpp" line="1736"/>
         <source> ▼ N</source>
-        <translation> ▼ N</translation>
+        <translation type="vanished"> ▼ N</translation>
     </message>
     <message>
-        <location filename="src/profile/profilewidget.cpp" line="2317"/>
+        <location filename="src/profile/profilewidget.cpp" line="2318"/>
         <source>to</source>
         <translation>a</translation>
     </message>
     <message>
-        <location filename="src/profile/profilewidget.cpp" line="2335"/>
+        <location filename="src/profile/profilewidget.cpp" line="2336"/>
         <source>from</source>
         <translation>da</translation>
     </message>
     <message>
-        <location filename="src/profile/profilewidget.cpp" line="2351"/>
-        <location filename="src/profile/profilewidget.cpp" line="2353"/>
         <source> ► </source>
-        <translation> ► </translation>
+        <translation type="vanished"> ► </translation>
     </message>
     <message>
-        <location filename="src/profile/profilewidget.cpp" line="2356"/>
+        <location filename="src/profile/profilewidget.cpp" line="2357"/>
         <source>, %1, %2 %3</source>
         <translation>, %1, %2 %3</translation>
     </message>
     <message>
-        <location filename="src/profile/profilewidget.cpp" line="2361"/>
+        <location filename="src/profile/profilewidget.cpp" line="2362"/>
         <source>Course: </source>
         <translation>Rotta: </translation>
     </message>
@@ -31806,48 +31831,64 @@ Mostrato in discesa solo in corrispondenza del simbolo dell&apos;aeromobile uten
         <translation>Piano di Volo non valido</translation>
     </message>
     <message>
-        <location filename="src/profile/profilewidget.cpp" line="2378"/>
+        <location filename="src/profile/profilewidget.cpp" line="1270"/>
+        <source> %1° %2 </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/profile/profilewidget.cpp" line="1737"/>
+        <source> %1 N</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/profile/profilewidget.cpp" line="2352"/>
+        <location filename="src/profile/profilewidget.cpp" line="2354"/>
+        <source> %1 </source>
+        <translation type="unfinished"> %1 </translation>
+    </message>
+    <message>
+        <location filename="src/profile/profilewidget.cpp" line="2379"/>
         <source>Heading: </source>
         <comment>Aircraft heading</comment>
         <translation>Prua: </translation>
     </message>
     <message>
-        <location filename="src/profile/profilewidget.cpp" line="2389"/>
+        <location filename="src/profile/profilewidget.cpp" line="2390"/>
         <source>Required Flight Path Angle: </source>
         <translation>Angolo di Traiettoria di Volo Richiesto: </translation>
     </message>
     <message>
-        <location filename="src/profile/profilewidget.cpp" line="2389"/>
+        <location filename="src/profile/profilewidget.cpp" line="2390"/>
         <source>Flight path angle: </source>
         <translation>Angolo della traiettoria di volo: </translation>
     </message>
     <message>
-        <location filename="src/profile/profilewidget.cpp" line="2390"/>
+        <location filename="src/profile/profilewidget.cpp" line="2391"/>
         <source>%L1 °</source>
         <translation>%L1 °</translation>
     </message>
     <message>
-        <location filename="src/profile/profilewidget.cpp" line="2402"/>
+        <location filename="src/profile/profilewidget.cpp" line="2403"/>
         <source>%1 above</source>
         <translation>%1 sopra</translation>
     </message>
     <message>
-        <location filename="src/profile/profilewidget.cpp" line="2406"/>
+        <location filename="src/profile/profilewidget.cpp" line="2407"/>
         <source>, </source>
         <translation>, </translation>
     </message>
     <message>
-        <location filename="src/profile/profilewidget.cpp" line="2406"/>
+        <location filename="src/profile/profilewidget.cpp" line="2407"/>
         <source>Ground: </source>
         <translation>Suolo: </translation>
     </message>
     <message>
-        <location filename="src/profile/profilewidget.cpp" line="2410"/>
+        <location filename="src/profile/profilewidget.cpp" line="2411"/>
         <source>Leg Safe Altitude: </source>
         <translation>Altitudine di Sicurezza del Segmento: </translation>
     </message>
     <message>
-        <location filename="src/profile/profilewidget.cpp" line="2420"/>
+        <location filename="src/profile/profilewidget.cpp" line="2421"/>
         <source>%1°M, %2</source>
         <translation>%1°M, %2</translation>
     </message>
@@ -31862,47 +31903,47 @@ Mostrato in discesa solo in corrispondenza del simbolo dell&apos;aeromobile uten
         <translation type="obsolete">▲</translation>
     </message>
     <message>
-        <location filename="src/profile/profilewidget.cpp" line="2438"/>
+        <location filename="src/profile/profilewidget.cpp" line="2439"/>
         <source> %L1 °]</source>
         <translation> %L1 °]</translation>
     </message>
     <message>
-        <location filename="src/profile/profilewidget.cpp" line="2594"/>
+        <location filename="src/profile/profilewidget.cpp" line="2595"/>
         <source>&lt;b&gt;Alternate:&lt;/b&gt; %1</source>
         <translation>&lt;b&gt;Alternato:&lt;/b&gt; %1</translation>
     </message>
     <message>
-        <location filename="src/profile/profilewidget.cpp" line="2612"/>
+        <location filename="src/profile/profilewidget.cpp" line="2613"/>
         <source>&lt;b&gt;Destination:&lt;/b&gt; %1 (%2)</source>
         <translation>&lt;b&gt;Destinazione:&lt;/b&gt; %1 (%2)</translation>
     </message>
     <message>
-        <location filename="src/profile/profilewidget.cpp" line="2621"/>
+        <location filename="src/profile/profilewidget.cpp" line="2622"/>
         <source>&lt;b&gt;Top of Descent:&lt;/b&gt; %1%2</source>
         <translation>&lt;b&gt;Punto di Inizio Discesa:&lt;/b&gt; %1%2</translation>
     </message>
     <message>
-        <location filename="src/profile/profilewidget.cpp" line="2633"/>
+        <location filename="src/profile/profilewidget.cpp" line="2634"/>
         <source>&lt;b&gt;Vert. Path Deviation:&lt;/b&gt; %1</source>
         <translation>&lt;b&gt;Scostamento dal Sentiero di Discesa:&lt;/b&gt; %1</translation>
     </message>
     <message>
-        <location filename="src/profile/profilewidget.cpp" line="2637"/>
+        <location filename="src/profile/profilewidget.cpp" line="2638"/>
         <source>&lt;b&gt;Required Angle and Speed:&lt;/b&gt; %1</source>
         <translation>&lt;b&gt;Angolo e Velocità Richiesti:&lt;/b&gt; %1</translation>
     </message>
     <message>
-        <location filename="src/profile/profilewidget.cpp" line="2637"/>
+        <location filename="src/profile/profilewidget.cpp" line="2638"/>
         <source>&lt;b&gt;Angle and Speed:&lt;/b&gt; %1</source>
         <translation>&lt;b&gt;Angolo e Velocità:&lt;/b&gt; %1</translation>
     </message>
     <message>
-        <location filename="src/profile/profilewidget.cpp" line="2643"/>
+        <location filename="src/profile/profilewidget.cpp" line="2644"/>
         <source>&lt;b&gt;Destination:&lt;/b&gt; %1</source>
         <translation>&lt;b&gt;Destinazione:&lt;/b&gt; %1</translation>
     </message>
     <message>
-        <location filename="src/profile/profilewidget.cpp" line="2652"/>
+        <location filename="src/profile/profilewidget.cpp" line="2653"/>
         <source>,&amp;nbsp;&amp;nbsp;&amp;nbsp;</source>
         <comment>Separator for profile header</comment>
         <translation>,&amp;nbsp;&amp;nbsp;&amp;nbsp;</translation>
@@ -31916,7 +31957,7 @@ Mostrato in discesa solo in corrispondenza del simbolo dell&apos;aeromobile uten
         <translation type="vanished">&lt;b&gt;Destinazione: %1 (%2). punto InizioDiscesa: %3%4.&lt;/b&gt;&amp;nbsp;&amp;nbsp;</translation>
     </message>
     <message>
-        <location filename="src/profile/profilewidget.cpp" line="2623"/>
+        <location filename="src/profile/profilewidget.cpp" line="2624"/>
         <source> (%1)</source>
         <translation> (%1)</translation>
     </message>
@@ -31941,12 +31982,12 @@ Mostrato in discesa solo in corrispondenza del simbolo dell&apos;aeromobile uten
         <translation type="vanished">, %1Vento %2°M, %3</translation>
     </message>
     <message>
-        <location filename="src/profile/profilewidget.cpp" line="2423"/>
+        <location filename="src/profile/profilewidget.cpp" line="2424"/>
         <source>Manual </source>
         <translation>Manuale </translation>
     </message>
     <message>
-        <location filename="src/profile/profilewidget.cpp" line="2423"/>
+        <location filename="src/profile/profilewidget.cpp" line="2424"/>
         <source>%1Wind: </source>
         <translation>%1Vento: </translation>
     </message>
@@ -31959,7 +32000,7 @@ Mostrato in discesa solo in corrispondenza del simbolo dell&apos;aeromobile uten
         <translation type="vanished">►</translation>
     </message>
     <message>
-        <location filename="src/profile/profilewidget.cpp" line="2433"/>
+        <location filename="src/profile/profilewidget.cpp" line="2434"/>
         <source>, %1 %2</source>
         <translation>, %1 %2</translation>
     </message>
@@ -31972,7 +32013,7 @@ Mostrato in discesa solo in corrispondenza del simbolo dell&apos;aeromobile uten
         <translation type="vanished">&lt;b&gt;Alla Destinazione: %1, al punto di inizio Discesa: %2.&lt;/b&gt;&amp;nbsp;&amp;nbsp;</translation>
     </message>
     <message>
-        <location filename="src/profile/profilewidget.cpp" line="2622"/>
+        <location filename="src/profile/profilewidget.cpp" line="2623"/>
         <source>Passed</source>
         <translation>Approvato</translation>
     </message>
@@ -35961,6 +36002,7 @@ Calcolato in base al profilo delle prestazioni dell&apos;aeromobile.</translatio
     </message>
     <message>
         <location filename="src/common/formatter.h" line="77"/>
+        <location filename="src/common/formatter.h" line="115"/>
         <source>▲</source>
         <translation type="unfinished">▲</translation>
     </message>
@@ -35971,6 +36013,7 @@ Calcolato in base al profilo delle prestazioni dell&apos;aeromobile.</translatio
     </message>
     <message>
         <location filename="src/common/formatter.h" line="86"/>
+        <location filename="src/common/formatter.h" line="120"/>
         <source>▼</source>
         <translation type="unfinished">▼</translation>
     </message>
@@ -35980,22 +36023,32 @@ Calcolato in base al profilo delle prestazioni dell&apos;aeromobile.</translatio
         <translation type="unfinished">▼</translation>
     </message>
     <message>
-        <location filename="src/common/formatter.h" line="95"/>
+        <location filename="src/common/formatter.h" line="97"/>
+        <source>▶︎</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/common/formatter.h" line="107"/>
+        <source>◀︎</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/common/formatter.h" line="125"/>
         <source>►</source>
         <translation type="unfinished">►</translation>
     </message>
     <message>
-        <location filename="src/common/formatter.h" line="97"/>
+        <location filename="src/common/formatter.h" line="99"/>
         <source>⮞</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/common/formatter.h" line="104"/>
+        <location filename="src/common/formatter.h" line="131"/>
         <source>◄</source>
         <translation type="unfinished">◄</translation>
     </message>
     <message>
-        <location filename="src/common/formatter.h" line="106"/>
+        <location filename="src/common/formatter.h" line="109"/>
         <source>⮜</source>
         <translation type="unfinished"></translation>
     </message>
@@ -36249,39 +36302,51 @@ Fai clic o ricarica per continuare.</translation>
 <context>
     <name>Route</name>
     <message>
-        <location filename="src/route/route.cpp" line="1313"/>
+        <location filename="src/route/route.cpp" line="1314"/>
         <source> (not found)</source>
         <translation> (non trovato)</translation>
     </message>
     <message>
-        <location filename="src/route/route.cpp" line="3148"/>
+        <location filename="src/route/route.cpp" line="3149"/>
         <source> / </source>
         <translation> / </translation>
     </message>
     <message>
-        <location filename="src/route/route.cpp" line="3817"/>
+        <location filename="src/route/route.cpp" line="3818"/>
+        <source>, above %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/route/route.cpp" line="3820"/>
+        <source>, below %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/route/route.cpp" line="3840"/>
+        <location filename="src/route/route.cpp" line="3851"/>
+        <source> %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>, above ▼</source>
-        <translation>, sopra ▼</translation>
+        <translation type="vanished">, sopra ▼</translation>
     </message>
     <message>
-        <location filename="src/route/route.cpp" line="3819"/>
         <source>, below ▲</source>
-        <translation>, sotto ▲</translation>
+        <translation type="vanished">, sotto ▲</translation>
     </message>
     <message>
-        <location filename="src/route/route.cpp" line="3839"/>
-        <location filename="src/route/route.cpp" line="3850"/>
+        <location filename="src/route/route.cpp" line="3840"/>
+        <location filename="src/route/route.cpp" line="3851"/>
         <source>%L1°, %L2</source>
         <translation>%L1°, %L2</translation>
     </message>
     <message>
-        <location filename="src/route/route.cpp" line="3839"/>
-        <location filename="src/route/route.cpp" line="3850"/>
         <source> ▼</source>
-        <translation> ▼</translation>
+        <translation type="vanished"> ▼</translation>
     </message>
     <message>
-        <location filename="src/route/route.cpp" line="3885"/>
+        <location filename="src/route/route.cpp" line="3886"/>
         <source>EMPTY</source>
         <translation>VUOTO</translation>
     </message>
@@ -36298,7 +36363,7 @@ Fai clic o ricarica per continuare.</translation>
         <translation type="vanished">-</translation>
     </message>
     <message>
-        <location filename="src/route/route.cpp" line="3864"/>
+        <location filename="src/route/route.cpp" line="3865"/>
         <source>Empty Flight Plan</source>
         <translation>Piano di Volo Vuoto</translation>
     </message>
@@ -42549,71 +42614,69 @@ Totale Viaggi: %1.</translation>
 <context>
     <name>SymbolPainter</name>
     <message>
-        <location filename="src/common/symbolpainter.cpp" line="720"/>
+        <location filename="src/common/symbolpainter.cpp" line="721"/>
         <source>MSA %1 %2 (%3, %4)</source>
         <translation>MSA %1 %2 (%3, %4)</translation>
     </message>
     <message>
-        <location filename="src/common/symbolpainter.cpp" line="723"/>
+        <location filename="src/common/symbolpainter.cpp" line="724"/>
         <source>°T</source>
         <translation>°T</translation>
     </message>
     <message>
-        <location filename="src/common/symbolpainter.cpp" line="723"/>
+        <location filename="src/common/symbolpainter.cpp" line="724"/>
         <source>°M</source>
         <translation>°M</translation>
     </message>
     <message>
-        <location filename="src/common/symbolpainter.cpp" line="743"/>
+        <location filename="src/common/symbolpainter.cpp" line="744"/>
         <source>%1°</source>
         <translation>%1°</translation>
     </message>
     <message>
-        <location filename="src/common/symbolpainter.cpp" line="749"/>
         <source>◄</source>
-        <translation>◄</translation>
+        <translation type="vanished">◄</translation>
     </message>
     <message>
-        <location filename="src/common/symbolpainter.cpp" line="751"/>
         <source>►</source>
-        <translation>►</translation>
+        <translation type="vanished">►</translation>
     </message>
     <message>
-        <location filename="src/common/symbolpainter.cpp" line="1138"/>
+        <location filename="src/common/symbolpainter.cpp" line="1139"/>
         <source>CL</source>
         <translation>CL</translation>
     </message>
     <message>
-        <location filename="src/common/symbolpainter.cpp" line="1138"/>
-        <location filename="src/common/symbolpainter.cpp" line="1181"/>
+        <location filename="src/common/symbolpainter.cpp" line="1139"/>
+        <location filename="src/common/symbolpainter.cpp" line="1182"/>
         <source>%1 (%2)</source>
         <translation>%1 (%2)</translation>
     </message>
     <message>
-        <location filename="src/common/symbolpainter.cpp" line="1162"/>
-        <location filename="src/common/symbolpainter.cpp" line="1210"/>
-        <location filename="src/common/symbolpainter.cpp" line="1261"/>
+        <location filename="src/common/symbolpainter.cpp" line="1163"/>
+        <location filename="src/common/symbolpainter.cpp" line="1211"/>
+        <location filename="src/common/symbolpainter.cpp" line="1262"/>
         <source>…</source>
         <comment>Dots used indicate additional text in map</comment>
         <translation>…</translation>
     </message>
     <message>
-        <location filename="src/common/symbolpainter.cpp" line="1318"/>
+        <location filename="src/common/symbolpainter.cpp" line="1319"/>
         <source>CT </source>
         <translation>CT </translation>
     </message>
     <message>
-        <location filename="src/common/symbolpainter.cpp" line="1324"/>
+        <location filename="src/common/symbolpainter.cpp" line="1325"/>
         <source>ATIS </source>
         <translation>ATIS </translation>
     </message>
     <message>
-        <location filename="src/common/symbolpainter.cpp" line="1326"/>
+        <location filename="src/common/symbolpainter.cpp" line="1327"/>
         <source>AWOS </source>
         <translation>AWOS </translation>
     </message>
     <message>
-        <location filename="src/common/symbolpainter.cpp" line="1328"/>
+        <location filename="src/common/symbolpainter.cpp" line="1329"/>
         <source>ASOS </source>
         <translation>ASOS </translation>
     </message>
@@ -42652,17 +42715,22 @@ Totale Viaggi: %1.</translation>
 <context>
     <name>TextPlacement</name>
     <message>
-        <location filename="src/common/textplacement.cpp" line="44"/>
         <source> ►</source>
-        <translation> ►</translation>
+        <translation type="vanished"> ►</translation>
     </message>
     <message>
         <location filename="src/common/textplacement.cpp" line="45"/>
-        <source>◄ </source>
-        <translation>◄ </translation>
+        <source> %1</source>
+        <oldsource>◄ </oldsource>
+        <translation type="unfinished">◄ </translation>
     </message>
     <message>
         <location filename="src/common/textplacement.cpp" line="46"/>
+        <source>%1 </source>
+        <translation type="unfinished">%1 </translation>
+    </message>
+    <message>
+        <location filename="src/common/textplacement.cpp" line="47"/>
         <source> / </source>
         <translation> / </translation>
     </message>

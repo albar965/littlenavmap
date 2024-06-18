@@ -1237,9 +1237,9 @@ void MapPainterRoute::paintProcedureSegment(const proc::MapProcedureLegs& legs, 
       holdText = QString::number(leg.course, 'f', 0) % (leg.trueCourse ? tr("°T") : tr("°M"));
 
       if(trueCourse < 180.f)
-        holdText = holdText % tr(" ►");
+        holdText = holdText % tr(" %1").arg(formatter::pointerRight());
       else
-        holdText = tr("◄ ") % holdText;
+        holdText = tr("%1 ").arg(formatter::pointerLeft()) % holdText;
 
       if(leg.time > 0.f)
         holdText2.append(QString::number(leg.time, 'g', 2) % tr("min"));
@@ -1249,9 +1249,9 @@ void MapPainterRoute::paintProcedureSegment(const proc::MapProcedureLegs& legs, 
         holdText2 = tr("1min");
 
       if(trueCourse < 180.f)
-        holdText2 = tr("◄ ") % holdText2;
+        holdText2 = tr("%1 ").arg(formatter::pointerLeft()) % holdText2;
       else
-        holdText2 = holdText2 % tr(" ►");
+        holdText2 = holdText2 % tr(" %1").arg(formatter::pointerRight());
     }
 
     if(draw)
@@ -1271,9 +1271,9 @@ void MapPainterRoute::paintProcedureSegment(const proc::MapProcedureLegs& legs, 
     {
       text = QString::number(leg.course, 'f', 0) % (leg.trueCourse ? tr("°T") : tr("°M")) % tr("/1min");
       if(trueCourse < 180.f)
-        text = text % tr(" ►");
+        text = text % tr(" %1").arg(formatter::pointerRight());
       else
-        text = tr("◄ ") % text;
+        text = tr("%1 ").arg(formatter::pointerLeft()) % text;
     }
 
     float px, py;

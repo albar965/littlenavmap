@@ -74,37 +74,61 @@ QString windInformationTailHead(float headWindKts, bool addUnit = true);
 inline QString windPointerNorth()
 {
 #ifdef Q_OS_MACOS
-  return QObject::tr("▲");
+  return QObject::tr("▲"); // BLACK UP-POINTING TRIANGLE Unicode: U+25B2, UTF-8: E2 96 B2
 #else
-  return QObject::tr("⮝");
+  return QObject::tr("⮝"); // U+2B9D Name: BLACK UPWARDS EQUILATERAL ARROWHEAD
 #endif
 }
 
 inline QString windPointerSouth()
 {
 #ifdef Q_OS_MACOS
-  return QObject::tr("▼");
+  return QObject::tr("▼"); // BLACK DOWN-POINTING TRIANGLE Unicode: U+25BC, UTF-8: E2 96 BC
 #else
-  return QObject::tr("⮟");
+  return QObject::tr("⮟"); // U+2B9F Name: BLACK DOWNWARDS EQUILATERAL ARROWHEAD
+
 #endif
 }
 
 inline QString windPointerEast()
 {
 #ifdef Q_OS_MACOS
-  return QObject::tr("►");
+  // Black and white on macOS and colored on other systems
+  return QObject::tr("▶︎"); // BLACK RIGHT-POINTING TRIANGLE Unicode: U+25B6 U+FE0E, UTF-8: E2 96 B6 EF B8 8E
 #else
-  return QObject::tr("⮞");
+  return QObject::tr("⮞"); // U+2B9E Name: BLACK RIGHTWARDS EQUILATERAL ARROWHEAD
 #endif
 }
 
 inline QString windPointerWest()
 {
 #ifdef Q_OS_MACOS
-  return QObject::tr("◄");
+  // Black and white on macOS and colored on other systems
+  return QObject::tr("◀︎"); // BLACK LEFT-POINTING TRIANGLE Unicode: U+25C0 U+FE0E, UTF-8: E2 97 80 EF B8 8E
 #else
-  return QObject::tr("⮜");
+  return QObject::tr("⮜"); // U+2B9C Name: BLACK LEFTWARDS EQUILATERAL ARROWHEAD
 #endif
+}
+
+inline QString pointerUp()
+{
+  return QObject::tr("▲"); // BLACK UP-POINTING TRIANGLE Unicode: U+25B2, UTF-8: E2 96 B2
+}
+
+inline QString pointerDown()
+{
+  return QObject::tr("▼"); // BLACK DOWN-POINTING TRIANGLE Unicode: U+25BC, UTF-8: E2 96 BC
+}
+
+inline QString pointerRight()
+{
+  return QObject::tr("►"); // U+25BA Name: BLACK RIGHT-POINTING POINTER
+
+}
+
+inline QString pointerLeft()
+{
+  return QObject::tr("◄"); // U+25C4 Name: BLACK LEFT-POINTING POINTER
 }
 
 /* Only headwind > 1 kts and crosswind */

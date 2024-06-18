@@ -689,9 +689,6 @@ This will increase the trip fuel by the given percentage.</string>
             <property name="showGroupSeparator" stdset="0">
              <bool>true</bool>
             </property>
-            <property name="suffix">
-             <string> %vspeed% ▲</string>
-            </property>
             <property name="decimals">
              <number>0</number>
             </property>
@@ -917,9 +914,6 @@ This will increase the trip fuel by the given percentage.</string>
            <widget class="QDoubleSpinBox" name="doubleSpinBoxDescentVertSpeed">
             <property name="showGroupSeparator" stdset="0">
              <bool>true</bool>
-            </property>
-            <property name="suffix">
-             <string> %vspeed% ▼</string>
             </property>
             <property name="decimals">
              <number>0</number>

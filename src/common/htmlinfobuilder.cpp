@@ -3295,7 +3295,7 @@ void HtmlInfoBuilder::airwayText(const MapAirway& airway, HtmlBuilder& html) con
     // Reverse if one-way is backward
     std::swap(from, to);
 
-  QString connector(airway.direction == map::DIR_BOTH ? tr(", ") : tr(" ► "));
+  QString connector(airway.direction == map::DIR_BOTH ? tr(", ") : tr(" %1 ").arg(formatter::pointerRight()));
   if(info)
   {
     tempHtml.a(identRegionText(from.ident, from.region), QString("lnm://show?lonx=%1&laty=%2").
@@ -4470,9 +4470,9 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
               // Positive means right of course,  negative means left of course.
               QString crossDirection;
               if(crossTrackDistance >= 0.1f)
-                crossDirection = tr("<b>◄</b>");
+                crossDirection = tr("<b>%1</b>").arg(formatter::pointerLeft());
               else if(crossTrackDistance <= -0.1f)
-                crossDirection = tr("<b>►</b>");
+                crossDirection = tr("<b>%1</b>").arg(formatter::pointerRight());
 
               html.id(pid::NEXT_CROSS_TRACK_DIST).row2(tr("Cross Track Distance:"),
                                                        tr("%1 %2").arg(Unit::distNm(std::abs(crossTrackDistance))).
@@ -4732,9 +4732,9 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
           int vspeed = atools::roundToInt(aircraft.getVerticalSpeedFeetPerMin());
           QString upDown;
           if(vspeed >= 100)
-            upDown = tr(" <b>▲</b>");
+            upDown = tr(" <b>%1</b>").arg(formatter::pointerUp());
           else if(vspeed <= -100)
-            upDown = tr(" <b>▼</b>");
+            upDown = tr(" <b>%1</b>").arg(formatter::pointerDown());
 
           if(vspeed < 10.f && vspeed > -10.f)
             vspeed = 0.f;
@@ -4775,7 +4775,7 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
         if(vertAngleToNext < map::INVALID_ANGLE_VALUE)
           html.row2(tr("Angle and Speed to Next:"), tr("%L1°, %L2").arg(vertAngleToNext, 0, 'g', 2).
                     arg(Unit::speedVertFpm(-ageo::descentSpeedForPathAngle(userAircraft->getGroundSpeedKts(), vertAngleToNext)) %
-                        tr(" ▼")));
+                        tr(" %1").arg(formatter::pointerDown())));
       }
       html.tableEndIf();
     }

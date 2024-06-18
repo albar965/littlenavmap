@@ -918,7 +918,8 @@ void AircraftPerfController::updateReportCurrent()
 
       html.table();
       html.row2(tr("True Airspeed:"), Unit::speedKts(curPerfLbs.getClimbSpeed()), flags);
-      html.row2(tr("Vertical Speed:"), Unit::speedVertFpm(curPerfLbs.getClimbVertSpeed()) % tr(" <b>▲</b>"), ahtml::NO_ENTITIES | flags);
+      html.row2(tr("Vertical Speed:"), Unit::speedVertFpm(curPerfLbs.getClimbVertSpeed()) % tr(" <b>%1</b>").arg(formatter::pointerUp()),
+                ahtml::NO_ENTITIES | flags);
       html.row2(tr("Fuel Flow:"), ft.flowWeightVolLocal(curPerfLbs.getClimbFuelFlow()), flags);
       html.tableEnd();
     }
@@ -937,7 +938,9 @@ void AircraftPerfController::updateReportCurrent()
       html.table();
       html.row2(tr("True Airspeed:"), Unit::speedKts(curPerfLbs.getDescentSpeed()), flags);
       // Descent speed is always positive
-      html.row2(tr("Vertical Speed:"), Unit::speedVertFpm(-curPerfLbs.getDescentVertSpeed()) % tr(" <b>▼</b>"), ahtml::NO_ENTITIES | flags);
+      html.row2(tr("Vertical Speed:"),
+                Unit::speedVertFpm(-curPerfLbs.getDescentVertSpeed()) % tr(" <b>%1</b>").arg(formatter::pointerDown()),
+                ahtml::NO_ENTITIES | flags);
       html.row2(tr("Fuel Flow:"), ft.flowWeightVolLocal(curPerfLbs.getDescentFuelFlow()), flags);
       html.tableEnd();
     }

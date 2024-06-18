@@ -726,7 +726,7 @@ void ProfileWidget::paintIls(QPainter& painter, const Route& route)
         double angle = atools::geo::angleFromQt(upperLine.angle());
         painter.translate(upperLine.p2());
         painter.rotate(angle + 90.);
-        painter.drawText(10, -painter.fontMetrics().descent(), map::ilsText(ils) + tr(" ►"));
+        painter.drawText(10, -painter.fontMetrics().descent(), map::ilsText(ils) + tr(" %1").arg(formatter::pointerRight()));
         painter.resetTransform();
       }
     }
@@ -844,9 +844,9 @@ void ProfileWidget::paintVasi(QPainter& painter, const Route& route)
 
           QString txt;
           if(vasi.second.isEmpty())
-            txt = tr("%1° ►").arg(QLocale().toString(vasi.first, 'f', 1));
+            txt = tr("%1° %2").arg(QLocale().toString(vasi.first, 'f', 1)).arg(formatter::pointerRight());
           else
-            txt = tr("%1° / %2 ►").arg(QLocale().toString(vasi.first, 'f', 1)).arg(vasi.second);
+            txt = tr("%1° / %2 %3").arg(QLocale().toString(vasi.first, 'f', 1)).arg(vasi.second).arg(formatter::pointerRight());
           painter.drawText(10, -painter.fontMetrics().descent(), txt);
           painter.resetTransform();
         }
@@ -1266,7 +1266,8 @@ void ProfileWidget::paintEvent(QPaintEvent *)
         {
           // Build angle text ===============================
           float pathAngle = angles.value(j - 1, map::INVALID_ANGLE_VALUE);
-          QString angleText = pathAngle < -0.5f ? tr(" %1° ► ").arg(pathAngle, 0, 'g', requiredByProcedure ? 3 : 2) : QString();
+          QString angleText = pathAngle < -0.5f ?
+                              tr(" %1° %2 ").arg(pathAngle, 0, 'g', requiredByProcedure ? 3 : 2).arg(formatter::pointerRight()) : QString();
 
           QString separator(tr(" /"));
           QLineF line(geometry.at(j - 1), geometry.at(j));
@@ -1713,9 +1714,9 @@ void ProfileWidget::paintEvent(QPaintEvent *)
       {
         QString upDown;
         if(vspeed > 100.f)
-          upDown = tr(" ▲");
+          upDown = tr(" %1").arg(formatter::pointerUp());
         else if(vspeed < -100.f)
-          upDown = tr(" ▼");
+          upDown = tr(" %1").arg(formatter::pointerDown());
         texts.append(Unit::speedVertFpm(vspeed) % upDown);
       }
     }
@@ -1732,8 +1733,8 @@ void ProfileWidget::paintEvent(QPaintEvent *)
       {
         float vertAngleToNext = origRoute.getVerticalAngleToNext(nextLegDistance);
         if(vertAngleToNext < map::INVALID_ANGLE_VALUE)
-          texts.append(Unit::speedVertFpm(-atools::geo::descentSpeedForPathAngle(userAircraft.getGroundSpeedKts(),
-                                                                                 vertAngleToNext)) % tr(" ▼ N"));
+          texts.append(Unit::speedVertFpm(-atools::geo::descentSpeedForPathAngle(userAircraft.getGroundSpeedKts(), vertAngleToNext)) %
+                       tr(" %1 N").arg(formatter::pointerDown()));
       }
     }
 
@@ -2348,9 +2349,9 @@ void ProfileWidget::buildTooltipText(int x, bool force)
     wind = windReporter->getWindForPosRoute(lastTooltipPos.alt(altitude));
 
   html.p(atools::util::html::NOBR_WHITESPACE);
-  html.b(Unit::distNm(distance, false) + tr(" ► ") + Unit::distNm(distanceToGo));
+  html.b(Unit::distNm(distance, false) + tr(" %1 ").arg(formatter::pointerRight()) + Unit::distNm(distanceToGo));
 #ifdef DEBUG_INFORMATION_PROFILE
-  html.br().b("[" + QString::number(distance) + tr(" ► ") + QString::number(distanceToGo) + "]");
+  html.br().b("[" + QString::number(distance) + tr(" %1 ").arg(formatter::pointerRight()) + QString::number(distanceToGo) + "]");
 #endif
   if(altitude < map::INVALID_ALTITUDE_VALUE)
     html.b(tr(", %1, %2 %3").arg(Unit::altFeet(altitude)).arg(fromTo).arg(toWaypoint));

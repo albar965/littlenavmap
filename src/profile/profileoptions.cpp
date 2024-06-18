@@ -17,6 +17,7 @@
 
 #include "profile/profileoptions.h"
 
+#include "common/formatter.h"
 #include "gui/treedialog.h"
 #include "common/constants.h"
 #include "settings/settings.h"
@@ -52,7 +53,7 @@ bool ProfileOptions::showOptions()
   treeDialog.addItem2(headerItem, optsp::PROFILE_HEADER_DIST_TIME_TO_TOD, tr("Top of Descent"), tr("Distance and time to top of descent.\n"
                                                                                                    "Not shown if passed."));
   treeDialog.addItem2(headerItem, optsp::PROFILE_HEADER_DESCENT_PATH_DEVIATION, tr("Deviation"), tr("Vertical altitude deviation from descent path.\n"
-                                                                                                    "▼ means above (increase sink rate) and ▲ means below (decrease sink rate)."));
+                                                                                                    "%1 means above (increase sink rate) and %2 means below (decrease sink rate).").arg(formatter::pointerDown()).arg(formatter::pointerUp()));
   treeDialog.addItem2(headerItem, optsp::PROFILE_HEADER_DESCENT_PATH_ANGLE, tr("Angle and Speed"), tr("Vertical flight path angle needed to keep the vertical path angle.\n"
                                                                                                       "Changes to \"Required angle\" if mandatory in approach procedures."));
 

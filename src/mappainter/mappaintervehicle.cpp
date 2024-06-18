@@ -17,6 +17,7 @@
 
 #include "mappainter/mappaintervehicle.h"
 
+#include "common/formatter.h"
 #include "common/mapcolors.h"
 #include "common/symbolpainter.h"
 #include "common/unit.h"
@@ -442,9 +443,9 @@ void MapPainterVehicle::climbSinkPointer(QString& upDown, const SimConnectAircra
   if(aircraft.getVerticalSpeedFeetPerMin() < atools::fs::sc::SC_INVALID_FLOAT)
   {
     if(aircraft.getVerticalSpeedFeetPerMin() > 100.f)
-      upDown = tr(" ▲");
+      upDown = tr(" %1").arg(formatter::pointerUp());
     else if(aircraft.getVerticalSpeedFeetPerMin() < -100.f)
-      upDown = tr(" ▼");
+      upDown = tr(" %1").arg(formatter::pointerDown());
   }
 }
 
