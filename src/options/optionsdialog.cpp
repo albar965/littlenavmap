@@ -194,7 +194,7 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
   list->addItem(pageListItem(list, tr("Files"), tr("Edit flight plan file pattern and more file related actions."), ":/littlenavmap/resources/icons/fileopen.svg"));
   list->addItem(pageListItem(list, tr("Map"), tr("Change map window behavior, handling of empty airports, and general display options."), ":/littlenavmap/resources/icons/mapsettings.svg"));
   list->addItem(pageListItem(list, tr("Map Tooltips and Clicks"), tr("Tooltip and map click settings."), ":/littlenavmap/resources/icons/mapclick.svg"));
-  list->addItem(pageListItem(list, tr("Map Navigation"), tr("Zoom, click, screen navigation and mousewheel settings."), ":/littlenavmap/resources/icons/mapnavigation.svg"));
+  list->addItem(pageListItem(list, tr("Map Navigation"), tr("Zoom, click, screen navigation and mouse wheel settings."), ":/littlenavmap/resources/icons/mapnavigation.svg"));
   list->addItem(pageListItem(list, tr("Map Display"), tr("Change colors, symbols, texts and font for map display and elevation profile objects."), ":/littlenavmap/resources/icons/mapdisplay.svg"));
   list->addItem(pageListItem(list, tr("Map Flight Plan"), tr("Adjust display style and colors for the flight plan on the map and the elevation profile."), ":/littlenavmap/resources/icons/mapdisplayflightplan.svg"));
   list->addItem(pageListItem(list, tr("Map Aircraft Trail"), tr("Edit display of the user aircraft trail and number of trail points."), ":/littlenavmap/resources/icons/aircrafttrail.svg"));

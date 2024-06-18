@@ -23104,7 +23104,7 @@ Also affects labels at holds and traffic patterns.</source>
     </message>
     <message>
         <location filename="src/options/options.ui" line="1974"/>
-        <source>You can still use the default click and drag method to scroll and the mousewheel to zoom in this mode.
+        <source>You can still use the default click and drag method to scroll and the mouse wheel to zoom in this mode.
 Enable &quot;Navigation Aids&quot;, &quot;Screen Areas&quot; on options page &quot;Map Display Labels&quot; to display hints on the map.</source>
         <translation type="unfinished"></translation>
     </message>

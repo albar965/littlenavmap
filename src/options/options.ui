@@ -2560,7 +2560,7 @@ Smaller values will allow a finer selection.</string>
                <item row="2" column="0" colspan="2">
                 <widget class="QRadioButton" name="radioButtonOptionsMapNavTouchscreen">
                  <property name="toolTip">
-                  <string>You can still use the default click and drag method to scroll and the mousewheel to zoom in this mode.
+                  <string>You can still use the default click and drag method to scroll and the mouse wheel to zoom in this mode.
 Enable &quot;Navigation Aids&quot;, &quot;Screen Areas&quot; on options page &quot;Map Labels&quot; to display hints on the map.</string>
                  </property>
                  <property name="text">
