@@ -58,15 +58,15 @@ A big thank you to all who reported bugs and issues!
 * Added shortcut to random flight creation: Menu `Flight Plan` -> `Generate Random Flight`. This
   opens the search dock window and activates the controls to generate a random flight.
 * Added a dialog window where a user can select either a fixed departure or a fixed destination
-  airport for the random plan generation. Add at least one airport to your flight plan to enable this
+  airport for the random flight generation. Add at least one airport to your flight plan to enable this
   function. #1013
-* Random plan generation now puts the change on the undo/redo stack once the user accepts a
+* Random flight generation now puts the change on the undo/redo stack once the user accepts a
   generated flight. This is the same behavior as used in the flight plan route description which
   allows to restore a previous flight plan and its changes.
 * Adjusted the maximum distance for random flight plan to realistic values.
   The maximum is 10.800 NM.
 * Fixed the minimum and maximum distance for random flight search not being saved on exit.
-* Performance improvements and random selection for departure and destionation functionality
+* Performance improvements and random selection for departure and destination functionality
   by [u-an-i](https://github.com/u-an-i).
 
 ### Procedures and Runway Selection
@@ -172,7 +172,9 @@ A big thank you to all who reported bugs and issues!
   aircraft nor the flight tracks of the user aircraft are shown in this mode. Small display errors
   like duplicate labels can appear.
 * Legacy map removed.
-* More restructuring, performance improvements and updated documentation for the web API.
+* More restructuring, performance improvements and updated documentation for the web frontend in
+  general, web API, web plugin API, web toolbar API and web theming CSS templates; useful for
+  developers and people who wish to enhance or modify the web frontend experience.
 
 ### Installation
 
