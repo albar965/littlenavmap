@@ -1,9 +1,11 @@
 <RCC>
     <qresource prefix="/littlenavmap">
+        <file>resources/config/little_navmap_mapstyle.ini</file>
         <file>resources/config/logging.cfg</file>
         <file>resources/config/mainwindow_state_dock.bin</file>
         <file>resources/config/mainwindow_state_nodock.bin</file>
         <file>resources/config/maplayers.xml</file>
+        <file>resources/config/mapthemes.cfg</file>
         <file>resources/config/navdatareader.cfg</file>
         <file>resources/config/networks.cfg</file>
         <file>resources/config/ssl/lnm.cert</file>
@@ -30,22 +32,30 @@
         <file>resources/icons/aircraft_frigate_user.svg</file>
         <file>resources/icons/aircraft_helicopter.svg</file>
         <file>resources/icons/aircraft_helicopter_ground.svg</file>
+        <file>resources/icons/aircraft_helicopter_ground_online.svg</file>
         <file>resources/icons/aircraft_helicopter_ground_user.svg</file>
+        <file>resources/icons/aircraft_helicopter_online.svg</file>
         <file>resources/icons/aircraft_helicopter_user.svg</file>
         <file>resources/icons/aircraft_jet.svg</file>
         <file>resources/icons/aircraft_jet_ground.svg</file>
+        <file>resources/icons/aircraft_jet_ground_online.svg</file>
         <file>resources/icons/aircraft_jet_ground_user.svg</file>
+        <file>resources/icons/aircraft_jet_online.svg</file>
         <file>resources/icons/aircraft_jet_user.svg</file>
         <file>resources/icons/aircraft_online.svg</file>
         <file>resources/icons/aircraft_online_ground.svg</file>
         <file>resources/icons/aircraft_small.svg</file>
         <file>resources/icons/aircraft_small_ground.svg</file>
+        <file>resources/icons/aircraft_small_ground_online.svg</file>
         <file>resources/icons/aircraft_small_ground_user.svg</file>
+        <file>resources/icons/aircraft_small_online.svg</file>
         <file>resources/icons/aircraft_small_user.svg</file>
+        <file>resources/icons/aircraft_unknown.svg</file>
         <file>resources/icons/aircraftai.svg</file>
         <file>resources/icons/aircraftaiground.svg</file>
         <file>resources/icons/aircraftdock.svg</file>
         <file>resources/icons/aircraftground.svg</file>
+        <file>resources/icons/aircraftonline.svg</file>
         <file>resources/icons/aircraftperf.svg</file>
         <file>resources/icons/aircraftperfedit.svg</file>
         <file>resources/icons/aircraftperfload.svg</file>
@@ -58,16 +68,22 @@
         <file>resources/icons/aircrafttraildelete.svg</file>
         <file>resources/icons/airport.svg</file>
         <file>resources/icons/airportaddon.svg</file>
+        <file>resources/icons/airportaddonall.svg</file>
+        <file>resources/icons/airportaddonnone.svg</file>
+        <file>resources/icons/airportaddonzoom.svg</file>
+        <file>resources/icons/airportclosed.svg</file>
         <file>resources/icons/airportempty.svg</file>
         <file>resources/icons/airporthelipad.svg</file>
         <file>resources/icons/airportlight.svg</file>
         <file>resources/icons/airportmenu.svg</file>
+        <file>resources/icons/airportmil.svg</file>
         <file>resources/icons/airportproc.svg</file>
         <file>resources/icons/airportroutealt.svg</file>
         <file>resources/icons/airportroutedest.svg</file>
         <file>resources/icons/airportroutestart.svg</file>
         <file>resources/icons/airportsoft.svg</file>
         <file>resources/icons/airportwater.svg</file>
+        <file>resources/icons/airportweather.svg</file>
         <file>resources/icons/airspace.svg</file>
         <file>resources/icons/airspacealt.svg</file>
         <file>resources/icons/airspacecopy.svg</file>
@@ -83,8 +99,12 @@
         <file>resources/icons/airwaytrack.svg</file>
         <file>resources/icons/airwaytrackdown.svg</file>
         <file>resources/icons/airwayvictor.svg</file>
+        <file>resources/icons/alternate.svg</file>
+        <file>resources/icons/altrange.svg</file>
         <file>resources/icons/application-exit.svg</file>
         <file>resources/icons/approach.svg</file>
+        <file>resources/icons/approachall.svg</file>
+        <file>resources/icons/approachconvert.svg</file>
         <file>resources/icons/approachguide.svg</file>
         <file>resources/icons/approachselect.svg</file>
         <file>resources/icons/approachunselect.svg</file>
@@ -96,8 +116,10 @@
         <file>resources/icons/back.svg</file>
         <file>resources/icons/boatai.svg</file>
         <file>resources/icons/boataiground.svg</file>
+        <file>resources/icons/bulb.svg</file>
         <file>resources/icons/cancel.svg</file>
         <file>resources/icons/centeraircraft.svg</file>
+        <file>resources/icons/centeraircraftdest.svg</file>
         <file>resources/icons/centermark.svg</file>
         <file>resources/icons/centerroute.svg</file>
         <file>resources/icons/checkbox_dark_checked.png</file>
@@ -115,9 +137,12 @@
         <file>resources/icons/copy.svg</file>
         <file>resources/icons/database.svg</file>
         <file>resources/icons/databaseairspace.svg</file>
+        <file>resources/icons/databasecheck.svg</file>
         <file>resources/icons/detaildefault.svg</file>
         <file>resources/icons/detailless.svg</file>
+        <file>resources/icons/detailmap.svg</file>
         <file>resources/icons/detailmore.svg</file>
+        <file>resources/icons/directto.svg</file>
         <file>resources/icons/distancemeasure.svg</file>
         <file>resources/icons/distancemeasureoff.svg</file>
         <file>resources/icons/distancemeasurerhumb.svg</file>
@@ -136,13 +161,20 @@
         <file>resources/icons/fullscreen.svg</file>
         <file>resources/icons/globals.svg</file>
         <file>resources/icons/gls.svg</file>
+        <file>resources/icons/gradientblackwhite.svg</file>
+        <file>resources/icons/gradientcolors.svg</file>
+        <file>resources/icons/gradientcolors2.svg</file>
         <file>resources/icons/group-by.svg</file>
         <file>resources/icons/help.svg</file>
+        <file>resources/icons/helpdownload.svg</file>
         <file>resources/icons/hillshading.svg</file>
         <file>resources/icons/hold.svg</file>
         <file>resources/icons/holdoff.svg</file>
         <file>resources/icons/home.svg</file>
         <file>resources/icons/homemap.svg</file>
+        <file>resources/icons/icongradientblackwhite.svg</file>
+        <file>resources/icons/icongradientcolors.svg</file>
+        <file>resources/icons/icongradientcolors2.svg</file>
         <file>resources/icons/ils.svg</file>
         <file>resources/icons/infodock.svg</file>
         <file>resources/icons/kmlfileopen.svg</file>
@@ -150,18 +182,30 @@
         <file>resources/icons/lessdetails.svg</file>
         <file>resources/icons/littlenavmap.ico</file>
         <file>resources/icons/littlenavmap.svg</file>
+        <file>resources/icons/littlenavmap32.ico</file>
+        <file>resources/icons/littlenavmap32.svg</file>
+        <file>resources/icons/littlenavmap64.ico</file>
+        <file>resources/icons/littlenavmap64.svg</file>
+        <file>resources/icons/littlenavmapdoc.ico</file>
+        <file>resources/icons/littlenavmapdoc.svg</file>
+        <file>resources/icons/littlenavmapinstall.ico</file>
+        <file>resources/icons/littlenavmapinstall.svg</file>
         <file>resources/icons/load-all.svg</file>
+        <file>resources/icons/loc.svg</file>
         <file>resources/icons/lock.svg</file>
         <file>resources/icons/logbook.svg</file>
         <file>resources/icons/logdata_add.svg</file>
         <file>resources/icons/logdata_delete.svg</file>
         <file>resources/icons/logdata_edit.svg</file>
         <file>resources/icons/map.svg</file>
+        <file>resources/icons/mapclick.svg</file>
         <file>resources/icons/mapdisplay.svg</file>
         <file>resources/icons/mapdisplay2.svg</file>
         <file>resources/icons/mapdisplayflightplan.svg</file>
+        <file>resources/icons/mapdisplaykeys.svg</file>
         <file>resources/icons/mapdisplaylabels.svg</file>
         <file>resources/icons/mapgrid.svg</file>
+        <file>resources/icons/mapgridconfig.svg</file>
         <file>resources/icons/mapnavigation.svg</file>
         <file>resources/icons/mapsaveasimage.svg</file>
         <file>resources/icons/mapsettings.svg</file>
@@ -197,6 +241,7 @@
         <file>resources/icons/radiobutton_dark_checked_disabled.png</file>
         <file>resources/icons/radiobutton_dark_unchecked.png</file>
         <file>resources/icons/radiobutton_dark_unchecked_disabled.png</file>
+        <file>resources/icons/random.svg</file>
         <file>resources/icons/rangeringoff.svg</file>
         <file>resources/icons/rangerings.svg</file>
         <file>resources/icons/rangeringsoff.svg</file>
@@ -220,7 +265,9 @@
         <file>resources/icons/routelegup.svg</file>
         <file>resources/icons/routelow.svg</file>
         <file>resources/icons/routeradio.svg</file>
+        <file>resources/icons/routerandom.svg</file>
         <file>resources/icons/routereverse.svg</file>
+        <file>resources/icons/routeselect.svg</file>
         <file>resources/icons/routestring.svg</file>
         <file>resources/icons/routetoctod.svg</file>
         <file>resources/icons/routetrack.svg</file>
@@ -248,6 +295,7 @@
         <file>resources/icons/trackline.svg</file>
         <file>resources/icons/trafficpattern.svg</file>
         <file>resources/icons/trafficpatternoff.svg</file>
+        <file>resources/icons/turnpath.svg</file>
         <file>resources/icons/undo.svg</file>
         <file>resources/icons/units.svg</file>
         <file>resources/icons/unlock.svg</file>
@@ -257,6 +305,7 @@
         <file>resources/icons/userdata_edit.svg</file>
         <file>resources/icons/userdata_move.svg</file>
         <file>resources/icons/userfeatures.svg</file>
+        <file>resources/icons/userpoint_Addon.svg</file>
         <file>resources/icons/userpoint_Airport.svg</file>
         <file>resources/icons/userpoint_Airstrip.svg</file>
         <file>resources/icons/userpoint_Bookmark.svg</file>
@@ -276,10 +325,12 @@
         <file>resources/icons/userpoint_Mountain.svg</file>
         <file>resources/icons/userpoint_NDB.svg</file>
         <file>resources/icons/userpoint_Obstacle.svg</file>
+        <file>resources/icons/userpoint_Oil Platform.svg</file>
         <file>resources/icons/userpoint_Other.svg</file>
         <file>resources/icons/userpoint_POI.svg</file>
         <file>resources/icons/userpoint_Park.svg</file>
         <file>resources/icons/userpoint_Pin.svg</file>
+        <file>resources/icons/userpoint_Radio Range.svg</file>
         <file>resources/icons/userpoint_Seaport.svg</file>
         <file>resources/icons/userpoint_Settlement.svg</file>
         <file>resources/icons/userpoint_TACAN.svg</file>
@@ -290,6 +341,7 @@
         <file>resources/icons/userpoint_VRP.svg</file>
         <file>resources/icons/userpoint_Water.svg</file>
         <file>resources/icons/userpoint_Waypoint.svg</file>
+        <file>resources/icons/verticaltrack.svg</file>
         <file>resources/icons/viewexpand.svg</file>
         <file>resources/icons/viewhoriz.svg</file>
         <file>resources/icons/viewreset.svg</file>
@@ -303,50 +355,5 @@
         <file>resources/icons/windpointer.svg</file>
         <file>resources/icons/zoomin.svg</file>
         <file>resources/icons/zoomout.svg</file>
-        <file>resources/icons/approachall.svg</file>
-        <file>resources/icons/altrange.svg</file>
-        <file>resources/icons/verticaltrack.svg</file>
-        <file>resources/icons/loc.svg</file>
-        <file>resources/icons/mapdisplaykeys.svg</file>
-        <file>resources/icons/airportclosed.svg</file>
-        <file>resources/icons/centeraircraftdest.svg</file>
-        <file>resources/icons/userpoint_Radio Range.svg</file>
-        <file>resources/icons/aircraftonline.svg</file>
-        <file>resources/icons/detailmap.svg</file>
-        <file>resources/icons/aircraft_helicopter_ground_online.svg</file>
-        <file>resources/icons/aircraft_helicopter_online.svg</file>
-        <file>resources/icons/aircraft_jet_ground_online.svg</file>
-        <file>resources/icons/aircraft_jet_online.svg</file>
-        <file>resources/icons/aircraft_small_ground_online.svg</file>
-        <file>resources/icons/aircraft_small_online.svg</file>
-        <file>resources/icons/turnpath.svg</file>
-        <file>resources/icons/databasecheck.svg</file>
-        <file>resources/icons/userpoint_Oil Platform.svg</file>
-        <file>resources/icons/aircraft_unknown.svg</file>
-        <file>resources/icons/userpoint_Addon.svg</file>
-        <file>resources/icons/airportmil.svg</file>
-        <file>resources/icons/mapgridconfig.svg</file>
-        <file>resources/icons/littlenavmapdoc.svg</file>
-        <file>resources/icons/directto.svg</file>
-        <file>resources/icons/alternate.svg</file>
-        <file>resources/icons/routeselect.svg</file>
-        <file>resources/icons/gradientblackwhite.svg</file>
-        <file>resources/icons/gradientcolors.svg</file>
-        <file>resources/icons/icongradientcolors.svg</file>
-        <file>resources/icons/icongradientblackwhite.svg</file>
-        <file>resources/icons/mapclick.svg</file>
-        <file>resources/icons/bulb.svg</file>
-        <file>resources/icons/gradientcolors2.svg</file>
-        <file>resources/icons/icongradientcolors2.svg</file>
-        <file>resources/config/little_navmap_mapstyle.ini</file>
-        <file>resources/icons/approachconvert.svg</file>
-        <file>resources/icons/airportweather.svg</file>
-        <file>resources/config/mapthemes.cfg</file>
-        <file>resources/icons/helpdownload.svg</file>
-        <file>resources/icons/airportaddonzoom.svg</file>
-        <file>resources/icons/airportaddonnone.svg</file>
-        <file>resources/icons/airportaddonall.svg</file>
-        <file>resources/icons/routerandom.svg</file>
-        <file>resources/icons/random.svg</file>
     </qresource>
 </RCC>
