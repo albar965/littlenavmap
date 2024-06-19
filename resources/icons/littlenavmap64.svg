@@ -46,7 +46,7 @@
      inkscape:window-x="44"
      inkscape:window-y="24"
      inkscape:window-maximized="0"
-     inkscape:current-layer="g1547"
+     inkscape:current-layer="g663"
      inkscape:showpageshadow="2"
      inkscape:pagecheckerboard="0"
      inkscape:deskcolor="#d1d1d1" />
@@ -1588,29 +1588,33 @@
      id="g1547"
      transform="matrix(0.86625783,0,0,0.86625783,4.2920501,72.22103)">
     <g
-       id="g1374"
-       transform="matrix(1.0783215,0,0,1.0783215,-0.40360762,2.9749893)">
-      <rect
-         style="fill:#ffffff;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none"
-         id="rect1266"
-         width="43.232147"
-         height="14.988951"
-         x="-3.8401501"
-         y="-43.979919"
-         rx="2.5197179"
-         ry="2.5197177" />
-      <text
-         xml:space="preserve"
-         style="font-weight:bold;font-size:11.5387px;line-height:125%;font-family:sans-serif;-inkscape-font-specification:'sans-serif Bold';letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0.288467px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-         x="-1.6081893"
-         y="-28.597864"
-         id="text500"
-         transform="scale(0.8987108,1.112705)"><tspan
-           sodipodi:role="line"
-           id="tspan498"
+       id="g663"
+       transform="matrix(1.3367823,0,0,1.3367823,14.233346,7.7816459)">
+      <g
+         id="g1384"
+         transform="matrix(1.1464739,0,0,1.1464739,12.520988,5.4266658)">
+        <rect
+           style="fill:#ffffff;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none"
+           id="rect1266"
+           width="14.599629"
+           height="14.988951"
+           x="-2.8603303"
+           y="-43.979919"
+           rx="1.7728636"
+           ry="1.7728636" />
+        <text
+           xml:space="preserve"
+           style="font-weight:bold;font-size:11.5387px;line-height:125%;font-family:sans-serif;-inkscape-font-specification:'sans-serif Bold';letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0.288467px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
            x="-1.6081893"
            y="-28.597864"
-           style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:11.5387px;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;stroke-width:0.288467px">LNM 64</tspan></text>
+           id="text500"
+           transform="scale(0.8987108,1.112705)"><tspan
+             sodipodi:role="line"
+             id="tspan498"
+             x="-1.6081893"
+             y="-28.597864"
+             style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:11.5387px;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;stroke-width:0.288467px">64</tspan></text>
+      </g>
     </g>
   </g>
 </svg>

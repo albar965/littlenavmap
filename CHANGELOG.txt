@@ -156,6 +156,7 @@ A big thank you to all who reported bugs and issues!
 * Fixed issue where application was still detected as running when trying to send a command through
   the command line.
 * Added `-q` / `--quit` command line argument to exit an already running instance.
+* New icons for 32 and 64 bit Windows builds to easier see the difference if both are installed.
 * More checks to avoid crashes.
 
 ### Web Interface
@@ -185,6 +186,7 @@ A big thank you to all who reported bugs and issues!
   [tuxmainy](https://github.com/tuxmainy). This package installs Little Navmap and Little Navconnect.
   Little Xpconnect can still be installed using the menu item `Install Little Xpconnect in X-Plane plugins`
   in the menu `Tools`.
+* Installer has a new icon to avoid confusion with the program file.
 
 ==<<=============================================================================
 
