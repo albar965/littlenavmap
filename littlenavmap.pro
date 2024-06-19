@@ -917,7 +917,12 @@ macx {
 # Windows specific deploy target
 win32 {
   defineReplace(p){return ($$shell_quote($$shell_path($$1)))}
-  RC_ICONS = resources/icons/littlenavmap.ico
+
+  contains(QT_ARCH, i386) { # 32 Bit build
+    RC_ICONS = resources/icons/littlenavmap32.ico
+  } else { # 64 Bit build
+    RC_ICONS = resources/icons/littlenavmap64.ico
+  }
   RC_ICONS += resources/icons/littlenavmapdoc.ico
 
   CONFIG(debug, debug|release) : DLL_SUFFIX=d
