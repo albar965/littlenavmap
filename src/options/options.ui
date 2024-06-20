@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>946</width>
-    <height>501</height>
+    <height>600</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -77,8 +77,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>617</width>
-             <height>503</height>
+             <width>631</width>
+             <height>531</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_21">
@@ -434,8 +434,8 @@ This is the file on top of the list &quot;Recent Window Layouts&quot;.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>631</width>
-             <height>432</height>
+             <width>514</width>
+             <height>371</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_22">
@@ -627,8 +627,8 @@ opening files, modifying the flight plan and other operations.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>617</width>
-             <height>970</height>
+             <width>419</width>
+             <height>1030</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_23">
@@ -1293,8 +1293,8 @@ This does not affect the map window which can be changed separately on the optio
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>631</width>
-             <height>432</height>
+             <width>568</width>
+             <height>386</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_36">
@@ -1614,8 +1614,8 @@ Also affects labels at holds and traffic patterns.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>631</width>
-             <height>432</height>
+             <width>471</width>
+             <height>375</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_59">
@@ -1830,8 +1830,8 @@ Example: &quot;IFR Frankfurt Am Main (EDDF) to Fiumicino (LIRF).lnmpln&quot;</st
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>631</width>
-             <height>432</height>
+             <width>317</width>
+             <height>487</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout">
@@ -2099,8 +2099,8 @@ The airports toolbar button can be used to hide empty airports if this box is ch
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>631</width>
-             <height>432</height>
+             <width>595</width>
+             <height>344</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_2">
@@ -2531,8 +2531,8 @@ Smaller values will allow a finer selection.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>617</width>
-             <height>514</height>
+             <width>501</width>
+             <height>526</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_12">
@@ -2860,8 +2860,8 @@ Map views might be shown with a larger zoom distance than expected if this optio
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>617</width>
-             <height>1053</height>
+             <width>499</width>
+             <height>1061</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_20">
@@ -3757,9 +3757,9 @@ Lower values make the airspace more opaque and higher values more transparent.</
            <property name="geometry">
             <rect>
              <x>0</x>
-             <y>-53</y>
-             <width>617</width>
-             <height>485</height>
+             <y>0</y>
+             <width>428</width>
+             <height>493</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_35">
@@ -4192,8 +4192,8 @@ Also used in the elevation profile.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>631</width>
-             <height>432</height>
+             <width>554</width>
+             <height>260</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_57">
@@ -4455,8 +4455,8 @@ Lower this value to avoid too long tracks and avoid stutters in map display.</st
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>617</width>
-             <height>651</height>
+             <width>452</width>
+             <height>748</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_35">
@@ -5240,20 +5240,7 @@ Value 0 is opaque and 90 is most transparent.</string>
            <item>
             <widget class="QLabel" name="labelMapApiKeysHint">
              <property name="text">
-              <string>&lt;p&gt;You can enter login information, tokens or API keys for map services which need an user account.
-The required keys shown below are extracted from the installed map themes.&lt;/p&gt;
-
-&lt;p&gt;Click one of the following links to go directly to the account pages of the respective map services. You may need to sign in. 
-&lt;a href=&quot;https://account.mapbox.com/&quot;&gt;&lt;b&gt;Mapbox&amp;nbsp;Account&amp;nbsp;page&lt;/b&gt;&lt;/a&gt;,
-&lt;a href=&quot;https://manage.thunderforest.com/dashboard&quot;&gt;&lt;b&gt;Thunderforest&amp;nbsp;Console&lt;/b&gt;&lt;/a&gt; and 
-&lt;a href=&quot;https://cloud.maptiler.com/account/keys/&quot;&gt;&lt;b&gt;Maptiler&amp;nbsp;Cloud&amp;nbsp;Account&amp;nbsp;API&amp;nbsp;key&amp;nbsp;page&lt;/b&gt;&lt;/a&gt;.
-&lt;/p&gt;
-
-&lt;p&gt;&lt;b&gt;A restart might be needed after changing keys.&lt;br/&gt;
-Do not show this information publicly in forums on screenshots.&lt;/b&gt;&lt;/p&gt;
-
-&lt;p&gt;Double click a value to edit.&lt;/p&gt;
-</string>
+              <string>&lt;p&gt;You can enter login information, tokens or API keys for map services which need an user account. The required keys shown below are extracted from the installed map themes. &lt;/p&gt;&lt;p&gt;Click one of the following links to go directly to the account pages of the respective map services. You may need to sign in or create an account.&lt;br/&gt;- &lt;a href=&quot;https://account.mapbox.com/&quot;&gt;&lt;b&gt;Mapbox Account page&lt;/b&gt;&lt;/a&gt;&lt;br/&gt;- &lt;a href=&quot;https://manage.thunderforest.com/dashboard&quot;&gt;&lt;b&gt;Thunderforest Console&lt;/b&gt;&lt;/a&gt;&lt;br/&gt;- &lt;a href=&quot;https://cloud.maptiler.com/account/keys/&quot;&gt;&lt;b&gt;Maptiler Cloud Account API key page&lt;/b&gt;&lt;/a&gt;&lt;br/&gt;- &lt;a href=&quot;https://stadiamaps.com/stamen/onboarding/create-account/&quot;&gt;&lt;b&gt;Stadia Maps / StamenTerrain&lt;/b&gt;&lt;/a&gt;&lt;/p&gt;&lt;p&gt;&lt;b&gt;A restart might be needed after changing keys. Note that all accounts are free. You do not have to enter any payment information there. Click the help button for details.&lt;br/&gt;Do not show this information publicly in forums on screenshots.&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Double click a value to edit.&lt;/p&gt;</string>
              </property>
              <property name="wordWrap">
               <bool>true</bool>
@@ -5358,8 +5345,8 @@ Do not show this information publicly in forums on screenshots.&lt;/b&gt;&lt;/p&
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>617</width>
-             <height>527</height>
+             <width>328</width>
+             <height>535</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_39">
@@ -5828,8 +5815,8 @@ airspace filename has to match the callsign of the online center.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>617</width>
-             <height>617</height>
+             <width>572</width>
+             <height>629</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_25">
@@ -6275,8 +6262,8 @@ put the active leg back on top after the given timeout while flying.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>631</width>
-             <height>432</height>
+             <width>318</width>
+             <height>241</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_26">
@@ -6435,8 +6422,8 @@ Note that this value does not affect flight plan calculation or saving of flight
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>617</width>
-             <height>610</height>
+             <width>272</width>
+             <height>750</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_27">
@@ -6676,8 +6663,8 @@ Note that this value does not affect flight plan calculation or saving of flight
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>617</width>
-             <height>875</height>
+             <width>360</width>
+             <height>931</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_28">
@@ -7274,8 +7261,8 @@ Entering a wrong value will cause errors when downloading weather reports.</stri
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>631</width>
-             <height>432</height>
+             <width>389</width>
+             <height>375</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_29">
@@ -7576,8 +7563,8 @@ Entering a wrong value will cause errors when downloading weather reports.</stri
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>631</width>
-             <height>432</height>
+             <width>363</width>
+             <height>258</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_37">
@@ -7769,8 +7756,8 @@ Little Navmap GIT repository.
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>617</width>
-             <height>629</height>
+             <width>437</width>
+             <height>699</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_30">
@@ -8131,8 +8118,8 @@ Source data has many errors.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>617</width>
-             <height>490</height>
+             <width>395</width>
+             <height>506</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_38">
