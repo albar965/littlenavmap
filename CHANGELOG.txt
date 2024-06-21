@@ -113,6 +113,8 @@ A big thank you to all who reported bugs and issues!
   #1126
 * Fixed display issue where userpoints without type were hidden. Optimized code for userpoint
   display.
+* AI/multiplayer aircraft labels not have a `…` appended if labels texts are suppressed due to higher
+  zoom distances Reworked aircraft label code.
 * Added internal object ID as optional aircraft label for AI/multiplayer. Enable this in options on
   page `Map Labels` in branch `AI, Multiplayer and Online Client Aircraft`.
 * Fixed wrong bearing for nearest radio navaids of airport in information dock window. Used wrong
