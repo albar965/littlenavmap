@@ -25,6 +25,7 @@
 #include "common/dirtool.h"
 #include "common/elevationprovider.h"
 #include "common/filecheck.h"
+#include "common/formatter.h"
 #include "common/mapcolors.h"
 #include "common/settingsmigrate.h"
 #include "common/unit.h"
@@ -237,6 +238,8 @@ MainWindow::MainWindow()
     marbleAboutDialog = new Marble::MarbleAboutDialog(this);
     marbleAboutDialog->setApplicationTitle(QCoreApplication::applicationName());
 
+    connect(NavApp::applicationInstance(), &QGuiApplication::fontChanged, formatter::initWindPtr);
+
     routeExport = new RouteExport(this);
     simbriefHandler = new SimBriefHandler(this);
 
@@ -245,6 +248,7 @@ MainWindow::MainWindow()
 
     // get best language and fill options combo box
     optionsDialog->initLanguage();
+
 
     // Has to load the state now so options are available for all controller and manager classes
     optionsDialog->restoreState();

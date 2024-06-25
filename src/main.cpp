@@ -319,6 +319,7 @@ int main(int argc, char *argv[])
       {
         font.fromString(fontStr);
         QApplication::setFont(font);
+        formatter::initWindPtr(font);
       }
       qInfo() << "Loaded font" << font.toString() << "from options. Stored font info" << fontStr;
 

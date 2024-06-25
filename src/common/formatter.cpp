@@ -29,6 +29,7 @@
 
 #include <QDateTime>
 #include <QElapsedTimer>
+#include <QFontMetrics>
 #include <QLocale>
 #include <QRegularExpression>
 #include <QStringBuilder>
@@ -36,6 +37,7 @@
 namespace formatter {
 
 static QStringList dateTimeFormats;
+QString windPtrNorth, windPtrSouth, windPtrEast, windPtrWest;
 
 QString formatMinutesHours(double timeHours)
 {
@@ -383,6 +385,51 @@ QString formatDateTimeSeconds(const QDateTime& datetime, bool overrideLocale)
                                                          "https://doc.qt.io/qt-5/qdate.html#toString-2 "
                                                          "Look at your operating system settings to find suitable format");
   return QLocale().toString(datetime, dateTimeStr);
+}
+
+void initWindPtr(const QFont& font)
+{
+  QFontMetrics metrics(font);
+
+  if(metrics.inFont(L'⮝'))
+    windPtrNorth = "⮝";
+  else
+    windPtrNorth = pointerUp();
+
+  if(metrics.inFont(L'⮟'))
+    windPtrSouth = "⮟";
+  else
+    windPtrSouth = pointerDown();
+
+  if(metrics.inFont(L'⮞'))
+    windPtrEast = "⮞";
+  else
+    windPtrEast = pointerRight();
+
+  if(metrics.inFont(L'⮜'))
+    windPtrWest = "⮜";
+  else
+    windPtrWest = pointerLeft();
+}
+
+const QString& windPointerNorth()
+{
+  return windPtrNorth;
+}
+
+const QString& windPointerSouth()
+{
+  return windPtrSouth;
+}
+
+const QString& windPointerEast()
+{
+  return windPtrEast;
+}
+
+const QString& windPointerWest()
+{
+  return windPtrWest;
 }
 
 } // namespace formatter
