@@ -360,7 +360,7 @@ void RouteExportFormatMap::init()
   FMT(TDSGTNXI,      AIRPORTS,             SU % "gfp",     tr("Garmin"),    tr("TDS GTNXi")                                               );
   FMT(TDSGTNXIWP,    AIRPORTS|GARMIN_WP,   SU % "gfp",     tr("Garmin"),    tr("TDS GTNXi with user defined waypoints")                   );
   FMT(JFBAE,         AIRPORTS,             S0 % "rte",     tr("Aircraft"),  tr("JustFlight BAE-146")                                      );
-  FMT(KLN90B,        AIRPORTS,             "kln.fpl",      tr("Garmin"),    tr("KLN 90B")                                                 );
+  FMT(KLN90B,        AIRPORTS,             "kln.pln",      tr("Garmin"),    tr("KLN 90B")                                                 );
   /* *INDENT-ON* */
 
 #undef FMT
