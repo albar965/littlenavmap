@@ -17,23 +17,24 @@
 
 #include "mappainter/mappaintervehicle.h"
 
-#include "common/formatter.h"
+#include "app/navapp.h"
 #include "common/mapcolors.h"
+#include "common/maptypes.h"
 #include "common/symbolpainter.h"
+#include "common/textpointer.h"
 #include "common/unit.h"
 #include "common/vehicleicons.h"
+#include "fs/sc/simconnectuseraircraft.h"
 #include "geo/calculations.h"
 #include "mapgui/maplayer.h"
-#include "common/maptypes.h"
 #include "mapgui/mappaintwidget.h"
 #include "mapgui/mapscale.h"
 #include "mapgui/mapscreenindex.h"
-#include "app/navapp.h"
-#include "fs/sc/simconnectuseraircraft.h"
 
 #include <marble/GeoPainter.h>
 
 #include <QStringBuilder>
+
 
 using namespace Marble;
 using namespace atools::geo;
@@ -443,9 +444,9 @@ void MapPainterVehicle::climbSinkPointer(QString& upDown, const SimConnectAircra
   if(aircraft.getVerticalSpeedFeetPerMin() < atools::fs::sc::SC_INVALID_FLOAT)
   {
     if(aircraft.getVerticalSpeedFeetPerMin() > 100.f)
-      upDown = tr(" %1").arg(formatter::pointerUp());
+      upDown = tr(" %1").arg(TextPointer::getPointerUp());
     else if(aircraft.getVerticalSpeedFeetPerMin() < -100.f)
-      upDown = tr(" %1").arg(formatter::pointerDown());
+      upDown = tr(" %1").arg(TextPointer::getPointerDown());
   }
 }
 

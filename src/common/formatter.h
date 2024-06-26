@@ -71,49 +71,6 @@ QString windInformationCross(float crossWindKts, bool addUnit = true);
 /* Tail and headwind > 1 kts */
 QString windInformationTailHead(float headWindKts, bool addUnit = true);
 
-/* Get wind pointers and other arrows depending on system */
-inline QString pointerUp()
-{
-  return "▲"; // BLACK UP-POINTING TRIANGLE Unicode: U+25B2, UTF-8: E2 96 B2
-}
-
-inline QString pointerDown()
-{
-  return "▼"; // BLACK DOWN-POINTING TRIANGLE Unicode: U+25BC, UTF-8: E2 96 BC
-}
-
-inline QString pointerRight()
-{
-#if defined(Q_OS_MACOS) || defined(Q_OS_WIN32)
-  // Black and white on macOS and colored on other Linux
-  return QObject::tr("▶︎"); // BLACK RIGHT-POINTING TRIANGLE Unicode: U+25B6 U+FE0E, UTF-8: E2 96 B6 EF B8 8E
-#else
-  return "►"; // U+25BA Name: BLACK RIGHT-POINTING POINTER
-#endif
-}
-
-inline QString pointerLeft()
-{
-#if defined(Q_OS_MACOS) || defined(Q_OS_WIN32)
-  // Black and white on macOS and colored on other Linux
-  return QObject::tr("◀︎"); // BLACK LEFT-POINTING TRIANGLE Unicode: U+25C0 U+FE0E, UTF-8: E2 97 80 EF B8 8E
-#else
-  return "◄"; // U+25C4 Name: BLACK LEFT-POINTING POINTER
-#endif
-}
-
-/* Wind pointers currently same as other pointers to avoid display issues when using limited fonts.
- * Alternative not available on all systems: [⮝⮟⮞⮜] . Falls back to normal pointers if not available in font.
- * Not to be used in map display. */
-
-/* Initialize wind pointers depending on font */
-void initWindPtr(const QFont& font);
-
-const QString& windPointerNorth();
-const QString& windPointerSouth();
-const QString& windPointerEast();
-const QString& windPointerWest();
-
 /* Only headwind > 1 kts and crosswind */
 QString windInformationShort(int windDirectionDeg, float windSpeedKts, float runwayEndHeading, float minHeadWind = 1.f,
                              bool addUnit = false);

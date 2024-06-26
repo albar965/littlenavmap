@@ -19,6 +19,7 @@
 
 #include "airspace/airspacecontroller.h"
 #include "atools.h"
+#include "textpointer.h"
 #include "common/airportfiles.h"
 #include "common/formatter.h"
 #include "common/fueltool.h"
@@ -3295,7 +3296,7 @@ void HtmlInfoBuilder::airwayText(const MapAirway& airway, HtmlBuilder& html) con
     // Reverse if one-way is backward
     std::swap(from, to);
 
-  QString connector(airway.direction == map::DIR_BOTH ? tr(", ") : tr(" %1 ").arg(formatter::pointerRight()));
+  QString connector(airway.direction == map::DIR_BOTH ? tr(", ") : tr(" %1 ").arg(TextPointer::getPointerRight()));
   if(info)
   {
     tempHtml.a(identRegionText(from.ident, from.region), QString("lnm://show?lonx=%1&laty=%2").
@@ -4470,9 +4471,9 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
               // Positive means right of course,  negative means left of course.
               QString crossDirection;
               if(crossTrackDistance >= 0.1f)
-                crossDirection = tr("<b>%1</b>").arg(formatter::pointerLeft());
+                crossDirection = tr("<b>%1</b>").arg(TextPointer::getPointerLeft());
               else if(crossTrackDistance <= -0.1f)
-                crossDirection = tr("<b>%1</b>").arg(formatter::pointerRight());
+                crossDirection = tr("<b>%1</b>").arg(TextPointer::getPointerRight());
 
               html.id(pid::NEXT_CROSS_TRACK_DIST).row2(tr("Cross Track Distance:"),
                                                        tr("%1 %2").arg(Unit::distNm(std::abs(crossTrackDistance))).
@@ -4732,9 +4733,9 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
           int vspeed = atools::roundToInt(aircraft.getVerticalSpeedFeetPerMin());
           QString upDown;
           if(vspeed >= 100)
-            upDown = tr(" <b>%1</b>").arg(formatter::pointerUp());
+            upDown = tr(" <b>%1</b>").arg(TextPointer::getPointerUp());
           else if(vspeed <= -100)
-            upDown = tr(" <b>%1</b>").arg(formatter::pointerDown());
+            upDown = tr(" <b>%1</b>").arg(TextPointer::getPointerDown());
 
           if(vspeed < 10.f && vspeed > -10.f)
             vspeed = 0.f;
@@ -4775,7 +4776,7 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
         if(vertAngleToNext < map::INVALID_ANGLE_VALUE)
           html.row2(tr("Angle and Speed to Next:"), tr("%L1°, %L2").arg(vertAngleToNext, 0, 'g', 2).
                     arg(Unit::speedVertFpm(-ageo::descentSpeedForPathAngle(userAircraft->getGroundSpeedKts(), vertAngleToNext)) %
-                        tr(" %1").arg(formatter::pointerDown())));
+                        tr(" %1").arg(TextPointer::getPointerDown())));
       }
       html.tableEndIf();
     }

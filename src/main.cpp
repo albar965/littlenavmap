@@ -15,6 +15,7 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
+#include "app/commandline.h"
 #include "app/navapp.h"
 #include "atools.h"
 #include "common/aircrafttrail.h"
@@ -24,6 +25,7 @@
 #include "common/maptypes.h"
 #include "common/proctypes.h"
 #include "common/settingsmigrate.h"
+#include "common/textpointer.h"
 #include "common/unit.h"
 #include "db/databasemanager.h"
 #include "exception.h"
@@ -54,8 +56,6 @@
 #include <marble/MarbleGlobal.h>
 #include <marble/MarbleDirs.h>
 #include <marble/MarbleDebug.h>
-
-#include <app/commandline.h>
 
 using namespace Marble;
 using atools::gui::Application;
@@ -319,8 +319,9 @@ int main(int argc, char *argv[])
       {
         font.fromString(fontStr);
         QApplication::setFont(font);
-        formatter::initWindPtr(font);
       }
+
+      TextPointer::initPointerCharacters(QApplication::font());
       qInfo() << "Loaded font" << font.toString() << "from options. Stored font info" << fontStr;
 
       // Load region override ============================================
@@ -371,7 +372,7 @@ int main(int argc, char *argv[])
         // "/home/USER/.local/share" ("/home/USER/.local/share/marble/maps/earth/openstreetmap")
         // "C:/Users/USER/AppData/Local" ("C:\Users\USER\AppData\Local\.marble\data\maps\earth\openstreetmap")
 
-        ///home/USER/.local/share/marble
+        /// home/USER/.local/share/marble
         QFileInfo cacheFileinfo(commandLine.getCachePath());
 
         QString marbleCache;

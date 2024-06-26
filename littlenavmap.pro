@@ -291,6 +291,7 @@ SOURCES += \
   src/common/symbolpainter.cpp \
   src/common/tabindexes.cpp \
   src/common/textplacement.cpp \
+  src/common/textpointer.cpp \
   src/common/unit.cpp \
   src/common/unitstringtool.cpp \
   src/common/updatehandler.cpp \
@@ -494,6 +495,7 @@ HEADERS  += \
   src/common/symbolpainter.h \
   src/common/tabindexes.h \
   src/common/textplacement.h \
+  src/common/textpointer.h \
   src/common/unit.h \
   src/common/unitstringtool.h \
   src/common/updatehandler.h \

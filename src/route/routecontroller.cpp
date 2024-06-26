@@ -17,6 +17,7 @@
 
 #include "routecontroller.h"
 
+#include "app/navapp.h"
 #include "atools.h"
 #include "common/constants.h"
 #include "common/filecheck.h"
@@ -24,6 +25,7 @@
 #include "common/mapcolors.h"
 #include "common/symbolpainter.h"
 #include "common/tabindexes.h"
+#include "common/textpointer.h"
 #include "common/unit.h"
 #include "common/unit.h"
 #include "common/unitstringtool.h"
@@ -44,7 +46,6 @@
 #include "gui/treedialog.h"
 #include "gui/widgetstate.h"
 #include "mapgui/mapwidget.h"
-#include "app/navapp.h"
 #include "options/optiondata.h"
 #include "parkingdialog.h"
 #include "query/airportquery.h"
@@ -83,6 +84,7 @@
 #include <QScrollBar>
 #include <QStringBuilder>
 #include <QUndoStack>
+
 
 namespace rcol {
 // Route table column indexes
@@ -2609,8 +2611,8 @@ void RouteController::routeTableOptions()
                          "The wind information is taken from the selected source in\n"
                          "menu \"Weather\" -> \"Airport Weather Source\".\n"
                          "Wind is taken from nearest airport if not available.").
-                      arg(formatter::windPointerSouth()).arg(formatter::windPointerNorth()).
-                      arg(formatter::windPointerEast()).arg(formatter::windPointerWest()),
+                      arg(TextPointer::getWindPointerSouth()).arg(TextPointer::getWindPointerNorth()).
+                      arg(TextPointer::getWindPointerEast()).arg(TextPointer::getWindPointerWest()),
                       routeLabel->isFlag(routelabel::HEADER_RUNWAY_TAKEOFF_WIND));
 
   treeDialog.addItem2(headerItem, rcol::HEADER_DEPARTURE, tr("Departure"),
@@ -2630,8 +2632,8 @@ void RouteController::routeTableOptions()
                          "The wind information is taken from the selected source in\n"
                          "menu \"Weather\" -> \"Airport Weather Source\".\n"
                          "Wind is taken from nearest airport if not available.").
-                      arg(formatter::windPointerSouth()).arg(formatter::windPointerNorth()).
-                      arg(formatter::windPointerEast()).arg(formatter::windPointerWest()),
+                      arg(TextPointer::getWindPointerSouth()).arg(TextPointer::getWindPointerNorth()).
+                      arg(TextPointer::getWindPointerEast()).arg(TextPointer::getWindPointerWest()),
                       routeLabel->isFlag(routelabel::HEADER_RUNWAY_LAND_WIND));
 
   // Add footer options to tree ========================================
@@ -5412,9 +5414,9 @@ void RouteController::updateModelTimeFuelWindAlt()
           {
             QString ptr;
             if(headWind >= 1.f)
-              ptr = formatter::windPointerSouth();
+              ptr = TextPointer::getWindPointerSouth();
             else if(headWind <= -1.f)
-              ptr = formatter::windPointerNorth();
+              ptr = TextPointer::getWindPointerNorth();
             txt.append(tr("%1 %2").arg(ptr).arg(Unit::speedKts(std::abs(headWind), false /* addUnit */)));
           }
           model->item(row, rcol::WIND_HEAD_TAIL)->setText(txt);

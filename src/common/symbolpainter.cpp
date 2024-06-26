@@ -17,7 +17,6 @@
 
 #include "symbolpainter.h"
 
-#include "common/formatter.h"
 #include "common/mapcolors.h"
 #include "common/maptypes.h"
 #include "common/unit.h"
@@ -25,6 +24,7 @@
 #include "fs/weather/metarparser.h"
 #include "geo/calculations.h"
 #include "options/optiondata.h"
+#include "textpointer.h"
 #include "util/paintercontextsaver.h"
 
 #include <QPainter>
@@ -747,9 +747,9 @@ void SymbolPainter::drawAirportMsa(QPainter *painter, const map::MapAirportMsa& 
         bearing = atools::geo::normalizeCourse(bearing + 180.f + magvar);
 
         if(bearing < 180.f)
-          text.prepend(formatter::pointerLeft());
+          text.prepend(TextPointer::getPointerLeft());
         else
-          text.append(formatter::pointerRight());
+          text.append(TextPointer::getPointerRight());
 
         // Line from center to top
         QLineF line(x, y, x, y - radius + 2.f);

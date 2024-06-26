@@ -24,6 +24,7 @@
 #include "fs/util/coordinates.h"
 #include "geo/calculations.h"
 #include "geo/pos.h"
+#include "textpointer.h"
 #include "unit.h"
 #include "util/htmlbuilder.h"
 
@@ -37,7 +38,6 @@
 namespace formatter {
 
 static QStringList dateTimeFormats;
-QString windPtrNorth, windPtrSouth, windPtrEast, windPtrWest;
 
 QString formatMinutesHours(double timeHours)
 {
@@ -230,9 +230,9 @@ QString windInformationTailHead(float headWindKts, bool addUnit)
     windPtr += Unit::speedKts(std::abs(headWindKts), addUnit);
 
     if(headWindKts <= -1.f)
-      windPtr += windPointerNorth(); // Tailwind
+      windPtr += TextPointer::getWindPointerNorth(); // Tailwind
     else
-      windPtr += windPointerSouth(); // Headwind
+      windPtr += TextPointer::getWindPointerSouth(); // Headwind
   }
   return QObject::tr(" %1").arg(windPtr);
 }
@@ -245,9 +245,9 @@ QString windInformationCross(float crossWindKts, bool addUnit)
     windPtr += Unit::speedKts(std::abs(crossWindKts), addUnit);
 
     if(crossWindKts > 0.f)
-      windPtr += windPointerWest();
+      windPtr += TextPointer::getWindPointerWest();
     else if(crossWindKts < 0.f)
-      windPtr += windPointerEast();
+      windPtr += TextPointer::getWindPointerEast();
   }
   return QObject::tr(" %1").arg(windPtr);
 }
@@ -385,51 +385,6 @@ QString formatDateTimeSeconds(const QDateTime& datetime, bool overrideLocale)
                                                          "https://doc.qt.io/qt-5/qdate.html#toString-2 "
                                                          "Look at your operating system settings to find suitable format");
   return QLocale().toString(datetime, dateTimeStr);
-}
-
-void initWindPtr(const QFont& font)
-{
-  QFontMetrics metrics(font);
-
-  if(metrics.inFont(L'⮝'))
-    windPtrNorth = "⮝";
-  else
-    windPtrNorth = pointerUp();
-
-  if(metrics.inFont(L'⮟'))
-    windPtrSouth = "⮟";
-  else
-    windPtrSouth = pointerDown();
-
-  if(metrics.inFont(L'⮞'))
-    windPtrEast = "⮞";
-  else
-    windPtrEast = pointerRight();
-
-  if(metrics.inFont(L'⮜'))
-    windPtrWest = "⮜";
-  else
-    windPtrWest = pointerLeft();
-}
-
-const QString& windPointerNorth()
-{
-  return windPtrNorth;
-}
-
-const QString& windPointerSouth()
-{
-  return windPtrSouth;
-}
-
-const QString& windPointerEast()
-{
-  return windPtrEast;
-}
-
-const QString& windPointerWest()
-{
-  return windPtrWest;
 }
 
 } // namespace formatter

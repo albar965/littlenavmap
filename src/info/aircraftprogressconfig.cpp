@@ -16,11 +16,12 @@
 *****************************************************************************/
 
 #include "info/aircraftprogressconfig.h"
-#include "common/formatter.h"
-#include "gui/treedialog.h"
-#include "common/constants.h"
-#include "settings/settings.h"
+
 #include "atools.h"
+#include "common/constants.h"
+#include "common/textpointer.h"
+#include "gui/treedialog.h"
+#include "settings/settings.h"
 
 #include <QDebug>
 
@@ -145,7 +146,7 @@ void AircraftProgressConfig::progressConfiguration()
   treeDialog.addItem2(nextItem, pid::NEXT_LEG_COURSE,       tr("Leg Course"), tr("Course of the current active flight plan leg."));
   treeDialog.addItem2(nextItem, pid::NEXT_HEADING,          tr("Heading"), tr("Heading to fly to the next waypoint considering wind."));
   treeDialog.addItem2(nextItem, pid::NEXT_CROSS_TRACK_DIST, tr("Cross Track Distance"), tr("Distance to flight plan leg.\n"
-                                                                                           "%1 means aircraft is left of flight plan leg (fly right) and %2 means right of leg.").arg(formatter::pointerRight()).arg(formatter::pointerLeft()));
+                                                                                           "%1 means aircraft is left of flight plan leg (fly right) and %2 means right of leg.").arg(TextPointer::getPointerRight()).arg(TextPointer::getPointerLeft()));
   treeDialog.addItem2(nextItem, pid::NEXT_REMARKS,              tr("Remarks"), tr("User entered remarks for an user flight plan position."));
 
   // Aircraft ==========================================================================================================
@@ -191,7 +192,8 @@ void AircraftProgressConfig::progressConfiguration()
   // Descent ==========================================================================================================
   QTreeWidgetItem *descentItem = treeDialog.addTopItem1(tr("Descent Path"));
   treeDialog.addItem2(descentItem, pid::DESCENT_DEVIATION,   tr("Deviation"), tr("Vertical altitude deviation from descent path.\n"
-                                                                                 "%1 means above (increase sink rate) and %2 means below (decrease sink rate).").arg(formatter::pointerDown()).arg(formatter::pointerUp()));
+                                                                                 "%1 means above (increase sink rate) and %2 means below (decrease sink rate).").
+                                                                            arg(TextPointer::getPointerDown()).arg(TextPointer::getPointerUp()));
   treeDialog.addItem2(descentItem, pid::DESCENT_ANGLE_SPEED, tr("Angle and Speed"), tr("Vertical flight path angle needed to keep the vertical path angle.\n"
                                                                                        "Changes to \"Required angle\" if mandatory in approach procedures."));
   treeDialog.addItem2(descentItem, pid::DESCENT_VERT_ANGLE_NEXT, tr("Angle and Speed to Next"), tr("Vertical descent angle and speed needed to arrive at\n"
@@ -202,8 +204,10 @@ void AircraftProgressConfig::progressConfiguration()
   treeDialog.addItem2(envItem, pid::ENV_WIND_DIR_SPEED,   tr("Wind Direction and Speed"), tr("Wind direction and speed at aircraft.\n"
                                                                                             "Second line shows headwind indicated by %1 and tailwind by %2\n"
                                                                                             "as well as crosswind (%3 or %4).").
-                                                                                        arg(formatter::windPointerSouth()).arg(formatter::windPointerNorth()).
-                                                                                        arg(formatter::windPointerEast()).arg(formatter::windPointerWest()));
+                                                                                        arg(TextPointer::getWindPointerSouth()).
+                                                                                        arg(TextPointer::getWindPointerNorth()).
+                                                                                        arg(TextPointer::getWindPointerEast()).
+                                                                                        arg(TextPointer::getWindPointerWest()));
   treeDialog.addItem2(envItem, pid::ENV_TAT,              tr("Total Air Temperature"), tr("Total air temperature (TAT).\n"
                                                                                          "Also indicated air temperature (IAT) or ram air temperature."));
   treeDialog.addItem2(envItem, pid::ENV_SAT,              tr("Static Air Temperature"), tr("Static air temperature (SAT).\n"

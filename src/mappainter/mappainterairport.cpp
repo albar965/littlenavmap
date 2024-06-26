@@ -22,6 +22,7 @@
 #include "common/mapcolors.h"
 #include "common/maptypes.h"
 #include "common/symbolpainter.h"
+#include "common/textpointer.h"
 #include "common/unit.h"
 #include "geo/calculations.h"
 #include "mapgui/aprongeometrycache.h"
@@ -884,23 +885,23 @@ void MapPainterAirport::drawAirportDiagram(const map::MapAirport& airport)
         {
           // This case is rare (eg. LTAI) - probably primary in the wrong place
           rotate = runway.heading + 90.f;
-          textPrim = tr("%1 ").arg(formatter::pointerRight()) %
+          textPrim = tr("%1 ").arg(TextPointer::getPointerRight()) %
                      formatter::courseTextFromTrue(opposedCourseDeg(runway.heading), airport.magvar, false /* magBold */,
                                                    false /* magBig */, false /* trueSmall */, true /* narrow */, forceBoth);
 
           textSec = formatter::courseTextFromTrue(runway.heading, airport.magvar, false /* magBold */, false /* magBig */,
                                                   false /* trueSmall */, true /* narrow */, forceBoth) %
-                    tr(" %1").arg(formatter::pointerLeft());
+                    tr(" %1").arg(TextPointer::getPointerLeft());
         }
         else
         {
           rotate = runway.heading - 90.f;
-          textPrim = tr("%1 ").arg(formatter::pointerRight()) %
+          textPrim = tr("%1 ").arg(TextPointer::getPointerRight()) %
                      formatter::courseTextFromTrue(runway.heading, airport.magvar, false /* magBold */, false /* magBig */,
                                                    false /* trueSmall */, true /* narrow */, forceBoth);
           textSec = formatter::courseTextFromTrue(opposedCourseDeg(runway.heading), airport.magvar, false /* magBold */,
                                                   false /* magBig */, false /* trueSmall */, true /* narrow */, forceBoth) %
-                    tr(" %1").arg(formatter::pointerLeft());
+                    tr(" %1").arg(TextPointer::getPointerLeft());
         }
 
         QRectF textRectPrim = rwHdgMetrics.boundingRect(textPrim).marginsAdded(RUNWAY_HEADING_MARGINS);

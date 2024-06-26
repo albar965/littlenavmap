@@ -28,6 +28,7 @@
 #include "common/formatter.h"
 #include "common/mapcolors.h"
 #include "common/settingsmigrate.h"
+#include "common/textpointer.h"
 #include "common/unit.h"
 #include "common/updatehandler.h"
 #include "connect/connectclient.h"
@@ -36,12 +37,12 @@
 #include "exception.h"
 #include "fs/gpx/gpxio.h"
 #include "fs/perf/aircraftperf.h"
+#include "gui/desktopservices.h"
 #include "gui/dialog.h"
 #include "gui/dockwidgethandler.h"
 #include "gui/errorhandler.h"
 #include "gui/filehistoryhandler.h"
 #include "gui/helphandler.h"
-#include "gui/desktopservices.h"
 #include "gui/messagebox.h"
 #include "gui/messagesettings.h"
 #include "gui/statusbareventfilter.h"
@@ -238,7 +239,8 @@ MainWindow::MainWindow()
     marbleAboutDialog = new Marble::MarbleAboutDialog(this);
     marbleAboutDialog->setApplicationTitle(QCoreApplication::applicationName());
 
-    connect(NavApp::applicationInstance(), &QGuiApplication::fontChanged, formatter::initWindPtr);
+    // Update pointer characters on font change
+    connect(NavApp::applicationInstance(), &QGuiApplication::fontChanged, TextPointer::initPointerCharacters);
 
     routeExport = new RouteExport(this);
     simbriefHandler = new SimBriefHandler(this);
@@ -248,7 +250,6 @@ MainWindow::MainWindow()
 
     // get best language and fill options combo box
     optionsDialog->initLanguage();
-
 
     // Has to load the state now so options are available for all controller and manager classes
     optionsDialog->restoreState();

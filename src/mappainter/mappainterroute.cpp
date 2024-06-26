@@ -24,6 +24,7 @@
 #include "common/proctypes.h"
 #include "common/symbolpainter.h"
 #include "common/textplacement.h"
+#include "common/textpointer.h"
 #include "common/unit.h"
 #include "geo/calculations.h"
 #include "mapgui/maplayer.h"
@@ -38,6 +39,7 @@
 #include <QStringBuilder>
 
 #include <marble/GeoPainter.h>
+
 
 using namespace Marble;
 using namespace atools::geo;
@@ -1237,9 +1239,9 @@ void MapPainterRoute::paintProcedureSegment(const proc::MapProcedureLegs& legs, 
       holdText = QString::number(leg.course, 'f', 0) % (leg.trueCourse ? tr("°T") : tr("°M"));
 
       if(trueCourse < 180.f)
-        holdText = holdText % tr(" %1").arg(formatter::pointerRight());
+        holdText = holdText % tr(" %1").arg(TextPointer::getPointerRight());
       else
-        holdText = tr("%1 ").arg(formatter::pointerLeft()) % holdText;
+        holdText = tr("%1 ").arg(TextPointer::getPointerLeft()) % holdText;
 
       if(leg.time > 0.f)
         holdText2.append(QString::number(leg.time, 'g', 2) % tr("min"));
@@ -1249,9 +1251,9 @@ void MapPainterRoute::paintProcedureSegment(const proc::MapProcedureLegs& legs, 
         holdText2 = tr("1min");
 
       if(trueCourse < 180.f)
-        holdText2 = tr("%1 ").arg(formatter::pointerLeft()) % holdText2;
+        holdText2 = tr("%1 ").arg(TextPointer::getPointerLeft()) % holdText2;
       else
-        holdText2 = holdText2 % tr(" %1").arg(formatter::pointerRight());
+        holdText2 = holdText2 % tr(" %1").arg(TextPointer::getPointerRight());
     }
 
     if(draw)
@@ -1271,9 +1273,9 @@ void MapPainterRoute::paintProcedureSegment(const proc::MapProcedureLegs& legs, 
     {
       text = QString::number(leg.course, 'f', 0) % (leg.trueCourse ? tr("°T") : tr("°M")) % tr("/1min");
       if(trueCourse < 180.f)
-        text = text % tr(" %1").arg(formatter::pointerRight());
+        text = text % tr(" %1").arg(TextPointer::getPointerRight());
       else
-        text = tr("%1 ").arg(formatter::pointerLeft()) % text;
+        text = tr("%1 ").arg(TextPointer::getPointerLeft()) % text;
     }
 
     float px, py;

@@ -17,16 +17,16 @@
 
 #include "mappainter/mappainternav.h"
 
-#include "common/formatter.h"
-#include "common/symbolpainter.h"
 #include "common/mapcolors.h"
-#include "common/textplacement.h"
-#include "util/paintercontextsaver.h"
-#include "mapgui/maplayer.h"
-#include "query/mapquery.h"
-#include "query/airwaytrackquery.h"
-#include "query/waypointtrackquery.h"
 #include "common/maptools.h"
+#include "common/symbolpainter.h"
+#include "common/textplacement.h"
+#include "common/textpointer.h"
+#include "mapgui/maplayer.h"
+#include "query/airwaytrackquery.h"
+#include "query/mapquery.h"
+#include "query/waypointtrackquery.h"
+#include "util/paintercontextsaver.h"
 
 #include <QElapsedTimer>
 #include <QStringBuilder>
@@ -348,7 +348,7 @@ void MapPainterNav::paintAirways(const QList<map::MapAirway> *airways, bool fast
             // Turn arrow depending on text angle, direction and depending if text segment is reversed compared to first
             // Omit arrow if no rotation
             txt.prepend(((textBearing < 180.f) ^ place.positionReversed.at(j) ^ (aw.direction == map::DIR_FORWARD)) ?
-                        tr("%1 ").arg(formatter::pointerLeft()) : tr("%1 ").arg(formatter::pointerRight()));
+                        tr("%1 ").arg(TextPointer::getPointerLeft()) : tr("%1 ").arg(TextPointer::getPointerRight()));
           else
             // Elide for not rotated texts
             txt = atools::elideTextShort(txt, 20);

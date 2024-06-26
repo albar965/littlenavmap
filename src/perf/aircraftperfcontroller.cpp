@@ -24,6 +24,7 @@
 #include "common/formatter.h"
 #include "common/fueltool.h"
 #include "common/tabindexes.h"
+#include "common/textpointer.h"
 #include "common/unit.h"
 #include "exception.h"
 #include "fs/perf/aircraftperf.h"
@@ -918,7 +919,8 @@ void AircraftPerfController::updateReportCurrent()
 
       html.table();
       html.row2(tr("True Airspeed:"), Unit::speedKts(curPerfLbs.getClimbSpeed()), flags);
-      html.row2(tr("Vertical Speed:"), Unit::speedVertFpm(curPerfLbs.getClimbVertSpeed()) % tr(" <b>%1</b>").arg(formatter::pointerUp()),
+      html.row2(tr("Vertical Speed:"),
+                Unit::speedVertFpm(curPerfLbs.getClimbVertSpeed()) % tr(" <b>%1</b>").arg(TextPointer::getPointerUp()),
                 ahtml::NO_ENTITIES | flags);
       html.row2(tr("Fuel Flow:"), ft.flowWeightVolLocal(curPerfLbs.getClimbFuelFlow()), flags);
       html.tableEnd();
@@ -939,7 +941,7 @@ void AircraftPerfController::updateReportCurrent()
       html.row2(tr("True Airspeed:"), Unit::speedKts(curPerfLbs.getDescentSpeed()), flags);
       // Descent speed is always positive
       html.row2(tr("Vertical Speed:"),
-                Unit::speedVertFpm(-curPerfLbs.getDescentVertSpeed()) % tr(" <b>%1</b>").arg(formatter::pointerDown()),
+                Unit::speedVertFpm(-curPerfLbs.getDescentVertSpeed()) % tr(" <b>%1</b>").arg(TextPointer::getPointerDown()),
                 ahtml::NO_ENTITIES | flags);
       html.row2(tr("Fuel Flow:"), ft.flowWeightVolLocal(curPerfLbs.getDescentFuelFlow()), flags);
       html.tableEnd();
@@ -1345,12 +1347,12 @@ void AircraftPerfController::windText(atools::util::HtmlBuilder& html, const QSt
       QString windPtr;
       if(headWind >= 1.f)
       {
-        windPtr = formatter::windPointerSouth();
+        windPtr = TextPointer::getWindPointerSouth();
         windType = tr("headwind");
       }
       else if(headWind <= -1.f)
       {
-        windPtr = formatter::windPointerNorth();
+        windPtr = TextPointer::getWindPointerNorth();
         windType = tr("tailwind");
       }
       windText.append(tr("%1 %2 %3").arg(windPtr).arg(Unit::speedKts(std::abs(headWind))).arg(windType));

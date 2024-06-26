@@ -17,32 +17,34 @@
 
 #include "profile/profilewidget.h"
 
-#include "atools.h"
 #include "app/navapp.h"
+#include "atools.h"
 #include "common/aircrafttrail.h"
-#include "geo/calculations.h"
-#include "common/mapcolors.h"
-#include "profile/profilescrollarea.h"
-#include "profile/profilelabelwidgetvert.h"
-#include "profile/profilelabelwidgethoriz.h"
-#include "profile/profileoptions.h"
-#include "ui_mainwindow.h"
-#include "common/symbolpainter.h"
-#include "util/htmlbuilder.h"
-#include "route/route.h"
-#include "route/routealtitude.h"
-#include "common/unit.h"
-#include "common/formatter.h"
-#include "settings/settings.h"
 #include "common/constants.h"
+#include "common/elevationprovider.h"
+#include "common/formatter.h"
+#include "common/formatter.h"
+#include "common/jumpback.h"
+#include "common/mapcolors.h"
+#include "common/symbolpainter.h"
+#include "common/textpointer.h"
+#include "common/unit.h"
+#include "common/vehicleicons.h"
+#include "geo/calculations.h"
 #include "mapgui/mapwidget.h"
 #include "options/optiondata.h"
-#include "common/elevationprovider.h"
-#include "common/vehicleicons.h"
-#include "common/jumpback.h"
-#include "weather/windreporter.h"
 #include "options/optiondata.h"
 #include "perf/aircraftperfcontroller.h"
+#include "profile/profilelabelwidgethoriz.h"
+#include "profile/profilelabelwidgetvert.h"
+#include "profile/profileoptions.h"
+#include "profile/profilescrollarea.h"
+#include "route/route.h"
+#include "route/routealtitude.h"
+#include "settings/settings.h"
+#include "ui_mainwindow.h"
+#include "util/htmlbuilder.h"
+#include "weather/windreporter.h"
 
 #include <QPainter>
 #include <QTimer>
@@ -726,7 +728,7 @@ void ProfileWidget::paintIls(QPainter& painter, const Route& route)
         double angle = atools::geo::angleFromQt(upperLine.angle());
         painter.translate(upperLine.p2());
         painter.rotate(angle + 90.);
-        painter.drawText(10, -painter.fontMetrics().descent(), map::ilsText(ils) + tr(" %1").arg(formatter::pointerRight()));
+        painter.drawText(10, -painter.fontMetrics().descent(), map::ilsText(ils) + tr(" %1").arg(TextPointer::getPointerRight()));
         painter.resetTransform();
       }
     }
@@ -844,9 +846,9 @@ void ProfileWidget::paintVasi(QPainter& painter, const Route& route)
 
           QString txt;
           if(vasi.second.isEmpty())
-            txt = tr("%1° %2").arg(QLocale().toString(vasi.first, 'f', 1)).arg(formatter::pointerRight());
+            txt = tr("%1° %2").arg(QLocale().toString(vasi.first, 'f', 1)).arg(TextPointer::getPointerRight());
           else
-            txt = tr("%1° / %2 %3").arg(QLocale().toString(vasi.first, 'f', 1)).arg(vasi.second).arg(formatter::pointerRight());
+            txt = tr("%1° / %2 %3").arg(QLocale().toString(vasi.first, 'f', 1)).arg(vasi.second).arg(TextPointer::getPointerRight());
           painter.drawText(10, -painter.fontMetrics().descent(), txt);
           painter.resetTransform();
         }
@@ -1267,7 +1269,8 @@ void ProfileWidget::paintEvent(QPaintEvent *)
           // Build angle text ===============================
           float pathAngle = angles.value(j - 1, map::INVALID_ANGLE_VALUE);
           QString angleText = pathAngle < -0.5f ?
-                              tr(" %1° %2 ").arg(pathAngle, 0, 'g', requiredByProcedure ? 3 : 2).arg(formatter::pointerRight()) : QString();
+                              tr(" %1° %2 ").arg(pathAngle, 0, 'g', requiredByProcedure ? 3 : 2).arg(TextPointer::getPointerRight()) :
+                              QString();
 
           QString separator(tr(" /"));
           QLineF line(geometry.at(j - 1), geometry.at(j));
@@ -1714,9 +1717,9 @@ void ProfileWidget::paintEvent(QPaintEvent *)
       {
         QString upDown;
         if(vspeed > 100.f)
-          upDown = tr(" %1").arg(formatter::pointerUp());
+          upDown = tr(" %1").arg(TextPointer::getPointerUp());
         else if(vspeed < -100.f)
-          upDown = tr(" %1").arg(formatter::pointerDown());
+          upDown = tr(" %1").arg(TextPointer::getPointerDown());
         texts.append(Unit::speedVertFpm(vspeed) % upDown);
       }
     }
@@ -1734,7 +1737,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
         float vertAngleToNext = origRoute.getVerticalAngleToNext(nextLegDistance);
         if(vertAngleToNext < map::INVALID_ANGLE_VALUE)
           texts.append(Unit::speedVertFpm(-atools::geo::descentSpeedForPathAngle(userAircraft.getGroundSpeedKts(), vertAngleToNext)) %
-                       tr(" %1 N").arg(formatter::pointerDown()));
+                       tr(" %1 N").arg(TextPointer::getPointerDown()));
       }
     }
 
@@ -2349,9 +2352,9 @@ void ProfileWidget::buildTooltipText(int x, bool force)
     wind = windReporter->getWindForPosRoute(lastTooltipPos.alt(altitude));
 
   html.p(atools::util::html::NOBR_WHITESPACE);
-  html.b(Unit::distNm(distance, false) + tr(" %1 ").arg(formatter::pointerRight()) + Unit::distNm(distanceToGo));
+  html.b(Unit::distNm(distance, false) + tr(" %1 ").arg(TextPointer::getPointerRight()) + Unit::distNm(distanceToGo));
 #ifdef DEBUG_INFORMATION_PROFILE
-  html.br().b("[" + QString::number(distance) + tr(" %1 ").arg(formatter::pointerRight()) + QString::number(distanceToGo) + "]");
+  html.br().b("[" + QString::number(distance) + tr(" %1 ").arg(TextPointer::getPointerRight()) + QString::number(distanceToGo) + "]");
 #endif
   if(altitude < map::INVALID_ALTITUDE_VALUE)
     html.b(tr(", %1, %2 %3").arg(Unit::altFeet(altitude)).arg(fromTo).arg(toWaypoint));
@@ -2428,9 +2431,9 @@ void ProfileWidget::buildTooltipText(int x, bool force)
     {
       QString windPtr;
       if(headWind >= 1.f)
-        windPtr = formatter::windPointerSouth();
+        windPtr = TextPointer::getWindPointerSouth();
       else if(headWind <= -1.f)
-        windPtr = formatter::windPointerNorth();
+        windPtr = TextPointer::getWindPointerNorth();
       html.text(tr(", %1 %2").arg(windPtr).arg(Unit::speedKts(std::abs(headWind))));
     }
   }

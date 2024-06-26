@@ -11,7 +11,7 @@ if [ ! -d "$APROJECTS" ]; then echo "$APROJECTS" does not exist ; exit 1 ; fi
 # Override by envrionment variable for another target
 export SSH_DEPLOY_TARGET=${SSH_DEPLOY_TARGET:-"sol:/data/alex/Public/Releases"}
 
-# LittleNavmap-linux-22.04-2.8.2.beta.tar.xz
+# LittleNavmap-linux-ubuntu-22.04-2.8.2.beta.tar.xz
 if [ -f "/etc/os-release" ]; then
   source /etc/os-release
   export FILENAME_LNM=$ID-$VERSION_ID-$(head -n1 "${APROJECTS}/deploy/Little Navmap/version.txt")

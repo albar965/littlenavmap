@@ -18,14 +18,15 @@
 #include "perf/aircraftperfdialog.h"
 #include "ui_aircraftperfdialog.h"
 
-#include "common/unit.h"
 #include "atools.h"
 #include "common/constants.h"
-#include "gui/helphandler.h"
-#include "fs/perf/aircraftperf.h"
-#include "gui/widgetstate.h"
-#include "common/unitstringtool.h"
 #include "common/formatter.h"
+#include "common/textpointer.h"
+#include "common/unit.h"
+#include "common/unitstringtool.h"
+#include "fs/perf/aircraftperf.h"
+#include "gui/helphandler.h"
+#include "gui/widgetstate.h"
 #include "util/htmlbuilder.h"
 
 #include <QPushButton>
@@ -50,8 +51,8 @@ AircraftPerfDialog::AircraftPerfDialog(QWidget *parent, const atools::fs::perf::
   perf = new AircraftPerf;
   *perf = aircraftPerformance;
 
-  ui->doubleSpinBoxClimbVertSpeed->setSuffix(tr(" %vspeed% %1").arg(formatter::pointerUp()));
-  ui->doubleSpinBoxDescentVertSpeed->setSuffix(tr(" %vspeed% %1").arg(formatter::pointerDown()));
+  ui->doubleSpinBoxClimbVertSpeed->setSuffix(tr(" %vspeed% %1").arg(TextPointer::getPointerUp()));
+  ui->doubleSpinBoxDescentVertSpeed->setSuffix(tr(" %vspeed% %1").arg(TextPointer::getPointerDown()));
 
   // All widgets that need their unit placeholders replaced on unit changes
   unitWidgets.append({
