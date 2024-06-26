@@ -35,9 +35,8 @@ class AircraftProgressConfig;
 class QTextBrowser;
 
 namespace map {
-
-class MapAirport;
-class MapResult;
+struct MapAirport;
+struct MapResult;
 }
 namespace atools {
 
