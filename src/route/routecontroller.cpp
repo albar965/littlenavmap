@@ -85,7 +85,6 @@
 #include <QStringBuilder>
 #include <QUndoStack>
 
-
 namespace rcol {
 // Route table column indexes
 enum RouteColumns
@@ -2331,35 +2330,34 @@ void RouteController::reverseRoute()
 
   RouteCommand *undoCommand = preChange(tr("Reverse"));
 
+  // Destination will be departure - check if valid
+  bool departureIsAirport = route.hasValidDestination();
+
   clearTableSelection();
 
-  // Remove all procedures and properties
+  // Remove all procedures and properties ===============================
   route.removeProcedureLegs(proc::PROCEDURE_ALL);
   route.removeAlternateLegs();
 
+  // Reverse plan ===============================
   atools::fs::pln::Flightplan& flightplan = route.getFlightplan();
   std::reverse(flightplan.begin(), flightplan.end());
 
-  QString depName = flightplan.getDepartureName();
-  QString depIdent = flightplan.getDepartureIdent();
-  flightplan.setDepartureName(flightplan.getDestinationName());
-  flightplan.setDepartureIdent(flightplan.getDestinationIdent());
-
-  flightplan.setDestinationName(depName);
-  flightplan.setDestinationIdent(depIdent);
+  // Update departure and destination ===============================
+  flightplan.adjustDepartureAndDestination(true /* force */);
 
   // Overwrite parking position with airport position
-  flightplan.setDeparturePosition(flightplan.constFirst().getPosition());
   flightplan.setDepartureParkingPosition(flightplan.constFirst().getPosition(),
                                          atools::fs::pln::INVALID_ALTITUDE, atools::fs::pln::INVALID_HEADING);
   flightplan.setDepartureParkingName(QString());
-  flightplan.setDepartureParkingType(atools::fs::pln::NO_POS);
+  flightplan.setDepartureParkingType(departureIsAirport ? atools::fs::pln::AIRPORT : atools::fs::pln::NO_POS);
 
   // Erase all airways to avoid wrong direction travel against one way
-  for(int i = 0; i < flightplan.size(); i++)
-    flightplan[i].setAirway(QString());
+  for(atools::fs::pln::FlightplanEntry& entry : flightplan)
+    entry.setAirway(QString());
   flightplan.getProperties().remove(atools::fs::pln::PROCAIRWAY);
 
+  // Rebuild route from flight plan ========================================
   route.createRouteLegsFromFlightplan();
   route.updateAll();
   route.updateAirwaysAndAltitude(false /* adjustRouteAltitude */);
