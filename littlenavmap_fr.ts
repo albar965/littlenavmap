@@ -3447,12 +3447,6 @@ Les formats ci-dessus doivent être donnés exactement comme dans les exemples.<
         <translation type="unfinished">Montrer les &amp;procédures de départ</translation>
     </message>
     <message>
-        <location filename="src/route/customproceduredialog.cpp" line="49"/>
-        <source>Show Departure &amp;Procedures</source>
-        <oldsource>Show Arrival &amp;Procedures</oldsource>
-        <translation type="unfinished">Montrer les &amp;procédures d&apos;arrivée</translation>
-    </message>
-    <message>
         <source> - Select Runway</source>
         <translation type="obsolete"> - Sélectionner la piste</translation>
     </message>
@@ -9696,7 +9690,7 @@ La meilleure piste sera sélectionnée automatiquement.</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="12160"/>
-        <source>&amp;Create an Issue Report ...</source>
+        <source>&amp;Create Issue Report ...</source>
         <translation type="unfinished">&amp;Créer un rapport d&apos;incident ...</translation>
     </message>
     <message>
@@ -17000,21 +16994,14 @@ Le bouton est mis en évidence si un filtre est sélectionné.</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapcontextmenu.cpp" line="451"/>
-        <source>%1 - Arrival/Approach Procedures</source>
-        <oldsource>Show Arrival &amp;Procedures for %1</oldsource>
-        <translation type="unfinished">Afficher les &amp;procédures d&apos;arrivée pour %1</translation>
+        <source>Show Arrival/Approach &amp;Procedures for %1</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="src/mapgui/mapcontextmenu.cpp" line="455"/>
         <source>%1 (no arrival/approach)</source>
         <oldsource>%1 (no arrival)</oldsource>
         <translation type="unfinished">%1 (aucune arrivée)</translation>
-    </message>
-    <message>
-        <location filename="src/mapgui/mapcontextmenu.cpp" line="455"/>
-        <source>%1 (no arrival/approach)</source>
-        <oldsource>Show Arrival &amp;Procedures for %1 (no arrival)</oldsource>
-        <translation type="unfinished">Indiquer les &amp;procédures d&apos;arrivée pour %1 (aucune arrivée)</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapcontextmenu.cpp" line="455"/>
@@ -30025,6 +30012,11 @@ VORTAC, TACAN ou NDB.</translation>
         <location filename="src/options/optionsdialog.cpp" line="193"/>
         <source>Fuel, distance, speed and coordinate units as well as
 options for course and heading display.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/options/optionsdialog.cpp" line="197"/>
+        <source>Zoom, click, screen navigation and mouse wheel settings.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>

@@ -9380,7 +9380,7 @@ Mantieni procedure.</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="12160"/>
-        <source>&amp;Create an Issue Report ...</source>
+        <source>&amp;Create Issue Report ...</source>
         <translation>&amp;Crea un Rapporto sul Problema ...</translation>
     </message>
     <message>
@@ -9443,7 +9443,7 @@ Mantieni procedure.</translation>
         <translation>Generare un volo utilizzando aeroporti casuali</translation>
     </message>
     <message>
-        <source>&amp;Create an Issue Report</source>
+        <source>&amp;Create Issue Report</source>
         <translation type="vanished">&amp;Crea un Rapporto sui Problemi</translation>
     </message>
     <message>

@@ -12157,7 +12157,7 @@ relation to shown airport</string>
   </action>
   <action name="actionCreateIssueReport">
    <property name="text">
-    <string>&amp;Create an Issue Report ...</string>
+    <string>&amp;Create Issue Report ...</string>
    </property>
    <property name="toolTip">
     <string>Builds an issue report package containing all related files to report a problem</string>

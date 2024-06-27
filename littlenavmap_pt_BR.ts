@@ -10325,7 +10325,7 @@ A velocidade do vento será interpolada entre esta altitude e a nível do solo.<
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="12160"/>
-        <source>&amp;Create an Issue Report ...</source>
+        <source>&amp;Create Issue Report ...</source>
         <translation>&amp;Criar um Relatório de Problema …</translation>
     </message>
     <message>

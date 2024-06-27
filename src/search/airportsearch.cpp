@@ -737,7 +737,7 @@ void AirportSearch::randomFlightClicked(bool showDialog)
 
     // Build selection dialog ===========================================================
     atools::gui::ChoiceDialog choiceDialog(mainWindow, QCoreApplication::applicationName() % tr(" - Random Flight"), label,
-                                           lnm::SEARCHTAB_AIRPORT_RANDOM, "/SEARCH.html#random-flight-in-airport-search");
+                                           lnm::SEARCHTAB_AIRPORT_RANDOM, "/RANDOM.html");
     choiceDialog.setHelpOnlineUrl(lnm::helpOnlineUrl);
     choiceDialog.setHelpLanguageOnline(lnm::helpLanguageOnline());
 

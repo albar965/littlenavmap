@@ -9032,7 +9032,7 @@ Wind speed will be interpolated between this altitude and ground level.</source>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="12160"/>
-        <source>&amp;Create an Issue Report ...</source>
+        <source>&amp;Create Issue Report ...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
