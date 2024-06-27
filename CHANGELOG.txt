@@ -4,14 +4,14 @@ This text is partially Markdown, so the formatting is sometimes strange.
 
 ==>>=============================================================================
 
-# Version 3.0.7.rc1
+# Version 3.0.8
 
 ## Notes
 
-**This is a release candidate of Little Navmap which fixes several bugs and adds a few
+**This is a stable release of Little Navmap which fixes several bugs and crashes and adds a few
 improvements and new features.**
 
-**Note that the program translations and the user manual have not been updated yet.**
+**The program translations for Brazilian Portuguese, French, German and Italian as well as the user manual have been updated.**
 
 **macOS users: Keep in mind that you have to clear the quarantine flag when updating Little Xpconnect. See
 [Clearing the Quarantine Flag on macOS](https://www.littlenavmap.org/manuals/littlenavmap/release/latest/en/XPCONNECT.html#clearing-the-quarantine-flag-on-macos).**
@@ -20,11 +20,12 @@ improvements and new features.**
 
 A big thank you to all who reported bugs and issues!
 
-## Changes from 3.0.6 to 3.0.7.rc1
+## Changes from 3.0.6 to 3.0.8
 
 ### Flight Plan Loading and Export
 
 * Added export option for MSFS [KLN 90B](https://github.com/falcon71/kln90b) #1136
+* 3.0.7.rc1 to 3.0.8: Fixed KLN90B export to using `kln.pln` as filename. #1164
 * Added multiexport option for MSFS JustFlight BAE-14. This uses the QualityWings format.
 * Made loading of MSFS PLN flight plan files more tolerant for missing altitude in element
   `WorldPosition`.
@@ -39,12 +40,12 @@ A big thank you to all who reported bugs and issues!
 
 ### Weather
 
-* Added interpolated weather reports for for NOAA, VATSIM, IVAO and X-Plane weather. These appear
+* Added interpolated weather reports for NOAA, VATSIM, IVAO and X-Plane weather. These appear
   at airports having no METAR reports. Note that this does not cover cloud layers.
 * Added wind display for landing and takeoff runway in flight plan table header. This uses station
-  or interpolated winds as as selected in menu `Weather` -> `Airport Weather Source`.
+  or interpolated winds as selected in menu `Weather` -> `Airport Weather Source`.
 * Added support for Active Sky FS (MSFS).
-* Fixed issue where ActiveSky weather was not updated.
+* Fixed issue where Active Sky weather was not updated.
 * Fixed crash that happened randomly when updating METAR data or switching between simulators with
   weather enabled.
 * Added sunrise and sunset to weather report page in information dock window.
@@ -72,17 +73,17 @@ A big thank you to all who reported bugs and issues!
 ### Procedures and Runway Selection
 
 * Improved procedure search. Now showing the first and last waypoint of procedures in the procedure
-  tree. Also showing the first and last waypoint of a selected procedure in the header. The header
+  tree. Also, showing the first and last waypoint of a selected procedure in the header. The header
   shows first and last for the full path including the procedure when selecting a transition.
 * Search now also looks for first and last waypoint of procedures. Procedures and and transitions
   are hidden if no criteria match text search. Procedures are expanded if a transition matches the
-  search text. This allows to find matching STAR for a selected approach and vice versa, for example.
+  search text. This allows finding the matching STAR for a selected approach and vice versa, for example.
 * Procedure view now tries to keep content when switching simulators, provided the airport exists
   in both simulators.
 * The procedure search tab now expands procedure branches already added to the flight plan.
   Procedures and/or respective transitions are expanded when showing procedures for departure or
   destination airport.
-* Runway selection dialogs windows now have the current runway end from the flight plan preselected.
+* Runway selection dialog windows now have the current runway end from the flight plan preselected.
 * The selection in procedure search is not saved anymore when changing airports to avoid unwanted
   highlighting on the map.
 * Added `Shift+F5` shortcut for procedure search.
@@ -106,14 +107,14 @@ A big thank you to all who reported bugs and issues!
 ### Map Display
 
 * Added warning dialog if aircraft trail is too long after startup as a hint for performance
-  issues. Also showing warning if trail was truncated after loading a GPX file.
+  issues. Also, showing warning if trail was truncated after loading a GPX file.
 * Fixed issue where updated maximum number of trail points was not applied until restart.
 * Fixed crash when fetching tooltip information for short aircraft trails.
 * Fixed disappearing flight plans and aircraft trails on high zoom distances or long flight plans.
   #1126
 * Fixed display issue where userpoints without type were hidden. Optimized code for userpoint
   display.
-* AI/multiplayer aircraft labels not have a `…` appended if labels texts are suppressed due to higher
+* AI/multiplayer aircraft labels now have a `…` appended if labels texts are suppressed due to higher
   zoom distances Reworked aircraft label code.
 * Added internal object ID as optional aircraft label for AI/multiplayer. Enable this in options on
   page `Map Labels` in branch `AI, Multiplayer and Online Client Aircraft`.
@@ -152,14 +153,16 @@ A big thank you to all who reported bugs and issues!
 * Non-blocking dialog windows now remember position. This covers `Flight Plan Calculation`,
   `Logbook Statistics` and `Flight Plan Route Description` dialog windows.
 * Resetting all non-blocking windows to default size and center position now when using `Reset
-  window layout` to avoid windows being lost off-screen. Also re-centering the main window when
+  window layout` to avoid windows being lost off-screen. Also, re-centering the main window when
   resetting layout from window menu.
 * Added message dialog to `Reset all Messages` for clarification.
 * Fixed issue where application was still detected as running when trying to send a command through
   the command line.
 * Added `-q` / `--quit` command line argument to exit an already running instance.
 * New icons for 32 and 64 bit Windows builds to easier see the difference if both are installed.
-* More checks to avoid crashes.
+* More checks to avoid crashes
+* 3.0.7.rc1 to 3.0.8: Translations updated. Thanks to Flavio, Patrick and Ricardo!
+* 3.0.7.rc1 to 3.0.8: Fixed issue where wind arrows did not show up on some systems.
 
 ### Web Interface
 
