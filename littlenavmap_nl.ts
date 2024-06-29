@@ -34161,22 +34161,22 @@ It can include the end of a departure or the start of an arrival procedure.</sou
 <context>
     <name>RouteController</name>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="303"/>
+        <location filename="src/route/routecontroller.cpp" line="302"/>
         <source>&amp;Undo Flight Plan</source>
         <translation>&amp;Verwijder Vluchtplan</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="307"/>
+        <location filename="src/route/routecontroller.cpp" line="306"/>
         <source>&amp;Redo Flight Plan</source>
         <translation>&amp;Herstel Vluchtplan</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="472"/>
+        <location filename="src/route/routecontroller.cpp" line="471"/>
         <source>Undo flight plan change.</source>
         <translation>Verwijder wijziging aan vluchtplan.</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="477"/>
+        <location filename="src/route/routecontroller.cpp" line="476"/>
         <source>Redo flight plan change.</source>
         <translation>Herstel wijziging aan vluchtplan.</translation>
     </message>
@@ -34185,7 +34185,7 @@ It can include the end of a departure or the start of an arrival procedure.</sou
         <translation type="vanished">%1 gegevens gekopieerd naar klembord.</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="807"/>
+        <location filename="src/route/routecontroller.cpp" line="806"/>
         <source>Flight plan string to clipboard.</source>
         <translation>Vluchtplan-reeks naar klembord.</translation>
     </message>
@@ -34194,35 +34194,35 @@ It can include the end of a departure or the start of an arrival procedure.</sou
         <translation type="vanished">Wijzig Snelheid</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="865"/>
+        <location filename="src/route/routecontroller.cpp" line="864"/>
         <source>Change Altitude</source>
         <translation>Wijzig Hoogte</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="909"/>
+        <location filename="src/route/routecontroller.cpp" line="908"/>
         <source>Change Type</source>
         <translation>Wijzig Type</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="922"/>
+        <location filename="src/route/routecontroller.cpp" line="921"/>
         <source>Flight plan type changed to %1.</source>
         <translation>Type vluchtplan gewijzigd naar %1.</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="1251"/>
+        <location filename="src/route/routecontroller.cpp" line="1250"/>
         <source>Loading of FLP flight plan failed:&lt;br/&gt;&lt;br/&gt;</source>
         <translation>Laden van FLP vluchtplan mislukt:&lt;br/&gt;&lt;br/&gt;</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="1257"/>
+        <location filename="src/route/routecontroller.cpp" line="1256"/>
         <source>Warnings while loading FLP flight plan file:&lt;br/&gt;&lt;br/&gt;</source>
         <translation>Waarschuwingen tijdens laden FLP vluchtplan bestand:&lt;br/&gt;&lt;br/&gt;</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="1259"/>
-        <location filename="src/route/routecontroller.cpp" line="1400"/>
-        <location filename="src/route/routecontroller.cpp" line="2270"/>
-        <location filename="src/route/routecontroller.cpp" line="3781"/>
+        <location filename="src/route/routecontroller.cpp" line="1258"/>
+        <location filename="src/route/routecontroller.cpp" line="1399"/>
+        <location filename="src/route/routecontroller.cpp" line="2269"/>
+        <location filename="src/route/routecontroller.cpp" line="3779"/>
         <source>Do not &amp;show this dialog again.</source>
         <translation>&amp;Toon deze dialoog niet meer.</translation>
     </message>
@@ -34237,27 +34237,27 @@ De startpositie is nu ingesteld als de langste hoofdstartbaan van de vertrekluch
         <translation type="vanished">Kan de procedures niet in het vluchtplan laden.</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="1539"/>
+        <location filename="src/route/routecontroller.cpp" line="1538"/>
         <source>Append</source>
         <translation>Voeg toe</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="1539"/>
+        <location filename="src/route/routecontroller.cpp" line="1538"/>
         <source>Insert</source>
         <translation>Voeg in</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="1929"/>
+        <location filename="src/route/routecontroller.cpp" line="1928"/>
         <source>Direct Calculation</source>
         <translation>Directe Berekening</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="1942"/>
+        <location filename="src/route/routecontroller.cpp" line="1941"/>
         <source>Calculated direct flight plan.</source>
         <translation>Direct vluchtplan berekend.</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2035"/>
+        <location filename="src/route/routecontroller.cpp" line="2034"/>
         <source>Radionnav Flight Plan Calculation</source>
         <translation>Radionav Vluchtplan Berekening</translation>
     </message>
@@ -34266,7 +34266,7 @@ De startpositie is nu ingesteld als de langste hoofdstartbaan van de vertrekluch
         <translation type="vanished">Berekend radio navaid vluchtplan.</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2069"/>
+        <location filename="src/route/routecontroller.cpp" line="2068"/>
         <source>No route found.</source>
         <translation>Geen route gevonden.</translation>
     </message>
@@ -34301,32 +34301,32 @@ Try another routing type or create the flight plan manually.</source>
 Probeer een ander routetype of creëer het vluchtplan manueel.</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2293"/>
+        <location filename="src/route/routecontroller.cpp" line="2292"/>
         <source>Adjust altitude</source>
         <translation>Aanpassen hoogte</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2310"/>
+        <location filename="src/route/routecontroller.cpp" line="2309"/>
         <source>Adjusted flight plan altitude.</source>
         <translation>Aangepaste hoogte vluchtplan.</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2332"/>
+        <location filename="src/route/routecontroller.cpp" line="2331"/>
         <source>Reverse</source>
         <translation>Omkeren</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2374"/>
+        <location filename="src/route/routecontroller.cpp" line="2372"/>
         <source>Reversed flight plan.</source>
         <translation>Omgekeerd vluchtplan.</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2576"/>
+        <location filename="src/route/routecontroller.cpp" line="2574"/>
         <source>Showing airport on map.</source>
         <translation>Toon de luchthaven op de kaart.</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2578"/>
+        <location filename="src/route/routecontroller.cpp" line="2576"/>
         <source>Showing navaid on map.</source>
         <translation>Toon navaid op de kaart.</translation>
     </message>
@@ -34439,202 +34439,202 @@ Probeer een ander routetype of creëer het vluchtplan manueel.</translation>
         <translation type="vanished">&lt;p&gt;Kan de procedures niet in het vluchtplan laden:&lt;/p&gt;&lt;ul&gt;&lt;li&gt;%1&lt;/li&gt;&lt;/ul&gt;</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="271"/>
+        <location filename="src/route/routecontroller.cpp" line="270"/>
         <source>Open or close tabs</source>
         <translation type="unfinished">Open of sluit tabs</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="210"/>
+        <location filename="src/route/routecontroller.cpp" line="209"/>
         <source>Longitude</source>
         <translation type="unfinished">Lengtegraad</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="188"/>
+        <location filename="src/route/routecontroller.cpp" line="187"/>
         <source>Ident</source>
         <translation type="unfinished">Ident</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="189"/>
+        <location filename="src/route/routecontroller.cpp" line="188"/>
         <source>Region</source>
         <translation type="unfinished">Regio</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="190"/>
+        <location filename="src/route/routecontroller.cpp" line="189"/>
         <source>Name</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="191"/>
-        <location filename="src/route/routecontroller.cpp" line="2855"/>
+        <location filename="src/route/routecontroller.cpp" line="190"/>
+        <location filename="src/route/routecontroller.cpp" line="2853"/>
         <source>Procedure</source>
         <translation type="unfinished">Procedure</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="192"/>
+        <location filename="src/route/routecontroller.cpp" line="191"/>
         <source>Airway or
 Procedure</source>
         <translation type="unfinished">Airway of
 Procedure</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="193"/>
+        <location filename="src/route/routecontroller.cpp" line="192"/>
         <source>Restriction
 %alt%/%speed%/angle</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="194"/>
+        <location filename="src/route/routecontroller.cpp" line="193"/>
         <source>Type</source>
         <translation type="unfinished">Type</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="195"/>
+        <location filename="src/route/routecontroller.cpp" line="194"/>
         <source>Freq.
 MHz/kHz/Cha.</source>
         <translation type="unfinished">Freq.
 MHz/kHz/Cha.</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="196"/>
+        <location filename="src/route/routecontroller.cpp" line="195"/>
         <source>Range
 %dist%</source>
         <translation type="unfinished">Bereik
 %dist%</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="197"/>
+        <location filename="src/route/routecontroller.cpp" line="196"/>
         <source>Course
 °M</source>
         <translation type="unfinished">Koers
 °M</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="198"/>
+        <location filename="src/route/routecontroller.cpp" line="197"/>
         <source>Course
 °T</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="199"/>
+        <location filename="src/route/routecontroller.cpp" line="198"/>
         <source>Distance
 %dist%</source>
         <translation type="unfinished">Afstand
 %dist%</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="200"/>
+        <location filename="src/route/routecontroller.cpp" line="199"/>
         <source>Remaining
 %dist%</source>
         <translation type="unfinished">Nog over
 %dist%</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="201"/>
+        <location filename="src/route/routecontroller.cpp" line="200"/>
         <source>Leg Time
 hh:mm</source>
         <translation type="unfinished">Deel Tijd
 hh:mm</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="202"/>
+        <location filename="src/route/routecontroller.cpp" line="201"/>
         <source>ETA
 hh:mm</source>
         <translation type="unfinished">ETA
 hh:mm</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="203"/>
+        <location filename="src/route/routecontroller.cpp" line="202"/>
         <source>Fuel Rem.
 %weight%</source>
         <translation type="unfinished">Brandstof Resterend.
 %weight%</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="204"/>
+        <location filename="src/route/routecontroller.cpp" line="203"/>
         <source>Fuel Rem.
 %volume%</source>
         <translation type="unfinished">Brandstof Resterend.
 %volume%</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="205"/>
+        <location filename="src/route/routecontroller.cpp" line="204"/>
         <source>Wind
 °M/%speed%</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="206"/>
+        <location filename="src/route/routecontroller.cpp" line="205"/>
         <source>Head- or Tailwind
 %speed%</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="207"/>
+        <location filename="src/route/routecontroller.cpp" line="206"/>
         <source>Altitude
 %alt%</source>
         <translation type="unfinished">Hoogte
 %alt%</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="209"/>
+        <location filename="src/route/routecontroller.cpp" line="208"/>
         <source>Latitude</source>
         <translation type="unfinished">Breedtegraad</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="211"/>
+        <location filename="src/route/routecontroller.cpp" line="210"/>
         <source>Mag.
 Decl.°</source>
         <translation type="unfinished">Mag.
 Decl.°</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="212"/>
+        <location filename="src/route/routecontroller.cpp" line="211"/>
         <source>Related
 Ident/Freq./Dist./Bearing</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="213"/>
+        <location filename="src/route/routecontroller.cpp" line="212"/>
         <source>Remarks</source>
         <translation type="unfinished">Opmerkingen</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="216"/>
+        <location filename="src/route/routecontroller.cpp" line="215"/>
         <source>ICAO ident of the navaid or airport.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="219"/>
+        <location filename="src/route/routecontroller.cpp" line="218"/>
         <source>Either SID, SID transition, STAR, STAR transition, transition,
 approach or missed plus the name of the procedure.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="221"/>
+        <location filename="src/route/routecontroller.cpp" line="220"/>
         <source>Contains the airway name for en route legs or procedure instruction.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="222"/>
+        <location filename="src/route/routecontroller.cpp" line="221"/>
         <source>Minimum and maximum altitude for en route airway segments.
 Procedure altitude restriction, speed limit or
 required descent flight path angle.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="227"/>
+        <location filename="src/route/routecontroller.cpp" line="226"/>
         <source>Frequency or channel of a radio navaid.
 Also shows ILS or localizer frequency for corresponding approaches
 on the last runway leg.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="230"/>
+        <location filename="src/route/routecontroller.cpp" line="229"/>
         <source>Range of a radio navaid if available.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="231"/>
+        <location filename="src/route/routecontroller.cpp" line="230"/>
         <source>Magnetic start course of the great circle route
 connecting the two waypoints of the leg.
 Does not consider VOR calibrated declination.</source>
@@ -34643,148 +34643,148 @@ connecting the two waypoints of the leg.</oldsource>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="234"/>
+        <location filename="src/route/routecontroller.cpp" line="233"/>
         <source>True start course of the great circle route connecting
 the two waypoints of the leg.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="251"/>
+        <location filename="src/route/routecontroller.cpp" line="250"/>
         <source>Wind direction and speed at waypoint.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="252"/>
+        <location filename="src/route/routecontroller.cpp" line="251"/>
         <source>Head- or tailwind at waypoint.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="253"/>
+        <location filename="src/route/routecontroller.cpp" line="252"/>
         <source>Altitude at waypoint
 Calculated based on the aircraft performance profile.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="257"/>
+        <location filename="src/route/routecontroller.cpp" line="256"/>
         <source>Waypoint latitude in format as selected in options.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="258"/>
+        <location filename="src/route/routecontroller.cpp" line="257"/>
         <source>Waypoint longitude in format as selected in options.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="259"/>
+        <location filename="src/route/routecontroller.cpp" line="258"/>
         <source>Magnetic declination at waypoint or VOR calibrated declination.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="260"/>
+        <location filename="src/route/routecontroller.cpp" line="259"/>
         <source>Related or recommended navaid for procedure legs.
 Shown with navaid ident, navaid frequency, distance and bearing defining a fix.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="444"/>
+        <location filename="src/route/routecontroller.cpp" line="443"/>
         <source>No flight plan.
 
 Right-click the center of an airport symbol on the map and select it as departure/destination from the context menu, or use the airport search (press &quot;F4&quot;) to select departure/destination from the context menu of the search result table.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="504"/>
+        <location filename="src/route/routecontroller.cpp" line="503"/>
         <source>Copied %1 entries as CSV to clipboard.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="644"/>
-        <location filename="src/route/routecontroller.cpp" line="698"/>
+        <location filename="src/route/routecontroller.cpp" line="643"/>
+        <location filename="src/route/routecontroller.cpp" line="697"/>
         <source>Flight Plan Remarks</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="666"/>
+        <location filename="src/route/routecontroller.cpp" line="665"/>
         <source>%1 - %2</source>
         <translation type="unfinished">%1 - %2</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="672"/>
+        <location filename="src/route/routecontroller.cpp" line="671"/>
         <source>%1 Version %2 (revision %3) on %4 </source>
         <translation type="unfinished">%1 Versie %2 (revisie %3) op %4 </translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="1172"/>
+        <location filename="src/route/routecontroller.cpp" line="1171"/>
         <source>Set Departure and Destination</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="1192"/>
+        <location filename="src/route/routecontroller.cpp" line="1191"/>
         <source>New flight plan set.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="1836"/>
+        <location filename="src/route/routecontroller.cpp" line="1835"/>
         <source>&lt;p&gt;One or more procedures in the flight plan are not valid.&lt;/p&gt;&lt;ul&gt;&lt;li&gt;%1&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;These will be dropped when saving.&lt;/p&gt;&lt;p&gt;Save flight plan now and drop invalid procedures?&lt;/p&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="1840"/>
+        <location filename="src/route/routecontroller.cpp" line="1839"/>
         <source>&lt;/li&gt;&lt;li&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="1841"/>
+        <location filename="src/route/routecontroller.cpp" line="1840"/>
         <source>Do not &amp;show this dialog again and save without warning.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2002"/>
+        <location filename="src/route/routecontroller.cpp" line="2001"/>
         <source>Airway Flight Plan Calculation</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2007"/>
+        <location filename="src/route/routecontroller.cpp" line="2006"/>
         <source>Low altitude airway Flight Plan Calculation</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2012"/>
+        <location filename="src/route/routecontroller.cpp" line="2011"/>
         <source>High altitude airway Flight Plan Calculation</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2067"/>
+        <location filename="src/route/routecontroller.cpp" line="2066"/>
         <source>Calculated flight plan.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2114"/>
+        <location filename="src/route/routecontroller.cpp" line="2113"/>
         <source>Calculating Flight Plan ...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2114"/>
+        <location filename="src/route/routecontroller.cpp" line="2113"/>
         <source>Cancel</source>
         <translation type="unfinished">Cancel</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2115"/>
+        <location filename="src/route/routecontroller.cpp" line="2114"/>
         <source>Little Navmap - Calculating Flight Plan</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2586"/>
+        <location filename="src/route/routecontroller.cpp" line="2584"/>
         <source> - Flight Plan Table</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2608"/>
+        <location filename="src/route/routecontroller.cpp" line="2606"/>
         <source>Takeoff Wind</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2609"/>
+        <location filename="src/route/routecontroller.cpp" line="2607"/>
         <source>Headwind on takeoff runway indicated by %1 and tailwind by %2
 as well as crosswind (%3 or %4).
 The wind information is taken from the selected source in
@@ -34798,52 +34798,52 @@ Wind is taken from nearest airport if not available.</oldsource>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2621"/>
+        <location filename="src/route/routecontroller.cpp" line="2619"/>
         <source>Arrival and Approach</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2628"/>
+        <location filename="src/route/routecontroller.cpp" line="2626"/>
         <source>Landing Wind</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2851"/>
+        <location filename="src/route/routecontroller.cpp" line="2849"/>
         <source> and </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="3039"/>
+        <location filename="src/route/routecontroller.cpp" line="3037"/>
         <source>selected navaids</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="3772"/>
+        <location filename="src/route/routecontroller.cpp" line="3770"/>
         <source>&lt;p&gt;You can use this feature to allow editing of a procedure or to avoid problems with simulators or add-ons when loading an exported flight plan.&lt;/p&gt;&lt;p&gt;Note that you can undo this conversion.&lt;/p&gt;&lt;p&gt;Converting a procedure to waypoints loses information:&lt;/p&gt;&lt;ul&gt;&lt;li&gt;Several approach procedure leg types like holds and turns cannot be converted and will appear as straight lines.&lt;/li&gt;&lt;li&gt;Speed and altitude restrictions are included as remarks and are not followed in the elevation profile.&lt;/li&gt;&lt;/ul&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="3786"/>
+        <location filename="src/route/routecontroller.cpp" line="3784"/>
         <source>Convert Procedure</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="3826"/>
+        <location filename="src/route/routecontroller.cpp" line="3824"/>
         <source>Procedure converted.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="4612"/>
+        <location filename="src/route/routecontroller.cpp" line="4610"/>
         <source>Direct to</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="4734"/>
+        <location filename="src/route/routecontroller.cpp" line="4732"/>
         <source>Changed flight plan for direct to.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="4766"/>
+        <location filename="src/route/routecontroller.cpp" line="4764"/>
         <source>PPOS</source>
         <translation type="unfinished"></translation>
     </message>
@@ -34852,41 +34852,41 @@ Wind is taken from nearest airport if not available.</oldsource>
         <translation type="obsolete">Luchthaven</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="5655"/>
+        <location filename="src/route/routecontroller.cpp" line="5653"/>
         <source>Parking or start position &quot;%1&quot; not found at departure airport.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="5786"/>
+        <location filename="src/route/routecontroller.cpp" line="5784"/>
         <source>Download oceanic tracks in menu &quot;Flight Plan&quot;
 or calculate the flight plan again if the flight plan uses tracks.</source>
         <comment>Keep in sync with menu names</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="6010"/>
+        <location filename="src/route/routecontroller.cpp" line="6008"/>
         <source>Aircraft Performance: </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="6021"/>
-        <location filename="src/route/routecontroller.cpp" line="6024"/>
+        <location filename="src/route/routecontroller.cpp" line="6019"/>
+        <location filename="src/route/routecontroller.cpp" line="6022"/>
         <source>%1%2</source>
         <translation type="unfinished">%1%2</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="6021"/>
-        <location filename="src/route/routecontroller.cpp" line="6024"/>
+        <location filename="src/route/routecontroller.cpp" line="6019"/>
+        <location filename="src/route/routecontroller.cpp" line="6022"/>
         <source> cycle %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="6030"/>
+        <location filename="src/route/routecontroller.cpp" line="6028"/>
         <source>Scenery data: </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="6058"/>
+        <location filename="src/route/routecontroller.cpp" line="6056"/>
         <source>No flight plan.
 
 Remarks for the flight plan.</source>
@@ -34897,7 +34897,7 @@ Remarks for the flight plan.</source>
         <translation type="vanished">Toon Bereik Navaid</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="3139"/>
+        <location filename="src/route/routecontroller.cpp" line="3137"/>
         <source>Table view reset to defaults.</source>
         <translation>Tabelweergave herstellen naar standaardwaarden.</translation>
     </message>
@@ -34906,7 +34906,7 @@ Remarks for the flight plan.</source>
         <translation type="vanished">Verandering Naam Waypoint</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2266"/>
+        <location filename="src/route/routecontroller.cpp" line="2265"/>
         <source>Cannot calculate flight plan.
 
 Try another calculation type,
@@ -34915,43 +34915,43 @@ create the flight plan manually.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2941"/>
+        <location filename="src/route/routecontroller.cpp" line="2939"/>
         <source>Show &amp;Procedures</source>
         <oldsource>Create &amp;approach</oldsource>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="3258"/>
+        <location filename="src/route/routecontroller.cpp" line="3256"/>
         <source>Waypoint Change</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="3271"/>
+        <location filename="src/route/routecontroller.cpp" line="3269"/>
         <source>Changed waypoint in flight plan.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="3585"/>
+        <location filename="src/route/routecontroller.cpp" line="3583"/>
         <source>Move Waypoints</source>
         <translation>Verplaats Waypoints</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="3654"/>
+        <location filename="src/route/routecontroller.cpp" line="3652"/>
         <source>Moved flight plan legs.</source>
         <translation>Verplaatste delen vluchtplan.</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="3679"/>
+        <location filename="src/route/routecontroller.cpp" line="3677"/>
         <source>Delete Procedure</source>
         <translation>Verwijder Procedure</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="3679"/>
+        <location filename="src/route/routecontroller.cpp" line="3677"/>
         <source>Delete Waypoints</source>
         <translation>Verwijder Waypoints</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="3691"/>
+        <location filename="src/route/routecontroller.cpp" line="3689"/>
         <source>Removed flight plan legs.</source>
         <translation>Verwijderde delen vluchtplan.</translation>
     </message>
@@ -34964,8 +34964,8 @@ create the flight plan manually.</source>
         <translation type="vanished">Vertrek ingesteld op %1 parking %2.</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="3924"/>
-        <location filename="src/route/routecontroller.cpp" line="3967"/>
+        <location filename="src/route/routecontroller.cpp" line="3922"/>
+        <location filename="src/route/routecontroller.cpp" line="3965"/>
         <source>Set Start Position</source>
         <translation>Stel Startpositie in</translation>
     </message>
@@ -34974,77 +34974,77 @@ create the flight plan manually.</source>
         <translation type="vanished">Vertrek ingesteld op %1 startpositie %2.</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="4021"/>
+        <location filename="src/route/routecontroller.cpp" line="4019"/>
         <source>Set Departure</source>
         <translation>Stel Vertrek.in</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="4042"/>
+        <location filename="src/route/routecontroller.cpp" line="4040"/>
         <source>Departure set to %1.</source>
         <translation>Vertrek ingesteld op %1.</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="4092"/>
+        <location filename="src/route/routecontroller.cpp" line="4090"/>
         <source>Set Destination</source>
         <translation>Stel Bestemming in</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="4113"/>
+        <location filename="src/route/routecontroller.cpp" line="4111"/>
         <source>Destination set to %1.</source>
         <translation>Bestemming ingesteld op %1.</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="4129"/>
+        <location filename="src/route/routecontroller.cpp" line="4127"/>
         <source>Add Alternate</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="4161"/>
+        <location filename="src/route/routecontroller.cpp" line="4159"/>
         <source>Alternate %1 added.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="4373"/>
-        <location filename="src/route/routecontroller.cpp" line="4374"/>
-        <location filename="src/route/routecontroller.cpp" line="4377"/>
-        <location filename="src/route/routecontroller.cpp" line="4387"/>
-        <location filename="src/route/routecontroller.cpp" line="4388"/>
-        <location filename="src/route/routecontroller.cpp" line="4391"/>
+        <location filename="src/route/routecontroller.cpp" line="4371"/>
+        <location filename="src/route/routecontroller.cpp" line="4372"/>
+        <location filename="src/route/routecontroller.cpp" line="4375"/>
+        <location filename="src/route/routecontroller.cpp" line="4385"/>
+        <location filename="src/route/routecontroller.cpp" line="4386"/>
+        <location filename="src/route/routecontroller.cpp" line="4389"/>
         <source> *</source>
         <translation type="unfinished"> *</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="4522"/>
+        <location filename="src/route/routecontroller.cpp" line="4520"/>
         <source>Add Procedure</source>
         <translation>Voeg Procedure.toe</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="4589"/>
+        <location filename="src/route/routecontroller.cpp" line="4587"/>
         <source>Added procedure to flight plan.</source>
         <translation>Procedure toegevoegd aan vluchtplan.</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="4745"/>
+        <location filename="src/route/routecontroller.cpp" line="4743"/>
         <source>Add Waypoint</source>
         <translation>Voeg Waypoint toe</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="4757"/>
+        <location filename="src/route/routecontroller.cpp" line="4755"/>
         <source>Added waypoint to flight plan.</source>
         <translation>Toegevoegd waypoint aan vluchtplan.</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="4837"/>
+        <location filename="src/route/routecontroller.cpp" line="4835"/>
         <source>Change Waypoint</source>
         <translation>Wijzig.Waypoint</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="4892"/>
+        <location filename="src/route/routecontroller.cpp" line="4890"/>
         <source>Replaced waypoint in flight plan.</source>
         <translation>Gewijzigd waypoint in vluchtplan.</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="5404"/>
+        <location filename="src/route/routecontroller.cpp" line="5402"/>
         <source>%1 / %2</source>
         <translation type="unfinished">%1 / %2</translation>
     </message>
@@ -35069,7 +35069,7 @@ create the flight plan manually.</source>
         <translation type="obsolete">&lt;b&gt;%1%2&lt;/b&gt; to &lt;b&gt;%3&lt;/b&gt;</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="6063"/>
+        <location filename="src/route/routecontroller.cpp" line="6061"/>
         <source>Remarks for the flight plan.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -35082,70 +35082,70 @@ create the flight plan manually.</source>
         <translation type="vanished">Verwijderd waypoint uit vluchtplan.</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2994"/>
+        <location filename="src/route/routecontroller.cpp" line="2992"/>
         <source>Edit name and coordinates of user defined flight plan position</source>
         <translation type="unfinished">Bewerk naam en coördinaten van positie gebruikers vliegtuig</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="3001"/>
+        <location filename="src/route/routecontroller.cpp" line="2999"/>
         <source>Edit remarks for selected flight plan leg</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2618"/>
-        <location filename="src/route/routecontroller.cpp" line="5052"/>
+        <location filename="src/route/routecontroller.cpp" line="2616"/>
+        <location filename="src/route/routecontroller.cpp" line="5050"/>
         <source>Departure</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="208"/>
+        <location filename="src/route/routecontroller.cpp" line="207"/>
         <source>Leg Safe Alt.
 %alt%</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="217"/>
+        <location filename="src/route/routecontroller.cpp" line="216"/>
         <source>Two letter ICAO region code of a navaid.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="218"/>
+        <location filename="src/route/routecontroller.cpp" line="217"/>
         <source>Name of airport or navaid.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="225"/>
+        <location filename="src/route/routecontroller.cpp" line="224"/>
         <source>Type of a radio navaid. Shows ILS, LOC or other for
 approaches like ILS or localizer on the last runway leg.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="236"/>
+        <location filename="src/route/routecontroller.cpp" line="235"/>
         <source>Length of the flight plan leg.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="237"/>
+        <location filename="src/route/routecontroller.cpp" line="236"/>
         <source>Remaining distance to destination airport or procedure end point.
 Static value. Does not update while flying.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="239"/>
+        <location filename="src/route/routecontroller.cpp" line="238"/>
         <source>Flying time for this leg.
 Calculated based on the selected aircraft performance profile.
 Static value. Does not update while flying.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="242"/>
+        <location filename="src/route/routecontroller.cpp" line="241"/>
         <source>Estimated time of arrival.
 Calculated based on the selected aircraft performance profile.
 Static value. Does not update while flying.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="245"/>
+        <location filename="src/route/routecontroller.cpp" line="244"/>
         <source>Fuel weight remaining at waypoint.
 Calculated based on the aircraft performance profile.
 Static value. Does not update while flying.</source>
@@ -35155,7 +35155,7 @@ Static value. Does not update while flying.</oldsource>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="248"/>
+        <location filename="src/route/routecontroller.cpp" line="247"/>
         <source>Fuel volume remaining at waypoint.
 Calculated based on the aircraft performance profile.
 Static value. Does not update while flying.</source>
@@ -35165,86 +35165,86 @@ Static value. Does not update while flying.</oldsource>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="255"/>
+        <location filename="src/route/routecontroller.cpp" line="254"/>
         <source>Safe altitude for a flight plan leg depending on ground elevation
 and options on page &quot;Flight Plan&quot;.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="262"/>
+        <location filename="src/route/routecontroller.cpp" line="261"/>
         <source>Turn instructions, flyover, related navaid for procedure legs or
 or remarks entered by user.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="305"/>
+        <location filename="src/route/routecontroller.cpp" line="304"/>
         <source>Ctrl+Z</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="309"/>
+        <location filename="src/route/routecontroller.cpp" line="308"/>
         <source>Ctrl+Y</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="1046"/>
+        <location filename="src/route/routecontroller.cpp" line="1045"/>
         <source>File &quot;%1&quot; is a not supported flight plan format or not a flight plan.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="1216"/>
-        <location filename="src/route/routecontroller.cpp" line="1379"/>
+        <location filename="src/route/routecontroller.cpp" line="1215"/>
+        <location filename="src/route/routecontroller.cpp" line="1378"/>
         <source>Flight Plan Changed</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="1495"/>
+        <location filename="src/route/routecontroller.cpp" line="1494"/>
         <source>&lt;p&gt;Errors reading flight plan route description&lt;br/&gt;&lt;b&gt;%1&lt;/b&gt;&lt;br/&gt;from command line:&lt;/p&gt;&lt;p&gt;%2&lt;/p&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2587"/>
+        <location filename="src/route/routecontroller.cpp" line="2585"/>
         <source>Select header lines and flight plan table columns to show.
 You can move and resize columns by clicking into the flight plan column headers.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2594"/>
+        <location filename="src/route/routecontroller.cpp" line="2592"/>
         <source>Column Name</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2594"/>
+        <location filename="src/route/routecontroller.cpp" line="2592"/>
         <source>Description</source>
         <translation type="unfinished">Beschrijving</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2597"/>
+        <location filename="src/route/routecontroller.cpp" line="2595"/>
         <source>Flight Plan Table Header</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2598"/>
+        <location filename="src/route/routecontroller.cpp" line="2596"/>
         <source>Airports</source>
         <translation type="unfinished">Luchthavens</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2599"/>
+        <location filename="src/route/routecontroller.cpp" line="2597"/>
         <source>Departure and destination airports as links to show them on the map and in information.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2605"/>
+        <location filename="src/route/routecontroller.cpp" line="2603"/>
         <source>Takeoff Runway</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2606"/>
+        <location filename="src/route/routecontroller.cpp" line="2604"/>
         <source>Departure runway heading and length.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2619"/>
+        <location filename="src/route/routecontroller.cpp" line="2617"/>
         <source>SID information.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -35253,38 +35253,38 @@ You can move and resize columns by clicking into the flight plan column headers.
         <translation type="obsolete">Aankomst</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2622"/>
+        <location filename="src/route/routecontroller.cpp" line="2620"/>
         <source>STAR and approach procedure information.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2624"/>
+        <location filename="src/route/routecontroller.cpp" line="2622"/>
         <source>Landing Runway</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2625"/>
-        <location filename="src/route/routecontroller.cpp" line="2629"/>
+        <location filename="src/route/routecontroller.cpp" line="2623"/>
+        <location filename="src/route/routecontroller.cpp" line="2627"/>
         <source>Destination runway heading, available distance for landing, elevation and facilities.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2602"/>
+        <location filename="src/route/routecontroller.cpp" line="2600"/>
         <source>Distance and Time</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="1395"/>
+        <location filename="src/route/routecontroller.cpp" line="1394"/>
         <source>Cruising altitude from flight plan is not valid. It may conflict with airport elevation, procedure and/or airway restrictions.&lt;br/&gt;&lt;br/&gt;Applied best guess for cruising altitude, trying to avoid errors.&lt;br/&gt;Note that you can undo this change.&lt;br/&gt;&lt;br/&gt;Adjust the altitude manually as needed.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2602"/>
+        <location filename="src/route/routecontroller.cpp" line="2600"/>
         <source>Flight plan total distance and flight time.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2630"/>
+        <location filename="src/route/routecontroller.cpp" line="2628"/>
         <source>Headwind on landing runway indicated by %1 and tailwind by %2
 as well as crosswind (%3 or %4).
 The wind information is taken from the selected source in
@@ -35293,150 +35293,150 @@ Wind is taken from nearest airport if not available.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2640"/>
+        <location filename="src/route/routecontroller.cpp" line="2638"/>
         <source>Flight Plan Table Footer</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2641"/>
+        <location filename="src/route/routecontroller.cpp" line="2639"/>
         <source>Selected Flight Plan Legs</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2642"/>
+        <location filename="src/route/routecontroller.cpp" line="2640"/>
         <source>Show distance, time and fuel for selected flight plan legs.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2644"/>
+        <location filename="src/route/routecontroller.cpp" line="2642"/>
         <source>Error Messages</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2645"/>
+        <location filename="src/route/routecontroller.cpp" line="2643"/>
         <source>Show error messages for flight plan elements like missing airports and more.
 It is strongly recommended to keep the error label enabled.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2650"/>
+        <location filename="src/route/routecontroller.cpp" line="2648"/>
         <source>Flight plan table columns</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2892"/>
+        <location filename="src/route/routecontroller.cpp" line="2890"/>
         <source>Show Departure &amp;Procedures for %1</source>
         <translation type="unfinished">Toon Vertrek &amp;Procedures voor %1</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2896"/>
+        <location filename="src/route/routecontroller.cpp" line="2894"/>
         <source>Show procedures (no departure procedure)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2902"/>
+        <location filename="src/route/routecontroller.cpp" line="2900"/>
         <source>Show Arrival/Approach &amp;Procedures for %1</source>
         <oldsource>Show Arrival &amp;Procedures for %1</oldsource>
         <translation type="unfinished">Toon Aankomst &amp;Procedures voor %1</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2906"/>
+        <location filename="src/route/routecontroller.cpp" line="2904"/>
         <source>Show &amp;Procedures (no arrival/approch procedure)</source>
         <oldsource>Show &amp;Procedures (no arrival procedure)</oldsource>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2910"/>
+        <location filename="src/route/routecontroller.cpp" line="2908"/>
         <source>Show Procedures for %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2915"/>
+        <location filename="src/route/routecontroller.cpp" line="2913"/>
         <source>Show Procedures (no procedure)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2919"/>
-        <location filename="src/route/routecontroller.cpp" line="2942"/>
+        <location filename="src/route/routecontroller.cpp" line="2917"/>
+        <location filename="src/route/routecontroller.cpp" line="2940"/>
         <source>Select Destination &amp;Runway for %1 ...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2924"/>
+        <location filename="src/route/routecontroller.cpp" line="2922"/>
         <source>Select &amp;Runway and use %1 as Destination ...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2930"/>
-        <location filename="src/route/routecontroller.cpp" line="2943"/>
+        <location filename="src/route/routecontroller.cpp" line="2928"/>
+        <location filename="src/route/routecontroller.cpp" line="2941"/>
         <source>Select &amp;Departure Runway for %1 ...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2935"/>
+        <location filename="src/route/routecontroller.cpp" line="2933"/>
         <source>Select Runway and use %1 as &amp;Departure ...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2948"/>
-        <location filename="src/route/routecontroller.cpp" line="3046"/>
+        <location filename="src/route/routecontroller.cpp" line="2946"/>
+        <location filename="src/route/routecontroller.cpp" line="3044"/>
         <source> (no runway)</source>
         <translation type="unfinished"> (geen startbaan)</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2987"/>
+        <location filename="src/route/routecontroller.cpp" line="2985"/>
         <source>Edit &amp;Position or Remarks ...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2993"/>
+        <location filename="src/route/routecontroller.cpp" line="2991"/>
         <source>&amp;Edit %1 ...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="3000"/>
+        <location filename="src/route/routecontroller.cpp" line="2998"/>
         <source>Edit &amp;Remarks for %1 ...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="3890"/>
+        <location filename="src/route/routecontroller.cpp" line="3888"/>
         <source>Set Start Position to Airport</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="3915"/>
+        <location filename="src/route/routecontroller.cpp" line="3913"/>
         <source>Start postition set to airport.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="3958"/>
+        <location filename="src/route/routecontroller.cpp" line="3956"/>
         <source>Start position set to %1 parking %2.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="4006"/>
+        <location filename="src/route/routecontroller.cpp" line="4004"/>
         <source>Start position set to %1 position %2.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="4214"/>
-        <location filename="src/route/routecontroller.cpp" line="4255"/>
+        <location filename="src/route/routecontroller.cpp" line="4212"/>
+        <location filename="src/route/routecontroller.cpp" line="4253"/>
         <source>Select runway for destination:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="4221"/>
-        <location filename="src/route/routecontroller.cpp" line="4318"/>
+        <location filename="src/route/routecontroller.cpp" line="4219"/>
+        <location filename="src/route/routecontroller.cpp" line="4316"/>
         <source>Select runway for departure:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="4257"/>
+        <location filename="src/route/routecontroller.cpp" line="4255"/>
         <source>Select runway and use airport as destination:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="4320"/>
+        <location filename="src/route/routecontroller.cpp" line="4318"/>
         <source>Select runway and use airport as departure:</source>
         <translation type="unfinished"></translation>
     </message>
@@ -35445,23 +35445,23 @@ It is strongly recommended to keep the error label enabled.</source>
         <translation type="obsolete">Alle</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="5050"/>
+        <location filename="src/route/routecontroller.cpp" line="5048"/>
         <source>Destination</source>
         <translation type="unfinished">Bestemming</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="5054"/>
+        <location filename="src/route/routecontroller.cpp" line="5052"/>
         <source>Alternate</source>
         <translation type="unfinished">Alternate</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="5067"/>
+        <location filename="src/route/routecontroller.cpp" line="5065"/>
         <source>Track %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="5081"/>
-        <location filename="src/route/routecontroller.cpp" line="5173"/>
+        <location filename="src/route/routecontroller.cpp" line="5079"/>
+        <location filename="src/route/routecontroller.cpp" line="5171"/>
         <source> / </source>
         <translation type="unfinished"> / </translation>
     </message>
@@ -35494,48 +35494,48 @@ It is strongly recommended to keep the error label enabled.</source>
         <translation type="obsolete">►</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="5420"/>
+        <location filename="src/route/routecontroller.cpp" line="5418"/>
         <source>%1 %2</source>
         <translation type="unfinished">%1 %2</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="5704"/>
+        <location filename="src/route/routecontroller.cpp" line="5702"/>
         <source>Waypoint &quot;%1&quot; not found.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="5739"/>
+        <location filename="src/route/routecontroller.cpp" line="5737"/>
         <source>
 </source>
         <translation type="unfinished">
 </translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="5774"/>
-        <location filename="src/route/routecontroller.cpp" line="5781"/>
+        <location filename="src/route/routecontroller.cpp" line="5772"/>
+        <location filename="src/route/routecontroller.cpp" line="5779"/>
         <source>Cannot load %1: %2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="5775"/>
+        <location filename="src/route/routecontroller.cpp" line="5773"/>
         <source>procedures</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="5775"/>
+        <location filename="src/route/routecontroller.cpp" line="5773"/>
         <source>procedure</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2851"/>
-        <location filename="src/route/routecontroller.cpp" line="5088"/>
-        <location filename="src/route/routecontroller.cpp" line="5089"/>
-        <location filename="src/route/routecontroller.cpp" line="5099"/>
-        <location filename="src/route/routecontroller.cpp" line="5168"/>
-        <location filename="src/route/routecontroller.cpp" line="5776"/>
-        <location filename="src/route/routecontroller.cpp" line="5783"/>
-        <location filename="src/route/routecontroller.cpp" line="6008"/>
-        <location filename="src/route/routecontroller.cpp" line="6030"/>
+        <location filename="src/route/routecontroller.cpp" line="2849"/>
+        <location filename="src/route/routecontroller.cpp" line="5086"/>
+        <location filename="src/route/routecontroller.cpp" line="5087"/>
+        <location filename="src/route/routecontroller.cpp" line="5097"/>
+        <location filename="src/route/routecontroller.cpp" line="5166"/>
+        <location filename="src/route/routecontroller.cpp" line="5774"/>
+        <location filename="src/route/routecontroller.cpp" line="5781"/>
+        <location filename="src/route/routecontroller.cpp" line="6006"/>
+        <location filename="src/route/routecontroller.cpp" line="6028"/>
         <source>, </source>
         <translation type="unfinished">, </translation>
     </message>
@@ -35548,17 +35548,17 @@ It is strongly recommended to keep the error label enabled.</source>
         <translation type="obsolete">▲</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="5777"/>
+        <location filename="src/route/routecontroller.cpp" line="5775"/>
         <source>Save and reload flight plan or select new procedures to fix this.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="5782"/>
+        <location filename="src/route/routecontroller.cpp" line="5780"/>
         <source>alternates</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="5782"/>
+        <location filename="src/route/routecontroller.cpp" line="5780"/>
         <source>alternate</source>
         <translation type="unfinished"></translation>
     </message>
@@ -35627,7 +35627,7 @@ It is strongly recommended to keep the error label enabled.</source>
         <translation type="obsolete">&lt;b&gt;%1&lt;/b&gt;</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="5979"/>
+        <location filename="src/route/routecontroller.cpp" line="5977"/>
         <source>Remarks changed</source>
         <translation type="unfinished"></translation>
     </message>
