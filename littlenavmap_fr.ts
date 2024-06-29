@@ -19770,7 +19770,7 @@ kHz/MHz</translation>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="4779"/>
         <source> %1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"> %1</translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="4854"/>
@@ -22266,7 +22266,7 @@ kHz/MHz</translation>
         <location filename="src/mappainter/mappaintervehicle.cpp" line="449"/>
         <source> %1</source>
         <oldsource>◄ </oldsource>
-        <translation type="unfinished">◄ </translation>
+        <translation type="unfinished"> %1</translation>
     </message>
     <message>
         <location filename="src/mappainter/mappainterroute.cpp" line="711"/>
@@ -32215,7 +32215,7 @@ Affiché lors de la descente uniquement au symbole de l&apos;avion utilisateur s
         <location filename="src/profile/profilewidget.cpp" line="849"/>
         <source>%1° %2</source>
         <oldsource>%1° / %2 ►</oldsource>
-        <translation type="unfinished">%1° / %2 ►</translation>
+        <translation type="unfinished">%1° %2</translation>
     </message>
     <message>
         <source>No Flight Plan.</source>
@@ -32308,7 +32308,7 @@ Affiché lors de la descente uniquement au symbole de l&apos;avion utilisateur s
         <location filename="src/profile/profilewidget.cpp" line="1720"/>
         <location filename="src/profile/profilewidget.cpp" line="1722"/>
         <source> %1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"> %1</translation>
     </message>
     <message>
         <location filename="src/profile/profilewidget.cpp" line="851"/>
@@ -36716,7 +36716,7 @@ Cliquer ou recharger pour continuer.</translation>
         <location filename="src/route/route.cpp" line="3841"/>
         <location filename="src/route/route.cpp" line="3852"/>
         <source> %1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"> %1</translation>
     </message>
     <message>
         <location filename="src/route/route.cpp" line="3866"/>
@@ -43047,12 +43047,12 @@ Total des déplacements: %1.</translation>
         <location filename="src/common/textplacement.cpp" line="45"/>
         <source> %1</source>
         <oldsource>◄ </oldsource>
-        <translation type="unfinished">◄ </translation>
+        <translation type="unfinished"> %1</translation>
     </message>
     <message>
         <location filename="src/common/textplacement.cpp" line="46"/>
         <source>%1 </source>
-        <translation type="unfinished">%1 </translation>
+        <translation>%1 </translation>
     </message>
     <message>
         <location filename="src/common/textplacement.cpp" line="47"/>
