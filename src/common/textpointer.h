@@ -24,6 +24,8 @@ class QString;
 /*
  * Manages special pointer Unicode characters depending on system, font and availability.
  * Call initWindPtr() before use.
+ *
+ * All used pointers are [▲▼▶︎►◀︎◄⮝⮟⮞⮜]
  */
 class TextPointer
 {
