@@ -476,7 +476,7 @@ Save changes?</source>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="923"/>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="944"/>
         <source> &lt;b&gt;%1&lt;/b&gt;</source>
-        <translation type="unfinished"> &lt;b&gt;▲&lt;/b&gt;</translation>
+        <translation> &lt;b&gt;%1&lt;/b&gt;</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="1030"/>
@@ -16906,7 +16906,7 @@ kHz/MHz</translation>
         <location filename="src/common/htmlinfobuilder.cpp" line="4779"/>
         <source> %1</source>
         <oldsource> ▼</oldsource>
-        <translation type="unfinished"> ▼</translation>
+        <translation> %1</translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="4777"/>
@@ -19054,7 +19054,7 @@ kHz/MHz</translation>
         <location filename="src/common/htmlinfobuilder.cpp" line="4476"/>
         <source>&lt;b&gt;%1&lt;/b&gt;</source>
         <oldsource>&lt;b&gt;◄&lt;/b&gt;</oldsource>
-        <translation type="unfinished">&lt;b&gt;◄&lt;/b&gt;</translation>
+        <translation>&lt;b&gt;%1&lt;/b&gt;</translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="4478"/>
@@ -20020,7 +20020,7 @@ kHz/MHz</translation>
         <location filename="src/common/htmlinfobuilder.cpp" line="4738"/>
         <source> &lt;b&gt;%1&lt;/b&gt;</source>
         <oldsource> &lt;b&gt;▲&lt;/b&gt;</oldsource>
-        <translation type="unfinished"> &lt;b&gt;▲&lt;/b&gt;</translation>
+        <translation type="unfinished"> &lt;b&gt;%1&lt;/b&gt;</translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="4747"/>
@@ -20689,7 +20689,7 @@ kHz/MHz</translation>
         <location filename="src/mappainter/mappaintervehicle.cpp" line="449"/>
         <source> %1</source>
         <oldsource> ►</oldsource>
-        <translation type="unfinished"> ►</translation>
+        <translation type="unfinished"> %1</translation>
     </message>
     <message>
         <location filename="src/mappainter/mappainterroute.cpp" line="1247"/>
@@ -28912,7 +28912,7 @@ Really use it?</source>
         <location filename="src/search/proceduresearch.cpp" line="1747"/>
         <location filename="src/search/proceduresearch.cpp" line="1753"/>
         <source> &lt;b&gt;%1&lt;/b&gt;</source>
-        <translation type="unfinished"> &lt;b&gt;▲&lt;/b&gt;</translation>
+        <translation type="unfinished"> &lt;b&gt;%1&lt;/b&gt;</translation>
     </message>
     <message>
         <location filename="src/search/proceduresearch.cpp" line="1768"/>
@@ -29348,7 +29348,7 @@ Changes to &quot;Required angle&quot; if mandatory in approach procedures.</sour
         <location filename="src/profile/profilewidget.cpp" line="1722"/>
         <source> %1</source>
         <oldsource> ►</oldsource>
-        <translation type="unfinished"> ►</translation>
+        <translation type="unfinished"> %1</translation>
     </message>
     <message>
         <location filename="src/profile/profilewidget.cpp" line="786"/>
@@ -29359,13 +29359,13 @@ Changes to &quot;Required angle&quot; if mandatory in approach procedures.</sour
         <location filename="src/profile/profilewidget.cpp" line="849"/>
         <source>%1° %2</source>
         <oldsource>%1° ►</oldsource>
-        <translation type="unfinished">%1° ►</translation>
+        <translation type="unfinished">%1° %2</translation>
     </message>
     <message>
         <location filename="src/profile/profilewidget.cpp" line="851"/>
         <source>%1° / %2 %3</source>
         <oldsource>%1° / %2 ►</oldsource>
-        <translation type="unfinished">%1° / %2 ►</translation>
+        <translation type="unfinished">%1° / %2 %3</translation>
     </message>
     <message>
         <source>No Flight Plan loaded.</source>
@@ -38921,7 +38921,7 @@ Travel Totals: %1.</source>
         <location filename="src/common/textplacement.cpp" line="45"/>
         <source> %1</source>
         <oldsource>◄ </oldsource>
-        <translation type="unfinished">◄ </translation>
+        <translation type="unfinished"> %1</translation>
     </message>
     <message>
         <location filename="src/common/textplacement.cpp" line="46"/>
