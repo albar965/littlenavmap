@@ -22744,7 +22744,7 @@ kHz/MHz</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapthemehandler.cpp" line="853"/>
-        <source>&lt;p&gt;The map theme &quot;%1&quot; requires additional information.&lt;/p&gt;&lt;p&gt;You have to create an user account at the related website and then create an username, an access key or a token.&lt;br/&gt;Most of these services offer a free plan for hobbyists.&lt;/p&gt;&lt;p&gt;Then go to menu &quot;Tools&quot; -&gt; &quot;Options&quot; and to page &quot;Map Display Keys&quot; in Little Navmap and enter the information for the key(s) below:&lt;/p&gt;&lt;ul&gt;&lt;li&gt;%2&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;The map will not show correctly until this is done.&lt;/p&gt;%3</source>
+        <source>&lt;p&gt;The map theme &quot;%1&quot; requires additional information.&lt;/p&gt;&lt;p&gt;You have to create an user account at the related website and then create an username, an access key or a token.&lt;br/&gt;Most of these services offer a free plan for hobbyists.&lt;/p&gt;&lt;p&gt;Then go to menu &quot;Tools&quot; -&gt; &quot;Options&quot; and to page &quot;Map Keys&quot; in Little Navmap and enter the information for the key(s) below:&lt;/p&gt;&lt;ul&gt;&lt;li&gt;%2&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;The map will not show correctly until this is done.&lt;/p&gt;%3</source>
         <translation type="unfinished">&lt;p&gt;Le thème de carte &quot;%1&quot; nécessite des informations supplémentaires.&lt;/p&gt;&lt;p&gt;Vous devez créer un compte utilisateur sur le site web correspondant, puis créer un nom d&apos;utilisateur, une clé d&apos;accès ou un code.&lt;br/&gt;La plupart de ces services proposent un plan gratuit pour les amateurs.&lt;/p&gt;&lt;p&gt;Ensuite, allez dans le menu &quot;Outils&quot; -&gt; &quot;Options&quot; et à la page &quot;Clés d&apos;affichage de la carte&quot; dans Little Navmap et saisissez les informations relatives à la ou aux clés ci-dessous:&lt;/p&gt;&lt;ul&gt;&lt;li&gt;%2&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;La carte ne s&apos;affichera pas correctement tant que cela n&apos;aura pas été fait.&lt;/p&gt;%3</translation>
     </message>
     <message>
@@ -26948,14 +26948,15 @@ Noter que certaines polices, en particulier les grandes polices, peuvent entraî
     </message>
     <message>
         <source>You can still use the default click and drag method to scroll and the mousewheel to zoom in this mode.
-Enable &quot;Navigation Aids&quot;, &quot;Screen Areas&quot; on options page &quot;Map Display Labels&quot; to display hints on the map.</source>
+Enable &quot;Navigation Aids&quot;, &quot;Screen Areas&quot; on options page &quot;Map Labels&quot; to display hints on the map.</source>
         <translation type="obsolete">Dans ce mode, vous pouvez toujours utiliser la méthode par défaut du cliquer-glisser pour faire défiler la carte et la molette de la souris pour zoomer.
 Activez &quot;Aides à la navigation&quot;, &quot;Zones d&apos;écran&quot; sur la page d&apos;options &quot;Étiquettes d&apos;affichage de la carte&quot; pour afficher des conseils sur la carte.</translation>
     </message>
     <message>
+        <location filename="src/options/options.ui" line="2594"/>
         <source>Enable &quot;Navigation Aids&quot;, &quot;Center Cross&quot; on
-options page &quot;Map Display Labels&quot; to display a screen center hint.</source>
-        <translation type="obsolete">Activez &quot;Aides à la navigation&quot;, &quot;Croix centrale&quot; sur la page d&apos;options &quot;Étiquettes d&apos;affichage cartographique&quot; pour afficher une indication du centre de l&apos;écran.
+options page &quot;Map Labels&quot; to display a screen center hint.</source>
+        <translation type="unfinished">Activez &quot;Aides à la navigation&quot;, &quot;Croix centrale&quot; sur la page d&apos;options &quot;Étiquettes d&apos;affichage cartographique&quot; pour afficher une indication du centre de l&apos;écran.
 page d&apos;options &quot;Étiquettes d&apos;affichage de la carte&quot; pour afficher une indication du centre de l&apos;écran.</translation>
     </message>
     <message>
@@ -27317,7 +27318,7 @@ La valeur 0 est opaque et 90 est la plus transparente.</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="5183"/>
-        <source>Map Display Labels</source>
+        <source>Map Labels</source>
         <translation type="unfinished">Étiquettes de l&apos;affichage de la carte</translation>
     </message>
     <message>
@@ -28218,13 +28219,6 @@ Enable &quot;Navigation Aids&quot;, &quot;Screen Areas&quot; on options page &qu
 Enable &quot;Navigation Aids&quot;, &quot;Screen Areas&quot; on options page &quot;Map Labels&quot; to display hints on the map.</oldsource>
         <translation type="unfinished">Dans ce mode, vous pouvez toujours utiliser la méthode par défaut de cliquer-déplacer pour faire défiler la carte et la molette de la souris pour zoomer.
 Activez les options &quot;Aides à la navigation&quot;, &quot;Zones d&apos;écran&quot; sur la page d&apos;options &quot;Étiquettes de carte&quot; pour afficher des conseils sur la carte.</translation>
-    </message>
-    <message>
-        <location filename="src/options/options.ui" line="2594"/>
-        <source>Enable &quot;Navigation Aids&quot;, &quot;Center Cross&quot; on
-options page &quot;Map Labels&quot; to display a screen center hint.</source>
-        <translation type="unfinished">Activer &quot;Aides à la Navigation&quot;, &quot;Croix centrale&quot; sur la page d&apos;options &quot;Etiquettes de Carte&quot; pour afficher une indication de centrage de l&apos;écran.
-page d&apos;options &quot;Etiquettes de Carte&quot; pour afficher une indication de centre à l&apos;écran.</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="2627"/>
@@ -30402,16 +30396,8 @@ l&apos;options pour l&apos;affichage de la route et du cap.</translation>
         <translation type="obsolete">Modifiez les couleurs, les symboles et les textes des marques, des lignes de mesure et d&apos;autres caractéristiques utilisateur pour la carte et le profil d&apos;élévation.</translation>
     </message>
     <message>
-        <source>Map Display Labels</source>
-        <translation type="obsolete">Étiquettes d&apos;affichage de la carte</translation>
-    </message>
-    <message>
         <source>Change map display and elevation profile label options for marks, user aircraft and more.</source>
         <translation type="obsolete">Modifiez les options d&apos;affichage de la carte et d&apos;étiquetage du profil d&apos;élévation pour les marques, l&apos;avion de l&apos;utilisateur et plus encore.</translation>
-    </message>
-    <message>
-        <source>Map Display Keys</source>
-        <translation type="obsolete">Touches d&apos;affichage de la carte</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="203"/>

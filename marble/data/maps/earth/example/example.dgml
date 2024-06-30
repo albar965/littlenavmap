@@ -99,7 +99,7 @@
           <!-- Example to build an url with access token, username and style.
                A single access token or API key is often sufficient to access a map which requires an user account.
                All keys enclosed in braces (except common ones like "x", "y", "z", "zoomLevel" and "language") are extracted from
-               the URL by LNM and are shown in the options dialog on page "Map Display Keys".
+               the URL by LNM and are shown in the options dialog on page "Map Keys".
                Allowed characters for keys are A-Z, a-z, 0-9, _, - and space.
                The keys have to be unique for all available maps/map providers and should be user readable.
                Best prefix them with your map name.

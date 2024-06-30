@@ -22469,7 +22469,7 @@ kHz/MHz</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapthemehandler.cpp" line="853"/>
-        <source>&lt;p&gt;The map theme &quot;%1&quot; requires additional information.&lt;/p&gt;&lt;p&gt;You have to create an user account at the related website and then create an username, an access key or a token.&lt;br/&gt;Most of these services offer a free plan for hobbyists.&lt;/p&gt;&lt;p&gt;Then go to menu &quot;Tools&quot; -&gt; &quot;Options&quot; and to page &quot;Map Display Keys&quot; in Little Navmap and enter the information for the key(s) below:&lt;/p&gt;&lt;ul&gt;&lt;li&gt;%2&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;The map will not show correctly until this is done.&lt;/p&gt;%3</source>
+        <source>&lt;p&gt;The map theme &quot;%1&quot; requires additional information.&lt;/p&gt;&lt;p&gt;You have to create an user account at the related website and then create an username, an access key or a token.&lt;br/&gt;Most of these services offer a free plan for hobbyists.&lt;/p&gt;&lt;p&gt;Then go to menu &quot;Tools&quot; -&gt; &quot;Options&quot; and to page &quot;Map Keys&quot; in Little Navmap and enter the information for the key(s) below:&lt;/p&gt;&lt;ul&gt;&lt;li&gt;%2&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;The map will not show correctly until this is done.&lt;/p&gt;%3</source>
         <translation>&lt;p&gt;Il tema della mappa&quot;%1&quot;necessita di ulteriori informazioni.&lt;/p&gt;&lt;p&gt;È necessario creare un account utente sul relativo sito web e poi creare un nome utente, una chiave di accesso o un token.&lt;br/&gt;La maggior parte di questi servizi offre un piano gratuito per gli hobbisti. &lt;/p&gt;&lt;p&gt;Poi vai al menu &quot;Strumenti&quot; -&gt; &quot;Opzioni&quot; e alla pagina &quot;Chiavi per la Visualizzazione della Mappa&quot; in Little Navmap e inserire le informazioni per la chiave o le chiavi di seguito:&lt;/p&gt;&lt;ul&gt;&lt;li&gt;%2&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;La mappa non verrà visualizzata correttamente fino a quando non verrà eseguita questa operazione.&lt;/p&gt;%3</translation>
     </message>
     <message>
@@ -26023,15 +26023,17 @@ Il valore 0 è opaco e 90 è il più trasparente.</translation>
         <translation>Finestra della Mappa</translation>
     </message>
     <message>
+        <location filename="src/options/options.ui" line="2563"/>
         <source>You can still use the default click and drag method to scroll and the mouse wheel to zoom in this mode.
-Enable &quot;Navigation Aids&quot;, &quot;Screen Areas&quot; on options page &quot;Map Display Labels&quot; to display hints on the map.</source>
-        <translation type="vanished">In questa modalità è ancora possibile utilizzare il metodo predefinito di clic e trascinamento per lo scorrimento e la rotellina del mouse per lo zoom.
+Enable &quot;Navigation Aids&quot;, &quot;Screen Areas&quot; on options page &quot;Map Labels&quot; to display hints on the map.</source>
+        <translation>In questa modalità è ancora possibile utilizzare il metodo predefinito di clic e trascinamento per lo scorrimento e la rotellina del mouse per lo zoom.
 Attivare &quot;Aiuti alla Navigazione&quot;, &quot;Area dello schermo&quot; nella pagina delle opzioni &quot;Etichette di Visualizzazione della Mappa&quot; per visualizzare i suggerimenti sulla mappa.</translation>
     </message>
     <message>
+        <location filename="src/options/options.ui" line="2594"/>
         <source>Enable &quot;Navigation Aids&quot;, &quot;Center Cross&quot; on
-options page &quot;Map Display Labels&quot; to display a screen center hint.</source>
-        <translation type="vanished">Attivare &quot;Aiuti alla navigazione&quot;, &quot;Croce centrale&quot; nella
+options page &quot;Map Labels&quot; to display a screen center hint.</source>
+        <translation>Attivare &quot;Aiuti alla navigazione&quot;, &quot;Croce centrale&quot; nella
 pagina delle opzioni &quot;Etichette di Visualizzazione della Mappa&quot; per visualizzare un suggerimento per il centro dello schermo.</translation>
     </message>
     <message>
@@ -26351,7 +26353,7 @@ Il valore 0 è opaco e 90 è il più trasparente.</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="5183"/>
-        <source>Map Display Labels</source>
+        <source>Map Labels</source>
         <translation>Etichette di Visualizzazione della Mappa</translation>
     </message>
     <message>
@@ -26717,20 +26719,6 @@ Il pulsante della barra degli strumenti aeroportii può essere utilizzato per na
         <location filename="src/options/options.ui" line="2475"/>
         <source>&amp;Click Sensitivity for Map Objects</source>
         <translation>Sensibilità del &amp;Clock per gli Oggetti della Mappa</translation>
-    </message>
-    <message>
-        <location filename="src/options/options.ui" line="2563"/>
-        <source>You can still use the default click and drag method to scroll and the mouse wheel to zoom in this mode.
-Enable &quot;Navigation Aids&quot;, &quot;Screen Areas&quot; on options page &quot;Map Labels&quot; to display hints on the map.</source>
-        <translation>In questa modalità è ancora possibile utilizzare il metodo predefinito di clic e trascinamento per lo scorrimento e la rotellina del mouse per lo zoom.
-Attivare &quot;Aiuti alla Navigazione nella Mappa&quot;, &quot;Area dello Schermo&quot; nella pagina delle opzioni &quot;Etichette Mappa&quot; per visualizzare i suggerimenti sulla mappa.</translation>
-    </message>
-    <message>
-        <location filename="src/options/options.ui" line="2594"/>
-        <source>Enable &quot;Navigation Aids&quot;, &quot;Center Cross&quot; on
-options page &quot;Map Labels&quot; to display a screen center hint.</source>
-        <translation>Abilita attivazione &quot;Strumenti di navigazione&quot;, &quot;Croce centrale&quot; nella
-pagina delle opzioni &quot;Etichette Mappa&quot; per visualizzare un suggerimento al centro dello schermo.</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="2627"/>
@@ -29503,16 +29491,8 @@ Spostare la finestra di dialogo per vedere le modifiche nella finestra principal
         <translation type="vanished">Modifica di colori, simboli e testi per segni, linee di misura e altre funzionalità dell&apos;utente per la mappa e il profilo altimetrico.</translation>
     </message>
     <message>
-        <source>Map Display Labels</source>
-        <translation type="vanished">Etichette di Visualizzazione della Mappa</translation>
-    </message>
-    <message>
         <source>Change map display and elevation profile label options for marks, user aircraft and more.</source>
         <translation type="vanished">Modificare le opzioni di visualizzazione della mappa e dell&apos;etichetta del profilo altimetrico per i segni, gli aeromobili dell&apos;utente e altro ancora.</translation>
-    </message>
-    <message>
-        <source>Map Display Keys</source>
-        <translation type="vanished">Chiavi per la Visualizzazione della Mappa</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="203"/>

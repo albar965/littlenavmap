@@ -5180,7 +5180,7 @@ Value 0 is opaque and 90 is most transparent.</string>
         <item>
          <widget class="QGroupBox" name="groupBox_27">
           <property name="title">
-           <string>Map Display Labels</string>
+           <string>Map Labels</string>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_32">
            <item>
