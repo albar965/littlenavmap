@@ -315,7 +315,7 @@ void HtmlInfoBuilder::airportText(const MapAirport& airport, const map::WeatherC
     // Sunrise and sunset ===========================
     QDateTime datetime = NavApp::isConnectedAndAircraft() ? NavApp::getUserAircraft().getZuluTime() : QDateTime::currentDateTimeUtc();
 
-    if(datetime.isValid())
+    if(datetime.isValid() && rec != nullptr)
       html.row2(tr("Sunrise and sunset:"), sunriseSunsetText(Pos(rec->valueFloat("lonx"), rec->valueFloat("laty")), datetime));
 
     // Coordinates ===============================================
@@ -947,7 +947,7 @@ void HtmlInfoBuilder::runwayText(const MapAirport& airport, HtmlBuilder& html, b
       const SqlRecordList *heliVector = infoQuery->getHelipadInformation(airport.id);
       if(heliVector != nullptr && !heliVector->isEmpty())
       {
-      html.hr();
+        html.hr();
 
         for(const SqlRecord& heliRec : *heliVector)
         {
@@ -1822,7 +1822,7 @@ void HtmlInfoBuilder::weatherText(const map::WeatherContext& context, const MapA
         html.hr();
         decodedMetars(html, context.ivaoMetar, airport, tr("IVAO"), src == WEATHER_SOURCE_IVAO && weatherShown);
       }
-    }  // if(flags & optsw::WEATHER_INFO_ALL)
+    } // if(flags & optsw::WEATHER_INFO_ALL)
     else
       html.p().warning(tr("No weather display selected in options dialog on page \"Weather\"."));
   } // if(info)

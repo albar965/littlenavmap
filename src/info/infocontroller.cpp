@@ -1197,6 +1197,8 @@ void InfoController::postDatabaseLoad()
   currentSearchResult->aiAircraft.append(savedSearchResult->aiAircraft);
   currentSearchResult->onlineAircraft.append(savedSearchResult->onlineAircraft);
 
+  currentSearchResult->removeInvalid();
+
   savedSearchResult->clear();
   showInformationInternal(*currentSearchResult, false /* showWindows */, false /* scrollToTop */, true /* forceUpdate */);
 }
