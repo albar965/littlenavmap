@@ -3013,7 +3013,7 @@ void MapWidget::optionsChanged()
   screenSearchDistanceTooltip = optiondata.getMapTooltipSensitivity();
 
   aircraftTrail->setMaxTrackEntries(optiondata.getAircraftTrailMaxPoints());
-  aircraftTrailLogbook->setMaxTrackEntries(optiondata.getAircraftTrailMaxPoints());
+  // aircraftTrailLogbook uses AircraftTrail::MAX_TRACK_ENTRIES
 
   MapPaintWidget::optionsChanged();
 }
@@ -3118,12 +3118,12 @@ void MapWidget::restoreState()
   // Restore range rings, patterns, holds and more
   getScreenIndex()->restoreState();
 
+  aircraftTrail->setMaxTrackEntries(OptionData::instance().getAircraftTrailMaxPoints());
   if(OptionData::instance().getFlags() & opts::STARTUP_LOAD_TRAIL && !NavApp::isSafeMode())
     aircraftTrail->restoreState(lnm::AIRCRAFT_TRACK_SUFFIX);
-  aircraftTrail->setMaxTrackEntries(OptionData::instance().getAircraftTrailMaxPoints());
 
   aircraftTrailLogbook->restoreState(lnm::LOGBOOK_TRACK_SUFFIX);
-  aircraftTrailLogbook->setMaxTrackEntries(OptionData::instance().getAircraftTrailMaxPoints());
+  // aircraftTrailLogbook uses AircraftTrail::MAX_TRACK_ENTRIES
 
   atools::gui::WidgetState state(lnm::MAP_OVERLAY_VISIBLE, false /*save visibility*/, true /*block signals*/);
   for(QAction *action : qAsConst(mapOverlays))

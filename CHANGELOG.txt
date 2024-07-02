@@ -37,6 +37,9 @@ A big thank you to all who reported bugs and issues!
 * Changed file extensions in multiexport to be untranslatable for local language to avoid issues.
 * Now adding STAR entry waypoint plus airway to MSFS PLN export in certain cases. Removing
   destination runway waypoints from MSFS PLN export if STAR is used.
+* Fixed aircraft trail for logbook entry that was incorrectly truncated.
+* Corrected display of split aircraft trail when starting a new flight on ground. Previously
+  the trails were shown wrongly connected.
 
 ### Weather
 
