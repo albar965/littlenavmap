@@ -1913,7 +1913,7 @@ void MainWindow::setMapObjectsShownMessageText(const QString& text, const QStrin
 
 const ElevationModel *MainWindow::getElevationModel()
 {
-  return mapWidget->model()->elevationModel();
+  return mapWidget->model() ? mapWidget->model()->elevationModel() : nullptr;
 }
 
 /* Called after each query */

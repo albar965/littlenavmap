@@ -187,12 +187,12 @@ MapWidget::MapWidget(MainWindow *parent)
   installEventFilter(this);
 
   // Disable all unwanted bloated useless Marble default popups on mouse click
-  Marble::MarbleWidgetInputHandler *input = inputHandler();
+  /*Marble::MarbleWidgetInputHandler *input = inputHandler();
   input->setMouseButtonPopupEnabled(Qt::RightButton, false);
   input->setMouseButtonPopupEnabled(Qt::LeftButton, false);
 
   // Avoid stuttering movements - jump directly to positions
-  input->setInertialEarthRotationEnabled(false);
+  input->setInertialEarthRotationEnabled(false);*/
 
   mapTooltip = new MapTooltip(mainWindow);
 
@@ -1535,7 +1535,7 @@ bool MapWidget::eventFilter(QObject *obj, QEvent *e)
   }
 
   // Pass to base class and keep on processing
-  Marble::MarbleWidget::eventFilter(obj, e);
+  MapGraphic::eventFilter(obj, e);
   return false;
 }
 

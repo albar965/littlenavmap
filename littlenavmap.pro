@@ -78,7 +78,7 @@
 # Define program version here VERSION_NUMBER_TODO
 VERSION_NUMBER=3.0.8
 
-QT += core gui sql xml network svg printsupport
+QT += core gui sql xml network svg printsupport widgets
 
 CONFIG += build_all c++14
 CONFIG -= debug_and_release debug_and_release_target
@@ -335,6 +335,8 @@ SOURCES += \
   src/mapgui/mapcontextmenu.cpp \
   src/mapgui/mapdetailhandler.cpp \
   src/mapgui/mapfunctions.cpp \
+  src/mapgui/mapgraphic.cpp \
+  src/mapgui/mapgraphicthread.cpp \
   src/mapgui/maplayer.cpp \
   src/mapgui/maplayersettings.cpp \
   src/mapgui/mapmarkhandler.cpp \
@@ -538,6 +540,8 @@ HEADERS  += \
   src/mapgui/mapcontextmenu.h \
   src/mapgui/mapdetailhandler.h \
   src/mapgui/mapfunctions.h \
+  src/mapgui/mapgraphic.h \
+  src/mapgui/mapgraphicthread.h \
   src/mapgui/maplayer.h \
   src/mapgui/maplayersettings.h \
   src/mapgui/mapmarkhandler.h \
