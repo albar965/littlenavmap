@@ -58,14 +58,13 @@ public:
         std::list<QString> idsMissing;          // linked list is inherently suited for thread-safety when appropriately implemented and used
         std::list<QString> idsDelivered;
         int indexLastIdCompleted;
+        int amountFailed;
     };
 
 private:
     QPainter *painter;
+    QNetworkAccessManager *netManager;
     void (MapGraphic::*paintDisplayAs)(QPaintEvent*);
-
-    void paintSphere(QPaintEvent *event);
-    void paintRectangle(QPaintEvent *event);
 
     float tanDefaultLensHalfHorizontalOpeningAngle = 1.732050807F;      // tan(60°); can change after resizing viewport
     const float earthRadius = 6378.137F;                                // Moritz, H. (1980); XVII General Assembly of the IUGG
@@ -104,14 +103,15 @@ private:
 
     bool doPaint = false;
 
-    QHash<QString, QHash<QString, QImage>> tilesDownloaded;
-    QHash<QString, QImage> currentTiles;
-
-    QString tileURLForLookup();
-
-    QNetworkAccessManager *netManager;
-
+    QHash<QString, QHash<QString, QImage>*> tilesDownloaded;
+    QHash<QString, QImage> *currentTiles;
+    QHash<QString, bool> failedTiles;
     QHash<QString, QString> request2id;
+
+    QString tileURLForLookup;
+
+    void paintSphere(QPaintEvent *event);
+    void paintRectangle(QPaintEvent *event);
 
 protected:
     /**

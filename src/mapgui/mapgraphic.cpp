@@ -10,6 +10,7 @@ MapGraphic::MapGraphic( QWidget *parent ) : QWidget(parent) {
     //referenceDistance = size().width() / 2 / sphereRadiusInPixel * earthRadius / tanDefaultLensHalfHorizontalOpeningAngle;
     oldZoom = ceilf(log2f(2 * sphereRadiusInPixel / tileWidth)) + 2;
     netManager = new QNetworkAccessManager(this);
+    netManager->setTransferTimeout(3500);
     connect(netManager, &QNetworkAccessManager::finished,
             this, &MapGraphic::netReplyReceived);
 }
@@ -21,8 +22,9 @@ MapGraphic::~MapGraphic() {
         QFile file(tileURLForLookup);
         if(file.open(QIODevice::WriteOnly)) {
             QDataStream out(&file);
-            out << tilesDownloaded[tileURLForLookup];
+            out << *tilesDownloaded[tileURLForLookup];
             file.close();
+            delete tilesDownloaded[tileURLForLookup];
         }
     }
 }
@@ -46,7 +48,7 @@ void MapGraphic::paintSphere(QPaintEvent *event) {
             tData->width = event->region().boundingRect().width() * scaleFactor;
             tData->height = (counter == amountThreads - 1) ? regionHeight * scaleFactor - counter * originalHeight : originalHeight;
             if(tData->width > 0 && tData->height > 0) {
-                tData->currentTiles = &currentTiles;
+                tData->currentTiles = currentTiles;
                 tData->tileWidth = tileWidth;
                 tData->tileHeight = tileHeight;
                 tData->xStart = event->region().boundingRect().left() * scaleFactor;
@@ -62,6 +64,7 @@ void MapGraphic::paintSphere(QPaintEvent *event) {
                 tData->tryZoomedOut = tData->zoom != oldZoom || tData->spin != oldSpin || tData->tilt != oldTilt;
                 tData->indexLastIdRequested = 0;
                 tData->indexLastIdCompleted = 0;
+                tData->amountFailed = 0;
                 if(tData->zoom > zoomMax) {
                     tData->zoom = zoomMax;
                 }
@@ -70,31 +73,43 @@ void MapGraphic::paintSphere(QPaintEvent *event) {
                 QThread *thread = new MapGraphicThread(tData);
                 threads.append(thread);
                 thread->start();
+            } else {
+                delete tData;
             }
         }
         while(++counter < amountThreads);
-        qDebug() << "MGO: threads started";
 
+        QHash<QString, bool> *returnedTiles = new QHash<QString, bool>[threadDatas.count()];
         int countRastering;
         do {
             countRastering = 0;
+            int indexTData = 0;
             foreach(threadData *tData, threadDatas) {
                 int countQueued = tData->idsMissing.size();
-                qDebug() << "MGO: missing count gotten" << countQueued;
                 auto it = tData->idsMissing.begin();
-                std::advance(it, tData->indexLastIdCompleted);
+                for(int i=0; i<tData->indexLastIdRequested; ++i) {
+                    QString id = *it++;
+                    if(!returnedTiles[indexTData].contains(id)) {
+                        if(currentTiles->contains(id)) {
+                            tData->idsDelivered.push_back(id);
+                            returnedTiles[indexTData].insert(id, true);
+                            qDebug() << "MGO: thread informed";
+                        } else if(failedTiles.contains(id)) {
+                            ++tData->amountFailed;
+                            returnedTiles[indexTData].insert(id, true);
+                            qDebug() << "MGO: thread informed about failure";
+                        }
+                    }
+                }
                 for(; tData->indexLastIdRequested < countQueued; ++tData->indexLastIdRequested) {
                     QString id = *it++;
                     qDebug() << "MGO: missing id gotten";
                     QStringList parts = id.split("/");
-                    QUrl qUrl = QUrl(tileURL.replace("{z}", parts[0]).replace("{x}", parts[1]).replace("{y}", parts[2]));
+                    QUrl qUrl = QUrl(QString(tileURL).replace("{z}", parts[0]).replace("{x}", parts[1]).replace("{y}", parts[2]));
                     if(!request2id.contains(qUrl.toString())) {
                         request2id[qUrl.toString()] = id;
                         netManager->get(QNetworkRequest(qUrl));
-                        qDebug() << "MGO: image requested";
-                    } else if(currentTiles.contains(id)) {
-                        tData->idsDelivered.push_back(id);
-                        qDebug() << "MGO: thread informed";
+                        qDebug() << "MGO: image requested " << qUrl.toString();
                     }
                 }
                 if(tData->rastering) {
@@ -104,8 +119,11 @@ void MapGraphic::paintSphere(QPaintEvent *event) {
                     delete tData->image;
                     tData->image = nullptr;
                 }
+                ++indexTData;
             }
         } while(countRastering > 0);
+
+        delete[] returnedTiles;
 
         while(threadDatas.count())
             delete threadDatas.takeLast();
@@ -122,20 +140,21 @@ void MapGraphic::paintRectangle(QPaintEvent *event) {
     }
 }
 
-QString MapGraphic::tileURLForLookup() {
-    return tileURL.replace("/", "_").replace(":", "_").replace("?", "_");
-}
-
 void MapGraphic::netReplyReceived(QNetworkReply *reply) {
     qDebug() << "MGO: reply received";
-    QImage image = QImageReader(reply).read();
-    qDebug() << "MGO: reply 2 image";
-    if(!image.isNull()) {
-        currentTiles[request2id[reply->request().url().toString()]] = image;
-        qDebug() << "MGO: image assigned";
+    if(reply->error() == QNetworkReply::NoError) {
+        QImage image = QImageReader(reply).read();
+        qDebug() << "MGO: reply 2 image";
+        if(!image.isNull()) {
+            currentTiles->insert(request2id[reply->request().url().toString()], image);
+            qDebug() << "MGO: image assigned";
+            reply->deleteLater();
+            qDebug() << "MGO: reply scheduled for deletion";
+            return;
+        }
     }
+    failedTiles.insert(request2id[reply->request().url().toString()], true);
     reply->deleteLater();
-    qDebug() << "MGO: reply scheduled for deletion";
 }
 
 qreal MapGraphic::distance() const {
@@ -194,23 +213,30 @@ void MapGraphic::setMapThemeId( const QString& maptheme ) {
         QXmlStreamReader xml(QString(file.readAll()));
         file.close();
         int depth = 0;
+        bool notDone[] = {true, true, true};
         bool isTexture = false;
         while (!xml.atEnd()) {
             QStringRef name = xml.name();
             if(isTexture) {
-                if(name == "tileSize") {
+                if(name == "tileSize" && notDone[0]) {
+                    notDone[0] = false;
                     tileWidth = xml.attributes().value("width").toInt();
                     found += tileWidth ? 1 : 0;
                     tileHeight = xml.attributes().value("height").toInt();
                     found += tileHeight ? 1 : 0;
-                } else if(name == "storageLayout") {
+                } else if(name == "storageLayout" && notDone[1]) {
+                    notDone[1] = false;
                     zoomMax = xml.attributes().value("maximumTileLevel").toInt();
                     if(zoomMax > 30) {
                         zoomMax = 30;
                     }
                     found += zoomMax ? 1 : 0;
-                } else if(name == "downloadUrl") {
+                } else if(name == "downloadUrl" && notDone[2]) {
+                    notDone[2] = false;
                     tileURL = xml.attributes().value("protocol") + "://" + xml.attributes().value("host") + xml.attributes().value("path");
+                    tileURLForLookup = QString(tileURL).replace("/", "_").replace(":", "_").replace("?", "_");
+                    // TODO: verify tileURL is executed by QNetworkAccessManager. Some urls evoke no error, no reply even after timeout passed there.
+                    // application would hang for such urls.
                     found += xml.attributes().value("protocol").count() ? 1 : 0;
                     found += xml.attributes().value("host").count() ? 1 : 0;
                     found += xml.attributes().value("path").contains("{z}") ? 1 : 0;
@@ -237,17 +263,17 @@ void MapGraphic::setMapThemeId( const QString& maptheme ) {
     }
     doPaint = found == 8;
     if(doPaint) {
-        if(!tilesDownloaded.contains(tileURLForLookup())) {
-            QFile file(tileURLForLookup());
+        if(!tilesDownloaded.contains(tileURLForLookup)) {
+            QHash<QString, QImage> *hash = new QHash<QString, QImage>();
+            QFile file(tileURLForLookup);
             if(file.open(QIODevice::ReadOnly)) {
                 QDataStream in(&file);
-                in >> tilesDownloaded[tileURLForLookup()];
+                in >> *hash;
                 file.close();
-            } else {
-                tilesDownloaded[tileURLForLookup()] = QHash<QString, QImage>();
             }
+            tilesDownloaded.insert(tileURLForLookup, hash);
         }
-        currentTiles = tilesDownloaded[tileURLForLookup()];
+        currentTiles = tilesDownloaded[tileURLForLookup];
     }
 }
 

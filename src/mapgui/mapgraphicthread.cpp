@@ -115,9 +115,7 @@ void MapGraphicThread::run() {
                         }
 
                         if(!pixelQueue.contains(QString(xy.id))) {
-                            qDebug() << "MGO: about to add missing id";
                             tData->idsMissing.push_back(QString(xy.id));
-                            qDebug() << "MGO: missing id added";
                         }
                         pixelQueue[QString(xy.id)].append(queuedPixel{
                             .xv = x,
@@ -133,10 +131,8 @@ void MapGraphicThread::run() {
                 }
             }
         }
-        qDebug() << "MGO: image iterated through";
-        while(pixelQueue.count() > tData->indexLastIdCompleted) {
+        while(pixelQueue.count() > tData->indexLastIdCompleted + tData->amountFailed) {
             volatile int count = tData->idsDelivered.size();
-            qDebug() << "MGO: waiting for tiles";
             auto it = tData->idsDelivered.begin();
             std::advance(it, tData->indexLastIdCompleted);
             for(; tData->indexLastIdCompleted < count; ++tData->indexLastIdCompleted) {
