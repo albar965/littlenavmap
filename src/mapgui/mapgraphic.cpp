@@ -28,28 +28,30 @@ MapGraphic::~MapGraphic() {
 
 void MapGraphic::paintSphere(QPaintEvent *event) {
     if(doPaint) {
-        QImage *image = new QImage(event->region().boundingRect().width() * scaleFactor, event->region().boundingRect().height() * scaleFactor, QImage::Format_RGB32);
-        if(image != nullptr) {
-            int regionHeight = event->region().boundingRect().height();
-            int amountThreads = QThread::idealThreadCount() - 2;        // - 2 = 1 for the main thread, 1 for the os
-            if(amountThreads > regionHeight * scaleFactor) {
-                amountThreads = regionHeight * scaleFactor;
-            }
-            if(amountThreads < 1) {
-                amountThreads = 1;
-            }
-            QList<threadData> threadDatas;
-            int counter = 0;
-            do {
+        int regionHeight = event->region().boundingRect().height();
+        int amountThreads = QThread::idealThreadCount() - 2;        // - 2 = 1 for the main thread, 1 for the os
+        if(amountThreads > regionHeight * scaleFactor) {
+            amountThreads = regionHeight * scaleFactor;
+        }
+        if(amountThreads < 1) {
+            amountThreads = 1;
+        }
+        QList<threadData> threadDatas;
+        int originalHeight = regionHeight * scaleFactor / amountThreads;
+        int counter = 0;
+        do {
+            int height = (counter == amountThreads - 1) ? regionHeight * scaleFactor - counter * originalHeight : originalHeight;
+            QImage *image = new QImage(event->region().boundingRect().width() * scaleFactor, height, QImage::Format_RGB32);
+            if(image != nullptr) {
                 threadData tData;
                 tData.image = image;
                 tData.currentTiles = &currentTiles;
                 tData.tileWidth = tileWidth;
                 tData.tileHeight = tileHeight;
                 tData.xStart = event->region().boundingRect().left() * scaleFactor;
-                tData.xEnd = (event->region().boundingRect().left() + event->region().boundingRect().width()) * scaleFactor;
-                tData.yStart = event->region().boundingRect().top() * scaleFactor;
-                tData.yEnd = (event->region().boundingRect().top() + regionHeight) * scaleFactor;
+                tData.xEnd = tData.xStart + event->region().boundingRect().width() * scaleFactor;
+                tData.yStart = event->region().boundingRect().top() * scaleFactor + counter * originalHeight;
+                tData.yEnd = tData.yStart + height;
                 tData.xOrigin = size().width() / 2 * scaleFactor;
                 tData.yOrigin = size().height() / 2 * scaleFactor;
                 tData.zoom = ceilf(log2f(2 * sphereRadiusInPixel / tileWidth)) + 2;
@@ -65,35 +67,38 @@ void MapGraphic::paintSphere(QPaintEvent *event) {
                 threadDatas.append(tData);
                 (new MapGraphicThread(&tData))->start();
             }
-            while(++counter < amountThreads);
+        }
+        while(++counter < amountThreads);
 
-            int countRastering;
-            do {
-                countRastering = 0;
-                foreach(threadData tData, threadDatas) {
-                    volatile int countQueued = tData.pixelQueue.count();
-                    for(int i = 0; i < countQueued; ++i) {
-                        QString id = tData.pixelQueue.keys()[i];
-                        QString url = tileURL
-                                          .replace("{z}", id.split("/")[0])
-                                          .replace("{x}", id.split("/")[1])
-                                          .replace("{y}", id.split("/")[2]);
-                        QUrl qUrl = QUrl(url);
-                        if(!request2id.contains(qUrl.toString())) {
-                            request2id[qUrl.toString()] = id;
-                            netManager->get(QNetworkRequest(qUrl));
-                        } else if(currentTiles.contains(id)) {
-                            if(!tData.idsDelivered.contains(id)) {
-                                tData.idsDelivered.append(id);
-                            }
+        int countRastering;
+        do {
+            countRastering = 0;
+            foreach(threadData tData, threadDatas) {
+                volatile int countQueued = tData.pixelQueue.count();
+                for(int i = 0; i < countQueued; ++i) {
+                    QString id = tData.pixelQueue.keys()[i];
+                    QString url = tileURL
+                                      .replace("{z}", id.split("/")[0])
+                                      .replace("{x}", id.split("/")[1])
+                                      .replace("{y}", id.split("/")[2]);
+                    QUrl qUrl = QUrl(url);
+                    if(!request2id.contains(qUrl.toString())) {
+                        request2id[qUrl.toString()] = id;
+                        netManager->get(QNetworkRequest(qUrl));
+                    } else if(currentTiles.contains(id)) {
+                        if(!tData.idsDelivered.contains(id)) {
+                            tData.idsDelivered.append(id);
                         }
                     }
-                    countRastering += tData.rastering ? 1 : 0;
                 }
-            } while(countRastering > 0);
-
-            painter->drawPixmap(event->region().boundingRect().left(), event->region().boundingRect().top(), QPixmap::fromImage(image->scaled(event->region().boundingRect().width(), event->region().boundingRect().height(), Qt::IgnoreAspectRatio, Qt::SmoothTransformation)));
-        }
+                if(tData.rastering) {
+                    ++countRastering;
+                } else {
+                    painter->drawPixmap(event->region().boundingRect().left(), tData.yStart / scaleFactor, QPixmap::fromImage(tData.image->scaled(event->region().boundingRect().width(), (tData.yEnd - tData.yStart) / scaleFactor, Qt::IgnoreAspectRatio, Qt::SmoothTransformation)));
+                    delete tData.image;
+                }
+            }
+        } while(countRastering > 0);
     }
 }
 
@@ -201,6 +206,7 @@ void MapGraphic::setMapThemeId( const QString& maptheme ) {
                 } else if(xml.isStartElement()) {
                     ++depth;
                 }
+                xml.readNext();
             } else if(name == "texture") {
                 isTexture = true;
                 xml.readNext();
@@ -211,7 +217,7 @@ void MapGraphic::setMapThemeId( const QString& maptheme ) {
             }
         }
     }
-    doPaint = found == 8;qDebug() << "XML: " << found;
+    doPaint = found == 8;
     if(doPaint) {
         if(!tilesDownloaded.contains(tileURLForLookup())) {
             QFile file(tileURLForLookup());
