@@ -40,6 +40,8 @@ A big thank you to all who reported bugs and issues!
 * Fixed aircraft trail for logbook entry that was incorrectly truncated.
 * Corrected display of split aircraft trail when starting a new flight on ground. Previously
   the trails were shown wrongly connected.
+* Fixed an issue where the cruise altitude was set incorrectly after downloading a flight plan
+  from SimBrief.
 
 ### Weather
 
