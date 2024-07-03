@@ -15,6 +15,7 @@ MapGraphic::MapGraphic( QWidget *parent ) : QWidget(parent) {
 }
 
 MapGraphic::~MapGraphic() {
+    delete netManager;
     delete painter;
     foreach (QString tileURLForLookup, tilesDownloaded.keys()) {
         QFile file(tileURLForLookup);
@@ -36,69 +37,82 @@ void MapGraphic::paintSphere(QPaintEvent *event) {
         if(amountThreads < 1) {
             amountThreads = 1;
         }
-        QList<threadData> threadDatas;
+        QList<QThread*> threads;
+        QList<threadData*> threadDatas;
         int originalHeight = regionHeight * scaleFactor / amountThreads;
         int counter = 0;
         do {
-            int height = (counter == amountThreads - 1) ? regionHeight * scaleFactor - counter * originalHeight : originalHeight;
-            QImage *image = new QImage(event->region().boundingRect().width() * scaleFactor, height, QImage::Format_RGB32);
-            if(image != nullptr) {
-                threadData tData;
-                tData.image = image;
-                tData.currentTiles = &currentTiles;
-                tData.tileWidth = tileWidth;
-                tData.tileHeight = tileHeight;
-                tData.xStart = event->region().boundingRect().left() * scaleFactor;
-                tData.xEnd = tData.xStart + event->region().boundingRect().width() * scaleFactor;
-                tData.yStart = event->region().boundingRect().top() * scaleFactor + counter * originalHeight;
-                tData.yEnd = tData.yStart + height;
-                tData.xOrigin = size().width() / 2 * scaleFactor;
-                tData.yOrigin = size().height() / 2 * scaleFactor;
-                tData.zoom = ceilf(log2f(2 * sphereRadiusInPixel / tileWidth)) + 2;
-                tData.spin = sphereSpin;
-                tData.tilt = sphereTilt;
-                tData.radius = sphereRadiusInPixel * scaleFactor;
-                tData.tryZoomedOut = tData.zoom != oldZoom || tData.spin != oldSpin || tData.tilt != oldTilt;
-                tData.indexLastIdCompleted = 0;
-                if(tData.zoom > zoomMax) {
-                    tData.zoom = zoomMax;
+            threadData *tData = new threadData;
+            tData->width = event->region().boundingRect().width() * scaleFactor;
+            tData->height = (counter == amountThreads - 1) ? regionHeight * scaleFactor - counter * originalHeight : originalHeight;
+            if(tData->width > 0 && tData->height > 0) {
+                tData->currentTiles = &currentTiles;
+                tData->tileWidth = tileWidth;
+                tData->tileHeight = tileHeight;
+                tData->xStart = event->region().boundingRect().left() * scaleFactor;
+                tData->xEnd = tData->xStart + tData->width;
+                tData->yStart = event->region().boundingRect().top() * scaleFactor + counter * originalHeight;
+                tData->yEnd = tData->yStart + tData->height;
+                tData->xOrigin = size().width() / 2 * scaleFactor;
+                tData->yOrigin = size().height() / 2 * scaleFactor;
+                tData->zoom = ceilf(log2f(2 * sphereRadiusInPixel / tileWidth)) + 2;
+                tData->spin = sphereSpin;
+                tData->tilt = sphereTilt;
+                tData->radius = sphereRadiusInPixel * scaleFactor;
+                tData->tryZoomedOut = tData->zoom != oldZoom || tData->spin != oldSpin || tData->tilt != oldTilt;
+                tData->indexLastIdRequested = 0;
+                tData->indexLastIdCompleted = 0;
+                if(tData->zoom > zoomMax) {
+                    tData->zoom = zoomMax;
                 }
-                tData.rastering = true;
+                tData->rastering = true;
                 threadDatas.append(tData);
-                (new MapGraphicThread(&tData))->start();
+                QThread *thread = new MapGraphicThread(tData);
+                threads.append(thread);
+                thread->start();
             }
         }
         while(++counter < amountThreads);
+        qDebug() << "MGO: threads started";
 
         int countRastering;
         do {
             countRastering = 0;
-            foreach(threadData tData, threadDatas) {
-                volatile int countQueued = tData.pixelQueue.count();
-                for(int i = 0; i < countQueued; ++i) {
-                    QString id = tData.pixelQueue.keys()[i];
-                    QString url = tileURL
-                                      .replace("{z}", id.split("/")[0])
-                                      .replace("{x}", id.split("/")[1])
-                                      .replace("{y}", id.split("/")[2]);
-                    QUrl qUrl = QUrl(url);
+            foreach(threadData *tData, threadDatas) {
+                int countQueued = tData->idsMissing.size();
+                qDebug() << "MGO: missing count gotten" << countQueued;
+                auto it = tData->idsMissing.begin();
+                std::advance(it, tData->indexLastIdCompleted);
+                for(; tData->indexLastIdRequested < countQueued; ++tData->indexLastIdRequested) {
+                    QString id = *it++;
+                    qDebug() << "MGO: missing id gotten";
+                    QStringList parts = id.split("/");
+                    QUrl qUrl = QUrl(tileURL.replace("{z}", parts[0]).replace("{x}", parts[1]).replace("{y}", parts[2]));
                     if(!request2id.contains(qUrl.toString())) {
                         request2id[qUrl.toString()] = id;
                         netManager->get(QNetworkRequest(qUrl));
+                        qDebug() << "MGO: image requested";
                     } else if(currentTiles.contains(id)) {
-                        if(!tData.idsDelivered.contains(id)) {
-                            tData.idsDelivered.append(id);
-                        }
+                        tData->idsDelivered.push_back(id);
+                        qDebug() << "MGO: thread informed";
                     }
                 }
-                if(tData.rastering) {
+                if(tData->rastering) {
                     ++countRastering;
-                } else {
-                    painter->drawPixmap(event->region().boundingRect().left(), tData.yStart / scaleFactor, QPixmap::fromImage(tData.image->scaled(event->region().boundingRect().width(), (tData.yEnd - tData.yStart) / scaleFactor, Qt::IgnoreAspectRatio, Qt::SmoothTransformation)));
-                    delete tData.image;
+                } else if(tData->image != nullptr) {
+                    painter->drawPixmap(event->region().boundingRect().left(), tData->yStart / scaleFactor, QPixmap::fromImage(tData->image->scaled(event->region().boundingRect().width(), (tData->yEnd - tData->yStart) / scaleFactor, Qt::IgnoreAspectRatio, Qt::SmoothTransformation)));
+                    delete tData->image;
+                    tData->image = nullptr;
                 }
             }
         } while(countRastering > 0);
+
+        while(threadDatas.count())
+            delete threadDatas.takeLast();
+        qDebug() << "MGO: about to delete threads";
+        while(threads.count())
+            delete threads.takeLast();
+        qDebug() << "MGO: threads deleted";
     }
 }
 
@@ -113,11 +127,15 @@ QString MapGraphic::tileURLForLookup() {
 }
 
 void MapGraphic::netReplyReceived(QNetworkReply *reply) {
+    qDebug() << "MGO: reply received";
     QImage image = QImageReader(reply).read();
+    qDebug() << "MGO: reply 2 image";
     if(!image.isNull()) {
         currentTiles[request2id[reply->request().url().toString()]] = image;
+        qDebug() << "MGO: image assigned";
     }
     reply->deleteLater();
+    qDebug() << "MGO: reply scheduled for deletion";
 }
 
 qreal MapGraphic::distance() const {

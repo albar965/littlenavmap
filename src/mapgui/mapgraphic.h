@@ -35,14 +35,9 @@ public:
                             // projection of earths surface as a 3D sphere onto a 2D rectangle
     };
 
-    struct queuedPixel {
-        int xv;             // viewport pixel
-        int yv;
-        int xt;             // pixel in tile
-        int yt;
-    };
-
     struct threadData {
+        int width;
+        int height;
         QImage *image;
         QHash<QString, QImage> *currentTiles;
         int tileWidth;
@@ -59,8 +54,9 @@ public:
         float radius;
         bool tryZoomedOut;
         bool rastering;
-        QHash<QString, QList<queuedPixel>> pixelQueue;
-        QList<QString> idsDelivered;
+        int indexLastIdRequested;
+        std::list<QString> idsMissing;          // linked list is inherently suited for thread-safety when appropriately implemented and used
+        std::list<QString> idsDelivered;
         int indexLastIdCompleted;
     };
 

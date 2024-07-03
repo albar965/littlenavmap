@@ -78,60 +78,75 @@ MapGraphicThread::tilesXY MapGraphicThread::lonLat2TilesXYFrom(lonLat angles, in
 }
 
 void MapGraphicThread::run() {
-    QPainter painter(tData->image);
-    int xStart = tData->xStart;
-    int xEnd = tData->xEnd;
-    int yStart = tData->yStart;
-    int yEnd = tData->yEnd;
-    for (int y = yStart; y < yEnd; ++y) {
-        for (int x = xStart; x < xEnd; ++x) {
-            lonLat angles = view2LonLatFrom(x, y, tData->xOrigin, tData->yOrigin, tData->radius * tData->radius, tData->spin, tData->tilt);
-            if (angles.latitude != 2.0F) {
-                tilesXY xy = lonLat2TilesXYFrom(angles, tData->zoom);
-                if (tData->currentTiles->contains(xy.id))
-                {
-                    painter.setPen(tData->currentTiles->value(xy.id).pixelColor(xy.xt, xy.yt));
-                    painter.drawPoint(x - xStart, y - yStart);
-                    continue;
-                }
-                else
-                {
-                    bool notPainted = true;
-                    if (tData->tryZoomedOut) {
-                        tilesXY xy = lonLat2TilesXYFrom(angles, tData->zoom - 1);
-                        if (tData->currentTiles->contains(xy.id))
-                        {
-                            painter.setPen(tData->currentTiles->value(xy.id).pixelColor(xy.xt, xy.yt));
-                            painter.drawPoint(x - xStart, y - yStart);
-                            notPainted = false;
-                        }
-                    }
-                    if (notPainted) {
-                        painter.setPen(Qt::GlobalColor::black);
+    tData->image = new QImage(tData->width, tData->height, QImage::Format_RGB32);
+    if(tData->image != nullptr) {
+        QPainter painter(tData->image);
+        QHash<QString, QList<queuedPixel>> pixelQueue;
+        int xStart = tData->xStart;
+        int xEnd = tData->xEnd;
+        int yStart = tData->yStart;
+        int yEnd = tData->yEnd;
+        for (int y = yStart; y < yEnd; ++y) {
+            for (int x = xStart; x < xEnd; ++x) {
+                lonLat angles = view2LonLatFrom(x, y, tData->xOrigin, tData->yOrigin, tData->radius * tData->radius, tData->spin, tData->tilt);
+                if (angles.latitude != 2.0F) {
+                    tilesXY xy = lonLat2TilesXYFrom(angles, tData->zoom);
+                    if (tData->currentTiles->contains(xy.id))
+                    {
+                        painter.setPen(tData->currentTiles->value(xy.id).pixelColor(xy.xt, xy.yt));
                         painter.drawPoint(x - xStart, y - yStart);
+                        continue;
                     }
+                    else
+                    {
+                        bool notPainted = true;
+                        if (tData->tryZoomedOut) {
+                            tilesXY xy = lonLat2TilesXYFrom(angles, tData->zoom - 1);
+                            if (tData->currentTiles->contains(xy.id))
+                            {
+                                painter.setPen(tData->currentTiles->value(xy.id).pixelColor(xy.xt, xy.yt));
+                                painter.drawPoint(x - xStart, y - yStart);
+                                notPainted = false;
+                            }
+                        }
+                        if (notPainted) {
+                            painter.setPen(Qt::GlobalColor::black);
+                            painter.drawPoint(x - xStart, y - yStart);
+                        }
 
-                    tData->pixelQueue[QString(xy.id)].append(MapGraphic::queuedPixel{
-                        .xv = x,
-                        .yv = y,
-                        .xt = xy.xt,
-                        .yt = xy.yt
-                    });
+                        if(!pixelQueue.contains(QString(xy.id))) {
+                            qDebug() << "MGO: about to add missing id";
+                            tData->idsMissing.push_back(QString(xy.id));
+                            qDebug() << "MGO: missing id added";
+                        }
+                        pixelQueue[QString(xy.id)].append(queuedPixel{
+                            .xv = x,
+                            .yv = y,
+                            .xt = xy.xt,
+                            .yt = xy.yt
+                        });
+                    }
                 }
-            }
-            else {
-                painter.setPen(Qt::GlobalColor::black);
-                painter.drawPoint(x - xStart, y - yStart);
+                else {
+                    painter.setPen(Qt::GlobalColor::black);
+                    painter.drawPoint(x - xStart, y - yStart);
+                }
             }
         }
-    }
-    while(tData->pixelQueue.count() > tData->indexLastIdCompleted) {
-        volatile int count = tData->idsDelivered.count();
-        for(; tData->indexLastIdCompleted < count; ++tData->indexLastIdCompleted) {
-            QString id = tData->idsDelivered[tData->indexLastIdCompleted];
-            foreach(MapGraphic::queuedPixel qp, tData->pixelQueue[id]) {
-                painter.setPen(tData->currentTiles->value(id).pixelColor(qp.xt, qp.yt));
-                painter.drawPoint(qp.xv - xStart, qp.yv - yStart);
+        qDebug() << "MGO: image iterated through";
+        while(pixelQueue.count() > tData->indexLastIdCompleted) {
+            volatile int count = tData->idsDelivered.size();
+            qDebug() << "MGO: waiting for tiles";
+            auto it = tData->idsDelivered.begin();
+            std::advance(it, tData->indexLastIdCompleted);
+            for(; tData->indexLastIdCompleted < count; ++tData->indexLastIdCompleted) {
+                QString id = *it++;
+                qDebug() << "MGO: missed tile about to be used " << id;
+                foreach(queuedPixel qp, pixelQueue[id]) {
+                    painter.setPen(tData->currentTiles->value(id).pixelColor(qp.xt, qp.yt));
+                    painter.drawPoint(qp.xv - xStart, qp.yv - yStart);
+                }
+                qDebug() << "MGO: missed tile used";
             }
         }
     }

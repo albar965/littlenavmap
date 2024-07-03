@@ -26,6 +26,13 @@ private:
         float latitude;
     };
 
+    struct queuedPixel {
+        int xv;             // viewport pixel
+        int yv;
+        int xt;             // pixel in tile
+        int yt;
+    };
+
     struct tilesXY {
         int x;              // tile index within all tiles
         int y;
