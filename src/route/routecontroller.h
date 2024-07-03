@@ -96,11 +96,12 @@ public:
    * and emits routeChanged. Uses file name as new current name  */
   bool loadFlightplan(const QString& filename, bool correctAndWarn);
 
+  /* Does not show a warning dialog if altitude or an invalid profile is corrected */
   void loadFlightplan(const atools::fs::pln::Flightplan& flightplan, atools::fs::pln::FileFormat format,
-                      const QString& filename, bool changed, bool adjustAltitude, bool undo)
+                      const QString& filename, bool changed, bool adjustAltitude, bool undo, bool correctProfile)
   {
     loadFlightplanInternal(flightplan, format, filename, changed, adjustAltitude, undo, false /* warnAltitude */,
-                           true /* correctProfile */);
+                           correctProfile /* correctProfile */);
   }
 
   /* Load the plan from a string in LNMPLN format */
@@ -396,9 +397,15 @@ private:
     MOVE_UP = -1
   };
 
-  void loadFlightplanInternal(atools::fs::pln::Flightplan flightplan, atools::fs::pln::FileFormat format,
-                              const QString& filename, bool changed, bool adjustAltitude, bool undo, bool warnAltitude,
-                              bool correctProfile);
+  /* Loads flight plan into Route object.
+   * changed: Clean undo index
+   * adjustAltitude: Always adjust altitude
+   * undo: Enclose in undo/redo step
+   * warnAltitude: Show warning dialog if altitude was changed
+   * correctProfile: Correct elevation profile if invalid
+   */
+  void loadFlightplanInternal(atools::fs::pln::Flightplan flightplan, atools::fs::pln::FileFormat format, const QString& filename,
+                              bool changed, bool adjustAltitude, bool undo, bool warnAltitude, bool correctProfile);
 
   /* Saves flight plan using LNM format. Returns true on success. */
   bool saveFlightplanLnmInternal(const QString& filename, bool silentShutdown, bool clearUndo);

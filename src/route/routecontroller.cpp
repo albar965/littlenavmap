@@ -1316,7 +1316,7 @@ void RouteController::loadFlightplanInternal(atools::fs::pln::Flightplan flightp
   route.updateAll(); // Removes alternate property if not resolvable
 
   // Update airway objects in route legs only - leave cruise altitude as is
-  route.updateAirwaysAndAltitude(false);
+  route.updateAirwaysAndAltitude(false /* adjustRouteAltitude */);
 
   // Calculate elevation profile
   route.calculateLegAltitudes();
@@ -1330,7 +1330,7 @@ void RouteController::loadFlightplanInternal(atools::fs::pln::Flightplan flightp
 
     // Update cruise altitude in local units based on procedures and airway restriction
     // Corrects cruise altitude if adjustRouteAltitude is true
-    route.updateAirwaysAndAltitude(true);
+    route.updateAirwaysAndAltitude(true /* adjustRouteAltitude */);
 
     // Calculate profile
     route.calculateLegAltitudes();
@@ -2417,7 +2417,7 @@ void RouteController::postDatabaseLoad()
 
   // Update cruise altitude in local units based on procedures and airway restriction
   // Corrects cruise altitude if adjustRouteAltitude is true
-  route.updateAirwaysAndAltitude(false);
+  route.updateAirwaysAndAltitude(false /* adjustRouteAltitude */);
   route.calculateLegAltitudes();
   updateActiveLeg();
 

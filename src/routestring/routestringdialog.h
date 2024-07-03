@@ -107,7 +107,8 @@ public:
 
 signals:
   /* Emitted when user clicks "Create flight plan" */
-  void routeFromFlightplan(const atools::fs::pln::Flightplan& flightplan, bool adjustAltitude, bool changed, bool undo);
+  void routeFromFlightplan(const atools::fs::pln::Flightplan& flightplan, bool adjustAltitude, bool changed, bool undo,
+                           bool correctProfile);
 
 private:
   void textChanged();

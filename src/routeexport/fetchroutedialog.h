@@ -58,7 +58,8 @@ public:
 
 signals:
   /* User clicked "Create Flight Plan" */
-  void routeNewFromFlightplan(const atools::fs::pln::Flightplan& flightplan, bool adjustAltitude, bool changed, bool undo);
+  void routeNewFromFlightplan(const atools::fs::pln::Flightplan& flightplan, bool adjustAltitude, bool changed, bool undo,
+                              bool correctProfile);
 
   /* User clicked on "Open in Route Description" */
   void routeNewFromString(const QString& routeString);

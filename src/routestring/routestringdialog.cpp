@@ -715,7 +715,9 @@ void RouteStringDialog::buttonBoxClicked(QAbstractButton *button)
     else
     {
       // Only in floating window - create a new flight plan and use undo/redo - keep non-modal dialog open - do not mark plan as changed
-      emit routeFromFlightplan(*flightplan, !isAltitudeIncluded() /* adjustAltitude */, false /* changed */, true /* undo */);
+      // Adjust altitude and probably correct an invalid profile only if no cruise altitude given
+      emit routeFromFlightplan(*flightplan, !isAltitudeIncluded() /* adjustAltitude */, false /* changed */, true /* undo */,
+                               !isAltitudeIncluded() /* correctProfile */);
       // Return QDialog::Accepted and close
       QDialog::accept();
     }
@@ -736,7 +738,9 @@ void RouteStringDialog::createPlanAndKeepOpen()
   updateTypeToFlightplan();
 
   // Floating window - Create a new flight plan and use undo/redo - keep non-modal dialog open - do not mark plan as changed
-  emit routeFromFlightplan(*flightplan, !isAltitudeIncluded() /* adjustAltitude */, false /* changed */, true /* undo */);
+  // Adjust altitude and probably correct an invalid profile only if no cruise altitude given
+  emit routeFromFlightplan(*flightplan, !isAltitudeIncluded() /* adjustAltitude */, false /* changed */, true /* undo */,
+                           !isAltitudeIncluded() /* correctProfile */);
 }
 
 void RouteStringDialog::textEditRouteStringPrepend(const QString& text, bool newline)
