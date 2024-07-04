@@ -68,8 +68,8 @@ private:
 
     float tanDefaultLensHalfHorizontalOpeningAngle = 1.732050807F;      // tan(60°); can change after resizing viewport
     const float earthRadius = 6378.137F;                                // Moritz, H. (1980); XVII General Assembly of the IUGG
-    //float referenceCoverage;                                          // helps derivation
-    //float referenceDistance;                                          // helps derivation
+    //float referenceCoverage;                                          // helps derivation, see constructor implementation
+    //float referenceDistance;                                          // helps derivation, see constructor implementation
 
     /**
      * @brief range (0.0f; 1.0f], exclusive border = (, inclusive border = ].
@@ -123,7 +123,7 @@ public:
     explicit MapGraphic( QWidget *parent = 0 );
     virtual ~MapGraphic();
 
-public Q_SLOTS:
+public slots:
     void netReplyReceived(QNetworkReply *reply);
 
 // migrated:

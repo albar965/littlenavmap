@@ -103,7 +103,6 @@ void MapGraphic::paintSphere(QPaintEvent *event) {
                 }
                 for(; tData->indexLastIdRequested < countQueued; ++tData->indexLastIdRequested) {
                     QString id = *it++;
-                    qDebug() << "MGO: missing id gotten";
                     QStringList parts = id.split("/");
                     QUrl qUrl = QUrl(QString(tileURL).replace("{z}", parts[0]).replace("{x}", parts[1]).replace("{y}", parts[2]));
                     if(!request2id.contains(qUrl.toString())) {
@@ -206,35 +205,33 @@ const Marble::ViewportParams *MapGraphic::viewport() const {
 }
 
 void MapGraphic::setMapThemeId( const QString& maptheme ) {
+    int tileWidth;
+    int tileHeight;
+    int zoomMax;
+    QString tileURL;
     int found = 0;
     // read, verify and set map theme configuration
     QFile file(maptheme);
     if(file.open(QIODevice::ReadOnly)) {
         QXmlStreamReader xml(QString(file.readAll()));
         file.close();
-        int depth = 0;
-        bool notDone[] = {true, true, true};
         bool isTexture = false;
         while (!xml.atEnd()) {
             QStringRef name = xml.name();
             if(isTexture) {
-                if(name == "tileSize" && notDone[0]) {
-                    notDone[0] = false;
+                if(name == "tileSize" && xml.isStartElement()) {
                     tileWidth = xml.attributes().value("width").toInt();
                     found += tileWidth ? 1 : 0;
                     tileHeight = xml.attributes().value("height").toInt();
                     found += tileHeight ? 1 : 0;
-                } else if(name == "storageLayout" && notDone[1]) {
-                    notDone[1] = false;
+                } else if(name == "storageLayout" && xml.isStartElement()) {
                     zoomMax = xml.attributes().value("maximumTileLevel").toInt();
                     if(zoomMax > 30) {
                         zoomMax = 30;
                     }
                     found += zoomMax ? 1 : 0;
-                } else if(name == "downloadUrl" && notDone[2]) {
-                    notDone[2] = false;
+                } else if(name == "downloadUrl" && xml.isStartElement()) {
                     tileURL = xml.attributes().value("protocol") + "://" + xml.attributes().value("host") + xml.attributes().value("path");
-                    tileURLForLookup = QString(tileURL).replace("/", "_").replace(":", "_").replace("?", "_");
                     // TODO: verify tileURL is executed by QNetworkAccessManager. Some urls evoke no error, no reply even after timeout passed there.
                     // application would hang for such urls.
                     found += xml.attributes().value("protocol").count() ? 1 : 0;
@@ -242,27 +239,25 @@ void MapGraphic::setMapThemeId( const QString& maptheme ) {
                     found += xml.attributes().value("path").contains("{z}") ? 1 : 0;
                     found += xml.attributes().value("path").contains("{x}") ? 1 : 0;
                     found += xml.attributes().value("path").contains("{y}") ? 1 : 0;
-                } else if(xml.isEndElement()) {
-                    --depth;
-                    if(depth == -1) {
-                        break;
-                    }
-                } else if(xml.isStartElement()) {
-                    ++depth;
+                } else if(name == "texture") {
+                    break;
                 }
                 xml.readNext();
             } else if(name == "texture") {
                 isTexture = true;
-                xml.readNext();
-            } else if(name != "head") {
                 xml.readNext();
             } else {
                 xml.readNextStartElement();
             }
         }
     }
-    doPaint = found == 8;
-    if(doPaint) {
+    if(found == 8) {
+        doPaint = true;
+        this->tileWidth = tileWidth;
+        this->tileHeight = tileHeight;
+        this->zoomMax = zoomMax;
+        this->tileURL = tileURL;
+        tileURLForLookup = tileURL.replace("/", "_").replace(":", "_").replace("?", "_");
         if(!tilesDownloaded.contains(tileURLForLookup)) {
             QHash<QString, QImage> *hash = new QHash<QString, QImage>();
             QFile file(tileURLForLookup);
@@ -274,7 +269,11 @@ void MapGraphic::setMapThemeId( const QString& maptheme ) {
             tilesDownloaded.insert(tileURLForLookup, hash);
         }
         currentTiles = tilesDownloaded[tileURLForLookup];
+        return;
     }
+    // TODO: warn about wrong theme configuration
+    // inform former theme is still active if one is,
+    // on app start nothing is painted
 }
 
 void MapGraphic::setShowClouds( bool visible ) {
