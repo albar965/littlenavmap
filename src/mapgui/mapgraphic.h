@@ -125,6 +125,8 @@ public:
 
 public slots:
     void netReplyReceived(QNetworkReply *reply);
+    void netErrorOccurred(QNetworkReply::NetworkError code, QNetworkReply *reply);
+    void netSSLErrorOccurred(const QList<QSslError> &errors, QNetworkReply *reply);
 
 // migrated:
 

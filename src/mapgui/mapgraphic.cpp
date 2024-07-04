@@ -9,14 +9,9 @@ MapGraphic::MapGraphic( QWidget *parent ) : QWidget(parent) {
     //referenceCoverage = 2 * sphereRadiusInPixel / size().width();
     //referenceDistance = size().width() / 2 / sphereRadiusInPixel * earthRadius / tanDefaultLensHalfHorizontalOpeningAngle;
     oldZoom = ceilf(log2f(2 * sphereRadiusInPixel / tileWidth)) + 2;
-    netManager = new QNetworkAccessManager(this);
-    netManager->setTransferTimeout(3500);
-    connect(netManager, &QNetworkAccessManager::finished,
-            this, &MapGraphic::netReplyReceived);
 }
 
 MapGraphic::~MapGraphic() {
-    delete netManager;
     delete painter;
     foreach (QString tileURLForLookup, tilesDownloaded.keys()) {
         QFile file(tileURLForLookup);
@@ -79,6 +74,8 @@ void MapGraphic::paintSphere(QPaintEvent *event) {
         }
         while(++counter < amountThreads);
 
+        netManager = new QNetworkAccessManager(this);
+        netManager->setTransferTimeout(3500);
         QHash<QString, bool> *returnedTiles = new QHash<QString, bool>[threadDatas.count()];
         int countRastering;
         do {
@@ -107,7 +104,13 @@ void MapGraphic::paintSphere(QPaintEvent *event) {
                     QUrl qUrl = QUrl(QString(tileURL).replace("{z}", parts[0]).replace("{x}", parts[1]).replace("{y}", parts[2]));
                     if(!request2id.contains(qUrl.toString())) {
                         request2id[qUrl.toString()] = id;
-                        netManager->get(QNetworkRequest(qUrl));
+                        QNetworkReply *reply = netManager->get(QNetworkRequest(qUrl));
+                        qDebug() << "MGO: net connect 1 " << (bool)connect(reply, &QNetworkReply::finished,
+                                this, [=](){ this->netReplyReceived(reply); });
+                        qDebug() << "MGO: net connect 2 " << (bool)connect(reply, &QNetworkReply::errorOccurred,
+                                this, [=](QNetworkReply::NetworkError code){ this->netErrorOccurred(code, reply); });
+                        qDebug() << "MGO: net connect 3 " << (bool)connect(reply, &QNetworkReply::sslErrors,
+                                this, [=](const QList<QSslError> &errors){ this->netSSLErrorOccurred(errors, reply); });
                         qDebug() << "MGO: image requested " << qUrl.toString();
                     }
                 }
@@ -123,6 +126,8 @@ void MapGraphic::paintSphere(QPaintEvent *event) {
         } while(countRastering > 0);
 
         delete[] returnedTiles;
+
+        delete netManager;
 
         while(threadDatas.count())
             delete threadDatas.takeLast();
@@ -154,6 +159,19 @@ void MapGraphic::netReplyReceived(QNetworkReply *reply) {
     }
     failedTiles.insert(request2id[reply->request().url().toString()], true);
     reply->deleteLater();
+}
+
+void MapGraphic::netErrorOccurred(QNetworkReply::NetworkError code, QNetworkReply *reply) {
+    qDebug() << "MGO: net error " << code;
+    failedTiles.insert(request2id[reply->request().url().toString()], true);
+}
+
+void MapGraphic::netSSLErrorOccurred(const QList<QSslError> &errors, QNetworkReply *reply) {
+    qDebug() << "MGO: net SSL error(s).";
+    foreach(QSslError e, errors) {
+        qDebug() << "MGO: net SSL error " << e.errorString();
+    }
+    failedTiles.insert(request2id[reply->request().url().toString()], true);
 }
 
 qreal MapGraphic::distance() const {
