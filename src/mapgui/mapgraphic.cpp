@@ -1,4 +1,5 @@
 #include "mapgraphic.h"
+#include <QTimer>
 #include "mapgui/mapgraphicthread.h"
 
 MapGraphic::MapGraphic( QWidget *parent ) : QWidget(parent) {
@@ -14,6 +15,7 @@ MapGraphic::MapGraphic( QWidget *parent ) : QWidget(parent) {
 MapGraphic::~MapGraphic() {
     delete painter;
     foreach (QString tileURLForLookup, tilesDownloaded.keys()) {
+        // TODO: flag tiles having new downloads, only write those
         QFile file(tileURLForLookup);
         if(file.open(QIODevice::WriteOnly)) {
             QDataStream out(&file);
@@ -34,7 +36,6 @@ void MapGraphic::paintSphere(QPaintEvent *event) {
         if(amountThreads < 1) {
             amountThreads = 1;
         }
-        QList<QThread*> threads;
         QList<threadData*> threadDatas;
         int originalHeight = regionHeight * scaleFactor / amountThreads;
         int counter = 0;
@@ -57,16 +58,14 @@ void MapGraphic::paintSphere(QPaintEvent *event) {
                 tData->tilt = sphereTilt;
                 tData->radius = sphereRadiusInPixel * scaleFactor;
                 tData->tryZoomedOut = tData->zoom != oldZoom || tData->spin != oldSpin || tData->tilt != oldTilt;
-                tData->indexLastIdRequested = 0;
-                tData->indexLastIdCompleted = 0;
-                tData->amountFailed = 0;
+                tData->idsMissing = new std::list<QString>();
                 if(tData->zoom > zoomMax) {
                     tData->zoom = zoomMax;
                 }
                 tData->rastering = true;
                 threadDatas.append(tData);
-                QThread *thread = new MapGraphicThread(tData);
-                threads.append(thread);
+                MapGraphicThread *thread = new MapGraphicThread(tData);
+                connect(thread, &MapGraphicThread::finished, thread, &QObject::deleteLater);
                 thread->start();
             } else {
                 delete tData;
@@ -74,46 +73,10 @@ void MapGraphic::paintSphere(QPaintEvent *event) {
         }
         while(++counter < amountThreads);
 
-        netManager = new QNetworkAccessManager(this);
-        netManager->setTransferTimeout(3500);
-        QHash<QString, bool> *returnedTiles = new QHash<QString, bool>[threadDatas.count()];
         int countRastering;
         do {
             countRastering = 0;
-            int indexTData = 0;
             foreach(threadData *tData, threadDatas) {
-                int countQueued = tData->idsMissing.size();
-                auto it = tData->idsMissing.begin();
-                for(int i=0; i<tData->indexLastIdRequested; ++i) {
-                    QString id = *it++;
-                    if(!returnedTiles[indexTData].contains(id)) {
-                        if(currentTiles->contains(id)) {
-                            tData->idsDelivered.push_back(id);
-                            returnedTiles[indexTData].insert(id, true);
-                            qDebug() << "MGO: thread informed";
-                        } else if(failedTiles.contains(id)) {
-                            ++tData->amountFailed;
-                            returnedTiles[indexTData].insert(id, true);
-                            qDebug() << "MGO: thread informed about failure";
-                        }
-                    }
-                }
-                for(; tData->indexLastIdRequested < countQueued; ++tData->indexLastIdRequested) {
-                    QString id = *it++;
-                    QStringList parts = id.split("/");
-                    QUrl qUrl = QUrl(QString(tileURL).replace("{z}", parts[0]).replace("{x}", parts[1]).replace("{y}", parts[2]));
-                    if(!request2id.contains(qUrl.toString())) {
-                        request2id[qUrl.toString()] = id;
-                        QNetworkReply *reply = netManager->get(QNetworkRequest(qUrl));
-                        qDebug() << "MGO: net connect 1 " << (bool)connect(reply, &QNetworkReply::finished,
-                                this, [=](){ this->netReplyReceived(reply); });
-                        qDebug() << "MGO: net connect 2 " << (bool)connect(reply, &QNetworkReply::errorOccurred,
-                                this, [=](QNetworkReply::NetworkError code){ this->netErrorOccurred(code, reply); });
-                        qDebug() << "MGO: net connect 3 " << (bool)connect(reply, &QNetworkReply::sslErrors,
-                                this, [=](const QList<QSslError> &errors){ this->netSSLErrorOccurred(errors, reply); });
-                        qDebug() << "MGO: image requested " << qUrl.toString();
-                    }
-                }
                 if(tData->rastering) {
                     ++countRastering;
                 } else if(tData->image != nullptr) {
@@ -121,20 +84,33 @@ void MapGraphic::paintSphere(QPaintEvent *event) {
                     delete tData->image;
                     tData->image = nullptr;
                 }
-                ++indexTData;
             }
         } while(countRastering > 0);
 
-        delete[] returnedTiles;
-
-        delete netManager;
+        QList<std::list<QString>*> *idsMissing = new QList<std::list<QString>*>();
+        foreach(threadData *tData, threadDatas) {
+            idsMissing->append(tData->idsMissing);
+        }
 
         while(threadDatas.count())
             delete threadDatas.takeLast();
-        qDebug() << "MGO: about to delete threads";
-        while(threads.count())
-            delete threads.takeLast();
-        qDebug() << "MGO: threads deleted";
+
+        /*QThread* thread = new QThread();
+        MapDownloader *downloader = new MapDownloader();
+        downloader->equip(idsMissing, tileURL, this);
+        qDebug() << "MGO: move 2 thread";
+        downloader->moveToThread(thread);
+        qDebug() << "MGO: moved 2 thread";
+        connect(thread, &QThread::started, downloader, &MapDownloader::run);
+        connect(downloader, &MapDownloader::finished, thread, &QThread::quit);
+        connect(downloader, &MapDownloader::finished, this, &MapGraphic::updateWrapper);
+        connect(downloader, &MapDownloader::finished, downloader, &MapDownloader::deleteLater);
+        connect(thread, &QThread::finished, thread, &QThread::deleteLater);
+        qDebug() << "MGO: start thread";
+        thread->start();
+        qDebug() << "MGO: start thread done";*/
+        mapDownloader.equip(idsMissing, tileURL, this);
+        QTimer::singleShot(1, &mapDownloader, &MapDownloader::run);
     }
 }
 
@@ -144,34 +120,9 @@ void MapGraphic::paintRectangle(QPaintEvent *event) {
     }
 }
 
-void MapGraphic::netReplyReceived(QNetworkReply *reply) {
-    qDebug() << "MGO: reply received";
-    if(reply->error() == QNetworkReply::NoError) {
-        QImage image = QImageReader(reply).read();
-        qDebug() << "MGO: reply 2 image";
-        if(!image.isNull()) {
-            currentTiles->insert(request2id[reply->request().url().toString()], image);
-            qDebug() << "MGO: image assigned";
-            reply->deleteLater();
-            qDebug() << "MGO: reply scheduled for deletion";
-            return;
-        }
-    }
-    failedTiles.insert(request2id[reply->request().url().toString()], true);
-    reply->deleteLater();
-}
-
-void MapGraphic::netErrorOccurred(QNetworkReply::NetworkError code, QNetworkReply *reply) {
-    qDebug() << "MGO: net error " << code;
-    failedTiles.insert(request2id[reply->request().url().toString()], true);
-}
-
-void MapGraphic::netSSLErrorOccurred(const QList<QSslError> &errors, QNetworkReply *reply) {
-    qDebug() << "MGO: net SSL error(s).";
-    foreach(QSslError e, errors) {
-        qDebug() << "MGO: net SSL error " << e.errorString();
-    }
-    failedTiles.insert(request2id[reply->request().url().toString()], true);
+void MapGraphic::updateWrapper() {
+    update();
+    qDebug() << "MGO: to update.";
 }
 
 qreal MapGraphic::distance() const {
@@ -287,6 +238,7 @@ void MapGraphic::setMapThemeId( const QString& maptheme ) {
             tilesDownloaded.insert(tileURLForLookup, hash);
         }
         currentTiles = tilesDownloaded[tileURLForLookup];
+        failedTiles.clear();
         return;
     }
     // TODO: warn about wrong theme configuration

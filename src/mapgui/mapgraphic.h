@@ -7,14 +7,12 @@
 #include "marble/MarbleWidgetInputHandler.h"
 #include "marble/ViewportParams.h"
 #include "marble/TextureLayer.h"
+#include "mapgui/mapdownloader.h"
 #include <QSettings>
 #include <QWidget>
 #include <QPainter>
 #include <QPaintEvent>
 #include <QXmlStreamReader>
-#include <QNetworkAccessManager>
-#include <QNetworkReply>
-#include <QImageReader>
 #include <QThread>
 
 class MapGraphic : public QWidget
@@ -54,17 +52,17 @@ public:
         float radius;
         bool tryZoomedOut;
         bool rastering;
-        int indexLastIdRequested;
-        std::list<QString> idsMissing;          // linked list is inherently suited for thread-safety when appropriately implemented and used
-        std::list<QString> idsDelivered;
-        int indexLastIdCompleted;
-        int amountFailed;
+        std::list<QString> *idsMissing;         // linked list is inherently suited for thread-safety when appropriately implemented and used
     };
+
+    QHash<QString, QImage> *currentTiles;
+    QHash<QString, bool> failedTiles;
 
 private:
     QPainter *painter;
-    QNetworkAccessManager *netManager;
     void (MapGraphic::*paintDisplayAs)(QPaintEvent*);
+
+    bool doPaint = false;
 
     float tanDefaultLensHalfHorizontalOpeningAngle = 1.732050807F;      // tan(60°); can change after resizing viewport
     const float earthRadius = 6378.137F;                                // Moritz, H. (1980); XVII General Assembly of the IUGG
@@ -100,15 +98,11 @@ private:
     int tileWidth;
     int tileHeight;
     QString tileURL;
-
-    bool doPaint = false;
+    QString tileURLForLookup;
 
     QHash<QString, QHash<QString, QImage>*> tilesDownloaded;
-    QHash<QString, QImage> *currentTiles;
-    QHash<QString, bool> failedTiles;
-    QHash<QString, QString> request2id;
 
-    QString tileURLForLookup;
+    MapDownloader mapDownloader;
 
     void paintSphere(QPaintEvent *event);
     void paintRectangle(QPaintEvent *event);
@@ -124,9 +118,7 @@ public:
     virtual ~MapGraphic();
 
 public slots:
-    void netReplyReceived(QNetworkReply *reply);
-    void netErrorOccurred(QNetworkReply::NetworkError code, QNetworkReply *reply);
-    void netSSLErrorOccurred(const QList<QSslError> &errors, QNetworkReply *reply);
+    void updateWrapper();
 
 // migrated:
 

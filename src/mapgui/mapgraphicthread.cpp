@@ -81,7 +81,6 @@ void MapGraphicThread::run() {
     tData->image = new QImage(tData->width, tData->height, QImage::Format_RGB32);
     if(tData->image != nullptr) {
         QPainter painter(tData->image);
-        QHash<QString, QList<queuedPixel>> pixelQueue;
         int xStart = tData->xStart;
         int xEnd = tData->xEnd;
         int yStart = tData->yStart;
@@ -114,35 +113,13 @@ void MapGraphicThread::run() {
                             painter.drawPoint(x - xStart, y - yStart);
                         }
 
-                        if(!pixelQueue.contains(QString(xy.id))) {
-                            tData->idsMissing.push_back(QString(xy.id));
-                        }
-                        pixelQueue[QString(xy.id)].append(queuedPixel{
-                            .xv = x,
-                            .yv = y,
-                            .xt = xy.xt,
-                            .yt = xy.yt
-                        });
+                        tData->idsMissing->push_back(QString(xy.id));
                     }
                 }
                 else {
                     painter.setPen(Qt::GlobalColor::black);
                     painter.drawPoint(x - xStart, y - yStart);
                 }
-            }
-        }
-        while(pixelQueue.count() > tData->indexLastIdCompleted + tData->amountFailed) {
-            volatile int count = tData->idsDelivered.size();
-            auto it = tData->idsDelivered.begin();
-            std::advance(it, tData->indexLastIdCompleted);
-            for(; tData->indexLastIdCompleted < count; ++tData->indexLastIdCompleted) {
-                QString id = *it++;
-                qDebug() << "MGO: missed tile about to be used " << id;
-                foreach(queuedPixel qp, pixelQueue[id]) {
-                    painter.setPen(tData->currentTiles->value(id).pixelColor(qp.xt, qp.yt));
-                    painter.drawPoint(qp.xv - xStart, qp.yv - yStart);
-                }
-                qDebug() << "MGO: missed tile used";
             }
         }
     }

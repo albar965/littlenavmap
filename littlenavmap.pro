@@ -334,6 +334,7 @@ SOURCES += \
   src/mapgui/mapairporthandler.cpp \
   src/mapgui/mapcontextmenu.cpp \
   src/mapgui/mapdetailhandler.cpp \
+  src/mapgui/mapdownloader.cpp \
   src/mapgui/mapfunctions.cpp \
   src/mapgui/mapgraphic.cpp \
   src/mapgui/mapgraphicthread.cpp \
@@ -539,6 +540,7 @@ HEADERS  += \
   src/mapgui/mapairporthandler.h \
   src/mapgui/mapcontextmenu.h \
   src/mapgui/mapdetailhandler.h \
+  src/mapgui/mapdownloader.h \
   src/mapgui/mapfunctions.h \
   src/mapgui/mapgraphic.h \
   src/mapgui/mapgraphicthread.h \
