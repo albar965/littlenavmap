@@ -52,9 +52,10 @@ MapGraphicThread::tilesXY MapGraphicThread::lonLat2TilesXYFrom(lonLat angles, in
     float yTile = (angles.latitude - -cutoffLatitude - .0001F) * amount / (2.0F * cutoffLatitude);            // - .0001 = prevent exact 1 as result (values in image are [0,1), [ = including, ) = excluding )
     xy.x = (int)xTile;                                                 // (int) floors towards 0
     xy.y = (int)yTile;
-    int length = sprintf_s(xy.id, 25, idFormat, zoom, xy.x, xy.y);
+    char id[25];        // maximum length of id incl. \0 at maximum zoom of 30
+    int length = sprintf_s(id, 25, idFormat, zoom, xy.x, xy.y);
     if (length == 0) {
-        strcpy(xy.id, "0/0/0");
+        strcpy(id, "0/0/0");
         xTile = angles.longitude / PI_Times_2;
         if (xTile < 0.0F) {
             xTile = 0.0F;
@@ -74,6 +75,7 @@ MapGraphicThread::tilesXY MapGraphicThread::lonLat2TilesXYFrom(lonLat angles, in
     }
     xy.xt = (int)((xTile - xy.x) * tData->tileWidth);
     xy.yt = (int)((yTile - xy.y) * tData->tileHeight);
+    xy.id = QString(id);
     return xy;
 }
 
@@ -113,7 +115,7 @@ void MapGraphicThread::run() {
                             painter.drawPoint(x - xStart, y - yStart);
                         }
 
-                        tData->idsMissing->push_back(QString(xy.id));
+                        tData->idsMissing.insert(xy.id);
                     }
                 }
                 else {

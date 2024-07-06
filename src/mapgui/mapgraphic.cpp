@@ -58,7 +58,6 @@ void MapGraphic::paintSphere(QPaintEvent *event) {
                 tData->tilt = sphereTilt;
                 tData->radius = sphereRadiusInPixel * scaleFactor;
                 tData->tryZoomedOut = tData->zoom != oldZoom || tData->spin != oldSpin || tData->tilt != oldTilt;
-                tData->idsMissing = new std::list<QString>();
                 if(tData->zoom > zoomMax) {
                     tData->zoom = zoomMax;
                 }
@@ -87,17 +86,15 @@ void MapGraphic::paintSphere(QPaintEvent *event) {
             }
         } while(countRastering > 0);
 
-        QList<std::list<QString>*> *idsMissing = new QList<std::list<QString>*>();
+        QSet<QString> *idsMissing = new QSet<QString>();
         foreach(threadData *tData, threadDatas) {
-            idsMissing->append(tData->idsMissing);
+            idsMissing->unite(tData->idsMissing);
+            delete tData;
         }
 
-        while(threadDatas.count())
-            delete threadDatas.takeLast();
-
-        /*QThread* thread = new QThread();
+        QThread* thread = new QThread();
         MapDownloader *downloader = new MapDownloader();
-        downloader->equip(idsMissing, tileURL, this);
+        downloader->equip(idsMissing, &failedTiles, tileURL);
         qDebug() << "MGO: move 2 thread";
         downloader->moveToThread(thread);
         qDebug() << "MGO: moved 2 thread";
@@ -108,9 +105,7 @@ void MapGraphic::paintSphere(QPaintEvent *event) {
         connect(thread, &QThread::finished, thread, &QThread::deleteLater);
         qDebug() << "MGO: start thread";
         thread->start();
-        qDebug() << "MGO: start thread done";*/
-        mapDownloader.equip(idsMissing, tileURL, this);
-        QTimer::singleShot(1, &mapDownloader, &MapDownloader::run);
+        qDebug() << "MGO: start thread done";
     }
 }
 
@@ -120,9 +115,15 @@ void MapGraphic::paintRectangle(QPaintEvent *event) {
     }
 }
 
-void MapGraphic::updateWrapper() {
-    update();
-    qDebug() << "MGO: to update.";
+void MapGraphic::updateWrapper(QHash<QString, QImage> *receivedTiles, QSet<QString> *localFailedTiles, QString url) {
+    if(tileURL == url) {
+        currentTiles->insert(*receivedTiles);
+        failedTiles.unite(*localFailedTiles);
+        update();
+        qDebug() << "MGO: to update.";
+    }
+    delete receivedTiles;
+    delete localFailedTiles;
 }
 
 qreal MapGraphic::distance() const {

@@ -17,7 +17,7 @@ public:
 private:
     const float PI = M_PI;
     const float PI_By_2 = M_PI_2;
-    const float PI_Times_2 = 2.0 * M_PI;
+    const float PI_Times_2 = 2.0f * M_PI;
 
     const float cutoffLatitude = 1.484422229745332366961F;            // for web mercator projection
 
@@ -31,7 +31,7 @@ private:
         int y;
         int xt;             // pixel index within tile
         int yt;
-        char id[25];        // maximum length of id incl. \0 at maximum zoom of 30
+        QString id;
     };
 
     const char idFormat[9] = "%d/%d/%d";

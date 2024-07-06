@@ -14,6 +14,7 @@
 #include <QPaintEvent>
 #include <QXmlStreamReader>
 #include <QThread>
+#include <QSet>
 
 class MapGraphic : public QWidget
 {
@@ -52,11 +53,8 @@ public:
         float radius;
         bool tryZoomedOut;
         bool rastering;
-        std::list<QString> *idsMissing;         // linked list is inherently suited for thread-safety when appropriately implemented and used
+        QSet<QString> idsMissing;
     };
-
-    QHash<QString, QImage> *currentTiles;
-    QHash<QString, bool> failedTiles;
 
 private:
     QPainter *painter;
@@ -102,7 +100,8 @@ private:
 
     QHash<QString, QHash<QString, QImage>*> tilesDownloaded;
 
-    MapDownloader mapDownloader;
+    QHash<QString, QImage> *currentTiles;
+    QSet<QString> failedTiles;
 
     void paintSphere(QPaintEvent *event);
     void paintRectangle(QPaintEvent *event);
@@ -118,7 +117,7 @@ public:
     virtual ~MapGraphic();
 
 public slots:
-    void updateWrapper();
+    void updateWrapper(QHash<QString, QImage> *receivedTiles, QSet<QString> *localFailedTiles, QString url);
 
 // migrated:
 

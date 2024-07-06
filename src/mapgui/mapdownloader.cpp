@@ -1,53 +1,58 @@
 #include "mapdownloader.h"
-#include "mapgui/mapgraphic.h"
 
 MapDownloader::MapDownloader()
     : QObject{}
-{
-
-}
+{}
 
 MapDownloader::~MapDownloader() {
     delete netManager;
 }
 
-void MapDownloader::equip(QList<std::list<QString>*> *idsMissing, QString tileURL, MapGraphic *caller)
+void MapDownloader::equip(QSet<QString> *idsMissing, QSet<QString> *failedTiles, QString &tileURL)
 {
     this->idsMissing = idsMissing;
+    this->failedTiles = failedTiles;
     this->tileURL = tileURL;
-    this->caller = caller;
 
-    netManager = new QNetworkAccessManager(this);
-    netManager->setTransferTimeout(3500);
+    receivedTiles = new QHash<QString, QImage>();
+    localFailedTiles = new QSet<QString>();
 }
 
 void MapDownloader::run() {
     qDebug() << "MGO: running thread";
-    foreach(std::list<QString> *missingIds, *idsMissing) {
-        foreach(QString missingId, *missingIds) {
-            QStringList parts = missingId.split("/");
-            QUrl qUrl = QUrl(QString(tileURL).replace("{z}", parts[0]).replace("{x}", parts[1]).replace("{y}", parts[2]));
-            if(!request2id.contains(qUrl.toString()) && !caller->failedTiles.contains(missingId)) {
-                request2id.insert(qUrl.toString(), missingId);
-                qDebug() << "MGO: net about to be used for " << qUrl.toString();
-                QNetworkReply *reply = netManager->get(QNetworkRequest(qUrl));
-                qDebug() << "MGO: net connect 1 " << (bool)connect(reply, &QNetworkReply::finished,
-                                                                    this, [=](){ this->netReplyReceived(reply); });
-                qDebug() << "MGO: net connect 2 " << (bool)connect(reply, &QNetworkReply::errorOccurred,
-                                                                    this, [=](QNetworkReply::NetworkError code){ this->netErrorOccurred(code, reply); });
-                qDebug() << "MGO: net connect 3 " << (bool)connect(reply, &QNetworkReply::sslErrors,
-                                                                    this, [=](const QList<QSslError> &errors){ this->netSSLErrorOccurred(errors, reply); });
-                qDebug() << "MGO: image requested " << qUrl.toString();
-            }
+    netManager = new QNetworkAccessManager(this);
+    netManager->setTransferTimeout(3500);
+
+    countToRequest = idsMissing->count();
+
+    foreach(QString missingId, *idsMissing) {
+        QStringList parts = missingId.split("/");
+        QUrl qUrl = QUrl(QString(tileURL).replace("{z}", parts[0]).replace("{x}", parts[1]).replace("{y}", parts[2]));
+        if(!failedTiles->contains(missingId)) {
+            request2id.insert(qUrl.toString(), missingId);
+            QNetworkReply *reply = netManager->get(QNetworkRequest(qUrl));
+            connect(reply, &QNetworkReply::finished,
+                    this, [=](){ this->netReplyReceived(reply); });
+            connect(reply, &QNetworkReply::errorOccurred,
+                    this, [=](QNetworkReply::NetworkError code){ this->netErrorOccurred(code, reply); });
+            connect(reply, &QNetworkReply::sslErrors,
+                    this, [=](const QList<QSslError> &errors){ this->netSSLErrorOccurred(errors, reply); });
+            qDebug() << "MGO: image requested " << qUrl.toString();
+        } else {
+            --countToRequest;
         }
     }
 
-    foreach(std::list<QString> *missingIds, *idsMissing) {
-        delete missingIds;
-    }
     delete idsMissing;
+
+    checkEnd();
 }
 
+void MapDownloader::checkEnd() {
+    if(++countReceived >= countToRequest) {
+        emit finished(receivedTiles, localFailedTiles, tileURL);
+    }
+}
 
 void MapDownloader::netReplyReceived(QNetworkReply *reply) {
     qDebug() << "MGO: reply received for " << reply->request().url().toString();
@@ -55,34 +60,22 @@ void MapDownloader::netReplyReceived(QNetworkReply *reply) {
         QImage image = QImageReader(reply).read();
         qDebug() << "MGO: reply 2 image";
         if(!image.isNull()) {
-            caller->currentTiles->insert(request2id[reply->request().url().toString()], image);
+            receivedTiles->insert(request2id[reply->request().url().toString()], image);
             qDebug() << "MGO: image assigned";
-            reply->deleteLater();
-            qDebug() << "MGO: reply scheduled for deletion";
-            ++countReceived;
-            if(countReceived >= request2id.count()) {
-                emit finished();
-            }
+            checkEnd();
             return;
         }
     }
-    reply->deleteLater();
-    if(!caller->failedTiles.contains(request2id[reply->request().url().toString()])) {
-        caller->failedTiles.insert(request2id[reply->request().url().toString()], true);
-        ++countReceived;
-        if(countReceived >= request2id.count()) {
-            emit finished();
-        }
+    if(!localFailedTiles->contains(request2id[reply->request().url().toString()])) {
+        localFailedTiles->insert(request2id[reply->request().url().toString()]);
+        checkEnd();
     }
 }
 
 void MapDownloader::netErrorOccurred(QNetworkReply::NetworkError code, QNetworkReply *reply) {
     qDebug() << "MGO: net error " << code << " for " << reply->request().url().toString();
-    caller->failedTiles.insert(request2id[reply->request().url().toString()], true);
-    ++countReceived;
-    if(countReceived >= request2id.count()) {
-        emit finished();
-    }
+    localFailedTiles->insert(request2id[reply->request().url().toString()]);
+    checkEnd();
 }
 
 void MapDownloader::netSSLErrorOccurred(const QList<QSslError> &errors, QNetworkReply *reply) {
@@ -90,9 +83,6 @@ void MapDownloader::netSSLErrorOccurred(const QList<QSslError> &errors, QNetwork
     foreach(QSslError e, errors) {
         qDebug() << "MGO: net SSL error " << e.errorString();
     }
-    caller->failedTiles.insert(request2id[reply->request().url().toString()], true);
-    ++countReceived;
-    if(countReceived >= request2id.count()) {
-        emit finished();
-    }
+    localFailedTiles->insert(request2id[reply->request().url().toString()]);
+    checkEnd();
 }
