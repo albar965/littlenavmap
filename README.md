@@ -4,13 +4,13 @@
 
 [**► Windows 64-bit Installer \(*MSFS and X-Plane*\)** - LittleNavmap-win64-3.0.8-Install.exe](https://github.com/albar965/littlenavmap/releases/download/v3.0.8/LittleNavmap-win64-3.0.8-Install.exe)<br/>
 [**► macOS** - LittleNavmap-macOS-3.0.8.zip](https://github.com/albar965/littlenavmap/releases/download/v3.0.8/LittleNavmap-macOS-3.0.8.zip)<br/>
-[**► Linux \(64 bit, based on Ubuntu 22.04\)** - LittleNavmap-linux-ubuntu-22.04-3.0.8.tar.xz](https://github.com/albar965/littlenavmap/releases/download/v3.0.8/LittleNavmap-linux-ubuntu-22.04-3.0.8.tar.xz)
+[**► Linux \(64 bit, based on Ubuntu 22.04\)** - LittleNavmap-linux-ubuntu-22.04-3.0.8.tar.xz](https://github.com/albar965/littlenavmap/releases/download/v3.0.8/LittleNavmap-linux-ubuntu-22.04-3.0.8.tar.xz)<br/>
 [**► Linux Debian Installation Package \(64 bit, based on Ubuntu 22.04\)** - LittleNavmap-linux-ubuntu-22.04-3.0.8-1_amd64.deb](https://github.com/albar965/littlenavmap/releases/download/v3.0.8/LittleNavmap-linux-ubuntu-22.04-3.0.8-1_amd64.deb)
 
 **Other Versions:**
 
 [► Windows 32-bit Installer \(*only for FSX and P3D*\) - LittleNavmap-win32-3.0.8-Install.exe](https://github.com/albar965/littlenavmap/releases/download/v3.0.8/LittleNavmap-win32-3.0.8-Install.exe)<br/>
-[► Linux \(64 bit, based on Ubuntu 20.04 for Debian or older systems\) - LittleNavmap-linux-ubuntu-20.04-3.0.8.tar.xz](https://github.com/albar965/littlenavmap/releases/download/v3.0.8/LittleNavmap-linux-ubuntu-20.04-3.0.8.tar.xz)
+[► Linux \(64 bit, based on Ubuntu 20.04 for Debian or older systems\) - LittleNavmap-linux-ubuntu-20.04-3.0.8.tar.xz](https://github.com/albar965/littlenavmap/releases/download/v3.0.8/LittleNavmap-linux-ubuntu-20.04-3.0.8.tar.xz)<br/>
 [► Linux Debian Installation Package \(64 bit, based on Ubuntu 20.04\) - LittleNavmap-linux-ubuntu-20.04-3.0.8-1_amd64.deb](https://github.com/albar965/littlenavmap/releases/download/v3.0.8/LittleNavmap-linux-ubuntu-20.04-3.0.8-1_amd64.deb)
 
 Zipped Windows releases without installer are available in the alternative download locations below or from the release assets at [GitHub - Little Navmap Releases - Version 3.0.8](https://github.com/albar965/littlenavmap/releases/v3.0.8) \(scroll down to `Assets`\).
