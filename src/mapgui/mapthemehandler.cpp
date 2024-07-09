@@ -853,7 +853,7 @@ void MapThemeHandler::changeMapTheme()
                      tr("<p>The map theme \"%1\" requires additional information.</p>"
                           "<p>You have to create an user account at the related website and then create an username, an access key or a token.<br/>"
                           "Most of these services offer a free plan for hobbyists.</p>"
-                          "<p>Then go to menu \"Tools\" -> \"Options\" and to page \"Map Display Keys\" in Little Navmap and "
+                          "<p>Then go to menu \"Tools\" -> \"Options\" and to page \"Map Keys\" in Little Navmap and "
                             "enter the information for the key(s) below:</p>"
                             "<ul><li>%2</li></ul>"
                               "<p>The map will not show correctly until this is done.</p>%3").

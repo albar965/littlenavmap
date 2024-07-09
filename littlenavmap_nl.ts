@@ -476,7 +476,7 @@ Save changes?</source>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="923"/>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="944"/>
         <source> &lt;b&gt;%1&lt;/b&gt;</source>
-        <translation type="unfinished"> &lt;b&gt;▲&lt;/b&gt;</translation>
+        <translation> &lt;b&gt;%1&lt;/b&gt;</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="1030"/>
@@ -16906,7 +16906,7 @@ kHz/MHz</translation>
         <location filename="src/common/htmlinfobuilder.cpp" line="4779"/>
         <source> %1</source>
         <oldsource> ▼</oldsource>
-        <translation type="unfinished"> ▼</translation>
+        <translation> %1</translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="4777"/>
@@ -19054,7 +19054,7 @@ kHz/MHz</translation>
         <location filename="src/common/htmlinfobuilder.cpp" line="4476"/>
         <source>&lt;b&gt;%1&lt;/b&gt;</source>
         <oldsource>&lt;b&gt;◄&lt;/b&gt;</oldsource>
-        <translation type="unfinished">&lt;b&gt;◄&lt;/b&gt;</translation>
+        <translation>&lt;b&gt;%1&lt;/b&gt;</translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="4478"/>
@@ -20020,7 +20020,7 @@ kHz/MHz</translation>
         <location filename="src/common/htmlinfobuilder.cpp" line="4738"/>
         <source> &lt;b&gt;%1&lt;/b&gt;</source>
         <oldsource> &lt;b&gt;▲&lt;/b&gt;</oldsource>
-        <translation type="unfinished"> &lt;b&gt;▲&lt;/b&gt;</translation>
+        <translation type="unfinished"> &lt;b&gt;%1&lt;/b&gt;</translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="4747"/>
@@ -20689,7 +20689,7 @@ kHz/MHz</translation>
         <location filename="src/mappainter/mappaintervehicle.cpp" line="449"/>
         <source> %1</source>
         <oldsource> ►</oldsource>
-        <translation type="unfinished"> ►</translation>
+        <translation type="unfinished"> %1</translation>
     </message>
     <message>
         <location filename="src/mappainter/mappainterroute.cpp" line="1247"/>
@@ -21084,7 +21084,7 @@ kHz/MHz</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapthemehandler.cpp" line="853"/>
-        <source>&lt;p&gt;The map theme &quot;%1&quot; requires additional information.&lt;/p&gt;&lt;p&gt;You have to create an user account at the related website and then create an username, an access key or a token.&lt;br/&gt;Most of these services offer a free plan for hobbyists.&lt;/p&gt;&lt;p&gt;Then go to menu &quot;Tools&quot; -&gt; &quot;Options&quot; and to page &quot;Map Display Keys&quot; in Little Navmap and enter the information for the key(s) below:&lt;/p&gt;&lt;ul&gt;&lt;li&gt;%2&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;The map will not show correctly until this is done.&lt;/p&gt;%3</source>
+        <source>&lt;p&gt;The map theme &quot;%1&quot; requires additional information.&lt;/p&gt;&lt;p&gt;You have to create an user account at the related website and then create an username, an access key or a token.&lt;br/&gt;Most of these services offer a free plan for hobbyists.&lt;/p&gt;&lt;p&gt;Then go to menu &quot;Tools&quot; -&gt; &quot;Options&quot; and to page &quot;Map Keys&quot; in Little Navmap and enter the information for the key(s) below:&lt;/p&gt;&lt;ul&gt;&lt;li&gt;%2&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;The map will not show correctly until this is done.&lt;/p&gt;%3</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -23943,7 +23943,7 @@ Value 0 is opaque and 90 is most transparent.</oldsource>
     </message>
     <message>
         <location filename="src/options/options.ui" line="5183"/>
-        <source>Map Display Labels</source>
+        <source>Map Labels</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -28912,7 +28912,7 @@ Really use it?</source>
         <location filename="src/search/proceduresearch.cpp" line="1747"/>
         <location filename="src/search/proceduresearch.cpp" line="1753"/>
         <source> &lt;b&gt;%1&lt;/b&gt;</source>
-        <translation type="unfinished"> &lt;b&gt;▲&lt;/b&gt;</translation>
+        <translation type="unfinished"> &lt;b&gt;%1&lt;/b&gt;</translation>
     </message>
     <message>
         <location filename="src/search/proceduresearch.cpp" line="1768"/>
@@ -29348,7 +29348,7 @@ Changes to &quot;Required angle&quot; if mandatory in approach procedures.</sour
         <location filename="src/profile/profilewidget.cpp" line="1722"/>
         <source> %1</source>
         <oldsource> ►</oldsource>
-        <translation type="unfinished"> ►</translation>
+        <translation type="unfinished"> %1</translation>
     </message>
     <message>
         <location filename="src/profile/profilewidget.cpp" line="786"/>
@@ -29359,13 +29359,13 @@ Changes to &quot;Required angle&quot; if mandatory in approach procedures.</sour
         <location filename="src/profile/profilewidget.cpp" line="849"/>
         <source>%1° %2</source>
         <oldsource>%1° ►</oldsource>
-        <translation type="unfinished">%1° ►</translation>
+        <translation type="unfinished">%1° %2</translation>
     </message>
     <message>
         <location filename="src/profile/profilewidget.cpp" line="851"/>
         <source>%1° / %2 %3</source>
         <oldsource>%1° / %2 ►</oldsource>
-        <translation type="unfinished">%1° / %2 ►</translation>
+        <translation type="unfinished">%1° / %2 %3</translation>
     </message>
     <message>
         <source>No Flight Plan loaded.</source>
@@ -38921,7 +38921,7 @@ Travel Totals: %1.</source>
         <location filename="src/common/textplacement.cpp" line="45"/>
         <source> %1</source>
         <oldsource>◄ </oldsource>
-        <translation type="unfinished">◄ </translation>
+        <translation type="unfinished"> %1</translation>
     </message>
     <message>
         <location filename="src/common/textplacement.cpp" line="46"/>

@@ -104,6 +104,7 @@ struct AircraftTrailPos
 
 private:
   friend QDataStream& operator<<(QDataStream& dataStream, const AircraftTrailPos& trackPos);
+
   friend QDataStream& operator>>(QDataStream& dataStream, AircraftTrailPos& trackPos);
 
   atools::geo::PosD pos;
@@ -192,10 +193,13 @@ public:
     maxTrackEntries = value;
   }
 
+  /* Absolute maximum, never exceeded */
+  const static int MAX_TRACK_ENTRIES = 1000000;
+
   /* Write and read the whole track to and from a binary stream */
   void saveToStream(QDataStream& out);
 
-  bool readFromStream(QDataStream & in);
+  bool readFromStream(QDataStream& in);
 
   /* Pull only needed read-only methods of the base class into public space */
   using QList<AircraftTrailPos>::isEmpty;
@@ -229,8 +233,8 @@ private:
   /* truncate and return removed number */
   int truncateTrail();
 
-  /* Maximum number of track points. If exceeded entries will be removed from beginning of the list */
-  int maxTrackEntries = 20000;
+  /* Maximum number of track points. If exceeded entries will be removed from beginning of the list. */
+  int maxTrackEntries = MAX_TRACK_ENTRIES;
 
   float maxAltitude, minAltitude;
   atools::geo::Rect boundingRect;

@@ -19107,7 +19107,7 @@ kHz/MHz</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapthemehandler.cpp" line="690"/>
-        <source>&lt;p&gt;The map theme &quot;%1&quot; requires additional information.&lt;/p&gt;&lt;p&gt;You have to create an user account at the related website and then create an username, an access key or a token.&lt;br/&gt;Most of these services offer a free plan for hobbyists.&lt;/p&gt;&lt;p&gt;Then go to menu &quot;Tools&quot; -&gt; &quot;Options&quot; and to page &quot;Map Display Keys&quot; in Little Navmap and enter the information for the key(s) below:&lt;/p&gt;&lt;ul&gt;&lt;li&gt;%2&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;The map will not show correctly until this is done.&lt;/p&gt;%3</source>
+        <source>&lt;p&gt;The map theme &quot;%1&quot; requires additional information.&lt;/p&gt;&lt;p&gt;You have to create an user account at the related website and then create an username, an access key or a token.&lt;br/&gt;Most of these services offer a free plan for hobbyists.&lt;/p&gt;&lt;p&gt;Then go to menu &quot;Tools&quot; -&gt; &quot;Options&quot; and to page &quot;Map Keys&quot; in Little Navmap and enter the information for the key(s) below:&lt;/p&gt;&lt;ul&gt;&lt;li&gt;%2&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;The map will not show correctly until this is done.&lt;/p&gt;%3</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -23105,13 +23105,13 @@ Also affects labels at holds and traffic patterns.</source>
     <message>
         <location filename="src/options/options.ui" line="1974"/>
         <source>You can still use the default click and drag method to scroll and the mouse wheel to zoom in this mode.
-Enable &quot;Navigation Aids&quot;, &quot;Screen Areas&quot; on options page &quot;Map Display Labels&quot; to display hints on the map.</source>
+Enable &quot;Navigation Aids&quot;, &quot;Screen Areas&quot; on options page &quot;Map Labels&quot; to display hints on the map.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="1995"/>
         <source>Enable &quot;Navigation Aids&quot;, &quot;Center Cross&quot; on
-options page &quot;Map Display Labels&quot; to display a screen center hint.</source>
+options page &quot;Map Labels&quot; to display a screen center hint.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -23349,7 +23349,7 @@ Value 0 is opaque and 90 is most transparent.</oldsource>
     </message>
     <message>
         <location filename="src/options/options.ui" line="4163"/>
-        <source>Map Display Labels</source>
+        <source>Map Labels</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -24189,7 +24189,7 @@ Move the dialog aside to see changes in main window or map.</source>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="125"/>
-        <source>Map Display Labels</source>
+        <source>Map Labels</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -24199,7 +24199,7 @@ Move the dialog aside to see changes in main window or map.</source>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="126"/>
-        <source>Map Display Keys</source>
+        <source>Map Keys</source>
         <translation type="unfinished"></translation>
     </message>
     <message>

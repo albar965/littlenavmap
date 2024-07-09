@@ -2280,15 +2280,17 @@ void MainWindow::routeFromStringSimBrief(const QString& routeString)
   {
     if(!routeStrDialog.getFlightplan().isEmpty())
       // Load plan and mark it as changed - do not use undo stack
+      // Adjust altitude and probably correct an invalid profile only if no cruise altitude given
       routeFromFlightplan(routeStrDialog.getFlightplan(), !routeStrDialog.isAltitudeIncluded() /* adjustAltitude */,
-                          true /* changed */, false /* undo */);
+                          true /* changed */, false /* undo */, !routeStrDialog.isAltitudeIncluded() /* correctProfile */);
     else
       qWarning() << "Flight plan is null";
   }
   routeStrDialog.saveState();
 }
 
-void MainWindow::routeFromFlightplan(const atools::fs::pln::Flightplan& flightplan, bool adjustAltitude, bool changed, bool undo)
+void MainWindow::routeFromFlightplan(const atools::fs::pln::Flightplan& flightplan, bool adjustAltitude, bool changed, bool undo,
+                                     bool correctProfile)
 {
   qDebug() << Q_FUNC_INFO;
 
@@ -2297,7 +2299,7 @@ void MainWindow::routeFromFlightplan(const atools::fs::pln::Flightplan& flightpl
   {
     // Transfer flag to new flightplan to avoid silently overwriting non LNMPLN files with own format
     bool lnmpln = routeController->getRouteConst().getFlightplanConst().isLnmFormat();
-    routeController->loadFlightplan(flightplan, atools::fs::pln::LNM_PLN, QString(), changed, adjustAltitude, undo);
+    routeController->loadFlightplan(flightplan, atools::fs::pln::LNM_PLN, QString(), changed, adjustAltitude, undo, correctProfile);
     routeController->getRoute().getFlightplan().setLnmFormat(lnmpln);
     if(OptionData::instance().getFlags() & opts::GUI_CENTER_ROUTE)
       routeCenter();
@@ -2325,7 +2327,8 @@ void MainWindow::routeNewFromAirports(const map::MapAirport& departure, const ma
   flightplan.setDepartureDestination(departure.ident, departure.position, destination.ident, destination.position);
 
   // Create new plan but save the change to the undo/redo stack - keep clean undo state (changed = false)
-  routeFromFlightplan(flightplan, true /* adjustAltitude */, false /* changed */, true /* undo */);
+  // Adjust altitude and possibly correct an invalid profile
+  routeFromFlightplan(flightplan, true /* adjustAltitude */, false /* changed */, true /* undo */, true /* correctProfile */);
 }
 
 void MainWindow::routeOpen()
@@ -3241,14 +3244,18 @@ void MainWindow::removeDialogFromDockHandler(QDialog *dialogWidget)
 
 void MainWindow::resetMessages()
 {
-  if(dialog->question(tr("This causes all message dialogs that were deactivated with the\n"
-                         "\"Do not show again\"\n"
-                         "button to be displayed again.\n\n"
-                         "Reset all messages to show up again now?")) == QMessageBox::Yes)
+  QMessageBox::StandardButton result = dialog->question(tr("This causes all message dialogs that were deactivated with the\n"
+                                                           "\"Do not show again\"\n"
+                                                           "button to be displayed again.\n\n"
+                                                           "Reset all messages to show up again now?"),
+                                                        QMessageBox::Yes | QMessageBox::No | QMessageBox::Help);
+  if(result == QMessageBox::Yes)
   {
     messages::resetAllMessages();
     setStatusMessage(tr("All message dialogs reset."));
   }
+  else if(result == QMessageBox::Help)
+    atools::gui::HelpHandler::openHelpUrlWeb(this, lnm::helpOnlineUrl % "MENUS.html#reset-all-messages", lnm::helpLanguageOnline());
 }
 
 void MainWindow::setStatusMessage(const QString& message, bool addToLog, bool popup)

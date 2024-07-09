@@ -7207,7 +7207,7 @@ de Cruzeiro %alt%</translation>
         <translation type="vanished">&lt;p&gt;Clique aqui para criar uma conta: &lt;a href=&quot;%1&quot;&gt;%2&lt;/a&gt;&lt;/p&gt;</translation>
     </message>
     <message>
-        <source>&lt;p&gt;The map theme &quot;%1&quot; requires additional information.&lt;/p&gt;&lt;p&gt;You have to create an user account at the related website and then create an username, an access key or a token.&lt;br/&gt;Most of these services offer a free plan for hobbyists.&lt;/p&gt;&lt;p&gt;Then go to menu &quot;Tools&quot; -&gt; &quot;Options&quot; and to page &quot;Map Display Keys&quot; in Little Navmap and enter the information for the key(s) below:&lt;/p&gt;&lt;ul&gt;&lt;li&gt;%2&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;The map will not show correctly until this is done.&lt;/p&gt;%3</source>
+        <source>&lt;p&gt;The map theme &quot;%1&quot; requires additional information.&lt;/p&gt;&lt;p&gt;You have to create an user account at the related website and then create an username, an access key or a token.&lt;br/&gt;Most of these services offer a free plan for hobbyists.&lt;/p&gt;&lt;p&gt;Then go to menu &quot;Tools&quot; -&gt; &quot;Options&quot; and to page &quot;Map Keys&quot; in Little Navmap and enter the information for the key(s) below:&lt;/p&gt;&lt;ul&gt;&lt;li&gt;%2&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;The map will not show correctly until this is done.&lt;/p&gt;%3</source>
         <translation type="vanished">&lt;p&gt;O tema do mapa &quot;%1&quot; requer informações adicionais.&lt;/p&gt;&lt;p&gt;Você deve criar uma conta de usuário no site relacionado e, em seguida, criar um nome de usuário, uma chave de acesso ou um token.&lt;br/&gt;A maioria desses serviços oferecem um plano gratuito para amadores.&lt;/p&gt;&lt;p&gt;Em seguida, vá ao menu &quot;Configurações&quot; -&gt; &quot;Opções&quot; e à página &quot;Chaves de exibição do mapa&quot; no Little Navmap e insira as informações para a(s) chave(s) abaixo:&lt;/p&gt;&lt;ul&gt;&lt;li&gt;%2&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;O mapa não será exibido corretamente até que isso seja feito.&lt;/p&gt;%3</translation>
     </message>
     <message>
@@ -21966,7 +21966,7 @@ kHz/MHz</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapthemehandler.cpp" line="853"/>
-        <source>&lt;p&gt;The map theme &quot;%1&quot; requires additional information.&lt;/p&gt;&lt;p&gt;You have to create an user account at the related website and then create an username, an access key or a token.&lt;br/&gt;Most of these services offer a free plan for hobbyists.&lt;/p&gt;&lt;p&gt;Then go to menu &quot;Tools&quot; -&gt; &quot;Options&quot; and to page &quot;Map Display Keys&quot; in Little Navmap and enter the information for the key(s) below:&lt;/p&gt;&lt;ul&gt;&lt;li&gt;%2&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;The map will not show correctly until this is done.&lt;/p&gt;%3</source>
+        <source>&lt;p&gt;The map theme &quot;%1&quot; requires additional information.&lt;/p&gt;&lt;p&gt;You have to create an user account at the related website and then create an username, an access key or a token.&lt;br/&gt;Most of these services offer a free plan for hobbyists.&lt;/p&gt;&lt;p&gt;Then go to menu &quot;Tools&quot; -&gt; &quot;Options&quot; and to page &quot;Map Keys&quot; in Little Navmap and enter the information for the key(s) below:&lt;/p&gt;&lt;ul&gt;&lt;li&gt;%2&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;The map will not show correctly until this is done.&lt;/p&gt;%3</source>
         <translation>&lt;p&gt;O tema do mapa &quot;%1&quot; requer informações adicionais.&lt;/p&gt;&lt;p&gt;Você deve criar uma conta de usuário no site relacionado e, em seguida, criar um nome de usuário, uma chave de acesso ou um token.&lt;br/&gt;A maioria desses serviços oferecem um plano gratuito para amadores.&lt;/p&gt;&lt;p&gt;Em seguida, vá ao menu &quot;Configurações&quot; -&gt; &quot;Opções&quot; e à página &quot;Chaves de exibição do mapa&quot; no Little Navmap e insira as informações para a(s) chave(s) abaixo:&lt;/p&gt;&lt;ul&gt;&lt;li&gt;%2&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;O mapa não será exibido corretamente até que isso seja feito.&lt;/p&gt;%3</translation>
     </message>
     <message>
@@ -24484,15 +24484,17 @@ Também afeta rótulos em orbitas e padrões de tráfego.</translation>
         <translation>Janela do mapa</translation>
     </message>
     <message>
+        <location filename="src/options/options.ui" line="2563"/>
         <source>You can still use the default click and drag method to scroll and the mouse wheel to zoom in this mode.
-Enable &quot;Navigation Aids&quot;, &quot;Screen Areas&quot; on options page &quot;Map Display Labels&quot; to display hints on the map.</source>
-        <translation type="vanished">Você ainda pode usar o método padrão de clicar e arrastar para rolar e a roda do mouse para ampliar neste modo.
+Enable &quot;Navigation Aids&quot;, &quot;Screen Areas&quot; on options page &quot;Map Labels&quot; to display hints on the map.</source>
+        <translation>Você ainda pode usar o método padrão de clicar e arrastar para rolar e a roda do mouse para ampliar neste modo.
 Ative &quot;Auxílios à Navegação&quot;, &quot;Áreas da tela&quot; na página de opções &quot;Rótulos de Exibição do Mapa&quot; para exibir dicas no mapa.</translation>
     </message>
     <message>
+        <location filename="src/options/options.ui" line="2594"/>
         <source>Enable &quot;Navigation Aids&quot;, &quot;Center Cross&quot; on
-options page &quot;Map Display Labels&quot; to display a screen center hint.</source>
-        <translation type="vanished">Habilite &quot;Auxílios à Navegação&quot;, &quot;Cruz Central&quot; em
+options page &quot;Map Labels&quot; to display a screen center hint.</source>
+        <translation>Habilite &quot;Auxílios à Navegação&quot;, &quot;Cruz Central&quot; em
 página de opções &quot;Rótulos de Exibição do Mapa&quot; para exibir uma dica central da tela.</translation>
     </message>
     <message>
@@ -24920,7 +24922,7 @@ entradas do logbook:</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="5183"/>
-        <source>Map Display Labels</source>
+        <source>Map Labels</source>
         <translation>Rótulos de Exibição do Mapa</translation>
     </message>
     <message>
@@ -25325,20 +25327,6 @@ O botão da barra de ferramentas de aeroportos pode ser usado para ocultar aerop
         <location filename="src/options/options.ui" line="2475"/>
         <source>&amp;Click Sensitivity for Map Objects</source>
         <translation>&amp;Sensibilidade ao clique para objetos no mapa</translation>
-    </message>
-    <message>
-        <location filename="src/options/options.ui" line="2563"/>
-        <source>You can still use the default click and drag method to scroll and the mouse wheel to zoom in this mode.
-Enable &quot;Navigation Aids&quot;, &quot;Screen Areas&quot; on options page &quot;Map Labels&quot; to display hints on the map.</source>
-        <translation>Você ainda pode usar o método padrão de clique e arraste para rolar e a roda do mouse para ampliar neste modo.
-Ative &quot;Auxílios de Navegação&quot;, &quot;Áreas de Tela&quot; na página de opções &quot;Rótulos de Mapa&quot; para exibir dicas no mapa.</translation>
-    </message>
-    <message>
-        <location filename="src/options/options.ui" line="2594"/>
-        <source>Enable &quot;Navigation Aids&quot;, &quot;Center Cross&quot; on
-options page &quot;Map Labels&quot; to display a screen center hint.</source>
-        <translation>Ative &quot;Auxílios de Navegação(navaids)&quot;, &quot;Cruz central&quot; em
-página de opções &quot;Exibição do Mapa &quot; para exibir uma dica no centro da tela.</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="2627"/>
@@ -28372,16 +28360,18 @@ Mova a caixa de diálogo para o lado para ver as alterações na janela principa
         <translation type="vanished">Altere cores, símbolos e textos para marcas, linhas de medição e outros recursos do usuário para mapa e perfil de elevação.</translation>
     </message>
     <message>
-        <source>Map Display Labels</source>
-        <translation type="vanished">Rótulos de Exibição do Mapa</translation>
+        <location filename="src/options/optionsdialog.cpp" line="202"/>
+        <source>Map Labels</source>
+        <translation>Rótulos de Exibição do Mapa</translation>
     </message>
     <message>
         <source>Change map display and elevation profile label options for marks, user aircraft and more.</source>
         <translation type="vanished">Altere a exibição do mapa e as opções de legenda do perfil de elevação para marcas, aeronaves do usuário e muito mais.</translation>
     </message>
     <message>
-        <source>Map Display Keys</source>
-        <translation type="vanished">Teclas de Exibição do Mapa</translation>
+        <location filename="src/options/optionsdialog.cpp" line="203"/>
+        <source>Map Keys</source>
+        <translation>Teclas de Exibição do Mapa</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="203"/>
@@ -29479,18 +29469,8 @@ A identificação pode ser interno, ICAO, FAA, IATA ou local dependendo da dispo
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="202"/>
-        <source>Map Labels</source>
-        <translation>Rótulos do Mapa</translation>
-    </message>
-    <message>
-        <location filename="src/options/optionsdialog.cpp" line="202"/>
         <source>Change map display and elevation profile label options for all map features.</source>
         <translation>Alterar a apresentação do mapa e as opções de etiqueta do perfil de elevação para todas as características do mapa.</translation>
-    </message>
-    <message>
-        <location filename="src/options/optionsdialog.cpp" line="203"/>
-        <source>Map Keys</source>
-        <translation>Chaves do Mapa</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="204"/>

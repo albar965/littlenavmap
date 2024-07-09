@@ -37,6 +37,11 @@ A big thank you to all who reported bugs and issues!
 * Changed file extensions in multiexport to be untranslatable for local language to avoid issues.
 * Now adding STAR entry waypoint plus airway to MSFS PLN export in certain cases. Removing
   destination runway waypoints from MSFS PLN export if STAR is used.
+* Fixed aircraft trail for logbook entry that was incorrectly truncated.
+* Corrected display of split aircraft trail when starting a new flight on ground. Previously
+  the trails were shown wrongly connected.
+* Fixed an issue where the cruise altitude was set incorrectly after downloading a flight plan
+  from SimBrief.
 
 ### Weather
 
@@ -125,11 +130,17 @@ A big thank you to all who reported bugs and issues!
 
 ### Scenery Library
 
-* Now bailing out early when reading malformed BGL files from MSFS resulting in endless loop.
-  Example: Broken `UWLS.bgl`.
 * Fix for crash when reading BGL files having invalid airports.
 * Fixed COM frequency duplicates in MSFS scenery library with Navigraph navdata update installed.
   Reload the scenery library to see the fix.
+* Now bailing out early when reading malformed BGL files from MSFS resulting in endless loop.
+  Example: Broken `UWLS.bgl`. The same appears with the package `microsoft-canada-point-of-interest`
+  which is excluded from loading now. Ignore these errors for now.
+* 3.0.7.rc1 to 3.0.8: Now excluding all Microsoft POI libraries from MSFS. These libraries contain
+  POIs modeled as fake airports and are partially not readable. The folder exclusion affects all
+  matching the pattern `*\Official\OneStore\microsoft-*-point-of-interest\*`.
+* 3.0.7.rc1 to 3.0.8: Fixed issue where heliports or other simple airports in MSFS could not be
+  shown on the map by double clicking in airport search or information window.
 
 ### Information and Aircraft Progress
 
@@ -139,6 +150,8 @@ A big thank you to all who reported bugs and issues!
 * Better formatting in weather and runway information.
 * Corrected wrong text for bearing from user aircraft. Now showing bearing and distance `from` user
   aircraft instead of `to`.
+* 3.0.7.rc1 to 3.0.8: Fixed crash when trying to show information for incomplete or missing
+  airports or navaids when switching between simulator databases.
 
 ### User Interface
 
@@ -163,6 +176,14 @@ A big thank you to all who reported bugs and issues!
 * More checks to avoid crashes
 * 3.0.7.rc1 to 3.0.8: Translations updated. Thanks to Flavio, Patrick and Ricardo!
 * 3.0.7.rc1 to 3.0.8: Fixed issue where wind arrows did not show up on some systems.
+* 3.0.7.rc1 to 3.0.8: Removed Dutch, Chinese and Spanish translations translations since these have
+  not been updated for a long time which can cause problems in the user user interface. The resulting
+  issues can range from arrows pointing into the wrong direction to missing texts and numbers.
+  You can still install the translations manually if you wish by downloading the related `*.qm` files
+  from [GitHub - littlenavmap - release/3.0](https://github.com/albar965/littlenavmap/tree/release/3.0)
+  and saving them besides the other translations in the installation folder.
+  Contact me if you'd like to update a translation or if you would like to create a new one:
+  [Contact](https://albar965.github.io/contact.html).
 
 ### Web Interface
 

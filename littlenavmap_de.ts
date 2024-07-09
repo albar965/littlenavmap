@@ -22582,8 +22582,8 @@ kHz/MHz</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapthemehandler.cpp" line="853"/>
-        <source>&lt;p&gt;The map theme &quot;%1&quot; requires additional information.&lt;/p&gt;&lt;p&gt;You have to create an user account at the related website and then create an username, an access key or a token.&lt;br/&gt;Most of these services offer a free plan for hobbyists.&lt;/p&gt;&lt;p&gt;Then go to menu &quot;Tools&quot; -&gt; &quot;Options&quot; and to page &quot;Map Display Keys&quot; in Little Navmap and enter the information for the key(s) below:&lt;/p&gt;&lt;ul&gt;&lt;li&gt;%2&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;The map will not show correctly until this is done.&lt;/p&gt;%3</source>
-        <translation>&lt;p&gt;Das Kartenthema &quot;%1&quot; erfordert zusätzliche Informationen.&lt;/p&gt;&lt;p&gt;Sie müssen ein Benutzerkonto auf der entsprechenden Website anlegen und dann einen Benutzernamen, einen Zugangsschlüssel oder ein Token erstellen.&lt;br/&gt;Die meisten dieser Dienste bieten einen kostenlosen Plan für Hobbyisten an.&lt;/p&gt;&lt;p&gt;Gehen Sie dann im Menü &quot;Extras&quot; -&gt; &quot;Einstellungen&quot; auf die Seite &quot;Kartenanzeige Schlüssel&quot; in Little Navmap und geben Sie die Informationen für die Schlüssel unten ein:&lt;/p&gt;&lt;ul&gt;&lt;li&gt;%2&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;Solange dies nicht geschehen ist, wird die Karte nicht korrekt angezeigt.&lt;/p&gt;%3</translation>
+        <source>&lt;p&gt;The map theme &quot;%1&quot; requires additional information.&lt;/p&gt;&lt;p&gt;You have to create an user account at the related website and then create an username, an access key or a token.&lt;br/&gt;Most of these services offer a free plan for hobbyists.&lt;/p&gt;&lt;p&gt;Then go to menu &quot;Tools&quot; -&gt; &quot;Options&quot; and to page &quot;Map Keys&quot; in Little Navmap and enter the information for the key(s) below:&lt;/p&gt;&lt;ul&gt;&lt;li&gt;%2&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;The map will not show correctly until this is done.&lt;/p&gt;%3</source>
+        <translation>&lt;p&gt;Das Kartenthema &quot;%1&quot; erfordert zusätzliche Informationen.&lt;/p&gt;&lt;p&gt;Sie müssen ein Benutzerkonto auf der entsprechenden Website anlegen und dann einen Benutzernamen, einen Zugangsschlüssel oder ein Token erstellen.&lt;br/&gt;Die meisten dieser Dienste bieten einen kostenlosen Plan für Hobbyisten an.&lt;/p&gt;&lt;p&gt;Gehen Sie dann im Menü &quot;Werkzeuge&quot; -&gt; &quot;Einstellungen&quot; auf die Seite &quot;Kartenschlüssel&quot; in Little Navmap und geben Sie die Informationen für die Schlüssel unten ein:&lt;/p&gt;&lt;ul&gt;&lt;li&gt;%2&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;Solange dies nicht geschehen ist, wird die Karte nicht korrekt angezeigt.&lt;/p&gt;%3</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapthemehandler.cpp" line="860"/>
@@ -26952,15 +26952,17 @@ Dies ändern, wenn beim Betrieb des Servers eine Fehlermeldung, wie &quot;Adress
         <translation>Kartenfenster</translation>
     </message>
     <message>
+        <location filename="src/options/options.ui" line="2563"/>
         <source>You can still use the default click and drag method to scroll and the mouse wheel to zoom in this mode.
-Enable &quot;Navigation Aids&quot;, &quot;Screen Areas&quot; on options page &quot;Map Display Labels&quot; to display hints on the map.</source>
-        <translation type="vanished">Sie können in diesem Modus weiterhin die standardmäßige Klick- und Ziehen-Methode zum Scrollen sowie das Mausrad zum Zoomen verwenden.
+Enable &quot;Navigation Aids&quot;, &quot;Screen Areas&quot; on options page &quot;Map Labels&quot; to display hints on the map.</source>
+        <translation>Sie können in diesem Modus weiterhin die standardmäßige Klick- und Ziehen-Methode zum Scrollen sowie das Mausrad zum Zoomen verwenden.
 Aktivieren Sie &quot;Navigationshilfen&quot; -&gt; &quot;Kartenregionen&quot; auf der Einstellungsseite &quot;Kartenanzeige Beschriftungen&quot;, um Hinweise auf der Karte anzuzeigen.</translation>
     </message>
     <message>
+        <location filename="src/options/options.ui" line="2594"/>
         <source>Enable &quot;Navigation Aids&quot;, &quot;Center Cross&quot; on
-options page &quot;Map Display Labels&quot; to display a screen center hint.</source>
-        <translation type="vanished">Aktivieren Sie &quot;Navigationshilfen&quot;, &quot;Kartenmitte&quot; auf der Einstellungsseite &quot;Kartenanzeige Beschriftungen&quot;, um Hinweise auf der Karte anzuzeigen.</translation>
+options page &quot;Map Labels&quot; to display a screen center hint.</source>
+        <translation>Aktivieren Sie &quot;Navigationshilfen&quot;, &quot;Kartenmitte&quot; auf der Einstellungsseite &quot;Kartenanzeige Beschriftungen&quot;, um Hinweise auf der Karte anzuzeigen.</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="2948"/>
@@ -27193,7 +27195,7 @@ Der Wert 0 ist undurchsichtig und 90 ist am transparentesten.</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="5183"/>
-        <source>Map Display Labels</source>
+        <source>Map Labels</source>
         <translation>Kartenanzeige Beschriftungen</translation>
     </message>
     <message>
@@ -27530,22 +27532,9 @@ Die Flugplatzschaltfläche in der Symbolleiste kann verwendet werden, um leere F
         <translation>&amp;Klickempfindlichkeit für Kartenobjekte</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="2563"/>
-        <source>You can still use the default click and drag method to scroll and the mouse wheel to zoom in this mode.
-Enable &quot;Navigation Aids&quot;, &quot;Screen Areas&quot; on options page &quot;Map Labels&quot; to display hints on the map.</source>
-        <translation>Sie können in diesem Modus weiterhin die standardmäßige Klick- und Ziehen-Methode zum Scrollen sowie das Mausrad zum Zoomen verwenden.
-Aktivieren Sie &quot;Navigationshilfen&quot;, &quot;Kartenregionen&quot; auf der Einstellungsseite &quot;Kartenbeschriftungen&quot;, um Hinweise auf der Karte anzuzeigen.</translation>
-    </message>
-    <message>
         <location filename="src/options/options.ui" line="2574"/>
         <source>&amp;Screen click area size:</source>
         <translation>Größe der Klickbereiche:</translation>
-    </message>
-    <message>
-        <location filename="src/options/options.ui" line="2594"/>
-        <source>Enable &quot;Navigation Aids&quot;, &quot;Center Cross&quot; on
-options page &quot;Map Labels&quot; to display a screen center hint.</source>
-        <translation>Aktivieren Sie &quot;Navigationshilfen&quot;, &quot;Kartenmitte&quot; auf der Einstellungsseite &quot;Kartenbeschriftungen&quot;, um Hinweise auf der Karte anzuzeigen.</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="2627"/>
@@ -30142,16 +30131,8 @@ Optionen für die Anzeige von Kurs und Richtung.</translation>
         <translation type="vanished">Ändern Sie Farben, Symbole und Texte für Markierungen, Messlinien und andere Objekte für Karte und Höhenprofil.</translation>
     </message>
     <message>
-        <source>Map Display Labels</source>
-        <translation type="vanished">Kartenanzeige Beschriftungen</translation>
-    </message>
-    <message>
         <source>Change map display and elevation profile label options for marks, user aircraft and more.</source>
         <translation type="vanished">Einstellungen für die Kartenanzeige und die Beschriftung des Höhenprofils für Markierungen, Nutzerflugzeuge und mehr.</translation>
-    </message>
-    <message>
-        <source>Map Display Keys</source>
-        <translation type="vanished">Kartenanzeige Schlüssel</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="203"/>

@@ -247,7 +247,7 @@ public:
   void routeFromStringSimBrief(const QString& routeString);
 
   /* Called from SimBrief handler or non-modal route string dialog to create new plan */
-  void routeFromFlightplan(const atools::fs::pln::Flightplan& flightplan, bool adjustAltitude, bool changed, bool undo);
+  void routeFromFlightplan(const atools::fs::pln::Flightplan& flightplan, bool adjustAltitude, bool changed, bool undo, bool correctProfile);
 
   MapThemeHandler *getMapThemeHandler() const
   {

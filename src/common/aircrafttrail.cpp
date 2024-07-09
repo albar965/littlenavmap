@@ -437,7 +437,7 @@ int AircraftTrail::appendTrailPos(const atools::fs::sc::SimConnectUserAircraft& 
   }
 
   int numTruncated = false;
-  bool changed = false;
+  bool changed = false, split = false;
   qint64 timestampMs = userAircraft.getZuluTime().toMSecsSinceEpoch();
   atools::geo::PosD posD = userAircraft.getPositionD();
   bool onGround = userAircraft.isOnGround();
@@ -476,8 +476,6 @@ int AircraftTrail::appendTrailPos(const atools::fs::sc::SimConnectUserAircraft& 
     bool maxTimeExceeded = almostNotEqual(last.getTimestampMs(), timestampMs, maxTimeMs);
 
 #ifdef DEBUG_INFORMATION_TRAIL
-    if(maxDistanceExceeded)
-      qDebug() << Q_FUNC_INFO << "MAX DISTANCE" << distanceToLastMeter << ">" << maxDistanceMeter;
     if(maxTimeExceeded)
       qDebug() << Q_FUNC_INFO << "MAX TIME" << last.getTimestampMs() << "-" << timestampMs << ">" << maxTimeMs;
     if(speedChanged)
@@ -492,7 +490,7 @@ int AircraftTrail::appendTrailPos(const atools::fs::sc::SimConnectUserAircraft& 
     if(maxTimeExceeded || speedChanged || altChanged || headingChanged)
     {
 #ifdef DEBUG_INFORMATION_TRAIL
-      qDebug() << Q_FUNC_INFO << "CHANGED ######################";
+      qDebug() << Q_FUNC_INFO << "CHANGED ########";
 #endif
       bool lastValid = lastUserAircraft->isValid();
       bool aircraftChanged = lastValid && lastUserAircraft->hasAircraftChanged(userAircraft);
@@ -503,21 +501,18 @@ int AircraftTrail::appendTrailPos(const atools::fs::sc::SimConnectUserAircraft& 
       if(allowSplit && jumped && (last.isOnGround() || onGround || aircraftChanged))
       {
 #ifdef DEBUG_INFORMATION_TRAIL
-        qDebug() << Q_FUNC_INFO << "Splitting trail" << "allowSplit" << allowSplit << "jumped" << jumped
+        qDebug() << Q_FUNC_INFO << "SPLITTING TRAIL ###################" << "allowSplit" << allowSplit << "jumped" << jumped
                  << "last.onGround" << last.isOnGround() << "onGround" << onGround << "aircraftChanged" << aircraftChanged;
 #endif
-
         // Add an invalid position before indicating a break
         append(AircraftTrailPos(timestampMs, onGround));
-        append(AircraftTrailPos(posD, timestampMs, onGround));
-        changed = true;
+        split = true;
       }
       else
-      {
         numTruncated += truncateTrail();
-        append(AircraftTrailPos(posD, timestampMs, onGround));
-        changed = true;
-      }
+
+      append(AircraftTrailPos(posD, timestampMs, onGround));
+      changed = true;
 
       // Update changed values for new added point
       lastGroundSpeedKts = userAircraft.getGroundSpeedKts();
@@ -528,11 +523,26 @@ int AircraftTrail::appendTrailPos(const atools::fs::sc::SimConnectUserAircraft& 
     *lastUserAircraft = userAircraft;
   } // if(isEmpty() && userAircraft.isValid()) ... else
 
-  if(!isEmpty() && changed)
+  if(!isEmpty())
   {
-    // Last one is always valid
-    updateBoundary(constLast());
-    updateLineStrings(constLast());
+    if(split)
+    {
+      // Trail was split - do a full update
+      updateBoundary();
+      updateLineStrings();
+    }
+    else if(changed)
+    {
+      // Last one is always valid
+      updateBoundary(constLast());
+      updateLineStrings(constLast());
+    }
+  }
+  else
+  {
+    // Trail is empty - clear cached values
+    clearBoundaries();
+    lineStrings.clear();
   }
 
 #ifdef DEBUG_INFORMATION_TRAIL
@@ -547,7 +557,9 @@ int AircraftTrail::appendTrailPos(const atools::fs::sc::SimConnectUserAircraft& 
 int AircraftTrail::truncateTrail()
 {
   int numTruncated = 0;
-  while(size() > maxTrackEntries)
+  int maxEntries = maxTrackEntries <= 0 || maxTrackEntries > MAX_TRACK_ENTRIES ? MAX_TRACK_ENTRIES : maxTrackEntries;
+
+  while(size() > maxEntries)
   {
     for(int i = 0; i < TRUNCATE_TRACK_ENTRIES; i++)
     {
@@ -562,6 +574,7 @@ int AircraftTrail::truncateTrail()
       removeFirst();
     }
   }
+
   return numTruncated;
 }
 

@@ -104,7 +104,8 @@ void FetchRouteDialog::buttonBoxClicked(QAbstractButton *button)
     // Use always IFR for SimBrief plans
     flightplan->setFlightplanType(apln::IFR);
 
-    emit routeNewFromFlightplan(*flightplan, false /* adjustAltitude */, true /* changed */, false /* undo */);
+    // Do not adjust altitude and do not correct an invalid profile
+    emit routeNewFromFlightplan(*flightplan, false /* adjustAltitude */, true /* changed */, false /* undo */, false /* correctProfile */);
   }
   else if(button == ui->buttonBox->button(QDialogButtonBox::YesToAll))
   {
