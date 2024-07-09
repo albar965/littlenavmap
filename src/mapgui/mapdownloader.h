@@ -15,13 +15,13 @@ public:
     explicit MapDownloader();
     virtual ~MapDownloader();
 
-    void equip(QSet<QString> *idsMissing, QSet<QString> *failedTiles, QString &tileURL);
+    void equip(QSet<QString> *idsMissing, QString &tileURL);
 
 public slots:
     void run();
 
 signals:
-    void finished(QHash<QString, QImage> *receivedTiles, QSet<QString> *localFailedTiles, QString url);
+    void finished(QHash<QString, QImage> *receivedTiles, QSet<QString> *localFailedTiles, QSet<QString> *idsMissing, QString url);
 
 private:
     QSet<QString> *idsMissing;
@@ -36,6 +36,8 @@ private:
     QHash<QString, QString> request2id;
     int countToRequest;
     int countReceived = 0;
+
+    bool doneRequesting = false;
 
     void checkEnd();
 

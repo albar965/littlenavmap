@@ -59,8 +59,8 @@ public:
 private:
     QPainter *painter;
     void (MapGraphic::*paintDisplayAs)(QPaintEvent*);
-
-    bool doPaint = false;
+    void (MapGraphic::*paintDisplayAsToBe)(QPaintEvent*) = nullptr;
+    void (MapGraphic::**paintDisplayAsSelector)(QPaintEvent*) = &paintDisplayAsToBe;
 
     float tanDefaultLensHalfHorizontalOpeningAngle = 1.732050807F;      // tan(60°); can change after resizing viewport
     const float earthRadius = 6378.137F;                                // Moritz, H. (1980); XVII General Assembly of the IUGG
@@ -102,9 +102,11 @@ private:
 
     QHash<QString, QImage> *currentTiles;
     QSet<QString> failedTiles;
+    QSet<QString> idsMissingKnown;
 
     void paintSphere(QPaintEvent *event);
     void paintRectangle(QPaintEvent *event);
+    void paintNothing(QPaintEvent *event);
 
 protected:
     /**
@@ -117,7 +119,7 @@ public:
     virtual ~MapGraphic();
 
 public slots:
-    void updateWrapper(QHash<QString, QImage> *receivedTiles, QSet<QString> *localFailedTiles, QString url);
+    void updateWrapper(QHash<QString, QImage> *receivedTiles, QSet<QString> *localFailedTiles, QSet<QString> *idsMissing, QString url);
 
 // migrated:
 

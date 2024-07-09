@@ -10,6 +10,7 @@ MapGraphic::MapGraphic( QWidget *parent ) : QWidget(parent) {
     //referenceCoverage = 2 * sphereRadiusInPixel / size().width();
     //referenceDistance = size().width() / 2 / sphereRadiusInPixel * earthRadius / tanDefaultLensHalfHorizontalOpeningAngle;
     oldZoom = ceilf(log2f(2 * sphereRadiusInPixel / tileWidth)) + 2;
+    paintDisplayAs = &MapGraphic::paintNothing;
 }
 
 MapGraphic::~MapGraphic() {
@@ -27,103 +28,113 @@ MapGraphic::~MapGraphic() {
 }
 
 void MapGraphic::paintSphere(QPaintEvent *event) {
-    if(doPaint) {
-        int regionHeight = event->region().boundingRect().height();
-        int amountThreads = QThread::idealThreadCount() - 2;        // - 2 = 1 for the main thread, 1 for the os
-        if(amountThreads > regionHeight * scaleFactor) {
-            amountThreads = regionHeight * scaleFactor;
-        }
-        if(amountThreads < 1) {
-            amountThreads = 1;
-        }
-        QList<threadData*> threadDatas;
-        int originalHeight = regionHeight * scaleFactor / amountThreads;
-        int counter = 0;
-        do {
-            threadData *tData = new threadData;
-            tData->width = event->region().boundingRect().width() * scaleFactor;
-            tData->height = (counter == amountThreads - 1) ? regionHeight * scaleFactor - counter * originalHeight : originalHeight;
-            if(tData->width > 0 && tData->height > 0) {
-                tData->currentTiles = currentTiles;
-                tData->tileWidth = tileWidth;
-                tData->tileHeight = tileHeight;
-                tData->xStart = event->region().boundingRect().left() * scaleFactor;
-                tData->xEnd = tData->xStart + tData->width;
-                tData->yStart = event->region().boundingRect().top() * scaleFactor + counter * originalHeight;
-                tData->yEnd = tData->yStart + tData->height;
-                tData->xOrigin = size().width() / 2 * scaleFactor;
-                tData->yOrigin = size().height() / 2 * scaleFactor;
-                tData->zoom = ceilf(log2f(2 * sphereRadiusInPixel / tileWidth)) + 2;
-                tData->spin = sphereSpin;
-                tData->tilt = sphereTilt;
-                tData->radius = sphereRadiusInPixel * scaleFactor;
-                tData->tryZoomedOut = tData->zoom != oldZoom || tData->spin != oldSpin || tData->tilt != oldTilt;
-                if(tData->zoom > zoomMax) {
-                    tData->zoom = zoomMax;
-                }
-                tData->rastering = true;
-                threadDatas.append(tData);
-                MapGraphicThread *thread = new MapGraphicThread(tData);
-                connect(thread, &MapGraphicThread::finished, thread, &QObject::deleteLater);
-                thread->start();
-            } else {
-                delete tData;
+    int regionHeight = event->region().boundingRect().height();
+    int amountThreads = QThread::idealThreadCount() - 2;        // - 2 = 1 for the main thread, 1 for the os
+    if(amountThreads > regionHeight * scaleFactor) {
+        amountThreads = regionHeight * scaleFactor;
+    }
+    if(amountThreads < 1) {
+        amountThreads = 1;
+    }
+    QList<threadData*> threadDatas;
+    int originalHeight = regionHeight * scaleFactor / amountThreads;
+    int counter = 0;
+    do {
+        threadData *tData = new threadData;
+        tData->width = event->region().boundingRect().width() * scaleFactor;
+        tData->height = (counter == amountThreads - 1) ? regionHeight * scaleFactor - counter * originalHeight : originalHeight;
+        if(tData->width > 0 && tData->height > 0) {
+            tData->currentTiles = currentTiles;
+            tData->tileWidth = tileWidth;
+            tData->tileHeight = tileHeight;
+            tData->xStart = event->region().boundingRect().left() * scaleFactor;
+            tData->xEnd = tData->xStart + tData->width;
+            tData->yStart = event->region().boundingRect().top() * scaleFactor + counter * originalHeight;
+            tData->yEnd = tData->yStart + tData->height;
+            tData->xOrigin = size().width() / 2 * scaleFactor;
+            tData->yOrigin = size().height() / 2 * scaleFactor;
+            tData->zoom = ceilf(log2f(2 * sphereRadiusInPixel / tileWidth)) + 2;
+            tData->spin = sphereSpin;
+            tData->tilt = sphereTilt;
+            tData->radius = sphereRadiusInPixel * scaleFactor;
+            tData->tryZoomedOut = tData->zoom != oldZoom || tData->spin != oldSpin || tData->tilt != oldTilt;
+            if(tData->zoom > zoomMax) {
+                tData->zoom = zoomMax;
             }
-        }
-        while(++counter < amountThreads);
-
-        int countRastering;
-        do {
-            countRastering = 0;
-            foreach(threadData *tData, threadDatas) {
-                if(tData->rastering) {
-                    ++countRastering;
-                } else if(tData->image != nullptr) {
-                    painter->drawPixmap(event->region().boundingRect().left(), tData->yStart / scaleFactor, QPixmap::fromImage(tData->image->scaled(event->region().boundingRect().width(), (tData->yEnd - tData->yStart) / scaleFactor, Qt::IgnoreAspectRatio, Qt::SmoothTransformation)));
-                    delete tData->image;
-                    tData->image = nullptr;
-                }
-            }
-        } while(countRastering > 0);
-
-        QSet<QString> *idsMissing = new QSet<QString>();
-        foreach(threadData *tData, threadDatas) {
-            idsMissing->unite(tData->idsMissing);
+            tData->rastering = true;
+            threadDatas.append(tData);
+            MapGraphicThread *thread = new MapGraphicThread(tData);
+            connect(thread, &MapGraphicThread::finished, thread, &QObject::deleteLater);
+            thread->start();
+        } else {
             delete tData;
         }
+    }
+    while(++counter < amountThreads);
 
-        QThread* thread = new QThread();
-        MapDownloader *downloader = new MapDownloader();
-        downloader->equip(idsMissing, &failedTiles, tileURL);
-        qDebug() << "MGO: move 2 thread";
-        downloader->moveToThread(thread);
-        qDebug() << "MGO: moved 2 thread";
-        connect(thread, &QThread::started, downloader, &MapDownloader::run);
-        connect(downloader, &MapDownloader::finished, thread, &QThread::quit);
-        connect(downloader, &MapDownloader::finished, this, &MapGraphic::updateWrapper);
-        connect(downloader, &MapDownloader::finished, downloader, &MapDownloader::deleteLater);
-        connect(thread, &QThread::finished, thread, &QThread::deleteLater);
-        qDebug() << "MGO: start thread";
-        thread->start();
-        qDebug() << "MGO: start thread done";
+    int countRastering;
+    do {
+        countRastering = 0;
+        foreach(threadData *tData, threadDatas) {
+            if(tData->rastering) {
+                ++countRastering;
+            } else if(tData->image != nullptr) {
+                painter->drawPixmap(event->region().boundingRect().left(), tData->yStart / scaleFactor, QPixmap::fromImage(tData->image->scaled(event->region().boundingRect().width(), (tData->yEnd - tData->yStart) / scaleFactor, Qt::IgnoreAspectRatio, Qt::SmoothTransformation)));
+                delete tData->image;
+                tData->image = nullptr;
+            }
+        }
+    } while(countRastering > 0);
+
+    QSet<QString> *idsMissing = new QSet<QString>();
+    foreach(threadData *tData, threadDatas) {
+        idsMissing->unite(tData->idsMissing);
+        delete tData;
+    }
+
+    if(idsMissing->subtract(failedTiles).subtract(idsMissingKnown).count() > 0)
+    {
+      idsMissingKnown.unite(*idsMissing);
+      QThread* thread = new QThread();
+      MapDownloader *downloader = new MapDownloader();
+      downloader->equip(idsMissing, tileURL);
+      qDebug() << "MGO: move 2 thread";
+      downloader->moveToThread(thread);
+      qDebug() << "MGO: moved 2 thread";
+      connect(thread, &QThread::started, downloader, &MapDownloader::run);
+      connect(downloader, &MapDownloader::finished, this, &MapGraphic::updateWrapper);
+      connect(downloader, &MapDownloader::finished, downloader, &MapDownloader::deleteLater);
+      connect(downloader, &MapDownloader::finished, thread, &QThread::quit);
+      connect(thread, &QThread::finished, thread, &QThread::deleteLater);
+      qDebug() << "MGO: start thread";
+      thread->start();
+      qDebug() << "MGO: start thread done";
+    } else {
+      delete idsMissing;
     }
 }
 
 void MapGraphic::paintRectangle(QPaintEvent *event) {
-    if(doPaint) {
-
-    }
+    // TODO
 }
 
-void MapGraphic::updateWrapper(QHash<QString, QImage> *receivedTiles, QSet<QString> *localFailedTiles, QString url) {
+void MapGraphic::paintNothing(QPaintEvent *event) {
+    // nop
+}
+
+void MapGraphic::updateWrapper(QHash<QString, QImage> *receivedTiles, QSet<QString> *localFailedTiles, QSet<QString> *idsMissing, QString url) {
     if(tileURL == url) {
+        qDebug() << "MGO: extending currentTiles";
         currentTiles->insert(*receivedTiles);
-        failedTiles.unite(*localFailedTiles);
-        update();
         qDebug() << "MGO: to update.";
+        update();
+        qDebug() << "MGO: extending failedTiles";
+        failedTiles.unite(*localFailedTiles);
+        idsMissingKnown.subtract(*idsMissing);
     }
     delete receivedTiles;
     delete localFailedTiles;
+    delete idsMissing;
 }
 
 qreal MapGraphic::distance() const {
@@ -222,7 +233,6 @@ void MapGraphic::setMapThemeId( const QString& maptheme ) {
         }
     }
     if(found == 8) {
-        doPaint = true;
         this->tileWidth = tileWidth;
         this->tileHeight = tileHeight;
         this->zoomMax = zoomMax;
@@ -240,6 +250,11 @@ void MapGraphic::setMapThemeId( const QString& maptheme ) {
         }
         currentTiles = tilesDownloaded[tileURLForLookup];
         failedTiles.clear();
+        paintDisplayAsSelector = &paintDisplayAs;
+        if(paintDisplayAsToBe != nullptr) {
+          paintDisplayAs = paintDisplayAsToBe;
+          paintDisplayAsToBe = nullptr;
+        }
         return;
     }
     // TODO: warn about wrong theme configuration
@@ -331,9 +346,9 @@ void MapGraphic::setDistance( qreal distance ) {
 
 void MapGraphic::setProjection( Marble::Projection projection ) {
     if(projection == Marble::Projection::Mercator) {
-        paintDisplayAs = &MapGraphic::paintSphere;
+      *paintDisplayAsSelector = &MapGraphic::paintSphere;
     } else {
-        paintDisplayAs = &MapGraphic::paintRectangle;
+      *paintDisplayAsSelector = &MapGraphic::paintRectangle;
     }
 }
 

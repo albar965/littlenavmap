@@ -8,10 +8,9 @@ MapDownloader::~MapDownloader() {
     delete netManager;
 }
 
-void MapDownloader::equip(QSet<QString> *idsMissing, QSet<QString> *failedTiles, QString &tileURL)
+void MapDownloader::equip(QSet<QString> *idsMissing, QString &tileURL)
 {
     this->idsMissing = idsMissing;
-    this->failedTiles = failedTiles;
     this->tileURL = tileURL;
 
     receivedTiles = new QHash<QString, QImage>();
@@ -28,29 +27,26 @@ void MapDownloader::run() {
     foreach(QString missingId, *idsMissing) {
         QStringList parts = missingId.split("/");
         QUrl qUrl = QUrl(QString(tileURL).replace("{z}", parts[0]).replace("{x}", parts[1]).replace("{y}", parts[2]));
-        if(!failedTiles->contains(missingId)) {
-            request2id.insert(qUrl.toString(), missingId);
-            QNetworkReply *reply = netManager->get(QNetworkRequest(qUrl));
-            connect(reply, &QNetworkReply::finished,
-                    this, [=](){ this->netReplyReceived(reply); });
-            connect(reply, &QNetworkReply::errorOccurred,
-                    this, [=](QNetworkReply::NetworkError code){ this->netErrorOccurred(code, reply); });
-            connect(reply, &QNetworkReply::sslErrors,
-                    this, [=](const QList<QSslError> &errors){ this->netSSLErrorOccurred(errors, reply); });
-            qDebug() << "MGO: image requested " << qUrl.toString();
-        } else {
-            --countToRequest;
-        }
+        request2id.insert(qUrl.toString(), missingId);
+        QNetworkReply *reply = netManager->get(QNetworkRequest(qUrl));
+        connect(reply, &QNetworkReply::finished,
+                this, [=](){ this->netReplyReceived(reply); });
+        connect(reply, &QNetworkReply::errorOccurred,
+                this, [=](QNetworkReply::NetworkError code){ this->netErrorOccurred(code, reply); });
+        connect(reply, &QNetworkReply::sslErrors,
+                this, [=](const QList<QSslError> &errors){ this->netSSLErrorOccurred(errors, reply); });
+        qDebug() << "MGO: image requested " << qUrl.toString();
     }
 
-    delete idsMissing;
+    doneRequesting = true;
 
+    --countReceived;
     checkEnd();
 }
 
 void MapDownloader::checkEnd() {
-    if(++countReceived >= countToRequest) {
-        emit finished(receivedTiles, localFailedTiles, tileURL);
+    if(doneRequesting && ++countReceived >= countToRequest) {
+        emit finished(receivedTiles, localFailedTiles, idsMissing, tileURL);
     }
 }
 
