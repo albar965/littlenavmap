@@ -32,6 +32,8 @@
 #include "weather/weathercontext.h"
 #include "weather/weathercontexthandler.h"
 
+#include <QMutexLocker>
+
 namespace ageo = atools::geo;
 using atools::fs::util::MorseCode;
 using atools::sql::SqlRecord;
@@ -96,34 +98,45 @@ MorseCode* AbstractLnmActionsController::getMorseCode(){
     return morseCode;
 }
 
-map::MapAirport AbstractLnmActionsController::getAirportByIdent(QByteArray ident){
-    map::MapAirport airport;
-    getAirportQuery(AirportQueryType::SIM)->getAirportByIdent(airport,ident);
-    return airport;
+map::MapAirport AbstractLnmActionsController::getAirportByIdent(QByteArray ident)
+{
+  QMutexLocker locker(&airportQueryIdentMutex);
+  return getAirportQuery(AirportQueryType::SIM)->getAirportByIdent(ident);
 }
 map::WeatherContext AbstractLnmActionsController::getWeatherContext(map::MapAirport& airport){
     map::WeatherContext weatherContext;
     getMainWindow()->getWeatherContextHandler()->buildWeatherContextInfo(weatherContext, airport);
     return weatherContext;
 }
-const SqlRecord* AbstractLnmActionsController::getAirportInformation(int id){
-    return getInfoQuery()->getAirportInformation(id);
+const SqlRecord AbstractLnmActionsController::getAirportInformation(int id)
+{
+  QMutexLocker locker(&infoQueryMutex);
+  return *getInfoQuery()->getAirportInformation(id);
 }
-const AirportAdminNames AbstractLnmActionsController::getAirportAdminNames(map::MapAirport& airport){
-    QString city, state, country;
-    getAirportQuery(AirportQueryType::SIM)->getAirportAdminNamesById(airport.id, city, state, country);
-    return {city, state, country};
+const AirportAdminNames AbstractLnmActionsController::getAirportAdminNames(map::MapAirport& airport)
+{
+  QString city, state, country;
+
+  QMutexLocker locker(&airportQueryAdminMutex);
+  getAirportQuery(AirportQueryType::SIM)->getAirportAdminNamesById(airport.id, city, state, country);
+
+  return {city, state, country};
 }
-int AbstractLnmActionsController::getTransitionAltitude(map::MapAirport& airport){
-    // Get transition altitude from nav database
-    if(getMapQuery() != nullptr)
+int AbstractLnmActionsController::getTransitionAltitude(map::MapAirport& airport)
+{
+  // Get transition altitude from nav database
+  if(getMapQuery() != nullptr)
+  {
+    map::MapAirport navAirport = airport;
     {
-      map::MapAirport navAirport = airport;
+      QMutexLocker locker(&mapQueryNavReplaceMutex);
       getMapQuery()->getAirportNavReplace(navAirport);
-      if(navAirport.isValid() && navAirport.transitionAltitude > 0)
-        return navAirport.transitionAltitude;
     }
-    return -1;
+
+    if(navAirport.isValid() && navAirport.transitionAltitude > 0)
+      return navAirport.transitionAltitude;
+  }
+  return -1;
 }
 
 const QTime AbstractLnmActionsController::getSunset(const SqlRecord& airportInformation){

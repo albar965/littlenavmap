@@ -125,22 +125,28 @@ WebApiResponse MapActionsController::featuresAction(WebApiRequest request)
   imageAction(*imageRequest);
 
   // Extract results created during dummy image request
-  const QList<map::MapAirport> airports = *mapPaintWidget->getMapQuery()->getAirportsByRect(rect,
-                                                                                            mapPaintWidget->getMapPaintLayer()->getMapLayer(), false, map::NONE,
-                                                                                            overflow);
+  QList<map::MapAirport> airports;
+  QList<map::MapNdb> ndbs ;
+  QList<map::MapVor> vors;
+  QList<map::MapMarker> markers;
+  QList<map::MapWaypoint> waypoints;
 
-  const QList<map::MapNdb> ndbs = *mapPaintWidget->getMapQuery()->getNdbsByRect(rect,
-                                                                                mapPaintWidget->getMapPaintLayer()->getMapLayer(), false,
-                                                                                overflow);
-  const QList<map::MapVor> vors = *mapPaintWidget->getMapQuery()->getVorsByRect(rect,
-                                                                                mapPaintWidget->getMapPaintLayer()->getMapLayer(), false,
-                                                                                overflow);
-  const QList<map::MapMarker> markers = *mapPaintWidget->getMapQuery()->getMarkersByRect(rect,
-                                                                                         mapPaintWidget->getMapPaintLayer()->getMapLayer(), false,
-                                                                                         overflow);
-  const QList<map::MapWaypoint> waypoints = mapPaintWidget->getWaypointTrackQuery()->getWaypointsByRect(rect,
-                                                                                                        mapPaintWidget->getMapPaintLayer()->getMapLayer(), false,
-                                                                                                        overflow);
+  {
+    QMutexLocker locker(&mapQueryRectMutex);
+    airports = *mapPaintWidget->getMapQuery()->getAirportsByRect(rect, mapPaintWidget->getMapPaintLayer()->getMapLayer(),
+                                                                 false, map::NONE, overflow);
+
+    ndbs = *mapPaintWidget->getMapQuery()->getNdbsByRect(rect, mapPaintWidget->getMapPaintLayer()->getMapLayer(),
+                                                         false, overflow);
+
+    vors = *mapPaintWidget->getMapQuery()->getVorsByRect(rect, mapPaintWidget->getMapPaintLayer()->getMapLayer(),
+                                                         false, overflow);
+    markers = *mapPaintWidget->getMapQuery()->getMarkersByRect(rect, mapPaintWidget->getMapPaintLayer()->getMapLayer(),
+                                                               false, overflow);
+
+    waypoints = mapPaintWidget->getWaypointTrackQuery()->getWaypointsByRect(rect, mapPaintWidget->getMapPaintLayer()->getMapLayer(),
+                                                                            false, overflow);
+  }
 
   MapFeaturesData data = {
     airports,
@@ -168,11 +174,17 @@ WebApiResponse MapActionsController::featureAction(WebApiRequest request)
   switch(type_id)
   {
     case map::WAYPOINT:
-      result.waypoints.append(mapPaintWidget->getWaypointTrackQuery()->getWaypointById(object_id));
+      {
+        QMutexLocker locker(&waypointTrackQueryByIdMutex);
+        result.waypoints.append(mapPaintWidget->getWaypointTrackQuery()->getWaypointById(object_id));
+      }
       break;
 
     default:
-      mapPaintWidget->getMapQuery()->getMapObjectById(result, type_id, map::AIRSPACE_SRC_NONE, object_id, false);
+      {
+        QMutexLocker locker(&mapQueryByIdMutex);
+        mapPaintWidget->getMapQuery()->getMapObjectById(result, type_id, map::AIRSPACE_SRC_NONE, object_id, false);
+      }
       break;
   }
 

@@ -2437,17 +2437,14 @@ void RouteController::postDatabaseLoad()
 /* Double click into table view */
 void RouteController::doubleClick(const QModelIndex& index)
 {
-  qDebug() << Q_FUNC_INFO;
+  qDebug() << Q_FUNC_INFO << index;
   if(index.isValid())
-  {
-    qDebug() << "mouseDoubleClickEvent";
     showAtIndex(index.row(), true /* info */, true /* map */, true /* doubleClick */);
-  }
 }
 
 void RouteController::showAtIndex(int index, bool info, bool map, bool doubleClick)
 {
-  if(index >= 0 && index < map::INVALID_INDEX_VALUE)
+  if(index >= 0 && index < route.size())
   {
     const RouteLeg& routeLeg = route.value(index);
     if(routeLeg.isValid())

@@ -82,7 +82,7 @@ protected:
     MapPixmap getPixmapRect(int width, int height, atools::geo::Rect rect, int detailFactor = MapLayerSettings::MAP_DEFAULT_DETAIL_LEVEL, const QString& errorCase = tr("Invalid rectangle"));
 
     MapPaintWidget *mapPaintWidget = nullptr;
-    QMutex mapPaintWidgetMutex;
+    QMutex mapPaintWidgetMutex, mapQueryRectMutex, waypointTrackQueryByIdMutex, mapQueryByIdMutex;
 };
 
 #endif // MAPACTIONSCONTROLLER_H

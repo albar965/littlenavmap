@@ -20,6 +20,8 @@
 
 #include "webapi/abstractactionscontroller.h"
 
+#include <QMutex>
+
 namespace atools {
     namespace geo {
         class Pos;
@@ -83,7 +85,7 @@ protected:
     // Common LNM model interface
     map::MapAirport getAirportByIdent(QByteArray ident);
     map::WeatherContext getWeatherContext(map::MapAirport& airport);
-    const SqlRecord* getAirportInformation(int id);
+    const SqlRecord getAirportInformation(int id);
     const AirportAdminNames getAirportAdminNames(map::MapAirport& airport);
     int getTransitionAltitude(map::MapAirport& airport);
     const QTime getSunset(const SqlRecord& airportInformation);
@@ -97,6 +99,8 @@ private:
     MorseCode* morseCode;
     QTime calculateSunriseSunset(const Pos& pos, float zenith);
     Pos getPosFromAirportInformation(const SqlRecord& airportInformation);
+
+    QMutex airportQueryIdentMutex, airportQueryAdminMutex, mapQueryNavReplaceMutex, infoQueryMutex;
 };
 
 #endif // ABSTRACTLNMACTIONSCONTROLLER_H
