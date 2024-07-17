@@ -180,6 +180,8 @@ Source: "{#LnmAppProjects}\littlenavmap\build\win\Little Navmap User Manual Onli
 
 // Delete obsolete files before installation ==========================================================================
 [InstallDelete]
+Type: files; Name: "{app}\translations\atools_*.qm"
+Type: files; Name: "{app}\translations\littlenavmap_*.qm"
 Type: files; Name: "{app}\Little Navmap Portable.cmd"
 Type: files; Name: "{app}\Little Navmap\help\little-navmap-user-manual-en.pdf"
 Type: files; Name: "{autoprograms}\{#LnmAppName} {#AppSuffix}\Little Navmap*PDF*.lnk"
