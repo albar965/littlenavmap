@@ -11649,13 +11649,13 @@ relation to shown airport</string>
      <normaloff>:/littlenavmap/resources/icons/verticaltrack.svg</normaloff>:/littlenavmap/resources/icons/verticaltrack.svg</iconset>
    </property>
    <property name="text">
-    <string>Show &amp;Vertical Track</string>
+    <string>Show &amp;Vertical Aircraft Trail</string>
    </property>
    <property name="toolTip">
-    <string>Show vertical track line</string>
+    <string>Show vertical aircraft trail</string>
    </property>
    <property name="statusTip">
-    <string>Show vertical track line</string>
+    <string>Show vertical aircraft trail</string>
    </property>
   </action>
   <action name="actionSearchUserpointUndo">

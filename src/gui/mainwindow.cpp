@@ -3563,7 +3563,7 @@ void MainWindow::mainWindowShownDelayed()
   // Update the information display later delayed to avoid long loading times due to weather timeout
   QTimer::singleShot(50, infoController, &InfoController::restoreInformation);
 
-  QTimer::singleShot(1000, std::bind(&MainWindow::warnTrailPoints, this, 0, true /* doNotShowAgain */));
+  QTimer::singleShot(1000, this, std::bind(&MainWindow::warnTrailPoints, this, 0, true /* doNotShowAgain */));
 
 #ifdef DEBUG_INFORMATION
   qDebug() << "mapDistanceLabel->size()" << mapDistanceLabel->size();
