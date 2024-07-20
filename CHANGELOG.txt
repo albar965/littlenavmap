@@ -176,7 +176,7 @@ A big thank you to all who reported bugs and issues!
 * More checks to avoid crashes
 * 3.0.7.rc1 to 3.0.8: Translations updated. Thanks to Flavio, Patrick and Ricardo!
 * 3.0.7.rc1 to 3.0.8: Fixed issue where wind arrows did not show up on some systems.
-* 3.0.7.rc1 to 3.0.8: Removed Dutch, Chinese and Spanish translations translations since these have
+* 3.0.7.rc1 to 3.0.8: Removed Dutch, Chinese and Spanish translations since these have
   not been updated for a long time which can cause problems in the user user interface. The resulting
   issues can range from arrows pointing into the wrong direction to missing texts and numbers.
   You can still install the translations manually if you wish by downloading the related `*.qm` files

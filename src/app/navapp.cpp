@@ -861,12 +861,13 @@ void NavApp::getReportFiles(QStringList& crashReportFiles, QString& reportFilena
   crashReportFiles.append(settings.valueStr(lnm::AIRCRAFT_PERF_FILENAME));
   crashReportFiles.append(Settings::getConfigFilename(".lnmpln"));
   crashReportFiles.append(Settings::getConfigFilename(lnm::AIRCRAFT_TRACK_SUFFIX));
+  crashReportFiles.append(Settings::getConfigFilename(lnm::STACKTRACE_SUFFIX, lnm::CRASHREPORTS_DIR));
   crashReportFiles.append(Settings::getFilename());
 
   // Add all log files last to catch any error which appear while compressing
   crashReportFiles.append(atools::logging::LoggingHandler::getLogFiles(true /* includeBackups */));
 
-  reportFilename = Settings::getConfigFilename(issueReport ? "_issuereport.zip" : "_crashreport.zip", "crashreports");
+  reportFilename = Settings::getConfigFilename(issueReport ? lnm::ISSUEREPORT_SUFFIX : lnm::CRASHREPORT_SUFFIX, lnm::CRASHREPORTS_DIR);
 
   // Remove not existing files =================================
   for(QString& filename : crashReportFiles)

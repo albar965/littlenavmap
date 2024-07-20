@@ -76,7 +76,7 @@
 # =============================================================================
 
 # Define program version here VERSION_NUMBER_TODO
-VERSION_NUMBER=3.0.8
+VERSION_NUMBER=3.0.9.rc1
 
 QT += core gui sql xml network svg printsupport
 
@@ -138,6 +138,10 @@ isEmpty(MARBLE_LIB_PATH) : MARBLE_LIB_PATH=$$PWD/../Marble-$$CONF_TYPE/lib
 
 QMAKE_CXXFLAGS += -Wall -Wextra -Wpedantic -Wno-pragmas -Wno-unknown-warning -Wno-unknown-warning-option
 
+# No crash handler on Linux and macOS
+unix : ATOOLS_DISABLE_CRASHHANDLER = true
+isEqual(ATOOLS_NO_CRASHHANDLER, "true") : ATOOLS_DISABLE_CRASHHANDLER = true
+
 unix:!macx {
   isEmpty(GIT_PATH) : GIT_PATH=git
 
@@ -163,14 +167,15 @@ win32 {
       LIBS += $$SIMCONNECT_PATH_WIN32"\lib\SimConnect.lib"
       OPENSSL_PATH_WIN=$$(OPENSSL_PATH_WIN32)
     }
+    ATOOLS_DISABLE_CRASHHANDLER = true
   } else {
   # MSFS
-  WINARCH = win64
-  !isEmpty(SIMCONNECT_PATH_WIN64) {
-    DEFINES += SIMCONNECT_BUILD_WIN64 WINARCH64
-    INCLUDEPATH += $$SIMCONNECT_PATH_WIN64"\include"
-    LIBS += $$SIMCONNECT_PATH_WIN64"\lib\SimConnect.lib"
-    OPENSSL_PATH_WIN=$$(OPENSSL_PATH_WIN64)
+    WINARCH = win64
+    !isEmpty(SIMCONNECT_PATH_WIN64) {
+      DEFINES += SIMCONNECT_BUILD_WIN64 WINARCH64
+      INCLUDEPATH += $$SIMCONNECT_PATH_WIN64"\include"
+      LIBS += $$SIMCONNECT_PATH_WIN64"\lib\SimConnect.lib"
+      OPENSSL_PATH_WIN=$$(OPENSSL_PATH_WIN64)
   }
 }
 
@@ -191,6 +196,16 @@ macx {
   CONFIG(debug, debug|release) : MACDEPLOY_FLAGS += -no-strip
 
   LIBS += -L$$MARBLE_LIB_PATH -lmarblewidget-qt5 -L$$ATOOLS_LIB_PATH -latools  -lz
+}
+
+# Cpptrace ==========================
+!isEqual(ATOOLS_DISABLE_CRASHHANDLER, "true") {
+  DEFINES += CPPTRACE_STATIC_DEFINE
+  win32 : LIBS += -L$$PWD/../cpptrace-$$CONF_TYPE-$$WINARCH/lib -lcpptrace -ldbghelp -ldwarf -lz -lzstd
+  unix:!macx : LIBS += -L$$PWD/../cpptrace-$$CONF_TYPE/lib -lcpptrace -ldwarf -lz -lzstd
+  CONFIG += force_debug_info
+} else {
+  DEFINES += DISABLE_CRASHHANDLER
 }
 
 isEmpty(GIT_PATH) {
@@ -851,7 +866,8 @@ unix:!macx {
   deploy.commands += cp -vfa $$[QT_INSTALL_LIBS]/libQt5X11Extras.so*  $$DEPLOY_DIR_LIB &&
   deploy.commands += cp -vfa $$[QT_INSTALL_LIBS]/libQt5XcbQpa.so*  $$DEPLOY_DIR_LIB &&
   deploy.commands += cp -vfa $$[QT_INSTALL_LIBS]/libQt5QmlModels.so*  $$DEPLOY_DIR_LIB &&
-  deploy.commands += cp -vfa $$[QT_INSTALL_LIBS]/libQt5Xml.so* $$DEPLOY_DIR_LIB
+  deploy.commands += cp -vfa $$[QT_INSTALL_LIBS]/libQt5Xml.so* $$DEPLOY_DIR_LIB &&
+  deploy.commands += rm -fv $$DEPLOY_DIR_LIB/lib*.so.*.debug $$DEPLOY_DIR_LIB/*/lib*.so.*.debug
 }
 
 # Mac specific deploy target

@@ -61,6 +61,7 @@ export ATOOLS_NO_WEATHER=true
 export ATOOLS_NO_WEB=true
 export ATOOLS_NO_WMM=true
 export ATOOLS_NO_NAVSERVER=true
+export ATOOLS_NO_CRASHHANDLER=true
 
 ${QMAKE_SHARED_ARM} ${APROJECTS}/atools/atools.pro -spec macx-clang CONFIG+=x86_64 CONFIG+=${CONF_TYPE}  'QMAKE_APPLE_DEVICE_ARCHS=x86_64 arm64'
 make -j4
@@ -89,6 +90,7 @@ unset ATOOLS_NO_WEATHER
 unset ATOOLS_NO_WEB
 unset ATOOLS_NO_WMM
 unset ATOOLS_NO_NAVSERVER
+unset ATOOLS_NO_CRASHHANDLER
 
 # ===========================================================================
 # ========================== atools - x86 and Qt 5.15

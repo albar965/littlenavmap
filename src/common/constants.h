@@ -485,6 +485,12 @@ const QLatin1String PROFILE_TRACK_SUFFIX("_profile.track");
 const QLatin1String LOGBOOK_TRACK_SUFFIX(".logbooktrack");
 const QLatin1String DARKSTYLE_INI_SUFFIX("_nightstyle.ini");
 
+/* Crash/issue report paths and file suffixes */
+const QLatin1String STACKTRACE_SUFFIX("_stacktrace.txt");
+const QLatin1String CRASHREPORTS_DIR("crashreports");
+const QLatin1String CRASHREPORT_SUFFIX("_crashreport.zip");
+const QLatin1String ISSUEREPORT_SUFFIX("_issuereport.zip");
+
 const QLatin1String MAPSTYLE_INI_SUFFIX("_mapstyle.ini");
 const QLatin1String MAPSTYLE_CONFIG(":/littlenavmap/resources/config/little_navmap_mapstyle.ini");
 

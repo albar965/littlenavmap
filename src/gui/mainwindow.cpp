@@ -494,6 +494,15 @@ MainWindow::MainWindow()
   QAction *debugAction8 = new QAction("DEBUG - Reset update timestamp to -2 days", ui->menuHelp);
   this->addAction(debugAction8);
 
+  QAction *debugAction9 = new QAction("DEBUG - throw exception", ui->menuHelp);
+  this->addAction(debugAction9);
+
+  QAction *debugAction10 = new QAction("DEBUG - crash with a segment violation", ui->menuHelp);
+  this->addAction(debugAction10);
+
+  QAction *debugAction11 = new QAction("DEBUG - crash with an assert", ui->menuHelp);
+  this->addAction(debugAction11);
+
   ui->menuHelp->addSeparator();
   ui->menuHelp->addSeparator();
   ui->menuHelp->addAction(debugAction1);
@@ -505,6 +514,11 @@ MainWindow::MainWindow()
   ui->menuHelp->addAction(debugAction7);
   ui->menuHelp->addAction(debugAction8);
 
+  ui->menuHelp->addSeparator();
+  ui->menuHelp->addAction(debugAction9);
+  ui->menuHelp->addAction(debugAction10);
+  ui->menuHelp->addAction(debugAction11);
+
   connect(debugAction1, &QAction::triggered, this, &MainWindow::debugActionTriggered1);
   connect(debugAction2, &QAction::triggered, this, &MainWindow::debugActionTriggered2);
   connect(debugAction3, &QAction::triggered, this, &MainWindow::debugActionTriggered3);
@@ -513,6 +527,9 @@ MainWindow::MainWindow()
   connect(debugAction6, &QAction::triggered, this, &MainWindow::debugActionTriggered6);
   connect(debugAction7, &QAction::triggered, this, &MainWindow::debugActionTriggered7);
   connect(debugAction8, &QAction::triggered, this, &MainWindow::debugActionTriggered8);
+  connect(debugAction9, &QAction::triggered, this, &MainWindow::debugActionTriggered9);
+  connect(debugAction10, &QAction::triggered, this, &MainWindow::debugActionTriggered10);
+  connect(debugAction11, &QAction::triggered, this, &MainWindow::debugActionTriggered11);
 
 #endif
 
@@ -637,6 +654,23 @@ void MainWindow::debugActionTriggered7()
 void MainWindow::debugActionTriggered8()
 {
   Settings::instance().setValueVar(lnm::OPTIONS_UPDATE_LAST_CHECKED, QDateTime::currentDateTime().toSecsSinceEpoch() - 3600L * 48L);
+}
+
+void MainWindow::debugActionTriggered9()
+{
+  throw std::exception();
+}
+
+void MainWindow::debugActionTriggered10()
+{
+  char*ptr = nullptr;
+  *ptr = '\0';
+}
+
+void MainWindow::debugActionTriggered11()
+{
+  QVector<int> vector;
+  vector.constFirst();
 }
 
 #endif
@@ -3576,15 +3610,6 @@ void MainWindow::mainWindowShownDelayed()
   qDebug() << "timeLabel->size()" << timeLabel->size();
 #endif
   qDebug() << Q_FUNC_INFO << "leave";
-
-  // Simulate various crashes in the event loop
-  // throw std::exception();
-
-  // char*ptr=nullptr;
-  // *ptr='\0';
-
-  // QVector<int> vector;
-  // vector.constFirst();
 }
 
 void MainWindow::runDirToolManual()

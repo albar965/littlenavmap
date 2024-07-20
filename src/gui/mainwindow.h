@@ -538,6 +538,9 @@ private:
   void debugActionTriggered6();
   void debugActionTriggered7();
   void debugActionTriggered8();
+  void debugActionTriggered9();
+  void debugActionTriggered10();
+  void debugActionTriggered11();
 
 #endif
 

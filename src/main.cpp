@@ -44,6 +44,7 @@
 #include "settings/settings.h"
 #include "userdata/userdataicons.h"
 #include "util/properties.h"
+#include "util/crashhandler.h"
 
 #include <QDebug>
 #include <QSplashScreen>
@@ -233,6 +234,13 @@ int main(int argc, char *argv[])
       {
         QDir().mkpath(commandLine.getLogPath());
         LoggingHandler::initialize(logCfg, commandLine.getLogPath());
+      }
+
+      // Initialize crashhandler - disable on Linux to get core files
+      if(settings.valueBool("Options/PrintStackTrace", true))
+      {
+        atools::util::crashhandler::init();
+        atools::util::crashhandler::setStackTraceLog(Settings::getConfigFilename(lnm::STACKTRACE_SUFFIX, lnm::CRASHREPORTS_DIR));
       }
 
       // ==============================================
@@ -458,15 +466,23 @@ int main(int argc, char *argv[])
   catch(atools::Exception& e)
   {
     NavApp::deInitDataExchange();
+    ATOOLS_PRINT_STACK_CRITICAL("Caught exception in main");
     ATOOLS_HANDLE_EXCEPTION(e);
     // Does not return in case of fatal error
   }
   catch(...)
   {
     NavApp::deInitDataExchange();
+    ATOOLS_PRINT_STACK_CRITICAL("Caught exception in main");
     ATOOLS_HANDLE_UNKNOWN_EXCEPTION;
     // Does not return in case of fatal error
   }
+
+  QString stacktrace = Settings::getConfigFilename(lnm::STACKTRACE_SUFFIX, lnm::CRASHREPORTS_DIR);
+  if(QFile::remove(stacktrace))
+    qInfo() << Q_FUNC_INFO << "Success removing stacktrace file" << stacktrace;
+  else
+    qInfo() << Q_FUNC_INFO << "Stacktrace file not removed" << stacktrace;
 
   NavApp::deInitDataExchange();
 
