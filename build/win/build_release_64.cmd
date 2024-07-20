@@ -30,6 +30,7 @@ rem See links below for OpenSSL binaries
 rem https://wiki.openssl.org/index.php/Binaries and https://bintray.com/vszakats/generic/openssl
 
 set WINARCH=win64
+set ATOOLS_NO_CRASHHANDLER=true
 
 if defined CONF_TYPE ( echo CONF_TYPE=%CONF_TYPE% ) else ( set CONF_TYPE=release)
 if defined ATOOLS_INC_PATH ( echo ATOOLS_INC_PATH=%ATOOLS_INC_PATH% ) else ( set ATOOLS_INC_PATH=%APROJECTS%\atools\src)
