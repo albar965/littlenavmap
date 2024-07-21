@@ -94,6 +94,8 @@ TARGET_NAME=Little Navmap
 # Copy environment variables into qmake variables
 ATOOLS_INC_PATH=$$(ATOOLS_INC_PATH)
 ATOOLS_LIB_PATH=$$(ATOOLS_LIB_PATH)
+ATOOLS_NO_CRASHHANDLER=$$(ATOOLS_NO_CRASHHANDLER)
+
 MARBLE_INC_PATH=$$(MARBLE_INC_PATH)
 MARBLE_LIB_PATH=$$(MARBLE_LIB_PATH)
 INSTALL_MARBLE_DYLIB=$$(INSTALL_MARBLE_DYLIB)
@@ -139,8 +141,7 @@ isEmpty(MARBLE_LIB_PATH) : MARBLE_LIB_PATH=$$PWD/../Marble-$$CONF_TYPE/lib
 QMAKE_CXXFLAGS += -Wall -Wextra -Wpedantic -Wno-pragmas -Wno-unknown-warning -Wno-unknown-warning-option
 
 # No crash handler on Linux and macOS
-unix : ATOOLS_DISABLE_CRASHHANDLER = true
-isEqual(ATOOLS_NO_CRASHHANDLER, "true") : ATOOLS_DISABLE_CRASHHANDLER = true
+unix : ATOOLS_NO_CRASHHANDLER = true
 
 unix:!macx {
   isEmpty(GIT_PATH) : GIT_PATH=git
@@ -167,7 +168,7 @@ win32 {
       LIBS += $$SIMCONNECT_PATH_WIN32"\lib\SimConnect.lib"
       OPENSSL_PATH_WIN=$$(OPENSSL_PATH_WIN32)
     }
-    ATOOLS_DISABLE_CRASHHANDLER = true
+    ATOOLS_NO_CRASHHANDLER = true
   } else {
   # MSFS
     WINARCH = win64
@@ -199,7 +200,7 @@ macx {
 }
 
 # Cpptrace ==========================
-!isEqual(ATOOLS_DISABLE_CRASHHANDLER, "true") {
+!isEqual(ATOOLS_NO_CRASHHANDLER, "true") {
   DEFINES += CPPTRACE_STATIC_DEFINE
   win32 : LIBS += -L$$PWD/../cpptrace-$$CONF_TYPE-$$WINARCH/lib -lcpptrace -ldbghelp -ldwarf -lz -lzstd
   unix:!macx : LIBS += -L$$PWD/../cpptrace-$$CONF_TYPE/lib -lcpptrace -ldwarf -lz -lzstd
