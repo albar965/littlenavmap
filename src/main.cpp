@@ -236,13 +236,6 @@ int main(int argc, char *argv[])
         LoggingHandler::initialize(logCfg, commandLine.getLogPath());
       }
 
-      // Initialize crashhandler - disable on Linux to get core files
-      if(settings.valueBool("Options/PrintStackTrace", true))
-      {
-        atools::util::crashhandler::init();
-        atools::util::crashhandler::setStackTraceLog(Settings::getConfigFilename(lnm::STACKTRACE_SUFFIX, lnm::CRASHREPORTS_DIR));
-      }
-
       // ==============================================
       // Print some information which can be useful for debugging
       Settings::logMessages();
@@ -250,6 +243,13 @@ int main(int argc, char *argv[])
 
       for(const QString& message : logMessages)
         qInfo() << message;
+
+      // Initialize crashhandler - disable on Linux to get core files
+      if(settings.valueBool("Options/PrintStackTrace", true))
+      {
+        atools::util::crashhandler::init();
+        atools::util::crashhandler::setStackTraceLog(Settings::getConfigFilename(lnm::STACKTRACE_SUFFIX, lnm::CRASHREPORTS_DIR));
+      }
 
       // ==============================================
       // Set language from command line into options - will be saved

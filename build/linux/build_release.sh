@@ -31,6 +31,7 @@ export MARBLE_LIB_PATH=${MARBLE_LIB_PATH:-"${APROJECTS}/Marble-${CONF_TYPE}/lib"
 export XPSDK_BASE=${XPSDK_BASE:-"${APROJECTS}/X-Plane SDK"}
 export DATABASE_BASE=${DATABASE_BASE:-"${APROJECTS}/little_navmap_db"}
 export HELP_BASE=${HELP_BASE:-"${APROJECTS}/little_navmap_help"}
+export ATOOLS_NO_CRASHHANDLER=${ATOOLS_NO_CRASHHANDLER:-"true"}
 
 # Defines the used Qt for all builds
 export QMAKE_SHARED=${QMAKE_SHARED:-"${HOME}/Qt/5.15.2/gcc_64/bin/qmake"}
@@ -51,6 +52,7 @@ if [[ ! -f "${QMAKE_SHARED}" ]]; then echo "Shared qmake not found" >&2; exit 1;
 if [[ ! -f "${QMAKE_STATIC}" ]]; then echo "Static qmake not found" >&2; exit 1; fi
 
 if [[ ! -d "${XPSDK_BASE}" ]]; then echo "XPlane SDK not found. Visit https://developer.x-plane.com/sdk/ for download" >&2; exit 1; fi
+
 
 # ===========================================================================
 # ========================== littlenavmap and littlenavconnect - shared Qt

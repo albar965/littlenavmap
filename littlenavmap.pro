@@ -140,9 +140,6 @@ isEmpty(MARBLE_LIB_PATH) : MARBLE_LIB_PATH=$$PWD/../Marble-$$CONF_TYPE/lib
 
 QMAKE_CXXFLAGS += -Wall -Wextra -Wpedantic -Wno-pragmas -Wno-unknown-warning -Wno-unknown-warning-option
 
-# No crash handler on Linux and macOS
-unix : ATOOLS_NO_CRASHHANDLER = true
-
 unix:!macx {
   isEmpty(GIT_PATH) : GIT_PATH=git
 
@@ -168,7 +165,6 @@ win32 {
       LIBS += $$SIMCONNECT_PATH_WIN32"\lib\SimConnect.lib"
       OPENSSL_PATH_WIN=$$(OPENSSL_PATH_WIN32)
     }
-    ATOOLS_NO_CRASHHANDLER = true
   } else {
   # MSFS
     WINARCH = win64
@@ -256,6 +252,7 @@ message(ATOOLS_LIB_PATH: $$ATOOLS_LIB_PATH)
 message(MARBLE_INC_PATH: $$MARBLE_INC_PATH)
 message(SIMCONNECT_PATH_WIN32: $$SIMCONNECT_PATH_WIN32)
 message(SIMCONNECT_PATH_WIN64: $$SIMCONNECT_PATH_WIN64)
+message(ATOOLS_NO_CRASHHANDLER: $$ATOOLS_NO_CRASHHANDLER)
 message(DEPLOY_BASE: $$DEPLOY_BASE)
 message(DEFINES: $$DEFINES)
 message(INCLUDEPATH: $$INCLUDEPATH)
