@@ -537,7 +537,7 @@ void InfoController::restoreState()
 
 void InfoController::restoreInformation()
 {
-  if(OptionData::instance().getFlags() & opts::STARTUP_LOAD_INFO && !NavApp::isSafeMode())
+  if(OptionData::instance().getFlags().testFlag(opts::STARTUP_LOAD_INFO) && !atools::gui::Application::isSafeMode())
   {
     // Go through the string and collect all objects in the MapSearchResult
     map::MapResult res;

@@ -2758,7 +2758,7 @@ void ProfileWidget::restoreState()
   profileOptions->restoreState();
   scrollArea->restoreState();
 
-  if(OptionData::instance().getFlags() & opts::STARTUP_LOAD_TRAIL && !NavApp::isSafeMode())
+  if(OptionData::instance().getFlags().testFlag(opts::STARTUP_LOAD_TRAIL) && !atools::gui::Application::isSafeMode())
     loadAircraftTrail();
 }
 

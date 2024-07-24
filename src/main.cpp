@@ -456,7 +456,7 @@ int main(int argc, char *argv[])
         retval = QApplication::exec();
       }
       else
-        NavApp::recordExit();
+        atools::gui::Application::recordExit();
     } // if(!NavApp::initSharedMemory())
     else
       retval = 0;
@@ -478,12 +478,7 @@ int main(int argc, char *argv[])
     // Does not return in case of fatal error
   }
 
-  QString stacktrace = Settings::getConfigFilename(lnm::STACKTRACE_SUFFIX, lnm::CRASHREPORTS_DIR);
-  if(QFile::remove(stacktrace))
-    qInfo() << Q_FUNC_INFO << "Success removing stacktrace file" << stacktrace;
-  else
-    qInfo() << Q_FUNC_INFO << "Stacktrace file not removed" << stacktrace;
-
+  atools::util::crashhandler::clearStackTrace(Settings::getConfigFilename(lnm::STACKTRACE_SUFFIX, lnm::CRASHREPORTS_DIR));
   NavApp::deInitDataExchange();
 
   delete dbManager;

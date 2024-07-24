@@ -276,7 +276,6 @@ SOURCES += \
   src/airspace/airspacecontroller.cpp \
   src/airspace/airspacetoolbarhandler.cpp \
   src/app/commandline.cpp \
-  src/app/dataexchange.cpp \
   src/app/navapp.cpp \
   src/common/abstractinfobuilder.cpp \
   src/common/aircrafttrail.cpp \
@@ -478,7 +477,6 @@ HEADERS  += \
   src/airspace/airspacecontroller.h \
   src/airspace/airspacetoolbarhandler.h \
   src/app/commandline.h \
-  src/app/dataexchange.h \
   src/app/navapp.h \
   src/common/abstractinfobuilder.h \
   src/common/aircrafttrail.h \

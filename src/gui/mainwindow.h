@@ -57,6 +57,10 @@ class ElevationModel;
 }
 
 namespace atools {
+
+namespace util {
+class Properties;
+}
 namespace fs {
 namespace pln {
 class Flightplan;
@@ -247,7 +251,8 @@ public:
   void routeFromStringSimBrief(const QString& routeString);
 
   /* Called from SimBrief handler or non-modal route string dialog to create new plan */
-  void routeFromFlightplan(const atools::fs::pln::Flightplan& flightplan, bool adjustAltitude, bool changed, bool undo, bool correctProfile);
+  void routeFromFlightplan(const atools::fs::pln::Flightplan& flightplan, bool adjustAltitude, bool changed, bool undo,
+                           bool correctProfile);
 
   MapThemeHandler *getMapThemeHandler() const
   {
@@ -528,6 +533,9 @@ private:
 
   /* Reduce status bar size if no mouse movement */
   void shrinkStatusBar();
+
+  /* Called by DataExchangeFetcher::dataExchangeDataFetched(). Takes command line options from another instance. */
+  void dataExchangeDataFetched(atools::util::Properties properties);
 
 #ifdef DEBUG_INFORMATION
   void debugActionTriggered1();

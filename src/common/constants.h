@@ -18,6 +18,8 @@
 #ifndef LITTLENAVMAP_CONSTANTS_H
 #define LITTLENAVMAP_CONSTANTS_H
 
+#include "gui/dataexchange.h"
+
 #include <QLatin1String>
 #include <QSize>
 
@@ -475,8 +477,8 @@ const QLatin1String STARTUP_QUIT("quit"); /* Exit application */
 
 /* Not used as long options */
 const QLatin1String STARTUP_OTHER_ARGUMENTS("others"); /* Positional arguments not found after option - string list */
-const QLatin1String STARTUP_COMMAND_ACTIVATE("activate"); /* Bring window to front */
-const QLatin1String STARTUP_COMMAND_QUIT("quit"); /* Exit application */
+const QLatin1String STARTUP_COMMAND_ACTIVATE(atools::gui::DataExchange::STARTUP_COMMAND_ACTIVATE); /* Bring window to front */
+const QLatin1String STARTUP_COMMAND_QUIT(atools::gui::DataExchange::STARTUP_COMMAND_QUIT); /* Exit application */
 
 /* Suffixes for common configuration files.
  * Used for atools::settings::Settings::getConfigFilename() */

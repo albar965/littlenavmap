@@ -18,7 +18,6 @@
 #include "gui/mainwindow.h"
 
 #include "airspace/airspacecontroller.h"
-#include "app/dataexchange.h"
 #include "app/navapp.h"
 #include "atools.h"
 #include "common/constants.h"
@@ -37,6 +36,7 @@
 #include "exception.h"
 #include "fs/gpx/gpxio.h"
 #include "fs/perf/aircraftperf.h"
+#include "gui/dataexchange.h"
 #include "gui/desktopservices.h"
 #include "gui/dialog.h"
 #include "gui/dockwidgethandler.h"
@@ -289,15 +289,7 @@ MainWindow::MainWindow()
     NavApp::init(this);
 
     // Initialize and connect the data exchange which sends properties from other started instances
-    const DataExchange *dataExchange = NavApp::getDataExchangeConst();
-    connect(dataExchange, &DataExchange::activateMain, this, &MainWindow::activateWindow);
-    connect(dataExchange, &DataExchange::activateMain, this, &MainWindow::raise);
-    connect(dataExchange, &DataExchange::quit, this, &MainWindow::close);
-    connect(dataExchange, &DataExchange::loadRoute,
-            this, std::bind(&MainWindow::routeOpenFile, this, std::placeholders::_1 /* filepath */, true /* correctAndWarn */));
-    connect(dataExchange, &DataExchange::loadRouteDescr, this, &MainWindow::routeOpenDescr);
-    connect(dataExchange, &DataExchange::loadLayout, this, &MainWindow::loadLayoutDelayed);
-    connect(dataExchange, &DataExchange::loadPerf, NavApp::getAircraftPerfController(), &AircraftPerfController::loadFile);
+    connect(NavApp::getDataExchangeConst(), &atools::gui::DataExchange::dataFetched, this, &MainWindow::dataExchangeDataFetched);
 
     NavApp::getStyleHandler()->insertMenuItems(ui->menuWindowStyle);
     NavApp::getStyleHandler()->restoreState();
@@ -605,6 +597,48 @@ MainWindow::~MainWindow()
 #endif
 
   atools::logging::LoggingGuiAbortHandler::resetGuiAbortFunction();
+}
+
+void MainWindow::dataExchangeDataFetched(atools::util::Properties properties)
+{
+  // Check for message from other instance
+  if(!properties.isEmpty())
+  {
+    // Found message
+    qDebug() << Q_FUNC_INFO << properties;
+
+    // Extract filenames from known options ================================
+    QString flightplan, flightplanDescr, perf, layout;
+    fc::fromStartupProperties(properties, &flightplan, &flightplanDescr, &perf, &layout);
+
+    // Quit without activate =====================================================
+    if(properties.contains(lnm::STARTUP_COMMAND_QUIT))
+      close();
+    else
+    {
+      // Load files if found and exist ===========================================
+      if(!flightplan.isEmpty() && atools::checkFile(Q_FUNC_INFO, flightplan, true /* warn */))
+        routeOpenFile(flightplan, true /* correctAndWarn */);
+
+      if(!flightplanDescr.isEmpty())
+        routeOpenDescr(flightplanDescr);
+
+      if(!layout.isEmpty() && atools::checkFile(Q_FUNC_INFO, layout, true /* warn */))
+        loadLayoutDelayed(layout);
+
+      if(!perf.isEmpty() && atools::checkFile(Q_FUNC_INFO, perf, true /* warn */))
+        NavApp::getAircraftPerfController()->loadFile(perf);
+
+      // Activate window - always sent by other instance =====================================================
+      if(properties.getPropertyBool(lnm::STARTUP_COMMAND_ACTIVATE))
+      {
+        activateWindow();
+        raise();
+      }
+    }
+  }
+  else
+    qDebug() << Q_FUNC_INFO << "properties empty";
 }
 
 #ifdef DEBUG_INFORMATION
@@ -3451,7 +3485,8 @@ void MainWindow::mainWindowShownDelayed()
 {
   qDebug() << Q_FUNC_INFO << "enter";
 
-  if(OptionData::instance().getFlags().testFlag(opts::STARTUP_LOAD_LAYOUT) && !layoutFileHistory->isEmpty() && !NavApp::isSafeMode())
+  if(OptionData::instance().getFlags().testFlag(opts::STARTUP_LOAD_LAYOUT) && !layoutFileHistory->isEmpty() &&
+     !atools::gui::Application::isSafeMode())
     loadLayoutDelayed(layoutFileHistory->getTopFile());
   // else layout was already loaded from settings earlier
 
@@ -4007,7 +4042,7 @@ void MainWindow::restoreStateMain()
 
   applyToolBarSize();
 
-  if(!NavApp::isSafeMode() && settings.contains(lnm::MAINWINDOW_WIDGET_DOCKHANDLER))
+  if(!atools::gui::Application::isSafeMode() && settings.contains(lnm::MAINWINDOW_WIDGET_DOCKHANDLER))
   {
     dockHandler->restoreState(settings.valueVar(lnm::MAINWINDOW_WIDGET_DOCKHANDLER).toByteArray());
 

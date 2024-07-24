@@ -64,17 +64,15 @@ class MapDetailHandler;
 class TrackManager;
 class MapThemeHandler;
 class QAction;
-class DataExchange;
 class WeatherContextHandler;
 
 namespace map {
 struct MapAirport;
 }
 namespace atools {
-namespace util {
-class Properties;
-}
 namespace gui {
+
+class DataExchange;
 class TabWidgetHandler;
 }
 
@@ -425,14 +423,6 @@ public:
   static void showLogbookSearch();
   static void showUserpointSearch();
 
-  /* Command line options */
-  static const atools::util::Properties& getStartupOptionsConst();
-  static QString getStartupOptionStr(const QString& key);
-  static QStringList getStartupOptionStrList(const QString& key);
-  static void addStartupOptionStr(const QString& key, const QString& value);
-  static void addStartupOptionStrList(const QString& key, const QStringList& value);
-  static void clearStartupOptions(); /* Clear for safe mode */
-
   /* Creates a lock file and shows a warning dialog if this is already present from a former crash.
    * Sets safe mode if user chooses to skip file loading.
    * Always creates a crash report in case of previous unsafe exit. */
@@ -446,8 +436,8 @@ public:
 
   static void setToolTipsEnabledMainMenu(bool enabled);
 
-  static const DataExchange *getDataExchangeConst();
-  static DataExchange *getDataExchange();
+  static const atools::gui::DataExchange *getDataExchangeConst();
+  static atools::gui::DataExchange *getDataExchange();
   static bool initDataExchange();
   static void deInitDataExchange();
 
@@ -490,9 +480,8 @@ private:
   static StyleHandler *styleHandler;
 
   static WebController *webController;
-  static atools::util::Properties *startupOptions;
 
-  static DataExchange *dataExchange;
+  static atools::gui::DataExchange *dataExchange;
 
   static bool loadingDatabase;
   static bool closeCalled;

@@ -408,7 +408,7 @@ void AirportSearch::saveState()
 void AirportSearch::restoreState()
 {
   atools::gui::WidgetState widgetState(lnm::SEARCHTAB_AIRPORT_WIDGET);
-  if(OptionData::instance().getFlags() & opts::STARTUP_LOAD_SEARCH && !NavApp::isSafeMode())
+  if(OptionData::instance().getFlags().testFlag(opts::STARTUP_LOAD_SEARCH) && !atools::gui::Application::isSafeMode())
   {
     widgetState.restore(airportSearchWidgets);
 
@@ -728,12 +728,15 @@ void AirportSearch::randomFlightClicked(bool showDialog)
     // Method called by user click and not "Search again" - show selection dialog
     enum {RANDOM_ALL, RANDOM_FIXED_DEPARTURE, RANDOM_FIXED_DESTINATION, RANDOM_BUTTON_GROUP};
 
-    QString label = tr("Let create a new flight plan for a single flight from an airport chosen at random from the airport search result table to an airport chosen at random from the airport search result table.\n"
-                       "Modify the selection criteria to your liking by setting the controls in the airport search result panel to values you like, for example runway length minimum to 1,000 ft.");
+    QString label =
+      tr(
+        "Let create a new flight plan for a single flight from an airport chosen at random from the airport search result table to an airport chosen at random from the airport search result table.\n"
+        "Modify the selection criteria to your liking by setting the controls in the airport search result panel to values you like, for example runway length minimum to 1,000 ft.");
 
     // Adjust label if plan is empty or not valid
     if(!departureAirport.isValid() && !destinationAirport.isValid())
-      label += tr( "\n\nAdd a departure or destination airport to your current flight plan if you wish to have that fixed instead of random.");
+      label +=
+        tr("\n\nAdd a departure or destination airport to your current flight plan if you wish to have that fixed instead of random.");
 
     // Build selection dialog ===========================================================
     atools::gui::ChoiceDialog choiceDialog(mainWindow, QCoreApplication::applicationName() % tr(" - Random Flight"), label,

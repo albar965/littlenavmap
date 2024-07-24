@@ -36,7 +36,6 @@
 #include "gui/stylehandler.h"
 #include "mapgui/mapthemehandler.h"
 #include "route/routealtitude.h"
-#include "util/properties.h"
 #include "logbook/logdatacontroller.h"
 #include "logging/logginghandler.h"
 #include "mapgui/mapmarkhandler.h"
@@ -59,8 +58,8 @@
 #include "weather/weatherreporter.h"
 #include "web/webcontroller.h"
 #include "web/webmapcontroller.h"
-#include "app/dataexchange.h"
 #include "settings/settings.h"
+#include "gui/dataexchange.h"
 
 #include "ui_mainwindow.h"
 
@@ -97,8 +96,7 @@ StyleHandler *NavApp::styleHandler = nullptr;
 
 WebController *NavApp::webController = nullptr;
 
-atools::util::Properties *NavApp::startupOptions = nullptr;
-DataExchange *NavApp::dataExchange = nullptr;
+atools::gui::DataExchange *NavApp::dataExchange = nullptr;
 
 bool NavApp::closeCalled = false;
 bool NavApp::loadingDatabase = false;
@@ -109,14 +107,12 @@ using atools::settings::Settings;
 NavApp::NavApp(int& argc, char **argv, int flags)
   : atools::gui::Application(argc, argv, flags)
 {
-  startupOptions = new atools::util::Properties;
   initApplication();
 }
 
 NavApp::~NavApp()
 {
   ATOOLS_DELETE(dataExchange);
-  ATOOLS_DELETE(startupOptions);
 }
 
 void NavApp::initApplication()
@@ -259,12 +255,12 @@ void NavApp::deInit()
   ATOOLS_DELETE_LOG(vehicleIcons);
 }
 
-const DataExchange *NavApp::getDataExchangeConst()
+const atools::gui::DataExchange *NavApp::getDataExchangeConst()
 {
   return dataExchange;
 }
 
-DataExchange *NavApp::getDataExchange()
+atools::gui::DataExchange *NavApp::getDataExchange()
 {
   return dataExchange;
 }
@@ -272,8 +268,8 @@ DataExchange *NavApp::getDataExchange()
 bool NavApp::initDataExchange()
 {
   if(dataExchange == nullptr)
-    dataExchange =
-      new DataExchange(Settings::instance().getAndStoreValue(lnm::OPTIONS_DATAEXCHANGE_DEBUG, false).toBool(), lnm::PROGRAM_GUID);
+    dataExchange = new atools::gui::DataExchange(
+      Settings::instance().getAndStoreValue(lnm::OPTIONS_DATAEXCHANGE_DEBUG, false).toBool(), lnm::PROGRAM_GUID);
 
   return dataExchange->isExit();
 }
@@ -828,31 +824,6 @@ void NavApp::showUserpointSearch()
   mainWindow->showUserpointSearch();
 }
 
-QString NavApp::getStartupOptionStr(const QString& key)
-{
-  return startupOptions->getPropertyStr(key);
-}
-
-QStringList NavApp::getStartupOptionStrList(const QString& key)
-{
-  return startupOptions->getPropertyStrList(key);
-}
-
-void NavApp::addStartupOptionStr(const QString& key, const QString& value)
-{
-  startupOptions->setPropertyStr(key, value);
-}
-
-void NavApp::addStartupOptionStrList(const QString& key, const QStringList& value)
-{
-  startupOptions->setPropertyStrList(key, value);
-}
-
-void NavApp::clearStartupOptions()
-{
-  startupOptions->clear();
-}
-
 void NavApp::getReportFiles(QStringList& crashReportFiles, QString& reportFilename, bool issueReport)
 {
   // Settings and files have to be saved before
@@ -929,11 +900,6 @@ void NavApp::setToolTipsEnabledMainMenu(bool enabled)
   if(mainWindow != nullptr)
     // Need to update the recent menus
     mainWindow->setToolTipsEnabledMainMenu(enabled);
-}
-
-const atools::util::Properties& NavApp::getStartupOptionsConst()
-{
-  return *startupOptions;
 }
 
 LogdataController *NavApp::getLogdataController()

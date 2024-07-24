@@ -1022,7 +1022,7 @@ void RouteController::restoreState()
     QString cmdLineFlightplanFile, cmdLineFlightplanDescr;
 
     // Load plan from command line or last used =============================================
-    fc::fromStartupProperties(NavApp::getStartupOptionsConst(), &cmdLineFlightplanFile, &cmdLineFlightplanDescr);
+    fc::fromStartupProperties(atools::gui::Application::getStartupOptionsConst(), &cmdLineFlightplanFile, &cmdLineFlightplanDescr);
 
     if(!cmdLineFlightplanFile.isEmpty())
     {
@@ -1060,7 +1060,7 @@ void RouteController::restoreState()
       // Nothing given on command line ==================================
       if(OptionData::instance().getFlags().testFlag(opts::STARTUP_LOAD_ROUTE))
       {
-        if(!NavApp::isSafeMode())
+        if(!atools::gui::Application::isSafeMode())
         {
           atools::settings::Settings& settings = atools::settings::Settings::instance();
           QString lastUsedFlightplanFile = settings.valueStr(lnm::ROUTE_FILENAME);

@@ -18,12 +18,14 @@
 #include "commandline.h"
 
 #include "common/constants.h"
-#include "app/navapp.h"
 #include "settings/settings.h"
+#include "gui/application.h"
 
 #include <QDebug>
 #include <QCommandLineParser>
 #include <QStringBuilder>
+
+using atools::gui::Application;
 
 CommandLine::CommandLine()
 {
@@ -152,23 +154,23 @@ void CommandLine::process()
     qWarning() << QObject::tr("Only one of options -f and -d can be used");
 
   if(parser->isSet(*flightplanOpt) && !parser->value(*flightplanOpt).isEmpty())
-    NavApp::addStartupOptionStr(lnm::STARTUP_FLIGHTPLAN, parser->value(*flightplanOpt));
+    Application::addStartupOptionStr(lnm::STARTUP_FLIGHTPLAN, parser->value(*flightplanOpt));
 
   if(parser->isSet(*flightplanDescrOpt) && !parser->value(*flightplanDescrOpt).isEmpty())
-    NavApp::addStartupOptionStr(lnm::STARTUP_FLIGHTPLAN_DESCR, parser->value(*flightplanDescrOpt));
+    Application::addStartupOptionStr(lnm::STARTUP_FLIGHTPLAN_DESCR, parser->value(*flightplanDescrOpt));
 
   if(parser->isSet(*performanceOpt) && !parser->value(*performanceOpt).isEmpty())
-    NavApp::addStartupOptionStr(lnm::STARTUP_AIRCRAFT_PERF, parser->value(*performanceOpt));
+    Application::addStartupOptionStr(lnm::STARTUP_AIRCRAFT_PERF, parser->value(*performanceOpt));
 
   if(parser->isSet(*layoutOpt) && !parser->value(*layoutOpt).isEmpty())
-    NavApp::addStartupOptionStr(lnm::STARTUP_LAYOUT, parser->value(*layoutOpt));
+    Application::addStartupOptionStr(lnm::STARTUP_LAYOUT, parser->value(*layoutOpt));
 
   if(parser->isSet(*quitOpt))
-    NavApp::addStartupOptionStr(lnm::STARTUP_QUIT, QString());
+    Application::addStartupOptionStr(lnm::STARTUP_QUIT, QString());
 
   // Other arguments without option
   if(!parser->positionalArguments().isEmpty())
-    NavApp::addStartupOptionStrList(lnm::STARTUP_OTHER_ARGUMENTS, parser->positionalArguments());
+    Application::addStartupOptionStrList(lnm::STARTUP_OTHER_ARGUMENTS, parser->positionalArguments());
 
   if(parser->isSet(*languageOpt) && !parser->value(*languageOpt).isEmpty())
     language = parser->value(*languageOpt);

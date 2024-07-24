@@ -3108,7 +3108,7 @@ void MapWidget::restoreState()
     homeDistance = DEFAULT_MAP_DISTANCE_KM;
   }
 
-  if(OptionData::instance().getFlags() & opts::STARTUP_LOAD_KML && !NavApp::isSafeMode())
+  if(OptionData::instance().getFlags().testFlag(opts::STARTUP_LOAD_KML) && !atools::gui::Application::isSafeMode())
   {
     kmlFilePaths = settings.valueStrList(lnm::MAP_KMLFILES);
     for(QString& path : kmlFilePaths)
@@ -3119,7 +3119,7 @@ void MapWidget::restoreState()
   getScreenIndex()->restoreState();
 
   aircraftTrail->setMaxTrackEntries(OptionData::instance().getAircraftTrailMaxPoints());
-  if(OptionData::instance().getFlags() & opts::STARTUP_LOAD_TRAIL && !NavApp::isSafeMode())
+  if(OptionData::instance().getFlags().testFlag(opts::STARTUP_LOAD_TRAIL) && !atools::gui::Application::isSafeMode())
     aircraftTrail->restoreState(lnm::AIRCRAFT_TRACK_SUFFIX);
 
   aircraftTrailLogbook->restoreState(lnm::LOGBOOK_TRACK_SUFFIX);

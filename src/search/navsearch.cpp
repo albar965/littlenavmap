@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -100,25 +100,25 @@ NavSearch::NavSearch(QMainWindow *parent, QTableView *tableView, si::TabSearchId
 
   // Possible combinations
   // type   nav_type
-  // N	     W
-  // NCP	   N
-  // NH	     N
-  // NHH	   N
-  // NMH	   N
-  // TC	     TC
-  // V	     W
-  // VH	     D
-  // VH	     V
-  // VH	     VD
-  // VH	     VT
-  // VL	     V
-  // VL	     VD
-  // VL	     VT
-  // VT	     V
-  // VT	     VD
-  // VT	     VT
-  // WN	     W
-  // WU	     W
+  // N       W
+  // NCP     N
+  // NH      N
+  // NHH     N
+  // NMH     N
+  // TC      TC
+  // V       W
+  // VH      D
+  // VH      V
+  // VH      VD
+  // VH      VT
+  // VL      V
+  // VL      VD
+  // VL      VT
+  // VT      V
+  // VT      VD
+  // VT      VT
+  // WN      W
+  // WU      W
   // Build SQL query conditions
   QStringList typeCondMap;
   typeCondMap << QString()
@@ -258,7 +258,7 @@ void NavSearch::saveState()
 void NavSearch::restoreState()
 {
   atools::gui::WidgetState widgetState(lnm::SEARCHTAB_NAV_WIDGET);
-  if(OptionData::instance().getFlags() & opts::STARTUP_LOAD_SEARCH && !NavApp::isSafeMode())
+  if(OptionData::instance().getFlags().testFlag(opts::STARTUP_LOAD_SEARCH) && !atools::gui::Application::isSafeMode())
   {
     widgetState.restore(navSearchWidgets);
 
