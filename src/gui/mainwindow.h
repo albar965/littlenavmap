@@ -537,7 +537,6 @@ private:
   /* Called by DataExchangeFetcher::dataExchangeDataFetched(). Takes command line options from another instance. */
   void dataExchangeDataFetched(atools::util::Properties properties);
 
-#ifdef DEBUG_INFORMATION
   void debugActionTriggered1();
   void debugActionTriggered2();
   void debugActionTriggered3();
@@ -549,8 +548,6 @@ private:
   void debugActionTriggered9();
   void debugActionTriggered10();
   void debugActionTriggered11();
-
-#endif
 
 #ifdef DEBUG_DUMP_SHORTCUTS
   void printShortcuts();

@@ -458,73 +458,71 @@ MainWindow::MainWindow()
     ATOOLS_HANDLE_UNKNOWN_EXCEPTION;
   }
 
-#ifdef DEBUG_INFORMATION
+  atools::settings::Settings& settings = atools::settings::Settings::instance();
 
-  QAction *debugAction1 = new QAction("DEBUG - Dump Route", ui->menuHelp);
-  debugAction1->setShortcut(QKeySequence("Ctrl+F1"));
-  debugAction1->setShortcutContext(Qt::ApplicationShortcut);
-  this->addAction(debugAction1);
+  if(settings.getAndStoreValue(lnm::OPTIONS_DEBUG_MENU, false).toBool())
+  {
+    QAction *debugAction1 = new QAction("DEBUG - Dump Route", ui->menuHelp);
+    this->addAction(debugAction1);
 
-  QAction *debugAction2 = new QAction("DEBUG - Dump Flightplan", ui->menuHelp);
-  this->addAction(debugAction2);
+    QAction *debugAction2 = new QAction("DEBUG - Dump flightplan", ui->menuHelp);
+    this->addAction(debugAction2);
 
-  QAction *debugAction3 = new QAction("DEBUG - Force Check updates", ui->menuHelp);
-  this->addAction(debugAction3);
+    QAction *debugAction3 = new QAction("DEBUG - Force check updates", ui->menuHelp);
+    this->addAction(debugAction3);
 
-  QAction *debugAction4 = new QAction("DEBUG - Reload flight plan", ui->menuHelp);
-  this->addAction(debugAction4);
+    QAction *debugAction4 = new QAction("DEBUG - Reload flight plan", ui->menuHelp);
+    this->addAction(debugAction4);
 
-  QAction *debugAction5 = new QAction("DEBUG - Open flight plan in editor", ui->menuHelp);
-  this->addAction(debugAction5);
+    QAction *debugAction5 = new QAction("DEBUG - Open flight plan in editor", ui->menuHelp);
+    this->addAction(debugAction5);
 
-  QAction *debugAction6 = new QAction("DEBUG - Open perf in editor", ui->menuHelp);
-  this->addAction(debugAction6);
+    QAction *debugAction6 = new QAction("DEBUG - Open perf in editor", ui->menuHelp);
+    this->addAction(debugAction6);
 
-  QAction *debugAction7 = new QAction("DEBUG - Dump map layers", ui->menuHelp);
-  this->addAction(debugAction7);
+    QAction *debugAction7 = new QAction("DEBUG - Dump map layers", ui->menuHelp);
+    this->addAction(debugAction7);
 
-  QAction *debugAction8 = new QAction("DEBUG - Reset update timestamp to -2 days", ui->menuHelp);
-  this->addAction(debugAction8);
+    QAction *debugAction8 = new QAction("DEBUG - Reset update timestamp to -2 days", ui->menuHelp);
+    this->addAction(debugAction8);
 
-  QAction *debugAction9 = new QAction("DEBUG - throw exception", ui->menuHelp);
-  this->addAction(debugAction9);
+    QAction *debugAction9 = new QAction("DEBUG - Crash by throwing an exception", ui->menuHelp);
+    this->addAction(debugAction9);
 
-  QAction *debugAction10 = new QAction("DEBUG - crash with a segment violation", ui->menuHelp);
-  this->addAction(debugAction10);
+    QAction *debugAction10 = new QAction("DEBUG - Crash with a segment violation", ui->menuHelp);
+    this->addAction(debugAction10);
 
-  QAction *debugAction11 = new QAction("DEBUG - crash with an assert", ui->menuHelp);
-  this->addAction(debugAction11);
+    QAction *debugAction11 = new QAction("DEBUG - Crash with an assert", ui->menuHelp);
+    this->addAction(debugAction11);
 
-  ui->menuHelp->addSeparator();
-  ui->menuHelp->addSeparator();
-  ui->menuHelp->addAction(debugAction1);
-  ui->menuHelp->addAction(debugAction2);
-  ui->menuHelp->addAction(debugAction3);
-  ui->menuHelp->addAction(debugAction4);
-  ui->menuHelp->addAction(debugAction5);
-  ui->menuHelp->addAction(debugAction6);
-  ui->menuHelp->addAction(debugAction7);
-  ui->menuHelp->addAction(debugAction8);
+    ui->menuHelp->addSeparator();
+    ui->menuHelp->addSeparator();
+    ui->menuHelp->addAction(debugAction1);
+    ui->menuHelp->addAction(debugAction2);
+    ui->menuHelp->addAction(debugAction3);
+    ui->menuHelp->addAction(debugAction4);
+    ui->menuHelp->addAction(debugAction5);
+    ui->menuHelp->addAction(debugAction6);
+    ui->menuHelp->addAction(debugAction7);
+    ui->menuHelp->addAction(debugAction8);
 
-  ui->menuHelp->addSeparator();
-  ui->menuHelp->addAction(debugAction9);
-  ui->menuHelp->addAction(debugAction10);
-  ui->menuHelp->addAction(debugAction11);
+    ui->menuHelp->addSeparator();
+    ui->menuHelp->addAction(debugAction9);
+    ui->menuHelp->addAction(debugAction10);
+    ui->menuHelp->addAction(debugAction11);
 
-  connect(debugAction1, &QAction::triggered, this, &MainWindow::debugActionTriggered1);
-  connect(debugAction2, &QAction::triggered, this, &MainWindow::debugActionTriggered2);
-  connect(debugAction3, &QAction::triggered, this, &MainWindow::debugActionTriggered3);
-  connect(debugAction4, &QAction::triggered, this, &MainWindow::debugActionTriggered4);
-  connect(debugAction5, &QAction::triggered, this, &MainWindow::debugActionTriggered5);
-  connect(debugAction6, &QAction::triggered, this, &MainWindow::debugActionTriggered6);
-  connect(debugAction7, &QAction::triggered, this, &MainWindow::debugActionTriggered7);
-  connect(debugAction8, &QAction::triggered, this, &MainWindow::debugActionTriggered8);
-  connect(debugAction9, &QAction::triggered, this, &MainWindow::debugActionTriggered9);
-  connect(debugAction10, &QAction::triggered, this, &MainWindow::debugActionTriggered10);
-  connect(debugAction11, &QAction::triggered, this, &MainWindow::debugActionTriggered11);
-
-#endif
-
+    connect(debugAction1, &QAction::triggered, this, &MainWindow::debugActionTriggered1);
+    connect(debugAction2, &QAction::triggered, this, &MainWindow::debugActionTriggered2);
+    connect(debugAction3, &QAction::triggered, this, &MainWindow::debugActionTriggered3);
+    connect(debugAction4, &QAction::triggered, this, &MainWindow::debugActionTriggered4);
+    connect(debugAction5, &QAction::triggered, this, &MainWindow::debugActionTriggered5);
+    connect(debugAction6, &QAction::triggered, this, &MainWindow::debugActionTriggered6);
+    connect(debugAction7, &QAction::triggered, this, &MainWindow::debugActionTriggered7);
+    connect(debugAction8, &QAction::triggered, this, &MainWindow::debugActionTriggered8);
+    connect(debugAction9, &QAction::triggered, this, &MainWindow::debugActionTriggered9);
+    connect(debugAction10, &QAction::triggered, this, &MainWindow::debugActionTriggered10);
+    connect(debugAction11, &QAction::triggered, this, &MainWindow::debugActionTriggered11);
+  }
 }
 
 MainWindow::~MainWindow()
@@ -641,8 +639,6 @@ void MainWindow::dataExchangeDataFetched(atools::util::Properties properties)
     qDebug() << Q_FUNC_INFO << "properties empty";
 }
 
-#ifdef DEBUG_INFORMATION
-
 void MainWindow::debugActionTriggered1()
 {
   qDebug() << "======================================================================================";
@@ -706,8 +702,6 @@ void MainWindow::debugActionTriggered11()
   QVector<int> vector;
   vector.constFirst();
 }
-
-#endif
 
 void MainWindow::updateMap() const
 {

@@ -379,6 +379,8 @@ const QLatin1String OPTIONS_PROFILE_JUMP_BACK_DEBUG("Options/ProfileJumpBackDebu
 const QLatin1String OPTIONS_MAP_LAYER_DEBUG("Options/MapLayerDebug");
 const QLatin1String OPTIONS_MAP_LAYER_DEBUG_DRAW("Options/MapLayerDebugDraw");
 
+const QLatin1String OPTIONS_DEBUG_MENU("Options/DebugMenu");
+
 const QLatin1String OPTIONS_ONLINE_NETWORK_DEBUG("Options/OnlineNetworkDebug");
 const QLatin1String OPTIONS_ONLINE_NETWORK_MAX_SHADOW_DIST_NM("Options/MaxShadowDistNm");
 const QLatin1String OPTIONS_ONLINE_NETWORK_MAX_SHADOW_ALT_DIFF_FT("Options/MaxShadowAltDiffFt");

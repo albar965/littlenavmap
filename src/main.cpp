@@ -437,8 +437,7 @@ int main(int argc, char *argv[])
 
       if(dbManager->checkIncompatibleDatabases(&databasesErased))
       {
-        delete dbManager;
-        dbManager = nullptr;
+        ATOOLS_DELETE_LOG(dbManager);
 
         MainWindow mainWindow;
 
