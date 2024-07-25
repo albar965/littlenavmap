@@ -3453,9 +3453,6 @@ void MainWindow::mainWindowShown()
              << "geo" << screen->geometry() << "available geo" << screen->availableGeometry()
              << "available virtual geo" << screen->availableVirtualGeometry();
 
-  // Check for commands from other instances in shared memory segment
-  NavApp::getDataExchange()->startTimer();
-
   mapThemeHandler->showThemeLoadingErrors();
 
   qDebug() << Q_FUNC_INFO << "leave";

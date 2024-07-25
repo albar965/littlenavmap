@@ -271,6 +271,11 @@ bool NavApp::initDataExchange()
     dataExchange = new atools::gui::DataExchange(
       Settings::instance().getAndStoreValue(lnm::OPTIONS_DATAEXCHANGE_DEBUG, false).toBool(), lnm::PROGRAM_GUID);
 
+  // Check for commands from other instances in shared memory segment
+  // Not connected to main window yet - so messages will be ignored
+  // Start timer early to update timestamp and avoid double instances
+  dataExchange->startTimer();
+
   return dataExchange->isExit();
 }
 
