@@ -14720,7 +14720,7 @@ in Relation zum angezeigten Flugplatz</translation>
         <translation>&amp;Erstelle Logbucheinträge</translation>
     </message>
     <message>
-        <source>Create a Userpoint of type Logbook including flight information for each takeoff and landing</source>
+        <source>Create a userpoint of type Logbook including flight information for each takeoff and landing</source>
         <translation type="vanished">Erstelle einen Nutzerpunkt des Typs Logbuch, der Fluginformationen für jeden Start und Landung beinhaltet</translation>
     </message>
     <message>
@@ -17245,12 +17245,8 @@ Die Schaltfläche ist hervorgehoben, wenn ein Filter ausgewählt ist.</translati
     </message>
     <message>
         <location filename="src/mapgui/mapcontextmenu.cpp" line="1088"/>
-        <source>Add an userpoint at this position</source>
-        <translation>Füge Nutzerpunkt an dieser Position hinzu</translation>
-    </message>
-    <message>
         <source>Add a userpoint at this position</source>
-        <translation type="vanished">Füge Nutzerpunkt an dieser Position hinzu</translation>
+        <translation>Füge Nutzerpunkt an dieser Position hinzu</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapcontextmenu.cpp" line="1089"/>

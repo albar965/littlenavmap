@@ -11104,7 +11104,7 @@ Wind speed will be interpolated between this altitude and ground level.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Create a Userpoint of type Logbook including flight information for each takeoff and landing</source>
+        <source>Create a userpoint of type Logbook including flight information for each takeoff and landing</source>
         <translation type="vanished">Crear un punto de usuario del tipo libro de registro incluyendo información de vuelo para cada despegue y aterrizaje</translation>
     </message>
     <message>
@@ -14323,7 +14323,7 @@ Button is highlighted if any filter is selected.</source>
     </message>
     <message>
         <location filename="src/mapgui/mapcontextmenu.cpp" line="1010"/>
-        <source>Add an userpoint at this position</source>
+        <source>Add a userpoint at this position</source>
         <translation type="unfinished"></translation>
     </message>
     <message>

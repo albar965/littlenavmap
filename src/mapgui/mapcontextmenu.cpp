@@ -1085,7 +1085,7 @@ void MapContextMenu::insertUserpointAddMenu(QMenu& menu)
                      MapResultIndex().
                      addRef(*result, map::AIRPORT | map::VOR | map::NDB | map::WAYPOINT | map::USERPOINT).
                      sort(DEFAULT_TYPE_SORT, alphaSort),
-                     tr("Add &Userpoint %1 ..."), tr("Add an userpoint at this position"),
+                     tr("Add &Userpoint %1 ..."), tr("Add a userpoint at this position"),
                      tr("Ctrl+Shift+Click"), QIcon(":/littlenavmap/resources/icons/userdata_add.svg"), true /* allowNoMapObject */,
                      callback);
 }

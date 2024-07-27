@@ -13746,7 +13746,7 @@ in relazione all&apos;aeroporto indicato</translation>
         <translation>&amp;Crea voci del Diario di bordo</translation>
     </message>
     <message>
-        <source>Create a Userpoint of type Logbook including flight information for each takeoff and landing</source>
+        <source>Create a userpoint of type Logbook including flight information for each takeoff and landing</source>
         <translation type="vanished">Creare un Punto utente di tipo Logbook che includa le informazioni di volo per ogni decollo e atterraggio</translation>
     </message>
     <message>
@@ -17180,12 +17180,8 @@ Il pulsante è evidenziato se è selezionato un filtro.</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapcontextmenu.cpp" line="1088"/>
-        <source>Add an userpoint at this position</source>
-        <translation>Aggiungi un punto utente in questa posizione</translation>
-    </message>
-    <message>
         <source>Add a userpoint at this position</source>
-        <translation type="vanished">Aggiungi un punto utente in questa posizione</translation>
+        <translation>Aggiungi un punto utente in questa posizione</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapcontextmenu.cpp" line="1089"/>

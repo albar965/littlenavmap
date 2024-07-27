@@ -13599,7 +13599,7 @@ O melhor track será selecionado automaticamente.</translation>
         <translation>País/ Código da área</translation>
     </message>
     <message>
-        <source>Create a Userpoint of type Logbook including flight information for each takeoff and landing</source>
+        <source>Create a userpoint of type Logbook including flight information for each takeoff and landing</source>
         <translation type="vanished">Criar um Userpoint do tipo Logbook incluindo informações de voo para cada decolagem e pouso</translation>
     </message>
     <message>
@@ -17037,12 +17037,8 @@ O botão é realçado se algum filtro for selecionado.</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapcontextmenu.cpp" line="1088"/>
-        <source>Add an userpoint at this position</source>
-        <translation>Adicione um userpoint nesta posição</translation>
-    </message>
-    <message>
         <source>Add a userpoint at this position</source>
-        <translation type="vanished">Adicione um userpoint nesta posição</translation>
+        <translation>Adicione um userpoint nesta posição</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapcontextmenu.cpp" line="1089"/>

@@ -13891,7 +13891,7 @@ La vitesse du vent sera interpolée entre cette altitude et le niveau du sol.</t
         <translation>&amp;Créer des entrées dans le journal de bord (Logbook)</translation>
     </message>
     <message>
-        <source>Create a Userpoint of type Logbook including flight information for each takeoff and landing</source>
+        <source>Create a userpoint of type Logbook including flight information for each takeoff and landing</source>
         <translation type="obsolete">Créer un point utilisateur de type journal de bord incluant les informations de vol pour chaque décollage et atterrissage</translation>
     </message>
     <message>
@@ -17454,12 +17454,8 @@ Le bouton est mis en évidence si un filtre est sélectionné.</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapcontextmenu.cpp" line="1088"/>
-        <source>Add an userpoint at this position</source>
-        <translation type="unfinished">Ajouter un userpoint à cette position</translation>
-    </message>
-    <message>
         <source>Add a userpoint at this position</source>
-        <translation type="obsolete">Ajouter un point utilisateur à cette position</translation>
+        <translation type="unfinished">Ajouter un userpoint à cette position</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapcontextmenu.cpp" line="1089"/>

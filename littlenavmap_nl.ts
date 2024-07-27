@@ -11517,7 +11517,7 @@ relation to shown airport</oldsource>
         <translation>&amp;Creëer Logboek notities</translation>
     </message>
     <message>
-        <source>Create a Userpoint of type Logbook including flight information for each takeoff and landing</source>
+        <source>Create a userpoint of type Logbook including flight information for each takeoff and landing</source>
         <translation type="vanished">Creëer een Gebruikerspunt type Logboek inclusief vluchtinformatie voor opstijgen en landen</translation>
     </message>
     <message>
@@ -16075,7 +16075,7 @@ Button is highlighted if any filter is selected.</source>
     </message>
     <message>
         <location filename="src/mapgui/mapcontextmenu.cpp" line="1088"/>
-        <source>Add an userpoint at this position</source>
+        <source>Add a userpoint at this position</source>
         <translation type="unfinished"></translation>
     </message>
     <message>

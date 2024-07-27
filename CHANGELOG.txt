@@ -1839,7 +1839,7 @@ A big thank you to all who reported bugs and issues!
 ### Userpoints
 
 * Added quick `Mark Airport as Add-on` function in all related context menus in map, flight plan
-  table and airport search result table. This inserts an userpoint of type `Addon` without additional
+  table and airport search result table. This inserts a userpoint of type `Addon` without additional
   editing. The labels of this userpoint type (yellow ring) are not shown on map to avoid overlap
   with the airport labels. You can add your own types starting with text `Addon`. These will be
   treated the same way.
@@ -1884,7 +1884,7 @@ A big thank you to all who reported bugs and issues!
 * Avoiding flickering course values while dragging measurement line.
 * Better measurement line handling: Tooltip and hotspot for measurement lines is now origin and end.
   The line can be moved from both ends.
-* Measurement lines can now be the origin of an userpoint showing its label.
+* Measurement lines can now be the origin of a userpoint showing its label.
 * Added option for airway display at flight plan legs in options on page `Map Display Labels` in
   branch `Flight Plan`. This is disabled per default.
 * Adjusted settings for offset localizer to also detect slightly offset KJFK 22R. This is indicated
@@ -1955,7 +1955,7 @@ A big thank you to all who reported bugs and issues!
 * More accuracy for flight plan calculation preference slider.
 * Added blue question mark help buttons to information and aircraft progress windows linking to the
   related user manual chapters.
-* Fixed userpoints category not being enabled after assigning a new type to an userpoint.
+* Fixed userpoints category not being enabled after assigning a new type to a userpoint.
   This avoids the confusing disappearance of a userpoint after changing the type.
 * Added workaround for missing translations in MSFS for AI or multiplayer aircraft. Needs a reload
   of the scenery library.
