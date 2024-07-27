@@ -4,21 +4,50 @@ This text is partially Markdown, so the formatting is sometimes strange.
 
 ==>>=============================================================================
 
-# Version 3.0.8
+# Version 3.0.9
 
 ## Notes
 
-**This is a stable release of Little Navmap which fixes several bugs and crashes and adds a few
-improvements and new features.**
-
-**The program translations for Brazilian Portuguese, French, German and Italian as well as the user manual have been updated.**
+**This is a stable release of Little Navmap which fixes a few issues and provides better error reporting for crashes.
+New features and small improvements are planned for the next release 3.0.10.**
 
 **macOS users: Keep in mind that you have to clear the quarantine flag when updating Little Xpconnect. See
 [Clearing the Quarantine Flag on macOS](https://www.littlenavmap.org/manuals/littlenavmap/release/latest/en/XPCONNECT.html#clearing-the-quarantine-flag-on-macos).**
 
-**Reload the scenery library to see fixes like the duplicate COM frequencies for MSFS airports.**
-
 A big thank you to all who reported bugs and issues!
+
+## Changes from 3.0.8 to 3.0.9
+
+* Fixed issue where NOAA and X-Plane 12 weather stations were not updated and showed
+  outdated weather.
+* Installer now removes all Dutch, Chinese and Spanish compiled `.qm` translation files before
+  installing. These translations have not been updated for a long time which can cause problems in
+  the user user interface. The resulting issues range from arrows pointing into the wrong
+  direction to missing texts and numbers.
+  You can still install the translations manually if you wish by downloading the related `*.qm`
+  files from [GitHub - littlenavmap - release/3.0](https://github.com/albar965/littlenavmap/tree/release/3.0)
+  and saving them in the directory `translations` in the installation folder.
+  Contact me if you'd like to update a translation or if you would like to create a new one:
+  [Contact](https://albar965.github.io/contact.html).
+* Attempt to fix crashes for the web server when accessing databases resulting in a crash.
+* Fixed issue where program could be started more than once if stuck in an early warning or
+  question dialog window. This could result in crashes and other problems.
+* Now collecting detailed location information on crashes (stack traces). Note that this is only
+  enabled for the Windows 64-bit version. Other operating systems already have means to collect crash
+  information (Linux core files and macOS crash reports). A file
+  `C:\Users\YOURUSERNAME\AppData\Roaming\ABarthel\little_navmap_stacktrace.txt` is created on crash
+  and included in all generated crash reports. Note that the required location information (debug
+  symbols) increases the program size but neither startup time nor overall performance are affected
+  in any way by this.
+* Other small text changes in the user interface.
+* Updates to user manual.
+
+* *Little Navconnect*: See file `CHANGELOG.txt` in sub-directory `Little Navconnect` in the
+  installation folder for a list of changes.
+
+==<<=============================================================================
+
+# Version 3.0.8
 
 ## Changes from 3.0.6 to 3.0.8
 
@@ -214,7 +243,7 @@ A big thank you to all who reported bugs and issues!
   in the menu `Tools`.
 * Installer has a new icon to avoid confusion with the program file.
 
-==<<=============================================================================
+=================================================================================
 
 # Version 3.0.6
 
