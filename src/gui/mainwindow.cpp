@@ -126,6 +126,7 @@ using atools::gui::FileHistoryHandler;
 using atools::gui::MapPosHistory;
 using atools::gui::HelpHandler;
 using atools::gui::DockWidgetHandler;
+using atools::gui::Application;
 
 MainWindow::MainWindow()
   : QMainWindow(nullptr), ui(new Ui::MainWindow)
@@ -529,7 +530,7 @@ MainWindow::~MainWindow()
 {
   qDebug() << Q_FUNC_INFO;
 
-  atools::gui::Application::setShuttingDown();
+  Application::setShuttingDown();
 
   clockTimer.stop();
   weatherUpdateTimer.stop();
@@ -710,7 +711,7 @@ void MainWindow::updateMap() const
 
 void MainWindow::updateClock() const
 {
-  if(!atools::gui::Application::isShuttingDown())
+  if(!Application::isShuttingDown())
   {
     timeLabel->setText(QDateTime::currentDateTimeUtc().toString("d   HH:mm:ss UTC "));
     timeLabel->setToolTip(tr("Day of month and UTC time.\n%1\nLocal: %2")
@@ -1770,7 +1771,7 @@ void MainWindow::connectAllSlots()
   connect(ui->actionShortcutAircraftProgress, &QAction::triggered, this, &MainWindow::actionShortcutAircraftProgressTriggered);
 
   // Check for database file modifications on application activation
-  connect(atools::gui::Application::applicationInstance(), &atools::gui::Application::applicationStateChanged,
+  connect(Application::applicationInstance(), &Application::applicationStateChanged,
           databaseManager, &DatabaseManager::checkForChangedNavAndSimDatabases);
 }
 
@@ -1897,7 +1898,7 @@ void MainWindow::actionShortcutAircraftProgressTriggered()
 void MainWindow::weatherUpdateTimeout()
 {
   // if(connectClient != nullptr && connectClient->isConnected() && infoController != nullptr)
-  if(!atools::gui::Application::isShuttingDown())
+  if(!Application::isShuttingDown())
     infoController->updateAirportWeather();
 }
 
@@ -2012,7 +2013,7 @@ void MainWindow::distanceChanged()
 
 void MainWindow::renderStatusReset()
 {
-  if(!atools::gui::Application::isShuttingDown())
+  if(!Application::isShuttingDown())
     // Force reset to complete to avoid forever "Waiting"
     renderStatusUpdateLabel(Marble::Complete, false /* forceUpdate */);
 }
@@ -2071,7 +2072,7 @@ void MainWindow::calculateRouteRandom()
 
 void MainWindow::shrinkStatusBar()
 {
-  if(!atools::gui::Application::isShuttingDown())
+  if(!Application::isShuttingDown())
   {
 #ifdef DEBUG_INFORMATION
     qDebug() << Q_FUNC_INFO << statusBar()->geometry() << QCursor::pos();
@@ -3476,8 +3477,7 @@ void MainWindow::mainWindowShownDelayed()
 {
   qDebug() << Q_FUNC_INFO << "enter";
 
-  if(OptionData::instance().getFlags().testFlag(opts::STARTUP_LOAD_LAYOUT) && !layoutFileHistory->isEmpty() &&
-     !atools::gui::Application::isSafeMode())
+  if(OptionData::instance().getFlags().testFlag(opts::STARTUP_LOAD_LAYOUT) && !layoutFileHistory->isEmpty() && !Application::isSafeMode())
     loadLayoutDelayed(layoutFileHistory->getTopFile());
   // else layout was already loaded from settings earlier
 
@@ -3635,6 +3635,10 @@ void MainWindow::mainWindowShownDelayed()
   qDebug() << "connectStatusLabel->size()" << connectStatusLabel->size();
   qDebug() << "timeLabel->size()" << timeLabel->size();
 #endif
+
+  // Log startup time
+  Application::startupFinished(Q_FUNC_INFO);
+
   qDebug() << Q_FUNC_INFO << "leave";
 }
 
@@ -3829,7 +3833,7 @@ void MainWindow::updateActionStates()
   qDebug() << Q_FUNC_INFO;
 #endif
 
-  if(atools::gui::Application::isShuttingDown())
+  if(Application::isShuttingDown())
     return;
 
   ui->actionClearKml->setEnabled(!mapWidget->getKmlFiles().isEmpty());
@@ -4033,7 +4037,7 @@ void MainWindow::restoreStateMain()
 
   applyToolBarSize();
 
-  if(!atools::gui::Application::isSafeMode() && settings.contains(lnm::MAINWINDOW_WIDGET_DOCKHANDLER))
+  if(!Application::isSafeMode() && settings.contains(lnm::MAINWINDOW_WIDGET_DOCKHANDLER))
   {
     dockHandler->restoreState(settings.valueVar(lnm::MAINWINDOW_WIDGET_DOCKHANDLER).toByteArray());
 
