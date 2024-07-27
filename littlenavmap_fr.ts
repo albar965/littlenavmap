@@ -2342,31 +2342,31 @@ de la scène</translation>
         <translation type="unfinished"> et </translation>
     </message>
     <message>
-        <location filename="src/search/airportsearch.cpp" line="731"/>
+        <location filename="src/search/airportsearch.cpp" line="732"/>
         <source>Let create a new flight plan for a single flight from an airport chosen at random from the airport search result table to an airport chosen at random from the airport search result table.
 Modify the selection criteria to your liking by setting the controls in the airport search result panel to values you like, for example runway length minimum to 1,000 ft.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/search/airportsearch.cpp" line="736"/>
+        <location filename="src/search/airportsearch.cpp" line="739"/>
         <source>
 
 Add a departure or destination airport to your current flight plan if you wish to have that fixed instead of random.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/search/airportsearch.cpp" line="739"/>
+        <location filename="src/search/airportsearch.cpp" line="742"/>
         <source> - Random Flight</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/search/airportsearch.cpp" line="745"/>
+        <location filename="src/search/airportsearch.cpp" line="748"/>
         <source>Let select departure and destination airport
 from airport search result table at random.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/search/airportsearch.cpp" line="753"/>
+        <location filename="src/search/airportsearch.cpp" line="756"/>
         <source>Use current flight plan&apos;s departure airport
 %1
 as fixed departure airport and let select a
@@ -2375,7 +2375,7 @@ table at random.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/search/airportsearch.cpp" line="761"/>
+        <location filename="src/search/airportsearch.cpp" line="764"/>
         <source>Use current flight plan&apos;s departure airport
 %1
 as fixed destination airport and let select a
@@ -2384,7 +2384,7 @@ table at random.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/search/airportsearch.cpp" line="772"/>
+        <location filename="src/search/airportsearch.cpp" line="775"/>
         <source>Keep current flight plan&apos;s departure airport
 %1
 as fixed departure airport and let select a
@@ -2393,7 +2393,7 @@ table at random.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/search/airportsearch.cpp" line="780"/>
+        <location filename="src/search/airportsearch.cpp" line="783"/>
         <source>Keep current flight plan&apos;s destination airport
 %1
 as fixed destination airport and let select a
@@ -2402,34 +2402,34 @@ table at random.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/search/airportsearch.cpp" line="791"/>
+        <location filename="src/search/airportsearch.cpp" line="794"/>
         <source>Let select only a destination airport from
 airport search result table at random.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/search/airportsearch.cpp" line="795"/>
+        <location filename="src/search/airportsearch.cpp" line="798"/>
         <source>Let select only a departure airport from
 airport search result table at random.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/search/airportsearch.cpp" line="824"/>
+        <location filename="src/search/airportsearch.cpp" line="827"/>
         <source>Random picking and criteria comparison running...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/search/airportsearch.cpp" line="941"/>
+        <location filename="src/search/airportsearch.cpp" line="944"/>
         <source>Nothing found</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/search/airportsearch.cpp" line="944"/>
+        <location filename="src/search/airportsearch.cpp" line="947"/>
         <source>Little Navmap - Random flight found:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/search/airportsearch.cpp" line="971"/>
+        <location filename="src/search/airportsearch.cpp" line="974"/>
         <source>No (further) airports satisfying your criteria
 found in the airport search result table.</source>
         <translation type="unfinished"></translation>
@@ -2439,12 +2439,12 @@ found in the airport search result table.</source>
         <translation type="obsolete">tirage au sort et comparaison de critères en cours...</translation>
     </message>
     <message>
-        <location filename="src/search/airportsearch.cpp" line="825"/>
+        <location filename="src/search/airportsearch.cpp" line="828"/>
         <source>Abort running</source>
         <translation type="unfinished">Abandonner l&apos;exécution</translation>
     </message>
     <message>
-        <location filename="src/search/airportsearch.cpp" line="933"/>
+        <location filename="src/search/airportsearch.cpp" line="936"/>
         <source>&lt;p&gt;&lt;b&gt;%1&lt;/b&gt; to &lt;b&gt;%2&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Direct distance: %3&lt;/p&gt;</source>
         <translation type="unfinished">&lt;p&gt;&lt;b&gt;%1&lt;/b&gt; to &lt;b&gt;%2&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Direct distance: %3&lt;/p&gt;</translation>
     </message>
@@ -2453,12 +2453,12 @@ found in the airport search result table.</source>
         <translation type="obsolete">Little Navmap - Vol Aléatoire Trouvé</translation>
     </message>
     <message>
-        <location filename="src/search/airportsearch.cpp" line="948"/>
+        <location filename="src/search/airportsearch.cpp" line="951"/>
         <source>&amp;Use as Flight Plan</source>
         <translation type="unfinished">&amp;Utiliser comme plan de vol</translation>
     </message>
     <message>
-        <location filename="src/search/airportsearch.cpp" line="949"/>
+        <location filename="src/search/airportsearch.cpp" line="952"/>
         <source>&amp;Search again</source>
         <translation type="unfinished">&amp;Chercher à nouveau</translation>
     </message>
@@ -2746,7 +2746,7 @@ Actuellement, seul &quot;OpenAir&quot; est supporté (*.txt). </translation>
 <context>
     <name>CommandLine</name>
     <message>
-        <location filename="src/app/commandline.cpp" line="32"/>
+        <location filename="src/app/commandline.cpp" line="34"/>
         <source>
 %1 version %2 command line options.
 Note that all arguments without &quot;-&quot; or &quot;--&quot; options are checked for
@@ -15486,36 +15486,36 @@ par rapport à l&apos;aéroport indiqué</translation>
         <translation type="vanished">Thème de carte personnalisé (%1)</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="767"/>
+        <location filename="src/gui/mainwindow.cpp" line="830"/>
         <source>Alt+1</source>
         <translation>Alt+1</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="768"/>
-        <location filename="src/gui/mainwindow.cpp" line="775"/>
-        <location filename="src/gui/mainwindow.cpp" line="782"/>
-        <location filename="src/gui/mainwindow.cpp" line="789"/>
-        <location filename="src/gui/mainwindow.cpp" line="796"/>
+        <location filename="src/gui/mainwindow.cpp" line="831"/>
+        <location filename="src/gui/mainwindow.cpp" line="838"/>
+        <location filename="src/gui/mainwindow.cpp" line="845"/>
+        <location filename="src/gui/mainwindow.cpp" line="852"/>
+        <location filename="src/gui/mainwindow.cpp" line="859"/>
         <source>Open or show the %1 dock window</source>
         <translation type="unfinished">Masquer ou afficher la fenêtre ancrable %1</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="774"/>
+        <location filename="src/gui/mainwindow.cpp" line="837"/>
         <source>Alt+2</source>
         <translation>Alt+2</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="781"/>
+        <location filename="src/gui/mainwindow.cpp" line="844"/>
         <source>Alt+3</source>
         <translation>Alt+3</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="788"/>
+        <location filename="src/gui/mainwindow.cpp" line="851"/>
         <source>Alt+4</source>
         <translation>Alt+4</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="795"/>
+        <location filename="src/gui/mainwindow.cpp" line="858"/>
         <source>Alt+5</source>
         <translation>Alt+5</translation>
     </message>
@@ -15528,32 +15528,32 @@ par rapport à l&apos;aéroport indiqué</translation>
         <translation type="obsolete">Alt+7</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="833"/>
+        <location filename="src/gui/mainwindow.cpp" line="896"/>
         <source>Not connected.</source>
         <translation type="unfinished">Déconnecté.</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="834"/>
+        <location filename="src/gui/mainwindow.cpp" line="897"/>
         <source>Simulator connection status.</source>
         <translation>Statut de connexion du simulateur.</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="842"/>
+        <location filename="src/gui/mainwindow.cpp" line="905"/>
         <source>Map detail level.</source>
         <translation>Niveau de détail de la carte.</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="846"/>
+        <location filename="src/gui/mainwindow.cpp" line="909"/>
         <source>Map rendering and download status.</source>
         <translation>Rendu de la carte et statut de téléchargement.</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="850"/>
+        <location filename="src/gui/mainwindow.cpp" line="913"/>
         <source>Map view distance to ground.</source>
         <translation>distance entre la carte et le sol.</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="1862"/>
+        <location filename="src/gui/mainwindow.cpp" line="1925"/>
         <source>
 
 Set the path to additional map themes in options on page &quot;Cache and Files&quot;</source>
@@ -15562,19 +15562,19 @@ Set the path to additional map themes in options on page &quot;Cache and Files&q
 Définissez le chemin d&apos;accès aux thèmes de cartes supplémentaires dans les options de la page &quot;Cache et fichiers&quot;</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="1922"/>
+        <location filename="src/gui/mainwindow.cpp" line="1985"/>
         <source>Too many objects</source>
         <translation type="unfinished">Trop d&apos;objets</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2094"/>
-        <location filename="src/gui/mainwindow.cpp" line="2110"/>
-        <location filename="src/gui/mainwindow.cpp" line="2122"/>
+        <location filename="src/gui/mainwindow.cpp" line="2157"/>
+        <location filename="src/gui/mainwindow.cpp" line="2173"/>
+        <location filename="src/gui/mainwindow.cpp" line="2185"/>
         <source> %1</source>
         <translation type="unfinished"> %1</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2096"/>
+        <location filename="src/gui/mainwindow.cpp" line="2159"/>
         <source> %1 (%2)</source>
         <translation type="unfinished"> %1 (%2)</translation>
     </message>
@@ -15587,13 +15587,13 @@ Définissez le chemin d&apos;accès aux thèmes de cartes supplémentaires dans 
         <translation type="obsolete"> - %1</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2115"/>
-        <location filename="src/gui/mainwindow.cpp" line="2117"/>
+        <location filename="src/gui/mainwindow.cpp" line="2178"/>
+        <location filename="src/gui/mainwindow.cpp" line="2180"/>
         <source> / N</source>
         <translation type="unfinished"> / N</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2119"/>
+        <location filename="src/gui/mainwindow.cpp" line="2182"/>
         <source> / (N)</source>
         <translation type="unfinished"> / (N)</translation>
     </message>
@@ -15606,8 +15606,8 @@ Définissez le chemin d&apos;accès aux thèmes de cartes supplémentaires dans 
         <translation type="obsolete">&lt;p&gt;Vous ne pouvez pas enregistrer ce fichier directement.&lt;br/&gt;Utilisez plutôt la fonction d&apos;exportation.&lt;/p&gt;&lt;p&gt;Enregistrez en utilisant le nouveau format LNMPLN maintenant?&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2702"/>
-        <location filename="src/gui/mainwindow.cpp" line="2722"/>
+        <location filename="src/gui/mainwindow.cpp" line="2765"/>
+        <location filename="src/gui/mainwindow.cpp" line="2785"/>
         <source>Cannot load file. Reason:
 
 %1</source>
@@ -15616,37 +15616,37 @@ Définissez le chemin d&apos;accès aux thèmes de cartes supplémentaires dans 
 %1</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2898"/>
+        <location filename="src/gui/mainwindow.cpp" line="2961"/>
         <source>JPG Image Files (*.jpg *.jpeg);;PNG Image Files (*.png);;BMP Image Files (*.bmp);;All Files (*)</source>
         <translation type="unfinished">Fichiers image JPG (*.jpg *.jpeg);;Fichiers image PNG (*.png);;Fichiers image BMP (*.bmp);;Tous les fichiers (*)</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2950"/>
+        <location filename="src/gui/mainwindow.cpp" line="3013"/>
         <source>JPG Image Files (*.jpg *.jpeg);;PNG Image Files (*.png);;All Files (*)</source>
         <translation type="unfinished">Fichiers image JPG (*.jpg *.jpeg);;Fichiers image PNG (*.png);;Tous les fichiers (*)</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="3227"/>
+        <location filename="src/gui/mainwindow.cpp" line="3290"/>
         <source>Close other dialog boxes before opening preferences</source>
         <translation type="unfinished">Fermer les autres boîtes de dialogue avant d&apos;ouvrir les préférences</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="3276"/>
+        <location filename="src/gui/mainwindow.cpp" line="3339"/>
         <source>&lt;p style=&apos;white-space:pre&apos;&gt;&lt;b&gt;Messages:&lt;/b&gt;</source>
         <translation type="unfinished">&lt;p style=&apos;white-space:pre&apos;&gt;&lt;b&gt;Messages:&lt;/b&gt;</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="3280"/>
+        <location filename="src/gui/mainwindow.cpp" line="3343"/>
         <source>...</source>
         <translation type="unfinished">...</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="3286"/>
+        <location filename="src/gui/mainwindow.cpp" line="3349"/>
         <source>&lt;br/&gt;</source>
         <translation type="unfinished">&lt;br/&gt;</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="3286"/>
+        <location filename="src/gui/mainwindow.cpp" line="3349"/>
         <source>&lt;/p&gt;</source>
         <translation type="unfinished">&lt;/p&gt;</translation>
     </message>
@@ -15680,12 +15680,12 @@ Définissez le chemin d&apos;accès aux thèmes de cartes supplémentaires dans 
         <translation type="vanished">Erreur d&apos;ouverture de l&apos;URL d&apos;aide &quot;%1&quot;</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="1896"/>
+        <location filename="src/gui/mainwindow.cpp" line="1959"/>
         <source>%1/%2</source>
         <translation>%1/%2</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="1901"/>
+        <location filename="src/gui/mainwindow.cpp" line="1964"/>
         <source>Simulator:
 %1
 
@@ -15698,7 +15698,7 @@ Réseau en ligne:
 %2</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="1923"/>
+        <location filename="src/gui/mainwindow.cpp" line="1986"/>
         <source>Too many objects to show on map.
 Display might be incomplete.
 Reduce map details in the &quot;View&quot; menu.</source>
@@ -15716,22 +15716,22 @@ Réduire les détails de la carte dans le menu &quot;Affichage&quot;.</translati
         <translation type="obsolete">Hors ligne</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="1965"/>
+        <location filename="src/gui/mainwindow.cpp" line="2028"/>
         <source>Done</source>
         <translation type="unfinished">Terminé</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="1968"/>
+        <location filename="src/gui/mainwindow.cpp" line="2031"/>
         <source>Updating</source>
         <translation type="unfinished">Mise à jour</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="1971"/>
+        <location filename="src/gui/mainwindow.cpp" line="2034"/>
         <source>Loading</source>
         <translation type="unfinished">Chargement</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="1974"/>
+        <location filename="src/gui/mainwindow.cpp" line="2037"/>
         <source>Incomplete</source>
         <translation type="unfinished">Incomplète</translation>
     </message>
@@ -15820,29 +15820,29 @@ Réduire les détails de la carte dans le menu &quot;Affichage&quot;.</translati
         <translation type="obsolete">Plan de vol sauvé au format FlightGear.</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2842"/>
+        <location filename="src/gui/mainwindow.cpp" line="2905"/>
         <source>Waiting up to %1 seconds for map download ...
 </source>
         <translation type="unfinished">Attente jusqu&apos;à %1 secondes pour le téléchargement de la carte ...
 </translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2843"/>
+        <location filename="src/gui/mainwindow.cpp" line="2906"/>
         <source>&amp;Ignore Downloads and Continue</source>
         <translation type="unfinished">&amp;Ignorer les téléchargements et continuer</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2854"/>
+        <location filename="src/gui/mainwindow.cpp" line="2917"/>
         <source>%1 downloads active and %2 downloads queued.</source>
         <translation type="unfinished">%1 téléchargements actifs et %2 téléchargements en file d&apos;attente.</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2892"/>
+        <location filename="src/gui/mainwindow.cpp" line="2955"/>
         <source> - Save Map as Image</source>
         <translation type="unfinished"> - Sauver la carte sous forme d&apos;image</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2900"/>
+        <location filename="src/gui/mainwindow.cpp" line="2963"/>
         <source>Little Navmap Map %1.jpg</source>
         <translation type="unfinished">Little Navmap Map %1.jpg</translation>
     </message>
@@ -15871,7 +15871,7 @@ Réduire les détails de la carte dans le menu &quot;Affichage&quot;.</translati
         <translation type="vanished">Incomplète.</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="1999"/>
+        <location filename="src/gui/mainwindow.cpp" line="2062"/>
         <source>Flight plan shown on map.</source>
         <translation>Plan de vol affiché sur la carte.</translation>
     </message>
@@ -15894,8 +15894,8 @@ Le simulateur pourrait ne pas être capable de charger le plan de vol.</translat
         <translation type="vanished">Sauver%1%3%2</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2128"/>
-        <location filename="src/gui/mainwindow.cpp" line="2136"/>
+        <location filename="src/gui/mainwindow.cpp" line="2191"/>
+        <location filename="src/gui/mainwindow.cpp" line="2199"/>
         <source> *</source>
         <oldsource> as</oldsource>
         <translation type="unfinished"> vers</translation>
@@ -15945,7 +15945,7 @@ Le simulateur pourrait ne pas être capable de charger le plan de vol.</translat
         <translation type="obsolete">&lt;p&gt;Le format FlightGear ne permet pas l&apos;enregistrement de:&lt;/p&gt;&lt;ul&gt;&lt;li&gt;Procédures (uniquement SID, STAR et les transitions respectives)&lt;/li&gt;&lt;li&gt;Noms de position&lt;/li&gt;&lt;li&gt;aItitude de croisière&lt;/li&gt;&lt;li&gt;Vitesse sol&lt;/li&gt;&lt;li&gt;Position parking départ&lt;/li&gt;&lt;li&gt;Types (IFR/VFR), Basse Alt/Haute Alt)&lt;/li&gt;&lt;li&gt;Autres aérodromes de destination&lt;/li&gt;&lt;li&gt;Défini par l&apos;utilisateur/approches personnalisées&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;Ces informations peuvent être perdues, en tout ou en partie, lors du rechargement du fichier.&lt;/p&gt;&lt;p&gt;&lt;b&gt;Sauver une copie supplémentaire au format PLN par défaut pour conserver toutes les informations.&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Vraiment sauver comme fichier FGFP?&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2046"/>
+        <location filename="src/gui/mainwindow.cpp" line="2109"/>
         <source> / </source>
         <translation> / </translation>
     </message>
@@ -15958,7 +15958,7 @@ Le simulateur pourrait ne pas être capable de charger le plan de vol.</translat
         <translation type="vanished"> - *</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2203"/>
+        <location filename="src/gui/mainwindow.cpp" line="2266"/>
         <source>Flight Plan has been changed.
 
 Save changes?</source>
@@ -15972,48 +15972,48 @@ Enregistrer les modifications ?</translation>
         <translation type="obsolete">Sauver les modifications?</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2307"/>
+        <location filename="src/gui/mainwindow.cpp" line="2370"/>
         <source>Created new flight plan.</source>
         <translation>Nouveau plan de vol créé.</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2319"/>
+        <location filename="src/gui/mainwindow.cpp" line="2382"/>
         <source>Created new empty flight plan.</source>
         <translation>Créer un nouveau plan de vol vide.</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2374"/>
-        <location filename="src/gui/mainwindow.cpp" line="2390"/>
-        <location filename="src/gui/mainwindow.cpp" line="2554"/>
+        <location filename="src/gui/mainwindow.cpp" line="2437"/>
+        <location filename="src/gui/mainwindow.cpp" line="2453"/>
+        <location filename="src/gui/mainwindow.cpp" line="2617"/>
         <source>Flight plan opened.</source>
         <translation>Plan de vol ouvert.</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2517"/>
+        <location filename="src/gui/mainwindow.cpp" line="2580"/>
         <source>Flight plan appended.</source>
         <translation>Plan de vol ajouté.</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2560"/>
+        <location filename="src/gui/mainwindow.cpp" line="2623"/>
         <source>File &quot;%1&quot; does not exist</source>
         <translation>Le fichier &quot;%1&quot; n&apos;existe pas</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2585"/>
+        <location filename="src/gui/mainwindow.cpp" line="2648"/>
         <source>Flight plan cruise altitude is zero.
 A simulator might not be able to load the flight plan.</source>
         <translation type="unfinished">L&apos;altitude de croisière du plan de vol est de zéro.
 Un simulateur peut ne pas être en mesure de charger le plan de vol.</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2595"/>
+        <location filename="src/gui/mainwindow.cpp" line="2658"/>
         <source>Save &amp;as LNMPLN ...</source>
         <translation type="unfinished">S&amp;auver sous  LNMPLN ...</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2494"/>
-        <location filename="src/gui/mainwindow.cpp" line="2628"/>
-        <location filename="src/gui/mainwindow.cpp" line="2655"/>
+        <location filename="src/gui/mainwindow.cpp" line="2557"/>
+        <location filename="src/gui/mainwindow.cpp" line="2691"/>
+        <location filename="src/gui/mainwindow.cpp" line="2718"/>
         <source>Flight plan saved.</source>
         <translation>Plan de vol sauvé.</translation>
     </message>
@@ -16042,7 +16042,7 @@ Un simulateur peut ne pas être en mesure de charger le plan de vol.</translatio
         <translation type="vanished">Plan de vol exporté.</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="654"/>
+        <location filename="src/gui/mainwindow.cpp" line="717"/>
         <source>Day of month and UTC time.
 %1
 Local: %2</source>
@@ -16051,17 +16051,17 @@ Local: %2</source>
 Local: %2</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="854"/>
+        <location filename="src/gui/mainwindow.cpp" line="917"/>
         <source>Coordinates and elevation at cursor position.</source>
         <translation>Coordonnées et élévation à la position du curseur.</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="858"/>
+        <location filename="src/gui/mainwindow.cpp" line="921"/>
         <source>Magnetic declination at cursor position.</source>
         <translation>Déclinaison magnétique à la position du curseur.</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="862"/>
+        <location filename="src/gui/mainwindow.cpp" line="925"/>
         <source>Day of month and UTC time.</source>
         <translation>Jour du mois et heure UTC.</translation>
     </message>
@@ -16108,30 +16108,30 @@ Local: %2</translation>
         <translation type="obsolete">N&apos;afficher plus cette boîte de dialogue et enregistrez le plan de vol au format FLP à l&apos;avenir.</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2341"/>
+        <location filename="src/gui/mainwindow.cpp" line="2404"/>
         <source>Open Flight Plan</source>
         <translation type="unfinished">Ouvrir un Plan de Vol</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2341"/>
-        <location filename="src/gui/mainwindow.cpp" line="2505"/>
-        <location filename="src/gui/mainwindow.cpp" line="2527"/>
-        <location filename="src/gui/mainwindow.cpp" line="2640"/>
+        <location filename="src/gui/mainwindow.cpp" line="2404"/>
+        <location filename="src/gui/mainwindow.cpp" line="2568"/>
+        <location filename="src/gui/mainwindow.cpp" line="2590"/>
+        <location filename="src/gui/mainwindow.cpp" line="2703"/>
         <source>Flight Plan Files %1;;All Files (*)</source>
         <translation>Fichiers du plan de vol %1;;Tous les fichiers (*)</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2504"/>
+        <location filename="src/gui/mainwindow.cpp" line="2567"/>
         <source>Append Flight Plan</source>
         <translation type="unfinished">Joindre Plan de Vol</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2526"/>
+        <location filename="src/gui/mainwindow.cpp" line="2589"/>
         <source>Insert info Flight Plan</source>
         <translation type="unfinished">Insérer Infos du Plan de Vol</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2537"/>
+        <location filename="src/gui/mainwindow.cpp" line="2600"/>
         <source>Flight plan inserted.</source>
         <translation type="unfinished">Plan de vol inséré.</translation>
     </message>
@@ -16156,34 +16156,34 @@ Local: %2</translation>
         <translation type="obsolete">Supprimer de la carte tous les anneaux de distance, les lignes de mesure, les circulations de trafic et les voies d&apos;attentes?</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2678"/>
+        <location filename="src/gui/mainwindow.cpp" line="2741"/>
         <source>Google Earth KML files removed from map.</source>
         <translation type="unfinished">Fichiers Google Earth KML supprimés de la carte.</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2684"/>
+        <location filename="src/gui/mainwindow.cpp" line="2747"/>
         <source>Google Earth KML</source>
         <translation type="unfinished">GOOGLE EARTH KML</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2685"/>
+        <location filename="src/gui/mainwindow.cpp" line="2748"/>
         <source>Google Earth KML %1;;All Files (*)</source>
         <translation>Google Earth KML %1 ;; Tous les fichiers (*)</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2695"/>
-        <location filename="src/gui/mainwindow.cpp" line="2713"/>
+        <location filename="src/gui/mainwindow.cpp" line="2758"/>
+        <location filename="src/gui/mainwindow.cpp" line="2776"/>
         <source>Google Earth KML file opened.</source>
         <translation type="unfinished">Fichier Google Earth KML ouvert.</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2698"/>
-        <location filename="src/gui/mainwindow.cpp" line="2718"/>
+        <location filename="src/gui/mainwindow.cpp" line="2761"/>
+        <location filename="src/gui/mainwindow.cpp" line="2781"/>
         <source>Opening Google Earth KML file failed.</source>
         <translation type="unfinished">L&apos;ouverture du fichier Google Earth KML a échoué.</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2897"/>
+        <location filename="src/gui/mainwindow.cpp" line="2960"/>
         <source>Save Map as Image</source>
         <translation type="unfinished">SAUVER LA CARTE EN IMAGE</translation>
     </message>
@@ -16196,30 +16196,30 @@ Local: %2</translation>
         <translation type="vanished">Capture d&apos;écran Little Navmap.jpg</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2922"/>
+        <location filename="src/gui/mainwindow.cpp" line="2985"/>
         <source>Error saving image.
 Only JPG, PNG and BMP are allowed.</source>
         <translation>Erreur lors de la sauvegarde de l&apos;image
 Seuls les formats JPG, PNG et BMP sont autorisés.</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2924"/>
-        <location filename="src/gui/mainwindow.cpp" line="2982"/>
+        <location filename="src/gui/mainwindow.cpp" line="2987"/>
+        <location filename="src/gui/mainwindow.cpp" line="3045"/>
         <source>Map image saved.</source>
         <translation type="unfinished">Image de la carte enregistrée.</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2935"/>
+        <location filename="src/gui/mainwindow.cpp" line="2998"/>
         <source> - Save Map as Image for AviTab</source>
         <translation type="unfinished"> - Sauvegarder la carte sous forme d&apos;image pour AviTab</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2942"/>
+        <location filename="src/gui/mainwindow.cpp" line="3005"/>
         <source>LittleNavmap_%1.png</source>
         <translation type="unfinished">LittleNavmap_%1.png</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2949"/>
+        <location filename="src/gui/mainwindow.cpp" line="3012"/>
         <source>Save Map as Image for AviTab</source>
         <translation type="unfinished">SAUVER LA CARTE EN IMAGE POUR AVITAB</translation>
     </message>
@@ -16228,36 +16228,36 @@ Seuls les formats JPG, PNG et BMP sont autorisés.</translation>
         <translation type="obsolete">Fichiers image AviTab %1;;Tous les fichiers (*)</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2973"/>
+        <location filename="src/gui/mainwindow.cpp" line="3036"/>
         <source>Error saving image.
 Only JPG and PNG are allowed.</source>
         <translation type="unfinished">Erreur de sauvegarde de l&apos;image.
 Seuls les formats JPG et PNG sont autorisés.</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2985"/>
+        <location filename="src/gui/mainwindow.cpp" line="3048"/>
         <source>Error saving JSON.</source>
         <translation type="unfinished">Sauvegarde des erreurs JSON.</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2990"/>
+        <location filename="src/gui/mainwindow.cpp" line="3053"/>
         <source>Map does not cover window.
 Ensure that the map fills the window completely.</source>
         <translation type="unfinished">La carte ne couvre pas la fenêtre.
 Assurez-vous que la carte remplit complètement la fenêtre.</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2995"/>
+        <location filename="src/gui/mainwindow.cpp" line="3058"/>
         <source>You have to switch to the Mercator map projection before saving the image.</source>
         <translation type="unfinished">Vous devez passer à la projection Mercator avant d&apos;enregistrer l&apos;image.</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="3001"/>
+        <location filename="src/gui/mainwindow.cpp" line="3064"/>
         <source> - Copy Map Image to Clipboard</source>
         <translation type="unfinished"> - Copier l&apos;image de la carte dans le Presse-papiers</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="3007"/>
+        <location filename="src/gui/mainwindow.cpp" line="3070"/>
         <source>Map image copied to clipboard.</source>
         <translation type="unfinished">Image de la carte copiée dans le presse-papiers.</translation>
     </message>
@@ -16283,12 +16283,12 @@ Assurez-vous que la carte remplit complètement la fenêtre.</translation>
         <translation type="vanished">Modification des paramètres de la carte.</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="3255"/>
+        <location filename="src/gui/mainwindow.cpp" line="3318"/>
         <source>All message dialogs reset.</source>
         <translation>Toutes les boîtes de dialogue de message sont réinitialisées.</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="261"/>
+        <location filename="src/gui/mainwindow.cpp" line="262"/>
         <source>Options changed.</source>
         <translation>Options modifiées.</translation>
     </message>
@@ -16297,7 +16297,7 @@ Assurez-vous que la carte remplit complètement la fenêtre.</translation>
         <translation type="obsolete">&lt;p&gt;est un planificateur de vol open source gratuit, un outil de navigation, une carte mobile, une recherche d&apos;aéroport et un système d&apos;information d&apos;aéroport pour X-Plane 11, Flight Simulator X et Prepar3D.&lt;/p&gt;&lt;p&gt;&lt;b&gt;Si vous souhaitez montrer votre appréciation, vous pouvez faire un don&amp;nbsp;&lt;a href=&quot;%1&quot;&gt;ici&lt;/a&gt;.&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Ce logiciel est sous licence &lt;a href=&quot;http://www.gnu.org/licenses/gpl-3.0&quot;&gt;GPL3&lt;/a&gt; ou toute version ultérieure.&lt;/p&gt;&lt;p&gt;Le code source de cette application est disponible sur &lt;a href=&quot;https://github.com/albar965&quot;&gt;Github&lt;/a&gt;.&lt;/p&gt;&lt;p&gt;Plus sur mes projets à &lt;a href=&quot;https://www.littlenavmap.org&quot;&gt;www.littlenavmap.org&lt;/a&gt;.&lt;/p&gt;&lt;p&gt;&lt;b&gt;Copyright 2015-2023 Alexander Barthel &lt;/a&gt;.&lt;/p&gt;&lt;p&gt;© 2017-2022 Traduction Française, Patrick JUNG aka Patbest&lt;/b&gt;&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="161"/>
+        <location filename="src/gui/mainwindow.cpp" line="162"/>
         <source>The option &quot;Allow to undock map window&quot; in the layout file is different than the currently set option.
 The layout might not be restored properly.
 
@@ -16308,7 +16308,7 @@ La mise en page peut ne pas être restaurée correctement.
 Appliquer quand même la mise en page de la fenêtre chargée?</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="380"/>
+        <location filename="src/gui/mainwindow.cpp" line="373"/>
         <source>Started.</source>
         <translation type="unfinished">Démarré.</translation>
     </message>
@@ -16345,22 +16345,22 @@ Appliquer quand même la mise en page de la fenêtre chargée?</translation>
         <translation type="obsolete">&lt;p style=&apos;white-space:pre&apos;&gt;est un planificateur de vol, un outil de navigation, une carte mobile,&lt;br/&gt;une recherche d&apos;aéroport et un système d&apos;information&lt;br/&gt;pour X-Plane 11, X-Plane 12, Flight Simulator X, Prepar3D et Microsoft Flight Simulator 2020.&lt;/p&gt;&lt;p&gt;&lt;b&gt;Si vous souhaitez montrer votre appréciation, vous pouvez faire un don&amp;nbsp;&lt;a href=&quot;%1&quot;&gt;ici&lt;/a&gt;.&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Ce logiciel est sous licence &lt;a href=&quot;http://www.gnu.org/licenses/gpl-3.0&quot;&gt;GPL3&lt;/a&gt; ou toute version ultérieure.&lt;/p&gt;&lt;p&gt;Le code source de cette application est disponible sur &lt;a href=&quot;https://github.com/albar965&quot;&gt;GitHub&lt;/a&gt;.&lt;/p&gt;&lt;p&gt;Plus d&apos;informations sur mes projets sur &lt;a href=&quot;https://www.littlenavmap.org&quot;&gt;www.littlenavmap.org&lt;/a&gt;.&lt;/p&gt;&lt;p&gt;&lt;b&gt;Copyright 2015-2023 Alexander Barthel&lt;/b&gt;&lt;/p&gt;&lt;p&gt;&lt;b&gt;Traduction Française 2017-2023 Patrick Jung&lt;/b&gt;&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="136"/>
+        <location filename="src/gui/mainwindow.cpp" line="137"/>
         <source>&lt;p style=&apos;white-space:pre&apos;&gt;is a free open source flight planner, navigation tool, moving map,&lt;br/&gt;airport search and airport information system&lt;br/&gt;for X-Plane 11, X-Plane 12, Flight Simulator X, Prepar3D and Microsoft Flight Simulator 2020.&lt;/p&gt;&lt;p&gt;&lt;b&gt;&lt;a href=&quot;%1&quot;&gt;Donate here to support the development of %2&lt;/a&gt;.&lt;/b&gt;&lt;/p&gt;&lt;p&gt;This software is licensed under &lt;a href=&quot;http://www.gnu.org/licenses/gpl-3.0&quot;&gt;GPL3&lt;/a&gt; or any later version.&lt;/p&gt;&lt;p&gt;The source code for this application is available at &lt;a href=&quot;https://github.com/albar965&quot;&gt;GitHub&lt;/a&gt;.&lt;/p&gt;&lt;p&gt;More about my projects at &lt;a href=&quot;https://www.littlenavmap.org&quot;&gt;www.littlenavmap.org&lt;/a&gt;.&lt;/p&gt;&lt;p&gt;&lt;b&gt;Copyright 2015-2024 Alexander Barthel&lt;/b&gt;&lt;/p&gt;</source>
         <translation type="unfinished">&lt;p style=&apos;white-space:pre&apos;&gt;is a free open source flight planner, navigation tool, moving map,&lt;br/&gt;airport search and airport information system&lt;br/&gt;for X-Plane 11, X-Plane 12, Flight Simulator X, Prepar3D and Microsoft Flight Simulator 2020.&lt;/p&gt;&lt;p&gt;&lt;b&gt;&lt;a href=&quot;%1&quot;&gt;Donate here to support the development of %2&lt;/a&gt;.&lt;/b&gt;&lt;/p&gt;&lt;p&gt;This software is licensed under &lt;a href=&quot;http://www.gnu.org/licenses/gpl-3.0&quot;&gt;GPL3&lt;/a&gt; or any later version.&lt;/p&gt;&lt;p&gt;The source code for this application is available at &lt;a href=&quot;https://github.com/albar965&quot;&gt;GitHub&lt;/a&gt;.&lt;/p&gt;&lt;p&gt;More about my projects at &lt;a href=&quot;https://www.littlenavmap.org&quot;&gt;www.littlenavmap.org&lt;/a&gt;.&lt;/p&gt;&lt;p&gt;&lt;b&gt;Copyright 2015-2024 Alexander Barthe &lt;/a&gt;.&lt;/p&gt;&lt;b&gt;© 2017-2024 Traduction Française par Patrick JUNG .&lt;/b&gt;&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="953"/>
-        <location filename="src/gui/mainwindow.cpp" line="957"/>
-        <location filename="src/gui/mainwindow.cpp" line="2022"/>
-        <location filename="src/gui/mainwindow.cpp" line="2027"/>
-        <location filename="src/gui/mainwindow.cpp" line="2069"/>
-        <location filename="src/gui/mainwindow.cpp" line="2071"/>
+        <location filename="src/gui/mainwindow.cpp" line="1016"/>
+        <location filename="src/gui/mainwindow.cpp" line="1020"/>
+        <location filename="src/gui/mainwindow.cpp" line="2085"/>
+        <location filename="src/gui/mainwindow.cpp" line="2090"/>
+        <location filename="src/gui/mainwindow.cpp" line="2132"/>
+        <location filename="src/gui/mainwindow.cpp" line="2134"/>
         <source> — </source>
         <translation type="unfinished"> — </translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="1873"/>
+        <location filename="src/gui/mainwindow.cpp" line="1936"/>
         <source>
 
 Set the path to the offline elevation data in options on page &quot;Cache and Files&quot;</source>
@@ -16369,55 +16369,55 @@ Set the path to the offline elevation data in options on page &quot;Cache and Fi
 Définir le chemin d&apos;accès aux données d&apos;élévation hors ligne dans les options de la page &quot;Cache et Fichiers&quot;</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2085"/>
+        <location filename="src/gui/mainwindow.cpp" line="2148"/>
         <source> 64-bit</source>
         <translation type="unfinished"> 64-bit</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2087"/>
+        <location filename="src/gui/mainwindow.cpp" line="2150"/>
         <source> 32-bit</source>
         <translation type="unfinished"> 32-bit</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2101"/>
+        <location filename="src/gui/mainwindow.cpp" line="2164"/>
         <source>Empty</source>
         <translation type="unfinished">Vide</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2104"/>
+        <location filename="src/gui/mainwindow.cpp" line="2167"/>
         <source> — (%1)</source>
         <translation type="unfinished"> — (%1)</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2107"/>
-        <location filename="src/gui/mainwindow.cpp" line="2141"/>
+        <location filename="src/gui/mainwindow.cpp" line="2170"/>
+        <location filename="src/gui/mainwindow.cpp" line="2204"/>
         <source> — %1</source>
         <translation type="unfinished"> — %1</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2126"/>
-        <location filename="src/gui/mainwindow.cpp" line="2134"/>
+        <location filename="src/gui/mainwindow.cpp" line="2189"/>
+        <location filename="src/gui/mainwindow.cpp" line="2197"/>
         <source> — %1%2</source>
         <translation type="unfinished"> — %1%2</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2130"/>
-        <location filename="src/gui/mainwindow.cpp" line="2138"/>
+        <location filename="src/gui/mainwindow.cpp" line="2193"/>
+        <location filename="src/gui/mainwindow.cpp" line="2201"/>
         <source> — *</source>
         <translation type="unfinished"> — *</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2181"/>
+        <location filename="src/gui/mainwindow.cpp" line="2244"/>
         <source>Delete user aircraft trail?</source>
         <translation type="unfinished">Supprimer le tracé de l&apos;avion utilisateur ?</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2189"/>
+        <location filename="src/gui/mainwindow.cpp" line="2252"/>
         <source>Aircraft trail removed from map.</source>
         <translation type="unfinished">Tracé de l&apos;avion supprimé de la carte.</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2201"/>
+        <location filename="src/gui/mainwindow.cpp" line="2264"/>
         <source>Flight Plan has been changed.
 The plan is empty but there are changes which can be restored by using undo.
 
@@ -16430,7 +16430,7 @@ Le plan est vide, mais il contient des modifications qui peuvent être rétablie
 Sauvegarder les modifications ?</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2241"/>
+        <location filename="src/gui/mainwindow.cpp" line="2304"/>
         <source>Note that you can put the flight plan route description window in the background and modify the flight plan on the map or flight plan table in parallel.</source>
         <translation type="unfinished">Notez que vous pouvez mettre la fenêtre de description de la route du plan de vol en arrière-plan et modifier le plan de vol sur la carte ou le tableau des plans de vol en parallèle.</translation>
     </message>
@@ -16439,44 +16439,44 @@ Sauvegarder les modifications ?</translation>
         <translation type="obsolete">Création d&apos;un nouveau plan de vol avec un aéroport de départ et de destination.</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2354"/>
+        <location filename="src/gui/mainwindow.cpp" line="2417"/>
         <source>Flight plan opened from route description.</source>
         <translation type="unfinished">Plan de vol ouvert à partir de la description de l&apos;itinéraire.</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2397"/>
+        <location filename="src/gui/mainwindow.cpp" line="2460"/>
         <source>Open and Replace GPX Trail</source>
         <translation type="unfinished">Ouvrir et Remplacer un tracé GPX</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2397"/>
-        <location filename="src/gui/mainwindow.cpp" line="2434"/>
+        <location filename="src/gui/mainwindow.cpp" line="2460"/>
+        <location filename="src/gui/mainwindow.cpp" line="2497"/>
         <source>GPX Files %1;;All Files (*)</source>
         <translation type="unfinished">Fichiers GPX %1;;Tous les Fichiers (*)</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2414"/>
+        <location filename="src/gui/mainwindow.cpp" line="2477"/>
         <source>Replace the current user aircraft trail?</source>
         <translation type="unfinished">Remplacer le tracé aérien actuel?</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2415"/>
+        <location filename="src/gui/mainwindow.cpp" line="2478"/>
         <source>Do not &amp;show this dialog again and replace trail.</source>
         <translation type="unfinished">N&apos;affichez plu&amp;s ce dialogue et remplacez le tracé.</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2428"/>
-        <location filename="src/gui/mainwindow.cpp" line="2450"/>
+        <location filename="src/gui/mainwindow.cpp" line="2491"/>
+        <location filename="src/gui/mainwindow.cpp" line="2513"/>
         <source>The file &quot;%1&quot; is no valid GPX file.</source>
         <translation type="unfinished">Le fichier &quot;%1&quot; n&apos;est pas un fichier GPX valide.</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2434"/>
+        <location filename="src/gui/mainwindow.cpp" line="2497"/>
         <source>Open and Append GPX Trail</source>
         <translation type="unfinished">Ouvrir et Ajouter un tracé GPX</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2462"/>
+        <location filename="src/gui/mainwindow.cpp" line="2525"/>
         <source>Truncated aircraft trail by %L1 points due to the
 maximum number of %L2 points set in
 options on page &quot;Map Aircraft Trail&quot;.
@@ -16485,7 +16485,7 @@ Note that too many trail points can cause performance issues in map display.</so
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2468"/>
+        <location filename="src/gui/mainwindow.cpp" line="2531"/>
         <source>Aircraft trail has %L1 points which can cause performance issues in map display.
 
 Consider lowering the maximum number of points in the options on page &quot;Map Aircraft Trail&quot;
@@ -16493,27 +16493,27 @@ or delete the trail.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2601"/>
+        <location filename="src/gui/mainwindow.cpp" line="2664"/>
         <source>&lt;p&gt;You cannot save this file directly.&lt;br/&gt;Use the export or multiexport functions in menu &quot;File&quot; instead.&lt;/p&gt;&lt;p&gt;Save using the LNMPLN format now?&lt;/p&gt;</source>
         <translation type="unfinished">&lt;p&gt;Vous ne pouvez pas enregistrer ce fichier directement.&lt;br/&gt;Utilisez plutôt les fonctions d&apos;exportation ou de multiexportation du menu &quot;Fichier&quot;.&lt;/p&gt;&lt;p&gt;Sauvegarder en utilisant le format LNMPLN maintenant?&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="3600"/>
+        <location filename="src/gui/mainwindow.cpp" line="3655"/>
         <source>Little Xpconnect successfully installed.</source>
         <translation type="unfinished">Little Xpconnect a été installé avec succès.</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="3601"/>
+        <location filename="src/gui/mainwindow.cpp" line="3656"/>
         <source>Little Xpconnect installed.</source>
         <translation type="unfinished">Little Xpconnect installé.</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="3618"/>
+        <location filename="src/gui/mainwindow.cpp" line="3673"/>
         <source>&lt;p&gt;Directory structure for Little Navmap files is already complete.&lt;/p&gt;The base directory is%1&amp;nbsp;(click to open)&lt;br/&gt;</source>
         <translation type="unfinished">&lt;p&gt;La structure des répertoires pour les fichiers Little Navmap est déjà complète.&lt;/p&gt;Le répertoire de base est%1&amp;nbsp;(cliquer pour ouvrir)&lt;br/&gt;</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="3912"/>
+        <location filename="src/gui/mainwindow.cpp" line="3967"/>
         <source>&lt;p&gt;&lt;b&gt;This will reset all options, window layout, dialog layout, aircraft trail, map position history and file histories back to default and restart %1.&lt;/b&gt;&lt;/p&gt;&lt;p&gt;User features like range rings or traffic patterns as well as scenery, logbook and userpoint databases are not affected.&lt;/p&gt;&lt;p&gt;A copy of the settings file&lt;/p&gt;%2&amp;nbsp;(click to open)&lt;p&gt;will be created in the folder&lt;/p&gt;%3&amp;nbsp;(click to open).&lt;p&gt;This allows you to undo this change.&lt;/p&gt;&lt;p&gt;Reset and restart now?&lt;/p&gt;</source>
         <translation type="unfinished">&lt;p&gt;&lt;b&gt;Cette opération réinitialise toutes les options, la disposition des fenêtres, la disposition des boîtes de dialogue, la trace de l&apos;avion, l&apos;historique des positions sur la carte et l&apos;historique des fichiers, et redémarre. %1.&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Les fonctions utilisateur telles que les anneaux de distance ou les modèles de trafic, ainsi que les bases de données des scènes, des carnets de bord et des userpoints ne sont pas affectés.&lt;/p&gt;&lt;p&gt;Une copie du fichier de configuration&lt;/p&gt;%2&amp;nbsp;(cliquer pour ouvrir)&lt;p&gt;sera créé dans le dossier&lt;/p&gt;%3&amp;nbsp;(cliquer pour ouvrir).&lt;p&gt;Cela vous permet d&apos;annuler ce changement.&lt;/p&gt;&lt;p&gt;Réinitialiser et redémarrer maintenant?&lt;/p&gt;</translation>
     </message>
@@ -16522,45 +16522,45 @@ or delete the trail.</source>
         <translation type="obsolete">&lt;p&gt;Vous ne pouvez pas sauvegarder ce fichier directement.&lt;br/&gt;Utilisez plutôt la fonction d&apos;exportation.&lt;/p&gt;&lt;p&gt;Sauvegarder en utilisant le format LNMPLN maintenant?&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2604"/>
+        <location filename="src/gui/mainwindow.cpp" line="2667"/>
         <source>Do not &amp;show this dialog again and save as LNMPLN.</source>
         <oldsource>Do not show this dialog again and save as LNMPLN.</oldsource>
         <translation type="unfinished">Ne plu&amp;s afficher cette boîte de dialogue et enregistrer sous LNMPLN.</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2639"/>
+        <location filename="src/gui/mainwindow.cpp" line="2702"/>
         <source>Save Flight Plan as LNMPLN Format</source>
         <translation type="unfinished">Sauver le plan de vol au format LNMPLN</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2727"/>
-        <location filename="src/gui/mainwindow.cpp" line="2742"/>
+        <location filename="src/gui/mainwindow.cpp" line="2790"/>
+        <location filename="src/gui/mainwindow.cpp" line="2805"/>
         <source>Window Layout</source>
         <translation type="unfinished">Disposition des fenêtres</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2728"/>
-        <location filename="src/gui/mainwindow.cpp" line="2743"/>
+        <location filename="src/gui/mainwindow.cpp" line="2791"/>
+        <location filename="src/gui/mainwindow.cpp" line="2806"/>
         <source>Window Layout Files %1;;All Files (*)</source>
         <translation type="unfinished">Fichiers de disposition des fenêtres %1;;Tous les fichiers (*)</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2752"/>
+        <location filename="src/gui/mainwindow.cpp" line="2815"/>
         <source>Window layout saved.</source>
         <translation type="unfinished">La disposition des fenêtres est sauvegardée.</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2786"/>
+        <location filename="src/gui/mainwindow.cpp" line="2849"/>
         <source>Window layout loaded and restored.</source>
         <translation type="unfinished">Chargement et restauration de l&apos;agencement des fenêtres.</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="3206"/>
+        <location filename="src/gui/mainwindow.cpp" line="3269"/>
         <source>Map settings reset.</source>
         <translation type="unfinished">Réinitialisation des paramètres de la carte.</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="3247"/>
+        <location filename="src/gui/mainwindow.cpp" line="3310"/>
         <source>This causes all message dialogs that were deactivated with the
 &quot;Do not show again&quot;
 button to be displayed again.
@@ -16569,52 +16569,52 @@ Reset all messages to show up again now?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="3283"/>
+        <location filename="src/gui/mainwindow.cpp" line="3346"/>
         <source>%1: %2</source>
         <translation type="unfinished">%1: %2</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="3283"/>
+        <location filename="src/gui/mainwindow.cpp" line="3346"/>
         <source>hh:mm:ss</source>
         <translation type="unfinished">hh:mm:ss</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="3302"/>
+        <location filename="src/gui/mainwindow.cpp" line="3365"/>
         <source>No Messages</source>
         <translation type="unfinished">Aucun messages</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="3304"/>
+        <location filename="src/gui/mainwindow.cpp" line="3367"/>
         <source>%1 %2</source>
         <translation type="unfinished">%1 %2</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="3306"/>
+        <location filename="src/gui/mainwindow.cpp" line="3369"/>
         <source>Messages</source>
         <translation type="unfinished">Messages</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="3306"/>
+        <location filename="src/gui/mainwindow.cpp" line="3369"/>
         <source>Message</source>
         <translation type="unfinished">Message</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="3346"/>
+        <location filename="src/gui/mainwindow.cpp" line="3409"/>
         <source>&lt;p&gt;Error initializing SSL subsystem.&lt;/p&gt;&lt;p&gt;The program will not be able to use encrypted network connections&lt;br/&gt;(i.e. HTTPS) that are needed to check for updates or&lt;br/&gt;to load online maps.&lt;/p&gt;</source>
         <translation type="unfinished">&lt;p&gt;Erreur lors de l&apos;initialisation du sous-système SSL.&lt;/p&gt;&lt;p&gt;Le programme ne pourra pas utiliser les connexions réseau cryptées &lt;br/&gt;(i.e. HTTPS) qui sont nécessaires pour vérifier les mises à jour ou &lt;br/&gt;charger les cartes en ligne.&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="3487"/>
+        <location filename="src/gui/mainwindow.cpp" line="3547"/>
         <source>&lt;p&gt;&lt;a href=&quot;%1&quot;&gt;Click here for more information in the Little Navmap online manual&lt;/a&gt;&lt;/p&gt;</source>
         <translation type="unfinished">&lt;p&gt;&lt;a href=&quot;%1&quot;&gt;&lt;b&gt;Cliquez ici pour plus d&apos;informations dans le &lt;i&gt;Little Navmap&lt;/i&gt;manuel en ligne&lt;/b&gt;&lt;&lt;/a&gt;&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="3482"/>
+        <location filename="src/gui/mainwindow.cpp" line="3542"/>
         <source>&lt;p&gt;Could not find a simulator installation on this computer. Also, no scenery library databases were found.&lt;/p&gt;&lt;p&gt;You can copy a Little Navmap scenery library database from another computer if you wish to run this Little Navmap instance on a remote across a network.&lt;/p&gt;</source>
         <translation type="unfinished">&lt;p&gt;Il n&apos;a pas été possible de trouver une installation de simulateur sur cet ordinateur. De plus, aucune base de données de bibliothèque de scènes n&apos;a été trouvée.&lt;/p&gt;&lt;p&gt;Vous pouvez copier une base de données de bibliothèque de scènes Little Navmap à partir d&apos;un autre ordinateur si vous souhaitez exécuter cette instance Little Navmap sur un ordinateur distant à travers un réseau.&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="3499"/>
+        <location filename="src/gui/mainwindow.cpp" line="3559"/>
         <source>&lt;html&gt;&lt;head&gt;&lt;style&gt;body { font-size: large; white-space: pre; }&lt;/style&gt;&lt;/head&gt;&lt;body&gt;&lt;h2&gt;Welcome to Little Navmap&lt;/h2&gt;&lt;p&gt;This seems to be the first time you are installing the program.&lt;/p&gt;&lt;p&gt;In the following several dialog windows and a web page will&lt;br/&gt;open to guide you through the first steps:&lt;/p&gt;&lt;ol&gt;&lt;li&gt;Web page in the online user manual showing&lt;br/&gt;important information for first time users.&lt;/li&gt;&lt;li&gt;A dialog window which allows to create a&lt;br/&gt;directory structure to save your files.&lt;br/&gt;You can do this later in menu &quot;Tools&quot; -&gt; &quot;Create Directory Structure&quot;.&lt;br/&gt;This step is optional.&lt;/li&gt;&lt;li&gt;The dialog window &quot;Load Scenery Library&quot; opens to load the&lt;br/&gt;simulator scenery into the Little Navmap database.&lt;br/&gt;This process runs in the background.&lt;br/&gt;You can start this manually in the menu&lt;br/&gt;&quot;Scenery Library&quot; -&gt; &quot;Load Scenery Library&quot;.&lt;/li&gt;&lt;li&gt;The connection dialog window opens allowing to attach Little Navmap&lt;br/&gt;to a simulator while flying.&lt;br/&gt;Do this manually in menu &quot;Tools&quot; -&gt; &quot;Connect to Flight Simulator&quot;.&lt;/li&gt;&lt;/ol&gt;&lt;p&gt;You can also skip all these steps and run them later.&lt;/p&gt;&lt;p&gt;See the help menu to access the online user manual and tutorials.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation type="unfinished">&lt;html&gt;&lt;head&gt;&lt;style&gt;body { font-size: large; white-space: pre; }&lt;/style&gt;&lt;/head&gt;&lt;body&gt;&lt;h2&gt;Bienvenue sur Little Navmap&lt;/h2&gt;&lt;p&gt;Il semble que ce soit la première fois que vous installez le programme.&lt;/p&gt;&lt;p&gt;Dans la suite, plusieurs fenêtres de dialogue et une page web s&apos;ouvriront&lt;br/&gt;pour vous guider dans les premières étapes:&lt;/p&gt;&lt;ol&gt;&lt;li&gt;Page web du manuel d&apos;utilisation en ligne présentant&lt;br/&gt;des informations importantes pour les nouveaux utilisateurs.&lt;/li&gt;&lt;li&gt;Une fenêtre de dialogue qui permet de créer une structure&lt;br/&gt;de répertoire pour enregistrer vos fichiers.&lt;br/&gt;Vous pouvez le faire plus tard dans le menu &quot;Outils&quot; -&gt; &quot;Créer une structure de répertoire&quot;.&lt;br/&gt;Cette étape est facultative.&lt;/li&gt;&lt;li&gt;La fenêtre de dialogue &quot;Charger la bibliothèque de scènes&quot; s&apos;ouvre pour charger les scènes du simulateur dans la base de données Little Navmap..&lt;br/&gt;Ce processus s&apos;exécute en arrière-plan.&lt;br/&gt;Vous pouvez lancer cette opération manuellement dans le menu&lt;br/&gt;&quot;Bibliothèque de scènes&quot; -&gt; &quot;Charger la bibliothèque de scènes&quot;.&lt;/li&gt;&lt;li&gt;La fenêtre de dialogue de connexion s&apos;ouvre et permet d&apos;attacher Little Navmap&lt;br/&gt; à un simulateur pendant le vol.&lt;br/&gt;Faites-le manuellement dans le menu &quot;Outils&quot; -&gt; &quot;Connexion au Simulateur de Vol&quot;.&lt;/li&gt;&lt;/ol&gt;&lt;p&gt;Vous pouvez également ignorer toutes ces étapes et les exécuter plus tard.&lt;/p&gt;&lt;p&gt;Le menu d&apos;aide permet d&apos;accéder au manuel de l&apos;utilisateur et aux didacticiels en ligne.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
@@ -16623,12 +16623,12 @@ Reset all messages to show up again now?</source>
         <translation type="obsolete">&lt;html&gt;&lt;head&gt;&lt;style&gt;body { font-size: large; white-space: pre; }&lt;/style&gt;&lt;/head&gt;&lt;body&gt;&lt;h2&gt;Bienvenue à Little Navmap&lt;/h2&gt;&lt;p&gt;Il semble que ce soit la première fois que vous installez le programme.&lt;/p&gt;&lt;p&gt;Dans ce qui suit, plusieurs fenêtres de dialogue et une page web vont&lt;br/&gt;ouvrir pour vous guider dans les premiers pas:&lt;/p&gt;&lt;ol&gt;&lt;li&gt;Page Web du manuel d&apos;utilisation en ligne indiquant&lt;br/&gt;les informations importantes pour les premiers utilisateurs.&lt;/li&gt;&lt;li&gt;Une fenêtre de dialogue qui permet de créer une structure de&lt;br/&gt;répertoire pour enregistrer vos fichiers.&lt;br/&gt;Vous pouvez le faire plus tard dans le menu &quot;Outils&quot; -&gt; &quot;Créer une structure de répertoire&quot;.&lt;br/&gt;Cette étape est optionnelle.&lt;/li&gt;&lt;li&gt;La fenêtre de dialogue &quot;Charger la bibliothèque de scènes&quot; s&apos;ouvre pour charger les scènes du&lt;br/&gt; simulateur dans la base de données Little Navmap.&lt;br/&gt;Ce processus s&apos;exécute en arrière-plan.&lt;br/&gt;Vous pouvez lancer cette opération manuellement dans le menu&lt;br/&gt;&quot;Bibliothèque de scènes&quot; -&gt; &quot;Recharger la bibliothèque de scènes&quot;.&lt;/li&gt;&lt;li&gt;La fenêtre de dialogue de connexion s&apos;ouvre et permet d&apos;attacher Little Navmap&lt;br/&gt;à un simulateur pendant le vol.&lt;br/&gt;Faites-le manuellement dans le menu &quot;Outils&quot; -&gt; &quot;Se connecter à Flight Simulator&quot;.&lt;/li&gt;&lt;/ol&gt;&lt;p&gt;Vous pouvez également ignorer toutes ces étapes et les exécuter plus tard.&lt;/p&gt;&lt;p&gt;Consultez le menu d&apos;aide pour accéder au manuel d&apos;utilisation et aux didacticiels en ligne.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="4579"/>
+        <location filename="src/gui/mainwindow.cpp" line="4634"/>
         <source>Do not &amp;show this dialog again and cancel loading.</source>
         <translation type="unfinished">Ne pa&amp;s afficher à nouveau cette boîte de dialogue et annuler le chargement.</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="4595"/>
+        <location filename="src/gui/mainwindow.cpp" line="4650"/>
         <source>Do not &amp;show this dialog again and quit.</source>
         <translation type="unfinished">N&apos;affichez pa&amp;s cette boîte de dialogue à nouveau et quittez.</translation>
     </message>
@@ -16654,7 +16654,7 @@ Reset all messages to show up again now?</source>
         <translation type="obsolete">&lt;b&gt;Cela réinitialisera toutes les options, la disposition des fenêtres, la disposition des dialogues, la trajectoire de l&apos;avion, l&apos;historique des positions sur la carte et l&apos;historique des fichiers aux valeurs par défaut et redémarrera %1.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;Les fonctionnalités utilisateur telles que les anneaux de distance ou les motifs, ainsi que les bases de données de scènes, de journaux de bord et de  userpoint ne sont pas affectées.&lt;br/&gt;&lt;br/&gt;Une copie du fichier de paramètres&lt;br/&gt;&lt;br/&gt;&quot;%2&quot;&lt;br/&gt;&lt;br/&gt;sera créée dans le dossier&lt;br/&gt;&lt;br/&gt;&quot;%3&quot;&lt;br/&gt;&lt;br/&gt;ce qui vous permet d&apos;annuler cette modification.</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="4577"/>
+        <location filename="src/gui/mainwindow.cpp" line="4632"/>
         <source>%1 is loading the scenery library database in the background.
 Really quit and cancel the loading process?</source>
         <translation type="unfinished">%1 charge la base de données de la bibliothèque de scènes en arrière-plan.
@@ -16665,7 +16665,7 @@ Vraiment quitter et annuler le processus de chargement?</translation>
         <translation type="obsolete">N&apos;affichez pa&amp;s cette boîte de dialogue à nouveau et annulez le chargement à l&apos;avenir.</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="4594"/>
+        <location filename="src/gui/mainwindow.cpp" line="4649"/>
         <source>Really quit?</source>
         <translation type="unfinished">Vous voulez vraiment quitter?</translation>
     </message>
@@ -16702,12 +16702,12 @@ Vraiment quitter et annuler le processus de chargement?</translation>
         <translation type="vanished">Voulez-vous vraiment Quitter?</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2181"/>
-        <location filename="src/gui/mainwindow.cpp" line="2243"/>
-        <location filename="src/gui/mainwindow.cpp" line="2475"/>
-        <location filename="src/gui/mainwindow.cpp" line="2587"/>
-        <location filename="src/gui/mainwindow.cpp" line="3350"/>
-        <location filename="src/gui/mainwindow.cpp" line="3489"/>
+        <location filename="src/gui/mainwindow.cpp" line="2244"/>
+        <location filename="src/gui/mainwindow.cpp" line="2306"/>
+        <location filename="src/gui/mainwindow.cpp" line="2538"/>
+        <location filename="src/gui/mainwindow.cpp" line="2650"/>
+        <location filename="src/gui/mainwindow.cpp" line="3413"/>
+        <location filename="src/gui/mainwindow.cpp" line="3549"/>
         <source>Do not &amp;show this dialog again.</source>
         <translation type="unfinished">Ne plu&amp;s afficher cette boite de dialogue.</translation>
     </message>
@@ -23879,8 +23879,8 @@ Assurez-vous que la carte remplit complètement la fenêtre.</translation>
 <context>
     <name>NavApp</name>
     <message>
-        <location filename="src/app/navapp.cpp" line="321"/>
-        <location filename="src/app/navapp.cpp" line="326"/>
+        <location filename="src/app/navapp.cpp" line="322"/>
+        <location filename="src/app/navapp.cpp" line="327"/>
         <source>While reading magnetic declination from database:</source>
         <translation type="unfinished">En lisant la déclinaison magnétique de la base de données:</translation>
     </message>
@@ -35926,59 +35926,59 @@ Les espaces sont remplacés par des traits de soulignement.</translation>
         <translation type="vanished">répertoire des paramètres</translation>
     </message>
     <message>
-        <location filename="src/app/commandline.cpp" line="40"/>
+        <location filename="src/app/commandline.cpp" line="42"/>
         <source>Use &lt;settings-path&gt; to store options and databases into the given directory. &lt;settings-path&gt; can be relative or absolute. Missing directories are created. Path can be on any drive.</source>
         <translation type="unfinished">Utilisez &lt;settings-path&gt; pour stocker les options et les bases de données dans le répertoire donné. &lt;settings-path&gt; peut être relatif ou absolu. Les répertoires manquants sont créés. Le chemin peut être sur n&apos;importe quel lecteur.</translation>
     </message>
     <message>
-        <location filename="src/app/commandline.cpp" line="43"/>
-        <location filename="src/app/commandline.cpp" line="50"/>
+        <location filename="src/app/commandline.cpp" line="45"/>
+        <location filename="src/app/commandline.cpp" line="52"/>
         <source>settings-path</source>
         <translation type="unfinished">chemin des paramètres</translation>
     </message>
     <message>
-        <location filename="src/app/commandline.cpp" line="47"/>
+        <location filename="src/app/commandline.cpp" line="49"/>
         <source>Use &lt;log-path&gt; to store log files into the given directory. &lt;log-path&gt; can be relative or absolute. Missing directories are created. Path can be on any drive.</source>
         <oldsource>Use &lt;cache-path&gt; to store tiles from online maps.Missing directories are created. Path can be on any drive.</oldsource>
         <translation type="unfinished">Utilisez &lt;cache-path&gt; pour stocker les tuiles des cartes en ligne.Des répertoires manquants sont créés. Le chemin peut être sur n&apos;importe quel lecteur.</translation>
     </message>
     <message>
-        <location filename="src/app/commandline.cpp" line="54"/>
+        <location filename="src/app/commandline.cpp" line="56"/>
         <source>Use &lt;cache-path&gt; to store tiles from online maps. Missing directories are created. Path can be on any drive.</source>
         <translation type="unfinished">Utilisez &lt;cache-path&gt; pour stocker les tuiles des cartes en ligne. Les répertoires manquants sont créés. Le chemin peut être sur n&apos;importe quel lecteur.</translation>
     </message>
     <message>
-        <location filename="src/app/commandline.cpp" line="56"/>
+        <location filename="src/app/commandline.cpp" line="58"/>
         <source>cache-path</source>
         <translation type="unfinished">chemin du cache</translation>
     </message>
     <message>
-        <location filename="src/app/commandline.cpp" line="60"/>
+        <location filename="src/app/commandline.cpp" line="62"/>
         <source>Load the given &lt;%1&gt; file on startup. Can be one of the supported formats like &quot;.lnmpln&quot;, &quot;.pln&quot;, &quot;.fms&quot;, &quot;.fgfp&quot;, &quot;.fpl&quot;, &quot;.gfp&quot; or others.</source>
         <translation type="unfinished">Charge le fichier &lt;%1&gt; donné au démarrage. Il peut s&apos;agir d&apos;un des formats pris en charge tels que &quot;.lnmpln&quot;, &quot;.pln&quot;, &quot;.fms&quot;, &quot;.fgfp&quot;, &quot;.fpl&quot;, &quot;.gfp&quot; ou autres.</translation>
     </message>
     <message>
-        <location filename="src/app/commandline.cpp" line="67"/>
+        <location filename="src/app/commandline.cpp" line="69"/>
         <source>Parse and load the given &lt;%1&gt; flight plan route description on startup. Example &quot;EDDF BOMBI LIRF&quot;.</source>
         <translation type="unfinished">Analyse et charge la description de la route du plan de vol &lt;%1&gt; au démarrage. Exemple &quot;EDDF BOMBI LIRF&quot;.</translation>
     </message>
     <message>
-        <location filename="src/app/commandline.cpp" line="73"/>
+        <location filename="src/app/commandline.cpp" line="75"/>
         <source>Load the given &lt;%1&gt; aircraft performance file &quot;.lnmperf&quot; on startup.</source>
         <translation type="unfinished">Charge le fichier de performance de l&apos;avion &lt;%1&gt; donné &quot;.lnmperf&quot; au démarrage.</translation>
     </message>
     <message>
-        <location filename="src/app/commandline.cpp" line="79"/>
+        <location filename="src/app/commandline.cpp" line="81"/>
         <source>Load the given &lt;%1&gt; window layout file&quot;.lnmlayout&quot; on startup.</source>
         <translation type="unfinished">Charge le fichier de présentation de fenêtre &lt;%1&gt; donné &quot;.lnmlayout&quot; au démarrage.</translation>
     </message>
     <message>
-        <location filename="src/app/commandline.cpp" line="84"/>
+        <location filename="src/app/commandline.cpp" line="86"/>
         <source>Quit an already running instance. The running instance might still ask about exiting or saving files.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/app/commandline.cpp" line="89"/>
+        <location filename="src/app/commandline.cpp" line="91"/>
         <source>Use language code &lt;language&gt; like &quot;de&quot; or &quot;en_US&quot; for the user interface. The code is not checked for existence or validity and is saved for the next startup.</source>
         <translation type="unfinished">Utilisez le code de langue &lt;language&gt; comme &quot;de&quot; ou &quot;en_US&quot; pour l&apos;interface utilisateur. L&apos;existence ou la validité de ce code n&apos;est pas vérifiée et il est enregistré pour le prochain démarrage.</translation>
     </message>
@@ -35987,22 +35987,22 @@ Les espaces sont remplacés par des traits de soulignement.</translation>
         <translation type="obsolete">Une seule des options -s et -p peut être utilisée</translation>
     </message>
     <message>
-        <location filename="src/app/commandline.cpp" line="152"/>
+        <location filename="src/app/commandline.cpp" line="154"/>
         <source>Only one of options -f and -d can be used</source>
         <translation type="unfinished">Une seule des options -f et -d peut être utilisée</translation>
     </message>
     <message>
-        <location filename="src/main.cpp" line="343"/>
+        <location filename="src/main.cpp" line="351"/>
         <source>Log files:</source>
         <translation>Fichiers Log:</translation>
     </message>
     <message>
-        <location filename="src/main.cpp" line="344"/>
+        <location filename="src/main.cpp" line="352"/>
         <source>Database directory:</source>
         <translation>Répertoire de la base de données:</translation>
     </message>
     <message>
-        <location filename="src/main.cpp" line="345"/>
+        <location filename="src/main.cpp" line="353"/>
         <source>Configuration:</source>
         <translation>Configuration:</translation>
     </message>
