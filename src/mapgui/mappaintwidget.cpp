@@ -68,7 +68,7 @@ using atools::geo::Rect;
 using atools::geo::Pos;
 
 MapPaintWidget::MapPaintWidget(QWidget *parent, bool visible, bool webParam)
-  : Marble::MarbleWidget(parent), visibleWidget(visible), web(webParam)
+  : MapGraphic(parent), visibleWidget(visible), web(webParam)
 {
   verbose = atools::settings::Settings::instance().getAndStoreValue(lnm::OPTIONS_MAPWIDGET_DEBUG, false).toBool();
 
@@ -171,7 +171,7 @@ void MapPaintWidget::copySettings(const MapPaintWidget& other, bool deep)
   setShowIceLayer(other.showIceLayer());
 
   // Adapt cache settings if changed
-  if(model()->persistentTileCacheLimit() != other.model()->persistentTileCacheLimit())
+  if(model() && other.model() && model()->persistentTileCacheLimit() != other.model()->persistentTileCacheLimit())
     model()->setPersistentTileCacheLimit(other.model()->persistentTileCacheLimit());
   if(volatileTileCacheLimit() != other.volatileTileCacheLimit())
     setVolatileTileCacheLimit(other.volatileTileCacheLimit());
@@ -261,21 +261,24 @@ void MapPaintWidget::setThemeInternal(const MapTheme& theme)
 void MapPaintWidget::removePlacemarks()
 {
   MarbleModel *m = model();
-  // Need to remove the placemark files since they are shown randomly on online maps
-  for(const QString& file : PLACEMARK_FILES_CACHE)
-    m->removeGeoData(file);
+  if(m) {
+    // Need to remove the placemark files since they are shown randomly on online maps
+    for(const QString& file : PLACEMARK_FILES_CACHE)
+      m->removeGeoData(file);
 
-  for(const QString& file : PLACEMARK_FILES_KML)
-    m->removeGeoData(file);
+    for(const QString& file : PLACEMARK_FILES_KML)
+      m->removeGeoData(file);
+  }
 }
 
 void MapPaintWidget::addPlacemarks()
 {
   MarbleModel *m = model();
-
-  // Add placemark files again - ignored if already loaded
-  for(const QString& file : PLACEMARK_FILES_CACHE)
-    m->addGeoDataFile(file);
+  if(m) {
+    // Add placemark files again - ignored if already loaded
+    for(const QString& file : PLACEMARK_FILES_CACHE)
+      m->addGeoDataFile(file);
+  }
 }
 
 void MapPaintWidget::unitsUpdated()
@@ -332,7 +335,7 @@ void MapPaintWidget::updateCacheSizes()
   }
 
   quint64 persCacheKb = OptionData::instance().getCacheSizeDiskMb() * 1000L;
-  if(persCacheKb != model()->persistentTileCacheLimit())
+  if(model() && persCacheKb != model()->persistentTileCacheLimit())
   {
     qDebug() << "Persistent cache to" << persCacheKb << "kb";
     model()->setPersistentTileCacheLimit(persCacheKb);
@@ -368,12 +371,12 @@ map::MapWeatherSource MapPaintWidget::getMapWeatherSource() const
 
 QDateTime MapPaintWidget::getSunShadingDateTime() const
 {
-  return model()->clockDateTime();
+    return model() ? model()->clockDateTime() : QDateTime();
 }
 
 void MapPaintWidget::setSunShadingDateTime(const QDateTime& datetime, bool force)
 {
-  if(force || std::abs(datetime.secsTo(model()->clockDateTime())) > 120)
+  if(force || model() && std::abs(datetime.secsTo(model()->clockDateTime())) > 120)
   {
     // Update time and map only if difference more than 2 minutes
     model()->setClockDateTime(datetime);
@@ -986,8 +989,10 @@ bool MapPaintWidget::addKmlFile(const QString& kmlFile)
 
 void MapPaintWidget::clearKmlFiles()
 {
-  for(const QString& file : qAsConst(kmlFilePaths))
-    model()->removeGeoData(file);
+  if(model()) {
+    for(const QString& file : qAsConst(kmlFilePaths))
+      model()->removeGeoData(file);
+  }
   kmlFilePaths.clear();
 }
 
@@ -1281,7 +1286,7 @@ void MapPaintWidget::resizeEvent(QResizeEvent *event)
   }
 
   // Let parent do its thing
-  MarbleWidget::resizeEvent(event);
+  MapGraphic::resizeEvent(event);
 
   if(keepWorldRect)
     // Keep visible rectangle if desired - CPU intense
@@ -1324,7 +1329,7 @@ void MapPaintWidget::paintEvent(QPaintEvent *paintEvent)
     painting = true;
     if(!active)
       // Not active yet - draw only background map
-      MarbleWidget::paintEvent(paintEvent);
+      MapGraphic::paintEvent(paintEvent);
     else
     {
       bool changed = false;
@@ -1357,7 +1362,7 @@ void MapPaintWidget::paintEvent(QPaintEvent *paintEvent)
       }
 
       // Erase map window to avoid black rectangle but do a dummy draw call to have everything initialized
-      MarbleWidget::paintEvent(paintEvent);
+      MapGraphic::paintEvent(paintEvent);
 
       if(changed)
       {
@@ -1390,7 +1395,8 @@ bool MapPaintWidget::loadKml(const QString& filename, bool center)
 {
   if(QFile::exists(filename))
   {
-    model()->addGeoDataFile(filename, 0, center && OptionData::instance().getFlags() & opts::GUI_CENTER_KML);
+    if(model())
+      model()->addGeoDataFile(filename, 0, center && OptionData::instance().getFlags() & opts::GUI_CENTER_KML);
 
     if(center)
       showAircraft(false);

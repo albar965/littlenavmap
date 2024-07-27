@@ -20,9 +20,9 @@
 
 #include "common/mapflags.h"
 #include "geo/pos.h"
+#include "mapgui/mapgraphic.h"
 
 #include <marble/GeoDataLatLonAltBox.h>
-#include <marble/MarbleWidget.h>
 
 class MapTheme;
 
@@ -85,7 +85,7 @@ class AircraftTrail;
  * Does not contain any UI and mouse/keyboard interaction.
  */
 class MapPaintWidget :
-  public Marble::MarbleWidget
+  public MapGraphic
 {
   Q_OBJECT
 
