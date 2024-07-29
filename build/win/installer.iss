@@ -12,7 +12,7 @@
 // Command line parameters with defaults ==========================================================================
 // Set defaults for debugging if not given on the command line
 #ifndef LnmAppVersion
-  #define LnmAppVersion "3.0.7.rc1"
+  #define LnmAppVersion "3.0.9"
 #endif
 
 #ifndef LnmAppArch
@@ -168,7 +168,7 @@ Name: lnmfmsassociation; Description: "{cm:AssocFileExtension,{#LnmAppName},X-Pl
 // LNM exe and whole folder
 [Files]
 Source: "{#LnmAppSourceBase}\{#LnmAppExeName}"; DestDir: "{app}"; Flags: ignoreversion
-Source: "{#LnmAppSourceDir}"; DestDir: "{app}"; Excludes: "\Little Navmap Portable.cmd"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "{#LnmAppSourceDir}"; DestDir: "{app}"; Excludes: "\Little Navmap Portable.cmd, \littlenavmap.debug, \Little Navconnect\littlenavconnect.debug"; Flags: ignoreversion recursesubdirs createallsubdirs
 // VC++ redistributable runtime. Extracted by VC2017RedistNeedsInstall(), if needed.
 #if LnmAppArch == "win64"
   Source: "{#LnmAppProjects}\Redist\vcredist_2015-2022.x64.exe"; DestDir: {tmp}; Flags: deleteafterinstall

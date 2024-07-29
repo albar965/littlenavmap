@@ -36,9 +36,7 @@ A big thank you to all who reported bugs and issues!
   enabled for the Windows 64-bit version. Other operating systems already have means to collect crash
   information (Linux core files and macOS crash reports). A file
   `C:\Users\YOURUSERNAME\AppData\Roaming\ABarthel\little_navmap_stacktrace.txt` is created on crash
-  and included in all generated crash reports. Note that the required location information (debug
-  symbols) increases the program size but neither startup time nor overall performance are affected
-  in any way by this.
+  and included in all generated crash reports.
 * Other small text changes in the user interface.
 * Updates to user manual.
 

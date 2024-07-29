@@ -1013,4 +1013,15 @@ deploy.depends = all
 
 QMAKE_EXTRA_TARGETS += deploy copydata all
 
-
+!isEqual(ATOOLS_NO_CRASHHANDLER, "true") {
+  isEqual(CONF_TYPE, "release") {
+    # Copy debug executable and strip original
+    win32 {
+      defineReplace(p){return ($$shell_quote($$shell_path($$1)))}
+      QMAKE_POST_LINK = copy $$p($$OUT_PWD/$${TARGET}.exe) $$p($$OUT_PWD/$${TARGET}.debug) && \
+                        strip $$p($$OUT_PWD/$${TARGET}.exe)
+    } else {
+      QMAKE_POST_LINK = cp -avfu $$OUT_PWD/$${TARGET} $$OUT_PWD/$${TARGET}.debug && strip $$OUT_PWD/$${TARGET}
+    }
+  }
+}
