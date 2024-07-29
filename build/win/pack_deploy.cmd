@@ -51,6 +51,9 @@ del "%APROJECTS%\deploy\%FILENAME_LNM_RELEASE%.zip"
 "C:\Program Files\7-Zip\7z.exe" -mx9 -mm=Deflate -mfb=258 -mpass=15 a "%APROJECTS%\deploy\%FILENAME_LNM_RELEASE%.zip" "%APROJECTS%\deploy\%FILENAME_LNM_RELEASE%" -xr!littlenavmap.debug -xr!littlenavconnect.debug
 if errorlevel 1 goto :err
 
+"C:\Program Files\7-Zip\7z.exe" a -r "%APROJECTS%\deploy\%FILENAME_LNM_RELEASE%_debug.zip" "%APROJECTS%\deploy\%FILENAME_LNM_RELEASE%\*.debug"
+if errorlevel 1 goto :err
+
 "C:\Program Files\Windows Defender\MpCmdRun.exe" -Scan -ScanType 3 -DisableRemediation -File "%APROJECTS%\deploy\%FILENAME_LNM_RELEASE%.zip"
 if errorlevel 1 goto :err
 
