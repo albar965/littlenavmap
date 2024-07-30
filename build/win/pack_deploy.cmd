@@ -23,17 +23,20 @@ set /p FILENAMETEMP=<"%APROJECTS%\deploy\Little Navmap %WINARCH%\version.txt"
 set FILENAME_LNM=%FILENAMETEMP: =%
 set FILENAME_LNM_RELEASE=LittleNavmap-%FILENAME_LNM%
 
+rem "%APROJECTS%\deploy\Little Navmap win64" to "%APROJECTS%\deploy\LittleNavmap-win64-3.0.9"
 rmdir /Q /S "%APROJECTS%\deploy\%FILENAME_LNM_RELEASE%"
 xcopy /i /s /e /f /y "%APROJECTS%\deploy\Little Navmap %WINARCH%" "%APROJECTS%\deploy\%FILENAME_LNM_RELEASE%"
 if errorlevel 1 goto :err
 
 rem ===========================================================================
 rem Copy navconnect ===========================================================
+rem "%APROJECTS%\deploy\Little Navconnect win64" to "%APROJECTS%\deploy\LittleNavmap-win64-3.0.9\Little Navconnect"
 xcopy /i /s /e /f /y "%APROJECTS%\deploy\Little Navconnect %WINARCH%" "%APROJECTS%\deploy\%FILENAME_LNM_RELEASE%\Little Navconnect"
 if errorlevel 1 goto :err
 
 rem ===========================================================================
 rem Copy xpconnect ============================================================
+rem "%APROJECTS%\deploy\Little Xpconnect" to "%APROJECTS%\deploy\LittleNavmap-win64-3.0.9\Little Xpconnect"
 xcopy /i /s /e /f /y "%APROJECTS%\deploy\Little Xpconnect" "%APROJECTS%\deploy\%FILENAME_LNM_RELEASE%\Little Xpconnect"
 if errorlevel 1 goto :err
 
@@ -48,24 +51,34 @@ rem ===========================================================================
 rem ==== Pack Little Navmap ===================================================
 del "%APROJECTS%\deploy\%FILENAME_LNM_RELEASE%.zip"
 
-"C:\Program Files\7-Zip\7z.exe" -mx9 -mm=Deflate -mfb=258 -mpass=15 a "%APROJECTS%\deploy\%FILENAME_LNM_RELEASE%.zip" "%APROJECTS%\deploy\%FILENAME_LNM_RELEASE%" -xr!littlenavmap.debug -xr!littlenavconnect.debug
+rem Check and copy installer =======================================
+"C:\Program Files\Windows Defender\MpCmdRun.exe" -Scan -ScanType 3 -DisableRemediation -File "%APROJECTS%\deploy\%FILENAME_LNM_RELEASE%-Install.exe"
 if errorlevel 1 goto :err
 
-"C:\Program Files\7-Zip\7z.exe" a -r "%APROJECTS%\deploy\%FILENAME_LNM_RELEASE%_debug.zip" "%APROJECTS%\deploy\%FILENAME_LNM_RELEASE%\*.debug"
+if defined SSH_DEPLOY_TARGET (
+pscp -i %HOMEDRIVE%\%HOMEPATH%\.ssh\id_rsa "%APROJECTS%\deploy\%FILENAME_LNM_RELEASE%-Install.exe" %SSH_DEPLOY_TARGET%/%FILENAME_LNM_RELEASE%-Install.exe
+)
+
+rem Create, check and copy Zip =======================================
+"C:\Program Files\7-Zip\7z.exe" -mx9 -mm=Deflate -mfb=258 -mpass=15 a "%APROJECTS%\deploy\%FILENAME_LNM_RELEASE%.zip" "%APROJECTS%\deploy\%FILENAME_LNM_RELEASE%" -xr!littlenavmap.debug -xr!littlenavconnect.debug
 if errorlevel 1 goto :err
 
 "C:\Program Files\Windows Defender\MpCmdRun.exe" -Scan -ScanType 3 -DisableRemediation -File "%APROJECTS%\deploy\%FILENAME_LNM_RELEASE%.zip"
 if errorlevel 1 goto :err
 
-"C:\Program Files\Windows Defender\MpCmdRun.exe" -Scan -ScanType 3 -DisableRemediation -File "%APROJECTS%\deploy\%FILENAME_LNM_RELEASE%-Install.exe"
-if errorlevel 1 goto :err
-
-rem ===========================================================================
-rem ==== Copy all =============================================================
-
 if defined SSH_DEPLOY_TARGET (
 pscp -i %HOMEDRIVE%\%HOMEPATH%\.ssh\id_rsa "%APROJECTS%\deploy\%FILENAME_LNM_RELEASE%.zip" %SSH_DEPLOY_TARGET%/%FILENAME_LNM_RELEASE%.zip
-pscp -i %HOMEDRIVE%\%HOMEPATH%\.ssh\id_rsa "%APROJECTS%\deploy\%FILENAME_LNM_RELEASE%-Install.exe" %SSH_DEPLOY_TARGET%/%FILENAME_LNM_RELEASE%-Install.exe
+)
+
+rem Create , check and copy Zip =======================================
+"C:\Program Files\7-Zip\7z.exe" a -r "%APROJECTS%\deploy\%FILENAME_LNM_RELEASE%_debug.zip" "%APROJECTS%\deploy\%FILENAME_LNM_RELEASE%\*.debug"
+if errorlevel 1 goto :err
+
+"C:\Program Files\Windows Defender\MpCmdRun.exe" -Scan -ScanType 3 -DisableRemediation -File "%APROJECTS%\deploy\%FILENAME_LNM_RELEASE%_debug.zip"
+if errorlevel 1 goto :err
+
+if defined SSH_DEPLOY_TARGET (
+pscp -i %HOMEDRIVE%\%HOMEPATH%\.ssh\id_rsa "%APROJECTS%\deploy\%FILENAME_LNM_RELEASE%_debug.zip" %SSH_DEPLOY_TARGET%/Debug/%FILENAME_LNM_RELEASE%_debug.zip"
 )
 
 popd
