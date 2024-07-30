@@ -962,8 +962,10 @@ win32 {
   deploy.commands += xcopy /F $$p($$MARBLE_LIB_PATH/../plugins/libNavigationFloatItem$${DLL_SUFFIX}.dll) $$p($$DEPLOY_BASE/$$WIN_TARGET_NAME/plugins) &&
   deploy.commands += xcopy /F $$p($$MARBLE_LIB_PATH/../plugins/libOverviewMap$${DLL_SUFFIX}.dll) $$p($$DEPLOY_BASE/$$WIN_TARGET_NAME/plugins) &&
   deploy.commands += xcopy /F $$p($$OUT_PWD/$${TARGET}.exe) $$p($$DEPLOY_BASE/$$WIN_TARGET_NAME) &&
-  exists($$OUT_PWD/$${TARGET}.debug) {
-    deploy.commands += xcopy /F $$p($$OUT_PWD/$${TARGET}.debug) $$p($$DEPLOY_BASE/$$WIN_TARGET_NAME) &&
+  !isEqual(ATOOLS_NO_CRASHHANDLER, "true") {
+    isEqual(CONF_TYPE, "release") {
+      deploy.commands += xcopy /F $$p($$OUT_PWD/$${TARGET}.debug) $$p($$DEPLOY_BASE/$$WIN_TARGET_NAME) &&
+    }
   }
   deploy.commands += xcopy /F $$p($$PWD/CHANGELOG.txt) $$p($$DEPLOY_BASE/$$WIN_TARGET_NAME) &&
   deploy.commands += xcopy /F $$p($$PWD/README.txt) $$p($$DEPLOY_BASE/$$WIN_TARGET_NAME) &&
