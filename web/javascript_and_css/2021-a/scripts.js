@@ -219,6 +219,8 @@ function injectUpdates(origin) {
     var notGettingMapViewRect = true;
     ocw.handleInteraction = function(e) {
       var currentTarget = e.currentTarget;
+      var x = e.offsetX;		// event values are 0 after async fetch on Firefox thus presave
+      var y = e.offsetY;
       if(notGettingMapViewRect) {
         notGettingMapViewRect = false;
         fetch("/api/ui/info").then(response => response.json(), error => {
@@ -227,9 +229,9 @@ function injectUpdates(origin) {
         }).then(json => {
           if(json.zoom_web >= 1386) {
             json.latLonRect_web[1] += json.latLonRect_web[1] < json.latLonRect_web[3] ? 360 : 0;
-            var newLon = json.latLonRect_web[3] + (json.latLonRect_web[1] - json.latLonRect_web[3]) * (e.offsetX / mapElement.clientWidth);
+            var newLon = json.latLonRect_web[3] + (json.latLonRect_web[1] - json.latLonRect_web[3]) * (x / mapElement.clientWidth);
             newLon -= newLon > 180 ? 360 : 0;
-            updateMapImage("mapcmd=center&lon=" + newLon + "&lat=" + (json.latLonRect_web[0] + (json.latLonRect_web[2] - json.latLonRect_web[0]) * (e.offsetY / mapElement.clientHeight)) + "&cmd", defaultMapQuality, true);
+            updateMapImage("mapcmd=center&lon=" + newLon + "&lat=" + (json.latLonRect_web[0] + (json.latLonRect_web[2] - json.latLonRect_web[0]) * (y / mapElement.clientHeight)) + "&cmd", defaultMapQuality, true);
           } else {
             var shift = currentTarget.getAttribute("data-shift");
             shift !== null ? updateMapImage("mapcmd=" + shift + "&cmd", defaultMapQuality, true) : !1;
