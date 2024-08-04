@@ -19,6 +19,7 @@
 
 #include "common/constants.h"
 #include "common/maptypesfactory.h"
+#include "query/querymanager.h"
 #include "query/querytypes.h"
 #include "common/mapresult.h"
 #include "fs/common/binarygeometry.h"
@@ -77,8 +78,8 @@ const static float MAX_RUNWAY_DISTANCE_METER_2 = 2000.f; // Second iteration if 
 const static float MAX_FUZZY_AIRPORT_DISTANCE_METER = 2000.f;
 const static float MAX_FUZZY_AIRPORT_DISTANCE_METER_UNIQUE = 10000.f;
 
-AirportQuery::AirportQuery(atools::sql::SqlDatabase *sqlDb, bool nav)
-  : navdata(nav), db(sqlDb)
+AirportQuery::AirportQuery(atools::sql::SqlDatabase *sqlDb, const Queries *queriesParam, bool nav)
+  : navdata(nav), db(sqlDb), queries(queriesParam)
 {
   mapTypesFactory = new MapTypesFactory();
   atools::settings::Settings& settings = atools::settings::Settings::instance();
@@ -179,7 +180,7 @@ void AirportQuery::getAirportById(map::MapAirport& airport, int airportId)
     airportByIdQuery->finish();
 
     if(!navdata)
-      NavApp::getAirportQueryNav()->correctAirportProcedureFlag(ap);
+      queries->getAirportQueryNav()->correctAirportProcedureFlag(ap);
 
     airport = *ap;
     airportIdCache.insert(airportId, ap);
@@ -215,7 +216,7 @@ void AirportQuery::getAirportByIdent(map::MapAirport& airport, const QString& id
                                    NavApp::isAirportDatabaseXPlane(navdata));
     airportByIdentQuery->finish();
     if(!navdata)
-      NavApp::getAirportQueryNav()->correctAirportProcedureFlag(ap);
+      queries->getAirportQueryNav()->correctAirportProcedureFlag(ap);
 
     airport = *ap;
     airportIdentCache.insert(ident, ap);
@@ -245,7 +246,7 @@ void AirportQuery::getAirportsByTruncatedIdent(QList<map::MapAirport>& airports,
     mapTypesFactory->fillAirport(airportsByTruncatedIdentQuery->record(), airport, true /* complete */, navdata,
                                  NavApp::isAirportDatabaseXPlane(navdata));
     if(!navdata)
-      NavApp::getAirportQueryNav()->correctAirportProcedureFlag(airport);
+      queries->getAirportQueryNav()->correctAirportProcedureFlag(airport);
     airports.append(airport);
   }
 }
@@ -306,7 +307,7 @@ void AirportQuery::getAirportsByOfficialIdent(QList<map::MapAirport>& airports, 
       mapTypesFactory->fillAirport(airportByOfficialQuery->record(), airport, true /* complete */, navdata,
                                    NavApp::isAirportDatabaseXPlane(navdata));
       if(!navdata)
-        NavApp::getAirportQueryNav()->correctAirportProcedureFlag(airport);
+        queries->getAirportQueryNav()->correctAirportProcedureFlag(airport);
       airports.append(airport);
     }
   }
@@ -395,7 +396,7 @@ void AirportQuery::getAirportFuzzy(map::MapAirport& airport, const map::MapAirpo
         mapTypesFactory->fillAirport(query->record(), airportByCoord, true /* complete */,
                                      navdata, NavApp::isAirportDatabaseXPlane(navdata));
         if(!navdata)
-          NavApp::getAirportQueryNav()->correctAirportProcedureFlag(airportByCoord);
+          queries->getAirportQueryNav()->correctAirportProcedureFlag(airportByCoord);
         airports.append(airportByCoord);
       });
     }
@@ -1015,7 +1016,7 @@ void AirportQuery::getRunwaysAndAirports(map::MapResultIndex& runwayAirports, co
         map::MapAirport airport;
         mapTypesFactory->fillAirport(query.record(), airport, false /* complete */, navdata, xp);
         if(!navdata)
-          NavApp::getAirportQueryNav()->correctAirportProcedureFlag(airport);
+          queries->getAirportQueryNav()->correctAirportProcedureFlag(airport);
         runwayAirports.add(map::MapResult::createFromMapBase(&airport));
       }
     }

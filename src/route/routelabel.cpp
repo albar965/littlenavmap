@@ -17,6 +17,7 @@
 
 #include "route/routelabel.h"
 
+#include "app/navapp.h"
 #include "atools.h"
 #include "common/constants.h"
 #include "common/formatter.h"
@@ -25,10 +26,10 @@
 #include "fs/pln/flightplan.h"
 #include "fs/util/fsutil.h"
 #include "gui/clicktooltiphandler.h"
-#include "app/navapp.h"
 #include "perf/aircraftperfcontroller.h"
 #include "query/airportquery.h"
 #include "query/mapquery.h"
+#include "query/querymanager.h"
 #include "route/route.h"
 #include "route/routealtitude.h"
 #include "route/routecontroller.h"
@@ -422,6 +423,7 @@ void RouteLabel::fetchTakeoffRunway(map::MapRunway& runway, map::MapRunwayEnd& r
   if(route.hasAnyProcedure() && route.hasValidDeparture())
   {
     // Departure runway information =======================================
+    const Queries *queries = QueryManager::instance()->getQueriesGui();
     const proc::MapProcedureLegs& departureLegs = route.getSidLegs();
     runwayEnd = departureLegs.runwayEnd; // Navdata
     if(!departureLegs.isEmpty() && runwayEnd.isFullyValid())
@@ -431,11 +433,11 @@ void RouteLabel::fetchTakeoffRunway(map::MapRunway& runway, map::MapRunwayEnd& r
       {
         // Get runway from simulator data by name if possible
         QList<map::MapRunwayEnd> runwayEnds;
-        NavApp::getMapQueryGui()->getRunwayEndByNameFuzzy(runwayEnds, runwayEnd.name, departLeg.getAirport(), false /* navdata */);
+        queries->getMapQuery()->getRunwayEndByNameFuzzy(runwayEnds, runwayEnd.name, departLeg.getAirport(), false /* navdata */);
         if(!runwayEnds.isEmpty())
           runwayEnd = runwayEnds.constFirst();
 
-        runway = NavApp::getAirportQuerySim()->getRunwayByEndId(departLeg.getId(), runwayEnd.id);
+        runway = queries->getAirportQuerySim()->getRunwayByEndId(departLeg.getId(), runwayEnd.id);
       }
     }
   }
@@ -510,16 +512,17 @@ void RouteLabel::fetchLandingRunway(map::MapRunway& runway, map::MapRunwayEnd& r
         {
           // Get runway from simulator data by name if possible
           QList<map::MapRunwayEnd> runwayEnds;
-          NavApp::getMapQueryGui()->getRunwayEndByNameFuzzy(runwayEnds, runwayEnd.name, destLeg.getAirport(), false /* navdata */);
+          const Queries *queries = QueryManager::instance()->getQueriesGui();
+          queries->getMapQuery()->getRunwayEndByNameFuzzy(runwayEnds, runwayEnd.name, destLeg.getAirport(), false /* navdata */);
           if(!runwayEnds.isEmpty())
             runwayEnd = runwayEnds.constFirst();
 
           if(runwayEnd.isFullyValid())
-            runway = NavApp::getAirportQuerySim()->getRunwayByEndId(destLeg.getId(), runwayEnd.id);
+            runway = queries->getAirportQuerySim()->getRunwayByEndId(destLeg.getId(), runwayEnd.id);
         }
       }
     }
-  }   // if(route.hasValidDestination())
+  } // if(route.hasValidDestination())
 }
 
 void RouteLabel::buildHeaderRunwayLand(atools::util::HtmlBuilder& html, const map::MapRunway& runway, const map::MapRunwayEnd& runwayEnd)

@@ -47,7 +47,6 @@ class MapLayer;
 class AirspaceQuery
 {
 public:
-  AirspaceQuery(atools::sql::SqlDatabase *sqlDb, map::MapAirspaceSources src);
   ~AirspaceQuery();
 
   AirspaceQuery(const AirspaceQuery& other) = delete;
@@ -91,9 +90,13 @@ public:
   void clearCache();
 
 private:
+  friend class AirspaceController;
+
+  AirspaceQuery(atools::sql::SqlDatabase *sqlDb, map::MapAirspaceSources src);
+
   void updateAirspaceStatus();
   const atools::geo::LineString *airspaceGeometryByNameInternal(const QString& callsign, const QString& facilityType);
-  void airspaceGeometry(atools::geo::LineString* lines, const QByteArray& bytes);
+  void airspaceGeometry(atools::geo::LineString*lines, const QByteArray& bytes);
 
   MapTypesFactory *mapTypesFactory;
   atools::sql::SqlDatabase *db;

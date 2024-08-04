@@ -57,6 +57,7 @@
 #include "gui/choicedialog.h"
 #include "gui/errorhandler.h"
 #include "common/unit.h"
+#include "query/querymanager.h"
 
 #include <QDebug>
 #include <QStandardPaths>
@@ -290,8 +291,10 @@ void LogdataController::createTakeoffLanding(const atools::fs::sc::SimConnectUse
     // Get nearest airport on takeoff/landing and runway ==============================================
     map::MapRunwayEnd runwayEnd;
     map::MapAirport airport;
-    if(!NavApp::getAirportQuerySim()->getBestRunwayEndForPosAndCourse(runwayEnd, airport, aircraft.getPosition(),
-                                                                      aircraft.getTrackDegTrue(), aircraft.isHelicopter()))
+    if(!QueryManager::instance()->getQueriesGui()->getAirportQuerySim()->getBestRunwayEndForPosAndCourse(runwayEnd, airport,
+                                                                                                          aircraft.getPosition(),
+                                                                                                          aircraft.getTrackDegTrue(),
+                                                                                                          aircraft.isHelicopter()))
     {
       // Not even an airport was found - log but continue anyway
       qWarning() << Q_FUNC_INFO << "No airport found near aircraft at" << (takeoff ? "takeoff" : "landing")
@@ -1108,7 +1111,7 @@ void LogdataController::convertUserdata()
 
   if(result == QMessageBox::Yes)
   {
-    LogdataConverter converter(NavApp::getDatabaseUser(), manager, NavApp::getAirportQuerySim());
+    LogdataConverter converter(NavApp::getDatabaseUser(), manager, QueryManager::instance()->getQueriesGui()->getAirportQuerySim());
 
     QGuiApplication::setOverrideCursor(Qt::WaitCursor);
 
@@ -1166,7 +1169,7 @@ void LogdataController::convertUserdata()
 
 void LogdataController::fetchAirportCoordinates(atools::geo::Pos& pos, QString& name, const QString& airportIdent)
 {
-  map::MapAirport airport = NavApp::getAirportQuerySim()->getAirportByIdent(airportIdent);
+  map::MapAirport airport = QueryManager::instance()->getQueriesGui()->getAirportQuerySim()->getAirportByIdent(airportIdent);
 
   if(airport.isValid())
   {

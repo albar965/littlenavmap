@@ -94,6 +94,7 @@
 #include "weather/weatherreporter.h"
 #include "weather/windreporter.h"
 #include "web/webcontroller.h"
+#include "query/querymanager.h"
 
 #include <marble/MarbleAboutDialog.h>
 #include <marble/MarbleModel.h>
@@ -569,18 +570,16 @@ MainWindow::~MainWindow()
   ATOOLS_DELETE_LOG(simbriefHandler);
   ATOOLS_DELETE_LOG(mapThemeHandler);
 
-  qDebug() << Q_FUNC_INFO << "NavApplication::deInit()";
+  // Delete NavApp members
   NavApp::deInit();
 
-  qDebug() << Q_FUNC_INFO << "Unit::deInit()";
+  // Free all queries
+  QueryManager::instance()->shutdown();
+
   Unit::deInit();
 
   ATOOLS_DELETE_LOG(ui);
-
   ATOOLS_DELETE_LOG(dockHandler);
-
-  // Delete settings singleton
-  qDebug() << Q_FUNC_INFO << "Settings::shutdown()";
 
   if(NavApp::isRestartProcess())
     Settings::clearAndShutdown();
@@ -1025,7 +1024,7 @@ void MainWindow::updateStatusBarStyle()
 
 void MainWindow::clearProcedureCache()
 {
-  NavApp::getProcedureQuery()->clearCache();
+  QueryManager::instance()->getQueriesGui()->getProcedureQuery()->clearCache();
 }
 
 void MainWindow::connectAllSlots()
@@ -1582,9 +1581,8 @@ void MainWindow::connectAllSlots()
   TrackController *trackController = NavApp::getTrackController();
   connect(trackController, &TrackController::postTrackLoad, routeController, &RouteController::clearAirwayNetworkCache);
   connect(trackController, &TrackController::postTrackLoad, infoController, &InfoController::tracksChanged);
-  connect(trackController, &TrackController::postTrackLoad, this, &MainWindow::updateMapObjectsShown);
+  connect(trackController, &TrackController::postTrackLoad, this, &MainWindow::postTrackLoad);
   connect(trackController, &TrackController::postTrackLoad, routeController, &RouteController::tracksChanged);
-  connect(trackController, &TrackController::postTrackLoad, mapWidget, &MapPaintWidget::postTrackLoad);
 
   connect(ui->actionRouteDownloadTracks, &QAction::toggled, trackController, &TrackController::downloadToggled);
   connect(ui->actionRouteDownloadTracksNow, &QAction::triggered, trackController, &TrackController::startDownload);
@@ -2882,7 +2880,7 @@ bool MainWindow::createMapImage(QPixmap& pixmap, const QString& dialogTitle, con
     else
     {
       // Create a map widget clone with the desired resolution
-      MapPaintWidget paintWidget(this, false /* no real widget - hidden */, false /* web */);
+      MapPaintWidget paintWidget(this, QueryManager::instance()->getQueriesGui(), false /* no real widget - hidden */, false /* web */);
       paintWidget.setActive(); // Activate painting
       paintWidget.setKeepWorldRect(); // Center world rectangle when resizing
 
@@ -3120,7 +3118,7 @@ void MainWindow::proceduresSelected(const QVector<proc::MapProcedureRef>& refs)
 void MainWindow::proceduresSelectedInternal(const QVector<proc::MapProcedureRef>& refs, bool previewAll)
 {
   QVector<proc::MapProcedureLegs> procedures;
-  ProcedureQuery *procedureQuery = NavApp::getProcedureQuery();
+  ProcedureQuery *procedureQuery = QueryManager::instance()->getQueriesGui()->getProcedureQuery();
 
   if(previewAll)
     // Loading might take longer for some airports
@@ -3132,7 +3130,7 @@ void MainWindow::proceduresSelectedInternal(const QVector<proc::MapProcedureRef>
     qDebug() << Q_FUNC_INFO << "approachId" << ref.procedureId << "transitionId" << ref.transitionId << "legId" << ref.legId;
 #endif
 
-    map::MapAirport airport = NavApp::getAirportQueryNav()->getAirportById(ref.airportId);
+    map::MapAirport airport = QueryManager::instance()->getQueriesGui()->getAirportQueryNav()->getAirportById(ref.airportId);
 
     if(refs.isEmpty())
     {
@@ -3211,7 +3209,7 @@ void MainWindow::proceduresSelectedInternal(const QVector<proc::MapProcedureRef>
 
 void MainWindow::procedureLegSelected(const proc::MapProcedureRef& ref)
 {
-  ProcedureQuery *procedureQuery = NavApp::getProcedureQuery();
+  Queries *queries = QueryManager::instance()->getQueriesGui();
   const proc::MapProcedureLeg *leg = nullptr;
 
 #ifdef DEBUG_INFORMATION
@@ -3220,7 +3218,9 @@ void MainWindow::procedureLegSelected(const proc::MapProcedureRef& ref)
 
   if(ref.legId != -1)
   {
-    map::MapAirport airport = NavApp::getAirportQueryNav()->getAirportById(ref.airportId);
+    map::MapAirport airport = queries->getAirportQueryNav()->getAirportById(ref.airportId);
+    ProcedureQuery *procedureQuery = queries->getProcedureQuery();
+
     if(ref.transitionId != -1)
       leg = procedureQuery->getTransitionLeg(airport, ref.legId);
     else
@@ -3840,9 +3840,11 @@ void MainWindow::updateActionStates()
 
   // Enable MORA button depending on available data
   ui->actionMapShowMinimumAltitude->setEnabled(NavApp::isMoraAvailable());
-  ui->actionMapShowGls->setEnabled(NavApp::isGlsAvailable());
-  ui->actionMapShowHolding->setEnabled(NavApp::isHoldingsAvailable());
-  ui->actionMapShowAirportMsa->setEnabled(NavApp::isAirportMsaAvailable());
+
+  const Queries *queries = QueryManager::instance()->getQueriesGui();
+  ui->actionMapShowGls->setEnabled(queries->isGlsAvailable());
+  ui->actionMapShowHolding->setEnabled(queries->isHoldingsAvailable());
+  ui->actionMapShowAirportMsa->setEnabled(queries->isAirportMsaAvailable());
 
   const Route& route = NavApp::getRouteConst();
   bool hasFlightplan = !route.isFlightplanEmpty();
@@ -4750,6 +4752,12 @@ void MainWindow::postDatabaseLoad(atools::fs::FsPaths::SimulatorType type)
   updateXpconnectInstallOptions();
 
   NavApp::logDatabaseMeta();
+}
+
+void MainWindow::postTrackLoad()
+{
+  QueryManager::instance()->postTrackLoad();
+  updateMapObjectsShown();
 }
 
 void MainWindow::dragEnterEvent(QDragEnterEvent *event)

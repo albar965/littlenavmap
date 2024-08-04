@@ -38,26 +38,6 @@ class CoordinateConverter;
 class WaypointTrackQuery
 {
 public:
-  /*
-   * @param sqlDb database for simulator scenery data
-   * @param sqlDbNav for updated navaids
-   */
-  WaypointTrackQuery(WaypointQuery *waypointQueryParam, WaypointQuery *trackQueryParam);
-
-  WaypointTrackQuery(const WaypointTrackQuery& other)
-  {
-    this->operator=(other);
-  }
-
-  /* Does a shallow copy. Query classes are not owned by this */
-  WaypointTrackQuery& operator=(const WaypointTrackQuery& other)
-  {
-    waypointQuery = other.waypointQuery;
-    trackQuery = other.trackQuery;
-    useTracks = other.useTracks;
-    return *this;
-  }
-
   /* Get one by database id */
   map::MapWaypoint getWaypointById(int id);
 
@@ -122,6 +102,28 @@ public:
   atools::sql::SqlQuery *getWaypointsByRectQueryTrack() const;
 
 private:
+  friend class Queries;
+
+  /*
+   * @param sqlDb database for simulator scenery data
+   * @param sqlDbNav for updated navaids
+   */
+  WaypointTrackQuery(WaypointQuery *waypointQueryParam, WaypointQuery *trackQueryParam);
+
+  WaypointTrackQuery(const WaypointTrackQuery& other)
+  {
+    this->operator=(other);
+  }
+
+  /* Does a shallow copy. Query classes are not owned by this */
+  WaypointTrackQuery& operator=(const WaypointTrackQuery& other)
+  {
+    waypointQuery = other.waypointQuery;
+    trackQuery = other.trackQuery;
+    useTracks = other.useTracks;
+    return *this;
+  }
+
   /* Copies objects and avoids duplicates in the to list/vector. */
   void copy(const QList<map::MapWaypoint>& from, QList<map::MapWaypoint>& to);
   void copy(const QVector<map::MapWaypoint>& from, QVector<map::MapWaypoint>& to);

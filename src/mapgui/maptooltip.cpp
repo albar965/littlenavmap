@@ -116,8 +116,8 @@ QString MapTooltip::buildTooltip(const map::MapResult& mapSearchResult, const at
 #endif
 
   HtmlBuilder html(false);
-  MapPaintWidget *mapPaintWidget = NavApp::getMapPaintWidgetGui();
-  HtmlInfoBuilder info(mapPaintWidget, false /* infoParam */, false /* infoParam */, opts.testFlag(optsd::TOOLTIP_VERBOSE));
+  HtmlInfoBuilder info(QueryManager::instance()->getQueriesGui(), false /* info */, false /* print */,
+                       opts.testFlag(optsd::TOOLTIP_VERBOSE));
   int numEntries = 0;
   bool bearing = true, // Suppress bearing for user aircraft
        distance = true, // No distance to last flight plan leg for route legs

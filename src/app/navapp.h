@@ -25,21 +25,16 @@
 
 class AircraftPerfController;
 class AircraftTrail;
-class AirportQuery;
-class AirwayTrackQuery;
-class WaypointTrackQuery;
 class TrackController;
 class AirspaceController;
 class ConnectClient;
 class DatabaseManager;
 class ElevationProvider;
 class InfoController;
-class InfoQuery;
 class LogdataController;
 class LogdataSearch;
 class MainWindow;
 class MapPaintWidget;
-class MapQuery;
 class MapWidget;
 class OnlinedataController;
 class OptionsDialog;
@@ -189,9 +184,6 @@ public:
 
   /* Check for availability in database */
   static bool isMoraAvailable();
-  static bool isHoldingsAvailable();
-  static bool isAirportMsaAvailable();
-  static bool isGlsAvailable();
 
   static float getTakeoffFlownDistanceNm();
   static QDateTime getTakeoffDateTime();
@@ -208,23 +200,6 @@ public:
   static const map::MapDisplayTypes getShownMapDisplayTypes();
   static const map::MapAirspaceFilter& getShownMapAirspaces();
 
-  static AirportQuery *getAirportQuerySim();
-  static AirportQuery *getAirportQueryNav();
-
-  /* Get the map query for the current GUI MapWidget. This means that its cache contents are related to the GUI map.
-   * For other instances of MapPaintWidget use the MapPaintWidget::getMapQuery() */
-  static MapQuery *getMapQueryGui();
-
-  /* Get the track query for the current GUI MapWidget. This means that its cache contents are related to the GUI map. */
-  static AirwayTrackQuery *getAirwayTrackQueryGui();
-
-  /* Get the track query for the current GUI MapWidget. This means that its cache contents are related to the GUI map. */
-  static WaypointTrackQuery *getWaypointTrackQueryGui();
-
-  static atools::geo::Pos getAirportPos(const QString& ident);
-
-  static InfoQuery *getInfoQuery();
-  static ProcedureQuery *getProcedureQuery();
   static const Route& getRouteConst();
   static Route& getRoute();
   static void updateRouteCycleMetadata();
@@ -447,9 +422,6 @@ private:
   static void getReportFiles(QStringList& crashReportFiles, QString& reportFilename, bool issueReport);
 
   /* Database query helpers and caches */
-  static AirportQuery *airportQuerySim, *airportQueryNav;
-  static InfoQuery *infoQuery;
-  static ProcedureQuery *procedureQuery;
   static ElevationProvider *elevationProvider;
 
   /* Most important handlers */

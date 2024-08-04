@@ -161,7 +161,7 @@ private:
   void collectErrors(QStringList& errors, const atools::fs::userdata::AirspaceReaderBase& reader, const QString& basePath);
   atools::geo::Pos fetchAirportCoordinates(const QString& airportIdent);
 
-  AirspaceQueryMapType queries;
+  AirspaceQueryMapType airspaceQueries;
   map::MapAirspaceSources sources = map::AIRSPACE_SRC_NONE;
   AirspaceToolBarHandler *airspaceHandler = nullptr;
   MainWindow *mainWindow;

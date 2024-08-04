@@ -171,7 +171,7 @@ const double MAP_ZOOM_OUT_LIMIT_KM = 10000.;
 using atools::geo::Pos;
 
 MapWidget::MapWidget(MainWindow *parent)
-  : MapPaintWidget(parent, true /* real visible widget */, false /* web */), mainWindow(parent)
+  : MapPaintWidget(parent, QueryManager::instance()->getQueriesGui(), true /* visible */, false /* web */), mainWindow(parent)
 {
   takeoffLandingLastAircraft = new atools::fs::sc::SimConnectUserAircraft;
   mapSearchResultTooltip = new map::MapResult;
@@ -1959,8 +1959,8 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
           else
           {
             // Load the approach without transition
-            map::MapAirport procAp = NavApp::getAirportQueryNav()->getAirportById(procpoint->legs->ref.airportId);
-            legs = NavApp::getProcedureQuery()->getProcedureLegs(procAp, procpoint->legs->ref.procedureId);
+            map::MapAirport procAp = queries->getAirportQueryNav()->getAirportById(procpoint->legs->ref.airportId);
+            legs = queries->getProcedureQuery()->getProcedureLegs(procAp, procpoint->legs->ref.procedureId);
           }
         }
       }

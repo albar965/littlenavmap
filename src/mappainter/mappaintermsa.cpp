@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@
 #include "mapgui/mapscale.h"
 #include "mapgui/maplayer.h"
 #include "query/mapquery.h"
+#include "query/querymanager.h"
 #include "util/paintercontextsaver.h"
 #include "common/symbolpainter.h"
 
@@ -51,7 +52,7 @@ void MapPainterMsa::render()
     {
       // Get drawing objects and cache them
       bool overflow = false;
-      const QList<MapAirportMsa> *msaList = mapQuery->getAirportMsa(curBox, context->mapLayer, context->lazyUpdate, overflow);
+      const QList<MapAirportMsa> *msaList = queries->getMapQuery()->getAirportMsa(curBox, context->mapLayer, context->lazyUpdate, overflow);
       context->setQueryOverflow(overflow);
 
       if(msaList != nullptr)

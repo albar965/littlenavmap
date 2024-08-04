@@ -60,12 +60,12 @@ InfoController::InfoController(MainWindow *parent)
   currentSearchResult = new map::MapResult;
   savedSearchResult = new map::MapResult;
 
-  mapQuery = NavApp::getMapQueryGui();
-  airportQuery = NavApp::getAirportQuerySim();
+  queries = QueryManager::instance()->getQueriesGui();
 
   airspaceController = NavApp::getAirspaceController();
 
-  infoBuilder = new HtmlInfoBuilder(parent->getMapWidget(), true);
+  // Only GUI usage
+  infoBuilder = new HtmlInfoBuilder(queries, true /* info */, false /* print */, true /* verbose */);
 
   // Get base font size for widgets
   Ui::MainWindow *ui = NavApp::getMainUi();
@@ -333,6 +333,7 @@ void InfoController::anchorClicked(const QUrl& url)
     // Internal link like "show on map"
     QUrlQuery query(url);
     MapWidget *mapWidget = NavApp::getMapWidgetGui();
+    AirportQuery *airportQuerySim = queries->getAirportQuerySim();
 
     map::MapTypes type(map::NONE);
     int id = -1;
@@ -363,7 +364,7 @@ void InfoController::anchorClicked(const QUrl& url)
       if(id != -1 && type != map::NONE)
       {
         map::MapResult result;
-        mapQuery->getMapObjectById(result, type, map::MapAirspaceSources(), id, false /* airportFromNavDatabase */);
+        queries->getMapQuery()->getMapObjectById(result, type, map::MapAirspaceSources(), id, false /* airportFromNavDatabase */);
         showInformation(result);
       }
     }
@@ -392,7 +393,7 @@ void InfoController::anchorClicked(const QUrl& url)
         // Zoom to an map object =========================================
         if(type == map::AIRPORT)
           // Show airport by id ================================================
-          emit showRect(airportQuery->getAirportById(id).bounding, false);
+          emit showRect(airportQuerySim->getAirportById(id).bounding, false);
         else if(type == map::AIRSPACE)
         {
           // Show airspaces by id and source ================================================
@@ -412,12 +413,12 @@ void InfoController::anchorClicked(const QUrl& url)
         else if(type == map::AIRWAY)
         {
           // Show full airways by id ================================================
-          map::MapAirway airway = NavApp::getAirwayTrackQueryGui()->getAirwayById(id);
+          map::MapAirway airway = queries->getAirwayTrackQuery()->getAirwayById(id);
 
           // Get all airway segments and the bounding rectangle
           atools::geo::Rect bounding;
           QList<map::MapAirway> airways;
-          NavApp::getAirwayTrackQueryGui()->getAirwayFull(airways, bounding, airway.name, airway.fragment);
+          queries->getAirwayTrackQuery()->getAirwayFull(airways, bounding, airway.name, airway.fragment);
 
           QList<QList<map::MapAirway> > airwayHighlights = mapWidget->getAirwayHighlights();
           airwayHighlights.append(airways);
@@ -427,7 +428,7 @@ void InfoController::anchorClicked(const QUrl& url)
         }
         else if(type == map::ILS)
           // Show ILS by bounding rectangle ================================================
-          emit showRect(mapQuery->getIlsById(id).bounding, false);
+          emit showRect(queries->getMapQuery()->getIlsById(id).bounding, false);
         else
           qWarning() << Q_FUNC_INFO << "Unknwown type" << url << type;
       }
@@ -439,8 +440,8 @@ void InfoController::anchorClicked(const QUrl& url)
         if(query.hasQueryItem("aplonx") && query.hasQueryItem("aplaty"))
           pos = atools::geo::Pos(query.queryItemValue("aplonx"), query.queryItemValue("aplaty"));
 
-        QList<map::MapAirport> airports = airportQuery->getAirportsByOfficialIdent(query.queryItemValue("airport"),
-                                                                                   pos.isValid() ? &pos : nullptr);
+        QList<map::MapAirport> airports = airportQuerySim->getAirportsByOfficialIdent(query.queryItemValue("airport"),
+                                                                                      pos.isValid() ? &pos : nullptr);
 
         if(!airports.isEmpty())
           emit showRect(airports.constFirst().bounding, false);
@@ -454,11 +455,11 @@ void InfoController::anchorClicked(const QUrl& url)
         qWarning() << Q_FUNC_INFO << "Unknwown URL" << url;
     }
     else if(url.host() == "showprocsdepart" && id != -1 && type != map::NONE)
-      emit showProcedures(airportQuery->getAirportById(id), true /* departureFilter */, false /* arrivalFilter */);
+      emit showProcedures(airportQuerySim->getAirportById(id), true /* departureFilter */, false /* arrivalFilter */);
     else if(url.host() == "showprocsarrival" && id != -1 && type != map::NONE)
-      emit showProcedures(airportQuery->getAirportById(id), false /* departureFilter */, true /* arrivalFilter */);
+      emit showProcedures(airportQuerySim->getAirportById(id), false /* departureFilter */, true /* arrivalFilter */);
     else if(url.host() == "showprocs" && id != -1 && type != map::NONE)
-      emit showProcedures(airportQuery->getAirportById(id), false /* departureFilter */, false /* arrivalFilter */);
+      emit showProcedures(airportQuerySim->getAirportById(id), false /* departureFilter */, false /* arrivalFilter */);
   }
 
   // Remember clicked text edit to clear the unwanted selection on next update when calling updateTextEdit()
@@ -546,8 +547,8 @@ void InfoController::restoreInformation()
     QString refsStr = atools::settings::Settings::instance().valueStr(lnm::INFOWINDOW_CURRENTMAPOBJECTS);
     QStringList refsStrList = refsStr.split(";", QString::SkipEmptyParts);
     for(int i = 0; i < refsStrList.size(); i += 2)
-      mapQuery->getMapObjectById(res, map::MapTypes(refsStrList.value(i + 1).toULongLong()), map::AIRSPACE_SRC_NONE,
-                                 refsStrList.value(i).toInt(), false /* airport from nav database */);
+      queries->getMapQuery()->getMapObjectById(res, map::MapTypes(refsStrList.value(i + 1).toULongLong()), map::AIRSPACE_SRC_NONE,
+                                               refsStrList.value(i).toInt(), false /* airport from nav database */);
 
     // Airspaces =================================
     refsStr = atools::settings::Settings::instance().valueStr(lnm::INFOWINDOW_CURRENTAIRSPACES);
@@ -615,7 +616,7 @@ void InfoController::updateAirportInternal(bool newAirport, bool bearingChange, 
     {
       HtmlBuilder html(true);
       map::MapAirport airport;
-      airportQuery->getAirportById(airport, currentSearchResult->airports.constFirst().id);
+      queries->getAirportQuerySim()->getAirportById(airport, currentSearchResult->airports.constFirst().id);
 
       // qDebug() << Q_FUNC_INFO << "Updating html" << airport.ident << airport.id;
 
@@ -1162,7 +1163,9 @@ void InfoController::postDatabaseLoad()
 
   // Reload airport by ident and position =====================================
   if(savedSearchResult->hasAirports())
-    currentSearchResult->airports.append(NavApp::getAirportQuerySim()->getAirportFuzzy(savedSearchResult->airports.constFirst()));
+    currentSearchResult->airports.append(queries->getAirportQuerySim()->getAirportFuzzy(savedSearchResult->airports.constFirst()));
+
+  MapQuery*mapQuery = queries->getMapQuery();
 
   // Reload navaids by ident, region and position ===================================
   // Insert only the first one for each getMapObjectByIdent() query
@@ -1496,7 +1499,7 @@ void InfoController::updateTextEditFontSizes()
 QStringList InfoController::getAirportTextFull(const QString& ident) const
 {
   map::MapAirport airport;
-  airportQuery->getAirportByIdent(airport, ident);
+  queries->getAirportQuerySim()->getAirportByIdent(airport, ident);
 
   QStringList retval;
   if(airport.isValid())
@@ -1505,7 +1508,7 @@ QStringList InfoController::getAirportTextFull(const QString& ident) const
     NavApp::getWeatherContextHandler()->buildWeatherContextInfo(weatherContext, airport);
 
     atools::util::HtmlBuilder html(mapcolors::webTableBackgroundColor, mapcolors::webTableAltBackgroundColor);
-    HtmlInfoBuilder builder(mainWindow->getMapWidget(), true /*info*/, true /*print*/);
+    HtmlInfoBuilder builder(queries, true /* info */, true /* print */, true /* verbose */);
     builder.airportText(airport, weatherContext, html, nullptr);
     retval.append(html.getHtml());
 

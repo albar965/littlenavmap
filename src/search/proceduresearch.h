@@ -267,7 +267,7 @@ private:
 
   InfoQuery *infoQuery = nullptr;
   ProcedureQuery *procedureQuery = nullptr;
-  AirportQuery *airportQueryNav = nullptr;
+  AirportQuery *airportQueryNav = nullptr, *airportQuerySim = nullptr;
 
   /* Contains initially all procedures and transitions loaded from fillProcedureTreeWidget().
    * Legs are added when expaning the tree from itemExpanded() */

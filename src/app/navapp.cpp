@@ -27,50 +27,42 @@
 #include "connect/connectclient.h"
 #include "db/databasemanager.h"
 #include "exception.h"
-#include "fs/perf/aircraftperf.h"
 #include "fs/common/magdecreader.h"
 #include "fs/common/morareader.h"
 #include "fs/db/databasemeta.h"
+#include "fs/perf/aircraftperf.h"
+#include "gui/dataexchange.h"
 #include "gui/errorhandler.h"
 #include "gui/mainwindow.h"
 #include "gui/stylehandler.h"
-#include "mapgui/mapthemehandler.h"
-#include "route/routealtitude.h"
 #include "logbook/logdatacontroller.h"
 #include "logging/logginghandler.h"
-#include "mapgui/mapmarkhandler.h"
 #include "mapgui/mapairporthandler.h"
 #include "mapgui/mapdetailhandler.h"
+#include "mapgui/mapmarkhandler.h"
+#include "mapgui/mapthemehandler.h"
 #include "mapgui/mapwidget.h"
 #include "online/onlinedatacontroller.h"
 #include "perf/aircraftperfcontroller.h"
 #include "profile/profilewidget.h"
-#include "query/airportquery.h"
-#include "query/infoquery.h"
-#include "query/mapquery.h"
 #include "query/procedurequery.h"
-#include "query/waypointtrackquery.h"
+#include "query/querymanager.h"
+#include "route/routealtitude.h"
 #include "route/routecontroller.h"
 #include "routestring/routestringwriter.h"
 #include "search/searchcontroller.h"
+#include "settings/settings.h"
 #include "track/trackcontroller.h"
 #include "userdata/userdatacontroller.h"
 #include "weather/weatherreporter.h"
 #include "web/webcontroller.h"
 #include "web/webmapcontroller.h"
-#include "settings/settings.h"
-#include "gui/dataexchange.h"
 
 #include "ui_mainwindow.h"
 
 #include <marble/MarbleModel.h>
 
 #include <QIcon>
-
-AirportQuery *NavApp::airportQuerySim = nullptr;
-AirportQuery *NavApp::airportQueryNav = nullptr;
-InfoQuery *NavApp::infoQuery = nullptr;
-ProcedureQuery *NavApp::procedureQuery = nullptr;
 
 ConnectClient *NavApp::connectClient = nullptr;
 DatabaseManager *NavApp::databaseManager = nullptr;
@@ -180,22 +172,9 @@ void NavApp::init(MainWindow *mainWindowParam)
                                               databaseManager->getDatabaseUserAirspace(),
                                               databaseManager->getDatabaseOnline());
 
-  airportQuerySim = new AirportQuery(databaseManager->getDatabaseSim(), false /* nav */);
-
-  airportQueryNav = new AirportQuery(databaseManager->getDatabaseNav(), true /* nav */);
-
-  infoQuery = new InfoQuery(databaseManager->getDatabaseSim(),
-                            databaseManager->getDatabaseNav(),
-                            databaseManager->getDatabaseTrack());
-
-  procedureQuery = new ProcedureQuery(databaseManager->getDatabaseNav());
-
   connectClient = new ConnectClient(mainWindow);
-
   updateHandler = new UpdateHandler(mainWindow);
-
   styleHandler = new StyleHandler(mainWindow);
-
   webController = new WebController(mainWindow);
 }
 
@@ -203,10 +182,6 @@ void NavApp::initQueries()
 {
   qDebug() << Q_FUNC_INFO;
   onlinedataController->initQueries();
-  airportQuerySim->initQueries();
-  airportQueryNav->initQueries();
-  infoQuery->initQueries();
-  procedureQuery->initQueries();
 }
 
 void NavApp::showElevationProviderErrors()
@@ -243,10 +218,6 @@ void NavApp::deInit()
   ATOOLS_DELETE_LOG(updateHandler);
   ATOOLS_DELETE_LOG(connectClient);
   ATOOLS_DELETE_LOG(elevationProvider);
-  ATOOLS_DELETE_LOG(airportQuerySim);
-  ATOOLS_DELETE_LOG(airportQueryNav);
-  ATOOLS_DELETE_LOG(infoQuery);
-  ATOOLS_DELETE_LOG(procedureQuery);
   ATOOLS_DELETE_LOG(databaseManager);
   ATOOLS_DELETE_LOG(databaseMetaSim);
   ATOOLS_DELETE_LOG(databaseMetaNav);
@@ -355,10 +326,7 @@ void NavApp::preDatabaseLoad()
   qDebug() << Q_FUNC_INFO;
 
   loadingDatabase = true;
-  infoQuery->deInitQueries();
-  airportQuerySim->deInitQueries();
-  airportQueryNav->deInitQueries();
-  procedureQuery->deInitQueries();
+  QueryManager::instance()->deInitQueries();
   moraReader->preDatabaseLoad();
   airspaceController->preDatabaseLoad();
   trackController->preDatabaseLoad();
@@ -380,10 +348,7 @@ void NavApp::postDatabaseLoad()
 
   readMagDecFromDatabase();
 
-  airportQuerySim->initQueries();
-  airportQueryNav->initQueries();
-  infoQuery->initQueries();
-  procedureQuery->initQueries();
+  QueryManager::instance()->initQueries();
   moraReader->readFromTable(getDatabaseNav(), getDatabaseSim());
   airspaceController->postDatabaseLoad();
   logdataController->postDatabaseLoad();
@@ -451,21 +416,6 @@ bool NavApp::isMoraAvailable()
   return moraReader->isDataAvailable();
 }
 
-bool NavApp::isHoldingsAvailable()
-{
-  return getMapQueryGui()->hasHoldings();
-}
-
-bool NavApp::isAirportMsaAvailable()
-{
-  return getMapQueryGui()->hasAirportMsa();
-}
-
-bool NavApp::isGlsAvailable()
-{
-  return getMapQueryGui()->hasGls();
-}
-
 float NavApp::getTakeoffFlownDistanceNm()
 {
   return mainWindow->getMapWidget()->getTakeoffFlownDistanceNm();
@@ -503,46 +453,6 @@ void NavApp::updateAllMaps()
 const QVector<atools::fs::sc::SimConnectAircraft>& NavApp::getAiAircraft()
 {
   return mainWindow->getMapWidget()->getAiAircraft();
-}
-
-AirportQuery *NavApp::getAirportQuerySim()
-{
-  return airportQuerySim;
-}
-
-AirportQuery *NavApp::getAirportQueryNav()
-{
-  return airportQueryNav;
-}
-
-MapQuery *NavApp::getMapQueryGui()
-{
-  return getMapPaintWidgetGui()->getMapQuery();
-}
-
-AirwayTrackQuery *NavApp::getAirwayTrackQueryGui()
-{
-  return getMapPaintWidgetGui()->getAirwayTrackQuery();
-}
-
-WaypointTrackQuery *NavApp::getWaypointTrackQueryGui()
-{
-  return getMapPaintWidgetGui()->getWaypointTrackQuery();
-}
-
-atools::geo::Pos NavApp::getAirportPos(const QString& ident)
-{
-  return airportQuerySim->getAirportPosByIdent(ident);
-}
-
-InfoQuery *NavApp::getInfoQuery()
-{
-  return infoQuery;
-}
-
-ProcedureQuery *NavApp::getProcedureQuery()
-{
-  return procedureQuery;
 }
 
 const Route& NavApp::getRouteConst()

@@ -53,8 +53,6 @@ class FlightplanEntry;
 }
 }
 
-class AirportQuery;
-class AirwayTrackQuery;
 class FlightplanEntryBuilder;
 class QItemSelection;
 class QMainWindow;
@@ -618,7 +616,6 @@ private:
 
   QMainWindow *mainWindow;
   QTableView *tableViewRoute;
-  AirportQuery *airportQuery;
   QStandardItemModel *model;
   QUndoStack *undoStack = nullptr;
   FlightplanEntryBuilder *entryBuilder = nullptr;

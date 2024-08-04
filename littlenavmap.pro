@@ -397,6 +397,7 @@ SOURCES += \
   src/query/infoquery.cpp \
   src/query/mapquery.cpp \
   src/query/procedurequery.cpp \
+  src/query/querymanager.cpp \
   src/query/querytypes.cpp \
   src/query/waypointquery.cpp \
   src/query/waypointtrackquery.cpp \
@@ -599,6 +600,7 @@ HEADERS  += \
   src/query/infoquery.h \
   src/query/mapquery.h \
   src/query/procedurequery.h \
+  src/query/querymanager.h \
   src/query/querytypes.h \
   src/query/waypointquery.h \
   src/query/waypointtrackquery.h \

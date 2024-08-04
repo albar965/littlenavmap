@@ -44,8 +44,8 @@ struct MapAirport;
 struct MapRunwayEnd;
 struct MapResult;
 }
-class MapQuery;
-class AirportQuery;
+
+class Queries;
 
 /* Loads and caches procedures and transitions. Procedures include
  * final approaches, SID and STAR but excludes transitions.
@@ -67,7 +67,7 @@ public:
    * @param sqlDb database for simulator scenery data
    * @param sqlDbNav for updated navaids
    */
-  ProcedureQuery(atools::sql::SqlDatabase *sqlDbNav);
+  ProcedureQuery(atools::sql::SqlDatabase *sqlDbNav, const Queries *queriesParam);
   ~ProcedureQuery();
 
   /* Do not allow copying */
@@ -272,8 +272,7 @@ private:
   /* maps leg ID to procedure/transition ID and index in list */
   QHash<int, std::pair<int, int> > procedureLegIndex, transitionLegIndex;
 
-  AirportQuery *airportQueryNav = nullptr;
-
+  const Queries *queries;
   bool verbose = false;
 
   /* Dummy used for custom approaches. */

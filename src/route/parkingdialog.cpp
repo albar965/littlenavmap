@@ -17,6 +17,7 @@
 
 #include "route/parkingdialog.h"
 
+#include "app/navapp.h"
 #include "atools.h"
 #include "common/constants.h"
 #include "common/mapcolors.h"
@@ -27,9 +28,9 @@
 #include "gui/itemviewzoomhandler.h"
 #include "gui/tools.h"
 #include "gui/widgetstate.h"
-#include "app/navapp.h"
 #include "query/airportquery.h"
 #include "query/mapquery.h"
+#include "query/querymanager.h"
 #include "route/route.h"
 #include "ui_parkingdialog.h"
 
@@ -137,7 +138,7 @@ void ParkingDialog::updateTable()
   startPositions.clear();
 
   // Create a copy from the cached start objects to allow sorting ====================================
-  AirportQuery *airportQuerySim = NavApp::getAirportQuerySim();
+  AirportQuery *airportQuerySim = QueryManager::instance()->getQueriesGui()->getAirportQuerySim();
   for(const map::MapStart& start : *airportQuerySim->getStartPositionsForAirport(departureAirport.id))
     startPositions.append(internal::StartPosition(start));
 
@@ -155,7 +156,7 @@ void ParkingDialog::updateTable()
       if(p1.parking.isValid())
         // Compare parking
         return std::make_tuple(p1.parking.name, p1.parking.number, p1.parking.suffix) <
-        std::make_tuple(p2.parking.name, p2.parking.number, p2.parking.suffix);
+               std::make_tuple(p2.parking.name, p2.parking.number, p2.parking.suffix);
       else if(p1.start.isValid())
       {
         // Compare start - first runways by name and then helipads by name
@@ -243,7 +244,8 @@ void ParkingDialog::updateTable()
             // Add ILS and similar approach aids
             if(departureAirport.isValid())
             {
-              for(const map::MapIls& ils : NavApp::getMapQueryGui()->getIlsByAirportAndRunway(departureAirport.ident, end.name))
+              const Queries *queries = QueryManager::instance()->getQueriesGui();
+              for(const map::MapIls& ils : queries->getMapQuery()->getIlsByAirportAndRunway(departureAirport.ident, end.name))
                 atts.append(map::ilsTypeShort(ils));
             }
             atts.removeAll(QString());

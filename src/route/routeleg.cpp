@@ -15,18 +15,19 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#include "route/routeleg.h"
-#include "query/mapquery.h"
-#include "query/airwaytrackquery.h"
-#include "query/airportquery.h"
-#include "geo/calculations.h"
-#include "fs/pln/flightplan.h"
-#include "common/maptools.h"
-#include "atools.h"
-#include "fs/util/fsutil.h"
-#include "common/elevationprovider.h"
 #include "app/navapp.h"
+#include "atools.h"
+#include "common/elevationprovider.h"
+#include "common/maptools.h"
 #include "common/unit.h"
+#include "fs/pln/flightplan.h"
+#include "fs/util/fsutil.h"
+#include "geo/calculations.h"
+#include "query/airportquery.h"
+#include "query/airwaytrackquery.h"
+#include "query/mapquery.h"
+#include "query/querymanager.h"
+#include "route/routeleg.h"
 
 #include <QRegularExpression>
 #include <QStringBuilder>
@@ -127,9 +128,10 @@ void RouteLeg::createFromProcedureLegs(int entryIndex, const proc::MapProcedureL
 void RouteLeg::assignAnyNavaid(atools::fs::pln::FlightplanEntry *flightplanEntry, const Pos& last, float maxDistance)
 {
   map::MapResult mapobjectResult;
-  NavApp::getMapQueryGui()->getMapObjectByIdent(mapobjectResult, map::WAYPOINT | map::VOR | map::NDB | map::AIRPORT,
-                                                flightplanEntry->getIdent(), flightplanEntry->getRegion(),
-                                                QString(), last, maxDistance);
+  QueryManager::instance()->getQueriesGui()->getMapQuery()->getMapObjectByIdent(mapobjectResult,
+                                                                                map::WAYPOINT | map::VOR | map::NDB | map::AIRPORT,
+                                                                                flightplanEntry->getIdent(), flightplanEntry->getRegion(),
+                                                                                QString(), last, maxDistance);
 
   if(mapobjectResult.hasVor())
   {
@@ -153,9 +155,10 @@ void RouteLeg::createFromDatabaseByEntry(int entryIndex, const RouteLeg *prevLeg
   index = entryIndex;
 
   atools::fs::pln::FlightplanEntry *flightplanEntry = &(*flightplan)[index];
-  MapQuery *mapQuery = NavApp::getMapQueryGui();
-  AirwayTrackQuery *airwayQuery = NavApp::getAirwayTrackQueryGui();
-  AirportQuery *airportQuery = NavApp::getAirportQuerySim();
+  const Queries *queries = QueryManager::instance()->getQueriesGui();
+  MapQuery *mapQuery = queries->getMapQuery();
+  AirwayTrackQuery *airwayQuery = queries->getAirwayTrackQuery();
+  AirportQuery *airportQuery = queries->getAirportQuerySim();
 
   QString region = flightplanEntry->getRegion();
 
@@ -1147,7 +1150,8 @@ void RouteLeg::assignNdb(const map::MapResult& mapobjectResult, atools::fs::pln:
 
 void RouteLeg::assignRunwayOrHelipad(const QString& name)
 {
-  NavApp::getAirportQuerySim()->getStartByNameAndPos(start, airport.id, name, flightplan->getDepartureParkingPosition());
+  QueryManager::instance()->getQueriesGui()->getAirportQuerySim()->getStartByNameAndPos(start, airport.id, name,
+                                                                                        flightplan->getDepartureParkingPosition());
 
   if(!start.isValid() || start.position.distanceMeterTo(flightplan->getDepartureParkingPosition()) > MAX_PARKING_DIST_METER)
     // Do not clear departure position in flight plan to allow the parking name to survive database switches

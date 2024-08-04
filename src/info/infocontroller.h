@@ -34,6 +34,7 @@ class AircraftProgressConfig;
 
 class QTextBrowser;
 
+class Queries;
 namespace map {
 struct MapAirport;
 struct MapResult;
@@ -213,10 +214,9 @@ private:
   map::MapResult *currentSearchResult, *savedSearchResult;
 
   MainWindow *mainWindow = nullptr;
-  MapQuery *mapQuery = nullptr;
-  AirportQuery *airportQuery = nullptr;
   AirspaceController *airspaceController = nullptr;
   HtmlInfoBuilder *infoBuilder = nullptr;
+  Queries *queries;
 
   AircraftProgressConfig *aircraftProgressConfig;
 

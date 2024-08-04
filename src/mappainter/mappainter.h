@@ -27,6 +27,7 @@
 #include <QFont>
 #include <QDateTime>
 
+class Queries;
 namespace atools {
 namespace geo {
 class LineString;
@@ -38,15 +39,11 @@ class GeoDataLineString;
 class GeoPainter;
 }
 
-class AirportQuery;
-class AirwayTrackQuery;
 class MapLayer;
 class MapPaintWidget;
-class MapQuery;
 class MapScale;
 class MapWidget;
 class SymbolPainter;
-class WaypointTrackQuery;
 class Route;
 
 namespace map {
@@ -439,11 +436,8 @@ protected:
   PaintContext *context = nullptr;
   SymbolPainter *symbolPainter = nullptr;
   MapPaintWidget *mapPaintWidget = nullptr;
-  MapQuery *mapQuery = nullptr;
-  AirwayTrackQuery *airwayQuery = nullptr;
-  WaypointTrackQuery *waypointQuery = nullptr;
-  AirportQuery *airportQuery = nullptr;
   MapScale *scale = nullptr;
+  const Queries *queries = nullptr;
 
 private:
 };

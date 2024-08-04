@@ -27,6 +27,7 @@
 #include "geo/line.h"
 #include "query/airportquery.h"
 #include "query/mapquery.h"
+#include "query/querymanager.h"
 #include "settings/settings.h"
 #include "sql/sqldatabase.h"
 #include "sql/sqlquery.h"
@@ -52,9 +53,10 @@ using proc::MapSpeedRestriction;
 namespace pln = atools::fs::pln;
 namespace ageo = atools::geo;
 
-ProcedureQuery::ProcedureQuery(atools::sql::SqlDatabase *sqlDbNav)
+ProcedureQuery::ProcedureQuery(atools::sql::SqlDatabase *sqlDbNav, const Queries *queriesParam)
   : dbNav(sqlDbNav)
 {
+  queries = queriesParam;
   verbose = atools::settings::Settings::instance().getAndStoreValue(lnm::OPTIONS_PROCEDURE_DEBUG, false).toBool();
 }
 
@@ -65,13 +67,13 @@ ProcedureQuery::~ProcedureQuery()
 
 const proc::MapProcedureLegs *ProcedureQuery::getProcedureLegs(map::MapAirport airport, int procedureId)
 {
-  NavApp::getMapQueryGui()->getAirportNavReplace(airport);
+  queries->getMapQuery()->getAirportNavReplace(airport);
   return fetchProcedureLegs(airport, procedureId);
 }
 
 const proc::MapProcedureLegs *ProcedureQuery::getTransitionLegs(map::MapAirport airport, int transitionId)
 {
-  NavApp::getMapQueryGui()->getAirportNavReplace(airport);
+  queries->getMapQuery()->getAirportNavReplace(airport);
   return fetchTransitionLegs(airport, procedureIdForTransitionId(transitionId), transitionId);
 }
 
@@ -604,21 +606,21 @@ void ProcedureQuery::runwayEndByName(map::MapResult& result, const QString& name
 {
   Q_ASSERT(airport.navdata);
 
-  NavApp::getMapQueryGui()->getRunwayEndByNameFuzzy(result.runwayEnds, name, airport, true /* navdata */);
+  queries->getMapQuery()->getRunwayEndByNameFuzzy(result.runwayEnds, name, airport, true /* navdata */);
 }
 
 void ProcedureQuery::runwayEndByNameSim(map::MapResult& result, const QString& name,
                                         const map::MapAirport& airport)
 {
   Q_ASSERT(!airport.navdata);
-  NavApp::getMapQueryGui()->getRunwayEndByNameFuzzy(result.runwayEnds, name, airport, false /* navdata */);
+  queries->getMapQuery()->getRunwayEndByNameFuzzy(result.runwayEnds, name, airport, false /* navdata */);
 }
 
 void ProcedureQuery::mapObjectByIdent(map::MapResult& result, map::MapTypes type,
                                       const QString& ident, const QString& region, const QString& airport,
                                       const Pos& sortByDistancePos)
 {
-  MapQuery *mapQuery = NavApp::getMapQueryGui();
+  MapQuery *mapQuery = queries->getMapQuery();
 
   mapQuery->getMapObjectByIdent(result, type, ident, region, airport, sortByDistancePos,
                                 nmToMeter(1000.f), true /* airport from nav database */);
@@ -847,7 +849,7 @@ proc::MapProcedureLegs *ProcedureQuery::buildProcedureLegs(const map::MapAirport
   {
     if(!runwayEndIdQuery->isNull("runway_end_id"))
     {
-      legs->runwayEnd = airportQueryNav->getRunwayEndById(runwayEndIdQuery->value("runway_end_id").toInt());
+      legs->runwayEnd = queries->getAirportQueryNav()->getRunwayEndById(runwayEndIdQuery->value("runway_end_id").toInt());
 
       // Add altitude to position since it is needed to display the first point in the SID
       legs->runwayEnd.position.setAltitude(airport.getAltitude());
@@ -1249,7 +1251,7 @@ void ProcedureQuery::processLegErrors(proc::MapProcedureLegs& legs) const
 
 void ProcedureQuery::processLegsFixRestrictions(const map::MapAirport& airport, proc::MapProcedureLegs& legs) const
 {
-  const map::MapAirport airportSim = NavApp::getMapQueryGui()->getAirportSim(airport);
+  const map::MapAirport airportSim = queries->getMapQuery()->getAirportSim(airport);
   float airportAlt = airportSim.isValid() ? airportSim.position.getAltitude() : airport.position.getAltitude();
 
   for(int i = 1; i < legs.size(); i++)
@@ -2000,8 +2002,6 @@ void ProcedureQuery::processCourseInterceptLegs(proc::MapProcedureLegs& legs) co
 
 void ProcedureQuery::initQueries()
 {
-  airportQueryNav = NavApp::getAirportQueryNav();
-
   deInitQueries();
 
   procedureLegQuery = new SqlQuery(dbNav);
@@ -2264,7 +2264,7 @@ proc::MapProcedureTypes ProcedureQuery::getMissingProcedures(QHash<QString, QStr
 
 int ProcedureQuery::getSidId(map::MapAirport departure, const QString& sid, const QString& runway, bool strict)
 {
-  NavApp::getMapQueryGui()->getAirportNavReplace(departure);
+  queries->getMapQuery()->getAirportNavReplace(departure);
 
   int sidApprId = -1;
   // Get a SID id =================================================================
@@ -2288,7 +2288,7 @@ int ProcedureQuery::getSidId(map::MapAirport departure, const QString& sid, cons
 
 int ProcedureQuery::getSidTransitionId(map::MapAirport departure, const QString& sidTrans, int sidId, bool strict)
 {
-  NavApp::getMapQueryGui()->getAirportNavReplace(departure);
+  queries->getMapQuery()->getAirportNavReplace(departure);
 
   int sidTransId = -1;
   // Get a SID transition id =================================================================
@@ -2308,7 +2308,7 @@ int ProcedureQuery::getSidTransitionId(map::MapAirport departure, const QString&
 
 int ProcedureQuery::getSidTransitionIdByWp(map::MapAirport departure, const QString& transWaypoint, int sidId, bool strict)
 {
-  NavApp::getMapQueryGui()->getAirportNavReplace(departure);
+  queries->getMapQuery()->getAirportNavReplace(departure);
 
   int sidTransId = -1;
   // Get a SID transition id =================================================================
@@ -2327,7 +2327,7 @@ int ProcedureQuery::getSidTransitionIdByWp(map::MapAirport departure, const QStr
 
 int ProcedureQuery::getStarId(map::MapAirport destination, const QString& star, const QString& runway, bool strict)
 {
-  NavApp::getMapQueryGui()->getAirportNavReplace(destination);
+  queries->getMapQuery()->getAirportNavReplace(destination);
 
   int starId = -1;
   // Get a STAR id =================================================================
@@ -2351,7 +2351,7 @@ int ProcedureQuery::getStarId(map::MapAirport destination, const QString& star, 
 
 int ProcedureQuery::getStarTransitionId(map::MapAirport destination, const QString& starTrans, int starId, bool strict)
 {
-  NavApp::getMapQueryGui()->getAirportNavReplace(destination);
+  queries->getMapQuery()->getAirportNavReplace(destination);
 
   int starTransId = -1;
   // Get a STAR transition id =================================================================
@@ -2370,7 +2370,7 @@ int ProcedureQuery::getStarTransitionId(map::MapAirport destination, const QStri
 
 int ProcedureQuery::getApprOrStarTransitionIdByWp(map::MapAirport destination, const QString& transWaypoint, int starId, bool strict)
 {
-  NavApp::getMapQueryGui()->getAirportNavReplace(destination);
+  queries->getMapQuery()->getAirportNavReplace(destination);
 
   int starTransId = -1;
   // Get a STAR transition id =================================================================
@@ -2389,7 +2389,7 @@ int ProcedureQuery::getApprOrStarTransitionIdByWp(map::MapAirport destination, c
 int ProcedureQuery::getApproachId(map::MapAirport destination, const QString& arincName, const QString& runway)
 {
   int approachId = -1;
-  NavApp::getMapQueryGui()->getAirportNavReplace(destination);
+  queries->getMapQuery()->getAirportNavReplace(destination);
 
   if(destination.isValid())
   {
@@ -2423,7 +2423,7 @@ int ProcedureQuery::getApproachId(map::MapAirport destination, const QString& ar
 int ProcedureQuery::getTransitionId(map::MapAirport destination, const QString& fixIdent, const QString& type, int approachId)
 {
   int transitionId = -1;
-  NavApp::getMapQueryGui()->getAirportNavReplace(destination);
+  queries->getMapQuery()->getAirportNavReplace(destination);
 
   if(destination.isValid())
   {
@@ -2674,7 +2674,7 @@ void ProcedureQuery::getLegsForFlightplanProperties(const QHash<QString, QString
                                                     QStringList& errors, bool autoresolveTransition)
 {
   errors.clear();
-  MapQuery *mapQuery = NavApp::getMapQueryGui();
+  MapQuery *mapQuery = queries->getMapQuery();
   map::MapAirport departAirportNav = mapQuery->getAirportNav(departure);
   map::MapAirport destAirportNav = mapQuery->getAirportNav(destination);
 
@@ -2794,7 +2794,8 @@ void ProcedureQuery::getLegsForFlightplanProperties(const QHash<QString, QString
     }
 
     if(approachId == -1)
-      errors.append(tr("Approach %1 to %2").arg(properties.value(pln::APPROACH)).arg(runwayErrorString(properties.value(pln::APPROACH_RW))));
+      errors.append(tr("Approach %1 to %2").
+                    arg(properties.value(pln::APPROACH)).arg(runwayErrorString(properties.value(pln::APPROACH_RW))));
   }
 
   // Get a transition id =================================================================
@@ -3161,7 +3162,7 @@ void ProcedureQuery::insertSidStarRunway(proc::MapProcedureLegs& legs, const QSt
 {
   if(legs.hasSidOrStarMultipleRunways())
   {
-    QStringList runwayNames = airportQueryNav->getRunwayNames(legs.ref.airportId);
+    QStringList runwayNames = queries->getAirportQueryNav()->getRunwayNames(legs.ref.airportId);
     if(runway.isEmpty())
       // Assign first matching runway for this sid if not assigned yet
       legs.runway = anyMatchingRunwayForSidStar(legs.arincName, runwayNames);
@@ -3169,7 +3170,7 @@ void ProcedureQuery::insertSidStarRunway(proc::MapProcedureLegs& legs, const QSt
       // Assign given runway
       legs.runway = atools::fs::util::runwayBestFitFromList(runway, runwayNames);
 
-    legs.runwayEnd = airportQueryNav->getRunwayEndByName(legs.ref.airportId, legs.runway);
+    legs.runwayEnd = queries->getAirportQueryNav()->getRunwayEndByName(legs.ref.airportId, legs.runway);
 
     if(legs.runwayEnd.isValid())
     {
@@ -3190,7 +3191,7 @@ void ProcedureQuery::insertSidStarRunway(proc::MapProcedureLegs& legs, const QSt
       }
 
       // Re-calculate all legs, positions and distances again
-      postProcessLegs(airportQueryNav->getAirportById(legs.ref.airportId), legs, false /*addArtificialLegs*/);
+      postProcessLegs(queries->getAirportQueryNav()->getAirportById(legs.ref.airportId), legs, false /*addArtificialLegs*/);
     }
     else if(verbose)
       qWarning() << Q_FUNC_INFO << "Cannot get runway for" << legs.runway;
@@ -3201,7 +3202,7 @@ int ProcedureQuery::findProcedureLegId(const map::MapAirport& airport, atools::s
                                        const QString& suffix, const QString& runway,
                                        bool transition, bool strict)
 {
-  QStringList airportRunways = airportQueryNav->getRunwayNames(airport.id);
+  QStringList airportRunways = queries->getAirportQueryNav()->getRunwayNames(airport.id);
 
   if(!query::valid(Q_FUNC_INFO, query))
     return -1;

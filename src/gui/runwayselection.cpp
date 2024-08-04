@@ -28,6 +28,7 @@
 #include "query/airportquery.h"
 #include "query/mapquery.h"
 #include "weather/weatherreporter.h"
+#include "query/querymanager.h"
 
 #include <QLabel>
 #include <QTableWidget>
@@ -64,7 +65,7 @@ RunwaySelection::RunwaySelection(QObject *parent, const map::MapAirport& mapAirp
   airport = new map::MapAirport;
   *airport = mapAirport;
 
-  mapQuery = NavApp::getMapQueryGui();
+  mapQuery = QueryManager::instance()->getQueriesGui()->getMapQuery();
 
   if(navdata)
     mapQuery->getAirportNavReplace(*airport);
@@ -182,7 +183,8 @@ void RunwaySelection::fillAirportLabel()
 
 void RunwaySelection::fillRunwayList()
 {
-  AirportQuery *airportQuery = navdata ? NavApp::getAirportQueryNav() : NavApp::getAirportQuerySim();
+  const Queries *queries = QueryManager::instance()->getQueriesGui();
+  AirportQuery *airportQuery = queries->getAirportQuery(navdata);
 
   // Get all runways from airport ==================================
   const QList<map::MapRunway> *rw = airportQuery->getRunways(airport->id);
@@ -203,7 +205,7 @@ void RunwaySelection::fillRunwayList()
     // Sort by length and heading ===================
     std::sort(runways.begin(), runways.end(), [](const RunwayIdxEntry& rw1, const RunwayIdxEntry& rw2) -> bool {
       return atools::almostEqual(rw1.runway.length, rw2.runway.length) ?
-      rw1.end.heading<rw2.end.heading : rw1.runway.length> rw2.runway.length;
+             rw1.end.heading<rw2.end.heading : rw1.runway.length> rw2.runway.length;
     });
   }
 

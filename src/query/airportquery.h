@@ -23,6 +23,7 @@
 #include <QCache>
 #include <QSet>
 
+class Queries;
 namespace Marble {
 class GeoDataLatLonBox;
 }
@@ -66,11 +67,6 @@ class NearestCacheKeyAirport;
 class AirportQuery
 {
 public:
-  /*
-   * @param sqlDb database for simulator scenery data
-   * @param sqlDbNav for updated navaids
-   */
-  AirportQuery(atools::sql::SqlDatabase *sqlDb, bool nav);
   ~AirportQuery();
 
   AirportQuery(const AirportQuery& other) = delete;
@@ -222,6 +218,14 @@ public:
 private:
   friend inline uint qHash(const NearestCacheKeyAirport& key);
 
+  friend Queries;
+
+  /*
+   * @param sqlDb database for simulator scenery data
+   * @param sqlDbNav for updated navaids
+   */
+  AirportQuery(atools::sql::SqlDatabase *sqlDb, const Queries*queriesParam, bool nav);
+
   const map::MapResultIndex *nearestProcAirportsInternal(const atools::geo::Pos& pos, const QString& ident, float distanceNm);
 
   const QList<map::MapAirport> *fetchAirports(const Marble::GeoDataLatLonBox& rect, atools::sql::SqlQuery *query, bool reverse,
@@ -266,6 +270,9 @@ private:
 
   /* Available ident columns in airport table. Set to true if column exists and has not null values. */
   bool icaoCol = false, faaCol = false, iataCol = false, localCol = false;
+
+  /* Need access to "other" airport query (nav/sim) */
+  const Queries *queries;
 
   /* Database queries */
   atools::sql::SqlQuery *runwayOverviewQuery = nullptr, *apronQuery = nullptr,

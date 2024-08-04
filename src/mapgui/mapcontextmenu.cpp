@@ -31,6 +31,7 @@
 #include "atools.h"
 #include "common/unit.h"
 #include "common/symbolpainter.h"
+#include "query/querymanager.h"
 
 #include <ui_mainwindow.h>
 
@@ -526,8 +527,9 @@ void MapContextMenu::insertProcedureAddMenu(QMenu& menu)
           const proc::MapProcedureLegs *legs = pt->legs;
           if(legs != nullptr && !legs->isAnyCustom())
           {
-            map::MapAirport airport = NavApp::getAirportQueryNav()->getAirportById(leg.airportId);
-            NavApp::getMapQueryGui()->getAirportSim(airport);
+            const Queries *queries = QueryManager::instance()->getQueriesGui();
+            map::MapAirport airport = queries->getAirportQueryNav()->getAirportById(leg.airportId);
+            queries->getMapQuery()->getAirportSim(airport);
 
             bool departure = false, destination = false;
             proc::procedureFlags(route, &airport, &departure, &destination);
@@ -796,13 +798,15 @@ void MapContextMenu::insertDepartureMenu(QMenu& menu)
       if(base != nullptr)
       {
         map::MapAirport airport;
+        const Queries *queries = QueryManager::instance()->getQueriesGui();
+
         if(base->getType() == map::HELIPAD)
         {
           // User clicked on helipad ================================
           const map::MapHelipad *helipad = base->asPtr<map::MapHelipad>();
 
           // Get related airport
-          airport = NavApp::getAirportQuerySim()->getAirportById(helipad->airportId);
+          airport = queries->getAirportQuerySim()->getAirportById(helipad->airportId);
 
           text = tr("Set %1 at %2 as &Departure").
                  arg(atools::elideTextShortMiddle(map::helipadText(*helipad), TEXT_ELIDE)).
@@ -814,7 +818,7 @@ void MapContextMenu::insertDepartureMenu(QMenu& menu)
           const map::MapParking *parking = base->asPtr<map::MapParking>();
 
           // Get related airport
-          airport = NavApp::getAirportQuerySim()->getAirportById(parking->airportId);
+          airport = queries->getAirportQuerySim()->getAirportById(parking->airportId);
 
           text = tr("Set %1 at %2 as &Departure").
                  arg(atools::elideTextShortMiddle(map::parkingText(*parking), TEXT_ELIDE)).

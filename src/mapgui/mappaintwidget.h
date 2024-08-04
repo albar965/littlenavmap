@@ -20,6 +20,7 @@
 
 #include "common/mapflags.h"
 #include "geo/pos.h"
+#include "query/querymanager.h"
 
 #include <marble/GeoDataLatLonAltBox.h>
 #include <marble/MarbleWidget.h>
@@ -61,10 +62,8 @@ class MainWindow;
 class MapPaintLayer;
 class MapScreenIndex;
 class ApronGeometryCache;
-class MapQuery;
-class AirwayTrackQuery;
-class WaypointTrackQuery;
 class MapLayer;
+class AircraftTrail;
 
 namespace proc {
 struct MapProcedureLeg;
@@ -72,8 +71,6 @@ struct MapProcedureLeg;
 struct MapProcedureLegs;
 
 }
-
-class AircraftTrail;
 
 /*
  * Contains all functions to draw a map including background, flight plan, navaids and whatnot.
@@ -85,12 +82,12 @@ class AircraftTrail;
  * Does not contain any UI and mouse/keyboard interaction.
  */
 class MapPaintWidget :
-  public Marble::MarbleWidget
+  public Marble::MarbleWidget, public Lockable
 {
   Q_OBJECT
 
 public:
-  explicit MapPaintWidget(QWidget *parent, bool visible, bool webParam);
+  explicit MapPaintWidget(QWidget *parent, Queries *queriesParam, bool visible, bool webParam);
   virtual ~MapPaintWidget() override;
 
   MapPaintWidget(const MapPaintWidget& other) = delete;
@@ -398,24 +395,6 @@ public:
   /* Saved bounding box from last zoom or scroll operation. Needed to detect view changes. */
   const Marble::GeoDataLatLonBox& getCurrentViewBoundingBox() const;
 
-  /* Get map query with cached objects for this paint widget instance */
-  MapQuery *getMapQuery() const
-  {
-    return mapQuery;
-  }
-
-  AirwayTrackQuery *getAirwayTrackQuery() const
-  {
-    return airwayTrackQuery;
-  }
-
-  WaypointTrackQuery *getWaypointTrackQuery() const
-  {
-    return waypointTrackQuery;
-  }
-
-  void postTrackLoad();
-
   /* No drawing at all and not map interactions except moving and zooming if true.
    * Limit depends on projection. */
   bool noRender() const;
@@ -442,6 +421,12 @@ public:
   bool isWeb() const
   {
     return web;
+  }
+
+  /* Get queries bundle. This can be either GUI or Web. Locking required for Web */
+  Queries *getQueries() const
+  {
+    return queries;
   }
 
 signals:
@@ -589,6 +574,8 @@ protected:
   /* Trail/track of user aircraft */
   AircraftTrail *aircraftTrail = nullptr, *aircraftTrailLogbook = nullptr;
 
+  Queries *queries;
+
 private:
   /* Set map theme and adjust properties accordingly. theme is the full path to the DGML */
   void setThemeInternal(const MapTheme& theme);
@@ -607,10 +594,6 @@ private:
   /* Keeps geographical objects as index in screen coordinates */
   MapScreenIndex *screenIndex = nullptr;
 
-  MapQuery *mapQuery = nullptr;
-  AirwayTrackQuery *airwayTrackQuery = nullptr;
-  WaypointTrackQuery *waypointTrackQuery = nullptr;
-
   /* Current zoom value (NOT distance) */
   int currentZoom = -1;
 
@@ -623,5 +606,7 @@ private:
   /* true if web instance */
   bool web;
 };
+
+typedef Locker<MapPaintWidget> MapPaintWidgetLocker;
 
 #endif // LITTLENAVMAP_NAVMAPPAINTWIDGET_H

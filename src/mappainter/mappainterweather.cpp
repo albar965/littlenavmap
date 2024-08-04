@@ -23,6 +23,7 @@
 #include "mapgui/mapscale.h"
 #include "mapgui/maplayer.h"
 #include "query/mapquery.h"
+#include "query/querymanager.h"
 #include "util/paintercontextsaver.h"
 #include "app/navapp.h"
 #include "route/route.h"
@@ -59,7 +60,7 @@ void MapPainterWeather::render()
 
   const GeoDataLatLonAltBox& curBox = context->viewport->viewLatLonAltBox();
   const QList<MapAirport> *airportCache =
-    mapQuery->getAirports(curBox, context->mapLayer, context->lazyUpdate, context->objectTypes, overflow);
+    queries->getMapQuery()->getAirports(curBox, context->mapLayer, context->lazyUpdate, context->objectTypes, overflow);
   context->setQueryOverflow(overflow);
 
   // Collect all airports that are visible from cache ======================================

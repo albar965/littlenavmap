@@ -18,6 +18,7 @@
 #include "mapgui/mapvisible.h"
 
 #include "airspace/airspacecontroller.h"
+#include "app/navapp.h"
 #include "atools.h"
 #include "common/maptypes.h"
 #include "common/unit.h"
@@ -27,8 +28,8 @@
 #include "mapgui/maplayer.h"
 #include "mapgui/mapmarkhandler.h"
 #include "mappainter/mappaintlayer.h"
-#include "app/navapp.h"
 #include "query/mapquery.h"
+#include "query/querymanager.h"
 #include "userdata/userdatacontroller.h"
 #include "util/htmlbuilder.h"
 #include "weather/windreporter.h"
@@ -201,7 +202,7 @@ void MapVisible::updateVisibleObjectsStatusBar()
         navaidsTooltip.append(tr("ILS (I)"));
       }
 
-      if(layer->isIls() && shownDispTypes.testFlag(map::GLS) && NavApp::getMapQueryGui()->hasGls())
+      if(layer->isIls() && shownDispTypes.testFlag(map::GLS) && QueryManager::instance()->getQueriesGui()->isGlsAvailable())
       {
         navaidLabel.append(tr("G"));
         navaidsTooltip.append(tr("GLS (G)"));

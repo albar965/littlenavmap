@@ -126,26 +126,37 @@ WebApiResponse MapActionsController::featuresAction(WebApiRequest request)
 
   // Extract results created during dummy image request
   QList<map::MapAirport> airports;
-  QList<map::MapNdb> ndbs ;
+  QList<map::MapNdb> ndbs;
   QList<map::MapVor> vors;
   QList<map::MapMarker> markers;
   QList<map::MapWaypoint> waypoints;
 
+  Queries *queries = mapPaintWidget->getQueries();
   {
-    QMutexLocker locker(&mapQueryRectMutex);
-    airports = *mapPaintWidget->getMapQuery()->getAirportsByRect(rect, mapPaintWidget->getMapPaintLayer()->getMapLayer(),
-                                                                 false, map::NONE, overflow);
+    QueryLocker locker(queries);
+    airports = *queries->getMapQuery()->getAirportsByRect(rect, mapPaintWidget->getMapPaintLayer()->getMapLayer(),
+                                                          false, map::NONE, overflow);
+  }
 
-    ndbs = *mapPaintWidget->getMapQuery()->getNdbsByRect(rect, mapPaintWidget->getMapPaintLayer()->getMapLayer(),
-                                                         false, overflow);
+  {
+    QueryLocker locker(queries);
+    ndbs = *queries->getMapQuery()->getNdbsByRect(rect, mapPaintWidget->getMapPaintLayer()->getMapLayer(), false, overflow);
+  }
 
-    vors = *mapPaintWidget->getMapQuery()->getVorsByRect(rect, mapPaintWidget->getMapPaintLayer()->getMapLayer(),
-                                                         false, overflow);
-    markers = *mapPaintWidget->getMapQuery()->getMarkersByRect(rect, mapPaintWidget->getMapPaintLayer()->getMapLayer(),
-                                                               false, overflow);
+  {
+    QueryLocker locker(queries);
+    vors = *queries->getMapQuery()->getVorsByRect(rect, mapPaintWidget->getMapPaintLayer()->getMapLayer(), false, overflow);
+  }
 
-    waypoints = mapPaintWidget->getWaypointTrackQuery()->getWaypointsByRect(rect, mapPaintWidget->getMapPaintLayer()->getMapLayer(),
-                                                                            false, overflow);
+  {
+    QueryLocker locker(queries);
+    markers = *queries->getMapQuery()->getMarkersByRect(rect, mapPaintWidget->getMapPaintLayer()->getMapLayer(), false, overflow);
+  }
+
+  {
+    QueryLocker locker(queries);
+    waypoints = queries->getWaypointTrackQuery()->getWaypointsByRect(rect, mapPaintWidget->getMapPaintLayer()->getMapLayer(),
+                                                                     false, overflow);
   }
 
   MapFeaturesData data = {
@@ -171,21 +182,19 @@ WebApiResponse MapActionsController::featureAction(WebApiRequest request)
 
   map::MapResult result;
 
-  switch(type_id)
   {
-    case map::WAYPOINT:
-      {
-        QMutexLocker locker(&waypointTrackQueryByIdMutex);
-        result.waypoints.append(mapPaintWidget->getWaypointTrackQuery()->getWaypointById(object_id));
-      }
-      break;
+    Queries *queries = mapPaintWidget->getQueries();
+    QueryLocker locker(queries);
+    switch(type_id)
+    {
+      case map::WAYPOINT:
+        result.waypoints.append(queries->getWaypointTrackQuery()->getWaypointById(object_id));
+        break;
 
-    default:
-      {
-        QMutexLocker locker(&mapQueryByIdMutex);
-        mapPaintWidget->getMapQuery()->getMapObjectById(result, type_id, map::AIRSPACE_SRC_NONE, object_id, false);
-      }
-      break;
+      default:
+        queries->getMapQuery()->getMapObjectById(result, type_id, map::AIRSPACE_SRC_NONE, object_id, false);
+        break;
+    }
   }
 
   MapFeaturesData data = {
@@ -213,7 +222,8 @@ void MapActionsController::init()
 
   // Create a map widget clone with the desired resolution
   if(mapPaintWidget == nullptr)
-    mapPaintWidget = new MapPaintWidget(dynamic_cast<QWidget *>(parent()), false /* no real widget - hidden */, true /* web */);
+    mapPaintWidget = new MapPaintWidget(dynamic_cast<QWidget *>(parent()), QueryManager::instance()->getQueriesWeb(),
+                                        false /* no real widget - hidden */, true /* web */);
 
   // Copy all map settings except trail
   mapPaintWidget->copySettings(*NavApp::getMapWidgetGui(), false /* deep */);
@@ -269,7 +279,8 @@ MapPixmap MapActionsController::getPixmapPosDistance(int width, int height, atoo
 
   if(mapPaintWidget != nullptr)
   {
-    QMutexLocker locker(&mapPaintWidgetMutex);
+    // Lock whole widget
+    MapPaintWidgetLocker locker(mapPaintWidget);
 
     // Copy all map settings except trail
     mapPaintWidget->copySettings(*NavApp::getMapWidgetGui(), false /* deep */);
@@ -342,7 +353,7 @@ MapPixmap MapActionsController::getPixmapRect(int width, int height, atools::geo
   {
     if(mapPaintWidget != nullptr)
     {
-      QMutexLocker locker(&mapPaintWidgetMutex);
+      MapPaintWidgetLocker locker(mapPaintWidget);
 
       // Copy all map settings except trail
       mapPaintWidget->copySettings(*NavApp::getMapWidgetGui(), false /* deep */);

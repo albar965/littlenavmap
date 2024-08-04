@@ -149,7 +149,7 @@ void MapPainterAirport::collectVisibleAirports(QVector<PaintAirportType>& visibl
 
   // Get airports from map display cache if enabled in toolbar/menu and layer
   if(context->objectTypes.testFlag(map::AIRPORT) && context->mapLayer->isAirport())
-    airportCache = mapQuery->getAirports(curBox, context->mapLayer, context->lazyUpdate, context->objectTypes, overflow);
+    airportCache = queries->getMapQuery()->getAirports(curBox, context->mapLayer, context->lazyUpdate, context->objectTypes, overflow);
   context->setQueryOverflow(overflow);
 
   // Collect departure, destination and alternate airports from flight plan for potential diagram painting ================
@@ -239,7 +239,7 @@ void MapPainterAirport::drawAirportDiagramBackground(const map::MapAirport& airp
   if(context->dOptAp(optsd::ITEM_AIRPORT_DETAIL_RUNWAY))
   {
     // Get all runways for this airport
-    const QList<MapRunway> *runways = airportQuery->getRunways(airport.id);
+    const QList<MapRunway> *runways = queries->getAirportQuerySim()->getRunways(airport.id);
 
     // Calculate all runway screen coordinates
     QList<QPointF> runwayCenters;
@@ -265,7 +265,7 @@ void MapPainterAirport::drawAirportDiagramBackground(const map::MapAirport& airp
   if(context->mapLayer->isAirportDiagram() && context->dOptAp(optsd::ITEM_AIRPORT_DETAIL_TAXI))
   {
     // For taxipaths
-    const QList<MapTaxiPath> *taxipaths = airportQuery->getTaxiPaths(airport.id);
+    const QList<MapTaxiPath> *taxipaths = queries->getAirportQuerySim()->getTaxiPaths(airport.id);
     for(const MapTaxiPath& taxipath : *taxipaths)
     {
       bool visible;
@@ -279,7 +279,7 @@ void MapPainterAirport::drawAirportDiagramBackground(const map::MapAirport& airp
   if(context->mapLayer->isAirportDiagram() && context->dOptAp(optsd::ITEM_AIRPORT_DETAIL_APRON))
   {
     // For aprons
-    const QList<MapApron> *aprons = airportQuery->getAprons(airport.id);
+    const QList<MapApron> *aprons = queries->getAirportQuerySim()->getAprons(airport.id);
     for(const MapApron& apron : *aprons)
     {
       // FSX/P3D geometry
@@ -333,7 +333,7 @@ void MapPainterAirport::drawAirportDiagram(const map::MapAirport& airport)
   if(context->dOptAp(optsd::ITEM_AIRPORT_DETAIL_RUNWAY))
   {
     // Get all runways for this airport
-    runways = airportQuery->getRunways(airport.id);
+    runways = queries->getAirportQuerySim()->getRunways(airport.id);
 
     // Calculate all runway screen coordinates
     runwayCoords(runways, &runwayCenters, &runwayRects, nullptr, &runwayOutlineRects, false /* overview */);
@@ -365,7 +365,7 @@ void MapPainterAirport::drawAirportDiagram(const map::MapAirport& airport)
   {
     // Draw aprons ---------------------------------
     painter->setBackground(Qt::transparent);
-    const QList<MapApron> *aprons = airportQuery->getAprons(airport.id);
+    const QList<MapApron> *aprons = queries->getAirportQuerySim()->getAprons(airport.id);
 
     for(const MapApron& apron : *aprons)
     {
@@ -399,7 +399,7 @@ void MapPainterAirport::drawAirportDiagram(const map::MapAirport& airport)
     QVector<int> pathThickness;
 
     // Collect coordinates first
-    const QList<MapTaxiPath> *taxipaths = airportQuery->getTaxiPaths(airport.id);
+    const QList<MapTaxiPath> *taxipaths = queries->getAirportQuerySim()->getTaxiPaths(airport.id);
     for(const MapTaxiPath& taxipath : *taxipaths)
     {
       bool visible;
@@ -684,7 +684,7 @@ void MapPainterAirport::drawAirportDiagram(const map::MapAirport& airport)
 
     QVector<Parking> parkingList;
 
-    const QList<MapParking> *parkings = airportQuery->getParkingsForAirport(airport.id);
+    const QList<MapParking> *parkings = queries->getAirportQuerySim()->getParkingsForAirport(airport.id);
     for(const MapParking& parking : *parkings)
     {
       float x = 0.f, y = 0.f;
@@ -726,7 +726,7 @@ void MapPainterAirport::drawAirportDiagram(const map::MapAirport& airport)
     } // for(const MapParking& parking : *parkings)
 
     // Draw helipads ------------------------------------------------
-    const QList<MapHelipad> *helipads = airportQuery->getHelipads(airport.id);
+    const QList<MapHelipad> *helipads = queries->getAirportQuerySim()->getHelipads(airport.id);
     if(!helipads->isEmpty())
     {
       for(const MapHelipad& helipad : *helipads)
@@ -1006,7 +1006,7 @@ void MapPainterAirport::drawAirportSymbolOverview(const map::MapAirport& ap, flo
     painter->setBackgroundMode(Qt::OpaqueMode);
 
     // Get all runways longer than 4000 feet
-    const QList<map::MapRunway> *rw = mapQuery->getRunwaysForOverview(ap.id);
+    const QList<map::MapRunway> *rw = queries->getMapQuery()->getRunwaysForOverview(ap.id);
 
     QList<QPointF> centers;
     QList<QRectF> rects, innerRects;

@@ -33,6 +33,7 @@
 #include "options/optiondata.h"
 #include "query/airportquery.h"
 #include "query/infoquery.h"
+#include "query/querymanager.h"
 #include "settings/settings.h"
 #include "util/filechecker.h"
 #include "util/filesystemwatcher.h"
@@ -62,6 +63,8 @@ using atools::settings::Settings;
 WeatherReporter::WeatherReporter(MainWindow *parentWindow, atools::fs::FsPaths::SimulatorType type)
   : QObject(parentWindow), simType(type), mainWindow(parentWindow)
 {
+  queries = QueryManager::instance()->getQueriesGui();
+
   xplaneFileWarningMsg = QString(tr("\n\nMake sure that your X-Plane base path is correct and\n"
                                     "weather files as well as directories exist.\n\n"
                                     "Click \"Reset paths\" in the Little Navmap dialog \"Load scenery library\"\n"
@@ -84,7 +87,8 @@ WeatherReporter::WeatherReporter(MainWindow *parentWindow, atools::fs::FsPaths::
 
   verbose = Settings::instance().getAndStoreValue(lnm::OPTIONS_WEATHER_DEBUG, false).toBool();
 
-  auto coordFunc = std::bind(&WeatherReporter::fetchAirportCoordinates, this, std::placeholders::_1);
+  auto coordFunc = std::bind(&WeatherReporter::fetchAirportCoordinates, this, std::placeholders::_1,
+                             queries->getAirportQuerySim(), atools::fs::FsPaths::isAnyXplane(simType));
 
   xpWeatherReader = new atools::fs::weather::XpWeatherReader(this, verbose);
 
@@ -187,15 +191,10 @@ void WeatherReporter::vatsimWeatherUpdated()
   }
 }
 
-atools::geo::Pos WeatherReporter::fetchAirportCoordinates(const QString& metarAirportIdent)
+atools::geo::Pos WeatherReporter::fetchAirportCoordinates(const QString& airportIdent, AirportQuery *airportQuery, bool xplane)
 {
   if(!NavApp::isLoadingDatabase())
-  {
-    if(atools::fs::FsPaths::isAnyXplane(simType))
-      return NavApp::getAirportQuerySim()->getAirportPosByIdentOrIcao(metarAirportIdent);
-    else
-      return NavApp::getAirportQuerySim()->getAirportPosByIdent(metarAirportIdent);
-  }
+    return xplane ? airportQuery->getAirportPosByIdentOrIcao(airportIdent) : airportQuery->getAirportPosByIdent(airportIdent);
   else
     return atools::geo::EMPTY_POS;
 }
@@ -507,13 +506,16 @@ void WeatherReporter::loadActiveSkySnapshot(const QString& path)
 
     int lineNum = 1;
     QString line;
+    AirportQuery *airportQuerySim = queries->getAirportQuerySim();
     while(weatherSnapshot.readLineInto(&line))
     {
       QStringList list = line.split("::");
       if(list.size() >= 2)
       {
         num++;
-        Metar metar(list.at(0), fetchAirportCoordinates(list.at(0)), list.at(1));
+        Metar metar(list.at(0),
+                    fetchAirportCoordinates(list.at(0), airportQuerySim, atools::fs::FsPaths::isAnyXplane(simType)),
+                    list.at(1));
         metar.parseAll(true /* useTimestamp */);
         activeSkyMetars.insert(list.at(0), metar);
       }
@@ -914,7 +916,7 @@ void WeatherReporter::getBestRunwaysTextShort(QString& title, QString& runwayNum
     {
       // Sorted by wind and merged for same direction
       maptools::RwVector ends(windSpeedKts, windDirectionDeg);
-      NavApp::getInfoQuery()->getRunwayEnds(ends, airport.id);
+      queries->getInfoQuery()->getRunwayEnds(ends, airport.id);
 
       if(!ends.isEmpty())
       {

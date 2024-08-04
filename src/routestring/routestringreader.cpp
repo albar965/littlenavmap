@@ -17,6 +17,7 @@
 
 #include "routestring/routestringreader.h"
 
+#include "app/navapp.h"
 #include "common/mapresult.h"
 #include "common/maptools.h"
 #include "common/proctypes.h"
@@ -24,11 +25,11 @@
 #include "fs/pln/flightplan.h"
 #include "fs/util/coordinates.h"
 #include "fs/util/fsutil.h"
-#include "app/navapp.h"
 #include "query/airportquery.h"
 #include "query/airwaytrackquery.h"
 #include "query/mapquery.h"
 #include "query/procedurequery.h"
+#include "query/querymanager.h"
 #include "query/waypointtrackquery.h"
 #include "route/flightplanentrybuilder.h"
 #include "util/htmlbuilder.h"
@@ -130,15 +131,16 @@ struct RouteStringReader::ParseEntry
 RouteStringReader::RouteStringReader(FlightplanEntryBuilder *flightplanEntryBuilder)
   : entryBuilder(flightplanEntryBuilder)
 {
-  mapQuery = NavApp::getMapQueryGui();
-  airportQuerySim = NavApp::getAirportQuerySim();
-  airportQueryNav = NavApp::getAirportQueryNav();
-  procQuery = NavApp::getProcedureQuery();
+  const Queries *queries = QueryManager::instance()->getQueriesGui();
+  mapQuery = queries->getMapQuery();
+  airportQuerySim = queries->getAirportQuerySim();
+  airportQueryNav = queries->getAirportQueryNav();
+  procQuery = queries->getProcedureQuery();
 
   // Create a copy of the delegate which uses the same AirwayQuery objects
   // This allows to disable track reading in the copy (setUseTracks())
-  airwayQuery = new AirwayTrackQuery(*NavApp::getAirwayTrackQueryGui());
-  waypointQuery = new WaypointTrackQuery(*NavApp::getWaypointTrackQueryGui());
+  airwayQuery = queries->getClonedAirwayTrackQuery();
+  waypointQuery = queries->getClonedWaypointTrackQuery();
 }
 
 RouteStringReader::~RouteStringReader()

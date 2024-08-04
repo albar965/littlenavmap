@@ -40,6 +40,7 @@ class SqlQuery;
 class CoordinateConverter;
 class MapTypesFactory;
 class MapLayer;
+class Queries;
 
 /*
  * Provides map related database queries.
@@ -49,11 +50,6 @@ class MapLayer;
 class MapQuery
 {
 public:
-  /*
-   * @param sqlDb database for simulator scenery data
-   * @param sqlDbNav for updated navaids
-   */
-  MapQuery(atools::sql::SqlDatabase *sqlDbSim, atools::sql::SqlDatabase *sqlDbNav, atools::sql::SqlDatabase *sqlDbUser);
   ~MapQuery();
 
   MapQuery(const MapQuery& other) = delete;
@@ -231,7 +227,7 @@ public:
 
   /* Similar to getAirports but no caching since user points can change */
   const QList<map::MapUserpoint>& getUserdataPoints(const Marble::GeoDataLatLonBox& rect, const QStringList& types,
-                                                   const QStringList& typesAll, bool unknownType, float distanceNm);
+                                                    const QStringList& typesAll, bool unknownType, float distanceNm);
 
   /* Get related airport for navaids from current nav database.
    * found is true if navaid search was successful and max distance to pos is not exceeded. */
@@ -252,6 +248,15 @@ public:
   bool hasDepartureProcedures(const map::MapAirport& airport) const;
 
 private:
+  friend class Queries;
+
+  /*
+   * @param sqlDb database for simulator scenery data
+   * @param sqlDbNav for updated navaids
+   */
+  MapQuery(atools::sql::SqlDatabase *sqlDbSim, atools::sql::SqlDatabase *sqlDbNav, atools::sql::SqlDatabase *sqlDbUser,
+           const Queries *parentQueriesParam);
+
   map::MapResultIndex *nearestNavaidsInternal(const atools::geo::Pos& pos, float distanceNm,
                                               map::MapTypes type, int maxIls, float maxIlsDist);
 
@@ -310,6 +315,8 @@ private:
                         *ndbByWaypointIdQuery = nullptr, *ilsByIdQuery = nullptr, *holdingByIdQuery = nullptr,
                         *ilsQuerySimByAirportAndRw = nullptr, *ilsQuerySimByAirportAndIdent = nullptr,
                         *vorNearestQuery = nullptr, *ndbNearestQuery = nullptr;
+
+  const Queries *queries;
 };
 
 #endif // LITTLENAVMAP_MAPQUERY_H

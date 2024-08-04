@@ -67,8 +67,8 @@ using namespace Marble;
 using atools::geo::Rect;
 using atools::geo::Pos;
 
-MapPaintWidget::MapPaintWidget(QWidget *parent, bool visible, bool webParam)
-  : Marble::MarbleWidget(parent), visibleWidget(visible), web(webParam)
+MapPaintWidget::MapPaintWidget(QWidget *parent, Queries* queriesParam, bool visible, bool webParam)
+  : Marble::MarbleWidget(parent), visibleWidget(visible), queries(queriesParam), web(webParam)
 {
   verbose = atools::settings::Settings::instance().getAndStoreValue(lnm::OPTIONS_MAPWIDGET_DEBUG, false).toBool();
 
@@ -98,19 +98,6 @@ MapPaintWidget::MapPaintWidget(QWidget *parent, bool visible, bool webParam)
   apronGeometryCache = new ApronGeometryCache();
   apronGeometryCache->setViewportParams(viewport());
 
-  mapQuery = new MapQuery(NavApp::getDatabaseSim(), NavApp::getDatabaseNav(), NavApp::getDatabaseUser());
-  mapQuery->initQueries();
-
-  // Set up airway queries =====================
-  airwayTrackQuery = new AirwayTrackQuery(new AirwayQuery(NavApp::getDatabaseNav(), false),
-                                          new AirwayQuery(NavApp::getDatabaseTrack(), true));
-  airwayTrackQuery->initQueries();
-
-  // Set up waypoint queries =====================
-  waypointTrackQuery = new WaypointTrackQuery(new WaypointQuery(NavApp::getDatabaseNav(), false),
-                                              new WaypointQuery(NavApp::getDatabaseTrack(), true));
-  waypointTrackQuery->initQueries();
-
   paintLayer->initQueries();
 }
 
@@ -118,19 +105,11 @@ MapPaintWidget::~MapPaintWidget()
 {
   removeLayer(paintLayer);
 
-  // Have to delete manually since classes can be copied and does not delete in destructor
-  airwayTrackQuery->deleteChildren();
-  ATOOLS_DELETE_LOG(airwayTrackQuery);
-
-  waypointTrackQuery->deleteChildren();
-  ATOOLS_DELETE_LOG(waypointTrackQuery);
-
   ATOOLS_DELETE_LOG(paintLayer);
   ATOOLS_DELETE_LOG(screenIndex);
   ATOOLS_DELETE_LOG(aircraftTrail);
   ATOOLS_DELETE_LOG(aircraftTrailLogbook);
   ATOOLS_DELETE_LOG(apronGeometryCache);
-  ATOOLS_DELETE_LOG(mapQuery);
 }
 
 void MapPaintWidget::copySettings(const MapPaintWidget& other, bool deep)
@@ -532,9 +511,6 @@ void MapPaintWidget::preDatabaseLoad()
   databaseLoadStatus = true;
   apronGeometryCache->clear();
   paintLayer->preDatabaseLoad();
-  mapQuery->deInitQueries();
-  airwayTrackQuery->deInitQueries();
-  waypointTrackQuery->deInitQueries();
 }
 
 void MapPaintWidget::postDatabaseLoad()
@@ -545,9 +521,6 @@ void MapPaintWidget::postDatabaseLoad()
   screenIndexUpdateReqired = true;
 
   // Reload track into database to catch changed waypoint ids
-  airwayTrackQuery->initQueries();
-  waypointTrackQuery->initQueries();
-  mapQuery->initQueries();
   paintLayer->postDatabaseLoad();
   update();
   updateMapVisibleUiPostDatabaseLoad();
@@ -1159,15 +1132,6 @@ void MapPaintWidget::jumpBackToAircraftCancel()
 const GeoDataLatLonBox& MapPaintWidget::getCurrentViewBoundingBox() const
 {
   return viewport()->viewLatLonAltBox();
-}
-
-void MapPaintWidget::postTrackLoad()
-{
-  waypointTrackQuery->clearCache();
-  airwayTrackQuery->clearCache();
-
-  waypointTrackQuery->initQueries();
-  airwayTrackQuery->initQueries();
 }
 
 void MapPaintWidget::cancelDragAll()

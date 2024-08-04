@@ -38,11 +38,6 @@ class CoordinateConverter;
 class WaypointQuery
 {
 public:
-  /*
-   * @param sqlDb database for simulator scenery data
-   * @param sqlDbNav for updated navaids
-   */
-  WaypointQuery(atools::sql::SqlDatabase *sqlDbNav, bool trackDatabaseParam);
   ~WaypointQuery();
 
   WaypointQuery(const WaypointQuery& other) = delete;
@@ -93,6 +88,14 @@ public:
   void clearCache();
 
 private:
+  friend class Queries;
+
+  /*
+   * @param sqlDb database for simulator scenery data
+   * @param sqlDbNav for updated navaids
+   */
+  WaypointQuery(atools::sql::SqlDatabase *sqlDbNav, bool trackDatabaseParam);
+
   MapTypesFactory *mapTypesFactory;
   atools::sql::SqlDatabase *dbNav;
 

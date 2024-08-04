@@ -140,7 +140,6 @@ textflags::TextFlags PaintContext::airportTextFlagsRoute(bool drawAsRoute, bool 
 MapPainter::MapPainter(MapPaintWidget *parentMapWidget, MapScale *mapScale, PaintContext *paintContext)
   : CoordinateConverter(parentMapWidget->viewport()), context(paintContext), mapPaintWidget(parentMapWidget), scale(mapScale)
 {
-  airportQuery = NavApp::getAirportQuerySim();
   symbolPainter = new SymbolPainter();
 }
 
@@ -915,9 +914,7 @@ bool MapPainter::sortAirportFunction(const PaintAirportType& pap1, const PaintAi
 
 void MapPainter::initQueries()
 {
-  mapQuery = mapPaintWidget->getMapQuery();
-  airwayQuery = mapPaintWidget->getAirwayTrackQuery();
-  waypointQuery = mapPaintWidget->getWaypointTrackQuery();
+  queries = mapPaintWidget->getQueries();
 }
 
 void MapPainter::getPixmap(QPixmap& pixmap, const QString& resource, int size) const

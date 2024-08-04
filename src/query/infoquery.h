@@ -40,11 +40,6 @@ class SqlRecord;
 class InfoQuery
 {
 public:
-  /*
-   * @param sqlDb database for simulator scenery data
-   * @param sqlDbNav for updated navaids
-   */
-  InfoQuery(atools::sql::SqlDatabase *sqlDbSim, atools::sql::SqlDatabase *sqlDbNav, atools::sql::SqlDatabase *sqlDbTrack);
   ~InfoQuery();
 
   InfoQuery(const InfoQuery& other) = delete;
@@ -100,11 +95,17 @@ public:
   void deInitQueries();
 
 private:
+  friend class Queries;
+  /*
+   * @param sqlDb database for simulator scenery data
+   * @param sqlDbNav for updated navaids
+   */
+  InfoQuery(atools::sql::SqlDatabase *sqlDbSim, atools::sql::SqlDatabase *sqlDbNav, atools::sql::SqlDatabase *sqlDbTrack);
+
   /* Caches */
   QCache<int, atools::sql::SqlRecord> airportCache, vorCache, ndbCache, runwayEndCache, msaCache, holdingCache;
 
-  QCache<int, atools::sql::SqlRecordList> comCache, runwayCache, helipadCache, startCache, procedureCache,
-                                          transitionCache;
+  QCache<int, atools::sql::SqlRecordList> comCache, runwayCache, helipadCache, startCache, procedureCache, transitionCache;
 
   QCache<QString, atools::sql::SqlRecordList> airportSceneryCache;
 

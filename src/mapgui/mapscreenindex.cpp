@@ -72,8 +72,7 @@ void assignIdAndInsert(const QString& settingsName, QHash<int, TYPE>& hash)
 MapScreenIndex::MapScreenIndex(MapPaintWidget *mapPaintWidgetParam, MapPaintLayer *mapPaintLayer)
   : mapWidget(mapPaintWidgetParam), paintLayer(mapPaintLayer)
 {
-  airportQuery = NavApp::getAirportQuerySim();
-
+  queries = mapWidget->getQueries();
   simData = new SimConnectData;
   lastSimData = new SimConnectData;
   lastUserAircraftForAverage = new SimConnectUserAircraft;
@@ -268,7 +267,7 @@ void MapScreenIndex::updateIlsScreenGeometry(const Marble::GeoDataLatLonBox& cur
   {
     // ILS enabled - add from map cache
     bool overflow = false;
-    const QList<map::MapIls> *ilsListPtr = mapWidget->getMapQuery()->getIls(curBox, paintLayer->getMapLayer(), false /* lazy */, overflow);
+    const QList<map::MapIls> *ilsListPtr = queries->getMapQuery()->getIls(curBox, paintLayer->getMapLayer(), false /* lazy */, overflow);
     if(ilsListPtr != nullptr)
     {
       for(const map::MapIls& ils : *ilsListPtr)
@@ -284,7 +283,7 @@ void MapScreenIndex::updateIlsScreenGeometry(const Marble::GeoDataLatLonBox& cur
           // Check if airport is to be shown - hide ILS if not - show ILS if no airport ident in navaid
           if(!ils.airportIdent.isEmpty())
           {
-            map::MapAirport airport = airportQuery->getAirportByIdent(ils.airportIdent);
+            map::MapAirport airport = queries->getAirportQuerySim()->getAirportByIdent(ils.airportIdent);
             if(airport.isValid() && !airport.isVisible(paintLayer->getShownMapTypes(), NavApp::getMapAirportHandler()->getMinimumRunwayFt(),
                                                        paintLayer->getMapLayer()))
               continue;
@@ -385,7 +384,7 @@ void MapScreenIndex::updateAirwayScreenGeometry(const Marble::GeoDataLatLonBox& 
 void MapScreenIndex::updateAirwayScreenGeometryInternal(QSet<int>& ids, const Marble::GeoDataLatLonBox& curBox, bool highlight)
 {
   const MapScale *scale = paintLayer->getMapScale();
-  AirwayTrackQuery *airwayTrackQuery = mapWidget->getAirwayTrackQuery();
+  AirwayTrackQuery *airwayTrackQuery = queries->getAirwayTrackQuery();
 
   if(scale->isValid())
   {
@@ -969,14 +968,14 @@ void MapScreenIndex::getAllNearest(const QPoint& point, int maxDistance, map::Ma
 
   // Airports actually drawn having parking spots which require tooltips and more
   const QSet<int>& shownDetailAirportIds = paintLayer->getShownDetailAirportIds();
-  mapWidget->getMapQuery()->getNearestScreenObjects(conv, mapLayer, shownDetailAirportIds, airportDiagram, mapTypes, displayTypes,
-                                                    xs, ys, maxDistance, result);
+  queries->getMapQuery()->getNearestScreenObjects(conv, mapLayer, shownDetailAirportIds, airportDiagram, mapTypes, displayTypes,
+                                                  xs, ys, maxDistance, result);
 
   // Update all incomplete objects, especially from search preview
   for(map::MapAirport& airport : result.airports)
   {
     if(!airport.complete())
-      airportQuery->getAirportById(airport, airport.getId());
+      queries->getAirportQuerySim()->getAirportById(airport, airport.getId());
   }
 
   if(shownDisplay.testFlag(map::FLIGHTPLAN))
@@ -1320,7 +1319,7 @@ void MapScreenIndex::getNearestIls(int xs, int ys, int maxDistance, map::MapResu
   }
 
   // Get ILS map objects for ids
-  MapQuery *mapQuery = mapWidget->getMapQuery();
+  MapQuery *mapQuery = queries->getMapQuery();
   for(int id : qAsConst(ilsIds))
     result.ils.append(mapQuery->getIlsById(id));
 }
@@ -1328,7 +1327,7 @@ void MapScreenIndex::getNearestIls(int xs, int ys, int maxDistance, map::MapResu
 /* Get all airways near cursor position */
 void MapScreenIndex::getNearestAirways(int xs, int ys, int maxDistance, map::MapResult& result) const
 {
-  AirwayTrackQuery *airwayTrackQuery = mapWidget->getAirwayTrackQuery();
+  AirwayTrackQuery *airwayTrackQuery = queries->getAirwayTrackQuery();
   const QSet<int> nearestIds = nearestLineIds(airwayLines, xs, ys, maxDistance, true /* lineDistanceOnly */);
   for(int id : nearestIds)
     result.airways.append(airwayTrackQuery->getAirwayById(id));

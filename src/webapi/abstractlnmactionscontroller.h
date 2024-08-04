@@ -20,38 +20,33 @@
 
 #include "webapi/abstractactionscontroller.h"
 
-#include <QMutex>
-
+class Queries;
 namespace atools {
-    namespace geo {
-        class Pos;
-    }
-    namespace fs {
-        namespace util {
-            class MorseCode;
-        }
-        namespace sc {
-            class SimConnectData;
-        }
-    }
-    namespace sql {
-        class SqlRecord;
-    }
+namespace geo {
+class Pos;
+}
+namespace fs {
+namespace util {
+class MorseCode;
+}
+namespace sc {
+class SimConnectData;
+}
+}
+namespace sql {
+class SqlRecord;
+}
 }
 namespace InfoBuilderTypes {
-    struct AirportAdminNames;
+struct AirportAdminNames;
 }
 namespace ageo = atools::geo;
 namespace map {
-    struct MapAirport;
-    struct WeatherContext;
+struct MapAirport;
+struct WeatherContext;
 }
 
 class NavApp;
-class MapQuery;
-class WaypointTrackQuery;
-class InfoQuery;
-class AirportQuery;
 class MainWindow;
 
 using atools::fs::util::MorseCode;
@@ -64,43 +59,41 @@ using atools::fs::sc::SimConnectData;
  * @brief The base class for all Little Navmap API action controllers
  */
 class AbstractLnmActionsController :
-        public AbstractActionsController
+  public AbstractActionsController
 {
-    Q_OBJECT
-    Q_ENUMS(AirportQueryType)
+  Q_OBJECT
+  Q_ENUMS(AirportQueryType)
+
 public:
-    Q_INVOKABLE AbstractLnmActionsController(QObject *parent, bool verboseParam, AbstractInfoBuilder* infoBuilder);
-    virtual ~AbstractLnmActionsController() override;
-    enum AirportQueryType { SIM, NAV };
+  Q_INVOKABLE AbstractLnmActionsController(QObject *parent, bool verboseParam, AbstractInfoBuilder*infoBuilder);
+  virtual ~AbstractLnmActionsController() override;
+  enum AirportQueryType {SIM, NAV};
+
 protected:
-    // Main LNM objects
-    NavApp* getNavApp();
-    MapQuery* getMapQuery();
-    WaypointTrackQuery* getWaypointTrackQuery();
-    InfoQuery* getInfoQuery();
-    AirportQuery* getAirportQuery(AirportQueryType type);
-    MainWindow* getMainWindow();
-    MorseCode* getMorseCode();
+  // Main LNM objects
+  MainWindow *getMainWindow();
+  MorseCode *getMorseCode();
+  Queries *getQueries();
 
-    // Common LNM model interface
-    map::MapAirport getAirportByIdent(QByteArray ident);
-    map::WeatherContext getWeatherContext(map::MapAirport& airport);
-    const SqlRecord getAirportInformation(int id);
-    const AirportAdminNames getAirportAdminNames(map::MapAirport& airport);
-    int getTransitionAltitude(map::MapAirport& airport);
-    const QTime getSunset(const SqlRecord& airportInformation);
-    const QTime getSunrise(const SqlRecord& airportInformation);
-    const QTime getSunset(const Pos& pos);
-    const QTime getSunrise(const Pos& pos);
-    const QDateTime getActiveDateTime();
-    const QString getActiveDateTimeSource();
-    const SimConnectData getSimConnectData();
+  // Common LNM model interface
+  map::MapAirport getAirportByIdent(QByteArray ident);
+  map::WeatherContext getWeatherContext(map::MapAirport& airport);
+  const SqlRecord getAirportInformation(int id);
+  const AirportAdminNames getAirportAdminNames(map::MapAirport& airport);
+  int getTransitionAltitude(map::MapAirport& airport);
+  const QTime getSunset(const SqlRecord& airportInformation);
+  const QTime getSunrise(const SqlRecord& airportInformation);
+  const QTime getSunset(const Pos& pos);
+  const QTime getSunrise(const Pos& pos);
+  const QDateTime getActiveDateTime();
+  const QString getActiveDateTimeSource();
+  const SimConnectData getSimConnectData();
+
 private:
-    MorseCode* morseCode;
-    QTime calculateSunriseSunset(const Pos& pos, float zenith);
-    Pos getPosFromAirportInformation(const SqlRecord& airportInformation);
+  MorseCode*morseCode;
+  QTime calculateSunriseSunset(const Pos& pos, float zenith);
+  Pos getPosFromAirportInformation(const SqlRecord& airportInformation);
 
-    QMutex airportQueryIdentMutex, airportQueryAdminMutex, mapQueryNavReplaceMutex, infoQueryMutex;
 };
 
 #endif // ABSTRACTLNMACTIONSCONTROLLER_H

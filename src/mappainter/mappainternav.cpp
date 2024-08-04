@@ -25,6 +25,7 @@
 #include "mapgui/maplayer.h"
 #include "query/airwaytrackquery.h"
 #include "query/mapquery.h"
+#include "query/querymanager.h"
 #include "query/waypointtrackquery.h"
 #include "util/paintercontextsaver.h"
 
@@ -65,7 +66,7 @@ void MapPainterNav::render()
     // Draw airway lines
     context->startTimer("Airway fetch");
     QList<MapAirway> airways;
-    airwayQuery->getAirways(airways, curBox, context->mapLayer, context->lazyUpdate);
+    queries->getAirwayTrackQuery()->getAirways(airways, curBox, context->mapLayer, context->lazyUpdate);
     context->endTimer("Airway fetch");
 
     paintAirways(&airways, context->drawFast, false /* track */);
@@ -78,7 +79,7 @@ void MapPainterNav::render()
     // Draw track lines
     context->startTimer("Track fetch");
     QList<MapAirway> tracks;
-    airwayQuery->getTracks(tracks, curBox, context->mapLayer, context->lazyUpdate);
+    queries->getAirwayTrackQuery()->getTracks(tracks, curBox, context->mapLayer, context->lazyUpdate);
     context->endTimer("Track fetch");
 
     paintAirways(&tracks, context->drawFast, true /* track */);
@@ -92,6 +93,9 @@ void MapPainterNav::render()
   bool drawAirwayWpJ = context->mapLayer->isAirwayWaypoint() && context->objectTypes.testFlag(map::AIRWAYJ);
   bool drawNormalWp = context->mapLayer->isWaypoint() && context->objectTypes.testFlag(map::WAYPOINT);
   bool drawTrackWp = context->mapLayer->isTrackWaypoint() && context->objectTypes.testFlag(map::TRACK);
+
+  MapQuery *mapQuery = queries->getMapQuery();
+  WaypointTrackQuery *waypointQuery = queries->getWaypointTrackQuery();
 
   // Merge and disambiguate all navaids and airway related navaids into hashes
   QHash<int, MapWaypoint> allWaypoints;

@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -22,6 +22,7 @@
 #include "mapgui/maplayer.h"
 #include "app/navapp.h"
 #include "query/mapquery.h"
+#include "query/querymanager.h"
 #include "userdata/userdataicons.h"
 #include "util/paintercontextsaver.h"
 
@@ -53,8 +54,8 @@ void MapPainterUser::render()
   context->szFont(context->textSizeUserpoint);
 
   // Always call paint to fill cache
-  paintUserpoints(mapQuery->getUserdataPoints(curBox, context->userPointTypes, context->userPointTypesAll,
-                                              context->userPointTypeUnknown, context->distanceNm), context->drawFast);
+  paintUserpoints(queries->getMapQuery()->getUserdataPoints(curBox, context->userPointTypes, context->userPointTypesAll,
+                                                            context->userPointTypeUnknown, context->distanceNm), context->drawFast);
 }
 
 void MapPainterUser::paintUserpoints(const QList<MapUserpoint>& userpoints, bool drawFast)

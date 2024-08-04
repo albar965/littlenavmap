@@ -24,6 +24,7 @@
 #include "app/navapp.h"
 #include "query/mapquery.h"
 #include "route/route.h"
+#include "query/querymanager.h"
 
 #include <QDataStream>
 #include <QStringBuilder>
@@ -1344,7 +1345,7 @@ void procedureFlags(const Route& route, const map::MapBase *base, bool *departur
   if(base != nullptr && base->getType() == map::AIRPORT)
   {
     const map::MapAirport *airport = base->asPtr<map::MapAirport>();
-    MapQuery *mapQueryGui = NavApp::getMapQueryGui();
+    MapQuery *mapQueryGui = QueryManager::instance()->getQueriesGui()->getMapQuery();
 
     if(departure != nullptr)
       *departure = route.isAirportDeparture(airport->ident);

@@ -362,6 +362,9 @@ private:
   /* Call other other classes to reopen queries */
   void postDatabaseLoad(atools::fs::FsPaths::SimulatorType type);
 
+  /* Oceanic tracks have changed */
+  void postTrackLoad();
+
   /* Map history has changed */
   void updateMapHistoryActions(int minIndex, int curIndex, int maxIndex);
 

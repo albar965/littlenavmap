@@ -52,10 +52,6 @@ class MapLayer;
 class AirwayQuery
 {
 public:
-  /*
-   * @param sqlDbNav for updated navaids
-   */
-  AirwayQuery(atools::sql::SqlDatabase *sqlDbNav, bool trackDatabaseParam);
   ~AirwayQuery();
 
   AirwayQuery(const AirwayQuery& other) = delete;
@@ -103,6 +99,13 @@ public:
   void clearCache();
 
 private:
+  friend class Queries;
+
+  /*
+   * @param sqlDbNav for updated navaids
+   */
+  AirwayQuery(atools::sql::SqlDatabase *sqlDbNav, bool trackDatabaseParam);
+
   map::MapWaypoint waypointById(int id);
 
   MapTypesFactory *mapTypesFactory;

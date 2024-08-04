@@ -17,6 +17,7 @@
 
 #include "route/customproceduredialog.h"
 
+#include "app/navapp.h"
 #include "common/constants.h"
 #include "common/maptypes.h"
 #include "common/unit.h"
@@ -26,8 +27,8 @@
 #include "gui/runwayselection.h"
 #include "gui/widgetstate.h"
 #include "query/mapquery.h"
+#include "query/querymanager.h"
 #include "ui_customproceduredialog.h"
-#include "app/navapp.h"
 
 #include <QPushButton>
 #include <QStringBuilder>
@@ -49,9 +50,9 @@ CustomProcedureDialog::CustomProcedureDialog(QWidget *parent, const map::MapAirp
   ui->buttonBoxCustomProc->button(QDialogButtonBox::Yes)->setText(departureParam ? tr("Show Departure &Procedures") :
                                                                   tr("Show Arrival/Approach &Procedures"));
 
-  if(!NavApp::getMapQueryGui()->hasDepartureProcedures(mapAirport) && departureParam)
+  if(!QueryManager::instance()->getQueriesGui()->getMapQuery()->hasDepartureProcedures(mapAirport) && departureParam)
     ui->buttonBoxCustomProc->button(QDialogButtonBox::Yes)->setDisabled(true);
-  else if(!NavApp::getMapQueryGui()->hasArrivalProcedures(mapAirport) && !departureParam)
+  else if(!QueryManager::instance()->getQueriesGui()->getMapQuery()->hasArrivalProcedures(mapAirport) && !departureParam)
     ui->buttonBoxCustomProc->button(QDialogButtonBox::Yes)->setDisabled(true);
 
   connect(runwaySelection, &RunwaySelection::doubleClicked, this, &CustomProcedureDialog::doubleClicked);

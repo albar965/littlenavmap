@@ -35,6 +35,7 @@
 #include "gui/widgetstate.h"
 #include "perf/aircraftperfcontroller.h"
 #include "query/airportquery.h"
+#include "query/querymanager.h"
 #include "sql/sqlrecord.h"
 #include "util/htmlbuilder.h"
 
@@ -333,7 +334,8 @@ void LogdataDialog::airportUpdated(QLineEdit *lineEdit, QLabel *label)
     else
     {
       // Try to get airport for ident
-      QList<map::MapAirport> airports = NavApp::getAirportQuerySim()->getAirportsByOfficialIdent(ident.toUpper());
+      QList<map::MapAirport> airports =
+        QueryManager::instance()->getQueriesGui()->getAirportQuerySim()->getAirportsByOfficialIdent(ident.toUpper());
 
       if(!airports.isEmpty())
         label->setText(tr("%1,   elevation %2%3").
@@ -594,7 +596,8 @@ void LogdataDialog::setAirport(const QString& ident, const QString& prefix, bool
       record->setValue(prefix + "_ident", ident.toUpper());
   }
 
-  QList<map::MapAirport> airports = NavApp::getAirportQuerySim()->getAirportsByOfficialIdent(ident.toUpper());
+  QList<map::MapAirport> airports =
+    QueryManager::instance()->getQueriesGui()->getAirportQuerySim()->getAirportsByOfficialIdent(ident.toUpper());
 
   if(!airports.isEmpty())
   {

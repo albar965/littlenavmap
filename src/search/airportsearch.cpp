@@ -18,6 +18,7 @@
 #include "search/airportsearch.h"
 
 #include "airporticondelegate.h"
+#include "app/navapp.h"
 #include "atools.h"
 #include "common/constants.h"
 #include "common/mapcolors.h"
@@ -32,17 +33,17 @@
 #include "gui/mainwindow.h"
 #include "gui/widgetstate.h"
 #include "gui/widgetutil.h"
-#include "app/navapp.h"
 #include "query/airportquery.h"
+#include "query/querymanager.h"
+#include "route/route.h"
 #include "search/column.h"
 #include "search/columnlist.h"
-#include "search/sqlmodel.h"
 #include "search/randomdepartureairportpickingbycriteria.h"
 #include "search/sqlcontroller.h"
+#include "search/sqlmodel.h"
 #include "settings/settings.h"
 #include "sql/sqlrecord.h"
 #include "ui_mainwindow.h"
-#include "route/route.h"
 
 #include <QProgressDialog>
 #include <QStringBuilder>
@@ -563,7 +564,7 @@ void AirportSearch::getSelectedMapObjects(map::MapResult& result) const
   rec.appendField("rating", QVariant::Int);
 
   MapTypesFactory factory;
-  AirportQuery *airportQueryNav = NavApp::getAirportQueryNav();
+  AirportQuery *airportQueryNav = QueryManager::instance()->getQueriesGui()->getAirportQueryNav();
 
   // Fill the result with incomplete airport objects (only id and lat/lon)
   const QItemSelection& selection = controller->getSelection();
@@ -929,7 +930,7 @@ void AirportSearch::dataRandomAirportsReceived(bool isSuccess, int indexDepartur
       QString text;
       if(!data->isEmpty())
       {
-        AirportQuery *airportQuery = NavApp::getAirportQuerySim();
+        AirportQuery *airportQuery = QueryManager::instance()->getQueriesGui()->getAirportQuerySim();
         airportDeparture = airportQuery->getAirportById(data->at(indexDeparture).first);
         airportDestination = airportQuery->getAirportById(data->at(indexDestination).first);
 

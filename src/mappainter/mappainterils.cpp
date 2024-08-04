@@ -23,6 +23,7 @@
 #include "query/mapquery.h"
 #include "geo/calculations.h"
 #include "common/mapcolors.h"
+#include "query/querymanager.h"
 #include "util/paintercontextsaver.h"
 #include "route/route.h"
 
@@ -69,7 +70,7 @@ void MapPainterIls::render()
        context->objectTypes.testFlag(map::AIRPORT))
     {
       bool overflow = false;
-      const QList<MapIls> *ilsList = mapQuery->getIls(curBox, context->mapLayer, context->lazyUpdate, overflow);
+      const QList<MapIls> *ilsList = queries->getMapQuery()->getIls(curBox, context->mapLayer, context->lazyUpdate, overflow);
       context->setQueryOverflow(overflow);
 
       if(ilsList != nullptr)
@@ -102,7 +103,7 @@ void MapPainterIls::render()
 
             if(!ils.airportIdent.isEmpty())
             {
-              airportQuery->getAirportByIdent(airport, ils.airportIdent);
+              queries->getAirportQuerySim()->getAirportByIdent(airport, ils.airportIdent);
               if(airport.isValid() && !airport.isVisible(context->objectTypes, context->mimimumRunwayLengthFt, context->mapLayer))
                 continue;
             }
