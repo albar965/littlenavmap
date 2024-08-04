@@ -52,6 +52,11 @@ public:
   AirspaceQuery(const AirspaceQuery& other) = delete;
   AirspaceQuery& operator=(const AirspaceQuery& other) = delete;
 
+private:
+  friend class AirspaceQueries;
+
+  AirspaceQuery(atools::sql::SqlDatabase *sqlDb, map::MapAirspaceSources src);
+
   void getAirspaceById(map::MapAirspace& airspace, int airspaceId);
 
   map::MapAirspace getAirspaceById(int airspaceId);
@@ -89,14 +94,9 @@ public:
   /* Clear all internal caches after reloading online centers */
   void clearCache();
 
-private:
-  friend class AirspaceController;
-
-  AirspaceQuery(atools::sql::SqlDatabase *sqlDb, map::MapAirspaceSources src);
-
   void updateAirspaceStatus();
   const atools::geo::LineString *airspaceGeometryByNameInternal(const QString& callsign, const QString& facilityType);
-  void airspaceGeometry(atools::geo::LineString*lines, const QByteArray& bytes);
+  void airspaceGeometry(atools::geo::LineString *lines, const QByteArray& bytes);
 
   MapTypesFactory *mapTypesFactory;
   atools::sql::SqlDatabase *db;

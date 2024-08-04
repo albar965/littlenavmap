@@ -508,29 +508,14 @@ void AirspaceQuery::deInitQueries()
 {
   clearCache();
 
-  delete airspaceByRectQuery;
-  airspaceByRectQuery = nullptr;
-
-  delete airspaceByRectAltRangeQuery;
-  airspaceByRectAltRangeQuery = nullptr;
-
-  delete airspaceByRectAltQuery;
-  airspaceByRectAltQuery = nullptr;
-
-  delete airspaceLinesByIdQuery;
-  airspaceLinesByIdQuery = nullptr;
-
-  delete airspaceGeoByNameQuery;
-  airspaceGeoByNameQuery = nullptr;
-
-  delete airspaceGeoByFileQuery;
-  airspaceGeoByFileQuery = nullptr;
-
-  delete airspaceByIdQuery;
-  airspaceByIdQuery = nullptr;
-
-  delete airspaceInfoQuery;
-  airspaceInfoQuery = nullptr;
+  ATOOLS_DELETE_LOG(airspaceByRectQuery);
+  ATOOLS_DELETE_LOG(airspaceByRectAltRangeQuery);
+  ATOOLS_DELETE_LOG(airspaceByRectAltQuery);
+  ATOOLS_DELETE_LOG(airspaceLinesByIdQuery);
+  ATOOLS_DELETE_LOG(airspaceGeoByNameQuery);
+  ATOOLS_DELETE_LOG(airspaceGeoByFileQuery);
+  ATOOLS_DELETE_LOG(airspaceByIdQuery);
+  ATOOLS_DELETE_LOG(airspaceInfoQuery);
 }
 
 void AirspaceQuery::clearCache()

@@ -65,7 +65,7 @@ class AbstractLnmActionsController :
   Q_ENUMS(AirportQueryType)
 
 public:
-  Q_INVOKABLE AbstractLnmActionsController(QObject *parent, bool verboseParam, AbstractInfoBuilder*infoBuilder);
+  Q_INVOKABLE AbstractLnmActionsController(QObject *parent, bool verboseParam, AbstractInfoBuilder *infoBuilder);
   virtual ~AbstractLnmActionsController() override;
   enum AirportQueryType {SIM, NAV};
 
@@ -90,7 +90,7 @@ protected:
   const SimConnectData getSimConnectData();
 
 private:
-  MorseCode*morseCode;
+  MorseCode *morseCode;
   QTime calculateSunriseSunset(const Pos& pos, float zenith);
   Pos getPosFromAirportInformation(const SqlRecord& airportInformation);
 

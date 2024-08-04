@@ -19,7 +19,6 @@
 
 #include "mapgui/mappaintwidget.h"
 #include "mapgui/mapscale.h"
-#include "app/navapp.h"
 #include "common/symbolpainter.h"
 #include "geo/calculations.h"
 #include "common/mapcolors.h"

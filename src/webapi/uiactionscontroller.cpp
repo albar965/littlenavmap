@@ -9,7 +9,7 @@ using InfoBuilderTypes::UiInfoData;
 
 #include <QDebug>
 
-UiActionsController::UiActionsController(QObject *parent, bool verboseParam, AbstractInfoBuilder*infoBuilder) :
+UiActionsController::UiActionsController(QObject *parent, bool verboseParam, AbstractInfoBuilder *infoBuilder) :
   AbstractLnmActionsController(parent, verboseParam, infoBuilder)
 {
   if(verbose)

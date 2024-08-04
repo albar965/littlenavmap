@@ -17,7 +17,6 @@
 
 #include "mapgui/mapscreenindex.h"
 
-#include "airspace/airspacecontroller.h"
 #include "common/aircrafttrail.h"
 #include "common/constants.h"
 #include "common/maptools.h"
@@ -34,6 +33,7 @@
 #include "app/navapp.h"
 #include "online/onlinedatacontroller.h"
 #include "query/airportquery.h"
+#include "query/airspacequeries.h"
 #include "query/airwaytrackquery.h"
 #include "query/mapquery.h"
 #include "route/route.h"
@@ -133,12 +133,11 @@ void MapScreenIndex::updateAirspaceScreenGeometryInternal(QSet<map::MapAirspaceI
                                                           const Marble::GeoDataLatLonBox& curBox, bool highlights)
 {
   const MapScale *scale = paintLayer->getMapScale();
-  AirspaceController *controller = NavApp::getAirspaceController();
 
   if(paintLayer->getMapLayer() == nullptr)
     return;
 
-  if(scale->isValid() && controller != nullptr && paintLayer != nullptr)
+  if(scale->isValid() && paintLayer != nullptr)
   {
     map::MapAirspaceFilter filter = mapWidget->getShownAirspaceTypesByLayer();
 
@@ -147,8 +146,8 @@ void MapScreenIndex::updateAirspaceScreenGeometryInternal(QSet<map::MapAirspaceI
     // Get displayed airspaces ================================
     bool overflow = false;
     if(!highlights && paintLayer->getShownMapTypes().testFlag(map::AIRSPACE))
-      controller->getAirspaces(airspaces, curBox, paintLayer->getMapLayer(), filter,
-                               NavApp::getRouteConst().getCruiseAltitudeFt(), false /* lazy */, source, overflow);
+      queries->getAirspaceQueries()->getAirspaces(airspaces, curBox, paintLayer->getMapLayer(), filter,
+                                                  NavApp::getRouteConst().getCruiseAltitudeFt(), false /* lazy */, source, overflow);
 
     // Get highlighted airspaces from info window ================================
     for(const map::MapAirspace& airspace : qAsConst(airspaceHighlights))
@@ -175,7 +174,7 @@ void MapScreenIndex::updateAirspaceScreenGeometryInternal(QSet<map::MapAirspaceI
       // Check if airspace overlaps with current screen and is not already in list
       if(airspacebox.intersects(curBox) && !ids.contains(airspace->combinedId()))
       {
-        const atools::geo::LineString *lines = controller->getAirspaceGeometry(airspace->combinedId());
+        const atools::geo::LineString *lines = queries->getAirspaceQueries()->getAirspaceGeometry(airspace->combinedId());
         if(lines != nullptr)
         {
           const QVector<QPolygonF *> polys = conv.createPolygons(*lines, mapWidget->rect());
@@ -198,7 +197,7 @@ void MapScreenIndex::updateAirspaceScreenGeometryInternal(QSet<map::MapAirspaceI
 void MapScreenIndex::resetAirspaceOnlineScreenGeometry()
 {
   // Clear internal caches
-  NavApp::getAirspaceController()->resetAirspaceOnlineScreenGeometry();
+  queries->getAirspaceQueries()->resetAirspaceOnlineScreenGeometry();
 }
 
 void MapScreenIndex::resetIlsScreenGeometry()
@@ -217,7 +216,7 @@ void MapScreenIndex::updateAirspaceScreenGeometry(const Marble::GeoDataLatLonBox
   QSet<map::MapAirspaceId> ids;
 
   // First get geometry from highlights
-  updateAirspaceScreenGeometryInternal(ids, NavApp::getAirspaceController()->getAirspaceSources(), curBox, true /* highlights */);
+  updateAirspaceScreenGeometryInternal(ids, queries->getAirspaceQueries()->getAirspaceSources(), curBox, true /* highlights */);
 
   if(!paintLayer->getMapLayer()->isAnyAirspace() || !paintLayer->getShownMapTypes().testFlag(map::AIRSPACE))
     return;
@@ -227,7 +226,7 @@ void MapScreenIndex::updateAirspaceScreenGeometry(const Marble::GeoDataLatLonBox
     return;
 
   // Get geometry from visible airspaces
-  updateAirspaceScreenGeometryInternal(ids, NavApp::getAirspaceController()->getAirspaceSources(), curBox, false /* highlights */);
+  updateAirspaceScreenGeometryInternal(ids, queries->getAirspaceQueries()->getAirspaceSources(), curBox, false /* highlights */);
 }
 
 void MapScreenIndex::updateIlsScreenGeometry(const Marble::GeoDataLatLonBox& curBox)
@@ -1254,7 +1253,7 @@ void MapScreenIndex::getNearestAirspaces(int xs, int ys, map::MapResult& result)
   for(const std::pair<map::MapAirspaceId, QPolygon>& polyPair : airspacePolygons)
   {
     if(polyPair.second.containsPoint(QPoint(xs, ys), Qt::OddEvenFill))
-      result.airspaces.append(NavApp::getAirspaceController()->getAirspaceById(polyPair.first));
+      result.airspaces.append(queries->getAirspaceQueries()->getAirspaceById(polyPair.first));
   }
 }
 

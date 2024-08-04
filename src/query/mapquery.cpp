@@ -17,7 +17,6 @@
 
 #include "query/mapquery.h"
 
-#include "airspace/airspacecontroller.h"
 #include "common/constants.h"
 #include "common/mapresult.h"
 #include "common/maptools.h"
@@ -29,6 +28,7 @@
 #include "app/navapp.h"
 #include "online/onlinedatacontroller.h"
 #include "query/airportquery.h"
+#include "query/airspacequeries.h"
 #include "query/airwaytrackquery.h"
 #include "query/waypointtrackquery.h"
 #include "settings/settings.h"
@@ -74,7 +74,7 @@ static QLatin1String AIRPORTIDENT_FROM_NDB("select a.ident, n.lonx, n.laty "
                                            "order by (abs(n.lonx - :lonx) + abs(n.laty - :laty)) limit 1");
 static float MAX_AIRPORT_IDENT_DISTANCE_M = atools::geo::nmToMeter(5.f);
 
-MapQuery::MapQuery(atools::sql::SqlDatabase *sqlDbSim, SqlDatabase *sqlDbNav, SqlDatabase *sqlDbUser, const Queries* parentQueriesParam)
+MapQuery::MapQuery(atools::sql::SqlDatabase *sqlDbSim, SqlDatabase *sqlDbNav, SqlDatabase *sqlDbUser, const Queries *parentQueriesParam)
   : dbSim(sqlDbSim), dbNav(sqlDbNav), dbUser(sqlDbUser), queries(parentQueriesParam)
 {
   mapTypesFactory = new MapTypesFactory();
@@ -537,7 +537,7 @@ void MapQuery::getMapObjectById(map::MapResult& result, map::MapTypes type, map:
   }
   else if(type == map::AIRSPACE)
   {
-    map::MapAirspace airspace = NavApp::getAirspaceController()->getAirspaceById({id, src});
+    map::MapAirspace airspace = queries->getAirspaceQueries()->getAirspaceById({id, src});
     if(airspace.isValidAirspace())
       result.airspaces.append(airspace);
   }
@@ -988,21 +988,21 @@ const QList<map::MapUserpoint>& MapQuery::getUserdataPoints(const GeoDataLatLonB
 
     for(const GeoDataLatLonBox& r : query::splitAtAntiMeridian(rect, queryRectInflationFactor, queryRectInflationIncrement))
     {
-      QVector<SqlQuery *> queries;
+      QVector<SqlQuery *> sqlQueries;
       QStringList queryTypes;
       if(unknownType || (allTypesSelected && unknownType))
       {
         // Either query all unknowns too and filter later or all and unknown are selected
         queryTypes.append("%"); // Only one query type "%"
-        queries.append(userdataPointByRectQueryNullType); // Extra for null types
+        sqlQueries.append(userdataPointByRectQueryNullType); // Extra for null types
       }
       else
         queryTypes = types;
 
-      queries.append(userdataPointByRectQuery); // Normal query to also catch unknown and empty types
+      sqlQueries.append(userdataPointByRectQuery); // Normal query to also catch unknown and empty types
 
       // One or two queries
-      for(SqlQuery *query : queries)
+      for(SqlQuery *query : sqlQueries)
       {
         query::bindRect(r, query);
         query->bindValue(":dist", distanceNm);

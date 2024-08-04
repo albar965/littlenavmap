@@ -17,7 +17,6 @@
 
 #include "infocontroller.h"
 
-#include "airspace/airspacecontroller.h"
 #include "app/navapp.h"
 #include "atools.h"
 #include "common/constants.h"
@@ -36,6 +35,7 @@
 #include "online/onlinedatacontroller.h"
 #include "options/optiondata.h"
 #include "query/airportquery.h"
+#include "query/airspacequeries.h"
 #include "query/airwaytrackquery.h"
 #include "query/mapquery.h"
 #include "route/route.h"
@@ -61,8 +61,6 @@ InfoController::InfoController(MainWindow *parent)
   savedSearchResult = new map::MapResult;
 
   queries = QueryManager::instance()->getQueriesGui();
-
-  airspaceController = NavApp::getAirspaceController();
 
   // Only GUI usage
   infoBuilder = new HtmlInfoBuilder(queries, true /* info */, false /* print */, true /* verbose */);
@@ -400,7 +398,7 @@ void InfoController::anchorClicked(const QUrl& url)
           map::MapAirspaceSources src(query.queryItemValue("source").toInt());
 
           // Append airspace to current highlight list if not already present
-          map::MapAirspace airspace = airspaceController->getAirspaceById({id, src});
+          map::MapAirspace airspace = queries->getAirspaceQueries()->getAirspaceById({id, src});
 
           QList<map::MapAirspace> airspaceHighlights = mapWidget->getAirspaceHighlights();
           if(!maptools::containsId(airspaceHighlights, airspace.id))
@@ -558,7 +556,7 @@ void InfoController::restoreInformation()
       map::MapAirspaceId id;
       id.id = refsStrList.value(i).toInt();
       id.src = static_cast<map::MapAirspaceSources>(refsStrList.value(i + 1).toInt());
-      res.airspaces.append(NavApp::getAirspaceController()->getAirspaceById(id));
+      res.airspaces.append(queries->getAirspaceQueries()->getAirspaceById(id));
     }
 
     // Remove wrong objects
@@ -901,7 +899,7 @@ void InfoController::showInformationInternal(map::MapResult result, bool showWin
     QList<map::MapAirspace> onlineAirspaces = result.getOnlineAirspaces();
     QList<map::MapAirspace>::iterator it = std::remove_if(onlineAirspaces.begin(), onlineAirspaces.end(),
                                                           [this](const map::MapAirspace& airspace) -> bool {
-      return !airspaceController->hasAirspaceById({airspace.id, map::AIRSPACE_SRC_ONLINE});
+      return !queries->getAirspaceQueries()->hasAirspaceById({airspace.id, map::AIRSPACE_SRC_ONLINE});
     });
     if(it != onlineAirspaces.end())
       onlineAirspaces.erase(it, onlineAirspaces.end());
@@ -924,7 +922,7 @@ void InfoController::showInformationInternal(map::MapResult result, bool showWin
 
       // Get extra information for online network ATC
       if(airspace.isOnline())
-        onlineRec = airspaceController->getOnlineAirspaceRecordById(airspace.id);
+        onlineRec = queries->getAirspaceQueries()->getOnlineAirspaceRecordById(airspace.id);
 
       infoBuilder->airspaceText(airspace, onlineRec, html);
       html.br();
@@ -1165,7 +1163,7 @@ void InfoController::postDatabaseLoad()
   if(savedSearchResult->hasAirports())
     currentSearchResult->airports.append(queries->getAirportQuerySim()->getAirportFuzzy(savedSearchResult->airports.constFirst()));
 
-  MapQuery*mapQuery = queries->getMapQuery();
+  MapQuery *mapQuery = queries->getMapQuery();
 
   // Reload navaids by ident, region and position ===================================
   // Insert only the first one for each getMapObjectByIdent() query

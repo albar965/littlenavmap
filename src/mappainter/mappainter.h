@@ -437,7 +437,7 @@ protected:
   SymbolPainter *symbolPainter = nullptr;
   MapPaintWidget *mapPaintWidget = nullptr;
   MapScale *scale = nullptr;
-  const Queries *queries = nullptr;
+  const Queries *queries = nullptr; // Derived from MapPaintWidget which can be GUI or web queries
 
 private:
 };

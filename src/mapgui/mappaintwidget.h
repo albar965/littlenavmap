@@ -423,7 +423,7 @@ public:
     return web;
   }
 
-  /* Get queries bundle. This can be either GUI or Web. Locking required for Web */
+  /* Get queries bundle. This can be either GUI or Web. Locking required for Web. */
   Queries *getQueries() const
   {
     return queries;
@@ -574,6 +574,7 @@ protected:
   /* Trail/track of user aircraft */
   AircraftTrail *aircraftTrail = nullptr, *aircraftTrailLogbook = nullptr;
 
+  /* Can be GUI or web queries. Passed down to painters and MapScreenIndex. */
   Queries *queries;
 
 private:

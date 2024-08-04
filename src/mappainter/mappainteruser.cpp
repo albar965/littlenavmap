@@ -62,6 +62,7 @@ void MapPainterUser::paintUserpoints(const QList<MapUserpoint>& userpoints, bool
 {
   const static QMargins MARGINS(100, 10, 10, 10);
   bool fill = context->flags2 & opts2::MAP_USERPOINT_TEXT_BACKGROUND;
+  // TODO SYNC
   UserdataIcons *icons = NavApp::getUserdataIcons();
 
   // Use margins for text placed on the right side of the object to avoid disappearing at the left screen border

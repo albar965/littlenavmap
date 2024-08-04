@@ -541,6 +541,9 @@ MainWindow::~MainWindow()
   // Close all queries
   preDatabaseLoad();
 
+  // Free all queries
+  QueryManager::instance()->shutdown();
+
   // Set all pointers to null to catch errors for late access
   NavApp::removeDialogFromDockHandler(routeStringDialog);
   ATOOLS_DELETE_LOG(routeStringDialog);
@@ -572,9 +575,6 @@ MainWindow::~MainWindow()
 
   // Delete NavApp members
   NavApp::deInit();
-
-  // Free all queries
-  QueryManager::instance()->shutdown();
 
   Unit::deInit();
 
@@ -693,7 +693,7 @@ void MainWindow::debugActionTriggered9()
 
 void MainWindow::debugActionTriggered10()
 {
-  char*ptr = nullptr;
+  char *ptr = nullptr;
   *ptr = '\0';
 }
 
@@ -1570,9 +1570,8 @@ void MainWindow::connectAllSlots()
   connect(airspaceController, &AirspaceController::userAirspacesUpdated,
           NavApp::getOnlinedataController(), &OnlinedataController::userAirspacesUpdated);
 
-  // Connect airspace manger signals to database manager signals
-  connect(airspaceController, &AirspaceController::preDatabaseLoadAirspaces, databaseManager, &DatabaseManager::preDatabaseLoad);
-  connect(airspaceController, &AirspaceController::postDatabaseLoadAirspaces, databaseManager, &DatabaseManager::postDatabaseLoad);
+  connect(airspaceController, &AirspaceController::preDatabaseLoadAirspaces, this, &MainWindow::preDatabaseLoadAirspaces);
+  connect(airspaceController, &AirspaceController::postDatabaseLoadAirspaces, this, &MainWindow::postDatabaseLoadAirspaces);
 
   connect(ui->actionMapShowAircraft, &QAction::toggled, profileWidget, &ProfileWidget::updateProfileShowFeatures);
   connect(ui->actionMapShowAircraftTrack, &QAction::toggled, profileWidget, &ProfileWidget::updateProfileShowFeatures);
@@ -4697,9 +4696,7 @@ void MainWindow::preDatabaseLoad()
 
     searchController->preDatabaseLoad();
     routeController->preDatabaseLoad();
-
     mapWidget->preDatabaseLoad();
-
     profileWidget->preDatabaseLoad();
     infoController->preDatabaseLoad();
     weatherReporter->preDatabaseLoad();
@@ -4719,7 +4716,6 @@ void MainWindow::postDatabaseLoad(atools::fs::FsPaths::SimulatorType type)
 
   if(hasDatabaseLoadStatus)
   {
-    NavApp::getWebController()->postDatabaseLoad();
     mapWidget->postDatabaseLoad(); // Init map widget dependent queries first
     NavApp::postDatabaseLoad();
     searchController->postDatabaseLoad();
@@ -4752,6 +4748,28 @@ void MainWindow::postDatabaseLoad(atools::fs::FsPaths::SimulatorType type)
   updateXpconnectInstallOptions();
 
   NavApp::logDatabaseMeta();
+}
+
+void MainWindow::preDatabaseLoadAirspaces()
+{
+  mapWidget->preDatabaseLoad(); // Stop drawing until loaded
+  infoController->preDatabaseLoad(); // Clear or update airspace information
+  QueryManager::instance()->preLoadAirspaces();
+}
+
+void MainWindow::postDatabaseLoadAirspaces()
+{
+  QueryManager::instance()->postLoadAirspaces();
+  mapWidget->postDatabaseLoad();
+  infoController->postDatabaseLoad();
+
+  // Update toolbar buttons
+  updateActionStates();
+
+  NavApp::getAirspaceController()->updateButtonsAndActions();
+
+  // Need to clear caches again and redraw after enabling queries
+  updateMapObjectsShown();
 }
 
 void MainWindow::postTrackLoad()

@@ -17,8 +17,8 @@
 
 #include "common/htmlinfobuilder.h"
 
-#include "airspace/airspacecontroller.h"
 #include "atools.h"
+#include "query/airspacequeries.h"
 #include "query/querymanager.h"
 #include "textpointer.h"
 #include "common/airportfiles.h"
@@ -3236,7 +3236,7 @@ void HtmlInfoBuilder::airspaceText(const MapAirspace& airspace, const atools::sq
 
   if(info && !airspace.isOnline())
   {
-    atools::sql::SqlRecord rec = NavApp::getAirspaceController()->getAirspaceInfoRecordById(airspace.combinedId());
+    atools::sql::SqlRecord rec = queries->getAirspaceQueries()->getAirspaceInfoRecordById(airspace.combinedId());
 
     if(!rec.isEmpty())
       addScenery(&rec, html, DATASOURCE_NAV);

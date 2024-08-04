@@ -224,7 +224,7 @@ private:
    * @param sqlDb database for simulator scenery data
    * @param sqlDbNav for updated navaids
    */
-  AirportQuery(atools::sql::SqlDatabase *sqlDb, const Queries*queriesParam, bool nav);
+  AirportQuery(atools::sql::SqlDatabase *sqlDb, const Queries *queriesParam, bool nav);
 
   const map::MapResultIndex *nearestProcAirportsInternal(const atools::geo::Pos& pos, const QString& ident, float distanceNm);
 

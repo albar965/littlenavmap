@@ -359,7 +359,6 @@ public:
   static TrackManager *getTrackManager();
 
   static AirspaceController *getAirspaceController();
-  static bool hasAnyAirspaces();
 
   static atools::fs::common::MagDecReader *getMagDecReader();
 

@@ -128,6 +128,7 @@ void MapPainterWeather::render()
   using namespace std::placeholders;
   std::sort(visibleAirportWeather.begin(), visibleAirportWeather.end(), std::bind(&MapPainter::sortAirportFunction, this, _1, _2));
 
+  // TODO SYNC
   WeatherReporter *reporter = NavApp::getWeatherReporter();
   for(const PaintAirportType& airportWeather: qAsConst(visibleAirportWeather))
   {

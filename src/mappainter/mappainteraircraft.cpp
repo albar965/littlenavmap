@@ -69,6 +69,7 @@ void MapPainterAircraft::render()
       if(onlineEnabled)
       {
         // Filters duplicates from simulator and user aircraft out - remove shadow aircraft
+        // TODO SYNC
         const QList<SimConnectAircraft> *onlineAircraft =
           NavApp::getOnlinedataController()->getAircraft(context->viewport->viewLatLonAltBox(),
                                                          context->mapLayer, context->lazyUpdate, overflow);

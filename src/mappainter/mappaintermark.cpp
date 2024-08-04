@@ -17,26 +17,26 @@
 
 #include "mappainter/mappaintermark.h"
 
-#include "mapgui/mapwidget.h"
 #include "app/navapp.h"
-#include "mapgui/mapscale.h"
-#include "mapgui/maplayer.h"
-#include "perf/aircraftperfcontroller.h"
-#include "common/mapcolors.h"
-#include "common/formatter.h"
-#include "geo/calculations.h"
-#include "util/roundedpolygon.h"
-#include "common/symbolpainter.h"
-#include "geo/rect.h"
 #include "atools.h"
+#include "common/formatter.h"
+#include "common/mapcolors.h"
 #include "common/symbolpainter.h"
-#include "airspace/airspacecontroller.h"
-#include "common/unit.h"
-#include "route/routeleg.h"
-#include "route/route.h"
-#include "util/paintercontextsaver.h"
+#include "common/symbolpainter.h"
 #include "common/textplacement.h"
+#include "common/unit.h"
 #include "fs/userdata/logdatamanager.h"
+#include "geo/calculations.h"
+#include "geo/rect.h"
+#include "mapgui/maplayer.h"
+#include "mapgui/mapscale.h"
+#include "mapgui/mapwidget.h"
+#include "perf/aircraftperfcontroller.h"
+#include "query/airspacequeries.h"
+#include "route/route.h"
+#include "route/routeleg.h"
+#include "util/paintercontextsaver.h"
+#include "util/roundedpolygon.h"
 
 #include <marble/GeoDataLineString.h>
 #include <marble/GeoDataLinearRing.h>
@@ -765,7 +765,7 @@ void MapPainterMark::paintAirspace(const map::MapAirspace& airspace)
     if(context->objCount())
       return;
 
-    const atools::geo::LineString *lineString = NavApp::getAirspaceController()->getAirspaceGeometry(airspace.combinedId());
+    const atools::geo::LineString *lineString = queries->getAirspaceQueries()->getAirspaceGeometry(airspace.combinedId());
 
     if(lineString != nullptr)
     {
@@ -1548,7 +1548,7 @@ void MapPainterMark::paintPatternMarks()
         if(drawDetails && context->mapLayer->isApproachText())
         {
           // Text for downwind leg =======================================
-          QLineF final (baseFinalPoint, originPoint);
+          QLineF finalLine(baseFinalPoint, originPoint);
           QPointF center = downwind.center();
           QString text = tr("%1/%2").
                          arg(Unit::altFeet(pattern.position.getAltitude(), true /* addUnit */, true /* narrow */, 10.f /* round */)).
@@ -1564,7 +1564,7 @@ void MapPainterMark::paintPatternMarks()
                  arg(pattern.runwayName).
                  arg(formatter::courseTextFromTrue(pattern.courseTrue, pattern.magvar, false /* magBold */, false /* magBig */,
                                                    false /* trueSmall */, true /* narrow */));
-          textPlacement.drawTextAlongOneLine(text, oppositeAngle, final.pointAt(0.60), atools::roundToInt(final.length()));
+          textPlacement.drawTextAlongOneLine(text, oppositeAngle, finalLine.pointAt(0.60), atools::roundToInt(finalLine.length()));
 
           // Draw arrows on legs =======================================
           // Set a lighter fill color for arrows
@@ -1580,7 +1580,7 @@ void MapPainterMark::paintPatternMarks()
           paintArrowAlongLine(painter, QLineF(downwindBasePoint, baseFinalPoint), arrow);
 
           // Final leg
-          paintArrowAlongLine(painter, final, arrow, 0.30f);
+          paintArrowAlongLine(painter, finalLine, arrow, 0.30f);
 
           // Upwind leg
           paintArrowAlongLine(painter, upwind, arrow);

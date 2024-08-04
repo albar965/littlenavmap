@@ -29,7 +29,6 @@ class AirportQuery;
 class InfoQuery;
 class HtmlInfoBuilder;
 class QTextEdit;
-class AirspaceController;
 class AircraftProgressConfig;
 
 class QTextBrowser;
@@ -214,7 +213,6 @@ private:
   map::MapResult *currentSearchResult, *savedSearchResult;
 
   MainWindow *mainWindow = nullptr;
-  AirspaceController *airspaceController = nullptr;
   HtmlInfoBuilder *infoBuilder = nullptr;
   Queries *queries;
 

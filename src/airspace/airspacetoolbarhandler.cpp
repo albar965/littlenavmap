@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -17,11 +17,13 @@
 
 #include "airspace/airspacetoolbarhandler.h"
 
+#include "app/navapp.h"
 #include "atools.h"
 #include "common/maptypes.h"
 #include "common/unit.h"
 #include "gui/actionbuttonhandler.h"
-#include "app/navapp.h"
+#include "query/airspacequeries.h"
+#include "query/querymanager.h"
 #include "ui_mainwindow.h"
 
 #include <QAction>
@@ -196,7 +198,7 @@ void AirspaceToolBarHandler::updateToolButtons()
 
   QAction *airspaceAction = NavApp::getMainUi()->actionShowAirspaces;
 
-  bool hasAirspaces = NavApp::hasAnyAirspaces();
+  bool hasAirspaces = QueryManager::instance()->getQueriesGui()->getAirspaceQueries()->hasAnyAirspaces();
   airspaceAction->setEnabled(hasAirspaces);
 
   // Enable or disable all tool buttons
@@ -218,7 +220,7 @@ void AirspaceToolBarHandler::updateToolButtons()
 void AirspaceToolBarHandler::updateToolActions()
 {
   bool enable = NavApp::getMainUi()->actionShowAirspaces->isChecked();
-  bool hasAirspaces = NavApp::hasAnyAirspaces();
+  bool hasAirspaces = QueryManager::instance()->getQueriesGui()->getAirspaceQueries()->hasAnyAirspaces();
   for(QToolButton *toolButton : qAsConst(airspaceToolButtons))
   {
     const QList<QAction *> actions = toolButton->menu()->actions();

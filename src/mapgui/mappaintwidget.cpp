@@ -67,7 +67,7 @@ using namespace Marble;
 using atools::geo::Rect;
 using atools::geo::Pos;
 
-MapPaintWidget::MapPaintWidget(QWidget *parent, Queries* queriesParam, bool visible, bool webParam)
+MapPaintWidget::MapPaintWidget(QWidget *parent, Queries*queriesParam, bool visible, bool webParam)
   : Marble::MarbleWidget(parent), visibleWidget(visible), queries(queriesParam), web(webParam)
 {
   verbose = atools::settings::Settings::instance().getAndStoreValue(lnm::OPTIONS_MAPWIDGET_DEBUG, false).toBool();
@@ -508,6 +508,7 @@ void MapPaintWidget::preDatabaseLoad()
 {
   jumpBackToAircraftCancel();
   cancelDragAll();
+
   databaseLoadStatus = true;
   apronGeometryCache->clear();
   paintLayer->preDatabaseLoad();

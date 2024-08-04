@@ -17,13 +17,13 @@
 
 #include "mapgui/maptooltip.h"
 
-#include "airspace/airspacecontroller.h"
 #include "app/navapp.h"
 #include "common/htmlinfobuilder.h"
 #include "common/maptypes.h"
 #include "gui/mainwindow.h"
 #include "mapgui/mappaintwidget.h"
 #include "options/optiondata.h"
+#include "query/airspacequeries.h"
 #include "route/route.h"
 #include "sql/sqlrecord.h"
 #include "util/htmlbuilder.h"
@@ -400,7 +400,7 @@ QString MapTooltip::buildTooltip(const map::MapResult& mapSearchResult, const at
 
         atools::sql::SqlRecord onlineRec;
         if(airspace.isOnline())
-          onlineRec = NavApp::getAirspaceController()->getOnlineAirspaceRecordById(airspace.id);
+          onlineRec = QueryManager::instance()->getQueriesGui()->getAirspaceQueries()->getOnlineAirspaceRecordById(airspace.id);
 
         info.airspaceText(airspace, onlineRec, html);
 

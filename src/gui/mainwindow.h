@@ -362,6 +362,10 @@ private:
   /* Call other other classes to reopen queries */
   void postDatabaseLoad(atools::fs::FsPaths::SimulatorType type);
 
+  /* Clear and reinit database queries and cache */
+  void preDatabaseLoadAirspaces();
+  void postDatabaseLoadAirspaces();
+
   /* Oceanic tracks have changed */
   void postTrackLoad();
 

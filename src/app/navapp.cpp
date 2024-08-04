@@ -18,6 +18,7 @@
 #include "app/navapp.h"
 
 #include "airspace/airspacecontroller.h"
+
 #include "atools.h"
 #include "common/aircrafttrail.h"
 #include "common/constants.h"
@@ -166,11 +167,7 @@ void NavApp::init(MainWindow *mainWindowParam)
 
   aircraftPerfController = new AircraftPerfController(mainWindow);
 
-  airspaceController = new AirspaceController(mainWindow,
-                                              databaseManager->getDatabaseSimAirspace(),
-                                              databaseManager->getDatabaseNavAirspace(),
-                                              databaseManager->getDatabaseUserAirspace(),
-                                              databaseManager->getDatabaseOnline());
+  airspaceController = new AirspaceController(mainWindow);
 
   connectClient = new ConnectClient(mainWindow);
   updateHandler = new UpdateHandler(mainWindow);
@@ -326,17 +323,15 @@ void NavApp::preDatabaseLoad()
   qDebug() << Q_FUNC_INFO;
 
   loadingDatabase = true;
-  QueryManager::instance()->deInitQueries();
+  webController->preDatabaseLoad();
   moraReader->preDatabaseLoad();
   airspaceController->preDatabaseLoad();
   trackController->preDatabaseLoad();
   logdataController->preDatabaseLoad();
+  QueryManager::instance()->deInitQueries();
 
-  delete databaseMetaSim;
-  databaseMetaSim = nullptr;
-
-  delete databaseMetaNav;
-  databaseMetaNav = nullptr;
+  ATOOLS_DELETE_LOG(databaseMetaSim);
+  ATOOLS_DELETE_LOG(databaseMetaNav);
 }
 
 void NavApp::postDatabaseLoad()
@@ -353,6 +348,7 @@ void NavApp::postDatabaseLoad()
   airspaceController->postDatabaseLoad();
   logdataController->postDatabaseLoad();
   trackController->postDatabaseLoad();
+  webController->postDatabaseLoad();
   loadingDatabase = false;
 }
 
@@ -860,11 +856,6 @@ const atools::fs::perf::AircraftPerf& NavApp::getAircraftPerformance()
 AirspaceController *NavApp::getAirspaceController()
 {
   return airspaceController;
-}
-
-bool NavApp::hasAnyAirspaces()
-{
-  return getAirspaceController()->hasAnyAirspaces();
 }
 
 atools::fs::common::MagDecReader *NavApp::getMagDecReader()

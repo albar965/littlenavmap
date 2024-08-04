@@ -391,6 +391,7 @@ SOURCES += \
   src/profile/profilescrollarea.cpp \
   src/profile/profilewidget.cpp \
   src/query/airportquery.cpp \
+  src/query/airspacequeries.cpp \
   src/query/airspacequery.cpp \
   src/query/airwayquery.cpp \
   src/query/airwaytrackquery.cpp \
@@ -594,6 +595,7 @@ HEADERS  += \
   src/profile/profilescrollarea.h \
   src/profile/profilewidget.h \
   src/query/airportquery.h \
+  src/query/airspacequeries.h \
   src/query/airspacequery.h \
   src/query/airwayquery.h \
   src/query/airwaytrackquery.h \

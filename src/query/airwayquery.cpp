@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -18,7 +18,6 @@
 #include "query/airwayquery.h"
 
 #include "common/constants.h"
-#include "common/mapresult.h"
 #include "common/maptypesfactory.h"
 #include "mapgui/maplayer.h"
 #include "settings/settings.h"
@@ -32,8 +31,8 @@ static double queryRectInflationFactor = 0.2;
 static double queryRectInflationIncrement = 0.1;
 int AirwayQuery::queryMaxRowsAirways = map::MAX_MAP_OBJECTS;
 
-AirwayQuery::AirwayQuery(SqlDatabase *sqlDbNav, bool trackDatabaseParam)
-  : dbNav(sqlDbNav), trackDatabase(trackDatabaseParam)
+AirwayQuery::AirwayQuery(SqlDatabase *sqlDbNav, bool trackParam)
+  : dbNav(sqlDbNav), track(trackParam)
 {
   mapTypesFactory = new MapTypesFactory();
   atools::settings::Settings& settings = atools::settings::Settings::instance();
@@ -59,7 +58,7 @@ void AirwayQuery::getAirwaysForWaypoint(QList<map::MapAirway>& airways, int wayp
   while(airwayByWaypointIdQuery->next())
   {
     map::MapAirway airway;
-    mapTypesFactory->fillAirwayOrTrack(airwayByWaypointIdQuery->record(), airway, trackDatabase);
+    mapTypesFactory->fillAirwayOrTrack(airwayByWaypointIdQuery->record(), airway, track);
     airways.append(airway);
   }
 }
@@ -90,7 +89,7 @@ void AirwayQuery::getWaypointsForAirway(QList<map::MapWaypoint>& waypoints, cons
   while(airwayWaypointByIdentQuery->next())
   {
     map::MapWaypoint waypoint;
-    mapTypesFactory->fillWaypoint(airwayWaypointByIdentQuery->record(), waypoint, trackDatabase);
+    mapTypesFactory->fillWaypoint(airwayWaypointByIdentQuery->record(), waypoint, track);
     waypoints.append(waypoint);
   }
 }
@@ -109,7 +108,7 @@ void AirwayQuery::getWaypointListForAirwayName(QList<map::MapAirwayWaypoint>& wa
   while(airwayWaypointsQuery->next())
     records.append(airwayWaypointsQuery->record());
 
-  QString fragmentCol = trackDatabase ? "track_fragment_no" : "airway_fragment_no";
+  QString fragmentCol = track ? "track_fragment_no" : "airway_fragment_no";
 
   for(int i = 0; i < records.size(); i++)
   {
@@ -150,7 +149,7 @@ map::MapWaypoint AirwayQuery::waypointById(int id)
   waypointByIdQuery->bindValue(":id", id);
   waypointByIdQuery->exec();
   if(waypointByIdQuery->next())
-    mapTypesFactory->fillWaypoint(waypointByIdQuery->record(), wp, trackDatabase);
+    mapTypesFactory->fillWaypoint(waypointByIdQuery->record(), wp, track);
   waypointByIdQuery->finish();
   return wp;
 }
@@ -167,7 +166,7 @@ void AirwayQuery::getAirwayFull(QList<map::MapAirway>& airways, atools::geo::Rec
   while(airwayFullQuery->next())
   {
     map::MapAirway airway;
-    mapTypesFactory->fillAirwayOrTrack(airwayFullQuery->record(), airway, trackDatabase);
+    mapTypesFactory->fillAirwayOrTrack(airwayFullQuery->record(), airway, track);
     bounding.extend(airway.bounding);
     airways.append(airway);
   }
@@ -188,7 +187,7 @@ void AirwayQuery::getAirwayById(map::MapAirway& airway, int airwayId)
   airwayByIdQuery->bindValue(":id", airwayId);
   airwayByIdQuery->exec();
   if(airwayByIdQuery->next())
-    mapTypesFactory->fillAirwayOrTrack(airwayByIdQuery->record(), airway, trackDatabase);
+    mapTypesFactory->fillAirwayOrTrack(airwayByIdQuery->record(), airway, track);
   airwayByIdQuery->finish();
 
 }
@@ -203,7 +202,7 @@ void AirwayQuery::getAirwaysByName(QList<map::MapAirway>& airways, const QString
   while(airwayByNameQuery->next())
   {
     map::MapAirway airway;
-    mapTypesFactory->fillAirwayOrTrack(airwayByNameQuery->record(), airway, trackDatabase);
+    mapTypesFactory->fillAirwayOrTrack(airwayByNameQuery->record(), airway, track);
     airways.append(airway);
   }
 }
@@ -233,7 +232,7 @@ void AirwayQuery::getAirwaysByNameAndWaypoint(QList<map::MapAirway>& airways, co
     while(airwayByNameAndWaypointQuery->next())
     {
       map::MapAirway airway;
-      mapTypesFactory->fillAirwayOrTrack(airwayByNameAndWaypointQuery->record(), airway, trackDatabase);
+      mapTypesFactory->fillAirwayOrTrack(airwayByNameAndWaypointQuery->record(), airway, track);
       airwaysObj->append(airway);
     }
 
@@ -270,7 +269,7 @@ const QList<map::MapAirway> *AirwayQuery::getAirways(const GeoDataLatLonBox& rec
           continue;
 
         map::MapAirway airway;
-        mapTypesFactory->fillAirwayOrTrack(airwayByRectQuery->record(), airway, trackDatabase);
+        mapTypesFactory->fillAirwayOrTrack(airwayByRectQuery->record(), airway, track);
         airwayCache.list.append(airway);
         ids.insert(airway.id);
       }
@@ -282,16 +281,16 @@ const QList<map::MapAirway> *AirwayQuery::getAirways(const GeoDataLatLonBox& rec
 
 void AirwayQuery::initQueries()
 {
-  airwayTable = trackDatabase ? "track" : "airway";
-  airwayIdCol = trackDatabase ? "track_id" : "airway_id";
-  airwayNameCol = trackDatabase ? "track_name" : "airway_name";
-  waypointIdCol = trackDatabase ? "trackpoint_id" : "waypoint_id";
-  waypointTable = trackDatabase ? "trackpoint" : "waypoint";
-  prefix = trackDatabase ? "track_" : "airway_";
+  airwayTable = track ? "track" : "airway";
+  airwayIdCol = track ? "track_id" : "airway_id";
+  airwayNameCol = track ? "track_name" : "airway_name";
+  waypointIdCol = track ? "trackpoint_id" : "waypoint_id";
+  waypointTable = track ? "trackpoint" : "waypoint";
+  prefix = track ? "track_" : "airway_";
 
   QString queryBase, waypointQueryBase;
 
-  if(trackDatabase)
+  if(track)
   {
     queryBase = airwayIdCol + ", " + airwayNameCol +
                 ", track_type, track_fragment_no, sequence_no, airway_id, from_waypoint_id, to_waypoint_id, "

@@ -21,7 +21,7 @@
 #include "atools.h"
 #include "db/databasemanager.h"
 #include "query/airportquery.h"
-#include "query/airspacequery.h"
+#include "query/airspacequeries.h"
 #include "query/airwayquery.h"
 #include "query/airwaytrackquery.h"
 #include "query/infoquery.h"
@@ -80,6 +80,30 @@ void QueryManager::postTrackLoad()
   }
 }
 
+void QueryManager::preLoadAirspaces()
+{
+  if(queriesGui == nullptr)
+    queriesGui->preLoadAirspaces();
+
+  if(queriesWeb == nullptr)
+  {
+    QueryLocker locker(queriesWeb);
+    queriesWeb->preLoadAirspaces();
+  }
+}
+
+void QueryManager::postLoadAirspaces()
+{
+  if(queriesGui == nullptr)
+    queriesGui->postLoadAirspaces();
+
+  if(queriesWeb == nullptr)
+  {
+    QueryLocker locker(queriesWeb);
+    queriesWeb->postLoadAirspaces();
+  }
+}
+
 void QueryManager::preDatabaseLoad()
 {
   if(queriesGui == nullptr)
@@ -108,9 +132,7 @@ Queries *QueryManager::getQueriesGui()
 {
   if(queriesGui == nullptr)
   {
-    DatabaseManager *dbMan = NavApp::getDatabaseManager();
-    queriesGui = new Queries(dbMan->getDatabaseSim(), dbMan->getDatabaseNav(), dbMan->getDatabaseUser(),
-                             dbMan->getDatabaseTrack());
+    queriesGui = new Queries();
     queriesGui->initQueries();
   }
   return queriesGui;
@@ -122,9 +144,7 @@ Queries *QueryManager::getQueriesWeb()
 
   if(queriesWeb == nullptr)
   {
-    DatabaseManager *dbMan = NavApp::getDatabaseManager();
-    queriesWeb = new Queries(dbMan->getDatabaseSim(), dbMan->getDatabaseNav(), dbMan->getDatabaseUser(),
-                             dbMan->getDatabaseTrack());
+    queriesWeb = new Queries();
     queriesWeb->initQueries();
   }
   return queriesWeb;
@@ -141,20 +161,31 @@ QueryManager::QueryManager()
 }
 
 // ==============================================================================================
-Queries::Queries(atools::sql::SqlDatabase *dbSim, atools::sql::SqlDatabase *dbNav, atools::sql::SqlDatabase *dbUser,
-                 atools::sql::SqlDatabase *dbTrack)
+Queries::Queries()
 {
-  airportQuerySim = new AirportQuery(dbSim, this, false /* nav */);
-  airportQueryNav = new AirportQuery(dbNav, this, true /* nav */);
-  mapQuery = new MapQuery(dbSim, dbNav, dbUser, this);
-  airwayTrackQuery = new AirwayTrackQuery(new AirwayQuery(dbNav, false), new AirwayQuery(dbTrack, true));
-  waypointTrackQuery = new WaypointTrackQuery(new WaypointQuery(dbNav, false), new WaypointQuery(dbTrack, true));
-  infoQuery = new InfoQuery(dbSim, dbNav, dbTrack);
-  procedureQuery = new ProcedureQuery(dbNav, this);
+  DatabaseManager *db = NavApp::getDatabaseManager();
+
+  airportQuerySim = new AirportQuery(db->getDatabaseSim(), this, false /* nav */);
+  airportQueryNav = new AirportQuery(db->getDatabaseNav(), this, true /* nav */);
+  mapQuery = new MapQuery(db->getDatabaseSim(), db->getDatabaseNav(), db->getDatabaseUser(), this);
+
+  airwayTrackQuery = new AirwayTrackQuery(new AirwayQuery(db->getDatabaseNav(), false /* track */),
+                                          new AirwayQuery(db->getDatabaseTrack(), true /* track */));
+
+  waypointTrackQuery = new WaypointTrackQuery(new WaypointQuery(db->getDatabaseNav(), false /* track */),
+                                              new WaypointQuery(db->getDatabaseTrack(), true /* track */));
+
+  infoQuery = new InfoQuery(db->getDatabaseSim(), db->getDatabaseNav(), db->getDatabaseTrack());
+  procedureQuery = new ProcedureQuery(db->getDatabaseNav(), this);
+
+  airspaceQueries = new AirspaceQueries(db->getDatabaseSim(), db->getDatabaseNav(), db->getDatabaseUserAirspace(),
+                                        db->getDatabaseOnline());
 }
 
 Queries::~Queries()
 {
+  ATOOLS_DELETE_LOG(airspaceQueries); //
+
   ATOOLS_DELETE_LOG(airportQuerySim);
   ATOOLS_DELETE_LOG(airportQueryNav);
   ATOOLS_DELETE_LOG(mapQuery);
@@ -224,6 +255,16 @@ void Queries::postTrackLoad()
   }
 }
 
+void Queries::preLoadAirspaces()
+{
+  airspaceQueries->preLoadAirspaces();
+}
+
+void Queries::postLoadAirspaces()
+{
+  airspaceQueries->postLoadAirspaces();
+}
+
 void Queries::preDatabaseLoad()
 {
   deInitQueries();
@@ -256,6 +297,9 @@ void Queries::initQueries()
 
   if(procedureQuery != nullptr)
     procedureQuery->initQueries();
+
+  if(airspaceQueries != nullptr)
+    airspaceQueries->initQueries();
 }
 
 void Queries::deInitQueries()
@@ -280,4 +324,7 @@ void Queries::deInitQueries()
 
   if(procedureQuery != nullptr)
     procedureQuery->deInitQueries();
+
+  if(airspaceQueries != nullptr)
+    airspaceQueries->deInitQueries();
 }
