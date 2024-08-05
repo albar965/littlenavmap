@@ -112,6 +112,25 @@ MapPaintWidget::~MapPaintWidget()
   ATOOLS_DELETE_LOG(apronGeometryCache);
 }
 
+// Unused options
+// setAnimationsEnabled(other.animationsEnabled());
+// setShowDebugPolygons(other.showDebugPolygons());
+// setShowRuntimeTrace(other.showRuntimeTrace());
+// setShowBackground(other.showBackground());
+// setShowFrameRate(other.showFrameRate());
+// setShowLakes(other.showLakes());
+// setShowRivers(other.showRivers());
+// setShowBorders(other.showBorders());
+// setShowOverviewMap(other.showOverviewMap());
+// setShowScaleBar(other.showScaleBar());
+// setShowCompass(other.showCompass());
+// setShowClouds(other.showClouds());
+// setShowCityLights(other.showCityLights());
+// setLockToSubSolarPoint(other.isLockedToSubSolarPoint());
+// setSubSolarPointIconVisible(other.isSubSolarPointIconVisible());
+// setShowAtmosphere(other.showAtmosphere());
+// setShowCrosshairs(other.showCrosshairs());
+// setShowRelief(other.showRelief());
 void MapPaintWidget::copySettings(const MapPaintWidget& other, bool deep)
 {
   paintLayer->copySettings(*other.paintLayer);
@@ -120,26 +139,6 @@ void MapPaintWidget::copySettings(const MapPaintWidget& other, bool deep)
   // Copy all MarbleWidget settings - some on demand to avoid overhead
   if(projection() != Marble::Mercator)
     setProjection(Marble::Mercator);
-
-  // Unused options
-  // setAnimationsEnabled(other.animationsEnabled());
-  // setShowDebugPolygons(other.showDebugPolygons());
-  // setShowRuntimeTrace(other.showRuntimeTrace());
-  // setShowBackground(other.showBackground());
-  // setShowFrameRate(other.showFrameRate());
-  // setShowLakes(other.showLakes());
-  // setShowRivers(other.showRivers());
-  // setShowBorders(other.showBorders());
-  // setShowOverviewMap(other.showOverviewMap());
-  // setShowScaleBar(other.showScaleBar());
-  // setShowCompass(other.showCompass());
-  // setShowClouds(other.showClouds());
-  // setShowCityLights(other.showCityLights());
-  // setLockToSubSolarPoint(other.isLockedToSubSolarPoint());
-  // setSubSolarPointIconVisible(other.isSubSolarPointIconVisible());
-  // setShowAtmosphere(other.showAtmosphere());
-  // setShowCrosshairs(other.showCrosshairs());
-  // setShowRelief(other.showRelief());
 
   setShowSunShading(other.showSunShading());
   setShowGrid(other.showGrid());

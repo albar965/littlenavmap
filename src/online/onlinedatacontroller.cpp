@@ -501,8 +501,6 @@ void OnlinedataController::showMessageDialog()
 const LineString *OnlinedataController::airspaceGeometryCallback(const QString& callsign, atools::fs::online::fac::FacilityType type)
 {
   opts2::Flags2 flags2 = OptionData::instance().getFlags2();
-
-  // TODO SYNC
   AirspaceQueries *airspaceQueries = QueryManager::instance()->getQueriesGui()->getAirspaceQueries();
   const LineString *lineString = nullptr;
 

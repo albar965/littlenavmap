@@ -281,6 +281,7 @@ MapPixmap MapActionsController::getPixmapPosDistance(int width, int height, atoo
   {
     // Lock whole widget
     MapPaintWidgetLocker locker(mapPaintWidget);
+    QueryLocker queryLocker(mapPaintWidget->getQueries());
 
     // Copy all map settings except trail
     mapPaintWidget->copySettings(*NavApp::getMapWidgetGui(), false /* deep */);
@@ -354,6 +355,7 @@ MapPixmap MapActionsController::getPixmapRect(int width, int height, atools::geo
     if(mapPaintWidget != nullptr)
     {
       MapPaintWidgetLocker locker(mapPaintWidget);
+      QueryLocker queryLocker(mapPaintWidget->getQueries());
 
       // Copy all map settings except trail
       mapPaintWidget->copySettings(*NavApp::getMapWidgetGui(), false /* deep */);

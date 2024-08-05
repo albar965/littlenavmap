@@ -91,7 +91,6 @@ const SqlRecord AbstractLnmActionsController::getAirportInformation(int id)
 const AirportAdminNames AbstractLnmActionsController::getAirportAdminNames(map::MapAirport& airport)
 {
   QString city, state, country;
-
   Queries *queries = getQueries();
   QueryLocker locker(queries);
   queries->getAirportQueryNav()->getAirportAdminNamesById(airport.id, city, state, country);

@@ -320,10 +320,7 @@ bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport, const 
       // Prepare context =====================================================
       context = PaintContext();
       context.shownDetailAirportIds = &shownDetailAirportIds;
-
-      // TODO SYNC
       context.route = &NavApp::getRouteConst();
-
       context.mapLayer = mapLayer;
       context.mapLayerRoute = mapLayerRoute;
       context.mapLayerEffective = mapLayerEffective;

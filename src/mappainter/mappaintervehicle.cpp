@@ -83,7 +83,6 @@ void MapPainterVehicle::paintAiVehicle(const SimConnectAircraft& vehicle, float 
     float offset = -(size / 2.f);
 
     // Draw symbol
-    // TODO SYNC
     context->painter->drawPixmap(QPointF(offset, offset),
                                  *NavApp::getVehicleIcons()->pixmapFromCache(vehicle, static_cast<int>(size), 0));
 
