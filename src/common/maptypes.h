@@ -1737,7 +1737,7 @@ QString airspaceText(const map::MapAirspace& airspace);
 
 QString aircraftTypeString(const atools::fs::sc::SimConnectAircraft& aircraft); /* Helicopter, etc. */
 QString aircraftTextShort(const atools::fs::sc::SimConnectAircraft& aircraft);
-QString aircraftType(const atools::fs::sc::SimConnectAircraft& aircraft);
+const QString& aircraftType(const atools::fs::sc::SimConnectAircraft& aircraft);
 
 bool isAircraftShadow(const map::MapBase *base);
 

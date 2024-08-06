@@ -25,6 +25,7 @@
 #include "common/unit.h"
 #include "common/unitstringtool.h"
 #include "fs/perf/aircraftperf.h"
+#include "fs/util/fsutil.h"
 #include "gui/helphandler.h"
 #include "gui/widgetstate.h"
 #include "util/htmlbuilder.h"
@@ -218,7 +219,7 @@ void AircraftPerfDialog::aircraftTypeEdited()
                                                                             "It is recommended to use official ICAO codes like "
                                                                             "\"B738\", \"BE9L\" or \"C172\".")));
   }
-  else if(!atools::fs::perf::AircraftPerf::isAircraftTypeValid(ui->lineEditType->text()))
+  else if(!atools::fs::util::isAircraftTypeDesignatorValid(ui->lineEditType->text()))
   {
     ui->labelTypeStatus->show();
     ui->labelTypeStatus->setText(atools::util::HtmlBuilder::warningMessage(tr("Aircraft type is probably not valid. "

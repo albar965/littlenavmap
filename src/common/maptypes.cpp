@@ -2284,7 +2284,7 @@ QString airspaceText(const MapAirspace& airspace)
   return QObject::tr("Airspace %1 (%2)").arg(airspace.name).arg(airspaceTypeToString(airspace.type));
 }
 
-QString aircraftType(const atools::fs::sc::SimConnectAircraft& aircraft)
+const QString& aircraftType(const atools::fs::sc::SimConnectAircraft& aircraft)
 {
   if(!aircraft.getAirplaneType().isEmpty())
     return aircraft.getAirplaneType();
