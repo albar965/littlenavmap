@@ -66,9 +66,6 @@ public:
   /* Get boundary merged with scenery and file metadata records. Not for online centers. */
   atools::sql::SqlRecord getAirspaceInfoRecordById(map::MapAirspaceId id);
 
-  void initQueries();
-  void deInitQueries();
-
   /* Tries to fetch online airspace geometry by name and facility. */
   const atools::geo::LineString *getOnlineAirspaceGeoByName(const QString& callsign, const QString& facilityType);
 
@@ -126,9 +123,16 @@ public:
 
 private:
   friend class Queries;
+  friend class AirspaceController;
 
   explicit AirspaceQueries(atools::sql::SqlDatabase *dbSim, atools::sql::SqlDatabase *dbNav,
                            atools::sql::SqlDatabase *dbUser, atools::sql::SqlDatabase *dbOnline);
+
+  /* Close all query objects thus disconnecting from the database */
+  void initQueries();
+
+  /* Create and prepare all queries */
+  void deInitQueries();
 
   void preLoadAirspaces();
   void postLoadAirspaces();

@@ -202,12 +202,6 @@ public:
   map::MapRunwayEnd getOpposedRunwayEnd(int airportId, const map::MapRunwayEnd& runwayEnd);
   map::MapRunway getRunwayByEndId(int airportId, int runwayEndId);
 
-  /* Close all query objects thus disconnecting from the database */
-  void initQueries();
-
-  /* Create and prepare all queries */
-  void deInitQueries();
-
   /* Get copies of cached objects */
   QHash<int, QList<map::MapParking> > getParkingCache() const;
   QHash<int, QList<map::MapHelipad> > getHelipadCache() const;
@@ -224,7 +218,13 @@ private:
    * @param sqlDb database for simulator scenery data
    * @param sqlDbNav for updated navaids
    */
-  AirportQuery(atools::sql::SqlDatabase *sqlDb, const Queries *queriesParam, bool nav);
+  explicit AirportQuery(atools::sql::SqlDatabase *sqlDb, const Queries *queriesParam, bool nav);
+
+  /* Close all query objects thus disconnecting from the database */
+  void initQueries();
+
+  /* Create and prepare all queries */
+  void deInitQueries();
 
   const map::MapResultIndex *nearestProcAirportsInternal(const atools::geo::Pos& pos, const QString& ident, float distanceNm);
 

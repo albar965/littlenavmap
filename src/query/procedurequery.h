@@ -63,11 +63,6 @@ class ProcedureQuery
   Q_DECLARE_TR_FUNCTIONS(ProcedureQuery)
 
 public:
-  /*
-   * @param sqlDb database for simulator scenery data
-   * @param sqlDbNav for updated navaids
-   */
-  ProcedureQuery(atools::sql::SqlDatabase *sqlDbNav, const Queries *queriesParam);
   ~ProcedureQuery();
 
   /* Do not allow copying */
@@ -164,15 +159,6 @@ public:
   void createCustomDeparture(proc::MapProcedureLegs& procedure, const map::MapAirport& airportSim,
                              const map::MapRunwayEnd& runwayEndSim, float distance);
 
-  /* Flush the cache to update units */
-  void clearCache();
-
-  /* Create all queries */
-  void initQueries();
-
-  /* Delete all queries */
-  void deInitQueries();
-
   /* Change procedure to insert runway from flight plan as departure or start for arinc names "ALL" or "RW10B".
    * Only for SID or STAR.
    *  Should only be used on a copy of a procedure object and not the cached object.*/
@@ -185,7 +171,24 @@ public:
 
   static bool doesRunwayMatchSidOrStar(const proc::MapProcedureLegs& procedure, const QString& runway);
 
+  /* Flush the cache to update units */
+  void clearCache();
+
 private:
+  friend class Queries;
+
+  /*
+   * @param sqlDb database for simulator scenery data
+   * @param sqlDbNav for updated navaids
+   */
+  explicit ProcedureQuery(atools::sql::SqlDatabase *sqlDbNav, const Queries *queriesParam);
+
+  /* Create all queries */
+  void initQueries();
+
+  /* Delete all queries */
+  void deInitQueries();
+
   proc::MapProcedureLeg buildTransitionLegEntry(const map::MapAirport& airport);
   proc::MapProcedureLeg buildProcedureLegEntry(const map::MapAirport& airport);
   void buildLegEntry(atools::sql::SqlQuery *query, proc::MapProcedureLeg& leg, const map::MapAirport& airport);

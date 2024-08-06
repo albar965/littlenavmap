@@ -90,6 +90,15 @@ public:
    * if they have to be kept between event loop calls. */
   const QList<map::MapAirway> *getAirways(const Marble::GeoDataLatLonBox& rect, const MapLayer *mapLayer, bool lazy);
 
+private:
+  friend class Queries;
+  friend class AirwayTrackQuery;
+
+  /*
+   * @param sqlDbNav for updated navaids
+   */
+  explicit AirwayQuery(atools::sql::SqlDatabase *sqlDbNav, bool trackParam);
+
   /* Close all query objects thus disconnecting from the database */
   void initQueries();
 
@@ -97,14 +106,6 @@ public:
   void deInitQueries();
 
   void clearCache();
-
-private:
-  friend class Queries;
-
-  /*
-   * @param sqlDbNav for updated navaids
-   */
-  AirwayQuery(atools::sql::SqlDatabase *sqlDbNav, bool trackParam);
 
   map::MapWaypoint waypointById(int id);
 

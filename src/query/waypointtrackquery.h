@@ -74,15 +74,6 @@ public:
   /* Get record for joined tables waypoint, bgl_file and scenery_area */
   const atools::sql::SqlRecord *getWaypointInformation(int waypointId);
 
-  /* Close all query objects thus disconnecting from the database */
-  void initQueries();
-
-  /* Create and prepare all queries */
-  void deInitQueries();
-
-  /* Tracks loaded - clear caches */
-  void clearCache();
-
   /* Set to false to ignore track database. Create a copy of this before using this method. */
   void setUseTracks(bool value)
   {
@@ -108,7 +99,16 @@ private:
    * @param sqlDb database for simulator scenery data
    * @param sqlDbNav for updated navaids
    */
-  WaypointTrackQuery(WaypointQuery *waypointQueryParam, WaypointQuery *trackQueryParam);
+  explicit WaypointTrackQuery(WaypointQuery *waypointQueryParam, WaypointQuery *trackQueryParam);
+
+  /* Close all query objects thus disconnecting from the database */
+  void initQueries();
+
+  /* Create and prepare all queries */
+  void deInitQueries();
+
+  /* Tracks loaded - clear caches */
+  void clearCache();
 
   WaypointTrackQuery(const WaypointTrackQuery& other)
   {

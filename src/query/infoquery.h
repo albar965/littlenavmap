@@ -88,19 +88,19 @@ public:
   /* Get a record from table trackmeta for given track id */
   atools::sql::SqlRecord getTrackMetadata(int trackId);
 
-  /* Create all queries */
-  void initQueries();
-
-  /* Delete all queries */
-  void deInitQueries();
-
 private:
   friend class Queries;
   /*
    * @param sqlDb database for simulator scenery data
    * @param sqlDbNav for updated navaids
    */
-  InfoQuery(atools::sql::SqlDatabase *sqlDbSim, atools::sql::SqlDatabase *sqlDbNav, atools::sql::SqlDatabase *sqlDbTrack);
+  explicit InfoQuery(atools::sql::SqlDatabase *sqlDbSim, atools::sql::SqlDatabase *sqlDbNav, atools::sql::SqlDatabase *sqlDbTrack);
+
+  /* Create all queries */
+  void initQueries();
+
+  /* Delete all queries */
+  void deInitQueries();
 
   /* Caches */
   QCache<int, atools::sql::SqlRecord> airportCache, vorCache, ndbCache, runwayEndCache, msaCache, holdingCache;

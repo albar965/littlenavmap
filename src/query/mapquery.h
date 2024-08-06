@@ -235,12 +235,6 @@ public:
   QString getAirportIdentFromVor(const QString& ident, const QString& region, const atools::geo::Pos& pos, bool found) const;
   QString getAirportIdentFromNdb(const QString& ident, const QString& region, const atools::geo::Pos& pos, bool found) const;
 
-  /* Close all query objects thus disconnecting from the database */
-  void initQueries();
-
-  /* Create and prepare all queries */
-  void deInitQueries();
-
   /* Check in navdatabase (Navigraph or other) if airport has procedures.
    * Slow but does a fuzzy search to find airport in navdata */
   bool hasProcedures(const map::MapAirport& airport) const;
@@ -254,8 +248,14 @@ private:
    * @param sqlDb database for simulator scenery data
    * @param sqlDbNav for updated navaids
    */
-  MapQuery(atools::sql::SqlDatabase *sqlDbSim, atools::sql::SqlDatabase *sqlDbNav, atools::sql::SqlDatabase *sqlDbUser,
-           const Queries *parentQueriesParam);
+  explicit MapQuery(atools::sql::SqlDatabase *sqlDbSim, atools::sql::SqlDatabase *sqlDbNav, atools::sql::SqlDatabase *sqlDbUser,
+                    const Queries *parentQueriesParam);
+
+  /* Close all query objects thus disconnecting from the database */
+  void initQueries();
+
+  /* Create and prepare all queries */
+  void deInitQueries();
 
   map::MapResultIndex *nearestNavaidsInternal(const atools::geo::Pos& pos, float distanceNm,
                                               map::MapTypes type, int maxIls, float maxIlsDist);

@@ -55,7 +55,7 @@ public:
 private:
   friend class AirspaceQueries;
 
-  AirspaceQuery(atools::sql::SqlDatabase *sqlDb, map::MapAirspaceSources src);
+  explicit AirspaceQuery(atools::sql::SqlDatabase *sqlDb, map::MapAirspaceSources src);
 
   void getAirspaceById(map::MapAirspace& airspace, int airspaceId);
 

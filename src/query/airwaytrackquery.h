@@ -76,15 +76,6 @@ public:
   void getAirways(QList<map::MapAirway>& airways, const Marble::GeoDataLatLonBox& rect, const MapLayer *mapLayer, bool lazy);
   void getTracks(QList<map::MapAirway>& airways, const Marble::GeoDataLatLonBox& rect, const MapLayer *mapLayer, bool lazy);
 
-  /* Close all query objects thus disconnecting from the database */
-  void initQueries();
-
-  /* Create and prepare all queries */
-  void deInitQueries();
-
-  /* Tracks loaded - clear caches */
-  void clearCache();
-
   /* Set to false to ignore track database. Create a copy of this before using this method. */
   void setUseTracks(bool value)
   {
@@ -107,6 +98,15 @@ private:
    * @param sqlDbTrack for tracks. May be null.
    */
   explicit AirwayTrackQuery(AirwayQuery *airwayQueryParam, AirwayQuery *trackQueryParam);
+
+  /* Close all query objects thus disconnecting from the database */
+  void initQueries();
+
+  /* Create and prepare all queries */
+  void deInitQueries();
+
+  /* Tracks loaded - clear caches */
+  void clearCache();
 
   AirwayTrackQuery(const AirwayTrackQuery& other)
   {
