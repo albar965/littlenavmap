@@ -779,33 +779,37 @@ const static QHash<map::MapAirspaceTypes, int> airspacePriorityMap(
 QString navTypeName(const QString& type)
 {
   QString retval = navTypeNameVor(type);
+
   if(retval.isEmpty())
     retval = navTypeNameNdb(type);
+
   if(retval.isEmpty())
     retval = navTypeNameVor(type);
+
   if(retval.isEmpty())
     retval = navTypeNameWaypoint(type);
+
   return retval;
 }
 
-QString navTypeNameVor(const QString& type)
+const QString& navTypeNameVor(const QString& type)
 {
-  return navTypeNamesVor.value(type);
+  return atools::hashValue(navTypeNamesVor, type);
 }
 
-QString navTypeNameVorLong(const QString& type)
+const QString& navTypeNameVorLong(const QString& type)
 {
-  return navTypeNamesVorLong.value(type);
+  return atools::hashValue(navTypeNamesVorLong, type);
 }
 
-QString navTypeNameNdb(const QString& type)
+const QString& navTypeNameNdb(const QString& type)
 {
-  return navTypeNamesNdb.value(type);
+  return atools::hashValue(navTypeNamesNdb, type);
 }
 
-QString navTypeNameWaypoint(const QString& type)
+const QString& navTypeNameWaypoint(const QString& type)
 {
-  return navTypeNamesWaypoint.value(type);
+  return atools::hashValue(navTypeNamesWaypoint, type);
 }
 
 QString navTypeArincNamesWaypoint(const QString& type)
@@ -875,15 +879,14 @@ QString navTypeArincNamesWaypoint(const QString& type)
   return types.join(QObject::tr(", "));
 }
 
-QString navName(const QString& type)
+const QString& navName(const QString& type)
 {
-  return navTypeNames.value(type);
+  return atools::hashValue(navTypeNames, type);
 }
 
 const QString& surfaceName(const QString& surface)
 {
-  Q_ASSERT(!surfaceMap.isEmpty());
-  return surfaceMap[surface];
+  return atools::hashValue(surfaceMap, surface);
 }
 
 QString smoothnessName(QVariant smoothnessVar)
@@ -911,32 +914,27 @@ QString smoothnessName(QVariant smoothnessVar)
 
 int surfaceQuality(const QString& surface)
 {
-  Q_ASSERT(!surfaceQualityMap.isEmpty());
   return surfaceQualityMap.value(surface, 0);
 }
 
 const QVector<std::pair<QRegularExpression, QString> >& parkingKeywords()
 {
-  Q_ASSERT(!parkingDatabaseKeywords.isEmpty());
   return parkingDatabaseKeywords;
 }
 
 const QString& parkingGateName(const QString& gate)
 {
-  Q_ASSERT(!parkingMapGate.isEmpty());
-  return parkingMapGate[gate];
+  return atools::hashValue(parkingMapGate, gate);
 }
 
 const QString& parkingRampName(const QString& ramp)
 {
-  Q_ASSERT(!parkingMapRamp.isEmpty());
-  return parkingMapRamp[ramp];
+  return atools::hashValue(parkingMapRamp, ramp);
 }
 
 const QString& parkingTypeName(const QString& type)
 {
-  Q_ASSERT(!parkingTypeMap.isEmpty());
-  return parkingTypeMap[type];
+  return atools::hashValue(parkingTypeMap, type);
 }
 
 QString parkingText(const MapParking& parking)
@@ -952,21 +950,14 @@ QString parkingText(const MapParking& parking)
   return atools::strJoin(retval, QObject::tr(" "));
 }
 
-const QString& parkingName(const QString& name)
+QString parkingName(const QString& name)
 {
-  Q_ASSERT(!parkingNameMap.isEmpty());
-
-  if(parkingNameMap.contains(name))
-    return parkingNameMap[name];
-  else
-    return name;
+  return parkingNameMap.value(name, name);
 }
 
 const QString& parkingDatabaseName(const QString& name)
 {
-  Q_ASSERT(!parkingDatabaseNameMap.isEmpty());
-
-  return parkingDatabaseNameMap[name];
+  return atools::hashValue(parkingDatabaseNameMap, name);
 }
 
 QString parkingNameNumberAndType(const map::MapParking& parking)
@@ -1780,10 +1771,10 @@ QString airportMsaText(const MapAirportMsa& airportMsa, bool user)
     return QObject::tr("%1 at %2 (%3)").arg(type).arg(airportMsa.airportIdent).arg(airportMsa.navIdent);
 }
 
-QString comTypeName(const QString& type)
+const QString& comTypeName(const QString& type)
 {
-  Q_ASSERT(!comTypeNames.isEmpty());
-  return comTypeNames.value(type);
+
+  return atools::hashValue(comTypeNames, type);
 }
 
 QString magvarText(float magvar, bool shortText, bool degSign)
@@ -1888,46 +1879,42 @@ QString ndbFullShortText(const MapNdb& ndb)
 
 const QString& airspaceTypeToString(map::MapAirspaceTypes type)
 {
-  return airspaceTypeNameMap[type];
+  return atools::hashValue(airspaceTypeNameMap, type);
 }
 
 const QString& airspaceTypeShortToString(map::MapAirspaceTypes type)
 {
-  return airspaceTypeShortNameMap[type];
+  return atools::hashValue(airspaceTypeShortNameMap, type);
 }
 
 const QString& airspaceFlagToString(map::MapAirspaceFlags type)
 {
-  return airspaceFlagNameMap[type];
+  return atools::hashValue(airspaceFlagNameMap, type);
 }
 
 const QString& airspaceFlagToStringLong(map::MapAirspaceFlags type)
 {
-  return airspaceFlagNameMapLong[type];
+  return atools::hashValue(airspaceFlagNameMapLong, type);
 }
 
 const QString& airspaceRemark(map::MapAirspaceTypes type)
 {
-  Q_ASSERT(!airspaceRemarkMap.isEmpty());
-  return airspaceRemarkMap[type];
+  return atools::hashValue(airspaceRemarkMap, type);
 }
 
 int airspaceDrawingOrder(map::MapAirspaceTypes type)
 {
-  Q_ASSERT(!airspacePriorityMap.isEmpty());
-  return airspacePriorityMap.value(type);
+  return airspacePriorityMap.value(type, map::AIRSPACE_NONE);
 }
 
 map::MapAirspaceTypes airspaceTypeFromDatabase(const QString& type)
 {
-  Q_ASSERT(!airspaceTypeFromDatabaseMap.isEmpty());
-  return airspaceTypeFromDatabaseMap.value(type);
+  return atools::hashValue(airspaceTypeFromDatabaseMap, type);
 }
 
 const QString& airspaceTypeToDatabase(map::MapAirspaceTypes type)
 {
-  Q_ASSERT(!airspaceTypeToDatabaseMap.isEmpty());
-  return airspaceTypeToDatabaseMap[type];
+  return atools::hashValue(airspaceTypeToDatabaseMap, type);
 }
 
 QString airspaceSourceText(MapAirspaceSources src)
