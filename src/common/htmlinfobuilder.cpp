@@ -107,7 +107,7 @@ const int MAX_DISTANCE_FOR_BEARING_METER = ageo::nmToMeter(8000);
 
 const static ahtml::Flags LINK_FLAGS = ahtml::LINK_NO_UL | ahtml::BOLD;
 
-HtmlInfoBuilder::HtmlInfoBuilder(Queries* queriesParam, bool infoParam, bool printParam, bool verboseParam)
+HtmlInfoBuilder::HtmlInfoBuilder(Queries *queriesParam, bool infoParam, bool printParam, bool verboseParam)
   : info(infoParam), print(printParam), verbose(verboseParam), queries(queriesParam)
 {
   if(info)
@@ -1753,7 +1753,7 @@ void HtmlInfoBuilder::weatherText(const map::WeatherContext& context, const MapA
         bool nearestOk = false;
         if(checkMetar(html, metar.getNearest()))
         {
-          html.text(tr("%2Nearest Weather - %1").arg(metar.getRequestIdent()).arg(sim), WEATHER_TITLE_FLAGS);
+          html.text(tr("%2Nearest Weather - %1").arg(airport.displayIdent()).arg(sim), WEATHER_TITLE_FLAGS);
 
           // Add link to airport station
           if(!print && airport.isValid())
@@ -1767,7 +1767,7 @@ void HtmlInfoBuilder::weatherText(const map::WeatherContext& context, const MapA
 
         if(nearestOk && checkMetar(html, metar.getInterpolated()))
         {
-          html.text(tr("%2Interpolated Weather - %1").arg(metar.getRequestIdent()).arg(sim), WEATHER_TITLE_FLAGS);
+          html.text(tr("%2Interpolated Weather - %1").arg(airport.displayIdent()).arg(sim), WEATHER_TITLE_FLAGS);
 
           // Add link to airport station
           if(!print && airport.isValid())
@@ -1919,20 +1919,20 @@ bool HtmlInfoBuilder::checkMetar(HtmlBuilder& html, const atools::fs::weather::M
 }
 
 void HtmlInfoBuilder::decodedMetars(HtmlBuilder& html, const atools::fs::weather::Metar& metar,
-                                    const map::MapAirport& airport, const QString& name, bool mapDisplay) const
+                                    const map::MapAirport& airport, const QString& weatherService, bool mapDisplay) const
 {
   if(metar.hasAnyMetar())
   {
     if(checkMetar(html, metar.getStation()))
     {
-      html.text(tr("%1 Station Weather").arg(name), WEATHER_TITLE_FLAGS);
+      html.text(tr("%1 Station Weather").arg(weatherService), WEATHER_TITLE_FLAGS);
       decodedMetar(html, airport, map::MapAirport(), metar, mapDisplay, atools::fs::weather::STATION);
     }
 
     bool nearestOk = false;
     if(checkMetar(html, metar.getNearest()))
     {
-      html.text(tr("%1 Nearest Weather - %2").arg(name).arg(metar.getNearestIdent()), WEATHER_TITLE_FLAGS);
+      html.text(tr("%1 Nearest Weather - %2").arg(weatherService).arg(metar.getNearestIdent()), WEATHER_TITLE_FLAGS);
 
       // Check if the station is an airport
       map::MapAirport reportAirport = queries->getAirportQuerySim()->getAirportByIdent(metar.getNearestIdent());
@@ -1949,7 +1949,7 @@ void HtmlInfoBuilder::decodedMetars(HtmlBuilder& html, const atools::fs::weather
 
     if(nearestOk && checkMetar(html, metar.getInterpolated()))
     {
-      html.text(tr("%1 Interpolated Weather").arg(name), WEATHER_TITLE_FLAGS);
+      html.text(tr("%1 Interpolated Weather").arg(weatherService), WEATHER_TITLE_FLAGS);
 
       // Check if the station is an airport
       map::MapAirport reportAirport;
@@ -3134,7 +3134,7 @@ void HtmlInfoBuilder::airspaceText(const MapAirspace& airspace, const atools::sq
 
   if(info)
   {
-    const QString remark = map::airspaceRemark(airspace.type);
+    const QString& remark = map::airspaceRemark(airspace.type);
     if(!remark.isEmpty())
       header.append(remark);
 
@@ -3704,7 +3704,7 @@ void HtmlInfoBuilder::aircraftText(const atools::fs::sc::SimConnectAircraft& air
 
   html.row2If(tr("Registration:"), aircraft.getAirplaneRegistration()); // ASXGS
 
-  QString model = map::aircraftType(aircraft);
+  const QString& model = map::aircraftType(aircraft);
   html.row2If(tr("Model:"), model); // Beechcraft
 
   if(aircraft.isAnyBoat())

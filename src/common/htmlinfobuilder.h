@@ -400,7 +400,7 @@ private:
                     atools::fs::weather::MetarType type) const;
 
   void decodedMetars(atools::util::HtmlBuilder& html, const atools::fs::weather::Metar& metar,
-                     const map::MapAirport& airport, const QString& name, bool mapDisplay) const;
+                     const map::MapAirport& airport, const QString& weatherService, bool mapDisplay) const;
 
   void addRadionavFixType(atools::util::HtmlBuilder& html, const atools::sql::SqlRecord& recApp) const;
 
