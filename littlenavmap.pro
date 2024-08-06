@@ -360,7 +360,7 @@ SOURCES += \
   src/mapgui/mapvisible.cpp \
   src/mapgui/mapwidget.cpp \
   src/mappainter/mappainter.cpp \
-  src/mappainter/mappainteraircraft.cpp \
+  src/mappainter/mappainteraiaircraft.cpp \
   src/mappainter/mappainterairport.cpp \
   src/mappainter/mappainterairspace.cpp \
   src/mappainter/mappainteraltitude.cpp \
@@ -373,6 +373,7 @@ SOURCES += \
   src/mappainter/mappaintertop.cpp \
   src/mappainter/mappaintertrail.cpp \
   src/mappainter/mappainteruser.cpp \
+  src/mappainter/mappainteruseraircraft.cpp \
   src/mappainter/mappaintervehicle.cpp \
   src/mappainter/mappainterweather.cpp \
   src/mappainter/mappainterwind.cpp \
@@ -564,7 +565,7 @@ HEADERS  += \
   src/mapgui/mapvisible.h \
   src/mapgui/mapwidget.h \
   src/mappainter/mappainter.h \
-  src/mappainter/mappainteraircraft.h \
+  src/mappainter/mappainteraiaircraft.h \
   src/mappainter/mappainterairport.h \
   src/mappainter/mappainterairspace.h \
   src/mappainter/mappainteraltitude.h \
@@ -577,6 +578,7 @@ HEADERS  += \
   src/mappainter/mappaintertop.h \
   src/mappainter/mappaintertrail.h \
   src/mappainter/mappainteruser.h \
+  src/mappainter/mappainteruseraircraft.h \
   src/mappainter/mappaintervehicle.h \
   src/mappainter/mappainterweather.h \
   src/mappainter/mappainterwind.h \

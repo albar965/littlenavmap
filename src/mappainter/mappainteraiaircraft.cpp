@@ -15,7 +15,7 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#include "mappainter/mappainteraircraft.h"
+#include "mappainter/mappainteraiaircraft.h"
 
 #include "common/constants.h"
 #include "geo/calculations.h"
@@ -32,7 +32,7 @@
 using atools::fs::sc::SimConnectUserAircraft;
 using atools::fs::sc::SimConnectAircraft;
 
-MapPainterAircraft::MapPainterAircraft(MapPaintWidget *mapWidget, MapScale *mapScale, PaintContext *paintContext)
+MapPainterAiAircraft::MapPainterAiAircraft(MapPaintWidget *mapWidget, MapScale *mapScale, PaintContext *paintContext)
   : MapPainterVehicle(mapWidget, mapScale, paintContext)
 {
   atools::settings::Settings& settings = atools::settings::Settings::instance();
@@ -41,12 +41,12 @@ MapPainterAircraft::MapPainterAircraft(MapPaintWidget *mapWidget, MapScale *mapS
   maxNearestAiLabelsVertDistFt = settings.getAndStoreValue(lnm::MAP_MAX_NEAREST_AI_LABELS_VERT_DIST_FT, 5000.).toFloat();
 }
 
-MapPainterAircraft::~MapPainterAircraft()
+MapPainterAiAircraft::~MapPainterAiAircraft()
 {
 
 }
 
-void MapPainterAircraft::render()
+void MapPainterAiAircraft::render()
 {
   const static QMargins MARGINS(100, 100, 100, 100);
   atools::util::PainterContextSaver saver(context->painter);
@@ -138,30 +138,6 @@ void MapPainterAircraft::render()
           paintAiVehicle(ac, adt.x, adt.y, forceLabelNearby);
         }
       }
-    }
-
-    // Draw user aircraft ====================================================================
-    if(context->objectTypes.testFlag(map::AIRCRAFT))
-    {
-      // Use higher accuracy - falls back to normal position if not set
-      atools::geo::PosD pos = userAircraft.getPositionD();
-      if(pos.isValid())
-      {
-        bool hidden = false;
-        double x, y;
-        if(wToS(pos, x, y, DEFAULT_WTOS_SIZE, &hidden))
-        {
-          if(!hidden)
-          {
-            paintTurnPath(userAircraft);
-            paintUserAircraft(userAircraft, static_cast<float>(x), static_cast<float>(y));
-          }
-        }
-      }
-    }
+    } // if(aiEnabled || onlineEnabled)
   } // if(context->objectTypes & map::AIRCRAFT_ALL)
-
-  // Wind display depends only on option
-  if(context->paintWindHeader && context->dOptUserAc(optsac::ITEM_USER_AIRCRAFT_WIND_POINTER) && userAircraft.isValid())
-    paintWindPointer(userAircraft, context->screenRect.width() / 2.f, 2.f);
 }

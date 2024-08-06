@@ -17,13 +17,14 @@
 
 #include "mappainter/mappaintlayer.h"
 
+#include "app/navapp.h"
 #include "common/constants.h"
 #include "common/mapcolors.h"
 #include "geo/calculations.h"
 #include "mapgui/maplayersettings.h"
 #include "mapgui/mapscale.h"
 #include "mapgui/mapwidget.h"
-#include "mappainter/mappainteraircraft.h"
+#include "mappainter/mappainteraiaircraft.h"
 #include "mappainter/mappainterairport.h"
 #include "mappainter/mappainterairspace.h"
 #include "mappainter/mappainteraltitude.h"
@@ -36,9 +37,9 @@
 #include "mappainter/mappaintertop.h"
 #include "mappainter/mappaintertrail.h"
 #include "mappainter/mappainteruser.h"
+#include "mappainter/mappainteruseraircraft.h"
 #include "mappainter/mappainterweather.h"
 #include "mappainter/mappainterwind.h"
-#include "app/navapp.h"
 #include "options/optiondata.h"
 #include "route/route.h"
 #include "settings/settings.h"
@@ -70,7 +71,8 @@ MapPaintLayer::MapPaintLayer(MapPaintWidget *widget)
   mapPainterAirspace = new MapPainterAirspace(mapPaintWidget, mapScale, &context);
   mapPainterMark = new MapPainterMark(mapPaintWidget, mapScale, &context);
   mapPainterRoute = new MapPainterRoute(mapPaintWidget, mapScale, &context);
-  mapPainterAircraft = new MapPainterAircraft(mapPaintWidget, mapScale, &context);
+  mapPainterUserAircraft = new MapPainterUserAircraft(mapPaintWidget, mapScale, &context);
+  mapPainterAiAircraft = new MapPainterAiAircraft(mapPaintWidget, mapScale, &context);
   mapPainterTrail = new MapPainterTrail(mapPaintWidget, mapScale, &context);
   mapPainterShip = new MapPainterShip(mapPaintWidget, mapScale, &context);
   mapPainterUser = new MapPainterUser(mapPaintWidget, mapScale, &context);
@@ -94,7 +96,8 @@ MapPaintLayer::~MapPaintLayer()
   delete mapPainterAirspace;
   delete mapPainterMark;
   delete mapPainterRoute;
-  delete mapPainterAircraft;
+  delete mapPainterUserAircraft;
+  delete mapPainterAiAircraft;
   delete mapPainterTrail;
   delete mapPainterShip;
   delete mapPainterUser;
@@ -235,7 +238,8 @@ void MapPaintLayer::initQueries()
   mapPainterAirspace->initQueries();
   mapPainterMark->initQueries();
   mapPainterRoute->initQueries();
-  mapPainterAircraft->initQueries();
+  mapPainterUserAircraft->initQueries();
+  mapPainterAiAircraft->initQueries();
   mapPainterTrail->initQueries();
   mapPainterShip->initQueries();
   mapPainterUser->initQueries();
@@ -595,9 +599,9 @@ bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport, const 
       if(!context.isObjectOverflow())
         mapPainterTrail->render();
 
-      mapPainterAircraft->render();
-
       mapPainterMark->render();
+      mapPainterAiAircraft->render();
+      mapPainterUserAircraft->render();
 
       resetNoAntiAliasFont();
       context.endTimer("All");

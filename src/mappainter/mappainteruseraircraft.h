@@ -15,28 +15,23 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef LITTLENAVMAP_MAPPAINTERAIRCRAFT_H
-#define LITTLENAVMAP_MAPPAINTERAIRCRAFT_H
+#ifndef LITTLENAVMAP_MAPPAINTERUSERAIRCRAFT_H
+#define LITTLENAVMAP_MAPPAINTERUSERAIRCRAFT_H
 
 #include "mappainter/mappaintervehicle.h"
 
 /*
  * Draws the simulator user aircraft and wind pointer.
  */
-class MapPainterAircraft :
+class MapPainterUserAircraft :
   public MapPainterVehicle
 {
 public:
-  MapPainterAircraft(MapPaintWidget *mapPaintWidget, MapScale *mapScale, PaintContext *paintContext);
-  virtual ~MapPainterAircraft() override;
+  MapPainterUserAircraft(MapPaintWidget *mapPaintWidget, MapScale *mapScale, PaintContext *paintContext);
+  virtual ~MapPainterUserAircraft() override;
 
   virtual void render() override;
 
-private:
-  int maxNearestAiLabels = 5;
-  float maxNearestAiLabelsDistNm = 10;
-  float maxNearestAiLabelsVertDistFt = 5000;
-
 };
 
-#endif // LITTLENAVMAP_MAPPAINTERMARKAIRCRAFT_H
+#endif // LITTLENAVMAP_MAPPAINTERUSERAIRCRAFT_H
