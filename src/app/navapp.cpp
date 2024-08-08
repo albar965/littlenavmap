@@ -323,7 +323,8 @@ void NavApp::preDatabaseLoad()
   qDebug() << Q_FUNC_INFO;
 
   loadingDatabase = true;
-  webController->preDatabaseLoad();
+  if(webController != nullptr)
+    webController->preDatabaseLoad();
   moraReader->preDatabaseLoad();
   airspaceController->preDatabaseLoad();
   trackController->preDatabaseLoad();
@@ -348,7 +349,8 @@ void NavApp::postDatabaseLoad()
   airspaceController->postDatabaseLoad();
   logdataController->postDatabaseLoad();
   trackController->postDatabaseLoad();
-  webController->postDatabaseLoad();
+  if(webController != nullptr)
+    webController->postDatabaseLoad();
   loadingDatabase = false;
 }
 
