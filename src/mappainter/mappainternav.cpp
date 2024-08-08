@@ -355,7 +355,7 @@ void MapPainterNav::paintAirways(const QList<map::MapAirway> *airways, bool fast
                         tr("%1 ").arg(TextPointer::getPointerLeft()) : tr("%1 ").arg(TextPointer::getPointerRight()));
           else
             // Elide for not rotated texts
-            txt = atools::elideTextShort(txt, 20);
+            txt = atools::elideTextShort(txt, 25);
         }
 
         // Add space at start and end to avoid letters touching the background rectangle border
