@@ -53,7 +53,8 @@ enum DisplayOptionProfile
   PROFILE_FP_ALT_RESTRICTION_BLOCK = 1 << 17,
 
   /* User aircraft labels */
-  PROFILE_AIRCRAFT_ALTITUDE = 1 << 18,
+  PROFILE_AIRCRAFT_ACTUAL_ALTITUDE = 1 << 18,
+  PROFILE_AIRCRAFT_INDICATED_ALTITUDE = 1 << 25,
   PROFILE_AIRCRAFT_VERT_SPEED = 1 << 19,
   PROFILE_AIRCRAFT_VERT_ANGLE_NEXT = 1 << 20,
 
@@ -63,7 +64,7 @@ enum DisplayOptionProfile
   PROFILE_HEADER_DESCENT_PATH_DEVIATION = 1 << 23, /* Descent Path: Deviation: 1,153 ft, above */
   PROFILE_HEADER_DESCENT_PATH_ANGLE = 1 << 24, /* ... Angle and Speed: -3.4°, -2,102 fpm */
 
-  // Next is 1 << 25
+  // Next is 1 << 26
 
   /* All drawn in the top label */
   PROFILE_TOP_ANY = PROFILE_LABELS_DISTANCE | PROFILE_LABELS_MAG_COURSE | PROFILE_LABELS_TRUE_COURSE | PROFILE_LABELS_RELATED,
@@ -88,7 +89,8 @@ static const QVector<optsp::DisplayOptionProfile> ALL_OPTIONS({optsp::PROFILE_LA
                                                                optsp::PROFILE_FP_ALT_RESTRICTION_BLOCK, optsp::PROFILE_GROUND,
                                                                optsp::PROFILE_SAFE_ALTITUDE, optsp::PROFILE_LEG_SAFE_ALTITUDE,
                                                                optsp::PROFILE_LABELS_ALT, optsp::PROFILE_TOOLTIP,
-                                                               optsp::PROFILE_HIGHLIGHT, optsp::PROFILE_AIRCRAFT_ALTITUDE,
+                                                               optsp::PROFILE_HIGHLIGHT, optsp::PROFILE_AIRCRAFT_ACTUAL_ALTITUDE,
+                                                               optsp::PROFILE_AIRCRAFT_INDICATED_ALTITUDE,
                                                                optsp::PROFILE_AIRCRAFT_VERT_SPEED, optsp::PROFILE_AIRCRAFT_VERT_ANGLE_NEXT,
                                                                optsp::PROFILE_HEADER_DIST_TIME_TO_DEST,
                                                                optsp::PROFILE_HEADER_DIST_TIME_TO_TOD,
@@ -103,7 +105,7 @@ static const optsp::DisplayOptionsProfile DEFAULT_OPTIONS = optsp::PROFILE_LABEL
                                                             optsp::PROFILE_FP_ALT_RESTRICTION_BLOCK | optsp::PROFILE_GROUND |
                                                             optsp::PROFILE_SAFE_ALTITUDE | optsp::PROFILE_LEG_SAFE_ALTITUDE |
                                                             optsp::PROFILE_LABELS_ALT | optsp::PROFILE_TOOLTIP | optsp::PROFILE_HIGHLIGHT |
-                                                            optsp::PROFILE_AIRCRAFT_ALTITUDE | optsp::PROFILE_AIRCRAFT_VERT_SPEED |
+                                                            optsp::PROFILE_AIRCRAFT_ACTUAL_ALTITUDE | optsp::PROFILE_AIRCRAFT_VERT_SPEED |
                                                             optsp::PROFILE_AIRCRAFT_VERT_ANGLE_NEXT |
                                                             optsp::PROFILE_HEADER_DIST_TIME_TO_DEST |
                                                             optsp::PROFILE_HEADER_DIST_TIME_TO_TOD |

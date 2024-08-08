@@ -1705,9 +1705,15 @@ void ProfileWidget::paintEvent(QPaintEvent *)
     // Draw optional aircraft labels =======================
     QStringList texts;
 
-    // Actual altitude
-    if(displayOptions.testFlag(optsp::PROFILE_AIRCRAFT_ALTITUDE))
-      texts.append(Unit::altFeet(aircraftAlt(userAircraft)));
+    // Indicated altitude ===========================
+    if(displayOptions.testFlag(optsp::PROFILE_AIRCRAFT_INDICATED_ALTITUDE) &&
+       userAircraft.getIndicatedAltitudeFt() < atools::fs::sc::SC_INVALID_FLOAT)
+      texts.append(tr("IND %1").arg(Unit::altFeet(userAircraft.getIndicatedAltitudeFt())));
+
+    // Actual altitude ===========================
+    if(displayOptions.testFlag(optsp::PROFILE_AIRCRAFT_ACTUAL_ALTITUDE) &&
+       userAircraft.getActualAltitudeFt() < atools::fs::sc::SC_INVALID_FLOAT)
+      texts.append(tr("ALT %1").arg(Unit::altFeet(userAircraft.getActualAltitudeFt())));
 
     // Actual vertical speed
     if(displayOptions.testFlag(optsp::PROFILE_AIRCRAFT_VERT_SPEED))

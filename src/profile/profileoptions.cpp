@@ -60,7 +60,8 @@ bool ProfileOptions::showOptions()
 
 
   QTreeWidgetItem *aircraftItem = treeDialog.addTopItem1(tr("User Aircraft Labels"));
-  treeDialog.addItem2(aircraftItem, optsp::PROFILE_AIRCRAFT_ALTITUDE, tr("Altitude"), tr("Show actual user aircraft altitude at symbol."));
+  treeDialog.addItem2(aircraftItem, optsp::PROFILE_AIRCRAFT_ACTUAL_ALTITUDE, tr("Actual Altitude"), tr("Actual user aircraft altitude at symbol prefixed with \"ALT\"."));
+  treeDialog.addItem2(aircraftItem, optsp::PROFILE_AIRCRAFT_INDICATED_ALTITUDE, tr("Indicated Altitude"), tr("Indicated user aircraft altitude at symbol prefixed with \"IND\"."));
   treeDialog.addItem2(aircraftItem, optsp::PROFILE_AIRCRAFT_VERT_SPEED, tr("Vertical Speed"), tr("Show vertical speed of at user aircraft symbol."));
   treeDialog.addItem2(aircraftItem, optsp::PROFILE_AIRCRAFT_VERT_ANGLE_NEXT, tr("Vertical Speed to Next"),
                       tr("Vertical speed needed to arrive at the calculated altitude at the next waypoint.\n"
