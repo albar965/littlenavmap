@@ -27092,7 +27092,7 @@ VORTAC, TACAN or NDB.</source>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="346"/>
-        <source>Select display options measurement lines.</source>
+        <source>Select display options for measurement lines.</source>
         <translation>选择显示测距线的选项。</translation>
     </message>
     <message>

@@ -28296,7 +28296,7 @@ Indicando com &quot;GC&quot; se rumo e o grande círculo estiverem selecionados.
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="346"/>
-        <source>Select display options measurement lines.</source>
+        <source>Select display options for measurement lines.</source>
         <translation>Selecione as opções de exibição das linhas de medição.</translation>
     </message>
     <message>

@@ -27393,7 +27393,7 @@ The label moves to keep it visible while scrolling.</source>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="346"/>
-        <source>Select display options measurement lines.</source>
+        <source>Select display options for measurement lines.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
