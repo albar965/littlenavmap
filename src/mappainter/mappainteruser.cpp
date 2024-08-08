@@ -77,8 +77,25 @@ void MapPainterUser::paintUserpoints(const QList<MapUserpoint>& userpoints, bool
 
       if(icons->hasType(userpoint.type) || context->userPointTypeUnknown)
       {
-        float size = context->szF(context->symbolSizeUserpoint, context->mapLayer->getUserPointSymbolSize());
-        if(userpoint.type == "Logbook")
+        // Use navaid sizes as base but allow user to override with userpoint scale
+        float size;
+        if(userpoint.isAirport())
+          size = context->szF(context->symbolSizeUserpoint, context->mapLayer->getAirportSymbolSize());
+        else if(userpoint.isNdb())
+          size = context->szF(context->symbolSizeUserpoint, context->mapLayer->getNdbSymbolSize());
+        else if(userpoint.isWaypoint())
+          size = context->szF(context->symbolSizeUserpoint * 1.5f, context->mapLayer->getWaypointSymbolSize());
+        else if(userpoint.isVrp())
+          size = context->szF(context->symbolSizeUserpoint * 2.f, context->mapLayer->getWaypointSymbolSize());
+        else if(userpoint.isObstacle())
+          size = context->szF(context->symbolSizeUserpoint * 2.f, context->mapLayer->getWaypointSymbolSize());
+        else if(userpoint.isVor())
+          size = context->szF(context->symbolSizeUserpoint, context->mapLayer->getVorSymbolSize());
+        else
+          size = context->szF(context->symbolSizeUserpoint, context->mapLayer->getUserPointSymbolSize());
+
+        // Put logbook shield to the bottom right
+        if(userpoint.isLogbook())
         {
           x += size / 2.f;
           y += size / 2.f;
@@ -94,9 +111,7 @@ void MapPainterUser::paintUserpoints(const QList<MapUserpoint>& userpoints, bool
           int maxTextLength = context->mapLayer->getMaxTextLengthUserpoint();
           QStringList texts;
           texts.append(atools::elideTextShort(userpoint.ident, maxTextLength));
-          QString name = userpoint.name != userpoint.ident ? atools::elideTextShort(userpoint.name, maxTextLength) : QString();
-          if(!name.isEmpty())
-            texts.append(name);
+          texts.append(userpoint.name != userpoint.ident ? atools::elideTextShort(userpoint.name, maxTextLength) : QString());
 
           textatt::TextAttributes textatts = textatt::NONE;
           float xpos = x, ypos = y;

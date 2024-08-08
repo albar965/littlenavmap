@@ -18,6 +18,7 @@
 #include "query/airwayquery.h"
 
 #include "common/constants.h"
+#include "common/mapresult.h"
 #include "common/maptypesfactory.h"
 #include "mapgui/maplayer.h"
 #include "settings/settings.h"

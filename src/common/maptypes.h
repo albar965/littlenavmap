@@ -887,7 +887,46 @@ struct MapUserpoint
 
   bool isAddon() const
   {
-    return type.startsWith("Addon");
+    return type.compare("Addon", Qt::CaseInsensitive) == 0;
+  }
+
+  bool isVor() const
+  {
+    return type.compare("VOR", Qt::CaseInsensitive) == 0 ||
+           type.compare("VORDME", Qt::CaseInsensitive) == 0 ||
+           type.compare("DME", Qt::CaseInsensitive) == 0 ||
+           type.compare("VORTAC", Qt::CaseInsensitive) == 0 ||
+           type.compare("TACAN", Qt::CaseInsensitive) == 0;
+  }
+
+  bool isWaypoint() const
+  {
+    return type.compare("Waypoint", Qt::CaseInsensitive) == 0;
+  }
+
+  bool isVrp() const
+  {
+    return type.compare("VRP", Qt::CaseInsensitive) == 0;
+  }
+
+  bool isObstacle() const
+  {
+    return type.compare("Obstacle", Qt::CaseInsensitive) == 0;
+  }
+
+  bool isNdb() const
+  {
+    return type.compare("NDB", Qt::CaseInsensitive) == 0;
+  }
+
+  bool isAirport() const
+  {
+    return type.compare("Airport", Qt::CaseInsensitive) == 0;
+  }
+
+  bool isLogbook() const
+  {
+    return type.compare("Logbook", Qt::CaseInsensitive) == 0;
   }
 
   QString name, ident, region, type, description, tags;
