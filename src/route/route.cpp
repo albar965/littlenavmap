@@ -2510,9 +2510,11 @@ bool Route::arrivalRouteToProcLegs(int& arrivaLegsOffset) const
     arrivaLegsOffset = getArrivaLegsOffset();
     if(arrivaLegsOffset > 0 && arrivaLegsOffset < size() - 1)
     {
-      const RouteLeg& routeLeg = value(arrivaLegsOffset - 1);
-      const RouteLeg& arrivalLeg = value(arrivaLegsOffset);
-      return arrivalLeg.isAnyProcedure() && arrivalLeg.isValid() && routeLeg.isValid() && routeLeg.isRoute();
+      const RouteLeg& prevRouteLeg = value(arrivaLegsOffset - 1);
+      const RouteLeg& nextArrivalLeg = value(arrivaLegsOffset);
+      return nextArrivalLeg.isAnyProcedure() && nextArrivalLeg.isValid() && prevRouteLeg.isValid() &&
+             // Previous leg is en-route or a departure
+             (prevRouteLeg.isRoute() || prevRouteLeg.getProcedureLeg().isAnyDeparture());
     }
   }
   return false;
@@ -2526,9 +2528,10 @@ bool Route::departureProcToRouteLegs(int& startIndexAfterProcedure) const
     startIndexAfterProcedure = getStartIndexAfterProcedure();
     if(startIndexAfterProcedure > 0 && startIndexAfterProcedure < size() - 1)
     {
-      const RouteLeg& departureLeg = value(startIndexAfterProcedure - 1);
-      const RouteLeg& routeLeg = value(startIndexAfterProcedure);
-      return departureLeg.isAnyProcedure() && departureLeg.isValid() && routeLeg.isRoute() && routeLeg.isValid();
+      const RouteLeg& prevDepartureLeg = value(startIndexAfterProcedure - 1);
+      const RouteLeg& nextRouteLeg = value(startIndexAfterProcedure);
+      return prevDepartureLeg.isAnyProcedure() && prevDepartureLeg.isValid() && nextRouteLeg.isValid() &&
+             (nextRouteLeg.isRoute() || nextRouteLeg.getProcedureLeg().isAnyArrival());
     }
   }
   return false;
