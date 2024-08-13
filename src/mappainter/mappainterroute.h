@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -65,8 +65,13 @@ private:
     {
     }
 
-    DrawText(const atools::geo::Line& lineParam, bool distanceParam, bool courseParam)
+    explicit DrawText(const atools::geo::Line& lineParam, bool distanceParam, bool courseParam)
       : line(lineParam), distance(distanceParam), course(courseParam)
+    {
+    }
+
+    explicit DrawText(const atools::geo::Pos& pos1, const atools::geo::Pos& pos2, bool distanceParam, bool courseParam)
+      : line(pos1, pos2), distance(distanceParam), course(courseParam)
     {
     }
 
@@ -74,7 +79,7 @@ private:
     atools::geo::Line line;
 
     /* Draw distance and/or course information */
-    bool distance, course;
+    bool distance = false, course = false;
   };
 
   /* Draw route only legs - not procedures */

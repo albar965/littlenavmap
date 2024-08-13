@@ -496,7 +496,7 @@ struct MapRunway
         patternAlt,
         smoothness /* 0 (smooth) to 1 (very rough). Default is 0.25. X-Plane only. -1.f if not set */;
   float width,
-        primaryOffset, secondaryOffset, /* part of the runway length */
+        primaryOffset, secondaryOffset, /* Offset threshold is a part of the runway length in ft */
         primaryBlastPad, secondaryBlastPad, primaryOverrun, secondaryOverrun; /* not part of the runway length all in ft */
   atools::geo::Pos primaryPosition, secondaryPosition;
 

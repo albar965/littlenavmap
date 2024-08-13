@@ -177,6 +177,7 @@ enum MapType : unsigned long long
 ATOOLS_DECLARE_FLAGS(MapTypes, MapType)
 ATOOLS_DECLARE_OPERATORS_FOR_FLAGS(map::MapTypes)
 
+QDebug operator<<(QDebug out, const map::MapType& type);
 QDebug operator<<(QDebug out, const map::MapTypes& type);
 
 /* Type that is used only for flags to determine what should be drawn.

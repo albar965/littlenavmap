@@ -954,9 +954,7 @@ void HtmlInfoBuilder::runwayText(const MapAirport& airport, HtmlBuilder& html, b
 
           QString num = hasStart ? " " % heliRec.valueStr("runway_name") : tr(" (no Start Position)");
 
-          html.h3(tr("Helipad%1").arg(num),
-                  (closed ? ahtml::STRIKEOUT : ahtml::NONE)
-                  | ahtml::UNDERLINE);
+          html.h3(tr("Helipad%1").arg(num), (closed ? ahtml::STRIKEOUT : ahtml::NONE) | ahtml::UNDERLINE);
           html.nbsp().nbsp();
 
           Pos pos(heliRec.valueFloat("lonx"), heliRec.valueFloat("laty"));
@@ -3536,16 +3534,11 @@ void HtmlInfoBuilder::procedurePointText(const map::MapProcedurePoint& procPoint
   if(!procPoint.previewAll)
   {
     // Add IAF, MAP, ...
-    QString typeStr, type = proc::proceduresLegSecialTypeLongStr(proc::specialType(leg.arincDescrCode));
-
-    if(type.isEmpty())
-      typeStr = tr("Fix:");
-    else
-      typeStr = tr("%1:").arg(type);
 
     if(!legs->isCustomDeparture())
     {
-      html.row2If(typeStr, leg.fixIdent);
+      const QString& type = proc::proceduresLegSecialTypeLongStr(proc::specialType(leg.arincDescrCode));
+      html.row2If(type.isEmpty() ? tr("Fix:") : tr("%1:").arg(type), leg.fixIdent);
 
       if(verbose)
       {

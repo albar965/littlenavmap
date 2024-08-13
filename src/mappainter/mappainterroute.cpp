@@ -40,7 +40,6 @@
 
 #include <marble/GeoPainter.h>
 
-
 using namespace Marble;
 using namespace atools::geo;
 using atools::contains;
@@ -807,7 +806,7 @@ void MapPainterRoute::paintProcedure(QSet<map::MapRef>& idMap, const proc::MapPr
   lastLines.clear();
   lastLines.append(QLineF());
   QVector<DrawText> drawTextLines, lastActiveDrawTextLines;
-  drawTextLines.fill({Line(), false, false}, legs.size());
+  drawTextLines.fill(DrawText(), legs.size());
   lastActiveDrawTextLines = drawTextLines;
 
   // Draw segments and collect text placement information in drawTextLines ========================================
@@ -1021,7 +1020,7 @@ void MapPainterRoute::paintProcedureSegment(const proc::MapProcedureLegs& legs, 
 
   // Use visible dummy here since we need to call the method that also returns coordinates outside the screen
   QLineF line;
-  bool hidden;
+  bool hidden; // Skip line drawing if hidden behind the globe
   wToS(leg.line, line, size, &hidden);
 
   if(leg.disabled)
@@ -1043,7 +1042,7 @@ void MapPainterRoute::paintProcedureSegment(const proc::MapProcedureLegs& legs, 
     return;
   }
 
-  QPainter *painter = context->painter;
+  Marble::GeoPainter *painter = context->painter;
   // ===========================================================
   // Draw lines simplified if no point is hidden to avoid weird things at high zoom factors in spherical projection
   if(!context->mapLayerRoute->isApproachDetail())
@@ -1055,7 +1054,7 @@ void MapPainterRoute::paintProcedureSegment(const proc::MapProcedureLegs& legs, 
     if(!hidden1 && !hidden2)
     {
       // QLineF simpleLine(lastLine.p2(), line.p1());
-      if(draw)
+      if(draw && !hidden)
       {
         if(!lastLines.constLast().p2().isNull() && !line.p1().isNull())
           drawLine(painter, lastLines.constLast().p2(), line.p1());
@@ -1071,7 +1070,9 @@ void MapPainterRoute::paintProcedureSegment(const proc::MapProcedureLegs& legs, 
     return;
   }
 
-  QPointF interceptPoint = wToS(leg.interceptPos, size, &hidden);
+  bool hiddenIntercept, hiddenRunwayDeparture, visibleDummy;
+  QPointF interceptPoint = wToS(leg.interceptPos, size, &visibleDummy, &hiddenIntercept);
+  QPointF runwayDeparturePoint = wToS(leg.runwayDeparturePos, size, &visibleDummy, &hiddenRunwayDeparture);
 
   bool showDistance = !leg.noDistanceDisplay();
 
@@ -1080,22 +1081,26 @@ void MapPainterRoute::paintProcedureSegment(const proc::MapProcedureLegs& legs, 
   {
     if(line.length() > 2 && leg.recFixPos.isValid())
     {
-      if(draw)
+      if(draw && !hidden)
       {
-        QPointF point = wToS(leg.recFixPos, size, &hidden);
-        if(leg.correctedArc)
+        bool recFixPosHidden;
+        QPointF recFixPoint = wToS(leg.recFixPos, size, &visibleDummy, &recFixPosHidden);
+        if(!recFixPosHidden)
         {
-          // Arc with stub
-          drawLine(painter, line.p1(), interceptPoint);
-          paintArc(context->painter, interceptPoint, line.p2(), point, leg.turnDirection == "L");
+          if(leg.correctedArc && !hiddenIntercept)
+          {
+            // Arc with stub
+            drawLine(painter, line.p1(), interceptPoint);
+            paintArc(context->painter, interceptPoint, line.p2(), recFixPoint, leg.turnDirection == "L");
+          }
+          else
+            paintArc(context->painter, line.p1(), line.p2(), recFixPoint, leg.turnDirection == "L");
         }
-        else
-          paintArc(context->painter, line.p1(), line.p2(), point, leg.turnDirection == "L");
       }
     }
     else
     {
-      if(draw)
+      if(draw && !hidden)
         drawLine(painter, line);
       lastLines.append(line);
 
@@ -1130,16 +1135,17 @@ void MapPainterRoute::paintProcedureSegment(const proc::MapProcedureLegs& legs, 
 #endif
       prevLeg != nullptr /*&& !prevLeg->isInitialFix() && prevLeg->type != proc::START_OF_PROCEDURE*/)
     {
+      // Turn found ===================================
       float lineDist = static_cast<float>(QLineF(lastLines.constLast().p2(), line.p1()).length());
       if(!lastLines.constLast().p2().isNull() && lineDist > 2.f)
       {
-        // Lines are not connected which can happen if a CF follows after a FD or similar
+        // Lines are not connected which can happen if a CF follows after a FD or similar ===================================
         paintProcedureBow(prevLeg, lastLines, painter, line, leg, interceptPoint, draw);
 
         if(drawTextLines != nullptr)
         {
           if(leg.interceptPos.isValid())
-            (*drawTextLines)[index] = DrawText(Line(leg.interceptPos, leg.line.getPos2()), false, true);
+            (*drawTextLines)[index] = DrawText(leg.interceptPos, leg.line.getPos2(), false, true);
           else
             // Can draw a label along the line with course but not distance
             (*drawTextLines)[index] = DrawText(leg.line, false, true);
@@ -1147,7 +1153,7 @@ void MapPainterRoute::paintProcedureSegment(const proc::MapProcedureLegs& legs, 
       }
       else
       {
-        // Lines are connected but a turn direction is given
+        // Lines are connected but a turn direction is given ===================================
         // Draw a small arc if a turn direction is given
 
         // lastLines gets the full line added and nextLine is the line for text
@@ -1160,33 +1166,45 @@ void MapPainterRoute::paintProcedureSegment(const proc::MapProcedureLegs& legs, 
         {
           // Can draw a label along the line with course but not distance
           if(leg.interceptPos.isValid())
-            (*drawTextLines)[index] = DrawText(Line(leg.interceptPos, leg.line.getPos2()), true, true);
+            (*drawTextLines)[index] = DrawText(leg.interceptPos, leg.line.getPos2(), true, true);
           else
-            (*drawTextLines)[index] = DrawText(Line(p1, p2), showDistance, true);
+            (*drawTextLines)[index] = DrawText(p1, p2, showDistance, true);
         }
       }
     }
     else
     {
-      // No turn direction or both
-
+      // No turn direction or both ===================================
       if(leg.interceptPos.isValid())
       {
-        // Intercept a CF leg
-        if(draw)
+        if(!hiddenIntercept)
         {
-          drawLine(painter, line.p1(), interceptPoint);
-          drawLine(painter, interceptPoint, line.p2());
+          // Intercept a CF leg ===================================
+          if(draw && !hidden && !hiddenRunwayDeparture)
+          {
+            if(leg.runwayDeparturePos.isValid())
+              // Draw aligned departure
+              drawPolyline(painter, QPolygonF({line.p1(), runwayDeparturePoint, interceptPoint, line.p2()}));
+            else
+              drawPolyline(painter, QPolygonF({line.p1(), interceptPoint, line.p2()}));
+          }
+
+          lastLines.append(QLineF(interceptPoint, line.p2()));
         }
-        lastLines.append(QLineF(interceptPoint, line.p2()));
 
         if(drawTextLines != nullptr)
-          // Can draw a label along the line
-          (*drawTextLines)[index] = DrawText(Line(leg.interceptPos, leg.line.getPos2()), showDistance, true);
+        {
+          if(leg.runwayDeparturePos.isValid())
+            (*drawTextLines)[index] = DrawText(leg.interceptPos, leg.line.getPos2(), showDistance, true);
+          else
+            // Draw aligned departure
+            // Can draw a label along the line
+            (*drawTextLines)[index] = DrawText(leg.interceptPos, leg.line.getPos2(), showDistance, true);
+        }
       }
       else
       {
-        if(draw)
+        if(draw && !hidden)
         {
           if(!lastLines.constLast().p2().isNull() && QLineF(lastLines.constLast().p2(), line.p1()).length() > 2)
           {
@@ -1195,13 +1213,22 @@ void MapPainterRoute::paintProcedureSegment(const proc::MapProcedureLegs& legs, 
               drawLine(painter, lastLines.constLast().p2(), line.p1());
           }
 
-          drawLine(painter, line);
+          if(leg.runwayDeparturePos.isValid() && !hiddenRunwayDeparture)
+            // Draw aligned departure
+            drawPolyline(painter, QPolygonF({line.p1(), runwayDeparturePoint, line.p2()}));
+          else
+            drawLine(painter, line);
         }
         lastLines.append(line);
 
         if(drawTextLines != nullptr)
-          // Can draw a label along the line
-          (*drawTextLines)[index] = DrawText(leg.line, showDistance, true);
+        {
+          if(leg.runwayDeparturePos.isValid())
+            (*drawTextLines)[index] = DrawText(leg.runwayDeparturePos, leg.line.getPos2(), showDistance, true);
+          else
+            // Can draw a label along the line
+            (*drawTextLines)[index] = DrawText(leg.line, showDistance, true);
+        }
       }
     }
   }
@@ -1217,13 +1244,25 @@ void MapPainterRoute::paintProcedureSegment(const proc::MapProcedureLegs& legs, 
                               proc::CIRCLE_TO_LAND,
                               proc::STRAIGHT_IN}))
   {
-    if(draw)
-      drawLine(painter, line);
+    if(draw && !hidden)
+    {
+      if(leg.runwayDeparturePos.isValid() && !hiddenRunwayDeparture)
+        // Draw aligned departure bending at opposite runway end
+        drawPolyline(painter, QPolygonF({line.p1(), runwayDeparturePoint, line.p2()}));
+      else
+        drawLine(painter, line);
+    }
     lastLines.append(line);
 
     if(drawTextLines != nullptr)
-      // Can draw a label along the line
-      (*drawTextLines)[index] = DrawText(leg.line, showDistance, true);
+    {
+      if(leg.runwayDeparturePos.isValid())
+        // Draw aligned departure bending at opposite runway end - label only after runway line
+        (*drawTextLines)[index] = DrawText(leg.runwayDeparturePos, leg.line.getPos2(), showDistance, true);
+      else
+        // Can draw a label along the line
+        (*drawTextLines)[index] = DrawText(leg.line, showDistance, true);
+    }
   }
   // ===========================================================
   else if(contains(leg.type, {proc::HOLD_TO_ALTITUDE,
@@ -1256,7 +1295,7 @@ void MapPainterRoute::paintProcedureSegment(const proc::MapProcedureLegs& legs, 
         holdText2 = holdText2 % tr(" %1").arg(TextPointer::getPointerRight());
     }
 
-    if(draw)
+    if(draw && !hidden)
       paintHoldWithText(painter, static_cast<float>(line.x2()), static_cast<float>(line.y2()),
                         trueCourse, leg.distance, leg.time, leg.turnDirection == "L",
                         holdText, holdText2,
@@ -1295,7 +1334,7 @@ void MapPainterRoute::paintProcedureSegment(const proc::MapProcedureLegs& legs, 
 
     if(drawTextLines != nullptr && !hidden)
       // Can draw a label along the line
-      (*drawTextLines)[index] = DrawText(Line(leg.line.getPos1(), leg.procedureTurnPos), showDistance, true);
+      (*drawTextLines)[index] = DrawText(leg.line.getPos1(), leg.procedureTurnPos, showDistance, true);
   }
 }
 
@@ -1866,8 +1905,9 @@ void MapPainterRoute::paintProcedurePoint(QSet<map::MapRef>& idMap, const proc::
     if(drawText)
       paintProcedurePointText(x, y, drawTextDetails, textPlacementAtts, texts);
   }
-  else if(!navaids.runwayEnds.isEmpty() && wToSBuf(navaids.runwayEnds.constFirst().position, x, y, MARGINS))
+  else if(!navaids.runwayEnds.isEmpty() && leg.runwayApproachPos.isValid() && wToSBuf(leg.runwayApproachPos, x, y, MARGINS))
   {
+    // To (offset) approach position =============
     texts.prepend(leg.fixIdent);
     if(drawUnderlay)
       paintProcedureUnderlay(leg, x, y, symbolSizeWaypoint);

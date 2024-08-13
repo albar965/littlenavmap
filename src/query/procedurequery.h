@@ -193,12 +193,27 @@ private:
   proc::MapProcedureLeg buildProcedureLegEntry(const map::MapAirport& airport);
   void buildLegEntry(atools::sql::SqlQuery *query, proc::MapProcedureLeg& leg, const map::MapAirport& airport);
 
-  /* See comments in postProcessLegs about the steps below */
+  /* See comments in postProcessLegs about the steps below.
+   * Custom approaches are built in createCustomApproach() and are not processed here. */
   void postProcessLegs(const map::MapAirport& airport, proc::MapProcedureLegs& legs, bool addArtificialLegs) const;
-  void processLegs(proc::MapProcedureLegs& legs) const;
+
+  /* Prepare all leg coordinates and fill line */
+  void processLegs(proc::MapProcedureLegs& legs, const map::MapAirport& airport) const;
+
+  /* Collect leg errors to procedure error */
   void processLegErrors(proc::MapProcedureLegs& legs) const;
+
+  /* Set the force altitude flag for FAF and FACF */
   void processAltRestrictions(proc::MapProcedureLegs& procedure) const;
+
+  /* Check which leg is used to draw the Maltesian cross */
   void processLegsFafAndFacf(proc::MapProcedureLegs& legs) const;
+
+  /* Align approach runway according to displaced threshold. Also corrects line of following missed legs. */
+  void processApproachRunway(proc::MapProcedureLegs& legs, const map::MapAirport& airport) const;
+
+  /* Add additional geometry to have departure partially aligned with runway */
+  void processDepartureRunway(proc::MapProcedureLegs& legs, const map::MapAirport& airport) const;
 
   /* Fill the courese and heading to intercept legs after all other lines are calculated */
   void processCourseInterceptLegs(proc::MapProcedureLegs& legs) const;
@@ -207,17 +222,19 @@ private:
   void processLegsDistanceAndCourse(proc::MapProcedureLegs& legs) const;
 
   /* Add an artificial (not in the database) runway leg if no connection to the end is given */
-  void processArtificialLegs(const map::MapAirport& airport, proc::MapProcedureLegs& legs,
-                             bool addArtificialLegs) const;
+  void processArtificialLegs(proc::MapProcedureLegs& legs, const map::MapAirport& airport, bool addArtificialLegs) const;
 
   /* Adjust conflicting altitude restrictions where a transition ends with "A2000" and is the same as the following
    * initial fix having "2000". Also corrects final altitude restriction if below airport. */
-  void processLegsFixRestrictions(const map::MapAirport& airport, proc::MapProcedureLegs& legs) const;
+  void processLegsFixRestrictions(proc::MapProcedureLegs& legs, const map::MapAirport& airport) const;
 
   /* Assign magnetic variation from the navaids */
-  void updateMagvar(const map::MapAirport& airport, proc::MapProcedureLegs& legs) const;
+  void processMagvar(proc::MapProcedureLegs& legs, const map::MapAirport& airport) const;
+
+  /* Update bounding rectangle */
   void updateBounding(proc::MapProcedureLegs& legs) const;
 
+  /* Update the mapTypes */
   void assignType(proc::MapProcedureLegs& procedure) const;
 
   /* Check if procedure has hard errors. Fills error list if any and resets id to -1*/
@@ -241,6 +258,9 @@ private:
   int findProcedureLegId(const map::MapAirport& airport, atools::sql::SqlQuery *query, const QString& suffix, const QString& runway,
                          bool transition, bool strict);
 
+  /* calculates distance based on field geometry and course based on the last segment in geometry */
+  void calcLegDistanceAndCourse(proc::MapProcedureLeg& leg) const;
+
   /* Get runway end and try lower and higher numbers if nothing was found - adds a dummy entry with airport
    * position if no runway ends were found */
   void runwayEndByName(map::MapResult& result, const QString& name, const map::MapAirport& airport);
@@ -257,6 +277,9 @@ private:
   static QString anyMatchingRunwayForSidStar(const QString& arincName, const QStringList& airportRunways);
 
   QString runwayErrorString(const QString& runway);
+
+  /* Calculate corrected approach point for offset threshold runways */
+  atools::geo::Pos approachPoint(const map::MapAirport& airport, const map::MapRunwayEnd& runwayEnd) const;
 
   atools::sql::SqlDatabase *dbNav;
   atools::sql::SqlQuery *procedureLegQuery = nullptr, *transitionLegQuery = nullptr,

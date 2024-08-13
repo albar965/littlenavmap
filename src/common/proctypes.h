@@ -104,8 +104,8 @@ struct MapProcedureRef
 {
   MapProcedureRef(int airportIdParam, int runwayEndIdParam, int procIdParam, int transIdParam, int legIdParam,
                   proc::MapProcedureTypes type)
-    : airportId(airportIdParam), runwayEndId(runwayEndIdParam), procedureId(procIdParam), transitionId(transIdParam),
-    legId(legIdParam), mapType(type)
+    : airportId(airportIdParam), runwayEndId(runwayEndIdParam), procedureId(procIdParam), transitionId(transIdParam), legId(legIdParam),
+      mapType(type)
   {
   }
 
@@ -187,9 +187,14 @@ struct MapProcedureLeg
 
   QStringList displayText /* Fix label for map - filled in approach query */,
               remarks /* Additional remarks for tree - filled in approach query */;
+
   atools::geo::Pos fixPos, recFixPos,
                    interceptPos, /* Position of an intercept leg for grey circle */
-                   procedureTurnPos /* Extended position of a procedure turn */;
+                   procedureTurnPos, /* Extended position of a procedure turn */
+                   runwayApproachPos, /* Corrected runway approach depending on offset threshold. Runway end if no threshold. */
+                   runwayDeparturePos; /* Leg was modified to align a departure with the runway for a SID.
+                                        * This point is the position where the departure bends at the runway end. */
+
   atools::geo::Line line, /* Line with flying direction from pos1 to pos2 */
                     holdLine; /* Helping line to find out if aircraft leaves the hold */
 
@@ -408,7 +413,7 @@ struct MapProcedureLegs
 {
   QVector<MapProcedureLeg> transitionLegs, procedureLegs;
 
-  /* Reference with all database ids */
+  /* Reference with all database ids. For all navdata except custom procedures. */
   MapProcedureRef ref;
   atools::geo::Rect bounding;
 
@@ -420,8 +425,9 @@ struct MapProcedureLegs
           aircraftCategory; /* 5.221 */
 
   /* Only for approaches - the found runway end at the airport - can be different due to fuzzy search.
-   * Coordinates might be set even for CTL approaches where name is empty in this case. */
+   * Coordinates might be set even for CTL approaches where name is empty in this case. For all navdata except custom procedures. */
   map::MapRunwayEnd runwayEnd;
+
   proc::MapProcedureTypes mapType = PROCEDURE_NONE;
 
   /* Accumulated distances */
@@ -658,18 +664,18 @@ QString procedureTypeText(const proc::MapProcedureLeg& leg);
 QStringList procedureTextFirstAndLastFix(const proc::MapProcedureLegs& legs, proc::MapProcedureTypes mapType);
 
 /* VOR, NDB, etc. */
-QString procedureFixType(const QString& type);
+const QString& procedureFixType(const QString& type);
 
 /* Ident name and FAF, MAP, IAF */
 QString procedureLegFixStr(const proc::MapProcedureLeg& leg);
 
 /* "LOC" -> "Localizer", "TCN" -> "TACAN" */
-QString procedureType(const QString& type);
+const QString& procedureType(const QString& type);
 proc::ProcedureLegType procedureLegEnum(const QString& type);
 QString procedureLegTypeStr(ProcedureLegType type);
-QString procedureLegTypeShortStr(ProcedureLegType type);
+const QString& procedureLegTypeShortStr(ProcedureLegType type);
 QString procedureLegTypeFullStr(ProcedureLegType type);
-QString procedureLegRemarks(proc::ProcedureLegType);
+const QString& procedureLegRemarks(proc::ProcedureLegType);
 QString altRestrictionText(const MapAltRestriction& restriction);
 QString vertRestrictionText(const MapProcedureLeg& procedureLeg);
 
@@ -689,8 +695,8 @@ bool procedureLegDrawIdent(ProcedureLegType type);
 bool procedureLegFrom(proc::ProcedureLegType type);
 
 /* IAF, FAF, MAP */
-QString proceduresLegSecialTypeShortStr(proc::LegSpecialType type);
-QString proceduresLegSecialTypeLongStr(proc::LegSpecialType type);
+const QString& proceduresLegSecialTypeShortStr(proc::LegSpecialType type);
+const QString& proceduresLegSecialTypeLongStr(proc::LegSpecialType type);
 
 /* Get special leg type from ARINC description code */
 proc::LegSpecialType specialType(const QString& arincDescrCode);

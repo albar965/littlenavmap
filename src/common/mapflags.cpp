@@ -28,6 +28,12 @@ const QVector<map::MapAirspaceSources> MAP_AIRSPACE_SRC_VALUES =
 const QVector<map::MapAirspaceSources> MAP_AIRSPACE_SRC_NO_ONLINE_VALUES =
 {AIRSPACE_SRC_SIM, AIRSPACE_SRC_NAV, AIRSPACE_SRC_USER};
 
+QDebug operator<<(QDebug out, const map::MapType& type)
+{
+  out << map::MapTypes(type);
+  return out;
+}
+
 QDebug operator<<(QDebug out, const map::MapTypes& type)
 {
   QDebugStateSaver saver(out);
@@ -39,6 +45,8 @@ QDebug operator<<(QDebug out, const map::MapTypes& type)
   {
     if(type.testFlag(AIRPORT))
       flags.append("AIRPORT");
+    if(type.testFlag(RUNWAY))
+      flags.append("RUNWAY");
     if(type.testFlag(VOR))
       flags.append("VOR");
     if(type.testFlag(NDB))
@@ -71,8 +79,6 @@ QDebug operator<<(QDebug out, const map::MapTypes& type)
       flags.append("PARKING");
     if(type.testFlag(RUNWAYEND))
       flags.append("RUNWAYEND");
-    if(type.testFlag(RUNWAY))
-      flags.append("RUNWAY");
     if(type.testFlag(INVALID))
       flags.append("INVALID");
     if(type.testFlag(MISSED_APPROACH))
@@ -113,10 +119,6 @@ QDebug operator<<(QDebug out, const map::MapTypes& type)
       flags.append("AIRPORT_HELIPAD");
     if(type.testFlag(AIRPORT_EMPTY))
       flags.append("AIRPORT_EMPTY");
-    if(type.testFlag(AIRPORT_ADDON_ZOOM_FILTER))
-      flags.append("AIRPORT_ADDON_ZOOM_AND_FILTER");
-    if(type.testFlag(AIRPORT_ADDON_ZOOM))
-      flags.append("AIRPORT_ADDON_ZOOM");
     if(type.testFlag(AIRPORT_UNLIGHTED))
       flags.append("AIRPORT_UNLIGHTED");
     if(type.testFlag(AIRPORT_NO_PROCS))
@@ -125,8 +127,15 @@ QDebug operator<<(QDebug out, const map::MapTypes& type)
       flags.append("AIRPORT_CLOSED");
     if(type.testFlag(AIRPORT_MILITARY))
       flags.append("AIRPORT_MILITARY");
+    if(type.testFlag(PROCEDURE_POINT))
+      flags.append("PROCEDURE_POINT");
+    if(type.testFlag(AIRCRAFT_TRAIL))
+      flags.append("AIRCRAFT_TRAIL");
+    if(type.testFlag(AIRPORT_ADDON_ZOOM))
+      flags.append("AIRPORT_ADDON_ZOOM");
+    if(type.testFlag(AIRPORT_ADDON_ZOOM_FILTER))
+      flags.append("AIRPORT_ADDON_ZOOM_FILTER");
   }
-
   out.nospace().noquote() << flags.join("|");
 
   return out;
