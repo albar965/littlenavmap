@@ -349,7 +349,6 @@ protected:
   void paintArc(Marble::GeoPainter *painter, const atools::geo::Pos& centerPos, float radiusNm, float angleDegStart, float angleDegEnd,
                 bool fast) const;
 
-  void drawLineString(Marble::GeoPainter *painter, const atools::geo::LineString& linestring);
   void drawLine(Marble::GeoPainter *painter, const atools::geo::Line& line, bool forceDraw = false) const;
 
   void drawPolygon(Marble::GeoPainter *painter, const atools::geo::LineString& linestring) const;
@@ -396,6 +395,7 @@ protected:
                          QVector<float> inboundArrows = QVector<float>(),
                          QVector<float> outboundArrows = QVector<float>()) const;
 
+  /* Draw PI turn */
   void paintProcedureTurnWithText(QPainter *painter, float x, float y, float turnHeading, float distanceNm, bool left,
                                   QLineF *extensionLine, const QString& text, const QColor& textColor,
                                   const QColor& textColorBackground) const;

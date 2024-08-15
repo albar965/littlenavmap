@@ -3911,21 +3911,27 @@ QDebug operator<<(QDebug out, const Route& route)
   out << route.getFlightplanConst().getProperties() << endl << endl;
   for(int i = 0; i < route.size(); ++i)
     out << "===" << i << route.value(i) << endl;
+
   out << endl << "Departure ===========" << endl;
   out << "offset" << route.getDepartureAirportLegIndex();
   out << route.getDepartureAirportLeg() << endl;
+
   out << endl << "Destination ===========" << endl;
   out << "offset" << route.getDestinationAirportLegIndex();
   out << route.getDestinationAirportLeg() << endl;
+
   out << endl << "Departure Procedure ===========" << endl;
   out << "offset" << route.getSidLegsOffset();
   out << route.getSidLegs() << endl;
+
   out << "STAR Procedure ===========" << endl;
   out << "offset" << route.getStarLegsOffset() << endl;
   out << route.getStarLegs() << endl;
+
   out << "Arrival Procedure ========" << endl;
   out << "offset" << route.getApproachLegsOffset() << endl;
   out << route.getApproachLegs() << endl;
+
   out << "Alternates ========" << endl;
   out << "offset" << route.getAlternateLegsOffset() << "num" << route.getNumAlternateLegs() << endl;
   out << "==================================================================" << endl;

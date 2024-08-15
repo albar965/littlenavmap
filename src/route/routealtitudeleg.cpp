@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -225,26 +225,27 @@ float RouteAltitudeLeg::dx() const
 QDebug operator<<(QDebug out, const RouteAltitudeLeg& obj)
 {
   QDebugStateSaver saver(out);
-  out << obj.ident
-      << obj.line
-      << "TOC" << obj.topOfClimb
-      << "TOD" << obj.topOfDescent
-      << "alternate" << obj.alternate
-      << "missed" << obj.missed
-      << "procedure" << obj.procedure
-      << "climb time" << obj.climbTime
-      << "cruise time" << obj.cruiseTime
-      << "descent time" << obj.descentTime << endl
-      << "climb fuel" << obj.climbFuel
-      << "cruise fuel" << obj.cruiseFuel
-      << "descent fuel" << obj.descentFuel
-      << "fuel to dest" << obj.fuelToDest << endl
-      << "time to dest" << obj.timeToDest << endl
-      << "wind speed" << obj.windSpeed
-      << "wind dir" << obj.windDirection << endl
-      << "geometry" << obj.geometry << "NM/ft" << endl
-      << "angles" << obj.angles << "°" << endl
-      << "line" << obj.line << endl
-      << "geoLine" << obj.geoLine;
+  out.noquote().nospace()
+    << obj.ident
+    << ", line " << obj.line
+    << ", TOC " << obj.topOfClimb
+    << ", TOD " << obj.topOfDescent
+    << ", alternate " << obj.alternate
+    << ", missed " << obj.missed
+    << ", procedure " << obj.procedure
+    << ", climb time " << obj.climbTime
+    << ", cruise time " << obj.cruiseTime
+    << ", descent time " << obj.descentTime << endl
+    << ", climb fuel " << obj.climbFuel
+    << ", cruise fuel " << obj.cruiseFuel
+    << ", descent fuel " << obj.descentFuel
+    << ", fuel to dest " << obj.fuelToDest << endl
+    << ", time to dest " << obj.timeToDest << endl
+    << ", wind speed " << obj.windSpeed
+    << ", wind dir " << obj.windDirection << endl
+    << ", geometry " << obj.geometry << "NM/ft " << endl
+    << ", angles " << obj.angles << "° " << endl
+    << ", line " << obj.line << endl
+    << ", geoLine " << obj.geoLine;
   return out;
 }

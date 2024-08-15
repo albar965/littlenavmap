@@ -586,7 +586,9 @@ QDebug operator<<(QDebug out, const MapProcedureLeg& leg)
       << "type" << leg.type
       << "maptype" << leg.mapType
       << "missed" << leg.missed
-      << "line" << leg.line << endl;
+      << "missed" << leg.missed
+      << "line" << leg.line << endl
+      << "geometry" << leg.geometry << endl;
 
   out << "displayText" << leg.displayText
       << "remarks" << leg.remarks;
@@ -595,8 +597,9 @@ QDebug operator<<(QDebug out, const MapProcedureLeg& leg)
 
   out << leg.recFixType << leg.recFixIdent << leg.recFixRegion << leg.recFixPos << endl;
   out << "intercept" << leg.interceptPos << leg.intercept << endl;
-  out << "pc pos" << leg.procedureTurnPos << endl;
-  out << "geometry" << leg.geometry << endl;
+  out << "procturn pos" << leg.procedureTurnPos << endl;
+  out << "rw appr pos" << leg.runwayApproachPos << endl;
+  out << "rw depart pos" << leg.runwayDeparturePos << endl;
 
   out << "turnDirection" << leg.turnDirection
       << "flyover" << leg.flyover

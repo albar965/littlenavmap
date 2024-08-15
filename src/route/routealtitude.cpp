@@ -2119,6 +2119,6 @@ QDebug operator<<(QDebug out, const RouteAltitude& obj)
                           << endl;
 
   for(int i = 0; i < obj.size(); i++)
-    out << "++++++++++++++++++++++" << endl << i << obj.value(i) << endl;
+    out << "++++++++++++++++++++++" << endl << i << " " << obj.value(i) << endl;
   return out;
 }

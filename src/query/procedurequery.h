@@ -209,7 +209,8 @@ private:
   /* Check which leg is used to draw the Maltesian cross */
   void processLegsFafAndFacf(proc::MapProcedureLegs& legs) const;
 
-  /* Align approach runway according to displaced threshold. Also corrects line of following missed legs. */
+  /* Align approach runway according to displaced threshold. Also corrects line of following missed legs.
+   * Either sim or nav coordinates depending on exact runway name match. */
   void processApproachRunway(proc::MapProcedureLegs& legs, const map::MapAirport& airport) const;
 
   /* Add additional geometry to have departure partially aligned with runway */
@@ -221,7 +222,8 @@ private:
   /* Fill calculatedDistance, geometry from line and calculated course fields */
   void processLegsDistanceAndCourse(proc::MapProcedureLegs& legs) const;
 
-  /* Add an artificial (not in the database) runway leg if no connection to the end is given */
+  /* Add an artificial (not in the database) runway leg if no connection to the end is given.
+   * Adds DIRECT_TO_RUNWAY, VECTORS and DIRECT_TO_FIX. */
   void processArtificialLegs(proc::MapProcedureLegs& legs, const map::MapAirport& airport, bool addArtificialLegs) const;
 
   /* Adjust conflicting altitude restrictions where a transition ends with "A2000" and is the same as the following
@@ -278,8 +280,9 @@ private:
 
   QString runwayErrorString(const QString& runway);
 
-  /* Calculate corrected approach point for offset threshold runways */
-  atools::geo::Pos approachPoint(const map::MapAirport& airport, const map::MapRunwayEnd& runwayEnd) const;
+  /* Calculate corrected approach point for offset threshold runways or arrival. Tries sim airport first and then
+   * nav airport if no runway matches by exact name. */
+  atools::geo::Pos runwayPoint(const map::MapAirport& airport, const map::MapRunwayEnd& runwayEnd, bool approach, bool offset) const;
 
   atools::sql::SqlDatabase *dbNav;
   atools::sql::SqlQuery *procedureLegQuery = nullptr, *transitionLegQuery = nullptr,
