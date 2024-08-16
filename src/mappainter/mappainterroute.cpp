@@ -1267,9 +1267,7 @@ void MapPainterRoute::paintProcedureSegment(const proc::MapProcedureLegs& legs, 
     }
   }
   // ===========================================================
-  else if(contains(leg.type, {proc::HOLD_TO_ALTITUDE,
-                              proc::HOLD_TO_FIX,
-                              proc::HOLD_TO_MANUAL_TERMINATION}))
+  else if(contains(leg.type, {proc::HOLD_TO_ALTITUDE, proc::HOLD_TO_FIX, proc::HOLD_TO_MANUAL_TERMINATION}))
   {
     QString holdText, holdText2;
 
@@ -1697,7 +1695,8 @@ void MapPainterRoute::paintProcedurePoint(QSet<map::MapRef>& idMap, const proc::
                          proc::HEADING_TO_RADIAL_TERMINATION,
                          proc::TRACK_FROM_FIX_FROM_DISTANCE,
                          proc::FROM_FIX_TO_MANUAL_TERMINATION,
-                         proc::HEADING_TO_MANUAL_TERMINATION}))
+                         proc::HEADING_TO_MANUAL_TERMINATION,
+                         proc::PROCEDURE_TURN}))
   {
     if(lastInTransition)
       // =================================
@@ -1713,14 +1712,20 @@ void MapPainterRoute::paintProcedurePoint(QSet<map::MapRef>& idMap, const proc::
         restrTexts.append(proc::speedRestrictionTextNarrow(speedRestr));
       }
 
-      if(drawUnderlay)
-        paintProcedureUnderlay(leg, x, y, defaultOverflySize);
-      paintProcedurePoint(x, y, false);
+      if(leg.type != proc::PROCEDURE_TURN)
+      {
+        if(drawUnderlay)
+          paintProcedureUnderlay(leg, x, y, defaultOverflySize);
+        paintProcedurePoint(x, y, false);
+      }
 
       if(drawText)
       {
         texts.append(restrTexts);
-        paintProcedurePointText(x, y, drawTextDetails, textPlacementAtts, texts);
+        if(leg.type == proc::PROCEDURE_TURN)
+          paintProcedurePointText(x, y, drawTextDetails, textatt::CENTER | textatt::ROUTE_BG_COLOR, texts);
+        else
+          paintProcedurePointText(x, y, drawTextDetails, textPlacementAtts, texts);
         restrTexts.clear();
         texts.clear();
       }
