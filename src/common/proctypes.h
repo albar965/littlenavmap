@@ -443,13 +443,13 @@ struct MapProcedureLegs
   }
 
   /* Get takeoff start position from simulator data if runway matches. Otherwise navdata. */
-  atools::geo::Pos getDeparturePosition() const
+  const atools::geo::Pos& getDeparturePosition() const
   {
     return mapType & proc::PROCEDURE_SID ? runwaySim.getDeparturePosition(runwayEndSim.secondary) : atools::geo::EMPTY_POS;
   }
 
   /* Get position of other end of start runway (bend to takeoff direction) from simulator data if runway matches. Otherwise navdata. */
-  atools::geo::Pos getDeparturePositionOther() const
+  const atools::geo::Pos& getDeparturePositionOther() const
   {
     return mapType & proc::PROCEDURE_SID ? runwaySim.getDeparturePositionOther(runwayEndSim.secondary) : atools::geo::EMPTY_POS;
   }

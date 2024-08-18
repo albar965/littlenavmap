@@ -1241,6 +1241,7 @@ void MainWindow::connectAllSlots()
   connect(logdataController, &LogdataController::logDataChanged, this, &MainWindow::updateMapObjectsShown);
   connect(logdataController, &LogdataController::logDataChanged, infoController, &InfoController::updateAllInformation);
 
+  connect(mapWidget, &MapWidget::aircraftHasPassedTakeoffPoint, logdataController, &LogdataController::aircraftHasPassedTakeoffPoint);
   connect(mapWidget, &MapWidget::aircraftTakeoff, logdataController, &LogdataController::aircraftTakeoff);
   connect(mapWidget, &MapWidget::aircraftLanding, logdataController, &LogdataController::aircraftLanding);
 

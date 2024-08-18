@@ -274,13 +274,20 @@ atools::sql::SqlDatabase *LogdataController::getDatabase() const
   return manager->getDatabase();
 }
 
+void LogdataController::aircraftHasPassedTakeoffPoint(const atools::fs::sc::SimConnectUserAircraft&)
+{
+  aircraftPassedTakeoffPoint = true;
+}
+
 void LogdataController::aircraftTakeoff(const atools::fs::sc::SimConnectUserAircraft& aircraft)
 {
+  aircraftPassedTakeoffPoint = true;
   createTakeoffLanding(aircraft, true /*takeoff*/, 0.f);
 }
 
 void LogdataController::aircraftLanding(const atools::fs::sc::SimConnectUserAircraft& aircraft, float flownDistanceNm)
 {
+  aircraftPassedTakeoffPoint = true;
   createTakeoffLanding(aircraft, false /*takeoff*/, flownDistanceNm);
 }
 
@@ -292,9 +299,9 @@ void LogdataController::createTakeoffLanding(const atools::fs::sc::SimConnectUse
     map::MapRunwayEnd runwayEnd;
     map::MapAirport airport;
     if(!QueryManager::instance()->getQueriesGui()->getAirportQuerySim()->getBestRunwayEndForPosAndCourse(runwayEnd, airport,
-                                                                                                          aircraft.getPosition(),
-                                                                                                          aircraft.getTrackDegTrue(),
-                                                                                                          aircraft.isHelicopter()))
+                                                                                                         aircraft.getPosition(),
+                                                                                                         aircraft.getTrackDegTrue(),
+                                                                                                         aircraft.isHelicopter()))
     {
       // Not even an airport was found - log but continue anyway
       qWarning() << Q_FUNC_INFO << "No airport found near aircraft at" << (takeoff ? "takeoff" : "landing")
@@ -542,7 +549,7 @@ void LogdataController::recordFlightplanAndPerf(atools::sql::SqlRecord& record)
 void LogdataController::resetTakeoffLandingDetection()
 {
   ATOOLS_DELETE_LOG(aircraftAtTakeoff);
-
+  aircraftPassedTakeoffPoint = false;
   logEntryId = -1;
   saveLogEntryId();
 }

@@ -26,6 +26,7 @@
 #include "common/textplacement.h"
 #include "common/textpointer.h"
 #include "common/unit.h"
+#include "fs/sc/simconnectuseraircraft.h"
 #include "geo/calculations.h"
 #include "mapgui/maplayer.h"
 #include "mapgui/mappaintwidget.h"
@@ -61,6 +62,9 @@ MapPainterRoute::~MapPainterRoute()
 
 void MapPainterRoute::render()
 {
+  // Draw line to departure runway position
+  paintDirectToDeparture();
+
   // Clear before collecting duplicates
   routeProcIdMap.clear();
 
@@ -87,6 +91,82 @@ void MapPainterRoute::render()
                      true /* preview */, false /* previewAll */);
 
     context->endTimer("Approach Preview");
+  }
+}
+
+void MapPainterRoute::paintDirectToDeparture()
+{
+  if(context->mapLayer->isAirportDiagram() && context->flags2.testFlag(opts2::MAP_ROUTE_DIRECT_TO_DEPARTURE) &&
+     !NavApp::hasAircraftPassedTakeoffPoint())
+  {
+    const atools::fs::sc::SimConnectUserAircraft& userAircraft = mapPaintWidget->getUserAircraft();
+
+    // Aircraft in air
+    if(NavApp::isConnectedAndAircraft() && userAircraft.isFlying())
+      return;
+
+    atools::geo::Pos runwayPos;
+    if(context->route->hasAnySidProcedure())
+      runwayPos = context->route->getSidLegs().getDeparturePosition();
+
+    if(!runwayPos.isValid())
+      // No runway position to point to
+      return;
+
+    atools::geo::Pos fromPos;
+    if(NavApp::isConnectedAndAircraft() && userAircraft.isOnGround())
+      // Use aircraft position on ground
+      fromPos = userAircraft.getPosition();
+    else
+    {
+      // Use parking spot or start position
+      fromPos = context->route->getDepartureParking().position;
+
+      if(!fromPos.isValid())
+        fromPos = context->route->getDepartureStart().position;
+    }
+
+    if(fromPos.isValid() && runwayPos.isValid())
+    {
+      float distMeter = fromPos.distanceMeterTo(runwayPos);
+      float distPixel = scale->getPixelForMeter(distMeter);
+
+      // Closer than 10 NM and more far than 10 screen pixel
+      if(distMeter < atools::geo::nmToMeter(10.f) && distPixel > 10)
+      {
+        atools::util::PainterContextSaver saver(context->painter);
+
+        // Use flight plan transparency
+        bool transparent = context->flags2.testFlag(opts2::MAP_ROUTE_TRANSPARENT);
+        int alpha = atools::roundToInt((transparent ? (1.f - context->transparencyFlightplan) : 1.f) * 255.f);
+
+        // Width from flight plan and pen
+        float width = context->szF(context->thicknessFlightplan, mapcolors::routeDirectToDeparturePen.widthF());
+
+        context->painter->setBackgroundMode(Qt::OpaqueMode);
+        context->painter->setBackground(mapcolors::adjustAlpha(mapcolors::routeDirectToDepartureBackgroundColor, alpha));
+        context->painter->setPen(mapcolors::adjustWidth(mapcolors::adjustAlpha(mapcolors::routeDirectToDeparturePen, alpha), width));
+
+        QPolygonF arrow = buildArrow(width * 1.2f);
+        atools::geo::Line line(runwayPos, fromPos);
+        drawLine(context->painter, line);
+
+        QColor arrowColor(NavApp::isDarkMapTheme() ?
+                          mapcolors::routeDirectToDepartureBackgroundColor : mapcolors::routeDirectToDeparturePen.color());
+        arrowColor.setAlpha(255);
+        context->painter->setBrush(arrowColor);
+        context->painter->setPen(QPen(arrowColor, width, Qt::SolidLine, Qt::FlatCap, Qt::MiterJoin));
+
+        if(distPixel > 100.f)
+          paintArrowAlongLine(context->painter, line, arrow, 0.25f);
+
+        if(distPixel > 50.f)
+          paintArrowAlongLine(context->painter, line, arrow, 0.5f);
+
+        if(distPixel > 100.f)
+          paintArrowAlongLine(context->painter, line, arrow, 0.75f);
+      }
+    }
   }
 }
 

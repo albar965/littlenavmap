@@ -18,6 +18,8 @@
 #ifndef LITTLENAVMAP_OPTIONDATA_H
 #define LITTLENAVMAP_OPTIONDATA_H
 
+#include "util/flags.h"
+
 #include <QColor>
 #include <QMap>
 
@@ -25,7 +27,7 @@ class QSize;
 class QFont;
 
 namespace opts {
-enum Flag
+enum Flag : unsigned long long
 {
   NO_FLAGS = 0,
 
@@ -133,8 +135,8 @@ enum Flag
   MAP_AIRSPACE_NO_MULT_Z = 1 << 30
 };
 
-Q_DECLARE_FLAGS(Flags, Flag)
-Q_DECLARE_OPERATORS_FOR_FLAGS(opts::Flags)
+ATOOLS_DECLARE_FLAGS(Flags, Flag)
+ATOOLS_DECLARE_OPERATORS_FOR_FLAGS(opts::Flags)
 
 /* Map detail level during scrolling or zooming */
 enum MapScrollDetail
@@ -283,7 +285,7 @@ enum OnlineFormat
 
 namespace opts2 {
 /* Extension from flags to avoid overflow */
-enum Flag2
+enum Flag2 : unsigned long long
 {
   NO_FLAGS2 = 0,
 
@@ -379,11 +381,15 @@ enum Flag2
   ROUTE_ZOOM_LANDING = 1 << 29,
 
   /* checkBoxOptionsMapFlightplanTransparent */
-  MAP_ROUTE_TRANSPARENT = 1 << 30
+  MAP_ROUTE_TRANSPARENT = 1 << 30,
+
+  /* checkBoxOptionsMapFlightplanDirectToDeparture */
+  MAP_ROUTE_DIRECT_TO_DEPARTURE = 1L << 31L,
+
 };
 
-Q_DECLARE_FLAGS(Flags2, Flag2)
-Q_DECLARE_OPERATORS_FOR_FLAGS(opts2::Flags2)
+ATOOLS_DECLARE_FLAGS(Flags2, Flag2)
+ATOOLS_DECLARE_OPERATORS_FOR_FLAGS(opts2::Flags2)
 
 } // namespace opts2
 

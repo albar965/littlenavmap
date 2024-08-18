@@ -409,6 +409,11 @@ bool NavApp::isUserAircraftValid()
   return mainWindow->getMapWidget()->getUserAircraft().isFullyValid();
 }
 
+bool NavApp::hasAircraftPassedTakeoffPoint()
+{
+  return logdataController->hasAircraftPassedTakeoffPoint();
+}
+
 bool NavApp::isMoraAvailable()
 {
   return moraReader->isDataAvailable();

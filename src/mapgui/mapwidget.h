@@ -5,12 +5,10 @@
 * it under the terms of the GNU General Public License as published by
 * the Free Software Foundation, either version 3 of the License, or
 * (at your option) any later version.
-*
 * This program is distributed in the hope that it will be useful,
 * but WITHOUT ANY WARRANTY; without even the implied warranty of
 * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 * GNU General Public License for more details.
-*
 * You should have received a copy of the GNU General Public License
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
@@ -259,6 +257,9 @@ signals:
   void aircraftEngineStarted(const atools::fs::sc::SimConnectUserAircraft& aircraft);
   void aircraftEngineStopped(const atools::fs::sc::SimConnectUserAircraft& aircraft);
 
+  /* Aircraft was close to departure point on runway */
+  void aircraftHasPassedTakeoffPoint(const atools::fs::sc::SimConnectUserAircraft& aircraft);
+
   /* State isFlying between last and current aircraft has changed */
   void aircraftTakeoff(const atools::fs::sc::SimConnectUserAircraft& aircraft);
   void aircraftLanding(const atools::fs::sc::SimConnectUserAircraft& aircraft, float flownDistanceNm);
@@ -485,7 +486,7 @@ private:
 
   /* Save last tooltip position. If invalid/null no tooltip will be shown */
   QPoint tooltipGlobalPos;
-  map::MapResult *mapSearchResultTooltip, *mapSearchResultTooltipLast, *mapSearchResultInfoClick;
+  map::MapResult *mapResultTooltip, *mapResultTooltipLast, *mapResultInfoClick;
 
   MapTooltip *mapTooltip;
 

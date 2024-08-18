@@ -547,6 +547,7 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
      ui->checkBoxOptionsSimHighlightActiveTable,
      ui->checkBoxOptionsMapFlightplanDimPassed,
      ui->checkBoxOptionsMapFlightplanHighlightActive,
+     ui->checkBoxOptionsMapFlightplanDirectToDeparture,
      ui->checkBoxOptionsMapFlightplanTransparent,
      ui->checkBoxOptionsSimCenterLeg,
      ui->checkBoxOptionsSimCenterLegTable,
@@ -1911,6 +1912,7 @@ void OptionsDialog::widgetsToOptionData()
 
   toFlags2(ui->checkBoxOptionsMapFlightplanDimPassed, opts2::MAP_ROUTE_DIM_PASSED);
   toFlags2(ui->checkBoxOptionsMapFlightplanHighlightActive, opts2::MAP_ROUTE_HIGHLIGHT_ACTIVE);
+  toFlags2(ui->checkBoxOptionsMapFlightplanDirectToDeparture, opts2::MAP_ROUTE_DIRECT_TO_DEPARTURE);
   toFlags2(ui->checkBoxOptionsMapFlightplanTransparent, opts2::MAP_ROUTE_TRANSPARENT);
   toFlags2(ui->checkBoxOptionsSimDoNotFollowScroll, opts2::ROUTE_NO_FOLLOW_ON_MOVE);
   toFlags2(ui->checkBoxOptionsSimCenterLeg, opts2::ROUTE_AUTOZOOM);
@@ -2231,6 +2233,7 @@ void OptionsDialog::optionDataToWidgets(const OptionData& data)
   fromFlags2(data, ui->checkBoxOptionsMapFlightplanText, opts2::MAP_ROUTE_TEXT_BACKGROUND);
   fromFlags2(data, ui->checkBoxOptionsMapFlightplanDimPassed, opts2::MAP_ROUTE_DIM_PASSED);
   fromFlags2(data, ui->checkBoxOptionsMapFlightplanHighlightActive, opts2::MAP_ROUTE_HIGHLIGHT_ACTIVE);
+  fromFlags2(data, ui->checkBoxOptionsMapFlightplanDirectToDeparture, opts2::MAP_ROUTE_DIRECT_TO_DEPARTURE);
   fromFlags2(data, ui->checkBoxOptionsMapFlightplanTransparent, opts2::MAP_ROUTE_TRANSPARENT);
   fromFlags2(data, ui->checkBoxOptionsSimDoNotFollowScroll, opts2::ROUTE_NO_FOLLOW_ON_MOVE);
   fromFlags2(data, ui->checkBoxOptionsSimZoomOnLanding, opts2::ROUTE_ZOOM_LANDING);

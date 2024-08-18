@@ -241,6 +241,9 @@ extern QColor routeProcedurePointFlyoverColor;
 extern QColor routeUserPointColor;
 extern QColor routeInvalidPointColor;
 
+extern QColor routeDirectToDepartureBackgroundColor;
+extern QPen routeDirectToDeparturePen;
+
 /* Procedure colors */
 extern QColor routeProcedureMissedTableColor;
 extern QColor routeProcedureMissedTableColorDark;
@@ -301,6 +304,10 @@ void adjustPenForManual(QPainter *painter);
 /* Value 0.0 (transparent) to 1.0 (opaque) */
 QColor adjustAlphaF(QColor color, float alpha);
 QPen adjustAlphaF(QPen pen, float alpha);
+
+/* Value 0 (transparent) to 255 (opaque) */
+QColor adjustAlpha(QColor color, int alpha);
+QPen adjustAlpha(QPen pen, int alpha);
 
 QPen adjustWidth(QPen pen, float width);
 

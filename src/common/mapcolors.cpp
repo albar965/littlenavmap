@@ -169,6 +169,9 @@ QColor routeProcedurePointFlyoverColor(Qt::black);
 QColor routeUserPointColor(Qt::darkYellow);
 QColor routeInvalidPointColor(Qt::red);
 
+QColor routeDirectToDepartureBackgroundColor(255, 255, 255);
+QPen routeDirectToDeparturePen(QColor(0, 0, 0), 3., Qt::DotLine, Qt::FlatCap, Qt::MiterJoin);
+
 /* Procedure colors */
 QColor routeProcedureMissedTableColorDark(240, 170, 120);
 QColor routeProcedureMissedTableColor(Qt::darkRed);
@@ -812,6 +815,9 @@ void loadColors()
   loadColor(colorSettings, "Route/UserPointColor", routeUserPointColor);
   loadColor(colorSettings, "Route/InvalidPointColor", routeInvalidPointColor);
 
+  loadPen(colorSettings, "Route/RouteDirectToDeparturePen", routeDirectToDeparturePen);
+  loadColor(colorSettings, "Route/RouteDirectToDepartureBackgroundColor", routeDirectToDepartureBackgroundColor);
+
   loadColorArgb(colorSettings, "Surface/Concrete", surfaceConcrete);
   loadColorArgb(colorSettings, "Surface/Grass", surfaceGrass);
   loadColorArgb(colorSettings, "Surface/Water", surfaceWater);
@@ -935,6 +941,20 @@ QPen adjustAlphaF(QPen pen, float alpha)
 QColor adjustAlphaF(QColor color, float alpha)
 {
   color.setAlphaF(alpha);
+  return color;
+}
+
+QPen adjustAlpha(QPen pen, int alpha)
+{
+  QColor color = pen.color();
+  color.setAlpha(alpha);
+  pen.setColor(color);
+  return pen;
+}
+
+QColor adjustAlpha(QColor color, int alpha)
+{
+  color.setAlpha(alpha);
   return color;
 }
 

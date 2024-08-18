@@ -145,6 +145,9 @@ private:
 
   void paintStartParking();
 
+  /* Draw line to departure runway position */
+  void paintDirectToDeparture();
+
   void paintWindBarbs(const QBitArray& visibleStartPoints, const QList<QPointF>& startPoints);
   void paintWindBarbAtWaypoint(float windSpeed, float windDir, float x, float y);
 

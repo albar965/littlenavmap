@@ -181,6 +181,7 @@ public:
   static bool isConnectedAndAircraft();
   static bool isConnectedAndAircraftFlying();
   static bool isUserAircraftValid();
+  static bool hasAircraftPassedTakeoffPoint();
 
   /* Check for availability in database */
   static bool isMoraAvailable();

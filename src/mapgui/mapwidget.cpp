@@ -174,9 +174,9 @@ MapWidget::MapWidget(MainWindow *parent)
   : MapPaintWidget(parent, QueryManager::instance()->getQueriesGui(), true /* visible */, false /* web */), mainWindow(parent)
 {
   takeoffLandingLastAircraft = new atools::fs::sc::SimConnectUserAircraft;
-  mapSearchResultTooltip = new map::MapResult;
-  mapSearchResultTooltipLast = new map::MapResult;
-  mapSearchResultInfoClick = new map::MapResult;
+  mapResultTooltip = new map::MapResult;
+  mapResultTooltipLast = new map::MapResult;
+  mapResultInfoClick = new map::MapResult;
   distanceMarkerBackup = new map::DistanceMarker;
   userpointDrag = new map::MapUserpoint;
 
@@ -246,9 +246,9 @@ MapWidget::~MapWidget()
   ATOOLS_DELETE_LOG(mapVisible);
   ATOOLS_DELETE_LOG(pushButtonExitFullscreen);
   ATOOLS_DELETE_LOG(takeoffLandingLastAircraft);
-  ATOOLS_DELETE_LOG(mapSearchResultTooltip);
-  ATOOLS_DELETE_LOG(mapSearchResultTooltipLast);
-  ATOOLS_DELETE_LOG(mapSearchResultInfoClick);
+  ATOOLS_DELETE_LOG(mapResultTooltip);
+  ATOOLS_DELETE_LOG(mapResultTooltipLast);
+  ATOOLS_DELETE_LOG(mapResultInfoClick);
   ATOOLS_DELETE_LOG(distanceMarkerBackup);
   ATOOLS_DELETE_LOG(userpointDrag);
 }
@@ -341,60 +341,60 @@ void MapWidget::handleInfoClick(const QPoint& point)
     NavApp::getRouteController()->debugNetworkClick(Pos(lon, lat));
 #endif
 
-  mapSearchResultInfoClick->clear();
-  getScreenIndexConst()->getAllNearest(point, screenSearchDistance, *mapSearchResultInfoClick, map::QUERY_NONE /* For double click */);
+  mapResultInfoClick->clear();
+  getScreenIndexConst()->getAllNearest(point, screenSearchDistance, *mapResultInfoClick, map::QUERY_NONE /* For double click */);
 
   // Removes the online aircraft from onlineAircraft which also have a simulator shadow in simAircraft
-  NavApp::getOnlinedataController()->removeOnlineShadowedAircraft(mapSearchResultInfoClick->onlineAircraft,
-                                                                  mapSearchResultInfoClick->aiAircraft);
+  NavApp::getOnlinedataController()->removeOnlineShadowedAircraft(mapResultInfoClick->onlineAircraft,
+                                                                  mapResultInfoClick->aiAircraft);
 
   // Remove all unwanted features
   optsd::DisplayClickOptions opts = OptionData::instance().getDisplayClickOptions();
 
   if(!opts.testFlag(optsd::CLICK_AIRCRAFT_USER))
-    mapSearchResultInfoClick->userAircraft.clear();
+    mapResultInfoClick->userAircraft.clear();
 
   if(!opts.testFlag(optsd::CLICK_AIRCRAFT_AI))
   {
-    mapSearchResultInfoClick->aiAircraft.clear();
-    mapSearchResultInfoClick->onlineAircraft.clear();
-    mapSearchResultInfoClick->onlineAircraftIds.clear();
+    mapResultInfoClick->aiAircraft.clear();
+    mapResultInfoClick->onlineAircraft.clear();
+    mapResultInfoClick->onlineAircraftIds.clear();
   }
 
   if(!(opts.testFlag(optsd::CLICK_NAVAID)))
   {
-    mapSearchResultInfoClick->vors.clear();
-    mapSearchResultInfoClick->vorIds.clear();
-    mapSearchResultInfoClick->ndbs.clear();
-    mapSearchResultInfoClick->ndbIds.clear();
-    mapSearchResultInfoClick->holdings.clear();
-    mapSearchResultInfoClick->holdingIds.clear();
-    mapSearchResultInfoClick->waypoints.clear();
-    mapSearchResultInfoClick->waypointIds.clear();
-    mapSearchResultInfoClick->ils.clear();
-    mapSearchResultInfoClick->airways.clear();
-    mapSearchResultInfoClick->userpoints.clear();
-    mapSearchResultInfoClick->logbookEntries.clear();
+    mapResultInfoClick->vors.clear();
+    mapResultInfoClick->vorIds.clear();
+    mapResultInfoClick->ndbs.clear();
+    mapResultInfoClick->ndbIds.clear();
+    mapResultInfoClick->holdings.clear();
+    mapResultInfoClick->holdingIds.clear();
+    mapResultInfoClick->waypoints.clear();
+    mapResultInfoClick->waypointIds.clear();
+    mapResultInfoClick->ils.clear();
+    mapResultInfoClick->airways.clear();
+    mapResultInfoClick->userpoints.clear();
+    mapResultInfoClick->logbookEntries.clear();
   }
 
   if(!opts.testFlag(optsd::CLICK_AIRSPACE))
-    mapSearchResultInfoClick->airspaces.clear();
+    mapResultInfoClick->airspaces.clear();
 
-  if(opts.testFlag(optsd::CLICK_AIRPORT_PROC) && mapSearchResultInfoClick->hasAirports())
+  if(opts.testFlag(optsd::CLICK_AIRPORT_PROC) && mapResultInfoClick->hasAirports())
   {
     bool departureFilter, arrivalFilter;
-    NavApp::getRouteConst().getAirportProcedureFlags(mapSearchResultInfoClick->airports.constFirst(), -1, departureFilter, arrivalFilter);
+    NavApp::getRouteConst().getAirportProcedureFlags(mapResultInfoClick->airports.constFirst(), -1, departureFilter, arrivalFilter);
 
-    emit showProcedures(mapSearchResultInfoClick->airports.constFirst(), departureFilter, arrivalFilter);
+    emit showProcedures(mapResultInfoClick->airports.constFirst(), departureFilter, arrivalFilter);
   }
 
   if(!opts.testFlag(optsd::CLICK_AIRPORT))
   {
-    mapSearchResultInfoClick->airports.clear();
-    mapSearchResultInfoClick->airportIds.clear();
+    mapResultInfoClick->airports.clear();
+    mapResultInfoClick->airportIds.clear();
   }
 
-  emit showInformation(*mapSearchResultInfoClick);
+  emit showInformation(*mapResultInfoClick);
 }
 
 void MapWidget::handleRouteClick(const QPoint& point)
@@ -560,11 +560,10 @@ void MapWidget::updateTooltipResult()
     queryTypes |= map::QUERY_AIRCRAFT_TRAIL_LOG;
 
   // Load tooltip data into mapSearchResultTooltip
-  *mapSearchResultTooltip = map::MapResult();
-  getScreenIndexConst()->getAllNearest(mapFromGlobal(tooltipGlobalPos), screenSearchDistanceTooltip, *mapSearchResultTooltip, queryTypes);
+  *mapResultTooltip = map::MapResult();
+  getScreenIndexConst()->getAllNearest(mapFromGlobal(tooltipGlobalPos), screenSearchDistanceTooltip, *mapResultTooltip, queryTypes);
 
-  NavApp::getOnlinedataController()->removeOnlineShadowedAircraft(mapSearchResultTooltip->onlineAircraft,
-                                                                  mapSearchResultTooltip->aiAircraft);
+  NavApp::getOnlinedataController()->removeOnlineShadowedAircraft(mapResultTooltip->onlineAircraft, mapResultTooltip->aiAircraft);
 }
 
 void MapWidget::hideTooltip()
@@ -613,7 +612,7 @@ void MapWidget::showTooltip(bool update)
       // Build a new tooltip HTML for weather changes or aircraft updates
       QString text;
       if(paintLayer->getMapLayer() != nullptr)
-        text = mapTooltip->buildTooltip(*mapSearchResultTooltip, atools::geo::Pos(lon, lat), NavApp::getRouteConst(),
+        text = mapTooltip->buildTooltip(*mapResultTooltip, atools::geo::Pos(lon, lat), NavApp::getRouteConst(),
                                         paintLayer->getMapLayer()->isAirportDiagram());
 
       if(!text.isEmpty())
@@ -1140,12 +1139,11 @@ void MapWidget::mouseDoubleClickEvent(QMouseEvent *event)
   map::MapResult mapSearchResult;
 
   if(OptionData::instance().getMapNavigation() == opts::MAP_NAV_CLICK_CENTER &&
-     !mapSearchResultInfoClick->isEmpty(map::AIRPORT | map::AIRCRAFT_ALL | map::NAV_ALL | map::ILS | map::USERPOINT |
-                                        map::USERPOINTROUTE))
+     !mapResultInfoClick->isEmpty(map::AIRPORT | map::AIRCRAFT_ALL | map::NAV_ALL | map::ILS | map::USERPOINT | map::USERPOINTROUTE))
   {
     // Do info click and use previous result from single click event if the double click was on a map object
-    mapSearchResult = *mapSearchResultInfoClick;
-    mapSearchResultInfoClick->clear();
+    mapSearchResult = *mapResultInfoClick;
+    mapResultInfoClick->clear();
   }
   else
     getScreenIndexConst()->getAllNearest(event->pos(), screenSearchDistance, mapSearchResult,
@@ -2201,8 +2199,7 @@ void MapWidget::updateRoute(const QPoint& point, int leg, int pointIndex, bool f
   }
 }
 
-bool MapWidget::showFeatureSelectionMenu(int& id, map::MapTypes& type, const map::MapResult& result,
-                                         const QString& menuText)
+bool MapWidget::showFeatureSelectionMenu(int& id, map::MapTypes& type, const map::MapResult& result, const QString& menuText)
 {
   // Add id and type to actions
   const int ICON_SIZE = 20;
@@ -2508,13 +2505,13 @@ void MapWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorDa
     updateTooltipResult();
 
     // Update if any aircraft is shown for heading, speed and altitude
-    bool updateAircraft = NavApp::isConnectedAndAircraft() && mapSearchResultTooltip->hasAnyAircraft();
+    bool updateAircraft = NavApp::isConnectedAndAircraft() && mapResultTooltip->hasAnyAircraft();
 
     // Update tooltip if bearing is shown
     bool updateBearing = NavApp::isConnectedAndAircraft();
 
     // Aircraft moved away from cursor or nothing in current result
-    bool aircraftDisappeared = mapSearchResultTooltip->isEmpty() && mapSearchResultTooltipLast->hasAnyAircraft();
+    bool aircraftDisappeared = mapResultTooltip->isEmpty() && mapResultTooltipLast->hasAnyAircraft();
 
     // Nothing found at all or aircraft moved away from cursor
     // This affects and hides tooltips across the whole application and should not be used on each update
@@ -2526,7 +2523,7 @@ void MapWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorDa
       showTooltip(true /* update */);
 
     // Remember last result to detech disappearing aircraft
-    *mapSearchResultTooltipLast = *mapSearchResultTooltip;
+    *mapResultTooltipLast = *mapResultTooltip;
   }
 
   // ================================================================================
@@ -2828,6 +2825,13 @@ void MapWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorDa
 
     if(!updatesEnabled())
       setUpdatesEnabled(true);
+
+    // Set flag if aircraft is or was close enought to the takeoff position on the runway
+    const proc::MapProcedureLegs& sidLegs = route.getSidLegs();
+    if(aircraft.isOnGround() &&
+       sidLegs.runwayEndSim.position.distanceMeterTo(aircraft.getPosition()) < atools::geo::feetToMeter(sidLegs.runwaySim.width))
+      emit aircraftHasPassedTakeoffPoint(aircraft);
+
   } // if(now - lastSimUpdateMs > deltas.timeDeltaMs)
 
   // Update action states if needed
