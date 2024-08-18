@@ -1774,7 +1774,7 @@ void HtmlInfoBuilder::weatherText(const map::WeatherContext& context, const MapA
           decodedMetar(html, airport, map::MapAirport(), metar, false, atools::fs::weather::INTERPOLATED);
         }
       } // if(context.fsMetar.isValid())
-      else if(!print && OptionData::instance().getFlags() & optsw::WEATHER_INFO_FS)
+      else if(!print && OptionData::instance().getFlagsWeather() & optsw::WEATHER_INFO_FS)
         html.p(tr("Not connected to simulator."), ahtml::BOLD);
 
       // Active Sky metar ===========================
