@@ -504,7 +504,7 @@ bool MapWidget::event(QEvent *event)
 {
   if(event->type() == QEvent::ToolTip)
   {
-#ifdef DEBUG_MOVING_AIRPLANE
+#ifdef DEBUG_MOVING_AIRCRAFT
     if(QGuiApplication::queryKeyboardModifiers() == (Qt::ControlModifier | Qt::ShiftModifier))
       return QWidget::event(event);
 
@@ -655,8 +655,7 @@ void MapWidget::leaveEvent(QEvent *)
 void MapWidget::keyPressEvent(QKeyEvent *event)
 {
 #ifdef DEBUG_INFORMATION_KEY_INPUT
-  qDebug() << Q_FUNC_INFO << event->text() << hex << event->nativeScanCode() << hex << event->key() << dec <<
-    event->modifiers();
+  qDebug() << Q_FUNC_INFO << event->text() << hex << event->nativeScanCode() << hex << event->key() << dec << event->modifiers();
 #endif
 
   // Does not work for key presses that are consumed by the widget
@@ -819,10 +818,6 @@ void MapWidget::mousePressEvent(QMouseEvent *event)
     setCursor(Qt::ArrowCursor);
     return;
   }
-
-#ifdef DEBUG_MOVING_AIRPLANE
-  debugMovingPlane(event);
-#endif
 
   hideTooltip();
 
@@ -1228,6 +1223,17 @@ void MapWidget::wheelEvent(QWheelEvent *event)
   bool accepted = std::abs(lastWheelAngle) >= ANGLE_THRESHOLD;
   bool directionIn = lastWheelAngle > 0;
 
+#ifdef DEBUG_MOVING_AIRCRAFT
+  if(event->modifiers() == (Qt::ControlModifier | Qt::ShiftModifier) ||
+     event->modifiers() == (Qt::ControlModifier | Qt::ShiftModifier | Qt::AltModifier))
+  {
+    if(angleDelta > 0)
+      debugMovingAircraft(event, -1);
+    else if(angleDelta < 0)
+      debugMovingAircraft(event, 1);
+  }
+  else
+#endif
   if(accepted)
   {
     // Reset summed up values if accepted
@@ -1612,8 +1618,10 @@ void MapWidget::mouseMoveEvent(QMouseEvent *event)
   if(!isActiveWindow())
     return;
 
-#ifdef DEBUG_MOVING_AIRPLANE
-  debugMovingPlane(event);
+#ifdef DEBUG_MOVING_AIRCRAFT
+  if(event->modifiers() == (Qt::ControlModifier | Qt::ShiftModifier) ||
+     event->modifiers() == (Qt::ControlModifier | Qt::ShiftModifier | Qt::AltModifier))
+    debugMovingAircraft(event, 0.f);
 #endif
 
   const MapScreenIndex *screenIndex = getScreenIndexConst();
@@ -3918,69 +3926,128 @@ void MapWidget::setDetailLevel(int level)
   }
 }
 
-#ifdef DEBUG_MOVING_AIRPLANE
-void MapWidget::debugMovingPlane(QMouseEvent *event)
+#ifdef DEBUG_MOVING_AIRCRAFT
+void MapWidget::debugMovingAircraft(QInputEvent *event, int upDown)
 {
   using atools::fs::sc::SimConnectData;
   static int packetId = 0;
   static Pos lastPos;
   static QPoint lastPoint;
+  static float alt = map::INVALID_ALTITUDE_VALUE, altInit = map::INVALID_ALTITUDE_VALUE;
+  static bool ground = true;
+  bool useProjection = false;
 
-  if(event->modifiers() == (Qt::ControlModifier | Qt::ShiftModifier) ||
-     event->modifiers() == (Qt::ControlModifier | Qt::ShiftModifier | Qt::AltModifier))
+  bool helicopter = event->modifiers().testFlag(Qt::AltModifier);
+  const Route& route = NavApp::getRouteConst();
+
+  const QMouseEvent *mouseEvent = dynamic_cast<const QMouseEvent *>(event);
+  const QWheelEvent *wheelEvent = dynamic_cast<const QWheelEvent *>(event);
+  QPoint eventPos;
+  if(mouseEvent != nullptr)
+    eventPos = mouseEvent->pos();
+  else if(wheelEvent != nullptr)
+    eventPos = wheelEvent->pos();
+
+  if(!(altInit < map::INVALID_ALTITUDE_VALUE))
   {
-    bool helicopter = event->modifiers().testFlag(Qt::AltModifier);
-    const Route& route = NavApp::getRouteConst();
-    if(QPoint(lastPoint - event->pos()).manhattanLength() > 20)
+    map::MapAirport departureAirport = route.getDepartureAirportLeg().getAirport();
+    map::MapAirport destinationAirport = route.getDepartureAirportLeg().getAirport();
+    map::MapAirport nearestAirport;
+
+    if(departureAirport.isValid() && destinationAirport.isValid())
+      nearestAirport = lastPos.distanceMeterTo(departureAirport.position) < lastPos.distanceMeterTo(destinationAirport.position) ?
+                       departureAirport : destinationAirport;
+
+    if(!nearestAirport.isValid())
     {
-      qreal lon, lat;
-      geoCoordinates(event->pos().x(), event->pos().y(), lon, lat);
-      Pos pos(lon, lat);
+      map::MapResult result;
+      getScreenIndexConst()->getAllNearest(eventPos, 1000, result, map::QUERY_NONE);
+      if(result.hasAirports())
+        nearestAirport = result.airports.constFirst();
+    }
 
-      float projectionDistance = route.getProjectionDistance();
+    altInit = alt = nearestAirport.getAltitude();
+  }
 
+  if(wheelEvent != nullptr)
+  {
+    int factor = 50;
+    if(std::abs(alt - altInit) > 5000.f)
+      factor = 1000;
+    else if(std::abs(alt - altInit) > 1000.f)
+      factor = 500;
+    else if(std::abs(alt - altInit) > 100.f)
+      factor = 200;
+    else if(std::abs(alt - altInit) > 10.f)
+      factor = 100;
+
+    ground = std::abs(alt - altInit) < 10.f;
+
+    alt += upDown * factor;
+    alt = atools::minmax(altInit, NavApp::getRouteController()->getCruiseAltitudeWidget(), alt);
+    qDebug() << Q_FUNC_INFO << "alt" << alt;
+  }
+  else if(QPoint(lastPoint - eventPos).manhattanLength() > 2)
+  {
+    qreal lon, lat;
+    geoCoordinates(eventPos.x(), eventPos.y(), lon, lat);
+    Pos pos(lon, lat);
+
+    float projectionDistance = route.getProjectionDistance();
+    if(useProjection)
+    {
       if(!(projectionDistance < map::INVALID_DISTANCE_VALUE))
         projectionDistance = route.getDistanceFromStart(pos);
 
-      float altFt = 0.f;
       if(projectionDistance < map::INVALID_DISTANCE_VALUE)
-        altFt = NavApp::getAltitudeLegs().getAltitudeForDistance(route.getTotalDistance() - projectionDistance);
+        alt = NavApp::getAltitudeLegs().getAltitudeForDistance(route.getTotalDistance() - projectionDistance);
+    }
 
-      const atools::fs::perf::AircraftPerf& perf = NavApp::getAircraftPerformance();
-      bool ground = false;
-      float vertSpeed = 0.f, tas = 0.f, fuelflow = 0.f, totalFuel = perf.getUsableFuelLbs();
-      float ice = 0.f;
-      if(route.size() <= 2)
+    qDebug() << Q_FUNC_INFO << "alt" << alt;
+
+    const atools::fs::perf::AircraftPerf& perf = NavApp::getAircraftPerformance();
+    float vertSpeed = 0.f, tas = 0.f, fuelflow = 0.f, totalFuel = perf.getUsableFuelLbs();
+    float ice = 0.f;
+    if(route.size() <= 2)
+    {
+      alt = NavApp::getRouteController()->getCruiseAltitudeWidget();
+      tas = perf.getCruiseSpeed();
+      fuelflow = perf.getCruiseFuelFlowLbs();
+      if(useProjection)
       {
-        altFt = NavApp::getRouteController()->getCruiseAltitudeWidget();
-        tas = perf.getCruiseSpeed();
-        fuelflow = perf.getCruiseFuelFlowLbs();
-        ground = altFt < NavApp::getElevationProvider()->getElevationFt(pos) + 500.f;
+        ground = alt < NavApp::getElevationProvider()->getElevationFt(pos) + 500.f;
       }
-      else
+    }
+    else
+    {
+      float distanceFromStart = route.getDistanceFromStart(pos);
+      if(useProjection)
       {
         float maxDist = helicopter ? 0.5f : 1.f;
-        float distanceFromStart = route.getDistanceFromStart(pos);
         ground = distanceFromStart<maxDist || distanceFromStart> route.getTotalDistance() - maxDist;
 
         if(route.isActiveAlternate() || route.isActiveMissed())
           ground = false;
+      }
 
-        if(!ground)
+      if(!ground)
+      {
+        if(route.isActiveAlternate() || route.isActiveMissed())
         {
-          if(route.isActiveAlternate() || route.isActiveMissed())
-          {
-            tas = perf.getAlternateSpeed();
-            fuelflow = perf.getAlternateFuelFlowLbs();
-            altFt = NavApp::getRouteController()->getCruiseAltitudeWidget() / 2.f;
-          }
-          else
+          tas = perf.getAlternateSpeed();
+          fuelflow = perf.getAlternateFuelFlowLbs();
+          alt = NavApp::getRouteController()->getCruiseAltitudeWidget() / 2.f;
+        }
+        else
+        {
+
+          tas = perf.getCruiseSpeed();
+          fuelflow = perf.getCruiseFuelFlowLbs();
+
+          if(useProjection)
           {
             float tocDist = route.getTopOfClimbDistance();
             float todDist = route.getTopOfDescentDistance();
-
-            tas = perf.getCruiseSpeed();
-            fuelflow = perf.getCruiseFuelFlowLbs();
 
             if(projectionDistance < tocDist)
             {
@@ -3997,31 +4064,34 @@ void MapWidget::debugMovingPlane(QMouseEvent *event)
             }
           }
         }
-        else
+      }
+      else
+      {
+        tas = 20.f;
+        fuelflow = 20.f;
+        if(useProjection)
         {
-          tas = 20.f;
-          fuelflow = 20.f;
           if(distanceFromStart < 0.2f || distanceFromStart > route.getTotalDistance() - 0.2f)
             fuelflow = 0.f;
         }
       }
-
-      if(atools::almostEqual(fuelflow, 0.f) && !ground)
-        fuelflow = 100.f;
-
-      if(!(altFt < map::INVALID_ALTITUDE_VALUE))
-        altFt = route.getCruiseAltitudeFt();
-
-      pos.setAltitude(altFt);
-      SimConnectData data = SimConnectData::buildDebugForPosition(pos, lastPos, ground, vertSpeed, tas, fuelflow, totalFuel, ice,
-                                                                  route.getCruiseAltitudeFt(), NavApp::getMagVar(pos),
-                                                                  perf.isJetFuel(), helicopter);
-      data.setPacketId(packetId++);
-
-      emit NavApp::getConnectClient()->dataPacketReceived(data);
-      lastPos = pos;
-      lastPoint = event->pos();
     }
+
+    if(atools::almostEqual(fuelflow, 0.f) && !ground)
+      fuelflow = 100.f;
+
+    if(!(alt < map::INVALID_ALTITUDE_VALUE))
+      alt = route.getCruiseAltitudeFt();
+
+    pos.setAltitude(alt);
+    SimConnectData data = SimConnectData::buildDebugMovingAircraft(pos, lastPos, ground, vertSpeed, tas, fuelflow, totalFuel, ice,
+                                                                   route.getCruiseAltitudeFt(), NavApp::getMagVar(pos),
+                                                                   perf.isJetFuel(), helicopter);
+    data.setPacketId(packetId++);
+
+    emit NavApp::getConnectClient()->dataPacketReceived(data);
+    lastPos = pos;
+    lastPoint = eventPos;
   }
 }
 

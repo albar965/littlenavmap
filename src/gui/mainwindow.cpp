@@ -3883,7 +3883,7 @@ void MainWindow::updateActionStates()
   bool hasTracksEnabled = NavApp::hasTracksEnabled();
   ui->actionRouteDownloadTracksNow->setEnabled(hasTracksEnabled);
 
-#ifdef DEBUG_MOVING_AIRPLANE
+#ifdef DEBUG_MOVING_AIRCRAFT
   ui->actionMapShowAircraft->setEnabled(true);
   ui->actionMapAircraftCenter->setEnabled(true);
   ui->actionMapAircraftCenterNow->setEnabled(true);

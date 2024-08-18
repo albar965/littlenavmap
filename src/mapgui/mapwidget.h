@@ -32,6 +32,7 @@ class MapTooltip;
 class MapVisible;
 class QContextMenuEvent;
 class QPushButton;
+class QInputEvent;
 
 namespace atools {
 namespace sql {
@@ -538,8 +539,8 @@ private:
 
   QPushButton *pushButtonExitFullscreen = nullptr;
 
-#ifdef DEBUG_MOVING_AIRPLANE
-  void debugMovingPlane(QMouseEvent *event);
+#ifdef DEBUG_MOVING_AIRCRAFT
+  void debugMovingAircraft(QInputEvent *event, int upDown);
 
 #endif
 };

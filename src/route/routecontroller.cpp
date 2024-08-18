@@ -2953,7 +2953,7 @@ void RouteController::tableContextMenu(const QPoint& pos)
     ui->actionMapRangeRings->setEnabled(true);
     ui->actionRouteSetMark->setEnabled(true);
 
-#ifdef DEBUG_MOVING_AIRPLANE
+#ifdef DEBUG_MOVING_AIRCRAFT
     ui->actionRouteActivateLeg->setEnabled(routeLeg->isValidWaypoint());
 #else
     ui->actionRouteActivateLeg->setEnabled(routeLeg->isValid() && NavApp::isConnected());
@@ -4329,8 +4329,7 @@ void RouteController::showCustomDeparture(map::MapAirport airport, QString dialo
       runwayEnds.append(route.getSidLegs().runwayEnd);
     else
       // Fetch sim id from procedure which uses nav id
-      queries->getMapQuery()->getRunwayEndByNameFuzzy(runwayEnds, route.getSidRunwayName(), airport,
-                                                      false /* navData */);
+      queries->getMapQuery()->getRunwayEndByNameFuzzy(runwayEnds, route.getSidRunwayName(), airport, false /* navData */);
 
     if(!runwayEnds.isEmpty())
       runwayEndId = runwayEnds.constFirst().id;
@@ -4353,8 +4352,7 @@ void RouteController::showCustomDeparture(map::MapAirport airport, QString dialo
       qDebug() << Q_FUNC_INFO << runway.primaryName << runway.secondaryName << end.id << end.name;
 
       proc::MapProcedureLegs procedure;
-      queries->getProcedureQuery()->createCustomDeparture(procedure, airport, end,
-                                                          procedureDialog.getLegDistance());
+      queries->getProcedureQuery()->createCustomDeparture(procedure, airport, end, procedureDialog.getLegDistance());
       routeAddProcedure(procedure);
     }
   }
