@@ -1071,8 +1071,13 @@ void MapPainterRoute::paintProcedureSegment(const proc::MapProcedureLegs& legs, 
   }
 
   bool hiddenIntercept, hiddenRunwayDeparture, visibleDummy;
+
+  // Real departure position bend at other end of runway - added to geometry of legs
+  ageo::Pos runwayDeparturePosOther = leg.runwaySim ? legs.getDeparturePositionOther() : ageo::EMPTY_POS;
+  QPointF runwayDeparturePoint = wToS(runwayDeparturePosOther, size, &visibleDummy, &hiddenRunwayDeparture);
+
+  // Intercept position to be inserted into geometry
   QPointF interceptPoint = wToS(leg.interceptPos, size, &visibleDummy, &hiddenIntercept);
-  QPointF runwayDeparturePoint = wToS(leg.runwayDeparturePos, size, &visibleDummy, &hiddenRunwayDeparture);
 
   // Do not show distance for altitude bound legs and if previous leg is a procedure turn
   bool showDistance = !(leg.noDistanceDisplay() || (prevLeg != nullptr && prevLeg->type == proc::PROCEDURE_TURN));
@@ -1184,7 +1189,7 @@ void MapPainterRoute::paintProcedureSegment(const proc::MapProcedureLegs& legs, 
           // Intercept a CF leg ===================================
           if(draw && !hidden)
           {
-            if(leg.runwayDeparturePos.isValid())
+            if(runwayDeparturePosOther.isValid())
               // Draw aligned departure
               drawPolyline(painter, QPolygonF({line.p1(), runwayDeparturePoint, interceptPoint, line.p2()}));
             else
@@ -1196,7 +1201,7 @@ void MapPainterRoute::paintProcedureSegment(const proc::MapProcedureLegs& legs, 
 
         if(drawTextLines != nullptr)
         {
-          if(leg.runwayDeparturePos.isValid())
+          if(runwayDeparturePosOther.isValid())
             (*drawTextLines)[index] = DrawText(leg.interceptPos, leg.line.getPos2(), showDistance, showCourse);
           else
             // Draw aligned departure
@@ -1215,7 +1220,7 @@ void MapPainterRoute::paintProcedureSegment(const proc::MapProcedureLegs& legs, 
               drawLine(painter, lastLines.constLast().p2(), line.p1());
           }
 
-          if(leg.runwayDeparturePos.isValid() && !hiddenRunwayDeparture)
+          if(runwayDeparturePosOther.isValid() && !hiddenRunwayDeparture)
             // Draw aligned departure
             drawPolyline(painter, QPolygonF({line.p1(), runwayDeparturePoint, line.p2()}));
           else
@@ -1225,8 +1230,8 @@ void MapPainterRoute::paintProcedureSegment(const proc::MapProcedureLegs& legs, 
 
         if(drawTextLines != nullptr)
         {
-          if(leg.runwayDeparturePos.isValid())
-            (*drawTextLines)[index] = DrawText(leg.runwayDeparturePos, leg.line.getPos2(), showDistance, showCourse);
+          if(runwayDeparturePosOther.isValid())
+            (*drawTextLines)[index] = DrawText(runwayDeparturePosOther, leg.line.getPos2(), showDistance, showCourse);
           else
             // Can draw a label along the line
             (*drawTextLines)[index] = DrawText(leg.line, showDistance, showCourse);
@@ -1248,7 +1253,7 @@ void MapPainterRoute::paintProcedureSegment(const proc::MapProcedureLegs& legs, 
   {
     if(draw && !hidden)
     {
-      if(leg.runwayDeparturePos.isValid() && !hiddenRunwayDeparture)
+      if(runwayDeparturePosOther.isValid() && !hiddenRunwayDeparture)
         // Draw aligned departure bending at opposite runway end
         drawPolyline(painter, QPolygonF({line.p1(), runwayDeparturePoint, line.p2()}));
       else
@@ -1258,9 +1263,9 @@ void MapPainterRoute::paintProcedureSegment(const proc::MapProcedureLegs& legs, 
 
     if(drawTextLines != nullptr)
     {
-      if(leg.runwayDeparturePos.isValid())
+      if(runwayDeparturePosOther.isValid())
         // Draw aligned departure bending at opposite runway end - label only after runway line
-        (*drawTextLines)[index] = DrawText(leg.runwayDeparturePos, leg.line.getPos2(), showDistance, showCourse);
+        (*drawTextLines)[index] = DrawText(runwayDeparturePosOther, leg.line.getPos2(), showDistance, showCourse);
       else
         // Can draw a label along the line
         (*drawTextLines)[index] = DrawText(leg.line, showDistance, showCourse);
@@ -1909,7 +1914,8 @@ void MapPainterRoute::paintProcedurePoint(QSet<map::MapRef>& idMap, const proc::
     if(drawText)
       paintProcedurePointText(x, y, drawTextDetails, textPlacementAtts, texts);
   }
-  else if(!navaids.runwayEnds.isEmpty() && leg.runwayApproachPos.isValid() && wToSBuf(leg.runwayApproachPos, x, y, MARGINS))
+  else if(!navaids.runwayEnds.isEmpty() && leg.runwaySim && legs.getApproachPosition().isValid() &&
+          wToSBuf(legs.getApproachPosition(), x, y, MARGINS))
   {
     // To (offset) approach position =============
     texts.prepend(leg.fixIdent);

@@ -2624,6 +2624,26 @@ QStringList MapRunwayEnd::uniqueVasiTypeStr() const
   return vasi;
 }
 
+atools::geo::Pos MapRunway::getApproachPosition(bool secondary) const
+{
+  if(secondary)
+  {
+    if(secondaryOffset > 1.f)
+      // Return position minus secondary offset
+      return secondaryPosition.endpoint(atools::geo::feetToMeter(secondaryOffset), atools::geo::opposedCourseDeg(heading));
+    else
+      return secondaryPosition;
+  }
+  else
+  {
+    if(primaryOffset > 1.f)
+      // Return position minus primary offset
+      return primaryPosition.endpoint(atools::geo::feetToMeter(primaryOffset), heading);
+    else
+      return primaryPosition;
+  }
+}
+
 MapProcedurePoint::MapProcedurePoint()
   : MapBase(staticType())
 {

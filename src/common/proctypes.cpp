@@ -567,6 +567,8 @@ QDebug operator<<(QDebug out, const MapProcedureLegs& legs)
       << "transitionType" << legs.transitionType
       << "transitionFixIdent" << legs.transitionFixIdent
       << "procedureRunway" << legs.runway
+      << "runwaySim" << legs.runwaySim
+      << "runwayEndSim" << legs.runwayEndSim
       << "runwayEnd.name" << legs.runwayEnd.name << endl;
 
   out << "===== Legs =====" << endl;
@@ -598,8 +600,7 @@ QDebug operator<<(QDebug out, const MapProcedureLeg& leg)
   out << leg.recFixType << leg.recFixIdent << leg.recFixRegion << leg.recFixPos << endl;
   out << "intercept" << leg.interceptPos << leg.intercept << endl;
   out << "procturn pos" << leg.procedureTurnPos << endl;
-  out << "rw appr pos" << leg.runwayApproachPos << endl;
-  out << "rw depart pos" << leg.runwayDeparturePos << endl;
+  out << "rw sim" << leg.runwaySim << endl;
 
   out << "turnDirection" << leg.turnDirection
       << "flyover" << leg.flyover

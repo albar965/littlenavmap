@@ -40,6 +40,8 @@ struct MapProcedureLegs;
 }
 
 namespace map {
+
+struct MapRunway;
 struct MapAirport;
 struct MapRunwayEnd;
 struct MapResult;
@@ -83,7 +85,7 @@ public:
   const proc::MapProcedureLegs *getTransitionLegs(map::MapAirport airport, int transitionId);
 
   /* Get all available transitions for the given procedure ID (approach.approach_id in database */
-  QVector<int> getTransitionIdsForProcedure(int procedureId);
+  const QVector<int> getTransitionIdsForProcedure(int procedureId);
 
   /* Resolves all procedures based on given properties and loads them from the database.
    * Procedures are partially resolved in a fuzzy way. */
@@ -151,13 +153,13 @@ public:
   /* Creates a user defined approach procedure. Handled like an approach procedure. */
   void createCustomApproach(proc::MapProcedureLegs& procedure, const map::MapAirport& airport, const QString& runwayEnd,
                             float finalLegDistance, float entryAltitude, float offsetAngle);
-  void createCustomApproach(proc::MapProcedureLegs& procedure, const map::MapAirport& airportSim,
+  void createCustomApproach(proc::MapProcedureLegs& legs, const map::MapAirport& airportSim,
                             const map::MapRunwayEnd& runwayEndSim, float finalLegDistance, float entryAltitude, float offsetAngle);
 
   /* Creates a user defined departure procedure. Handled like a SID. */
-  void createCustomDeparture(proc::MapProcedureLegs& procedure, const map::MapAirport& airport, const QString& runwayEnd, float distance);
-  void createCustomDeparture(proc::MapProcedureLegs& procedure, const map::MapAirport& airportSim,
-                             const map::MapRunwayEnd& runwayEndSim, float distance);
+  void createCustomDeparture(proc::MapProcedureLegs& legs, const map::MapAirport& airport, const QString& runwayEnd, float distance);
+  void createCustomDeparture(proc::MapProcedureLegs& legs, const map::MapAirport& airportSim, const map::MapRunwayEnd& runwayEndSim,
+                             float distance);
 
   /* Change procedure to insert runway from flight plan as departure or start for arinc names "ALL" or "RW10B".
    * Only for SID or STAR.
@@ -280,9 +282,9 @@ private:
 
   QString runwayErrorString(const QString& runway);
 
-  /* Calculate corrected approach point for offset threshold runways or arrival. Tries sim airport first and then
-   * nav airport if no runway matches by exact name. */
-  atools::geo::Pos runwayPoint(const map::MapAirport& airport, const map::MapRunwayEnd& runwayEnd, bool approach, bool offset) const;
+  /* Fetch simulator runway and runway end if runway name matches exactly. Otherwise navdata runway */
+  void fetchRunwaysSim(map::MapRunway& runwaySim, map::MapRunwayEnd& runwayEndSim, const map::MapAirport& airport,
+                       const map::MapRunwayEnd& runwayEnd) const;
 
   atools::sql::SqlDatabase *dbNav;
   atools::sql::SqlQuery *procedureLegQuery = nullptr, *transitionLegQuery = nullptr,

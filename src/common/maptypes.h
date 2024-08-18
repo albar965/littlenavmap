@@ -495,7 +495,7 @@ struct MapRunway
   float heading, /* true degrees of primary */
         patternAlt,
         smoothness /* 0 (smooth) to 1 (very rough). Default is 0.25. X-Plane only. -1.f if not set */;
-  float width,
+  float width, /* ft */
         primaryOffset, secondaryOffset, /* Offset threshold is a part of the runway length in ft */
         primaryBlastPad, secondaryBlastPad, primaryOverrun, secondaryOverrun; /* not part of the runway length all in ft */
   atools::geo::Pos primaryPosition, secondaryPosition;
@@ -533,6 +533,28 @@ struct MapRunway
   const atools::geo::Pos& getPosition() const
   {
     return position;
+  }
+
+  atools::geo::Rect bounding() const
+  {
+    atools::geo::Rect rect(secondaryPosition);
+    rect.extend(primaryPosition);
+    return rect;
+  }
+
+  /* Get touchdown position considering offset threshold from simulator data if runway matches. Otherwise navdata. */
+  atools::geo::Pos getApproachPosition(bool secondary) const;
+
+  /* Get takeoff start position from simulator data if runway matches. Otherwise navdata. */
+  const atools::geo::Pos& getDeparturePosition(bool secondary) const
+  {
+    return secondary ? secondaryPosition : primaryPosition;
+  }
+
+  /* Get position of other end of start runway (bend to takeoff direction) from simulator data if runway matches. Otherwise navdata. */
+  const atools::geo::Pos& getDeparturePositionOther(bool secondary) const
+  {
+    return getDeparturePosition(!secondary);
   }
 
 };

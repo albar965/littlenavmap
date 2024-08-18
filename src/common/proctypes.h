@@ -188,19 +188,21 @@ struct MapProcedureLeg
   QStringList displayText /* Fix label for map - filled in approach query */,
               remarks /* Additional remarks for tree - filled in approach query */;
 
-  atools::geo::Pos fixPos, recFixPos,
+  atools::geo::Pos fixPos, recFixPos, /* Calculated from ARINC fix */
                    interceptPos, /* Position of an intercept leg for grey circle */
-                   procedureTurnPos, /* Extended position of a procedure turn */
-                   runwayApproachPos, /* Corrected runway approach depending on offset threshold. Runway end if no threshold. */
-                   runwayDeparturePos; /* Leg was modified to align a departure with the runway for a SID.
-                                        * This point is the position where the departure bends at the runway end. */
+                   procedureTurnPos; /* Extended position of a procedure turn */
+
+  /* Leg has sim runway information in parent MapProcedureLegs which can be used for precise drawing information.
+   * For custom and real procedures.  */
+  bool runwaySim = false;
 
   atools::geo::Line line, /* Line with flying direction from pos1 to pos2 */
                     holdLine; /* Helping line to find out if aircraft leaves the hold */
 
   atools::geo::LineString geometry; /* Same as line or geometry approximation for intercept or arcs for distance to leg calculation */
 
-  /* Navaids resolved by approach query class */
+  /* Navaids resolved by approach query class. Runways are valid with empty name for circle-to-land or straight-in.
+   * Always from navdata source. */
   map::MapResult navaids, recNavaids;
 
   MapAltRestriction altRestriction;
@@ -429,6 +431,28 @@ struct MapProcedureLegs
   map::MapRunwayEnd runwayEnd;
 
   proc::MapProcedureTypes mapType = PROCEDURE_NONE;
+
+  /* Copies from the respective legs. Positions from simulator runway if runway name matches. Otherwise navdata. */
+  map::MapRunway runwaySim;
+  map::MapRunwayEnd runwayEndSim;
+
+  /* Get touchdown position considering offset threshold from simulator data if runway matches. Otherwise navdata. */
+  atools::geo::Pos getApproachPosition() const
+  {
+    return mapType & proc::PROCEDURE_APPROACH ? runwaySim.getApproachPosition(runwayEndSim.secondary) : atools::geo::EMPTY_POS;
+  }
+
+  /* Get takeoff start position from simulator data if runway matches. Otherwise navdata. */
+  atools::geo::Pos getDeparturePosition() const
+  {
+    return mapType & proc::PROCEDURE_SID ? runwaySim.getDeparturePosition(runwayEndSim.secondary) : atools::geo::EMPTY_POS;
+  }
+
+  /* Get position of other end of start runway (bend to takeoff direction) from simulator data if runway matches. Otherwise navdata. */
+  atools::geo::Pos getDeparturePositionOther() const
+  {
+    return mapType & proc::PROCEDURE_SID ? runwaySim.getDeparturePositionOther(runwayEndSim.secondary) : atools::geo::EMPTY_POS;
+  }
 
   /* Accumulated distances */
   float procedureDistance = 0.f, transitionDistance = 0.f, missedDistance = 0.f;
