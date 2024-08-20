@@ -222,7 +222,6 @@ void MapPainterAirport::collectVisibleAirports(QVector<PaintAirportType>& visibl
   std::sort(visibleAirports.begin(), visibleAirports.end(), std::bind(&MapPainter::sortAirportFunction, this, _1, _2));
 }
 
-/* Draws the full airport diagram including runway, taxiways, apron, parking and more */
 void MapPainterAirport::drawAirportDiagramBackground(const map::MapAirport& airport)
 {
   Marble::GeoPainter *painter = context->painter;
@@ -291,7 +290,6 @@ void MapPainterAirport::drawAirportDiagramBackground(const map::MapAirport& airp
   }
 }
 
-/* Draw simple FSX/P3D aprons */
 void MapPainterAirport::drawFsApron(const map::MapApron& apron)
 {
   QVector<QPoint> apronPoints;
@@ -310,7 +308,6 @@ void MapPainterAirport::drawXplaneApron(const map::MapApron& apron, bool fast)
     context->painter->drawPath(boundaryPath);
 }
 
-/* Draws the full airport diagram including runway, taxiways, apron, parking and more */
 void MapPainterAirport::drawAirportDiagram(const map::MapAirport& airport)
 {
   const static QMargins MARGINS(2, 2, 2, 2);
@@ -990,7 +987,6 @@ void MapPainterAirport::drawAirportDiagram(const map::MapAirport& airport)
   }
 }
 
-/* Draw airport runway overview as in VFR maps (runways with white center line) */
 void MapPainterAirport::drawAirportSymbolOverview(const map::MapAirport& ap, float x, float y, float symsize)
 {
   Marble::GeoPainter *painter = context->painter;
@@ -1068,14 +1064,6 @@ void MapPainterAirport::drawAirportSymbol(const map::MapAirport& ap, float x, fl
   }
 }
 
-/*
- * Fill coordinate arrays for all runways of an airport.
- * @param runways runway input object
- * @param centers center points
- * @param rects Runway rectangles
- * @param innerRects Fill rectangles
- * @param outlineRects Big white outline
- */
 void MapPainterAirport::runwayCoords(const QList<map::MapRunway> *runways, QList<QPointF> *centers,
                                      QList<QRectF> *rects, QList<QRectF> *innerRects, QList<QRectF> *outlineRects, bool overview)
 {

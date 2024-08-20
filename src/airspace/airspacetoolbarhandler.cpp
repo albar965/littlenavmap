@@ -443,17 +443,17 @@ void AirspaceToolBarHandler::createToolButtons()
 
 void AirspaceToolBarHandler::createAirspaceToolButton(atools::gui::ActionButtonHandler *buttonHandler, const QString& icon,
                                                       const QString& buttonHelp,
-                                                      const std::initializer_list<map::MapAirspaceTypes>& types,
-                                                      const std::initializer_list<map::MapAirspaceFlags>& flags,
+                                                      const std::initializer_list<map::MapAirspaceType>& types,
+                                                      const std::initializer_list<map::MapAirspaceFlag>& flags,
                                                       bool groupActions, bool minMaxAltitude)
 {
   Ui::MainWindow *ui = NavApp::getMainUi();
   map::MapAirspaceTypes allTypes = map::AIRSPACE_NONE;
-  for(const map::MapAirspaceTypes& type : types)
+  for(map::MapAirspaceType type : types)
     allTypes |= type;
 
   map::MapAirspaceFlags allFlags = map::AIRSPACE_ALTITUDE_FLAG_NONE;
-  for(const map::MapAirspaceFlags& flag : flags)
+  for(map::MapAirspaceFlag flag : flags)
     allFlags |= flag;
 
   ui->menuViewAirspaces->addSeparator();
@@ -517,7 +517,7 @@ void AirspaceToolBarHandler::createAirspaceToolButton(atools::gui::ActionButtonH
     airspaceToolGroups.append(group);
 
     // Add radio button items based on flags
-    for(const map::MapAirspaceFlags& flag: flags)
+    for(map::MapAirspaceFlag flag: flags)
     {
       QAction *action = new QAction(map::airspaceFlagToString(flag), parent);
       action->setToolTip(map::airspaceFlagToStringLong(flag));
@@ -540,7 +540,7 @@ void AirspaceToolBarHandler::createAirspaceToolButton(atools::gui::ActionButtonH
     airspaceToolGroups.append(nullptr);
 
     // Add tool button items based on types
-    for(const map::MapAirspaceTypes& type : types)
+    for(map::MapAirspaceType type : types)
     {
       QAction *action = new QAction(map::airspaceTypeToString(type), parent);
       action->setCheckable(true);

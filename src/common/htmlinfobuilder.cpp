@@ -1366,7 +1366,7 @@ void HtmlInfoBuilder::windText(const atools::grib::WindPosList& windStack, HtmlB
           continue;
 
         Flags flags = windbarbLayerIndex == i || waypointLayerIndex == i || manualLayerIndex == i || cruiseLayerIndex == i ?
-                      ahtml::BOLD | ahtml::ALIGN_RIGHT : ahtml::ALIGN_RIGHT;
+                      ahtml::BOLD | ahtml::ALIGN_RIGHT : ahtml::Flags(ahtml::ALIGN_RIGHT);
         QStringList suffixList;
 
         if(waypointLayerIndex == i && cruiseLayerIndex == i)
@@ -3132,7 +3132,7 @@ void HtmlInfoBuilder::airspaceText(const MapAirspace& airspace, const atools::sq
 
   if(info)
   {
-    const QString& remark = map::airspaceRemark(airspace.type);
+    const QString& remark = map::airspaceRemark(map::MapAirspaceType(airspace.type));
     if(!remark.isEmpty())
       header.append(remark);
 
@@ -5196,7 +5196,7 @@ void HtmlInfoBuilder::head(HtmlBuilder& html, const QString& text, const atools:
 
 void HtmlInfoBuilder::head(HtmlBuilder& html, const QString& text, const RouteLeg& leg)
 {
-  const MapTypes mapType = leg.getMapType();
+  const MapType mapType = leg.getMapType();
 
   if(mapType == map::PROCEDURE)
   {

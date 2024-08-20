@@ -172,33 +172,35 @@ const map::MapAirspaceFilter MapPaintLayer::getShownAirspacesTypesByLayer() cons
 
   // Mask out all types that are not visible in the current layer
   map::MapAirspaceFilter filter = airspaceTypes;
+  map::MapAirspaceTypes types = filter.types;
   if(!mapLayer->isAirspaceIcao())
-    filter.types &= ~map::AIRSPACE_CLASS_ICAO;
+    types &= ~map::AIRSPACE_CLASS_ICAO;
 
   if(!mapLayer->isAirspaceFg())
-    filter.types &= ~map::AIRSPACE_CLASS_FG;
+    types &= ~map::AIRSPACE_CLASS_FG;
 
   if(!mapLayer->isAirspaceFirUir())
-    filter.types &= ~map::AIRSPACE_FIR_UIR;
+    types &= ~map::AIRSPACE_FIR_UIR;
 
   if(!mapLayer->isAirspaceCenter())
-    filter.types &= ~map::AIRSPACE_CENTER;
+    types &= ~map::AIRSPACE_CENTER;
 
   if(!mapLayer->isAirspaceRestricted())
-    filter.types &= ~map::AIRSPACE_RESTRICTED;
+    types &= ~map::AIRSPACE_RESTRICTED;
 
   if(!mapLayer->isAirspaceSpecial())
-    filter.types &= ~map::AIRSPACE_SPECIAL;
+    types &= ~map::AIRSPACE_SPECIAL;
 
   if(!mapLayer->isAirspaceOther())
-    filter.types &= ~map::AIRSPACE_OTHER;
+    types &= ~map::AIRSPACE_OTHER;
 
   filter.flags.setFlag(map::AIRSPACE_NO_MULTIPLE_Z, OptionData::instance().getFlags().testFlag(opts::MAP_AIRSPACE_NO_MULT_Z));
+  filter.types = types;
 
   return filter;
 }
 
-const map::MapAirspaceTypes MapPaintLayer::getShownAirspaceTextsByLayer() const
+map::MapAirspaceType MapPaintLayer::getShownAirspaceTextsByLayer() const
 {
   map::MapAirspaceTypes types = map::AIRSPACE_NONE;
 
@@ -226,7 +228,7 @@ const map::MapAirspaceTypes MapPaintLayer::getShownAirspaceTextsByLayer() const
       types |= map::AIRSPACE_OTHER;
   }
 
-  return types;
+  return types.asEnum();
 }
 
 void MapPaintLayer::initQueries()

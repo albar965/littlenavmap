@@ -250,11 +250,11 @@ void MapVisible::updateVisibleObjectsStatusBar()
       {
         map::MapAirspaceFilter airspaceFilter = paintLayer->getShownAirspacesTypesByLayer();
         // Collect airspace information ==========================================================
-        for(int i = 0; i < map::MAP_AIRSPACE_TYPE_BITS; i++)
+        for(int i = 0; i <= map::MAP_AIRSPACE_TYPE_BITS; i++)
         {
           map::MapAirspaceTypes type(1 << i);
           if(airspaceFilter.types & type)
-            airspacesTooltip.append(map::airspaceTypeToString(type));
+            airspacesTooltip.append(map::airspaceTypeToString(map::MapAirspaceType(type)));
         }
         std::sort(airspacesTooltip.begin(), airspacesTooltip.end());
 

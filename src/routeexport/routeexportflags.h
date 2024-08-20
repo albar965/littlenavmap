@@ -18,7 +18,7 @@
 #ifndef LNM_ROUTEEXPORTFLAGS_H
 #define LNM_ROUTEEXPORTFLAGS_H
 
-#include <QFlags>
+#include "util/flags.h"
 
 namespace re {
 enum RouteExportType
@@ -129,8 +129,8 @@ enum RouteExportFormatFlag : quint16
   SAVED_FLAGS = SELECTED /* Saved to configuration. */
 };
 
-Q_DECLARE_FLAGS(RouteExportFormatFlags, RouteExportFormatFlag)
-Q_DECLARE_OPERATORS_FOR_FLAGS(rexp::RouteExportFormatFlags)
+ATOOLS_DECLARE_FLAGS_16(RouteExportFormatFlags, RouteExportFormatFlag)
+ATOOLS_DECLARE_OPERATORS_FOR_FLAGS(rexp::RouteExportFormatFlags)
 
 } // namespace rexp
 

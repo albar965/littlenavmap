@@ -479,7 +479,7 @@ const QPen aircraftTrailPen(float size, float minAlt, float maxAlt, float alt)
 }
 
 /* Default colors. Saved to little_navmap_mapstyle.ini and can be overridden there */
-static QHash<map::MapAirspaceTypes, QColor> airspaceFillColors(
+static QHash<map::MapAirspaceType, QColor> airspaceFillColors(
   {
     {map::AIRSPACE_NONE, QColor("#00000000")},
     {map::CENTER, QColor("#30808080")},
@@ -518,7 +518,7 @@ static QHash<map::MapAirspaceTypes, QColor> airspaceFillColors(
   );
 
 /* Default colors. Saved to little_navmap_mapstyle.ini and can be overridden there */
-static QHash<map::MapAirspaceTypes, QPen> airspacePens(
+static QHash<map::MapAirspaceType, QPen> airspacePens(
   {
     {map::AIRSPACE_NONE, QPen(QColor("#00000000"))},
     {map::CENTER, QPen(QColor("#808080"), 1.5)},
@@ -557,7 +557,7 @@ static QHash<map::MapAirspaceTypes, QPen> airspacePens(
   );
 
 /* Maps airspace types to color configuration options */
-static QHash<QString, map::MapAirspaceTypes> airspaceConfigNames(
+static QHash<QString, map::MapAirspaceType> airspaceConfigNames(
   {
     {"Center", map::CENTER},
     {"ClassA", map::CLASS_A},
@@ -847,7 +847,7 @@ void loadColors()
   for(auto it = airspaceConfigNames.constBegin(); it != airspaceConfigNames.constEnd(); ++it)
   {
     const QString& name = it.key();
-    map::MapAirspaceTypes type = it.value();
+    map::MapAirspaceType type = it.value();
     loadPen(colorSettings, "Airspace/" % name % "Pen", airspacePens[type]);
     loadColorArgb(colorSettings, "Airspace/" % name % "FillColor", airspaceFillColors[type]);
   }

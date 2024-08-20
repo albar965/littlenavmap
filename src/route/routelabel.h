@@ -18,6 +18,8 @@
 #ifndef LNM_ROUTELABEL_H
 #define LNM_ROUTELABEL_H
 
+#include "util/flags.h"
+
 #include <QObject>
 
 class QString;
@@ -37,7 +39,7 @@ class HtmlBuilder;
 namespace routelabel {
 
 /* Flag which defines header and footer content. */
-enum LabelFlag
+enum LabelFlag : quint32
 {
   HEADER_AIRPORTS = 1 << 0,
   HEADER_DEPARTURE = 1 << 1,
@@ -55,8 +57,8 @@ enum LabelFlag
               HEADER_RUNWAY_LAND | HEADER_RUNWAY_LAND_WIND | HEADER_DISTTIME | FOOTER_SELECTION | FOOTER_ERROR
 };
 
-Q_DECLARE_FLAGS(LabelFlags, LabelFlag)
-Q_DECLARE_OPERATORS_FOR_FLAGS(routelabel::LabelFlags)
+ATOOLS_DECLARE_FLAGS_32(LabelFlags, LabelFlag)
+ATOOLS_DECLARE_OPERATORS_FOR_FLAGS(routelabel::LabelFlags)
 } // namespace label
 
 /*

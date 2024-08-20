@@ -115,7 +115,7 @@ public:
   const map::MapAirspaceFilter getShownAirspacesTypesByLayer() const;
 
   /* Flags for airspace having labels */
-  const map::MapAirspaceTypes getShownAirspaceTextsByLayer() const;
+  map::MapAirspaceType getShownAirspaceTextsByLayer() const;
 
   const map::MapAirspaceFilter& getShownAirspaces() const
   {

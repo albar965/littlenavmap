@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -54,11 +54,28 @@ private:
   void collectVisibleAirports(QVector<PaintAirportType>& visibleAirports);
 
   void drawAirportSymbol(const map::MapAirport& ap, float x, float y, float size);
+
+  /* Draws the full airport diagram including runway, taxiways, apron, parking and more */
   void drawAirportDiagram(const map::MapAirport& airport);
+
+  /* Draws the full airport diagram including runway, taxiways, apron, parking and more */
   void drawAirportDiagramBackground(const map::MapAirport& airport);
+
+  /* Draw airport runway overview as in VFR maps (runways with white center line) */
   void drawAirportSymbolOverview(const map::MapAirport& ap, float x, float y, float symsize);
+
+  /*
+   * Fill coordinate arrays for all runways of an airport.
+   * @param runways runway input object
+   * @param centers center points
+   * @param rects Runway rectangles
+   * @param innerRects Fill rectangles
+   * @param outlineRects Big white outline
+   */
   void runwayCoords(const QList<map::MapRunway> *runways, QList<QPointF> *centers, QList<QRectF> *rects,
                     QList<QRectF> *innerRects, QList<QRectF> *outlineRects, bool overview);
+
+  /* Draw simple FSX/P3D aprons */
   void drawFsApron(const map::MapApron& apron);
   void drawXplaneApron(const map::MapApron& apron, bool fast);
   QString parkingNameForSize(const map::MapParking& parking, float width);

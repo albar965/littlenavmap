@@ -74,7 +74,7 @@ struct PaintContext
   map::MapTypes objectTypes; /* Object types that should be drawn */
   map::MapDisplayTypes objectDisplayTypes; /* Object types that should be drawn */
   map::MapAirspaceFilter airspaceFilterByLayer; /* Airspaces */
-  map::MapAirspaceTypes airspaceTextsByLayer;
+  map::MapAirspaceType airspaceTextsByLayer;
 
   atools::geo::Rect viewportRect; /* Rectangle of current viewport */
   QRect screenRect; /* Screen coordinate rect */

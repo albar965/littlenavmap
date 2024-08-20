@@ -18,7 +18,8 @@
 #ifndef LNM_ROUTEFLAGS_H
 #define LNM_ROUTEFLAGS_H
 
-#include <QFlags>
+#include "util/flags.h"
+
 #include <limits>
 
 namespace legindex {
@@ -35,7 +36,7 @@ enum LegIndex
 namespace rf {
 
 /* Options for Route::adjustedToOptions */
-enum RouteAdjustOption
+enum RouteAdjustOption : quint32
 {
   NONE = 0,
   SAVE_APPROACH_WP = 1 << 0, /* Save approach as waypoints and remove approach information. */
@@ -112,8 +113,8 @@ enum RouteAdjustOption
   DEFAULT_OPTS_GPX = rf::DEFAULT_OPTS | rf::SAVE_AIRWAY_WP | rf::SAVE_SID_WP | rf::SAVE_STAR_WP | rf::SAVE_APPROACH_WP
 };
 
-Q_DECLARE_FLAGS(RouteAdjustOptions, rf::RouteAdjustOption)
-Q_DECLARE_OPERATORS_FOR_FLAGS(rf::RouteAdjustOptions)
+ATOOLS_DECLARE_FLAGS_32(RouteAdjustOptions, rf::RouteAdjustOption)
+ATOOLS_DECLARE_OPERATORS_FOR_FLAGS(rf::RouteAdjustOptions)
 
 }
 

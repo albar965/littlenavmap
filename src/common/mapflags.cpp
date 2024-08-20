@@ -146,7 +146,7 @@ QDebug operator<<(QDebug out, const map::MapDisplayTypes& type)
   QDebugStateSaver saver(out);
 
   QStringList flags;
-  if(type == NONE)
+  if(type == map::MapDisplayTypes(map::NONE))
     flags.append("NONE");
   else
   {
@@ -183,7 +183,8 @@ QDebug operator<<(QDebug out, const map::MapDisplayTypes& type)
 
 QDataStream& operator>>(QDataStream& dataStream, MapAirspaceFilter& obj)
 {
-  quint32 types, flags;
+  quint32 flags;
+  quint64 types;
   dataStream >> types >> flags >> obj.minAltitudeFt >> obj.maxAltitudeFt;
   obj.types = map::MapAirspaceTypes(types);
   obj.flags = map::MapAirspaceFlags(flags);
@@ -193,7 +194,7 @@ QDataStream& operator>>(QDataStream& dataStream, MapAirspaceFilter& obj)
 
 QDataStream& operator<<(QDataStream& dataStream, const MapAirspaceFilter& obj)
 {
-  dataStream << static_cast<quint32>(obj.types) << static_cast<quint32>(obj.flags) << obj.minAltitudeFt << obj.maxAltitudeFt;
+  dataStream << static_cast<quint64>(obj.types) << static_cast<quint32>(obj.flags) << obj.minAltitudeFt << obj.maxAltitudeFt;
   return dataStream;
 }
 

@@ -18,12 +18,14 @@
 #ifndef LNM_PROFILEOPTIONS_H
 #define LNM_PROFILEOPTIONS_H
 
+#include "util/flags.h"
+
 #include <QCoreApplication>
 
 namespace optsp {
 
 /* Display options for elevation profile affecting line as well as top and left labels. Saved to settings. */
-enum DisplayOptionProfile
+enum DisplayOptionProfile : quint32
 {
   PROFILE_NONE = 0,
 
@@ -77,8 +79,8 @@ enum DisplayOptionProfile
   PROFILE_FP_ANY = PROFILE_FP_DIST | PROFILE_FP_MAG_COURSE | PROFILE_FP_TRUE_COURSE | PROFILE_FP_VERTICAL_ANGLE,
 };
 
-Q_DECLARE_FLAGS(DisplayOptionsProfile, optsp::DisplayOptionProfile)
-Q_DECLARE_OPERATORS_FOR_FLAGS(optsp::DisplayOptionsProfile)
+ATOOLS_DECLARE_FLAGS_32(DisplayOptionsProfile, optsp::DisplayOptionProfile)
+ATOOLS_DECLARE_OPERATORS_FOR_FLAGS(optsp::DisplayOptionsProfile)
 
 /* All available options for loops */
 static const QVector<optsp::DisplayOptionProfile> ALL_OPTIONS({optsp::PROFILE_LABELS_DISTANCE, optsp::PROFILE_LABELS_MAG_COURSE,

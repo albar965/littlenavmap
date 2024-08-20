@@ -51,7 +51,7 @@ struct MapBase;
 
 namespace mw {
 /* State of click, drag and drop actions on the map */
-enum MouseState
+enum MouseState : quint32
 {
   NONE = 0, /* Nothing */
 
@@ -75,8 +75,8 @@ enum MouseState
              mw::DRAG_USER_POINT
 };
 
-Q_DECLARE_FLAGS(MouseStates, MouseState)
-Q_DECLARE_OPERATORS_FOR_FLAGS(mw::MouseStates)
+ATOOLS_DECLARE_FLAGS_32(MouseStates, MouseState)
+ATOOLS_DECLARE_OPERATORS_FOR_FLAGS(mw::MouseStates)
 }
 
 /*
@@ -430,6 +430,8 @@ private:
 
   /* Hide and prevent re-show */
   virtual void hideTooltip() override;
+
+  /* Update result set for tooltip */
   void updateTooltipResult();
 
   virtual void handleHistory() override;

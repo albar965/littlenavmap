@@ -57,11 +57,11 @@ static QHash<QString, QString> navTypeNamesNdb;
 static QHash<QString, QString> navTypeNamesWaypoint;
 static QHash<QString, QString> navTypeNames;
 static QHash<QString, QString> comTypeNames;
-static QHash<map::MapAirspaceTypes, QString> airspaceTypeNameMap;
-static QHash<map::MapAirspaceTypes, QString> airspaceTypeShortNameMap;
-static QHash<map::MapAirspaceFlags, QString> airspaceFlagNameMap;
-static QHash<map::MapAirspaceFlags, QString> airspaceFlagNameMapLong;
-static QHash<map::MapAirspaceTypes, QString> airspaceRemarkMap;
+static QHash<map::MapAirspaceType, QString> airspaceTypeNameMap;
+static QHash<map::MapAirspaceType, QString> airspaceTypeShortNameMap;
+static QHash<map::MapAirspaceFlag, QString> airspaceFlagNameMap;
+static QHash<map::MapAirspaceFlag, QString> airspaceFlagNameMapLong;
+static QHash<map::MapAirspaceType, QString> airspaceRemarkMap;
 
 void initTranslateableTexts()
 {
@@ -449,7 +449,7 @@ void initTranslateableTexts()
       {"VOL", QObject::tr("VOLMET")}
     });
 
-  airspaceTypeNameMap = QHash<map::MapAirspaceTypes, QString>(
+  airspaceTypeNameMap = QHash<map::MapAirspaceType, QString>(
     {
       {map::AIRSPACE_NONE, QObject::tr("No Airspace")},
       {map::CENTER, QObject::tr("Center")},
@@ -486,7 +486,7 @@ void initTranslateableTexts()
       {map::ONLINE_OBSERVER, QObject::tr("Online Observer")}
     });
 
-  airspaceTypeShortNameMap = QHash<map::MapAirspaceTypes, QString>(
+  airspaceTypeShortNameMap = QHash<map::MapAirspaceType, QString>(
     {
       {map::AIRSPACE_NONE, QObject::tr("No Airspace")},
       {map::CENTER, QObject::tr("CTR")},
@@ -523,7 +523,7 @@ void initTranslateableTexts()
       {map::ONLINE_OBSERVER, QObject::tr("Online Observer")}
     });
 
-  airspaceFlagNameMap = QHash<map::MapAirspaceFlags, QString>(
+  airspaceFlagNameMap = QHash<map::MapAirspaceFlag, QString>(
     {
       // Values below only for actions
       {map::AIRSPACE_ALTITUDE_ALL, QObject::tr("&All altitudes")},
@@ -531,7 +531,7 @@ void initTranslateableTexts()
       {map::AIRSPACE_ALTITUDE_SET, QObject::tr("For &minimum and maximum altitude")}
     });
 
-  airspaceFlagNameMapLong = QHash<map::MapAirspaceFlags, QString>(
+  airspaceFlagNameMapLong = QHash<map::MapAirspaceFlag, QString>(
     {
       // Values below only for actions
       {map::AIRSPACE_ALTITUDE_ALL, QObject::tr("Show airspaces for all altitudes")},
@@ -539,7 +539,7 @@ void initTranslateableTexts()
       {map::AIRSPACE_ALTITUDE_SET, QObject::tr("Show airspaces overlapping selected minimum and maximum altitude")}
     });
 
-  airspaceRemarkMap = QHash<map::MapAirspaceTypes, QString>(
+  airspaceRemarkMap = QHash<map::MapAirspaceType, QString>(
     {
       {map::AIRSPACE_NONE, QObject::tr("No Airspace")},
       {map::CENTER, QString()},
@@ -652,7 +652,7 @@ static QHash<QString, int> surfaceQualityMap(
     {"INVALID", 0}
   });
 
-const static QHash<QString, map::MapAirspaceTypes> airspaceTypeFromDatabaseMap(
+const static QHash<QString, map::MapAirspaceType> airspaceTypeFromDatabaseMap(
   {
     {"NONE", map::AIRSPACE_NONE},
     {"C", map::CENTER},
@@ -689,7 +689,7 @@ const static QHash<QString, map::MapAirspaceTypes> airspaceTypeFromDatabaseMap(
     {"OBS", map::ONLINE_OBSERVER} /* No database type */
   });
 
-static QHash<map::MapAirspaceTypes, QString> airspaceTypeToDatabaseMap(
+static QHash<map::MapAirspaceType, QString> airspaceTypeToDatabaseMap(
   {
     {map::AIRSPACE_NONE, "NONE"},
     {map::CENTER, "C"},
@@ -728,7 +728,7 @@ static QHash<map::MapAirspaceTypes, QString> airspaceTypeToDatabaseMap(
   });
 
 /* Defines drawing sort order - lower values are drawn first - higher values are drawn on top */
-const static QHash<map::MapAirspaceTypes, int> airspacePriorityMap(
+const static QHash<map::MapAirspaceType, int> airspacePriorityMap(
   {
     {map::AIRSPACE_NONE, 1},
 
@@ -1877,42 +1877,42 @@ QString ndbFullShortText(const MapNdb& ndb)
   return type.isEmpty() ? QObject::tr("NDB") : QObject::tr("NDB (%1)").arg(type);
 }
 
-const QString& airspaceTypeToString(map::MapAirspaceTypes type)
+const QString& airspaceTypeToString(map::MapAirspaceType type)
 {
   return atools::hashValue(airspaceTypeNameMap, type);
 }
 
-const QString& airspaceTypeShortToString(map::MapAirspaceTypes type)
+const QString& airspaceTypeShortToString(map::MapAirspaceType type)
 {
   return atools::hashValue(airspaceTypeShortNameMap, type);
 }
 
-const QString& airspaceFlagToString(map::MapAirspaceFlags type)
+const QString& airspaceFlagToString(map::MapAirspaceFlag type)
 {
   return atools::hashValue(airspaceFlagNameMap, type);
 }
 
-const QString& airspaceFlagToStringLong(map::MapAirspaceFlags type)
+const QString& airspaceFlagToStringLong(map::MapAirspaceFlag type)
 {
   return atools::hashValue(airspaceFlagNameMapLong, type);
 }
 
-const QString& airspaceRemark(map::MapAirspaceTypes type)
+const QString& airspaceRemark(map::MapAirspaceType type)
 {
   return atools::hashValue(airspaceRemarkMap, type);
 }
 
-int airspaceDrawingOrder(map::MapAirspaceTypes type)
+int airspaceDrawingOrder(map::MapAirspaceType type)
 {
   return airspacePriorityMap.value(type, map::AIRSPACE_NONE);
 }
 
-map::MapAirspaceTypes airspaceTypeFromDatabase(const QString& type)
+map::MapAirspaceType airspaceTypeFromDatabase(const QString& type)
 {
-  return atools::hashValue(airspaceTypeFromDatabaseMap, type);
+  return atools::hashValue(airspaceTypeFromDatabaseMap, type, map::AIRSPACE_NONE);
 }
 
-const QString& airspaceTypeToDatabase(map::MapAirspaceTypes type)
+const QString& airspaceTypeToDatabase(map::MapAirspaceType type)
 {
   return atools::hashValue(airspaceTypeToDatabaseMap, type);
 }

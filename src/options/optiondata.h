@@ -27,7 +27,8 @@ class QSize;
 class QFont;
 
 namespace opts {
-enum Flag : unsigned long long
+/* Not saved. */
+enum Flag : quint64
 {
   NO_FLAGS = 0,
 
@@ -135,7 +136,7 @@ enum Flag : unsigned long long
   MAP_AIRSPACE_NO_MULT_Z = 1 << 30
 };
 
-ATOOLS_DECLARE_FLAGS(Flags, Flag)
+ATOOLS_DECLARE_FLAGS_64(Flags, Flag)
 ATOOLS_DECLARE_OPERATORS_FOR_FLAGS(opts::Flags)
 
 /* Map detail level during scrolling or zooming */
@@ -284,8 +285,8 @@ enum OnlineFormat
 } // namespace opts
 
 namespace opts2 {
-/* Extension from flags to avoid overflow */
-enum Flag2 : unsigned long long
+/* Extension from flags to avoid overflow. Not saved. */
+enum Flag2 : quint64
 {
   NO_FLAGS2 = 0,
 
@@ -388,14 +389,14 @@ enum Flag2 : unsigned long long
 
 };
 
-ATOOLS_DECLARE_FLAGS(Flags2, Flag2)
+ATOOLS_DECLARE_FLAGS_64(Flags2, Flag2)
 ATOOLS_DECLARE_OPERATORS_FOR_FLAGS(opts2::Flags2)
 
 } // namespace opts2
 
 namespace optsw {
 
-enum FlagWeather
+enum FlagWeather : quint32
 {
   NO_WEATHER_FLAGS = 0,
 
@@ -446,13 +447,13 @@ enum FlagWeather
                         WEATHER_TOOLTIP_IVAO
 };
 
-Q_DECLARE_FLAGS(FlagsWeather, FlagWeather)
-Q_DECLARE_OPERATORS_FOR_FLAGS(optsw::FlagsWeather)
+ATOOLS_DECLARE_FLAGS_32(FlagsWeather, FlagWeather)
+ATOOLS_DECLARE_OPERATORS_FOR_FLAGS(optsw::FlagsWeather)
 } // namespace opts2
 
 namespace optsac {
 /* Changing these option values will also change the saved values thus invalidating user settings */
-enum DisplayOptionUserAircraft
+enum DisplayOptionUserAircraft : quint32
 {
   ITEM_USER_AIRCRAFT_NONE = 0,
   ITEM_USER_AIRCRAFT_REGISTRATION = 1 << 1,
@@ -475,8 +476,8 @@ enum DisplayOptionUserAircraft
   ITEM_USER_AIRCRAFT_ALT_ABOVE_GROUND = 1 << 18
 };
 
-Q_DECLARE_FLAGS(DisplayOptionsUserAircraft, DisplayOptionUserAircraft)
-Q_DECLARE_OPERATORS_FOR_FLAGS(optsac::DisplayOptionsUserAircraft)
+ATOOLS_DECLARE_FLAGS_32(DisplayOptionsUserAircraft, DisplayOptionUserAircraft)
+ATOOLS_DECLARE_OPERATORS_FOR_FLAGS(optsac::DisplayOptionsUserAircraft)
 
 enum DisplayOptionAiAircraft : quint32
 {
@@ -499,14 +500,14 @@ enum DisplayOptionAiAircraft : quint32
   ITEM_AI_AIRCRAFT_OBJECT_ID = 1 << 16
 };
 
-Q_DECLARE_FLAGS(DisplayOptionsAiAircraft, DisplayOptionAiAircraft)
-Q_DECLARE_OPERATORS_FOR_FLAGS(optsac::DisplayOptionsAiAircraft)
+ATOOLS_DECLARE_FLAGS_32(DisplayOptionsAiAircraft, DisplayOptionAiAircraft)
+ATOOLS_DECLARE_OPERATORS_FOR_FLAGS(optsac::DisplayOptionsAiAircraft)
 }
 
 namespace optsd {
 
 /* Changing these option values will also change the saved values thus invalidating user settings */
-enum DisplayOptionAirport
+enum DisplayOptionAirport : quint32
 {
   AIRPORT_NONE = 0,
 
@@ -522,11 +523,11 @@ enum DisplayOptionAirport
   ITEM_AIRPORT_DETAIL_BOUNDARY = 1 << 9
 };
 
-Q_DECLARE_FLAGS(DisplayOptionsAirport, DisplayOptionAirport)
-Q_DECLARE_OPERATORS_FOR_FLAGS(optsd::DisplayOptionsAirport)
+ATOOLS_DECLARE_FLAGS_32(DisplayOptionsAirport, DisplayOptionAirport)
+ATOOLS_DECLARE_OPERATORS_FOR_FLAGS(optsd::DisplayOptionsAirport)
 
 /* On-screen navigation aids */
-enum DisplayOptionNavAid
+enum DisplayOptionNavAid : quint32
 {
   NAVAIDS_NONE = 0,
   NAVAIDS_CENTER_CROSS = 1 << 1, /* White center cross on black background */
@@ -535,11 +536,11 @@ enum DisplayOptionNavAid
   NAVAIDS_TOUCHSCREEN_ICONS = 1 << 4 /* Icons */
 };
 
-Q_DECLARE_FLAGS(DisplayOptionsNavAid, DisplayOptionNavAid)
-Q_DECLARE_OPERATORS_FOR_FLAGS(optsd::DisplayOptionsNavAid)
+ATOOLS_DECLARE_FLAGS_32(DisplayOptionsNavAid, DisplayOptionNavAid)
+ATOOLS_DECLARE_OPERATORS_FOR_FLAGS(optsd::DisplayOptionsNavAid)
 
 /* Airspace labels */
-enum DisplayOptionAirspace
+enum DisplayOptionAirspace : quint32
 {
   AIRSPACE_NONE = 0,
   AIRSPACE_NAME = 1 << 1, /* Airspace name */
@@ -549,11 +550,11 @@ enum DisplayOptionAirspace
   AIRSPACE_COM = 1 << 5 /* COM frequencies */
 };
 
-Q_DECLARE_FLAGS(DisplayOptionsAirspace, DisplayOptionAirspace)
-Q_DECLARE_OPERATORS_FOR_FLAGS(optsd::DisplayOptionsAirspace)
+ATOOLS_DECLARE_FLAGS_32(DisplayOptionsAirspace, DisplayOptionAirspace)
+ATOOLS_DECLARE_OPERATORS_FOR_FLAGS(optsd::DisplayOptionsAirspace)
 
 /* Measurement lines */
-enum DisplayOptionMeasurement
+enum DisplayOptionMeasurement : quint32
 {
   MEASUREMENT_NONE = 0,
   MEASUREMENT_TRUE = 1 << 0,
@@ -563,10 +564,10 @@ enum DisplayOptionMeasurement
   MEASUREMENT_RADIAL = 1 << 4
 };
 
-Q_DECLARE_FLAGS(DisplayOptionsMeasurement, DisplayOptionMeasurement)
-Q_DECLARE_OPERATORS_FOR_FLAGS(optsd::DisplayOptionsMeasurement)
+ATOOLS_DECLARE_FLAGS_32(DisplayOptionsMeasurement, DisplayOptionMeasurement)
+ATOOLS_DECLARE_OPERATORS_FOR_FLAGS(optsd::DisplayOptionsMeasurement)
 
-enum DisplayOptionRose
+enum DisplayOptionRose : quint32
 {
   ROSE_NONE = 0,
   ROSE_RANGE_RINGS = 1 << 0,
@@ -581,10 +582,10 @@ enum DisplayOptionRose
   ROSE_TRUE_HEADING = 1 << 9
 };
 
-Q_DECLARE_FLAGS(DisplayOptionsRose, DisplayOptionRose)
-Q_DECLARE_OPERATORS_FOR_FLAGS(optsd::DisplayOptionsRose)
+ATOOLS_DECLARE_FLAGS_32(DisplayOptionsRose, DisplayOptionRose)
+ATOOLS_DECLARE_OPERATORS_FOR_FLAGS(optsd::DisplayOptionsRose)
 
-enum DisplayOptionRoute
+enum DisplayOptionRoute : quint32
 {
   ROUTE_NONE = 0,
   ROUTE_DISTANCE = 1 << 0,
@@ -595,10 +596,10 @@ enum DisplayOptionRoute
   ROUTE_AIRWAY = 1 << 5
 };
 
-Q_DECLARE_FLAGS(DisplayOptionsRoute, DisplayOptionRoute)
-Q_DECLARE_OPERATORS_FOR_FLAGS(optsd::DisplayOptionsRoute)
+ATOOLS_DECLARE_FLAGS_32(DisplayOptionsRoute, DisplayOptionRoute)
+ATOOLS_DECLARE_OPERATORS_FOR_FLAGS(optsd::DisplayOptionsRoute)
 
-enum DisplayTooltipOption
+enum DisplayTooltipOption : quint32
 {
   TOOLTIP_NONE = 0,
   TOOLTIP_AIRPORT = 1 << 1,
@@ -612,10 +613,10 @@ enum DisplayTooltipOption
   TOOLTIP_AIRCRAFT_TRAIL = 1 << 9
 };
 
-Q_DECLARE_FLAGS(DisplayTooltipOptions, DisplayTooltipOption)
-Q_DECLARE_OPERATORS_FOR_FLAGS(optsd::DisplayTooltipOptions)
+ATOOLS_DECLARE_FLAGS_32(DisplayTooltipOptions, DisplayTooltipOption)
+ATOOLS_DECLARE_OPERATORS_FOR_FLAGS(optsd::DisplayTooltipOptions)
 
-enum DisplayClickOption
+enum DisplayClickOption : quint32
 {
   CLICK_NONE = 0,
   CLICK_AIRPORT = 1 << 1,
@@ -627,8 +628,8 @@ enum DisplayClickOption
   CLICK_FLIGHTPLAN = 1 << 7
 };
 
-Q_DECLARE_FLAGS(DisplayClickOptions, DisplayClickOption)
-Q_DECLARE_OPERATORS_FOR_FLAGS(optsd::DisplayClickOptions)
+ATOOLS_DECLARE_FLAGS_32(DisplayClickOptions, DisplayClickOption)
+ATOOLS_DECLARE_OPERATORS_FOR_FLAGS(optsd::DisplayClickOptions)
 
 } // namespace optsd
 

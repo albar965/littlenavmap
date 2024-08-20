@@ -1215,7 +1215,9 @@ void MapContextMenu::insertShowInSearchMenu(QMenu& menu)
   // Erase all non-online airspaces and aircraft which are not online client shadows
   index.erase(std::remove_if(index.begin(), index.end(), [](const map::MapBase *base) -> bool {
     if(base->getType() == map::AIRSPACE)
-      return !base->asPtr<map::MapAirspace>()->src.testFlag(map::AIRSPACE_SRC_ONLINE);
+    {
+      return !map::MapAirspaceSources(base->asPtr<map::MapAirspace>()->src).testFlag(map::AIRSPACE_SRC_ONLINE);
+    }
 
     return false;
   }), index.end());

@@ -38,7 +38,7 @@ static double queryRectInflationFactor = 0.2;
 static double queryRectInflationIncrement = 0.1;
 int AirspaceQuery::queryMaxRows = map::MAX_MAP_OBJECTS;
 
-AirspaceQuery::AirspaceQuery(SqlDatabase *sqlDb, map::MapAirspaceSources src)
+AirspaceQuery::AirspaceQuery(SqlDatabase *sqlDb, map::MapAirspaceSource src)
   : db(sqlDb), source(src)
 {
   mapTypesFactory = new MapTypesFactory();
@@ -115,8 +115,7 @@ const QList<map::MapAirspace> *AirspaceQuery::getAirspaces(const GeoDataLatLonBo
   const static QRegularExpression REGEXP_FBZ_RESTR_DESIG("[0-9A-Y]+Z[0-9]?$");
 
   airspaceCache.updateCache(rect, mapLayer, queryRectInflationFactor, queryRectInflationIncrement, lazy,
-                            [](const MapLayer *curLayer, const MapLayer *newLayer) -> bool
-  {
+                            [](const MapLayer *curLayer, const MapLayer *newLayer) -> bool {
     return curLayer->hasSameQueryParametersAirspace(newLayer);
   });
 
@@ -141,9 +140,9 @@ const QList<map::MapAirspace> *AirspaceQuery::getAirspaces(const GeoDataLatLonBo
       {
         for(int i = 0; i <= map::MAP_AIRSPACE_TYPE_BITS; i++)
         {
-          map::MapAirspaceTypes t(1 << i);
-          if(filter.types & t)
-            typeStrings.append(map::airspaceTypeToDatabase(t));
+          map::MapAirspaceTypes type(1 << i);
+          if(filter.types & type)
+            typeStrings.append(map::airspaceTypeToDatabase(type.asEnum()));
         }
       }
 

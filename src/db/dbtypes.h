@@ -109,7 +109,6 @@ public:
 
 private:
   friend QDataStream& operator<<(QDataStream& out, const SimulatorTypeMap& obj);
-
   friend QDataStream& operator>>(QDataStream& in, SimulatorTypeMap& obj);
 
   void fillOneDefault(atools::fs::FsPaths::SimulatorType type, navdb::Status navDatabaseStatus);

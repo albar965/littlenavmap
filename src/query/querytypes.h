@@ -52,15 +52,13 @@ void bindRect(const atools::geo::Rect& rect, atools::sql::SqlQuery *query, const
 void fetchObjectsForRect(const atools::geo::Rect& rect, atools::sql::SqlQuery *query,
                          std::function<void(atools::sql::SqlQuery *query)> callback);
 
-const QList<Marble::GeoDataLatLonBox> splitAtAntiMeridian(const Marble::GeoDataLatLonBox& rect, double factor = 0.,
-                                                    double increment = 0.);
+const QList<Marble::GeoDataLatLonBox> splitAtAntiMeridian(const Marble::GeoDataLatLonBox& rect, double factor = 0., double increment = 0.);
 
 /* Inflate rect by width and height in degrees. If it crosses the poles or date line it will be limited */
 void inflateQueryRect(Marble::GeoDataLatLonBox& rect, double factor, double increment);
 
 template<typename ID>
-const atools::sql::SqlRecord *cachedRecord(QCache<ID, atools::sql::SqlRecord>& cache,
-                                           atools::sql::SqlQuery *query, ID id);
+const atools::sql::SqlRecord *cachedRecord(QCache<ID, atools::sql::SqlRecord>& cache, atools::sql::SqlQuery *query, ID id);
 
 template<typename ID>
 const atools::sql::SqlRecordList *cachedRecordList(QCache<ID, atools::sql::SqlRecordList>& cache, atools::sql::SqlQuery *query, ID id);
@@ -77,8 +75,7 @@ struct SimpleRectCache
    * @param lazy if true do not fetch new data but return the old potentially incomplete dataset
    * @return true after clearing the cache. The caller has to request new data
    */
-  bool updateCache(const Marble::GeoDataLatLonBox& rect, const MapLayer *mapLayer, double factor, double increment,
-                   bool lazy,
+  bool updateCache(const Marble::GeoDataLatLonBox& rect, const MapLayer *mapLayer, double factor, double increment, bool lazy,
                    LayerCompareFunc funcSameLayer);
   void clear();
 
@@ -219,7 +216,7 @@ struct NearestCacheKeyNavaid
 {
   atools::geo::Pos pos;
   float distanceNm;
-  map::MapTypes type;
+  map::MapType type;
 
   bool operator==(const query::NearestCacheKeyNavaid& other) const
   {
@@ -235,7 +232,7 @@ struct NearestCacheKeyNavaid
 
 inline uint qHash(const query::NearestCacheKeyNavaid& key)
 {
-  return qHash(key.pos) ^ qHash(key.type) ^ ::qHash(key.distanceNm);
+  return atools::geo::qHash(key.pos) ^ ::qHash(map::MapTypes(key.type).asFlagType()) ^ ::qHash(key.distanceNm);
 }
 
 } // namespace query

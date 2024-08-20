@@ -157,7 +157,7 @@ public:
   /* Get range of radio navaid. -1 if not a radio navaid. Source is always database. */
   int getRange() const;
 
-  const map::MapTypes getMapType() const
+  map::MapType getMapType() const
   {
     return type;
   }
@@ -296,7 +296,7 @@ public:
   /* SID, STAR or approach */
   bool isAnyProcedure() const
   {
-    return type.testFlag(map::PROCEDURE);
+    return type & map::PROCEDURE;
   }
 
   /* User defined waypoint */
@@ -433,7 +433,7 @@ private:
   /* Associated flight plan entry or approach leg entry */
   int index = -1;
 
-  map::MapTypes type = map::NONE;
+  map::MapType type = map::NONE;
   map::MapAirport airport;
   map::MapParking parking;
   map::MapStart start;

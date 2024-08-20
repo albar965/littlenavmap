@@ -18,6 +18,8 @@
 #ifndef LITTLENAVMAP_PROCFLAGS_H
 #define LITTLENAVMAP_PROCFLAGS_H
 
+#include "util/flags.h"
+
 #include <QDebug>
 
 /*
@@ -27,7 +29,7 @@ namespace proc {
 
 // =====================================================================
 /* Type covering all objects that are passed around in the program. Also use to determine what should be drawn. */
-enum MapProcedureType
+enum MapProcedureType : quint32
 {
   PROCEDURE_NONE = 0,
   PROCEDURE_APPROACH = 1 << 0, /* Also custom */
@@ -67,8 +69,8 @@ enum MapProcedureType
   PROCEDURE_ALL_BUT_MISSED = PROCEDURE_ALL & ~PROCEDURE_MISSED,
 };
 
-Q_DECLARE_FLAGS(MapProcedureTypes, MapProcedureType)
-Q_DECLARE_OPERATORS_FOR_FLAGS(proc::MapProcedureTypes)
+ATOOLS_DECLARE_FLAGS_32(MapProcedureTypes, MapProcedureType)
+ATOOLS_DECLARE_OPERATORS_FOR_FLAGS(proc::MapProcedureTypes)
 
 QDebug operator<<(QDebug out, const proc::MapProcedureTypes& type);
 

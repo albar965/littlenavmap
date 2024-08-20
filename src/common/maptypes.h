@@ -1392,8 +1392,8 @@ struct MapAirspace
    *  U Unknown - do not display value */
 
   QVector<int> comFrequencies;
-  map::MapAirspaceTypes type = map::AIRSPACE_NONE;
-  map::MapAirspaceSources src;
+  map::MapAirspaceType type = map::AIRSPACE_NONE;
+  map::MapAirspaceSource src;
 
   map::MapAirspaceId combinedId() const
   {
@@ -1809,12 +1809,12 @@ QString parkingShortName(const QString& name);
 /* Parking description as needed in the PLN files */
 QString parkingNameForFlightplan(const MapParking& parking);
 
-const QString& airspaceTypeToString(map::MapAirspaceTypes type);
-const QString& airspaceFlagToString(map::MapAirspaceFlags type); /* Includes mnemonics */
-const QString& airspaceFlagToStringLong(map::MapAirspaceFlags type); /* For tooltips */
-const QString& airspaceRemark(map::MapAirspaceTypes type);
+const QString& airspaceTypeToString(MapAirspaceType type);
+const QString& airspaceFlagToString(MapAirspaceFlag type); /* Includes mnemonics */
+const QString& airspaceFlagToStringLong(MapAirspaceFlag type); /* For tooltips */
+const QString& airspaceRemark(MapAirspaceType type);
 
-int airspaceDrawingOrder(map::MapAirspaceTypes type);
+int airspaceDrawingOrder(MapAirspaceType type);
 QString airspaceSourceText(map::MapAirspaceSources src);
 QString airspaceRestrictiveName(const map::MapAirspace& airspace);
 QStringList airspaceNameMap(const map::MapAirspace& airspace, int maxTextLength, bool name = true, bool restrictiveName = true,
@@ -1833,8 +1833,8 @@ QStringList aircraftIcing(const atools::fs::sc::SimConnectUserAircraft& aircraft
 /* true if any ice value is above one percent */
 bool aircraftHasIcing(const atools::fs::sc::SimConnectUserAircraft& aircraft);
 
-map::MapAirspaceTypes airspaceTypeFromDatabase(const QString& type);
-const QString& airspaceTypeToDatabase(map::MapAirspaceTypes type);
+MapAirspaceType airspaceTypeFromDatabase(const QString& type);
+const QString& airspaceTypeToDatabase(MapAirspaceType type);
 
 QString airwayTrackTypeToShortString(map::MapAirwayTrackType type); /* Also used when writing to db for tracks */
 QString airwayTrackTypeToString(map::MapAirwayTrackType type);

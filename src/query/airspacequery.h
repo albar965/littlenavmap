@@ -55,7 +55,7 @@ public:
 private:
   friend class AirspaceQueries;
 
-  explicit AirspaceQuery(atools::sql::SqlDatabase *sqlDb, map::MapAirspaceSources src);
+  explicit AirspaceQuery(atools::sql::SqlDatabase *sqlDb, map::MapAirspaceSource src);
 
   void getAirspaceById(map::MapAirspace& airspace, int airspaceId);
 
@@ -125,7 +125,7 @@ private:
   bool hasMultipleCode = false;
 
   /* Source database definition */
-  map::MapAirspaceSources source;
+  map::MapAirspaceSource source;
 };
 
 #endif // LITTLENAVMAP_AIRSPACEQUERY_H
