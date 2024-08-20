@@ -3382,7 +3382,7 @@ void MapWidget::updateMapObjectsShown()
   setShowMapObject(map::AIRWAYJ, ui->actionMapShowJetAirways->isChecked());
   setShowMapObject(map::TRACK, ui->actionMapShowTracks->isChecked() && NavApp::hasTracks());
 
-  setShowMapObject(map::AIRSPACE, getShownAirspaces().flags & map::AIRSPACE_ALL && ui->actionShowAirspaces->isChecked());
+  setShowMapObject(map::AIRSPACE, getShownAirspaces().types & map::AIRSPACE_ALL && ui->actionShowAirspaces->isChecked());
 
   setShowMapObjectDisplay(map::FLIGHTPLAN, ui->actionMapShowRoute->isChecked());
   setShowMapObjectDisplay(map::FLIGHTPLAN_TOC_TOD, ui->actionMapShowTocTod->isChecked());
