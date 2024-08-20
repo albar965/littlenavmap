@@ -342,11 +342,25 @@ void MapWidget::handleInfoClick(const QPoint& point)
 #endif
 
   mapResultInfoClick->clear();
-  getScreenIndexConst()->getAllNearest(point, screenSearchDistance, *mapResultInfoClick, map::QUERY_NONE /* For double click */);
+
+  map::MapObjectQueryTypes queryTypes = map::QUERY_PREVIEW_PROC_POINTS;
+
+  if(getShownMapDisplayTypes().testFlag(map::FLIGHTPLAN))
+  {
+    queryTypes |= map::QUERY_PROC_RECOMMENDED;
+    queryTypes |= map::QUERY_PROC_POINTS;
+
+    if(getShownMapTypes().testFlag(map::MISSED_APPROACH))
+      queryTypes |= map::QUERY_PROC_MISSED_POINTS;
+
+    if(getShownMapDisplayTypes().testFlag(map::FLIGHTPLAN_ALTERNATE))
+      queryTypes |= map::QUERY_ALTERNATE;
+  }
+
+  getScreenIndexConst()->getAllNearest(point, screenSearchDistance, *mapResultInfoClick, queryTypes);
 
   // Removes the online aircraft from onlineAircraft which also have a simulator shadow in simAircraft
-  NavApp::getOnlinedataController()->removeOnlineShadowedAircraft(mapResultInfoClick->onlineAircraft,
-                                                                  mapResultInfoClick->aiAircraft);
+  NavApp::getOnlinedataController()->removeOnlineShadowedAircraft(mapResultInfoClick->onlineAircraft, mapResultInfoClick->aiAircraft);
 
   // Remove all unwanted features
   optsd::DisplayClickOptions opts = OptionData::instance().getDisplayClickOptions();
@@ -539,18 +553,22 @@ bool MapWidget::event(QEvent *event)
 void MapWidget::updateTooltipResult()
 {
   // Get map objects for tooltip ===========================================================================
-  map::MapObjectQueryTypes queryTypes = map::QUERY_PROC_POINTS | map::QUERY_MARK_HOLDINGS | map::QUERY_MARK_PATTERNS |
-                                        map::QUERY_MARK_MSA | map::QUERY_MARK_DISTANCE | map::QUERY_MARK_RANGE |
-                                        map::QUERY_PREVIEW_PROC_POINTS | map::QUERY_PROC_RECOMMENDED;
+  map::MapObjectQueryTypes queryTypes = map::QUERY_MARK | map::QUERY_PREVIEW_PROC_POINTS;
 
   const OptionData& optiondata = OptionData::instance();
 
   // Enable features not always shown depending on visiblity
-  if(getShownMapTypes().testFlag(map::MISSED_APPROACH))
-    queryTypes |= map::QUERY_PROC_MISSED_POINTS;
+  if(getShownMapDisplayTypes().testFlag(map::FLIGHTPLAN))
+  {
+    queryTypes |= map::QUERY_PROC_RECOMMENDED;
+    queryTypes |= map::QUERY_PROC_POINTS;
 
-  if(getShownMapDisplayTypes().testFlag(map::FLIGHTPLAN_ALTERNATE))
-    queryTypes |= map::QUERY_ALTERNATE;
+    if(getShownMapTypes().testFlag(map::MISSED_APPROACH))
+      queryTypes |= map::QUERY_PROC_MISSED_POINTS;
+
+    if(getShownMapDisplayTypes().testFlag(map::FLIGHTPLAN_ALTERNATE))
+      queryTypes |= map::QUERY_ALTERNATE;
+  }
 
   if(getShownMapTypes().testFlag(map::AIRCRAFT_TRAIL) && optiondata.getDisplayTooltipOptions().testFlag(optsd::TOOLTIP_AIRCRAFT_TRAIL))
     queryTypes |= map::QUERY_AIRCRAFT_TRAIL;
@@ -705,8 +723,21 @@ bool MapWidget::mousePressCheckModifierActions(QMouseEvent *event)
     Pos pos(lon, lat);
 
     // Look for navaids or airports nearby click
+    map::MapObjectQueryTypes queryTypes = map::QUERY_NONE;
+
+    if(getShownMapDisplayTypes().testFlag(map::FLIGHTPLAN))
+    {
+      queryTypes |= map::QUERY_PROC_RECOMMENDED;
+
+      if(getShownMapTypes().testFlag(map::MISSED_APPROACH))
+        queryTypes |= map::QUERY_PROC_MISSED_POINTS;
+
+      if(getShownMapDisplayTypes().testFlag(map::FLIGHTPLAN_ALTERNATE))
+        queryTypes |= map::QUERY_ALTERNATE;
+    }
+
     map::MapResult result;
-    getScreenIndexConst()->getAllNearest(event->pos(), screenSearchDistance, result, map::QUERY_NONE);
+    getScreenIndexConst()->getAllNearest(event->pos(), screenSearchDistance, result, queryTypes);
 
     // Range rings =======================================================================
     if(event->modifiers() == Qt::ShiftModifier)
@@ -933,6 +964,18 @@ void MapWidget::mouseReleaseEvent(QMouseEvent *event)
           if(mouseState.testFlag(mw::DRAG_DIST_CHANGE_START))
           {
             // Update origin of distance measurement line - check if navaid or airport is the new origin and assign label if
+            map::MapObjectQueryTypes queryTypes = map::QUERY_NONE;
+
+            if(getShownMapDisplayTypes().testFlag(map::FLIGHTPLAN))
+            {
+              queryTypes |= map::QUERY_PROC_RECOMMENDED;
+
+              if(getShownMapTypes().testFlag(map::MISSED_APPROACH))
+                queryTypes |= map::QUERY_PROC_MISSED_POINTS;
+
+              if(getShownMapDisplayTypes().testFlag(map::FLIGHTPLAN_ALTERNATE))
+                queryTypes |= map::QUERY_ALTERNATE;
+            }
             map::MapResult result;
             screenIndex->getAllNearest(event->pos(), screenSearchDistance, result, map::QUERY_NONE);
             fillDistanceMarker(screenIndex->getDistanceMark(currentDistanceMarkerId), pos, result);
@@ -1146,8 +1189,23 @@ void MapWidget::mouseDoubleClickEvent(QMouseEvent *event)
     mapResultInfoClick->clear();
   }
   else
-    getScreenIndexConst()->getAllNearest(event->pos(), screenSearchDistance, mapSearchResult,
-                                         map::QUERY_MARK_HOLDINGS | map::QUERY_MARK_PATTERNS | map::QUERY_MARK_RANGE);
+  {
+    map::MapObjectQueryTypes queryTypes = map::QUERY_MARK_HOLDINGS | map::QUERY_MARK_PATTERNS | map::QUERY_MARK_RANGE;
+
+    if(getShownMapDisplayTypes().testFlag(map::FLIGHTPLAN))
+    {
+      queryTypes |= map::QUERY_PROC_RECOMMENDED;
+      queryTypes |= map::QUERY_PROC_POINTS;
+
+      if(getShownMapTypes().testFlag(map::MISSED_APPROACH))
+        queryTypes |= map::QUERY_PROC_MISSED_POINTS;
+
+      if(getShownMapDisplayTypes().testFlag(map::FLIGHTPLAN_ALTERNATE))
+        queryTypes |= map::QUERY_ALTERNATE;
+    }
+
+    getScreenIndexConst()->getAllNearest(event->pos(), screenSearchDistance, mapSearchResult, queryTypes);
+  }
 
   if(mapSearchResult.userAircraft.isValid())
   {
@@ -2132,7 +2190,20 @@ void MapWidget::updateRoute(const QPoint& point, int leg, int pointIndex, bool f
 
   // Get all objects where the mouse button was released
   map::MapResult result;
-  getScreenIndexConst()->getAllNearest(point, screenSearchDistance, result, map::QUERY_NONE);
+  map::MapObjectQueryTypes queryTypes = map::QUERY_NONE;
+
+  if(getShownMapDisplayTypes().testFlag(map::FLIGHTPLAN))
+  {
+    queryTypes |= map::QUERY_PROC_RECOMMENDED;
+
+    if(getShownMapTypes().testFlag(map::MISSED_APPROACH))
+      queryTypes |= map::QUERY_PROC_MISSED_POINTS;
+
+    if(getShownMapDisplayTypes().testFlag(map::FLIGHTPLAN_ALTERNATE))
+      queryTypes |= map::QUERY_ALTERNATE;
+  }
+
+  getScreenIndexConst()->getAllNearest(point, screenSearchDistance, result, queryTypes);
 
   // Allow only airports for alternates
   if(pointIndex >= 0)
