@@ -72,7 +72,7 @@ static const int ELEVATION_CHANGE_OFFLINE_UPDATE_TIMEOUT_MS = 100;
 
 // Defines a rectangle where five points are sampled and the maximum altitude is used.
 // Results in a sample rectangle with ELEVATION_SAMPLE_RADIUS_NM * ELEVATION_SAMPLE_RADIUS_NM size
-static const float ELEVATION_SAMPLE_RADIUS_NM = 0.1f;
+static const float ELEVATION_SAMPLE_RADIUS_NM = 0.5f;
 
 /* Do not calculate a profile for legs longer than this value */
 static const int ELEVATION_MAX_LEG_NM = 2000;
