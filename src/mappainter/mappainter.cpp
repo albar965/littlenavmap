@@ -41,30 +41,31 @@ using namespace Marble;
 using namespace atools::geo;
 using atools::roundToInt;
 
-PaintAirportType::PaintAirportType(const map::MapAirport& ap, float x, float y)
+AirportPaintData::AirportPaintData(const map::MapAirport& ap, float x, float y)
   : airport(new map::MapAirport(ap)), point(x, y)
 {
 
 }
 
-PaintAirportType::~PaintAirportType()
+AirportPaintData::AirportPaintData(const AirportPaintData& other)
+  : airport(new map::MapAirport)
+{
+  this->operator=(other);
+}
+
+AirportPaintData::AirportPaintData()
+  : airport(new map::MapAirport)
+{
+}
+
+AirportPaintData::~AirportPaintData()
 {
   delete airport;
 }
 
-PaintAirportType& PaintAirportType::operator=(const PaintAirportType& other)
+AirportPaintData& AirportPaintData::operator=(const AirportPaintData& other)
 {
-  if(airport != nullptr && other.airport != nullptr)
-    *airport = *other.airport;
-  else if(airport == nullptr && other.airport != nullptr)
-    airport = new map::MapAirport(*other.airport);
-  else if(airport != nullptr && other.airport == nullptr)
-  {
-    delete airport;
-    airport = nullptr;
-  }
-  // else both nullptr
-
+  *airport = *other.airport;
   point = other.point;
   return *this;
 }
@@ -889,7 +890,7 @@ void MapPainter::paintArrowAlongLine(QPainter *painter, const QLineF& line, cons
   painter->resetTransform();
 }
 
-bool MapPainter::sortAirportFunction(const PaintAirportType& pap1, const PaintAirportType& pap2)
+bool MapPainter::sortAirportFunction(const AirportPaintData& airportPaintData1, const AirportPaintData& airportPaintData2)
 {
   // returns ​true if the first argument is less than (i.e. is ordered before) the second.
   // ">" puts true behind
@@ -901,11 +902,11 @@ bool MapPainter::sortAirportFunction(const PaintAirportType& pap1, const PaintAi
 
   bool empty3dFlag = od.getFlags2().testFlag(opts2::MAP_EMPTY_AIRPORTS_3D);
   bool emptyFlag = od.getFlags().testFlag(opts::MAP_EMPTY_AIRPORTS);
-  int priority1 = pap1.airport->paintPriority(addonFlag, emptyFlag, empty3dFlag);
-  int priority2 = pap2.airport->paintPriority(addonFlag, emptyFlag, empty3dFlag);
+  int priority1 = airportPaintData1.getAirport().paintPriority(addonFlag, emptyFlag, empty3dFlag);
+  int priority2 = airportPaintData2.getAirport().paintPriority(addonFlag, emptyFlag, empty3dFlag);
 
   if(priority1 == priority2)
-    return pap1.airport->id < pap2.airport->id;
+    return airportPaintData1.getAirport().id < airportPaintData2.getAirport().id;
   else
     // Smaller priority: Draw first below all other. Higher priority: Draw last on top of other
     return priority1 < priority2;

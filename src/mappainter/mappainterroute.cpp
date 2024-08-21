@@ -2038,26 +2038,26 @@ void MapPainterRoute::paintProcedurePoint(QSet<map::MapRef>& idMap, const proc::
   }
 }
 
-void MapPainterRoute::paintAirport(float x, float y, const map::MapAirport& obj)
+void MapPainterRoute::paintAirport(float x, float y, const map::MapAirport& airport)
 {
-  context->routeDrawnNavaids->append(obj.getRef());
+  context->routeDrawnNavaids->append(airport.getRef());
   float size = context->szF(context->symbolSizeAirport, context->mapLayerRoute->getAirportSymbolSize());
-  symbolPainter->drawAirportSymbol(context->painter, obj, x, y, size, false, false,
+  symbolPainter->drawAirportSymbol(context->painter, airport, x, y, size, false, false,
                                    context->flags2.testFlag(opts2::MAP_AIRPORT_HIGHLIGHT_ADDON));
 }
 
-void MapPainterRoute::paintAirportText(float x, float y, const map::MapAirport& obj, textatt::TextAttributes atts)
+void MapPainterRoute::paintAirportText(float x, float y, const map::MapAirport& airport, textatt::TextAttributes atts)
 {
   float size = context->szF(context->symbolSizeAirport, context->mapLayerRoute->getAirportSymbolSize());
-  symbolPainter->drawAirportText(context->painter, obj, x, y, context->dispOptsAirport,
+  symbolPainter->drawAirportText(context->painter, airport, x, y, context->dispOptsAirport,
                                  context->airportTextFlagsRoute(true /* drawAsRoute */, false /* draw as log */), size,
                                  context->mapLayerRoute->isAirportDiagram(),
                                  context->mapLayerRoute->getMaxTextLengthAirport(), atts);
 }
 
-void MapPainterRoute::paintWaypoint(float x, float y, const map::MapWaypoint& obj, bool preview)
+void MapPainterRoute::paintWaypoint(float x, float y, const map::MapWaypoint& waypoint, bool preview)
 {
-  context->routeDrawnNavaids->append(obj.getRef());
+  context->routeDrawnNavaids->append(waypoint.getRef());
   paintWaypoint(QColor(), x, y, preview);
 }
 
@@ -2069,7 +2069,7 @@ void MapPainterRoute::paintWaypoint(const QColor& col, float x, float y, bool pr
   symbolPainter->drawWaypointSymbol(context->painter, col, x, y, size, !preview);
 }
 
-void MapPainterRoute::paintWaypointText(float x, float y, const map::MapWaypoint& obj, bool drawTextDetails,
+void MapPainterRoute::paintWaypointText(float x, float y, const map::MapWaypoint& waypoint, bool drawTextDetails,
                                         textatt::TextAttributes atts, const QStringList *additionalText)
 {
   float size = context->szF(context->symbolSizeNavaid, context->mapLayerRoute->getWaypointSymbolSize());
@@ -2089,18 +2089,18 @@ void MapPainterRoute::paintWaypointText(float x, float y, const map::MapWaypoint
     fill = false;
   }
 
-  symbolPainter->drawWaypointText(context->painter, obj, x, y, flags, size, fill, atts, additionalText);
+  symbolPainter->drawWaypointText(context->painter, waypoint, x, y, flags, size, fill, atts, additionalText);
 }
 
-void MapPainterRoute::paintVor(float x, float y, const map::MapVor& obj, bool preview)
+void MapPainterRoute::paintVor(float x, float y, const map::MapVor& vor, bool preview)
 {
-  context->routeDrawnNavaids->append(obj.getRef());
+  context->routeDrawnNavaids->append(vor.getRef());
   float size = context->szF(context->symbolSizeNavaid, context->mapLayerRoute->getVorSymbolSizeRoute());
   float sizeLarge = context->szF(context->symbolSizeNavaid, context->mapLayerRoute->getVorSymbolSizeLarge());
-  symbolPainter->drawVorSymbol(context->painter, obj, x, y, size, sizeLarge, !preview, false /* fast */, context->darkMap);
+  symbolPainter->drawVorSymbol(context->painter, vor, x, y, size, sizeLarge, !preview, false /* fast */, context->darkMap);
 }
 
-void MapPainterRoute::paintVorText(float x, float y, const map::MapVor& obj, bool drawTextDetails, textatt::TextAttributes atts,
+void MapPainterRoute::paintVorText(float x, float y, const map::MapVor& vor, bool drawTextDetails, textatt::TextAttributes atts,
                                    const QStringList *additionalText)
 {
   float size = context->szF(context->symbolSizeNavaid, context->mapLayerRoute->getVorSymbolSize());
@@ -2124,18 +2124,18 @@ void MapPainterRoute::paintVorText(float x, float y, const map::MapVor& obj, boo
     fill = false;
   }
 
-  symbolPainter->drawVorText(context->painter, obj, x, y, flags, size, fill, context->darkMap, atts, additionalText);
+  symbolPainter->drawVorText(context->painter, vor, x, y, flags, size, fill, context->darkMap, atts, additionalText);
 }
 
-void MapPainterRoute::paintNdb(float x, float y, const map::MapNdb& obj, bool preview)
+void MapPainterRoute::paintNdb(float x, float y, const map::MapNdb& ndb, bool preview)
 {
-  context->routeDrawnNavaids->append(obj.getRef());
+  context->routeDrawnNavaids->append(ndb.getRef());
   float size = context->szF(context->symbolSizeNavaid, context->mapLayerRoute->getNdbSymbolSize());
   size = std::max(size, 8.f);
   symbolPainter->drawNdbSymbol(context->painter, x, y, size, !preview, false /* fast */, context->darkMap);
 }
 
-void MapPainterRoute::paintNdbText(float x, float y, const map::MapNdb& obj, bool drawTextDetails, textatt::TextAttributes atts,
+void MapPainterRoute::paintNdbText(float x, float y, const map::MapNdb& ndb, bool drawTextDetails, textatt::TextAttributes atts,
                                    const QStringList *additionalText)
 {
   float size = context->szF(context->symbolSizeNavaid, context->mapLayerRoute->getNdbSymbolSize());
@@ -2159,7 +2159,7 @@ void MapPainterRoute::paintNdbText(float x, float y, const map::MapNdb& obj, boo
     fill = false;
   }
 
-  symbolPainter->drawNdbText(context->painter, obj, x, y, flags, size * 1.5f, fill, context->darkMap, atts, additionalText);
+  symbolPainter->drawNdbText(context->painter, ndb, x, y, flags, size * 1.5f, fill, context->darkMap, atts, additionalText);
 }
 
 /* paint intermediate approach point */
@@ -2184,9 +2184,9 @@ void MapPainterRoute::paintProcedureUnderlay(const proc::MapProcedureLeg& leg, f
   symbolPainter->drawProcedureUnderlay(context->painter, x, y, size, leg.flyover, leg.malteseCross);
 }
 
-void MapPainterRoute::paintUserpoint(float x, float y, const map::MapUserpointRoute& obj, bool preview)
+void MapPainterRoute::paintUserpoint(float x, float y, const map::MapUserpointRoute& userpoint, bool preview)
 {
-  context->routeDrawnNavaids->append(obj.getRef());
+  context->routeDrawnNavaids->append(userpoint.getRef());
   float size = context->szF(context->symbolSizeNavaid, context->mapLayerRoute->getWaypointSymbolSize());
   size = std::max(size, 8.f);
   symbolPainter->drawUserpointSymbol(context->painter, x, y, size, !preview);

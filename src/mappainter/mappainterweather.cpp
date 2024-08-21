@@ -64,7 +64,7 @@ void MapPainterWeather::render()
   context->setQueryOverflow(overflow);
 
   // Collect all airports that are visible from cache ======================================
-  QList<PaintAirportType> visibleAirportWeather;
+  QList<AirportPaintData> visibleAirportWeather;
   float x, y;
   bool hidden, visibleOnMap;
   if(airportCache != nullptr)
@@ -74,7 +74,7 @@ void MapPainterWeather::render()
       visibleOnMap = wToS(airport.position, x, y, scale->getScreeenSizeForRect(airport.bounding), &hidden);
 
       if(!hidden && visibleOnMap)
-        visibleAirportWeather.append(PaintAirportType(airport, x, y));
+        visibleAirportWeather.append(AirportPaintData(airport, x, y));
     }
   }
 
@@ -86,7 +86,7 @@ void MapPainterWeather::render()
       const MapAirport& airport = context->route->getDepartureAirportLeg().getAirport();
       visibleOnMap = wToS(airport.position, x, y, scale->getScreeenSizeForRect(airport.bounding), &hidden);
       if(!hidden && visibleOnMap)
-        visibleAirportWeather.append(PaintAirportType(airport, x, y));
+        visibleAirportWeather.append(AirportPaintData(airport, x, y));
     }
 
     if(context->route->getDestinationAirportLeg().isAirport())
@@ -94,7 +94,7 @@ void MapPainterWeather::render()
       const MapAirport& airport = context->route->getDestinationAirportLeg().getAirport();
       visibleOnMap = wToS(airport.position, x, y, scale->getScreeenSizeForRect(airport.bounding), &hidden);
       if(!hidden && visibleOnMap)
-        visibleAirportWeather.append(PaintAirportType(airport, x, y));
+        visibleAirportWeather.append(AirportPaintData(airport, x, y));
     }
 
     QVector<MapAirport> alternates = context->route->getAlternateAirports();
@@ -102,7 +102,7 @@ void MapPainterWeather::render()
     {
       visibleOnMap = wToS(airport.position, x, y, scale->getScreeenSizeForRect(airport.bounding), &hidden);
       if(!hidden && visibleOnMap)
-        visibleAirportWeather.append(PaintAirportType(airport, x, y));
+        visibleAirportWeather.append(AirportPaintData(airport, x, y));
     }
   }
 
@@ -112,14 +112,14 @@ void MapPainterWeather::render()
      context->weatherSource == map::WEATHER_SOURCE_SIMULATOR)
   {
     visibleAirportWeather.erase(std::remove_if(visibleAirportWeather.begin(), visibleAirportWeather.end(),
-                                               [](const PaintAirportType& ap) -> bool
+                                               [](const AirportPaintData& airportPaintData) -> bool
     {
-      return ap.airport->emptyDraw() || !ap.airport->hard() || ap.airport->closed();
+      return airportPaintData.getAirport().emptyDraw() || !airportPaintData.getAirport().hard() || airportPaintData.getAirport().closed();
     }), visibleAirportWeather.end());
 
     std::sort(visibleAirportWeather.begin(), visibleAirportWeather.end(),
-              [](const PaintAirportType& ap1, const PaintAirportType& ap2) {
-      return ap1.airport->longestRunwayLength > ap2.airport->longestRunwayLength;
+              [](const AirportPaintData& airportPaintData1, const AirportPaintData& airportPaintData2) {
+      return airportPaintData1.getAirport().longestRunwayLength > airportPaintData2.getAirport().longestRunwayLength;
     });
     visibleAirportWeather = visibleAirportWeather.mid(0, 10);
   }
@@ -129,12 +129,12 @@ void MapPainterWeather::render()
   std::sort(visibleAirportWeather.begin(), visibleAirportWeather.end(), std::bind(&MapPainter::sortAirportFunction, this, _1, _2));
 
   WeatherReporter *reporter = NavApp::getWeatherReporter();
-  for(const PaintAirportType& airportWeather: qAsConst(visibleAirportWeather))
+  for(const AirportPaintData& airportPaintData : qAsConst(visibleAirportWeather))
   {
-    const atools::fs::weather::Metar& metar = reporter->getAirportWeather(*airportWeather.airport, true /* stationOnly */);
+    const atools::fs::weather::Metar& metar = reporter->getAirportWeather(airportPaintData.getAirport(), true /* stationOnly */);
 
     if(metar.hasStationMetar())
-      drawAirportWeather(metar.getStation(), airportWeather.point);
+      drawAirportWeather(metar.getStation(), airportPaintData.getPoint());
   }
 }
 

@@ -279,23 +279,28 @@ struct PaintContext
 };
 
 /* Used to collect airports for drawing. Needs to copy airport since it might be removed from the cache. */
-struct PaintAirportType
+class AirportPaintData
 {
-  PaintAirportType(const map::MapAirport& ap, float x, float y);
-  PaintAirportType()
+public:
+  AirportPaintData();
+  AirportPaintData(const map::MapAirport& ap, float x, float y);
+  AirportPaintData(const AirportPaintData& other);
+
+  ~AirportPaintData();
+
+  AirportPaintData& operator=(const AirportPaintData& other);
+
+  const map::MapAirport& getAirport() const
   {
+    return *airport;
   }
 
-  ~PaintAirportType();
-
-  PaintAirportType(const PaintAirportType& other)
+  const QPointF& getPoint() const
   {
-    this->operator=(other);
-
+    return point;
   }
 
-  PaintAirportType& operator=(const PaintAirportType& other);
-
+private:
   map::MapAirport *airport = nullptr;
   QPointF point;
 };
@@ -319,7 +324,7 @@ public:
 
   virtual void render() = 0;
 
-  bool sortAirportFunction(const PaintAirportType& pap1, const PaintAirportType& pap2);
+  bool sortAirportFunction(const AirportPaintData& airportPaintData1, const AirportPaintData& airportPaintData2);
 
   void initQueries();
 

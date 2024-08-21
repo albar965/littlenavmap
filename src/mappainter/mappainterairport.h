@@ -30,7 +30,8 @@ struct MapApron;
 struct MapRunway;
 }
 
-struct PaintAirportType;
+class AirportPaintData;
+class RunwayPaintData;
 
 /*
  * Draws airport symbols, runway overview and complete airport diagram. Airport details are also drawn for
@@ -51,9 +52,9 @@ public:
 private:
   /* Pre-calculates visible airports for render() and fills visibleAirports.
    * visibleAirportIds gets all idents of shown airports */
-  void collectVisibleAirports(QVector<PaintAirportType>& visibleAirports);
+  void collectVisibleAirports(QVector<AirportPaintData>& visibleAirports);
 
-  void drawAirportSymbol(const map::MapAirport& ap, float x, float y, float size);
+  void drawAirportSymbol(const map::MapAirport& airport, float x, float y, float size);
 
   /* Draws the full airport diagram including runway, taxiways, apron, parking and more */
   void drawAirportDiagram(const map::MapAirport& airport);
@@ -61,19 +62,11 @@ private:
   /* Draws the full airport diagram including runway, taxiways, apron, parking and more */
   void drawAirportDiagramBackground(const map::MapAirport& airport);
 
-  /* Draw airport runway overview as in VFR maps (runways with white center line) */
-  void drawAirportSymbolOverview(const map::MapAirport& ap, float x, float y, float symsize);
+  /* Draw airport runway overview as in VFR maps (runways with white fill) */
+  void drawAirportSymbolOverview(const map::MapAirport& airport, float x, float y, float symsize);
 
-  /*
-   * Fill coordinate arrays for all runways of an airport.
-   * @param runways runway input object
-   * @param centers center points
-   * @param rects Runway rectangles
-   * @param innerRects Fill rectangles
-   * @param outlineRects Big white outline
-   */
-  void runwayCoords(const QList<map::MapRunway> *runways, QList<QPointF> *centers, QList<QRectF> *rects,
-                    QList<QRectF> *innerRects, QList<QRectF> *outlineRects, bool overview);
+  /* Get all runways for this airport and calculate all runway screen coordinates */
+  void runwayCoords(QVector<RunwayPaintData>& runwayPaintData, const QList<map::MapRunway> *runways, bool overview);
 
   /* Draw simple FSX/P3D aprons */
   void drawFsApron(const map::MapApron& apron);
