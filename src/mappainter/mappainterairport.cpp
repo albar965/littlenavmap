@@ -966,7 +966,8 @@ void MapPainterAirport::drawAirportDiagram(const map::MapAirport& airport)
     const static QMarginsF RUNWAY_NUMBER_MARGINS(2., 0., 2., 0.);
 
     context->szFont(context->textSizeAirportRunway * (mapLayer->isAirportDiagram() ? 1.8f : 1.2f));
-    QFontMetricsF rwTextMetrics(painter->font());
+    painter->setPen(QPen(mapcolors::runwayOutlineColor, 2., Qt::SolidLine, Qt::FlatCap));
+    QFontMetricsF runwayTextMetrics(painter->font());
     QMargins margins(20, 20, 20, 20);
 
     for(const RunwayPaintData& paintData : qAsConst(runwayPaintData))
@@ -979,19 +980,22 @@ void MapPainterAirport::drawAirportDiagram(const map::MapAirport& airport)
         painter->rotate(runway.heading);
 
         // Calculate background rectangle with margins
-        QRectF rectPrimary = rwTextMetrics.boundingRect(runway.primaryName);
-        rectPrimary = rectPrimary.marginsAdded(RUNWAY_NUMBER_MARGINS);
-        rectPrimary.moveTo(-rectPrimary.width() / 2., 4.);
+        QRectF textRect = runwayTextMetrics.boundingRect(runway.primaryName);
+        textRect = textRect.marginsAdded(RUNWAY_NUMBER_MARGINS);
+        textRect.moveTo(-textRect.width() / 2., 4.);
 
-        painter->fillRect(rectPrimary, mapcolors::runwayTextBackgroundColor);
-        painter->drawText(QPointF(-rectPrimary.width() / 2. + RUNWAY_NUMBER_MARGINS.left(), rwTextMetrics.ascent() + 4.),
+        painter->fillRect(textRect, mapcolors::runwayTextBackgroundColor);
+        painter->drawText(QPointF(-textRect.width() / 2. + RUNWAY_NUMBER_MARGINS.left(), runwayTextMetrics.ascent() + 4.),
                           runway.primaryName);
 
         if(runway.primaryClosed)
         {
           // Cross out runway number
-          painter->drawLine(rectPrimary.topLeft(), rectPrimary.bottomRight());
-          painter->drawLine(rectPrimary.topRight(), rectPrimary.bottomLeft());
+          double radius = std::max(textRect.width(), textRect.height()) / 3.;
+          double centerX = textRect.center().x();
+          double centerY = textRect.center().y();
+          painter->drawLine(QPointF(centerX - radius, centerY - radius), QPointF(centerX + radius, centerY + radius));
+          painter->drawLine(QPointF(centerX + radius, centerY - radius), QPointF(centerX - radius, centerY + radius));
         }
         painter->resetTransform();
       }
@@ -1002,19 +1006,22 @@ void MapPainterAirport::drawAirportDiagram(const map::MapAirport& airport)
         painter->rotate(runway.heading + 180.f);
 
         // Calculate background rectangle with margins
-        QRectF rectSecondary = rwTextMetrics.boundingRect(runway.secondaryName);
-        rectSecondary = rectSecondary.marginsAdded(RUNWAY_NUMBER_MARGINS);
-        rectSecondary.moveTo(-rectSecondary.width() / 2., 4.);
+        QRectF textRect = runwayTextMetrics.boundingRect(runway.secondaryName);
+        textRect = textRect.marginsAdded(RUNWAY_NUMBER_MARGINS);
+        textRect.moveTo(-textRect.width() / 2., 4.);
 
-        painter->fillRect(rectSecondary, mapcolors::runwayTextBackgroundColor);
-        painter->drawText(QPointF(-rectSecondary.width() / 2. + RUNWAY_NUMBER_MARGINS.left(), rwTextMetrics.ascent() + 4.),
+        painter->fillRect(textRect, mapcolors::runwayTextBackgroundColor);
+        painter->drawText(QPointF(-textRect.width() / 2. + RUNWAY_NUMBER_MARGINS.left(), runwayTextMetrics.ascent() + 4.),
                           runway.secondaryName);
 
         if(runway.secondaryClosed)
         {
           // Cross out runway number
-          painter->drawLine(rectSecondary.topLeft(), rectSecondary.bottomRight());
-          painter->drawLine(rectSecondary.topRight(), rectSecondary.bottomLeft());
+          double radius = std::max(textRect.width(), textRect.height()) / 3.;
+          double centerX = textRect.center().x();
+          double centerY = textRect.center().y();
+          painter->drawLine(QPointF(centerX - radius, centerY - radius), QPointF(centerX + radius, centerY + radius));
+          painter->drawLine(QPointF(centerX + radius, centerY - radius), QPointF(centerX - radius, centerY + radius));
         }
         painter->resetTransform();
       }
