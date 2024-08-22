@@ -34,106 +34,106 @@ enum Flag : quint64
 
   /* Reload KML files on startup.
    * ui->checkBoxOptionsStartupLoadKml  */
-  STARTUP_LOAD_KML = 1 << 0,
+  STARTUP_LOAD_KML = 1ULL << 0,
 
   /* Reload all map settings on startup.
    * ui->checkBoxOptionsStartupLoadMapSettings */
-  STARTUP_LOAD_MAP_SETTINGS = 1 << 1,
+  STARTUP_LOAD_MAP_SETTINGS = 1ULL << 1,
 
   /* Reload route on startup.
    * ui->checkBoxOptionsStartupLoadRoute */
-  STARTUP_LOAD_ROUTE = 1 << 2,
+  STARTUP_LOAD_ROUTE = 1ULL << 2,
 
   /* Show home on starup.
    * ui->radioButtonOptionsStartupShowHome */
-  STARTUP_SHOW_HOME = 1 << 3,
+  STARTUP_SHOW_HOME = 1ULL << 3,
 
   /* Show last position on startup.
    * ui->radioButtonOptionsStartupShowLast */
-  STARTUP_SHOW_LAST = 1 << 4,
+  STARTUP_SHOW_LAST = 1ULL << 4,
 
   /* Show last position on startup.
    * ui->radioButtonOptionsStartupShowFlightplan */
-  STARTUP_SHOW_ROUTE = 1 << 5,
+  STARTUP_SHOW_ROUTE = 1ULL << 5,
 
   /* Center KML after loading.
    * ui->checkBoxOptionsGuiCenterKml */
-  GUI_CENTER_KML = 1 << 6,
+  GUI_CENTER_KML = 1ULL << 6,
 
   /* Center flight plan after loading.
    * ui->checkBoxOptionsGuiCenterRoute */
-  GUI_CENTER_ROUTE = 1 << 7,
+  GUI_CENTER_ROUTE = 1ULL << 7,
 
   /* Treat empty airports special.
    * ui->checkBoxOptionsMapEmptyAirports */
-  MAP_EMPTY_AIRPORTS = 1 << 8,
+  MAP_EMPTY_AIRPORTS = 1ULL << 8,
 
   /* East/west rule for flight plan calculation.
    * ui->checkBoxOptionsRouteEastWestRule */
-  ROUTE_ALTITUDE_RULE = 1 << 9,
+  ROUTE_ALTITUDE_RULE = 1ULL << 9,
 
   /* ui->checkBoxOptionsOnlineRemoveShadow */
-  ONLINE_REMOVE_SHADOW = 1 << 10,
+  ONLINE_REMOVE_SHADOW = 1ULL << 10,
 
   /* ui->checkBoxOptionsMapAiAircraftHideGround */
-  MAP_AI_HIDE_GROUND = 1 << 11,
+  MAP_AI_HIDE_GROUND = 1ULL << 11,
 
   /* No box mode when moving map.
    * ui->checkBoxOptionsSimUpdatesConstant */
-  SIM_UPDATE_MAP_CONSTANTLY = 1 << 12,
+  SIM_UPDATE_MAP_CONSTANTLY = 1ULL << 12,
 
   /* Center flight plan after loading.
    * ui->checkBoxOptionsGuiAvoidOverwrite */
-  GUI_AVOID_OVERWRITE_FLIGHTPLAN = 1 << 13,
+  GUI_AVOID_OVERWRITE_FLIGHTPLAN = 1ULL << 13,
 
   /* radioButtonCacheUseOnlineElevation */
-  CACHE_USE_ONLINE_ELEVATION = 1 << 14,
+  CACHE_USE_ONLINE_ELEVATION = 1ULL << 14,
 
   /* radioButtonCacheUseOnlineElevation */
-  CACHE_USE_OFFLINE_ELEVATION = 1 << 15,
+  CACHE_USE_OFFLINE_ELEVATION = 1ULL << 15,
 
   /* checkBoxOptionsStartupLoadInfoContent */
-  STARTUP_LOAD_INFO = 1 << 17,
+  STARTUP_LOAD_INFO = 1ULL << 17,
 
   /* checkBoxOptionsStartupLoadSearch */
-  STARTUP_LOAD_SEARCH = 1 << 18,
+  STARTUP_LOAD_SEARCH = 1ULL << 18,
 
   /* checkBoxOptionsStartupLoadTrail */
-  STARTUP_LOAD_TRAIL = 1 << 19,
+  STARTUP_LOAD_TRAIL = 1ULL << 19,
 
   /* checkBoxOptionsGuiOverrideLocale */
-  GUI_OVERRIDE_LOCALE = 1 << 21,
+  GUI_OVERRIDE_LOCALE = 1ULL << 21,
 
   /* checkBoxOptionsDisplayTrailGradient */
-  MAP_TRAIL_GRADIENT = 1 << 22,
+  MAP_TRAIL_GRADIENT = 1ULL << 22,
 
   /* checkBoxOptionsFreetype */
-  GUI_FREETYPE_FONT_ENGINE = 1 << 23,
+  GUI_FREETYPE_FONT_ENGINE = 1ULL << 23,
 
   /* Reload aircraft performance on startup.
    * ui->checkBoxOptionsStartupLoadperf */
-  STARTUP_LOAD_PERF = 1 << 24,
+  STARTUP_LOAD_PERF = 1ULL << 24,
 
   /* Reload window layout on startup.
    * ui->checkBoxOptionsStartupLoadLayout */
-  STARTUP_LOAD_LAYOUT = 1 << 25,
+  STARTUP_LOAD_LAYOUT = 1ULL << 25,
 
   /* Reload window layout on startup.
    * ui->checkBoxOptionsStartupShowSplash */
-  STARTUP_SHOW_SPLASH = 1 << 26,
+  STARTUP_SHOW_SPLASH = 1ULL << 26,
 
   /* Reverse wheel.
    * ui->checkBoxOptionsGuiWheel */
-  GUI_REVERSE_WHEEL = 1 << 27,
+  GUI_REVERSE_WHEEL = 1ULL << 27,
 
   /* checkBoxOptionsGuiTooltipsAll */
-  ENABLE_TOOLTIPS_ALL = 1 << 28,
+  ENABLE_TOOLTIPS_ALL = 1ULL << 28,
 
   /* checkBoxOptionsGuiTooltipsMenu */
-  ENABLE_TOOLTIPS_MENU = 1 << 29,
+  ENABLE_TOOLTIPS_MENU = 1ULL << 29,
 
   /* ui->checkBoxOptionsMapAirspaceNoMultZ */
-  MAP_AIRSPACE_NO_MULT_Z = 1 << 30
+  MAP_AIRSPACE_NO_MULT_Z = 1ULL << 30
 };
 
 ATOOLS_DECLARE_FLAGS_64(Flags, Flag)
@@ -292,100 +292,100 @@ enum Flag2 : quint64
 
   /* Treat empty airports special.
    * ui->checkBoxOptionsMapEmptyAirports3D */
-  MAP_EMPTY_AIRPORTS_3D = 1 << 0,
+  MAP_EMPTY_AIRPORTS_3D = 1ULL << 0,
 
   /* checkBoxOptionsMapFlightplanHighlightActive */
-  MAP_ROUTE_HIGHLIGHT_ACTIVE = 1 << 1,
+  MAP_ROUTE_HIGHLIGHT_ACTIVE = 1ULL << 1,
 
   /* ui->checkBoxOptionsMapAirportText */
-  MAP_AIRPORT_TEXT_BACKGROUND = 1 << 2,
+  MAP_AIRPORT_TEXT_BACKGROUND = 1ULL << 2,
 
   /* ui->checkBoxOptionsMapNavaidText */
-  MAP_NAVAID_TEXT_BACKGROUND = 1 << 3,
+  MAP_NAVAID_TEXT_BACKGROUND = 1ULL << 3,
 
   /* ui->checkBoxOptionsMapFlightplanText */
-  MAP_ROUTE_TEXT_BACKGROUND = 1 << 4,
+  MAP_ROUTE_TEXT_BACKGROUND = 1ULL << 4,
 
   /* ui->checkBoxOptionsSimHighlightActiveTable */
-  ROUTE_HIGHLIGHT_ACTIVE_TABLE = 1 << 5,
+  ROUTE_HIGHLIGHT_ACTIVE_TABLE = 1ULL << 5,
 
   /* ui->checkBoxOptionsMapFlightplanDimPassed */
-  MAP_ROUTE_DIM_PASSED = 1 << 6,
+  MAP_ROUTE_DIM_PASSED = 1ULL << 6,
 
   /* ui->checkBoxOptionsSimDoNotFollowOnScroll */
-  ROUTE_NO_FOLLOW_ON_MOVE = 1 << 7,
+  ROUTE_NO_FOLLOW_ON_MOVE = 1ULL << 7,
 
   /* ui->checkBoxOptionsSimCenterLeg */
-  ROUTE_AUTOZOOM = 1 << 8,
+  ROUTE_AUTOZOOM = 1ULL << 8,
 
   /* checkBoxOptionsGuiToolbarSize */
-  OVERRIDE_TOOLBAR_SIZE = 1 << 9,
+  OVERRIDE_TOOLBAR_SIZE = 1ULL << 9,
 
   /* ui->checkBoxOptionsSimCenterLegTable */
-  ROUTE_CENTER_ACTIVE_LEG = 1 << 10,
+  ROUTE_CENTER_ACTIVE_LEG = 1ULL << 10,
 
   /* checkBoxOptionsMapZoomAvoidBlurred */
-  MAP_AVOID_BLURRED_MAP = 1 << 11,
+  MAP_AVOID_BLURRED_MAP = 1ULL << 11,
 
   /* checkBoxOptionsMapUndock */
-  MAP_ALLOW_UNDOCK = 1 << 12,
+  MAP_ALLOW_UNDOCK = 1ULL << 12,
 
   /* checkBoxOptionsGuiHighDpi */
-  HIGH_DPI_DISPLAY_SUPPORT = 1 << 13,
+  HIGH_DPI_DISPLAY_SUPPORT = 1ULL << 13,
 
   /* checkBoxDisplayOnlineNameLookup */
-  ONLINE_AIRSPACE_BY_NAME = 1 << 14,
+  ONLINE_AIRSPACE_BY_NAME = 1ULL << 14,
 
   /* checkBoxDisplayOnlineFilenameLookup */
-  ONLINE_AIRSPACE_BY_FILE = 1 << 15,
+  ONLINE_AIRSPACE_BY_FILE = 1ULL << 15,
 
   /* checkBoxOptionsMapHighlightTransparent */
-  MAP_HIGHLIGHT_TRANSPARENT = 1 << 16,
+  MAP_HIGHLIGHT_TRANSPARENT = 1ULL << 16,
 
   /* checkBoxOptionsGuiRaiseWindows */
-  RAISE_WINDOWS = 1 << 17,
+  RAISE_WINDOWS = 1ULL << 17,
 
   /* checkBoxOptionsUnitFuelOther */
-  UNIT_FUEL_SHOW_OTHER = 1 << 18,
+  UNIT_FUEL_SHOW_OTHER = 1ULL << 18,
 
   /* checkBoxOptionsUnitTrueCourse */
-  UNIT_TRUE_COURSE = 1 << 19,
+  UNIT_TRUE_COURSE = 1ULL << 19,
 
   /* ui->checkBoxOptionsSimClearSelection */
-  ROUTE_CLEAR_SELECTION = 1 << 20,
+  ROUTE_CLEAR_SELECTION = 1ULL << 20,
 
   /* checkBoxOptionsGuiRaiseDockWindows */
-  RAISE_DOCK_WINDOWS = 1 << 21,
+  RAISE_DOCK_WINDOWS = 1ULL << 21,
 
   /* checkBoxOptionsGuiRaiseMainWindow */
-  RAISE_MAIN_WINDOW = 1 << 22,
+  RAISE_MAIN_WINDOW = 1ULL << 22,
 
   /* ui->checkBoxOptionsMapAirwayText */
-  MAP_AIRWAY_TEXT_BACKGROUND = 1 << 23,
+  MAP_AIRWAY_TEXT_BACKGROUND = 1ULL << 23,
 
   /* checkBoxOptionsMapUserpointText */
-  MAP_USERPOINT_TEXT_BACKGROUND = 1 << 24,
+  MAP_USERPOINT_TEXT_BACKGROUND = 1ULL << 24,
 
   /* checkBoxOptionsSimZoomOnTakeoff */
-  ROUTE_ZOOM_TAKEOFF = 1 << 25,
+  ROUTE_ZOOM_TAKEOFF = 1ULL << 25,
 
   /* checkBoxOptionsMapUserAircraftText */
-  MAP_USER_TEXT_BACKGROUND = 1 << 26,
+  MAP_USER_TEXT_BACKGROUND = 1ULL << 26,
 
   /* checkBoxOptionsMapAiAircraftText */
-  MAP_AI_TEXT_BACKGROUND = 1 << 27,
+  MAP_AI_TEXT_BACKGROUND = 1ULL << 27,
 
   /* checkBoxOptionsMapAirportAddon */
-  MAP_AIRPORT_HIGHLIGHT_ADDON = 1 << 28,
+  MAP_AIRPORT_HIGHLIGHT_ADDON = 1ULL << 28,
 
   /* checkBoxOptionsSimZoomOnLanding */
-  ROUTE_ZOOM_LANDING = 1 << 29,
+  ROUTE_ZOOM_LANDING = 1ULL << 29,
 
   /* checkBoxOptionsMapFlightplanTransparent */
-  MAP_ROUTE_TRANSPARENT = 1 << 30,
+  MAP_ROUTE_TRANSPARENT = 1ULL << 30,
 
   /* checkBoxOptionsMapFlightplanDirectToDeparture */
-  MAP_ROUTE_DIRECT_TO_DEPARTURE = 1L << 31L,
+  MAP_ROUTE_DIRECT_TO_DEPARTURE = 1ULL << 31L,
 
 };
 
@@ -402,43 +402,43 @@ enum FlagWeather : quint32
 
   /* Show ASN weather in info panel.
    * ui->checkBoxOptionsWeatherInfoAsn */
-  WEATHER_INFO_ACTIVESKY = 1 << 0,
+  WEATHER_INFO_ACTIVESKY = 1ULL << 0,
 
   /* Show NOAA weather in info panel.
    * ui->checkBoxOptionsWeatherInfoNoaa */
-  WEATHER_INFO_NOAA = 1 << 1,
+  WEATHER_INFO_NOAA = 1ULL << 1,
 
   /* Show Vatsim weather in info panel.
    * ui->checkBoxOptionsWeatherInfoVatsim */
-  WEATHER_INFO_VATSIM = 1 << 2,
+  WEATHER_INFO_VATSIM = 1ULL << 2,
 
   /* Show FSX/P3D or X-Plane weather in info panel.
    * ui->checkBoxOptionsWeatherInfoFs */
-  WEATHER_INFO_FS = 1 << 3,
+  WEATHER_INFO_FS = 1ULL << 3,
 
   /* Show IVAO weather in info panel.
    * ui->checkBoxOptionsWeatherInfoIvao*/
-  WEATHER_INFO_IVAO = 1 << 4,
+  WEATHER_INFO_IVAO = 1ULL << 4,
 
   /* Show ASN weather in tooltip.
    * ui->checkBoxOptionsWeatherTooltipAsn */
-  WEATHER_TOOLTIP_ACTIVESKY = 1 << 5,
+  WEATHER_TOOLTIP_ACTIVESKY = 1ULL << 5,
 
   /* Show NOAA weather in tooltip.
    * ui->checkBoxOptionsWeatherTooltipNoaa */
-  WEATHER_TOOLTIP_NOAA = 1 << 6,
+  WEATHER_TOOLTIP_NOAA = 1ULL << 6,
 
   /* Show Vatsim weather in tooltip.
    * ui->checkBoxOptionsWeatherTooltipVatsim */
-  WEATHER_TOOLTIP_VATSIM = 1 << 7,
+  WEATHER_TOOLTIP_VATSIM = 1ULL << 7,
 
   /* Show FSX/P3D or X-Plane weather in tooltip.
    * ui->checkBoxOptionsWeatherTooltipFs */
-  WEATHER_TOOLTIP_FS = 1 << 8,
+  WEATHER_TOOLTIP_FS = 1ULL << 8,
 
   /* Show IVAO weather in tooltip.
    * ui->checkBoxOptionsWeatherTooltipIvao*/
-  WEATHER_TOOLTIP_IVAO = 1 << 9,
+  WEATHER_TOOLTIP_IVAO = 1ULL << 9,
 
   WEATHER_INFO_ALL = WEATHER_INFO_ACTIVESKY | WEATHER_INFO_NOAA | WEATHER_INFO_VATSIM | WEATHER_INFO_FS |
                      WEATHER_INFO_IVAO,

@@ -62,78 +62,78 @@ Q_DECL_CONSTEXPR static int MAX_MAP_OBJECTS = 12000;
  * Partially used to determine what should be drawn.
  * These types are used in map::MapBase::objType.
  * Can be serialized to QVariant.
- * This state is not saved but filled by the saved state of the various actions. */
+ * This state is not saved but filled by the saved state of the various actions at runtime. */
 /* *INDENT-OFF* */
 enum MapType : quint64
 {
   NONE =             0,
-  AIRPORT =          1L << 0, /* Master switch for airport display */
-  RUNWAY =           1L << 1, /* Stores runways for queries */
+  AIRPORT =          1ULL << 0, /* Master switch for airport display */
+  RUNWAY =           1ULL << 1, /* Stores runways for queries */
   // 1 << 2, UNUSED
   // 1 << 3,
   // 1 << 4,
-  VOR =              1L << 5, /* Also: DME, VORDME, VORTAC and TACAN */
-  NDB =              1L << 6,
-  ILS =              1L << 7, /* Type also covers GLS approaches */
-  MARKER =           1L << 8,
-  WAYPOINT =         1L << 9,
-  AIRWAY =           1L << 10,
-  AIRWAYV =          1L << 11,
-  AIRWAYJ =          1L << 12,
-  USER_FEATURE =     1L << 13,
-  AIRCRAFT =         1L << 14, /* Simulator user aircraft */
-  AIRCRAFT_AI =      1L << 15, /* AI or multiplayer simulator aircraft */
-  AIRCRAFT_AI_SHIP = 1L << 16, /* AI or multiplayer simulator ship */
-  AIRPORT_MSA =      1L << 17, /* Minimum safe altitude for airports and navaids - small icon */
-  USERPOINTROUTE =   1L << 18, /* Flight plan user waypoint */
-  PARKING =          1L << 19,
-  RUNWAYEND =        1L << 20,
-  INVALID =          1L << 21, /* Flight plan waypoint not found in database */
-  MISSED_APPROACH =  1L << 22, /* Only procedure type that can be hidden */
-  PROCEDURE =        1L << 23, /* General procedure leg */
-  AIRSPACE =         1L << 24, /* General airspace boundary, online or offline */
-  HELIPAD =          1L << 25, /* Helipads on airports */
-  HOLDING =          1L << 26, /* Enroute holds and user holds. User holds are enabled by MapMarkType below */
-  USERPOINT =        1L << 27, /* A user defined waypoint - not used to define if should be drawn or not */
-  TRACK =            1L << 28, /* NAT, PACOTS or AUSOTS track */
-  AIRCRAFT_ONLINE =  1L << 29, /* Online network client/aircraft */
-  LOGBOOK =          1L << 30, /* Logbook entry */
+  VOR =              1ULL << 5, /* Also: DME, VORDME, VORTAC and TACAN */
+  NDB =              1ULL << 6,
+  ILS =              1ULL << 7, /* Type also covers GLS approaches */
+  MARKER =           1ULL << 8,
+  WAYPOINT =         1ULL << 9,
+  AIRWAY =           1ULL << 10,
+  AIRWAYV =          1ULL << 11,
+  AIRWAYJ =          1ULL << 12,
+  USER_FEATURE =     1ULL << 13,
+  AIRCRAFT =         1ULL << 14, /* Simulator user aircraft */
+  AIRCRAFT_AI =      1ULL << 15, /* AI or multiplayer simulator aircraft */
+  AIRCRAFT_AI_SHIP = 1ULL << 16, /* AI or multiplayer simulator ship */
+  AIRPORT_MSA =      1ULL << 17, /* Minimum safe altitude for airports and navaids - small icon */
+  USERPOINTROUTE =   1ULL << 18, /* Flight plan user waypoint */
+  PARKING =          1ULL << 19,
+  RUNWAYEND =        1ULL << 20,
+  INVALID =          1ULL << 21, /* Flight plan waypoint not found in database */
+  MISSED_APPROACH =  1ULL << 22, /* Only procedure type that can be hidden */
+  PROCEDURE =        1ULL << 23, /* General procedure leg */
+  AIRSPACE =         1ULL << 24, /* General airspace boundary, online or offline */
+  HELIPAD =          1ULL << 25, /* Helipads on airports */
+  HOLDING =          1ULL << 26, /* Enroute holds and user holds. User holds are enabled by MapMarkType below */
+  USERPOINT =        1ULL << 27, /* A user defined waypoint - not used to define if should be drawn or not */
+  TRACK =            1ULL << 28, /* NAT, PACOTS or AUSOTS track */
+  AIRCRAFT_ONLINE =  1ULL << 29, /* Online network client/aircraft */
+  LOGBOOK =          1ULL << 30, /* Logbook entry */
 
   /* Need to use constant expressions for long values above 32 bit */
 
   /* Mark state is saved in the MapMarkHandler ================================ */
-  MARK_RANGE =           1L << 31, /* 1 << 31 All range rings */
-  MARK_DISTANCE =        1L << 32, /* All measurement lines */
-  MARK_HOLDING =         1L << 33, /* Holdings */
-  MARK_PATTERNS =        1L << 34, /* Traffic patterns */
-  MARK_MSA =             1L << 35, /* Airport MSA placed/highlighted by user */
+  MARK_RANGE =           1ULL << 31, /* 1 << 31 All range rings */
+  MARK_DISTANCE =        1ULL << 32, /* All measurement lines */
+  MARK_HOLDING =         1ULL << 33, /* Holdings */
+  MARK_PATTERNS =        1ULL << 34, /* Traffic patterns */
+  MARK_MSA =             1ULL << 35, /* Airport MSA placed/highlighted by user */
 
   /* All marks */
   MARK_ALL = MARK_RANGE | MARK_DISTANCE | MARK_HOLDING | MARK_PATTERNS | MARK_MSA,
 
   /* Airport display flags ================================  */
-  AIRPORT_HARD =         1L << 36, /* Display flag for airports having at least one hard runway */
-  AIRPORT_SOFT =         1L << 37, /* Display flag for airports having only soft runways */
-  AIRPORT_WATER =        1L << 38, /* Display flag for water only airports */
-  AIRPORT_HELIPAD =      1L << 39, /* Display flag for helipad only airports */
-  AIRPORT_EMPTY =        1L << 40, /* Filter flag for empty airports */
-  // 1L << 41 / 0x0000'0200'0000'0000 FREE
-  AIRPORT_UNLIGHTED =    1L << 42, /* Filter flag. Show airports having no lighting */
-  AIRPORT_NO_PROCS =     1L << 43, /* Filter flag. Show airports without approach procedure */
-  AIRPORT_CLOSED =       1L << 44, /* Filter flag. Show closed airports */
-  AIRPORT_MILITARY =     1L << 46, /* Filter flag. Show military airports */
+  AIRPORT_HARD =         1ULL << 36, /* Display flag for airports having at least one hard runway */
+  AIRPORT_SOFT =         1ULL << 37, /* Display flag for airports having only soft runways */
+  AIRPORT_WATER =        1ULL << 38, /* Display flag for water only airports */
+  AIRPORT_HELIPAD =      1ULL << 39, /* Display flag for helipad only airports */
+  AIRPORT_EMPTY =        1ULL << 40, /* Filter flag for empty airports */
+  // 1ULL << 41 / 0x0000'0200'0000'0000 FREE
+  AIRPORT_UNLIGHTED =    1ULL << 42, /* Filter flag. Show airports having no lighting */
+  AIRPORT_NO_PROCS =     1ULL << 43, /* Filter flag. Show airports without approach procedure */
+  AIRPORT_CLOSED =       1ULL << 44, /* Filter flag. Show closed airports */
+  AIRPORT_MILITARY =     1ULL << 46, /* Filter flag. Show military airports */
 
   /* Procedure flags ================================  */
-  PROCEDURE_POINT =      1L << 45, /* Type flag for map base and context menu */
+  PROCEDURE_POINT =      1ULL << 45, /* Type flag for map base and context menu */
 
-  AIRCRAFT_TRAIL =       1L << 47, /* Simulator aircraft track.  */
+  AIRCRAFT_TRAIL =       1ULL << 47, /* Simulator aircraft track.  */
 
   /* Add-on airport flags ================================  */
-  AIRPORT_ADDON_ZOOM =        1L << 48, /* Add-on airports override zoom distance but but not filter */
-  AIRPORT_ADDON_ZOOM_FILTER = 1L << 49, /* Add-on airports override zoom distance and filters */
+  AIRPORT_ADDON_ZOOM =        1ULL << 48, /* Add-on airports override zoom distance but but not filter */
+  AIRPORT_ADDON_ZOOM_FILTER = 1ULL << 49, /* Add-on airports override zoom distance and filters */
 
 
-  // NEXT = 0x0001'0000'0000'0000 / 1L << 50
+  // NEXT = 0x0001'0000'0000'0000 / 1ULL << 50
 
   /* =============================================================================================== */
   /* Pure visibiliy flags. Nothing is shown if not at least one of these is set */
@@ -280,41 +280,41 @@ ATOOLS_DECLARE_OPERATORS_FOR_FLAGS(map::AirportQueryFlags)
 enum MapAirspaceType : quint64
 {
   AIRSPACE_NONE = 0,
-  CENTER = 1L << 0,
-  CLASS_A = 1L << 1, // ICAO airspace - controlled - no VFR
-  CLASS_B = 1L << 2, // ICAO airspace - controlled
-  CLASS_C = 1L << 3, // ICAO airspace - controlled
-  CLASS_D = 1L << 4, // ICAO airspace - controlled
-  CLASS_E = 1L << 5, // ICAO airspace - controlled
-  CLASS_F = 1L << 6, // Open FIR - uncontrolled
-  CLASS_G = 1L << 7, // Open FIR - uncontrolled
-  TOWER = 1L << 8,
-  CLEARANCE = 1L << 9,
-  GROUND = 1L << 10,
-  DEPARTURE = 1L << 11,
-  APPROACH = 1L << 12,
-  MOA = 1L << 13,
-  RESTRICTED = 1L << 14,
-  PROHIBITED = 1L << 15,
-  WARNING = 1L << 16,
-  ALERT = 1L << 17,
-  DANGER = 1L << 18,
-  NATIONAL_PARK = 1L << 19,
-  MODEC = 1L << 20,
-  RADAR = 1L << 21,
-  TRAINING = 1L << 22,
-  GLIDERPROHIBITED = 1L << 23, // Not FSX/P3D
-  WAVEWINDOW = 1L << 24, // Not FSX/P3D
-  CAUTION = 1L << 25, // DFD
+  CENTER = 1ULL << 0,
+  CLASS_A = 1ULL << 1, // ICAO airspace - controlled - no VFR
+  CLASS_B = 1ULL << 2, // ICAO airspace - controlled
+  CLASS_C = 1ULL << 3, // ICAO airspace - controlled
+  CLASS_D = 1ULL << 4, // ICAO airspace - controlled
+  CLASS_E = 1ULL << 5, // ICAO airspace - controlled
+  CLASS_F = 1ULL << 6, // Open FIR - uncontrolled
+  CLASS_G = 1ULL << 7, // Open FIR - uncontrolled
+  TOWER = 1ULL << 8,
+  CLEARANCE = 1ULL << 9,
+  GROUND = 1ULL << 10,
+  DEPARTURE = 1ULL << 11,
+  APPROACH = 1ULL << 12,
+  MOA = 1ULL << 13,
+  RESTRICTED = 1ULL << 14,
+  PROHIBITED = 1ULL << 15,
+  WARNING = 1ULL << 16,
+  ALERT = 1ULL << 17,
+  DANGER = 1ULL << 18,
+  NATIONAL_PARK = 1ULL << 19,
+  MODEC = 1ULL << 20,
+  RADAR = 1ULL << 21,
+  TRAINING = 1ULL << 22,
+  GLIDERPROHIBITED = 1ULL << 23, // Not FSX/P3D
+  WAVEWINDOW = 1ULL << 24, // Not FSX/P3D
+  CAUTION = 1ULL << 25, // DFD
 
-  ONLINE_OBSERVER = 1L << 26, // VATSIM or IVAO observer
+  ONLINE_OBSERVER = 1ULL << 26, // VATSIM or IVAO observer
 
-  FIR = 1L << 27, // New FIR region instead of center
-  UIR = 1L << 28, // New UIR region instead of center
+  FIR = 1ULL << 27, // New FIR region instead of center
+  UIR = 1ULL << 28, // New UIR region instead of center
 
-  GCA = 1L << 29, // New general control area combining several unknown types
-  MCTR = 1L << 30, // Military Control Zone (MCTR)
-  TRSA = 1L << 31, // Terminal Radar Service Area (TRSA)
+  GCA = 1ULL << 29, // New general control area combining several unknown types
+  MCTR = 1ULL << 30, // Military Control Zone (MCTR)
+  TRSA = 1ULL << 31, // Terminal Radar Service Area (TRSA)
 
   // >>> Update MAP_AIRSPACE_TYPE_BITS below too <<<
 
