@@ -401,7 +401,7 @@ private:
   void jumpBackToAircraftTimeout(const atools::geo::Pos& pos);
 
   /* Needed filter to avoid and/or disable some Marble pecularities */
-  bool eventFilter(QObject *obj, QEvent *evt) override;
+  bool eventFilter(QObject *obj, QEvent *eventParam) override;
 
   /* Check for modifiers on mouse click and start actions like range rings on Ctrl+Click */
   bool mousePressCheckModifierActions(QMouseEvent *event);

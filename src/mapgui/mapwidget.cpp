@@ -672,7 +672,8 @@ void MapWidget::leaveEvent(QEvent *)
 void MapWidget::keyPressEvent(QKeyEvent *event)
 {
 #ifdef DEBUG_INFORMATION_KEY_INPUT
-  qDebug() << Q_FUNC_INFO << event->text() << hex << event->nativeScanCode() << hex << event->key() << dec << event->modifiers();
+  qDebug() << Q_FUNC_INFO << event->text() << Qt::hex << event->nativeScanCode()
+           << Qt::hex << event->key() << Qt::dec << event->modifiers();
 #endif
 
   // Does not work for key presses that are consumed by the widget
@@ -1255,7 +1256,7 @@ void MapWidget::wheelEvent(QWheelEvent *event)
 {
   static const int ANGLE_THRESHOLD = 120;
 
-#ifdef DEBUG_INFORMATION
+#ifdef DEBUG_INFORMATION_WHEEL
   qDebug() << Q_FUNC_INFO << "pixelDelta" << event->pixelDelta() << "angleDelta" << event->angleDelta()
            << "lastWheelAngleY" << lastWheelAngleY << "lastWheelAngleX" << lastWheelAngleX
            << event->source() << "geometry()" << geometry() << "rect()" << rect() << "event->pos()" << event->pos()
@@ -1319,14 +1320,15 @@ void MapWidget::wheelEvent(QWheelEvent *event)
       else if(angleDeltaY < 0)
         NavApp::getMapDetailHandler()->decreaseMapDetail();
     }
-    else if(event->modifiers() == Qt::AltModifier)
-    {
-      // Move in map position history ===================================================================
-      if(angleDeltaY > 0 || angleDeltaX > 0)
-        historyNext();
-      else if(angleDeltaY < 0 || angleDeltaX < 0)
-        historyBack();
-    }
+    // This completely fails on Windows
+    // else if(event->modifiers() == Qt::AltModifier)
+    // {
+    //// Move in map position history ===================================================================
+    // if(angleDeltaY > 0 || angleDeltaX > 0)
+    // historyNext();
+    // else if(angleDeltaY < 0 || angleDeltaX < 0)
+    // historyBack();
+    // }
     else
     {
       // Zoom in/out ========================================================================
@@ -1492,18 +1494,31 @@ bool MapWidget::pointVisible(const QPoint& point)
   return geoCoordinates(point.x(), point.y(), lon, lat);
 }
 
-bool MapWidget::eventFilter(QObject *obj, QEvent *e)
+bool MapWidget::eventFilter(QObject *obj, QEvent *eventParam)
 {
-  if(e->type() == QEvent::KeyPress)
+  if(eventParam->type() == QEvent::KeyPress)
   {
-    QKeyEvent *keyEvent = dynamic_cast<QKeyEvent *>(e);
+    QKeyEvent *keyEvent = dynamic_cast<QKeyEvent *>(eventParam);
     if(keyEvent != nullptr)
     {
+#ifdef DEBUG_INFORMATION_KEY_INPUT
+      qDebug() << Q_FUNC_INFO << keyEvent->text() << Qt::hex << keyEvent->nativeScanCode()
+               << Qt::hex << keyEvent->key() << Qt::dec << keyEvent->modifiers();
+#endif
+
+      if((keyEvent->key() == Qt::Key_Left || keyEvent->key() == Qt::Key_Right) && keyEvent->modifiers() & Qt::AltModifier)
+      {
+        // Cursor keys + alt are sent and scroll map if history forward or backward actions are disabled at end of history
+        eventParam->accept(); // Do not propagate further
+        event(eventParam); // Call own event handler
+        return true; // Do not process further
+      }
+
       if(keyEvent->key() == Qt::Key_Home)
       {
         // Catch useless home event where Marble zooms way out
-        e->accept(); // Do not propagate further
-        event(e); // Call own event handler
+        eventParam->accept(); // Do not propagate further
+        event(eventParam); // Call own event handler
         return true; // Do not process further
       }
 
@@ -1514,8 +1529,8 @@ bool MapWidget::eventFilter(QObject *obj, QEvent *e)
         // Do not let marble use it for zooming
         // Keys processed by actions
 
-        e->accept(); // Do not propagate further
-        event(e); // Call own event handler
+        eventParam->accept(); // Do not propagate further
+        event(eventParam); // Call own event handler
         return true; // Do not process further
       }
 
@@ -1528,60 +1543,60 @@ bool MapWidget::eventFilter(QObject *obj, QEvent *e)
         jumpBackToAircraftStart();
 
         // Pass to key event handler for zooming
-        e->accept(); // Do not propagate further
-        event(e); // Call own event handler
+        eventParam->accept(); // Do not propagate further
+        event(eventParam); // Call own event handler
         return true; // Do not process further
       }
     }
   }
 
-  if(e->type() == QEvent::Wheel)
+  if(eventParam->type() == QEvent::Wheel)
     jumpBackToAircraftStart();
 
-  QMouseEvent *mEvent = dynamic_cast<QMouseEvent *>(e);
+  QMouseEvent *mEvent = dynamic_cast<QMouseEvent *>(eventParam);
   if(mEvent != nullptr)
   {
     // Filter any obscure Marble actions around the visible globe
 
     if(!pointVisible(mEvent->pos()))
     {
-      e->accept(); // Do not propagate further
-      event(e); // Call own event handler
+      eventParam->accept(); // Do not propagate further
+      event(eventParam); // Call own event handler
       return true; // Do not process further
     }
   }
 
-  if(e->type() == QEvent::MouseButtonDblClick)
+  if(eventParam->type() == QEvent::MouseButtonDblClick)
   {
     // Catch the double click event
 
-    e->accept(); // Do not propagate further
-    event(e); // Call own event handler
+    eventParam->accept(); // Do not propagate further
+    event(eventParam); // Call own event handler
     return true; // Do not process further
   }
 
-  if(e->type() == QEvent::Wheel)
+  if(eventParam->type() == QEvent::Wheel)
   {
     // Catch the wheel event and do own zooming since Marble is buggy
 
-    e->accept(); // Do not propagate further
-    event(e); // Call own event handler
+    eventParam->accept(); // Do not propagate further
+    event(eventParam); // Call own event handler
     return true; // Do not process further
   }
 
-  if(e->type() == QEvent::MouseButtonPress)
+  if(eventParam->type() == QEvent::MouseButtonPress)
   {
-    QMouseEvent *mouseEvent = dynamic_cast<QMouseEvent *>(e);
+    QMouseEvent *mouseEvent = dynamic_cast<QMouseEvent *>(eventParam);
 
     if(mouseEvent != nullptr && mouseEvent->modifiers() & Qt::ControlModifier)
       // Remove control modifer to disable Marble rectangle dragging
       mouseEvent->setModifiers(mouseEvent->modifiers() & ~Qt::ControlModifier);
   }
 
-  if(e->type() == QEvent::MouseMove)
+  if(eventParam->type() == QEvent::MouseMove)
   {
     // Update coordinate display in status bar
-    QMouseEvent *mouseEvent = dynamic_cast<QMouseEvent *>(e);
+    QMouseEvent *mouseEvent = dynamic_cast<QMouseEvent *>(eventParam);
     qreal lon, lat;
     if(geoCoordinates(mouseEvent->pos().x(), mouseEvent->pos().y(), lon, lat, Marble::GeoDataCoordinates::Degree))
     {
@@ -1594,28 +1609,28 @@ bool MapWidget::eventFilter(QObject *obj, QEvent *e)
       mainWindow->updateMapPosLabel(Pos(), -1, -1);
   }
 
-  if(e->type() == QEvent::MouseMove && mouseState != mw::NONE)
+  if(eventParam->type() == QEvent::MouseMove && mouseState != mw::NONE)
   {
     // Do not allow mouse scrolling during drag actions
-    e->accept();
-    event(e);
+    eventParam->accept();
+    event(eventParam);
 
     // Do not process further
     return true;
   }
 
-  QMouseEvent *mouseEvent = dynamic_cast<QMouseEvent *>(e);
-  if(e->type() == QEvent::MouseMove && mouseEvent->buttons() == Qt::NoButton && mouseState == mw::NONE)
+  QMouseEvent *mouseEvent = dynamic_cast<QMouseEvent *>(eventParam);
+  if(eventParam->type() == QEvent::MouseMove && mouseEvent->buttons() == Qt::NoButton && mouseState == mw::NONE)
   {
     // No not pass movements to marble widget to avoid cursor fighting
-    e->accept();
-    event(e);
+    eventParam->accept();
+    event(eventParam);
     // Do not process further
     return true;
   }
 
   // Pass to base class and keep on processing
-  Marble::MarbleWidget::eventFilter(obj, e);
+  Marble::MarbleWidget::eventFilter(obj, eventParam);
   return false;
 }
 
