@@ -520,7 +520,7 @@ private:
   JumpBack *jumpBack;
 
   /* Sum up mouse wheel or trackpad movement before zooming */
-  int lastWheelAngle = 0;
+  int lastWheelAngleX = 0, lastWheelAngleY = 0;
 
   MainWindow *mainWindow;
 

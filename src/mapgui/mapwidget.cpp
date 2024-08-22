@@ -1257,8 +1257,9 @@ void MapWidget::wheelEvent(QWheelEvent *event)
 
 #ifdef DEBUG_INFORMATION
   qDebug() << Q_FUNC_INFO << "pixelDelta" << event->pixelDelta() << "angleDelta" << event->angleDelta()
-           << "lastWheelAngle" << lastWheelAngle
-           << event->source() << "geometry()" << geometry() << "rect()" << rect() << "event->pos()" << event->pos();
+           << "lastWheelAngleY" << lastWheelAngleY << "lastWheelAngleX" << lastWheelAngleX
+           << event->source() << "geometry()" << geometry() << "rect()" << rect() << "event->pos()" << event->pos()
+           << "event->angleDelta()" << event->angleDelta() << "event->modifiers()" << event->modifiers();
 #endif
 
   if(!rect().contains(event->pos()))
@@ -1266,45 +1267,65 @@ void MapWidget::wheelEvent(QWheelEvent *event)
     return;
 
   // Pixel is null for mouse wheel - otherwise touchpad
-  int angleDelta = event->angleDelta().y();
+  int angleDeltaY = event->angleDelta().y();
+  int angleDeltaX = event->angleDelta().x();
 
   // Sum up wheel events to start action one threshold is exceeded
-  lastWheelAngle += angleDelta;
+  lastWheelAngleY += angleDeltaY;
+  lastWheelAngleX += angleDeltaX;
 
-  if(atools::sign(lastWheelAngle) != atools::sign(angleDelta))
+  if(atools::sign(lastWheelAngleY) != atools::sign(angleDeltaY))
     // User changed direction while moving - reverse direction
     // to allow immediate scroll direction change
-    lastWheelAngle = ANGLE_THRESHOLD * atools::sign(angleDelta);
+    lastWheelAngleY = ANGLE_THRESHOLD * atools::sign(angleDeltaY);
 
-  bool accepted = std::abs(lastWheelAngle) >= ANGLE_THRESHOLD;
-  bool directionIn = lastWheelAngle > 0;
+  if(atools::sign(lastWheelAngleX) != atools::sign(angleDeltaX))
+    // User changed direction while moving - reverse direction
+    // to allow immediate scroll direction change
+    lastWheelAngleX = ANGLE_THRESHOLD * atools::sign(angleDeltaX);
+
+  bool accepted = std::abs(lastWheelAngleY) >= ANGLE_THRESHOLD ||
+                  (std::abs(lastWheelAngleX) >= ANGLE_THRESHOLD && event->modifiers() == Qt::AltModifier);
+  bool directionIn = lastWheelAngleY > 0;
 
 #ifdef DEBUG_MOVING_AIRCRAFT
   if(event->modifiers() == (Qt::ControlModifier | Qt::ShiftModifier) ||
      event->modifiers() == (Qt::ControlModifier | Qt::ShiftModifier | Qt::AltModifier))
   {
-    if(angleDelta > 0)
+    if(angleDeltaY > 0)
       debugMovingAircraft(event, -1);
-    else if(angleDelta < 0)
+    else if(angleDeltaY < 0)
       debugMovingAircraft(event, 1);
   }
   else
 #endif
   if(accepted)
   {
-    // Reset summed up values if accepted
-    lastWheelAngle = 0;
     bool reverse = OptionData::instance().getFlags().testFlag(opts::GUI_REVERSE_WHEEL);
+    if(reverse)
+    {
+      angleDeltaX = -angleDeltaX;
+      angleDeltaY = -angleDeltaY;
+      directionIn = !directionIn;
+    }
+
+    // Reset summed up values if accepted
+    lastWheelAngleY = 0;
     if(event->modifiers() == Qt::ControlModifier)
     {
-      if(reverse)
-        angleDelta = -angleDelta;
-
       // Adjust map detail ===================================================================
-      if(angleDelta > 0)
+      if(angleDeltaY > 0)
         NavApp::getMapDetailHandler()->increaseMapDetail();
-      else if(angleDelta < 0)
+      else if(angleDeltaY < 0)
         NavApp::getMapDetailHandler()->decreaseMapDetail();
+    }
+    else if(event->modifiers() == Qt::AltModifier)
+    {
+      // Move in map position history ===================================================================
+      if(angleDeltaY > 0 || angleDeltaX > 0)
+        historyNext();
+      else if(angleDeltaY < 0 || angleDeltaX < 0)
+        historyBack();
     }
     else
     {
@@ -1316,9 +1337,6 @@ void MapWidget::wheelEvent(QWheelEvent *event)
         // Position is visible
         qreal centerLat = centerLatitude();
         qreal centerLon = centerLongitude();
-
-        if(reverse)
-          directionIn = !directionIn;
 
         zoomInOut(directionIn, event->modifiers() == Qt::ShiftModifier /* smooth */);
 
