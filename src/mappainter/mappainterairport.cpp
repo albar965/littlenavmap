@@ -294,7 +294,7 @@ void MapPainterAirport::drawAirportDiagramBackground(const map::MapAirport& airp
     for(const RunwayPaintData& paintData : qAsConst(runwayPaintData))
     {
       // Not for water runways
-      if(paintData.getRunway().isWater())
+      if(!paintData.getRunway().isWater())
       {
         painter->translate(paintData.getCenter());
         painter->rotate(paintData.getRunway().heading);
@@ -614,7 +614,7 @@ void MapPainterAirport::drawAirportDiagram(const map::MapAirport& airport)
     for(const RunwayPaintData& paintData : qAsConst(runwayPaintData))
     {
       // No outline for water
-      if(paintData.getRunway().isWater())
+      if(!paintData.getRunway().isWater())
       {
         painter->translate(paintData.getCenter());
         painter->rotate(paintData.getRunway().heading);
