@@ -726,13 +726,15 @@ void AirportSearch::randomFlightClicked(bool showDialog)
 
   if(showDialog)
   {
+    // Keep ids stable since they are used to save state
     // Method called by user click and not "Search again" - show selection dialog
     enum {RANDOM_ALL, RANDOM_FIXED_DEPARTURE, RANDOM_FIXED_DESTINATION, RANDOM_BUTTON_GROUP};
 
     QString label =
       tr(
-        "Let create a new flight plan for a single flight from an airport chosen at random from the airport search result table to an airport chosen at random from the airport search result table.\n"
-        "Modify the selection criteria to your liking by setting the controls in the airport search result panel to values you like, for example runway length minimum to 1,000 ft.");
+        "<p>Create a new flight plan from a destination and departure airport chosen at random from the airport search result table.</p>"
+          "<p>Modify the selection criteria to your liking by setting the controls in the airport search result panel to values you like, for example runway length minimum to 1,000 ft.</p>"
+            "<p>Add an airport to the flight plan table to use it as a fixed departure or destination.</p>");
 
     // Adjust label if plan is empty or not valid
     if(!departureAirport.isValid() && !destinationAirport.isValid())
@@ -799,9 +801,9 @@ void AirportSearch::randomFlightClicked(bool showDialog)
                                   tr("Let select only a departure airport from\n"
                                      "airport search result table at random."));
 
-      choiceDialog.disableButton(RANDOM_ALL);
-      choiceDialog.disableButton(RANDOM_FIXED_DEPARTURE);
-      choiceDialog.disableButton(RANDOM_FIXED_DESTINATION);
+      choiceDialog.disableWidget(RANDOM_ALL);
+      choiceDialog.disableWidget(RANDOM_FIXED_DEPARTURE);
+      choiceDialog.disableWidget(RANDOM_FIXED_DESTINATION);
     }
 
     choiceDialog.addSpacer();

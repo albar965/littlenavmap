@@ -958,6 +958,7 @@ bool UserdataController::exportSelectedQuestion(bool& selected, bool& append, bo
     return true;
 
   // Dialog options
+  // Keep ids stable since they are used to save state
   enum {SELECTED, APPEND, HEADER, XP12};
 
   atools::gui::ChoiceDialog choiceDialog(mainWindow, QCoreApplication::applicationName() + tr(" - Userpoint Export Options"),
@@ -994,10 +995,10 @@ bool UserdataController::exportSelectedQuestion(bool& selected, bool& append, bo
 
   choiceDialog.restoreState();
 
-  choiceDialog.disableButton(HEADER, choiceDialog.isButtonChecked(APPEND));
+  choiceDialog.disableWidget(HEADER, choiceDialog.isButtonChecked(APPEND));
   connect(&choiceDialog, &atools::gui::ChoiceDialog::buttonToggled, this, [&choiceDialog](int id, bool checked) {
     if(id == APPEND)
-      choiceDialog.disableButton(HEADER, checked);
+      choiceDialog.disableWidget(HEADER, checked);
   });
 
   if(choiceDialog.exec() == QDialog::Accepted)
@@ -1016,16 +1017,8 @@ void UserdataController::cleanupUserdata()
 {
   qDebug() << Q_FUNC_INFO;
 
-  enum
-  {
-    COMPARE, // Ident, Name, and Type
-    REGION,
-    DESCRIPTION,
-    TAGS,
-    COORDINATES,
-    EMPTY,
-    SHOW_PREVIEW
-  };
+  // Keep ids stable since they are used to save state
+  enum {COMPARE, /* Ident, Name, and Type */ REGION, DESCRIPTION, TAGS, COORDINATES, EMPTY, SHOW_PREVIEW};
 
   // Create a dialog with tree checkboxes =====================
   atools::gui::ChoiceDialog choiceDialog(mainWindow, QCoreApplication::applicationName() + tr(" - Cleanup Userpoints"),
@@ -1052,19 +1045,19 @@ void UserdataController::cleanupUserdata()
   choiceDialog.addCheckBox(SHOW_PREVIEW, tr("Show a &preview before deleting userpoints"),
                            tr("Shows a dialog window with all userpoints to be deleted before removing them."), true /* checked */);
 
+  // Disable the ok button if not at least one of these is checked
+  choiceDialog.setRequiredAnyChecked({COMPARE, EMPTY});
+
   // Disable duplicate cleanup parameters if top box is off
   connect(&choiceDialog, &atools::gui::ChoiceDialog::buttonToggled, [&choiceDialog](int id, bool checked) {
     if(id == COMPARE)
     {
-      choiceDialog.enableButton(REGION, checked);
-      choiceDialog.enableButton(DESCRIPTION, checked);
-      choiceDialog.enableButton(TAGS, checked);
-      choiceDialog.enableButton(COORDINATES, checked);
+      choiceDialog.enableWidget(REGION, checked);
+      choiceDialog.enableWidget(DESCRIPTION, checked);
+      choiceDialog.enableWidget(TAGS, checked);
+      choiceDialog.enableWidget(COORDINATES, checked);
     }
   });
-
-  // Disable the ok button if not at least one of these is checked
-  choiceDialog.setRequiredAnyChecked({COMPARE, EMPTY});
 
   choiceDialog.restoreState();
 

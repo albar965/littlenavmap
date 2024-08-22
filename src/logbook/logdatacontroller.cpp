@@ -778,9 +778,12 @@ void LogdataController::addLogEntry()
 
 void LogdataController::cleanupLogEntries()
 {
-  enum {SHORT_DISTANCE, DEPARTURE_AND_DESTINATION_EQUAL, DEPARTURE_OR_DESTINATION_EMPTY, SHOW_PREVIEW};
+  // Keep ids stable since they are used to save state
+  enum {SHORT_DISTANCE, DEPARTURE_AND_DESTINATION_EQUAL, DEPARTURE_OR_DESTINATION_EMPTY, SHOW_PREVIEW, SHORT_DISTANCE_BOX};
 
   qDebug() << Q_FUNC_INFO;
+
+  float distNm = -1.f;
 
   // Create a dialog with tree checkboxes =====================
   atools::gui::ChoiceDialog choiceDialog(mainWindow, QCoreApplication::applicationName() % tr(" - Cleanup Logbook"),
@@ -790,29 +793,24 @@ void LogdataController::cleanupLogEntries()
   choiceDialog.setHelpOnlineUrl(lnm::helpOnlineUrl);
   choiceDialog.setHelpLanguageOnline(lnm::helpLanguageOnline());
 
-  // Get right value and unit for distance
-  float distNm = 5.f;
-  switch(Unit::getUnitDist())
-  {
-    case opts::DIST_NM:
-      distNm = 5.f;
-      break;
+  choiceDialog.addCheckBox(SHORT_DISTANCE, tr("&Shorter than"),
+                           tr("Removes all entries having a too small flown distance."), true /* checked */);
 
-    case opts::DIST_KM:
-      distNm = atools::geo::kmToNm(10.f);
-      break;
+  // Add a spin box for the distance =======================
+  QDoubleSpinBox *spinBox = new QDoubleSpinBox(&choiceDialog);
+  spinBox->setDecimals(1);
+  spinBox->setValue(5.);
+  spinBox->setRange(1., 10800.);
+  spinBox->setSingleStep(1.);
+  spinBox->setSuffix(Unit::replacePlaceholders(tr(" %dist%")));
+  choiceDialog.addWidget(SHORT_DISTANCE_BOX, spinBox);
 
-    case opts::DIST_MILES:
-      distNm = atools::geo::miToNm(5.f);
-      break;
-  }
-
-  choiceDialog.addCheckBox(SHORT_DISTANCE, tr("&Shorter than %1").arg(Unit::distNm(distNm, true /* addUnit */, 0 /* minValPrec*/)),
-                           tr("Removes all entries having a too small flown distance."));
   choiceDialog.addCheckBox(DEPARTURE_AND_DESTINATION_EQUAL, tr("&Departure and destination ident equal"),
-                           tr("Removes all entries where the idents of departure and destination are the same. E.g. pattern work."));
+                           tr("Removes all entries where the idents of departure and destination are the same. E.g. pattern work."),
+                           false /* checked */);
   choiceDialog.addCheckBox(DEPARTURE_OR_DESTINATION_EMPTY, tr("&Departure or destination ident empty or not an airport"),
-                           tr("Removes incomplete entries where the flight was terminated early or off-airport, for example."));
+                           tr("Removes incomplete entries where the flight was terminated early or off-airport, for example."),
+                           false /* checked */);
   choiceDialog.addSpacer();
   choiceDialog.addLine();
   choiceDialog.addCheckBox(SHOW_PREVIEW, tr("Show a &preview before deleting logbook entries"),
@@ -820,6 +818,11 @@ void LogdataController::cleanupLogEntries()
 
   // Disable ok button if not at least one of these is checked
   choiceDialog.setRequiredAnyChecked({SHORT_DISTANCE, DEPARTURE_AND_DESTINATION_EQUAL, DEPARTURE_OR_DESTINATION_EMPTY});
+  connect(&choiceDialog, &atools::gui::ChoiceDialog::buttonToggled, this, [&choiceDialog](int id, bool checked) {
+    if(id == SHORT_DISTANCE)
+      choiceDialog.enableWidget(SHORT_DISTANCE_BOX, checked);
+  });
+
   choiceDialog.restoreState();
 
   if(choiceDialog.exec() == QDialog::Accepted)
@@ -849,10 +852,13 @@ void LogdataController::cleanupLogEntries()
         SqlColumn("description", tr("Remarks")),
       });
 
+      if(choiceDialog.isButtonChecked(SHORT_DISTANCE))
+        distNm = Unit::rev(static_cast<float>(spinBox->value()), Unit::distNmF); // Convert from current units to NM
+
       // Get query for preview
       QString queryStr = manager->getCleanupPreview(choiceDialog.isButtonChecked(DEPARTURE_AND_DESTINATION_EQUAL),
                                                     choiceDialog.isButtonChecked(DEPARTURE_OR_DESTINATION_EMPTY),
-                                                    choiceDialog.isButtonChecked(SHORT_DISTANCE) ? distNm : -1.f, previewCols);
+                                                    distNm, previewCols);
 
       // Callback for data formatting
       atools::gui::SqlQueryDialogDataFunc dataFunc([&previewCols](int column, const QVariant& data, Qt::ItemDataRole role) -> QVariant {
@@ -900,7 +906,7 @@ void LogdataController::cleanupLogEntries()
       SqlTransaction transaction(manager->getDatabase());
       removed = manager->cleanupLogEntries(choiceDialog.isButtonChecked(DEPARTURE_AND_DESTINATION_EQUAL),
                                            choiceDialog.isButtonChecked(DEPARTURE_OR_DESTINATION_EMPTY),
-                                           choiceDialog.isButtonChecked(SHORT_DISTANCE) ? distNm : -1.f);
+                                           distNm);
       transaction.commit();
       QGuiApplication::restoreOverrideCursor();
     }
@@ -1028,7 +1034,7 @@ void LogdataController::exportCsv()
   qDebug() << Q_FUNC_INFO;
   try
   {
-    // Checkbox ids
+    // Keep ids stable since they are used to save state
     enum {SELECTED, APPEND, HEADER, EXPORTPLAN, EXPORTPERF, EXPORTGPX};
 
     // Build a choice dialog with several checkboxes =========================
@@ -1054,14 +1060,14 @@ void LogdataController::exportCsv()
     choiceDialog.addCheckBox(EXPORTGPX, tr(
                                "&GPX file containing flight plan points and trail"), attachmentToolTip, false);
     choiceDialog.addSpacer();
-    choiceDialog.restoreState();
 
     // Disable/enable header depending on append option
-    choiceDialog.disableButton(HEADER, choiceDialog.isButtonChecked(APPEND));
     connect(&choiceDialog, &atools::gui::ChoiceDialog::buttonToggled, this, [&choiceDialog](int id, bool checked) {
       if(id == APPEND)
-        choiceDialog.disableButton(HEADER, checked);
+        choiceDialog.disableWidget(HEADER, checked);
     });
+
+    choiceDialog.restoreState();
 
     if(choiceDialog.exec() == QDialog::Accepted)
     {
