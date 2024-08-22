@@ -3907,10 +3907,17 @@ QString Route::buildDefaultFilenameShort(const QString& separator, const QString
 QDebug operator<<(QDebug out, const Route& route)
 {
   QDebugStateSaver saver(out);
-  out << endl << "Route ==================================================================" << endl;
   out << route.getFlightplanConst().getProperties() << endl << endl;
+
+  out << endl << "Route ==================================================================" << endl;
   for(int i = 0; i < route.size(); ++i)
     out << "===" << i << route.value(i) << endl;
+
+  out << endl << "Departure Parking ===========" << endl;
+  out << "parking" << route.getDepartureParking() << endl;
+
+  out << endl << "Departure Start ===========" << endl;
+  out << "start" << route.getDepartureStart() << endl;
 
   out << endl << "Departure ===========" << endl;
   out << "offset" << route.getDepartureAirportLegIndex();

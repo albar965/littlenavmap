@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -53,7 +53,7 @@ const static atools::fs::pln::FlightplanEntry EMPTY_FLIGHTPLAN_ENTRY;
 const static QLatin1String PARKING_NO_NUMBER(" NULL");
 
 /* Maximum distance for parking spot to saved coordinate */
-const float MAX_PARKING_DIST_METER = 50.f;
+const float MAX_PARKING_DIST_METER = atools::geo::nmToMeter(1.f);
 
 RouteLeg::RouteLeg(atools::fs::pln::Flightplan *parentFlightplan)
   : flightplan(parentFlightplan)
@@ -198,8 +198,8 @@ void RouteLeg::createFromDatabaseByEntry(int entryIndex, const RouteLeg *prevLeg
           {
             // Not found at airway search for any navaid with the given name nearby
             assignAnyNavaid(flightplanEntry, last, maxDistance);
-            qWarning() << Q_FUNC_INFO << "No waypoints for" << flightplanEntry->getIdent() <<
-              flightplanEntry->getAirway();
+            qWarning() << Q_FUNC_INFO << "No waypoints for" << flightplanEntry->getIdent()
+                       << flightplanEntry->getAirway();
           }
         }
         else
@@ -230,7 +230,7 @@ void RouteLeg::createFromDatabaseByEntry(int entryIndex, const RouteLeg *prevLeg
           // There is a parking name and this is the departure airport
           bool translateName = false;
           QList<map::MapParking> parkings;
-          if(NavApp::isAirportDatabaseXPlane(false /* navdata */) || name.endsWith(PARKING_NO_NUMBER))
+          if(NavApp::isAirportDatabaseXPlane(false /* navdata */) || NavApp::isNavdataAll() || name.endsWith(PARKING_NO_NUMBER))
           {
             // X-Plane style parking - name only ======
             if(name.endsWith(PARKING_NO_NUMBER))
