@@ -146,7 +146,7 @@ QDebug operator<<(QDebug out, const map::MapDisplayTypes& type)
   QDebugStateSaver saver(out);
 
   QStringList flags;
-  if(type == map::MapDisplayTypes(map::NONE))
+  if(type == DISPLAY_TYPE_NONE)
     flags.append("NONE");
   else
   {

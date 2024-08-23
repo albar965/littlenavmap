@@ -82,8 +82,8 @@ MapPaintLayer::MapPaintLayer(MapPaintWidget *widget)
   mapPainterTop = new MapPainterTop(mapPaintWidget, mapScale, &context);
 
   // Default for visible object types
-  objectTypes = map::MapTypes(map::AIRPORT_DEFAULT) | map::MapTypes(map::VOR) | map::MapTypes(map::NDB) | map::MapTypes(map::AP_ILS) |
-                map::MapTypes(map::MARKER) | map::MapTypes(map::WAYPOINT);
+  objectTypes = map::AIRPORT_DEFAULT | map::VOR | map::NDB | map::ILS | map::MARKER | map::WAYPOINT;
+
   objectDisplayTypes = map::DISPLAY_TYPE_NONE;
 }
 

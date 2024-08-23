@@ -867,7 +867,7 @@ void HtmlInfoBuilder::runwayText(const MapAirport& airport, HtmlBuilder& html, b
         rowForBool(html, &rec, "has_center_red", tr("Has red Center Lights"), false);
 
         // Add a list of runway markings
-        atools::fs::bgl::rw::RunwayMarkingFlags flags(rec.valueInt("marking_flags"));
+        atools::fs::bgl::rw::RunwayMarkingFlags flags(static_cast<atools::fs::bgl::rw::RunwayMarkings>(rec.valueInt("marking_flags")));
         QStringList markings;
         if(flags & atools::fs::bgl::rw::EDGES)
           markings.append(tr("Edges"));
