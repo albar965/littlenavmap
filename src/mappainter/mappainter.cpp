@@ -17,17 +17,18 @@
 
 #include "mappainter/mappainter.h"
 
-#include "mapgui/mappaintwidget.h"
-#include "mapgui/mapscale.h"
-#include "common/symbolpainter.h"
-#include "geo/calculations.h"
+#include "app/navapp.h"
+#include "common/formatter.h"
 #include "common/mapcolors.h"
 #include "common/maptypes.h"
-#include "mapgui/maplayer.h"
-#include "common/formatter.h"
-#include "util/paintercontextsaver.h"
-#include "common/unit.h"
+#include "common/symbolpainter.h"
 #include "common/textplacement.h"
+#include "common/unit.h"
+#include "geo/calculations.h"
+#include "mapgui/maplayer.h"
+#include "mapgui/mappaintwidget.h"
+#include "mapgui/mapscale.h"
+#include "util/paintercontextsaver.h"
 
 #include <marble/GeoDataLineString.h>
 #include <marble/GeoDataLinearRing.h>
@@ -900,7 +901,8 @@ bool MapPainter::sortAirportFunction(const AirportPaintData& airportPaintData1, 
   bool addonFlag = context->objectTypes.testFlag(map::AIRPORT_ADDON_ZOOM) ||
                    context->objectTypes.testFlag(map::AIRPORT_ADDON_ZOOM_FILTER);
 
-  bool empty3dFlag = od.getFlags2().testFlag(opts2::MAP_EMPTY_AIRPORTS_3D);
+  bool empty3dFlag = od.getFlags2().testFlag(opts2::MAP_EMPTY_AIRPORTS_3D) &&
+                     NavApp::getCurrentSimulatorDb() != atools::fs::FsPaths::XPLANE_12;
   bool emptyFlag = od.getFlags().testFlag(opts::MAP_EMPTY_AIRPORTS);
   int priority1 = airportPaintData1.getAirport().paintPriority(addonFlag, emptyFlag, empty3dFlag);
   int priority2 = airportPaintData2.getAirport().paintPriority(addonFlag, emptyFlag, empty3dFlag);

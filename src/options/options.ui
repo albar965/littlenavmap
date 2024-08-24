@@ -2050,12 +2050,14 @@ The airports toolbar button can be used to hide empty airports if this box is ch
                <item>
                 <widget class="QCheckBox" name="checkBoxOptionsMapEmptyAirports3D">
                  <property name="toolTip">
-                  <string>All X-Plane airports which are 2D and stock airports
+                  <string>All X-Plane 11 airports which are 2D and stock airports
 are drawn underneath all other airports and use a gray symbol.
-The airports toolbar button can be used to hide empty airports if this box is checked.</string>
+The airports toolbar button can be used to hide empty airports if this box is checked.
+
+Note that this function is disabled for X-Plane 12 since the 3D flag is unreliable there.</string>
                  </property>
                  <property name="text">
-                  <string>&amp;X-Plane 2D airports are shown as empty</string>
+                  <string>&amp;X-Plane 11 2D airports are shown as empty</string>
                  </property>
                  <property name="checked">
                   <bool>false</bool>

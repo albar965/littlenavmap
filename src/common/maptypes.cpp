@@ -1079,7 +1079,9 @@ bool MapAirport::emptyDraw() const
     return false;
 
   const OptionData& od = OptionData::instance();
-  return emptyDraw(od.getFlags().testFlag(opts::MAP_EMPTY_AIRPORTS), od.getFlags2().testFlag(opts2::MAP_EMPTY_AIRPORTS_3D));
+  return emptyDraw(od.getFlags().testFlag(opts::MAP_EMPTY_AIRPORTS),
+                   od.getFlags2().testFlag(opts2::MAP_EMPTY_AIRPORTS_3D) &&
+                   NavApp::getCurrentSimulatorDb() != atools::fs::FsPaths::XPLANE_12);
 }
 
 bool MapAirport::emptyDraw(bool emptyOptsFlag, bool emptyOpts3dFlag) const
