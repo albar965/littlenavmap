@@ -986,9 +986,9 @@ void AirportQuery::getRunwaysAndAirports(map::MapResultIndex& runwayAirports, co
   SqlQuery query(db);
   query.prepare("select * from runway where lonx between :leftx and :rightx and laty between :bottomy and :topy");
 
-  for(const ageo::Rect& r : rect.splitAtAntiMeridian())
+  for(const ageo::Rect& splitRect : rect.splitAtAntiMeridian())
   {
-    query::bindRect(r, &query);
+    query::bindRect(splitRect, &query);
     query.exec();
 
     while(query.next())
@@ -1006,9 +1006,9 @@ void AirportQuery::getRunwaysAndAirports(map::MapResultIndex& runwayAirports, co
                   "where lonx between :leftx and :rightx and laty between :bottomy and :topy and longest_runway_length = 0");
 
     bool xp = NavApp::isAirportDatabaseXPlane(navdata /* navdata */);
-    for(const ageo::Rect& r : rect.splitAtAntiMeridian())
+    for(const ageo::Rect& splitRect : rect.splitAtAntiMeridian())
     {
-      query::bindRect(r, &query);
+      query::bindRect(splitRect, &query);
       query.exec();
 
       while(query.next())

@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -57,22 +57,31 @@ public:
   virtual void sort(int column, Qt::SortOrder order) override;
 
 private:
+  /* Returns the formatted data for the "distance" and "heading" column */
   virtual QVariant data(const QModelIndex& index, int role) const override;
+
+  /* Returns the data for the given role and section in the header with the specified orientation. */
   virtual QVariant headerData(int section, Qt::Orientation orientation, int role) const override;
+
+  /* Does the filtering by minimum and maximum distance and direction */
   virtual bool filterAcceptsRow(int sourceRow, const QModelIndex&) const override;
+
+  /* Defines greater and lower than for sorting of the two columns distance and heading */
   virtual bool lessThan(const QModelIndex& sourceLeft, const QModelIndex& sourceRight) const override;
 
   bool matchDistance(const atools::geo::Pos& pos) const;
+
+  /* Build position object from SQL row data */
   atools::geo::Pos buildPos(int row) const;
 
   /* Direction filter ranges are decreased by this value on each side */
-  static float Q_DECL_CONSTEXPR DIR_RANGE_DEG = 22.5f;
+  static float constexpr DIR_RANGE_DEG = 22.5f;
 
   /* Direction filter parameters */
-  static float Q_DECL_CONSTEXPR MIN_NORTH_DEG = 270.f + DIR_RANGE_DEG, MAX_NORTH_DEG = 90.f - DIR_RANGE_DEG;
-  static float Q_DECL_CONSTEXPR MIN_EAST_DEG = 0.f + DIR_RANGE_DEG, MAX_EAST_DEG = 180.f - DIR_RANGE_DEG;
-  static float Q_DECL_CONSTEXPR MIN_SOUTH_DEG = 90.f + DIR_RANGE_DEG, MAX_SOUTH_DEG = 270.f - DIR_RANGE_DEG;
-  static float Q_DECL_CONSTEXPR MIN_WEST_DEG = 180.f + DIR_RANGE_DEG, MAX_WEST_DEG = 360.f - DIR_RANGE_DEG;
+  static float constexpr MIN_NORTH_DEG = 270.f + DIR_RANGE_DEG, MAX_NORTH_DEG = 90.f - DIR_RANGE_DEG;
+  static float constexpr MIN_EAST_DEG = 0.f + DIR_RANGE_DEG, MAX_EAST_DEG = 180.f - DIR_RANGE_DEG;
+  static float constexpr MIN_SOUTH_DEG = 90.f + DIR_RANGE_DEG, MAX_SOUTH_DEG = 270.f - DIR_RANGE_DEG;
+  static float constexpr MIN_WEST_DEG = 180.f + DIR_RANGE_DEG, MAX_WEST_DEG = 360.f - DIR_RANGE_DEG;
 
   SqlModel *sourceSqlModel = nullptr;
   atools::geo::Pos centerPos;

@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -89,9 +89,9 @@ const QList<Marble::GeoDataLatLonBox> splitAtAntiMeridian(const Marble::GeoDataL
 
 void fetchObjectsForRect(const atools::geo::Rect& rect, atools::sql::SqlQuery *query, std::function<void(atools::sql::SqlQuery *)> callback)
 {
-  for(const atools::geo::Rect& r : rect.splitAtAntiMeridian())
+  for(const atools::geo::Rect& splitRect : rect.splitAtAntiMeridian())
   {
-    query::bindRect(r, query);
+    query::bindRect(splitRect, query);
     query->exec();
     while(query->next())
       callback(query);
