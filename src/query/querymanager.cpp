@@ -58,10 +58,10 @@ void QueryManager::deInitQueries()
 
 void QueryManager::preTrackLoad()
 {
-  if(queriesGui == nullptr)
+  if(queriesGui != nullptr)
     queriesGui->preTrackLoad();
 
-  if(queriesWeb == nullptr)
+  if(queriesWeb != nullptr)
   {
     QueryLocker locker(queriesWeb);
     queriesWeb->preTrackLoad();
@@ -70,10 +70,10 @@ void QueryManager::preTrackLoad()
 
 void QueryManager::postTrackLoad()
 {
-  if(queriesGui == nullptr)
+  if(queriesGui != nullptr)
     queriesGui->postTrackLoad();
 
-  if(queriesWeb == nullptr)
+  if(queriesWeb != nullptr)
   {
     QueryLocker locker(queriesWeb);
     queriesWeb->postTrackLoad();
@@ -82,10 +82,10 @@ void QueryManager::postTrackLoad()
 
 void QueryManager::preLoadAirspaces()
 {
-  if(queriesGui == nullptr)
+  if(queriesGui != nullptr)
     queriesGui->preLoadAirspaces();
 
-  if(queriesWeb == nullptr)
+  if(queriesWeb != nullptr)
   {
     QueryLocker locker(queriesWeb);
     queriesWeb->preLoadAirspaces();
@@ -94,10 +94,10 @@ void QueryManager::preLoadAirspaces()
 
 void QueryManager::postLoadAirspaces()
 {
-  if(queriesGui == nullptr)
+  if(queriesGui != nullptr)
     queriesGui->postLoadAirspaces();
 
-  if(queriesWeb == nullptr)
+  if(queriesWeb != nullptr)
   {
     QueryLocker locker(queriesWeb);
     queriesWeb->postLoadAirspaces();
@@ -106,10 +106,10 @@ void QueryManager::postLoadAirspaces()
 
 void QueryManager::preDatabaseLoad()
 {
-  if(queriesGui == nullptr)
+  if(queriesGui != nullptr)
     queriesGui->preDatabaseLoad();
 
-  if(queriesWeb == nullptr)
+  if(queriesWeb != nullptr)
   {
     QueryLocker locker(queriesWeb);
     queriesWeb->preDatabaseLoad();
@@ -118,10 +118,10 @@ void QueryManager::preDatabaseLoad()
 
 void QueryManager::postDatabaseLoad()
 {
-  if(queriesGui == nullptr)
+  if(queriesGui != nullptr)
     queriesGui->postDatabaseLoad();
 
-  if(queriesWeb == nullptr)
+  if(queriesWeb != nullptr)
   {
     QueryLocker locker(queriesWeb);
     queriesWeb->postDatabaseLoad();
@@ -135,6 +135,7 @@ Queries *QueryManager::getQueriesGui()
     queriesGui = new Queries();
     queriesGui->initQueries();
   }
+
   return queriesGui;
 }
 
@@ -147,6 +148,7 @@ Queries *QueryManager::getQueriesWeb()
     queriesWeb = new Queries();
     queriesWeb->initQueries();
   }
+
   return queriesWeb;
 }
 
