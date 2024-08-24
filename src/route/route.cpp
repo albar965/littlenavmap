@@ -3543,7 +3543,7 @@ void Route::updateAirways(float& minAltitudeFt, float& maxAltitudeFt, bool adjus
 {
   minAltitudeFt = atools::fs::pln::FLIGHTPLAN_ALTITUDE_FT_MIN;
   maxAltitudeFt = atools::fs::pln::FLIGHTPLAN_ALTITUDE_FT_MAX;
-
+  AirwayTrackQuery *airwayTrackQuery = QueryManager::instance()->getQueriesGui()->getAirwayTrackQuery();
   for(int i = 1; i < size(); i++)
   {
     RouteLeg& routeLeg = (*this)[i];
@@ -3567,9 +3567,7 @@ void Route::updateAirways(float& minAltitudeFt, float& maxAltitudeFt, bool adjus
       }
 
       QList<map::MapAirway> airways;
-      QueryManager::instance()->getQueriesGui()->getAirwayTrackQuery()->getAirwaysByNameAndWaypoint(airways, routeLeg.getAirwayName(),
-                                                                                                    prevLeg.getIdent(),
-                                                                                                    routeLeg.getIdent());
+      airwayTrackQuery->getAirwaysByNameAndWaypoint(airways, routeLeg.getAirwayName(), prevLeg.getIdent(), routeLeg.getIdent());
 
       if(!airways.isEmpty())
       {

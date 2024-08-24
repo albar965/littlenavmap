@@ -286,6 +286,16 @@ bool RouteStringReader::createRouteFromString(const QString& routeString, rs::Ro
   qDebug() << Q_FUNC_INFO << "after start" << timer.restart();
 #endif
 
+  // Convert notation "NATA"/"NATD" to "A"/"D" if NAT tracks are available and used
+  if(!(options & rs::NO_TRACKS) && NavApp::hasNatTracks())
+  {
+    for(QString& item : cleanItems)
+    {
+      if(item.startsWith("NAT") && item.size() == 4)
+        item = item.right(1);
+    }
+  }
+
   QList<ParseEntry> resultList;
   for(const QString& item : qAsConst(cleanItems))
   {

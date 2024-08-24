@@ -356,6 +356,9 @@ public:
 
   static TrackController *getTrackController();
   static bool hasTracks();
+  static bool hasNatTracks();
+  static bool hasPacotsTracks();
+  static bool hasAusotsTracks();
   static bool hasTracksEnabled();
   static TrackManager *getTrackManager();
 

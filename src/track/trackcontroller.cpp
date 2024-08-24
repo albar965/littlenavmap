@@ -176,6 +176,21 @@ bool TrackController::hasTracks() const
   return trackManager->hasData();
 }
 
+bool TrackController::hasNatTracks()
+{
+  return hasTracks() && enabledTracks().contains(atools::track::NAT);
+}
+
+bool TrackController::hasPacotsTracks()
+{
+  return hasTracks() && enabledTracks().contains(atools::track::PACOTS);
+}
+
+bool TrackController::hasAusotsTracks()
+{
+  return hasTracks() && enabledTracks().contains(atools::track::AUSOTS);
+}
+
 void TrackController::trackDownloadFinished(const atools::track::TrackVectorType& tracks, atools::track::TrackType type)
 {
   qDebug() << Q_FUNC_INFO << static_cast<int>(type) << "size" << tracks.size();
