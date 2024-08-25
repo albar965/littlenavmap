@@ -67,7 +67,7 @@ using namespace Marble;
 using atools::geo::Rect;
 using atools::geo::Pos;
 
-MapPaintWidget::MapPaintWidget(QWidget *parent, Queries*queriesParam, bool visible, bool webParam)
+MapPaintWidget::MapPaintWidget(QWidget *parent, Queries *queriesParam, bool visible, bool webParam)
   : Marble::MarbleWidget(parent), visibleWidget(visible), queries(queriesParam), web(webParam)
 {
   verbose = atools::settings::Settings::instance().getAndStoreValue(lnm::OPTIONS_MAPWIDGET_DEBUG, false).toBool();
@@ -1323,8 +1323,10 @@ void MapPaintWidget::paintEvent(QPaintEvent *paintEvent)
       // Erase map window to avoid black rectangle but do a dummy draw call to have everything initialized
       MarbleWidget::paintEvent(paintEvent);
 
-      if(changed)
+      // Either changed or overflow state changed to not overflow
+      if(changed || (!paintLayer->isObjectOverflow() && !paintLayer->isQueryOverflow() && previousOverflow))
       {
+        previousOverflow = false;
         // Major change - update index and visible objects
         updateMapVisibleUi();
         screenIndex->updateAllGeometry(currentViewBoundingBox);
@@ -1332,6 +1334,7 @@ void MapPaintWidget::paintEvent(QPaintEvent *paintEvent)
 
       if(paintLayer->isObjectOverflow() || paintLayer->isQueryOverflow())
       {
+        previousOverflow = true;
 #ifdef DEBUG_INFORMATION
         qDebug() << Q_FUNC_INFO
                  << "isObjectOverflow" << paintLayer->isObjectOverflow()
@@ -1342,6 +1345,9 @@ void MapPaintWidget::paintEvent(QPaintEvent *paintEvent)
         // Passed by queued connection - execute later in event loop
         emit resultTruncated();
       }
+      else
+        previousOverflow = false;
+
     } // if(!active) ... else ...
 
     painting = false;

@@ -231,6 +231,9 @@ void MapPainterMark::paintHighlights()
   painter->setBrush(transparent ? QBrush(mapcolors::adjustAlphaF(highlightColor, alpha)) : QBrush(Qt::NoBrush));
   for(const std::pair<ageo::Pos, float>& posSize : positionSizeList)
   {
+    if(context->objCount())
+      return;
+
     float x, y;
     if(wToS(posSize.first, x, y))
     {

@@ -606,6 +606,9 @@ private:
 
   /* true if web instance */
   bool web;
+
+  /* Last paint previousOverflow */
+  bool previousOverflow = false;
 };
 
 typedef Locker<MapPaintWidget> MapPaintWidgetLocker;
