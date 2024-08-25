@@ -116,7 +116,7 @@ public:
   const QString& getRegion() const;
 
   /* Get name of airport or navaid. Empty for waypoint or user. Source can be flight plan entry or database. */
-  const QString& getName() const;
+  QString getName() const;
 
   /* Get airway  name from loaded flight plan. */
   const QString& getAirwayName() const;

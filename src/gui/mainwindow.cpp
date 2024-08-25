@@ -1964,7 +1964,6 @@ void MainWindow::updateConnectionStatusMessageText()
   connectStatusLabel->setMinimumWidth(connectStatusLabel->width());
 }
 
-/* Updates label and tooltip for objects shown on map */
 void MainWindow::setMapObjectsShownMessageText(const QString& text, const QString& tooltipText)
 {
   mapVisibleLabel->setText(text);
@@ -1977,7 +1976,6 @@ const ElevationModel *MainWindow::getElevationModel()
   return mapWidget->model()->elevationModel();
 }
 
-/* Called after each query */
 void MainWindow::resultTruncated()
 {
   mapVisibleLabel->setText(atools::util::HtmlBuilder::errorMessage(tr("Too many objects")));

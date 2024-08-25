@@ -163,6 +163,7 @@ public:
   void updateMapPosLabel(const atools::geo::Pos& pos, int x, int y);
 
   /* Sets the text and tooltip of the statusbar label that indicates what objects are shown on the map */
+  /* Updates label and tooltip for objects shown on map */
   void setMapObjectsShownMessageText(const QString& text = QString(), const QString& tooltipText = QString());
 
   /* Updates label and tooltip for connection status */
@@ -186,6 +187,7 @@ public:
   void renderStatusUpdateLabel(Marble::RenderStatus status, bool forceUpdate);
 
   /* Show "Too many objects" label if number of map features was truncated */
+  /* Called after each query */
   void resultTruncated();
 
   void setDatabaseErased(bool value)

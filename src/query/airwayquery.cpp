@@ -23,6 +23,9 @@
 #include "mapgui/maplayer.h"
 #include "settings/settings.h"
 #include "sql/sqldatabase.h"
+#include "sql/sqlutil.h"
+
+#include <QStringBuilder>
 
 using namespace Marble;
 using namespace atools::sql;
@@ -38,9 +41,9 @@ AirwayQuery::AirwayQuery(SqlDatabase *sqlDbNav, bool trackParam)
   mapTypesFactory = new MapTypesFactory();
   atools::settings::Settings& settings = atools::settings::Settings::instance();
 
-  queryRectInflationFactor = settings.getAndStoreValue(lnm::SETTINGS_MAPQUERY + "QueryRectInflationFactor", 0.3).toDouble();
-  queryRectInflationIncrement = settings.getAndStoreValue(lnm::SETTINGS_MAPQUERY + "QueryRectInflationIncrement", 0.1).toDouble();
-  queryMaxRowsAirways = settings.getAndStoreValue(lnm::SETTINGS_MAPQUERY + "AirwayQueryRowLimitAw", map::MAX_MAP_OBJECTS).toInt();
+  queryRectInflationFactor = settings.getAndStoreValue(lnm::SETTINGS_MAPQUERY % "QueryRectInflationFactor", 0.3).toDouble();
+  queryRectInflationIncrement = settings.getAndStoreValue(lnm::SETTINGS_MAPQUERY % "QueryRectInflationIncrement", 0.1).toDouble();
+  queryMaxRowsAirways = settings.getAndStoreValue(lnm::SETTINGS_MAPQUERY % "AirwayQueryRowLimitAw", map::MAX_MAP_OBJECTS).toInt();
 }
 
 AirwayQuery::~AirwayQuery()
@@ -289,89 +292,84 @@ void AirwayQuery::initQueries()
   waypointTable = track ? "trackpoint" : "waypoint";
   prefix = track ? "track_" : "airway_";
 
-  QString queryBase, waypointQueryBase;
-
+  // Columns for airway query ==================================
+  QString airwayQueryBase = airwayIdCol % ", " % airwayNameCol;
   if(track)
-  {
-    queryBase = airwayIdCol + ", " + airwayNameCol +
-                ", track_type, track_fragment_no, sequence_no, airway_id, from_waypoint_id, to_waypoint_id, "
-                "airway_direction, airway_minimum_altitude, airway_maximum_altitude, "
-                "altitude_levels_east, altitude_levels_west, "
-                "from_lonx, from_laty, to_lonx, to_laty ";
-
-  }
+    airwayQueryBase += ", track_type, track_fragment_no, sequence_no, airway_id, from_waypoint_id, to_waypoint_id, "
+                       "airway_direction, airway_minimum_altitude, airway_maximum_altitude, "
+                       "altitude_levels_east, altitude_levels_west, "
+                       "from_lonx, from_laty, to_lonx, to_laty ";
   else
-  {
-    queryBase = airwayIdCol + ", " + airwayNameCol +
-                ", airway_type, airway_fragment_no, sequence_no, from_waypoint_id, to_waypoint_id, "
-                "direction, minimum_altitude, maximum_altitude, from_lonx, from_laty, to_lonx, to_laty ";
-  }
+    airwayQueryBase += ", airway_type, airway_fragment_no, sequence_no, from_waypoint_id, to_waypoint_id, "
+                       "direction, minimum_altitude, maximum_altitude, from_lonx, from_laty, to_lonx, to_laty ";
 
-  SqlRecord aprec = dbNav->record(airwayTable);
-  if(aprec.contains("route_type"))
-    queryBase.append(", route_type");
+  if(atools::sql::SqlUtil(dbNav).hasTableAndColumn(airwayTable, "route_type"))
+    airwayQueryBase.append(", route_type");
 
-  waypointQueryBase = waypointIdCol + ", ident, region, type, num_victor_airway, num_jet_airway, mag_var, lonx, laty ";
+  // Columns for waypoint query ==================================
+  QString waypointQueryBase = waypointIdCol % ", ident, region, type, num_victor_airway, num_jet_airway, mag_var, lonx, laty ";
+  if(atools::sql::SqlUtil(dbNav).hasTableAndColumn(waypointTable, "name"))
+    waypointQueryBase += ", name";
 
-  if(dbNav->record(airwayTable).contains("arinc_type"))
+  if(atools::sql::SqlUtil(dbNav).hasTableAndColumn(waypointTable, "arinc_type"))
     waypointQueryBase += ", arinc_type";
 
   deInitQueries();
 
   waypointByIdQuery = new SqlQuery(dbNav);
-  waypointByIdQuery->prepare("select " + waypointQueryBase + " from " + waypointTable +
-                             " where " + waypointIdCol + " = :id");
+  waypointByIdQuery->prepare("select " % waypointQueryBase % " from " % waypointTable %
+                             " where " % waypointIdCol % " = :id");
 
   // Get all that are crossing the anti meridian too and filter them out from the query result
   airwayByRectQuery = new SqlQuery(dbNav);
   airwayByRectQuery->prepare(
-    "select " + queryBase + ", right_lonx, left_lonx, bottom_laty, top_laty from " + airwayTable + " where " +
+    "select " % airwayQueryBase % ", right_lonx, left_lonx, bottom_laty, top_laty from " % airwayTable % " where " %
     "not (right_lonx < :leftx or left_lonx > :rightx or bottom_laty > :topy or top_laty < :bottomy) "
     "or right_lonx < left_lonx");
 
   airwayByWaypointIdQuery = new SqlQuery(dbNav);
   airwayByWaypointIdQuery->prepare(
-    "select " + queryBase + " from " + airwayTable + " where from_waypoint_id = :id or to_waypoint_id = :id");
+    "select " % airwayQueryBase % " from " % airwayTable % " where from_waypoint_id = :id or to_waypoint_id = :id");
 
   airwayByNameAndWaypointQuery = new SqlQuery(dbNav);
   airwayByNameAndWaypointQuery->prepare(
-    "select " + queryBase +
-    " from " + airwayTable + " a join " + waypointTable + " wf on a.from_waypoint_id = wf." + waypointIdCol +
-    " join " + waypointTable + " wt on a.to_waypoint_id = wt." + waypointIdCol +
-    " where a." + airwayNameCol + " like :airway and ((wf.ident = :ident1 and wt.ident like :ident2) or "
+    "select " % airwayQueryBase %
+    " from " % airwayTable % " a join " % waypointTable % " wf on a.from_waypoint_id = wf." % waypointIdCol %
+    " join " % waypointTable % " wt on a.to_waypoint_id = wt." % waypointIdCol %
+    " where a." % airwayNameCol % " like :airway and ((wf.ident = :ident1 and wt.ident like :ident2) or "
                                   " (wt.ident = :ident1 and wf.ident like :ident2))");
 
   airwayByIdQuery = new SqlQuery(dbNav);
-  airwayByIdQuery->prepare("select " + queryBase + " from " + airwayTable +
-                           " where " + airwayIdCol + " = :id");
+  airwayByIdQuery->prepare("select " % airwayQueryBase % " from " % airwayTable %
+                           " where " % airwayIdCol % " = :id");
 
   airwayWaypointByIdentQuery = new SqlQuery(dbNav);
-  airwayWaypointByIdentQuery->prepare("select " + waypointQueryBase +
-                                      " from " + waypointTable +
-                                      " w join " + airwayTable +
-                                      " a on w." + waypointIdCol +
-                                      " = a.from_waypoint_id where w.ident = :waypoint and a." +
-                                      airwayNameCol + " = :airway union select " + waypointQueryBase +
-                                      " from " + waypointTable +
-                                      " w join " + airwayTable +
-                                      " a on w." + waypointIdCol +
-                                      " = a.to_waypoint_id where w.ident = :waypoint and a." +
-                                      airwayNameCol + " = :airway");
+  airwayWaypointByIdentQuery->prepare("select " % waypointQueryBase %
+                                      " from " % waypointTable %
+                                      " w join " % airwayTable %
+                                      " a on w." % waypointIdCol %
+                                      " = a.from_waypoint_id where w.ident = :waypoint and a." %
+                                      airwayNameCol % " = :airway union select " % waypointQueryBase %
+                                      " from " % waypointTable %
+                                      " w join " % airwayTable %
+                                      " a on w." % waypointIdCol %
+                                      " = a.to_waypoint_id where w.ident = :waypoint and a." %
+                                      airwayNameCol % " = :airway");
 
   airwayByNameQuery = new SqlQuery(dbNav);
-  airwayByNameQuery->prepare("select " + queryBase + " from " + airwayTable +
-                             " where " + airwayNameCol + " = :name");
+  airwayByNameQuery->prepare("select " % airwayQueryBase % " from " % airwayTable %
+                             " where " % airwayNameCol % " = :name");
 
   airwayWaypointsQuery = new SqlQuery(dbNav);
-  airwayWaypointsQuery->prepare("select " + queryBase +
-                                " from " + airwayTable +
-                                " where " + airwayNameCol +
-                                " = :name order by " + prefix + "fragment_no, sequence_no");
+  airwayWaypointsQuery->prepare("select " % airwayQueryBase %
+                                " from " % airwayTable %
+                                " where " % airwayNameCol %
+                                " = :name order by " % prefix % "fragment_no, sequence_no");
 
   airwayFullQuery = new SqlQuery(dbNav);
-  airwayFullQuery->prepare("select " + queryBase +
-                           " from " + airwayTable +
-                           " where " + prefix + "fragment_no = :fragment and " + airwayNameCol + " = :name");
+  airwayFullQuery->prepare("select " % airwayQueryBase %
+                           " from " % airwayTable %
+                           " where " % prefix % "fragment_no = :fragment and " % airwayNameCol % " = :name");
 }
 
 void AirwayQuery::deInitQueries()

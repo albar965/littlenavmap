@@ -435,6 +435,7 @@ void MapTypesFactory::fillWaypoint(const SqlRecord& record, map::MapWaypoint& wa
   waypoint.id = record.valueInt(track ? "trackpoint_id" : "waypoint_id");
   waypoint.ident = record.valueStr("ident");
   waypoint.region = record.valueStr("region");
+  waypoint.name= record.valueStr("name", QString());
   waypoint.type = record.valueStr("type");
   waypoint.arincType = record.valueStr("arinc_type", QString());
   waypoint.magvar = record.valueFloat("mag_var");
@@ -450,6 +451,7 @@ void MapTypesFactory::fillWaypointFromNav(const SqlRecord& record, map::MapWaypo
   waypoint.id = record.valueInt("waypoint_id");
   waypoint.ident = record.valueStr("ident");
   waypoint.region = record.valueStr("region");
+  waypoint.name= record.valueStr("name", QString());
   waypoint.type = record.valueStr("type");
   waypoint.arincType = record.valueStr("arinc_type", QString());
   waypoint.magvar = record.valueFloat("mag_var");

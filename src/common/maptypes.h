@@ -837,7 +837,7 @@ struct MapWaypoint
   }
 
   float magvar;
-  QString ident, region,
+  QString ident, region, name,
           type /* NAMED, UNAMED, etc. */,
           arincType /* ARINC * 424.18 field type definition 5.42 */;
   int routeIndex = -1; /* Filled by the get nearest methods for building the context menu */

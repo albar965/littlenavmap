@@ -278,10 +278,13 @@ void WaypointQuery::initQueries()
   // Common select statements
   QString waypointQueryBase(id % ", ident, region, type, num_victor_airway, num_jet_airway, mag_var, lonx, laty ");
 
-  if(atools::sql::SqlUtil(dbNav).hasTableAndColumn("waypoint", "artificial"))
+  if(atools::sql::SqlUtil(dbNav).hasTableAndColumn(table, "name"))
+    waypointQueryBase += ", name";
+
+  if(atools::sql::SqlUtil(dbNav).hasTableAndColumn(table, "artificial"))
     waypointQueryBase.append(", artificial");
 
-  if(atools::sql::SqlUtil(dbNav).hasTableAndColumn("waypoint", "arinc_type"))
+  if(atools::sql::SqlUtil(dbNav).hasTableAndColumn(table, "arinc_type"))
     waypointQueryBase.append(", arinc_type");
 
   deInitQueries();
@@ -329,9 +332,10 @@ void WaypointQuery::initQueries()
   waypointInfoQuery = new SqlQuery(dbNav);
 
   if(trackDatabase)
-    waypointInfoQuery->prepare("select * from " % table % " where " % id % " = :id");
+    waypointInfoQuery->prepare("select " % waypointQueryBase % " from " % table % " where " % id % " = :id");
   else
-    waypointInfoQuery->prepare("select * from waypoint "
+    waypointInfoQuery->prepare("select " % waypointQueryBase %
+                               " from waypoint "
                                "join bgl_file on waypoint.file_id = bgl_file.bgl_file_id "
                                "join scenery_area on bgl_file.scenery_area_id = scenery_area.scenery_area_id "
                                "where waypoint_id = :id");

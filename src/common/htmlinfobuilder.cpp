@@ -2892,6 +2892,7 @@ void HtmlInfoBuilder::airportRow(const map::MapAirport& ap, HtmlBuilder& html) c
 
 void HtmlInfoBuilder::waypointText(const MapWaypoint& waypoint, HtmlBuilder& html) const
 {
+  const static QRegularExpression WP_NAME_RADIAL_DME("D([0-9]{3})([A-Z])");
   const SqlRecord *rec = nullptr;
 
   if(info)
@@ -2917,6 +2918,11 @@ void HtmlInfoBuilder::waypointText(const MapWaypoint& waypoint, HtmlBuilder& htm
   if(!print && info)
     bearingToUserText(waypoint.position, waypoint.magvar, html);
 
+  html.row2If(tr("Name:"), atools::fs::util::capWaypointNameString(waypoint.ident, waypoint.name, true /* emptyIfEqual */));
+
+  if(info)
+    html.row2If(tr("Region:"), waypoint.region);
+
   if(info)
   {
     if(waypoint.arincType.isEmpty())
@@ -2924,17 +2930,10 @@ void HtmlInfoBuilder::waypointText(const MapWaypoint& waypoint, HtmlBuilder& htm
     else
       // Show detailed description instead
       html.row2If(tr("Type description:"), map::navTypeArincNamesWaypoint(waypoint.arincType));
-
-    if(rec != nullptr && rec->contains("airport_id") && !rec->isNull("airport_id"))
-      airportRow(queries->getAirportQueryNav()->getAirportById(rec->valueInt("airport_id")), html);
   }
-  else
-    html.row2If(tr("Type:"), map::navTypeNameWaypoint(waypoint.type));
 
   if(verbose)
   {
-    const static QRegularExpression WP_NAME_RADIAL_DME("D([0-9]{3})([A-Z])");
-
     QRegularExpressionMatch match = WP_NAME_RADIAL_DME.match(waypoint.ident);
     if(match.hasMatch())
     {
@@ -2951,7 +2950,9 @@ void HtmlInfoBuilder::waypointText(const MapWaypoint& waypoint, HtmlBuilder& htm
 
   if(info)
   {
-    html.row2If(tr("Region:"), waypoint.region);
+    if(rec != nullptr && rec->contains("airport_id") && !rec->isNull("airport_id"))
+      airportRow(queries->getAirportQueryNav()->getAirportById(rec->valueInt("airport_id")), html);
+
     html.row2(tr("Magnetic declination:"), map::magvarText(waypoint.magvar));
     addCoordinates(rec, html);
   }

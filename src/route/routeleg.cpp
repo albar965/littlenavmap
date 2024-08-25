@@ -923,7 +923,7 @@ const QString& RouteLeg::getRegion() const
   return EMPTY_STRING;
 }
 
-const QString& RouteLeg::getName() const
+QString RouteLeg::getName() const
 {
   if(type == map::INVALID)
     return EMPTY_STRING;
@@ -934,6 +934,8 @@ const QString& RouteLeg::getName() const
     return vor.name;
   else if(ndb.isValid())
     return ndb.name;
+  else if(waypoint.isValid())
+    return atools::fs::util::capWaypointNameString(waypoint.ident, waypoint.name, true /* emptyIfEqual */);
   else if(ils.isValid())
     return ils.name;
   else if(type == map::INVALID)

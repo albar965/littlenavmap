@@ -34,6 +34,7 @@
 #include "gui/widgetstate.h"
 #include "gui/widgetutil.h"
 #include "query/airportquery.h"
+#include "query/mapquery.h"
 #include "query/querymanager.h"
 #include "route/route.h"
 #include "search/column.h"
@@ -554,47 +555,25 @@ void AirportSearch::getSelectedMapObjects(map::MapResult& result) const
   if(!ui->dockWidgetSearch->isVisible())
     return;
 
-  const QString idColumnName = columns->getIdColumnName();
-
-  // Build a SQL record with three fields
-  atools::sql::SqlRecord rec;
-  rec.appendField(idColumnName, QVariant::Int);
-  rec.appendField("lonx", QVariant::Double);
-  rec.appendField("laty", QVariant::Double);
-  rec.appendField("rating", QVariant::Int);
-
-  MapTypesFactory factory;
   AirportQuery *airportQueryNav = QueryManager::instance()->getQueriesGui()->getAirportQueryNav();
 
   // Fill the result with incomplete airport objects (only id and lat/lon)
   const QItemSelection& selection = controller->getSelection();
-  int range = 0;
   for(const QItemSelectionRange& rng :  selection)
   {
     for(int row = rng.top(); row <= rng.bottom(); ++row)
     {
-      map::MapAirport airport;
-      QVariant idVar = controller->getRawData(row, idColumnName);
+      QVariant idVar = controller->getRawData(row, columns->getIdColumnName());
       if(idVar.isValid())
       {
-        rec.setValue(0, idVar);
-        rec.setValue(1, controller->getRawData(row, "lonx"));
-        rec.setValue(2, controller->getRawData(row, "laty"));
-        rec.setValue(3, controller->getRawData(row, "rating"));
+        mapQuery->getMapObjectById(result, map::AIRPORT, map::AIRSPACE_SRC_NONE, idVar.toInt(), false /* airportFromNavDatabase */);
 
-#ifdef DEBUG_INFORMATION_SELECTION
-        qDebug() << Q_FUNC_INFO << "range" << range << "row" << row << rec;
-#endif
-        // Not fully populated
-        factory.fillAirport(rec, airport, false /* complete */, false /* nav */, NavApp::isAirportDatabaseXPlane(false /* navdata */));
-        airportQueryNav->correctAirportProcedureFlag(airport);
-
-        result.airports.append(airport);
+        if(result.hasAirports())
+          airportQueryNav->correctAirportProcedureFlag(result.airports.first());
       }
       else
-        qWarning() << Q_FUNC_INFO << "Invalid selection: range" << range << "row" << row << "col" << idColumnName << idVar;
+        qWarning() << Q_FUNC_INFO << "Invalid selection: range" << row << "col" << columns->getIdColumnName() << idVar;
     }
-    range++;
   }
 }
 
