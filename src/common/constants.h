@@ -367,6 +367,7 @@ const QLatin1String OPTIONS_MARBLE_DEBUG("Options/MarbleDebug");
 const QLatin1String OPTIONS_CONNECTCLIENT_DEBUG("Options/ConnectClientDebug");
 const QLatin1String OPTIONS_AIRCRAFTINDEX_DEBUG("Options/AircraftIndexDebug");
 const QLatin1String OPTIONS_MAPWIDGET_DEBUG("Options/MapWidgetDebug");
+const QLatin1String OPTIONS_MAPWIDGET_TILEID_DEBUG("Options/MapWidgetDebugTileId");
 const QLatin1String OPTIONS_DOCKHANDLER_DEBUG("Options/DockHandlerDebug");
 const QLatin1String OPTIONS_WHAZZUP_PARSER_DEBUG("Options/WhazzupParserDebug");
 const QLatin1String OPTIONS_DATAREADER_DEBUG("Options/DataReaderDebug");

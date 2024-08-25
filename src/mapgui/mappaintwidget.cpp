@@ -99,6 +99,8 @@ MapPaintWidget::MapPaintWidget(QWidget *parent, Queries *queriesParam, bool visi
   apronGeometryCache->setViewportParams(viewport());
 
   paintLayer->initQueries();
+
+  setShowTileId(atools::settings::Settings::instance().getAndStoreValue(lnm::OPTIONS_MAPWIDGET_TILEID_DEBUG, false).toBool());
 }
 
 MapPaintWidget::~MapPaintWidget()
