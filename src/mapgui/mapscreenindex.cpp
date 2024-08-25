@@ -942,18 +942,6 @@ void MapScreenIndex::getAllNearest(const QPoint& point, int maxDistance, map::Ma
       route.getNearestRecommended(conv, xs, ys, maxDistance, result, queryTypes, routeDrawnNavaids);
   }
 
-  // Get points of procedure preview
-  if(types.testFlag(map::QUERY_PREVIEW_PROC_POINTS))
-  {
-    map::MapObjectQueryTypes queryTypes = types | map::QUERY_PROCEDURES | map::QUERY_PROC_POINTS;
-    if(shown.testFlag(map::MISSED_APPROACH))
-      queryTypes |= map::QUERY_PROC_MISSED_POINTS;
-    getNearestProcedureHighlights(xs, ys, maxDistance, result, queryTypes);
-  }
-
-  // Get copies from highlightMapObjects and marks (user features)
-  getNearestHighlights(xs, ys, maxDistance, result, types);
-
   // Get objects from cache - already present objects will be skipped
   // Airway included to fetch waypoints
   map::MapTypes mapTypes = shown &
@@ -969,6 +957,19 @@ void MapScreenIndex::getAllNearest(const QPoint& point, int maxDistance, map::Ma
   const QSet<int>& shownDetailAirportIds = paintLayer->getShownDetailAirportIds();
   queries->getMapQuery()->getNearestScreenObjects(conv, mapLayer, shownDetailAirportIds, airportDiagram, mapTypes, displayTypes,
                                                   xs, ys, maxDistance, result);
+
+  // Get points of procedure preview
+  if(types.testFlag(map::QUERY_PREVIEW_PROC_POINTS))
+  {
+    map::MapObjectQueryTypes queryTypes = types | map::QUERY_PROCEDURES | map::QUERY_PROC_POINTS;
+    if(shown.testFlag(map::MISSED_APPROACH))
+      queryTypes |= map::QUERY_PROC_MISSED_POINTS;
+    getNearestProcedureHighlights(xs, ys, maxDistance, result, queryTypes);
+  }
+
+  // Get copies from highlightMapObjects and marks (user features). These are never artificial.
+  // Highlighted waypoints are removed above by resolveWaypointNavaids() and have to be added here
+  getNearestHighlights(xs, ys, maxDistance, result, types);
 
   // Update all incomplete objects, especially from search preview
   for(map::MapAirport& airport : result.airports)
