@@ -965,14 +965,9 @@ WindReporter *NavApp::getWindReporter()
   return mainWindow->getWindReporter();
 }
 
-void NavApp::getAirportWind(int& windDirectionDeg, float& windSpeedKts, const map::MapAirport& airport, bool stationOnly)
+void NavApp::getAirportMetarWind(float& windDirectionDeg, float& windSpeedKts, const map::MapAirport& airport, bool stationOnly)
 {
-  mainWindow->getWeatherReporter()->getAirportWind(windDirectionDeg, windSpeedKts, airport, stationOnly);
-}
-
-map::MapWeatherSource NavApp::getAirportWeatherSource()
-{
-  return mainWindow->getMapWidget()->getMapWeatherSource();
+  mainWindow->getWeatherReporter()->getAirportMetarWind(windDirectionDeg, windSpeedKts, airport, stationOnly);
 }
 
 void NavApp::updateWindowTitle()

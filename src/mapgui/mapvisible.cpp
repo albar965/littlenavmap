@@ -374,9 +374,9 @@ void MapVisible::updateVisibleObjectsStatusBar()
       if(shownDispTypes.testFlag(map::AIRPORT_WEATHER) && layer->isAirportWeather())
       {
         tooltip.tr().td().b(tr("Airport weather source (AW): ")).
-        text(map::mapWeatherSourceString(paintLayer->getWeatherSource())).tdEnd().trEnd();
+        text(map::mapWeatherSourceString(paintLayer->getMapWeatherSource())).tdEnd().trEnd();
 
-        if(paintLayer->getWeatherSource() != map::WEATHER_SOURCE_DISABLED)
+        if(paintLayer->getMapWeatherSource() != map::WEATHER_SOURCE_DISABLED)
           weatherLabel.append(tr("AW"));
       }
       else

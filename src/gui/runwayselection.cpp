@@ -252,9 +252,8 @@ void RunwaySelection::fillRunwayList()
       runwayTableWidget->horizontalHeaderItem(i)->setToolTip(headerTooltips.at(i));
 
     // Fetch airport wind ===================================================
-    int windDirectionDeg;
-    float windSpeedKts;
-    NavApp::getAirportWind(windDirectionDeg, windSpeedKts, *airport, false /* stationOnly */);
+    float windSpeedKts, windDirectionDeg;
+    NavApp::getAirportMetarWind(windDirectionDeg, windSpeedKts, *airport, false /* stationOnly */);
 
     // Fill items ===================================================
     int index = 0; // Index in runway table

@@ -143,12 +143,11 @@ public:
    * @param html Result containing HTML snippet
    * @param background Background color for icons
    */
-  void runwayText(const map::MapAirport& airport, atools::util::HtmlBuilder& html,
-                  bool details = true, bool soft = true) const;
+  void runwayText(const map::MapAirport& airport, atools::util::HtmlBuilder& html, bool details = true, bool soft = true) const;
 
   /* Adds text for preferred runways */
-  void bestRunwaysText(const map::MapAirport& airport, atools::util::HtmlBuilder& html,
-                       const atools::fs::weather::MetarParser& parsed, int max, bool details) const;
+  void bestRunwaysText(const map::MapAirport& airport, atools::util::HtmlBuilder& html, const atools::fs::weather::MetarParser& parsed,
+                       int max, bool details) const;
 
   /*
    * Creates a HTML description for all COM frequencies of an airport.
@@ -170,8 +169,7 @@ public:
   void nearestText(const map::MapAirport& airport, atools::util::HtmlBuilder& html) const;
 
   /* Create HTML for decoded weather report for current airport */
-  void weatherText(const map::WeatherContext& context, const map::MapAirport& airport,
-                   atools::util::HtmlBuilder& html) const;
+  void weatherText(const map::WeatherContext& context, const map::MapAirport& airport, atools::util::HtmlBuilder& html) const;
 
   /* Database nav features */
   void airportMsaText(const map::MapAirportMsa& msa, atools::util::HtmlBuilder& html) const;
@@ -372,7 +370,7 @@ private:
                   const QString& msg, bool expected = false) const;
 
   void runwayEndText(atools::util::HtmlBuilder& html, const map::MapAirport& airport, const atools::sql::SqlRecord *rec,
-                     float hdgPrimTrue, float length, bool secondary) const;
+                     float headingPrimaryTrue, float length, bool secondary) const;
 
   void rowForStr(atools::util::HtmlBuilder& html, const atools::sql::SqlRecord *rec, const QString& colName,
                  const QString& msg, const QString& val) const;

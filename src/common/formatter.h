@@ -72,7 +72,7 @@ QString windInformationCross(float crossWindKts, bool addUnit = true);
 QString windInformationTailHead(float headWindKts, bool addUnit = true);
 
 /* Only headwind > 1 kts and crosswind */
-QString windInformationShort(int windDirectionDeg, float windSpeedKts, float runwayEndHeading, float minHeadWind = 1.f,
+QString windInformationShort(float windDirectionDeg, float windSpeedKts, float runwayEndHeading, float minHeadWind = 1.f,
                              bool addUnit = false);
 
 /* Get course or heading text with magnetic and/or true course depending on settings */

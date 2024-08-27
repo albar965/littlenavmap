@@ -1783,9 +1783,8 @@ void ProcedureSearch::updateProcedureWind()
 
     if(root->childCount() > 0)
     {
-      int windDirectionDeg;
-      float windSpeedKts;
-      NavApp::getAirportWind(windDirectionDeg, windSpeedKts, *currentAirportSim, false /* stationOnly */);
+      float windSpeedKts, windDirectionDeg;
+      NavApp::getAirportMetarWind(windDirectionDeg, windSpeedKts, *currentAirportSim, false /* stationOnly */);
 
       for(int i = 0; i < root->childCount(); i++)
       {

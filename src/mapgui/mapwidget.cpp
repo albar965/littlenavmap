@@ -289,7 +289,7 @@ void MapWidget::getUserpointDragPoints(QPoint& cur, QPixmap& pixmap)
 
 map::MapWeatherSource MapWidget::getMapWeatherSource() const
 {
-  return paintLayer->getWeatherSource();
+  return paintLayer->getMapWeatherSource();
 }
 
 void MapWidget::getRouteDragPoints(atools::geo::LineString& fixedPos, QPoint& cur)
@@ -3171,7 +3171,7 @@ void MapWidget::saveState() const
   settings.setValue(lnm::MAP_SUN_SHADING_TIME_OPTION, paintLayer->getSunShading());
 
   // Weather source settings =====================================
-  settings.setValue(lnm::MAP_WEATHER_SOURCE, paintLayer->getWeatherSource());
+  settings.setValue(lnm::MAP_WEATHER_SOURCE, paintLayer->getMapWeatherSource());
 
   history.saveState(atools::settings::Settings::getConfigFilename(".history"));
   getScreenIndexConst()->saveState();

@@ -282,9 +282,8 @@ public:
 
   static WeatherReporter *getWeatherReporter();
   static WeatherContextHandler *getWeatherContextHandler();
-  static void getAirportWind(int& windDirectionDeg, float& windSpeedKts, const map::MapAirport& airport, bool stationOnly);
+  static void getAirportMetarWind(float& windDirectionDeg, float& windSpeedKts, const map::MapAirport& airport, bool stationOnly);
 
-  static map::MapWeatherSource getAirportWeatherSource();
   static WindReporter *getWindReporter();
 
   static void updateWindowTitle();
@@ -380,6 +379,7 @@ public:
 
   static StyleHandler *getStyleHandler();
 
+  static map::MapWeatherSource getMapWeatherSourceText();
   static map::MapWeatherSource getMapWeatherSource();
   static bool isMapWeatherShown();
 

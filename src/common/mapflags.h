@@ -423,7 +423,7 @@ QDataStream& operator<<(QDataStream& dataStream, const map::MapAirspaceFilter& o
 struct MapAirspaceId
 {
   int id;
-  MapAirspaceSources src;
+  MapAirspaceSource src;
 };
 
 inline uint qHash(const map::MapAirspaceId& id)
@@ -508,6 +508,7 @@ enum MapWeatherSource
 };
 
 QString mapWeatherSourceString(map::MapWeatherSource source);
+QString mapWeatherSourceStringShort(map::MapWeatherSource source);
 
 } // namespace map
 

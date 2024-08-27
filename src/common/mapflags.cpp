@@ -223,4 +223,29 @@ QString mapWeatherSourceString(MapWeatherSource source)
   return QString();
 }
 
+QString mapWeatherSourceStringShort(MapWeatherSource source)
+{
+  switch(source)
+  {
+    case map::WEATHER_SOURCE_DISABLED:
+      return QObject::tr("—");
+
+    case map::WEATHER_SOURCE_SIMULATOR:
+      return QObject::tr("Simulator");
+
+    case map::WEATHER_SOURCE_ACTIVE_SKY:
+      return QObject::tr("AS");
+
+    case map::WEATHER_SOURCE_NOAA:
+      return QObject::tr("NOAA");
+
+    case map::WEATHER_SOURCE_VATSIM:
+      return QObject::tr("VATSIM");
+
+    case map::WEATHER_SOURCE_IVAO:
+      return QObject::tr("IVAO");
+  }
+  return QString();
+}
+
 } // namespace map

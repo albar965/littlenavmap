@@ -341,11 +341,6 @@ void MapPaintWidget::windDisplayUpdated()
   updateMapVisibleUi();
 }
 
-map::MapWeatherSource MapPaintWidget::getMapWeatherSource() const
-{
-  return paintLayer->getWeatherSource();
-}
-
 QDateTime MapPaintWidget::getSunShadingDateTime() const
 {
   return model()->clockDateTime();
@@ -1160,7 +1155,7 @@ map::MapSunShading MapPaintWidget::sunShadingFromUi()
 map::MapWeatherSource MapPaintWidget::weatherSourceFromUi()
 {
   // Default get internal value instead of GUI
-  return paintLayer->getWeatherSource();
+  return paintLayer->getMapWeatherSource();
 }
 
 void MapPaintWidget::updateThemeUi(const QString&)

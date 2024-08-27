@@ -258,9 +258,6 @@ public:
   /* Redraw map to reflect wind barb changes */
   void windDisplayUpdated();
 
-  /* Current weather source for icon display */
-  map::MapWeatherSource getMapWeatherSource() const;
-
   /* Airspaces and airways from the information window are kept in separate lists */
   void changeAirspaceHighlights(const QList<map::MapAirspace>& airspaces);
   void changeAirwayHighlights(const QList<QList<map::MapAirway> >& airways);

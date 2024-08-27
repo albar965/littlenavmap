@@ -750,12 +750,11 @@ void HtmlInfoBuilder::comText(const MapAirport& airport, HtmlBuilder& html) cons
 void HtmlInfoBuilder::bestRunwaysText(const MapAirport& airport, HtmlBuilder& html,
                                       const MetarParser& parsed, int max, bool details) const
 {
-  int windDirectionDeg = parsed.getWindDir();
-  float windSpeedKts = parsed.getWindSpeedKts();
+  float windDirectionDeg = parsed.getWindDirF(), windSpeedKts = parsed.getWindSpeedKts();
   maptools::RwVector ends(windSpeedKts, windDirectionDeg);
 
   // Need wind direction and speed - otherwise all runways are good =======================
-  if(windDirectionDeg != -1 && windSpeedKts < atools::fs::weather::INVALID_METAR_VALUE)
+  if(windDirectionDeg < map::INVALID_METAR_VALUE && windSpeedKts < map::INVALID_METAR_VALUE)
     queries->getInfoQuery()->getRunwayEnds(ends, airport.id);
 
   if(!ends.isEmpty())
@@ -828,6 +827,7 @@ void HtmlInfoBuilder::runwayText(const MapAirport& airport, HtmlBuilder& html, b
 
     html.br().b(tr("Elevation: ")).text(Unit::altFeet(airport.getAltitude()));
 
+    // Have to use direct queries and SqlRecord since map::MapRunway and map::MapRunwayEnd do not contain all information
     InfoQuery *infoQuery = queries->getInfoQuery();
     const SqlRecordList *recVector = infoQuery->getRunwayInformation(airport.id);
     if(recVector != nullptr)
@@ -838,13 +838,13 @@ void HtmlInfoBuilder::runwayText(const MapAirport& airport, HtmlBuilder& html, b
         if(!soft && !map::isHardSurface(rec.valueStr("surface")))
           continue;
 
-        const SqlRecord *recPrim = infoQuery->getRunwayEndInformation(rec.valueInt("primary_end_id"));
-        const SqlRecord *recSec = infoQuery->getRunwayEndInformation(rec.valueInt("secondary_end_id"));
-        bool closedPrim = recPrim->valueBool("has_closed_markings");
-        bool closedSec = recSec->valueBool("has_closed_markings");
+        const SqlRecord *recordPrimary = infoQuery->getRunwayEndInformation(rec.valueInt("primary_end_id"));
+        const SqlRecord *recordSecondary = infoQuery->getRunwayEndInformation(rec.valueInt("secondary_end_id"));
+        bool closedPrim = recordPrimary->valueBool("has_closed_markings");
+        bool closedSec = recordSecondary->valueBool("has_closed_markings");
 
         html.hr();
-        html.text(tr("Runways ") % recPrim->valueStr("name") % ", " % recSec->valueStr("name"),
+        html.text(tr("Runways ") % recordPrimary->valueStr("name") % ", " % recordSecondary->valueStr("name"),
                   ((closedPrim && closedSec) ? ahtml::STRIKEOUT : ahtml::NONE) | ahtml::UNDERLINE | ahtml::BIG | ahtml::BOLD);
 
         html.table();
@@ -915,11 +915,12 @@ void HtmlInfoBuilder::runwayText(const MapAirport& airport, HtmlBuilder& html, b
           if(print)
             html.table().tr().td();
 
-          runwayEndText(html, airport, recPrim, rec.valueFloat("heading"), rec.valueFloat("length"), false /* secondary */);
+          runwayEndText(html, airport, recordPrimary, rec.valueFloat("heading"), rec.valueFloat("length"), false /* secondary */);
           if(print)
             html.tdEnd().td();
 
-          runwayEndText(html, airport, recSec, opposedCourseDeg(rec.valueFloat("heading")), rec.valueFloat("length"), true /* secondary */);
+          runwayEndText(html, airport, recordSecondary, opposedCourseDeg(rec.valueFloat("heading")), rec.valueFloat("length"),
+                        true /* secondary */);
 
           if(print)
             html.tdEnd().trEnd().tableEnd();
@@ -929,9 +930,9 @@ void HtmlInfoBuilder::runwayText(const MapAirport& airport, HtmlBuilder& html, b
 #ifdef DEBUG_INFORMATION_INFO
           html.small(QString("Database: runway_id = %1").arg(rec.valueInt("runway_id"))).br();
           html.small(QString("Database: Primary runway_end_id = %1, heading = %2").
-                     arg(recPrim->valueInt("runway_end_id")).arg(recPrim->valueFloat("heading"))).br();
+                     arg(recordPrimary->valueInt("runway_end_id")).arg(recordPrimary->valueFloat("heading"))).br();
           html.small(QString("Database: Secondary runway_end_id = %1, heading = %2").
-                     arg(recSec->valueInt("runway_end_id")).arg(recSec->valueFloat("heading"))).br();
+                     arg(recordSecondary->valueInt("runway_end_id")).arg(recordSecondary->valueFloat("heading"))).br();
 #endif
         }
       }
@@ -1022,7 +1023,7 @@ void HtmlInfoBuilder::runwayText(const MapAirport& airport, HtmlBuilder& html, b
 }
 
 void HtmlInfoBuilder::runwayEndText(HtmlBuilder& html, const MapAirport& airport, const SqlRecord *rec,
-                                    float hdgPrimTrue, float length, bool secondary) const
+                                    float headingPrimaryTrue, float length, bool secondary) const
 {
   bool closed = rec->valueBool("has_closed_markings");
 
@@ -1038,7 +1039,7 @@ void HtmlInfoBuilder::runwayEndText(HtmlBuilder& html, const MapAirport& airport
 
   bool forceBoth = std::abs(airport.magvar) > 90.f;
   html.row2(tr("Heading:", "runway heading"),
-            courseTextFromTrue(hdgPrimTrue, airport.magvar, true /* magBold */, false /* magBig */, true /* trueSmall */,
+            courseTextFromTrue(headingPrimaryTrue, airport.magvar, true /* magBold */, false /* magBig */, true /* trueSmall */,
                                false /* narrow */, forceBoth),
             ahtml::NO_ENTITIES);
 
@@ -1093,6 +1094,15 @@ void HtmlInfoBuilder::runwayEndText(HtmlBuilder& html, const MapAirport& airport
     lights.append(tr("Touchdown"));
   if(!lights.isEmpty())
     html.row2(tr("Runway End Lights:"), lights.join(tr(", ")));
+
+  // Wind at runway
+  float windSpeedKts, windDirectionDeg;
+  NavApp::getAirportMetarWind(windDirectionDeg, windSpeedKts, airport, false /* stationOnly */);
+  QString windText = formatter::windInformationShort(windDirectionDeg, windSpeedKts, headingPrimaryTrue, -999.f /* minHeadWind */,
+                                                     true /* addUnit */);
+
+  if(!windText.isEmpty())
+    html.row2If(tr("Wind:"), windText % tr(". METAR source \"%1\".").arg(map::mapWeatherSourceString(NavApp::getMapWeatherSource())));
 
 #ifdef DEBUG_INFORMATION_INFO
   html.row2("[secondary]", secondary);
@@ -1968,8 +1978,6 @@ void HtmlInfoBuilder::decodedMetar(HtmlBuilder& html, const map::MapAirport& air
                                    const atools::fs::weather::Metar& metar,
                                    bool mapDisplay, atools::fs::weather::MetarType type) const
 {
-  using atools::fs::weather::INVALID_METAR_VALUE;
-
   const MetarParser& parsed = metar.getMetarParser(type);
 
   QList<atools::fs::weather::MetarCloud> clouds = parsed.getClouds();
@@ -2032,21 +2040,21 @@ void HtmlInfoBuilder::decodedMetar(HtmlBuilder& html, const map::MapAirport& air
   {
     QString windDir, windVar;
 
-    if(parsed.getWindDir() >= 0)
+    if(parsed.getWindDirF() < map::INVALID_METAR_VALUE)
       // Wind direction given
-      windDir = courseTextFromTrue(parsed.getWindDir(), airport.magvar) % tr(", ");
+      windDir = courseTextFromTrue(parsed.getWindDirF(), airport.magvar) % tr(", ");
 
     if(parsed.getWindRangeFrom() != -1 && parsed.getWindRangeTo() != -1)
       // Wind direction range given (additionally to dir in some cases)
       windVar = tr(", variable ") % courseTextFromTrue(parsed.getWindRangeFrom(), airport.magvar) %
                 tr(" to ") % courseTextFromTrue(parsed.getWindRangeTo(), airport.magvar);
-    else if(parsed.getWindDir() == -1)
+    else if(!(parsed.getWindDirF() < map::INVALID_METAR_VALUE))
       windDir = tr("Variable, ");
 
-    if(windSpeedKts < INVALID_METAR_VALUE)
+    if(windSpeedKts < map::INVALID_METAR_VALUE)
     {
       QString windSpeedStr;
-      if(windSpeedKts < INVALID_METAR_VALUE)
+      if(windSpeedKts < map::INVALID_METAR_VALUE)
         windSpeedStr = Unit::speedKts(windSpeedKts);
 
       html.row2(tr("Wind:"), windDir % windSpeedStr % windVar, ahtml::NO_ENTITIES);
@@ -2057,7 +2065,7 @@ void HtmlInfoBuilder::decodedMetar(HtmlBuilder& html, const map::MapAirport& air
     hasWind = true;
   }
 
-  if(parsed.getGustSpeedKts() < INVALID_METAR_VALUE)
+  if(parsed.getGustSpeedKts() < map::INVALID_METAR_VALUE)
   {
     hasWind = true;
     html.row2(tr("Wind gusts:"), Unit::speedKts(parsed.getGustSpeedKts()));
@@ -2065,34 +2073,34 @@ void HtmlInfoBuilder::decodedMetar(HtmlBuilder& html, const map::MapAirport& air
 
   // Temperature  =============================================================
   float temperature = parsed.getTemperatureC();
-  if(temperature < INVALID_METAR_VALUE)
+  if(temperature < map::INVALID_METAR_VALUE)
     html.row2(tr("Temperature:"), locale.toString(atools::roundToInt(temperature)) % tr("°C, ") %
               locale.toString(atools::roundToInt(ageo::degCToDegF(temperature))) % tr("°F"));
 
   float dewpoint = parsed.getDewpointDegC();
-  if(dewpoint < INVALID_METAR_VALUE)
+  if(dewpoint < map::INVALID_METAR_VALUE)
     html.row2(tr("Dew point:"), locale.toString(atools::roundToInt(dewpoint)) % tr("°C, ") %
               locale.toString(atools::roundToInt(ageo::degCToDegF(dewpoint))) % tr("°F"));
 
   // Pressure  =============================================================
   float seaLevelPressureMbar = parsed.getPressureMbar();
-  if(seaLevelPressureMbar < INVALID_METAR_VALUE)
+  if(seaLevelPressureMbar < map::INVALID_METAR_VALUE)
   {
     html.row2(tr("Pressure:"), locale.toString(seaLevelPressureMbar, 'f', 0) % tr(" hPa, ") %
               locale.toString(ageo::mbarToInHg(seaLevelPressureMbar), 'f', 2) % tr(" inHg"));
 
-    if(temperature < INVALID_METAR_VALUE)
+    if(temperature < map::INVALID_METAR_VALUE)
       html.row2(tr("Density Altitude:"), Unit::altFeet(ageo::densityAltitudeFt(temperature, airport.getAltitude(), seaLevelPressureMbar)));
   }
 
   // Visibility =============================================================
   const atools::fs::weather::MetarVisibility& minVis = parsed.getMinVisibility();
   QStringList visiblity;
-  if(minVis.getVisibilityMeter() < INVALID_METAR_VALUE)
+  if(minVis.getVisibilityMeter() < map::INVALID_METAR_VALUE)
     visiblity.append(tr("%1 %2").arg(minVis.getModifierString()).arg(Unit::distMeter(minVis.getVisibilityMeter())));
 
   const atools::fs::weather::MetarVisibility& maxVis = parsed.getMaxVisibility();
-  if(maxVis.getVisibilityMeter() < INVALID_METAR_VALUE)
+  if(maxVis.getVisibilityMeter() < map::INVALID_METAR_VALUE)
     visiblity.append(tr("%1 %2").arg(maxVis.getModifierString()).arg(Unit::distMeter(maxVis.getVisibilityMeter())));
   visiblity.removeDuplicates();
 
@@ -2130,7 +2138,7 @@ void HtmlInfoBuilder::decodedMetar(HtmlBuilder& html, const map::MapAirport& air
       float altMeter = cloud.getAltitudeMeter();
       QString altStr;
 
-      if(altMeter < INVALID_METAR_VALUE && cloud.getCoverage() != atools::fs::weather::MetarCloud::COVERAGE_CLEAR)
+      if(altMeter < map::INVALID_METAR_VALUE && cloud.getCoverage() != atools::fs::weather::MetarCloud::COVERAGE_CLEAR)
         altStr = Unit::altMeter(altMeter);
 
       html.row2(cloud.getCoverageString(), altStr);

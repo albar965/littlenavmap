@@ -893,26 +893,25 @@ const atools::fs::weather::Metar& WeatherReporter::getAirportWeather(const map::
   return Metar::EMPTY;
 }
 
-void WeatherReporter::getAirportWind(int& windDirectionDeg, float& windSpeedKts, const map::MapAirport& airport, bool stationOnly)
+void WeatherReporter::getAirportMetarWind(float& windDirectionDeg, float& windSpeedKts, const map::MapAirport& airport, bool stationOnly)
 {
   const atools::fs::weather::Metar& metar = getAirportWeather(airport, stationOnly);
   const atools::fs::weather::MetarParser& parsed =
     metar.getMetarParser(stationOnly ? atools::fs::weather::STATION : atools::fs::weather::BEST);
 
-  windDirectionDeg = parsed.getWindDir();
+  windDirectionDeg = parsed.getWindDirF();
   windSpeedKts = parsed.getWindSpeedKts();
 }
 
 void WeatherReporter::getBestRunwaysTextShort(QString& title, QString& runwayNumbers, QString& sourceText, const map::MapAirport& airport)
 {
-  if(NavApp::getAirportWeatherSource() != map::WEATHER_SOURCE_DISABLED)
+  if(NavApp::getMapWeatherSource() != map::WEATHER_SOURCE_DISABLED)
   {
-    int windDirectionDeg;
-    float windSpeedKts;
-    getAirportWind(windDirectionDeg, windSpeedKts, airport, false /* stationOnly */);
+    float windSpeedKts, windDirectionDeg;
+    getAirportMetarWind(windDirectionDeg, windSpeedKts, airport, false /* stationOnly */);
 
     // Need wind direction and speed - otherwise all runways are good =======================
-    if(windDirectionDeg != -1 && windSpeedKts < atools::fs::weather::INVALID_METAR_VALUE)
+    if(windDirectionDeg < map::INVALID_METAR_VALUE && windSpeedKts < map::INVALID_METAR_VALUE)
     {
       // Sorted by wind and merged for same direction
       maptools::RwVector ends(windSpeedKts, windDirectionDeg);
@@ -924,7 +923,7 @@ void WeatherReporter::getBestRunwaysTextShort(QString& title, QString& runwayNum
         QStringList runways = ends.getSortedRunways(2);
         if(!runways.isEmpty())
         {
-          title = runways.size() == 1 ? tr("Wind prefers runway:") : tr("Wind prefers runways:");
+          title = runways.size() == 1 ? tr("Wind prefers runway ") : tr("Wind prefers runways ");
           runwayNumbers = tr("%1.").arg(atools::strJoin(runways.mid(0, 4), tr(", "), tr(" and ")));
         }
       }
@@ -935,7 +934,7 @@ void WeatherReporter::getBestRunwaysTextShort(QString& title, QString& runwayNum
     else
       title = tr("No wind information.");
 
-    sourceText = tr("Using airport weather source \"%1\".").arg(map::mapWeatherSourceString(NavApp::getAirportWeatherSource()));
+    sourceText = tr("METAR source \"%1\".").arg(map::mapWeatherSourceString(NavApp::getMapWeatherSource()));
   }
   else
     sourceText = tr("Airport weather source is disabled in menu \"Weather\" -> \"Airport Weather Source\".");
@@ -987,7 +986,7 @@ void WeatherReporter::resetErrorState()
 void WeatherReporter::updateTimeouts()
 {
   map::MapWeatherSource airportWeatherSource = NavApp::getMapWidgetGui() != nullptr ?
-                                               NavApp::getAirportWeatherSource() : map::WEATHER_SOURCE_SIMULATOR;
+                                               NavApp::getMapWeatherSource() : map::WEATHER_SOURCE_SIMULATOR;
 
   // Disable periodic downloads if feature is not needed
   optsw::FlagsWeather flags = OptionData::instance().getFlagsWeather();

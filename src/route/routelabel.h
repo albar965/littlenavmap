@@ -24,6 +24,7 @@
 
 class QString;
 class Route;
+class RouteLeg;
 
 namespace map {
 
@@ -119,8 +120,11 @@ private:
   void buildHeaderDepart(atools::util::HtmlBuilder& html, bool widget);
 
   void buildHeaderArrival(atools::util::HtmlBuilder& html, bool widget);
+
   void buildHeaderRunwayLand(atools::util::HtmlBuilder& html, const map::MapRunway& runway, const map::MapRunwayEnd& runwayEnd);
   void buildHeaderRunwayLandWind(atools::util::HtmlBuilder& html, const map::MapRunwayEnd& runwayEnd);
+
+  void buildHeaderRunwayWind(atools::util::HtmlBuilder& html, const map::MapRunwayEnd& runwayEnd, const RouteLeg& leg);
 
   void buildHeaderTocTod(atools::util::HtmlBuilder& html); /* Only for print and HTML export */
   void buildErrorLabel(QString& toolTipText, QStringList errors, const QString& header);

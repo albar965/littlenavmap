@@ -175,9 +175,13 @@ void RouteLabel::buildPrintText(atools::util::HtmlBuilder& html, bool titleOnly)
 
     buildHeaderTocTod(htmlTodTod);
     buildHeaderDistTime(htmlDistTime, false /* widget */);
+
+    // Takeoff and departure
     buildHeaderRunwayTakeoff(htmlRunwayTakeoff, takeoffRunway, takeoffRunwayEnd);
     buildHeaderRunwayTakeoffWind(htmlRunwayTakeoff, takeoffRunwayEnd);
     buildHeaderDepart(htmlDepart, false /* widget */);
+
+    // Arrival and landing
     buildHeaderArrival(htmlArrival, false /* widget */);
     buildHeaderRunwayLand(htmlRunwayLand, landingRunway, landingRunwayEnd);
     buildHeaderRunwayLandWind(htmlRunwayLand, landingRunwayEnd);
@@ -465,24 +469,25 @@ void RouteLabel::buildHeaderRunwayTakeoff(atools::util::HtmlBuilder& html, const
   }
 }
 
+void RouteLabel::buildHeaderRunwayWind(atools::util::HtmlBuilder& html, const map::MapRunwayEnd& runwayEnd, const RouteLeg& leg)
+{
+  // Departure runway information =======================================
+  if(runwayEnd.isFullyValid() && leg.isValid())
+  {
+    // Wind ===================================================
+    float windSpeedKts, windDirectionDeg;
+    NavApp::getAirportMetarWind(windDirectionDeg, windSpeedKts, leg.getAirport(), false /* stationOnly */);
+    QString windText = formatter::windInformationShort(windDirectionDeg, windSpeedKts, runwayEnd.heading,
+                                                       -999.f /* minHeadWind */, true /* addUnit */);
+    if(!windText.isEmpty())
+      html.b(tr("Wind ")).text(windText).text(tr(". "));
+  }
+}
+
 void RouteLabel::buildHeaderRunwayTakeoffWind(atools::util::HtmlBuilder& html, const map::MapRunwayEnd& runwayEnd)
 {
   // Departure runway information =======================================
-  if(runwayEnd.isFullyValid())
-  {
-    const RouteLeg& departLeg = route.getDepartureAirportLeg();
-    if(departLeg.isValid())
-    {
-      // Wind ===================================================
-      int windDirectionDeg;
-      float windSpeedKts;
-      NavApp::getAirportWind(windDirectionDeg, windSpeedKts, departLeg.getAirport(), false /* stationOnly */);
-      QString windText = formatter::windInformationShort(windDirectionDeg, windSpeedKts, runwayEnd.heading,
-                                                         -999.f /* minHeadWind */, true /* addUnit */);
-      if(!windText.isEmpty())
-        html.b(tr("Wind ")).text(windText).text(tr(". "));
-    }
-  }
+  return buildHeaderRunwayWind(html, runwayEnd, route.getDepartureAirportLeg());
 }
 
 void RouteLabel::fetchLandingRunway(map::MapRunway& runway, map::MapRunwayEnd& runwayEnd)
@@ -556,20 +561,7 @@ void RouteLabel::buildHeaderRunwayLand(atools::util::HtmlBuilder& html, const ma
 
 void RouteLabel::buildHeaderRunwayLandWind(atools::util::HtmlBuilder& html, const map::MapRunwayEnd& runwayEnd)
 {
-  if(runwayEnd.isFullyValid())
-  {
-    const RouteLeg& destLeg = route.getDestinationAirportLeg();
-    if(destLeg.isValid())
-    {
-      // Wind ===================================================
-      int windDirectionDeg;
-      float windSpeedKts;
-      NavApp::getAirportWind(windDirectionDeg, windSpeedKts, destLeg.getAirport(), false /* stationOnly */);
-      QString windText = formatter::windInformationShort(windDirectionDeg, windSpeedKts, runwayEnd.heading, -999.f, true /* addUnit */);
-      if(!windText.isEmpty())
-        html.b(tr("Wind ")).text(windText).text(tr(". "));
-    }
-  }
+  return buildHeaderRunwayWind(html, runwayEnd, route.getDestinationAirportLeg());
 }
 
 void RouteLabel::buildHeaderTocTod(atools::util::HtmlBuilder& html)

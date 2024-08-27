@@ -128,7 +128,7 @@ public:
     return mapScale;
   }
 
-  map::MapWeatherSource getWeatherSource() const
+  map::MapWeatherSource getMapWeatherSource() const
   {
     return weatherSource;
   }

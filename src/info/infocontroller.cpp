@@ -555,7 +555,7 @@ void InfoController::restoreInformation()
     {
       map::MapAirspaceId id;
       id.id = refsStrList.value(i).toInt();
-      id.src = static_cast<map::MapAirspaceSources>(refsStrList.value(i + 1).toInt());
+      id.src = static_cast<map::MapAirspaceSource>(refsStrList.value(i + 1).toInt());
       res.airspaces.append(queries->getAirspaceQueries()->getAirspaceById(id));
     }
 
@@ -604,28 +604,31 @@ void InfoController::updateAirportInternal(bool newAirport, bool bearingChange, 
   if(currentSearchResult->hasAirports())
   {
     map::WeatherContext currentWeatherContext;
-    bool weatherChanged = NavApp::getWeatherContextHandler()->buildWeatherContextInfoFull(currentWeatherContext,
-                                                                                          currentSearchResult->airports.constFirst());
-
-    // qDebug() << Q_FUNC_INFO << "newAirport" << newAirport << "weatherChanged" << weatherChanged
-    // << "ident" << currentWeatherContext.ident;
+    bool weatherChanged =
+      NavApp::getWeatherContextHandler()->buildWeatherContextInfoFull(currentWeatherContext, currentSearchResult->airports.constFirst());
 
     if(newAirport || weatherChanged || bearingChange || forceWeatherUpdate)
     {
+      // Update airport overview ==============================================
       HtmlBuilder html(true);
+      Ui::MainWindow *ui = NavApp::getMainUi();
       map::MapAirport airport;
       queries->getAirportQuerySim()->getAirportById(airport, currentSearchResult->airports.constFirst().id);
-
-      // qDebug() << Q_FUNC_INFO << "Updating html" << airport.ident << airport.id;
-
       infoBuilder->airportText(airport, currentWeatherContext, html, &NavApp::getRouteConst());
 
-      Ui::MainWindow *ui = NavApp::getMainUi();
       // Leave position for weather or bearing updates
       updateTextEdit(ui->textBrowserAirportInfo, html.getHtml(), scrollToTop, !scrollToTop /* keepSelection */);
 
       if(newAirport || weatherChanged || forceWeatherUpdate)
       {
+        // Update airport runways ==============================================
+        html.clear();
+        infoBuilder->runwayText(airport, html);
+
+        // Leave position for weather updates
+        updateTextEdit(ui->textBrowserRunwayInfo, html.getHtml(), scrollToTop, !scrollToTop /* keepSelection */);
+
+        // Update airport weather ==============================================
         html.clear();
         infoBuilder->weatherText(currentWeatherContext, airport, html);
 
