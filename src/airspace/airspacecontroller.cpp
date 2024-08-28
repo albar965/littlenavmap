@@ -80,6 +80,8 @@ void AirspaceController::sourceToggled()
   airspaceQueries->setSourceFlag(map::AIRSPACE_SRC_USER, ui->actionViewAirspaceSrcUser->isChecked());
   airspaceQueries->setSourceFlag(map::AIRSPACE_SRC_ONLINE, ui->actionViewAirspaceSrcOnline->isChecked());
 
+  qDebug() << Q_FUNC_INFO << airspaceQueries->getSources();
+
   {
     // Need to synchronize web queries since threads are calling it
     QueryLocker locker(QueryManager::instance()->getQueriesWeb());

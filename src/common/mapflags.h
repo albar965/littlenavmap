@@ -358,8 +358,11 @@ enum MapAirspaceSource : quint32
 ATOOLS_DECLARE_FLAGS_32(MapAirspaceSources, MapAirspaceSource)
 ATOOLS_DECLARE_OPERATORS_FOR_FLAGS(map::MapAirspaceSources)
 
-extern const QVector<map::MapAirspaceSources> MAP_AIRSPACE_SRC_VALUES;
-extern const QVector<map::MapAirspaceSources> MAP_AIRSPACE_SRC_NO_ONLINE_VALUES;
+QDebug operator<<(QDebug out, const map::MapAirspaceSource& type);
+QDebug operator<<(QDebug out, const map::MapAirspaceSources& type);
+
+extern const QVector<map::MapAirspaceSource> MAP_AIRSPACE_SRC_VALUES;
+extern const QVector<map::MapAirspaceSource> MAP_AIRSPACE_SRC_NO_ONLINE_VALUES;
 
 /* Airspace filter flags */
 enum MapAirspaceFlag : quint32

@@ -180,7 +180,8 @@ Queries::Queries()
   infoQuery = new InfoQuery(db->getDatabaseSim(), db->getDatabaseNav(), db->getDatabaseTrack());
   procedureQuery = new ProcedureQuery(db->getDatabaseNav(), this);
 
-  airspaceQueries = new AirspaceQueries(db->getDatabaseSim(), db->getDatabaseNav(), db->getDatabaseUserAirspace(),
+  // Need extra airspace databases since selection is independent of nav/sim
+  airspaceQueries = new AirspaceQueries(db->getDatabaseSimAirspace(), db->getDatabaseNavAirspace(), db->getDatabaseUserAirspace(),
                                         db->getDatabaseOnline());
 }
 

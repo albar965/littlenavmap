@@ -38,7 +38,6 @@ AirspaceQueries::AirspaceQueries(atools::sql::SqlDatabase *dbSim, atools::sql::S
 
 AirspaceQueries::~AirspaceQueries()
 {
-  qDebug() << Q_FUNC_INFO;
   qDeleteAll(airspaceQueries);
   airspaceQueries.clear();
 }
@@ -144,11 +143,11 @@ void AirspaceQueries::getAirspacesInternal(AirspaceVector& airspaceVector, const
   // Check if requested source and enabled sources overlap
   if(src & sources)
   {
-    AirspaceQuery *query = airspaceQueries.value(src);
-    if(query != nullptr)
+    AirspaceQuery *airspaceQuery = airspaceQueries.value(src);
+    if(airspaceQuery != nullptr)
     {
       // Get airspaces from cache
-      const QList<map::MapAirspace> *airspaces = query->getAirspaces(rect, mapLayer, filter, flightplanAltitude, lazy, overflow);
+      const QList<map::MapAirspace> *airspaces = airspaceQuery->getAirspaces(rect, mapLayer, filter, flightplanAltitude, lazy, overflow);
 
       if(airspaces != nullptr)
       {
@@ -165,7 +164,7 @@ void AirspaceQueries::getAirspaces(AirspaceVector& airspaces, const Marble::GeoD
                                    map::MapAirspaceSources sourcesParam, bool& overflow)
 {
   // Merge airspace pointers from all sources/caches into one list
-  for(map::MapAirspaceSources src : map::MAP_AIRSPACE_SRC_VALUES)
+  for(map::MapAirspaceSource src : map::MAP_AIRSPACE_SRC_VALUES)
   {
     if(sourcesParam & src)
       getAirspacesInternal(airspaces, rect, mapLayer, filter, flightplanAltitude, lazy, src, overflow);
@@ -190,7 +189,7 @@ const atools::geo::LineString *AirspaceQueries::getAirspaceGeometry(map::MapAirs
 
 bool AirspaceQueries::hasAnyAirspaces() const
 {
-  for(map::MapAirspaceSources src : map::MAP_AIRSPACE_SRC_VALUES)
+  for(map::MapAirspaceSource src : map::MAP_AIRSPACE_SRC_VALUES)
   {
     if((sources & src) && airspaceQueries.contains(src) && airspaceQueries.value(src)->hasAirspacesDatabase())
       return true;
@@ -238,7 +237,7 @@ const atools::geo::LineString *AirspaceQueries::getOnlineAirspaceGeoByName(const
 QStringList AirspaceQueries::getAirspaceSourcesStr() const
 {
   QStringList retval;
-  for(map::MapAirspaceSources src : map::MAP_AIRSPACE_SRC_VALUES)
+  for(map::MapAirspaceSource src : map::MAP_AIRSPACE_SRC_VALUES)
   {
     if(sources & src)
       retval.append(map::airspaceSourceText(src));

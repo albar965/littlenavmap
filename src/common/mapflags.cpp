@@ -22,11 +22,37 @@
 
 namespace map {
 
-const QVector<map::MapAirspaceSources> MAP_AIRSPACE_SRC_VALUES =
-{AIRSPACE_SRC_SIM, AIRSPACE_SRC_NAV, AIRSPACE_SRC_ONLINE, AIRSPACE_SRC_USER};
+const QVector<map::MapAirspaceSource> MAP_AIRSPACE_SRC_VALUES({AIRSPACE_SRC_SIM, AIRSPACE_SRC_NAV, AIRSPACE_SRC_ONLINE, AIRSPACE_SRC_USER});
+const QVector<map::MapAirspaceSource> MAP_AIRSPACE_SRC_NO_ONLINE_VALUES({AIRSPACE_SRC_SIM, AIRSPACE_SRC_NAV, AIRSPACE_SRC_USER});
 
-const QVector<map::MapAirspaceSources> MAP_AIRSPACE_SRC_NO_ONLINE_VALUES =
-{AIRSPACE_SRC_SIM, AIRSPACE_SRC_NAV, AIRSPACE_SRC_USER};
+QDebug operator<<(QDebug out, const map::MapAirspaceSource& type)
+{
+  out << map::MapAirspaceSources(type);
+  return out;
+}
+
+QDebug operator<<(QDebug out, const map::MapAirspaceSources& type)
+{
+  QDebugStateSaver saver(out);
+
+  QStringList flags;
+  if(type == AIRSPACE_SRC_NONE)
+    flags.append("AIRSPACE_SRC_NONE");
+  else
+  {
+    if(type.testFlag(AIRSPACE_SRC_SIM))
+      flags.append("AIRSPACE_SRC_SIM");
+    if(type.testFlag(AIRSPACE_SRC_NAV))
+      flags.append("AIRSPACE_SRC_NAV");
+    if(type.testFlag(AIRSPACE_SRC_ONLINE))
+      flags.append("AIRSPACE_SRC_ONLINE");
+    if(type.testFlag(AIRSPACE_SRC_USER))
+      flags.append("AIRSPACE_SRC_USER");
+  }
+  out.nospace().noquote() << flags.join("|");
+
+  return out;
+}
 
 QDebug operator<<(QDebug out, const map::MapType& type)
 {
