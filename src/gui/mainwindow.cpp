@@ -1432,6 +1432,10 @@ void MainWindow::connectAllSlots()
     helpHandler->openHelpUrlWeb(lnm::helpOnlineMainMenuUrl, lnm::helpLanguageOnline());
   });
 
+  connect(ui->actionHelpUserManualShortcuts, &QAction::triggered, this, [this](bool)->void {
+    helpHandler->openHelpUrlWeb(lnm::helpOnlineShortcutsUrl, lnm::helpLanguageOnline());
+  });
+
   connect(ui->actionHelpUserManualMapDisplay, &QAction::triggered, this, [this](bool)->void {
     helpHandler->openHelpUrlWeb(lnm::helpOnlineMapDisplayUrl, lnm::helpLanguageOnline());
   });

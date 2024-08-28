@@ -49,6 +49,7 @@ extern QString helpOnlineUrl;
 extern QString helpOnlineMainUrl;
 extern QString helpOnlineTutorialsUrl;
 extern QString helpOnlineMainMenuUrl;
+extern QString helpOnlineShortcutsUrl;
 extern QString helpOnlineMapDisplayUrl;
 extern QString helpOnlineLegendUrl;
 extern QString helpOnlineFlightPlanningUrl;

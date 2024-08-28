@@ -219,6 +219,7 @@
      <addaction name="separator"/>
      <addaction name="actionHelpUserManualUserInterface"/>
      <addaction name="actionHelpUserManualMainMenu"/>
+     <addaction name="actionHelpUserManualShortcuts"/>
      <addaction name="separator"/>
      <addaction name="actionHelpUserManualFlightPlanning"/>
      <addaction name="actionHelpUserManualAircraftPerf"/>
@@ -12377,6 +12378,21 @@ relation to shown airport</string>
    </property>
    <property name="statusTip">
     <string>Generate a flight using random airports</string>
+   </property>
+  </action>
+  <action name="actionHelpUserManualShortcuts">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/help.svg</normaloff>:/littlenavmap/resources/icons/help.svg</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Keyboard Shortcuts</string>
+   </property>
+   <property name="toolTip">
+    <string>Shows all keyboard shortcuts online in a browser</string>
+   </property>
+   <property name="statusTip">
+    <string>Show keyboard shortcuts in a browser</string>
    </property>
   </action>
  </widget>
