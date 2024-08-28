@@ -370,7 +370,7 @@ MapPixmap MapActionsController::getPixmapRect(int width, int height, atools::geo
       mapPaintWidget->setShowMapObject(map::AIRCRAFT_TRAIL, false);
 
       // Set detail factor
-      mapPaintWidget->getMapPaintLayer()->setDetailLevel(detailFactor);
+      mapPaintWidget->getMapPaintLayer()->setDetailLevel(detailFactor, detailFactor);
 
       // Disable copyright note and wind
       mapPaintWidget->setPaintCopyright(false);

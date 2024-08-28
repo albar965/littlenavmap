@@ -901,7 +901,7 @@ void MainWindow::setupUi()
   ui->statusBar->addPermanentWidget(mapVisibleLabel);
 
   mapDetailLabel = new QLabel();
-  mapDetailLabel->setToolTip(tr("Map detail level."));
+  mapDetailLabel->setToolTip(tr("Map detail level / text label level."));
   ui->statusBar->addPermanentWidget(mapDetailLabel);
 
   mapRenderStatusLabel = new QLabel();
@@ -1648,6 +1648,8 @@ void MainWindow::connectAllSlots()
   MapDetailHandler *mapDetailHandler = NavApp::getMapDetailHandler();
   connect(ui->actionMapDetailsMore, &QAction::triggered, mapDetailHandler, &MapDetailHandler::increaseMapDetail);
   connect(ui->actionMapDetailsLess, &QAction::triggered, mapDetailHandler, &MapDetailHandler::decreaseMapDetail);
+  connect(ui->actionMapDetailsTextMore, &QAction::triggered, mapDetailHandler, &MapDetailHandler::increaseMapDetailText);
+  connect(ui->actionMapDetailsTextLess, &QAction::triggered, mapDetailHandler, &MapDetailHandler::decreaseMapDetailText);
   connect(ui->actionMapDetailsDefault, &QAction::triggered, mapDetailHandler, &MapDetailHandler::defaultMapDetail);
 
   connect(mapDetailHandler, &MapDetailHandler::updateDetailLevel, mapWidget, &MapWidget::setMapDetail);

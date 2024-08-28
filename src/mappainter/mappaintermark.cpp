@@ -84,7 +84,8 @@ void MapPainterMark::render()
     paintPatternMarks();
 
   if(context->objectTypes.testFlag(map::MARK_HOLDING))
-    paintHoldingMarks(mapPaintWidget->getHoldingMarksFiltered(), true /* user */, context->drawFast, false /* darkMap */);
+    paintHoldingMarks(mapPaintWidget->getHoldingMarksFiltered(), context->mapLayer, context->mapLayerText, true /* user */,
+                      context->drawFast, false /* darkMap */);
 
   // Airport MSA set by user
   if(context->objectTypes.testFlag(map::MARK_MSA))
@@ -512,7 +513,7 @@ void MapPainterMark::paintLogEntries(const QList<map::MapLogbookEntry>& entries)
         {
           symbolPainter->drawLogbookPreviewSymbol(context->painter, x, y, symbolSize);
 
-          if(context->mapLayer->isWaypointRouteName())
+          if(context->mapLayerText->isWaypointRouteName())
             symbolPainter->textBoxF(context->painter, {name}, routeLogEntryOutlineColor, x + symbolSize / 2 + 2, y, textatt::LOG_BG_COLOR);
         }
       }
@@ -633,8 +634,7 @@ void MapPainterMark::paintLogEntries(const QList<map::MapLogbookEntry>& entries)
           symbolPainter->drawAirportSymbol(context->painter, entry->departure, x, y, size, false, context->drawFast,
                                            context->flags2.testFlag(opts2::MAP_AIRPORT_HIGHLIGHT_ADDON));
           symbolPainter->drawAirportText(context->painter, entry->departure, x, y, context->dispOptsAirport, flags, size,
-                                         context->mapLayer->isAirportDiagram(),
-                                         context->mapLayer->getMaxTextLengthAirport());
+                                         context->mapLayer->isAirportDiagram(), context->mapLayerText->getMaxTextLengthAirport());
         }
         airportIds.insert(entry->departure.id);
       }
@@ -648,8 +648,7 @@ void MapPainterMark::paintLogEntries(const QList<map::MapLogbookEntry>& entries)
           symbolPainter->drawAirportSymbol(context->painter, entry->destination, x, y, size, false, context->drawFast,
                                            context->flags2.testFlag(opts2::MAP_AIRPORT_HIGHLIGHT_ADDON));
           symbolPainter->drawAirportText(context->painter, entry->destination, x, y, context->dispOptsAirport, flags, size,
-                                         context->mapLayer->isAirportDiagram(),
-                                         context->mapLayer->getMaxTextLengthAirport());
+                                         context->mapLayer->isAirportDiagram(), context->mapLayerText->getMaxTextLengthAirport());
         }
         airportIds.insert(entry->destination.id);
       }
@@ -1512,7 +1511,7 @@ void MapPainterMark::paintPatternMarks()
         float angle = static_cast<float>(ageo::angleFromQt(downwind.angle()));
         float oppositeAngle = static_cast<float>(ageo::opposedCourseDeg(ageo::angleFromQt(downwind.angle())));
 
-        if(pattern.showEntryExit && context->mapLayer->isApproachText())
+        if(pattern.showEntryExit && context->mapLayerText->isApproachText())
         {
           // Draw a line below to fill the gap because of round edges
           painter->setBrush(Qt::white);
@@ -1548,7 +1547,7 @@ void MapPainterMark::paintPatternMarks()
         painter->setBrush(Qt::NoBrush);
         painter->drawPath(polygon.getPainterPath());
 
-        if(drawDetails && context->mapLayer->isApproachText())
+        if(drawDetails && context->mapLayerText->isApproachText())
         {
           // Text for downwind leg =======================================
           QLineF finalLine(baseFinalPoint, originPoint);

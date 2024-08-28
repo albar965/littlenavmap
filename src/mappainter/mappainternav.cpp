@@ -174,7 +174,7 @@ void MapPainterNav::render()
     context->setQueryOverflow(overflow);
 
     if(holds != nullptr)
-      paintHoldingMarks(*holds, false /* user */, context->drawFast, context->darkMap);
+      paintHoldingMarks(*holds, context->mapLayer, context->mapLayerText, false /* user */, context->drawFast, context->darkMap);
   }
   context->endTimer("Hold");
 }
@@ -226,8 +226,8 @@ void MapPainterNav::paintAirways(const QList<map::MapAirway> *airways, bool fast
        (isTrack && !context->objectTypes.testFlag(map::TRACK)))
       continue;
 
-    bool ident = (!isTrack && context->mapLayer->isAirwayIdent()) || (isTrack && context->mapLayer->isTrackIdent());
-    bool info = (!isTrack && context->mapLayer->isAirwayInfo()) || (isTrack && context->mapLayer->isTrackInfo());
+    bool ident = (!isTrack && context->mapLayerText->isAirwayIdent()) || (isTrack && context->mapLayerText->isTrackIdent());
+    bool info = (!isTrack && context->mapLayerText->isAirwayInfo()) || (isTrack && context->mapLayerText->isTrackInfo());
 
     painter->setPen(QPen(mapcolors::colorForAirwayOrTrack(airway, context->darkMap), isTrack ? linewidthTrack : linewidthAirway));
     painter->setBrush(painter->pen().color());
@@ -405,10 +405,10 @@ void MapPainterNav::paintWaypoints(const QHash<int, map::MapWaypoint>& waypoints
       symbolPainter->drawWaypointSymbol(context->painter, QColor(), x, y, size, false);
 
       // If airways are drawn force display of the respecive waypoints
-      if(context->mapLayer->isWaypointName() || // Draw all waypoint names or ...
-         (context->mapLayer->isAirwayIdent() && // Draw names for specific airway waypoints
+      if(context->mapLayerText->isWaypointName() || // Draw all waypoint names or ...
+         (context->mapLayerText->isAirwayIdent() && // Draw names for specific airway waypoints
           ((drawAirwayV && waypoint.hasVictorAirways) || (drawAirwayJ && waypoint.hasJetAirways))) ||
-         (context->mapLayer->isTrackInfo() && // Draw names for specific airway waypoints
+         (context->mapLayerText->isTrackInfo() && // Draw names for specific airway waypoints
           (drawTrack && waypoint.hasTracks)))
         symbolPainter->drawWaypointText(context->painter, waypoint, x, y, textflags::IDENT, size, fill);
     }
@@ -441,9 +441,9 @@ void MapPainterNav::paintVors(const QHash<int, map::MapVor>& vors, bool drawFast
 
       textflags::TextFlags flags;
 
-      if(context->mapLayer->isVorInfo())
+      if(context->mapLayerText->isVorInfo())
         flags = textflags::IDENT | textflags::TYPE | textflags::FREQ;
-      else if(context->mapLayer->isVorIdent())
+      else if(context->mapLayerText->isVorIdent())
         flags = textflags::IDENT;
 
       symbolPainter->drawVorText(context->painter, vor, x, y, flags, size, fill, context->darkMap);
@@ -476,9 +476,9 @@ void MapPainterNav::paintNdbs(const QHash<int, map::MapNdb>& ndbs, bool drawFast
 
       textflags::TextFlags flags;
 
-      if(context->mapLayer->isNdbInfo())
+      if(context->mapLayerText->isNdbInfo())
         flags = textflags::IDENT | textflags::TYPE | textflags::FREQ;
-      else if(context->mapLayer->isNdbIdent())
+      else if(context->mapLayerText->isNdbIdent())
         flags = textflags::IDENT;
 
       symbolPainter->drawNdbText(context->painter, ndb, x, y, flags, size, fill, context->darkMap);
@@ -506,7 +506,7 @@ void MapPainterNav::paintMarkers(const QList<map::MapMarker> *markers, bool draw
 
       symbolPainter->drawMarkerSymbol(context->painter, marker, x, y, size, drawFast);
 
-      if(context->mapLayer->isMarkerInfo())
+      if(context->mapLayerText->isMarkerInfo())
       {
         QString type = marker.type.toLower();
         type[0] = type.at(0).toUpper();

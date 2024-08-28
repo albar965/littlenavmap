@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -72,8 +72,7 @@ const MapLayer *MapLayerSettings::getLayer(float distanceKm, int detailLevel) co
   using namespace std::placeholders;
 
   // Get the layer with the next lowest zoom distance
-  auto it = std::lower_bound(layers.constBegin(), layers.constEnd(), distanceKm,
-                             std::bind(&MapLayerSettings::compare, this, _1, _2));
+  auto it = std::lower_bound(layers.constBegin(), layers.constEnd(), distanceKm, std::bind(&MapLayerSettings::compare, this, _1, _2));
 
   // Adjust iterator for detail level changes
   if(detailLevel > MAP_DEFAULT_DETAIL_LEVEL)

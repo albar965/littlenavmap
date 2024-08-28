@@ -81,13 +81,13 @@ textflags::TextFlags PaintContext::airportTextFlags() const
   // Build and draw airport text
   textflags::TextFlags textflags = textflags::NONE;
 
-  if(mapLayer->isAirportInfo())
+  if(mapLayerText->isAirportInfo())
     textflags = textflags::INFO;
 
-  if(mapLayer->isAirportIdent())
+  if(mapLayerText->isAirportIdent())
     textflags |= textflags::IDENT;
 
-  if(mapLayer->isAirportName())
+  if(mapLayerText->isAirportName())
     textflags |= textflags::NAME;
 
   if(!flags2.testFlag(opts2::MAP_AIRPORT_TEXT_BACKGROUND))
@@ -101,13 +101,13 @@ textflags::TextFlags PaintContext::airportTextFlagsMinor() const
   // Build and draw airport text
   textflags::TextFlags textflags = textflags::NONE;
 
-  if(mapLayer->isAirportMinorInfo())
+  if(mapLayerText->isAirportMinorInfo())
     textflags = textflags::INFO;
 
-  if(mapLayer->isAirportMinorIdent())
+  if(mapLayerText->isAirportMinorIdent())
     textflags |= textflags::IDENT;
 
-  if(mapLayer->isAirportMinorName())
+  if(mapLayerText->isAirportMinorName())
     textflags |= textflags::NAME;
 
   if(!flags2.testFlag(opts2::MAP_AIRPORT_TEXT_BACKGROUND))
@@ -128,7 +128,7 @@ textflags::TextFlags PaintContext::airportTextFlagsRoute(bool drawAsRoute, bool 
     textflags |= textflags::LOG_TEXT;
 
   // Use more more detailed text for flight plan
-  if(mapLayer->isAirportRouteInfo())
+  if(mapLayerRouteText->isAirportRouteInfo())
     textflags |= textflags::NAME | textflags::INFO;
 
   if(!(flags2 & opts2::MAP_ROUTE_TEXT_BACKGROUND))
@@ -1044,7 +1044,8 @@ void MapPainter::paintMsaMarks(const QList<map::MapAirportMsa>& airportMsa, bool
   }
 }
 
-void MapPainter::paintHoldingMarks(const QList<map::MapHolding>& holdings, bool user, bool drawFast, bool darkMap) const
+void MapPainter::paintHoldingMarks(const QList<map::MapHolding>& holdings, const MapLayer *layer, const MapLayer *layerText, bool user,
+                                   bool drawFast, bool darkMap) const
 {
   if(holdings.isEmpty())
     return;
@@ -1052,8 +1053,8 @@ void MapPainter::paintHoldingMarks(const QList<map::MapHolding>& holdings, bool 
   atools::util::PainterContextSaver saver(context->painter);
   GeoPainter *painter = context->painter;
 
-  bool detail = context->mapLayer->isHoldingInfo();
-  bool detail2 = context->mapLayer->isHoldingInfo2();
+  bool detail = layerText->isHoldingInfo();
+  bool detail2 = layerText->isHoldingInfo2();
 
   QColor backColor = user || context->flags2 & opts2::MAP_NAVAID_TEXT_BACKGROUND ? QColor(Qt::white) : QColor(Qt::transparent);
 
@@ -1077,7 +1078,7 @@ void MapPainter::paintHoldingMarks(const QList<map::MapHolding>& holdings, bool 
     float distPixel = scale->getPixelForNm(dist);
     float lineWidth = user ? context->szF(context->thicknessUserFeature, 3) : (detail2 ? 2.5f : 1.5f);
 
-    if(context->mapLayer->isApproach() && distPixel > 10.f)
+    if(layer->isApproach() && distPixel > 10.f)
     {
       // Calculcate approximate rectangle
       Rect rect(holding.position, atools::geo::nmToMeter(dist) * 2.f, true /* fast */);

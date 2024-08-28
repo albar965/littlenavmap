@@ -515,7 +515,7 @@ void MapPainterRoute::paintRouteInternal(QStringList routeTexts, QVector<Line> l
       drawLine(painter, lines.at(activeRouteLeg - 1));
     }
   }
-  context->szFont(context->textSizeFlightplan * context->mapLayerRoute->getRouteFontScale());
+  context->szFont(context->textSizeFlightplan * context->mapLayerRouteText->getRouteFontScale());
 
   // Collect coordinates for text placement and lines first ============================
   LineString positions;
@@ -531,7 +531,7 @@ void MapPainterRoute::paintRouteInternal(QStringList routeTexts, QVector<Line> l
   painter->setBackground(mapcolors::routeTextBackgroundColor);
   painter->setPen(mapcolors::routeTextColor);
 
-  if(context->mapLayerRoute->isRouteTextAndDetail())
+  if(context->mapLayerRouteText->isRouteTextAndDetail())
   {
     // Do not draw text on the color/black outline - on center only if transparent line or text background selected
     bool textOnLineCenter = context->flags2.testFlag(opts2::MAP_ROUTE_TEXT_BACKGROUND) ||
@@ -574,7 +574,7 @@ void MapPainterRoute::paintRouteInternal(QStringList routeTexts, QVector<Line> l
       visibleStartPointsBuf.clearBit(i);
   }
   // Draw initial and final course arrows but not for VORs
-  if(context->mapLayerRoute->isRouteTextAndDetail2())
+  if(context->mapLayerRouteText->isRouteTextAndDetail2())
     paintInboundOutboundTexts(textPlacementBuf, passedRouteLeg, false /* vor */);
 
   painter->restore();
@@ -586,7 +586,7 @@ void MapPainterRoute::paintRouteInternal(QStringList routeTexts, QVector<Line> l
   // Draw symbol text
   drawRouteSymbolText(visibleStartPointsBuf, textPlacementBuf.getStartPoints());
 
-  if(context->mapLayerRoute->isRouteTextAndDetail2())
+  if(context->mapLayerRouteText->isRouteTextAndDetail2())
   {
     // Draw initial and final course arrows but VOR only to have text over VOR symbols
     painter->save();
@@ -645,7 +645,7 @@ void MapPainterRoute::paintInboundOutboundTexts(const TextPlacement& textPlaceme
     return;
 
   // Make text a bit smaller
-  context->szFont(context->textSizeFlightplan * 0.85f * context->mapLayerRoute->getRouteFontScale());
+  context->szFont(context->textSizeFlightplan * 0.85f * context->mapLayerRouteText->getRouteFontScale());
 
   QFontMetricsF metrics = painter->fontMetrics();
   float arrowWidth = textPlacement.getArrowWidth(); // Arrows added in text placement
@@ -768,12 +768,12 @@ void MapPainterRoute::paintTopOfDescentAndClimb()
 
     context->painter->setPen(QPen(Qt::black, width, Qt::SolidLine, Qt::FlatCap));
     context->painter->setBrush(Qt::transparent);
-    context->szFont(context->textSizeFlightplan * context->mapLayerRoute->getRouteFontScale());
+    context->szFont(context->textSizeFlightplan * context->mapLayerRouteText->getRouteFontScale());
 
     int activeLegIndex = route->getActiveLegIndex();
 
     // Use margins for text placed on the right side of the object to avoid disappearing at the left screen border
-    bool drawTextDetails = context->mapLayerRoute->isApproachText();
+    bool drawTextDetails = context->mapLayerRouteText->isApproachText();
     // Draw the top of climb circle and text ======================
     if(!(context->flags2.testFlag(opts2::MAP_ROUTE_DIM_PASSED)) ||
        activeLegIndex == map::INVALID_INDEX_VALUE || route->getTopOfClimbLegIndex() > activeLegIndex - 1)
@@ -788,7 +788,7 @@ void MapPainterRoute::paintTopOfDescentAndClimb()
 
           QStringList toc;
           toc.append(tr("TOC"));
-          if(context->mapLayerRoute->isAirportRouteInfo())
+          if(context->mapLayerRouteText->isAirportRouteInfo())
             toc.append(Unit::distNm(route->getTopOfClimbDistance()));
 
           paintText(mapcolors::routeTextColor, x, y, radius * 2.f, drawTextDetails, toc, TEXT_ATTS);
@@ -810,7 +810,7 @@ void MapPainterRoute::paintTopOfDescentAndClimb()
 
           QStringList tod;
           tod.append(tr("TOD"));
-          if(context->mapLayerRoute->isAirportRouteInfo())
+          if(context->mapLayerRouteText->isAirportRouteInfo())
             tod.append(Unit::distNm(route->getTopOfDescentFromDestination()));
 
           paintText(mapcolors::routeTextColor, x, y, radius * 2.f, drawTextDetails, tod, TEXT_ATTS);
@@ -891,7 +891,7 @@ void MapPainterRoute::paintProcedure(QSet<map::MapRef>& idMap, const proc::MapPr
 
   // Draw segments and collect text placement information in drawTextLines ========================================
   // Need to set font since it is used by drawHold
-  context->szFont(context->textSizeFlightplan * context->mapLayerRoute->getRouteFontScale());
+  context->szFont(context->textSizeFlightplan * context->mapLayerRouteText->getRouteFontScale());
 
   // Paint legs ====================================================
   bool noText = context->drawFast;
@@ -952,7 +952,7 @@ void MapPainterRoute::paintProcedure(QSet<map::MapRef>& idMap, const proc::MapPr
   }
 
   // Draw text along lines only on low zoom factors ========
-  if((!preview && context->mapLayerRoute->isRouteTextAndDetail()) || (preview && context->mapLayerRoute->isApproachText()))
+  if((!preview && context->mapLayerRouteText->isRouteTextAndDetail()) || (preview && context->mapLayerRouteText->isApproachText()))
   {
     if(!context->drawFast)
     {
@@ -1011,7 +1011,7 @@ void MapPainterRoute::paintProcedure(QSet<map::MapRef>& idMap, const proc::MapPr
       painter->setBackground(previewAll ? QColor(Qt::transparent) : mapcolors::routeTextBackgroundColor);
       if(previewAll)
         // Make the font larger for better arrow visibility in multi preview
-        context->szFont(context->textSizeFlightplan * 1.5f * context->mapLayerRoute->getRouteFontScale());
+        context->szFont(context->textSizeFlightplan * 1.5f * context->mapLayerRouteText->getRouteFontScale());
 
       QVector<Line> textLines;
       LineString positions;
@@ -1039,7 +1039,7 @@ void MapPainterRoute::paintProcedure(QSet<map::MapRef>& idMap, const proc::MapPr
       textPlacement.drawTextAlongLines();
     }
 
-    context->szFont(context->textSizeFlightplan * context->mapLayerRoute->getRouteFontScale());
+    context->szFont(context->textSizeFlightplan * context->mapLayerRouteText->getRouteFontScale());
   }
 
   // Texts and navaid icons ====================================================
@@ -1056,7 +1056,7 @@ void MapPainterRoute::paintProcedure(QSet<map::MapRef>& idMap, const proc::MapPr
     bool drawText = i + diff >= passedProcLeg || !activeValid || preview;
     bool drawPoint = i + diff >= passedProcLeg || !activeValid || preview || previewAll;
 
-    if(!context->mapLayerRoute->isApproachText())
+    if(!context->mapLayerRouteText->isApproachText())
       drawText = false;
 
     if(previewAll)
@@ -1695,8 +1695,8 @@ void MapPainterRoute::paintProcedurePoint(QSet<map::MapRef>& idMap, const proc::
   if(leg.disabled)
     return;
 
-  bool drawText = context->mapLayerRoute->isApproachText() && drawTextFlag;
-  bool drawTextDetails = !previewAll && drawTextFlag && context->mapLayerRoute->isApproachTextDetails();
+  bool drawText = context->mapLayerRouteText->isApproachText() && drawTextFlag;
+  bool drawTextDetails = !previewAll && drawTextFlag && context->mapLayerRouteText->isApproachTextDetails();
   bool drawUnderlay = drawText && !previewAll && context->mapLayerRoute->isApproachDetail();
 
   proc::MapAltRestriction altRestr(leg.altRestriction);
@@ -2052,7 +2052,7 @@ void MapPainterRoute::paintAirportText(float x, float y, const map::MapAirport& 
   symbolPainter->drawAirportText(context->painter, airport, x, y, context->dispOptsAirport,
                                  context->airportTextFlagsRoute(true /* drawAsRoute */, false /* draw as log */), size,
                                  context->mapLayerRoute->isAirportDiagram(),
-                                 context->mapLayerRoute->getMaxTextLengthAirport(), atts);
+                                 context->mapLayerRouteText->getMaxTextLengthAirport(), atts);
 }
 
 void MapPainterRoute::paintWaypoint(float x, float y, const map::MapWaypoint& waypoint, bool preview)
@@ -2079,7 +2079,7 @@ void MapPainterRoute::paintWaypointText(float x, float y, const map::MapWaypoint
     // Show ellipsis instead of additional texts if these are not empty
     flags |= textflags::ELLIPSE_IDENT;
 
-  if(context->mapLayerRoute->isWaypointRouteName())
+  if(context->mapLayerRouteText->isWaypointRouteName())
     flags |= textflags::IDENT;
 
   bool fill = true;
@@ -2111,10 +2111,10 @@ void MapPainterRoute::paintVorText(float x, float y, const map::MapVor& vor, boo
     flags |= textflags::ELLIPSE_IDENT;
 
   // Use more more detailed VOR text for flight plan
-  if(context->mapLayerRoute->isVorRouteIdent())
+  if(context->mapLayerRouteText->isVorRouteIdent())
     flags |= textflags::IDENT;
 
-  if(context->mapLayerRoute->isVorRouteInfo())
+  if(context->mapLayerRouteText->isVorRouteInfo())
     flags |= textflags::FREQ | textflags::INFO | textflags::TYPE;
 
   bool fill = true;
@@ -2146,10 +2146,10 @@ void MapPainterRoute::paintNdbText(float x, float y, const map::MapNdb& ndb, boo
     flags |= textflags::ELLIPSE_IDENT;
 
   // Use more more detailed NDB text for flight plan
-  if(context->mapLayerRoute->isNdbRouteIdent())
+  if(context->mapLayerRouteText->isNdbRouteIdent())
     flags |= textflags::IDENT;
 
-  if(context->mapLayerRoute->isNdbRouteInfo())
+  if(context->mapLayerRouteText->isNdbRouteInfo())
     flags |= textflags::FREQ | textflags::INFO | textflags::TYPE;
 
   bool fill = true;
@@ -2218,7 +2218,7 @@ void MapPainterRoute::paintText(const QColor& color, float x, float y, float siz
   if(!(context->flags2 & opts2::MAP_ROUTE_TEXT_BACKGROUND))
     transparency = 0;
 
-  if(!texts.isEmpty() && context->mapLayerRoute->isWaypointRouteName())
+  if(!texts.isEmpty() && context->mapLayerRouteText->isWaypointRouteName())
     symbolPainter->textBoxF(context->painter, texts, color, x, y, atts, transparency);
 }
 
@@ -2442,7 +2442,7 @@ void MapPainterRoute::drawRouteSymbolText(const QBitArray& visibleStartPoints, c
 
         case map::USERPOINTROUTE:
           paintText(mapcolors::routeUserPointColor, x, y, size, true /* drawTextDetails */,
-                    {atools::elideTextShort(curLeg.getDisplayIdent(), context->mapLayerRoute->getMaxTextLengthAirport())},
+                    {atools::elideTextShort(curLeg.getDisplayIdent(), context->mapLayerRouteText->getMaxTextLengthAirport())},
                     textPlacementAtts);
           break;
 

@@ -309,9 +309,12 @@
     <addaction name="actionMapHideAllHoldings"/>
     <addaction name="actionMapHideAllMsa"/>
     <addaction name="separator"/>
-    <addaction name="actionMapDetailsMore"/>
     <addaction name="actionMapDetailsDefault"/>
+    <addaction name="actionMapDetailsMore"/>
     <addaction name="actionMapDetailsLess"/>
+    <addaction name="separator"/>
+    <addaction name="actionMapDetailsTextMore"/>
+    <addaction name="actionMapDetailsTextLess"/>
    </widget>
    <widget class="QMenu" name="menuRoute">
     <property name="title">
@@ -7113,6 +7116,42 @@ relation to shown airport</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+-</string>
+   </property>
+  </action>
+  <action name="actionMapDetailsTextMore">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/detailmorelabel.svg</normaloff>:/littlenavmap/resources/icons/detailmorelabel.svg</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;More Map Labels</string>
+   </property>
+   <property name="toolTip">
+    <string>Show more labels on the map</string>
+   </property>
+   <property name="statusTip">
+    <string>Show more labels on the map</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift++</string>
+   </property>
+  </action>
+  <action name="actionMapDetailsTextLess">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/detaillesslabel.svg</normaloff>:/littlenavmap/resources/icons/detaillesslabel.svg</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Less Map Labels</string>
+   </property>
+   <property name="toolTip">
+    <string>Show fewer labels on the map</string>
+   </property>
+   <property name="statusTip">
+    <string>Show fewer labels on the map</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+-</string>
    </property>
   </action>
   <action name="actionMapShowHome">

@@ -1320,6 +1320,14 @@ void MapWidget::wheelEvent(QWheelEvent *event)
       else if(angleDeltaY < 0)
         NavApp::getMapDetailHandler()->decreaseMapDetail();
     }
+    else if(event->modifiers() == (Qt::ControlModifier | Qt::ShiftModifier))
+    {
+      // Adjust map label detail ===================================================================
+      if(angleDeltaY > 0)
+        NavApp::getMapDetailHandler()->increaseMapDetailText();
+      else if(angleDeltaY < 0)
+        NavApp::getMapDetailHandler()->decreaseMapDetailText();
+    }
     // This completely fails on Windows
     // else if(event->modifiers() == Qt::AltModifier)
     // {
@@ -3941,22 +3949,28 @@ void MapWidget::removeDistanceMark(int id)
   mainWindow->setStatusMessage(QString(tr("Measurement line removed from map.")));
 }
 
-void MapWidget::setMapDetail(int level)
+void MapWidget::setMapDetail(int level, int levelText)
 {
-  setDetailLevel(level);
+  setDetailLevel(level, levelText);
   update();
 
-  int levelUi = level - MapLayerSettings::MAP_DEFAULT_DETAIL_LEVEL; // -2 -> 0 -> 5
-  QString detStr;
-  if(levelUi == 0)
-    detStr = tr("Normal");
-  else if(levelUi > 0)
-    detStr = "+" + QString::number(levelUi);
-  else if(levelUi < 0)
-    detStr = QString::number(levelUi);
+  QString detailStr, detailStrText;
+  if(level == MapLayerSettings::MAP_DEFAULT_DETAIL_LEVEL)
+    detailStr = tr("—");
+  else if(level > MapLayerSettings::MAP_DEFAULT_DETAIL_LEVEL)
+    detailStr = "+" + QString::number(level);
+  else if(level < MapLayerSettings::MAP_DEFAULT_DETAIL_LEVEL)
+    detailStr = QString::number(level);
+
+  if(levelText == MapLayerSettings::MAP_DEFAULT_DETAIL_LEVEL)
+    detailStrText = tr("—");
+  else if(levelText > MapLayerSettings::MAP_DEFAULT_DETAIL_LEVEL)
+    detailStrText = "+" + QString::number(levelText);
+  else if(levelText < MapLayerSettings::MAP_DEFAULT_DETAIL_LEVEL)
+    detailStrText = QString::number(levelText);
 
   // Update status bar label
-  mainWindow->setDetailLabelText(tr("Detail %1").arg(detStr));
+  mainWindow->setDetailLabelText(tr("Detail %1/%2").arg(detailStr).arg(detailStrText));
   mainWindow->setStatusMessage(tr("Map detail level changed."));
 }
 
@@ -4022,13 +4036,13 @@ void MapWidget::deleteAircraftTrailLogbook()
   aircraftTrailLogbook->clearTrail();
 }
 
-void MapWidget::setDetailLevel(int level)
+void MapWidget::setDetailLevel(int level, int levelText)
 {
-  qDebug() << Q_FUNC_INFO << level;
+  qDebug() << Q_FUNC_INFO << level << levelText;
 
-  if(level != paintLayer->getDetailLevel())
+  if(level != paintLayer->getDetailLevel() || levelText != paintLayer->getDetailLevelText())
   {
-    paintLayer->setDetailLevel(level);
+    paintLayer->setDetailLevel(level, levelText);
     updateMapVisibleUi();
     getScreenIndex()->updateAllGeometry(getCurrentViewBoundingBox());
   }

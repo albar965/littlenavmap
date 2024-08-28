@@ -2601,7 +2601,7 @@ void RouteController::routeTableOptions()
   treeDialog.addItem2(headerItem, rcol::HEADER_TAKEOFF_WIND, tr("Takeoff Wind"),
                       tr("Headwind on takeoff runway indicated by %1 and tailwind by %2\n"
                          "as well as crosswind (%3 or %4).\n"
-                         "The wind information is taken from the selected source in\n"
+                         "The wind information is taken from the selected METAR source in\n"
                          "menu \"Weather\" -> \"Airport Weather Source\".\n"
                          "Wind is taken from nearest airport if not available.").
                       arg(TextPointer::getWindPointerSouth()).arg(TextPointer::getWindPointerNorth()).
@@ -2622,7 +2622,7 @@ void RouteController::routeTableOptions()
                       tr("Destination runway heading, available distance for landing, elevation and facilities."),
                       tr("Headwind on landing runway indicated by %1 and tailwind by %2\n"
                          "as well as crosswind (%3 or %4).\n"
-                         "The wind information is taken from the selected source in\n"
+                         "The wind information is taken from the selected METAR source in\n"
                          "menu \"Weather\" -> \"Airport Weather Source\".\n"
                          "Wind is taken from nearest airport if not available.").
                       arg(TextPointer::getWindPointerSouth()).arg(TextPointer::getWindPointerNorth()).

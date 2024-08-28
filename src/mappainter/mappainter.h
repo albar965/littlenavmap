@@ -57,11 +57,15 @@ struct MapAirportMsa;
 /* Struct that is passed to all painters. It is created from scratch for each paint event. */
 struct PaintContext
 {
-  const MapLayer *mapLayer; /* layer for the current zoom distance also affected by detail level
-                             *  should be used to visibility of map objects */
-  const MapLayer *mapLayerEffective; /* layer for the current zoom distance not affected by detail level.
-                                      *  Should be used to determine text visibility and object sizes. */
-  const MapLayer *mapLayerRoute; /* layer for the current zoom distance and more details for route. */
+  const MapLayer *mapLayer, /* Layer for the current zoom distance also affected by detail level
+                             * Used for visibility of map objects */
+                 *mapLayerText, /* layer for the current zoom distance also affected by text and label detail level
+                                 * Used for visibility of labels */
+                 *mapLayerEffective, /* Layer for the current zoom distance not affected by detail level.
+                                      *  Used to determine text visibility and object sizes. */
+                 *mapLayerRoute, /* Layer for the current zoom distance and more details for route. */
+                 *mapLayerRouteText; /* Layer for the current zoom distance and more details for route labels. */
+
   Marble::GeoPainter *painter;
   Marble::ViewportParams *viewport;
   Marble::ViewContext viewContext;
@@ -420,7 +424,8 @@ protected:
   void getPixmap(QPixmap& pixmap, const QString& resource, int size) const;
 
   /* Draw enroute as well as user defined holdings */
-  void paintHoldingMarks(const QList<map::MapHolding>& holdings, bool user, bool drawFast, bool darkMap) const;
+  void paintHoldingMarks(const QList<map::MapHolding>& holdings, const MapLayer *layer, const MapLayer *layerText,
+                         bool user, bool drawFast, bool darkMap) const;
 
   /* Draw large semi-transparent MSA enabled by user */
   void paintMsaMarks(const QList<map::MapAirportMsa>& airportMsa, bool user, bool drawFast) const;

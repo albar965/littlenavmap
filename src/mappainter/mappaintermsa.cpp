@@ -104,5 +104,6 @@ void MapPainterMsa::drawMsaSymbol(const map::MapAirportMsa& airportMsa, float x,
     scale = context->mapLayer->getAirportMsaSymbolScale();
 
   // Draw the full symbol with all sectors
-  symbolPainter->drawAirportMsa(painter, airportMsa, x, y, size * 2, scale, true /* header */, true /* transparency */, fast);
+  symbolPainter->drawAirportMsa(painter, airportMsa, x, y, size * 2, scale, context->mapLayerText->isAirportMsaDetails() /* header */,
+                                true /* transparency */, fast);
 }

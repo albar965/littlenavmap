@@ -189,9 +189,9 @@ void MapPainterIls::drawIlsSymbol(const map::MapIls& ils, bool fast)
 
     // Draw ILS text -----------------------------------
     QString text;
-    if(context->mapLayer->isIlsInfo())
+    if(context->mapLayerText->isIlsInfo())
       text = map::ilsText(ils);
-    else if(context->mapLayer->isIlsIdent())
+    else if(context->mapLayerText->isIlsIdent())
       text = ils.ident;
 
     if(!text.isEmpty())

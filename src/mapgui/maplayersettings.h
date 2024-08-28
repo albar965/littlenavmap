@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -61,9 +61,11 @@ public:
   /* Connect a widget which is updated on file change */
   void connectMapSettingsUpdated(QWidget *mapWidget);
 
-  static Q_DECL_CONSTEXPR int MAP_DEFAULT_DETAIL_LEVEL = 10;
-  static Q_DECL_CONSTEXPR int MAP_MAX_DETAIL_LEVEL = 15;
-  static Q_DECL_CONSTEXPR int MAP_MIN_DETAIL_LEVEL = 8;
+  static constexpr int MAP_DEFAULT_DETAIL_LEVEL = 0;
+  static constexpr int MAP_MAX_DETAIL_LEVEL = 5;
+  static constexpr int MAP_MIN_DETAIL_LEVEL = -2;
+  static constexpr int MAP_MAX_DETAIL_LEVEL_TEXT = 5;
+  static constexpr int MAP_MIN_DETAIL_LEVEL_TEXT = -5;
 
 signals:
   /* Sent if overloading configuration file changes */

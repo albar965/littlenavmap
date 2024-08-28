@@ -129,8 +129,8 @@ void MapPainterAirport::render()
       drawAirportDiagram(airportPaintData.getAirport());
   }
 
-  float airportFontScale = context->mapLayer->getAirportFontScale();
-  float airportSoftFontScale = context->mapLayer->getAirportMinorFontScale();
+  float airportFontScale = context->mapLayerText->getAirportFontScale();
+  float airportSoftFontScale = context->mapLayerText->getAirportMinorFontScale();
 
   // Calculate parameters for normal and soft airports
   float symsize = context->szF(context->symbolSizeAirport, context->mapLayer->getAirportSymbolSize());
@@ -170,7 +170,7 @@ void MapPainterAirport::render()
 
     symbolPainter->drawAirportText(context->painter, airport, x, y, context->dispOptsAirport, minor ? textFlagsMinor : textFlags,
                                    minor ? apMinorSymSize : apSymSize, context->mapLayer->isAirportDiagram(),
-                                   context->mapLayer->getMaxTextLengthAirport());
+                                   context->mapLayerText->getMaxTextLengthAirport());
   }
   context->endTimer("Airport");
 }
@@ -1123,7 +1123,7 @@ void MapPainterAirport::runwayCoords(QVector<RunwayPaintData>& runwayPaintData, 
       QRectF rect(-width / 2., -length / 2., width, length);
       QRectF inner(-width / 6., -length / 2. + 2., width - 4., length - 4.);
 
-      runwayPaintData.append(RunwayPaintData(runway, QPoint(xc, yc), rect, outline, inner));
+      runwayPaintData.append(RunwayPaintData(runway, QPointF(xc, yc), rect, outline, inner));
     }
   }
 }

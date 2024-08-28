@@ -92,11 +92,16 @@ public:
   void setShowMapObjects(map::MapTypes type, map::MapTypes mask);
 
   /* Changes the detail factor (range 5-15 default is 10 */
-  void setDetailLevel(int level);
+  void setDetailLevel(int level, int levelText);
 
   int getDetailLevel() const
   {
     return detailLevel;
+  }
+
+  int getDetailLevelText() const
+  {
+    return detailLevelText;
   }
 
   /* Get all shown map objects like airports, VOR, NDB, etc. */
@@ -221,6 +226,7 @@ private:
 
   /* Default detail factor. Range is from 5 to 15 */
   int detailLevel = 10;
+  int detailLevelText = 10;
 
   bool databaseLoadStatus = false;
 
@@ -247,7 +253,8 @@ private:
   MapScale *mapScale = nullptr;
   MapLayerSettings *layers = nullptr;
   MapPaintWidget *mapPaintWidget = nullptr;
-  const MapLayer *mapLayer = nullptr, *mapLayerRoute = nullptr, *mapLayerEffective = nullptr;
+  const MapLayer *mapLayer = nullptr, *mapLayerText = nullptr, *mapLayerRoute = nullptr, *mapLayerRouteText = nullptr,
+                 *mapLayerEffective = nullptr;
   bool verbose = false, verboseDraw = false;
   QFont::StyleStrategy savedFontStrategy, savedDefaultFontStrategy;
 

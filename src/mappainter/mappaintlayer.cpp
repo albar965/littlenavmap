@@ -119,7 +119,7 @@ void MapPaintLayer::copySettings(const MapPaintLayer& other)
   sunShading = other.sunShading;
 
   // Updates layers too
-  setDetailLevel(other.detailLevel);
+  setDetailLevel(other.detailLevel, other.detailLevelText);
 }
 
 void MapPaintLayer::preDatabaseLoad()
@@ -159,9 +159,10 @@ void MapPaintLayer::setShowAirspaces(map::MapAirspaceFilter types)
   airspaceTypes = types;
 }
 
-void MapPaintLayer::setDetailLevel(int level)
+void MapPaintLayer::setDetailLevel(int level, int levelText)
 {
   detailLevel = level;
+  detailLevelText = levelText;
   updateLayers();
 }
 
@@ -204,27 +205,27 @@ map::MapAirspaceType MapPaintLayer::getShownAirspaceTextsByLayer() const
 {
   map::MapAirspaceTypes types = map::AIRSPACE_NONE;
 
-  if(mapLayer != nullptr)
+  if(mapLayerText != nullptr)
   {
-    if(mapLayer->isAirspaceIcaoText())
+    if(mapLayerText->isAirspaceIcaoText())
       types |= map::AIRSPACE_CLASS_ICAO;
 
-    if(mapLayer->isAirspaceFgText())
+    if(mapLayerText->isAirspaceFgText())
       types |= map::AIRSPACE_CLASS_FG;
 
-    if(mapLayer->isAirspaceFirUirText())
+    if(mapLayerText->isAirspaceFirUirText())
       types |= map::AIRSPACE_FIR_UIR;
 
-    if(mapLayer->isAirspaceCenterText())
+    if(mapLayerText->isAirspaceCenterText())
       types |= map::AIRSPACE_CENTER;
 
-    if(mapLayer->isAirspaceRestrictedText())
+    if(mapLayerText->isAirspaceRestrictedText())
       types |= map::AIRSPACE_RESTRICTED;
 
-    if(mapLayer->isAirspaceSpecialText())
+    if(mapLayerText->isAirspaceSpecialText())
       types |= map::AIRSPACE_SPECIAL;
 
-    if(mapLayer->isAirspaceOtherText())
+    if(mapLayerText->isAirspaceOtherText())
       types |= map::AIRSPACE_OTHER;
   }
 
@@ -269,14 +270,18 @@ void MapPaintLayer::initMapLayerSettings()
 void MapPaintLayer::updateLayers()
 {
   if(noRender())
-    mapLayerEffective = mapLayer = mapLayerRoute = nullptr;
+    mapLayerEffective = mapLayer = mapLayerText = mapLayerRoute = mapLayerRouteText = nullptr;
   else
   {
     float distKm = static_cast<float>(mapPaintWidget->distance());
     // Get the uncorrected effective layer - route painting is independent of declutter
     mapLayerEffective = layers->getLayer(distKm);
+
     mapLayer = layers->getLayer(distKm, detailLevel);
+    mapLayerText = layers->getLayer(distKm, detailLevelText);
+
     mapLayerRoute = layers->getLayer(distKm, detailLevel + 1);
+    mapLayerRouteText = layers->getLayer(distKm, detailLevelText + 1);
   }
 }
 
@@ -328,7 +333,9 @@ bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport, const 
       context.shownDetailAirportIds = &shownDetailAirportIds;
       context.route = &NavApp::getRouteConst();
       context.mapLayer = mapLayer;
+      context.mapLayerText = mapLayerText;
       context.mapLayerRoute = mapLayerRoute;
+      context.mapLayerRouteText = mapLayerRouteText;
       context.mapLayerEffective = mapLayerEffective;
       context.painter = painter;
       context.viewport = viewport;

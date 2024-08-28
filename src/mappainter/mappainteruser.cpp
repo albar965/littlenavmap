@@ -106,9 +106,9 @@ void MapPainterUser::paintUserpoints(const QList<MapUserpoint>& userpoints, bool
         context->painter->drawPixmap(QPointF(x - size / 2.f, y - size / 2.f), *iconPixmap);
 
         // Do not draw labels for airport add-on marks
-        if(context->mapLayer->isUserpointInfo() && !drawFast && !userpoint.isAddon())
+        if(context->mapLayerText->isUserpointInfo() && !drawFast && !userpoint.isAddon())
         {
-          int maxTextLength = context->mapLayer->getMaxTextLengthUserpoint();
+          int maxTextLength = context->mapLayerText->getMaxTextLengthUserpoint();
           QStringList texts;
           texts.append(atools::elideTextShort(userpoint.ident, maxTextLength));
           texts.append(userpoint.name != userpoint.ident ? atools::elideTextShort(userpoint.name, maxTextLength) : QString());

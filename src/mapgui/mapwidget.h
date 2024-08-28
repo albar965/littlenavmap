@@ -201,7 +201,7 @@ public:
   void removeDistanceMark(int id);
 
   /* Set map details in widget and update statusbar */
-  void setMapDetail(int level);
+  void setMapDetail(int level, int levelText);
 
   /* Reset details and feature visibility on the map back to default */
   void resetSettingsToDefault();
@@ -332,7 +332,7 @@ private:
   };
 
   /* Change map detail level in paint layer and update map visible tooltip in statusbar */
-  void setDetailLevel(int level);
+  void setDetailLevel(int level, int levelText);
 
   /* Update tooltip in case of weather changes */
   void showTooltip(bool update);
