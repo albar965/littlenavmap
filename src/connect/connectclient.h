@@ -18,9 +18,10 @@
 #ifndef LITTLENAVMAP_CONNECTCLIENT_H
 #define LITTLENAVMAP_CONNECTCLIENT_H
 
-#include "fs/sc/simconnectdata.h"
-#include "util/timedcache.h"
 #include "connectdialog.h"
+#include "fs/sc/simconnecttypes.h"
+#include "geo/pos.h"
+#include "util/timedcache.h"
 #include "util/version.h"
 
 #include <QAbstractSocket>
@@ -34,7 +35,15 @@ class QMessageBox;
 
 namespace atools {
 namespace fs {
+
+namespace weather {
+class Metar;
+}
 namespace sc {
+
+class SimConnectUserAircraft;
+
+class SimConnectData;
 class DataReaderThread;
 class SimConnectHandler;
 class XpConnectHandler;
@@ -106,6 +115,9 @@ signals:
    * can be aircraft position or weather update */
   void dataPacketReceived(const atools::fs::sc::SimConnectData& simConnectData);
 
+  /* First valid aircraft occurrence after connecting */
+  void validAircraftReceived(const atools::fs::sc::SimConnectUserAircraft& userAircraft);
+
   /* Emitted when a new SimConnect data was received that contains weather data */
   void weatherUpdated();
 
@@ -156,8 +168,8 @@ private:
   atools::fs::sc::SimConnectHandler *simConnectHandler = nullptr;
   atools::fs::sc::XpConnectHandler *xpConnectHandler = nullptr;
 
-  /* Have to keep it since it is read multiple times */
-  atools::fs::sc::SimConnectData *simConnectData = nullptr;
+  atools::fs::sc::SimConnectData *simConnectDataNet = nullptr, /* Have to keep it since it is read multiple times from socket */
+                                 *currentValidSimConnectData = nullptr; /* Filled if user aircraft is valid */
 
   QTcpSocket *socket = nullptr;
   /* Used to trigger reconnects on socket base connections */

@@ -1640,22 +1640,46 @@ Also affects labels at holds and traffic patterns.</string>
                <property name="spacing">
                 <number>2</number>
                </property>
-               <item row="4" column="0" colspan="3">
-                <widget class="QLineEdit" name="lineEditOptionsRouteFilename">
+               <item row="6" column="1">
+                <widget class="QPushButton" name="pushButtonOptionsRouteFilenameLong">
                  <property name="toolTip">
-                  <string extracomment="Do not translate the keywords">Applies to new filenames when saving LNMPLN flight plans.
-File patterns for other flight plan files are defined in the multiexport options dialog.
-The file suffix &quot;.lnmpln&quot; is appended automatically.
-
-PLANTYPE: IFR or VFR
-DEPARTIDENT: Departure airport ident
-DEPARTNAME: Departure airport name
-DESTIDENT: Destination airport ident
-DESTNAME: Destination airport name
-CRUISEALT: Cruise altitude</string>
+                  <string>Set flight plan file pattern to long name &quot;PLANTYPE DEPARTNAME (DEPARTIDENT) to DESTNAME (DESTIDENT)&quot;
+Example: &quot;IFR Frankfurt Am Main (EDDF) to Fiumicino (LIRF).lnmpln&quot;</string>
                  </property>
                  <property name="text">
-                  <string notr="true">PLANTYPE DEPARTNAME (DEPARTIDENT) to DESTNAME (DESTIDENT)</string>
+                  <string>&amp;Long Pattern</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="7" column="0" colspan="3">
+                <widget class="QLabel" name="labelOptionsRouteFilenameExample">
+                 <property name="text">
+                  <string/>
+                 </property>
+                 <property name="wordWrap">
+                  <bool>true</bool>
+                 </property>
+                 <property name="margin">
+                  <number>10</number>
+                 </property>
+                 <property name="textInteractionFlags">
+                  <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
+                 </property>
+                </widget>
+               </item>
+               <item row="8" column="0" colspan="3">
+                <widget class="QLabel" name="labelOptionsFilePatternsHint">
+                 <property name="text">
+                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/littlenavmap/resources/icons/bulb.svg&quot;/&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;You can set more file patterns and export locations in the &amp;quot;Multiexport Flight Plan Options&amp;quot; in the main menu &amp;quot;File&amp;quot;.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                 </property>
+                 <property name="wordWrap">
+                  <bool>true</bool>
+                 </property>
+                 <property name="margin">
+                  <number>10</number>
+                 </property>
+                 <property name="textInteractionFlags">
+                  <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
                  </property>
                 </widget>
                </item>
@@ -1674,14 +1698,44 @@ Does not apply to the flight plan loaded after startup.
                  </property>
                 </widget>
                </item>
-               <item row="2" column="0" colspan="3">
+               <item row="6" column="0">
+                <widget class="QPushButton" name="pushButtonOptionsRouteFilenameShort">
+                 <property name="toolTip">
+                  <string>Set flight plan file pattern to short name &quot;DEPARTIDENT DESTIDENT&quot;.
+Example: &quot;EDDF LIRF.lnmpln&quot;</string>
+                 </property>
+                 <property name="text">
+                  <string>&amp;Short Pattern</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="3" column="0" colspan="3">
                 <widget class="Line" name="line_19">
                  <property name="orientation">
                   <enum>Qt::Horizontal</enum>
                  </property>
                 </widget>
                </item>
-               <item row="1" column="0" colspan="3">
+               <item row="5" column="0" colspan="3">
+                <widget class="QLineEdit" name="lineEditOptionsRouteFilename">
+                 <property name="toolTip">
+                  <string extracomment="Do not translate the keywords">Applies to new filenames when saving LNMPLN flight plans.
+File patterns for other flight plan files are defined in the multiexport options dialog.
+The file suffix &quot;.lnmpln&quot; is appended automatically.
+
+PLANTYPE: IFR or VFR
+DEPARTIDENT: Departure airport ident
+DEPARTNAME: Departure airport name
+DESTIDENT: Destination airport ident
+DESTNAME: Destination airport name
+CRUISEALT: Cruise altitude</string>
+                 </property>
+                 <property name="text">
+                  <string notr="true">PLANTYPE DEPARTNAME (DEPARTIDENT) to DESTNAME (DESTIDENT)</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="2" column="0" colspan="3">
                 <widget class="QCheckBox" name="checkBoxOptionsGuiAvoidOverwrite">
                  <property name="toolTip">
                   <string>Check this option to avoid overwriting flight plans with a new departure or destination after changing these.
@@ -1695,34 +1749,7 @@ The &quot;Save as&quot; dialog will show up instead of overwriting the current f
                  </property>
                 </widget>
                </item>
-               <item row="6" column="0" colspan="3">
-                <widget class="QLabel" name="labelOptionsRouteFilenameExample">
-                 <property name="text">
-                  <string/>
-                 </property>
-                 <property name="wordWrap">
-                  <bool>true</bool>
-                 </property>
-                 <property name="margin">
-                  <number>10</number>
-                 </property>
-                 <property name="textInteractionFlags">
-                  <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
-                 </property>
-                </widget>
-               </item>
-               <item row="5" column="0">
-                <widget class="QPushButton" name="pushButtonOptionsRouteFilenameShort">
-                 <property name="toolTip">
-                  <string>Set flight plan file pattern to short name &quot;DEPARTIDENT DESTIDENT&quot;.
-Example: &quot;EDDF LIRF.lnmpln&quot;</string>
-                 </property>
-                 <property name="text">
-                  <string>&amp;Short Pattern</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="3" column="0" colspan="3">
+               <item row="4" column="0" colspan="3">
                 <widget class="QLabel" name="label_9">
                  <property name="text">
                   <string>&amp;Pattern for default flight plan file names used when saving LNMPLN:</string>
@@ -1732,30 +1759,16 @@ Example: &quot;EDDF LIRF.lnmpln&quot;</string>
                  </property>
                 </widget>
                </item>
-               <item row="5" column="1">
-                <widget class="QPushButton" name="pushButtonOptionsRouteFilenameLong">
+               <item row="1" column="0">
+                <widget class="QCheckBox" name="checkBoxOptionsGuiAddDeparture">
                  <property name="toolTip">
-                  <string>Set flight plan file pattern to long name &quot;PLANTYPE DEPARTNAME (DEPARTIDENT) to DESTNAME (DESTIDENT)&quot;
-Example: &quot;IFR Frankfurt Am Main (EDDF) to Fiumicino (LIRF).lnmpln&quot;</string>
+                  <string>Add departure parking, runway or airport to an empty flight plan after connecting to simulator.</string>
                  </property>
                  <property name="text">
-                  <string>&amp;Long Pattern</string>
+                  <string>Add &amp;departure position to flight plan after connecting to simulator</string>
                  </property>
-                </widget>
-               </item>
-               <item row="7" column="0" colspan="3">
-                <widget class="QLabel" name="labelOptionsFilePatternsHint">
-                 <property name="text">
-                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/littlenavmap/resources/icons/bulb.svg&quot;/&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;You can set more file patterns and export locations in the &amp;quot;Multiexport Flight Plan Options&amp;quot; in the main menu &amp;quot;File&amp;quot;.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-                 </property>
-                 <property name="wordWrap">
+                 <property name="checked">
                   <bool>true</bool>
-                 </property>
-                 <property name="margin">
-                  <number>10</number>
-                 </property>
-                 <property name="textInteractionFlags">
-                  <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
                  </property>
                 </widget>
                </item>
@@ -1830,8 +1843,8 @@ Example: &quot;IFR Frankfurt Am Main (EDDF) to Fiumicino (LIRF).lnmpln&quot;</st
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>631</width>
-             <height>531</height>
+             <width>317</width>
+             <height>487</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout">
@@ -2101,8 +2114,8 @@ Note that this function is disabled for X-Plane 12 since the 3D flag is unreliab
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>631</width>
-             <height>531</height>
+             <width>595</width>
+             <height>344</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_2">
@@ -2533,8 +2546,8 @@ Smaller values will allow a finer selection.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>631</width>
-             <height>531</height>
+             <width>501</width>
+             <height>526</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_12">
@@ -2862,8 +2875,8 @@ Map views might be shown with a larger zoom distance than expected if this optio
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>617</width>
-             <height>1053</height>
+             <width>499</width>
+             <height>1065</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_20">
@@ -3760,8 +3773,8 @@ Lower values make the airspace more opaque and higher values more transparent.</
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>631</width>
-             <height>531</height>
+             <width>428</width>
+             <height>518</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_35">
@@ -4208,8 +4221,8 @@ from either the departure parking or the user aircraft while taxiing.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>631</width>
-             <height>531</height>
+             <width>554</width>
+             <height>264</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_57">
@@ -4471,8 +4484,8 @@ Lower this value to avoid too long tracks and avoid stutters in map display.</st
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>617</width>
-             <height>651</height>
+             <width>452</width>
+             <height>748</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_35">
@@ -5361,8 +5374,8 @@ Value 0 is opaque and 90 is most transparent.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>631</width>
-             <height>531</height>
+             <width>328</width>
+             <height>535</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_39">
@@ -5831,8 +5844,8 @@ airspace filename has to match the callsign of the online center.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>617</width>
-             <height>617</height>
+             <width>572</width>
+             <height>633</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_25">
@@ -6278,8 +6291,8 @@ put the active leg back on top after the given timeout while flying.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>631</width>
-             <height>531</height>
+             <width>318</width>
+             <height>241</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_26">
@@ -6438,8 +6451,8 @@ Note that this value does not affect flight plan calculation or saving of flight
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>617</width>
-             <height>610</height>
+             <width>272</width>
+             <height>754</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_27">
@@ -6679,8 +6692,8 @@ Note that this value does not affect flight plan calculation or saving of flight
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>617</width>
-             <height>875</height>
+             <width>360</width>
+             <height>939</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_28">
@@ -7277,8 +7290,8 @@ Entering a wrong value will cause errors when downloading weather reports.</stri
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>631</width>
-             <height>531</height>
+             <width>389</width>
+             <height>375</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_29">
@@ -7579,8 +7592,8 @@ Entering a wrong value will cause errors when downloading weather reports.</stri
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>631</width>
-             <height>531</height>
+             <width>363</width>
+             <height>258</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_37">
@@ -7772,8 +7785,8 @@ Little Navmap GIT repository.
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>617</width>
-             <height>629</height>
+             <width>437</width>
+             <height>699</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_30">
@@ -8553,6 +8566,7 @@ You have to reload the scenery library so that the changes take effect.</string>
   <tabstop>checkBoxOptionsUnitTrueCourse</tabstop>
   <tabstop>scrollArea_18</tabstop>
   <tabstop>checkBoxOptionsGuiCenterRoute</tabstop>
+  <tabstop>checkBoxOptionsGuiAddDeparture</tabstop>
   <tabstop>checkBoxOptionsGuiAvoidOverwrite</tabstop>
   <tabstop>lineEditOptionsRouteFilename</tabstop>
   <tabstop>pushButtonOptionsRouteFilenameShort</tabstop>

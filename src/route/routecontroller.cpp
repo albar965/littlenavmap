@@ -5493,6 +5493,37 @@ void RouteController::disconnectedFromSimulator()
   emit routeChanged(false /* geometryChanged */);
 }
 
+void RouteController::validAircraftReceived(const atools::fs::sc::SimConnectUserAircraft& userAircraft)
+{
+  if(route.isEmpty() && userAircraft.isFullyValid() && userAircraft.isOnGround() &&
+     OptionData::instance().getFlags().testFlag(opts::GUI_ADD_DEPARTURE))
+  {
+    // Got notification about first valid user aircraft occurrence on ground and plan is empty
+    // Get nearest objects within of 0.005 NM
+    const map::MapResultIndex *resultIndex =
+      QueryManager::instance()->getQueriesGui()->getAirportQuerySim()->getNearestAirportObjects(userAircraft.getPosition(), 0.05f);
+
+    if(resultIndex != nullptr && !resultIndex->isEmpty())
+    {
+      const map::MapBase *first = resultIndex->constFirst();
+
+      qDebug() << Q_FUNC_INFO << "Adding to route" << *first;
+
+      // Add nearest object to plan as  departure positionF
+      if(first->objType == map::PARKING)
+        routeSetParking(first->asObj<map::MapParking>());
+      else if(first->objType == map::START)
+        routeSetStartPosition(first->asObj<map::MapStart>());
+      else if(first->objType == map::AIRPORT)
+        routeSetDeparture(first->asObj<map::MapAirport>());
+
+#ifdef DEBUG_INFORMATION
+      qDebug() << Q_FUNC_INFO << *resultIndex;
+#endif
+    }
+  }
+}
+
 void RouteController::simDataChanged(const atools::fs::sc::SimConnectData& simulatorData)
 {
   if(!loadingDatabaseState && atools::almostNotEqual(QDateTime::currentDateTime().toMSecsSinceEpoch(),

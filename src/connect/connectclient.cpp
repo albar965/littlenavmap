@@ -57,6 +57,8 @@ ConnectClient::ConnectClient(MainWindow *parent)
   // VERSION_NUMBER_TODO
   minimumXpconnectVersion("1.2.0.beta")
 {
+  currentValidSimConnectData = new atools::fs::sc::SimConnectData();
+
   atools::settings::Settings& settings = atools::settings::Settings::instance();
   verbose = settings.getAndStoreValue(lnm::OPTIONS_CONNECTCLIENT_DEBUG, false).toBool();
 
@@ -126,6 +128,7 @@ ConnectClient::~ConnectClient()
   ATOOLS_DELETE_LOG(xpConnectHandler);
   ATOOLS_DELETE_LOG(connectDialog);
   ATOOLS_DELETE_LOG(errorMessageBox);
+  ATOOLS_DELETE_LOG(currentValidSimConnectData);
 }
 
 void ConnectClient::flushQueuedRequests()
@@ -234,6 +237,10 @@ void ConnectClient::connectedToSimulatorDirect()
                                              tr("Connected to local flight simulator (%1).").arg(simName()));
   connectDialog->setConnected(isConnected());
   mainWindow->setStatusMessage(tr("Connected to simulator."), true /* addLog */);
+
+  // Clear status for first valid aircraft detection
+  *currentValidSimConnectData = atools::fs::sc::SimConnectData();
+
   emit connectedToSimulator();
   emit weatherUpdated();
 }
@@ -241,6 +248,9 @@ void ConnectClient::connectedToSimulatorDirect()
 void ConnectClient::disconnectedFromSimulatorDirect()
 {
   qDebug() << Q_FUNC_INFO;
+
+  // Clear status for first valid aircraft detection
+  *currentValidSimConnectData = atools::fs::sc::SimConnectData();
 
   showTerminalError();
 
@@ -346,6 +356,14 @@ void ConnectClient::postSimConnectData(atools::fs::sc::SimConnectData dataPacket
           ac.setFlag(atools::fs::sc::ON_GROUND);
       }
 
+      // Check if user aircraft was previously not valid and send signal if status has changed
+      bool nowValid = !currentValidSimConnectData->getUserAircraftConst().isFullyValid() &&
+                      dataPacket.getUserAircraftConst().isFullyValid();
+      *currentValidSimConnectData = dataPacket;
+
+      if(nowValid)
+        emit validAircraftReceived(currentValidSimConnectData->getUserAircraftConst());
+
       emit dataPacketReceived(dataPacket);
     } // if(!dataPacket.isEmptyReply())
 
@@ -360,8 +378,7 @@ void ConnectClient::postSimConnectData(atools::fs::sc::SimConnectData dataPacket
         QString ident = metar.getRequestIdent();
         if(verbose)
         {
-          qDebug() << "ConnectClient::postSimConnectData metar ident to cache ident"
-                   << ident << "pos" << metar.getRequestPos().toString();
+          qDebug() << "ConnectClient::postSimConnectData metar ident to cache ident" << ident << "pos" << metar.getRequestPos().toString();
           qDebug() << "Station" << metar.getStationMetar();
           qDebug() << "Nearest" << metar.getNearestMetar();
           qDebug() << "Interpolated" << metar.getInterpolatedMetar();
@@ -410,7 +427,7 @@ void ConnectClient::postSimConnectData(atools::fs::sc::SimConnectData dataPacket
     // Get flags before disconnecting
     bool xplane = dataReader != nullptr ? dataReader->isXplaneHandler() : false, network = isNetworkConnect();
     atools::fs::sc::SimConnectStatus status = dataPacket.getStatus();
-    QString statusText = simConnectData->getStatusText();
+    QString statusText = simConnectDataNet->getStatusText();
 
     disconnectClicked();
     handleError(status, statusText, xplane, network);
@@ -853,8 +870,8 @@ void ConnectClient::closeSocket(bool allowRestart)
     socket = nullptr;
   }
 
-  delete simConnectData;
-  simConnectData = nullptr;
+  delete simConnectDataNet;
+  simConnectDataNet = nullptr;
 
   QString msgTooltip, msg;
   if(error == QAbstractSocket::RemoteHostClosedError || error == QAbstractSocket::UnknownSocketError)
@@ -893,6 +910,10 @@ void ConnectClient::closeSocket(bool allowRestart)
     if(!atools::gui::Application::isShuttingDown())
     {
       mainWindow->setStatusMessage(tr("Disconnected from simulator."), true /* addLog */);
+
+      // Clear status for first valid aircraft detection
+      *currentValidSimConnectData = atools::fs::sc::SimConnectData();
+
       emit disconnectedFromSimulator();
       emit weatherUpdated();
     }
@@ -945,6 +966,10 @@ void ConnectClient::connectedToServerSocket()
 
   // Let other program parts know about the new connection
   mainWindow->setStatusMessage(tr("Connected to simulator."), true /* addLog */);
+
+  // Clear status for first valid aircraft detection
+  *currentValidSimConnectData = atools::fs::sc::SimConnectData();
+
   emit connectedToSimulator();
   emit weatherUpdated();
 }
@@ -958,18 +983,18 @@ void ConnectClient::readFromSocket()
     {
       if(verbose)
         qDebug() << "readFromSocket" << socket->bytesAvailable();
-      if(simConnectData == nullptr)
+      if(simConnectDataNet == nullptr)
         // Need to keep the data in background since this method can be called multiple times until the data is filled
-        simConnectData = new atools::fs::sc::SimConnectData;
+        simConnectDataNet = new atools::fs::sc::SimConnectData;
 
-      bool read = simConnectData->read(socket);
-      if(simConnectData->getStatus() != atools::fs::sc::OK)
+      bool read = simConnectDataNet->read(socket);
+      if(simConnectDataNet->getStatus() != atools::fs::sc::OK)
       {
         // Something went wrong - shutdown
 
         bool xplane = dataReader != nullptr ? dataReader->isXplaneHandler() : false, network = isNetworkConnect();
-        atools::fs::sc::SimConnectStatus status = simConnectData->getStatus();
-        QString statusText = simConnectData->getStatusText();
+        atools::fs::sc::SimConnectStatus status = simConnectDataNet->getStatus();
+        QString statusText = simConnectDataNet->getStatusText();
 
         closeSocket(false);
         handleError(status, statusText, xplane, network);
@@ -981,24 +1006,24 @@ void ConnectClient::readFromSocket()
       if(read)
       {
         if(verbose)
-          qDebug() << "readFromSocket id " << simConnectData->getPacketId();
+          qDebug() << "readFromSocket id " << simConnectDataNet->getPacketId();
 
-        if(simConnectData->getPacketId() > 0)
+        if(simConnectDataNet->getPacketId() > 0)
         {
           if(verbose)
-            qDebug() << "readFromSocket id " << simConnectData->getPacketId() << "replying";
+            qDebug() << "readFromSocket id " << simConnectDataNet->getPacketId() << "replying";
 
           // Data was read completely and successfully - reply to server
           atools::fs::sc::SimConnectReply reply;
-          reply.setPacketId(simConnectData->getPacketId());
+          reply.setPacketId(simConnectDataNet->getPacketId());
           writeReplyToSocket(reply);
         }
-        else if(!simConnectData->getMetars().isEmpty())
+        else if(!simConnectDataNet->getMetars().isEmpty())
         {
           if(verbose)
-            qDebug() << "readFromSocket id " << simConnectData->getPacketId() << "metars";
+            qDebug() << "readFromSocket id " << simConnectDataNet->getPacketId() << "metars";
 
-          for(const atools::fs::weather::Metar& metar : simConnectData->getMetars())
+          for(const atools::fs::weather::Metar& metar : simConnectDataNet->getMetars())
             outstandingReplies.remove(metar.getRequestIdent());
 
           // Start request on next invocation of the event queue
@@ -1006,9 +1031,9 @@ void ConnectClient::readFromSocket()
         }
 
         // Send around in the application
-        postSimConnectData(*simConnectData);
-        delete simConnectData;
-        simConnectData = nullptr;
+        postSimConnectData(*simConnectDataNet);
+        delete simConnectDataNet;
+        simConnectDataNet = nullptr;
       }
       else
         return;

@@ -133,7 +133,11 @@ enum Flag : quint64
   ENABLE_TOOLTIPS_MENU = 1ULL << 29,
 
   /* ui->checkBoxOptionsMapAirspaceNoMultZ */
-  MAP_AIRSPACE_NO_MULT_Z = 1ULL << 30
+  MAP_AIRSPACE_NO_MULT_Z = 1ULL << 30,
+
+  /* ui->checkBoxOptionsGuiAddDeparture */
+  GUI_ADD_DEPARTURE = 1ULL << 31
+
 };
 
 ATOOLS_DECLARE_FLAGS_64(Flags, Flag)

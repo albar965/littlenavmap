@@ -271,6 +271,9 @@ public:
 
   void simDataChanged(const atools::fs::sc::SimConnectData& simulatorData);
 
+  /* Addd parking, start or airport to flight plan if empty */
+  void validAircraftReceived(const atools::fs::sc::SimConnectUserAircraft& userAircraft);
+
   void editUserWaypointName(int index);
 
   void shownMapFeaturesChanged(map::MapTypes types);
