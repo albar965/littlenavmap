@@ -103,6 +103,8 @@ QDebug operator<<(QDebug out, const map::MapTypes& type)
       flags.append("USERPOINTROUTE");
     if(type.testFlag(PARKING))
       flags.append("PARKING");
+    if(type.testFlag(START))
+      flags.append("START");
     if(type.testFlag(RUNWAYEND))
       flags.append("RUNWAYEND");
     if(type.testFlag(INVALID))

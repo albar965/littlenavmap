@@ -2440,6 +2440,9 @@ QString mapBaseText(const map::MapBase *base, int elideAirportName)
       case map::PARKING:
         return map::parkingText(*base->asPtr<map::MapParking>());
 
+      case map::START:
+        return QString();
+
       case map::HELIPAD:
         return map::helipadText(*base->asPtr<map::MapHelipad>());
 
@@ -2529,6 +2532,9 @@ QIcon mapBaseIcon(const map::MapBase *base, int size)
 
       case map::PARKING:
         return mapcolors::iconForParkingType(base->asPtr<map::MapParking>()->type);
+
+      case map::START:
+        return QIcon();
 
       case map::HELIPAD:
         return SymbolPainter::createHelipadIcon(*base->asPtr<map::MapHelipad>(), size);

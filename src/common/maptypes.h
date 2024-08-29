@@ -698,8 +698,13 @@ struct MapStart
   : public MapBase
 {
   MapStart() :
-    MapBase(map::NONE)
+    MapBase(staticType())
   {
+  }
+
+  static map::MapType staticType()
+  {
+    return map::START;
   }
 
   bool isRunway() const

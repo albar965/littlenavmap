@@ -428,6 +428,7 @@ void MapResult::removeInvalid()
   removeInvalid(runways);
   removeInvalid(towers);
   removeInvalid(parkings);
+  removeInvalid(starts);
   removeInvalid(helipads);
   removeInvalid(waypoints, &waypointIds);
   removeInvalid(vors, &vorIds);
@@ -809,6 +810,22 @@ int MapResult::size(const MapTypes& types) const
   return totalSize;
 }
 
+QDebug operator<<(QDebug out, const map::MapResultIndex& record)
+{
+  QDebugStateSaver saver(out);
+
+  out << "]";
+  out << "MapResultIndex[";
+  for(const map::MapBase *obj : record)
+    out << *obj << ",";
+  out << "]";
+
+  out << "MapResult[";
+  out << record.result;
+  out << "]]";
+  return out;
+}
+
 QDebug operator<<(QDebug out, const map::MapResult& record)
 {
   QDebugStateSaver saver(out);
@@ -846,6 +863,13 @@ QDebug operator<<(QDebug out, const map::MapResult& record)
     out << "Parking[";
     for(const map::MapParking& obj :  record.parkings)
       out << obj.id << obj.name << obj.number << obj.type << ",";
+    out << "]";
+  }
+  if(!record.starts.isEmpty())
+  {
+    out << "Start[";
+    for(const map::MapStart& obj :  record.starts)
+      out << obj.id << obj.runwayName << obj.type << ",";
     out << "]";
   }
   if(!record.waypoints.isEmpty())
@@ -943,6 +967,7 @@ MapResultIndex& MapResultIndex::add(const MapResult& resultParam, const MapTypes
   addToIndexRangeIf(resultParam.runwayEnds, result.runwayEnds, types);
   addToIndexRangeIf(resultParam.runways, result.runways, types);
   addToIndexRangeIf(resultParam.parkings, result.parkings, types);
+  addToIndexRangeIf(resultParam.starts, result.starts, types);
   addToIndexRangeIf(resultParam.helipads, result.helipads, types);
   addToIndexRangeIf(resultParam.waypoints, result.waypoints, types);
   addToIndexRangeIf(resultParam.vors, result.vors, types);
@@ -983,6 +1008,7 @@ MapResultIndex& MapResultIndex::addRef(const MapResult& resultParam, const MapTy
   addToIndexIf(resultParam.runwayEnds, types);
   addToIndexIf(resultParam.runways, types);
   addToIndexIf(resultParam.parkings, types);
+  addToIndexIf(resultParam.starts, types);
   addToIndexIf(resultParam.helipads, types);
   addToIndexIf(resultParam.waypoints, types);
   addToIndexIf(resultParam.vors, types);

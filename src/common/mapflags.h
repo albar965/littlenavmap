@@ -87,6 +87,7 @@ enum MapType : quint64
   AIRPORT_MSA =      1ULL << 17, /* Minimum safe altitude for airports and navaids - small icon */
   USERPOINTROUTE =   1ULL << 18, /* Flight plan user waypoint */
   PARKING =          1ULL << 19,
+  START =            1ULL << 50,
   RUNWAYEND =        1ULL << 20,
   INVALID =          1ULL << 21, /* Flight plan waypoint not found in database */
   MISSED_APPROACH =  1ULL << 22, /* Only procedure type that can be hidden */
@@ -133,7 +134,7 @@ enum MapType : quint64
   AIRPORT_ADDON_ZOOM_FILTER = 1ULL << 49, /* Add-on airports override zoom distance and filters */
 
 
-  // NEXT = 0x0001'0000'0000'0000 / 1ULL << 50
+  // NEXT = 0x0001'0000'0000'0000 / 1ULL << 51 after START
 
   /* =============================================================================================== */
   /* Pure visibiliy flags. Nothing is shown if not at least one of these is set */
