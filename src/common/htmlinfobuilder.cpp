@@ -2970,8 +2970,7 @@ void HtmlInfoBuilder::waypointText(const MapWaypoint& waypoint, HtmlBuilder& htm
   // Waypoints should normally not appear here if they are artificial except for FSX, MSFS and the like
   waypointAirwayText(waypoint, html);
 
-  if(rec != nullptr)
-    addScenery(rec, html, DATASOURCE_NAV);
+  addScenery(rec, html, DATASOURCE_NAV);
 
   if(!info)
     routeWindText(html, NavApp::getRouteConst(), waypoint.routeIndex);
@@ -5033,6 +5032,11 @@ void HtmlInfoBuilder::aircraftTitle(const atools::fs::sc::SimConnectAircraft& ai
 
 void HtmlInfoBuilder::addScenery(const atools::sql::SqlRecord *rec, HtmlBuilder& html, SceneryType type) const
 {
+#ifdef DEBUG_INFORMATION_INFO
+  if(rec != nullptr)
+    qDebug() << Q_FUNC_INFO << *rec << type;
+#endif
+
   head(html, tr("Data Source"));
   html.table();
 

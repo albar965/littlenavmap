@@ -334,11 +334,10 @@ void WaypointQuery::initQueries()
   if(trackDatabase)
     waypointInfoQuery->prepare("select " % waypointQueryBase % " from " % table % " where " % id % " = :id");
   else
-    waypointInfoQuery->prepare("select " % waypointQueryBase %
-                               " from waypoint "
-                               "join bgl_file on waypoint.file_id = bgl_file.bgl_file_id "
-                               "join scenery_area on bgl_file.scenery_area_id = scenery_area.scenery_area_id "
-                               "where waypoint_id = :id");
+    waypointInfoQuery->prepare("select w.*, a.title, f.filepath from waypoint w "
+                               "join bgl_file f on w.file_id = f.bgl_file_id "
+                               "join scenery_area a on f.scenery_area_id = a.scenery_area_id "
+                               "where w.waypoint_id = :id");
 }
 
 void WaypointQuery::deInitQueries()
