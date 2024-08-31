@@ -446,7 +446,7 @@ private:
 
   virtual void contextMenuEvent(QContextMenuEvent *event) override;
   virtual void focusOutEvent(QFocusEvent *) override;
-  virtual void keyPressEvent(QKeyEvent *event) override;
+  virtual void keyPressEvent(QKeyEvent *keyEvent) override;
   virtual void leaveEvent(QEvent *) override;
 
   /* Catch tooltip event */

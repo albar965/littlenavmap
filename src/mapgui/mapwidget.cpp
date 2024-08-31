@@ -229,6 +229,24 @@ MapWidget::MapWidget(MainWindow *parent)
   mapOverlays.insert("overviewmap", mainWindow->getUi()->actionMapOverlayOverview);
 
   mapVisible = new MapVisible(paintLayer);
+
+  // Need to limit commonly used shortcuts like home, up, down, etc. to the map window =========
+  Ui::MainWindow *ui = NavApp::getMainUi();
+  addActions({ui->actionMapShowHome, ui->actionMapAircraftCenterNow, ui->actionRouteCenter, ui->actionMapShowMark,
+              ui->actionMapJumpCoordinatesMain, ui->actionMapBack, ui->actionMapNext, ui->actionMapDetailsMore, ui->actionMapDetailsLess,
+              ui->actionMapDetailsTextMore, ui->actionMapDetailsTextLess});
+
+  ui->actionMapShowHome->setShortcutContext(Qt::WidgetWithChildrenShortcut);
+  ui->actionMapAircraftCenterNow->setShortcutContext(Qt::WidgetWithChildrenShortcut);
+  ui->actionRouteCenter->setShortcutContext(Qt::WidgetWithChildrenShortcut);
+  ui->actionMapShowMark->setShortcutContext(Qt::WidgetWithChildrenShortcut);
+  ui->actionMapJumpCoordinatesMain->setShortcutContext(Qt::WidgetWithChildrenShortcut);
+  ui->actionMapBack->setShortcutContext(Qt::WidgetWithChildrenShortcut);
+  ui->actionMapNext->setShortcutContext(Qt::WidgetWithChildrenShortcut);
+  ui->actionMapDetailsMore->setShortcutContext(Qt::WidgetWithChildrenShortcut);
+  ui->actionMapDetailsLess->setShortcutContext(Qt::WidgetWithChildrenShortcut);
+  ui->actionMapDetailsTextMore->setShortcutContext(Qt::WidgetWithChildrenShortcut);
+  ui->actionMapDetailsTextLess->setShortcutContext(Qt::WidgetWithChildrenShortcut);
 }
 
 MapWidget::~MapWidget()
