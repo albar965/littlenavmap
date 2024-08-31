@@ -4834,7 +4834,18 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
     float isaDeviation = sat - ageo::isaTemperature(userAircraft->getActualAltitudeFt());
     if(isaDeviation < 0.f && isaDeviation > -0.5f)
       isaDeviation = 0.f;
-    html.id(pid::ENV_ISA_DEV).row2(tr("ISA Deviation:"), locale.toString(isaDeviation, 'f', 0) % tr(" °C"));
+
+    QString isaStr = locale.toString(std::abs(isaDeviation), 'f', 0);
+    QString isaSignStr;
+    if(isaStr != tr("0", "used to detect real zero value in local language"))
+    {
+      if(isaDeviation > 0.f)
+        isaSignStr = tr("+", "ISA deviation sign");
+      else if(isaDeviation < 0.f)
+        isaSignStr = tr("-", "ISA deviation sign");
+    }
+
+    html.id(pid::ENV_ISA_DEV).row2(tr("ISA Deviation:"), isaSignStr % isaStr % tr(" °C"));
 
     float seaLevelPressureMbar = userAircraft->getSeaLevelPressureMbar();
     QString pressureTxt = highlightText(locale.toString(seaLevelPressureMbar, 'f', 0) % tr(" hPa, ") %
