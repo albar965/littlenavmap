@@ -57,8 +57,6 @@ ConnectClient::ConnectClient(MainWindow *parent)
   // VERSION_NUMBER_TODO
   minimumXpconnectVersion("1.2.0.beta")
 {
-  currentValidSimConnectData = new atools::fs::sc::SimConnectData();
-
   atools::settings::Settings& settings = atools::settings::Settings::instance();
   verbose = settings.getAndStoreValue(lnm::OPTIONS_CONNECTCLIENT_DEBUG, false).toBool();
 
@@ -128,7 +126,6 @@ ConnectClient::~ConnectClient()
   ATOOLS_DELETE_LOG(xpConnectHandler);
   ATOOLS_DELETE_LOG(connectDialog);
   ATOOLS_DELETE_LOG(errorMessageBox);
-  ATOOLS_DELETE_LOG(currentValidSimConnectData);
 }
 
 void ConnectClient::flushQueuedRequests()
@@ -239,7 +236,7 @@ void ConnectClient::connectedToSimulatorDirect()
   mainWindow->setStatusMessage(tr("Connected to simulator."), true /* addLog */);
 
   // Clear status for first valid aircraft detection
-  *currentValidSimConnectData = atools::fs::sc::SimConnectData();
+  foundValidAircraft = false;
 
   emit connectedToSimulator();
   emit weatherUpdated();
@@ -250,7 +247,7 @@ void ConnectClient::disconnectedFromSimulatorDirect()
   qDebug() << Q_FUNC_INFO;
 
   // Clear status for first valid aircraft detection
-  *currentValidSimConnectData = atools::fs::sc::SimConnectData();
+  foundValidAircraft = false;
 
   showTerminalError();
 
@@ -356,13 +353,13 @@ void ConnectClient::postSimConnectData(atools::fs::sc::SimConnectData dataPacket
           ac.setFlag(atools::fs::sc::ON_GROUND);
       }
 
-      // Check if user aircraft was previously not valid and send signal if status has changed
-      bool nowValid = !currentValidSimConnectData->getUserAircraftConst().isFullyValid() &&
-                      dataPacket.getUserAircraftConst().isFullyValid();
-      *currentValidSimConnectData = dataPacket;
-
-      if(nowValid)
-        emit validAircraftReceived(currentValidSimConnectData->getUserAircraftConst());
+      // Check if user aircraft is valid, on ground and signal not sent yet
+      if(!foundValidAircraft && userAircraft.isFullyValid() && userAircraft.isOnGround())
+      {
+        qDebug() << Q_FUNC_INFO << "Found valid user aircraft once";
+        foundValidAircraft = true;
+        emit validAircraftReceived(userAircraft);
+      }
 
       emit dataPacketReceived(dataPacket);
     } // if(!dataPacket.isEmptyReply())
@@ -912,7 +909,7 @@ void ConnectClient::closeSocket(bool allowRestart)
       mainWindow->setStatusMessage(tr("Disconnected from simulator."), true /* addLog */);
 
       // Clear status for first valid aircraft detection
-      *currentValidSimConnectData = atools::fs::sc::SimConnectData();
+      foundValidAircraft = false;
 
       emit disconnectedFromSimulator();
       emit weatherUpdated();
@@ -968,7 +965,7 @@ void ConnectClient::connectedToServerSocket()
   mainWindow->setStatusMessage(tr("Connected to simulator."), true /* addLog */);
 
   // Clear status for first valid aircraft detection
-  *currentValidSimConnectData = atools::fs::sc::SimConnectData();
+  foundValidAircraft = false;
 
   emit connectedToSimulator();
   emit weatherUpdated();

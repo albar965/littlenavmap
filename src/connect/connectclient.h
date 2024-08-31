@@ -168,8 +168,7 @@ private:
   atools::fs::sc::SimConnectHandler *simConnectHandler = nullptr;
   atools::fs::sc::XpConnectHandler *xpConnectHandler = nullptr;
 
-  atools::fs::sc::SimConnectData *simConnectDataNet = nullptr, /* Have to keep it since it is read multiple times from socket */
-                                 *currentValidSimConnectData = nullptr; /* Filled if user aircraft is valid */
+  atools::fs::sc::SimConnectData *simConnectDataNet = nullptr; /* Have to keep it since it is read multiple times from socket */
 
   QTcpSocket *socket = nullptr;
   /* Used to trigger reconnects on socket base connections */
@@ -193,7 +192,7 @@ private:
   // have to remember state separately to avoid sending signals when autoconnect fails
   bool socketConnected = false;
 
-  bool errorState = false, terminalErrorShown = false, xpconnectVersionChecked = false;
+  bool errorState = false, terminalErrorShown = false, xpconnectVersionChecked = false, foundValidAircraft = false;
 
   /* Try to reconnect every 10 seconds when network connection is lost */
   int socketReconnectSec = 10;

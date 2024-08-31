@@ -43,7 +43,6 @@
 #include "search/sqlcontroller.h"
 #include "search/sqlmodel.h"
 #include "settings/settings.h"
-#include "sql/sqlrecord.h"
 #include "ui_mainwindow.h"
 
 #include <QProgressDialog>
