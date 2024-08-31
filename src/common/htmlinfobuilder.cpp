@@ -427,9 +427,11 @@ void HtmlInfoBuilder::airportText(const MapAirport& airport, const map::WeatherC
 
   if(!info && !airport.noRunways())
   {
+    QString label = airport.water() && !airport.waterOnly() ? tr("Longest Land Runway Length:") : tr("Longest Runway Length:");
+
     // Add longest for tooltip
     html.table();
-    html.row2(tr("Longest Runway Length:"), Unit::distShortFeet(airport.longestRunwayLength));
+    html.row2(label, Unit::distShortFeet(airport.longestRunwayLength));
     html.tableEnd();
   }
 
@@ -447,7 +449,7 @@ void HtmlInfoBuilder::airportText(const MapAirport& airport, const map::WeatherC
 
   if(info && !airport.noRunways())
   {
-    head(html, tr("Longest Runway"));
+    head(html, airport.water() && !airport.waterOnly() ? tr("Longest Land Runway") : tr("Longest Runway"));
     html.table();
     html.row2(tr("Length:"), Unit::distShortFeet(airport.longestRunwayLength));
     if(rec != nullptr)
