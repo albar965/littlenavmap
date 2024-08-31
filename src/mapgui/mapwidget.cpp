@@ -539,7 +539,6 @@ bool MapWidget::event(QEvent *event)
 #ifdef DEBUG_MOVING_AIRCRAFT
     if(QGuiApplication::queryKeyboardModifiers() == (Qt::ControlModifier | Qt::ShiftModifier))
       return QWidget::event(event);
-
 #endif
 
     if(mouseState == mw::NONE)
@@ -687,44 +686,51 @@ void MapWidget::leaveEvent(QEvent *)
   mainWindow->updateMapPosLabel(Pos(), -1, -1);
 }
 
-void MapWidget::keyPressEvent(QKeyEvent *event)
+void MapWidget::keyPressEvent(QKeyEvent *keyEvent)
 {
+  Qt::Key key = static_cast<Qt::Key>(keyEvent->key());
+
+  // Get only real modifiers
+  Qt::KeyboardModifiers modifiers = keyEvent->modifiers() & (Qt::ControlModifier | Qt::ShiftModifier | Qt::AltModifier);
+
 #ifdef DEBUG_INFORMATION_KEY_INPUT
-  qDebug() << Q_FUNC_INFO << event->text() << Qt::hex << event->nativeScanCode()
-           << Qt::hex << event->key() << Qt::dec << event->modifiers();
+  qDebug() << Q_FUNC_INFO << "Text" << keyEvent->text()
+           << "Scan code" << Qt::hex << keyEvent->nativeScanCode()
+           << "Key" << Qt::hex << key
+           << "Modifiers" << Qt::dec << modifiers;
 #endif
 
   // Does not work for key presses that are consumed by the widget
-  if(event->key() == Qt::Key_Escape)
+  if(key == Qt::Key_Escape)
   {
     cancelDragAll();
     setContextMenuPolicy(Qt::DefaultContextMenu);
   }
-  else if(event->key() == Qt::Key_Menu)
+  else if(key == Qt::Key_Menu)
   {
     if(mouseState == mw::NONE)
       // First menu key press after dragging - enable context menu again
       setContextMenuPolicy(Qt::DefaultContextMenu);
   }
-  else if(event->key() == Qt::Key_Asterisk)
+  else if(key == Qt::Key_Asterisk)
     zoomInOut(true /* in */, true /* smooth */);
-  else if(event->key() == Qt::Key_Slash)
+  else if(key == Qt::Key_Slash)
     zoomInOut(false /* in */, true /* smooth */);
-  else if(event->modifiers() & Qt::KeypadModifier)
+  else if(keyEvent->modifiers().testFlag(Qt::KeypadModifier))
   {
     // Check shift for smooth zooming for keypad input only
-    bool shift = event->modifiers() & Qt::ShiftModifier;
-    if(event->key() == Qt::Key_Plus)
+    bool shift = modifiers == Qt::ShiftModifier;
+    if(key == Qt::Key_Plus)
       zoomInOut(true /* in */, shift /* smooth */);
-    else if(event->key() == Qt::Key_Minus)
+    else if(key == Qt::Key_Minus)
       zoomInOut(false /* in */, shift /* smooth */);
   }
-  else if(!(event->modifiers() & Qt::ControlModifier)) // Do not use with Ctrl since this is used for map details
+  else if(!(modifiers == Qt::ControlModifier)) // Do not use with Ctrl since this is used for map details
   {
     // Do not check shift since different keyboard layouts might affect this
-    if(event->key() == Qt::Key_Plus)
+    if(key == Qt::Key_Plus)
       zoomInOut(true /* in */, false /* smooth */);
-    else if(event->key() == Qt::Key_Minus)
+    else if(key == Qt::Key_Minus)
       zoomInOut(false /* in */, false /* smooth */);
   }
 }
@@ -1303,13 +1309,16 @@ void MapWidget::wheelEvent(QWheelEvent *event)
     // to allow immediate scroll direction change
     lastWheelAngleX = ANGLE_THRESHOLD * atools::sign(angleDeltaX);
 
+  // Get only real modifiers
+  Qt::KeyboardModifiers modifiers = event->modifiers() & (Qt::ControlModifier | Qt::ShiftModifier | Qt::AltModifier);
+
   bool accepted = std::abs(lastWheelAngleY) >= ANGLE_THRESHOLD ||
-                  (std::abs(lastWheelAngleX) >= ANGLE_THRESHOLD && event->modifiers() == Qt::AltModifier);
+                  (std::abs(lastWheelAngleX) >= ANGLE_THRESHOLD && modifiers == Qt::AltModifier);
   bool directionIn = lastWheelAngleY > 0;
 
 #ifdef DEBUG_MOVING_AIRCRAFT
-  if(event->modifiers() == (Qt::ControlModifier | Qt::ShiftModifier) ||
-     event->modifiers() == (Qt::ControlModifier | Qt::ShiftModifier | Qt::AltModifier))
+  if(modifiers == (Qt::ControlModifier | Qt::ShiftModifier) ||
+     modifiers == (Qt::ControlModifier | Qt::ShiftModifier | Qt::AltModifier))
   {
     if(angleDeltaY > 0)
       debugMovingAircraft(event, -1);
@@ -1330,7 +1339,7 @@ void MapWidget::wheelEvent(QWheelEvent *event)
 
     // Reset summed up values if accepted
     lastWheelAngleY = 0;
-    if(event->modifiers() == Qt::ControlModifier)
+    if(modifiers == Qt::ControlModifier)
     {
       // Adjust map detail ===================================================================
       if(angleDeltaY > 0)
@@ -1338,7 +1347,7 @@ void MapWidget::wheelEvent(QWheelEvent *event)
       else if(angleDeltaY < 0)
         NavApp::getMapDetailHandler()->decreaseMapDetail();
     }
-    else if(event->modifiers() == (Qt::ControlModifier | Qt::ShiftModifier))
+    else if(modifiers == (Qt::ControlModifier | Qt::ShiftModifier))
     {
       // Adjust map label detail ===================================================================
       if(angleDeltaY > 0)
@@ -1347,7 +1356,7 @@ void MapWidget::wheelEvent(QWheelEvent *event)
         NavApp::getMapDetailHandler()->decreaseMapDetailText();
     }
     // This completely fails on Windows
-    // else if(event->modifiers() == Qt::AltModifier)
+    // else if(modifiers == Qt::AltModifier)
     // {
     //// Move in map position history ===================================================================
     // if(angleDeltaY > 0 || angleDeltaX > 0)
@@ -1355,7 +1364,7 @@ void MapWidget::wheelEvent(QWheelEvent *event)
     // else if(angleDeltaY < 0 || angleDeltaX < 0)
     // historyBack();
     // }
-    else
+    else if(modifiers == Qt::NoModifier || modifiers == Qt::ShiftModifier)
     {
       // Zoom in/out ========================================================================
       // Check for threshold
@@ -1366,7 +1375,7 @@ void MapWidget::wheelEvent(QWheelEvent *event)
         qreal centerLat = centerLatitude();
         qreal centerLon = centerLongitude();
 
-        zoomInOut(directionIn, event->modifiers() == Qt::ShiftModifier /* smooth */);
+        zoomInOut(directionIn, modifiers == Qt::ShiftModifier /* smooth */);
 
         // Get global coordinates of cursor in new zoom level
         qreal lon2, lat2;
@@ -1522,55 +1531,61 @@ bool MapWidget::pointVisible(const QPoint& point)
 
 bool MapWidget::eventFilter(QObject *obj, QEvent *eventParam)
 {
+  const static QSet<Qt::Key> ZOOM_KEYS({Qt::Key_Plus, Qt::Key_Minus, Qt::Key_Asterisk, Qt::Key_Slash});
+  const static QSet<Qt::Key> MOVE_KEYS({Qt::Key_Left, Qt::Key_Right, Qt::Key_Up, Qt::Key_Down});
+
   if(eventParam->type() == QEvent::KeyPress)
   {
     QKeyEvent *keyEvent = dynamic_cast<QKeyEvent *>(eventParam);
     if(keyEvent != nullptr)
     {
+      // Get only real modifiers
+      Qt::KeyboardModifiers modifiers = keyEvent->modifiers() & (Qt::ControlModifier | Qt::ShiftModifier | Qt::AltModifier);
+      Qt::Key key = static_cast<Qt::Key>(keyEvent->key());
+      bool consumeEvent = false;
+
 #ifdef DEBUG_INFORMATION_KEY_INPUT
-      qDebug() << Q_FUNC_INFO << keyEvent->text() << Qt::hex << keyEvent->nativeScanCode()
-               << Qt::hex << keyEvent->key() << Qt::dec << keyEvent->modifiers();
+      qDebug() << Q_FUNC_INFO << "Text" << keyEvent->text()
+               << "Scan code" << Qt::hex << keyEvent->nativeScanCode()
+               << "Key" << Qt::hex << key
+               << "Modifiers" << Qt::dec << modifiers
+               << "Object" << (obj != nullptr ? obj->objectName() : "nullptr");
 #endif
 
-      if((keyEvent->key() == Qt::Key_Left || keyEvent->key() == Qt::Key_Right) && keyEvent->modifiers() & Qt::AltModifier)
-      {
-        // Cursor keys + alt are sent and scroll map if history forward or backward actions are disabled at end of history
-        eventParam->accept(); // Do not propagate further
-        event(eventParam); // Call own event handler
-        return true; // Do not process further
-      }
+      // Cursor keys + alt are sent and scroll map if history forward or backward actions are disabled at end of history
+      // Suppress this here
+      if(!consumeEvent && (key == Qt::Key_Left || key == Qt::Key_Right) && modifiers == Qt::AltModifier)
+        consumeEvent = true;
 
-      if(keyEvent->key() == Qt::Key_Home)
-      {
-        // Catch useless home event where Marble zooms way out
-        eventParam->accept(); // Do not propagate further
-        event(eventParam); // Call own event handler
-        return true; // Do not process further
-      }
+      // Catch useless home event where Marble zooms way out. Suppress.
+      if(!consumeEvent && key == Qt::Key_Home)
+        consumeEvent = true;
 
-      if(atools::contains(static_cast<Qt::Key>(keyEvent->key()), {Qt::Key_Plus, Qt::Key_Minus}) &&
-         (keyEvent->modifiers().testFlag(Qt::ControlModifier)))
-      {
-        // Catch Ctrl++ and Ctrl+- and use it only for details
-        // Do not let marble use it for zooming
-        // Keys processed by actions
+      // Catch Ctrl++ and Ctrl+- and use it only for details
+      // Do not let marble use it for zooming
+      // Keys processed by actions
+      // Suppress this here
+      if(!consumeEvent && (key == Qt::Key_Plus || key == Qt::Key_Minus) &&
+         (modifiers == Qt::ControlModifier || modifiers == (Qt::ControlModifier | Qt::ShiftModifier)))
+        consumeEvent = true;
 
-        eventParam->accept(); // Do not propagate further
-        event(eventParam); // Call own event handler
-        return true; // Do not process further
-      }
-
-      if(atools::contains(static_cast<Qt::Key>(keyEvent->key()), {Qt::Key_Left, Qt::Key_Right, Qt::Key_Up, Qt::Key_Down}))
-        // Movement starts delay every time
+      // Movement starts delay every time
+      if(!consumeEvent && MOVE_KEYS.contains(key))
         jumpBackToAircraftStart();
 
-      if(atools::contains(static_cast<Qt::Key>(keyEvent->key()), {Qt::Key_Plus, Qt::Key_Minus, Qt::Key_Asterisk, Qt::Key_Slash}))
+      if(!consumeEvent && ZOOM_KEYS.contains(key))
       {
         jumpBackToAircraftStart();
 
         // Pass to key event handler for zooming
         eventParam->accept(); // Do not propagate further
         event(eventParam); // Call own event handler
+        return true; // Do not process further
+      }
+
+      if(consumeEvent)
+      {
+        eventParam->accept(); // Do not propagate further
         return true; // Do not process further
       }
     }
