@@ -2012,11 +2012,13 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
     point = event->pos();
 
   QPoint menuPos = QCursor::pos();
+  bool notInViewport = false;
   // Do not show context menu if point is not on the map
   if(!rect().contains(point))
   {
     menuPos = mapToGlobal(rect().center());
     point = rect().center();
+    notInViewport = true;
   }
 
   if(event->reason() != QContextMenuEvent::Keyboard)
@@ -2030,8 +2032,8 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
   MapContextMenu contextMenu(mainWindow, this, NavApp::getRouteConst());
 
   // ==================================================================================================
-  // Open menu
-  if(contextMenu.exec(menuPos, point))
+  // Open menu - use null point if cursor is outside of map window
+  if(contextMenu.exec(menuPos, notInViewport ? QPoint() : point))
   {
     // Disable map updates
     contextMenuActive = false;
