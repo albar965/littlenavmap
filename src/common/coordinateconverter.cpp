@@ -514,32 +514,15 @@ const QVector<QPolygonF *> CoordinateConverter::createPolylinesInternal(const at
 {
   QVector<QPolygonF *> polylineVector;
 
-  const float LATY_CORRECTION = 0.00001f;
-  LineString correctedLines = linestring;
-
-  // Avoid the straight line Marble draws wrongly for equal latitudes - needed to force GC path
-  for(int i = 0; i < correctedLines.size() - 1; i++)
-  {
-    Pos& p1(correctedLines[i]);
-    Pos& p2(correctedLines[i + 1]);
-
-    if(atools::almostEqual(p1.getLatY(), p2.getLatY()) && std::abs(p1.getLonX() - p2.getLonX()) > 0.5f)
-    {
-      // Move latitude a bit up and down if equal and more than half a degree apart
-      p1.setLatY(p1.getLatY() + LATY_CORRECTION);
-      p2.setLatY(p2.getLatY() - LATY_CORRECTION);
-    }
-  }
-
   // Build Marble geometry object
-  if(!correctedLines.isEmpty())
+  if(!linestring.isEmpty())
   {
     GeoDataLineString geoLineStr;
     geoLineStr.setTessellate(true);
 
-    for(int i = 0; i < correctedLines.size() - 1; i++)
+    for(int i = 0; i < linestring.size() - 1; i++)
     {
-      Line line(correctedLines.at(i), correctedLines.at(i + 1));
+      Line line(linestring.at(i), linestring.at(i + 1));
 
       // Split long lines to work around the buggy visibility check in Marble resulting in disappearing line segments
       // Do a quick check using Manhattan distance in degree
@@ -557,7 +540,7 @@ const QVector<QPolygonF *> CoordinateConverter::createPolylinesInternal(const at
     }
 
     // Add last point
-    geoLineStr << GeoDataCoordinates(correctedLines.constLast().getLonX(), correctedLines.constLast().getLatY(), 0, DEG);
+    geoLineStr << GeoDataCoordinates(linestring.constLast().getLonX(), linestring.constLast().getLatY(), 0, DEG);
 
 #ifdef DEBUG_INFORMATION_LINERENDER
     qDebug() << Q_FUNC_INFO << "=========================================";

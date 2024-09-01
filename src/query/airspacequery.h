@@ -96,7 +96,7 @@ private:
 
   void updateAirspaceStatus();
   const atools::geo::LineString *airspaceGeometryByNameInternal(const QString& callsign, const QString& facilityType);
-  void airspaceGeometry(atools::geo::LineString *lines, const QByteArray& bytes);
+  void airspaceGeometry(atools::geo::LineString *linestring, const QByteArray& bytes);
 
   MapTypesFactory *mapTypesFactory;
   atools::sql::SqlDatabase *db;

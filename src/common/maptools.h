@@ -26,11 +26,13 @@
 #include <QList>
 #include <QSet>
 #include <algorithm>
-#include <functional>
 
 class CoordinateConverter;
 
 namespace maptools {
+
+/* Move latitude values slightly up and down to workaround Marble drawing straight lines */
+void correctLatY(atools::geo::LineString& linestring, bool polygon);
 
 /*
  * Container conversion functions for map::MapBase derived structs and objects

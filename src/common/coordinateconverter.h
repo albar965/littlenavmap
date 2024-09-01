@@ -159,7 +159,6 @@ private:
   const QVector<QPolygonF *> createPolylinesInternal(const atools::geo::LineString& linestring, const QRectF& screenRect) const;
 
   const Marble::ViewportParams *viewport;
-
 };
 
 #endif // LITTLENAVMAP_COORDINATECONVERTER_H

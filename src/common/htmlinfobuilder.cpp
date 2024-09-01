@@ -5045,11 +5045,6 @@ void HtmlInfoBuilder::aircraftTitle(const atools::fs::sc::SimConnectAircraft& ai
 
 void HtmlInfoBuilder::addScenery(const atools::sql::SqlRecord *rec, HtmlBuilder& html, SceneryType type) const
 {
-#ifdef DEBUG_INFORMATION_INFO
-  if(rec != nullptr)
-    qDebug() << Q_FUNC_INFO << *rec << type;
-#endif
-
   head(html, tr("Data Source"));
   html.table();
 

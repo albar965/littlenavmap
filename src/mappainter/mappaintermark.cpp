@@ -21,6 +21,7 @@
 #include "atools.h"
 #include "common/formatter.h"
 #include "common/mapcolors.h"
+#include "common/maptools.h"
 #include "common/symbolpainter.h"
 #include "common/symbolpainter.h"
 #include "common/textplacement.h"
@@ -669,6 +670,9 @@ void MapPainterMark::paintAirwayList(const QList<map::MapAirway>& airwayList)
     if(airway.isValid())
       linestring.append(airway.to);
   }
+
+  // Move latitude values slightly up and down to workaround Marble drawing straight lines
+  maptools::correctLatY(linestring, false /* polygon */);
 
   // Outline =================
   float lineWidth = context->szF(context->thicknessUserFeature, 5.f);

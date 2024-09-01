@@ -20,6 +20,7 @@
 #include "app/navapp.h"
 #include "common/formatter.h"
 #include "common/mapcolors.h"
+#include "common/maptools.h"
 #include "common/maptypes.h"
 #include "common/symbolpainter.h"
 #include "common/textplacement.h"
@@ -536,7 +537,12 @@ void MapPainter::drawPolygon(Marble::GeoPainter *painter, const QPolygonF& polyg
 
 void MapPainter::drawLine(Marble::GeoPainter *painter, const atools::geo::Line& line, bool forceDraw) const
 {
-  QVector<QPolygonF *> polygons = createPolylines(LineString(line.getPos1(), line.getPos2()), context->screenRect);
+  LineString linestring(line.getPos1(), line.getPos2());
+
+  // Move latitude values slightly up and down to workaround Marble drawing straight lines
+  maptools::correctLatY(linestring, false /* polygon */);
+
+  QVector<QPolygonF *> polygons = createPolylines(linestring, context->screenRect);
   if(!polygons.isEmpty())
   {
     drawPolylines(painter, polygons);

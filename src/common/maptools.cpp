@@ -123,4 +123,25 @@ QStringList RwVector::getSortedRunways(int minHeadWind) const
   return runways;
 }
 
+void correctLatY(atools::geo::LineString& linestring, bool polygon)
+{
+  // Move latitude slight up or down
+  float latYChange = 0.0001f;
+  int fromIndex = polygon ? 0 : 1;
+
+  for(int i = fromIndex; i < linestring.size(); i++)
+  {
+    atools::geo::Pos& pos = atools::atRoll(linestring, i);
+    atools::geo::Pos& prev = atools::atRoll(linestring, i - 1);
+
+    if(atools::almostEqual(prev.getLatY(), pos.getLatY()) && std::abs(pos.getLonX() - prev.getLonX()) > 0.5f)
+    {
+      pos.setLatY(pos.getLatY() + latYChange);
+
+      // Toggle up and down movement
+      latYChange *= -1.f;
+    }
+  }
+}
+
 } // namespace maptools

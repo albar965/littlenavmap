@@ -19,6 +19,7 @@
 
 #include "atools.h"
 #include "common/constants.h"
+#include "common/maptools.h"
 #include "common/maptypesfactory.h"
 #include "fs/common/binarygeometry.h"
 #include "mapgui/maplayer.h"
@@ -242,10 +243,13 @@ const QList<map::MapAirspace> *AirspaceQuery::getAirspaces(const GeoDataLatLonBo
   return &airspaceCache.list;
 }
 
-void AirspaceQuery::airspaceGeometry(LineString *lines, const QByteArray& bytes)
+void AirspaceQuery::airspaceGeometry(LineString *linestring, const QByteArray& bytes)
 {
   atools::fs::common::BinaryGeometry geometry(bytes);
-  geometry.swapGeometry(*lines);
+  geometry.swapGeometry(*linestring);
+
+  // Move latitude values slightly up and down to workaround Marble drawing straight lines
+  maptools::correctLatY(*linestring, true /* polygon */);
 }
 
 const LineString *AirspaceQuery::getAirspaceGeometryById(int airspaceId)
