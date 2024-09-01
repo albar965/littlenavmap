@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -106,7 +106,10 @@ public:
    * @return true if coordinate is visible and not hidden
    */
   bool wToS(const Marble::GeoDataCoordinates& coords, double& x, double& y, const QSize& size = DEFAULT_WTOS_SIZE,
-            bool *isHidden = nullptr) const;
+            bool *isHidden = nullptr) const
+  {
+    return wToSInternal(coords, x, y, size, isHidden);
+  }
 
   bool wToS(const Marble::GeoDataCoordinates& coords, int& x, int& y, const QSize& size = DEFAULT_WTOS_SIZE,
             bool *isHidden = nullptr) const;
@@ -124,7 +127,6 @@ public:
   bool wToS(const atools::geo::Line& coords, QLineF& line, const QSize& size = DEFAULT_WTOS_SIZE, bool *isHidden = nullptr) const;
 
   bool sToW(int x, int y, atools::geo::Pos& pos) const;
-  bool sToW(int x, int y, Marble::GeoDataCoordinates& coords) const;
 
   /* Converte screen to world coordinates */
   atools::geo::Pos sToW(int x, int y) const;
@@ -137,7 +139,8 @@ public:
   const QVector<QPolygonF *> createPolygons(const atools::geo::LineString& linestring, const QRectF& screenRect) const;
   void releasePolygons(const QVector<QPolygonF *>& polygons) const;
 
-  const QVector<QPolygonF *> createPolylines(const atools::geo::LineString& linestring, const QRectF& screenRect) const;
+  const QVector<QPolygonF *> createPolylines(const atools::geo::LineString& linestring, const QRectF& screenRect,
+                                             bool splitLongLines) const;
   void releasePolylines(const QVector<QPolygonF *>& polylines) const;
 
   /*  Determines whether a geographical feature is big enough so that it should
@@ -152,11 +155,16 @@ public:
   static Q_DECL_CONSTEXPR Marble::GeoDataCoordinates::BearingType INITBRG = Marble::GeoDataCoordinates::InitialBearing;
   static Q_DECL_CONSTEXPR Marble::GeoDataCoordinates::BearingType FINALBRG = Marble::GeoDataCoordinates::FinalBearing;
 
+  bool wToSPoints(const atools::geo::Pos& pos, QVector<double>& x, double& y, const QSize& size, bool *isHidden) const;
+  bool wToSPoints(const atools::geo::Pos& pos, QVector<float>& x, float& y, const QSize& size, bool *isHidden) const;
+  bool wToSPoints(const Marble::GeoDataCoordinates& coords, QVector<double>& x, double& y, const QSize& size, bool *isHidden) const;
+
 private:
   bool wToSInternal(const Marble::GeoDataCoordinates& coords, double& x, double& y, const QSize& size, bool *isHidden) const;
 
   const QVector<QPolygonF *> createPolygonsInternal(const atools::geo::LineString& linestring, const QRectF& screenRect) const;
-  const QVector<QPolygonF *> createPolylinesInternal(const atools::geo::LineString& linestring, const QRectF& screenRect) const;
+  const QVector<QPolygonF *> createPolylinesInternal(const atools::geo::LineString& linestring, const QRectF& screenRect,
+                                                     bool splitLongLines) const;
 
   const Marble::ViewportParams *viewport;
 };

@@ -543,6 +543,7 @@ void MapPainterRoute::paintRouteInternal(QStringList routeTexts, QVector<Line> l
     textPlacement.setDrawFast(context->drawFast);
     textPlacement.setLineWidth(outerlinewidth);
     textPlacement.setTextOnLineCenter(textOnLineCenter);
+
     textPlacement.calculateTextPositions(positions);
     textPlacement.calculateTextAlongLines(lines, routeTexts);
     textPlacement.drawTextAlongLines();
@@ -554,6 +555,7 @@ void MapPainterRoute::paintRouteInternal(QStringList routeTexts, QVector<Line> l
   textPlacementBuf.setMinLengthForText(painter->fontMetrics().averageCharWidth() * 2);
   textPlacementBuf.setDrawFast(context->drawFast);
   textPlacementBuf.setLineWidth(outerlinewidth);
+
   textPlacementBuf.calculateTextPositions(positions);
   bool drawAlternate = context->objectDisplayTypes.testFlag(map::FLIGHTPLAN_ALTERNATE);
 

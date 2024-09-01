@@ -38,8 +38,7 @@ using atools::geo::Pos;
 // Need a bigger buffer here
 const static QSize TEXT_PLACEMENT_WTOS_SIZE(10000, 10000);
 
-TextPlacement::TextPlacement(QPainter *painterParam, const CoordinateConverter *coordinateConverter,
-                             const QRect& screenRectParam)
+TextPlacement::TextPlacement(QPainter *painterParam, const CoordinateConverter *coordinateConverter, const QRect& screenRectParam)
   : painter(painterParam), converter(coordinateConverter)
 {
   arrowRight = tr(" %1").arg(TextPointer::getPointerRight());
@@ -76,18 +75,26 @@ void TextPlacement::calculateTextAlongLines(const QVector<atools::geo::Line>& li
   visibleStartPoints.resize(lines.size() + 1);
 
   QFontMetricsF metrics(painter->font());
-  QPoint pt1, pt2;
   if(!fast)
   {
     for(int i = 0; i < lines.size(); i++)
     {
       const Line& line = lines.at(i);
-      bool visible1, hidden1, visible2, hidden2;
-      pt1 = converter->wToS(line.getPos1(), TEXT_PLACEMENT_WTOS_SIZE, &visible1, &hidden1);
-      pt2 = converter->wToS(line.getPos2(), TEXT_PLACEMENT_WTOS_SIZE, &visible2, &hidden2);
-      float lineLength = atools::geo::simpleDistanceF(pt1.x(), pt1.y(), pt2.x(), pt2.y());
 
-      if(line.isValid() && lineLength > minLengthForText && !hidden1 && !hidden2)
+      if(!line.isValid())
+        continue;
+
+      // Get a safe properly ordered list of points to avoid issues with Mercator projection
+      const QVector<QPolygonF *> polylines = converter->createPolylines(LineString(line.getPos1(), line.getPos2()), screenRect,
+                                                                        false /* splitLongLines */);
+
+      if(polylines.isEmpty())
+        continue;
+
+      float lineLength = static_cast<float>(QLineF(polylines.constFirst()->constFirst(), polylines.constLast()->constLast()).length());
+      converter->releasePolylines(polylines);
+
+      if(lineLength > minLengthForText)
       {
         // Build temporary elided text to get the right length - use any arrow
         QString text = elideText(lineTexts.at(i), arrowLeft, metrics, lineLength);
@@ -121,15 +128,8 @@ void TextPlacement::calculateTextAlongLines(const QVector<atools::geo::Line>& li
     }
   }
 
-  if(!lines.isEmpty())
-  {
-    // Add last point
-    const Line& line = lines.constLast();
-    pt2 = converter->wToS(line.getPos2(), TEXT_PLACEMENT_WTOS_SIZE);
-
-    if(!colors.isEmpty())
-      colors2.append(colors.at(lines.size() - 1));
-  }
+  if(!lines.isEmpty() && !colors.isEmpty())
+    colors2.append(colors.at(lines.size() - 1));
 }
 
 void TextPlacement::calculateTextAlongLine(const atools::geo::Line& line, const QString& lineText)
@@ -329,30 +329,29 @@ bool TextPlacement::findTextPosInternal(const Line& line, float distanceMeter, f
   line.interpolatePoints(distanceMeter, numPoints - 1, positions);
   positions.append(line.getPos2());
 
+  // Get a safe properly ordered list of points to avoid issues with Mercator projection
+  const QVector<QPolygonF *> polylines = converter->createPolylines(positions, screenRect, false /* splitLongLines */);
+  if(polylines.isEmpty())
+    return false;
+
   // Collect positions which are not hidden ============================================
   QPolygonF points;
+  for(const QPolygonF *polyline : polylines)
+    points.append(*polyline);
+  converter->releasePolylines(polylines);
+
+  // Remove duplicates which can appear at the antimeridian
+  points.erase(std::unique(points.begin(), points.end(), [](QPointF& point1, QPointF& point2) -> bool {
+    return point1 == point2;
+  }), points.end());
+
   double lineLength = 0.;
-  bool firstVisible = false, lastVisible = false;
-  for(int i = 0; i < positions.size(); i++)
-  {
-    const Pos& pos = positions.at(i);
-    bool hidden = false;
-    float xt, yt;
-    bool visible = converter->wToS(pos, xt, yt, TEXT_PLACEMENT_WTOS_SIZE, &hidden);
-    if(!hidden)
-    {
-      if(!points.isEmpty())
-        lineLength += QLineF(QPointF(xt, yt), points.constLast()).length();
+  for(int i = 1; i < points.size(); i++)
+    lineLength += QLineF(points.at(i - 1), points.at(i)).length();
 
-      points.append(QPointF(xt, yt));
-
-      // Remember visibility for first and last point
-      if(i == 0)
-        firstVisible = visible;
-      else if(i == positions.size() - 1)
-        lastVisible = visible;
-    }
-  }
+  float xt, yt;
+  bool firstVisible = converter->wToS(line.getPos1(), xt, yt, TEXT_PLACEMENT_WTOS_SIZE);
+  bool lastVisible = converter->wToS(line.getPos2(), xt, yt, TEXT_PLACEMENT_WTOS_SIZE);
 
 #ifdef DEBUG_TEXPLACEMENT_PAINT
   qDebug() << Q_FUNC_INFO << "points" << points << "firstVisible" << firstVisible << "lastVisible" << lastVisible;

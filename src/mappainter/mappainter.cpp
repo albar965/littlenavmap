@@ -456,7 +456,7 @@ void MapPainter::drawCross(Marble::GeoPainter *painter, int x, int y, int size) 
 
 void MapPainter::drawPolyline(Marble::GeoPainter *painter, const atools::geo::LineString& linestring) const
 {
-  QVector<QPolygonF *> polygons = createPolylines(linestring, context->screenRect);
+  QVector<QPolygonF *> polygons = createPolylines(linestring, context->screenRect, true /* splitLongLines */);
   drawPolylines(painter, polygons);
   releasePolylines(polygons);
 }
@@ -542,7 +542,7 @@ void MapPainter::drawLine(Marble::GeoPainter *painter, const atools::geo::Line& 
   // Move latitude values slightly up and down to workaround Marble drawing straight lines
   maptools::correctLatY(linestring, false /* polygon */);
 
-  QVector<QPolygonF *> polygons = createPolylines(linestring, context->screenRect);
+  QVector<QPolygonF *> polygons = createPolylines(linestring, context->screenRect, true /* splitLongLines */);
   if(!polygons.isEmpty())
   {
     drawPolylines(painter, polygons);
