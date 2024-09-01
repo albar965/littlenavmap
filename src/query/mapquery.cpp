@@ -875,7 +875,7 @@ const QList<map::MapAirport> *MapQuery::getAirports(const Marble::GeoDataLatLonB
   airportCacheNormalFlag = normal;
 
   airportByRectQuery->bindValue(":minlength", mapLayer->getMinRunwayLength());
-  return fetchAirports(rect, airportByRectQuery, lazy, false /* overview */, addonZoom || addonZoomFilter, normal, overflow);
+  return fetchAirports(rect, airportByRectQuery, lazy, addonZoom || addonZoomFilter, normal, overflow);
 }
 
 const QList<map::MapAirport> *MapQuery::getAirportsByRect(const atools::geo::Rect& rect, const MapLayer *mapLayer, bool lazy,
@@ -896,7 +896,7 @@ const QList<map::MapAirport> *MapQuery::getAirportsByRect(const atools::geo::Rec
   airportCacheNormalFlag = normal;
 
   airportByRectQuery->bindValue(":minlength", mapLayer->getMinRunwayLength());
-  return fetchAirports(latLonBox, airportByRectQuery, lazy, false /* overview */, addonZoom || addonZoomFilter, normal, overflow);
+  return fetchAirports(latLonBox, airportByRectQuery, lazy, addonZoom || addonZoomFilter, normal, overflow);
 }
 
 const QList<map::MapVor> *MapQuery::getVors(const GeoDataLatLonBox& rect, const MapLayer *mapLayer,
@@ -1237,7 +1237,7 @@ const QList<map::MapIls> *MapQuery::getIls(GeoDataLatLonBox rect, const MapLayer
  * @return pointer to the airport cache
  */
 const QList<map::MapAirport> *MapQuery::fetchAirports(const Marble::GeoDataLatLonBox& rect, atools::sql::SqlQuery *query,
-                                                      bool lazy, bool overview, bool addon, bool normal, bool& overflow)
+                                                      bool lazy, bool addon, bool normal, bool& overflow)
 {
   if(!query::valid(Q_FUNC_INFO, query))
     return nullptr;
@@ -1261,11 +1261,7 @@ const QList<map::MapAirport> *MapQuery::fetchAirports(const Marble::GeoDataLatLo
         while(query->next())
         {
           MapAirport airport;
-          if(overview)
-            // Fill only a part of the object
-            mapTypesFactory->fillAirportForOverview(query->record(), airport, navdata, NavApp::isAirportDatabaseXPlane(navdata));
-          else
-            mapTypesFactory->fillAirport(query->record(), airport, true /* complete */, navdata, NavApp::isAirportDatabaseXPlane(navdata));
+          mapTypesFactory->fillAirport(query->record(), airport, true /* complete */, navdata, NavApp::isAirportDatabaseXPlane(navdata));
 
           // Need to update airport procedure flag for mixed mode databases to enable procedure filter on map
           airportQueryNav->correctAirportProcedureFlag(airport);
@@ -1283,13 +1279,8 @@ const QList<map::MapAirport> *MapQuery::fetchAirports(const Marble::GeoDataLatLo
         while(airportAddonByRectQuery->next())
         {
           MapAirport airport;
-          if(overview)
-            // Fill only a part of the object
-            mapTypesFactory->fillAirportForOverview(airportAddonByRectQuery->record(), airport, navdata,
-                                                    NavApp::isAirportDatabaseXPlane(navdata));
-          else
-            mapTypesFactory->fillAirport(airportAddonByRectQuery->record(), airport, true /* complete */, navdata,
-                                         NavApp::isAirportDatabaseXPlane(navdata));
+          mapTypesFactory->fillAirport(airportAddonByRectQuery->record(), airport, true /* complete */, navdata,
+                                       NavApp::isAirportDatabaseXPlane(navdata));
 
           // Need to update airport procedure flag for mixed mode databases to enable procedure filter on map
           airportQueryNav->correctAirportProcedureFlag(airport);

@@ -266,7 +266,7 @@ private:
                                 float maxDistanceMeter, bool airportFromNavDatabase, map::AirportQueryFlags flags) const;
 
   const QList<map::MapAirport> *fetchAirports(const Marble::GeoDataLatLonBox& rect, atools::sql::SqlQuery *query,
-                                              bool lazy, bool overview, bool addon, bool normal, bool& overflow);
+                                              bool lazy, bool addon, bool normal, bool& overflow);
 
   QVector<map::MapIls> ilsByAirportAndRunway(const QString& airportIdent, const QString& runway) const;
 

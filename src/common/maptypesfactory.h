@@ -63,9 +63,6 @@ public:
   void fillAirport(const atools::sql::SqlRecord& record, map::MapAirport& airport, bool complete, bool nav,
                    bool xplane);
 
-  /* Populate airport from queries based on the overview tables airport_medium and airport_large. */
-  void fillAirportForOverview(const atools::sql::SqlRecord& record, map::MapAirport& airport, bool nav, bool xplane);
-
   /*
    * @param overview if true fill only fields needed for airport overview symbol (white filled runways)
    */
