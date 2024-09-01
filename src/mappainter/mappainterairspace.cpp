@@ -75,8 +75,8 @@ void MapPainterAirspace::render()
   // Collect visible airspaces ==================================================================================
   struct DrawAirspace
   {
-    DrawAirspace(const MapAirspace *airspaceParam, const QVector<QPolygonF *> polygonsParam)
-      : airspace(airspaceParam), polygons(std::move(polygonsParam))
+    explicit DrawAirspace(const MapAirspace *airspaceParam, const QVector<QPolygonF *> polygonsParam)
+      : airspace(airspaceParam), polygons(polygonsParam)
     {
     }
 
@@ -163,6 +163,19 @@ void MapPainterAirspace::render()
 #endif
             drawPolygon(painter, *polygons.at(i));
           }
+
+#ifdef DEBUG_COLOR_AIRSPACE_POLY_POINTS
+
+          context->szFont(1.5f);
+          painter->setPen(QPen(QColor(0, 0, 255, 64), 2.));
+
+          for(int i = 0; i < lineString->size(); i++)
+          {
+            const atools::geo::Pos& pos = lineString->at(i);
+            drawCircle(painter, pos, 2.f);
+            drawText(painter, pos, QString::number(i), true, true);
+          }
+#endif
         } // if(lineString != nullptr)
       } // if(context->viewportRect.overlaps(airspace->bounding))
 

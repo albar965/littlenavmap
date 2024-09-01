@@ -793,6 +793,18 @@ void MapPainterMark::paintAirspace(const map::MapAirspace& airspace)
                                 static_cast<float>(center.x()), static_cast<float>(center.y()), textatt::CENTER);
       }
 
+#ifdef DEBUG_COLOR_AIRSPACE_POLY_POINTS_MARK
+      context->szFont(context->textSizeRangeUserFeature * 1.5f);
+      painter->setPen(QPen(QColor(0, 0, 0, 255), 2.));
+      for(int i = 0; i < lineString->size(); i++)
+      {
+        const atools::geo::Pos& pos = lineString->at(i);
+        drawCircle(painter, pos, 4.f);
+        drawText(painter, pos, QString::number(i), true, true);
+      }
+      context->szFont(context->textSizeRangeUserFeature);
+#endif
+
       releasePolygons(polygons);
     }
   }
