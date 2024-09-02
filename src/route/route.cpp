@@ -2927,21 +2927,18 @@ Route Route::adjustedToOptions(const Route& origRoute, rf::RouteAdjustOptions op
     route.removeAllProcedureLegs();
     route.updateIndicesAndOffsets();
   }
-  else
+  else if(options.testFlag(rf::REMOVE_MISSED))
   {
-    // Remove trailing alternates ====================================================
-    if(options.testFlag(rf::REMOVE_ALTERNATE))
-    {
-      route.removeAlternateLegs();
-      route.updateIndicesAndOffsets();
-    }
-
     // Remove missed approach legs ====================================================
-    if(options.testFlag(rf::REMOVE_MISSED))
-    {
-      route.removeMissedLegs();
-      route.updateIndicesAndOffsets();
-    }
+    route.removeMissedLegs();
+    route.updateIndicesAndOffsets();
+  }
+
+  // Remove trailing alternates ====================================================
+  if(options.testFlag(rf::REMOVE_ALTERNATE))
+  {
+    route.removeAlternateLegs();
+    route.updateIndicesAndOffsets();
   }
 
   // Remove or clear custom ============================================================================
