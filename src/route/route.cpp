@@ -22,7 +22,6 @@
 #include "common/textpointer.h"
 #include "common/unit.h"
 #include "fs/db/databasemeta.h"
-#include "fs/perf/aircraftperf.h"
 #include "fs/util/coordinates.h"
 #include "fs/util/fsutil.h"
 #include "geo/calculations.h"
@@ -2922,18 +2921,27 @@ Route Route::adjustedToOptions(const Route& origRoute, rf::RouteAdjustOptions op
     }
   }
 
-  // Remove trailing alternates ====================================================
-  if(options.testFlag(rf::REMOVE_ALTERNATE))
+  // Remove all procedure legs ====================================================
+  if(options.testFlag(rf::REMOVE_ALL_PROCEDURES))
   {
-    route.removeAlternateLegs();
+    route.removeAllProcedureLegs();
     route.updateIndicesAndOffsets();
   }
-
-  // Remove missed approach legs ====================================================
-  if(options.testFlag(rf::REMOVE_MISSED))
+  else
   {
-    route.removeMissedLegs();
-    route.updateIndicesAndOffsets();
+    // Remove trailing alternates ====================================================
+    if(options.testFlag(rf::REMOVE_ALTERNATE))
+    {
+      route.removeAlternateLegs();
+      route.updateIndicesAndOffsets();
+    }
+
+    // Remove missed approach legs ====================================================
+    if(options.testFlag(rf::REMOVE_MISSED))
+    {
+      route.removeMissedLegs();
+      route.updateIndicesAndOffsets();
+    }
   }
 
   // Remove or clear custom ============================================================================
@@ -2953,7 +2961,7 @@ Route Route::adjustedToOptions(const Route& origRoute, rf::RouteAdjustOptions op
 
       // Remove RW waypoint to avoid confusing X-Plane FMS and GPS
       // DEPART -> RW -> RW+X -> DEST
-      if(options.testFlag(rf::CLEAN_CUSTOM_DEPART) && route.size() > 3)
+      if(options.testFlag(rf::REMOVE_CUSTOM_DEPART) && route.size() > 3)
         route.removeAllAt(1);
     }
   }

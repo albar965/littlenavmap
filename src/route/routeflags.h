@@ -62,9 +62,10 @@ enum RouteAdjustOption : quint32
 
   REMOVE_RUNWAY_PROC = 1 << 14, /* Remove runway extensions and their waypoints */
   REMOVE_MISSED = 1 << 15, /* Remove missed approach */
-  CLEAN_CUSTOM_DEPART = 1 << 16, /* Remove first runway waypoint from selected departure runway for X-Plane */
+  REMOVE_CUSTOM_DEPART = 1 << 16, /* Remove first runway waypoint from selected departure runway for X-Plane */
   SAVE_KEEP_INVALID_START = 1 << 17, /* Do not remove parking/start position names which were not resolved against database */
   RESTRICTIONS_TO_REMARKS = 1 << 18, /* Put procedure restrictions into the remarks section when converting procedures to waypoints */
+  REMOVE_ALL_PROCEDURES = 1 << 19, /* Remove all procedures and do not save their waypoints */
 
   /* Flag combinations =========================================================================== */
 
@@ -95,10 +96,10 @@ enum RouteAdjustOption : quint32
   DEFAULT_OPTS_ROUTESTRING = FIX_PROC_ENTRY_EXIT,
 
   /* Microsoft Flight Simulator 2020 */
-  DEFAULT_OPTS_MSFS = DEFAULT_OPTS | SAVE_MSFS | rf::CLEAN_CUSTOM_DEPART,
+  DEFAULT_OPTS_MSFS = DEFAULT_OPTS | SAVE_MSFS | rf::REMOVE_CUSTOM_DEPART,
 
   /* FSX and P3D - remove first point of departure */
-  DEFAULT_OPTS_FSX_P3D = DEFAULT_OPTS_NO_PROC | rf::CLEAN_CUSTOM_DEPART,
+  DEFAULT_OPTS_FSX_P3D = DEFAULT_OPTS_NO_PROC | rf::REMOVE_CUSTOM_DEPART,
 
   /* PMS50 GTN750 */
   DEFAULT_OPTS_PMS50 = DEFAULT_OPTS_MSFS,
@@ -106,8 +107,13 @@ enum RouteAdjustOption : quint32
   /* Export adjust options for XP11 and old FMS3 */
   DEFAULT_OPTS_FMS3 = rf::DEFAULT_OPTS_NO_PROC,
   DEFAULT_OPTS_FMS11 = rf::REPLACE_CUSTOM_WP | rf::REMOVE_ALTERNATE | rf::REMOVE_TRACKS | rf::FIX_CIRCLETOLAND |
-                       rf::XPLANE_REPLACE_AIRPORT_IDENTS | rf::CLEAN_CUSTOM_DEPART,
+                       rf::XPLANE_REPLACE_AIRPORT_IDENTS | rf::REMOVE_CUSTOM_DEPART,
   DEFAULT_OPTS_CIVA_FMS = rf::DEFAULT_OPTS_NO_PROC | rf::REMOVE_ALTERNATE | rf::REMOVE_RUNWAY_PROC | rf::REMOVE_MISSED,
+
+  /* Remove all procedures for FlightFactor T7 but keep entry and exit points */
+  DEFAULT_OPTS_FMS_T7 = rf::REPLACE_CUSTOM_WP | rf::REMOVE_ALTERNATE | rf::REMOVE_TRACKS | rf::FIX_CIRCLETOLAND |
+                        rf::XPLANE_REPLACE_AIRPORT_IDENTS | rf::REMOVE_CUSTOM_DEPART | rf::REMOVE_ALL_PROCEDURES |
+                        FIX_PROC_ENTRY_EXIT_ALWAYS,
 
   /* Garmin GPX */
   DEFAULT_OPTS_GPX = rf::DEFAULT_OPTS | rf::SAVE_AIRWAY_WP | rf::SAVE_SID_WP | rf::SAVE_STAR_WP | rf::SAVE_APPROACH_WP

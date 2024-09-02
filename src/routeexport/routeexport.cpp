@@ -17,8 +17,8 @@
 
 #include "routeexport/routeexport.h"
 
-#include "fs/gpx/gpxtypes.h"
 #include "fs/gpx/gpxio.h"
+#include "fs/gpx/gpxtypes.h"
 #include "routeexport/routeexportformat.h"
 #include "routeexport/routeexportdialog.h"
 #include "atools.h"
@@ -449,6 +449,27 @@ bool RouteExport::routeExportFms11(const RouteExportFormat& format)
       if(exportFlighplan(routeFile, rf::DEFAULT_OPTS_FMS11, std::bind(&FlightplanIO::saveFms11, flightplanIO, _1, _2)))
       {
         mainWindow->setStatusMessage(tr("Flight plan saved as FMS 11."));
+        formatExportedCallback(format, routeFile);
+        return true;
+      }
+    }
+  }
+  return false;
+}
+
+bool RouteExport::routeExportFmsT7Multi(const RouteExportFormat& format)
+{
+  qDebug() << Q_FUNC_INFO;
+
+  if(routeValidateMulti(format))
+  {
+    QString routeFile = exportFileMulti(format);
+    if(!routeFile.isEmpty())
+    {
+      using namespace std::placeholders;
+      if(exportFlighplan(routeFile, rf::DEFAULT_OPTS_FMS_T7, std::bind(&FlightplanIO::saveFms11, flightplanIO, _1, _2)))
+      {
+        mainWindow->setStatusMessage(tr("Flight plan saved as FMS 11 for FlightFactor B777."));
         formatExportedCallback(format, routeFile);
         return true;
       }
