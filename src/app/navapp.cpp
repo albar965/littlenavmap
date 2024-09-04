@@ -20,7 +20,6 @@
 #include "airspace/airspacecontroller.h"
 
 #include "atools.h"
-#include "common/aircrafttrail.h"
 #include "common/constants.h"
 #include "common/elevationprovider.h"
 #include "common/updatehandler.h"
@@ -32,6 +31,7 @@
 #include "fs/common/morareader.h"
 #include "fs/db/databasemeta.h"
 #include "fs/perf/aircraftperf.h"
+#include "geo/aircrafttrail.h"
 #include "gui/dataexchange.h"
 #include "gui/errorhandler.h"
 #include "gui/mainwindow.h"
