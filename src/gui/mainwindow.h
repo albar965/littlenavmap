@@ -262,13 +262,14 @@ public:
   }
 
   /* Clear route */
+  /* Called from menu or toolbar by action */
   void routeNew();
 
   /* Question dialog and then delete map and profile trail */
   void deleteAircraftTrail(bool quiet);
 
   /* Silently deletes track on takeoff */
-  void deleteProfileAircraftTrail();
+  void deleteProfileAircraftTrailPoints();
 
   atools::gui::DockWidgetHandler *getDockHandler() const
   {
@@ -497,6 +498,7 @@ private:
   void resetWindowLayout();
   void resetTabLayout();
 
+  /* Check manually for updates as triggered by the action */
   void checkForUpdates();
   void updateClock() const;
 

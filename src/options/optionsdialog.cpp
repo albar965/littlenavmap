@@ -74,6 +74,10 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
 
   ui->setupUi(this);
 
+#ifndef QT_NO_DEBUG
+  ui->spinBoxSimMaxTrailPoints->setMinimum(10);
+#endif
+
   // 0 "Startup and Updates"
   // 1 "User Interface"
   // 2 "Display and Text"

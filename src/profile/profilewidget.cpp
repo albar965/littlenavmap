@@ -228,15 +228,6 @@ ProfileWidget::~ProfileWidget()
   ATOOLS_DELETE_LOG(profileOptions);
 }
 
-void ProfileWidget::aircraftTrailTruncated()
-{
-  if(!widgetVisible)
-    return;
-
-  updateScreenCoords();
-  update();
-}
-
 float ProfileWidget::aircraftAlt(const atools::fs::sc::SimConnectUserAircraft& aircraft)
 {
   return aircraft.getIndicatedAltitudeFt() < atools::fs::sc::SC_INVALID_FLOAT ?
@@ -2566,7 +2557,7 @@ void ProfileWidget::showContextMenu(const QPoint& globalPoint)
           action == ui->actionProfileShowVerticalTrack)
     update();
   else if(action == ui->actionProfileDeleteAircraftTrack)
-    deleteAircraftTrail();
+    deleteAircraftTrailPoints();
 
   // Other actions are connected to methods or used during updates
   // else if(action == ui->actionProfileFit)
@@ -2662,7 +2653,6 @@ void ProfileWidget::updateHeaderLabel()
     NavApp::getMainUi()->labelProfileInfo->setText(text.join(tr(",&nbsp;&nbsp;&nbsp;", "Separator for profile header")));
 }
 
-/* Cursor leaves widget. Stop displaying the rubberband */
 void ProfileWidget::leaveEvent(QEvent *)
 {
   hideRubberBand();
@@ -2683,7 +2673,6 @@ void ProfileWidget::hideRubberBand()
   emit highlightProfilePoint(atools::geo::EMPTY_POS);
 }
 
-/* Resizing needs an update of the screen coordinates */
 void ProfileWidget::resizeEvent(QResizeEvent *)
 {
   if(!insideResizeEvent)
@@ -2703,8 +2692,7 @@ void ProfileWidget::resizeEvent(QResizeEvent *)
     qWarning() << Q_FUNC_INFO << "Recursion";
 }
 
-/* Deleting aircraft track needs an update of the screen coordinates */
-void ProfileWidget::deleteAircraftTrail()
+void ProfileWidget::deleteAircraftTrailPoints()
 {
   aircraftTrailPoints.clear();
 

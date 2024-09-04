@@ -50,7 +50,7 @@ void MapPainterTrail::render()
     // Have to do separate check for single point rect which appears right after deleting the trail
     if(!aircraftTrail.isEmpty() && (resolves(bounding) || (bounding.isPoint() && context->viewportRect.overlaps(bounding))))
     {
-#ifdef DEBUG_DRAW_TRACK
+#ifdef DEBUG_DRAW_TRAIL
       {
         atools::util::PainterContextSaver saver(context->painter);
         context->painter->setPen(QPen(Qt::blue, 2));

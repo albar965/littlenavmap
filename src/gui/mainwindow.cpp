@@ -720,7 +720,6 @@ void MainWindow::updateClock() const
   }
 }
 
-/* Check manually for updates as triggered by the action */
 void MainWindow::checkForUpdates()
 {
   NavApp::checkForUpdates(OptionData::instance().getUpdateChannels(), true /* manual */, false /* startup */, false /* forceDebug */);
@@ -1722,8 +1721,6 @@ void MainWindow::connectAllSlots()
 
   connect(connectClient, &ConnectClient::aiFetchOptionsChanged, this, &MainWindow::updateActionStates);
 
-  connect(mapWidget, &MapPaintWidget::aircraftTrackTruncated, profileWidget, &ProfileWidget::aircraftTrailTruncated);
-
   // Weather update ===================================================
   connect(weatherReporter, &WeatherReporter::weatherUpdated, mapWidget, &MapWidget::updateTooltip);
   connect(weatherReporter, &WeatherReporter::weatherUpdated, infoController, &InfoController::updateAirportWeather);
@@ -2226,9 +2223,9 @@ void MainWindow::setToolTipsEnabledMainMenu(bool enabled)
   }
 }
 
-void MainWindow::deleteProfileAircraftTrail()
+void MainWindow::deleteProfileAircraftTrailPoints()
 {
-  profileWidget->deleteAircraftTrail();
+  profileWidget->deleteAircraftTrailPoints();
 }
 
 void MainWindow::deleteAircraftTrail(bool quiet)
@@ -2243,7 +2240,7 @@ void MainWindow::deleteAircraftTrail(bool quiet)
   if(result == QMessageBox::Yes)
   {
     mapWidget->deleteAircraftTrail();
-    profileWidget->deleteAircraftTrail();
+    profileWidget->deleteAircraftTrailPoints();
     updateActionStates();
     setStatusMessage(QString(tr("Aircraft trail removed from map.")));
   }
@@ -2367,7 +2364,6 @@ void MainWindow::routeFromFlightplan(const atools::fs::pln::Flightplan& flightpl
   }
 }
 
-/* Called from menu or toolbar by action */
 void MainWindow::routeNew()
 {
   if(routeCheckForChanges())

@@ -2514,7 +2514,7 @@ void MapWidget::takeoffLandingTimeout()
       takeoffLandingDistanceNm = 0.;
 
       // Delete the profile track to avoid the messy collection of older tracks
-      NavApp::getMainWindow()->deleteProfileAircraftTrail();
+      NavApp::getMainWindow()->deleteProfileAircraftTrailPoints();
 
       emit aircraftTakeoff(aircraft);
     }
@@ -2631,11 +2631,11 @@ void MapWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorDa
   qDebug() << "widgetRectSmall" << widgetRectSmall;
 #endif
 
-  int numTruncated = aircraftTrail->appendTrailPos(aircraft, true /* allowSplit */);
-  numTruncated += aircraftTrailLogbook->appendTrailPos(aircraft, false /* allowSplit */);
+  // Update map if trail was truncated
+  bool trailTruncated = aircraftTrail->appendTrailPos(aircraft, true /* allowSplit */) > 0;
 
-  if(numTruncated > 0)
-    emit aircraftTrackTruncated();
+  // Ignore truncatated trail for logbook - should never appear
+  aircraftTrailLogbook->appendTrailPos(aircraft, false /* allowSplit */);
 
   if(wasEmpty != aircraftTrail->isEmpty())
     // We have a track - update toolbar and menu
@@ -2963,15 +2963,12 @@ void MapWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorDa
       }
     }
 
-    // if(aircraft.isFlying())
-    // touchdownDetected = false;
-
-    if((dataHasChanged || aiVisible) && !contextMenuActive)
+    if(!updatesEnabled())
+      // Re-enabling updates implicitly calls update() on the widget
+      setUpdatesEnabled(true);
+    else if((dataHasChanged || aiVisible || trailTruncated) && !contextMenuActive)
       // Not scrolled or zoomed but needs a redraw
       update();
-
-    if(!updatesEnabled())
-      setUpdatesEnabled(true);
 
     // Set flag if aircraft is or was close enought to the takeoff position on the runway
     const proc::MapProcedureLegs& sidLegs = route.getSidLegs();
@@ -3172,7 +3169,8 @@ void MapWidget::optionsChanged()
   screenSearchDistanceTooltip = optiondata.getMapTooltipSensitivity();
 
   aircraftTrail->setMaxTrackEntries(optiondata.getAircraftTrailMaxPoints());
-  // aircraftTrailLogbook uses AircraftTrail::MAX_TRACK_ENTRIES
+
+  // aircraftTrailLogbook uses AircraftTrail::MAX_TRACK_ENTRIES which is the maximum
 
   MapPaintWidget::optionsChanged();
 }
@@ -3281,8 +3279,8 @@ void MapWidget::restoreState()
   if(OptionData::instance().getFlags().testFlag(opts::STARTUP_LOAD_TRAIL) && !atools::gui::Application::isSafeMode())
     aircraftTrail->restoreState(lnm::AIRCRAFT_TRACK_SUFFIX);
 
-  aircraftTrailLogbook->restoreState(lnm::LOGBOOK_TRACK_SUFFIX);
   // aircraftTrailLogbook uses AircraftTrail::MAX_TRACK_ENTRIES
+  aircraftTrailLogbook->restoreState(lnm::LOGBOOK_TRACK_SUFFIX);
 
   atools::gui::WidgetState state(lnm::MAP_OVERLAY_VISIBLE, false /*save visibility*/, true /*block signals*/);
   for(QAction *action : qAsConst(mapOverlays))
@@ -4142,7 +4140,6 @@ void MapWidget::debugMovingAircraft(QInputEvent *event, int upDown)
 
     alt += upDown * factor;
     alt = atools::minmax(altInit, NavApp::getRouteController()->getCruiseAltitudeWidget(), alt);
-    qDebug() << Q_FUNC_INFO << "alt" << alt;
   }
   else if(QPoint(lastPoint - eventPos).manhattanLength() > 2)
   {
@@ -4167,11 +4164,11 @@ void MapWidget::debugMovingAircraft(QInputEvent *event, int upDown)
     float ice = 0.f;
     if(route.size() <= 2)
     {
-      alt = NavApp::getRouteController()->getCruiseAltitudeWidget();
       tas = perf.getCruiseSpeed();
       fuelflow = perf.getCruiseFuelFlowLbs();
       if(useProjection)
       {
+        alt = NavApp::getRouteController()->getCruiseAltitudeWidget();
         ground = alt < NavApp::getElevationProvider()->getElevationFt(pos) + 500.f;
       }
     }

@@ -433,9 +433,6 @@ signals:
   /* Update action state in main window (disabled/enabled) */
   void updateActionStates();
 
-  /* Aircraft track was truncated and needs to be updated */
-  void aircraftTrackTruncated();
-
   void shownMapFeaturesChanged(map::MapTypes types);
 
   /* Search center has changed by context menu */
