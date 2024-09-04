@@ -22,6 +22,7 @@
 #include "common/maptools.h"
 #include "common/maptypesfactory.h"
 #include "fs/util/fsutil.h"
+#include "geo/marbleconverter.h"
 #include "logbook/logdatacontroller.h"
 #include "mapgui/mapairporthandler.h"
 #include "mapgui/maplayer.h"
@@ -931,9 +932,7 @@ const QList<map::MapVor> *MapQuery::getVors(const GeoDataLatLonBox& rect, const 
 
 const QList<map::MapVor> *MapQuery::getVorsByRect(const atools::geo::Rect& rect, const MapLayer *mapLayer, bool lazy, bool& overflow)
 {
-  const GeoDataLatLonBox latLonBox = GeoDataLatLonBox(rect.getNorth(), rect.getSouth(), rect.getEast(),
-                                                      rect.getWest(), GeoDataCoordinates::Degree);
-  return getVors(latLonBox, mapLayer, lazy, overflow);
+  return getVors(mconvert::toGdc(rect), mapLayer, lazy, overflow);
 }
 
 const QList<map::MapNdb> *MapQuery::getNdbs(const GeoDataLatLonBox& rect, const MapLayer *mapLayer, bool lazy, bool& overflow)

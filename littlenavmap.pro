@@ -280,10 +280,8 @@ SOURCES += \
   src/app/commandline.cpp \
   src/app/navapp.cpp \
   src/common/abstractinfobuilder.cpp \
-  src/common/aircrafttrail.cpp \
   src/common/airportfiles.cpp \
   src/common/constants.cpp \
-  src/common/coordinateconverter.cpp \
   src/common/dialogrecordhelper.cpp \
   src/common/dirtool.cpp \
   src/common/elevationprovider.cpp \
@@ -323,6 +321,9 @@ SOURCES += \
   src/db/undoredoprogress.cpp \
   src/export/csvexporter.cpp \
   src/export/exporter.cpp \
+  src/geo/aircrafttrail.cpp \
+  src/geo/coordinateconverter.cpp \
+  src/geo/marbleconverter.cpp \
   src/gui/holddialog.cpp \
   src/gui/coordinatedialog.cpp \
   src/gui/mainwindow.cpp \
@@ -484,10 +485,8 @@ HEADERS  += \
   src/app/commandline.h \
   src/app/navapp.h \
   src/common/abstractinfobuilder.h \
-  src/common/aircrafttrail.h \
   src/common/airportfiles.h \
   src/common/constants.h \
-  src/common/coordinateconverter.h \
   src/common/dialogrecordhelper.h \
   src/common/dirtool.h \
   src/common/elevationprovider.h \
@@ -529,6 +528,9 @@ HEADERS  += \
   src/db/undoredoprogress.h \
   src/export/csvexporter.h \
   src/export/exporter.h \
+  src/geo/aircrafttrail.h \
+  src/geo/coordinateconverter.h \
+  src/geo/marbleconverter.h \
   src/gui/holddialog.h \
   src/gui/coordinatedialog.h \
   src/gui/mainwindow.h \

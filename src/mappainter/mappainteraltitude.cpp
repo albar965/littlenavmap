@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -22,6 +22,7 @@
 #include "common/mapcolors.h"
 #include "fs/common/morareader.h"
 #include "geo/line.h"
+#include "geo/marbleconverter.h"
 #include "mapgui/maplayer.h"
 #include "mapgui/mapscale.h"
 #include "util/paintercontextsaver.h"
@@ -66,10 +67,10 @@ void MapPainterAltitude::render()
 
       // Get covered one degree coordinate rectangles
       const GeoDataLatLonBox& curBox = context->viewport->viewLatLonAltBox();
-      int west = static_cast<int>(curBox.west(DEG));
-      int east = static_cast<int>(curBox.east(DEG));
-      int north = static_cast<int>(curBox.north(DEG));
-      int south = static_cast<int>(curBox.south(DEG));
+      int west = static_cast<int>(curBox.west(mconvert::DEG));
+      int east = static_cast<int>(curBox.east(mconvert::DEG));
+      int north = static_cast<int>(curBox.north(mconvert::DEG));
+      int south = static_cast<int>(curBox.south(mconvert::DEG));
 
       // Split at anit-meridian if needed
       QVector<std::pair<int, int> > ranges;
@@ -112,12 +113,12 @@ void MapPainterAltitude::render()
               {
                 // Calculate rectangle screen width
                 bool visibleDummy;
-                QPointF leftPt = wToSF(GeoDataCoordinates(lonx, laty - .5, 0, DEG), DEFAULT_WTOS_SIZE, &visibleDummy);
-                QPointF rightPt = wToSF(GeoDataCoordinates(lonx + 1., laty - .5, 0, DEG), DEFAULT_WTOS_SIZE, &visibleDummy);
+                QPointF leftPt = wToSF(mconvert::toGdc(lonx, laty - .5f), DEFAULT_WTOS_SIZE, &visibleDummy);
+                QPointF rightPt = wToSF(mconvert::toGdc(lonx + 1.f, laty - .5f), DEFAULT_WTOS_SIZE, &visibleDummy);
 
                 minWidth = std::min(static_cast<float>(QLineF(leftPt, rightPt).length()), minWidth);
 
-                centers.append(GeoDataCoordinates(lonx + .5, laty - .5, 0, DEG));
+                centers.append(mconvert::toGdc(lonx + .5f, laty - .5f));
                 altitudes.append(moraFt100);
               }
             }

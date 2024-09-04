@@ -18,7 +18,6 @@
 #include "app/commandline.h"
 #include "app/navapp.h"
 #include "atools.h"
-#include "common/aircrafttrail.h"
 #include "common/constants.h"
 #include "common/formatter.h"
 #include "common/maptypes.h"
@@ -32,6 +31,7 @@
 #include "fs/sc/simconnectdata.h"
 #include "fs/sc/simconnectreply.h"
 #include "fs/weather/metarparser.h"
+#include "geo/aircrafttrail.h"
 #include "geo/calculations.h"
 #include "gui/dockwidgethandler.h"
 #include "gui/mainwindow.h"
@@ -43,8 +43,8 @@
 #include "routeexport/routeexportformat.h"
 #include "settings/settings.h"
 #include "userdata/userdataicons.h"
-#include "util/properties.h"
 #include "util/crashhandler.h"
+#include "util/properties.h"
 
 #include <QDebug>
 #include <QSplashScreen>

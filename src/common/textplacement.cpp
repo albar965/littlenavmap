@@ -15,12 +15,12 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#include "common/coordinateconverter.h"
 #include "common/textplacement.h"
 
-#include "geo/line.h"
 #include "common/mapflags.h"
 #include "geo/calculations.h"
+#include "geo/coordinateconverter.h"
+#include "geo/line.h"
 #include "geo/linestring.h"
 #include "textpointer.h"
 

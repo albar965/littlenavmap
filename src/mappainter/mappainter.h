@@ -18,14 +18,17 @@
 #ifndef LITTLENAVMAP_MAPPAINTER_H
 #define LITTLENAVMAP_MAPPAINTER_H
 
-#include "common/coordinateconverter.h"
 #include "common/mapflags.h"
-#include "options/optiondata.h"
+#include "geo/coordinateconverter.h"
 #include "geo/rect.h"
+#include "options/optiondata.h"
+
+#include <marble/MarbleGlobal.h>
 
 #include <QPen>
 #include <QFont>
 #include <QDateTime>
+#include <QCoreApplication>
 
 class Queries;
 namespace atools {

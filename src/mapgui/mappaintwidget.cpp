@@ -17,17 +17,18 @@
 
 #include "mapgui/mappaintwidget.h"
 
-#include "common/aircrafttrail.h"
+#include "app/navapp.h"
 #include "common/constants.h"
 #include "common/mapresult.h"
 #include "common/unit.h"
+#include "geo/aircrafttrail.h"
 #include "geo/calculations.h"
+#include "geo/marbleconverter.h"
 #include "mapgui/aprongeometrycache.h"
 #include "mapgui/mapscreenindex.h"
 #include "mapgui/mapthemehandler.h"
 #include "mappainter/mappaintlayer.h"
 #include "marble/ViewportParams.h"
-#include "app/navapp.h"
 #include "query/airwayquery.h"
 #include "query/airwaytrackquery.h"
 #include "query/mapquery.h"
@@ -565,8 +566,7 @@ QString MapPaintWidget::createAvitabJson()
 
 void MapPaintWidget::centerRectOnMapPrecise(const atools::geo::Rect& rect, bool allowAdjust)
 {
-  centerRectOnMapPrecise(Marble::GeoDataLatLonBox(rect.getNorth(), rect.getSouth(), rect.getEast(), rect.getWest(),
-                                                  GeoDataCoordinates::Degree), allowAdjust);
+  centerRectOnMapPrecise(mconvert::toGdc(rect), allowAdjust);
 }
 
 void MapPaintWidget::centerRectOnMapPrecise(const Marble::GeoDataLatLonBox& rect, bool allowAdjust)
@@ -575,8 +575,8 @@ void MapPaintWidget::centerRectOnMapPrecise(const Marble::GeoDataLatLonBox& rect
   centerOn(rect, false /* animated */);
   int zoomIterations = 0;
 
-  double north = rect.north(GeoDataCoordinates::Degree), south = rect.south(GeoDataCoordinates::Degree),
-         east = rect.east(GeoDataCoordinates::Degree), west = rect.west(GeoDataCoordinates::Degree);
+  double north = rect.north(mconvert::DEG), south = rect.south(mconvert::DEG),
+         east = rect.east(mconvert::DEG), west = rect.west(mconvert::DEG);
 
   if(verbose)
     qDebug() << Q_FUNC_INFO << "initial zoom" << zoom() << "zoom step" << zoomStep();
@@ -638,15 +638,12 @@ atools::geo::Pos MapPaintWidget::getCurrentViewCenterPos() const
 
 atools::geo::Rect MapPaintWidget::getCurrentViewRect() const
 {
-  const GeoDataLatLonBox& box = getCurrentViewBoundingBox();
-  return atools::geo::Rect(box.west(GeoDataCoordinates::Degree), box.north(GeoDataCoordinates::Degree),
-                           box.east(GeoDataCoordinates::Degree), box.south(GeoDataCoordinates::Degree));
+  return atools::geo::Rect(mconvert::fromGdc(getCurrentViewBoundingBox()));
 }
 
 void MapPaintWidget::centerRectOnMap(const Marble::GeoDataLatLonBox& rect, bool allowAdjust)
 {
-  centerRectOnMap(Rect(rect.west(GeoDataCoordinates::Degree), rect.north(GeoDataCoordinates::Degree),
-                       rect.east(GeoDataCoordinates::Degree), rect.south(GeoDataCoordinates::Degree)), allowAdjust);
+  centerRectOnMap(mconvert::fromGdc(rect), allowAdjust);
 }
 
 void MapPaintWidget::centerRectOnMap(const atools::geo::Rect& rect, bool allowAdjust)
@@ -662,10 +659,9 @@ void MapPaintWidget::centerRectOnMap(const atools::geo::Rect& rect, bool allowAd
     scaled.scale(1.075f, 1.075f);
 
     double north = scaled.getNorth(), south = scaled.getSouth(), east = scaled.getEast(), west = scaled.getWest();
-    GeoDataLatLonBox box(north, south, east, west, GeoDataCoordinates::Degree);
 
     // Center rectangle first
-    centerOn(box, false /* animated */);
+    centerOn(mconvert::toGdc(scaled), false /* animated */);
 
     // Correct zoom - zoom out until all points are visible ==========================
     // Needed since Marble does zoom correctly

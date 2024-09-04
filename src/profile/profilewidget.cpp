@@ -19,7 +19,6 @@
 
 #include "app/navapp.h"
 #include "atools.h"
-#include "common/aircrafttrail.h"
 #include "common/constants.h"
 #include "common/elevationprovider.h"
 #include "common/formatter.h"
@@ -30,7 +29,9 @@
 #include "common/textpointer.h"
 #include "common/unit.h"
 #include "common/vehicleicons.h"
+#include "geo/aircrafttrail.h"
 #include "geo/calculations.h"
+#include "geo/marbleconverter.h"
 #include "mapgui/mapwidget.h"
 #include "options/optiondata.h"
 #include "options/optiondata.h"
@@ -1973,8 +1974,8 @@ bool ProfileWidget::fetchRouteElevations(atools::geo::LineString& elevations, co
       // Create a line string from the two points and split it at the date line if crossing
       GeoDataLineString coords;
       coords.setTessellate(true);
-      coords << GeoDataCoordinates(geometry.at(i).getLonX(), geometry.at(i).getLatY(), 0., GeoDataCoordinates::Degree)
-             << GeoDataCoordinates(geometry.at(i + 1).getLonX(), geometry.at(i + 1).getLatY(), 0., GeoDataCoordinates::Degree);
+      coords << mconvert::toGdc(geometry.at(i).getLonX(), geometry.at(i).getLatY())
+             << mconvert::toGdc(geometry.at(i + 1).getLonX(), geometry.at(i + 1).getLatY());
 
       const QVector<Marble::GeoDataLineString *> coordsCorrected = coords.toDateLineCorrected();
       for(const Marble::GeoDataLineString *ls : coordsCorrected)

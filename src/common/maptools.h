@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -18,9 +18,9 @@
 #ifndef LITTLENAVMAP_MAPTOOLS_H
 #define LITTLENAVMAP_MAPTOOLS_H
 
-#include "common/coordinateconverter.h"
-#include "geo/calculations.h"
 #include "common/mapflags.h"
+#include "geo/calculations.h"
+#include "geo/coordinateconverter.h"
 #include "geo/pos.h"
 
 #include <QList>

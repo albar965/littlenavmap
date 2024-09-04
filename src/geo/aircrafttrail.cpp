@@ -15,7 +15,7 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#include "common/aircrafttrail.h"
+#include "geo/aircrafttrail.h"
 
 #include "atools.h"
 #include "common/constants.h"
@@ -24,6 +24,7 @@
 #include "fs/sc/simconnectuseraircraft.h"
 #include "geo/calculations.h"
 #include "geo/linestring.h"
+#include "geo/marbleconverter.h"
 #include "io/fileroller.h"
 #include "settings/settings.h"
 
@@ -169,10 +170,7 @@ map::AircraftTrailSegment AircraftTrail::findNearest(const QPoint& point, const 
   if(size() <= 1)
     return trailSegment;
 
-  atools::geo::Rect viewportRect(viewportBox.west(Marble::GeoDataCoordinates::Degree),
-                                 viewportBox.north(Marble::GeoDataCoordinates::Degree),
-                                 viewportBox.east(Marble::GeoDataCoordinates::Degree),
-                                 viewportBox.south(Marble::GeoDataCoordinates::Degree));
+  atools::geo::Rect viewportRect = mconvert::fromGdc(viewportBox);
 
   int trackIndex = -1;
   int indexTracks = 0;

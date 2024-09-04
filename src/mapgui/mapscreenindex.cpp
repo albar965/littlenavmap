@@ -17,11 +17,13 @@
 
 #include "mapgui/mapscreenindex.h"
 
-#include "common/aircrafttrail.h"
+#include "app/navapp.h"
 #include "common/constants.h"
 #include "common/maptools.h"
 #include "fs/gpx/gpxtypes.h"
 #include "fs/sc/simconnectdata.h"
+#include "geo/aircrafttrail.h"
+#include "geo/marbleconverter.h"
 #include "logbook/logdatacontroller.h"
 #include "mapgui/mapairporthandler.h"
 #include "mapgui/mapfunctions.h"
@@ -30,7 +32,6 @@
 #include "mapgui/mappaintwidget.h"
 #include "mapgui/mapscale.h"
 #include "mappainter/mappaintlayer.h"
-#include "app/navapp.h"
 #include "online/onlinedatacontroller.h"
 #include "query/airportquery.h"
 #include "query/airspacequeries.h"
@@ -169,7 +170,7 @@ void MapScreenIndex::updateAirspaceScreenGeometryInternal(QSet<map::MapAirspaceI
       if(!(airspace->type & filter.types) && !highlights)
         continue;
 
-      Marble::GeoDataLatLonBox airspacebox = conv.toGdc(airspace->bounding);
+      Marble::GeoDataLatLonBox airspacebox = mconvert::toGdc(airspace->bounding);
 
       // Check if airspace overlaps with current screen and is not already in list
       if(airspacebox.intersects(curBox) && !ids.contains(airspace->combinedId()))
@@ -300,11 +301,7 @@ void MapScreenIndex::updateIlsScreenGeometry(const Marble::GeoDataLatLonBox& cur
     if(!ils.hasGeometry)
       continue;
 
-    Marble::GeoDataLatLonBox ilsbox(ils.bounding.getNorth(), ils.bounding.getSouth(),
-                                    ils.bounding.getEast(), ils.bounding.getWest(),
-                                    Marble::GeoDataCoordinates::Degree);
-
-    if(ilsbox.intersects(curBox))
+    if(mconvert::toGdc(ils.bounding).intersects(curBox))
     {
       updateLineScreenGeometry(ilsLines, ils.id, ils.centerLine(), curBox, conv);
 
@@ -456,7 +453,7 @@ void MapScreenIndex::updateAirwayScreenGeometryInternal(QSet<int>& ids, const Ma
 void MapScreenIndex::updateLineScreenGeometry(QList<std::pair<int, QLine> >& index, int id, const atools::geo::Line& line,
                                               const Marble::GeoDataLatLonBox& curBox, const CoordinateConverter& conv)
 {
-  Marble::GeoDataLineString geoLineStr = conv.toGdcStr(line);
+  Marble::GeoDataLineString geoLineStr = mconvert::toGdcStr(line);
   QRect mapGeo = mapWidget->rect();
 
   QList<Marble::GeoDataLatLonBox> curBoxCorrectedList = query::splitAtAntiMeridian(curBox);

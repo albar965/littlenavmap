@@ -17,8 +17,8 @@
 
 #include "mappainter/mappaintertrail.h"
 
-#include "common/aircrafttrail.h"
 #include "fs/sc/simconnectuseraircraft.h"
+#include "geo/aircrafttrail.h"
 #include "mapgui/mappaintwidget.h"
 #include "route/route.h"
 #include "util/paintercontextsaver.h"

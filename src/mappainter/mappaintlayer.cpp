@@ -21,6 +21,7 @@
 #include "common/constants.h"
 #include "common/mapcolors.h"
 #include "geo/calculations.h"
+#include "geo/marbleconverter.h"
 #include "mapgui/maplayersettings.h"
 #include "mapgui/mapscale.h"
 #include "mapgui/mapwidget.h"
@@ -366,11 +367,7 @@ bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport, const 
       context.defaultFont = painter->font();
       painter->setFont(context.defaultFont);
 
-      const GeoDataLatLonAltBox& box = viewport->viewLatLonAltBox();
-      context.viewportRect = atools::geo::Rect(box.west(GeoDataCoordinates::Degree),
-                                               box.north(GeoDataCoordinates::Degree),
-                                               box.east(GeoDataCoordinates::Degree),
-                                               box.south(GeoDataCoordinates::Degree));
+      context.viewportRect = mconvert::fromGdc(viewport->viewLatLonAltBox());
 
       context.screenRect = mapPaintWidget->rect();
 

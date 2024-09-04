@@ -17,7 +17,7 @@
 
 #include "mapgui/mapwidget.h"
 
-#include "common/aircrafttrail.h"
+#include "app/navapp.h"
 #include "common/constants.h"
 #include "common/elevationprovider.h"
 #include "common/jumpback.h"
@@ -29,7 +29,9 @@
 #include "fs/gpx/gpxtypes.h"
 #include "fs/perf/aircraftperf.h"
 #include "fs/sc/simconnectdata.h"
+#include "geo/aircrafttrail.h"
 #include "geo/calculations.h"
+#include "geo/marbleconverter.h"
 #include "gui/coordinatedialog.h"
 #include "gui/dialog.h"
 #include "gui/holddialog.h"
@@ -51,7 +53,6 @@
 #include "mapgui/maptooltip.h"
 #include "mapgui/mapvisible.h"
 #include "mappainter/mappaintlayer.h"
-#include "app/navapp.h"
 #include "online/onlinedatacontroller.h"
 #include "query/airportquery.h"
 #include "query/procedurequery.h"
@@ -2694,9 +2695,7 @@ void MapWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorDa
     {
       for(const atools::fs::sc::SimConnectAircraft& ai : simulatorData.getAiAircraftConst())
       {
-        if(getCurrentViewBoundingBox().contains(
-             Marble::GeoDataCoordinates(ai.getPosition().getLonX(), ai.getPosition().getLatY(), 0,
-                                        Marble::GeoDataCoordinates::Degree)))
+        if(getCurrentViewBoundingBox().contains(mconvert::toGdc(ai.getPosition())))
         {
           aiVisible = true;
           break;

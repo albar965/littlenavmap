@@ -18,6 +18,7 @@
 #include "weather/windreporter.h"
 
 #include "app/navapp.h"
+#include "geo/marbleconverter.h"
 #include "ui_mainwindow.h"
 #include "grib/windquery.h"
 #include "settings/settings.h"
@@ -783,8 +784,7 @@ const atools::grib::WindPosList *WindReporter::getWindForRect(const Marble::GeoD
       windPosCache.clear();
       for(const Marble::GeoDataLatLonBox& box : query::splitAtAntiMeridian(rect, queryRectInflationFactor, queryRectInflationIncrement))
       {
-        atools::geo::Rect geoRect(box.west(Marble::GeoDataCoordinates::Degree), box.north(Marble::GeoDataCoordinates::Degree),
-                                  box.east(Marble::GeoDataCoordinates::Degree), box.south(Marble::GeoDataCoordinates::Degree));
+        atools::geo::Rect geoRect = mconvert::fromGdc(box);
 
         atools::grib::WindPosList windPosList;
         windQuery->getWindForRect(windPosList, geoRect, getDisplayAltitudeFt(), gridSpacing);
