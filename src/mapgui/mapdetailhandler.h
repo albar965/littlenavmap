@@ -67,6 +67,10 @@ public:
    * emits updateDetailLevel() */
   void defaultMapDetail();
 
+  /* Detail level in range MAP_MIN_DETAIL_LEVEL(_TEXT) -> MAP_DEFAULT_DETAIL_LEVEL -> MAP_MAX_DETAIL_LEVEL(_TEXT) */
+  int getDetailLevel() const;
+  int getDetailLevelText() const;
+
 signals:
   /* Redraw map on slider change or reset. */
   void updateDetailLevel(int level, int levelText);
@@ -75,9 +79,6 @@ private:
   void setDetailLevel(int level);
   void setDetailLevelText(int level);
 
-  /* Detail level in range MAP_MIN_DETAIL_LEVEL(_TEXT) -> MAP_DEFAULT_DETAIL_LEVEL -> MAP_MAX_DETAIL_LEVEL(_TEXT) */
-  int getDetailLevel() const;
-  int getDetailLevelText() const;
   void detailSliderChanged();
   void updateActions();
 

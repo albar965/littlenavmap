@@ -17,30 +17,30 @@
 
 #include "mapgui/mapthemehandler.h"
 
+#include "app/navapp.h"
 #include "atools.h"
 #include "common/constants.h"
 #include "exception.h"
+#include "gui/dialog.h"
 #include "gui/messagebox.h"
+#include "gui/widgetstate.h"
+#include "mapgui/mapwidget.h"
+#include "options/optiondata.h"
 #include "settings/settings.h"
+#include "ui_mainwindow.h"
 #include "util/htmlbuilder.h"
 #include "util/simplecrypt.h"
 #include "util/xmlstream.h"
-#include "mapgui/mapwidget.h"
-#include "app/navapp.h"
-#include "ui_mainwindow.h"
-#include "gui/dialog.h"
-#include "gui/widgetstate.h"
-#include "options/optiondata.h"
 
+#include <QActionGroup>
 #include <QCoreApplication>
+#include <QDataStream>
 #include <QDebug>
 #include <QFileInfo>
-#include <QXmlStreamReader>
 #include <QRegularExpression>
-#include <QDataStream>
-#include <QActionGroup>
-#include <QStringBuilder>
 #include <QSettings>
+#include <QStringBuilder>
+#include <QXmlStreamReader>
 
 const static quint64 KEY = 0x19CB0467EBD391CC;
 const static QLatin1String FILENAME("mapthemekeys.bin");
@@ -105,7 +105,7 @@ void MapThemeHandler::loadThemes()
 
   QHash<QString, MapTheme> ids, sourceDirs;
   QSet<QString> shortcuts;
-  for(const QFileInfo& dgml : findMapThemes({getMapThemeDefaultDir(), getMapThemeUserDir()}))
+  for(const QFileInfo& dgml : findMapThemes({mapThemeDefaultDir(), mapThemeUserDir()}))
   {
     MapTheme theme = loadTheme(dgml);
 
@@ -326,7 +326,7 @@ const MapTheme& MapThemeHandler::getTheme(const QString& themeId) const
   return themeByIndex(themeIdToIndexMap.value(themeId, -1));
 }
 
-QString MapThemeHandler::getCurrentThemeId() const
+QString MapThemeHandler::currentThemeId() const
 {
   if(actionGroupMapTheme->checkedAction() == nullptr)
   {
@@ -405,7 +405,7 @@ void MapThemeHandler::saveState() const
 
   // Save current theme ===================================================
   atools::settings::Settings& settings = atools::settings::Settings::instance();
-  settings.setValue(lnm::MAP_THEME, getCurrentThemeId());
+  settings.setValue(lnm::MAP_THEME, currentThemeId());
 
   atools::gui::WidgetState widgetState(lnm::MAINWINDOW_WIDGET_MAPTHEME);
   widgetState.save(mapProjectionActionGroup);
@@ -741,7 +741,7 @@ void MapThemeHandler::setupMapThemesUi()
   bool online = true;
   int index = 0;
   // Sort order is always online/offline and then alphabetical
-  for(const MapTheme& theme : getThemes())
+  for(const MapTheme& theme : qAsConst(themes))
   {
     // Check if offline map come after online and add separators
     if(!theme.isOnline() && online)
@@ -821,7 +821,7 @@ void MapThemeHandler::changeMapTheme()
   {
     qDebug() << Q_FUNC_INFO << "Falling back to default theme due to invalid index" << themeId;
     // No theme for index found - use default OSM
-    theme = getDefaultTheme();
+    theme = defaultTheme;
     themeId = theme.getThemeId();
   }
 
@@ -871,7 +871,6 @@ void MapThemeHandler::changeMapTheme()
   NavApp::setStatusMessage(tr("Map theme changed to %1.").arg(actionGroupMapTheme->checkedAction()->text()));
 }
 
-/* Called by actions */
 void MapThemeHandler::changeMapProjection()
 {
   Ui::MainWindow *ui = NavApp::getMainUi();
@@ -902,7 +901,7 @@ void MapThemeHandler::optionsChanged()
   qDebug() << Q_FUNC_INFO;
 
   // Remember current theme id like "openstreetmap"
-  QString currentThemeId = getCurrentThemeId();
+  QString curThemeId = currentThemeId();
 
   // Save key to avoid deletion
   saveKeyfile();
@@ -916,10 +915,10 @@ void MapThemeHandler::optionsChanged()
   // Rebuild menu
   setupMapThemesUi();
 
-  if(!getTheme(currentThemeId).isValid())
+  if(!getTheme(curThemeId).isValid())
   {
     // Assign the default theme if the current one was removed
-    currentThemeId = defaultTheme.getThemeId();
+    curThemeId = defaultTheme.getThemeId();
     NavApp::getMapWidgetGui()->setTheme(defaultTheme);
 
     if(NavApp::getMapPaintWidgetWeb() != nullptr)
@@ -927,7 +926,7 @@ void MapThemeHandler::optionsChanged()
   }
 
   // Check the theme action
-  changeMapThemeActions(currentThemeId);
+  changeMapThemeActions(curThemeId);
 }
 
 QString MapThemeHandler::getStatusTextForDir(const QString& path, bool& error)
@@ -970,11 +969,11 @@ void MapThemeHandler::validateMapThemeDirectories(QWidget *parent)
   QStringList msg;
 
   // Default application dir is required
-  msg.append(atools::checkDirMsg(getMapThemeDefaultDir()));
+  msg.append(atools::checkDirMsg(mapThemeDefaultDir()));
 
-  if(!getMapThemeUserDir().isEmpty())
+  if(!mapThemeUserDir().isEmpty())
     // User defined dir is optional
-    msg.append(atools::checkDirMsg(getMapThemeUserDir()));
+    msg.append(atools::checkDirMsg(mapThemeUserDir()));
 
   // Remove empty error messages
   msg.removeAll(QString());
@@ -983,12 +982,32 @@ void MapThemeHandler::validateMapThemeDirectories(QWidget *parent)
     atools::gui::Dialog::warning(parent, tr("Base path(s) for map themes not found.\n%1").arg(msg.join(tr(",\n"))));
 }
 
-QString MapThemeHandler::getMapThemeDefaultDir()
+void MapThemeHandler::resetToDefault()
+{
+  Ui::MainWindow *ui = NavApp::getMainUi();
+
+  ui->actionMapProjectionMercator->setChecked(true);
+
+  const QList<QAction *> actions = toolButtonMapTheme->menu()->actions();
+  for(QAction *action : actions)
+  {
+    if(action->data().toString() == defaultTheme.getThemeId())
+    {
+      action->setChecked(true);
+      break;
+    }
+  }
+
+  changeMapTheme();
+  changeMapProjection();
+}
+
+QString MapThemeHandler::mapThemeDefaultDir()
 {
   return QCoreApplication::applicationDirPath() % atools::SEP % "data" % atools::SEP % "maps" % atools::SEP % "earth";
 }
 
-QString MapThemeHandler::getMapThemeUserDir()
+QString MapThemeHandler::mapThemeUserDir()
 {
   return OptionData::instance().getCacheMapThemeDir();
 }

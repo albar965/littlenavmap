@@ -248,7 +248,7 @@ void MapVisible::updateVisibleObjectsStatusBar()
       map::MapAirspaceSources airspaceSources = QueryManager::instance()->getQueriesGui()->getAirspaceQueries()->getAirspaceSources();
       if(shown.testFlag(map::AIRSPACE) && airspaceSources & map::AIRSPACE_SRC_ALL)
       {
-        map::MapAirspaceFilter airspaceFilter = paintLayer->getShownAirspacesTypesByLayer();
+        map::MapAirspaceFilter airspaceFilter = paintLayer->getShownAirspacesTypesForLayer();
         // Collect airspace information ==========================================================
         for(int i = 0; i <= map::MAP_AIRSPACE_TYPE_BITS; i++)
         {

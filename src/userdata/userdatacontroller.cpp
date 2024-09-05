@@ -309,22 +309,22 @@ void UserdataController::saveState() const
 void UserdataController::restoreState()
 {
   const QStringList allTypes = getAllTypes();
+  atools::settings::Settings& settings = atools::settings::Settings::instance();
 
   // Get the list of icons found the last time which allows to identify new types and enable them per default
-  allLastFoundTypes = atools::settings::Settings::instance().valueStrList(lnm::MAP_USERDATA_ALL);
+  allLastFoundTypes = settings.valueStrList(lnm::MAP_USERDATA_ALL);
   if(allLastFoundTypes.isEmpty())
     allLastFoundTypes = allTypes;
 
-  if(OptionData::instance().getFlags() & opts::STARTUP_LOAD_MAP_SETTINGS)
+  if(OptionData::instance().getFlags().testFlag(opts::STARTUP_LOAD_MAP_SETTINGS))
   {
-    atools::settings::Settings& settings = atools::settings::Settings::instance();
-
     // Get list of enabled. Enable all as default
     const QStringList list = settings.valueStrList(lnm::MAP_USERDATA, allTypes);
     selectedUnknownType = settings.valueBool(lnm::MAP_USERDATA_UNKNOWN, true);
 
     // Remove all types from the restored list of enabled which were not found in the new list of registered types
     // in case some were removed
+    selectedTypes.clear();
     for(const QString& type : list)
     {
       if(allTypes.contains(type))
@@ -350,6 +350,7 @@ void UserdataController::restoreState()
 
 void UserdataController::resetSettingsToDefault()
 {
+  selectedTypes.clear();
   selectedTypes.append(icons->getAllTypes());
   selectedUnknownType = true;
   typesToActions();

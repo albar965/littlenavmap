@@ -209,6 +209,140 @@ QDebug operator<<(QDebug out, const map::MapDisplayTypes& type)
   return out;
 }
 
+QDebug operator<<(QDebug out, const map::MapWeatherSource& type)
+{
+  if(type == WEATHER_SOURCE_SIMULATOR)
+    out << "WEATHER_SOURCE_SIMULATOR";
+  if(type == WEATHER_SOURCE_ACTIVE_SKY)
+    out << "WEATHER_SOURCE_ACTIVE_SKY";
+  if(type == WEATHER_SOURCE_NOAA)
+    out << "WEATHER_SOURCE_NOAA";
+  if(type == WEATHER_SOURCE_VATSIM)
+    out << "WEATHER_SOURCE_VATSIM";
+  if(type == WEATHER_SOURCE_IVAO)
+    out << "WEATHER_SOURCE_IVAO";
+  if(type == WEATHER_SOURCE_DISABLED)
+    out << "WEATHER_SOURCE_DISABLED";
+  return out;
+}
+
+QDebug operator<<(QDebug out, const map::MapAirspaceTypes& type)
+{
+  QDebugStateSaver saver(out);
+
+  QStringList flags;
+  if(type == AIRSPACE_NONE)
+    flags.append("AIRSPACE_NONE");
+  else
+  {
+    if(type.testFlag(CENTER))
+      flags.append("CENTER");
+    if(type.testFlag(CLASS_A))
+      flags.append("CLASS_A");
+    if(type.testFlag(CLASS_B))
+      flags.append("CLASS_B");
+    if(type.testFlag(CLASS_C))
+      flags.append("CLASS_C");
+    if(type.testFlag(CLASS_D))
+      flags.append("CLASS_D");
+    if(type.testFlag(CLASS_E))
+      flags.append("CLASS_E");
+    if(type.testFlag(CLASS_F))
+      flags.append("CLASS_F");
+    if(type.testFlag(CLASS_G))
+      flags.append("CLASS_G");
+    if(type.testFlag(TOWER))
+      flags.append("TOWER");
+    if(type.testFlag(CLEARANCE))
+      flags.append("CLEARANCE");
+    if(type.testFlag(GROUND))
+      flags.append("GROUND");
+    if(type.testFlag(DEPARTURE))
+      flags.append("DEPARTURE");
+    if(type.testFlag(APPROACH))
+      flags.append("APPROACH");
+    if(type.testFlag(MOA))
+      flags.append("MOA");
+    if(type.testFlag(RESTRICTED))
+      flags.append("RESTRICTED");
+    if(type.testFlag(PROHIBITED))
+      flags.append("PROHIBITED");
+    if(type.testFlag(WARNING))
+      flags.append("WARNING");
+    if(type.testFlag(ALERT))
+      flags.append("ALERT");
+    if(type.testFlag(DANGER))
+      flags.append("DANGER");
+    if(type.testFlag(NATIONAL_PARK))
+      flags.append("NATIONAL_PARK");
+    if(type.testFlag(MODEC))
+      flags.append("MODEC");
+    if(type.testFlag(RADAR))
+      flags.append("RADAR");
+    if(type.testFlag(TRAINING))
+      flags.append("TRAINING");
+    if(type.testFlag(GLIDERPROHIBITED))
+      flags.append("GLIDERPROHIBITED");
+    if(type.testFlag(WAVEWINDOW))
+      flags.append("WAVEWINDOW");
+    if(type.testFlag(CAUTION))
+      flags.append("CAUTION");
+    if(type.testFlag(ONLINE_OBSERVER))
+      flags.append("ONLINE_OBSERVER");
+    if(type.testFlag(FIR))
+      flags.append("FIR");
+    if(type.testFlag(UIR))
+      flags.append("UIR");
+    if(type.testFlag(GCA))
+      flags.append("GCA");
+    if(type.testFlag(MCTR))
+      flags.append("MCTR");
+    if(type.testFlag(TRSA))
+      flags.append("TRSA");
+  }
+  out.nospace().noquote() << flags.join("|");
+
+  return out;
+}
+
+QDebug operator<<(QDebug out, const map::MapAirspaceFlags& type)
+{
+  QDebugStateSaver saver(out);
+
+  QStringList flags;
+  if(type == AIRSPACE_ALTITUDE_FLAG_NONE)
+    flags.append("NONE");
+  else
+  {
+    if(type.testFlag(AIRSPACE_ALTITUDE_ALL))
+      flags.append("AIRSPACE_ALTITUDE_ALL");
+    if(type.testFlag(AIRSPACE_ALTITUDE_FLIGHTPLAN))
+      flags.append("AIRSPACE_ALTITUDE_FLIGHTPLAN");
+    if(type.testFlag(AIRSPACE_ALTITUDE_SET))
+      flags.append("AIRSPACE_ALTITUDE_SET");
+    if(type.testFlag(AIRSPACE_ALL_ON))
+      flags.append("AIRSPACE_ALL_ON");
+    if(type.testFlag(AIRSPACE_ALL_OFF))
+      flags.append("AIRSPACE_ALL_OFF");
+    if(type.testFlag(AIRSPACE_NO_MULTIPLE_Z))
+      flags.append("AIRSPACE_NO_MULTIPLE_Z");
+  }
+  out.nospace().noquote() << flags.join("|");
+
+  return out;
+}
+
+QDebug operator<<(QDebug out, const map::MapAirspaceFilter& type)
+{
+  out << "MapAirspaceFilter[";
+  out << type.flags;
+  out << type.types;
+  out << "minAltitudeFt" << type.minAltitudeFt;
+  out << "maxAltitudeFt" << type.maxAltitudeFt;
+  out << "]";
+  return out;
+}
+
 QDataStream& operator>>(QDataStream& dataStream, MapAirspaceFilter& obj)
 {
   quint32 flags;

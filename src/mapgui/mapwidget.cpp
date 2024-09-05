@@ -55,11 +55,13 @@
 #include "mappainter/mappaintlayer.h"
 #include "online/onlinedatacontroller.h"
 #include "query/airportquery.h"
+#include "query/airspacequeries.h"
 #include "query/procedurequery.h"
 #include "route/routealtitude.h"
 #include "route/routecontroller.h"
 #include "settings/settings.h"
 #include "ui_mainwindow.h"
+#include "userdata/userdatacontroller.h"
 #include "userdata/userdataicons.h"
 #include "weather/windreporter.h"
 
@@ -3284,7 +3286,7 @@ void MapWidget::restoreState()
   for(QAction *action : qAsConst(mapOverlays))
     state.restore(action);
 
-  if(OptionData::instance().getFlags() & opts::STARTUP_LOAD_MAP_SETTINGS)
+  if(OptionData::instance().getFlags().testFlag(opts::STARTUP_LOAD_MAP_SETTINGS))
     paintLayer->setShowAirspaces(settings.valueVar(lnm::MAP_AIRSPACES,
                                                    QVariant::fromValue(map::MapAirspaceFilter())).value<map::MapAirspaceFilter>());
   else
@@ -3408,13 +3410,10 @@ void MapWidget::resetSettingActionsToDefault()
                                       ui->actionShowAirspaces, ui->actionMapShowRoute, ui->actionMapShowTocTod, ui->actionMapShowAlternate,
                                       ui->actionMapShowAircraft, ui->actionMapShowCompassRose, ui->actionMapShowCompassRoseAttach,
                                       ui->actionMapShowEndurance, ui->actionMapShowSelectedAltRange, ui->actionMapShowTurnPath,
-                                      ui->actionMapAircraftCenter, ui->actionMapShowAircraftAi, ui->actionMapShowAircraftOnline,
+                                      ui->actionMapShowAircraftAi, ui->actionMapShowAircraftOnline,
                                       ui->actionMapShowAircraftAiBoat, ui->actionMapShowAircraftTrack, ui->actionInfoApproachShowMissedAppr,
                                       ui->actionMapShowGrid, ui->actionMapShowCities, ui->actionMapShowMinimumAltitude,
                                       ui->actionMapShowAirportWeather, ui->actionMapShowSunShading});
-
-  // Menu map =====================================
-  ui->actionMapAircraftCenter->setChecked(true);
 
   // Menu view =====================================
   // Button airports
@@ -3437,34 +3436,37 @@ void MapWidget::resetSettingActionsToDefault()
 
   // -----------------
   ui->actionMapShowRoute->setChecked(true);
-  ui->actionMapShowTocTod->setChecked(true);
   ui->actionMapShowAlternate->setChecked(true);
+  ui->actionMapShowTocTod->setChecked(true);
   ui->actionInfoApproachShowMissedAppr->setChecked(true);
+  // --
   ui->actionMapShowAircraft->setChecked(true);
   ui->actionMapShowAircraftTrack->setChecked(true);
   ui->actionMapShowCompassRose->setChecked(false);
   ui->actionMapShowCompassRoseAttach->setChecked(true);
+  // --
   ui->actionMapShowSelectedAltRange->setChecked(false);
   ui->actionMapShowTurnPath->setChecked(false);
   ui->actionMapShowEndurance->setChecked(false);
-
-  // -----------------
+  // --
   ui->actionMapShowAircraftAi->setChecked(true);
   ui->actionMapShowAircraftOnline->setChecked(true);
   ui->actionMapShowAircraftAiBoat->setChecked(false);
-
-  // -----------------
+  // --
   ui->actionMapShowGrid->setChecked(true);
   ui->actionMapShowCities->setChecked(true);
   ui->actionMapShowMinimumAltitude->setChecked(true);
-
-  // -----------------
+  // --
   ui->actionMapShowAirportWeather->setChecked(true);
   // Weather sources unmodified
-
-  // -----------------
-  ui->actionMapShowSunShading->setChecked(false);
+  // --
   // Sun shading data unmodified
+  ui->actionMapShowSunShading->setChecked(false);
+  // --
+
+  // Set elsewhere
+  // Map projection Mercator
+  // Map theme OpenStreetMap
 }
 
 void MapWidget::updateThemeUi(const QString& themeId)
@@ -3573,6 +3575,10 @@ void MapWidget::updateMapObjectsShown()
   mapVisible->updateVisibleObjectsStatusBar();
 
   emit shownMapFeaturesChanged(paintLayer->getShownMapTypes());
+
+#ifdef DEBUG_INFORMATION
+  printMapTypesToLog();
+#endif
 
   // Update widget
   update();

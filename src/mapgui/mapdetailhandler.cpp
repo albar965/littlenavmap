@@ -48,11 +48,12 @@ void DetailSliderAction::saveState() const
 
 void DetailSliderAction::restoreState()
 {
-  if(OptionData::instance().getFlags() & opts::STARTUP_LOAD_MAP_SETTINGS)
-  {
+  if(OptionData::instance().getFlags().testFlag(opts::STARTUP_LOAD_MAP_SETTINGS))
     sliderValue = atools::settings::Settings::instance().valueInt(settingsKey, MapLayerSettings::MAP_DEFAULT_DETAIL_LEVEL);
-    setSliderValue(sliderValue);
-  }
+  else
+    sliderValue = MapLayerSettings::MAP_DEFAULT_DETAIL_LEVEL;
+
+  setSliderValue(sliderValue);
 }
 
 QWidget *DetailSliderAction::createWidget(QWidget *parent)
@@ -175,11 +176,8 @@ void MapDetailHandler::saveState() const
 
 void MapDetailHandler::restoreState()
 {
-  if(OptionData::instance().getFlags() & opts::STARTUP_LOAD_MAP_SETTINGS)
-  {
-    sliderActionDetailLevel->restoreState();
-    sliderActionDetailLevelText->restoreState();
-  }
+  sliderActionDetailLevel->restoreState();
+  sliderActionDetailLevelText->restoreState();
 
   detailSliderChanged();
   updateActions();

@@ -52,11 +52,8 @@ void MapMarkHandler::saveState()
 
 void MapMarkHandler::restoreState()
 {
-  if(OptionData::instance().getFlags() & opts::STARTUP_LOAD_MAP_SETTINGS)
-  {
-    QVariant defaultValue = static_cast<map::MapTypes::FlagType>(map::MARK_ALL);
-    markTypes = atools::settings::Settings::instance().valueVar(lnm::MAP_MARK_DISPLAY, defaultValue).value<map::MapTypes::FlagType>();
-  }
+  if(OptionData::instance().getFlags().testFlag(opts::STARTUP_LOAD_MAP_SETTINGS))
+    markTypes = atools::settings::Settings::instance().valueVar(lnm::MAP_MARK_DISPLAY, map::MARK_ALL).value<map::MapTypes::FlagType>();
   flagsToActions();
 }
 

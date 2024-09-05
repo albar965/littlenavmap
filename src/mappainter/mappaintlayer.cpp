@@ -167,7 +167,7 @@ void MapPaintLayer::setDetailLevel(int level, int levelText)
   updateLayers();
 }
 
-const map::MapAirspaceFilter MapPaintLayer::getShownAirspacesTypesByLayer() const
+const map::MapAirspaceFilter MapPaintLayer::getShownAirspacesTypesForLayer() const
 {
   if(mapLayer == nullptr)
     return map::MapAirspaceFilter();
@@ -342,7 +342,7 @@ bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport, const 
       context.viewport = viewport;
       context.objectTypes = objectTypes;
       context.objectDisplayTypes = objectDisplayTypes;
-      context.airspaceFilterByLayer = getShownAirspacesTypesByLayer();
+      context.airspaceFilterByLayer = getShownAirspacesTypesForLayer();
       context.airspaceTextsByLayer = getShownAirspaceTextsByLayer();
       context.viewContext = mapPaintWidget->viewContext();
       context.drawFast = mapScrollDetail == opts::DETAIL_LOW && mapPaintWidget->viewContext() == Marble::Animation;

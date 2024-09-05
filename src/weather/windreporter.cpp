@@ -18,16 +18,16 @@
 #include "weather/windreporter.h"
 
 #include "app/navapp.h"
-#include "geo/marbleconverter.h"
-#include "ui_mainwindow.h"
-#include "grib/windquery.h"
-#include "settings/settings.h"
 #include "common/constants.h"
-#include "options/optiondata.h"
 #include "common/unit.h"
-#include "perf/aircraftperfcontroller.h"
-#include "mapgui/maplayer.h"
+#include "geo/marbleconverter.h"
+#include "grib/windquery.h"
 #include "gui/dialog.h"
+#include "mapgui/maplayer.h"
+#include "options/optiondata.h"
+#include "perf/aircraftperfcontroller.h"
+#include "settings/settings.h"
+#include "ui_mainwindow.h"
 
 #include <QToolButton>
 #include <QDir>
@@ -227,7 +227,7 @@ void WindReporter::saveState() const
 
 void WindReporter::restoreState()
 {
-  if(OptionData::instance().getFlags() & opts::STARTUP_LOAD_MAP_SETTINGS)
+  if(OptionData::instance().getFlags().testFlag(opts::STARTUP_LOAD_MAP_SETTINGS))
   {
     atools::settings::Settings& settings = atools::settings::Settings::instance();
 

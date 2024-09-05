@@ -247,7 +247,11 @@ public:
     return currentDistanceMarkerId;
   }
 
+  /* Shows the configuration dialog for the degree grid */
   void showGridConfiguration();
+
+  /* Logs map display settings */
+  void printMapTypesToLog();
 
 signals:
   /* Emitted when connection is established and user aircraft turned from invalid to valid */

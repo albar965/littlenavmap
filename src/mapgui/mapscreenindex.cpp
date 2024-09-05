@@ -140,7 +140,7 @@ void MapScreenIndex::updateAirspaceScreenGeometryInternal(QSet<map::MapAirspaceI
 
   if(scale->isValid() && paintLayer != nullptr)
   {
-    map::MapAirspaceFilter filter = mapWidget->getShownAirspaceTypesByLayer();
+    map::MapAirspaceFilter filter = mapWidget->getShownAirspaceTypesForLayer();
 
     AirspaceVector airspaces;
 

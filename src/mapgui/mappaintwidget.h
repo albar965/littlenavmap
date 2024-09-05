@@ -230,7 +230,7 @@ public:
   const map::MapTypes getShownMapTypes() const;
   const map::MapDisplayTypes getShownMapDisplayTypes() const;
   const map::MapAirspaceFilter& getShownAirspaces() const;
-  const map::MapAirspaceFilter getShownAirspaceTypesByLayer() const;
+  const map::MapAirspaceFilter getShownAirspaceTypesForLayer() const;
   int getShownMinimumRunwayFt() const;
 
   /* User aircraft as shown on the map */

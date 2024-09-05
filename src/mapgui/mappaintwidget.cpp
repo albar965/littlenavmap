@@ -491,9 +491,9 @@ const map::MapAirspaceFilter& MapPaintWidget::getShownAirspaces() const
   return paintLayer->getShownAirspaces();
 }
 
-const map::MapAirspaceFilter MapPaintWidget::getShownAirspaceTypesByLayer() const
+const map::MapAirspaceFilter MapPaintWidget::getShownAirspaceTypesForLayer() const
 {
-  return paintLayer->getShownAirspacesTypesByLayer();
+  return paintLayer->getShownAirspacesTypesForLayer();
 }
 
 ApronGeometryCache *MapPaintWidget::getApronGeometryCache()

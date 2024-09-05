@@ -3257,10 +3257,12 @@ void MainWindow::resetMapObjectsShown()
 
   mapWidget->resetSettingActionsToDefault();
   mapWidget->resetSettingsToDefault();
-  NavApp::getUserdataController()->resetSettingsToDefault();
 
+  mapThemeHandler->resetToDefault();
+  windReporter->resetSettingsToDefault();
+
+  NavApp::getUserdataController()->resetSettingsToDefault();
   NavApp::getAirspaceController()->resetSettingsToDefault();
-  NavApp::getWindReporter()->resetSettingsToDefault();
   NavApp::getMapMarkHandler()->resetSettingsToDefault();
   NavApp::getMapAirportHandler()->resetSettingsToDefault();
   NavApp::getMapDetailHandler()->defaultMapDetail();
@@ -3642,6 +3644,8 @@ void MainWindow::mainWindowShownDelayed()
 
   // Log startup time
   Application::startupFinished(Q_FUNC_INFO);
+
+  mapWidget->printMapTypesToLog();
 
   qDebug() << Q_FUNC_INFO << "leave";
 }
@@ -4135,7 +4139,7 @@ void MainWindow::restoreStateMain()
   updateMapKeys();
 
   widgetState.setBlockSignals(true);
-  if(OptionData::instance().getFlags() & opts::STARTUP_LOAD_MAP_SETTINGS)
+  if(OptionData::instance().getFlags().testFlag(opts::STARTUP_LOAD_MAP_SETTINGS))
   {
     // Restore map settings if requested by the user
     widgetState.restore({ui->actionMapShowVor, ui->actionMapShowNdb, ui->actionMapShowWp,
@@ -4143,10 +4147,10 @@ void MainWindow::restoreStateMain()
                          ui->actionMapShowVictorAirways, ui->actionMapShowJetAirways, ui->actionMapShowTracks, ui->actionShowAirspaces,
                          ui->actionMapShowRoute, ui->actionMapShowTocTod, ui->actionMapShowAlternate, ui->actionMapShowAircraft,
                          ui->actionMapShowCompassRose, ui->actionMapShowCompassRoseAttach, ui->actionMapShowEndurance,
-                         ui->actionMapShowSelectedAltRange, ui->actionMapShowTurnPath, ui->actionMapAircraftCenter,
-                         ui->actionMapShowAircraftAi, ui->actionMapShowAircraftOnline, ui->actionMapShowAircraftAiBoat,
-                         ui->actionMapShowAircraftTrack, ui->actionInfoApproachShowMissedAppr, ui->actionSearchLogdataShowDirect,
-                         ui->actionSearchLogdataShowRoute, ui->actionSearchLogdataShowTrack});
+                         ui->actionMapShowSelectedAltRange, ui->actionMapShowTurnPath, ui->actionMapShowAircraftAi,
+                         ui->actionMapShowAircraftOnline, ui->actionMapShowAircraftAiBoat, ui->actionMapShowAircraftTrack,
+                         ui->actionInfoApproachShowMissedAppr, ui->actionSearchLogdataShowDirect, ui->actionSearchLogdataShowRoute,
+                         ui->actionSearchLogdataShowTrack});
   }
   else
     mapWidget->resetSettingActionsToDefault();
@@ -4156,7 +4160,7 @@ void MainWindow::restoreStateMain()
                        ui->actionRouteSaveApprWaypointsOpt, ui->actionRouteSaveAirwayWaypointsOpt, ui->actionLogdataCreateLogbook,
                        ui->actionAircraftPerformanceWarnMismatch, ui->actionMapShowSunShading, ui->actionMapShowAirportWeather,
                        ui->actionMapShowMinimumAltitude, ui->actionRunWebserver, ui->actionShowAllowDocking, ui->actionShowAllowMoving,
-                       ui->actionShowWindowTitleBar, ui->actionWindowStayOnTop});
+                       ui->actionShowWindowTitleBar, ui->actionWindowStayOnTop, ui->actionMapAircraftCenter});
 
   widgetState.setBlockSignals(false);
 

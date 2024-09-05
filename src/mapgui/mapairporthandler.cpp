@@ -250,10 +250,9 @@ void MapAirportHandler::saveState()
 
 void MapAirportHandler::restoreState()
 {
-  if(OptionData::instance().getFlags() & opts::STARTUP_LOAD_MAP_SETTINGS)
+  if(OptionData::instance().getFlags().testFlag(opts::STARTUP_LOAD_MAP_SETTINGS))
   {
-    QVariant defaultValue = static_cast<map::MapTypes::FlagType>(map::AIRPORT_DEFAULT);
-    airportTypes = atools::settings::Settings::instance().valueVar(lnm::MAP_AIRPORT, defaultValue).value<map::MapTypes::FlagType>();
+    airportTypes = atools::settings::Settings::instance().valueVar(lnm::MAP_AIRPORT, map::AIRPORT_DEFAULT).value<map::MapTypes::FlagType>();
     sliderActionRunwayLength->restoreState();
   }
   actionEmpty->setEnabled(OptionData::instance().getFlags() & opts::MAP_EMPTY_AIRPORTS);

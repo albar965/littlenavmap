@@ -420,6 +420,10 @@ struct MapAirspaceFilter
   int minAltitudeFt, maxAltitudeFt;
 };
 
+QDebug operator<<(QDebug out, const map::MapAirspaceFilter& type);
+QDebug operator<<(QDebug out, const map::MapAirspaceFlags& type);
+QDebug operator<<(QDebug out, const map::MapAirspaceTypes& type);
+
 QDataStream& operator>>(QDataStream& dataStream, map::MapAirspaceFilter& obj);
 QDataStream& operator<<(QDataStream& dataStream, const map::MapAirspaceFilter& obj);
 
@@ -513,6 +517,8 @@ enum MapWeatherSource
 
 QString mapWeatherSourceString(map::MapWeatherSource source);
 QString mapWeatherSourceStringShort(map::MapWeatherSource source);
+
+QDebug operator<<(QDebug out, const map::MapWeatherSource& type);
 
 } // namespace map
 
