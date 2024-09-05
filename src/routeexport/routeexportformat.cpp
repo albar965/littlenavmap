@@ -367,7 +367,7 @@ void RouteExportFormatMap::init()
   FMT(TDSGTNXIWP,    AIRPORTS|GARMIN_WP,   SUP % "gfp",     tr("Garmin"),    tr("TDS GTNXi with user defined waypoints")                   );
   FMT(JFBAE,         AIRPORTS,             S0P % "rte",     tr("Aircraft"),  tr("JustFlight BAE-146")                                      );
   FMT(KLN90B,        AIRPORTS,             "kln.pln",       tr("Garmin"),    tr("KLN 90B")                                                 );
-  FMT(XPFFT7,        AIRPORTS|CYCLE|NDALL, SD % "_T7.fms",  tr("Aircraft"),  tr("FlightFactor Boeing 777")                                                 );
+  FMT(XPFFT7,        AIRPORTS|CYCLE|NDALL, SDP % "fms",     tr("Aircraft"),  tr("FlightFactor Boeing 777")                                                 );
   /* *INDENT-ON* */
 
 #undef FMT
@@ -547,7 +547,7 @@ void RouteExportFormatMap::updateDefaultPaths()
   (*this)[TDSGTNXIWP   ].DP(tdsGtmGfp);
   (*this)[JFBAE        ].DP(msfsBasePath % SEP % "Community" % SEP % "JustFlight BAE-146" % SEP % "justflight-aircraft-146" % SEP % "Work" % SEP % "JustFlight" % SEP % "FlightPlans");
   (*this)[KLN90B       ].DP(msfsBasePath % SEP % "Community" % SEP % "falcon71-kln90b" % SEP % "flightplan" % SEP % "kln");
-  (*this)[XPFFT7       ].DP(xpFilesPath12);
+  (*this)[XPFFT7       ].DP(xpFilesPath12 % SEP % "Custom Data" % SEP % "STSFF" % SEP % "co-routes");
   /* *INDENT-ON* */
 #undef DP
 
