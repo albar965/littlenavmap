@@ -1840,7 +1840,8 @@ QStringList RouteStringReader::cleanItemList(const QStringList& items, float& sp
     if(match.hasMatch())
     {
       item = match.captured(1);
-      appendWarning(tr("Ignoring speed and altitude at waypoint %1.").arg(item));
+      appendWarning(tr("Ignoring speed and altitude at waypoint %1. "
+                       "If necessary, adjust your cruising altitude manually.").arg(item));
     }
 
     if(i < items.size() - 1)

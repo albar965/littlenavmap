@@ -4085,7 +4085,6 @@ void MapWidget::setDetailLevel(int level, int levelText)
   }
 }
 
-#ifdef DEBUG_INFORMATION
 void MapWidget::printMapTypesToLog()
 {
   qDebug() << Q_FUNC_INFO << "Shown on map ===============================================" << endl
@@ -4102,8 +4101,6 @@ void MapWidget::printMapTypesToLog()
            << "getDetailLevelText" << NavApp::getMapDetailHandler()->getDetailLevelText() << endl
            << "===============================================";
 }
-
-#endif
 
 void MapWidget::debugMovingAircraft(QInputEvent *event, int upDown)
 {
