@@ -2953,11 +2953,10 @@ void RouteController::tableContextMenu(const QPoint& pos)
     ui->actionMapRangeRings->setEnabled(true);
     ui->actionRouteSetMark->setEnabled(true);
 
-#ifdef DEBUG_MOVING_AIRCRAFT
-    ui->actionRouteActivateLeg->setEnabled(routeLeg->isValidWaypoint());
-#else
-    ui->actionRouteActivateLeg->setEnabled(routeLeg->isValid() && NavApp::isConnected());
-#endif
+    if(NavApp::isDebugMovingAircraft())
+      ui->actionRouteActivateLeg->setEnabled(routeLeg->isValidWaypoint());
+    else
+      ui->actionRouteActivateLeg->setEnabled(routeLeg->isValid() && NavApp::isConnected());
   }
   else
   {

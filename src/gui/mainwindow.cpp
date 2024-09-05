@@ -464,66 +464,75 @@ MainWindow::MainWindow()
 
   if(settings.getAndStoreValue(lnm::OPTIONS_DEBUG_MENU, false).toBool())
   {
-    QAction *debugAction1 = new QAction("DEBUG - Dump Route", ui->menuHelp);
-    this->addAction(debugAction1);
+    debugActionDumpRoute = new QAction("DEBUG - Dump Route", ui->menuHelp);
+    this->addAction(debugActionDumpRoute);
 
-    QAction *debugAction2 = new QAction("DEBUG - Dump flightplan", ui->menuHelp);
-    this->addAction(debugAction2);
+    debugActionDumpFlightplan = new QAction("DEBUG - Dump flightplan", ui->menuHelp);
+    this->addAction(debugActionDumpFlightplan);
 
-    QAction *debugAction3 = new QAction("DEBUG - Force check updates", ui->menuHelp);
-    this->addAction(debugAction3);
+    debugActionForceUpdates = new QAction("DEBUG - Force check updates", ui->menuHelp);
+    this->addAction(debugActionForceUpdates);
 
-    QAction *debugAction4 = new QAction("DEBUG - Reload flight plan", ui->menuHelp);
-    this->addAction(debugAction4);
+    debugActionReloadPlan = new QAction("DEBUG - Reload flight plan", ui->menuHelp);
+    this->addAction(debugActionReloadPlan);
 
-    QAction *debugAction5 = new QAction("DEBUG - Open flight plan in editor", ui->menuHelp);
-    this->addAction(debugAction5);
+    debugActionPlanEdit = new QAction("DEBUG - Open flight plan in editor", ui->menuHelp);
+    this->addAction(debugActionPlanEdit);
 
-    QAction *debugAction6 = new QAction("DEBUG - Open perf in editor", ui->menuHelp);
-    this->addAction(debugAction6);
+    debugActionPerfEdit = new QAction("DEBUG - Open perf in editor", ui->menuHelp);
+    this->addAction(debugActionPerfEdit);
 
-    QAction *debugAction7 = new QAction("DEBUG - Dump map layers", ui->menuHelp);
-    this->addAction(debugAction7);
+    debugActionDumpLayers = new QAction("DEBUG - Dump map layers", ui->menuHelp);
+    this->addAction(debugActionDumpLayers);
 
-    QAction *debugAction8 = new QAction("DEBUG - Reset update timestamp to -2 days", ui->menuHelp);
-    this->addAction(debugAction8);
+    debugActionResetUpdate = new QAction("DEBUG - Reset update timestamp to -2 days", ui->menuHelp);
+    this->addAction(debugActionResetUpdate);
 
-    QAction *debugAction9 = new QAction("DEBUG - Crash by throwing an exception", ui->menuHelp);
-    this->addAction(debugAction9);
+    debugActionThrowException = new QAction("DEBUG - Crash by throwing an exception", ui->menuHelp);
+    this->addAction(debugActionThrowException);
 
-    QAction *debugAction10 = new QAction("DEBUG - Crash with a segment violation", ui->menuHelp);
-    this->addAction(debugAction10);
+    debugActionSegfault = new QAction("DEBUG - Crash with a segment violation", ui->menuHelp);
+    this->addAction(debugActionSegfault);
 
-    QAction *debugAction11 = new QAction("DEBUG - Crash with an assert", ui->menuHelp);
-    this->addAction(debugAction11);
+    debugActionAssert = new QAction("DEBUG - Crash with an assert", ui->menuHelp);
+    this->addAction(debugActionAssert);
 
-    ui->menuHelp->addSeparator();
-    ui->menuHelp->addSeparator();
-    ui->menuHelp->addAction(debugAction1);
-    ui->menuHelp->addAction(debugAction2);
-    ui->menuHelp->addAction(debugAction3);
-    ui->menuHelp->addAction(debugAction4);
-    ui->menuHelp->addAction(debugAction5);
-    ui->menuHelp->addAction(debugAction6);
-    ui->menuHelp->addAction(debugAction7);
-    ui->menuHelp->addAction(debugAction8);
+    debugActionMoveAircraft = new QAction("DEBUG - Enable aircraft movement with mouse", ui->menuHelp);
+    debugActionMoveAircraft->setCheckable(true);
+    this->addAction(debugActionMoveAircraft);
 
     ui->menuHelp->addSeparator();
-    ui->menuHelp->addAction(debugAction9);
-    ui->menuHelp->addAction(debugAction10);
-    ui->menuHelp->addAction(debugAction11);
+    ui->menuHelp->addSeparator();
+    ui->menuHelp->addAction(debugActionDumpRoute);
+    ui->menuHelp->addAction(debugActionDumpFlightplan);
+    ui->menuHelp->addAction(debugActionForceUpdates);
+    ui->menuHelp->addAction(debugActionReloadPlan);
+    ui->menuHelp->addAction(debugActionPlanEdit);
+    ui->menuHelp->addAction(debugActionPerfEdit);
+    ui->menuHelp->addAction(debugActionDumpLayers);
+    ui->menuHelp->addAction(debugActionResetUpdate);
 
-    connect(debugAction1, &QAction::triggered, this, &MainWindow::debugActionTriggered1);
-    connect(debugAction2, &QAction::triggered, this, &MainWindow::debugActionTriggered2);
-    connect(debugAction3, &QAction::triggered, this, &MainWindow::debugActionTriggered3);
-    connect(debugAction4, &QAction::triggered, this, &MainWindow::debugActionTriggered4);
-    connect(debugAction5, &QAction::triggered, this, &MainWindow::debugActionTriggered5);
-    connect(debugAction6, &QAction::triggered, this, &MainWindow::debugActionTriggered6);
-    connect(debugAction7, &QAction::triggered, this, &MainWindow::debugActionTriggered7);
-    connect(debugAction8, &QAction::triggered, this, &MainWindow::debugActionTriggered8);
-    connect(debugAction9, &QAction::triggered, this, &MainWindow::debugActionTriggered9);
-    connect(debugAction10, &QAction::triggered, this, &MainWindow::debugActionTriggered10);
-    connect(debugAction11, &QAction::triggered, this, &MainWindow::debugActionTriggered11);
+    QMenu *crashMenu = new QMenu("DEBUG - Crash", ui->menuHelp);
+    crashMenu->addAction(debugActionThrowException);
+    crashMenu->addAction(debugActionSegfault);
+    crashMenu->addAction(debugActionAssert);
+    ui->menuHelp->addMenu(crashMenu);
+
+    ui->menuHelp->addSeparator();
+    ui->menuHelp->addAction(debugActionMoveAircraft);
+
+    connect(debugActionDumpRoute, &QAction::triggered, this, &MainWindow::debugActionTriggeredDumpRoute);
+    connect(debugActionDumpFlightplan, &QAction::triggered, this, &MainWindow::debugActionTriggeredDumpFlightplan);
+    connect(debugActionForceUpdates, &QAction::triggered, this, &MainWindow::debugActionTriggeredForceUpdates);
+    connect(debugActionReloadPlan, &QAction::triggered, this, &MainWindow::debugActionTriggeredReloadPlan);
+    connect(debugActionPlanEdit, &QAction::triggered, this, &MainWindow::debugActionTriggeredPlanEdit);
+    connect(debugActionPerfEdit, &QAction::triggered, this, &MainWindow::debugActionTriggeredPerfEdit);
+    connect(debugActionDumpLayers, &QAction::triggered, this, &MainWindow::debugActionTriggeredDumpLayers);
+    connect(debugActionResetUpdate, &QAction::triggered, this, &MainWindow::debugActionTriggeredResetUpdate);
+    connect(debugActionThrowException, &QAction::triggered, this, &MainWindow::debugActionTriggeredThrowException);
+    connect(debugActionSegfault, &QAction::triggered, this, &MainWindow::debugActionTriggeredSegfault);
+    connect(debugActionAssert, &QAction::triggered, this, &MainWindow::debugActionTriggeredAssert);
+    connect(debugActionMoveAircraft, &QAction::toggled, this, &MainWindow::updateActionStates);
   }
 }
 
@@ -639,7 +648,7 @@ void MainWindow::dataExchangeDataFetched(atools::util::Properties properties)
     qDebug() << Q_FUNC_INFO << "properties empty";
 }
 
-void MainWindow::debugActionTriggered1()
+void MainWindow::debugActionTriggeredDumpRoute()
 {
   qDebug() << "======================================================================================";
   qDebug() << Q_FUNC_INFO;
@@ -647,7 +656,7 @@ void MainWindow::debugActionTriggered1()
   qDebug() << "======================================================================================";
 }
 
-void MainWindow::debugActionTriggered2()
+void MainWindow::debugActionTriggeredDumpFlightplan()
 {
   qDebug() << "======================================================================================";
   qDebug() << Q_FUNC_INFO;
@@ -655,52 +664,57 @@ void MainWindow::debugActionTriggered2()
   qDebug() << "======================================================================================";
 }
 
-void MainWindow::debugActionTriggered3()
+void MainWindow::debugActionTriggeredForceUpdates()
 {
   NavApp::checkForUpdates(OptionData::instance().getUpdateChannels(), false /* manual */, false /* startup */, true /* forceDebug */);
 }
 
-void MainWindow::debugActionTriggered4()
+void MainWindow::debugActionTriggeredReloadPlan()
 {
   QString file = routeController->getRouteFilename();
   routeController->loadFlightplan(file, true /* correctAndWarn */);
 }
 
-void MainWindow::debugActionTriggered5()
+void MainWindow::debugActionTriggeredPlanEdit()
 {
   desktopServices->openFile(routeController->getRouteFilename());
 }
 
-void MainWindow::debugActionTriggered6()
+void MainWindow::debugActionTriggeredPerfEdit()
 {
   desktopServices->openFile(NavApp::getAircraftPerfController()->getCurrentFilename());
 }
 
-void MainWindow::debugActionTriggered7()
+void MainWindow::debugActionTriggeredDumpLayers()
 {
   mapWidget->dumpMapLayers();
 }
 
-void MainWindow::debugActionTriggered8()
+void MainWindow::debugActionTriggeredResetUpdate()
 {
   Settings::instance().setValueVar(lnm::OPTIONS_UPDATE_LAST_CHECKED, QDateTime::currentDateTime().toSecsSinceEpoch() - 3600L * 48L);
 }
 
-void MainWindow::debugActionTriggered9()
+void MainWindow::debugActionTriggeredThrowException()
 {
   throw std::exception();
 }
 
-void MainWindow::debugActionTriggered10()
+void MainWindow::debugActionTriggeredSegfault()
 {
   char *ptr = nullptr;
   *ptr = '\0';
 }
 
-void MainWindow::debugActionTriggered11()
+void MainWindow::debugActionTriggeredAssert()
 {
   QVector<int> vector;
   vector.constFirst();
+}
+
+bool MainWindow::isDebugMovingAircraft() const
+{
+  return debugActionMoveAircraft != nullptr ? debugActionMoveAircraft->isChecked() : false;
 }
 
 void MainWindow::updateMap() const
@@ -732,11 +746,7 @@ void MainWindow::showOnlineDownloads()
 
 void MainWindow::showChangelog()
 {
-#ifdef Q_OS_MACOS
   desktopServices->openFile(QApplication::applicationDirPath() % atools::SEP % "CHANGELOG.txt");
-#else
-  desktopServices->openFile(QApplication::applicationDirPath() % atools::SEP % "CHANGELOG.txt");
-#endif
 }
 
 void MainWindow::showDonationPage()
@@ -3878,24 +3888,27 @@ void MainWindow::updateActionStates()
   bool hasTracksEnabled = NavApp::hasTracksEnabled();
   ui->actionRouteDownloadTracksNow->setEnabled(hasTracksEnabled);
 
-#ifdef DEBUG_MOVING_AIRCRAFT
-  ui->actionMapShowAircraft->setEnabled(true);
-  ui->actionMapAircraftCenter->setEnabled(true);
-  ui->actionMapAircraftCenterNow->setEnabled(true);
-  ui->actionMapShowAircraftAi->setEnabled(true);
-  ui->actionMapShowAircraftOnline->setEnabled(true);
-  ui->actionMapShowAircraftAiBoat->setEnabled(true);
-#else
-  ui->actionMapShowAircraft->setEnabled(NavApp::isConnected());
-  ui->actionMapAircraftCenter->setEnabled(NavApp::isConnected());
-  ui->actionMapAircraftCenterNow->setEnabled(NavApp::isConnectedAndAircraft());
+  if(NavApp::isDebugMovingAircraft())
+  {
+    ui->actionMapShowAircraft->setEnabled(true);
+    ui->actionMapAircraftCenter->setEnabled(true);
+    ui->actionMapAircraftCenterNow->setEnabled(true);
+    ui->actionMapShowAircraftAi->setEnabled(true);
+    ui->actionMapShowAircraftOnline->setEnabled(true);
+    ui->actionMapShowAircraftAiBoat->setEnabled(true);
+  }
+  else
+  {
+    ui->actionMapShowAircraft->setEnabled(NavApp::isConnected());
+    ui->actionMapAircraftCenter->setEnabled(NavApp::isConnected());
+    ui->actionMapAircraftCenterNow->setEnabled(NavApp::isConnectedAndAircraft());
 
-  // AI, multiplayer or online clients
-  ui->actionMapShowAircraftAi->setEnabled(NavApp::isConnected() && NavApp::isFetchAiAircraft());
-  ui->actionMapShowAircraftOnline->setEnabled(NavApp::getOnlinedataController()->isNetworkActive());
+    // AI, multiplayer or online clients
+    ui->actionMapShowAircraftAi->setEnabled(NavApp::isConnected() && NavApp::isFetchAiAircraft());
+    ui->actionMapShowAircraftOnline->setEnabled(NavApp::getOnlinedataController()->isNetworkActive());
 
-  ui->actionMapShowAircraftAiBoat->setEnabled(NavApp::isConnected() && NavApp::isFetchAiShip());
-#endif
+    ui->actionMapShowAircraftAiBoat->setEnabled(NavApp::isConnected() && NavApp::isFetchAiShip());
+  }
 
   ui->actionConnectSimulatorToggle->blockSignals(true);
   ui->actionConnectSimulatorToggle->setChecked(NavApp::isConnected());

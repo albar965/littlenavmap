@@ -295,6 +295,9 @@ public:
   /* Start installation for Little Xpconnect */
   void installXpconnect();
 
+  /* If enabled an aircraft can be moved around the map using Ctr+Shift+Movement, Ctr+Shift+Whell changes altitude */
+  bool isDebugMovingAircraft() const;
+
 signals:
   /* Emitted when window is shown the first time */
   void windowShown();
@@ -548,17 +551,17 @@ private:
   /* Called by DataExchangeFetcher::dataExchangeDataFetched(). Takes command line options from another instance. */
   void dataExchangeDataFetched(atools::util::Properties properties);
 
-  void debugActionTriggered1();
-  void debugActionTriggered2();
-  void debugActionTriggered3();
-  void debugActionTriggered4();
-  void debugActionTriggered5();
-  void debugActionTriggered6();
-  void debugActionTriggered7();
-  void debugActionTriggered8();
-  void debugActionTriggered9();
-  void debugActionTriggered10();
-  void debugActionTriggered11();
+  void debugActionTriggeredDumpRoute();
+  void debugActionTriggeredDumpFlightplan();
+  void debugActionTriggeredForceUpdates();
+  void debugActionTriggeredReloadPlan();
+  void debugActionTriggeredPlanEdit();
+  void debugActionTriggeredPerfEdit();
+  void debugActionTriggeredDumpLayers();
+  void debugActionTriggeredResetUpdate();
+  void debugActionTriggeredThrowException();
+  void debugActionTriggeredSegfault();
+  void debugActionTriggeredAssert();
 
 #ifdef DEBUG_DUMP_SHORTCUTS
   void printShortcuts();
@@ -649,6 +652,12 @@ private:
 
   /* Call debugDumpContainerSizes() every 30 seconds */
   QTimer debugDumpContainerSizesTimer;
+
+  QAction *debugActionDumpRoute = nullptr, *debugActionDumpFlightplan = nullptr, *debugActionForceUpdates = nullptr,
+          *debugActionReloadPlan = nullptr, *debugActionPlanEdit = nullptr,
+          *debugActionPerfEdit = nullptr, *debugActionDumpLayers = nullptr, *debugActionResetUpdate = nullptr,
+          *debugActionThrowException = nullptr, *debugActionSegfault = nullptr,
+          *debugActionAssert = nullptr, *debugActionMoveAircraft = nullptr;
 };
 
 #endif // LITTLENAVMAP_MAINWINDOW_H

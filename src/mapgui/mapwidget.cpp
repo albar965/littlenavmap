@@ -537,10 +537,11 @@ bool MapWidget::event(QEvent *event)
 {
   if(event->type() == QEvent::ToolTip)
   {
-#ifdef DEBUG_MOVING_AIRCRAFT
-    if(QGuiApplication::queryKeyboardModifiers() == (Qt::ControlModifier | Qt::ShiftModifier))
-      return QWidget::event(event);
-#endif
+    if(NavApp::isDebugMovingAircraft())
+    {
+      if(QGuiApplication::queryKeyboardModifiers() == (Qt::ControlModifier | Qt::ShiftModifier))
+        return QWidget::event(event);
+    }
 
     if(mouseState == mw::NONE)
     {
@@ -1317,18 +1318,15 @@ void MapWidget::wheelEvent(QWheelEvent *event)
                   (std::abs(lastWheelAngleX) >= ANGLE_THRESHOLD && modifiers == Qt::AltModifier);
   bool directionIn = lastWheelAngleY > 0;
 
-#ifdef DEBUG_MOVING_AIRCRAFT
-  if(modifiers == (Qt::ControlModifier | Qt::ShiftModifier) ||
-     modifiers == (Qt::ControlModifier | Qt::ShiftModifier | Qt::AltModifier))
+  if(NavApp::isDebugMovingAircraft() && (modifiers == (Qt::ControlModifier | Qt::ShiftModifier) ||
+                                         modifiers == (Qt::ControlModifier | Qt::ShiftModifier | Qt::AltModifier)))
   {
     if(angleDeltaY > 0)
       debugMovingAircraft(event, -1);
     else if(angleDeltaY < 0)
       debugMovingAircraft(event, 1);
   }
-  else
-#endif
-  if(accepted)
+  else if(accepted)
   {
     bool reverse = OptionData::instance().getFlags().testFlag(opts::GUI_REVERSE_WHEEL);
     if(reverse)
@@ -1749,11 +1747,12 @@ void MapWidget::mouseMoveEvent(QMouseEvent *event)
   if(!isActiveWindow())
     return;
 
-#ifdef DEBUG_MOVING_AIRCRAFT
-  if(event->modifiers() == (Qt::ControlModifier | Qt::ShiftModifier) ||
-     event->modifiers() == (Qt::ControlModifier | Qt::ShiftModifier | Qt::AltModifier))
-    debugMovingAircraft(event, 0.f);
-#endif
+  if(NavApp::isDebugMovingAircraft())
+  {
+    if(event->modifiers() == (Qt::ControlModifier | Qt::ShiftModifier) ||
+       event->modifiers() == (Qt::ControlModifier | Qt::ShiftModifier | Qt::AltModifier))
+      debugMovingAircraft(event, 0.f);
+  }
 
   const MapScreenIndex *screenIndex = getScreenIndexConst();
   qreal lon = 0., lat = 0.;
@@ -4080,7 +4079,26 @@ void MapWidget::setDetailLevel(int level, int levelText)
   }
 }
 
-#ifdef DEBUG_MOVING_AIRCRAFT
+#ifdef DEBUG_INFORMATION
+void MapWidget::printMapTypesToLog()
+{
+  qDebug() << Q_FUNC_INFO << "Shown on map ===============================================" << endl
+           << " - getShownMapDisplayTypes" << getShownMapDisplayTypes() << endl
+           << " - getShownMapTypes" << getShownMapTypes() << endl
+           << " - getShownAirspaces" << getShownAirspaces() << endl
+           << " - getAirspaceSources" << queries->getAirspaceQueries()->getAirspaceSources() << endl
+           << " - getMapWeatherSource" << getMapWeatherSource() << endl
+           << " - getShownMinimumRunwayFt" << getShownMinimumRunwayFt() << endl
+           << " - Userdata getSelectedTypes" << NavApp::getUserdataController()->getSelectedTypes() << endl
+           << " - getMarkTypes" << NavApp::getMapMarkHandler()->getMarkTypes() << endl
+           << " - projection" << projection() << "getCurrentThemeId" << getCurrentThemeId() << endl
+           << " - getDetailLevel" << NavApp::getMapDetailHandler()->getDetailLevel()
+           << "getDetailLevelText" << NavApp::getMapDetailHandler()->getDetailLevelText() << endl
+           << "===============================================";
+}
+
+#endif
+
 void MapWidget::debugMovingAircraft(QInputEvent *event, int upDown)
 {
   using atools::fs::sc::SimConnectData;
@@ -4155,8 +4173,6 @@ void MapWidget::debugMovingAircraft(QInputEvent *event, int upDown)
       if(projectionDistance < map::INVALID_DISTANCE_VALUE)
         alt = NavApp::getAltitudeLegs().getAltitudeForDistance(route.getTotalDistance() - projectionDistance);
     }
-
-    qDebug() << Q_FUNC_INFO << "alt" << alt;
 
     const atools::fs::perf::AircraftPerf& perf = NavApp::getAircraftPerformance();
     float vertSpeed = 0.f, tas = 0.f, fuelflow = 0.f, totalFuel = perf.getUsableFuelLbs();
@@ -4247,5 +4263,3 @@ void MapWidget::debugMovingAircraft(QInputEvent *event, int upDown)
     lastPoint = eventPos;
   }
 }
-
-#endif

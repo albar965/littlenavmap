@@ -1020,6 +1020,11 @@ bool NavApp::isMenuToolTipsVisible()
   return getMainUi()->menuFile->toolTipsVisible();
 }
 
+bool NavApp::isDebugMovingAircraft()
+{
+  return mainWindow->isDebugMovingAircraft();
+}
+
 MapWidget *NavApp::getMapWidgetGui()
 {
   return mainWindow->getMapWidget();

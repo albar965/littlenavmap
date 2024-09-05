@@ -30,9 +30,6 @@
 // #define DEBUG_APPROACH_PAINT
 // #define DEBUG_ROUTE_PAINT
 
-/* Use Shift+Ctrl-Mousemove to simulate an aircraft */
-// #define DEBUG_MOVING_AIRCRAFT
-
 /* Print the main window state as a hex dump into the log */
 // #define DEBUG_CREATE_WINDOW_STATE
 

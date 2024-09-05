@@ -460,6 +460,8 @@ private:
   /* true if point is not hidden by globe */
   bool pointVisible(const QPoint& point);
 
+  void debugMovingAircraft(QInputEvent *event, int upDown);
+
   int screenSearchDistance /* Radius for click sensitivity */,
       screenSearchDistanceTooltip /* Radius for tooltip sensitivity */;
 
@@ -542,10 +544,6 @@ private:
 
   QPushButton *pushButtonExitFullscreen = nullptr;
 
-#ifdef DEBUG_MOVING_AIRCRAFT
-  void debugMovingAircraft(QInputEvent *event, int upDown);
-
-#endif
 };
 
 #endif // LITTLENAVMAP_NAVMAPWIDGET_H

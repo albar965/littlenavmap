@@ -1230,11 +1230,7 @@ void InfoController::tracksChanged()
 void InfoController::updateUserAircraftText()
 {
   Ui::MainWindow *ui = NavApp::getMainUi();
-#ifdef DEBUG_MOVING_AIRCRAFT
-  if(/* DISABLES CODE */ (true))
-#else
-  if(NavApp::isConnectedActive())
-#endif
+  if(NavApp::isConnectedActive() || NavApp::isDebugMovingAircraft())
   {
     if(NavApp::isUserAircraftValid())
     {
@@ -1265,11 +1261,7 @@ void InfoController::updateUserAircraftText()
 void InfoController::updateAircraftProgressText()
 {
   Ui::MainWindow *ui = NavApp::getMainUi();
-#ifdef DEBUG_MOVING_AIRCRAFT
-  if(/* DISABLES CODE */ (true))
-#else
-  if(NavApp::isConnected())
-#endif
+  if(NavApp::isConnected() || NavApp::isDebugMovingAircraft())
   {
     if(NavApp::isUserAircraftValid())
     {
@@ -1300,11 +1292,7 @@ void InfoController::updateAircraftProgressText()
 void InfoController::updateAiAircraftText()
 {
   Ui::MainWindow *ui = NavApp::getMainUi();
-#ifdef DEBUG_MOVING_AIRCRAFT
-  if(/* DISABLES CODE */ (true))
-#else
-  if(NavApp::isConnected())
-#endif
+  if(NavApp::isConnected() || NavApp::isDebugMovingAircraft())
   {
     if(NavApp::isUserAircraftValid())
     {

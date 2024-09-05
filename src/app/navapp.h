@@ -412,6 +412,9 @@ public:
   /* true if tooltips in menus are visible */
   static bool isMenuToolTipsVisible();
 
+  /* Fake aircraft movement enabled in debug menu */
+  static bool isDebugMovingAircraft();
+
   static void setToolTipsEnabledMainMenu(bool enabled);
 
   static const atools::gui::DataExchange *getDataExchangeConst();
