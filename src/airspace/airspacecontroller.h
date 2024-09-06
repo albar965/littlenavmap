@@ -18,12 +18,17 @@
 #ifndef LNM_AIRSPACECONTROLLER_H
 #define LNM_AIRSPACECONTROLLER_H
 
-#include "common/maptypes.h"
+#include "common/mapflags.h"
 #include "fs/fspaths.h"
 
 #include <QObject>
 
+class AirspaceQueries;
 namespace atools {
+
+namespace geo {
+class Pos;
+}
 namespace fs {
 namespace userdata {
 class AirspaceReaderBase;
@@ -45,9 +50,6 @@ class MapLayer;
 class AirspaceToolBarHandler;
 class MainWindow;
 
-typedef  QHash<map::MapAirspaceSources, AirspaceQuery *> AirspaceQueryMapType;
-typedef  QVector<const map::MapAirspace *> AirspaceVector;
-
 /*
  * Wraps the airspace queries for nav, sim, user and online airspaces.
  * Provides a method to import user airspaces recursively from a folder.
@@ -58,33 +60,11 @@ class AirspaceController
   Q_OBJECT
 
 public:
-  explicit AirspaceController(MainWindow *mainWindowParam, atools::sql::SqlDatabase *dbSim,
-                              atools::sql::SqlDatabase *dbNav, atools::sql::SqlDatabase *dbUser,
-                              atools::sql::SqlDatabase *dbOnline);
+  explicit AirspaceController(MainWindow *mainWindowParam);
   virtual ~AirspaceController() override;
 
   AirspaceController(const AirspaceController& other) = delete;
   AirspaceController& operator=(const AirspaceController& other) = delete;
-
-  /* Get airspace or online center by id and source database. Airspace is not valid if not found. */
-  void getAirspaceById(map::MapAirspace& airspace, map::MapAirspaceId id);
-  map::MapAirspace getAirspaceById(map::MapAirspaceId id);
-
-  bool hasAirspaceById(map::MapAirspaceId id);
-
-  /* Get record with all rows from atc table (online center) */
-  atools::sql::SqlRecord getOnlineAirspaceRecordById(int airspaceId);
-
-  /* Get boundary merged with scenery and file metadata records. Not for online centers. */
-  atools::sql::SqlRecord getAirspaceInfoRecordById(map::MapAirspaceId id);
-
-  /* Get airspaces from all enabled sources for map display */
-  void getAirspaces(AirspaceVector& airspaces, const Marble::GeoDataLatLonBox& rect, const MapLayer *mapLayer,
-                    const map::MapAirspaceFilter& filter, float flightplanAltitude, bool lazy,
-                    map::MapAirspaceSources sourcesParam, bool& overflow);
-
-  /* Get Geometry for any airspace and source database */
-  const atools::geo::LineString *getAirspaceGeometry(map::MapAirspaceId id);
 
   /* Read and write widget states, source and airspace selection */
   void saveState() const;
@@ -98,36 +78,15 @@ public:
   /* Re-initializes all queries */
   void postDatabaseLoad();
 
-  /* Clears cache for online database changes */
-  void onlineClientAndAtcUpdated();
-
-  /* Resets all queries */
-  void resetAirspaceOnlineScreenGeometry();
-
   /* Update drop down buttons and actions */
   void updateButtonsAndActions();
-
-  /* Get currently enabled souces for map display */
-  map::MapAirspaceSources getAirspaceSources() const
-  {
-    return sources;
-  }
-
-  bool hasAnyAirspaces() const;
-
-  /* Get sources as string */
-  QStringList getAirspaceSourcesStr() const;
 
   /* Opens folder selection dialog if base is not set and loads all airspaces */
   void loadAirspaces();
 
-  /* Tries to fetch online airspace geometry by name and facility. */
-  const atools::geo::LineString *getOnlineAirspaceGeoByName(const QString& callsign, const QString& facilityType);
-
-  /* Tries to fetch online airspace geometry by file name. */
-  const atools::geo::LineString *getOnlineAirspaceGeoByFile(const QString& callsign);
-
   void resetSettingsToDefault();
+
+  void onlineClientAndAtcUpdated();
 
 signals:
   /* Filter in drop down buttons have changed */
@@ -150,22 +109,13 @@ private:
   /* Copy source selection to actons */
   void sourceToActions();
 
-  void getAirspacesInternal(AirspaceVector& airspaceVector, const Marble::GeoDataLatLonBox& rect,
-                            const MapLayer *mapLayer, const map::MapAirspaceFilter& filter, float flightplanAltitude,
-                            bool lazy, map::MapAirspaceSources src, bool& overflow);
-  void preLoadAirspaces();
-  void postLoadAirspaces();
-
   void loadAirspace(atools::fs::userdata::AirspaceReaderBase& reader, const QString& file, int fileId, int& nextAirspaceId,
                     int& numReadFile);
   void collectErrors(QStringList& errors, const atools::fs::userdata::AirspaceReaderBase& reader, const QString& basePath);
   atools::geo::Pos fetchAirportCoordinates(const QString& airportIdent);
 
-  AirspaceQueryMapType queries;
-  map::MapAirspaceSources sources = map::AIRSPACE_SRC_NONE;
   AirspaceToolBarHandler *airspaceHandler = nullptr;
   MainWindow *mainWindow;
-  bool loadingUserAirspaces = false;
 };
 
 #endif // LNM_AIRSPACECONTROLLER_H

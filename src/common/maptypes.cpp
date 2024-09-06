@@ -57,11 +57,11 @@ static QHash<QString, QString> navTypeNamesNdb;
 static QHash<QString, QString> navTypeNamesWaypoint;
 static QHash<QString, QString> navTypeNames;
 static QHash<QString, QString> comTypeNames;
-static QHash<map::MapAirspaceTypes, QString> airspaceTypeNameMap;
-static QHash<map::MapAirspaceTypes, QString> airspaceTypeShortNameMap;
-static QHash<map::MapAirspaceFlags, QString> airspaceFlagNameMap;
-static QHash<map::MapAirspaceFlags, QString> airspaceFlagNameMapLong;
-static QHash<map::MapAirspaceTypes, QString> airspaceRemarkMap;
+static QHash<map::MapAirspaceType, QString> airspaceTypeNameMap;
+static QHash<map::MapAirspaceType, QString> airspaceTypeShortNameMap;
+static QHash<map::MapAirspaceFlag, QString> airspaceFlagNameMap;
+static QHash<map::MapAirspaceFlag, QString> airspaceFlagNameMapLong;
+static QHash<map::MapAirspaceType, QString> airspaceRemarkMap;
 
 void initTranslateableTexts()
 {
@@ -449,7 +449,7 @@ void initTranslateableTexts()
       {"VOL", QObject::tr("VOLMET")}
     });
 
-  airspaceTypeNameMap = QHash<map::MapAirspaceTypes, QString>(
+  airspaceTypeNameMap = QHash<map::MapAirspaceType, QString>(
     {
       {map::AIRSPACE_NONE, QObject::tr("No Airspace")},
       {map::CENTER, QObject::tr("Center")},
@@ -486,7 +486,7 @@ void initTranslateableTexts()
       {map::ONLINE_OBSERVER, QObject::tr("Online Observer")}
     });
 
-  airspaceTypeShortNameMap = QHash<map::MapAirspaceTypes, QString>(
+  airspaceTypeShortNameMap = QHash<map::MapAirspaceType, QString>(
     {
       {map::AIRSPACE_NONE, QObject::tr("No Airspace")},
       {map::CENTER, QObject::tr("CTR")},
@@ -523,7 +523,7 @@ void initTranslateableTexts()
       {map::ONLINE_OBSERVER, QObject::tr("Online Observer")}
     });
 
-  airspaceFlagNameMap = QHash<map::MapAirspaceFlags, QString>(
+  airspaceFlagNameMap = QHash<map::MapAirspaceFlag, QString>(
     {
       // Values below only for actions
       {map::AIRSPACE_ALTITUDE_ALL, QObject::tr("&All altitudes")},
@@ -531,7 +531,7 @@ void initTranslateableTexts()
       {map::AIRSPACE_ALTITUDE_SET, QObject::tr("For &minimum and maximum altitude")}
     });
 
-  airspaceFlagNameMapLong = QHash<map::MapAirspaceFlags, QString>(
+  airspaceFlagNameMapLong = QHash<map::MapAirspaceFlag, QString>(
     {
       // Values below only for actions
       {map::AIRSPACE_ALTITUDE_ALL, QObject::tr("Show airspaces for all altitudes")},
@@ -539,7 +539,7 @@ void initTranslateableTexts()
       {map::AIRSPACE_ALTITUDE_SET, QObject::tr("Show airspaces overlapping selected minimum and maximum altitude")}
     });
 
-  airspaceRemarkMap = QHash<map::MapAirspaceTypes, QString>(
+  airspaceRemarkMap = QHash<map::MapAirspaceType, QString>(
     {
       {map::AIRSPACE_NONE, QObject::tr("No Airspace")},
       {map::CENTER, QString()},
@@ -652,7 +652,7 @@ static QHash<QString, int> surfaceQualityMap(
     {"INVALID", 0}
   });
 
-const static QHash<QString, map::MapAirspaceTypes> airspaceTypeFromDatabaseMap(
+const static QHash<QString, map::MapAirspaceType> airspaceTypeFromDatabaseMap(
   {
     {"NONE", map::AIRSPACE_NONE},
     {"C", map::CENTER},
@@ -689,7 +689,7 @@ const static QHash<QString, map::MapAirspaceTypes> airspaceTypeFromDatabaseMap(
     {"OBS", map::ONLINE_OBSERVER} /* No database type */
   });
 
-static QHash<map::MapAirspaceTypes, QString> airspaceTypeToDatabaseMap(
+static QHash<map::MapAirspaceType, QString> airspaceTypeToDatabaseMap(
   {
     {map::AIRSPACE_NONE, "NONE"},
     {map::CENTER, "C"},
@@ -728,7 +728,7 @@ static QHash<map::MapAirspaceTypes, QString> airspaceTypeToDatabaseMap(
   });
 
 /* Defines drawing sort order - lower values are drawn first - higher values are drawn on top */
-const static QHash<map::MapAirspaceTypes, int> airspacePriorityMap(
+const static QHash<map::MapAirspaceType, int> airspacePriorityMap(
   {
     {map::AIRSPACE_NONE, 1},
 
@@ -779,33 +779,37 @@ const static QHash<map::MapAirspaceTypes, int> airspacePriorityMap(
 QString navTypeName(const QString& type)
 {
   QString retval = navTypeNameVor(type);
+
   if(retval.isEmpty())
     retval = navTypeNameNdb(type);
+
   if(retval.isEmpty())
     retval = navTypeNameVor(type);
+
   if(retval.isEmpty())
     retval = navTypeNameWaypoint(type);
+
   return retval;
 }
 
-QString navTypeNameVor(const QString& type)
+const QString& navTypeNameVor(const QString& type)
 {
-  return navTypeNamesVor.value(type);
+  return atools::hashValue(navTypeNamesVor, type);
 }
 
-QString navTypeNameVorLong(const QString& type)
+const QString& navTypeNameVorLong(const QString& type)
 {
-  return navTypeNamesVorLong.value(type);
+  return atools::hashValue(navTypeNamesVorLong, type);
 }
 
-QString navTypeNameNdb(const QString& type)
+const QString& navTypeNameNdb(const QString& type)
 {
-  return navTypeNamesNdb.value(type);
+  return atools::hashValue(navTypeNamesNdb, type);
 }
 
-QString navTypeNameWaypoint(const QString& type)
+const QString& navTypeNameWaypoint(const QString& type)
 {
-  return navTypeNamesWaypoint.value(type);
+  return atools::hashValue(navTypeNamesWaypoint, type);
 }
 
 QString navTypeArincNamesWaypoint(const QString& type)
@@ -875,15 +879,14 @@ QString navTypeArincNamesWaypoint(const QString& type)
   return types.join(QObject::tr(", "));
 }
 
-QString navName(const QString& type)
+const QString& navName(const QString& type)
 {
-  return navTypeNames.value(type);
+  return atools::hashValue(navTypeNames, type);
 }
 
 const QString& surfaceName(const QString& surface)
 {
-  Q_ASSERT(!surfaceMap.isEmpty());
-  return surfaceMap[surface];
+  return atools::hashValue(surfaceMap, surface);
 }
 
 QString smoothnessName(QVariant smoothnessVar)
@@ -911,32 +914,27 @@ QString smoothnessName(QVariant smoothnessVar)
 
 int surfaceQuality(const QString& surface)
 {
-  Q_ASSERT(!surfaceQualityMap.isEmpty());
   return surfaceQualityMap.value(surface, 0);
 }
 
 const QVector<std::pair<QRegularExpression, QString> >& parkingKeywords()
 {
-  Q_ASSERT(!parkingDatabaseKeywords.isEmpty());
   return parkingDatabaseKeywords;
 }
 
 const QString& parkingGateName(const QString& gate)
 {
-  Q_ASSERT(!parkingMapGate.isEmpty());
-  return parkingMapGate[gate];
+  return atools::hashValue(parkingMapGate, gate);
 }
 
 const QString& parkingRampName(const QString& ramp)
 {
-  Q_ASSERT(!parkingMapRamp.isEmpty());
-  return parkingMapRamp[ramp];
+  return atools::hashValue(parkingMapRamp, ramp);
 }
 
 const QString& parkingTypeName(const QString& type)
 {
-  Q_ASSERT(!parkingTypeMap.isEmpty());
-  return parkingTypeMap[type];
+  return atools::hashValue(parkingTypeMap, type);
 }
 
 QString parkingText(const MapParking& parking)
@@ -952,21 +950,14 @@ QString parkingText(const MapParking& parking)
   return atools::strJoin(retval, QObject::tr(" "));
 }
 
-const QString& parkingName(const QString& name)
+QString parkingName(const QString& name)
 {
-  Q_ASSERT(!parkingNameMap.isEmpty());
-
-  if(parkingNameMap.contains(name))
-    return parkingNameMap[name];
-  else
-    return name;
+  return parkingNameMap.value(name, name);
 }
 
 const QString& parkingDatabaseName(const QString& name)
 {
-  Q_ASSERT(!parkingDatabaseNameMap.isEmpty());
-
-  return parkingDatabaseNameMap[name];
+  return atools::hashValue(parkingDatabaseNameMap, name);
 }
 
 QString parkingNameNumberAndType(const map::MapParking& parking)
@@ -1088,7 +1079,9 @@ bool MapAirport::emptyDraw() const
     return false;
 
   const OptionData& od = OptionData::instance();
-  return emptyDraw(od.getFlags().testFlag(opts::MAP_EMPTY_AIRPORTS), od.getFlags2().testFlag(opts2::MAP_EMPTY_AIRPORTS_3D));
+  return emptyDraw(od.getFlags().testFlag(opts::MAP_EMPTY_AIRPORTS),
+                   od.getFlags2().testFlag(opts2::MAP_EMPTY_AIRPORTS_3D) &&
+                   NavApp::getCurrentSimulatorDb() != atools::fs::FsPaths::XPLANE_12);
 }
 
 bool MapAirport::emptyDraw(bool emptyOptsFlag, bool emptyOpts3dFlag) const
@@ -1780,10 +1773,10 @@ QString airportMsaText(const MapAirportMsa& airportMsa, bool user)
     return QObject::tr("%1 at %2 (%3)").arg(type).arg(airportMsa.airportIdent).arg(airportMsa.navIdent);
 }
 
-QString comTypeName(const QString& type)
+const QString& comTypeName(const QString& type)
 {
-  Q_ASSERT(!comTypeNames.isEmpty());
-  return comTypeNames.value(type);
+
+  return atools::hashValue(comTypeNames, type);
 }
 
 QString magvarText(float magvar, bool shortText, bool degSign)
@@ -1886,48 +1879,44 @@ QString ndbFullShortText(const MapNdb& ndb)
   return type.isEmpty() ? QObject::tr("NDB") : QObject::tr("NDB (%1)").arg(type);
 }
 
-const QString& airspaceTypeToString(map::MapAirspaceTypes type)
+const QString& airspaceTypeToString(map::MapAirspaceType type)
 {
-  return airspaceTypeNameMap[type];
+  return atools::hashValue(airspaceTypeNameMap, type);
 }
 
-const QString& airspaceTypeShortToString(map::MapAirspaceTypes type)
+const QString& airspaceTypeShortToString(map::MapAirspaceType type)
 {
-  return airspaceTypeShortNameMap[type];
+  return atools::hashValue(airspaceTypeShortNameMap, type);
 }
 
-const QString& airspaceFlagToString(map::MapAirspaceFlags type)
+const QString& airspaceFlagToString(map::MapAirspaceFlag type)
 {
-  return airspaceFlagNameMap[type];
+  return atools::hashValue(airspaceFlagNameMap, type);
 }
 
-const QString& airspaceFlagToStringLong(map::MapAirspaceFlags type)
+const QString& airspaceFlagToStringLong(map::MapAirspaceFlag type)
 {
-  return airspaceFlagNameMapLong[type];
+  return atools::hashValue(airspaceFlagNameMapLong, type);
 }
 
-const QString& airspaceRemark(map::MapAirspaceTypes type)
+const QString& airspaceRemark(map::MapAirspaceType type)
 {
-  Q_ASSERT(!airspaceRemarkMap.isEmpty());
-  return airspaceRemarkMap[type];
+  return atools::hashValue(airspaceRemarkMap, type);
 }
 
-int airspaceDrawingOrder(map::MapAirspaceTypes type)
+int airspaceDrawingOrder(map::MapAirspaceType type)
 {
-  Q_ASSERT(!airspacePriorityMap.isEmpty());
-  return airspacePriorityMap.value(type);
+  return airspacePriorityMap.value(type, map::AIRSPACE_NONE);
 }
 
-map::MapAirspaceTypes airspaceTypeFromDatabase(const QString& type)
+map::MapAirspaceType airspaceTypeFromDatabase(const QString& type)
 {
-  Q_ASSERT(!airspaceTypeFromDatabaseMap.isEmpty());
-  return airspaceTypeFromDatabaseMap.value(type);
+  return atools::hashValue(airspaceTypeFromDatabaseMap, type, map::AIRSPACE_NONE);
 }
 
-const QString& airspaceTypeToDatabase(map::MapAirspaceTypes type)
+const QString& airspaceTypeToDatabase(map::MapAirspaceType type)
 {
-  Q_ASSERT(!airspaceTypeToDatabaseMap.isEmpty());
-  return airspaceTypeToDatabaseMap[type];
+  return atools::hashValue(airspaceTypeToDatabaseMap, type);
 }
 
 QString airspaceSourceText(MapAirspaceSources src)
@@ -2284,7 +2273,7 @@ QString airspaceText(const MapAirspace& airspace)
   return QObject::tr("Airspace %1 (%2)").arg(airspace.name).arg(airspaceTypeToString(airspace.type));
 }
 
-QString aircraftType(const atools::fs::sc::SimConnectAircraft& aircraft)
+const QString& aircraftType(const atools::fs::sc::SimConnectAircraft& aircraft)
 {
   if(!aircraft.getAirplaneType().isEmpty())
     return aircraft.getAirplaneType();
@@ -2451,6 +2440,9 @@ QString mapBaseText(const map::MapBase *base, int elideAirportName)
       case map::PARKING:
         return map::parkingText(*base->asPtr<map::MapParking>());
 
+      case map::START:
+        return QString();
+
       case map::HELIPAD:
         return map::helipadText(*base->asPtr<map::MapHelipad>());
 
@@ -2540,6 +2532,9 @@ QIcon mapBaseIcon(const map::MapBase *base, int size)
 
       case map::PARKING:
         return mapcolors::iconForParkingType(base->asPtr<map::MapParking>()->type);
+
+      case map::START:
+        return QIcon();
 
       case map::HELIPAD:
         return SymbolPainter::createHelipadIcon(*base->asPtr<map::MapHelipad>(), size);
@@ -2635,6 +2630,26 @@ QStringList MapRunwayEnd::uniqueVasiTypeStr() const
   vasi.removeAll(QString());
   vasi.removeDuplicates();
   return vasi;
+}
+
+atools::geo::Pos MapRunway::getApproachPosition(bool secondary) const
+{
+  if(secondary)
+  {
+    if(secondaryOffset > 1.f)
+      // Return position minus secondary offset
+      return secondaryPosition.endpoint(atools::geo::feetToMeter(secondaryOffset), atools::geo::opposedCourseDeg(heading));
+    else
+      return secondaryPosition;
+  }
+  else
+  {
+    if(primaryOffset > 1.f)
+      // Return position minus primary offset
+      return primaryPosition.endpoint(atools::geo::feetToMeter(primaryOffset), heading);
+    else
+      return primaryPosition;
+  }
 }
 
 MapProcedurePoint::MapProcedurePoint()

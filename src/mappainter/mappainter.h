@@ -18,15 +18,19 @@
 #ifndef LITTLENAVMAP_MAPPAINTER_H
 #define LITTLENAVMAP_MAPPAINTER_H
 
-#include "common/coordinateconverter.h"
 #include "common/mapflags.h"
-#include "options/optiondata.h"
+#include "geo/coordinateconverter.h"
 #include "geo/rect.h"
+#include "options/optiondata.h"
+
+#include <marble/MarbleGlobal.h>
 
 #include <QPen>
 #include <QFont>
 #include <QDateTime>
+#include <QCoreApplication>
 
+class Queries;
 namespace atools {
 namespace geo {
 class LineString;
@@ -38,15 +42,11 @@ class GeoDataLineString;
 class GeoPainter;
 }
 
-class AirportQuery;
-class AirwayTrackQuery;
 class MapLayer;
 class MapPaintWidget;
-class MapQuery;
 class MapScale;
 class MapWidget;
 class SymbolPainter;
-class WaypointTrackQuery;
 class Route;
 
 namespace map {
@@ -60,11 +60,15 @@ struct MapAirportMsa;
 /* Struct that is passed to all painters. It is created from scratch for each paint event. */
 struct PaintContext
 {
-  const MapLayer *mapLayer; /* layer for the current zoom distance also affected by detail level
-                             *  should be used to visibility of map objects */
-  const MapLayer *mapLayerEffective; /* layer for the current zoom distance not affected by detail level.
-                                      *  Should be used to determine text visibility and object sizes. */
-  const MapLayer *mapLayerRoute; /* layer for the current zoom distance and more details for route. */
+  const MapLayer *mapLayer, /* Layer for the current zoom distance also affected by detail level
+                             * Used for visibility of map objects */
+                 *mapLayerText, /* layer for the current zoom distance also affected by text and label detail level
+                                 * Used for visibility of labels */
+                 *mapLayerEffective, /* Layer for the current zoom distance not affected by detail level.
+                                      *  Used to determine text visibility and object sizes. */
+                 *mapLayerRoute, /* Layer for the current zoom distance and more details for route. */
+                 *mapLayerRouteText; /* Layer for the current zoom distance and more details for route labels. */
+
   Marble::GeoPainter *painter;
   Marble::ViewportParams *viewport;
   Marble::ViewContext viewContext;
@@ -77,7 +81,7 @@ struct PaintContext
   map::MapTypes objectTypes; /* Object types that should be drawn */
   map::MapDisplayTypes objectDisplayTypes; /* Object types that should be drawn */
   map::MapAirspaceFilter airspaceFilterByLayer; /* Airspaces */
-  map::MapAirspaceTypes airspaceTextsByLayer;
+  map::MapAirspaceType airspaceTextsByLayer;
 
   atools::geo::Rect viewportRect; /* Rectangle of current viewport */
   QRect screenRect; /* Screen coordinate rect */
@@ -282,23 +286,28 @@ struct PaintContext
 };
 
 /* Used to collect airports for drawing. Needs to copy airport since it might be removed from the cache. */
-struct PaintAirportType
+class AirportPaintData
 {
-  PaintAirportType(const map::MapAirport& ap, float x, float y);
-  PaintAirportType()
+public:
+  AirportPaintData();
+  AirportPaintData(const map::MapAirport& ap, float x, float y);
+  AirportPaintData(const AirportPaintData& other);
+
+  ~AirportPaintData();
+
+  AirportPaintData& operator=(const AirportPaintData& other);
+
+  const map::MapAirport& getAirport() const
   {
+    return *airport;
   }
 
-  ~PaintAirportType();
-
-  PaintAirportType(const PaintAirportType& other)
+  const QPointF& getPoint() const
   {
-    this->operator=(other);
-
+    return point;
   }
 
-  PaintAirportType& operator=(const PaintAirportType& other);
-
+private:
   map::MapAirport *airport = nullptr;
   QPointF point;
 };
@@ -322,7 +331,7 @@ public:
 
   virtual void render() = 0;
 
-  bool sortAirportFunction(const PaintAirportType& pap1, const PaintAirportType& pap2);
+  bool sortAirportFunction(const AirportPaintData& airportPaintData1, const AirportPaintData& airportPaintData2);
 
   void initQueries();
 
@@ -352,7 +361,6 @@ protected:
   void paintArc(Marble::GeoPainter *painter, const atools::geo::Pos& centerPos, float radiusNm, float angleDegStart, float angleDegEnd,
                 bool fast) const;
 
-  void drawLineString(Marble::GeoPainter *painter, const atools::geo::LineString& linestring);
   void drawLine(Marble::GeoPainter *painter, const atools::geo::Line& line, bool forceDraw = false) const;
 
   void drawPolygon(Marble::GeoPainter *painter, const atools::geo::LineString& linestring) const;
@@ -399,6 +407,7 @@ protected:
                          QVector<float> inboundArrows = QVector<float>(),
                          QVector<float> outboundArrows = QVector<float>()) const;
 
+  /* Draw PI turn */
   void paintProcedureTurnWithText(QPainter *painter, float x, float y, float turnHeading, float distanceNm, bool left,
                                   QLineF *extensionLine, const QString& text, const QColor& textColor,
                                   const QColor& textColorBackground) const;
@@ -418,7 +427,8 @@ protected:
   void getPixmap(QPixmap& pixmap, const QString& resource, int size) const;
 
   /* Draw enroute as well as user defined holdings */
-  void paintHoldingMarks(const QList<map::MapHolding>& holdings, bool user, bool drawFast, bool darkMap) const;
+  void paintHoldingMarks(const QList<map::MapHolding>& holdings, const MapLayer *layer, const MapLayer *layerText,
+                         bool user, bool drawFast, bool darkMap) const;
 
   /* Draw large semi-transparent MSA enabled by user */
   void paintMsaMarks(const QList<map::MapAirportMsa>& airportMsa, bool user, bool drawFast) const;
@@ -439,11 +449,8 @@ protected:
   PaintContext *context = nullptr;
   SymbolPainter *symbolPainter = nullptr;
   MapPaintWidget *mapPaintWidget = nullptr;
-  MapQuery *mapQuery = nullptr;
-  AirwayTrackQuery *airwayQuery = nullptr;
-  WaypointTrackQuery *waypointQuery = nullptr;
-  AirportQuery *airportQuery = nullptr;
   MapScale *scale = nullptr;
+  const Queries *queries = nullptr; // Derived from MapPaintWidget which can be GUI or web queries
 
 private:
 };

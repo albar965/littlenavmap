@@ -18,6 +18,7 @@
 #include "query/waypointtrackquery.h"
 
 #include "common/maptools.h"
+#include "geo/marbleconverter.h"
 #include "query/waypointquery.h"
 #include "mapgui/maplayer.h"
 
@@ -147,10 +148,8 @@ void WaypointTrackQuery::getWaypointsAirway(QList<map::MapWaypoint>& waypoints, 
 const QList<map::MapWaypoint> WaypointTrackQuery::getWaypointsByRect(const atools::geo::Rect& rect, const MapLayer *mapLayer,
                                                                      bool lazy, bool& overflow)
 {
-  const GeoDataLatLonBox latLonBox = GeoDataLatLonBox(rect.getNorth(), rect.getSouth(), rect.getEast(),
-                                                      rect.getWest(), GeoDataCoordinates::Degree);
   QList<map::MapWaypoint> waypoints = QList<map::MapWaypoint>();
-  getWaypoints(waypoints, latLonBox, mapLayer, lazy, overflow);
+  getWaypoints(waypoints, mconvert::toGdc(rect), mapLayer, lazy, overflow);
   return waypoints;
 }
 
@@ -183,8 +182,8 @@ void WaypointTrackQuery::clearCache()
 
 void WaypointTrackQuery::deleteChildren()
 {
-  ATOOLS_DELETE(trackQuery);
-  ATOOLS_DELETE(waypointQuery);
+  ATOOLS_DELETE_LOG(trackQuery);
+  ATOOLS_DELETE_LOG(waypointQuery);
 }
 
 SqlQuery *WaypointTrackQuery::getWaypointsByRectQuery() const

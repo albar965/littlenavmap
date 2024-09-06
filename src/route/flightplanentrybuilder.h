@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -20,6 +20,8 @@
 
 #include "common/mapflags.h"
 
+class Queries;
+
 namespace atools {
 namespace geo {
 class Pos;
@@ -34,25 +36,16 @@ class FlightplanEntry;
 
 namespace map {
 struct MapAirport;
-
 struct MapNdb;
-
 struct MapVor;
-
 struct MapWaypoint;
-
 struct MapUserpoint;
-
 struct MapResult;
-
 }
 
 namespace proc {
 struct MapProcedureLeg;
-
 }
-
-class MapQuery;
 
 class FlightplanEntryBuilder
 {
@@ -102,6 +95,8 @@ public:
 private:
   bool vorForWaypoint(const map::MapWaypoint& waypoint, map::MapVor& vor) const;
   bool ndbForWaypoint(const map::MapWaypoint& waypoint, map::MapNdb& ndb) const;
+
+  const Queries *queries;
 
   /* Used to number user defined positions */
   int curUserpointNumber = 1;

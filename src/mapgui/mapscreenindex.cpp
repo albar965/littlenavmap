@@ -17,12 +17,13 @@
 
 #include "mapgui/mapscreenindex.h"
 
-#include "airspace/airspacecontroller.h"
-#include "common/aircrafttrail.h"
+#include "app/navapp.h"
 #include "common/constants.h"
 #include "common/maptools.h"
 #include "fs/gpx/gpxtypes.h"
 #include "fs/sc/simconnectdata.h"
+#include "geo/aircrafttrail.h"
+#include "geo/marbleconverter.h"
 #include "logbook/logdatacontroller.h"
 #include "mapgui/mapairporthandler.h"
 #include "mapgui/mapfunctions.h"
@@ -31,9 +32,9 @@
 #include "mapgui/mappaintwidget.h"
 #include "mapgui/mapscale.h"
 #include "mappainter/mappaintlayer.h"
-#include "app/navapp.h"
 #include "online/onlinedatacontroller.h"
 #include "query/airportquery.h"
+#include "query/airspacequeries.h"
 #include "query/airwaytrackquery.h"
 #include "query/mapquery.h"
 #include "route/route.h"
@@ -72,8 +73,7 @@ void assignIdAndInsert(const QString& settingsName, QHash<int, TYPE>& hash)
 MapScreenIndex::MapScreenIndex(MapPaintWidget *mapPaintWidgetParam, MapPaintLayer *mapPaintLayer)
   : mapWidget(mapPaintWidgetParam), paintLayer(mapPaintLayer)
 {
-  airportQuery = NavApp::getAirportQuerySim();
-
+  queries = mapWidget->getQueries();
   simData = new SimConnectData;
   lastSimData = new SimConnectData;
   lastUserAircraftForAverage = new SimConnectUserAircraft;
@@ -134,22 +134,21 @@ void MapScreenIndex::updateAirspaceScreenGeometryInternal(QSet<map::MapAirspaceI
                                                           const Marble::GeoDataLatLonBox& curBox, bool highlights)
 {
   const MapScale *scale = paintLayer->getMapScale();
-  AirspaceController *controller = NavApp::getAirspaceController();
 
   if(paintLayer->getMapLayer() == nullptr)
     return;
 
-  if(scale->isValid() && controller != nullptr && paintLayer != nullptr)
+  if(scale->isValid() && paintLayer != nullptr)
   {
-    map::MapAirspaceFilter filter = mapWidget->getShownAirspaceTypesByLayer();
+    map::MapAirspaceFilter filter = mapWidget->getShownAirspaceTypesForLayer();
 
     AirspaceVector airspaces;
 
     // Get displayed airspaces ================================
     bool overflow = false;
     if(!highlights && paintLayer->getShownMapTypes().testFlag(map::AIRSPACE))
-      controller->getAirspaces(airspaces, curBox, paintLayer->getMapLayer(), filter,
-                               NavApp::getRouteConst().getCruiseAltitudeFt(), false /* lazy */, source, overflow);
+      queries->getAirspaceQueries()->getAirspaces(airspaces, curBox, paintLayer->getMapLayer(), filter,
+                                                  NavApp::getRouteConst().getCruiseAltitudeFt(), false /* lazy */, source, overflow);
 
     // Get highlighted airspaces from info window ================================
     for(const map::MapAirspace& airspace : qAsConst(airspaceHighlights))
@@ -171,12 +170,12 @@ void MapScreenIndex::updateAirspaceScreenGeometryInternal(QSet<map::MapAirspaceI
       if(!(airspace->type & filter.types) && !highlights)
         continue;
 
-      Marble::GeoDataLatLonBox airspacebox = conv.toGdc(airspace->bounding);
+      Marble::GeoDataLatLonBox airspacebox = mconvert::toGdc(airspace->bounding);
 
       // Check if airspace overlaps with current screen and is not already in list
       if(airspacebox.intersects(curBox) && !ids.contains(airspace->combinedId()))
       {
-        const atools::geo::LineString *lines = controller->getAirspaceGeometry(airspace->combinedId());
+        const atools::geo::LineString *lines = queries->getAirspaceQueries()->getAirspaceGeometry(airspace->combinedId());
         if(lines != nullptr)
         {
           const QVector<QPolygonF *> polys = conv.createPolygons(*lines, mapWidget->rect());
@@ -199,7 +198,7 @@ void MapScreenIndex::updateAirspaceScreenGeometryInternal(QSet<map::MapAirspaceI
 void MapScreenIndex::resetAirspaceOnlineScreenGeometry()
 {
   // Clear internal caches
-  NavApp::getAirspaceController()->resetAirspaceOnlineScreenGeometry();
+  queries->getAirspaceQueries()->resetAirspaceOnlineScreenGeometry();
 }
 
 void MapScreenIndex::resetIlsScreenGeometry()
@@ -218,7 +217,7 @@ void MapScreenIndex::updateAirspaceScreenGeometry(const Marble::GeoDataLatLonBox
   QSet<map::MapAirspaceId> ids;
 
   // First get geometry from highlights
-  updateAirspaceScreenGeometryInternal(ids, NavApp::getAirspaceController()->getAirspaceSources(), curBox, true /* highlights */);
+  updateAirspaceScreenGeometryInternal(ids, queries->getAirspaceQueries()->getAirspaceSources(), curBox, true /* highlights */);
 
   if(!paintLayer->getMapLayer()->isAnyAirspace() || !paintLayer->getShownMapTypes().testFlag(map::AIRSPACE))
     return;
@@ -228,7 +227,7 @@ void MapScreenIndex::updateAirspaceScreenGeometry(const Marble::GeoDataLatLonBox
     return;
 
   // Get geometry from visible airspaces
-  updateAirspaceScreenGeometryInternal(ids, NavApp::getAirspaceController()->getAirspaceSources(), curBox, false /* highlights */);
+  updateAirspaceScreenGeometryInternal(ids, queries->getAirspaceQueries()->getAirspaceSources(), curBox, false /* highlights */);
 }
 
 void MapScreenIndex::updateIlsScreenGeometry(const Marble::GeoDataLatLonBox& curBox)
@@ -268,7 +267,7 @@ void MapScreenIndex::updateIlsScreenGeometry(const Marble::GeoDataLatLonBox& cur
   {
     // ILS enabled - add from map cache
     bool overflow = false;
-    const QList<map::MapIls> *ilsListPtr = mapWidget->getMapQuery()->getIls(curBox, paintLayer->getMapLayer(), false /* lazy */, overflow);
+    const QList<map::MapIls> *ilsListPtr = queries->getMapQuery()->getIls(curBox, paintLayer->getMapLayer(), false /* lazy */, overflow);
     if(ilsListPtr != nullptr)
     {
       for(const map::MapIls& ils : *ilsListPtr)
@@ -284,7 +283,7 @@ void MapScreenIndex::updateIlsScreenGeometry(const Marble::GeoDataLatLonBox& cur
           // Check if airport is to be shown - hide ILS if not - show ILS if no airport ident in navaid
           if(!ils.airportIdent.isEmpty())
           {
-            map::MapAirport airport = airportQuery->getAirportByIdent(ils.airportIdent);
+            map::MapAirport airport = queries->getAirportQuerySim()->getAirportByIdent(ils.airportIdent);
             if(airport.isValid() && !airport.isVisible(paintLayer->getShownMapTypes(), NavApp::getMapAirportHandler()->getMinimumRunwayFt(),
                                                        paintLayer->getMapLayer()))
               continue;
@@ -302,11 +301,7 @@ void MapScreenIndex::updateIlsScreenGeometry(const Marble::GeoDataLatLonBox& cur
     if(!ils.hasGeometry)
       continue;
 
-    Marble::GeoDataLatLonBox ilsbox(ils.bounding.getNorth(), ils.bounding.getSouth(),
-                                    ils.bounding.getEast(), ils.bounding.getWest(),
-                                    Marble::GeoDataCoordinates::Degree);
-
-    if(ilsbox.intersects(curBox))
+    if(mconvert::toGdc(ils.bounding).intersects(curBox))
     {
       updateLineScreenGeometry(ilsLines, ils.id, ils.centerLine(), curBox, conv);
 
@@ -385,7 +380,7 @@ void MapScreenIndex::updateAirwayScreenGeometry(const Marble::GeoDataLatLonBox& 
 void MapScreenIndex::updateAirwayScreenGeometryInternal(QSet<int>& ids, const Marble::GeoDataLatLonBox& curBox, bool highlight)
 {
   const MapScale *scale = paintLayer->getMapScale();
-  AirwayTrackQuery *airwayTrackQuery = mapWidget->getAirwayTrackQuery();
+  AirwayTrackQuery *airwayTrackQuery = queries->getAirwayTrackQuery();
 
   if(scale->isValid())
   {
@@ -458,7 +453,7 @@ void MapScreenIndex::updateAirwayScreenGeometryInternal(QSet<int>& ids, const Ma
 void MapScreenIndex::updateLineScreenGeometry(QList<std::pair<int, QLine> >& index, int id, const atools::geo::Line& line,
                                               const Marble::GeoDataLatLonBox& curBox, const CoordinateConverter& conv)
 {
-  Marble::GeoDataLineString geoLineStr = conv.toGdcStr(line);
+  Marble::GeoDataLineString geoLineStr = mconvert::toGdcStr(line);
   QRect mapGeo = mapWidget->rect();
 
   QList<Marble::GeoDataLatLonBox> curBoxCorrectedList = query::splitAtAntiMeridian(curBox);
@@ -944,18 +939,6 @@ void MapScreenIndex::getAllNearest(const QPoint& point, int maxDistance, map::Ma
       route.getNearestRecommended(conv, xs, ys, maxDistance, result, queryTypes, routeDrawnNavaids);
   }
 
-  // Get points of procedure preview
-  if(types.testFlag(map::QUERY_PREVIEW_PROC_POINTS))
-  {
-    map::MapObjectQueryTypes queryTypes = types | map::QUERY_PROCEDURES | map::QUERY_PROC_POINTS;
-    if(shown.testFlag(map::MISSED_APPROACH))
-      queryTypes |= map::QUERY_PROC_MISSED_POINTS;
-    getNearestProcedureHighlights(xs, ys, maxDistance, result, queryTypes);
-  }
-
-  // Get copies from highlightMapObjects and marks (user features)
-  getNearestHighlights(xs, ys, maxDistance, result, types);
-
   // Get objects from cache - already present objects will be skipped
   // Airway included to fetch waypoints
   map::MapTypes mapTypes = shown &
@@ -969,14 +952,27 @@ void MapScreenIndex::getAllNearest(const QPoint& point, int maxDistance, map::Ma
 
   // Airports actually drawn having parking spots which require tooltips and more
   const QSet<int>& shownDetailAirportIds = paintLayer->getShownDetailAirportIds();
-  mapWidget->getMapQuery()->getNearestScreenObjects(conv, mapLayer, shownDetailAirportIds, airportDiagram, mapTypes, displayTypes,
-                                                    xs, ys, maxDistance, result);
+  queries->getMapQuery()->getNearestScreenObjects(conv, mapLayer, shownDetailAirportIds, airportDiagram, mapTypes, displayTypes,
+                                                  xs, ys, maxDistance, result);
+
+  // Get points of procedure preview
+  if(types.testFlag(map::QUERY_PREVIEW_PROC_POINTS))
+  {
+    map::MapObjectQueryTypes queryTypes = types | map::QUERY_PROCEDURES | map::QUERY_PROC_POINTS;
+    if(shown.testFlag(map::MISSED_APPROACH))
+      queryTypes |= map::QUERY_PROC_MISSED_POINTS;
+    getNearestProcedureHighlights(xs, ys, maxDistance, result, queryTypes);
+  }
+
+  // Get copies from highlightMapObjects and marks (user features). These are never artificial.
+  // Highlighted waypoints are removed above by resolveWaypointNavaids() and have to be added here
+  getNearestHighlights(xs, ys, maxDistance, result, types);
 
   // Update all incomplete objects, especially from search preview
   for(map::MapAirport& airport : result.airports)
   {
     if(!airport.complete())
-      airportQuery->getAirportById(airport, airport.getId());
+      queries->getAirportQuerySim()->getAirportById(airport, airport.getId());
   }
 
   if(shownDisplay.testFlag(map::FLIGHTPLAN))
@@ -1255,7 +1251,7 @@ void MapScreenIndex::getNearestAirspaces(int xs, int ys, map::MapResult& result)
   for(const std::pair<map::MapAirspaceId, QPolygon>& polyPair : airspacePolygons)
   {
     if(polyPair.second.containsPoint(QPoint(xs, ys), Qt::OddEvenFill))
-      result.airspaces.append(NavApp::getAirspaceController()->getAirspaceById(polyPair.first));
+      result.airspaces.append(queries->getAirspaceQueries()->getAirspaceById(polyPair.first));
   }
 }
 
@@ -1320,7 +1316,7 @@ void MapScreenIndex::getNearestIls(int xs, int ys, int maxDistance, map::MapResu
   }
 
   // Get ILS map objects for ids
-  MapQuery *mapQuery = mapWidget->getMapQuery();
+  MapQuery *mapQuery = queries->getMapQuery();
   for(int id : qAsConst(ilsIds))
     result.ils.append(mapQuery->getIlsById(id));
 }
@@ -1328,7 +1324,7 @@ void MapScreenIndex::getNearestIls(int xs, int ys, int maxDistance, map::MapResu
 /* Get all airways near cursor position */
 void MapScreenIndex::getNearestAirways(int xs, int ys, int maxDistance, map::MapResult& result) const
 {
-  AirwayTrackQuery *airwayTrackQuery = mapWidget->getAirwayTrackQuery();
+  AirwayTrackQuery *airwayTrackQuery = queries->getAirwayTrackQuery();
   const QSet<int> nearestIds = nearestLineIds(airwayLines, xs, ys, maxDistance, true /* lineDistanceOnly */);
   for(int id : nearestIds)
     result.airways.append(airwayTrackQuery->getAirwayById(id));

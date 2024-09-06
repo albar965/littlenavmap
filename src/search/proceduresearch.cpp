@@ -36,6 +36,7 @@
 #include "query/infoquery.h"
 #include "query/mapquery.h"
 #include "query/procedurequery.h"
+#include "query/querymanager.h"
 #include "route/route.h"
 #include "route/route.h"
 #include "search/searchcontroller.h"
@@ -170,9 +171,11 @@ bool TreeEventFilter::eventFilter(QObject *object, QEvent *event)
 ProcedureSearch::ProcedureSearch(QMainWindow *main, QTreeWidget *treeWidgetParam, si::TabSearchId tabWidgetIndex)
   : AbstractSearch(main, tabWidgetIndex), treeWidget(treeWidgetParam)
 {
-  infoQuery = NavApp::getInfoQuery();
-  procedureQuery = NavApp::getProcedureQuery();
-  airportQueryNav = NavApp::getAirportQueryNav();
+  const Queries *queries = QueryManager::instance()->getQueriesGui();
+  infoQuery = queries->getInfoQuery();
+  airportQueryNav = queries->getAirportQueryNav();
+  airportQuerySim = queries->getAirportQuerySim();
+  procedureQuery = queries->getProcedureQuery();
 
   currentAirportNav = new map::MapAirport;
   currentAirportSim = new map::MapAirport;
@@ -372,8 +375,7 @@ void ProcedureSearch::postDatabaseLoad()
   updateProcedureWind();
   clearSelection();
 
-  showProceduresInternal(NavApp::getAirportQuerySim()->getAirportFuzzy(*savedAirportSim), savedDepartureFilter, savedArrivalFilter,
-                         true /* silent */);
+  showProceduresInternal(airportQuerySim->getAirportFuzzy(*savedAirportSim), savedDepartureFilter, savedArrivalFilter, true /* silent */);
 }
 
 void ProcedureSearch::showProcedures(const map::MapAirport& airport, bool departureFilter, bool arrivalFilter)
@@ -383,7 +385,7 @@ void ProcedureSearch::showProcedures(const map::MapAirport& airport, bool depart
 
 void ProcedureSearch::showProceduresInternal(const map::MapAirport& airportSim, bool departureFilter, bool arrivalFilter, bool silent)
 {
-  map::MapAirport navAirport = NavApp::getMapQueryGui()->getAirportNav(airportSim);
+  map::MapAirport navAirport = QueryManager::instance()->getQueriesGui()->getMapQuery()->getAirportNav(airportSim);
   qDebug() << Q_FUNC_INFO << "airport" << airportSim << "navAirport" << navAirport
            << "departureFilter" << departureFilter << "arrivalFilter" << arrivalFilter;
 
@@ -733,7 +735,7 @@ void ProcedureSearch::updateFilterBoxes()
     const QStringList runwayNamesNav = airportQueryNav->getRunwayNames(currentAirportNav->id);
 
     // Get runway list from simulator
-    const QStringList runwayNamesSim = NavApp::getAirportQuerySim()->getRunwayNames(currentAirportSim->id);
+    const QStringList runwayNamesSim = airportQuerySim->getRunwayNames(currentAirportSim->id);
 
     // Add a tree of transitions and approaches
     const SqlRecordList *recProcList = infoQuery->getProcedureInformation(currentAirportNav->id);
@@ -1084,12 +1086,12 @@ void ProcedureSearch::saveState()
 void ProcedureSearch::restoreState()
 {
   atools::settings::Settings& settings = atools::settings::Settings::instance();
-  if(OptionData::instance().getFlags() & opts::STARTUP_LOAD_SEARCH && !NavApp::isSafeMode())
+  if(OptionData::instance().getFlags() & opts::STARTUP_LOAD_SEARCH && !atools::gui::Application::isSafeMode())
   {
     if(NavApp::hasDataInDatabase())
     {
       airportQueryNav->getAirportById(*currentAirportNav, settings.valueInt(lnm::APPROACHTREE_AIRPORT_NAV, -1));
-      NavApp::getAirportQuerySim()->getAirportById(*currentAirportSim, settings.valueInt(lnm::APPROACHTREE_AIRPORT_SIM, -1));
+      airportQuerySim->getAirportById(*currentAirportSim, settings.valueInt(lnm::APPROACHTREE_AIRPORT_SIM, -1));
     }
 
     if(!currentAirportSim->isValid() || !currentAirportNav->isValid())
@@ -1099,7 +1101,7 @@ void ProcedureSearch::restoreState()
   updateFilterBoxes();
 
   QSet<int> state;
-  if(OptionData::instance().getFlags() & opts::STARTUP_LOAD_SEARCH && !NavApp::isSafeMode())
+  if(OptionData::instance().getFlags() & opts::STARTUP_LOAD_SEARCH && !atools::gui::Application::isSafeMode())
   {
     Ui::MainWindow *ui = NavApp::getMainUi();
     WidgetState(lnm::APPROACHTREE_WIDGET).restore({ui->comboBoxProcedureSearchFilter, ui->comboBoxProcedureRunwayFilter,
@@ -1116,7 +1118,7 @@ void ProcedureSearch::restoreState()
   updateTreeHeader();
   WidgetState(lnm::APPROACHTREE_WIDGET).restore(treeWidget);
 
-  if(OptionData::instance().getFlags() & opts::STARTUP_LOAD_SEARCH && !NavApp::isSafeMode())
+  if(OptionData::instance().getFlags() & opts::STARTUP_LOAD_SEARCH && !atools::gui::Application::isSafeMode())
   {
     // Restoring state will emit above signal
     if(currentAirportNav->isValid() && currentAirportNav->procedure())
@@ -1176,7 +1178,7 @@ void ProcedureSearch::fetchSingleTransitionId(MapProcedureRef& ref) const
     if(legs != nullptr && legs->procedureLegs.isEmpty())
     {
       // Special case for SID which consists only of transition legs
-      QVector<int> transitionIds = procedureQuery->getTransitionIdsForProcedure(ref.procedureId);
+      const QVector<int> transitionIds = procedureQuery->getTransitionIdsForProcedure(ref.procedureId);
       if(!transitionIds.isEmpty())
         ref.transitionId = transitionIds.constFirst();
     }
@@ -1781,9 +1783,8 @@ void ProcedureSearch::updateProcedureWind()
 
     if(root->childCount() > 0)
     {
-      int windDirectionDeg;
-      float windSpeedKts;
-      NavApp::getAirportWind(windDirectionDeg, windSpeedKts, *currentAirportSim, false /* stationOnly */);
+      float windSpeedKts, windDirectionDeg;
+      NavApp::getAirportMetarWind(windDirectionDeg, windSpeedKts, *currentAirportSim, false /* stationOnly */);
 
       for(int i = 0; i < root->childCount(); i++)
       {

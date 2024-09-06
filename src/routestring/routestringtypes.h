@@ -18,13 +18,14 @@
 #ifndef LNM_ROUTESTRINGTYPES_H
 #define LNM_ROUTESTRINGTYPES_H
 
-#include <QFlags>
+#include "util/flags.h"
+
 #include <QStringList>
 
 namespace rs {
 
 /* Do not change order since it is used to save to options */
-enum RouteStringOption
+enum RouteStringOption : quint32
 {
   NONE = 0,
 
@@ -84,8 +85,8 @@ enum RouteStringOption
   SIMBRIEF_READ_DEFAULTS = rs::READ_ALTERNATES | rs::REPORT
 };
 
-Q_DECLARE_FLAGS(RouteStringOptions, RouteStringOption)
-Q_DECLARE_OPERATORS_FOR_FLAGS(rs::RouteStringOptions)
+ATOOLS_DECLARE_FLAGS_32(RouteStringOptions, RouteStringOption)
+ATOOLS_DECLARE_OPERATORS_FOR_FLAGS(rs::RouteStringOptions)
 
 /* Remove all invalid characters and simplify string. Extracts all characters until the next empty line. */
 QStringList cleanRouteStringList(const QString& string);

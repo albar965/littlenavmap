@@ -102,50 +102,50 @@ void MapPainterTop::render()
 
 #ifdef DEBUG_APPROACH_PAINT
   {
-    const proc::MapProcedureLeg& leg = mapPaintWidget->getProcedureLegHighlights();
+    const proc::MapProcedureLeg& leg = mapPaintWidget->getProcedureLegHighlight();
     atools::util::PainterContextSaver saver(context->painter);
-    painter->setBrush(Qt::black);
-    painter->setBackgroundMode(Qt::OpaqueMode);
-    painter->setBackground(Qt::black);
+    context->painter->setBrush(Qt::black);
+    context->painter->setBackgroundMode(Qt::OpaqueMode);
+    context->painter->setBackground(Qt::black);
 
     if(leg.geometry.isValid())
     {
-      painter->setPen(QPen(Qt::red, 6));
-      drawLineString(painter, leg.geometry);
+      context->painter->setPen(QPen(Qt::red, 6));
+      drawPolyline(context->painter, leg.geometry);
     }
     if(leg.line.isValid())
     {
-      painter->setPen(QPen(Qt::yellow, 3));
-      drawLine(painter, leg.line);
-      drawText(painter, leg.line.getPos1(), "P1", false, false);
-      drawText(painter, leg.line.getPos2(), QString("P2,%1°,%2nm").
+      context->painter->setPen(QPen(Qt::yellow, 3));
+      drawLine(context->painter, leg.line);
+      drawText(context->painter, leg.line.getPos1(), "P1", false, false);
+      drawText(context->painter, leg.line.getPos2(), QString("P2,%1°,%2nm").
                arg(leg.course, 0, 'f', 1).arg(leg.distance, 0, 'f', 1), false, false);
 
     }
     if(leg.holdLine.isValid())
     {
-      painter->setPen(QPen(Qt::blue, 3));
-      drawLine(painter, leg.line);
+      context->painter->setPen(QPen(Qt::blue, 3));
+      drawLine(context->painter, leg.line);
     }
     if(leg.procedureTurnPos.isValid())
     {
-      painter->setPen(QPen(Qt::blue, 2));
-      drawText(painter, leg.procedureTurnPos, "PTFIX", false, false);
+      context->painter->setPen(QPen(Qt::blue, 2));
+      drawText(context->painter, leg.procedureTurnPos, "PTFIX", false, false);
     }
     if(leg.interceptPos.isValid())
     {
-      painter->setPen(QPen(Qt::yellow, 2));
-      drawText(painter, leg.interceptPos, "ICPT", true, false);
+      context->painter->setPen(QPen(Qt::yellow, 2));
+      drawText(context->painter, leg.interceptPos, "ICPT", true, false);
     }
     if(leg.recFixPos.isValid())
     {
-      painter->setPen(QPen(Qt::lightGray, 2));
-      drawText(painter, leg.recFixPos, leg.recFixIdent.isEmpty() ? "RECFIX" : leg.recFixIdent, false, true);
+      context->painter->setPen(QPen(Qt::lightGray, 2));
+      drawText(context->painter, leg.recFixPos, leg.recFixIdent.isEmpty() ? "RECFIX" : leg.recFixIdent, false, true);
     }
     if(leg.fixPos.isValid())
     {
-      painter->setPen(QPen(Qt::white, 2));
-      drawText(painter, leg.fixPos, leg.fixIdent.isEmpty() ? "FIX" : leg.fixIdent, true, true);
+      context->painter->setPen(QPen(Qt::white, 2));
+      drawText(context->painter, leg.fixPos, leg.fixIdent.isEmpty() ? "FIX" : leg.fixIdent, true, true);
     }
   }
 #endif
@@ -157,8 +157,10 @@ void MapPainterTop::render()
 
     QStringList labels;
     labels.append(QString("Layer %1").arg(context->mapLayer->getMaxRange()));
+    labels.append(QString("Layer text %1").arg(context->mapLayerText->getMaxRange()));
     labels.append(QString("Layer effective %1").arg(context->mapLayerEffective->getMaxRange()));
     labels.append(QString("Layer route %1").arg(context->mapLayerRoute->getMaxRange()));
+    labels.append(QString("Layer route text %1").arg(context->mapLayerRouteText->getMaxRange()));
     labels.append(QString("Airport sym %1").arg(context->mapLayer->getAirportSymbolSize()));
     labels.append(QString("Min RW %1").arg(context->mapLayer->getMinRunwayLength()));
     labels.append("-");

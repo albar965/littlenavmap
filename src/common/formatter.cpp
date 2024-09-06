@@ -17,11 +17,10 @@
 
 #include "common/formatter.h"
 
-#include "fs/util/fsutil.h"
-
 #include "atools.h"
 #include "common/mapflags.h"
 #include "fs/util/coordinates.h"
+#include "fs/util/fsutil.h"
 #include "geo/calculations.h"
 #include "geo/pos.h"
 #include "textpointer.h"
@@ -262,10 +261,10 @@ QString windInformation(float headWindKts, float crossWindKts, const QString& se
   return windTxt.join(separator);
 }
 
-QString windInformationShort(int windDirectionDeg, float windSpeedKts, float runwayEndHeading, float minHeadWind, bool addUnit)
+QString windInformationShort(float windDirectionDeg, float windSpeedKts, float runwayEndHeading, float minHeadWind, bool addUnit)
 {
   QString windStr;
-  if(windDirectionDeg != -1 && windSpeedKts >= 1.f && windSpeedKts < map::INVALID_METAR_VALUE)
+  if(windDirectionDeg < map::INVALID_METAR_VALUE && windSpeedKts >= 1.f && windSpeedKts < map::INVALID_METAR_VALUE)
   {
     float headWindKts, crossWindKts;
     atools::geo::windForCourse(headWindKts, crossWindKts, windSpeedKts, windDirectionDeg, runwayEndHeading);

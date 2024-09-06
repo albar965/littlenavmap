@@ -24,6 +24,9 @@
 #include <QHash>
 #include <QObject>
 
+class AirportQuery;
+
+class Queries;
 namespace map {
 struct MapAirport;
 }
@@ -105,8 +108,8 @@ public:
   /* For display. Source depends on settings and parsed objects are cached. */
   const atools::fs::weather::Metar& getAirportWeather(const map::MapAirport& airport, bool stationOnly);
 
-  /* Get wind at airport. No nearest values for stationOnly=true. */
-  void getAirportWind(int& windDirectionDeg, float& windSpeedKts, const map::MapAirport& airport, bool stationOnly);
+  /* Get wind at airport using METAR from current map weather symbol selection. No nearest values for stationOnly=true. */
+  void getAirportMetarWind(float& windDirectionDeg, float& windSpeedKts, const map::MapAirport& airport, bool stationOnly);
 
   /* Gives preferred runways with title text like "Prefers runway:". Runways might be grouped. */
   void getBestRunwaysTextShort(QString& title, QString& runwayNumbers, QString& sourceText, const map::MapAirport& airport);
@@ -143,7 +146,7 @@ public:
     ASP5, /* Active Sky for Prepar3D v5 */
     ASXPL11, /* Active Sky for X-Plane 11 */
     ASXPL12, /* Active Sky for X-Plane 12 */
-    ASFS   /* Active Sky for MSFS */
+    ASFS /* Active Sky for MSFS */
   };
 
   /* Get type of active sky weather snapshot that was found */
@@ -223,7 +226,7 @@ private:
   /* Show warning dialog in main loop to avoid issues when being called from draw handler */
   void showXplaneWarningDialog(const QString& message);
 
-  atools::geo::Pos fetchAirportCoordinates(const QString& metarAirportIdent);
+  atools::geo::Pos fetchAirportCoordinates(const QString& airportIdent, AirportQuery *airportQuery, bool xplane);
 
   /* Update IVAO and NOAA timeout periods - timeout is disable if weather services are not used */
   void updateTimeouts();
@@ -260,6 +263,8 @@ private:
   int onlineWeatherTimeoutSecs = 600;
 
   bool errorReported = false;
+
+  const Queries *queries;
 
   bool verbose = false;
 };

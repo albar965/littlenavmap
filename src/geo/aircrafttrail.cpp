@@ -15,7 +15,7 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#include "common/aircrafttrail.h"
+#include "geo/aircrafttrail.h"
 
 #include "atools.h"
 #include "common/constants.h"
@@ -24,6 +24,7 @@
 #include "fs/sc/simconnectuseraircraft.h"
 #include "geo/calculations.h"
 #include "geo/linestring.h"
+#include "geo/marbleconverter.h"
 #include "io/fileroller.h"
 #include "settings/settings.h"
 
@@ -39,9 +40,6 @@ quint16 AircraftTrail::version = 0;
 
 /* Insert an invalid position as an break indicator if aircraft jumps too far on ground. */
 static const float MAX_POINT_DISTANCE_NM = 5.f;
-
-/* Number of entries to remove at once */
-static const int TRUNCATE_TRACK_ENTRIES = 200;
 
 static const quint32 FILE_MAGIC_NUMBER = 0x5B6C1A2B;
 
@@ -168,14 +166,11 @@ map::AircraftTrailSegment AircraftTrail::findNearest(const QPoint& point, const 
                                                      const Marble::GeoDataLatLonAltBox& viewportBox,
                                                      ScreenCoordinatesFunc screenCoordinates) const
 {
-  map::AircraftTrailSegment trail;
+  map::AircraftTrailSegment trailSegment;
   if(size() <= 1)
-    return trail;
+    return trailSegment;
 
-  atools::geo::Rect viewportRect(viewportBox.west(Marble::GeoDataCoordinates::Degree),
-                                 viewportBox.north(Marble::GeoDataCoordinates::Degree),
-                                 viewportBox.east(Marble::GeoDataCoordinates::Degree),
-                                 viewportBox.south(Marble::GeoDataCoordinates::Degree));
+  atools::geo::Rect viewportRect = mconvert::fromGdc(viewportBox);
 
   int trackIndex = -1;
   int indexTracks = 0;
@@ -238,17 +233,17 @@ map::AircraftTrailSegment AircraftTrail::findNearest(const QPoint& point, const 
 
       // Set interpolated altitude
       pos.setAltitude(static_cast<float>(atools::interpolate(posFrom.getAltitudeD(), posTo.getAltitudeD(), 0., length, distFrom1)));
-      trail.position = pos;
-      trail.index = trackIndex;
-      trail.from = posFrom.getPosition();
-      trail.to = posTo.getPosition();
-      trail.length = static_cast<float>(length);
-      trail.distanceFromStart = resultShortest.distanceFrom1;
-      trail.speed = static_cast<float>(length / travelTime * 1000.f);
-      trail.headingTrue = static_cast<float>(posFrom.getPosD().angleDegTo(posTo.getPosD()));
-      trail.timestampPos = posFrom.getTimestampMs() + std::lround(travelTime * fraction);
-      trail.onGround = atools::roundToInt(atools::interpolate(static_cast<double>(posFrom.isOnGround()),
-                                                              static_cast<double>(posTo.isOnGround()), 0., length, distFrom1));
+      trailSegment.position = pos;
+      trailSegment.index = trackIndex;
+      trailSegment.from = posFrom.getPosition();
+      trailSegment.to = posTo.getPosition();
+      trailSegment.length = static_cast<float>(length);
+      trailSegment.distanceFromStart = resultShortest.distanceFrom1;
+      trailSegment.speed = static_cast<float>(length / travelTime * 1000.f);
+      trailSegment.headingTrue = static_cast<float>(posFrom.getPosD().angleDegTo(posTo.getPosD()));
+      trailSegment.timestampPos = posFrom.getTimestampMs() + std::lround(travelTime * fraction);
+      trailSegment.onGround = atools::roundToInt(atools::interpolate(static_cast<double>(posFrom.isOnGround()),
+                                                                     static_cast<double>(posTo.isOnGround()), 0., length, distFrom1));
     }
     else
     {
@@ -256,10 +251,10 @@ map::AircraftTrailSegment AircraftTrail::findNearest(const QPoint& point, const 
       qDebug() << Q_FUNC_INFO << "MISSED" << pos << point << QPoint(static_cast<int>(xs), static_cast<int>(ys));
 #endif
       trackIndex = -1;
-      trail.position = Pos();
+      trailSegment.position = Pos();
     }
   }
-  return trail;
+  return trailSegment;
 }
 
 atools::fs::gpx::GpxData AircraftTrail::toGpxData(const atools::fs::pln::Flightplan& flightplan) const
@@ -436,7 +431,7 @@ int AircraftTrail::appendTrailPos(const atools::fs::sc::SimConnectUserAircraft& 
     return false;
   }
 
-  int numTruncated = false;
+  int numTruncated = 0;
   bool changed = false, split = false;
   qint64 timestampMs = userAircraft.getZuluTime().toMSecsSinceEpoch();
   atools::geo::PosD posD = userAircraft.getPositionD();
@@ -525,9 +520,9 @@ int AircraftTrail::appendTrailPos(const atools::fs::sc::SimConnectUserAircraft& 
 
   if(!isEmpty())
   {
-    if(split)
+    if(split || numTruncated > 0)
     {
-      // Trail was split - do a full update
+      // Trail was split or truncated - do a full update
       updateBoundary();
       updateLineStrings();
     }
@@ -556,13 +551,16 @@ int AircraftTrail::appendTrailPos(const atools::fs::sc::SimConnectUserAircraft& 
 
 int AircraftTrail::truncateTrail()
 {
-  int numTruncated = 0;
+  int numTruncated = 0, truncateBatch = std::max(size() / 50, 5); // Calculate batch based on current size
   int maxEntries = maxTrackEntries <= 0 || maxTrackEntries > MAX_TRACK_ENTRIES ? MAX_TRACK_ENTRIES : maxTrackEntries;
 
-  while(size() > maxEntries)
+  while(size() > maxEntries && !isEmpty())
   {
-    for(int i = 0; i < TRUNCATE_TRACK_ENTRIES; i++)
+    for(int i = 0; i < truncateBatch; i++)
     {
+      if(isEmpty())
+        break;
+
       numTruncated++;
       removeFirst();
     }
@@ -640,8 +638,6 @@ void AircraftTrail::updateLineStrings()
   if(!isEmpty())
   {
     atools::geo::LineString linestring;
-    lineStrings.reserve(size());
-
     for(const AircraftTrailPos& trackPos : qAsConst(*this))
     {
       if(!trackPos.isValid())

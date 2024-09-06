@@ -38,11 +38,6 @@ class CoordinateConverter;
 class WaypointQuery
 {
 public:
-  /*
-   * @param sqlDb database for simulator scenery data
-   * @param sqlDbNav for updated navaids
-   */
-  WaypointQuery(atools::sql::SqlDatabase *sqlDbNav, bool trackDatabaseParam);
   ~WaypointQuery();
 
   WaypointQuery(const WaypointQuery& other) = delete;
@@ -79,20 +74,29 @@ public:
   /* Get record for joined tables waypoint, bgl_file and scenery_area */
   const atools::sql::SqlRecord *getWaypointInformation(int waypointId);
 
+  atools::sql::SqlQuery *getWaypointsByRectQuery() const
+  {
+    return waypointsByRectQuery;
+  }
+
+private:
+  friend class Queries;
+  friend class WaypointTrackQuery;
+
+  /*
+   * @param sqlDb database for simulator scenery data
+   * @param sqlDbNav for updated navaids
+   */
+  explicit WaypointQuery(atools::sql::SqlDatabase *sqlDbNav, bool trackDatabaseParam);
+
   /* Close all query objects thus disconnecting from the database */
   void initQueries();
 
   /* Create and prepare all queries */
   void deInitQueries();
 
-  atools::sql::SqlQuery *getWaypointsByRectQuery() const
-  {
-    return waypointsByRectQuery;
-  }
-
   void clearCache();
 
-private:
   MapTypesFactory *mapTypesFactory;
   atools::sql::SqlDatabase *dbNav;
 

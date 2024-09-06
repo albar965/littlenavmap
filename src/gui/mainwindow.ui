@@ -219,6 +219,7 @@
      <addaction name="separator"/>
      <addaction name="actionHelpUserManualUserInterface"/>
      <addaction name="actionHelpUserManualMainMenu"/>
+     <addaction name="actionHelpUserManualShortcuts"/>
      <addaction name="separator"/>
      <addaction name="actionHelpUserManualFlightPlanning"/>
      <addaction name="actionHelpUserManualAircraftPerf"/>
@@ -308,9 +309,12 @@
     <addaction name="actionMapHideAllHoldings"/>
     <addaction name="actionMapHideAllMsa"/>
     <addaction name="separator"/>
-    <addaction name="actionMapDetailsMore"/>
     <addaction name="actionMapDetailsDefault"/>
+    <addaction name="actionMapDetailsMore"/>
     <addaction name="actionMapDetailsLess"/>
+    <addaction name="separator"/>
+    <addaction name="actionMapDetailsTextMore"/>
+    <addaction name="actionMapDetailsTextLess"/>
    </widget>
    <widget class="QMenu" name="menuRoute">
     <property name="title">
@@ -7114,6 +7118,42 @@ relation to shown airport</string>
     <string>Ctrl+-</string>
    </property>
   </action>
+  <action name="actionMapDetailsTextMore">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/detailmorelabel.svg</normaloff>:/littlenavmap/resources/icons/detailmorelabel.svg</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;More Map Labels</string>
+   </property>
+   <property name="toolTip">
+    <string>Show more labels on the map</string>
+   </property>
+   <property name="statusTip">
+    <string>Show more labels on the map</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift++</string>
+   </property>
+  </action>
+  <action name="actionMapDetailsTextLess">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/detaillesslabel.svg</normaloff>:/littlenavmap/resources/icons/detaillesslabel.svg</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Less Map Labels</string>
+   </property>
+   <property name="toolTip">
+    <string>Show fewer labels on the map</string>
+   </property>
+   <property name="statusTip">
+    <string>Show fewer labels on the map</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+-</string>
+   </property>
+  </action>
   <action name="actionMapShowHome">
    <property name="icon">
     <iconset resource="../../littlenavmap.qrc">
@@ -9374,7 +9414,7 @@ relation to shown airport</string>
     <bool>true</bool>
    </property>
    <property name="checked">
-    <bool>false</bool>
+    <bool>true</bool>
    </property>
    <property name="icon">
     <iconset resource="../../littlenavmap.qrc">
@@ -11649,13 +11689,13 @@ relation to shown airport</string>
      <normaloff>:/littlenavmap/resources/icons/verticaltrack.svg</normaloff>:/littlenavmap/resources/icons/verticaltrack.svg</iconset>
    </property>
    <property name="text">
-    <string>Show &amp;Vertical Track</string>
+    <string>Show &amp;Vertical Aircraft Trail</string>
    </property>
    <property name="toolTip">
-    <string>Show vertical track line</string>
+    <string>Show vertical aircraft trail</string>
    </property>
    <property name="statusTip">
-    <string>Show vertical track line</string>
+    <string>Show vertical aircraft trail</string>
    </property>
   </action>
   <action name="actionSearchUserpointUndo">
@@ -12377,6 +12417,21 @@ relation to shown airport</string>
    </property>
    <property name="statusTip">
     <string>Generate a flight using random airports</string>
+   </property>
+  </action>
+  <action name="actionHelpUserManualShortcuts">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/help.svg</normaloff>:/littlenavmap/resources/icons/help.svg</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Keyboard Shortcuts</string>
+   </property>
+   <property name="toolTip">
+    <string>Shows all keyboard shortcuts online in a browser</string>
+   </property>
+   <property name="statusTip">
+    <string>Show keyboard shortcuts in a browser</string>
    </property>
   </action>
  </widget>

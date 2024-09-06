@@ -17,17 +17,18 @@
 
 #include "mapgui/mappaintwidget.h"
 
-#include "common/aircrafttrail.h"
+#include "app/navapp.h"
 #include "common/constants.h"
 #include "common/mapresult.h"
 #include "common/unit.h"
+#include "geo/aircrafttrail.h"
 #include "geo/calculations.h"
+#include "geo/marbleconverter.h"
 #include "mapgui/aprongeometrycache.h"
 #include "mapgui/mapscreenindex.h"
 #include "mapgui/mapthemehandler.h"
 #include "mappainter/mappaintlayer.h"
 #include "marble/ViewportParams.h"
-#include "app/navapp.h"
 #include "query/airwayquery.h"
 #include "query/airwaytrackquery.h"
 #include "query/mapquery.h"
@@ -67,8 +68,9 @@ using namespace Marble;
 using atools::geo::Rect;
 using atools::geo::Pos;
 
-MapPaintWidget::MapPaintWidget(QWidget *parent, bool visible, bool webParam)
-  : MapGraphic(parent), visibleWidget(visible), web(webParam)
+
+MapPaintWidget::MapPaintWidget(QWidget *parent, Queries *queriesParam, bool visible, bool webParam)
+  : MapGraphic(parent), visibleWidget(visible), queries(queriesParam), web(webParam)
 {
   verbose = atools::settings::Settings::instance().getAndStoreValue(lnm::OPTIONS_MAPWIDGET_DEBUG, false).toBool();
 
@@ -98,41 +100,41 @@ MapPaintWidget::MapPaintWidget(QWidget *parent, bool visible, bool webParam)
   apronGeometryCache = new ApronGeometryCache();
   apronGeometryCache->setViewportParams(viewport());
 
-  mapQuery = new MapQuery(NavApp::getDatabaseSim(), NavApp::getDatabaseNav(), NavApp::getDatabaseUser());
-  mapQuery->initQueries();
-
-  // Set up airway queries =====================
-  airwayTrackQuery = new AirwayTrackQuery(new AirwayQuery(NavApp::getDatabaseNav(), false),
-                                          new AirwayQuery(NavApp::getDatabaseTrack(), true));
-  airwayTrackQuery->initQueries();
-
-  // Set up waypoint queries =====================
-  waypointTrackQuery = new WaypointTrackQuery(new WaypointQuery(NavApp::getDatabaseNav(), false),
-                                              new WaypointQuery(NavApp::getDatabaseTrack(), true));
-  waypointTrackQuery->initQueries();
-
   paintLayer->initQueries();
+
+  setShowTileId(atools::settings::Settings::instance().getAndStoreValue(lnm::OPTIONS_MAPWIDGET_TILEID_DEBUG, false).toBool());
 }
 
 MapPaintWidget::~MapPaintWidget()
 {
   removeLayer(paintLayer);
 
-  // Have to delete manually since classes can be copied and does not delete in destructor
-  airwayTrackQuery->deleteChildren();
-  ATOOLS_DELETE_LOG(airwayTrackQuery);
-
-  waypointTrackQuery->deleteChildren();
-  ATOOLS_DELETE_LOG(waypointTrackQuery);
-
   ATOOLS_DELETE_LOG(paintLayer);
   ATOOLS_DELETE_LOG(screenIndex);
   ATOOLS_DELETE_LOG(aircraftTrail);
   ATOOLS_DELETE_LOG(aircraftTrailLogbook);
   ATOOLS_DELETE_LOG(apronGeometryCache);
-  ATOOLS_DELETE_LOG(mapQuery);
 }
 
+// Unused options
+// setAnimationsEnabled(other.animationsEnabled());
+// setShowDebugPolygons(other.showDebugPolygons());
+// setShowRuntimeTrace(other.showRuntimeTrace());
+// setShowBackground(other.showBackground());
+// setShowFrameRate(other.showFrameRate());
+// setShowLakes(other.showLakes());
+// setShowRivers(other.showRivers());
+// setShowBorders(other.showBorders());
+// setShowOverviewMap(other.showOverviewMap());
+// setShowScaleBar(other.showScaleBar());
+// setShowCompass(other.showCompass());
+// setShowClouds(other.showClouds());
+// setShowCityLights(other.showCityLights());
+// setLockToSubSolarPoint(other.isLockedToSubSolarPoint());
+// setSubSolarPointIconVisible(other.isSubSolarPointIconVisible());
+// setShowAtmosphere(other.showAtmosphere());
+// setShowCrosshairs(other.showCrosshairs());
+// setShowRelief(other.showRelief());
 void MapPaintWidget::copySettings(const MapPaintWidget& other, bool deep)
 {
   paintLayer->copySettings(*other.paintLayer);
@@ -141,26 +143,6 @@ void MapPaintWidget::copySettings(const MapPaintWidget& other, bool deep)
   // Copy all MarbleWidget settings - some on demand to avoid overhead
   if(projection() != Marble::Mercator)
     setProjection(Marble::Mercator);
-
-  // Unused options
-  // setAnimationsEnabled(other.animationsEnabled());
-  // setShowDebugPolygons(other.showDebugPolygons());
-  // setShowRuntimeTrace(other.showRuntimeTrace());
-  // setShowBackground(other.showBackground());
-  // setShowFrameRate(other.showFrameRate());
-  // setShowLakes(other.showLakes());
-  // setShowRivers(other.showRivers());
-  // setShowBorders(other.showBorders());
-  // setShowOverviewMap(other.showOverviewMap());
-  // setShowScaleBar(other.showScaleBar());
-  // setShowCompass(other.showCompass());
-  // setShowClouds(other.showClouds());
-  // setShowCityLights(other.showCityLights());
-  // setLockToSubSolarPoint(other.isLockedToSubSolarPoint());
-  // setSubSolarPointIconVisible(other.isSubSolarPointIconVisible());
-  // setShowAtmosphere(other.showAtmosphere());
-  // setShowCrosshairs(other.showCrosshairs());
-  // setShowRelief(other.showRelief());
 
   setShowSunShading(other.showSunShading());
   setShowGrid(other.showGrid());
@@ -364,11 +346,6 @@ void MapPaintWidget::windDisplayUpdated()
   updateMapVisibleUi();
 }
 
-map::MapWeatherSource MapPaintWidget::getMapWeatherSource() const
-{
-  return paintLayer->getWeatherSource();
-}
-
 QDateTime MapPaintWidget::getSunShadingDateTime() const
 {
     return model() ? model()->clockDateTime() : QDateTime();
@@ -518,9 +495,9 @@ const map::MapAirspaceFilter& MapPaintWidget::getShownAirspaces() const
   return paintLayer->getShownAirspaces();
 }
 
-const map::MapAirspaceFilter MapPaintWidget::getShownAirspaceTypesByLayer() const
+const map::MapAirspaceFilter MapPaintWidget::getShownAirspaceTypesForLayer() const
 {
-  return paintLayer->getShownAirspacesTypesByLayer();
+  return paintLayer->getShownAirspacesTypesForLayer();
 }
 
 ApronGeometryCache *MapPaintWidget::getApronGeometryCache()
@@ -532,12 +509,10 @@ void MapPaintWidget::preDatabaseLoad()
 {
   jumpBackToAircraftCancel();
   cancelDragAll();
+
   databaseLoadStatus = true;
   apronGeometryCache->clear();
   paintLayer->preDatabaseLoad();
-  mapQuery->deInitQueries();
-  airwayTrackQuery->deInitQueries();
-  waypointTrackQuery->deInitQueries();
 }
 
 void MapPaintWidget::postDatabaseLoad()
@@ -548,9 +523,6 @@ void MapPaintWidget::postDatabaseLoad()
   screenIndexUpdateReqired = true;
 
   // Reload track into database to catch changed waypoint ids
-  airwayTrackQuery->initQueries();
-  waypointTrackQuery->initQueries();
-  mapQuery->initQueries();
   paintLayer->postDatabaseLoad();
   update();
   updateMapVisibleUiPostDatabaseLoad();
@@ -598,8 +570,7 @@ QString MapPaintWidget::createAvitabJson()
 
 void MapPaintWidget::centerRectOnMapPrecise(const atools::geo::Rect& rect, bool allowAdjust)
 {
-  centerRectOnMapPrecise(Marble::GeoDataLatLonBox(rect.getNorth(), rect.getSouth(), rect.getEast(), rect.getWest(),
-                                                  GeoDataCoordinates::Degree), allowAdjust);
+  centerRectOnMapPrecise(mconvert::toGdc(rect), allowAdjust);
 }
 
 void MapPaintWidget::centerRectOnMapPrecise(const Marble::GeoDataLatLonBox& rect, bool allowAdjust)
@@ -608,8 +579,8 @@ void MapPaintWidget::centerRectOnMapPrecise(const Marble::GeoDataLatLonBox& rect
   centerOn(rect, false /* animated */);
   int zoomIterations = 0;
 
-  double north = rect.north(GeoDataCoordinates::Degree), south = rect.south(GeoDataCoordinates::Degree),
-         east = rect.east(GeoDataCoordinates::Degree), west = rect.west(GeoDataCoordinates::Degree);
+  double north = rect.north(mconvert::DEG), south = rect.south(mconvert::DEG),
+         east = rect.east(mconvert::DEG), west = rect.west(mconvert::DEG);
 
   if(verbose)
     qDebug() << Q_FUNC_INFO << "initial zoom" << zoom() << "zoom step" << zoomStep();
@@ -671,15 +642,12 @@ atools::geo::Pos MapPaintWidget::getCurrentViewCenterPos() const
 
 atools::geo::Rect MapPaintWidget::getCurrentViewRect() const
 {
-  const GeoDataLatLonBox& box = getCurrentViewBoundingBox();
-  return atools::geo::Rect(box.west(GeoDataCoordinates::Degree), box.north(GeoDataCoordinates::Degree),
-                           box.east(GeoDataCoordinates::Degree), box.south(GeoDataCoordinates::Degree));
+  return atools::geo::Rect(mconvert::fromGdc(getCurrentViewBoundingBox()));
 }
 
 void MapPaintWidget::centerRectOnMap(const Marble::GeoDataLatLonBox& rect, bool allowAdjust)
 {
-  centerRectOnMap(Rect(rect.west(GeoDataCoordinates::Degree), rect.north(GeoDataCoordinates::Degree),
-                       rect.east(GeoDataCoordinates::Degree), rect.south(GeoDataCoordinates::Degree)), allowAdjust);
+  centerRectOnMap(mconvert::fromGdc(rect), allowAdjust);
 }
 
 void MapPaintWidget::centerRectOnMap(const atools::geo::Rect& rect, bool allowAdjust)
@@ -695,10 +663,9 @@ void MapPaintWidget::centerRectOnMap(const atools::geo::Rect& rect, bool allowAd
     scaled.scale(1.075f, 1.075f);
 
     double north = scaled.getNorth(), south = scaled.getSouth(), east = scaled.getEast(), west = scaled.getWest();
-    GeoDataLatLonBox box(north, south, east, west, GeoDataCoordinates::Degree);
 
     // Center rectangle first
-    centerOn(box, false /* animated */);
+    centerOn(mconvert::toGdc(scaled), false /* animated */);
 
     // Correct zoom - zoom out until all points are visible ==========================
     // Needed since Marble does zoom correctly
@@ -1166,15 +1133,6 @@ const GeoDataLatLonBox& MapPaintWidget::getCurrentViewBoundingBox() const
   return viewport()->viewLatLonAltBox();
 }
 
-void MapPaintWidget::postTrackLoad()
-{
-  waypointTrackQuery->clearCache();
-  airwayTrackQuery->clearCache();
-
-  waypointTrackQuery->initQueries();
-  airwayTrackQuery->initQueries();
-}
-
 void MapPaintWidget::cancelDragAll()
 {
   // No-op
@@ -1199,7 +1157,7 @@ map::MapSunShading MapPaintWidget::sunShadingFromUi()
 map::MapWeatherSource MapPaintWidget::weatherSourceFromUi()
 {
   // Default get internal value instead of GUI
-  return paintLayer->getWeatherSource();
+  return paintLayer->getMapWeatherSource();
 }
 
 void MapPaintWidget::updateThemeUi(const QString&)
@@ -1364,8 +1322,10 @@ void MapPaintWidget::paintEvent(QPaintEvent *paintEvent)
       // Erase map window to avoid black rectangle but do a dummy draw call to have everything initialized
       MapGraphic::paintEvent(paintEvent);
 
-      if(changed)
+      // Either changed or overflow state changed to not overflow
+      if(changed || (!paintLayer->isObjectOverflow() && !paintLayer->isQueryOverflow() && previousOverflow))
       {
+        previousOverflow = false;
         // Major change - update index and visible objects
         updateMapVisibleUi();
         screenIndex->updateAllGeometry(currentViewBoundingBox);
@@ -1373,6 +1333,7 @@ void MapPaintWidget::paintEvent(QPaintEvent *paintEvent)
 
       if(paintLayer->isObjectOverflow() || paintLayer->isQueryOverflow())
       {
+        previousOverflow = true;
 #ifdef DEBUG_INFORMATION
         qDebug() << Q_FUNC_INFO
                  << "isObjectOverflow" << paintLayer->isObjectOverflow()
@@ -1383,6 +1344,9 @@ void MapPaintWidget::paintEvent(QPaintEvent *paintEvent)
         // Passed by queued connection - execute later in event loop
         emit resultTruncated();
       }
+      else
+        previousOverflow = false;
+
     } // if(!active) ... else ...
 
     painting = false;

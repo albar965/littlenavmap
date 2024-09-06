@@ -112,6 +112,9 @@ public:
   void editLogEntryFromMap(int id);
   void deleteLogEntryFromMap(int id);
 
+  /* Signaled if aircraft was or is close to the departure point on the runway */
+  void aircraftHasPassedTakeoffPoint(const atools::fs::sc::SimConnectUserAircraft&);
+
   /* Takeoff and landing events from map widget which will create a log entry if enabled */
   void aircraftTakeoff(const atools::fs::sc::SimConnectUserAircraft& aircraft);
   void aircraftLanding(const atools::fs::sc::SimConnectUserAircraft& aircraft, float flownDistanceNm);
@@ -185,6 +188,12 @@ public:
   void perfAdd(atools::sql::SqlRecord *record, QWidget *parent); /* Attach new performance to logbook entry */
   void perfSaveAs(atools::sql::SqlRecord *record, QWidget *parent); /* Save attached performance to file */
 
+  /* Aircraft was close to departure point on runway. Value is remembered. */
+  bool hasAircraftPassedTakeoffPoint() const
+  {
+    return aircraftPassedTakeoffPoint;
+  }
+
 signals:
   /* Sent after database modification to update the search result table */
   void refreshLogSearch(bool loadAll, bool keepSelection, bool force);
@@ -244,6 +253,8 @@ private:
 
   /* Remember last aircraft for fuel calculations */
   const atools::fs::sc::SimConnectUserAircraft *aircraftAtTakeoff = nullptr;
+
+  bool aircraftPassedTakeoffPoint = false;
 
   LogStatisticsDialog *statsDialog = nullptr;
 

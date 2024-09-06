@@ -60,8 +60,8 @@ SearchBaseTable::SearchBaseTable(QMainWindow *parent, QTableView *tableView, Col
                                  si::TabSearchId tabWidgetIndex)
   : AbstractSearch(parent, tabWidgetIndex), columns(columnList), view(tableView)
 {
-  mapQuery = NavApp::getMapQueryGui();
-  airportQuery = NavApp::getAirportQuerySim();
+  mapQuery = QueryManager::instance()->getQueriesGui()->getMapQuery();
+  airportQuery = QueryManager::instance()->getQueriesGui()->getAirportQuerySim();
 
   zoomHandler = new atools::gui::ItemViewZoomHandler(view);
   connect(NavApp::navAppInstance(), &atools::gui::Application::fontChanged, this, &SearchBaseTable::fontChanged);
@@ -1095,8 +1095,8 @@ void SearchBaseTable::contextMenu(const QPoint& pos)
     // Fill result with map objects ===========================
     std::initializer_list<map::MapTypes> msaTypeList = {map::AIRPORT, map::VOR, map::NDB, map::WAYPOINT};
     if(result.hasTypes(map::AIRPORT | map::VOR | map::NDB | map::WAYPOINT))
-      NavApp::getMapQueryGui()->getMapObjectByIdent(msaResult, map::AIRPORT_MSA, result.getIdent(msaTypeList),
-                                                    result.getRegion(msaTypeList), QString(), result.getPosition(msaTypeList));
+      mapQuery->getMapObjectByIdent(msaResult, map::AIRPORT_MSA, result.getIdent(msaTypeList),
+                                    result.getRegion(msaTypeList), QString(), result.getPosition(msaTypeList));
 
     if(mapObjType == map::AIRPORT && result.hasAirports())
       airport = result.airports.constFirst();

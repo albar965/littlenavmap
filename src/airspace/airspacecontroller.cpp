@@ -18,6 +18,7 @@
 #include "airspace/airspacecontroller.h"
 
 #include "airspace/airspacetoolbarhandler.h"
+#include "app/navapp.h"
 #include "atools.h"
 #include "common/constants.h"
 #include "db/airspacedialog.h"
@@ -27,14 +28,15 @@
 #include "fs/userdata/airspacereaderivao.h"
 #include "fs/userdata/airspacereaderopenair.h"
 #include "fs/userdata/airspacereadervatsim.h"
+#include "gui/dialog.h"
 #include "gui/errorhandler.h"
 #include "gui/mainwindow.h"
-#include "gui/dialog.h"
 #include "gui/textdialog.h"
 #include "gui/widgetstate.h"
-#include "app/navapp.h"
 #include "query/airportquery.h"
+#include "query/airspacequeries.h"
 #include "query/airspacequery.h"
+#include "query/querymanager.h"
 #include "sql/sqltransaction.h"
 #include "ui_mainwindow.h"
 #include "util/htmlbuilder.h"
@@ -44,26 +46,12 @@
 #include <QDirIterator>
 #include <QProgressDialog>
 
-AirspaceController::AirspaceController(MainWindow *mainWindowParam,
-                                       atools::sql::SqlDatabase *dbSim, atools::sql::SqlDatabase *dbNav,
-                                       atools::sql::SqlDatabase *dbUser, atools::sql::SqlDatabase *dbOnline)
+AirspaceController::AirspaceController(MainWindow *mainWindowParam)
   : QObject(mainWindowParam), mainWindow(mainWindowParam)
 {
-  // Create all query objects =================================
-  if(dbSim != nullptr)
-    queries.insert(map::AIRSPACE_SRC_SIM, new AirspaceQuery(dbSim, map::AIRSPACE_SRC_SIM));
-  if(dbNav != nullptr)
-    queries.insert(map::AIRSPACE_SRC_NAV, new AirspaceQuery(dbNav, map::AIRSPACE_SRC_NAV));
-  if(dbUser != nullptr)
-    queries.insert(map::AIRSPACE_SRC_USER, new AirspaceQuery(dbUser, map::AIRSPACE_SRC_USER));
-  if(dbOnline != nullptr)
-    queries.insert(map::AIRSPACE_SRC_ONLINE, new AirspaceQuery(dbOnline, map::AIRSPACE_SRC_ONLINE));
-
-  for(AirspaceQuery *q : qAsConst(queries))
-    q->initQueries();
-
   // Button and action handler =================================
-  qDebug() << Q_FUNC_INFO << "Creating InfoController";
+  qDebug() << Q_FUNC_INFO;
+
   airspaceHandler = new AirspaceToolBarHandler(NavApp::getMainWindow());
   airspaceHandler->createToolButtons();
 
@@ -80,145 +68,40 @@ AirspaceController::AirspaceController(MainWindow *mainWindowParam,
 AirspaceController::~AirspaceController()
 {
   ATOOLS_DELETE_LOG(airspaceHandler);
-
-  qDeleteAll(queries);
-  queries.clear();
 }
 
 void AirspaceController::sourceToggled()
 {
+  AirspaceQueries *airspaceQueries = QueryManager::instance()->getQueriesGui()->getAirspaceQueries();
   Ui::MainWindow *ui = NavApp::getMainUi();
-  sources.setFlag(map::AIRSPACE_SRC_SIM, ui->actionViewAirspaceSrcSimulator->isChecked());
-  sources.setFlag(map::AIRSPACE_SRC_NAV, ui->actionViewAirspaceSrcNavigraph->isChecked());
-  sources.setFlag(map::AIRSPACE_SRC_USER, ui->actionViewAirspaceSrcUser->isChecked());
-  sources.setFlag(map::AIRSPACE_SRC_ONLINE, ui->actionViewAirspaceSrcOnline->isChecked());
 
-  emit updateAirspaceSources(sources);
+  airspaceQueries->setSourceFlag(map::AIRSPACE_SRC_SIM, ui->actionViewAirspaceSrcSimulator->isChecked());
+  airspaceQueries->setSourceFlag(map::AIRSPACE_SRC_NAV, ui->actionViewAirspaceSrcNavigraph->isChecked());
+  airspaceQueries->setSourceFlag(map::AIRSPACE_SRC_USER, ui->actionViewAirspaceSrcUser->isChecked());
+  airspaceQueries->setSourceFlag(map::AIRSPACE_SRC_ONLINE, ui->actionViewAirspaceSrcOnline->isChecked());
+
+  qDebug() << Q_FUNC_INFO << airspaceQueries->getSources();
+
+  {
+    // Need to synchronize web queries since threads are calling it
+    QueryLocker locker(QueryManager::instance()->getQueriesWeb());
+    locker.getLockable()->getAirspaceQueries()->setSources(airspaceQueries->getSources());
+  }
+
+  emit updateAirspaceSources(airspaceQueries->getSources());
 
   updateButtonsAndActions();
 }
 
 void AirspaceController::sourceToActions()
 {
+  AirspaceQueries *airspaceQueries = QueryManager::instance()->getQueriesGui()->getAirspaceQueries();
   Ui::MainWindow *ui = NavApp::getMainUi();
-  ui->actionViewAirspaceSrcSimulator->setChecked(sources & map::AIRSPACE_SRC_SIM);
-  ui->actionViewAirspaceSrcNavigraph->setChecked(sources & map::AIRSPACE_SRC_NAV);
-  ui->actionViewAirspaceSrcUser->setChecked(sources & map::AIRSPACE_SRC_USER);
-  ui->actionViewAirspaceSrcOnline->setChecked(sources & map::AIRSPACE_SRC_ONLINE);
-}
 
-void AirspaceController::getAirspaceById(map::MapAirspace& airspace, map::MapAirspaceId id)
-{
-  if((id.src & map::AIRSPACE_SRC_USER) && loadingUserAirspaces)
-    // Avoid deadlock while loading user airspaces
-    return;
-
-  AirspaceQuery *query = queries.value(id.src);
-  if(query != nullptr)
-    query->getAirspaceById(airspace, id.id);
-}
-
-map::MapAirspace AirspaceController::getAirspaceById(map::MapAirspaceId id)
-{
-  map::MapAirspace airspace;
-  getAirspaceById(airspace, id);
-  return airspace;
-}
-
-bool AirspaceController::hasAirspaceById(map::MapAirspaceId id)
-{
-  if((id.src & map::AIRSPACE_SRC_USER) && loadingUserAirspaces)
-    // Avoid deadlock while loading user airspaces
-    return false;
-
-  AirspaceQuery *query = queries.value(id.src);
-  if(query != nullptr)
-    return query->hasAirspaceById(id.id);
-
-  return false;
-}
-
-atools::sql::SqlRecord AirspaceController::getOnlineAirspaceRecordById(int airspaceId)
-{
-  // Only for online centers
-  AirspaceQuery *query = queries.value(map::AIRSPACE_SRC_ONLINE);
-  if(query != nullptr)
-    return query->getOnlineAirspaceRecordById(airspaceId);
-  else
-    return atools::sql::SqlRecord();
-}
-
-atools::sql::SqlRecord AirspaceController::getAirspaceInfoRecordById(map::MapAirspaceId id)
-{
-  atools::sql::SqlRecord rec;
-
-  if((id.src & map::AIRSPACE_SRC_USER) && loadingUserAirspaces)
-    // Avoid deadlock while loading user airspaces
-    return rec;
-
-  if(!(id.src & map::AIRSPACE_SRC_ONLINE))
-  {
-    AirspaceQuery *query = queries.value(id.src);
-    if(query != nullptr)
-      return query->getAirspaceInfoRecordById(id.id);
-  }
-
-  return rec;
-}
-
-void AirspaceController::getAirspacesInternal(AirspaceVector& airspaceVector, const Marble::GeoDataLatLonBox& rect,
-                                              const MapLayer *mapLayer, const map::MapAirspaceFilter& filter, float flightplanAltitude,
-                                              bool lazy, map::MapAirspaceSources src, bool& overflow)
-{
-  if((src & map::AIRSPACE_SRC_USER) && loadingUserAirspaces)
-    // Avoid deadlock while loading user airspaces
-    return;
-
-  // Check if requested source and enabled sources overlap
-  if(src & sources)
-  {
-    AirspaceQuery *query = queries.value(src);
-    if(query != nullptr)
-    {
-      // Get airspaces from cache
-      const QList<map::MapAirspace> *airspaces = query->getAirspaces(rect, mapLayer, filter, flightplanAltitude, lazy, overflow);
-
-      if(airspaces != nullptr)
-      {
-        // Append pointers
-        for(const map::MapAirspace& airspace : *airspaces)
-          airspaceVector.append(&airspace);
-      }
-    }
-  }
-}
-
-void AirspaceController::getAirspaces(AirspaceVector& airspaces, const Marble::GeoDataLatLonBox& rect, const MapLayer *mapLayer,
-                                      const map::MapAirspaceFilter& filter, float flightplanAltitude, bool lazy,
-                                      map::MapAirspaceSources sourcesParam, bool& overflow)
-{
-  // Merge airspace pointers from all sources/caches into one list
-  for(map::MapAirspaceSources src : map::MAP_AIRSPACE_SRC_VALUES)
-  {
-    if(sourcesParam & src)
-      getAirspacesInternal(airspaces, rect, mapLayer, filter, flightplanAltitude, lazy, src, overflow);
-
-    if(overflow)
-      break;
-  }
-}
-
-const atools::geo::LineString *AirspaceController::getAirspaceGeometry(map::MapAirspaceId id)
-{
-  if((id.src & map::AIRSPACE_SRC_USER) && loadingUserAirspaces)
-    // Avoid deadlock while loading user airspaces
-    return nullptr;
-
-  AirspaceQuery *query = queries.value(id.src);
-  if(query != nullptr)
-    return query->getAirspaceGeometryById(id.id);
-
-  return nullptr;
+  ui->actionViewAirspaceSrcSimulator->setChecked(airspaceQueries->hasSourceFlag(map::AIRSPACE_SRC_SIM));
+  ui->actionViewAirspaceSrcNavigraph->setChecked(airspaceQueries->hasSourceFlag(map::AIRSPACE_SRC_NAV));
+  ui->actionViewAirspaceSrcUser->setChecked(airspaceQueries->hasSourceFlag(map::AIRSPACE_SRC_USER));
+  ui->actionViewAirspaceSrcOnline->setChecked(airspaceQueries->hasSourceFlag(map::AIRSPACE_SRC_ONLINE));
 }
 
 void AirspaceController::restoreState()
@@ -243,48 +126,50 @@ void AirspaceController::saveState() const
 
 void AirspaceController::optionsChanged()
 {
-  if(!loadingUserAirspaces)
+  AirspaceQueries *airspaceQueries = QueryManager::instance()->getQueriesGui()->getAirspaceQueries();
+  if(!airspaceQueries->isLoadingUserAirspaces())
   {
-    for(AirspaceQuery *query : qAsConst(queries))
-      // Also calls deinit before and clears caches
-      query->initQueries();
+    airspaceQueries->initQueries();
+
+    {
+      // Need to synchronize web queries since threads are calling it
+      QueryLocker locker(QueryManager::instance()->getQueriesWeb());
+      locker.getLockable()->getAirspaceQueries()->initQueries();
+    }
   }
 }
 
 void AirspaceController::preDatabaseLoad()
 {
+  AirspaceQueries *airspaceQueries = QueryManager::instance()->getQueriesGui()->getAirspaceQueries();
   // Avoid recursion from signal which is reflected by the database manager from
   // preDatabaseLoadAirspaces and postDatabaseLoadAirspaces
-  if(!loadingUserAirspaces)
+  if(!airspaceQueries->isLoadingUserAirspaces())
   {
-    for(AirspaceQuery *query : qAsConst(queries))
-      query->deInitQueries();
+    airspaceQueries->deInitQueries();
+
+    {
+      // Need to synchronize web queries since threads are calling it
+      QueryLocker locker(QueryManager::instance()->getQueriesWeb());
+      locker.getLockable()->getAirspaceQueries()->deInitQueries();
+    }
   }
 }
 
 void AirspaceController::postDatabaseLoad()
 {
+  AirspaceQueries *airspaceQueries = QueryManager::instance()->getQueriesGui()->getAirspaceQueries();
   // Avoid recursion from signal which is reflected by the database manager from
   // preDatabaseLoadAirspaces and postDatabaseLoadAirspaces
-  if(!loadingUserAirspaces)
+  if(!airspaceQueries->isLoadingUserAirspaces())
   {
-    for(AirspaceQuery *query : qAsConst(queries))
-      query->initQueries();
-  }
-}
+    airspaceQueries->initQueries();
 
-void AirspaceController::onlineClientAndAtcUpdated()
-{
-  if(queries.contains(map::AIRSPACE_SRC_ONLINE))
-    queries.value(map::AIRSPACE_SRC_ONLINE)->clearCache();
-}
-
-void AirspaceController::resetAirspaceOnlineScreenGeometry()
-{
-  if(queries.contains(map::AIRSPACE_SRC_ONLINE))
-  {
-    queries.value(map::AIRSPACE_SRC_ONLINE)->deInitQueries();
-    queries.value(map::AIRSPACE_SRC_ONLINE)->initQueries();
+    {
+      // Need to synchronize web queries since threads are calling it
+      QueryLocker locker(QueryManager::instance()->getQueriesWeb());
+      locker.getLockable()->getAirspaceQueries()->initQueries();
+    }
   }
 }
 
@@ -298,19 +183,24 @@ void AirspaceController::resetSettingsToDefault()
   updateButtonsAndActions();
 }
 
+void AirspaceController::onlineClientAndAtcUpdated()
+{
+  AirspaceQueries *airspaceQueries = QueryManager::instance()->getQueriesGui()->getAirspaceQueries();
+  if(!airspaceQueries->isLoadingUserAirspaces())
+  {
+    airspaceQueries->onlineClientAndAtcUpdated();
+
+    {
+      // Need to synchronize web queries since threads are calling it
+      QueryLocker locker(QueryManager::instance()->getQueriesWeb());
+      locker.getLockable()->getAirspaceQueries()->onlineClientAndAtcUpdated();
+    }
+  }
+}
+
 void AirspaceController::updateButtonsAndActions()
 {
   airspaceHandler->updateButtonsAndActions();
-}
-
-bool AirspaceController::hasAnyAirspaces() const
-{
-  for(map::MapAirspaceSources src : map::MAP_AIRSPACE_SRC_VALUES)
-  {
-    if((sources & src) && queries.contains(src) && queries.value(src)->hasAirspacesDatabase())
-      return true;
-  }
-  return false;
 }
 
 void AirspaceController::loadAirspaces()
@@ -328,7 +218,7 @@ void AirspaceController::loadAirspaces()
     qDebug() << Q_FUNC_INFO << basePath;
 
     // Disable queries to avoid locked database
-    preLoadAirspaces();
+    emit preDatabaseLoadAirspaces();
 
     bool success = false;
     int sceneryId = 1, fileId = 1, numReadTotal = 0, numFiles = 0;
@@ -476,7 +366,7 @@ void AirspaceController::loadAirspaces()
     }
 
     // Re-initialize queries again
-    postLoadAirspaces();
+    emit postDatabaseLoadAirspaces(NavApp::getCurrentSimulatorDb());
 
     // Let online controller update airspace shapes
     emit userAirspacesUpdated();
@@ -501,10 +391,11 @@ atools::geo::Pos AirspaceController::fetchAirportCoordinates(const QString& airp
 {
   if(!NavApp::isLoadingDatabase())
   {
+    const Queries *queries = QueryManager::instance()->getQueriesGui();
     if(atools::fs::FsPaths::isAnyXplane(NavApp::getCurrentSimulatorDb()))
-      return NavApp::getAirportQuerySim()->getAirportPosByIdentOrIcao(airportIdent);
+      return queries->getAirportQuerySim()->getAirportPosByIdentOrIcao(airportIdent);
     else
-      return NavApp::getAirportQuerySim()->getAirportPosByIdent(airportIdent);
+      return queries->getAirportQuerySim()->getAirportPosByIdent(airportIdent);
   }
   else
     return atools::geo::EMPTY_POS;
@@ -514,57 +405,4 @@ void AirspaceController::collectErrors(QStringList& errors, const atools::fs::us
 {
   for(const atools::fs::userdata::AirspaceReaderOpenAir::AirspaceErr& err : reader.getErrors())
     errors.append(tr("File \"%1\" line %2: %3").arg(QDir(basePath).relativeFilePath(err.file)).arg(err.line).arg(err.message));
-}
-
-const atools::geo::LineString *AirspaceController::getOnlineAirspaceGeoByFile(const QString& callsign)
-{
-  // Avoid deadlock while loading user airspaces
-  if(!loadingUserAirspaces)
-  {
-    AirspaceQuery *query = queries.value(map::AIRSPACE_SRC_USER);
-    if(query != nullptr)
-      return query->getAirspaceGeometryByFile(callsign);
-  }
-  return nullptr;
-}
-
-const atools::geo::LineString *AirspaceController::getOnlineAirspaceGeoByName(const QString& callsign, const QString& facilityType)
-{
-  if(!loadingUserAirspaces)
-  {
-    AirspaceQuery *query = queries.value(map::AIRSPACE_SRC_USER);
-    if(query != nullptr)
-      return query->getAirspaceGeometryByName(callsign, facilityType);
-  }
-  return nullptr;
-}
-
-void AirspaceController::preLoadAirspaces()
-{
-  loadingUserAirspaces = true;
-  if(queries.contains(map::AIRSPACE_SRC_USER))
-    queries.value(map::AIRSPACE_SRC_USER)->deInitQueries();
-
-  emit preDatabaseLoadAirspaces();
-}
-
-void AirspaceController::postLoadAirspaces()
-{
-  if(queries.contains(map::AIRSPACE_SRC_USER))
-    queries.value(map::AIRSPACE_SRC_USER)->initQueries();
-  loadingUserAirspaces = false;
-
-  emit postDatabaseLoadAirspaces(NavApp::getCurrentSimulatorDb());
-}
-
-QStringList AirspaceController::getAirspaceSourcesStr() const
-{
-  QStringList retval;
-  for(map::MapAirspaceSources src : map::MAP_AIRSPACE_SRC_VALUES)
-  {
-    if(sources & src)
-      retval.append(map::airspaceSourceText(src));
-  }
-
-  return retval;
 }

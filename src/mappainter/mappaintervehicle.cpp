@@ -35,7 +35,6 @@
 
 #include <QStringBuilder>
 
-
 using namespace Marble;
 using namespace atools::geo;
 using namespace map;
@@ -226,7 +225,7 @@ void MapPainterVehicle::paintTextLabelAi(float x, float y, float size, const Sim
   QStringList texts;
   bool flying = !aircraft.isOnGround();
 
-  const MapLayer *layer = context->mapLayer;
+  const MapLayer *layer = context->mapLayerText;
 
   if((!flying && layer->isAiAircraftGroundText()) || // All AI on ground
      (flying && layer->isAiAircraftText()) || // All AI in the air

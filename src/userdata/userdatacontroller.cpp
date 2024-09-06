@@ -309,22 +309,22 @@ void UserdataController::saveState() const
 void UserdataController::restoreState()
 {
   const QStringList allTypes = getAllTypes();
+  atools::settings::Settings& settings = atools::settings::Settings::instance();
 
   // Get the list of icons found the last time which allows to identify new types and enable them per default
-  allLastFoundTypes = atools::settings::Settings::instance().valueStrList(lnm::MAP_USERDATA_ALL);
+  allLastFoundTypes = settings.valueStrList(lnm::MAP_USERDATA_ALL);
   if(allLastFoundTypes.isEmpty())
     allLastFoundTypes = allTypes;
 
-  if(OptionData::instance().getFlags() & opts::STARTUP_LOAD_MAP_SETTINGS)
+  if(OptionData::instance().getFlags().testFlag(opts::STARTUP_LOAD_MAP_SETTINGS))
   {
-    atools::settings::Settings& settings = atools::settings::Settings::instance();
-
     // Get list of enabled. Enable all as default
     const QStringList list = settings.valueStrList(lnm::MAP_USERDATA, allTypes);
     selectedUnknownType = settings.valueBool(lnm::MAP_USERDATA_UNKNOWN, true);
 
     // Remove all types from the restored list of enabled which were not found in the new list of registered types
     // in case some were removed
+    selectedTypes.clear();
     for(const QString& type : list)
     {
       if(allTypes.contains(type))
@@ -350,6 +350,7 @@ void UserdataController::restoreState()
 
 void UserdataController::resetSettingsToDefault()
 {
+  selectedTypes.clear();
   selectedTypes.append(icons->getAllTypes());
   selectedUnknownType = true;
   typesToActions();
@@ -958,6 +959,7 @@ bool UserdataController::exportSelectedQuestion(bool& selected, bool& append, bo
     return true;
 
   // Dialog options
+  // Keep ids stable since they are used to save state
   enum {SELECTED, APPEND, HEADER, XP12};
 
   atools::gui::ChoiceDialog choiceDialog(mainWindow, QCoreApplication::applicationName() + tr(" - Userpoint Export Options"),
@@ -994,10 +996,10 @@ bool UserdataController::exportSelectedQuestion(bool& selected, bool& append, bo
 
   choiceDialog.restoreState();
 
-  choiceDialog.disableButton(HEADER, choiceDialog.isButtonChecked(APPEND));
+  choiceDialog.disableWidget(HEADER, choiceDialog.isButtonChecked(APPEND));
   connect(&choiceDialog, &atools::gui::ChoiceDialog::buttonToggled, this, [&choiceDialog](int id, bool checked) {
     if(id == APPEND)
-      choiceDialog.disableButton(HEADER, checked);
+      choiceDialog.disableWidget(HEADER, checked);
   });
 
   if(choiceDialog.exec() == QDialog::Accepted)
@@ -1016,16 +1018,8 @@ void UserdataController::cleanupUserdata()
 {
   qDebug() << Q_FUNC_INFO;
 
-  enum
-  {
-    COMPARE, // Ident, Name, and Type
-    REGION,
-    DESCRIPTION,
-    TAGS,
-    COORDINATES,
-    EMPTY,
-    SHOW_PREVIEW
-  };
+  // Keep ids stable since they are used to save state
+  enum {COMPARE, /* Ident, Name, and Type */ REGION, DESCRIPTION, TAGS, COORDINATES, EMPTY, SHOW_PREVIEW};
 
   // Create a dialog with tree checkboxes =====================
   atools::gui::ChoiceDialog choiceDialog(mainWindow, QCoreApplication::applicationName() + tr(" - Cleanup Userpoints"),
@@ -1052,19 +1046,19 @@ void UserdataController::cleanupUserdata()
   choiceDialog.addCheckBox(SHOW_PREVIEW, tr("Show a &preview before deleting userpoints"),
                            tr("Shows a dialog window with all userpoints to be deleted before removing them."), true /* checked */);
 
+  // Disable the ok button if not at least one of these is checked
+  choiceDialog.setRequiredAnyChecked({COMPARE, EMPTY});
+
   // Disable duplicate cleanup parameters if top box is off
   connect(&choiceDialog, &atools::gui::ChoiceDialog::buttonToggled, [&choiceDialog](int id, bool checked) {
     if(id == COMPARE)
     {
-      choiceDialog.enableButton(REGION, checked);
-      choiceDialog.enableButton(DESCRIPTION, checked);
-      choiceDialog.enableButton(TAGS, checked);
-      choiceDialog.enableButton(COORDINATES, checked);
+      choiceDialog.enableWidget(REGION, checked);
+      choiceDialog.enableWidget(DESCRIPTION, checked);
+      choiceDialog.enableWidget(TAGS, checked);
+      choiceDialog.enableWidget(COORDINATES, checked);
     }
   });
-
-  // Disable the ok button if not at least one of these is checked
-  choiceDialog.setRequiredAnyChecked({COMPARE, EMPTY});
 
   choiceDialog.restoreState();
 

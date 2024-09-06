@@ -57,6 +57,10 @@ class ElevationModel;
 }
 
 namespace atools {
+
+namespace util {
+class Properties;
+}
 namespace fs {
 namespace pln {
 class Flightplan;
@@ -159,6 +163,7 @@ public:
   void updateMapPosLabel(const atools::geo::Pos& pos, int x, int y);
 
   /* Sets the text and tooltip of the statusbar label that indicates what objects are shown on the map */
+  /* Updates label and tooltip for objects shown on map */
   void setMapObjectsShownMessageText(const QString& text = QString(), const QString& tooltipText = QString());
 
   /* Updates label and tooltip for connection status */
@@ -182,6 +187,7 @@ public:
   void renderStatusUpdateLabel(Marble::RenderStatus status, bool forceUpdate);
 
   /* Show "Too many objects" label if number of map features was truncated */
+  /* Called after each query */
   void resultTruncated();
 
   void setDatabaseErased(bool value)
@@ -247,7 +253,8 @@ public:
   void routeFromStringSimBrief(const QString& routeString);
 
   /* Called from SimBrief handler or non-modal route string dialog to create new plan */
-  void routeFromFlightplan(const atools::fs::pln::Flightplan& flightplan, bool adjustAltitude, bool changed, bool undo, bool correctProfile);
+  void routeFromFlightplan(const atools::fs::pln::Flightplan& flightplan, bool adjustAltitude, bool changed, bool undo,
+                           bool correctProfile);
 
   MapThemeHandler *getMapThemeHandler() const
   {
@@ -255,13 +262,14 @@ public:
   }
 
   /* Clear route */
+  /* Called from menu or toolbar by action */
   void routeNew();
 
   /* Question dialog and then delete map and profile trail */
   void deleteAircraftTrail(bool quiet);
 
   /* Silently deletes track on takeoff */
-  void deleteProfileAircraftTrail();
+  void deleteProfileAircraftTrailPoints();
 
   atools::gui::DockWidgetHandler *getDockHandler() const
   {
@@ -286,6 +294,9 @@ public:
 
   /* Start installation for Little Xpconnect */
   void installXpconnect();
+
+  /* If enabled an aircraft can be moved around the map using Ctr+Shift+Movement, Ctr+Shift+Whell changes altitude */
+  bool isDebugMovingAircraft() const;
 
 signals:
   /* Emitted when window is shown the first time */
@@ -356,6 +367,13 @@ private:
 
   /* Call other other classes to reopen queries */
   void postDatabaseLoad(atools::fs::FsPaths::SimulatorType type);
+
+  /* Clear and reinit database queries and cache */
+  void preDatabaseLoadAirspaces();
+  void postDatabaseLoadAirspaces();
+
+  /* Oceanic tracks have changed */
+  void postTrackLoad();
 
   /* Map history has changed */
   void updateMapHistoryActions(int minIndex, int curIndex, int maxIndex);
@@ -483,6 +501,7 @@ private:
   void resetWindowLayout();
   void resetTabLayout();
 
+  /* Check manually for updates as triggered by the action */
   void checkForUpdates();
   void updateClock() const;
 
@@ -529,17 +548,20 @@ private:
   /* Reduce status bar size if no mouse movement */
   void shrinkStatusBar();
 
-#ifdef DEBUG_INFORMATION
-  void debugActionTriggered1();
-  void debugActionTriggered2();
-  void debugActionTriggered3();
-  void debugActionTriggered4();
-  void debugActionTriggered5();
-  void debugActionTriggered6();
-  void debugActionTriggered7();
-  void debugActionTriggered8();
+  /* Called by DataExchangeFetcher::dataExchangeDataFetched(). Takes command line options from another instance. */
+  void dataExchangeDataFetched(atools::util::Properties properties);
 
-#endif
+  void debugActionTriggeredDumpRoute();
+  void debugActionTriggeredDumpFlightplan();
+  void debugActionTriggeredForceUpdates();
+  void debugActionTriggeredReloadPlan();
+  void debugActionTriggeredPlanEdit();
+  void debugActionTriggeredPerfEdit();
+  void debugActionTriggeredDumpLayers();
+  void debugActionTriggeredResetUpdate();
+  void debugActionTriggeredThrowException();
+  void debugActionTriggeredSegfault();
+  void debugActionTriggeredAssert();
 
 #ifdef DEBUG_DUMP_SHORTCUTS
   void printShortcuts();
@@ -630,6 +652,12 @@ private:
 
   /* Call debugDumpContainerSizes() every 30 seconds */
   QTimer debugDumpContainerSizesTimer;
+
+  QAction *debugActionDumpRoute = nullptr, *debugActionDumpFlightplan = nullptr, *debugActionForceUpdates = nullptr,
+          *debugActionReloadPlan = nullptr, *debugActionPlanEdit = nullptr,
+          *debugActionPerfEdit = nullptr, *debugActionDumpLayers = nullptr, *debugActionResetUpdate = nullptr,
+          *debugActionThrowException = nullptr, *debugActionSegfault = nullptr,
+          *debugActionAssert = nullptr, *debugActionMoveAircraft = nullptr;
 };
 
 #endif // LITTLENAVMAP_MAINWINDOW_H

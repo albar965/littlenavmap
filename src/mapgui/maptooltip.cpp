@@ -17,13 +17,13 @@
 
 #include "mapgui/maptooltip.h"
 
-#include "airspace/airspacecontroller.h"
 #include "app/navapp.h"
 #include "common/htmlinfobuilder.h"
 #include "common/maptypes.h"
 #include "gui/mainwindow.h"
 #include "mapgui/mappaintwidget.h"
 #include "options/optiondata.h"
+#include "query/airspacequeries.h"
 #include "route/route.h"
 #include "sql/sqlrecord.h"
 #include "util/htmlbuilder.h"
@@ -116,8 +116,8 @@ QString MapTooltip::buildTooltip(const map::MapResult& mapSearchResult, const at
 #endif
 
   HtmlBuilder html(false);
-  MapPaintWidget *mapPaintWidget = NavApp::getMapPaintWidgetGui();
-  HtmlInfoBuilder info(mapPaintWidget, false /* infoParam */, false /* infoParam */, opts.testFlag(optsd::TOOLTIP_VERBOSE));
+  HtmlInfoBuilder info(QueryManager::instance()->getQueriesGui(), false /* info */, false /* print */,
+                       opts.testFlag(optsd::TOOLTIP_VERBOSE));
   int numEntries = 0;
   bool bearing = true, // Suppress bearing for user aircraft
        distance = true, // No distance to last flight plan leg for route legs
@@ -400,7 +400,7 @@ QString MapTooltip::buildTooltip(const map::MapResult& mapSearchResult, const at
 
         atools::sql::SqlRecord onlineRec;
         if(airspace.isOnline())
-          onlineRec = NavApp::getAirspaceController()->getOnlineAirspaceRecordById(airspace.id);
+          onlineRec = QueryManager::instance()->getQueriesGui()->getAirspaceQueries()->getOnlineAirspaceRecordById(airspace.id);
 
         info.airspaceText(airspace, onlineRec, html);
 

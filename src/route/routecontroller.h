@@ -53,8 +53,6 @@ class FlightplanEntry;
 }
 }
 
-class AirportQuery;
-class AirwayTrackQuery;
 class FlightplanEntryBuilder;
 class QItemSelection;
 class QMainWindow;
@@ -272,6 +270,9 @@ public:
   void disconnectedFromSimulator();
 
   void simDataChanged(const atools::fs::sc::SimConnectData& simulatorData);
+
+  /* Addd parking, start or airport to flight plan if empty */
+  void validAircraftReceived(const atools::fs::sc::SimConnectUserAircraft& userAircraft);
 
   void editUserWaypointName(int index);
 
@@ -618,7 +619,6 @@ private:
 
   QMainWindow *mainWindow;
   QTableView *tableViewRoute;
-  AirportQuery *airportQuery;
   QStandardItemModel *model;
   QUndoStack *undoStack = nullptr;
   FlightplanEntryBuilder *entryBuilder = nullptr;

@@ -18,6 +18,8 @@
 #ifndef LITTLENAVMAP_PROCFLAGS_H
 #define LITTLENAVMAP_PROCFLAGS_H
 
+#include "util/flags.h"
+
 #include <QDebug>
 
 /*
@@ -27,7 +29,7 @@ namespace proc {
 
 // =====================================================================
 /* Type covering all objects that are passed around in the program. Also use to determine what should be drawn. */
-enum MapProcedureType
+enum MapProcedureType : quint32
 {
   PROCEDURE_NONE = 0,
   PROCEDURE_APPROACH = 1 << 0, /* Also custom */
@@ -67,8 +69,8 @@ enum MapProcedureType
   PROCEDURE_ALL_BUT_MISSED = PROCEDURE_ALL & ~PROCEDURE_MISSED,
 };
 
-Q_DECLARE_FLAGS(MapProcedureTypes, MapProcedureType)
-Q_DECLARE_OPERATORS_FOR_FLAGS(proc::MapProcedureTypes)
+ATOOLS_DECLARE_FLAGS_32(MapProcedureTypes, MapProcedureType)
+ATOOLS_DECLARE_OPERATORS_FOR_FLAGS(proc::MapProcedureTypes)
 
 QDebug operator<<(QDebug out, const proc::MapProcedureTypes& type);
 
@@ -77,6 +79,8 @@ QDebug operator<<(QDebug out, const proc::MapProcedureTypes& type);
 enum ProcedureLegType
 {
   INVALID_LEG_TYPE,
+
+  /* Official leg types ==================================== */
   ARC_TO_FIX,
   COURSE_TO_ALTITUDE,
   COURSE_TO_DME_DISTANCE,
@@ -101,14 +105,16 @@ enum ProcedureLegType
   HEADING_TO_MANUAL_TERMINATION,
   HEADING_TO_RADIAL_TERMINATION,
 
-  DIRECT_TO_RUNWAY, /* Artifical last segment inserted for first leg of departure (similar to IF) */
-  CIRCLE_TO_LAND, /* Artifical last segment inserted if approach does not contain a runway end and is a CTL
+  /* Artificial leg types used to fill gaps ==================================== */
+  DIRECT_TO_RUNWAY, /* Last segment inserted for first leg of departure (similar to IF) */
+  CIRCLE_TO_LAND, /* Last segment inserted if approach does not contain a runway end and is a CTL
                    *  Points for airport center */
-  STRAIGHT_IN, /* Artifical last segment inserted from MAP to runway */
+  STRAIGHT_IN, /* Last segment inserted from MAP to runway */
   START_OF_PROCEDURE, /* Artifical first point if procedures do not start with an initial fix
                        *  or with a track, heading or course to fix having length 0 */
   VECTORS, /* Fills a gap between manual segments and an initial fix */
 
+  /* Artificial leg types for custom approach and departure ======================= */
   /* Custom approach */
   CUSTOM_APP_START, /* Start: INITIAL_FIX */
   CUSTOM_APP_RUNWAY, /* End: COURSE_TO_FIX */

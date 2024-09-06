@@ -434,8 +434,8 @@ This is the file on top of the list &quot;Recent Window Layouts&quot;.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>514</width>
-             <height>371</height>
+             <width>631</width>
+             <height>531</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_22">
@@ -627,8 +627,8 @@ opening files, modifying the flight plan and other operations.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>419</width>
-             <height>1030</height>
+             <width>617</width>
+             <height>970</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_23">
@@ -1293,8 +1293,8 @@ This does not affect the map window which can be changed separately on the optio
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>568</width>
-             <height>386</height>
+             <width>631</width>
+             <height>531</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_36">
@@ -1614,8 +1614,8 @@ Also affects labels at holds and traffic patterns.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>471</width>
-             <height>375</height>
+             <width>631</width>
+             <height>531</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_59">
@@ -1640,22 +1640,46 @@ Also affects labels at holds and traffic patterns.</string>
                <property name="spacing">
                 <number>2</number>
                </property>
-               <item row="4" column="0" colspan="3">
-                <widget class="QLineEdit" name="lineEditOptionsRouteFilename">
+               <item row="6" column="1">
+                <widget class="QPushButton" name="pushButtonOptionsRouteFilenameLong">
                  <property name="toolTip">
-                  <string extracomment="Do not translate the keywords">Applies to new filenames when saving LNMPLN flight plans.
-File patterns for other flight plan files are defined in the multiexport options dialog.
-The file suffix &quot;.lnmpln&quot; is appended automatically.
-
-PLANTYPE: IFR or VFR
-DEPARTIDENT: Departure airport ident
-DEPARTNAME: Departure airport name
-DESTIDENT: Destination airport ident
-DESTNAME: Destination airport name
-CRUISEALT: Cruise altitude</string>
+                  <string>Set flight plan file pattern to long name &quot;PLANTYPE DEPARTNAME (DEPARTIDENT) to DESTNAME (DESTIDENT)&quot;
+Example: &quot;IFR Frankfurt Am Main (EDDF) to Fiumicino (LIRF).lnmpln&quot;</string>
                  </property>
                  <property name="text">
-                  <string notr="true">PLANTYPE DEPARTNAME (DEPARTIDENT) to DESTNAME (DESTIDENT)</string>
+                  <string>&amp;Long Pattern</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="7" column="0" colspan="3">
+                <widget class="QLabel" name="labelOptionsRouteFilenameExample">
+                 <property name="text">
+                  <string/>
+                 </property>
+                 <property name="wordWrap">
+                  <bool>true</bool>
+                 </property>
+                 <property name="margin">
+                  <number>10</number>
+                 </property>
+                 <property name="textInteractionFlags">
+                  <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
+                 </property>
+                </widget>
+               </item>
+               <item row="8" column="0" colspan="3">
+                <widget class="QLabel" name="labelOptionsFilePatternsHint">
+                 <property name="text">
+                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/littlenavmap/resources/icons/bulb.svg&quot;/&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;You can set more file patterns and export locations in the &amp;quot;Multiexport Flight Plan Options&amp;quot; in the main menu &amp;quot;File&amp;quot;.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                 </property>
+                 <property name="wordWrap">
+                  <bool>true</bool>
+                 </property>
+                 <property name="margin">
+                  <number>10</number>
+                 </property>
+                 <property name="textInteractionFlags">
+                  <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
                  </property>
                 </widget>
                </item>
@@ -1674,14 +1698,44 @@ Does not apply to the flight plan loaded after startup.
                  </property>
                 </widget>
                </item>
-               <item row="2" column="0" colspan="3">
+               <item row="6" column="0">
+                <widget class="QPushButton" name="pushButtonOptionsRouteFilenameShort">
+                 <property name="toolTip">
+                  <string>Set flight plan file pattern to short name &quot;DEPARTIDENT DESTIDENT&quot;.
+Example: &quot;EDDF LIRF.lnmpln&quot;</string>
+                 </property>
+                 <property name="text">
+                  <string>&amp;Short Pattern</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="3" column="0" colspan="3">
                 <widget class="Line" name="line_19">
                  <property name="orientation">
                   <enum>Qt::Horizontal</enum>
                  </property>
                 </widget>
                </item>
-               <item row="1" column="0" colspan="3">
+               <item row="5" column="0" colspan="3">
+                <widget class="QLineEdit" name="lineEditOptionsRouteFilename">
+                 <property name="toolTip">
+                  <string extracomment="Do not translate the keywords">Applies to new filenames when saving LNMPLN flight plans.
+File patterns for other flight plan files are defined in the multiexport options dialog.
+The file suffix &quot;.lnmpln&quot; is appended automatically.
+
+PLANTYPE: IFR or VFR
+DEPARTIDENT: Departure airport ident
+DEPARTNAME: Departure airport name
+DESTIDENT: Destination airport ident
+DESTNAME: Destination airport name
+CRUISEALT: Cruise altitude</string>
+                 </property>
+                 <property name="text">
+                  <string notr="true">PLANTYPE DEPARTNAME (DEPARTIDENT) to DESTNAME (DESTIDENT)</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="2" column="0" colspan="3">
                 <widget class="QCheckBox" name="checkBoxOptionsGuiAvoidOverwrite">
                  <property name="toolTip">
                   <string>Check this option to avoid overwriting flight plans with a new departure or destination after changing these.
@@ -1695,34 +1749,7 @@ The &quot;Save as&quot; dialog will show up instead of overwriting the current f
                  </property>
                 </widget>
                </item>
-               <item row="6" column="0" colspan="3">
-                <widget class="QLabel" name="labelOptionsRouteFilenameExample">
-                 <property name="text">
-                  <string/>
-                 </property>
-                 <property name="wordWrap">
-                  <bool>true</bool>
-                 </property>
-                 <property name="margin">
-                  <number>10</number>
-                 </property>
-                 <property name="textInteractionFlags">
-                  <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
-                 </property>
-                </widget>
-               </item>
-               <item row="5" column="0">
-                <widget class="QPushButton" name="pushButtonOptionsRouteFilenameShort">
-                 <property name="toolTip">
-                  <string>Set flight plan file pattern to short name &quot;DEPARTIDENT DESTIDENT&quot;.
-Example: &quot;EDDF LIRF.lnmpln&quot;</string>
-                 </property>
-                 <property name="text">
-                  <string>&amp;Short Pattern</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="3" column="0" colspan="3">
+               <item row="4" column="0" colspan="3">
                 <widget class="QLabel" name="label_9">
                  <property name="text">
                   <string>&amp;Pattern for default flight plan file names used when saving LNMPLN:</string>
@@ -1732,30 +1759,16 @@ Example: &quot;EDDF LIRF.lnmpln&quot;</string>
                  </property>
                 </widget>
                </item>
-               <item row="5" column="1">
-                <widget class="QPushButton" name="pushButtonOptionsRouteFilenameLong">
+               <item row="1" column="0">
+                <widget class="QCheckBox" name="checkBoxOptionsGuiAddDeparture">
                  <property name="toolTip">
-                  <string>Set flight plan file pattern to long name &quot;PLANTYPE DEPARTNAME (DEPARTIDENT) to DESTNAME (DESTIDENT)&quot;
-Example: &quot;IFR Frankfurt Am Main (EDDF) to Fiumicino (LIRF).lnmpln&quot;</string>
+                  <string>Add departure parking, runway or airport to an empty flight plan after connecting to simulator.</string>
                  </property>
                  <property name="text">
-                  <string>&amp;Long Pattern</string>
+                  <string>Add &amp;departure position to flight plan after connecting to simulator</string>
                  </property>
-                </widget>
-               </item>
-               <item row="7" column="0" colspan="3">
-                <widget class="QLabel" name="labelOptionsFilePatternsHint">
-                 <property name="text">
-                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/littlenavmap/resources/icons/bulb.svg&quot;/&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;You can set more file patterns and export locations in the &amp;quot;Multiexport Flight Plan Options&amp;quot; in the main menu &amp;quot;File&amp;quot;.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-                 </property>
-                 <property name="wordWrap">
+                 <property name="checked">
                   <bool>true</bool>
-                 </property>
-                 <property name="margin">
-                  <number>10</number>
-                 </property>
-                 <property name="textInteractionFlags">
-                  <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
                  </property>
                 </widget>
                </item>
@@ -2050,12 +2063,14 @@ The airports toolbar button can be used to hide empty airports if this box is ch
                <item>
                 <widget class="QCheckBox" name="checkBoxOptionsMapEmptyAirports3D">
                  <property name="toolTip">
-                  <string>All X-Plane airports which are 2D and stock airports
+                  <string>All X-Plane 11 airports which are 2D and stock airports
 are drawn underneath all other airports and use a gray symbol.
-The airports toolbar button can be used to hide empty airports if this box is checked.</string>
+The airports toolbar button can be used to hide empty airports if this box is checked.
+
+Note that this function is disabled for X-Plane 12 since the 3D flag is unreliable there.</string>
                  </property>
                  <property name="text">
-                  <string>&amp;X-Plane 2D airports are shown as empty</string>
+                  <string>&amp;X-Plane 11 2D airports are shown as empty</string>
                  </property>
                  <property name="checked">
                   <bool>false</bool>
@@ -2861,7 +2876,7 @@ Map views might be shown with a larger zoom distance than expected if this optio
              <x>0</x>
              <y>0</y>
              <width>499</width>
-             <height>1061</height>
+             <height>1065</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_20">
@@ -3759,7 +3774,7 @@ Lower values make the airspace more opaque and higher values more transparent.</
              <x>0</x>
              <y>0</y>
              <width>428</width>
-             <height>493</height>
+             <height>518</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_35">
@@ -3984,6 +3999,53 @@ Lower values make the airspace more opaque and higher values more transparent.</
                <property name="spacing">
                 <number>2</number>
                </property>
+               <item row="1" column="3">
+                <widget class="QPushButton" name="pushButtonOptionsDisplayFlightplanColor">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="toolTip">
+                  <string>Color for flight plan line.
+Also used in the elevation profile.</string>
+                 </property>
+                 <property name="text">
+                  <string>&amp;Flight Plan Color</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="3" column="0">
+                <widget class="QCheckBox" name="checkBoxOptionsMapFlightplanHighlightActive">
+                 <property name="toolTip">
+                  <string>Draw the active flight plan leg in a different color.
+Change the color of this leg with the &quot;Active Leg Color&quot;.
+Also used in the elevation profile.</string>
+                 </property>
+                 <property name="text">
+                  <string>&amp;Highlight active leg</string>
+                 </property>
+                 <property name="checked">
+                  <bool>true</bool>
+                 </property>
+                </widget>
+               </item>
+               <item row="4" column="0">
+                <widget class="QCheckBox" name="checkBoxOptionsMapFlightplanDimPassed">
+                 <property name="toolTip">
+                  <string>Draw already flown legs in a different color and hide waypoint texts to unclutter the map.
+Change the color of these legs with the &quot;Passed Leg Color&quot;.
+Also used in the elevation profile.</string>
+                 </property>
+                 <property name="text">
+                  <string>&amp;Dim passed legs</string>
+                 </property>
+                 <property name="checked">
+                  <bool>true</bool>
+                 </property>
+                </widget>
+               </item>
                <item row="5" column="0" colspan="2">
                 <widget class="QCheckBox" name="checkBoxOptionsMapFlightplanTransparent">
                  <property name="toolTip">
@@ -3998,30 +4060,54 @@ Not used in the elevation profile.</string>
                  </property>
                 </widget>
                </item>
-               <item row="5" column="2">
-                <widget class="QSpinBox" name="spinBoxOptionsDisplayTransparencyFlightplan">
-                 <property name="toolTip">
-                  <string>Transparency of the flight plan line. Only used if &quot;Transparent Line&quot; is checked.
-Value 0 is opaque and 90 is most transparent.
-Not used in the elevation profile.</string>
+               <item row="7" column="0" colspan="4">
+                <widget class="QLabel" name="labelOptionsFlightPlanLabelHint">
+                 <property name="text">
+                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/littlenavmap/resources/icons/bulb.svg&quot;/&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Flight plan label settings can be found on page &lt;/span&gt;&lt;a href=&quot;lnm://12&quot;&gt;&lt;span style=&quot; font-style:italic; text-decoration: underline; color:#0057ae;&quot;&gt;Map Labels&lt;/span&gt;&lt;/a&gt;&lt;span style=&quot; font-style:italic;&quot;&gt; in branch &amp;quot;Flight Plan&amp;quot;.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                  </property>
-                 <property name="suffix">
-                  <string> %</string>
+                 <property name="wordWrap">
+                  <bool>true</bool>
                  </property>
-                 <property name="prefix">
-                  <string>Transparency </string>
-                 </property>
-                 <property name="minimum">
-                  <number>0</number>
-                 </property>
-                 <property name="maximum">
-                  <number>90</number>
-                 </property>
-                 <property name="singleStep">
+                 <property name="margin">
                   <number>10</number>
                  </property>
-                 <property name="value">
-                  <number>50</number>
+                 <property name="textInteractionFlags">
+                  <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
+                 </property>
+                </widget>
+               </item>
+               <item row="5" column="3">
+                <widget class="QPushButton" name="pushButtonOptionsDisplayFlightplanOutlineColor">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="toolTip">
+                  <string>Color for flight plan outline. 
+Only used if &quot;Transparent Line&quot; is not selected.
+Not used in the elevation profile.</string>
+                 </property>
+                 <property name="text">
+                  <string>&amp;Outline Color</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="3" column="3">
+                <widget class="QPushButton" name="pushButtonOptionsDisplayFlightplanActiveColor">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="toolTip">
+                  <string>Color for the active flight plan leg.
+Also used in the elevation profile.</string>
+                 </property>
+                 <property name="text">
+                  <string>&amp;Active Leg Color</string>
                  </property>
                 </widget>
                </item>
@@ -4060,101 +4146,44 @@ Also used in the elevation profile.</string>
                  </property>
                 </widget>
                </item>
-               <item row="5" column="3">
-                <widget class="QPushButton" name="pushButtonOptionsDisplayFlightplanOutlineColor">
-                 <property name="sizePolicy">
-                  <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-                   <horstretch>0</horstretch>
-                   <verstretch>0</verstretch>
-                  </sizepolicy>
-                 </property>
+               <item row="5" column="2">
+                <widget class="QSpinBox" name="spinBoxOptionsDisplayTransparencyFlightplan">
                  <property name="toolTip">
-                  <string>Color for flight plan outline. 
-Only used if &quot;Transparent Line&quot; is not selected.
+                  <string>Transparency of the flight plan line. Only used if &quot;Transparent Line&quot; is checked.
+Value 0 is opaque and 90 is most transparent.
 Not used in the elevation profile.</string>
                  </property>
-                 <property name="text">
-                  <string>&amp;Outline Color</string>
+                 <property name="suffix">
+                  <string> %</string>
                  </property>
-                </widget>
-               </item>
-               <item row="4" column="0">
-                <widget class="QCheckBox" name="checkBoxOptionsMapFlightplanDimPassed">
-                 <property name="toolTip">
-                  <string>Draw already flown legs in a different color and hide waypoint texts to unclutter the map.
-Change the color of these legs with the &quot;Passed Leg Color&quot;.
-Also used in the elevation profile.</string>
+                 <property name="prefix">
+                  <string>Transparency </string>
                  </property>
-                 <property name="text">
-                  <string>&amp;Dim passed legs</string>
+                 <property name="minimum">
+                  <number>0</number>
                  </property>
-                 <property name="checked">
-                  <bool>true</bool>
+                 <property name="maximum">
+                  <number>90</number>
                  </property>
-                </widget>
-               </item>
-               <item row="3" column="0">
-                <widget class="QCheckBox" name="checkBoxOptionsMapFlightplanHighlightActive">
-                 <property name="toolTip">
-                  <string>Draw the active flight plan leg in a different color.
-Change the color of this leg with the &quot;Active Leg Color&quot;.
-Also used in the elevation profile.</string>
+                 <property name="singleStep">
+                  <number>10</number>
                  </property>
-                 <property name="text">
-                  <string>&amp;Highlight active leg</string>
-                 </property>
-                 <property name="checked">
-                  <bool>true</bool>
-                 </property>
-                </widget>
-               </item>
-               <item row="1" column="3">
-                <widget class="QPushButton" name="pushButtonOptionsDisplayFlightplanColor">
-                 <property name="sizePolicy">
-                  <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-                   <horstretch>0</horstretch>
-                   <verstretch>0</verstretch>
-                  </sizepolicy>
-                 </property>
-                 <property name="toolTip">
-                  <string>Color for flight plan line.
-Also used in the elevation profile.</string>
-                 </property>
-                 <property name="text">
-                  <string>&amp;Flight Plan Color</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="3" column="3">
-                <widget class="QPushButton" name="pushButtonOptionsDisplayFlightplanActiveColor">
-                 <property name="sizePolicy">
-                  <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-                   <horstretch>0</horstretch>
-                   <verstretch>0</verstretch>
-                  </sizepolicy>
-                 </property>
-                 <property name="toolTip">
-                  <string>Color for the active flight plan leg.
-Also used in the elevation profile.</string>
-                 </property>
-                 <property name="text">
-                  <string>&amp;Active Leg Color</string>
+                 <property name="value">
+                  <number>50</number>
                  </property>
                 </widget>
                </item>
                <item row="6" column="0" colspan="4">
-                <widget class="QLabel" name="labelOptionsFlightPlanLabelHint">
+                <widget class="QCheckBox" name="checkBoxOptionsMapFlightplanDirectToDeparture">
+                 <property name="toolTip">
+                  <string>Shows a dashed line with arrows pointing directly to the departure runway position
+from either the departure parking or the user aircraft while taxiing.</string>
+                 </property>
                  <property name="text">
-                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/littlenavmap/resources/icons/bulb.svg&quot;/&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Flight plan label settings can be found on page &lt;/span&gt;&lt;a href=&quot;lnm://12&quot;&gt;&lt;span style=&quot; font-style:italic; text-decoration: underline; color:#0057ae;&quot;&gt;Map Labels&lt;/span&gt;&lt;/a&gt;&lt;span style=&quot; font-style:italic;&quot;&gt; in branch &amp;quot;Flight Plan&amp;quot;.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                  <string>&amp;Show direct course line to departure runway</string>
                  </property>
-                 <property name="wordWrap">
+                 <property name="checked">
                   <bool>true</bool>
-                 </property>
-                 <property name="margin">
-                  <number>10</number>
-                 </property>
-                 <property name="textInteractionFlags">
-                  <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
                  </property>
                 </widget>
                </item>
@@ -4193,7 +4222,7 @@ Also used in the elevation profile.</string>
              <x>0</x>
              <y>0</y>
              <width>554</width>
-             <height>260</height>
+             <height>264</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_57">
@@ -5816,7 +5845,7 @@ airspace filename has to match the callsign of the online center.</string>
              <x>0</x>
              <y>0</y>
              <width>572</width>
-             <height>629</height>
+             <height>633</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_25">
@@ -6423,7 +6452,7 @@ Note that this value does not affect flight plan calculation or saving of flight
              <x>0</x>
              <y>0</y>
              <width>272</width>
-             <height>750</height>
+             <height>754</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_27">
@@ -6664,7 +6693,7 @@ Note that this value does not affect flight plan calculation or saving of flight
              <x>0</x>
              <y>0</y>
              <width>360</width>
-             <height>931</height>
+             <height>939</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_28">
@@ -8118,8 +8147,8 @@ Source data has many errors.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>395</width>
-             <height>506</height>
+             <width>631</width>
+             <height>531</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_38">
@@ -8537,6 +8566,7 @@ You have to reload the scenery library so that the changes take effect.</string>
   <tabstop>checkBoxOptionsUnitTrueCourse</tabstop>
   <tabstop>scrollArea_18</tabstop>
   <tabstop>checkBoxOptionsGuiCenterRoute</tabstop>
+  <tabstop>checkBoxOptionsGuiAddDeparture</tabstop>
   <tabstop>checkBoxOptionsGuiAvoidOverwrite</tabstop>
   <tabstop>lineEditOptionsRouteFilename</tabstop>
   <tabstop>pushButtonOptionsRouteFilenameShort</tabstop>
@@ -8620,6 +8650,7 @@ You have to reload the scenery library so that the changes take effect.</string>
   <tabstop>checkBoxOptionsMapFlightplanTransparent</tabstop>
   <tabstop>spinBoxOptionsDisplayTransparencyFlightplan</tabstop>
   <tabstop>pushButtonOptionsDisplayFlightplanOutlineColor</tabstop>
+  <tabstop>checkBoxOptionsMapFlightplanDirectToDeparture</tabstop>
   <tabstop>scrollArea_19</tabstop>
   <tabstop>spinBoxOptionsDisplayThicknessTrail</tabstop>
   <tabstop>pushButtonOptionsDisplayTrailColor</tabstop>

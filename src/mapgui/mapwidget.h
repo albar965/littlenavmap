@@ -5,12 +5,10 @@
 * it under the terms of the GNU General Public License as published by
 * the Free Software Foundation, either version 3 of the License, or
 * (at your option) any later version.
-*
 * This program is distributed in the hope that it will be useful,
 * but WITHOUT ANY WARRANTY; without even the implied warranty of
 * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 * GNU General Public License for more details.
-*
 * You should have received a copy of the GNU General Public License
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
@@ -32,6 +30,7 @@ class MapTooltip;
 class MapVisible;
 class QContextMenuEvent;
 class QPushButton;
+class QInputEvent;
 
 namespace atools {
 namespace sql {
@@ -52,7 +51,7 @@ struct MapBase;
 
 namespace mw {
 /* State of click, drag and drop actions on the map */
-enum MouseState
+enum MouseState : quint32
 {
   NONE = 0, /* Nothing */
 
@@ -76,8 +75,8 @@ enum MouseState
              mw::DRAG_USER_POINT
 };
 
-Q_DECLARE_FLAGS(MouseStates, MouseState)
-Q_DECLARE_OPERATORS_FOR_FLAGS(mw::MouseStates)
+ATOOLS_DECLARE_FLAGS_32(MouseStates, MouseState)
+ATOOLS_DECLARE_OPERATORS_FOR_FLAGS(mw::MouseStates)
 }
 
 /*
@@ -202,7 +201,7 @@ public:
   void removeDistanceMark(int id);
 
   /* Set map details in widget and update statusbar */
-  void setMapDetail(int level);
+  void setMapDetail(int level, int levelText);
 
   /* Reset details and feature visibility on the map back to default */
   void resetSettingsToDefault();
@@ -248,7 +247,11 @@ public:
     return currentDistanceMarkerId;
   }
 
+  /* Shows the configuration dialog for the degree grid */
   void showGridConfiguration();
+
+  /* Logs map display settings */
+  void printMapTypesToLog();
 
 signals:
   /* Emitted when connection is established and user aircraft turned from invalid to valid */
@@ -257,6 +260,9 @@ signals:
   /* Fuel flow started or stopped */
   void aircraftEngineStarted(const atools::fs::sc::SimConnectUserAircraft& aircraft);
   void aircraftEngineStopped(const atools::fs::sc::SimConnectUserAircraft& aircraft);
+
+  /* Aircraft was close to departure point on runway */
+  void aircraftHasPassedTakeoffPoint(const atools::fs::sc::SimConnectUserAircraft& aircraft);
 
   /* State isFlying between last and current aircraft has changed */
   void aircraftTakeoff(const atools::fs::sc::SimConnectUserAircraft& aircraft);
@@ -330,7 +336,7 @@ private:
   };
 
   /* Change map detail level in paint layer and update map visible tooltip in statusbar */
-  void setDetailLevel(int level);
+  void setDetailLevel(int level, int levelText);
 
   /* Update tooltip in case of weather changes */
   void showTooltip(bool update);
@@ -399,7 +405,7 @@ private:
   void jumpBackToAircraftTimeout(const atools::geo::Pos& pos);
 
   /* Needed filter to avoid and/or disable some Marble pecularities */
-  bool eventFilter(QObject *obj, QEvent *evt) override;
+  bool eventFilter(QObject *obj, QEvent *eventParam) override;
 
   /* Check for modifiers on mouse click and start actions like range rings on Ctrl+Click */
   bool mousePressCheckModifierActions(QMouseEvent *event);
@@ -428,6 +434,8 @@ private:
 
   /* Hide and prevent re-show */
   virtual void hideTooltip() override;
+
+  /* Update result set for tooltip */
   void updateTooltipResult();
 
   virtual void handleHistory() override;
@@ -442,7 +450,7 @@ private:
 
   virtual void contextMenuEvent(QContextMenuEvent *event) override;
   virtual void focusOutEvent(QFocusEvent *) override;
-  virtual void keyPressEvent(QKeyEvent *event) override;
+  virtual void keyPressEvent(QKeyEvent *keyEvent) override;
   virtual void leaveEvent(QEvent *) override;
 
   /* Catch tooltip event */
@@ -455,6 +463,8 @@ private:
 
   /* true if point is not hidden by globe */
   bool pointVisible(const QPoint& point);
+
+  void debugMovingAircraft(QInputEvent *event, int upDown);
 
   int screenSearchDistance /* Radius for click sensitivity */,
       screenSearchDistanceTooltip /* Radius for tooltip sensitivity */;
@@ -484,7 +494,7 @@ private:
 
   /* Save last tooltip position. If invalid/null no tooltip will be shown */
   QPoint tooltipGlobalPos;
-  map::MapResult *mapSearchResultTooltip, *mapSearchResultTooltipLast, *mapSearchResultInfoClick;
+  map::MapResult *mapResultTooltip, *mapResultTooltipLast, *mapResultInfoClick;
 
   MapTooltip *mapTooltip;
 
@@ -516,7 +526,7 @@ private:
   JumpBack *jumpBack;
 
   /* Sum up mouse wheel or trackpad movement before zooming */
-  int lastWheelAngle = 0;
+  int lastWheelAngleX = 0, lastWheelAngleY = 0;
 
   MainWindow *mainWindow;
 
@@ -538,10 +548,6 @@ private:
 
   QPushButton *pushButtonExitFullscreen = nullptr;
 
-#ifdef DEBUG_MOVING_AIRPLANE
-  void debugMovingPlane(QMouseEvent *event);
-
-#endif
 };
 
 #endif // LITTLENAVMAP_NAVMAPWIDGET_H

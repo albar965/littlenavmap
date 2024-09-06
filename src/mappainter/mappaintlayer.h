@@ -43,7 +43,8 @@ class MapPainterIls;
 class MapPainterMark;
 class MapPainterTop;
 class MapPainterRoute;
-class MapPainterAircraft;
+class MapPainterAiAircraft;
+class MapPainterUserAircraft;
 class MapPainterTrail;
 class MapPainterShip;
 class MapPainterUser;
@@ -91,11 +92,16 @@ public:
   void setShowMapObjects(map::MapTypes type, map::MapTypes mask);
 
   /* Changes the detail factor (range 5-15 default is 10 */
-  void setDetailLevel(int level);
+  void setDetailLevel(int level, int levelText);
 
   int getDetailLevel() const
   {
     return detailLevel;
+  }
+
+  int getDetailLevelText() const
+  {
+    return detailLevelText;
   }
 
   /* Get all shown map objects like airports, VOR, NDB, etc. */
@@ -111,10 +117,10 @@ public:
   }
 
   /* Adjusted by layer visibility */
-  const map::MapAirspaceFilter getShownAirspacesTypesByLayer() const;
+  const map::MapAirspaceFilter getShownAirspacesTypesForLayer() const;
 
   /* Flags for airspace having labels */
-  const map::MapAirspaceTypes getShownAirspaceTextsByLayer() const;
+  map::MapAirspaceType getShownAirspaceTextsByLayer() const;
 
   const map::MapAirspaceFilter& getShownAirspaces() const
   {
@@ -127,7 +133,7 @@ public:
     return mapScale;
   }
 
-  map::MapWeatherSource getWeatherSource() const
+  map::MapWeatherSource getMapWeatherSource() const
   {
     return weatherSource;
   }
@@ -220,6 +226,7 @@ private:
 
   /* Default detail factor. Range is from 5 to 15 */
   int detailLevel = 10;
+  int detailLevelText = 10;
 
   bool databaseLoadStatus = false;
 
@@ -233,7 +240,8 @@ private:
   MapPainterIls *mapPainterIls;
   MapPainterMark *mapPainterMark;
   MapPainterRoute *mapPainterRoute;
-  MapPainterAircraft *mapPainterAircraft;
+  MapPainterAiAircraft *mapPainterAiAircraft;
+  MapPainterUserAircraft *mapPainterUserAircraft;
   MapPainterTrail *mapPainterTrail;
   MapPainterTop *mapPainterTop;
   MapPainterShip *mapPainterShip;
@@ -245,7 +253,8 @@ private:
   MapScale *mapScale = nullptr;
   MapLayerSettings *layers = nullptr;
   MapPaintWidget *mapPaintWidget = nullptr;
-  const MapLayer *mapLayer = nullptr, *mapLayerRoute = nullptr, *mapLayerEffective = nullptr;
+  const MapLayer *mapLayer = nullptr, *mapLayerText = nullptr, *mapLayerRoute = nullptr, *mapLayerRouteText = nullptr,
+                 *mapLayerEffective = nullptr;
   bool verbose = false, verboseDraw = false;
   QFont::StyleStrategy savedFontStrategy, savedDefaultFontStrategy;
 

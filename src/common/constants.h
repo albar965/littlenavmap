@@ -18,6 +18,8 @@
 #ifndef LITTLENAVMAP_CONSTANTS_H
 #define LITTLENAVMAP_CONSTANTS_H
 
+#include "gui/dataexchange.h"
+
 #include <QLatin1String>
 #include <QSize>
 
@@ -27,9 +29,6 @@
 /* Paint additional information useful for debugging for approaches */
 // #define DEBUG_APPROACH_PAINT
 // #define DEBUG_ROUTE_PAINT
-
-/* Use Shift+Ctrl-Mousemove to simulate an aircraft */
-// #define DEBUG_MOVING_AIRPLANE
 
 /* Print the main window state as a hex dump into the log */
 // #define DEBUG_CREATE_WINDOW_STATE
@@ -47,6 +46,7 @@ extern QString helpOnlineUrl;
 extern QString helpOnlineMainUrl;
 extern QString helpOnlineTutorialsUrl;
 extern QString helpOnlineMainMenuUrl;
+extern QString helpOnlineShortcutsUrl;
 extern QString helpOnlineMapDisplayUrl;
 extern QString helpOnlineLegendUrl;
 extern QString helpOnlineFlightPlanningUrl;
@@ -168,7 +168,7 @@ const QLatin1String MAINWINDOW_WIDGET_MAPTHEME("MainWindow/WidgetMapTheme");
 const QLatin1String MAINWINDOW_WIDGET_DOCKHANDLER("MainWindow/WidgetDockHandler");
 const QLatin1String MAINWINDOW_PRINT_SIZE("MainWindow/PrintPreviewSize");
 
-const QLatin1String MAP_AIRSPACES("Map/AirspaceFilter2");
+const QLatin1String MAP_AIRSPACES("Map/AirspaceFilter3");
 const QLatin1String MAP_USERDATA("Map/Userdata");
 const QLatin1String MAP_USERDATA_ALL("Map/UserdataAll");
 const QLatin1String MAP_USERDATA_UNKNOWN("Map/UserdataUnknown");
@@ -200,7 +200,8 @@ const QLatin1String MAP_AIRPORT_MSA("Map/AirportMsa1");
 const QLatin1String MAP_MARK_DISPLAY("Map/MarkDisplay1");
 const QLatin1String MAP_AIRPORT("Map/Airports3");
 const QLatin1String MAP_AIRPORT_RUNWAY_LENGTH("Map/AirportsRunwayLength");
-const QLatin1String MAP_DETAIL_LEVEL("Map/DetailLevel");
+const QLatin1String MAP_DETAIL_LEVEL("Map/DetailLevel2");
+const QLatin1String MAP_DETAIL_LEVEL_TEXT("Map/DetailLevelText2");
 
 const QLatin1String LAYOUT_RECENT("WindowLayout/FilenamesRecent");
 
@@ -365,6 +366,7 @@ const QLatin1String OPTIONS_MARBLE_DEBUG("Options/MarbleDebug");
 const QLatin1String OPTIONS_CONNECTCLIENT_DEBUG("Options/ConnectClientDebug");
 const QLatin1String OPTIONS_AIRCRAFTINDEX_DEBUG("Options/AircraftIndexDebug");
 const QLatin1String OPTIONS_MAPWIDGET_DEBUG("Options/MapWidgetDebug");
+const QLatin1String OPTIONS_MAPWIDGET_TILEID_DEBUG("Options/MapWidgetDebugTileId");
 const QLatin1String OPTIONS_DOCKHANDLER_DEBUG("Options/DockHandlerDebug");
 const QLatin1String OPTIONS_WHAZZUP_PARSER_DEBUG("Options/WhazzupParserDebug");
 const QLatin1String OPTIONS_DATAREADER_DEBUG("Options/DataReaderDebug");
@@ -376,6 +378,8 @@ const QLatin1String OPTIONS_MAP_JUMP_BACK_DEBUG("Options/MapJumpBackDebug");
 const QLatin1String OPTIONS_PROFILE_JUMP_BACK_DEBUG("Options/ProfileJumpBackDebug");
 const QLatin1String OPTIONS_MAP_LAYER_DEBUG("Options/MapLayerDebug");
 const QLatin1String OPTIONS_MAP_LAYER_DEBUG_DRAW("Options/MapLayerDebugDraw");
+
+const QLatin1String OPTIONS_DEBUG_MENU("Options/DebugMenu");
 
 const QLatin1String OPTIONS_ONLINE_NETWORK_DEBUG("Options/OnlineNetworkDebug");
 const QLatin1String OPTIONS_ONLINE_NETWORK_MAX_SHADOW_DIST_NM("Options/MaxShadowDistNm");
@@ -475,8 +479,8 @@ const QLatin1String STARTUP_QUIT("quit"); /* Exit application */
 
 /* Not used as long options */
 const QLatin1String STARTUP_OTHER_ARGUMENTS("others"); /* Positional arguments not found after option - string list */
-const QLatin1String STARTUP_COMMAND_ACTIVATE("activate"); /* Bring window to front */
-const QLatin1String STARTUP_COMMAND_QUIT("quit"); /* Exit application */
+const QLatin1String STARTUP_COMMAND_ACTIVATE(atools::gui::DataExchange::STARTUP_COMMAND_ACTIVATE); /* Bring window to front */
+const QLatin1String STARTUP_COMMAND_QUIT(atools::gui::DataExchange::STARTUP_COMMAND_QUIT); /* Exit application */
 
 /* Suffixes for common configuration files.
  * Used for atools::settings::Settings::getConfigFilename() */
@@ -484,6 +488,12 @@ const QLatin1String AIRCRAFT_TRACK_SUFFIX(".track");
 const QLatin1String PROFILE_TRACK_SUFFIX("_profile.track");
 const QLatin1String LOGBOOK_TRACK_SUFFIX(".logbooktrack");
 const QLatin1String DARKSTYLE_INI_SUFFIX("_nightstyle.ini");
+
+/* Crash/issue report paths and file suffixes */
+const QLatin1String STACKTRACE_SUFFIX("_stacktrace.txt");
+const QLatin1String CRASHREPORTS_DIR("crashreports");
+const QLatin1String CRASHREPORT_SUFFIX("_crashreport.zip");
+const QLatin1String ISSUEREPORT_SUFFIX("_issuereport.zip");
 
 const QLatin1String MAPSTYLE_INI_SUFFIX("_mapstyle.ini");
 const QLatin1String MAPSTYLE_CONFIG(":/littlenavmap/resources/config/little_navmap_mapstyle.ini");

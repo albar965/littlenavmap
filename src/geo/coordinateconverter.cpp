@@ -15,9 +15,10 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#include "common/coordinateconverter.h"
+#include "geo/coordinateconverter.h"
 
 #include "atools.h"
+#include "geo/marbleconverter.h"
 #include "geo/pos.h"
 #include "geo/line.h"
 #include "geo/linestring.h"
@@ -45,62 +46,6 @@ bool CoordinateConverter::isHidden(const atools::geo::Pos& coords) const
   bool hidden = false;
   wToS(coords, xr, yr, DEFAULT_WTOS_SIZE, &hidden);
   return hidden;
-}
-
-GeoDataCoordinates CoordinateConverter::toGdc(const Pos& coords) const
-{
-  return GeoDataCoordinates(coords.getLonX(), coords.getLatY(), 0., DEG);
-}
-
-Marble::GeoDataLatLonBox CoordinateConverter::toGdc(const atools::geo::Rect& coords) const
-{
-  return GeoDataLatLonBox(coords.getNorth(), coords.getSouth(), coords.getEast(), coords.getWest(), DEG);
-}
-
-Rect CoordinateConverter::fromGdc(const GeoDataLatLonBox& coords) const
-{
-  return Rect(coords.west(DEG), coords.north(DEG), coords.east(DEG), coords.south(DEG));
-}
-
-GeoDataLineString CoordinateConverter::toGdcStr(const Pos& pos1, const Pos& pos2) const
-{
-  GeoDataLineString linestring;
-  linestring.setTessellate(true);
-  linestring.append(toGdc(pos1));
-  linestring.append(toGdc(pos2));
-  return linestring;
-}
-
-GeoDataLineString CoordinateConverter::toGdcStr(const Line& coords) const
-{
-  GeoDataLineString linestring;
-  linestring.setTessellate(true);
-  linestring.append(toGdc(coords.getPos1()));
-  linestring.append(toGdc(coords.getPos2()));
-  return linestring;
-}
-
-GeoDataLineString CoordinateConverter::toGdcStr(const LineString& coords) const
-{
-  GeoDataLineString linestring;
-  linestring.setTessellate(true);
-
-  for(const Pos& pos : coords)
-    linestring.append(toGdc(pos));
-  return linestring;
-}
-
-Pos CoordinateConverter::fromGdc(const GeoDataCoordinates& coords) const
-{
-  return Pos(coords.longitude(DEG), coords.latitude(DEG));
-}
-
-const LineString CoordinateConverter::fromGdcStr(const GeoDataLineString& coords) const
-{
-  LineString linestring;
-  for(const GeoDataCoordinates& gdc : coords)
-    linestring.append(fromGdc(gdc));
-  return linestring;
 }
 
 bool CoordinateConverter::isVisible(const atools::geo::Pos& coords, const QSize& size, bool *isHidden) const
@@ -172,7 +117,7 @@ bool CoordinateConverter::wToS(const atools::geo::Pos& coords, double& x, double
   }
 
   bool hidden;
-  bool visible = wToS(Marble::GeoDataCoordinates(coords.getLonX(), coords.getLatY(), 0., DEG), x, y, size, &hidden);
+  bool visible = wToS(mconvert::toGdc(coords), x, y, size, &hidden);
   if(isHidden != nullptr)
     *isHidden = hidden;
   return visible && !hidden;
@@ -189,15 +134,10 @@ bool CoordinateConverter::wToS(const atools::geo::PosD& coords, double& x, doubl
   }
 
   bool hidden;
-  bool visible = wToS(Marble::GeoDataCoordinates(coords.getLonX(), coords.getLatY(), 0., DEG), x, y, size, &hidden);
+  bool visible = wToS(mconvert::toGdc(coords), x, y, size, &hidden);
   if(isHidden != nullptr)
     *isHidden = hidden;
   return visible && !hidden;
-}
-
-bool CoordinateConverter::wToS(const Marble::GeoDataCoordinates& coords, double& x, double& y, const QSize& size, bool *isHidden) const
-{
-  return wToSInternal(coords, x, y, size, isHidden);
 }
 
 bool CoordinateConverter::wToS(const Marble::GeoDataCoordinates& coords, int& x, int& y, const QSize& size, bool *isHidden) const
@@ -269,7 +209,7 @@ QPoint CoordinateConverter::wToS(const Marble::GeoDataCoordinates& coords, const
   }
 }
 
-QPointF CoordinateConverter::wToSF(const GeoDataCoordinates& coords, const QSize& size, bool *visible, bool *isHidden) const
+QPointF CoordinateConverter::wToSF(const Marble::GeoDataCoordinates& coords, const QSize& size, bool *visible, bool *isHidden) const
 {
   double xr, yr;
   bool isVisible = wToS(coords, xr, yr, size, isHidden);
@@ -288,32 +228,22 @@ QPointF CoordinateConverter::wToSF(const GeoDataCoordinates& coords, const QSize
   }
 }
 
-QVector<QPolygonF> CoordinateConverter::wToS(const Pos& pos1, const Pos& pos2) const
+QVector<QPolygonF> CoordinateConverter::wToS(const atools::geo::Pos& pos1, const atools::geo::Pos& pos2) const
 {
-  GeoDataLineString lineStr;
-  lineStr.setTessellate(true);
-  lineStr << toGdc(pos1) << toGdc(pos2);
-  return wToS(lineStr);
+  return wToS(mconvert::toGdcStr(Line(pos1, pos2)));
 }
 
-QVector<QPolygonF> CoordinateConverter::wToS(const Line& line) const
+QVector<QPolygonF> CoordinateConverter::wToS(const atools::geo::Line& line) const
 {
-  GeoDataLineString lineStr;
-  lineStr.setTessellate(true);
-  lineStr << toGdc(line.getPos1()) << toGdc(line.getPos2());
-  return wToS(lineStr);
+  return wToS(mconvert::toGdcStr(line));
 }
 
-QVector<QPolygonF> CoordinateConverter::wToS(const LineString& line) const
+QVector<QPolygonF> CoordinateConverter::wToS(const atools::geo::LineString& linestring) const
 {
-  GeoDataLineString lineStr;
-  lineStr.setTessellate(true);
-  for(const atools::geo::Pos& pos : line)
-    lineStr << toGdc(pos);
-  return wToS(lineStr);
+  return wToS(mconvert::toGdcStr(linestring));
 }
 
-QVector<QPolygonF> CoordinateConverter::wToS(const GeoDataLineString& line) const
+QVector<QPolygonF> CoordinateConverter::wToS(const Marble::GeoDataLineString& line) const
 {
   QVector<QPolygonF *> polygons;
   viewport->screenCoordinates(line, polygons);
@@ -330,42 +260,60 @@ QVector<QPolygonF> CoordinateConverter::wToS(const GeoDataLineString& line) cons
 bool CoordinateConverter::sToW(int x, int y, atools::geo::Pos& pos) const
 {
   qreal lon, lat;
-  bool visible = viewport->geoCoordinates(x, y, lon, lat, DEG);
+  bool visible = viewport->geoCoordinates(x, y, lon, lat, mconvert::DEG);
 
   pos.setLonX(static_cast<float>(lon));
   pos.setLatY(static_cast<float>(lat));
   return visible;
 }
 
-bool CoordinateConverter::sToW(int x, int y, Marble::GeoDataCoordinates& coords) const
-{
-  qreal lon, lat;
-  bool visible = viewport->geoCoordinates(x, y, lon, lat, DEG);
-
-  coords.setLongitude(lon, DEG);
-  coords.setLatitude(lat, DEG);
-  return visible;
-}
-
 atools::geo::Pos CoordinateConverter::sToW(int x, int y) const
 {
   qreal lon, lat;
-  bool visible = viewport->geoCoordinates(x, y, lon, lat, DEG);
-
-  if(visible)
-    return atools::geo::Pos(lon, lat);
-  else
-    return atools::geo::Pos();
+  bool visible = viewport->geoCoordinates(x, y, lon, lat, mconvert::DEG);
+  return visible ? atools::geo::Pos(lon, lat) : atools::geo::EMPTY_POS;
 }
 
-Pos CoordinateConverter::sToW(const QPoint& point) const
+atools::geo::Pos CoordinateConverter::sToW(const QPoint& point) const
 {
   return sToW(point.x(), point.y());
 }
 
-Pos CoordinateConverter::sToW(const QPointF& point) const
+atools::geo::Pos CoordinateConverter::sToW(const QPointF& point) const
 {
   return sToW(atools::roundToInt(point.x()), atools::roundToInt(point.y()));
+}
+
+bool CoordinateConverter::wToSPoints(const atools::geo::Pos& pos, QVector<double>& x, double& y, const QSize& size, bool *isHidden) const
+{
+  return wToSPoints(mconvert::toGdc(pos), x, y, size, isHidden);
+}
+
+bool CoordinateConverter::wToSPoints(const atools::geo::Pos& pos, QVector<float>& x, float& y, const QSize& size, bool *isHidden) const
+{
+  QVector<double> xDouble;
+  double yDouble;
+  bool retval = wToSPoints(mconvert::toGdc(pos), xDouble, yDouble, size, isHidden);
+  for(double xd : qAsConst(xDouble))
+    x.append(static_cast<float>(xd));
+  y = static_cast<float>(yDouble);
+  return retval;
+}
+
+bool CoordinateConverter::wToSPoints(const Marble::GeoDataCoordinates& coords, QVector<double>& x, double& y, const QSize& size,
+                                     bool *isHidden) const
+{
+  bool hidden;
+  int numPoints;
+  QVarLengthArray<qreal, 100> xordinates(100);
+  bool visible = viewport->screenCoordinates(coords, xordinates.data(), y, numPoints, size, hidden);
+
+  for(int i = 0; i < numPoints; i++)
+    x.append(xordinates.at(i));
+
+  if(isHidden != nullptr)
+    *isHidden = hidden;
+  return visible && !hidden;
 }
 
 bool CoordinateConverter::wToSInternal(const Marble::GeoDataCoordinates& coords, double& x, double& y, const QSize& size,
@@ -387,10 +335,10 @@ bool CoordinateConverter::wToSInternal(const Marble::GeoDataCoordinates& coords,
     {
       qreal xordinate = xordinates.at(i);
 
-      if(foundIndexMaybeOffScreen == -1 || std::abs(xordinate) < std::abs(xordinate))
+      if(foundIndexMaybeOffScreen == -1)
         foundIndexMaybeOffScreen = i;
 
-      if((foundIndexOnScreen == -1 || std::abs(xordinate) < std::abs(xordinate)) && xordinate >= 0 && xordinate <= viewport->width())
+      if(foundIndexOnScreen == -1 && xordinate >= 0 && xordinate <= viewport->width())
         foundIndexOnScreen = i;
     }
 
@@ -439,11 +387,7 @@ const QVector<QPolygonF *> CoordinateConverter::createPolygons(const atools::geo
 const QVector<QPolygonF *> CoordinateConverter::createPolygonsInternal(const atools::geo::LineString& linestring,
                                                                        const QRectF& screenRect) const
 {
-  Marble::GeoDataLinearRing linearRing;
-  linearRing.setTessellate(true);
-
-  for(const Pos& pos : linestring)
-    linearRing.append(Marble::GeoDataCoordinates(pos.getLonX(), pos.getLatY(), 0, DEG));
+  Marble::GeoDataLinearRing linearRing = mconvert::toGdcRing(linestring);
 
   QVector<QPolygonF *> polygons;
   if(viewport->viewLatLonAltBox().intersects(linearRing.latLonAltBox()) && viewport->resolves(linearRing.latLonAltBox()))
@@ -481,9 +425,10 @@ void CoordinateConverter::releasePolygons(const QVector<QPolygonF *>& polygons) 
   qDeleteAll(polygons);
 }
 
-const QVector<QPolygonF *> CoordinateConverter::createPolylines(const atools::geo::LineString& linestring, const QRectF& screenRect) const
+const QVector<QPolygonF *> CoordinateConverter::createPolylines(const atools::geo::LineString& linestring, const QRectF& screenRect,
+                                                                bool splitLongLines) const
 {
-  return createPolylinesInternal(linestring, screenRect);
+  return createPolylinesInternal(linestring, screenRect, splitLongLines);
 }
 
 bool CoordinateConverter::resolves(const Marble::GeoDataLatLonBox& box) const
@@ -501,63 +446,55 @@ bool CoordinateConverter::resolves(const Marble::GeoDataCoordinates& coord1, con
 
 bool CoordinateConverter::resolves(const atools::geo::Rect& rect) const
 {
-  return resolves(toGdc(rect));
+  return resolves(mconvert::toGdc(rect));
 }
 
 bool CoordinateConverter::resolves(const atools::geo::Line& line) const
 {
-  return resolves(toGdc(line.getPos1()), toGdc(line.getPos2()));
+  return resolves(mconvert::toGdc(line.getPos1()), mconvert::toGdc(line.getPos2()));
 }
 
 const QVector<QPolygonF *> CoordinateConverter::createPolylinesInternal(const atools::geo::LineString& linestring,
-                                                                        const QRectF& screenRect) const
+                                                                        const QRectF& screenRect, bool splitLongLines) const
 {
   QVector<QPolygonF *> polylineVector;
 
-  const float LATY_CORRECTION = 0.00001f;
-  LineString correctedLines = linestring;
-
-  // Avoid the straight line Marble draws wrongly for equal latitudes - needed to force GC path
-  for(int i = 0; i < correctedLines.size() - 1; i++)
-  {
-    Pos& p1(correctedLines[i]);
-    Pos& p2(correctedLines[i + 1]);
-
-    if(atools::almostEqual(p1.getLatY(), p2.getLatY()) && std::abs(p1.getLonX() - p2.getLonX()) > 0.5f)
-    {
-      // Move latitude a bit up and down if equal and more than half a degree apart
-      p1.setLatY(p1.getLatY() + LATY_CORRECTION);
-      p2.setLatY(p2.getLatY() - LATY_CORRECTION);
-    }
-  }
-
   // Build Marble geometry object
-  if(!correctedLines.isEmpty())
+  if(!linestring.isEmpty())
   {
     GeoDataLineString geoLineStr;
     geoLineStr.setTessellate(true);
 
-    for(int i = 0; i < correctedLines.size() - 1; i++)
+    if(splitLongLines)
     {
-      Line line(correctedLines.at(i), correctedLines.at(i + 1));
+      for(int i = 0; i < linestring.size() - 1; i++)
+      {
+        Line line(linestring.at(i), linestring.at(i + 1));
 
-      // Split long lines to work around the buggy visibility check in Marble resulting in disappearing line segments
-      // Do a quick check using Manhattan distance in degree
-      LineString ls;
-      if(line.lengthSimple() > 30.f)
-        line.interpolatePoints(line.lengthMeter(), 20, ls);
-      else if(line.lengthSimple() > 5.f)
-        line.interpolatePoints(line.lengthMeter(), 5, ls);
-      else
-        ls.append(line.getPos1());
+        // Split long lines to work around the buggy visibility check in Marble resulting in disappearing line segments
+        // Do a quick check using Manhattan distance in degree
+        LineString lines;
+        if(line.lengthSimple() > 30.f)
+          line.interpolatePoints(line.lengthMeter(), 20, lines);
+        else if(line.lengthSimple() > 5.f)
+          line.interpolatePoints(line.lengthMeter(), 5, lines);
+        else
+          lines.append(line.getPos1());
 
-      // Append split points or single point
-      for(const Pos& pos : qAsConst(ls))
-        geoLineStr << GeoDataCoordinates(pos.getLonX(), pos.getLatY(), 0, DEG);
+        // Append split points or single point
+        for(const Pos& pos : qAsConst(lines))
+          geoLineStr << mconvert::toGdc(pos);
+      }
+    }
+    else
+    {
+      // Skip generation if intermediate points and create direct
+      for(const Pos& pos : linestring)
+        geoLineStr << mconvert::toGdc(pos);
     }
 
     // Add last point
-    geoLineStr << GeoDataCoordinates(correctedLines.constLast().getLonX(), correctedLines.constLast().getLatY(), 0, DEG);
+    geoLineStr << mconvert::toGdc(linestring.constLast());
 
 #ifdef DEBUG_INFORMATION_LINERENDER
     qDebug() << Q_FUNC_INFO << "=========================================";

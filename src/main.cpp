@@ -18,7 +18,6 @@
 #include "app/commandline.h"
 #include "app/navapp.h"
 #include "atools.h"
-#include "common/aircrafttrail.h"
 #include "common/constants.h"
 #include "common/formatter.h"
 #include "common/maptypes.h"
@@ -32,6 +31,7 @@
 #include "fs/sc/simconnectdata.h"
 #include "fs/sc/simconnectreply.h"
 #include "fs/weather/metarparser.h"
+#include "geo/aircrafttrail.h"
 #include "geo/calculations.h"
 #include "gui/dockwidgethandler.h"
 #include "gui/mainwindow.h"
@@ -43,6 +43,7 @@
 #include "routeexport/routeexportformat.h"
 #include "settings/settings.h"
 #include "userdata/userdataicons.h"
+#include "util/crashhandler.h"
 #include "util/properties.h"
 
 #include <QDebug>
@@ -66,6 +67,9 @@ using atools::gui::Translator;
 
 int main(int argc, char *argv[])
 {
+  // Start timer to measure startup time
+  Application::startup();
+
   // Initialize the resources from atools static library
   Q_INIT_RESOURCE(atools);
 
@@ -242,6 +246,13 @@ int main(int argc, char *argv[])
 
       for(const QString& message : logMessages)
         qInfo() << message;
+
+      // Initialize crashhandler - disable on Linux to get core files
+      if(settings.valueBool("Options/PrintStackTrace", true))
+      {
+        atools::util::crashhandler::init();
+        atools::util::crashhandler::setStackTraceLog(Settings::getConfigFilename(lnm::STACKTRACE_SUFFIX, lnm::CRASHREPORTS_DIR));
+      }
 
       // ==============================================
       // Set language from command line into options - will be saved
@@ -429,8 +440,7 @@ int main(int argc, char *argv[])
 
       if(dbManager->checkIncompatibleDatabases(&databasesErased))
       {
-        delete dbManager;
-        dbManager = nullptr;
+        ATOOLS_DELETE_LOG(dbManager);
 
         MainWindow mainWindow;
 
@@ -448,7 +458,7 @@ int main(int argc, char *argv[])
         retval = QApplication::exec();
       }
       else
-        NavApp::recordExit();
+        atools::gui::Application::recordExit();
     } // if(!NavApp::initSharedMemory())
     else
       retval = 0;
@@ -458,16 +468,19 @@ int main(int argc, char *argv[])
   catch(atools::Exception& e)
   {
     NavApp::deInitDataExchange();
+    ATOOLS_PRINT_STACK_CRITICAL("Caught exception in main");
     ATOOLS_HANDLE_EXCEPTION(e);
     // Does not return in case of fatal error
   }
   catch(...)
   {
     NavApp::deInitDataExchange();
+    ATOOLS_PRINT_STACK_CRITICAL("Caught exception in main");
     ATOOLS_HANDLE_UNKNOWN_EXCEPTION;
     // Does not return in case of fatal error
   }
 
+  atools::util::crashhandler::clearStackTrace(Settings::getConfigFilename(lnm::STACKTRACE_SUFFIX, lnm::CRASHREPORTS_DIR));
   NavApp::deInitDataExchange();
 
   delete dbManager;

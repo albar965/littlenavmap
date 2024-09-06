@@ -17,18 +17,19 @@
 
 #include "mappainter/mappainter.h"
 
+#include "app/navapp.h"
+#include "common/formatter.h"
+#include "common/mapcolors.h"
+#include "common/maptools.h"
+#include "common/maptypes.h"
+#include "common/symbolpainter.h"
+#include "common/textplacement.h"
+#include "common/unit.h"
+#include "geo/calculations.h"
+#include "mapgui/maplayer.h"
 #include "mapgui/mappaintwidget.h"
 #include "mapgui/mapscale.h"
-#include "app/navapp.h"
-#include "common/symbolpainter.h"
-#include "geo/calculations.h"
-#include "common/mapcolors.h"
-#include "common/maptypes.h"
-#include "mapgui/maplayer.h"
-#include "common/formatter.h"
 #include "util/paintercontextsaver.h"
-#include "common/unit.h"
-#include "common/textplacement.h"
 
 #include <marble/GeoDataLineString.h>
 #include <marble/GeoDataLinearRing.h>
@@ -42,30 +43,31 @@ using namespace Marble;
 using namespace atools::geo;
 using atools::roundToInt;
 
-PaintAirportType::PaintAirportType(const map::MapAirport& ap, float x, float y)
+AirportPaintData::AirportPaintData(const map::MapAirport& ap, float x, float y)
   : airport(new map::MapAirport(ap)), point(x, y)
 {
 
 }
 
-PaintAirportType::~PaintAirportType()
+AirportPaintData::AirportPaintData(const AirportPaintData& other)
+  : airport(new map::MapAirport)
+{
+  this->operator=(other);
+}
+
+AirportPaintData::AirportPaintData()
+  : airport(new map::MapAirport)
+{
+}
+
+AirportPaintData::~AirportPaintData()
 {
   delete airport;
 }
 
-PaintAirportType& PaintAirportType::operator=(const PaintAirportType& other)
+AirportPaintData& AirportPaintData::operator=(const AirportPaintData& other)
 {
-  if(airport != nullptr && other.airport != nullptr)
-    *airport = *other.airport;
-  else if(airport == nullptr && other.airport != nullptr)
-    airport = new map::MapAirport(*other.airport);
-  else if(airport != nullptr && other.airport == nullptr)
-  {
-    delete airport;
-    airport = nullptr;
-  }
-  // else both nullptr
-
+  *airport = *other.airport;
   point = other.point;
   return *this;
 }
@@ -80,13 +82,13 @@ textflags::TextFlags PaintContext::airportTextFlags() const
   // Build and draw airport text
   textflags::TextFlags textflags = textflags::NONE;
 
-  if(mapLayer->isAirportInfo())
+  if(mapLayerText->isAirportInfo())
     textflags = textflags::INFO;
 
-  if(mapLayer->isAirportIdent())
+  if(mapLayerText->isAirportIdent())
     textflags |= textflags::IDENT;
 
-  if(mapLayer->isAirportName())
+  if(mapLayerText->isAirportName())
     textflags |= textflags::NAME;
 
   if(!flags2.testFlag(opts2::MAP_AIRPORT_TEXT_BACKGROUND))
@@ -100,13 +102,13 @@ textflags::TextFlags PaintContext::airportTextFlagsMinor() const
   // Build and draw airport text
   textflags::TextFlags textflags = textflags::NONE;
 
-  if(mapLayer->isAirportMinorInfo())
+  if(mapLayerText->isAirportMinorInfo())
     textflags = textflags::INFO;
 
-  if(mapLayer->isAirportMinorIdent())
+  if(mapLayerText->isAirportMinorIdent())
     textflags |= textflags::IDENT;
 
-  if(mapLayer->isAirportMinorName())
+  if(mapLayerText->isAirportMinorName())
     textflags |= textflags::NAME;
 
   if(!flags2.testFlag(opts2::MAP_AIRPORT_TEXT_BACKGROUND))
@@ -127,7 +129,7 @@ textflags::TextFlags PaintContext::airportTextFlagsRoute(bool drawAsRoute, bool 
     textflags |= textflags::LOG_TEXT;
 
   // Use more more detailed text for flight plan
-  if(mapLayer->isAirportRouteInfo())
+  if(mapLayerRouteText->isAirportRouteInfo())
     textflags |= textflags::NAME | textflags::INFO;
 
   if(!(flags2 & opts2::MAP_ROUTE_TEXT_BACKGROUND))
@@ -140,7 +142,6 @@ textflags::TextFlags PaintContext::airportTextFlagsRoute(bool drawAsRoute, bool 
 MapPainter::MapPainter(MapPaintWidget *parentMapWidget, MapScale *mapScale, PaintContext *paintContext)
   : CoordinateConverter(parentMapWidget->viewport()), context(paintContext), mapPaintWidget(parentMapWidget), scale(mapScale)
 {
-  airportQuery = NavApp::getAirportQuerySim();
   symbolPainter = new SymbolPainter();
 }
 
@@ -455,7 +456,7 @@ void MapPainter::drawCross(Marble::GeoPainter *painter, int x, int y, int size) 
 
 void MapPainter::drawPolyline(Marble::GeoPainter *painter, const atools::geo::LineString& linestring) const
 {
-  QVector<QPolygonF *> polygons = createPolylines(linestring, context->screenRect);
+  QVector<QPolygonF *> polygons = createPolylines(linestring, context->screenRect, true /* splitLongLines */);
   drawPolylines(painter, polygons);
   releasePolylines(polygons);
 }
@@ -536,7 +537,12 @@ void MapPainter::drawPolygon(Marble::GeoPainter *painter, const QPolygonF& polyg
 
 void MapPainter::drawLine(Marble::GeoPainter *painter, const atools::geo::Line& line, bool forceDraw) const
 {
-  QVector<QPolygonF *> polygons = createPolylines(LineString(line.getPos1(), line.getPos2()), context->screenRect);
+  LineString linestring(line.getPos1(), line.getPos2());
+
+  // Move latitude values slightly up and down to workaround Marble drawing straight lines
+  maptools::correctLatY(linestring, false /* polygon */);
+
+  QVector<QPolygonF *> polygons = createPolylines(linestring, context->screenRect, true /* splitLongLines */);
   if(!polygons.isEmpty())
   {
     drawPolylines(painter, polygons);
@@ -891,7 +897,7 @@ void MapPainter::paintArrowAlongLine(QPainter *painter, const QLineF& line, cons
   painter->resetTransform();
 }
 
-bool MapPainter::sortAirportFunction(const PaintAirportType& pap1, const PaintAirportType& pap2)
+bool MapPainter::sortAirportFunction(const AirportPaintData& airportPaintData1, const AirportPaintData& airportPaintData2)
 {
   // returns ​true if the first argument is less than (i.e. is ordered before) the second.
   // ">" puts true behind
@@ -901,13 +907,14 @@ bool MapPainter::sortAirportFunction(const PaintAirportType& pap1, const PaintAi
   bool addonFlag = context->objectTypes.testFlag(map::AIRPORT_ADDON_ZOOM) ||
                    context->objectTypes.testFlag(map::AIRPORT_ADDON_ZOOM_FILTER);
 
-  bool empty3dFlag = od.getFlags2().testFlag(opts2::MAP_EMPTY_AIRPORTS_3D);
+  bool empty3dFlag = od.getFlags2().testFlag(opts2::MAP_EMPTY_AIRPORTS_3D) &&
+                     NavApp::getCurrentSimulatorDb() != atools::fs::FsPaths::XPLANE_12;
   bool emptyFlag = od.getFlags().testFlag(opts::MAP_EMPTY_AIRPORTS);
-  int priority1 = pap1.airport->paintPriority(addonFlag, emptyFlag, empty3dFlag);
-  int priority2 = pap2.airport->paintPriority(addonFlag, emptyFlag, empty3dFlag);
+  int priority1 = airportPaintData1.getAirport().paintPriority(addonFlag, emptyFlag, empty3dFlag);
+  int priority2 = airportPaintData2.getAirport().paintPriority(addonFlag, emptyFlag, empty3dFlag);
 
   if(priority1 == priority2)
-    return pap1.airport->id < pap2.airport->id;
+    return airportPaintData1.getAirport().id < airportPaintData2.getAirport().id;
   else
     // Smaller priority: Draw first below all other. Higher priority: Draw last on top of other
     return priority1 < priority2;
@@ -915,9 +922,7 @@ bool MapPainter::sortAirportFunction(const PaintAirportType& pap1, const PaintAi
 
 void MapPainter::initQueries()
 {
-  mapQuery = mapPaintWidget->getMapQuery();
-  airwayQuery = mapPaintWidget->getAirwayTrackQuery();
-  waypointQuery = mapPaintWidget->getWaypointTrackQuery();
+  queries = mapPaintWidget->getQueries();
 }
 
 void MapPainter::getPixmap(QPixmap& pixmap, const QString& resource, int size) const
@@ -1045,7 +1050,8 @@ void MapPainter::paintMsaMarks(const QList<map::MapAirportMsa>& airportMsa, bool
   }
 }
 
-void MapPainter::paintHoldingMarks(const QList<map::MapHolding>& holdings, bool user, bool drawFast, bool darkMap) const
+void MapPainter::paintHoldingMarks(const QList<map::MapHolding>& holdings, const MapLayer *layer, const MapLayer *layerText, bool user,
+                                   bool drawFast, bool darkMap) const
 {
   if(holdings.isEmpty())
     return;
@@ -1053,8 +1059,8 @@ void MapPainter::paintHoldingMarks(const QList<map::MapHolding>& holdings, bool 
   atools::util::PainterContextSaver saver(context->painter);
   GeoPainter *painter = context->painter;
 
-  bool detail = context->mapLayer->isHoldingInfo();
-  bool detail2 = context->mapLayer->isHoldingInfo2();
+  bool detail = layerText->isHoldingInfo();
+  bool detail2 = layerText->isHoldingInfo2();
 
   QColor backColor = user || context->flags2 & opts2::MAP_NAVAID_TEXT_BACKGROUND ? QColor(Qt::white) : QColor(Qt::transparent);
 
@@ -1078,7 +1084,7 @@ void MapPainter::paintHoldingMarks(const QList<map::MapHolding>& holdings, bool 
     float distPixel = scale->getPixelForNm(dist);
     float lineWidth = user ? context->szF(context->thicknessUserFeature, 3) : (detail2 ? 2.5f : 1.5f);
 
-    if(context->mapLayer->isApproach() && distPixel > 10.f)
+    if(layer->isApproach() && distPixel > 10.f)
     {
       // Calculcate approximate rectangle
       Rect rect(holding.position, atools::geo::nmToMeter(dist) * 2.f, true /* fast */);

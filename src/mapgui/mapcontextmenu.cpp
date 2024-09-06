@@ -31,6 +31,7 @@
 #include "atools.h"
 #include "common/unit.h"
 #include "common/symbolpainter.h"
+#include "query/querymanager.h"
 
 #include <ui_mainwindow.h>
 
@@ -526,8 +527,9 @@ void MapContextMenu::insertProcedureAddMenu(QMenu& menu)
           const proc::MapProcedureLegs *legs = pt->legs;
           if(legs != nullptr && !legs->isAnyCustom())
           {
-            map::MapAirport airport = NavApp::getAirportQueryNav()->getAirportById(leg.airportId);
-            NavApp::getMapQueryGui()->getAirportSim(airport);
+            const Queries *queries = QueryManager::instance()->getQueriesGui();
+            map::MapAirport airport = queries->getAirportQueryNav()->getAirportById(leg.airportId);
+            queries->getMapQuery()->getAirportSim(airport);
 
             bool departure = false, destination = false;
             proc::procedureFlags(route, &airport, &departure, &destination);
@@ -796,13 +798,15 @@ void MapContextMenu::insertDepartureMenu(QMenu& menu)
       if(base != nullptr)
       {
         map::MapAirport airport;
+        const Queries *queries = QueryManager::instance()->getQueriesGui();
+
         if(base->getType() == map::HELIPAD)
         {
           // User clicked on helipad ================================
           const map::MapHelipad *helipad = base->asPtr<map::MapHelipad>();
 
           // Get related airport
-          airport = NavApp::getAirportQuerySim()->getAirportById(helipad->airportId);
+          airport = queries->getAirportQuerySim()->getAirportById(helipad->airportId);
 
           text = tr("Set %1 at %2 as &Departure").
                  arg(atools::elideTextShortMiddle(map::helipadText(*helipad), TEXT_ELIDE)).
@@ -814,7 +818,7 @@ void MapContextMenu::insertDepartureMenu(QMenu& menu)
           const map::MapParking *parking = base->asPtr<map::MapParking>();
 
           // Get related airport
-          airport = NavApp::getAirportQuerySim()->getAirportById(parking->airportId);
+          airport = queries->getAirportQuerySim()->getAirportById(parking->airportId);
 
           text = tr("Set %1 at %2 as &Departure").
                  arg(atools::elideTextShortMiddle(map::parkingText(*parking), TEXT_ELIDE)).
@@ -1085,7 +1089,7 @@ void MapContextMenu::insertUserpointAddMenu(QMenu& menu)
                      MapResultIndex().
                      addRef(*result, map::AIRPORT | map::VOR | map::NDB | map::WAYPOINT | map::USERPOINT).
                      sort(DEFAULT_TYPE_SORT, alphaSort),
-                     tr("Add &Userpoint %1 ..."), tr("Add an userpoint at this position"),
+                     tr("Add &Userpoint %1 ..."), tr("Add a userpoint at this position"),
                      tr("Ctrl+Shift+Click"), QIcon(":/littlenavmap/resources/icons/userdata_add.svg"), true /* allowNoMapObject */,
                      callback);
 }
@@ -1211,7 +1215,9 @@ void MapContextMenu::insertShowInSearchMenu(QMenu& menu)
   // Erase all non-online airspaces and aircraft which are not online client shadows
   index.erase(std::remove_if(index.begin(), index.end(), [](const map::MapBase *base) -> bool {
     if(base->getType() == map::AIRSPACE)
-      return !base->asPtr<map::MapAirspace>()->src.testFlag(map::AIRSPACE_SRC_ONLINE);
+    {
+      return !map::MapAirspaceSources(base->asPtr<map::MapAirspace>()->src).testFlag(map::AIRSPACE_SRC_ONLINE);
+    }
 
     return false;
   }), index.end());

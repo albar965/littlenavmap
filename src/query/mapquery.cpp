@@ -17,24 +17,26 @@
 
 #include "query/mapquery.h"
 
-#include "airspace/airspacecontroller.h"
 #include "common/constants.h"
 #include "common/mapresult.h"
 #include "common/maptools.h"
 #include "common/maptypesfactory.h"
 #include "fs/util/fsutil.h"
+#include "geo/marbleconverter.h"
 #include "logbook/logdatacontroller.h"
 #include "mapgui/mapairporthandler.h"
 #include "mapgui/maplayer.h"
 #include "app/navapp.h"
 #include "online/onlinedatacontroller.h"
 #include "query/airportquery.h"
+#include "query/airspacequeries.h"
 #include "query/airwaytrackquery.h"
 #include "query/waypointtrackquery.h"
 #include "settings/settings.h"
 #include "sql/sqldatabase.h"
 #include "sql/sqlutil.h"
 #include "userdata/userdatacontroller.h"
+#include "querymanager.h"
 
 using namespace Marble;
 using namespace atools::sql;
@@ -73,8 +75,8 @@ static QLatin1String AIRPORTIDENT_FROM_NDB("select a.ident, n.lonx, n.laty "
                                            "order by (abs(n.lonx - :lonx) + abs(n.laty - :laty)) limit 1");
 static float MAX_AIRPORT_IDENT_DISTANCE_M = atools::geo::nmToMeter(5.f);
 
-MapQuery::MapQuery(atools::sql::SqlDatabase *sqlDbSim, SqlDatabase *sqlDbNav, SqlDatabase *sqlDbUser)
-  : dbSim(sqlDbSim), dbNav(sqlDbNav), dbUser(sqlDbUser)
+MapQuery::MapQuery(atools::sql::SqlDatabase *sqlDbSim, SqlDatabase *sqlDbNav, SqlDatabase *sqlDbUser, const Queries *parentQueriesParam)
+  : dbSim(sqlDbSim), dbNav(sqlDbNav), dbUser(sqlDbUser), queries(parentQueriesParam)
 {
   mapTypesFactory = new MapTypesFactory();
   atools::settings::Settings& settings = atools::settings::Settings::instance();
@@ -95,7 +97,7 @@ bool MapQuery::hasProcedures(const map::MapAirport& airport) const
 {
   MapAirport airportNav = getAirportNav(airport);
   if(airportNav.isValid())
-    return NavApp::getAirportQueryNav()->hasProcedures(airportNav);
+    return queries->getAirportQueryNav()->hasProcedures(airportNav);
 
   return false;
 }
@@ -104,7 +106,7 @@ bool MapQuery::hasArrivalProcedures(const map::MapAirport& airport) const
 {
   MapAirport airportNav = getAirportNav(airport);
   if(airportNav.isValid())
-    return NavApp::getAirportQueryNav()->hasArrivalProcedures(airportNav);
+    return queries->getAirportQueryNav()->hasArrivalProcedures(airportNav);
 
   return false;
 }
@@ -113,7 +115,7 @@ bool MapQuery::hasDepartureProcedures(const map::MapAirport& airport) const
 {
   MapAirport airportNav = getAirportNav(airport);
   if(airportNav.isValid())
-    return NavApp::getAirportQueryNav()->hasDepartureProcedures(airportNav);
+    return queries->getAirportQueryNav()->hasDepartureProcedures(airportNav);
 
   return false;
 }
@@ -123,7 +125,7 @@ map::MapAirport MapQuery::getAirportSim(const map::MapAirport& airport) const
   if(airport.navdata)
   {
     MapAirport retval;
-    NavApp::getAirportQuerySim()->getAirportFuzzy(retval, airport);
+    queries->getAirportQuerySim()->getAirportFuzzy(retval, airport);
     return retval;
   }
   return airport;
@@ -134,7 +136,7 @@ map::MapAirport MapQuery::getAirportNav(const map::MapAirport& airport) const
   if(!airport.navdata)
   {
     MapAirport retval;
-    NavApp::getAirportQueryNav()->getAirportFuzzy(retval, airport);
+    queries->getAirportQueryNav()->getAirportFuzzy(retval, airport);
     return retval;
   }
   return airport;
@@ -143,13 +145,13 @@ map::MapAirport MapQuery::getAirportNav(const map::MapAirport& airport) const
 void MapQuery::getAirportSimReplace(map::MapAirport& airport) const
 {
   if(airport.navdata)
-    NavApp::getAirportQuerySim()->getAirportFuzzy(airport, airport);
+    queries->getAirportQuerySim()->getAirportFuzzy(airport, airport);
 }
 
 void MapQuery::getAirportNavReplace(map::MapAirport& airport) const
 {
   if(!airport.navdata)
-    NavApp::getAirportQueryNav()->getAirportFuzzy(airport, airport);
+    queries->getAirportQueryNav()->getAirportFuzzy(airport, airport);
 }
 
 void MapQuery::getAirportTransitionAltiudeAndLevel(const map::MapAirport& airport, float& transitionAltitude, float& transitionLevel) const
@@ -302,14 +304,14 @@ map::MapResultIndex *MapQuery::nearestNavaidsInternal(const Pos& pos, float dist
 
     if(type & map::WAYPOINT)
     {
-      query::fetchObjectsForRect(rect, NavApp::getWaypointTrackQueryGui()->getWaypointsByRectQueryTrack(),
+      query::fetchObjectsForRect(rect, queries->getWaypointTrackQuery()->getWaypointsByRectQueryTrack(),
                                  [ =, &res](atools::sql::SqlQuery *query) -> void {
         MapWaypoint obj;
         mapTypesFactory->fillWaypoint(query->record(), obj, true /* track database */);
         res.waypoints.append(obj);
       });
 
-      query::fetchObjectsForRect(rect, NavApp::getWaypointTrackQueryGui()->getWaypointsByRectQuery(),
+      query::fetchObjectsForRect(rect, queries->getWaypointTrackQuery()->getWaypointsByRectQuery(),
                                  [ =, &res](atools::sql::SqlQuery *query) -> void {
         MapWaypoint obj;
         mapTypesFactory->fillWaypoint(query->record(), obj, false /* track database */);
@@ -373,7 +375,7 @@ void MapQuery::mapObjectByIdentInternal(map::MapResult& result, map::MapTypes ty
 {
   if(type & map::AIRPORT)
   {
-    AirportQuery *airportQuery = airportFromNavDatabase ? NavApp::getAirportQueryNav() : NavApp::getAirportQuerySim();
+    AirportQuery *airportQuery = queries->getAirportQuery(airportFromNavDatabase);
 
     // Try exact ident first =====================
     MapAirport ap = airportQuery->getAirportByIdent(ident);
@@ -444,7 +446,7 @@ void MapQuery::mapObjectByIdentInternal(map::MapResult& result, map::MapTypes ty
 
   if(type & map::WAYPOINT)
   {
-    NavApp::getWaypointTrackQueryGui()->getWaypointByIdent(result.waypoints, ident, region, airport);
+    queries->getWaypointTrackQuery()->getWaypointByIdent(result.waypoints, ident, region, airport);
     maptools::sortByDistance(result.waypoints, sortByDistancePos);
     maptools::removeByDistance(result.waypoints, sortByDistancePos, maxDistanceMeter);
   }
@@ -465,15 +467,10 @@ void MapQuery::mapObjectByIdentInternal(map::MapResult& result, map::MapTypes ty
   }
 
   if(type & map::RUNWAYEND)
-  {
-    if(airportFromNavDatabase)
-      NavApp::getAirportQueryNav()->getRunwayEndByNames(result, ident, airport);
-    else
-      NavApp::getAirportQuerySim()->getRunwayEndByNames(result, ident, airport);
-  }
+    queries->getAirportQuery(airportFromNavDatabase)->getRunwayEndByNames(result, ident, airport);
 
   if(type & map::AIRWAY)
-    NavApp::getAirwayTrackQueryGui()->getAirwaysByName(result.airways, ident);
+    queries->getAirwayTrackQuery()->getAirwaysByName(result.airways, ident);
 }
 
 void MapQuery::getMapObjectById(map::MapResult& result, map::MapTypes type, map::MapAirspaceSources src, int id,
@@ -481,9 +478,7 @@ void MapQuery::getMapObjectById(map::MapResult& result, map::MapTypes type, map:
 {
   if(type == map::AIRPORT)
   {
-    MapAirport airport = (airportFromNavDatabase ?
-                          NavApp::getAirportQueryNav() :
-                          NavApp::getAirportQuerySim())->getAirportById(id);
+    MapAirport airport = queries->getAirportQuery(airportFromNavDatabase)->getAirportById(id);
     if(airport.isValid())
       result.airports.append(airport);
   }
@@ -513,7 +508,7 @@ void MapQuery::getMapObjectById(map::MapResult& result, map::MapTypes type, map:
   }
   else if(type == map::WAYPOINT)
   {
-    MapWaypoint waypoint = NavApp::getWaypointTrackQueryGui()->getWaypointById(id);
+    MapWaypoint waypoint = queries->getWaypointTrackQuery()->getWaypointById(id);
     if(waypoint.isValid())
       result.waypoints.append(waypoint);
   }
@@ -537,13 +532,13 @@ void MapQuery::getMapObjectById(map::MapResult& result, map::MapTypes type, map:
   }
   else if(type == map::RUNWAYEND)
   {
-    map::MapRunwayEnd end = (airportFromNavDatabase ? NavApp::getAirportQueryNav() : NavApp::getAirportQuerySim())->getRunwayEndById(id);
+    map::MapRunwayEnd end = queries->getAirportQuery(airportFromNavDatabase)->getRunwayEndById(id);
     if(end.isValid())
       result.runwayEnds.append(end);
   }
   else if(type == map::AIRSPACE)
   {
-    map::MapAirspace airspace = NavApp::getAirspaceController()->getAirspaceById({id, src});
+    map::MapAirspace airspace = queries->getAirspaceQueries()->getAirspaceById({id, src});
     if(airspace.isValidAirspace())
       result.airspaces.append(airspace);
   }
@@ -553,7 +548,7 @@ void MapQuery::getMapObjectById(map::MapResult& result, map::MapTypes type, map:
   }
   else if(type == map::AIRWAY)
   {
-    map::MapAirway airway = NavApp::getAirwayTrackQueryGui()->getAirwayById(id);
+    map::MapAirway airway = queries->getAirwayTrackQuery()->getAirwayById(id);
     if(airway.isValid())
       result.airways.append(airway);
   }
@@ -776,7 +771,7 @@ void MapQuery::getNearestScreenObjects(const CoordinateConverter& conv, const Ma
   if(victorWaypoints || jetWaypoints || trackWaypoints || normalWaypoints || flightplan)
   {
     // Get all close waypoints
-    NavApp::getWaypointTrackQueryGui()->getNearestScreenObjects(conv, mapLayer, types, xs, ys, screenDistance, result);
+    queries->getWaypointTrackQuery()->getNearestScreenObjects(conv, mapLayer, types, xs, ys, screenDistance, result);
 
     // Filter waypoints by airway/track type and remove artificial ones
     QHash<int, MapWaypoint> waypoints;
@@ -829,7 +824,7 @@ void MapQuery::getNearestScreenObjects(const CoordinateConverter& conv, const Ma
   if(mapLayer->isAirport() && airportDiagram)
   {
     // Also check parking and helipads in airport diagrams
-    QHash<int, QList<MapParking> > parkingCache = NavApp::getAirportQuerySim()->getParkingCache();
+    QHash<int, QList<MapParking> > parkingCache = queries->getAirportQuerySim()->getParkingCache();
     for(auto it = parkingCache.constBegin(); it != parkingCache.constEnd(); ++it)
     {
       // Only draw if airport is actually drawn on map
@@ -843,7 +838,7 @@ void MapQuery::getNearestScreenObjects(const CoordinateConverter& conv, const Ma
       }
     }
 
-    QHash<int, QList<MapHelipad> > helipadCache = NavApp::getAirportQuerySim()->getHelipadCache();
+    QHash<int, QList<MapHelipad> > helipadCache = queries->getAirportQuerySim()->getHelipadCache();
     for(auto it = helipadCache.constBegin(); it != helipadCache.constEnd(); ++it)
     {
       if(shownDetailAirportIds.contains(it.key()))
@@ -870,8 +865,10 @@ const QList<map::MapAirport> *MapQuery::getAirports(const Marble::GeoDataLatLonB
                            [this, addonZoom, addonZoomFilter, normal](const MapLayer *curLayer, const MapLayer *newLayer) -> bool
   {
     return curLayer->hasSameQueryParametersAirport(newLayer) &&
-    // Invalidate cache if settings differ
-    airportCacheAddonZoomFlag == addonZoom && airportCacheAddonZoomFilterFlag == addonZoomFilter && airportCacheNormalFlag == normal;
+           // Invalidate cache if settings differ
+           airportCacheAddonZoomFlag == addonZoom &&
+           airportCacheAddonZoomFilterFlag == addonZoomFilter &&
+           airportCacheNormalFlag == normal;
   });
 
   airportCacheAddonZoomFlag = addonZoom;
@@ -879,7 +876,7 @@ const QList<map::MapAirport> *MapQuery::getAirports(const Marble::GeoDataLatLonB
   airportCacheNormalFlag = normal;
 
   airportByRectQuery->bindValue(":minlength", mapLayer->getMinRunwayLength());
-  return fetchAirports(rect, airportByRectQuery, lazy, false /* overview */, addonZoom || addonZoomFilter, normal, overflow);
+  return fetchAirports(rect, airportByRectQuery, lazy, addonZoom || addonZoomFilter, normal, overflow);
 }
 
 const QList<map::MapAirport> *MapQuery::getAirportsByRect(const atools::geo::Rect& rect, const MapLayer *mapLayer, bool lazy,
@@ -900,7 +897,7 @@ const QList<map::MapAirport> *MapQuery::getAirportsByRect(const atools::geo::Rec
   airportCacheNormalFlag = normal;
 
   airportByRectQuery->bindValue(":minlength", mapLayer->getMinRunwayLength());
-  return fetchAirports(latLonBox, airportByRectQuery, lazy, false /* overview */, addonZoom || addonZoomFilter, normal, overflow);
+  return fetchAirports(latLonBox, airportByRectQuery, lazy, addonZoom || addonZoomFilter, normal, overflow);
 }
 
 const QList<map::MapVor> *MapQuery::getVors(const GeoDataLatLonBox& rect, const MapLayer *mapLayer,
@@ -935,9 +932,7 @@ const QList<map::MapVor> *MapQuery::getVors(const GeoDataLatLonBox& rect, const 
 
 const QList<map::MapVor> *MapQuery::getVorsByRect(const atools::geo::Rect& rect, const MapLayer *mapLayer, bool lazy, bool& overflow)
 {
-  const GeoDataLatLonBox latLonBox = GeoDataLatLonBox(rect.getNorth(), rect.getSouth(), rect.getEast(),
-                                                      rect.getWest(), GeoDataCoordinates::Degree);
-  return getVors(latLonBox, mapLayer, lazy, overflow);
+  return getVors(mconvert::toGdc(rect), mapLayer, lazy, overflow);
 }
 
 const QList<map::MapNdb> *MapQuery::getNdbs(const GeoDataLatLonBox& rect, const MapLayer *mapLayer, bool lazy, bool& overflow)
@@ -992,21 +987,21 @@ const QList<map::MapUserpoint>& MapQuery::getUserdataPoints(const GeoDataLatLonB
 
     for(const GeoDataLatLonBox& r : query::splitAtAntiMeridian(rect, queryRectInflationFactor, queryRectInflationIncrement))
     {
-      QVector<SqlQuery *> queries;
+      QVector<SqlQuery *> sqlQueries;
       QStringList queryTypes;
       if(unknownType || (allTypesSelected && unknownType))
       {
         // Either query all unknowns too and filter later or all and unknown are selected
         queryTypes.append("%"); // Only one query type "%"
-        queries.append(userdataPointByRectQueryNullType); // Extra for null types
+        sqlQueries.append(userdataPointByRectQueryNullType); // Extra for null types
       }
       else
         queryTypes = types;
 
-      queries.append(userdataPointByRectQuery); // Normal query to also catch unknown and empty types
+      sqlQueries.append(userdataPointByRectQuery); // Normal query to also catch unknown and empty types
 
       // One or two queries
-      for(SqlQuery *query : queries)
+      for(SqlQuery *query : sqlQueries)
       {
         query::bindRect(r, query);
         query->bindValue(":dist", distanceNm);
@@ -1221,7 +1216,7 @@ const QList<map::MapIls> *MapQuery::getIls(GeoDataLatLonBox rect, const MapLayer
         map::MapRunwayEnd end;
         if(mapLayer->isIlsDetail() && !NavApp::isNavdataOff())
           // Get the runway end to fix graphical alignment issues in map
-          end = NavApp::getAirportQueryNav()->getRunwayEndById(ilsByRectQuery->valueInt("loc_runway_end_id"));
+          end = queries->getAirportQueryNav()->getRunwayEndById(ilsByRectQuery->valueInt("loc_runway_end_id"));
 
         MapIls ils;
         mapTypesFactory->fillIls(ilsByRectQuery->record(), ils, end.isFullyValid() ? end.heading : map::INVALID_HEADING_VALUE);
@@ -1241,12 +1236,12 @@ const QList<map::MapIls> *MapQuery::getIls(GeoDataLatLonBox rect, const MapLayer
  * @return pointer to the airport cache
  */
 const QList<map::MapAirport> *MapQuery::fetchAirports(const Marble::GeoDataLatLonBox& rect, atools::sql::SqlQuery *query,
-                                                      bool lazy, bool overview, bool addon, bool normal, bool& overflow)
+                                                      bool lazy, bool addon, bool normal, bool& overflow)
 {
   if(!query::valid(Q_FUNC_INFO, query))
     return nullptr;
 
-  AirportQuery *airportQueryNav = NavApp::getAirportQueryNav();
+  AirportQuery *airportQueryNav = queries->getAirportQueryNav();
 
   if(airportCache.list.isEmpty() && !lazy)
   {
@@ -1265,11 +1260,7 @@ const QList<map::MapAirport> *MapQuery::fetchAirports(const Marble::GeoDataLatLo
         while(query->next())
         {
           MapAirport airport;
-          if(overview)
-            // Fill only a part of the object
-            mapTypesFactory->fillAirportForOverview(query->record(), airport, navdata, NavApp::isAirportDatabaseXPlane(navdata));
-          else
-            mapTypesFactory->fillAirport(query->record(), airport, true /* complete */, navdata, NavApp::isAirportDatabaseXPlane(navdata));
+          mapTypesFactory->fillAirport(query->record(), airport, true /* complete */, navdata, NavApp::isAirportDatabaseXPlane(navdata));
 
           // Need to update airport procedure flag for mixed mode databases to enable procedure filter on map
           airportQueryNav->correctAirportProcedureFlag(airport);
@@ -1287,13 +1278,8 @@ const QList<map::MapAirport> *MapQuery::fetchAirports(const Marble::GeoDataLatLo
         while(airportAddonByRectQuery->next())
         {
           MapAirport airport;
-          if(overview)
-            // Fill only a part of the object
-            mapTypesFactory->fillAirportForOverview(airportAddonByRectQuery->record(), airport, navdata,
-                                                    NavApp::isAirportDatabaseXPlane(navdata));
-          else
-            mapTypesFactory->fillAirport(airportAddonByRectQuery->record(), airport, true /* complete */, navdata,
-                                         NavApp::isAirportDatabaseXPlane(navdata));
+          mapTypesFactory->fillAirport(airportAddonByRectQuery->record(), airport, true /* complete */, navdata,
+                                       NavApp::isAirportDatabaseXPlane(navdata));
 
           // Need to update airport procedure flag for mixed mode databases to enable procedure filter on map
           airportQueryNav->correctAirportProcedureFlag(airport);
@@ -1350,12 +1336,11 @@ void MapQuery::getRunwayEndByNameFuzzy(QList<map::MapRunwayEnd>& runwayEnds, con
 void MapQuery::runwayEndByNameFuzzy(QList<map::MapRunwayEnd>& runwayEnds, const QString& name,
                                     const map::MapAirport& airport, bool navData) const
 {
-  AirportQuery *aquery = navData ? NavApp::getAirportQueryNav() : NavApp::getAirportQuerySim();
   map::MapResult result;
 
   if(!name.isEmpty())
   {
-    QString bestRunway = atools::fs::util::runwayBestFit(name, aquery->getRunwayNames(airport.id));
+    QString bestRunway = atools::fs::util::runwayBestFit(name, queries->getAirportQuery(navData)->getRunwayNames(airport.id));
 
     if(!bestRunway.isEmpty())
       getMapObjectByIdent(result, map::RUNWAYEND, bestRunway, QString(), airport.ident, navData /* airport or runway from nav database */);

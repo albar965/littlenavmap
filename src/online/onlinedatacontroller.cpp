@@ -17,22 +17,23 @@
 
 #include "online/onlinedatacontroller.h"
 
-#include "fs/online/onlinedatamanager.h"
-#include "airspace/airspacecontroller.h"
-#include "util/httpdownloader.h"
-#include "gui/mainwindow.h"
-#include "common/maptools.h"
+#include "app/navapp.h"
 #include "common/constants.h"
-#include "options/optiondata.h"
-#include "zip/gzip.h"
-#include "gui/dialog.h"
+#include "common/maptools.h"
+#include "fs/online/onlinedatamanager.h"
+#include "fs/sc/simconnectdata.h"
 #include "geo/calculations.h"
+#include "gui/dialog.h"
+#include "gui/mainwindow.h"
+#include "mapgui/maplayer.h"
+#include "options/optiondata.h"
+#include "query/airspacequeries.h"
+#include "query/querymanager.h"
+#include "settings/settings.h"
 #include "sql/sqlquery.h"
 #include "sql/sqlrecord.h"
-#include "mapgui/maplayer.h"
-#include "app/navapp.h"
-#include "settings/settings.h"
-#include "fs/sc/simconnectdata.h"
+#include "util/httpdownloader.h"
+#include "zip/gzip.h"
 
 #include <QDebug>
 #include <QTextCodec>
@@ -500,18 +501,18 @@ void OnlinedataController::showMessageDialog()
 const LineString *OnlinedataController::airspaceGeometryCallback(const QString& callsign, atools::fs::online::fac::FacilityType type)
 {
   opts2::Flags2 flags2 = OptionData::instance().getFlags2();
-
+  AirspaceQueries *airspaceQueries = QueryManager::instance()->getQueriesGui()->getAirspaceQueries();
   const LineString *lineString = nullptr;
-  AirspaceController *airspaceController = NavApp::getAirspaceController();
+
   // Try to get airspace boundary by name vs. callsign if set in options
   if(flags2 & opts2::ONLINE_AIRSPACE_BY_NAME)
-    lineString = airspaceController->getOnlineAirspaceGeoByName(callsign, atools::fs::online::facilityTypeToDb(type));
+    lineString = airspaceQueries->getOnlineAirspaceGeoByName(callsign, atools::fs::online::facilityTypeToDb(type));
 
   // Try to get airspace boundary by file name vs. callsign if set in options
   if(flags2 & opts2::ONLINE_AIRSPACE_BY_FILE)
   {
     if(lineString == nullptr)
-      lineString = airspaceController->getOnlineAirspaceGeoByFile(callsign);
+      lineString = airspaceQueries->getOnlineAirspaceGeoByFile(callsign);
   }
 
   return lineString;

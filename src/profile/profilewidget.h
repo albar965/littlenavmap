@@ -76,9 +76,6 @@ public:
   /* Update user aircraft on profile display */
   void simDataChanged(const atools::fs::sc::SimConnectData& simulatorData);
 
-  /* Track was shortened and needs a full update */
-  void aircraftTrailTruncated();
-
   void simulatorStatusChanged();
 
   /* Deletes track */
@@ -89,8 +86,9 @@ public:
   /* Disables or enables aircraft and/or track display */
   void updateProfileShowFeatures();
 
-  /* Notification after track deletion */
-  void deleteAircraftTrail();
+  /* Deleting aircraft track needs an update of the screen coordinates.
+   * Called on manual delete and on takeoff detection. */
+  void deleteAircraftTrailPoints();
 
   /* Stops thread and disables all udpates */
   void preDatabaseLoad();
@@ -204,7 +202,11 @@ private:
   virtual void paintEvent(QPaintEvent *) override;
   virtual void showEvent(QShowEvent *) override;
   virtual void hideEvent(QHideEvent *) override;
+
+  /* Resizing needs an update of the screen coordinates */
   virtual void resizeEvent(QResizeEvent *) override;
+
+  /* Cursor leaves widget. Stop displaying the rubberband */
   virtual void leaveEvent(QEvent *) override;
 
   /* Mouse events*/

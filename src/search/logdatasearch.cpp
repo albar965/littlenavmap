@@ -205,7 +205,7 @@ void LogdataSearch::saveState()
 void LogdataSearch::restoreState()
 {
   atools::gui::WidgetState widgetState(lnm::SEARCHTAB_LOGDATA_VIEW_WIDGET);
-  if(OptionData::instance().getFlags() & opts::STARTUP_LOAD_SEARCH && !NavApp::isSafeMode())
+  if(OptionData::instance().getFlags().testFlag(opts::STARTUP_LOAD_SEARCH) && !atools::gui::Application::isSafeMode())
     widgetState.restore(logdataSearchWidgets);
   else
   {

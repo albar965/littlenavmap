@@ -46,7 +46,7 @@ void MapPainterShip::render()
     // If actions are unchecked return
     return;
 
-  if(NavApp::isConnected() || mapPaintWidget->getUserAircraft().isDebug())
+  if(NavApp::isConnected())
   {
     // Draw AI ships first
     if(context->objectTypes & map::AIRCRAFT_AI_SHIP && context->mapLayer->isAiShipLarge())

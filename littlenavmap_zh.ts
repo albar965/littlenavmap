@@ -10360,13 +10360,13 @@ Best track will be selected automatically.</source>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="11652"/>
-        <source>Show &amp;Vertical Track</source>
+        <source>Show &amp;Vertical Aircraft Trail</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="11655"/>
         <location filename="src/gui/mainwindow.ui" line="11658"/>
-        <source>Show vertical track line</source>
+        <source>Show vertical aircraft trail</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -15774,7 +15774,7 @@ Button is highlighted if any filter is selected.</source>
     </message>
     <message>
         <location filename="src/mapgui/mapcontextmenu.cpp" line="1088"/>
-        <source>Add an userpoint at this position</source>
+        <source>Add a userpoint at this position</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -27092,7 +27092,7 @@ VORTAC, TACAN or NDB.</source>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="346"/>
-        <source>Select display options measurement lines.</source>
+        <source>Select display options for measurement lines.</source>
         <translation>选择显示测距线的选项。</translation>
     </message>
     <message>

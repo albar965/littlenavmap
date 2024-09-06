@@ -24,6 +24,7 @@
 #include "app/navapp.h"
 #include "query/mapquery.h"
 #include "route/route.h"
+#include "query/querymanager.h"
 
 #include <QDataStream>
 #include <QStringBuilder>
@@ -263,9 +264,9 @@ const static QHash<ProcedureLegType, QString> approachLegTypeToShortStr(
     {CUSTOM_DEP_RUNWAY, "CDR"}
   });
 
-QString procedureFixType(const QString& type)
+const QString& procedureFixType(const QString& type)
 {
-  return approachFixTypeToStr.value(type, type);
+  return atools::hashValue(approachFixTypeToStr, type, type);
 }
 
 QString procedureLegFixStr(const MapProcedureLeg& leg)
@@ -289,9 +290,9 @@ QString procedureLegFixStr(const MapProcedureLeg& leg)
     return fix;
 }
 
-QString procedureType(const QString& type)
+const QString& procedureType(const QString& type)
 {
-  return approachTypeToStr.value(type, type);
+  return atools::hashValue(approachTypeToStr, type, type);
 }
 
 QString edgeLights(const QString& type)
@@ -321,24 +322,28 @@ proc::ProcedureLegType procedureLegEnum(const QString& type)
   return approachLegTypeToEnum.value(type);
 }
 
-QString proceduresLegSecialTypeShortStr(proc::LegSpecialType type)
+const QString& proceduresLegSecialTypeShortStr(proc::LegSpecialType type)
 {
-  return specialTypeShortStr.value(type);
+  return atools::hashValue(specialTypeShortStr, type);
 }
 
-QString proceduresLegSecialTypeLongStr(proc::LegSpecialType type)
+const QString& proceduresLegSecialTypeLongStr(proc::LegSpecialType type)
 {
-  return specialTypeLongStr.value(type);
+  return atools::hashValue(specialTypeLongStr, type);
 }
 
 QString procedureLegTypeStr(proc::ProcedureLegType type)
 {
+#ifdef DEBUG_INFORMATION
+  return QString("%1 [%2]").arg(approachLegTypeToStr.value(type)).arg(approachLegTypeToShortStr.value(type));
+#else
   return approachLegTypeToStr.value(type);
+#endif
 }
 
-QString procedureLegTypeShortStr(ProcedureLegType type)
+const QString& procedureLegTypeShortStr(ProcedureLegType type)
 {
-  return approachLegTypeToShortStr.value(type);
+  return atools::hashValue(approachLegTypeToShortStr, type);
 }
 
 QString procedureLegTypeFullStr(ProcedureLegType type)
@@ -346,9 +351,9 @@ QString procedureLegTypeFullStr(ProcedureLegType type)
   return QObject::tr("%1 (%2)").arg(approachLegTypeToStr.value(type)).arg(approachLegTypeToShortStr.value(type));
 }
 
-QString procedureLegRemarks(proc::ProcedureLegType type)
+const QString& procedureLegRemarks(proc::ProcedureLegType type)
 {
-  return approachLegRemarkStr.value(type);
+  return atools::hashValue(approachLegRemarkStr, type);
 }
 
 QStringList restrictionText(const MapProcedureLeg& procedureLeg)
@@ -562,6 +567,8 @@ QDebug operator<<(QDebug out, const MapProcedureLegs& legs)
       << "transitionType" << legs.transitionType
       << "transitionFixIdent" << legs.transitionFixIdent
       << "procedureRunway" << legs.runway
+      << "runwaySim" << legs.runwaySim
+      << "runwayEndSim" << legs.runwayEndSim
       << "runwayEnd.name" << legs.runwayEnd.name << endl;
 
   out << "===== Legs =====" << endl;
@@ -581,7 +588,9 @@ QDebug operator<<(QDebug out, const MapProcedureLeg& leg)
       << "type" << leg.type
       << "maptype" << leg.mapType
       << "missed" << leg.missed
-      << "line" << leg.line << endl;
+      << "missed" << leg.missed
+      << "line" << leg.line << endl
+      << "geometry" << leg.geometry << endl;
 
   out << "displayText" << leg.displayText
       << "remarks" << leg.remarks;
@@ -590,8 +599,8 @@ QDebug operator<<(QDebug out, const MapProcedureLeg& leg)
 
   out << leg.recFixType << leg.recFixIdent << leg.recFixRegion << leg.recFixPos << endl;
   out << "intercept" << leg.interceptPos << leg.intercept << endl;
-  out << "pc pos" << leg.procedureTurnPos << endl;
-  out << "geometry" << leg.geometry << endl;
+  out << "procturn pos" << leg.procedureTurnPos << endl;
+  out << "rw sim" << leg.runwaySim << endl;
 
   out << "turnDirection" << leg.turnDirection
       << "flyover" << leg.flyover
@@ -1344,7 +1353,7 @@ void procedureFlags(const Route& route, const map::MapBase *base, bool *departur
   if(base != nullptr && base->getType() == map::AIRPORT)
   {
     const map::MapAirport *airport = base->asPtr<map::MapAirport>();
-    MapQuery *mapQueryGui = NavApp::getMapQueryGui();
+    MapQuery *mapQueryGui = QueryManager::instance()->getQueriesGui()->getMapQuery();
 
     if(departure != nullptr)
       *departure = route.isAirportDeparture(airport->ident);

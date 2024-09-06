@@ -134,9 +134,9 @@ void WaypointQuery::getWaypointsRect(QVector<map::MapWaypoint>& waypoints, const
   if(!query::valid(Q_FUNC_INFO, waypointRectQuery))
     return;
 
-  for(const Rect& r : Rect(pos, nmToMeter(distanceNm), true /* fast */).splitAtAntiMeridian())
+  for(const Rect& splitRect : Rect(pos, nmToMeter(distanceNm), true /* fast */).splitAtAntiMeridian())
   {
-    query::bindRect(r, waypointRectQuery);
+    query::bindRect(splitRect, waypointRectQuery);
     waypointRectQuery->exec();
     while(waypointRectQuery->next())
     {
@@ -278,10 +278,13 @@ void WaypointQuery::initQueries()
   // Common select statements
   QString waypointQueryBase(id % ", ident, region, type, num_victor_airway, num_jet_airway, mag_var, lonx, laty ");
 
-  if(atools::sql::SqlUtil(dbNav).hasTableAndColumn("waypoint", "artificial"))
+  if(atools::sql::SqlUtil(dbNav).hasTableAndColumn(table, "name"))
+    waypointQueryBase += ", name";
+
+  if(atools::sql::SqlUtil(dbNav).hasTableAndColumn(table, "artificial"))
     waypointQueryBase.append(", artificial");
 
-  if(atools::sql::SqlUtil(dbNav).hasTableAndColumn("waypoint", "arinc_type"))
+  if(atools::sql::SqlUtil(dbNav).hasTableAndColumn(table, "arinc_type"))
     waypointQueryBase.append(", arinc_type");
 
   deInitQueries();
@@ -329,12 +332,12 @@ void WaypointQuery::initQueries()
   waypointInfoQuery = new SqlQuery(dbNav);
 
   if(trackDatabase)
-    waypointInfoQuery->prepare("select * from " % table % " where " % id % " = :id");
+    waypointInfoQuery->prepare("select " % waypointQueryBase % " from " % table % " where " % id % " = :id");
   else
-    waypointInfoQuery->prepare("select * from waypoint "
-                               "join bgl_file on waypoint.file_id = bgl_file.bgl_file_id "
-                               "join scenery_area on bgl_file.scenery_area_id = scenery_area.scenery_area_id "
-                               "where waypoint_id = :id");
+    waypointInfoQuery->prepare("select w.*, a.title, f.filepath from waypoint w "
+                               "join bgl_file f on w.file_id = f.bgl_file_id "
+                               "join scenery_area a on f.scenery_area_id = a.scenery_area_id "
+                               "where w.waypoint_id = :id");
 }
 
 void WaypointQuery::deInitQueries()

@@ -18,7 +18,7 @@
 #ifndef LNM_ROUTEEXPORTFLAGS_H
 #define LNM_ROUTEEXPORTFLAGS_H
 
-#include <QFlags>
+#include "util/flags.h"
 
 namespace re {
 enum RouteExportType
@@ -95,13 +95,14 @@ enum RouteExportFormatType : quint16
   INIBUILDS = 44, /* MSFS IniBuilds Airbus - fpl */
   JFBAE = 48, /* MSFS JustFlight BAE-146 (QualityWings) */
   KLN90B = 49, /* KLN 90B (https://github.com/falcon71/kln90b) */
+  XPFFT7 = 50, /* X-Plane 12 FlightFactor Boeing 777 */
 
   /* Other ================ */
   EFBR = 27, /* AivlaSoft EFB */
   GPX = 28, /* Garmin exchange format. Not a flight plan format.  */
   HTML = 29, /* Export as HTML page */
 
-  // Next = 50
+  // Next = 51
 };
 
 /* Flags for export format. Some flags are saved to the configuration,
@@ -129,8 +130,8 @@ enum RouteExportFormatFlag : quint16
   SAVED_FLAGS = SELECTED /* Saved to configuration. */
 };
 
-Q_DECLARE_FLAGS(RouteExportFormatFlags, RouteExportFormatFlag)
-Q_DECLARE_OPERATORS_FOR_FLAGS(rexp::RouteExportFormatFlags)
+ATOOLS_DECLARE_FLAGS_16(RouteExportFormatFlags, RouteExportFormatFlag)
+ATOOLS_DECLARE_OPERATORS_FOR_FLAGS(rexp::RouteExportFormatFlags)
 
 } // namespace rexp
 

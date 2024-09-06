@@ -38,26 +38,6 @@ class CoordinateConverter;
 class WaypointTrackQuery
 {
 public:
-  /*
-   * @param sqlDb database for simulator scenery data
-   * @param sqlDbNav for updated navaids
-   */
-  WaypointTrackQuery(WaypointQuery *waypointQueryParam, WaypointQuery *trackQueryParam);
-
-  WaypointTrackQuery(const WaypointTrackQuery& other)
-  {
-    this->operator=(other);
-  }
-
-  /* Does a shallow copy. Query classes are not owned by this */
-  WaypointTrackQuery& operator=(const WaypointTrackQuery& other)
-  {
-    waypointQuery = other.waypointQuery;
-    trackQuery = other.trackQuery;
-    useTracks = other.useTracks;
-    return *this;
-  }
-
   /* Get one by database id */
   map::MapWaypoint getWaypointById(int id);
 
@@ -94,15 +74,6 @@ public:
   /* Get record for joined tables waypoint, bgl_file and scenery_area */
   const atools::sql::SqlRecord *getWaypointInformation(int waypointId);
 
-  /* Close all query objects thus disconnecting from the database */
-  void initQueries();
-
-  /* Create and prepare all queries */
-  void deInitQueries();
-
-  /* Tracks loaded - clear caches */
-  void clearCache();
-
   /* Set to false to ignore track database. Create a copy of this before using this method. */
   void setUseTracks(bool value)
   {
@@ -122,6 +93,37 @@ public:
   atools::sql::SqlQuery *getWaypointsByRectQueryTrack() const;
 
 private:
+  friend class Queries;
+
+  /*
+   * @param sqlDb database for simulator scenery data
+   * @param sqlDbNav for updated navaids
+   */
+  explicit WaypointTrackQuery(WaypointQuery *waypointQueryParam, WaypointQuery *trackQueryParam);
+
+  /* Close all query objects thus disconnecting from the database */
+  void initQueries();
+
+  /* Create and prepare all queries */
+  void deInitQueries();
+
+  /* Tracks loaded - clear caches */
+  void clearCache();
+
+  WaypointTrackQuery(const WaypointTrackQuery& other)
+  {
+    this->operator=(other);
+  }
+
+  /* Does a shallow copy. Query classes are not owned by this */
+  WaypointTrackQuery& operator=(const WaypointTrackQuery& other)
+  {
+    waypointQuery = other.waypointQuery;
+    trackQuery = other.trackQuery;
+    useTracks = other.useTracks;
+    return *this;
+  }
+
   /* Copies objects and avoids duplicates in the to list/vector. */
   void copy(const QList<map::MapWaypoint>& from, QList<map::MapWaypoint>& to);
   void copy(const QVector<map::MapWaypoint>& from, QVector<map::MapWaypoint>& to);

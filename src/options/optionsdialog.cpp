@@ -74,6 +74,10 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
 
   ui->setupUi(this);
 
+#ifndef QT_NO_DEBUG
+  ui->spinBoxSimMaxTrailPoints->setMinimum(10);
+#endif
+
   // 0 "Startup and Updates"
   // 1 "User Interface"
   // 2 "Display and Text"
@@ -289,15 +293,15 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
   addItem<optsac::DisplayOptionsUserAircraft>(userAircraft, displayOptItemIndexUser, tr("Type"), tr("Show the aircraft type, like B738, B350 or M20T."), optsac::ITEM_USER_AIRCRAFT_TYPE);
   addItem<optsac::DisplayOptionsUserAircraft>(userAircraft, displayOptItemIndexUser, tr("Airline"), tr("Airline like \"Orbit Airlines\"."), optsac::ITEM_USER_AIRCRAFT_AIRLINE);
   addItem<optsac::DisplayOptionsUserAircraft>(userAircraft, displayOptItemIndexUser, tr("Flight Number"), tr("Flight number like \"123\"."), optsac::ITEM_USER_AIRCRAFT_FLIGHT_NUMBER);
-  addItem<optsac::DisplayOptionsUserAircraft>(userAircraft, displayOptItemIndexUser, tr("Transponder Code"), tr("Transponder code prefixed with \"XPDR\" on the map"), optsac::ITEM_USER_AIRCRAFT_TRANSPONDER_CODE);
-  addItem<optsac::DisplayOptionsUserAircraft>(userAircraft, displayOptItemIndexUser, tr("Indicated Airspeed"), tr("Value prefixed with \"IAS\" on the map"), optsac::ITEM_USER_AIRCRAFT_IAS);
-  addItem<optsac::DisplayOptionsUserAircraft>(userAircraft, displayOptItemIndexUser, tr("Ground Speed"), tr("Value prefixed with \"GS\" on the map"), optsac::ITEM_USER_AIRCRAFT_GS, true);
-  addItem<optsac::DisplayOptionsUserAircraft>(userAircraft, displayOptItemIndexUser, tr("True Airspeed"), tr("Value prefixed with \"TAS\" on the map"), optsac::ITEM_USER_AIRCRAFT_TAS);
+  addItem<optsac::DisplayOptionsUserAircraft>(userAircraft, displayOptItemIndexUser, tr("Transponder Code"), tr("Transponder code prefixed with \"XPDR\" on the map."), optsac::ITEM_USER_AIRCRAFT_TRANSPONDER_CODE);
+  addItem<optsac::DisplayOptionsUserAircraft>(userAircraft, displayOptItemIndexUser, tr("Indicated Airspeed"), tr("Value prefixed with \"IAS\" on the map."), optsac::ITEM_USER_AIRCRAFT_IAS);
+  addItem<optsac::DisplayOptionsUserAircraft>(userAircraft, displayOptItemIndexUser, tr("Ground Speed"), tr("Value prefixed with \"GS\" on the map."), optsac::ITEM_USER_AIRCRAFT_GS, true);
+  addItem<optsac::DisplayOptionsUserAircraft>(userAircraft, displayOptItemIndexUser, tr("True Airspeed"), tr("Value prefixed with \"TAS\" on the map."), optsac::ITEM_USER_AIRCRAFT_TAS);
   addItem<optsac::DisplayOptionsUserAircraft>(userAircraft, displayOptItemIndexUser, tr("Climb- and Sinkrate"), QString(), optsac::ITEM_USER_AIRCRAFT_CLIMB_SINK);
-  addItem<optsac::DisplayOptionsUserAircraft>(userAircraft, displayOptItemIndexUser, tr("Heading"), tr("Aircraft magnetic heading prefixed with \"HDG\" on the map"), optsac::ITEM_USER_AIRCRAFT_HEADING);
-  addItem<optsac::DisplayOptionsUserAircraft>(userAircraft, displayOptItemIndexUser, tr("Actual Altitude"), tr("Real aircraft altitude prefixed with \"ALT\" on the map"), optsac::ITEM_USER_AIRCRAFT_ALTITUDE, true);
-  addItem<optsac::DisplayOptionsUserAircraft>(userAircraft, displayOptItemIndexUser, tr("Indicated Altitude"), tr("Indicated aircraft altitude prefixed with \"IND\" on the map"), optsac::ITEM_USER_AIRCRAFT_INDICATED_ALTITUDE);
-  addItem<optsac::DisplayOptionsUserAircraft>(userAircraft, displayOptItemIndexUser, tr("Altitude above ground"), tr("Actual altitude above ground. Prefixed with \"AGL\" on the map"), optsac::ITEM_USER_AIRCRAFT_ALT_ABOVE_GROUND);
+  addItem<optsac::DisplayOptionsUserAircraft>(userAircraft, displayOptItemIndexUser, tr("Heading"), tr("Aircraft magnetic heading prefixed with \"HDG\" on the map."), optsac::ITEM_USER_AIRCRAFT_HEADING);
+  addItem<optsac::DisplayOptionsUserAircraft>(userAircraft, displayOptItemIndexUser, tr("Actual Altitude"), tr("Real aircraft altitude prefixed with \"ALT\" on the map."), optsac::ITEM_USER_AIRCRAFT_ALTITUDE, true);
+  addItem<optsac::DisplayOptionsUserAircraft>(userAircraft, displayOptItemIndexUser, tr("Indicated Altitude"), tr("Indicated aircraft altitude prefixed with \"IND\" on the map."), optsac::ITEM_USER_AIRCRAFT_INDICATED_ALTITUDE);
+  addItem<optsac::DisplayOptionsUserAircraft>(userAircraft, displayOptItemIndexUser, tr("Altitude above ground"), tr("Actual altitude above ground. Prefixed with \"AGL\" on the map."), optsac::ITEM_USER_AIRCRAFT_ALT_ABOVE_GROUND);
   addItem<optsac::DisplayOptionsUserAircraft>(userAircraft, displayOptItemIndexUser, tr("Track Line"), tr("Show the aircraft trail as a black needle at\n"
                                                                                                           "the from of the user aircraft."), optsac::ITEM_USER_AIRCRAFT_TRACK_LINE, true);
   addItem<optsac::DisplayOptionsUserAircraft>(userAircraft, displayOptItemIndexUser, tr("Coordinates"), tr("Show aircraft coordinates using the format selected on\n"
@@ -343,7 +347,7 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
   addItem<optsd::DisplayOptionsRose>(compassRose, displayOptItemIndexRose, tr("True Heading"), tr("Show the whole circle and tick marks using true heading."), optsd::ROSE_TRUE_HEADING);
 
   // Measurment lines =====================================================
-  QTreeWidgetItem *measurement = addTopItem(tr("Measurement Lines"), tr("Select display options measurement lines."));
+  QTreeWidgetItem *measurement = addTopItem(tr("Measurement Lines"), tr("Select display options for measurement lines."));
   addItem<optsd::DisplayOptionsMeasurement>(measurement, displayOptItemIndexMeasurement, tr("Distance"), tr("Great circle distance for measurement line."), optsd::MEASUREMENT_DIST, true);
   addItem<optsd::DisplayOptionsMeasurement>(measurement, displayOptItemIndexMeasurement, tr("Magnetic Course"), tr("Show magnetic course for start and end of line."), optsd::MEASUREMENT_MAG, true);
   addItem<optsd::DisplayOptionsMeasurement>(measurement, displayOptItemIndexMeasurement, tr("True Course"), tr("Show true course for start and end of line."), optsd::MEASUREMENT_TRUE, true);
@@ -366,6 +370,7 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
      ui->checkBoxOptionsGuiRaiseDockWindows,
      ui->checkBoxOptionsGuiRaiseMainWindow,
      ui->checkBoxOptionsGuiCenterRoute,
+     ui->checkBoxOptionsGuiAddDeparture,
      ui->checkBoxOptionsGuiAvoidOverwrite,
      ui->checkBoxOptionsGuiOverrideLocale,
      ui->checkBoxOptionsGuiHighDpi, // Read in main.cpp
@@ -547,6 +552,7 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
      ui->checkBoxOptionsSimHighlightActiveTable,
      ui->checkBoxOptionsMapFlightplanDimPassed,
      ui->checkBoxOptionsMapFlightplanHighlightActive,
+     ui->checkBoxOptionsMapFlightplanDirectToDeparture,
      ui->checkBoxOptionsMapFlightplanTransparent,
      ui->checkBoxOptionsSimCenterLeg,
      ui->checkBoxOptionsSimCenterLegTable,
@@ -1869,6 +1875,7 @@ void OptionsDialog::widgetsToOptionData()
   toFlags2(ui->checkBoxOptionsUnitFuelOther, opts2::UNIT_FUEL_SHOW_OTHER);
   toFlags2(ui->checkBoxOptionsUnitTrueCourse, opts2::UNIT_TRUE_COURSE);
   toFlags(ui->checkBoxOptionsGuiCenterRoute, opts::GUI_CENTER_ROUTE);
+  toFlags(ui->checkBoxOptionsGuiAddDeparture, opts::GUI_ADD_DEPARTURE);
   toFlags(ui->checkBoxOptionsGuiAvoidOverwrite, opts::GUI_AVOID_OVERWRITE_FLIGHTPLAN);
   toFlags(ui->checkBoxOptionsGuiOverrideLocale, opts::GUI_OVERRIDE_LOCALE);
   toFlags(ui->checkBoxOptionsMapEmptyAirports, opts::MAP_EMPTY_AIRPORTS);
@@ -1911,6 +1918,7 @@ void OptionsDialog::widgetsToOptionData()
 
   toFlags2(ui->checkBoxOptionsMapFlightplanDimPassed, opts2::MAP_ROUTE_DIM_PASSED);
   toFlags2(ui->checkBoxOptionsMapFlightplanHighlightActive, opts2::MAP_ROUTE_HIGHLIGHT_ACTIVE);
+  toFlags2(ui->checkBoxOptionsMapFlightplanDirectToDeparture, opts2::MAP_ROUTE_DIRECT_TO_DEPARTURE);
   toFlags2(ui->checkBoxOptionsMapFlightplanTransparent, opts2::MAP_ROUTE_TRANSPARENT);
   toFlags2(ui->checkBoxOptionsSimDoNotFollowScroll, opts2::ROUTE_NO_FOLLOW_ON_MOVE);
   toFlags2(ui->checkBoxOptionsSimCenterLeg, opts2::ROUTE_AUTOZOOM);
@@ -2189,6 +2197,7 @@ void OptionsDialog::optionDataToWidgets(const OptionData& data)
   fromFlags2(data, ui->checkBoxOptionsUnitFuelOther, opts2::UNIT_FUEL_SHOW_OTHER);
   fromFlags2(data, ui->checkBoxOptionsUnitTrueCourse, opts2::UNIT_TRUE_COURSE);
   fromFlags(data, ui->checkBoxOptionsGuiCenterRoute, opts::GUI_CENTER_ROUTE);
+  fromFlags(data, ui->checkBoxOptionsGuiAddDeparture, opts::GUI_ADD_DEPARTURE);
   fromFlags(data, ui->checkBoxOptionsGuiAvoidOverwrite, opts::GUI_AVOID_OVERWRITE_FLIGHTPLAN);
   fromFlags(data, ui->checkBoxOptionsGuiOverrideLocale, opts::GUI_OVERRIDE_LOCALE);
   fromFlags(data, ui->checkBoxOptionsMapEmptyAirports, opts::MAP_EMPTY_AIRPORTS);
@@ -2231,6 +2240,7 @@ void OptionsDialog::optionDataToWidgets(const OptionData& data)
   fromFlags2(data, ui->checkBoxOptionsMapFlightplanText, opts2::MAP_ROUTE_TEXT_BACKGROUND);
   fromFlags2(data, ui->checkBoxOptionsMapFlightplanDimPassed, opts2::MAP_ROUTE_DIM_PASSED);
   fromFlags2(data, ui->checkBoxOptionsMapFlightplanHighlightActive, opts2::MAP_ROUTE_HIGHLIGHT_ACTIVE);
+  fromFlags2(data, ui->checkBoxOptionsMapFlightplanDirectToDeparture, opts2::MAP_ROUTE_DIRECT_TO_DEPARTURE);
   fromFlags2(data, ui->checkBoxOptionsMapFlightplanTransparent, opts2::MAP_ROUTE_TRANSPARENT);
   fromFlags2(data, ui->checkBoxOptionsSimDoNotFollowScroll, opts2::ROUTE_NO_FOLLOW_ON_MOVE);
   fromFlags2(data, ui->checkBoxOptionsSimZoomOnLanding, opts2::ROUTE_ZOOM_LANDING);

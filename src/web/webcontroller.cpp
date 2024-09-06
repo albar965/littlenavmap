@@ -17,6 +17,7 @@
 
 #include "web/webcontroller.h"
 
+#include "mapgui/mappaintwidget.h"
 #include "settings/settings.h"
 #include "web/requesthandler.h"
 #include "web/webmapcontroller.h"
@@ -75,7 +76,6 @@ WebController::WebController(QWidget *parent) :
 
   mapController = new WebMapController(parentWidget, verbose);
   apiController = new WebApiController(parentWidget, verbose);
-  htmlInfoBuilder = new HtmlInfoBuilder(mapController->getMapPaintWidget(), true /*info*/, true /*print*/);
 
   updateSettings();
 }
@@ -116,6 +116,10 @@ void WebController::startServer()
 
   // Start map
   mapController->initMapPaintWidget();
+
+  if(htmlInfoBuilder == nullptr)
+    htmlInfoBuilder = new HtmlInfoBuilder(mapController->getMapPaintWidget()->getQueries(),
+                                          true /* info */, true /* print */, true /* verbose */);
 
   requestHandler = new RequestHandler(this, mapController, apiController, htmlInfoBuilder, verbose);
 

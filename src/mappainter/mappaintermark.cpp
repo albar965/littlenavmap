@@ -17,26 +17,27 @@
 
 #include "mappainter/mappaintermark.h"
 
-#include "mapgui/mapwidget.h"
 #include "app/navapp.h"
-#include "mapgui/mapscale.h"
-#include "mapgui/maplayer.h"
-#include "perf/aircraftperfcontroller.h"
-#include "common/mapcolors.h"
-#include "common/formatter.h"
-#include "geo/calculations.h"
-#include "util/roundedpolygon.h"
-#include "common/symbolpainter.h"
-#include "geo/rect.h"
 #include "atools.h"
+#include "common/formatter.h"
+#include "common/mapcolors.h"
+#include "common/maptools.h"
 #include "common/symbolpainter.h"
-#include "airspace/airspacecontroller.h"
-#include "common/unit.h"
-#include "route/routeleg.h"
-#include "route/route.h"
-#include "util/paintercontextsaver.h"
+#include "common/symbolpainter.h"
 #include "common/textplacement.h"
+#include "common/unit.h"
 #include "fs/userdata/logdatamanager.h"
+#include "geo/calculations.h"
+#include "geo/rect.h"
+#include "mapgui/maplayer.h"
+#include "mapgui/mapscale.h"
+#include "mapgui/mapwidget.h"
+#include "perf/aircraftperfcontroller.h"
+#include "query/airspacequeries.h"
+#include "route/route.h"
+#include "route/routeleg.h"
+#include "util/paintercontextsaver.h"
+#include "util/roundedpolygon.h"
 
 #include <marble/GeoDataLineString.h>
 #include <marble/GeoDataLinearRing.h>
@@ -84,7 +85,8 @@ void MapPainterMark::render()
     paintPatternMarks();
 
   if(context->objectTypes.testFlag(map::MARK_HOLDING))
-    paintHoldingMarks(mapPaintWidget->getHoldingMarksFiltered(), true /* user */, context->drawFast, false /* darkMap */);
+    paintHoldingMarks(mapPaintWidget->getHoldingMarksFiltered(), context->mapLayer, context->mapLayerText, true /* user */,
+                      context->drawFast, false /* darkMap */);
 
   // Airport MSA set by user
   if(context->objectTypes.testFlag(map::MARK_MSA))
@@ -231,6 +233,9 @@ void MapPainterMark::paintHighlights()
   painter->setBrush(transparent ? QBrush(mapcolors::adjustAlphaF(highlightColor, alpha)) : QBrush(Qt::NoBrush));
   for(const std::pair<ageo::Pos, float>& posSize : positionSizeList)
   {
+    if(context->objCount())
+      return;
+
     float x, y;
     if(wToS(posSize.first, x, y))
     {
@@ -509,7 +514,7 @@ void MapPainterMark::paintLogEntries(const QList<map::MapLogbookEntry>& entries)
         {
           symbolPainter->drawLogbookPreviewSymbol(context->painter, x, y, symbolSize);
 
-          if(context->mapLayer->isWaypointRouteName())
+          if(context->mapLayerText->isWaypointRouteName())
             symbolPainter->textBoxF(context->painter, {name}, routeLogEntryOutlineColor, x + symbolSize / 2 + 2, y, textatt::LOG_BG_COLOR);
         }
       }
@@ -630,8 +635,7 @@ void MapPainterMark::paintLogEntries(const QList<map::MapLogbookEntry>& entries)
           symbolPainter->drawAirportSymbol(context->painter, entry->departure, x, y, size, false, context->drawFast,
                                            context->flags2.testFlag(opts2::MAP_AIRPORT_HIGHLIGHT_ADDON));
           symbolPainter->drawAirportText(context->painter, entry->departure, x, y, context->dispOptsAirport, flags, size,
-                                         context->mapLayer->isAirportDiagram(),
-                                         context->mapLayer->getMaxTextLengthAirport());
+                                         context->mapLayer->isAirportDiagram(), context->mapLayerText->getMaxTextLengthAirport());
         }
         airportIds.insert(entry->departure.id);
       }
@@ -645,8 +649,7 @@ void MapPainterMark::paintLogEntries(const QList<map::MapLogbookEntry>& entries)
           symbolPainter->drawAirportSymbol(context->painter, entry->destination, x, y, size, false, context->drawFast,
                                            context->flags2.testFlag(opts2::MAP_AIRPORT_HIGHLIGHT_ADDON));
           symbolPainter->drawAirportText(context->painter, entry->destination, x, y, context->dispOptsAirport, flags, size,
-                                         context->mapLayer->isAirportDiagram(),
-                                         context->mapLayer->getMaxTextLengthAirport());
+                                         context->mapLayer->isAirportDiagram(), context->mapLayerText->getMaxTextLengthAirport());
         }
         airportIds.insert(entry->destination.id);
       }
@@ -667,6 +670,9 @@ void MapPainterMark::paintAirwayList(const QList<map::MapAirway>& airwayList)
     if(airway.isValid())
       linestring.append(airway.to);
   }
+
+  // Move latitude values slightly up and down to workaround Marble drawing straight lines
+  maptools::correctLatY(linestring, false /* polygon */);
 
   // Outline =================
   float lineWidth = context->szF(context->thicknessUserFeature, 5.f);
@@ -765,7 +771,7 @@ void MapPainterMark::paintAirspace(const map::MapAirspace& airspace)
     if(context->objCount())
       return;
 
-    const atools::geo::LineString *lineString = NavApp::getAirspaceController()->getAirspaceGeometry(airspace.combinedId());
+    const atools::geo::LineString *lineString = queries->getAirspaceQueries()->getAirspaceGeometry(airspace.combinedId());
 
     if(lineString != nullptr)
     {
@@ -790,6 +796,18 @@ void MapPainterMark::paintAirspace(const map::MapAirspace& airspace)
         symbolPainter->textBoxF(painter, {map::airspaceNameMap(airspace, 20)}, innerPen,
                                 static_cast<float>(center.x()), static_cast<float>(center.y()), textatt::CENTER);
       }
+
+#ifdef DEBUG_COLOR_AIRSPACE_POLY_POINTS_MARK
+      context->szFont(context->textSizeRangeUserFeature * 1.5f);
+      painter->setPen(QPen(QColor(0, 0, 0, 255), 2.));
+      for(int i = 0; i < lineString->size(); i++)
+      {
+        const atools::geo::Pos& pos = lineString->at(i);
+        drawCircle(painter, pos, 4.f);
+        drawText(painter, pos, QString::number(i), true, true);
+      }
+      context->szFont(context->textSizeRangeUserFeature);
+#endif
 
       releasePolygons(polygons);
     }
@@ -1509,7 +1527,7 @@ void MapPainterMark::paintPatternMarks()
         float angle = static_cast<float>(ageo::angleFromQt(downwind.angle()));
         float oppositeAngle = static_cast<float>(ageo::opposedCourseDeg(ageo::angleFromQt(downwind.angle())));
 
-        if(pattern.showEntryExit && context->mapLayer->isApproachText())
+        if(pattern.showEntryExit && context->mapLayerText->isApproachText())
         {
           // Draw a line below to fill the gap because of round edges
           painter->setBrush(Qt::white);
@@ -1545,10 +1563,10 @@ void MapPainterMark::paintPatternMarks()
         painter->setBrush(Qt::NoBrush);
         painter->drawPath(polygon.getPainterPath());
 
-        if(drawDetails && context->mapLayer->isApproachText())
+        if(drawDetails && context->mapLayerText->isApproachText())
         {
           // Text for downwind leg =======================================
-          QLineF final (baseFinalPoint, originPoint);
+          QLineF finalLine(baseFinalPoint, originPoint);
           QPointF center = downwind.center();
           QString text = tr("%1/%2").
                          arg(Unit::altFeet(pattern.position.getAltitude(), true /* addUnit */, true /* narrow */, 10.f /* round */)).
@@ -1564,7 +1582,7 @@ void MapPainterMark::paintPatternMarks()
                  arg(pattern.runwayName).
                  arg(formatter::courseTextFromTrue(pattern.courseTrue, pattern.magvar, false /* magBold */, false /* magBig */,
                                                    false /* trueSmall */, true /* narrow */));
-          textPlacement.drawTextAlongOneLine(text, oppositeAngle, final.pointAt(0.60), atools::roundToInt(final.length()));
+          textPlacement.drawTextAlongOneLine(text, oppositeAngle, finalLine.pointAt(0.60), atools::roundToInt(finalLine.length()));
 
           // Draw arrows on legs =======================================
           // Set a lighter fill color for arrows
@@ -1580,7 +1598,7 @@ void MapPainterMark::paintPatternMarks()
           paintArrowAlongLine(painter, QLineF(downwindBasePoint, baseFinalPoint), arrow);
 
           // Final leg
-          paintArrowAlongLine(painter, final, arrow, 0.30f);
+          paintArrowAlongLine(painter, finalLine, arrow, 0.30f);
 
           // Upwind leg
           paintArrowAlongLine(painter, upwind, arrow);

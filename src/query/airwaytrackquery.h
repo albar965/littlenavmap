@@ -43,26 +43,6 @@ class AirwayQuery;
 class AirwayTrackQuery
 {
 public:
-  /*
-   * @param sqlDbNav for updated navaids
-   * @param sqlDbTrack for tracks. May be null.
-   */
-  AirwayTrackQuery(AirwayQuery *airwayQueryParam, AirwayQuery *trackQueryParam);
-
-  AirwayTrackQuery(const AirwayTrackQuery& other)
-  {
-    this->operator=(other);
-  }
-
-  /* Does a shallow copy. Query classes are not owned by this */
-  AirwayTrackQuery& operator=(const AirwayTrackQuery& other)
-  {
-    airwayQuery = other.airwayQuery;
-    trackQuery = other.trackQuery;
-    useTracks = other.useTracks;
-    return *this;
-  }
-
   /* Get all airways that are attached to a waypoint */
   void getAirwaysForWaypoint(QList<map::MapAirway>& airways, int waypointId);
 
@@ -96,15 +76,6 @@ public:
   void getAirways(QList<map::MapAirway>& airways, const Marble::GeoDataLatLonBox& rect, const MapLayer *mapLayer, bool lazy);
   void getTracks(QList<map::MapAirway>& airways, const Marble::GeoDataLatLonBox& rect, const MapLayer *mapLayer, bool lazy);
 
-  /* Close all query objects thus disconnecting from the database */
-  void initQueries();
-
-  /* Create and prepare all queries */
-  void deInitQueries();
-
-  /* Tracks loaded - clear caches */
-  void clearCache();
-
   /* Set to false to ignore track database. Create a copy of this before using this method. */
   void setUseTracks(bool value)
   {
@@ -120,6 +91,37 @@ public:
   void deleteChildren();
 
 private:
+  friend class Queries;
+
+  /*
+   * @param sqlDbNav for updated navaids
+   * @param sqlDbTrack for tracks. May be null.
+   */
+  explicit AirwayTrackQuery(AirwayQuery *airwayQueryParam, AirwayQuery *trackQueryParam);
+
+  /* Close all query objects thus disconnecting from the database */
+  void initQueries();
+
+  /* Create and prepare all queries */
+  void deInitQueries();
+
+  /* Tracks loaded - clear caches */
+  void clearCache();
+
+  AirwayTrackQuery(const AirwayTrackQuery& other)
+  {
+    this->operator=(other);
+  }
+
+  /* Does a shallow copy. Query classes are not owned by this */
+  AirwayTrackQuery& operator=(const AirwayTrackQuery& other)
+  {
+    airwayQuery = other.airwayQuery;
+    trackQuery = other.trackQuery;
+    useTracks = other.useTracks;
+    return *this;
+  }
+
   AirwayQuery *airwayQuery = nullptr, *trackQuery = nullptr;
   bool useTracks = true;
 };

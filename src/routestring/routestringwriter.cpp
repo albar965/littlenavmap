@@ -17,6 +17,8 @@
 
 #include "routestring/routestringwriter.h"
 
+#include "app/navapp.h"
+#include "atools.h"
 #include "common/unit.h"
 #include "fs/util/coordinates.h"
 #include "fs/util/fsutil.h"
@@ -387,7 +389,13 @@ QStringList RouteStringWriter::createStringForRouteInternal(const Route& routePa
         else
           items.append(lastId % (gfpCoords && lastType != map::USERPOINTROUTE ? ',' % coords::toGfpFormat(lastPos) : QString()));
 
-        items.append(airway);
+        // Convert track characters into NAT notation like "A" to "NATA" if tracks are available, enabled and if
+        // the coordinates are in the right range
+        if(leg.isTrack() && NavApp::hasNatTracks() && airway.size() == 1 && airway.at(0) >= QChar('A') && airway.at(0) <= QChar('Z') &&
+           atools::inRange(-80.f, 0.f, leg.getPosition().getLonX()))
+          items.append("NAT" % airway);
+        else
+          items.append(airway);
       }
       // else Airway is the same skip waypoint
     }

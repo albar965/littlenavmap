@@ -169,6 +169,9 @@ QColor routeProcedurePointFlyoverColor(Qt::black);
 QColor routeUserPointColor(Qt::darkYellow);
 QColor routeInvalidPointColor(Qt::red);
 
+QColor routeDirectToDepartureBackgroundColor(255, 255, 255);
+QPen routeDirectToDeparturePen(QColor(0, 0, 0), 3., Qt::DotLine, Qt::FlatCap, Qt::MiterJoin);
+
 /* Procedure colors */
 QColor routeProcedureMissedTableColorDark(240, 170, 120);
 QColor routeProcedureMissedTableColor(Qt::darkRed);
@@ -476,7 +479,7 @@ const QPen aircraftTrailPen(float size, float minAlt, float maxAlt, float alt)
 }
 
 /* Default colors. Saved to little_navmap_mapstyle.ini and can be overridden there */
-static QHash<map::MapAirspaceTypes, QColor> airspaceFillColors(
+static QHash<map::MapAirspaceType, QColor> airspaceFillColors(
   {
     {map::AIRSPACE_NONE, QColor("#00000000")},
     {map::CENTER, QColor("#30808080")},
@@ -515,7 +518,7 @@ static QHash<map::MapAirspaceTypes, QColor> airspaceFillColors(
   );
 
 /* Default colors. Saved to little_navmap_mapstyle.ini and can be overridden there */
-static QHash<map::MapAirspaceTypes, QPen> airspacePens(
+static QHash<map::MapAirspaceType, QPen> airspacePens(
   {
     {map::AIRSPACE_NONE, QPen(QColor("#00000000"))},
     {map::CENTER, QPen(QColor("#808080"), 1.5)},
@@ -554,7 +557,7 @@ static QHash<map::MapAirspaceTypes, QPen> airspacePens(
   );
 
 /* Maps airspace types to color configuration options */
-static QHash<QString, map::MapAirspaceTypes> airspaceConfigNames(
+static QHash<QString, map::MapAirspaceType> airspaceConfigNames(
   {
     {"Center", map::CENTER},
     {"ClassA", map::CLASS_A},
@@ -812,6 +815,9 @@ void loadColors()
   loadColor(colorSettings, "Route/UserPointColor", routeUserPointColor);
   loadColor(colorSettings, "Route/InvalidPointColor", routeInvalidPointColor);
 
+  loadPen(colorSettings, "Route/RouteDirectToDeparturePen", routeDirectToDeparturePen);
+  loadColor(colorSettings, "Route/RouteDirectToDepartureBackgroundColor", routeDirectToDepartureBackgroundColor);
+
   loadColorArgb(colorSettings, "Surface/Concrete", surfaceConcrete);
   loadColorArgb(colorSettings, "Surface/Grass", surfaceGrass);
   loadColorArgb(colorSettings, "Surface/Water", surfaceWater);
@@ -841,7 +847,7 @@ void loadColors()
   for(auto it = airspaceConfigNames.constBegin(); it != airspaceConfigNames.constEnd(); ++it)
   {
     const QString& name = it.key();
-    map::MapAirspaceTypes type = it.value();
+    map::MapAirspaceType type = it.value();
     loadPen(colorSettings, "Airspace/" % name % "Pen", airspacePens[type]);
     loadColorArgb(colorSettings, "Airspace/" % name % "FillColor", airspaceFillColors[type]);
   }
@@ -935,6 +941,20 @@ QPen adjustAlphaF(QPen pen, float alpha)
 QColor adjustAlphaF(QColor color, float alpha)
 {
   color.setAlphaF(alpha);
+  return color;
+}
+
+QPen adjustAlpha(QPen pen, int alpha)
+{
+  QColor color = pen.color();
+  color.setAlpha(alpha);
+  pen.setColor(color);
+  return pen;
+}
+
+QColor adjustAlpha(QColor color, int alpha)
+{
+  color.setAlpha(alpha);
   return color;
 }
 

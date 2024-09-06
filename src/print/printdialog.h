@@ -18,6 +18,8 @@
 #ifndef LITTLENAVMAP_PRINTDIALOG_H
 #define LITTLENAVMAP_PRINTDIALOG_H
 
+#include "util/flags.h"
+
 #include <QBitArray>
 #include <QDialog>
 
@@ -33,7 +35,7 @@ class ItemViewZoomHandler;
 }
 
 namespace prt {
-enum PrintFlightplanOpt
+enum PrintFlightplanOpt : quint32
 {
   NONE = 0,
   DEPARTURE_OVERVIEW = 1 << 0,
@@ -62,8 +64,8 @@ enum PrintFlightplanOpt
                     DESTINATION_COM | DESTINATION_APPR | DESTINATION_WEATHER
 };
 
-Q_DECLARE_FLAGS(PrintFlightplanOpts, PrintFlightplanOpt)
-Q_DECLARE_OPERATORS_FOR_FLAGS(prt::PrintFlightplanOpts)
+ATOOLS_DECLARE_FLAGS_32(PrintFlightplanOpts, PrintFlightplanOpt)
+ATOOLS_DECLARE_OPERATORS_FOR_FLAGS(prt::PrintFlightplanOpts)
 }
 
 /*

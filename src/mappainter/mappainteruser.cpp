@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -22,6 +22,7 @@
 #include "mapgui/maplayer.h"
 #include "app/navapp.h"
 #include "query/mapquery.h"
+#include "query/querymanager.h"
 #include "userdata/userdataicons.h"
 #include "util/paintercontextsaver.h"
 
@@ -53,8 +54,8 @@ void MapPainterUser::render()
   context->szFont(context->textSizeUserpoint);
 
   // Always call paint to fill cache
-  paintUserpoints(mapQuery->getUserdataPoints(curBox, context->userPointTypes, context->userPointTypesAll,
-                                              context->userPointTypeUnknown, context->distanceNm), context->drawFast);
+  paintUserpoints(queries->getMapQuery()->getUserdataPoints(curBox, context->userPointTypes, context->userPointTypesAll,
+                                                            context->userPointTypeUnknown, context->distanceNm), context->drawFast);
 }
 
 void MapPainterUser::paintUserpoints(const QList<MapUserpoint>& userpoints, bool drawFast)
@@ -76,8 +77,25 @@ void MapPainterUser::paintUserpoints(const QList<MapUserpoint>& userpoints, bool
 
       if(icons->hasType(userpoint.type) || context->userPointTypeUnknown)
       {
-        float size = context->szF(context->symbolSizeUserpoint, context->mapLayer->getUserPointSymbolSize());
-        if(userpoint.type == "Logbook")
+        // Use navaid sizes as base but allow user to override with userpoint scale
+        float size;
+        if(userpoint.isAirport())
+          size = context->szF(context->symbolSizeUserpoint, context->mapLayer->getAirportSymbolSize());
+        else if(userpoint.isNdb())
+          size = context->szF(context->symbolSizeUserpoint, context->mapLayer->getNdbSymbolSize());
+        else if(userpoint.isWaypoint())
+          size = context->szF(context->symbolSizeUserpoint * 1.5f, context->mapLayer->getWaypointSymbolSize());
+        else if(userpoint.isVrp())
+          size = context->szF(context->symbolSizeUserpoint * 2.f, context->mapLayer->getWaypointSymbolSize());
+        else if(userpoint.isObstacle())
+          size = context->szF(context->symbolSizeUserpoint * 2.f, context->mapLayer->getWaypointSymbolSize());
+        else if(userpoint.isVor())
+          size = context->szF(context->symbolSizeUserpoint, context->mapLayer->getVorSymbolSize());
+        else
+          size = context->szF(context->symbolSizeUserpoint, context->mapLayer->getUserPointSymbolSize());
+
+        // Put logbook shield to the bottom right
+        if(userpoint.isLogbook())
         {
           x += size / 2.f;
           y += size / 2.f;
@@ -88,14 +106,12 @@ void MapPainterUser::paintUserpoints(const QList<MapUserpoint>& userpoints, bool
         context->painter->drawPixmap(QPointF(x - size / 2.f, y - size / 2.f), *iconPixmap);
 
         // Do not draw labels for airport add-on marks
-        if(context->mapLayer->isUserpointInfo() && !drawFast && !userpoint.isAddon())
+        if(context->mapLayerText->isUserpointInfo() && !drawFast && !userpoint.isAddon())
         {
-          int maxTextLength = context->mapLayer->getMaxTextLengthUserpoint();
+          int maxTextLength = context->mapLayerText->getMaxTextLengthUserpoint();
           QStringList texts;
           texts.append(atools::elideTextShort(userpoint.ident, maxTextLength));
-          QString name = userpoint.name != userpoint.ident ? atools::elideTextShort(userpoint.name, maxTextLength) : QString();
-          if(!name.isEmpty())
-            texts.append(name);
+          texts.append(userpoint.name != userpoint.ident ? atools::elideTextShort(userpoint.name, maxTextLength) : QString());
 
           textatt::TextAttributes textatts = textatt::NONE;
           float xpos = x, ypos = y;

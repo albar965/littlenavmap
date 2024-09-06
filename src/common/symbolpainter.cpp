@@ -524,8 +524,8 @@ void SymbolPainter::drawWindBarbs(QPainter *painter, float wind, float gust, flo
     painter->drawEllipse(QPointF(x, y), bgLineWidth / 2.f, bgLineWidth / 2.f);
   }
 
-  if(wind >= 2.f && wind < atools::fs::weather::INVALID_METAR_VALUE / 2.f &&
-     dir >= 0.f && dir < atools::fs::weather::INVALID_METAR_VALUE / 2.f)
+  if(wind >= 2.f && wind < map::INVALID_METAR_VALUE / 2.f &&
+     dir >= 0.f && dir < map::INVALID_METAR_VALUE / 2.f)
   {
     // Calculate dimensions ============================
 
@@ -546,7 +546,7 @@ void SymbolPainter::drawWindBarbs(QPainter *painter, float wind, float gust, flo
       barbs = calculateWindBarbs(lineLength, lineWidth, wind, true /* use 50 knot barbs */);
 
       float windGust = gust;
-      if(windGust >= 2.f && windGust < atools::fs::weather::INVALID_METAR_VALUE / 2.f)
+      if(windGust >= 2.f && windGust < map::INVALID_METAR_VALUE / 2.f)
       {
         // Gust wind barbs
         lineLength = size;

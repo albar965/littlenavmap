@@ -25,21 +25,16 @@
 
 class AircraftPerfController;
 class AircraftTrail;
-class AirportQuery;
-class AirwayTrackQuery;
-class WaypointTrackQuery;
 class TrackController;
 class AirspaceController;
 class ConnectClient;
 class DatabaseManager;
 class ElevationProvider;
 class InfoController;
-class InfoQuery;
 class LogdataController;
 class LogdataSearch;
 class MainWindow;
 class MapPaintWidget;
-class MapQuery;
 class MapWidget;
 class OnlinedataController;
 class OptionsDialog;
@@ -64,17 +59,15 @@ class MapDetailHandler;
 class TrackManager;
 class MapThemeHandler;
 class QAction;
-class DataExchange;
 class WeatherContextHandler;
 
 namespace map {
 struct MapAirport;
 }
 namespace atools {
-namespace util {
-class Properties;
-}
 namespace gui {
+
+class DataExchange;
 class TabWidgetHandler;
 }
 
@@ -188,12 +181,10 @@ public:
   static bool isConnectedAndAircraft();
   static bool isConnectedAndAircraftFlying();
   static bool isUserAircraftValid();
+  static bool hasAircraftPassedTakeoffPoint();
 
   /* Check for availability in database */
   static bool isMoraAvailable();
-  static bool isHoldingsAvailable();
-  static bool isAirportMsaAvailable();
-  static bool isGlsAvailable();
 
   static float getTakeoffFlownDistanceNm();
   static QDateTime getTakeoffDateTime();
@@ -210,23 +201,6 @@ public:
   static const map::MapDisplayTypes getShownMapDisplayTypes();
   static const map::MapAirspaceFilter& getShownMapAirspaces();
 
-  static AirportQuery *getAirportQuerySim();
-  static AirportQuery *getAirportQueryNav();
-
-  /* Get the map query for the current GUI MapWidget. This means that its cache contents are related to the GUI map.
-   * For other instances of MapPaintWidget use the MapPaintWidget::getMapQuery() */
-  static MapQuery *getMapQueryGui();
-
-  /* Get the track query for the current GUI MapWidget. This means that its cache contents are related to the GUI map. */
-  static AirwayTrackQuery *getAirwayTrackQueryGui();
-
-  /* Get the track query for the current GUI MapWidget. This means that its cache contents are related to the GUI map. */
-  static WaypointTrackQuery *getWaypointTrackQueryGui();
-
-  static atools::geo::Pos getAirportPos(const QString& ident);
-
-  static InfoQuery *getInfoQuery();
-  static ProcedureQuery *getProcedureQuery();
   static const Route& getRouteConst();
   static Route& getRoute();
   static void updateRouteCycleMetadata();
@@ -308,9 +282,8 @@ public:
 
   static WeatherReporter *getWeatherReporter();
   static WeatherContextHandler *getWeatherContextHandler();
-  static void getAirportWind(int& windDirectionDeg, float& windSpeedKts, const map::MapAirport& airport, bool stationOnly);
+  static void getAirportMetarWind(float& windDirectionDeg, float& windSpeedKts, const map::MapAirport& airport, bool stationOnly);
 
-  static map::MapWeatherSource getAirportWeatherSource();
   static WindReporter *getWindReporter();
 
   static void updateWindowTitle();
@@ -382,11 +355,13 @@ public:
 
   static TrackController *getTrackController();
   static bool hasTracks();
+  static bool hasNatTracks();
+  static bool hasPacotsTracks();
+  static bool hasAusotsTracks();
   static bool hasTracksEnabled();
   static TrackManager *getTrackManager();
 
   static AirspaceController *getAirspaceController();
-  static bool hasAnyAirspaces();
 
   static atools::fs::common::MagDecReader *getMagDecReader();
 
@@ -404,6 +379,7 @@ public:
 
   static StyleHandler *getStyleHandler();
 
+  static map::MapWeatherSource getMapWeatherSourceText();
   static map::MapWeatherSource getMapWeatherSource();
   static bool isMapWeatherShown();
 
@@ -425,14 +401,6 @@ public:
   static void showLogbookSearch();
   static void showUserpointSearch();
 
-  /* Command line options */
-  static const atools::util::Properties& getStartupOptionsConst();
-  static QString getStartupOptionStr(const QString& key);
-  static QStringList getStartupOptionStrList(const QString& key);
-  static void addStartupOptionStr(const QString& key, const QString& value);
-  static void addStartupOptionStrList(const QString& key, const QStringList& value);
-  static void clearStartupOptions(); /* Clear for safe mode */
-
   /* Creates a lock file and shows a warning dialog if this is already present from a former crash.
    * Sets safe mode if user chooses to skip file loading.
    * Always creates a crash report in case of previous unsafe exit. */
@@ -444,10 +412,13 @@ public:
   /* true if tooltips in menus are visible */
   static bool isMenuToolTipsVisible();
 
+  /* Fake aircraft movement enabled in debug menu */
+  static bool isDebugMovingAircraft();
+
   static void setToolTipsEnabledMainMenu(bool enabled);
 
-  static const DataExchange *getDataExchangeConst();
-  static DataExchange *getDataExchange();
+  static const atools::gui::DataExchange *getDataExchangeConst();
+  static atools::gui::DataExchange *getDataExchange();
   static bool initDataExchange();
   static void deInitDataExchange();
 
@@ -457,9 +428,6 @@ private:
   static void getReportFiles(QStringList& crashReportFiles, QString& reportFilename, bool issueReport);
 
   /* Database query helpers and caches */
-  static AirportQuery *airportQuerySim, *airportQueryNav;
-  static InfoQuery *infoQuery;
-  static ProcedureQuery *procedureQuery;
   static ElevationProvider *elevationProvider;
 
   /* Most important handlers */
@@ -490,9 +458,8 @@ private:
   static StyleHandler *styleHandler;
 
   static WebController *webController;
-  static atools::util::Properties *startupOptions;
 
-  static DataExchange *dataExchange;
+  static atools::gui::DataExchange *dataExchange;
 
   static bool loadingDatabase;
   static bool closeCalled;

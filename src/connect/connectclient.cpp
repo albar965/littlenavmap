@@ -234,6 +234,10 @@ void ConnectClient::connectedToSimulatorDirect()
                                              tr("Connected to local flight simulator (%1).").arg(simName()));
   connectDialog->setConnected(isConnected());
   mainWindow->setStatusMessage(tr("Connected to simulator."), true /* addLog */);
+
+  // Clear status for first valid aircraft detection
+  foundValidAircraft = false;
+
   emit connectedToSimulator();
   emit weatherUpdated();
 }
@@ -241,6 +245,9 @@ void ConnectClient::connectedToSimulatorDirect()
 void ConnectClient::disconnectedFromSimulatorDirect()
 {
   qDebug() << Q_FUNC_INFO;
+
+  // Clear status for first valid aircraft detection
+  foundValidAircraft = false;
 
   showTerminalError();
 
@@ -320,8 +327,17 @@ void ConnectClient::postSimConnectData(atools::fs::sc::SimConnectData dataPacket
       // Update ICAO aircraft designator from aircraft.cfg for MSFS ===================================
       QString aircraftCfgKey = userAircraft.getProperties().value(atools::fs::sc::PROP_AIRCRAFT_CFG).getValueString();
       if(!aircraftCfgKey.isEmpty())
-        // Has property - fetch from index by loaded aircraft.cfg values
-        userAircraft.setAirplaneModel(NavApp::getAircraftIndex().getIcaoTypeDesignator(aircraftCfgKey));
+      {
+        atools::fs::scenery::AircraftIndex& aircraftIndex = NavApp::getAircraftIndex();
+
+        // Has property - fetch from index by loaded aircraft.cfg values using a best guess
+        // from "icao_type_designator" and "icao_model".
+        userAircraft.setAirplaneModel(aircraftIndex.getIcaoTypeDesignator(aircraftCfgKey));
+
+        // Helicopter category in MSFS
+        if(aircraftIndex.getCategory(aircraftCfgKey).compare("Helicopter", Qt::CaseInsensitive) == 0)
+          userAircraft.setCategory(atools::fs::sc::HELICOPTER);
+      }
 
       // Fix incorrect on-ground status which appears from some traffic tools =======================
       for(atools::fs::sc::SimConnectAircraft& ac : dataPacket.getAiAircraft())
@@ -335,6 +351,14 @@ void ConnectClient::postSimConnectData(atools::fs::sc::SimConnectData dataPacket
 
         if(ac.isOnGround() && (gsFlying || vsFlying))
           ac.setFlag(atools::fs::sc::ON_GROUND);
+      }
+
+      // Check if user aircraft is valid, on ground and signal not sent yet
+      if(!foundValidAircraft && userAircraft.isFullyValid() && userAircraft.isOnGround())
+      {
+        qDebug() << Q_FUNC_INFO << "Found valid user aircraft once";
+        foundValidAircraft = true;
+        emit validAircraftReceived(userAircraft);
       }
 
       emit dataPacketReceived(dataPacket);
@@ -351,8 +375,7 @@ void ConnectClient::postSimConnectData(atools::fs::sc::SimConnectData dataPacket
         QString ident = metar.getRequestIdent();
         if(verbose)
         {
-          qDebug() << "ConnectClient::postSimConnectData metar ident to cache ident"
-                   << ident << "pos" << metar.getRequestPos().toString();
+          qDebug() << "ConnectClient::postSimConnectData metar ident to cache ident" << ident << "pos" << metar.getRequestPos().toString();
           qDebug() << "Station" << metar.getStationMetar();
           qDebug() << "Nearest" << metar.getNearestMetar();
           qDebug() << "Interpolated" << metar.getInterpolatedMetar();
@@ -401,7 +424,7 @@ void ConnectClient::postSimConnectData(atools::fs::sc::SimConnectData dataPacket
     // Get flags before disconnecting
     bool xplane = dataReader != nullptr ? dataReader->isXplaneHandler() : false, network = isNetworkConnect();
     atools::fs::sc::SimConnectStatus status = dataPacket.getStatus();
-    QString statusText = simConnectData->getStatusText();
+    QString statusText = simConnectDataNet->getStatusText();
 
     disconnectClicked();
     handleError(status, statusText, xplane, network);
@@ -844,8 +867,8 @@ void ConnectClient::closeSocket(bool allowRestart)
     socket = nullptr;
   }
 
-  delete simConnectData;
-  simConnectData = nullptr;
+  delete simConnectDataNet;
+  simConnectDataNet = nullptr;
 
   QString msgTooltip, msg;
   if(error == QAbstractSocket::RemoteHostClosedError || error == QAbstractSocket::UnknownSocketError)
@@ -884,6 +907,10 @@ void ConnectClient::closeSocket(bool allowRestart)
     if(!atools::gui::Application::isShuttingDown())
     {
       mainWindow->setStatusMessage(tr("Disconnected from simulator."), true /* addLog */);
+
+      // Clear status for first valid aircraft detection
+      foundValidAircraft = false;
+
       emit disconnectedFromSimulator();
       emit weatherUpdated();
     }
@@ -936,6 +963,10 @@ void ConnectClient::connectedToServerSocket()
 
   // Let other program parts know about the new connection
   mainWindow->setStatusMessage(tr("Connected to simulator."), true /* addLog */);
+
+  // Clear status for first valid aircraft detection
+  foundValidAircraft = false;
+
   emit connectedToSimulator();
   emit weatherUpdated();
 }
@@ -949,18 +980,18 @@ void ConnectClient::readFromSocket()
     {
       if(verbose)
         qDebug() << "readFromSocket" << socket->bytesAvailable();
-      if(simConnectData == nullptr)
+      if(simConnectDataNet == nullptr)
         // Need to keep the data in background since this method can be called multiple times until the data is filled
-        simConnectData = new atools::fs::sc::SimConnectData;
+        simConnectDataNet = new atools::fs::sc::SimConnectData;
 
-      bool read = simConnectData->read(socket);
-      if(simConnectData->getStatus() != atools::fs::sc::OK)
+      bool read = simConnectDataNet->read(socket);
+      if(simConnectDataNet->getStatus() != atools::fs::sc::OK)
       {
         // Something went wrong - shutdown
 
         bool xplane = dataReader != nullptr ? dataReader->isXplaneHandler() : false, network = isNetworkConnect();
-        atools::fs::sc::SimConnectStatus status = simConnectData->getStatus();
-        QString statusText = simConnectData->getStatusText();
+        atools::fs::sc::SimConnectStatus status = simConnectDataNet->getStatus();
+        QString statusText = simConnectDataNet->getStatusText();
 
         closeSocket(false);
         handleError(status, statusText, xplane, network);
@@ -972,24 +1003,24 @@ void ConnectClient::readFromSocket()
       if(read)
       {
         if(verbose)
-          qDebug() << "readFromSocket id " << simConnectData->getPacketId();
+          qDebug() << "readFromSocket id " << simConnectDataNet->getPacketId();
 
-        if(simConnectData->getPacketId() > 0)
+        if(simConnectDataNet->getPacketId() > 0)
         {
           if(verbose)
-            qDebug() << "readFromSocket id " << simConnectData->getPacketId() << "replying";
+            qDebug() << "readFromSocket id " << simConnectDataNet->getPacketId() << "replying";
 
           // Data was read completely and successfully - reply to server
           atools::fs::sc::SimConnectReply reply;
-          reply.setPacketId(simConnectData->getPacketId());
+          reply.setPacketId(simConnectDataNet->getPacketId());
           writeReplyToSocket(reply);
         }
-        else if(!simConnectData->getMetars().isEmpty())
+        else if(!simConnectDataNet->getMetars().isEmpty())
         {
           if(verbose)
-            qDebug() << "readFromSocket id " << simConnectData->getPacketId() << "metars";
+            qDebug() << "readFromSocket id " << simConnectDataNet->getPacketId() << "metars";
 
-          for(const atools::fs::weather::Metar& metar : simConnectData->getMetars())
+          for(const atools::fs::weather::Metar& metar : simConnectDataNet->getMetars())
             outstandingReplies.remove(metar.getRequestIdent());
 
           // Start request on next invocation of the event queue
@@ -997,9 +1028,9 @@ void ConnectClient::readFromSocket()
         }
 
         // Send around in the application
-        postSimConnectData(*simConnectData);
-        delete simConnectData;
-        simConnectData = nullptr;
+        postSimConnectData(*simConnectDataNet);
+        delete simConnectDataNet;
+        simConnectDataNet = nullptr;
       }
       else
         return;

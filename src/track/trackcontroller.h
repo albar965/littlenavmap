@@ -82,6 +82,11 @@ public:
     return !enabledTracks().isEmpty();
   }
 
+  /* True if specific type is enabled in the menu and tracks are downloaded */
+  bool hasNatTracks();
+  bool hasPacotsTracks();
+  bool hasAusotsTracks();
+
   /* If true: Do not load tracks that are currently not valid. */
   void setDownloadOnlyValid(bool value)
   {

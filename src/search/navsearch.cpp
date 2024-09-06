@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -17,23 +17,24 @@
 
 #include "search/navsearch.h"
 
+#include "app/navapp.h"
 #include "atools.h"
 #include "common/constants.h"
 #include "common/mapcolors.h"
 #include "common/mapflags.h"
 #include "common/mapresult.h"
 #include "common/maptypes.h"
-#include "common/maptypesfactory.h"
 #include "common/unit.h"
+#include "fs/util/fsutil.h"
 #include "gui/widgetstate.h"
 #include "gui/widgetutil.h"
-#include "app/navapp.h"
+#include "query/mapquery.h"
+#include "query/querymanager.h"
 #include "search/column.h"
 #include "search/columnlist.h"
 #include "search/navicondelegate.h"
 #include "search/sqlcontroller.h"
 #include "settings/settings.h"
-#include "sql/sqlrecord.h"
 #include "ui_mainwindow.h"
 
 #include <QStringBuilder>
@@ -100,25 +101,25 @@ NavSearch::NavSearch(QMainWindow *parent, QTableView *tableView, si::TabSearchId
 
   // Possible combinations
   // type   nav_type
-  // N	     W
-  // NCP	   N
-  // NH	     N
-  // NHH	   N
-  // NMH	   N
-  // TC	     TC
-  // V	     W
-  // VH	     D
-  // VH	     V
-  // VH	     VD
-  // VH	     VT
-  // VL	     V
-  // VL	     VD
-  // VL	     VT
-  // VT	     V
-  // VT	     VD
-  // VT	     VT
-  // WN	     W
-  // WU	     W
+  // N       W
+  // NCP     N
+  // NH      N
+  // NHH     N
+  // NMH     N
+  // TC      TC
+  // V       W
+  // VH      D
+  // VH      V
+  // VH      VD
+  // VH      VT
+  // VL      V
+  // VL      VD
+  // VL      VT
+  // VT      V
+  // VT      VD
+  // VT      VT
+  // WN      W
+  // WU      W
   // Build SQL query conditions
   QStringList typeCondMap;
   typeCondMap << QString()
@@ -258,7 +259,7 @@ void NavSearch::saveState()
 void NavSearch::restoreState()
 {
   atools::gui::WidgetState widgetState(lnm::SEARCHTAB_NAV_WIDGET);
-  if(OptionData::instance().getFlags() & opts::STARTUP_LOAD_SEARCH && !NavApp::isSafeMode())
+  if(OptionData::instance().getFlags().testFlag(opts::STARTUP_LOAD_SEARCH) && !atools::gui::Application::isSafeMode())
   {
     widgetState.restore(navSearchWidgets);
 
@@ -315,7 +316,7 @@ QVariant NavSearch::modelDataHandler(int colIndex, int rowIndex, const Column *c
   switch(role)
   {
     case Qt::DisplayRole:
-      return formatModelData(col, displayRoleValue);
+      return formatModelData(col, rowIndex, displayRoleValue);
 
     case Qt::TextAlignmentRole:
       if(col->getColumnName() == "ident" || col->getColumnName() == "airport_ident" ||
@@ -339,8 +340,7 @@ QVariant NavSearch::modelDataHandler(int colIndex, int rowIndex, const Column *c
   return QVariant();
 }
 
-/* Formats the QVariant to a QString depending on column name */
-QString NavSearch::formatModelData(const Column *col, const QVariant& displayRoleValue) const
+QString NavSearch::formatModelData(const Column *col, int row, const QVariant& displayRoleValue) const
 {
   // Called directly by the model for export functions
   if(col->getColumnName() == "nav_type")
@@ -348,7 +348,14 @@ QString NavSearch::formatModelData(const Column *col, const QVariant& displayRol
   else if(col->getColumnName() == "type")
     return map::navTypeName(displayRoleValue.toString());
   else if(col->getColumnName() == "name")
-    return atools::capString(displayRoleValue.toString());
+  {
+    if(controller->getRawData(row, "nav_type").toString() == 'W')
+      // Is waypoint
+      return atools::fs::util::capWaypointNameString(controller->getRawData(row, "ident").toString(), displayRoleValue.toString(),
+                                                     false /* emptyIfEqual */);
+    else
+      return atools::capString(displayRoleValue.toString());
+  }
   else if(col->getColumnName() == "range" && displayRoleValue.toFloat() > 0.f)
     return Unit::distNm(displayRoleValue.toFloat(), false);
   else if(col->getColumnName() == "altitude")
@@ -383,42 +390,27 @@ void NavSearch::getSelectedMapObjects(map::MapResult& result) const
   if(!ui->dockWidgetSearch->isVisible())
     return;
 
-  // Build a SQL record with all available fields
-  atools::sql::SqlRecord rec;
-  controller->initRecord(rec);
-
-  MapTypesFactory factory;
-
   // Fill the result with all (mixed) navaids
   const QItemSelection& selection = controller->getSelection();
   for(const QItemSelectionRange& rng :  selection)
   {
     for(int row = rng.top(); row <= rng.bottom(); ++row)
     {
-      controller->fillRecord(row, rec);
-
       // All objects are fully populated
-      QString navType = rec.valueStr("nav_type");
-      map::MapTypes type = map::navTypeToMapType(navType);
+      map::MapTypes type = map::navTypeToMapType(controller->getRawData(row, "nav_type").toString());
+      QVariant idVar;
 
       if(type == map::WAYPOINT)
-      {
-        map::MapWaypoint obj;
-        factory.fillWaypointFromNav(rec, obj);
-        result.waypoints.append(obj);
-      }
+        idVar = controller->getRawData(row, "waypoint_id");
       else if(type == map::NDB)
-      {
-        map::MapNdb obj;
-        factory.fillNdb(rec, obj);
-        result.ndbs.append(obj);
-      }
+        idVar = controller->getRawData(row, "ndb_id");
       else if(type == map::VOR)
-      {
-        map::MapVor obj;
-        factory.fillVorFromNav(rec, obj);
-        result.vors.append(obj);
-      }
+        idVar = controller->getRawData(row, "vor_id");
+
+      if(idVar.isValid())
+        mapQuery->getMapObjectById(result, type, map::AIRSPACE_SRC_NONE, idVar.toInt(), false /* airportFromNavDatabase */);
+      else
+        qWarning() << Q_FUNC_INFO << "Invalid selection: range" << "row" << row << idVar;
     }
   }
 }

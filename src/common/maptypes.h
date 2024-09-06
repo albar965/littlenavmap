@@ -370,7 +370,8 @@ struct MapPos
 struct MapAirport
   : public MapBase
 {
-  MapAirport() : MapBase(staticType())
+  MapAirport() :
+    MapBase(staticType())
   {
   }
 
@@ -478,7 +479,8 @@ QDebug operator<<(QDebug out, const map::MapAirport& obj);
 struct MapRunway
   : public MapBase
 {
-  MapRunway() : MapBase(staticType())
+  MapRunway() :
+    MapBase(staticType())
   {
   }
 
@@ -493,8 +495,8 @@ struct MapRunway
   float heading, /* true degrees of primary */
         patternAlt,
         smoothness /* 0 (smooth) to 1 (very rough). Default is 0.25. X-Plane only. -1.f if not set */;
-  float width,
-        primaryOffset, secondaryOffset, /* part of the runway length */
+  float width, /* ft */
+        primaryOffset, secondaryOffset, /* Offset threshold is a part of the runway length in ft */
         primaryBlastPad, secondaryBlastPad, primaryOverrun, secondaryOverrun; /* not part of the runway length all in ft */
   atools::geo::Pos primaryPosition, secondaryPosition;
 
@@ -533,6 +535,28 @@ struct MapRunway
     return position;
   }
 
+  atools::geo::Rect bounding() const
+  {
+    atools::geo::Rect rect(secondaryPosition);
+    rect.extend(primaryPosition);
+    return rect;
+  }
+
+  /* Get touchdown position considering offset threshold from simulator data if runway matches. Otherwise navdata. */
+  atools::geo::Pos getApproachPosition(bool secondary) const;
+
+  /* Get takeoff start position from simulator data if runway matches. Otherwise navdata. */
+  const atools::geo::Pos& getDeparturePosition(bool secondary) const
+  {
+    return secondary ? secondaryPosition : primaryPosition;
+  }
+
+  /* Get position of other end of start runway (bend to takeoff direction) from simulator data if runway matches. Otherwise navdata. */
+  const atools::geo::Pos& getDeparturePositionOther(bool secondary) const
+  {
+    return getDeparturePosition(!secondary);
+  }
+
 };
 
 // =====================================================================
@@ -542,7 +566,8 @@ struct MapRunway
 struct MapRunwayEnd
   : public MapBase
 {
-  MapRunwayEnd() : MapBase(staticType())
+  MapRunwayEnd() :
+    MapBase(staticType())
   {
   }
 
@@ -597,7 +622,8 @@ struct MapRunwayEnd
 struct MapApron
   : public MapBase
 {
-  MapApron() : MapBase(map::NONE)
+  MapApron() :
+    MapBase(map::NONE)
   {
   }
 
@@ -638,7 +664,8 @@ struct MapTaxiPath
 struct MapParking
   : public MapBase
 {
-  MapParking() : MapBase(staticType())
+  MapParking() :
+    MapBase(staticType())
   {
   }
 
@@ -670,8 +697,14 @@ struct MapParking
 struct MapStart
   : public MapBase
 {
-  MapStart() : MapBase(map::NONE)
+  MapStart() :
+    MapBase(staticType())
   {
+  }
+
+  static map::MapType staticType()
+  {
+    return map::START;
   }
 
   bool isRunway() const
@@ -701,7 +734,8 @@ struct MapStart
 struct MapHelipad
   : public MapBase
 {
-  MapHelipad() : MapBase(staticType())
+  MapHelipad() :
+    MapBase(staticType())
   {
   }
 
@@ -721,7 +755,8 @@ struct MapHelipad
 struct MapVor
   : public MapBase
 {
-  MapVor() : MapBase(staticType())
+  MapVor() :
+    MapBase(staticType())
   {
   }
 
@@ -767,7 +802,8 @@ struct MapVor
 struct MapNdb
   : public MapBase
 {
-  MapNdb() : MapBase(staticType())
+  MapNdb() :
+    MapBase(staticType())
   {
   }
 
@@ -795,7 +831,8 @@ struct MapNdb
 struct MapWaypoint
   : public MapBase
 {
-  MapWaypoint() : MapBase(staticType())
+  MapWaypoint() :
+    MapBase(staticType())
   {
   }
 
@@ -805,7 +842,7 @@ struct MapWaypoint
   }
 
   float magvar;
-  QString ident, region,
+  QString ident, region, name,
           type /* NAMED, UNAMED, etc. */,
           arincType /* ARINC * 424.18 field type definition 5.42 */;
   int routeIndex = -1; /* Filled by the get nearest methods for building the context menu */
@@ -845,7 +882,8 @@ struct MapAirwayWaypoint
 struct MapUserpointRoute
   : public MapBase
 {
-  MapUserpointRoute() : MapBase(staticType())
+  MapUserpointRoute() :
+    MapBase(staticType())
   {
   }
 
@@ -864,7 +902,8 @@ struct MapUserpointRoute
 struct MapUserpoint
   : public MapBase
 {
-  MapUserpoint() : MapBase(staticType())
+  MapUserpoint() :
+    MapBase(staticType())
   {
   }
 
@@ -875,7 +914,46 @@ struct MapUserpoint
 
   bool isAddon() const
   {
-    return type.startsWith("Addon");
+    return type.compare("Addon", Qt::CaseInsensitive) == 0;
+  }
+
+  bool isVor() const
+  {
+    return type.compare("VOR", Qt::CaseInsensitive) == 0 ||
+           type.compare("VORDME", Qt::CaseInsensitive) == 0 ||
+           type.compare("DME", Qt::CaseInsensitive) == 0 ||
+           type.compare("VORTAC", Qt::CaseInsensitive) == 0 ||
+           type.compare("TACAN", Qt::CaseInsensitive) == 0;
+  }
+
+  bool isWaypoint() const
+  {
+    return type.compare("Waypoint", Qt::CaseInsensitive) == 0;
+  }
+
+  bool isVrp() const
+  {
+    return type.compare("VRP", Qt::CaseInsensitive) == 0;
+  }
+
+  bool isObstacle() const
+  {
+    return type.compare("Obstacle", Qt::CaseInsensitive) == 0;
+  }
+
+  bool isNdb() const
+  {
+    return type.compare("NDB", Qt::CaseInsensitive) == 0;
+  }
+
+  bool isAirport() const
+  {
+    return type.compare("Airport", Qt::CaseInsensitive) == 0;
+  }
+
+  bool isLogbook() const
+  {
+    return type.compare("Logbook", Qt::CaseInsensitive) == 0;
   }
 
   QString name, ident, region, type, description, tags;
@@ -887,7 +965,8 @@ struct MapUserpoint
 struct MapUserAircraft
   : public MapBase
 {
-  MapUserAircraft() : MapBase(staticType())
+  MapUserAircraft() :
+    MapBase(staticType())
   {
   }
 
@@ -897,8 +976,7 @@ struct MapUserAircraft
   }
 
   explicit MapUserAircraft(const atools::fs::sc::SimConnectUserAircraft& aircraftParam)
-    : MapBase(staticType(), aircraftParam.getId(), aircraftParam.getPosition()),
-    aircraft(aircraftParam)
+    : MapBase(staticType(), aircraftParam.getId(), aircraftParam.getPosition()), aircraft(aircraftParam)
   {
   }
 
@@ -923,7 +1001,8 @@ private:
 struct MapAiAircraft
   : public MapBase
 {
-  MapAiAircraft() : MapBase(staticType())
+  MapAiAircraft() :
+    MapBase(staticType())
   {
   }
 
@@ -951,7 +1030,8 @@ private:
 struct MapOnlineAircraft
   : public MapBase
 {
-  MapOnlineAircraft() : MapBase(staticType())
+  MapOnlineAircraft() :
+    MapBase(staticType())
   {
   }
 
@@ -986,7 +1066,8 @@ private:
 struct MapLogbookEntry
   : public MapBase
 {
-  MapLogbookEntry() : MapBase(staticType())
+  MapLogbookEntry() :
+    MapBase(staticType())
   {
   }
 
@@ -1080,7 +1161,8 @@ enum MapAirwayRouteType
 struct MapAirway
   : public MapBase
 {
-  MapAirway() : MapBase(staticType())
+  MapAirway() :
+    MapBase(staticType())
   {
   }
 
@@ -1129,7 +1211,8 @@ struct MapAirway
 struct MapMarker
   : public MapBase
 {
-  MapMarker() : MapBase(staticType())
+  MapMarker() :
+    MapBase(staticType())
   {
   }
 
@@ -1165,7 +1248,8 @@ enum IlsType : char
 struct MapIls
   : public MapBase
 {
-  MapIls() : MapBase(staticType())
+  MapIls() :
+    MapBase(staticType())
   {
   }
 
@@ -1291,7 +1375,8 @@ struct MapIls
 struct MapAirspace
   : public MapBase
 {
-  MapAirspace() : MapBase(staticType())
+  MapAirspace() :
+    MapBase(staticType())
   {
   }
 
@@ -1312,8 +1397,8 @@ struct MapAirspace
    *  U Unknown - do not display value */
 
   QVector<int> comFrequencies;
-  map::MapAirspaceTypes type = map::AIRSPACE_NONE;
-  map::MapAirspaceSources src;
+  map::MapAirspaceType type = map::AIRSPACE_NONE;
+  map::MapAirspaceSource src;
 
   map::MapAirspaceId combinedId() const
   {
@@ -1364,7 +1449,8 @@ struct MapAirspace
 struct MapAirportMsa :
   public MapBase
 {
-  MapAirportMsa() : MapBase(staticType())
+  MapAirportMsa() :
+    MapBase(staticType())
   {
   }
 
@@ -1404,7 +1490,8 @@ struct MapAirportMsa :
 struct MapHolding
   : public MapBase
 {
-  MapHolding() : MapBase(staticType())
+  MapHolding() :
+    MapBase(staticType())
   {
   }
 
@@ -1500,7 +1587,8 @@ struct MapProcedurePoint
 struct PatternMarker
   : public MapBase
 {
-  PatternMarker() : MapBase(staticType())
+  PatternMarker() :
+    MapBase(staticType())
   {
   }
 
@@ -1532,7 +1620,8 @@ QDataStream& operator<<(QDataStream& dataStream, const map::PatternMarker& obj);
 struct HoldingMarker
   : public MapBase
 {
-  HoldingMarker() : MapBase(staticType())
+  HoldingMarker() :
+    MapBase(staticType())
   {
   }
 
@@ -1554,7 +1643,8 @@ QDataStream& operator<<(QDataStream& dataStream, const map::HoldingMarker& obj);
 struct MsaMarker
   : public MapBase
 {
-  MsaMarker() : MapBase(staticType())
+  MsaMarker() :
+    MapBase(staticType())
   {
   }
 
@@ -1576,7 +1666,8 @@ QDataStream& operator<<(QDataStream& dataStream, const map::MsaMarker& obj);
 struct RangeMarker
   : public MapBase
 {
-  RangeMarker() : MapBase(staticType())
+  RangeMarker() :
+    MapBase(staticType())
   {
   }
 
@@ -1674,10 +1765,10 @@ struct AircraftTrailSegment
 // =====================================================================================
 /* Database type strings to GUI strings and map objects to display strings */
 QString navTypeName(const QString& type);
-QString navTypeNameVor(const QString& type);
-QString navTypeNameVorLong(const QString& type);
-QString navTypeNameNdb(const QString& type);
-QString navTypeNameWaypoint(const QString& type);
+const QString& navTypeNameVor(const QString& type);
+const QString& navTypeNameVorLong(const QString& type);
+const QString& navTypeNameNdb(const QString& type);
+const QString& navTypeNameWaypoint(const QString& type);
 QString navTypeArincNamesWaypoint(const QString& type); /* ARINC * 424.18 field type definition 5.42 */
 
 QString ilsText(const map::MapIls& ils); /* No locale use - for map display */
@@ -1691,13 +1782,13 @@ QString holdingTextShort(const map::MapHolding& holding, bool user);
 QString edgeLights(const QString& type);
 QString patternDirection(const QString& type);
 
-QString navName(const QString& type);
+const QString& navName(const QString& type);
 const QString& surfaceName(const QString& surface);
 QString smoothnessName(QVariant smoothnessVar); // X-Plane runway smoothness
 const QString& parkingGateName(const QString& gate);
 const QString& parkingRampName(const QString& ramp);
 const QString& parkingTypeName(const QString& type);
-const QString& parkingName(const QString& name);
+QString parkingName(const QString& name);
 QString parkingText(const map::MapParking& parking);
 QString parkingNameNumberAndType(const map::MapParking& parking);
 QString parkingNameOrNumber(const map::MapParking& parking);
@@ -1723,12 +1814,12 @@ QString parkingShortName(const QString& name);
 /* Parking description as needed in the PLN files */
 QString parkingNameForFlightplan(const MapParking& parking);
 
-const QString& airspaceTypeToString(map::MapAirspaceTypes type);
-const QString& airspaceFlagToString(map::MapAirspaceFlags type); /* Includes mnemonics */
-const QString& airspaceFlagToStringLong(map::MapAirspaceFlags type); /* For tooltips */
-const QString& airspaceRemark(map::MapAirspaceTypes type);
+const QString& airspaceTypeToString(MapAirspaceType type);
+const QString& airspaceFlagToString(MapAirspaceFlag type); /* Includes mnemonics */
+const QString& airspaceFlagToStringLong(MapAirspaceFlag type); /* For tooltips */
+const QString& airspaceRemark(MapAirspaceType type);
 
-int airspaceDrawingOrder(map::MapAirspaceTypes type);
+int airspaceDrawingOrder(MapAirspaceType type);
 QString airspaceSourceText(map::MapAirspaceSources src);
 QString airspaceRestrictiveName(const map::MapAirspace& airspace);
 QStringList airspaceNameMap(const map::MapAirspace& airspace, int maxTextLength, bool name = true, bool restrictiveName = true,
@@ -1737,7 +1828,7 @@ QString airspaceText(const map::MapAirspace& airspace);
 
 QString aircraftTypeString(const atools::fs::sc::SimConnectAircraft& aircraft); /* Helicopter, etc. */
 QString aircraftTextShort(const atools::fs::sc::SimConnectAircraft& aircraft);
-QString aircraftType(const atools::fs::sc::SimConnectAircraft& aircraft);
+const QString& aircraftType(const atools::fs::sc::SimConnectAircraft& aircraft);
 
 bool isAircraftShadow(const map::MapBase *base);
 
@@ -1747,8 +1838,8 @@ QStringList aircraftIcing(const atools::fs::sc::SimConnectUserAircraft& aircraft
 /* true if any ice value is above one percent */
 bool aircraftHasIcing(const atools::fs::sc::SimConnectUserAircraft& aircraft);
 
-map::MapAirspaceTypes airspaceTypeFromDatabase(const QString& type);
-const QString& airspaceTypeToDatabase(map::MapAirspaceTypes type);
+MapAirspaceType airspaceTypeFromDatabase(const QString& type);
+const QString& airspaceTypeToDatabase(MapAirspaceType type);
 
 QString airwayTrackTypeToShortString(map::MapAirwayTrackType type); /* Also used when writing to db for tracks */
 QString airwayTrackTypeToString(map::MapAirwayTrackType type);
@@ -1756,7 +1847,7 @@ QString airwayRouteTypeToString(map::MapAirwayRouteType type);
 QString airwayRouteTypeToStringShort(map::MapAirwayRouteType type); /* Also used when writing to db for tracks */
 map::MapAirwayTrackType  airwayTrackTypeFromString(const QString& typeStr);
 map::MapAirwayRouteType  airwayRouteTypeFromString(const QString& typeStr);
-QString comTypeName(const QString& type);
+const QString& comTypeName(const QString& type);
 
 QString airportText(const map::MapAirport& airport, int elideName = 100, bool includeIdent = false);
 QString airportTextShort(const map::MapAirport& airport, int elideName = 100, bool includeIdent = false);

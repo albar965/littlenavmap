@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -17,15 +17,17 @@
 
 #include "route/flightplanentrybuilder.h"
 
+#include "app/navapp.h"
 #include "common/proctypes.h"
 #include "fs/pln/flightplanentry.h"
 #include "query/mapquery.h"
-#include "app/navapp.h"
+#include "query/querymanager.h"
 
 using atools::fs::pln::FlightplanEntry;
 
 FlightplanEntryBuilder::FlightplanEntryBuilder()
 {
+  queries = QueryManager::instance()->getQueriesGui();
 }
 
 /* Copy airport attributes to flight plan entry */
@@ -39,7 +41,7 @@ void FlightplanEntryBuilder::buildFlightplanEntry(int id, const atools::geo::Pos
                                                   bool resolveWaypoints)
 {
   map::MapResult result;
-  NavApp::getMapQueryGui()->getMapObjectById(result, type, map::AIRSPACE_SRC_NONE, id, false /* airport from nav database */);
+  queries->getMapQuery()->getMapObjectById(result, type, map::AIRSPACE_SRC_NONE, id, false /* airport from nav database */);
   buildFlightplanEntry(userPos, result, entry, resolveWaypoints, map::NONE);
 }
 
@@ -120,7 +122,7 @@ void FlightplanEntryBuilder::entryFromAirport(const map::MapAirport& airport, Fl
 
 bool FlightplanEntryBuilder::vorForWaypoint(const map::MapWaypoint& waypoint, map::MapVor& vor) const
 {
-  NavApp::getMapQueryGui()->getVorForWaypoint(vor, waypoint.id);
+  queries->getMapQuery()->getVorForWaypoint(vor, waypoint.id);
 
   // Check for invalid references that are caused by the navdata update or disabled navaids at the north pole
   return !vor.ident.isEmpty() && vor.isValid() && !vor.position.isPole() &&
@@ -129,7 +131,7 @@ bool FlightplanEntryBuilder::vorForWaypoint(const map::MapWaypoint& waypoint, ma
 
 bool FlightplanEntryBuilder::ndbForWaypoint(const map::MapWaypoint& waypoint, map::MapNdb& ndb) const
 {
-  NavApp::getMapQueryGui()->getNdbForWaypoint(ndb, waypoint.id);
+  queries->getMapQuery()->getNdbForWaypoint(ndb, waypoint.id);
 
   // Check for invalid references that are caused by the navdata update or disabled navaids at the north pole
   return !ndb.ident.isEmpty() && ndb.isValid() && !ndb.position.isPole() &&
@@ -158,7 +160,7 @@ void FlightplanEntryBuilder::entryFromWaypoint(const map::MapWaypoint& waypoint,
     // Convert waypoint to underlying NDB for airway routes
 
     // Workaround for source data error - wrongly assigned VOR waypoints that are assigned to NDBs
-    NavApp::getMapQueryGui()->getVorNearest(vor, waypoint.position);
+    queries->getMapQuery()->getVorNearest(vor, waypoint.position);
     if(!vor.dmeOnly && !vor.ident.isEmpty() && vor.isValid() && !vor.position.isPole() &&
        vor.position.almostEqual(waypoint.position, atools::geo::Pos::POS_EPSILON_10M))
     {

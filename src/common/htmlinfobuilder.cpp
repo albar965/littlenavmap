@@ -17,8 +17,9 @@
 
 #include "common/htmlinfobuilder.h"
 
-#include "airspace/airspacecontroller.h"
 #include "atools.h"
+#include "query/airspacequeries.h"
+#include "query/querymanager.h"
 #include "textpointer.h"
 #include "common/airportfiles.h"
 #include "common/formatter.h"
@@ -106,15 +107,11 @@ const int MAX_DISTANCE_FOR_BEARING_METER = ageo::nmToMeter(8000);
 
 const static ahtml::Flags LINK_FLAGS = ahtml::LINK_NO_UL | ahtml::BOLD;
 
-HtmlInfoBuilder::HtmlInfoBuilder(MapPaintWidget *mapWidgetParam, bool infoParam, bool printParam, bool verboseParam)
-  : mapWidget(mapWidgetParam), info(infoParam), print(printParam), verbose(verboseParam)
+HtmlInfoBuilder::HtmlInfoBuilder(Queries *queriesParam, bool infoParam, bool printParam, bool verboseParam)
+  : info(infoParam), print(printParam), verbose(verboseParam), queries(queriesParam)
 {
   if(info)
     verbose = true;
-
-  infoQuery = NavApp::getInfoQuery();
-  airportQuerySim = NavApp::getAirportQuerySim();
-  airportQueryNav = NavApp::getAirportQueryNav();
 
   morse = new MorseCode("&nbsp;", "&nbsp;&nbsp;&nbsp;");
 }
@@ -232,8 +229,8 @@ QString HtmlInfoBuilder::sunriseSunsetText(const atools::geo::Pos& pos, const QD
 void HtmlInfoBuilder::airportText(const MapAirport& airport, const map::WeatherContext& weatherContext,
                                   HtmlBuilder& html, const Route *route) const
 {
-  MapQuery *mapQuery = mapWidget->getMapQuery();
-  const SqlRecord *rec = infoQuery->getAirportInformation(airport.id);
+  MapQuery *mapQuery = queries->getMapQuery();
+  const SqlRecord *rec = queries->getInfoQuery()->getAirportInformation(airport.id);
   int rating = -1;
 
   if(rec != nullptr)
@@ -284,7 +281,7 @@ void HtmlInfoBuilder::airportText(const MapAirport& airport, const map::WeatherC
 
   // Administrative information ======================
   QString city, state, country;
-  airportQuerySim->getAirportAdminNamesById(airport.id, city, state, country);
+  queries->getAirportQuerySim()->getAirportAdminNamesById(airport.id, city, state, country);
   if(verbose)
   {
     html.row2If(tr("City:"), city);
@@ -430,9 +427,11 @@ void HtmlInfoBuilder::airportText(const MapAirport& airport, const map::WeatherC
 
   if(!info && !airport.noRunways())
   {
+    QString label = airport.water() && !airport.waterOnly() ? tr("Longest Land Runway Length:") : tr("Longest Runway Length:");
+
     // Add longest for tooltip
     html.table();
-    html.row2(tr("Longest Runway Length:"), Unit::distShortFeet(airport.longestRunwayLength));
+    html.row2(label, Unit::distShortFeet(airport.longestRunwayLength));
     html.tableEnd();
   }
 
@@ -450,7 +449,7 @@ void HtmlInfoBuilder::airportText(const MapAirport& airport, const map::WeatherC
 
   if(info && !airport.noRunways())
   {
-    head(html, tr("Longest Runway"));
+    head(html, airport.water() && !airport.waterOnly() ? tr("Longest Land Runway") : tr("Longest Runway"));
     html.table();
     html.row2(tr("Length:"), Unit::distShortFeet(airport.longestRunwayLength));
     if(rec != nullptr)
@@ -563,7 +562,7 @@ void HtmlInfoBuilder::nearestText(const MapAirport& airport, HtmlBuilder& html) 
 
     // Get nearest airports that have procedures ====================================
     const MapResultIndex *nearestAirportsNav =
-      airportQueryNav->getNearestProcAirports(airport.position, airport.ident, NEAREST_MAX_DISTANCE_AIRPORT_NM);
+      queries->getAirportQueryNav()->getNearestProcAirports(airport.position, airport.ident, NEAREST_MAX_DISTANCE_AIRPORT_NM);
 
     if(!nearestMapObjectsText(airport, html, nearestAirportsNav, tr("Nearest Airports with Procedures"), false, true,
                               NEAREST_MAX_NUM_AIRPORT))
@@ -571,8 +570,8 @@ void HtmlInfoBuilder::nearestText(const MapAirport& airport, HtmlBuilder& html) 
 
     // Get nearest VOR and NDB ====================================
     MapResultIndex *nearestNavaids =
-      mapWidget->getMapQuery()->getNearestNavaids(airport.position, NEAREST_MAX_DISTANCE_NAVAID_NM,
-                                                  map::VOR | map::NDB | map::ILS, 3 /* maxIls */, 4.f /* maxIlsDistNm */);
+      queries->getMapQuery()->getNearestNavaids(airport.position, NEAREST_MAX_DISTANCE_NAVAID_NM,
+                                                map::VOR | map::NDB | map::ILS, 3 /* maxIls */, 4.f /* maxIlsDistNm */);
 
     if(!nearestMapObjectsText(airport, html, nearestNavaids, tr("Nearest Radio Navaids"), true, false, NEAREST_MAX_NUM_NAVAID))
       html.p().b(tr("No navaids within a radius of %1.").arg(Unit::distNm(NEAREST_MAX_DISTANCE_NAVAID_NM * 4.f))).pEnd();
@@ -657,7 +656,7 @@ bool HtmlInfoBuilder::nearestMapObjectsText(const MapAirport& airport, HtmlBuild
       {
         // Airport comes from navdatabase having procedures - convert to simulator airport to get sim name
         // Convert navdatabase airport to simulator
-        map::MapAirport apSim = mapWidget->getMapQuery()->getAirportSim(*apNav);
+        map::MapAirport apSim = queries->getMapQuery()->getAirportSim(*apNav);
 
         // Omit center airport used as reference
         if(apSim.isValid() && apSim.id != airport.id)
@@ -708,12 +707,12 @@ bool HtmlInfoBuilder::nearestMapObjectsText(const MapAirport& airport, HtmlBuild
 
 void HtmlInfoBuilder::comText(const MapAirport& airport, HtmlBuilder& html) const
 {
-  if(info && infoQuery != nullptr)
+  if(info)
   {
     if(!print)
       airportTitle(airport, html, -1, true /* procedures */);
 
-    const SqlRecordList *recVector = infoQuery->getComInformation(airport.id);
+    const SqlRecordList *recVector = queries->getInfoQuery()->getComInformation(airport.id);
     if(recVector != nullptr)
     {
       html.table();
@@ -753,13 +752,12 @@ void HtmlInfoBuilder::comText(const MapAirport& airport, HtmlBuilder& html) cons
 void HtmlInfoBuilder::bestRunwaysText(const MapAirport& airport, HtmlBuilder& html,
                                       const MetarParser& parsed, int max, bool details) const
 {
-  int windDirectionDeg = parsed.getWindDir();
-  float windSpeedKts = parsed.getWindSpeedKts();
+  float windDirectionDeg = parsed.getWindDirF(), windSpeedKts = parsed.getWindSpeedKts();
   maptools::RwVector ends(windSpeedKts, windDirectionDeg);
 
   // Need wind direction and speed - otherwise all runways are good =======================
-  if(windDirectionDeg != -1 && windSpeedKts < atools::fs::weather::INVALID_METAR_VALUE)
-    infoQuery->getRunwayEnds(ends, airport.id);
+  if(windDirectionDeg < map::INVALID_METAR_VALUE && windSpeedKts < map::INVALID_METAR_VALUE)
+    queries->getInfoQuery()->getRunwayEnds(ends, airport.id);
 
   if(!ends.isEmpty())
   {
@@ -824,13 +822,15 @@ void HtmlInfoBuilder::bestRunwaysText(const MapAirport& airport, HtmlBuilder& ht
 
 void HtmlInfoBuilder::runwayText(const MapAirport& airport, HtmlBuilder& html, bool details, bool soft) const
 {
-  if(info && infoQuery != nullptr)
+  if(info)
   {
     if(!print)
       airportTitle(airport, html, -1, true /* procedures */);
 
     html.br().b(tr("Elevation: ")).text(Unit::altFeet(airport.getAltitude()));
 
+    // Have to use direct queries and SqlRecord since map::MapRunway and map::MapRunwayEnd do not contain all information
+    InfoQuery *infoQuery = queries->getInfoQuery();
     const SqlRecordList *recVector = infoQuery->getRunwayInformation(airport.id);
     if(recVector != nullptr)
     {
@@ -840,13 +840,13 @@ void HtmlInfoBuilder::runwayText(const MapAirport& airport, HtmlBuilder& html, b
         if(!soft && !map::isHardSurface(rec.valueStr("surface")))
           continue;
 
-        const SqlRecord *recPrim = infoQuery->getRunwayEndInformation(rec.valueInt("primary_end_id"));
-        const SqlRecord *recSec = infoQuery->getRunwayEndInformation(rec.valueInt("secondary_end_id"));
-        bool closedPrim = recPrim->valueBool("has_closed_markings");
-        bool closedSec = recSec->valueBool("has_closed_markings");
+        const SqlRecord *recordPrimary = infoQuery->getRunwayEndInformation(rec.valueInt("primary_end_id"));
+        const SqlRecord *recordSecondary = infoQuery->getRunwayEndInformation(rec.valueInt("secondary_end_id"));
+        bool closedPrim = recordPrimary->valueBool("has_closed_markings");
+        bool closedSec = recordSecondary->valueBool("has_closed_markings");
 
         html.hr();
-        html.text(tr("Runways ") % recPrim->valueStr("name") % ", " % recSec->valueStr("name"),
+        html.text(tr("Runways ") % recordPrimary->valueStr("name") % ", " % recordSecondary->valueStr("name"),
                   ((closedPrim && closedSec) ? ahtml::STRIKEOUT : ahtml::NONE) | ahtml::UNDERLINE | ahtml::BIG | ahtml::BOLD);
 
         html.table();
@@ -869,7 +869,7 @@ void HtmlInfoBuilder::runwayText(const MapAirport& airport, HtmlBuilder& html, b
         rowForBool(html, &rec, "has_center_red", tr("Has red Center Lights"), false);
 
         // Add a list of runway markings
-        atools::fs::bgl::rw::RunwayMarkingFlags flags(rec.valueInt("marking_flags"));
+        atools::fs::bgl::rw::RunwayMarkingFlags flags(static_cast<atools::fs::bgl::rw::RunwayMarkings>(rec.valueInt("marking_flags")));
         QStringList markings;
         if(flags & atools::fs::bgl::rw::EDGES)
           markings.append(tr("Edges"));
@@ -917,11 +917,12 @@ void HtmlInfoBuilder::runwayText(const MapAirport& airport, HtmlBuilder& html, b
           if(print)
             html.table().tr().td();
 
-          runwayEndText(html, airport, recPrim, rec.valueFloat("heading"), rec.valueFloat("length"), false /* secondary */);
+          runwayEndText(html, airport, recordPrimary, rec.valueFloat("heading"), rec.valueFloat("length"), false /* secondary */);
           if(print)
             html.tdEnd().td();
 
-          runwayEndText(html, airport, recSec, opposedCourseDeg(rec.valueFloat("heading")), rec.valueFloat("length"), true /* secondary */);
+          runwayEndText(html, airport, recordSecondary, opposedCourseDeg(rec.valueFloat("heading")), rec.valueFloat("length"),
+                        true /* secondary */);
 
           if(print)
             html.tdEnd().trEnd().tableEnd();
@@ -931,9 +932,9 @@ void HtmlInfoBuilder::runwayText(const MapAirport& airport, HtmlBuilder& html, b
 #ifdef DEBUG_INFORMATION_INFO
           html.small(QString("Database: runway_id = %1").arg(rec.valueInt("runway_id"))).br();
           html.small(QString("Database: Primary runway_end_id = %1, heading = %2").
-                     arg(recPrim->valueInt("runway_end_id")).arg(recPrim->valueFloat("heading"))).br();
+                     arg(recordPrimary->valueInt("runway_end_id")).arg(recordPrimary->valueFloat("heading"))).br();
           html.small(QString("Database: Secondary runway_end_id = %1, heading = %2").
-                     arg(recSec->valueInt("runway_end_id")).arg(recSec->valueFloat("heading"))).br();
+                     arg(recordSecondary->valueInt("runway_end_id")).arg(recordSecondary->valueFloat("heading"))).br();
 #endif
         }
       }
@@ -956,9 +957,7 @@ void HtmlInfoBuilder::runwayText(const MapAirport& airport, HtmlBuilder& html, b
 
           QString num = hasStart ? " " % heliRec.valueStr("runway_name") : tr(" (no Start Position)");
 
-          html.h3(tr("Helipad%1").arg(num),
-                  (closed ? ahtml::STRIKEOUT : ahtml::NONE)
-                  | ahtml::UNDERLINE);
+          html.h3(tr("Helipad%1").arg(num), (closed ? ahtml::STRIKEOUT : ahtml::NONE) | ahtml::UNDERLINE);
           html.nbsp().nbsp();
 
           Pos pos(heliRec.valueFloat("lonx"), heliRec.valueFloat("laty"));
@@ -1026,7 +1025,7 @@ void HtmlInfoBuilder::runwayText(const MapAirport& airport, HtmlBuilder& html, b
 }
 
 void HtmlInfoBuilder::runwayEndText(HtmlBuilder& html, const MapAirport& airport, const SqlRecord *rec,
-                                    float hdgPrimTrue, float length, bool secondary) const
+                                    float headingPrimaryTrue, float length, bool secondary) const
 {
   bool closed = rec->valueBool("has_closed_markings");
 
@@ -1042,7 +1041,7 @@ void HtmlInfoBuilder::runwayEndText(HtmlBuilder& html, const MapAirport& airport
 
   bool forceBoth = std::abs(airport.magvar) > 90.f;
   html.row2(tr("Heading:", "runway heading"),
-            courseTextFromTrue(hdgPrimTrue, airport.magvar, true /* magBold */, false /* magBig */, true /* trueSmall */,
+            courseTextFromTrue(headingPrimaryTrue, airport.magvar, true /* magBold */, false /* magBig */, true /* trueSmall */,
                                false /* narrow */, forceBoth),
             ahtml::NO_ENTITIES);
 
@@ -1098,6 +1097,15 @@ void HtmlInfoBuilder::runwayEndText(HtmlBuilder& html, const MapAirport& airport
   if(!lights.isEmpty())
     html.row2(tr("Runway End Lights:"), lights.join(tr(", ")));
 
+  // Wind at runway
+  float windSpeedKts, windDirectionDeg;
+  NavApp::getAirportMetarWind(windDirectionDeg, windSpeedKts, airport, false /* stationOnly */);
+  QString windText = formatter::windInformationShort(windDirectionDeg, windSpeedKts, headingPrimaryTrue, -999.f /* minHeadWind */,
+                                                     true /* addUnit */);
+
+  if(!windText.isEmpty())
+    html.row2If(tr("Wind:"), windText % tr(". METAR source \"%1\".").arg(map::mapWeatherSourceString(NavApp::getMapWeatherSource())));
+
 #ifdef DEBUG_INFORMATION_INFO
   html.row2("[secondary]", secondary);
 #else
@@ -1106,7 +1114,7 @@ void HtmlInfoBuilder::runwayEndText(HtmlBuilder& html, const MapAirport& airport
   html.tableEnd();
 
   // Show none, one or more ILS
-  const QVector<map::MapIls> ilsVector = mapWidget->getMapQuery()->getIlsByAirportAndRunway(airport.ident, rec->valueStr("name"));
+  const QVector<map::MapIls> ilsVector = queries->getMapQuery()->getIlsByAirportAndRunway(airport.ident, rec->valueStr("name"));
   for(const map::MapIls& ils : ilsVector)
     ilsTextRunwayInfo(ils, html);
 }
@@ -1218,7 +1226,7 @@ void HtmlInfoBuilder::ilsTextInternal(const map::MapIls& ils, atools::util::Html
     if(endId > 0)
     {
       // Get assigned runway end =====================
-      end = airportQueryNav->getRunwayEndById(endId); // ILS are sourced from navdatabase
+      end = queries->getAirportQueryNav()->getRunwayEndById(endId); // ILS are sourced from navdatabase
       if(end.isValid())
       {
         // The maximum angular offset for a LOC is 3° for FAA and 5° for ICAO.
@@ -1226,7 +1234,7 @@ void HtmlInfoBuilder::ilsTextInternal(const map::MapIls& ils, atools::util::Html
         if(ageo::angleAbsDiff(end.heading, ageo::normalizeCourse(ils.heading)) > 2.f)
         {
           // Get airport for consistent magnetic variation =====================
-          map::MapAirport airport = airportQuerySim->getAirportByIdent(ils.airportIdent);
+          map::MapAirport airport = queries->getAirportQuerySim()->getAirportByIdent(ils.airportIdent);
 
           // Prefer airport variation to have the same runway heading as in the runway information
           float rwMagvar = airport.isValid() ? airport.magvar : ils.magvar;
@@ -1370,7 +1378,7 @@ void HtmlInfoBuilder::windText(const atools::grib::WindPosList& windStack, HtmlB
           continue;
 
         Flags flags = windbarbLayerIndex == i || waypointLayerIndex == i || manualLayerIndex == i || cruiseLayerIndex == i ?
-                      ahtml::BOLD | ahtml::ALIGN_RIGHT : ahtml::ALIGN_RIGHT;
+                      ahtml::BOLD | ahtml::ALIGN_RIGHT : ahtml::Flags(ahtml::ALIGN_RIGHT);
         QStringList suffixList;
 
         if(waypointLayerIndex == i && cruiseLayerIndex == i)
@@ -1421,18 +1429,19 @@ void HtmlInfoBuilder::windText(const atools::grib::WindPosList& windStack, HtmlB
 
 void HtmlInfoBuilder::procedureText(const MapAirport& airport, HtmlBuilder& html) const
 {
-  if(info && infoQuery != nullptr && airport.isValid())
+  if(info && airport.isValid())
   {
-    MapQuery *mapQuery = mapWidget->getMapQuery();
+    MapQuery *mapQuery = queries->getMapQuery();
     MapAirport navAirport = mapQuery->getAirportNav(airport);
 
     if(!print)
       airportTitle(airport, html, -1, true /* procedures */);
 
+    InfoQuery *infoQuery = queries->getInfoQuery();
     const SqlRecordList *recAppVector = infoQuery->getProcedureInformation(navAirport.id);
     if(recAppVector != nullptr)
     {
-      QStringList runwayNames = airportQueryNav->getRunwayNames(navAirport.id);
+      QStringList runwayNames = queries->getAirportQueryNav()->getRunwayNames(navAirport.id);
 
       for(const SqlRecord& recApp : *recAppVector)
       {
@@ -1477,7 +1486,7 @@ void HtmlInfoBuilder::procedureText(const MapAirport& airport, HtmlBuilder& html
         if(procType == "LOCB")
         {
           // Display backcourse ILS information ===========================================
-          const QList<MapRunway> *runways = airportQueryNav->getRunways(airport.id);
+          const QList<MapRunway> *runways = queries->getAirportQueryNav()->getRunways(airport.id);
 
           if(runways != nullptr)
           {
@@ -1581,8 +1590,7 @@ void HtmlInfoBuilder::procedureText(const MapAirport& airport, HtmlBuilder& html
                 html.row2(tr("DME Distance:"), Unit::distNm(dist, true /*addunit*/, 5));
 
               const atools::sql::SqlRecord vorReg =
-                infoQuery->getVorByIdentAndRegion(recTrans.valueStr("dme_ident"),
-                                                  recTrans.valueStr("dme_region"));
+                infoQuery->getVorByIdentAndRegion(recTrans.valueStr("dme_ident"), recTrans.valueStr("dme_region"));
 
               if(!vorReg.isEmpty())
               {
@@ -1629,8 +1637,7 @@ void HtmlInfoBuilder::addRadionavFixType(HtmlBuilder& html, const SqlRecord& rec
 
     map::MapResult result;
 
-    mapWidget->getMapQuery()->getMapObjectByIdent(result, map::VOR, recApp.valueStr("fix_ident"),
-                                                  recApp.valueStr("fix_region"));
+    queries->getMapQuery()->getMapObjectByIdent(result, map::VOR, recApp.valueStr("fix_ident"), recApp.valueStr("fix_region"));
 
     if(result.hasVor())
     {
@@ -1676,8 +1683,7 @@ void HtmlInfoBuilder::addRadionavFixType(HtmlBuilder& html, const SqlRecord& rec
       html.row2(tr("Fix Type:"), tr("Terminal NDB"));
 
     map::MapResult result;
-    mapWidget->getMapQuery()->getMapObjectByIdent(result, map::NDB, recApp.valueStr("fix_ident"),
-                                                  recApp.valueStr("fix_region"));
+    queries->getMapQuery()->getMapObjectByIdent(result, map::NDB, recApp.valueStr("fix_ident"), recApp.valueStr("fix_region"));
 
     if(result.hasNdb())
     {
@@ -1707,10 +1713,8 @@ void HtmlInfoBuilder::weatherText(const map::WeatherContext& context, const MapA
     if(!print)
       airportTitle(airport, html, -1, true /* procedures */);
 
-    MapQuery *mapQuery = mapWidget->getMapQuery();
-
     float transitionAltitude = 0.f, transitionLevel = 0.f;
-    mapQuery->getAirportTransitionAltiudeAndLevel(airport, transitionAltitude, transitionLevel);
+    queries->getMapQuery()->getAirportTransitionAltiudeAndLevel(airport, transitionAltitude, transitionLevel);
 
     QStringList transitionStr;
     if(transitionAltitude > 0.f)
@@ -1737,7 +1741,7 @@ void HtmlInfoBuilder::weatherText(const map::WeatherContext& context, const MapA
     if(flags & optsw::WEATHER_INFO_ALL)
     {
       // Source for map icon display
-      MapWeatherSource src = mapWidget->getMapWeatherSource();
+      MapWeatherSource src = NavApp::getMapWeatherSource();
       bool weatherShown = NavApp::isMapWeatherShown();
 
       // Simconnect or X-Plane weather file metar ===========================
@@ -1759,21 +1763,21 @@ void HtmlInfoBuilder::weatherText(const map::WeatherContext& context, const MapA
         bool nearestOk = false;
         if(checkMetar(html, metar.getNearest()))
         {
-          html.text(tr("%2Nearest Weather - %1").arg(metar.getRequestIdent()).arg(sim), WEATHER_TITLE_FLAGS);
+          html.text(tr("%2Nearest Weather - %1").arg(airport.displayIdent()).arg(sim), WEATHER_TITLE_FLAGS);
 
           // Add link to airport station
           if(!print && airport.isValid())
             html.nbsp().nbsp().a(tr("Map"), QString("lnm://show?id=%1&type=%2").arg(airport.id).arg(map::AIRPORT), LINK_FLAGS);
 
           map::MapAirport reportAirport;
-          airportQuerySim->getAirportByIdent(reportAirport, metar.getNearestIdent());
+          queries->getAirportQuerySim()->getAirportByIdent(reportAirport, metar.getNearestIdent());
           decodedMetar(html, airport, reportAirport, metar, src == WEATHER_SOURCE_SIMULATOR && weatherShown, atools::fs::weather::NEAREST);
           nearestOk = true;
         }
 
         if(nearestOk && checkMetar(html, metar.getInterpolated()))
         {
-          html.text(tr("%2Interpolated Weather - %1").arg(metar.getRequestIdent()).arg(sim), WEATHER_TITLE_FLAGS);
+          html.text(tr("%2Interpolated Weather - %1").arg(airport.displayIdent()).arg(sim), WEATHER_TITLE_FLAGS);
 
           // Add link to airport station
           if(!print && airport.isValid())
@@ -1782,7 +1786,7 @@ void HtmlInfoBuilder::weatherText(const map::WeatherContext& context, const MapA
           decodedMetar(html, airport, map::MapAirport(), metar, false, atools::fs::weather::INTERPOLATED);
         }
       } // if(context.fsMetar.isValid())
-      else if(!print && OptionData::instance().getFlags() & optsw::WEATHER_INFO_FS)
+      else if(!print && OptionData::instance().getFlagsWeather() & optsw::WEATHER_INFO_FS)
         html.p(tr("Not connected to simulator."), ahtml::BOLD);
 
       // Active Sky metar ===========================
@@ -1907,7 +1911,7 @@ void HtmlInfoBuilder::airportMsaTextInternal(const map::MapAirportMsa& msa, atoo
   }
 
   if(info && !user)
-    addScenery(infoQuery->getMsaInformation(msa.id), html, DATASOURCE_MSA);
+    addScenery(queries->getInfoQuery()->getMsaInformation(msa.id), html, DATASOURCE_MSA);
 
   if(info)
     html.br();
@@ -1925,23 +1929,23 @@ bool HtmlInfoBuilder::checkMetar(HtmlBuilder& html, const atools::fs::weather::M
 }
 
 void HtmlInfoBuilder::decodedMetars(HtmlBuilder& html, const atools::fs::weather::Metar& metar,
-                                    const map::MapAirport& airport, const QString& name, bool mapDisplay) const
+                                    const map::MapAirport& airport, const QString& weatherService, bool mapDisplay) const
 {
   if(metar.hasAnyMetar())
   {
     if(checkMetar(html, metar.getStation()))
     {
-      html.text(tr("%1 Station Weather").arg(name), WEATHER_TITLE_FLAGS);
+      html.text(tr("%1 Station Weather").arg(weatherService), WEATHER_TITLE_FLAGS);
       decodedMetar(html, airport, map::MapAirport(), metar, mapDisplay, atools::fs::weather::STATION);
     }
 
     bool nearestOk = false;
     if(checkMetar(html, metar.getNearest()))
     {
-      html.text(tr("%1 Nearest Weather - %2").arg(name).arg(metar.getNearestIdent()), WEATHER_TITLE_FLAGS);
+      html.text(tr("%1 Nearest Weather - %2").arg(weatherService).arg(metar.getNearestIdent()), WEATHER_TITLE_FLAGS);
 
       // Check if the station is an airport
-      map::MapAirport reportAirport = airportQuerySim->getAirportByIdent(metar.getNearestIdent());
+      map::MapAirport reportAirport = queries->getAirportQuerySim()->getAirportByIdent(metar.getNearestIdent());
       if(!print && reportAirport.isValid())
       {
         // Add link to airport
@@ -1955,11 +1959,11 @@ void HtmlInfoBuilder::decodedMetars(HtmlBuilder& html, const atools::fs::weather
 
     if(nearestOk && checkMetar(html, metar.getInterpolated()))
     {
-      html.text(tr("%1 Interpolated Weather").arg(name), WEATHER_TITLE_FLAGS);
+      html.text(tr("%1 Interpolated Weather").arg(weatherService), WEATHER_TITLE_FLAGS);
 
       // Check if the station is an airport
       map::MapAirport reportAirport;
-      airportQuerySim->getAirportByIdent(reportAirport, metar.getNearestIdent());
+      queries->getAirportQuerySim()->getAirportByIdent(reportAirport, metar.getNearestIdent());
       if(!print && reportAirport.isValid())
       {
         // Add link to airport
@@ -1976,8 +1980,6 @@ void HtmlInfoBuilder::decodedMetar(HtmlBuilder& html, const map::MapAirport& air
                                    const atools::fs::weather::Metar& metar,
                                    bool mapDisplay, atools::fs::weather::MetarType type) const
 {
-  using atools::fs::weather::INVALID_METAR_VALUE;
-
   const MetarParser& parsed = metar.getMetarParser(type);
 
   QList<atools::fs::weather::MetarCloud> clouds = parsed.getClouds();
@@ -2040,21 +2042,21 @@ void HtmlInfoBuilder::decodedMetar(HtmlBuilder& html, const map::MapAirport& air
   {
     QString windDir, windVar;
 
-    if(parsed.getWindDir() >= 0)
+    if(parsed.getWindDirF() < map::INVALID_METAR_VALUE)
       // Wind direction given
-      windDir = courseTextFromTrue(parsed.getWindDir(), airport.magvar) % tr(", ");
+      windDir = courseTextFromTrue(parsed.getWindDirF(), airport.magvar) % tr(", ");
 
     if(parsed.getWindRangeFrom() != -1 && parsed.getWindRangeTo() != -1)
       // Wind direction range given (additionally to dir in some cases)
       windVar = tr(", variable ") % courseTextFromTrue(parsed.getWindRangeFrom(), airport.magvar) %
                 tr(" to ") % courseTextFromTrue(parsed.getWindRangeTo(), airport.magvar);
-    else if(parsed.getWindDir() == -1)
+    else if(!(parsed.getWindDirF() < map::INVALID_METAR_VALUE))
       windDir = tr("Variable, ");
 
-    if(windSpeedKts < INVALID_METAR_VALUE)
+    if(windSpeedKts < map::INVALID_METAR_VALUE)
     {
       QString windSpeedStr;
-      if(windSpeedKts < INVALID_METAR_VALUE)
+      if(windSpeedKts < map::INVALID_METAR_VALUE)
         windSpeedStr = Unit::speedKts(windSpeedKts);
 
       html.row2(tr("Wind:"), windDir % windSpeedStr % windVar, ahtml::NO_ENTITIES);
@@ -2065,7 +2067,7 @@ void HtmlInfoBuilder::decodedMetar(HtmlBuilder& html, const map::MapAirport& air
     hasWind = true;
   }
 
-  if(parsed.getGustSpeedKts() < INVALID_METAR_VALUE)
+  if(parsed.getGustSpeedKts() < map::INVALID_METAR_VALUE)
   {
     hasWind = true;
     html.row2(tr("Wind gusts:"), Unit::speedKts(parsed.getGustSpeedKts()));
@@ -2073,34 +2075,34 @@ void HtmlInfoBuilder::decodedMetar(HtmlBuilder& html, const map::MapAirport& air
 
   // Temperature  =============================================================
   float temperature = parsed.getTemperatureC();
-  if(temperature < INVALID_METAR_VALUE)
+  if(temperature < map::INVALID_METAR_VALUE)
     html.row2(tr("Temperature:"), locale.toString(atools::roundToInt(temperature)) % tr("°C, ") %
               locale.toString(atools::roundToInt(ageo::degCToDegF(temperature))) % tr("°F"));
 
   float dewpoint = parsed.getDewpointDegC();
-  if(dewpoint < INVALID_METAR_VALUE)
+  if(dewpoint < map::INVALID_METAR_VALUE)
     html.row2(tr("Dew point:"), locale.toString(atools::roundToInt(dewpoint)) % tr("°C, ") %
               locale.toString(atools::roundToInt(ageo::degCToDegF(dewpoint))) % tr("°F"));
 
   // Pressure  =============================================================
   float seaLevelPressureMbar = parsed.getPressureMbar();
-  if(seaLevelPressureMbar < INVALID_METAR_VALUE)
+  if(seaLevelPressureMbar < map::INVALID_METAR_VALUE)
   {
     html.row2(tr("Pressure:"), locale.toString(seaLevelPressureMbar, 'f', 0) % tr(" hPa, ") %
               locale.toString(ageo::mbarToInHg(seaLevelPressureMbar), 'f', 2) % tr(" inHg"));
 
-    if(temperature < INVALID_METAR_VALUE)
+    if(temperature < map::INVALID_METAR_VALUE)
       html.row2(tr("Density Altitude:"), Unit::altFeet(ageo::densityAltitudeFt(temperature, airport.getAltitude(), seaLevelPressureMbar)));
   }
 
   // Visibility =============================================================
   const atools::fs::weather::MetarVisibility& minVis = parsed.getMinVisibility();
   QStringList visiblity;
-  if(minVis.getVisibilityMeter() < INVALID_METAR_VALUE)
+  if(minVis.getVisibilityMeter() < map::INVALID_METAR_VALUE)
     visiblity.append(tr("%1 %2").arg(minVis.getModifierString()).arg(Unit::distMeter(minVis.getVisibilityMeter())));
 
   const atools::fs::weather::MetarVisibility& maxVis = parsed.getMaxVisibility();
-  if(maxVis.getVisibilityMeter() < INVALID_METAR_VALUE)
+  if(maxVis.getVisibilityMeter() < map::INVALID_METAR_VALUE)
     visiblity.append(tr("%1 %2").arg(maxVis.getModifierString()).arg(Unit::distMeter(maxVis.getVisibilityMeter())));
   visiblity.removeDuplicates();
 
@@ -2138,7 +2140,7 @@ void HtmlInfoBuilder::decodedMetar(HtmlBuilder& html, const map::MapAirport& air
       float altMeter = cloud.getAltitudeMeter();
       QString altStr;
 
-      if(altMeter < INVALID_METAR_VALUE && cloud.getCoverage() != atools::fs::weather::MetarCloud::COVERAGE_CLEAR)
+      if(altMeter < map::INVALID_METAR_VALUE && cloud.getCoverage() != atools::fs::weather::MetarCloud::COVERAGE_CLEAR)
         altStr = Unit::altMeter(altMeter);
 
       html.row2(cloud.getCoverageString(), altStr);
@@ -2168,7 +2170,7 @@ void HtmlInfoBuilder::decodedMetar(HtmlBuilder& html, const map::MapAirport& air
     int reports = 0;
     for(const QString& interpolationIdent : metar.getInterpolatedIdents())
     {
-      map::MapAirport interpolationAirport = airportQuerySim->getAirportByIdent(interpolationIdent);
+      map::MapAirport interpolationAirport = queries->getAirportQuerySim()->getAirportByIdent(interpolationIdent);
       if(interpolationAirport.isValid())
       {
         // Add link to airport
@@ -2194,8 +2196,8 @@ void HtmlInfoBuilder::decodedMetar(HtmlBuilder& html, const map::MapAirport& air
 void HtmlInfoBuilder::vorText(const MapVor& vor, HtmlBuilder& html) const
 {
   const SqlRecord *rec = nullptr;
-  if(info && infoQuery != nullptr)
-    rec = infoQuery->getVorInformation(vor.id);
+  if(info)
+    rec = queries->getInfoQuery()->getVorInformation(vor.id);
 
   QIcon icon = SymbolPainter::createVorIcon(vor, symbolSizeTitle.height(), NavApp::isGuiStyleDark());
   html.img(icon, QString(), QString(), symbolSizeTitle);
@@ -2228,7 +2230,7 @@ void HtmlInfoBuilder::vorText(const MapVor& vor, HtmlBuilder& html) const
       html.row2If(tr("Type:"), map::navTypeNameVorLong(vor.type));
 
     if(rec != nullptr && !rec->isNull("airport_id"))
-      airportRow(airportQueryNav->getAirportById(rec->valueInt("airport_id")), html);
+      airportRow(queries->getAirportQueryNav()->getAirportById(rec->valueInt("airport_id")), html);
 
   }
   if(info)
@@ -2261,7 +2263,7 @@ void HtmlInfoBuilder::vorText(const MapVor& vor, HtmlBuilder& html) const
     addCoordinates(rec, html);
   html.tableEnd();
 
-  MapWaypoint wp = NavApp::getWaypointTrackQueryGui()->getWaypointByNavId(vor.id, map::VOR);
+  MapWaypoint wp = queries->getWaypointTrackQuery()->getWaypointByNavId(vor.id, map::VOR);
   if(wp.artificial != map::WAYPOINT_ARTIFICIAL_NONE)
     // Artificial waypoints are not shown - display airway list here
     waypointAirwayText(wp, html);
@@ -2284,8 +2286,8 @@ void HtmlInfoBuilder::vorText(const MapVor& vor, HtmlBuilder& html) const
 void HtmlInfoBuilder::ndbText(const MapNdb& ndb, HtmlBuilder& html) const
 {
   const SqlRecord *rec = nullptr;
-  if(info && infoQuery != nullptr)
-    rec = infoQuery->getNdbInformation(ndb.id);
+  if(info)
+    rec = queries->getInfoQuery()->getNdbInformation(ndb.id);
 
   QIcon icon = SymbolPainter::createNdbIcon(symbolSizeTitle.height(), NavApp::isGuiStyleDark());
   html.img(icon, QString(), QString(), symbolSizeTitle);
@@ -2311,7 +2313,7 @@ void HtmlInfoBuilder::ndbText(const MapNdb& ndb, HtmlBuilder& html) const
     html.row2If(tr("Type:"), map::navTypeNameNdb(ndb.type));
 
     if(rec != nullptr && !rec->isNull("airport_id"))
-      airportRow(airportQueryNav->getAirportById(rec->valueInt("airport_id")), html);
+      airportRow(queries->getAirportQueryNav()->getAirportById(rec->valueInt("airport_id")), html);
 
   }
 
@@ -2335,7 +2337,7 @@ void HtmlInfoBuilder::ndbText(const MapNdb& ndb, HtmlBuilder& html) const
     addCoordinates(rec, html);
   html.tableEnd();
 
-  MapWaypoint wp = NavApp::getWaypointTrackQueryGui()->getWaypointByNavId(ndb.id, map::NDB);
+  MapWaypoint wp = queries->getWaypointTrackQuery()->getWaypointByNavId(ndb.id, map::NDB);
   if(wp.artificial != map::WAYPOINT_ARTIFICIAL_NONE)
     // Artificial waypoints are not shown - display airway list here
     waypointAirwayText(wp, html);
@@ -2404,7 +2406,7 @@ void HtmlInfoBuilder::holdingTextInternal(const MapHolding& holding, HtmlBuilder
     bearingToUserText(holding.position, holding.magvar, html);
 
   if(info && !holding.airportIdent.isEmpty())
-    airportRow(airportQuerySim->getAirportByIdent(holding.airportIdent), html);
+    airportRow(queries->getAirportQuerySim()->getAirportByIdent(holding.airportIdent), html);
 
   if(holding.time > 0.f)
   {
@@ -2451,7 +2453,7 @@ void HtmlInfoBuilder::holdingTextInternal(const MapHolding& holding, HtmlBuilder
   html.tableEnd();
 
   if(info && !user)
-    addScenery(infoQuery->getHoldingInformation(holding.id), html, DATASOURCE_HOLD);
+    addScenery(queries->getInfoQuery()->getHoldingInformation(holding.id), html, DATASOURCE_HOLD);
 
   if(info)
     html.br();
@@ -2525,6 +2527,16 @@ void HtmlInfoBuilder::bearingAndDistanceTexts(const atools::geo::Pos& pos, float
     if(added)
       html.append(temp);
   }
+}
+
+void HtmlInfoBuilder::lock()
+{
+  queries->lock();
+}
+
+void HtmlInfoBuilder::unlock()
+{
+  queries->unlock();
 }
 
 void HtmlInfoBuilder::patternMarkerText(const PatternMarker& pattern, atools::util::HtmlBuilder& html) const
@@ -2878,7 +2890,7 @@ void HtmlInfoBuilder::airportRow(const map::MapAirport& ap, HtmlBuilder& html) c
 {
   if(ap.isValid())
   {
-    map::MapAirport apSim = mapWidget->getMapQuery()->getAirportSim(ap);
+    map::MapAirport apSim = queries->getMapQuery()->getAirportSim(ap);
     if(apSim.isValid())
     {
       HtmlBuilder apHtml = html.cleared();
@@ -2890,10 +2902,11 @@ void HtmlInfoBuilder::airportRow(const map::MapAirport& ap, HtmlBuilder& html) c
 
 void HtmlInfoBuilder::waypointText(const MapWaypoint& waypoint, HtmlBuilder& html) const
 {
+  const static QRegularExpression WP_NAME_RADIAL_DME("D([0-9]{3})([A-Z])");
   const SqlRecord *rec = nullptr;
 
-  if(info && infoQuery != nullptr)
-    rec = mapWidget->getWaypointTrackQuery()->getWaypointInformation(waypoint.id);
+  if(info)
+    rec = queries->getWaypointTrackQuery()->getWaypointInformation(waypoint.id);
 
   QIcon icon = SymbolPainter::createWaypointIcon(symbolSizeTitle.height());
   html.img(icon, QString(), QString(), symbolSizeTitle);
@@ -2915,6 +2928,11 @@ void HtmlInfoBuilder::waypointText(const MapWaypoint& waypoint, HtmlBuilder& htm
   if(!print && info)
     bearingToUserText(waypoint.position, waypoint.magvar, html);
 
+  html.row2If(tr("Name:"), atools::fs::util::capWaypointNameString(waypoint.ident, waypoint.name, true /* emptyIfEqual */));
+
+  if(info)
+    html.row2If(tr("Region:"), waypoint.region);
+
   if(info)
   {
     if(waypoint.arincType.isEmpty())
@@ -2922,17 +2940,10 @@ void HtmlInfoBuilder::waypointText(const MapWaypoint& waypoint, HtmlBuilder& htm
     else
       // Show detailed description instead
       html.row2If(tr("Type description:"), map::navTypeArincNamesWaypoint(waypoint.arincType));
-
-    if(rec != nullptr && rec->contains("airport_id") && !rec->isNull("airport_id"))
-      airportRow(airportQueryNav->getAirportById(rec->valueInt("airport_id")), html);
   }
-  else
-    html.row2If(tr("Type:"), map::navTypeNameWaypoint(waypoint.type));
 
   if(verbose)
   {
-    const static QRegularExpression WP_NAME_RADIAL_DME("D([0-9]{3})([A-Z])");
-
     QRegularExpressionMatch match = WP_NAME_RADIAL_DME.match(waypoint.ident);
     if(match.hasMatch())
     {
@@ -2949,7 +2960,9 @@ void HtmlInfoBuilder::waypointText(const MapWaypoint& waypoint, HtmlBuilder& htm
 
   if(info)
   {
-    html.row2If(tr("Region:"), waypoint.region);
+    if(rec != nullptr && rec->contains("airport_id") && !rec->isNull("airport_id"))
+      airportRow(queries->getAirportQueryNav()->getAirportById(rec->valueInt("airport_id")), html);
+
     html.row2(tr("Magnetic declination:"), map::magvarText(waypoint.magvar));
     addCoordinates(rec, html);
   }
@@ -2959,8 +2972,7 @@ void HtmlInfoBuilder::waypointText(const MapWaypoint& waypoint, HtmlBuilder& htm
   // Waypoints should normally not appear here if they are artificial except for FSX, MSFS and the like
   waypointAirwayText(waypoint, html);
 
-  if(rec != nullptr)
-    addScenery(rec, html, DATASOURCE_NAV);
+  addScenery(rec, html, DATASOURCE_NAV);
 
   if(!info)
     routeWindText(html, NavApp::getRouteConst(), waypoint.routeIndex);
@@ -2980,7 +2992,7 @@ void HtmlInfoBuilder::waypointAirwayText(const MapWaypoint& waypoint, HtmlBuilde
     return;
 
   QList<MapAirway> airways;
-  NavApp::getAirwayTrackQueryGui()->getAirwaysForWaypoint(airways, waypoint.id);
+  queries->getAirwayTrackQuery()->getAirwaysForWaypoint(airways, waypoint.id);
 
   if(!airways.isEmpty())
   {
@@ -3130,7 +3142,7 @@ void HtmlInfoBuilder::airspaceText(const MapAirspace& airspace, const atools::sq
 
   if(info)
   {
-    const QString remark = map::airspaceRemark(airspace.type);
+    const QString& remark = map::airspaceRemark(map::MapAirspaceType(airspace.type));
     if(!remark.isEmpty())
       header.append(remark);
 
@@ -3232,7 +3244,7 @@ void HtmlInfoBuilder::airspaceText(const MapAirspace& airspace, const atools::sq
 
   if(info && !airspace.isOnline())
   {
-    atools::sql::SqlRecord rec = NavApp::getAirspaceController()->getAirspaceInfoRecordById(airspace.combinedId());
+    atools::sql::SqlRecord rec = queries->getAirspaceQueries()->getAirspaceInfoRecordById(airspace.combinedId());
 
     if(!rec.isEmpty())
       addScenery(&rec, html, DATASOURCE_NAV);
@@ -3285,7 +3297,7 @@ void HtmlInfoBuilder::airwayText(const MapAirway& airway, HtmlBuilder& html) con
   else
     html.row2If(tr("Track type:"), map::airwayTrackTypeToString(airway.type));
 
-  WaypointTrackQuery *waypointQuery = mapWidget->getWaypointTrackQuery();
+  WaypointTrackQuery *waypointQuery = queries->getWaypointTrackQuery();
   map::MapWaypoint from = waypointQuery->getWaypointById(airway.fromWaypointId);
   map::MapWaypoint to = waypointQuery->getWaypointById(airway.toWaypointId);
 
@@ -3335,11 +3347,11 @@ void HtmlInfoBuilder::airwayText(const MapAirway& airway, HtmlBuilder& html) con
     html.row2(tr("Segment length:"), Unit::distMeter(airway.from.distanceMeterTo(airway.to)));
 
   atools::sql::SqlRecord trackMeta;
-  if(infoQuery != nullptr && info)
+  if(info)
   {
     if(!isAirway)
     {
-      trackMeta = infoQuery->getTrackMetadata(airway.id);
+      trackMeta = queries->getInfoQuery()->getTrackMetadata(airway.id);
       if(!trackMeta.isEmpty())
       {
         QDateTime validFrom = trackMeta.valueDateTime("valid_from");
@@ -3363,7 +3375,7 @@ void HtmlInfoBuilder::airwayText(const MapAirway& airway, HtmlBuilder& html) con
 
     // Show list of waypoints =================================================================
     QList<map::MapAirwayWaypoint> waypointList;
-    NavApp::getAirwayTrackQueryGui()->getWaypointListForAirwayName(waypointList, airway.name, airway.fragment);
+    queries->getAirwayTrackQuery()->getWaypointListForAirwayName(waypointList, airway.name, airway.fragment);
 
     if(!waypointList.isEmpty())
     {
@@ -3532,16 +3544,11 @@ void HtmlInfoBuilder::procedurePointText(const map::MapProcedurePoint& procPoint
   if(!procPoint.previewAll)
   {
     // Add IAF, MAP, ...
-    QString typeStr, type = proc::proceduresLegSecialTypeLongStr(proc::specialType(leg.arincDescrCode));
-
-    if(type.isEmpty())
-      typeStr = tr("Fix:");
-    else
-      typeStr = tr("%1:").arg(type);
 
     if(!legs->isCustomDeparture())
     {
-      html.row2If(typeStr, leg.fixIdent);
+      const QString& type = proc::proceduresLegSecialTypeLongStr(proc::specialType(leg.arincDescrCode));
+      html.row2If(type.isEmpty() ? tr("Fix:") : tr("%1:").arg(type), leg.fixIdent);
 
       if(verbose)
       {
@@ -3700,7 +3707,7 @@ void HtmlInfoBuilder::aircraftText(const atools::fs::sc::SimConnectAircraft& air
 
   html.row2If(tr("Registration:"), aircraft.getAirplaneRegistration()); // ASXGS
 
-  QString model = map::aircraftType(aircraft);
+  const QString& model = map::aircraftType(aircraft);
   html.row2If(tr("Model:"), model); // Beechcraft
 
   if(aircraft.isAnyBoat())
@@ -4827,7 +4834,18 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
     float isaDeviation = sat - ageo::isaTemperature(userAircraft->getActualAltitudeFt());
     if(isaDeviation < 0.f && isaDeviation > -0.5f)
       isaDeviation = 0.f;
-    html.id(pid::ENV_ISA_DEV).row2(tr("ISA Deviation:"), locale.toString(isaDeviation, 'f', 0) % tr(" °C"));
+
+    QString isaStr = locale.toString(std::abs(isaDeviation), 'f', 0);
+    QString isaSignStr;
+    if(isaStr != tr("0", "used to detect real zero value in local language"))
+    {
+      if(isaDeviation > 0.f)
+        isaSignStr = tr("+", "ISA deviation sign");
+      else if(isaDeviation < 0.f)
+        isaSignStr = tr("-", "ISA deviation sign");
+    }
+
+    html.id(pid::ENV_ISA_DEV).row2(tr("ISA Deviation:"), isaSignStr % isaStr % tr(" °C"));
 
     float seaLevelPressureMbar = userAircraft->getSeaLevelPressureMbar();
     QString pressureTxt = highlightText(locale.toString(seaLevelPressureMbar, 'f', 0) % tr(" hPa, ") %
@@ -5073,7 +5091,7 @@ void HtmlInfoBuilder::addAirportFolder(const MapAirport& airport, HtmlBuilder& h
 void HtmlInfoBuilder::addAirportSceneryAndLinks(const MapAirport& airport, HtmlBuilder& html) const
 {
   // Scenery library entries ============================================
-  const atools::sql::SqlRecordList *sceneryInfo = infoQuery->getAirportSceneryInformation(airport.ident);
+  const atools::sql::SqlRecordList *sceneryInfo = queries->getInfoQuery()->getAirportSceneryInformation(airport.ident);
 
   if(sceneryInfo != nullptr)
   {
@@ -5097,7 +5115,7 @@ void HtmlInfoBuilder::addAirportSceneryAndLinks(const MapAirport& airport, HtmlB
 
   // Check if airport is in navdata
   QStringList links;
-  MapAirport airportNav = mapWidget->getMapQuery()->getAirportNav(airport);
+  MapAirport airportNav = queries->getMapQuery()->getAirportNav(airport);
   ahtml::Flags flags = ahtml::LINK_NO_UL | ahtml::NO_ENTITIES;
 
   if(airportNav.isValid() && airportNav.navdata)
@@ -5199,7 +5217,7 @@ void HtmlInfoBuilder::head(HtmlBuilder& html, const QString& text, const atools:
 
 void HtmlInfoBuilder::head(HtmlBuilder& html, const QString& text, const RouteLeg& leg)
 {
-  const MapTypes mapType = leg.getMapType();
+  const MapType mapType = leg.getMapType();
 
   if(mapType == map::PROCEDURE)
   {
@@ -5224,7 +5242,7 @@ void HtmlInfoBuilder::head(HtmlBuilder& html, const QString& text, int id, map::
   if(type == map::AIRPORT)
   {
     QString procText, procHref;
-    airportProcedureLinkTexts(procText, procHref, airportQuerySim->getAirportById(id));
+    airportProcedureLinkTexts(procText, procHref, queries->getAirportQuerySim()->getAirportById(id));
 
     // Center on airport bounding rect and add info link
     head(html, text, {tr("Map"), QString("lnm://show?id=%1&type=%2").arg(id).arg(type),

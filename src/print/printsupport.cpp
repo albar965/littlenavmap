@@ -236,14 +236,13 @@ void PrintSupport::createFlightplanDocuments()
   printDocument->adjustSize();
 }
 
-void PrintSupport::addAirport(QTextCursor& cursor, const map::MapAirport& airport, const QString& prefix,
-                              bool departure)
+void PrintSupport::addAirport(QTextCursor& cursor, const map::MapAirport& airport, const QString& prefix, bool departure)
 {
   // Create a block format inserting page breaks
   QTextBlockFormat pageBreakBlock;
   pageBreakBlock.setPageBreakPolicy(QTextFormat::PageBreak_AlwaysBefore);
 
-  HtmlInfoBuilder builder(mainWindow->getMapWidget(), true /*info*/, true /*print*/);
+  HtmlInfoBuilder builder(QueryManager::instance()->getQueriesGui(), true /* info */, true /* print */, true /* verbose */);
   map::WeatherContext weatherContext;
 
   prt::PrintFlightplanOpts opts = printDialog->getPrintOptions();

@@ -31,6 +31,8 @@ export XPSDK_BASE=${XPSDK_BASE:-"${APROJECTS}/X-Plane SDK"}
 export DATABASE_BASE=${DATABASE_BASE:-"${APROJECTS}/little_navmap_db"}
 export HELP_BASE=${HELP_BASE:-"${APROJECTS}/little_navmap_help"}
 
+export ATOOLS_NO_CRASHHANDLER=true
+
 # Defines the used Qt for all builds  - x86 and Qt 5.15
 export QMAKE_SHARED=${QMAKE_SHARED:-"${HOME}/Qt/5.15.2/clang_64/bin/qmake"}
 
@@ -42,7 +44,6 @@ export QMAKE_SHARED_ARM=${QMAKE_SHARED_ARM:-"${HOME}/Qt/6.4.0/macos/bin/qmake"}
 export DEPLOY_BASE="${APROJECTS}/deploy"
 
 export INSTALL_MARBLE_DYLIB=$APROJECTS/build-marble-release/src/lib/marble/libmarblewidget-qt5.25.dylib
-
 
 # ===========================================================================
 # ========================== atools - x86 and arm64 and Qt 6.4
@@ -133,6 +134,7 @@ ${QMAKE_SHARED} ${APROJECTS}/littlenavmap/littlenavmap.pro -spec macx-clang CONF
 make -j4
 make copydata
 make deploy -i -l
+
 
 
 

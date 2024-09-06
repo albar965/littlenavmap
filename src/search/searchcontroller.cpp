@@ -46,8 +46,10 @@
 using atools::gui::HelpHandler;
 
 SearchController::SearchController(QMainWindow *parent, QTabWidget *tabWidgetSearchParam)
-  : mapQuery(NavApp::getMapQueryGui()), mainWindow(parent), tabWidgetSearch(tabWidgetSearchParam)
+  : mainWindow(parent), tabWidgetSearch(tabWidgetSearchParam)
 {
+  mapQuery = QueryManager::instance()->getQueriesGui()->getMapQuery();
+
   Ui::MainWindow *ui = NavApp::getMainUi();
   connect(ui->pushButtonAirportHelpSearch, &QPushButton::clicked, this, &SearchController::helpPressed);
   connect(ui->pushButtonNavHelpSearch, &QPushButton::clicked, this, &SearchController::helpPressed);

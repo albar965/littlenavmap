@@ -39,6 +39,7 @@ QString helpOnlineMainUrl;
 QString helpOnlineTutorialsUrl;
 QString helpOnlineDownloadsUrl;
 QString helpOnlineMainMenuUrl;
+QString helpOnlineShortcutsUrl;
 QString helpOnlineMapDisplayUrl;
 QString helpOnlineLegendUrl;
 QString helpOnlineFlightPlanningUrl;
@@ -109,6 +110,7 @@ void loadHelpUrls()
     helpOnlineUrl = base;
     helpOnlineMainUrl = base % "index.html";
     helpOnlineMainMenuUrl = base % "MENUS.html";
+    helpOnlineShortcutsUrl = base % "SHORTCUTS.html";
     helpOnlineMapDisplayUrl = base % "MAPDISPLAY.html";
     helpOnlineTutorialsUrl = base % "TUTORIALS.html";
     helpOnlineLegendUrl = base % "LEGEND.html";
@@ -129,6 +131,7 @@ void loadHelpUrls()
     helpOnlineMainUrl = helpOnlineUrl;
     helpOnlineTutorialsUrl = settings.value("help/tutorials", base + "TUTORIALS.html").toString();
     helpOnlineMainMenuUrl = settings.value("help/mainmenu", base + "MENUS.html").toString();
+    helpOnlineShortcutsUrl = settings.value("help/shortcuts", base + "SHORTCUTS.html").toString();
     helpOnlineMapDisplayUrl = settings.value("help/mapdisplay", base + "MAPDISPLAY.html").toString();
     helpOnlineLegendUrl = settings.value("help/legend", base + "LEGEND.html").toString();
     helpOnlineFlightPlanningUrl = settings.value("help/flightplanning", base + "FLIGHTPLAN.html").toString();

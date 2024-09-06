@@ -29,7 +29,7 @@ class MetarParser;
 }
 }
 
-struct PaintAirportType;
+class AirportPaintData;
 
 /*
  * Draws airport weather symbols.

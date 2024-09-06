@@ -41,6 +41,9 @@ if defined DATABASE_BASE ( echo DATABASE_BASE=%DATABASE_BASE% ) else ( set DATAB
 if defined HELP_BASE ( echo HELP_BASE=%HELP_BASE% ) else ( set HELP_BASE=%APROJECTS%\little_navmap_help)
 if defined ATOOLS_GIT_PATH ( echo ATOOLS_GIT_PATH=%ATOOLS_GIT_PATH% ) else ( set ATOOLS_GIT_PATH=C:\Git\bin\git)
 
+set ATOOLS_NO_CRASHHANDLER=%ATOOLS_NO_CRASHHANDLER_32%
+if defined ATOOLS_NO_CRASHHANDLER ( echo ATOOLS_NO_CRASHHANDLER=%ATOOLS_NO_CRASHHANDLER% ) else ( set ATOOLS_NO_CRASHHANDLER=true)
+
 rem Default points to Qt installation
 rem if defined OPENSSL_PATH ( echo %OPENSSL_PATH% ) else ( set OPENSSL_PATH="C:\Qt\Tools\OpenSSL\Win_x86\bin\")
 

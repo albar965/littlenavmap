@@ -66,14 +66,11 @@ RequestHandler::RequestHandler(QObject *parent, WebMapController *webMapControll
   connect(this, &RequestHandler::getCurrentMapWidgetPos,
           NavApp::getMapPaintWidgetGui(), &MapPaintWidget::getCurrentViewCenterPos, Qt::BlockingQueuedConnection);
 
-  connect(this, &RequestHandler::getPixmap, webMapController, &WebMapController::getPixmap,
-          Qt::BlockingQueuedConnection);
-  connect(this, &RequestHandler::getPixmapObject, webMapController, &WebMapController::getPixmapObject,
-          Qt::BlockingQueuedConnection);
+  connect(this, &RequestHandler::getPixmap, webMapController, &WebMapController::getPixmap, Qt::BlockingQueuedConnection);
+  connect(this, &RequestHandler::getPixmapObject, webMapController, &WebMapController::getPixmapObject, Qt::BlockingQueuedConnection);
   connect(this, &RequestHandler::getPixmapPosDistance, webMapController, &WebMapController::getPixmapPosDistance,
           Qt::BlockingQueuedConnection);
-  connect(this, &RequestHandler::getPixmapRect, webMapController, &WebMapController::getPixmapRect,
-          Qt::BlockingQueuedConnection);
+  connect(this, &RequestHandler::getPixmapRect, webMapController, &WebMapController::getPixmapRect, Qt::BlockingQueuedConnection);
 
   /* Connect WebApiController to serviceWebApi signal */
   connect(this, &RequestHandler::serviceWebApi, webApiController, &WebApiController::service, Qt::BlockingQueuedConnection);
@@ -420,6 +417,8 @@ inline void RequestHandler::handleHtmlFileRequest(HttpRequest& request, HttpResp
 
     if(t.contains(QStringLiteral(u"{aircraftText}")))
     {
+      // Lock all queries used by HtmlInfoBuilder
+      HtmlInfoBuilderLocker locker(htmlInfoBuilder);
       html.clear();
       htmlInfoBuilder->aircraftText(userAircraft, html);
       htmlInfoBuilder->aircraftTextWeightAndFuel(userAircraft, html);
@@ -436,7 +435,10 @@ inline void RequestHandler::handleHtmlFileRequest(HttpRequest& request, HttpResp
       // Additional required progress fields are defined in aircraftprogressconfig.cpp in vector ADDITIONAL_WEB_IDS
       html.setIdBits(NavApp::getInfoController()->getEnabledProgressBitsWeb());
 
-      htmlInfoBuilder->aircraftProgressText(userAircraft, html, route);
+      {
+        HtmlInfoBuilderLocker locker(htmlInfoBuilder);
+        htmlInfoBuilder->aircraftProgressText(userAircraft, html, route);
+      }
       t.setVariable(QStringLiteral(u"aircraftProgressText"), html.getHtml());
     }
 

@@ -17,7 +17,7 @@
 
 #include "mapgui/mapvisible.h"
 
-#include "airspace/airspacecontroller.h"
+#include "app/navapp.h"
 #include "atools.h"
 #include "common/maptypes.h"
 #include "common/unit.h"
@@ -27,8 +27,9 @@
 #include "mapgui/maplayer.h"
 #include "mapgui/mapmarkhandler.h"
 #include "mappainter/mappaintlayer.h"
-#include "app/navapp.h"
+#include "query/airspacequeries.h"
 #include "query/mapquery.h"
+#include "query/querymanager.h"
 #include "userdata/userdatacontroller.h"
 #include "util/htmlbuilder.h"
 #include "weather/windreporter.h"
@@ -201,7 +202,7 @@ void MapVisible::updateVisibleObjectsStatusBar()
         navaidsTooltip.append(tr("ILS (I)"));
       }
 
-      if(layer->isIls() && shownDispTypes.testFlag(map::GLS) && NavApp::getMapQueryGui()->hasGls())
+      if(layer->isIls() && shownDispTypes.testFlag(map::GLS) && QueryManager::instance()->getQueriesGui()->isGlsAvailable())
       {
         navaidLabel.append(tr("G"));
         navaidsTooltip.append(tr("GLS (G)"));
@@ -244,16 +245,16 @@ void MapVisible::updateVisibleObjectsStatusBar()
       }
 
       QStringList airspacesTooltip, airspaceGroupLabel, airspaceGroupTooltip, airspaceSrcTooltip;
-      map::MapAirspaceSources airspaceSources = NavApp::getAirspaceController()->getAirspaceSources();
+      map::MapAirspaceSources airspaceSources = QueryManager::instance()->getQueriesGui()->getAirspaceQueries()->getAirspaceSources();
       if(shown.testFlag(map::AIRSPACE) && airspaceSources & map::AIRSPACE_SRC_ALL)
       {
-        map::MapAirspaceFilter airspaceFilter = paintLayer->getShownAirspacesTypesByLayer();
+        map::MapAirspaceFilter airspaceFilter = paintLayer->getShownAirspacesTypesForLayer();
         // Collect airspace information ==========================================================
-        for(int i = 0; i < map::MAP_AIRSPACE_TYPE_BITS; i++)
+        for(int i = 0; i <= map::MAP_AIRSPACE_TYPE_BITS; i++)
         {
           map::MapAirspaceTypes type(1 << i);
           if(airspaceFilter.types & type)
-            airspacesTooltip.append(map::airspaceTypeToString(type));
+            airspacesTooltip.append(map::airspaceTypeToString(map::MapAirspaceType(type)));
         }
         std::sort(airspacesTooltip.begin(), airspacesTooltip.end());
 
@@ -293,7 +294,7 @@ void MapVisible::updateVisibleObjectsStatusBar()
           airspaceGroupTooltip.append(tr("Centers and others (OTR)"));
         }
 
-        airspaceSrcTooltip = NavApp::getAirspaceController()->getAirspaceSourcesStr();
+        airspaceSrcTooltip = QueryManager::instance()->getQueriesGui()->getAirspaceQueries()->getAirspaceSourcesStr();
       }
 
       if(!navaidsTooltip.isEmpty())
@@ -373,9 +374,9 @@ void MapVisible::updateVisibleObjectsStatusBar()
       if(shownDispTypes.testFlag(map::AIRPORT_WEATHER) && layer->isAirportWeather())
       {
         tooltip.tr().td().b(tr("Airport weather source (AW): ")).
-        text(map::mapWeatherSourceString(paintLayer->getWeatherSource())).tdEnd().trEnd();
+        text(map::mapWeatherSourceString(paintLayer->getMapWeatherSource())).tdEnd().trEnd();
 
-        if(paintLayer->getWeatherSource() != map::WEATHER_SOURCE_DISABLED)
+        if(paintLayer->getMapWeatherSource() != map::WEATHER_SOURCE_DISABLED)
           weatherLabel.append(tr("AW"));
       }
       else

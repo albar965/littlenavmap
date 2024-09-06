@@ -18,10 +18,12 @@
 #include "web/webmapcontroller.h"
 
 #include "atools.h"
+#include "fs/sc/simconnectuseraircraft.h"
 #include "mapgui/mappaintwidget.h"
 #include "mapgui/mapwidget.h"
 #include "app/navapp.h"
 #include "mappainter/mappaintlayer.h"
+#include "query/airportquery.h"
 
 #include <QDebug>
 #include <QPixmap>
@@ -44,7 +46,8 @@ void WebMapController::initMapPaintWidget()
 
   // Create a map widget if not already done and clone with the desired resolution
   if(mapPaintWidget == nullptr)
-    mapPaintWidget = new MapPaintWidget(parentWidget, false /* no real widget - hidden */, true /* web */);
+    mapPaintWidget = new MapPaintWidget(parentWidget, QueryManager::instance()->getQueriesWeb(), false /* no real widget - hidden */,
+                                        true /* web */);
 
   // Copy all map settings including trail if changed
   mapPaintWidget->copySettings(*NavApp::getMapWidgetGui(), true /* deep */);
@@ -78,14 +81,14 @@ MapPixmap WebMapController::getPixmapObject(int width, int height, web::ObjectTy
                                             float distanceKm)
 {
   if(verbose)
-    qDebug() << Q_FUNC_INFO << width << "x" << height << "type" << type << "ident" << ident << "distanceKm" <<
-      distanceKm;
+    qDebug() << Q_FUNC_INFO << width << "x" << height << "type" << type << "ident" << ident << "distanceKm" << distanceKm;
 
   MapPixmap mapPixmap;
   switch(type)
   {
     case web::USER_AIRCRAFT:
-      mapPixmap = getPixmapPosDistance(width, height, NavApp::getUserAircraftPos(), distanceKm, QLatin1String(""), tr("No user aircraft"));
+      mapPixmap = getPixmapPosDistance(width, height, mapPaintWidget->getUserAircraft().getPosition(), distanceKm, QLatin1String(""),
+                                       tr("No user aircraft"));
       break;
 
     case web::ROUTE:
@@ -93,8 +96,10 @@ MapPixmap WebMapController::getPixmapObject(int width, int height, web::ObjectTy
       break;
 
     case web::AIRPORT:
-      mapPixmap = getPixmapPosDistance(width, height, NavApp::getAirportPos(ident), distanceKm, QLatin1String(""), tr(
-                                         "Airport %1 not found").arg(ident));
+      atools::geo::Pos pos = mapPaintWidget->getQueries()->getAirportQuerySim()->getAirportPosByIdent(ident);
+
+      if(pos.isValid())
+        mapPixmap = getPixmapPosDistance(width, height, pos, distanceKm, QLatin1String(""), tr("Airport %1 not found").arg(ident));
       break;
   }
   return mapPixmap;
@@ -126,8 +131,6 @@ MapPixmap WebMapController::getPixmapPosDistance(int width, int height, atools::
 
   if(mapPaintWidget != nullptr)
   {
-    QMutexLocker locker(&mapPaintWidgetMutex);
-
     // Copy all map settings including trail if changed
     mapPaintWidget->copySettings(*NavApp::getMapWidgetGui(), true /* deep */);
 
@@ -199,8 +202,6 @@ MapPixmap WebMapController::getPixmapRect(int width, int height, atools::geo::Re
   {
     if(mapPaintWidget != nullptr)
     {
-      QMutexLocker locker(&mapPaintWidgetMutex);
-
       // Copy all map settings including trail if changed
       mapPaintWidget->copySettings(*NavApp::getMapWidgetGui(), true /* deep */);
 

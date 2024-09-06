@@ -21,6 +21,7 @@
 #include "common/mapflags.h"
 #include "geo/pos.h"
 #include "mapgui/mapgraphic.h"
+#include "query/querymanager.h"
 
 #include <marble/GeoDataLatLonAltBox.h>
 
@@ -61,10 +62,8 @@ class MainWindow;
 class MapPaintLayer;
 class MapScreenIndex;
 class ApronGeometryCache;
-class MapQuery;
-class AirwayTrackQuery;
-class WaypointTrackQuery;
 class MapLayer;
+class AircraftTrail;
 
 namespace proc {
 struct MapProcedureLeg;
@@ -72,8 +71,6 @@ struct MapProcedureLeg;
 struct MapProcedureLegs;
 
 }
-
-class AircraftTrail;
 
 /*
  * Contains all functions to draw a map including background, flight plan, navaids and whatnot.
@@ -84,13 +81,12 @@ class AircraftTrail;
  *
  * Does not contain any UI and mouse/keyboard interaction.
  */
-class MapPaintWidget :
-  public MapGraphic
+class MapPaintWidget : public MapGraphic, public Lockable
 {
   Q_OBJECT
 
 public:
-  explicit MapPaintWidget(QWidget *parent, bool visible, bool webParam);
+  explicit MapPaintWidget(QWidget *parent, Queries *queriesParam, bool visible, bool webParam);
   virtual ~MapPaintWidget() override;
 
   MapPaintWidget(const MapPaintWidget& other) = delete;
@@ -233,7 +229,7 @@ public:
   const map::MapTypes getShownMapTypes() const;
   const map::MapDisplayTypes getShownMapDisplayTypes() const;
   const map::MapAirspaceFilter& getShownAirspaces() const;
-  const map::MapAirspaceFilter getShownAirspaceTypesByLayer() const;
+  const map::MapAirspaceFilter getShownAirspaceTypesForLayer() const;
   int getShownMinimumRunwayFt() const;
 
   /* User aircraft as shown on the map */
@@ -260,9 +256,6 @@ public:
 
   /* Redraw map to reflect wind barb changes */
   void windDisplayUpdated();
-
-  /* Current weather source for icon display */
-  map::MapWeatherSource getMapWeatherSource() const;
 
   /* Airspaces and airways from the information window are kept in separate lists */
   void changeAirspaceHighlights(const QList<map::MapAirspace>& airspaces);
@@ -398,24 +391,6 @@ public:
   /* Saved bounding box from last zoom or scroll operation. Needed to detect view changes. */
   const Marble::GeoDataLatLonBox& getCurrentViewBoundingBox() const;
 
-  /* Get map query with cached objects for this paint widget instance */
-  MapQuery *getMapQuery() const
-  {
-    return mapQuery;
-  }
-
-  AirwayTrackQuery *getAirwayTrackQuery() const
-  {
-    return airwayTrackQuery;
-  }
-
-  WaypointTrackQuery *getWaypointTrackQuery() const
-  {
-    return waypointTrackQuery;
-  }
-
-  void postTrackLoad();
-
   /* No drawing at all and not map interactions except moving and zooming if true.
    * Limit depends on projection. */
   bool noRender() const;
@@ -444,15 +419,18 @@ public:
     return web;
   }
 
+  /* Get queries bundle. This can be either GUI or Web. Locking required for Web. */
+  Queries *getQueries() const
+  {
+    return queries;
+  }
+
 signals:
   /* Emitted whenever the result exceeds the limit clause in the queries */
   void resultTruncated();
 
   /* Update action state in main window (disabled/enabled) */
   void updateActionStates();
-
-  /* Aircraft track was truncated and needs to be updated */
-  void aircraftTrackTruncated();
 
   void shownMapFeaturesChanged(map::MapTypes types);
 
@@ -589,6 +567,9 @@ protected:
   /* Trail/track of user aircraft */
   AircraftTrail *aircraftTrail = nullptr, *aircraftTrailLogbook = nullptr;
 
+  /* Can be GUI or web queries. Passed down to painters and MapScreenIndex. */
+  Queries *queries;
+
 private:
   /* Set map theme and adjust properties accordingly. theme is the full path to the DGML */
   void setThemeInternal(const MapTheme& theme);
@@ -607,10 +588,6 @@ private:
   /* Keeps geographical objects as index in screen coordinates */
   MapScreenIndex *screenIndex = nullptr;
 
-  MapQuery *mapQuery = nullptr;
-  AirwayTrackQuery *airwayTrackQuery = nullptr;
-  WaypointTrackQuery *waypointTrackQuery = nullptr;
-
   /* Current zoom value (NOT distance) */
   int currentZoom = -1;
 
@@ -622,6 +599,11 @@ private:
 
   /* true if web instance */
   bool web;
+
+  /* Last paint previousOverflow */
+  bool previousOverflow = false;
 };
+
+typedef Locker<MapPaintWidget> MapPaintWidgetLocker;
 
 #endif // LITTLENAVMAP_NAVMAPPAINTWIDGET_H

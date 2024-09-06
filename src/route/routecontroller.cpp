@@ -177,8 +177,6 @@ namespace pln = atools::fs::pln;
 RouteController::RouteController(QMainWindow *parentWindow, QTableView *tableView)
   : QObject(parentWindow), mainWindow(parentWindow), tableViewRoute(tableView)
 {
-  airportQuery = NavApp::getAirportQuerySim();
-
   routeFilenameDefault = atools::settings::Settings::getConfigFilename(lnm::ROUTE_DEFAULT_SUFFIX);
 
   dialog = new atools::gui::Dialog(mainWindow);
@@ -1022,7 +1020,7 @@ void RouteController::restoreState()
     QString cmdLineFlightplanFile, cmdLineFlightplanDescr;
 
     // Load plan from command line or last used =============================================
-    fc::fromStartupProperties(NavApp::getStartupOptionsConst(), &cmdLineFlightplanFile, &cmdLineFlightplanDescr);
+    fc::fromStartupProperties(atools::gui::Application::getStartupOptionsConst(), &cmdLineFlightplanFile, &cmdLineFlightplanDescr);
 
     if(!cmdLineFlightplanFile.isEmpty())
     {
@@ -1060,7 +1058,7 @@ void RouteController::restoreState()
       // Nothing given on command line ==================================
       if(OptionData::instance().getFlags().testFlag(opts::STARTUP_LOAD_ROUTE))
       {
-        if(!NavApp::isSafeMode())
+        if(!atools::gui::Application::isSafeMode())
         {
           atools::settings::Settings& settings = atools::settings::Settings::instance();
           QString lastUsedFlightplanFile = settings.valueStr(lnm::ROUTE_FILENAME);
@@ -1431,10 +1429,10 @@ void RouteController::loadProceduresFromFlightplan(bool clearOldProcedurePropert
 
   QStringList errors;
   proc::MapProcedureLegs arrival, departure, star;
-  NavApp::getProcedureQuery()->getLegsForFlightplanProperties(route.getFlightplanConst().getPropertiesConst(),
-                                                              route.getDepartureAirportLeg().getAirport(),
-                                                              route.getDestinationAirportLeg().getAirport(),
-                                                              arrival, star, departure, errors, autoresolveTransition);
+  QueryManager::instance()->getQueriesGui()->getProcedureQuery()->getLegsForFlightplanProperties(
+    route.getFlightplanConst().getPropertiesConst(), route.getDepartureAirportLeg().getAirport(),
+    route.getDestinationAirportLeg().getAirport(), arrival, star, departure, errors,
+    autoresolveTransition);
   errors.removeDuplicates();
   procedureErrors = errors;
 
@@ -2437,17 +2435,14 @@ void RouteController::postDatabaseLoad()
 /* Double click into table view */
 void RouteController::doubleClick(const QModelIndex& index)
 {
-  qDebug() << Q_FUNC_INFO;
+  qDebug() << Q_FUNC_INFO << index;
   if(index.isValid())
-  {
-    qDebug() << "mouseDoubleClickEvent";
     showAtIndex(index.row(), true /* info */, true /* map */, true /* doubleClick */);
-  }
 }
 
 void RouteController::showAtIndex(int index, bool info, bool map, bool doubleClick)
 {
-  if(index >= 0 && index < map::INVALID_INDEX_VALUE)
+  if(index >= 0 && index < route.size())
   {
     const RouteLeg& routeLeg = route.value(index);
     if(routeLeg.isValid())
@@ -2535,8 +2530,8 @@ void RouteController::showInformationInternal(const RouteLeg& routeLeg)
   else
   {
     map::MapResult result;
-    NavApp::getMapQueryGui()->getMapObjectById(result, routeLeg.getMapType(), map::AIRSPACE_SRC_NONE,
-                                               routeLeg.getId(), false /* airport from nav database */);
+    QueryManager::instance()->getQueriesGui()->getMapQuery()->getMapObjectById(result, routeLeg.getMapType(), map::AIRSPACE_SRC_NONE,
+                                                                               routeLeg.getId(), false /* airport from nav database */);
     emit showInformation(result);
   }
 }
@@ -2606,7 +2601,7 @@ void RouteController::routeTableOptions()
   treeDialog.addItem2(headerItem, rcol::HEADER_TAKEOFF_WIND, tr("Takeoff Wind"),
                       tr("Headwind on takeoff runway indicated by %1 and tailwind by %2\n"
                          "as well as crosswind (%3 or %4).\n"
-                         "The wind information is taken from the selected source in\n"
+                         "The wind information is taken from the selected METAR source in\n"
                          "menu \"Weather\" -> \"Airport Weather Source\".\n"
                          "Wind is taken from nearest airport if not available.").
                       arg(TextPointer::getWindPointerSouth()).arg(TextPointer::getWindPointerNorth()).
@@ -2627,7 +2622,7 @@ void RouteController::routeTableOptions()
                       tr("Destination runway heading, available distance for landing, elevation and facilities."),
                       tr("Headwind on landing runway indicated by %1 and tailwind by %2\n"
                          "as well as crosswind (%3 or %4).\n"
-                         "The wind information is taken from the selected source in\n"
+                         "The wind information is taken from the selected METAR source in\n"
                          "menu \"Weather\" -> \"Airport Weather Source\".\n"
                          "Wind is taken from nearest airport if not available.").
                       arg(TextPointer::getWindPointerSouth()).arg(TextPointer::getWindPointerNorth()).
@@ -2827,8 +2822,9 @@ void RouteController::tableContextMenu(const QPoint& pos)
     baseType = proc::MapProcedureLegs::getProcedureTypeBase(routeLeg->getProcedureType());
 
     if(routeLeg->getVor().isValid() || routeLeg->getNdb().isValid() || routeLeg->getWaypoint().isValid() || routeLeg->isAirport())
-      NavApp::getMapQueryGui()->getMapObjectByIdent(msaResult, map::AIRPORT_MSA, routeLeg->getIdent(),
-                                                    routeLeg->getRegion(), QString(), routeLeg->getPosition());
+      QueryManager::instance()->getQueriesGui()->getMapQuery()->getMapObjectByIdent(msaResult, map::AIRPORT_MSA, routeLeg->getIdent(),
+                                                                                    routeLeg->getRegion(), QString(),
+                                                                                    routeLeg->getPosition());
 
     if(routeLeg->isAnyProcedure())
     {
@@ -2957,11 +2953,10 @@ void RouteController::tableContextMenu(const QPoint& pos)
     ui->actionMapRangeRings->setEnabled(true);
     ui->actionRouteSetMark->setEnabled(true);
 
-#ifdef DEBUG_MOVING_AIRPLANE
-    ui->actionRouteActivateLeg->setEnabled(routeLeg->isValidWaypoint());
-#else
-    ui->actionRouteActivateLeg->setEnabled(routeLeg->isValid() && NavApp::isConnected());
-#endif
+    if(NavApp::isDebugMovingAircraft())
+      ui->actionRouteActivateLeg->setEnabled(routeLeg->isValidWaypoint());
+    else
+      ui->actionRouteActivateLeg->setEnabled(routeLeg->isValid() && NavApp::isConnected());
   }
   else
   {
@@ -3145,8 +3140,8 @@ void RouteController::tableContextMenu(const QPoint& pos)
     else if(action == ui->actionMapHold && routeLeg != nullptr)
     {
       map::MapResult result;
-      NavApp::getMapQueryGui()->getMapObjectById(result, routeLeg->getMapType(), map::AIRSPACE_SRC_NONE,
-                                                 routeLeg->getId(), false /* airport from nav*/);
+      QueryManager::instance()->getQueriesGui()->getMapQuery()->getMapObjectById(result, routeLeg->getMapType(), map::AIRSPACE_SRC_NONE,
+                                                                                 routeLeg->getId(), false /* airport from nav*/);
 
       if(!result.isEmpty(map::AIRPORT | map::VOR | map::NDB | map::WAYPOINT))
         NavApp::getMapWidgetGui()->addHold(result, atools::geo::EMPTY_POS);
@@ -3874,7 +3869,7 @@ void RouteController::routeSetHelipad(const map::MapHelipad& helipad)
   qDebug() << Q_FUNC_INFO << helipad.id;
 
   map::MapStart start;
-  airportQuery->getStartById(start, helipad.startId);
+  QueryManager::instance()->getQueriesGui()->getAirportQuerySim()->getStartById(start, helipad.startId);
 
   routeSetStartPosition(start);
 }
@@ -3926,7 +3921,7 @@ void RouteController::routeSetParking(const map::MapParking& parking)
   {
     // No route, no start airport or different airport
     map::MapAirport ap;
-    airportQuery->getAirportById(ap, parking.airportId);
+    QueryManager::instance()->getQueriesGui()->getAirportQuerySim()->getAirportById(ap, parking.airportId);
     routeSetDepartureInternal(ap);
     route.removeProcedureLegs(proc::PROCEDURE_DEPARTURE);
   }
@@ -3969,7 +3964,7 @@ void RouteController::routeSetStartPosition(map::MapStart start)
      route.getDepartureAirportLeg().getId() != start.airportId)
   {
     map::MapAirport airport;
-    airportQuery->getAirportById(airport, start.airportId);
+    QueryManager::instance()->getQueriesGui()->getAirportQuerySim()->getAirportById(airport, start.airportId);
     routeSetDepartureInternal(airport);
     route.removeProcedureLegs(proc::PROCEDURE_DEPARTURE);
   }
@@ -4258,7 +4253,7 @@ void RouteController::showCustomApproach(map::MapAirport airport, QString dialog
   // Get the simulator runway end id to pre-select runway end row in dialog =================================
   // Check if there is already a STAR or an approach to fetch current runway selection
   QList<map::MapRunwayEnd> runwayEnds;
-  const MapQuery *mapQuery = NavApp::getMapQueryGui();
+  const MapQuery *mapQuery = QueryManager::instance()->getQueriesGui()->getMapQuery();
   if(!route.getApproachLegs().isEmpty())
   {
     if(route.hasCustomApproach())
@@ -4292,8 +4287,10 @@ void RouteController::showCustomApproach(map::MapAirport airport, QString dialog
       qDebug() << Q_FUNC_INFO << runway.primaryName << runway.secondaryName << end.id << end.name;
 
       proc::MapProcedureLegs procedure;
-      NavApp::getProcedureQuery()->createCustomApproach(procedure, airport, end, procedureDialog.getLegDistance(),
-                                                        procedureDialog.getEntryAltitude(), procedureDialog.getLegOffsetAngle());
+      QueryManager::instance()->getQueriesGui()->getProcedureQuery()->createCustomApproach(procedure, airport, end,
+                                                                                           procedureDialog.getLegDistance(),
+                                                                                           procedureDialog.getEntryAltitude(),
+                                                                                           procedureDialog.getLegOffsetAngle());
       routeAddProcedure(procedure);
     }
   }
@@ -4321,6 +4318,8 @@ void RouteController::showCustomDeparture(map::MapAirport airport, QString dialo
   // Get the simulator runway end id to pre-select runway end row in dialog =================================
   // Check if there is already a SID to fetch current runway selection
   int runwayEndId = -1;
+  const Queries *queries = QueryManager::instance()->getQueriesGui();
+
   if(!route.getSidLegs().isEmpty())
   {
     QList<map::MapRunwayEnd> runwayEnds;
@@ -4329,7 +4328,7 @@ void RouteController::showCustomDeparture(map::MapAirport airport, QString dialo
       runwayEnds.append(route.getSidLegs().runwayEnd);
     else
       // Fetch sim id from procedure which uses nav id
-      NavApp::getMapQueryGui()->getRunwayEndByNameFuzzy(runwayEnds, route.getSidRunwayName(), airport, false /* navData */);
+      queries->getMapQuery()->getRunwayEndByNameFuzzy(runwayEnds, route.getSidRunwayName(), airport, false /* navData */);
 
     if(!runwayEnds.isEmpty())
       runwayEndId = runwayEnds.constFirst().id;
@@ -4352,7 +4351,7 @@ void RouteController::showCustomDeparture(map::MapAirport airport, QString dialo
       qDebug() << Q_FUNC_INFO << runway.primaryName << runway.secondaryName << end.id << end.name;
 
       proc::MapProcedureLegs procedure;
-      NavApp::getProcedureQuery()->createCustomDeparture(procedure, airport, end, procedureDialog.getLegDistance());
+      queries->getProcedureQuery()->createCustomDeparture(procedure, airport, end, procedureDialog.getLegDistance());
       routeAddProcedure(procedure);
     }
   }
@@ -4403,16 +4402,16 @@ void RouteController::routeAddProcedure(proc::MapProcedureLegs legs)
   }
 
   clearTableSelection();
-
-  AirportQuery *airportQueryNav = NavApp::getAirportQueryNav(), *airportQuerySim = NavApp::getAirportQuerySim();
-  ProcedureQuery *procedureQuery = NavApp::getProcedureQuery();
-  MapQuery *mapQuery = NavApp::getMapQueryGui();
+  const Queries *queries = QueryManager::instance()->getQueriesGui();
+  AirportQuery *airportQueryNav = queries->getAirportQueryNav(), *airportQuerySim = queries->getAirportQuerySim();
+  ProcedureQuery *procedureQuery = queries->getProcedureQuery();
+  MapQuery *mapQuery = queries->getMapQuery();
   map::MapAirport airportSim, airportNav;
   if(legs.isAnyCustom())
   {
     // Airport id in legs is from sim database - get airport and convert to nav database
     airportSim = airportQuerySim->getAirportById(legs.ref.airportId);
-    airportNav = mapQuery->getAirportNav(airportSim);
+    airportNav = queries->getMapQuery()->getAirportNav(airportSim);
   }
   else
   {
@@ -4918,9 +4917,11 @@ int RouteController::calculateInsertIndex(const atools::geo::Pos& pos, int legIn
         case atools::geo::INVALID:
           insertIndex = 0;
           break;
+
         case atools::geo::ALONG_TRACK:
           insertIndex = nearestlegIndex;
           break;
+
         case atools::geo::BEFORE_START:
           if(nearestlegIndex == 1)
             // Add before departure
@@ -4928,6 +4929,7 @@ int RouteController::calculateInsertIndex(const atools::geo::Pos& pos, int legIn
           else
             insertIndex = nearestlegIndex;
           break;
+
         case atools::geo::AFTER_END:
           if(nearestlegIndex == route.getSizeWithoutAlternates() - 1)
             insertIndex = nearestlegIndex + 1;
@@ -4950,7 +4952,7 @@ int RouteController::calculateInsertIndex(const atools::geo::Pos& pos, int legIn
 void RouteController::updateFlightplanEntryAirway(int airwayId, FlightplanEntry& entry)
 {
   map::MapAirway airway;
-  NavApp::getAirwayTrackQueryGui()->getAirwayById(airway, airwayId);
+  QueryManager::instance()->getQueriesGui()->getAirwayTrackQuery()->getAirwayById(airway, airwayId);
   entry.setAirway(airway.name);
   entry.setFlag(atools::fs::pln::entry::TRACK, airway.isTrack());
 }
@@ -5488,6 +5490,37 @@ void RouteController::disconnectedFromSimulator()
   route.resetActive();
   highlightNextWaypoint(-1);
   emit routeChanged(false /* geometryChanged */);
+}
+
+void RouteController::validAircraftReceived(const atools::fs::sc::SimConnectUserAircraft& userAircraft)
+{
+  if(route.isEmpty() && userAircraft.isFullyValid() && userAircraft.isOnGround() &&
+     OptionData::instance().getFlags().testFlag(opts::GUI_ADD_DEPARTURE))
+  {
+    // Got notification about first valid user aircraft occurrence on ground and plan is empty
+    // Get nearest objects within of 0.005 NM
+    const map::MapResultIndex *resultIndex =
+      QueryManager::instance()->getQueriesGui()->getAirportQuerySim()->getNearestAirportObjects(userAircraft.getPosition(), 0.05f);
+
+    if(resultIndex != nullptr && !resultIndex->isEmpty())
+    {
+      const map::MapBase *first = resultIndex->constFirst();
+
+      qDebug() << Q_FUNC_INFO << "Adding to route" << *first;
+
+      // Add nearest object to plan as  departure positionF
+      if(first->objType == map::PARKING)
+        routeSetParking(first->asObj<map::MapParking>());
+      else if(first->objType == map::START)
+        routeSetStartPosition(first->asObj<map::MapStart>());
+      else if(first->objType == map::AIRPORT)
+        routeSetDeparture(first->asObj<map::MapAirport>());
+
+#ifdef DEBUG_INFORMATION
+      qDebug() << Q_FUNC_INFO << *resultIndex;
+#endif
+    }
+  }
 }
 
 void RouteController::simDataChanged(const atools::fs::sc::SimConnectData& simulatorData)

@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -65,8 +65,13 @@ private:
     {
     }
 
-    DrawText(const atools::geo::Line& lineParam, bool distanceParam, bool courseParam)
+    explicit DrawText(const atools::geo::Line& lineParam, bool distanceParam, bool courseParam)
       : line(lineParam), distance(distanceParam), course(courseParam)
+    {
+    }
+
+    explicit DrawText(const atools::geo::Pos& pos1, const atools::geo::Pos& pos2, bool distanceParam, bool courseParam)
+      : line(pos1, pos2), distance(distanceParam), course(courseParam)
     {
     }
 
@@ -74,7 +79,7 @@ private:
     atools::geo::Line line;
 
     /* Draw distance and/or course information */
-    bool distance, course;
+    bool distance = false, course = false;
   };
 
   /* Draw route only legs - not procedures */
@@ -84,15 +89,17 @@ private:
   /* Draw recommended navaids */
   void paintRecommended(int passedRouteLeg, QSet<map::MapRef>& idMap);
 
+  /* Draw only enlarged airport icon. The airport diagram is drawn in the MapPainterAirport which also omits the symbol. */
+  void paintAirport(float x, float y, const map::MapAirport& airport);
+
   /* Draw navaid symbols */
-  void paintAirport(float x, float y, const map::MapAirport& obj);
-  void paintVor(float x, float y, const map::MapVor& obj, bool preview);
-  void paintNdb(float x, float y, const map::MapNdb& obj, bool preview);
-  void paintWaypoint(float x, float y, const map::MapWaypoint& obj, bool preview);
+  void paintVor(float x, float y, const map::MapVor& vor, bool preview);
+  void paintNdb(float x, float y, const map::MapNdb& ndb, bool preview);
+  void paintWaypoint(float x, float y, const map::MapWaypoint& waypoint, bool preview);
   void paintWaypoint(const QColor& col, float x, float y, bool preview);
 
   /* Paint user defined waypoint */
-  void paintUserpoint(float x, float y, const map::MapUserpointRoute& obj, bool preview);
+  void paintUserpoint(float x, float y, const map::MapUserpointRoute& userpoint, bool preview);
 
   /* Draw a full procedure */
   void paintProcedure(QSet<map::MapRef>& idMap,
@@ -116,13 +123,13 @@ private:
                          const proc::MapProcedureLeg& leg, const QPointF& intersectPoint, bool draw);
 
   /* Draw navaid labels */
-  void paintWaypointText(float x, float y, const map::MapWaypoint& obj, bool drawTextDetails, textatt::TextAttributes atts,
+  void paintWaypointText(float x, float y, const map::MapWaypoint& waypoint, bool drawTextDetails, textatt::TextAttributes atts,
                          const QStringList *additionalText);
-  void paintNdbText(float x, float y, const map::MapNdb& obj, bool drawTextDetails, textatt::TextAttributes atts,
+  void paintNdbText(float x, float y, const map::MapNdb& ndb, bool drawTextDetails, textatt::TextAttributes atts,
                     const QStringList *additionalText);
-  void paintVorText(float x, float y, const map::MapVor& obj, bool drawTextDetails, textatt::TextAttributes atts,
+  void paintVorText(float x, float y, const map::MapVor& vor, bool drawTextDetails, textatt::TextAttributes atts,
                     const QStringList *additionalText);
-  void paintAirportText(float x, float y, const map::MapAirport& obj, textatt::TextAttributes atts);
+  void paintAirportText(float x, float y, const map::MapAirport& airport, textatt::TextAttributes atts);
 
   /* Draw text with light yellow background for flight plan */
   void paintText(const QColor& color, float x, float y, float size, bool drawTextDetails, QStringList texts, textatt::TextAttributes atts);
@@ -139,6 +146,9 @@ private:
   void paintProcedureUnderlay(const proc::MapProcedureLeg& leg, float x, float y, float size);
 
   void paintStartParking();
+
+  /* Draw line to departure runway position */
+  void paintDirectToDeparture();
 
   void paintWindBarbs(const QBitArray& visibleStartPoints, const QList<QPointF>& startPoints);
   void paintWindBarbAtWaypoint(float windSpeed, float windDir, float x, float y);

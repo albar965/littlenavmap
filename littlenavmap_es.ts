@@ -10428,13 +10428,13 @@ Wind speed will be interpolated between this altitude and ground level.</source>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="11544"/>
-        <source>Show &amp;Vertical Track</source>
+        <source>Show &amp;Vertical Aircraft Trail</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="11547"/>
         <location filename="src/gui/mainwindow.ui" line="11550"/>
-        <source>Show vertical track line</source>
+        <source>Show vertical aircraft trail</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -11104,7 +11104,7 @@ Wind speed will be interpolated between this altitude and ground level.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Create a Userpoint of type Logbook including flight information for each takeoff and landing</source>
+        <source>Create a userpoint of type Logbook including flight information for each takeoff and landing</source>
         <translation type="vanished">Crear un punto de usuario del tipo libro de registro incluyendo información de vuelo para cada despegue y aterrizaje</translation>
     </message>
     <message>
@@ -14323,7 +14323,7 @@ Button is highlighted if any filter is selected.</source>
     </message>
     <message>
         <location filename="src/mapgui/mapcontextmenu.cpp" line="1010"/>
-        <source>Add an userpoint at this position</source>
+        <source>Add a userpoint at this position</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -24792,7 +24792,7 @@ The label is fixed. Not shown at procedure legs.</source>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="242"/>
-        <source>Select display options measurement lines.</source>
+        <source>Select display options for measurement lines.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>

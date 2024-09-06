@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -49,16 +49,6 @@ void MapTypesFactory::fillAirport(const SqlRecord& record, map::MapAirport& airp
   }
   else
     airport.position = Pos(record.valueFloat("lonx"), record.valueFloat("laty"), 0.f);
-}
-
-void MapTypesFactory::fillAirportForOverview(const SqlRecord& record, map::MapAirport& airport, bool nav, bool xplane)
-{
-  fillAirportBase(record, airport, true);
-  airport.navdata = nav;
-  airport.xplane = xplane;
-
-  airport.flags = fillAirportFlags(record, true);
-  airport.position = Pos(record.valueFloat("lonx"), record.valueFloat("laty"), 0.f);
 }
 
 void MapTypesFactory::fillRunway(const atools::sql::SqlRecord& record, map::MapRunway& runway, bool overview)
@@ -435,6 +425,7 @@ void MapTypesFactory::fillWaypoint(const SqlRecord& record, map::MapWaypoint& wa
   waypoint.id = record.valueInt(track ? "trackpoint_id" : "waypoint_id");
   waypoint.ident = record.valueStr("ident");
   waypoint.region = record.valueStr("region");
+  waypoint.name = record.valueStr("name", QString());
   waypoint.type = record.valueStr("type");
   waypoint.arincType = record.valueStr("arinc_type", QString());
   waypoint.magvar = record.valueFloat("mag_var");
@@ -450,6 +441,7 @@ void MapTypesFactory::fillWaypointFromNav(const SqlRecord& record, map::MapWaypo
   waypoint.id = record.valueInt("waypoint_id");
   waypoint.ident = record.valueStr("ident");
   waypoint.region = record.valueStr("region");
+  waypoint.name = record.valueStr("name", QString());
   waypoint.type = record.valueStr("type");
   waypoint.arincType = record.valueStr("arinc_type", QString());
   waypoint.magvar = record.valueFloat("mag_var");
@@ -788,7 +780,7 @@ void MapTypesFactory::fillStart(const SqlRecord& record, map::MapStart& start)
   start.heading = record.valueFloat("heading");
 }
 
-void MapTypesFactory::fillAirspace(const SqlRecord& record, map::MapAirspace& airspace, map::MapAirspaceSources src)
+void MapTypesFactory::fillAirspace(const SqlRecord& record, map::MapAirspace& airspace, map::MapAirspaceSource src)
 {
   if(record.contains("boundary_id"))
     airspace.id = record.valueInt("boundary_id");

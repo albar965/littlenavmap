@@ -202,24 +202,9 @@ public:
   /* Get theme by theme id (element <theme> in DGML. */
   const MapTheme& getTheme(const QString& themeId) const;
 
-  /* Get default theme which is the one with short name "openstreetmap" */
-  const MapTheme& getDefaultTheme() const
-  {
-    return defaultTheme;
-  }
-
-  /* Currently selected theme id from actions */
-  QString getCurrentThemeId() const;
-
   const MapTheme& getCurrentTheme() const
   {
-    return getTheme(getCurrentThemeId());
-  }
-
-  /* Sort order is always online/offline and then alphabetical */
-  const QVector<MapTheme>& getThemes() const
-  {
-    return themes;
+    return getTheme(currentThemeId());
   }
 
   /* See related methods in MapTheme */
@@ -265,6 +250,8 @@ public:
 
   /* Called by the actions after key updates */
   void changeMapTheme();
+
+  /* Called by actions */
   void changeMapProjection();
 
   /* Reload themes and rebuild menu */
@@ -276,9 +263,15 @@ public:
   /* Checks default and user folder and shows an error dialog if any is invalid */
   static void validateMapThemeDirectories(QWidget *parent);
 
+  /* Reset back to OpenStreetMap and Mecator */
+  void resetToDefault();
+
 private:
-  static QString getMapThemeDefaultDir();
-  static QString getMapThemeUserDir();
+  static QString mapThemeDefaultDir();
+  static QString mapThemeUserDir();
+
+  /* Currently selected theme id from actions */
+  QString currentThemeId() const;
 
   /* Get theme by internal index */
   const MapTheme& themeByIndex(int themeIndex) const;

@@ -17,24 +17,24 @@
 
 #include "routeexport/routeexport.h"
 
-#include "fs/gpx/gpxtypes.h"
-#include "fs/gpx/gpxio.h"
-#include "routeexport/routeexportformat.h"
-#include "routeexport/routeexportdialog.h"
+#include "app/navapp.h"
 #include "atools.h"
-#include "common/aircrafttrail.h"
 #include "common/constants.h"
 #include "exception.h"
+#include "fs/gpx/gpxio.h"
+#include "fs/gpx/gpxtypes.h"
 #include "fs/perf/aircraftperf.h"
 #include "fs/pln/flightplanio.h"
+#include "geo/aircrafttrail.h"
 #include "gui/dialog.h"
 #include "gui/errorhandler.h"
 #include "gui/mainwindow.h"
 #include "io/fileroller.h"
-#include "app/navapp.h"
 #include "route/routealtitude.h"
 #include "route/routecontroller.h"
 #include "routeexport/routeexportdata.h"
+#include "routeexport/routeexportdialog.h"
+#include "routeexport/routeexportformat.h"
 #include "routeexport/routemultiexportdialog.h"
 #include "routestring/routestringwriter.h"
 #include "ui_mainwindow.h"
@@ -449,6 +449,27 @@ bool RouteExport::routeExportFms11(const RouteExportFormat& format)
       if(exportFlighplan(routeFile, rf::DEFAULT_OPTS_FMS11, std::bind(&FlightplanIO::saveFms11, flightplanIO, _1, _2)))
       {
         mainWindow->setStatusMessage(tr("Flight plan saved as FMS 11."));
+        formatExportedCallback(format, routeFile);
+        return true;
+      }
+    }
+  }
+  return false;
+}
+
+bool RouteExport::routeExportFmsT7Multi(const RouteExportFormat& format)
+{
+  qDebug() << Q_FUNC_INFO;
+
+  if(routeValidateMulti(format))
+  {
+    QString routeFile = exportFileMulti(format);
+    if(!routeFile.isEmpty())
+    {
+      using namespace std::placeholders;
+      if(exportFlighplan(routeFile, rf::DEFAULT_OPTS_FMS_T7, std::bind(&FlightplanIO::saveFms11, flightplanIO, _1, _2)))
+      {
+        mainWindow->setStatusMessage(tr("Flight plan saved as FMS 11 for FlightFactor B777."));
         formatExportedCallback(format, routeFile);
         return true;
       }

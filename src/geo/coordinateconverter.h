@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -18,12 +18,17 @@
 #ifndef LITTLENAVMAP_COORDINATECONVERTER_H
 #define LITTLENAVMAP_COORDINATECONVERTER_H
 
-#include <marble/GeoDataCoordinates.h>
-
 #include <QPoint>
 #include <QSize>
 
+class QPolygonF;
+
+class QLineF;
+
+class QRectF;
 namespace Marble {
+
+class GeoDataCoordinates;
 class ViewportParams;
 class GeoDataLineString;
 class GeoDataLatLonBox;
@@ -64,18 +69,6 @@ public:
   /* @return true if position is hidden behind globe */
   bool isHidden(const atools::geo::Pos& coords) const;
 
-  /* Conversion from Marble coordinates to atools coordinates and back.
-   * Do not transfer or convert altitude */
-  Marble::GeoDataCoordinates toGdc(const atools::geo::Pos& coords) const;
-  Marble::GeoDataLatLonBox toGdc(const atools::geo::Rect& coords) const;
-  Marble::GeoDataLineString toGdcStr(const atools::geo::Line& coords) const;
-  Marble::GeoDataLineString toGdcStr(const atools::geo::LineString& coords) const;
-  Marble::GeoDataLineString toGdcStr(const atools::geo::Pos& pos1, const atools::geo::Pos& pos2) const;
-
-  atools::geo::Rect fromGdc(const Marble::GeoDataLatLonBox& coords) const;
-  atools::geo::Pos fromGdc(const Marble::GeoDataCoordinates& coords) const;
-  const atools::geo::LineString fromGdcStr(const Marble::GeoDataLineString& coords) const;
-
   /*
    * Convert world to screen coordinates
    * @param coords world coordinates
@@ -93,7 +86,7 @@ public:
    *  Result might contain duplicates for Mercator projection. */
   QVector<QPolygonF> wToS(const atools::geo::Pos& pos1, const atools::geo::Pos& pos2) const;
   QVector<QPolygonF> wToS(const atools::geo::Line& line) const;
-  QVector<QPolygonF> wToS(const atools::geo::LineString& line) const;
+  QVector<QPolygonF> wToS(const atools::geo::LineString& linestring) const;
   QVector<QPolygonF> wToS(const Marble::GeoDataLineString& line) const;
 
   /*
@@ -106,7 +99,10 @@ public:
    * @return true if coordinate is visible and not hidden
    */
   bool wToS(const Marble::GeoDataCoordinates& coords, double& x, double& y, const QSize& size = DEFAULT_WTOS_SIZE,
-            bool *isHidden = nullptr) const;
+            bool *isHidden = nullptr) const
+  {
+    return wToSInternal(coords, x, y, size, isHidden);
+  }
 
   bool wToS(const Marble::GeoDataCoordinates& coords, int& x, int& y, const QSize& size = DEFAULT_WTOS_SIZE,
             bool *isHidden = nullptr) const;
@@ -124,7 +120,6 @@ public:
   bool wToS(const atools::geo::Line& coords, QLineF& line, const QSize& size = DEFAULT_WTOS_SIZE, bool *isHidden = nullptr) const;
 
   bool sToW(int x, int y, atools::geo::Pos& pos) const;
-  bool sToW(int x, int y, Marble::GeoDataCoordinates& coords) const;
 
   /* Converte screen to world coordinates */
   atools::geo::Pos sToW(int x, int y) const;
@@ -137,7 +132,8 @@ public:
   const QVector<QPolygonF *> createPolygons(const atools::geo::LineString& linestring, const QRectF& screenRect) const;
   void releasePolygons(const QVector<QPolygonF *>& polygons) const;
 
-  const QVector<QPolygonF *> createPolylines(const atools::geo::LineString& linestring, const QRectF& screenRect) const;
+  const QVector<QPolygonF *> createPolylines(const atools::geo::LineString& linestring, const QRectF& screenRect,
+                                             bool splitLongLines) const;
   void releasePolylines(const QVector<QPolygonF *>& polylines) const;
 
   /*  Determines whether a geographical feature is big enough so that it should
@@ -147,19 +143,18 @@ public:
   bool resolves(const atools::geo::Rect& rect) const;
   bool resolves(const atools::geo::Line& line) const;
 
-  /* Shortcuts for more readable code */
-  static Q_DECL_CONSTEXPR Marble::GeoDataCoordinates::Unit DEG = Marble::GeoDataCoordinates::Degree;
-  static Q_DECL_CONSTEXPR Marble::GeoDataCoordinates::BearingType INITBRG = Marble::GeoDataCoordinates::InitialBearing;
-  static Q_DECL_CONSTEXPR Marble::GeoDataCoordinates::BearingType FINALBRG = Marble::GeoDataCoordinates::FinalBearing;
+  bool wToSPoints(const atools::geo::Pos& pos, QVector<double>& x, double& y, const QSize& size, bool *isHidden) const;
+  bool wToSPoints(const atools::geo::Pos& pos, QVector<float>& x, float& y, const QSize& size, bool *isHidden) const;
+  bool wToSPoints(const Marble::GeoDataCoordinates& coords, QVector<double>& x, double& y, const QSize& size, bool *isHidden) const;
 
 private:
   bool wToSInternal(const Marble::GeoDataCoordinates& coords, double& x, double& y, const QSize& size, bool *isHidden) const;
 
   const QVector<QPolygonF *> createPolygonsInternal(const atools::geo::LineString& linestring, const QRectF& screenRect) const;
-  const QVector<QPolygonF *> createPolylinesInternal(const atools::geo::LineString& linestring, const QRectF& screenRect) const;
+  const QVector<QPolygonF *> createPolylinesInternal(const atools::geo::LineString& linestring, const QRectF& screenRect,
+                                                     bool splitLongLines) const;
 
   const Marble::ViewportParams *viewport;
-
 };
 
 #endif // LITTLENAVMAP_COORDINATECONVERTER_H

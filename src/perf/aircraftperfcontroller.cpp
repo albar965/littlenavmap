@@ -1404,10 +1404,10 @@ void AircraftPerfController::restoreState()
   fileHistory->restoreState();
 
   // Load last used performance file or the one passed on the command line
-  if(!NavApp::isSafeMode())
+  if(!atools::gui::Application::isSafeMode())
   {
     QString perfFile;
-    fc::fromStartupProperties(NavApp::getStartupOptionsConst(), nullptr, nullptr, &perfFile);
+    fc::fromStartupProperties(atools::gui::Application::getStartupOptionsConst(), nullptr, nullptr, &perfFile);
 
     if(perfFile.isEmpty() && OptionData::instance().getFlags() & opts::STARTUP_LOAD_PERF)
       perfFile = settings.valueStr(lnm::AIRCRAFT_PERF_FILENAME);
@@ -1432,7 +1432,7 @@ void AircraftPerfController::restoreState()
   perfHandler->setCruiseAltitude(cruiseAlt());
   perfHandler->start();
 
-  if(!NavApp::isSafeMode())
+  if(!atools::gui::Application::isSafeMode())
   {
     QString defaultFilename = atools::settings::Settings::getConfigFilename(lnm::PERF_COLLECTED_SUFFIX);
     if(atools::checkFile(Q_FUNC_INFO, defaultFilename))

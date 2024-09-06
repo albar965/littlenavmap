@@ -18,10 +18,13 @@
 #ifndef LNM_ROUTELABEL_H
 #define LNM_ROUTELABEL_H
 
+#include "util/flags.h"
+
 #include <QObject>
 
 class QString;
 class Route;
+class RouteLeg;
 
 namespace map {
 
@@ -37,7 +40,7 @@ class HtmlBuilder;
 namespace routelabel {
 
 /* Flag which defines header and footer content. */
-enum LabelFlag
+enum LabelFlag : quint32
 {
   HEADER_AIRPORTS = 1 << 0,
   HEADER_DEPARTURE = 1 << 1,
@@ -55,8 +58,8 @@ enum LabelFlag
               HEADER_RUNWAY_LAND | HEADER_RUNWAY_LAND_WIND | HEADER_DISTTIME | FOOTER_SELECTION | FOOTER_ERROR
 };
 
-Q_DECLARE_FLAGS(LabelFlags, LabelFlag)
-Q_DECLARE_OPERATORS_FOR_FLAGS(routelabel::LabelFlags)
+ATOOLS_DECLARE_FLAGS_32(LabelFlags, LabelFlag)
+ATOOLS_DECLARE_OPERATORS_FOR_FLAGS(routelabel::LabelFlags)
 } // namespace label
 
 /*
@@ -117,8 +120,11 @@ private:
   void buildHeaderDepart(atools::util::HtmlBuilder& html, bool widget);
 
   void buildHeaderArrival(atools::util::HtmlBuilder& html, bool widget);
+
   void buildHeaderRunwayLand(atools::util::HtmlBuilder& html, const map::MapRunway& runway, const map::MapRunwayEnd& runwayEnd);
   void buildHeaderRunwayLandWind(atools::util::HtmlBuilder& html, const map::MapRunwayEnd& runwayEnd);
+
+  void buildHeaderRunwayWind(atools::util::HtmlBuilder& html, const map::MapRunwayEnd& runwayEnd, const RouteLeg& leg);
 
   void buildHeaderTocTod(atools::util::HtmlBuilder& html); /* Only for print and HTML export */
   void buildErrorLabel(QString& toolTipText, QStringList errors, const QString& header);

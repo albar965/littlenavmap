@@ -18,6 +18,7 @@
 #include "search/airportsearch.h"
 
 #include "airporticondelegate.h"
+#include "app/navapp.h"
 #include "atools.h"
 #include "common/constants.h"
 #include "common/mapcolors.h"
@@ -32,17 +33,17 @@
 #include "gui/mainwindow.h"
 #include "gui/widgetstate.h"
 #include "gui/widgetutil.h"
-#include "app/navapp.h"
 #include "query/airportquery.h"
+#include "query/mapquery.h"
+#include "query/querymanager.h"
+#include "route/route.h"
 #include "search/column.h"
 #include "search/columnlist.h"
-#include "search/sqlmodel.h"
 #include "search/randomdepartureairportpickingbycriteria.h"
 #include "search/sqlcontroller.h"
+#include "search/sqlmodel.h"
 #include "settings/settings.h"
-#include "sql/sqlrecord.h"
 #include "ui_mainwindow.h"
-#include "route/route.h"
 
 #include <QProgressDialog>
 #include <QStringBuilder>
@@ -408,7 +409,7 @@ void AirportSearch::saveState()
 void AirportSearch::restoreState()
 {
   atools::gui::WidgetState widgetState(lnm::SEARCHTAB_AIRPORT_WIDGET);
-  if(OptionData::instance().getFlags() & opts::STARTUP_LOAD_SEARCH && !NavApp::isSafeMode())
+  if(OptionData::instance().getFlags().testFlag(opts::STARTUP_LOAD_SEARCH) && !atools::gui::Application::isSafeMode())
   {
     widgetState.restore(airportSearchWidgets);
 
@@ -553,47 +554,25 @@ void AirportSearch::getSelectedMapObjects(map::MapResult& result) const
   if(!ui->dockWidgetSearch->isVisible())
     return;
 
-  const QString idColumnName = columns->getIdColumnName();
-
-  // Build a SQL record with three fields
-  atools::sql::SqlRecord rec;
-  rec.appendField(idColumnName, QVariant::Int);
-  rec.appendField("lonx", QVariant::Double);
-  rec.appendField("laty", QVariant::Double);
-  rec.appendField("rating", QVariant::Int);
-
-  MapTypesFactory factory;
-  AirportQuery *airportQueryNav = NavApp::getAirportQueryNav();
+  AirportQuery *airportQueryNav = QueryManager::instance()->getQueriesGui()->getAirportQueryNav();
 
   // Fill the result with incomplete airport objects (only id and lat/lon)
   const QItemSelection& selection = controller->getSelection();
-  int range = 0;
   for(const QItemSelectionRange& rng :  selection)
   {
     for(int row = rng.top(); row <= rng.bottom(); ++row)
     {
-      map::MapAirport airport;
-      QVariant idVar = controller->getRawData(row, idColumnName);
+      QVariant idVar = controller->getRawData(row, columns->getIdColumnName());
       if(idVar.isValid())
       {
-        rec.setValue(0, idVar);
-        rec.setValue(1, controller->getRawData(row, "lonx"));
-        rec.setValue(2, controller->getRawData(row, "laty"));
-        rec.setValue(3, controller->getRawData(row, "rating"));
+        mapQuery->getMapObjectById(result, map::AIRPORT, map::AIRSPACE_SRC_NONE, idVar.toInt(), false /* airportFromNavDatabase */);
 
-#ifdef DEBUG_INFORMATION_SELECTION
-        qDebug() << Q_FUNC_INFO << "range" << range << "row" << row << rec;
-#endif
-        // Not fully populated
-        factory.fillAirport(rec, airport, false /* complete */, false /* nav */, NavApp::isAirportDatabaseXPlane(false /* navdata */));
-        airportQueryNav->correctAirportProcedureFlag(airport);
-
-        result.airports.append(airport);
+        if(result.hasAirports())
+          airportQueryNav->correctAirportProcedureFlag(result.airports.first());
       }
       else
-        qWarning() << Q_FUNC_INFO << "Invalid selection: range" << range << "row" << row << "col" << idColumnName << idVar;
+        qWarning() << Q_FUNC_INFO << "Invalid selection: range" << row << "col" << columns->getIdColumnName() << idVar;
     }
-    range++;
   }
 }
 
@@ -725,15 +704,20 @@ void AirportSearch::randomFlightClicked(bool showDialog)
 
   if(showDialog)
   {
+    // Keep ids stable since they are used to save state
     // Method called by user click and not "Search again" - show selection dialog
     enum {RANDOM_ALL, RANDOM_FIXED_DEPARTURE, RANDOM_FIXED_DESTINATION, RANDOM_BUTTON_GROUP};
 
-    QString label = tr("Let create a new flight plan for a single flight from an airport chosen at random from the airport search result table to an airport chosen at random from the airport search result table.\n"
-                       "Modify the selection criteria to your liking by setting the controls in the airport search result panel to values you like, for example runway length minimum to 1,000 ft.");
+    QString label =
+      tr(
+        "<p>Create a new flight plan from a destination and departure airport chosen at random from the airport search result table.</p>"
+          "<p>Modify the selection criteria to your liking by setting the controls in the airport search result panel to values you like, for example runway length minimum to 1,000 ft.</p>"
+            "<p>Add an airport to the flight plan table to use it as a fixed departure or destination.</p>");
 
     // Adjust label if plan is empty or not valid
     if(!departureAirport.isValid() && !destinationAirport.isValid())
-      label += tr( "\n\nAdd a departure or destination airport to your current flight plan if you wish to have that fixed instead of random.");
+      label +=
+        tr("\n\nAdd a departure or destination airport to your current flight plan if you wish to have that fixed instead of random.");
 
     // Build selection dialog ===========================================================
     atools::gui::ChoiceDialog choiceDialog(mainWindow, QCoreApplication::applicationName() % tr(" - Random Flight"), label,
@@ -795,9 +779,9 @@ void AirportSearch::randomFlightClicked(bool showDialog)
                                   tr("Let select only a departure airport from\n"
                                      "airport search result table at random."));
 
-      choiceDialog.disableButton(RANDOM_ALL);
-      choiceDialog.disableButton(RANDOM_FIXED_DEPARTURE);
-      choiceDialog.disableButton(RANDOM_FIXED_DESTINATION);
+      choiceDialog.disableWidget(RANDOM_ALL);
+      choiceDialog.disableWidget(RANDOM_FIXED_DEPARTURE);
+      choiceDialog.disableWidget(RANDOM_FIXED_DESTINATION);
     }
 
     choiceDialog.addSpacer();
@@ -926,7 +910,7 @@ void AirportSearch::dataRandomAirportsReceived(bool isSuccess, int indexDepartur
       QString text;
       if(!data->isEmpty())
       {
-        AirportQuery *airportQuery = NavApp::getAirportQuerySim();
+        AirportQuery *airportQuery = QueryManager::instance()->getQueriesGui()->getAirportQuerySim();
         airportDeparture = airportQuery->getAirportById(data->at(indexDeparture).first);
         airportDestination = airportQuery->getAirportById(data->at(indexDestination).first);
 

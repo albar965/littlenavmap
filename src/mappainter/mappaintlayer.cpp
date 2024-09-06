@@ -17,13 +17,15 @@
 
 #include "mappainter/mappaintlayer.h"
 
+#include "app/navapp.h"
 #include "common/constants.h"
 #include "common/mapcolors.h"
 #include "geo/calculations.h"
+#include "geo/marbleconverter.h"
 #include "mapgui/maplayersettings.h"
 #include "mapgui/mapscale.h"
 #include "mapgui/mapwidget.h"
-#include "mappainter/mappainteraircraft.h"
+#include "mappainter/mappainteraiaircraft.h"
 #include "mappainter/mappainterairport.h"
 #include "mappainter/mappainterairspace.h"
 #include "mappainter/mappainteraltitude.h"
@@ -36,9 +38,9 @@
 #include "mappainter/mappaintertop.h"
 #include "mappainter/mappaintertrail.h"
 #include "mappainter/mappainteruser.h"
+#include "mappainter/mappainteruseraircraft.h"
 #include "mappainter/mappainterweather.h"
 #include "mappainter/mappainterwind.h"
-#include "app/navapp.h"
 #include "options/optiondata.h"
 #include "route/route.h"
 #include "settings/settings.h"
@@ -70,7 +72,8 @@ MapPaintLayer::MapPaintLayer(MapPaintWidget *widget)
   mapPainterAirspace = new MapPainterAirspace(mapPaintWidget, mapScale, &context);
   mapPainterMark = new MapPainterMark(mapPaintWidget, mapScale, &context);
   mapPainterRoute = new MapPainterRoute(mapPaintWidget, mapScale, &context);
-  mapPainterAircraft = new MapPainterAircraft(mapPaintWidget, mapScale, &context);
+  mapPainterUserAircraft = new MapPainterUserAircraft(mapPaintWidget, mapScale, &context);
+  mapPainterAiAircraft = new MapPainterAiAircraft(mapPaintWidget, mapScale, &context);
   mapPainterTrail = new MapPainterTrail(mapPaintWidget, mapScale, &context);
   mapPainterShip = new MapPainterShip(mapPaintWidget, mapScale, &context);
   mapPainterUser = new MapPainterUser(mapPaintWidget, mapScale, &context);
@@ -80,8 +83,8 @@ MapPaintLayer::MapPaintLayer(MapPaintWidget *widget)
   mapPainterTop = new MapPainterTop(mapPaintWidget, mapScale, &context);
 
   // Default for visible object types
-  objectTypes = map::MapTypes(map::AIRPORT_DEFAULT) | map::MapTypes(map::VOR) | map::MapTypes(map::NDB) | map::MapTypes(map::AP_ILS) |
-                map::MapTypes(map::MARKER) | map::MapTypes(map::WAYPOINT);
+  objectTypes = map::AIRPORT_DEFAULT | map::VOR | map::NDB | map::ILS | map::MARKER | map::WAYPOINT;
+
   objectDisplayTypes = map::DISPLAY_TYPE_NONE;
 }
 
@@ -94,7 +97,8 @@ MapPaintLayer::~MapPaintLayer()
   delete mapPainterAirspace;
   delete mapPainterMark;
   delete mapPainterRoute;
-  delete mapPainterAircraft;
+  delete mapPainterUserAircraft;
+  delete mapPainterAiAircraft;
   delete mapPainterTrail;
   delete mapPainterShip;
   delete mapPainterUser;
@@ -116,7 +120,7 @@ void MapPaintLayer::copySettings(const MapPaintLayer& other)
   sunShading = other.sunShading;
 
   // Updates layers too
-  setDetailLevel(other.detailLevel);
+  setDetailLevel(other.detailLevel, other.detailLevelText);
 }
 
 void MapPaintLayer::preDatabaseLoad()
@@ -156,74 +160,77 @@ void MapPaintLayer::setShowAirspaces(map::MapAirspaceFilter types)
   airspaceTypes = types;
 }
 
-void MapPaintLayer::setDetailLevel(int level)
+void MapPaintLayer::setDetailLevel(int level, int levelText)
 {
   detailLevel = level;
+  detailLevelText = levelText;
   updateLayers();
 }
 
-const map::MapAirspaceFilter MapPaintLayer::getShownAirspacesTypesByLayer() const
+const map::MapAirspaceFilter MapPaintLayer::getShownAirspacesTypesForLayer() const
 {
   if(mapLayer == nullptr)
     return map::MapAirspaceFilter();
 
   // Mask out all types that are not visible in the current layer
   map::MapAirspaceFilter filter = airspaceTypes;
+  map::MapAirspaceTypes types = filter.types;
   if(!mapLayer->isAirspaceIcao())
-    filter.types &= ~map::AIRSPACE_CLASS_ICAO;
+    types &= ~map::AIRSPACE_CLASS_ICAO;
 
   if(!mapLayer->isAirspaceFg())
-    filter.types &= ~map::AIRSPACE_CLASS_FG;
+    types &= ~map::AIRSPACE_CLASS_FG;
 
   if(!mapLayer->isAirspaceFirUir())
-    filter.types &= ~map::AIRSPACE_FIR_UIR;
+    types &= ~map::AIRSPACE_FIR_UIR;
 
   if(!mapLayer->isAirspaceCenter())
-    filter.types &= ~map::AIRSPACE_CENTER;
+    types &= ~map::AIRSPACE_CENTER;
 
   if(!mapLayer->isAirspaceRestricted())
-    filter.types &= ~map::AIRSPACE_RESTRICTED;
+    types &= ~map::AIRSPACE_RESTRICTED;
 
   if(!mapLayer->isAirspaceSpecial())
-    filter.types &= ~map::AIRSPACE_SPECIAL;
+    types &= ~map::AIRSPACE_SPECIAL;
 
   if(!mapLayer->isAirspaceOther())
-    filter.types &= ~map::AIRSPACE_OTHER;
+    types &= ~map::AIRSPACE_OTHER;
 
   filter.flags.setFlag(map::AIRSPACE_NO_MULTIPLE_Z, OptionData::instance().getFlags().testFlag(opts::MAP_AIRSPACE_NO_MULT_Z));
+  filter.types = types;
 
   return filter;
 }
 
-const map::MapAirspaceTypes MapPaintLayer::getShownAirspaceTextsByLayer() const
+map::MapAirspaceType MapPaintLayer::getShownAirspaceTextsByLayer() const
 {
   map::MapAirspaceTypes types = map::AIRSPACE_NONE;
 
-  if(mapLayer != nullptr)
+  if(mapLayerText != nullptr)
   {
-    if(mapLayer->isAirspaceIcaoText())
+    if(mapLayerText->isAirspaceIcaoText())
       types |= map::AIRSPACE_CLASS_ICAO;
 
-    if(mapLayer->isAirspaceFgText())
+    if(mapLayerText->isAirspaceFgText())
       types |= map::AIRSPACE_CLASS_FG;
 
-    if(mapLayer->isAirspaceFirUirText())
+    if(mapLayerText->isAirspaceFirUirText())
       types |= map::AIRSPACE_FIR_UIR;
 
-    if(mapLayer->isAirspaceCenterText())
+    if(mapLayerText->isAirspaceCenterText())
       types |= map::AIRSPACE_CENTER;
 
-    if(mapLayer->isAirspaceRestrictedText())
+    if(mapLayerText->isAirspaceRestrictedText())
       types |= map::AIRSPACE_RESTRICTED;
 
-    if(mapLayer->isAirspaceSpecialText())
+    if(mapLayerText->isAirspaceSpecialText())
       types |= map::AIRSPACE_SPECIAL;
 
-    if(mapLayer->isAirspaceOtherText())
+    if(mapLayerText->isAirspaceOtherText())
       types |= map::AIRSPACE_OTHER;
   }
 
-  return types;
+  return types.asEnum();
 }
 
 void MapPaintLayer::initQueries()
@@ -235,7 +242,8 @@ void MapPaintLayer::initQueries()
   mapPainterAirspace->initQueries();
   mapPainterMark->initQueries();
   mapPainterRoute->initQueries();
-  mapPainterAircraft->initQueries();
+  mapPainterUserAircraft->initQueries();
+  mapPainterAiAircraft->initQueries();
   mapPainterTrail->initQueries();
   mapPainterShip->initQueries();
   mapPainterUser->initQueries();
@@ -263,14 +271,18 @@ void MapPaintLayer::initMapLayerSettings()
 void MapPaintLayer::updateLayers()
 {
   if(noRender())
-    mapLayerEffective = mapLayer = mapLayerRoute = nullptr;
+    mapLayerEffective = mapLayer = mapLayerText = mapLayerRoute = mapLayerRouteText = nullptr;
   else
   {
     float distKm = static_cast<float>(mapPaintWidget->distance());
     // Get the uncorrected effective layer - route painting is independent of declutter
     mapLayerEffective = layers->getLayer(distKm);
+
     mapLayer = layers->getLayer(distKm, detailLevel);
+    mapLayerText = layers->getLayer(distKm, detailLevelText);
+
     mapLayerRoute = layers->getLayer(distKm, detailLevel + 1);
+    mapLayerRouteText = layers->getLayer(distKm, detailLevelText + 1);
   }
 }
 
@@ -322,13 +334,15 @@ bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport, const 
       context.shownDetailAirportIds = &shownDetailAirportIds;
       context.route = &NavApp::getRouteConst();
       context.mapLayer = mapLayer;
+      context.mapLayerText = mapLayerText;
       context.mapLayerRoute = mapLayerRoute;
+      context.mapLayerRouteText = mapLayerRouteText;
       context.mapLayerEffective = mapLayerEffective;
       context.painter = painter;
       context.viewport = viewport;
       context.objectTypes = objectTypes;
       context.objectDisplayTypes = objectDisplayTypes;
-      context.airspaceFilterByLayer = getShownAirspacesTypesByLayer();
+      context.airspaceFilterByLayer = getShownAirspacesTypesForLayer();
       context.airspaceTextsByLayer = getShownAirspaceTextsByLayer();
       context.viewContext = mapPaintWidget->viewContext();
       context.drawFast = mapScrollDetail == opts::DETAIL_LOW && mapPaintWidget->viewContext() == Marble::Animation;
@@ -353,11 +367,7 @@ bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport, const 
       context.defaultFont = painter->font();
       painter->setFont(context.defaultFont);
 
-      const GeoDataLatLonAltBox& box = viewport->viewLatLonAltBox();
-      context.viewportRect = atools::geo::Rect(box.west(GeoDataCoordinates::Degree),
-                                               box.north(GeoDataCoordinates::Degree),
-                                               box.east(GeoDataCoordinates::Degree),
-                                               box.south(GeoDataCoordinates::Degree));
+      context.viewportRect = mconvert::fromGdc(viewport->viewLatLonAltBox());
 
       context.screenRect = mapPaintWidget->rect();
 
@@ -595,9 +605,9 @@ bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport, const 
       if(!context.isObjectOverflow())
         mapPainterTrail->render();
 
-      mapPainterAircraft->render();
-
       mapPainterMark->render();
+      mapPainterAiAircraft->render();
+      mapPainterUserAircraft->render();
 
       resetNoAntiAliasFont();
       context.endTimer("All");

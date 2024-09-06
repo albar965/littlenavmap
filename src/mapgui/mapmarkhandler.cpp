@@ -52,11 +52,8 @@ void MapMarkHandler::saveState()
 
 void MapMarkHandler::restoreState()
 {
-  if(OptionData::instance().getFlags() & opts::STARTUP_LOAD_MAP_SETTINGS)
-  {
-    QVariant defaultValue = static_cast<atools::util::FlagType>(map::MARK_ALL);
-    markTypes = atools::settings::Settings::instance().valueVar(lnm::MAP_MARK_DISPLAY, defaultValue).value<atools::util::FlagType>();
-  }
+  if(OptionData::instance().getFlags().testFlag(opts::STARTUP_LOAD_MAP_SETTINGS))
+    markTypes = atools::settings::Settings::instance().valueVar(lnm::MAP_MARK_DISPLAY, map::MARK_ALL).value<map::MapTypes::FlagType>();
   flagsToActions();
 }
 
@@ -261,6 +258,7 @@ void MapMarkHandler::clearRangeRingsAndDistanceMarkers(bool quiet, map::MapTypes
 
 void MapMarkHandler::routeResetAll()
 {
+  // Keep ids stable since they are used to save state
   enum
   {
     EMPTY_FLIGHT_PLAN, DELETE_TRAIL, DELETE_ACTIVE_LEG, RESTART_PERF, RESTART_LOGBOOK, REMOVE_MARK_RANGE, REMOVE_MARK_DISTANCE,
@@ -269,7 +267,6 @@ void MapMarkHandler::routeResetAll()
 
   qDebug() << Q_FUNC_INFO;
 
-  // Create a dialog with four checkboxes
   atools::gui::ChoiceDialog choiceDialog(mainWindow, QCoreApplication::applicationName() + tr(" - Reset for new Flight"),
                                          tr("Select items to reset for a new flight"), lnm::RESET_FOR_NEW_FLIGHT_DIALOG, "RESET.html");
   choiceDialog.setHelpOnlineUrl(lnm::helpOnlineUrl);
@@ -295,6 +292,8 @@ void MapMarkHandler::routeResetAll()
   choiceDialog.addCheckBox(REMOVE_MARK_PATTERNS, tr("&Traffic patterns"), QString(), false /* checked */);
   choiceDialog.addCheckBox(REMOVE_MARK_MSA, tr("&MSA diagrams"), QString(), false /* checked */);
   choiceDialog.addSpacer();
+  choiceDialog.setRequiredAnyChecked({EMPTY_FLIGHT_PLAN, DELETE_TRAIL, DELETE_ACTIVE_LEG, RESTART_PERF, RESTART_LOGBOOK, REMOVE_MARK_RANGE,
+                                      REMOVE_MARK_DISTANCE, REMOVE_MARK_HOLDING, REMOVE_MARK_PATTERNS, REMOVE_MARK_MSA});
 
   choiceDialog.restoreState();
 
