@@ -334,9 +334,8 @@ public:
   /* true if flight plan was loaded in LNMPLN format. Otherwise imported from PLN, FMS, etc. */
   bool isLnmFormatFlightplan() const;
 
-  /* Get error messages from route parsing */
-  bool hasErrors() const;
   QStringList getErrorStrings() const;
+  QStringList getMinorErrorStrings() const;
 
   /* Update header label with sim information */
   void updateRemarkHeader();

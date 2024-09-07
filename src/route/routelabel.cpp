@@ -610,14 +610,19 @@ void RouteLabel::buildHeaderDistTime(atools::util::HtmlBuilder& html, bool widge
 void RouteLabel::updateFooterErrorLabel()
 {
   QString toolTipText;
+  RouteController *routeController = NavApp::getRouteController();
+
+  QStringList routeErrors;
+  if(isFlag(routelabel::FOOTER_ERROR_MINOR))
+    routeErrors.append(routeController->getMinorErrorStrings());
+  routeErrors.append(routeController->getErrorStrings());
 
   if(isFlag(routelabel::FOOTER_ERROR))
   {
     // Collect errors from all controllers =================================
 
     // Flight plan ============
-    RouteController *routeController = NavApp::getRouteController();
-    buildErrorLabel(toolTipText, routeController->getErrorStrings(),
+    buildErrorLabel(toolTipText, routeErrors,
                     tr("<nobr><b>Problems on tab \"Flight Plan\":</b></nobr>", "Synchronize name with tab name"));
 
     // Elevation profile ============

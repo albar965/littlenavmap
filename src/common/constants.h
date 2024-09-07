@@ -215,7 +215,7 @@ const QLatin1String NAVCONNECT_DIALOG("NavConnect/ConnectDialog");
 
 const QLatin1String ROUTE_FILENAME("Route/Filename");
 const QLatin1String ROUTE_DEFAULT_FILE_LNMPLN("Route/DefaultLnmpln");
-const QLatin1String ROUTE_HEADER_FOOTER_FLAGS("Route/HeaderFooterFlags");
+const QLatin1String ROUTE_HEADER_FOOTER_FLAGS("Route/HeaderFooterFlags2");
 
 const QLatin1String ROUTE_FILENAMES_RECENT("Route/FilenamesRecent");
 const QLatin1String ROUTE_FILENAMESKML_RECENT("Route/FilenamesKmlRecent");

@@ -132,7 +132,8 @@ enum RouteColumns
   HEADER_LAND_WIND,
 
   FOOTER_SELECTION = 1500,
-  FOOTER_ERROR
+  FOOTER_ERROR,
+  FOOTER_ERROR_MINOR
 };
 
 /* Default columns which are shown on first startup. Others are hidden. */
@@ -2638,6 +2639,9 @@ void RouteController::routeTableOptions()
                       tr("Show error messages for flight plan elements like missing airports and more.\n"
                          "It is strongly recommended to keep the error label enabled."),
                       routeLabel->isFlag(routelabel::FOOTER_ERROR));
+  treeDialog.addItem2(footerItem, rcol::FOOTER_ERROR_MINOR, tr("Error Messages about parking"),
+                      tr("Show minor error messages for parking spots in the flight plan missing at the airport."),
+                      routeLabel->isFlag(routelabel::FOOTER_ERROR_MINOR));
 
   // Add column names and description texts to tree ====================
   QTreeWidgetItem *tableItem = treeDialog.addTopItem1(tr("Flight plan table columns"));
@@ -2672,6 +2676,7 @@ void RouteController::routeTableOptions()
 
     routeLabel->setFlag(routelabel::FOOTER_SELECTION, treeDialog.isItemChecked(rcol::FOOTER_SELECTION));
     routeLabel->setFlag(routelabel::FOOTER_ERROR, treeDialog.isItemChecked(rcol::FOOTER_ERROR));
+    routeLabel->setFlag(routelabel::FOOTER_ERROR_MINOR, treeDialog.isItemChecked(rcol::FOOTER_ERROR_MINOR));
 
     // Update all =====================
     updateModelTimeFuelWindAlt();
@@ -5787,44 +5792,52 @@ void RouteController::updateModelHighlightsAndErrors()
   }
 }
 
-bool RouteController::hasErrors() const
-{
-  return !flightplanErrors.isEmpty() || !procedureErrors.isEmpty() || !alternateErrors.isEmpty() || !parkingErrors.isEmpty();
-}
-
 QStringList RouteController::getErrorStrings() const
 {
-  QStringList toolTip;
-  if(hasErrors())
+  QStringList errorText;
+  if(!flightplanErrors.isEmpty() || !procedureErrors.isEmpty() || !alternateErrors.isEmpty())
   {
-    toolTip.append(flightplanErrors);
-    toolTip.append(parkingErrors);
+    errorText.append(flightplanErrors);
 
     if(!procedureErrors.isEmpty())
     {
-      toolTip.append(tr("Cannot load %1: %2").
-                     arg(procedureErrors.size() > 1 ? tr("procedures") : tr("procedure")).
-                     arg(procedureErrors.join(tr(", "))));
-      toolTip.append(tr("Save and reload flight plan or select new procedures to fix this."));
+      errorText.append(tr("Cannot load %1: %2").
+                       arg(procedureErrors.size() > 1 ? tr("procedures") : tr("procedure")).
+                       arg(procedureErrors.join(tr(", "))));
+      errorText.append(tr("Save and reload flight plan or select new procedures to fix this."));
     }
 
     if(!alternateErrors.isEmpty())
-      toolTip.append(tr("Cannot load %1: %2").
-                     arg(alternateErrors.size() > 1 ? tr("alternates") : tr("alternate")).
-                     arg(alternateErrors.join(tr(", "))));
+      errorText.append(tr("Cannot load %1: %2").
+                       arg(alternateErrors.size() > 1 ? tr("alternates") : tr("alternate")).
+                       arg(alternateErrors.join(tr(", "))));
 
     if(trackErrors)
-      toolTip.append(tr("Download oceanic tracks in menu \"Flight Plan\"\n"
-                        "or calculate the flight plan again if the flight plan uses tracks.",
-                        "Keep in sync with menu names"));
+      errorText.append(tr("Download oceanic tracks in menu \"Flight Plan\"\n"
+                          "or calculate the flight plan again if the flight plan uses tracks.",
+                          "Keep in sync with menu names"));
   }
 
 #ifdef DEBUG_INFORMATION
-  if(!toolTip.isEmpty())
-    qDebug() << Q_FUNC_INFO << toolTip;
+  if(!errorText.isEmpty())
+    qDebug() << Q_FUNC_INFO << errorText;
 #endif
 
-  return toolTip;
+  return errorText;
+}
+
+QStringList RouteController::getMinorErrorStrings() const
+{
+  QStringList errorText;
+  if(!parkingErrors.isEmpty())
+    errorText.append(parkingErrors);
+
+#ifdef DEBUG_INFORMATION
+  if(!errorText.isEmpty())
+    qDebug() << Q_FUNC_INFO << errorText;
+#endif
+
+  return errorText;
 }
 
 void RouteController::flightplanLabelLinkActivated(const QString& link)
