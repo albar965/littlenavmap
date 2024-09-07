@@ -425,13 +425,15 @@ void MapPainterAirport::drawAirportDiagram(const map::MapAirport& airport)
   }
 
   // Draw taxiways ==================================================
-  if(mapLayer->isAirportDiagram() && context->dOptAp(optsd::ITEM_AIRPORT_DETAIL_TAXI))
+  if(mapLayer->isAirportDiagram() &&
+     (context->dOptAp(optsd::ITEM_AIRPORT_DETAIL_TAXI) || context->dOptAp(optsd::ITEM_AIRPORT_DETAIL_TAXI_LINE) ||
+      context->dOptAp(optsd::ITEM_AIRPORT_DETAIL_TAXI_NAME)))
   {
     painter->setBackgroundMode(Qt::OpaqueMode);
     QVector<QPoint> startPts, endPts;
     QVector<int> pathThickness;
 
-    // Collect coordinates first
+    // Collect coordinates first ===========================================
     const QList<MapTaxiPath> *taxipaths = queries->getAirportQuerySim()->getTaxiPaths(airport.id);
     for(const MapTaxiPath& taxipath : *taxipaths)
     {
@@ -447,49 +449,52 @@ void MapPainterAirport::drawAirportDiagram(const map::MapAirport& airport)
         pathThickness.append(std::max(2, scale->getPixelIntForFeet(taxipath.width)));
     }
 
-    // Draw closed and other taxi paths first to have real taxiways on top
-    for(int i = 0; i < taxipaths->size(); i++)
+    if(context->dOptAp(optsd::ITEM_AIRPORT_DETAIL_TAXI))
     {
-      const MapTaxiPath& taxipath = taxipaths->at(i);
-      int thickness = pathThickness.at(i);
-
-      if(thickness > 0)
+      // Draw closed and other taxi paths first to have real taxiways on top
+      for(int i = 0; i < taxipaths->size(); i++)
       {
-        QColor col = mapcolors::colorForSurface(taxipath.surface);
+        const MapTaxiPath& taxipath = taxipaths->at(i);
+        int thickness = pathThickness.at(i);
 
-        const QPoint& start = startPts.at(i);
-        const QPoint& end = endPts.at(i);
-
-        if(taxipath.closed)
+        if(thickness > 0)
         {
-          painter->setPen(QPen(col, thickness, Qt::SolidLine, Qt::RoundCap));
-          painter->drawLine(start, end);
+          QColor col = mapcolors::colorForSurface(taxipath.surface);
 
-          painter->setPen(QPen(mapcolors::taxiwayClosedBrush, thickness, Qt::SolidLine, Qt::RoundCap));
-          painter->drawLine(start, end);
+          const QPoint& start = startPts.at(i);
+          const QPoint& end = endPts.at(i);
 
-        }
-        else if(!taxipath.drawSurface)
-        {
-          painter->setPen(QPen(QBrush(col, Qt::Dense4Pattern), thickness, Qt::SolidLine, Qt::RoundCap));
-          painter->drawLine(start, end);
+          if(taxipath.closed)
+          {
+            painter->setPen(QPen(col, thickness, Qt::SolidLine, Qt::RoundCap));
+            painter->drawLine(start, end);
+
+            painter->setPen(QPen(mapcolors::taxiwayClosedBrush, thickness, Qt::SolidLine, Qt::RoundCap));
+            painter->drawLine(start, end);
+
+          }
+          else if(!taxipath.drawSurface)
+          {
+            painter->setPen(QPen(QBrush(col, Qt::Dense4Pattern), thickness, Qt::SolidLine, Qt::RoundCap));
+            painter->drawLine(start, end);
+          }
         }
       }
-    }
 
-    // Draw real taxiways
-    for(int i = 0; i < taxipaths->size(); i++)
-    {
-      const MapTaxiPath& taxipath = taxipaths->at(i);
-      if(!taxipath.closed && taxipath.drawSurface && pathThickness.at(i) > 0)
+      // Draw real taxiways ===========================================
+      for(int i = 0; i < taxipaths->size(); i++)
       {
-        painter->setPen(QPen(mapcolors::colorForSurface(taxipath.surface), pathThickness.at(i), Qt::SolidLine, Qt::RoundCap));
-        painter->drawLine(startPts.at(i), endPts.at(i));
+        const MapTaxiPath& taxipath = taxipaths->at(i);
+        if(!taxipath.closed && taxipath.drawSurface && pathThickness.at(i) > 0)
+        {
+          painter->setPen(QPen(mapcolors::colorForSurface(taxipath.surface), pathThickness.at(i), Qt::SolidLine, Qt::RoundCap));
+          painter->drawLine(startPts.at(i), endPts.at(i));
+        }
       }
-    }
+    } // if(context->dOptAp(optsd::ITEM_AIRPORT_DETAIL_TAXI))
 
-    // Draw center lines - also for X-Plane on the pavement
-    if(!fast && mapLayerEffective->isAirportDiagramDetail())
+    // Draw center lines - also for X-Plane on the pavement ===========================================
+    if(!fast && mapLayerEffective->isAirportDiagramDetail() && context->dOptAp(optsd::ITEM_AIRPORT_DETAIL_TAXI_LINE))
     {
       for(int i = 0; i < taxipaths->size(); i++)
       {
@@ -499,7 +504,7 @@ void MapPainterAirport::drawAirportDiagram(const map::MapAirport& airport)
     }
 
     // Draw taxiway names ==================================================
-    if(!fast && mapLayerEffective->isAirportDiagramDetail())
+    if(!fast && mapLayerEffective->isAirportDiagramDetail() && context->dOptAp(optsd::ITEM_AIRPORT_DETAIL_TAXI_NAME))
     {
       context->szFont(context->textSizeAirportTaxiway);
 
@@ -553,7 +558,7 @@ void MapPainterAirport::drawAirportDiagram(const map::MapAirport& airport)
           }
         }
       } // for(QString taxiname : map.keys())
-    } // if(!fast && mapLayerEffective->isAirportDiagramDetail())
+    } // if(!fast && mapLayerEffective->isAirportDiagramDetail() && context->dOptAp(optsd::ITEM_AIRPORT_DETAIL_TAXI_NAME))
   } // if(mapLayer->isAirportDiagram() && context->dOptAp(optsd::ITEM_AIRPORT_DETAIL_TAXI))
 
   // Draw runway overrun and blast pads ==================================================

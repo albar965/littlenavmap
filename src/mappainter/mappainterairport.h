@@ -59,7 +59,7 @@ private:
   /* Draws the full airport diagram including runway, taxiways, apron, parking and more */
   void drawAirportDiagram(const map::MapAirport& airport);
 
-  /* Draws the full airport diagram including runway, taxiways, apron, parking and more */
+  /* Draws the full white airport diagram background including runway, taxiways, apron, parking and more */
   void drawAirportDiagramBackground(const map::MapAirport& airport);
 
   /* Draw airport runway overview as in VFR maps (runways with white fill) */
