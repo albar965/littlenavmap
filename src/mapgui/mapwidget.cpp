@@ -516,7 +516,7 @@ void MapWidget::jumpBackToAircraftTimeout(const atools::geo::Pos& pos)
      OptionData::instance().getFlags2().testFlag(opts2::ROUTE_NO_FOLLOW_ON_MOVE))
   {
 
-    if(mouseState != mw::NONE || viewContext() == Marble::Animation || contextMenuActive || QToolTip::isVisible())
+    if(mouseState != mapwin::NONE || viewContext() == Marble::Animation || contextMenuActive || QToolTip::isVisible())
       // Restart/extend as long as menu is active, user is dragging around or tooltip is visible
       jumpBack->restart();
     else
@@ -545,7 +545,7 @@ bool MapWidget::event(QEvent *event)
         return QWidget::event(event);
     }
 
-    if(mouseState == mw::NONE)
+    if(mouseState == mapwin::NONE)
     {
       const QHelpEvent *helpEvent = dynamic_cast<const QHelpEvent *>(event);
       if(helpEvent != nullptr)
@@ -674,7 +674,7 @@ void MapWidget::focusOutEvent(QFocusEvent *)
 
   hideTooltip();
 
-  if(!(mouseState & mw::DRAG_POST_MENU))
+  if(!(mouseState & mapwin::DRAG_POST_MENU))
   {
     cancelDragAll();
     setContextMenuPolicy(Qt::DefaultContextMenu);
@@ -712,7 +712,7 @@ void MapWidget::keyPressEvent(QKeyEvent *keyEvent)
   }
   else if(key == Qt::Key_Menu)
   {
-    if(mouseState == mw::NONE)
+    if(mouseState == mapwin::NONE)
       // First menu key press after dragging - enable context menu again
       setContextMenuPolicy(Qt::DefaultContextMenu);
   }
@@ -741,7 +741,7 @@ void MapWidget::keyPressEvent(QKeyEvent *keyEvent)
 
 bool MapWidget::mousePressCheckModifierActions(QMouseEvent *event)
 {
-  if(mouseState != mw::NONE || event->type() != QEvent::MouseButtonRelease || noRender())
+  if(mouseState != mapwin::NONE || event->type() != QEvent::MouseButtonRelease || noRender())
     // Not if dragging or for button release
     return false;
 
@@ -887,19 +887,19 @@ void MapWidget::mousePressEvent(QMouseEvent *event)
 
   // Remember mouse position to check later if mouse was moved during click (drag map scroll)
   mouseMoved = event->pos();
-  if(mouseState & mw::DRAG_ALL)
+  if(mouseState & mapwin::DRAG_ALL)
   {
     if(cursor().shape() != Qt::ArrowCursor)
       setCursor(Qt::ArrowCursor);
 
     if(event->button() == Qt::LeftButton)
       // Done with any dragging
-      mouseState |= mw::DRAG_POST;
+      mouseState |= mapwin::DRAG_POST;
     else if(event->button() == Qt::RightButton)
       // Cancel any dragging
-      mouseState |= mw::DRAG_POST_CANCEL;
+      mouseState |= mapwin::DRAG_POST_CANCEL;
   }
-  else if(mouseState == mw::NONE && event->buttons() & Qt::RightButton)
+  else if(mouseState == mapwin::NONE && event->buttons() & Qt::RightButton)
     // First right click after dragging - enable context menu again
     setContextMenuPolicy(Qt::DefaultContextMenu);
   else
@@ -958,10 +958,10 @@ void MapWidget::mouseReleaseEvent(QMouseEvent *event)
   bool touchArea = touchAreaClicked(event);
   MapScreenIndex *screenIndex = getScreenIndex();
 
-  if(mouseState & mw::DRAG_ROUTE_POINT || mouseState & mw::DRAG_ROUTE_LEG)
+  if(mouseState & mapwin::DRAG_ROUTE_POINT || mouseState & mapwin::DRAG_ROUTE_LEG)
   {
     // End route point dragging
-    if(mouseState & mw::DRAG_POST)
+    if(mouseState & mapwin::DRAG_POST)
     {
       // Ending route dragging - update route
       qreal lon, lat;
@@ -972,25 +972,25 @@ void MapWidget::mouseReleaseEvent(QMouseEvent *event)
 
     // End all dragging
     cancelDragRoute();
-    mouseState = mw::NONE;
+    mouseState = mapwin::NONE;
     setViewContext(Marble::Still);
     update();
   }
-  else if(mouseState.testFlag(mw::DRAG_DIST_NEW_END) || mouseState.testFlag(mw::DRAG_DIST_CHANGE_START) ||
-          mouseState.testFlag(mw::DRAG_DIST_CHANGE_END))
+  else if(mouseState.testFlag(mapwin::DRAG_DIST_NEW_END) || mouseState.testFlag(mapwin::DRAG_DIST_CHANGE_START) ||
+          mouseState.testFlag(mapwin::DRAG_DIST_CHANGE_END))
   {
     // Either new measurement line which is fixed at origin and dragged at end or one of the ends is dragged
     if(!screenIndex->getDistanceMarks().isEmpty())
     {
       setCursor(Qt::ArrowCursor);
-      if(mouseState.testFlag(mw::DRAG_POST))
+      if(mouseState.testFlag(mapwin::DRAG_POST))
       {
         qreal lon, lat;
         bool visible = geoCoordinates(event->pos().x(), event->pos().y(), lon, lat);
         Pos pos(lon, lat);
         if(visible)
         {
-          if(mouseState.testFlag(mw::DRAG_DIST_CHANGE_START))
+          if(mouseState.testFlag(mapwin::DRAG_DIST_CHANGE_START))
           {
             // Update origin of distance measurement line - check if navaid or airport is the new origin and assign label if
             map::MapObjectQueryTypes queryTypes = map::QUERY_NONE;
@@ -1009,13 +1009,13 @@ void MapWidget::mouseReleaseEvent(QMouseEvent *event)
             screenIndex->getAllNearest(event->pos(), screenSearchDistance, result, map::QUERY_NONE);
             fillDistanceMarker(screenIndex->getDistanceMark(currentDistanceMarkerId), pos, result);
           }
-          else if(mouseState.testFlag(mw::DRAG_DIST_CHANGE_END) || mouseState.testFlag(mw::DRAG_DIST_NEW_END))
+          else if(mouseState.testFlag(mapwin::DRAG_DIST_CHANGE_END) || mouseState.testFlag(mapwin::DRAG_DIST_NEW_END))
             // New or end was moved - update coordinates only
             screenIndex->updateDistanceMarkerToPos(currentDistanceMarkerId, pos);
           currentDistanceMarkerId = -1;
         }
       }
-      else if(mouseState & mw::DRAG_POST_CANCEL)
+      else if(mouseState & mapwin::DRAG_POST_CANCEL)
         cancelDragDistance();
     }
     else
@@ -1024,14 +1024,14 @@ void MapWidget::mouseReleaseEvent(QMouseEvent *event)
         setCursor(Qt::ArrowCursor);
     }
 
-    mouseState = mw::NONE;
+    mouseState = mapwin::NONE;
     setViewContext(Marble::Still);
     update();
   }
-  else if(mouseState & mw::DRAG_USER_POINT)
+  else if(mouseState & mapwin::DRAG_USER_POINT)
   {
     // End userpoint dragging
-    if(mouseState & mw::DRAG_POST)
+    if(mouseState & mapwin::DRAG_POST)
     {
       // Ending route dragging - update route
       qreal lon, lat;
@@ -1048,7 +1048,7 @@ void MapWidget::mouseReleaseEvent(QMouseEvent *event)
     cancelDragUserpoint();
 
     // End all dragging
-    mouseState = mw::NONE;
+    mouseState = mapwin::NONE;
     setViewContext(Marble::Still);
     update();
   }
@@ -1063,7 +1063,7 @@ void MapWidget::mouseReleaseEvent(QMouseEvent *event)
     if(currentDistanceMarkerId != -1)
     {
       // Found an end - create a backup and start dragging
-      mouseState = origin ? mw::DRAG_DIST_CHANGE_START : mw::DRAG_DIST_CHANGE_END; // Either change end or origin
+      mouseState = origin ? mapwin::DRAG_DIST_CHANGE_START : mapwin::DRAG_DIST_CHANGE_END; // Either change end or origin
       *distanceMarkerBackup = screenIndex->getDistanceMarks().value(currentDistanceMarkerId);
       setContextMenuPolicy(Qt::PreventContextMenu);
     }
@@ -1086,7 +1086,7 @@ void MapWidget::mouseReleaseEvent(QMouseEvent *event)
             qDebug() << "route point" << routePoint;
 
             // Found a leg - start dragging
-            mouseState = mw::DRAG_ROUTE_POINT;
+            mouseState = mapwin::DRAG_ROUTE_POINT;
 
             routeDragCur = QPoint(event->pos().x(), event->pos().y());
             routeDragFixed.clear();
@@ -1126,7 +1126,7 @@ void MapWidget::mouseReleaseEvent(QMouseEvent *event)
               routeDragLeg = routeLeg;
               qDebug() << "route leg" << routeLeg;
               // Found a leg - start dragging
-              mouseState = mw::DRAG_ROUTE_LEG;
+              mouseState = mapwin::DRAG_ROUTE_LEG;
 
               routeDragCur = QPoint(event->pos().x(), event->pos().y());
 
@@ -1139,7 +1139,7 @@ void MapWidget::mouseReleaseEvent(QMouseEvent *event)
         }
       }
 
-      if(mouseState == mw::NONE && !noRender())
+      if(mouseState == mapwin::NONE && !noRender())
       {
         if(cursor().shape() != Qt::ArrowCursor)
           setCursor(Qt::ArrowCursor);
@@ -1190,7 +1190,7 @@ void MapWidget::mouseDoubleClickEvent(QMouseEvent *event)
     return;
   }
 
-  if(mouseState != mw::NONE)
+  if(mouseState != mapwin::NONE)
     return;
 
   if(touchAreaClicked(event))
@@ -1651,7 +1651,7 @@ bool MapWidget::eventFilter(QObject *obj, QEvent *eventParam)
       mainWindow->updateMapPosLabel(Pos(), -1, -1);
   }
 
-  if(eventParam->type() == QEvent::MouseMove && mouseState != mw::NONE)
+  if(eventParam->type() == QEvent::MouseMove && mouseState != mapwin::NONE)
   {
     // Do not allow mouse scrolling during drag actions
     eventParam->accept();
@@ -1662,7 +1662,7 @@ bool MapWidget::eventFilter(QObject *obj, QEvent *eventParam)
   }
 
   QMouseEvent *mouseEvent = dynamic_cast<QMouseEvent *>(eventParam);
-  if(eventParam->type() == QEvent::MouseMove && mouseEvent->buttons() == Qt::NoButton && mouseState == mw::NONE)
+  if(eventParam->type() == QEvent::MouseMove && mouseEvent->buttons() == Qt::NoButton && mouseState == mapwin::NONE)
   {
     // No not pass movements to marble widget to avoid cursor fighting
     eventParam->accept();
@@ -1682,7 +1682,7 @@ void MapWidget::cancelDragAll()
   cancelDragUserpoint();
   cancelDragDistance();
 
-  mouseState = mw::NONE;
+  mouseState = mapwin::NONE;
   setViewContext(Marble::Still);
   update();
 }
@@ -1690,7 +1690,7 @@ void MapWidget::cancelDragAll()
 /* Stop userpoint editing and reset coordinates and pixmap */
 void MapWidget::cancelDragUserpoint()
 {
-  if(mouseState & mw::DRAG_USER_POINT)
+  if(mouseState & mapwin::DRAG_USER_POINT)
   {
     if(cursor().shape() != Qt::ArrowCursor)
       setCursor(Qt::ArrowCursor);
@@ -1704,7 +1704,7 @@ void MapWidget::cancelDragUserpoint()
 /* Stop route editing and reset all coordinates */
 void MapWidget::cancelDragRoute()
 {
-  if(mouseState & mw::DRAG_ROUTE_POINT || mouseState & mw::DRAG_ROUTE_LEG)
+  if(mouseState & mapwin::DRAG_ROUTE_POINT || mouseState & mapwin::DRAG_ROUTE_LEG)
   {
     if(cursor().shape() != Qt::ArrowCursor)
       setCursor(Qt::ArrowCursor);
@@ -1722,10 +1722,10 @@ void MapWidget::cancelDragDistance()
   if(cursor().shape() != Qt::ArrowCursor)
     setCursor(Qt::ArrowCursor);
 
-  if(mouseState.testFlag(mw::DRAG_DIST_NEW_END))
+  if(mouseState.testFlag(mapwin::DRAG_DIST_NEW_END))
     // Remove new distance measurement line
     getScreenIndex()->removeDistanceMark(currentDistanceMarkerId);
-  else if(mouseState.testFlag(mw::DRAG_DIST_CHANGE_END) || mouseState.testFlag(mw::DRAG_DIST_CHANGE_START))
+  else if(mouseState.testFlag(mapwin::DRAG_DIST_CHANGE_END) || mouseState.testFlag(mapwin::DRAG_DIST_CHANGE_START))
     // Replace modified line with backup
     getScreenIndex()->updateDistanceMarker(currentDistanceMarkerId, *distanceMarkerBackup);
   currentDistanceMarkerId = -1;
@@ -1739,7 +1739,7 @@ void MapWidget::startUserpointDrag(const map::MapUserpoint& userpoint, const QPo
     userpointDragCur = point;
     *userpointDrag = userpoint;
     // Start mouse dragging and disable context menu so we can catch the right button click as cancel
-    mouseState = mw::DRAG_USER_POINT;
+    mouseState = mapwin::DRAG_USER_POINT;
     setContextMenuPolicy(Qt::PreventContextMenu);
   }
 }
@@ -1760,7 +1760,7 @@ void MapWidget::mouseMoveEvent(QMouseEvent *event)
   qreal lon = 0., lat = 0.;
   bool visible = false;
   // Change cursor and keep aircraft from centering if moving in any drag and drop mode ================
-  if(mouseState & mw::DRAG_ALL)
+  if(mouseState & mapwin::DRAG_ALL)
   {
     jumpBackToAircraftStart();
 
@@ -1771,35 +1771,35 @@ void MapWidget::mouseMoveEvent(QMouseEvent *event)
     visible = geoCoordinates(event->pos().x(), event->pos().y(), lon, lat);
   }
 
-  if(mouseState.testFlag(mw::DRAG_DIST_NEW_END) || mouseState.testFlag(mw::DRAG_DIST_CHANGE_START) ||
-     mouseState.testFlag(mw::DRAG_DIST_CHANGE_END))
+  if(mouseState.testFlag(mapwin::DRAG_DIST_NEW_END) || mouseState.testFlag(mapwin::DRAG_DIST_CHANGE_START) ||
+     mouseState.testFlag(mapwin::DRAG_DIST_CHANGE_END))
   {
     // Changing or adding distance measurement line ==========================================
     // Position is valid update the distance mark continuously
     if(visible && !screenIndex->getDistanceMarks().isEmpty())
     {
-      if(mouseState.testFlag(mw::DRAG_DIST_CHANGE_START))
+      if(mouseState.testFlag(mapwin::DRAG_DIST_CHANGE_START))
         getScreenIndex()->updateDistanceMarkerFromPos(currentDistanceMarkerId, Pos(lon, lat));
-      else if(mouseState.testFlag(mw::DRAG_DIST_CHANGE_END) || mouseState.testFlag(mw::DRAG_DIST_NEW_END))
+      else if(mouseState.testFlag(mapwin::DRAG_DIST_CHANGE_END) || mouseState.testFlag(mapwin::DRAG_DIST_NEW_END))
         getScreenIndex()->updateDistanceMarkerToPos(currentDistanceMarkerId, Pos(lon, lat));
     }
 
   }
-  else if(mouseState.testFlag(mw::DRAG_ROUTE_LEG) || mouseState.testFlag(mw::DRAG_ROUTE_POINT))
+  else if(mouseState.testFlag(mapwin::DRAG_ROUTE_LEG) || mouseState.testFlag(mapwin::DRAG_ROUTE_POINT))
   {
     // Dragging route leg or waypoint ==========================================
     if(visible)
       // Update current point
       routeDragCur = QPoint(event->pos().x(), event->pos().y());
   }
-  else if(mouseState.testFlag(mw::DRAG_USER_POINT))
+  else if(mouseState.testFlag(mapwin::DRAG_USER_POINT))
   {
     // Moving userpoint ==========================================
     if(visible)
       // Update current point
       userpointDragCur = QPoint(event->pos().x(), event->pos().y());
   }
-  else if(mouseState == mw::NONE && !noRender())
+  else if(mouseState == mapwin::NONE && !noRender())
   {
     // No drag mode - just mouse movement - change cursor =================================
 
@@ -1864,7 +1864,7 @@ void MapWidget::mouseMoveEvent(QMouseEvent *event)
       jumpBackToAircraftStart();
   }
 
-  if(mouseState & mw::DRAG_ALL)
+  if(mouseState & mapwin::DRAG_ALL)
   {
     // Set context for fast redraw
     setViewContext(Marble::Animation);
@@ -1881,7 +1881,7 @@ void MapWidget::resetPaintForDrag()
     return;
 
   // Reset context for full redraw when using drag and drop
-  if(mouseState & mw::DRAG_ALL)
+  if(mouseState & mapwin::DRAG_ALL)
   {
     // Do a full redraw with all details and reload
     setViewContext(Marble::Still);
@@ -1986,7 +1986,7 @@ void MapWidget::addDistanceMarker(const atools::geo::Pos& pos, const map::MapAir
   getScreenIndex()->addDistanceMark(distanceMarker);
 
   // Start mouse dragging and disable context menu so we can catch the right button click as cancel
-  mouseState = mw::DRAG_DIST_NEW_END;
+  mouseState = mapwin::DRAG_DIST_NEW_END;
   setContextMenuPolicy(Qt::PreventContextMenu);
   currentDistanceMarkerId = distanceMarker.id;
 }
@@ -2000,7 +2000,7 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
   qDebug() << Q_FUNC_INFO << "state" << mouseState << "modifiers" << event->modifiers() << "reason" << event->reason()
            << "pos" << event->pos();
 
-  if(mouseState != mw::NONE)
+  if(mouseState != mapwin::NONE)
     return;
 
   // Disable any automatic scrolling
@@ -2312,7 +2312,7 @@ void MapWidget::updateRoute(const QPoint& point, int leg, int pointIndex, bool f
     qDebug() << Q_FUNC_INFO << "menu";
 
     // Avoid drag cancel when loosing focus
-    mouseState |= mw::DRAG_POST_MENU;
+    mouseState |= mapwin::DRAG_POST_MENU;
 
     QString menuText = tr("Add %1 to Flight Plan");
     if(fromClickAdd)
@@ -2323,7 +2323,7 @@ void MapWidget::updateRoute(const QPoint& point, int leg, int pointIndex, bool f
     // Multiple entries - build a menu with icons
     showFeatureSelectionMenu(id, type, result, menuText);
 
-    mouseState &= ~mw::DRAG_POST_MENU;
+    mouseState &= ~mapwin::DRAG_POST_MENU;
   }
 
   Pos pos = atools::geo::EMPTY_POS;
@@ -2772,7 +2772,7 @@ void MapWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorDa
 
       // Do not update if user is using drag and drop or scrolling around
       // No updates while jump back is active and user is moving around
-      if(mouseState == mw::NONE && viewContext() == Marble::Still && !jumpBack->isActive())
+      if(mouseState == mapwin::NONE && viewContext() == Marble::Still && !jumpBack->isActive())
       {
         if(!aircraftVisible || // Not visible on world map
            posHasChanged) // Significant change in position might require zooming or re-centering
@@ -2945,7 +2945,7 @@ void MapWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorDa
 
     // Zoom close after touchdown ===================================================================
     // Only if user is not mousing around on the map
-    if(mouseState == mw::NONE && viewContext() == Marble::Still && !contextMenuActive)
+    if(mouseState == mapwin::NONE && viewContext() == Marble::Still && !contextMenuActive)
     {
       if(touchdownDetectedZoom && od.getFlags2().testFlag(opts2::ROUTE_ZOOM_LANDING))
       {

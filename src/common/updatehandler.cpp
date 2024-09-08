@@ -151,7 +151,7 @@ void UpdateHandler::updateFound(atools::util::UpdateList updates)
   qDebug() << Q_FUNC_INFO;
 
   for(const atools::util::Update& update:updates)
-    qDebug() << Q_FUNC_INFO << update.version;
+    qDebug() << Q_FUNC_INFO << update.getVersion();
 
   if(!updates.isEmpty())
   {
@@ -161,8 +161,8 @@ void UpdateHandler::updateFound(atools::util::UpdateList updates)
     // Show only the newest one
     const atools::util::Update& update = updates.constFirst();
 
-    if(!update.changelog.isEmpty())
-      html.text(update.changelog, atools::util::html::NO_ENTITIES);
+    if(!update.getChangelog().isEmpty())
+      html.text(update.getChangelog(), atools::util::html::NO_ENTITIES);
 
     atools::gui::Application::closeSplashScreen();
 
@@ -178,7 +178,7 @@ void UpdateHandler::updateFound(atools::util::UpdateList updates)
       if(updateDialog.isIgnoreThisUpdate())
       {
         // Add latest update - do not report anything earlier or equal again
-        QString ignore = updates.constFirst().version;
+        QString ignore = updates.constFirst().getVersion();
         qDebug() << Q_FUNC_INFO << "Ignoring updates now" << ignore;
         Settings::instance().setValue(lnm::OPTIONS_UPDATE_ALREADY_CHECKED, ignore);
       }

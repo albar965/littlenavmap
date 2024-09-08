@@ -213,7 +213,7 @@ enum MapDisplayType : quint32
   LOGBOOK_ALL = LOGBOOK_DIRECT | LOGBOOK_ROUTE | LOGBOOK_TRACK
 };
 
-ATOOLS_DECLARE_FLAGS_32(MapDisplayTypes, MapDisplayType)
+ATOOLS_DECLARE_FLAGS_32(MapDisplayTypes, map::MapDisplayType)
 ATOOLS_DECLARE_OPERATORS_FOR_FLAGS(map::MapDisplayTypes)
 
 QDebug operator<<(QDebug out, const map::MapDisplayTypes& type);
@@ -241,7 +241,7 @@ enum MapObjectQueryType : quint32
   QUERY_MARK = QUERY_MARK_DISTANCE | QUERY_MARK_HOLDINGS | QUERY_MARK_PATTERNS | QUERY_MARK_RANGE | QUERY_MARK_MSA,
 };
 
-ATOOLS_DECLARE_FLAGS_32(MapObjectQueryTypes, MapObjectQueryType)
+ATOOLS_DECLARE_FLAGS_32(MapObjectQueryTypes, map::MapObjectQueryType)
 ATOOLS_DECLARE_OPERATORS_FOR_FLAGS(map::MapObjectQueryTypes)
 
 /* ================================================================================== */
@@ -253,7 +253,7 @@ enum DistanceMarkerFlag : quint32
   DIST_MARK_MAGVAR = 1 << 1 /* Has calibrated declination */
 };
 
-ATOOLS_DECLARE_FLAGS_32(DistanceMarkerFlags, DistanceMarkerFlag)
+ATOOLS_DECLARE_FLAGS_32(DistanceMarkerFlags, map::DistanceMarkerFlag)
 ATOOLS_DECLARE_OPERATORS_FOR_FLAGS(map::DistanceMarkerFlags)
 
 /* ================================================================================== */
@@ -273,7 +273,7 @@ enum AirportQueryFlag : quint32
   AP_QUERY_OFFICIAL = AP_QUERY_ICAO | AP_QUERY_IATA | AP_QUERY_FAA | AP_QUERY_LOCAL
 };
 
-ATOOLS_DECLARE_FLAGS_32(AirportQueryFlags, AirportQueryFlag)
+ATOOLS_DECLARE_FLAGS_32(AirportQueryFlags, map::AirportQueryFlag)
 ATOOLS_DECLARE_OPERATORS_FOR_FLAGS(map::AirportQueryFlags)
 
 /* ================================================================================== */
@@ -356,7 +356,7 @@ enum MapAirspaceSource : quint32
   AIRSPACE_SRC_NOT_ONLINE = AIRSPACE_SRC_SIM | AIRSPACE_SRC_NAV | AIRSPACE_SRC_USER
 };
 
-ATOOLS_DECLARE_FLAGS_32(MapAirspaceSources, MapAirspaceSource)
+ATOOLS_DECLARE_FLAGS_32(MapAirspaceSources, map::MapAirspaceSource)
 ATOOLS_DECLARE_OPERATORS_FOR_FLAGS(map::MapAirspaceSources)
 
 QDebug operator<<(QDebug out, const map::MapAirspaceSource& type);
@@ -384,7 +384,7 @@ enum MapAirspaceFlag : quint32
   AIRSPACE_FLAG_DEFAULT = AIRSPACE_ALTITUDE_ALL
 };
 
-ATOOLS_DECLARE_FLAGS_32(MapAirspaceFlags, MapAirspaceFlag)
+ATOOLS_DECLARE_FLAGS_32(MapAirspaceFlags, map::MapAirspaceFlag)
 ATOOLS_DECLARE_OPERATORS_FOR_FLAGS(map::MapAirspaceFlags)
 
 /* Combines all airspace types and flags for display into a serializable object
@@ -474,7 +474,7 @@ enum MapAirportFlag : quint32
   AP_ALL = 0xffffffff
 };
 
-ATOOLS_DECLARE_FLAGS_32(MapAirportFlags, MapAirportFlag)
+ATOOLS_DECLARE_FLAGS_32(MapAirportFlags, map::MapAirportFlag)
 ATOOLS_DECLARE_OPERATORS_FOR_FLAGS(map::MapAirportFlags)
 
 /* X-Plane airport type. Matches values in apt.dat */
@@ -540,7 +540,7 @@ enum TextFlag : quint32
   ELLIPSE_IDENT = 0x0400 /* Add allipse to first text (ident) and ignore additional texts if additonal are not empty */
 };
 
-ATOOLS_DECLARE_FLAGS_32(TextFlags, TextFlag)
+ATOOLS_DECLARE_FLAGS_32(TextFlags, textflags::TextFlag)
 ATOOLS_DECLARE_OPERATORS_FOR_FLAGS(textflags::TextFlags)
 }
 
@@ -594,8 +594,8 @@ enum TextAttribute : quint32
   PLACE_ALL = LEFT | RIGHT | CENTER | BELOW | ABOVE,
 };
 
-ATOOLS_DECLARE_FLAGS_32(TextAttributes, TextAttribute)
-ATOOLS_DECLARE_OPERATORS_FOR_FLAGS(TextAttributes)
+ATOOLS_DECLARE_FLAGS_32(TextAttributes, textatt::TextAttribute)
+ATOOLS_DECLARE_OPERATORS_FOR_FLAGS(textatt::TextAttributes)
 }
 
 Q_DECLARE_TYPEINFO(map::MapAirspaceFilter, Q_PRIMITIVE_TYPE);

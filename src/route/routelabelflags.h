@@ -42,7 +42,7 @@ enum LabelFlag : quint32
               HEADER_RUNWAY_LAND | HEADER_RUNWAY_LAND_WIND | HEADER_DISTTIME | FOOTER_SELECTION | FOOTER_ERROR | FOOTER_ERROR_MINOR
 };
 
-ATOOLS_DECLARE_FLAGS_32(LabelFlags, LabelFlag)
+ATOOLS_DECLARE_FLAGS_32(LabelFlags, routelabel::LabelFlag)
 ATOOLS_DECLARE_OPERATORS_FOR_FLAGS(routelabel::LabelFlags)
 } // namespace label
 

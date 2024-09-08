@@ -85,7 +85,7 @@ enum RouteStringOption : quint32
   SIMBRIEF_READ_DEFAULTS = rs::READ_ALTERNATES | rs::REPORT
 };
 
-ATOOLS_DECLARE_FLAGS_32(RouteStringOptions, RouteStringOption)
+ATOOLS_DECLARE_FLAGS_32(RouteStringOptions, rs::RouteStringOption)
 ATOOLS_DECLARE_OPERATORS_FOR_FLAGS(rs::RouteStringOptions)
 
 /* Remove all invalid characters and simplify string. Extracts all characters until the next empty line. */

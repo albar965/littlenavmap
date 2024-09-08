@@ -442,7 +442,7 @@ private:
   /* Used to check if mouse moved between button down and up */
   QPoint mouseMoved;
 
-  mw::MouseStates mouseState = mw::NONE;
+  mapwin::MouseStates mouseState = mapwin::NONE;
   bool contextMenuActive = false;
 
   /* Current moving position when dragging a flight plan point or leg */

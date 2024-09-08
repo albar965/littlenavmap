@@ -20,7 +20,7 @@
 
 #include "util/flags.h"
 
-namespace mw {
+namespace mapwin {
 /* State of click, drag and drop actions on the map */
 enum MouseState : quint32
 {
@@ -41,13 +41,12 @@ enum MouseState : quint32
   DRAG_POST_CANCEL = 1 << 8, /* Right mousebutton clicked - cancel all actions */
 
   /* Used to check if any interaction is going on */
-  DRAG_ALL = mw::DRAG_DIST_NEW_END | mw::DRAG_DIST_CHANGE_START | mw::DRAG_DIST_CHANGE_END |
-             mw::DRAG_ROUTE_LEG | mw::DRAG_ROUTE_POINT |
-             mw::DRAG_USER_POINT
+  DRAG_ALL = mapwin::DRAG_DIST_NEW_END | mapwin::DRAG_DIST_CHANGE_START | mapwin::DRAG_DIST_CHANGE_END | mapwin::DRAG_ROUTE_LEG |
+             mapwin::DRAG_ROUTE_POINT | mapwin::DRAG_USER_POINT
 };
 
-ATOOLS_DECLARE_FLAGS_32(MouseStates, MouseState)
-ATOOLS_DECLARE_OPERATORS_FOR_FLAGS(mw::MouseStates)
+ATOOLS_DECLARE_FLAGS_32(MouseStates, mapwin::MouseState)
+ATOOLS_DECLARE_OPERATORS_FOR_FLAGS(mapwin::MouseStates)
 }
 
 #endif // LNM_MAPWIDGETFLAGS_H

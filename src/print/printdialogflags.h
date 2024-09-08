@@ -50,7 +50,7 @@ enum PrintFlightplanOpt : quint32
                     DESTINATION_COM | DESTINATION_APPR | DESTINATION_WEATHER
 };
 
-ATOOLS_DECLARE_FLAGS_32(PrintFlightplanOpts, PrintFlightplanOpt)
+ATOOLS_DECLARE_FLAGS_32(PrintFlightplanOpts, prt::PrintFlightplanOpt)
 ATOOLS_DECLARE_OPERATORS_FOR_FLAGS(prt::PrintFlightplanOpts)
 }
 

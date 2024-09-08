@@ -451,7 +451,7 @@ enum FlagWeather : quint32
                         WEATHER_TOOLTIP_IVAO
 };
 
-ATOOLS_DECLARE_FLAGS_32(FlagsWeather, FlagWeather)
+ATOOLS_DECLARE_FLAGS_32(FlagsWeather, optsw::FlagWeather)
 ATOOLS_DECLARE_OPERATORS_FOR_FLAGS(optsw::FlagsWeather)
 } // namespace opts2
 
@@ -480,7 +480,7 @@ enum DisplayOptionUserAircraft : quint32
   ITEM_USER_AIRCRAFT_ALT_ABOVE_GROUND = 1 << 18
 };
 
-ATOOLS_DECLARE_FLAGS_32(DisplayOptionsUserAircraft, DisplayOptionUserAircraft)
+ATOOLS_DECLARE_FLAGS_32(DisplayOptionsUserAircraft, optsac::DisplayOptionUserAircraft)
 ATOOLS_DECLARE_OPERATORS_FOR_FLAGS(optsac::DisplayOptionsUserAircraft)
 
 enum DisplayOptionAiAircraft : quint32
@@ -504,7 +504,7 @@ enum DisplayOptionAiAircraft : quint32
   ITEM_AI_AIRCRAFT_OBJECT_ID = 1 << 16
 };
 
-ATOOLS_DECLARE_FLAGS_32(DisplayOptionsAiAircraft, DisplayOptionAiAircraft)
+ATOOLS_DECLARE_FLAGS_32(DisplayOptionsAiAircraft, optsac::DisplayOptionAiAircraft)
 ATOOLS_DECLARE_OPERATORS_FOR_FLAGS(optsac::DisplayOptionsAiAircraft)
 }
 
@@ -529,7 +529,7 @@ enum DisplayOptionAirport : quint32
   ITEM_AIRPORT_DETAIL_BOUNDARY = 1 << 9
 };
 
-ATOOLS_DECLARE_FLAGS_32(DisplayOptionsAirport, DisplayOptionAirport)
+ATOOLS_DECLARE_FLAGS_32(DisplayOptionsAirport, optsd::DisplayOptionAirport)
 ATOOLS_DECLARE_OPERATORS_FOR_FLAGS(optsd::DisplayOptionsAirport)
 
 /* On-screen navigation aids */
@@ -542,7 +542,7 @@ enum DisplayOptionNavAid : quint32
   NAVAIDS_TOUCHSCREEN_ICONS = 1 << 4 /* Icons */
 };
 
-ATOOLS_DECLARE_FLAGS_32(DisplayOptionsNavAid, DisplayOptionNavAid)
+ATOOLS_DECLARE_FLAGS_32(DisplayOptionsNavAid, optsd::DisplayOptionNavAid)
 ATOOLS_DECLARE_OPERATORS_FOR_FLAGS(optsd::DisplayOptionsNavAid)
 
 /* Airspace labels */
@@ -556,7 +556,7 @@ enum DisplayOptionAirspace : quint32
   AIRSPACE_COM = 1 << 5 /* COM frequencies */
 };
 
-ATOOLS_DECLARE_FLAGS_32(DisplayOptionsAirspace, DisplayOptionAirspace)
+ATOOLS_DECLARE_FLAGS_32(DisplayOptionsAirspace, optsd::DisplayOptionAirspace)
 ATOOLS_DECLARE_OPERATORS_FOR_FLAGS(optsd::DisplayOptionsAirspace)
 
 /* Measurement lines */
@@ -570,7 +570,7 @@ enum DisplayOptionMeasurement : quint32
   MEASUREMENT_RADIAL = 1 << 4
 };
 
-ATOOLS_DECLARE_FLAGS_32(DisplayOptionsMeasurement, DisplayOptionMeasurement)
+ATOOLS_DECLARE_FLAGS_32(DisplayOptionsMeasurement, optsd::DisplayOptionMeasurement)
 ATOOLS_DECLARE_OPERATORS_FOR_FLAGS(optsd::DisplayOptionsMeasurement)
 
 enum DisplayOptionRose : quint32
@@ -588,7 +588,7 @@ enum DisplayOptionRose : quint32
   ROSE_TRUE_HEADING = 1 << 9
 };
 
-ATOOLS_DECLARE_FLAGS_32(DisplayOptionsRose, DisplayOptionRose)
+ATOOLS_DECLARE_FLAGS_32(DisplayOptionsRose, optsd::DisplayOptionRose)
 ATOOLS_DECLARE_OPERATORS_FOR_FLAGS(optsd::DisplayOptionsRose)
 
 enum DisplayOptionRoute : quint32
@@ -602,7 +602,7 @@ enum DisplayOptionRoute : quint32
   ROUTE_AIRWAY = 1 << 5
 };
 
-ATOOLS_DECLARE_FLAGS_32(DisplayOptionsRoute, DisplayOptionRoute)
+ATOOLS_DECLARE_FLAGS_32(DisplayOptionsRoute, optsd::DisplayOptionRoute)
 ATOOLS_DECLARE_OPERATORS_FOR_FLAGS(optsd::DisplayOptionsRoute)
 
 enum DisplayTooltipOption : quint32
@@ -619,7 +619,7 @@ enum DisplayTooltipOption : quint32
   TOOLTIP_AIRCRAFT_TRAIL = 1 << 9
 };
 
-ATOOLS_DECLARE_FLAGS_32(DisplayTooltipOptions, DisplayTooltipOption)
+ATOOLS_DECLARE_FLAGS_32(DisplayTooltipOptions, optsd::DisplayTooltipOption)
 ATOOLS_DECLARE_OPERATORS_FOR_FLAGS(optsd::DisplayTooltipOptions)
 
 enum DisplayClickOption : quint32
@@ -634,7 +634,7 @@ enum DisplayClickOption : quint32
   CLICK_FLIGHTPLAN = 1 << 7
 };
 
-ATOOLS_DECLARE_FLAGS_32(DisplayClickOptions, DisplayClickOption)
+ATOOLS_DECLARE_FLAGS_32(DisplayClickOptions, optsd::DisplayClickOption)
 ATOOLS_DECLARE_OPERATORS_FOR_FLAGS(optsd::DisplayClickOptions)
 
 } // namespace optsd

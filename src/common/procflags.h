@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -69,7 +69,7 @@ enum MapProcedureType : quint32
   PROCEDURE_ALL_BUT_MISSED = PROCEDURE_ALL & ~PROCEDURE_MISSED,
 };
 
-ATOOLS_DECLARE_FLAGS_32(MapProcedureTypes, MapProcedureType)
+ATOOLS_DECLARE_FLAGS_32(MapProcedureTypes, proc::MapProcedureType)
 ATOOLS_DECLARE_OPERATORS_FOR_FLAGS(proc::MapProcedureTypes)
 
 QDebug operator<<(QDebug out, const proc::MapProcedureTypes& type);
