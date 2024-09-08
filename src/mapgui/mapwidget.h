@@ -17,7 +17,7 @@
 #define LITTLENAVMAP_NAVMAPWIDGET_H
 
 #include "mapgui/mappaintwidget.h"
-
+#include "mapgui/mapwidgetflags.h"
 #include "gui/mapposhistory.h"
 #include "geo/linestring.h"
 
@@ -47,36 +47,6 @@ struct MapWaypoint;
 struct MapVor;
 struct MapNdb;
 struct MapBase;
-}
-
-namespace mw {
-/* State of click, drag and drop actions on the map */
-enum MouseState : quint32
-{
-  NONE = 0, /* Nothing */
-
-  DRAG_DIST_NEW_END = 1 << 0, /* A new distance measurement line is dragged moving the endpoint */
-  DRAG_DIST_CHANGE_START = 1 << 1, /* A present distance measurement line is changed dragging the origin */
-  DRAG_DIST_CHANGE_END = 1 << 2, /* A present distance measurement line is changed dragging the endpoint */
-
-  DRAG_ROUTE_LEG = 1 << 3, /* Changing a flight plan leg by adding a new point */
-  DRAG_ROUTE_POINT = 1 << 4, /* Changing the flight plan by replacing a present waypoint */
-
-  DRAG_USER_POINT = 1 << 5, /* Moving a userpoint around */
-
-  DRAG_POST = 1 << 6, /* Mouse released - all done */
-  DRAG_POST_MENU = 1 << 7, /* A menu is opened after selecting multiple objects.
-                            * Avoid cancelling all drag when loosing focus */
-  DRAG_POST_CANCEL = 1 << 8, /* Right mousebutton clicked - cancel all actions */
-
-  /* Used to check if any interaction is going on */
-  DRAG_ALL = mw::DRAG_DIST_NEW_END | mw::DRAG_DIST_CHANGE_START | mw::DRAG_DIST_CHANGE_END |
-             mw::DRAG_ROUTE_LEG | mw::DRAG_ROUTE_POINT |
-             mw::DRAG_USER_POINT
-};
-
-ATOOLS_DECLARE_FLAGS_32(MouseStates, MouseState)
-ATOOLS_DECLARE_OPERATORS_FOR_FLAGS(mw::MouseStates)
 }
 
 /*

@@ -100,7 +100,7 @@ void AircraftProgressConfig::progressConfiguration()
 
   /* *INDENT-OFF* */
   // =====================================================================================================================
-  /*: This and all following texts have to match the ones in HtmlInfoBuilder::aircraftProgressText() */
+  /* This and all following texts have to match the ones in HtmlInfoBuilder::aircraftProgressText() */
   QTreeWidgetItem *rootItem = treeDialog.getRootItem();
   treeDialog.addItem2(rootItem, pid::DATE_TIME_REAL,  tr("Real Date and Time"), tr("Real date and UTC time."));
   treeDialog.addItem2(rootItem, pid::LOCAL_TIME_REAL, tr("Real local Date and Time"), tr("Real local date and time."));

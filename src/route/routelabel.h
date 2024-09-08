@@ -18,7 +18,7 @@
 #ifndef LNM_ROUTELABEL_H
 #define LNM_ROUTELABEL_H
 
-#include "util/flags.h"
+#include "route/routelabelflags.h"
 
 #include <QObject>
 
@@ -27,7 +27,6 @@ class Route;
 class RouteLeg;
 
 namespace map {
-
 struct MapRunwayEnd;
 struct MapRunway;
 }
@@ -36,32 +35,6 @@ namespace util {
 class HtmlBuilder;
 }
 }
-
-namespace routelabel {
-
-/* Flag which defines header and footer content. */
-enum LabelFlag : quint32
-{
-  HEADER_AIRPORTS = 1 << 0,
-  HEADER_DEPARTURE = 1 << 1,
-  HEADER_ARRIVAL = 1 << 2,
-  HEADER_RUNWAY_TAKEOFF = 1 << 3,
-  HEADER_RUNWAY_TAKEOFF_WIND = 1 << 4,
-  HEADER_RUNWAY_LAND = 1 << 5,
-  HEADER_RUNWAY_LAND_WIND = 1 << 6,
-  HEADER_DISTTIME = 1 << 7,
-  FOOTER_SELECTION = 1 << 8,
-  FOOTER_ERROR = 1 << 9,
-  FOOTER_ERROR_MINOR = 1 << 10,
-
-  /* Default when loading config first time */
-  LABEL_ALL = HEADER_AIRPORTS | HEADER_DEPARTURE | HEADER_ARRIVAL | HEADER_RUNWAY_TAKEOFF | HEADER_RUNWAY_TAKEOFF_WIND |
-              HEADER_RUNWAY_LAND | HEADER_RUNWAY_LAND_WIND | HEADER_DISTTIME | FOOTER_SELECTION | FOOTER_ERROR | FOOTER_ERROR_MINOR
-};
-
-ATOOLS_DECLARE_FLAGS_32(LabelFlags, LabelFlag)
-ATOOLS_DECLARE_OPERATORS_FOR_FLAGS(routelabel::LabelFlags)
-} // namespace label
 
 /*
  * Generates the flight plan table header text and provides methods to get header text for printing and HTML export.

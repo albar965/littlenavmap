@@ -171,7 +171,7 @@ enum MapType : quint64
   /* All objects that have a magvar assigned */
   NAV_MAGVAR = AIRPORT | VOR | NDB | WAYPOINT,
 
-  ALL = 0xffff'ffff'ffff'ffff
+  ALL = 0xffffffffffffffff
 };
 /* *INDENT-ON* */
 

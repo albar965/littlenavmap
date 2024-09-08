@@ -18,7 +18,7 @@
 #ifndef LITTLENAVMAP_PRINTDIALOG_H
 #define LITTLENAVMAP_PRINTDIALOG_H
 
-#include "util/flags.h"
+#include "print/printdialogflags.h"
 
 #include <QBitArray>
 #include <QDialog>
@@ -32,40 +32,6 @@ namespace atools {
 namespace gui {
 class ItemViewZoomHandler;
 }
-}
-
-namespace prt {
-enum PrintFlightplanOpt : quint32
-{
-  NONE = 0,
-  DEPARTURE_OVERVIEW = 1 << 0,
-  DEPARTURE_RUNWAYS = 1 << 1,
-  DEPARTURE_RUNWAYS_SOFT = 1 << 2,
-  DEPARTURE_RUNWAYS_DETAIL = 1 << 3,
-  DEPARTURE_COM = 1 << 4,
-  DEPARTURE_APPR = 1 << 5,
-  DESTINATION_OVERVIEW = 1 << 6,
-  DESTINATION_RUNWAYS = 1 << 7,
-  DESTINATION_RUNWAYS_SOFT = 1 << 8,
-  DESTINATION_RUNWAYS_DETAIL = 1 << 9,
-  DESTINATION_COM = 1 << 10,
-  DESTINATION_APPR = 1 << 11,
-  FLIGHTPLAN = 1 << 12, /* Print flight plan */
-  NEW_PAGE = 1 << 13, /* New page after each chapter */
-  FUEL_REPORT = 1 << 14, /* Print fuel and aircraft performance report */
-  HEADER = 1 << 15, /* Print a detailed header as on top of the flight plan dock */
-
-  DEPARTURE_WEATHER = 1 << 16,
-  DESTINATION_WEATHER = 1 << 17,
-
-  DEPARTURE_ANY = DEPARTURE_OVERVIEW | DEPARTURE_RUNWAYS |
-                  DEPARTURE_COM | DEPARTURE_APPR | DEPARTURE_WEATHER,
-  DESTINATION_ANY = DESTINATION_OVERVIEW | DESTINATION_RUNWAYS |
-                    DESTINATION_COM | DESTINATION_APPR | DESTINATION_WEATHER
-};
-
-ATOOLS_DECLARE_FLAGS_32(PrintFlightplanOpts, PrintFlightplanOpt)
-ATOOLS_DECLARE_OPERATORS_FOR_FLAGS(prt::PrintFlightplanOpts)
 }
 
 /*

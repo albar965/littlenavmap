@@ -360,6 +360,7 @@ SOURCES += \
   src/mapgui/maptooltip.cpp \
   src/mapgui/mapvisible.cpp \
   src/mapgui/mapwidget.cpp \
+  src/mapgui/mapwidgetflags.cpp \
   src/mappainter/mappainter.cpp \
   src/mappainter/mappainteraiaircraft.cpp \
   src/mappainter/mappainterairport.cpp \
@@ -386,9 +387,11 @@ SOURCES += \
   src/perf/aircraftperfdialog.cpp \
   src/perf/perfmergedialog.cpp \
   src/print/printdialog.cpp \
+  src/print/printdialogflags.cpp \
   src/print/printsupport.cpp \
   src/profile/profilelabelwidgethoriz.cpp \
   src/profile/profilelabelwidgetvert.cpp \
+  src/profile/profileoptionflags.cpp \
   src/profile/profileoptions.cpp \
   src/profile/profilescrollarea.cpp \
   src/profile/profilewidget.cpp \
@@ -416,6 +419,7 @@ SOURCES += \
   src/route/routeextractor.cpp \
   src/route/routeflags.cpp \
   src/route/routelabel.cpp \
+  src/route/routelabelflags.cpp \
   src/route/routeleg.cpp \
   src/route/runwayselectiondialog.cpp \
   src/route/userwaypointdialog.cpp \
@@ -566,6 +570,7 @@ HEADERS  += \
   src/mapgui/maptooltip.h \
   src/mapgui/mapvisible.h \
   src/mapgui/mapwidget.h \
+  src/mapgui/mapwidgetflags.h \
   src/mappainter/mappainter.h \
   src/mappainter/mappainteraiaircraft.h \
   src/mappainter/mappainterairport.h \
@@ -592,9 +597,11 @@ HEADERS  += \
   src/perf/aircraftperfdialog.h \
   src/perf/perfmergedialog.h \
   src/print/printdialog.h \
+  src/print/printdialogflags.h \
   src/print/printsupport.h \
   src/profile/profilelabelwidgethoriz.h \
   src/profile/profilelabelwidgetvert.h \
+  src/profile/profileoptionflags.h \
   src/profile/profileoptions.h \
   src/profile/profilescrollarea.h \
   src/profile/profilewidget.h \
@@ -622,6 +629,7 @@ HEADERS  += \
   src/route/routeextractor.h \
   src/route/routeflags.h \
   src/route/routelabel.h \
+  src/route/routelabelflags.h \
   src/route/routeleg.h \
   src/route/runwayselectiondialog.h \
   src/route/userwaypointdialog.h \
