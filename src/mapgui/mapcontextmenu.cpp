@@ -227,7 +227,7 @@ void MapContextMenu::buildMainMenu()
   if(visibleOnMap)
   {
     // More rarely used menu items
-    sub->addAction(ui->actionMapJumpCoordinates); // Used in MapWidget::contextMenuEvent()
+    sub->addAction(ui->actionMapJumpCoordinatesMain); // Same as in main menu "Map"
     sub->addSeparator();
     insertShowInSearchMenu(*sub);
     insertShowInRouteMenu(*sub);
@@ -1238,18 +1238,14 @@ bool MapContextMenu::exec(QPoint menuPos, QPoint point)
   // Build menu - add actions
 
   if(!point.isNull() && !mapWidget->noRender())
-  {
-    qreal lon, lat;
     // Cursor can be outside of map region
-    visibleOnMap = mapWidget->geoCoordinates(point.x(), point.y(), lon, lat);
+    mapBasePos->position = mapWidget->getGeoPos(point);
 
-    if(visibleOnMap)
-      // Cursor is not off-globe
-      mapBasePos->position = atools::geo::Pos(lon, lat);
-  }
+  visibleOnMap = mapBasePos->position.isValid();
 
   // Get objects near position =============================================================
-  map::MapObjectQueryTypes queryType = map::QUERY_MARK | map::QUERY_PREVIEW_PROC_POINTS | map::QUERY_PROC_RECOMMENDED;
+  map::MapObjectQueryTypes queryType = map::QUERY_MARK | map::QUERY_PREVIEW_PROC_POINTS |
+                                       map::QUERY_PROC_RECOMMENDED;
 
   // Fetch alternates only if enabled on map
   if(mapWidget->getShownMapDisplayTypes().testFlag(map::FLIGHTPLAN_ALTERNATE))

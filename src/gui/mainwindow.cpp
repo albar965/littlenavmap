@@ -1640,7 +1640,8 @@ void MainWindow::connectAllSlots()
 
   connect(ui->actionMapShowMark, &QAction::triggered, mapWidget, &MapWidget::showSearchMark);
   connect(ui->actionMapShowHome, &QAction::triggered, mapWidget, &MapWidget::showHome);
-  connect(ui->actionMapJumpCoordinatesMain, &QAction::triggered, mapWidget, &MapWidget::jumpCoordinates);
+  connect(ui->actionMapJumpCoordinatesMain, &QAction::triggered, mapWidget, &MapWidget::jumpToCoordinates);
+  connect(ui->actionMapCopyCoordinates, &QAction::triggered, mapWidget, &MapWidget::copyCoordinates);
   connect(ui->actionMapAircraftCenter, &QAction::toggled, mapWidget, &MapPaintWidget::showAircraft);
   connect(ui->actionMapAircraftCenterNow, &QAction::triggered, mapWidget, &MapPaintWidget::showAircraftNow);
   connect(ui->actionMapShowGridConfig, &QAction::triggered, mapWidget, &MapWidget::showGridConfiguration);
@@ -2099,11 +2100,8 @@ void MainWindow::shrinkStatusBar()
   }
 }
 
-void MainWindow::updateMapPosLabel(const atools::geo::Pos& pos, int x, int y)
+void MainWindow::updateMapPosLabel(const atools::geo::Pos& pos, int screenX, int screenY)
 {
-  Q_UNUSED(x)
-  Q_UNUSED(y)
-
   if(pos.isValid())
   {
     QString text(Unit::coords(pos));
@@ -2121,7 +2119,7 @@ void MainWindow::updateMapPosLabel(const atools::geo::Pos& pos, int x, int y)
     mapMagvarLabel->setMinimumWidth(mapMagvarLabel->width());
 
 #ifdef DEBUG_INFORMATION
-    text.append(QString(" [%1,%2]").arg(x).arg(y));
+    text.append(QString(" [L %1,%2/G %3,%4]").arg(screenX).arg(screenY).arg(QCursor::pos().x()).arg(QCursor::pos().y()));
 #endif
 
     mapPositionLabel->setText(text);
@@ -2841,8 +2839,7 @@ bool MainWindow::layoutOpenInternal(const QString& layoutFile)
 {
   try
   {
-    if(dockHandler->loadWindowState(layoutFile, OptionData::instance().getFlags2().testFlag(opts2::MAP_ALLOW_UNDOCK),
-                                    layoutWarnText))
+    if(dockHandler->loadWindowState(layoutFile, OptionData::instance().getFlags2().testFlag(opts2::MAP_ALLOW_UNDOCK), layoutWarnText))
     {
       dockHandler->currentStateToWindow();
 

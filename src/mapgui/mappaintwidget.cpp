@@ -428,6 +428,24 @@ bool MapPaintWidget::isDistanceCutOff() const
     return distance() > DISTANCE_CUT_OFF_LIMIT_MERCATOR_KM;
 }
 
+Pos MapPaintWidget::getGeoPos(const QPoint& screenPoint) const
+{
+  qreal lon, lat;
+  if(geoCoordinates(screenPoint.x(), screenPoint.y(), lon, lat))
+    return Pos(lon, lat);
+  else
+    return atools::geo::EMPTY_POS;
+}
+
+QPoint MapPaintWidget::getScreenPoint(const atools::geo::Pos& pos)
+{
+  qreal x, y;
+  if(screenCoordinates(pos.getLonX(), pos.getLatY(), x, y))
+    return QPoint(atools::roundToInt(x), atools::roundToInt(y));
+  else
+    return QPoint();
+}
+
 void MapPaintWidget::setShowMapObjects(map::MapTypes type, map::MapTypes mask)
 {
   paintLayer->setShowMapObjects(type, mask);
@@ -631,12 +649,7 @@ QPixmap MapPaintWidget::getPixmap(const QSize& size)
   return getPixmap(size.width(), size.height());
 }
 
-atools::geo::Pos MapPaintWidget::getCurrentViewCenterPos() const
-{
-  return atools::geo::Pos(centerLongitude(), centerLatitude(), distance());
-}
-
-atools::geo::Rect MapPaintWidget::getCurrentViewRect() const
+atools::geo::Rect MapPaintWidget::getViewRect() const
 {
   return atools::geo::Rect(mconvert::fromGdc(getCurrentViewBoundingBox()));
 }

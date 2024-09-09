@@ -262,11 +262,8 @@ MapPixmap MapActionsController::getPixmapPosDistance(int width, int height, atoo
   if(!pos.isValid())
   {
     if(errorCase == QLatin1String(""))
-    {
       // Use current map position
-      pos.setLonX(static_cast<float>(mapPaintWidget->centerLongitude()));
-      pos.setLatY(static_cast<float>(mapPaintWidget->centerLatitude()));
-    }
+      pos = NavApp::getMapWidgetGui()->getCenterPos();
     else
     {
       if(verbose)
@@ -333,7 +330,7 @@ MapPixmap MapActionsController::getPixmapPosDistance(int width, int height, atoo
 
     // Fill result object
     mappixmap.pixmap = mapPaintWidget->getPixmap(width, height);
-    mappixmap.pos = mapPaintWidget->getCurrentViewCenterPos();
+    mappixmap.pos = mapPaintWidget->getCenterPos();
 
     return mappixmap;
   }
@@ -381,7 +378,7 @@ MapPixmap MapActionsController::getPixmapRect(int width, int height, atools::geo
       // No distance requested. Therefore requested is equal to actual
       mapPixmap.correctedDistanceKm = mapPixmap.requestedDistanceKm = static_cast<float>(mapPaintWidget->distance());
       mapPixmap.pixmap = mapPaintWidget->getPixmap(width, height);
-      mapPixmap.pos = mapPaintWidget->getCurrentViewCenterPos();
+      mapPixmap.pos = mapPaintWidget->getCenterPos();
 
       return mapPixmap;
     }

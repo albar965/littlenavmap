@@ -146,11 +146,11 @@ public:
   /* Change the search center mark to given position */
   void changeSearchMark(const atools::geo::Pos& pos);
 
-  /* Show jump to coordinates dialog called from main menu */
-  void jumpCoordinates();
+  /* Show jump to coordinates dialog called from main menu or context menu */
+  void jumpToCoordinates();
 
-  /* Show jump to coordinates dialog called from context menu */
-  void jumpCoordinatesPos(const atools::geo::Pos& pos);
+  /* Copy coordinates to clipboard from context menu or shortcut Ctrl+C on the map. */
+  void copyCoordinates();
 
   /* Stop jump back timer on shutdown */
   void cancelJumpBack();
@@ -432,7 +432,10 @@ private:
   void zoomInOut(bool directionIn, bool smooth);
 
   /* true if point is not hidden by globe */
-  bool pointVisible(const QPoint& point);
+  bool isPointVisible(const QPoint& point)
+  {
+    return getGeoPos(point).isValid();
+  }
 
   void debugMovingAircraft(QInputEvent *event, int upDown);
 

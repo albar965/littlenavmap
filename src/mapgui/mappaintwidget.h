@@ -333,9 +333,7 @@ public:
     avoidBlurredMap = value;
   }
 
-  /* Pos includes distance in km as altitude */
-  atools::geo::Pos getCurrentViewCenterPos() const;
-  atools::geo::Rect getCurrentViewRect() const;
+  atools::geo::Rect getViewRect() const;
 
   bool isNoNavPaint() const
   {
@@ -425,6 +423,21 @@ public:
   {
     return queries;
   }
+
+  atools::geo::Pos getGeoPos(const QPoint& screenPoint) const;
+
+  atools::geo::Pos getCenterPos() const
+  {
+    return atools::geo::Pos(centerLongitude(), centerLatitude());
+  }
+
+  /* Pos includes distance in km as altitude */
+  atools::geo::Pos getCenterPosAndDistance() const
+  {
+    return atools::geo::Pos(centerLongitude(), centerLatitude(), distance());
+  }
+
+  QPoint getScreenPoint(const atools::geo::Pos& pos);
 
 signals:
   /* Emitted whenever the result exceeds the limit clause in the queries */

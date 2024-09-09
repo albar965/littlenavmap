@@ -25,8 +25,8 @@ WebApiResponse UiActionsController::infoAction(WebApiRequest request)
   MapWidget *mw = getMainWindow()->getMapWidget();
   MapPaintWidget *mpw = NavApp::getMapPaintWidgetWeb();
 
-  atools::geo::Rect rw = mpw->getCurrentViewRect();
-  atools::geo::Rect ru = mw->getCurrentViewRect();
+  atools::geo::Rect rw = mpw->getViewRect();
+  atools::geo::Rect ru = mw->getViewRect();
 
   UiInfoData data = {
     mw->zoom(),

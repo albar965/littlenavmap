@@ -160,7 +160,7 @@ public:
   void setToolTipsEnabledMainMenu(bool enabled);
 
   /* Update coordinate display in status bar */
-  void updateMapPosLabel(const atools::geo::Pos& pos, int x, int y);
+  void updateMapPosLabel(const atools::geo::Pos& pos, int screenX, int screenY);
 
   /* Sets the text and tooltip of the statusbar label that indicates what objects are shown on the map */
   /* Updates label and tooltip for objects shown on map */

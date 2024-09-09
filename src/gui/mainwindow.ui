@@ -11036,6 +11036,9 @@ relation to shown airport</string>
    <property name="statusTip">
     <string>Copies the coordinates into the clipboard</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+C</string>
+   </property>
   </action>
   <action name="actionWindowLayoutOpen">
    <property name="text">
@@ -11579,21 +11582,6 @@ relation to shown airport</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+Shift+Home</string>
-   </property>
-  </action>
-  <action name="actionMapJumpCoordinates">
-   <property name="icon">
-    <iconset resource="../../littlenavmap.qrc">
-     <normaloff>:/littlenavmap/resources/icons/zoomin.svg</normaloff>:/littlenavmap/resources/icons/zoomin.svg</iconset>
-   </property>
-   <property name="text">
-    <string>&amp;Jump to Coordinates ...</string>
-   </property>
-   <property name="toolTip">
-    <string>Jump to coordinates and zoom distance on the map</string>
-   </property>
-   <property name="statusTip">
-    <string>Set center mark for distance search</string>
    </property>
   </action>
   <action name="actionMapShowEndurance">
