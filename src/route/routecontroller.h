@@ -458,6 +458,9 @@ private:
   void routeSetDepartureInternal(const map::MapAirport& airport);
   void routeSetDestinationInternal(const map::MapAirport& airport);
 
+  /* Removes alternates which are equal to the destination */
+  void routeCleanAlternates();
+
   /* Update table view model completely */
   void updateTableModelAndErrors();
 

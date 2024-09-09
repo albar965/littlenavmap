@@ -1639,6 +1639,7 @@ bool RouteController::insertFlightplan(const QString& filename, int insertBefore
     route.updateAll();
     route.updateAirwaysAndAltitude(false /* adjustRouteAltitude */);
     route.calculateLegAltitudes();
+    routeCleanAlternates();
 
     updateActiveLeg();
     updateTableModelAndErrors();
@@ -4106,9 +4107,32 @@ void RouteController::routeSetDestination(map::MapAirport airport)
   updateTableModelAndErrors();
   updateActions();
 
+  routeCleanAlternates();
+
   postChange(undoCommand);
   emit routeChanged(true /* geometryChanged */);
   NavApp::setStatusMessage(tr("Destination set to %1.").arg(airport.ident));
+}
+
+void RouteController::routeCleanAlternates()
+{
+  const RouteLeg& destinationLeg = route.getDestinationAirportLeg();
+  if(destinationLeg.isAirport())
+  {
+    QList<int> rows;
+    int alternateOffset = route.getAlternateLegsOffset();
+    if(alternateOffset < map::INVALID_INDEX_VALUE)
+    {
+      for(int i = alternateOffset; i < route.size(); i++)
+      {
+        if(route.value(i).getId() == destinationLeg.getId())
+          rows.append(i);
+      }
+    }
+
+    if(!rows.isEmpty())
+      deleteSelectedLegsInternal(rows);
+  }
 }
 
 void RouteController::routeAddAlternate(map::MapAirport airport)
@@ -4153,6 +4177,7 @@ void RouteController::routeAddAlternate(map::MapAirport airport)
 
   updateActiveLeg();
   updateTableModelAndErrors();
+  routeCleanAlternates();
 
   postChange(undoCommand);
   emit routeChanged(true /* geometryChanged */);
@@ -4574,6 +4599,7 @@ void RouteController::routeAddProcedure(proc::MapProcedureLegs legs)
   route.updateAirwaysAndAltitude(false /* adjustRouteAltitude */);
   route.calculateLegAltitudes();
   route.updateDepartureAndDestination(false /* clearInvalidStart */);
+  routeCleanAlternates();
 
   // Get type and cruise altitude from widgets
   updateFlightplanFromWidgets();
@@ -4730,6 +4756,7 @@ void RouteController::routeDirectTo(int id, const atools::geo::Pos& userPos, map
     updateTableModelAndErrors();
     updateActions();
     tableSelectionChanged(QItemSelection(), QItemSelection());
+    routeCleanAlternates();
 
     postChange(undoCommand);
     emit routeChanged(true /* geometryChanged */);
@@ -4753,6 +4780,7 @@ void RouteController::routeAdd(int id, atools::geo::Pos userPos, map::MapTypes t
   updateActiveLeg();
   updateTableModelAndErrors();
   updateActions();
+  routeCleanAlternates();
 
   postChange(undoCommand);
   emit routeChanged(true /* geometryChanged */);
@@ -4888,6 +4916,7 @@ void RouteController::routeReplace(int id, atools::geo::Pos userPos, map::MapTyp
   updateActiveLeg();
   updateTableModelAndErrors();
   updateActions();
+  routeCleanAlternates();
 
   postChange(undoCommand);
   emit routeChanged(true /* geometryChanged */);
