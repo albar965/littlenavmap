@@ -200,6 +200,7 @@
     <addaction name="actionShowAllowDocking"/>
     <addaction name="actionShowAllowMoving"/>
     <addaction name="actionShowWindowTitleBar"/>
+    <addaction name="actionDockWindowsNormalFrame"/>
     <addaction name="separator"/>
     <addaction name="actionShowStatusbar"/>
     <addaction name="separator"/>
@@ -12420,6 +12421,18 @@ relation to shown airport</string>
    </property>
    <property name="statusTip">
     <string>Show keyboard shortcuts in a browser</string>
+   </property>
+  </action>
+  <action name="actionDockWindowsNormalFrame">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>&amp;Floating Docks use normal Window Frame</string>
+   </property>
+   <property name="toolTip">
+    <string>Assign a normal window frame to dock windows and
+let them appear in the task list</string>
    </property>
   </action>
  </widget>

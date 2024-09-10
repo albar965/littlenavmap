@@ -322,12 +322,16 @@ private:
   void hideTitleBar();
   void allowDockingWindows();
   void allowMovingWindows();
+  void windowFrameDocking();
 
   /* Signal from action */
   void stayOnTop();
 
   /* Map dock widget floating state changed */
   void mapDockTopLevelChanged(bool topLevel);
+
+  /* Map dock visible or not. Adjust window frame. */
+  void mapDockVisibilityChanged(bool visible);
 
   /* Called by action */
   void fullScreenMapToggle();
