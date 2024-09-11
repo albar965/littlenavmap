@@ -1358,7 +1358,7 @@ void MainWindow::connectAllSlots()
   connect(ui->actionShowFloatingWindows, &QAction::triggered, this, &MainWindow::raiseFloatingWindows);
   connect(ui->actionWindowStayOnTop, &QAction::toggled, this, &MainWindow::stayOnTop);
   connect(ui->actionShowAllowDocking, &QAction::toggled, this, &MainWindow::allowDockingWindows);
-  connect(ui->actionDockWindowsNormalFrame, &QAction::toggled, this, &MainWindow::windowFrameDocking);
+  // connect(ui->actionDockWindowsNormalFrame, &QAction::toggled, this, &MainWindow::windowFrameDocking);
   connect(ui->actionShowAllowMoving, &QAction::toggled, this, &MainWindow::allowMovingWindows);
   connect(ui->actionShowWindowTitleBar, &QAction::toggled, this, &MainWindow::hideTitleBar);
   connect(ui->actionShowFullscreenMap, &QAction::toggled, this, &MainWindow::fullScreenMapToggle);
@@ -3776,12 +3776,11 @@ void MainWindow::allowMovingWindows()
 
 void MainWindow::windowFrameDocking()
 {
-  qDebug() << Q_FUNC_INFO;
-  dockHandler->setWindowFrame(ui->actionDockWindowsNormalFrame->isChecked());
-
-  if(OptionData::instance().getFlags2().testFlag(opts2::MAP_ALLOW_UNDOCK))
-    // Undockable map widget is not registered in handler
-    dockHandler->setDockWindowFrame(ui->dockWidgetMap, ui->actionDockWindowsNormalFrame->isChecked());
+  // qDebug() << Q_FUNC_INFO;
+  // dockHandler->setWindowFrame(ui->actionDockWindowsNormalFrame->isChecked());
+  // if(OptionData::instance().getFlags2().testFlag(opts2::MAP_ALLOW_UNDOCK))
+  //// Undockable map widget is not registered in handler
+  // dockHandler->setDockWindowFrame(ui->dockWidgetMap, ui->actionDockWindowsNormalFrame->isChecked());
 }
 
 void MainWindow::allowDockingWindows()
@@ -4177,8 +4176,8 @@ void MainWindow::restoreStateMain()
                        ui->actionRouteSaveApprWaypointsOpt, ui->actionRouteSaveAirwayWaypointsOpt, ui->actionLogdataCreateLogbook,
                        ui->actionAircraftPerformanceWarnMismatch, ui->actionMapShowSunShading, ui->actionMapShowAirportWeather,
                        ui->actionMapShowMinimumAltitude, ui->actionRunWebserver, ui->actionShowAllowDocking,
-                       ui->actionDockWindowsNormalFrame, ui->actionShowAllowMoving, ui->actionShowWindowTitleBar, ui->actionWindowStayOnTop,
-                       ui->actionMapAircraftCenter});
+                       /*ui->actionDockWindowsNormalFrame, */ ui->actionShowAllowMoving, ui->actionShowWindowTitleBar,
+                       ui->actionWindowStayOnTop, ui->actionMapAircraftCenter});
 
   widgetState.setBlockSignals(false);
 

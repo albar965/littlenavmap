@@ -200,7 +200,6 @@
     <addaction name="actionShowAllowDocking"/>
     <addaction name="actionShowAllowMoving"/>
     <addaction name="actionShowWindowTitleBar"/>
-    <addaction name="actionDockWindowsNormalFrame"/>
     <addaction name="separator"/>
     <addaction name="actionShowStatusbar"/>
     <addaction name="separator"/>
