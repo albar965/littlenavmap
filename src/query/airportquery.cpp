@@ -85,8 +85,14 @@ void AirportQuery::loadAirportProcedureCache()
 
   if(navdata && NavApp::isNavdataMixed())
   {
+    QString queryStr;
+    if(iataCol)
+      queryStr = "select ident, iata from airport where num_approach > 0";
+    else
+      queryStr = "select ident, null as iata from airport where num_approach > 0";
+
     SqlQuery query(db);
-    query.exec("select ident, iata from airport where num_approach > 0");
+    query.exec(queryStr);
     while(query.next())
     {
       airportsWithProceduresIdent.insert(query.valueStr(0));
@@ -1275,19 +1281,19 @@ QStringList AirportQuery::airportOverviewColumns(const atools::sql::SqlDatabase 
     "lonx", "laty", "left_lonx", "top_laty", "right_lonx", "bottom_laty "
   });
 
-  SqlRecord aprec = db->record("airport");
-  if(aprec.contains("region"))
+  SqlRecord airportRec = db->record("airport");
+  if(airportRec.contains("region"))
     airportQueryBase.append("region");
-  if(aprec.contains("is_3d"))
+  if(airportRec.contains("is_3d"))
     airportQueryBase.append("is_3d");
 
-  if(aprec.contains("icao"))
+  if(airportRec.contains("icao"))
     airportQueryBase.append("icao");
-  if(aprec.contains("iata"))
+  if(airportRec.contains("iata"))
     airportQueryBase.append("iata");
-  if(aprec.contains("faa"))
+  if(airportRec.contains("faa"))
     airportQueryBase.append("faa");
-  if(aprec.contains("local"))
+  if(airportRec.contains("local"))
     airportQueryBase.append("local");
 
   return airportQueryBase;
@@ -1364,7 +1370,10 @@ void AirportQuery::initQueries()
   airportCoordsByIdentQuery->prepare("select lonx, laty from airport where ident = :ident ");
 
   airportCoordsByIdentOrIcaoQuery = new SqlQuery(db);
-  airportCoordsByIdentOrIcaoQuery->prepare("select lonx, laty from airport where ident = :identicao or icao = :identicao ");
+  if(icaoCol)
+    airportCoordsByIdentOrIcaoQuery->prepare("select lonx, laty from airport where ident = :identicao or icao = :identicao ");
+  else
+    airportCoordsByIdentOrIcaoQuery->prepare("select lonx, laty from airport where ident = :identicao ");
 
   airportByRectAndProcQuery = new SqlQuery(db);
   airportByRectAndProcQuery->prepare("select " % airportQueryBase.join(", ") % " from airport where " % whereRect %
