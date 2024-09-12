@@ -133,7 +133,7 @@ void MapPainterVehicle::paintUserAircraft(const SimConnectUserAircraft& userAirc
 
 void MapPainterVehicle::paintTurnPath(const atools::fs::sc::SimConnectUserAircraft& userAircraft) const
 {
-  if(context->objectDisplayTypes & map::AIRCRAFT_TURN_PATH && userAircraft.isFlying())
+  if(context->objectDisplayTypes.testFlag(map::AIRCRAFT_TURN_PATH) && userAircraft.isFlying())
   {
     const atools::geo::Pos& aircraftPos = mapPaintWidget->getUserAircraft().getPosition();
     if(aircraftPos.isValid())

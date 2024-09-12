@@ -479,7 +479,7 @@ void MapPainterMark::paintLogEntries(const QList<map::MapLogbookEntry>& entries)
   }
 
   // Draw route ==========================================================================
-  if(context->objectDisplayTypes & map::LOGBOOK_ROUTE && !visibleRouteGeometries.isEmpty())
+  if(context->objectDisplayTypes.testFlag(map::LOGBOOK_ROUTE) && !visibleRouteGeometries.isEmpty())
   {
     float outerlinewidth = context->szF(context->thicknessFlightplan, 7);
     float innerlinewidth = context->szF(context->thicknessFlightplan, 4);
@@ -547,7 +547,7 @@ void MapPainterMark::paintLogEntries(const QList<map::MapLogbookEntry>& entries)
   }
 
   // Draw direct connection ==========================================================================
-  if(context->objectDisplayTypes & map::LOGBOOK_DIRECT)
+  if(context->objectDisplayTypes.testFlag(map::LOGBOOK_DIRECT))
   {
     // Use smaller measurement line thickness for this direct connection
     float outerlinewidth = context->szF(context->thicknessUserFeature, 7) * 0.6f;
@@ -887,7 +887,7 @@ void MapPainterMark::paintRangeMarks()
 void MapPainterMark::paintSelectedAltitudeRange()
 {
   const atools::fs::sc::SimConnectUserAircraft& userAircraft = mapPaintWidget->getUserAircraft();
-  if(context->objectDisplayTypes & map::AIRCRAFT_SELECTED_ALT_RANGE && userAircraft.isFlying())
+  if(context->objectDisplayTypes.testFlag(map::AIRCRAFT_SELECTED_ALT_RANGE) && userAircraft.isFlying())
   {
     ageo::Pos pos = mapPaintWidget->getUserAircraft().getPosition();
     if(pos.isValid())
@@ -928,7 +928,7 @@ void MapPainterMark::paintSelectedAltitudeRange()
 void MapPainterMark::paintEndurance()
 {
   const atools::fs::sc::SimConnectUserAircraft& userAircraft = mapPaintWidget->getUserAircraft();
-  if(context->objectDisplayTypes & map::AIRCRAFT_ENDURANCE && userAircraft.isFlying())
+  if(context->objectDisplayTypes.testFlag(map::AIRCRAFT_ENDURANCE) && userAircraft.isFlying())
   {
     ageo::Pos pos = mapPaintWidget->getUserAircraft().getPosition();
     if(pos.isValid())
@@ -1011,7 +1011,7 @@ void MapPainterMark::paintEndurance()
 
 void MapPainterMark::paintCompassRose()
 {
-  if(context->objectDisplayTypes & map::COMPASS_ROSE && mapPaintWidget->distance() < MIN_VIEW_DISTANCE_COMPASS_ROSE_KM)
+  if(context->objectDisplayTypes.testFlag(map::COMPASS_ROSE) && mapPaintWidget->distance() < MIN_VIEW_DISTANCE_COMPASS_ROSE_KM)
   {
     atools::util::PainterContextSaver saver(context->painter);
     const OptionData& od = OptionData::instance();
@@ -1022,7 +1022,7 @@ void MapPainterMark::paintCompassRose()
 
     // Use either aircraft position or viewport center
     QRect viewport = painter->viewport();
-    bool hasAircraft = pos.isValid() && context->objectDisplayTypes & map::COMPASS_ROSE_ATTACH;
+    bool hasAircraft = pos.isValid() && context->objectDisplayTypes.testFlag(map::COMPASS_ROSE_ATTACH);
     if(!hasAircraft)
       pos = sToW(viewport.center());
 

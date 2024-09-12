@@ -1843,8 +1843,8 @@ The &quot;Save as&quot; dialog will show up instead of overwriting the current f
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>317</width>
-             <height>487</height>
+             <width>631</width>
+             <height>531</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout">
@@ -2114,8 +2114,8 @@ Note that this function is disabled for X-Plane 12 since the 3D flag is unreliab
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>595</width>
-             <height>344</height>
+             <width>631</width>
+             <height>531</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_2">
@@ -2546,8 +2546,8 @@ Smaller values will allow a finer selection.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>501</width>
-             <height>526</height>
+             <width>631</width>
+             <height>531</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_12">
@@ -2874,9 +2874,9 @@ Map views might be shown with a larger zoom distance than expected if this optio
            <property name="geometry">
             <rect>
              <x>0</x>
-             <y>0</y>
-             <width>499</width>
-             <height>1065</height>
+             <y>-38</y>
+             <width>617</width>
+             <height>1053</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_20">
@@ -3773,8 +3773,8 @@ Lower values make the airspace more opaque and higher values more transparent.</
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>428</width>
-             <height>518</height>
+             <width>631</width>
+             <height>531</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_35">
@@ -4016,18 +4016,17 @@ Also used in the elevation profile.</string>
                  </property>
                 </widget>
                </item>
-               <item row="3" column="0">
-                <widget class="QCheckBox" name="checkBoxOptionsMapFlightplanHighlightActive">
+               <item row="5" column="0" colspan="2">
+                <widget class="QCheckBox" name="checkBoxOptionsMapFlightplanTransparent">
                  <property name="toolTip">
-                  <string>Draw the active flight plan leg in a different color.
-Change the color of this leg with the &quot;Active Leg Color&quot;.
-Also used in the elevation profile.</string>
+                  <string>Draw the flight plan line using a transparent line without outline.
+Not used in the elevation profile.</string>
                  </property>
                  <property name="text">
-                  <string>&amp;Highlight active leg</string>
+                  <string>&amp;Transparent line</string>
                  </property>
                  <property name="checked">
-                  <bool>true</bool>
+                  <bool>false</bool>
                  </property>
                 </widget>
                </item>
@@ -4046,21 +4045,24 @@ Also used in the elevation profile.</string>
                  </property>
                 </widget>
                </item>
-               <item row="5" column="0" colspan="2">
-                <widget class="QCheckBox" name="checkBoxOptionsMapFlightplanTransparent">
+               <item row="2" column="3">
+                <widget class="QPushButton" name="pushButtonOptionsDisplayFlightplanProcedureColor">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
                  <property name="toolTip">
-                  <string>Draw the flight plan line using a transparent line without outline.
-Not used in the elevation profile.</string>
+                  <string>Color for the procedure legs of a flight plan.
+Also used in the elevation profile.</string>
                  </property>
                  <property name="text">
-                  <string>&amp;Transparent line</string>
-                 </property>
-                 <property name="checked">
-                  <bool>false</bool>
+                  <string>&amp;Procedure Leg Color</string>
                  </property>
                 </widget>
                </item>
-               <item row="7" column="0" colspan="4">
+               <item row="6" column="0" colspan="4">
                 <widget class="QLabel" name="labelOptionsFlightPlanLabelHint">
                  <property name="text">
                   <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/littlenavmap/resources/icons/bulb.svg&quot;/&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Flight plan label settings can be found on page &lt;/span&gt;&lt;a href=&quot;lnm://12&quot;&gt;&lt;span style=&quot; font-style:italic; text-decoration: underline; color:#0057ae;&quot;&gt;Map Labels&lt;/span&gt;&lt;/a&gt;&lt;span style=&quot; font-style:italic;&quot;&gt; in branch &amp;quot;Flight Plan&amp;quot;.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
@@ -4111,23 +4113,6 @@ Also used in the elevation profile.</string>
                  </property>
                 </widget>
                </item>
-               <item row="2" column="3">
-                <widget class="QPushButton" name="pushButtonOptionsDisplayFlightplanProcedureColor">
-                 <property name="sizePolicy">
-                  <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-                   <horstretch>0</horstretch>
-                   <verstretch>0</verstretch>
-                  </sizepolicy>
-                 </property>
-                 <property name="toolTip">
-                  <string>Color for the procedure legs of a flight plan.
-Also used in the elevation profile.</string>
-                 </property>
-                 <property name="text">
-                  <string>&amp;Procedure Leg Color</string>
-                 </property>
-                </widget>
-               </item>
                <item row="4" column="3">
                 <widget class="QPushButton" name="pushButtonOptionsDisplayFlightplanPassedColor">
                  <property name="sizePolicy">
@@ -4173,14 +4158,15 @@ Not used in the elevation profile.</string>
                  </property>
                 </widget>
                </item>
-               <item row="6" column="0" colspan="4">
-                <widget class="QCheckBox" name="checkBoxOptionsMapFlightplanDirectToDeparture">
+               <item row="3" column="0">
+                <widget class="QCheckBox" name="checkBoxOptionsMapFlightplanHighlightActive">
                  <property name="toolTip">
-                  <string>Shows a dashed line with arrows pointing directly to the departure runway position
-from either the departure parking or the user aircraft while taxiing.</string>
+                  <string>Draw the active flight plan leg in a different color.
+Change the color of this leg with the &quot;Active Leg Color&quot;.
+Also used in the elevation profile.</string>
                  </property>
                  <property name="text">
-                  <string>&amp;Show direct course line to departure runway</string>
+                  <string>&amp;Highlight active leg</string>
                  </property>
                  <property name="checked">
                   <bool>true</bool>
@@ -4221,8 +4207,8 @@ from either the departure parking or the user aircraft while taxiing.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>554</width>
-             <height>264</height>
+             <width>631</width>
+             <height>531</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_57">
@@ -4484,8 +4470,8 @@ Lower this value to avoid too long tracks and avoid stutters in map display.</st
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>452</width>
-             <height>748</height>
+             <width>617</width>
+             <height>651</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_35">
@@ -5374,8 +5360,8 @@ Value 0 is opaque and 90 is most transparent.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>328</width>
-             <height>535</height>
+             <width>631</width>
+             <height>531</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_39">
@@ -5844,8 +5830,8 @@ airspace filename has to match the callsign of the online center.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>572</width>
-             <height>633</height>
+             <width>617</width>
+             <height>617</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_25">
@@ -6291,8 +6277,8 @@ put the active leg back on top after the given timeout while flying.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>318</width>
-             <height>241</height>
+             <width>631</width>
+             <height>531</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_26">
@@ -6451,8 +6437,8 @@ Note that this value does not affect flight plan calculation or saving of flight
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>272</width>
-             <height>754</height>
+             <width>617</width>
+             <height>610</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_27">
@@ -6692,8 +6678,8 @@ Note that this value does not affect flight plan calculation or saving of flight
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>360</width>
-             <height>939</height>
+             <width>617</width>
+             <height>875</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_28">
@@ -7290,8 +7276,8 @@ Entering a wrong value will cause errors when downloading weather reports.</stri
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>389</width>
-             <height>375</height>
+             <width>631</width>
+             <height>531</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_29">
@@ -7592,8 +7578,8 @@ Entering a wrong value will cause errors when downloading weather reports.</stri
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>363</width>
-             <height>258</height>
+             <width>631</width>
+             <height>531</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_37">
@@ -7785,8 +7771,8 @@ Little Navmap GIT repository.
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>437</width>
-             <height>699</height>
+             <width>617</width>
+             <height>629</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_30">
@@ -8650,7 +8636,6 @@ You have to reload the scenery library so that the changes take effect.</string>
   <tabstop>checkBoxOptionsMapFlightplanTransparent</tabstop>
   <tabstop>spinBoxOptionsDisplayTransparencyFlightplan</tabstop>
   <tabstop>pushButtonOptionsDisplayFlightplanOutlineColor</tabstop>
-  <tabstop>checkBoxOptionsMapFlightplanDirectToDeparture</tabstop>
   <tabstop>scrollArea_19</tabstop>
   <tabstop>spinBoxOptionsDisplayThicknessTrail</tabstop>
   <tabstop>pushButtonOptionsDisplayTrailColor</tabstop>

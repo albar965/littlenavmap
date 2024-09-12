@@ -3392,7 +3392,7 @@ void MapWidget::resetSettingActionsToDefault()
                                       ui->actionShowAirspaces, ui->actionMapShowRoute, ui->actionMapShowTocTod, ui->actionMapShowAlternate,
                                       ui->actionMapShowAircraft, ui->actionMapShowCompassRose, ui->actionMapShowCompassRoseAttach,
                                       ui->actionMapShowEndurance, ui->actionMapShowSelectedAltRange, ui->actionMapShowTurnPath,
-                                      ui->actionMapShowAircraftAi, ui->actionMapShowAircraftOnline,
+                                      ui->actionMapShowAircraftAi, ui->actionMapShowAircraftOnline, ui->actionShowDirectToRunway,
                                       ui->actionMapShowAircraftAiBoat, ui->actionMapShowAircraftTrack, ui->actionInfoApproachShowMissedAppr,
                                       ui->actionMapShowGrid, ui->actionMapShowCities, ui->actionMapShowMinimumAltitude,
                                       ui->actionMapShowAirportWeather, ui->actionMapShowSunShading});
@@ -3421,6 +3421,7 @@ void MapWidget::resetSettingActionsToDefault()
   ui->actionMapShowAlternate->setChecked(true);
   ui->actionMapShowTocTod->setChecked(true);
   ui->actionInfoApproachShowMissedAppr->setChecked(true);
+  ui->actionShowDirectToRunway->setChecked(true);
   // --
   ui->actionMapShowAircraft->setChecked(true);
   ui->actionMapShowAircraftTrack->setChecked(true);
@@ -3521,6 +3522,7 @@ void MapWidget::updateMapObjectsShown()
   setShowMapObjectDisplay(map::AIRCRAFT_ENDURANCE, ui->actionMapShowEndurance->isChecked());
   setShowMapObjectDisplay(map::AIRCRAFT_SELECTED_ALT_RANGE, ui->actionMapShowSelectedAltRange->isChecked());
   setShowMapObjectDisplay(map::AIRCRAFT_TURN_PATH, ui->actionMapShowTurnPath->isChecked());
+  setShowMapObjectDisplay(map::DIRECT_TO_DEPARTURE, ui->actionShowDirectToRunway->isChecked());
   setShowMapObject(map::AIRCRAFT, ui->actionMapShowAircraft->isChecked());
   setShowMapObject(map::AIRCRAFT_TRAIL, ui->actionMapShowAircraftTrack->isChecked());
   setShowMapObject(map::AIRCRAFT_AI, ui->actionMapShowAircraftAi->isChecked());

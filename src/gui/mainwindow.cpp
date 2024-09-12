@@ -1568,6 +1568,7 @@ void MainWindow::connectAllSlots()
   connect(ui->actionMapShowEndurance, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
   connect(ui->actionMapShowSelectedAltRange, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
   connect(ui->actionMapShowTurnPath, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
+  connect(ui->actionShowDirectToRunway, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
   connect(ui->actionMapShowAircraft, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
   connect(ui->actionMapShowAircraftAi, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
   connect(ui->actionMapShowAircraftOnline, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
@@ -4162,11 +4163,11 @@ void MainWindow::restoreStateMain()
                          ui->actionMapShowIls, ui->actionMapShowGls, ui->actionMapShowHolding, ui->actionMapShowAirportMsa,
                          ui->actionMapShowVictorAirways, ui->actionMapShowJetAirways, ui->actionMapShowTracks, ui->actionShowAirspaces,
                          ui->actionMapShowRoute, ui->actionMapShowTocTod, ui->actionMapShowAlternate, ui->actionMapShowAircraft,
-                         ui->actionMapShowCompassRose, ui->actionMapShowCompassRoseAttach, ui->actionMapShowEndurance,
-                         ui->actionMapShowSelectedAltRange, ui->actionMapShowTurnPath, ui->actionMapShowAircraftAi,
-                         ui->actionMapShowAircraftOnline, ui->actionMapShowAircraftAiBoat, ui->actionMapShowAircraftTrack,
-                         ui->actionInfoApproachShowMissedAppr, ui->actionSearchLogdataShowDirect, ui->actionSearchLogdataShowRoute,
-                         ui->actionSearchLogdataShowTrack});
+                         ui->actionShowDirectToRunway, ui->actionMapShowCompassRose, ui->actionMapShowCompassRoseAttach,
+                         ui->actionMapShowEndurance, ui->actionMapShowSelectedAltRange, ui->actionMapShowTurnPath,
+                         ui->actionMapShowAircraftAi, ui->actionMapShowAircraftOnline, ui->actionMapShowAircraftAiBoat,
+                         ui->actionMapShowAircraftTrack, ui->actionInfoApproachShowMissedAppr, ui->actionSearchLogdataShowDirect,
+                         ui->actionSearchLogdataShowRoute, ui->actionSearchLogdataShowTrack});
   }
   else
     mapWidget->resetSettingActionsToDefault();
@@ -4413,7 +4414,7 @@ void MainWindow::saveActionStates()
                                            ui->actionMapShowVictorAirways, ui->actionMapShowJetAirways, ui->actionMapShowTracks,
                                            ui->actionShowAirspaces, ui->actionMapShowRoute, ui->actionMapShowTocTod,
                                            ui->actionMapShowAlternate, ui->actionMapShowAircraft, ui->actionMapShowCompassRose,
-                                           ui->actionMapShowCompassRoseAttach, ui->actionMapShowEndurance,
+                                           ui->actionMapShowCompassRoseAttach, ui->actionMapShowEndurance, ui->actionShowDirectToRunway,
                                            ui->actionMapShowSelectedAltRange, ui->actionMapShowTurnPath, ui->actionMapAircraftCenter,
                                            ui->actionMapShowAircraftAi, ui->actionMapShowAircraftOnline, ui->actionMapShowAircraftAiBoat,
                                            ui->actionMapShowAircraftTrack, ui->actionInfoApproachShowMissedAppr, ui->actionMapShowGrid,

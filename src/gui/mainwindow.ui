@@ -488,6 +488,7 @@
     <addaction name="actionMapShowAlternate"/>
     <addaction name="actionMapShowTocTod"/>
     <addaction name="actionInfoApproachShowMissedAppr"/>
+    <addaction name="actionShowDirectToRunway"/>
     <addaction name="separator"/>
     <addaction name="actionMapShowAircraft"/>
     <addaction name="actionMapShowAircraftTrack"/>
@@ -12432,6 +12433,25 @@ relation to shown airport</string>
    <property name="toolTip">
     <string>Assign a normal window frame to dock windows and
 let them appear in the task list</string>
+   </property>
+  </action>
+  <action name="actionShowDirectToRunway">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/directrunway.svg</normaloff>:/littlenavmap/resources/icons/directrunway.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Show &amp;Direction to Departure Runway</string>
+   </property>
+   <property name="toolTip">
+    <string>Shows a dashed line with arrows pointing directly to the departure runway position
+from either the departure parking or the user aircraft while taxiing.</string>
    </property>
   </action>
  </widget>

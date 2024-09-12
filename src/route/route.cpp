@@ -513,7 +513,7 @@ void Route::updateActiveLegAndPos(const map::PosCourse& pos)
 
       // Either left current leg or closer to next and on courses
       // Do not track on missed if legs are not displayed
-      if(!(!(shownTypes & map::MISSED_APPROACH) && value(nextLeg).getProcedureLeg().isMissed()))
+      if(!(!shownTypes.testFlag(map::MISSED_APPROACH) && value(nextLeg).getProcedureLeg().isMissed()))
       {
         // Go to next leg and increase all values
         activeLegIndex = nextLeg;

@@ -49,7 +49,7 @@ void MapPainterShip::render()
   if(NavApp::isConnected())
   {
     // Draw AI ships first
-    if(context->objectTypes & map::AIRCRAFT_AI_SHIP && context->mapLayer->isAiShipLarge())
+    if(context->objectTypes.testFlag(map::AIRCRAFT_AI_SHIP) && context->mapLayer->isAiShipLarge())
     {
       atools::util::PainterContextSaver saver(context->painter);
       bool hidden = false;

@@ -386,10 +386,7 @@ enum Flag2 : quint64
   ROUTE_ZOOM_LANDING = 1ULL << 29,
 
   /* checkBoxOptionsMapFlightplanTransparent */
-  MAP_ROUTE_TRANSPARENT = 1ULL << 30,
-
-  /* checkBoxOptionsMapFlightplanDirectToDeparture */
-  MAP_ROUTE_DIRECT_TO_DEPARTURE = 1ULL << 31L,
+  MAP_ROUTE_TRANSPARENT = 1ULL << 30
 
 };
 

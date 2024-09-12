@@ -459,7 +459,7 @@ bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport, const 
           map::MapTypes type = routeLeg.getMapType();
           if(type == map::PROCEDURE)
           {
-            if(!routeLeg.getProcedureLeg().isMissed() || context.objectTypes & map::MISSED_APPROACH)
+            if(!routeLeg.getProcedureLeg().isMissed() || context.objectTypes.testFlag(map::MISSED_APPROACH))
             {
               // Procedure navaids drawn by route code
               const map::MapResult& navaids = routeLeg.getProcedureLeg().navaids;
@@ -480,7 +480,7 @@ bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport, const 
           map::MapTypes type = routeLeg.getMapType();
           if(type == map::PROCEDURE)
           {
-            if(!routeLeg.getProcedureLeg().isMissed() || context.objectTypes & map::MISSED_APPROACH)
+            if(!routeLeg.getProcedureLeg().isMissed() || context.objectTypes.testFlag(map::MISSED_APPROACH))
             {
               // Procedure recommended navaids drawn by route code
               const map::MapResult& recNavaids = routeLeg.getProcedureLeg().recNavaids;
@@ -519,7 +519,7 @@ bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport, const 
         const proc::MapProcedureLegs& procedure = mapPaintWidget->getProcedureHighlight();
         for(int i = 0; i < procedure.size(); i++)
         {
-          if(!procedure.at(i).isMissed() || context.objectTypes & map::MISSED_APPROACH)
+          if(!procedure.at(i).isMissed() || context.objectTypes.testFlag(map::MISSED_APPROACH))
           {
             const map::MapResult& navaids = procedure.at(i).navaids;
             if(navaids.hasWaypoints())

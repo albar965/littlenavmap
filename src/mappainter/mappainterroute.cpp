@@ -96,7 +96,8 @@ void MapPainterRoute::render()
 
 void MapPainterRoute::paintDirectToDeparture()
 {
-  if(context->mapLayer->isAirportDiagram() && context->flags2.testFlag(opts2::MAP_ROUTE_DIRECT_TO_DEPARTURE) &&
+
+  if(context->mapLayer->isAirportDiagram() && context->objectDisplayTypes.testFlag(map::DIRECT_TO_DEPARTURE) &&
      !NavApp::hasAircraftPassedTakeoffPoint())
   {
     const atools::fs::sc::SimConnectUserAircraft& userAircraft = mapPaintWidget->getUserAircraft();
@@ -1090,7 +1091,7 @@ void MapPainterRoute::paintProcedureSegment(const proc::MapProcedureLegs& legs, 
   if(previewAll && leg.isMissed())
     return;
 
-  if(leg.isMissed() && !(context->objectTypes & map::MISSED_APPROACH))
+  if(leg.isMissed() && !(context->objectTypes.testFlag(map::MISSED_APPROACH)))
     return;
 
   if(!leg.line.isValid())
@@ -1690,7 +1691,7 @@ void MapPainterRoute::paintProcedurePoint(QSet<map::MapRef>& idMap, const proc::
   if(previewAll && leg.isMissed())
     return;
 
-  if(leg.isMissed() && !(context->objectTypes & map::MISSED_APPROACH))
+  if(leg.isMissed() && !(context->objectTypes.testFlag(map::MISSED_APPROACH)))
     // If missed is hidden on route do not display it
     return;
 

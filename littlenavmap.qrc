@@ -357,5 +357,6 @@
         <file>resources/icons/zoomout.svg</file>
         <file>resources/icons/detailmorelabel.svg</file>
         <file>resources/icons/detaillesslabel.svg</file>
+        <file>resources/icons/directrunway.svg</file>
     </qresource>
 </RCC>
