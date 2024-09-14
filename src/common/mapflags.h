@@ -209,7 +209,7 @@ enum MapDisplayType : quint32
 
   AIRCRAFT_SELECTED_ALT_RANGE = 1 << 19, /* Altitude range for selected autopilot altitude ("green banana"). */
   AIRCRAFT_TURN_PATH = 1 << 20, /* Turn path at aircraft */
-  DIRECT_TO_DEPARTURE = 1 << 21, /* Course line direct to departure runway */
+  DIRECT_TO_DEPARTURE = 1 << 22, /* Course line direct to departure runway */
 
   LOGBOOK_ALL = LOGBOOK_DIRECT | LOGBOOK_ROUTE | LOGBOOK_TRACK
 };
