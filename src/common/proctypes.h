@@ -411,9 +411,12 @@ QDebug operator<<(QDebug out, const proc::MapProcedureLeg& leg);
  * Flying order in transitionLegs and then procedureLegs.
  * SID contains all legs in approach and transition fields. Flying order in procedureLegs and then transitionLegs.
  * STAR contains all legs in approach and transition fields. Flying order in transitionLegs and then procedureLegs */
+
+typedef QVector<MapProcedureLeg> MapProcedureLegVector;
+
 struct MapProcedureLegs
 {
-  QVector<MapProcedureLeg> transitionLegs, procedureLegs;
+  MapProcedureLegVector transitionLegs, procedureLegs;
 
   /* Reference with all database ids. For all navdata except custom procedures. */
   MapProcedureRef ref;

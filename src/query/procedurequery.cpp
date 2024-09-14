@@ -1025,26 +1025,26 @@ void ProcedureQuery::processArtificialLegs(proc::MapProcedureLegs& legs, const m
 
       if(runwayPos.isValid())
       {
-        QVector<MapProcedureLeg>& legList = legs.procedureLegs.isEmpty() ? legs.transitionLegs : legs.procedureLegs;
+        proc::MapProcedureLegVector& legVector = legs.procedureLegs.isEmpty() ? legs.transitionLegs : legs.procedureLegs;
 
-        if(!legList.isEmpty())
+        if(!legVector.isEmpty())
         {
           // Runway to initial fix - create artificial vector leg ==================
-          if(legList.constFirst().isInitialFix() && legList.constFirst().fixType != "R")
+          if(legVector.constFirst().isInitialFix() && legVector.constFirst().fixType != "R")
           {
             // Convert IF back into a point
-            legList.first().line.setPos1(legList.constFirst().line.getPos2());
+            legVector.first().line.setPos1(legVector.constFirst().line.getPos2());
 
             // Connect runway and initial fix
             proc::MapProcedureLeg startLeg = createStartLeg(legs.constFirst(), legs, {});
             startLeg.type = proc::VECTORS;
             startLeg.line = Line(runwayPos, legs.constFirst().line.getPos1());
             startLeg.mapType = legs.procedureLegs.isEmpty() ? proc::PROCEDURE_SID_TRANSITION : proc::PROCEDURE_SID;
-            legList.prepend(startLeg);
+            legVector.prepend(startLeg);
           }
 
           // Add runway fix to departure
-          proc::MapProcedureLeg runwayLeg = createRunwayLeg(legList.constFirst(), legs);
+          proc::MapProcedureLeg runwayLeg = createRunwayLeg(legVector.constFirst(), legs);
           runwayLeg.type = proc::DIRECT_TO_RUNWAY;
           runwayLeg.altRestriction.alt1 = airport.position.getAltitude(); // At 50ft above threshold
           runwayLeg.line = Line(runwayPos);
@@ -1052,7 +1052,7 @@ void ProcedureQuery::processArtificialLegs(proc::MapProcedureLegs& legs, const m
           runwayLeg.distance = 0.f;
           runwayLeg.course = map::INVALID_COURSE_VALUE;
 
-          legList.prepend(runwayLeg);
+          legVector.prepend(runwayLeg);
         }
       }
     } // if(legs.mapType & proc::PROCEDURE_DEPARTURE)
@@ -1369,10 +1369,11 @@ void ProcedureQuery::processApproachRunway(proc::MapProcedureLegs& legs, const m
   if(legs.mapType & proc::PROCEDURE_APPROACH)
   {
     // Look for runway
-    for(int i = 0; i < legs.procedureLegs.size(); i++)
+    proc::MapProcedureLegVector& legVector = legs.procedureLegs;
+    for(int i = 0; i < legVector.size(); i++)
     {
-      proc::MapProcedureLeg& leg = legs[i];
-      proc::MapProcedureLeg *nextLeg = i < legs.procedureLegs.size() - 1 ? &legs[i + 1] : nullptr;
+      proc::MapProcedureLeg& leg = legVector[i];
+      proc::MapProcedureLeg *nextLeg = i < legVector.size() - 1 ? &legVector[i + 1] : nullptr;
 
       // Last runway point if this has a runway and is the last leg or the next is missed (end of approach)
       // Runway name is empty in case of circle-to-land or straight-in
