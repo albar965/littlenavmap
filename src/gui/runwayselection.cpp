@@ -202,10 +202,13 @@ void RunwaySelection::fillRunwayList()
         runways.append(RunwayIdxEntry(r, sec));
     }
 
-    // Sort by length and heading ===================
+    // Sort by length and normalized name ===================
     std::sort(runways.begin(), runways.end(), [](const RunwayIdxEntry& rw1, const RunwayIdxEntry& rw2) -> bool {
-      return atools::almostEqual(rw1.runway.length, rw2.runway.length) ?
-             rw1.end.heading<rw2.end.heading : rw1.runway.length> rw2.runway.length;
+      if(atools::almostEqual(rw1.runway.length, rw2.runway.length))
+        return atools::fs::util::runwayNamePrefixZero(rw1.end.name) < atools::fs::util::runwayNamePrefixZero(rw2.end.name);
+      else
+        // Longest on top
+        return rw1.runway.length > rw2.runway.length;
     });
   }
 
