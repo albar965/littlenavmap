@@ -776,7 +776,7 @@ void SymbolPainter::drawAirportMsa(QPainter *painter, const map::MapAirportMsa& 
       for(int i = 0; i < airportMsa.bearings.size(); i++)
       {
         float bearing = atools::geo::normalizeCourse(airportMsa.bearings.at(i) + 180.f + magvar);
-        float bearingTo = atools::geo::normalizeCourse(atools::atRoll(airportMsa.bearings, i + 1) + 180.f + magvar);
+        float bearingTo = atools::geo::normalizeCourse(atools::atRollConst(airportMsa.bearings, i + 1) + 180.f + magvar);
 
         // Line from origin to top defining label position - circles with one sector use a label closer to the center
         QLineF line(x, y, x, y - radius * (airportMsa.altitudes.size() > 1 ? 0.70 : 0.4));

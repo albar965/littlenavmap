@@ -121,10 +121,11 @@ A big thank you to all who reported bugs and issues!
 * Fixed issue where detection of malformed MSFS airports rejected valid airport add-ons with a
   message `Duplicate airport ident`. This happened when add-on developers put more than one of the
   same airport into one BGL file.
-* Better airspace display geometry for Navigraph database. Now considering Rhumb line segments in
-  airspace description. This does not cover airspaces loaded from simulators since the required
-  information is missing. Note that this and needs an updated Navigraph database. Most likely
-  next cycle 2410.
+* Better airspace geometry for Navigraph databases and all airspaces read from simulator
+  libraries. Now considering Rhumb line segments in DFD airspace description.
+  Note that a workaround is used to detect the segments for simulator and user airspaces since
+  required information is missing in simulators. This eliminates wrong airspace boundaries drawn as
+  bows (Great Circle lines). Note that this needs an updated Navigraph database if used.
 * Fixed duplicate reading of X-Plane `airspace.txt` resulting in airspaces shown twice. The file
   `airspace.txt` in `Custom Data` now correctly overrides the one in `Resources`.
 * Updated minor database version to 29 due to several schema changes. This results in a notice
