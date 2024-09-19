@@ -15,6 +15,8 @@ This text is partially Markdown, so the formatting is sometimes strange.
 
 **The program will remind you to reload the scenery library due to database changes. This is optional.**
 
+**Note that the user manual and the program translations have not been updated yet.**
+
 A big thank you to all who reported bugs and issues!
 
 ## Changes from 3.0.9 to 3.0.10.rc1
