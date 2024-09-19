@@ -13,6 +13,8 @@ This text is partially Markdown, so the formatting is sometimes strange.
 **macOS users: Keep in mind that you have to clear the quarantine flag when updating Little Xpconnect. See
 [Clearing the Quarantine Flag on macOS](https://www.littlenavmap.org/manuals/littlenavmap/release/latest/en/XPCONNECT.html#clearing-the-quarantine-flag-on-macos).**
 
+**The program will remind you to reload the scenery library due to database changes. This is optional.**
+
 A big thank you to all who reported bugs and issues!
 
 ## Changes from 3.0.9 to 3.0.10.rc1
@@ -88,7 +90,9 @@ A big thank you to all who reported bugs and issues!
   menu `View`.
 * Setting `Load the map display saved settings` on options page `Startup and Updates` now affects
   the same options as `View` -> `Reset Display Settings` now. This is map theme, map projection
-  and detail levels as well. Also fixed issue where userpoints were not reset correctly.
+  and detail levels as well.
+* Fixed issue where userpoints were not reset correctly when using
+  `Reset Display Settings`.
 * Added shortcut `Ctrl+C` to copy coordinates at the cursor position in the map window to the
   clipboard. Note that you have to activate the map window by pressing F2 or clicking into it
   before using any shortcuts there.
@@ -121,11 +125,11 @@ A big thank you to all who reported bugs and issues!
 * Fixed issue where detection of malformed MSFS airports rejected valid airport add-ons with a
   message `Duplicate airport ident`. This happened when add-on developers put more than one of the
   same airport into one BGL file.
-* Better airspace geometry for Navigraph databases and all airspaces read from simulator
-  libraries. Now considering Rhumb line segments in DFD airspace description.
+* Better airspace geometry for Navigraph databases, airspaces read from simulator
+  libraries and user files. Now considering Rhumb line segments in DFD airspace description.
   Note that a workaround is used to detect the segments for simulator and user airspaces since
-  required information is missing in simulators. This eliminates wrong airspace boundaries drawn as
-  bows (Great Circle lines). Note that this needs an updated Navigraph database if used.
+  required information is missing there. This eliminates wrong airspace boundaries drawn as
+  bows (Great Circle lines). Note that this needs a new AIRAC cycle if using the Navigraph update.
 * Fixed duplicate reading of X-Plane `airspace.txt` resulting in airspaces shown twice. The file
   `airspace.txt` in `Custom Data` now correctly overrides the one in `Resources`.
 * Updated minor database version to 29 due to several schema changes. This results in a notice
@@ -145,8 +149,8 @@ A big thank you to all who reported bugs and issues!
   map airport weather.
 * Fixes to web interface by [u-an-i](https://github.com/u-an-i) #1177.
 * Now getting best guess for user aircraft type designator and category in MSFS. Using keys
-  `icao_type_designator` and `icao_model` from file `aircraft.cfg`. Added aircraft category to detect
-  helicopters.
+  `icao_type_designator` and `icao_model` from file `aircraft.cfg`.
+* Added aircraft category to detect helicopters in MSFS.
 * Added help menu item pointing to keyboard shortcuts.
 * Fixes for random crashes when using the web interface.
 * More optimizations.
