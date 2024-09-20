@@ -98,6 +98,8 @@ A big thank you to all who reported bugs and issues!
 * Added shortcut `Ctrl+C` to copy coordinates at the cursor position in the map window to the
   clipboard. Note that you have to activate the map window by pressing F2 or clicking into it
   before using any shortcuts there.
+* Disabled Shift/Ctrl/Alt+Left/Right/up/Down keys for map scrolling to avoid shorcuts overlapping
+  with operating system functions.
 * Fixed inadvertent movement or zooming on map display when using mouse wheel, keyboard shortcuts
   containing `+`, `-` or cursor keys.
 * Now stopping map drawing on overflow of highlighted map objects (e.g. selected navaids in the
@@ -136,6 +138,8 @@ A big thank you to all who reported bugs and issues!
   `airspace.txt` in `Custom Data` now correctly overrides the one in `Resources`.
 * Updated minor database version to 29 due to several schema changes. This results in a notice
   about a previous database version although reloading is not required.
+* Fixed issue with double and invalid COM frequencies for MSFS airports when using
+  MSFS Navigraph  update.
 
 ### Search
 

@@ -1536,8 +1536,9 @@ bool MapWidget::eventFilter(QObject *obj, QEvent *eventParam)
 #endif
 
       // Cursor keys + alt are sent and scroll map if history forward or backward actions are disabled at end of history
+      // Also disable Shift/Ctrl/Alt+Direction keys to avoid overlap with OS functions
       // Suppress this here
-      if(!consumeEvent && (key == Qt::Key_Left || key == Qt::Key_Right) && modifiers == Qt::AltModifier)
+      if(!consumeEvent && MOVE_KEYS.contains(key) && (modifiers & (Qt::ShiftModifier | Qt::ControlModifier | Qt::AltModifier)))
         consumeEvent = true;
 
       // Catch useless home event where Marble zooms way out. Suppress.
