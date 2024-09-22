@@ -887,14 +887,14 @@ unix:!macx {
 # Mac specific deploy target
 macx {
 
-  INSTALL_MARBLE_DYLIB_CMD=install_name_tool \
-         -change  $$INSTALL_MARBLE_DYLIB \
-         @executable_path/../Frameworks/libmarblewidget-qt5.25.dylib $$OUT_PWD/littlenavmap.app/Contents/PlugIns
-
-# Needs "-rpath" in GUI
 #  INSTALL_MARBLE_DYLIB_CMD=install_name_tool \
 #         -change  $$INSTALL_MARBLE_DYLIB \
-#         -rpath @executable_path/../Frameworks/libmarblewidget-qt5.25.dylib $$OUT_PWD/littlenavmap.app/Contents/PlugIns
+#         @executable_path/../Frameworks/libmarblewidget-qt5.25.dylib $$OUT_PWD/littlenavmap.app/Contents/PlugIns
+
+  # Needs "-rpath" in GUI
+  INSTALL_MARBLE_DYLIB_CMD=install_name_tool \
+         -change  $$INSTALL_MARBLE_DYLIB \
+         -rpath @executable_path/../Frameworks/libmarblewidget-qt5.25.dylib $$OUT_PWD/littlenavmap.app/Contents/PlugIns
 
 
   DEPLOY_APP=\"$$PWD/../deploy/Little Navmap.app\"

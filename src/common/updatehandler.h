@@ -26,7 +26,7 @@
 namespace atools {
 namespace util {
 class UpdateCheck;
-struct Update;
+class Update;
 typedef QVector<atools::util::Update> UpdateList;
 }
 }
