@@ -914,9 +914,9 @@ const QList<map::MapVor> *MapQuery::getVors(const GeoDataLatLonBox& rect, const 
 
   if(vorCache.list.isEmpty() && !lazy)
   {
-    for(const GeoDataLatLonBox& r : query::splitAtAntiMeridian(rect, queryRectInflationFactor, queryRectInflationIncrement))
+    for(const GeoDataLatLonBox& box : query::splitAtAntiMeridian(rect, queryRectInflationFactor, queryRectInflationIncrement))
     {
-      query::bindRect(r, vorsByRectQuery);
+      query::bindRect(box, vorsByRectQuery);
       vorsByRectQuery->exec();
       while(vorsByRectQuery->next())
       {
@@ -948,9 +948,9 @@ const QList<map::MapNdb> *MapQuery::getNdbs(const GeoDataLatLonBox& rect, const 
 
   if(ndbCache.list.isEmpty() && !lazy)
   {
-    for(const GeoDataLatLonBox& r : query::splitAtAntiMeridian(rect, queryRectInflationFactor, queryRectInflationIncrement))
+    for(const GeoDataLatLonBox& box : query::splitAtAntiMeridian(rect, queryRectInflationFactor, queryRectInflationIncrement))
     {
-      query::bindRect(r, ndbsByRectQuery);
+      query::bindRect(box, ndbsByRectQuery);
       ndbsByRectQuery->exec();
       while(ndbsByRectQuery->next())
       {
@@ -985,7 +985,7 @@ const QList<map::MapUserpoint>& MapQuery::getUserdataPoints(const GeoDataLatLonB
   {
     bool allTypesSelected = types == typesAll;
 
-    for(const GeoDataLatLonBox& r : query::splitAtAntiMeridian(rect, queryRectInflationFactor, queryRectInflationIncrement))
+    for(const GeoDataLatLonBox& box : query::splitAtAntiMeridian(rect, queryRectInflationFactor, queryRectInflationIncrement))
     {
       QVector<SqlQuery *> sqlQueries;
       QStringList queryTypes;
@@ -1003,7 +1003,7 @@ const QList<map::MapUserpoint>& MapQuery::getUserdataPoints(const GeoDataLatLonB
       // One or two queries
       for(SqlQuery *query : sqlQueries)
       {
-        query::bindRect(r, query);
+        query::bindRect(box, query);
         query->bindValue(":dist", distanceNm);
 
         for(const QString& queryType : qAsConst(queryTypes))
@@ -1096,10 +1096,9 @@ const QList<map::MapMarker> *MapQuery::getMarkers(const GeoDataLatLonBox& rect, 
 
   if(markerCache.list.isEmpty() && !lazy)
   {
-    for(const GeoDataLatLonBox& r :
-        query::splitAtAntiMeridian(rect, queryRectInflationFactor, queryRectInflationIncrement))
+    for(const GeoDataLatLonBox& box : query::splitAtAntiMeridian(rect, queryRectInflationFactor, queryRectInflationIncrement))
     {
-      query::bindRect(r, markersByRectQuery);
+      query::bindRect(box, markersByRectQuery);
       markersByRectQuery->exec();
       while(markersByRectQuery->next())
       {
@@ -1134,10 +1133,9 @@ const QList<map::MapHolding> *MapQuery::getHoldings(const Marble::GeoDataLatLonB
 
     if(holdingCache.list.isEmpty() && !lazy)
     {
-      for(const GeoDataLatLonBox& r :
-          query::splitAtAntiMeridian(rect, queryRectInflationFactor, queryRectInflationIncrement))
+      for(const GeoDataLatLonBox& box : query::splitAtAntiMeridian(rect, queryRectInflationFactor, queryRectInflationIncrement))
       {
-        query::bindRect(r, holdingByRectQuery);
+        query::bindRect(box, holdingByRectQuery);
         holdingByRectQuery->exec();
         while(holdingByRectQuery->next())
         {
@@ -1166,10 +1164,9 @@ const QList<map::MapAirportMsa> *MapQuery::getAirportMsa(const Marble::GeoDataLa
 
     if(airportMsaCache.list.isEmpty() && !lazy)
     {
-      for(const GeoDataLatLonBox& r :
-          query::splitAtAntiMeridian(rect, queryRectInflationFactor, queryRectInflationIncrement))
+      for(const GeoDataLatLonBox& box : query::splitAtAntiMeridian(rect, queryRectInflationFactor, queryRectInflationIncrement))
       {
-        query::bindRect(r, airportMsaByRectQuery);
+        query::bindRect(box, airportMsaByRectQuery);
 
         airportMsaByRectQuery->exec();
         while(airportMsaByRectQuery->next())
@@ -1205,9 +1202,9 @@ const QList<map::MapIls> *MapQuery::getIls(GeoDataLatLonBox rect, const MapLayer
     // Increase bounding rect since ILS has no bounding to query
     rect.setBoundaries(rect.north() + increase, rect.south() - increase, rect.east() + increase, rect.west() - increase);
 
-    for(const GeoDataLatLonBox& r : query::splitAtAntiMeridian(rect, queryRectInflationFactor, queryRectInflationIncrement))
+    for(const GeoDataLatLonBox& box : query::splitAtAntiMeridian(rect, queryRectInflationFactor, queryRectInflationIncrement))
     {
-      query::bindRect(r, ilsByRectQuery);
+      query::bindRect(box, ilsByRectQuery);
 
       ilsByRectQuery->exec();
       while(ilsByRectQuery->next())
@@ -1247,7 +1244,7 @@ const QList<map::MapAirport> *MapQuery::fetchAirports(const Marble::GeoDataLatLo
   {
     bool navdata = NavApp::isNavdataAll();
 
-    for(const GeoDataLatLonBox& r : query::splitAtAntiMeridian(rect, queryRectInflationFactor, queryRectInflationIncrement))
+    for(const GeoDataLatLonBox& box : query::splitAtAntiMeridian(rect, queryRectInflationFactor, queryRectInflationIncrement))
     {
       // Avoid duplicates between both queries
       QSet<int> ids;
@@ -1255,7 +1252,7 @@ const QList<map::MapAirport> *MapQuery::fetchAirports(const Marble::GeoDataLatLo
       // Get normal airports ==========
       if(normal)
       {
-        query::bindRect(r, query);
+        query::bindRect(box, query);
         query->exec();
         while(query->next())
         {
@@ -1273,7 +1270,7 @@ const QList<map::MapAirport> *MapQuery::fetchAirports(const Marble::GeoDataLatLo
       // Get add-on airports ==========
       if(addon && airportAddonByRectQuery != nullptr)
       {
-        query::bindRect(r, airportAddonByRectQuery);
+        query::bindRect(box, airportAddonByRectQuery);
         airportAddonByRectQuery->exec();
         while(airportAddonByRectQuery->next())
         {

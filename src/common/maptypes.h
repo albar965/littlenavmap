@@ -1461,7 +1461,7 @@ struct MapAirportMsa :
 
   QString airportIdent, navIdent, region, multipleCode, vorType;
 
-  map::MapType navType; /* AIRPORT, VOR, NDB or WAYPOINT*/
+  map::MapType navType; /* AIRPORT, VOR, NDB, ILS or WAYPOINT */
   bool vorDmeOnly, vorHasDme, vorTacan, vorVortac; /* VOR specific flags */
 
   float radius, /* Radius in NM */

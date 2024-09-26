@@ -636,6 +636,8 @@ map::MapType MapTypesFactory::strToType(const QString& navType)
     return map::VOR; // VOR/TACAN/DME
   else if(navType == "A")
     return map::AIRPORT;
+  else if(navType == "I")
+    return map::ILS;
   else if(navType == "R")
     return map::RUNWAYEND;
 

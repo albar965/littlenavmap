@@ -96,7 +96,7 @@ void MapPainterMsa::drawMsaSymbol(const map::MapAirportMsa& airportMsa, float x,
       size = context->sz(context->symbolSizeNavaid, context->mapLayer->getVorSymbolSize());
     else if(airportMsa.navType == map::NDB)
       size = context->sz(context->symbolSizeNavaid, context->mapLayer->getNdbSymbolSize());
-    else if(airportMsa.navType == map::WAYPOINT)
+    else if(airportMsa.navType == map::WAYPOINT || airportMsa.navType == map::ILS)
       size = context->sz(context->symbolSizeNavaid, context->mapLayer->getWaypointSymbolSize());
     size = std::max(size, 6);
   }

@@ -140,6 +140,8 @@ A big thank you to all who reported bugs and issues!
   about a previous database version although reloading is not required.
 * Fixed issue with double and invalid COM frequencies for MSFS airports when using
   MSFS Navigraph  update.
+* Fixed issues reading MSA centers for X-Plane where runways were not detected. Now also looking
+  for center points of ILS.
 
 ### Search
 

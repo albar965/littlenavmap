@@ -1858,6 +1858,8 @@ void HtmlInfoBuilder::airportMsaTextInternal(const map::MapAirportMsa& msa, atoo
         title.append(tr("%1 %2").arg(tr("Waypoint")).arg(msa.navIdent));
       else if(msa.navType == map::VOR)
         title.append(tr("%1 %2").arg(map::vorType(msa.vorDmeOnly, msa.vorHasDme, msa.vorTacan, msa.vorVortac)).arg(msa.navIdent));
+      else if(msa.navType == map::ILS)
+        title.append(tr("%1 %2").arg(tr("ILS/LOC")).arg(msa.navIdent));
       else if(msa.navType == map::NDB)
         title.append(tr("%1 %2").arg(tr("NDB")).arg(msa.navIdent));
       else if(msa.navType == map::RUNWAYEND)
