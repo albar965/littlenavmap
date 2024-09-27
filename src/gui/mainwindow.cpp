@@ -2484,10 +2484,14 @@ void MainWindow::trailLoadGpxFile(const QString& file)
       if(replace)
       {
         QGuiApplication::setOverrideCursor(Qt::WaitCursor);
-        int numTruncated = mapWidget->loadAircraftTrail(file);
+        int numTruncated, numLoaded;
+        mapWidget->loadAircraftTrail(file, numTruncated, numLoaded);
         QGuiApplication::restoreOverrideCursor();
 
-        warnTrailPoints(numTruncated, false /* doNotShowAgain */);
+        if(numLoaded == 0)
+          atools::gui::Dialog::warning(this, tr("The file \"%1\" does not contain track points.").arg(file));
+        else
+          warnTrailPoints(numTruncated, false /* doNotShowAgain */);
       }
     }
     else
@@ -2507,10 +2511,14 @@ void MainWindow::trailAppendGpx()
     if(atools::fs::gpx::GpxIO::isGpxFile(file))
     {
       QGuiApplication::setOverrideCursor(Qt::WaitCursor);
-      int numTruncated = mapWidget->appendAircraftTrail(file);
+      int numTruncated, numLoaded;
+      mapWidget->appendAircraftTrail(file, numTruncated, numLoaded);
       QGuiApplication::restoreOverrideCursor();
 
-      warnTrailPoints(numTruncated, false /* doNotShowAgain */);
+      if(numLoaded == 0)
+        atools::gui::Dialog::warning(this, tr("The file \"%1\" does not contain track points.").arg(file));
+      else
+        warnTrailPoints(numTruncated, false /* doNotShowAgain */);
     }
     else
       atools::gui::Dialog::warning(this, tr("The file \"%1\" is no valid GPX file.").arg(file));

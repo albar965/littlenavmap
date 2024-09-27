@@ -180,8 +180,8 @@ public:
   void clearAllMarkers(map::MapTypes types);
 
   /* Return number of truncated points */
-  int loadAircraftTrail(const QString& filename);
-  int appendAircraftTrail(const QString& filename);
+  void loadAircraftTrail(const QString& filename, int& numLoaded, int& numTruncated);
+  void appendAircraftTrail(const QString& filename, int& numLoaded, int& numTruncated);
 
   /* Delete the current aircraft track. Will not stop collecting new track points */
   void deleteAircraftTrail();

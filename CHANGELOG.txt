@@ -38,6 +38,9 @@ A big thank you to all who reported bugs and issues!
   `SBRJ EVKO3A.NAXOP IBDA1A SBSP`. #1130
 * Fixed issue where parking spots could not be found resulting in an error message after reloading
   a flight plan when using the option `Use Navigraph for all Features`.
+* Made GPX file detection more tolerant. Now showing a warning if the GPX file does not contain any
+  track points.
+
 
 ## Export
 

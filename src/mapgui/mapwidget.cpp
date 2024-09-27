@@ -4024,40 +4024,48 @@ void MapWidget::clearAllMarkers(map::MapTypes types)
   mainWindow->setStatusMessage(tr("User features removed from map."));
 }
 
-int MapWidget::loadAircraftTrail(const QString& filename)
+void MapWidget::loadAircraftTrail(const QString& filename, int& numLoaded, int& numTruncated)
 {
   atools::fs::gpx::GpxData gpxData;
   atools::fs::gpx::GpxIO().loadGpx(gpxData, filename);
 
-  int numTruncated = aircraftTrail->fillTrailFromGpxData(gpxData);
-  qDebug() << Q_FUNC_INFO << "Num points" << gpxData.getNumPoints() << "numTruncated" << numTruncated;
+  numLoaded = gpxData.getNumPoints();
+  numTruncated = 0;
 
-  if(OptionData::instance().getFlags().testFlag(opts::GUI_CENTER_ROUTE))
-    showRect(gpxData.getTrailRect(), false /* doubleClick */);
+  if(numLoaded > 0)
+  {
+    numTruncated = aircraftTrail->fillTrailFromGpxData(gpxData);
+    qDebug() << Q_FUNC_INFO << "Num points" << gpxData.getNumPoints() << "numTruncated" << numTruncated;
 
-  update();
-  emit updateActionStates();
-  mainWindow->setStatusMessage(tr("User aircraft trail replaced."));
+    if(OptionData::instance().getFlags().testFlag(opts::GUI_CENTER_ROUTE))
+      showRect(gpxData.getTrailRect(), false /* doubleClick */);
 
-  return numTruncated;
+    update();
+    emit updateActionStates();
+    mainWindow->setStatusMessage(tr("User aircraft trail replaced."));
+  }
 }
 
-int MapWidget::appendAircraftTrail(const QString& filename)
+void MapWidget::appendAircraftTrail(const QString& filename, int& numLoaded, int& numTruncated)
 {
   atools::fs::gpx::GpxData gpxData;
   atools::fs::gpx::GpxIO().loadGpx(gpxData, filename);
 
-  int numTruncated = aircraftTrail->appendTrailFromGpxData(gpxData);
-  qDebug() << Q_FUNC_INFO << "Num points" << gpxData.getNumPoints() << "numTruncated" << numTruncated;
+  numLoaded = gpxData.getNumPoints();
+  numTruncated = 0;
 
-  if(OptionData::instance().getFlags().testFlag(opts::GUI_CENTER_ROUTE))
-    showRect(gpxData.getTrailRect(), false /* doubleClick */);
+  if(numLoaded > 0)
+  {
+    numTruncated = aircraftTrail->appendTrailFromGpxData(gpxData);
+    qDebug() << Q_FUNC_INFO << "Num points" << gpxData.getNumPoints() << "numTruncated" << numTruncated;
 
-  update();
-  emit updateActionStates();
-  mainWindow->setStatusMessage(tr("User aircraft trail appended."));
+    if(OptionData::instance().getFlags().testFlag(opts::GUI_CENTER_ROUTE))
+      showRect(gpxData.getTrailRect(), false /* doubleClick */);
 
-  return numTruncated;
+    update();
+    emit updateActionStates();
+    mainWindow->setStatusMessage(tr("User aircraft trail appended."));
+  }
 }
 
 void MapWidget::deleteAircraftTrail()
