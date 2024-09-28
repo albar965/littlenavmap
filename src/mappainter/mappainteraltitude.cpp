@@ -60,7 +60,7 @@ void MapPainterAltitude::render()
 
       // Use width and style from pen but override transparency
       QColor gridCol = context->darkMap ? mapcolors::minimumAltitudeGridPenDark.color() : mapcolors::minimumAltitudeGridPen.color();
-      gridCol.setAlphaF(1. - context->transparencyMora);
+      gridCol.setAlphaF(atools::minmax(0., 1., 1. - context->transparencyMora));
       QPen pen = context->darkMap ? mapcolors::minimumAltitudeGridPenDark : mapcolors::minimumAltitudeGridPen;
       pen.setColor(gridCol);
       context->painter->setPen(pen);
@@ -135,7 +135,7 @@ void MapPainterAltitude::render()
 
         // Do not use transparency but override from options
         QColor textCol = context->darkMap ? mapcolors::minimumAltitudeNumberColorDark : mapcolors::minimumAltitudeNumberColor;
-        textCol.setAlphaF(1. - context->transparencyMora);
+        textCol.setAlphaF(atools::minmax(0., 1., 1. - context->transparencyMora));
         context->painter->setPen(textCol);
 
         float fontSize = minWidth * context->textSizeMora;

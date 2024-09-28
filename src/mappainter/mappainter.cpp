@@ -963,7 +963,7 @@ void MapPainter::paintMsaMarks(const QList<map::MapAirportMsa>& airportMsa, bool
 
       // Use width and style from pen but override transparency
       QColor gridCol = context->darkMap ? mapcolors::msaDiagramLinePenDark.color() : mapcolors::msaDiagramLinePen.color();
-      gridCol.setAlphaF(1. - context->transparencyAirportMsa);
+      gridCol.setAlphaF(atools::minmax(0., 1., 1. - context->transparencyAirportMsa));
       QPen pen = context->darkMap ? mapcolors::msaDiagramLinePenDark : mapcolors::msaDiagramLinePen;
       pen.setColor(gridCol);
       context->painter->setPen(pen);
@@ -1003,7 +1003,7 @@ void MapPainter::paintMsaMarks(const QList<map::MapAirportMsa>& airportMsa, bool
         {
           // Do not use transparency but override from options
           QColor textCol = context->darkMap ? mapcolors::msaDiagramNumberColorDark : mapcolors::msaDiagramNumberColor;
-          textCol.setAlphaF(1. - context->transparencyAirportMsa);
+          textCol.setAlphaF(atools::minmax(0., 1., 1. - context->transparencyAirportMsa));
           context->painter->setPen(textCol);
 
           QFont font = context->painter->font();

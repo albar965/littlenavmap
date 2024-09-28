@@ -933,28 +933,28 @@ void darkenPainterRect(QPainter& painter)
 QPen adjustAlphaF(QPen pen, float alpha)
 {
   QColor color = pen.color();
-  color.setAlphaF(alpha);
+  color.setAlphaF(atools::minmax(0.f, 1.f, alpha));
   pen.setColor(color);
   return pen;
 }
 
 QColor adjustAlphaF(QColor color, float alpha)
 {
-  color.setAlphaF(alpha);
+  color.setAlphaF(atools::minmax(0.f, 1.f, alpha));
   return color;
 }
 
 QPen adjustAlpha(QPen pen, int alpha)
 {
   QColor color = pen.color();
-  color.setAlpha(alpha);
+  color.setAlpha(atools::minmax(0, 255, alpha));
   pen.setColor(color);
   return pen;
 }
 
 QColor adjustAlpha(QColor color, int alpha)
 {
-  color.setAlpha(alpha);
+  color.setAlpha(atools::minmax(0, 255, alpha));
   return color;
 }
 

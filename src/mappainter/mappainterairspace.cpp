@@ -17,14 +17,15 @@
 
 #include "mappainter/mappainterairspace.h"
 
+#include "app/navapp.h"
+#include "atools.h"
 #include "common/mapcolors.h"
 #include "common/textplacement.h"
+#include "mapgui/maplayer.h"
+#include "mapgui/mapscale.h"
 #include "query/airspacequeries.h"
 #include "query/querymanager.h"
 #include "route/route.h"
-#include "mapgui/maplayer.h"
-#include "app/navapp.h"
-#include "mapgui/mapscale.h"
 #include "util/polygontools.h"
 
 #include <marble/GeoDataLineString.h>
@@ -185,7 +186,7 @@ void MapPainterAirspace::render()
         // Draw center circle for online airspace with less transparency and darker
         QBrush brush = painter->brush();
         QColor color = brush.color();
-        color.setAlphaF(color.alphaF() * 2.f);
+        color.setAlphaF(atools::minmax(0., 1., color.alphaF() * 2.));
         brush.setColor(color.darker(200));
         painter->setBrush(brush);
 

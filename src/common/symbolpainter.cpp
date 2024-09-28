@@ -1425,7 +1425,7 @@ void SymbolPainter::textBoxF(QPainter *painter, QStringList texts, QPen textPen,
     {
       // Use an alpha channel for semi transparency
       painter->setBackgroundMode(Qt::OpaqueMode);
-      backColor.setAlpha(transparency);
+      backColor.setAlpha(atools::minmax(0, 255, transparency));
       painter->setBrush(backColor);
       painter->setBackground(backColor);
       fill = true;

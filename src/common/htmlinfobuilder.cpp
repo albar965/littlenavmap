@@ -3258,10 +3258,10 @@ void HtmlInfoBuilder::airspaceText(const MapAirspace& airspace, const atools::sq
     html.small(QString("Database: source = %1, boundary_id = %2").
                arg(map::airspaceSourceText(airspace.src)).arg(airspace.getId())).br();
     html.small(QString("name = %1, comName = %2, comType = %3, minAltitudeType = %4, maxAltitudeType = %5, "
-                       "multipleCode = %6, restrictiveDesignation = %7, restrictiveType = %8, timeCode = %9").
+                       "multipleCode = %6, restrictiveDesignation = %7, restrictiveType = %8, timeCode = %9, db type = %10").
                arg(airspace.name).arg(airspace.comName).arg(airspace.comType).arg(airspace.minAltitudeType).
                arg(airspace.maxAltitudeType).arg(airspace.multipleCode).arg(airspace.restrictiveDesignation).
-               arg(airspace.restrictiveType).arg(airspace.timeCode));
+               arg(airspace.restrictiveType).arg(airspace.timeCode).arg(map::airspaceTypeToDatabase(airspace.type)));
   }
 #endif
 
