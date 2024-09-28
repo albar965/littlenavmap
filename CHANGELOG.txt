@@ -172,6 +172,8 @@ A big thank you to all who reported bugs and issues!
   `icao_type_designator` and `icao_model` from file `aircraft.cfg`.
 * Added aircraft category to detect helicopters in MSFS.
 * Added help menu item pointing to keyboard shortcuts.
+* Fixed reversed meaning of settings `By airspace name vs. callsign` and `By airspace file name vs. callsign`
+  on options page `Map Online`.
 * More optimizations.
 
 ==<<=============================================================================

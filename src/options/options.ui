@@ -5387,7 +5387,7 @@ Value 0 is opaque and 90 is most transparent.</string>
                 <number>2</number>
                </property>
                <item>
-                <widget class="QCheckBox" name="checkBoxDisplayOnlineFileLookup">
+                <widget class="QCheckBox" name="checkBoxDisplayOnlineNameLookup">
                  <property name="toolTip">
                   <string>Look in the user airspaces for a boundary where the
 airspace name has to match the callsign of the online center.</string>
@@ -5401,7 +5401,7 @@ airspace name has to match the callsign of the online center.</string>
                 </widget>
                </item>
                <item>
-                <widget class="QCheckBox" name="checkBoxDisplayOnlineNameLookup">
+                <widget class="QCheckBox" name="checkBoxDisplayOnlineFileLookup">
                  <property name="toolTip">
                   <string>Look in the user airspaces for a boundary where the
 airspace filename has to match the callsign of the online center.</string>

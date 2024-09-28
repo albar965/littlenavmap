@@ -500,20 +500,17 @@ void OnlinedataController::showMessageDialog()
 
 const LineString *OnlinedataController::airspaceGeometryCallback(const QString& callsign, atools::fs::online::fac::FacilityType type)
 {
-  opts2::Flags2 flags2 = OptionData::instance().getFlags2();
+  opts2::Flags2 flags = OptionData::instance().getFlags2();
   AirspaceQueries *airspaceQueries = QueryManager::instance()->getQueriesGui()->getAirspaceQueries();
   const LineString *lineString = nullptr;
 
   // Try to get airspace boundary by name vs. callsign if set in options
-  if(flags2 & opts2::ONLINE_AIRSPACE_BY_NAME)
+  if(flags.testFlag(opts2::ONLINE_AIRSPACE_BY_NAME))
     lineString = airspaceQueries->getOnlineAirspaceGeoByName(callsign, atools::fs::online::facilityTypeToDb(type));
 
   // Try to get airspace boundary by file name vs. callsign if set in options
-  if(flags2 & opts2::ONLINE_AIRSPACE_BY_FILE)
-  {
-    if(lineString == nullptr)
-      lineString = airspaceQueries->getOnlineAirspaceGeoByFile(callsign);
-  }
+  if(flags.testFlag(opts2::ONLINE_AIRSPACE_BY_FILE) && (lineString == nullptr || lineString->isEmpty()))
+    lineString = airspaceQueries->getOnlineAirspaceGeoByFile(callsign);
 
   return lineString;
 }

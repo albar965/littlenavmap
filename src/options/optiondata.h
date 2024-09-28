@@ -340,7 +340,7 @@ enum Flag2 : quint64
   /* checkBoxDisplayOnlineNameLookup */
   ONLINE_AIRSPACE_BY_NAME = 1ULL << 14,
 
-  /* checkBoxDisplayOnlineFilenameLookup */
+  /* checkBoxDisplayOnlineFileLookup */
   ONLINE_AIRSPACE_BY_FILE = 1ULL << 15,
 
   /* checkBoxOptionsMapHighlightTransparent */
