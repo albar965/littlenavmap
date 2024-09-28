@@ -153,17 +153,25 @@ A big thank you to all who reported bugs and issues!
   `Distance from Mark` and other functions around the antimeridian. #1184
 * Waypoints now can be searched by name.
 
+### Web Server
+
+* Fixes to web interface by [u-an-i](https://github.com/u-an-i). Click or tap now moves to the
+  correct map position. Note that you have to do a hard reload in the web browser if you see an
+  incomplete map or other issues. Press `Ctrl+Shift+R` on most browsers to do a hard reload bypassing
+  the browser cache.
+* Updated user manual for the web interface for new and changed functionality:
+  [User Manual - Web Server](https://www.littlenavmap.org/manuals/littlenavmap/release/latest/en/WEBSERVER.html).
+* Fixes for random crashes when using the web interface.
+
 ### User Interface
 
 * Added winds from airport METAR to tab `Airport` -> `Runways` in dock window `Information`.
 * Fixed issue where an invalid error message about a wrong X-Plane path was shown when switching
   map airport weather.
-* Fixes to web interface by [u-an-i](https://github.com/u-an-i) #1177.
 * Now getting best guess for user aircraft type designator and category in MSFS. Using keys
   `icao_type_designator` and `icao_model` from file `aircraft.cfg`.
 * Added aircraft category to detect helicopters in MSFS.
 * Added help menu item pointing to keyboard shortcuts.
-* Fixes for random crashes when using the web interface.
 * More optimizations.
 
 ==<<=============================================================================
