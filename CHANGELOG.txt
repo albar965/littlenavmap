@@ -45,7 +45,7 @@ A big thank you to all who reported bugs and issues!
 
 * Added export format for FlightFactor Boeing 777 V2. This is a FMS format file with procedures
   stripped since the aircraft rejects loading FMS files with procedures.
-* Fixed issue where RealityXP GNS export declared the destination airport wrongly as an userpoint
+* Fixed issue where RealityXP GNS export declared the destination airport wrongly as a userpoint
   when using export option with userpoints.
 * Now using ISO date with offset from UTC in all flight plan files.
 
@@ -676,7 +676,7 @@ See below for changes from 3.0.3.rc1 to 3.0.4.
   to magnetic drift.
 * Now trying to find a cruise altitude which does not violate restrictions if it cannot be loaded
   from a flight plan or if the plan has an invalid cruise altitude. This applies to all plans
-  which are loaded manually by an user. The change can be undone to revert to the previously
+  which are loaded manually by a user. The change can be undone to revert to the previously
   invalid cruise altitude.
 * Fixed issue where PLN, FMS or other imported flight plan files were wrongly overwritten in LNMPLN
   format in some cases.
