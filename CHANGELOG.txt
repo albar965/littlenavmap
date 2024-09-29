@@ -112,6 +112,9 @@ A big thank you to all who reported bugs and issues!
   search result table.
 * Fixed issue where navaids like recommended fixes from flight plan procedures did not react to a
   single or double click.
+* `Save Map as Image for AviTab` now uses PNG as the default format since JPG may cause crashes.
+* Fixed issue where images can be saved using the wrong format ignoring selection in the
+  format drop down box. Now always adding file suffix according to image type.
 
 ### Scenery Library
 

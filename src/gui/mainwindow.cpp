@@ -2969,7 +2969,7 @@ void MainWindow::mapSaveImage()
     QString imageFile = dialog->saveFileDialog(
       tr("Save Map as Image"),
       tr("JPG Image Files (*.jpg *.jpeg);;PNG Image Files (*.png);;BMP Image Files (*.bmp);;All Files (*)"),
-      "jpg", "MainWindow/",
+      QString(), "MainWindow/MapSaveImage",
       atools::fs::FsPaths::getFilesPath(NavApp::getCurrentSimulatorDb()), tr("Little Navmap Map %1.jpg").
       arg(QDateTime::currentDateTime().toString("yyyyMMdd-HHmmss")),
       false /* confirm overwrite */,
@@ -2984,11 +2984,20 @@ void MainWindow::mapSaveImage()
       {
         // Did not give file extension - check by looking at selected filter
         if(filterIndex == 0)
+        {
           format = "jpg";
+          imageFile.append(".jpg");
+        }
         else if(filterIndex == 1)
+        {
           format = "png";
+          imageFile.append(".png");
+        }
         else if(filterIndex == 2)
+        {
           format = "bmp";
+          imageFile.append(".bmp");
+        }
       }
 
       if(!pixmap.save(imageFile, format, 95))
@@ -3017,17 +3026,15 @@ void MainWindow::mapSaveImageAviTab()
           defaultFileName = NavApp::getRouteConst().buildDefaultFilenameShort("_", ".jpg");
 
         int filterIndex = -1;
+        QString path = NavApp::getCurrentSimulatorBasePath() %
+                       atools::SEP % "Resources" % atools::SEP % "plugins" % atools::SEP % "AviTab" %
+                       atools::SEP % "MapTiles" % atools::SEP % "Mercator";
 
-        QString imageFile = dialog->saveFileDialog(
-          tr("Save Map as Image for AviTab"),
-          tr("JPG Image Files (*.jpg *.jpeg);;PNG Image Files (*.png);;All Files (*)"),
-          "jpg", "MainWindow/AviTab",
-          NavApp::getCurrentSimulatorBasePath() %
-          atools::SEP % "Resources" % atools::SEP % "plugins" % atools::SEP % "AviTab" %
-          atools::SEP % "MapTiles" % atools::SEP % "Mercator", defaultFileName,
-          false /* confirm overwrite */,
-          false /* autoNumber */,
-          &filterIndex);
+        QString imageFile = dialog->saveFileDialog(tr("Save Map as Image for AviTab"),
+                                                   tr("PNG Image Files (*.png);;JPG Image Files (*.jpg *.jpeg);;All Files (*)"),
+                                                   QString(), "MainWindow/MapSaveImageAviTab",
+                                                   path, defaultFileName, false /* confirm overwrite */, false /* autoNumber */,
+                                                   &filterIndex);
 
         if(!imageFile.isEmpty())
         {
@@ -3037,9 +3044,15 @@ void MainWindow::mapSaveImageAviTab()
           {
             // Did not give file extension - check by looking at selected filter
             if(filterIndex == 0)
-              format = "jpg";
-            else if(filterIndex == 1)
+            {
               format = "png";
+              imageFile.append(".png");
+            }
+            else if(filterIndex == 1)
+            {
+              format = "jpg";
+              imageFile.append(".jpg");
+            }
           }
 
           if(!pixmap.save(imageFile, format, 95))
