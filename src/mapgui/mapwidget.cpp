@@ -243,7 +243,7 @@ MapWidget::MapWidget(MainWindow *parent)
   ui->actionMapAircraftCenterNow->setShortcutContext(Qt::WidgetWithChildrenShortcut);
   ui->actionRouteCenter->setShortcutContext(Qt::WidgetWithChildrenShortcut);
   ui->actionMapShowMark->setShortcutContext(Qt::WidgetWithChildrenShortcut);
-  // ui->actionMapJumpCoordinatesMain->setShortcutContext(Qt::WidgetWithChildrenShortcut); Use application wide
+  // ui->actionMapJumpCoordinates->setShortcutContext(Qt::WidgetShortcut); // Globally available
   ui->actionMapCopyCoordinates->setShortcutContext(Qt::WidgetShortcut); // Only map display window
   ui->actionMapBack->setShortcutContext(Qt::WidgetWithChildrenShortcut);
   ui->actionMapNext->setShortcutContext(Qt::WidgetWithChildrenShortcut);
@@ -1995,19 +1995,19 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
   else
     point = event->pos();
 
-  QPoint menuPos = QCursor::pos();
+  QPoint menuPoint = QCursor::pos();
   bool notInViewport = false;
   // Do not show context menu if point is not on the map
   if(!rect().contains(point))
   {
     point = rect().center();
-    menuPos = mapToGlobal(point);
+    menuPoint = mapToGlobal(point);
     notInViewport = true;
   }
 
   if(event->reason() != QContextMenuEvent::Keyboard)
     // Move menu position off the cursor to avoid accidental selection on touchpads
-    menuPos += QPoint(3, 3);
+    menuPoint += QPoint(3, 3);
 
   hideTooltip();
 
@@ -2015,12 +2015,16 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
   // Build a context menu with sub-menus depending on objects at the clicked position
   MapContextMenu contextMenu(mainWindow, this, NavApp::getRouteConst());
 
+  // Disconnect actions used in main menu to avoid double signals
+  disconnectGlobalActions();
+
   // ==================================================================================================
   // Open menu - use null point if cursor is outside of map window
-  if(contextMenu.exec(menuPos, notInViewport ? QPoint() : point))
+  if(contextMenu.exec(menuPoint, notInViewport ? QPoint() : point))
   {
-    // Disable map updates
+    // Enable map updates again
     contextMenuActive = false;
+    connectGlobalActions();
 
     // Selected action - one of the fixed or created ones
     const QAction *action = contextMenu.getSelectedAction();
@@ -2044,14 +2048,10 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
       addRangeMark(pos, true /* showDialog */);
     else if(action == ui->actionMapSetMark)
       changeSearchMark(pos);
-    // Actions below send signals
-    // else if(action == ui->actionMapJumpCoordinatesMain)
-    // jumpCoordinatesPos(pos);
-    // else if(action == ui->actionMapCopyCoordinates)
-    // {
-    // QGuiApplication::clipboard()->setText(Unit::coords(pos));
-    // mainWindow->setStatusMessage(QString(tr("Coordinates copied to clipboard.")));
-    // }
+    else if(action == ui->actionMapJumpCoordinates)
+      jumpToCoordinatesPos(pos);
+    else if(action == ui->actionMapCopyCoordinates)
+      copyCoordinatesPos(pos);
     else if(action == ui->actionMapSetHome)
       changeHome();
     else
@@ -2240,6 +2240,8 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
       }
     }
   }
+  else
+    connectGlobalActions();
 
   // Enable map updates again
   contextMenuActive = false;
@@ -3799,18 +3801,24 @@ void MapWidget::showHome()
   }
 }
 
-void MapWidget::copyCoordinates()
+void MapWidget::copyCoordinatesCursor()
 {
   QPoint point = mapFromGlobal(QCursor::pos());
-  Pos pos = getGeoPos(point);
-  if(pos.isValid() && rect().contains(point))
+  if(rect().contains(point))
+    copyCoordinatesPos(getGeoPos(point));
+}
+
+void MapWidget::copyCoordinatesPos(const atools::geo::Pos& pos)
+{
+  qDebug() << Q_FUNC_INFO << pos;
+  if(pos.isValid())
   {
     QGuiApplication::clipboard()->setText(Unit::coords(pos));
     mainWindow->setStatusMessage(QString(tr("Coordinates copied to clipboard.")));
   }
 }
 
-void MapWidget::jumpToCoordinates()
+void MapWidget::jumpToCoordinatesCenter()
 {
   // Cursor can be outside of map region
   QPoint point = mapFromGlobal(QCursor::pos());
@@ -3820,8 +3828,12 @@ void MapWidget::jumpToCoordinates()
     // Use map center for initialization
     pos = getCenterPos();
 
-  qDebug() << Q_FUNC_INFO << "point" << point << "cursor" << QCursor::pos() << pos;
+  jumpToCoordinatesPos(pos);
+}
 
+void MapWidget::jumpToCoordinatesPos(const atools::geo::Pos& pos)
+{
+  qDebug() << Q_FUNC_INFO << pos;
   CoordinateDialog dialog(this, pos);
   if(dialog.exec() == QDialog::Accepted)
   {
@@ -4270,4 +4282,16 @@ void MapWidget::debugMovingAircraft(QInputEvent *event, int upDown)
     lastPos = pos;
     lastPoint = eventPos;
   }
+}
+
+void MapWidget::disconnectGlobalActions()
+{
+  Ui::MainWindow *ui = NavApp::getMainUi();
+  ui->actionMapJumpCoordinates->disconnect();
+}
+
+void MapWidget::connectGlobalActions()
+{
+  Ui::MainWindow *ui = NavApp::getMainUi();
+  connect(ui->actionMapJumpCoordinates, &QAction::triggered, this, &MapWidget::jumpToCoordinatesCenter);
 }

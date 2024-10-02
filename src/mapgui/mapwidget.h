@@ -147,10 +147,10 @@ public:
   void changeSearchMark(const atools::geo::Pos& pos);
 
   /* Show jump to coordinates dialog called from main menu or context menu */
-  void jumpToCoordinates();
+  void jumpToCoordinatesCenter();
 
   /* Copy coordinates to clipboard from context menu or shortcut Ctrl+C on the map. */
-  void copyCoordinates();
+  void copyCoordinatesCursor();
 
   /* Stop jump back timer on shutdown */
   void cancelJumpBack();
@@ -387,6 +387,9 @@ private:
   /* Show menu to allow selection of a map feature below the cursor */
   bool showFeatureSelectionMenu(int& id, map::MapTypes& type, const map::MapResult& result, const QString& menuText);
 
+  void jumpToCoordinatesPos(const atools::geo::Pos& pos);
+  void copyCoordinatesPos(const atools::geo::Pos& pos);
+
   /* MapPaintWidget overrides for UI updates mostly ============================================================ */
   virtual void optionsChanged() override;
   virtual void overlayStateFromMenu() override;
@@ -438,6 +441,10 @@ private:
   }
 
   void debugMovingAircraft(QInputEvent *event, int upDown);
+
+  /* Some global actions which require handling in the context menu have to be disconnected to avoid double call */
+  void disconnectGlobalActions();
+  void connectGlobalActions();
 
   int screenSearchDistance /* Radius for click sensitivity */,
       screenSearchDistanceTooltip /* Radius for tooltip sensitivity */;

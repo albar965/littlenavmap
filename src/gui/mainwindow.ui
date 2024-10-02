@@ -293,7 +293,7 @@
     <addaction name="actionMapAircraftCenterNow"/>
     <addaction name="actionRouteCenter"/>
     <addaction name="actionMapShowMark"/>
-    <addaction name="actionMapJumpCoordinatesMain"/>
+    <addaction name="actionMapJumpCoordinates"/>
     <addaction name="separator"/>
     <addaction name="actionMapAircraftCenter"/>
     <addaction name="actionMapDeleteAircraftTrack"/>
@@ -11567,23 +11567,23 @@ relation to shown airport</string>
     <string>Alt+Shift+R</string>
    </property>
   </action>
-  <action name="actionMapJumpCoordinatesMain">
-   <property name="icon">
-    <iconset resource="../../littlenavmap.qrc">
-     <normaloff>:/littlenavmap/resources/icons/zoomin.svg</normaloff>:/littlenavmap/resources/icons/zoomin.svg</iconset>
-   </property>
-   <property name="text">
-    <string>&amp;Jump to Coordinates ...</string>
-   </property>
-   <property name="toolTip">
-    <string>Jump to coordinates and zoom distance on the map</string>
-   </property>
-   <property name="statusTip">
-    <string>Set center mark for distance search</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+Shift+Home</string>
-   </property>
+  <action name="actionMapJumpCoordinates">
+  <property name="icon">
+  <iconset resource="../../littlenavmap.qrc">
+  <normaloff>:/littlenavmap/resources/icons/zoomin.svg</normaloff>:/littlenavmap/resources/icons/zoomin.svg</iconset>
+  </property>
+  <property name="text">
+  <string>&amp;Jump to Coordinates ...</string>
+  </property>
+  <property name="toolTip">
+  <string>Jump to coordinates and zoom distance on the map</string>
+  </property>
+  <property name="statusTip">
+  <string>Jump to coordinates and zoom distance on the map</string>
+  </property>
+  <property name="shortcut">
+  <string>Ctrl+Shift+Home</string>
+  </property>
   </action>
   <action name="actionMapShowEndurance">
    <property name="checkable">

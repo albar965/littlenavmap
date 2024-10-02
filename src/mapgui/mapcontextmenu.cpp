@@ -94,20 +94,11 @@ MapContextMenu::MapContextMenu(QMainWindow *mainWindowParam, MapWidget *mapWidge
   mapBasePos = new map::MapPos(atools::geo::EMPTY_POS);
 
   ui = NavApp::getMainUi();
-  const static QList<QAction *> ACTIONS({
-    // Save state since widgets are shared with others
-    ui->actionMapCopyCoordinates,
-    ui->actionMapHold,
-    ui->actionMapAirportMsa,
-    ui->actionMapNavaidRange,
-    ui->actionMapRangeRings,
-    ui->actionMapTrafficPattern,
-    ui->actionRouteAddPos,
-    ui->actionMapRouteAirportAlternate,
-    ui->actionMapRouteAirportDest,
-    ui->actionMapRouteAirportStart,
-    ui->actionRouteAppendPos
-  });
+  // Save state since widgets are shared with others
+  const static QList<QAction *> ACTIONS({ui->actionMapCopyCoordinates, ui->actionMapJumpCoordinates, ui->actionMapHold,
+                                         ui->actionMapAirportMsa, ui->actionMapNavaidRange, ui->actionMapRangeRings,
+                                         ui->actionMapTrafficPattern, ui->actionRouteAddPos, ui->actionMapRouteAirportAlternate,
+                                         ui->actionMapRouteAirportDest, ui->actionMapRouteAirportStart, ui->actionRouteAppendPos});
 
   // Texts with % will be replaced save them and let the ActionTextSaver restore them on return
   textSaver = new atools::gui::ActionTextSaver(ACTIONS);
@@ -227,7 +218,7 @@ void MapContextMenu::buildMainMenu()
   if(visibleOnMap)
   {
     // More rarely used menu items
-    sub->addAction(ui->actionMapJumpCoordinatesMain); // Same as in main menu "Map"
+    sub->addAction(ui->actionMapJumpCoordinates); // Action from main menu
     sub->addSeparator();
     insertShowInSearchMenu(*sub);
     insertShowInRouteMenu(*sub);
@@ -1258,6 +1249,7 @@ bool MapContextMenu::exec(QPoint menuPos, QPoint point)
   // Disable all general menu items that depend on position ===========================
   ui->actionMapSetMark->setEnabled(visibleOnMap);
   ui->actionMapSetHome->setEnabled(visibleOnMap);
+  ui->actionMapJumpCoordinates->setEnabled(visibleOnMap);
 
   // Copy coordinates ===================
   ui->actionMapCopyCoordinates->setEnabled(visibleOnMap);

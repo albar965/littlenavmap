@@ -33,6 +33,11 @@ CoordinateDialog::CoordinateDialog(QWidget *parent, const atools::geo::Pos& pos)
   : QDialog(parent), ui(new Ui::CoordinateDialog)
 {
   position = new atools::geo::Pos(pos);
+  if(!position->isValid())
+  {
+    position->setLatY(0.f);
+    position->setLonX(0.f);
+  }
 
   setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
   setWindowModality(Qt::ApplicationModal);
