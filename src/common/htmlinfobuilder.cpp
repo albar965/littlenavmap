@@ -253,7 +253,7 @@ void HtmlInfoBuilder::airportText(const MapAirport& airport, const map::WeatherC
     flightplanWaypointRemarks(html, airport.routeIndex);
   }
 
-  if(!print && info)
+  if(info && !print)
     bearingToUserText(airport.position, airport.magvar, html);
 
   // Idents and codes ======================
@@ -1013,8 +1013,7 @@ void HtmlInfoBuilder::runwayText(const MapAirport& airport, HtmlBuilder& html, b
           if(print)
             html.text(startText);
           else
-            html.a(startText, QString("lnm://show?lonx=%1&laty=%2").
-                   arg(pos.getLonX()).arg(pos.getLatY()), ahtml::LINK_NO_UL);
+            html.a(startText, QString("lnm://show?lonx=%1&laty=%2").arg(pos.getLonX()).arg(pos.getLatY()), ahtml::LINK_NO_UL);
           i++;
         }
       }
@@ -1151,7 +1150,7 @@ void HtmlInfoBuilder::ilsTextInternal(const map::MapIls& ils, atools::util::Html
 
     navaidTitle(html, text);
 
-    if(info)
+    if(info && !print)
     {
       // Add map link if not tooltip ==========================================
       html.nbsp().nbsp();
@@ -1173,7 +1172,7 @@ void HtmlInfoBuilder::ilsTextInternal(const map::MapIls& ils, atools::util::Html
 
   if(infoOrTooltip)
   {
-    if(!print && info)
+    if(info && !print)
       bearingToUserText(ageo::Pos(ils.position.getLonX(), ils.position.getLatY()), ils.magvar, html);
 
     // ILS information ==================================================
@@ -1766,7 +1765,7 @@ void HtmlInfoBuilder::weatherText(const map::WeatherContext& context, const MapA
           html.text(tr("%2Nearest Weather - %1").arg(airport.displayIdent()).arg(sim), WEATHER_TITLE_FLAGS);
 
           // Add link to airport station
-          if(!print && airport.isValid())
+          if(info && !print && airport.isValid())
             html.nbsp().nbsp().a(tr("Map"), QString("lnm://show?id=%1&type=%2").arg(airport.id).arg(map::AIRPORT), LINK_FLAGS);
 
           map::MapAirport reportAirport;
@@ -1780,7 +1779,7 @@ void HtmlInfoBuilder::weatherText(const map::WeatherContext& context, const MapA
           html.text(tr("%2Interpolated Weather - %1").arg(airport.displayIdent()).arg(sim), WEATHER_TITLE_FLAGS);
 
           // Add link to airport station
-          if(!print && airport.isValid())
+          if(info && !print && airport.isValid())
             html.nbsp().nbsp().a(tr("Map"), QString("lnm://show?id=%1&type=%2").arg(airport.id).arg(map::AIRPORT), LINK_FLAGS);
 
           decodedMetar(html, airport, map::MapAirport(), metar, false, atools::fs::weather::INTERPOLATED);
@@ -1872,12 +1871,13 @@ void HtmlInfoBuilder::airportMsaTextInternal(const map::MapAirportMsa& msa, atoo
 
   navaidTitle(html, tr("%1 %2at %3").arg(user ? tr("User MSA Diagram") : QString(tr("MSA"))).arg(msa.multipleCode % tr(" ")).arg(title));
 
-  if(info)
+  if(info && !print)
   {
     // Add map link if not tooltip
     html.nbsp().nbsp();
     html.a(tr("Map"), QString("lnm://show?lonx=%1&laty=%2").arg(msa.position.getLonX()).arg(msa.position.getLatY()), LINK_FLAGS);
   }
+
   html.table();
   html.row2(tr("Radius:"), Unit::distNm(msa.radius));
 
@@ -1948,7 +1948,7 @@ void HtmlInfoBuilder::decodedMetars(HtmlBuilder& html, const atools::fs::weather
 
       // Check if the station is an airport
       map::MapAirport reportAirport = queries->getAirportQuerySim()->getAirportByIdent(metar.getNearestIdent());
-      if(!print && reportAirport.isValid())
+      if(info && !print && reportAirport.isValid())
       {
         // Add link to airport
         html.nbsp().nbsp();
@@ -1966,7 +1966,7 @@ void HtmlInfoBuilder::decodedMetars(HtmlBuilder& html, const atools::fs::weather
       // Check if the station is an airport
       map::MapAirport reportAirport;
       queries->getAirportQuerySim()->getAirportByIdent(reportAirport, metar.getNearestIdent());
-      if(!print && reportAirport.isValid())
+      if(info && !print && reportAirport.isValid())
       {
         // Add link to airport
         html.nbsp().nbsp();
@@ -2165,7 +2165,7 @@ void HtmlInfoBuilder::decodedMetar(HtmlBuilder& html, const map::MapAirport& air
   bestRunwaysText(airport, html, parsed, 8 /* max entries */, true /* details */);
 
   // Interpolated airports ==================================
-  if(type == atools::fs::weather::INTERPOLATED && info && !print)
+  if(info && !print && type == atools::fs::weather::INTERPOLATED)
   {
     HtmlBuilder reportHtml = html.cleared();
 
@@ -2208,7 +2208,7 @@ void HtmlInfoBuilder::vorText(const MapVor& vor, HtmlBuilder& html) const
   QString type = map::vorType(vor);
   navaidTitle(html, type % ": " % capString(vor.name) % " (" % vor.ident % ")");
 
-  if(info)
+  if(info && !print)
   {
     // Add map link if not tooltip
     html.nbsp().nbsp();
@@ -2297,7 +2297,7 @@ void HtmlInfoBuilder::ndbText(const MapNdb& ndb, HtmlBuilder& html) const
 
   navaidTitle(html, tr("NDB: ") % capString(ndb.name) % " (" % ndb.ident % ")");
 
-  if(info)
+  if(info && !print)
   {
     // Add map link if not tooltip
     html.nbsp().nbsp();
@@ -2307,7 +2307,7 @@ void HtmlInfoBuilder::ndbText(const MapNdb& ndb, HtmlBuilder& html) const
   html.table();
   routeInfoText(html, ndb.routeIndex, ndb.recommended);
 
-  if(!print && info)
+  if(info && !print)
     bearingToUserText(ndb.position, ndb.magvar, html);
 
   if(verbose)
@@ -2404,7 +2404,7 @@ void HtmlInfoBuilder::holdingTextInternal(const MapHolding& holding, HtmlBuilder
   html.table();
   // Add bearing/distance to table
 
-  if(!print && info)
+  if(info && !print)
     bearingToUserText(holding.position, holding.magvar, html);
 
   if(info && !holding.airportIdent.isEmpty())
@@ -2582,7 +2582,7 @@ bool HtmlInfoBuilder::userpointText(MapUserpoint userpoint, HtmlBuilder& html) c
 
     navaidTitle(html, tr("Userpoint%1").arg(userpoint.temp ? tr(" (Temporary)") : QString()));
 
-    if(info)
+    if(info && !print)
     {
       // Add map link if not tooltip
       html.nbsp().nbsp();
@@ -2592,7 +2592,7 @@ bool HtmlInfoBuilder::userpointText(MapUserpoint userpoint, HtmlBuilder& html) c
 
     html.table();
 
-    if(!print && info)
+    if(info && !print)
       bearingToUserText(userpoint.position, NavApp::getMagVar(userpoint.position), html);
 
     // Be cautious with user defined data and adapt it for HTML display
@@ -2916,7 +2916,7 @@ void HtmlInfoBuilder::waypointText(const MapWaypoint& waypoint, HtmlBuilder& htm
 
   navaidTitle(html, tr("Waypoint: ") % waypoint.ident);
 
-  if(info)
+  if(info && !print)
   {
     // Add map link if not tooltip
     html.nbsp().nbsp();
@@ -2927,7 +2927,7 @@ void HtmlInfoBuilder::waypointText(const MapWaypoint& waypoint, HtmlBuilder& htm
   html.table();
   routeInfoText(html, waypoint.routeIndex, waypoint.recommended);
 
-  if(!print && info)
+  if(info && !print)
     bearingToUserText(waypoint.position, waypoint.magvar, html);
 
   html.row2If(tr("Name:"), atools::fs::util::capWaypointNameString(waypoint.ident, waypoint.name, true /* emptyIfEqual */));
@@ -3133,7 +3133,7 @@ void HtmlInfoBuilder::airspaceText(const MapAirspace& airspace, const atools::sq
     navaidTitle(html, ((info && !airspace.isOnline()) ? tr("Airspace: ") : QString()) % name % suffix);
   }
 
-  if(info && airspace.hasValidGeometry())
+  if(info && !print && airspace.hasValidGeometry())
   {
     // Add map link if not tooltip
     html.nbsp().nbsp();
@@ -3279,7 +3279,7 @@ void HtmlInfoBuilder::airwayText(const MapAirway& airway, HtmlBuilder& html) con
   else
     navaidTitle(html, tr("Track: ") % airway.name);
 
-  if(info)
+  if(info && !print)
   {
     // Add map link if not tooltip
     html.nbsp().nbsp();
@@ -5167,7 +5167,7 @@ void HtmlInfoBuilder::addAirportSceneryAndLinks(const MapAirport& airport, HtmlB
 
 QString HtmlInfoBuilder::filepathTextShow(const QString& filepath, const QString& prefix, bool canonical) const
 {
-  HtmlBuilder link(true);
+  HtmlBuilder link(true /* backgroundColorUsed */);
 
   if(filepath.isEmpty())
     return QString();
@@ -5226,7 +5226,9 @@ void HtmlInfoBuilder::head(HtmlBuilder& html, const QString& text, const RouteLe
     // Is procedure leg, get fix information if available
     int id = -1;
     MapTypes procMapType = map::NONE;
-    leg.getProcedureLeg().navaids.getIdAndType(id, procMapType, {map::VOR, map::NDB, map::WAYPOINT});
+
+    if(info && !print)
+      leg.getProcedureLeg().navaids.getIdAndType(id, procMapType, {map::VOR, map::NDB, map::WAYPOINT});
 
     if(id != -1)
       // Has valid navaid
@@ -5241,26 +5243,31 @@ void HtmlInfoBuilder::head(HtmlBuilder& html, const QString& text, const RouteLe
 
 void HtmlInfoBuilder::head(HtmlBuilder& html, const QString& text, int id, map::MapType type, const atools::geo::Pos& pos)
 {
-  if(type == map::AIRPORT)
+  if(info && !print)
   {
-    QString procText, procHref;
-    airportProcedureLinkTexts(procText, procHref, queries->getAirportQuerySim()->getAirportById(id));
+    if(type == map::AIRPORT)
+    {
+      QString procText, procHref;
+      airportProcedureLinkTexts(procText, procHref, queries->getAirportQuerySim()->getAirportById(id));
 
-    // Center on airport bounding rect and add info link
-    head(html, text, {tr("Map"), QString("lnm://show?id=%1&type=%2").arg(id).arg(type),
-                      tr("Info"), QString("lnm://info?id=%1&type=%2").arg(id).arg(type),
-                      procText, procHref});
+      // Center on airport bounding rect and add info link
+      head(html, text, {tr("Map"), QString("lnm://show?id=%1&type=%2").arg(id).arg(type),
+                        tr("Info"), QString("lnm://info?id=%1&type=%2").arg(id).arg(type),
+                        procText, procHref});
 
+    }
+    else if(atools::contains(type, {map::VOR, map::NDB, map::WAYPOINT}))
+      // Center navaid by position and add info link
+      head(html, text, {tr("Map"), QString("lnm://show?lonx=%1&laty=%2").arg(pos.getLonX()).arg(pos.getLatY()),
+                        tr("Info"), QString("lnm://info?id=%1&type=%2").arg(id).arg(type)});
+    else if(pos.isValid())
+      // Show map link for position
+      head(html, text, QStringList({tr("Map"), QString("lnm://show?lonx=%1&laty=%2").arg(pos.getLonX()).arg(pos.getLatY())}));
+    else
+      // No links
+      head(html, text);
   }
-  else if(atools::contains(type, {map::VOR, map::NDB, map::WAYPOINT}))
-    // Center navaid by position and add info link
-    head(html, text, {tr("Map"), QString("lnm://show?lonx=%1&laty=%2").arg(pos.getLonX()).arg(pos.getLatY()),
-                      tr("Info"), QString("lnm://info?id=%1&type=%2").arg(id).arg(type)});
-  else if(pos.isValid())
-    // Show map link for position
-    head(html, text, QStringList({tr("Map"), QString("lnm://show?lonx=%1&laty=%2").arg(pos.getLonX()).arg(pos.getLatY())}));
   else
-    // No links
     head(html, text);
 }
 
