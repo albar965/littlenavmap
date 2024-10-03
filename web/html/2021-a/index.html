@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="/javascript_and_css/2021-a/layout-internal.css">
     <link rel="stylesheet" href="/javascript_and_css/2021-a/look-internal.css">
     <title>
-      {applicationName} {applicationVersion} - Webserver
+      {applicationName} {applicationVersion}
     </title>
     <script>
       function attemptRun(attemptFunctionName) {
@@ -34,11 +34,11 @@
       <div id="menubarContainer">
         <div id="menubarOuter" class="menubar" onclick="setActive(event)">
           <button id="buttonMap" class="active"><a href="map.html" target="contentiframe" onclick="showIframe(this);event.preventDefault()">Map</a></button>
-          <button id="buttonFlightPlan"><a href="../flightplan.html" target="addoniframe" onclick="showIframe(this);event.preventDefault()">Flight Plan</a></button>
-          <button id="buttonProgress"><a href="../progress.html" target="addoniframe" onclick="showIframe(this);event.preventDefault()">Progress</a></button>
-          <button id="buttonAircraft"><a href="../aircraft.html" target="addoniframe" onclick="showIframe(this);event.preventDefault()">Aircraft</a></button>
-          <button id="buttonAirport"><a href="../airport.html" target="addoniframe" onclick="showIframe(this);event.preventDefault()">Airports</a></button>
-          <button id="buttonHelp"><a href="{helpUrl}" target="_blank">Help</a></button>
+          <button title="Flight Plan Table" id="buttonFlightPlan"><a href="../flightplan.html" target="addoniframe" onclick="showIframe(this);event.preventDefault()">Flight Plan</a></button>
+          <button title="General user aircraft information" id="buttonAircraft"><a href="../aircraft.html" target="addoniframe" onclick="showIframe(this);event.preventDefault()">Aircraft</a></button>
+          <button title="User aircraft progress and environment information" id="buttonProgress"><a href="../progress.html" target="addoniframe" onclick="showIframe(this);event.preventDefault()">Progress</a></button>
+          <button title="Search for airports" id="buttonAirport"><a href="../airport.html" target="addoniframe" onclick="showIframe(this);event.preventDefault()">Airports</a></button>
+          <button title="Show the web server help in a new tab" id="buttonHelp"><a href="{helpUrl}" target="_blank">Help</a></button>
         </div>
         <div id="toggleOptionsContainer">
           <div id="toggleOptionsToggle" onclick="toggleMenubarsOptions(event)">
