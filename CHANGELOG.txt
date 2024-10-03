@@ -163,8 +163,6 @@ A big thank you to all who reported bugs and issues!
   correct map position. Note that you have to do a hard reload in the web browser if you see an
   incomplete map or other issues. Press `Ctrl+Shift+R` on most browsers to do a hard reload bypassing
   the browser cache.
-* Updated user manual for the web interface for new and changed functionality:
-  [User Manual - Web Server](https://www.littlenavmap.org/manuals/littlenavmap/release/latest/en/WEBSERVER.html).
 * Fixes for random crashes when using the web interface.
 
 ### User Interface
@@ -179,6 +177,17 @@ A big thank you to all who reported bugs and issues!
 * Fixed reversed meaning of settings `By airspace name vs. callsign` and `By airspace file name vs. callsign`
   on options page `Map Online`.
 * More optimizations.
+
+### User Manual
+
+* Updated manual for new detail functions:
+  [User Manual - Map Menu - More/Less Map Labels](https://www.littlenavmap.org/manuals/littlenavmap/release/latest/en/MENUS.html#map-label-details)
+* Direct to departure function:
+  [User Manual - View Menu - Show Direct to Departure](https://www.littlenavmap.org/manuals/littlenavmap/release/latest/en/MENUS.html#show-direct-to-departure).
+* Updated the outdated user manual section for the web interface:
+  [User Manual - Web Server](https://www.littlenavmap.org/manuals/littlenavmap/release/latest/en/WEBSERVER.html).
+* Updated airspace chapter for online airspace loading and matching:
+  [User Manual - Loading Airspaces](https://www.littlenavmap.org/manuals/littlenavmap/release/latest/en/AIRSPACELOAD.html).
 
 ==<<=============================================================================
 
