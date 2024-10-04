@@ -180,6 +180,10 @@ A big thank you to all who reported bugs and issues!
 
 ### User Manual
 
+* Added link to Google Translate on the top page in the user manual where the whole manual can be
+  translated on the fly into another language. Added the same on top of the page
+  [Alex’ Projects](https://albar965.github.io/index.html) and the
+  [Frequently asked Questions](https://albar965.github.io/littlenavmap-faq.html)
 * Updated manual for new detail functions:
   [User Manual - Map Menu - More/Less Map Labels](https://www.littlenavmap.org/manuals/littlenavmap/release/latest/en/MENUS.html#map-label-details)
 * Direct to departure function:
