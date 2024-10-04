@@ -4802,10 +4802,11 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
     float windDir = normalizeCourse(userAircraft->getWindDirectionDegT() - userAircraft->getMagVarDeg());
     if(windSpeed >= 1.f)
     {
-      QString windTxt = courseText(windDir, userAircraft->getWindDirectionDegT(),
-                                   true /* magBold */, true /* magBig */, false /* trueSmall */) %
-                        tr(", ") % highlightText(Unit::speedKts(windSpeed));
-      html.id(pid::ENV_WIND_DIR_SPEED).row2(tr("Wind Direction and Speed:"), windTxt, ahtml::NO_ENTITIES);
+      QStringList windTxt;
+      windTxt.append(courseText(windDir, userAircraft->getWindDirectionDegT(),
+                                true /* magBold */, true /* magBig */, false /* trueSmall */));
+      windTxt.append(highlightText(Unit::speedKts(windSpeed)));
+      html.id(pid::ENV_WIND_DIR_SPEED).row2(tr("Wind Direction and Speed:"), atools::strJoin(windTxt, tr(", ")), ahtml::NO_ENTITIES);
     }
     else
       html.id(pid::ENV_WIND_DIR_SPEED).row2(tr("Wind Direction and Speed:"), tr("None"));
@@ -4814,10 +4815,8 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
     float headWind = 0.f, crossWind = 0.f;
     ageo::windForCourse(headWind, crossWind, windSpeed, windDir, userAircraft->getHeadingDegMag());
 
-    QString windPtr = formatter::windInformation(headWind, crossWind, tr(", "));
-
     // Keep an empty line to avoid flickering
-    html.id(pid::ENV_WIND_DIR_SPEED).row2(QString(), windPtr, ahtml::NO_ENTITIES);
+    html.id(pid::ENV_WIND_DIR_SPEED).row2(QString(), formatter::windInformation(headWind, crossWind, tr(", ")), ahtml::NO_ENTITIES);
 
     // Total air temperature (TAT) is also called: indicated air temperature (IAT) or ram air temperature (RAT)
     float tat = userAircraft->getTotalAirTemperatureCelsius();

@@ -223,17 +223,18 @@ QDateTime readDateTime(QString str)
 
 QString windInformationTailHead(float headWindKts, bool addUnit)
 {
-  QString windPtr;
   if(std::abs(headWindKts) >= 1.0f)
   {
+    QString windPtr;
     windPtr += Unit::speedKts(std::abs(headWindKts), addUnit);
 
     if(headWindKts <= -1.f)
       windPtr += TextPointer::getWindPointerNorth(); // Tailwind
     else
       windPtr += TextPointer::getWindPointerSouth(); // Headwind
+    return QObject::tr(" %1").arg(windPtr);
   }
-  return QObject::tr(" %1").arg(windPtr);
+  return QString();
 }
 
 QString windInformationCross(float crossWindKts, bool addUnit)
@@ -253,12 +254,8 @@ QString windInformationCross(float crossWindKts, bool addUnit)
 
 QString windInformation(float headWindKts, float crossWindKts, const QString& separator, bool addUnit)
 {
-  QStringList windTxt;
-  windTxt.append(windInformationTailHead(headWindKts, addUnit));
-  windTxt.append(windInformationCross(crossWindKts, addUnit));
-  windTxt.removeAll(QString());
-
-  return windTxt.join(separator);
+  return atools::strJoin(QStringList({windInformationTailHead(headWindKts, addUnit),
+                                      windInformationCross(crossWindKts, addUnit)}), separator);
 }
 
 QString windInformationShort(float windDirectionDeg, float windSpeedKts, float runwayEndHeading, float minHeadWind, bool addUnit)
