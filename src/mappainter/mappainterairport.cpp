@@ -903,21 +903,19 @@ void MapPainterAirport::drawAirportDiagram(const map::MapAirport& airport)
 
       // Draw runway heading numbers with arrows at ends ========================================================================
       const static QMarginsF RUNWAY_HEADING_MARGINS(2., 0., 2., 0.);
-
       context->szFont(context->textSizeAirportRunway);
       QFontMetricsF rwHdgMetrics(painter->font());
 
       for(int i = 0; i < runwayPaintData.size(); i++)
       {
         const RunwayPaintData& paintData = runwayPaintData.at(i);
-        const MapRunway& runway = paintData.getRunway();
-        const QRectF& runwayRect = paintData.getRect();
 
         QString textPrim;
         QString textSec;
 
         float rotate;
         bool forceBoth = std::abs(airport.magvar) > 90.f;
+        const MapRunway& runway = paintData.getRunway();
         if(runway.heading > 180.f)
         {
           // This case is rare (eg. LTAI) - probably primary in the wrong place
@@ -941,17 +939,27 @@ void MapPainterAirport::drawAirportDiagram(const map::MapAirport& airport)
                     tr(" %1").arg(TextPointer::getPointerLeft());
         }
 
-        QRectF textRectPrim = rwHdgMetrics.boundingRect(textPrim).marginsAdded(RUNWAY_HEADING_MARGINS);
+        // FreeType on Windows has a bug where the arrows break calculation of the text size
+        QString textPrimMetrics(textPrim), textSecMetrics(textSec);
+#ifdef Q_OS_WIN
+        if(OptionData::instance().getFlags().testFlag(opts::GUI_FREETYPE_FONT_ENGINE))
+        {
+          textPrimMetrics.replace(TextPointer::getPointerRight(), ">");
+          textSecMetrics.replace(TextPointer::getPointerLeft(), "<");
+        }
+#endif
+        QRectF textRectPrim = rwHdgMetrics.boundingRect(textPrimMetrics).marginsAdded(RUNWAY_HEADING_MARGINS);
         textRectPrim.setHeight(rwHdgMetrics.height());
 
-        QRectF textRectSec = rwHdgMetrics.boundingRect(textSec).marginsAdded(RUNWAY_HEADING_MARGINS);
+        QRectF textRectSec = rwHdgMetrics.boundingRect(textSecMetrics).marginsAdded(RUNWAY_HEADING_MARGINS);
         textRectSec.setHeight(rwHdgMetrics.height());
 
+        // If all texts fit along the runway side draw heading
+        const QRectF& runwayRect = paintData.getRect();
         if(textRectPrim.width() + textRectSec.width() + runwayTextLengths.at(i) < runwayRect.height())
         {
-          // If all texts fit along the runway side draw heading
-          painter->translate(paintData.getCenter());
-          painter->rotate(rotate);
+          painter->translate(paintData.getCenter()); // Center to 0,0
+          painter->rotate(rotate); // Rotate runway to horizontal layout
 
           textRectPrim.moveTo(-runwayRect.height() / 2., -runwayRect.width() / 2. - textRectPrim.height() - 5.);
           painter->fillRect(textRectPrim, mapcolors::runwayTextBackgroundColor);
