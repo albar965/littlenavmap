@@ -132,7 +132,7 @@ using atools::gui::Application;
 MainWindow::MainWindow()
   : QMainWindow(nullptr), ui(new Ui::MainWindow)
 {
-  qDebug() << Q_FUNC_INFO << "constructor";
+  qDebug() << Q_FUNC_INFO << "Entry";
 
   aboutMessage =
     tr("<p style='white-space:pre'>is a free open source flight planner, navigation tool, moving map,<br/>"
@@ -172,6 +172,8 @@ MainWindow::MainWindow()
     // Have to handle exceptions here since no message handler is active yet and no atools::Application method can catch it
 
     ui->setupUi(this);
+
+    // setAttribute(Qt::WA_DeleteOnClose);
 
     QString helpFileOffline = HelpHandler::getHelpFile(lnm::helpOfflineFile, OptionData::getLanguageFromConfigFile());
     qDebug() << Q_FUNC_INFO << "Offline help" << helpFileOffline;
@@ -534,76 +536,94 @@ MainWindow::MainWindow()
     connect(debugActionAssert, &QAction::triggered, this, &MainWindow::debugActionTriggeredAssert);
     connect(debugActionMoveAircraft, &QAction::toggled, this, &MainWindow::updateActionStates);
   }
+
+  qDebug() << Q_FUNC_INFO << "Exit";
 }
 
 MainWindow::~MainWindow()
 {
   qDebug() << Q_FUNC_INFO;
+}
 
-  Application::setShuttingDown();
+void MainWindow::deInit()
+{
+  qDebug() << Q_FUNC_INFO << "Enter deInitCalled" << deInitCalled;
 
-  clockTimer.stop();
-  weatherUpdateTimer.stop();
-  mapWidget->cancelJumpBack();
-  profileWidget->cancelJumpBack();
+  if(!deInitCalled)
+  {
+    deInitCalled = true;
+    Application::setShuttingDown();
 
-  // Close all queries
-  preDatabaseLoad();
+    qDebug() << Q_FUNC_INFO << "stopping timers";
+    clockTimer.stop();
+    weatherUpdateTimer.stop();
+    mapWidget->cancelJumpBack();
+    profileWidget->cancelJumpBack();
 
-  // Free all queries
-  QueryManager::instance()->shutdown();
+    // Close all queries
+    qDebug() << Q_FUNC_INFO << "preDatabaseLoad()";
+    preDatabaseLoad();
 
-  // Set all pointers to null to catch errors for late access
-  NavApp::removeDialogFromDockHandler(routeStringDialog);
-  ATOOLS_DELETE_LOG(routeStringDialog);
-  ATOOLS_DELETE_LOG(routeController);
-  ATOOLS_DELETE_LOG(searchController);
-  ATOOLS_DELETE_LOG(weatherReporter);
-  ATOOLS_DELETE_LOG(windReporter);
-  ATOOLS_DELETE_LOG(profileWidget);
-  ATOOLS_DELETE_LOG(marbleAboutDialog);
-  ATOOLS_DELETE_LOG(infoController);
-  ATOOLS_DELETE_LOG(printSupport);
-  ATOOLS_DELETE_LOG(routeFileHistory);
-  ATOOLS_DELETE_LOG(kmlFileHistory);
-  ATOOLS_DELETE_LOG(layoutFileHistory);
-  ATOOLS_DELETE_LOG(optionsDialog);
-  ATOOLS_DELETE_LOG(mapWidget);
-  ATOOLS_DELETE_LOG(dialog);
-  ATOOLS_DELETE_LOG(errorHandler);
-  ATOOLS_DELETE_LOG(helpHandler);
-  ATOOLS_DELETE_LOG(desktopServices);
-  ATOOLS_DELETE_LOG(actionGroupMapProjection);
-  ATOOLS_DELETE_LOG(actionGroupMapSunShading);
-  ATOOLS_DELETE_LOG(actionGroupMapWeatherSource);
-  ATOOLS_DELETE_LOG(actionGroupMapWeatherWindSource);
-  ATOOLS_DELETE_LOG(routeExport);
-  ATOOLS_DELETE_LOG(weatherContextHandler);
-  ATOOLS_DELETE_LOG(simbriefHandler);
-  ATOOLS_DELETE_LOG(mapThemeHandler);
+    // Free all queries
+    qDebug() << Q_FUNC_INFO << "QueryManager::instance()->shutdown()";
+    QueryManager::instance()->shutdown();
 
-  // Delete NavApp members
-  NavApp::deInit();
+    // Set all pointers to null to catch errors for late access
+    qDebug() << Q_FUNC_INFO << "NavApp::removeDialogFromDockHandler()";
+    NavApp::removeDialogFromDockHandler(routeStringDialog);
 
-  Unit::deInit();
+    ATOOLS_DELETE_LOG(routeStringDialog);
+    ATOOLS_DELETE_LOG(routeController);
+    ATOOLS_DELETE_LOG(searchController);
+    ATOOLS_DELETE_LOG(weatherReporter);
+    ATOOLS_DELETE_LOG(windReporter);
+    ATOOLS_DELETE_LOG(profileWidget);
+    ATOOLS_DELETE_LOG(marbleAboutDialog);
+    ATOOLS_DELETE_LOG(infoController);
+    ATOOLS_DELETE_LOG(printSupport);
+    ATOOLS_DELETE_LOG(routeFileHistory);
+    ATOOLS_DELETE_LOG(kmlFileHistory);
+    ATOOLS_DELETE_LOG(layoutFileHistory);
+    ATOOLS_DELETE_LOG(optionsDialog);
+    ATOOLS_DELETE_LOG(mapWidget);
+    ATOOLS_DELETE_LOG(dialog);
+    ATOOLS_DELETE_LOG(errorHandler);
+    ATOOLS_DELETE_LOG(helpHandler);
+    ATOOLS_DELETE_LOG(desktopServices);
+    ATOOLS_DELETE_LOG(actionGroupMapProjection);
+    ATOOLS_DELETE_LOG(actionGroupMapSunShading);
+    ATOOLS_DELETE_LOG(actionGroupMapWeatherSource);
+    ATOOLS_DELETE_LOG(actionGroupMapWeatherWindSource);
+    ATOOLS_DELETE_LOG(routeExport);
+    ATOOLS_DELETE_LOG(weatherContextHandler);
+    ATOOLS_DELETE_LOG(simbriefHandler);
+    ATOOLS_DELETE_LOG(mapThemeHandler);
 
-  ATOOLS_DELETE_LOG(ui);
-  ATOOLS_DELETE_LOG(dockHandler);
+    // Delete NavApp members
+    NavApp::deInit();
 
-  if(NavApp::isRestartProcess())
-    Settings::clearAndShutdown();
-  else
-    Settings::shutdown();
+    Unit::deInit();
 
-  // Free translations
-  atools::gui::Translator::unload();
+    ATOOLS_DELETE_LOG(ui);
+    ATOOLS_DELETE_LOG(dockHandler);
+
+    if(NavApp::isRestartProcess())
+      Settings::clearAndShutdown();
+    else
+      Settings::shutdown();
+
+    // Free translations
+    atools::gui::Translator::unload();
 
 #if defined(Q_OS_LINUX)
-  // Remove signal handler
-  atools::util::SignalHandler::deleteInstance();
+    // Remove signal handler
+    atools::util::SignalHandler::deleteInstance();
 #endif
 
-  atools::logging::LoggingGuiAbortHandler::resetGuiAbortFunction();
+    qDebug() << Q_FUNC_INFO << "About to exit";
+    atools::gui::Application::recordExit();
+    atools::logging::LoggingGuiAbortHandler::resetGuiAbortFunction();
+  }
 }
 
 void MainWindow::dataExchangeDataFetched(atools::util::Properties properties)
@@ -2527,7 +2547,9 @@ void MainWindow::trailAppendGpx()
 
 void MainWindow::warnTrailPoints(int numTruncated, bool doNotShowAgain)
 {
-  int numPoints = mapWidget->getAircraftTrailSize();
+  int numPoints = 0;
+  if(mapWidget != nullptr)
+    numPoints = mapWidget->getAircraftTrailSize();
 
   qDebug() << Q_FUNC_INFO << "numTruncated" << numTruncated << "numPoints" << numPoints << "doNotShowAgain" << doNotShowAgain;
 
@@ -3650,7 +3672,7 @@ void MainWindow::mainWindowShownDelayed()
   // Update the information display later delayed to avoid long loading times due to weather timeout
   QTimer::singleShot(50, infoController, &InfoController::restoreInformation);
 
-  QTimer::singleShot(1000, this, std::bind(&MainWindow::warnTrailPoints, this, 0, true /* doNotShowAgain */));
+  QTimer::singleShot(70, this, std::bind(&MainWindow::warnTrailPoints, this, 0, true /* doNotShowAgain */));
 
 #ifdef DEBUG_INFORMATION
   qDebug() << "mapDistanceLabel->size()" << mapDistanceLabel->size();
@@ -3828,15 +3850,14 @@ void MainWindow::hideTitleBar()
 void MainWindow::mapDockVisibilityChanged(bool visible)
 {
   // Map widget changed visbility
-  if(OptionData::instance().getFlags2().testFlag(opts2::MAP_ALLOW_UNDOCK))
+  if(!NavApp::isCloseCalled() && OptionData::instance().getFlags2().testFlag(opts2::MAP_ALLOW_UNDOCK))
     dockHandler->setDockWindowFrame(ui->dockWidgetMap, dockHandler->getWindowFrame() && visible);
-
 }
 
 void MainWindow::mapDockTopLevelChanged(bool topLevel)
 {
   // Map widget changed floating state
-  if(OptionData::instance().getFlags2().testFlag(opts2::MAP_ALLOW_UNDOCK))
+  if(!NavApp::isCloseCalled() && OptionData::instance().getFlags2().testFlag(opts2::MAP_ALLOW_UNDOCK))
     dockHandler->setHideTitleBar(ui->dockWidgetMap, dockHandler->getHideTitleBar() && !topLevel);
 }
 
@@ -4638,9 +4659,9 @@ void MainWindow::printShortcuts()
 
 void MainWindow::closeEvent(QCloseEvent *event)
 {
+  qDebug() << Q_FUNC_INFO << "Entry";
   // Catch all close events like Ctrl-Q or Menu/Exit or clicking on the
   // close button on the window frame
-  qDebug() << Q_FUNC_INFO;
 
   // Save to default file in options or delete the default file if plan is empty
   if(OptionData::instance().getFlags().testFlag(opts::STARTUP_LOAD_ROUTE))
@@ -4723,7 +4744,12 @@ void MainWindow::closeEvent(QCloseEvent *event)
 
   /* Have to delete early before deleting main map widget */
   if(quit)
+  {
     NavApp::deInitWebController();
+    deInit();
+  }
+
+  qDebug() << Q_FUNC_INFO << "Exit quit is" << quit;
 }
 
 void MainWindow::showEvent(QShowEvent *event)

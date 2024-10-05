@@ -1006,7 +1006,7 @@ bool MapPaintWidget::hasHighlights() const
 
 int MapPaintWidget::getAircraftTrailSize() const
 {
-  return aircraftTrail->size();
+  return aircraftTrail != nullptr ? aircraftTrail->size() : 0;
 }
 
 const map::MapResult& MapPaintWidget::getSearchHighlights() const

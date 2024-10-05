@@ -442,6 +442,8 @@ int main(int argc, char *argv[])
       {
         ATOOLS_DELETE_LOG(dbManager);
 
+        QApplication::setQuitOnLastWindowClosed(true);
+
         MainWindow mainWindow;
 
         // Show database dialog if something was removed
@@ -454,16 +456,20 @@ int main(int argc, char *argv[])
 
         // =============================================================================================
         // Run application
-        qDebug() << "Before app.exec()";
+        qDebug() << Q_FUNC_INFO << "Before QApplication::exec()";
         retval = QApplication::exec();
+        qDebug() << Q_FUNC_INFO << "After QApplication::exec()";
       }
       else
+      {
+        ATOOLS_DELETE_LOG(dbManager);
         atools::gui::Application::recordExit();
+      }
     } // if(!NavApp::initSharedMemory())
     else
       retval = 0;
 
-    qInfo() << "app.exec() done, retval is" << retval << (retval == 0 ? "(ok)" : "(error)");
+    qInfo() << "QApplication::exec() done, retval is" << retval << (retval == 0 ? "(ok)" : "(error)");
   }
   catch(atools::Exception& e)
   {
@@ -483,8 +489,7 @@ int main(int argc, char *argv[])
   atools::util::crashhandler::clearStackTrace(Settings::getConfigFilename(lnm::STACKTRACE_SUFFIX, lnm::CRASHREPORTS_DIR));
   NavApp::deInitDataExchange();
 
-  delete dbManager;
-  dbManager = nullptr;
+  ATOOLS_DELETE_LOG(dbManager);
 
   qInfo() << "About to shut down logging";
   atools::logging::LoggingHandler::shutdown();

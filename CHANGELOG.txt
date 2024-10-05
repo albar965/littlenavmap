@@ -176,6 +176,7 @@ A big thank you to all who reported bugs and issues!
 * Added help menu item pointing to keyboard shortcuts.
 * Fixed reversed meaning of settings `By airspace name vs. callsign` and `By airspace file name vs. callsign`
   on options page `Map Online`.
+* Fixed problem with wrong crash detection when shutting down operating system with *Little Navmap* running.
 * More optimizations.
 
 ### User Manual

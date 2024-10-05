@@ -311,6 +311,9 @@ private:
   virtual void dragEnterEvent(QDragEnterEvent *event) override;
   virtual void dropEvent(QDropEvent *event) override;
 
+  /* Shutdown all services after close with following application exit */
+  void deInit();
+
   void connectAllSlots();
 
   /* Called by window shown event when the main window is visible the first time */
@@ -656,6 +659,8 @@ private:
 
   /* Call debugDumpContainerSizes() every 30 seconds */
   QTimer debugDumpContainerSizesTimer;
+
+  bool deInitCalled = false; /* Avoid double call */
 
   QAction *debugActionDumpRoute = nullptr, *debugActionDumpFlightplan = nullptr, *debugActionForceUpdates = nullptr,
           *debugActionReloadPlan = nullptr, *debugActionPlanEdit = nullptr,
