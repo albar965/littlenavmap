@@ -177,6 +177,9 @@ A big thank you to all who reported bugs and issues!
 * Fixed reversed meaning of settings `By airspace name vs. callsign` and `By airspace file name vs. callsign`
   on options page `Map Online`.
 * Fixed problem with wrong crash detection when shutting down operating system with *Little Navmap* running.
+* Now always exiting program if command line options `--quit` / `-q` was set, even if no other
+  instance was found.
+* Fixed wrong error message when reading flight route descriptions from the command line.
 * More optimizations.
 
 ### User Manual

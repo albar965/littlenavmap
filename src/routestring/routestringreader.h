@@ -98,7 +98,7 @@ public:
 
   bool hasErrorMessages() const
   {
-    return errorMessages.isEmpty();
+    return !errorMessages.isEmpty();
   }
 
   /* Get messages in order of error, warning and info messages separated by an empty line */
