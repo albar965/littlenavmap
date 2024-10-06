@@ -323,6 +323,12 @@ void checkAndMigrateSettings()
 #endif
       }
 
+      if(optionsVersion <= Version("3.0.10.rc1"))
+      {
+        qInfo() << Q_FUNC_INFO << "Adjusting settings for versions before or equal to 3.0.10.rc1";
+        settings.setValue("MainWindow/Widget_statusBar", true);
+      }
+
       qInfo() << Q_FUNC_INFO << "Clearing all essential messages since version differs";
       messages::resetEssentialMessages();
 
