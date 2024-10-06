@@ -9336,7 +9336,7 @@ A simulator might not be able to load the flight plan.</source>
         <translation>Barra de herramientas de Mapa de espacios aéreos</translation>
     </message>
     <message>
-        <source>Append flight plan to the corte.in file for the Flight Factor Airbus</source>
+        <source>Append flight plan to the corte.in file for the FlightFactor Airbus</source>
         <translation type="vanished">Agregar Plan de Vuelo para archivo corte.in de FlightFactor A320</translation>
     </message>
     <message>
@@ -10707,8 +10707,8 @@ Wind speed will be interpolated between this altitude and ground level.</source>
         <translation type="vanished">Exportar Plan de Vuelo como IXEG &amp;FPL ...</translation>
     </message>
     <message>
-        <source>Export Flight Plan to &amp;corte.in for Flight Factor Airbus ...</source>
-        <translation type="vanished">Exportar Plan de Vuelo a &amp;corte.in para Flight Factor Airbus ...</translation>
+        <source>Export Flight Plan to &amp;corte.in for FlightFactor Airbus ...</source>
+        <translation type="vanished">Exportar Plan de Vuelo a &amp;corte.in para FlightFactor Airbus ...</translation>
     </message>
     <message>
         <source>Show Compass Rose</source>
@@ -32036,8 +32036,8 @@ Remarks for the flight plan.</source>
         <translation type="vanished">Grabar Plan de Vuelo con formato IXEG FPL</translation>
     </message>
     <message>
-        <source>Save Flight Plan to corte.in for Flight Factor Airbus</source>
-        <translation type="vanished">Grabar Plan de Vuelo a &quot;corte.in&quot; para Flight Factor Airbus</translation>
+        <source>Save Flight Plan to corte.in for FlightFactor Airbus</source>
+        <translation type="vanished">Grabar Plan de Vuelo a &quot;corte.in&quot; para FlightFactor Airbus</translation>
     </message>
     <message>
         <source>corte.in Files %1;;All Files (*)</source>
@@ -32848,7 +32848,7 @@ Old and limited format.</source>
     </message>
     <message>
         <location filename="src/routeexport/routeexportformat.cpp" line="321"/>
-        <source>Flight Factor Airbus</source>
+        <source>FlightFactor Airbus</source>
         <translation type="unfinished"></translation>
     </message>
     <message>

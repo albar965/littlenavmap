@@ -160,7 +160,7 @@ public:
   /* IXEG 737 */
   bool routeExportFplMulti(const RouteExportFormat& format);
 
-  /* Flight factor airbus */
+  /* FlightFactor airbus */
   bool routeExportCorteInMulti(const RouteExportFormat& format);
 
   /* Reality XP GNS */

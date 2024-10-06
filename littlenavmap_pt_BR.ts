@@ -8858,8 +8858,8 @@ Guardar alterações?</translation>
         <translation type="vanished">Anexar plano de voo ao arquivo companyroutes.xml do ProSim</translation>
     </message>
     <message>
-        <source>Append flight plan to the corte.in file for the Flight Factor Airbus</source>
-        <translation type="vanished">Anexe plano de voo ao arquivo corte.in para Flight Factor Airbus</translation>
+        <source>Append flight plan to the corte.in file for the FlightFactor Airbus</source>
+        <translation type="vanished">Anexe plano de voo ao arquivo corte.in para FlightFactor Airbus</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="4181"/>
@@ -14300,8 +14300,8 @@ Somente JPG, PNG and BMP estão disponíveis.</translation>
         <translation type="vanished">Exportar o Plano de Voo em &amp;FPL para Reality XP GNS...</translation>
     </message>
     <message>
-        <source>Export Flight Plan to &amp;corte.in for Flight Factor Airbus ...</source>
-        <translation type="vanished">Exportar Plano de Voo em &amp;corte.in para Airbus Flight Factor ...</translation>
+        <source>Export Flight Plan to &amp;corte.in for FlightFactor Airbus ...</source>
+        <translation type="vanished">Exportar Plano de Voo em &amp;corte.in para Airbus FlightFactor ...</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="8993"/>
@@ -38261,8 +38261,8 @@ A posição inicial está agora configurada para a pista principal mais longa do
         <translation type="vanished">Salvar plano de voo para companyroutes.xml para ProSim</translation>
     </message>
     <message>
-        <source>Save Flight Plan to corte.in for Flight Factor Airbus</source>
-        <translation type="vanished">Salvar o Plano de Voo para corte.in para Flight Factor Airbus</translation>
+        <source>Save Flight Plan to corte.in for FlightFactor Airbus</source>
+        <translation type="vanished">Salvar o Plano de Voo para corte.in para FlightFactor Airbus</translation>
     </message>
     <message>
         <source>Export Flight Plan as %1 FPL</source>
@@ -39219,7 +39219,7 @@ Formato antigo e limitado.</translation>
     </message>
     <message>
         <location filename="src/routeexport/routeexportformat.cpp" line="343"/>
-        <source>Flight Factor Airbus</source>
+        <source>FlightFactor Airbus</source>
         <translation></translation>
     </message>
     <message>

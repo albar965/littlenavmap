@@ -35754,8 +35754,8 @@ to select departure and destination.</oldsource>
         <translation type="vanished">保存飞行计划为 IXEG 的 FPL 格式</translation>
     </message>
     <message>
-        <source>Save Flight Plan to corte.in for Flight Factor Airbus</source>
-        <translation type="vanished">为 Flight Factor Airbus 保存飞行计划到 corte.in 文件</translation>
+        <source>Save Flight Plan to corte.in for FlightFactor Airbus</source>
+        <translation type="vanished">为 FlightFactor Airbus 保存飞行计划到 corte.in 文件</translation>
     </message>
     <message>
         <source>corte.in Files %1;;All Files (*)</source>
@@ -36786,8 +36786,8 @@ Old and limited format.</source>
     </message>
     <message>
         <location filename="src/routeexport/routeexportformat.cpp" line="337"/>
-        <source>Flight Factor Airbus</source>
-        <translation>Flight Factor Airbus</translation>
+        <source>FlightFactor Airbus</source>
+        <translation>FlightFactor Airbus</translation>
     </message>
     <message>
         <location filename="src/routeexport/routeexportformat.cpp" line="338"/>

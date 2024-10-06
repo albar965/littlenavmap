@@ -14550,8 +14550,8 @@ in Relation zum angezeigten Flugplatz</translation>
         <translation type="vanished">Exportiere Flugplan als IXEG &amp;FPL ...</translation>
     </message>
     <message>
-        <source>Export Flight Plan to &amp;corte.in for Flight Factor Airbus ...</source>
-        <translation type="vanished">Exportiere Flugplan als &amp;corte.in für Flight Factor Airbus ...</translation>
+        <source>Export Flight Plan to &amp;corte.in for FlightFactor Airbus ...</source>
+        <translation type="vanished">Exportiere Flugplan als &amp;corte.in für FlightFactor Airbus ...</translation>
     </message>
     <message>
         <source>Export Flight Plan as &amp;GFP for Reality XP GTN ...</source>
@@ -15264,9 +15264,9 @@ in Relation zum angezeigten Flugplatz</translation>
         <translation type="vanished">Flugplan als FPL für die IXEG Boeing speichern</translation>
     </message>
     <message>
-        <source>Append flight plan to the corte.in file for the Flight Factor Airbus</source>
-        <oldsource>Append flight plan to the corte.in file for the Flight Factor A320</oldsource>
-        <translation type="vanished">Flugplan and die corte.in Datei für den Flight Factor Airbus anhängen</translation>
+        <source>Append flight plan to the corte.in file for the FlightFactor Airbus</source>
+        <oldsource>Append flight plan to the corte.in file for the FlightFactor A320</oldsource>
+        <translation type="vanished">Flugplan and die corte.in Datei für den FlightFactor Airbus anhängen</translation>
     </message>
     <message>
         <source>Opened navigation map legend.</source>
@@ -39332,8 +39332,8 @@ Anmerkungen zum Flugplan.</translation>
         <translation type="vanished">Flugplan im IXEG FPL Format speichern</translation>
     </message>
     <message>
-        <source>Save Flight Plan to corte.in for Flight Factor Airbus</source>
-        <translation type="vanished">Flugplan in corte.in für Flight Factor Airbus speichern</translation>
+        <source>Save Flight Plan to corte.in for FlightFactor Airbus</source>
+        <translation type="vanished">Flugplan in corte.in für FlightFactor Airbus speichern</translation>
     </message>
     <message>
         <source>corte.in Files %1;;All Files (*)</source>
@@ -40425,8 +40425,8 @@ Altes eingeschränktes Format.</translation>
     </message>
     <message>
         <location filename="src/routeexport/routeexportformat.cpp" line="343"/>
-        <source>Flight Factor Airbus</source>
-        <translation>Flight Factor Airbus</translation>
+        <source>FlightFactor Airbus</source>
+        <translation>FlightFactor Airbus</translation>
     </message>
     <message>
         <location filename="src/routeexport/routeexportformat.cpp" line="344"/>

@@ -340,7 +340,7 @@ void RouteExportFormatMap::init()
   FMT(HTML,          NONE,                 D % "html",      tr("Other"),     tr("HTML flight plan web page") % mainMenu                    );
   FMT(FPR,           AIRPORTS,             S0P % "fpr",     tr("Aircraft"),  tr("Majestic Dash MJC8 Q400")                                 );
   FMT(FPL,           AIRPORTS,             S0P % "fpl",     tr("Aircraft"),  tr("IXEG Boeing 737")                                         );
-  FMT(CORTEIN,       AIRPORTS|FILEAPP,     "corte.in",      tr("Aircraft"),  tr("Flight Factor Airbus")                                    );
+  FMT(CORTEIN,       AIRPORTS|FILEAPP,     "corte.in",      tr("Aircraft"),  tr("FlightFactor Airbus")                                    );
   FMT(RXPGNS,        AIRPORTS,             S0P % "fpl",     tr("Garmin"),    tr("Reality XP GNS 530W/430W V2")                             );
   FMT(RXPGNSUWP,     AIRPORTS|GARMIN_WP,   S0P % "fpl",     tr("Garmin"),    tr("Reality XP GNS 530W/430W V2 with user defined waypoints") % rxpTooltip);
   FMT(RXPGTN,        AIRPORTS,             SUP % "gfp",     tr("Garmin"),    tr("Reality XP GTN 750/650 Touch")                            );

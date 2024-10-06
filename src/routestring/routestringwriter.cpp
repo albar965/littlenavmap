@@ -309,7 +309,7 @@ QStringList RouteStringWriter::createStringForRouteInternal(const Route& routePa
 
   if(route.hasAnyApproachProcedure() && !route.getApproachLegs().type.isEmpty() && !route.hasCustomApproach())
   {
-    // Flight factor specialities - there are probably more to guess
+    // FlightFactor specialities - there are probably more to guess
     if(route.getApproachLegs().type == "RNAV")
       approachName = "RNV" % destinationRunway;
     else
@@ -497,7 +497,7 @@ QStringList RouteStringWriter::createStringForRouteInternal(const Route& routePa
   else if(options.testFlag(rs::SID_STAR_GENERIC))
     items.append("STAR");
 
-  // Remove last DCT for flight factor export
+  // Remove last DCT for FlightFactor export
   if(options.testFlag(rs::NO_FINAL_DCT) && items.constLast() == "DCT")
     items.removeLast();
 

@@ -46,7 +46,7 @@ enum RouteStringOption : quint32
   GFP_COORDS = 1 << 11, /* Suffix all navaids with coordinates for new GFP format */
   USR_WPT = 1 << 12, /* User waypoints for all navaids to avoid locked waypoints from Garmin */
   SKYVECTOR_COORDS = 1 << 13, /* Skyvector coordinate format */
-  NO_FINAL_DCT = 1 << 14, /* omit last DCT for Flight Factor export */
+  NO_FINAL_DCT = 1 << 14, /* omit last DCT for FlightFactor export */
 
   ALTERNATES = 1 << 15, /* Write alternate at end of list */
 

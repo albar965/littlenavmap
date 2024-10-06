@@ -13115,8 +13115,8 @@ in relazione all&apos;aeroporto indicato</translation>
         <translation type="vanished">Esporta Piano di Volo come IXEG &amp;FPL ...</translation>
     </message>
     <message>
-        <source>Export Flight Plan to &amp;corte.in for Flight Factor Airbus ...</source>
-        <translation type="vanished">Esporta Piano di Volo come &amp;corte.in per Flight Factor Airbus ...</translation>
+        <source>Export Flight Plan to &amp;corte.in for FlightFactor Airbus ...</source>
+        <translation type="vanished">Esporta Piano di Volo come &amp;corte.in per FlightFactor Airbus ...</translation>
     </message>
     <message>
         <source>Export Flight Plan as &amp;GFP for Reality XP GTN ...</source>
@@ -14847,9 +14847,9 @@ Corrisponde a qualsiasi aeroporto visitato.</translation>
         <translation type="vanished">Salva piano di volo come FPL utilizzabile da Boeing IXEG</translation>
     </message>
     <message>
-        <source>Append flight plan to the corte.in file for the Flight Factor Airbus</source>
-        <oldsource>Append flight plan to the corte.in file for the Flight Factor A320</oldsource>
-        <translation type="vanished">Accoda piano di volo al file corte.in per Airbus Flight Factor</translation>
+        <source>Append flight plan to the corte.in file for the FlightFactor Airbus</source>
+        <oldsource>Append flight plan to the corte.in file for the FlightFactor A320</oldsource>
+        <translation type="vanished">Accoda piano di volo al file corte.in per Airbus FlightFactor</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="9219"/>
@@ -39198,8 +39198,8 @@ o calcola di nuovo il piano di volo se il piano di volo utilizza le tratte.</tra
         <translation type="vanished">Salva Piano di Volo in Formato IXEG FPL</translation>
     </message>
     <message>
-        <source>Save Flight Plan to corte.in for Flight Factor Airbus</source>
-        <translation type="vanished">Salva Piano di Volo su corte.in per Flight Factor Airbus</translation>
+        <source>Save Flight Plan to corte.in for FlightFactor Airbus</source>
+        <translation type="vanished">Salva Piano di Volo su corte.in per FlightFactor Airbus</translation>
     </message>
     <message>
         <source>corte.in Files %1;;All Files (*)</source>
@@ -40285,8 +40285,8 @@ Vecchio formato limitato.</translation>
     </message>
     <message>
         <location filename="src/routeexport/routeexportformat.cpp" line="343"/>
-        <source>Flight Factor Airbus</source>
-        <translation>Flight Factor Airbus</translation>
+        <source>FlightFactor Airbus</source>
+        <translation>FlightFactor Airbus</translation>
     </message>
     <message>
         <location filename="src/routeexport/routeexportformat.cpp" line="344"/>

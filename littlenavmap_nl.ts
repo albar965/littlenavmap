@@ -11204,8 +11204,8 @@ Wind speed will be interpolated between this altitude and ground level.</source>
         <translation type="vanished">Exporteer Vluchtplan als IXEG &amp;FPL ...</translation>
     </message>
     <message>
-        <source>Export Flight Plan to &amp;corte.in for Flight Factor Airbus ...</source>
-        <translation type="vanished">Exporteer Vluchtplan als &amp;corte.in voor Flight Factor Airbus ...</translation>
+        <source>Export Flight Plan to &amp;corte.in for FlightFactor Airbus ...</source>
+        <translation type="vanished">Exporteer Vluchtplan als &amp;corte.in voor FlightFactor Airbus ...</translation>
     </message>
     <message>
         <source>Export Flight Plan as &amp;GFP for Reality XP GTN ...</source>
@@ -13412,8 +13412,8 @@ Windsnelheid wordt geinterpoleerd uit de klim-en daalfases.</translation>
         <translation type="vanished">Bewaar vluchtplan als FPL bestand bruikbaar in de IXEG Boeing</translation>
     </message>
     <message>
-        <source>Append flight plan to the corte.in file for the Flight Factor Airbus</source>
-        <translation type="vanished">Voeg het vluchtplan aan het  corte.in bestand toe voor de Flight Factor Airbus</translation>
+        <source>Append flight plan to the corte.in file for the FlightFactor Airbus</source>
+        <translation type="vanished">Voeg het vluchtplan aan het  corte.in bestand toe voor de FlightFactor Airbus</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="8824"/>
@@ -35747,8 +35747,8 @@ It is strongly recommended to keep the error label enabled.</source>
         <translation type="vanished">Bewaar Vluchtplan als IXE FPL Formaat</translation>
     </message>
     <message>
-        <source>Save Flight Plan to corte.in for Flight Factor Airbus</source>
-        <translation type="vanished">Bewaar Vluchtplan als corte.in voor Flight Factor Airbus</translation>
+        <source>Save Flight Plan to corte.in for FlightFactor Airbus</source>
+        <translation type="vanished">Bewaar Vluchtplan als corte.in voor FlightFactor Airbus</translation>
     </message>
     <message>
         <source>corte.in Files %1;;All Files (*)</source>
@@ -36596,7 +36596,7 @@ Old and limited format.</source>
     </message>
     <message>
         <location filename="src/routeexport/routeexportformat.cpp" line="337"/>
-        <source>Flight Factor Airbus</source>
+        <source>FlightFactor Airbus</source>
         <translation type="unfinished"></translation>
     </message>
     <message>

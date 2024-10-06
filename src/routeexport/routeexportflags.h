@@ -83,7 +83,7 @@ enum RouteExportFormatType : quint16
   RTEMSFS = 41, /* PMDG RTE format */
   FPR = 17, /* Majestic Dash binary format */
   FPL = 18, /* IXEG 737 */
-  CORTEIN = 19, /* Flight factor airbus */
+  CORTEIN = 19, /* FlightFactor airbus */
   FLTPLAN = 20, /* iFly */
   BBS = 21, /* BlackBox Simulations Airbus */
   FEELTHEREFPL = 22, /* FeelThere or Wilco aircraft */

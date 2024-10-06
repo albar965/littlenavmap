@@ -13645,8 +13645,8 @@ La vitesse du vent sera interpolée entre cette altitude et le niveau du sol.</t
         <translation type="vanished">Exporter le plan de vol au format IXEG &amp;FPL ...</translation>
     </message>
     <message>
-        <source>Export Flight Plan to &amp;corte.in for Flight Factor Airbus ...</source>
-        <translation type="obsolete">Exporter le plan de vol vers &quot;&amp;corte.in&quot; pour Flight Factor Airbus...</translation>
+        <source>Export Flight Plan to &amp;corte.in for FlightFactor Airbus ...</source>
+        <translation type="obsolete">Exporter le plan de vol vers &quot;&amp;corte.in&quot; pour FlightFactor Airbus...</translation>
     </message>
     <message>
         <source>Export Flight Plan as &amp;GFP for Reality XP GTN ...</source>
@@ -14686,8 +14686,8 @@ Correspond à tout aéroport visité.</translation>
         <translation type="vanished">Sauver le plan de vol au format  FPL utilisable par l&apos;IXEG Boeing</translation>
     </message>
     <message>
-        <source>Append flight plan to the corte.in file for the Flight Factor Airbus</source>
-        <oldsource>Append flight plan to the corte.in file for the Flight Factor A320</oldsource>
+        <source>Append flight plan to the corte.in file for the FlightFactor Airbus</source>
+        <oldsource>Append flight plan to the corte.in file for the FlightFactor A320</oldsource>
         <translation type="vanished">Joindre plan de vol vers &quot;corte.in&quot; pour le FlightFactor A320</translation>
     </message>
     <message>
@@ -39566,7 +39566,7 @@ ou recalculer le plan de vol si votre plan utilise des pistes.</translation>
         <translation type="vanished">Sauver plan de vol au format IXEG FPL</translation>
     </message>
     <message>
-        <source>Save Flight Plan to corte.in for Flight Factor Airbus</source>
+        <source>Save Flight Plan to corte.in for FlightFactor Airbus</source>
         <translation type="vanished">Sauver plan de vol vers &quot;corte.in&quot; pour le FlightFactor Airbus</translation>
     </message>
     <message>
@@ -40652,8 +40652,8 @@ Format ancien et limité.</translation>
     </message>
     <message>
         <location filename="src/routeexport/routeexportformat.cpp" line="343"/>
-        <source>Flight Factor Airbus</source>
-        <translation type="unfinished">Flight Factor Airbus</translation>
+        <source>FlightFactor Airbus</source>
+        <translation type="unfinished">FlightFactor Airbus</translation>
     </message>
     <message>
         <location filename="src/routeexport/routeexportformat.cpp" line="344"/>
