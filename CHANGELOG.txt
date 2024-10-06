@@ -8,8 +8,7 @@ This text is partially Markdown, so the formatting is sometimes strange.
 
 ## Notes
 
-**This is a stable release of Little Navmap which fixes a few issues and provides better error reporting for crashes.
-New features and small improvements are planned for the next release 3.0.10.**
+**This is a stable release of Little Navmap which fixes issues and has a few new features.**
 
 **macOS users: Keep in mind that you have to clear the quarantine flag when updating Little Xpconnect. See
 [Clearing the Quarantine Flag on macOS](https://www.littlenavmap.org/manuals/littlenavmap/release/latest/en/XPCONNECT.html#clearing-the-quarantine-flag-on-macos).**
@@ -37,8 +36,8 @@ A big thank you to all who reported bugs and issues!
   `SBRJ EVKO3A.NAXOP IBDA1A SBSP`. #1130
 * Fixed issue where parking spots could not be found resulting in an error message after reloading
   a flight plan when using the option `Use Navigraph for all Features`.
-* Made GPX file detection more tolerant. Now showing a warning if the GPX file does not contain any
-  track points.
+* From 3.0.10.rc1 to 3.0.11: Made GPX file detection more tolerant. Now showing a warning if the
+  GPX file does not contain any track points.
 
 
 ## Export
@@ -111,11 +110,12 @@ A big thank you to all who reported bugs and issues!
   search result table.
 * Fixed issue where navaids like recommended fixes from flight plan procedures did not react to a
   single or double click.
-* `Save Map as Image for AviTab` now uses PNG as the default format since JPG may cause crashes.
-* Fixed issue where images can be saved using the wrong format ignoring selection in the
-  format drop down box. Now always adding file suffix according to image type.
-* Fixed issue where wrong coordinates were used when selecting `More` -> `Jump to Coordinates`
-  in map context menu.
+* From 3.0.10.rc1 to 3.0.11: `Save Map as Image for AviTab` now uses PNG as the default format
+  since JPG may cause crashes.
+* From 3.0.10.rc1 to 3.0.11:  Fixed issue where images can be saved using the wrong format ignoring
+  selection in the format drop down box. Now always adding file suffix according to image type.
+* From 3.0.10.rc1 to 3.0.11: Fixed issue where wrong coordinates were used when selecting `More` ->
+  `Jump to Coordinates` in map context menu.
 
 ### Scenery Library
 
@@ -147,8 +147,8 @@ A big thank you to all who reported bugs and issues!
   about a previous database version although reloading is not required.
 * Fixed issue with double and invalid COM frequencies for MSFS airports when using
   MSFS Navigraph  update.
-* Fixed issues reading MSA centers for X-Plane where runways were not detected. Now also looking
-  for center points of ILS.
+* From 3.0.10.rc1 to 3.0.11: Fixed issues reading MSA centers for X-Plane where runways were not
+  detected. Now also looking for center points of ILS.
 
 ### Search
 
@@ -167,6 +167,8 @@ A big thank you to all who reported bugs and issues!
 
 ### User Interface
 
+* From 3.0.10.rc1 to 3.0.11: Translations for French, Italian and Brazilian Portuguese updated.
+  Thanks to Flavio, Patrick and Ricardo!
 * Added winds from airport METAR to tab `Airport` -> `Runways` in dock window `Information`.
 * Fixed issue where an invalid error message about a wrong X-Plane path was shown when switching
   map airport weather.
@@ -174,13 +176,14 @@ A big thank you to all who reported bugs and issues!
   `icao_type_designator` and `icao_model` from file `aircraft.cfg`.
 * Added aircraft category to detect helicopters in MSFS.
 * Added help menu item pointing to keyboard shortcuts.
-* Fixed reversed meaning of settings `By airspace name vs. callsign` and `By airspace file name vs. callsign`
-  on options page `Map Online`.
-* Fixed problem with wrong crash detection when shutting down operating system with *Little Navmap* running.
-* Now always exiting program if command line options `--quit` / `-q` was set, even if no other
-  instance was found.
-* Fixed wrong error message when reading flight route descriptions from the command line.
-* More optimizations.
+* From 3.0.10.rc1 to 3.0.11: Fixed reversed meaning of settings `By airspace name vs. callsign` and
+  `By airspace file name vs. callsign` on options page `Map Online`.
+* From 3.0.10.rc1 to 3.0.11: Fixed problem with wrong crash detection when shutting down operating
+  system with *Little Navmap* running.
+* From 3.0.10.rc1 to 3.0.11: Now always exiting program if command line option `--quit` / `-q` was
+  set, even if no other instance was found.
+* From 3.0.10.rc1 to 3.0.11: Fixed wrong error message when reading flight route descriptions from
+  the command line.
 
 ### User Manual
 
@@ -196,6 +199,13 @@ A big thank you to all who reported bugs and issues!
   [User Manual - Web Server](https://www.littlenavmap.org/manuals/littlenavmap/release/latest/en/WEBSERVER.html).
 * Updated airspace chapter for online airspace loading and matching:
   [User Manual - Loading Airspaces](https://www.littlenavmap.org/manuals/littlenavmap/release/latest/en/AIRSPACELOAD.html).
+
+### Little Navconnect Changes from 3.0.6 to 3.0.7
+
+* Disabled crash detection since it resulted in wrong crashes found when running
+  program in system tray on Windows.
+* Now always exiting program if command line option `--quit` / `-q` was set, even if no other
+  instance was found.
 
 ==<<=============================================================================
 
