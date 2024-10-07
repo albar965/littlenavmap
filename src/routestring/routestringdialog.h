@@ -105,6 +105,13 @@ public:
   /* Create flight plan but keep dialog open */
   void createPlanAndKeepOpen();
 
+  /* No-op for now */
+  void preDatabaseLoad();
+
+  /* Re-read string. */
+  void postDatabaseLoad();
+  void tracksChanged();
+
 signals:
   /* Emitted when user clicks "Create flight plan" */
   void routeFromFlightplan(const atools::fs::pln::Flightplan& flightplan, bool adjustAltitude, bool changed, bool undo,

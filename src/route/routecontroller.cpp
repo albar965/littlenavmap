@@ -2016,9 +2016,9 @@ void RouteController::calculateRoute()
     // Airway/waypoint preference =======================================
     int pref = routeCalcDialog->getAirwayWaypointPreference();
     if(pref == RouteCalcDialog::AIRWAY_WAYPOINT_PREF_MIN)
-      mode &= ~atools::routing::MODE_WAYPOINT;
+      mode &= ~atools::routing::Modes(atools::routing::MODE_WAYPOINT);
     else if(pref == RouteCalcDialog::AIRWAY_WAYPOINT_PREF_MAX)
-      mode &= ~atools::routing::MODE_AIRWAY;
+      mode &= ~atools::routing::Modes(atools::routing::MODE_AIRWAY);
 
     // RNAV setting
     if(routeCalcDialog->isAirwayNoRnav())

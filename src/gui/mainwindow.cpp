@@ -2345,6 +2345,7 @@ void MainWindow::routeFromStringCurrent()
     connect(NavApp::navAppInstance(), &QGuiApplication::fontChanged, routeStringDialog, &RouteStringDialog::fontChanged);
     connect(routeController, &RouteController::routeChanged, routeStringDialog, &RouteStringDialog::updateButtonState);
     connect(NavApp::getStyleHandler(), &StyleHandler::styleChanged, routeStringDialog, &RouteStringDialog::styleChanged);
+    connect(NavApp::getTrackController(), &TrackController::postTrackLoad, routeStringDialog, &RouteStringDialog::tracksChanged);
   }
 
   routeStringDialog->show();
@@ -4771,6 +4772,8 @@ void MainWindow::preDatabaseLoad()
   {
     hasDatabaseLoadStatus = true;
 
+    if(routeStringDialog != nullptr)
+      routeStringDialog->preDatabaseLoad();
     searchController->preDatabaseLoad();
     routeController->preDatabaseLoad();
     mapWidget->preDatabaseLoad();
@@ -4778,9 +4781,7 @@ void MainWindow::preDatabaseLoad()
     infoController->preDatabaseLoad();
     weatherReporter->preDatabaseLoad();
     windReporter->preDatabaseLoad();
-
     NavApp::preDatabaseLoad();
-
     weatherContextHandler->clearWeatherContext();
   }
   else
@@ -4802,9 +4803,9 @@ void MainWindow::postDatabaseLoad(atools::fs::FsPaths::SimulatorType type)
     weatherReporter->postDatabaseLoad(type);
     windReporter->postDatabaseLoad(type);
     routeExport->postDatabaseLoad();
-
-    // U actions for flight simulator database switch in main menu
-    NavApp::getDatabaseManager()->insertSimSwitchActions();
+    if(routeStringDialog != nullptr)
+      routeStringDialog->postDatabaseLoad();
+    NavApp::getDatabaseManager()->insertSimSwitchActions(); // Actions for flight simulator database switch in main menu
 
     hasDatabaseLoadStatus = false;
   }

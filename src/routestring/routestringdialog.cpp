@@ -606,7 +606,8 @@ void RouteStringDialog::styleChanged()
 
 rs::RouteStringOptions RouteStringDialog::getOptionsFromSettings()
 {
-  return rs::RouteStringOptions(atools::settings::Settings::instance().valueInt(lnm::ROUTE_STRING_DIALOG_OPTIONS, rs::DEFAULT_OPTIONS));
+  return rs::RouteStringOptions(
+    static_cast<quint32>(atools::settings::Settings::instance().valueInt(lnm::ROUTE_STRING_DIALOG_OPTIONS, rs::DEFAULT_OPTIONS)));
 }
 
 void RouteStringDialog::textChanged()
@@ -743,6 +744,24 @@ void RouteStringDialog::createPlanAndKeepOpen()
                            !isAltitudeIncluded() /* correctProfile */);
 }
 
+void RouteStringDialog::preDatabaseLoad()
+{
+
+}
+
+void RouteStringDialog::postDatabaseLoad()
+{
+  textChangedInternal(true /* forceUpdate */);
+}
+
+void RouteStringDialog::tracksChanged()
+{
+#ifdef DEBUG_INFORMATION
+  qDebug() << Q_FUNC_INFO;
+#endif
+  textChangedInternal(true /* forceUpdate */);
+}
+
 void RouteStringDialog::textEditRouteStringPrepend(const QString& text, bool newline)
 {
   // Do not delay update in RouteStringDialog::textChanged()
@@ -778,7 +797,7 @@ void RouteStringDialog::updateButtonState()
   // Copy option flags to dropdown menu items
   updatingActions = true;
   for(QAction *action : qAsConst(actions))
-    action->setChecked(rs::RouteStringOptions(action->data().toInt()) & options);
+    action->setChecked(rs::RouteStringOptions(static_cast<quint32>(action->data().toInt())) & options);
 
   updatingActions = false;
 }

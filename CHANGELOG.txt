@@ -38,7 +38,9 @@ A big thank you to all who reported bugs and issues!
   a flight plan when using the option `Use Navigraph for all Features`.
 * From 3.0.10.rc1 to 3.0.11: Made GPX file detection more tolerant. Now showing a warning if the
   GPX file does not contain any track points.
-
+* From 3.0.10.rc1 to 3.0.11: Flight plan route description is now updated after downloading or
+  deleting oceanic tracks.
+* From 3.0.10.rc1 to 3.0.11: Now updating flight plan route description after switching simulator.
 
 ## Export
 
