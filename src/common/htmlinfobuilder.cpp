@@ -2270,7 +2270,7 @@ void HtmlInfoBuilder::vorText(const MapVor& vor, HtmlBuilder& html) const
     // Artificial waypoints are not shown - display airway list here
     waypointAirwayText(wp, html);
 
-  if(rec != nullptr)
+  if(info && rec != nullptr)
     addScenery(rec, html, DATASOURCE_NAV);
 
   if(!info)
@@ -2974,9 +2974,9 @@ void HtmlInfoBuilder::waypointText(const MapWaypoint& waypoint, HtmlBuilder& htm
   // Waypoints should normally not appear here if they are artificial except for FSX, MSFS and the like
   waypointAirwayText(waypoint, html);
 
-  addScenery(rec, html, DATASOURCE_NAV);
-
-  if(!info)
+  if(info)
+    addScenery(rec, html, DATASOURCE_NAV);
+  else
     routeWindText(html, NavApp::getRouteConst(), waypoint.routeIndex);
 
 #ifdef DEBUG_INFORMATION_INFO
