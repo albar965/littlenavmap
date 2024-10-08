@@ -420,6 +420,11 @@ struct MapProcedureLegs
 
   /* Reference with all database ids. For all navdata except custom procedures. */
   MapProcedureRef ref;
+
+  /* Includes related navaids which might be far away (KASE SID33 LINDZ1 -> GCC) */
+  atools::geo::Rect boundingWithRecommended;
+
+  /* Only the procedure points for centering without related */
   atools::geo::Rect bounding;
 
   QString type, /* GNSS (display GLS) GPS IGS ILS LDA LOC LOCB NDB NDBDME RNAV (RNV) SDF TCN VOR VORDME */

@@ -828,7 +828,7 @@ void MapPainterRoute::paintTopOfDescentAndClimb()
 void MapPainterRoute::paintProcedure(QSet<map::MapRef>& idMap, const proc::MapProcedureLegs& legs, int legsRouteOffset, const QColor& color,
                                      bool preview, bool previewAll)
 {
-  if(legs.isEmpty() || !legs.bounding.overlaps(context->viewportRect))
+  if(legs.isEmpty() || !legs.boundingWithRecommended.overlaps(context->viewportRect))
     return;
 
   QPainter *painter = context->painter;
@@ -1099,7 +1099,7 @@ void MapPainterRoute::paintProcedureSegment(const proc::MapProcedureLegs& legs, 
 
   const proc::MapProcedureLeg *prevLeg = index > 0 ? &legs.at(index - 1) : nullptr;
 
-  QSize size = scale->getScreeenSizeForRect(legs.bounding);
+  QSize size = scale->getScreeenSizeForRect(legs.boundingWithRecommended);
 
   // Use visible dummy here since we need to call the method that also returns coordinates outside the screen
   QLineF line;

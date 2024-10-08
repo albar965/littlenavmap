@@ -672,32 +672,34 @@ void ProcedureQuery::processMagvar(proc::MapProcedureLegs& legs, const map::MapA
   }
 }
 
-void ProcedureQuery::updateBounding(proc::MapProcedureLegs& legs) const
+void ProcedureQuery::updateBounding(proc::MapProcedureLegs& legs, bool includeRecommended) const
 {
+  atools::geo::Rect& bounding = includeRecommended ? legs.boundingWithRecommended : legs.bounding;
   for(int i = 0; i < legs.size(); i++)
   {
     const proc::MapProcedureLeg& leg = legs.at(i);
     if(leg.isHold())
     {
       // Simply extend bounding by a rectangle with the radius of hold distance - assume 250 kts if time is used
-      legs.bounding.extend(Rect(leg.fixPos, leg.distance > 0 ?
-                                nmToMeter(leg.distance * 2.f) :
-                                nmToMeter(leg.time > 0.f ? leg.time / 60.f * 250.f : 10.f), true /* fast */));
-      legs.bounding.extend(leg.holdLine.boundingRect());
+      bounding.extend(Rect(leg.fixPos, leg.distance > 0 ?
+                           nmToMeter(leg.distance * 2.f) :
+                           nmToMeter(leg.time > 0.f ? leg.time / 60.f * 250.f : 10.f), true /* fast */));
+      bounding.extend(leg.holdLine.boundingRect());
     }
     else if(leg.isProcedureTurn())
     {
-      legs.bounding.extend(leg.procedureTurnPos);
+      bounding.extend(leg.procedureTurnPos);
 
       // Approximate the extension of the turn section
-      legs.bounding.extend(leg.procedureTurnPos.endpoint(ageo::nmToMeter(8.f), leg.legTrueCourse()));
+      bounding.extend(leg.procedureTurnPos.endpoint(ageo::nmToMeter(8.f), leg.legTrueCourse()));
     }
 
-    legs.bounding.extend(leg.fixPos);
-    legs.bounding.extend(leg.recFixPos);
-    legs.bounding.extend(leg.interceptPos);
-    legs.bounding.extend(leg.line.boundingRect());
-    legs.bounding.extend(leg.geometry);
+    bounding.extend(leg.fixPos);
+    if(includeRecommended)
+      bounding.extend(leg.recFixPos);
+    bounding.extend(leg.interceptPos);
+    bounding.extend(leg.line.boundingRect());
+    bounding.extend(leg.geometry);
   }
 }
 
@@ -926,7 +928,8 @@ void ProcedureQuery::postProcessLegs(const map::MapAirport& airport, proc::MapPr
   processLegsFixRestrictions(legs, airport);
 
   // Update bounding rectangle
-  updateBounding(legs);
+  updateBounding(legs, false /* includeRecommended */);
+  updateBounding(legs, true /* includeRecommended */);
 
   // Collect leg errors to procedure error
   processLegErrors(legs);
@@ -1246,7 +1249,8 @@ void ProcedureQuery::postProcessLegsForRoute(proc::MapProcedureLegs& starLegs, c
   {
     // Update distances and bounding rectangle
     processLegsDistanceAndCourse(starLegs);
-    updateBounding(starLegs);
+    updateBounding(starLegs, false /* includeRecommended */);
+    updateBounding(starLegs, true /* includeRecommended */);
   }
 }
 
@@ -2650,6 +2654,7 @@ void ProcedureQuery::createCustomApproach(proc::MapProcedureLegs& legs, const ma
   legs.transitionDistance = legs.missedDistance = 0.f;
   legs.bounding = legs.runwaySim.bounding();
   legs.bounding.extend(initialFixPos);
+  legs.boundingWithRecommended = legs.bounding;
 
   // Create an initial fix leg at the given distance =======================
   proc::MapProcedureLeg startLeg;
@@ -2722,6 +2727,7 @@ void ProcedureQuery::createCustomDeparture(proc::MapProcedureLegs& legs, const m
   legs.transitionDistance = legs.missedDistance = 0.f;
   legs.bounding = Rect(endFixPos);
   legs.bounding.extend(runwayEndSim.position);
+  legs.boundingWithRecommended = legs.bounding;
 
   // Create the runway leg ================================================
   proc::MapProcedureLeg runwayLeg;

@@ -26,6 +26,8 @@
 
 namespace atools {
 namespace geo {
+
+class Rect;
 class Pos;
 }
 namespace sql {
@@ -236,7 +238,7 @@ private:
   void processMagvar(proc::MapProcedureLegs& legs, const map::MapAirport& airport) const;
 
   /* Update bounding rectangle */
-  void updateBounding(proc::MapProcedureLegs& legs) const;
+  void updateBounding(proc::MapProcedureLegs& legs, bool includeRecommended) const;
 
   /* Update the mapTypes */
   void assignType(proc::MapProcedureLegs& procedure) const;

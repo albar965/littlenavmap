@@ -118,6 +118,9 @@ A big thank you to all who reported bugs and issues!
   selection in the format drop down box. Now always adding file suffix according to image type.
 * From 3.0.10.rc1 to 3.0.11: Fixed issue where wrong coordinates were used when selecting `More` ->
   `Jump to Coordinates` in map context menu.
+* From 3.0.10.rc1 to 3.0.11: Fixed issue where procedures zoomed too far out when showing in
+  procedure search. This was caused due to too far away recommended navaids like GCC/K1 for
+  KASE SID 33 LINDZ1.
 
 ### Scenery Library
 
