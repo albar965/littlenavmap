@@ -15416,27 +15416,27 @@ Ci sono modifiche che possono essere ripristinate utilizzando l&apos;annullament
         <translation type="vanished">&lt;p&gt;Non è possibile salvare questo file direttamente.&lt;br/&gt;Utilizzare invece la funzione di esportazione.&lt;/p&gt;&lt;p&gt;Salvare ora utilizzando il formato LNMPLN? &lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="3388"/>
+        <location filename="src/gui/mainwindow.cpp" line="3389"/>
         <source>&lt;p style=&apos;white-space:pre&apos;&gt;&lt;b&gt;Messages:&lt;/b&gt;</source>
         <translation>&lt;p style=&apos;white-space:pre&apos;&gt;&lt;b&gt;Messaggi:&lt;/b&gt;</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="3392"/>
+        <location filename="src/gui/mainwindow.cpp" line="3393"/>
         <source>...</source>
         <translation>...</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="3458"/>
+        <location filename="src/gui/mainwindow.cpp" line="3459"/>
         <source>&lt;p&gt;Error initializing SSL subsystem.&lt;/p&gt;&lt;p&gt;The program will not be able to use encrypted network connections&lt;br/&gt;(i.e. HTTPS) that are needed to check for updates or&lt;br/&gt;to load online maps.&lt;/p&gt;</source>
         <translation>&lt;p&gt;Errore initializzando il sottosistema SSL.&lt;/p&gt;&lt;p&gt;Il programma non sarà in grado di utilizzare connessioni di rete crittografate&lt;br/&gt;(i.e. HTTPS) che sono necessarie per verificare gli aggiornamenti o&lt;br/&gt;per cricare mappe online.&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="3596"/>
+        <location filename="src/gui/mainwindow.cpp" line="3597"/>
         <source>&lt;p&gt;&lt;a href=&quot;%1&quot;&gt;Click here for more information in the Little Navmap online manual&lt;/a&gt;&lt;/p&gt;</source>
         <translation>&lt;p&gt;&lt;a href=&quot;%1&quot;&gt;Clicca qui per maggiori informazioni nel manuale online di Little Navmap&lt;/a&gt;&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="3591"/>
+        <location filename="src/gui/mainwindow.cpp" line="3592"/>
         <source>&lt;p&gt;Could not find a simulator installation on this computer. Also, no scenery library databases were found.&lt;/p&gt;&lt;p&gt;You can copy a Little Navmap scenery library database from another computer if you wish to run this Little Navmap instance on a remote across a network.&lt;/p&gt;</source>
         <translation>&lt;p&gt;Non è stato possibile trovare un&apos;installazione di un simulatore su questo computer. Inoltre, non sono stati trovati database di librerie di scenari.&lt;/p&gt;&lt;p&gt;È possibile copiare un database di librerie di scenari di Little Navmap da un altro computer se si desidera eseguire questa istanza di Little Navmap su un computer remoto attraverso una rete.&lt;/p&gt;</translation>
     </message>
@@ -15675,41 +15675,41 @@ Il simulatore potrebbe non essere in grado di caricare il piano di volo.</transl
         <translation>Si noti che è possibile mettere in secondo piano la finestra di descrizione della rotta del piano di volo e modificare parallelamente il piano di volo sulla mappa o sulla tabella dei piani di volo.</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2394"/>
+        <location filename="src/gui/mainwindow.cpp" line="2395"/>
         <source>Created new flight plan.</source>
         <translation>Crea un nuovo piano di volo.</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2405"/>
+        <location filename="src/gui/mainwindow.cpp" line="2406"/>
         <source>Created new empty flight plan.</source>
         <translation>Nuovo piano di volo vuoto creato.</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2460"/>
-        <location filename="src/gui/mainwindow.cpp" line="2476"/>
-        <location filename="src/gui/mainwindow.cpp" line="2650"/>
+        <location filename="src/gui/mainwindow.cpp" line="2461"/>
+        <location filename="src/gui/mainwindow.cpp" line="2477"/>
+        <location filename="src/gui/mainwindow.cpp" line="2651"/>
         <source>Flight plan opened.</source>
         <translation>Piano di volo aperto.</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2613"/>
+        <location filename="src/gui/mainwindow.cpp" line="2614"/>
         <source>Flight plan appended.</source>
         <translation>Piano di volo accodato.</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2656"/>
+        <location filename="src/gui/mainwindow.cpp" line="2657"/>
         <source>File &quot;%1&quot; does not exist</source>
         <translation>Il file &quot;%1&quot; non esiste</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2681"/>
+        <location filename="src/gui/mainwindow.cpp" line="2682"/>
         <source>Flight plan cruise altitude is zero.
 A simulator might not be able to load the flight plan.</source>
         <translation>L&apos;altitudine di crociera del piano di volo è zero.
 Il simulatore potrebbe non essere in grado di caricare il piano di volo.</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2691"/>
+        <location filename="src/gui/mainwindow.cpp" line="2692"/>
         <source>Save &amp;as LNMPLN ...</source>
         <translation>Salva &amp;come LNMPLN ...</translation>
     </message>
@@ -15718,9 +15718,9 @@ Il simulatore potrebbe non essere in grado di caricare il piano di volo.</transl
         <translation type="vanished">&lt;p&gt;&lt;b&gt;Non puoi salvare direttamente questo file.&lt;br/&gt;Informazioni potrebbero essere perse.&lt;br/&gt;Usa invece la funzione di esportazione.&lt;/b&gt;&lt;/p&gt;&lt;p&gt;&lt;b&gt;Salvare utilizzando il nuovo formato LNMPLN?&lt;/b&gt;&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2590"/>
-        <location filename="src/gui/mainwindow.cpp" line="2724"/>
-        <location filename="src/gui/mainwindow.cpp" line="2751"/>
+        <location filename="src/gui/mainwindow.cpp" line="2591"/>
+        <location filename="src/gui/mainwindow.cpp" line="2725"/>
+        <location filename="src/gui/mainwindow.cpp" line="2752"/>
         <source>Flight plan saved.</source>
         <translation>Piano di volo salvato.</translation>
     </message>
@@ -15765,29 +15765,29 @@ Il simulatore potrebbe non essere in grado di caricare il piano di volo.</transl
         <translation type="vanished">Rimuovere tutti gli anelli di distanza, misurazioni, circuiti di traffico e attese dalla mappa?</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2937"/>
+        <location filename="src/gui/mainwindow.cpp" line="2938"/>
         <source>Waiting up to %1 seconds for map download ...
 </source>
         <translation>In attesa di %1 secondi per il download della mappa ...
 </translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2938"/>
+        <location filename="src/gui/mainwindow.cpp" line="2939"/>
         <source>&amp;Ignore Downloads and Continue</source>
         <translation>&amp;Ignora i Downloads e Continua</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2949"/>
+        <location filename="src/gui/mainwindow.cpp" line="2950"/>
         <source>%1 downloads active and %2 downloads queued.</source>
         <translation>%1 downloads attivi e %2 downloads in coda.</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2987"/>
+        <location filename="src/gui/mainwindow.cpp" line="2988"/>
         <source> - Save Map as Image</source>
         <translation> - Salva Mappa come Immagine</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2995"/>
+        <location filename="src/gui/mainwindow.cpp" line="2996"/>
         <source>Little Navmap Map %1.jpg</source>
         <translation>Little Navmap Map %1.jpg</translation>
     </message>
@@ -15870,30 +15870,30 @@ Locale: %2</translation>
         <translation type="vanished">&lt;p&gt;Il formato FlightGear non consente il salvataggio di:&lt;/p&gt;&lt;ul&gt;&lt;li&gt;Procedure (solo SID, STAR e le rispettive transizioni)&lt;/li&gt;&lt;li&gt;Nomi delle posizioni&lt;/li&gt;&lt;li&gt;Altitudine di Crociera&lt;/li&gt;&lt;li&gt;Velocità al suolo&lt;/li&gt;&lt;li&gt;Posizione di parcheggio di partenza&lt;/li&gt;&lt;li&gt;Tipi (IFR/VFR, Alt bassa/Alt alta)&lt;/li&gt;&lt;li&gt;Aeroporti alternati&lt;/li&gt;&lt;li&gt;Avvicinamenti definiti dall&apos;utente/personalizzati&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;Queste informazioni o parti di esse possono andare perse quando si ricarica il file.&lt;/p&gt;&lt;p&gt;&lt;b&gt;Salva una copia aggiuntiva utilizzando il formato PLN predefinito per conservare tutte le informazioni.&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Salvare davvero come file FGFP?&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2427"/>
+        <location filename="src/gui/mainwindow.cpp" line="2428"/>
         <source>Open Flight Plan</source>
         <translation>Apri Piano di Volo</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2427"/>
-        <location filename="src/gui/mainwindow.cpp" line="2601"/>
-        <location filename="src/gui/mainwindow.cpp" line="2623"/>
-        <location filename="src/gui/mainwindow.cpp" line="2736"/>
+        <location filename="src/gui/mainwindow.cpp" line="2428"/>
+        <location filename="src/gui/mainwindow.cpp" line="2602"/>
+        <location filename="src/gui/mainwindow.cpp" line="2624"/>
+        <location filename="src/gui/mainwindow.cpp" line="2737"/>
         <source>Flight Plan Files %1;;All Files (*)</source>
         <translation>File Piano di Volo %1;;Tutti i Files(*)</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2600"/>
+        <location filename="src/gui/mainwindow.cpp" line="2601"/>
         <source>Append Flight Plan</source>
         <translation>Accoda Piano di Volo</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2622"/>
+        <location filename="src/gui/mainwindow.cpp" line="2623"/>
         <source>Insert info Flight Plan</source>
         <translation>Inserisci nel Piano di Volo</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2633"/>
+        <location filename="src/gui/mainwindow.cpp" line="2634"/>
         <source>Flight plan inserted.</source>
         <translation>Piano di volo inserito.</translation>
     </message>
@@ -15914,34 +15914,34 @@ Locale: %2</translation>
         <translation type="vanished">Salva Flight Plan Pulito senza Annotazioni</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2774"/>
+        <location filename="src/gui/mainwindow.cpp" line="2775"/>
         <source>Google Earth KML files removed from map.</source>
         <translation>File Google Earth KML rimosso dalla mappa.</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2780"/>
+        <location filename="src/gui/mainwindow.cpp" line="2781"/>
         <source>Google Earth KML</source>
         <translation>Google Earth KML</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2781"/>
+        <location filename="src/gui/mainwindow.cpp" line="2782"/>
         <source>Google Earth KML %1;;All Files (*)</source>
         <translation>Google Earth KML %1;;Tutti Files (*)</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2791"/>
-        <location filename="src/gui/mainwindow.cpp" line="2809"/>
+        <location filename="src/gui/mainwindow.cpp" line="2792"/>
+        <location filename="src/gui/mainwindow.cpp" line="2810"/>
         <source>Google Earth KML file opened.</source>
         <translation>File Google Earth KML aperto.</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2794"/>
-        <location filename="src/gui/mainwindow.cpp" line="2814"/>
+        <location filename="src/gui/mainwindow.cpp" line="2795"/>
+        <location filename="src/gui/mainwindow.cpp" line="2815"/>
         <source>Opening Google Earth KML file failed.</source>
         <translation>Apertura del file Google Earth KML fallita.</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2992"/>
+        <location filename="src/gui/mainwindow.cpp" line="2993"/>
         <source>Save Map as Image</source>
         <translation>Salva la Mappa come Immagine</translation>
     </message>
@@ -15954,30 +15954,30 @@ Locale: %2</translation>
         <translation type="vanished">Little Navmap Screenshot.jpg</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="3026"/>
+        <location filename="src/gui/mainwindow.cpp" line="3027"/>
         <source>Error saving image.
 Only JPG, PNG and BMP are allowed.</source>
         <translation>Errore nel salvataggio immagine.
 Sono consentiti solo JPG, PNG and BMP.</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="3028"/>
-        <location filename="src/gui/mainwindow.cpp" line="3090"/>
+        <location filename="src/gui/mainwindow.cpp" line="3029"/>
+        <location filename="src/gui/mainwindow.cpp" line="3091"/>
         <source>Map image saved.</source>
         <translation>Immagine mappa salvata.</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="3039"/>
+        <location filename="src/gui/mainwindow.cpp" line="3040"/>
         <source> - Save Map as Image for AviTab</source>
         <translation> - Salva la Mappa come Immagine per AviTab</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="3046"/>
+        <location filename="src/gui/mainwindow.cpp" line="3047"/>
         <source>LittleNavmap_%1.png</source>
         <translation>LittleNavmap_%1.png</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="3055"/>
+        <location filename="src/gui/mainwindow.cpp" line="3056"/>
         <source>Save Map as Image for AviTab</source>
         <translation>Salva la Mappa come Immagine per AviTab</translation>
     </message>
@@ -15986,36 +15986,36 @@ Sono consentiti solo JPG, PNG and BMP.</translation>
         <translation type="vanished">Files immagine AviTab %1;;Tutti i Files (*)</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="3081"/>
+        <location filename="src/gui/mainwindow.cpp" line="3082"/>
         <source>Error saving image.
 Only JPG and PNG are allowed.</source>
         <translation>Errore nel salvataggio immagine.
 Sono consentiti solo JPG e PNG.</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="3093"/>
+        <location filename="src/gui/mainwindow.cpp" line="3094"/>
         <source>Error saving JSON.</source>
         <translation>Errore durante il salvataggio JSON.</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="3098"/>
+        <location filename="src/gui/mainwindow.cpp" line="3099"/>
         <source>Map does not cover window.
 Ensure that the map fills the window completely.</source>
         <translation>La mappa non copre la finestra.
 Assicurati che la mappa riempia completamente la finestra.</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="3103"/>
+        <location filename="src/gui/mainwindow.cpp" line="3104"/>
         <source>You have to switch to the Mercator map projection before saving the image.</source>
         <translation>Devi passare alla proiezione della mappa di Mercator prima di salvare l&apos;immagine.</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="3109"/>
+        <location filename="src/gui/mainwindow.cpp" line="3110"/>
         <source> - Copy Map Image to Clipboard</source>
         <translation> - Copia l&apos;Immagine della Mappa negli Appunti</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="3115"/>
+        <location filename="src/gui/mainwindow.cpp" line="3116"/>
         <source>Map image copied to clipboard.</source>
         <translation>Immagine mappa copiata negli appunti.</translation>
     </message>
@@ -16044,7 +16044,7 @@ Assicurati che la mappa riempia completamente la finestra.</translation>
         <translation type="vanished">Le impostazioni della mappa sono cambiate.</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="3367"/>
+        <location filename="src/gui/mainwindow.cpp" line="3368"/>
         <source>All message dialogs reset.</source>
         <translation>Tutte le finestre di dialogo dei messaggi sono state ripristinate.</translation>
     </message>
@@ -16241,50 +16241,50 @@ Save changes?</source>
 Salvare le modifiche?</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2440"/>
+        <location filename="src/gui/mainwindow.cpp" line="2441"/>
         <source>Flight plan opened from route description.</source>
         <translation>Piano di volo aperto dalla descrizione della rotta.</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2483"/>
+        <location filename="src/gui/mainwindow.cpp" line="2484"/>
         <source>Open and Replace GPX Trail</source>
         <translation>Aprire e sostituire la traccia GPX</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2483"/>
-        <location filename="src/gui/mainwindow.cpp" line="2524"/>
+        <location filename="src/gui/mainwindow.cpp" line="2484"/>
+        <location filename="src/gui/mainwindow.cpp" line="2525"/>
         <source>GPX Files %1;;All Files (*)</source>
         <translation>Files GPX %1;;Tutti i Files (*)</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2500"/>
+        <location filename="src/gui/mainwindow.cpp" line="2501"/>
         <source>Replace the current user aircraft trail?</source>
         <translation>Sostituire l&apos;attuale traccia dell&apos;aereo dell&apos;utente?</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2501"/>
+        <location filename="src/gui/mainwindow.cpp" line="2502"/>
         <source>Do not &amp;show this dialog again and replace trail.</source>
         <translation>Non &amp;mostrare di nuovo questa finestra di dialogo e sostituire il percorso.</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2512"/>
-        <location filename="src/gui/mainwindow.cpp" line="2539"/>
+        <location filename="src/gui/mainwindow.cpp" line="2513"/>
+        <location filename="src/gui/mainwindow.cpp" line="2540"/>
         <source>The file &quot;%1&quot; does not contain track points.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2518"/>
-        <location filename="src/gui/mainwindow.cpp" line="2544"/>
+        <location filename="src/gui/mainwindow.cpp" line="2519"/>
+        <location filename="src/gui/mainwindow.cpp" line="2545"/>
         <source>The file &quot;%1&quot; is no valid GPX file.</source>
         <translation>Il file &quot;%1&quot; non è un file GPX valido.</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2524"/>
+        <location filename="src/gui/mainwindow.cpp" line="2525"/>
         <source>Open and Append GPX Trail</source>
         <translation>Aprire e Accodare la Traccia GPX</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2558"/>
+        <location filename="src/gui/mainwindow.cpp" line="2559"/>
         <source>Truncated aircraft trail by %L1 points due to the
 maximum number of %L2 points set in
 options on page &quot;Map Aircraft Trail&quot;.
@@ -16297,7 +16297,7 @@ opzioni alla pagina &quot;Mappa Percorso Aereo&quot;.
 Si noti che un numero eccessivo di punti del percorso può causare problemi di prestazioni nella visualizzazione della mappa.</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2564"/>
+        <location filename="src/gui/mainwindow.cpp" line="2565"/>
         <source>Aircraft trail has %L1 points which can cause performance issues in map display.
 
 Consider lowering the maximum number of points in the options on page &quot;Map Aircraft Trail&quot;
@@ -16308,24 +16308,24 @@ Considerare la possibilità di ridurre il numero massimo di punti nelle opzioni 
 oppure eliminare la traccia.</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2697"/>
+        <location filename="src/gui/mainwindow.cpp" line="2698"/>
         <source>&lt;p&gt;You cannot save this file directly.&lt;br/&gt;Use the export or multiexport functions in menu &quot;File&quot; instead.&lt;/p&gt;&lt;p&gt;Save using the LNMPLN format now?&lt;/p&gt;</source>
         <translation>&lt;p&gt;Non è possibile salvare questo file direttamente.&lt;br/&gt;Utilizzare invece le funzioni di esportazione o multiesportazione nel menu &quot;File&quot;.&lt;/p&gt;&lt;p&gt;Salvare utilizzando il formato LNMPLN ora? &lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2700"/>
+        <location filename="src/gui/mainwindow.cpp" line="2701"/>
         <source>Do not &amp;show this dialog again and save as LNMPLN.</source>
         <oldsource>Do not show this dialog again and save as LNMPLN.</oldsource>
         <translation>Non &amp;mostrare più questo messaggio e salva come LNMPLN.</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2735"/>
+        <location filename="src/gui/mainwindow.cpp" line="2736"/>
         <source>Save Flight Plan as LNMPLN Format</source>
         <translation>Salva Piano di Volo in Formato LNMPLN</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2798"/>
-        <location filename="src/gui/mainwindow.cpp" line="2818"/>
+        <location filename="src/gui/mainwindow.cpp" line="2799"/>
+        <location filename="src/gui/mainwindow.cpp" line="2819"/>
         <source>Cannot load file. Reason:
 
 %1</source>
@@ -16334,34 +16334,34 @@ oppure eliminare la traccia.</translation>
 %1</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2823"/>
-        <location filename="src/gui/mainwindow.cpp" line="2838"/>
+        <location filename="src/gui/mainwindow.cpp" line="2824"/>
+        <location filename="src/gui/mainwindow.cpp" line="2839"/>
         <source>Window Layout</source>
         <translation>Layout Finestra</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2824"/>
-        <location filename="src/gui/mainwindow.cpp" line="2839"/>
+        <location filename="src/gui/mainwindow.cpp" line="2825"/>
+        <location filename="src/gui/mainwindow.cpp" line="2840"/>
         <source>Window Layout Files %1;;All Files (*)</source>
         <translation>File di Layout Finestra %1;;Tutti i Files (*)</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2848"/>
+        <location filename="src/gui/mainwindow.cpp" line="2849"/>
         <source>Window layout saved.</source>
         <translation>Layour della finestra salvato.</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2881"/>
+        <location filename="src/gui/mainwindow.cpp" line="2882"/>
         <source>Window layout loaded and restored.</source>
         <translation>Layout della finestra caricato e ripristinato.</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2993"/>
+        <location filename="src/gui/mainwindow.cpp" line="2994"/>
         <source>JPG Image Files (*.jpg *.jpeg);;PNG Image Files (*.png);;BMP Image Files (*.bmp);;All Files (*)</source>
         <translation>File Immagine JPG (*.jpg *.jpeg);;File Immagine PNG (*.png);;File Immagine BMP (*.bmp);;Tutti i Files (*)</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="3056"/>
+        <location filename="src/gui/mainwindow.cpp" line="3057"/>
         <source>PNG Image Files (*.png);;JPG Image Files (*.jpg *.jpeg);;All Files (*)</source>
         <translation type="unfinished"></translation>
     </message>
@@ -16370,17 +16370,17 @@ oppure eliminare la traccia.</translation>
         <translation type="vanished">File Immagine JPG (*.jpg *.jpeg);;File Immagine PNG (*.png);;Tutti i Files (*)</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="3318"/>
+        <location filename="src/gui/mainwindow.cpp" line="3319"/>
         <source>Map settings reset.</source>
         <translation>Ripristino impostazioni della mappa.</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="3339"/>
+        <location filename="src/gui/mainwindow.cpp" line="3340"/>
         <source>Close other dialog boxes before opening preferences</source>
         <translation>Chiudi le altre finestre di dialogo prima di aprire le preferenze</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="3359"/>
+        <location filename="src/gui/mainwindow.cpp" line="3360"/>
         <source>This causes all message dialogs that were deactivated with the
 &quot;Do not show again&quot;
 button to be displayed again.
@@ -16393,90 +16393,90 @@ vengono nuovamente visualizzate.
 Ripristinare la visualizzazione di tutti i messaggi?</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="3395"/>
+        <location filename="src/gui/mainwindow.cpp" line="3396"/>
         <source>%1: %2</source>
         <translation>%1: %2</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="3395"/>
+        <location filename="src/gui/mainwindow.cpp" line="3396"/>
         <source>hh:mm:ss</source>
         <translation>hh:mm:ss</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="3398"/>
+        <location filename="src/gui/mainwindow.cpp" line="3399"/>
         <source>&lt;br/&gt;</source>
         <translation>&lt;br/&gt;</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="3398"/>
+        <location filename="src/gui/mainwindow.cpp" line="3399"/>
         <source>&lt;/p&gt;</source>
         <translation>&lt;br/&gt;</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="3414"/>
+        <location filename="src/gui/mainwindow.cpp" line="3415"/>
         <source>No Messages</source>
         <translation>Nessun Messaggio</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="3416"/>
+        <location filename="src/gui/mainwindow.cpp" line="3417"/>
         <source>%1 %2</source>
         <translation>%1 %2</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="3418"/>
+        <location filename="src/gui/mainwindow.cpp" line="3419"/>
         <source>Messages</source>
         <translation>Messaggi</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="3418"/>
+        <location filename="src/gui/mainwindow.cpp" line="3419"/>
         <source>Message</source>
         <translation>Messaggio</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="3608"/>
+        <location filename="src/gui/mainwindow.cpp" line="3609"/>
         <source>&lt;html&gt;&lt;head&gt;&lt;style&gt;body { font-size: large; white-space: pre; }&lt;/style&gt;&lt;/head&gt;&lt;body&gt;&lt;h2&gt;Welcome to Little Navmap&lt;/h2&gt;&lt;p&gt;This seems to be the first time you are installing the program.&lt;/p&gt;&lt;p&gt;In the following several dialog windows and a web page will&lt;br/&gt;open to guide you through the first steps:&lt;/p&gt;&lt;ol&gt;&lt;li&gt;Web page in the online user manual showing&lt;br/&gt;important information for first time users.&lt;/li&gt;&lt;li&gt;A dialog window which allows to create a&lt;br/&gt;directory structure to save your files.&lt;br/&gt;You can do this later in menu &quot;Tools&quot; -&gt; &quot;Create Directory Structure&quot;.&lt;br/&gt;This step is optional.&lt;/li&gt;&lt;li&gt;The dialog window &quot;Load Scenery Library&quot; opens to load the&lt;br/&gt;simulator scenery into the Little Navmap database.&lt;br/&gt;This process runs in the background.&lt;br/&gt;You can start this manually in the menu&lt;br/&gt;&quot;Scenery Library&quot; -&gt; &quot;Load Scenery Library&quot;.&lt;/li&gt;&lt;li&gt;The connection dialog window opens allowing to attach Little Navmap&lt;br/&gt;to a simulator while flying.&lt;br/&gt;Do this manually in menu &quot;Tools&quot; -&gt; &quot;Connect to Flight Simulator&quot;.&lt;/li&gt;&lt;/ol&gt;&lt;p&gt;You can also skip all these steps and run them later.&lt;/p&gt;&lt;p&gt;See the help menu to access the online user manual and tutorials.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head&gt;&lt;style&gt;body { font-size: large; white-space: pre; }&lt;/style&gt;&lt;/head&gt;&lt;body&gt;&lt;h2&gt;Benvenuti in Little Navmap &lt;/h2&gt;&lt;p&gt;Questa sembra essere la prima volta che installi il programma.&lt;/p&gt;&lt;p&gt;Nelle seguenti diverse finestre di dialogo e una pagina web&lt;br/&gt;si aprirà per guidarti attraverso i primi passaggi:&lt;/p&gt;&lt;ol&gt;&lt;li&gt;Pagina Web nel manuale d&apos;uso online che mostra&lt;br/&gt;informazioni importanti per gli utenti al primo utilizzo.&lt;/li&gt;&lt;li&gt; Una finestra di dialogo che consente di creare una&lt;br/&gt;struttura di cartelle per salvare i file.&lt;br/&gt;Puoi farlo in seguito nel menu &quot;Strumenti&quot; -&gt; &quot;Crea la Struttura delle Cartelle&quot;.&lt;br/&gt;Questo passaggio è facoltativo.&lt;/li&gt;&lt;li&gt;La finestra di dialogo &quot;Carica Libreria Scenari&quot; si apre per caricare&lt;br/&gt;lo scenario del simulatore nel database di Little Navmap.&lt;br/&gt;Questo processo gira in background.&lt;br/&gt;Puoi avviarlo manualmente nel menu&lt;br/&gt;&quot;Cartella Scenari&quot; -&gt; &quot;Carica Libreria Scenari&quot;.&lt;/li&gt;&lt;li&gt;La finestra di dialogo di connessione si apre consentendo di collegare Little Navmap&lt;br/&gt;a un simulatore durante il volo.&lt;br/&gt;Fai questo manualmente nel menu&quot; Strumenti &quot; -&gt; &quot;Collegamento al Simulatore di Volo&quot;.&lt;/li&gt;&lt;/ol&gt;&lt;p&gt;Puoi anche saltare tutti questi passaggi ed eseguirli in seguito.&lt;/p&gt;&lt;p&gt;Vedi il menu di aiuto per accedere al manuale d&apos;uso online e tutorials.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="3706"/>
+        <location filename="src/gui/mainwindow.cpp" line="3707"/>
         <source>Little Xpconnect successfully installed.</source>
         <translation>Little Xpconnect è stato installato con successo.</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="3707"/>
+        <location filename="src/gui/mainwindow.cpp" line="3708"/>
         <source>Little Xpconnect installed.</source>
         <translation>Little Xpconnect installato.</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="3724"/>
+        <location filename="src/gui/mainwindow.cpp" line="3725"/>
         <source>&lt;p&gt;Directory structure for Little Navmap files is already complete.&lt;/p&gt;The base directory is%1&amp;nbsp;(click to open)&lt;br/&gt;</source>
         <translation>&lt;p&gt;La struttura delle cartelle per i file di Little Navmap è già completa.&lt;/p&gt;La cartella di base è%1&amp;nbsp;(clicca per aprire)&lt;br/&gt;</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="4039"/>
+        <location filename="src/gui/mainwindow.cpp" line="4040"/>
         <source>&lt;p&gt;&lt;b&gt;This will reset all options, window layout, dialog layout, aircraft trail, map position history and file histories back to default and restart %1.&lt;/b&gt;&lt;/p&gt;&lt;p&gt;User features like range rings or traffic patterns as well as scenery, logbook and userpoint databases are not affected.&lt;/p&gt;&lt;p&gt;A copy of the settings file&lt;/p&gt;%2&amp;nbsp;(click to open)&lt;p&gt;will be created in the folder&lt;/p&gt;%3&amp;nbsp;(click to open).&lt;p&gt;This allows you to undo this change.&lt;/p&gt;&lt;p&gt;Reset and restart now?&lt;/p&gt;</source>
         <translation>&lt;p&gt;&lt;b&gt;Questa operazione ripristina tutte le opzioni, il layout delle finestre, il layout delle finestre di dialogo, le tracce degli aerei, la cronologia delle posizioni sulla mappa e la cronologia dei file e riavvia %1.&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Le caratteristiche dell&apos;utente, come gli anelli di distanza o gli schemi di traffico, nonché i database degli scenari, dei registri e degli userpoint non sono interessati. &lt;/p&gt;&lt;p&gt;Nella cartella&lt;/p&gt;%3&amp;nbsp; (fare clic per aprire)&lt;p&gt; verrà creata una copia del file delle impostazioni&lt;/p&gt;%2&amp;nbsp; (fare clic per aprire).&lt;p&gt;Ciò consente di annullare la modifica.&lt;/p&gt;&lt;p&gt;Ripristina e riavvia ora?&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="4705"/>
+        <location filename="src/gui/mainwindow.cpp" line="4706"/>
         <source>%1 is loading the scenery library database in the background.
 Really quit and cancel the loading process?</source>
         <translation>%1 sta caricando il database della libreria degli scenari in background.
 Vuoi veramente uscire e annullare il processo di caricamento?</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="4707"/>
+        <location filename="src/gui/mainwindow.cpp" line="4708"/>
         <source>Do not &amp;show this dialog again and cancel loading.</source>
         <oldsource>Do not &amp;show this dialog again and cancel loading in the future.</oldsource>
         <translation>Non &amp;visualizzare nuovamente questa finestra di dialogo e annullare il caricamento.</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="4722"/>
+        <location filename="src/gui/mainwindow.cpp" line="4723"/>
         <source>Really quit?</source>
         <translation>Abbandonare veramente?</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="4723"/>
+        <location filename="src/gui/mainwindow.cpp" line="4724"/>
         <source>Do not &amp;show this dialog again and quit.</source>
         <oldsource>Do not &amp;show this dialog again and quit in the future.</oldsource>
         <translation>Non &amp;mostrare più questo messaggio e termina.</translation>
@@ -16526,10 +16526,10 @@ Vuoi veramente uscire e annullare il processo di caricamento?</translation>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="2268"/>
         <location filename="src/gui/mainwindow.cpp" line="2330"/>
-        <location filename="src/gui/mainwindow.cpp" line="2571"/>
-        <location filename="src/gui/mainwindow.cpp" line="2683"/>
-        <location filename="src/gui/mainwindow.cpp" line="3462"/>
-        <location filename="src/gui/mainwindow.cpp" line="3598"/>
+        <location filename="src/gui/mainwindow.cpp" line="2572"/>
+        <location filename="src/gui/mainwindow.cpp" line="2684"/>
+        <location filename="src/gui/mainwindow.cpp" line="3463"/>
+        <location filename="src/gui/mainwindow.cpp" line="3599"/>
         <source>Do not &amp;show this dialog again.</source>
         <translation>Non &amp;mostrare più questo messaggio.</translation>
     </message>
@@ -31070,113 +31070,113 @@ Notare che l&apos;ordine delle colonne è quello selezionato nella tabella del p
 <context>
     <name>ProcedureQuery</name>
     <message>
-        <location filename="src/query/procedurequery.cpp" line="1685"/>
-        <location filename="src/query/procedurequery.cpp" line="1927"/>
-        <location filename="src/query/procedurequery.cpp" line="1945"/>
-        <location filename="src/query/procedurequery.cpp" line="1991"/>
-        <location filename="src/query/procedurequery.cpp" line="2111"/>
+        <location filename="src/query/procedurequery.cpp" line="1689"/>
+        <location filename="src/query/procedurequery.cpp" line="1931"/>
+        <location filename="src/query/procedurequery.cpp" line="1949"/>
+        <location filename="src/query/procedurequery.cpp" line="1995"/>
+        <location filename="src/query/procedurequery.cpp" line="2115"/>
         <source>/</source>
         <translation>/</translation>
     </message>
     <message>
-        <location filename="src/query/procedurequery.cpp" line="1946"/>
-        <location filename="src/query/procedurequery.cpp" line="1992"/>
+        <location filename="src/query/procedurequery.cpp" line="1950"/>
+        <location filename="src/query/procedurequery.cpp" line="1996"/>
         <source>°M</source>
         <translation>°M</translation>
     </message>
     <message>
-        <location filename="src/query/procedurequery.cpp" line="1688"/>
+        <location filename="src/query/procedurequery.cpp" line="1692"/>
         <source>DME %1</source>
         <translation>DME %1</translation>
     </message>
     <message>
-        <location filename="src/query/procedurequery.cpp" line="1809"/>
-        <location filename="src/query/procedurequery.cpp" line="2108"/>
-        <location filename="src/query/procedurequery.cpp" line="2120"/>
-        <location filename="src/query/procedurequery.cpp" line="2129"/>
-        <location filename="src/query/procedurequery.cpp" line="2145"/>
+        <location filename="src/query/procedurequery.cpp" line="1813"/>
+        <location filename="src/query/procedurequery.cpp" line="2112"/>
+        <location filename="src/query/procedurequery.cpp" line="2124"/>
+        <location filename="src/query/procedurequery.cpp" line="2133"/>
+        <location filename="src/query/procedurequery.cpp" line="2149"/>
         <source>Intercept</source>
         <translation>Intercettare</translation>
     </message>
     <message>
-        <location filename="src/query/procedurequery.cpp" line="1809"/>
+        <location filename="src/query/procedurequery.cpp" line="1813"/>
         <source>Course to Fix</source>
         <translation>Rotta per il Fix</translation>
     </message>
     <message>
-        <location filename="src/query/procedurequery.cpp" line="1876"/>
-        <location filename="src/query/procedurequery.cpp" line="2024"/>
+        <location filename="src/query/procedurequery.cpp" line="1880"/>
+        <location filename="src/query/procedurequery.cpp" line="2028"/>
         <source>Altitude</source>
         <translation>Altitudine</translation>
     </message>
     <message>
-        <location filename="src/query/procedurequery.cpp" line="1946"/>
-        <location filename="src/query/procedurequery.cpp" line="1992"/>
+        <location filename="src/query/procedurequery.cpp" line="1950"/>
+        <location filename="src/query/procedurequery.cpp" line="1996"/>
         <source>°T</source>
         <translation>°T</translation>
     </message>
     <message>
-        <location filename="src/query/procedurequery.cpp" line="2018"/>
-        <location filename="src/query/procedurequery.cpp" line="2036"/>
+        <location filename="src/query/procedurequery.cpp" line="2022"/>
+        <location filename="src/query/procedurequery.cpp" line="2040"/>
         <source>Manual</source>
         <translation>Manuale</translation>
     </message>
     <message>
-        <location filename="src/query/procedurequery.cpp" line="2030"/>
+        <location filename="src/query/procedurequery.cpp" line="2034"/>
         <source>Single</source>
         <translation>Singolo</translation>
     </message>
     <message>
-        <location filename="src/query/procedurequery.cpp" line="2113"/>
-        <location filename="src/query/procedurequery.cpp" line="2145"/>
+        <location filename="src/query/procedurequery.cpp" line="2117"/>
+        <location filename="src/query/procedurequery.cpp" line="2149"/>
         <source>Leg</source>
         <translation>Segmento</translation>
     </message>
     <message>
-        <location filename="src/query/procedurequery.cpp" line="2820"/>
+        <location filename="src/query/procedurequery.cpp" line="2826"/>
         <source>no runway</source>
         <translation>nessuna pista</translation>
     </message>
     <message>
-        <location filename="src/query/procedurequery.cpp" line="2820"/>
+        <location filename="src/query/procedurequery.cpp" line="2826"/>
         <source>runway %1</source>
         <translation>pista %1</translation>
     </message>
     <message>
-        <location filename="src/query/procedurequery.cpp" line="2858"/>
+        <location filename="src/query/procedurequery.cpp" line="2864"/>
         <source>SID %1 from %2</source>
         <translation>SID %1 da %2</translation>
     </message>
     <message>
-        <location filename="src/query/procedurequery.cpp" line="2905"/>
-        <location filename="src/query/procedurequery.cpp" line="2950"/>
+        <location filename="src/query/procedurequery.cpp" line="2911"/>
+        <location filename="src/query/procedurequery.cpp" line="2956"/>
         <source>Approach %1 to %2</source>
         <translation>Avvicinamento %1 a %2</translation>
     </message>
     <message>
-        <location filename="src/query/procedurequery.cpp" line="2977"/>
+        <location filename="src/query/procedurequery.cpp" line="2983"/>
         <source>STAR %1 to %2</source>
         <translation>STAR %1 a %2</translation>
     </message>
     <message>
-        <location filename="src/query/procedurequery.cpp" line="3040"/>
-        <location filename="src/query/procedurequery.cpp" line="3057"/>
+        <location filename="src/query/procedurequery.cpp" line="3046"/>
+        <location filename="src/query/procedurequery.cpp" line="3063"/>
         <source>SID %1 is using an invalid runway %2</source>
         <translation>La SID %1 utilizza una pista non valida %2</translation>
     </message>
     <message>
-        <location filename="src/query/procedurequery.cpp" line="3094"/>
-        <location filename="src/query/procedurequery.cpp" line="3111"/>
+        <location filename="src/query/procedurequery.cpp" line="3100"/>
+        <location filename="src/query/procedurequery.cpp" line="3117"/>
         <source>STAR %1 is using an invalid runway %2</source>
         <translation>La STAR %1 utilizza una pista non valida %2</translation>
     </message>
     <message>
-        <location filename="src/query/procedurequery.cpp" line="3134"/>
+        <location filename="src/query/procedurequery.cpp" line="3140"/>
         <source>Procedure %1 %2 in scenery library has errors</source>
         <translation>La procedura %1 %2 nella libreria degli scenari contiene errori</translation>
     </message>
     <message>
-        <location filename="src/query/procedurequery.cpp" line="3143"/>
+        <location filename="src/query/procedurequery.cpp" line="3149"/>
         <source>Procedure not found in scenery library</source>
         <translation>Procedura non trovata nella libreria degli scenari</translation>
     </message>
@@ -31185,7 +31185,7 @@ Notare che l&apos;ordine delle colonne è quello selezionato nella tabella del p
         <translation type="vanished">SID %1</translation>
     </message>
     <message>
-        <location filename="src/query/procedurequery.cpp" line="2871"/>
+        <location filename="src/query/procedurequery.cpp" line="2877"/>
         <source>SID transition %1</source>
         <translation>Transizione SID %1</translation>
     </message>
@@ -31194,7 +31194,7 @@ Notare che l&apos;ordine delle colonne è quello selezionato nella tabella del p
         <translation type="vanished">Avvicinamento %1</translation>
     </message>
     <message>
-        <location filename="src/query/procedurequery.cpp" line="2961"/>
+        <location filename="src/query/procedurequery.cpp" line="2967"/>
         <source>Transition %1</source>
         <translation>Transizione %1</translation>
     </message>
@@ -31203,12 +31203,12 @@ Notare che l&apos;ordine delle colonne è quello selezionato nella tabella del p
         <translation type="vanished">STAR %1</translation>
     </message>
     <message>
-        <location filename="src/query/procedurequery.cpp" line="2990"/>
+        <location filename="src/query/procedurequery.cpp" line="2996"/>
         <source>STAR transition %1</source>
         <translation>Transizione STAR %1</translation>
     </message>
     <message>
-        <location filename="src/query/procedurequery.cpp" line="1066"/>
+        <location filename="src/query/procedurequery.cpp" line="1069"/>
         <source>Start</source>
         <translation>Partenza</translation>
     </message>
@@ -36318,8 +36318,8 @@ Calcolato in base al profilo delle prestazioni dell&apos;aeromobile.</translatio
         <translation>Errore nella lettura della configurazione multiesportazione: Versione non valida. Configurazione multiesportazione incompatibile.</translation>
     </message>
     <message>
-        <location filename="src/query/procedurequery.cpp" line="2657"/>
-        <location filename="src/query/procedurequery.cpp" line="2752"/>
+        <location filename="src/query/procedurequery.cpp" line="2662"/>
+        <location filename="src/query/procedurequery.cpp" line="2758"/>
         <source>RW%1+%2</source>
         <translation>RW%1+%2</translation>
     </message>
@@ -42199,7 +42199,7 @@ Altrimenti gli aeroporti vengono aggiunti come puntirotta.</translation>
         <translation>Non si aspetta che il primo e l&apos;ultimo elemento della stringa siano un identificativo ICAO dell&apos;aeroporto se è selezionato</translation>
     </message>
     <message>
-        <location filename="src/routestring/routestringdialog.cpp" line="678"/>
+        <location filename="src/routestring/routestringdialog.cpp" line="679"/>
         <source>Description is too long.</source>
         <translation>La descrizione è troppo lunga.</translation>
     </message>
