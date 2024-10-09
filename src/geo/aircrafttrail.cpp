@@ -41,6 +41,9 @@ quint16 AircraftTrail::version = 0;
 /* Insert an invalid position as an break indicator if aircraft jumps too far on ground. */
 static const float MAX_POINT_DISTANCE_NM = 5.f;
 
+/* Split lines up for display */
+static const int PARTITION_POINT_SIZE = 200;
+
 static const quint32 FILE_MAGIC_NUMBER = 0x5B6C1A2B;
 
 /* Version 2 to adds timstamp and single floating point precision. Uses 32-bit second timestamps */
@@ -625,9 +628,21 @@ void AircraftTrail::updateLineStrings(const AircraftTrailPos& trackPos)
   if(trackPos.isValid())
   {
     if(lineStrings.isEmpty())
+      // Initial append add new line string =======================================
       lineStrings.append(atools::geo::LineString(trackPos.getPosition()));
     else
-      lineStrings.last().append(trackPos.getPosition());
+    {
+      // Append to filled list =======================================
+      atools::geo::LineString& last = lineStrings.last();
+      if(last.size() > PARTITION_POINT_SIZE)
+      {
+        // Add new partition since last is too large - add position to both lines for closing
+        last.append(trackPos.getPosition());
+        lineStrings.append(atools::geo::LineString(trackPos.getPosition()));
+      }
+      else
+        last.append(trackPos.getPosition());
+    }
   }
 }
 
@@ -638,11 +653,28 @@ void AircraftTrail::updateLineStrings()
   if(!isEmpty())
   {
     atools::geo::LineString linestring;
-    for(const AircraftTrailPos& trackPos : qAsConst(*this))
+    for(int i = 0; i < size(); i++)
     {
+      const AircraftTrailPos& trackPos = at(i);
       if(!trackPos.isValid())
       {
-        // An invalid position shows a break in the lines - add line and start a new one
+        // An invalid position shows a break in the lines - add line and start a new one =================
+        lineStrings.append(linestring);
+        linestring.clear();
+      }
+      else if(linestring.size() > PARTITION_POINT_SIZE)
+      {
+        // Line string too long - add a new one as partition =============================
+        linestring.append(trackPos.getPosition());
+
+        if(i < size() - 1)
+        {
+          // Add next position to keep line closed
+          const AircraftTrailPos& nextTrackPos = at(i + 1);
+          if(nextTrackPos.isValid())
+            linestring.append(nextTrackPos.getPosition());
+        }
+
         lineStrings.append(linestring);
         linestring.clear();
       }

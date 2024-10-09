@@ -121,6 +121,8 @@ A big thank you to all who reported bugs and issues!
 * From 3.0.10.rc1 to 3.0.11: Fixed issue where procedures zoomed too far out when showing in
   procedure search. This was caused due to too far away recommended navaids like GCC/K1 for
   KASE SID 33 LINDZ1.
+* From 3.0.10.rc1 to 3.0.11: Splitting large aircraft trails into partitions for better performance
+  and to avoid crashes.
 
 ### Scenery Library
 
