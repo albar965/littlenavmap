@@ -624,6 +624,8 @@ void MainWindow::deInit()
     atools::gui::Application::recordExit();
     atools::logging::LoggingGuiAbortHandler::resetGuiAbortFunction();
   }
+  else
+    qWarning() << Q_FUNC_INFO << "deInit called more than once";
 }
 
 void MainWindow::dataExchangeDataFetched(atools::util::Properties properties)
@@ -4660,95 +4662,101 @@ void MainWindow::printShortcuts()
 
 void MainWindow::closeEvent(QCloseEvent *event)
 {
-  qDebug() << Q_FUNC_INFO << "Entry";
-  // Catch all close events like Ctrl-Q or Menu/Exit or clicking on the
-  // close button on the window frame
-
-  // Save to default file in options or delete the default file if plan is empty
-  if(OptionData::instance().getFlags().testFlag(opts::STARTUP_LOAD_ROUTE))
-    // Save automatically
-    routeController->saveFlightplanLnmDefaultShutdown();
-  else if(routeController->hasChanged())
-  {
-    // Changed flight plan found - ask for confirmation
-    if(!routeCheckForChanges())
-    {
-      // Do not exit
-      event->ignore();
-
-      // Do not restart process after settings reset
-      NavApp::setRestartProcess(false);
-      return;
-    }
-  }
-
-  if(NavApp::getAircraftPerfController()->hasChanged())
-  {
-    if(!NavApp::getAircraftPerfController()->checkForChanges())
-    {
-      // Do not exit
-      event->ignore();
-
-      // Do not restart process after settings reset
-      NavApp::setRestartProcess(false);
-      return;
-    }
-  }
-
+  qDebug() << Q_FUNC_INFO << "Enter deInitCalled" << deInitCalled;
   bool quit = false;
-  // Do not ask if user did a reset settings
-  if(!NavApp::isRestartProcess())
-  {
-    if(NavApp::getDatabaseManager()->isLoadingProgress())
-    {
-      // Database compiling in background ==========================
-      int result = dialog->showQuestionMsgBox(lnm::ACTIONS_SHOW_QUIT_LOADING,
-                                              tr("%1 is loading the scenery library database in the background.\n"
-                                                 "Really quit and cancel the loading process?").arg(QCoreApplication::applicationName()),
-                                              tr("Do not &show this dialog again and cancel loading."),
-                                              QMessageBox::Yes | QMessageBox::No, QMessageBox::No, QMessageBox::Yes);
 
-      if(result != QMessageBox::Yes)
+  if(!deInitCalled)
+  {
+    // Catch all close events like Ctrl-Q or Menu/Exit or clicking on the
+    // close button on the window frame
+
+    // Save to default file in options or delete the default file if plan is empty
+    if(OptionData::instance().getFlags().testFlag(opts::STARTUP_LOAD_ROUTE))
+      // Save automatically
+      routeController->saveFlightplanLnmDefaultShutdown();
+    else if(routeController->hasChanged())
+    {
+      // Changed flight plan found - ask for confirmation
+      if(!routeCheckForChanges())
       {
         // Do not exit
         event->ignore();
-        NavApp::getDatabaseManager()->showProgressWindow();
-      }
-      else
-        quit = true;
-    }
-    else
-    {
-      // Normal as quit dialog ======================================
-      int result = dialog->showQuestionMsgBox(lnm::ACTIONS_SHOW_QUIT, tr("Really quit?"),
-                                              tr("Do not &show this dialog again and quit."),
-                                              QMessageBox::Yes | QMessageBox::No, QMessageBox::No, QMessageBox::Yes);
 
-      if(result != QMessageBox::Yes)
+        // Do not restart process after settings reset
+        NavApp::setRestartProcess(false);
+        return;
+      }
+    }
+
+    if(NavApp::getAircraftPerfController()->hasChanged())
+    {
+      if(!NavApp::getAircraftPerfController()->checkForChanges())
+      {
         // Do not exit
         event->ignore();
+
+        // Do not restart process after settings reset
+        NavApp::setRestartProcess(false);
+        return;
+      }
+    }
+
+    // Do not ask if user did a reset settings
+    if(!NavApp::isRestartProcess())
+    {
+      if(NavApp::getDatabaseManager()->isLoadingProgress())
+      {
+        // Database compiling in background ==========================
+        int result = dialog->showQuestionMsgBox(lnm::ACTIONS_SHOW_QUIT_LOADING,
+                                                tr("%1 is loading the scenery library database in the background.\n"
+                                                   "Really quit and cancel the loading process?").arg(QCoreApplication::applicationName()),
+                                                tr("Do not &show this dialog again and cancel loading."),
+                                                QMessageBox::Yes | QMessageBox::No, QMessageBox::No, QMessageBox::Yes);
+
+        if(result != QMessageBox::Yes)
+        {
+          // Do not exit
+          event->ignore();
+          NavApp::getDatabaseManager()->showProgressWindow();
+        }
+        else
+          quit = true;
+      }
       else
-        quit = true;
+      {
+        // Normal as quit dialog ======================================
+        int result = dialog->showQuestionMsgBox(lnm::ACTIONS_SHOW_QUIT, tr("Really quit?"),
+                                                tr("Do not &show this dialog again and quit."),
+                                                QMessageBox::Yes | QMessageBox::No, QMessageBox::No, QMessageBox::Yes);
+
+        if(result != QMessageBox::Yes)
+          // Do not exit
+          event->ignore();
+        else
+          quit = true;
+      }
+    }
+
+    if(quit)
+    {
+      NavApp::setCloseCalled();
+      NavApp::getDatabaseManager()->loadSceneryStop();
+
+      // Close all registerd non-modal dialogs to allow application to close
+      dockHandler->closeAllDialogWidgets();
+    }
+
+    saveStateMain();
+
+    /* Have to delete early before deleting main map widget */
+    if(quit)
+    {
+      NavApp::deInitWebController();
+      deInit();
     }
   }
-
-  if(quit)
-  {
-    NavApp::setCloseCalled();
-    NavApp::getDatabaseManager()->loadSceneryStop();
-
-    // Close all registerd non-modal dialogs to allow application to close
-    dockHandler->closeAllDialogWidgets();
-  }
-
-  saveStateMain();
-
-  /* Have to delete early before deleting main map widget */
-  if(quit)
-  {
-    NavApp::deInitWebController();
-    deInit();
-  }
+  else
+    qWarning() << Q_FUNC_INFO << "close called after deInit";
 
   qDebug() << Q_FUNC_INFO << "Exit quit is" << quit;
 }
