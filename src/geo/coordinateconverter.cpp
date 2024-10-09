@@ -511,9 +511,14 @@ const QVector<QPolygonF *> CoordinateConverter::createPolylinesInternal(const at
         QVector<QPolygonF *> polylines;
         viewport->screenCoordinates(*geoLine, polylines);
 
-        // Remove invisible polylines
+        // Remove invisible polylines by bounding rect first
+        polylines.erase(std::remove_if(polylines.begin(), polylines.end(), [screenRect](const QPolygonF *polyline)->bool {
+          return polyline == nullptr || polyline->isEmpty() || !polyline->boundingRect().intersects(screenRect);
+        }), polylines.end());
+
+        // Now do more accurate removal
         QPolygonF screenPolygon(screenRect);
-        polylines.erase(std::remove_if(polylines.begin(), polylines.end(), [&screenPolygon](const QPolygonF *polyline)->bool {
+        polylines.erase(std::remove_if(polylines.begin(), polylines.end(), [screenPolygon](const QPolygonF *polyline)->bool {
           return !polyline->intersects(screenPolygon);
         }), polylines.end());
 
