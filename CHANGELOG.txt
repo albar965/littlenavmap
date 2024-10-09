@@ -123,6 +123,7 @@ A big thank you to all who reported bugs and issues!
   KASE SID 33 LINDZ1.
 * From 3.0.10.rc1 to 3.0.11: Splitting large aircraft trails into partitions for better performance
   and to avoid crashes.
+* From 3.0.10.rc1 to 3.0.11: Fixed memory leak when drawing lines.
 
 ### Scenery Library
 
