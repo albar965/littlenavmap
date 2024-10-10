@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2022 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -90,7 +90,7 @@ void openDatabaseFileExt(atools::sql::SqlDatabase *db, const QString& file, bool
     db->open(pragmas, true /* readonly */);
   }
 
-  atools::fs::db::DatabaseMeta(db).logInfo();
+  qInfo() << Q_FUNC_INFO << atools::fs::db::DatabaseMeta(db);
 }
 
 void openDatabaseFile(atools::sql::SqlDatabase *db, const QString& file, bool readonly, bool createSchema)
