@@ -804,7 +804,7 @@ void MapPainterMark::paintAirspace(const map::MapAirspace& airspace)
       {
         const atools::geo::Pos& pos = lineString->at(i);
         drawCircle(painter, pos, 4.f);
-        drawText(painter, pos, QString::number(i), true, true);
+        drawText(painter, pos, QString::number(i), true /* topCorner */, true /* leftCorner */);
       }
       context->szFont(context->textSizeRangeUserFeature);
 #endif

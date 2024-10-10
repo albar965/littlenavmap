@@ -54,10 +54,20 @@ void MapPainterTrail::render()
       {
         atools::util::PainterContextSaver saver(context->painter);
         context->painter->setPen(QPen(Qt::blue, 2));
-        int i = 0;
 
-        for(auto it = aircraftTrail.constBegin(); it != aircraftTrail.constEnd(); ++it)
-          drawText(context->painter, it->getPosition(), QString::number(i++), 0.f, 0.f);
+        for(int i = 0; i < aircraftTrail.size(); i++)
+          drawText(context->painter, aircraftTrail.at(i).getPosition(), QString::number(i), true /* topCorner */, true /* leftCorner */);
+
+        context->painter->setPen(QPen(Qt::red, 2));
+        int lineStringIndex = 0;
+        for( const atools::geo::LineString& linestring : aircraftTrail.getLineStrings())
+        {
+          int posIndex = 0;
+          for(const atools::geo::Pos& pos : linestring)
+            drawText(context->painter, pos, QString::number(lineStringIndex) + "/" + QString::number(posIndex++),
+                     false /* topCorner */, false /* leftCorner */);
+          lineStringIndex++;
+        }
       }
 
 #endif

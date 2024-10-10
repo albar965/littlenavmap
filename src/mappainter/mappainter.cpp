@@ -435,8 +435,7 @@ void MapPainter::drawCircle(Marble::GeoPainter *painter, const atools::geo::Pos&
     painter->drawEllipse(pt, radius, radius);
 }
 
-void MapPainter::drawText(Marble::GeoPainter *painter, const Pos& pos, const QString& text, bool topCorner,
-                          bool leftCorner) const
+void MapPainter::drawText(Marble::GeoPainter *painter, const Pos& pos, const QString& text, bool topCorner, bool leftCorner) const
 {
   QPoint pt = wToS(pos);
   if(!pt.isNull())

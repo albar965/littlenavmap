@@ -1759,7 +1759,6 @@ struct AircraftTrailSegment
 
   qint64 timestampPos; /* Milliseconds since Epoch, interpolated pos */
   bool onGround;
-
 };
 
 // =====================================================================================

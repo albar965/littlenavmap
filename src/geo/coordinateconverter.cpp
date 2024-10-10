@@ -397,24 +397,23 @@ const QVector<QPolygonF *> CoordinateConverter::createPolygonsInternal(const ato
 
   if(polygons.size() > 1)
   {
-    // Remove all invisible which appear especially in Mercator projection
+    // Remove all invisible polygons from end to start
     QPolygonF screenPolygon(screenRect);
-    auto fromIt = std::remove_if(polygons.begin(), polygons.end(), [&screenPolygon](const QPolygonF *polygon)->bool {
-      return !polygon->intersects(screenPolygon);
-    });
-
-    // Delete objects
-    for(auto it = fromIt; it != polygons.end(); ++it)
-      delete *it;
-
-    // Delete array elements
-    polygons.erase(fromIt, polygons.end());
+    for(int i = polygons.size() - 1; i >= 0; i--)
+    {
+      const QPolygonF *polygon = polygons.at(i);
+      if(!polygon->intersects(screenPolygon))
+      {
+        delete polygon;
+        polygons.remove(i);
+      }
+    }
 
     // Remove all points which are too close together
     for(QPolygonF *polygon : qAsConst(polygons))
     {
-      // Remove all consecutive duplicate elements from the range
-      polygon->erase(std::unique(polygon->begin(), polygon->end(), [](QPointF& p1, QPointF& p2) -> bool {
+      // Remove all consecutive duplicate points from the range
+      polygon->erase(std::unique(polygon->begin(), polygon->end(), [](const QPointF& p1, const QPointF& p2) -> bool {
         return atools::almostEqual(p1.x(), p2.x(), 0.5) && atools::almostEqual(p1.y(), p2.y(), 0.5);
       }), polygon->end());
 
@@ -520,32 +519,30 @@ const QVector<QPolygonF *> CoordinateConverter::createPolylinesInternal(const at
 
         if(!polygons.isEmpty())
         {
-          // Remove invisible polylines by bounding rect first
-          auto fromIt = std::remove_if(polygons.begin(), polygons.end(), [screenRect](const QPolygonF *polygon)->bool {
-            return polygon == nullptr || polygon->isEmpty() || !polygon->boundingRect().intersects(screenRect);
-          });
-
-          // Delete objects
-          for(auto it = fromIt; it != polygons.end(); ++it)
-            delete *it;
-
-          // Delete array elements
-          polygons.erase(fromIt, polygons.end());
+          // Remove invisible polylines by bounding rect first - intersects might crash on large polygons - from end to start
+          for(int i = polygons.size() - 1; i >= 0; i--)
+          {
+            const QPolygonF *polygon = polygons.at(i);
+            if(polygon == nullptr || polygon->isEmpty() || !polygon->boundingRect().intersects(screenRect))
+            {
+              delete polygon;
+              polygons.remove(i);
+            }
+          }
 
           if(!polygons.isEmpty())
           {
-            // Now do more accurate removal
+            // Now do more accurate removal from end to start
             QPolygonF screenPolygon(screenRect);
-            fromIt = std::remove_if(polygons.begin(), polygons.end(), [screenPolygon](const QPolygonF *polygon)->bool {
-              return !polygon->intersects(screenPolygon);
-            });
-
-            // Delete objects
-            for(auto it = fromIt; it != polygons.end(); ++it)
-              delete *it;
-
-            // Delete array elements
-            polygons.erase(fromIt, polygons.end());
+            for(int i = polygons.size() - 1; i >= 0; i--)
+            {
+              const QPolygonF *polygon = polygons.at(i);
+              if(polygon == nullptr || polygon->isEmpty() || !polygon->intersects(screenPolygon))
+              {
+                delete polygon;
+                polygons.remove(i);
+              }
+            }
 
             if(!polygons.isEmpty())
               polylineVector.append(polygons);
