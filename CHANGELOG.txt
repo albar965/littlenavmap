@@ -43,6 +43,8 @@ A big thank you to all who reported bugs and issues!
 * From 3.0.10.rc1 to 3.0.11: Flight plan route description is now updated after downloading or
   deleting oceanic tracks.
 * From 3.0.10.rc1 to 3.0.11: Now updating flight plan route description after switching simulator.
+* From 3.0.10.rc1 to 3.0.11: Corrected wrong error message `File does not contain track points`
+  when loading GPX files.
 
 ## Export
 

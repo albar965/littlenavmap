@@ -2508,7 +2508,7 @@ void MainWindow::trailLoadGpxFile(const QString& file)
       {
         QGuiApplication::setOverrideCursor(Qt::WaitCursor);
         int numTruncated, numLoaded;
-        mapWidget->loadAircraftTrail(file, numTruncated, numLoaded);
+        mapWidget->loadAircraftTrail(file, numLoaded, numTruncated);
         QGuiApplication::restoreOverrideCursor();
 
         if(numLoaded == 0)
@@ -2535,7 +2535,7 @@ void MainWindow::trailAppendGpx()
     {
       QGuiApplication::setOverrideCursor(Qt::WaitCursor);
       int numTruncated, numLoaded;
-      mapWidget->appendAircraftTrail(file, numTruncated, numLoaded);
+      mapWidget->appendAircraftTrail(file, numLoaded, numTruncated);
       QGuiApplication::restoreOverrideCursor();
 
       if(numLoaded == 0)
