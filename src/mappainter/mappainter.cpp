@@ -550,9 +550,11 @@ void MapPainter::drawLine(Marble::GeoPainter *painter, const atools::geo::Line& 
   else if(forceDraw)
   {
     // Avoid disappearing line segments due to Marble
-    QPointF pt1 = wToSF(line.getPos1());
-    QPointF pt2 = wToSF(line.getPos2());
-    if(!pt1.isNull() && !pt2.isNull())
+
+    bool visible1, visible2, hidden1, hidden2;
+    QPointF pt1 = wToSF(line.getPos1(), DEFAULT_WTOS_SIZE, &visible1, &hidden1);
+    QPointF pt2 = wToSF(line.getPos2(), DEFAULT_WTOS_SIZE, &visible2, &hidden2);
+    if(!hidden1 && !hidden2)
       drawLine(context->painter, pt1, pt2);
   }
 }
