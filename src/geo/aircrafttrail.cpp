@@ -161,6 +161,7 @@ AircraftTrail& AircraftTrail::operator=(const AircraftTrail& other)
   lastHeadingDegTrue = other.lastHeadingDegTrue;
 
   lineStrings = other.lineStrings;
+  lineStringsIndex = other.lineStringsIndex;
 
   return *this;
 }
@@ -175,13 +176,13 @@ map::AircraftTrailSegment AircraftTrail::findNearest(const QPoint& point, const 
 
   atools::geo::Rect viewportRect = mconvert::fromGdc(viewportBox);
 
-  int trackIndex = -1;
-  int indexTracks = 0;
-  atools::geo::LineDistance result, resultLine, resultShortest, resultShortestLine;
-  resultShortest.distance = map::INVALID_DISTANCE_VALUE;
+  int trackIndexNearest = -1;
+  atools::geo::LineDistance resultNearest, resultNearestLine;
+  resultNearest.distance = map::INVALID_DISTANCE_VALUE;
 
-  for(const atools::geo::LineString& lineString : lineStrings)
+  for(int i = 0; i < lineStrings.size(); i++)
   {
+    const atools::geo::LineString& lineString = lineStrings.at(i);
     atools::geo::Rect trackBounding = lineString.boundingRect();
 
 #ifdef DEBUG_INFORMATION_TRACK_NEAREST
@@ -190,38 +191,37 @@ map::AircraftTrailSegment AircraftTrail::findNearest(const QPoint& point, const 
 
     if(trackBounding.overlaps(viewportRect))
     {
-      int idx = -1;
-      lineString.distanceMeterToLineString(position, result, &resultLine, &idx, &viewportRect);
+      int posInLineIdx = -1;
+      atools::geo::LineDistance result, resultLine;
+      lineString.distanceMeterToLineString(position, result, &resultLine, &posInLineIdx, &viewportRect);
 
-      if(std::abs(result.distance) < std::abs(resultShortest.distance) && result.status == atools::geo::ALONG_TRACK)
+      if(std::abs(result.distance) < std::abs(resultNearest.distance) && result.status == atools::geo::ALONG_TRACK)
       {
-        resultShortest = result;
-        resultShortestLine = resultLine;
-        trackIndex = idx + indexTracks;
+        resultNearest = result; // Numbers related to full linestring
+        resultNearestLine = resultLine; // Numbers related to found line segment
+        trackIndexNearest = lineStringsIndex.at(i) + posInLineIdx;
       }
     }
-
-    indexTracks += lineString.size() + 1;
   }
 
 #ifdef DEBUG_INFORMATION_TRACK_NEAREST
-  qDebug() << Q_FUNC_INFO << "resultShortest" << resultShortest << "trackIndex" << trackIndex << "size()" << size();
-  qDebug() << Q_FUNC_INFO << "resultLine" << resultLine;
+  qDebug() << Q_FUNC_INFO << "resultNearest" << resultNearest << "trackIndexNearest" << trackIndexNearest << "size()" << size();
+  qDebug() << Q_FUNC_INFO << "resultNearestLine" << resultNearestLine;
 #endif
 
   AircraftTrailPos posFrom, posTo;
   Pos pos;
 
-  if(trackIndex >= 0 && trackIndex < size() - 1 && resultShortest.status == atools::geo::ALONG_TRACK)
+  if(trackIndexNearest >= 0 && trackIndexNearest < size() - 1 && resultNearest.status == atools::geo::ALONG_TRACK)
   {
-    posFrom = at(trackIndex);
-    posTo = at(trackIndex + 1);
+    posFrom = at(trackIndexNearest);
+    posTo = at(trackIndexNearest + 1);
     atools::geo::Line line(posFrom.getPosition(), posTo.getPosition());
 
     double length = posFrom.getPosD().distanceMeterTo(posTo.getPosD());
-    double fraction = resultShortestLine.distanceFrom1 / length;
+    double fraction = resultNearestLine.distanceFrom1 / length;
     pos = line.interpolate(static_cast<float>(length), static_cast<float>(fraction));
-    trackIndex++;
+    trackIndexNearest++;
 
     double xs, ys;
     screenCoordinates(pos.getLonX(), pos.getLatY(), xs, ys);
@@ -231,17 +231,17 @@ map::AircraftTrailSegment AircraftTrail::findNearest(const QPoint& point, const 
 #ifdef DEBUG_INFORMATION_TRACK_NEAREST
       qDebug() << Q_FUNC_INFO << "NEAR" << pos << point << QPoint(static_cast<int>(xs), static_cast<int>(ys));
 #endif
-      double distFrom1 = static_cast<double>(resultShortestLine.distanceFrom1);
+      double distFrom1 = static_cast<double>(resultNearestLine.distanceFrom1);
       double travelTime = static_cast<double>(posTo.getTimestampMs() - posFrom.getTimestampMs());
 
       // Set interpolated altitude
       pos.setAltitude(static_cast<float>(atools::interpolate(posFrom.getAltitudeD(), posTo.getAltitudeD(), 0., length, distFrom1)));
       trailSegment.position = pos;
-      trailSegment.index = trackIndex;
+      trailSegment.index = trackIndexNearest;
       trailSegment.from = posFrom.getPosition();
       trailSegment.to = posTo.getPosition();
       trailSegment.length = static_cast<float>(length);
-      trailSegment.distanceFromStart = resultShortest.distanceFrom1;
+      trailSegment.distanceFromStart = resultNearest.distanceFrom1;
       trailSegment.speed = static_cast<float>(length / travelTime * 1000.f);
       trailSegment.headingTrue = static_cast<float>(posFrom.getPosD().angleDegTo(posTo.getPosD()));
       trailSegment.timestampPos = posFrom.getTimestampMs() + std::lround(travelTime * fraction);
@@ -253,7 +253,7 @@ map::AircraftTrailSegment AircraftTrail::findNearest(const QPoint& point, const 
 #ifdef DEBUG_INFORMATION_TRACK_NEAREST
       qDebug() << Q_FUNC_INFO << "MISSED" << pos << point << QPoint(static_cast<int>(xs), static_cast<int>(ys));
 #endif
-      trackIndex = -1;
+      trackIndexNearest = -1;
       trailSegment.position = Pos();
     }
   }
@@ -265,8 +265,8 @@ atools::fs::gpx::GpxData AircraftTrail::toGpxData(const atools::fs::pln::Flightp
   atools::fs::gpx::GpxData gpxData;
   gpxData.setFlightplan(flightplan);
 
-  const QVector<QVector<atools::geo::PosD> >& positionList = getPositionsD();
-  const QVector<QVector<qint64> >& timestampsList = getTimestampsMs();
+  const QVector<QVector<atools::geo::PosD> >& positionList = positionsD();
+  const QVector<QVector<qint64> >& timestampsList = timestampsMs();
 
   Q_ASSERT(positionList.size() == timestampsList.size());
 
@@ -310,6 +310,7 @@ int AircraftTrail::appendTrailFromGpxData(const atools::fs::gpx::GpxData& gpxDat
   }
   int numTruncated = truncateTrail();
 
+  cleanDuplicates();
   updateBoundary();
   updateLineStrings();
 
@@ -350,7 +351,17 @@ void AircraftTrail::restoreState(const QString& suffix)
       qWarning() << "Cannot read track" << trackFile.fileName() << ":" << trackFile.errorString();
   }
 
+  cleanDuplicates();
   qDebug() << Q_FUNC_INFO << "Trail size" << size();
+
+#ifdef  DEBUG_INFORMATION_TRAIL
+  for(int i = 0; i < size(); i++)
+  {
+    const AircraftTrailPos& trackPos = at(i);
+    if(!trackPos.isValid())
+      qDebug() << Q_FUNC_INFO << "SPLIT AT" << i << value(i - 1).getPosition() << value(i + 1).getPosition();
+  }
+#endif
 
   updateBoundary();
   updateLineStrings();
@@ -526,14 +537,15 @@ int AircraftTrail::appendTrailPos(const atools::fs::sc::SimConnectUserAircraft& 
     if(split || numTruncated > 0)
     {
       // Trail was split or truncated - do a full update
+      cleanDuplicates();
       updateBoundary();
       updateLineStrings();
     }
     else if(changed)
     {
       // Last one is always valid
-      updateBoundary(constLast());
-      updateLineStrings(constLast());
+      updateBoundaryLast();
+      updateLineStringsLast();
     }
   }
   else
@@ -541,6 +553,7 @@ int AircraftTrail::appendTrailPos(const atools::fs::sc::SimConnectUserAircraft& 
     // Trail is empty - clear cached values
     clearBoundaries();
     lineStrings.clear();
+    lineStringsIndex.clear();
   }
 
 #ifdef DEBUG_INFORMATION_TRAIL
@@ -584,6 +597,7 @@ void AircraftTrail::clearTrail()
   clear();
   clearBoundaries();
   lineStrings.clear();
+  lineStringsIndex.clear();
 }
 
 void AircraftTrail::clearBoundaries()
@@ -612,36 +626,60 @@ void AircraftTrail::updateBoundary()
   boundingRect = atools::geo::bounding(positions);
 }
 
-void AircraftTrail::updateBoundary(const AircraftTrailPos& trackPos)
+void AircraftTrail::updateBoundaryLast()
 {
-  if(trackPos.isValid())
+  if(!isEmpty())
   {
-    float alt = static_cast<float>(trackPos.getPosD().getAltitude());
-    minAltitude = std::min(minAltitude, alt);
-    maxAltitude = std::max(maxAltitude, alt);
-    boundingRect.extend(trackPos.getPosition());
+    const AircraftTrailPos& lastTrailPos = constLast();
+    if(lastTrailPos.isValid())
+    {
+      float alt = static_cast<float>(lastTrailPos.getPosD().getAltitude());
+      minAltitude = std::min(minAltitude, alt);
+      maxAltitude = std::max(maxAltitude, alt);
+      boundingRect.extend(lastTrailPos.getPosition());
+    }
   }
 }
 
-void AircraftTrail::updateLineStrings(const AircraftTrailPos& trackPos)
+void AircraftTrail::cleanDuplicates()
 {
-  if(trackPos.isValid())
+  // Remove consecutive invalid and with similar position
+  erase(std::unique(begin(), end(), [](const AircraftTrailPos& p1, const AircraftTrailPos& p2) -> bool {
+    return (!p1.isValid() && !p2.isValid()) ||
+           (p1.getPosD().almostEqual(p2.getPosD(), atools::geo::Pos::POS_EPSILON_1M) &&
+            atools::almostEqual(p1.getAltitudeD(), p2.getAltitudeD(), 10.));
+  }), end());
+}
+
+void AircraftTrail::updateLineStringsLast()
+{
+  if(!isEmpty())
   {
-    if(lineStrings.isEmpty())
-      // Initial append add new line string =======================================
-      lineStrings.append(atools::geo::LineString(trackPos.getPosition()));
-    else
+    const AircraftTrailPos& lastTrailPos = constLast();
+    if(lastTrailPos.isValid())
     {
-      // Append to filled list =======================================
-      atools::geo::LineString& last = lineStrings.last();
-      if(last.size() > PARTITION_POINT_SIZE)
+      if(lineStrings.isEmpty())
       {
-        // Add new partition since last is too large - add position to both lines for closing
-        last.append(trackPos.getPosition());
-        lineStrings.append(atools::geo::LineString(trackPos.getPosition()));
+        // Initial append add new line string =======================================
+        lineStrings.append(atools::geo::LineString(lastTrailPos.getPosition()));
+        lineStringsIndex.append(0);
       }
       else
-        last.append(trackPos.getPosition());
+      {
+        // Append to filled list =======================================
+        atools::geo::LineString& lastLineString = lineStrings.last();
+
+        if(lastLineString.size() > PARTITION_POINT_SIZE)
+        {
+          // Add new partition since last is too large - add position to both lines for closing polyline
+          lastLineString.append(lastTrailPos.getPosition());
+
+          lineStrings.append(atools::geo::LineString(lastTrailPos.getPosition()));
+          lineStringsIndex.append(size() - 1);
+        }
+        else
+          lastLineString.append(lastTrailPos.getPosition());
+      }
     }
   }
 }
@@ -649,46 +687,82 @@ void AircraftTrail::updateLineStrings(const AircraftTrailPos& trackPos)
 void AircraftTrail::updateLineStrings()
 {
   lineStrings.clear();
+  lineStringsIndex.clear();
 
   if(!isEmpty())
   {
     atools::geo::LineString linestring;
+    int startIndex = 0;
     for(int i = 0; i < size(); i++)
     {
-      const AircraftTrailPos& trackPos = at(i);
-      if(!trackPos.isValid())
+      const AircraftTrailPos& trailPos = at(i);
+
+      if(!trailPos.isValid())
       {
-        // An invalid position shows a break in the lines - add line and start a new one =================
+        // An invalid position shows a break in the lines - add line and start a new one without connection =================
         lineStrings.append(linestring);
+        lineStringsIndex.append(startIndex);
+        startIndex += linestring.size() + 1; // Index for next one - this point is skipped - consecutive invalid are already filtered
         linestring.clear();
       }
       else if(linestring.size() > PARTITION_POINT_SIZE)
       {
-        // Line string too long - add a new one as partition =============================
-        linestring.append(trackPos.getPosition());
+        // Line string too long - add a new one as partition being connected =============================
+        linestring.append(trailPos.getPosition());
 
+        // Add next position to keep lines attached
         if(i < size() - 1)
         {
-          // Add next position to keep line closed
-          const AircraftTrailPos& nextTrackPos = at(i + 1);
-          if(nextTrackPos.isValid())
-            linestring.append(nextTrackPos.getPosition());
+          const AircraftTrailPos& nextTrailPos = at(i + 1);
+          if(nextTrailPos.isValid())
+            linestring.append(nextTrailPos.getPosition());
         }
 
         lineStrings.append(linestring);
+        lineStringsIndex.append(startIndex);
+        startIndex += linestring.size() - 1; // Next one starts overlapping at nextTrailPos
         linestring.clear();
       }
       else
-        linestring.append(trackPos.getPosition());
+        linestring.append(trailPos.getPosition());
     }
 
     // Add rest
     if(!linestring.isEmpty())
+    {
       lineStrings.append(linestring);
+      lineStringsIndex.append(startIndex);
+    }
   }
+
+  if(lineStrings.size() != lineStringsIndex.size())
+    qWarning() << Q_FUNC_INFO << "lineStrings.size() != lineStringsIndex.size()" << lineStrings.size() << lineStringsIndex.size();
+
+#ifdef  DEBUG_INFORMATION_TRAIL
+  qDebug() << Q_FUNC_INFO << "========================================";
+
+  for(int i = 0; i < lineStrings.size(); i++)
+  {
+    const atools::geo::LineString& ls = lineStrings.at(i);
+    qDebug() << "#" << i << "size" << ls.size() << "index" << lineStringsIndex.at(i);
+    qDebug() << "From" << at(lineStringsIndex.at(i)).getPosition() << "to" << at(lineStringsIndex.at(i) + ls.size() - 1).getPosition();
+
+    if(ls.size() > 2)
+      qDebug() << ls.constFirst() << "..." << ls.constLast();
+    else if(ls.size() > 1)
+      qDebug() << ls.constFirst() << ls.constLast();
+    else if(ls.size() > 0)
+      qDebug() << ls.constFirst();
+    else if(ls.size() > 0)
+      qDebug() << "empty";
+  }
+
+  // qDebug() << Q_FUNC_INFO << lineStrings;
+  qDebug() << Q_FUNC_INFO << lineStringsIndex;
+#endif
 }
 
-const QVector<QVector<atools::geo::PosD> > AircraftTrail::getPositionsD() const
+const QVector<QVector<atools::geo::PosD> > AircraftTrail::positionsD() const
 {
   QVector<QVector<atools::geo::PosD> > linestringsD;
 
@@ -716,7 +790,7 @@ const QVector<QVector<atools::geo::PosD> > AircraftTrail::getPositionsD() const
   return linestringsD;
 }
 
-const QVector<QVector<qint64> > AircraftTrail::getTimestampsMs() const
+const QVector<QVector<qint64> > AircraftTrail::timestampsMs() const
 {
   QVector<QVector<qint64> > timestamps;
 

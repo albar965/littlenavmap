@@ -8,7 +8,9 @@ This text is partially Markdown, so the formatting is sometimes strange.
 
 ## Notes
 
-**This is a stable release of Little Navmap which fixes issues and has a few new features.**
+**This is a stable release of Little Navmap that fixes many issues and adds some new features.**
+
+**This update is recommended for all users.**
 
 **macOS users: Keep in mind that you have to clear the quarantine flag when updating Little Xpconnect. See
 [Clearing the Quarantine Flag on macOS](https://www.littlenavmap.org/manuals/littlenavmap/release/latest/en/XPCONNECT.html#clearing-the-quarantine-flag-on-macos).**
@@ -82,7 +84,8 @@ A big thank you to all who reported bugs and issues!
   some cases.
 * Better distance estimate for procedure legs terminated by altitude. Now considering altitude.
 * Fixed disappearing user aircraft tooltip after automatic trail truncation.
-* Fixed potential crash when truncating short aircraft trail.
+* Fixed potential crash when truncating short aircraft trail and applied more optimizations
+  for display.
 * Fixed issues with labels on long measurement lines and flight plan legs. Lines flipped direction
   arrows at certain zoom values.
 * Fixed issue where Great Circle airspace boundaries were drawn as a straight lines in some cases.

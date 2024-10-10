@@ -181,7 +181,8 @@ public:
     return boundingRect;
   }
 
-  /* More than one linestring might be returned if the trail is interrupted. */
+  /* More than one linestring might be returned if the trail is interrupted.
+   * Lines are also partitioned to avoid too large strings. */
   const QVector<atools::geo::LineString>& getLineStrings() const
   {
     return lineStrings;
@@ -218,17 +219,22 @@ private:
 
   void clearBoundaries();
   void updateBoundary();
-  void updateBoundary(const AircraftTrailPos& trackPos);
+  void updateBoundaryLast();
 
-  // Copies the coordinates from the structs to a list of lineStrings.
+  /* Remove consecutive invalid and with similar position */
+  void cleanDuplicates();
+
+  /* Copies the coordinates from the structs to a list of lineStrings. */
   void updateLineStrings();
-  void updateLineStrings(const AircraftTrailPos& trackPos);
+
+  /* As above but incrementally. lastTrackPos must be added before */
+  void updateLineStringsLast();
 
   /* Accurate positions for GPX export */
-  const QVector<QVector<atools::geo::PosD> > getPositionsD() const;
+  const QVector<QVector<atools::geo::PosD> > positionsD() const;
 
   /* Same size as getLineStrings() but returns the timestamps in milliseconds since Epoch UTC for each position */
-  const QVector<QVector<qint64> > getTimestampsMs() const;
+  const QVector<QVector<qint64> > timestampsMs() const;
 
   /* truncate and return removed number */
   int truncateTrail();
@@ -250,6 +256,9 @@ private:
 
   // Cached for display
   QVector<atools::geo::LineString> lineStrings;
+
+  // Points to the first AircraftTrailPos in this - in sync with lineStrings
+  QVector<int> lineStringsIndex;
 
   /* Needed in RouteExportFormat stream operators to read different formats */
   static quint16 version;
