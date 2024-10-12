@@ -111,7 +111,6 @@ void DirTool::run(bool manual, bool& created)
   box.setMessage(message);
   box.setIcon(QMessageBox::Question);
   box.setHelpUrl(lnm::helpOnlineInstallDirUrl, lnm::helpLanguageOnline());
-  box.setDefaultButton(QDialogButtonBox::No);
 
   if(box.exec() == QDialogButtonBox::Yes)
   {

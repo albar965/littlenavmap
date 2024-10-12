@@ -197,6 +197,8 @@ A big thank you to all who reported bugs and issues!
   set, even if no other instance was found.
 * From 3.0.10.rc1 to 3.0.11: Fixed wrong error message when reading flight route descriptions from
   the command line.
+* From 3.0.10.rc1 to 3.0.11: Fixed issue where dialog windows appeared behind the main window that
+  made the program appear to freeze or crash.
 
 ### User Manual
 

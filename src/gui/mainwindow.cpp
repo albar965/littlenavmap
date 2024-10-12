@@ -3432,12 +3432,6 @@ void MainWindow::mainWindowShown()
 {
   qDebug() << Q_FUNC_INFO << "enter";
 
-  // This shows a warning dialog if failing - start it later within the event loop to avoid a freeze
-  QTimer::singleShot(0, this, &NavApp::showElevationProviderErrors);
-
-  // Show a warning if map theme folders do not exist
-  QTimer::singleShot(0, this, std::bind(&MapThemeHandler::validateMapThemeDirectories, this));
-
   // Need to set the font again to pass it on to all menus since these are opened later
   qDebug() << Q_FUNC_INFO << "QApplication::font()" << QApplication::font();
   QApplication::setFont(QApplication::font());
@@ -3456,46 +3450,12 @@ void MainWindow::mainWindowShown()
 
   mapWidget->showSavedPosOnStartup();
 
-  // Show a warning if SSL was not intiaized properly. Can happen if the redist packages are not installed.
-  if(!QSslSocket::supportsSsl())
-    dialog->showWarnMsgBox(lnm::ACTIONS_SHOW_SSL_FAILED, tr("<p>Error initializing SSL subsystem.</p>"
-                                                              "<p>The program will not be able to use encrypted network connections<br/>"
-                                                              "(i.e. HTTPS) that are needed to check for updates or<br/>"
-                                                              "to load online maps.</p>"),
-                           tr("Do not &show this dialog again."));
-
   NavApp::logDatabaseMeta();
-
-  // If enabled connect to simulator without showing dialog
-  NavApp::getConnectClient()->tryConnectOnStartup();
-
-  // Start weather downloads
-  weatherUpdateTimeout();
-
-  // Update the weather every 15 seconds if connected
-  weatherUpdateTimer.setInterval(Settings::instance().getAndStoreValue(lnm::OPTIONS_WEATHER_UPDATE_RATE_SIM, 15000).toInt());
-  weatherUpdateTimer.start();
-
-  optionsDialog->checkOfficialOnlineUrls();
-
-  // Start regular download of online network files
-  NavApp::getOnlinedataController()->startProcessing();
-
-  // Start webserver
-  if(ui->actionRunWebserver->isChecked())
-  {
-    NavApp::getWebController()->startServer();
-    updateMapKeys(); // Update API keys and theme dir in web map widget
-  }
-  webserverStatusChanged(NavApp::isWebControllerRunning());
 
   renderStatusUpdateLabel(Marble::Complete, true /* forceUpdate */);
 
-  // Do delayed dock window formatting and fullscreen state after widget layout is done
+  // Do delayed dock window formatting and fullscreen state after widget layout is done ================================
   QTimer::singleShot(100, this, &MainWindow::mainWindowShownDelayed);
-
-  if(ui->actionRouteDownloadTracks->isChecked())
-    QTimer::singleShot(1000, NavApp::getTrackController(), &TrackController::startDownloadStartup);
 
   // Log screen information ==============
   const QList<QScreen *> screens = QGuiApplication::screens();
@@ -3505,8 +3465,6 @@ void MainWindow::mainWindowShown()
              << "name" << screen->name() << "model" << screen->model() << "manufacturer" << screen->manufacturer()
              << "geo" << screen->geometry() << "available geo" << screen->availableGeometry()
              << "available virtual geo" << screen->availableVirtualGeometry();
-
-  mapThemeHandler->showThemeLoadingErrors();
 
   qDebug() << Q_FUNC_INFO << "leave";
 }
@@ -3565,9 +3523,7 @@ void MainWindow::mainWindowShownDelayed()
   // Raise all floating docks and focus map widget
   raiseFloatingWindows();
 
-  if(migrate::getOptionsVersion().isValid() &&
-     migrate::getOptionsVersion() <= atools::util::Version("2.6.14") &&
-     atools::util::Version(QApplication::applicationVersion()) == atools::util::Version("2.6.15"))
+  if(migrate::getOptionsVersion().isValid() && migrate::getOptionsVersion() <= atools::util::Version("3.0.9"))
   {
     qDebug() << Q_FUNC_INFO << "Fixing status bar visibility";
     ui->statusBar->setVisible(true);
@@ -3585,6 +3541,51 @@ void MainWindow::mainWindowShownDelayed()
   // Draw map ============================================================================
   // Map widget draws gray rectangle until main window is visible
   mapWidget->update();
+
+  // ========================================================================================
+  // Initialize all late after reopening main window =======================================
+  NavApp::getConnectClient()->tryConnectOnStartup();
+
+  // Start weather downloads
+  weatherUpdateTimeout();
+
+  // Update the weather every 15 seconds if connected
+  weatherUpdateTimer.setInterval(Settings::instance().getAndStoreValue(lnm::OPTIONS_WEATHER_UPDATE_RATE_SIM, 15000).toInt());
+  weatherUpdateTimer.start();
+
+  optionsDialog->checkOfficialOnlineUrls();
+
+  // Start regular download of online network files
+  NavApp::getOnlinedataController()->startProcessing();
+
+  // Start webserver ========================================================
+  if(ui->actionRunWebserver->isChecked())
+  {
+    NavApp::getWebController()->startServer();
+    updateMapKeys(); // Update API keys and theme dir in web map widget
+  }
+  webserverStatusChanged(NavApp::isWebControllerRunning());
+
+  // Show a warning if SSL was not intiaized properly.
+  if(!QSslSocket::supportsSsl())
+    dialog->showWarnMsgBox(lnm::ACTIONS_SHOW_SSL_FAILED, tr("<p>Error initializing SSL subsystem.</p>"
+                                                              "<p>The program will not be able to use encrypted network connections<br/>"
+                                                              "(i.e. HTTPS) that are needed to check for updates or<br/>"
+                                                              "to load online maps.</p>"),
+                           tr("Do not &show this dialog again."));
+
+  // Need to open dialogs here since main window might reopen earlier when initializing thus putting dialogs into back
+  // This shows a warning dialog if failing - start it later within the event loop to avoid a freeze
+  NavApp::showElevationProviderErrors();
+
+  // Show a warning if map theme folders do not exist
+  MapThemeHandler::validateMapThemeDirectories(this);
+  mapThemeHandler->showThemeLoadingErrors();
+
+  if(ui->actionRouteDownloadTracks->isChecked())
+    QTimer::singleShot(1000, NavApp::getTrackController(), &TrackController::startDownloadStartup);
+
+  warnTrailPoints(0, true /* doNotShowAgain */);
 
   // Check for missing simulators and databases ====================================================
   DatabaseManager *databaseManager = NavApp::getDatabaseManager();
@@ -3673,9 +3674,7 @@ void MainWindow::mainWindowShownDelayed()
   NavApp::checkForUpdates(OptionData::instance().getUpdateChannels(), false /* manual */, true /* startup */, false /* forceDebug */);
 
   // Update the information display later delayed to avoid long loading times due to weather timeout
-  QTimer::singleShot(50, infoController, &InfoController::restoreInformation);
-
-  QTimer::singleShot(70, this, std::bind(&MainWindow::warnTrailPoints, this, 0, true /* doNotShowAgain */));
+  QTimer::singleShot(100, infoController, &InfoController::restoreInformation);
 
 #ifdef DEBUG_INFORMATION
   qDebug() << "mapDistanceLabel->size()" << mapDistanceLabel->size();
