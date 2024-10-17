@@ -15,7 +15,11 @@
 
 Zipped Windows releases without installer are available in the alternative download locations below or from the release assets at [GitHub - Little Navmap Releases - Version 3.0.11](https://github.com/albar965/littlenavmap/releases/v3.0.11) \(scroll down to `Assets`\).
 
-**► [Alternative Download Locations](https://albar965.github.io/downloads.html)**
+**[► Alternative Download Locations](https://albar965.github.io/downloads.html).** Look into sub-folders for beta, development or release candidates.
+
+**[►► Read here if you have problems downloading _Little Navmap_ for Windows](/littlenavmap-faq.html#windows-download)**
+
+**[►► See here if you have problems running _Little Navmap_ on macOS](https://www.littlenavmap.org/manuals/littlenavmap/release/latest/en/INSTALLATION.html#macos)**
 
 ### Little Navmap Links
 
