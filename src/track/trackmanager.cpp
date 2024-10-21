@@ -364,11 +364,11 @@ int TrackManager::addTrackpoint(QHash<int, SqlRecord>& trackpoints, atools::sql:
           rec.setValue("trackpoint_id", trackpointId);
           rec.setValue("nav_id", ref.id);
           rec.setValue("ident", navaidQuery->value("ident"));
-          rec.setValue("name", waypointQuery->value("name", QVariant::String));
+          rec.setValue("name", navaidQuery->value("name", QVariant::String));
           rec.setValue("region", navaidQuery->value("region"));
-          rec.setValue("artificial", waypointQuery->value("artificial", QVariant::Int));
+          rec.setValue("artificial", 1); // Created for airways
           rec.setValue("type", type);
-          rec.setValue("arinc_type", waypointQuery->value("arinc_type", QVariant::String));
+          rec.setNull("arinc_type");
           rec.setValue("num_victor_airway", 0);
           rec.setValue("num_jet_airway", 0);
           rec.setValue("mag_var", navaidQuery->value("mag_var"));
