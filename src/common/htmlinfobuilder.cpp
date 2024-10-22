@@ -3405,7 +3405,7 @@ void HtmlInfoBuilder::airwayText(const MapAirway& airway, HtmlBuilder& html) con
     html.small(ageo::Line(airway.from, airway.to).crossesAntiMeridian() ? "cross am" : "-").br();
     html.small(airway.westCourse ? "west" : "").br();
     html.small(airway.eastCourse ? "east" : "").br();
-    html.small(QString("Database: airway_id = %1").arg(airway.getId())).br();
+    html.small(QString("Database: airway_id = %1 seq = %2 frag = %3").arg(airway.getId()).arg(airway.sequence).arg(airway.fragment)).br();
   }
 #endif
 
