@@ -3008,7 +3008,7 @@ Route Route::adjustedToOptions(const Route& origRoute, rf::RouteAdjustOptions op
             // Assign STAR attributes
             QString designator;
             int number;
-            if(atools::fs::util::runwayNameSplit(route.getStarRunwayName(), &number, &designator))
+            if(atools::fs::util::runwayNameSplitNum(route.getStarRunwayName(), &number, &designator))
               transWaypointEntry.setRunway(QString::number(number), atools::fs::util::runwayDesignatorLong(designator));
             transWaypointEntry.setStar(route.getStarLegs().procedureFixIdent);
 
@@ -3035,7 +3035,7 @@ Route Route::adjustedToOptions(const Route& origRoute, rf::RouteAdjustOptions op
             // Assign STAR attributes
             QString designator;
             int number;
-            if(atools::fs::util::runwayNameSplit(route.getStarRunwayName(), &number, &designator))
+            if(atools::fs::util::runwayNameSplitNum(route.getStarRunwayName(), &number, &designator))
               transWaypointEntry.setRunway(QString::number(number), atools::fs::util::runwayDesignatorLong(designator));
             transWaypointEntry.setStar(route.getStarLegs().procedureFixIdent);
 
@@ -3193,7 +3193,7 @@ Route Route::adjustedToOptions(const Route& origRoute, rf::RouteAdjustOptions op
 
           if(!rw.isEmpty())
           {
-            if(atools::fs::util::runwayNameSplit(rw, &number, &designator))
+            if(atools::fs::util::runwayNameSplitNum(rw, &number, &designator))
               entry.setRunway(QString::number(number), atools::fs::util::runwayDesignatorLong(designator));
           }
         }
@@ -3304,7 +3304,7 @@ Route Route::adjustedToOptions(const Route& origRoute, rf::RouteAdjustOptions op
 
         if(!appr.runway.isEmpty())
         {
-          if(atools::fs::util::runwayNameSplit(appr.runway, &number, &designator))
+          if(atools::fs::util::runwayNameSplitNum(appr.runway, &number, &designator))
             entry.setRunway(QString::number(number), atools::fs::util::runwayDesignatorLong(designator));
         }
         entry.setApproach(appr.type, appr.suffix, appr.transitionFixIdent);

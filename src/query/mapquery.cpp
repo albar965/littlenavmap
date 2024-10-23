@@ -1347,7 +1347,7 @@ void MapQuery::runwayEndByNameFuzzy(QList<map::MapRunwayEnd>& runwayEnds, const 
   {
     // Get heading of runway by name
     int rwnum = 0;
-    atools::fs::util::runwayNameSplit(name, &rwnum);
+    atools::fs::util::runwayNameSplitNum(name, &rwnum);
 
     // Create a dummy with the airport position as the last resort
     map::MapRunwayEnd end;
