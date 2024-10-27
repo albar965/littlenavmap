@@ -439,7 +439,8 @@ const QVector<QPolygonF *> CoordinateConverter::createPolylines(const atools::ge
 
 bool CoordinateConverter::resolves(const Marble::GeoDataLatLonBox& box) const
 {
-  return viewport->resolves(box) && viewport->viewLatLonAltBox().intersects(box);
+  // boxes alsmost spanning the whole globe are always in range
+  return viewport->resolves(box) && box.width(GeoDataCoordinates::Degree) > 359. ? true : viewport->viewLatLonAltBox().intersects(box);
 }
 
 bool CoordinateConverter::resolves(const Marble::GeoDataCoordinates& coord1, const Marble::GeoDataCoordinates& coord2) const

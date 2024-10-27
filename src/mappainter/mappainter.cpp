@@ -259,7 +259,7 @@ void MapPainter::paintCircle(GeoPainter *painter, const Pos& centerPos, float ra
   if(radiusNm > atools::geo::EARTH_CIRCUMFERENCE_METER / 4.f)
     return;
 
-  if(radiusNm < 1.f || atools::geo::meterToNm(context->zoomDistanceMeter) < 5.f)
+  if(radiusNm < 1.f && atools::geo::meterToNm(context->zoomDistanceMeter) < 5.f)
     // Use different method to draw circles with small radius to avoid distortion because of rounding errors
     // This one ignores spherical shape and projection at low zoom distances
     paintCircleSmallInternal(painter, centerPos, radiusNm, fast, textPos);
