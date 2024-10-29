@@ -156,7 +156,10 @@ void MapPainterNav::render()
 
   // Marker -------------------------------------------------
   context->startTimer("Marker");
-  if(context->mapLayer->isMarker() && context->objectTypes.testFlag(map::MARKER) && !context->isObjectOverflow())
+  if(context->objectTypes.testFlag(map::AIRPORT) &&
+     context->mapLayer->isIls() && context->objectTypes.testFlag(map::ILS) &&
+     context->mapLayer->isMarker() && context->objectTypes.testFlag(map::MARKER) &&
+     !context->isObjectOverflow())
   {
     const QList<MapMarker> *markers = mapQuery->getMarkers(curBox, context->mapLayer, context->lazyUpdate, overflow);
     context->setQueryOverflow(overflow);
