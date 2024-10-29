@@ -512,7 +512,7 @@ const LineString *OnlinedataController::airspaceGeometryCallback(const QString& 
   if(flags.testFlag(opts2::ONLINE_AIRSPACE_BY_FILE) && (lineString == nullptr || lineString->isEmpty()))
     lineString = airspaceQueries->getOnlineAirspaceGeoByFile(callsign);
 
-  return lineString;
+  return lineString != nullptr && lineString->isValidPolygon() ? lineString : nullptr;
 }
 
 void OnlinedataController::optionsChanged()

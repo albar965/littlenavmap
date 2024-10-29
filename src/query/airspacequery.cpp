@@ -282,7 +282,7 @@ const LineString *AirspaceQuery::getAirspaceGeometryByFile(QString callsign)
     {
       // Return nullptr if empty - empty objects in cache indicate object not present
       const LineString *lineString = onlineCenterGeoFileCache.object(callsign);
-      if(lineString != nullptr && !lineString->isEmpty())
+      if(lineString != nullptr && lineString->isValidPolygon())
         return lineString;
     }
     else
@@ -308,7 +308,7 @@ const LineString *AirspaceQuery::getAirspaceGeometryByFile(QString callsign)
       }
       airspaceGeoByFileQuery->finish();
       onlineCenterGeoFileCache.insert(callsign, lineString);
-      if(!lineString->isEmpty())
+      if(lineString != nullptr && lineString->isValidPolygon())
         return lineString;
     }
   }
@@ -381,7 +381,7 @@ const LineString *AirspaceQuery::airspaceGeometryByNameInternal(const QString& c
 
       airspaceGeoByNameQuery->finish();
       onlineCenterGeoCache.insert(callsign, lineString);
-      if(!lineString->isEmpty())
+      if(lineString->isValidPolygon())
         return lineString;
     }
   }

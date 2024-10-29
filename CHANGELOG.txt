@@ -33,6 +33,8 @@ A big thank you to all who reported bugs and issues!
 * Fixed issue where last airway in scenery library was omitted. This affected all simulators.
 * Better error reporting and validation in log file for invalid taxiway structures in MSFS. #1200
 * Display of marker beacons now disabled if ILS or airports are not shown.
+* Fixed missing circles for online towers and centers not having a matching geometry in the user
+  airspace database. This also disabled the tooltips on the map.
 
 ==<<=============================================================================
 
