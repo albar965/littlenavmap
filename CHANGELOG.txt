@@ -4,20 +4,38 @@ This text is partially Markdown, so the formatting is sometimes strange.
 
 ==>>=============================================================================
 
-# Version 3.0.11
+# Version 3.0.12
 
 ## Notes
 
-**This is a stable release of Little Navmap that fixes many issues and adds some new features.**
-
-**This update is recommended for all users.**
+**This is an optional stable release of Little Navmap that fixes a few issues.
+You can skip this update if you're not affected by one of the problems below.**
 
 **macOS users: Keep in mind that you have to clear the quarantine flag when updating Little Xpconnect. See
 [Clearing the Quarantine Flag on macOS](https://www.littlenavmap.org/manuals/littlenavmap/release/latest/en/XPCONNECT.html#clearing-the-quarantine-flag-on-macos).**
 
-**The program will remind you to reload the scenery library due to database changes. This is optional.**
-
 A big thank you to all who reported bugs and issues!
+
+# Version 3.0.12
+
+## Changes from 3.0.11 to 3.0.12
+
+* Problem with disappearing large range rings and other lines on very high and very close zoom
+  distances fixed. Range rings > 4000 NM disappeared from the map when using Mercator projection 
+  or when zooming in close.
+* Fixed exception when downloading Oceanic tracks.
+* Fixed issue where ILS were missing for MSFS. Examples EGPH using ILS approach with an add-on
+  airport.
+* EDDF double ILS as for runway 25R, using the ILS IFNW and IFNR now correctly used for MSFS. 
+  The correct ILS is selected for display when using the related approach.
+* Fixed broken airway collection for X-Plane. Example: Airway W66 not found for the flight plan 
+  route description `ZUCK ATBUG W66 JNQ ZWWW`. #1197
+* Fixed issue where last airway in scenery library was omitted. This affected all simulators.
+* Better error reporting and validation in log file for invalid taxiway structures in MSFS. #1200
+
+==<<=============================================================================
+
+# Version 3.0.11
 
 ## Changes from 3.0.9 to 3.0.11
 
@@ -222,7 +240,7 @@ A big thank you to all who reported bugs and issues!
 * Now always exiting program if command line option `--quit` / `-q` was set, even if no other
   instance was found.
 
-==<<=============================================================================
+=================================================================================
 
 # Version 3.0.9
 
