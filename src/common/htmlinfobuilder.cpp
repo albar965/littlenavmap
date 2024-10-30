@@ -1266,7 +1266,7 @@ void HtmlInfoBuilder::ilsTextInternal(const map::MapIls& ils, atools::util::Html
 #ifdef DEBUG_INFORMATION_INFO
   if(info && !procInfo)
   {
-    html.small(QString("Database: ils_id = %1, corrected %2").arg(ils.id).arg(ils.corrected)).br();
+    html.small(QString("Database: ils_id = %1, %2, corrected %3").arg(ils.id).arg(ils.airportIdent).arg(ils.corrected)).br();
     if(end.isValid())
       html.small(QString("Database: runway_end_id = %1").arg(end.id)).br();
   }

@@ -288,6 +288,8 @@ private:
   void fetchRunwaysSim(map::MapRunway& runwaySim, map::MapRunwayEnd& runwayEndSim, const map::MapAirport& airport,
                        const map::MapRunwayEnd& runwayEnd) const;
 
+  QString bestAirportIdent(const map::MapAirport& airport);
+
   atools::sql::SqlDatabase *dbNav;
   atools::sql::SqlQuery *procedureLegQuery = nullptr, *transitionLegQuery = nullptr,
                         *transitionIdForLegQuery = nullptr, *procedureIdForTransQuery = nullptr,

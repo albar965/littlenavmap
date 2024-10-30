@@ -772,6 +772,7 @@ proc::MapProcedureLegs *ProcedureQuery::fetchTransitionLegs(const map::MapAirpor
     legs->suffix = procedure->suffix;
     legs->procedureFixIdent = procedure->procedureFixIdent;
     legs->arincName = procedure->arincName;
+    legs->airportIdent = procedure->airportIdent;
     legs->aircraftCategory = procedure->aircraftCategory;
     legs->gpsOverlay = procedure->gpsOverlay;
     legs->verticalAngle = procedure->verticalAngle;
@@ -835,6 +836,7 @@ proc::MapProcedureLegs *ProcedureQuery::buildProcedureLegs(const map::MapAirport
     legs->suffix = procedureQuery->valueStr("suffix");
     legs->procedureFixIdent = procedureQuery->valueStr("fix_ident");
     legs->arincName = procedureQuery->valueStr("arinc_name", QString());
+    legs->airportIdent = procedureQuery->valueStr("airport_ident", QString());
     legs->aircraftCategory = procedureQuery->valueStr("aircraft_category", QString());
     legs->gpsOverlay = procedureQuery->valueBool("has_gps_overlay", false);
     legs->verticalAngle = procedureQuery->valueBool("has_vertical_angle", false);
@@ -936,8 +938,6 @@ void ProcedureQuery::postProcessLegs(const map::MapAirport& airport, proc::MapPr
 
   // Check which leg is used to draw the Maltesian cross
   processLegsFafAndFacf(legs);
-
-  // qDebug() << legs;
 }
 
 void ProcedureQuery::processArtificialLegs(proc::MapProcedureLegs& legs, const map::MapAirport& airport, bool addArtificialLegs) const
@@ -1365,6 +1365,25 @@ void ProcedureQuery::fetchRunwaysSim(map::MapRunway& runwaySim, map::MapRunwayEn
     runwaySim = queries->getAirportQuery(airport.navdata)->getRunwayByEndId(airport.id, runwayEnd.id);
     runwayEndSim = runwayEnd;
   }
+}
+
+QString ProcedureQuery::bestAirportIdent(const map::MapAirport& airport)
+{
+  if(airport.xplane)
+  {
+    // ICAO is mostly identical to ident except for small fields
+    if(!airport.icao.isEmpty())
+      return airport.icao;
+
+    if(!airport.faa.isEmpty())
+      return airport.faa;
+
+    if(!airport.local.isEmpty())
+      return airport.local;
+  }
+
+  // Otherwise internal id
+  return airport.ident;
 }
 
 void ProcedureQuery::processApproachRunway(proc::MapProcedureLegs& legs, const map::MapAirport& airport) const
@@ -2184,22 +2203,22 @@ void ProcedureQuery::initQueries()
 
   if(dbNav->record("approach").contains("arinc_name"))
   {
-    procedureQuery->prepare("select type, arinc_name, suffix, has_gps_overlay, fix_ident, runway_name "
+    procedureQuery->prepare("select type, arinc_name, airport_ident, suffix, has_gps_overlay, fix_ident, runway_name "
                             "from approach where approach_id = :id");
 
-    procedureIdByNameQuery->prepare("select approach_id, arinc_name, suffix, runway_name from approach "
+    procedureIdByNameQuery->prepare("select approach_id, arinc_name, airport_ident, suffix, runway_name from approach "
                                     "where fix_ident like :fixident and type like :type and airport_ident = :apident");
 
     procedureIdByArincNameQuery = new SqlQuery(dbNav);
-    procedureIdByArincNameQuery->prepare("select approach_id, suffix, arinc_name, runway_name from approach "
+    procedureIdByArincNameQuery->prepare("select approach_id, suffix, arinc_name, airport_ident, runway_name from approach "
                                          "where arinc_name like :arincname and airport_ident = :apident");
   }
   else
   {
-    procedureQuery->prepare("select type, suffix, has_gps_overlay, fix_ident, runway_name "
+    procedureQuery->prepare("select type, airport_ident, suffix, has_gps_overlay, fix_ident, runway_name "
                             "from approach where approach_id = :id");
 
-    procedureIdByNameQuery->prepare("select approach_id, suffix, runway_name from approach "
+    procedureIdByNameQuery->prepare("select approach_id, airport_ident, suffix, runway_name from approach "
                                     "where fix_ident like :fixident and type like :type and airport_ident = :apident");
 
     // Leave ARINC name query as null
@@ -2426,7 +2445,7 @@ int ProcedureQuery::getSidId(map::MapAirport departure, const QString& sid, cons
   {
     procedureIdByNameQuery->bindValue(":fixident", sid);
     procedureIdByNameQuery->bindValue(":type", "GPS");
-    procedureIdByNameQuery->bindValue(":apident", departure.ident);
+    procedureIdByNameQuery->bindValue(":apident", bestAirportIdent(departure));
 
     sidApprId = findProcedureId(departure, procedureIdByNameQuery, "D", runway, strict);
 
@@ -2489,7 +2508,7 @@ int ProcedureQuery::getStarId(map::MapAirport destination, const QString& star, 
   {
     procedureIdByNameQuery->bindValue(":fixident", star);
     procedureIdByNameQuery->bindValue(":type", "GPS");
-    procedureIdByNameQuery->bindValue(":apident", destination.ident);
+    procedureIdByNameQuery->bindValue(":apident", bestAirportIdent(destination));
 
     starId = findProcedureId(destination, procedureIdByNameQuery, "A", runway, strict);
 
@@ -2548,7 +2567,7 @@ int ProcedureQuery::getApproachId(map::MapAirport destination, const QString& ar
   if(destination.isValid())
   {
     procedureIdByArincNameQuery->bindValue(":arincname", arincName);
-    procedureIdByArincNameQuery->bindValue(":apident", destination.ident);
+    procedureIdByArincNameQuery->bindValue(":apident", bestAirportIdent(destination));
 
     approachId = findProcedureId(destination, procedureIdByArincNameQuery, QString(), runway, false);
 
@@ -2944,7 +2963,7 @@ void ProcedureQuery::getLegsForFlightplanProperties(const QHash<QString, QString
 
       procedureIdByNameQuery->bindValue(":fixident", appr);
       procedureIdByNameQuery->bindValue(":type", type);
-      procedureIdByNameQuery->bindValue(":apident", destAirportNav.ident);
+      procedureIdByNameQuery->bindValue(":apident", bestAirportIdent(destAirportNav));
 
       if(destAirportNav.isValid())
         approachId = findProcedureId(destAirportNav, procedureIdByNameQuery,

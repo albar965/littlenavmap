@@ -107,9 +107,8 @@ public:
                                             float maxDistanceMeter = map::INVALID_DISTANCE_VALUE,
                                             map::AirportQueryFlags flags = map::AP_QUERY_ALL);
 
-  /* Try to get airport by ident, icao or position as a fallback if pos is valid,
-   * Need to get ident, icao and pos as copies to avoid overwriting.
-   * Does not use cache. */
+  /* Try to get airport by ident, icao, local or position as a fallback if pos is valid,
+   * Need to get ident, icao and pos as copies to avoid overwriting. Uses cache. */
   const map::MapAirport getAirportFuzzy(const map::MapAirport& airport);
   void getAirportFuzzy(map::MapAirport& airport, const map::MapAirport airportCopy);
 

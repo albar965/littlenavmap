@@ -3275,8 +3275,7 @@ Route Route::adjustedToOptions(const Route& origRoute, rf::RouteAdjustOptions op
     } // for(int i = 0; i < entries.size(); i++)
 
     // Now remove of all procedure legs in the flight plan =====================
-    plan.erase(std::remove_if(plan.begin(), plan.end(), [](const FlightplanEntry& type) -> bool
-    {
+    plan.erase(std::remove_if(plan.begin(), plan.end(), [](const FlightplanEntry& type) -> bool {
       return type.getFlags() & atools::fs::pln::entry::PROCEDURE;
     }), plan.end());
 
@@ -3418,7 +3417,7 @@ Route Route::adjustedToOptions(const Route& origRoute, rf::RouteAdjustOptions op
   if(options.testFlag(rf::XPLANE_REPLACE_AIRPORT_IDENTS))
   {
     // Replace X-Plane waypoint idents with official ones for airports
-    // XP accepts only internal codes in departure and destination fields
+    // XP accepts only internal codes or idents equal to CIFP names in departure and destination fields
     for(int i = 0; i < plan.size(); i++)
     {
       FlightplanEntry& entry = plan[i];
@@ -3430,7 +3429,7 @@ Route Route::adjustedToOptions(const Route& origRoute, rf::RouteAdjustOptions op
         {
           // Determine ident for departure or destination
 
-          // Use DEP/DES keywords for long internal airport idents
+          // Use ADEP/ADES keywords for normal airport idents. Use DEP/DES for long names.
           bool useAirportKeys = airport.ident.size() <= 4;
 
           // Check official idents - ignore IATA
@@ -3464,27 +3463,25 @@ Route Route::adjustedToOptions(const Route& origRoute, rf::RouteAdjustOptions op
           {
             // Set for start
             plan.setDepartureIdent(ident);
+            entry.setIdent(ident);
 
             // Set properties to use ADEP/ADES or DEP/DES.  Read by FlightplanIO::saveFmsInternal()
             // Value does not matter - only presence is checked
             if(useAirportKeys)
-              // ADEP
-              plan.getProperties().remove(atools::fs::pln::AIRPORT_DEPARTURE_NO_AIRPORT);
+              plan.getProperties().remove(atools::fs::pln::AIRPORT_DEPARTURE_NO_AIRPORT); // ADEP
             else
-              // DEP
-              plan.getProperties().insert(atools::fs::pln::AIRPORT_DEPARTURE_NO_AIRPORT, QString());
+              plan.getProperties().insert(atools::fs::pln::AIRPORT_DEPARTURE_NO_AIRPORT, QString()); // DEP
           }
           else if(i == plan.size() - 1)
           {
             // Set for destination
             plan.setDestinationIdent(ident);
+            entry.setIdent(ident);
 
             if(useAirportKeys)
-              // ADES
-              plan.getProperties().remove(atools::fs::pln::AIRPORT_DESTINATION_NO_AIRPORT);
+              plan.getProperties().remove(atools::fs::pln::AIRPORT_DESTINATION_NO_AIRPORT); // ADES
             else
-              // DES
-              plan.getProperties().insert(atools::fs::pln::AIRPORT_DESTINATION_NO_AIRPORT, QString());
+              plan.getProperties().insert(atools::fs::pln::AIRPORT_DESTINATION_NO_AIRPORT, QString()); // DES
           }
         } // if(i == 0 || i == entries.size() - 1)
       } // if(entry.getWaypointType() == atools::fs::pln::entry::AIRPORT)

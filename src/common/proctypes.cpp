@@ -553,20 +553,21 @@ QDebug operator<<(QDebug out, const ProcedureLegType& type)
 QDebug operator<<(QDebug out, const MapProcedureLegs& legs)
 {
   QDebugStateSaver saver(out);
-  out << "ProcedureLeg =====" << endl;
+  out << "MapProcedureLegs =====" << endl;
   out << "maptype" << legs.mapType << endl;
 
-  out << "approachDistance" << legs.procedureDistance
+  out << "procedureDistance" << legs.procedureDistance
       << "transitionDistance" << legs.transitionDistance
       << "missedDistance" << legs.missedDistance << endl;
 
-  out << "approachType" << legs.type
-      << "approachSuffix" << legs.suffix
-      << "approachFixIdent" << legs.procedureFixIdent
-      << "approachArincName" << legs.arincName
+  out << "type" << legs.type
+      << "suffix" << legs.suffix
+      << "procedureFixIdent" << legs.procedureFixIdent
+      << "arincName" << legs.arincName
+      << "airportIdent" << legs.airportIdent
       << "transitionType" << legs.transitionType
       << "transitionFixIdent" << legs.transitionFixIdent
-      << "procedureRunway" << legs.runway
+      << "runway" << legs.runway
       << "runwaySim" << legs.runwaySim
       << "runwayEndSim" << legs.runwayEndSim
       << "runwayEnd.name" << legs.runwayEnd.name << endl;
@@ -581,7 +582,7 @@ QDebug operator<<(QDebug out, const MapProcedureLegs& legs)
 QDebug operator<<(QDebug out, const MapProcedureLeg& leg)
 {
   QDebugStateSaver saver(out);
-  out << "ProcedureLeg =============" << endl;
+  out << "MapProcedureLeg =============" << endl;
   out << "approachId" << leg.procedureId
       << "transitionId" << leg.transitionId
       << "legId" << leg.legId << endl

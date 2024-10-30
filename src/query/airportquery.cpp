@@ -354,18 +354,20 @@ void AirportQuery::getAirportFuzzy(map::MapAirport& airport, const map::MapAirpo
 
     if(airports.isEmpty())
     {
+      map::AirportQueryFlag flags = map::AP_QUERY_ICAO | map::AP_QUERY_FAA | map::AP_QUERY_LOCAL;
+
       // Try ICAO first on all fields (ICAO, not IATA, FAA and local)
       if(airportCopy.icao != airportCopy.ident)
-        getAirportsByOfficialIdent(airports, airportCopy.icao, nullptr, map::INVALID_DISTANCE_VALUE,
-                                   map::AP_QUERY_ICAO | map::AP_QUERY_FAA | map::AP_QUERY_LOCAL);
+        getAirportsByOfficialIdent(airports, airportCopy.icao, nullptr, map::INVALID_DISTANCE_VALUE, flags);
 
-      // Try IATA next on all fields
-      getAirportsByOfficialIdent(airports, airportCopy.iata, nullptr, map::INVALID_DISTANCE_VALUE,
-                                 map::AP_QUERY_ICAO | map::AP_QUERY_IATA | map::AP_QUERY_FAA | map::AP_QUERY_LOCAL);
+      // Try IATA next on all fields including IATA
+      getAirportsByOfficialIdent(airports, airportCopy.iata, nullptr, map::INVALID_DISTANCE_VALUE, flags | map::AP_QUERY_IATA);
 
       // Try FAA next on all fields except IATA
-      getAirportsByOfficialIdent(airports, airportCopy.faa, nullptr, map::INVALID_DISTANCE_VALUE,
-                                 map::AP_QUERY_ICAO | map::AP_QUERY_FAA | map::AP_QUERY_LOCAL);
+      getAirportsByOfficialIdent(airports, airportCopy.faa, nullptr, map::INVALID_DISTANCE_VALUE, flags);
+
+      // Try local next on all fields except IATA
+      getAirportsByOfficialIdent(airports, airportCopy.local, nullptr, map::INVALID_DISTANCE_VALUE, flags);
     }
 
     // Fall back to coordinate based search and look for centers within certain distance

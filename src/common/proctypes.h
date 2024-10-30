@@ -430,6 +430,8 @@ struct MapProcedureLegs
   QString type, /* GNSS (display GLS) GPS IGS ILS LDA LOC LOCB NDB NDBDME RNAV (RNV) SDF TCN VOR VORDME */
           suffix, procedureFixIdent /* Approach fix or SID/STAR name */,
           arincName, /* ARINC for procedures or runways ("ALL", "16B", etc.) for SID and STAR */
+          airportIdent, /* Same as CIFP file name in X-Plane. Original name referenced in procedures
+                           independent of the various airport codes. Needed for FMS export. */
           transitionType, transitionFixIdent,
           runway, /* Runway from the procedure does not have to match the airport runway but is saved. Used by approaches and SID. */
           aircraftCategory; /* 5.221 */
