@@ -672,12 +672,23 @@ void ProcedureQuery::processMagvar(proc::MapProcedureLegs& legs, const map::MapA
   }
 }
 
-void ProcedureQuery::updateBounding(proc::MapProcedureLegs& legs, bool includeRecommended) const
+void ProcedureQuery::updateBounding(proc::MapProcedureLegs& legs) const
 {
-  atools::geo::Rect& bounding = includeRecommended ? legs.boundingWithRecommended : legs.bounding;
+  updateBounding(legs, legs.bounding, false /* includeRecommended */, false /* includeMissed */);
+  updateBounding(legs, legs.boundingWithMissed, false /* includeRecommended */, true /* includeMissed */);
+  updateBounding(legs, legs.boundingWithRecommended, true /* includeRecommended */, true /* includeMissed */);
+}
+
+void ProcedureQuery::updateBounding(proc::MapProcedureLegs& legs, atools::geo::Rect& bounding, bool includeRecommended,
+                                    bool includeMissed) const
+{
   for(int i = 0; i < legs.size(); i++)
   {
     const proc::MapProcedureLeg& leg = legs.at(i);
+
+    if(!includeMissed && leg.isMissed())
+      break;
+
     if(leg.isHold())
     {
       // Simply extend bounding by a rectangle with the radius of hold distance - assume 250 kts if time is used
@@ -930,8 +941,7 @@ void ProcedureQuery::postProcessLegs(const map::MapAirport& airport, proc::MapPr
   processLegsFixRestrictions(legs, airport);
 
   // Update bounding rectangle
-  updateBounding(legs, false /* includeRecommended */);
-  updateBounding(legs, true /* includeRecommended */);
+  updateBounding(legs);
 
   // Collect leg errors to procedure error
   processLegErrors(legs);
@@ -1249,8 +1259,7 @@ void ProcedureQuery::postProcessLegsForRoute(proc::MapProcedureLegs& starLegs, c
   {
     // Update distances and bounding rectangle
     processLegsDistanceAndCourse(starLegs);
-    updateBounding(starLegs, false /* includeRecommended */);
-    updateBounding(starLegs, true /* includeRecommended */);
+    updateBounding(starLegs);
   }
 }
 
@@ -2673,7 +2682,7 @@ void ProcedureQuery::createCustomApproach(proc::MapProcedureLegs& legs, const ma
   legs.transitionDistance = legs.missedDistance = 0.f;
   legs.bounding = legs.runwaySim.bounding();
   legs.bounding.extend(initialFixPos);
-  legs.boundingWithRecommended = legs.bounding;
+  legs.boundingWithRecommended = legs.boundingWithMissed = legs.bounding;
 
   // Create an initial fix leg at the given distance =======================
   proc::MapProcedureLeg startLeg;
@@ -2746,7 +2755,7 @@ void ProcedureQuery::createCustomDeparture(proc::MapProcedureLegs& legs, const m
   legs.transitionDistance = legs.missedDistance = 0.f;
   legs.bounding = Rect(endFixPos);
   legs.bounding.extend(runwayEndSim.position);
-  legs.boundingWithRecommended = legs.bounding;
+  legs.boundingWithRecommended = legs.boundingWithMissed = legs.bounding;
 
   // Create the runway leg ================================================
   proc::MapProcedureLeg runwayLeg;

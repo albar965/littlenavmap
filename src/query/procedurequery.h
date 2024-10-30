@@ -238,7 +238,8 @@ private:
   void processMagvar(proc::MapProcedureLegs& legs, const map::MapAirport& airport) const;
 
   /* Update bounding rectangle */
-  void updateBounding(proc::MapProcedureLegs& legs, bool includeRecommended) const;
+  void updateBounding(proc::MapProcedureLegs& legs) const;
+  void updateBounding(proc::MapProcedureLegs& legs, atools::geo::Rect& bounding, bool includeRecommended, bool includeMissed) const;
 
   /* Update the mapTypes */
   void assignType(proc::MapProcedureLegs& procedure) const;

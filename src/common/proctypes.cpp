@@ -570,7 +570,10 @@ QDebug operator<<(QDebug out, const MapProcedureLegs& legs)
       << "runway" << legs.runway
       << "runwaySim" << legs.runwaySim
       << "runwayEndSim" << legs.runwayEndSim
-      << "runwayEnd.name" << legs.runwayEnd.name << endl;
+      << "runwayEnd.name" << legs.runwayEnd.name
+      << "bounding" << legs.bounding
+      << "boundingWithRecommended" << legs.boundingWithRecommended
+      << "boundingWithMissed" << legs.boundingWithMissed << endl;
 
   out << "===== Legs =====" << endl;
   for(int i = 0; i < legs.size(); i++)

@@ -164,10 +164,11 @@ private:
 
   /* Called from menu actions */
   void showInformationSelected();
-  void showOnMapSelected();
+  void showAirportOnMapSelected();
+  void showProcedureSelected();
   void procedureAttachSelected();
+
   void attachProcedure();
-  void showProcedureTriggered();
 
   // Save and restore expanded and selected item state
   QSet<int> treeViewStateSave() const;

@@ -220,10 +220,10 @@ ProcedureSearch::ProcedureSearch(QMainWindow *main, QTreeWidget *treeWidgetParam
   connect(ui->actionSearchProcedureSelectNothing, &QAction::triggered, this, &ProcedureSearch::clearSelectionClicked);
 
   connect(ui->actionSearchProcedureInformation, &QAction::triggered, this, &ProcedureSearch::showInformationSelected);
-  connect(ui->actionSearchProcedureShowOnMap, &QAction::triggered, this, &ProcedureSearch::showOnMapSelected);
+  connect(ui->actionSearchProcedureShowOnMap, &QAction::triggered, this, &ProcedureSearch::showAirportOnMapSelected);
   connect(ui->actionInfoApproachAttach, &QAction::triggered, this, &ProcedureSearch::procedureAttachSelected);
   connect(ui->actionInfoApproachClear, &QAction::triggered, this, &ProcedureSearch::clearSelectionClicked);
-  connect(ui->actionInfoApproachShow, &QAction::triggered, this, &ProcedureSearch::showProcedureTriggered);
+  connect(ui->actionInfoApproachShow, &QAction::triggered, this, &ProcedureSearch::showProcedureSelected);
 
   connect(treeWidget, &QTreeWidget::itemSelectionChanged, this, &ProcedureSearch::itemSelectionChanged);
   connect(treeWidget, &QTreeWidget::itemDoubleClicked, this, &ProcedureSearch::itemDoubleClicked);
@@ -275,7 +275,7 @@ void ProcedureSearch::airportLabelLinkActivated(const QString& link)
   QUrl url(link);
   if(url.scheme() == "lnm" && url.host() == "showairport")
   {
-    showOnMapSelected();
+    showAirportOnMapSelected();
     showInformationSelected();
   }
 }
@@ -1578,7 +1578,7 @@ void ProcedureSearch::showInformationSelected()
   }
 }
 
-void ProcedureSearch::showOnMapSelected()
+void ProcedureSearch::showAirportOnMapSelected()
 {
   // ui->actionSearchProcedureShowOnMap
   if(currentAirportSim->isValid())
@@ -1619,7 +1619,7 @@ const proc::MapProcedureLegs *ProcedureSearch::fetchProcData(MapProcedureRef& re
   return procedureLegs;
 }
 
-void ProcedureSearch::showProcedureTriggered()
+void ProcedureSearch::showProcedureSelected()
 {
   if(!treeWidget->selectedItems().isEmpty())
     showEntry(treeWidget->selectedItems().constFirst(), false /* double click*/, true /* zoom */);
@@ -1707,13 +1707,13 @@ void ProcedureSearch::showEntry(QTreeWidgetItem *item, bool doubleClick, bool zo
   {
     const proc::MapProcedureLegs *legs = procedureQuery->getTransitionLegs(*currentAirportNav, ref.transitionId);
     if(legs != nullptr)
-      emit showRect(legs->bounding, doubleClick);
+      emit showRect(NavApp::getShownMapTypes().testFlag(map::MISSED_APPROACH) ? legs->boundingWithMissed : legs->bounding, doubleClick);
   }
   else if(ref.procedureId != -1 && !doubleClick)
   {
     const proc::MapProcedureLegs *legs = procedureQuery->getProcedureLegs(*currentAirportNav, ref.procedureId);
     if(legs != nullptr)
-      emit showRect(legs->bounding, doubleClick);
+      emit showRect(NavApp::getShownMapTypes().testFlag(map::MISSED_APPROACH) ? legs->boundingWithMissed : legs->bounding, doubleClick);
   }
 }
 

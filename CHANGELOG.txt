@@ -42,6 +42,8 @@ A big thank you to all who reported bugs and issues!
   since their X-Plane ident does not match official airport codes like ICAO, FAA or local.
   Note that X-Plane may still refuse to load flight plans created using such airports.
   Plans using AT4 will be loaded without issues but not plans using VNPR.
+* Wrong procedure centering when clicking in procedure search corrected. Now depends on visibility
+  of the missed approach.
 
 ==<<=============================================================================
 
