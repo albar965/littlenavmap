@@ -3448,7 +3448,27 @@ Route Route::adjustedToOptions(const Route& origRoute, rf::RouteAdjustOptions op
             useAirportKeys = false;
 
           // Use display ident for DEP/DES since it does not matter in this configuration
-          QString ident = useAirportKeys ? airport.ident : airport.displayIdent();
+          // Take airport ident from procedures if available since this is the original CIFP name.
+          QString ident;
+          if(i == 0 && !route.getSidLegs().airportIdent.isEmpty())
+          {
+            ident = route.getSidLegs().airportIdent;
+            useAirportKeys = true;
+          }
+          else if(i == plan.size() - 1 && !route.getApproachLegs().airportIdent.isEmpty())
+          {
+            ident = route.getApproachLegs().airportIdent;
+            useAirportKeys = true;
+          }
+          else if(i == plan.size() - 1 && !route.getStarLegs().airportIdent.isEmpty())
+          {
+            ident = route.getStarLegs().airportIdent;
+            useAirportKeys = true;
+          }
+          else if(useAirportKeys)
+            ident = airport.ident;
+          else
+            ident = airport.displayIdent();
 
           if(ident.size() > 4)
             useAirportKeys = false;

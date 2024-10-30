@@ -44,6 +44,8 @@ A big thank you to all who reported bugs and issues!
   Plans using AT4 will be loaded without issues but not plans using VNPR.
 * Wrong procedure centering when clicking in procedure search corrected. Now depends on visibility
   of the missed approach.
+* Improved export of X-Plane FMS files if airport has several idents. Flight plans using
+  Qualicum Beach (AT4) and similar cases as departure or destination can now be loaded in X-Plane.
 
 ==<<=============================================================================
 
