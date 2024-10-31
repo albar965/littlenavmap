@@ -2907,9 +2907,13 @@ bool MainWindow::createMapImage(QPixmap& pixmap, const QString& dialogTitle, con
     if(exportDialog.isCurrentView())
     {
       // Copy image as is from current view
-      mapWidget->showOverlays(false, false /* show scale */);
-      pixmap = mapWidget->mapScreenShot();
-      mapWidget->showOverlays(true, false /* show scale */);
+      mapWidget->showOverlays(false /* show */, false /* show scale */);
+      if(isFullScreen())
+        mapWidget->removeFullScreenExitButton();
+      pixmap = mapWidget->getPixmap(exportDialog.getSize());
+      mapWidget->showOverlays(true /* show */, false /* show scale */);
+      if(isFullScreen())
+        mapWidget->addFullScreenExitButton();
 
       if(json != nullptr)
         *json = mapWidget->createAvitabJson();

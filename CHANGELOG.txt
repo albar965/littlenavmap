@@ -49,6 +49,7 @@ A big thank you to all who reported bugs and issues!
   of the missed approach.
 * Improved export of X-Plane FMS files if airport has several idents. Flight plans using
   Qualicum Beach (AT4) and similar cases as departure or destination can now be loaded in X-Plane.
+* Removing fullscreen button now when copying map image to the clipboard or when saving screenshots.
 
 ==<<=============================================================================
 
