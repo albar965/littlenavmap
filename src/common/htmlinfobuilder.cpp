@@ -3234,7 +3234,11 @@ void HtmlInfoBuilder::airspaceText(const MapAirspace& airspace, const atools::sq
     html.row2If(tr("Name:"), onlineRec.valueStr("name"));
     html.row2If(tr("Server:"), onlineRec.valueStr("server"));
     html.row2If(tr("Facility Type:"), atools::fs::online::facilityTypeText(onlineRec.valueInt("facility_type")));
-    html.row2If(tr("Visual Range:"), Unit::distNm(onlineRec.valueInt("visual_range")));
+
+    int visualRange = onlineRec.valueInt("visual_range");
+    if(visualRange > 0)
+      html.row2If(tr("Visual Range:"), Unit::distNm(visualRange));
+
     html.row2If(tr("ATIS:"), onlineRec.valueStr("atis").replace("^\\A7", "\n"));
     html.row2If(tr("ATIS Time:"), locale.toString(onlineRec.valueDateTime("atis_time")));
     html.row2If(tr("Connection Time:"), locale.toString(onlineRec.valueDateTime("connection_time")));

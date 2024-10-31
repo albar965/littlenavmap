@@ -28,7 +28,7 @@ A big thank you to all who reported bugs and issues!
 * Fixed issue where ILS were missing for MSFS. Examples EGPH using ILS approach with an add-on
   airport.
 * EDDF double ILS as for runway 25R, using the ILS IFNW and IFNR now correctly used for MSFS.
-  The correct ILS is selected for display when using the related approach.
+  The right ILS is selected for display when using the related approach.
 * Fixed broken airway collection for X-Plane. Example: Airway W66 not found for the flight plan
   route description `ZUCK ATBUG W66 JNQ ZWWW`. #1197
 * Fixed issue where last airway in scenery library was omitted. This affected all simulators.
@@ -36,6 +36,9 @@ A big thank you to all who reported bugs and issues!
 * Display of marker beacons now disabled if ILS or airports are not shown.
 * Fixed missing circles for online towers and centers not having a matching geometry in the user
   airspace database. This also disabled the tooltips on the map.
+* Corrected online center size settings in options on page 'Map Online`. *Little Navmap* now falls
+  back to user defined value if an online center does not provide a visual range value. Fixed values
+  reset back to default when applying options.
 * Fixed several issues in X-Plane database when assigning airports to procedures. As a result
   procedures could not be loaded from flight plans and airport procedures menu was wrongly disabled.
   Examples for X-Plane 12: No procedures were found for Pokhara Intl (VNPR) and Qualicum Beach (AT4)

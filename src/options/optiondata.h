@@ -26,8 +26,10 @@
 class QSize;
 class QFont;
 
+/*
+ * All these flags are not saved but restored from action and button states.
+ */
 namespace opts {
-/* Not saved. */
 enum Flag : quint64
 {
   NO_FLAGS = 0,
@@ -285,6 +287,40 @@ enum OnlineFormat
   ONLINE_FORMAT_VATSIM_JSON,
   ONLINE_FORMAT_IVAO_JSON
 };
+
+/* Override flags for circle radii for online centers, towers and more.
+ * Online provided values are used if available and flag is set, i.e. checkbox is clicked. */
+enum DisplayOnlineFlag : quint32
+{
+  DISPLAY_ONLINE_NONE = 0,
+
+  /* ui->spinBoxDisplayOnlineClearance */
+  DISPLAY_ONLINE_CLEARANCE = 1 << 0,
+
+  /* ui->spinBoxDisplayOnlineArea      */
+  DISPLAY_ONLINE_AREA = 1 << 1,
+
+  /* ui->spinBoxDisplayOnlineApproach  */
+  DISPLAY_ONLINE_APPROACH = 1 << 2,
+
+  /* ui->spinBoxDisplayOnlineDeparture */
+  DISPLAY_ONLINE_DEPARTURE = 1 << 3,
+
+  /* ui->spinBoxDisplayOnlineFir       */
+  DISPLAY_ONLINE_FIR = 1 << 4,
+
+  /* ui->spinBoxDisplayOnlineObserver  */
+  DISPLAY_ONLINE_OBSERVER = 1 << 5,
+
+  /* ui->spinBoxDisplayOnlineGround    */
+  DISPLAY_ONLINE_GROUND = 1 << 6,
+
+  /* ui->spinBoxDisplayOnlineTower     */
+  DISPLAY_ONLINE_TOWER = 1 << 7
+};
+
+ATOOLS_DECLARE_FLAGS_32(DisplayOnlineFlags, DisplayOnlineFlag)
+ATOOLS_DECLARE_OPERATORS_FOR_FLAGS(opts::DisplayOnlineFlags)
 
 } // namespace opts
 
@@ -1199,6 +1235,11 @@ public:
     return displayOnlineTower;
   }
 
+  const opts::DisplayOnlineFlags& getDisplayOnlineFlags() const
+  {
+    return displayOnlineFlags;
+  }
+
   const QString& getWebDocumentRoot() const
   {
     return webDocumentRoot;
@@ -1381,6 +1422,9 @@ private:
                          opts2::ONLINE_AIRSPACE_BY_FILE | opts2::ONLINE_AIRSPACE_BY_NAME | opts2::RAISE_WINDOWS |
                          opts2::HIGH_DPI_DISPLAY_SUPPORT | opts2::ROUTE_CENTER_ACTIVE_LEG |
                          opts2::ROUTE_CENTER_ACTIVE_LEG | opts2::ROUTE_NO_FOLLOW_ON_MOVE | opts2::MAP_ROUTE_HIGHLIGHT_ACTIVE;
+
+  opts::DisplayOnlineFlags displayOnlineFlags = opts::DISPLAY_ONLINE_OBSERVER | opts::DISPLAY_ONLINE_CLEARANCE |
+                                                opts::DISPLAY_ONLINE_DEPARTURE;
 
   QString weatherActiveSkyPath, // ui->lineEditOptionsWeatherAsnPath
           weatherXplane11Path, // ui->lineEditOptionsWeatherXplanePath
@@ -1619,7 +1663,7 @@ private:
   int displayMapHighlightTransparent = 50;
 
   // spinBoxDisplayOnlineClearance
-  int displayOnlineClearance = -1;
+  int displayOnlineClearance = 20;
 
   // spinBoxDisplayOnlineArea
   int displayOnlineArea = 200;
@@ -1628,13 +1672,13 @@ private:
   int displayOnlineApproach = 40;
 
   // spinBoxDisplayOnlineDeparture
-  int displayOnlineDeparture = -1;
+  int displayOnlineDeparture = 20;
 
   // spinBoxDisplayOnlineFir
   int displayOnlineFir = 200;
 
   // spinBoxDisplayOnlineObserver
-  int displayOnlineObserver = -1;
+  int displayOnlineObserver = 20;
 
   // spinBoxDisplayOnlineGround
   int displayOnlineGround = 10;

@@ -329,6 +329,26 @@ void checkAndMigrateSettings()
         settings.setValue("MainWindow/Widget_statusBar", true);
       }
 
+      if(optionsVersion <= Version("3.0.11"))
+      {
+        removeAndLog("Widget_checkBoxDisplayOnlineApproachRange");
+        removeAndLog("Widget_checkBoxDisplayOnlineAreaRange");
+        removeAndLog("Widget_checkBoxDisplayOnlineClearanceRange");
+        removeAndLog("Widget_checkBoxDisplayOnlineDepartureRange");
+        removeAndLog("Widget_checkBoxDisplayOnlineFirRange");
+        removeAndLog("Widget_checkBoxDisplayOnlineGroundRange");
+        removeAndLog("Widget_checkBoxDisplayOnlineObserverRange");
+        removeAndLog("Widget_checkBoxDisplayOnlineTowerRange");
+        removeAndLog("Widget_spinBoxDisplayOnlineApproach");
+        removeAndLog("Widget_spinBoxDisplayOnlineArea");
+        removeAndLog("Widget_spinBoxDisplayOnlineClearance");
+        removeAndLog("Widget_spinBoxDisplayOnlineDeparture");
+        removeAndLog("Widget_spinBoxDisplayOnlineFir");
+        removeAndLog("Widget_spinBoxDisplayOnlineGround");
+        removeAndLog("Widget_spinBoxDisplayOnlineObserver");
+        removeAndLog("Widget_spinBoxDisplayOnlineTower");
+      }
+
       qInfo() << Q_FUNC_INFO << "Clearing all essential messages since version differs";
       messages::resetEssentialMessages();
 

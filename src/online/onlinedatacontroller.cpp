@@ -129,42 +129,61 @@ void OnlinedataController::updateAtcSizes()
 {
   // Override default circle radius for certain ATC center types
   const OptionData& opts = OptionData::instance();
+  opts::DisplayOnlineFlags flags = opts.getDisplayOnlineFlags();
 
-  QHash<atools::fs::online::fac::FacilityType, int> sizeMap;
+  atools::fs::online::AtcSizeMap sizeMap;
   for(atools::fs::online::fac::FacilityType type : atools::fs::online::allFacilityTypes())
   {
     int diameter = -1;
+    bool useDefault = false; // Online provided values are used if available and flag is set, i.e. checkbox is clicked.
+
     switch(type)
     {
       case atools::fs::online::fac::UNKNOWN:
         break;
+
       case atools::fs::online::fac::OBSERVER:
         diameter = opts.getDisplayOnlineObserver();
+        useDefault = flags.testFlag(opts::DISPLAY_ONLINE_OBSERVER);
         break;
+
       case atools::fs::online::fac::FLIGHT_INFORMATION:
         diameter = opts.getDisplayOnlineFir();
+        useDefault = flags.testFlag(opts::DISPLAY_ONLINE_FIR);
         break;
+
       case atools::fs::online::fac::DELIVERY:
         diameter = opts.getDisplayOnlineClearance();
+        useDefault = flags.testFlag(opts::DISPLAY_ONLINE_CLEARANCE);
         break;
+
       case atools::fs::online::fac::GROUND:
         diameter = opts.getDisplayOnlineGround();
+        useDefault = flags.testFlag(opts::DISPLAY_ONLINE_GROUND);
         break;
+
       case atools::fs::online::fac::TOWER:
         diameter = opts.getDisplayOnlineTower();
+        useDefault = flags.testFlag(opts::DISPLAY_ONLINE_TOWER);
         break;
+
       case atools::fs::online::fac::APPROACH:
         diameter = opts.getDisplayOnlineApproach();
+        useDefault = flags.testFlag(opts::DISPLAY_ONLINE_APPROACH);
         break;
+
       case atools::fs::online::fac::ACC:
         diameter = opts.getDisplayOnlineArea();
+        useDefault = flags.testFlag(opts::DISPLAY_ONLINE_AREA);
         break;
+
       case atools::fs::online::fac::DEPARTURE:
         diameter = opts.getDisplayOnlineDeparture();
+        useDefault = flags.testFlag(opts::DISPLAY_ONLINE_DEPARTURE);
         break;
     }
 
-    sizeMap.insert(type, diameter != -1 ? std::max(1, diameter / 2) : -1);
+    sizeMap.insert(type, atools::fs::online::AtcSizeMapValue(useDefault, std::max(1, diameter / 2)));
   }
   manager->setAtcSize(sizeMap);
 }

@@ -65,6 +65,29 @@ using atools::settings::Settings;
 using atools::gui::HelpHandler;
 using atools::util::HtmlBuilder;
 
+template<typename FIELD, typename FLAG>
+inline void toFlags(FIELD& field, const QAbstractButton *button, FLAG flag)
+{
+#ifndef QT_NO_DEBUG
+  field.testFlag(flag); // For type validation since operators are not type safe
+#endif
+
+  if(button->isChecked())
+    field |= flag;
+  else
+    field &= ~flag;
+}
+
+template<typename FIELD, typename FLAG>
+inline void fromFlags(const FIELD& field, QAbstractButton *button, FLAG flag)
+{
+#ifndef QT_NO_DEBUG
+  field.testFlag(flag); // For type validation since operators are not type safe
+#endif
+
+  button->setChecked(field & flag);
+}
+
 OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
   : QDialog(parentWindow), ui(new Ui::Options), mainWindow(parentWindow)
 {
@@ -759,16 +782,6 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
   connect(ui->pushButtonOptionsOnlineTestStatusUrl, &QPushButton::clicked, this, &OptionsDialog::onlineTestStatusUrlClicked);
   connect(ui->pushButtonOptionsOnlineTestWhazzupUrl, &QPushButton::clicked, this, &OptionsDialog::onlineTestWhazzupUrlClicked);
 
-  // Online map display =======================================================================
-  connect(ui->checkBoxDisplayOnlineGroundRange, &QCheckBox::toggled, this, &OptionsDialog::onlineDisplayRangeClicked);
-  connect(ui->checkBoxDisplayOnlineApproachRange, &QCheckBox::toggled, this, &OptionsDialog::onlineDisplayRangeClicked);
-  connect(ui->checkBoxDisplayOnlineObserverRange, &QCheckBox::toggled, this, &OptionsDialog::onlineDisplayRangeClicked);
-  connect(ui->checkBoxDisplayOnlineFirRange, &QCheckBox::toggled, this, &OptionsDialog::onlineDisplayRangeClicked);
-  connect(ui->checkBoxDisplayOnlineAreaRange, &QCheckBox::toggled, this, &OptionsDialog::onlineDisplayRangeClicked);
-  connect(ui->checkBoxDisplayOnlineDepartureRange, &QCheckBox::toggled, this, &OptionsDialog::onlineDisplayRangeClicked);
-  connect(ui->checkBoxDisplayOnlineTowerRange, &QCheckBox::toggled, this, &OptionsDialog::onlineDisplayRangeClicked);
-  connect(ui->checkBoxDisplayOnlineClearanceRange, &QCheckBox::toggled, this, &OptionsDialog::onlineDisplayRangeClicked);
-
   // Web server =======================================================================
   connect(ui->pushButtonOptionsWebSelectDocroot, &QPushButton::clicked, this, &OptionsDialog::selectWebDocrootClicked);
   connect(ui->lineEditOptionsWebDocroot, &QLineEdit::textEdited, this, &OptionsDialog::updateWebDocrootStatus);
@@ -1002,27 +1015,6 @@ void OptionsDialog::eastWestRuleClicked()
   ui->comboBoxOptionsRouteAltitudeRuleType->setEnabled(ui->checkBoxOptionsRouteEastWestRule->isChecked());
 }
 
-void OptionsDialog::onlineDisplayRangeClicked()
-{
-  ui->spinBoxDisplayOnlineClearance->setEnabled(!ui->checkBoxDisplayOnlineClearanceRange->isChecked());
-  ui->spinBoxDisplayOnlineArea->setEnabled(!ui->checkBoxDisplayOnlineAreaRange->isChecked());
-  ui->spinBoxDisplayOnlineApproach->setEnabled(!ui->checkBoxDisplayOnlineApproachRange->isChecked());
-  ui->spinBoxDisplayOnlineDeparture->setEnabled(!ui->checkBoxDisplayOnlineDepartureRange->isChecked());
-  ui->spinBoxDisplayOnlineFir->setEnabled(!ui->checkBoxDisplayOnlineFirRange->isChecked());
-  ui->spinBoxDisplayOnlineObserver->setEnabled(!ui->checkBoxDisplayOnlineObserverRange->isChecked());
-  ui->spinBoxDisplayOnlineGround->setEnabled(!ui->checkBoxDisplayOnlineGroundRange->isChecked());
-  ui->spinBoxDisplayOnlineTower->setEnabled(!ui->checkBoxDisplayOnlineTowerRange->isChecked());
-
-  ui->labelDisplayOnlineClearance->setEnabled(!ui->checkBoxDisplayOnlineClearanceRange->isChecked());
-  ui->labelDisplayOnlineArea->setEnabled(!ui->checkBoxDisplayOnlineAreaRange->isChecked());
-  ui->labelDisplayOnlineApproach->setEnabled(!ui->checkBoxDisplayOnlineApproachRange->isChecked());
-  ui->labelDisplayOnlineDeparture->setEnabled(!ui->checkBoxDisplayOnlineDepartureRange->isChecked());
-  ui->labelDisplayOnlineFir->setEnabled(!ui->checkBoxDisplayOnlineFirRange->isChecked());
-  ui->labelDisplayOnlineObserver->setEnabled(!ui->checkBoxDisplayOnlineObserverRange->isChecked());
-  ui->labelDisplayOnlineGround->setEnabled(!ui->checkBoxDisplayOnlineGroundRange->isChecked());
-  ui->labelDisplayOnlineTower->setEnabled(!ui->checkBoxDisplayOnlineTowerRange->isChecked());
-}
-
 void OptionsDialog::checkOfficialOnlineUrls()
 {
   if(ui->spinBoxOptionsOnlineUpdate->value() < MIN_ONLINE_UPDATE)
@@ -1190,7 +1182,6 @@ void OptionsDialog::updateWidgetStates()
   updateButtonColors();
   updateGuiFontLabel();
   updateMapFontLabel();
-  onlineDisplayRangeClicked();
   eastWestRuleClicked();
   mapEmptyAirportsClicked(false);
   updateCacheElevationStates();
@@ -1353,7 +1344,6 @@ void OptionsDialog::restoreState()
   updateButtonColors();
   updateGuiFontLabel();
   updateMapFontLabel();
-  onlineDisplayRangeClicked();
   eastWestRuleClicked();
   updateTrailStates();
 
@@ -1857,82 +1847,91 @@ void OptionsDialog::widgetsToOptionData()
   data.displayOptionsAirspace = optsd::AIRSPACE_NONE;
   displayOptWidgetToOptionData(data.displayOptionsAirspace, displayOptItemIndexAirspace);
 
-  toFlags(ui->checkBoxOptionsStartupLoadKml, opts::STARTUP_LOAD_KML);
-  toFlags(ui->checkBoxOptionsStartupLoadMapSettings, opts::STARTUP_LOAD_MAP_SETTINGS);
-  toFlags(ui->checkBoxOptionsStartupLoadTrail, opts::STARTUP_LOAD_TRAIL);
-  toFlags(ui->checkBoxOptionsStartupLoadRoute, opts::STARTUP_LOAD_ROUTE);
-  toFlags(ui->checkBoxOptionsStartupLoadPerf, opts::STARTUP_LOAD_PERF);
-  toFlags(ui->checkBoxOptionsStartupLoadLayout, opts::STARTUP_LOAD_LAYOUT);
-  toFlags(ui->checkBoxOptionsStartupShowSplash, opts::STARTUP_SHOW_SPLASH);
-  toFlags(ui->checkBoxOptionsStartupLoadSearch, opts::STARTUP_LOAD_SEARCH);
-  toFlags(ui->checkBoxOptionsStartupLoadInfoContent, opts::STARTUP_LOAD_INFO);
-  toFlags(ui->radioButtonOptionsStartupShowHome, opts::STARTUP_SHOW_HOME);
-  toFlags(ui->radioButtonOptionsStartupShowLast, opts::STARTUP_SHOW_LAST);
-  toFlags(ui->radioButtonOptionsStartupShowFlightplan, opts::STARTUP_SHOW_ROUTE);
-  toFlags(ui->checkBoxOptionsGuiCenterKml, opts::GUI_CENTER_KML);
-  toFlags(ui->checkBoxOptionsGuiWheel, opts::GUI_REVERSE_WHEEL);
-  toFlags2(ui->checkBoxOptionsGuiRaiseWindows, opts2::RAISE_WINDOWS);
-  toFlags2(ui->checkBoxOptionsGuiRaiseDockWindows, opts2::RAISE_DOCK_WINDOWS);
-  toFlags2(ui->checkBoxOptionsGuiRaiseMainWindow, opts2::RAISE_MAIN_WINDOW);
-  toFlags2(ui->checkBoxOptionsUnitFuelOther, opts2::UNIT_FUEL_SHOW_OTHER);
-  toFlags2(ui->checkBoxOptionsUnitTrueCourse, opts2::UNIT_TRUE_COURSE);
-  toFlags(ui->checkBoxOptionsGuiCenterRoute, opts::GUI_CENTER_ROUTE);
-  toFlags(ui->checkBoxOptionsGuiAddDeparture, opts::GUI_ADD_DEPARTURE);
-  toFlags(ui->checkBoxOptionsGuiAvoidOverwrite, opts::GUI_AVOID_OVERWRITE_FLIGHTPLAN);
-  toFlags(ui->checkBoxOptionsGuiOverrideLocale, opts::GUI_OVERRIDE_LOCALE);
-  toFlags(ui->checkBoxOptionsMapEmptyAirports, opts::MAP_EMPTY_AIRPORTS);
-  toFlags(ui->checkBoxOptionsRouteEastWestRule, opts::ROUTE_ALTITUDE_RULE);
-  toFlagsWeather(ui->checkBoxOptionsWeatherInfoAsn, optsw::WEATHER_INFO_ACTIVESKY);
-  toFlagsWeather(ui->checkBoxOptionsWeatherInfoNoaa, optsw::WEATHER_INFO_NOAA);
-  toFlagsWeather(ui->checkBoxOptionsWeatherInfoVatsim, optsw::WEATHER_INFO_VATSIM);
-  toFlagsWeather(ui->checkBoxOptionsWeatherInfoIvao, optsw::WEATHER_INFO_IVAO);
-  toFlagsWeather(ui->checkBoxOptionsWeatherInfoFs, optsw::WEATHER_INFO_FS);
-  toFlagsWeather(ui->checkBoxOptionsWeatherTooltipAsn, optsw::WEATHER_TOOLTIP_ACTIVESKY);
-  toFlagsWeather(ui->checkBoxOptionsWeatherTooltipNoaa, optsw::WEATHER_TOOLTIP_NOAA);
-  toFlagsWeather(ui->checkBoxOptionsWeatherTooltipVatsim, optsw::WEATHER_TOOLTIP_VATSIM);
-  toFlagsWeather(ui->checkBoxOptionsWeatherTooltipIvao, optsw::WEATHER_TOOLTIP_IVAO);
-  toFlagsWeather(ui->checkBoxOptionsWeatherTooltipFs, optsw::WEATHER_TOOLTIP_FS);
-  toFlags(ui->checkBoxOptionsSimUpdatesConstant, opts::SIM_UPDATE_MAP_CONSTANTLY);
+  toFlags(data.flags, ui->checkBoxOptionsStartupLoadKml, opts::STARTUP_LOAD_KML);
+  toFlags(data.flags, ui->checkBoxOptionsStartupLoadMapSettings, opts::STARTUP_LOAD_MAP_SETTINGS);
+  toFlags(data.flags, ui->checkBoxOptionsStartupLoadTrail, opts::STARTUP_LOAD_TRAIL);
+  toFlags(data.flags, ui->checkBoxOptionsStartupLoadRoute, opts::STARTUP_LOAD_ROUTE);
+  toFlags(data.flags, ui->checkBoxOptionsStartupLoadPerf, opts::STARTUP_LOAD_PERF);
+  toFlags(data.flags, ui->checkBoxOptionsStartupLoadLayout, opts::STARTUP_LOAD_LAYOUT);
+  toFlags(data.flags, ui->checkBoxOptionsStartupShowSplash, opts::STARTUP_SHOW_SPLASH);
+  toFlags(data.flags, ui->checkBoxOptionsStartupLoadSearch, opts::STARTUP_LOAD_SEARCH);
+  toFlags(data.flags, ui->checkBoxOptionsStartupLoadInfoContent, opts::STARTUP_LOAD_INFO);
+  toFlags(data.flags, ui->radioButtonOptionsStartupShowHome, opts::STARTUP_SHOW_HOME);
+  toFlags(data.flags, ui->radioButtonOptionsStartupShowLast, opts::STARTUP_SHOW_LAST);
+  toFlags(data.flags, ui->radioButtonOptionsStartupShowFlightplan, opts::STARTUP_SHOW_ROUTE);
+  toFlags(data.flags, ui->checkBoxOptionsGuiCenterKml, opts::GUI_CENTER_KML);
+  toFlags(data.flags, ui->checkBoxOptionsGuiWheel, opts::GUI_REVERSE_WHEEL);
+  toFlags(data.flags2, ui->checkBoxOptionsGuiRaiseWindows, opts2::RAISE_WINDOWS);
+  toFlags(data.flags2, ui->checkBoxOptionsGuiRaiseDockWindows, opts2::RAISE_DOCK_WINDOWS);
+  toFlags(data.flags2, ui->checkBoxOptionsGuiRaiseMainWindow, opts2::RAISE_MAIN_WINDOW);
+  toFlags(data.flags2, ui->checkBoxOptionsUnitFuelOther, opts2::UNIT_FUEL_SHOW_OTHER);
+  toFlags(data.flags2, ui->checkBoxOptionsUnitTrueCourse, opts2::UNIT_TRUE_COURSE);
+  toFlags(data.flags, ui->checkBoxOptionsGuiCenterRoute, opts::GUI_CENTER_ROUTE);
+  toFlags(data.flags, ui->checkBoxOptionsGuiAddDeparture, opts::GUI_ADD_DEPARTURE);
+  toFlags(data.flags, ui->checkBoxOptionsGuiAvoidOverwrite, opts::GUI_AVOID_OVERWRITE_FLIGHTPLAN);
+  toFlags(data.flags, ui->checkBoxOptionsGuiOverrideLocale, opts::GUI_OVERRIDE_LOCALE);
+  toFlags(data.flags, ui->checkBoxOptionsMapEmptyAirports, opts::MAP_EMPTY_AIRPORTS);
+  toFlags(data.flags, ui->checkBoxOptionsRouteEastWestRule, opts::ROUTE_ALTITUDE_RULE);
+  toFlags(data.flagsWeather, ui->checkBoxOptionsWeatherInfoAsn, optsw::WEATHER_INFO_ACTIVESKY);
+  toFlags(data.flagsWeather, ui->checkBoxOptionsWeatherInfoNoaa, optsw::WEATHER_INFO_NOAA);
+  toFlags(data.flagsWeather, ui->checkBoxOptionsWeatherInfoVatsim, optsw::WEATHER_INFO_VATSIM);
+  toFlags(data.flagsWeather, ui->checkBoxOptionsWeatherInfoIvao, optsw::WEATHER_INFO_IVAO);
+  toFlags(data.flagsWeather, ui->checkBoxOptionsWeatherInfoFs, optsw::WEATHER_INFO_FS);
+  toFlags(data.flagsWeather, ui->checkBoxOptionsWeatherTooltipAsn, optsw::WEATHER_TOOLTIP_ACTIVESKY);
+  toFlags(data.flagsWeather, ui->checkBoxOptionsWeatherTooltipNoaa, optsw::WEATHER_TOOLTIP_NOAA);
+  toFlags(data.flagsWeather, ui->checkBoxOptionsWeatherTooltipVatsim, optsw::WEATHER_TOOLTIP_VATSIM);
+  toFlags(data.flagsWeather, ui->checkBoxOptionsWeatherTooltipIvao, optsw::WEATHER_TOOLTIP_IVAO);
+  toFlags(data.flagsWeather, ui->checkBoxOptionsWeatherTooltipFs, optsw::WEATHER_TOOLTIP_FS);
+  toFlags(data.flags, ui->checkBoxOptionsSimUpdatesConstant, opts::SIM_UPDATE_MAP_CONSTANTLY);
 
-  toFlags2(ui->checkBoxOptionsMapZoomAvoidBlurred, opts2::MAP_AVOID_BLURRED_MAP);
-  toFlags2(ui->checkBoxOptionsMapUndock, opts2::MAP_ALLOW_UNDOCK);
-  toFlags2(ui->checkBoxOptionsGuiHighDpi, opts2::HIGH_DPI_DISPLAY_SUPPORT);
-  toFlags2(ui->checkBoxOptionsGuiToolbarSize, opts2::OVERRIDE_TOOLBAR_SIZE);
-  toFlags(ui->checkBoxOptionsFreetype, opts::GUI_FREETYPE_FONT_ENGINE);
+  toFlags(data.flags2, ui->checkBoxOptionsMapZoomAvoidBlurred, opts2::MAP_AVOID_BLURRED_MAP);
+  toFlags(data.flags2, ui->checkBoxOptionsMapUndock, opts2::MAP_ALLOW_UNDOCK);
+  toFlags(data.flags2, ui->checkBoxOptionsGuiHighDpi, opts2::HIGH_DPI_DISPLAY_SUPPORT);
+  toFlags(data.flags2, ui->checkBoxOptionsGuiToolbarSize, opts2::OVERRIDE_TOOLBAR_SIZE);
+  toFlags(data.flags, ui->checkBoxOptionsFreetype, opts::GUI_FREETYPE_FONT_ENGINE);
 
-  toFlags(ui->radioButtonCacheUseOffineElevation, opts::CACHE_USE_OFFLINE_ELEVATION);
-  toFlags(ui->radioButtonCacheUseOnlineElevation, opts::CACHE_USE_ONLINE_ELEVATION);
+  toFlags(data.flags, ui->radioButtonCacheUseOffineElevation, opts::CACHE_USE_OFFLINE_ELEVATION);
+  toFlags(data.flags, ui->radioButtonCacheUseOnlineElevation, opts::CACHE_USE_ONLINE_ELEVATION);
 
-  toFlags2(ui->checkBoxOptionsMapEmptyAirports3D, opts2::MAP_EMPTY_AIRPORTS_3D);
+  toFlags(data.flags2, ui->checkBoxOptionsMapEmptyAirports3D, opts2::MAP_EMPTY_AIRPORTS_3D);
+  toFlags(data.flags2, ui->checkBoxOptionsMapAirportText, opts2::MAP_AIRPORT_TEXT_BACKGROUND);
+  toFlags(data.flags2, ui->checkBoxOptionsMapAirportAddon, opts2::MAP_AIRPORT_HIGHLIGHT_ADDON);
+  toFlags(data.flags2, ui->checkBoxOptionsMapNavaidText, opts2::MAP_NAVAID_TEXT_BACKGROUND);
+  toFlags(data.flags2, ui->checkBoxOptionsMapUserpointText, opts2::MAP_USERPOINT_TEXT_BACKGROUND);
+  toFlags(data.flags2, ui->checkBoxOptionsMapAirwayText, opts2::MAP_AIRWAY_TEXT_BACKGROUND);
+  toFlags(data.flags2, ui->checkBoxOptionsMapFlightplanText, opts2::MAP_ROUTE_TEXT_BACKGROUND);
+  toFlags(data.flags2, ui->checkBoxOptionsMapUserAircraftText, opts2::MAP_USER_TEXT_BACKGROUND);
+  toFlags(data.flags2, ui->checkBoxOptionsMapAiAircraftText, opts2::MAP_AI_TEXT_BACKGROUND);
 
-  toFlags2(ui->checkBoxOptionsMapAirportText, opts2::MAP_AIRPORT_TEXT_BACKGROUND);
-  toFlags2(ui->checkBoxOptionsMapAirportAddon, opts2::MAP_AIRPORT_HIGHLIGHT_ADDON);
-  toFlags2(ui->checkBoxOptionsMapNavaidText, opts2::MAP_NAVAID_TEXT_BACKGROUND);
-  toFlags2(ui->checkBoxOptionsMapUserpointText, opts2::MAP_USERPOINT_TEXT_BACKGROUND);
-  toFlags2(ui->checkBoxOptionsMapAirwayText, opts2::MAP_AIRWAY_TEXT_BACKGROUND);
-  toFlags2(ui->checkBoxOptionsMapFlightplanText, opts2::MAP_ROUTE_TEXT_BACKGROUND);
-  toFlags2(ui->checkBoxOptionsMapUserAircraftText, opts2::MAP_USER_TEXT_BACKGROUND);
-  toFlags2(ui->checkBoxOptionsMapAiAircraftText, opts2::MAP_AI_TEXT_BACKGROUND);
-  toFlags(ui->checkBoxOptionsMapAiAircraftHideGround, opts::MAP_AI_HIDE_GROUND);
-  toFlags(ui->checkBoxOptionsMapAirspaceNoMultZ, opts::MAP_AIRSPACE_NO_MULT_Z);
-  toFlags2(ui->checkBoxOptionsMapHighlightTransparent, opts2::MAP_HIGHLIGHT_TRANSPARENT);
-  toFlags(ui->checkBoxOptionsDisplayTrailGradient, opts::MAP_TRAIL_GRADIENT);
+  toFlags(data.flags, ui->checkBoxOptionsMapAiAircraftHideGround, opts::MAP_AI_HIDE_GROUND);
+  toFlags(data.flags, ui->checkBoxOptionsMapAirspaceNoMultZ, opts::MAP_AIRSPACE_NO_MULT_Z);
+  toFlags(data.flags2, ui->checkBoxOptionsMapHighlightTransparent, opts2::MAP_HIGHLIGHT_TRANSPARENT);
+  toFlags(data.flags, ui->checkBoxOptionsDisplayTrailGradient, opts::MAP_TRAIL_GRADIENT);
 
-  toFlags2(ui->checkBoxOptionsMapFlightplanDimPassed, opts2::MAP_ROUTE_DIM_PASSED);
-  toFlags2(ui->checkBoxOptionsMapFlightplanHighlightActive, opts2::MAP_ROUTE_HIGHLIGHT_ACTIVE);
-  toFlags2(ui->checkBoxOptionsMapFlightplanTransparent, opts2::MAP_ROUTE_TRANSPARENT);
-  toFlags2(ui->checkBoxOptionsSimDoNotFollowScroll, opts2::ROUTE_NO_FOLLOW_ON_MOVE);
-  toFlags2(ui->checkBoxOptionsSimCenterLeg, opts2::ROUTE_AUTOZOOM);
-  toFlags2(ui->checkBoxOptionsSimCenterLegTable, opts2::ROUTE_CENTER_ACTIVE_LEG);
-  toFlags2(ui->checkBoxOptionsSimClearSelection, opts2::ROUTE_CLEAR_SELECTION);
-  toFlags2(ui->checkBoxOptionsSimHighlightActiveTable, opts2::ROUTE_HIGHLIGHT_ACTIVE_TABLE);
+  toFlags(data.flags2, ui->checkBoxOptionsMapFlightplanDimPassed, opts2::MAP_ROUTE_DIM_PASSED);
+  toFlags(data.flags2, ui->checkBoxOptionsMapFlightplanHighlightActive, opts2::MAP_ROUTE_HIGHLIGHT_ACTIVE);
+  toFlags(data.flags2, ui->checkBoxOptionsMapFlightplanTransparent, opts2::MAP_ROUTE_TRANSPARENT);
+  toFlags(data.flags2, ui->checkBoxOptionsSimDoNotFollowScroll, opts2::ROUTE_NO_FOLLOW_ON_MOVE);
+  toFlags(data.flags2, ui->checkBoxOptionsSimCenterLeg, opts2::ROUTE_AUTOZOOM);
+  toFlags(data.flags2, ui->checkBoxOptionsSimCenterLegTable, opts2::ROUTE_CENTER_ACTIVE_LEG);
+  toFlags(data.flags2, ui->checkBoxOptionsSimClearSelection, opts2::ROUTE_CLEAR_SELECTION);
+  toFlags(data.flags2, ui->checkBoxOptionsSimHighlightActiveTable, opts2::ROUTE_HIGHLIGHT_ACTIVE_TABLE);
 
-  toFlags2(ui->checkBoxDisplayOnlineNameLookup, opts2::ONLINE_AIRSPACE_BY_NAME);
-  toFlags2(ui->checkBoxDisplayOnlineFileLookup, opts2::ONLINE_AIRSPACE_BY_FILE);
+  toFlags(data.flags2, ui->checkBoxDisplayOnlineNameLookup, opts2::ONLINE_AIRSPACE_BY_NAME);
+  toFlags(data.flags2, ui->checkBoxDisplayOnlineFileLookup, opts2::ONLINE_AIRSPACE_BY_FILE);
 
-  toFlags(ui->checkBoxOptionsOnlineRemoveShadow, opts::ONLINE_REMOVE_SHADOW);
-  toFlags(ui->checkBoxOptionsGuiTooltipsAll, opts::ENABLE_TOOLTIPS_ALL);
-  toFlags(ui->checkBoxOptionsGuiTooltipsMenu, opts::ENABLE_TOOLTIPS_MENU);
+  toFlags(data.flags, ui->checkBoxOptionsOnlineRemoveShadow, opts::ONLINE_REMOVE_SHADOW);
+  toFlags(data.flags, ui->checkBoxOptionsGuiTooltipsAll, opts::ENABLE_TOOLTIPS_ALL);
+  toFlags(data.flags, ui->checkBoxOptionsGuiTooltipsMenu, opts::ENABLE_TOOLTIPS_MENU);
+
+  toFlags(data.displayOnlineFlags, ui->checkBoxDisplayOnlineClearanceRange, opts::DISPLAY_ONLINE_CLEARANCE);
+  toFlags(data.displayOnlineFlags, ui->checkBoxDisplayOnlineAreaRange, opts::DISPLAY_ONLINE_AREA);
+  toFlags(data.displayOnlineFlags, ui->checkBoxDisplayOnlineApproachRange, opts::DISPLAY_ONLINE_APPROACH);
+  toFlags(data.displayOnlineFlags, ui->checkBoxDisplayOnlineDepartureRange, opts::DISPLAY_ONLINE_DEPARTURE);
+  toFlags(data.displayOnlineFlags, ui->checkBoxDisplayOnlineFirRange, opts::DISPLAY_ONLINE_FIR);
+  toFlags(data.displayOnlineFlags, ui->checkBoxDisplayOnlineObserverRange, opts::DISPLAY_ONLINE_OBSERVER);
+  toFlags(data.displayOnlineFlags, ui->checkBoxDisplayOnlineGroundRange, opts::DISPLAY_ONLINE_GROUND);
+  toFlags(data.displayOnlineFlags, ui->checkBoxDisplayOnlineTowerRange, opts::DISPLAY_ONLINE_TOWER);
 
   data.flightplanPattern = ui->lineEditOptionsRouteFilename->text();
   data.cacheOfflineElevationPath = ui->lineEditCacheOfflineDataPath->text();
@@ -1958,8 +1957,8 @@ void OptionsDialog::widgetsToOptionData()
   data.displayClickOptions.setFlag(optsd::CLICK_AIRSPACE, ui->checkBoxOptionsMapClickAirspace->isChecked());
   data.displayClickOptions.setFlag(optsd::CLICK_FLIGHTPLAN, ui->checkBoxOptionsMapClickFlightplan->isChecked());
 
-  toFlags2(ui->checkBoxOptionsSimZoomOnLanding, opts2::ROUTE_ZOOM_LANDING);
-  toFlags2(ui->checkBoxOptionsSimZoomOnTakeoff, opts2::ROUTE_ZOOM_TAKEOFF);
+  toFlags(data.flags2, ui->checkBoxOptionsSimZoomOnLanding, opts2::ROUTE_ZOOM_LANDING);
+  toFlags(data.flags2, ui->checkBoxOptionsSimZoomOnTakeoff, opts2::ROUTE_ZOOM_TAKEOFF);
   data.weatherXplane11Path = atools::nativeCleanPath(ui->lineEditOptionsWeatherXplanePath->text());
   data.weatherXplane12Path = atools::nativeCleanPath(ui->lineEditOptionsWeatherXplane12Path->text());
   data.weatherActiveSkyPath = atools::nativeCleanPath(ui->lineEditOptionsWeatherAsnPath->text());
@@ -2106,14 +2105,14 @@ void OptionsDialog::widgetsToOptionData()
   data.onlineCustomReload = ui->spinBoxOptionsOnlineUpdate->value();
   data.onlineFormat = static_cast<opts::OnlineFormat>(ui->comboBoxOptionsOnlineFormat->currentIndex());
 
-  data.displayOnlineClearance = displayOnlineRangeToData(ui->spinBoxDisplayOnlineClearance, ui->checkBoxDisplayOnlineClearanceRange);
-  data.displayOnlineArea = displayOnlineRangeToData(ui->spinBoxDisplayOnlineArea, ui->checkBoxDisplayOnlineAreaRange);
-  data.displayOnlineApproach = displayOnlineRangeToData(ui->spinBoxDisplayOnlineApproach, ui->checkBoxDisplayOnlineApproachRange);
-  data.displayOnlineDeparture = displayOnlineRangeToData(ui->spinBoxDisplayOnlineDeparture, ui->checkBoxDisplayOnlineDepartureRange);
-  data.displayOnlineFir = displayOnlineRangeToData(ui->spinBoxDisplayOnlineFir, ui->checkBoxDisplayOnlineFirRange);
-  data.displayOnlineObserver = displayOnlineRangeToData(ui->spinBoxDisplayOnlineObserver, ui->checkBoxDisplayOnlineObserverRange);
-  data.displayOnlineGround = displayOnlineRangeToData(ui->spinBoxDisplayOnlineGround, ui->checkBoxDisplayOnlineGroundRange);
-  data.displayOnlineTower = displayOnlineRangeToData(ui->spinBoxDisplayOnlineTower, ui->checkBoxDisplayOnlineTowerRange);
+  data.displayOnlineClearance = ui->spinBoxDisplayOnlineClearance->value();
+  data.displayOnlineArea = ui->spinBoxDisplayOnlineArea->value();
+  data.displayOnlineApproach = ui->spinBoxDisplayOnlineApproach->value();
+  data.displayOnlineDeparture = ui->spinBoxDisplayOnlineDeparture->value();
+  data.displayOnlineFir = ui->spinBoxDisplayOnlineFir->value();
+  data.displayOnlineObserver = ui->spinBoxDisplayOnlineObserver->value();
+  data.displayOnlineGround = ui->spinBoxDisplayOnlineGround->value();
+  data.displayOnlineTower = ui->spinBoxDisplayOnlineTower->value();
 
   data.webPort = ui->spinBoxOptionsWebPort->value();
   data.webDocumentRoot = QDir::fromNativeSeparators(ui->lineEditOptionsWebDocroot->text());
@@ -2125,17 +2124,6 @@ void OptionsDialog::widgetsToOptionData()
   widgetToMapThemeKeys(data);
 
   data.valid = true;
-}
-
-int OptionsDialog::displayOnlineRangeToData(const QSpinBox *spinBox, const QCheckBox *checkButton)
-{
-  return checkButton->isChecked() ? -1 : spinBox->value();
-}
-
-void OptionsDialog::displayOnlineRangeFromData(QSpinBox *spinBox, QCheckBox *checkButton, int value)
-{
-  spinBox->setValue(value);
-  checkButton->setChecked(value == -1);
 }
 
 void OptionsDialog::initLanguage()
@@ -2178,84 +2166,93 @@ void OptionsDialog::optionDataToWidgets(const OptionData& data)
   displayOptDataToWidget(data.displayOptionsAirspace, displayOptItemIndexAirspace);
 
   // Copy from check and radio buttons
-  fromFlags(data, ui->checkBoxOptionsStartupLoadKml, opts::STARTUP_LOAD_KML);
-  fromFlags(data, ui->checkBoxOptionsStartupLoadMapSettings, opts::STARTUP_LOAD_MAP_SETTINGS);
-  fromFlags(data, ui->checkBoxOptionsStartupLoadRoute, opts::STARTUP_LOAD_ROUTE);
-  fromFlags(data, ui->checkBoxOptionsStartupLoadPerf, opts::STARTUP_LOAD_PERF);
-  fromFlags(data, ui->checkBoxOptionsStartupLoadLayout, opts::STARTUP_LOAD_LAYOUT);
-  fromFlags(data, ui->checkBoxOptionsStartupShowSplash, opts::STARTUP_SHOW_SPLASH);
-  fromFlags(data, ui->checkBoxOptionsStartupLoadTrail, opts::STARTUP_LOAD_TRAIL);
-  fromFlags(data, ui->checkBoxOptionsStartupLoadInfoContent, opts::STARTUP_LOAD_INFO);
-  fromFlags(data, ui->checkBoxOptionsStartupLoadSearch, opts::STARTUP_LOAD_SEARCH);
-  fromFlags(data, ui->radioButtonOptionsStartupShowHome, opts::STARTUP_SHOW_HOME);
-  fromFlags(data, ui->radioButtonOptionsStartupShowLast, opts::STARTUP_SHOW_LAST);
-  fromFlags(data, ui->radioButtonOptionsStartupShowFlightplan, opts::STARTUP_SHOW_ROUTE);
-  fromFlags(data, ui->checkBoxOptionsGuiCenterKml, opts::GUI_CENTER_KML);
-  fromFlags(data, ui->checkBoxOptionsGuiWheel, opts::GUI_REVERSE_WHEEL);
-  fromFlags2(data, ui->checkBoxOptionsGuiRaiseWindows, opts2::RAISE_WINDOWS);
-  fromFlags2(data, ui->checkBoxOptionsGuiRaiseDockWindows, opts2::RAISE_DOCK_WINDOWS);
-  fromFlags2(data, ui->checkBoxOptionsGuiRaiseMainWindow, opts2::RAISE_MAIN_WINDOW);
-  fromFlags2(data, ui->checkBoxOptionsUnitFuelOther, opts2::UNIT_FUEL_SHOW_OTHER);
-  fromFlags2(data, ui->checkBoxOptionsUnitTrueCourse, opts2::UNIT_TRUE_COURSE);
-  fromFlags(data, ui->checkBoxOptionsGuiCenterRoute, opts::GUI_CENTER_ROUTE);
-  fromFlags(data, ui->checkBoxOptionsGuiAddDeparture, opts::GUI_ADD_DEPARTURE);
-  fromFlags(data, ui->checkBoxOptionsGuiAvoidOverwrite, opts::GUI_AVOID_OVERWRITE_FLIGHTPLAN);
-  fromFlags(data, ui->checkBoxOptionsGuiOverrideLocale, opts::GUI_OVERRIDE_LOCALE);
-  fromFlags(data, ui->checkBoxOptionsMapEmptyAirports, opts::MAP_EMPTY_AIRPORTS);
-  fromFlags(data, ui->checkBoxOptionsRouteEastWestRule, opts::ROUTE_ALTITUDE_RULE);
-  fromFlagsWeather(data, ui->checkBoxOptionsWeatherInfoAsn, optsw::WEATHER_INFO_ACTIVESKY);
-  fromFlagsWeather(data, ui->checkBoxOptionsWeatherInfoNoaa, optsw::WEATHER_INFO_NOAA);
-  fromFlagsWeather(data, ui->checkBoxOptionsWeatherInfoVatsim, optsw::WEATHER_INFO_VATSIM);
-  fromFlagsWeather(data, ui->checkBoxOptionsWeatherInfoIvao, optsw::WEATHER_INFO_IVAO);
-  fromFlagsWeather(data, ui->checkBoxOptionsWeatherInfoFs, optsw::WEATHER_INFO_FS);
-  fromFlagsWeather(data, ui->checkBoxOptionsWeatherTooltipAsn, optsw::WEATHER_TOOLTIP_ACTIVESKY);
-  fromFlagsWeather(data, ui->checkBoxOptionsWeatherTooltipNoaa, optsw::WEATHER_TOOLTIP_NOAA);
-  fromFlagsWeather(data, ui->checkBoxOptionsWeatherTooltipVatsim, optsw::WEATHER_TOOLTIP_VATSIM);
-  fromFlagsWeather(data, ui->checkBoxOptionsWeatherTooltipIvao, optsw::WEATHER_TOOLTIP_IVAO);
-  fromFlagsWeather(data, ui->checkBoxOptionsWeatherTooltipFs, optsw::WEATHER_TOOLTIP_FS);
-  fromFlags(data, ui->checkBoxOptionsSimUpdatesConstant, opts::SIM_UPDATE_MAP_CONSTANTLY);
+  fromFlags(data.flags, ui->checkBoxOptionsStartupLoadKml, opts::STARTUP_LOAD_KML);
+  fromFlags(data.flags, ui->checkBoxOptionsStartupLoadMapSettings, opts::STARTUP_LOAD_MAP_SETTINGS);
+  fromFlags(data.flags, ui->checkBoxOptionsStartupLoadRoute, opts::STARTUP_LOAD_ROUTE);
+  fromFlags(data.flags, ui->checkBoxOptionsStartupLoadPerf, opts::STARTUP_LOAD_PERF);
+  fromFlags(data.flags, ui->checkBoxOptionsStartupLoadLayout, opts::STARTUP_LOAD_LAYOUT);
+  fromFlags(data.flags, ui->checkBoxOptionsStartupShowSplash, opts::STARTUP_SHOW_SPLASH);
+  fromFlags(data.flags, ui->checkBoxOptionsStartupLoadTrail, opts::STARTUP_LOAD_TRAIL);
+  fromFlags(data.flags, ui->checkBoxOptionsStartupLoadInfoContent, opts::STARTUP_LOAD_INFO);
+  fromFlags(data.flags, ui->checkBoxOptionsStartupLoadSearch, opts::STARTUP_LOAD_SEARCH);
+  fromFlags(data.flags, ui->radioButtonOptionsStartupShowHome, opts::STARTUP_SHOW_HOME);
+  fromFlags(data.flags, ui->radioButtonOptionsStartupShowLast, opts::STARTUP_SHOW_LAST);
+  fromFlags(data.flags, ui->radioButtonOptionsStartupShowFlightplan, opts::STARTUP_SHOW_ROUTE);
+  fromFlags(data.flags, ui->checkBoxOptionsGuiCenterKml, opts::GUI_CENTER_KML);
+  fromFlags(data.flags, ui->checkBoxOptionsGuiWheel, opts::GUI_REVERSE_WHEEL);
+  fromFlags(data.flags2, ui->checkBoxOptionsGuiRaiseWindows, opts2::RAISE_WINDOWS);
+  fromFlags(data.flags2, ui->checkBoxOptionsGuiRaiseDockWindows, opts2::RAISE_DOCK_WINDOWS);
+  fromFlags(data.flags2, ui->checkBoxOptionsGuiRaiseMainWindow, opts2::RAISE_MAIN_WINDOW);
+  fromFlags(data.flags2, ui->checkBoxOptionsUnitFuelOther, opts2::UNIT_FUEL_SHOW_OTHER);
+  fromFlags(data.flags2, ui->checkBoxOptionsUnitTrueCourse, opts2::UNIT_TRUE_COURSE);
+  fromFlags(data.flags, ui->checkBoxOptionsGuiCenterRoute, opts::GUI_CENTER_ROUTE);
+  fromFlags(data.flags, ui->checkBoxOptionsGuiAddDeparture, opts::GUI_ADD_DEPARTURE);
+  fromFlags(data.flags, ui->checkBoxOptionsGuiAvoidOverwrite, opts::GUI_AVOID_OVERWRITE_FLIGHTPLAN);
+  fromFlags(data.flags, ui->checkBoxOptionsGuiOverrideLocale, opts::GUI_OVERRIDE_LOCALE);
+  fromFlags(data.flags, ui->checkBoxOptionsMapEmptyAirports, opts::MAP_EMPTY_AIRPORTS);
+  fromFlags(data.flags, ui->checkBoxOptionsRouteEastWestRule, opts::ROUTE_ALTITUDE_RULE);
+  fromFlags(data.flagsWeather, ui->checkBoxOptionsWeatherInfoAsn, optsw::WEATHER_INFO_ACTIVESKY);
+  fromFlags(data.flagsWeather, ui->checkBoxOptionsWeatherInfoNoaa, optsw::WEATHER_INFO_NOAA);
+  fromFlags(data.flagsWeather, ui->checkBoxOptionsWeatherInfoVatsim, optsw::WEATHER_INFO_VATSIM);
+  fromFlags(data.flagsWeather, ui->checkBoxOptionsWeatherInfoIvao, optsw::WEATHER_INFO_IVAO);
+  fromFlags(data.flagsWeather, ui->checkBoxOptionsWeatherInfoFs, optsw::WEATHER_INFO_FS);
+  fromFlags(data.flagsWeather, ui->checkBoxOptionsWeatherTooltipAsn, optsw::WEATHER_TOOLTIP_ACTIVESKY);
+  fromFlags(data.flagsWeather, ui->checkBoxOptionsWeatherTooltipNoaa, optsw::WEATHER_TOOLTIP_NOAA);
+  fromFlags(data.flagsWeather, ui->checkBoxOptionsWeatherTooltipVatsim, optsw::WEATHER_TOOLTIP_VATSIM);
+  fromFlags(data.flagsWeather, ui->checkBoxOptionsWeatherTooltipIvao, optsw::WEATHER_TOOLTIP_IVAO);
+  fromFlags(data.flagsWeather, ui->checkBoxOptionsWeatherTooltipFs, optsw::WEATHER_TOOLTIP_FS);
+  fromFlags(data.flags, ui->checkBoxOptionsSimUpdatesConstant, opts::SIM_UPDATE_MAP_CONSTANTLY);
 
-  fromFlags2(data, ui->checkBoxOptionsMapZoomAvoidBlurred, opts2::MAP_AVOID_BLURRED_MAP);
-  fromFlags2(data, ui->checkBoxOptionsMapUndock, opts2::MAP_ALLOW_UNDOCK);
-  fromFlags2(data, ui->checkBoxOptionsGuiHighDpi, opts2::HIGH_DPI_DISPLAY_SUPPORT);
-  fromFlags2(data, ui->checkBoxOptionsGuiToolbarSize, opts2::OVERRIDE_TOOLBAR_SIZE);
-  fromFlags(data, ui->checkBoxOptionsFreetype, opts::GUI_FREETYPE_FONT_ENGINE);
+  fromFlags(data.flags2, ui->checkBoxOptionsMapZoomAvoidBlurred, opts2::MAP_AVOID_BLURRED_MAP);
+  fromFlags(data.flags2, ui->checkBoxOptionsMapUndock, opts2::MAP_ALLOW_UNDOCK);
+  fromFlags(data.flags2, ui->checkBoxOptionsGuiHighDpi, opts2::HIGH_DPI_DISPLAY_SUPPORT);
+  fromFlags(data.flags2, ui->checkBoxOptionsGuiToolbarSize, opts2::OVERRIDE_TOOLBAR_SIZE);
+  fromFlags(data.flags, ui->checkBoxOptionsFreetype, opts::GUI_FREETYPE_FONT_ENGINE);
 
-  fromFlags(data, ui->radioButtonCacheUseOffineElevation, opts::CACHE_USE_OFFLINE_ELEVATION);
-  fromFlags(data, ui->radioButtonCacheUseOnlineElevation, opts::CACHE_USE_ONLINE_ELEVATION);
+  fromFlags(data.flags, ui->radioButtonCacheUseOffineElevation, opts::CACHE_USE_OFFLINE_ELEVATION);
+  fromFlags(data.flags, ui->radioButtonCacheUseOnlineElevation, opts::CACHE_USE_ONLINE_ELEVATION);
 
-  fromFlags2(data, ui->checkBoxOptionsMapEmptyAirports3D, opts2::MAP_EMPTY_AIRPORTS_3D);
+  fromFlags(data.flags2, ui->checkBoxOptionsMapEmptyAirports3D, opts2::MAP_EMPTY_AIRPORTS_3D);
 
-  fromFlags2(data, ui->checkBoxOptionsMapAirportText, opts2::MAP_AIRPORT_TEXT_BACKGROUND);
-  fromFlags2(data, ui->checkBoxOptionsMapAirportAddon, opts2::MAP_AIRPORT_HIGHLIGHT_ADDON);
-  fromFlags2(data, ui->checkBoxOptionsMapNavaidText, opts2::MAP_NAVAID_TEXT_BACKGROUND);
-  fromFlags2(data, ui->checkBoxOptionsMapUserpointText, opts2::MAP_USERPOINT_TEXT_BACKGROUND);
-  fromFlags2(data, ui->checkBoxOptionsMapAirwayText, opts2::MAP_AIRWAY_TEXT_BACKGROUND);
-  fromFlags2(data, ui->checkBoxOptionsMapUserAircraftText, opts2::MAP_USER_TEXT_BACKGROUND);
-  fromFlags2(data, ui->checkBoxOptionsMapAiAircraftText, opts2::MAP_AI_TEXT_BACKGROUND);
-  fromFlags(data, ui->checkBoxOptionsMapAiAircraftHideGround, opts::MAP_AI_HIDE_GROUND);
-  fromFlags(data, ui->checkBoxOptionsMapAirspaceNoMultZ, opts::MAP_AIRSPACE_NO_MULT_Z);
-  fromFlags(data, ui->checkBoxOptionsDisplayTrailGradient, opts::MAP_TRAIL_GRADIENT);
+  fromFlags(data.flags2, ui->checkBoxOptionsMapAirportText, opts2::MAP_AIRPORT_TEXT_BACKGROUND);
+  fromFlags(data.flags2, ui->checkBoxOptionsMapAirportAddon, opts2::MAP_AIRPORT_HIGHLIGHT_ADDON);
+  fromFlags(data.flags2, ui->checkBoxOptionsMapNavaidText, opts2::MAP_NAVAID_TEXT_BACKGROUND);
+  fromFlags(data.flags2, ui->checkBoxOptionsMapUserpointText, opts2::MAP_USERPOINT_TEXT_BACKGROUND);
+  fromFlags(data.flags2, ui->checkBoxOptionsMapAirwayText, opts2::MAP_AIRWAY_TEXT_BACKGROUND);
+  fromFlags(data.flags2, ui->checkBoxOptionsMapUserAircraftText, opts2::MAP_USER_TEXT_BACKGROUND);
+  fromFlags(data.flags2, ui->checkBoxOptionsMapAiAircraftText, opts2::MAP_AI_TEXT_BACKGROUND);
+  fromFlags(data.flags, ui->checkBoxOptionsMapAiAircraftHideGround, opts::MAP_AI_HIDE_GROUND);
+  fromFlags(data.flags, ui->checkBoxOptionsMapAirspaceNoMultZ, opts::MAP_AIRSPACE_NO_MULT_Z);
+  fromFlags(data.flags, ui->checkBoxOptionsDisplayTrailGradient, opts::MAP_TRAIL_GRADIENT);
 
-  fromFlags2(data, ui->checkBoxOptionsMapHighlightTransparent, opts2::MAP_HIGHLIGHT_TRANSPARENT);
-  fromFlags2(data, ui->checkBoxOptionsMapFlightplanText, opts2::MAP_ROUTE_TEXT_BACKGROUND);
-  fromFlags2(data, ui->checkBoxOptionsMapFlightplanDimPassed, opts2::MAP_ROUTE_DIM_PASSED);
-  fromFlags2(data, ui->checkBoxOptionsMapFlightplanHighlightActive, opts2::MAP_ROUTE_HIGHLIGHT_ACTIVE);
-  fromFlags2(data, ui->checkBoxOptionsMapFlightplanTransparent, opts2::MAP_ROUTE_TRANSPARENT);
-  fromFlags2(data, ui->checkBoxOptionsSimDoNotFollowScroll, opts2::ROUTE_NO_FOLLOW_ON_MOVE);
-  fromFlags2(data, ui->checkBoxOptionsSimZoomOnLanding, opts2::ROUTE_ZOOM_LANDING);
-  fromFlags2(data, ui->checkBoxOptionsSimZoomOnTakeoff, opts2::ROUTE_ZOOM_TAKEOFF);
-  fromFlags2(data, ui->checkBoxOptionsSimCenterLeg, opts2::ROUTE_AUTOZOOM);
-  fromFlags2(data, ui->checkBoxOptionsSimCenterLegTable, opts2::ROUTE_CENTER_ACTIVE_LEG);
-  fromFlags2(data, ui->checkBoxOptionsSimClearSelection, opts2::ROUTE_CLEAR_SELECTION);
-  fromFlags2(data, ui->checkBoxOptionsSimHighlightActiveTable, opts2::ROUTE_HIGHLIGHT_ACTIVE_TABLE);
+  fromFlags(data.flags2, ui->checkBoxOptionsMapHighlightTransparent, opts2::MAP_HIGHLIGHT_TRANSPARENT);
+  fromFlags(data.flags2, ui->checkBoxOptionsMapFlightplanText, opts2::MAP_ROUTE_TEXT_BACKGROUND);
+  fromFlags(data.flags2, ui->checkBoxOptionsMapFlightplanDimPassed, opts2::MAP_ROUTE_DIM_PASSED);
+  fromFlags(data.flags2, ui->checkBoxOptionsMapFlightplanHighlightActive, opts2::MAP_ROUTE_HIGHLIGHT_ACTIVE);
+  fromFlags(data.flags2, ui->checkBoxOptionsMapFlightplanTransparent, opts2::MAP_ROUTE_TRANSPARENT);
+  fromFlags(data.flags2, ui->checkBoxOptionsSimDoNotFollowScroll, opts2::ROUTE_NO_FOLLOW_ON_MOVE);
+  fromFlags(data.flags2, ui->checkBoxOptionsSimZoomOnLanding, opts2::ROUTE_ZOOM_LANDING);
+  fromFlags(data.flags2, ui->checkBoxOptionsSimZoomOnTakeoff, opts2::ROUTE_ZOOM_TAKEOFF);
+  fromFlags(data.flags2, ui->checkBoxOptionsSimCenterLeg, opts2::ROUTE_AUTOZOOM);
+  fromFlags(data.flags2, ui->checkBoxOptionsSimCenterLegTable, opts2::ROUTE_CENTER_ACTIVE_LEG);
+  fromFlags(data.flags2, ui->checkBoxOptionsSimClearSelection, opts2::ROUTE_CLEAR_SELECTION);
+  fromFlags(data.flags2, ui->checkBoxOptionsSimHighlightActiveTable, opts2::ROUTE_HIGHLIGHT_ACTIVE_TABLE);
 
-  fromFlags2(data, ui->checkBoxDisplayOnlineNameLookup, opts2::ONLINE_AIRSPACE_BY_NAME);
-  fromFlags2(data, ui->checkBoxDisplayOnlineFileLookup, opts2::ONLINE_AIRSPACE_BY_FILE);
+  fromFlags(data.flags2, ui->checkBoxDisplayOnlineNameLookup, opts2::ONLINE_AIRSPACE_BY_NAME);
+  fromFlags(data.flags2, ui->checkBoxDisplayOnlineFileLookup, opts2::ONLINE_AIRSPACE_BY_FILE);
 
-  fromFlags(data, ui->checkBoxOptionsOnlineRemoveShadow, opts::ONLINE_REMOVE_SHADOW);
-  fromFlags(data, ui->checkBoxOptionsGuiTooltipsAll, opts::ENABLE_TOOLTIPS_ALL);
-  fromFlags(data, ui->checkBoxOptionsGuiTooltipsMenu, opts::ENABLE_TOOLTIPS_MENU);
+  fromFlags(data.flags, ui->checkBoxOptionsOnlineRemoveShadow, opts::ONLINE_REMOVE_SHADOW);
+  fromFlags(data.flags, ui->checkBoxOptionsGuiTooltipsAll, opts::ENABLE_TOOLTIPS_ALL);
+  fromFlags(data.flags, ui->checkBoxOptionsGuiTooltipsMenu, opts::ENABLE_TOOLTIPS_MENU);
+
+  fromFlags(data.displayOnlineFlags, ui->checkBoxDisplayOnlineClearanceRange, opts::DISPLAY_ONLINE_CLEARANCE);
+  fromFlags(data.displayOnlineFlags, ui->checkBoxDisplayOnlineAreaRange, opts::DISPLAY_ONLINE_AREA);
+  fromFlags(data.displayOnlineFlags, ui->checkBoxDisplayOnlineApproachRange, opts::DISPLAY_ONLINE_APPROACH);
+  fromFlags(data.displayOnlineFlags, ui->checkBoxDisplayOnlineDepartureRange, opts::DISPLAY_ONLINE_DEPARTURE);
+  fromFlags(data.displayOnlineFlags, ui->checkBoxDisplayOnlineFirRange, opts::DISPLAY_ONLINE_FIR);
+  fromFlags(data.displayOnlineFlags, ui->checkBoxDisplayOnlineObserverRange, opts::DISPLAY_ONLINE_OBSERVER);
+  fromFlags(data.displayOnlineFlags, ui->checkBoxDisplayOnlineGroundRange, opts::DISPLAY_ONLINE_GROUND);
+  fromFlags(data.displayOnlineFlags, ui->checkBoxDisplayOnlineTowerRange, opts::DISPLAY_ONLINE_TOWER);
 
   ui->lineEditOptionsRouteFilename->setText(data.flightplanPattern);
   ui->lineEditCacheOfflineDataPath->setText(data.cacheOfflineElevationPath);
@@ -2423,14 +2420,14 @@ void OptionsDialog::optionDataToWidgets(const OptionData& data)
   ui->spinBoxOptionsOnlineUpdate->setValue(data.onlineCustomReload);
   ui->comboBoxOptionsOnlineFormat->setCurrentIndex(data.onlineFormat);
 
-  displayOnlineRangeFromData(ui->spinBoxDisplayOnlineClearance, ui->checkBoxDisplayOnlineClearanceRange, data.displayOnlineClearance);
-  displayOnlineRangeFromData(ui->spinBoxDisplayOnlineArea, ui->checkBoxDisplayOnlineAreaRange, data.displayOnlineArea);
-  displayOnlineRangeFromData(ui->spinBoxDisplayOnlineApproach, ui->checkBoxDisplayOnlineApproachRange, data.displayOnlineApproach);
-  displayOnlineRangeFromData(ui->spinBoxDisplayOnlineDeparture, ui->checkBoxDisplayOnlineDepartureRange, data.displayOnlineDeparture);
-  displayOnlineRangeFromData(ui->spinBoxDisplayOnlineFir, ui->checkBoxDisplayOnlineFirRange, data.displayOnlineFir);
-  displayOnlineRangeFromData(ui->spinBoxDisplayOnlineObserver, ui->checkBoxDisplayOnlineObserverRange, data.displayOnlineObserver);
-  displayOnlineRangeFromData(ui->spinBoxDisplayOnlineGround, ui->checkBoxDisplayOnlineGroundRange, data.displayOnlineGround);
-  displayOnlineRangeFromData(ui->spinBoxDisplayOnlineTower, ui->checkBoxDisplayOnlineTowerRange, data.displayOnlineTower);
+  ui->spinBoxDisplayOnlineClearance->setValue(data.displayOnlineClearance);
+  ui->spinBoxDisplayOnlineArea->setValue(data.displayOnlineArea);
+  ui->spinBoxDisplayOnlineApproach->setValue(data.displayOnlineApproach);
+  ui->spinBoxDisplayOnlineDeparture->setValue(data.displayOnlineDeparture);
+  ui->spinBoxDisplayOnlineFir->setValue(data.displayOnlineFir);
+  ui->spinBoxDisplayOnlineObserver->setValue(data.displayOnlineObserver);
+  ui->spinBoxDisplayOnlineGround->setValue(data.displayOnlineGround);
+  ui->spinBoxDisplayOnlineTower->setValue(data.displayOnlineTower);
 
   ui->spinBoxOptionsWebPort->setValue(data.webPort);
   ui->checkBoxOptionsWebEncrypted->setChecked(data.webEncrypted);
@@ -2504,75 +2501,6 @@ void OptionsDialog::mapThemeKeysToWidget(const OptionData& data)
     }
   }
   ui->tableWidgetOptionsMapKeys->resizeColumnsToContents();
-}
-
-void OptionsDialog::toFlagsWeather(QCheckBox *checkBox, optsw::FlagsWeather flag)
-{
-  if(checkBox->isChecked())
-    OptionData::instanceInternal().flagsWeather |= flag;
-  else
-    OptionData::instanceInternal().flagsWeather &= ~flag;
-}
-
-void OptionsDialog::fromFlagsWeather(const OptionData& data, QCheckBox *checkBox, optsw::FlagsWeather flag)
-{
-  checkBox->setChecked(data.flagsWeather & flag);
-}
-
-/* Add flag from checkbox to OptionData flags */
-void OptionsDialog::toFlags(QCheckBox *checkBox, opts::Flags flag)
-{
-  if(checkBox->isChecked())
-    OptionData::instanceInternal().flags |= flag;
-  else
-    OptionData::instanceInternal().flags &= ~flag;
-}
-
-/* Add flag from radio button to OptionData flags */
-void OptionsDialog::toFlags(QRadioButton *radioButton, opts::Flags flag)
-{
-  if(radioButton->isChecked())
-    OptionData::instanceInternal().flags |= flag;
-  else
-    OptionData::instanceInternal().flags &= ~flag;
-}
-
-void OptionsDialog::fromFlags(const OptionData& data, QCheckBox *checkBox, opts::Flags flag)
-{
-  checkBox->setChecked(data.flags & flag);
-}
-
-void OptionsDialog::fromFlags(const OptionData& data, QRadioButton *radioButton, opts::Flags flag)
-{
-  radioButton->setChecked(data.flags & flag);
-}
-
-/* Add flag from checkbox to OptionData flags */
-void OptionsDialog::toFlags2(QCheckBox *checkBox, opts2::Flags2 flag)
-{
-  if(checkBox->isChecked())
-    OptionData::instanceInternal().flags2 |= flag;
-  else
-    OptionData::instanceInternal().flags2 &= ~flag;
-}
-
-/* Add flag from radio button to OptionData flags */
-void OptionsDialog::toFlags2(QRadioButton *radioButton, opts2::Flags2 flag)
-{
-  if(radioButton->isChecked())
-    OptionData::instanceInternal().flags2 |= flag;
-  else
-    OptionData::instanceInternal().flags2 &= ~flag;
-}
-
-void OptionsDialog::fromFlags2(const OptionData& data, QCheckBox *checkBox, opts2::Flags2 flag)
-{
-  checkBox->setChecked(data.flags2 & flag);
-}
-
-void OptionsDialog::fromFlags2(const OptionData& data, QRadioButton *radioButton, opts2::Flags2 flag)
-{
-  radioButton->setChecked(data.flags2 & flag);
 }
 
 void OptionsDialog::mapThemeDirSelectClicked()

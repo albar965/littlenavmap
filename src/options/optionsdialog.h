@@ -121,19 +121,6 @@ private:
   void widgetToMapThemeKeys(OptionData& data);
   void mapThemeKeysToWidget(const OptionData& data);
 
-  void toFlags(QCheckBox *checkBox, opts::Flags flag);
-  void toFlags(QRadioButton *radioButton, opts::Flags flag);
-  void fromFlags(const OptionData& data, QCheckBox *checkBox, opts::Flags flag);
-  void fromFlags(const OptionData& data, QRadioButton *radioButton, opts::Flags flag);
-
-  void toFlags2(QCheckBox *checkBox, opts2::Flags2 flag);
-  void toFlags2(QRadioButton *radioButton, opts2::Flags2 flag);
-  void fromFlags2(const OptionData& data, QCheckBox *checkBox, opts2::Flags2 flag);
-  void fromFlags2(const OptionData& data, QRadioButton *radioButton, opts2::Flags2 flag);
-
-  void toFlagsWeather(QCheckBox *checkBox, optsw::FlagsWeather flag);
-  void fromFlagsWeather(const OptionData& data, QCheckBox *checkBox, optsw::FlagsWeather flag);
-
   void selectActiveSkyPathClicked();
   void selectXplane11PathClicked();
   void selectXplane12PathClicked();
@@ -190,7 +177,6 @@ private:
 
   void trailColorClicked();
   void mapMeasurementColorClicked();
-  void onlineDisplayRangeClicked();
   void eastWestRuleClicked();
 
   // Add items to the tree widget and to the  displayOptItemIndex
@@ -223,8 +209,6 @@ private:
   void mapThemeDirSelectClicked();
   void checkUpdateClicked();
   void mapEmptyAirportsClicked(bool state);
-  int displayOnlineRangeToData(const QSpinBox *spinBox, const QCheckBox *checkButton);
-  void displayOnlineRangeFromData(QSpinBox *spinBox, QCheckBox *checkButton, int value);
   void updateNavOptions();
 
   /* Online networks */
