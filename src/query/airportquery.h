@@ -110,7 +110,7 @@ public:
   /* Try to get airport by ident, icao, local or position as a fallback if pos is valid,
    * Need to get ident, icao and pos as copies to avoid overwriting. Uses cache. */
   const map::MapAirport getAirportFuzzy(const map::MapAirport& airport);
-  void getAirportFuzzy(map::MapAirport& airport, const map::MapAirport airportCopy);
+  void getAirportFuzzy(map::MapAirport& airport, const map::MapAirport airportParam);
 
   /* Get display ident (ICAO, IATA, FAA or local) based on internal ident */
   QString getDisplayIdent(const QString& ident);

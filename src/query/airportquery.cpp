@@ -316,27 +316,27 @@ const MapAirport AirportQuery::getAirportFuzzy(const map::MapAirport& airport)
   return ap;
 }
 
-void AirportQuery::getAirportFuzzy(map::MapAirport& airport, const map::MapAirport airportCopy)
+void AirportQuery::getAirportFuzzy(map::MapAirport& airport, const map::MapAirport airportParam)
 {
-  if(!airportCopy.isValid())
+  if(!airportParam.isValid())
     return;
 
-  map::MapAirport *apCached = airportFuzzyIdCache.object(airportCopy.id);
+  map::MapAirport *airportCached = airportFuzzyIdCache.object(airportParam.id);
 
-  if(apCached != nullptr)
+  if(airportCached != nullptr)
     // Found in cache - copy from pointer
-    airport = *apCached;
+    airport = *airportCached;
   else
   {
     QList<map::MapAirport> airports;
 
     // Create new airport for caching
-    apCached = new map::MapAirport;
+    airportCached = new map::MapAirport;
 
     // airportFrom has to be copied to avoid overwriting
     // Try exact ident match first
     map::MapAirport airportByIdent;
-    getAirportByIdent(airportByIdent, airportCopy.ident);
+    getAirportByIdent(airportByIdent, airportParam.ident);
 
     // Try other codes if given as second attempt
     bool foundByIdent = false;
@@ -348,32 +348,32 @@ void AirportQuery::getAirportFuzzy(map::MapAirport& airport, const map::MapAirpo
 
     // Sort by distance and remove too far away in case an ident was assigned to a new airport
     // Allow more distance if result is unique
-    maptools::sortByDistance(airports, airportCopy.position);
-    maptools::removeByDistance(airports, airportCopy.position,
+    maptools::sortByDistance(airports, airportParam.position);
+    maptools::removeByDistance(airports, airportParam.position,
                                foundByIdent ? MAX_FUZZY_AIRPORT_DISTANCE_METER_UNIQUE : MAX_FUZZY_AIRPORT_DISTANCE_METER);
 
     if(airports.isEmpty())
     {
-      map::AirportQueryFlag flags = map::AP_QUERY_ICAO | map::AP_QUERY_FAA | map::AP_QUERY_LOCAL;
+      map::AirportQueryFlag flags = map::AP_QUERY_IDENT | map::AP_QUERY_ICAO | map::AP_QUERY_FAA | map::AP_QUERY_LOCAL;
 
       // Try ICAO first on all fields (ICAO, not IATA, FAA and local)
-      if(airportCopy.icao != airportCopy.ident)
-        getAirportsByOfficialIdent(airports, airportCopy.icao, nullptr, map::INVALID_DISTANCE_VALUE, flags);
+      if(airportParam.icao != airportParam.ident)
+        getAirportsByOfficialIdent(airports, airportParam.icao, nullptr, map::INVALID_DISTANCE_VALUE, flags);
 
       // Try IATA next on all fields including IATA
-      getAirportsByOfficialIdent(airports, airportCopy.iata, nullptr, map::INVALID_DISTANCE_VALUE, flags | map::AP_QUERY_IATA);
+      getAirportsByOfficialIdent(airports, airportParam.iata, nullptr, map::INVALID_DISTANCE_VALUE, flags | map::AP_QUERY_IATA);
 
       // Try FAA next on all fields except IATA
-      getAirportsByOfficialIdent(airports, airportCopy.faa, nullptr, map::INVALID_DISTANCE_VALUE, flags);
+      getAirportsByOfficialIdent(airports, airportParam.faa, nullptr, map::INVALID_DISTANCE_VALUE, flags);
 
       // Try local next on all fields except IATA
-      getAirportsByOfficialIdent(airports, airportCopy.local, nullptr, map::INVALID_DISTANCE_VALUE, flags);
+      getAirportsByOfficialIdent(airports, airportParam.local, nullptr, map::INVALID_DISTANCE_VALUE, flags);
     }
 
     // Fall back to coordinate based search and look for centers within certain distance
-    if(airports.isEmpty() && airportCopy.position.isValid())
+    if(airports.isEmpty() && airportParam.position.isValid())
     {
-      ageo::Rect rect(airportCopy.position, ageo::nmToMeter(10.f), true /* fast */);
+      ageo::Rect rect(airportParam.position, ageo::nmToMeter(10.f), true /* fast */);
 
       query::fetchObjectsForRect(rect, airportByPosQuery, [ =, &airports](atools::sql::SqlQuery *query) -> void {
         map::MapAirport airportByCoord;
@@ -388,23 +388,23 @@ void AirportQuery::getAirportFuzzy(map::MapAirport& airport, const map::MapAirpo
     if(!airports.isEmpty())
     {
       // Sort by distance and remove too far away
-      maptools::sortByDistance(airports, airportCopy.position);
-      maptools::removeByDistance(airports, airportCopy.position, foundByIdent ?
+      maptools::sortByDistance(airports, airportParam.position);
+      maptools::removeByDistance(airports, airportParam.position, foundByIdent ?
                                  MAX_FUZZY_AIRPORT_DISTANCE_METER_UNIQUE : MAX_FUZZY_AIRPORT_DISTANCE_METER);
 
       if(!airports.isEmpty())
         // Assign to cache object
-        *apCached = airports.constFirst();
+        *airportCached = airports.constFirst();
     } // else assign empty airport to indicate that is it not available
 
     // Can be valid or empty
-    airport = *apCached;
+    airport = *airportCached;
 
     // Also insert negative entries for not found
-    airportFuzzyIdCache.insert(airportCopy.id, apCached);
+    airportFuzzyIdCache.insert(airportParam.id, airportCached);
 
 #ifdef DEBUG_INFORMATION
-    qDebug() << Q_FUNC_INFO << "Found" << *apCached << "as replacement for" << airportCopy;
+    qDebug() << Q_FUNC_INFO << "Found" << *airportCached << "as replacement for" << airportParam;
 #endif
   }
 }
