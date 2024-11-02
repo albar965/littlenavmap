@@ -8,7 +8,7 @@ This text is partially Markdown, so the formatting is sometimes strange.
 
 ## Notes
 
-**This is a stable release of Little Navmap that fixes a few issues.**
+**This is a stable release of Little Navmap that fixes smaller issues.**
 
 **Reload the scenery library database to get fixes for airports and procedures.**
 
@@ -40,11 +40,11 @@ A big thank you to all who reported bugs and issues!
   back to user defined value if an online center does not provide a visual range value. Fixed values
   reset back to default when applying options.
 * Fixed several issues in X-Plane database when assigning airports to procedures. As a result
-  procedures could not be loaded from flight plans and airport procedures menu was wrongly disabled.
+  procedures could not be loaded from flight plans and the airport procedures menu was wrongly disabled.
   Examples for X-Plane 12: No procedures were found for Pokhara Intl (VNPR) and Qualicum Beach (AT4)
   since their X-Plane ident does not match official airport codes like ICAO, FAA or local.
-  Note that X-Plane may still refuse to load flight plans created using such airports.
-  Plans using AT4 will be loaded without issues but not plans using VNPR.
+  Note that X-Plane 11 may still refuse to load flight plans created using such airports while there
+  are normally no issues using X-Plane 12.
 * Wrong procedure centering when clicking in procedure search corrected. Now depends on visibility
   of the missed approach.
 * Improved export of X-Plane FMS files if airport has several idents. Flight plans using
