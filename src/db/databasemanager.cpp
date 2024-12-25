@@ -1532,6 +1532,14 @@ bool DatabaseManager::checkValidBasePaths() const
 {
   using atools::gui::Dialog;
 
+#if defined(SIMCONNECT_BUILD_WIN32)
+  if(selectedFsType == atools::fs::FsPaths::MSFS_2024)
+  {
+    Dialog::warning(databaseDialog, tr("You cannot load the MSFS 2024 scenery library using Little Navmap 32-bit."));
+    return false;
+  }
+#endif
+
   bool configValid = true;
   QStringList errors;
   if(!NavDatabase::isBasePathValid(databaseDialog->getBasePath(), errors, selectedFsType))
