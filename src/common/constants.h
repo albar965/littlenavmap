@@ -505,13 +505,9 @@ const QLatin1String MAPSTYLE_CONFIG(":/littlenavmap/resources/config/little_navm
 // Only one can be opened at a time
 #if defined(WINARCH64)
 const QLatin1String SIMCONNECT_DLL_NAME("SimConnect_msfs_2020.dll");
-#else
-const QLatin1String SIMCONNECT_DLL_NAME("SimConnect.dll");
-#endif
-
-#if defined(WINARCH64)
 const QLatin1String SIMCONNECT_LOADER_DLL_NAME("SimConnect_msfs_2024.dll");
 #else
+const QLatin1String SIMCONNECT_DLL_NAME("SimConnect.dll");
 const QLatin1String SIMCONNECT_LOADER_DLL_NAME("SimConnect.dll");
 #endif
 
