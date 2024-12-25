@@ -1875,12 +1875,7 @@ map::MapAirway RouteStringReader::extractAirway(const QList<map::MapAirway>& air
 
 void RouteStringReader::removeEmptyResults(QList<ParseEntry>& resultList)
 {
-  auto it = std::remove_if(resultList.begin(), resultList.end(),
-                           [](const ParseEntry& type) -> bool
-  {
+  resultList.erase(std::remove_if(resultList.begin(), resultList.end(), [](const ParseEntry& type) -> bool {
     return type.result.isEmpty(ROUTE_TYPES_AND_AIRWAY);
-  });
-
-  if(it != resultList.end())
-    resultList.erase(it, resultList.end());
+  }), resultList.end());
 }

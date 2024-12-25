@@ -464,16 +464,14 @@ void MapResult::removeNoRouteIndex()
 
 void MapResult::clearNavdataAirspaces()
 {
-  airspaces.erase(std::remove_if(airspaces.begin(), airspaces.end(), [](const map::MapAirspace& airspace) -> bool
-    {
+  airspaces.erase(std::remove_if(airspaces.begin(), airspaces.end(), [](const map::MapAirspace& airspace) -> bool {
       return !airspace.isOnline();
     }), airspaces.end());
 }
 
 void MapResult::clearOnlineAirspaces()
 {
-  airspaces.erase(std::remove_if(airspaces.begin(), airspaces.end(), [](const map::MapAirspace& airspace) -> bool
-    {
+  airspaces.erase(std::remove_if(airspaces.begin(), airspaces.end(), [](const map::MapAirspace& airspace) -> bool {
       return airspace.isOnline();
     }), airspaces.end());
 }
@@ -1118,13 +1116,10 @@ MapResultIndex& MapResultIndex::remove(const atools::geo::Pos& pos, float maxDis
 
   float maxMeter = atools::geo::nmToMeter(maxDistanceNm);
 
-  auto it = std::remove_if(begin(), end(), [maxMeter, &pos](const MapBase *obj) -> bool
-    {
+  erase(std::remove_if(begin(), end(), [maxMeter, &pos](const MapBase *obj) -> bool {
       return obj->position.distanceMeterTo(pos) > maxMeter;
-    });
+    }), end());
 
-  if(it != end())
-    erase(it, end());
   return *this;
 }
 

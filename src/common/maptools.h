@@ -119,13 +119,9 @@ void removeByDistance(QList<TYPE>& list, const atools::geo::Pos& pos, int maxDis
   if(list.isEmpty() || !pos.isValid() || !(maxDistanceMeter < map::INVALID_INDEX_VALUE))
     return;
 
-  auto it = std::remove_if(list.begin(), list.end(), [maxDistanceMeter, &pos](const TYPE& type) -> bool {
+  list.erase(std::remove_if(list.begin(), list.end(), [maxDistanceMeter, &pos](const TYPE& type) -> bool {
       return type.getPosition().distanceMeterTo(pos) > maxDistanceMeter;
-    });
-
-  if(it != list.end())
-    list.erase(it, list.end());
-
+    }), list.end());
 }
 
 /* Erase all elements that are farther away than maxDistanceMeter */
@@ -135,13 +131,9 @@ void removeByDistance(QList<TYPE>& list, const atools::geo::Pos& pos, float maxD
   if(list.isEmpty() || !pos.isValid() || !(maxDistanceMeter < map::INVALID_DISTANCE_VALUE))
     return;
 
-  auto it = std::remove_if(list.begin(), list.end(), [maxDistanceMeter, &pos](const TYPE& type) -> bool {
+  list.erase(std::remove_if(list.begin(), list.end(), [maxDistanceMeter, &pos](const TYPE& type) -> bool {
       return type.getPosition().distanceMeterTo(pos) > maxDistanceMeter;
-    });
-
-  if(it != list.end())
-    list.erase(it, list.end());
-
+    }), list.end());
 }
 
 /* Sorts elements by distance to a point */
@@ -151,15 +143,11 @@ void removeByDirection(QList<TYPE>& list, const atools::geo::Pos& pos, int lastD
   if(list.isEmpty() || !pos.isValid())
     return;
 
-  auto it = std::remove_if(list.begin(), list.end(), [lastDirection, &pos](const TYPE& type) -> bool {
+  list.erase(std::remove_if(list.begin(), list.end(), [lastDirection, &pos](const TYPE& type) -> bool {
       int crs = 360 + atools::geo::normalizeCourse(type.getPosition().angleTo(pos));
       int crs2 = 360 + atools::geo::normalizeCourse(lastDirection);
       return atools::absInt(crs - crs2) > 120;
-    });
-
-  if(it != list.end())
-    list.erase(it, list.end());
-
+    }), list.end());
 }
 
 /* Sorts elements by distance to a point */
@@ -307,12 +295,9 @@ TYPE byId(const QList<TYPE>& list, int id)
 template<typename TYPE>
 void removeById(QList<TYPE>& list, int id)
 {
-  auto it = std::remove_if(list.begin(), list.end(), [id](const TYPE& p) -> bool {
+  list.erase(std::remove_if(list.begin(), list.end(), [id](const TYPE& p) -> bool {
       return p.getId() == id;
-    });
-
-  if(it != list.end())
-    list.erase(it, list.end());
+    }), list.end());
 }
 
 template<typename TYPE>

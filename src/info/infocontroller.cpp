@@ -900,12 +900,10 @@ void InfoController::showInformationInternal(map::MapResult result, bool showWin
 
     // Delete all airspaces that were removed from the database inbetween
     QList<map::MapAirspace> onlineAirspaces = result.getOnlineAirspaces();
-    QList<map::MapAirspace>::iterator it = std::remove_if(onlineAirspaces.begin(), onlineAirspaces.end(),
-                                                          [this](const map::MapAirspace& airspace) -> bool {
+    onlineAirspaces.erase(std::remove_if(onlineAirspaces.begin(), onlineAirspaces.end(),
+                                         [this](const map::MapAirspace& airspace) -> bool {
       return !queries->getAirspaceQueries()->hasAirspaceById({airspace.id, map::AIRSPACE_SRC_ONLINE});
-    });
-    if(it != onlineAirspaces.end())
-      onlineAirspaces.erase(it, onlineAirspaces.end());
+    }), onlineAirspaces.end());
 
     html.tableAtts({
       {"width", "100%"}
