@@ -6,7 +6,6 @@
 *.cache/
 *.d
 *.db
-*.dll
 *.exe
 *.lib
 *.o
