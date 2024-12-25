@@ -20,7 +20,6 @@
 
 #include "connectdialog.h"
 #include "fs/sc/simconnecttypes.h"
-#include "geo/pos.h"
 #include "util/timedcache.h"
 #include "util/version.h"
 
@@ -34,6 +33,14 @@ class MainWindow;
 class QMessageBox;
 
 namespace atools {
+
+namespace geo {
+class Pos;
+}
+
+namespace win {
+class ActivationContext;
+}
 namespace fs {
 
 namespace weather {
@@ -110,6 +117,19 @@ public:
   /* Print the size of all container classes to detect overflow or memory leak conditions */
   void debugDumpContainerSizes() const;
 
+  /* Get global activation context to load and unload DLLs */
+  atools::win::ActivationContext *getActivationContext() const
+  {
+    return activationContext;
+  }
+
+  /* Test SimConnect connection by simply trying to open it */
+  bool checkSimConnect() const;
+
+  /* Closes SimConnect connection to avoid conflicts with other DLL */
+  void pauseSimConnect();
+  void resumeSimConnect();
+
 signals:
   /* Emitted when new data was received from the server (Little Navconnect), SimConnect or X-Plane.
    * can be aircraft position or weather update */
@@ -160,7 +180,7 @@ private:
   void showTerminalError();
   void showXpconnectVersionWarning(const QString& xpconnectVersion);
 
-  bool silent = false, manualDisconnect = false;
+  bool silent = false, manualDisconnect = false, simconnectPaused = false;
   ConnectDialog *connectDialog = nullptr;
 
   /* Does automatic reconnect. Reads SimConnect or Xpconnect. */
@@ -169,6 +189,8 @@ private:
   atools::fs::sc::XpConnectHandler *xpConnectHandler = nullptr;
 
   atools::fs::sc::SimConnectData *simConnectDataNet = nullptr; /* Have to keep it since it is read multiple times from socket */
+
+  atools::win::ActivationContext *activationContext = nullptr;
 
   QTcpSocket *socket = nullptr;
   /* Used to trigger reconnects on socket base connections */

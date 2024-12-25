@@ -577,6 +577,7 @@ QString DatabaseManager::getSimulatorFilesPathBest(const FsPaths::SimulatorTypeV
     case atools::fs::FsPaths::P3D_V5:
     case atools::fs::FsPaths::P3D_V6:
     case atools::fs::FsPaths::MSFS:
+    case atools::fs::FsPaths::MSFS_2024:
       // Ignore user changes of path for now
       path = FsPaths::getFilesPath(type);
       break;
@@ -614,6 +615,7 @@ QString DatabaseManager::getSimulatorBasePathBest(const FsPaths::SimulatorTypeVe
     case atools::fs::FsPaths::XPLANE_11:
     case atools::fs::FsPaths::XPLANE_12:
     case atools::fs::FsPaths::MSFS:
+    case atools::fs::FsPaths::MSFS_2024:
       return FsPaths::getBasePath(type);
 
     case atools::fs::FsPaths::DFD:
@@ -1234,6 +1236,7 @@ void DatabaseManager::assignSceneryCorrection()
         break;
 
       case navdb::CORRECT_MSFS_NO_NAVIGRAPH:
+      case navdb::CORRECT_MSFS_2024:
       case navdb::CORRECT_XP_CYCLE_NAV_SMALLER:
       case navdb::CORRECT_FSX_P3D_OUTDATED:
         // Assign value to simulator too to remember value
@@ -1241,6 +1244,7 @@ void DatabaseManager::assignSceneryCorrection()
         break;
 
       case navdb::CORRECT_EMPTY:
+      case navdb::CORRECT_EMPTY_CHANGE:
         // Assign value to simulator too to remember value
         simulators[currentFsType].navDatabaseStatus = navDatabaseStatus = navdb::ALL;
         break;
@@ -1263,7 +1267,14 @@ navdb::Correction DatabaseManager::getSceneryCorrection(const navdb::Status& nav
 
   if(metaSim.hasData())
   {
-    if(simType == atools::fs::FsPaths::MSFS)
+    if(simType == atools::fs::FsPaths::MSFS_2024)
+    {
+      // ======================================================================================================
+      // Correct scenery mode for MSFS 2024 ==============================================
+      if(navDbStatus == navdb::MIXED || navDbStatus == navdb::ALL)
+        correction = navdb::CORRECT_MSFS_2024;
+    }
+    else if(simType == atools::fs::FsPaths::MSFS)
     {
       // ======================================================================================================
       // Correct scenery mode for MSFS ==============================================
@@ -1311,8 +1322,12 @@ navdb::Correction DatabaseManager::getSceneryCorrection(const navdb::Status& nav
       correction = navdb::CORRECT_ALL;
   }
   else
-    correction = navdb::CORRECT_EMPTY;
-
+  {
+    if(navDbStatus == navdb::ALL)
+      correction = navdb::CORRECT_EMPTY;
+    else
+      correction = navdb::CORRECT_EMPTY_CHANGE;
+  }
   return correction;
 }
 
@@ -1332,12 +1347,14 @@ void DatabaseManager::correctSceneryOptions(navdb::Correction& correction)
 
     case navdb::CORRECT_FSX_P3D_OUTDATED:
     case navdb::CORRECT_MSFS_NO_NAVIGRAPH:
+    case navdb::CORRECT_MSFS_2024:
     case navdb::CORRECT_XP_CYCLE_NAV_SMALLER:
       navDbActionOff->setChecked(true);
       switchNavFromMainMenu();
       break;
 
     case navdb::CORRECT_EMPTY:
+    case navdb::CORRECT_EMPTY_CHANGE:
       navDbActionAll->setChecked(true);
       switchNavFromMainMenu();
       break;
@@ -1362,16 +1379,32 @@ void DatabaseManager::checkSceneryOptions(bool manualCheck)
       if(manualCheck)
         atools::gui::Dialog::information(mainWindow,
                                          navDbActionAuto->isChecked() ?
-                                         tr("Scenery library mode is correct. Mode is set automatically.") :
-                                         tr("No issues found. Scenery library mode is correct."));
+                                         tr("<p>Scenery library mode is correct. Mode is set automatically by Little Navmap.</p>") :
+                                         tr("<p>No issues found. Scenery library mode is correct and "
+                                              "set manually in menu \"Scenery Library\".</p>"));
       break;
 
     case navdb::CORRECT_EMPTY:
       if(manualCheck)
         atools::gui::Dialog::information(mainWindow,
-                                         tr("Showing Navigraph airports since simulator database is empty.\n\n"
-                                            "You can load the simulator scenery library database in the menu\n"
-                                            "\"Scenery Library\" -> \"Load Scenery Library\"."));
+                                         tr("<p>Simulator database is empty.</p>"
+                                              "<p>Showing Navigraph airports and navaids.</p>"
+                                                "<p style='white-space:pre'>You can load the simulator scenery library "
+                                                  "database in the menu</br>"
+                                                  "\"Scenery Library\" -> \"Load Scenery Library\".</p>"));
+      break;
+
+    case navdb::CORRECT_EMPTY_CHANGE:
+      if(manualCheck)
+        atools::gui::Dialog::information(mainWindow,
+                                         tr("<p>Simulator database is empty.</p>"
+                                              "<p style='white-space:pre'>You can load the simulator scenery library "
+                                                "database in the menu<br/>"
+                                                "\"Scenery Library\" -> \"Load Scenery Library\".</p>"
+                                                "<p style='white-space:pre'>Alternatively, you can switch to Navigraph only data in the menu<br/>"
+                                                "\"Scenery Library\" -> \"Navigraph\" -> \"Use Navigraph for all Features\".</p>"
+
+                                            ));
       break;
 
     case navdb::CORRECT_MSFS_HAS_NAVIGRAPH:
@@ -1394,6 +1427,19 @@ void DatabaseManager::checkSceneryOptions(bool manualCheck)
                                     tr("<p style='white-space:pre'>You are using MSFS without the Navigraph navdata update.</p>"
                                          "<p>You should use the scenery library mode \"Do not use Navigraph Database\" "
                                            "to avoid issues with airport information in Little Navmap.</p>"
+                                           "<p style='white-space:pre'>You can change the mode manually in the menu<br/>"
+                                           "\"Scenery Library\" -> \"Navigraph\" -> \"Do not use Navigraph Database\".</p>"
+                                           "<p>Correct the scenery library mode now?</p>", "Sync texts with menu items"),
+                                    manualCheck ? QString() : tr("Do not &show this dialog again and always correct mode after loading."),
+                                    QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes, QMessageBox::Yes) == QMessageBox::Yes)
+        correctSceneryOptions(correction);
+      break;
+
+    case navdb::CORRECT_MSFS_2024:
+      if(dialog->showQuestionMsgBox(manualCheck ? QString() : lnm::ACTIONS_SHOW_CORRECT_MSFS_NO_NAVIGRAPH,
+                                    tr("<p style='white-space:pre'>You are using MSFS 2024.</p>"
+                                         "<p>You should use the scenery library mode \"Do not use Navigraph Database\" "
+                                           "to avoid issues with airport information or navigation data mismatches in Little Navmap.</p>"
                                            "<p style='white-space:pre'>You can change the mode manually in the menu<br/>"
                                            "\"Scenery Library\" -> \"Navigraph\" -> \"Do not use Navigraph Database\".</p>"
                                            "<p>Correct the scenery library mode now?</p>", "Sync texts with menu items"),
@@ -1502,6 +1548,15 @@ bool DatabaseManager::checkValidBasePaths() const
                          "The path \"Community\" is always needed for add-ons.</p>%3").
                       arg(databaseDialog->getBasePath()).arg(errors.join("<br/>")).arg(resetPath));
     }
+    else if(selectedFsType == atools::fs::FsPaths::MSFS_2024)
+    {
+      // Check if base path is valid - all simulators ========================================================
+      Dialog::warning(databaseDialog,
+                      tr("<p style='white-space:pre'>Cannot read base path \"%1\".<br/><br/>"
+                         "Reason:<br/>"
+                         "%2<br/></p>%3").
+                      arg(databaseDialog->getBasePath()).arg(errors.join("<br/>")).arg(resetPath));
+    }
     else
     {
       Dialog::warning(databaseDialog,
@@ -1530,7 +1585,7 @@ bool DatabaseManager::checkValidBasePaths() const
         configValid = false;
       }
     }
-    else if(selectedFsType != atools::fs::FsPaths::MSFS)
+    else if(selectedFsType != atools::fs::FsPaths::MSFS && selectedFsType != atools::fs::FsPaths::MSFS_2024)
     {
       // Check scenery.cfg for FSX and P3D ========================================================
       QString sceneryCfgCodec = (selectedFsType == atools::fs::FsPaths::P3D_V4 || selectedFsType == atools::fs::FsPaths::P3D_V5 ||
@@ -1545,12 +1600,38 @@ bool DatabaseManager::checkValidBasePaths() const
         configValid = false;
       }
     }
+
+    if(selectedFsType == FsPaths::MSFS_2024)
+    {
+      dialog->showInfoMsgBox(lnm::ACTIONS_SHOW_DATABASE_SIMCONNECT,
+                             tr("Note that the connection to the flight simulator has to be paused while "
+                                "loading airports from the simulator.\n"
+                                "You will not see user aircraft updates while loading."),
+                             tr("Do not &show this dialog again."));
+
+      bool connectionValid = NavApp::checkSimConnect();
+      while(!connectionValid)
+      {
+        QMessageBox::StandardButton retval = dialog->information(
+          tr("Cannot connect to Microsoft Flight Simulator 2024, which is required for Little Navmap to load airports.\n\n"
+             "Start Microsoft Flight Simulator 2024, "
+             "wait until the user interface of the simulator is visible and then press \"Ok\" to continue."),
+          QMessageBox::Ok | QMessageBox::Cancel);
+
+        if(retval == QMessageBox::Ok)
+          connectionValid = NavApp::checkSimConnect();
+        else if(retval == QMessageBox::Cancel)
+        {
+          configValid = false;
+          break;
+        }
+      }
+    }
   } // if(configValid)
+
   return configValid;
 }
 
-/* Shows scenery database loading dialog.
- * @return true if execution was successfull. false if it was cancelled */
 void DatabaseManager::loadSceneryInternal()
 {
   qDebug() << Q_FUNC_INFO;

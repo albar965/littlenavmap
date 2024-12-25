@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -32,7 +32,9 @@ void SimulatorTypeMap::fillDefault(navdb::Status navDatabaseStatus)
 
 atools::fs::FsPaths::SimulatorType SimulatorTypeMap::getBest() const
 {
-  if(contains(FsPaths::MSFS) && value(FsPaths::MSFS).hasDatabase)
+  if(contains(FsPaths::MSFS_2024) && value(FsPaths::MSFS_2024).hasDatabase)
+    return FsPaths::MSFS_2024;
+  else if(contains(FsPaths::MSFS) && value(FsPaths::MSFS).hasDatabase)
     return FsPaths::MSFS;
   else if(contains(FsPaths::XPLANE_12) && value(FsPaths::XPLANE_12).hasDatabase)
     return FsPaths::XPLANE_12;
@@ -56,8 +58,10 @@ atools::fs::FsPaths::SimulatorType SimulatorTypeMap::getBest() const
 
 FsPaths::SimulatorType SimulatorTypeMap::getBestInstalled() const
 {
-  return getBestInstalled({FsPaths::MSFS, FsPaths::XPLANE_12, FsPaths::XPLANE_11, FsPaths::P3D_V6, FsPaths::P3D_V5, FsPaths::P3D_V4,
-                           FsPaths::P3D_V3, FsPaths::FSX_SE, FsPaths::FSX});
+  return getBestInstalled({FsPaths::MSFS_2024, FsPaths::MSFS,
+                           FsPaths::XPLANE_12, FsPaths::XPLANE_11,
+                           FsPaths::P3D_V6, FsPaths::P3D_V5, FsPaths::P3D_V4, FsPaths::P3D_V3,
+                           FsPaths::FSX_SE, FsPaths::FSX});
 }
 
 FsPaths::SimulatorType SimulatorTypeMap::getBestInstalled(const FsPaths::SimulatorTypeVector& types) const

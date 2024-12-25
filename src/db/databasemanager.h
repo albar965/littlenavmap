@@ -299,6 +299,8 @@ private:
   void assignSceneryCorrection();
 
   void simulatorChangedFromComboBox(atools::fs::FsPaths::SimulatorType value);
+
+  /* Shows scenery database loading dialog. */
   void loadSceneryInternal();
 
   /* Called by signal DatabaseLoader::loadingFinished() */

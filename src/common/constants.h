@@ -113,6 +113,7 @@ const QLatin1String ACTIONS_SHOW_TRAIL_POINTS("Actions/TrailPoints");
 
 const QLatin1String ACTIONS_SHOW_DATABASE_HINTS("Actions/DatabaseLoadShowHints");
 const QLatin1String ACTIONS_SHOW_DATABASE_OLD("Actions/DatabaseOld");
+const QLatin1String ACTIONS_SHOW_DATABASE_SIMCONNECT("Actions/DatabaseSimConnect");
 const QLatin1String ACTIONS_SHOW_CORRECT_MSFS_HAS_NAVIGRAPH("Actions/DatabaseMsfsNavigraph");
 const QLatin1String ACTIONS_SHOW_CORRECT_MSFS_NO_NAVIGRAPH("Actions/DatabaseMsfsNavigraphOff");
 const QLatin1String ACTIONS_SHOW_CORRECT_XP_CYCLE_NAV_SMALLER("Actions/DatabaseCycleMismatch");
@@ -120,6 +121,7 @@ const QLatin1String ACTIONS_SHOW_CORRECT_XP_CYCLE_NAV_EQUAL("Actions/DatabaseCyc
 const QLatin1String ACTIONS_SHOW_CORRECT_FSX_P3D_UPDATED("Actions/DatabaseFsxP3dUpdated");
 const QLatin1String ACTIONS_SHOW_CORRECT_FSX_P3D_OUTDATED("Actions/DatabaseFsxP3dOutdated");
 const QLatin1String ACTIONS_SHOW_DATABASE_BACKGROUND_HINT("Actions/DatabaseBackgroundHint");
+const QLatin1String ACTIONS_SHOW_DATABASE_MSFS2024_HINT("Actions/DatabaseMsfs2024Hint");
 const QLatin1String ACTIONS_SHOW_DATABASE_MSFS_NAVIGRAPH_ALL("Actions/DatabaseMsfsNavigraphAll");
 
 const QLatin1String ACTIONS_SHOW_SSL_WARNING_ONLINE("Actions/SslWarningOnline");
@@ -497,6 +499,21 @@ const QLatin1String ISSUEREPORT_SUFFIX("_issuereport.zip");
 
 const QLatin1String MAPSTYLE_INI_SUFFIX("_mapstyle.ini");
 const QLatin1String MAPSTYLE_CONFIG(":/littlenavmap/resources/config/little_navmap_mapstyle.ini");
+
+// The 2020 SimConnect is used to connect to MSFS 2020 and 2024 for user aircraft and environment updates
+// SimConnect from 2024 has to be used to load the airport facilities from the simulator
+// Only one can be opened at a time
+#if defined(WINARCH64)
+const QLatin1String SIMCONNECT_DLL_NAME("SimConnect_msfs_2020.dll");
+#else
+const QLatin1String SIMCONNECT_DLL_NAME("SimConnect.dll");
+#endif
+
+#if defined(WINARCH64)
+const QLatin1String SIMCONNECT_LOADER_DLL_NAME("SimConnect_msfs_2024.dll");
+#else
+const QLatin1String SIMCONNECT_LOADER_DLL_NAME("SimConnect.dll");
+#endif
 
 /*
  * Supported language for the online help system. Will be determined by presence of the file

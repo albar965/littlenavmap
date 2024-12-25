@@ -19,20 +19,21 @@
 
 #include "app/navapp.h"
 #include "common/constants.h"
-#include "fs/sc/simconnectreply.h"
 #include "fs/sc/datareaderthread.h"
+#include "fs/sc/simconnecthandler.h"
+#include "fs/sc/simconnectreply.h"
+#include "fs/sc/xpconnecthandler.h"
+#include "fs/scenery/aircraftindex.h"
+#include "fs/scenery/languagejson.h"
 #include "fs/weather/metar.h"
+#include "geo/calculations.h"
 #include "gui/dialog.h"
 #include "gui/helphandler.h"
-#include "online/onlinedatacontroller.h"
 #include "gui/mainwindow.h"
-#include "geo/calculations.h"
+#include "online/onlinedatacontroller.h"
 #include "settings/settings.h"
-#include "fs/sc/simconnecthandler.h"
-#include "fs/sc/xpconnecthandler.h"
-#include "fs/scenery/languagejson.h"
-#include "fs/scenery/aircraftindex.h"
 #include "util/version.h"
+#include "win/activationcontext.h"
 
 #include <QDataStream>
 #include <QTcpSocket>
@@ -57,6 +58,9 @@ ConnectClient::ConnectClient(MainWindow *parent)
   // VERSION_NUMBER_TODO
   minimumXpconnectVersion("1.2.0.beta")
 {
+  // Create global context to load and unload DLLs
+  activationContext = new atools::win::ActivationContext;
+
   atools::settings::Settings& settings = atools::settings::Settings::instance();
   verbose = settings.getAndStoreValue(lnm::OPTIONS_CONNECTCLIENT_DEBUG, false).toBool();
 
@@ -67,8 +71,7 @@ ConnectClient::ConnectClient(MainWindow *parent)
 
   // Create FSX/P3D handler for SimConnect
   simConnectHandler = new atools::fs::sc::SimConnectHandler(verbose);
-  simConnectHandler->loadSimConnect(QApplication::applicationDirPath() %
-                                    atools::SEP % "simconnect" % atools::SEP % "simconnect.manifest");
+  simConnectHandler->loadSimConnect(activationContext, lnm::SIMCONNECT_DLL_NAME);
 
   // Create X-Plane handler for shared memory
   xpConnectHandler = new atools::fs::sc::XpConnectHandler();
@@ -116,6 +119,8 @@ ConnectClient::~ConnectClient()
 {
   qDebug() << Q_FUNC_INFO;
 
+  simConnectHandler->close();
+  simConnectHandler->releaseSimConnect();
   flushQueuedRequestsTimer.stop();
   reconnectNetworkTimer.stop();
 
@@ -126,6 +131,7 @@ ConnectClient::~ConnectClient()
   ATOOLS_DELETE_LOG(xpConnectHandler);
   ATOOLS_DELETE_LOG(connectDialog);
   ATOOLS_DELETE_LOG(errorMessageBox);
+  ATOOLS_DELETE_LOG(activationContext);
 }
 
 void ConnectClient::flushQueuedRequests()
@@ -252,8 +258,7 @@ void ConnectClient::disconnectedFromSimulatorDirect()
   showTerminalError();
 
   // Try to reconnect if it was not unlinked by using the disconnect button
-  if(!errorState && connectDialog->isAutoConnect() &&
-     connectDialog->isAnyConnectDirect() && !manualDisconnect)
+  if(!errorState && connectDialog->isAutoConnect() && connectDialog->isAnyConnectDirect() && !manualDisconnect)
     connectInternal();
   else
     mainWindow->setConnectionStatusMessageText(tr("Disconnected"), tr("Disconnected from local flight simulator."));
@@ -322,6 +327,16 @@ void ConnectClient::postSimConnectData(atools::fs::sc::SimConnectData dataPacket
                                  languageIndex.getName(ac.getAirplaneAirline()),
                                  languageIndex.getName(ac.getAirplaneTitle()),
                                  languageIndex.getName(ac.getAirplaneModel()));
+      }
+      else
+      {
+        // No language index
+        // Clear user aircraft names from MSFS keywords
+        userAircraft.cleanAircraftNames();
+
+        // Clear AI aircraft names from MSFS keywords
+        for(atools::fs::sc::SimConnectAircraft& ac : dataPacket.getAiAircraft())
+          ac.cleanAircraftNames();
       }
 
       // Update ICAO aircraft designator from aircraft.cfg for MSFS ===================================
@@ -1050,4 +1065,54 @@ void ConnectClient::debugDumpContainerSizes() const
   qDebug() << Q_FUNC_INFO << "queuedRequests.size()" << queuedRequests.size();
   qDebug() << Q_FUNC_INFO << "queuedRequestIdents.size()" << queuedRequestIdents.size();
   qDebug() << Q_FUNC_INFO << "notAvailableStations.size()" << notAvailableStations.size();
+}
+
+bool ConnectClient::checkSimConnect() const
+{
+  if(simConnectHandler != nullptr)
+    return simConnectHandler->checkSimConnect();
+  else
+    return false;
+}
+
+void ConnectClient::pauseSimConnect()
+{
+  qDebug() << Q_FUNC_INFO;
+
+  // Disable only if active or autoconnect is on
+  if(simConnectHandler != nullptr && dataReader->isSimConnectHandler() && (reconnectNetworkTimer.isActive() || dataReader->isConnected()))
+  {
+    errorState = false;
+
+    reconnectNetworkTimer.stop();
+
+    if(dataReader->isConnected())
+      // Tell disconnectedFromSimulatorDirect not to reconnect
+      manualDisconnect = true;
+
+    dataReader->terminateThread();
+
+    // Close connection
+    simConnectHandler->pauseSimConnect();
+
+    simconnectPaused = true;
+  }
+  else
+    simconnectPaused = false;
+}
+
+void ConnectClient::resumeSimConnect()
+{
+  qDebug() << Q_FUNC_INFO;
+  if(simconnectPaused)
+  {
+    simConnectHandler->resumeSimConnect();
+
+    if(connectDialog->isAutoConnect())
+      reconnectNetworkTimer.start(socketReconnectSec * 1000);
+    else
+      connectInternalAuto();
+
+    simconnectPaused = false;
+  }
 }

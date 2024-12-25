@@ -414,6 +414,26 @@ bool NavApp::hasAircraftPassedTakeoffPoint()
   return logdataController->hasAircraftPassedTakeoffPoint();
 }
 
+bool NavApp::checkSimConnect()
+{
+  if(connectClient != nullptr)
+    return connectClient->checkSimConnect();
+  else
+    return false;
+}
+
+void NavApp::pauseSimConnect()
+{
+  if(connectClient != nullptr)
+    return connectClient->pauseSimConnect();
+}
+
+void NavApp::resumeSimConnect()
+{
+  if(connectClient != nullptr)
+    return connectClient->resumeSimConnect();
+}
+
 bool NavApp::isMoraAvailable()
 {
   return moraReader->isDataAvailable();
@@ -615,6 +635,11 @@ OptionsDialog *NavApp::getOptionsDialog()
 QString NavApp::getCurrentSimulatorShortName()
 {
   return atools::fs::FsPaths::typeToShortName(getCurrentSimulatorDb());
+}
+
+QString NavApp::getCurrentSimulatorShortDisplayName()
+{
+  return atools::fs::FsPaths::typeToShortDisplayName(getCurrentSimulatorDb());
 }
 
 QString NavApp::getCurrentSimulatorName()
@@ -1229,4 +1254,9 @@ float NavApp::getMagVar(const atools::geo::Pos& pos, float defaultValue)
 UpdateHandler *NavApp::getUpdateHandler()
 {
   return updateHandler;
+}
+
+atools::win::ActivationContext *NavApp::getActivationContext()
+{
+  return getConnectClient()->getActivationContext();
 }

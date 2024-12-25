@@ -2186,7 +2186,7 @@ void MainWindow::updateWindowTitle()
 
   // Database information  ==========================================
   // Simulator database =========
-  QString simDb = NavApp::getCurrentSimulatorShortName(), simDbText;
+  QString simDb = NavApp::getCurrentSimulatorShortDisplayName(), simDbText;
   simDbText = simDb.isEmpty() ? tr("Empty") : simDb;
 
   if(navDbStatus == navdb::ALL)

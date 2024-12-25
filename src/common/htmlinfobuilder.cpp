@@ -1750,7 +1750,7 @@ void HtmlInfoBuilder::weatherText(const map::WeatherContext& context, const MapA
 
         // Only FSX/P3D allow remote requests for now - X-Plane is weather files
         const Metar& metar = context.simMetar;
-        QString sim = tr("%1 ").arg(NavApp::getCurrentSimulatorShortName());
+        QString sim = tr("%1 ").arg(NavApp::getCurrentSimulatorShortDisplayName());
 
         if(checkMetar(html, metar.getStation()))
         {
@@ -5359,7 +5359,7 @@ void HtmlInfoBuilder::addMetarLines(HtmlBuilder& html, const map::WeatherContext
   {
     // Simulator weather =====================================================
     bool mapDisplay = src == WEATHER_SOURCE_SIMULATOR;
-    QString sim = tr("%1 ").arg(NavApp::getCurrentSimulatorShortName());
+    QString sim = tr("%1 ").arg(NavApp::getCurrentSimulatorShortDisplayName());
     addMetarLine(html, tr("%1Station").arg(sim), airport, fsMetar.getStation(), mapDisplay);
     addMetarLine(html, tr("%1Nearest").arg(sim), airport, fsMetar.getNearest(), mapDisplay);
     addMetarLine(html, tr("%1Interpolated").arg(sim), airport, fsMetar.getInterpolated(), mapDisplay);

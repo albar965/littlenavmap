@@ -231,7 +231,8 @@ void DatabaseDialog::updateComboBox()
 void DatabaseDialog::updateWidgets()
 {
   bool showXplane = atools::fs::FsPaths::isAnyXplane(currentFsType) || currentFsType == atools::fs::FsPaths::NONE;
-  bool showMsfs = currentFsType == atools::fs::FsPaths::MSFS || currentFsType == atools::fs::FsPaths::NONE;
+  bool showMsfs = currentFsType == atools::fs::FsPaths::MSFS || currentFsType == atools::fs::FsPaths::MSFS_2024 ||
+                  currentFsType == atools::fs::FsPaths::NONE;
 
   ui->lineEditDatabaseSceneryFile->setDisabled(showXplane || showMsfs);
   ui->labelDatabaseSceneryFile->setDisabled(showXplane || showMsfs);
@@ -247,13 +248,14 @@ void DatabaseDialog::updateWidgets()
   ui->checkBoxReadAddOnXml->setEnabled(currentFsType == atools::fs::FsPaths::P3D_V3 || currentFsType == atools::fs::FsPaths::P3D_V4 ||
                                        currentFsType == atools::fs::FsPaths::P3D_V5 || currentFsType == atools::fs::FsPaths::P3D_V6);
 
-  ui->checkBoxReadInactive->setEnabled(currentFsType != atools::fs::FsPaths::MSFS);
+  ui->checkBoxReadInactive->setEnabled(currentFsType != atools::fs::FsPaths::MSFS && currentFsType != atools::fs::FsPaths::MSFS_2024);
 
   // Disable everything if no installed simulators are found
   // (normally not needed since the action is already disabled)
   ui->pushButtonDatabaseSceneryFile->setEnabled(!showXplane && !showMsfs);
   ui->lineEditDatabaseSceneryFile->setEnabled(!showXplane && !showMsfs);
-  // ui->pushButtonDatabaseResetPaths->setEnabled(!showXplane && !showMsfs);
+
+  // ui->pushButtonDatabaseResetPaths->setEnabled(currentFsType != atools::fs::FsPaths::MSFS_2024);
 }
 
 QString DatabaseDialog::fixBasePath(QString path)

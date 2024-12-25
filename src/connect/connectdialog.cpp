@@ -51,10 +51,8 @@ ConnectDialog::ConnectDialog(QWidget *parent, bool simConnectAvailable)
     ui->tabConnectFsx->setDisabled(true);
     ui->labelConnectFsx->setText(atools::util::HtmlBuilder::warningMessage(
                                    tr("SimConnect not found. Your Little Navmap "
-                                      "installation is missing the file \"SimConnect.dll\".<br/>"
-                                      "Reinstall Little Navmap or "
-                                      "install a FSX SP2 compatible version of SimConnect on your computer.<br/>")) +
-                                 ui->labelConnectFsx->text());
+                                      "installation is missing the file \"%1\".<br/>").
+                                   arg(lnm::SIMCONNECT_DLL_NAME)) + ui->labelConnectFsx->text());
   }
   else
   {

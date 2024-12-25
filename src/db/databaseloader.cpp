@@ -17,6 +17,7 @@
 
 #include "db/databaseloader.h"
 
+#include "app/navapp.h"
 #include "atools.h"
 #include "common/constants.h"
 #include "common/formatter.h"
@@ -28,10 +29,11 @@
 #include "fs/navdatabaseprogress.h"
 #include "gui/errorhandler.h"
 #include "gui/textdialog.h"
-#include "app/navapp.h"
 #include "options/optionsdialog.h"
 #include "settings/settings.h"
 #include "sql/sqldatabase.h"
+#include "ui_mainwindow.h"
+#include "win/activationcontext.h"
 
 #include <QDir>
 #include <QElapsedTimer>
@@ -160,6 +162,15 @@ DatabaseLoader::~DatabaseLoader()
 
 void DatabaseLoader::loadScenery()
 {
+  if(selectedFsType == atools::fs::FsPaths::MSFS_2024)
+  {
+    // Disable loading and pause SimConnect to avoid conflicts
+    // Keep menu items disabled to not let user select a MSFS connection
+    NavApp::getMainUi()->actionConnectSimulator->setDisabled(true);
+    NavApp::getMainUi()->actionConnectSimulatorToggle->setDisabled(true);
+    NavApp::pauseSimConnect();
+  }
+
   // Get configuration file path from resources or overloaded path
   QString config = Settings::getOverloadedPath(lnm::DATABASE_NAVDATAREADER_CONFIG);
   qInfo() << Q_FUNC_INFO << "Config file" << config << "Database" << compileDb->databaseName();
@@ -199,7 +210,7 @@ void DatabaseLoader::loadScenery()
   // New progress dialog
   deleteProgressDialog();
   // No parent to allow non-modal dialog
-  progressDialog = new DatabaseProgressDialog(nullptr, atools::fs::FsPaths::typeToShortName(selectedFsType));
+  progressDialog = new DatabaseProgressDialog(nullptr, atools::fs::FsPaths::typeToShortDisplayName(selectedFsType));
 
   // Add to dock handler to enable auto raise and closing on exit as well as applying stay-on-top status from main
   NavApp::addDialogToDockHandler(progressDialog);
@@ -208,17 +219,18 @@ void DatabaseLoader::loadScenery()
   navDatabaseOpts->setSceneryFile(simulators.value(selectedFsType).sceneryCfg);
   navDatabaseOpts->setBasepath(basePath);
 
+  // Clear defaults
+  navDatabaseOpts->setMsfsCommunityPath(QString());
+  navDatabaseOpts->setMsfsOfficialPath(QString());
+
   // Set MSFS pecularities
   if(selectedFsType == atools::fs::FsPaths::MSFS)
   {
     navDatabaseOpts->setMsfsCommunityPath(FsPaths::getMsfsCommunityPath(basePath));
     navDatabaseOpts->setMsfsOfficialPath(FsPaths::getMsfsOfficialPath(basePath));
   }
-  else
-  {
-    navDatabaseOpts->setMsfsCommunityPath(QString());
-    navDatabaseOpts->setMsfsOfficialPath(QString());
-  }
+  else if(selectedFsType == atools::fs::FsPaths::MSFS_2024)
+    navDatabaseOpts->setMsfs24StreamedPackagesPath(FsPaths::getMsfs24StreamedPackagesPath());
 
   // Reset timers used in progress callback in thread context
   progressTimerElapsedThread = 0L;
@@ -238,6 +250,12 @@ void DatabaseLoader::loadScenery()
   // Compile navdata in background ==================================================================
   atools::fs::NavDatabase navDatabase(navDatabaseOpts, compileDb, navDatabaseErrors, GIT_REVISION_LITTLENAVMAP);
 
+  // Load MSFS 2024 SimConnect DLL since only this can be used to fetch facilities
+  // The library will be freed after loading in compileDatabasePost()
+  atools::win::ActivationContext *activationContext = NavApp::getActivationContext();
+  activationContext->loadLibrary(lnm::SIMCONNECT_LOADER_DLL_NAME);
+  navDatabase.setActivationContext(activationContext, lnm::SIMCONNECT_LOADER_DLL_NAME);
+
   // resultFlags = navDatabase.compileDatabase();
   future = QtConcurrent::run(navDatabase, &atools::fs::NavDatabase::compileDatabase);
 
@@ -248,6 +266,14 @@ void DatabaseLoader::loadScenery()
 void DatabaseLoader::compileDatabasePost()
 {
   qDebug() << Q_FUNC_INFO;
+
+  if(selectedFsType == atools::fs::FsPaths::MSFS_2024)
+  {
+    // Start MSFS 2020 SimConnect again and enable menu items
+    NavApp::resumeSimConnect();
+    NavApp::getMainUi()->actionConnectSimulator->setEnabled(true);
+    NavApp::getMainUi()->actionConnectSimulatorToggle->setEnabled(true);
+  }
 
   // Exceptions are passed from thread and are thrown again when calling future.result()
   try
@@ -261,6 +287,9 @@ void DatabaseLoader::compileDatabasePost()
                                                  QString() : tr("Processed files:\n%1\n").arg(currentBglFilePath));
     resultFlagsShared |= atools::fs::COMPILE_FAILED;
   }
+
+  // Unload MSFS 2024 DLL again
+  NavApp::getActivationContext()->freeLibrary(lnm::SIMCONNECT_LOADER_DLL_NAME);
 
   // Show errors that occured during loading, if any
   if(!resultFlagsShared.testFlag(atools::fs::COMPILE_CANCELED))

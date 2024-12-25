@@ -28,7 +28,7 @@ namespace navdb {
 enum Status : quint8
 {
   UNKNOWN,
-  ALL, /* Only third party nav database */
+  ALL, /* Only Navigraph third party nav database */
   MIXED, /* Airports from simulator rest from nav database */
   OFF /* Only simulator database */
 };
@@ -36,14 +36,16 @@ enum Status : quint8
 /* Defines the automatic correction and reason for the navdata source */
 enum Correction : quint8
 {
-  CORRECT_NONE,
+  CORRECT_NONE, /* Nothing to correct */
   CORRECT_MSFS_HAS_NAVIGRAPH, /* MSFS with Navigraph update found -> mixed mode */
   CORRECT_MSFS_NO_NAVIGRAPH, /* MSFS without navdata update found -> no navdatabase */
+  CORRECT_MSFS_2024, /* MSFS 2024 -> no navdatabase */
   CORRECT_FSX_P3D_UPDATED, /* Any FSX or P3D with updated cycle -> mixed or sim only mode */
   CORRECT_FSX_P3D_OUTDATED, /* Any FSX or P3D with old included AIRAC - sim only mode */
   CORRECT_XP_CYCLE_NAV_EQUAL, /* XP nav cycle is equal to sim cycle -> mixed mode */
   CORRECT_XP_CYCLE_NAV_SMALLER, /* XP nav cycle is equal to sim cycle -> no navdatabase */
   CORRECT_EMPTY, /* Sim database is empty - use navdata for all */
+  CORRECT_EMPTY_CHANGE, /* Sim database is empty and wrong mode */
   CORRECT_ALL /* Navdata for all selected - change mode */
 };
 

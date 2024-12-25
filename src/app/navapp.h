@@ -65,6 +65,10 @@ namespace map {
 struct MapAirport;
 }
 namespace atools {
+
+namespace win {
+class ActivationContext;
+}
 namespace gui {
 
 class DataExchange;
@@ -183,6 +187,10 @@ public:
   static bool isUserAircraftValid();
   static bool hasAircraftPassedTakeoffPoint();
 
+  static bool checkSimConnect();
+  static void pauseSimConnect();
+  static void resumeSimConnect();
+
   /* Check for availability in database */
   static bool isMoraAvailable();
 
@@ -192,6 +200,8 @@ public:
   static const atools::fs::sc::SimConnectUserAircraft& getUserAircraft();
   static const atools::fs::sc::SimConnectData& getSimConnectData();
   static const atools::geo::Pos& getUserAircraftPos();
+
+  static atools::win::ActivationContext* getActivationContext();
 
   static void updateAllMaps();
 
@@ -248,6 +258,7 @@ public:
 
   /* Get the short name (FSX, FSXSE, P3DV3, P3DV2) of the currently selected simulator. */
   static QString getCurrentSimulatorShortName();
+  static QString getCurrentSimulatorShortDisplayName();
   static QString getCurrentSimulatorName();
   static bool hasSidStarInDatabase();
   static bool hasRouteTypeInDatabase();
