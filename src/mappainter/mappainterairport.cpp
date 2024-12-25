@@ -870,7 +870,7 @@ void MapPainterAirport::drawAirportDiagram(const map::MapAirport& airport)
         if(!runway.edgeLight.isEmpty())
           runwayText.append(tr(" / L"));
 
-        if(!runway.surface.isEmpty() && runway.surface != "TR" && runway.surface != "UNKNOWN" && runway.surface != "INVALID")
+        if(map::surfaceValid(runway.surface))
         {
           // Draw only if valid
           const QString& surface = map::surfaceName(runway.surface);

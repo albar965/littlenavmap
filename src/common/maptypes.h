@@ -1781,6 +1781,7 @@ QString holdingTextShort(const map::MapHolding& holding, bool user);
 QString edgeLights(const QString& type);
 QString patternDirection(const QString& type);
 
+bool surfaceValid(const QString& surface);
 const QString& navName(const QString& type);
 const QString& surfaceName(const QString& surface);
 QString smoothnessName(QVariant smoothnessVar); // X-Plane runway smoothness

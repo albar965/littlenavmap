@@ -188,7 +188,8 @@ QColor routeInvalidTableColorDark(Qt::red);
 QColor nextWaypointColor(255, 100, 255);
 QColor nextWaypointColorDark(150, 20, 150);
 
-// Surface colors for runways, aprons and taxiways
+/* Surface colors for runways, aprons and taxiways */
+/* These are defaults and are overridden by little_navmap_mapstyle.ini */
 static QColor surfaceConcrete("#888888");
 static QColor surfaceGrass("#00a000");
 static QColor surfaceWater("#808585ff");
@@ -209,8 +210,8 @@ static QColor surfacePlanks("#8B4513");
 static QColor surfaceSand("#F4A460");
 static QColor surfaceShale("#F5DEB3");
 static QColor surfaceTarmac("#909090");
-static QColor surfaceUnknown("#ffffff");
-static QColor surfaceTransparent("#e0e0e0");
+static QColor surfaceUnknown("#d0d0d0"); // Ensure visibility for dark and bright maps
+static QColor surfaceTransparent("#d0d0d0");
 
 /* Alternating colors */
 static QColor rowBgColor;

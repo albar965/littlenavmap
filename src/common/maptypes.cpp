@@ -89,7 +89,8 @@ void initTranslateableTexts()
       {"T", QObject::tr("Tarmac")},
       {"TR", QObject::tr("Transparent")},
       {"UNKNOWN", QObject::tr("Unknown")},
-      {"INVALID", QObject::tr("Invalid")}
+      {"INVALID", QObject::tr("Invalid")},
+      {QString(), QObject::tr("Unknown")}
     });
 
   /* Short size name for gate and full name for others */
@@ -882,6 +883,11 @@ QString navTypeArincNamesWaypoint(const QString& type)
 const QString& navName(const QString& type)
 {
   return atools::hashValue(navTypeNames, type);
+}
+
+bool surfaceValid(const QString& surface)
+{
+  return !surface.isEmpty() && surface != "TR" && surface != "UNKNOWN" && surface != "INVALID";
 }
 
 const QString& surfaceName(const QString& surface)
