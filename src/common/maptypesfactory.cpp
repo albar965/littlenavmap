@@ -494,8 +494,6 @@ void MapTypesFactory::fillAirwayOrTrack(const SqlRecord& record, map::MapAirway&
       airway.type = map::TRACK_NAT;
     else if(type == 'P')
       airway.type = map::TRACK_PACOTS;
-    else if(type == 'A')
-      airway.type = map::TRACK_AUSOTS;
     else
       qWarning() << Q_FUNC_INFO << "Invalid track type" << record.valueStr("track_type");
 

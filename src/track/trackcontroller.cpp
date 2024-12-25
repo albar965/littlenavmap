@@ -45,7 +45,6 @@ TrackController::TrackController(TrackManager *trackManagerParam, MainWindow *ma
 #ifdef DEBUG_TRACK_TEST
   downloader->setUrl(atools::track::NAT, "/tmp/NAT.txt");
   downloader->setUrl(atools::track::PACOTS, "/tmp/PACOTS.txt");
-  downloader->setUrl(atools::track::AUSOTS, "/tmp/AUSOTS.txt");
 #else
   namespace t = atools::track;
   atools::settings::Settings& settings = Settings::instance();
@@ -56,10 +55,6 @@ TrackController::TrackController(TrackManager *trackManagerParam, MainWindow *ma
   downloader->setUrl(t::PACOTS,
                      settings.getAndStoreValue(lnm::OPTIONS_TRACK_PACOTS_URL, TrackDownloader::URL.value(t::PACOTS)).toString(),
                      settings.getAndStoreValue(lnm::OPTIONS_TRACK_PACOTS_PARAM, TrackDownloader::PARAM.value(t::PACOTS)).toStringList());
-
-  downloader->setUrl(t::AUSOTS,
-                     settings.getAndStoreValue(lnm::OPTIONS_TRACK_AUSOTS_URL, TrackDownloader::URL.value(t::AUSOTS)).toString(),
-                     settings.getAndStoreValue(lnm::OPTIONS_TRACK_AUSOTS_PARAM, TrackDownloader::PARAM.value(t::AUSOTS)).toStringList());
 #endif
 
   connect(downloader, &TrackDownloader::trackDownloadFinished, this, &TrackController::trackDownloadFinished);
@@ -69,7 +64,6 @@ TrackController::TrackController(TrackManager *trackManagerParam, MainWindow *ma
   Ui::MainWindow *ui = NavApp::getMainUi();
   connect(ui->actionTrackSourcesNat, &QAction::toggled, this, &TrackController::trackSelectionChanged);
   connect(ui->actionTrackSourcesPacots, &QAction::toggled, this, &TrackController::trackSelectionChanged);
-  connect(ui->actionTrackSourcesAusots, &QAction::toggled, this, &TrackController::trackSelectionChanged);
 }
 
 TrackController::~TrackController()
@@ -81,7 +75,7 @@ void TrackController::restoreState()
   atools::gui::WidgetState state(lnm::AIRSPACE_CONTROLLER_WIDGETS, false /* visibility */, true /* block signals */);
 
   Ui::MainWindow *ui = NavApp::getMainUi();
-  state.restore({ui->actionTrackSourcesNat, ui->actionTrackSourcesPacots, ui->actionTrackSourcesAusots, ui->actionRouteDownloadTracks});
+  state.restore({ui->actionTrackSourcesNat, ui->actionTrackSourcesPacots, ui->actionRouteDownloadTracks});
 }
 
 void TrackController::saveState() const
@@ -90,8 +84,7 @@ void TrackController::saveState() const
 
   atools::gui::WidgetState state(lnm::AIRSPACE_CONTROLLER_WIDGETS);
 
-  state.save(QList<const QObject *>({ui->actionTrackSourcesNat, ui->actionTrackSourcesPacots, ui->actionTrackSourcesAusots,
-                                     ui->actionRouteDownloadTracks}));
+  state.save(QList<const QObject *>({ui->actionTrackSourcesNat, ui->actionTrackSourcesPacots, ui->actionRouteDownloadTracks}));
 }
 
 void TrackController::optionsChanged()
@@ -184,11 +177,6 @@ bool TrackController::hasNatTracks()
 bool TrackController::hasPacotsTracks()
 {
   return hasTracks() && enabledTracks().contains(atools::track::PACOTS);
-}
-
-bool TrackController::hasAusotsTracks()
-{
-  return hasTracks() && enabledTracks().contains(atools::track::AUSOTS);
 }
 
 void TrackController::trackDownloadFinished(const atools::track::TrackVectorType& tracks, atools::track::TrackType type)
@@ -317,12 +305,13 @@ QVector<atools::track::TrackType> TrackController::enabledTracks() const
 {
   QVector<atools::track::TrackType> retval;
   Ui::MainWindow *ui = NavApp::getMainUi();
+
   if(ui->actionTrackSourcesNat->isChecked())
     retval.append(atools::track::NAT);
+
   if(ui->actionTrackSourcesPacots->isChecked())
     retval.append(atools::track::PACOTS);
-  if(ui->actionTrackSourcesAusots->isChecked())
-    retval.append(atools::track::AUSOTS);
+
   return retval;
 }
 

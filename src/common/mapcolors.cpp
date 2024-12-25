@@ -631,9 +631,6 @@ const QColor colorForAirwayOrTrack(const map::MapAirway& airway, bool darkMap)
       else
         return airwayTrackColor.lighter(darkMap ? 200 : 100);
 
-    case map::TRACK_AUSOTS:
-      return airwayTrackColor.lighter(darkMap ? 200 : 100);
-
     case map::AIRWAY_VICTOR:
       return airwayVictorColor.darker(darkMap ? 180 : 100);
 

@@ -1286,9 +1286,6 @@ QString airwayTrackTypeToShortString(MapAirwayTrackType type)
     case map::TRACK_PACOTS:
       return QObject::tr("P");
 
-    case map::TRACK_AUSOTS:
-      return QObject::tr("A");
-
     case map::AIRWAY_VICTOR:
       return QObject::tr("L");
 
@@ -1315,9 +1312,6 @@ QString airwayTrackTypeToString(MapAirwayTrackType type)
     case map::TRACK_PACOTS:
       return QObject::tr("PACOTS");
 
-    case map::TRACK_AUSOTS:
-      return QObject::tr("AUSOTS");
-
     case map::AIRWAY_VICTOR:
       return QObject::tr("Low");
 
@@ -1343,8 +1337,6 @@ MapAirwayTrackType airwayTrackTypeFromString(const QString& typeStr)
     return map::TRACK_NAT;
   else if(typeStr.startsWith('P'))
     return map::TRACK_PACOTS;
-  else if(typeStr.startsWith('A'))
-    return map::TRACK_AUSOTS;
   else
     return map::NO_AIRWAY;
 }

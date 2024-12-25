@@ -326,7 +326,6 @@
      </property>
      <addaction name="actionTrackSourcesNat"/>
      <addaction name="actionTrackSourcesPacots"/>
-     <addaction name="actionTrackSourcesAusots"/>
     </widget>
     <addaction name="actionShortcutFlightPlan"/>
     <addaction name="actionShortcutAircraftPerformance"/>
@@ -10692,10 +10691,10 @@ relation to shown airport</string>
     <string>Download Oceanic Tracks on &amp;Startup</string>
    </property>
    <property name="toolTip">
-    <string>Download NAT, PACOTS and AUSOTS tracks on startup</string>
+    <string>Download NAT and PACOTS tracks on startup</string>
    </property>
    <property name="statusTip">
-    <string>Download NAT, PACOTS and AUSOTS tracks on startup</string>
+    <string>Download NAT and PACOTS tracks on startup</string>
    </property>
   </action>
   <action name="actionRouteDeleteTracks">
@@ -10718,10 +10717,10 @@ relation to shown airport</string>
     <string>Download Oceanic &amp;Tracks</string>
    </property>
    <property name="toolTip">
-    <string>Download NAT, PACOTS and AUSOTS tracks now</string>
+    <string>Download NAT and PACOTS tracks now</string>
    </property>
    <property name="statusTip">
-    <string>Download NAT, PACOTS and AUSOTS tracks now</string>
+    <string>Download NAT and PACOTS tracks now</string>
    </property>
   </action>
   <action name="actionRouteSaveAsPln">
@@ -11207,20 +11206,6 @@ relation to shown airport</string>
    </property>
    <property name="statusTip">
     <string>Download tracks for Pacific Organized Track System</string>
-   </property>
-  </action>
-  <action name="actionTrackSourcesAusots">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>&amp;AUSOTS</string>
-   </property>
-   <property name="toolTip">
-    <string>Download tracks for Australian Organized Track Structure</string>
-   </property>
-   <property name="statusTip">
-    <string>Download tracks for Australian Organized Track Structure</string>
    </property>
   </action>
   <action name="actionConnectSimulatorToggle">

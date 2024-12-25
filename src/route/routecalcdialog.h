@@ -109,7 +109,7 @@ public:
   /* true if NDB should be included in radionav calculation */
   bool isRadionavNdb() const;
 
-  /* Use tracks (NAT, PACOTS and AUSOTS) in airway calculation */
+  /* Use tracks (NAT and PACOTS) in airway calculation */
   bool isUseTracks() const;
 
   /* Full route or selection. Status of combo box in window. */

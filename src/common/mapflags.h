@@ -96,7 +96,7 @@ enum MapType : quint64
   HELIPAD =          1ULL << 25, /* Helipads on airports */
   HOLDING =          1ULL << 26, /* Enroute holds and user holds. User holds are enabled by MapMarkType below */
   USERPOINT =        1ULL << 27, /* A user defined waypoint - not used to define if should be drawn or not */
-  TRACK =            1ULL << 28, /* NAT, PACOTS or AUSOTS track */
+  TRACK =            1ULL << 28, /* NAT or PACOTS track */
   AIRCRAFT_ONLINE =  1ULL << 29, /* Online network client/aircraft */
   LOGBOOK =          1ULL << 30, /* Logbook entry */
 

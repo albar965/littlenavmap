@@ -370,7 +370,7 @@ private:
   *databaseSim = nullptr /* Database for simulator content. Connection inside is exchanged depending on settings. */,
   *databaseNav = nullptr /* Database for third party navigation data. Connection inside is exchanged depending on settings. */,
   *databaseUser = nullptr /* Database for user data */,
-  *databaseTrack = nullptr /* Database for tracks like NAT, PACOTS and AUSOTS */,
+  *databaseTrack = nullptr /* Database for tracks like NAT or PACOTS */,
   *databaseLogbook = nullptr /* Database for logbook */,
   *databaseUserAirspace = nullptr /* Database for user airspaces */,
   *databaseSimAirspace = nullptr /* Airspace database from simulator independent from nav switch */,

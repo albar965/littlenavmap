@@ -56,7 +56,7 @@ enum RouteStringOption : quint32
   READ_MATCH_WAYPOINTS = 1 << 18, /* Match coordinate formats to nearby waypoints. */
 
   /* Writing options when converting flight plan to string ====================== */
-  NO_TRACKS = 1 << 19, /* Do not use NAT, PACOTS or AUSOTS. */
+  NO_TRACKS = 1 << 19, /* Do not use NAT or PACOTS. */
 
   SID_STAR_NONE = 1 << 20, /* Needed in dialog action only */
 

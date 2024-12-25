@@ -1132,8 +1132,7 @@ enum MapAirwayTrackType
   AIRWAY_JET,
   AIRWAY_BOTH,
   TRACK_NAT,
-  TRACK_PACOTS,
-  TRACK_AUSOTS
+  TRACK_PACOTS
 };
 
 enum MapAirwayDirection
@@ -1157,7 +1156,7 @@ enum MapAirwayRouteType
   RT_TRACK /* S Undesignated ATS Route */
 };
 
-/* Airway segment or part of NAT, PACOTS or AUSOTS track */
+/* Airway segment or part of NAT or PACOTS track */
 struct MapAirway
   : public MapBase
 {

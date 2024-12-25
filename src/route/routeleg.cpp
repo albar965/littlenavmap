@@ -1060,10 +1060,7 @@ bool RouteLeg::isAirwaySetAndInvalid(float minAltLegFt, float maxAltLegFt, QStri
       name.toInt(&ok);
 
       // Assume that all short names might be tracks
-      bool track = isTrack() || name.length() == 1 || ok ||
-                   // AUSOTS like "MY16"
-                   (atools::charAt(name, 0).isLetter() && atools::charAt(name, 1).isLetter() &&
-                    atools::charAt(name, 2).isDigit() && atools::charAt(name, 3).isDigit());
+      bool track = isTrack() || name.length() == 1 || ok;
 
       invalid = true;
       if(errors != nullptr)

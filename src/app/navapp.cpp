@@ -875,11 +875,6 @@ bool NavApp::hasPacotsTracks()
   return trackController->hasPacotsTracks();
 }
 
-bool NavApp::hasAusotsTracks()
-{
-  return trackController->hasAusotsTracks();
-}
-
 bool NavApp::hasTracksEnabled()
 {
   return trackController->hasTracksEnabled();

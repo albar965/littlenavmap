@@ -34,7 +34,7 @@ class AirwayTrackQuery;
 class WaypointTrackQuery;
 
 /*
- * Downloads track systems (NAT, PACOTS and AUSOTS) from public websites, parses the pages and loads the tracks into
+ * Downloads track systems (NAT and PACOTS) from public websites, parses the pages and loads the tracks into
  * the track database.
  *
  * Also initializes and updates waypoint and airway queries classes which share track and navaid databases.
@@ -85,7 +85,6 @@ public:
   /* True if specific type is enabled in the menu and tracks are downloaded */
   bool hasNatTracks();
   bool hasPacotsTracks();
-  bool hasAusotsTracks();
 
   /* If true: Do not load tracks that are currently not valid. */
   void setDownloadOnlyValid(bool value)

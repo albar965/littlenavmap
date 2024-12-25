@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2022 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -37,7 +37,7 @@ const QString DATABASE_NAME_NAV = "LNMDBNAV";
 /* Userpoint database */
 const QString DATABASE_NAME_USER = "LNMDBUSER";
 
-/* NAT, PACOTS, AUSOTS */
+/* NAT or PACOTS */
 const QString DATABASE_NAME_TRACK = "LNMDBTRACK";
 
 /* Logbook database */
