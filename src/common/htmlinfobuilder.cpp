@@ -3707,7 +3707,8 @@ void HtmlInfoBuilder::aircraftText(const atools::fs::sc::SimConnectAircraft& air
 
   html.row2If(tr("Flight Number:"), aircraft.getAirplaneFlightnumber());
 
-  html.row2If(tr("Transponder Code:"), aircraft.getTransponderCodeStr());
+  if(aircraft.getCategory() == atools::fs::sc::AIRPLANE || aircraft.getCategory() == atools::fs::sc::HELICOPTER)
+    html.row2If(tr("Transponder Code:"), aircraft.getTransponderCodeStr());
 
   html.row2If(tr("Type:"), aircraft.getAirplaneModel()); // BE58
 
