@@ -268,6 +268,11 @@ bool RouteExport::routeExportPlnMsfsMan()
   return routeExportPln(exportFormatMap->getForManualSave(rexp::PLNMSFS));
 }
 
+bool RouteExport::routeExportPlnMsfs24Man()
+{
+  return routeExportPln(exportFormatMap->getForManualSave(rexp::PLNMSFS24));
+}
+
 bool RouteExport::routeExportLnm(const RouteExportFormat& format)
 {
   qDebug() << Q_FUNC_INFO;
@@ -312,12 +317,19 @@ bool RouteExport::routeExportInternalPln(const RouteExportFormat& format)
   {
     // Use always same settings prefix for MSFS independent of scenery library selection
     // Other simulators share same PLN settings prefix also independent of scenery library
-    QString shortName = format.getType() == rexp::PLNMSFS ? atools::fs::FsPaths::typeToShortName(atools::fs::FsPaths::MSFS) : "Pln";
+    QString shortName;
+    if(format.getType() == rexp::PLNMSFS)
+      shortName = atools::fs::FsPaths::typeToShortName(atools::fs::FsPaths::MSFS);
+    if(format.getType() == rexp::PLNMSFS24)
+      shortName = atools::fs::FsPaths::typeToShortName(atools::fs::FsPaths::MSFS_2024);
+    else
+      shortName = "Pln";
 
     QString routeFile = exportFile(format, "Route/Pln" % shortName,
                                    NavApp::getCurrentSimulatorFilesPath(),
                                    buildDefaultFilename(format,
-                                                        format.getType() == rexp::PLNMSFS || format.getType() == rexp::PLNMSFSCOMPAT),
+                                                        format.getType() == rexp::PLNMSFS || format.getType() == rexp::PLNMSFS24 ||
+                                                        format.getType() == rexp::PLNMSFSCOMPAT),
                                    false /* dontComfirmOverwrite */);
 
     if(!routeFile.isEmpty())
@@ -332,6 +344,10 @@ bool RouteExport::routeExportInternalPln(const RouteExportFormat& format)
 
         case rexp::PLNMSFS:
           result = exportFlighplan(routeFile, rf::DEFAULT_OPTS_MSFS, std::bind(&FlightplanIO::savePlnMsfs, flightplanIO, _1, _2));
+          break;
+
+        case rexp::PLNMSFS24:
+          result = exportFlighplan(routeFile, rf::DEFAULT_OPTS_MSFS_2024, std::bind(&FlightplanIO::savePlnMsfs24, flightplanIO, _1, _2));
           break;
 
         case rexp::PLNMSFSCOMPAT:

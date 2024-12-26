@@ -93,9 +93,10 @@
     <addaction name="separator"/>
     <addaction name="actionRouteResetAll"/>
     <addaction name="separator"/>
+    <addaction name="actionRouteSaveAsPlnMsfs24"/>
     <addaction name="actionRouteSaveAsPlnMsfs"/>
-    <addaction name="actionRouteSaveAsPln"/>
     <addaction name="actionRouteSaveAsFms11"/>
+    <addaction name="actionRouteSaveAsPln"/>
     <addaction name="actionRouteSaveAsFlightGear"/>
     <addaction name="separator"/>
     <addaction name="actionRouteFetchFromSimBrief"/>
@@ -8828,7 +8829,7 @@ relation to shown airport</string>
      <normaloff>:/littlenavmap/resources/icons/saveasfms.svg</normaloff>:/littlenavmap/resources/icons/saveasfms.svg</iconset>
    </property>
    <property name="text">
-    <string>Export Flight &amp;Plan as FMS for X-Plane 11 and 12 ...</string>
+    <string>Export Flight Plan as FMS for &amp;X-Plane 11 and 12 ...</string>
    </property>
    <property name="toolTip">
     <string>Export flight plan using FMS format usable by X-Plane 11 and 12</string>
@@ -10729,7 +10730,7 @@ relation to shown airport</string>
      <normaloff>:/littlenavmap/resources/icons/filesaveas.svg</normaloff>:/littlenavmap/resources/icons/filesaveas.svg</iconset>
    </property>
    <property name="text">
-    <string>Export Flight Plan &amp;as P3D or FSX  PLN ...</string>
+    <string>Export Flight Plan as &amp;P3D or FSX  PLN ...</string>
    </property>
    <property name="toolTip">
     <string>Export Flight Plan as PLN for P3D or FSX</string>
@@ -11118,13 +11119,31 @@ relation to shown airport</string>
      <normaloff>:/littlenavmap/resources/icons/filesaveas.svg</normaloff>:/littlenavmap/resources/icons/filesaveas.svg</iconset>
    </property>
    <property name="text">
-    <string>Export Flight Plan &amp;as MSFS 2020 PLN ...</string>
+    <string>Export Flight Plan as MSFS &amp;2020 PLN ...</string>
    </property>
    <property name="toolTip">
     <string>Export Flight Plan as PLN for Microsoft Flight Simulator 2020</string>
    </property>
    <property name="statusTip">
     <string>Export Flight Plan as PLN for Microsoft Flight Simulator 2020</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+B</string>
+   </property>
+  </action>
+  <action name="actionRouteSaveAsPlnMsfs24">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/filesaveas.svg</normaloff>:/littlenavmap/resources/icons/filesaveas.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Export Flight Plan as &amp;MSFS 2024 PLN ...</string>
+   </property>
+   <property name="toolTip">
+    <string>Export Flight Plan as PLN for the Microsoft Flight Simulator 2024 EFB</string>
+   </property>
+   <property name="statusTip">
+    <string>Export Flight Plan as PLN for the Microsoft Flight Simulator 2024 EFB</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+Shift+F</string>
@@ -11553,22 +11572,22 @@ relation to shown airport</string>
    </property>
   </action>
   <action name="actionMapJumpCoordinates">
-  <property name="icon">
-  <iconset resource="../../littlenavmap.qrc">
-  <normaloff>:/littlenavmap/resources/icons/zoomin.svg</normaloff>:/littlenavmap/resources/icons/zoomin.svg</iconset>
-  </property>
-  <property name="text">
-  <string>&amp;Jump to Coordinates ...</string>
-  </property>
-  <property name="toolTip">
-  <string>Jump to coordinates and zoom distance on the map</string>
-  </property>
-  <property name="statusTip">
-  <string>Jump to coordinates and zoom distance on the map</string>
-  </property>
-  <property name="shortcut">
-  <string>Ctrl+Shift+Home</string>
-  </property>
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/zoomin.svg</normaloff>:/littlenavmap/resources/icons/zoomin.svg</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Jump to Coordinates ...</string>
+   </property>
+   <property name="toolTip">
+    <string>Jump to coordinates and zoom distance on the map</string>
+   </property>
+   <property name="statusTip">
+    <string>Jump to coordinates and zoom distance on the map</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+Home</string>
+   </property>
   </action>
   <action name="actionMapShowEndurance">
    <property name="checkable">

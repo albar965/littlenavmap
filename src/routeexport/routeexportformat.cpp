@@ -216,6 +216,7 @@ void RouteExportFormatMap::initCallbacks(RouteExport *routeExport)
   (*this)[LNMPLN       ].CB(bind(&RouteExport::routeExportLnm,                routeExport, _1));
   (*this)[PLN          ].CB(bind(&RouteExport::routeExportPln,                routeExport, _1));
   (*this)[PLNMSFS      ].CB(bind(&RouteExport::routeExportPlnMsfs,            routeExport, _1));
+  (*this)[PLNMSFS24    ].CB(bind(&RouteExport::routeExportPlnMsfs,            routeExport, _1));
   (*this)[PLNMSFSCOMPAT].CB(bind(&RouteExport::routeExportPlnMsfs,            routeExport, _1));
   (*this)[FMS3         ].CB(bind(&RouteExport::routeExportFms3Multi,          routeExport, _1));
   (*this)[CIVAFMS      ].CB(bind(&RouteExport::routeExportCivaFmsMulti,       routeExport, _1));
@@ -300,9 +301,6 @@ void RouteExportFormatMap::init()
   // Departure ident and destination ident without dot
   const QString S0(ap::DEPARTIDENT % ap::DESTIDENT);
 
-  // Departure ident and destination ident without dot
-  const QString SD(ap::DEPARTIDENT % "-" % ap::DESTIDENT);
-
   // Departure ident and destination ident plus period
   const QString S0P(ap::DEPARTIDENT % ap::DESTIDENT % ".");
 
@@ -319,6 +317,7 @@ void RouteExportFormatMap::init()
   FMT(LNMPLN,        NONE,                 D % "lnmpln",    tr("Little Navmap"), tr("Little Navmap native flight plan format") % lnmTooltip);
   FMT(PLN,           AIRPORTS|PARKING,     D % "pln",       tr("Simulator"), tr("FSX and Prepar3D") % mainMenu                             );
   FMT(PLNMSFS,       AIRPORTS|PARKING|VFR, D % "pln",       tr("Simulator"), tr("Microsoft Flight Simulator 2020") % mainMenu              );
+  FMT(PLNMSFS24,     AIRPORTS|VFR,         D % "pln",       tr("Simulator"), tr("Microsoft Flight Simulator 2024") % mainMenu              );
   FMT(PLNMSFSCOMPAT, AIRPORTS|PARKING|VFR, D % "pln",       tr("Simulator"), tr("Microsoft Flight Simulator 2020 format using \"*\" as degree sign.\n"
                                                                                    "Use this if you run into issues when importing flight plans or\n"
                                                                                    "your operating system is set to Asian locale.")           );
@@ -411,6 +410,8 @@ void RouteExportFormatMap::updateDefaultPaths()
   // C:\Users\USER\AppData\Roaming\Microsoft Flight Simulator
   QString msfsLocalStatePath = NavApp::getSimulatorFilesPathBest({FsPaths::MSFS}, documents);
 
+  QString msfs24LocalStatePath = NavApp::getSimulatorFilesPathBest({FsPaths::MSFS_2024}, documents);
+
   // .../Packages/Microsoft.FlightSimulator_8wekyb3d8bbwe/LocalCache/Packages/
   QString msfsBasePath = NavApp::getSimulatorBasePathBest({FsPaths::MSFS});
   if(msfsBasePath.isEmpty())
@@ -501,6 +502,7 @@ void RouteExportFormatMap::updateDefaultPaths()
   (*this)[LNMPLN       ].DP(lnmplnFiles);
   (*this)[PLN          ].DP(fsxP3dBasePath);
   (*this)[PLNMSFS      ].DP(msfsLocalStatePath);
+  (*this)[PLNMSFS24    ].DP(msfs24LocalStatePath);
   (*this)[PLNMSFSCOMPAT].DP(msfsLocalStatePath);
   (*this)[FMS3         ].DP(xpFilesPath12Or11);
   (*this)[FMS11        ].DP(xpFilesPath11);

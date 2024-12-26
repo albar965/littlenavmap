@@ -2828,7 +2828,8 @@ Route Route::adjustedToOptions(const Route& origRoute, rf::RouteAdjustOptions op
 
   bool saveApproachWp = options.testFlag(rf::SAVE_APPROACH_WP),
        saveSidWp = options.testFlag(rf::SAVE_SID_WP), saveStarWp = options.testFlag(rf::SAVE_STAR_WP),
-       replaceCustomWp = options.testFlag(rf::REPLACE_CUSTOM_WP), msfs = options.testFlag(rf::SAVE_MSFS),
+       replaceCustomWp = options.testFlag(rf::REPLACE_CUSTOM_WP),
+       msfs = options.testFlag(rf::SAVE_MSFS), msfs24 = options.testFlag(rf::SAVE_MSFS_2024),
        removeCustom = options.testFlag(rf::REMOVE_RUNWAY_PROC), restrToRemarks = options.testFlag(rf::RESTRICTIONS_TO_REMARKS);
 
   // Create copy which allows to modify the plan ==============

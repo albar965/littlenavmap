@@ -44,6 +44,7 @@ enum RouteExportFormatType : quint16
   PLN = 0, /* FSX/P3D XML PLN format */
   // PLNANNOTATED = 1, Removed
   PLNMSFS = 31, /* Microsoft Flight Simulator 2020 with ° as degree sign. */
+  PLNMSFS24 = 51, /* Microsoft Flight Simulator 2024. */
   PLNMSFSCOMPAT = 47, /* Microsoft Flight Simulator 2020 with * as degree sign for add-ons */
   FMS3 = 2, /* Old X-Plane FMS 3 */
   FMS11 = 3, /* New X-Plane FMS 11 */
@@ -102,7 +103,7 @@ enum RouteExportFormatType : quint16
   GPX = 28, /* Garmin exchange format. Not a flight plan format.  */
   HTML = 29, /* Export as HTML page */
 
-  // Next = 51
+  // Next = 52
 };
 
 /* Flags for export format. Some flags are saved to the configuration,

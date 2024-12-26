@@ -67,10 +67,12 @@ enum RouteAdjustOption : quint32
   RESTRICTIONS_TO_REMARKS = 1 << 18, /* Put procedure restrictions into the remarks section when converting procedures to waypoints */
   REMOVE_ALL_PROCEDURES = 1 << 19, /* Remove all procedures and do not save their waypoints */
 
+  SAVE_MSFS_2024 = 1 << 20,
+
   /* Flag combinations =========================================================================== */
 
   /* Export adjust options for most export formats */
-  DEFAULT_OPTS = rf::REPLACE_CUSTOM_WP | rf::REMOVE_ALTERNATE | rf::REMOVE_TRACKS | FIX_PROC_ENTRY_EXIT,
+  DEFAULT_OPTS = rf::REPLACE_CUSTOM_WP | rf::REMOVE_ALTERNATE | rf::REMOVE_TRACKS | rf::FIX_PROC_ENTRY_EXIT,
 
   /* Do not add waypoint and procedure entry or exit back. */
   DEFAULT_OPTS_PROC = rf::REPLACE_CUSTOM_WP | rf::REMOVE_ALTERNATE | rf::REMOVE_TRACKS,
@@ -82,27 +84,30 @@ enum RouteAdjustOption : quint32
   DEFAULT_OPTS_GFP = rf::DEFAULT_OPTS | rf::REMOVE_RUNWAY_PROC,
   DEFAULT_OPTS_GFP_NO_PROC = rf::DEFAULT_OPTS_NO_PROC | rf::REMOVE_RUNWAY_PROC,
 
-  DEFAULT_OPTS_FLP = rf::REPLACE_CUSTOM_WP | rf::REMOVE_TRACKS | FIX_PROC_ENTRY_EXIT | rf::REMOVE_RUNWAY_PROC,
+  DEFAULT_OPTS_FLP = rf::REPLACE_CUSTOM_WP | rf::REMOVE_TRACKS | rf::FIX_PROC_ENTRY_EXIT | rf::REMOVE_RUNWAY_PROC,
   DEFAULT_OPTS_FLP_MSFS_CRJ = rf::REPLACE_CUSTOM_WP | rf::REMOVE_TRACKS | FIX_PROC_ENTRY_EXIT_ALWAYS | SAVE_AIRWAY_WP |
                               rf::REMOVE_RUNWAY_PROC,
 
   /* LNMPLN save and load format. Does not mangle anything. */
-  DEFAULT_OPTS_LNMPLN = FIX_PROC_ENTRY_EXIT | SAVE_LNMPLN | SAVE_KEEP_INVALID_START,
+  DEFAULT_OPTS_LNMPLN = rf::FIX_PROC_ENTRY_EXIT | rf::SAVE_LNMPLN | rf::SAVE_KEEP_INVALID_START,
 
   /* LNMPLN save selected legs as plan. */
-  DEFAULT_OPTS_LNMPLN_SAVE_SELECTED = DEFAULT_OPTS_LNMPLN | rf::REMOVE_ALTERNATE | SAVE_KEEP_INVALID_START,
+  DEFAULT_OPTS_LNMPLN_SAVE_SELECTED = rf::DEFAULT_OPTS_LNMPLN | rf::REMOVE_ALTERNATE | rf::SAVE_KEEP_INVALID_START,
 
   /* Option for RouteStringWriter used to generate a route description */
-  DEFAULT_OPTS_ROUTESTRING = FIX_PROC_ENTRY_EXIT,
+  DEFAULT_OPTS_ROUTESTRING = rf::FIX_PROC_ENTRY_EXIT,
 
   /* Microsoft Flight Simulator 2020 */
-  DEFAULT_OPTS_MSFS = DEFAULT_OPTS | SAVE_MSFS | rf::REMOVE_CUSTOM_DEPART,
+  DEFAULT_OPTS_MSFS = rf::DEFAULT_OPTS | rf::SAVE_MSFS | rf::REMOVE_CUSTOM_DEPART,
+
+  /* Microsoft Flight Simulator 2020 */
+  DEFAULT_OPTS_MSFS_2024 = rf::DEFAULT_OPTS | rf::SAVE_MSFS_2024 | rf::REMOVE_CUSTOM_DEPART,
 
   /* FSX and P3D - remove first point of departure */
-  DEFAULT_OPTS_FSX_P3D = DEFAULT_OPTS_NO_PROC | rf::REMOVE_CUSTOM_DEPART,
+  DEFAULT_OPTS_FSX_P3D = rf::DEFAULT_OPTS_NO_PROC | rf::REMOVE_CUSTOM_DEPART,
 
   /* PMS50 GTN750 */
-  DEFAULT_OPTS_PMS50 = DEFAULT_OPTS_MSFS,
+  DEFAULT_OPTS_PMS50 = rf::DEFAULT_OPTS_MSFS,
 
   /* Export adjust options for XP11 and old FMS3 */
   DEFAULT_OPTS_FMS3 = rf::DEFAULT_OPTS_NO_PROC,
@@ -113,7 +118,7 @@ enum RouteAdjustOption : quint32
   /* Remove all procedures for FlightFactor T7 but keep entry and exit points */
   DEFAULT_OPTS_FMS_T7 = rf::REPLACE_CUSTOM_WP | rf::REMOVE_ALTERNATE | rf::REMOVE_TRACKS | rf::FIX_CIRCLETOLAND |
                         rf::XPLANE_REPLACE_AIRPORT_IDENTS | rf::REMOVE_CUSTOM_DEPART | rf::REMOVE_ALL_PROCEDURES |
-                        FIX_PROC_ENTRY_EXIT_ALWAYS,
+                        rf::FIX_PROC_ENTRY_EXIT_ALWAYS,
 
   /* Garmin GPX */
   DEFAULT_OPTS_GPX = rf::DEFAULT_OPTS | rf::SAVE_AIRWAY_WP | rf::SAVE_SID_WP | rf::SAVE_STAR_WP | rf::SAVE_APPROACH_WP
