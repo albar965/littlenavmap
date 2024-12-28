@@ -19,7 +19,9 @@
 #define LITTLENAVMAP_COORDINATECONVERTER_H
 
 #include <QPoint>
+#include <QPolygonF>
 #include <QSize>
+#include <QVector>
 
 class QPolygonF;
 
@@ -50,7 +52,10 @@ class LineString;
 class CoordinateConverter
 {
 public:
-  CoordinateConverter(const Marble::ViewportParams *viewportParams);
+  CoordinateConverter(const Marble::ViewportParams *viewportParams)
+    : viewport(viewportParams)
+  {
+  }
 
   /* Default size (100x100) for the screen object. Needed to find the repeating pattern for the
    *  Mercator projection. */
@@ -68,6 +73,10 @@ public:
 
   /* @return true if position is hidden behind globe */
   bool isHidden(const atools::geo::Pos& coords) const;
+
+  /* Make width or height 1 pixel if null. Zero width or heigh rectangles do not overlap with anything else */
+  static QRectF correctBounding(const QRectF& boundingRect);
+  static QRect correctBounding(const QRect& boundingRect);
 
   /*
    * Convert world to screen coordinates
@@ -130,11 +139,21 @@ public:
   /* Get screen polygons for given line string. Polygons are cleaned up from duplicates and split at anti-meridian.
    * Free with releasePolygons() */
   const QVector<QPolygonF *> createPolygons(const atools::geo::LineString& linestring, const QRectF& screenRect) const;
-  void releasePolygons(const QVector<QPolygonF *>& polygons) const;
 
-  const QVector<QPolygonF *> createPolylines(const atools::geo::LineString& linestring, const QRectF& screenRect,
-                                             bool splitLongLines) const;
-  void releasePolylines(const QVector<QPolygonF *>& polylines) const;
+  void releasePolygons(const QVector<QPolygonF *>& polygons) const
+  {
+    qDeleteAll(polygons);
+  }
+
+  const QVector<QPolygonF *> createPolylines(const atools::geo::LineString& linestring, const QRectF& screenRect, bool splitLongLines) const
+  {
+    return createPolylinesInternal(linestring, screenRect, splitLongLines);
+  }
+
+  void releasePolylines(const QVector<QPolygonF *>& polylines) const
+  {
+    qDeleteAll(polylines);
+  }
 
   /*  Determines whether a geographical feature is big enough so that it should
    * represent a single point on the screen. Additionally checks if feature bounding rect overlaps viewport. */

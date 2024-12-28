@@ -413,19 +413,8 @@ void MapPainter::drawLineStraight(Marble::GeoPainter *painter, const atools::geo
 
 void MapPainter::drawLine(QPainter *painter, const QLineF& line) const
 {
-  static const QMarginsF MARGINS(1., 1., 1., 1.);
-  QRectF rect(line.p1(), line.p2());
-  // Add margins to avoid null width and height which will not intersect with viewport
-  rect = rect.normalized().marginsAdded(MARGINS);
-
-  if(atools::geo::lineValid(line) && QRectF(painter->viewport()).intersects(rect))
-  {
-    // if(line.intersect(QLineF(rect.topLeft(), rect.topRight()), nullptr) == QLineF::BoundedIntersection ||
-    // line.intersect(QLineF(rect.topRight(), rect.bottomRight()), nullptr) == QLineF::BoundedIntersection ||
-    // line.intersect(QLineF(rect.bottomRight(), rect.bottomLeft()), nullptr) == QLineF::BoundedIntersection ||
-    // line.intersect(QLineF(rect.bottomLeft(), rect.topLeft()), nullptr) == QLineF::BoundedIntersection)
+  if(atools::geo::lineValid(line) && QRectF(painter->viewport()).intersects(correctBounding(QRectF(line.p1(), line.p2()))))
     painter->drawLine(line);
-  }
 }
 
 void MapPainter::drawCircle(Marble::GeoPainter *painter, const atools::geo::Pos& center, float radius) const

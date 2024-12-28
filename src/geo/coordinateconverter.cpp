@@ -35,17 +35,32 @@ using namespace atools::geo;
 
 const QSize CoordinateConverter::DEFAULT_WTOS_SIZE(100, 100);
 
-CoordinateConverter::CoordinateConverter(const ViewportParams *viewportParams)
-  : viewport(viewportParams)
-{
-}
-
 bool CoordinateConverter::isHidden(const atools::geo::Pos& coords) const
 {
   qreal xr, yr;
   bool hidden = false;
   wToS(coords, xr, yr, DEFAULT_WTOS_SIZE, &hidden);
   return hidden;
+}
+
+QRectF CoordinateConverter::correctBounding(const QRectF& boundingRect)
+{
+  QRectF rect(boundingRect);
+  if(rect.width() < 1.)
+    rect.setWidth(1.);
+  if(rect.height() < 1.)
+    rect.setHeight(1.);
+  return rect;
+}
+
+QRect CoordinateConverter::correctBounding(const QRect& boundingRect)
+{
+  QRect rect(boundingRect);
+  if(rect.width() == 0)
+    rect.setWidth(1);
+  if(rect.height() == 0)
+    rect.setHeight(1);
+  return rect;
 }
 
 bool CoordinateConverter::isVisible(const atools::geo::Pos& coords, const QSize& size, bool *isHidden) const
@@ -426,17 +441,6 @@ const QVector<QPolygonF *> CoordinateConverter::createPolygonsInternal(const ato
   return polygons;
 }
 
-void CoordinateConverter::releasePolygons(const QVector<QPolygonF *>& polygons) const
-{
-  qDeleteAll(polygons);
-}
-
-const QVector<QPolygonF *> CoordinateConverter::createPolylines(const atools::geo::LineString& linestring, const QRectF& screenRect,
-                                                                bool splitLongLines) const
-{
-  return createPolylinesInternal(linestring, screenRect, splitLongLines);
-}
-
 bool CoordinateConverter::resolves(const Marble::GeoDataLatLonBox& box) const
 {
   // boxes alsmost spanning the whole globe are always in range
@@ -524,7 +528,7 @@ const QVector<QPolygonF *> CoordinateConverter::createPolylinesInternal(const at
           for(int i = polygons.size() - 1; i >= 0; i--)
           {
             const QPolygonF *polygon = polygons.at(i);
-            if(polygon == nullptr || polygon->isEmpty() || !polygon->boundingRect().intersects(screenRect))
+            if(polygon == nullptr || polygon->isEmpty() || !correctBounding(polygon->boundingRect()).intersects(screenRect))
             {
               delete polygon;
               polygons.remove(i);
@@ -554,9 +558,4 @@ const QVector<QPolygonF *> CoordinateConverter::createPolylinesInternal(const at
     qDeleteAll(geoLineStrCorrected);
   }
   return polylineVector;
-}
-
-void CoordinateConverter::releasePolylines(const QVector<QPolygonF *>& polylines) const
-{
-  qDeleteAll(polylines);
 }

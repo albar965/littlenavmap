@@ -385,7 +385,8 @@ bool TextPlacement::findTextPosInternal(const Line& line, float distanceMeter, f
       bool touchingEnd = toEnd < textWidth / 2.f + textHeight;
 
       // Text fits if not too close to the ends and if roughly visible by checking the squared rectangle
-      if((!touchingStart && !touchingEnd) && !pt.isNull() && screenRectF.intersects(QRectF(pt - square, pt + square)))
+      if((!touchingStart && !touchingEnd) && !pt.isNull() &&
+         screenRectF.intersects(CoordinateConverter::correctBounding(QRectF(pt - square, pt + square))))
       {
         QLineF textLine;
         if(i == 0)
@@ -433,7 +434,7 @@ bool TextPlacement::findTextPosInternal(const Line& line, float distanceMeter, f
         matrix.reset();
 
         // Check full visibility ================
-        if(screenRectSmall.contains(textPolygon.boundingRect()))
+        if(screenRectSmall.contains(CoordinateConverter::correctBounding(textPolygon.boundingRect())))
         {
           fullyVisibleValid.append(i);
 #ifdef DEBUG_TEXPLACEMENT_PAINT
