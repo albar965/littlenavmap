@@ -1163,8 +1163,17 @@ void SearchBaseTable::contextMenu(const QPoint& pos)
   // Airport actions ==============================================================
   bool disableDepartDest = false, disableAlternate = false, disableDirectTo = false;
   QString departDestSuffix = proc::procedureTextSuffixDepartDest(route, airport, &disableDepartDest);
-  QString alternateSuffix = proc::procedureTextSuffixAlternate(route, airport, &disableAlternate);
   QString directToSuffix = proc::procedureTextSuffixDirectTo(route, routeIndex, &airport, &disableDirectTo);
+
+  // Need at least one airport or destination to add an alternate
+  QString alternateSuffix;
+  if(route.getSizeWithoutAlternates() < 1)
+  {
+    disableAlternate = true;
+    alternateSuffix = tr(" (no destination)");
+  }
+  else
+    alternateSuffix = proc::procedureTextSuffixAlternate(route, airport, &disableAlternate);
 
   // Airport search
   ui->actionSearchRouteAirportStart->setDisabled(disableDepartDest);

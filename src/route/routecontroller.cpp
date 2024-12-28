@@ -4139,10 +4139,8 @@ void RouteController::routeAddAlternate(map::MapAirport airport)
 {
   qDebug() << Q_FUNC_INFO << airport.id << airport.ident;
 
-  if(!airport.isValid())
-    return;
-
-  if(route.isAirportAlternate(airport.ident) || route.isAirportDestination(airport.ident))
+  if(route.getSizeWithoutAlternates() < 1 || !airport.isValid() || route.isAirportAlternate(airport.ident) ||
+     route.isAirportDestination(airport.ident))
     return;
 
   // Ignore events triggering follow due to selection changes
