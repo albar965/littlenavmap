@@ -1609,6 +1609,7 @@ bool DatabaseManager::checkValidBasePaths() const
       }
     }
 
+#ifdef Q_OS_WIN
     if(selectedFsType == FsPaths::MSFS_2024)
     {
       dialog->showInfoMsgBox(lnm::ACTIONS_SHOW_DATABASE_SIMCONNECT,
@@ -1635,6 +1636,7 @@ bool DatabaseManager::checkValidBasePaths() const
         }
       }
     }
+#endif
   } // if(configValid)
 
   return configValid;
