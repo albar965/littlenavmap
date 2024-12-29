@@ -330,6 +330,12 @@ void MapPainterNav::paintAirways(const QList<map::MapAirway> *airways, bool fast
       painter->setBrush(mapcolors::textBoxColor);
       painter->setBackground(mapcolors::textBoxColor);
     }
+    else
+    {
+      painter->setBackgroundMode(Qt::TransparentMode);
+      painter->setBrush(Qt::transparent);
+      painter->setBackground(Qt::transparent);
+    }
 
     QFontMetricsF metrics(context->painter->font());
     for(Place& place : textlist)

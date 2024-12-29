@@ -218,10 +218,17 @@ void MapPainterIls::drawIlsSymbol(const map::MapIls& ils, bool fast)
 
       if(featherLen > MIN_LENGTH_FOR_TEXT)
       {
-        if(context->flags2 & opts2::MAP_NAVAID_TEXT_BACKGROUND)
+        if(context->flags2.testFlag(opts2::MAP_NAVAID_TEXT_BACKGROUND))
         {
-          painter->setBackground(Qt::white);
+          painter->setBackground(mapcolors::textBoxColor);
+          painter->setBrush(mapcolors::textBoxColor);
           painter->setBackgroundMode(Qt::OpaqueMode);
+        }
+        else
+        {
+          painter->setBackground(Qt::transparent);
+          painter->setBrush(Qt::transparent);
+          painter->setBackgroundMode(Qt::TransparentMode);
         }
 
         QFontMetricsF metrics(painter->font());
