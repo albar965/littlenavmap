@@ -45,22 +45,14 @@ bool CoordinateConverter::isHidden(const atools::geo::Pos& coords) const
 
 QRectF CoordinateConverter::correctBounding(const QRectF& boundingRect)
 {
-  QRectF rect(boundingRect);
-  if(rect.width() < 1.)
-    rect.setWidth(1.);
-  if(rect.height() < 1.)
-    rect.setHeight(1.);
-  return rect;
+  const static QMarginsF MARGINS(1., 1., 1., 1.);
+  return boundingRect.normalized().marginsAdded(MARGINS);
 }
 
 QRect CoordinateConverter::correctBounding(const QRect& boundingRect)
 {
-  QRect rect(boundingRect);
-  if(rect.width() == 0)
-    rect.setWidth(1);
-  if(rect.height() == 0)
-    rect.setHeight(1);
-  return rect;
+  const static QMargins MARGINS(1, 1, 1, 1);
+  return boundingRect.normalized().marginsAdded(MARGINS);
 }
 
 bool CoordinateConverter::isVisible(const atools::geo::Pos& coords, const QSize& size, bool *isHidden) const
