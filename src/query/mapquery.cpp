@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -451,19 +451,24 @@ void MapQuery::mapObjectByIdentInternal(map::MapResult& result, map::MapTypes ty
     maptools::removeByDistance(result.waypoints, sortByDistancePos, maxDistanceMeter);
   }
 
-  if(type & map::ILS && query::valid(Q_FUNC_INFO, ilsByIdentQuery))
+  if(type & map::ILS)
   {
-    ilsByIdentQuery->bindValue(":ident", ident);
-    ilsByIdentQuery->bindValue(":airport", airport);
-    ilsByIdentQuery->exec();
-    while(ilsByIdentQuery->next())
+    SqlQuery *query = airport.isEmpty() ? ilsByIdentQuery : ilsByIdentAndAirportQuery;
+    if(query::valid(Q_FUNC_INFO, query))
     {
-      MapIls ils;
-      mapTypesFactory->fillIls(ilsByIdentQuery->record(), ils);
-      result.ils.append(ils);
+      query->bindValue(":ident", ident);
+      if(!airport.isEmpty())
+        query->bindValue(":airport", airport);
+      query->exec();
+      while(query->next())
+      {
+        MapIls ils;
+        mapTypesFactory->fillIls(query->record(), ils);
+        result.ils.append(ils);
+      }
+      maptools::sortByDistance(result.ils, sortByDistancePos);
+      maptools::removeByDistance(result.ils, sortByDistancePos, maxDistanceMeter);
     }
-    maptools::sortByDistance(result.ils, sortByDistancePos);
-    maptools::removeByDistance(result.ils, sortByDistancePos, maxDistanceMeter);
   }
 
   if(type & map::RUNWAYEND)
@@ -1462,8 +1467,11 @@ void MapQuery::initQueries()
   ilsByIdQuery = new SqlQuery(dbNav);
   ilsByIdQuery->prepare("select " + ilsQueryBase + " from ils where ils_id = :id");
 
+  ilsByIdentAndAirportQuery = new SqlQuery(dbNav);
+  ilsByIdentAndAirportQuery->prepare("select " + ilsQueryBase + " from ils where ident = :ident and loc_airport_ident = :airport");
+
   ilsByIdentQuery = new SqlQuery(dbNav);
-  ilsByIdentQuery->prepare("select " + ilsQueryBase + " from ils where ident = :ident and loc_airport_ident = :airport");
+  ilsByIdentQuery->prepare("select " + ilsQueryBase + " from ils where ident = :ident");
 
   ilsQuerySimByAirportAndRw = new SqlQuery(dbNav);
   ilsQuerySimByAirportAndRw->prepare("select " + ilsQueryBase + " from ils where loc_airport_ident = :apt and loc_runway_name = :rwy");
@@ -1557,6 +1565,7 @@ void MapQuery::deInitQueries()
   ATOOLS_DELETE(ndbNearestQuery);
   ATOOLS_DELETE(ilsByRectQuery);
   ATOOLS_DELETE(ilsByIdentQuery);
+  ATOOLS_DELETE(ilsByIdentAndAirportQuery);
   ATOOLS_DELETE(ilsByIdQuery);
   ATOOLS_DELETE(ilsQuerySimByAirportAndRw);
   ATOOLS_DELETE(ilsQuerySimByAirportAndIdent);

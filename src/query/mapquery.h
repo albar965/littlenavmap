@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -309,7 +309,8 @@ private:
                         *ilsByRectQuery = nullptr, *holdingByRectQuery = nullptr,
                         *userdataPointByRectQuery = nullptr, *userdataPointByRectQueryNullType = nullptr;
 
-  atools::sql::SqlQuery *vorByIdentQuery = nullptr, *ndbByIdentQuery = nullptr, *ilsByIdentQuery = nullptr;
+  atools::sql::SqlQuery *vorByIdentQuery = nullptr, *ndbByIdentQuery = nullptr, *ilsByIdentAndAirportQuery = nullptr,
+                        *ilsByIdentQuery = nullptr;
 
   atools::sql::SqlQuery *vorByIdQuery = nullptr, *ndbByIdQuery = nullptr, *vorByWaypointIdQuery = nullptr,
                         *ndbByWaypointIdQuery = nullptr, *ilsByIdQuery = nullptr, *holdingByIdQuery = nullptr,
