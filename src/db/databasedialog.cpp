@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -231,36 +231,41 @@ void DatabaseDialog::updateComboBox()
 void DatabaseDialog::updateWidgets()
 {
   bool showXplane = atools::fs::FsPaths::isAnyXplane(currentFsType) || currentFsType == atools::fs::FsPaths::NONE;
-  bool showMsfs = currentFsType == atools::fs::FsPaths::MSFS || currentFsType == atools::fs::FsPaths::MSFS_2024 ||
-                  currentFsType == atools::fs::FsPaths::NONE;
+  bool showMsfs = currentFsType == atools::fs::FsPaths::MSFS || currentFsType == atools::fs::FsPaths::NONE;
+  bool showMsfs24 = currentFsType == atools::fs::FsPaths::MSFS_2024 || currentFsType == atools::fs::FsPaths::NONE;
 
-  ui->lineEditDatabaseSceneryFile->setDisabled(showXplane || showMsfs);
-  ui->labelDatabaseSceneryFile->setDisabled(showXplane || showMsfs);
-
-  ui->lineEditDatabaseSceneryFile->blockSignals(true);
-  ui->lineEditDatabaseSceneryFile->setText(simulators.value(currentFsType).sceneryCfg);
-  ui->lineEditDatabaseSceneryFile->blockSignals(false);
+  // Flight Simulator Base Path:
+  ui->labelDatabaseBasePath->setDisabled(showMsfs24);
+  ui->lineEditDatabaseBasePath->setDisabled(showMsfs24);
+  ui->pushButtonDatabaseBasePath->setDisabled(showMsfs24);
 
   ui->lineEditDatabaseBasePath->blockSignals(true);
   ui->lineEditDatabaseBasePath->setText(simulators.value(currentFsType).basePath);
   ui->lineEditDatabaseBasePath->blockSignals(false);
 
+  // Scenery Configuration File:
+  ui->lineEditDatabaseSceneryFile->setDisabled(showXplane || showMsfs || showMsfs24);
+  ui->labelDatabaseSceneryFile->setDisabled(showXplane || showMsfs || showMsfs24);
+  ui->pushButtonDatabaseSceneryFile->setDisabled(showXplane || showMsfs || showMsfs24);
+
+  ui->lineEditDatabaseSceneryFile->blockSignals(true);
+  ui->lineEditDatabaseSceneryFile->setText(simulators.value(currentFsType).sceneryCfg);
+  ui->lineEditDatabaseSceneryFile->blockSignals(false);
+
+  // Read Prepar3D add-on.xml packages
   ui->checkBoxReadAddOnXml->setEnabled(currentFsType == atools::fs::FsPaths::P3D_V3 || currentFsType == atools::fs::FsPaths::P3D_V4 ||
                                        currentFsType == atools::fs::FsPaths::P3D_V5 || currentFsType == atools::fs::FsPaths::P3D_V6);
 
-  ui->checkBoxReadInactive->setEnabled(currentFsType != atools::fs::FsPaths::MSFS && currentFsType != atools::fs::FsPaths::MSFS_2024);
+  // Read inactive or disabled Scenery Entries
+  ui->checkBoxReadInactive->setDisabled(showMsfs || showMsfs24);
 
-  // Disable everything if no installed simulators are found
-  // (normally not needed since the action is already disabled)
-  ui->pushButtonDatabaseSceneryFile->setEnabled(!showXplane && !showMsfs);
-  ui->lineEditDatabaseSceneryFile->setEnabled(!showXplane && !showMsfs);
-
-  // ui->pushButtonDatabaseResetPaths->setEnabled(currentFsType != atools::fs::FsPaths::MSFS_2024);
+  // Reset Paths
+  ui->pushButtonDatabaseResetPaths->setDisabled(showMsfs24);
 }
 
 QString DatabaseDialog::fixBasePath(QString path)
 {
   if(!path.isEmpty() && !QDir(path).isRoot() && (path.endsWith("/") || path.endsWith("\\")))
-    path.remove(path.size() - 1, 1);
+    path.chop(1);
   return atools::nativeCleanPath(path);
 }
