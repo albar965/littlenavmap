@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -60,6 +60,9 @@ using atools::fs::FsPaths;
 
 // Maximum age of database before showing a warning dialog
 const static int MAX_AGE_DAYS = 60;
+
+// Note dialog letting user know about loading time
+const static int SIMCONNECT_LOADING_MINUTES = 10;
 
 DatabaseManager::DatabaseManager(MainWindow *parent)
   : QObject(parent), mainWindow(parent)
@@ -1624,7 +1627,8 @@ bool DatabaseManager::checkValidBasePaths() const
         QMessageBox::StandardButton retval = dialog->information(
           tr("Cannot connect to Microsoft Flight Simulator 2024, which is required for Little Navmap to load airports.\n\n"
              "Start Microsoft Flight Simulator 2024, "
-             "wait until the user interface of the simulator is visible and then press \"Ok\" to continue."),
+             "wait until the user interface of the simulator is visible and then press \"Ok\" to continue.\n\n"
+             "Note that the loading process can take a while. Expect about %1 minutes.").arg(SIMCONNECT_LOADING_MINUTES),
           QMessageBox::Ok | QMessageBox::Cancel);
 
         if(retval == QMessageBox::Ok)
