@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -831,7 +831,7 @@ void MapPainterAirport::drawAirportDiagram(const map::MapAirport& airport)
         float x, y;
         if(wToSBuf(airport.towerCoords, x, y, MARGINS_SMALL))
         {
-          QString text = mapLayerEffective->isAirportDiagramDetail3() ? tr("Tower") : tr("T");
+          QString text = mapLayerEffective->isAirportDiagramDetail3() ? tr("Tower") : tr("T", "Tower short name");
           painter->setPen(QPen(mapcolors::towerTextColor, 2, Qt::SolidLine, Qt::FlatCap));
           painter->drawText(QPointF(x - metrics.horizontalAdvance(text) / 2., y + metrics.ascent() / 2.), text);
         }

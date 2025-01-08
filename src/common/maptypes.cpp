@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -217,44 +217,44 @@ void initTranslateableTexts()
 
   parkingDatabaseNameMap = QHash<QString, QString>(
     {
-      {"NO_PARKING", QObject::tr("NONE")},
-      {"PARKING", QObject::tr("P")},
-      {"N_PARKING", QObject::tr("NP")},
-      {"NE_PARKING", QObject::tr("NEP")},
-      {"E_PARKING", QObject::tr("EP")},
-      {"SE_PARKING", QObject::tr("SEP")},
-      {"S_PARKING", QObject::tr("SP")},
-      {"SW_PARKING", QObject::tr("SWP")},
-      {"W_PARKING", QObject::tr("WP")},
-      {"NW_PARKING", QObject::tr("NWP")},
-      {"GATE", QObject::tr("G")},
-      {"DOCK", QObject::tr("D")},
-      {"GATE_A", QObject::tr("GA")},
-      {"GATE_B", QObject::tr("GB")},
-      {"GATE_C", QObject::tr("GC")},
-      {"GATE_D", QObject::tr("GD")},
-      {"GATE_E", QObject::tr("GE")},
-      {"GATE_F", QObject::tr("GF")},
-      {"GATE_G", QObject::tr("GG")},
-      {"GATE_H", QObject::tr("GH")},
-      {"GATE_I", QObject::tr("GI")},
-      {"GATE_J", QObject::tr("GJ")},
-      {"GATE_K", QObject::tr("GK")},
-      {"GATE_L", QObject::tr("GL")},
-      {"GATE_M", QObject::tr("GM")},
-      {"GATE_N", QObject::tr("GN")},
-      {"GATE_O", QObject::tr("GO")},
-      {"GATE_P", QObject::tr("GP")},
-      {"GATE_Q", QObject::tr("GQ")},
-      {"GATE_R", QObject::tr("GR")},
-      {"GATE_S", QObject::tr("GS")},
-      {"GATE_T", QObject::tr("GT")},
-      {"GATE_U", QObject::tr("GU")},
-      {"GATE_V", QObject::tr("GV")},
-      {"GATE_W", QObject::tr("GW")},
-      {"GATE_X", QObject::tr("GX")},
-      {"GATE_Y", QObject::tr("GY")},
-      {"GATE_Z", QObject::tr("GZ")},
+      {"NO_PARKING", "NONE"},
+      {"PARKING", "P"},
+      {"N_PARKING", "NP"},
+      {"NE_PARKING", "NEP"},
+      {"E_PARKING", "EP"},
+      {"SE_PARKING", "SEP"},
+      {"S_PARKING", "SP"},
+      {"SW_PARKING", "SWP"},
+      {"W_PARKING", "WP"},
+      {"NW_PARKING", "NWP"},
+      {"GATE", "G"},
+      {"DOCK", "D"},
+      {"GATE_A", "GA"},
+      {"GATE_B", "GB"},
+      {"GATE_C", "GC"},
+      {"GATE_D", "GD"},
+      {"GATE_E", "GE"},
+      {"GATE_F", "GF"},
+      {"GATE_G", "GG"},
+      {"GATE_H", "GH"},
+      {"GATE_I", "GI"},
+      {"GATE_J", "GJ"},
+      {"GATE_K", "GK"},
+      {"GATE_L", "GL"},
+      {"GATE_M", "GM"},
+      {"GATE_N", "GN"},
+      {"GATE_O", "GO"},
+      {"GATE_P", "GP"},
+      {"GATE_Q", "GQ"},
+      {"GATE_R", "GR"},
+      {"GATE_S", "GS"},
+      {"GATE_T", "GT"},
+      {"GATE_U", "GU"},
+      {"GATE_V", "GV"},
+      {"GATE_W", "GW"},
+      {"GATE_X", "GX"},
+      {"GATE_Y", "GY"},
+      {"GATE_Z", "GZ"},
     });
 
   /* *INDENT-OFF* */
@@ -321,78 +321,78 @@ void initTranslateableTexts()
 
   navTypeNamesVor = QHash<QString, QString>(
     {
-      {"INVALID", QObject::tr("Invalid")},
-      {"H", QObject::tr("H")},
-      {"L", QObject::tr("L")},
-      {"T", QObject::tr("T")},
-      {"VH", QObject::tr("H")},
-      {"VL", QObject::tr("L")},
-      {"VT", QObject::tr("T")},
+      {"INVALID", QObject::tr("Invalid", "VOR type name")},
+      {"H", QObject::tr("H", "VOR type name")},
+      {"L", QObject::tr("L", "VOR type name")},
+      {"T", QObject::tr("T", "VOR type name")},
+      {"VH", QObject::tr("H", "VOR type name")},
+      {"VL", QObject::tr("L", "VOR type name")},
+      {"VT", QObject::tr("T", "VOR type name")},
     });
 
   navTypeNamesVorLong = QHash<QString, QString>(
     {
-      {"INVALID", QObject::tr("Invalid")},
-      {"H", QObject::tr("High")},
-      {"L", QObject::tr("Low")},
-      {"T", QObject::tr("Terminal")},
-      {"VTH", QObject::tr("High")},
-      {"VTL", QObject::tr("Low")},
-      {"VTT", QObject::tr("Terminal")}
+      {"INVALID", QObject::tr("Invalid", "Long VOR type name")},
+      {"H", QObject::tr("High", "Long VOR type name")},
+      {"L", QObject::tr("Low", "Long VOR type name")},
+      {"T", QObject::tr("Terminal", "Long VOR type name")},
+      {"VTH", QObject::tr("High", "Long VOR type name")},
+      {"VTL", QObject::tr("Low", "Long VOR type name")},
+      {"VTT", QObject::tr("Terminal", "Long VOR type name")}
     });
 
   navTypeNamesNdb = QHash<QString, QString>(
     {
-      {"INVALID", QObject::tr("Invalid")},
-      {"HH", QObject::tr("HH")},
-      {"H", QObject::tr("H")},
-      {"MH", QObject::tr("MH")},
-      {"CP", QObject::tr("Compass Locator")},
-      {"NHH", QObject::tr("HH")},
-      {"NH", QObject::tr("H")},
-      {"NMH", QObject::tr("MH")},
-      {"NCP", QObject::tr("Compass Locator")},
+      {"INVALID", QObject::tr("Invalid", "NDB type name")},
+      {"HH", QObject::tr("HH", "NDB type name")},
+      {"H", QObject::tr("H", "NDB type name")},
+      {"MH", QObject::tr("MH", "NDB type name")},
+      {"CP", QObject::tr("Compass Locator", "NDB type name")},
+      {"NHH", QObject::tr("HH", "NDB type name")},
+      {"NH", QObject::tr("H", "NDB type name")},
+      {"NMH", QObject::tr("MH", "NDB type name")},
+      {"NCP", QObject::tr("Compass Locator", "NDB type name")},
     });
 
   navTypeNamesWaypoint = QHash<QString, QString>(
     {
-      {"INVALID", QObject::tr("Invalid")},
-      {"WN", QObject::tr("Named")},
-      {"WT", QObject::tr("Track")},
-      {"WU", QObject::tr("Unnamed")},
-      {"V", QObject::tr("VOR")},
-      {"N", QObject::tr("NDB")},
-      {"VFR", QObject::tr("VFR")},
-      {"RNAV", QObject::tr("RNAV")},
-      {"OA", QObject::tr("Off Airway")},
-      {"IAF", QObject::tr("IAF")},
-      {"FAF", QObject::tr("FAF")}
+      {"INVALID", QObject::tr("Invalid", "Waypoint type name")},
+      {"WN", QObject::tr("Named", "Waypoint type name")},
+      {"WT", QObject::tr("Track", "Waypoint type name")},
+      {"WU", QObject::tr("Unnamed", "Waypoint type name")},
+      {"V", QObject::tr("VOR", "Waypoint type name")},
+      {"N", QObject::tr("NDB", "Waypoint type name")},
+      {"VFR", QObject::tr("VFR", "Waypoint type name")},
+      {"RNAV", QObject::tr("RNAV", "Waypoint type name")},
+      {"OA", QObject::tr("Off Airway", "Waypoint type name")},
+      {"IAF", QObject::tr("IAF", "Waypoint type name")},
+      {"FAF", QObject::tr("FAF", "Waypoint type name")}
     });
 
   navTypeNames = QHash<QString, QString>(
     {
-      {"INVALID", QObject::tr("Invalid")},
-      {"VD", QObject::tr("VORDME")},
-      {"VT", QObject::tr("VORTAC")},
-      {"VTD", QObject::tr("DME only VORTAC")},
-      {"V", QObject::tr("VOR")},
-      {"D", QObject::tr("DME")},
-      {"TC", QObject::tr("TACAN")},
-      {"TCD", QObject::tr("DME only TACAN")},
-      {"N", QObject::tr("NDB")},
-      {"W", QObject::tr("Waypoint")}
+      {"INVALID", QObject::tr("Invalid", "All navaids type name")},
+      {"VD", QObject::tr("VORDME", "All navaids type name")},
+      {"VT", QObject::tr("VORTAC", "All navaids type name")},
+      {"VTD", QObject::tr("DME only VORTAC", "All navaids type name")},
+      {"V", QObject::tr("VOR", "All navaids type name")},
+      {"D", QObject::tr("DME", "All navaids type name")},
+      {"TC", QObject::tr("TACAN", "All navaids type name")},
+      {"TCD", QObject::tr("DME only TACAN", "All navaids type name")},
+      {"N", QObject::tr("NDB", "All navaids type name")},
+      {"W", QObject::tr("Waypoint", "All navaids type name")}
     });
 
   comTypeNames = QHash<QString, QString>(
     {
-      {"INVALID", QObject::tr("Invalid")},
-      {"NONE", QObject::tr("None")},
+      {"INVALID", QObject::tr("Invalid", "COM type name")},
+      {"NONE", QObject::tr("None", "COM type name")},
 
       // FSX/P3D types
       // {"ATIS", QObject::tr("ATIS")},
       // {"MC", QObject::tr("Multicom")},
       // {"UC", QObject::tr("Unicom")},
-      {"CTAF", QObject::tr("CTAF")},
+      {"CTAF", QObject::tr("CTAF", "COM type name")},
       // {"G", QObject::tr("Ground")},
       // {"T", QObject::tr("Tower")},
       // {"C", QObject::tr("Clearance")},
@@ -403,125 +403,125 @@ void initTranslateableTexts()
       // {"AWOS", QObject::tr("AWOS")},
       // {"ASOS", QObject::tr("ASOS")},
       // {"CPT", QObject::tr("Clearance pre Taxi")},
-      {"RCD", QObject::tr("Remote Clearance Delivery")},
+      {"RCD", QObject::tr("Remote Clearance Delivery", "COM type name")},
 
       // All new AIRAC types
-      {"CTR", QObject::tr("Area Control Center")},
-      {"ACP", QObject::tr("Airlift Command Post")},
-      {"AIR", QObject::tr("Air to Air")},
-      {"A", QObject::tr("Approach Control")},
-      {"ARR", QObject::tr("Arrival Control")},
-      {"ASOS", QObject::tr("ASOS")},
-      {"ATIS", QObject::tr("ATIS")},
-      {"AWI", QObject::tr("AWIB")},
-      {"AWOS", QObject::tr("AWOS")},
-      {"AWS", QObject::tr("AWIS")},
-      {"C", QObject::tr("Clearance Delivery")},
-      {"CPT", QObject::tr("Clearance Pre-Taxi")},
-      {"CTA", QObject::tr("Terminal Control Area")},
-      {"CTL", QObject::tr("Control")},
-      {"D", QObject::tr("Departure Control")},
-      {"DIR", QObject::tr("Director (Approach Control Radar)")},
-      {"EFS", QObject::tr("En-route Flight Advisory Service (EFAS)")},
-      {"EMR", QObject::tr("Emergency")},
-      {"FSS", QObject::tr("Flight Service Station")},
-      {"GCO", QObject::tr("Ground Comm Outlet")},
-      {"GET", QObject::tr("Gate Control")},
-      {"G", QObject::tr("Ground Control")},
-      {"HEL", QObject::tr("Helicopter Frequency")},
-      {"INF", QObject::tr("Information")},
-      {"MIL", QObject::tr("Military Frequency")},
-      {"MC", QObject::tr("Multicom")},
-      {"OPS", QObject::tr("Operations")},
-      {"PAL", QObject::tr("Pilot Activated Lighting")},
-      {"RDO", QObject::tr("Radio")},
-      {"RDR", QObject::tr("Radar")},
-      {"RFS", QObject::tr("Remote Flight Service Station (RFSS)")},
-      {"RMP", QObject::tr("Ramp or Taxi Control")},
-      {"RSA", QObject::tr("Airport Radar Service Area (ARSA)")},
-      {"TCA", QObject::tr("Terminal Control Area (TCA)")},
-      {"TMA", QObject::tr("Terminal Control Area (TMA)")},
-      {"TML", QObject::tr("Terminal")},
-      {"TRS", QObject::tr("Terminal Radar Service Area (TRSA)")},
-      {"TWE", QObject::tr("Transcriber Weather Broadcast (TWEB)")},
-      {"T", QObject::tr("Tower, Air Traffic Control")},
-      {"UAC", QObject::tr("Upper Area Control")},
-      {"UC", QObject::tr("UNICOM")},
-      {"VOL", QObject::tr("VOLMET")}
+      {"CTR", QObject::tr("Area Control Center", "COM type name")},
+      {"ACP", QObject::tr("Airlift Command Post", "COM type name")},
+      {"AIR", QObject::tr("Air to Air", "COM type name")},
+      {"A", QObject::tr("Approach Control", "COM type name")},
+      {"ARR", QObject::tr("Arrival Control", "COM type name")},
+      {"ASOS", QObject::tr("ASOS", "COM type name")},
+      {"ATIS", QObject::tr("ATIS", "COM type name")},
+      {"AWI", QObject::tr("AWIB", "COM type name")},
+      {"AWOS", QObject::tr("AWOS", "COM type name")},
+      {"AWS", QObject::tr("AWIS", "COM type name")},
+      {"C", QObject::tr("Clearance Delivery", "COM type name")},
+      {"CPT", QObject::tr("Clearance Pre-Taxi", "COM type name")},
+      {"CTA", QObject::tr("Terminal Control Area", "COM type name")},
+      {"CTL", QObject::tr("Control", "COM type name")},
+      {"D", QObject::tr("Departure Control", "COM type name")},
+      {"DIR", QObject::tr("Director (Approach Control Radar)", "COM type name")},
+      {"EFS", QObject::tr("En-route Flight Advisory Service (EFAS)", "COM type name")},
+      {"EMR", QObject::tr("Emergency", "COM type name")},
+      {"FSS", QObject::tr("Flight Service Station", "COM type name")},
+      {"GCO", QObject::tr("Ground Comm Outlet", "COM type name")},
+      {"GET", QObject::tr("Gate Control", "COM type name")},
+      {"G", QObject::tr("Ground Control", "COM type name")},
+      {"HEL", QObject::tr("Helicopter Frequency", "COM type name")},
+      {"INF", QObject::tr("Information", "COM type name")},
+      {"MIL", QObject::tr("Military Frequency", "COM type name")},
+      {"MC", QObject::tr("Multicom", "COM type name")},
+      {"OPS", QObject::tr("Operations", "COM type name")},
+      {"PAL", QObject::tr("Pilot Activated Lighting", "COM type name")},
+      {"RDO", QObject::tr("Radio", "COM type name")},
+      {"RDR", QObject::tr("Radar", "COM type name")},
+      {"RFS", QObject::tr("Remote Flight Service Station (RFSS)", "COM type name")},
+      {"RMP", QObject::tr("Ramp or Taxi Control", "COM type name")},
+      {"RSA", QObject::tr("Airport Radar Service Area (ARSA)", "COM type name")},
+      {"TCA", QObject::tr("Terminal Control Area (TCA)", "COM type name")},
+      {"TMA", QObject::tr("Terminal Control Area (TMA)", "COM type name")},
+      {"TML", QObject::tr("Terminal", "COM type name")},
+      {"TRS", QObject::tr("Terminal Radar Service Area (TRSA)", "COM type name")},
+      {"TWE", QObject::tr("Transcriber Weather Broadcast (TWEB)", "COM type name")},
+      {"T", QObject::tr("Tower, Air Traffic Control", "COM type name")},
+      {"UAC", QObject::tr("Upper Area Control", "COM type name")},
+      {"UC", QObject::tr("UNICOM", "COM type name")},
+      {"VOL", QObject::tr("VOLMET", "COM type name")}
     });
 
   airspaceTypeNameMap = QHash<map::MapAirspaceType, QString>(
     {
-      {map::AIRSPACE_NONE, QObject::tr("No Airspace")},
-      {map::CENTER, QObject::tr("Center")},
-      {map::CLASS_A, QObject::tr("Class A")},
-      {map::CLASS_B, QObject::tr("Class B")},
-      {map::CLASS_C, QObject::tr("Class C")},
-      {map::CLASS_D, QObject::tr("Class D")},
-      {map::CLASS_E, QObject::tr("Class E")},
-      {map::CLASS_F, QObject::tr("Class F")},
-      {map::CLASS_G, QObject::tr("Class G")},
-      {map::FIR, QObject::tr("FIR")},
-      {map::UIR, QObject::tr("UIR")},
-      {map::TOWER, QObject::tr("Tower")},
-      {map::CLEARANCE, QObject::tr("Clearance")},
-      {map::GROUND, QObject::tr("Ground")},
-      {map::DEPARTURE, QObject::tr("Departure")},
-      {map::APPROACH, QObject::tr("Approach")},
-      {map::MOA, QObject::tr("MOA")},
-      {map::RESTRICTED, QObject::tr("Restricted")},
-      {map::PROHIBITED, QObject::tr("Prohibited")},
-      {map::WARNING, QObject::tr("Warning")},
-      {map::CAUTION, QObject::tr("Caution")},
-      {map::ALERT, QObject::tr("Alert")},
-      {map::DANGER, QObject::tr("Danger")},
-      {map::NATIONAL_PARK, QObject::tr("National Park")},
-      {map::MODEC, QObject::tr("Mode-C")},
-      {map::RADAR, QObject::tr("Radar")},
-      {map::GCA, QObject::tr("General Control Area")},
-      {map::MCTR, QObject::tr("Military Control Zone")},
-      {map::TRSA, QObject::tr("Terminal Radar Service Area")},
-      {map::TRAINING, QObject::tr("Training")},
-      {map::GLIDERPROHIBITED, QObject::tr("Glider Prohibited")},
-      {map::WAVEWINDOW, QObject::tr("Wave Window")},
-      {map::ONLINE_OBSERVER, QObject::tr("Online Observer")}
+      {map::AIRSPACE_NONE, QObject::tr("No Airspace", "Airspace type name")},
+      {map::CENTER, QObject::tr("Center", "Airspace type name")},
+      {map::CLASS_A, QObject::tr("Class A", "Airspace type name")},
+      {map::CLASS_B, QObject::tr("Class B", "Airspace type name")},
+      {map::CLASS_C, QObject::tr("Class C", "Airspace type name")},
+      {map::CLASS_D, QObject::tr("Class D", "Airspace type name")},
+      {map::CLASS_E, QObject::tr("Class E", "Airspace type name")},
+      {map::CLASS_F, QObject::tr("Class F", "Airspace type name")},
+      {map::CLASS_G, QObject::tr("Class G", "Airspace type name")},
+      {map::FIR, QObject::tr("FIR", "Airspace type name")},
+      {map::UIR, QObject::tr("UIR", "Airspace type name")},
+      {map::TOWER, QObject::tr("Tower", "Airspace type name")},
+      {map::CLEARANCE, QObject::tr("Clearance", "Airspace type name")},
+      {map::GROUND, QObject::tr("Ground", "Airspace type name")},
+      {map::DEPARTURE, QObject::tr("Departure", "Airspace type name")},
+      {map::APPROACH, QObject::tr("Approach", "Airspace type name")},
+      {map::MOA, QObject::tr("MOA", "Airspace type name")},
+      {map::RESTRICTED, QObject::tr("Restricted", "Airspace type name")},
+      {map::PROHIBITED, QObject::tr("Prohibited", "Airspace type name")},
+      {map::WARNING, QObject::tr("Warning", "Airspace type name")},
+      {map::CAUTION, QObject::tr("Caution", "Airspace type name")},
+      {map::ALERT, QObject::tr("Alert", "Airspace type name")},
+      {map::DANGER, QObject::tr("Danger", "Airspace type name")},
+      {map::NATIONAL_PARK, QObject::tr("National Park", "Airspace type name")},
+      {map::MODEC, QObject::tr("Mode-C", "Airspace type name")},
+      {map::RADAR, QObject::tr("Radar", "Airspace type name")},
+      {map::GCA, QObject::tr("General Control Area", "Airspace type name")},
+      {map::MCTR, QObject::tr("Military Control Zone", "Airspace type name")},
+      {map::TRSA, QObject::tr("Terminal Radar Service Area", "Airspace type name")},
+      {map::TRAINING, QObject::tr("Training", "Airspace type name")},
+      {map::GLIDERPROHIBITED, QObject::tr("Glider Prohibited", "Airspace type name")},
+      {map::WAVEWINDOW, QObject::tr("Wave Window", "Airspace type name")},
+      {map::ONLINE_OBSERVER, QObject::tr("Online Observer", "Airspace type name")}
     });
 
   airspaceTypeShortNameMap = QHash<map::MapAirspaceType, QString>(
     {
-      {map::AIRSPACE_NONE, QObject::tr("No Airspace")},
-      {map::CENTER, QObject::tr("CTR")},
-      {map::CLASS_A, QObject::tr("A")},
-      {map::CLASS_B, QObject::tr("B")},
-      {map::CLASS_C, QObject::tr("C")},
-      {map::CLASS_D, QObject::tr("D")},
-      {map::CLASS_E, QObject::tr("E")},
-      {map::CLASS_F, QObject::tr("F")},
-      {map::CLASS_G, QObject::tr("G")},
-      {map::FIR, QObject::tr("FIR")},
-      {map::UIR, QObject::tr("UIR")},
-      {map::TOWER, QObject::tr("TWR")},
-      {map::CLEARANCE, QObject::tr("CLR")},
-      {map::GROUND, QObject::tr("GND")},
-      {map::DEPARTURE, QObject::tr("DEP")},
-      {map::APPROACH, QObject::tr("APP")},
-      {map::MOA, QObject::tr("MOA")},
-      {map::RESTRICTED, QObject::tr("R")},
-      {map::PROHIBITED, QObject::tr("P")},
-      {map::WARNING, QObject::tr("W")},
-      {map::CAUTION, QObject::tr("CN")},
-      {map::ALERT, QObject::tr("A")},
-      {map::DANGER, QObject::tr("D")},
-      {map::NATIONAL_PARK, QObject::tr("National Park")},
-      {map::MODEC, QObject::tr("Mode-C")},
-      {map::RADAR, QObject::tr("Radar")},
-      {map::GCA, QObject::tr("GCA")},
-      {map::MCTR, QObject::tr("MCZ")},
-      {map::TRSA, QObject::tr("TRSA")},
-      {map::TRAINING, QObject::tr("T")},
-      {map::GLIDERPROHIBITED, QObject::tr("Glider Prohibited")},
-      {map::WAVEWINDOW, QObject::tr("Wave Window")},
-      {map::ONLINE_OBSERVER, QObject::tr("Online Observer")}
+      {map::AIRSPACE_NONE, QObject::tr("No Airspace", "Airspace short type name")},
+      {map::CENTER, QObject::tr("CTR", "Airspace short type name")},
+      {map::CLASS_A, QObject::tr("A", "Airspace short type name")},
+      {map::CLASS_B, QObject::tr("B", "Airspace short type name")},
+      {map::CLASS_C, QObject::tr("C", "Airspace short type name")},
+      {map::CLASS_D, QObject::tr("D", "Airspace short type name")},
+      {map::CLASS_E, QObject::tr("E", "Airspace short type name")},
+      {map::CLASS_F, QObject::tr("F", "Airspace short type name")},
+      {map::CLASS_G, QObject::tr("G", "Airspace short type name")},
+      {map::FIR, QObject::tr("FIR", "Airspace short type name")},
+      {map::UIR, QObject::tr("UIR", "Airspace short type name")},
+      {map::TOWER, QObject::tr("TWR", "Airspace short type name")},
+      {map::CLEARANCE, QObject::tr("CLR", "Airspace short type name")},
+      {map::GROUND, QObject::tr("GND", "Airspace short type name")},
+      {map::DEPARTURE, QObject::tr("DEP", "Airspace short type name")},
+      {map::APPROACH, QObject::tr("APP", "Airspace short type name")},
+      {map::MOA, QObject::tr("MOA", "Airspace short type name")},
+      {map::RESTRICTED, QObject::tr("R", "Airspace short type name")},
+      {map::PROHIBITED, QObject::tr("P", "Airspace short type name")},
+      {map::WARNING, QObject::tr("W", "Airspace short type name")},
+      {map::CAUTION, QObject::tr("CN", "Airspace short type name")},
+      {map::ALERT, QObject::tr("A", "Airspace short type name")},
+      {map::DANGER, QObject::tr("D", "Airspace short type name")},
+      {map::NATIONAL_PARK, QObject::tr("National Park", "Airspace short type name")},
+      {map::MODEC, QObject::tr("Mode-C", "Airspace short type name")},
+      {map::RADAR, QObject::tr("Radar", "Airspace short type name")},
+      {map::GCA, QObject::tr("GCA", "Airspace short type name")},
+      {map::MCTR, QObject::tr("MCZ", "Airspace short type name")},
+      {map::TRSA, QObject::tr("TRSA", "Airspace short type name")},
+      {map::TRAINING, QObject::tr("T", "Airspace short type name")},
+      {map::GLIDERPROHIBITED, QObject::tr("Glider Prohibited", "Airspace short type name")},
+      {map::WAVEWINDOW, QObject::tr("Wave Window", "Airspace short type name")},
+      {map::ONLINE_OBSERVER, QObject::tr("Online Observer", "Airspace short type name")}
     });
 
   airspaceFlagNameMap = QHash<map::MapAirspaceFlag, QString>(
@@ -583,46 +583,46 @@ void initTranslateableTexts()
 // Map for flight plan values
 static QHash<QString, QString> parkingNameMapUntranslated(
   {
-    {"INVALID", QLatin1String("Invalid")},
-    {"UNKNOWN", QLatin1String("Unknown")},
-    {"NONE", QLatin1String("Parking None")},
-    {"P", QLatin1String("Parking")},
-    {"NP", QLatin1String("N Parking")},
-    {"NEP", QLatin1String("NE Parking")},
-    {"EP", QLatin1String("E Parking")},
-    {"SEP", QLatin1String("SE Parking")},
-    {"SP", QLatin1String("S Parking")},
-    {"SWP", QLatin1String("SW Parking")},
-    {"WP", QLatin1String("W Parking")},
-    {"NWP", QLatin1String("NW Parking")},
-    {"G", QLatin1String("Gate")},
-    {"D", QLatin1String("Dock")},
-    {"GA", QLatin1String("Gate A")},
-    {"GB", QLatin1String("Gate B")},
-    {"GC", QLatin1String("Gate C")},
-    {"GD", QLatin1String("Gate D")},
-    {"GE", QLatin1String("Gate E")},
-    {"GF", QLatin1String("Gate F")},
-    {"GG", QLatin1String("Gate G")},
-    {"GH", QLatin1String("Gate H")},
-    {"GI", QLatin1String("Gate I")},
-    {"GJ", QLatin1String("Gate J")},
-    {"GK", QLatin1String("Gate K")},
-    {"GL", QLatin1String("Gate L")},
-    {"GM", QLatin1String("Gate M")},
-    {"GN", QLatin1String("Gate N")},
-    {"GO", QLatin1String("Gate O")},
-    {"GP", QLatin1String("Gate P")},
-    {"GQ", QLatin1String("Gate Q")},
-    {"GR", QLatin1String("Gate R")},
-    {"GS", QLatin1String("Gate S")},
-    {"GT", QLatin1String("Gate T")},
-    {"GU", QLatin1String("Gate U")},
-    {"GV", QLatin1String("Gate V")},
-    {"GW", QLatin1String("Gate W")},
-    {"GX", QLatin1String("Gate X")},
-    {"GY", QLatin1String("Gate Y")},
-    {"GZ", QLatin1String("Gate Z")}
+    {"INVALID", "Invalid"},
+    {"UNKNOWN", "Unknown"},
+    {"NONE", "Parking None"},
+    {"P", "Parking"},
+    {"NP", "N Parking"},
+    {"NEP", "NE Parking"},
+    {"EP", "E Parking"},
+    {"SEP", "SE Parking"},
+    {"SP", "S Parking"},
+    {"SWP", "SW Parking"},
+    {"WP", "W Parking"},
+    {"NWP", "NW Parking"},
+    {"G", "Gate"},
+    {"D", "Dock"},
+    {"GA", "Gate A"},
+    {"GB", "Gate B"},
+    {"GC", "Gate C"},
+    {"GD", "Gate D"},
+    {"GE", "Gate E"},
+    {"GF", "Gate F"},
+    {"GG", "Gate G"},
+    {"GH", "Gate H"},
+    {"GI", "Gate I"},
+    {"GJ", "Gate J"},
+    {"GK", "Gate K"},
+    {"GL", "Gate L"},
+    {"GM", "Gate M"},
+    {"GN", "Gate N"},
+    {"GO", "Gate O"},
+    {"GP", "Gate P"},
+    {"GQ", "Gate Q"},
+    {"GR", "Gate R"},
+    {"GS", "Gate S"},
+    {"GT", "Gate T"},
+    {"GU", "Gate U"},
+    {"GV", "Gate V"},
+    {"GW", "Gate W"},
+    {"GX", "Gate X"},
+    {"GY", "Gate Y"},
+    {"GZ", "Gate Z"}
   });
 
 /* The higher the better */
@@ -1281,19 +1281,19 @@ QString airwayTrackTypeToShortString(MapAirwayTrackType type)
       break;
 
     case map::TRACK_NAT:
-      return QObject::tr("N");
+      return QObject::tr("N", "Oceanic track type");
 
     case map::TRACK_PACOTS:
-      return QObject::tr("P");
+      return QObject::tr("P", "Oceanic track type");
 
     case map::AIRWAY_VICTOR:
-      return QObject::tr("L");
+      return QObject::tr("L", "Oceanic track type");
 
     case map::AIRWAY_JET:
-      return QObject::tr("H");
+      return QObject::tr("H", "Oceanic track type");
 
     case map::AIRWAY_BOTH:
-      return QObject::tr("B");
+      return QObject::tr("B", "Oceanic track type");
 
   }
   return QString();
@@ -1307,19 +1307,19 @@ QString airwayTrackTypeToString(MapAirwayTrackType type)
       break;
 
     case map::TRACK_NAT:
-      return QObject::tr("NAT");
+      return QObject::tr("NAT", "Oceanic track system name");
 
     case map::TRACK_PACOTS:
-      return QObject::tr("PACOTS");
+      return QObject::tr("PACOTS", "Oceanic track system name");
 
     case map::AIRWAY_VICTOR:
-      return QObject::tr("Low");
+      return QObject::tr("Low", "Oceanic track system name");
 
     case map::AIRWAY_JET:
-      return QObject::tr("High");
+      return QObject::tr("High", "Oceanic track system name");
 
     case map::AIRWAY_BOTH:
-      return QObject::tr("Both");
+      return QObject::tr("Both", "Oceanic track system name");
 
   }
   return QString();
@@ -1383,28 +1383,28 @@ QString airwayRouteTypeToStringShort(map::MapAirwayRouteType type)
       break;
 
     case map::RT_AIRLINE:
-      return QObject::tr("A");
+      return "A";
 
     case map::RT_CONTROL:
-      return QObject::tr("C");
+      return "C";
 
     case map::RT_DIRECT:
-      return QObject::tr("D");
+      return "D";
 
     case map::RT_HELICOPTER:
-      return QObject::tr("H");
+      return "H";
 
     case map::RT_OFFICIAL:
-      return QObject::tr("O");
+      return "O";
 
     case map::RT_RNAV:
-      return QObject::tr("R");
+      return "R";
 
     case map::RT_UNDESIGNATED:
-      return QObject::tr("S");
+      return "S";
 
     case map::RT_TRACK:
-      return QObject::tr("T");
+      return "T";
   }
   return QString();
 }
@@ -1660,22 +1660,26 @@ QString holdingMarkText(const HoldingMarker& obj)
 {
   if(obj.holding.navIdent.isEmpty())
     return QObject::tr("User Holding %1 %2").
-           arg(obj.holding.turnLeft ? QObject::tr("L") : QObject::tr("R")).
+           arg(obj.holding.turnLeft ? QObject::tr("L", "Holding direction") : QObject::tr("R", "Holding direction")).
            arg(Unit::altFeet(obj.holding.position.getAltitude()));
   else
     return QObject::tr("User Holding %1 %2 %3").
            arg(obj.holding.navIdent).
-           arg(obj.holding.turnLeft ? QObject::tr("L") : QObject::tr("R")).
+           arg(obj.holding.turnLeft ? QObject::tr("L", "Holding direction") : QObject::tr("R", "Holding direction")).
            arg(Unit::altFeet(obj.holding.position.getAltitude()));
 }
 
 QString patternMarkText(const PatternMarker& obj)
 {
   if(obj.airportIcao.isEmpty())
-    return QObject::tr("Traffic Pattern %1 RW %2").arg(obj.turnRight ? QObject::tr("R") : QObject::tr("L")).arg(obj.runwayName);
+    return QObject::tr("Traffic Pattern %1 RW %2").arg(obj.turnRight ?
+                                                       QObject::tr("R", "Pattern direction") :
+                                                       QObject::tr("L", "Pattern direction")).arg(obj.runwayName);
   else
     return QObject::tr("Traffic Pattern %1 %2 RW %3").
-           arg(obj.airportIcao).arg(obj.turnRight ? QObject::tr("R") : QObject::tr("L")).arg(obj.runwayName);
+           arg(obj.airportIcao).arg(obj.turnRight ?
+                                    QObject::tr("R", "Pattern direction") :
+                                    QObject::tr("L", "Pattern direction")).arg(obj.runwayName);
 }
 
 QString msaMarkText(const MsaMarker& obj)
@@ -1701,15 +1705,15 @@ QString airwayAltText(const MapAirway& airway)
     if(airway.maxAltitude > 0 && airway.maxAltitude < map::MapAirway::MAX_ALTITUDE_LIMIT_FT)
       altTxt = Unit::altFeet(airway.minAltitude);
     else
-      altTxt = QObject::tr("Min ") % Unit::altFeet(airway.minAltitude);
+      altTxt = QObject::tr("Min ", "Airway altitude restriction") % Unit::altFeet(airway.minAltitude);
   }
 
   if(airway.maxAltitude > 0 && airway.maxAltitude < map::MapAirway::MAX_ALTITUDE_LIMIT_FT)
   {
     if(airway.minAltitude > 0)
-      altTxt += QObject::tr(" to ") % Unit::altFeet(airway.maxAltitude);
+      altTxt += QObject::tr(" to ", "Airway altitude restriction") % Unit::altFeet(airway.maxAltitude);
     else
-      altTxt += QObject::tr("Max ") % Unit::altFeet(airway.maxAltitude);
+      altTxt += QObject::tr("Max ", "Airway altitude restriction") % Unit::altFeet(airway.maxAltitude);
   }
   return altTxt;
 }
@@ -1793,10 +1797,10 @@ QString magvarText(float magvar, bool shortText, bool degSign)
     const QString txt = degSign ? QObject::tr("%1°%2") : QObject::tr("%1%2");
 
     if(magvar < -0.04f)
-      return txt.arg(num).arg(shortText ? QObject::tr("W") : QObject::tr(" West"));
+      return txt.arg(num).arg(shortText ? QObject::tr("W", "Compass direction west") : QObject::tr(" West"));
     else if(magvar > 0.04f)
       // positive" (or "easterly") variation
-      return txt.arg(num).arg(shortText ? QObject::tr("E") : QObject::tr(" East"));
+      return txt.arg(num).arg(shortText ? QObject::tr("E", "Compass direction east") : QObject::tr(" East"));
     else
       return degSign ? QObject::tr("0°") : QObject::tr("0");
   }
@@ -1818,44 +1822,14 @@ bool isSoftSurface(const QString& surface)
   return !isWaterSurface(surface) && !isHardSurface(surface);
 }
 
-QString parkingShortName(const QString& name)
-{
-  if(name == "P")
-    return QObject::tr("P");
-  else if(name == "NP")
-    return QObject::tr("N");
-  else if(name == "NEP")
-    return QObject::tr("NE");
-  else if(name == "EP")
-    return QObject::tr("E");
-  else if(name == "SEP")
-    return QObject::tr("SE");
-  else if(name == "SP")
-    return QObject::tr("S");
-  else if(name == "SWP")
-    return QObject::tr("SW");
-  else if(name == "WP")
-    return QObject::tr("W");
-  else if(name == "NWP")
-    return QObject::tr("NW");
-  else if(name == "G")
-    return QString();
-  else if(name == "D")
-    return QObject::tr("D");
-  else if(name.startsWith("G"))
-    return name.right(1);
-  else
-    return QString();
-}
-
 QString edgeLights(const QString& type)
 {
   if(type == "L")
-    return QObject::tr("Low");
+    return QObject::tr("Low", "Taxi edge lights");
   else if(type == "M")
-    return QObject::tr("Medium");
+    return QObject::tr("Medium", "Taxi edge lights");
   else if(type == "H")
-    return QObject::tr("High");
+    return QObject::tr("High", "Taxi edge lights");
   else
     return QString();
 }
@@ -1863,9 +1837,9 @@ QString edgeLights(const QString& type)
 QString patternDirection(const QString& type)
 {
   if(type == "L")
-    return QObject::tr("Left");
+    return QObject::tr("Left", "Traffic pattern direction");
   else if(type == "R")
-    return QObject::tr("Right");
+    return QObject::tr("Right", "Traffic pattern direction");
   else
     return QString();
 }
@@ -2040,9 +2014,9 @@ QString ilsType(const map::MapIls& ils, bool gs, bool dme, const QString& separa
       text += QObject::tr(" CAT III");
 
     if(gs && ils.hasGlideslope())
-      text += separator % QObject::tr("GS");
+      text += separator % QObject::tr("GS", "ILS type");
     if(dme && ils.hasDme)
-      text += separator % QObject::tr("DME");
+      text += separator % QObject::tr("DME", "ILS type");
   }
   else
   {
@@ -2195,7 +2169,7 @@ QString airspaceRestrictiveNameMap(const MapAirspace& airspace)
     if(name.endsWith('*'))
       name = name.remove('*').trimmed();
 
-    restrictedName = airspace.restrictiveType % QObject::tr("-") % name;
+    restrictedName = airspace.restrictiveType % QObject::tr("-", "Airspace text separator") % name;
   }
   return restrictedName;
 }

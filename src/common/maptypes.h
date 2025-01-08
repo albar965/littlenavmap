@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -1806,9 +1806,6 @@ map::MapAirspaceSources airspaceSource(const map::MapBase *base);
 
 /* Parking name from PLN to database name */
 const QString& parkingDatabaseName(const QString& name);
-
-/* Get short name for a parking spot */
-QString parkingShortName(const QString& name);
 
 /* Parking description as needed in the PLN files */
 QString parkingNameForFlightplan(const MapParking& parking);

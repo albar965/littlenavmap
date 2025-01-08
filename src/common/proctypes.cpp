@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -419,7 +419,7 @@ QString altRestrictionTextNarrow(const proc::MapAltRestriction& altRestriction)
   {
     case proc::MapAltRestriction::ILS_AT:
     case proc::MapAltRestriction::ILS_AT_OR_ABOVE:
-      retval = QObject::tr("GS") + Unit::altFeet(altRestriction.alt1, true, true);
+      retval = QObject::tr("GS", "Procedure altitude restriction") + Unit::altFeet(altRestriction.alt1, true, true);
       break;
 
     case proc::MapAltRestriction::NO_ALT_RESTR:
@@ -430,16 +430,16 @@ QString altRestrictionTextNarrow(const proc::MapAltRestriction& altRestriction)
       break;
 
     case proc::MapAltRestriction::AT_OR_ABOVE:
-      retval = QObject::tr("A") + Unit::altFeet(altRestriction.alt1, true, true);
+      retval = QObject::tr("A", "Procedure altitude restriction") + Unit::altFeet(altRestriction.alt1, true, true);
       break;
 
     case proc::MapAltRestriction::AT_OR_BELOW:
-      retval = QObject::tr("B") + Unit::altFeet(altRestriction.alt1, true, true);
+      retval = QObject::tr("B", "Procedure altitude restriction") + Unit::altFeet(altRestriction.alt1, true, true);
       break;
 
     case proc::MapAltRestriction::BETWEEN:
-      retval = QObject::tr("A") + Unit::altFeet(altRestriction.alt2, false, true) +
-               QObject::tr("B") + Unit::altFeet(altRestriction.alt1, true, true);
+      retval = QObject::tr("A", "Procedure altitude restriction") + Unit::altFeet(altRestriction.alt2, false, true) +
+               QObject::tr("B", "Procedure altitude restriction") + Unit::altFeet(altRestriction.alt1, true, true);
       break;
   }
   return retval;
@@ -522,10 +522,10 @@ QString speedRestrictionTextNarrow(const proc::MapSpeedRestriction& speedRestric
       return Unit::speedKts(speedRestriction.speed, false) + Unit::getUnitSpeedStr();
 
     case proc::MapSpeedRestriction::MIN:
-      return QObject::tr("A") + Unit::speedKts(speedRestriction.speed, false) + Unit::getUnitSpeedStr();
+      return QObject::tr("A", "Procedure speed restriction") + Unit::speedKts(speedRestriction.speed, false) + Unit::getUnitSpeedStr();
 
     case proc::MapSpeedRestriction::MAX:
-      return QObject::tr("B") + Unit::speedKts(speedRestriction.speed, false) + Unit::getUnitSpeedStr();
+      return QObject::tr("B", "Procedure speed restriction") + Unit::speedKts(speedRestriction.speed, false) + Unit::getUnitSpeedStr();
   }
   return QString();
 }

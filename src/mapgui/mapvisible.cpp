@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -90,19 +90,19 @@ void MapVisible::updateVisibleObjectsStatusBar()
           if(shown.testFlag(map::AIRPORT_HARD))
           {
             runways.append(tr("hard (H)"));
-            apShort.append(tr("H"));
+            apShort.append(tr("H", "Runway surface"));
           }
 
           if(shown.testFlag(map::AIRPORT_SOFT) && layer->isAirportMinor())
           {
             runways.append(tr("soft (S)"));
-            apShort.append(tr("S"));
+            apShort.append(tr("S", "Runway surface"));
           }
 
           if(shown.testFlag(map::AIRPORT_WATER) && layer->isAirportMinor())
           {
             runways.append(tr("water (W)"));
-            apShort.append(tr("W"));
+            apShort.append(tr("W", "Runway surface"));
           }
           if(!runways.isEmpty())
             tooltip.text(tr("With ") % atools::strJoin(runways, tr(", "), tr(" and "), tr(" runways."))).br();
@@ -119,13 +119,13 @@ void MapVisible::updateVisibleObjectsStatusBar()
         if(shown.testFlag(map::AIRPORT_EMPTY))
         {
           features.append(tr("empty with zero rating (E)"));
-          apShort.append(tr("E"));
+          apShort.append(tr("E", "Airport status"));
         }
 
         if(shown.testFlag(map::AIRPORT_HELIPAD) && layer->isAirportMinor())
         {
           features.append(tr("heliports (O)"));
-          apShort.append(tr("O"));
+          apShort.append(tr("O", "Airport status"));
         }
 
         if(shown.testFlag(map::AIRPORT_UNLIGHTED))
@@ -133,7 +133,7 @@ void MapVisible::updateVisibleObjectsStatusBar()
         else
         {
           features.append(tr("only lighted (L)"));
-          apShort.append(tr("L"));
+          apShort.append(tr("L", "Airport status"));
         }
 
         if(shown.testFlag(map::AIRPORT_NO_PROCS))
@@ -141,30 +141,30 @@ void MapVisible::updateVisibleObjectsStatusBar()
         else
         {
           features.append(tr("only with procedure (P)"));
-          apShort.append(tr("P"));
+          apShort.append(tr("P", "Airport status"));
         }
 
         if(shown.testFlag(map::AIRPORT_CLOSED))
         {
           features.append(tr("closed (C)"));
-          apShort.append(tr("C"));
+          apShort.append(tr("C", "Airport status"));
         }
 
         if(shown.testFlag(map::AIRPORT_MILITARY))
         {
           features.append(tr("military (M)"));
-          apShort.append(tr("M"));
+          apShort.append(tr("M", "Airport status"));
         }
 
         if(shown.testFlag(map::AIRPORT_ADDON_ZOOM))
         {
           features.append(tr("add-on overrides zoom (AZ)"));
-          apShort.append(tr("AZ"));
+          apShort.append(tr("AZ", "Airport status"));
         }
         else if(shown.testFlag(map::AIRPORT_ADDON_ZOOM_FILTER))
         {
           features.append(tr("add-on overrides zoom and filter (AF)"));
-          apShort.append(tr("AF"));
+          apShort.append(tr("AF", "Airport status"));
         }
 
         if(!features.isEmpty())
@@ -180,55 +180,55 @@ void MapVisible::updateVisibleObjectsStatusBar()
       // Collect navaid information ==========================================================
       if(layer->isVor() && shown.testFlag(map::VOR))
       {
-        navaidLabel.append(tr("V"));
+        navaidLabel.append(tr("V", "Navaid short type"));
         navaidsTooltip.append(tr("VOR (V)"));
       }
 
       if(layer->isNdb() && shown.testFlag(map::NDB))
       {
-        navaidLabel.append(tr("N"));
+        navaidLabel.append(tr("N", "Navaid short type"));
         navaidsTooltip.append(tr("NDB (N)"));
       }
 
       if(layer->isWaypoint() && shown.testFlag(map::WAYPOINT))
       {
-        navaidLabel.append(tr("W"));
+        navaidLabel.append(tr("W", "Navaid short type"));
         navaidsTooltip.append(tr("Waypoints (W)"));
       }
 
       if(layer->isIls() && shown.testFlag(map::ILS))
       {
-        navaidLabel.append(tr("I"));
+        navaidLabel.append(tr("I", "Navaid short type"));
         navaidsTooltip.append(tr("ILS (I)"));
       }
 
       if(layer->isIls() && shownDispTypes.testFlag(map::GLS) && QueryManager::instance()->getQueriesGui()->isGlsAvailable())
       {
-        navaidLabel.append(tr("G"));
+        navaidLabel.append(tr("G", "Navaid short type"));
         navaidsTooltip.append(tr("GLS (G)"));
       }
 
       if(layer->isAirway() && shown.testFlag(map::AIRWAYV))
       {
-        navaidLabel.append(tr("LA"));
+        navaidLabel.append(tr("LA", "Airway short type"));
         navaidsTooltip.append(tr("Low Airways (LA)"));
       }
 
       if(layer->isAirway() && shown.testFlag(map::AIRWAYJ))
       {
-        navaidLabel.append(tr("HA"));
+        navaidLabel.append(tr("HA", "Airway short type"));
         navaidsTooltip.append(tr("High Airways (HA)"));
       }
 
       if(layer->isTrack() && shown.testFlag(map::TRACK))
       {
-        navaidLabel.append(tr("T"));
+        navaidLabel.append(tr("T", "Track short indicator"));
         navaidsTooltip.append(tr("Tracks (T)"));
       }
 
       if(layer->isHolding() && shown.testFlag(map::HOLDING))
       {
-        navaidLabel.append(tr("H"));
+        navaidLabel.append(tr("H", "Holding short indicator"));
         navaidsTooltip.append(tr("Holdings (H)"));
       }
 
@@ -389,7 +389,7 @@ void MapVisible::updateVisibleObjectsStatusBar()
         b(tr(" Wind source: ")).text(windReporter->getSourceText()).tdEnd().trEnd();
 
         if(windReporter->isWindShown() && windReporter->getSource() != wind::WIND_SOURCE_DISABLED)
-          weatherLabel.append(tr("W"));
+          weatherLabel.append(tr("W", "Wind indicator"));
       }
       else
         tooltip.tr().td(tr("No wind shown")).trEnd();
@@ -399,7 +399,7 @@ void MapVisible::updateVisibleObjectsStatusBar()
       if(shownDispTypes.testFlag(map::FLIGHTPLAN)) // Always shown until cut off distance
       {
         tooltip.tr().td().b(tr("Flight plan (F)")).tdEnd().trEnd();
-        routeLabel.append(tr("F"));
+        routeLabel.append(tr("F", "Flight plan indicator"));
       }
       else
         tooltip.tr().td(tr("No wind shown")).trEnd();
@@ -407,7 +407,7 @@ void MapVisible::updateVisibleObjectsStatusBar()
       if(shown.testFlag(map::AIRCRAFT_TRAIL)) // Always shown until cut off distance
       {
         tooltip.tr().td().b(tr("Aircraft trail (T)")).tdEnd().trEnd();
-        routeLabel.append(tr("T"));
+        routeLabel.append(tr("T", "Trail indicator"));
       }
       else
         tooltip.tr().td(tr("No aircraft trail shown")).trEnd();
