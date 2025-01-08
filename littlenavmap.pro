@@ -744,9 +744,9 @@ ICON = resources/icons/littlenavmap.icns
 TRANSLATIONS = littlenavmap_fr.ts \
                littlenavmap_it.ts \
                littlenavmap_de.ts \
+               littlenavmap_zh.ts \
                littlenavmap_pt_BR.ts
 
-# littlenavmap_zh.ts
 # littlenavmap_nl.ts
 # littlenavmap_es.ts
 
