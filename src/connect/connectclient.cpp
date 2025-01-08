@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -258,7 +258,7 @@ void ConnectClient::disconnectedFromSimulatorDirect()
   showTerminalError();
 
   // Try to reconnect if it was not unlinked by using the disconnect button
-  if(!errorState && connectDialog->isAutoConnect() && connectDialog->isAnyConnectDirect() && !manualDisconnect)
+  if(!errorState && connectDialog->isAutoConnect() && connectDialog->isAnyConnectDirect() && !manualDisconnect && !simconnectPaused)
     connectInternal();
   else
     mainWindow->setConnectionStatusMessageText(tr("Disconnected"), tr("Disconnected from local flight simulator."));
@@ -750,7 +750,7 @@ void ConnectClient::showTerminalError()
 
 void ConnectClient::connectInternal()
 {
-  if(connectDialog->isAnyConnectDirect())
+  if(connectDialog->isAnyConnectDirect() && !simconnectPaused)
   {
     qDebug() << "Starting direct connection";
 
@@ -1080,15 +1080,17 @@ void ConnectClient::pauseSimConnect()
   qDebug() << Q_FUNC_INFO;
 
   // Disable only if active or autoconnect is on
-  if(simConnectHandler != nullptr && dataReader->isSimConnectHandler() && (reconnectNetworkTimer.isActive() || dataReader->isConnected()))
+  if(simConnectHandler != nullptr &&
+     dataReader->isSimConnectHandler() /*&& (reconnectNetworkTimer.isActive() || dataReader->isConnected())*/)
   {
+    qDebug() << Q_FUNC_INFO << "Paused";
+
     errorState = false;
 
     reconnectNetworkTimer.stop();
 
-    if(dataReader->isConnected())
-      // Tell disconnectedFromSimulatorDirect not to reconnect
-      manualDisconnect = true;
+    // Tell disconnectedFromSimulatorDirect not to reconnect
+    manualDisconnect = true;
 
     dataReader->terminateThread();
 
@@ -1106,6 +1108,8 @@ void ConnectClient::resumeSimConnect()
   qDebug() << Q_FUNC_INFO;
   if(simconnectPaused)
   {
+    qDebug() << Q_FUNC_INFO << "Unpaused";
+
     simConnectHandler->resumeSimConnect();
 
     if(connectDialog->isAutoConnect())
