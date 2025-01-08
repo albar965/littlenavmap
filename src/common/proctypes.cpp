@@ -295,28 +295,6 @@ const QString& procedureType(const QString& type)
   return atools::hashValue(approachTypeToStr, type, type);
 }
 
-QString edgeLights(const QString& type)
-{
-  if(type == "L")
-    return QObject::tr("Low");
-  else if(type == "M")
-    return QObject::tr("Medium");
-  else if(type == "H")
-    return QObject::tr("High");
-  else
-    return QString();
-}
-
-QString patternDirection(const QString& type)
-{
-  if(type == "L")
-    return QObject::tr("Left");
-  else if(type == "R")
-    return QObject::tr("Right");
-  else
-    return QString();
-}
-
 proc::ProcedureLegType procedureLegEnum(const QString& type)
 {
   return approachLegTypeToEnum.value(type);
@@ -419,7 +397,7 @@ QString altRestrictionTextNarrow(const proc::MapAltRestriction& altRestriction)
   {
     case proc::MapAltRestriction::ILS_AT:
     case proc::MapAltRestriction::ILS_AT_OR_ABOVE:
-      retval = QObject::tr("GS", "Procedure altitude restriction") + Unit::altFeet(altRestriction.alt1, true, true);
+      retval = QObject::tr("GS", "Procedure altitude restriction - avoid translation") + Unit::altFeet(altRestriction.alt1, true, true);
       break;
 
     case proc::MapAltRestriction::NO_ALT_RESTR:
@@ -430,16 +408,16 @@ QString altRestrictionTextNarrow(const proc::MapAltRestriction& altRestriction)
       break;
 
     case proc::MapAltRestriction::AT_OR_ABOVE:
-      retval = QObject::tr("A", "Procedure altitude restriction") + Unit::altFeet(altRestriction.alt1, true, true);
+      retval = QObject::tr("A", "Procedure altitude restriction - avoid translation") + Unit::altFeet(altRestriction.alt1, true, true);
       break;
 
     case proc::MapAltRestriction::AT_OR_BELOW:
-      retval = QObject::tr("B", "Procedure altitude restriction") + Unit::altFeet(altRestriction.alt1, true, true);
+      retval = QObject::tr("B", "Procedure altitude restriction - avoid translation") + Unit::altFeet(altRestriction.alt1, true, true);
       break;
 
     case proc::MapAltRestriction::BETWEEN:
-      retval = QObject::tr("A", "Procedure altitude restriction") + Unit::altFeet(altRestriction.alt2, false, true) +
-               QObject::tr("B", "Procedure altitude restriction") + Unit::altFeet(altRestriction.alt1, true, true);
+      retval = QObject::tr("A", "Procedure altitude restriction - avoid translation") + Unit::altFeet(altRestriction.alt2, false, true) +
+               QObject::tr("B", "Procedure altitude restriction - avoid translation") + Unit::altFeet(altRestriction.alt1, true, true);
       break;
   }
   return retval;
@@ -522,10 +500,12 @@ QString speedRestrictionTextNarrow(const proc::MapSpeedRestriction& speedRestric
       return Unit::speedKts(speedRestriction.speed, false) + Unit::getUnitSpeedStr();
 
     case proc::MapSpeedRestriction::MIN:
-      return QObject::tr("A", "Procedure speed restriction") + Unit::speedKts(speedRestriction.speed, false) + Unit::getUnitSpeedStr();
+      return QObject::tr("A", "Procedure speed restriction - avoid translation") +
+             Unit::speedKts(speedRestriction.speed, false) + Unit::getUnitSpeedStr();
 
     case proc::MapSpeedRestriction::MAX:
-      return QObject::tr("B", "Procedure speed restriction") + Unit::speedKts(speedRestriction.speed, false) + Unit::getUnitSpeedStr();
+      return QObject::tr("B", "Procedure speed restriction - avoid translation") +
+             Unit::speedKts(speedRestriction.speed, false) + Unit::getUnitSpeedStr();
   }
   return QString();
 }

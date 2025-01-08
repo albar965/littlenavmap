@@ -331,18 +331,18 @@ void MapVisible::updateVisibleObjectsStatusBar()
           if(!layer->isAiAircraftSmall())
           {
             ac = tr("Aircraft > %1 ft").arg(layer::LARGE_AIRCRAFT_SIZE);
-            aiLabel.append("A>");
+            aiLabel.append(tr("A>", "Aircraft indicator"));
           }
           else
           {
             ac = tr("Aircraft");
-            aiLabel.append("A");
+            aiLabel.append(tr("A", "Aircraft indicator"));
           }
 
           if(layer->isAiAircraftGround())
           {
             ac.append(tr(" on ground"));
-            aiLabel.last().append("G");
+            aiLabel.last().append(tr("G", "Aircraft indicator"));
           }
           ai.append(ac);
         }
@@ -352,12 +352,12 @@ void MapVisible::updateVisibleObjectsStatusBar()
           if(!layer->isAiShipSmall())
           {
             ai.append(tr("Ships > %1 ft").arg(layer::LARGE_SHIP_SIZE));
-            aiLabel.append("S>");
+            aiLabel.append(tr("S>", "Ship indicator"));
           }
           else
           {
             ai.append(tr("Ships"));
-            aiLabel.append("S");
+            aiLabel.append(tr("S", "Ship indicator"));
           }
         }
       }
@@ -377,7 +377,7 @@ void MapVisible::updateVisibleObjectsStatusBar()
         text(map::mapWeatherSourceString(paintLayer->getMapWeatherSource())).tdEnd().trEnd();
 
         if(paintLayer->getMapWeatherSource() != map::WEATHER_SOURCE_DISABLED)
-          weatherLabel.append(tr("AW"));
+          weatherLabel.append(tr("AW", "Airport weather indicator"));
       }
       else
         tooltip.tr().td(tr("No airport weather shown")).trEnd();
