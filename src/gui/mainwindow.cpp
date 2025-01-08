@@ -503,6 +503,10 @@ MainWindow::MainWindow()
     debugActionMoveAircraft->setCheckable(true);
     this->addAction(debugActionMoveAircraft);
 
+    debugActionExportPlans = new QAction("DEBUG - Multiexport Drag and Dropped Flight Plans", ui->menuHelp);
+    debugActionExportPlans->setCheckable(true);
+    this->addAction(debugActionExportPlans);
+
     ui->menuHelp->addSeparator();
     ui->menuHelp->addSeparator();
     ui->menuHelp->addAction(debugActionDumpRoute);
@@ -522,6 +526,7 @@ MainWindow::MainWindow()
 
     ui->menuHelp->addSeparator();
     ui->menuHelp->addAction(debugActionMoveAircraft);
+    ui->menuHelp->addAction(debugActionExportPlans);
 
     connect(debugActionDumpRoute, &QAction::triggered, this, &MainWindow::debugActionTriggeredDumpRoute);
     connect(debugActionDumpFlightplan, &QAction::triggered, this, &MainWindow::debugActionTriggeredDumpFlightplan);
@@ -535,6 +540,7 @@ MainWindow::MainWindow()
     connect(debugActionSegfault, &QAction::triggered, this, &MainWindow::debugActionTriggeredSegfault);
     connect(debugActionAssert, &QAction::triggered, this, &MainWindow::debugActionTriggeredAssert);
     connect(debugActionMoveAircraft, &QAction::toggled, this, &MainWindow::updateActionStates);
+    connect(debugActionExportPlans, &QAction::toggled, this, &MainWindow::updateActionStates);
   }
 
   qDebug() << Q_FUNC_INFO << "Exit";
@@ -4873,39 +4879,66 @@ void MainWindow::dragEnterEvent(QDragEnterEvent *event)
 {
   qDebug() << Q_FUNC_INFO;
   // Accept only one file
-  if(event->mimeData() != nullptr && event->mimeData()->hasUrls() && event->mimeData()->urls().size() == 1)
+  if(event->mimeData() != nullptr && event->mimeData()->hasUrls() &&
+     (event->mimeData()->urls().size() == 1 || debugActionExportPlans->isChecked()))
   {
-    QList<QUrl> urls = event->mimeData()->urls();
+    QList<QUrl> urls;
+
+    if(debugActionExportPlans->isChecked())
+    {
+      // Accept all URLs for debug export
+      urls.append(event->mimeData()->urls());
+      std::sort(urls.begin(), urls.end());
+    }
+    else
+      urls.append(event->mimeData()->urls().constFirst());
 
     if(!urls.isEmpty())
     {
-      // Has to be a file
-      QUrl url = urls.constFirst();
-      if(url.isLocalFile())
+      // First has to be a file
+      for(const QUrl& url : urls)
       {
-        // accept if file exists, is readable and matches the supported extensions or content
-        QFileInfo file(url.toLocalFile());
-
-        QString flightplan, perf, layout, gpx;
-        fc::checkFileType(file.filePath(), &flightplan, &perf, &layout, &gpx);
-
-        if(!flightplan.isEmpty() || !perf.isEmpty() || !layout.isEmpty() || !gpx.isEmpty())
+        if(url.isLocalFile())
         {
-          qDebug() << Q_FUNC_INFO << "accepting" << url;
-          event->acceptProposedAction();
-          return;
+          // accept if file exists, is readable and matches the supported extensions or content
+          QFileInfo file(url.toLocalFile());
+
+          QString flightplan, perf, layout, gpx;
+          fc::checkFileType(file.filePath(), &flightplan, &perf, &layout, &gpx);
+
+          if(!flightplan.isEmpty() || !perf.isEmpty() || !layout.isEmpty() || !gpx.isEmpty())
+          {
+            qDebug() << Q_FUNC_INFO << "accepting" << url;
+            event->acceptProposedAction();
+            return;
+          }
         }
+        qDebug() << Q_FUNC_INFO << "not accepting" << url;
       }
-      qDebug() << Q_FUNC_INFO << "not accepting" << url;
     }
   }
 }
 
 void MainWindow::dropEvent(QDropEvent *event)
 {
-  if(event->mimeData()->urls().size() == 1)
+  QList<QUrl> urls = event->mimeData()->urls();
+  if(debugActionExportPlans->isChecked())
   {
-    QString filepath = event->mimeData()->urls().constFirst().toLocalFile();
+    // Load all plans and export them using multiexport for testing
+    std::sort(urls.begin(), urls.end());
+    for(const QUrl& url : urls)
+    {
+      QString filepath = url.toLocalFile();
+      qDebug() << Q_FUNC_INFO << "Dropped file:" << filepath;
+
+      routeOpenFile(filepath, true /* correctAndWarn */);
+      routeExport->routeMultiExport();
+    }
+  }
+  else if(urls.size() == 1)
+  {
+    // Check only first URL
+    QString filepath = urls.constFirst().toLocalFile();
     qDebug() << Q_FUNC_INFO << "Dropped file:" << filepath;
 
     if(atools::gui::DockWidgetHandler::isWindowLayoutFile(filepath))

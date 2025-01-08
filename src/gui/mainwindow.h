@@ -666,7 +666,7 @@ private:
           *debugActionReloadPlan = nullptr, *debugActionPlanEdit = nullptr,
           *debugActionPerfEdit = nullptr, *debugActionDumpLayers = nullptr, *debugActionResetUpdate = nullptr,
           *debugActionThrowException = nullptr, *debugActionSegfault = nullptr,
-          *debugActionAssert = nullptr, *debugActionMoveAircraft = nullptr;
+          *debugActionAssert = nullptr, *debugActionMoveAircraft = nullptr, *debugActionExportPlans = nullptr;
 };
 
 #endif // LITTLENAVMAP_MAINWINDOW_H
