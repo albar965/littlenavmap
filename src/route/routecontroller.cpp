@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -216,7 +216,9 @@ RouteController::RouteController(QMainWindow *parentWindow, QTableView *tableVie
     tr("Name of airport or navaid."),
     tr("Either SID, SID transition, STAR, STAR transition, transition,\n"
        "approach or missed plus the name of the procedure."),
-    tr("Contains the airway name for en route legs or procedure instruction."),
+    tr("Contains the airway name for en route legs or procedure instruction.\n"
+       "Airways have a suffix showing the type which is \n"
+       "\"H\" for high/Jet, \"L\" for low/Victor and \"B\" for both."),
     tr("Minimum and maximum altitude for en route airway segments.\n"
        "Procedure altitude restriction, speed limit or\n"
        "required descent flight path angle."),
