@@ -1077,17 +1077,15 @@ bool ConnectClient::checkSimConnect() const
 
 void ConnectClient::pauseSimConnect()
 {
-  qDebug() << Q_FUNC_INFO;
+  qDebug() << Q_FUNC_INFO << "Paused connected" << dataReader->isConnected() << "reconnecting" << dataReader->isReconnecting()
+           << "autoConnect" << connectDialog->isAutoConnect();
 
   // Disable only if active or autoconnect is on
-  if(simConnectHandler != nullptr &&
-     dataReader->isSimConnectHandler() /*&& (reconnectNetworkTimer.isActive() || dataReader->isConnected())*/)
+  if(simConnectHandler != nullptr && dataReader->isSimConnectHandler() &&
+     (connectDialog->isAutoConnect() || dataReader->isConnected() || dataReader->isReconnecting()))
   {
-    qDebug() << Q_FUNC_INFO << "Paused";
-
+    qDebug() << Q_FUNC_INFO << "Pausing...";
     errorState = false;
-
-    reconnectNetworkTimer.stop();
 
     // Tell disconnectedFromSimulatorDirect not to reconnect
     manualDisconnect = true;
@@ -1105,18 +1103,21 @@ void ConnectClient::pauseSimConnect()
 
 void ConnectClient::resumeSimConnect()
 {
-  qDebug() << Q_FUNC_INFO;
+  qDebug() << Q_FUNC_INFO << "simconnectPaused" << simconnectPaused;
   if(simconnectPaused)
   {
-    qDebug() << Q_FUNC_INFO << "Unpaused";
+    qDebug() << Q_FUNC_INFO << "...unpaused";
 
     simConnectHandler->resumeSimConnect();
+    simconnectPaused = false;
 
     if(connectDialog->isAutoConnect())
-      reconnectNetworkTimer.start(socketReconnectSec * 1000);
-    else
+    {
+      qDebug() << Q_FUNC_INFO << "connectInternalAuto()";
       connectInternalAuto();
+    }
+    else
+      connectInternal();
 
-    simconnectPaused = false;
   }
 }
