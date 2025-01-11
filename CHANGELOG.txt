@@ -30,34 +30,37 @@ There are limitations since Little Navmap has to load the complete scenery libra
 SimConnect interface and cannot rely on files anymore. All files used by Little Navmap from MSFS
 2020 were dropped due to the streaming only approach of MSFS 2024.
 
-Note that most of the limitations can only be fixed by Asobo.
+Note that some of theses limitations can only be fixed by Asobo.
 
 * The simulator has to run to load the scenery library.
 * The simulator connection in Little Navmap has to be paused during loading. You will not see
   aircraft updates in Little Navmap while loading.
-* Loading airports and navaids takes about 10 minutes. Future optimizations and parallelization are
+* Loading airports and navaids takes about 10 minutes. Future optimizations are
   planned.
 * Detection of add-on airports is not possible. Right click on an airport icon on the map, the
   airport search result table or the flight plan table and use the function `Mark Airport as add-on`
-  which will add a userpoint on top of this airport.
+  which will add a userpoint on top of an airport marking it as an add-on.
 * Airports have no city, country or state/province names.
 * Airport names are always English. Translations are not available.
 * Closed runways or closed airports cannot be detected.
-* Some ILS are not connected to runways and therefore won't be shown in the Little Navmap elevation
-  profile. Example: LOWI OEV.
-* Runways used by procedures which are present at an airport do not always match. Example: EDDK
-  where runways were renamed.
+* About 140 ILS of 4100 are not connected to runways and therefore won't be shown in the Little Navmap
+  elevation profile. Example: LOWI OEV.
+* Runways used by procedures which are present at an airport do not always match. Example: EDDK, LSZR,
+  LSZN, ENSB, EKRN, LFLO, LOWK and more.
 * A workaround has to be used to detect if an airport has lighted runways or not since this
   information is missing in the SimConnect interface. This is not 100 percent reliable.
+* MSFS 2020 provides around 42000 airports while MSFS 2024 has almost 84000 airports. Half of these
+  are heliports.
 * Airspaces are not available through SimConnect. You can use other sources for airspaces. See chapter
-  [Little Navmap User Manual - Loading Airspaces](https://www.littlenavmap.org/manuals/littlenavmap/release/latest/en/AIRSPACELOAD.html) for more information and links to public airspace sources.
+  [Little Navmap User Manual - Loading Airspaces](https://www.littlenavmap.org/manuals/littlenavmap/release/latest/en/AIRSPACELOAD.html)
+  for more information and links to public airspace sources.
 * Airport aprons are not available, only taxiways.
 * Airline codes for parking are missing.
 * Navaids like waypoints, VOR, NDB or ILS can only be loaded if they are connected to a procedure,
   a runway or an airway. This means that waypoints in the North Atlantic needed for Oceanic tracks
   will be missing, for example. LOWI localizer OEJ cannot be loaded and is missing on the map. As a
-  result, around 100000 navaids are missing from the map due to SimConnect limitations, which does
-  not allow the enumeration of navaids world-wide.
+  result, around 70000 navaids are missing from the map due to SimConnect limitations, which does
+  not allow the world-wide enumeration of navaids.
 * Full SID and STAR are duplicated for each runway. This will be fixed in one of the next releases
   of Little Navmap and does not affect functionality.
 * Note that all fields in the load scenery library dialog are now disabled when selecting MSFS 2024
@@ -81,8 +84,7 @@ Note that most of the limitations can only be fixed by Asobo.
 ### Other
 
 * Removing airport vehicles now for all MSFS simulators.
-* Added exclusion of traffic and AIRAC BGL from loading for MSFS 2020 to avoid error messages in
-  the log.
+* Added TACAN and VORTAC station types for all MSFS simulators.
 * Fixed issue where ILS could not be found if airport ident was empty. This resulted in recommended
   navaids not being resolved in procedures (red error message in procedure search).
 * Fixed crash when selecting airport as alternate in airport search result table or in logbook
@@ -108,6 +110,8 @@ Note that most of the limitations can only be fixed by Asobo.
   when using X-Plane and MSFS simulators.
 * Now omitting duplicate waypoints with invalid regions in all MSFS simulators. Also using better
   duplicate waypoint removal for MSFS 2020 now.
+* Added exclusion of traffic and AIRAC BGL from loading for MSFS 2020 to avoid error messages in
+  the log.
 * ILS feather geometry is now using a minimum width of 2 degrees to avoid ILS feathers shown as
   lines in all simulators.
 * Improved on-ground approximation to avoid wrong takeoff detection when hovering with helicopters.
