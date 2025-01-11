@@ -4,18 +4,120 @@ This text is partially Markdown, so the formatting is sometimes strange.
 
 ==>>=============================================================================
 
-# Version 3.0.12
+# Version 3.0.13.beta1
 
 ## Notes
 
-**This is a stable release of Little Navmap that fixes smaller issues.**
+**This is a test release of Little Navmap that adds support for MSFS 2024 and fixes other small
+issues. Please read the release notes below.**
 
-**Reload the scenery library database to get fixes for airports and procedures.**
+Note that not all reported issues were fixed so far. See
+[Release 3.0.13](https://github.com/albar965/littlenavmap/milestone/35). This will be done in the next
+releases.
 
-**macOS users: Keep in mind that you have to clear the quarantine flag when updating Little Xpconnect. See
-[Clearing the Quarantine Flag on macOS](https://www.littlenavmap.org/manuals/littlenavmap/release/latest/en/XPCONNECT.html#clearing-the-quarantine-flag-on-macos).**
+Translations and user manual are not yet updated.
 
-A big thank you to all who reported bugs and issues!
+The MSFS 2024 Steam installation should work but is untested. Do not hesitate to give feedback if
+you see issues.
+
+# Version 3.0.13.beta1
+
+## Changes from 3.0.12 to 3.0.13.beta1
+
+### MSFS 2024 Scenery Library #1198
+
+There are limitations since Little Navmap has to load the complete scenery library through the MSFS
+SimConnect interface and cannot rely on files anymore. All files used by Little Navmap from MSFS
+2020 were dropped due to the streaming only approach of MSFS 2024.
+
+Note that most of the limitations can only be fixed by Asobo.
+
+* The simulator has to run to load the scenery library.
+* The simulator connection in Little Navmap has to be paused during loading. You will not see
+  aircraft updates in Little Navmap while loading.
+* Loading airports and navaids takes about 10 minutes. Future optimizations and parallelization are
+  planned.
+* Detection of add-on airports is not possible. Right click on an airport icon on the map, the
+  airport search result table or the flight plan table and use the function `Mark Airport as add-on`
+  which will add a userpoint on top of this airport.
+* Airports have no city, country or state/province names.
+* Airport names are always English. Translations are not available.
+* Closed runways or closed airports cannot be detected.
+* Some ILS are not connected to runways and therefore won't be shown in the Little Navmap elevation
+  profile. Example: LOWI OEV.
+* Runways used by procedures which are present at an airport do not always match. Example: EDDK
+  where runways were renamed.
+* A workaround has to be used to detect if an airport has lighted runways or not since this
+  information is missing in the SimConnect interface. This is not 100 percent reliable.
+* Airspaces are not available through SimConnect. You can use other sources for airspaces. See chapter
+  [Little Navmap User Manual - Loading Airspaces](https://www.littlenavmap.org/manuals/littlenavmap/release/latest/en/AIRSPACELOAD.html) for more information and links to public airspace sources.
+* Airport aprons are not available, only taxiways.
+* Airline codes for parking are missing.
+* Navaids like waypoints, VOR, NDB or ILS can only be loaded if they are connected to a procedure,
+  a runway or an airway. This means that waypoints in the North Atlantic needed for Oceanic tracks
+  will be missing, for example. LOWI localizer OEJ cannot be loaded and is missing on the map. As a
+  result, around 100000 navaids are missing from the map due to SimConnect limitations, which does
+  not allow the enumeration of navaids world-wide.
+* Full SID and STAR are duplicated for each runway. This will be fixed in one of the next releases
+  of Little Navmap and does not affect functionality.
+* Note that all fields in the load scenery library dialog are now disabled when selecting MSFS 2024
+  since no path is used.
+* A warning dialog is shown when trying to compile MSFS 2024 with 32-bit build.
+* Note that this approach allows to read encrypted add-on airports. You will not see this
+  notification message anymore for MSFS 2024.
+
+### MSFS 2024 Other
+
+* Added detection of MSFS 2024 Steam and Microsoft Store installations. Detection of Steam
+  installations is untested but should work.
+* Added reading and writing of MSFS 2024 flight plans to export from menu `File` and multiexport.
+  `Ctrl+Shift+F` now saves a PLN file for MSFS 2024 from the Little Navmap menu `File`. Note that you
+  have to load the flight plans in the MSFS 2024 EFB after starting a free flight. #1216
+* The keyboard shortcut `Ctrl+Shift+B` is now used for MSFS 2020 PLN files. #1216
+* Note that detailed user or AI/multiplayer aircraft descriptions are not available in MSFS 2024
+  since aircraft files are missing.
+* Adapted database loading dialog to MSFS 2024 changes. Now disabling buttons accordingly. #1198
+
+### Other
+
+* Removing airport vehicles now for all MSFS simulators.
+* Added exclusion of traffic and AIRAC BGL from loading for MSFS 2020 to avoid error messages in
+  the log.
+* Fixed issue where ILS could not be found if airport ident was empty. This resulted in recommended
+  navaids not being resolved in procedures (red error message in procedure search).
+* Fixed crash when selecting airport as alternate in airport search result table or in logbook
+  where `Add as Alternate` was wrongly enabled despite having an empty route. #1222
+* Fixed drawing issue where exact vertical lines were not shown in Mercator projection. This
+  affected measuring lines, flight plan legs, airways and more. Example: Airway L888 between PEXUN
+  and SANLI. #1221
+* Fixed disappearing large distance rings when zooming close in. #1207
+* Removed AUSOTS track system since it is discontinued. Now uses preferred routes.
+* Fixed airway and ILS text background affected by airspace display. Background color for labels
+  was incorrect. #1207
+* Removed white fill for unknown runway surface and replaced it with light gray for better
+  visibility in dark and light map themes.
+* Fixed wrong transponder display `0000` shown for ships and other vehicles. Now omitted.
+* Added map theme `MapBox Streets`. Remove an already installed map theme if you have one.
+  Otherwise, Little Navmap will show error messages hinting you to do so.
+* Added airway type description to flight plan table configuration to make airway suffixes
+  `L` (low) and `H` (high) clearer.
+* Now flagging all VOR and NDB waypoints as artificial in FSX, P3D and MSFS simulators to hide them
+  in the user interface. These are not real waypoints ands are used only internally to build the
+  airway and routing network system.
+* Updated to World Magnetic Model WMM2025 coefficients for more accurate declination calculation
+  when using X-Plane and MSFS simulators.
+* Now omitting duplicate waypoints with invalid regions in all MSFS simulators. Also using better
+  duplicate waypoint removal for MSFS 2020 now.
+* ILS feather geometry is now using a minimum width of 2 degrees to avoid ILS feathers shown as
+  lines in all simulators.
+* Improved on-ground approximation to avoid wrong takeoff detection when hovering with helicopters.
+* Fixed more disambiguations for translation texts to avoid wrong translations.
+* Changed certain texts to be untranslatable to avoid issues with database indicators.
+* Added disambiguation strings for translation texts to avoid same translation for procedure
+  restrictions and airway types, for example.
+* Updated translation files and add Chinese back again.
+
+==<<=============================================================================
 
 # Version 3.0.12
 
@@ -51,7 +153,7 @@ A big thank you to all who reported bugs and issues!
   Qualicum Beach (AT4) and similar cases as departure or destination can now be loaded in X-Plane.
 * Removing fullscreen button now when copying map image to the clipboard or when saving screenshots.
 
-==<<=============================================================================
+=================================================================================
 
 # Version 3.0.11
 
