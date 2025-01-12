@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -373,8 +373,8 @@ void LogdataController::recordTakeoff(const atools::fs::sc::SimConnectUserAircra
   record.setValue("aircraft_registration", aircraft.getAirplaneRegistration()); // varchar(50),
   record.setValue("flightplan_number", aircraft.getAirplaneFlightnumber()); // varchar(100),
   record.setValue("flightplan_cruise_altitude", NavApp::getRouteCruiseAltitudeFt()); // integer,
-  record.setValue("flightplan_file", atools::nativeCleanPath(NavApp::getCurrentRouteFilepath())); // varchar(1024),
-  record.setValue("performance_file", atools::nativeCleanPath(NavApp::getCurrentAircraftPerfFilepath())); // varchar(1024),
+  record.setValue("flightplan_file", atools::nativeCleanPath(NavApp::getCurrentRouteFilePath())); // varchar(1024),
+  record.setValue("performance_file", atools::nativeCleanPath(NavApp::getCurrentAircraftPerfFilePath())); // varchar(1024),
   record.setValue("block_fuel", NavApp::getAltitudeLegs().getBlockFuel(NavApp::getAircraftPerformance())); // integer,
   record.setValue("trip_fuel", NavApp::getAltitudeLegs().getTripFuel()); // integer,
   record.setValue("grossweight", aircraft.getAirplaneTotalWeightLbs()); // integer,
@@ -723,13 +723,13 @@ void LogdataController::prefillLogEntry(atools::sql::SqlRecord& rec)
 
   // File attachements =============================================
 
-  planAttachLnmpln(&rec, NavApp::getCurrentRouteFilepath(), mainWindow);
-  perfAttachLnmperf(&rec, NavApp::getCurrentAircraftPerfFilepath(), mainWindow);
+  planAttachLnmpln(&rec, NavApp::getCurrentRouteFilePath(), mainWindow);
+  perfAttachLnmperf(&rec, NavApp::getCurrentAircraftPerfFilePath(), mainWindow);
   gpxAttach(&rec, mainWindow, true /* currentTrack */);
 
   // Filenames ======================================================
-  rec.setValue("flightplan_file", atools::nativeCleanPath(NavApp::getCurrentRouteFilepath()));
-  rec.setValue("performance_file", atools::nativeCleanPath(NavApp::getCurrentAircraftPerfFilepath()));
+  rec.setValue("flightplan_file", atools::nativeCleanPath(NavApp::getCurrentRouteFilePath()));
+  rec.setValue("performance_file", atools::nativeCleanPath(NavApp::getCurrentAircraftPerfFilePath()));
 }
 
 void LogdataController::addLogEntry()

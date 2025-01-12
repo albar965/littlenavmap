@@ -85,7 +85,7 @@ void Route::updateAircraftPerfMetadata()
   QHash<QString, QString>& properties = flightplan.getProperties();
   properties.insert(atools::fs::pln::AIRCRAFT_PERF_NAME, NavApp::getCurrentAircraftPerfName());
   properties.insert(atools::fs::pln::AIRCRAFT_PERF_TYPE, NavApp::getCurrentAircraftPerfAircraftType());
-  properties.insert(atools::fs::pln::AIRCRAFT_PERF_FILE, NavApp::getCurrentAircraftPerfFilepath());
+  properties.insert(atools::fs::pln::AIRCRAFT_PERF_FILE, NavApp::getCurrentAircraftPerfFilePath());
 }
 
 void Route::updateRouteCycleMetadata()

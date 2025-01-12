@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -699,13 +699,13 @@ void MainWindow::debugActionTriggeredForceUpdates()
 
 void MainWindow::debugActionTriggeredReloadPlan()
 {
-  QString file = routeController->getRouteFilename();
+  QString file = routeController->getRouteFilePath();
   routeController->loadFlightplan(file, true /* correctAndWarn */);
 }
 
 void MainWindow::debugActionTriggeredPlanEdit()
 {
-  desktopServices->openFile(routeController->getRouteFilename());
+  desktopServices->openFile(routeController->getRouteFilePath());
 }
 
 void MainWindow::debugActionTriggeredPerfEdit()
@@ -2215,20 +2215,23 @@ void MainWindow::updateWindowTitle()
     title += tr(" / (N)");
 
   if((navDbStatus == navdb::ALL || navDbStatus == navdb::MIXED) && !NavApp::getDatabaseAiracCycleNav().isEmpty())
-    title += tr(" %1").arg(NavApp::getDatabaseAiracCycleNav());
+    title += tr(" ") % NavApp::getDatabaseAiracCycleNav();
 
   // Flight plan name  ==========================================
-  if(!routeController->getRouteFilename().isEmpty())
-    title += tr(" — %1%2").
-             arg(QFileInfo(routeController->getRouteFilename()).fileName()).
-             arg(routeController->hasChanged() ? tr(" *") : QString());
+  if(!routeController->getRouteFilePath().isEmpty())
+  {
+    if(routeController->hasChanged())
+      title += tr(" — %1 *").arg(QFileInfo(routeController->getRouteFilePath()).fileName());
+    else
+      title += tr(" — %1").arg(QFileInfo(routeController->getRouteFilePath()).fileName());
+  }
   else if(routeController->hasChanged())
     title += tr(" — *");
 
   // Performance name  ==========================================
-  if(!NavApp::getCurrentAircraftPerfFilepath().isEmpty())
+  if(!NavApp::getCurrentAircraftPerfFilePath().isEmpty())
     title += tr(" — %1%2").
-             arg(QFileInfo(NavApp::getCurrentAircraftPerfFilepath()).fileName()).
+             arg(QFileInfo(NavApp::getCurrentAircraftPerfFilePath()).fileName()).
              arg(NavApp::getAircraftPerfController()->hasChanged() ? tr(" *") : QString());
   else if(NavApp::getAircraftPerfController()->hasChanged())
     title += tr(" — *");
@@ -2307,7 +2310,7 @@ bool MainWindow::routeCheckForChanges()
   switch(retval)
   {
     case QMessageBox::Save:
-      if(routeController->getRouteFilename().isEmpty())
+      if(routeController->getRouteFilePath().isEmpty())
         return routeSaveAsLnm();
       else
         return routeSaveLnm();
@@ -2719,7 +2722,7 @@ bool MainWindow::routeSaveLnm()
     }
   }
 
-  if(routeController->getRouteFilename().isEmpty() || !routeController->doesLnmFilenameMatchRoute() ||
+  if(routeController->getRouteFilePath().isEmpty() || !routeController->doesLnmFilenameMatchRoute() ||
      !routeController->isLnmFormatFlightplan())
     // No filename or plan has changed - save as ================================
     return routeSaveAsLnm();
@@ -2728,7 +2731,7 @@ bool MainWindow::routeSaveLnm()
     // Save as LNMPLN =====================================================
     if(routeController->saveFlightplanLnm())
     {
-      routeFileHistory->addFile(routeController->getRouteFilename());
+      routeFileHistory->addFile(routeController->getRouteFilePath());
       updateActionStates();
       updateWindowTitle();
       setStatusMessage(tr("Flight plan saved."));

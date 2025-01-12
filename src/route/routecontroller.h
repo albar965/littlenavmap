@@ -304,13 +304,13 @@ public:
   void showCustomDepartureMainMenu();
 
   /* Name of currently loaded flight plan file full path */
-  const QString& getRouteFilename() const
+  const QString& getRouteFilePath() const
   {
     return routeFilename;
   }
 
   /* Name of default flight plan file in settings full path */
-  const QString& getRouteFilenameDefault() const
+  const QString& getRouteFilePathDefault() const
   {
     return routeFilenameDefault;
   }
