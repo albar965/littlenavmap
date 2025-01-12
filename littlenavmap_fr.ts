@@ -36165,14 +36165,14 @@ Affiché lors de la descente uniquement au symbole de l&apos;avion utilisateur s
     <message>
         <location filename="src/common/maptypes.cpp" line="872"/>
         <location filename="src/common/proctypes.cpp" line="106"/>
-        <location filename="src/common/proctypes.cpp" line="945"/>
-        <location filename="src/common/proctypes.cpp" line="973"/>
+        <location filename="src/common/proctypes.cpp" line="953"/>
+        <location filename="src/common/proctypes.cpp" line="981"/>
         <source>Approach</source>
         <translation>Approche</translation>
     </message>
     <message>
         <location filename="src/common/proctypes.cpp" line="107"/>
-        <location filename="src/common/proctypes.cpp" line="975"/>
+        <location filename="src/common/proctypes.cpp" line="983"/>
         <source>Departure</source>
         <translation>Départ</translation>
     </message>
@@ -36963,32 +36963,32 @@ Affiché lors de la descente uniquement au symbole de l&apos;avion utilisateur s
         <translation type="unfinished">B</translation>
     </message>
     <message>
-        <location filename="src/common/proctypes.cpp" line="1268"/>
+        <location filename="src/common/proctypes.cpp" line="1276"/>
         <source> (not connected to simulator)</source>
         <translation type="unfinished"> (non connecté au simulateur)</translation>
     </message>
     <message>
-        <location filename="src/common/proctypes.cpp" line="1275"/>
+        <location filename="src/common/proctypes.cpp" line="1283"/>
         <source> (no active flight plan segment)</source>
         <translation type="unfinished"> (pas de segment de plan de vol actif)</translation>
     </message>
     <message>
-        <location filename="src/common/proctypes.cpp" line="1283"/>
+        <location filename="src/common/proctypes.cpp" line="1291"/>
         <source> (past active)</source>
         <translation type="unfinished"> (anciennement active)</translation>
     </message>
     <message>
-        <location filename="src/common/proctypes.cpp" line="1304"/>
+        <location filename="src/common/proctypes.cpp" line="1312"/>
         <source> (is procedure)</source>
         <translation type="unfinished"> (est la procédure)</translation>
     </message>
     <message>
-        <location filename="src/common/proctypes.cpp" line="1310"/>
+        <location filename="src/common/proctypes.cpp" line="1318"/>
         <source> (flight plan)</source>
         <translation type="unfinished"> (plan de vol)</translation>
     </message>
     <message>
-        <location filename="src/common/proctypes.cpp" line="1453"/>
+        <location filename="src/common/proctypes.cpp" line="1461"/>
         <source>R%1</source>
         <comment>Radial</comment>
         <translation type="unfinished">R%1</translation>
@@ -36998,122 +36998,122 @@ Affiché lors de la descente uniquement au symbole de l&apos;avion utilisateur s
         <translation type="obsolete">R%1</translation>
     </message>
     <message>
-        <location filename="src/common/proctypes.cpp" line="900"/>
+        <location filename="src/common/proctypes.cpp" line="908"/>
         <source>RNP %L1</source>
         <translation type="unfinished">RNP %L1</translation>
     </message>
     <message>
         <location filename="src/common/formatter.cpp" line="235"/>
         <location filename="src/common/formatter.cpp" line="252"/>
-        <location filename="src/common/proctypes.cpp" line="1018"/>
+        <location filename="src/common/proctypes.cpp" line="1026"/>
         <source> %1</source>
         <translation type="unfinished"> %1</translation>
     </message>
     <message>
-        <location filename="src/common/proctypes.cpp" line="1018"/>
+        <location filename="src/common/proctypes.cpp" line="1026"/>
         <source> runway %1</source>
         <translation type="unfinished"> piste %1</translation>
     </message>
     <message>
-        <location filename="src/common/proctypes.cpp" line="1023"/>
+        <location filename="src/common/proctypes.cpp" line="1031"/>
         <source> all</source>
         <translation type="unfinished"> tout</translation>
     </message>
     <message>
-        <location filename="src/common/proctypes.cpp" line="1023"/>
+        <location filename="src/common/proctypes.cpp" line="1031"/>
         <source> all runways</source>
         <translation type="unfinished"> toutes les pistes</translation>
     </message>
     <message>
-        <location filename="src/common/proctypes.cpp" line="1025"/>
+        <location filename="src/common/proctypes.cpp" line="1033"/>
         <source> all %1</source>
         <translation type="unfinished"> tous les %1</translation>
     </message>
     <message>
-        <location filename="src/common/proctypes.cpp" line="1025"/>
+        <location filename="src/common/proctypes.cpp" line="1033"/>
         <source> all runways %1</source>
         <translation type="unfinished"> toutes les pistes %1</translation>
     </message>
     <message>
-        <location filename="src/common/proctypes.cpp" line="1217"/>
-        <location filename="src/common/proctypes.cpp" line="1244"/>
+        <location filename="src/common/proctypes.cpp" line="1225"/>
+        <location filename="src/common/proctypes.cpp" line="1252"/>
         <source> (is departure)</source>
         <translation type="unfinished"> (est le départ)</translation>
     </message>
     <message>
-        <location filename="src/common/proctypes.cpp" line="1215"/>
-        <location filename="src/common/proctypes.cpp" line="1241"/>
+        <location filename="src/common/proctypes.cpp" line="1223"/>
+        <location filename="src/common/proctypes.cpp" line="1249"/>
         <source> (is destination)</source>
         <translation type="unfinished"> (est la destination)</translation>
     </message>
     <message>
-        <location filename="src/common/proctypes.cpp" line="1219"/>
-        <location filename="src/common/proctypes.cpp" line="1249"/>
+        <location filename="src/common/proctypes.cpp" line="1227"/>
+        <location filename="src/common/proctypes.cpp" line="1257"/>
         <source> (is alternate)</source>
         <translation type="unfinished"> (est de dégagement)</translation>
     </message>
     <message>
-        <location filename="src/common/proctypes.cpp" line="1413"/>
+        <location filename="src/common/proctypes.cpp" line="1421"/>
         <source>All Aircraft</source>
         <translation type="unfinished">Tous avions</translation>
     </message>
     <message>
-        <location filename="src/common/proctypes.cpp" line="1415"/>
+        <location filename="src/common/proctypes.cpp" line="1423"/>
         <source>All Aircraft, Cruise 250 kts or less</source>
         <translation type="unfinished">Tous avions, vitesse de croisière de 250 kts ou moins</translation>
     </message>
     <message>
-        <location filename="src/common/proctypes.cpp" line="1417"/>
+        <location filename="src/common/proctypes.cpp" line="1425"/>
         <source>Non-Jet and Turbo Prop</source>
         <translation type="unfinished">Hors jet et Turbo Hélice</translation>
     </message>
     <message>
-        <location filename="src/common/proctypes.cpp" line="1419"/>
+        <location filename="src/common/proctypes.cpp" line="1427"/>
         <source>Multi-Engine Props Only</source>
         <translation type="unfinished">Props multi-moteur uniquement</translation>
     </message>
     <message>
-        <location filename="src/common/proctypes.cpp" line="1421"/>
+        <location filename="src/common/proctypes.cpp" line="1429"/>
         <source>Jets and Turbo Props/Special, Cruise at least 190 kts</source>
         <translation type="unfinished">Jets et Turbo Props/Spécial, Croisière au moins 190 kts</translation>
     </message>
     <message>
-        <location filename="src/common/proctypes.cpp" line="1423"/>
+        <location filename="src/common/proctypes.cpp" line="1431"/>
         <source>Helicopter Only</source>
         <translation type="unfinished">Hélicoptère uniquement</translation>
     </message>
     <message>
-        <location filename="src/common/proctypes.cpp" line="1425"/>
+        <location filename="src/common/proctypes.cpp" line="1433"/>
         <source>Jet Power</source>
         <translation type="unfinished">Puissance du jet</translation>
     </message>
     <message>
-        <location filename="src/common/proctypes.cpp" line="1427"/>
+        <location filename="src/common/proctypes.cpp" line="1435"/>
         <source>Turbo-Prop/Special, Cruise at least 190 kts</source>
         <translation type="unfinished">Turbo-propulseur/spécial, vitesse de croisière d&apos;au moins 190 kts</translation>
     </message>
     <message>
-        <location filename="src/common/proctypes.cpp" line="1429"/>
+        <location filename="src/common/proctypes.cpp" line="1437"/>
         <source>Non-Jet, Non-Turbo Prop</source>
         <translation type="unfinished">Hors-jet, Prop. sans turbo</translation>
     </message>
     <message>
-        <location filename="src/common/proctypes.cpp" line="1431"/>
+        <location filename="src/common/proctypes.cpp" line="1439"/>
         <source>Non-Jet, Cruise at least 190 kts</source>
         <translation type="unfinished">Hors-jet, vitesse de croisière d&apos;au moins 190 kts</translation>
     </message>
     <message>
-        <location filename="src/common/proctypes.cpp" line="1433"/>
+        <location filename="src/common/proctypes.cpp" line="1441"/>
         <source>Non-Jet, Cruise below 190 kts</source>
         <translation type="unfinished">Hors-jet, vitesse de croisière inférieure à 190 kts</translation>
     </message>
     <message>
-        <location filename="src/common/proctypes.cpp" line="1438"/>
+        <location filename="src/common/proctypes.cpp" line="1446"/>
         <source>Single Engine</source>
         <translation type="unfinished">Moteur unique</translation>
     </message>
     <message>
-        <location filename="src/common/proctypes.cpp" line="1440"/>
+        <location filename="src/common/proctypes.cpp" line="1448"/>
         <source>Twin Engine</source>
         <translation type="unfinished">Double moteur</translation>
     </message>
@@ -37156,38 +37156,38 @@ Affiché lors de la descente uniquement au symbole de l&apos;avion utilisateur s
         <translation>Au dessous de </translation>
     </message>
     <message>
-        <location filename="src/common/proctypes.cpp" line="826"/>
+        <location filename="src/common/proctypes.cpp" line="834"/>
         <source> min</source>
         <translation> min</translation>
     </message>
     <message>
-        <location filename="src/common/proctypes.cpp" line="860"/>
-        <location filename="src/common/proctypes.cpp" line="869"/>
+        <location filename="src/common/proctypes.cpp" line="868"/>
+        <location filename="src/common/proctypes.cpp" line="877"/>
         <source> MHz</source>
         <translation type="unfinished"> MHz</translation>
     </message>
     <message>
-        <location filename="src/common/proctypes.cpp" line="873"/>
+        <location filename="src/common/proctypes.cpp" line="881"/>
         <source> kHz</source>
         <translation type="unfinished"> kHz</translation>
     </message>
     <message>
-        <location filename="src/common/proctypes.cpp" line="890"/>
+        <location filename="src/common/proctypes.cpp" line="898"/>
         <source>Fly over</source>
         <translation>survoler</translation>
     </message>
     <message>
-        <location filename="src/common/proctypes.cpp" line="893"/>
+        <location filename="src/common/proctypes.cpp" line="901"/>
         <source>Turn right</source>
         <translation>tourner à droite vers</translation>
     </message>
     <message>
-        <location filename="src/common/proctypes.cpp" line="895"/>
+        <location filename="src/common/proctypes.cpp" line="903"/>
         <source>Turn left</source>
         <translation>tourner à gauche vers</translation>
     </message>
     <message>
-        <location filename="src/common/proctypes.cpp" line="897"/>
+        <location filename="src/common/proctypes.cpp" line="905"/>
         <source>Turn left or right</source>
         <translation>tourner à gauche ou à droite vers</translation>
     </message>
@@ -37206,44 +37206,44 @@ Affiché lors de la descente uniquement au symbole de l&apos;avion utilisateur s
         <translation>associé à: %1</translation>
     </message>
     <message>
-        <location filename="src/common/proctypes.cpp" line="910"/>
+        <location filename="src/common/proctypes.cpp" line="918"/>
         <source>Error: Fix %1/%2 type %3 not found</source>
         <translation>Erreur: Correction %1/%2 type %3 pas trouvé</translation>
     </message>
     <message>
-        <location filename="src/common/proctypes.cpp" line="914"/>
+        <location filename="src/common/proctypes.cpp" line="922"/>
         <source>Error: Recommended fix %1/%2 type %3 not found</source>
         <translation>Erreur: Correctif recommandé %1/%2 type %3 pas trouvé</translation>
     </message>
     <message>
-        <location filename="src/common/proctypes.cpp" line="947"/>
+        <location filename="src/common/proctypes.cpp" line="955"/>
         <source>Missed</source>
         <translation>Manqué</translation>
     </message>
     <message>
-        <location filename="src/common/proctypes.cpp" line="949"/>
+        <location filename="src/common/proctypes.cpp" line="957"/>
         <source>Transition</source>
         <translation>Transition</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="870"/>
-        <location filename="src/common/proctypes.cpp" line="951"/>
+        <location filename="src/common/proctypes.cpp" line="959"/>
         <source>STAR</source>
         <translation>STAR</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="868"/>
-        <location filename="src/common/proctypes.cpp" line="953"/>
+        <location filename="src/common/proctypes.cpp" line="961"/>
         <source>SID</source>
         <translation>SID</translation>
     </message>
     <message>
-        <location filename="src/common/proctypes.cpp" line="955"/>
+        <location filename="src/common/proctypes.cpp" line="963"/>
         <source>SID Transition</source>
         <translation>Transition SID</translation>
     </message>
     <message>
-        <location filename="src/common/proctypes.cpp" line="957"/>
+        <location filename="src/common/proctypes.cpp" line="965"/>
         <source>STAR Transition</source>
         <translation>Transition STAR</translation>
     </message>
@@ -37647,54 +37647,54 @@ Calculé sur la base du profil de performance de l&apos;aéronef.</translation>
         <translation type="obsolete">%1 %2 %3%4</translation>
     </message>
     <message>
-        <location filename="src/common/proctypes.cpp" line="982"/>
+        <location filename="src/common/proctypes.cpp" line="990"/>
         <source>Transition %1</source>
         <translation type="unfinished">Transition %1</translation>
     </message>
     <message>
-        <location filename="src/common/proctypes.cpp" line="986"/>
+        <location filename="src/common/proctypes.cpp" line="994"/>
         <source>%1%2%3 %4</source>
         <translation type="unfinished">%1%2%3 %4</translation>
     </message>
     <message>
-        <location filename="src/common/proctypes.cpp" line="990"/>
+        <location filename="src/common/proctypes.cpp" line="998"/>
         <source>Missed </source>
         <translation type="unfinished">Manqué </translation>
     </message>
     <message>
-        <location filename="src/common/proctypes.cpp" line="990"/>
+        <location filename="src/common/proctypes.cpp" line="998"/>
         <source>Approach </source>
         <translation type="unfinished">Approche </translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="2224"/>
         <location filename="src/common/maptypes.cpp" line="2737"/>
-        <location filename="src/common/proctypes.cpp" line="992"/>
+        <location filename="src/common/proctypes.cpp" line="1000"/>
         <source>-</source>
         <translation type="unfinished">-</translation>
     </message>
     <message>
-        <location filename="src/common/proctypes.cpp" line="997"/>
+        <location filename="src/common/proctypes.cpp" line="1005"/>
         <source> via %1</source>
         <translation type="unfinished"> via %1</translation>
     </message>
     <message>
-        <location filename="src/common/proctypes.cpp" line="1004"/>
+        <location filename="src/common/proctypes.cpp" line="1012"/>
         <source>STAR %1.%2</source>
         <translation type="unfinished">STAR %1.%2</translation>
     </message>
     <message>
-        <location filename="src/common/proctypes.cpp" line="1006"/>
+        <location filename="src/common/proctypes.cpp" line="1014"/>
         <source>SID %1.%2</source>
         <translation type="unfinished">SID %1.%2</translation>
     </message>
     <message>
-        <location filename="src/common/proctypes.cpp" line="1008"/>
+        <location filename="src/common/proctypes.cpp" line="1016"/>
         <source>STAR %1</source>
         <translation type="unfinished">STAR %1</translation>
     </message>
     <message>
-        <location filename="src/common/proctypes.cpp" line="1010"/>
+        <location filename="src/common/proctypes.cpp" line="1018"/>
         <source>SID %1</source>
         <translation type="unfinished">SID %1</translation>
     </message>
@@ -38068,28 +38068,28 @@ Cliquer ou recharger pour continuer.</translation>
         <translation type="unfinished"> (non trouvé)</translation>
     </message>
     <message>
-        <location filename="src/route/route.cpp" line="3163"/>
+        <location filename="src/route/route.cpp" line="3170"/>
         <source> / </source>
         <translation type="unfinished"> / </translation>
     </message>
     <message>
-        <location filename="src/route/route.cpp" line="3850"/>
+        <location filename="src/route/route.cpp" line="3857"/>
         <source>, above %1</source>
         <translation type="unfinished">, au-dessus de %1</translation>
     </message>
     <message>
-        <location filename="src/route/route.cpp" line="3852"/>
+        <location filename="src/route/route.cpp" line="3859"/>
         <source>, below %1</source>
         <translation type="unfinished">, en dessous de %1</translation>
     </message>
     <message>
-        <location filename="src/route/route.cpp" line="3873"/>
-        <location filename="src/route/route.cpp" line="3884"/>
+        <location filename="src/route/route.cpp" line="3880"/>
+        <location filename="src/route/route.cpp" line="3891"/>
         <source> %1</source>
         <translation type="unfinished"> %1</translation>
     </message>
     <message>
-        <location filename="src/route/route.cpp" line="3898"/>
+        <location filename="src/route/route.cpp" line="3905"/>
         <source>Empty Flight Plan</source>
         <translation type="unfinished">Plan de vol vide</translation>
     </message>
@@ -38102,8 +38102,8 @@ Cliquer ou recharger pour continuer.</translation>
         <translation type="obsolete">, en dessous ▲</translation>
     </message>
     <message>
-        <location filename="src/route/route.cpp" line="3872"/>
-        <location filename="src/route/route.cpp" line="3884"/>
+        <location filename="src/route/route.cpp" line="3879"/>
+        <location filename="src/route/route.cpp" line="3891"/>
         <source>%L1°, %L2</source>
         <translation type="unfinished">%L1°, %L2</translation>
     </message>
@@ -38112,7 +38112,7 @@ Cliquer ou recharger pour continuer.</translation>
         <translation type="obsolete"> ▼</translation>
     </message>
     <message>
-        <location filename="src/route/route.cpp" line="3919"/>
+        <location filename="src/route/route.cpp" line="3926"/>
         <source>EMPTY</source>
         <translation type="unfinished">VIDE</translation>
     </message>

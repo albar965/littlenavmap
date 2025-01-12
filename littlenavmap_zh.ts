@@ -31301,15 +31301,15 @@ Changes to &quot;Required angle&quot; if mandatory in approach procedures.</sour
     </message>
     <message>
         <location filename="src/common/proctypes.cpp" line="107"/>
-        <location filename="src/common/proctypes.cpp" line="975"/>
+        <location filename="src/common/proctypes.cpp" line="983"/>
         <source>Departure</source>
         <translation>离场机场</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="872"/>
         <location filename="src/common/proctypes.cpp" line="106"/>
-        <location filename="src/common/proctypes.cpp" line="945"/>
-        <location filename="src/common/proctypes.cpp" line="973"/>
+        <location filename="src/common/proctypes.cpp" line="953"/>
+        <location filename="src/common/proctypes.cpp" line="981"/>
         <source>Approach</source>
         <translation>进近</translation>
     </message>
@@ -33681,153 +33681,153 @@ Changes to &quot;Required angle&quot; if mandatory in approach procedures.</sour
         <translation type="unfinished">B</translation>
     </message>
     <message>
-        <location filename="src/common/proctypes.cpp" line="1268"/>
+        <location filename="src/common/proctypes.cpp" line="1276"/>
         <source> (not connected to simulator)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/common/proctypes.cpp" line="1275"/>
+        <location filename="src/common/proctypes.cpp" line="1283"/>
         <source> (no active flight plan segment)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/common/proctypes.cpp" line="1283"/>
+        <location filename="src/common/proctypes.cpp" line="1291"/>
         <source> (past active)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/common/proctypes.cpp" line="1304"/>
+        <location filename="src/common/proctypes.cpp" line="1312"/>
         <source> (is procedure)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/common/proctypes.cpp" line="1310"/>
+        <location filename="src/common/proctypes.cpp" line="1318"/>
         <source> (flight plan)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/common/proctypes.cpp" line="1453"/>
+        <location filename="src/common/proctypes.cpp" line="1461"/>
         <source>R%1</source>
         <comment>Radial</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/common/proctypes.cpp" line="900"/>
+        <location filename="src/common/proctypes.cpp" line="908"/>
         <source>RNP %L1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="src/common/formatter.cpp" line="235"/>
         <location filename="src/common/formatter.cpp" line="252"/>
-        <location filename="src/common/proctypes.cpp" line="1018"/>
+        <location filename="src/common/proctypes.cpp" line="1026"/>
         <source> %1</source>
         <translation type="unfinished"> %1</translation>
     </message>
     <message>
-        <location filename="src/common/proctypes.cpp" line="1018"/>
+        <location filename="src/common/proctypes.cpp" line="1026"/>
         <source> runway %1</source>
         <translation type="unfinished"> 跑道 %1</translation>
     </message>
     <message>
-        <location filename="src/common/proctypes.cpp" line="1023"/>
+        <location filename="src/common/proctypes.cpp" line="1031"/>
         <source> all</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/common/proctypes.cpp" line="1023"/>
+        <location filename="src/common/proctypes.cpp" line="1031"/>
         <source> all runways</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/common/proctypes.cpp" line="1025"/>
+        <location filename="src/common/proctypes.cpp" line="1033"/>
         <source> all %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/common/proctypes.cpp" line="1025"/>
+        <location filename="src/common/proctypes.cpp" line="1033"/>
         <source> all runways %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/common/proctypes.cpp" line="1217"/>
-        <location filename="src/common/proctypes.cpp" line="1244"/>
+        <location filename="src/common/proctypes.cpp" line="1225"/>
+        <location filename="src/common/proctypes.cpp" line="1252"/>
         <source> (is departure)</source>
         <translation type="unfinished">（是离场机场）</translation>
     </message>
     <message>
-        <location filename="src/common/proctypes.cpp" line="1215"/>
-        <location filename="src/common/proctypes.cpp" line="1241"/>
+        <location filename="src/common/proctypes.cpp" line="1223"/>
+        <location filename="src/common/proctypes.cpp" line="1249"/>
         <source> (is destination)</source>
         <translation type="unfinished">（是目的机场）</translation>
     </message>
     <message>
-        <location filename="src/common/proctypes.cpp" line="1219"/>
-        <location filename="src/common/proctypes.cpp" line="1249"/>
+        <location filename="src/common/proctypes.cpp" line="1227"/>
+        <location filename="src/common/proctypes.cpp" line="1257"/>
         <source> (is alternate)</source>
         <translation type="unfinished">（是备降机场）</translation>
     </message>
     <message>
-        <location filename="src/common/proctypes.cpp" line="1413"/>
+        <location filename="src/common/proctypes.cpp" line="1421"/>
         <source>All Aircraft</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/common/proctypes.cpp" line="1415"/>
+        <location filename="src/common/proctypes.cpp" line="1423"/>
         <source>All Aircraft, Cruise 250 kts or less</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/common/proctypes.cpp" line="1417"/>
+        <location filename="src/common/proctypes.cpp" line="1425"/>
         <source>Non-Jet and Turbo Prop</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/common/proctypes.cpp" line="1419"/>
+        <location filename="src/common/proctypes.cpp" line="1427"/>
         <source>Multi-Engine Props Only</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/common/proctypes.cpp" line="1421"/>
+        <location filename="src/common/proctypes.cpp" line="1429"/>
         <source>Jets and Turbo Props/Special, Cruise at least 190 kts</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/common/proctypes.cpp" line="1423"/>
+        <location filename="src/common/proctypes.cpp" line="1431"/>
         <source>Helicopter Only</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/common/proctypes.cpp" line="1425"/>
+        <location filename="src/common/proctypes.cpp" line="1433"/>
         <source>Jet Power</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/common/proctypes.cpp" line="1427"/>
+        <location filename="src/common/proctypes.cpp" line="1435"/>
         <source>Turbo-Prop/Special, Cruise at least 190 kts</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/common/proctypes.cpp" line="1429"/>
+        <location filename="src/common/proctypes.cpp" line="1437"/>
         <source>Non-Jet, Non-Turbo Prop</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/common/proctypes.cpp" line="1431"/>
+        <location filename="src/common/proctypes.cpp" line="1439"/>
         <source>Non-Jet, Cruise at least 190 kts</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/common/proctypes.cpp" line="1433"/>
+        <location filename="src/common/proctypes.cpp" line="1441"/>
         <source>Non-Jet, Cruise below 190 kts</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/common/proctypes.cpp" line="1438"/>
+        <location filename="src/common/proctypes.cpp" line="1446"/>
         <source>Single Engine</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/common/proctypes.cpp" line="1440"/>
+        <location filename="src/common/proctypes.cpp" line="1448"/>
         <source>Twin Engine</source>
         <translation type="unfinished"></translation>
     </message>
@@ -33874,38 +33874,38 @@ Changes to &quot;Required angle&quot; if mandatory in approach procedures.</sour
         <translation>低于 </translation>
     </message>
     <message>
-        <location filename="src/common/proctypes.cpp" line="826"/>
+        <location filename="src/common/proctypes.cpp" line="834"/>
         <source> min</source>
         <translation> 分钟</translation>
     </message>
     <message>
-        <location filename="src/common/proctypes.cpp" line="860"/>
-        <location filename="src/common/proctypes.cpp" line="869"/>
+        <location filename="src/common/proctypes.cpp" line="868"/>
+        <location filename="src/common/proctypes.cpp" line="877"/>
         <source> MHz</source>
         <translation type="unfinished"> MHz</translation>
     </message>
     <message>
-        <location filename="src/common/proctypes.cpp" line="873"/>
+        <location filename="src/common/proctypes.cpp" line="881"/>
         <source> kHz</source>
         <translation type="unfinished"> kHz</translation>
     </message>
     <message>
-        <location filename="src/common/proctypes.cpp" line="890"/>
+        <location filename="src/common/proctypes.cpp" line="898"/>
         <source>Fly over</source>
         <translation>飞越</translation>
     </message>
     <message>
-        <location filename="src/common/proctypes.cpp" line="893"/>
+        <location filename="src/common/proctypes.cpp" line="901"/>
         <source>Turn right</source>
         <translation>右转</translation>
     </message>
     <message>
-        <location filename="src/common/proctypes.cpp" line="895"/>
+        <location filename="src/common/proctypes.cpp" line="903"/>
         <source>Turn left</source>
         <translation>左转</translation>
     </message>
     <message>
-        <location filename="src/common/proctypes.cpp" line="897"/>
+        <location filename="src/common/proctypes.cpp" line="905"/>
         <source>Turn left or right</source>
         <translation>向左或右转</translation>
     </message>
@@ -33919,44 +33919,44 @@ Changes to &quot;Required angle&quot; if mandatory in approach procedures.</sour
         <translation>相关：%1</translation>
     </message>
     <message>
-        <location filename="src/common/proctypes.cpp" line="910"/>
+        <location filename="src/common/proctypes.cpp" line="918"/>
         <source>Error: Fix %1/%2 type %3 not found</source>
         <translation>错误：找不到导航点 %1/%2 类型 %3</translation>
     </message>
     <message>
-        <location filename="src/common/proctypes.cpp" line="914"/>
+        <location filename="src/common/proctypes.cpp" line="922"/>
         <source>Error: Recommended fix %1/%2 type %3 not found</source>
         <translation>错误：找不到推荐的导航点 %1/%2 类型 %3</translation>
     </message>
     <message>
-        <location filename="src/common/proctypes.cpp" line="947"/>
+        <location filename="src/common/proctypes.cpp" line="955"/>
         <source>Missed</source>
         <translation>复飞</translation>
     </message>
     <message>
-        <location filename="src/common/proctypes.cpp" line="949"/>
+        <location filename="src/common/proctypes.cpp" line="957"/>
         <source>Transition</source>
         <translation>过渡程序</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="870"/>
-        <location filename="src/common/proctypes.cpp" line="951"/>
+        <location filename="src/common/proctypes.cpp" line="959"/>
         <source>STAR</source>
         <translation>STAR</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="868"/>
-        <location filename="src/common/proctypes.cpp" line="953"/>
+        <location filename="src/common/proctypes.cpp" line="961"/>
         <source>SID</source>
         <translation>SID</translation>
     </message>
     <message>
-        <location filename="src/common/proctypes.cpp" line="955"/>
+        <location filename="src/common/proctypes.cpp" line="963"/>
         <source>SID Transition</source>
         <translation>SID 过渡程序</translation>
     </message>
     <message>
-        <location filename="src/common/proctypes.cpp" line="957"/>
+        <location filename="src/common/proctypes.cpp" line="965"/>
         <source>STAR Transition</source>
         <translation>STAR 过渡程序</translation>
     </message>
@@ -34128,54 +34128,54 @@ Spaces are replaced with underscores.</oldsource>
         <translation type="vanished">%1 %2 %3%4</translation>
     </message>
     <message>
-        <location filename="src/common/proctypes.cpp" line="982"/>
+        <location filename="src/common/proctypes.cpp" line="990"/>
         <source>Transition %1</source>
         <translation>过渡程序 %1</translation>
     </message>
     <message>
-        <location filename="src/common/proctypes.cpp" line="986"/>
+        <location filename="src/common/proctypes.cpp" line="994"/>
         <source>%1%2%3 %4</source>
         <translation type="unfinished">%1%2%3 %4</translation>
     </message>
     <message>
-        <location filename="src/common/proctypes.cpp" line="990"/>
+        <location filename="src/common/proctypes.cpp" line="998"/>
         <source>Missed </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/common/proctypes.cpp" line="990"/>
+        <location filename="src/common/proctypes.cpp" line="998"/>
         <source>Approach </source>
         <translation type="unfinished">进近 </translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="2224"/>
         <location filename="src/common/maptypes.cpp" line="2737"/>
-        <location filename="src/common/proctypes.cpp" line="992"/>
+        <location filename="src/common/proctypes.cpp" line="1000"/>
         <source>-</source>
         <translation type="unfinished">-</translation>
     </message>
     <message>
-        <location filename="src/common/proctypes.cpp" line="997"/>
+        <location filename="src/common/proctypes.cpp" line="1005"/>
         <source> via %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/common/proctypes.cpp" line="1004"/>
+        <location filename="src/common/proctypes.cpp" line="1012"/>
         <source>STAR %1.%2</source>
         <translation type="unfinished">STAR %1.%2</translation>
     </message>
     <message>
-        <location filename="src/common/proctypes.cpp" line="1006"/>
+        <location filename="src/common/proctypes.cpp" line="1014"/>
         <source>SID %1.%2</source>
         <translation type="unfinished">SID %1.%2</translation>
     </message>
     <message>
-        <location filename="src/common/proctypes.cpp" line="1008"/>
+        <location filename="src/common/proctypes.cpp" line="1016"/>
         <source>STAR %1</source>
         <translation>STAR %1</translation>
     </message>
     <message>
-        <location filename="src/common/proctypes.cpp" line="1010"/>
+        <location filename="src/common/proctypes.cpp" line="1018"/>
         <source>SID %1</source>
         <translation>SID %1</translation>
     </message>
@@ -34699,29 +34699,29 @@ Click or reload to continue.</source>
         <translation> (未找到)</translation>
     </message>
     <message>
-        <location filename="src/route/route.cpp" line="3163"/>
+        <location filename="src/route/route.cpp" line="3170"/>
         <source> / </source>
         <translation type="unfinished"> / </translation>
     </message>
     <message>
-        <location filename="src/route/route.cpp" line="3850"/>
+        <location filename="src/route/route.cpp" line="3857"/>
         <source>, above %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/route.cpp" line="3852"/>
+        <location filename="src/route/route.cpp" line="3859"/>
         <source>, below %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/route/route.cpp" line="3873"/>
-        <location filename="src/route/route.cpp" line="3884"/>
+        <location filename="src/route/route.cpp" line="3880"/>
+        <location filename="src/route/route.cpp" line="3891"/>
         <source> %1</source>
         <translation type="unfinished"> %1</translation>
     </message>
     <message>
-        <location filename="src/route/route.cpp" line="3872"/>
-        <location filename="src/route/route.cpp" line="3884"/>
+        <location filename="src/route/route.cpp" line="3879"/>
+        <location filename="src/route/route.cpp" line="3891"/>
         <source>%L1°, %L2</source>
         <translation type="unfinished"></translation>
     </message>
@@ -34730,7 +34730,7 @@ Click or reload to continue.</source>
         <translation type="obsolete"> ▼</translation>
     </message>
     <message>
-        <location filename="src/route/route.cpp" line="3919"/>
+        <location filename="src/route/route.cpp" line="3926"/>
         <source>EMPTY</source>
         <translation type="unfinished"></translation>
     </message>
@@ -34747,7 +34747,7 @@ Click or reload to continue.</source>
         <translation type="vanished">-</translation>
     </message>
     <message>
-        <location filename="src/route/route.cpp" line="3898"/>
+        <location filename="src/route/route.cpp" line="3905"/>
         <source>Empty Flight Plan</source>
         <translation type="unfinished"></translation>
     </message>
