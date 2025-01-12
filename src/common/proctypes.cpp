@@ -758,9 +758,15 @@ void MapProcedureLegs::clearProcedure()
   procedureDistance = missedDistance = 0.f;
   type.clear();
   suffix.clear();
-  arincName.clear();
   procedureFixIdent.clear();
-  runwayEnd = map::MapRunwayEnd();
+  arincName.clear();
+  airportIdent.clear();
+  aircraftCategory.clear();
+  runway.clear();
+  runwayEnd = runwayEndSim = map::MapRunwayEnd();
+  runwaySim = map::MapRunway();
+  ref.runwayEndId = ref.airportId = ref.legId = ref.procedureId = -1;
+  ref.mapType &= ~proc::PROCEDURE_APPROACH;
 }
 
 void MapProcedureLegs::clearTransition()
@@ -770,6 +776,8 @@ void MapProcedureLegs::clearTransition()
   transitionDistance = 0.f;
   transitionType.clear();
   transitionFixIdent.clear();
+  ref.transitionId = -1;
+  ref.mapType &= ~proc::PROCEDURE_TRANSITION;
 }
 
 int MapProcedureLegs::indexForLeg(const proc::MapProcedureLeg& leg) const

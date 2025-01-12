@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -444,6 +444,23 @@ struct MapProcedureLegs
   map::MapRunway runwaySim;
   map::MapRunwayEnd runwayEndSim;
 
+  /* Accumulated distances */
+  float procedureDistance = 0.f, transitionDistance = 0.f, missedDistance = 0.f;
+
+  /* Assigned color for multi preview or default color for normal preview. */
+  QColor previewColor;
+
+  /* Parameters only for custom approaches.
+   * Altitude in feet above airport elevation and distance to runway threshold in NM */
+  float customAltitude = 0.f, customDistance = 0.f, customOffset = 0.f;
+
+  bool gpsOverlay,
+       hasError, /* Probably unusable due to missing navaid */
+       hasHardError, /* Deny usage since geometry is not valid */
+       circleToLand, /* Runway is not part of procedure and was added internally */
+       rnp, /* One or more legs have a required navigation performance */
+       verticalAngle; /* One or more legs have a vertical angle */
+
   /* Get touchdown position considering offset threshold from simulator data if runway matches. Otherwise navdata. */
   atools::geo::Pos getApproachPosition() const
   {
@@ -461,23 +478,6 @@ struct MapProcedureLegs
   {
     return mapType & proc::PROCEDURE_SID ? runwaySim.getDeparturePositionOther(runwayEndSim.secondary) : atools::geo::EMPTY_POS;
   }
-
-  /* Accumulated distances */
-  float procedureDistance = 0.f, transitionDistance = 0.f, missedDistance = 0.f;
-
-  /* Assigned color for multi preview or default color for normal preview. */
-  QColor previewColor;
-
-  /* Parameters only for custom approaches.
-   * Altitude in feet above airport elevation and distance to runway threshold in NM */
-  float customAltitude = 0.f, customDistance = 0.f, customOffset = 0.f;
-
-  bool gpsOverlay,
-       hasError, /* Probably unusable due to missing navaid */
-       hasHardError, /* Deny usage since geometry is not valid */
-       circleToLand, /* Runway is not part of procedure and was added internally */
-       rnp, /* One or more legs have a required navigation performance */
-       verticalAngle; /* One or more legs have a vertical angle */
 
   /* Short display type name "VOR" or "ILS" */
   QString displayType() const

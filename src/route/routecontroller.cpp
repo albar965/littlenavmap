@@ -1628,7 +1628,7 @@ bool RouteController::insertFlightplan(const QString& filename, int insertBefore
     routePlan.removeIsNoSaveEntries();
 
     // Clear procedure structures
-    route.clearProcedures(proc::PROCEDURE_ALL);
+    route.clearAllProcedures();
 
     // Clear procedure legs from route object only since indexes are not consistent now
     route.clearProcedureLegs(proc::PROCEDURE_ALL, true /* clear route */, false /* clear flight plan */);

@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -453,6 +453,7 @@ public:
 
   /* Does not delete flight plan properties. Clears the MapProcedure structures. */
   void clearProcedures(proc::MapProcedureTypes type);
+  void clearAllProcedures();
 
   /* Removes legs that match the given procedures from the route and/or flightplan */
   void clearProcedureLegs(proc::MapProcedureTypes type, bool clearRoute = true, bool clearFlightplan = true);
