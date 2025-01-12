@@ -47,6 +47,8 @@ Note that some of theses limitations can only be fixed by Asobo.
   elevation profile. Example: LOWI OEV heading West.
 * Runways used by procedures which are present at an airport do not always match. Example: EDDK, LSZR,
   LSZN, ENSB, EKRN, LFLO, LOWK and more where runways have been renamed recently in the real world.
+* The airport Istanbul Intl (LTFM) is missing in the stock data. Little Navmap will show the airport
+  if you install an add-on.
 * A workaround has to be used to detect if an airport has lighted runways or not since this
   information is missing in the SimConnect interface. This is not 100 percent reliable.
 * MSFS 2020 provides around 42000 airports while MSFS 2024 has almost 84000 airports. Half of these
