@@ -28,25 +28,25 @@ you see issues.
 
 There are limitations since Little Navmap has to load the complete scenery library through the MSFS
 SimConnect interface and cannot rely on files anymore. All files used by Little Navmap from MSFS
-2020 were dropped due to the streaming only approach of MSFS 2024.
+2020 were dropped due to the streaming only approach of MSFS 2024. This required a full new
+compiler implementation.
 
 Note that some of theses limitations can only be fixed by Asobo.
 
 * The simulator has to run to load the scenery library.
 * The simulator connection in Little Navmap has to be paused during loading. You will not see
   aircraft updates in Little Navmap while loading.
-* Loading airports and navaids takes about 10 minutes. Future optimizations are
-  planned.
+* Loading airports and navaids takes about 10 minutes. Future optimizations are planned.
 * Detection of add-on airports is not possible. Right click on an airport icon on the map, the
   airport search result table or the flight plan table and use the function `Mark Airport as add-on`
   which will add a userpoint on top of an airport marking it as an add-on.
 * Airports have no city, country or state/province names.
-* Airport names are always English. Translations are not available.
-* Closed runways or closed airports cannot be detected.
+* Airport names are always English. Translations or exonyms are not available.
+* Neither closed runways nor closed airports can be recognised.
 * About 140 ILS of 4100 are not connected to runways and therefore won't be shown in the Little Navmap
-  elevation profile. Example: LOWI OEV.
+  elevation profile. Example: LOWI OEV heading West.
 * Runways used by procedures which are present at an airport do not always match. Example: EDDK, LSZR,
-  LSZN, ENSB, EKRN, LFLO, LOWK and more.
+  LSZN, ENSB, EKRN, LFLO, LOWK and more where runways have been renamed recently in the real world.
 * A workaround has to be used to detect if an airport has lighted runways or not since this
   information is missing in the SimConnect interface. This is not 100 percent reliable.
 * MSFS 2020 provides around 42000 airports while MSFS 2024 has almost 84000 airports. Half of these
@@ -58,16 +58,16 @@ Note that some of theses limitations can only be fixed by Asobo.
 * Airline codes for parking are missing.
 * Navaids like waypoints, VOR, NDB or ILS can only be loaded if they are connected to a procedure,
   a runway or an airway. This means that waypoints in the North Atlantic needed for Oceanic tracks
-  will be missing, for example. LOWI localizer OEJ cannot be loaded and is missing on the map. As a
-  result, around 70000 navaids are missing from the map due to SimConnect limitations, which does
-  not allow the world-wide enumeration of navaids.
+  will be missing, for example. LOWI localizer OEJ heading East cannot be loaded and is missing on
+  the map. As a result, around 70000 navaids are missing from the map due to SimConnect limitations,
+  which do not allow the world-wide enumeration of navaids.
 * Full SID and STAR are duplicated for each runway. This will be fixed in one of the next releases
   of Little Navmap and does not affect functionality.
 * Note that all fields in the load scenery library dialog are now disabled when selecting MSFS 2024
   since no path is used.
-* A warning dialog is shown when trying to compile MSFS 2024 with 32-bit build.
-* Note that this approach allows to read encrypted add-on airports. You will not see this
-  notification message anymore for MSFS 2024.
+* A warning dialog is shown when trying to compile MSFS 2024 with the 32-bit build.
+* Note that loading airports via SimConnect allows to read encrypted add-on airports. You will not
+  see the notification message about encrypted airports anymore for MSFS 2024.
 
 ### MSFS 2024 Other
 
@@ -78,15 +78,25 @@ Note that some of theses limitations can only be fixed by Asobo.
   have to load the flight plans in the MSFS 2024 EFB after starting a free flight. #1216
 * The keyboard shortcut `Ctrl+Shift+B` is now used for MSFS 2020 PLN files. #1216
 * Note that detailed user or AI/multiplayer aircraft descriptions are not available in MSFS 2024
-  since aircraft files are missing.
-* Adapted database loading dialog to MSFS 2024 changes. Now disabling buttons accordingly. #1198
+  since aircraft files are not accessible.
+
+### MSFS Simulators
+
+* Added TACAN and VORTAC station types for all MSFS simulators including display of channel.
+* Removing airport vehicles now from all MSFS simulator AI traffic.
+* Now flagging all VOR and NDB waypoints as artificial in FSX, P3D and MSFS simulators to hide them
+  in Little Navmap. These are not real waypoints and are used only internally to build the
+  airway and routing network system.
+* Now omitting duplicate waypoints with invalid regions in all MSFS simulators. Also using better
+  duplicate waypoint removal for MSFS 2020 now.
+* Added exclusion of traffic and AIRAC BGL from loading for MSFS 2020 to avoid error messages in
+  the log.
 
 ### Other
 
-* Removing airport vehicles now for all MSFS simulators.
-* Added TACAN and VORTAC station types for all MSFS simulators.
-* Fixed issue where ILS could not be found if airport ident was empty. This resulted in recommended
-  navaids not being resolved in procedures (red error message in procedure search).
+* Fixed issue where ILS could not be found for procedure if airport ident was empty. This resulted
+  in recommended navaids not being resolved in procedures (red error message in procedure search).
+* Fixed bug where X-Plane 11/12 FMS exported FMS format had departure and destination wrongly swapped.
 * Fixed crash when selecting airport as alternate in airport search result table or in logbook
   where `Add as Alternate` was wrongly enabled despite having an empty route. #1222
 * Fixed drawing issue where exact vertical lines were not shown in Mercator projection. This
@@ -103,21 +113,14 @@ Note that some of theses limitations can only be fixed by Asobo.
   Otherwise, Little Navmap will show error messages hinting you to do so.
 * Added airway type description to flight plan table configuration to make airway suffixes
   `L` (low) and `H` (high) clearer.
-* Now flagging all VOR and NDB waypoints as artificial in FSX, P3D and MSFS simulators to hide them
-  in the user interface. These are not real waypoints ands are used only internally to build the
-  airway and routing network system.
 * Updated to World Magnetic Model WMM2025 coefficients for more accurate declination calculation
   when using X-Plane and MSFS simulators.
-* Now omitting duplicate waypoints with invalid regions in all MSFS simulators. Also using better
-  duplicate waypoint removal for MSFS 2020 now.
-* Added exclusion of traffic and AIRAC BGL from loading for MSFS 2020 to avoid error messages in
-  the log.
 * ILS feather geometry is now using a minimum width of 2 degrees to avoid ILS feathers shown as
   lines in all simulators.
 * Improved on-ground approximation to avoid wrong takeoff detection when hovering with helicopters.
 * Fixed more disambiguations for translation texts to avoid wrong translations.
 * Changed certain texts to be untranslatable to avoid issues with database indicators.
-* Added disambiguation strings for translation texts to avoid same translation for procedure
+* Added disambiguations for translation texts to avoid same translation for procedure
   restrictions and airway types, for example.
 * Updated translation files and add Chinese back again.
 
