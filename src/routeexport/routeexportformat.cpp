@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -56,10 +56,12 @@ void RouteExportFormatMap::setDebugOptions(rexp::RouteExportFormatType type)
 {
   RouteExportFormat& format = (*this)[type];
 
-  QString defaultPath = QDir::homePath() + "/Temp/Little Navmap Export";
+  QString defaultPath = QDir::homePath() % atools::SEP % "Temp";
   QString path = Settings::instance().getAndStoreValue(lnm::OPTIONS_MULTIEXPORT_DEBUG_PATH, defaultPath).toString();
 
-  format.setPath(path + "/" + format.getCategory());
+  format.setPath(path % atools::SEP %
+                 QCoreApplication::applicationName() % " " % QCoreApplication::applicationVersion() % atools::SEP +
+                 format.getCategory());
 
   QDir().mkpath(format.getPath());
   format.setPattern(QFileInfo(format.getDefaultPattern()).baseName() + " " + format.getComment().replace("/", "-") +
