@@ -4881,13 +4881,13 @@ void MainWindow::postTrackLoad()
 void MainWindow::dragEnterEvent(QDragEnterEvent *event)
 {
   qDebug() << Q_FUNC_INFO;
-  // Accept only one file
+  // Accept only one file - multiple only for debugging export
   if(event->mimeData() != nullptr && event->mimeData()->hasUrls() &&
-     (event->mimeData()->urls().size() == 1 || debugActionExportPlans->isChecked()))
+     (event->mimeData()->urls().size() == 1 || (debugActionExportPlans != nullptr && debugActionExportPlans->isChecked())))
   {
     QList<QUrl> urls;
 
-    if(debugActionExportPlans->isChecked())
+    if(debugActionExportPlans != nullptr && debugActionExportPlans->isChecked())
     {
       // Accept all URLs for debug export
       urls.append(event->mimeData()->urls());
@@ -4925,7 +4925,7 @@ void MainWindow::dragEnterEvent(QDragEnterEvent *event)
 void MainWindow::dropEvent(QDropEvent *event)
 {
   QList<QUrl> urls = event->mimeData()->urls();
-  if(debugActionExportPlans->isChecked())
+  if(debugActionExportPlans != nullptr && debugActionExportPlans->isChecked())
   {
     // Load all plans and export them using multiexport for testing
     std::sort(urls.begin(), urls.end());
