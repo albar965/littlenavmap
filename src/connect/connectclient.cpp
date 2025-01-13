@@ -119,12 +119,23 @@ ConnectClient::~ConnectClient()
 {
   qDebug() << Q_FUNC_INFO;
 
-  simConnectHandler->close();
-  simConnectHandler->releaseSimConnect();
   flushQueuedRequestsTimer.stop();
   reconnectNetworkTimer.stop();
 
+  // Terminate data reader
   disconnectClicked();
+
+  // Avoid getting messages after destruction
+  disconnect(dataReader, &DataReaderThread::postSimConnectData, this, &ConnectClient::postSimConnectData);
+  disconnect(dataReader, &DataReaderThread::postStatus, this, &ConnectClient::statusPosted);
+  disconnect(dataReader, &DataReaderThread::connectedToSimulator, this, &ConnectClient::connectedToSimulatorDirect);
+  disconnect(dataReader, &DataReaderThread::disconnectedFromSimulator, this, &ConnectClient::disconnectedFromSimulatorDirect);
+
+  // Close SimConnect
+  simConnectHandler->close();
+
+  // Release DLL
+  simConnectHandler->releaseSimConnect();
 
   ATOOLS_DELETE_LOG(dataReader);
   ATOOLS_DELETE_LOG(simConnectHandler);
