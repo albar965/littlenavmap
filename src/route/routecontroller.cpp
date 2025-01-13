@@ -1296,6 +1296,15 @@ void RouteController::loadFlightplanInternal(atools::fs::pln::Flightplan flightp
 
   route.createRouteLegsFromFlightplan();
 
+  if(!routeFlightplan.isEmpty())
+  {
+    if(!routeFlightplan.getDeparturePosition().isValid())
+      routeFlightplan.setDeparturePosition(routeFlightplan.constFirst().getPosition());
+
+    if(!routeFlightplan.getDestinationPosition().isValid())
+      routeFlightplan.setDestinationPosition(routeFlightplan.constLast().getPosition());
+  }
+
   // test and error after undo/redo and switch
 
   // These formats have transition waypoints which might match or not on import and require a cleanup
