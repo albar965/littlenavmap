@@ -2713,57 +2713,57 @@ compatíveis e são carregados, se possível.</translation>
 <context>
     <name>ConnectClient</name>
     <message>
-        <location filename="src/connect/connectclient.cpp" line="857"/>
+        <location filename="src/connect/connectclient.cpp" line="868"/>
         <source>
 Will retry to connect.</source>
         <translation>
 Tente conectar novamente.</translation>
     </message>
     <message>
-        <location filename="src/connect/connectclient.cpp" line="673"/>
+        <location filename="src/connect/connectclient.cpp" line="684"/>
         <source>Auto connect switched off.</source>
         <translation>Conexão automática desligada.</translation>
     </message>
     <message>
-        <location filename="src/connect/connectclient.cpp" line="199"/>
-        <location filename="src/connect/connectclient.cpp" line="221"/>
+        <location filename="src/connect/connectclient.cpp" line="210"/>
+        <location filename="src/connect/connectclient.cpp" line="232"/>
         <source>MSFS</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/connect/connectclient.cpp" line="205"/>
+        <location filename="src/connect/connectclient.cpp" line="216"/>
         <source>FSX, Prepar3D or MSFS</source>
         <translation>FSX, Prepar3D ou MSFS</translation>
     </message>
     <message>
-        <location filename="src/connect/connectclient.cpp" line="224"/>
+        <location filename="src/connect/connectclient.cpp" line="235"/>
         <source>FSX/P3D</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/connect/connectclient.cpp" line="227"/>
+        <location filename="src/connect/connectclient.cpp" line="238"/>
         <source>FSX/P3D/MSFS</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/connect/connectclient.cpp" line="242"/>
-        <location filename="src/connect/connectclient.cpp" line="980"/>
+        <location filename="src/connect/connectclient.cpp" line="253"/>
+        <location filename="src/connect/connectclient.cpp" line="991"/>
         <source>Connected to simulator.</source>
         <translation>Conectado ao simulador.</translation>
     </message>
     <message>
-        <location filename="src/connect/connectclient.cpp" line="275"/>
-        <location filename="src/connect/connectclient.cpp" line="924"/>
+        <location filename="src/connect/connectclient.cpp" line="286"/>
+        <location filename="src/connect/connectclient.cpp" line="935"/>
         <source>Disconnected from simulator.</source>
         <translation>Desconectado do simulador.</translation>
     </message>
     <message>
-        <location filename="src/connect/connectclient.cpp" line="455"/>
+        <location filename="src/connect/connectclient.cpp" line="466"/>
         <source>Little Xpconnect</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/connect/connectclient.cpp" line="457"/>
+        <location filename="src/connect/connectclient.cpp" line="468"/>
         <source>Little Navconnect</source>
         <translation></translation>
     </message>
@@ -2773,7 +2773,7 @@ Tente conectar novamente.</translation>
         <translation type="vanished">Atualize &lt;i&gt;%1&lt;/i&gt; para a versão mais recente.&lt;br/&gt;A versão instalada de &lt;i&gt;%1&lt;/i&gt;&lt;br/&gt;não é compatível com esta versão do Little Navmap.&lt;br/&gt; &lt;br/&gt;Instale a versão mais recente de &lt;i&gt;%1&lt;/i&gt;.</translation>
     </message>
     <message>
-        <location filename="src/connect/connectclient.cpp" line="475"/>
+        <location filename="src/connect/connectclient.cpp" line="486"/>
         <source>The connection is not reliable.&lt;br/&gt;&lt;br/&gt;Check your network or installation.</source>
         <translation>A conexão não é confiável.&lt;br/&gt;&lt;br/&gt;Verifique sua conexão ou instalação.</translation>
     </message>
@@ -2782,52 +2782,52 @@ Tente conectar novamente.</translation>
         <translation type="vanished">&lt;p&gt;Erro ao receber dados de &lt;i&gt;%1&lt;/i&gt;:&lt;/p&gt;&lt;p&gt;%2&lt;/p&gt;&lt;p&gt;%3&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="src/connect/connectclient.cpp" line="904"/>
+        <location filename="src/connect/connectclient.cpp" line="915"/>
         <source>Connect Error</source>
         <translation>Erro de Conexão</translation>
     </message>
     <message>
-        <location filename="src/connect/connectclient.cpp" line="971"/>
+        <location filename="src/connect/connectclient.cpp" line="982"/>
         <source>Connected</source>
         <translation>Conectado</translation>
     </message>
     <message>
-        <location filename="src/connect/connectclient.cpp" line="239"/>
+        <location filename="src/connect/connectclient.cpp" line="250"/>
         <source>Connected (%1)</source>
         <translation>Conectado (%1)</translation>
     </message>
     <message>
-        <location filename="src/connect/connectclient.cpp" line="240"/>
+        <location filename="src/connect/connectclient.cpp" line="251"/>
         <source>Connected to local flight simulator (%1).</source>
         <translation>Conectado com o flight simulator na rede (%1).</translation>
     </message>
     <message>
-        <location filename="src/connect/connectclient.cpp" line="466"/>
+        <location filename="src/connect/connectclient.cpp" line="477"/>
         <source>Update %1 to the latest version.&lt;br/&gt;The installed version of %1&lt;br/&gt;is not compatible with this version of Little Navmap.&lt;br/&gt;&lt;br/&gt;Install the latest version of %1 which you can always find in the Little Navmap installation directory.</source>
         <translation>Atualize %1 para a versão mais recente.&lt;br/&gt;A versão instalada de %1&lt;br/&gt;não é compatível com esta versão do Little Navmap.&lt;br/&gt;&lt;br/&gt;Instale a versão mais recente de %1 que você pode encontre sempre no diretório de instalação do Little Navmap.</translation>
     </message>
     <message>
-        <location filename="src/connect/connectclient.cpp" line="482"/>
+        <location filename="src/connect/connectclient.cpp" line="493"/>
         <source>&lt;p&gt;Error receiving data from %1:&lt;/p&gt;&lt;p&gt;%2&lt;/p&gt;&lt;p&gt;%3&lt;/p&gt;</source>
         <translation>&lt;p&gt;Erro ao receber dados de %1:&lt;/p&gt;&lt;p&gt;%2&lt;/p&gt;&lt;p&gt;%3&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="src/connect/connectclient.cpp" line="705"/>
+        <location filename="src/connect/connectclient.cpp" line="716"/>
         <source>&lt;p&gt;You are using an outdated version of the X-Plane Little Xpconnect plugin.&lt;br/&gt;Minimum recommended version is &quot;%1&quot;.&lt;/p&gt;&lt;p&gt;It is recommended to remove the old plugin and install the included Little Xpconnect in the X-Plane directory &quot;plugins&quot;.&lt;/p&gt;</source>
         <translation>&lt;p&gt;Você está usando uma versão desatualizada do plugin X-Plane Little Xpconnect.&lt;br/&gt;A versão mínima recomendada é “%1”.&lt;/p&gt;&lt;p&gt;É recomendado remover o plugin antigo e instalar o Little Xpconnect incluído no diretório “plugins” do X-Plane.&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="src/connect/connectclient.cpp" line="711"/>
+        <location filename="src/connect/connectclient.cpp" line="722"/>
         <source>&lt;p&gt;You are using an outdated version &quot;%1&quot; of the X-Plane Little Xpconnect plugin.&lt;br/&gt;Minimum recommended version is &quot;%2&quot;.&lt;p&gt;&lt;p&gt;It is recommended to remove the old plugin and install the included Little Xpconnect in X-Plane directory &quot;plugins&quot;.&lt;/p&gt;</source>
         <translation>&lt;p&gt;Você está usando uma versão desatualizada “%1” do plugin X-Plane Little Xpconnect.&lt;br/&gt;A versão mínima recomendada é “%2”.&lt;p&gt;&lt;p&gt;É recomendado remover o plugin antigo e instalar o Little Xpconnect incluído no diretório “plugins” do X-Plane.&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="src/connect/connectclient.cpp" line="720"/>
+        <location filename="src/connect/connectclient.cpp" line="731"/>
         <source>&amp;Install Now ...</source>
         <translation>&amp;Instalar Agora ...</translation>
     </message>
     <message>
-        <location filename="src/connect/connectclient.cpp" line="741"/>
+        <location filename="src/connect/connectclient.cpp" line="752"/>
         <source>Too many errors when trying to connect to simulator.
 
 Not matching simulator interface or other SimConnect problem.
@@ -2846,62 +2846,62 @@ Certifique-se de usar a versão correta de %1 com o simulador correto:
 Você precisa reiniciar %1 para continuar.</translation>
     </message>
     <message>
-        <location filename="src/connect/connectclient.cpp" line="774"/>
+        <location filename="src/connect/connectclient.cpp" line="785"/>
         <source>Error (%1) ...</source>
         <translation>Erro (%1)...</translation>
     </message>
     <message>
-        <location filename="src/connect/connectclient.cpp" line="775"/>
+        <location filename="src/connect/connectclient.cpp" line="786"/>
         <source>Too many errors when trying to connect to simulator (%1).</source>
         <translation>Muitos erros ao tentar conectar ao simulador (%1).</translation>
     </message>
     <message>
-        <location filename="src/connect/connectclient.cpp" line="972"/>
+        <location filename="src/connect/connectclient.cpp" line="983"/>
         <source>Connected to remote flight simulator on &quot;%1&quot;.</source>
         <translation>Conectado remotamente com o flight simulator em &quot;%1&quot;.</translation>
     </message>
     <message>
-        <location filename="src/connect/connectclient.cpp" line="779"/>
+        <location filename="src/connect/connectclient.cpp" line="790"/>
         <source>Connecting (%1) ...</source>
         <oldsource>Connecting (%1)...</oldsource>
         <translation>Conectando (%1) ...</translation>
     </message>
     <message>
-        <location filename="src/connect/connectclient.cpp" line="799"/>
-        <location filename="src/connect/connectclient.cpp" line="898"/>
+        <location filename="src/connect/connectclient.cpp" line="810"/>
+        <location filename="src/connect/connectclient.cpp" line="909"/>
         <source>Connecting ...</source>
         <oldsource>Connecting...</oldsource>
         <translation>Conectando ...</translation>
     </message>
     <message>
-        <location filename="src/connect/connectclient.cpp" line="264"/>
-        <location filename="src/connect/connectclient.cpp" line="673"/>
-        <location filename="src/connect/connectclient.cpp" line="891"/>
+        <location filename="src/connect/connectclient.cpp" line="275"/>
+        <location filename="src/connect/connectclient.cpp" line="684"/>
+        <location filename="src/connect/connectclient.cpp" line="902"/>
         <source>Disconnected</source>
         <translation>Disconectado</translation>
     </message>
     <message>
-        <location filename="src/connect/connectclient.cpp" line="264"/>
+        <location filename="src/connect/connectclient.cpp" line="275"/>
         <source>Disconnected from local flight simulator.</source>
         <translation>Disconectado do flight simulator local.</translation>
     </message>
     <message>
-        <location filename="src/connect/connectclient.cpp" line="892"/>
+        <location filename="src/connect/connectclient.cpp" line="903"/>
         <source>Disconnected from remote flight simulator on &quot;%1&quot;.</source>
         <translation>Disconectado da conexão remota com o flight simulator &quot;%1&quot;.</translation>
     </message>
     <message>
-        <location filename="src/connect/connectclient.cpp" line="850"/>
+        <location filename="src/connect/connectclient.cpp" line="861"/>
         <source>Do not &amp;show this dialog again.</source>
         <translation>Não &amp;mostre este diálogo novamente.</translation>
     </message>
     <message>
-        <location filename="src/connect/connectclient.cpp" line="905"/>
+        <location filename="src/connect/connectclient.cpp" line="916"/>
         <source>Error in server connection to &quot;%1&quot;: %2 (%3)</source>
         <translation>Erro no servidor para se conectar com &quot;%1&quot;: %2 (%3)</translation>
     </message>
     <message>
-        <location filename="src/connect/connectclient.cpp" line="854"/>
+        <location filename="src/connect/connectclient.cpp" line="865"/>
         <source>Error in server connection: %1 (%2).%3</source>
         <translation>Erro na conexão com o servidor: %1 (%2).%3</translation>
     </message>
@@ -2910,34 +2910,34 @@ Você precisa reiniciar %1 para continuar.</translation>
         <translation type="vanished">Erro na leitura dos dados do Little Navconnect: %1.</translation>
     </message>
     <message>
-        <location filename="src/connect/connectclient.cpp" line="899"/>
+        <location filename="src/connect/connectclient.cpp" line="910"/>
         <source>Error while trying to connect to &quot;%1&quot;: %2 (%3).
 Will retry.</source>
         <translation>Erro enquanto tentava se conectar com &quot;%1&quot;: %2 (%3).
 Tente novamente.</translation>
     </message>
     <message>
-        <location filename="src/connect/connectclient.cpp" line="954"/>
+        <location filename="src/connect/connectclient.cpp" line="965"/>
         <source>Error writing reply to Little Navconnect: %1.</source>
         <translation>Erro enquanto tentava entregar uma resposta para Little Navconnect: %1.</translation>
     </message>
     <message>
-        <location filename="src/connect/connectclient.cpp" line="202"/>
+        <location filename="src/connect/connectclient.cpp" line="213"/>
         <source>FSX or Prepar3D</source>
         <translation>FSX ou Prepar3D</translation>
     </message>
     <message>
-        <location filename="src/connect/connectclient.cpp" line="849"/>
+        <location filename="src/connect/connectclient.cpp" line="860"/>
         <source>Remote end closed connection.</source>
         <translation>Conexão remota fechada e encerrada.</translation>
     </message>
     <message>
-        <location filename="src/connect/connectclient.cpp" line="780"/>
+        <location filename="src/connect/connectclient.cpp" line="791"/>
         <source>Trying to connect to local flight simulator (%1).</source>
         <translation>Tentando se conectar com o flight simulator (%1).</translation>
     </message>
     <message>
-        <location filename="src/connect/connectclient.cpp" line="800"/>
+        <location filename="src/connect/connectclient.cpp" line="811"/>
         <source>Trying to connect to remote flight simulator on &quot;%1&quot;.</source>
         <translation>Tentando fazer uma conexão remota com o flight simulator &quot;%1&quot;.</translation>
     </message>
@@ -2946,12 +2946,12 @@ Tente novamente.</translation>
         <translation type="vanished">Aviso</translation>
     </message>
     <message>
-        <location filename="src/connect/connectclient.cpp" line="196"/>
+        <location filename="src/connect/connectclient.cpp" line="207"/>
         <source>X-Plane</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/connect/connectclient.cpp" line="217"/>
+        <location filename="src/connect/connectclient.cpp" line="228"/>
         <source>XP</source>
         <translation></translation>
     </message>
