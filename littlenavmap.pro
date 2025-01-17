@@ -744,7 +744,7 @@ ICON = resources/icons/littlenavmap.icns
 TRANSLATIONS = littlenavmap_fr.ts \
                littlenavmap_it.ts \
                littlenavmap_de.ts \
-               littlenavmap_zh.ts \
+               littlenavmap_zh_CN.ts \
                littlenavmap_pt_BR.ts
 
 # littlenavmap_nl.ts
@@ -819,6 +819,7 @@ unix:!macx {
   DEPLOY_DIR_LIB=\"$$DEPLOY_BASE/$$TARGET_NAME/lib\"
 
   deploy.commands += rm -Rfv $$DEPLOY_DIR &&
+  deploy.commands += mkdir -pv $$DEPLOY_DIR/translations &&
   deploy.commands += mkdir -pv $$DEPLOY_DIR_LIB &&
   deploy.commands += mkdir -pv $$DEPLOY_DIR_LIB/iconengines &&
   deploy.commands += mkdir -pv $$DEPLOY_DIR_LIB/imageformats &&
@@ -836,11 +837,11 @@ unix:!macx {
   deploy.commands += cp -Rvf $$OUT_PWD/help $$DEPLOY_DIR &&
   deploy.commands += cp -Rvf $$OUT_PWD/web $$DEPLOY_DIR &&
   deploy.commands += cp -Rvf $$OUT_PWD/customize $$DEPLOY_DIR &&
-  deploy.commands += cp -Rvf $$OUT_PWD/translations $$DEPLOY_DIR &&
   deploy.commands += cp -Rvf $$OUT_PWD/littlenavmap $$DEPLOY_DIR &&
   deploy.commands += cp -vfa $$[QT_INSTALL_TRANSLATIONS]/qt_??.qm  $$DEPLOY_DIR/translations &&
   deploy.commands += cp -vfa $$[QT_INSTALL_TRANSLATIONS]/qt_??_??.qm  $$DEPLOY_DIR/translations &&
   deploy.commands += cp -vfa $$[QT_INSTALL_TRANSLATIONS]/qtbase*.qm  $$DEPLOY_DIR/translations &&
+  deploy.commands += cp -Rvf $$OUT_PWD/translations $$DEPLOY_DIR &&
   exists($$DATABASE_BASE) : deploy.commands += cp -Rvf $$DATABASE_BASE $$DEPLOY_DIR &&
   exists($$HELP_BASE) : deploy.commands += cp -Rvf $$HELP_BASE/* $$DEPLOY_DIR/help &&
   deploy.commands += cp -vf $$PWD/desktop/\"Little Navmap Portable Linux.sh\" $$DEPLOY_DIR/\"Little Navmap Portable.sh\" &&
