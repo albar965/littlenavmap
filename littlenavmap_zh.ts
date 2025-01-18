@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
-<TS version="2.1" language="zh_CN" sourcelanguage="zh_CN">
+<TS version="2.1" language="zh" sourcelanguage="zh">
 <context>
     <name>AbstractInfoBuilder</name>
     <message>
