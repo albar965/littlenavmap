@@ -634,7 +634,6 @@ struct MapApron
   atools::fs::common::XpGeo geometry;
 
   QString surface;
-  bool drawSurface;
 };
 
 // =====================================================================
@@ -644,7 +643,7 @@ struct MapTaxiPath
   atools::geo::Pos start, end;
   QString surface, name;
   int width; /* feet */
-  bool drawSurface, closed;
+  bool closed;
 
   bool isValid() const
   {

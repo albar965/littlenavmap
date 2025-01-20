@@ -51,6 +51,9 @@ static const int TAXIWAY_TEXT_MIN_LENGTH = 10;
 static const int RUNWAY_OVERVIEW_MIN_LENGTH_FEET = 8000;
 static const float AIRPORT_DIAGRAM_BACKGROUND_METER = 200.f;
 
+/* All taxiway paths wider than this are not drawn */
+static const int MAX_TAXI_WIDTH_FT = 1000;
+
 using namespace Marble;
 using namespace atools::geo;
 using namespace map;
@@ -407,12 +410,7 @@ void MapPainterAirport::drawAirportDiagram(const map::MapAirport& airport)
       col = col.darker(110);
 
       painter->setPen(QPen(col, 1, Qt::SolidLine, Qt::FlatCap));
-
-      if(!apron.drawSurface)
-        // Use pattern for transparent aprons
-        painter->setBrush(QBrush(col, Qt::Dense6Pattern));
-      else
-        painter->setBrush(QBrush(col));
+      painter->setBrush(QBrush(col));
 
       // FSX/P3D geometry
       if(!apron.vertices.isEmpty())
@@ -442,11 +440,11 @@ void MapPainterAirport::drawAirportDiagram(const map::MapAirport& airport)
       startPts.append(wToS(taxipath.start, DEFAULT_WTOS_SIZE, &visible));
       endPts.append(wToS(taxipath.end, DEFAULT_WTOS_SIZE, &visible));
 
-      if(taxipath.width == 0)
-        // Special X-Plane case - width is not given for path
-        pathThickness.append(0);
-      else
+      if(taxipath.width > 0 && taxipath.width < MAX_TAXI_WIDTH_FT)
         pathThickness.append(std::max(2, scale->getPixelIntForFeet(taxipath.width)));
+      else
+        // Path is either broken or special X-Plane case where width is not given for path
+        pathThickness.append(0);
     }
 
     if(context->dOptAp(optsd::ITEM_AIRPORT_DETAIL_TAXI))
@@ -473,11 +471,6 @@ void MapPainterAirport::drawAirportDiagram(const map::MapAirport& airport)
             painter->drawLine(start, end);
 
           }
-          else if(!taxipath.drawSurface)
-          {
-            painter->setPen(QPen(QBrush(col, Qt::Dense4Pattern), thickness, Qt::SolidLine, Qt::RoundCap));
-            painter->drawLine(start, end);
-          }
         }
       }
 
@@ -485,7 +478,7 @@ void MapPainterAirport::drawAirportDiagram(const map::MapAirport& airport)
       for(int i = 0; i < taxipaths->size(); i++)
       {
         const MapTaxiPath& taxipath = taxipaths->at(i);
-        if(!taxipath.closed && taxipath.drawSurface && pathThickness.at(i) > 0)
+        if(!taxipath.closed && pathThickness.at(i) > 0)
         {
           painter->setPen(QPen(mapcolors::colorForSurface(taxipath.surface), pathThickness.at(i), Qt::SolidLine, Qt::RoundCap));
           painter->drawLine(startPts.at(i), endPts.at(i));

@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -579,7 +579,6 @@ const QList<map::MapApron> *AirportQuery::getAprons(int airportId)
 
       ap.id = apronQuery->valueInt("apron_id");
       ap.surface = apronQuery->value("surface").toString();
-      ap.drawSurface = apronQuery->value("is_draw_surface").toInt() > 0;
 
       if(!apronQuery->isNull("geometry"))
       {
@@ -1080,7 +1079,6 @@ const QList<map::MapTaxiPath> *AirportQuery::getTaxiPaths(int airportId)
       // TODO should be moved to MapTypesFactory
       map::MapTaxiPath tp;
       tp.closed = taxiparthQuery->value("type").toString() == "CLOSED";
-      tp.drawSurface = taxiparthQuery->value("is_draw_surface").toInt() > 0;
       tp.start = ageo::Pos(taxiparthQuery->value("start_lonx").toFloat(), taxiparthQuery->value("start_laty").toFloat());
       tp.end = ageo::Pos(taxiparthQuery->value("end_lonx").toFloat(), taxiparthQuery->value("end_laty").toFloat());
       tp.surface = taxiparthQuery->value("surface").toString();
