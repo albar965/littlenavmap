@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -979,7 +979,12 @@ void MapThemeHandler::validateMapThemeDirectories(QWidget *parent)
   msg.removeAll(QString());
 
   if(!msg.isEmpty())
-    atools::gui::Dialog::warning(parent, tr("Base path(s) for map themes not found.\n%1").arg(msg.join(tr(",\n"))));
+    atools::gui::Dialog::warning(parent, tr("Base path(s) for map themes not found.\n%1\n\n"
+                                            "Go to menu \"Tools\" -> \"Options\" and then to page \"Cache and Files\". "
+                                            "Clear the input field \"Directory for additional map themes\" "
+                                            "with the wrong path to disable themes or "
+                                            "click \"Select Themes Directory\" and select the correct folder.",
+                                            "Syncronize with texts in menu and options dialog").arg(msg.join(tr(",\n"))));
 }
 
 void MapThemeHandler::resetToDefault()
