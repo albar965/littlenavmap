@@ -1617,7 +1617,7 @@ bool DatabaseManager::checkValidBasePaths() const
     {
       dialog->showInfoMsgBox(lnm::ACTIONS_SHOW_DATABASE_SIMCONNECT,
                              tr("Note that the connection to the flight simulator has to be paused while "
-                                "loading airports from the simulator.\n"
+                                "loading data from the simulator.\n"
                                 "You will not see user aircraft updates while loading."),
                              tr("Do not &show this dialog again."));
 
@@ -1625,7 +1625,7 @@ bool DatabaseManager::checkValidBasePaths() const
       while(!connectionValid)
       {
         QMessageBox::StandardButton retval = dialog->information(
-          tr("Cannot connect to Microsoft Flight Simulator 2024, which is required for Little Navmap to load airports.\n\n"
+          tr("Cannot connect to Microsoft Flight Simulator 2024, which is required for Little Navmap to load data.\n\n"
              "Start Microsoft Flight Simulator 2024, "
              "wait until the user interface of the simulator is visible and then press \"Ok\" to continue.\n\n"
              "Note that the loading process can take a while. Expect about %1 minutes.").arg(SIMCONNECT_LOADING_MINUTES),

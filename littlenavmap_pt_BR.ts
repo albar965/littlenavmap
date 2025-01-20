@@ -4244,17 +4244,24 @@ Você pode carregar o banco de dados da biblioteca de cenários do simulador no 
     </message>
     <message>
         <location filename="src/db/databasemanager.cpp" line="1619"/>
-        <source>Note that the connection to the flight simulator has to be paused while loading airports from the simulator.
+        <source>Note that the connection to the flight simulator has to be paused while loading data from the simulator.
 You will not see user aircraft updates while loading.</source>
+        <oldsource>Note that the connection to the flight simulator has to be paused while loading airports from the simulator.
+You will not see user aircraft updates while loading.</oldsource>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="src/db/databasemanager.cpp" line="1628"/>
-        <source>Cannot connect to Microsoft Flight Simulator 2024, which is required for Little Navmap to load airports.
+        <source>Cannot connect to Microsoft Flight Simulator 2024, which is required for Little Navmap to load data.
 
 Start Microsoft Flight Simulator 2024, wait until the user interface of the simulator is visible and then press &quot;Ok&quot; to continue.
 
 Note that the loading process can take a while. Expect about %1 minutes.</source>
+        <oldsource>Cannot connect to Microsoft Flight Simulator 2024, which is required for Little Navmap to load airports.
+
+Start Microsoft Flight Simulator 2024, wait until the user interface of the simulator is visible and then press &quot;Ok&quot; to continue.
+
+Note that the loading process can take a while. Expect about %1 minutes.</oldsource>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -9695,13 +9702,13 @@ exibição de vento na linha superior do perfil de elevação.</translation>
         <translation type="vanished">Mostrar ou ocultar as etiquetas no lado esquerdo do perfil de elevação</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.ui" line="11851"/>
+        <location filename="src/gui/mainwindow.ui" line="11854"/>
         <source>Show Scroll&amp;bars</source>
         <translation>Mostrar &amp;barras de rolagem</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.ui" line="11854"/>
         <location filename="src/gui/mainwindow.ui" line="11857"/>
+        <location filename="src/gui/mainwindow.ui" line="11860"/>
         <source>Show or hide scrollbars around the elevation profile</source>
         <translation>Mostrar ou ocultar barras de rolagem ao redor do perfil de elevação</translation>
     </message>
@@ -10243,333 +10250,338 @@ A velocidade do vento será interpolada entre esta altitude e a nível do solo.<
         <translation>&amp;Opções de exibição de progresso da aeronave...</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.ui" line="11661"/>
+        <location filename="src/gui/mainwindow.ui" line="11649"/>
+        <source>Ctrl+Shift+K</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/gui/mainwindow.ui" line="11664"/>
         <source>Show Selected &amp;Altitude Range Arc</source>
         <translation>Mostrar Arco de Alcance na &amp;Altitude Selecionada</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.ui" line="11709"/>
-        <location filename="src/gui/mainwindow.ui" line="11745"/>
+        <location filename="src/gui/mainwindow.ui" line="11712"/>
+        <location filename="src/gui/mainwindow.ui" line="11748"/>
         <source>Ctrl+Shift+Z</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.ui" line="11727"/>
-        <location filename="src/gui/mainwindow.ui" line="11763"/>
+        <location filename="src/gui/mainwindow.ui" line="11730"/>
+        <location filename="src/gui/mainwindow.ui" line="11766"/>
         <source>Ctrl+Shift+Y</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.ui" line="11797"/>
+        <location filename="src/gui/mainwindow.ui" line="11800"/>
         <source>&amp;Center on Aircraft and Destination</source>
         <translation>&amp;Centrar no Avião e no Destino</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.ui" line="11822"/>
         <location filename="src/gui/mainwindow.ui" line="11825"/>
+        <location filename="src/gui/mainwindow.ui" line="11828"/>
         <source>Create the recommended directory structure for saving and loading files</source>
         <translation>Crie a estrutura de diretórios recomendada para salvar e carregar arquivos</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.ui" line="11834"/>
+        <location filename="src/gui/mainwindow.ui" line="11837"/>
         <source>&amp;Elevation Profile Display Options ...</source>
         <translation>&amp;Opções de exibição do perfil de elevação ...</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.ui" line="11837"/>
         <location filename="src/gui/mainwindow.ui" line="11840"/>
+        <location filename="src/gui/mainwindow.ui" line="11843"/>
         <source>Select display options for elevation profile</source>
         <translation>Selecione as opções de exibição para o perfil de elevação</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.ui" line="11872"/>
+        <location filename="src/gui/mainwindow.ui" line="11875"/>
         <source>Show &amp;Online Aircraft</source>
         <translation>Mostrar Aeronave &amp;Online</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.ui" line="11875"/>
         <location filename="src/gui/mainwindow.ui" line="11878"/>
+        <location filename="src/gui/mainwindow.ui" line="11881"/>
         <source>Show online client aircraft on the map</source>
         <translation>Mostrar aeronaves de clientes online no mapa</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.ui" line="11883"/>
+        <location filename="src/gui/mainwindow.ui" line="11886"/>
         <source>Reset &amp;Tabs to Default</source>
         <translation>Redefinir &amp;guias para o padrão</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.ui" line="11886"/>
         <location filename="src/gui/mainwindow.ui" line="11889"/>
+        <location filename="src/gui/mainwindow.ui" line="11892"/>
         <source>Reset all tabs back to default</source>
         <translation>Redefina todas as guias de volta ao padrão</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.ui" line="11894"/>
+        <location filename="src/gui/mainwindow.ui" line="11897"/>
         <source>Detail Handler Dummy</source>
         <translation>Manequim do manipulador de detalhes</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.ui" line="11899"/>
+        <location filename="src/gui/mainwindow.ui" line="11902"/>
         <source>Theme Handler Dummy</source>
         <translation>Manequim do Manipulador de Temas</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.ui" line="11908"/>
+        <location filename="src/gui/mainwindow.ui" line="11911"/>
         <source>Remove all &amp;Measurement Lines</source>
         <translation>Remova Todas as Linhas de &amp;Medição</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.ui" line="11911"/>
         <location filename="src/gui/mainwindow.ui" line="11914"/>
+        <location filename="src/gui/mainwindow.ui" line="11917"/>
         <source>Remove all measurement lines from the map</source>
         <translation>Remova todas as linhas de medição do mapa</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.ui" line="11923"/>
+        <location filename="src/gui/mainwindow.ui" line="11926"/>
         <source>Remove all &amp;Holdings</source>
         <translation>Remover todas as &amp;Orbitas</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.ui" line="11926"/>
         <location filename="src/gui/mainwindow.ui" line="11929"/>
+        <location filename="src/gui/mainwindow.ui" line="11932"/>
         <source>Remove all holdings from the map</source>
         <translation>Remover todas as orbitas do mapa</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.ui" line="11938"/>
+        <location filename="src/gui/mainwindow.ui" line="11941"/>
         <source>Remove all &amp;Traffic Patterns</source>
         <translation>Remover todos os &amp;Padrões de Tráfego</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.ui" line="11941"/>
         <location filename="src/gui/mainwindow.ui" line="11944"/>
+        <location filename="src/gui/mainwindow.ui" line="11947"/>
         <source>Remove all traffic patterns from the map</source>
         <translation>Remover todos os padrões de tráfego do mapa</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.ui" line="11953"/>
+        <location filename="src/gui/mainwindow.ui" line="11956"/>
         <source>Remove all &amp;MSA Diagrams</source>
         <translation>Remover todos os Diagramas &amp;MSA</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.ui" line="11956"/>
         <location filename="src/gui/mainwindow.ui" line="11959"/>
+        <location filename="src/gui/mainwindow.ui" line="11962"/>
         <source>Remove all MSA diagrams from the  map</source>
         <translation>Remover todos os diagramas MSA do mapa</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.ui" line="11974"/>
+        <location filename="src/gui/mainwindow.ui" line="11977"/>
         <source>Show &amp;Turn Flight Path</source>
         <translation>Mostrar &amp;Trajetória de Voo da Curva</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.ui" line="11977"/>
         <location filename="src/gui/mainwindow.ui" line="11980"/>
+        <location filename="src/gui/mainwindow.ui" line="11983"/>
         <source>Shows flight path for turns</source>
         <translation>Mostra a trajetória de voo para curvas</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.ui" line="11983"/>
+        <location filename="src/gui/mainwindow.ui" line="11986"/>
         <source>Ctrl+Alt+L</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.ui" line="11992"/>
+        <location filename="src/gui/mainwindow.ui" line="11995"/>
         <source>&amp;Validate Scenery Library Settings</source>
         <translation>&amp;Validar Configurações da Biblioteca de Cenários</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.ui" line="11995"/>
         <location filename="src/gui/mainwindow.ui" line="11998"/>
+        <location filename="src/gui/mainwindow.ui" line="12001"/>
         <source>Check if the correct modes for the scenery library are used</source>
         <translation>Verifique se os modos corretos para a biblioteca de cenários são usados</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.ui" line="12009"/>
+        <location filename="src/gui/mainwindow.ui" line="12012"/>
         <source>Show Dock Window &amp;Title Bars</source>
         <translation>Mostrar Barras de &amp;Título da Janela Dock</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.ui" line="12012"/>
+        <location filename="src/gui/mainwindow.ui" line="12015"/>
         <source>Show Dock Window Title Bars</source>
         <translation>Mostrar Barras de Título da Janela Dock</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.ui" line="12015"/>
         <location filename="src/gui/mainwindow.ui" line="12018"/>
+        <location filename="src/gui/mainwindow.ui" line="12021"/>
         <source>Show or hide the title bars of docked windows</source>
         <translation>Mostrar ou ocultar as barras de título das janelas encaixadas</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.ui" line="12029"/>
+        <location filename="src/gui/mainwindow.ui" line="12032"/>
         <source>&amp;Warning for Aircraft Type Mismatch</source>
         <translation>&amp;Aviso para Incompatibilidade de Tipo de Aeronave</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.ui" line="12032"/>
         <location filename="src/gui/mainwindow.ui" line="12035"/>
+        <location filename="src/gui/mainwindow.ui" line="12038"/>
         <source>Show a warning if the loaded performance file does not match the simulator aircraft</source>
         <translation>Mostrar um aviso se o arquivo de performance carregado não corresponder à aeronave do simulador</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.ui" line="12040"/>
+        <location filename="src/gui/mainwindow.ui" line="12043"/>
         <source>&amp;Cleanup Logbook Entries ...</source>
         <translation>&amp;Limpar entradas do Logbook...</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.ui" line="12043"/>
         <location filename="src/gui/mainwindow.ui" line="12046"/>
+        <location filename="src/gui/mainwindow.ui" line="12049"/>
         <source>Remove invalid logbook entries</source>
         <translation>Remova entradas inválidas do logbook</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.ui" line="12055"/>
+        <location filename="src/gui/mainwindow.ui" line="12058"/>
         <source>&amp;Changelog (Offline, Text)</source>
         <translation>&amp;Registro de Alterações (Offline, Texto)</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.ui" line="12066"/>
+        <location filename="src/gui/mainwindow.ui" line="12069"/>
         <source>Show Map Theme &amp;Installation</source>
         <translation>Mostrar &amp;Instalação do Tema do Mapa</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.ui" line="12140"/>
-        <location filename="src/gui/mainwindow.ui" line="12158"/>
+        <location filename="src/gui/mainwindow.ui" line="12143"/>
+        <location filename="src/gui/mainwindow.ui" line="12161"/>
         <source>&amp;Direct to %1</source>
         <translation>&amp;Direto para %1</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.ui" line="12143"/>
         <location filename="src/gui/mainwindow.ui" line="12146"/>
-        <location filename="src/gui/mainwindow.ui" line="12161"/>
+        <location filename="src/gui/mainwindow.ui" line="12149"/>
         <location filename="src/gui/mainwindow.ui" line="12164"/>
+        <location filename="src/gui/mainwindow.ui" line="12167"/>
         <source>Change flight plan to fly direct to leg or navaid</source>
         <translation>Alterar o plano de voo para voar direto para a perna ou navaid</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.ui" line="12149"/>
-        <location filename="src/gui/mainwindow.ui" line="12167"/>
+        <location filename="src/gui/mainwindow.ui" line="12152"/>
+        <location filename="src/gui/mainwindow.ui" line="12170"/>
         <source>Ctrl+D</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.ui" line="12182"/>
+        <location filename="src/gui/mainwindow.ui" line="12185"/>
         <source>Show &amp;Alternate Airports</source>
         <translation>Mostrar Aeroportos &amp;Alternativos</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.ui" line="12185"/>
         <location filename="src/gui/mainwindow.ui" line="12188"/>
+        <location filename="src/gui/mainwindow.ui" line="12191"/>
         <source>Show legs to alternate airports and airports for flight plan on the map</source>
         <translation>Mostrar pernas para aeroportos alternativos e aeroportos para o plano de voo no mapa</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.ui" line="12193"/>
+        <location filename="src/gui/mainwindow.ui" line="12196"/>
         <source>&amp;Create Issue Report ...</source>
         <translation>&amp;Criar um Relatório de Problema …</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.ui" line="12348"/>
+        <location filename="src/gui/mainwindow.ui" line="12351"/>
         <source>Install Little &amp;Xpconnect in X-Plane Plugins ...</source>
         <translation>Instalar Little &amp;Xpconnect nos Plugins do X-Plane …</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.ui" line="12351"/>
         <location filename="src/gui/mainwindow.ui" line="12354"/>
+        <location filename="src/gui/mainwindow.ui" line="12357"/>
         <source>Install the Little Xpconnect X-Plane plugin in the currently selected X-Plane instance</source>
         <translation>Instalar o plugin Little Xpconnect X-Plane na instância atualmente selecionada do X-Plane</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.ui" line="12359"/>
+        <location filename="src/gui/mainwindow.ui" line="12362"/>
         <source>Show &amp;GLOBE Offline Elevation Data Installation</source>
         <translation>Mostrar Instalação de Dados de Elevação Offline &amp;GLOBE</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.ui" line="12362"/>
         <location filename="src/gui/mainwindow.ui" line="12365"/>
+        <location filename="src/gui/mainwindow.ui" line="12368"/>
         <source>Show the installation directory for GLOBE offline elevation data</source>
         <translation>Mostrar o diretório de instalação para dados de elevação offline GLOBE</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.ui" line="12374"/>
+        <location filename="src/gui/mainwindow.ui" line="12377"/>
         <source>&amp;Download User Manuals</source>
         <translation>&amp;Baixar Manuais do Usuário</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.ui" line="12377"/>
+        <location filename="src/gui/mainwindow.ui" line="12380"/>
         <source>Download the user manual in other formats like PDF</source>
         <translation>Baixar o manual do usuário em outros formatos como PDF</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.ui" line="12385"/>
+        <location filename="src/gui/mainwindow.ui" line="12388"/>
         <source>&amp;Procedure Search</source>
         <translation>&amp;Busca de Procedimentos</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.ui" line="12388"/>
         <location filename="src/gui/mainwindow.ui" line="12391"/>
+        <location filename="src/gui/mainwindow.ui" line="12394"/>
         <source>Show and activate Procedure Search Window</source>
         <translation>Exibir e ativar a Janela de Busca de Procedimentos</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.ui" line="12394"/>
+        <location filename="src/gui/mainwindow.ui" line="12397"/>
         <source>Shift+F5</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.ui" line="12406"/>
+        <location filename="src/gui/mainwindow.ui" line="12409"/>
         <source>Generate &amp;Random Flight ...</source>
         <translation>Gerar Voo &amp;Aleatório ...</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.ui" line="12409"/>
         <location filename="src/gui/mainwindow.ui" line="12412"/>
+        <location filename="src/gui/mainwindow.ui" line="12415"/>
         <source>Generate a flight using random airports</source>
         <translation>Gerar um voo usando aeroportos aleatórios</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.ui" line="12421"/>
+        <location filename="src/gui/mainwindow.ui" line="12424"/>
         <source>&amp;Keyboard Shortcuts</source>
         <translation>&amp;Atalhos de Teclado</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.ui" line="12424"/>
+        <location filename="src/gui/mainwindow.ui" line="12427"/>
         <source>Shows all keyboard shortcuts online in a browser</source>
         <translation>Mostra todos os atalhos de teclado online em um navegador</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.ui" line="12427"/>
+        <location filename="src/gui/mainwindow.ui" line="12430"/>
         <source>Show keyboard shortcuts in a browser</source>
         <translation>Mostrar atalhos de teclado em um navegador</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.ui" line="12435"/>
+        <location filename="src/gui/mainwindow.ui" line="12438"/>
         <source>&amp;Floating Docks use normal Window Frame</source>
         <oldsource>&amp;Dock Windows have a normal Window Frame</oldsource>
         <translation>&amp;Docks Flutuantes usam Moldura Normal de Janela</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.ui" line="12438"/>
+        <location filename="src/gui/mainwindow.ui" line="12441"/>
         <source>Assign a normal window frame to dock windows and
 let them appear in the task list</source>
         <translation>Atribua uma moldura normal de janela para janelas de encaixe e
 permita que apareçam na lista de tarefas</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.ui" line="12454"/>
+        <location filename="src/gui/mainwindow.ui" line="12457"/>
         <source>Show &amp;Direction to Departure Runway</source>
         <translation>Mostrar &amp;Direção para Pista de Decolagem</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.ui" line="12457"/>
+        <location filename="src/gui/mainwindow.ui" line="12460"/>
         <source>Shows a dashed line with arrows pointing directly to the departure runway position
 from either the departure parking or the user aircraft while taxiing.</source>
         <translation>Mostra uma linha tracejada com setas apontando diretamente para a posição da pista
 de decolagem tanto do estacionamento de partida quanto da aeronave do usuário durante o taxiamento.</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.ui" line="12196"/>
         <location filename="src/gui/mainwindow.ui" line="12199"/>
+        <location filename="src/gui/mainwindow.ui" line="12202"/>
         <source>Builds an issue report package containing all related files to report a problem</source>
         <translation>Construir um pacote de relatório de problema contendo todos os arquivos relacionados para relatar um problema</translation>
     </message>
@@ -10589,137 +10601,137 @@ de decolagem tanto do estacionamento de partida quanto da aeronave do usuário d
         <translation></translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.ui" line="12204"/>
+        <location filename="src/gui/mainwindow.ui" line="12207"/>
         <source>&amp;Load Aircraft Trail from GPX ...</source>
         <translation>&amp;Carregar Trilha da Aeronave a partir de GPX …</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.ui" line="12207"/>
         <location filename="src/gui/mainwindow.ui" line="12210"/>
+        <location filename="src/gui/mainwindow.ui" line="12213"/>
         <source>Load aircraft trail from a GPX file replacing the current user aircraft trail</source>
         <translation>Carregar trilha da aeronave a partir de um arquivo GPX substituindo a trilha atual da aeronave do usuário</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.ui" line="12215"/>
+        <location filename="src/gui/mainwindow.ui" line="12218"/>
         <source>&amp;Append Aircraft Trail from GPX ...</source>
         <translation>&amp;Anexar Trilha da Aeronave a partir de GPX …</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.ui" line="12218"/>
         <location filename="src/gui/mainwindow.ui" line="12221"/>
+        <location filename="src/gui/mainwindow.ui" line="12224"/>
         <source>Load aircraft trail from a GPX file and append it to the current user aircraft trail</source>
         <translation>Carregar trilha da aeronave a partir de um arquivo GPX e anexá-la à trilha atual da aeronave do usuário</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.ui" line="12232"/>
+        <location filename="src/gui/mainwindow.ui" line="12235"/>
         <source>Names</source>
         <translation>Nomes</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.ui" line="12235"/>
         <location filename="src/gui/mainwindow.ui" line="12238"/>
+        <location filename="src/gui/mainwindow.ui" line="12241"/>
         <source>Show airport administrative search options like city names or countries</source>
         <translation>Mostrar opções de busca administrativa de aeroportos como nomes de cidades ou países</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.ui" line="12247"/>
+        <location filename="src/gui/mainwindow.ui" line="12250"/>
         <source>&amp;Main Menu and Toolbar Items</source>
         <translation>&amp;Itens do Menu Principal e da Barra de Ferramentas</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.ui" line="12250"/>
+        <location filename="src/gui/mainwindow.ui" line="12253"/>
         <source>Show information about all main menu and toolbar items online in a browser</source>
         <translation>Mostrar informações sobre todos os itens do menu principal e da barra de ferramentas online em um navegador</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.ui" line="12253"/>
+        <location filename="src/gui/mainwindow.ui" line="12256"/>
         <source>Show information about all main menu and toolbar items</source>
         <translation>Mostrar informações sobre todos os itens do menu principal e da barra de ferramentas</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.ui" line="12262"/>
+        <location filename="src/gui/mainwindow.ui" line="12265"/>
         <source>Map &amp;Display and Context Menu</source>
         <translation>&amp;Exibição de Mapa e Menu de Contexto</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.ui" line="12265"/>
+        <location filename="src/gui/mainwindow.ui" line="12268"/>
         <source>Show information about the map display and its context menu online in a browser</source>
         <translation>Mostrar informações sobre a exibição do mapa e seu menu de contexto online em um navegador</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.ui" line="12268"/>
+        <location filename="src/gui/mainwindow.ui" line="12271"/>
         <source>Show information about the map display and its context menu</source>
         <translation>Mostrar informações sobre a exibição do mapa e seu menu de contexto</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.ui" line="12277"/>
+        <location filename="src/gui/mainwindow.ui" line="12280"/>
         <source>&amp;Start and first Steps</source>
         <translation>&amp;Início e Primeiros Passos</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.ui" line="12280"/>
+        <location filename="src/gui/mainwindow.ui" line="12283"/>
         <source>Show the start and first steps page online in a browser</source>
         <translation>Mostrar a página de início e primeiros passos online em um navegador</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.ui" line="12283"/>
-        <location filename="src/gui/mainwindow.ui" line="12380"/>
+        <location filename="src/gui/mainwindow.ui" line="12286"/>
+        <location filename="src/gui/mainwindow.ui" line="12383"/>
         <source>Show the start and first steps page</source>
         <translation>Mostrar a página de início e primeiros passos</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.ui" line="12292"/>
+        <location filename="src/gui/mainwindow.ui" line="12295"/>
         <source>&amp;User Interface</source>
         <translation>&amp;Interface do Usuário</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.ui" line="12295"/>
+        <location filename="src/gui/mainwindow.ui" line="12298"/>
         <source>Show general help about the user interface in a browser</source>
         <translation>Mostrar ajuda geral sobre a interface do usuário em um navegador</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.ui" line="12298"/>
+        <location filename="src/gui/mainwindow.ui" line="12301"/>
         <source>Show general help about the user interface</source>
         <translation>Mostrar ajuda geral sobre a interface do usuário</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.ui" line="12307"/>
+        <location filename="src/gui/mainwindow.ui" line="12310"/>
         <source>&amp;Flight Planning</source>
         <translation>&amp;Planejamento de Voo</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.ui" line="12310"/>
+        <location filename="src/gui/mainwindow.ui" line="12313"/>
         <source>Show help about flight planning in a browser</source>
         <translation>Mostrar ajuda sobre planejamento de voo em um navegador</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.ui" line="12313"/>
+        <location filename="src/gui/mainwindow.ui" line="12316"/>
         <source>Show help about flight planning</source>
         <translation>Mostrar ajuda sobre planejamento de voo</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.ui" line="12322"/>
+        <location filename="src/gui/mainwindow.ui" line="12325"/>
         <source>&amp;Aircraft Performance</source>
         <translation>&amp;Performance de Aeronaves</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.ui" line="12325"/>
+        <location filename="src/gui/mainwindow.ui" line="12328"/>
         <source>Show information about aircraft performance in a browser</source>
         <translation>Mostrar informações sobre performance de aeronaves em um navegador</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.ui" line="12328"/>
+        <location filename="src/gui/mainwindow.ui" line="12331"/>
         <source>Show information about aircraft performance</source>
         <translation>Mostrar informações sobre performance de aeronaves</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.ui" line="12337"/>
+        <location filename="src/gui/mainwindow.ui" line="12340"/>
         <source>Convert %1 to &amp;Waypoints</source>
         <translation>Converter %1 para &amp;Waypoints</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.ui" line="12340"/>
         <location filename="src/gui/mainwindow.ui" line="12343"/>
+        <location filename="src/gui/mainwindow.ui" line="12346"/>
         <source>Convert the procedure to waypoints which allows editing</source>
         <translation>Converter o procedimento para waypoints que permitem edição</translation>
     </message>
@@ -10728,8 +10740,8 @@ de decolagem tanto do estacionamento de partida quanto da aeronave do usuário d
         <translation type="vanished">&amp;Log de alterações</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.ui" line="12058"/>
         <location filename="src/gui/mainwindow.ui" line="12061"/>
+        <location filename="src/gui/mainwindow.ui" line="12064"/>
         <source>Open changelog in text editor</source>
         <translation>Abra log de alterações no editor de texto</translation>
     </message>
@@ -10738,43 +10750,43 @@ de decolagem tanto do estacionamento de partida quanto da aeronave do usuário d
         <translation type="vanished">Mostrar Diretório de &amp;Instalação do Tema de Mapa</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.ui" line="12077"/>
+        <location filename="src/gui/mainwindow.ui" line="12080"/>
         <source>&amp;Cleanup Userpoints ...</source>
         <translation>&amp;Limpar Userpoints ...</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.ui" line="12080"/>
         <location filename="src/gui/mainwindow.ui" line="12083"/>
+        <location filename="src/gui/mainwindow.ui" line="12086"/>
         <source>Delete duplicates and invalid userpoints from database</source>
         <translation>Excluir duplicatas e userpoints inválidos do banco de dados</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.ui" line="12092"/>
-        <location filename="src/gui/mainwindow.ui" line="12107"/>
+        <location filename="src/gui/mainwindow.ui" line="12095"/>
+        <location filename="src/gui/mainwindow.ui" line="12110"/>
         <source>&amp;Mark %1 as Add-on</source>
         <translation>&amp;Marcar %1 como Add-on</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.ui" line="12095"/>
         <location filename="src/gui/mainwindow.ui" line="12098"/>
-        <location filename="src/gui/mainwindow.ui" line="12110"/>
+        <location filename="src/gui/mainwindow.ui" line="12101"/>
         <location filename="src/gui/mainwindow.ui" line="12113"/>
+        <location filename="src/gui/mainwindow.ui" line="12116"/>
         <source>Create a userpoint highlighting the airport as add-on</source>
         <translation>Crie um userpoint destacando o aeroporto como complemento</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.ui" line="12125"/>
+        <location filename="src/gui/mainwindow.ui" line="12128"/>
         <source>Show Map Grid &amp;Configuration ...</source>
         <translation>Mostrar &amp;Configuração da Grade do Mapa …</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.ui" line="12128"/>
+        <location filename="src/gui/mainwindow.ui" line="12131"/>
         <source>Show map grid configuration</source>
         <translation>Mostrar configuração da grade do mapa</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.ui" line="12069"/>
         <location filename="src/gui/mainwindow.ui" line="12072"/>
+        <location filename="src/gui/mainwindow.ui" line="12075"/>
         <source>Open the Little Navmap map installation directory for additional maps</source>
         <translation>Abra o diretório de instalação de mapas do Little Navmap para mapas adicionais</translation>
     </message>
@@ -11574,60 +11586,60 @@ de decolagem tanto do estacionamento de partida quanto da aeronave do usuário d
         <translation type="vanished">Mostrar Faixa de &amp;Altitude Selecionada</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.ui" line="11664"/>
         <location filename="src/gui/mainwindow.ui" line="11667"/>
+        <location filename="src/gui/mainwindow.ui" line="11670"/>
         <source>Show range for selected autopilot altitude</source>
         <translation>Mostrar alcance para a altitude do piloto automático selecionada</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.ui" line="11670"/>
+        <location filename="src/gui/mainwindow.ui" line="11673"/>
         <source>Ctrl+Alt+K</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.ui" line="11685"/>
+        <location filename="src/gui/mainwindow.ui" line="11688"/>
         <source>Show &amp;Vertical Aircraft Trail</source>
         <translation>Mostrar Rastro &amp;Vertical</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.ui" line="11688"/>
         <location filename="src/gui/mainwindow.ui" line="11691"/>
+        <location filename="src/gui/mainwindow.ui" line="11694"/>
         <source>Show vertical aircraft trail</source>
         <translation>Mostrar Linha do Rastro Vertical</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.ui" line="11700"/>
+        <location filename="src/gui/mainwindow.ui" line="11703"/>
         <source>&amp;Undo Userpoint</source>
         <translation>&amp;Desfazer Userpoint</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.ui" line="11703"/>
         <location filename="src/gui/mainwindow.ui" line="11706"/>
-        <location filename="src/gui/mainwindow.ui" line="11739"/>
+        <location filename="src/gui/mainwindow.ui" line="11709"/>
         <location filename="src/gui/mainwindow.ui" line="11742"/>
+        <location filename="src/gui/mainwindow.ui" line="11745"/>
         <source>Undo last change</source>
         <translation>Desfazer última alteração</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.ui" line="11718"/>
+        <location filename="src/gui/mainwindow.ui" line="11721"/>
         <source>&amp;Redo Userpoint</source>
         <translation>&amp;Refazer Userpoint</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.ui" line="11721"/>
         <location filename="src/gui/mainwindow.ui" line="11724"/>
-        <location filename="src/gui/mainwindow.ui" line="11757"/>
+        <location filename="src/gui/mainwindow.ui" line="11727"/>
         <location filename="src/gui/mainwindow.ui" line="11760"/>
+        <location filename="src/gui/mainwindow.ui" line="11763"/>
         <source>Redo last change</source>
         <translation>Refazer última alteração</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.ui" line="11736"/>
+        <location filename="src/gui/mainwindow.ui" line="11739"/>
         <source>&amp;Undo Logbook Entry</source>
         <translation>&amp;Desfazer Entrada no Logbook</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.ui" line="11754"/>
+        <location filename="src/gui/mainwindow.ui" line="11757"/>
         <source>&amp;Redo Logbook Entry</source>
         <translation>&amp;Refazer Entrada no Logbook</translation>
     </message>
@@ -11640,24 +11652,24 @@ de decolagem tanto do estacionamento de partida quanto da aeronave do usuário d
         <translation type="vanished">Mostrar ou ocultar os rótulos na parte superior do perfil de elevação</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.ui" line="11768"/>
+        <location filename="src/gui/mainwindow.ui" line="11771"/>
         <source>Export Flight &amp;Plan to SimBrief ...</source>
         <translation>Exportar &amp;Plano de Voo para SimBrief ...</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.ui" line="11771"/>
         <location filename="src/gui/mainwindow.ui" line="11774"/>
+        <location filename="src/gui/mainwindow.ui" line="11777"/>
         <source>Send the flight plan to SimBrief and open it in your web browser</source>
         <translation>Envie o plano de voo para o SimBrief e abra-o no seu navegador da web</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.ui" line="11779"/>
+        <location filename="src/gui/mainwindow.ui" line="11782"/>
         <source>Open Flight Plan from &amp;SimBrief ...</source>
         <translation>Abrir Plano de Voo do &amp;SimBrief ...</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.ui" line="11782"/>
         <location filename="src/gui/mainwindow.ui" line="11785"/>
+        <location filename="src/gui/mainwindow.ui" line="11788"/>
         <source>Fetches the flight plan from your current SimBrief plan</source>
         <translation>Obter o plano de voo do seu plano SimBrief atual</translation>
     </message>
@@ -11666,19 +11678,19 @@ de decolagem tanto do estacionamento de partida quanto da aeronave do usuário d
         <translation type="vanished">&amp;Zoom para aeronave e destino</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.ui" line="11800"/>
         <location filename="src/gui/mainwindow.ui" line="11803"/>
+        <location filename="src/gui/mainwindow.ui" line="11806"/>
         <source>Zoom elevation profile to aircraft and destination</source>
         <translation>Ampliar o perfil de elevação para a aeronave e o destino</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.ui" line="11808"/>
+        <location filename="src/gui/mainwindow.ui" line="11811"/>
         <source>Show &amp;Map Cache</source>
         <translation>Mostrar Cache do &amp;Mapa</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.ui" line="11811"/>
         <location filename="src/gui/mainwindow.ui" line="11814"/>
+        <location filename="src/gui/mainwindow.ui" line="11817"/>
         <source>Open the Little Navmap map cache directory in the default file manager</source>
         <translation>Abra o diretório de cache do mapa Little Navmap no gerenciador de arquivos padrão</translation>
     </message>
@@ -11687,7 +11699,7 @@ de decolagem tanto do estacionamento de partida quanto da aeronave do usuário d
         <translation type="vanished">&amp;Criar estrutura de diretório</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.ui" line="11819"/>
+        <location filename="src/gui/mainwindow.ui" line="11822"/>
         <source>&amp;Create Directory Structure for saving Files</source>
         <oldsource>Create the recommended directory structure for saving files</oldsource>
         <translation>&amp;Crie a Estrutura de Diretórios para Salvar Arquivos</translation>
@@ -16088,7 +16100,7 @@ Salvar alterações?</translation>
     <message>
         <location filename="src/gui/mainwindow.ui" line="7797"/>
         <location filename="src/gui/mainwindow.ui" line="7800"/>
-        <location filename="src/gui/mainwindow.ui" line="12131"/>
+        <location filename="src/gui/mainwindow.ui" line="12134"/>
         <source>Show map grid</source>
         <translation>Mostrar mapa em grade</translation>
     </message>
@@ -21726,7 +21738,7 @@ kHz/MHz</translation>
 <context>
     <name>MapPainter</name>
     <message>
-        <location filename="src/mappainter/mappainterairport.cpp" line="878"/>
+        <location filename="src/mappainter/mappainterairport.cpp" line="871"/>
         <location filename="src/mappainter/mappainternav.cpp" line="270"/>
         <location filename="src/mappainter/mappainternav.cpp" line="280"/>
         <location filename="src/mappainter/mappainterroute.cpp" line="186"/>
@@ -21735,24 +21747,24 @@ kHz/MHz</translation>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/mappainter/mappainterairport.cpp" line="871"/>
+        <location filename="src/mappainter/mappainterairport.cpp" line="864"/>
         <source> / L</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/mappainter/mappainterairport.cpp" line="834"/>
+        <location filename="src/mappainter/mappainterairport.cpp" line="827"/>
         <source>T</source>
         <comment>Tower short name</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/mappainter/mappainterairport.cpp" line="866"/>
+        <location filename="src/mappainter/mappainterairport.cpp" line="859"/>
         <source> x </source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/mappainter/mappainterairport.cpp" line="923"/>
-        <location filename="src/mappainter/mappainterairport.cpp" line="934"/>
+        <location filename="src/mappainter/mappainterairport.cpp" line="916"/>
+        <location filename="src/mappainter/mappainterairport.cpp" line="927"/>
         <location filename="src/mappainter/mappainternav.cpp" line="364"/>
         <location filename="src/mappainter/mappainterroute.cpp" line="1371"/>
         <location filename="src/mappainter/mappainterroute.cpp" line="1381"/>
@@ -21761,8 +21773,8 @@ kHz/MHz</translation>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/mappainter/mappainterairport.cpp" line="929"/>
-        <location filename="src/mappainter/mappainterairport.cpp" line="939"/>
+        <location filename="src/mappainter/mappainterairport.cpp" line="922"/>
+        <location filename="src/mappainter/mappainterairport.cpp" line="932"/>
         <location filename="src/mappainter/mappainterroute.cpp" line="1369"/>
         <location filename="src/mappainter/mappainterroute.cpp" line="1383"/>
         <location filename="src/mappainter/mappainterroute.cpp" line="1403"/>
@@ -21940,7 +21952,7 @@ kHz/MHz</translation>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/mappainter/mappainterairport.cpp" line="834"/>
+        <location filename="src/mappainter/mappainterairport.cpp" line="827"/>
         <source>Tower</source>
         <translation>Torre</translation>
     </message>
@@ -22260,6 +22272,15 @@ kHz/MHz</translation>
         <translation>O diretório é válido. %1 %2 encontrado(s).</translation>
     </message>
     <message>
+        <location filename="src/mapgui/mapthemehandler.cpp" line="982"/>
+        <source>Base path(s) for map themes not found.
+%1
+
+Go to menu &quot;Tools&quot; -&gt; &quot;Options&quot; and then to page &quot;Cache and Files&quot;. Clear the input field &quot;Directory for additional map themes&quot; with the wrong path to disable themes or click &quot;Select Themes Directory&quot; and select the correct folder.</source>
+        <comment>Syncronize with texts in menu and options dialog</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <location filename="src/mapgui/mapthemehandler.cpp" line="303"/>
         <location filename="src/mapgui/mapthemehandler.cpp" line="958"/>
         <source>map themes</source>
@@ -22323,14 +22344,13 @@ kHz/MHz</translation>
         <translation>tema do mapa</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapthemehandler.cpp" line="982"/>
         <source>Base path(s) for map themes not found.
 %1</source>
-        <translation>Caminho(s) base para temas de mapa não encontrado(s).
+        <translation type="vanished">Caminho(s) base para temas de mapa não encontrado(s).
 %1</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapthemehandler.cpp" line="982"/>
+        <location filename="src/mapgui/mapthemehandler.cpp" line="987"/>
         <source>,
 </source>
         <translation></translation>
@@ -30876,33 +30896,33 @@ Observe que a ordem das colunas é a selecionada na tabela do plano de voo.</tra
         <translation type="vanished"> (Sobreposição do GPS)</translation>
     </message>
     <message>
-        <location filename="src/search/proceduresearch.cpp" line="1449"/>
+        <location filename="src/search/proceduresearch.cpp" line="1457"/>
         <source>&amp;Insert %1 into Flight Plan</source>
         <translation>&amp;Inserir %1 no Plano de Voo</translation>
     </message>
     <message>
-        <location filename="src/search/proceduresearch.cpp" line="1456"/>
+        <location filename="src/search/proceduresearch.cpp" line="1464"/>
         <source>&amp;Use %1 and %2 as Departure</source>
         <translation>&amp;Use %1 e %2 como Saída</translation>
     </message>
     <message>
-        <location filename="src/search/proceduresearch.cpp" line="1453"/>
+        <location filename="src/search/proceduresearch.cpp" line="1461"/>
         <source>&amp;Use %1 and %2 as Destination</source>
         <translation>&amp;Use %1 e %2 como Destino</translation>
     </message>
     <message>
-        <location filename="src/search/proceduresearch.cpp" line="1733"/>
+        <location filename="src/search/proceduresearch.cpp" line="1741"/>
         <source>&lt;b&gt;%1</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/search/proceduresearch.cpp" line="1737"/>
-        <location filename="src/search/proceduresearch.cpp" line="1738"/>
+        <location filename="src/search/proceduresearch.cpp" line="1745"/>
+        <location filename="src/search/proceduresearch.cpp" line="1746"/>
         <source>-%1</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/search/proceduresearch.cpp" line="864"/>
+        <location filename="src/search/proceduresearch.cpp" line="867"/>
         <source>All</source>
         <translation>Todas</translation>
     </message>
@@ -30911,30 +30931,30 @@ Observe que a ordem das colunas é a selecionada na tabela do plano de voo.</tra
         <translation type="vanished">&lt;b&gt;Nenhum Aeroporto selecionado.&lt;/b&gt;&lt;br/&gt;&amp;nbsp;</translation>
     </message>
     <message>
-        <location filename="src/search/proceduresearch.cpp" line="577"/>
+        <location filename="src/search/proceduresearch.cpp" line="580"/>
         <source>&lt;p style=&apos;white-space:pre&apos;&gt;Use the right-click context menu in the map or&lt;br/&gt;the airport search result table (&lt;code&gt;F4&lt;/code&gt;)&lt;br/&gt;and select &quot;Show Procedures&quot; for an airport.&lt;/p&gt;</source>
         <oldsource>&lt;p style=&apos;white-space:pre&apos;&gt;Use the right-click context menu in the map or&lt;br/&gt;the airport search result table (&lt;code&gt;F4&lt;/code&gt;)&lt;br/&gt;and select &lt;i&gt;Show Procedures&lt;/i&gt; for an airport.&lt;/p&gt;</oldsource>
         <translation>&lt;p style=&apos;white-space:pre&apos;&gt;Use o menu de contexto do botão direito no mapa ou&lt;br/&gt;a tabela de resultados de pesquisa de aeroporto(&lt;code&gt;F4&lt;/code&gt;)&lt;br/&gt;e selecione &quot;Mostrar procedimentos&quot; para um aeroporto.&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="src/search/proceduresearch.cpp" line="580"/>
+        <location filename="src/search/proceduresearch.cpp" line="583"/>
         <source>Select &quot;Show Procedures&quot; for an airport to fill this list</source>
         <translation>Selecione &quot;Mostrar Procedimentos&quot; para um aeroporto preencher esta lista</translation>
     </message>
     <message>
-        <location filename="src/search/proceduresearch.cpp" line="707"/>
+        <location filename="src/search/proceduresearch.cpp" line="710"/>
         <source>All Runways</source>
         <translation>Todas as Pistas</translation>
     </message>
     <message>
-        <location filename="src/search/proceduresearch.cpp" line="1642"/>
+        <location filename="src/search/proceduresearch.cpp" line="1650"/>
         <source>Procedure has errors and cannot be added to the flight plan.
 This can happen due to inconsistent navdata, missing waypoints or other reasons.</source>
         <translation>O procedimento tem erros e não pode ser adicionado ao plano de voo.
 Isso pode acontecer devido a dados de navegação (Navdata) inconsistentes, waypoints ausentes ou outros motivos.</translation>
     </message>
     <message>
-        <location filename="src/search/proceduresearch.cpp" line="1649"/>
+        <location filename="src/search/proceduresearch.cpp" line="1657"/>
         <source>Procedure has errors and will not display correctly.
 This can happen due to inconsistent navdata, missing waypoints or other reasons.
 
@@ -30945,7 +30965,7 @@ Isso pode acontecer devido a dados de navegação (Navdata) inconsistentes, wayp
 Deseja realmente usá-lo?</translation>
     </message>
     <message>
-        <location filename="src/search/proceduresearch.cpp" line="1013"/>
+        <location filename="src/search/proceduresearch.cpp" line="1016"/>
         <source>Approach </source>
         <translation>Aproximação </translation>
     </message>
@@ -30954,7 +30974,7 @@ Deseja realmente usá-lo?</translation>
         <translation type="vanished">Chegada na %1</translation>
     </message>
     <message>
-        <location filename="src/search/proceduresearch.cpp" line="1151"/>
+        <location filename="src/search/proceduresearch.cpp" line="1154"/>
         <source>Course
 °M</source>
         <translation>Curso
@@ -30965,24 +30985,24 @@ Deseja realmente usá-lo?</translation>
         <translation type="vanished">Saída de %1</translation>
     </message>
     <message>
-        <location filename="src/search/proceduresearch.cpp" line="1139"/>
+        <location filename="src/search/proceduresearch.cpp" line="1142"/>
         <source>Description</source>
         <translation>Descrição</translation>
     </message>
     <message>
-        <location filename="src/search/proceduresearch.cpp" line="1154"/>
+        <location filename="src/search/proceduresearch.cpp" line="1157"/>
         <source>Dist./Time
 %1/min</source>
         <translation>Dist./Tempo
 %1/min</translation>
     </message>
     <message>
-        <location filename="src/search/proceduresearch.cpp" line="1653"/>
+        <location filename="src/search/proceduresearch.cpp" line="1661"/>
         <source>Do not &amp;show this dialog again.</source>
         <translation>Não &amp;mostrar este diálogo novamente.</translation>
     </message>
     <message>
-        <location filename="src/search/proceduresearch.cpp" line="1142"/>
+        <location filename="src/search/proceduresearch.cpp" line="1145"/>
         <source>Ident</source>
         <translation></translation>
     </message>
@@ -30997,155 +31017,155 @@ Deseja realmente usá-lo?</translation>
         <translation> (1 transição)</translation>
     </message>
     <message>
-        <location filename="src/search/proceduresearch.cpp" line="570"/>
+        <location filename="src/search/proceduresearch.cpp" line="573"/>
         <source>Airport has no procedure.</source>
         <translation>O aeroporto não tem procedimento.</translation>
     </message>
     <message>
-        <location filename="src/search/proceduresearch.cpp" line="574"/>
+        <location filename="src/search/proceduresearch.cpp" line="577"/>
         <source>No Airport selected.</source>
         <translation>Nenhum Aeroporto selecionado.</translation>
     </message>
     <message>
-        <location filename="src/search/proceduresearch.cpp" line="594"/>
+        <location filename="src/search/proceduresearch.cpp" line="597"/>
         <source>Runway mismatches found. Click here for details.</source>
         <translation>Foram encontradas inconsistências nas pistas. Clique aqui para obter detalhes.</translation>
     </message>
     <message>
-        <location filename="src/search/proceduresearch.cpp" line="585"/>
+        <location filename="src/search/proceduresearch.cpp" line="588"/>
         <source>&lt;p style=&apos;white-space:pre&apos;&gt;Procedure %1 %2 not found for simulator airport.&lt;br/&gt;This means that runways from navigation data do not match runways of the simulator airport data.&lt;br/&gt;Update your navigation data or update or install an add-on airport to fix this.&lt;/p&gt;&lt;p style=&apos;white-space:pre&apos;&gt;You can still use procedures for this airport since %3&lt;br/&gt;uses a best guess to cross reference simulator runways.&lt;/p&gt;</source>
         <translation>&lt;p style=&apos;white-space:pre&apos;&gt;Procedimento %1 %2 não encontrado para o aeroporto do simulador.&lt;br/&gt;Isso significa que as pistas dos dados de navegação não correspondem às pistas dos dados do aeroporto do simulador.&lt;br/&gt;Atualize seus dados de navegação ou atualize ou instale um aeroporto adicional para corrigir isso.&lt;/p&gt;&lt;p style=&apos;white-space:pre&apos;&gt;Ainda é possível usar procedimentos para este aeroporto, já que %3&lt;br/&gt;faz uma suposição para cruzar referências das pistas do simulador.&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="src/search/proceduresearch.cpp" line="590"/>
+        <location filename="src/search/proceduresearch.cpp" line="593"/>
         <source>runway</source>
         <translation>pista</translation>
     </message>
     <message>
-        <location filename="src/search/proceduresearch.cpp" line="590"/>
+        <location filename="src/search/proceduresearch.cpp" line="593"/>
         <source>runways</source>
         <translation>pistas</translation>
     </message>
     <message>
-        <location filename="src/search/proceduresearch.cpp" line="591"/>
+        <location filename="src/search/proceduresearch.cpp" line="594"/>
         <source> and </source>
         <translation> e </translation>
     </message>
     <message>
-        <location filename="src/search/proceduresearch.cpp" line="619"/>
+        <location filename="src/search/proceduresearch.cpp" line="622"/>
         <source>%1 %2</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/search/proceduresearch.cpp" line="619"/>
+        <location filename="src/search/proceduresearch.cpp" line="622"/>
         <source>%1 &lt;b&gt;%2&lt;/b&gt;</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/search/proceduresearch.cpp" line="620"/>
+        <location filename="src/search/proceduresearch.cpp" line="623"/>
         <source> %1 %2</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/search/proceduresearch.cpp" line="620"/>
+        <location filename="src/search/proceduresearch.cpp" line="623"/>
         <source> %1 &lt;b&gt;%2&lt;/b&gt;</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/search/proceduresearch.cpp" line="620"/>
+        <location filename="src/search/proceduresearch.cpp" line="623"/>
         <source> via </source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/search/proceduresearch.cpp" line="645"/>
-        <location filename="src/search/proceduresearch.cpp" line="692"/>
+        <location filename="src/search/proceduresearch.cpp" line="648"/>
+        <location filename="src/search/proceduresearch.cpp" line="695"/>
         <source>. From </source>
         <translation>. De </translation>
     </message>
     <message>
-        <location filename="src/search/proceduresearch.cpp" line="645"/>
-        <location filename="src/search/proceduresearch.cpp" line="692"/>
-        <location filename="src/search/proceduresearch.cpp" line="1813"/>
-        <location filename="src/search/proceduresearch.cpp" line="1856"/>
+        <location filename="src/search/proceduresearch.cpp" line="648"/>
+        <location filename="src/search/proceduresearch.cpp" line="695"/>
+        <location filename="src/search/proceduresearch.cpp" line="1821"/>
+        <location filename="src/search/proceduresearch.cpp" line="1864"/>
         <source> to </source>
         <translation> para </translation>
     </message>
     <message>
-        <location filename="src/search/proceduresearch.cpp" line="645"/>
-        <location filename="src/search/proceduresearch.cpp" line="692"/>
+        <location filename="src/search/proceduresearch.cpp" line="648"/>
+        <location filename="src/search/proceduresearch.cpp" line="695"/>
         <source>.</source>
         <translation>.</translation>
     </message>
     <message>
-        <location filename="src/search/proceduresearch.cpp" line="782"/>
+        <location filename="src/search/proceduresearch.cpp" line="785"/>
         <source>No Runway</source>
         <translation>Nenhuma Pista</translation>
     </message>
     <message>
-        <location filename="src/search/proceduresearch.cpp" line="805"/>
+        <location filename="src/search/proceduresearch.cpp" line="808"/>
         <source>%1 Approaches</source>
         <translation>%1 Abordagens</translation>
     </message>
     <message>
-        <location filename="src/search/proceduresearch.cpp" line="1023"/>
+        <location filename="src/search/proceduresearch.cpp" line="1026"/>
         <source> (%1)</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/search/proceduresearch.cpp" line="1140"/>
+        <location filename="src/search/proceduresearch.cpp" line="1143"/>
         <source>Procedure instruction.</source>
         <translation>Instrução de procedimento.</translation>
     </message>
     <message>
-        <location filename="src/search/proceduresearch.cpp" line="1143"/>
+        <location filename="src/search/proceduresearch.cpp" line="1146"/>
         <source>ICAO ident of the navaid,</source>
         <translation>Identidade ICAO do navaid,</translation>
     </message>
     <message>
-        <location filename="src/search/proceduresearch.cpp" line="1145"/>
+        <location filename="src/search/proceduresearch.cpp" line="1148"/>
         <source>Restriction
 %1/%2/angle</source>
         <translation>Restrição
 %1/%2/ângulo</translation>
     </message>
     <message>
-        <location filename="src/search/proceduresearch.cpp" line="1146"/>
+        <location filename="src/search/proceduresearch.cpp" line="1149"/>
         <source>Altitude restriction, speed limit or
 required descent flight path angle.</source>
         <translation>Restrição de altitude, limite de velocidade
 ou ângulo de trajetória de descida exigido.</translation>
     </message>
     <message>
-        <location filename="src/search/proceduresearch.cpp" line="1148"/>
+        <location filename="src/search/proceduresearch.cpp" line="1151"/>
         <source>First and last
 Waypoint</source>
         <translation>Primeiro e último
 Waypoint</translation>
     </message>
     <message>
-        <location filename="src/search/proceduresearch.cpp" line="1149"/>
+        <location filename="src/search/proceduresearch.cpp" line="1152"/>
         <source>First and last waypoint of the procedure, transition or both.</source>
         <translation>Primeiro e último waypoint do procedimento, transição ou ambos.</translation>
     </message>
     <message>
-        <location filename="src/search/proceduresearch.cpp" line="1152"/>
+        <location filename="src/search/proceduresearch.cpp" line="1155"/>
         <source>Magnetic course to fly.</source>
         <translation>Curso magnético a ser seguido.</translation>
     </message>
     <message>
-        <location filename="src/search/proceduresearch.cpp" line="1155"/>
+        <location filename="src/search/proceduresearch.cpp" line="1158"/>
         <source>Distance to fly in %1 or flying time in minutes.</source>
         <translation>Distância a ser percorrida em %1 ou tempo de vôo em minutos.</translation>
     </message>
     <message>
-        <location filename="src/search/proceduresearch.cpp" line="1157"/>
+        <location filename="src/search/proceduresearch.cpp" line="1160"/>
         <source>Head- and Crosswind
 %1</source>
         <translation>Proa- e Vento de Través
 %1</translation>
     </message>
     <message>
-        <location filename="src/search/proceduresearch.cpp" line="1158"/>
+        <location filename="src/search/proceduresearch.cpp" line="1161"/>
         <source>Head- and crosswind components in %1 for departure or arrival runway.
 Weather source is selected in menu &quot;Weather&quot; -&gt; &quot;Airport Weather Source&quot;.
 Tailwinds are omitted.</source>
@@ -31154,35 +31174,35 @@ A fonte de tempo é selecionada no menu &quot;Tempo&quot; -&gt; &quot;Fonte de T
 Os ventos de cauda são omitidos.</translation>
     </message>
     <message>
-        <location filename="src/search/proceduresearch.cpp" line="1163"/>
+        <location filename="src/search/proceduresearch.cpp" line="1166"/>
         <source>Turn instructions, flyover or related navaid for procedure legs.</source>
         <translatorcomment>Instruções de curva, passagem ou navegação relacionada para pernas de procedimento.</translatorcomment>
         <translation>Gire instruções, viaduto ou navaid relacionado para os fixos do procedimento.</translation>
     </message>
     <message>
-        <location filename="src/search/proceduresearch.cpp" line="1439"/>
+        <location filename="src/search/proceduresearch.cpp" line="1447"/>
         <source>Position</source>
         <translation>Posição</translation>
     </message>
     <message>
-        <location filename="src/search/proceduresearch.cpp" line="1465"/>
-        <location filename="src/search/proceduresearch.cpp" line="1466"/>
+        <location filename="src/search/proceduresearch.cpp" line="1473"/>
+        <location filename="src/search/proceduresearch.cpp" line="1474"/>
         <source>Procedure</source>
         <translation>Procedimento</translation>
     </message>
     <message>
-        <location filename="src/search/proceduresearch.cpp" line="1474"/>
+        <location filename="src/search/proceduresearch.cpp" line="1482"/>
         <source>Airport</source>
         <translation>Aeroporto</translation>
     </message>
     <message>
-        <location filename="src/search/proceduresearch.cpp" line="1740"/>
+        <location filename="src/search/proceduresearch.cpp" line="1748"/>
         <source>&lt;/b&gt;</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/search/proceduresearch.cpp" line="1867"/>
-        <location filename="src/search/proceduresearch.cpp" line="1869"/>
+        <location filename="src/search/proceduresearch.cpp" line="1875"/>
+        <location filename="src/search/proceduresearch.cpp" line="1877"/>
         <source>transition</source>
         <translation>transição</translation>
     </message>
@@ -31191,56 +31211,56 @@ Os ventos de cauda são omitidos.</translation>
         <translation type="vanished">%L1 Transições</translation>
     </message>
     <message>
-        <location filename="src/search/proceduresearch.cpp" line="1743"/>
+        <location filename="src/search/proceduresearch.cpp" line="1751"/>
         <source>GPS Overlay</source>
         <translation>Sobreposição de GPS</translation>
     </message>
     <message>
-        <location filename="src/search/proceduresearch.cpp" line="1748"/>
-        <location filename="src/search/proceduresearch.cpp" line="1754"/>
+        <location filename="src/search/proceduresearch.cpp" line="1756"/>
+        <location filename="src/search/proceduresearch.cpp" line="1762"/>
         <source> %1</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/search/proceduresearch.cpp" line="1749"/>
-        <location filename="src/search/proceduresearch.cpp" line="1755"/>
+        <location filename="src/search/proceduresearch.cpp" line="1757"/>
+        <location filename="src/search/proceduresearch.cpp" line="1763"/>
         <source> &lt;b&gt;%1&lt;/b&gt;</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/search/proceduresearch.cpp" line="1770"/>
+        <location filename="src/search/proceduresearch.cpp" line="1778"/>
         <source>RNP</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/search/proceduresearch.cpp" line="564"/>
-        <location filename="src/search/proceduresearch.cpp" line="1813"/>
-        <location filename="src/search/proceduresearch.cpp" line="1856"/>
+        <location filename="src/search/proceduresearch.cpp" line="567"/>
+        <location filename="src/search/proceduresearch.cpp" line="1821"/>
+        <location filename="src/search/proceduresearch.cpp" line="1864"/>
         <source> </source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/search/proceduresearch.cpp" line="591"/>
-        <location filename="src/search/proceduresearch.cpp" line="645"/>
-        <location filename="src/search/proceduresearch.cpp" line="692"/>
-        <location filename="src/search/proceduresearch.cpp" line="939"/>
-        <location filename="src/search/proceduresearch.cpp" line="1813"/>
-        <location filename="src/search/proceduresearch.cpp" line="1817"/>
-        <location filename="src/search/proceduresearch.cpp" line="1856"/>
-        <location filename="src/search/proceduresearch.cpp" line="1860"/>
-        <location filename="src/search/proceduresearch.cpp" line="1892"/>
-        <location filename="src/search/proceduresearch.cpp" line="1908"/>
-        <location filename="src/search/proceduresearch.cpp" line="1917"/>
+        <location filename="src/search/proceduresearch.cpp" line="594"/>
+        <location filename="src/search/proceduresearch.cpp" line="648"/>
+        <location filename="src/search/proceduresearch.cpp" line="695"/>
+        <location filename="src/search/proceduresearch.cpp" line="942"/>
+        <location filename="src/search/proceduresearch.cpp" line="1821"/>
+        <location filename="src/search/proceduresearch.cpp" line="1825"/>
+        <location filename="src/search/proceduresearch.cpp" line="1864"/>
+        <location filename="src/search/proceduresearch.cpp" line="1868"/>
+        <location filename="src/search/proceduresearch.cpp" line="1900"/>
+        <location filename="src/search/proceduresearch.cpp" line="1916"/>
+        <location filename="src/search/proceduresearch.cpp" line="1925"/>
         <source>, </source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/search/proceduresearch.cpp" line="1847"/>
+        <location filename="src/search/proceduresearch.cpp" line="1855"/>
         <source>Full</source>
         <translation>Completo</translation>
     </message>
     <message>
-        <location filename="src/search/proceduresearch.cpp" line="1849"/>
+        <location filename="src/search/proceduresearch.cpp" line="1857"/>
         <source>DME</source>
         <translation></translation>
     </message>
@@ -31251,7 +31271,7 @@ Really use it?</source>
 Deseja realmente usá-lo?</translation>
     </message>
     <message>
-        <location filename="src/search/proceduresearch.cpp" line="1162"/>
+        <location filename="src/search/proceduresearch.cpp" line="1165"/>
         <source>Remarks</source>
         <translation>Observações</translation>
     </message>
@@ -31262,17 +31282,17 @@ Deseja realmente usá-lo?</translation>
 %1/%2</translation>
     </message>
     <message>
-        <location filename="src/search/proceduresearch.cpp" line="785"/>
+        <location filename="src/search/proceduresearch.cpp" line="788"/>
         <source>Runway %1</source>
         <translation>Pista %1</translation>
     </message>
     <message>
-        <location filename="src/search/proceduresearch.cpp" line="1727"/>
+        <location filename="src/search/proceduresearch.cpp" line="1735"/>
         <source>SID</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/search/proceduresearch.cpp" line="1729"/>
+        <location filename="src/search/proceduresearch.cpp" line="1737"/>
         <source>STAR</source>
         <translation></translation>
     </message>
@@ -31285,12 +31305,12 @@ Deseja realmente usá-lo?</translation>
         <translation type="vanished">Selecione pista de partida para esta SID</translation>
     </message>
     <message>
-        <location filename="src/search/proceduresearch.cpp" line="1853"/>
+        <location filename="src/search/proceduresearch.cpp" line="1861"/>
         <source>Transition</source>
         <translation>Transição</translation>
     </message>
     <message>
-        <location filename="src/search/proceduresearch.cpp" line="1553"/>
+        <location filename="src/search/proceduresearch.cpp" line="1561"/>
         <source>Tree view reset to defaults.</source>
         <translation>A exibição de árvore é redefinida para padrões.</translation>
     </message>
@@ -32100,7 +32120,7 @@ Os espaços são substituídos por sublinhados.</translation>
         <location filename="src/common/maptypes.cpp" line="2036"/>
         <location filename="src/common/maptypes.cpp" line="2305"/>
         <location filename="src/common/maptypes.cpp" line="2582"/>
-        <location filename="src/search/proceduresearch.cpp" line="1902"/>
+        <location filename="src/search/proceduresearch.cpp" line="1910"/>
         <source>, </source>
         <translation></translation>
     </message>
@@ -35456,7 +35476,7 @@ de Procedimento</translation>
         <translation type="vanished">Região</translation>
     </message>
     <message>
-        <location filename="src/search/proceduresearch.cpp" line="1902"/>
+        <location filename="src/search/proceduresearch.cpp" line="1910"/>
         <source>Related: %1</source>
         <translation>Relatado: %1</translation>
     </message>
