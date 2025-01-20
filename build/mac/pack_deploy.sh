@@ -14,33 +14,26 @@ export SSH_DEPLOY_TARGET=${SSH_DEPLOY_TARGET:-"sol:/data/alex/Public/Releases"}
 (
   cd ${APROJECTS}/deploy
 
-  # Files:
-  # - CHANGELOG-LittleNavconnect.txt
-  # - CHANGELOG-LittleNavmap.txt
-  # - LICENSE.txt
-  # - Little Navconnect.app
-  # - Little Navmap.app
-  # - Little Xpconnect
-  # - LittleNavconnect.zip
-  # - LittleNavmap.zip
-  # - LittleXpconnect.zip
-  # - README-LittleNavconnect.txt
-  # - README-LittleNavmap.txt
-  # - revision-LittleNavconnect.txt
-  # - revision-LittleNavmap.txt
-  # - version-LittleNavconnect.txt
-  # - version-LittleNavmap.txt
-
   rm -rfv LittleNavmap.zip LittleNavconnect.zip LittleXpconnect.zip
 
   cp -avf "Little Xpconnect arm64/README.txt" README-LittleXpconnect.txt
   cp -avf "Little Xpconnect arm64/CHANGELOG.txt" CHANGELOG-LittleXpconnect.txt
 
-  zip -r -y -9 LittleNavmap.zip "Little Navmap.app" "Little Navconnect.app" "Little Xpconnect arm64" "Little Xpconnect x86" \
-         LICENSE.txt README-LittleNavconnect.txt CHANGELOG-LittleNavconnect.txt \
-         README-LittleNavmap.txt CHANGELOG-LittleNavmap.txt \
-         README-LittleXpconnect.txt CHANGELOG-LittleXpconnect.txt \
-         revision-LittleNavmap.txt version-LittleNavmap.txt
+  zip -r -y -9 LittleNavmap.zip \
+    "CHANGELOG-LittleNavconnect.txt" \
+    "CHANGELOG-LittleNavmap.txt" \
+    "CHANGELOG-LittleXpconnect.txt" \
+    "LICENSE.txt" \
+    "Little Navconnect.app" \
+    "Little Navmap Portable.command" \
+    "Little Navmap.app" \
+    "Little Xpconnect arm64" \
+    "Little Xpconnect x86" \
+    "README-LittleNavconnect.txt" \
+    "README-LittleNavmap.txt" \
+    "README-LittleXpconnect.txt" \
+    "revision-LittleNavmap.txt" \
+    "version-LittleNavmap.txt"
 
 #  zip -r -y -9 LittleXpconnect.zip "Little Xpconnect"
 
