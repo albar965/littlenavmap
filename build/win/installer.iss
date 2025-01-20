@@ -91,13 +91,20 @@ WizardStyle=modern
 CloseApplications=yes
 CloseApplicationsFilter=*.exe
 #if LnmAppArch == "win64"
-  // "ArchitecturesAllowed=x64" specifies that Setup cannot run on
-  // anything but x64.
-  ArchitecturesAllowed=x64
-  // "ArchitecturesInstallIn64BitMode=x64" requests that the install be
-  // done in "64-bit mode" on x64, meaning it should use the native
-  // 64-bit Program Files directory and the 64-bit view of the registry.
-  ArchitecturesInstallIn64BitMode=x64
+  ; x64compatible
+  ; Matches systems capable of running x64 binaries.
+  ; This includes systems running x64 Windows, and also Arm64-based Windows 11 systems,
+  ; which have the ability to run x64 binaries via emulation.
+
+  ; Specifies which architectures Setup is allowed to run on.
+  ; If none of the specified architecture identifiers match the current system,
+  ; Setup will display an error message (WindowsVersionNotSupported) and exit.
+  ArchitecturesAllowed=x64compatible
+
+  ; Only allow the installer to run on x64-compatible systems,
+  ; and enable 64-bit install mode.
+  ; 64-bit Program Files directory and the 64-bit view of the registry.
+  ArchitecturesInstallIn64BitMode=x64compatible
 #endif
 
 ; ==========================================================================
