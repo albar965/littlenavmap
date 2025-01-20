@@ -12,7 +12,6 @@
 *.obj
 *.orig
 *.pro.user
-*.qm
 *.rej
 *.so
 *.sqlite
@@ -28,5 +27,3 @@
 /debug/
 /deploy/
 /release/
-atools_*.qm
-atools_*.ts
