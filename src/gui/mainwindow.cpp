@@ -1857,8 +1857,7 @@ void MainWindow::actionShortcutProcedureSearchTriggered()
   qDebug() << Q_FUNC_INFO;
   dockHandler->activateWindow(ui->dockWidgetSearch);
   searchController->setCurrentSearchTabId(si::SEARCH_PROC);
-  ui->lineEditNavIcaoSearch->setFocus();
-  ui->lineEditNavIcaoSearch->selectAll();
+  ui->treeWidgetApproachSearch->setFocus();
 }
 
 void MainWindow::actionShortcutUserpointSearchTriggered()

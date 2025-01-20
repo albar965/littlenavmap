@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -232,6 +232,7 @@ private:
 
   void clearSelectionClicked();
   void showAllToggled(bool checked);
+  void showAllToggledAction(bool checked);
 
   /* Get procedure reference with ids only */
   const proc::MapProcedureRef& fetchProcRef(const QTreeWidgetItem *item) const;

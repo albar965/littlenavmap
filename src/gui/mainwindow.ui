@@ -11645,6 +11645,9 @@ relation to shown airport</string>
    <property name="statusTip">
     <string>Preview all listed procedures on the map</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+K</string>
+   </property>
   </action>
   <action name="actionMapShowSelectedAltRange">
    <property name="checkable">

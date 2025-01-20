@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -201,12 +201,14 @@ ProcedureSearch::ProcedureSearch(QMainWindow *main, QTreeWidget *treeWidgetParam
   ui->actionSearchProcedureSelectNothing->setShortcutContext(Qt::WidgetWithChildrenShortcut);
 
   ui->actionInfoApproachAttach->setShortcutContext(Qt::WidgetWithChildrenShortcut);
+  ui->actionSearchProcedureShowAll->setShortcutContext(Qt::WidgetWithChildrenShortcut);
   ui->actionSearchProcedureInformation->setShortcutContext(Qt::WidgetWithChildrenShortcut);
   ui->actionSearchProcedureShowOnMap->setShortcutContext(Qt::WidgetWithChildrenShortcut);
   ui->actionSearchProcedureShowInSearch->setShortcutContext(Qt::WidgetWithChildrenShortcut);
   ui->actionInfoApproachShow->setShortcutContext(Qt::WidgetWithChildrenShortcut);
 
-  treeWidget->addActions({ui->actionSearchProcedureSelectNothing, ui->actionInfoApproachAttach, ui->actionInfoApproachShow});
+  treeWidget->addActions({ui->actionSearchProcedureSelectNothing, ui->actionInfoApproachAttach, ui->actionSearchProcedureShowAll,
+                          ui->actionInfoApproachShow});
 
   ui->tabProcedureSearch->addActions({ui->actionSearchProcedureInformation, ui->actionSearchProcedureShowOnMap,
                                       ui->actionSearchProcedureShowInSearch});
@@ -222,6 +224,7 @@ ProcedureSearch::ProcedureSearch(QMainWindow *main, QTreeWidget *treeWidgetParam
   connect(ui->actionSearchProcedureInformation, &QAction::triggered, this, &ProcedureSearch::showInformationSelected);
   connect(ui->actionSearchProcedureShowOnMap, &QAction::triggered, this, &ProcedureSearch::showAirportOnMapSelected);
   connect(ui->actionInfoApproachAttach, &QAction::triggered, this, &ProcedureSearch::procedureAttachSelected);
+  connect(ui->actionSearchProcedureShowAll, &QAction::triggered, this, &ProcedureSearch::showAllToggledAction);
   connect(ui->actionInfoApproachClear, &QAction::triggered, this, &ProcedureSearch::clearSelectionClicked);
   connect(ui->actionInfoApproachShow, &QAction::triggered, this, &ProcedureSearch::showProcedureSelected);
 
@@ -1358,6 +1361,12 @@ QList<QTreeWidgetItem *> ProcedureSearch::buildTransitionLegItems(const MapProce
   return items;
 }
 
+void ProcedureSearch::showAllToggledAction(bool checked)
+{
+  // Let push button pass the signal on
+  ui->pushButtonProcedureShowAll->setChecked(checked);
+}
+
 void ProcedureSearch::showAllToggled(bool checked)
 {
   qDebug() << Q_FUNC_INFO;
@@ -1398,7 +1407,7 @@ void ProcedureSearch::contextMenu(const QPoint& pos)
 
   // Save text which will be changed below
   Ui::MainWindow *ui = NavApp::getMainUi();
-  ActionTextSaver saver({ui->actionInfoApproachShow, ui->actionSearchProcedureFollowSelection,
+  ActionTextSaver saver({ui->actionInfoApproachShow, ui->actionSearchProcedureShowAll, ui->actionSearchProcedureFollowSelection,
                          ui->actionInfoApproachAttach, ui->actionInfoApproachExpandAll,
                          ui->actionInfoApproachCollapseAll, ui->actionSearchProcedureInformation,
                          ui->actionSearchProcedureShowOnMap, ui->actionSearchProcedureShowInSearch,
@@ -1406,7 +1415,7 @@ void ProcedureSearch::contextMenu(const QPoint& pos)
                          ui->actionSearchResetSearch, ui->actionInfoApproachClear, ui->actionSearchResetView});
 
   ActionStateSaver stateSaver({
-    ui->actionInfoApproachShow, ui->actionSearchProcedureFollowSelection, ui->actionInfoApproachAttach,
+    ui->actionInfoApproachShow, ui->actionSearchProcedureFollowSelection, ui->actionSearchProcedureShowAll, ui->actionInfoApproachAttach,
     ui->actionInfoApproachExpandAll, ui->actionInfoApproachCollapseAll, ui->actionSearchProcedureInformation,
     ui->actionSearchProcedureShowOnMap, ui->actionSearchProcedureShowInSearch, ui->actionInfoApproachExpandAll,
     ui->actionInfoApproachCollapseAll, ui->actionSearchResetSearch, ui->actionInfoApproachClear,
@@ -1552,9 +1561,9 @@ void ProcedureSearch::contextMenu(const QPoint& pos)
       treeWidget->resizeColumnToContents(i);
     NavApp::setStatusMessage(tr("Tree view reset to defaults."));
   }
-  else if(action == ui->actionSearchProcedureShowAll)
-    // Button signal triggers procedure display
-    ui->pushButtonProcedureShowAll->setChecked(ui->actionSearchProcedureShowAll->isChecked());
+  // else if(action == ui->actionSearchProcedureShowAll) // Already connected to showAllToggledAction()
+  //// Button signal triggers procedure display
+  // ui->pushButtonProcedureShowAll->setChecked(ui->actionSearchProcedureShowAll->isChecked());
   else if(action == ui->actionSearchProcedureShowInSearch)
   {
     if(currentAirportSim->isValid())
