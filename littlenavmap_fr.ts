@@ -10102,7 +10102,8 @@ from either the departure parking or the user aircraft while taxiing.</source>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="8196"/>
-        <source>Show &amp;AI and &amp;Multiplayer Aircraft</source>
+        <source>Show &amp;AI and Multiplayer Aircraft</source>
+        <oldsource>Show &amp;AI and &amp;Multiplayer Aircraft</oldsource>
         <translation type="unfinished">Afficher l&apos;I&amp;A et les avions multijoueurs</translation>
     </message>
     <message>
@@ -13032,7 +13033,8 @@ La vitesse du vent sera interpolée entre cette altitude et le niveau du sol.</t
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="9600"/>
-        <source>&amp;Remove all &amp;Highlights and Selections</source>
+        <source>&amp;Remove all Highlights and Selections</source>
+        <oldsource>&amp;Remove all &amp;Highlights and Selections</oldsource>
         <translation type="unfinished">Supprime&amp;r tous les points en surbrillance et sélections</translation>
     </message>
     <message>
@@ -37882,7 +37884,7 @@ L&apos;anneau d&apos;autonomie est statique et ne change pas avec les performanc
     </message>
     <message>
         <location filename="src/gui/rangemarkerdialog.ui" line="79"/>
-        <location filename="src/gui/rangemarkerdialog.cpp" line="109"/>
+        <location filename="src/gui/rangemarkerdialog.cpp" line="108"/>
         <source>&amp;Latitude and Longitude:</source>
         <translation type="unfinished">&amp;Latitude et Longitude:</translation>
     </message>
@@ -37933,8 +37935,11 @@ Les formats ci-dessus doivent être donnés exactement comme dans les exemples.<
     <message>
         <location filename="src/gui/rangemarkerdialog.ui" line="127"/>
         <source>Space separated list of range ring radii.
+A range ring will be added for each radius value.
+Falls back to default if empty or not valid.</source>
+        <oldsource>Space separated list of range ring radii.
 A range ring will be added for each radius value which can be between 0.01 and 4000 %dist%.
-Falls back to 50, 100, 200 and 500 %dist% if empty or not valid.</source>
+Falls back to 50, 100, 200 and 500 %dist% if empty or not valid.</oldsource>
         <translation type="unfinished">Liste des rayons des anneaux de portée séparés par des espaces.
 Un anneau de distance sera ajouté pour chaque valeur de rayon qui peut être comprise entre 0,01 et 4000 %dist%.
 Revient à 50, 100, 200 et 500 %dist% s&apos;il est vide ou non valide.</translation>
@@ -37957,12 +37962,12 @@ et utilisez les rayons de l&apos;anneau de portée comme ci-dessus.</translation
         <translation type="unfinished">Maximum des valeurs %L1 de %L2 à %L3 %dist%.</translation>
     </message>
     <message>
-        <location filename="src/gui/rangemarkerdialog.cpp" line="107"/>
+        <location filename="src/gui/rangemarkerdialog.cpp" line="106"/>
         <source>&amp;Longitude and Latitude:</source>
         <translation type="unfinished">&amp;Longitude et Latitude:</translation>
     </message>
     <message>
-        <location filename="src/gui/rangemarkerdialog.cpp" line="129"/>
+        <location filename="src/gui/rangemarkerdialog.cpp" line="128"/>
         <source>&lt;p&gt;&lt;b&gt;%1&lt;/b&gt;&lt;/p&gt;</source>
         <translation type="unfinished">&lt;p&gt;&lt;b&gt;%1&lt;/b&gt;&lt;/p&gt;</translation>
     </message>
@@ -37971,45 +37976,45 @@ et utilisez les rayons de l&apos;anneau de portée comme ci-dessus.</translation
         <translation type="obsolete">Coordonnées %1</translation>
     </message>
     <message>
-        <location filename="src/gui/rangemarkerdialog.cpp" line="129"/>
+        <location filename="src/gui/rangemarkerdialog.cpp" line="128"/>
         <source>Coordinates at click spot: %1</source>
         <translation type="unfinished">Coordonnées à l&apos;endroit du clic: %1</translation>
     </message>
     <message>
-        <location filename="src/gui/rangemarkerdialog.cpp" line="138"/>
+        <location filename="src/gui/rangemarkerdialog.cpp" line="137"/>
         <source> - </source>
         <translation type="unfinished"> - </translation>
     </message>
     <message>
-        <location filename="src/gui/rangemarkerdialog.cpp" line="138"/>
+        <location filename="src/gui/rangemarkerdialog.cpp" line="137"/>
         <source>.
 </source>
         <translation type="unfinished">.
 </translation>
     </message>
     <message>
-        <location filename="src/gui/rangemarkerdialog.cpp" line="140"/>
+        <location filename="src/gui/rangemarkerdialog.cpp" line="139"/>
         <source>Aircraft Performance: </source>
         <translation type="unfinished">Performances de l&apos;avion: </translation>
     </message>
     <message>
-        <location filename="src/gui/rangemarkerdialog.cpp" line="143"/>
+        <location filename="src/gui/rangemarkerdialog.cpp" line="142"/>
         <source>%1Estimated range with reserve: %2</source>
         <translation type="unfinished">%1Estimation de la portée avec réserve: %2</translation>
     </message>
     <message>
-        <location filename="src/gui/rangemarkerdialog.cpp" line="145"/>
+        <location filename="src/gui/rangemarkerdialog.cpp" line="144"/>
         <source>%1Estimated range not valid.</source>
         <translation type="unfinished">%1L&apos;intervalle estimé n&apos;est pas valide.</translation>
     </message>
     <message>
-        <location filename="src/gui/rangemarkerdialog.cpp" line="291"/>
+        <location filename="src/gui/rangemarkerdialog.cpp" line="290"/>
         <source> </source>
         <comment>Range ring number separator</comment>
         <translation type="unfinished"> </translation>
     </message>
     <message>
-        <location filename="src/gui/rangemarkerdialog.cpp" line="297"/>
+        <location filename="src/gui/rangemarkerdialog.cpp" line="296"/>
         <source> </source>
         <comment>Range ring separator</comment>
         <translation type="unfinished"> </translation>

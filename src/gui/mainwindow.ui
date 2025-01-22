@@ -8193,7 +8193,7 @@ relation to shown airport</string>
      <normaloff>:/littlenavmap/resources/icons/aircraftai.svg</normaloff>:/littlenavmap/resources/icons/aircraftai.svg</iconset>
    </property>
    <property name="text">
-    <string>Show &amp;AI and &amp;Multiplayer Aircraft</string>
+    <string>Show &amp;AI and Multiplayer Aircraft</string>
    </property>
    <property name="toolTip">
     <string>Show simulator AI and multiplayer aircraft on the map</string>
@@ -9597,7 +9597,7 @@ relation to shown airport</string>
      <normaloff>:/littlenavmap/resources/icons/clearselection.svg</normaloff>:/littlenavmap/resources/icons/clearselection.svg</iconset>
    </property>
    <property name="text">
-    <string>&amp;Remove all &amp;Highlights and Selections</string>
+    <string>&amp;Remove all Highlights and Selections</string>
    </property>
    <property name="toolTip">
     <string>Clear all highlights on the map</string>

@@ -9772,8 +9772,9 @@ sia dal parcheggio di partenza che dall&apos;aeromobile utente durante il rullag
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="8196"/>
-        <source>Show &amp;AI and &amp;Multiplayer Aircraft</source>
-        <translation>Mostra Aerei &amp;AI e Multigiocatore</translation>
+        <source>Show &amp;AI and Multiplayer Aircraft</source>
+        <oldsource>Show &amp;AI and &amp;Multiplayer Aircraft</oldsource>
+        <translation type="unfinished">Mostra Aerei &amp;AI e Multigiocatore</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="8747"/>
@@ -15175,8 +15176,9 @@ Corrisponde a qualsiasi aeroporto visitato.</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="9600"/>
-        <source>&amp;Remove all &amp;Highlights and Selections</source>
-        <translation>&amp;Rimuovi tutte le Selezioni e le &amp;Evidenze</translation>
+        <source>&amp;Remove all Highlights and Selections</source>
+        <oldsource>&amp;Remove all &amp;Highlights and Selections</oldsource>
+        <translation type="unfinished">&amp;Rimuovi tutte le Selezioni e le &amp;Evidenze</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="9603"/>
@@ -37481,7 +37483,7 @@ L&apos;anello di autonomia è statico e non cambia con le prestazioni dell&apos;
     </message>
     <message>
         <location filename="src/gui/rangemarkerdialog.ui" line="79"/>
-        <location filename="src/gui/rangemarkerdialog.cpp" line="109"/>
+        <location filename="src/gui/rangemarkerdialog.cpp" line="108"/>
         <source>&amp;Latitude and Longitude:</source>
         <translation>&amp;Latitudine e Longitudine:</translation>
     </message>
@@ -37533,9 +37535,12 @@ I formati sopra indicati devono essere inseriti esattamente come mostrato negli 
     <message>
         <location filename="src/gui/rangemarkerdialog.ui" line="127"/>
         <source>Space separated list of range ring radii.
+A range ring will be added for each radius value.
+Falls back to default if empty or not valid.</source>
+        <oldsource>Space separated list of range ring radii.
 A range ring will be added for each radius value which can be between 0.01 and 4000 %dist%.
-Falls back to 50, 100, 200 and 500 %dist% if empty or not valid.</source>
-        <translation>Elenco separato da spazi dei raggi dell&apos;anello di distanza.
+Falls back to 50, 100, 200 and 500 %dist% if empty or not valid.</oldsource>
+        <translation type="unfinished">Elenco separato da spazi dei raggi dell&apos;anello di distanza.
 Verrà aggiunto un anello di distanza per ciascun valore del raggio che può essere compreso tra 0,01 e 4.000% dist%.
 Torna a 50, 100, 200 e 500% dist% se vuoto o non valido.</translation>
     </message>
@@ -37557,12 +37562,12 @@ e utilizzare i raggi dell&apos;anello come sopra.</translation>
         <translation>Massimo dei valori %L1 da %L2 a %L3 %dist%.</translation>
     </message>
     <message>
-        <location filename="src/gui/rangemarkerdialog.cpp" line="107"/>
+        <location filename="src/gui/rangemarkerdialog.cpp" line="106"/>
         <source>&amp;Longitude and Latitude:</source>
         <translation>&amp;Longitudine e Latitudine:</translation>
     </message>
     <message>
-        <location filename="src/gui/rangemarkerdialog.cpp" line="129"/>
+        <location filename="src/gui/rangemarkerdialog.cpp" line="128"/>
         <source>&lt;p&gt;&lt;b&gt;%1&lt;/b&gt;&lt;/p&gt;</source>
         <translation>&lt;p&gt;&lt;b&gt;%1&lt;/b&gt;&lt;/p&gt;</translation>
     </message>
@@ -37571,45 +37576,45 @@ e utilizzare i raggi dell&apos;anello come sopra.</translation>
         <translation type="vanished">Coordinate %1</translation>
     </message>
     <message>
-        <location filename="src/gui/rangemarkerdialog.cpp" line="129"/>
+        <location filename="src/gui/rangemarkerdialog.cpp" line="128"/>
         <source>Coordinates at click spot: %1</source>
         <translation>Coordinate del punto cliccato: %1</translation>
     </message>
     <message>
-        <location filename="src/gui/rangemarkerdialog.cpp" line="138"/>
+        <location filename="src/gui/rangemarkerdialog.cpp" line="137"/>
         <source> - </source>
         <translation> - </translation>
     </message>
     <message>
-        <location filename="src/gui/rangemarkerdialog.cpp" line="138"/>
+        <location filename="src/gui/rangemarkerdialog.cpp" line="137"/>
         <source>.
 </source>
         <translation>.
 </translation>
     </message>
     <message>
-        <location filename="src/gui/rangemarkerdialog.cpp" line="140"/>
+        <location filename="src/gui/rangemarkerdialog.cpp" line="139"/>
         <source>Aircraft Performance: </source>
         <translation>Prestazioni dell&apos;Aereo: </translation>
     </message>
     <message>
-        <location filename="src/gui/rangemarkerdialog.cpp" line="143"/>
+        <location filename="src/gui/rangemarkerdialog.cpp" line="142"/>
         <source>%1Estimated range with reserve: %2</source>
         <translation>%1Portata stimata con la riserv: %2</translation>
     </message>
     <message>
-        <location filename="src/gui/rangemarkerdialog.cpp" line="145"/>
+        <location filename="src/gui/rangemarkerdialog.cpp" line="144"/>
         <source>%1Estimated range not valid.</source>
         <translation>%1Portata stimata non valida.</translation>
     </message>
     <message>
-        <location filename="src/gui/rangemarkerdialog.cpp" line="291"/>
+        <location filename="src/gui/rangemarkerdialog.cpp" line="290"/>
         <source> </source>
         <comment>Range ring number separator</comment>
         <translation> </translation>
     </message>
     <message>
-        <location filename="src/gui/rangemarkerdialog.cpp" line="297"/>
+        <location filename="src/gui/rangemarkerdialog.cpp" line="296"/>
         <source> </source>
         <comment>Range ring separator</comment>
         <translation> </translation>

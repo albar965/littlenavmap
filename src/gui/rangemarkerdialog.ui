@@ -125,8 +125,8 @@ Formats above have to be given exactly as shown in the examples.</string>
     <widget class="QLineEdit" name="lineEditRangeMarkerRadii">
      <property name="toolTip">
       <string>Space separated list of range ring radii.
-A range ring will be added for each radius value which can be between 0.01 and 4000 %dist%.
-Falls back to 50, 100, 200 and 500 %dist% if empty or not valid.</string>
+A range ring will be added for each radius value.
+Falls back to default if empty or not valid.</string>
      </property>
      <property name="text">
       <string notr="true">50 100 200 500</string>
