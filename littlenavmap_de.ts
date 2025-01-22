@@ -3794,48 +3794,48 @@ Hilfreich wenn Sie Werkzeuge benutzen, um bestimmte Szenerien für jeden Flug zu
 <context>
     <name>DatabaseManager</name>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="314"/>
+        <location filename="src/db/databasemanager.cpp" line="315"/>
         <source>The database for the simulator below is not compatible with this program version or was incompletely loaded:&lt;br/&gt;&lt;br/&gt;%1&lt;br/&gt;&lt;br/&gt;Erase it?&lt;br/&gt;&lt;br/&gt;%2</source>
         <translation>Die Datenbank für den unten genannten Simulator ist nicht kompatibel mit dieser Programmversion oder wurde unvollständig geladen:&lt;br/&gt;&lt;br/&gt;%1&lt;br/&gt;&lt;br/&gt;Datenbank löschen?&lt;br/&gt;&lt;br/&gt;%2</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="317"/>
+        <location filename="src/db/databasemanager.cpp" line="318"/>
         <source>You can reload the Scenery Library Database again after erasing.</source>
         <translation>Die Datenbank der Szeneriebibliotheken kann nach dem Löschen neu geladen werden.</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="321"/>
+        <location filename="src/db/databasemanager.cpp" line="322"/>
         <source>The databases for the simulators below are not compatible with this program version or were incompletely loaded:&lt;br/&gt;&lt;br/&gt;%1&lt;br/&gt;&lt;br/&gt;Erase them?&lt;br/&gt;&lt;br/&gt;%2</source>
         <translation>Die Datenbanken für den unten genannten Simulator sind nicht kompatibel mit dieser Programmversion oder wurden unvollständig geladen:&lt;br/&gt;&lt;br/&gt;%1&lt;br/&gt;&lt;br/&gt;Datenbanken löschen?&lt;br/&gt;&lt;br/&gt;%2</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="324"/>
+        <location filename="src/db/databasemanager.cpp" line="325"/>
         <source>You can reload these Scenery Library Databases again after erasing.</source>
         <translation>Die Szeneriebibliothek kann nach dem Löschen neu geladen werden.</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="332"/>
+        <location filename="src/db/databasemanager.cpp" line="333"/>
         <source>&amp;No and Exit Application</source>
         <translation>&amp;Nein und Programm beenden</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="333"/>
+        <location filename="src/db/databasemanager.cpp" line="334"/>
         <source>&amp;Erase</source>
         <translation>L&amp;öschen</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="345"/>
+        <location filename="src/db/databasemanager.cpp" line="346"/>
         <source>Deleting ...</source>
         <translation>Lösche ...</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="351"/>
+        <location filename="src/db/databasemanager.cpp" line="352"/>
         <source>Erasing database for %1 ...</source>
         <translation>Lösche Datenbank für %1 ...</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="373"/>
-        <location filename="src/db/databasemanager.cpp" line="507"/>
+        <location filename="src/db/databasemanager.cpp" line="374"/>
+        <location filename="src/db/databasemanager.cpp" line="508"/>
         <source>Deleting of database&lt;br/&gt;&lt;br/&gt;&quot;%1&quot;&lt;br/&gt;&lt;br/&gt;failed.&lt;br/&gt;&lt;br/&gt;Remove the database file manually and restart the program.</source>
         <oldsource>Deleting of database&lt;br/&gt;&lt;br/&gt;&lt;i&gt;%1&lt;/i&gt;&lt;br/&gt;&lt;br/&gt;failed.&lt;br/&gt;&lt;br/&gt;Remove the database file manually and restart the program.</oldsource>
         <translation>Löschen der Datenbank&lt;br/&gt;&lt;br/&gt;&quot;%1&quot;&lt;br/&gt;&lt;br/&gt;fehlgeschlagen.&lt;br/&gt;&lt;br/&gt;Löschen Sie die Datenbankdatei manuell und starten Sie das Programm neu.</translation>
@@ -3845,182 +3845,182 @@ Hilfreich wenn Sie Werkzeuge benutzen, um bestimmte Szenerien für jeden Flug zu
         <translation type="vanished">Ihre aktuellen Navigationsdaten sind älter als die bei Little Navmap mitgelieferten.&lt;br/&gt;&lt;br/&gt;Wollen Sie die aktuellen Navigationsdaten mit den neuen überschreiben?&lt;hr/&gt;Aktuelle, zu überschreibende Datei:&lt;br/&gt;&lt;br/&gt;&lt;i&gt;%1&lt;br/&gt;&lt;br/&gt;%2, AIRAC-Zyklus %3, erstellt am %4&lt;/i&gt;&lt;hr/&gt;Neue Datei:&lt;br/&gt;&lt;br/&gt;&lt;i&gt;%5&lt;br/&gt;&lt;br/&gt;%6, Zyklus %7, erstellt am %8&lt;/i&gt;&lt;hr/&gt;&lt;br/&gt;</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="70"/>
+        <location filename="src/db/databasemanager.cpp" line="71"/>
         <source>&lt;p&gt;&lt;big&gt;Last Update: %1. Database Version: %2. Program Version: %3.%4&lt;/big&gt;&lt;/p&gt;</source>
         <translation>&lt;p&gt;&lt;big&gt;Letzte Aktualisierung: %1. Datenbankversion: %2. Programmversion: %3.%4&lt;/big&gt;&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="71"/>
+        <location filename="src/db/databasemanager.cpp" line="72"/>
         <source> AIRAC Cycle %1.</source>
         <translation> AIRAC-Zyklus %1.</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="435"/>
+        <location filename="src/db/databasemanager.cpp" line="436"/>
         <source>Your current navdata is older than the navdata included in the Little Navmap download archive.&lt;br/&gt;&lt;br/&gt;Overwrite the current navdata file with the new one?&lt;hr/&gt;Current file to overwrite:&lt;br/&gt;&lt;br/&gt;&lt;i&gt;%1&lt;br/&gt;&lt;br/&gt;%2, cycle %3, compiled on %4&lt;/i&gt;&lt;hr/&gt;New file:&lt;br/&gt;&lt;br/&gt;&lt;i&gt;%5&lt;br/&gt;&lt;br/&gt;%6, cycle %7, compiled on %8&lt;/i&gt;&lt;hr/&gt;&lt;br/&gt;</source>
         <translation>Ihre aktuellen Navigationsdaten sind älter als die bei Little Navmap mitgelieferten.&lt;br/&gt;&lt;br/&gt;Wollen Sie die aktuellen Navigationsdaten mit den neuen überschreiben?&lt;hr/&gt;Aktuelle, zu überschreibende Datei:&lt;br/&gt;&lt;br/&gt;&lt;i&gt;%1&lt;br/&gt;&lt;br/&gt;%2, AIRAC-Zyklus %3, erstellt am %4&lt;/i&gt;&lt;hr/&gt;Neue Datei:&lt;br/&gt;&lt;br/&gt;&lt;i&gt;%5&lt;br/&gt;&lt;br/&gt;%6, AIRAC-Zyklus %7, erstellt am %8&lt;/i&gt;&lt;hr/&gt;&lt;br/&gt;</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="452"/>
+        <location filename="src/db/databasemanager.cpp" line="453"/>
         <source>Do not &amp;show this dialog again and skip copying.</source>
         <oldsource>Do &amp;not show this dialog again and skip copying in the future.</oldsource>
         <translation>Diesen Dialog &amp;nicht mehr anzeigen und das Kopieren überspringen.</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="460"/>
-        <location filename="src/db/databasemanager.cpp" line="520"/>
+        <location filename="src/db/databasemanager.cpp" line="461"/>
+        <location filename="src/db/databasemanager.cpp" line="521"/>
         <source>Preparing %1 Database ...</source>
         <translation>Bereite %1 Datenbank vor ...</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="475"/>
+        <location filename="src/db/databasemanager.cpp" line="476"/>
         <source>Preparing %1 Database: Copying file ...</source>
         <translation>Bereite %1 Datenbank vor: Kopiere Dateien ...</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="488"/>
+        <location filename="src/db/databasemanager.cpp" line="489"/>
         <source>Preparing %1 Database: Creating indexes ...</source>
         <translation>Bereite %1 Datenbank vor: Erstelle Index ...</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="495"/>
+        <location filename="src/db/databasemanager.cpp" line="496"/>
         <source>Preparing %1 Database: Analyzing ...</source>
         <translation>Bereite %1 Datenbank vor: Analysiere ...</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="512"/>
+        <location filename="src/db/databasemanager.cpp" line="513"/>
         <source>Cannot copy database&lt;br/&gt;&lt;br/&gt;&quot;%1&quot;&lt;br/&gt;&lt;br/&gt;to&lt;br/&gt;&lt;br/&gt;&quot;%2&quot;&lt;br/&gt;&lt;br/&gt;.</source>
         <oldsource>Cannot copy database&lt;br/&gt;&lt;br/&gt;&lt;i&gt;%1&lt;/i&gt;&lt;br/&gt;&lt;br/&gt;to&lt;br/&gt;&lt;br/&gt;&lt;i&gt;%2&lt;/i&gt;&lt;br/&gt;&lt;br/&gt;.</oldsource>
         <translation>Kann Datenbank nicht von&lt;br/&gt;&lt;br/&gt;&quot;%1&quot;&lt;br/&gt;&lt;br/&gt;zu&lt;br/&gt;&lt;br/&gt;&quot;%2&quot;&lt;br/&gt;&lt;br/&gt; kopieren.</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="683"/>
+        <location filename="src/db/databasemanager.cpp" line="684"/>
         <source>&amp;Load Scenery Library ...</source>
         <translation>Szeneriebibliothek &amp;laden ...</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="685"/>
+        <location filename="src/db/databasemanager.cpp" line="686"/>
         <source>Load Scenery Library (no simulator)</source>
         <translation>Szeneriebibliothek laden (kein Simulator)</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="701"/>
-        <location filename="src/db/databasemanager.cpp" line="781"/>
+        <location filename="src/db/databasemanager.cpp" line="702"/>
+        <location filename="src/db/databasemanager.cpp" line="782"/>
         <source> - AIRAC Cycle %1</source>
         <translation> - AIRAC-Zyklus %1</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="703"/>
+        <location filename="src/db/databasemanager.cpp" line="704"/>
         <source> - No AIRAC Cycle</source>
         <translation> - Kein AIRAC-Zyklus</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="706"/>
+        <location filename="src/db/databasemanager.cpp" line="707"/>
         <source> (database is empty)</source>
         <translation> (Datenbank ist leer)</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="713"/>
+        <location filename="src/db/databasemanager.cpp" line="714"/>
         <source>&amp;%1%2</source>
         <translation>&amp;%1%2</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="717"/>
+        <location filename="src/db/databasemanager.cpp" line="718"/>
         <source>&amp;Select Automatically</source>
         <translation>&amp;Automatisch auswählen</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="720"/>
+        <location filename="src/db/databasemanager.cpp" line="721"/>
         <source>Select best navdata mode for simulator</source>
         <translation>Besten Navigationsdatenmodus für den Simulator wählen</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="724"/>
+        <location filename="src/db/databasemanager.cpp" line="725"/>
         <source>Use %1 for &amp;all Features</source>
         <translation>%1 für &amp;alle Funktionen benutzen</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="727"/>
+        <location filename="src/db/databasemanager.cpp" line="728"/>
         <source>Use all of %1 database features</source>
         <translation>Nutze alle Funktionen von %1 Datenbank</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="731"/>
+        <location filename="src/db/databasemanager.cpp" line="732"/>
         <source>Use %1 for &amp;Navaids and Procedures</source>
         <translation>Nutze %1 für &amp;Navigationshilfen und Verfahren</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="734"/>
+        <location filename="src/db/databasemanager.cpp" line="735"/>
         <source>Use only navaids, airways, airspaces and procedures from %1 database</source>
         <translation>Nutze nur Navigationshilfen, Luftstraßen, Lufträume und Verfahren aus der %1 Datenbank</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="738"/>
+        <location filename="src/db/databasemanager.cpp" line="739"/>
         <source>Do &amp;not use %1 database</source>
         <translation>%1 Datenbank &amp;nicht benutzen</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="741"/>
+        <location filename="src/db/databasemanager.cpp" line="742"/>
         <source>Do not use %1 database</source>
         <translation>%1 Datenbank nicht benutzen</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="763"/>
+        <location filename="src/db/databasemanager.cpp" line="764"/>
         <source>No Scenery Library and no Simulator found</source>
         <translation>Keine Szeneriebibliothek und keinen Simulator gefunden</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="764"/>
+        <location filename="src/db/databasemanager.cpp" line="765"/>
         <source>No scenery library database and no simulator found</source>
         <translation>Keine Szeneriebibliothek und keinen Simulator gefunden</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="786"/>
+        <location filename="src/db/databasemanager.cpp" line="787"/>
         <source>empty</source>
         <translation>leer</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="790"/>
+        <location filename="src/db/databasemanager.cpp" line="791"/>
         <source>prev. version - reload advised</source>
         <translation>vorherige Version - neu laden empfohlen</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="794"/>
+        <location filename="src/db/databasemanager.cpp" line="795"/>
         <source>%1 days old - reload advised</source>
         <translation>%1 Tage alt - neu laden empfohlen</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="799"/>
+        <location filename="src/db/databasemanager.cpp" line="800"/>
         <source>no simulator</source>
         <translation>kein Simulator</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="802"/>
+        <location filename="src/db/databasemanager.cpp" line="803"/>
         <source> (%1)</source>
         <translation> (%1)</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="802"/>
-        <location filename="src/db/databasemanager.cpp" line="1946"/>
+        <location filename="src/db/databasemanager.cpp" line="803"/>
+        <location filename="src/db/databasemanager.cpp" line="1948"/>
         <source>, </source>
         <translation>, </translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="804"/>
+        <location filename="src/db/databasemanager.cpp" line="805"/>
         <source>&amp;%1 %2%3</source>
         <translation>&amp;%1 %2%3</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="805"/>
+        <location filename="src/db/databasemanager.cpp" line="806"/>
         <source>Switch to %1 database</source>
         <translation>Zu %1 Datenbank wechseln</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="855"/>
+        <location filename="src/db/databasemanager.cpp" line="856"/>
         <source>&lt;p style=&apos;white-space:pre&apos;&gt;The scenery mode &quot;%1&quot; ignores all airports of the simulator.&lt;p/&gt;&lt;p&gt;Airport information is limited in this mode.&lt;br/&gt;This means that aprons, taxiways, parking positions, runway surface information and other information is not available.&lt;br/&gt;Smaller airports might be missing and runway layout might not match the runway layout in the simulator.&lt;/p&gt;&lt;p&gt;&lt;b&gt;Normally you should not use this mode.&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Really switch to mode &quot;%1&quot; now?&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;%1&quot;&gt;Click here for more information in the Little Navmap online manual&lt;/a&gt;&lt;/p&gt;</source>
         <translation>&lt;p style=&apos;white-space:pre&apos;&gt;Der Szeneriemodus &quot;%1&quot; ignoriert alle Flugplätze des Simulators.&lt;p/&gt;&lt;p&gt;Die Flugplatzinformationen sind in diesem Modus begrenzt.&lt;br/&gt;Dies bedeutet, dass Vorfelder, Rollbahnen, Parkpositionen, Informationen über die Oberfläche der Runways sowie weitere Informationen nicht verfügbar sind.&lt;br/&gt;Kleinere Flugplätze könnten fehlen und das Layout der Start- und Landebahnen könnte nicht mit dem des Simulators übereinstimmen.&lt;/p&gt;&lt;p&gt;&lt;b&gt;Normalerweise sollten Sie diesen Modus nicht verwenden.&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Jetzt wirklich in den Modus &quot;%1&quot; wechseln?&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;%1&quot;&gt;Klicken Sie hier für weitere Informationen im Little Navmap Online-Handbuch&lt;/a&gt;&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="865"/>
+        <location filename="src/db/databasemanager.cpp" line="866"/>
         <source>Do not &amp;show this dialog again and switch the mode.</source>
         <oldsource>Do &amp;not show this dialog again and switch the mode in the future.</oldsource>
         <translation>Diesen Dialog &amp;nicht mehr anzeigen und den Modus wechseln.</translation>
@@ -4048,19 +4048,19 @@ Die Datenbank der Simulatorszeneriebibliothek kann über das Menü
 &quot;Szeneriebibliothek&quot; -&gt; &quot;Szeneriebibliothek laden&quot; geladen werden.</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="1415"/>
+        <location filename="src/db/databasemanager.cpp" line="1416"/>
         <source>&lt;p style=&apos;white-space:pre&apos;&gt;You are using MSFS with the Navigraph navdata update.&lt;/p&gt;&lt;p&gt;You should update the Little Navmap navdata with the Navigraph FMS Data Manager as well and use the right scenery library mode &quot;Use Navigraph for Navaids and Procedures&quot; to avoid issues with airport information in Little Navmap.&lt;/p&gt;&lt;p style=&apos;white-space:pre&apos;&gt;You can change the mode manually in the menu&lt;br/&gt;&quot;Scenery Library&quot; -&gt; &quot;Navigraph&quot; -&gt; &quot;Use Navigraph for Navaids and Procedures&quot;.&lt;/p&gt;&lt;p&gt;Correct the scenery library mode now?&lt;/p&gt;</source>
         <comment>Sync texts with menu items</comment>
         <translation>&lt;p style=&apos;white-space:pre&apos;&gt;Sie verwenden MSFS mit dem Navigraph Navdata Update.&lt;/p&gt;&lt;p&gt;Sie sollten auch die Little Navmap-Navigationsdaten mit dem Navigraph FMS Data Manager aktualisieren und den richtigen Modus der Szeneriebibliothek &quot;Nutze Navigraph für Navigationshilfen und Verfahren&quot; verwenden, um Probleme mit Flugplatzinformationen in Little Navmap zu vermeiden.&lt;/p&gt;&lt;p style=&apos;white-space:pre&apos;&gt;Sie können den Modus manuell im Menü&lt;br/&gt;&quot;Szeneriebibliothek&quot; -&gt; &quot;Navigraph&quot; -&gt; &quot;Nutze Navigraph für Navigationshilfen und Verfahren&quot; ändern.&lt;/p&gt;&lt;p&gt;Jetzt den Modus der Szeneriebibliothek korrigieren?&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="1430"/>
+        <location filename="src/db/databasemanager.cpp" line="1431"/>
         <source>&lt;p style=&apos;white-space:pre&apos;&gt;You are using MSFS without the Navigraph navdata update.&lt;/p&gt;&lt;p&gt;You should use the scenery library mode &quot;Do not use Navigraph Database&quot; to avoid issues with airport information in Little Navmap.&lt;/p&gt;&lt;p style=&apos;white-space:pre&apos;&gt;You can change the mode manually in the menu&lt;br/&gt;&quot;Scenery Library&quot; -&gt; &quot;Navigraph&quot; -&gt; &quot;Do not use Navigraph Database&quot;.&lt;/p&gt;&lt;p&gt;Correct the scenery library mode now?&lt;/p&gt;</source>
         <comment>Sync texts with menu items</comment>
         <translation>&lt;p style=&apos;white-space:pre&apos;&gt;Sie verwenden MSFS ohne das Navigraph-Navdata-Update.&lt;/p&gt;&lt;p&gt;Sie sollten den Szeneriebibliotheksmodus &quot;Navigraph Datenbank nicht benutzen&quot; verwenden, um Probleme mit den Flugplatzinformationen in Little Navmap zu vermeiden.&lt;/p&gt;&lt;p style=&apos;white-space:pre&apos;&gt;Sie können den Modus manuell im Menü&lt;br/&gt;&quot;Szeneriebibliothek&quot; -&gt; &quot;Navigraph&quot; -&gt; &quot;Navigraph Datenbank nicht benutzen&quot; ändern.&lt;/p&gt;&lt;p&gt;Den Modus der Szeneriebibliothek jetzt korrigieren?&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="2063"/>
+        <location filename="src/db/databasemanager.cpp" line="2065"/>
         <source>&lt;p&gt;%1&lt;/p&gt;&lt;p&gt;It is advised to reload the scenery library database after each Little Navmap update, after installing new add-on scenery or after a flight simulator update to enable new features or benefit from bug fixes.&lt;/p&gt;&lt;p&gt;You can do this in menu &quot;Scenery Library&quot; -&gt; &quot;Load Scenery Library&quot;.&lt;/p&gt;&lt;p&gt;Open the &quot;Load Scenery Library&quot; dialog window now?&lt;/p&gt;</source>
         <translation>&lt;p&gt;%1&lt;/p&gt;&lt;p&gt;Es wird empfohlen, die Datenbank der Szeneriebibliothek nach jedem Little Navmap-Update, nach der Installation neuer Add-on-Szenerien oder nach einem Update des Flugsimulators neu zu laden, um neue Funktionen zu aktivieren oder von Fehlerkorrekturen zu profitieren.&lt;/p&gt;&lt;p&gt;Sie können dies im Menü &quot;Szeneriebibliothek&quot; -&gt; &quot;Szeneriebibliothek laden&quot; tun.&lt;/p&gt;&lt;p&gt;Jetzt das Dialogfenster &quot;Lade Szeneriebibliothek&quot; öffnen?&lt;/p&gt;</translation>
     </message>
@@ -4076,7 +4076,7 @@ Die Datenbank der Simulatorszeneriebibliothek kann über das Menü
         <translation type="vanished">&lt;p style=&apos;white-space:pre&apos;&gt;Der AIRAC-Zyklus %1 Ihrer Navigationsdaten ist älter als der Simulatorzyklus %2.&lt;/p&gt;&lt;p&gt;Dies kann zu Warnmeldungen beim Laden von Flugplänen in X-Plane führen.&lt;/p&gt;&lt;p&gt;Aktualisieren Sie die Little Navmap-Navigationsdaten mit dem Navigraph FMS Data Manager, um den gleichen Zyklus wie die X-Plane-Daten zu verwenden.&lt;/p&gt;&lt;p&gt;Sie können auch den Modus der Szeneriebibliothek &quot;Navigraph Datenbank nicht benutzen&quot; verwenden, um alle Daten aus dem Simulator zu holen.&lt;/p&gt;&lt;p style=&apos;white-space:pre&apos;&gt;Sie können dies manuell im Menü&lt;br/&gt;&quot;Scenery Library&quot; -&gt; &quot;Navigraph&quot; -&gt; &quot;Navigraph Datenbank nicht benutzen&quot; ändern.&lt;/p&gt;&lt;p&gt;Den Modus der Szeneriebibliothek jetzt korrigieren?&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="1517"/>
+        <location filename="src/db/databasemanager.cpp" line="1518"/>
         <source>&lt;p style=&apos;white-space:pre&apos;&gt;Your current scenery library mode is &quot;Use Navigraph for all Features&quot;.&lt;/p&gt;&lt;p&gt;All information from the simulator scenery library is ignored in this mode.&lt;/p&gt;&lt;p&gt;Note that airport information is limited in this mode. This means that aprons, taxiways, parking positions, runway surfaces and more are not available, smaller airports will be missing and the runway layout might not match the one in the simulator.&lt;/p&gt;&lt;p style=&apos;white-space:pre&apos;&gt;You can change this manually in the menu&lt;br/&gt;&quot;Scenery Library&quot; -&gt; &quot;Navigraph&quot; -&gt; &quot;Use Navigraph for Navaids and Procedures&quot;.&lt;/p&gt;&lt;p&gt;&lt;b&gt;Normally you should not use this mode.&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Correct the scenery library mode now?&lt;/p&gt;</source>
         <comment>Sync texts with menu items</comment>
         <translation>&lt;p style=&apos;white-space:pre&apos;&gt;Ihr aktueller Szeneriebibliotheksmodus ist &quot;Navigraph für alle Funktionen benutzen&quot;.&lt;/p&gt;&lt;p&gt;Alle Informationen aus der Simulator-Szeneriebibliothek werden in diesem Modus ignoriert.&lt;/p&gt;&lt;p&gt;Beachten Sie, dass die Flugplatzinformationen in diesem Modus eingeschränkt sind. Das bedeutet, dass Vorfelder, Rollbahnen, Parkpositionen, Start- und Runwayoberflächen und mehr nicht verfügbar sind, kleinere Flugplätze fehlen und dass Runwaylayout möglicherweise nicht mit dem des Simulators übereinstimmt.&lt;/p&gt;&lt;p style=&apos;white-space:pre&apos;&gt;Sie können dies manuell im Menü&lt;br/&gt;&quot;Szeneriebibliothek&quot; -&gt; &quot;Navigraph&quot; -&gt; &quot;Nutze Navigraph für Navigationshilfen und Verfahren&quot; ändern.&lt;/p&gt;&lt;p&gt;&lt;b&gt;Normalerweise sollten Sie diesen Modus nicht verwenden.&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Den Modus der Szeneriebibliothek jetzt korrigieren?&lt;/p&gt;</translation>
@@ -4090,41 +4090,41 @@ Die Datenbank der Simulatorszeneriebibliothek kann über das Menü
         <translation type="vanished">Keine Probleme gefunden.</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="1456"/>
+        <location filename="src/db/databasemanager.cpp" line="1457"/>
         <source>&lt;p style=&apos;white-space:pre&apos;&gt;The AIRAC cycle %1 of your navigation data is equal to the simulator cycle.&lt;p&gt;&lt;p&gt;You should use the scenery library mode &quot;Use Navigraph for Navaids and Procedures&quot; to fetch airports from the simulator and navdata from the update.&lt;/p&gt;&lt;p style=&apos;white-space:pre&apos;&gt;You can change this manually in the menu&lt;br/&gt;&quot;Scenery Library&quot; -&gt; &quot;Navigraph&quot; -&gt; &quot;Use Navigraph for Navaids and Procedures&quot;.&lt;/p&gt;&lt;p&gt;Correct the scenery library mode now?&lt;/p&gt;</source>
         <comment>Sync texts with menu items</comment>
         <translation>&lt;p style=&apos;white-space:pre&apos;&gt;Der AIRAC-Zyklus %1 Ihrer Navigationsdaten ist gleich dem Simulator-Zyklus.&lt;p&gt;&lt;p&gt;Das bedeutet, dass Sie die aktualisierten Navigraph-Daten für Little Navmap ignorieren.&lt;/p&gt;&lt;p&gt;Sie sollten den Modus der Szeneriebibliothek &quot;Nutze Navigraph für Navigationshilfen und Verfahren&quot; verwenden, um Flugplätze aus dem Simulator und Navigationsdaten aus dem Update zu holen.&lt;/p&gt;&lt;p style=&apos;white-space:pre&apos;&gt;Sie können dies manuell im Menü&lt;br/&gt;&quot;Scenery Library&quot; -&gt; &quot;Navigraph&quot; -&gt; &quot;Nutze Navigraph für Navigationshilfen und Verfahren&quot; ändern.&lt;/p&gt;&lt;p&gt;Den Modus der Szeneriebibliothek jetzt korrigieren?&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="1471"/>
+        <location filename="src/db/databasemanager.cpp" line="1472"/>
         <source>&lt;p style=&apos;white-space:pre&apos;&gt;The AIRAC cycle %1 of your navigation data is older than the simulator cycle %2.&lt;/p&gt;&lt;p&gt;This can result in warning messages when loading flight plans in X-Plane.&lt;/p&gt;&lt;p&gt;Update the Little Navmap navdata to use the same cycle as the X-Plane navdata with the Navigraph FMS Data Manager to fix this.&lt;/p&gt;&lt;p&gt;You can also use the scenery library mode &quot;Do not use Navigraph Database&quot; to fetch all data from the simulator.&lt;/p&gt;&lt;p style=&apos;white-space:pre&apos;&gt;You can change this manually in the menu&lt;br/&gt;&quot;Scenery Library&quot; -&gt; &quot;Navigraph&quot; -&gt; &quot;Do not use Navigraph Database&quot;.&lt;/p&gt;&lt;p&gt;Correct the scenery library mode now?&lt;/p&gt;</source>
         <comment>Sync texts with menu items</comment>
         <translation>&lt;p style=&apos;white-space:pre&apos;&gt;Der AIRAC-Zyklus %1 Ihrer Navigationsdaten ist älter als der Simulatorzyklus %2.&lt;/p&gt;&lt;p&gt;Dies kann zu Warnmeldungen beim Laden von Flugplänen in X-Plane führen.&lt;/p&gt;&lt;p&gt;Aktualisieren Sie die Little Navmap-Navigationsdaten mit dem Navigraph FMS Data Manager, um den gleichen Zyklus wie die X-Plane-Daten zu verwenden.&lt;/p&gt;&lt;p&gt;Sie können auch den Modus der Szeneriebibliothek &quot;Navigraph Datenbank nicht benutzen&quot; verwenden, um alle Daten aus dem Simulator zu holen.&lt;/p&gt;&lt;p style=&apos;white-space:pre&apos;&gt;Sie können dies manuell im Menü&lt;br/&gt;&quot;Scenery Library&quot; -&gt; &quot;Navigraph&quot; -&gt; &quot;Navigraph Datenbank nicht benutzen&quot; ändern.&lt;/p&gt;&lt;p&gt;Den Modus der Szeneriebibliothek jetzt korrigieren?&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="1489"/>
+        <location filename="src/db/databasemanager.cpp" line="1490"/>
         <source>&lt;p style=&apos;white-space:pre&apos;&gt;Your navdata based on AIRAC cycle %1 is outdated.&lt;/p&gt;&lt;p&gt;This can result in warning messages when loading flight plans.&lt;/p&gt;&lt;p&gt;Update the Little Navmap navdata with the Navigraph FMS Data Manager to fix this.&lt;/p&gt;&lt;p&gt;You can also use the scenery library mode &quot;Do not use Navigraph Database&quot; to fetch all data from the simulator.&lt;/p&gt;&lt;p style=&apos;white-space:pre&apos;&gt;You can change this manually in the menu&lt;br/&gt;&quot;Scenery Library&quot; -&gt; &quot;Navigraph&quot; -&gt; &quot;Do not use Navigraph Database&quot;.&lt;/p&gt;&lt;p&gt;Correct the scenery library mode now?&lt;/p&gt;</source>
         <comment>Sync texts with menu items</comment>
         <translation>&lt;p style=&apos;white-space:pre&apos;&gt;Ihre auf dem AIRAC-Zyklus %1 basierenden Navigationsdaten sind veraltet.&lt;/p&gt;&lt;p&gt;Dies kann zu Warnmeldungen beim Laden von Flugplänen führen.&lt;/p&gt;&lt;p&gt;Aktualisieren Sie die Little Navmap-Navigationsdaten mit dem Navigraph FMS Data Manager, um dieses Problem zu beheben.&lt;/p&gt;&lt;p&gt;Sie können auch den Szenerie-Bibliotheksmodus &quot;Navigraph Datenbank nicht benutzen&quot; verwenden, um alle Daten aus dem Simulator zu holen.&lt;/p&gt;&lt;p style=&apos;white-space:pre&apos;&gt;Sie können dies manuell im Menü&lt;br/&gt;&quot;Szeneriebibliothek&quot; -&gt; &quot;Navigraph&quot; -&gt; &quot;Navigraph Datenbank nicht benutzen&quot; ändern.&lt;/p&gt;&lt;p&gt;Jetzt den Modus der Szeneriebibliothek korrigieren?&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="1505"/>
+        <location filename="src/db/databasemanager.cpp" line="1506"/>
         <source>&lt;p style=&apos;white-space:pre&apos;&gt;&lt;p&gt;You are using an updated Navigraph database with a not optimal scenery library mode.&lt;/p&gt;&lt;p style=&apos;white-space:pre&apos;&gt;You can fix this in the menu&lt;br/&gt;&quot;Scenery Library&quot; -&gt; &quot;Navigraph&quot; -&gt; &quot;Use Navigraph for Navaids and Procedures&quot;.&lt;/p&gt;&lt;p&gt;Correct the scenery library mode now?&lt;/p&gt;</source>
         <comment>Sync texts with menu items</comment>
         <translation>&lt;p style=&apos;white-space:pre&apos;&gt;&lt;p&gt;Sie verwenden eine aktualisierte Navigraph-Datenbank mit einem nicht optimalen Szeneriebibliotheksmodus.&lt;/p&gt;&lt;p style=&apos;white-space:pre&apos;&gt;Sie können dies im Menü&lt;br/&gt;&quot;Szeneriebibliothek&quot; -&gt; &quot;Navigraph&quot; -&gt; &quot;Nutze Navigraph für Navigationshilfen und Verfahren&quot; beheben.&lt;/p&gt;&lt;p&gt;Jetzt den Modus der Szeneriebibliothek korrigieren?&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="1541"/>
+        <location filename="src/db/databasemanager.cpp" line="1542"/>
         <source>You cannot load the MSFS 2024 scenery library using Little Navmap 32-bit.</source>
         <translation>MSFS 2024 Szeneriebibliothek kann nicht mit Little Navmap 32-bit geladen werden.</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="1566"/>
+        <location filename="src/db/databasemanager.cpp" line="1567"/>
         <source>&lt;p style=&apos;white-space:pre&apos;&gt;Cannot read base path &quot;%1&quot;.&lt;br/&gt;&lt;br/&gt;Reason:&lt;br/&gt;%2&lt;br/&gt;&lt;/p&gt;%3</source>
         <translation>&lt;p style=&apos;white-space:pre&apos;&gt;Kann Basispfad nicht lesen &quot;%1&quot;.&lt;br/&gt;&lt;br/&gt;Grund:&lt;br/&gt;%2&lt;br/&gt;&lt;/p&gt;%3</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="1619"/>
+        <location filename="src/db/databasemanager.cpp" line="1620"/>
         <source>Note that the connection to the flight simulator has to be paused while loading data from the simulator.
 You will not see user aircraft updates while loading.</source>
         <oldsource>Note that the connection to the flight simulator has to be paused while loading airports from the simulator.
@@ -4133,7 +4133,6 @@ You will not see user aircraft updates while loading.</oldsource>
 Während des Ladens werden keine Aktualisierungen des Benutzerflugzeugs angezeigt.</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="1628"/>
         <source>Cannot connect to Microsoft Flight Simulator 2024, which is required for Little Navmap to load data.
 
 Start Microsoft Flight Simulator 2024, wait until the user interface of the simulator is visible and then press &quot;Ok&quot; to continue.
@@ -4144,62 +4143,62 @@ Note that the loading process can take a while. Expect about %1 minutes.</source
 Start Microsoft Flight Simulator 2024, wait until the user interface of the simulator is visible and then press &quot;Ok&quot; to continue.
 
 Note that the loading process can take a while. Expect about %1 minutes.</oldsource>
-        <translation>Es kann keine Verbindung zum Microsoft Flight Simulator 2024 hergestellt werden, der für Little Navmap zum Laden der Daten erforderlich ist.
+        <translation type="vanished">Es kann keine Verbindung zum Microsoft Flight Simulator 2024 hergestellt werden, der für Little Navmap zum Laden der Daten erforderlich ist.
 
 Starten Sie den Microsoft Flight Simulator 2024, warten Sie, bis die Benutzeroberfläche des Simulators sichtbar ist und drücken Sie dann &quot;Ok&quot;, um fortzufahren.
 
 Beachten Sie, dass der Ladevorgang eine Weile dauern kann. Rechnen Sie mit etwa %1 Minuten.</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="1932"/>
+        <location filename="src/db/databasemanager.cpp" line="1934"/>
         <source>%1 %2 included for loading</source>
         <oldsource>%1 %2 included in loading</oldsource>
         <translation>%1 %2 zum Laden hinzugefügt</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="1934"/>
+        <location filename="src/db/databasemanager.cpp" line="1936"/>
         <source>extra directories are</source>
         <translation>extra Verzeichnisse sind</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="1934"/>
+        <location filename="src/db/databasemanager.cpp" line="1936"/>
         <source>extra directory is</source>
         <translation>extra Verzeichnis ist</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="1936"/>
+        <location filename="src/db/databasemanager.cpp" line="1938"/>
         <source>%1 %2 excluded from loading</source>
         <translation>%1 %2 vom Laden ausgeschlossen</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="1938"/>
-        <location filename="src/db/databasemanager.cpp" line="1942"/>
+        <location filename="src/db/databasemanager.cpp" line="1940"/>
+        <location filename="src/db/databasemanager.cpp" line="1944"/>
         <source>directories are</source>
         <translation>Verzeichnisse sind</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="1938"/>
-        <location filename="src/db/databasemanager.cpp" line="1942"/>
+        <location filename="src/db/databasemanager.cpp" line="1940"/>
+        <location filename="src/db/databasemanager.cpp" line="1944"/>
         <source>directory is</source>
         <translation>Verzeichnis ist</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="1940"/>
+        <location filename="src/db/databasemanager.cpp" line="1942"/>
         <source>%1 %2 excluded from add-on detection</source>
         <translation>%1 %2 von der Add-on Erkennung ausgeschlossen</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="1946"/>
+        <location filename="src/db/databasemanager.cpp" line="1948"/>
         <source>&lt;b&gt;Note:&lt;/b&gt; </source>
         <translation>&lt;b&gt;Hinweis:&lt;/b&gt; </translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="1946"/>
+        <location filename="src/db/databasemanager.cpp" line="1948"/>
         <source> and </source>
         <translation> und </translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="1946"/>
+        <location filename="src/db/databasemanager.cpp" line="1948"/>
         <source>.</source>
         <translation>.</translation>
     </message>
@@ -4208,12 +4207,12 @@ Beachten Sie, dass der Ladevorgang eine Weile dauern kann. Rechnen Sie mit etwa 
         <translation type="vanished">Die ausgeschlossenen Verzeichnisse können in den Einstellungen auf der Seite &quot;Szeneriebibliothek&quot; geändert werden.</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="1950"/>
+        <location filename="src/db/databasemanager.cpp" line="1952"/>
         <source>&lt;p&gt;</source>
         <translation>&lt;p&gt;</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="1950"/>
+        <location filename="src/db/databasemanager.cpp" line="1952"/>
         <source>&lt;/p&gt;</source>
         <translation>&lt;/p&gt;</translation>
     </message>
@@ -4222,95 +4221,108 @@ Beachten Sie, dass der Ladevorgang eine Weile dauern kann. Rechnen Sie mit etwa 
         <translation type="vanished">&lt;p&gt;%1&lt;/p&gt;&lt;p&gt;Es ist empfohlen, die Datenbank der Szeneriebibliothek nach jedem Little Navmap-Update, nach der Installation neuer Add-on-Szenerien oder nach einem Update des Flugsimulators neu zu laden, um neue Funktionen zu aktivieren oder von Fehlerkorrekturen zu profitieren.&lt;/p&gt;&lt;p&gt;Sie können dies im Menü &quot;Szeneriebibliothek&quot; -&gt; &quot;Szeneriebibliothek laden&quot; tun.&lt;/p&gt;&lt;p&gt;Jetzt das Dialogfenster &quot;Lade Szeneriebibliothek&quot; öffnen?&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="1423"/>
-        <location filename="src/db/databasemanager.cpp" line="1436"/>
-        <location filename="src/db/databasemanager.cpp" line="1449"/>
-        <location filename="src/db/databasemanager.cpp" line="1464"/>
-        <location filename="src/db/databasemanager.cpp" line="1482"/>
-        <location filename="src/db/databasemanager.cpp" line="1498"/>
-        <location filename="src/db/databasemanager.cpp" line="1510"/>
-        <location filename="src/db/databasemanager.cpp" line="1527"/>
+        <location filename="src/db/databasemanager.cpp" line="1424"/>
+        <location filename="src/db/databasemanager.cpp" line="1437"/>
+        <location filename="src/db/databasemanager.cpp" line="1450"/>
+        <location filename="src/db/databasemanager.cpp" line="1465"/>
+        <location filename="src/db/databasemanager.cpp" line="1483"/>
+        <location filename="src/db/databasemanager.cpp" line="1499"/>
+        <location filename="src/db/databasemanager.cpp" line="1511"/>
+        <location filename="src/db/databasemanager.cpp" line="1528"/>
         <source>Do not &amp;show this dialog again and always correct mode after loading.</source>
         <oldsource>Do &amp;not show this dialog again and always correct mode after loading.</oldsource>
         <translation>Diesen Dialog &amp;nicht mehr anzeigen und den Modus korrigieren.</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="1443"/>
+        <location filename="src/db/databasemanager.cpp" line="1444"/>
         <source>&lt;p style=&apos;white-space:pre&apos;&gt;You are using MSFS 2024.&lt;/p&gt;&lt;p&gt;You should use the scenery library mode &quot;Do not use Navigraph Database&quot; to avoid issues with airport information or navigation data mismatches in Little Navmap.&lt;/p&gt;&lt;p style=&apos;white-space:pre&apos;&gt;You can change the mode manually in the menu&lt;br/&gt;&quot;Scenery Library&quot; -&gt; &quot;Navigraph&quot; -&gt; &quot;Do not use Navigraph Database&quot;.&lt;/p&gt;&lt;p&gt;Correct the scenery library mode now?&lt;/p&gt;</source>
         <comment>Sync texts with menu items</comment>
         <translation>&lt;p style=&apos;white-space:pre&apos;&gt;Sie verwenden MSFS 2024.&lt;/p&gt;&lt;p&gt;Sie sollten den Szeneriebibliotheksmodus &quot;Navigraph Datenbank nicht benutzen&quot; verwenden, um Probleme mit Flugplatzinformationen oder nicht übereinstimmenden Navigationshilfen in Little Navmap zu vermeiden.&lt;/p&gt;&lt;p style=&apos;white-space:pre&apos;&gt;Sie können den Modus manuell im Menü&lt;br/&gt;&quot;Szeneriebibliothek&quot; -&gt; &quot;Navigraph&quot; -&gt; &quot;Navigraph Datenbank nicht benutzen&quot; ändern.&lt;/p&gt;&lt;p&gt;Den Szenerie-Bibliotheksmodus jetzt korrigieren?&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="1550"/>
+        <location filename="src/db/databasemanager.cpp" line="1551"/>
         <source>&lt;p&gt;Click &quot;Reset paths&quot; in the dialog &quot;Load Scenery Library&quot; for a possible fix.&lt;/p&gt;</source>
         <translation>&lt;p&gt;Auf &quot;Pfade zurücksetzen&quot; im Dialog &quot;Lade Szeneriebibliothek&quot; für eine mögliche Lösung klicken.&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="1555"/>
+        <location filename="src/db/databasemanager.cpp" line="1556"/>
         <source>&lt;p style=&apos;white-space:pre&apos;&gt;Cannot read base path &quot;%1&quot;.&lt;br/&gt;&lt;br/&gt;Reason:&lt;br/&gt;%2&lt;br/&gt;&lt;br/&gt;Either the &quot;OneStore&quot; or the &quot;Steam&quot; paths have to exist.&lt;br/&gt;The path &quot;Community&quot; is always needed for add-ons.&lt;/p&gt;%3</source>
         <translation>&lt;p style=&apos;white-space:pre&apos;&gt;Kann den Basispfad &quot;%1&quot; nicht lesen.&lt;br/&gt;&lt;br/&gt;Grund:&lt;br/&gt;%2&lt;br/&gt;&lt;br/&gt;Es muss entweder der &quot;OneStore&quot;- oder der &quot;Steam&quot;-Pfad vorhanden sein.&lt;br/&gt;Der Pfad &quot;Community&quot; wird immer für Add-ons benötigt.&lt;/p&gt;%3</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="1574"/>
+        <location filename="src/db/databasemanager.cpp" line="1575"/>
         <source>&lt;p style=&apos;white-space:pre&apos;&gt;Cannot read base path &quot;%1&quot;.&lt;br/&gt;&lt;br/&gt;Reason:&lt;br/&gt;%2&lt;/p&gt;%3</source>
         <translation>&lt;p style=&apos;white-space:pre&apos;&gt;Kann Basispfad nicht lesen &quot;%1&quot;.&lt;br/&gt;&lt;br/&gt;Grund:&lt;br/&gt;%2&lt;/p&gt;%3</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="1705"/>
+        <location filename="src/db/databasemanager.cpp" line="1629"/>
+        <source>Cannot connect to Microsoft Flight Simulator 2024, which is required for Little Navmap to load data.
+
+Start Microsoft Flight Simulator 2024, wait until the user interface of the simulator is visible and then press &quot;Ok&quot; to continue.
+
+Note that the loading process can take a while. Expect about %1 to %2 minutes.</source>
+        <translation>Es kann keine Verbindung zum Microsoft Flight Simulator 2024 hergestellt werden, der für Little Navmap zum Laden der Daten erforderlich ist.
+
+Starten Sie den Microsoft Flight Simulator 2024, warten Sie, bis die Benutzeroberfläche des Simulators sichtbar ist und drücken Sie dann &quot;Ok&quot;, um fortzufahren.
+
+Beachten Sie, dass der Ladevorgang eine Weile dauern kann. Rechnen Sie mit etwa %1 bis %2 Minuten.</translation>
+    </message>
+    <message>
+        <location filename="src/db/databasemanager.cpp" line="1707"/>
         <source>Note that you can put the scenery library loading window into the background and continue working with Little Navmap while it is loading.</source>
         <translation>Beachten Sie, dass Sie das Fenster zum Laden der Szeneriebibliothek in den Hintergrund stellen und mit Little Navmap weiterarbeiten können, während die Datenbank geladen wird.</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="1947"/>
+        <location filename="src/db/databasemanager.cpp" line="1949"/>
         <source>Included and excluded directories can be changed in options on page &quot;Scenery Library Database&quot;.</source>
         <translation>Die ein- und ausgeschlossenen Verzeichnisse können in Einstellungen auf der Seite &quot;Szeneriebibliothek&quot; geändert werden.</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="2050"/>
+        <location filename="src/db/databasemanager.cpp" line="2052"/>
         <source>The scenery library database was created using a previous version of Little Navmap.</source>
         <translation>Die Datenbank der Szeneriebibliothek wurde mit einer früheren Version von Little Navmap erstellt.</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="2055"/>
+        <location filename="src/db/databasemanager.cpp" line="2057"/>
         <source>Scenery library database was not reloaded for more than %1 days.</source>
         <translation>Die Datenbank der Szeneriebibliothek wurde seit mehr als %1 Tagen nicht mehr neu geladen.</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="1950"/>
-        <location filename="src/db/databasemanager.cpp" line="2070"/>
+        <location filename="src/db/databasemanager.cpp" line="1952"/>
+        <location filename="src/db/databasemanager.cpp" line="2072"/>
         <source>&lt;br/&gt;</source>
         <translation>&lt;br/&gt;</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="1011"/>
+        <location filename="src/db/databasemanager.cpp" line="1012"/>
         <source>Cannot open database. Error message:&lt;br/&gt;&lt;br/&gt;%1&lt;br/&gt;&lt;br/&gt;File is either malformed or this is an internal error.&lt;br/&gt;&lt;br/&gt;You might want to report this to the developer.&lt;br/&gt;&lt;br/&gt;Exiting now.</source>
         <oldsource>Cannot open database. Error message:&lt;br/&gt;&lt;br/&gt;%1&lt;br/&gt;&lt;br/&gt;File is either malformed or this is an internal error.&lt;br/&gt;&lt;br/&gt;You might want to report this.&lt;br/&gt;&lt;br/&gt;Exiting now.</oldsource>
         <translation>Kann Datenbank nicht öffnen. Fehlermeldung:&lt;br/&gt;&lt;br/&gt;%1&lt;br/&gt;&lt;br/&gt;Die Datei ist entweder fehlerhaft oder es ist ein interner Fehler aufgetreten.&lt;br/&gt;&lt;br/&gt;Sie sollten dies an den Entwickler melden.&lt;br/&gt;&lt;br/&gt;Beende jetzt.</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="1385"/>
+        <location filename="src/db/databasemanager.cpp" line="1386"/>
         <source>&lt;p&gt;Scenery library mode is correct. Mode is set automatically by Little Navmap.&lt;/p&gt;</source>
         <translation>&lt;p&gt;Der Modus der Szenenbibliothek ist korrekt. Der Modus wird automatisch von Little Navmap eingestellt.&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="1386"/>
+        <location filename="src/db/databasemanager.cpp" line="1387"/>
         <source>&lt;p&gt;No issues found. Scenery library mode is correct and set manually in menu &quot;Scenery Library&quot;.&lt;/p&gt;</source>
         <translation>&lt;p&gt;Keine Probleme gefunden. Der Szeneriebibliotheksmodus ist korrekt und manuell im Menü &quot;Szeneriebibliothek&quot; eingestellt.&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="1393"/>
+        <location filename="src/db/databasemanager.cpp" line="1394"/>
         <source>&lt;p&gt;Simulator database is empty.&lt;/p&gt;&lt;p&gt;Showing Navigraph airports and navaids.&lt;/p&gt;&lt;p style=&apos;white-space:pre&apos;&gt;You can load the simulator scenery library database in the menu&lt;/br&gt;&quot;Scenery Library&quot; -&gt; &quot;Load Scenery Library&quot;.&lt;/p&gt;</source>
         <translation>&lt;p&gt;Die Simulatordatenbank ist leer.&lt;/p&gt;&lt;p&gt;Zeige Flugplätze und -Navigationshilfen aus der Navigraph-datenbank an.&lt;/p&gt;&lt;p style=&apos;white-space:pre&apos;&gt;Sie können die Datenbank der Simulator-Szeneriebibliothek über das Menü&lt;/br&gt;&quot;Szeneriebibliothek&quot; -&gt; &quot;Szeneriebibliothek laden&quot; einspielen.&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="1403"/>
+        <location filename="src/db/databasemanager.cpp" line="1404"/>
         <source>&lt;p&gt;Simulator database is empty.&lt;/p&gt;&lt;p style=&apos;white-space:pre&apos;&gt;You can load the simulator scenery library database in the menu&lt;br/&gt;&quot;Scenery Library&quot; -&gt; &quot;Load Scenery Library&quot;.&lt;/p&gt;&lt;p style=&apos;white-space:pre&apos;&gt;Alternatively, you can switch to Navigraph only data in the menu&lt;br/&gt;&quot;Scenery Library&quot; -&gt; &quot;Navigraph&quot; -&gt; &quot;Use Navigraph for all Features&quot;.&lt;/p&gt;</source>
         <translation>&lt;p&gt;Die Simulatordatenbank ist leer.&lt;/p&gt;&lt;p style=&apos;white-space:pre&apos;&gt;Sie können die Datenbank der Simulator-Szeneriebibliothek über das Menü&lt;br/&gt;&quot;Szeneriebibliothek&quot; -&gt; &quot;Szeneriebilothek laden&quot; einspielen.&lt;/p&gt;&lt;p style=&apos;white-space:pre&apos;&gt;Alternativ können Sie über das Menü&lt;br/&gt;&quot;Szeneriebibliothek&quot; -&gt; &quot;Navigraph&quot; -&gt; &quot;Navigraph für alle Funktionen benutzen&quot; auf Navigraph-Daten umschalten.&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="1622"/>
-        <location filename="src/db/databasemanager.cpp" line="1707"/>
-        <location filename="src/db/databasemanager.cpp" line="2071"/>
+        <location filename="src/db/databasemanager.cpp" line="1623"/>
+        <location filename="src/db/databasemanager.cpp" line="1709"/>
+        <location filename="src/db/databasemanager.cpp" line="2073"/>
         <source>Do not &amp;show this dialog again.</source>
         <oldsource>Do &amp;not show this dialog again.</oldsource>
         <translation>Diesen Dialog &amp;nicht mehr anzeigen.</translation>
@@ -4320,22 +4332,22 @@ Beachten Sie, dass der Ladevorgang eine Weile dauern kann. Rechnen Sie mit etwa 
         <translation type="vanished">&lt;p&gt;Bitte beachten, dass Flugplatzinformationen in diesem Modus eingeschränkt sind.&lt;br/&gt;Das bedeutet, dass Vorfelder, Rollwege, Parkpositionen, Oberflächentypen der Runways und andere Informationen nicht verfügbar sind.&lt;/p&gt;&lt;p&gt;Zusätzlich können kleinere Flugplätze fehlen.&lt;/p&gt;&lt;p&gt;Die Anordnung von Runways stimmt möglicherweise nicht mit der im Simulator überein, wenn Standard- oder ältere Flugplatzszenerien verwendet werden.&lt;/p&gt;&lt;p&gt;&lt;b&gt;Auf den untenstehenden Link klicken, um weitere Informationen zu erhalten:&lt;br/&gt;&lt;br/&gt;&lt;br/&gt;&lt;a href=&quot;%1&quot;&gt;Online-Handbuch - Navigationsdatenbanken&lt;/a&gt;&lt;/b&gt;&lt;br/&gt;&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="893"/>
+        <location filename="src/db/databasemanager.cpp" line="894"/>
         <source>Enabled all features for %1.</source>
         <translation>Alle Funktionen für %1 aktiviert.</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="898"/>
+        <location filename="src/db/databasemanager.cpp" line="899"/>
         <source>Enabled navaids, airways, airspaces and procedures for %1.</source>
         <translation>Navigationshilfen, Luftstraßen, Lufträume und Verfahren für %1 aktiviert.</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="903"/>
+        <location filename="src/db/databasemanager.cpp" line="904"/>
         <source>Disabled %1.</source>
         <translation>%1 deaktiviert.</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="970"/>
+        <location filename="src/db/databasemanager.cpp" line="971"/>
         <source>Switched to %1.</source>
         <translation>Zu %1 gewechselt.</translation>
     </message>
@@ -4351,13 +4363,13 @@ Exiting now.</oldsource>
         <translation type="vanished">Kann Datenbank %1 nicht öffnen. Grund:&lt;br/&gt;&lt;br/&gt;%2&lt;br/&gt;&lt;br/&gt;Läuft noch eine weiter Instanz von &lt;i&gt;%3&lt;/i&gt;?&lt;br/&gt;&lt;br/&gt;Beende Programm jetzt.</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="1133"/>
+        <location filename="src/db/databasemanager.cpp" line="1134"/>
         <source>&lt;p&gt;Detected a modification of one or more database files:&lt;br/&gt;&quot;%1&quot;&lt;br/&gt;&lt;br/&gt;Always close %2 before copying, overwriting or updating scenery library databases.&lt;/p&gt;</source>
         <oldsource>&lt;p style=&quot;white-space:pre&quot;&gt;Detected a modification of one or more database files:&lt;br/&gt;&lt;br/&gt;&amp;quot;%1&amp;quot;&lt;br/&gt;&lt;br/&gt;Always close &lt;i&gt;%2&lt;/i&gt; before copying, overwriting or updating scenery library databases.&lt;/p&gt;</oldsource>
         <translation>&lt;p&gt;Modifikation an einer oder mehreren Datenbankdateien erkannt:&lt;br/&gt;&quot;%1&quot;&lt;br/&gt;&lt;br/&gt;%2 muss immer geschlossen werden, bevor Datenbankdateien kopiert, überschrieben oder aktualisiert werden.&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="1136"/>
+        <location filename="src/db/databasemanager.cpp" line="1137"/>
         <source>&amp;quot;&lt;br/&gt;&amp;quot;</source>
         <translation>&amp;quot;&lt;br/&gt;&amp;quot;</translation>
     </message>
@@ -4370,12 +4382,12 @@ Exiting now.</oldsource>
         <translation type="vanished">&lt;p style=&apos;white-space:pre&apos;&gt;Kann den Basispfad nicht lesen &quot;%1&quot;.&lt;br/&gt;&lt;br/&gt;Grund:&lt;br/&gt;%2&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="1591"/>
+        <location filename="src/db/databasemanager.cpp" line="1592"/>
         <source>&lt;p style=&apos;white-space:pre&apos;&gt;Cannot read scenery configuration &quot;%1&quot;.&lt;br/&gt;&lt;br/&gt;Reason:&lt;br/&gt;%2&lt;br/&gt;&lt;br/&gt;Enable the option &quot;Read inactive or disabled Scenery Entries&quot;&lt;br/&gt;or start X-Plane once to create the file.&lt;/p&gt;</source>
         <translation>&lt;p style=&apos;white-space:pre&apos;&gt;Kann Szeneriekonfiguration nicht lesen &quot;%1&quot;.&lt;br/&gt;&lt;br/&gt;Grund:&lt;br/&gt;%2&lt;br/&gt;&lt;br/&gt;Entweder muss die Option &quot;Inaktive Szenerieeinträge einlesen&quot; eingeschaltet werden&lt;br/&gt;oder X-Plane muss einmalig gestarted werden, um die Datei zu erstellen.&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="1608"/>
+        <location filename="src/db/databasemanager.cpp" line="1609"/>
         <source>&lt;p style=&apos;white-space:pre&apos;&gt;Cannot read scenery configuration &quot;%1&quot;.&lt;br/&gt;&lt;br/&gt;Reason:&lt;br/&gt;%2&lt;/p&gt;</source>
         <translation>&lt;p style=&apos;white-space:pre&apos;&gt;Kann Szeneriekonfiguration nicht lesen &quot;%1&quot;.&lt;br/&gt;&lt;br/&gt;Grund:&lt;br/&gt;%2&lt;/p&gt;</translation>
     </message>
@@ -4472,14 +4484,14 @@ Aktivieren Sie die Option &quot;Inaktive Szenerieeinträge lesen&quot; oder star
         <translation type="vanished">&lt;big&gt;Fertig.&lt;/big&gt;</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="1896"/>
-        <location filename="src/db/databasemanager.cpp" line="1904"/>
-        <location filename="src/db/databasemanager.cpp" line="1909"/>
+        <location filename="src/db/databasemanager.cpp" line="1898"/>
+        <location filename="src/db/databasemanager.cpp" line="1906"/>
+        <location filename="src/db/databasemanager.cpp" line="1911"/>
         <source>None</source>
         <translation>Keine</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="1951"/>
+        <location filename="src/db/databasemanager.cpp" line="1953"/>
         <source>&lt;p&gt;&lt;big&gt;Currently Loaded:&lt;/big&gt;&lt;/p&gt;&lt;p&gt;%1&lt;/p&gt;</source>
         <translation>&lt;p&gt;&lt;big&gt;Momentan geladen:&lt;/big&gt;&lt;/p&gt;&lt;p&gt;%1&lt;/p&gt;</translation>
     </message>

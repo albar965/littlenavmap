@@ -62,7 +62,8 @@ using atools::fs::FsPaths;
 const static int MAX_AGE_DAYS = 60;
 
 // Note dialog letting user know about loading time
-const static int SIMCONNECT_LOADING_MINUTES = 10;
+const static int SIMCONNECT_LOADING_MINUTES_MIN = 10;
+const static int SIMCONNECT_LOADING_MINUTES_MAX = 15;
 
 DatabaseManager::DatabaseManager(MainWindow *parent)
   : QObject(parent), mainWindow(parent)
@@ -1628,7 +1629,8 @@ bool DatabaseManager::checkValidBasePaths() const
           tr("Cannot connect to Microsoft Flight Simulator 2024, which is required for Little Navmap to load data.\n\n"
              "Start Microsoft Flight Simulator 2024, "
              "wait until the user interface of the simulator is visible and then press \"Ok\" to continue.\n\n"
-             "Note that the loading process can take a while. Expect about %1 minutes.").arg(SIMCONNECT_LOADING_MINUTES),
+             "Note that the loading process can take a while. Expect about %1 to %2 minutes.").
+          arg(SIMCONNECT_LOADING_MINUTES_MIN).arg(SIMCONNECT_LOADING_MINUTES_MAX),
           QMessageBox::Ok | QMessageBox::Cancel);
 
         if(retval == QMessageBox::Ok)
