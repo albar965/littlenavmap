@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -193,9 +193,10 @@ private:
   /* Delete all queries */
   void deInitQueries();
 
-  proc::MapProcedureLeg buildTransitionLegEntry(const map::MapAirport& airport);
-  proc::MapProcedureLeg buildProcedureLegEntry(const map::MapAirport& airport);
-  void buildLegEntry(atools::sql::SqlQuery *query, proc::MapProcedureLeg& leg, const map::MapAirport& airport);
+  proc::MapProcedureLeg buildTransitionLegEntry(const proc::MapProcedureLegs& legs, const map::MapAirport& airport);
+  proc::MapProcedureLeg buildProcedureLegEntry(const proc::MapProcedureLegs& legs, const map::MapAirport& airport);
+  void buildLegEntry(atools::sql::SqlQuery *query, proc::MapProcedureLeg& leg, const proc::MapProcedureLegs& legs,
+                     const map::MapAirport& airport);
 
   /* See comments in postProcessLegs about the steps below.
    * Custom approaches are built in createCustomApproach() and are not processed here. */

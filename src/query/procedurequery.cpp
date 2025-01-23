@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -167,16 +167,16 @@ const MapProcedureLegs *ProcedureQuery::getProcedureLegs(const map::MapAirport& 
     return getProcedureLegs(airport, procedureId);
 }
 
-proc::MapProcedureLeg ProcedureQuery::buildProcedureLegEntry(const map::MapAirport& airport)
+proc::MapProcedureLeg ProcedureQuery::buildProcedureLegEntry(const proc::MapProcedureLegs& legs, const map::MapAirport& airport)
 {
   MapProcedureLeg leg;
   leg.legId = procedureLegQuery->valueInt("approach_leg_id");
   leg.missed = procedureLegQuery->valueBool("is_missed");
-  buildLegEntry(procedureLegQuery, leg, airport);
+  buildLegEntry(procedureLegQuery, leg, legs, airport);
   return leg;
 }
 
-proc::MapProcedureLeg ProcedureQuery::buildTransitionLegEntry(const map::MapAirport& airport)
+proc::MapProcedureLeg ProcedureQuery::buildTransitionLegEntry(const proc::MapProcedureLegs& legs, const map::MapAirport& airport)
 {
   MapProcedureLeg leg;
 
@@ -193,11 +193,11 @@ proc::MapProcedureLeg ProcedureQuery::buildTransitionLegEntry(const map::MapAirp
   // }
 
   leg.missed = false;
-  buildLegEntry(transitionLegQuery, leg, airport);
+  buildLegEntry(transitionLegQuery, leg, legs, airport);
   return leg;
 }
 
-void ProcedureQuery::buildLegEntry(atools::sql::SqlQuery *query, proc::MapProcedureLeg& leg,
+void ProcedureQuery::buildLegEntry(atools::sql::SqlQuery *query, proc::MapProcedureLeg& leg, const proc::MapProcedureLegs& legs,
                                    const map::MapAirport& airport)
 {
   leg.type = proc::procedureLegEnum(query->valueStr("type"));
@@ -532,13 +532,36 @@ void ProcedureQuery::buildLegEntry(atools::sql::SqlQuery *query, proc::MapProced
   }
   else if(leg.recFixType == "N" || leg.recFixType == "TN")
   {
-    mapObjectByIdent(leg.recNavaids, map::NDB, leg.recFixIdent, leg.recFixRegion, QString(), recFixPos);
-    if(!leg.recNavaids.ndbs.isEmpty())
+    // Try ILS/LOC with the same name first if this is a ILS/LOC approach
+    // Due to an error in the DFD compiler co-located ILS/LOC and NDB always select the NDB
+    // Example ENOV LDMB. LOC and NDB have name HN.
+    bool foundIls = false;
+    if((NavApp::isNavdataAll() || NavApp::isNavdataMixed()) && legs.hasFrequency())
     {
-      leg.recFixPos = leg.recNavaids.ndbs.constFirst().position;
+      mapObjectByIdent(leg.recNavaids, map::ILS, leg.recFixIdent, leg.recFixRegion, QString(), recFixPos);
+      if(!leg.recNavaids.ils.isEmpty() &&
+         airport.position.distanceMeterTo(leg.recNavaids.ils.constFirst().position) < atools::geo::nmToMeter(20))
+      {
+        leg.recFixPos = leg.recNavaids.ils.constFirst().position;
+        leg.recFixType = leg.recNavaids.ils.constFirst().isLoc() ? "L" : "I";
 
-      if(!(leg.magvar < map::INVALID_MAGVAR))
-        leg.magvar = leg.recNavaids.ndbs.constFirst().magvar;
+        if(!(leg.magvar < map::INVALID_MAGVAR))
+          leg.magvar = leg.recNavaids.ils.constFirst().magvar;
+
+        foundIls = true;
+      }
+    }
+
+    if(!foundIls)
+    {
+      mapObjectByIdent(leg.recNavaids, map::NDB, leg.recFixIdent, leg.recFixRegion, QString(), recFixPos);
+      if(!leg.recNavaids.ndbs.isEmpty())
+      {
+        leg.recFixPos = leg.recNavaids.ndbs.constFirst().position;
+
+        if(!(leg.magvar < map::INVALID_MAGVAR))
+          leg.magvar = leg.recNavaids.ndbs.constFirst().magvar;
+      }
     }
   }
   else if(leg.recFixType == "R")
@@ -757,18 +780,17 @@ proc::MapProcedureLegs *ProcedureQuery::fetchTransitionLegs(const map::MapAirpor
              << "transitionId" << transitionId;
 #endif
 
-    transitionLegQuery->bindValue(":id", transitionId);
-    transitionLegQuery->exec();
-
     proc::MapProcedureLegs *legs = new proc::MapProcedureLegs;
     legs->ref.airportId = airport.id;
     legs->ref.procedureId = procedureId;
     legs->ref.transitionId = transitionId;
     legs->ref.mapType = legs->mapType;
 
+    transitionLegQuery->bindValue(":id", transitionId);
+    transitionLegQuery->exec();
     while(transitionLegQuery->next())
     {
-      legs->transitionLegs.append(buildTransitionLegEntry(airport));
+      legs->transitionLegs.append(buildTransitionLegEntry(*legs, airport));
       legs->transitionLegs.last().airportId = airport.id;
       legs->transitionLegs.last().procedureId = procedureId;
       legs->transitionLegs.last().transitionId = transitionId;
@@ -818,9 +840,6 @@ proc::MapProcedureLegs *ProcedureQuery::buildProcedureLegs(const map::MapAirport
   if(!query::valid(Q_FUNC_INFO, procedureLegQuery) || !query::valid(Q_FUNC_INFO, procedureQuery))
     return nullptr;
 
-  procedureLegQuery->bindValue(":id", procedureId);
-  procedureLegQuery->exec();
-
   proc::MapProcedureLegs *legs = new proc::MapProcedureLegs;
   legs->ref.airportId = airport.id;
   legs->ref.procedureId = procedureId;
@@ -829,14 +848,6 @@ proc::MapProcedureLegs *ProcedureQuery::buildProcedureLegs(const map::MapAirport
 
   // Populated when processing artifical legs
   legs->circleToLand = false;
-
-  // Load all legs ======================
-  while(procedureLegQuery->next())
-  {
-    legs->procedureLegs.append(buildProcedureLegEntry(airport));
-    legs->procedureLegs.last().airportId = airport.id;
-    legs->procedureLegs.last().procedureId = procedureId;
-  }
 
   // Load basic approach information ======================
   procedureQuery->bindValue(":id", procedureId);
@@ -855,6 +866,16 @@ proc::MapProcedureLegs *ProcedureQuery::buildProcedureLegs(const map::MapAirport
     legs->runway = procedureQuery->valueStr("runway_name");
   }
   procedureQuery->finish();
+
+  // Load all legs ======================
+  procedureLegQuery->bindValue(":id", procedureId);
+  procedureLegQuery->exec();
+  while(procedureLegQuery->next())
+  {
+    legs->procedureLegs.append(buildProcedureLegEntry(*legs, airport));
+    legs->procedureLegs.last().airportId = airport.id;
+    legs->procedureLegs.last().procedureId = procedureId;
+  }
 
   // Get all runway ends if they are in the database
   bool runwayFound = false;
