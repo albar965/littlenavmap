@@ -39,7 +39,6 @@ enum Correction : quint8
   CORRECT_NONE, /* Nothing to correct */
   CORRECT_MSFS_HAS_NAVIGRAPH, /* MSFS with Navigraph update found -> mixed mode */
   CORRECT_MSFS_NO_NAVIGRAPH, /* MSFS without navdata update found -> no navdatabase */
-  CORRECT_MSFS_2024, /* MSFS 2024 -> no navdatabase */
   CORRECT_FSX_P3D_UPDATED, /* Any FSX or P3D with updated cycle -> mixed or sim only mode */
   CORRECT_FSX_P3D_OUTDATED, /* Any FSX or P3D with old included AIRAC - sim only mode */
   CORRECT_XP_CYCLE_NAV_EQUAL, /* XP nav cycle is equal to sim cycle -> mixed mode */

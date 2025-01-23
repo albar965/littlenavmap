@@ -1240,7 +1240,6 @@ void DatabaseManager::assignSceneryCorrection()
         break;
 
       case navdb::CORRECT_MSFS_NO_NAVIGRAPH:
-      case navdb::CORRECT_MSFS_2024:
       case navdb::CORRECT_XP_CYCLE_NAV_SMALLER:
       case navdb::CORRECT_FSX_P3D_OUTDATED:
         // Assign value to simulator too to remember value
@@ -1271,14 +1270,7 @@ navdb::Correction DatabaseManager::getSceneryCorrection(const navdb::Status& nav
 
   if(metaSim.hasData())
   {
-    if(simType == atools::fs::FsPaths::MSFS_2024)
-    {
-      // ======================================================================================================
-      // Correct scenery mode for MSFS 2024 ==============================================
-      if(navDbStatus == navdb::MIXED || navDbStatus == navdb::ALL)
-        correction = navdb::CORRECT_MSFS_2024;
-    }
-    else if(simType == atools::fs::FsPaths::MSFS)
+    if(simType == atools::fs::FsPaths::MSFS || simType == atools::fs::FsPaths::MSFS_2024)
     {
       // ======================================================================================================
       // Correct scenery mode for MSFS ==============================================
@@ -1351,7 +1343,6 @@ void DatabaseManager::correctSceneryOptions(navdb::Correction& correction)
 
     case navdb::CORRECT_FSX_P3D_OUTDATED:
     case navdb::CORRECT_MSFS_NO_NAVIGRAPH:
-    case navdb::CORRECT_MSFS_2024:
     case navdb::CORRECT_XP_CYCLE_NAV_SMALLER:
       navDbActionOff->setChecked(true);
       switchNavFromMainMenu();
@@ -1405,15 +1396,17 @@ void DatabaseManager::checkSceneryOptions(bool manualCheck)
                                               "<p style='white-space:pre'>You can load the simulator scenery library "
                                                 "database in the menu<br/>"
                                                 "\"Scenery Library\" -> \"Load Scenery Library\".</p>"
-                                                "<p style='white-space:pre'>Alternatively, you can switch to Navigraph only data in the menu<br/>"
-                                                "\"Scenery Library\" -> \"Navigraph\" -> \"Use Navigraph for all Features\".</p>"
+                                                "<p style='white-space:pre'>"
+                                                  "Alternatively, you can switch to Navigraph only data in the menu<br/>"
+                                                  "\"Scenery Library\" -> \"Navigraph\" -> \"Use Navigraph for all Features\".</p>"
 
                                             ));
       break;
 
     case navdb::CORRECT_MSFS_HAS_NAVIGRAPH:
       if(dialog->showQuestionMsgBox(manualCheck ? QString() : lnm::ACTIONS_SHOW_CORRECT_MSFS_HAS_NAVIGRAPH,
-                                    tr("<p style='white-space:pre'>You are using MSFS with the Navigraph navdata update.</p>"
+                                    tr("<p style='white-space:pre'>"
+                                         "You are using MSFS 2020 or 2024 with the Navigraph navdata update.</p>"
                                          "<p>You should update the Little Navmap navdata with the "
                                            "Navigraph FMS Data Manager as well and use the right scenery library mode "
                                            "\"Use Navigraph for Navaids and Procedures\" "
@@ -1428,22 +1421,10 @@ void DatabaseManager::checkSceneryOptions(bool manualCheck)
 
     case navdb::CORRECT_MSFS_NO_NAVIGRAPH:
       if(dialog->showQuestionMsgBox(manualCheck ? QString() : lnm::ACTIONS_SHOW_CORRECT_MSFS_NO_NAVIGRAPH,
-                                    tr("<p style='white-space:pre'>You are using MSFS without the Navigraph navdata update.</p>"
+                                    tr("<p style='white-space:pre'>"
+                                         "You are using MSFS 2020 or 2024 without the Navigraph navdata update.</p>"
                                          "<p>You should use the scenery library mode \"Do not use Navigraph Database\" "
                                            "to avoid issues with airport information in Little Navmap.</p>"
-                                           "<p style='white-space:pre'>You can change the mode manually in the menu<br/>"
-                                           "\"Scenery Library\" -> \"Navigraph\" -> \"Do not use Navigraph Database\".</p>"
-                                           "<p>Correct the scenery library mode now?</p>", "Sync texts with menu items"),
-                                    manualCheck ? QString() : tr("Do not &show this dialog again and always correct mode after loading."),
-                                    QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes, QMessageBox::Yes) == QMessageBox::Yes)
-        correctSceneryOptions(correction);
-      break;
-
-    case navdb::CORRECT_MSFS_2024:
-      if(dialog->showQuestionMsgBox(manualCheck ? QString() : lnm::ACTIONS_SHOW_CORRECT_MSFS_NO_NAVIGRAPH,
-                                    tr("<p style='white-space:pre'>You are using MSFS 2024.</p>"
-                                         "<p>You should use the scenery library mode \"Do not use Navigraph Database\" "
-                                           "to avoid issues with airport information or navigation data mismatches in Little Navmap.</p>"
                                            "<p style='white-space:pre'>You can change the mode manually in the menu<br/>"
                                            "\"Scenery Library\" -> \"Navigraph\" -> \"Do not use Navigraph Database\".</p>"
                                            "<p>Correct the scenery library mode now?</p>", "Sync texts with menu items"),
