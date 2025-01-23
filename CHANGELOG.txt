@@ -32,7 +32,8 @@ Note that some of theses limitations can only be fixed by Asobo.
 * A workaround is used to load all navaids which are not connected to procedures or airways.
   Unfortunately this increases the loading time. This needs to be fixed in the SimConnect facility
   interface by Asobo.
-* Loading airports and navaids takes about 10 to 15 minutes.
+* Loading airports and navaids takes about 10 to 15 minutes. Optimizations might come with
+  future updates.
 * Detection of add-on airports is not possible. Right click on an airport icon on the map, the
   airport search result table or the flight plan table and use the function `Mark Airport as add-on`
   which will add a userpoint on top of an airport marking it as an add-on.
@@ -64,6 +65,11 @@ Note that some of theses limitations can only be fixed by Asobo.
 Little Navmap cannot detect a Navigraph installation since the location of the folder `Community`
 can be moved by the user. Select `Use Navigraph for Navaids and Procedures` instead of `Select
 automatically` in the Little Navmap menu `Scenery Library` -> `Navigraph`.
+
+### MSFS online flight planner
+
+Note that the [MSFS online flight planner](https://planner.flightsimulator.com/) cannot import
+valid MSFS 2024 flight plans. #1234
 
 ## Changes from 3.0.13.beta1 to 3.0.13.beta2
 
