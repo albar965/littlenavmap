@@ -27,54 +27,79 @@ compiler implementation.
 Note that some of theses limitations can only be fixed by Asobo.
 
 * The simulator has to run to load the scenery library.
-* The simulator connection in Little Navmap has to be paused during loading. You will not see aircraft updates in Little Navmap but you can use Little Navmap normally while loading.
-* A workaround is used to load all navaids which are not connected to procedures or airways. Unfortunately this increases the loading time. This needs to be fixed in the SimConnect facility interface by Asobo.
+* The simulator connection in Little Navmap has to be paused during loading. You will not see
+  aircraft updates in Little Navmap but you can use Little Navmap normally while loading.
+* A workaround is used to load all navaids which are not connected to procedures or airways.
+  Unfortunately this increases the loading time. This needs to be fixed in the SimConnect facility
+  interface by Asobo.
 * Loading airports and navaids takes about 10 to 15 minutes.
-* Detection of add-on airports is not possible. Right click on an airport icon on the map, the airport search result table or the flight plan table and use the function `Mark Airport as add-on` which will add a userpoint on top of an airport marking it as an add-on.
+* Detection of add-on airports is not possible. Right click on an airport icon on the map, the
+  airport search result table or the flight plan table and use the function `Mark Airport as add-on`
+  which will add a userpoint on top of an airport marking it as an add-on.
 * Airports have no city, country or state/province names.
 * Airport names are always in your local language as set in MSFS 2024.
 * Neither closed runways nor closed airports can be recognized.
-* Runways used by procedures at an airport do not always match. Example: EDDK, LSZR, LSZN, ENSB, EKRN, LFLO, LOWK and more where runways have been renamed recently in the real world.
-* The airport Istanbul Intl (LTFM) is missing in the stock data. Little Navmap will show the airport if you install an add-on.
-* A workaround has to be used to detect if an airport has lighted runways or not. This information is missing in the SimConnect interface. This is not 100 percent reliable.
-* MSFS 2020 provides around 42000 airports while MSFS 2024 has almost 84000 airports. Half of these are heliports.
-* Airspaces are not available through SimConnect. You can use other sources for airspaces. See chapter
-  [Little Navmap User Manual - Loading Airspaces](https://www.littlenavmap.org/manuals/littlenavmap/release/latest/en/AIRSPACELOAD.html)
+* Runways used by procedures at an airport do not always match. Example: EDDK, LSZR, LSZN, ENSB,
+  EKRN, LFLO, LOWK and more where runways have been renamed recently in the real world.
+* The airport Istanbul Intl (LTFM) is missing in the stock data. Little Navmap will show the
+  airport if you install an add-on.
+* A workaround has to be used to detect if an airport has lighted runways or not. This information
+  is missing in the SimConnect interface. This is not 100 percent reliable.
+* MSFS 2020 provides around 42000 airports while MSFS 2024 has almost 84000 airports. Half of these
+  are heliports.
+* Airspaces are not available through SimConnect. You can use other sources for airspaces. See
+  chapter
+  [Little Navmap User Manual - Loading  Airspaces](https://www.littlenavmap.org/manuals/littlenavmap/release/latest/en/AIRSPACELOAD.html)
   for more information and links to public airspace sources.
 * Airport aprons are not available, only taxiways.
 * Airline codes for parking are missing.
-* Note that all fields in the load scenery library dialog are disabled when selecting MSFS 2024 since no path is used.
+* Note that all fields in the load scenery library dialog are disabled when selecting MSFS 2024
+  since no path is used.
 * A warning dialog is shown when trying to compile MSFS 2024 with the 32-bit build.
-* Note that loading airports via SimConnect allows to read encrypted add-on airports. You will not see the notification message about encrypted airports anymore for MSFS 2024.
+* Note that loading airports via SimConnect allows to read encrypted add-on airports. You will not
+  see the notification message about encrypted airports anymore for MSFS 2024.
 
 ### For Navigraph user who have the navdata update for MSFS 2024 and Little Navmap installed:
 
-Little Navmap cannot detect a Navigraph installation since the location of the folder `Community` can be moved by the user. Select `Use Navigraph for Navaids and Procedures` instead of `Select automatically` in the Little Navmap menu `Scenery Library` -> `Navigraph`.
+Little Navmap cannot detect a Navigraph installation since the location of the folder `Community`
+can be moved by the user. Select `Use Navigraph for Navaids and Procedures` instead of `Select
+automatically` in the Little Navmap menu `Scenery Library` -> `Navigraph`.
 
 ## Changes from 3.0.13.beta1 to 3.0.13.beta2
 
 ### MSFS 2024
 
 * Fixed ILS detection. Previously some or all ILS were wrongly read as VOR stations.
-* Fixed invalid runway references in ILS. As result ILS or localizers used in the flight plan were not shown in the elevation profile or the map.
+* Fixed invalid runway references in ILS. As result ILS or localizers used in the flight plan were
+  not shown in the elevation profile or the map.
 * Corrected counting of ILS when loading scenery library.
-* Now combining procedures having the same runway transitions. Runway transitions are now collapsed to parallel runways (indicated by e.g. `SID 16L, 16R`) or `All`.
-* Now adding navaids not connected to procedures or airways to MSFS 2024 loading process. These are required to build Oceanic tracks or off-airways routes, for example. This function uses a workaround until SimConnect is improved by Asobo.
-* Now correcting odd altitude values by rounding. This affected procedure altitude restrictions, for example.
-* Now calculating magnetic declination for all facilities except VOR using the World Magnetic Model instead of the partially wrong MSFS 2024 values.
+* Now combining procedures having the same runway transitions. Runway transitions are now collapsed
+  to parallel runways (indicated by e.g. `SID 16L, 16R`) or `All`.
+* Now adding navaids not connected to procedures or airways to MSFS 2024 loading process. These are
+  required to build Oceanic tracks or off-airways routes, for example. This function uses a
+  workaround until SimConnect is improved by Asobo.
+* Now correcting odd altitude values by rounding. This affected procedure altitude restrictions,
+  for example.
+* Now calculating magnetic declination for all facilities except VOR using the World Magnetic Model
+  instead of the partially wrong MSFS 2024 values.
 * Fixed detection of military airports. Added new keywords for military names in other languages.
 
 ### Other
 
-* Added keyboard shortcut `Ctrl+Shift+K` to preview all procedures. Now activating tree widget when pressing `Shift+F5` to activate the procedure search.
+* Added keyboard shortcut `Ctrl+Shift+K` to preview all procedures. Now activating tree widget when
+  pressing `Shift+F5` to activate the procedure search.
 * Added missing portable script `Little Navmap Portable.command` to macOS build
-* Broken taxiway paths being wider than 1000 ft are now omitted. Example: EDDF in MSFS 2020 resulting in a large white area on top of the airport.
+* Broken taxiway paths being wider than 1000 ft are now omitted. Example: EDDF in MSFS 2020
+  resulting in a large white area on top of the airport.
 * Completely removed drawing of transparent paths and aprons using patterns. All are now opaque.
-* Added workaround where co-located NDB and localizers with the same name preferred the NDB wrongly for procedures. This resulted in the ILS or localizer not being shown for related approaches. Example ENOV approach LDMB. Localizer and NDB are named HN there.
+* Added workaround where co-located NDB and localizers with the same name preferred the NDB wrongly
+  for procedures. This resulted in the ILS or localizer not being shown for related approaches.
+  Example ENOV approach LDMB. Localizer and NDB are named HN there.
 * Added hint how to fix wrong map theme path in error message window.
 * Adapted German translation to new texts. Changed term `Prozedur` to more common `Verfahren`.
 * Fixed broken build where Chinese translation was not available. #1228
-* Added Chinese translations for Qt components from project [qt_zh_CN.ts](https://github.com/niemingzhao/qt_zh_CN.ts) to fix not translated buttons. #1228
+* Added Chinese translations for Qt components from project
+  [qt_zh_CN.ts](https://github.com/niemingzhao/qt_zh_CN.ts) to fix not translated buttons. #1228
 
 ==<<=============================================================================
 
