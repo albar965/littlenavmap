@@ -1619,7 +1619,11 @@ bool DatabaseManager::checkValidBasePaths() const
       dialog->showInfoMsgBox(lnm::ACTIONS_SHOW_DATABASE_SIMCONNECT,
                              tr("Note that the connection to the flight simulator has to be paused while "
                                 "loading data from the simulator.\n"
-                                "You will not see user aircraft updates while loading."),
+                                "You will not see user aircraft updates while loading.\n\n"
+                                "Note that the loading process can take a while. Expect %1 to %2 minutes. "
+                                "In the meantime, you can continue to use %3 as normal.").
+                             arg(SIMCONNECT_LOADING_MINUTES_MIN).arg(SIMCONNECT_LOADING_MINUTES_MAX).
+                             arg(QCoreApplication::applicationName()),
                              tr("Do not &show this dialog again."));
 
       bool connectionValid = NavApp::checkSimConnect();
@@ -1629,8 +1633,9 @@ bool DatabaseManager::checkValidBasePaths() const
           tr("Cannot connect to Microsoft Flight Simulator 2024, which is required for Little Navmap to load data.\n\n"
              "Start Microsoft Flight Simulator 2024, "
              "wait until the user interface of the simulator is visible and then press \"Ok\" to continue.\n\n"
-             "Note that the loading process can take a while. Expect about %1 to %2 minutes.").
-          arg(SIMCONNECT_LOADING_MINUTES_MIN).arg(SIMCONNECT_LOADING_MINUTES_MAX),
+             "Note that the loading process can take a while. Expect %1 to %2 minutes."
+             "In the meantime, you can continue to use %3 as normal.").
+          arg(SIMCONNECT_LOADING_MINUTES_MIN).arg(SIMCONNECT_LOADING_MINUTES_MAX).arg(QCoreApplication::applicationName()),
           QMessageBox::Ok | QMessageBox::Cancel);
 
         if(retval == QMessageBox::Ok)
