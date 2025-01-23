@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -72,6 +72,10 @@ int main(int argc, char *argv[])
 
   // Initialize the resources from atools static library
   Q_INIT_RESOURCE(atools);
+
+#ifdef SIMCONNECT_BUILD_WIN64
+  Q_INIT_RESOURCE(navdata);
+#endif
 
   // Register all types to allow conversion from/to QVariant and thus reading/writing into settings
   atools::geo::registerMetaTypes();
