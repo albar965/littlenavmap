@@ -4027,7 +4027,7 @@ Utile si vous utilisez des outils pour désactiver et activer certaines scènes 
     </message>
     <message>
         <location filename="src/db/databasemanager.cpp" line="803"/>
-        <location filename="src/db/databasemanager.cpp" line="1948"/>
+        <location filename="src/db/databasemanager.cpp" line="1953"/>
         <source>, </source>
         <translation type="unfinished">, </translation>
     </message>
@@ -4073,15 +4073,6 @@ Utile si vous utilisez des outils pour désactiver et activer certaines scènes 
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="1629"/>
-        <source>Cannot connect to Microsoft Flight Simulator 2024, which is required for Little Navmap to load data.
-
-Start Microsoft Flight Simulator 2024, wait until the user interface of the simulator is visible and then press &quot;Ok&quot; to continue.
-
-Note that the loading process can take a while. Expect about %1 to %2 minutes.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>%1 - Validate scenery library mode</source>
         <translation type="obsolete">%1 - Valider le mode de la bibliothèque de scènes</translation>
     </message>
@@ -4094,7 +4085,7 @@ Note that the loading process can take a while. Expect about %1 to %2 minutes.</
         <translation type="obsolete">Aucun problème n&apos;a été détecté. Le mode de la bibliothèque de scènes est correct.</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="2065"/>
+        <location filename="src/db/databasemanager.cpp" line="2070"/>
         <source>&lt;p&gt;%1&lt;/p&gt;&lt;p&gt;It is advised to reload the scenery library database after each Little Navmap update, after installing new add-on scenery or after a flight simulator update to enable new features or benefit from bug fixes.&lt;/p&gt;&lt;p&gt;You can do this in menu &quot;Scenery Library&quot; -&gt; &quot;Load Scenery Library&quot;.&lt;/p&gt;&lt;p&gt;Open the &quot;Load Scenery Library&quot; dialog window now?&lt;/p&gt;</source>
         <translation type="unfinished">&lt;/p&gt;%1&lt;/p&gt;&lt;p&gt;Il est conseillé de recharger la base de données de la bibliothèque de scènes après chaque mise à jour de Little Navmap, après l&apos;installation de nouvelles scènes complémentaires ou après une mise à jour du simulateur de vol afin d&apos;activer de nouvelles fonctionnalités ou de bénéficier de corrections de bugs.&lt;/p&gt;&lt;p&gt;Vous pouvez le faire dans le menu &quot;Bibliothèque de scènes&quot; -&gt; &quot;Charger la bibliothèque de scènes&quot;.&lt;/p&gt;&lt;p&gt;Ouverture de la fenêtre de dialogue &quot;Charger la bibliothèque de scènes&quot; maintenant?&lt;/p&gt;</translation>
     </message>
@@ -4192,96 +4183,107 @@ Note that the loading process can take a while. Expect about %1 to %2 minutes.</
     <message>
         <location filename="src/db/databasemanager.cpp" line="1620"/>
         <source>Note that the connection to the flight simulator has to be paused while loading data from the simulator.
-You will not see user aircraft updates while loading.</source>
-        <oldsource>Note that the connection to the flight simulator has to be paused while loading airports from the simulator.
+You will not see user aircraft updates while loading.
+
+Note that the loading process can take a while. Expect %1 to %2 minutes. In the meantime, you can continue to use %3 as normal.</source>
+        <oldsource>Note that the connection to the flight simulator has to be paused while loading data from the simulator.
 You will not see user aircraft updates while loading.</oldsource>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="1707"/>
+        <location filename="src/db/databasemanager.cpp" line="1633"/>
+        <source>Cannot connect to Microsoft Flight Simulator 2024, which is required for Little Navmap to load data.
+
+Start Microsoft Flight Simulator 2024, wait until the user interface of the simulator is visible and then press &quot;Ok&quot; to continue.
+
+Note that the loading process can take a while. Expect %1 to %2 minutes.In the meantime, you can continue to use %3 as normal.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/db/databasemanager.cpp" line="1712"/>
         <source>Note that you can put the scenery library loading window into the background and continue working with Little Navmap while it is loading.</source>
         <translation type="unfinished">Notez que vous pouvez placer la fenêtre de chargement de la bibliothèque de scènes en arrière-plan et continuer à travailler avec Little Navmap pendant le chargement.</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="1934"/>
+        <location filename="src/db/databasemanager.cpp" line="1939"/>
         <source>%1 %2 included for loading</source>
         <translation type="unfinished">%1 %2 inclus pour le chargement</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="1936"/>
+        <location filename="src/db/databasemanager.cpp" line="1941"/>
         <source>extra directories are</source>
         <translation type="unfinished">les répertoires supplémentaires sont</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="1936"/>
+        <location filename="src/db/databasemanager.cpp" line="1941"/>
         <source>extra directory is</source>
         <translation type="unfinished">Le répertoire supplémentaire est</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="1938"/>
+        <location filename="src/db/databasemanager.cpp" line="1943"/>
         <source>%1 %2 excluded from loading</source>
         <translation type="unfinished">%1 %2 exclu du chargement</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="1940"/>
-        <location filename="src/db/databasemanager.cpp" line="1944"/>
+        <location filename="src/db/databasemanager.cpp" line="1945"/>
+        <location filename="src/db/databasemanager.cpp" line="1949"/>
         <source>directories are</source>
         <translation type="unfinished">les répertoires sont</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="1940"/>
-        <location filename="src/db/databasemanager.cpp" line="1944"/>
+        <location filename="src/db/databasemanager.cpp" line="1945"/>
+        <location filename="src/db/databasemanager.cpp" line="1949"/>
         <source>directory is</source>
         <translation type="unfinished">le répertoire est</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="1942"/>
+        <location filename="src/db/databasemanager.cpp" line="1947"/>
         <source>%1 %2 excluded from add-on detection</source>
         <translation type="unfinished">%1 %2 exclu de la détection des modules complémentaires</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="1948"/>
+        <location filename="src/db/databasemanager.cpp" line="1953"/>
         <source>&lt;b&gt;Note:&lt;/b&gt; </source>
         <translation type="unfinished">&lt;b&gt;Note:&lt;/b&gt; </translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="1948"/>
+        <location filename="src/db/databasemanager.cpp" line="1953"/>
         <source> and </source>
         <translation type="unfinished"> et </translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="1948"/>
+        <location filename="src/db/databasemanager.cpp" line="1953"/>
         <source>.</source>
         <translation type="unfinished">.</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="1949"/>
+        <location filename="src/db/databasemanager.cpp" line="1954"/>
         <source>Included and excluded directories can be changed in options on page &quot;Scenery Library Database&quot;.</source>
         <translation type="unfinished">Les répertoires inclus et exclus peuvent être modifiés dans les options de la page &quot;Base de données de la bibliothèque de scènes&quot;.</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="1952"/>
+        <location filename="src/db/databasemanager.cpp" line="1957"/>
         <source>&lt;p&gt;</source>
         <translation type="unfinished">&lt;p&gt;</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="1952"/>
+        <location filename="src/db/databasemanager.cpp" line="1957"/>
         <source>&lt;/p&gt;</source>
         <translation type="unfinished">&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="2052"/>
+        <location filename="src/db/databasemanager.cpp" line="2057"/>
         <source>The scenery library database was created using a previous version of Little Navmap.</source>
         <translation type="unfinished">La base de données de la bibliothèque de scènes a été créée à l&apos;aide d&apos;une version précédente de Little Navmap.</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="2057"/>
+        <location filename="src/db/databasemanager.cpp" line="2062"/>
         <source>Scenery library database was not reloaded for more than %1 days.</source>
         <translation type="unfinished">La base de données de la bibliothèque de scènes n&apos;a pas été rechargée depuis plus de %1 jours.</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="1952"/>
-        <location filename="src/db/databasemanager.cpp" line="2072"/>
+        <location filename="src/db/databasemanager.cpp" line="1957"/>
+        <location filename="src/db/databasemanager.cpp" line="2077"/>
         <source>&lt;br/&gt;</source>
         <translation type="unfinished">&lt;br/&gt;</translation>
     </message>
@@ -4340,9 +4342,9 @@ Vous pouvez charger la base de données de la bibliothèque de scènes du simula
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="1623"/>
-        <location filename="src/db/databasemanager.cpp" line="1709"/>
-        <location filename="src/db/databasemanager.cpp" line="2073"/>
+        <location filename="src/db/databasemanager.cpp" line="1627"/>
+        <location filename="src/db/databasemanager.cpp" line="1714"/>
+        <location filename="src/db/databasemanager.cpp" line="2078"/>
         <source>Do not &amp;show this dialog again.</source>
         <translation type="unfinished">N&apos;affichez plu&amp;s cette boîte de dialogue.</translation>
     </message>
@@ -4503,14 +4505,14 @@ Activez l&apos;option &quot;Lire les entrées de scènes inactives ou désactiv�
         <translation type="vanished">&lt;big&gt;Terminé.&lt;/big&gt;</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="1898"/>
-        <location filename="src/db/databasemanager.cpp" line="1906"/>
+        <location filename="src/db/databasemanager.cpp" line="1903"/>
         <location filename="src/db/databasemanager.cpp" line="1911"/>
+        <location filename="src/db/databasemanager.cpp" line="1916"/>
         <source>None</source>
         <translation>Aucun</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="1953"/>
+        <location filename="src/db/databasemanager.cpp" line="1958"/>
         <source>&lt;p&gt;&lt;big&gt;Currently Loaded:&lt;/big&gt;&lt;/p&gt;&lt;p&gt;%1&lt;/p&gt;</source>
         <translation type="unfinished">&lt;p&gt;&lt;big&gt;Chargement effectué:&lt;/big&gt;&lt;/p&gt;&lt;p&gt;%1&lt;/p&gt;</translation>
     </message>
@@ -31823,113 +31825,113 @@ Notez que l&apos;ordre des colonnes est celui sélectionné dans le tableau des 
 <context>
     <name>ProcedureQuery</name>
     <message>
-        <location filename="src/query/procedurequery.cpp" line="1717"/>
-        <location filename="src/query/procedurequery.cpp" line="1959"/>
-        <location filename="src/query/procedurequery.cpp" line="1977"/>
-        <location filename="src/query/procedurequery.cpp" line="2023"/>
-        <location filename="src/query/procedurequery.cpp" line="2143"/>
+        <location filename="src/query/procedurequery.cpp" line="1740"/>
+        <location filename="src/query/procedurequery.cpp" line="1982"/>
+        <location filename="src/query/procedurequery.cpp" line="2000"/>
+        <location filename="src/query/procedurequery.cpp" line="2046"/>
+        <location filename="src/query/procedurequery.cpp" line="2166"/>
         <source>/</source>
         <translation type="unfinished">/</translation>
     </message>
     <message>
-        <location filename="src/query/procedurequery.cpp" line="1978"/>
-        <location filename="src/query/procedurequery.cpp" line="2024"/>
+        <location filename="src/query/procedurequery.cpp" line="2001"/>
+        <location filename="src/query/procedurequery.cpp" line="2047"/>
         <source>°M</source>
         <translation>°M</translation>
     </message>
     <message>
-        <location filename="src/query/procedurequery.cpp" line="1720"/>
+        <location filename="src/query/procedurequery.cpp" line="1743"/>
         <source>DME %1</source>
         <translation>DME %1</translation>
     </message>
     <message>
-        <location filename="src/query/procedurequery.cpp" line="1841"/>
-        <location filename="src/query/procedurequery.cpp" line="2140"/>
-        <location filename="src/query/procedurequery.cpp" line="2152"/>
-        <location filename="src/query/procedurequery.cpp" line="2161"/>
-        <location filename="src/query/procedurequery.cpp" line="2177"/>
+        <location filename="src/query/procedurequery.cpp" line="1864"/>
+        <location filename="src/query/procedurequery.cpp" line="2163"/>
+        <location filename="src/query/procedurequery.cpp" line="2175"/>
+        <location filename="src/query/procedurequery.cpp" line="2184"/>
+        <location filename="src/query/procedurequery.cpp" line="2200"/>
         <source>Intercept</source>
         <translation>Intercepter</translation>
     </message>
     <message>
-        <location filename="src/query/procedurequery.cpp" line="1841"/>
+        <location filename="src/query/procedurequery.cpp" line="1864"/>
         <source>Course to Fix</source>
         <translation type="unfinished">Route au waypoint (Rm)</translation>
     </message>
     <message>
-        <location filename="src/query/procedurequery.cpp" line="1908"/>
-        <location filename="src/query/procedurequery.cpp" line="2056"/>
+        <location filename="src/query/procedurequery.cpp" line="1931"/>
+        <location filename="src/query/procedurequery.cpp" line="2079"/>
         <source>Altitude</source>
         <translation>Altitude</translation>
     </message>
     <message>
-        <location filename="src/query/procedurequery.cpp" line="1978"/>
-        <location filename="src/query/procedurequery.cpp" line="2024"/>
+        <location filename="src/query/procedurequery.cpp" line="2001"/>
+        <location filename="src/query/procedurequery.cpp" line="2047"/>
         <source>°T</source>
         <translation>°T</translation>
     </message>
     <message>
-        <location filename="src/query/procedurequery.cpp" line="2050"/>
-        <location filename="src/query/procedurequery.cpp" line="2068"/>
+        <location filename="src/query/procedurequery.cpp" line="2073"/>
+        <location filename="src/query/procedurequery.cpp" line="2091"/>
         <source>Manual</source>
         <translation type="unfinished">Manuel</translation>
     </message>
     <message>
-        <location filename="src/query/procedurequery.cpp" line="2062"/>
+        <location filename="src/query/procedurequery.cpp" line="2085"/>
         <source>Single</source>
         <translation>Unique</translation>
     </message>
     <message>
-        <location filename="src/query/procedurequery.cpp" line="2145"/>
-        <location filename="src/query/procedurequery.cpp" line="2177"/>
+        <location filename="src/query/procedurequery.cpp" line="2168"/>
+        <location filename="src/query/procedurequery.cpp" line="2200"/>
         <source>Leg</source>
         <translation>segment</translation>
     </message>
     <message>
-        <location filename="src/query/procedurequery.cpp" line="2854"/>
+        <location filename="src/query/procedurequery.cpp" line="2877"/>
         <source>no runway</source>
         <translation type="unfinished">aucune piste</translation>
     </message>
     <message>
-        <location filename="src/query/procedurequery.cpp" line="2854"/>
+        <location filename="src/query/procedurequery.cpp" line="2877"/>
         <source>runway %1</source>
         <translation type="unfinished">piste %1</translation>
     </message>
     <message>
-        <location filename="src/query/procedurequery.cpp" line="2892"/>
+        <location filename="src/query/procedurequery.cpp" line="2915"/>
         <source>SID %1 from %2</source>
         <translation type="unfinished">SID %1 de %2</translation>
     </message>
     <message>
-        <location filename="src/query/procedurequery.cpp" line="2939"/>
-        <location filename="src/query/procedurequery.cpp" line="2984"/>
+        <location filename="src/query/procedurequery.cpp" line="2962"/>
+        <location filename="src/query/procedurequery.cpp" line="3007"/>
         <source>Approach %1 to %2</source>
         <translation type="unfinished">Approche %1 vers %2</translation>
     </message>
     <message>
-        <location filename="src/query/procedurequery.cpp" line="3011"/>
+        <location filename="src/query/procedurequery.cpp" line="3034"/>
         <source>STAR %1 to %2</source>
         <translation type="unfinished">STAR %1 vers %2</translation>
     </message>
     <message>
-        <location filename="src/query/procedurequery.cpp" line="3074"/>
-        <location filename="src/query/procedurequery.cpp" line="3091"/>
+        <location filename="src/query/procedurequery.cpp" line="3097"/>
+        <location filename="src/query/procedurequery.cpp" line="3114"/>
         <source>SID %1 is using an invalid runway %2</source>
         <translation type="unfinished">Le SID %1 utilise une piste non valide %2</translation>
     </message>
     <message>
-        <location filename="src/query/procedurequery.cpp" line="3128"/>
-        <location filename="src/query/procedurequery.cpp" line="3145"/>
+        <location filename="src/query/procedurequery.cpp" line="3151"/>
+        <location filename="src/query/procedurequery.cpp" line="3168"/>
         <source>STAR %1 is using an invalid runway %2</source>
         <translation type="unfinished">STAR %1 utilise une piste non valide %2</translation>
     </message>
     <message>
-        <location filename="src/query/procedurequery.cpp" line="3168"/>
+        <location filename="src/query/procedurequery.cpp" line="3191"/>
         <source>Procedure %1 %2 in scenery library has errors</source>
         <translation type="unfinished">La procédure %1 %2 de la bibliothèque de scènes comporte des erreurs</translation>
     </message>
     <message>
-        <location filename="src/query/procedurequery.cpp" line="3177"/>
+        <location filename="src/query/procedurequery.cpp" line="3200"/>
         <source>Procedure not found in scenery library</source>
         <translation type="unfinished">Procédure non trouvée dans la bibliothèque de scènes</translation>
     </message>
@@ -31938,7 +31940,7 @@ Notez que l&apos;ordre des colonnes est celui sélectionné dans le tableau des 
         <translation type="obsolete">SID %1</translation>
     </message>
     <message>
-        <location filename="src/query/procedurequery.cpp" line="2905"/>
+        <location filename="src/query/procedurequery.cpp" line="2928"/>
         <source>SID transition %1</source>
         <translation type="unfinished">Transition SID %1</translation>
     </message>
@@ -31947,7 +31949,7 @@ Notez que l&apos;ordre des colonnes est celui sélectionné dans le tableau des 
         <translation type="obsolete">Approche %1</translation>
     </message>
     <message>
-        <location filename="src/query/procedurequery.cpp" line="2995"/>
+        <location filename="src/query/procedurequery.cpp" line="3018"/>
         <source>Transition %1</source>
         <translation type="unfinished">Transition %1</translation>
     </message>
@@ -31956,12 +31958,12 @@ Notez que l&apos;ordre des colonnes est celui sélectionné dans le tableau des 
         <translation type="obsolete">STAR %1</translation>
     </message>
     <message>
-        <location filename="src/query/procedurequery.cpp" line="3024"/>
+        <location filename="src/query/procedurequery.cpp" line="3047"/>
         <source>STAR transition %1</source>
         <translation type="unfinished">Transition STAR %1</translation>
     </message>
     <message>
-        <location filename="src/query/procedurequery.cpp" line="1079"/>
+        <location filename="src/query/procedurequery.cpp" line="1102"/>
         <source>Start</source>
         <translation>Début</translation>
     </message>
@@ -37389,17 +37391,17 @@ Les espaces sont remplacés par des traits de soulignement.</translation>
         <translation type="unfinished">Une seule des options -f et -d peut être utilisée</translation>
     </message>
     <message>
-        <location filename="src/main.cpp" line="351"/>
+        <location filename="src/main.cpp" line="355"/>
         <source>Log files:</source>
         <translation>Fichiers Log:</translation>
     </message>
     <message>
-        <location filename="src/main.cpp" line="352"/>
+        <location filename="src/main.cpp" line="356"/>
         <source>Database directory:</source>
         <translation>Répertoire de la base de données:</translation>
     </message>
     <message>
-        <location filename="src/main.cpp" line="353"/>
+        <location filename="src/main.cpp" line="357"/>
         <source>Configuration:</source>
         <translation>Configuration:</translation>
     </message>
@@ -37830,8 +37832,8 @@ Calculé sur la base du profil de performance de l&apos;aéronef.</translation>
         <translation type="unfinished">Erreur de lecture de la configuration multi-exportation: Version non valide. Configuration de multi-exportation incompatible.</translation>
     </message>
     <message>
-        <location filename="src/query/procedurequery.cpp" line="2690"/>
-        <location filename="src/query/procedurequery.cpp" line="2786"/>
+        <location filename="src/query/procedurequery.cpp" line="2713"/>
+        <location filename="src/query/procedurequery.cpp" line="2809"/>
         <source>RW%1+%2</source>
         <translation type="unfinished">RW%1+%2</translation>
     </message>
@@ -37884,7 +37886,7 @@ L&apos;anneau d&apos;autonomie est statique et ne change pas avec les performanc
     </message>
     <message>
         <location filename="src/gui/rangemarkerdialog.ui" line="79"/>
-        <location filename="src/gui/rangemarkerdialog.cpp" line="108"/>
+        <location filename="src/gui/rangemarkerdialog.cpp" line="109"/>
         <source>&amp;Latitude and Longitude:</source>
         <translation type="unfinished">&amp;Latitude et Longitude:</translation>
     </message>
@@ -37962,12 +37964,12 @@ et utilisez les rayons de l&apos;anneau de portée comme ci-dessus.</translation
         <translation type="unfinished">Maximum des valeurs %L1 de %L2 à %L3 %dist%.</translation>
     </message>
     <message>
-        <location filename="src/gui/rangemarkerdialog.cpp" line="106"/>
+        <location filename="src/gui/rangemarkerdialog.cpp" line="107"/>
         <source>&amp;Longitude and Latitude:</source>
         <translation type="unfinished">&amp;Longitude et Latitude:</translation>
     </message>
     <message>
-        <location filename="src/gui/rangemarkerdialog.cpp" line="128"/>
+        <location filename="src/gui/rangemarkerdialog.cpp" line="129"/>
         <source>&lt;p&gt;&lt;b&gt;%1&lt;/b&gt;&lt;/p&gt;</source>
         <translation type="unfinished">&lt;p&gt;&lt;b&gt;%1&lt;/b&gt;&lt;/p&gt;</translation>
     </message>
@@ -37976,45 +37978,45 @@ et utilisez les rayons de l&apos;anneau de portée comme ci-dessus.</translation
         <translation type="obsolete">Coordonnées %1</translation>
     </message>
     <message>
-        <location filename="src/gui/rangemarkerdialog.cpp" line="128"/>
+        <location filename="src/gui/rangemarkerdialog.cpp" line="129"/>
         <source>Coordinates at click spot: %1</source>
         <translation type="unfinished">Coordonnées à l&apos;endroit du clic: %1</translation>
     </message>
     <message>
-        <location filename="src/gui/rangemarkerdialog.cpp" line="137"/>
+        <location filename="src/gui/rangemarkerdialog.cpp" line="138"/>
         <source> - </source>
         <translation type="unfinished"> - </translation>
     </message>
     <message>
-        <location filename="src/gui/rangemarkerdialog.cpp" line="137"/>
+        <location filename="src/gui/rangemarkerdialog.cpp" line="138"/>
         <source>.
 </source>
         <translation type="unfinished">.
 </translation>
     </message>
     <message>
-        <location filename="src/gui/rangemarkerdialog.cpp" line="139"/>
+        <location filename="src/gui/rangemarkerdialog.cpp" line="140"/>
         <source>Aircraft Performance: </source>
         <translation type="unfinished">Performances de l&apos;avion: </translation>
     </message>
     <message>
-        <location filename="src/gui/rangemarkerdialog.cpp" line="142"/>
+        <location filename="src/gui/rangemarkerdialog.cpp" line="143"/>
         <source>%1Estimated range with reserve: %2</source>
         <translation type="unfinished">%1Estimation de la portée avec réserve: %2</translation>
     </message>
     <message>
-        <location filename="src/gui/rangemarkerdialog.cpp" line="144"/>
+        <location filename="src/gui/rangemarkerdialog.cpp" line="145"/>
         <source>%1Estimated range not valid.</source>
         <translation type="unfinished">%1L&apos;intervalle estimé n&apos;est pas valide.</translation>
     </message>
     <message>
-        <location filename="src/gui/rangemarkerdialog.cpp" line="290"/>
+        <location filename="src/gui/rangemarkerdialog.cpp" line="291"/>
         <source> </source>
         <comment>Range ring number separator</comment>
         <translation type="unfinished"> </translation>
     </message>
     <message>
-        <location filename="src/gui/rangemarkerdialog.cpp" line="296"/>
+        <location filename="src/gui/rangemarkerdialog.cpp" line="297"/>
         <source> </source>
         <comment>Range ring separator</comment>
         <translation type="unfinished"> </translation>
