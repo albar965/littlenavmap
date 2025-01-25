@@ -29,11 +29,11 @@ Note that some of theses limitations can only be fixed by Asobo.
 * The simulator has to run to load the scenery library.
 * The simulator connection in Little Navmap has to be paused during loading. You will not see
   aircraft updates in Little Navmap but you can use Little Navmap normally while loading.
-* A workaround is used to load all navaids which are not connected to procedures or airways.
-  Unfortunately this increases the loading time. This needs to be fixed in the SimConnect facility
-  interface by Asobo.
 * Loading airports and navaids takes about 10 to 15 minutes. Better loading times need improvements
-  and fixes in the SimConnect interface by Asobo which has to provide a world wide list of navaids.
+  and fixes in the SimConnect interface which has to provide a world wide list of navaids.
+* A workaround is used to load all navaids which are not connected to procedures or airways until
+  the SimConnect interface is fixed. Oceanic tracks can be loaded now. Note that this workaround
+  does not ensure that really all available navaids are loaded.
 * Detection of add-on airports is not possible. Right click on an airport icon on the map, the
   airport search result table or the flight plan table and use the function `Mark Airport as add-on`
   which will add a userpoint on top of an airport marking it as an add-on.
@@ -82,7 +82,7 @@ valid MSFS 2024 flight plans. #1234
   to parallel runways (indicated by e.g. `SID 16L, 16R`) or `All`.
 * Now adding navaids not connected to procedures or airways to MSFS 2024 loading process. These are
   required to build Oceanic tracks or off-airways routes, for example. This function uses a
-  workaround until SimConnect is improved by Asobo.
+  workaround until SimConnect is improved to deliver a world-wide list of navaids.
 * Now correcting odd altitude values by rounding. This affected procedure altitude restrictions,
   for example.
 * Now calculating magnetic declination for all facilities except VOR using the World Magnetic Model
