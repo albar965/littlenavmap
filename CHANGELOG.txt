@@ -72,6 +72,8 @@ valid MSFS 2024 flight plans. #1234
 ### MSFS 2024
 
 * Now detecting Navigraph navdata update to select correct scenery library mode automatically.
+  Note that navaids are loaded incompletely to save time if this is detected since the Little Navmap
+  database should be updated directly using the Navigraph FMS data manaeger.
 * Fixed ILS detection. Previously some or all ILS were wrongly read as VOR stations.
 * Fixed invalid runway references in ILS. As result ILS or localizers used in the flight plan were
   not shown in the elevation profile or the map.
