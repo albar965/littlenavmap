@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -52,7 +52,8 @@ void SimBriefHandler::sendRouteToSimBrief()
   const Route& route = NavApp::getRouteConst();
 
   // Create route description string ================================
-  QString routeString = RouteStringWriter().createStringForRoute(route, 0.f, rs::SIMBRIEF_WRITE_DEFAULTS);
+  QString routeString = RouteStringWriter().
+                        createStringForRoute(route.adjustedToOptions(rf::ADD_PROC_ENTRY_EXIT), 0.f, rs::SIMBRIEF_WRITE_DEFAULTS);
   QString aircraftType = NavApp::getAircraftPerformance().getAircraftType();
 
   // Ask user ================================

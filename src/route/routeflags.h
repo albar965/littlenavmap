@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -47,9 +47,11 @@ enum RouteAdjustOption : quint32
   REMOVE_ALTERNATE = 1 << 5, /* Remove all alternate legs. */
   REMOVE_TRACKS = 1 << 6, /* Empty track name to force direct */
   FIX_CIRCLETOLAND = 1 << 7, /* Add a dummy best guess runway for circle-to-land approaches for X-Plane */
-  FIX_PROC_ENTRY_EXIT = 1 << 8, /* Add any removed procedure entry and exit points back
-                                 * if they are attached to an airway. */
-  FIX_PROC_ENTRY_EXIT_ALWAYS = 1 << 9, /* Always add any removed procedure entry and exit points back */
+
+  ADD_PROC_ENTRY_EXIT_AIRWAY = 1 << 8, /* Add any removed procedure entry and exit points back
+                                        * *if* they are attached to an airway. */
+  ADD_PROC_ENTRY_EXIT = 1 << 9, /* Always add any removed procedure entry and exit points back */
+
   SAVE_MSFS = 1 << 10, /* Insert all SID/STAR waypoints and add procedure information for each waypoint.
                         * Add approach information to last waypoint/destination.
                         * Also adds airport information to waypoints from simulator database.  */
@@ -72,30 +74,30 @@ enum RouteAdjustOption : quint32
   /* Flag combinations =========================================================================== */
 
   /* Export adjust options for most export formats */
-  DEFAULT_OPTS = rf::REPLACE_CUSTOM_WP | rf::REMOVE_ALTERNATE | rf::REMOVE_TRACKS | rf::FIX_PROC_ENTRY_EXIT,
+  DEFAULT_OPTS = rf::REPLACE_CUSTOM_WP | rf::REMOVE_ALTERNATE | rf::REMOVE_TRACKS | rf::ADD_PROC_ENTRY_EXIT_AIRWAY,
 
   /* Do not add waypoint and procedure entry or exit back. */
   DEFAULT_OPTS_PROC = rf::REPLACE_CUSTOM_WP | rf::REMOVE_ALTERNATE | rf::REMOVE_TRACKS,
 
   /* Always add entry and exit waypoints for procedures. This is used for formats not supporting procedures. */
-  DEFAULT_OPTS_NO_PROC = rf::REPLACE_CUSTOM_WP | rf::REMOVE_ALTERNATE | rf::REMOVE_TRACKS | FIX_PROC_ENTRY_EXIT_ALWAYS,
+  DEFAULT_OPTS_NO_PROC = rf::REPLACE_CUSTOM_WP | rf::REMOVE_ALTERNATE | rf::REMOVE_TRACKS | ADD_PROC_ENTRY_EXIT,
 
   /* Export adjust options for Garmin GFP formats */
   DEFAULT_OPTS_GFP = rf::DEFAULT_OPTS | rf::REMOVE_RUNWAY_PROC,
   DEFAULT_OPTS_GFP_NO_PROC = rf::DEFAULT_OPTS_NO_PROC | rf::REMOVE_RUNWAY_PROC,
 
-  DEFAULT_OPTS_FLP = rf::REPLACE_CUSTOM_WP | rf::REMOVE_TRACKS | rf::FIX_PROC_ENTRY_EXIT | rf::REMOVE_RUNWAY_PROC,
-  DEFAULT_OPTS_FLP_MSFS_CRJ = rf::REPLACE_CUSTOM_WP | rf::REMOVE_TRACKS | FIX_PROC_ENTRY_EXIT_ALWAYS | SAVE_AIRWAY_WP |
+  DEFAULT_OPTS_FLP = rf::REPLACE_CUSTOM_WP | rf::REMOVE_TRACKS | rf::ADD_PROC_ENTRY_EXIT_AIRWAY | rf::REMOVE_RUNWAY_PROC,
+  DEFAULT_OPTS_FLP_MSFS_CRJ = rf::REPLACE_CUSTOM_WP | rf::REMOVE_TRACKS | ADD_PROC_ENTRY_EXIT | SAVE_AIRWAY_WP |
                               rf::REMOVE_RUNWAY_PROC,
 
   /* LNMPLN save and load format. Does not mangle anything. */
-  DEFAULT_OPTS_LNMPLN = rf::FIX_PROC_ENTRY_EXIT | rf::SAVE_LNMPLN | rf::SAVE_KEEP_INVALID_START,
+  DEFAULT_OPTS_LNMPLN = rf::ADD_PROC_ENTRY_EXIT_AIRWAY | rf::SAVE_LNMPLN | rf::SAVE_KEEP_INVALID_START,
 
   /* LNMPLN save selected legs as plan. */
   DEFAULT_OPTS_LNMPLN_SAVE_SELECTED = rf::DEFAULT_OPTS_LNMPLN | rf::REMOVE_ALTERNATE | rf::SAVE_KEEP_INVALID_START,
 
   /* Option for RouteStringWriter used to generate a route description */
-  DEFAULT_OPTS_ROUTESTRING = rf::FIX_PROC_ENTRY_EXIT,
+  DEFAULT_OPTS_ROUTESTRING = rf::ADD_PROC_ENTRY_EXIT_AIRWAY,
 
   /* Microsoft Flight Simulator 2020 */
   DEFAULT_OPTS_MSFS = rf::DEFAULT_OPTS | rf::SAVE_MSFS | rf::REMOVE_CUSTOM_DEPART,
@@ -118,7 +120,7 @@ enum RouteAdjustOption : quint32
   /* Remove all procedures for FlightFactor T7 but keep entry and exit points */
   DEFAULT_OPTS_FMS_T7 = rf::REPLACE_CUSTOM_WP | rf::REMOVE_ALTERNATE | rf::REMOVE_TRACKS | rf::FIX_CIRCLETOLAND |
                         rf::XPLANE_REPLACE_AIRPORT_IDENTS | rf::REMOVE_CUSTOM_DEPART | rf::REMOVE_ALL_PROCEDURES |
-                        rf::FIX_PROC_ENTRY_EXIT_ALWAYS,
+                        rf::ADD_PROC_ENTRY_EXIT,
 
   /* Garmin GPX */
   DEFAULT_OPTS_GPX = rf::DEFAULT_OPTS | rf::SAVE_AIRWAY_WP | rf::SAVE_SID_WP | rf::SAVE_STAR_WP | rf::SAVE_APPROACH_WP

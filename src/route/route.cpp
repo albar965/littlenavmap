@@ -2856,7 +2856,7 @@ Route Route::adjustedToOptions(const Route& origRoute, rf::RouteAdjustOptions op
     route.removeProcedureLegs(proc::PROCEDURE_APPROACH_ALL);
 
   // Restore duplicate waypoints at route/procedure entry/exits which were removed after route calculation
-  if(options.testFlag(rf::FIX_PROC_ENTRY_EXIT) || options.testFlag(rf::FIX_PROC_ENTRY_EXIT_ALWAYS))
+  if(options.testFlag(rf::ADD_PROC_ENTRY_EXIT_AIRWAY) || options.testFlag(rf::ADD_PROC_ENTRY_EXIT))
   {
     QVector<float> altVector = route.getAltitudeLegs().getAltitudes();
 
@@ -2873,7 +2873,7 @@ Route Route::adjustedToOptions(const Route& origRoute, rf::RouteAdjustOptions op
           airway = plan.getPropertiesConst().value(atools::fs::pln::PROCAIRWAY);
 
         const RouteLeg& routeLeg = route.value(arrivaLegsOffset - 1);
-        if((!airway.isEmpty() || options.testFlag(rf::FIX_PROC_ENTRY_EXIT_ALWAYS)) &&
+        if((!airway.isEmpty() || options.testFlag(rf::ADD_PROC_ENTRY_EXIT)) &&
            proc::procedureLegFixAtStart(arrivalLeg.getProcedureLegType()) && !arrivalLeg.isNavaidEqualTo(routeLeg))
         {
           FlightplanEntry entry;
@@ -2907,7 +2907,7 @@ Route Route::adjustedToOptions(const Route& origRoute, rf::RouteAdjustOptions op
       if(!departureLeg.getProcedureLeg().isCustomDeparture())
       {
         const RouteLeg& routeLeg = route.value(startIndexAfterProcedure);
-        if((!routeLeg.getAirwayName().isEmpty() || options.testFlag(rf::FIX_PROC_ENTRY_EXIT_ALWAYS)) &&
+        if((!routeLeg.getAirwayName().isEmpty() || options.testFlag(rf::ADD_PROC_ENTRY_EXIT)) &&
            proc::procedureLegFixAtEnd(departureLeg.getProcedureLegType()) && !departureLeg.isNavaidEqualTo(routeLeg))
         {
           FlightplanEntry entry;
