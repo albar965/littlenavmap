@@ -41100,37 +41100,37 @@ Travel Totals: %1.</source>
 <context>
     <name>SimBriefHandler</name>
     <message>
-        <location filename="src/routeexport/simbriefhandler.cpp" line="61"/>
+        <location filename="src/routeexport/simbriefhandler.cpp" line="62"/>
         <source>&amp;Export</source>
         <translation>导出(&amp;E)</translation>
     </message>
     <message>
-        <location filename="src/routeexport/simbriefhandler.cpp" line="62"/>
+        <location filename="src/routeexport/simbriefhandler.cpp" line="63"/>
         <source>&amp;Help</source>
         <translation>帮助(&amp;H)</translation>
     </message>
     <message>
-        <location filename="src/routeexport/simbriefhandler.cpp" line="63"/>
+        <location filename="src/routeexport/simbriefhandler.cpp" line="64"/>
         <source>&amp;Copy web address to clipboard</source>
         <translation>复制网页地址到剪贴板(&amp;C)</translation>
     </message>
     <message>
-        <location filename="src/routeexport/simbriefhandler.cpp" line="66"/>
+        <location filename="src/routeexport/simbriefhandler.cpp" line="67"/>
         <source>&lt;p&gt;&lt;b&gt;Export this flight plan to SimBrief?&lt;/b&gt;&lt;/p&gt;&lt;p&gt;The information below will be sent:&lt;/p&gt;&lt;table&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td&gt;Route description:&lt;/td&gt;&lt;td&gt;%1&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Cruise altitude:&lt;/td&gt;&lt;td&gt;%2&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Aircraft type:&lt;/td&gt;&lt;td&gt;%3&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;p&gt;Open your web browser and log into SimBrief before exporting the flight plan.&lt;/p&gt;</source>
         <translation>&lt;p&gt;&lt;b&gt;导出飞行计划至SimBrief?&lt;/b&gt;&lt;/p&gt;&lt;p&gt;下列信息将被发送:&lt;/p&gt;&lt;table&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td&gt;航路描述:&lt;/td&gt;&lt;td&gt;%1&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;巡航高度:&lt;/td&gt;&lt;td&gt;%2&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;飞行器类型:&lt;/td&gt;&lt;td&gt;%3&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;p&gt;在导出飞行计划之前打开您的网页浏览器并登录SimBrief。&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="src/routeexport/simbriefhandler.cpp" line="75"/>
+        <location filename="src/routeexport/simbriefhandler.cpp" line="76"/>
         <source>Do not &amp;show this dialog again and open address in the browser instead.</source>
         <translation>不再显示此对话框，而是直接在浏览器中打开此地址(&amp;S)。</translation>
     </message>
     <message>
-        <location filename="src/routeexport/simbriefhandler.cpp" line="89"/>
+        <location filename="src/routeexport/simbriefhandler.cpp" line="90"/>
         <source>SimBrief flight plan sent to web browser.</source>
         <translation>SimBrief飞行计划发送至浏览器.</translation>
     </message>
     <message>
-        <location filename="src/routeexport/simbriefhandler.cpp" line="94"/>
+        <location filename="src/routeexport/simbriefhandler.cpp" line="95"/>
         <source>SimBrief address copied to clipboard.</source>
         <translation>复制SimBrief地址至剪贴板.</translation>
     </message>

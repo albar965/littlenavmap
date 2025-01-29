@@ -44136,38 +44136,38 @@ Travel Totals: %1.</source>
 <context>
     <name>SimBriefHandler</name>
     <message>
-        <location filename="src/routeexport/simbriefhandler.cpp" line="61"/>
+        <location filename="src/routeexport/simbriefhandler.cpp" line="62"/>
         <source>&amp;Export</source>
         <translation>&amp;Export</translation>
     </message>
     <message>
-        <location filename="src/routeexport/simbriefhandler.cpp" line="62"/>
+        <location filename="src/routeexport/simbriefhandler.cpp" line="63"/>
         <source>&amp;Help</source>
         <translation>&amp;Hilfe</translation>
     </message>
     <message>
-        <location filename="src/routeexport/simbriefhandler.cpp" line="63"/>
+        <location filename="src/routeexport/simbriefhandler.cpp" line="64"/>
         <source>&amp;Copy web address to clipboard</source>
         <translation>&amp;Internetadresse in die Zwischenablage kopieren</translation>
     </message>
     <message>
-        <location filename="src/routeexport/simbriefhandler.cpp" line="66"/>
+        <location filename="src/routeexport/simbriefhandler.cpp" line="67"/>
         <source>&lt;p&gt;&lt;b&gt;Export this flight plan to SimBrief?&lt;/b&gt;&lt;/p&gt;&lt;p&gt;The information below will be sent:&lt;/p&gt;&lt;table&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td&gt;Route description:&lt;/td&gt;&lt;td&gt;%1&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Cruise altitude:&lt;/td&gt;&lt;td&gt;%2&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Aircraft type:&lt;/td&gt;&lt;td&gt;%3&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;p&gt;Open your web browser and log into SimBrief before exporting the flight plan.&lt;/p&gt;</source>
         <translation>&lt;p&gt;&lt;b&gt;Diesen Flugplan nach SimBrief exportieren?&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Die nachstehenden Informationen werden gesandt:&lt;/p&gt;&lt;table&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td&gt;Routenbeschreibung:&lt;/td&gt;&lt;td&gt;%1&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Reiseflughöhe:&lt;/td&gt;&lt;td&gt;%2&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Flugzeugtyp:&lt;/td&gt;&lt;td&gt;%3&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;p&gt;Öffnen Sie Ihren Webbrowser und melden Sie sich bei SimBrief an, bevor Sie den Flugplan exportieren.&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="src/routeexport/simbriefhandler.cpp" line="75"/>
+        <location filename="src/routeexport/simbriefhandler.cpp" line="76"/>
         <source>Do not &amp;show this dialog again and open address in the browser instead.</source>
         <oldsource>Do &amp;not show this dialog again and open address in the browser instead.</oldsource>
         <translation>Diesen &amp;Dialog nicht mehr anzeigen und die Adresse im Webbrowser öffnen.</translation>
     </message>
     <message>
-        <location filename="src/routeexport/simbriefhandler.cpp" line="89"/>
+        <location filename="src/routeexport/simbriefhandler.cpp" line="90"/>
         <source>SimBrief flight plan sent to web browser.</source>
         <translation>SimBrief Flugplan an den Webbrowser gesendet.</translation>
     </message>
     <message>
-        <location filename="src/routeexport/simbriefhandler.cpp" line="94"/>
+        <location filename="src/routeexport/simbriefhandler.cpp" line="95"/>
         <source>SimBrief address copied to clipboard.</source>
         <translation>SimBrief Internetadresse in die Zwischenablage kopiert.</translation>
     </message>

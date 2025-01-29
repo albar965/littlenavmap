@@ -44339,38 +44339,38 @@ Total des déplacements: %1.</translation>
 <context>
     <name>SimBriefHandler</name>
     <message>
-        <location filename="src/routeexport/simbriefhandler.cpp" line="61"/>
+        <location filename="src/routeexport/simbriefhandler.cpp" line="62"/>
         <source>&amp;Export</source>
         <translation type="unfinished">&amp;Exporter</translation>
     </message>
     <message>
-        <location filename="src/routeexport/simbriefhandler.cpp" line="62"/>
+        <location filename="src/routeexport/simbriefhandler.cpp" line="63"/>
         <source>&amp;Help</source>
         <translation type="unfinished">&amp;Aide</translation>
     </message>
     <message>
-        <location filename="src/routeexport/simbriefhandler.cpp" line="63"/>
+        <location filename="src/routeexport/simbriefhandler.cpp" line="64"/>
         <source>&amp;Copy web address to clipboard</source>
         <translation type="unfinished">&amp;Copier l&apos;adresse web dans le presse-papiers</translation>
     </message>
     <message>
-        <location filename="src/routeexport/simbriefhandler.cpp" line="66"/>
+        <location filename="src/routeexport/simbriefhandler.cpp" line="67"/>
         <source>&lt;p&gt;&lt;b&gt;Export this flight plan to SimBrief?&lt;/b&gt;&lt;/p&gt;&lt;p&gt;The information below will be sent:&lt;/p&gt;&lt;table&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td&gt;Route description:&lt;/td&gt;&lt;td&gt;%1&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Cruise altitude:&lt;/td&gt;&lt;td&gt;%2&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Aircraft type:&lt;/td&gt;&lt;td&gt;%3&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;p&gt;Open your web browser and log into SimBrief before exporting the flight plan.&lt;/p&gt;</source>
         <oldsource>&lt;p&gt;&lt;b&gt;Export this flight plan to SimBrief?&lt;/b&gt;&lt;/p&gt;&lt;p&gt;The information below will be sent:&lt;/p&gt;&lt;table&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td&gt;Route description:&lt;/td&gt;&lt;td&gt;%1&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Cruise altitide:&lt;/td&gt;&lt;td&gt;%2&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Aircraft type:&lt;/td&gt;&lt;td&gt;%3&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;p&gt;Open your web browser and log into SimBrief before exporting the flight plan.&lt;/p&gt;</oldsource>
         <translation type="unfinished">&lt;p&gt;&lt;b&gt;Exporter ce plan de vol vers SimBrief ?&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Les informations ci-dessous seront envoyées:&lt;/p&gt;&lt;table&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td&gt;Route description:&lt;/td&gt;&lt;td&gt;%1&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Altitude de croisière:&lt;/td&gt;&lt;td&gt;%2&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Type avion:&lt;/td&gt;&lt;td&gt;%3&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;p&gt;Ouvrez votre navigateur Web et connectez-vous à SimBrief avant d&apos;exporter le plan de vol.&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="src/routeexport/simbriefhandler.cpp" line="75"/>
+        <location filename="src/routeexport/simbriefhandler.cpp" line="76"/>
         <source>Do not &amp;show this dialog again and open address in the browser instead.</source>
         <translation type="unfinished">N&apos;affichez plu&amp;s cette boîte de dialogue et ouvrez plutôt l&apos;adresse dans le navigateur.</translation>
     </message>
     <message>
-        <location filename="src/routeexport/simbriefhandler.cpp" line="89"/>
+        <location filename="src/routeexport/simbriefhandler.cpp" line="90"/>
         <source>SimBrief flight plan sent to web browser.</source>
         <translation type="unfinished">Plan de vol SimBrief envoyé au navigateur web.</translation>
     </message>
     <message>
-        <location filename="src/routeexport/simbriefhandler.cpp" line="94"/>
+        <location filename="src/routeexport/simbriefhandler.cpp" line="95"/>
         <source>SimBrief address copied to clipboard.</source>
         <translation type="unfinished">L&apos;adresse de SimBrief a été copiée dans le presse-papiers.</translation>
     </message>
