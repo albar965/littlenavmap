@@ -38117,36 +38117,41 @@ Disabilitato se un navdatabase non lo consente.</translation>
         <translation>&amp;Tutte le aerovie</translation>
     </message>
     <message>
-        <location filename="src/route/routecalcdialog.ui" line="549"/>
+        <location filename="src/route/routecalcdialog.ui" line="496"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/littlenavmap/resources/icons/bulb.svg&quot;/&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;For best results, add SID, STAR or approaches before calculating an IFR flight plan.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/route/routecalcdialog.ui" line="565"/>
         <source>Calculate a direct flight plan.
 Keeps procedures.</source>
         <translation>Calcola un piano di volo diretto.
 Mantieni le procedure.</translation>
     </message>
     <message>
-        <location filename="src/route/routecalcdialog.ui" line="553"/>
+        <location filename="src/route/routecalcdialog.ui" line="569"/>
         <source>Calculate a direct flight plan</source>
         <translation>Calcola piano di volo diretto</translation>
     </message>
     <message>
-        <location filename="src/route/routecalcdialog.ui" line="556"/>
+        <location filename="src/route/routecalcdialog.ui" line="572"/>
         <source>&amp;Direct</source>
         <translation>&amp;Diretto</translation>
     </message>
     <message>
-        <location filename="src/route/routecalcdialog.ui" line="569"/>
+        <location filename="src/route/routecalcdialog.ui" line="585"/>
         <source>Reverse the whole flight plan.
 Erases procedures.</source>
         <translation>Inverti l&apos;intero piano di volo.
 Cancella procedure.</translation>
     </message>
     <message>
-        <location filename="src/route/routecalcdialog.ui" line="573"/>
+        <location filename="src/route/routecalcdialog.ui" line="589"/>
         <source>Reverse whole flight plan</source>
         <translation>Inverti interamente il piano di volo</translation>
     </message>
     <message>
-        <location filename="src/route/routecalcdialog.ui" line="576"/>
+        <location filename="src/route/routecalcdialog.ui" line="592"/>
         <source>&amp;Reverse</source>
         <translation>&amp;Contrario</translation>
     </message>
@@ -38209,7 +38214,7 @@ Calcolo più veloce.</translation>
         <translation>&amp;Calcola</translation>
     </message>
     <message>
-        <location filename="src/route/routecalcdialog.cpp" line="197"/>
+        <location filename="src/route/routecalcdialog.cpp" line="198"/>
         <source>Use downloaded NAT or PACOTS tracks.
 Best track will be selected automatically.
 Ensure to use the correct flight level.
@@ -38224,7 +38229,7 @@ Assicurati di utilizzare il livello di volo corretto.
 In caso contrario, le tracce non verranno utilizzate.</translation>
     </message>
     <message>
-        <location filename="src/route/routecalcdialog.cpp" line="201"/>
+        <location filename="src/route/routecalcdialog.cpp" line="202"/>
         <source>
 
 No tracks available. Press the download button or
@@ -38236,33 +38241,33 @@ Nessuna rotta disponibile. Premi il pulsante di download o
 vai su &quot;Piano di volo&quot; -&gt; &quot;Scarica percorsi&quot; per recuperare le rotte.</translation>
     </message>
     <message>
-        <location filename="src/route/routecalcdialog.cpp" line="236"/>
-        <location filename="src/route/routecalcdialog.cpp" line="237"/>
-        <location filename="src/route/routecalcdialog.cpp" line="257"/>
-        <location filename="src/route/routecalcdialog.cpp" line="259"/>
-        <location filename="src/route/routecalcdialog.cpp" line="262"/>
-        <location filename="src/route/routecalcdialog.cpp" line="264"/>
+        <location filename="src/route/routecalcdialog.cpp" line="240"/>
+        <location filename="src/route/routecalcdialog.cpp" line="241"/>
+        <location filename="src/route/routecalcdialog.cpp" line="261"/>
+        <location filename="src/route/routecalcdialog.cpp" line="263"/>
+        <location filename="src/route/routecalcdialog.cpp" line="266"/>
+        <location filename="src/route/routecalcdialog.cpp" line="268"/>
         <source>%1 (%2)</source>
         <translation>%1 (%2)</translation>
     </message>
     <message>
-        <location filename="src/route/routecalcdialog.cpp" line="238"/>
+        <location filename="src/route/routecalcdialog.cpp" line="242"/>
         <source>&lt;b&gt;Calculate flight plan between legs&lt;br/&gt;%1 and %2&lt;/b&gt;</source>
         <translation>&lt;b&gt;Calcolo il piano di volo tra i segmenti&lt;br/&gt;%1 e %2&lt;/b&gt;</translation>
     </message>
     <message>
-        <location filename="src/route/routecalcdialog.cpp" line="242"/>
+        <location filename="src/route/routecalcdialog.cpp" line="246"/>
         <source>Cannot calculate flight plan between selected legs.</source>
         <translation>Impossibile calcolare il piano di volo tra i segmenti selezionati.</translation>
     </message>
     <message>
-        <location filename="src/route/routecalcdialog.cpp" line="243"/>
-        <location filename="src/route/routecalcdialog.cpp" line="274"/>
+        <location filename="src/route/routecalcdialog.cpp" line="247"/>
+        <location filename="src/route/routecalcdialog.cpp" line="278"/>
         <source>Click here for details.</source>
         <translation>Clicca qui per dettagli.</translation>
     </message>
     <message>
-        <location filename="src/route/routecalcdialog.cpp" line="244"/>
+        <location filename="src/route/routecalcdialog.cpp" line="248"/>
         <source>Select a range of legs or two flight plan legs in the flight plan table.
 The selection may not be part of a procedure or an alternate.
 It can include the end of a departure or the start of an arrival procedure.</source>
@@ -38271,27 +38276,27 @@ La selezione non deve essere parte di una procedura o di un alternato.
 Può includere la fine di una procedura di partenza o l&apos;inizio di quella di arrivo.</translation>
     </message>
     <message>
-        <location filename="src/route/routecalcdialog.cpp" line="266"/>
+        <location filename="src/route/routecalcdialog.cpp" line="270"/>
         <source>&lt;b&gt;Calculate flight plan from&lt;br/&gt;%1 to %2&lt;/b&gt;&lt;hr/&gt;</source>
         <translation>&lt;b&gt;Calcola il piano di volo da&lt;br/&gt;%1 a %2&lt;/b&gt;&lt;hr/&gt;</translation>
     </message>
     <message>
-        <location filename="src/route/routecalcdialog.cpp" line="268"/>
+        <location filename="src/route/routecalcdialog.cpp" line="272"/>
         <source>Direct distance is %1. Flight plan distance is %2.</source>
         <translation>La distanza diretta è %1. La distanza del piano di volo è %2.</translation>
     </message>
     <message>
-        <location filename="src/route/routecalcdialog.cpp" line="274"/>
+        <location filename="src/route/routecalcdialog.cpp" line="278"/>
         <source>Set departure and destination first.</source>
         <translation>Prima imposta partenza e destinazione.</translation>
     </message>
     <message>
-        <location filename="src/route/routecalcdialog.cpp" line="275"/>
+        <location filename="src/route/routecalcdialog.cpp" line="279"/>
         <source>&lt;p style=&apos;white-space:pre&apos;&gt;Use the right-click context menu on the map or the airport search (&lt;code&gt;F4&lt;/code&gt;)&lt;br/&gt;to select departure and destination first.&lt;/p&gt;</source>
         <translation>&lt;p style=&apos;white-space:pre&apos;&gt;Usa il menu contestuale del tasto destro sulla mappa o ricerca aeroporto (&lt;code&gt;F4&lt;/code&gt;)&lt;br/&gt;per selezionare prima partenza e destinazione.&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="src/route/routecalcdialog.cpp" line="277"/>
+        <location filename="src/route/routecalcdialog.cpp" line="281"/>
         <source>Select departure and destination first</source>
         <translation>Prima seleziona partenza e destinazione</translation>
     </message>

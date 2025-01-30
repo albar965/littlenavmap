@@ -35524,36 +35524,41 @@ Disabled if a navdatabase does not allow it.</source>
         <translation>所有航路(&amp;A)</translation>
     </message>
     <message>
-        <location filename="src/route/routecalcdialog.ui" line="549"/>
+        <location filename="src/route/routecalcdialog.ui" line="496"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/littlenavmap/resources/icons/bulb.svg&quot;/&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;For best results, add SID, STAR or approaches before calculating an IFR flight plan.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/route/routecalcdialog.ui" line="565"/>
         <source>Calculate a direct flight plan.
 Keeps procedures.</source>
         <translation>计算直飞的飞行计划。
 保留进离场程序。</translation>
     </message>
     <message>
-        <location filename="src/route/routecalcdialog.ui" line="553"/>
+        <location filename="src/route/routecalcdialog.ui" line="569"/>
         <source>Calculate a direct flight plan</source>
         <translation>计算直飞的飞行计划</translation>
     </message>
     <message>
-        <location filename="src/route/routecalcdialog.ui" line="556"/>
+        <location filename="src/route/routecalcdialog.ui" line="572"/>
         <source>&amp;Direct</source>
         <translation>直飞(&amp;D)</translation>
     </message>
     <message>
-        <location filename="src/route/routecalcdialog.ui" line="569"/>
+        <location filename="src/route/routecalcdialog.ui" line="585"/>
         <source>Reverse the whole flight plan.
 Erases procedures.</source>
         <translation>反向整个飞行计划。
 移除进离场程序。</translation>
     </message>
     <message>
-        <location filename="src/route/routecalcdialog.ui" line="573"/>
+        <location filename="src/route/routecalcdialog.ui" line="589"/>
         <source>Reverse whole flight plan</source>
         <translation>将整个飞行计划反向</translation>
     </message>
     <message>
-        <location filename="src/route/routecalcdialog.ui" line="576"/>
+        <location filename="src/route/routecalcdialog.ui" line="592"/>
         <source>&amp;Reverse</source>
         <translation>反向(&amp;R)</translation>
     </message>
@@ -35616,7 +35621,7 @@ Fastest calculation.</source>
         <translation>计算(&amp;C)</translation>
     </message>
     <message>
-        <location filename="src/route/routecalcdialog.cpp" line="197"/>
+        <location filename="src/route/routecalcdialog.cpp" line="198"/>
         <source>Use downloaded NAT or PACOTS tracks.
 Best track will be selected automatically.
 Ensure to use the correct flight level.
@@ -35631,7 +35636,7 @@ Otherwise, tracks will not be used.</oldsource>
 否则，不会使用该航迹。</translation>
     </message>
     <message>
-        <location filename="src/route/routecalcdialog.cpp" line="201"/>
+        <location filename="src/route/routecalcdialog.cpp" line="202"/>
         <source>
 
 No tracks available. Press the download button or
@@ -35643,33 +35648,33 @@ go to &quot;Flight Plan&quot; -&gt; &quot;Download Tracks&quot; to fetch tracks.
 转到“飞行计划”-&gt;“下载洋区航路”以获取航迹。</translation>
     </message>
     <message>
-        <location filename="src/route/routecalcdialog.cpp" line="236"/>
-        <location filename="src/route/routecalcdialog.cpp" line="237"/>
-        <location filename="src/route/routecalcdialog.cpp" line="257"/>
-        <location filename="src/route/routecalcdialog.cpp" line="259"/>
-        <location filename="src/route/routecalcdialog.cpp" line="262"/>
-        <location filename="src/route/routecalcdialog.cpp" line="264"/>
+        <location filename="src/route/routecalcdialog.cpp" line="240"/>
+        <location filename="src/route/routecalcdialog.cpp" line="241"/>
+        <location filename="src/route/routecalcdialog.cpp" line="261"/>
+        <location filename="src/route/routecalcdialog.cpp" line="263"/>
+        <location filename="src/route/routecalcdialog.cpp" line="266"/>
+        <location filename="src/route/routecalcdialog.cpp" line="268"/>
         <source>%1 (%2)</source>
         <translation>%1 (%2)</translation>
     </message>
     <message>
-        <location filename="src/route/routecalcdialog.cpp" line="238"/>
+        <location filename="src/route/routecalcdialog.cpp" line="242"/>
         <source>&lt;b&gt;Calculate flight plan between legs&lt;br/&gt;%1 and %2&lt;/b&gt;</source>
         <translation>&lt;b&gt;计算&lt;br/&gt;%1 及 %2 航段之间的飞行计划&lt;/b&gt;</translation>
     </message>
     <message>
-        <location filename="src/route/routecalcdialog.cpp" line="242"/>
+        <location filename="src/route/routecalcdialog.cpp" line="246"/>
         <source>Cannot calculate flight plan between selected legs.</source>
         <translation>无法计算选定的航段间的飞行计划。</translation>
     </message>
     <message>
-        <location filename="src/route/routecalcdialog.cpp" line="243"/>
-        <location filename="src/route/routecalcdialog.cpp" line="274"/>
+        <location filename="src/route/routecalcdialog.cpp" line="247"/>
+        <location filename="src/route/routecalcdialog.cpp" line="278"/>
         <source>Click here for details.</source>
         <translation>点击这里显示详情。</translation>
     </message>
     <message>
-        <location filename="src/route/routecalcdialog.cpp" line="244"/>
+        <location filename="src/route/routecalcdialog.cpp" line="248"/>
         <source>Select a range of legs or two flight plan legs in the flight plan table.
 The selection may not be part of a procedure or an alternate.
 It can include the end of a departure or the start of an arrival procedure.</source>
@@ -35678,27 +35683,27 @@ It can include the end of a departure or the start of an arrival procedure.</sou
 它可以包括离场程序的结束或进场程序的开始。</translation>
     </message>
     <message>
-        <location filename="src/route/routecalcdialog.cpp" line="266"/>
+        <location filename="src/route/routecalcdialog.cpp" line="270"/>
         <source>&lt;b&gt;Calculate flight plan from&lt;br/&gt;%1 to %2&lt;/b&gt;&lt;hr/&gt;</source>
         <translation>&lt;b&gt;计算自&lt;br/&gt;%1 到 %2的飞行计划&lt;/b&gt;</translation>
     </message>
     <message>
-        <location filename="src/route/routecalcdialog.cpp" line="268"/>
+        <location filename="src/route/routecalcdialog.cpp" line="272"/>
         <source>Direct distance is %1. Flight plan distance is %2.</source>
         <translation>直飞距离 %1 ，飞行计划距离 %2。</translation>
     </message>
     <message>
-        <location filename="src/route/routecalcdialog.cpp" line="274"/>
+        <location filename="src/route/routecalcdialog.cpp" line="278"/>
         <source>Set departure and destination first.</source>
         <translation>先选择离场机场及到达机场。</translation>
     </message>
     <message>
-        <location filename="src/route/routecalcdialog.cpp" line="275"/>
+        <location filename="src/route/routecalcdialog.cpp" line="279"/>
         <source>&lt;p style=&apos;white-space:pre&apos;&gt;Use the right-click context menu on the map or the airport search (&lt;code&gt;F4&lt;/code&gt;)&lt;br/&gt;to select departure and destination first.&lt;/p&gt;</source>
         <translation>&lt;p style=&apos;white-space:pre&apos;&gt;先使用地图的右键菜单或者在机场搜索 (&lt;code&gt;F4&lt;/code&gt;)&lt;br/&gt;中设置离场机场和到达机场。&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="src/route/routecalcdialog.cpp" line="277"/>
+        <location filename="src/route/routecalcdialog.cpp" line="281"/>
         <source>Select departure and destination first</source>
         <translation>先选择离场机场及到达机场</translation>
     </message>

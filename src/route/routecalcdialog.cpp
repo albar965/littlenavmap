@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -165,6 +165,7 @@ void RouteCalcDialog::setCruisingAltitudeFt(float altitude)
 
 void RouteCalcDialog::updateWidgets()
 {
+  const Route& route = NavApp::getRouteConst();
   bool airway = ui->radioButtonRouteCalcAirway->isChecked();
   if(calculating)
   {
@@ -186,12 +187,12 @@ void RouteCalcDialog::updateWidgets()
     ui->labelRouteCalcAirwayPreferAirway->setEnabled(airway);
     ui->labelRouteCalcAirwayPreferWaypoint->setEnabled(airway);
 
-    bool canCalcRoute = NavApp::getRouteConst().canCalcRoute();
+    bool canCalcRoute = route.canCalcRoute();
     ui->pushButtonRouteCalcAdjustAltitude->setEnabled(canCalcRoute);
     ui->buttonBox->button(QDialogButtonBox::Apply)->setEnabled(isCalculateSelection() ? canCalculateSelection : canCalcRoute);
     ui->buttonBox->button(QDialogButtonBox::Close)->setEnabled(true);
 
-    ui->pushButtonRouteCalcDirect->setEnabled(canCalcRoute && NavApp::getRouteConst().hasEntries());
+    ui->pushButtonRouteCalcDirect->setEnabled(canCalcRoute && route.hasEntries());
     ui->pushButtonRouteCalcReverse->setEnabled(canCalcRoute);
 
     QString msg = tr("Use downloaded NAT or PACOTS tracks.\n"
@@ -207,6 +208,9 @@ void RouteCalcDialog::updateWidgets()
     else
       ui->checkBoxRouteCalcAirwayTrack->setToolTip(msg + err);
   }
+
+  // Show hint to add procededures before calculating IFR
+  ui->labelOptionsProceduresHint->setVisible(route.isTypeIfr() && !route.hasAnyProcedure());
 
   updateHeader();
   updatePreferenceLabel();
