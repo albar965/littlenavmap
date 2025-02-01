@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -1421,7 +1421,8 @@ private:
                          opts2::MAP_AI_TEXT_BACKGROUND | opts2::MAP_ROUTE_DIM_PASSED | opts2::MAP_AVOID_BLURRED_MAP |
                          opts2::ONLINE_AIRSPACE_BY_FILE | opts2::ONLINE_AIRSPACE_BY_NAME | opts2::RAISE_WINDOWS |
                          opts2::HIGH_DPI_DISPLAY_SUPPORT | opts2::ROUTE_CENTER_ACTIVE_LEG |
-                         opts2::ROUTE_CENTER_ACTIVE_LEG | opts2::ROUTE_NO_FOLLOW_ON_MOVE | opts2::MAP_ROUTE_HIGHLIGHT_ACTIVE;
+                         opts2::ROUTE_CENTER_ACTIVE_LEG | opts2::ROUTE_NO_FOLLOW_ON_MOVE | opts2::MAP_ROUTE_HIGHLIGHT_ACTIVE |
+                         opts2::MAP_ROUTE_TRANSPARENT | opts2::MAP_HIGHLIGHT_TRANSPARENT;
 
   opts::DisplayOnlineFlags displayOnlineFlags = opts::DISPLAY_ONLINE_OBSERVER | opts::DISPLAY_ONLINE_CLEARANCE |
                                                 opts::DISPLAY_ONLINE_DEPARTURE;
@@ -1660,7 +1661,7 @@ private:
   int displayTextSizeCompassRose = 100;
 
   // spinBoxOptionsMapHighlightTransparent
-  int displayMapHighlightTransparent = 50;
+  int displayMapHighlightTransparent = 30;
 
   // spinBoxDisplayOnlineClearance
   int displayOnlineClearance = 20;
@@ -1710,11 +1711,11 @@ private:
   // spinBoxOptionsDisplayTextSizeAirspace
   int displayTextSizeAirspace = 100;
 
-  QColor flightplanColor = QColor(Qt::yellow), flightplanOutlineColor = QColor(Qt::black), flightplanProcedureColor = QColor(255, 150, 0),
-         flightplanActiveColor = QColor(Qt::magenta), flightplanPassedColor = QColor(Qt::gray), trailColor = QColor(Qt::black),
-         measurementColor = QColor(Qt::black);
-
-  QColor highlightFlightplanColor = QColor(Qt::green), highlightSearchColor = QColor(Qt::yellow), highlightProfileColor = QColor(Qt::cyan);
+  // Default values
+  QColor flightplanColor = QColor("#ff0000"), flightplanOutlineColor = QColor(Qt::black), flightplanProcedureColor = QColor("#aa0000"),
+         flightplanActiveColor = QColor("#ff00ff"), flightplanPassedColor = QColor("#a0a0a4"),
+         trailColor = QColor(Qt::black), measurementColor = QColor(Qt::black),
+         highlightFlightplanColor = QColor("#00ff00"), highlightSearchColor = QColor("#ffff00"), highlightProfileColor = QColor("#00ffff");
 
   // comboBoxOptionsDisplayTrailType
   opts::DisplayTrailType displayTrailType = opts::TRAIL_TYPE_DASHED;

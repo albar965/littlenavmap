@@ -2874,7 +2874,7 @@ Map views might be shown with a larger zoom distance than expected if this optio
            <property name="geometry">
             <rect>
              <x>0</x>
-             <y>-38</y>
+             <y>-25</y>
              <width>617</width>
              <height>1053</height>
             </rect>
@@ -4026,7 +4026,7 @@ Not used in the elevation profile.</string>
                   <string>&amp;Transparent line</string>
                  </property>
                  <property name="checked">
-                  <bool>false</bool>
+                  <bool>true</bool>
                  </property>
                 </widget>
                </item>
@@ -4207,8 +4207,8 @@ Also used in the elevation profile.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>631</width>
-             <height>531</height>
+             <width>554</width>
+             <height>260</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_57">
@@ -4470,8 +4470,8 @@ Lower this value to avoid too long tracks and avoid stutters in map display.</st
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>617</width>
-             <height>651</height>
+             <width>452</width>
+             <height>748</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_35">
@@ -4770,7 +4770,7 @@ if you hover over the elevation profile.</string>
                   <string>&amp;Transparent Circles</string>
                  </property>
                  <property name="checked">
-                  <bool>false</bool>
+                  <bool>true</bool>
                  </property>
                 </widget>
                </item>
@@ -4955,7 +4955,7 @@ Value 0 is opaque and 90 is most transparent.</string>
                   <number>10</number>
                  </property>
                  <property name="value">
-                  <number>50</number>
+                  <number>30</number>
                  </property>
                 </widget>
                </item>
@@ -5360,8 +5360,8 @@ Value 0 is opaque and 90 is most transparent.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>631</width>
-             <height>531</height>
+             <width>328</width>
+             <height>535</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_39">
@@ -5830,8 +5830,8 @@ airspace filename has to match the callsign of the online center.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>617</width>
-             <height>617</height>
+             <width>572</width>
+             <height>629</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_25">
@@ -6277,8 +6277,8 @@ put the active leg back on top after the given timeout while flying.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>631</width>
-             <height>531</height>
+             <width>318</width>
+             <height>241</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_26">
@@ -6437,8 +6437,8 @@ Note that this value does not affect flight plan calculation or saving of flight
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>617</width>
-             <height>610</height>
+             <width>272</width>
+             <height>750</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_27">
@@ -6678,8 +6678,8 @@ Note that this value does not affect flight plan calculation or saving of flight
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>617</width>
-             <height>875</height>
+             <width>360</width>
+             <height>931</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_28">
@@ -7276,8 +7276,8 @@ Entering a wrong value will cause errors when downloading weather reports.</stri
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>631</width>
-             <height>531</height>
+             <width>389</width>
+             <height>375</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_29">
@@ -7578,8 +7578,8 @@ Entering a wrong value will cause errors when downloading weather reports.</stri
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>631</width>
-             <height>531</height>
+             <width>363</width>
+             <height>258</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_37">
@@ -7771,8 +7771,8 @@ Little Navmap GIT repository.
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>617</width>
-             <height>629</height>
+             <width>437</width>
+             <height>699</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_30">
