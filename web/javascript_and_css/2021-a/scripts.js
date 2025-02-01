@@ -526,6 +526,11 @@ function injectUpdates(origin) {
     /*
      * Initial Page initialisations: map
      */
+    // https://github.com/albar965/littlenavmap/discussions/1238
+    // remove startup animation for now
+    ocw.checkRefresh() || ocw.refreshMap();
+    storeState("mapshown", true);
+    /*
     var transitionElement = mapElement.parentElement;
     function initiallyShowMap() {
       function show() {
@@ -551,6 +556,7 @@ function injectUpdates(origin) {
     } else {
       initiallyShowMap();
     }
+    */
 
   }
 
