@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
-<TS version="2.1" language="zh_CN">
+<TS version="2.1" language="zh">
 <context>
     <name>AbstractInfoBuilder</name>
     <message>
@@ -2283,7 +2283,7 @@ Add a departure or destination airport to your current flight plan if you wish t
 Pre-add a departure or destination airport to your current flight plan if you wish to have that fixed instead of random.</oldsource>
         <translation>
 
-添加出发或到达机场至您当前的飞行计划，如果您希望不变而不是随机。</translation>
+如果您希望固定的机场而不是完全随机，添加出发或到达机场至您当前的飞行计划。</translation>
     </message>
     <message>
         <location filename="src/search/airportsearch.cpp" line="723"/>
@@ -2396,7 +2396,7 @@ found in the airport search result table.</source>
     <message>
         <location filename="src/search/airportsearch.cpp" line="712"/>
         <source>&lt;p&gt;Create a new flight plan from a destination and departure airport chosen at random from the airport search result table.&lt;/p&gt;&lt;p&gt;Modify the selection criteria to your liking by setting the controls in the airport search result panel to values you like, for example runway length minimum to 1,000 ft.&lt;/p&gt;&lt;p&gt;Add an airport to the flight plan table to use it as a fixed departure or destination.&lt;/p&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;p&gt;从机场搜索结果表中随机选择一个出发和到达机场来创建一个新的飞行计划。&lt;/p&gt;可以根据您的喜好在机场搜索结果面板中调整选择的标准，如跑道最低长度为1000英尺。&lt;/p&gt;&lt;p&gt;将一个机场添加到飞行计划表格中，来作为固定的出发地或目的地。&lt;/p&gt;</translation>
     </message>
     <message>
         <location filename="src/search/airportsearch.cpp" line="917"/>
@@ -3123,7 +3123,7 @@ Deselecting this will stop all automatic connection attempts immediately.</sourc
         <location filename="src/connect/connectdialog.cpp" line="53"/>
         <source>SimConnect not found. Your Little Navmap installation is missing the file &quot;%1&quot;.&lt;br/&gt;</source>
         <oldsource>SimConnect not found. Your Little Navmap installation is missing the file &quot;SimConnect.dll&quot;.&lt;br/&gt;Reinstall Little Navmap or install a FSX SP2 compatible version of SimConnect on your computer.&lt;br/&gt;</oldsource>
-        <translation type="unfinished">没有找到 SimConnect。您的 &lt;i&gt;Little Navmap&lt;/i&gt; 安装缺少文件&quot;SimConnect.dll&quot;。&lt;br/&gt;在您的计算机上重新安装 &lt;i&gt;Little Navmap&lt;/i&gt; 或者安装 FSX SP2 兼容版本的 SimConnect。&lt;br/&gt;</translation>
+        <translation>没有找到 SimConnect。您的 Little Navmap 安装缺少文件 &quot;%1&quot;。&lt;br/&gt;</translation>
     </message>
     <message>
         <location filename="src/connect/connectdialog.cpp" line="61"/>
@@ -3890,6 +3890,15 @@ Useful if you use tools to disable and enable certain scenery for each flight.</
         <translation>无法打开数据库，错误信息:&lt;br/&gt;&lt;br/&gt;%1&lt;br/&gt;&lt;br/&gt;内部错误或文件损坏.&lt;br/&gt;&lt;br/&gt;您可能希望将此报告给开发者.&lt;br/&gt;&lt;br/&gt;现在退出.</translation>
     </message>
     <message>
+        <location filename="src/db/databasemanager.cpp" line="1614"/>
+        <source>Cannot connect to Microsoft Flight Simulator 2024, which is required for Little Navmap to load data.
+
+Start Microsoft Flight Simulator 2024, wait until the user interface of the simulator is visible and then press &quot;Ok&quot; to continue.
+
+Note that the loading process can take a while. Expect %1 to %2 minutes.In the meantime, you can continue to use %3 as normal.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Scenery library mode is correct. Mode is set automatically.</source>
         <translation type="vanished">地景库模式正确，模式设置为自动。</translation>
     </message>
@@ -3931,22 +3940,23 @@ You can load the simulator scenery library database in the menu
     <message>
         <location filename="src/db/databasemanager.cpp" line="1377"/>
         <source>&lt;p&gt;Scenery library mode is correct. Mode is set automatically by Little Navmap.&lt;/p&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;p&gt;地景库模式正确，Little Navma自动选择模式。&lt;/p&gt;</translation>
     </message>
     <message>
         <location filename="src/db/databasemanager.cpp" line="1378"/>
         <source>&lt;p&gt;No issues found. Scenery library mode is correct and set manually in menu &quot;Scenery Library&quot;.&lt;/p&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;p&gt;地景库模式正确，地景库模式在菜单 &quot;Scenery Library&quot; 中手动选择。&lt;/p&gt;</translation>
     </message>
     <message>
         <location filename="src/db/databasemanager.cpp" line="1385"/>
         <source>&lt;p&gt;Simulator database is empty.&lt;/p&gt;&lt;p&gt;Showing Navigraph airports and navaids.&lt;/p&gt;&lt;p style=&apos;white-space:pre&apos;&gt;You can load the simulator scenery library database in the menu&lt;/br&gt;&quot;Scenery Library&quot; -&gt; &quot;Load Scenery Library&quot;.&lt;/p&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;p&gt;空的模拟器数据库。&lt;/p&gt;&lt;p&gt;正显示 Navigraph 机场和助航设备。&lt;/p&gt;&lt;p style=&apos;white-space:pre&apos;&gt;您可以在菜单 &quot;地景库&quot; -&gt; &quot;载入地景库&quot; 载入模拟器地景数据库。&lt;/p&gt;</translation>
     </message>
     <message>
         <location filename="src/db/databasemanager.cpp" line="1395"/>
         <source>&lt;p&gt;Simulator database is empty.&lt;/p&gt;&lt;p style=&apos;white-space:pre&apos;&gt;You can load the simulator scenery library database in the menu&lt;br/&gt;&quot;Scenery Library&quot; -&gt; &quot;Load Scenery Library&quot;.&lt;/p&gt;&lt;p style=&apos;white-space:pre&apos;&gt;Alternatively, you can switch to Navigraph only data in the menu&lt;br/&gt;&quot;Scenery Library&quot; -&gt; &quot;Navigraph&quot; -&gt; &quot;Use Navigraph for all Features&quot;.&lt;/p&gt;</source>
-        <translation type="unfinished"></translation>
+        <translatorcomment>&lt;p&gt;空的模拟器数据库。&lt;/p&gt;&lt;p&gt;正显示 Navigraph 机场和助航设备。&lt;/p&gt;&lt;p style=&apos;white-space:pre&apos;&gt;您可以在菜单 &quot;地景库&quot; -&gt; &quot;载入地景库&quot; 载入模拟器地景数据库。&lt;/p&gt;</translatorcomment>
+        <translation>&lt;p&gt;空的模拟器数据库。&lt;/p&gt;&lt;p style=&apos;white-space:pre&apos;&gt;您可以在菜单&lt;br/&gt;&quot;地景库&quot; -&gt; &quot;载入地景库&quot; 来加载模拟器地景数据库。&lt;/p&gt;&lt;br/&gt;&lt;p style=&apos;white-space:pre&apos;&gt;或者, 您可以在菜单&quot;地景库&quot; -&gt; &quot;Navigraph&quot; -&gt; &quot;为 Navigraph 启用所有要素&quot; 来切换至仅Navigraph数据。&lt;/p&gt;</translation>
     </message>
     <message>
         <location filename="src/db/databasemanager.cpp" line="1408"/>
@@ -3964,6 +3974,11 @@ You can load the simulator scenery library database in the menu
         <location filename="src/db/databasemanager.cpp" line="1509"/>
         <source>Do not &amp;show this dialog again and always correct mode after loading.</source>
         <translation>不再显示此对话框，在加载后总是修正模式(&amp;S)。</translation>
+    </message>
+    <message>
+        <source>&lt;p style=&apos;white-space:pre&apos;&gt;You are using MSFS 2024.&lt;/p&gt;&lt;p&gt;You should use the scenery library mode &quot;Do not use Navigraph Database&quot; to avoid issues with airport information or navigation data mismatches in Little Navmap.&lt;/p&gt;&lt;p style=&apos;white-space:pre&apos;&gt;You can change the mode manually in the menu&lt;br/&gt;&quot;Scenery Library&quot; -&gt; &quot;Navigraph&quot; -&gt; &quot;Do not use Navigraph Database&quot;.&lt;/p&gt;&lt;p&gt;Correct the scenery library mode now?&lt;/p&gt;</source>
+        <comment>Sync texts with menu items</comment>
+        <translation type="vanished">&lt;p style=&apos;white-space:pre&apos;&gt;您正在使用 MSFS 2024。&lt;/p&gt;&lt;p&gt;您应该选择地景数据库模式 &quot;不要使用数据库 Navigraph&quot; 来避免机场信息和导航数据不一致。&lt;/p&gt;&lt;p style=&apos;white-space:pre&apos;&gt;您可以在菜单&lt;br/&gt;&quot;地景库&quot; -&gt; &quot;Navigraph&quot; -&gt; &quot;不要使用数据库 Navigraph&quot; 手动修改模式。&lt;/p&gt;&lt;p&gt;现在修正地景库模式?&lt;/p&gt;</translation>
     </message>
     <message>
         <location filename="src/db/databasemanager.cpp" line="1438"/>
@@ -3992,7 +4007,7 @@ You can load the simulator scenery library database in the menu
     <message>
         <location filename="src/db/databasemanager.cpp" line="1523"/>
         <source>You cannot load the MSFS 2024 scenery library using Little Navmap 32-bit.</source>
-        <translation type="unfinished"></translation>
+        <translation>您不能使用32位的 Little Navmap 加载MSFS 2024地景库。</translation>
     </message>
     <message>
         <location filename="src/db/databasemanager.cpp" line="1532"/>
@@ -4007,7 +4022,7 @@ You can load the simulator scenery library database in the menu
     <message>
         <location filename="src/db/databasemanager.cpp" line="1548"/>
         <source>&lt;p style=&apos;white-space:pre&apos;&gt;Cannot read base path &quot;%1&quot;.&lt;br/&gt;&lt;br/&gt;Reason:&lt;br/&gt;%2&lt;br/&gt;&lt;/p&gt;%3</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;p style=&apos;white-space:pre&apos;&gt;无法读取根目录 &quot;%1&quot;。&lt;br/&gt;&lt;br/&gt;原因:&lt;br/&gt;%2&lt;br/&gt;&lt;/p&gt;%3</translation>
     </message>
     <message>
         <location filename="src/db/databasemanager.cpp" line="1556"/>
@@ -4015,23 +4030,22 @@ You can load the simulator scenery library database in the menu
         <translation>&lt;p style=&apos;white-space:pre&apos;&gt;无法读取路径 &quot;%1&quot;.&lt;br/&gt;&lt;br/&gt;原因:&lt;br/&gt;%2&lt;/p&gt;%3</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="1601"/>
-        <source>Note that the connection to the flight simulator has to be paused while loading data from the simulator.
-You will not see user aircraft updates while loading.
-
-Note that the loading process can take a while. Expect %1 to %2 minutes. In the meantime, you can continue to use %3 as normal.</source>
-        <oldsource>Note that the connection to the flight simulator has to be paused while loading data from the simulator.
-You will not see user aircraft updates while loading.</oldsource>
-        <translation type="unfinished"></translation>
+        <source>Note that the connection to the flight simulator has to be paused while loading airports from the simulator.
+You will not see user aircraft updates while loading.</source>
+        <translation type="vanished">注意，在从模拟器加载机场时，与飞行模拟器的连接将被暂停。
+加载时，您将无法看见用户飞行器。</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="1614"/>
-        <source>Cannot connect to Microsoft Flight Simulator 2024, which is required for Little Navmap to load data.
+        <source>Cannot connect to Microsoft Flight Simulator 2024, which is required for Little Navmap to load airports.
 
 Start Microsoft Flight Simulator 2024, wait until the user interface of the simulator is visible and then press &quot;Ok&quot; to continue.
 
-Note that the loading process can take a while. Expect %1 to %2 minutes.In the meantime, you can continue to use %3 as normal.</source>
-        <translation type="unfinished"></translation>
+Note that the loading process can take a while. Expect about %1 minutes.</source>
+        <translation type="vanished">无法连接至 MSFS 2024，Little Navmap加载机场要求保持连接。
+
+启动 MSFS 2024，等待直到模拟器用户界面可见并点击 &quot;OK&quot; 以继续。
+
+注意，加载过程需要好一会，预计 %1 分钟。</translation>
     </message>
     <message>
         <location filename="src/db/databasemanager.cpp" line="1693"/>
@@ -4125,6 +4139,14 @@ Note that the loading process can take a while. Expect %1 to %2 minutes.In the m
         <location filename="src/db/databasemanager.cpp" line="1424"/>
         <source>&lt;p style=&apos;white-space:pre&apos;&gt;You are using MSFS 2020 or 2024 without the Navigraph navdata update.&lt;/p&gt;&lt;p&gt;You should use the scenery library mode &quot;Do not use Navigraph Database&quot; to avoid issues with airport information in Little Navmap.&lt;/p&gt;&lt;p style=&apos;white-space:pre&apos;&gt;You can change the mode manually in the menu&lt;br/&gt;&quot;Scenery Library&quot; -&gt; &quot;Navigraph&quot; -&gt; &quot;Do not use Navigraph Database&quot;.&lt;/p&gt;&lt;p&gt;Correct the scenery library mode now?&lt;/p&gt;</source>
         <comment>Sync texts with menu items</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/db/databasemanager.cpp" line="1601"/>
+        <source>Note that the connection to the flight simulator has to be paused while loading data from the simulator.
+You will not see user aircraft updates while loading.
+
+Note that the loading process can take a while. Expect %1 to %2 minutes. In the meantime, you can continue to use %3 as normal.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -5881,7 +5903,7 @@ Note that you can undo this change.</source>
     <message>
         <location filename="src/logbook/logdatacontroller.cpp" line="796"/>
         <source>&amp;Shorter than</source>
-        <translation type="unfinished"></translation>
+        <translation>短于(&amp;S)</translation>
     </message>
     <message>
         <location filename="src/logbook/logdatacontroller.cpp" line="797"/>
@@ -5891,7 +5913,7 @@ Note that you can undo this change.</source>
     <message>
         <location filename="src/logbook/logdatacontroller.cpp" line="805"/>
         <source> %dist%</source>
-        <translation type="unfinished"> %dist%</translation>
+        <translation> %dist%</translation>
     </message>
     <message>
         <location filename="src/logbook/logdatacontroller.cpp" line="808"/>
@@ -6819,7 +6841,8 @@ This updates only the path and does not attach the file to the logbook entry.</s
     <message>
         <location filename="src/logbook/logdatadialog.cpp" line="333"/>
         <source>Off airport at %1.</source>
-        <translation type="unfinished"></translation>
+        <translatorcomment>缺损记录的离场机场那里</translatorcomment>
+        <translation>于 %1 离开机场。</translation>
     </message>
     <message>
         <location filename="src/logbook/logdatadialog.cpp" line="341"/>
@@ -9678,34 +9701,34 @@ Best track will be selected automatically.</source>
     <message>
         <location filename="src/gui/mainwindow.ui" line="7128"/>
         <source>&amp;More Map Labels</source>
-        <translation type="unfinished"></translation>
+        <translation>更多的地图标签(&amp;M)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="7131"/>
         <location filename="src/gui/mainwindow.ui" line="7134"/>
         <source>Show more labels on the map</source>
-        <translation type="unfinished"></translation>
+        <translation>在地图上显示更多的标签</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="7137"/>
         <source>Ctrl+Shift++</source>
-        <translation type="unfinished"></translation>
+        <translation>Ctrl+Shift++</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="7146"/>
         <source>&amp;Less Map Labels</source>
-        <translation type="unfinished"></translation>
+        <translation>更少的地图标签(&amp;L)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="7149"/>
         <location filename="src/gui/mainwindow.ui" line="7152"/>
         <source>Show fewer labels on the map</source>
-        <translation type="unfinished"></translation>
+        <translation>在地图上显示更少的标签</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="7155"/>
         <source>Ctrl+Shift+-</source>
-        <translation type="unfinished"></translation>
+        <translation>Ctrl+Shift+-</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="7392"/>
@@ -9747,7 +9770,7 @@ Best track will be selected automatically.</source>
     <message>
         <location filename="src/gui/mainwindow.ui" line="8832"/>
         <source>Export Flight Plan as FMS for &amp;X-Plane 11 and 12 ...</source>
-        <translation type="unfinished"></translation>
+        <translation>导出飞行计划为 X-Plane11/12 的FMS格式(&amp;X) ...</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="10604"/>
@@ -9763,39 +9786,39 @@ Best track will be selected automatically.</source>
         <location filename="src/gui/mainwindow.ui" line="10695"/>
         <location filename="src/gui/mainwindow.ui" line="10698"/>
         <source>Download NAT and PACOTS tracks on startup</source>
-        <translation type="unfinished"></translation>
+        <translation>在启动时下载 NAT, PACOTS 或 AUSOTS 航迹</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="10721"/>
         <location filename="src/gui/mainwindow.ui" line="10724"/>
         <source>Download NAT and PACOTS tracks now</source>
-        <translation type="unfinished">立刻下载 NAT, PACOTS 或 AUSOTS 航迹</translation>
+        <translation>立刻下载 NAT, PACOTS 或 AUSOTS 航迹</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="10733"/>
         <source>Export Flight Plan as &amp;P3D or FSX  PLN ...</source>
-        <translation type="unfinished"></translation>
+        <translation>导出飞行计划为 P3D 或 FSX 的 PLN 格式(&amp;P)...</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="11122"/>
         <source>Export Flight Plan as MSFS &amp;2020 PLN ...</source>
-        <translation type="unfinished"></translation>
+        <translation>导出飞行计划为 MSFS 2020 的 PLN 格式(&amp;2)...</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="11131"/>
         <source>Ctrl+Shift+B</source>
-        <translation type="unfinished"></translation>
+        <translation>Ctrl+Shift+B</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="11140"/>
         <source>Export Flight Plan as &amp;MSFS 2024 PLN ...</source>
-        <translation type="unfinished"></translation>
+        <translation>导出飞行计划为 MSFS 2024 的 PLN 格式(&amp;A)...</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="11143"/>
         <location filename="src/gui/mainwindow.ui" line="11146"/>
         <source>Export Flight Plan as PLN for the Microsoft Flight Simulator 2024 EFB</source>
-        <translation type="unfinished"></translation>
+        <translation>导出飞行计划到 PLN 文件以供微软飞行模拟 2024 EFB 使用</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="11547"/>
@@ -9895,17 +9918,17 @@ Best track will be selected automatically.</source>
     <message>
         <location filename="src/gui/mainwindow.ui" line="12424"/>
         <source>&amp;Keyboard Shortcuts</source>
-        <translation type="unfinished"></translation>
+        <translation>键盘快捷键(&amp;K)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="12427"/>
         <source>Shows all keyboard shortcuts online in a browser</source>
-        <translation type="unfinished"></translation>
+        <translation>在浏览器中在线显示键盘快捷键</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="12430"/>
         <source>Show keyboard shortcuts in a browser</source>
-        <translation type="unfinished"></translation>
+        <translation>在浏览器中显示键盘快捷键</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="12438"/>
@@ -9921,13 +9944,14 @@ let them appear in the task list</source>
     <message>
         <location filename="src/gui/mainwindow.ui" line="12457"/>
         <source>Show &amp;Direction to Departure Runway</source>
-        <translation type="unfinished"></translation>
+        <translation>显示至起飞跑道的方向(&amp;D)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="12460"/>
         <source>Shows a dashed line with arrows pointing directly to the departure runway position
 from either the departure parking or the user aircraft while taxiing.</source>
-        <translation type="unfinished"></translation>
+        <translation>用一条带箭头的虚线指向离场跑道位置
+起点为停机位或滑行时的用户飞行器。</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="12199"/>
@@ -10175,7 +10199,7 @@ from either the departure parking or the user aircraft while taxiing.</source>
         <location filename="src/gui/mainwindow.ui" line="12113"/>
         <location filename="src/gui/mainwindow.ui" line="12116"/>
         <source>Create a userpoint highlighting the airport as add-on</source>
-        <translation type="unfinished"></translation>
+        <translation>创建一个用户航点将机场视作插件高亮</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="12128"/>
@@ -11794,7 +11818,7 @@ from either the departure parking or the user aircraft while taxiing.</source>
         <location filename="src/gui/mainwindow.ui" line="216"/>
         <source>User Manual - Helpful &amp;Chapters (Online)</source>
         <oldsource>User Manual - Helpful Chapters (Online)</oldsource>
-        <translation>用户手册 - 有用的章节 (在线)(&amp;C)</translation>
+        <translation>用户手册 - 很有帮助的章节 (在线)(&amp;C)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="326"/>
@@ -14967,12 +14991,12 @@ Set the path to the offline elevation data in options on page &quot;Cache and Fi
     <message>
         <location filename="src/gui/mainwindow.cpp" line="941"/>
         <source>Map detail level / text label level.</source>
-        <translation type="unfinished"></translation>
+        <translation>地图细节级别 / 文字标签级别。</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="2223"/>
         <source> — %1 *</source>
-        <translation type="unfinished"></translation>
+        <translation> — %1 *</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="2287"/>
@@ -15009,7 +15033,7 @@ Set the path to the offline elevation data in options on page &quot;Cache and Fi
         <location filename="src/gui/mainwindow.cpp" line="2524"/>
         <location filename="src/gui/mainwindow.cpp" line="2551"/>
         <source>The file &quot;%1&quot; does not contain track points.</source>
-        <translation type="unfinished"></translation>
+        <translation>文件 &quot;%1&quot; 不包含轨迹点。</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="2530"/>
@@ -15163,7 +15187,7 @@ Only JPG, PNG and BMP are allowed.</source>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="3072"/>
         <source>PNG Image Files (*.png);;JPG Image Files (*.jpg *.jpeg);;All Files (*)</source>
-        <translation type="unfinished"></translation>
+        <translation>PNG 图像文件 (*.png);;JPG 图像文件 (*.jpg *.jpeg);;所有文件 (*)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="3097"/>
@@ -16098,7 +16122,7 @@ Button is highlighted if any filter is selected.</source>
     <message>
         <location filename="src/mapgui/mapcontextmenu.cpp" line="1064"/>
         <source>Create a userpoint highlighting the airport as add-on</source>
-        <translation type="unfinished"></translation>
+        <translation>创建用户航点将机场视为插件高亮</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapcontextmenu.cpp" line="1075"/>
@@ -16220,7 +16244,7 @@ Button is highlighted if detail level is not default.</source>
     <message>
         <location filename="src/mapgui/mapdetailhandler.cpp" line="284"/>
         <source>Normal map detail level</source>
-        <translation>普通地图细节级别</translation>
+        <translation>正常地图细节级别</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapdetailhandler.cpp" line="286"/>
@@ -16245,37 +16269,37 @@ Button is highlighted if detail level is not default.</source>
     <message>
         <location filename="src/mapgui/mapdetailhandler.cpp" line="293"/>
         <source> (Ctrl+Mouse Wheel)</source>
-        <translation type="unfinished"></translation>
+        <translation> (Ctrl+鼠标滚轮)</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapdetailhandler.cpp" line="297"/>
         <source>Normal map labels</source>
-        <translation type="unfinished"></translation>
+        <translation>正常地图标签</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapdetailhandler.cpp" line="299"/>
         <source>Minimum map labels %1</source>
-        <translation type="unfinished"></translation>
+        <translation>最少的地图标签 %1</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapdetailhandler.cpp" line="301"/>
         <source>Maximum map labels %1</source>
-        <translation type="unfinished"></translation>
+        <translation>最多的地图标签 %1</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapdetailhandler.cpp" line="303"/>
         <source>Less map labels %1</source>
-        <translation type="unfinished"></translation>
+        <translation>更少的地图标签 %1</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapdetailhandler.cpp" line="305"/>
         <source>More map labels %1</source>
-        <translation type="unfinished"></translation>
+        <translation>更多的地图标签 %1</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapdetailhandler.cpp" line="307"/>
         <source> (Ctrl+Shift+Mouse Wheel)</source>
-        <translation type="unfinished"></translation>
+        <translation> (Ctrl+Shift+鼠标滚轮)</translation>
     </message>
 </context>
 <context>
@@ -16418,12 +16442,12 @@ Button is highlighted if detail level is not default.</source>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="217"/>
         <source>Sun never rises</source>
-        <translation>太阳永不升起</translation>
+        <translation>极夜</translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="219"/>
         <source>Sun never sets</source>
-        <translation>太阳永不落下</translation>
+        <translation>极昼</translation>
     </message>
     <message>
         <source>%1, %2 UTC
@@ -16667,19 +16691,19 @@ Button is highlighted if detail level is not default.</source>
         <location filename="src/common/htmlinfobuilder.cpp" line="4846"/>
         <source>0</source>
         <comment>used to detect real zero value in local language</comment>
-        <translation type="unfinished">0</translation>
+        <translation>0</translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="4849"/>
         <source>+</source>
         <comment>ISA deviation sign</comment>
-        <translation type="unfinished"></translation>
+        <translation>+</translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="4851"/>
         <source>-</source>
         <comment>ISA deviation sign</comment>
-        <translation type="unfinished">-</translation>
+        <translation>-</translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="5148"/>
@@ -16893,7 +16917,7 @@ Button is highlighted if detail level is not default.</source>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="3954"/>
         <source>Trail Segment Length (long jump):</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="3957"/>
@@ -18077,7 +18101,7 @@ kHz/MHz</translation>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="2054"/>
         <source> to </source>
-        <translation> 到 </translation>
+        <translation> 至 </translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="2056"/>
@@ -19298,12 +19322,12 @@ kHz/MHz</translation>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="430"/>
         <source>Longest Land Runway Length:</source>
-        <translation type="unfinished"></translation>
+        <translation>最长的着陆跑道长度:</translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="452"/>
         <source>Longest Land Runway</source>
-        <translation type="unfinished"></translation>
+        <translation>最长的着陆跑道</translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="813"/>
@@ -19328,7 +19352,7 @@ kHz/MHz</translation>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="1106"/>
         <source>. METAR source &quot;%1&quot;.</source>
-        <translation type="unfinished"></translation>
+        <translation>. METAR 源 &quot;%1&quot;。</translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="1384"/>
@@ -19368,7 +19392,7 @@ kHz/MHz</translation>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="1861"/>
         <source>ILS/LOC</source>
-        <translation type="unfinished"></translation>
+        <translation>ILS/LOC</translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="1869"/>
@@ -20552,7 +20576,7 @@ kHz/MHz</translation>
         <location filename="src/mappainter/mappainterairport.cpp" line="827"/>
         <source>T</source>
         <comment>Tower short name</comment>
-        <translation type="unfinished"></translation>
+        <translation>T</translation>
     </message>
     <message>
         <location filename="src/mappainter/mappainterairport.cpp" line="859"/>
@@ -21374,169 +21398,169 @@ Go to menu &quot;Tools&quot; -&gt; &quot;Options&quot; and then to page &quot;Ca
         <location filename="src/mapgui/mapvisible.cpp" line="93"/>
         <source>H</source>
         <comment>Runway surface</comment>
-        <translation type="unfinished">H</translation>
+        <translation>H</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapvisible.cpp" line="99"/>
         <source>S</source>
         <comment>Runway surface</comment>
-        <translation type="unfinished">南</translation>
+        <translation>S</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapvisible.cpp" line="122"/>
         <source>E</source>
         <comment>Airport status</comment>
-        <translation type="unfinished"></translation>
+        <translation>E</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapvisible.cpp" line="128"/>
         <source>O</source>
         <comment>Airport status</comment>
-        <translation type="unfinished">O</translation>
+        <translation>O</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapvisible.cpp" line="136"/>
         <source>L</source>
         <comment>Airport status</comment>
-        <translation type="unfinished">L</translation>
+        <translation>L</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapvisible.cpp" line="144"/>
         <source>P</source>
         <comment>Airport status</comment>
-        <translation type="unfinished">P</translation>
+        <translation>P</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapvisible.cpp" line="150"/>
         <source>C</source>
         <comment>Airport status</comment>
-        <translation type="unfinished"></translation>
+        <translation>C</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapvisible.cpp" line="156"/>
         <source>M</source>
         <comment>Airport status</comment>
-        <translation type="unfinished">M</translation>
+        <translation>M</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapvisible.cpp" line="162"/>
         <source>AZ</source>
         <comment>Airport status</comment>
-        <translation type="unfinished">AZ</translation>
+        <translation>AZ</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapvisible.cpp" line="167"/>
         <source>AF</source>
         <comment>Airport status</comment>
-        <translation type="unfinished">AF</translation>
+        <translation>AF</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapvisible.cpp" line="183"/>
         <source>V</source>
         <comment>Navaid short type</comment>
-        <translation type="unfinished">V</translation>
+        <translation>V</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapvisible.cpp" line="189"/>
         <source>N</source>
         <comment>Navaid short type</comment>
-        <translation type="unfinished"></translation>
+        <translation>N</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapvisible.cpp" line="195"/>
         <source>W</source>
         <comment>Navaid short type</comment>
-        <translation type="unfinished"></translation>
+        <translation>W</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapvisible.cpp" line="201"/>
         <source>I</source>
         <comment>Navaid short type</comment>
-        <translation type="unfinished">I</translation>
+        <translation>I</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapvisible.cpp" line="207"/>
         <source>G</source>
         <comment>Navaid short type</comment>
-        <translation type="unfinished">G</translation>
+        <translation>G</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapvisible.cpp" line="213"/>
         <source>LA</source>
         <comment>Airway short type</comment>
-        <translation type="unfinished">LA</translation>
+        <translation>LA</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapvisible.cpp" line="219"/>
         <source>HA</source>
         <comment>Airway short type</comment>
-        <translation type="unfinished">HA</translation>
+        <translation>HA</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapvisible.cpp" line="225"/>
         <source>T</source>
         <comment>Track short indicator</comment>
-        <translation type="unfinished"></translation>
+        <translation>T</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapvisible.cpp" line="231"/>
         <source>H</source>
         <comment>Holding short indicator</comment>
-        <translation type="unfinished">H</translation>
+        <translation>H</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapvisible.cpp" line="334"/>
         <source>A&gt;</source>
         <comment>Aircraft indicator</comment>
-        <translation type="unfinished"></translation>
+        <translation>A&gt;</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapvisible.cpp" line="339"/>
         <source>A</source>
         <comment>Aircraft indicator</comment>
-        <translation type="unfinished">A</translation>
+        <translation>A</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapvisible.cpp" line="345"/>
         <source>G</source>
         <comment>Aircraft indicator</comment>
-        <translation type="unfinished">G</translation>
+        <translation>G</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapvisible.cpp" line="355"/>
         <source>S&gt;</source>
         <comment>Ship indicator</comment>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="src/mapgui/mapvisible.cpp" line="360"/>
         <source>S</source>
         <comment>Ship indicator</comment>
-        <translation type="unfinished">南</translation>
+        <translation>南</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapvisible.cpp" line="380"/>
         <source>AW</source>
         <comment>Airport weather indicator</comment>
-        <translation type="unfinished">AW</translation>
+        <translation>AW</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapvisible.cpp" line="392"/>
         <source>W</source>
         <comment>Wind indicator</comment>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="src/mapgui/mapvisible.cpp" line="402"/>
         <source>F</source>
         <comment>Flight plan indicator</comment>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="src/mapgui/mapvisible.cpp" line="410"/>
         <source>T</source>
         <comment>Trail indicator</comment>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="src/mapgui/mapvisible.cpp" line="443"/>
@@ -21572,7 +21596,7 @@ Go to menu &quot;Tools&quot; -&gt; &quot;Options&quot; and then to page &quot;Ca
         <location filename="src/mapgui/mapvisible.cpp" line="105"/>
         <source>W</source>
         <comment>Runway surface</comment>
-        <translation type="unfinished"></translation>
+        <translation>W</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapvisible.cpp" line="108"/>
@@ -22253,12 +22277,12 @@ Ensure that the map fills the window completely.</source>
         <location filename="src/mapgui/mapwidget.cpp" line="4007"/>
         <location filename="src/mapgui/mapwidget.cpp" line="4014"/>
         <source>—</source>
-        <translation type="unfinished"></translation>
+        <translation>—</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapwidget.cpp" line="4021"/>
         <source>Detail %1/%2</source>
-        <translation type="unfinished">%1/%2 详情</translation>
+        <translation>%1/%2 详情</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapwidget.cpp" line="4036"/>
@@ -22990,7 +23014,7 @@ New name will be &quot;filename_1.pln&quot; if &quot;filename.pln&quot; already 
     <message>
         <location filename="src/options/options.ui" line="1802"/>
         <source>Does not apply to the KML files loaded after startup.</source>
-        <translation>启动后不适用于 KML 文件。</translation>
+        <translation>不适用于启动后加载的 KML 文件。</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="1805"/>
@@ -23395,7 +23419,9 @@ Smaller values will zoom in closer to an airport or navaid.
         <source>Zooms the map one step out for actions like center flight plan or double click to achieve a sharp map display.
 This works best with the Mercator projection and online maps.
 Map views might be shown with a larger zoom distance than expected if this option is selected.</source>
-        <translation type="unfinished"></translation>
+        <translation>缩放地图来适配一些操作，如置中飞行计划或双击使地图显示清晰。
+在使用墨卡托投影和在线地图时效果最佳。
+如勾选，地图视角的缩放距离可能会比预期的更大。</translation>
     </message>
     <message>
         <source>&amp;Avoid blurred map display by zooming out
@@ -24343,7 +24369,9 @@ This is als used for &quot;Center map on aircraft and next flight plan waypoint&
         <source>Draw the active flight plan leg in a different color.
 Change the color of this leg with the &quot;Active Leg Color&quot;.
 Also used in the elevation profile.</source>
-        <translation type="unfinished"></translation>
+        <translation>用不同的颜色绘制激活的飞行计划航段。
+通过 &quot;激活航段颜色&quot; 来改变这些航段的颜色。
+同样使用于纵剖图。</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="4169"/>
@@ -24395,7 +24423,9 @@ Does not apply to lines originating from airports or navaids.</source>
         <source>Change the display of circles highlighting selected features on the map.
 These are shown when a flight plan leg is selected, an entry in a search result table is selected or 
 if you hover over the elevation profile.</source>
-        <translation type="unfinished"></translation>
+        <translation>更改地图上高亮选中要素的显示。
+当选中了飞行计划航段、搜索结果表格的条目或鼠标悬停在纵剖图上
+时，将会显示。</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="4770"/>
@@ -24804,12 +24834,12 @@ Lower values make the airspace more opaque and higher values more transparent.</
     <message>
         <location filename="src/options/options.ui" line="1765"/>
         <source>Add departure parking, runway or airport to an empty flight plan after connecting to simulator.</source>
-        <translation type="unfinished"></translation>
+        <translation>在连接至模拟器后添加离场机位、跑道或机场至空计划。</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="1768"/>
         <source>Add &amp;departure position to flight plan after connecting to simulator</source>
-        <translation type="unfinished"></translation>
+        <translation>连接至模拟器后添加出发位置至飞行计划(&amp;D)</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="2066"/>
@@ -24818,12 +24848,16 @@ are drawn underneath all other airports and use a gray symbol.
 The airports toolbar button can be used to hide empty airports if this box is checked.
 
 Note that this function is disabled for X-Plane 12 since the 3D flag is unreliable there.</source>
-        <translation type="unfinished"></translation>
+        <translation>X-Plane 11 中所有默认的2D机场
+绘制时，将绘制在其他机场下层并使用灰色符号。
+如果勾选，机场工具栏按钮则可以用来隐藏空机场。
+
+注意，功能对 X-Plane 12 不可用，因为3D标签此时不可靠。</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="2073"/>
         <source>&amp;X-Plane 11 2D airports are shown as empty</source>
-        <translation type="unfinished">将X-Plane 2D机场显示为空(&amp;X) {11 2D?}</translation>
+        <translation>将X-Plane 2D机场显示为空(&amp;X)</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="3178"/>
@@ -27115,27 +27149,28 @@ Indicated with &quot;GC&quot; if rhumb and great circle are selected.</source>
         <location filename="src/options/optionsdialog.cpp" line="278"/>
         <source>Show taxiways. This applies partially to MSFS and fully to FSX and P3D.
 X-Plane simulators have taxiways integrated into the apron geometry.</source>
-        <translation type="unfinished"></translation>
+        <translation>显示滑行道。MSFS部分支持，FSX和P3D完全支持。
+X-Plane则将滑行道集成在停机坪几何结构中。</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="280"/>
         <source>Taxiway Lines</source>
-        <translation type="unfinished"></translation>
+        <translation>滑行道线</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="280"/>
         <source>Show taxiway lines.</source>
-        <translation type="unfinished"></translation>
+        <translation>显示滑行道线。</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="281"/>
         <source>Taxiway Names</source>
-        <translation type="unfinished"></translation>
+        <translation>滑行道名称</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="281"/>
         <source>Show taxiway names.</source>
-        <translation type="unfinished"></translation>
+        <translation>显示滑行道名称。</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="298"/>
@@ -27226,7 +27261,7 @@ The label is fixed. Not shown at procedure legs.</source>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="322"/>
         <source>Transponder code prefixed with &quot;XPDR&quot; on the map.</source>
-        <translation type="unfinished"></translation>
+        <translation>在地图上以&quot;XPDR&quot;开头的应答机编码。</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="323"/>
@@ -27237,7 +27272,7 @@ The label is fixed. Not shown at procedure legs.</source>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="323"/>
         <source>Value prefixed with &quot;IAS&quot; on the map.</source>
-        <translation type="unfinished"></translation>
+        <translation>在地图上以&quot;IAS&quot;开头的值。</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="324"/>
@@ -27248,7 +27283,7 @@ The label is fixed. Not shown at procedure legs.</source>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="324"/>
         <source>Value prefixed with &quot;GS&quot; on the map.</source>
-        <translation type="unfinished"></translation>
+        <translation>在地图上以&quot;GS&quot;开头的值。</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="325"/>
@@ -27259,13 +27294,13 @@ The label is fixed. Not shown at procedure legs.</source>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="325"/>
         <source>Value prefixed with &quot;TAS&quot; on the map.</source>
-        <translation type="unfinished"></translation>
+        <translation>在地图上以&quot;TAS&quot;开头的值。</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="326"/>
         <location filename="src/options/optionsdialog.cpp" line="348"/>
         <source>Climb- and Sinkrate</source>
-        <translation>爬升和下降</translation>
+        <translation>爬升- 和下降率</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="327"/>
@@ -27344,14 +27379,18 @@ on page &quot;Map Navigation&quot; is enabled as well.</source>
         <source>Shows corner marks to highlight the screen areas.
 Helps if map areas are used for touchscreen navigation.
 Only shown if &quot;Use map areas&quot; on page &quot;Map Navigation&quot; is enabled as well.</source>
-        <translation type="unfinished"></translation>
+        <translation>显示边缘标记以高亮屏幕区域。
+在用触摸屏导航时会有帮助。
+只在 &quot;地图导航&quot; 页面启用了 &quot;使用地图区域导航&quot; 时候才会显示。</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="263"/>
         <source>Shows icons for the screen areas.
 Useful if map areas are used for touchscreen navigation.
 Only shown if &quot;Use map areas&quot; on page &quot;Map Navigation&quot; is enabled as well.</source>
-        <translation type="unfinished"></translation>
+        <translation>显示屏幕区域的图标。
+在用触摸屏导航时会有用。
+只在 &quot;地图导航&quot; 页面启用了 &quot;使用地图区域导航&quot; 时候才会显示。</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="269"/>
@@ -27437,22 +27476,22 @@ The label moves to keep it visible while scrolling.</source>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="327"/>
         <source>Aircraft magnetic heading prefixed with &quot;HDG&quot; on the map.</source>
-        <translation type="unfinished"></translation>
+        <translation>在地图上显示以 &quot;HDG&quot; 开头的飞行器磁航向。</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="328"/>
         <source>Real aircraft altitude prefixed with &quot;ALT&quot; on the map.</source>
-        <translation type="unfinished"></translation>
+        <translation>在地图上显示以 &quot;ALT&quot; 开头的实际飞行器高度。</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="329"/>
         <source>Indicated aircraft altitude prefixed with &quot;IND&quot; on the map.</source>
-        <translation type="unfinished"></translation>
+        <translation>在地图上显示以 &quot;IND&quot; 开头的飞行器指示高度。</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="330"/>
         <source>Actual altitude above ground. Prefixed with &quot;AGL&quot; on the map.</source>
-        <translation type="unfinished"></translation>
+        <translation>在地图上显示以 &quot;AGL&quot; 开头的飞行器离地高度。</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="344"/>
@@ -27482,7 +27521,7 @@ The label moves to keep it visible while scrolling.</source>
         <location filename="src/options/optionsdialog.cpp" line="328"/>
         <location filename="src/options/optionsdialog.cpp" line="350"/>
         <source>Actual Altitude</source>
-        <translation>真高</translation>
+        <translation>实际高度</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="350"/>
@@ -27669,167 +27708,167 @@ VORTAC, TACAN or NDB.</source>
 的径向线，前缀 &quot;R&quot;。</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="1708"/>
+        <location filename="src/options/optionsdialog.cpp" line="1719"/>
         <source>Open Directory to include</source>
         <translation>打开目录以包含</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="2511"/>
+        <location filename="src/options/optionsdialog.cpp" line="2522"/>
         <source>Select directory for map themes</source>
         <translation>选择地图主题目录</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="2613"/>
+        <location filename="src/options/optionsdialog.cpp" line="2624"/>
         <source>Weather snapshot file is valid. Using selected for all simulators</source>
         <translation>天气文件有效。将为所有模拟器启用所选</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="2647"/>
+        <location filename="src/options/optionsdialog.cpp" line="2658"/>
         <source>No Active Sky weather snapshot file selected. Using default for ASP5 for %1.</source>
         <translation>没有选择 Active Sky 天气快照文件。为 %1 使用默认 ASP5。</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="2652"/>
+        <location filename="src/options/optionsdialog.cpp" line="2663"/>
         <source>No Active Sky weather snapshot file selected. Using default for Active Sky XP 11 for %1.</source>
         <translation>没有选择 Active Sky 天气快照文件。为 %1 使用默认 Active Sky XP11。</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="2657"/>
+        <location filename="src/options/optionsdialog.cpp" line="2668"/>
         <source>No Active Sky weather snapshot file selected. Using default for Active Sky XP 12 for %1.</source>
         <translation>没有选择 Active Sky 天气快照文件。为 %1 使用默认 Active Sky XP12。</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="2662"/>
+        <location filename="src/options/optionsdialog.cpp" line="2673"/>
         <source>No Active Sky weather snapshot file selected. Using default for Active Sky FS for %1.</source>
         <translation>没有选择 Active Sky 天气快照文件。为 %1 使用默认 Active Sky FS。</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="2683"/>
+        <location filename="src/options/optionsdialog.cpp" line="2694"/>
         <source>Weather file is valid. Using selected for X-Plane 11.</source>
         <translation>天气文件有效。将为 X-Plane11.启用所选。</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="2687"/>
+        <location filename="src/options/optionsdialog.cpp" line="2698"/>
         <source>Using default weather from X-Plane 11 base path.</source>
         <translation>使用 X-Plane11 根目录的默认天气。</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="2700"/>
+        <location filename="src/options/optionsdialog.cpp" line="2711"/>
         <source>Is not a directory.</source>
         <translation>不是一个目录。</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="2702"/>
+        <location filename="src/options/optionsdialog.cpp" line="2713"/>
         <source>Weather directory is valid. Using selected for X-Plane 12.</source>
         <translation>天气目录有效。将为 X-Plane12.启用所选。</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="2706"/>
+        <location filename="src/options/optionsdialog.cpp" line="2717"/>
         <source>Using default weather from X-Plane 12 base path.</source>
         <translation>使用 X-Plane12 根目录的默认天气。</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="2721"/>
+        <location filename="src/options/optionsdialog.cpp" line="2732"/>
         <source>Is not a X-Plane 11 wind file.</source>
         <translation>不是一个有效的 X-Plane 风况文件。</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="2723"/>
+        <location filename="src/options/optionsdialog.cpp" line="2734"/>
         <source>X-Plane 11 wind file is valid.</source>
         <translation>X-Plane 11风况文件是有效的。</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="2726"/>
+        <location filename="src/options/optionsdialog.cpp" line="2737"/>
         <source>Using default X-Plane 11 wind file.</source>
         <translation>正在使用默认的 X-Plane11 风况文件。</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="2734"/>
+        <location filename="src/options/optionsdialog.cpp" line="2745"/>
         <source>Select Active Sky Weather Snapshot File</source>
         <translation>选择 Active Sky 天气快照文件</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="2753"/>
+        <location filename="src/options/optionsdialog.cpp" line="2764"/>
         <source>Select X-Plane 11 METAR File</source>
         <translation>选择 X-Plane11 METAR 文件</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="2775"/>
+        <location filename="src/options/optionsdialog.cpp" line="2786"/>
         <source>Select X-Plane 12 Weather Directory</source>
         <translation>选择 X-Plane12 的天气目录</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="2792"/>
+        <location filename="src/options/optionsdialog.cpp" line="2803"/>
         <source>Select X-Plane 11 Wind File</source>
         <translation>选择 X-Plane11 的风况文件</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="2793"/>
+        <location filename="src/options/optionsdialog.cpp" line="2804"/>
         <source>X-Plane 11 Wind Files %1;;All Files (*)</source>
         <translation>X-Plane 11 风况文件 %1;;所有文件 (*)</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="2865"/>
+        <location filename="src/options/optionsdialog.cpp" line="2876"/>
         <source>No valid address found.</source>
         <translation>无效的地址。</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="2867"/>
+        <location filename="src/options/optionsdialog.cpp" line="2878"/>
         <source>Web Server is running at the address:&lt;br/&gt;%1</source>
         <translation>Web服务正运行在:&lt;br/&gt;%1</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="2869"/>
+        <location filename="src/options/optionsdialog.cpp" line="2880"/>
         <source>Web Server is running at addresses:&lt;br/&gt;%1</source>
         <translation>Web服务正运行在:&lt;br/&gt;%1</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="3144"/>
+        <location filename="src/options/optionsdialog.cpp" line="3155"/>
         <source>Font too large for user interface. Size was corrected. Maximum is 30 pixels/points.</source>
         <translation>用户界面的字体过大。大小已被修正。最大值为 30像素。</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="3178"/>
+        <location filename="src/options/optionsdialog.cpp" line="3189"/>
         <source>&lt;p&gt;Here you can enter a Mapbox User Style URL.&lt;/p&gt;&lt;p&gt;Open the Mapbox Studio, login and click on the three-dot menu button of your style.&lt;br/&gt; Then click on the copy icon of the &quot;Style URL&quot; to add it to the clipboard and enter it below.&lt;/p&gt;&lt;p&gt;A style URL looks like &quot;mapbox://styles/USERNAME/STYLEID&quot;.&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;https://studio.mapbox.com/&quot;&gt;&lt;b&gt;Click here to open the Mapbox Studio page in your browser&lt;/b&gt;&lt;/a&gt;&lt;/p&gt;</source>
         <translation>&lt;p&gt;您可以在这里输入 Mapbox 用户样式的URL.&lt;/p&gt;&lt;p&gt;打开 Mapbox Studio，登录并点击您样式中带有三个点的菜单。&lt;br/&gt; 然后点击并复制图标 &quot;Style URL&quot; 来添加至剪贴板并在下方输入。&lt;/p&gt;&lt;p&gt;一个样式 URL 形如&quot;mapbox://styles/USERNAME/STYLEID&quot;.&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;https://studio.mapbox.com/&quot;&gt;&lt;b&gt;点击此处在浏览器中打开 Mapbox Studio页面&lt;/b&gt;&lt;/a&gt;&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="3185"/>
+        <location filename="src/options/optionsdialog.cpp" line="3196"/>
         <source>&lt;p&gt;You can also to provide you Mapbox Access Token below if not already done.&lt;br/&gt;You can find the Token on your Mapbox Account page.&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;https://account.mapbox.com/&quot;&gt;&lt;b&gt;Click here to open the Mapbox Account page in your browser&lt;/b&gt;&lt;/a&gt;&lt;/p&gt;</source>
         <translation>&lt;p&gt;您需要在下面提供您的 Mapbox 令牌(Token).&lt;br/&gt;令牌可以在您 Mapbox 账户页面进行获取.&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;https://account.mapbox.com/&quot;&gt;&lt;b&gt;点击此处以在浏览器中打开 Mapbox 账户页面&lt;/b&gt;&lt;/a&gt;&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="3193"/>
+        <location filename="src/options/optionsdialog.cpp" line="3204"/>
         <source>&lt;p&gt;&lt;b&gt;You have to clear the map cache manually after updating or changing your Mapbox style.&lt;/b&gt;&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;%1&quot;&gt;&lt;b&gt;Click here to open cache folder for the Mapbox user style.&lt;/b&gt;&lt;/a&gt; Backup the folder if needed and then delete the folder contents manually to clear the cache.&lt;/p&gt;</source>
         <translation>&lt;p&gt;&lt;b&gt;在更新或改变 Mapbox 样式后，您需要手动清理地图缓存.&lt;/b&gt;&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;%1&quot;&gt;&lt;b&gt;点击此处打开 Mapbox 用户样式缓存目录.&lt;/b&gt;&lt;/a&gt; 手动删除目录来清理缓存，必要时请备份.&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="3212"/>
+        <location filename="src/options/optionsdialog.cpp" line="3223"/>
         <source> - Enter Mapbox Keys</source>
         <translation> - 输入Mapbox Keys</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="3243"/>
+        <location filename="src/options/optionsdialog.cpp" line="3254"/>
         <source>Mapbox Token is empty.</source>
         <translation>Mapbox令牌(Token)为空。</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="3246"/>
+        <location filename="src/options/optionsdialog.cpp" line="3257"/>
         <source>Mapbox User Style not found in URL.</source>
         <translation>Mapbox 用户样式未在URL中找到 。</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="3249"/>
+        <location filename="src/options/optionsdialog.cpp" line="3260"/>
         <source>Mapbox Username not found in URL.</source>
         <translation>在URL中未找到Mapbox用户名。</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="3252"/>
+        <location filename="src/options/optionsdialog.cpp" line="3263"/>
         <source>Style URL has to start with &quot;mapbox://styles/&quot;.</source>
         <translation>样式URL需要以 &quot;mapbox://styles/&quot; 开头。</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="3256"/>
+        <location filename="src/options/optionsdialog.cpp" line="3267"/>
         <source>One or more Mapbox keys are missing. Installation might be incomplete since map themes are missing.</source>
         <translation>一个或多个Mapbox Key丢失。安装可能不完全由于地图主题丢失。</translation>
     </message>
@@ -27894,9 +27933,9 @@ Resetting update period back to %1 seconds.</source>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="1076"/>
-        <location filename="src/options/optionsdialog.cpp" line="1624"/>
-        <location filename="src/options/optionsdialog.cpp" line="1641"/>
-        <location filename="src/options/optionsdialog.cpp" line="1665"/>
+        <location filename="src/options/optionsdialog.cpp" line="1635"/>
+        <location filename="src/options/optionsdialog.cpp" line="1652"/>
+        <location filename="src/options/optionsdialog.cpp" line="1676"/>
         <source>&lt;p&gt;Success. First lines in file:&lt;/p&gt;&lt;hr/&gt;&lt;code&gt;%1&lt;/code&gt;&lt;hr/&gt;&lt;br/&gt;</source>
         <translation>&lt;p&gt;成功。文件里的第一行是：&lt;/p&gt;&lt;hr/&gt;&lt;code&gt;%1&lt;/code&gt;&lt;hr/&gt;&lt;br/&gt;</translation>
     </message>
@@ -27912,10 +27951,10 @@ Resetting update period back to %1 seconds.</source>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="1093"/>
-        <location filename="src/options/optionsdialog.cpp" line="1627"/>
-        <location filename="src/options/optionsdialog.cpp" line="1644"/>
-        <location filename="src/options/optionsdialog.cpp" line="1667"/>
-        <location filename="src/options/optionsdialog.cpp" line="1681"/>
+        <location filename="src/options/optionsdialog.cpp" line="1638"/>
+        <location filename="src/options/optionsdialog.cpp" line="1655"/>
+        <location filename="src/options/optionsdialog.cpp" line="1678"/>
+        <location filename="src/options/optionsdialog.cpp" line="1692"/>
         <source>Failed. Reason:
 %1</source>
         <translation>失败。原因是：
@@ -27927,7 +27966,7 @@ Resetting update period back to %1 seconds.</source>
         <translation>重置所有选项到默认？</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="1395"/>
+        <location filename="src/options/optionsdialog.cpp" line="1406"/>
         <source>%1, %2</source>
         <translation>%1, %2</translation>
     </message>
@@ -27936,17 +27975,17 @@ Resetting update period back to %1 seconds.</source>
         <translation type="vanished">&lt;p&gt;成功。文件中第一行 METAR 文本是：&lt;/p&gt;&lt;hr/&gt;&lt;code&gt;%1&lt;/code&gt;&lt;hr/&gt;&lt;br/&gt;</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="1679"/>
+        <location filename="src/options/optionsdialog.cpp" line="1690"/>
         <source>Success.</source>
         <translation>成功。</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="3029"/>
+        <location filename="src/options/optionsdialog.cpp" line="3040"/>
         <source>Example: &quot;%1&quot;</source>
         <translation>例如：“%1”</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="3032"/>
+        <location filename="src/options/optionsdialog.cpp" line="3043"/>
         <source>&lt;br/&gt;</source>
         <translation>&lt;br/&gt;</translation>
     </message>
@@ -27969,7 +28008,7 @@ Resetting update period back to %1 seconds.</source>
         <translation type="vanished"> </translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="3038"/>
+        <location filename="src/options/optionsdialog.cpp" line="3049"/>
         <source>Pattern is empty. Using default &quot;%1&quot;.</source>
         <translation>模式为空。使用默认“%1”。</translation>
     </message>
@@ -27983,7 +28022,7 @@ Resetting update period back to %1 seconds.</source>
         <translation type="vanished">为用户飞行器航向显示为一个小品红圆圈。</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="3082"/>
+        <location filename="src/options/optionsdialog.cpp" line="3093"/>
         <source>%1 - Select font</source>
         <translation>%1 - 已选择的字体</translation>
     </message>
@@ -27992,22 +28031,22 @@ Resetting update period back to %1 seconds.</source>
         <translation type="vanished">&lt;p&gt;成功。结果是：&lt;/p&gt;&lt;hr/&gt;&lt;code&gt;%1&lt;/code&gt;&lt;hr/&gt;&lt;br/&gt;</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="1726"/>
+        <location filename="src/options/optionsdialog.cpp" line="1737"/>
         <source>Open Directory to exclude from Scenery Loading</source>
         <translation>打开从地景载入中排除的目录</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="1738"/>
+        <location filename="src/options/optionsdialog.cpp" line="1749"/>
         <source>Open Files to exclude from Scenery Loading</source>
         <translation>打开从地景载入中排除的文件</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="1759"/>
+        <location filename="src/options/optionsdialog.cpp" line="1770"/>
         <source>Open Directory to exclude from Add-On Recognition</source>
         <translation>打开从插件识别中排除的目录</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="2540"/>
+        <location filename="src/options/optionsdialog.cpp" line="2551"/>
         <source>Open GLOBE data directory</source>
         <translation>打开 GLOBE 数据目录</translation>
     </message>
@@ -28016,8 +28055,8 @@ Resetting update period back to %1 seconds.</source>
         <translation type="vanished">选择用户空域目录</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="2560"/>
-        <location filename="src/options/optionsdialog.cpp" line="2698"/>
+        <location filename="src/options/optionsdialog.cpp" line="2571"/>
+        <location filename="src/options/optionsdialog.cpp" line="2709"/>
         <source>Directory does not exist.</source>
         <translation>目录不存在。</translation>
     </message>
@@ -28026,12 +28065,12 @@ Resetting update period back to %1 seconds.</source>
         <translation type="vanished">目录无效。</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="2569"/>
+        <location filename="src/options/optionsdialog.cpp" line="2580"/>
         <source>No directory selected.</source>
         <translation>没有选择目录。</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="2564"/>
+        <location filename="src/options/optionsdialog.cpp" line="2575"/>
         <source>No valid GLOBE data found.</source>
         <translation>没有找到有效的 GLOBE 数据。</translation>
     </message>
@@ -28044,14 +28083,15 @@ Resetting update period back to %1 seconds.</source>
         <location filename="src/options/optionsdialog.cpp" line="331"/>
         <source>Show the aircraft trail as a black needle at
 the from of the user aircraft.</source>
-        <translation type="unfinished"></translation>
+        <translation>在用户飞行器前方用一条黑色线
+显示飞行器航迹。</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="333"/>
         <location filename="src/options/optionsdialog.cpp" line="353"/>
         <source>Show aircraft coordinates using the format selected on
 options page &quot;Units&quot;.</source>
-        <translation type="unfinished"></translation>
+        <translation>显示飞行器坐标，格式可以在页面 &quot;单位&quot; 选择。</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="335"/>
@@ -28080,7 +28120,7 @@ prefixed with &quot;From User&quot;.</source>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="373"/>
         <source>Show the whole circle and tick marks using true heading.</source>
-        <translation type="unfinished"></translation>
+        <translation>整个圆盘和刻度使用真航向。</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="380"/>
@@ -28092,51 +28132,51 @@ prefixed with &quot;From User&quot;.</source>
         <translation type="obsolete">纵剖图</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="2475"/>
+        <location filename="src/options/optionsdialog.cpp" line="2486"/>
         <source>No keys found in DGML map configuration files.</source>
         <translation>没有在 DGML 地图配置文件中找到密钥(key)。</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="2483"/>
+        <location filename="src/options/optionsdialog.cpp" line="2494"/>
         <source> API Key / Username / Token </source>
         <translation> API 密钥(Key) / 用户名 / 令牌(Token) </translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="2483"/>
+        <location filename="src/options/optionsdialog.cpp" line="2494"/>
         <source> Value </source>
         <translation> 值 </translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="2497"/>
+        <location filename="src/options/optionsdialog.cpp" line="2508"/>
         <source>Double click to edit key value</source>
         <translation>双击来编辑key</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="2532"/>
+        <location filename="src/options/optionsdialog.cpp" line="2543"/>
         <source>No map theme directory set.</source>
         <translation>没有设置地图主题目录。</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="2566"/>
+        <location filename="src/options/optionsdialog.cpp" line="2577"/>
         <source>Directory and files are valid.</source>
         <translation>目录和文件是有效的。</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="2606"/>
-        <location filename="src/options/optionsdialog.cpp" line="2679"/>
-        <location filename="src/options/optionsdialog.cpp" line="2717"/>
+        <location filename="src/options/optionsdialog.cpp" line="2617"/>
+        <location filename="src/options/optionsdialog.cpp" line="2690"/>
+        <location filename="src/options/optionsdialog.cpp" line="2728"/>
         <source>File does not exist.</source>
         <translation>文件不存在。</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="2608"/>
-        <location filename="src/options/optionsdialog.cpp" line="2681"/>
-        <location filename="src/options/optionsdialog.cpp" line="2719"/>
+        <location filename="src/options/optionsdialog.cpp" line="2619"/>
+        <location filename="src/options/optionsdialog.cpp" line="2692"/>
+        <location filename="src/options/optionsdialog.cpp" line="2730"/>
         <source>Is not a file.</source>
         <translation>不是文件。</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="2610"/>
+        <location filename="src/options/optionsdialog.cpp" line="2621"/>
         <source>Is not an Active Sky weather snapshot file.</source>
         <translation>不是 Active Sky 天气快照文件。</translation>
     </message>
@@ -28145,27 +28185,27 @@ prefixed with &quot;From User&quot;.</source>
         <translation type="vanished">天气文件有效。将为所有模拟器启用</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="2625"/>
+        <location filename="src/options/optionsdialog.cpp" line="2636"/>
         <source>No Active Sky weather snapshot found. Active Sky METARs are not available.</source>
         <translation>没有选择 Active Sky 天气快照文件。Active Sky METAR 不可用。</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="2629"/>
+        <location filename="src/options/optionsdialog.cpp" line="2640"/>
         <source>Will use default weather snapshot after confirming change.</source>
         <translation>确认更改以后会使用默认的天气快照。</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="2633"/>
+        <location filename="src/options/optionsdialog.cpp" line="2644"/>
         <source>No Active Sky weather snapshot file selected. Using default for Active Sky Next for %1.</source>
         <translation>没有选择 Active Sky 天气快照文件。为 %1 使用默认 Active Sky Next。</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="2637"/>
+        <location filename="src/options/optionsdialog.cpp" line="2648"/>
         <source>No Active Sky weather snapshot file selected. Using default for AS16 for %1.</source>
         <translation>没有选择 Active Sky 天气快照文件。为 %1 使用默认 AS16。</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="2642"/>
+        <location filename="src/options/optionsdialog.cpp" line="2653"/>
         <source>No Active Sky weather snapshot file selected. Using default for ASP4 for %1.</source>
         <translation>没有选择 Active Sky 天气快照文件。为 %1 使用默认 ASP4。</translation>
     </message>
@@ -28198,7 +28238,7 @@ prefixed with &quot;From User&quot;.</source>
         <translation type="vanished">打开 Active Sky 天气快照文件</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="2735"/>
+        <location filename="src/options/optionsdialog.cpp" line="2746"/>
         <source>Active Sky Weather Snapshot Files %1;;All Files (*)</source>
         <translation>Active Sky 天气快照文件 %1;;All Files (*)</translation>
     </message>
@@ -28207,7 +28247,7 @@ prefixed with &quot;From User&quot;.</source>
         <translation type="vanished">打开 X-Plane METAR 文件</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="2754"/>
+        <location filename="src/options/optionsdialog.cpp" line="2765"/>
         <source>X-Plane METAR Files %1;;All Files (*)</source>
         <translation>X-Plane METAR 文件  %1;;所有文件 (*)</translation>
     </message>
@@ -28220,7 +28260,7 @@ prefixed with &quot;From User&quot;.</source>
         <translation type="vanished">X-Plane 风况文件  %1;;所有文件 (*)</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="2818"/>
+        <location filename="src/options/optionsdialog.cpp" line="2829"/>
         <source>Memory cache cleared.</source>
         <translation>内存缓存已清空。</translation>
     </message>
@@ -28253,17 +28293,17 @@ This process will run in background and can take a while.</source>
         <translation type="vanished">, </translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="2871"/>
+        <location filename="src/options/optionsdialog.cpp" line="2882"/>
         <source>&amp;Stop Web Server</source>
         <translation>停止 Web 服务器(&amp;S)</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="2875"/>
+        <location filename="src/options/optionsdialog.cpp" line="2886"/>
         <source>Web Server is not running.</source>
         <translation>Web 服务器未运行。</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="2876"/>
+        <location filename="src/options/optionsdialog.cpp" line="2887"/>
         <source>&amp;Start Web Server</source>
         <translation>启动 Web 服务器(&amp;S)</translation>
     </message>
@@ -28280,22 +28320,22 @@ This process will run in background and can take a while.</source>
         <translation type="vanished">警告：没有找到“index.html”文件。</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="2899"/>
+        <location filename="src/options/optionsdialog.cpp" line="2910"/>
         <source>Document root is valid.</source>
         <translation>文档根目录有效。</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="2919"/>
+        <location filename="src/options/optionsdialog.cpp" line="2930"/>
         <source>Using default document root &quot;%1&quot;.</source>
         <translation>正在使用默认的文档根目录：“%1”。</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="2924"/>
+        <location filename="src/options/optionsdialog.cpp" line="2935"/>
         <source>Not initialized.</source>
         <translation>没有初始化。</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="2932"/>
+        <location filename="src/options/optionsdialog.cpp" line="2943"/>
         <source>Open Document Root Directory</source>
         <translation>打开文档根目录</translation>
     </message>
@@ -29169,7 +29209,7 @@ Note that the order of columns is as selected in the flight plan table.</source>
         <location filename="src/search/proceduresearch.cpp" line="1822"/>
         <location filename="src/search/proceduresearch.cpp" line="1865"/>
         <source> to </source>
-        <translation> 到 </translation>
+        <translation> 至 </translation>
     </message>
     <message>
         <location filename="src/search/proceduresearch.cpp" line="648"/>
@@ -29273,7 +29313,7 @@ Waypoint</source>
     <message>
         <location filename="src/search/proceduresearch.cpp" line="1158"/>
         <source>Distance to fly in %1 or flying time in minutes.</source>
-        <translation type="unfinished"></translation>
+        <translation>在 %1 中的飞行距离或以分钟计的飞行时间。</translation>
     </message>
     <message>
         <location filename="src/search/proceduresearch.cpp" line="1160"/>
@@ -29577,7 +29617,7 @@ required descent flight path angle.</source>
         <location filename="src/profile/profileoptions.cpp" line="63"/>
         <source>Actual Altitude</source>
         <oldsource>Altitude</oldsource>
-        <translation type="unfinished">高度</translation>
+        <translation>实际高度</translation>
     </message>
     <message>
         <source>Show actual user aircraft altitude at symbol.</source>
@@ -29705,17 +29745,17 @@ Changes to &quot;Required angle&quot; if mandatory in approach procedures.</sour
     <message>
         <location filename="src/profile/profileoptions.cpp" line="63"/>
         <source>Actual user aircraft altitude at symbol prefixed with &quot;ALT&quot;.</source>
-        <translation type="unfinished"></translation>
+        <translation>在符号处以&quot;ALT&quot;开头显示飞行器实际高度。</translation>
     </message>
     <message>
         <location filename="src/profile/profileoptions.cpp" line="64"/>
         <source>Indicated Altitude</source>
-        <translation type="unfinished">指示高度</translation>
+        <translation>指示高度</translation>
     </message>
     <message>
         <location filename="src/profile/profileoptions.cpp" line="64"/>
         <source>Indicated user aircraft altitude at symbol prefixed with &quot;IND&quot;.</source>
-        <translation type="unfinished"></translation>
+        <translation>在符号处以&quot;IND&quot;开头显示飞行器指示高度。</translation>
     </message>
     <message>
         <location filename="src/profile/profileoptions.cpp" line="72"/>
@@ -29959,12 +29999,12 @@ Changes to &quot;Required angle&quot; if mandatory in approach procedures.</sour
     <message>
         <location filename="src/profile/profilewidget.cpp" line="1703"/>
         <source>IND %1</source>
-        <translation type="unfinished">指示 %1</translation>
+        <translation>指示 %1</translation>
     </message>
     <message>
         <location filename="src/profile/profilewidget.cpp" line="1708"/>
         <source>ALT %1</source>
-        <translation type="unfinished">高度 %1</translation>
+        <translation>高度 %1</translation>
     </message>
     <message>
         <location filename="src/profile/profilewidget.cpp" line="1738"/>
@@ -30364,7 +30404,7 @@ Changes to &quot;Required angle&quot; if mandatory in approach procedures.</sour
     <message>
         <location filename="src/common/mapflags.cpp" line="393"/>
         <source>—</source>
-        <translation type="unfinished"></translation>
+        <translation>—</translation>
     </message>
     <message>
         <location filename="src/common/mapflags.cpp" line="396"/>
@@ -30404,7 +30444,7 @@ Changes to &quot;Required angle&quot; if mandatory in approach procedures.</sour
     <message>
         <location filename="src/common/mapflags.cpp" line="399"/>
         <source>AS</source>
-        <translation type="unfinished"></translation>
+        <translation>AS</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="70"/>
@@ -32329,13 +32369,13 @@ Changes to &quot;Required angle&quot; if mandatory in approach procedures.</sour
         <location filename="src/common/maptypes.cpp" line="2017"/>
         <source>GS</source>
         <comment>ILS type</comment>
-        <translation type="unfinished">GS</translation>
+        <translation>GS</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="2019"/>
         <source>DME</source>
         <comment>ILS type</comment>
-        <translation type="unfinished">DME</translation>
+        <translation>DME</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="2036"/>
@@ -32377,7 +32417,7 @@ Changes to &quot;Required angle&quot; if mandatory in approach procedures.</sour
         <location filename="src/common/maptypes.cpp" line="2172"/>
         <source>-</source>
         <comment>Airspace text separator</comment>
-        <translation type="unfinished">-</translation>
+        <translation>-</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="2248"/>
@@ -32574,877 +32614,884 @@ Changes to &quot;Required angle&quot; if mandatory in approach procedures.</sour
         <location filename="src/common/maptypes.cpp" line="324"/>
         <source>Invalid</source>
         <comment>VOR type name</comment>
-        <translation type="unfinished">无效的</translation>
+        <translation>无效的</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="325"/>
         <location filename="src/common/maptypes.cpp" line="328"/>
         <source>H</source>
         <comment>VOR type name</comment>
-        <translation type="unfinished">H</translation>
+        <translation>高空</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="326"/>
         <location filename="src/common/maptypes.cpp" line="329"/>
         <source>L</source>
         <comment>VOR type name</comment>
-        <translation type="unfinished">L</translation>
+        <translation>低空</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="327"/>
         <location filename="src/common/maptypes.cpp" line="330"/>
         <source>T</source>
         <comment>VOR type name</comment>
-        <translation type="unfinished"></translation>
+        <translation>终端</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="335"/>
         <source>Invalid</source>
         <comment>Long VOR type name</comment>
-        <translation type="unfinished">无效的</translation>
+        <translation>无效的</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="336"/>
         <location filename="src/common/maptypes.cpp" line="339"/>
         <source>High</source>
         <comment>Long VOR type name</comment>
-        <translation type="unfinished">高空</translation>
+        <translation>高空</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="337"/>
         <location filename="src/common/maptypes.cpp" line="340"/>
         <source>Low</source>
         <comment>Long VOR type name</comment>
-        <translation type="unfinished">低空</translation>
+        <translation>低空</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="338"/>
         <location filename="src/common/maptypes.cpp" line="341"/>
         <source>Terminal</source>
         <comment>Long VOR type name</comment>
-        <translation type="unfinished">终端</translation>
+        <translation>终端</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="346"/>
         <source>Invalid</source>
         <comment>NDB type name</comment>
-        <translation type="unfinished">无效的</translation>
+        <translation>无效的</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="347"/>
         <location filename="src/common/maptypes.cpp" line="351"/>
         <source>HH</source>
         <comment>NDB type name</comment>
-        <translation type="unfinished">HH</translation>
+        <translation>高高空</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="348"/>
         <location filename="src/common/maptypes.cpp" line="352"/>
         <source>H</source>
         <comment>NDB type name</comment>
-        <translation type="unfinished">H</translation>
+        <translation>高空</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="349"/>
         <location filename="src/common/maptypes.cpp" line="353"/>
         <source>MH</source>
         <comment>NDB type name</comment>
-        <translation type="unfinished">MH</translation>
+        <translation>中高空</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="350"/>
         <location filename="src/common/maptypes.cpp" line="354"/>
         <source>Compass Locator</source>
         <comment>NDB type name</comment>
-        <translation type="unfinished">近远台</translation>
+        <translation>近远台</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="359"/>
         <source>Invalid</source>
         <comment>Waypoint type name</comment>
-        <translation type="unfinished">无效的</translation>
+        <translation>无效的</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="360"/>
         <source>Named</source>
         <comment>Waypoint type name</comment>
-        <translation type="unfinished">命名的</translation>
+        <translation>命名的</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="361"/>
         <source>Track</source>
         <comment>Waypoint type name</comment>
-        <translation type="unfinished">航迹</translation>
+        <translation>航迹</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="362"/>
         <source>Unnamed</source>
         <comment>Waypoint type name</comment>
-        <translation type="unfinished">未命名的</translation>
+        <translation>未命名的</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="363"/>
         <source>VOR</source>
         <comment>Waypoint type name</comment>
-        <translation type="unfinished">VOR</translation>
+        <translation>VOR</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="364"/>
         <source>NDB</source>
         <comment>Waypoint type name</comment>
-        <translation type="unfinished">NDB</translation>
+        <translation>NDB</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="365"/>
         <source>VFR</source>
         <comment>Waypoint type name</comment>
-        <translation type="unfinished">VFR</translation>
+        <translation>VFR</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="366"/>
         <source>RNAV</source>
         <comment>Waypoint type name</comment>
-        <translation type="unfinished">RNAV</translation>
+        <translation>RNAV</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="367"/>
         <source>Off Airway</source>
         <comment>Waypoint type name</comment>
-        <translation type="unfinished">偏离航路</translation>
+        <translation>偏离航路</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="368"/>
         <source>IAF</source>
         <comment>Waypoint type name</comment>
-        <translation type="unfinished">IAF</translation>
+        <translation>IAF</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="369"/>
         <source>FAF</source>
         <comment>Waypoint type name</comment>
-        <translation type="unfinished">FAF</translation>
+        <translation>FAF</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="374"/>
         <source>Invalid</source>
         <comment>All navaids type name</comment>
-        <translation type="unfinished">无效的</translation>
+        <translation>无效的</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="375"/>
         <source>VORDME</source>
         <comment>All navaids type name</comment>
-        <translation type="unfinished">VORDME</translation>
+        <translation>VORDME</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="376"/>
         <source>VORTAC</source>
         <comment>All navaids type name</comment>
-        <translation type="unfinished">VORTAC</translation>
+        <translation>VORTAC</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="377"/>
         <source>DME only VORTAC</source>
         <comment>All navaids type name</comment>
-        <translation type="unfinished">VORTAC仅DME</translation>
+        <translation>VORTAC仅DME</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="378"/>
         <source>VOR</source>
         <comment>All navaids type name</comment>
-        <translation type="unfinished">VOR</translation>
+        <translation>VOR</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="379"/>
         <source>DME</source>
         <comment>All navaids type name</comment>
-        <translation type="unfinished">DME</translation>
+        <translation>DME</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="380"/>
         <source>TACAN</source>
         <comment>All navaids type name</comment>
-        <translation type="unfinished">TACAN</translation>
+        <translation>TACAN</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="381"/>
         <source>DME only TACAN</source>
         <comment>All navaids type name</comment>
-        <translation type="unfinished">TACAN仅DME</translation>
+        <translation>TACAN仅DME</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="382"/>
         <source>NDB</source>
         <comment>All navaids type name</comment>
-        <translation type="unfinished">NDB</translation>
+        <translation>NDB</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="383"/>
         <source>Waypoint</source>
         <comment>All navaids type name</comment>
-        <translation type="unfinished">航路点</translation>
+        <translation>航路点</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="388"/>
         <source>Invalid</source>
         <comment>COM type name</comment>
-        <translation type="unfinished">无效的</translation>
+        <translation>无效的</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="389"/>
         <source>None</source>
         <comment>COM type name</comment>
-        <translation type="unfinished">无</translation>
+        <translation>无</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="395"/>
         <source>CTAF</source>
         <comment>COM type name</comment>
-        <translation type="unfinished">CTAF</translation>
+        <translation>CTAF</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="406"/>
         <source>Remote Clearance Delivery</source>
         <comment>COM type name</comment>
-        <translation type="unfinished">远程放行管制</translation>
+        <translation>远程放行管制</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="409"/>
         <source>Area Control Center</source>
         <comment>COM type name</comment>
-        <translation type="unfinished">区域管制中心</translation>
+        <translation>区域管制中心</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="410"/>
         <source>Airlift Command Post</source>
         <comment>COM type name</comment>
-        <translation type="unfinished">空运指挥所</translation>
+        <translation>空运指挥所</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="411"/>
         <source>Air to Air</source>
         <comment>COM type name</comment>
-        <translation type="unfinished">空对空</translation>
+        <translation>空对空</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="412"/>
         <source>Approach Control</source>
         <comment>COM type name</comment>
-        <translation type="unfinished">进近管制</translation>
+        <translation>进近管制</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="413"/>
         <source>Arrival Control</source>
         <comment>COM type name</comment>
-        <translation type="unfinished">进近管制</translation>
+        <translation>进场管制</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="414"/>
         <source>ASOS</source>
         <comment>COM type name</comment>
-        <translation type="unfinished">ASOS</translation>
+        <translation>ASOS</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="415"/>
         <source>ATIS</source>
         <comment>COM type name</comment>
-        <translation type="unfinished">ATIS</translation>
+        <translation>ATIS</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="416"/>
         <source>AWIB</source>
         <comment>COM type name</comment>
-        <translation type="unfinished">AWIB</translation>
+        <translation>AWIB</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="417"/>
         <source>AWOS</source>
         <comment>COM type name</comment>
-        <translation type="unfinished">AWOS</translation>
+        <translation>AWOS</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="418"/>
         <source>AWIS</source>
         <comment>COM type name</comment>
-        <translation type="unfinished">AWIS</translation>
+        <translation>AWIS</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="419"/>
         <source>Clearance Delivery</source>
         <comment>COM type name</comment>
-        <translation type="unfinished">放行管制</translation>
+        <translation>放行管制</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="420"/>
         <source>Clearance Pre-Taxi</source>
         <comment>COM type name</comment>
-        <translation type="unfinished">滑行前放行</translation>
+        <translation>放行管制(滑行前)</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="421"/>
         <source>Terminal Control Area</source>
         <comment>COM type name</comment>
-        <translation type="unfinished">终端管制区</translation>
+        <translation>终端管制区</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="422"/>
         <source>Control</source>
         <comment>COM type name</comment>
-        <translation type="unfinished">管制</translation>
+        <translation>管制</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="423"/>
         <source>Departure Control</source>
         <comment>COM type name</comment>
-        <translation type="unfinished">离场管制</translation>
+        <translation>离场管制</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="424"/>
         <source>Director (Approach Control Radar)</source>
         <comment>COM type name</comment>
-        <translation type="unfinished">主任（进近管制雷达）</translation>
+        <translation>主任（进近管制雷达）</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="425"/>
         <source>En-route Flight Advisory Service (EFAS)</source>
         <comment>COM type name</comment>
-        <translation type="unfinished">航路飞行咨询服务（EFAS）</translation>
+        <translation>航路飞行咨询服务（EFAS）</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="426"/>
         <source>Emergency</source>
         <comment>COM type name</comment>
-        <translation type="unfinished">紧急</translation>
+        <translation>紧急</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="427"/>
         <source>Flight Service Station</source>
         <comment>COM type name</comment>
-        <translation type="unfinished">飞行服务站</translation>
+        <translation>飞行服务站</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="428"/>
         <source>Ground Comm Outlet</source>
         <comment>COM type name</comment>
-        <translation type="unfinished">地面通讯端子</translation>
+        <translatorcomment>Ground communications outlets (GCO) </translatorcomment>
+        <translation>地面通讯端子</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="429"/>
         <source>Gate Control</source>
         <comment>COM type name</comment>
-        <translation type="unfinished">登机口管制</translation>
+        <translation>登机口管制</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="430"/>
         <source>Ground Control</source>
         <comment>COM type name</comment>
-        <translation type="unfinished">地面管制</translation>
+        <translation>地面管制</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="431"/>
         <source>Helicopter Frequency</source>
         <comment>COM type name</comment>
-        <translation type="unfinished">直升机频率</translation>
+        <translation>直升机频率</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="432"/>
         <source>Information</source>
         <comment>COM type name</comment>
-        <translation type="unfinished">信息</translation>
+        <translation>信息</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="433"/>
         <source>Military Frequency</source>
         <comment>COM type name</comment>
-        <translation type="unfinished">军用频率</translation>
+        <translation>军用频率</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="434"/>
         <source>Multicom</source>
         <comment>COM type name</comment>
-        <translation type="unfinished">多种通信</translation>
+        <translatorcomment>在美国和加拿大的航空领域，MULTICOM通常指用作没有空中交通管制的机场附近飞机之间的公共交通告知频率。没翻译，不好翻译</translatorcomment>
+        <translation>Multicom</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="435"/>
         <source>Operations</source>
         <comment>COM type name</comment>
-        <translation type="unfinished">运行</translation>
+        <translation>运行</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="436"/>
         <source>Pilot Activated Lighting</source>
         <comment>COM type name</comment>
-        <translation type="unfinished">飞行员控制的灯光</translation>
+        <translation>飞行员控制的灯光</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="437"/>
         <source>Radio</source>
         <comment>COM type name</comment>
-        <translation type="unfinished">无线电</translation>
+        <translation>无线电</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="438"/>
         <source>Radar</source>
         <comment>COM type name</comment>
-        <translation type="unfinished">雷达</translation>
+        <translation>雷达</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="439"/>
         <source>Remote Flight Service Station (RFSS)</source>
         <comment>COM type name</comment>
-        <translation type="unfinished">远程飞行服务站（RFSS）</translation>
+        <translation>远程飞行服务站（RFSS）</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="440"/>
         <source>Ramp or Taxi Control</source>
         <comment>COM type name</comment>
-        <translation type="unfinished">停机坪或滑行管制</translation>
+        <translation>停机坪或滑行管制</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="441"/>
         <source>Airport Radar Service Area (ARSA)</source>
         <comment>COM type name</comment>
-        <translation type="unfinished">机场雷达服务区（ARSA）</translation>
+        <translation>机场雷达服务区（ARSA）</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="442"/>
         <source>Terminal Control Area (TCA)</source>
         <comment>COM type name</comment>
-        <translation type="unfinished">终端管制区（TCA）</translation>
+        <translation>终端管制区（TCA）</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="443"/>
         <source>Terminal Control Area (TMA)</source>
         <comment>COM type name</comment>
-        <translation type="unfinished">终端管制区（TMA）</translation>
+        <translation>终端管制区（TMA）</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="444"/>
         <source>Terminal</source>
         <comment>COM type name</comment>
-        <translation type="unfinished">终端</translation>
+        <translation>终端</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="445"/>
         <source>Terminal Radar Service Area (TRSA)</source>
         <comment>COM type name</comment>
-        <translation type="unfinished">终端雷达服务区（TRSA）</translation>
+        <translation>终端雷达服务区（TRSA）</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="446"/>
         <source>Transcriber Weather Broadcast (TWEB)</source>
         <comment>COM type name</comment>
-        <translation type="unfinished">转录气象广播（TWEB）</translation>
+        <translation>转录气象广播（TWEB）</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="447"/>
         <source>Tower, Air Traffic Control</source>
         <comment>COM type name</comment>
-        <translation type="unfinished">塔台、空中交通管制</translation>
+        <translation>塔台、空中交通管制</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="448"/>
         <source>Upper Area Control</source>
         <comment>COM type name</comment>
-        <translation type="unfinished">高空管制</translation>
+        <translation>高空管制</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="449"/>
         <source>UNICOM</source>
         <comment>COM type name</comment>
-        <translation type="unfinished">通用通信</translation>
+        <translation>通用通信</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="450"/>
         <source>VOLMET</source>
         <comment>COM type name</comment>
-        <translation type="unfinished">航空气象资料</translation>
+        <translation>航空气象资料</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="455"/>
         <source>No Airspace</source>
         <comment>Airspace type name</comment>
-        <translation type="unfinished">没有空域</translation>
+        <translation>没有空域</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="456"/>
         <source>Center</source>
         <comment>Airspace type name</comment>
-        <translation type="unfinished">中心</translation>
+        <translation>中心</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="457"/>
         <source>Class A</source>
         <comment>Airspace type name</comment>
-        <translation type="unfinished">A 类空域</translation>
+        <translation>A 类空域</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="458"/>
         <source>Class B</source>
         <comment>Airspace type name</comment>
-        <translation type="unfinished">B 类空域</translation>
+        <translation>B 类空域</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="459"/>
         <source>Class C</source>
         <comment>Airspace type name</comment>
-        <translation type="unfinished">C 类空域</translation>
+        <translation>C 类空域</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="460"/>
         <source>Class D</source>
         <comment>Airspace type name</comment>
-        <translation type="unfinished">D 类空域</translation>
+        <translation>D 类空域</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="461"/>
         <source>Class E</source>
         <comment>Airspace type name</comment>
-        <translation type="unfinished">E 类空域</translation>
+        <translation>E 类空域</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="462"/>
         <source>Class F</source>
         <comment>Airspace type name</comment>
-        <translation type="unfinished">F 类空域</translation>
+        <translation>F 类空域</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="463"/>
         <source>Class G</source>
         <comment>Airspace type name</comment>
-        <translation type="unfinished">G 类空域</translation>
+        <translation>G 类空域</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="464"/>
         <source>FIR</source>
         <comment>Airspace type name</comment>
-        <translation type="unfinished"></translation>
+        <translation>飞行情报区(FIR)</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="465"/>
         <source>UIR</source>
         <comment>Airspace type name</comment>
-        <translation type="unfinished">高空飞行情报区(UIR)</translation>
+        <translation>高空飞行情报区(UIR)</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="466"/>
         <source>Tower</source>
         <comment>Airspace type name</comment>
-        <translation type="unfinished">塔台</translation>
+        <translation>塔台</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="467"/>
         <source>Clearance</source>
         <comment>Airspace type name</comment>
-        <translation type="unfinished">放行</translation>
+        <translation>放行</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="468"/>
         <source>Ground</source>
         <comment>Airspace type name</comment>
-        <translation type="unfinished">地面</translation>
+        <translation>地面</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="469"/>
         <source>Departure</source>
         <comment>Airspace type name</comment>
-        <translation type="unfinished"></translation>
+        <translation>离场</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="470"/>
         <source>Approach</source>
         <comment>Airspace type name</comment>
-        <translation type="unfinished">进近</translation>
+        <translation>进近</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="471"/>
         <source>MOA</source>
         <comment>Airspace type name</comment>
-        <translation type="unfinished">军事活动区（MOA）</translation>
+        <translation>军事活动区（MOA）</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="472"/>
         <source>Restricted</source>
         <comment>Airspace type name</comment>
-        <translation type="unfinished">限制空域</translation>
+        <translation>限制空域</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="473"/>
         <source>Prohibited</source>
         <comment>Airspace type name</comment>
-        <translation type="unfinished">禁飞区</translation>
+        <translation>禁飞区</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="474"/>
         <source>Warning</source>
         <comment>Airspace type name</comment>
-        <translation type="unfinished"></translation>
+        <translation>警告区域</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="475"/>
         <source>Caution</source>
         <comment>Airspace type name</comment>
-        <translation type="unfinished">注意</translation>
+        <translation>注意区域</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="476"/>
         <source>Alert</source>
         <comment>Airspace type name</comment>
-        <translation type="unfinished">警戒区域</translation>
+        <translation>警戒区域</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="477"/>
         <source>Danger</source>
         <comment>Airspace type name</comment>
-        <translation type="unfinished">危险区</translation>
+        <translation>危险区</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="478"/>
         <source>National Park</source>
         <comment>Airspace type name</comment>
-        <translation type="unfinished">国家公园</translation>
+        <translation>国家公园</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="479"/>
         <source>Mode-C</source>
         <comment>Airspace type name</comment>
-        <translation type="unfinished">C 模式</translation>
+        <translation>C 模式</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="480"/>
         <source>Radar</source>
         <comment>Airspace type name</comment>
-        <translation type="unfinished">雷达</translation>
+        <translation>雷达</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="481"/>
         <source>General Control Area</source>
         <comment>Airspace type name</comment>
-        <translation type="unfinished">一般管制区(GCA)</translation>
+        <translation>一般管制区(GCA)</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="482"/>
         <source>Military Control Zone</source>
         <comment>Airspace type name</comment>
-        <translation type="unfinished">军事管制区(MCZ)</translation>
+        <translation>军事管制区(MCZ)</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="483"/>
         <source>Terminal Radar Service Area</source>
         <comment>Airspace type name</comment>
-        <translation type="unfinished">终端雷达服务区(MRSA)</translation>
+        <translation>终端雷达服务区(MRSA)</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="484"/>
         <source>Training</source>
         <comment>Airspace type name</comment>
-        <translation type="unfinished">训练区</translation>
+        <translation>训练区</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="485"/>
         <source>Glider Prohibited</source>
         <comment>Airspace type name</comment>
-        <translation type="unfinished">滑翔机禁飞区</translation>
+        <translation>滑翔机禁飞区</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="486"/>
         <source>Wave Window</source>
         <comment>Airspace type name</comment>
-        <translation type="unfinished">背风坡窗口</translation>
+        <translatorcomment>大概是一种临时为滑翔机启用的空域</translatorcomment>
+        <translation>背风坡窗口</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="487"/>
         <source>Online Observer</source>
         <comment>Airspace type name</comment>
-        <translation type="unfinished">在线观察者</translation>
+        <translation>在线观察者</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="492"/>
         <source>No Airspace</source>
         <comment>Airspace short type name</comment>
-        <translation type="unfinished">没有空域</translation>
+        <translation>没有空域</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="493"/>
         <source>CTR</source>
         <comment>Airspace short type name</comment>
-        <translation type="unfinished">管制空域(CTR)</translation>
+        <translation>管制空域(CTR)</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="494"/>
         <location filename="src/common/maptypes.cpp" line="513"/>
         <source>A</source>
         <comment>Airspace short type name</comment>
-        <translation type="unfinished">A</translation>
+        <translation>A类</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="495"/>
         <source>B</source>
         <comment>Airspace short type name</comment>
-        <translation type="unfinished">B</translation>
+        <translation>B类</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="496"/>
         <source>C</source>
         <comment>Airspace short type name</comment>
-        <translation type="unfinished"></translation>
+        <translation>C类</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="497"/>
         <location filename="src/common/maptypes.cpp" line="514"/>
         <source>D</source>
         <comment>Airspace short type name</comment>
-        <translation type="unfinished">D</translation>
+        <translation>D类</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="498"/>
         <source>E</source>
         <comment>Airspace short type name</comment>
-        <translation type="unfinished"></translation>
+        <translation>E类</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="499"/>
         <source>F</source>
         <comment>Airspace short type name</comment>
-        <translation type="unfinished"></translation>
+        <translation>F类</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="500"/>
         <source>G</source>
         <comment>Airspace short type name</comment>
-        <translation type="unfinished">G</translation>
+        <translation>G类</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="501"/>
         <source>FIR</source>
         <comment>Airspace short type name</comment>
-        <translation type="unfinished"></translation>
+        <translation>FIR</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="502"/>
         <source>UIR</source>
         <comment>Airspace short type name</comment>
-        <translation type="unfinished">高空飞行情报区(UIR)</translation>
+        <translation>UIR</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="503"/>
         <source>TWR</source>
         <comment>Airspace short type name</comment>
-        <translation type="unfinished">塔台(TWR)</translation>
+        <translation>TWR</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="504"/>
         <source>CLR</source>
         <comment>Airspace short type name</comment>
-        <translation type="unfinished">放行(CLR)</translation>
+        <translation>CLR</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="505"/>
         <source>GND</source>
         <comment>Airspace short type name</comment>
-        <translation type="unfinished">地面(GND)</translation>
+        <translation>CLR</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="506"/>
         <source>DEP</source>
         <comment>Airspace short type name</comment>
-        <translation type="unfinished">离场(DEP)</translation>
+        <translation>DEP</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="507"/>
         <source>APP</source>
         <comment>Airspace short type name</comment>
-        <translation type="unfinished">进近(APP)</translation>
+        <translation>APP</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="508"/>
         <source>MOA</source>
         <comment>Airspace short type name</comment>
-        <translation type="unfinished">军事活动区（MOA）</translation>
+        <translation>MOA</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="509"/>
         <source>R</source>
         <comment>Airspace short type name</comment>
-        <translation type="unfinished">R</translation>
+        <translation>R</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="510"/>
         <source>P</source>
         <comment>Airspace short type name</comment>
-        <translation type="unfinished">P</translation>
+        <translation>P</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="511"/>
         <source>W</source>
         <comment>Airspace short type name</comment>
-        <translation type="unfinished"></translation>
+        <translation>W</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="512"/>
         <source>CN</source>
         <comment>Airspace short type name</comment>
-        <translation type="unfinished">参考代码(CN)</translation>
+        <translatorcomment>参考代码(CN)</translatorcomment>
+        <translation>CN</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="515"/>
         <source>National Park</source>
         <comment>Airspace short type name</comment>
-        <translation type="unfinished">国家公园</translation>
+        <translation>国家公园</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="516"/>
         <source>Mode-C</source>
         <comment>Airspace short type name</comment>
-        <translation type="unfinished">C 模式</translation>
+        <translation>C 模式</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="517"/>
         <source>Radar</source>
         <comment>Airspace short type name</comment>
-        <translation type="unfinished">雷达</translation>
+        <translation>雷达</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="518"/>
         <source>GCA</source>
         <comment>Airspace short type name</comment>
-        <translation type="unfinished">地面管制进近(GCA)</translation>
+        <translatorcomment>地面管制进近(GCA)</translatorcomment>
+        <translation>GCA</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="519"/>
         <source>MCZ</source>
         <comment>Airspace short type name</comment>
-        <translation type="unfinished">军事管制区域(MCZ)</translation>
+        <translatorcomment>军事管制区域(MCZ)</translatorcomment>
+        <translation>MCZ</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="520"/>
         <source>TRSA</source>
         <comment>Airspace short type name</comment>
-        <translation type="unfinished">终端雷达服务区域(TRSA)</translation>
+        <translatorcomment>终端雷达服务区域(TRSA)</translatorcomment>
+        <translation>TRSA</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="521"/>
         <source>T</source>
         <comment>Airspace short type name</comment>
-        <translation type="unfinished"></translation>
+        <translation>T</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="522"/>
         <source>Glider Prohibited</source>
         <comment>Airspace short type name</comment>
-        <translation type="unfinished">滑翔机禁飞区</translation>
+        <translation>滑翔机禁飞区</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="523"/>
         <source>Wave Window</source>
         <comment>Airspace short type name</comment>
-        <translation type="unfinished">背风坡窗口</translation>
+        <translation>背风坡窗口</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="524"/>
         <source>Online Observer</source>
         <comment>Airspace short type name</comment>
-        <translation type="unfinished">在线观察者</translation>
+        <translation>在线观察者</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="531"/>
@@ -33475,61 +33522,61 @@ Changes to &quot;Required angle&quot; if mandatory in approach procedures.</sour
         <location filename="src/common/maptypes.cpp" line="1284"/>
         <source>N</source>
         <comment>Oceanic track type</comment>
-        <translation type="unfinished"></translation>
+        <translation>N</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="1287"/>
         <source>P</source>
         <comment>Oceanic track type</comment>
-        <translation type="unfinished">P</translation>
+        <translation>P</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="1290"/>
         <source>L</source>
         <comment>Oceanic track type</comment>
-        <translation type="unfinished">L</translation>
+        <translation>L</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="1293"/>
         <source>H</source>
         <comment>Oceanic track type</comment>
-        <translation type="unfinished">H</translation>
+        <translation>H</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="1296"/>
         <source>B</source>
         <comment>Oceanic track type</comment>
-        <translation type="unfinished">B</translation>
+        <translation>B</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="1310"/>
         <source>NAT</source>
         <comment>Oceanic track system name</comment>
-        <translation type="unfinished">NAT</translation>
+        <translation>NAT</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="1313"/>
         <source>PACOTS</source>
         <comment>Oceanic track system name</comment>
-        <translation type="unfinished">PACOTS</translation>
+        <translation>PACOTS</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="1316"/>
         <source>Low</source>
         <comment>Oceanic track system name</comment>
-        <translation type="unfinished">低空</translation>
+        <translation>低空</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="1319"/>
         <source>High</source>
         <comment>Oceanic track system name</comment>
-        <translation type="unfinished">高空</translation>
+        <translation>高空</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="1322"/>
         <source>Both</source>
         <comment>Oceanic track system name</comment>
-        <translation type="unfinished"></translation>
+        <translation>高空和低空</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="1585"/>
@@ -33551,88 +33598,89 @@ Changes to &quot;Required angle&quot; if mandatory in approach procedures.</sour
         <location filename="src/common/maptypes.cpp" line="1668"/>
         <source>L</source>
         <comment>Holding direction</comment>
-        <translation type="unfinished">L</translation>
+        <translation>L</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="1663"/>
         <location filename="src/common/maptypes.cpp" line="1668"/>
         <source>R</source>
         <comment>Holding direction</comment>
-        <translation type="unfinished">R</translation>
+        <translation>R</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="1676"/>
         <location filename="src/common/maptypes.cpp" line="1681"/>
         <source>R</source>
         <comment>Pattern direction</comment>
-        <translation type="unfinished">R</translation>
+        <translation>R</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="1677"/>
         <location filename="src/common/maptypes.cpp" line="1682"/>
         <source>L</source>
         <comment>Pattern direction</comment>
-        <translation type="unfinished">L</translation>
+        <translation>L</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="1708"/>
         <source>Min </source>
         <comment>Airway altitude restriction</comment>
-        <translation type="unfinished">最小 </translation>
+        <translation>最低 </translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="1714"/>
         <source> to </source>
         <comment>Airway altitude restriction</comment>
-        <translation type="unfinished"> 到 </translation>
+        <translatorcomment>aaaaaaaaaaaaaa</translatorcomment>
+        <translation> 至 </translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="1716"/>
         <source>Max </source>
         <comment>Airway altitude restriction</comment>
-        <translation type="unfinished">最大 </translation>
+        <translation>最高 </translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="1800"/>
         <source>W</source>
         <comment>Compass direction west</comment>
-        <translation type="unfinished"></translation>
+        <translation>西</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="1803"/>
         <source>E</source>
         <comment>Compass direction east</comment>
-        <translation type="unfinished"></translation>
+        <translation>东</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="1828"/>
         <source>Low</source>
         <comment>Taxi edge lights</comment>
-        <translation type="unfinished">低空</translation>
+        <translation>弱</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="1830"/>
         <source>Medium</source>
         <comment>Taxi edge lights</comment>
-        <translation type="unfinished">中型</translation>
+        <translation>中</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="1832"/>
         <source>High</source>
         <comment>Taxi edge lights</comment>
-        <translation type="unfinished">高空</translation>
+        <translation>强</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="1840"/>
         <source>Left</source>
         <comment>Traffic pattern direction</comment>
-        <translation type="unfinished">向左</translation>
+        <translation>向左</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="1842"/>
         <source>Right</source>
         <comment>Traffic pattern direction</comment>
-        <translation type="unfinished">向右</translation>
+        <translation>向右</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="1850"/>
@@ -34096,33 +34144,33 @@ Changes to &quot;Required angle&quot; if mandatory in approach procedures.</sour
         <location filename="src/common/proctypes.cpp" line="400"/>
         <source>GS</source>
         <comment>Procedure altitude restriction - avoid translation</comment>
-        <translation type="unfinished">GS</translation>
+        <translation>GS</translation>
     </message>
     <message>
         <location filename="src/common/proctypes.cpp" line="411"/>
         <location filename="src/common/proctypes.cpp" line="419"/>
         <source>A</source>
         <comment>Procedure altitude restriction - avoid translation</comment>
-        <translation type="unfinished">A</translation>
+        <translation>A</translation>
     </message>
     <message>
         <location filename="src/common/proctypes.cpp" line="415"/>
         <location filename="src/common/proctypes.cpp" line="420"/>
         <source>B</source>
         <comment>Procedure altitude restriction - avoid translation</comment>
-        <translation type="unfinished">B</translation>
+        <translation>B</translation>
     </message>
     <message>
         <location filename="src/common/proctypes.cpp" line="503"/>
         <source>A</source>
         <comment>Procedure speed restriction - avoid translation</comment>
-        <translation type="unfinished">A</translation>
+        <translation>A</translation>
     </message>
     <message>
         <location filename="src/common/proctypes.cpp" line="507"/>
         <source>B</source>
         <comment>Procedure speed restriction - avoid translation</comment>
-        <translation type="unfinished">B</translation>
+        <translation>B</translation>
     </message>
     <message>
         <location filename="src/common/proctypes.cpp" line="1276"/>
@@ -35425,7 +35473,7 @@ Fastest calculation</source>
         <location filename="src/route/routecalcdialog.ui" line="341"/>
         <source>Download NAT and PACOTS tracks now</source>
         <oldsource>Download NAT, PACOTS and AUSOTS tracks now</oldsource>
-        <translation type="unfinished">立刻下载 NAT, PACOTS 或 AUSOTS 航迹</translation>
+        <translation>立刻下载 NAT, PACOTS 或 AUSOTS 航路</translation>
     </message>
     <message>
         <location filename="src/route/routecalcdialog.ui" line="357"/>
@@ -35433,20 +35481,20 @@ Fastest calculation</source>
 Best track will be selected automatically.</source>
         <oldsource>Use downloaded NAT, PACOTS or AUSOTS tracks.
 Best track will be selected automatically.</oldsource>
-        <translation type="unfinished">使用下载的 NAT, PACOTS 或 AUSOTS 航迹。
+        <translation>使用下载的 NAT, PACOTS 或 AUSOTS 航路。
 将会自动使用最佳航迹。</translation>
     </message>
     <message>
         <location filename="src/route/routecalcdialog.ui" line="361"/>
         <source>Use downloaded NAT or PACOTS tracks.</source>
         <oldsource>Use downloaded NAT, PACOTS or AUSOTS tracks.</oldsource>
-        <translation type="unfinished">使用下载的 NAT, PACOTS 或 AUSOTS 航迹。</translation>
+        <translation>使用下载的 NAT, PACOTS 或 AUSOTS 航路。</translation>
     </message>
     <message>
         <location filename="src/route/routecalcdialog.ui" line="364"/>
         <source>&amp;Use NAT or PACOTS tracks</source>
         <oldsource>&amp;Use NAT, PACOTS or AUSOTS tracks</oldsource>
-        <translation type="unfinished">使用 NAT, PACOTS 或 AUSOTS 航迹(&amp;U)</translation>
+        <translation>使用 NAT, PACOTS 或 AUSOTS 航路(&amp;U)</translation>
     </message>
     <message>
         <location filename="src/route/routecalcdialog.ui" line="371"/>
@@ -35509,7 +35557,7 @@ Disabled if a navdatabase does not allow it.</source>
         <location filename="src/route/routecalcdialog.ui" line="457"/>
         <source>&amp;High airways</source>
         <oldsource>&amp;Jet airways (high altitude)</oldsource>
-        <translation>高空航路(&amp;J)</translation>
+        <translation>高空航路(&amp;H)</translation>
     </message>
     <message>
         <location filename="src/route/routecalcdialog.ui" line="467"/>
@@ -35630,8 +35678,8 @@ Otherwise, tracks will not be used.</source>
 Best track will be selected automatically.
 Ensure to use the correct flight level.
 Otherwise, tracks will not be used.</oldsource>
-        <translation type="unfinished">使用下载的 NAT、PACOTS 或 AUSOTS 航迹。
-会自动选择最佳航迹。
+        <translation>使用下载的 NAT、PACOTS 或 AUSOTS 航路。
+会自动选择最佳航路。
 确保选择了正确的飞行高度层。
 否则，不会使用该航迹。</translation>
     </message>
@@ -35644,8 +35692,8 @@ go to &quot;Flight Plan&quot; -&gt; &quot;Download Tracks&quot; to fetch tracks.
         <comment>Keep translation in sync with menu items</comment>
         <translation>
 
-没有可用的航迹。按下载按钮或
-转到“飞行计划”-&gt;“下载洋区航路”以获取航迹。</translation>
+没有可用的航路。按下载按钮或
+转到“飞行计划”-&gt;“下载洋区航路”以获取航路。</translation>
     </message>
     <message>
         <location filename="src/route/routecalcdialog.cpp" line="240"/>
@@ -36876,7 +36924,7 @@ You can move and resize columns by clicking into the flight plan column headers.
     <message>
         <location filename="src/route/routecontroller.cpp" line="2605"/>
         <source>Departure and destination airports as links to show them on the map and in information.</source>
-        <translation type="unfinished"></translation>
+        <translation>在地图和信息栏成对显示出发和到达机场。</translation>
     </message>
     <message>
         <location filename="src/route/routecontroller.cpp" line="2611"/>
@@ -36941,7 +36989,9 @@ Wind is taken from nearest airport if not available.</oldsource>
         <source>Contains the airway name for en route legs or procedure instruction.
 Airways have a suffix showing the type which is 
 &quot;H&quot; for high/Jet, &quot;L&quot; for low/Victor and &quot;B&quot; for both.</source>
-        <translation type="unfinished"></translation>
+        <translation>包含航路段的航路名称或程序说明。
+航路包含前缀来指示类型
+&quot;H&quot;为高空，&quot;L&quot;为低空，&quot;B&quot;为高空和低空。</translation>
     </message>
     <message>
         <location filename="src/route/routecontroller.cpp" line="259"/>
@@ -36960,7 +37010,11 @@ as well as crosswind (%3 or %4).
 The wind information is taken from the selected METAR source in
 menu &quot;Weather&quot; -&gt; &quot;Airport Weather Source&quot;.
 Wind is taken from nearest airport if not available.</source>
-        <translation type="unfinished"></translation>
+        <translation>起飞跑道风况，逆风由 %1 指示，顺风由 %2 指示。
+侧风同理 (%3 或 %4)。
+风况信息来自于选定的 METAR源
+在菜单 &quot;天气&quot; -&gt; &quot;机场天气源&quot;。
+如果风况不可用，则选取最近机场风况。</translation>
     </message>
     <message>
         <location filename="src/route/routecontroller.cpp" line="2627"/>
@@ -36979,7 +37033,11 @@ as well as crosswind (%3 or %4).
 The wind information is taken from the selected METAR source in
 menu &quot;Weather&quot; -&gt; &quot;Airport Weather Source&quot;.
 Wind is taken from nearest airport if not available.</source>
-        <translation type="unfinished"></translation>
+        <translation>着陆跑道风况，逆风由 %1 指示，顺风由 %2 指示。
+侧风同理 (%3 或 %4)。
+风况信息来自于选定的 METAR源
+在菜单 &quot;天气&quot; -&gt; &quot;机场天气源&quot;。
+如果风况不可用，则选取最近机场风况。</translation>
     </message>
     <message>
         <location filename="src/route/routecontroller.cpp" line="2646"/>
@@ -37011,12 +37069,12 @@ It is strongly recommended to keep the error label enabled.</source>
     <message>
         <location filename="src/route/routecontroller.cpp" line="2654"/>
         <source>Error Messages about parking</source>
-        <translation type="unfinished"></translation>
+        <translation>关于停机坪的错误信息</translation>
     </message>
     <message>
         <location filename="src/route/routecontroller.cpp" line="2655"/>
         <source>Show minor error messages for parking spots in the flight plan missing at the airport.</source>
-        <translation type="unfinished"></translation>
+        <translation>机场缺失飞行计划中的停机位时显示次要的错误消息。</translation>
     </message>
     <message>
         <location filename="src/route/routecontroller.cpp" line="2659"/>
@@ -37865,7 +37923,7 @@ This can happen if you save a flight plan based on FSX, Prepar3D or MSFS scenery
     <message>
         <location filename="src/routeexport/routeexport.cpp" line="488"/>
         <source>Flight plan saved as FMS 11 for FlightFactor B777.</source>
-        <translation type="unfinished"></translation>
+        <translation>飞行计划已另存为 FMS 11 为 FlightFactor B777。</translation>
     </message>
     <message>
         <location filename="src/routeexport/routeexport.cpp" line="1368"/>
@@ -38515,7 +38573,7 @@ The same format as FMS 11 but saved to the X-Plane 12 folder.</source>
     <message>
         <location filename="src/routeexport/routeexportformat.cpp" line="322"/>
         <source>Microsoft Flight Simulator 2024</source>
-        <translation type="unfinished">MSFS 2024</translation>
+        <translation>MSFS 2024</translation>
     </message>
     <message>
         <location filename="src/routeexport/routeexportformat.cpp" line="323"/>
@@ -38556,7 +38614,7 @@ Old and limited format.</source>
     <message>
         <location filename="src/routeexport/routeexportformat.cpp" line="371"/>
         <source>FlightFactor Boeing 777</source>
-        <translation type="unfinished"></translation>
+        <translation>FlightFactor B777</translation>
     </message>
     <message>
         <source>html</source>
@@ -38808,7 +38866,7 @@ Old and limited format.</source>
         <location filename="src/route/routelabel.cpp" line="258"/>
         <location filename="src/route/routelabel.cpp" line="268"/>
         <source> to </source>
-        <translation> 到 </translation>
+        <translation> 至 </translation>
     </message>
     <message>
         <location filename="src/route/routelabel.cpp" line="288"/>
@@ -39953,7 +40011,7 @@ If not applicable, the best estimate from installed simulators is used.</source>
     <message>
         <location filename="src/routestring/routestringreader.cpp" line="1843"/>
         <source>Ignoring speed and altitude at waypoint %1. If necessary, adjust your cruising altitude manually.</source>
-        <translation type="unfinished"></translation>
+        <translation>忽略航点 %1 处的速度和高度限制。如需要，手动调整巡航高度。</translation>
     </message>
     <message>
         <source>Ignoring speed and altitude at waypoint %1.</source>
@@ -40898,7 +40956,7 @@ Right-click into the map and select
     <message>
         <location filename="src/search/searchbasetable.cpp" line="1173"/>
         <source> (no destination)</source>
-        <translation type="unfinished"> (无目的地)</translation>
+        <translation> (无目的地)</translation>
     </message>
     <message>
         <location filename="src/search/searchbasetable.cpp" line="1227"/>
@@ -43249,17 +43307,17 @@ adapt the X-Plane weather path in &quot;Options&quot; on page &quot;Weather File
     <message>
         <location filename="src/weather/weatherreporter.cpp" line="926"/>
         <source>Wind prefers runway </source>
-        <translation type="unfinished"></translation>
+        <translation>适合风的跑道 </translation>
     </message>
     <message>
         <location filename="src/weather/weatherreporter.cpp" line="926"/>
         <source>Wind prefers runways </source>
-        <translation type="unfinished"></translation>
+        <translation>适合风的跑道 </translation>
     </message>
     <message>
         <location filename="src/weather/weatherreporter.cpp" line="937"/>
         <source>METAR source &quot;%1&quot;.</source>
-        <translation type="unfinished"></translation>
+        <translation>METAR 源 &quot;%1&quot;。</translation>
     </message>
     <message>
         <source>ASXP</source>
