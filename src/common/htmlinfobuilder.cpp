@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -1786,7 +1786,16 @@ void HtmlInfoBuilder::weatherText(const map::WeatherContext& context, const MapA
         }
       } // if(context.fsMetar.isValid())
       else if(!print && OptionData::instance().getFlagsWeather() & optsw::WEATHER_INFO_FS)
-        html.p(tr("Not connected to simulator."), ahtml::BOLD);
+      {
+        atools::fs::FsPaths::SimulatorType simulatorDb = NavApp::getCurrentSimulatorDb();
+        if(simulatorDb == atools::fs::FsPaths::MSFS || simulatorDb == atools::fs::FsPaths::MSFS_2024)
+          html.p().text(tr("MSFS simulators do not provide weather information."), ahtml::BOLD).br().
+          text(tr("Go to the main menu -> \"Tools\" -> \"Options\" and then to page \"Weather\". "
+                  "Select NOAA or another weather provider instead.")).pEnd();
+        else if(simulatorDb != atools::fs::FsPaths::XPLANE_11 && simulatorDb != atools::fs::FsPaths::XPLANE_12)
+          html.p().text(tr("Not connected to simulator."), ahtml::BOLD).br().
+          text(tr("Needed to fetch weather information.")).pEnd();
+      }
 
       // Active Sky metar ===========================
       if(context.activeSkyMetar.hasAnyMetar())

@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -70,7 +70,7 @@ WeatherReporter::WeatherReporter(MainWindow *parentWindow, atools::fs::FsPaths::
                                     "Click \"Reset paths\" in the Little Navmap dialog \"Load scenery library\"\n"
                                     "to fix the base path after moving a X-Plane installation.\n\n"
                                     "Also check the paths in the Little Navmap options on page \"Weather Files\".\n"
-                                    "These path should be empty to use the default.\n\n"
+                                    "These paths should be empty to use the default.\n\n"
                                     "Restart Little Navmap after correcting the weather paths."));
 
   xplaneMissingWarningMsg = QString(tr("Cannot access weather files.\n"

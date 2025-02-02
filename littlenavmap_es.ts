@@ -36642,7 +36642,7 @@ Click &quot;Reset paths&quot; in the Little Navmap dialog &quot;Load scenery lib
 to fix the base path after moving a X-Plane installation.
 
 Also check the paths in the Little Navmap options on page &quot;Weather Files&quot;.
-These path should be empty to use the default.
+These paths should be empty to use the default.
 
 Restart Little Navmap after correcting the weather paths.</source>
         <translation type="unfinished"></translation>
