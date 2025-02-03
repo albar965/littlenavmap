@@ -2968,7 +2968,7 @@ Tente novamente.</translation>
         <location filename="src/connect/connectdialog.cpp" line="53"/>
         <source>SimConnect not found. Your Little Navmap installation is missing the file &quot;%1&quot;.&lt;br/&gt;</source>
         <oldsource>SimConnect not found. Your Little Navmap installation is missing the file &quot;SimConnect.dll&quot;.&lt;br/&gt;Reinstall Little Navmap or install a FSX SP2 compatible version of SimConnect on your computer.&lt;br/&gt;</oldsource>
-        <translation type="unfinished">SimConnect não encontrado. Falta o arquivo &quot;SimConnect.dll&quot; na instalação do Little Navmap.&lt;br/&gt;Reinstale o Little Navmap ou instale uma versão compatível com FSX SP2 do SimConnect em seu computador.&lt;br/&gt;</translation>
+        <translation>SimConnect não encontrado. A sua instalação do Little Navmap está faltando o arquivo&quot;%1&quot;.&lt;br/&gt;</translation>
     </message>
     <message>
         <location filename="src/connect/connectdialog.cpp" line="61"/>
@@ -3003,7 +3003,7 @@ Tente novamente.</translation>
     <message>
         <location filename="src/connect/connectdialog.cpp" line="183"/>
         <source>Scenery library mode is &quot;Use Navigraph for all Features&quot;.&lt;br/&gt;Click here for details.</source>
-        <translation>O modo de biblioteca de dados é &quot;Usar Navigraph para todos os recursos&quot;.&lt;br/&gt;Clique aqui para obter detalhes.</translation>
+        <translation>O modo de biblioteca de cenários é &quot;Usar Navigraph para todos os recursos&quot;.&lt;br/&gt;Clique aqui para obter detalhes.</translation>
     </message>
     <message>
         <location filename="src/connect/connectdialog.cpp" line="185"/>
@@ -3828,13 +3828,13 @@ Ative a opção &quot;Ler entradas de cenários inativos ou desativados&quot; ou
         <location filename="src/db/databasemanager.cpp" line="1408"/>
         <source>&lt;p style=&apos;white-space:pre&apos;&gt;You are using MSFS 2020 or 2024 with the Navigraph navdata update.&lt;/p&gt;&lt;p&gt;You should update the Little Navmap navdata with the Navigraph FMS Data Manager as well and use the right scenery library mode &quot;Use Navigraph for Navaids and Procedures&quot; to avoid issues with airport information in Little Navmap.&lt;/p&gt;&lt;p style=&apos;white-space:pre&apos;&gt;You can change the mode manually in the menu&lt;br/&gt;&quot;Scenery Library&quot; -&gt; &quot;Navigraph&quot; -&gt; &quot;Use Navigraph for Navaids and Procedures&quot;.&lt;/p&gt;&lt;p&gt;Correct the scenery library mode now?&lt;/p&gt;</source>
         <comment>Sync texts with menu items</comment>
-        <translation type="unfinished"></translation>
+        <translation>&lt;p style=&apos;white-space:pre&apos;&gt;Você está usando o MSFS 2020 ou 2024 com a atualização de dados de navegação do Navigraph.&lt;/p&gt;&lt;p&gt;Você deve atualizar os dados de navegação do Little Navmap com o Navigraph FMS Data Manager também e usar o modo correto da biblioteca de cenários &quot;Usar Navigraph para Navaids e Procedimentos&quot; para evitar problemas com informações de aeroportos no Little Navmap.&lt;/p&gt;&lt;p style=&apos;white-space:pre&apos;&gt;Você pode alterar o modo manualmente no menu&lt;br/&gt;&quot;Biblioteca de Cenários&quot; -&gt; &quot;Navigraph&quot; -&gt; &quot;Usar Navigraph para Navaids e Procedimentos&quot;.&lt;/p&gt;&lt;p&gt;Corrigir o modo da biblioteca de cenários agora?&lt;/p&gt;</translation>
     </message>
     <message>
         <location filename="src/db/databasemanager.cpp" line="1424"/>
         <source>&lt;p style=&apos;white-space:pre&apos;&gt;You are using MSFS 2020 or 2024 without the Navigraph navdata update.&lt;/p&gt;&lt;p&gt;You should use the scenery library mode &quot;Do not use Navigraph Database&quot; to avoid issues with airport information in Little Navmap.&lt;/p&gt;&lt;p style=&apos;white-space:pre&apos;&gt;You can change the mode manually in the menu&lt;br/&gt;&quot;Scenery Library&quot; -&gt; &quot;Navigraph&quot; -&gt; &quot;Do not use Navigraph Database&quot;.&lt;/p&gt;&lt;p&gt;Correct the scenery library mode now?&lt;/p&gt;</source>
         <comment>Sync texts with menu items</comment>
-        <translation type="unfinished"></translation>
+        <translation>&lt;p style=&apos;white-space:pre&apos;&gt;Você está usando o MSFS 2020 ou 2024 sem a atualização de dados de navegação do Navigraph.&lt;/p&gt;&lt;p&gt;Você deve usar o modo da biblioteca de cenários &quot;Não usar o banco de dados do Navigraph&quot; para evitar problemas com informações de aeroportos no Little Navmap.&lt;/p&gt;&lt;p style=&apos;white-space:pre&apos;&gt;Você pode alterar o modo manualmente no menu&lt;br/&gt;&quot;Biblioteca de Cenários&quot; -&gt; &quot;Navigraph&quot; -&gt; &quot;Não usar o banco de dados do Navigraph&quot;.&lt;/p&gt;&lt;p&gt;Corrigir o modo da biblioteca de cenários agora?&lt;/p&gt;</translation>
     </message>
     <message>
         <source>%1 - Validate scenery library mode</source>
@@ -3918,7 +3918,7 @@ Ative a opção &quot;Ler entradas de cenários inativos ou desativados&quot; ou
     <message>
         <location filename="src/db/databasemanager.cpp" line="2051"/>
         <source>&lt;p&gt;%1&lt;/p&gt;&lt;p&gt;It is advised to reload the scenery library database after each Little Navmap update, after installing new add-on scenery or after a flight simulator update to enable new features or benefit from bug fixes.&lt;/p&gt;&lt;p&gt;You can do this in menu &quot;Scenery Library&quot; -&gt; &quot;Load Scenery Library&quot;.&lt;/p&gt;&lt;p&gt;Open the &quot;Load Scenery Library&quot; dialog window now?&lt;/p&gt;</source>
-        <translation>&lt;p&gt;%1&lt;/p&gt;&lt;p&gt;É recomendado recarregar o banco de dados da biblioteca de cenários após cada atualização do Little Navmap, após instalar novos cenários de complementos ou após uma atualização do simulador de voo para habilitar novos recursos ou se beneficiar de correções de bugs.&lt;/p&gt;&lt;p&gt;Você pode fazer isso no menu &quot;Biblioteca de Dados&quot; -&gt; &quot;Carregar Biblioteca de Cenários&quot;.&lt;/p&gt;&lt;p&gt;Abrir a janela de diálogo &quot;Carregar Biblioteca de Cenários&quot; agora?&lt;/p&gt;</translation>
+        <translation>&lt;p&gt;%1&lt;/p&gt;&lt;p&gt;É recomendado recarregar o banco de dados da biblioteca de cenários após cada atualização do Little Navmap, após instalar novos cenários de complementos ou após uma atualização do simulador de voo para habilitar novos recursos ou se beneficiar de correções de bugs.&lt;/p&gt;&lt;p&gt;Você pode fazer isso no menu &quot;Biblioteca de Cenários&quot; -&gt; &quot;Carregar Biblioteca de Cenários&quot;.&lt;/p&gt;&lt;p&gt;Abrir a janela de diálogo &quot;Carregar Biblioteca de Cenários&quot; agora?&lt;/p&gt;</translation>
     </message>
     <message>
         <source>&lt;p&gt;%1&lt;/p&gt;&lt;p&gt;It is advised to reload the scenery library database after each Little Navmap update, after installing new add-on scenery or after a flight simulator update to enable new features or benefit from bug fixes.&lt;/p&gt;&lt;p&gt;You can do this in menu &quot;Scenery Library&quot; -&gt; &quot;Reload Scenery Library&quot;.&lt;/p&gt;&lt;p&gt;Open the &quot;Reload Scenery Library&quot; dialog window now?&lt;/p&gt;</source>
@@ -4151,22 +4151,22 @@ Exiting now.</oldsource>
     <message>
         <location filename="src/db/databasemanager.cpp" line="1377"/>
         <source>&lt;p&gt;Scenery library mode is correct. Mode is set automatically by Little Navmap.&lt;/p&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;p&gt;O modo da biblioteca de cenários está correto. O modo é definido automaticamente pelo Little Navmap.&lt;/p&gt;</translation>
     </message>
     <message>
         <location filename="src/db/databasemanager.cpp" line="1378"/>
         <source>&lt;p&gt;No issues found. Scenery library mode is correct and set manually in menu &quot;Scenery Library&quot;.&lt;/p&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;p&gt;Nenhum problema encontrado. O modo da biblioteca de cenários está correto e definido manualmente no menu &quot;Biblioteca de Cenários&quot;.&lt;/p&gt;</translation>
     </message>
     <message>
         <location filename="src/db/databasemanager.cpp" line="1385"/>
         <source>&lt;p&gt;Simulator database is empty.&lt;/p&gt;&lt;p&gt;Showing Navigraph airports and navaids.&lt;/p&gt;&lt;p style=&apos;white-space:pre&apos;&gt;You can load the simulator scenery library database in the menu&lt;/br&gt;&quot;Scenery Library&quot; -&gt; &quot;Load Scenery Library&quot;.&lt;/p&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;p&gt;O banco de dados do simulador está vazio.&lt;/p&gt;&lt;p&gt;Mostrando aeroportos e navaids do Navigraph.&lt;/p&gt;&lt;p style=&apos;white-space:pre&apos;&gt;Você pode carregar o banco de dados da biblioteca de cenários do simulador no menu&lt;/br&gt;&quot;Biblioteca de Cenários&quot; -&gt; &quot;Carregar Biblioteca de Cenários&quot;.&lt;/p&gt;</translation>
     </message>
     <message>
         <location filename="src/db/databasemanager.cpp" line="1395"/>
         <source>&lt;p&gt;Simulator database is empty.&lt;/p&gt;&lt;p style=&apos;white-space:pre&apos;&gt;You can load the simulator scenery library database in the menu&lt;br/&gt;&quot;Scenery Library&quot; -&gt; &quot;Load Scenery Library&quot;.&lt;/p&gt;&lt;p style=&apos;white-space:pre&apos;&gt;Alternatively, you can switch to Navigraph only data in the menu&lt;br/&gt;&quot;Scenery Library&quot; -&gt; &quot;Navigraph&quot; -&gt; &quot;Use Navigraph for all Features&quot;.&lt;/p&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;p&gt;O banco de dados do simulador está vazio.&lt;/p&gt;&lt;p style=&apos;white-space:pre&apos;&gt;Você pode carregar o banco de dados da biblioteca de cenários do simulador no menu&lt;br/&gt;&quot;Biblioteca de Cenários&quot; -&gt; &quot;Carregar Biblioteca de Cenários&quot;.&lt;/p&gt;&lt;p style=&apos;white-space:pre&apos;&gt;Alternativamente, você pode mudar para dados exclusivos do Navigraph no menu&lt;br/&gt;&quot;Biblioteca de Cenários&quot; -&gt; &quot;Navigraph&quot; -&gt; &quot;Usar Navigraph para todos os Recursos&quot;.&lt;/p&gt;</translation>
     </message>
     <message>
         <source>&lt;p style=&apos;white-space:pre&apos;&gt;You are using MSFS with the Navigraph navdata update.&lt;/p&gt;&lt;p&gt;You should update the Little Navmap navdata with the Navigraph FMS Data Manager as well and use the right scenery library mode &quot;Use Navigraph for Navaids and Procedures&quot; to avoid issues with airport information in Little Navmap.&lt;/p&gt;&lt;p style=&apos;white-space:pre&apos;&gt;You can change the mode manually in the menu&lt;br/&gt;&quot;Scenery Library&quot; -&gt; &quot;Navigraph&quot; -&gt; &quot;Use Navigraph for Navaids and Procedures&quot;.&lt;/p&gt;&lt;p&gt;Correct the scenery library mode now?&lt;/p&gt;</source>
@@ -4192,7 +4192,7 @@ Exiting now.</oldsource>
         <location filename="src/db/databasemanager.cpp" line="1499"/>
         <source>&lt;p style=&apos;white-space:pre&apos;&gt;Your current scenery library mode is &quot;Use Navigraph for all Features&quot;.&lt;/p&gt;&lt;p&gt;All information from the simulator scenery library is ignored in this mode.&lt;/p&gt;&lt;p&gt;Note that airport information is limited in this mode. This means that aprons, taxiways, parking positions, runway surfaces and more are not available, smaller airports will be missing and the runway layout might not match the one in the simulator.&lt;/p&gt;&lt;p style=&apos;white-space:pre&apos;&gt;You can change this manually in the menu&lt;br/&gt;&quot;Scenery Library&quot; -&gt; &quot;Navigraph&quot; -&gt; &quot;Use Navigraph for Navaids and Procedures&quot;.&lt;/p&gt;&lt;p&gt;&lt;b&gt;Normally you should not use this mode.&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Correct the scenery library mode now?&lt;/p&gt;</source>
         <comment>Sync texts with menu items</comment>
-        <translation>&lt;p style=&apos;white-space:pre&apos;&gt;Seu modo de biblioteca de cenários atual é &quot;Usar Navigraph para todos os recursos&quot;.&lt;/p&gt;&lt;p&gt;Todas as informações da biblioteca de cenários do simulador são ignoradas neste modo.&lt;/p&gt; &lt;p&gt;Observe que as informações do aeroporto são limitadas neste modo. Isso significa que pátios, pistas de táxi, posições de estacionamento, superfícies de pista e muito mais não estão disponíveis, aeroportos menores estarão ausentes e o layout da pista pode não corresponder ao do simulador.&lt;/p&gt;&lt;p style=&apos;white-space:pre &apos;&gt;Você pode alterar isso manualmente no menu&lt;br/&gt;&quot;Biblioteca de dados&quot; -&gt; &quot;Navigraph&quot; -&gt; &quot;Usar Navigraph para navaids e procedimentos&quot;.&lt;/p&gt;&lt;p&gt;&lt;b&gt;Normalmente, você não deve usar isso modo.&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Corrigir o modo de biblioteca de cenário agora?&lt;/p&gt;</translation>
+        <translation>&lt;p style=&apos;white-space:pre&apos;&gt;Seu modo de biblioteca de cenários atual é &quot;Usar Navigraph para todos os recursos&quot;.&lt;/p&gt;&lt;p&gt;Todas as informações da biblioteca de cenários do simulador são ignoradas neste modo.&lt;/p&gt; &lt;p&gt;Observe que as informações do aeroporto são limitadas neste modo. Isso significa que pátios, pistas de táxi, posições de estacionamento, superfícies de pista e muito mais não estão disponíveis, aeroportos menores estarão ausentes e o layout da pista pode não corresponder ao do simulador.&lt;/p&gt;&lt;p style=&apos;white-space:pre &apos;&gt;Você pode alterar isso manualmente no menu&lt;br/&gt;&quot;Biblioteca de Cenários&quot; -&gt; &quot;Navigraph&quot; -&gt; &quot;Usar Navigraph para navaids e procedimentos&quot;.&lt;/p&gt;&lt;p&gt;&lt;b&gt;Normalmente, você não deve usar isso modo.&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Corrigir o modo de biblioteca de cenário agora?&lt;/p&gt;</translation>
     </message>
     <message>
         <source>%1 - Validate Scenery Library Settings</source>
@@ -4215,35 +4215,35 @@ Você pode carregar o banco de dados da biblioteca de cenários do simulador no 
         <location filename="src/db/databasemanager.cpp" line="1438"/>
         <source>&lt;p style=&apos;white-space:pre&apos;&gt;The AIRAC cycle %1 of your navigation data is equal to the simulator cycle.&lt;p&gt;&lt;p&gt;You should use the scenery library mode &quot;Use Navigraph for Navaids and Procedures&quot; to fetch airports from the simulator and navdata from the update.&lt;/p&gt;&lt;p style=&apos;white-space:pre&apos;&gt;You can change this manually in the menu&lt;br/&gt;&quot;Scenery Library&quot; -&gt; &quot;Navigraph&quot; -&gt; &quot;Use Navigraph for Navaids and Procedures&quot;.&lt;/p&gt;&lt;p&gt;Correct the scenery library mode now?&lt;/p&gt;</source>
         <comment>Sync texts with menu items</comment>
-        <translation>&lt;p style=&apos;white-space:pre&apos;&gt;O ciclo AIRAC %1 dos seus dados de navegação é igual ao ciclo do simulador.&lt;/p&gt;&lt;p&gt;Você deve usar o modo da biblioteca de dados &quot;Usar Navigraph para Navaids e Procedimentos&quot; para obter aeroportos do simulador e dados de navegação da atualização.&lt;/p&gt;&lt;p style=&apos;white-space:pre&apos;&gt;Você pode alterar isso manualmente no menu&lt;br/&gt;&quot;Biblioteca de Dados&quot; -&gt; &quot;Navigraph&quot; -&gt; &quot;Usar Navigraph para Navaids e Procedimentos&quot;.&lt;/p&gt;&lt;p&gt;Corrigir o modo da biblioteca de cenários agora?&lt;/p&gt;</translation>
+        <translation>&lt;p style=&apos;white-space:pre&apos;&gt;O ciclo AIRAC %1 dos seus dados de navegação é igual ao ciclo do simulador.&lt;/p&gt;&lt;p&gt;Você deve usar o modo da biblioteca de cenários &quot;Usar Navigraph para Navaids e Procedimentos&quot; para obter aeroportos do simulador e dados de navegação da atualização.&lt;/p&gt;&lt;p style=&apos;white-space:pre&apos;&gt;Você pode alterar isso manualmente no menu&lt;br/&gt;&quot;Biblioteca de Cenários&quot; -&gt; &quot;Navigraph&quot; -&gt; &quot;Usar Navigraph para Navaids e Procedimentos&quot;.&lt;/p&gt;&lt;p&gt;Corrigir o modo da biblioteca de cenários agora?&lt;/p&gt;</translation>
     </message>
     <message>
         <location filename="src/db/databasemanager.cpp" line="1453"/>
         <source>&lt;p style=&apos;white-space:pre&apos;&gt;The AIRAC cycle %1 of your navigation data is older than the simulator cycle %2.&lt;/p&gt;&lt;p&gt;This can result in warning messages when loading flight plans in X-Plane.&lt;/p&gt;&lt;p&gt;Update the Little Navmap navdata to use the same cycle as the X-Plane navdata with the Navigraph FMS Data Manager to fix this.&lt;/p&gt;&lt;p&gt;You can also use the scenery library mode &quot;Do not use Navigraph Database&quot; to fetch all data from the simulator.&lt;/p&gt;&lt;p style=&apos;white-space:pre&apos;&gt;You can change this manually in the menu&lt;br/&gt;&quot;Scenery Library&quot; -&gt; &quot;Navigraph&quot; -&gt; &quot;Do not use Navigraph Database&quot;.&lt;/p&gt;&lt;p&gt;Correct the scenery library mode now?&lt;/p&gt;</source>
         <comment>Sync texts with menu items</comment>
-        <translation>&lt;p style=&apos;white-space:pre&apos;&gt;O ciclo AIRAC %1 dos seus dados de navegação é mais antigo do que o ciclo do simulador %2.&lt;/p&gt;&lt;p&gt;Isso pode resultar em mensagens de aviso ao carregar planos de voo no X-Plane.&lt;/p&gt;&lt;p&gt;Atualize os dados de navegação do Little Navmap para usar o mesmo ciclo dos dados de navegação do X-Plane com o Navigraph FMS Data Manager para corrigir isso.&lt;/p&gt;&lt;p&gt;Você também pode usar o modo da biblioteca de dados &quot;Não usar Banco de Dados Navigraph&quot; para obter todos os dados do simulador.&lt;/p&gt;&lt;p style=&apos;white-space:pre&apos;&gt;Você pode alterar isso manualmente no menu&lt;br/&gt;&quot;Biblioteca de Dados&quot; -&gt; &quot;Navigraph&quot; -&gt; &quot;Não usar Banco de Dados Navigraph&quot;.&lt;/p&gt;&lt;p&gt;Corrigir o modo da biblioteca de cenários agora?&lt;/p&gt;</translation>
+        <translation>&lt;p style=&apos;white-space:pre&apos;&gt;O ciclo AIRAC %1 dos seus dados de navegação é mais antigo do que o ciclo do simulador %2.&lt;/p&gt;&lt;p&gt;Isso pode resultar em mensagens de aviso ao carregar planos de voo no X-Plane.&lt;/p&gt;&lt;p&gt;Atualize os dados de navegação do Little Navmap para usar o mesmo ciclo dos dados de navegação do X-Plane com o Navigraph FMS Data Manager para corrigir isso.&lt;/p&gt;&lt;p&gt;Você também pode usar o modo da biblioteca de cenários &quot;Não usar Banco de Dados Navigraph&quot; para obter todos os dados do simulador.&lt;/p&gt;&lt;p style=&apos;white-space:pre&apos;&gt;Você pode alterar isso manualmente no menu&lt;br/&gt;&quot;Biblioteca de Cenários&quot; -&gt; &quot;Navigraph&quot; -&gt; &quot;Não usar Banco de Dados Navigraph&quot;.&lt;/p&gt;&lt;p&gt;Corrigir o modo da biblioteca de cenários agora?&lt;/p&gt;</translation>
     </message>
     <message>
         <location filename="src/db/databasemanager.cpp" line="1471"/>
         <source>&lt;p style=&apos;white-space:pre&apos;&gt;Your navdata based on AIRAC cycle %1 is outdated.&lt;/p&gt;&lt;p&gt;This can result in warning messages when loading flight plans.&lt;/p&gt;&lt;p&gt;Update the Little Navmap navdata with the Navigraph FMS Data Manager to fix this.&lt;/p&gt;&lt;p&gt;You can also use the scenery library mode &quot;Do not use Navigraph Database&quot; to fetch all data from the simulator.&lt;/p&gt;&lt;p style=&apos;white-space:pre&apos;&gt;You can change this manually in the menu&lt;br/&gt;&quot;Scenery Library&quot; -&gt; &quot;Navigraph&quot; -&gt; &quot;Do not use Navigraph Database&quot;.&lt;/p&gt;&lt;p&gt;Correct the scenery library mode now?&lt;/p&gt;</source>
         <comment>Sync texts with menu items</comment>
-        <translation>&lt;p style=&apos;white-space:pre&apos;&gt;Seus dados de navegação baseados no ciclo AIRAC %1 estão desatualizados.&lt;/p&gt;&lt;p&gt;Isso pode resultar em mensagens de aviso ao carregar planos de voo.&lt;/p&gt;&lt;p&gt;Atualize os dados de navegação do Little Navmap com o Navigraph FMS Data Manager para corrigir isso.&lt;/p&gt;&lt;p&gt;Você também pode usar o modo da biblioteca de cenários &quot;Não usar Banco de Dados Navigraph&quot; para obter todos os dados do simulador.&lt;/p&gt;&lt;p style=&apos;white-space:pre&apos;&gt;Você pode alterar isso manualmente no menu&lt;br/&gt;&quot;Biblioteca de Dados&quot; -&gt; &quot;Navigraph&quot; -&gt; &quot;Não usar Banco de Dados Navigraph&quot;.&lt;/p&gt;&lt;p&gt;Corrigir o modo da biblioteca de cenários agora?&lt;/p&gt;</translation>
+        <translation>&lt;p style=&apos;white-space:pre&apos;&gt;Seus dados de navegação baseados no ciclo AIRAC %1 estão desatualizados.&lt;/p&gt;&lt;p&gt;Isso pode resultar em mensagens de aviso ao carregar planos de voo.&lt;/p&gt;&lt;p&gt;Atualize os dados de navegação do Little Navmap com o Navigraph FMS Data Manager para corrigir isso.&lt;/p&gt;&lt;p&gt;Você também pode usar o modo da biblioteca de cenários &quot;Não usar Banco de Dados Navigraph&quot; para obter todos os dados do simulador.&lt;/p&gt;&lt;p style=&apos;white-space:pre&apos;&gt;Você pode alterar isso manualmente no menu&lt;br/&gt;&quot;Biblioteca de Cenários&quot; -&gt; &quot;Navigraph&quot; -&gt; &quot;Não usar Banco de Dados Navigraph&quot;.&lt;/p&gt;&lt;p&gt;Corrigir o modo da biblioteca de cenários agora?&lt;/p&gt;</translation>
     </message>
     <message>
         <location filename="src/db/databasemanager.cpp" line="1487"/>
         <source>&lt;p style=&apos;white-space:pre&apos;&gt;&lt;p&gt;You are using an updated Navigraph database with a not optimal scenery library mode.&lt;/p&gt;&lt;p style=&apos;white-space:pre&apos;&gt;You can fix this in the menu&lt;br/&gt;&quot;Scenery Library&quot; -&gt; &quot;Navigraph&quot; -&gt; &quot;Use Navigraph for Navaids and Procedures&quot;.&lt;/p&gt;&lt;p&gt;Correct the scenery library mode now?&lt;/p&gt;</source>
         <comment>Sync texts with menu items</comment>
-        <translation>&lt;p style=&apos;white-space:pre&apos;&gt;&lt;p&gt;Você está usando um banco de dados Navigraph atualizado com um modo de biblioteca de cenários não otimizado.&lt;/p&gt;&lt;p style=&apos;white-space:pre&apos;&gt;Você pode corrigir isso no menu&lt;br/&gt;&quot;Biblioteca de Dados&quot; -&gt; &quot;Navigraph&quot; -&gt; &quot;Usar Navigraph para Navaids e Procedimentos&quot;.&lt;/p&gt;&lt;p&gt;Corrigir o modo da biblioteca de cenários agora?&lt;/p&gt;</translation>
+        <translation>&lt;p style=&apos;white-space:pre&apos;&gt;&lt;p&gt;Você está usando um banco de dados Navigraph atualizado com um modo de biblioteca de cenários não otimizado.&lt;/p&gt;&lt;p style=&apos;white-space:pre&apos;&gt;Você pode corrigir isso no menu&lt;br/&gt;&quot;Biblioteca de Cenários&quot; -&gt; &quot;Navigraph&quot; -&gt; &quot;Usar Navigraph para Navaids e Procedimentos&quot;.&lt;/p&gt;&lt;p&gt;Corrigir o modo da biblioteca de cenários agora?&lt;/p&gt;</translation>
     </message>
     <message>
         <location filename="src/db/databasemanager.cpp" line="1523"/>
         <source>You cannot load the MSFS 2024 scenery library using Little Navmap 32-bit.</source>
-        <translation type="unfinished"></translation>
+        <translation>Você não pode carregar a biblioteca de cenários do MSFS 2024 usando o Little Navmap 32-bit.</translation>
     </message>
     <message>
         <location filename="src/db/databasemanager.cpp" line="1548"/>
         <source>&lt;p style=&apos;white-space:pre&apos;&gt;Cannot read base path &quot;%1&quot;.&lt;br/&gt;&lt;br/&gt;Reason:&lt;br/&gt;%2&lt;br/&gt;&lt;/p&gt;%3</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;p style=&apos;white-space:pre&apos;&gt;Não foi possível ler o caminho base &quot;%1&quot;.&lt;br/&gt;&lt;br/&gt;Motivo:&lt;br/&gt;%2&lt;br/&gt;&lt;/p&gt;%3</translation>
     </message>
     <message>
         <location filename="src/db/databasemanager.cpp" line="1601"/>
@@ -4253,7 +4253,10 @@ You will not see user aircraft updates while loading.
 Note that the loading process can take a while. Expect %1 to %2 minutes. In the meantime, you can continue to use %3 as normal.</source>
         <oldsource>Note that the connection to the flight simulator has to be paused while loading data from the simulator.
 You will not see user aircraft updates while loading.</oldsource>
-        <translation type="unfinished"></translation>
+        <translation>Observe que a conexão com o simulador de voo deve ser pausada enquanto os dados do simulador são carregados.
+Você não verá atualizações da aeronave do usuário durante o carregamento.
+
+Observe que o processo de carregamento pode demorar um pouco. Espere de %1 a %2 minutos. Enquanto isso, você pode continuar a usar o %3 normalmente.</translation>
     </message>
     <message>
         <location filename="src/db/databasemanager.cpp" line="1614"/>
@@ -4262,7 +4265,11 @@ You will not see user aircraft updates while loading.</oldsource>
 Start Microsoft Flight Simulator 2024, wait until the user interface of the simulator is visible and then press &quot;Ok&quot; to continue.
 
 Note that the loading process can take a while. Expect %1 to %2 minutes.In the meantime, you can continue to use %3 as normal.</source>
-        <translation type="unfinished"></translation>
+        <translation>Não foi possível conectar ao Microsoft Flight Simulator 2024, necessário para o Little Navmap carregar os dados.
+
+Inicie o Microsoft Flight Simulator 2024, aguarde até que a interface do simulador esteja visível e, em seguida, pressione &quot;Ok&quot; para continuar.
+
+Observe que o processo de carregamento pode demorar um pouco. Espere de %1 a %2 minutos. Enquanto isso, você pode continuar a usar o %3 normalmente.</translation>
     </message>
     <message>
         <location filename="src/db/databasemanager.cpp" line="1693"/>
@@ -7482,7 +7489,7 @@ Defina o caminho para os dados de elevação offline nas opções na página “
     <message>
         <location filename="src/gui/mainwindow.cpp" line="2223"/>
         <source> — %1 *</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="2232"/>
@@ -7498,7 +7505,7 @@ Defina o caminho para os dados de elevação offline nas opções na página “
     <message>
         <location filename="src/gui/mainwindow.cpp" line="2217"/>
         <source> </source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source> *</source>
@@ -7550,7 +7557,7 @@ Defina o caminho para os dados de elevação offline nas opções na página “
         <location filename="src/gui/mainwindow.cpp" line="2524"/>
         <location filename="src/gui/mainwindow.cpp" line="2551"/>
         <source>The file &quot;%1&quot; does not contain track points.</source>
-        <translation type="unfinished"></translation>
+        <translation>O arquivo &quot;%1&quot; não contém pontos de trajetória.</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="2530"/>
@@ -7675,7 +7682,7 @@ ou excluir a trilha.</translation>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="3072"/>
         <source>PNG Image Files (*.png);;JPG Image Files (*.jpg *.jpeg);;All Files (*)</source>
-        <translation type="unfinished"></translation>
+        <translation>Arquivos de Imagem PNG (*.png);;Arquivos de Imagem JPG (*.jpg *.jpeg);;Todos os Arquivos (*)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="3375"/>
@@ -8343,7 +8350,7 @@ Guardar alterações?</translation>
     <message>
         <location filename="src/gui/mainwindow.ui" line="357"/>
         <source>&amp;Scenery Library</source>
-        <translation>&amp;Biblioteca de Dados</translation>
+        <translation>&amp;Biblioteca de Cenários</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="8418"/>
@@ -10066,7 +10073,7 @@ A velocidade do vento será interpolada entre esta altitude e a nível do solo.<
         <location filename="src/gui/mainwindow.ui" line="8196"/>
         <source>Show &amp;AI and Multiplayer Aircraft</source>
         <oldsource>Show &amp;AI and &amp;Multiplayer Aircraft</oldsource>
-        <translation type="unfinished">Mostrar AI e &amp;Aeronaves do Mutiplayer</translation>
+        <translation>Mostrar Aeronaves de &amp;IA e Multiplayer</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="8199"/>
@@ -10118,7 +10125,7 @@ A velocidade do vento será interpolada entre esta altitude e a nível do solo.<
         <location filename="src/gui/mainwindow.ui" line="8832"/>
         <source>Export Flight Plan as FMS for &amp;X-Plane 11 and 12 ...</source>
         <oldsource>Export Flight &amp;Plan as FMS for X-Plane 11 and 12 ...</oldsource>
-        <translation type="unfinished">Exportar &amp;Plano de Voo como FMS para X-Plane 11 e 12...</translation>
+        <translation>Exportar Plano de Voo como FMS para &amp;X-Plane 11 e 12 ...</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="8835"/>
@@ -10175,7 +10182,7 @@ A velocidade do vento será interpolada entre esta altitude e a nível do solo.<
         <location filename="src/gui/mainwindow.ui" line="9600"/>
         <source>&amp;Remove all Highlights and Selections</source>
         <oldsource>&amp;Remove all &amp;Highlights and Selections</oldsource>
-        <translation type="unfinished">&amp;Remover todos os &amp;Destaques e Seleções</translation>
+        <translation>&amp;Remover Todos os Destaques e Seleções</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="9603"/>
@@ -10221,18 +10228,18 @@ A velocidade do vento será interpolada entre esta altitude e a nível do solo.<
     <message>
         <location filename="src/gui/mainwindow.ui" line="11131"/>
         <source>Ctrl+Shift+B</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="11140"/>
         <source>Export Flight Plan as &amp;MSFS 2024 PLN ...</source>
-        <translation type="unfinished"></translation>
+        <translation>Exportar Plano de Voo como &amp;MSFS 2024 PLN ...</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="11143"/>
         <location filename="src/gui/mainwindow.ui" line="11146"/>
         <source>Export Flight Plan as PLN for the Microsoft Flight Simulator 2024 EFB</source>
-        <translation type="unfinished"></translation>
+        <translation>Exportar Plano de Voo como PLN para o EFB do Microsoft Flight Simulator 2024</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="11547"/>
@@ -10254,7 +10261,7 @@ A velocidade do vento será interpolada entre esta altitude e a nível do solo.<
     <message>
         <location filename="src/gui/mainwindow.ui" line="11649"/>
         <source>Ctrl+Shift+K</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="11664"/>
@@ -11942,7 +11949,7 @@ de decolagem tanto do estacionamento de partida quanto da aeronave do usuário d
         <location filename="src/gui/mainwindow.ui" line="10698"/>
         <source>Download NAT and PACOTS tracks on startup</source>
         <oldsource>Download NAT, PACOTS and AUSOTS tracks on startup</oldsource>
-        <translation type="unfinished">Baixar NAT, PACOTS e AUSOTS na inicialização</translation>
+        <translation>Baixar rotas NAT e PACOTS na inicialização</translation>
     </message>
     <message>
         <source>&amp;Delete Tracks</source>
@@ -11963,7 +11970,7 @@ de decolagem tanto do estacionamento de partida quanto da aeronave do usuário d
         <location filename="src/gui/mainwindow.ui" line="10724"/>
         <source>Download NAT and PACOTS tracks now</source>
         <oldsource>Download NAT, PACOTS and AUSOTS tracks now</oldsource>
-        <translation type="unfinished">Baixar NAT, PACOTS e AUSOTS agora</translation>
+        <translation>Baixar rotas NAT e PACOTS agora</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="3368"/>
@@ -14005,7 +14012,7 @@ O melhor track será selecionado automaticamente.</translation>
         <location filename="src/gui/mainwindow.ui" line="11122"/>
         <source>Export Flight Plan as MSFS &amp;2020 PLN ...</source>
         <oldsource>Export Flight Plan &amp;as MSFS 2020 PLN ...</oldsource>
-        <translation type="unfinished">Exportar Plano de Voo &amp;como MSFS 2020 PLN ....</translation>
+        <translation>Exportar Plano de Voo como MSFS &amp;2020 PLN ...</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="11125"/>
@@ -14047,7 +14054,7 @@ O melhor track será selecionado automaticamente.</translation>
         <location filename="src/gui/mainwindow.ui" line="10733"/>
         <source>Export Flight Plan as &amp;P3D or FSX  PLN ...</source>
         <oldsource>Export Flight Plan &amp;as P3D or FSX  PLN ...</oldsource>
-        <translation type="unfinished">Exportar Plano de Voo &amp;como P3D ou FSX PLN ...</translation>
+        <translation>Exportar Plano de Voo como PLN do &amp;P3D ou FSX ...</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="10736"/>
@@ -19330,11 +19337,6 @@ O botão é realçado se o nível de detalhe não for padrão.</translation>
         <translation>camada manual</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="1793"/>
-        <source>Go to the main menu -&gt; &quot;Tools&quot; -&gt; &quot;Options&quot; and then to page &quot;Weather&quot;. Select NOAA or another weather provider instead.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="1881"/>
         <source>%1 %2at %3</source>
         <translation>%1 %2em %3</translation>
@@ -20372,7 +20374,11 @@ kHz/MHz</translation>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="1792"/>
         <source>MSFS simulators do not provide weather information.</source>
-        <oldsource>MSFS does not provide simulator weather information.</oldsource>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/common/htmlinfobuilder.cpp" line="1793"/>
+        <source>Go to the main menu -&gt; &quot;Tools&quot; -&gt; &quot;Options&quot; and then to page &quot;Weather&quot;. Select NOAA or another weather provider instead.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -20388,7 +20394,7 @@ kHz/MHz</translation>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="1870"/>
         <source>ILS/LOC</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="1878"/>
@@ -21773,7 +21779,7 @@ kHz/MHz</translation>
         <location filename="src/mappainter/mappainterairport.cpp" line="827"/>
         <source>T</source>
         <comment>Tower short name</comment>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="src/mappainter/mappainterairport.cpp" line="859"/>
@@ -22296,7 +22302,10 @@ kHz/MHz</translation>
 
 Go to menu &quot;Tools&quot; -&gt; &quot;Options&quot; and then to page &quot;Cache and Files&quot;. Clear the input field &quot;Directory for additional map themes&quot; with the wrong path to disable themes or click &quot;Select Themes Directory&quot; and select the correct folder.</source>
         <comment>Syncronize with texts in menu and options dialog</comment>
-        <translation type="unfinished"></translation>
+        <translation>Caminho(s) base para temas de mapa não encontrado(s).
+%1
+
+Vá ao menu &quot;Configurações&quot; -&gt; &quot;Opções&quot; e depois à página &quot;Cache e Arquivos&quot;. Limpe o campo de entrada &quot;Diretório para temas de mapa adicionais&quot; com o caminho incorreto para desativar os temas ou clique em &quot;Selecionar Diretório de Temas&quot; e selecione a pasta correta.</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapthemehandler.cpp" line="303"/>
@@ -22399,127 +22408,127 @@ Go to menu &quot;Tools&quot; -&gt; &quot;Options&quot; and then to page &quot;Ca
         <location filename="src/mapgui/mapvisible.cpp" line="93"/>
         <source>H</source>
         <comment>Runway surface</comment>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="src/mapgui/mapvisible.cpp" line="99"/>
         <source>S</source>
         <comment>Runway surface</comment>
-        <translation type="unfinished">M</translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="src/mapgui/mapvisible.cpp" line="122"/>
         <source>E</source>
         <comment>Airport status</comment>
-        <translation type="unfinished">L</translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="src/mapgui/mapvisible.cpp" line="128"/>
         <source>O</source>
         <comment>Airport status</comment>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="src/mapgui/mapvisible.cpp" line="136"/>
         <source>L</source>
         <comment>Airport status</comment>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="src/mapgui/mapvisible.cpp" line="144"/>
         <source>P</source>
         <comment>Airport status</comment>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="src/mapgui/mapvisible.cpp" line="150"/>
         <source>C</source>
         <comment>Airport status</comment>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="src/mapgui/mapvisible.cpp" line="156"/>
         <source>M</source>
         <comment>Airport status</comment>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="src/mapgui/mapvisible.cpp" line="162"/>
         <source>AZ</source>
         <comment>Airport status</comment>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="src/mapgui/mapvisible.cpp" line="167"/>
         <source>AF</source>
         <comment>Airport status</comment>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="src/mapgui/mapvisible.cpp" line="183"/>
         <source>V</source>
         <comment>Navaid short type</comment>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="src/mapgui/mapvisible.cpp" line="189"/>
         <source>N</source>
         <comment>Navaid short type</comment>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="src/mapgui/mapvisible.cpp" line="195"/>
         <source>W</source>
         <comment>Navaid short type</comment>
-        <translation type="unfinished">O</translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="src/mapgui/mapvisible.cpp" line="201"/>
         <source>I</source>
         <comment>Navaid short type</comment>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="src/mapgui/mapvisible.cpp" line="207"/>
         <source>G</source>
         <comment>Navaid short type</comment>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="src/mapgui/mapvisible.cpp" line="213"/>
         <source>LA</source>
         <comment>Airway short type</comment>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="src/mapgui/mapvisible.cpp" line="219"/>
         <source>HA</source>
         <comment>Airway short type</comment>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="src/mapgui/mapvisible.cpp" line="225"/>
         <source>T</source>
         <comment>Track short indicator</comment>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="src/mapgui/mapvisible.cpp" line="231"/>
         <source>H</source>
         <comment>Holding short indicator</comment>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="src/mapgui/mapvisible.cpp" line="334"/>
         <source>A&gt;</source>
         <comment>Aircraft indicator</comment>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="src/mapgui/mapvisible.cpp" line="339"/>
         <source>A</source>
         <comment>Aircraft indicator</comment>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="src/mapgui/mapvisible.cpp" line="344"/>
@@ -22573,19 +22582,19 @@ Go to menu &quot;Tools&quot; -&gt; &quot;Options&quot; and then to page &quot;Ca
         <location filename="src/mapgui/mapvisible.cpp" line="345"/>
         <source>G</source>
         <comment>Aircraft indicator</comment>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="src/mapgui/mapvisible.cpp" line="355"/>
         <source>S&gt;</source>
         <comment>Ship indicator</comment>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="src/mapgui/mapvisible.cpp" line="360"/>
         <source>S</source>
         <comment>Ship indicator</comment>
-        <translation type="unfinished">M</translation>
+        <translation>N</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapvisible.cpp" line="365"/>
@@ -22614,7 +22623,7 @@ Go to menu &quot;Tools&quot; -&gt; &quot;Options&quot; and then to page &quot;Ca
         <location filename="src/mapgui/mapvisible.cpp" line="392"/>
         <source>W</source>
         <comment>Wind indicator</comment>
-        <translation type="unfinished">O</translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="src/mapgui/mapvisible.cpp" line="395"/>
@@ -22638,7 +22647,7 @@ Go to menu &quot;Tools&quot; -&gt; &quot;Options&quot; and then to page &quot;Ca
         <location filename="src/mapgui/mapvisible.cpp" line="410"/>
         <source>T</source>
         <comment>Trail indicator</comment>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="src/mapgui/mapvisible.cpp" line="413"/>
@@ -22788,19 +22797,19 @@ Go to menu &quot;Tools&quot; -&gt; &quot;Options&quot; and then to page &quot;Ca
         <source>&lt;p style=&apos;white-space:pre&apos;&gt;The currently selected scenery database for the simulator is empty.&lt;br/&gt;Go to: Main menu -&amp;gt; &quot;Scenery Library&quot; -&amp;gt; &quot;Load Scenery Library&quot; or press &lt;code&gt;Ctrl+Shift+L&lt;/code&gt;.&lt;br/&gt;Then select the simulator and press &quot;Load&quot;.&lt;/p&gt;</source>
         <oldsource>&lt;p style=&apos;white-space:pre&apos;&gt;The currently selected scenery database for the simulator is empty.&lt;br/&gt;Go to: Main menu -&amp;gt; &quot;Scenery Library&quot; -&amp;gt; &quot;Load Scenery Library&quot; or press &lt;code&gt;Ctrl+Shift+L&lt;/code&gt;.&lt;br/&gt;Then choose the simulator and press &quot;Load&quot;.&lt;/p&gt;</oldsource>
         <comment>Keep instructions in sync with translated menus and shortcuts</comment>
-        <translation>&lt;p style=&apos;white-space:pre&apos;&gt;O banco de dados de cenários atualmente selecionado para o simulador está vazio.&lt;br/&gt;Vá para: Menu principal -&amp;gt; &quot;Biblioteca de Dados&quot; -&amp;gt; &quot;Carregar Biblioteca de Cenários&quot; ou pressione &lt;code&gt;Ctrl+Shift+L&lt;/code&gt;.&lt;br/&gt;Em seguida, selecione o simulador e pressione &quot;Carregar&quot;.&lt;/p&gt;</translation>
+        <translation>&lt;p style=&apos;white-space:pre&apos;&gt;O banco de dados de cenários atualmente selecionado para o simulador está vazio.&lt;br/&gt;Vá para: Menu principal -&amp;gt; &quot;Biblioteca de Cenários&quot; -&amp;gt; &quot;Carregar Biblioteca de Cenários&quot; ou pressione &lt;code&gt;Ctrl+Shift+L&lt;/code&gt;.&lt;br/&gt;Em seguida, selecione o simulador e pressione &quot;Carregar&quot;.&lt;/p&gt;</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapvisible.cpp" line="380"/>
         <source>AW</source>
         <comment>Airport weather indicator</comment>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="src/mapgui/mapvisible.cpp" line="402"/>
         <source>F</source>
         <comment>Flight plan indicator</comment>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="src/mapgui/mapvisible.cpp" line="443"/>
@@ -22836,7 +22845,7 @@ Go to menu &quot;Tools&quot; -&gt; &quot;Options&quot; and then to page &quot;Ca
         <location filename="src/mapgui/mapvisible.cpp" line="105"/>
         <source>W</source>
         <comment>Runway surface</comment>
-        <translation type="unfinished">O</translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="src/mapgui/mapvisible.cpp" line="108"/>
@@ -27514,7 +27523,7 @@ Isso também é usado para &quot;Centralize o mapa na aeronave e no próximo way
     <message>
         <location filename="src/options/options.ui" line="6914"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/littlenavmap/resources/icons/bulb.svg&quot;/&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Note that the X-Plane default weather location is determined by the flight simulator base path in the dialog &amp;quot;Load Scenery Library&amp;quot;. The simulator selection in the &amp;quot;Scenery Library&amp;quot; menu also determines which weather files are loaded. &lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/littlenavmap/resources/icons/bulb.svg&quot;/&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Observe que a localização padrão do clima do X-Plane é determinada pelo caminho base do simulador de voo no diálogo &amp;quot;Carregar Biblioteca de Cenários&amp;quot;. A seleção do simulador de voo no menu &amp;quot;Biblioteca de Dados&amp;quot; também determina quais arquivos de clima são carregados.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/littlenavmap/resources/icons/bulb.svg&quot;/&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Observe que a localização padrão do clima do X-Plane é determinada pelo caminho base do simulador de voo no diálogo &amp;quot;Carregar Biblioteca de Cenários&amp;quot;. A seleção do simulador de voo no menu &amp;quot;Biblioteca de Cenários&amp;quot; também determina quais arquivos de clima são carregados.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="7048"/>
@@ -32734,33 +32743,33 @@ Procedimento</translation>
         <location filename="src/common/proctypes.cpp" line="400"/>
         <source>GS</source>
         <comment>Procedure altitude restriction - avoid translation</comment>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="src/common/proctypes.cpp" line="411"/>
         <location filename="src/common/proctypes.cpp" line="419"/>
         <source>A</source>
         <comment>Procedure altitude restriction - avoid translation</comment>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="src/common/proctypes.cpp" line="415"/>
         <location filename="src/common/proctypes.cpp" line="420"/>
         <source>B</source>
         <comment>Procedure altitude restriction - avoid translation</comment>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="src/common/proctypes.cpp" line="503"/>
         <source>A</source>
         <comment>Procedure speed restriction - avoid translation</comment>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="src/common/proctypes.cpp" line="507"/>
         <source>B</source>
         <comment>Procedure speed restriction - avoid translation</comment>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="src/common/proctypes.cpp" line="1227"/>
@@ -33279,937 +33288,937 @@ Procedimento</translation>
         <location filename="src/common/maptypes.cpp" line="324"/>
         <source>Invalid</source>
         <comment>VOR type name</comment>
-        <translation type="unfinished">Inválido</translation>
+        <translation>Inválido</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="325"/>
         <location filename="src/common/maptypes.cpp" line="328"/>
         <source>H</source>
         <comment>VOR type name</comment>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="326"/>
         <location filename="src/common/maptypes.cpp" line="329"/>
         <source>L</source>
         <comment>VOR type name</comment>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="327"/>
         <location filename="src/common/maptypes.cpp" line="330"/>
         <source>T</source>
         <comment>VOR type name</comment>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="335"/>
         <source>Invalid</source>
         <comment>Long VOR type name</comment>
-        <translation type="unfinished">Inválido</translation>
+        <translation>Inválido</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="336"/>
         <location filename="src/common/maptypes.cpp" line="339"/>
         <source>High</source>
         <comment>Long VOR type name</comment>
-        <translation type="unfinished">Alto</translation>
+        <translation>Alto</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="337"/>
         <location filename="src/common/maptypes.cpp" line="340"/>
         <source>Low</source>
         <comment>Long VOR type name</comment>
-        <translation type="unfinished">Baixo</translation>
+        <translation>Baixo</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="338"/>
         <location filename="src/common/maptypes.cpp" line="341"/>
         <source>Terminal</source>
         <comment>Long VOR type name</comment>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="346"/>
         <source>Invalid</source>
         <comment>NDB type name</comment>
-        <translation type="unfinished">Inválido</translation>
+        <translation>Inválido</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="347"/>
         <location filename="src/common/maptypes.cpp" line="351"/>
         <source>HH</source>
         <comment>NDB type name</comment>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="348"/>
         <location filename="src/common/maptypes.cpp" line="352"/>
         <source>H</source>
         <comment>NDB type name</comment>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="349"/>
         <location filename="src/common/maptypes.cpp" line="353"/>
         <source>MH</source>
         <comment>NDB type name</comment>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="350"/>
         <location filename="src/common/maptypes.cpp" line="354"/>
         <source>Compass Locator</source>
         <comment>NDB type name</comment>
-        <translation type="unfinished">Localizador para Bússola</translation>
+        <translation>Localizador de Bússola</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="359"/>
         <source>Invalid</source>
         <comment>Waypoint type name</comment>
-        <translation type="unfinished">Inválido</translation>
+        <translation>Inválido</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="360"/>
         <source>Named</source>
         <comment>Waypoint type name</comment>
-        <translation type="unfinished">Nomeado</translation>
+        <translation>Nomeado</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="361"/>
         <source>Track</source>
         <comment>Waypoint type name</comment>
-        <translation type="unfinished">Rastro</translation>
+        <translation>Rota</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="362"/>
         <source>Unnamed</source>
         <comment>Waypoint type name</comment>
-        <translation type="unfinished">Sem nomeação</translation>
+        <translation>Sem nomeação</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="363"/>
         <source>VOR</source>
         <comment>Waypoint type name</comment>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="364"/>
         <source>NDB</source>
         <comment>Waypoint type name</comment>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="365"/>
         <source>VFR</source>
         <comment>Waypoint type name</comment>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="366"/>
         <source>RNAV</source>
         <comment>Waypoint type name</comment>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="367"/>
         <source>Off Airway</source>
         <comment>Waypoint type name</comment>
-        <translation type="unfinished">Fora da Aerovia</translation>
+        <translation>Fora da Aerovia</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="368"/>
         <source>IAF</source>
         <comment>Waypoint type name</comment>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="369"/>
         <source>FAF</source>
         <comment>Waypoint type name</comment>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="374"/>
         <source>Invalid</source>
         <comment>All navaids type name</comment>
-        <translation type="unfinished">Inválido</translation>
+        <translation>Inválido</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="375"/>
         <source>VORDME</source>
         <comment>All navaids type name</comment>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="376"/>
         <source>VORTAC</source>
         <comment>All navaids type name</comment>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="377"/>
         <source>DME only VORTAC</source>
         <comment>All navaids type name</comment>
-        <translation type="unfinished">DME somente VORTAC</translation>
+        <translation>DME somente VORTAC</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="378"/>
         <source>VOR</source>
         <comment>All navaids type name</comment>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="379"/>
         <source>DME</source>
         <comment>All navaids type name</comment>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="380"/>
         <source>TACAN</source>
         <comment>All navaids type name</comment>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="381"/>
         <source>DME only TACAN</source>
         <comment>All navaids type name</comment>
-        <translation type="unfinished">DME somente TACAN</translation>
+        <translation>DME somente TACAN</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="382"/>
         <source>NDB</source>
         <comment>All navaids type name</comment>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="383"/>
         <source>Waypoint</source>
         <comment>All navaids type name</comment>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="388"/>
         <source>Invalid</source>
         <comment>COM type name</comment>
-        <translation type="unfinished">Inválido</translation>
+        <translation>Inválido</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="389"/>
         <source>None</source>
         <comment>COM type name</comment>
-        <translation type="unfinished">Nenhum</translation>
+        <translation>Nenhum</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="395"/>
         <source>CTAF</source>
         <comment>COM type name</comment>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="406"/>
         <source>Remote Clearance Delivery</source>
         <comment>COM type name</comment>
-        <translation type="unfinished">Autorização de Tráfego Remoto</translation>
+        <translation>Autorização de Tráfego Remoto</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="409"/>
         <source>Area Control Center</source>
         <comment>COM type name</comment>
-        <translation type="unfinished">Centro de Controle de Área</translation>
+        <translation>Centro de Controle de Área</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="410"/>
         <source>Airlift Command Post</source>
         <comment>COM type name</comment>
-        <translation type="unfinished">Posto de Comando de Transporte Aéreo</translation>
+        <translation>Posto de Comando de Transporte Aéreo</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="411"/>
         <source>Air to Air</source>
         <comment>COM type name</comment>
-        <translation type="unfinished">Ar por Ar</translation>
+        <translation>Ar por Ar</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="412"/>
         <source>Approach Control</source>
         <comment>COM type name</comment>
-        <translation type="unfinished">Controle de aproximação</translation>
+        <translation>Controle de aproximação</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="413"/>
         <source>Arrival Control</source>
         <comment>COM type name</comment>
-        <translation type="unfinished">Controle de chegada</translation>
+        <translation>Controle de chegada</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="414"/>
         <source>ASOS</source>
         <comment>COM type name</comment>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="415"/>
         <source>ATIS</source>
         <comment>COM type name</comment>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="416"/>
         <source>AWIB</source>
         <comment>COM type name</comment>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="417"/>
         <source>AWOS</source>
         <comment>COM type name</comment>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="418"/>
         <source>AWIS</source>
         <comment>COM type name</comment>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="419"/>
         <source>Clearance Delivery</source>
         <comment>COM type name</comment>
-        <translation type="unfinished">Autorização de Tráfego</translation>
+        <translation>Autorização de Tráfego</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="420"/>
         <source>Clearance Pre-Taxi</source>
         <comment>COM type name</comment>
-        <translation type="unfinished">Liberação Pré-Táxi</translation>
+        <translation>Liberação Pré-Táxi</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="421"/>
         <source>Terminal Control Area</source>
         <comment>COM type name</comment>
-        <translation type="unfinished">Área de Controle do Terminal</translation>
+        <translation>Área de Controle do Terminal</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="422"/>
         <source>Control</source>
         <comment>COM type name</comment>
-        <translation type="unfinished">Controle</translation>
+        <translation>Controle</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="423"/>
         <source>Departure Control</source>
         <comment>COM type name</comment>
-        <translation type="unfinished">Departamento de Controle</translation>
+        <translation>Controle de Decolagem</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="424"/>
         <source>Director (Approach Control Radar)</source>
         <comment>COM type name</comment>
-        <translation type="unfinished">Diretor (Radar de Controle de Aproximação)</translation>
+        <translation>Diretor (Radar de Controle de Aproximação)</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="425"/>
         <source>En-route Flight Advisory Service (EFAS)</source>
         <comment>COM type name</comment>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="426"/>
         <source>Emergency</source>
         <comment>COM type name</comment>
-        <translation type="unfinished">Emergência</translation>
+        <translation>Emergência</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="427"/>
         <source>Flight Service Station</source>
         <comment>COM type name</comment>
-        <translation type="unfinished">Estação de Serviço de Voo</translation>
+        <translation>Estação de Serviço de Voo</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="428"/>
         <source>Ground Comm Outlet</source>
         <comment>COM type name</comment>
-        <translation type="unfinished">Tomada de Comutação Terrestre</translation>
+        <translation>Tomada de Comutação Terrestre</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="429"/>
         <source>Gate Control</source>
         <comment>COM type name</comment>
-        <translation type="unfinished">Controle de Gate</translation>
+        <translation>Controle de Gate</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="430"/>
         <source>Ground Control</source>
         <comment>COM type name</comment>
-        <translation type="unfinished">Controle de Solo</translation>
+        <translation>Controle de Solo</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="431"/>
         <source>Helicopter Frequency</source>
         <comment>COM type name</comment>
-        <translation type="unfinished">Frequência do Helicóptero</translation>
+        <translation>Frequência do Helicóptero</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="432"/>
         <source>Information</source>
         <comment>COM type name</comment>
-        <translation type="unfinished">Informação</translation>
+        <translation>Informação</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="433"/>
         <source>Military Frequency</source>
         <comment>COM type name</comment>
-        <translation type="unfinished">Frequência Militar</translation>
+        <translation>Frequência Militar</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="434"/>
         <source>Multicom</source>
         <comment>COM type name</comment>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="435"/>
         <source>Operations</source>
         <comment>COM type name</comment>
-        <translation type="unfinished">Operações</translation>
+        <translation>Operações</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="436"/>
         <source>Pilot Activated Lighting</source>
         <comment>COM type name</comment>
-        <translation type="unfinished">Iluminação Ativada pelo Piloto</translation>
+        <translation>Iluminação Ativada pelo Piloto</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="437"/>
         <source>Radio</source>
         <comment>COM type name</comment>
-        <translation type="unfinished">Rádio</translation>
+        <translation>Rádio</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="438"/>
         <source>Radar</source>
         <comment>COM type name</comment>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="439"/>
         <source>Remote Flight Service Station (RFSS)</source>
         <comment>COM type name</comment>
-        <translation type="unfinished">Estação de Serviço de Voo Remoto (RFSS)</translation>
+        <translation>Estação de Serviço de Voo Remoto (RFSS)</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="440"/>
         <source>Ramp or Taxi Control</source>
         <comment>COM type name</comment>
-        <translation type="unfinished">Ramp ou Controle de Táxi</translation>
+        <translation>Rampa ou Controle de Táxi</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="441"/>
         <source>Airport Radar Service Area (ARSA)</source>
         <comment>COM type name</comment>
-        <translation type="unfinished">Área de serviço de radar do aeroporto (ARSA)</translation>
+        <translation>Área de serviço de radar do aeroporto (ARSA)</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="442"/>
         <source>Terminal Control Area (TCA)</source>
         <comment>COM type name</comment>
-        <translation type="unfinished">Área de Controle do Terminal (TCA)</translation>
+        <translation>Área de Controle do Terminal (TCA)</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="443"/>
         <source>Terminal Control Area (TMA)</source>
         <comment>COM type name</comment>
-        <translation type="unfinished">Área de Controle do Terminal (TMA)</translation>
+        <translation>Área de Controle do Terminal (TMA)</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="444"/>
         <source>Terminal</source>
         <comment>COM type name</comment>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="445"/>
         <source>Terminal Radar Service Area (TRSA)</source>
         <comment>COM type name</comment>
-        <translation type="unfinished">Área de Serviço de RadarTerminal (TRSA)</translation>
+        <translation>Área de Serviço de RadarTerminal (TRSA)</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="446"/>
         <source>Transcriber Weather Broadcast (TWEB)</source>
         <comment>COM type name</comment>
-        <translation type="unfinished">Transmissão Meteorológica Transcrita (TWEB)</translation>
+        <translation>Transmissão Meteorológica Transcrita (TWEB)</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="447"/>
         <source>Tower, Air Traffic Control</source>
         <comment>COM type name</comment>
-        <translation type="unfinished">Torre, Controle de Tráfego Aéreo</translation>
+        <translation>Torre, Controle de Tráfego Aéreo</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="448"/>
         <source>Upper Area Control</source>
         <comment>COM type name</comment>
-        <translation type="unfinished">Controle de Área Superior</translation>
+        <translation>Controle de Área Superior (Upper)</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="449"/>
         <source>UNICOM</source>
         <comment>COM type name</comment>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="450"/>
         <source>VOLMET</source>
         <comment>COM type name</comment>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="455"/>
         <source>No Airspace</source>
         <comment>Airspace type name</comment>
-        <translation type="unfinished">Nenhum espaço aéreo</translation>
+        <translation>Nenhum espaço aéreo</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="456"/>
         <source>Center</source>
         <comment>Airspace type name</comment>
-        <translation type="unfinished">Centro</translation>
+        <translation>Centro</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="457"/>
         <source>Class A</source>
         <comment>Airspace type name</comment>
-        <translation type="unfinished"></translation>
+        <translation>Classe A</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="458"/>
         <source>Class B</source>
         <comment>Airspace type name</comment>
-        <translation type="unfinished"></translation>
+        <translation>Classe B</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="459"/>
         <source>Class C</source>
         <comment>Airspace type name</comment>
-        <translation type="unfinished"></translation>
+        <translation>Classe C</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="460"/>
         <source>Class D</source>
         <comment>Airspace type name</comment>
-        <translation type="unfinished"></translation>
+        <translation>Classe D</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="461"/>
         <source>Class E</source>
         <comment>Airspace type name</comment>
-        <translation type="unfinished"></translation>
+        <translation>Classe E</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="462"/>
         <source>Class F</source>
         <comment>Airspace type name</comment>
-        <translation type="unfinished"></translation>
+        <translation>Classe F</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="463"/>
         <source>Class G</source>
         <comment>Airspace type name</comment>
-        <translation type="unfinished"></translation>
+        <translation>Classe G</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="464"/>
         <source>FIR</source>
         <comment>Airspace type name</comment>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="465"/>
         <source>UIR</source>
         <comment>Airspace type name</comment>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="466"/>
         <source>Tower</source>
         <comment>Airspace type name</comment>
-        <translation type="unfinished">Torre</translation>
+        <translation>Torre</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="467"/>
         <source>Clearance</source>
         <comment>Airspace type name</comment>
-        <translation type="unfinished">Liberação</translation>
+        <translation>Liberação</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="468"/>
         <source>Ground</source>
         <comment>Airspace type name</comment>
-        <translation type="unfinished">Solo</translation>
+        <translation>Solo</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="469"/>
         <source>Departure</source>
         <comment>Airspace type name</comment>
-        <translation type="unfinished">Saída</translation>
+        <translation>Saída</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="470"/>
         <source>Approach</source>
         <comment>Airspace type name</comment>
-        <translation type="unfinished">Aproximação</translation>
+        <translation>Aproximação</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="471"/>
         <source>MOA</source>
         <comment>Airspace type name</comment>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="472"/>
         <source>Restricted</source>
         <comment>Airspace type name</comment>
-        <translation type="unfinished">Restrito</translation>
+        <translation>Restrito</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="473"/>
         <source>Prohibited</source>
         <comment>Airspace type name</comment>
-        <translation type="unfinished">Proibido</translation>
+        <translation>Proibido</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="474"/>
         <source>Warning</source>
         <comment>Airspace type name</comment>
-        <translation type="unfinished">Aviso</translation>
+        <translation>Aviso</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="475"/>
         <source>Caution</source>
         <comment>Airspace type name</comment>
-        <translation type="unfinished">Perigo</translation>
+        <translation>Perigo</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="476"/>
         <source>Alert</source>
         <comment>Airspace type name</comment>
-        <translation type="unfinished">Alerta</translation>
+        <translation>Alerta</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="477"/>
         <source>Danger</source>
         <comment>Airspace type name</comment>
-        <translation type="unfinished">Perigoso</translation>
+        <translation>Perigoso</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="478"/>
         <source>National Park</source>
         <comment>Airspace type name</comment>
-        <translation type="unfinished">Parque Nacional</translation>
+        <translation>Parque Nacional</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="479"/>
         <source>Mode-C</source>
         <comment>Airspace type name</comment>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="480"/>
         <source>Radar</source>
         <comment>Airspace type name</comment>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="481"/>
         <source>General Control Area</source>
         <comment>Airspace type name</comment>
-        <translation type="unfinished">Área de Controle Geral</translation>
+        <translation>Área de Controle Geral</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="482"/>
         <source>Military Control Zone</source>
         <comment>Airspace type name</comment>
-        <translation type="unfinished">Zona de Controle Militar</translation>
+        <translation>Zona de Controle Militar</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="483"/>
         <source>Terminal Radar Service Area</source>
         <comment>Airspace type name</comment>
-        <translation type="unfinished">Área de Serviço de Radar de Terminal</translation>
+        <translation>Área de Serviço de Radar de Terminal</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="484"/>
         <source>Training</source>
         <comment>Airspace type name</comment>
-        <translation type="unfinished">Treinamento</translation>
+        <translation>Treinamento</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="485"/>
         <source>Glider Prohibited</source>
         <comment>Airspace type name</comment>
-        <translation type="unfinished">Proibido Planador</translation>
+        <translation>Proibido Planador</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="486"/>
         <source>Wave Window</source>
         <comment>Airspace type name</comment>
-        <translation type="unfinished">Janela de onda</translation>
+        <translation>Janela de onda</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="487"/>
         <source>Online Observer</source>
         <comment>Airspace type name</comment>
-        <translation type="unfinished">Observador Online</translation>
+        <translation>Observador Online</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="492"/>
         <source>No Airspace</source>
         <comment>Airspace short type name</comment>
-        <translation type="unfinished">Nenhum espaço aéreo</translation>
+        <translation>Nenhum Espaço Aéreo</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="493"/>
         <source>CTR</source>
         <comment>Airspace short type name</comment>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="494"/>
         <location filename="src/common/maptypes.cpp" line="513"/>
         <source>A</source>
         <comment>Airspace short type name</comment>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="495"/>
         <source>B</source>
         <comment>Airspace short type name</comment>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="496"/>
         <source>C</source>
         <comment>Airspace short type name</comment>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="497"/>
         <location filename="src/common/maptypes.cpp" line="514"/>
         <source>D</source>
         <comment>Airspace short type name</comment>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="498"/>
         <source>E</source>
         <comment>Airspace short type name</comment>
-        <translation type="unfinished">L</translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="499"/>
         <source>F</source>
         <comment>Airspace short type name</comment>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="500"/>
         <source>G</source>
         <comment>Airspace short type name</comment>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="501"/>
         <source>FIR</source>
         <comment>Airspace short type name</comment>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="502"/>
         <source>UIR</source>
         <comment>Airspace short type name</comment>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="503"/>
         <source>TWR</source>
         <comment>Airspace short type name</comment>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="504"/>
         <source>CLR</source>
         <comment>Airspace short type name</comment>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="505"/>
         <source>GND</source>
         <comment>Airspace short type name</comment>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="506"/>
         <source>DEP</source>
         <comment>Airspace short type name</comment>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="507"/>
         <source>APP</source>
         <comment>Airspace short type name</comment>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="508"/>
         <source>MOA</source>
         <comment>Airspace short type name</comment>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="509"/>
         <source>R</source>
         <comment>Airspace short type name</comment>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="510"/>
         <source>P</source>
         <comment>Airspace short type name</comment>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="511"/>
         <source>W</source>
         <comment>Airspace short type name</comment>
-        <translation type="unfinished">O</translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="512"/>
         <source>CN</source>
         <comment>Airspace short type name</comment>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="515"/>
         <source>National Park</source>
         <comment>Airspace short type name</comment>
-        <translation type="unfinished">Parque Nacional</translation>
+        <translation>Parque Nacional</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="516"/>
         <source>Mode-C</source>
         <comment>Airspace short type name</comment>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="517"/>
         <source>Radar</source>
         <comment>Airspace short type name</comment>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="518"/>
         <source>GCA</source>
         <comment>Airspace short type name</comment>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="519"/>
         <source>MCZ</source>
         <comment>Airspace short type name</comment>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="520"/>
         <source>TRSA</source>
         <comment>Airspace short type name</comment>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="521"/>
         <source>T</source>
         <comment>Airspace short type name</comment>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="522"/>
         <source>Glider Prohibited</source>
         <comment>Airspace short type name</comment>
-        <translation type="unfinished">Proibido Planador</translation>
+        <translation>Proibido Planador</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="523"/>
         <source>Wave Window</source>
         <comment>Airspace short type name</comment>
-        <translation type="unfinished">Janela de onda</translation>
+        <translation>Janela de onda</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="524"/>
         <source>Online Observer</source>
         <comment>Airspace short type name</comment>
-        <translation type="unfinished">Observador Online</translation>
+        <translation>Observador Online</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="1284"/>
         <source>N</source>
         <comment>Oceanic track type</comment>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="1287"/>
         <source>P</source>
         <comment>Oceanic track type</comment>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="1290"/>
         <source>L</source>
         <comment>Oceanic track type</comment>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="1293"/>
         <source>H</source>
         <comment>Oceanic track type</comment>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="1296"/>
         <source>B</source>
         <comment>Oceanic track type</comment>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="1310"/>
         <source>NAT</source>
         <comment>Oceanic track system name</comment>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="1313"/>
         <source>PACOTS</source>
         <comment>Oceanic track system name</comment>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="1316"/>
         <source>Low</source>
         <comment>Oceanic track system name</comment>
-        <translation type="unfinished">Baixo</translation>
+        <translation>Baixo</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="1319"/>
         <source>High</source>
         <comment>Oceanic track system name</comment>
-        <translation type="unfinished">Alto</translation>
+        <translation>Alto</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="1322"/>
         <source>Both</source>
         <comment>Oceanic track system name</comment>
-        <translation type="unfinished">Ambos</translation>
+        <translation>Ambos</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="1373"/>
@@ -34465,14 +34474,14 @@ Procedimento</translation>
         <location filename="src/common/maptypes.cpp" line="1668"/>
         <source>L</source>
         <comment>Holding direction</comment>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="1663"/>
         <location filename="src/common/maptypes.cpp" line="1668"/>
         <source>R</source>
         <comment>Holding direction</comment>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="1666"/>
@@ -34489,14 +34498,14 @@ Procedimento</translation>
         <location filename="src/common/maptypes.cpp" line="1681"/>
         <source>R</source>
         <comment>Pattern direction</comment>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="1677"/>
         <location filename="src/common/maptypes.cpp" line="1682"/>
         <source>L</source>
         <comment>Pattern direction</comment>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="1679"/>
@@ -34507,19 +34516,19 @@ Procedimento</translation>
         <location filename="src/common/maptypes.cpp" line="1708"/>
         <source>Min </source>
         <comment>Airway altitude restriction</comment>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="1714"/>
         <source> to </source>
         <comment>Airway altitude restriction</comment>
-        <translation type="unfinished"> para </translation>
+        <translation> para </translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="1716"/>
         <source>Max </source>
         <comment>Airway altitude restriction</comment>
-        <translation type="unfinished">Máximo(Max) </translation>
+        <translation>Máximo (Max) </translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="1724"/>
@@ -34572,13 +34581,13 @@ Procedimento</translation>
         <location filename="src/common/maptypes.cpp" line="1800"/>
         <source>W</source>
         <comment>Compass direction west</comment>
-        <translation type="unfinished">O</translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="1803"/>
         <source>E</source>
         <comment>Compass direction east</comment>
-        <translation type="unfinished">L</translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="1805"/>
@@ -34590,49 +34599,49 @@ Procedimento</translation>
         <location filename="src/common/maptypes.cpp" line="1828"/>
         <source>Low</source>
         <comment>Taxi edge lights</comment>
-        <translation type="unfinished">Baixo</translation>
+        <translation>Baixo</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="1830"/>
         <source>Medium</source>
         <comment>Taxi edge lights</comment>
-        <translation type="unfinished">Médio</translation>
+        <translation>Médio</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="1832"/>
         <source>High</source>
         <comment>Taxi edge lights</comment>
-        <translation type="unfinished">Alto</translation>
+        <translation>Alto</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="1840"/>
         <source>Left</source>
         <comment>Traffic pattern direction</comment>
-        <translation type="unfinished">Esquerda</translation>
+        <translation>Esquerda</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="1842"/>
         <source>Right</source>
         <comment>Traffic pattern direction</comment>
-        <translation type="unfinished">Direita</translation>
+        <translation>Direita</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="2017"/>
         <source>GS</source>
         <comment>ILS type</comment>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="2019"/>
         <source>DME</source>
         <comment>ILS type</comment>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="2172"/>
         <source>-</source>
         <comment>Airspace text separator</comment>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="2549"/>
@@ -36296,9 +36305,9 @@ Falls back to default if empty or not valid.</source>
         <oldsource>Space separated list of range ring radii.
 A range ring will be added for each radius value which can be between 0.01 and 4000 %dist%.
 Falls back to 50, 100, 200 and 500 %dist% if empty or not valid.</oldsource>
-        <translation type="unfinished">Lista separada por espaço dos raios do anel de alcance.
-Um anel de intervalo será adicionado para cada valor de raio que pode estar entre 0,01 e 4000 %dist%.
-Cai para 50, 100, 200 e 500 %dist% se vazio ou inválido.</translation>
+        <translation>Lista de raios dos anéis de alcance separados por espaço.
+Um anel de alcance será adicionado para cada valor de raio.
+Retorna ao padrão se estiver vazio ou não for válido.</translation>
     </message>
     <message>
         <location filename="src/gui/rangemarkerdialog.ui" line="142"/>
@@ -36730,7 +36739,7 @@ Cálculo mais rápido</translation>
         <location filename="src/route/routecalcdialog.ui" line="341"/>
         <source>Download NAT and PACOTS tracks now</source>
         <oldsource>Download NAT, PACOTS and AUSOTS tracks now</oldsource>
-        <translation type="unfinished">Baixar NAT, PACOTS e AUSOTS agora</translation>
+        <translation>Baixar rotas NAT e PACOTS agora</translation>
     </message>
     <message>
         <location filename="src/route/routecalcdialog.ui" line="357"/>
@@ -36738,20 +36747,20 @@ Cálculo mais rápido</translation>
 Best track will be selected automatically.</source>
         <oldsource>Use downloaded NAT, PACOTS or AUSOTS tracks.
 Best track will be selected automatically.</oldsource>
-        <translation type="unfinished">Use NAT, PACOTS ou AUSOTS baixados.
-O melhor track será selecionado automaticamente.</translation>
+        <translation>Usar NAT,ou PACOTS baixados.
+A melhor rota será selecionada automaticamente.</translation>
     </message>
     <message>
         <location filename="src/route/routecalcdialog.ui" line="361"/>
         <source>Use downloaded NAT or PACOTS tracks.</source>
         <oldsource>Use downloaded NAT, PACOTS or AUSOTS tracks.</oldsource>
-        <translation type="unfinished">Use NAT, PACOTS ou AUSOTS baixados.</translation>
+        <translation>Usar rptas NAT ou PACOTS baixadas.</translation>
     </message>
     <message>
         <location filename="src/route/routecalcdialog.ui" line="364"/>
         <source>&amp;Use NAT or PACOTS tracks</source>
         <oldsource>&amp;Use NAT, PACOTS or AUSOTS tracks</oldsource>
-        <translation type="unfinished">&amp;Use NAT, PACOTS ou AUSOTS</translation>
+        <translation>&amp;Usar rotas NAT ou PACOTS</translation>
     </message>
     <message>
         <location filename="src/route/routecalcdialog.ui" line="371"/>
@@ -36831,7 +36840,7 @@ Desativado se um banco de dados de navegação não permitir.</translation>
     <message>
         <location filename="src/route/routecalcdialog.ui" line="496"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/littlenavmap/resources/icons/bulb.svg&quot;/&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;For best results, add SID, STAR or approaches before calculating an IFR flight plan.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/littlenavmap/resources/icons/bulb.svg&quot;/&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Para melhores resultados, adicione SID, STAR ou aproximações antes de calcular um plano de voo IFR.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="src/route/routecalcdialog.ui" line="565"/>
@@ -36935,10 +36944,10 @@ Otherwise, tracks will not be used.</source>
 Best track will be selected automatically.
 Ensure to use the correct flight level.
 Otherwise, tracks will not be used.</oldsource>
-        <translation type="unfinished">Use NAT, PACOTS ou AUSOTS baixados.
-A melhor track será selecionado automaticamente.
+        <translation>Use rotas NAT ou PACOTS baixadas.
+A melhor rota será selecionada automaticamente.
 Certifique-se de usar o nível de voo correto.
-Caso contrário, as tracks  não serão usadas.</translation>
+Caso contrário, as rotas não serão utilizadas.</translation>
     </message>
     <message>
         <location filename="src/route/routecalcdialog.cpp" line="202"/>
@@ -37737,7 +37746,9 @@ Observações para o plano de voo.</translation>
         <source>Contains the airway name for en route legs or procedure instruction.
 Airways have a suffix showing the type which is 
 &quot;H&quot; for high/Jet, &quot;L&quot; for low/Victor and &quot;B&quot; for both.</source>
-        <translation type="unfinished"></translation>
+        <translation>Contém o nome da aerovia para trechos em rota ou instrução de procedimento.
+As aerovias possuem um sufixo indicando o tipo:
+&quot;H&quot; para alta/Jet, &quot;L&quot; para baixa/Victor e &quot;B&quot; para ambas.</translation>
     </message>
     <message>
         <location filename="src/route/routecontroller.cpp" line="225"/>
@@ -39023,7 +39034,8 @@ A posição inicial está agora configurada para a pista principal mais longa do
         <source>One or more of the selected export formats are for X-Plane and
 &quot;Use Navigraph for Navaids and Procedures&quot; is selected in the menu &quot;Scenery Library&quot; -&gt; &quot;Navigraph&quot;.
 </source>
-        <translation>Um ou mais dos formatos de exportação selecionados são para X-Plane e &quot;Usar Navigraph para Navaids e Procedimentos&quot; está selecionado no menu &quot;Biblioteca de Dados&quot; -&gt; &quot;Navigraph&quot;.
+        <translation>Um ou mais dos formatos de exportação selecionados são para o X-Plane, e
+&quot;Usar Navigraph para Auxílios à Navegação e Procedimentos&quot; está selecionado no menu &quot;Biblioteca de Cenários&quot; -&gt; &quot;Navigraph&quot;.
 </translation>
     </message>
     <message>
@@ -39819,7 +39831,7 @@ O mesmo formato do FMS 11, mas salvo na pasta X-Plane 12.</translation>
     <message>
         <location filename="src/routeexport/routeexportformat.cpp" line="322"/>
         <source>Microsoft Flight Simulator 2024</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="src/routeexport/routeexportformat.cpp" line="326"/>
@@ -42121,7 +42133,7 @@ Clique com o botão direito do mouse no mapa e selecione
     <message>
         <location filename="src/search/searchbasetable.cpp" line="1173"/>
         <source> (no destination)</source>
-        <translation type="unfinished"> (sem destino)</translation>
+        <translation> (nenhum destino)</translation>
     </message>
     <message>
         <location filename="src/search/searchbasetable.cpp" line="1227"/>
@@ -44395,7 +44407,19 @@ Also check the paths in the Little Navmap options on page &quot;Weather Files&qu
 These paths should be empty to use the default.
 
 Restart Little Navmap after correcting the weather paths.</source>
-        <translation>
+        <oldsource>
+
+Make sure that your X-Plane base path is correct and
+weather files as well as directories exist.
+
+Click &quot;Reset paths&quot; in the Little Navmap dialog &quot;Load scenery library&quot;
+to fix the base path after moving a X-Plane installation.
+
+Also check the paths in the Little Navmap options on page &quot;Weather Files&quot;.
+These path should be empty to use the default.
+
+Restart Little Navmap after correcting the weather paths.</oldsource>
+        <translation type="unfinished">
 
 Certifique-se de que o caminho base do X-Plane está correto e que os arquivos de clima e diretórios existem.
 
@@ -44825,7 +44849,7 @@ ajuste o caminho do clima do X-Plane nas opções, na página &quot;Arquivos de 
         <location filename="src/connect/xpconnectinstaller.cpp" line="105"/>
         <source>&lt;p&gt;Install or update the Little Xpconnect plugin for %1 in the directory below?&lt;/p&gt;&lt;p&gt;%2&amp;nbsp;(click to open)&lt;/p&gt;&lt;p&gt;The X-Plane target installation is as selected in the menu &quot;Scenery Library&quot;.&lt;/p&gt;&lt;p&gt;&lt;b&gt;Note that you have to close X-Plane while installing the plugin.&lt;/b&gt;&lt;/p&gt;%3</source>
         <oldsource>&lt;p&gt;Install or update the Little Xpconnect plugin for %1 in the directory below?&lt;/p&gt;&lt;p&gt;%2&amp;nbsp;(click to open)&lt;/p&gt;&lt;p&gt;The X-Plane target installation is as selected in the menu &quot;Scenery Library&quot;.&lt;/p&gt;%3</oldsource>
-        <translation>&lt;p&gt;Instalar ou atualizar o plugin Little Xpconnect para %1 no diretório abaixo?&lt;/p&gt;&lt;p&gt;%2&amp;nbsp;(clique para abrir)&lt;/p&gt;&lt;p&gt;A instalação alvo do X-Plane é conforme selecionado no menu &quot;Biblioteca de Dados&quot;.&lt;/p&gt;&lt;p&gt;&lt;b&gt;Observe que você deve fechar o X-Plane enquanto instala o plugin.&lt;/b&gt;&lt;/p&gt;%3</translation>
+        <translation>&lt;p&gt;Instalar ou atualizar o plugin Little Xpconnect para %1 no diretório abaixo?&lt;/p&gt;&lt;p&gt;%2&amp;nbsp;(clique para abrir)&lt;/p&gt;&lt;p&gt;A instalação alvo do X-Plane é conforme selecionado no menu &quot;Biblioteca de Cenários&quot;.&lt;/p&gt;&lt;p&gt;&lt;b&gt;Observe que você deve fechar o X-Plane enquanto instala o plugin.&lt;/b&gt;&lt;/p&gt;%3</translation>
     </message>
     <message>
         <location filename="src/connect/xpconnectinstaller.cpp" line="142"/>
