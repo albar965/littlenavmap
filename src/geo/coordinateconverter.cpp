@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -472,21 +472,22 @@ const QVector<QPolygonF *> CoordinateConverter::createPolylinesInternal(const at
     {
       for(int i = 0; i < linestring.size() - 1; i++)
       {
-        Line line(linestring.at(i), linestring.at(i + 1));
+        for(const Line& splitLine : Line(linestring.at(i), linestring.at(i + 1)).splitAtAntiMeridian())
+        {
+          // Split long lines to work around the buggy visibility check in Marble resulting in disappearing line segments
+          // Do a quick check using Manhattan distance in degree
+          LineString lines;
+          if(splitLine.lengthSimple() > 30.f)
+            splitLine.interpolatePoints(splitLine.lengthMeter(), 20, lines);
+          else if(splitLine.lengthSimple() > 5.f)
+            splitLine.interpolatePoints(splitLine.lengthMeter(), 5, lines);
+          else
+            lines.append(splitLine.getPos1());
 
-        // Split long lines to work around the buggy visibility check in Marble resulting in disappearing line segments
-        // Do a quick check using Manhattan distance in degree
-        LineString lines;
-        if(line.lengthSimple() > 30.f)
-          line.interpolatePoints(line.lengthMeter(), 20, lines);
-        else if(line.lengthSimple() > 5.f)
-          line.interpolatePoints(line.lengthMeter(), 5, lines);
-        else
-          lines.append(line.getPos1());
-
-        // Append split points or single point
-        for(const Pos& pos : qAsConst(lines))
-          geoLineStr << mconvert::toGdc(pos);
+          // Append split points or single point
+          for(const Pos& pos : qAsConst(lines))
+            geoLineStr << mconvert::toGdc(pos);
+        }
       }
     }
     else

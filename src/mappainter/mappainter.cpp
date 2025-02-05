@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -539,12 +539,14 @@ void MapPainter::drawLine(Marble::GeoPainter *painter, const atools::geo::Line& 
   else if(forceDraw)
   {
     // Avoid disappearing line segments due to Marble
-
-    bool visible1, visible2, hidden1, hidden2;
-    QPointF pt1 = wToSF(line.getPos1(), DEFAULT_WTOS_SIZE, &visible1, &hidden1);
-    QPointF pt2 = wToSF(line.getPos2(), DEFAULT_WTOS_SIZE, &visible2, &hidden2);
-    if(!hidden1 && !hidden2)
-      drawLine(context->painter, pt1, pt2);
+    for(const Line& splitLine : line.splitAtAntiMeridian())
+    {
+      bool visible1, visible2, hidden1, hidden2;
+      QPointF pt1 = wToSF(splitLine.getPos1(), DEFAULT_WTOS_SIZE, &visible1, &hidden1);
+      QPointF pt2 = wToSF(splitLine.getPos2(), DEFAULT_WTOS_SIZE, &visible2, &hidden2);
+      if(!hidden1 && !hidden2)
+        drawLine(context->painter, pt1, pt2);
+    }
   }
 }
 
