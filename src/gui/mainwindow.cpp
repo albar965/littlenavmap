@@ -156,7 +156,7 @@ MainWindow::MainWindow()
            "</a>."
          "</p>"
          "<p>"
-           "<b>Copyright 2015-2024 Alexander Barthel"
+           "<b>Copyright 2015-2025 Alexander Barthel"
            "</b>"
          "</p>").arg(lnm::helpDonateUrl).arg(QCoreApplication::applicationName());
 
