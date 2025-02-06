@@ -355,14 +355,18 @@ void ConnectClient::postSimConnectData(atools::fs::sc::SimConnectData dataPacket
       if(!aircraftCfgKey.isEmpty())
       {
         atools::fs::scenery::AircraftIndex& aircraftIndex = NavApp::getAircraftIndex();
+        QString model = aircraftIndex.getIcaoTypeDesignator(aircraftCfgKey);
 
+        if(!model.isEmpty())
+        {
         // Has property - fetch from index by loaded aircraft.cfg values using a best guess
         // from "icao_type_designator" and "icao_model".
-        userAircraft.setAirplaneModel(aircraftIndex.getIcaoTypeDesignator(aircraftCfgKey));
+          userAircraft.setAirplaneModel(model);
 
         // Helicopter category in MSFS
         if(aircraftIndex.getCategory(aircraftCfgKey).compare("Helicopter", Qt::CaseInsensitive) == 0)
           userAircraft.setCategory(atools::fs::sc::HELICOPTER);
+        }
       }
 
       // Fix incorrect on-ground status which appears from some traffic tools =======================
