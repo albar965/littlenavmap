@@ -2717,14 +2717,14 @@ compatible file types and are loaded if possible.</source>
     </message>
     <message>
         <location filename="src/connect/connectclient.cpp" line="253"/>
-        <location filename="src/connect/connectclient.cpp" line="991"/>
+        <location filename="src/connect/connectclient.cpp" line="995"/>
         <source>Connected to simulator.</source>
         <translation>已连接到模拟器。</translation>
     </message>
     <message>
         <location filename="src/connect/connectclient.cpp" line="275"/>
-        <location filename="src/connect/connectclient.cpp" line="684"/>
-        <location filename="src/connect/connectclient.cpp" line="902"/>
+        <location filename="src/connect/connectclient.cpp" line="688"/>
+        <location filename="src/connect/connectclient.cpp" line="906"/>
         <source>Disconnected</source>
         <translation>已断开连接</translation>
     </message>
@@ -2749,17 +2749,17 @@ compatible file types and are loaded if possible.</source>
     </message>
     <message>
         <location filename="src/connect/connectclient.cpp" line="286"/>
-        <location filename="src/connect/connectclient.cpp" line="935"/>
+        <location filename="src/connect/connectclient.cpp" line="939"/>
         <source>Disconnected from simulator.</source>
         <translation>已从模拟器断开。</translation>
     </message>
     <message>
-        <location filename="src/connect/connectclient.cpp" line="466"/>
+        <location filename="src/connect/connectclient.cpp" line="470"/>
         <source>Little Xpconnect</source>
         <translation>Little Xpconnect</translation>
     </message>
     <message>
-        <location filename="src/connect/connectclient.cpp" line="468"/>
+        <location filename="src/connect/connectclient.cpp" line="472"/>
         <source>Little Navconnect</source>
         <translation>Little Navconnect</translation>
     </message>
@@ -2769,7 +2769,7 @@ compatible file types and are loaded if possible.</source>
         <translation type="obsolete">更新&lt;i&gt;%1&lt;/i&gt;到最新版本。&lt;br/&gt;已安装的&lt;i&gt;%1&lt;/i&gt;&lt;br/&gt;版本与此版本&lt;i&gt;Little Navmap&lt;/i&gt;不兼容。&lt;br/&gt;&lt;br/&gt;安装&lt;i&gt;%1&lt;/i&gt;的最新版本。</translation>
     </message>
     <message>
-        <location filename="src/connect/connectclient.cpp" line="486"/>
+        <location filename="src/connect/connectclient.cpp" line="490"/>
         <source>The connection is not reliable.&lt;br/&gt;&lt;br/&gt;Check your network or installation.</source>
         <translation>连接不可靠。&lt;br/&gt;&lt;br/&gt;请检查您的网络或者安装。</translation>
     </message>
@@ -2778,7 +2778,7 @@ compatible file types and are loaded if possible.</source>
         <translation type="vanished">&lt;p&gt;从&lt;i&gt;%1&lt;/i&gt;获取数据出错：&lt;/p&gt;&lt;p&gt;%2&lt;/p&gt;&lt;p&gt;%3&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="src/connect/connectclient.cpp" line="684"/>
+        <location filename="src/connect/connectclient.cpp" line="688"/>
         <source>Auto connect switched off.</source>
         <translation>自动连接已关闭。</translation>
     </message>
@@ -2787,13 +2787,13 @@ compatible file types and are loaded if possible.</source>
         <translation type="vanished">连接中（%1）…</translation>
     </message>
     <message>
-        <location filename="src/connect/connectclient.cpp" line="790"/>
+        <location filename="src/connect/connectclient.cpp" line="794"/>
         <source>Connecting (%1) ...</source>
         <oldsource>Connecting (%1)...</oldsource>
         <translation>正在连接（%1）...</translation>
     </message>
     <message>
-        <location filename="src/connect/connectclient.cpp" line="791"/>
+        <location filename="src/connect/connectclient.cpp" line="795"/>
         <source>Trying to connect to local flight simulator (%1).</source>
         <translation>尝试连接到本地飞行模拟器（%1）。</translation>
     </message>
@@ -2802,32 +2802,32 @@ compatible file types and are loaded if possible.</source>
         <translation type="vanished">正在连接…</translation>
     </message>
     <message>
-        <location filename="src/connect/connectclient.cpp" line="477"/>
+        <location filename="src/connect/connectclient.cpp" line="481"/>
         <source>Update %1 to the latest version.&lt;br/&gt;The installed version of %1&lt;br/&gt;is not compatible with this version of Little Navmap.&lt;br/&gt;&lt;br/&gt;Install the latest version of %1 which you can always find in the Little Navmap installation directory.</source>
         <translation>升级 %1 到最新版本.&lt;br/&gt;当前安装版本: %1&lt;br/&gt;与Little Navmap版本不符.&lt;br/&gt;&lt;br/&gt;安装最新版的 %1 您可以在 Little Navmap 安装目录下找到.</translation>
     </message>
     <message>
-        <location filename="src/connect/connectclient.cpp" line="493"/>
+        <location filename="src/connect/connectclient.cpp" line="497"/>
         <source>&lt;p&gt;Error receiving data from %1:&lt;/p&gt;&lt;p&gt;%2&lt;/p&gt;&lt;p&gt;%3&lt;/p&gt;</source>
         <translation>&lt;p&gt;从 %1 接收到错误数据:&lt;/p&gt;&lt;p&gt;%2&lt;/p&gt;&lt;p&gt;%3&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="src/connect/connectclient.cpp" line="716"/>
+        <location filename="src/connect/connectclient.cpp" line="720"/>
         <source>&lt;p&gt;You are using an outdated version of the X-Plane Little Xpconnect plugin.&lt;br/&gt;Minimum recommended version is &quot;%1&quot;.&lt;/p&gt;&lt;p&gt;It is recommended to remove the old plugin and install the included Little Xpconnect in the X-Plane directory &quot;plugins&quot;.&lt;/p&gt;</source>
         <translation>&lt;p&gt;您正在使用X-Plane Little Xpconnect插件的旧版本 &lt;br/&gt;最低版本要求为: &quot;%1&quot;.&lt;p&gt;&lt;p&gt;建议删除旧版本插件并安装新版Little Xpconnect 在X-Plane/Resources/plugins下 .&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="src/connect/connectclient.cpp" line="722"/>
+        <location filename="src/connect/connectclient.cpp" line="726"/>
         <source>&lt;p&gt;You are using an outdated version &quot;%1&quot; of the X-Plane Little Xpconnect plugin.&lt;br/&gt;Minimum recommended version is &quot;%2&quot;.&lt;p&gt;&lt;p&gt;It is recommended to remove the old plugin and install the included Little Xpconnect in X-Plane directory &quot;plugins&quot;.&lt;/p&gt;</source>
         <translation>&lt;p&gt;您正在使用X-Plane Little Xpconnect插件的旧版本: &quot;%1&quot; &lt;br/&gt;最低版本要求为: &quot;%2&quot;.&lt;p&gt;&lt;p&gt;建议删除旧版本插件并安装新版Little Xpconnect 在X-Plane/Resources/plugins下 .&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="src/connect/connectclient.cpp" line="731"/>
+        <location filename="src/connect/connectclient.cpp" line="735"/>
         <source>&amp;Install Now ...</source>
         <translation>现在安装(&amp;I) ...</translation>
     </message>
     <message>
-        <location filename="src/connect/connectclient.cpp" line="752"/>
+        <location filename="src/connect/connectclient.cpp" line="756"/>
         <source>Too many errors when trying to connect to simulator.
 
 Not matching simulator interface or other SimConnect problem.
@@ -2846,83 +2846,83 @@ You have to restart %1 to resume.</source>
 您需要重启 %1 来恢复.</translation>
     </message>
     <message>
-        <location filename="src/connect/connectclient.cpp" line="785"/>
+        <location filename="src/connect/connectclient.cpp" line="789"/>
         <source>Error (%1) ...</source>
         <translation>错误 (%1) ...</translation>
     </message>
     <message>
-        <location filename="src/connect/connectclient.cpp" line="786"/>
+        <location filename="src/connect/connectclient.cpp" line="790"/>
         <source>Too many errors when trying to connect to simulator (%1).</source>
         <translation>尝试连接至模拟器时发生过多错误 (%1).</translation>
     </message>
     <message>
-        <location filename="src/connect/connectclient.cpp" line="810"/>
-        <location filename="src/connect/connectclient.cpp" line="909"/>
+        <location filename="src/connect/connectclient.cpp" line="814"/>
+        <location filename="src/connect/connectclient.cpp" line="913"/>
         <source>Connecting ...</source>
         <oldsource>Connecting...</oldsource>
         <translation>正在连接...</translation>
     </message>
     <message>
-        <location filename="src/connect/connectclient.cpp" line="811"/>
+        <location filename="src/connect/connectclient.cpp" line="815"/>
         <source>Trying to connect to remote flight simulator on &quot;%1&quot;.</source>
         <translation>尝试连接到远程飞行模拟器“%1”。</translation>
     </message>
     <message>
-        <location filename="src/connect/connectclient.cpp" line="860"/>
+        <location filename="src/connect/connectclient.cpp" line="864"/>
         <source>Remote end closed connection.</source>
         <translation>远程关闭了连接。</translation>
     </message>
     <message>
-        <location filename="src/connect/connectclient.cpp" line="861"/>
+        <location filename="src/connect/connectclient.cpp" line="865"/>
         <source>Do not &amp;show this dialog again.</source>
         <translation>不要再显示此对话框 (&amp;S)。</translation>
     </message>
     <message>
-        <location filename="src/connect/connectclient.cpp" line="865"/>
+        <location filename="src/connect/connectclient.cpp" line="869"/>
         <source>Error in server connection: %1 (%2).%3</source>
         <translation>连接到服务器错误：%1 (%2)。%3</translation>
     </message>
     <message>
-        <location filename="src/connect/connectclient.cpp" line="868"/>
+        <location filename="src/connect/connectclient.cpp" line="872"/>
         <source>
 Will retry to connect.</source>
         <translation>
 将会尝试连接。</translation>
     </message>
     <message>
-        <location filename="src/connect/connectclient.cpp" line="903"/>
+        <location filename="src/connect/connectclient.cpp" line="907"/>
         <source>Disconnected from remote flight simulator on &quot;%1&quot;.</source>
         <translation>已从远程飞行模拟器“%1”断开。</translation>
     </message>
     <message>
-        <location filename="src/connect/connectclient.cpp" line="910"/>
+        <location filename="src/connect/connectclient.cpp" line="914"/>
         <source>Error while trying to connect to &quot;%1&quot;: %2 (%3).
 Will retry.</source>
         <translation>尝试连接到“%1”错误：%2 (%3)。
 将会重试。</translation>
     </message>
     <message>
-        <location filename="src/connect/connectclient.cpp" line="915"/>
+        <location filename="src/connect/connectclient.cpp" line="919"/>
         <source>Connect Error</source>
         <translation>连接错误</translation>
     </message>
     <message>
-        <location filename="src/connect/connectclient.cpp" line="916"/>
+        <location filename="src/connect/connectclient.cpp" line="920"/>
         <source>Error in server connection to &quot;%1&quot;: %2 (%3)</source>
         <translation>连接服务器“%1”错误：%2 (%3)</translation>
     </message>
     <message>
-        <location filename="src/connect/connectclient.cpp" line="965"/>
+        <location filename="src/connect/connectclient.cpp" line="969"/>
         <source>Error writing reply to Little Navconnect: %1.</source>
         <translation>写入回复 Little Navconnect 时错误：%1。</translation>
     </message>
     <message>
-        <location filename="src/connect/connectclient.cpp" line="982"/>
+        <location filename="src/connect/connectclient.cpp" line="986"/>
         <source>Connected</source>
         <translation>已连接</translation>
     </message>
     <message>
-        <location filename="src/connect/connectclient.cpp" line="983"/>
+        <location filename="src/connect/connectclient.cpp" line="987"/>
         <source>Connected to remote flight simulator on &quot;%1&quot;.</source>
         <translation>已连接到远程飞行模拟器“%1”。</translation>
     </message>
