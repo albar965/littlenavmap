@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -1703,8 +1703,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
       texts.append(tr("IND %1").arg(Unit::altFeet(userAircraft.getIndicatedAltitudeFt())));
 
     // Actual altitude ===========================
-    if(displayOptions.testFlag(optsp::PROFILE_AIRCRAFT_ACTUAL_ALTITUDE) &&
-       userAircraft.getActualAltitudeFt() < atools::fs::sc::SC_INVALID_FLOAT)
+    if(displayOptions.testFlag(optsp::PROFILE_AIRCRAFT_ACTUAL_ALTITUDE) && userAircraft.isActualAltitudeFullyValid())
       texts.append(tr("ALT %1").arg(Unit::altFeet(userAircraft.getActualAltitudeFt())));
 
     // Actual vertical speed

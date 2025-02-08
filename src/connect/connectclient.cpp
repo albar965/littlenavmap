@@ -308,9 +308,12 @@ void ConnectClient::postSimConnectData(atools::fs::sc::SimConnectData dataPacket
       {
         if(verbose)
           qDebug() << Q_FUNC_INFO << "User aircraft not fully valid";
-        // Invalidate position at the 0,0 position if no groundspeed
+        // Invalidate position at the 0,0 position if no groundspeed - leave altitude
         userAircraft.setCoordinates(atools::geo::EMPTY_POS);
       }
+
+      if(!userAircraft.isActualAltitudeFullyValid())
+        userAircraft.setActualAltitude(map::INVALID_ALTITUDE_VALUE);
 
       // Modify AI aircraft and set shadow flag if a online network aircraft is registered as shadowed in the index
       NavApp::getOnlinedataController()->updateAircraftShadowState(dataPacket);
@@ -359,13 +362,13 @@ void ConnectClient::postSimConnectData(atools::fs::sc::SimConnectData dataPacket
 
         if(!model.isEmpty())
         {
-        // Has property - fetch from index by loaded aircraft.cfg values using a best guess
-        // from "icao_type_designator" and "icao_model".
+          // Has property - fetch from index by loaded aircraft.cfg values using a best guess
+          // from "icao_type_designator" and "icao_model".
           userAircraft.setAirplaneModel(model);
 
-        // Helicopter category in MSFS
-        if(aircraftIndex.getCategory(aircraftCfgKey).compare("Helicopter", Qt::CaseInsensitive) == 0)
-          userAircraft.setCategory(atools::fs::sc::HELICOPTER);
+          // Helicopter category in MSFS
+          if(aircraftIndex.getCategory(aircraftCfgKey).compare("Helicopter", Qt::CaseInsensitive) == 0)
+            userAircraft.setCategory(atools::fs::sc::HELICOPTER);
         }
       }
 

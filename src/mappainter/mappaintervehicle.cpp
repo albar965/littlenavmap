@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -302,7 +302,8 @@ void MapPainterVehicle::paintTextLabelAi(float x, float y, float size, const Sim
         altTexts.append(tr("IND %1").arg(Unit::altFeet(aircraft.getIndicatedAltitudeFt())));
 
       // Actual altitude ====================================================================================
-      if(aiDisp(hidden, optsac::ITEM_AI_AIRCRAFT_ALTITUDE, detail1, aircraft.getActualAltitudeFt()))
+      if(aiDisp(hidden, optsac::ITEM_AI_AIRCRAFT_ALTITUDE, detail1,
+                aircraft.getActualAltitudeFt()) && aircraft.isActualAltitudeFullyValid())
         altTexts.append(tr("ALT %1%2").arg(Unit::altFeet(aircraft.getActualAltitudeFt())).arg(QString()));
 
       QString upDown;
@@ -397,7 +398,7 @@ void MapPainterVehicle::paintTextLabelUser(float x, float y, int size, const Sim
     if(context->dOptUserAc(optsac::ITEM_USER_AIRCRAFT_INDICATED_ALTITUDE))
       altText.append(tr("IND %1").arg(Unit::altFeet(aircraft.getIndicatedAltitudeFt())));
 
-    if(context->dOptUserAc(optsac::ITEM_USER_AIRCRAFT_ALTITUDE))
+    if(context->dOptUserAc(optsac::ITEM_USER_AIRCRAFT_ALTITUDE) && aircraft.isActualAltitudeFullyValid())
       altText.append(tr("ALT %1").arg(Unit::altFeet(aircraft.getActualAltitudeFt())));
 
     if(!aircraft.isOnGround() && context->dOptUserAc(optsac::ITEM_USER_AIRCRAFT_ALT_ABOVE_GROUND))

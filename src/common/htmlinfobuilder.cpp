@@ -3654,7 +3654,7 @@ void HtmlInfoBuilder::aircraftText(const atools::fs::sc::SimConnectAircraft& air
       texts.append(tr("<b>Heading</b>&nbsp;%1").arg(hdg.join(tr(", "))));
 
     // Actual or indicated altitude
-    if(aircraft.getActualAltitudeFt() < atools::fs::sc::SC_INVALID_FLOAT)
+    if(aircraft.isActualAltitudeFullyValid())
       texts.append(tr("<b>Act. Altitude</b>&nbsp;%1").arg(Unit::altFeet(aircraft.getActualAltitudeFt())));
     else if(aircraft.getIndicatedAltitudeFt() < atools::fs::sc::SC_INVALID_FLOAT)
       texts.append(tr("<b>Ind. Altitude</b>&nbsp;%1").arg(Unit::altFeet(aircraft.getIndicatedAltitudeFt())));
@@ -4651,9 +4651,9 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
       }
     }
 
-    float speedActKts = aircraft.getActualAltitudeFt();
-    if(speedActKts < atools::fs::sc::SC_INVALID_FLOAT)
+    if(aircraft.isActualAltitudeFullyValid())
     {
+      float speedActKts = aircraft.getActualAltitudeFt();
       // Check for display of alternate units
       QString otherAct;
       if(html.isIdSet(pid::ALT_ACTUAL_OTHER))
@@ -4846,21 +4846,24 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
     html.id(pid::ENV_SAT).row2(tr("Static Air Temperature:"), locale.toString(sat, 'f', 0) % tr(" °C, ") %
                                locale.toString(ageo::degCToDegF(sat), 'f', 0) % tr("°F"));
 
-    float isaDeviation = sat - ageo::isaTemperature(userAircraft->getActualAltitudeFt());
-    if(isaDeviation < 0.f && isaDeviation > -0.5f)
-      isaDeviation = 0.f;
-
-    QString isaStr = locale.toString(std::abs(isaDeviation), 'f', 0);
-    QString isaSignStr;
-    if(isaStr != tr("0", "used to detect real zero value in local language"))
+    if(userAircraft->isActualAltitudeFullyValid())
     {
-      if(isaDeviation > 0.f)
-        isaSignStr = tr("+", "ISA deviation sign");
-      else if(isaDeviation < 0.f)
-        isaSignStr = tr("-", "ISA deviation sign");
-    }
+      float isaDeviation = sat - ageo::isaTemperature(userAircraft->getActualAltitudeFt());
+      if(isaDeviation < 0.f && isaDeviation > -0.5f)
+        isaDeviation = 0.f;
 
-    html.id(pid::ENV_ISA_DEV).row2(tr("ISA Deviation:"), isaSignStr % isaStr % tr(" °C"));
+      QString isaStr = locale.toString(std::abs(isaDeviation), 'f', 0);
+      QString isaSignStr;
+      if(isaStr != tr("0", "used to detect real zero value in local language"))
+      {
+        if(isaDeviation > 0.f)
+          isaSignStr = tr("+", "ISA deviation sign");
+        else if(isaDeviation < 0.f)
+          isaSignStr = tr("-", "ISA deviation sign");
+      }
+
+      html.id(pid::ENV_ISA_DEV).row2(tr("ISA Deviation:"), isaSignStr % isaStr % tr(" °C"));
+    }
 
     float seaLevelPressureMbar = userAircraft->getSeaLevelPressureMbar();
     QString pressureTxt = highlightText(locale.toString(seaLevelPressureMbar, 'f', 0) % tr(" hPa, ") %
@@ -4868,7 +4871,7 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
     html.id(pid::ENV_SEA_LEVEL_PRESS).row2(tr("Sea Level Pressure:"), pressureTxt, ahtml::NO_ENTITIES);
 
     // Not in air
-    if(userAircraft->isOnGround())
+    if(userAircraft->isOnGround() && userAircraft->isActualAltitudeFullyValid())
       html.id(pid::ENV_DENSITY_ALTITUDE).
       row2(tr("Density Altitude:"), Unit::altFeet(ageo::densityAltitudeFt(sat, aircraft.getActualAltitudeFt(), seaLevelPressureMbar)));
 
