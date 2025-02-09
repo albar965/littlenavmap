@@ -256,7 +256,7 @@ void ElevationProvider::showErrors()
   {
     QUrl url = atools::gui::HelpHandler::getHelpUrlWeb(lnm::helpOnlineInstallGlobeUrl, lnm::helpLanguageOnline());
     QString message = tr(
-      "<p>The online elevation data which is used by default for the elevation profile is limited and has a lot of errors.<br/>"
+      "<p>The online elevation data which is used by default for the elevation profile is limited and has some small issues.<br/>"
       "Therefore, it is recommended to download and use the offline GLOBE elevation data which provides world wide coverage.</p>"
       "<p>Go to the main menu -&gt; \"Tools\" -&gt; \"Options\" and then to page \"Cache and files\" to add the GLOBE data.</p>"
         "<p><a href=\"%1\">Click here for more information in the Little Navmap online manual</a></p>",
