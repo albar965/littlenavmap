@@ -572,7 +572,6 @@ QDebug operator<<(QDebug out, const MapProcedureLeg& leg)
       << "type" << leg.type
       << "maptype" << leg.mapType
       << "missed" << leg.missed
-      << "missed" << leg.missed
       << "line" << leg.line << endl
       << "geometry" << leg.geometry << endl;
 

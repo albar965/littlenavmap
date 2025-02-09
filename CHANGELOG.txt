@@ -67,6 +67,7 @@ Note that the [MSFS online flight planner](https://planner.flightsimulator.com/)
 * Removed wrong transponder display `0000` shown for ships and other vehicles.
 * Added map theme `MapBox Streets`. Remove any map theme using the same name if you have one installed. Otherwise, Little Navmap will show error messages hinting you to do so.
 * From 3.0.13.beta2: Removing airport vehicles from all MSFS simulator AI traffic. This can result in missing traffic when using AI traffic tools which supply the wrong vehicle category. Only vehicle categories `Airplane`, `Helicopter` and `Boat` are shown. All others are disregarded.
+* From 3.0.13.beta2: Fix for missing distance at first missed approach leg.
 
 ### Flight Plan, Procedures and Aircraft Progress
 

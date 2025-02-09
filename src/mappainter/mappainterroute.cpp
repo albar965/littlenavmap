@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -1237,8 +1237,11 @@ void MapPainterRoute::paintProcedureSegment(const proc::MapProcedureLegs& legs, 
           if(leg.interceptPos.isValid())
             (*drawTextLines)[index] = DrawText(leg.interceptPos, leg.line.getPos2(), false, showCourse);
           else
-            // Can draw a label along the line with course but not distance
-            (*drawTextLines)[index] = DrawText(leg.line, false, showCourse);
+          {
+            // Can draw a label along the line with course but not distance - draw distance anyway for first missed leg
+            bool firstMissed = !prevLeg->isMissed() && leg.isMissed() && (prevLeg->isCircleToLand() || prevLeg->isStraightIn());
+            (*drawTextLines)[index] = DrawText(leg.line, firstMissed, showCourse);
+          }
         }
       }
       else
