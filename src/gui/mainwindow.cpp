@@ -2909,88 +2909,80 @@ bool MainWindow::layoutOpenInternal(const QString& layoutFile)
 bool MainWindow::createMapImage(QPixmap& pixmap, const QString& dialogTitle, const QString& optionPrefx, QString *json,
                                 bool dynamicFeatures)
 {
-  ImageExportDialog exportDialog(this, dialogTitle, optionPrefx, mapWidget->width(), mapWidget->height());
+  // Adjust the real size by pixel ratio to display the real exported image size
+  ImageExportDialog exportDialog(this, dialogTitle, optionPrefx,
+                                 QSizeF(devicePixelRatioF() > 1. ?
+                                        QSizeF(mapWidget->size()) * devicePixelRatioF() :
+                                        QSizeF(mapWidget->size())).toSize());
   int retval = exportDialog.exec();
   if(retval == QDialog::Accepted)
   {
-    if(exportDialog.isCurrentView())
+    // Create a map widget clone with the desired resolution
+    MapPaintWidget paintWidget(this, QueryManager::instance()->getQueriesGui(), false /* no real widget - hidden */, false /* web */);
+
+    // Copy all map settings
+    paintWidget.copySettings(*mapWidget, dynamicFeatures /* deep */);
+
+    // Copy visible rectangle
+    paintWidget.copyView(*mapWidget);
+
+    paintWidget.setActive(); // Activate painting
+    paintWidget.setAvoidBlurredMap(false); // Not needed - done manually below
+
+    QGuiApplication::setOverrideCursor(Qt::WaitCursor);
+
+    // Prepare drawing by painting a dummy image - also resizes the widget
+    paintWidget.prepareDraw(exportDialog.getSize());
+
+    paintWidget.centerRectOnMapPrecise(mapWidget->getViewRect());
+
+    if(exportDialog.isAvoidBlurredMap())
+      paintWidget.adjustMapDistance();
+
+    QGuiApplication::restoreOverrideCursor();
+
+    // Create a progress dialog
+    int numSeconds = 60;
+    QString label = tr("Waiting up to %1 seconds for map download ...\n");
+    QProgressDialog progress(label.arg(numSeconds), tr("&Ignore Downloads and Continue"), 0, numSeconds, this);
+    progress.setWindowModality(Qt::WindowModal);
+    progress.setMinimumDuration(0);
+    progress.show();
+    QApplication::processEvents();
+
+    // Get download job information and update progress text
+    int queuedJobs = -1, activeJobs = -1;
+    connect(paintWidget.model()->downloadManager(), &HttpDownloadManager::progressChanged, this,
+            [&progress, &queuedJobs, &activeJobs, &numSeconds, &label](int active, int queued) -> void
     {
-      // Copy image as is from current view
-      mapWidget->showOverlays(false /* show */, false /* show scale */);
-      if(isFullScreen())
-        mapWidget->removeFullScreenExitButton();
-      pixmap = mapWidget->getPixmap(exportDialog.getSize());
-      mapWidget->showOverlays(true /* show */, false /* show scale */);
-      if(isFullScreen())
-        mapWidget->addFullScreenExitButton();
+      progress.setLabelText(label.arg(numSeconds) % tr("%1 downloads active and %2 downloads queued.").
+                            arg(active).arg(queued));
+      queuedJobs = queued;
+      activeJobs = active;
+    });
 
-      if(json != nullptr)
-        *json = mapWidget->createAvitabJson();
-    }
-    else
+    // Loop until seconds are over
+    for(int i = 0; i < numSeconds; i++)
     {
-      // Create a map widget clone with the desired resolution
-      MapPaintWidget paintWidget(this, QueryManager::instance()->getQueriesGui(), false /* no real widget - hidden */, false /* web */);
-      paintWidget.setActive(); // Activate painting
-      paintWidget.setKeepWorldRect(); // Center world rectangle when resizing
-
-      paintWidget.setAvoidBlurredMap(exportDialog.isAvoidBlurredMap());
-      paintWidget.setAdjustOnResize(exportDialog.isAvoidBlurredMap());
-
-      // Copy all map settings
-      paintWidget.copySettings(*mapWidget, dynamicFeatures /* deep */);
-
-      // Copy visible rectangle
-      paintWidget.copyView(*mapWidget);
-      QGuiApplication::setOverrideCursor(Qt::WaitCursor);
-
-      // Prepare drawing by painting a dummy image
-      paintWidget.prepareDraw(exportDialog.getSize().width(), exportDialog.getSize().height());
-      QGuiApplication::restoreOverrideCursor();
-
-      // Create a progress dialog
-      int numSeconds = 60;
-      QString label = tr("Waiting up to %1 seconds for map download ...\n");
-      QProgressDialog progress(label.arg(numSeconds), tr("&Ignore Downloads and Continue"), 0, numSeconds, this);
-      progress.setWindowModality(Qt::WindowModal);
-      progress.setMinimumDuration(0);
-      progress.show();
+      progress.setValue(i);
       QApplication::processEvents();
 
-      // Get download job information and update progress text
-      int queuedJobs = -1, activeJobs = -1;
-      connect(paintWidget.model()->downloadManager(), &HttpDownloadManager::progressChanged, this,
-              [&progress, &queuedJobs, &activeJobs, &numSeconds, &label](int active, int queued) -> void
-      {
-        progress.setLabelText(label.arg(numSeconds) % tr("%1 downloads active and %2 downloads queued.").
-                              arg(active).arg(queued));
-        queuedJobs = queued;
-        activeJobs = active;
-      });
+      if(progress.wasCanceled() || paintWidget.renderStatus() == Marble::Complete ||
+         (queuedJobs == 0 && activeJobs == 0))
+        break;
 
-      // Loop until seconds are over
-      for(int i = 0; i < numSeconds; i++)
-      {
-        progress.setValue(i);
-        QApplication::processEvents();
-
-        if(progress.wasCanceled() || paintWidget.renderStatus() == Marble::Complete ||
-           (queuedJobs == 0 && activeJobs == 0))
-          break;
-
-        QThread::sleep(1);
-      }
-      progress.setValue(numSeconds);
-
-      // Now draw the actual image including navaids
-      QGuiApplication::setOverrideCursor(Qt::WaitCursor);
-      pixmap = paintWidget.getPixmap(exportDialog.getSize());
-      QGuiApplication::restoreOverrideCursor();
-
-      if(json != nullptr)
-        // Create Avitab reference if needed
-        *json = paintWidget.createAvitabJson();
+      QThread::sleep(1);
     }
+    progress.setValue(numSeconds);
+
+    // Now draw the actual image including navaids
+    QGuiApplication::setOverrideCursor(Qt::WaitCursor);
+    pixmap = paintWidget.getPixmap(exportDialog.getSize());
+    QGuiApplication::restoreOverrideCursor();
+
+    if(json != nullptr)
+      // Create Avitab reference if needed
+      *json = paintWidget.createAvitabJson();
     PrintSupport::drawWatermark(QPoint(0, pixmap.height()), &pixmap);
     return true;
   }
@@ -4521,6 +4513,10 @@ QList<QAction *> MainWindow::getMainWindowActions()
 #ifdef DEBUG_DUMP_SHORTCUTS
 void MainWindow::printShortcuts()
 {
+#if QT_VERSION >= QT_VERSION_CHECK(5, 14, 0)
+  using Qt::endl;
+#endif
+
   // Print all main menu and sub menu shortcuts ==============================================
   qDebug() << "===============================================================================";
 

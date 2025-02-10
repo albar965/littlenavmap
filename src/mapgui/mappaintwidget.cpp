@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -68,8 +68,8 @@ using namespace Marble;
 using atools::geo::Rect;
 using atools::geo::Pos;
 
-MapPaintWidget::MapPaintWidget(QWidget *parent, Queries *queriesParam, bool visible, bool webParam)
-  : Marble::MarbleWidget(parent), visibleWidget(visible), queries(queriesParam), web(webParam)
+MapPaintWidget::MapPaintWidget(QWidget *parent, Queries *queriesParam, bool visibleWidgetParam, bool webParam)
+  : Marble::MarbleWidget(parent), visibleWidget(visibleWidgetParam), queries(queriesParam), web(webParam)
 {
   verbose = atools::settings::Settings::instance().getAndStoreValue(lnm::OPTIONS_MAPWIDGET_DEBUG, false).toBool();
 
@@ -582,16 +582,15 @@ QString MapPaintWidget::createAvitabJson()
   return QString();
 }
 
-void MapPaintWidget::centerRectOnMapPrecise(const atools::geo::Rect& rect, bool allowAdjust)
+void MapPaintWidget::centerRectOnMapPrecise(const atools::geo::Rect& rect)
 {
-  centerRectOnMapPrecise(mconvert::toGdc(rect), allowAdjust);
+  centerRectOnMapPrecise(mconvert::toGdc(rect));
 }
 
-void MapPaintWidget::centerRectOnMapPrecise(const Marble::GeoDataLatLonBox& rect, bool allowAdjust)
+void MapPaintWidget::centerRectOnMapPrecise(const Marble::GeoDataLatLonBox& rect)
 {
   // Marble zooms out too far - start by doing this
   centerOn(rect, false /* animated */);
-  int zoomIterations = 0;
 
   double north = rect.north(mconvert::DEG), south = rect.south(mconvert::DEG),
          east = rect.east(mconvert::DEG), west = rect.west(mconvert::DEG);
@@ -600,12 +599,12 @@ void MapPaintWidget::centerRectOnMapPrecise(const Marble::GeoDataLatLonBox& rect
     qDebug() << Q_FUNC_INFO << "initial zoom" << zoom() << "zoom step" << zoomStep();
 
   // Zoom in deeper
-  zoomIn();
-  zoomIn();
+  zoomIn(Marble::Instant);
+  zoomIn(Marble::Instant);
 
   // Now zoom out step by step until all points are visible - max 100 iterations
   qreal x, y;
-  int step = 1;
+  int step = 1, zoomIterations = 0;
   while((!screenCoordinates(west, north, x, y) || !screenCoordinates(east, north, x, y) ||
          !screenCoordinates(east, south, x, y) || !screenCoordinates(west, south, x, y)) &&
         (zoomIterations < 500) && (zoom() < maximumZoom()))
@@ -619,29 +618,45 @@ void MapPaintWidget::centerRectOnMapPrecise(const Marble::GeoDataLatLonBox& rect
   }
 
   if(verbose)
-    qDebug() << Q_FUNC_INFO << "final zoom" << zoom();
-
-  // Fix blurryness or zoom one out after correcting by zooming in
-  if((allowAdjust && avoidBlurredMap) || zoomIterations > 0)
-    adjustMapDistance();
+    qDebug() << Q_FUNC_INFO << "final zoom" << zoom() << "zoomIterations" << zoomIterations << "avoidBlurredMap" << avoidBlurredMap;
 }
 
-void MapPaintWidget::prepareDraw(int width, int height)
+void MapPaintWidget::prepareDraw(const QSize& size)
 {
   // Issue a single drawing event to the Marble widget for initialization
   // No navaids are painted for performance reasons
   noNavPaint = true;
-  getPixmap(width, height);
+  getPixmap(size);
   noNavPaint = false;
 }
 
-QPixmap MapPaintWidget::getPixmap(int width, int height)
+QPixmap MapPaintWidget::getPixmap(int pixmapWidth, int pixmapHeight)
 {
-  if(width > 0 && height > 0)
-    // Resize if needed - resizeEvent will be called in grab
-    resize(width, height);
+  if(verbose)
+    qDebug() << Q_FUNC_INFO << "pixmapWidth" << pixmapWidth << "pixmapHeight" << pixmapHeight;
 
-  return grab();
+  if(pixmapWidth > 0 && pixmapHeight > 0)
+  {
+    // QWidget::grab() increases the pixel size by devicePixelRatio
+    // Shrink it here to get the requested size as result
+    if(devicePixelRatioF() > 1.f)
+    {
+      pixmapWidth = atools::roundToInt(pixmapWidth / devicePixelRatioF());
+      pixmapHeight = atools::roundToInt(pixmapHeight / devicePixelRatioF());
+    }
+
+    // Resize if needed - resizeEvent will be called in QWidget::grab()
+    if(pixmapWidth != width() || pixmapHeight != height())
+      resize(pixmapWidth, pixmapHeight);
+  }
+
+  QPixmap pixmap = grab();
+  if(verbose)
+    qDebug() << Q_FUNC_INFO << "pixmap.size()" << pixmap.size()
+             << "pixmap.devicePixelRatioF()" << pixmap.devicePixelRatioF()
+             << "MapPaintWidget::devicePixelRatioF()" << devicePixelRatioF();
+
+  return pixmap;
 }
 
 QPixmap MapPaintWidget::getPixmap(const QSize& size)
@@ -699,7 +714,7 @@ void MapPaintWidget::centerRectOnMap(const atools::geo::Rect& rect, bool allowAd
 #ifdef DEBUG_INFORMATION
       qDebug() << Q_FUNC_INFO << "out distance NM" << atools::geo::kmToNm(distance());
 #endif
-      zoomIn();
+      zoomIn(Marble::Instant);
       zoomIterations++;
     }
 
@@ -1252,10 +1267,6 @@ void MapPaintWidget::resizeEvent(QResizeEvent *event)
 
   // Let parent do its thing
   MarbleWidget::resizeEvent(event);
-
-  if(keepWorldRect)
-    // Keep visible rectangle if desired - CPU intense
-    centerRectOnMapPrecise(currentViewBoundingBox, adjustOnResize);
 }
 
 void MapPaintWidget::paintEvent(QPaintEvent *paintEvent)
@@ -1265,8 +1276,8 @@ void MapPaintWidget::paintEvent(QPaintEvent *paintEvent)
     // Avoid excessive logging on visible widget
     qDebug() << Q_FUNC_INFO << "Viewport" << getCurrentViewBoundingBox().toString(GeoDataCoordinates::Degree);
     qDebug() << Q_FUNC_INFO << "currentViewBoundingBox" << currentViewBoundingBox.toString(GeoDataCoordinates::Degree);
-    qDebug() << Q_FUNC_INFO << "painting" << painting << "noRender" << noRender() << "isActive" << isActive()
-             << "mapCoversViewport" << viewport()->mapCoversViewport();
+    qDebug() << Q_FUNC_INFO << "visibleWidget" << visibleWidget << "painting" << painting << "noRender" << noRender()
+             << "isActive" << isActive() << "mapCoversViewport" << viewport()->mapCoversViewport();
   }
 
   // Avoid spurious events that appear on shutdown and cause crashes

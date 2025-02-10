@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -56,7 +56,6 @@ WebApiResponse MapActionsController::imageAction(WebApiRequest request)
     );
 
   int detailFactor = request.parameters.value("detailfactor").toInt();
-
   MapPixmap map = getPixmapRect(request.parameters.value("width").toInt(), request.parameters.value("height").toInt(), rect, detailFactor);
 
   QString format = QString(request.parameters.value("format"));
@@ -283,9 +282,6 @@ MapPixmap MapActionsController::getPixmapPosDistance(int width, int height, atoo
     // Copy all map settings except trail
     mapPaintWidget->copySettings(*NavApp::getMapWidgetGui(), false /* deep */);
 
-    // Do not center world rectangle when resizing map widget
-    mapPaintWidget->setKeepWorldRect(false);
-
     // Jump to position without zooming for sharp map
     mapPaintWidget->showPosNotAdjusted(pos, distanceKm);
 
@@ -356,9 +352,6 @@ MapPixmap MapActionsController::getPixmapRect(int width, int height, atools::geo
 
       // Copy all map settings except trail
       mapPaintWidget->copySettings(*NavApp::getMapWidgetGui(), false /* deep */);
-
-      // Do not center world rectangle when resizing
-      mapPaintWidget->setKeepWorldRect(false);
 
       mapPaintWidget->showRectStreamlined(rect, false);
 

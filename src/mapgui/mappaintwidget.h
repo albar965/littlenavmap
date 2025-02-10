@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -87,7 +87,7 @@ class MapPaintWidget :
   Q_OBJECT
 
 public:
-  explicit MapPaintWidget(QWidget *parent, Queries *queriesParam, bool visible, bool webParam);
+  explicit MapPaintWidget(QWidget *parent, Queries *queriesParam, bool visibleWidgetParam, bool webParam);
   virtual ~MapPaintWidget() override;
 
   MapPaintWidget(const MapPaintWidget& other) = delete;
@@ -299,29 +299,18 @@ public:
     return active;
   }
 
-  /* Will keep the shown bounding rectangle on resize if true */
-  void setKeepWorldRect(bool value = true)
-  {
-    keepWorldRect = value;
-  }
-
-  /* Adjust for more sharp images when centering rectangle on resize */
-  void setAdjustOnResize(bool value = true)
-  {
-    adjustOnResize = value;
-  }
-
   /* Try several iterations to show the given rectangele as precise as possible.
-   * More CPU intense than other functions. */
-  void centerRectOnMapPrecise(const Marble::GeoDataLatLonBox& rect, bool allowAdjust);
-  void centerRectOnMapPrecise(const atools::geo::Rect& rect, bool allowAdjust);
+   * More CPU intense than other functions.
+   * Returns true if view was corrected by zooming. */
+  void centerRectOnMapPrecise(const Marble::GeoDataLatLonBox& rect);
+  void centerRectOnMapPrecise(const atools::geo::Rect& rect);
 
-  /* Resizes the widget if width and height are bigger than 0 and returns map content as pixmap. */
-  QPixmap getPixmap(int width = -1, int height = -1);
+  /* Resizes the widget if pixmapWidth and pixmapHeight are bigger than 0 and returns map content as pixmap. */
+  QPixmap getPixmap(int pixmapWidth = -1, int pixmapHeight = -1);
   QPixmap getPixmap(const QSize& size);
 
   /* Prepare Marble widget drawing with a dummy paint event without drawing navaids */
-  void prepareDraw(int width, int height);
+  void prepareDraw(const QSize& size);
 
   bool isAvoidBlurredMap() const
   {
@@ -439,6 +428,9 @@ public:
 
   QPoint getScreenPoint(const atools::geo::Pos& pos);
 
+  /* Zoom out once to get a sharp map display */
+  void adjustMapDistance();
+
 signals:
   /* Emitted whenever the result exceeds the limit clause in the queries */
   void resultTruncated();
@@ -464,9 +456,6 @@ protected:
   }
 
   void showPosInternal(const atools::geo::Pos& pos, float distanceKm, bool doubleClick, bool allowAdjust);
-
-  /* Zoom out once to get a sharp map display */
-  void adjustMapDistance();
 
   bool loadKml(const QString& filename, bool center);
 
@@ -547,12 +536,6 @@ protected:
 
   /* Widget is shown */
   bool active = false;
-
-  /* Keep the visible world rectangle when resizing - used in resize event */
-  bool keepWorldRect = false;
-
-  /* Keep the visible world rectangle when resizing and zoom out one step to keep image sharp */
-  bool adjustOnResize = false;
 
   /* Zoom one step out to avoid blurred maps */
   bool avoidBlurredMap = false;

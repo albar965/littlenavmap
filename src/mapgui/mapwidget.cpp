@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -1440,22 +1440,22 @@ bool MapWidget::handleTouchAreaClick(QMouseEvent *event)
 
     case ZOOMIN:
       eventConsumed = true;
-      zoomIn();
+      zoomIn(Marble::Instant);
       break;
 
     case MOVEUP:
       eventConsumed = true;
-      moveUp();
+      moveUp(Marble::Instant);
       break;
 
     case ZOOMOUT:
       eventConsumed = true;
-      zoomOut();
+      zoomOut(Marble::Instant);
       break;
 
     case MOVELEFT:
       eventConsumed = true;
-      moveLeft();
+      moveLeft(Marble::Instant);
       break;
 
     case NONE:
@@ -3970,9 +3970,9 @@ void MapWidget::zoomInOut(bool directionIn, bool smooth)
     else
     {
       if(directionIn)
-        zoomIn();
+        zoomIn(Marble::Instant);
       else
-        zoomOut();
+        zoomOut(Marble::Instant);
     }
   }
 #ifdef DEBUG_INFORMATION

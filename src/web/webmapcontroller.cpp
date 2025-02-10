@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -131,9 +131,6 @@ MapPixmap WebMapController::getPixmapPosDistance(int width, int height, atools::
     // Copy all map settings including trail if changed
     mapPaintWidget->copySettings(*NavApp::getMapWidgetGui(), true /* deep */);
 
-    // Do not center world rectangle when resizing map widget
-    mapPaintWidget->setKeepWorldRect(false);
-
     // Jump to position without zooming for sharp map
     mapPaintWidget->showPosNotAdjusted(pos, distanceKm);
 
@@ -201,9 +198,6 @@ MapPixmap WebMapController::getPixmapRect(int width, int height, atools::geo::Re
     {
       // Copy all map settings including trail if changed
       mapPaintWidget->copySettings(*NavApp::getMapWidgetGui(), true /* deep */);
-
-      // Do not center world rectangle when resizing
-      mapPaintWidget->setKeepWorldRect(false);
 
       mapPaintWidget->showRectStreamlined(rect);
 
