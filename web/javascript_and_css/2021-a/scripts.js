@@ -64,11 +64,6 @@ function injectUpdates(origin) {
     var fastRefreshMapThreshold = 12;                                                 // time in seconds below which an auto-refreshing map's refresh interval is considered "fast"; works in conjunction with fastRefreshMapQuality
     var mapUpdateTimeoutWaitDuration = 10000;                                         // time in milliseconds to wait for the updated map image to have arrived, after this time a "map image updated" (= notifications are run and image update locks are released) is forced, this is server response time + download time! The main purpose is unlocking the locks on an image update when no image received for a reason like a server outage which if not handled would prevent new images to get requested which the server could handle again if the outage was only temporary.
 
-    /*
-     * settings (code modifiable)
-     */
-    var realPixelsPerCSSPixel = /*devicePixelRatio ||*/ 1;
-
 
     /*
      * elements
@@ -119,25 +114,7 @@ function injectUpdates(origin) {
      * notifiable = function to take notification of this function call returned a new image, will be passed id of current update "cycle"
      * returns integer id of current update "cycle", will have the negative value of the current update "cycle" if this function call did not request a new image due to locking
      */
-    // has a copy updateMapImage_cssPixels (see there) which needs parallel treatment
-    var updateMapImage_realPixels = function(command, quality, force, notifiable, nolock) {
-      mapUpdateNotifiables.push(notifiable);
-      if(mapImageLoaded || force && !forceLock) {
-        mapImageLoaded = false;
-        forceLock = force && !nolock;
-        mapElement.src = "/mapimage?format=jpg&quality=" + quality + "&width=" + ~~(mapSize.width * realPixelsPerCSSPixel) + "&height=" + ~~(mapSize.height * realPixelsPerCSSPixel) + "&session&" + command + "=" + Math.random();
-        clearTimeout(mapUpdateTimeout);
-        mapUpdateTimeout = setTimeout((function(mapUpdateCounter) {
-          return function() {
-            mapElement.onload();
-            valueMapUpdateCounterMustBeAbove = mapUpdateCounter + 1;
-          };
-        })(mapUpdateCounter), mapUpdateTimeoutWaitDuration);
-        return ++mapUpdateCounter;
-      }
-      return -mapUpdateCounter;
-    };
-    // same as updateMapImage_realPixels except width and height are as delivered by JS (= in CSS pixels (which are real when devicePixelRatio == 1))
+    // width and height are as delivered by JS (= in CSS pixels (which are real when devicePixelRatio == 1))
     var updateMapImage_cssPixels = function(command, quality, force, notifiable, nolock) {
       mapUpdateNotifiables.push(notifiable);
       if(mapImageLoaded || force && !forceLock) {
@@ -157,7 +134,7 @@ function injectUpdates(origin) {
     };
 
     function setMapImageUpdateFunction() {
-      window.updateMapImage = realPixelsPerCSSPixel === 1 ? updateMapImage_cssPixels : updateMapImage_realPixels;
+      window.updateMapImage = updateMapImage_cssPixels;
     }
     setMapImageUpdateFunction();
 
@@ -505,22 +482,6 @@ function injectUpdates(origin) {
         storeState("preventingstandby", false);
       }
     }
-
-    /*ocw.toggleRetinaMap = function(innerorigin) {
-      if(innerorigin.checked) {
-        realPixelsPerCSSPixel = devicePixelRatio || 1;
-        storeState("retinaon", true);
-      } else {
-        realPixelsPerCSSPixel = 1;
-        storeState("retinaon", false);
-      }
-      setMapImageUpdateFunction();
-      ocw.refreshMap();
-    }
-    var retinaToggle = ocd.querySelector("#retinaToggle");
-    if(retrieveState("retinaon", retinaToggle.checked) !== retinaToggle.checked) {
-      retinaToggle.click();
-    }*/
 
 
     /*
