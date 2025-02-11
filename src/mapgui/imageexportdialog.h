@@ -48,6 +48,9 @@ public:
   /* Checkbox: Zoom out once to avoid blurry map */
   bool isAvoidBlurredMap() const;
 
+  /* true if image should be saved as is in map view */
+  bool isCurrentView() const;
+
 private:
   void currentResolutionIndexChanged();
   void buttonBoxClicked(QAbstractButton *button);

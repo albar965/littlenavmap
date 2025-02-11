@@ -97,6 +97,11 @@ bool ImageExportDialog::isAvoidBlurredMap() const
   return ui->checkBoxAvoidBlurred->isChecked();
 }
 
+bool ImageExportDialog::isCurrentView() const
+{
+  return ui->comboBoxResolution->currentIndex() == CURRENT_MAP_VIEW;
+}
+
 void ImageExportDialog::buttonBoxClicked(QAbstractButton *button)
 {
   if(button == ui->buttonBox->button(QDialogButtonBox::Ok))
@@ -143,4 +148,5 @@ void ImageExportDialog::currentResolutionIndexChanged()
   ui->labelWidth->setEnabled(index == CUSTOM_RESOLUTION);
   ui->spinBoxHeight->setEnabled(index == CUSTOM_RESOLUTION);
   ui->labelHeight->setEnabled(index == CUSTOM_RESOLUTION);
+  ui->checkBoxAvoidBlurred->setDisabled(index == CURRENT_MAP_VIEW);
 }
