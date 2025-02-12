@@ -3,8 +3,8 @@
 ------------------------------------------------------------------------------
 
 Little Navmap is a free open source flight planner, navigation tool, moving map, airport search and
-airport information system for Flight Simulator X, Prepar3D, Microsoft Flight Simulator 2020 and
-X-Plane.
+airport information system for Flight Simulator X, Prepar3D, Microsoft Flight Simulator 2020,
+Microsoft Flight Simulator 2024 and X-Plane.
 
 A widely configurable map display using the OpenStreetMap as a background map is only one option
 of many online or included offline maps.

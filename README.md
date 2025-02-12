@@ -2,18 +2,18 @@
 
 <!-- VERSION_NUMBER_TODO -->
 
-[**► Windows 64-bit Installer \(*MSFS and X-Plane*\)** - LittleNavmap-win64-3.0.12-Install.exe](https://github.com/albar965/littlenavmap/releases/download/v3.0.12/LittleNavmap-win64-3.0.12-Install.exe)<br/>
-[**► macOS** - LittleNavmap-macOS-3.0.12.zip](https://github.com/albar965/littlenavmap/releases/download/v3.0.12/LittleNavmap-macOS-3.0.12.zip)<br/>
-[**► Linux \(64 bit, based on Ubuntu 22.04\)** - LittleNavmap-linux-ubuntu-22.04-3.0.12.tar.xz](https://github.com/albar965/littlenavmap/releases/download/v3.0.12/LittleNavmap-linux-ubuntu-22.04-3.0.12.tar.xz)<br/>
-[**► Linux Debian Installation Package \(64 bit, based on Ubuntu 22.04\)** - LittleNavmap-linux-ubuntu-22.04-3.0.12-1_amd64.deb](https://github.com/albar965/littlenavmap/releases/download/v3.0.12/LittleNavmap-linux-ubuntu-22.04-3.0.12-1_amd64.deb)
+[**► Windows 64-bit Installer \(*MSFS 2020, MSFS 2024 and X-Plane*\)** - LittleNavmap-win64-3.0.14-Install.exe](https://github.com/albar965/littlenavmap/releases/download/v3.0.14/LittleNavmap-win64-3.0.14-Install.exe)<br/>
+[**► macOS** - LittleNavmap-macOS-3.0.14.zip](https://github.com/albar965/littlenavmap/releases/download/v3.0.14/LittleNavmap-macOS-3.0.14.zip)<br/>
+[**► Linux \(64 bit, based on Ubuntu 22.04\)** - LittleNavmap-linux-ubuntu-22.04-3.0.14.tar.xz](https://github.com/albar965/littlenavmap/releases/download/v3.0.14/LittleNavmap-linux-ubuntu-22.04-3.0.14.tar.xz)<br/>
+[**► Linux Debian Installation Package \(64 bit, based on Ubuntu 22.04\)** - LittleNavmap-linux-ubuntu-22.04-3.0.14-1_amd64.deb](https://github.com/albar965/littlenavmap/releases/download/v3.0.14/LittleNavmap-linux-ubuntu-22.04-3.0.14-1_amd64.deb)
 
 **Other Versions:**
 
-[► Windows 32-bit Installer \(*only for FSX and P3D*\) - LittleNavmap-win32-3.0.12-Install.exe](https://github.com/albar965/littlenavmap/releases/download/v3.0.12/LittleNavmap-win32-3.0.12-Install.exe)<br/>
-[► Linux \(64 bit, based on Ubuntu 20.04 for Debian or older systems\) - LittleNavmap-linux-ubuntu-20.04-3.0.12.tar.xz](https://github.com/albar965/littlenavmap/releases/download/v3.0.12/LittleNavmap-linux-ubuntu-20.04-3.0.12.tar.xz)<br/>
-[► Linux Debian Installation Package \(64 bit, based on Ubuntu 20.04\) - LittleNavmap-linux-ubuntu-20.04-3.0.12-1_amd64.deb](https://github.com/albar965/littlenavmap/releases/download/v3.0.12/LittleNavmap-linux-ubuntu-20.04-3.0.12-1_amd64.deb)
+[► Windows 32-bit Installer \(*only for FSX and P3D*\) - LittleNavmap-win32-3.0.14-Install.exe](https://github.com/albar965/littlenavmap/releases/download/v3.0.14/LittleNavmap-win32-3.0.14-Install.exe)<br/>
+[► Linux \(64 bit, based on Ubuntu 20.04 for Debian or older systems\) - LittleNavmap-linux-ubuntu-20.04-3.0.14.tar.xz](https://github.com/albar965/littlenavmap/releases/download/v3.0.14/LittleNavmap-linux-ubuntu-20.04-3.0.14.tar.xz)<br/>
+[► Linux Debian Installation Package \(64 bit, based on Ubuntu 20.04\) - LittleNavmap-linux-ubuntu-20.04-3.0.14-1_amd64.deb](https://github.com/albar965/littlenavmap/releases/download/v3.0.14/LittleNavmap-linux-ubuntu-20.04-3.0.14-1_amd64.deb)
 
-Zipped Windows releases without installer are available in the alternative download locations below or from the release assets at [GitHub - Little Navmap Releases - Version 3.0.12](https://github.com/albar965/littlenavmap/releases/v3.0.12) \(scroll down to `Assets`\).
+Zipped Windows releases without installer are available in the alternative download locations below or from the release assets at [GitHub - Little Navmap Releases - Version 3.0.14](https://github.com/albar965/littlenavmap/releases/v3.0.14) \(scroll down to `Assets`\).
 
 **[► Alternative Download Locations](https://albar965.github.io/downloads.html).** Look into sub-folders for beta, development or release candidates.
 
@@ -55,7 +55,7 @@ Zipped Windows releases without installer are available in the alternative downl
 ## Little Navmap
 
 ![Little Navmap](https://albar965.github.io/assets/images/navroute.png) **_Little Navmap_** is a free open source flight planner, navigation tool, moving map,
-airport search and airport information system for **Flight Simulator X, Prepar3D, Microsoft Flight Simulator 2020 and X-Plane** and is available for **Windows, Apple macOS and Linux**.
+airport search and airport information system for **Flight Simulator X, Prepar3D, Microsoft Flight Simulator 2020, Microsoft Flight Simulator 2024 and X-Plane** and is available for **Windows, Apple macOS and Linux**.
 
 _Little Navmap_ comes with a **detailed manual** also including tutorials which is available online as well as in PDF and other formats like EPUB.
 Help buttons in all relevant areas of the program display corresponding chapters in the online manual on click.
@@ -123,7 +123,7 @@ _Little Navmap_ features its own internal **web server** which allows to follow 
 any device across a network.
 
 **Supported Flight Simulators:** All FSX versions from SP2 up, Flight Simulator - Steam Edition,
-Prepar3D v4, v5, v6, Microsoft Flight Simulator 2020, X-Plane 11 and X-Plane 12.
+Prepar3D v4, v5, v6, Microsoft Flight Simulator 2020, Microsoft Flight Simulator 2024, X-Plane 11 and X-Plane 12.
 
 **Supported platforms:** Windows 7/8/10/11, Apple macOS \(10.12 or newer only\) and Linux \(64 bit only\).
 

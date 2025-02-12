@@ -9,7 +9,7 @@ This text is partially Markdown, so the formatting is sometimes strange.
 ## Notes
 
 **This is a stable version of Little Navmap which adds support for MSFS 2024 and fixes several
-issues, including X-Plane related ones. Please read the release notes below.**
+issues, including X-Plane related ones.**
 
 Translations and user manual have been updated.
 
@@ -145,6 +145,7 @@ to be fixed by the developers of the MSFS online flight planner. #1234
   and airway types, for example.
 * Updated Brazilian Portuguese translation by Ricardo.
 * Updated Italian translation by Flavio.
+* Updated French translation by Patrick.
 * Updated German translation. Changed term `Prozedur` to more common `Verfahren`.
 * Enabled Chinese translation again and update it by Eyderoe
 * Added Chinese translations for Qt components from project
