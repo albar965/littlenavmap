@@ -2,55 +2,55 @@
 
 <!-- VERSION_NUMBER_TODO -->
 
-[**â–º Windows 64-bit Installer \(*MSFS 2020, MSFS 2024 and X-Plane*\)** - LittleNavmap-win64-3.0.14-Install.exe](https://github.com/albar965/littlenavmap/releases/download/v3.0.14/LittleNavmap-win64-3.0.14-Install.exe)<br/>
-[**â–º macOS** - LittleNavmap-macOS-3.0.14.zip](https://github.com/albar965/littlenavmap/releases/download/v3.0.14/LittleNavmap-macOS-3.0.14.zip)<br/>
-[**â–º Linux \(64 bit, based on Ubuntu 22.04\)** - LittleNavmap-linux-ubuntu-22.04-3.0.14.tar.xz](https://github.com/albar965/littlenavmap/releases/download/v3.0.14/LittleNavmap-linux-ubuntu-22.04-3.0.14.tar.xz)<br/>
-[**â–º Linux Debian Installation Package \(64 bit, based on Ubuntu 22.04\)** - LittleNavmap-linux-ubuntu-22.04-3.0.14-1_amd64.deb](https://github.com/albar965/littlenavmap/releases/download/v3.0.14/LittleNavmap-linux-ubuntu-22.04-3.0.14-1_amd64.deb)
+[**► Windows 64-bit Installer \(*MSFS 2020, MSFS 2024 and X-Plane*\)** - LittleNavmap-win64-3.0.14-Install.exe](https://github.com/albar965/littlenavmap/releases/download/v3.0.14/LittleNavmap-win64-3.0.14-Install.exe)<br/>
+[**► macOS** - LittleNavmap-macOS-3.0.14.zip](https://github.com/albar965/littlenavmap/releases/download/v3.0.14/LittleNavmap-macOS-3.0.14.zip)<br/>
+[**► Linux \(64 bit, based on Ubuntu 22.04\)** - LittleNavmap-linux-ubuntu-22.04-3.0.14.tar.xz](https://github.com/albar965/littlenavmap/releases/download/v3.0.14/LittleNavmap-linux-ubuntu-22.04-3.0.14.tar.xz)<br/>
+[**► Linux Debian Installation Package \(64 bit, based on Ubuntu 22.04\)** - LittleNavmap-linux-ubuntu-22.04-3.0.14-1_amd64.deb](https://github.com/albar965/littlenavmap/releases/download/v3.0.14/LittleNavmap-linux-ubuntu-22.04-3.0.14-1_amd64.deb)
 
 **Other Versions:**
 
-[â–º Windows 32-bit Installer \(*only for FSX and P3D*\) - LittleNavmap-win32-3.0.14-Install.exe](https://github.com/albar965/littlenavmap/releases/download/v3.0.14/LittleNavmap-win32-3.0.14-Install.exe)<br/>
-[â–º Linux \(64 bit, based on Ubuntu 20.04 for Debian or older systems\) - LittleNavmap-linux-ubuntu-20.04-3.0.14.tar.xz](https://github.com/albar965/littlenavmap/releases/download/v3.0.14/LittleNavmap-linux-ubuntu-20.04-3.0.14.tar.xz)<br/>
-[â–º Linux Debian Installation Package \(64 bit, based on Ubuntu 20.04\) - LittleNavmap-linux-ubuntu-20.04-3.0.14-1_amd64.deb](https://github.com/albar965/littlenavmap/releases/download/v3.0.14/LittleNavmap-linux-ubuntu-20.04-3.0.14-1_amd64.deb)
+[► Windows 32-bit Installer \(*only for FSX and P3D*\) - LittleNavmap-win32-3.0.14-Install.exe](https://github.com/albar965/littlenavmap/releases/download/v3.0.14/LittleNavmap-win32-3.0.14-Install.exe)<br/>
+[► Linux \(64 bit, based on Ubuntu 20.04 for Debian or older systems\) - LittleNavmap-linux-ubuntu-20.04-3.0.14.tar.xz](https://github.com/albar965/littlenavmap/releases/download/v3.0.14/LittleNavmap-linux-ubuntu-20.04-3.0.14.tar.xz)<br/>
+[► Linux Debian Installation Package \(64 bit, based on Ubuntu 20.04\) - LittleNavmap-linux-ubuntu-20.04-3.0.14-1_amd64.deb](https://github.com/albar965/littlenavmap/releases/download/v3.0.14/LittleNavmap-linux-ubuntu-20.04-3.0.14-1_amd64.deb)
 
 Zipped Windows releases without installer are available in the alternative download locations below or from the release assets at [GitHub - Little Navmap Releases - Version 3.0.14](https://github.com/albar965/littlenavmap/releases/v3.0.14) \(scroll down to `Assets`\).
 
-**[â–º Alternative Download Locations](https://albar965.github.io/downloads.html).** Look into sub-folders for beta, development or release candidates.
+**[► Alternative Download Locations](https://albar965.github.io/downloads.html).** Look into sub-folders for beta, development or release candidates.
 
 <p style="color: #c00000; background: rgba(250, 220, 220, 0.5); font-size: 1em;">
   <b>
-    <a style="color: #a00000;" href="/littlenavmap-faq.html#windows-download">â–º Read here if you have problems downloading Little Navmap for Windows</a><br/>
-    <a style="color: #a00000;" href="https://www.littlenavmap.org/manuals/littlenavmap/release/latest/en/INSTALLATION.html#macos">â–º See here if you have problems running Little Navmap on macOS</a><br/>
+    <a style="color: #a00000;" href="/littlenavmap-faq.html#windows-download">► Read here if you have problems downloading Little Navmap for Windows</a><br/>
+    <a style="color: #a00000;" href="https://www.littlenavmap.org/manuals/littlenavmap/release/latest/en/INSTALLATION.html#macos">► See here if you have problems running Little Navmap on macOS</a><br/>
   </b>
 </p>
 
 ### Little Navmap Links
 
-[**â–º Screenshots for _Little Navmap_**](https://albar965.github.io/littlenavmapscreens.html)
+[**► Screenshots for _Little Navmap_**](https://albar965.github.io/littlenavmapscreens.html)
 
-[**â–º Screenshots of new 2.8 Features**](https://albar965.github.io/pages/28/littlenavmapscreens.html)
+[**► Screenshots of new 2.8 Features**](https://albar965.github.io/pages/28/littlenavmapscreens.html)
 
 
-[**â–º User manuals for _Little Navmap_ and _Little Navconnect_**](https://albar965.github.io/manuals.html)
+[**► User manuals for _Little Navmap_ and _Little Navconnect_**](https://albar965.github.io/manuals.html)
 
 -----
 
-[**â–º Other Downloads** (SimConnect, Aircraft Performance and more)](https://www.littlenavmap.org/downloads)
+[**► Other Downloads** (SimConnect, Aircraft Performance and more)](https://www.littlenavmap.org/downloads)
 
-[**â–º _Little Navmap_ - Frequently asked Questions**](https://albar965.github.io/littlenavmap-faq.html)
+[**► _Little Navmap_ - Frequently asked Questions**](https://albar965.github.io/littlenavmap-faq.html)
 
-[**â–º _Little Navmap_ - Install Navigraph Updates**](https://albar965.github.io/littlenavmap_navigraph.html) Shows how to update the included Navigraph database to the latest cycle.
+[**► _Little Navmap_ - Install Navigraph Updates**](https://albar965.github.io/littlenavmap_navigraph.html) Shows how to update the included Navigraph database to the latest cycle.
 
-[â–º GitHub Profile](https://github.com/albar965) All my projects, releases, source code, issue lists and more.
+[► GitHub Profile](https://github.com/albar965) All my projects, releases, source code, issue lists and more.
 
-[**â–º Support Forum at _Avsim_**](https://www.avsim.com/forum/780-little-navmap-little-navconnect-little-logbook-support-forum) **Support and help for users.**
+[**► Support Forum at _Avsim_**](https://www.avsim.com/forum/780-little-navmap-little-navconnect-little-logbook-support-forum) **Support and help for users.**
 
 ### Little Navmap Donations
 
 [![Donate](https://albar965.github.io/assets/images/donate.png)](https://albar965.github.io/donate.html)
 
 **Donate to show your appreciation if you like my programs.**
-**Spenden Sie, um Ihre WertschÃ¤tzung zu zeigen, wenn Ihnen  meine Programme gefallen.**
+**Spenden Sie, um Ihre Wertschätzung zu zeigen, wenn Ihnen  meine Programme gefallen.**
 
 ## Little Navmap
 
