@@ -360,16 +360,17 @@ void ProcedureQuery::buildLegEntry(atools::sql::SqlQuery *query, proc::MapProced
     mapObjectByIdent(leg.navaids, map::VOR, leg.fixIdent, leg.fixRegion, QString(), fixPos);
     mapObjectByIdent(leg.navaids, map::ILS, leg.fixIdent, QString(), airport.ident, fixPos);
 
+    // Get closest navaid ============================
     if(leg.navaids.hasVor() && leg.navaids.hasIls())
     {
       // Remove the one with is farther away from the airport or fix position
-      if(leg.navaids.vors.constFirst().position.distanceMeterTo(leg.fixPos) <
-         leg.navaids.ils.constFirst().position.distanceMeterTo(leg.fixPos))
+      if(leg.navaids.vors.constFirst().position.distanceMeterTo(fixPos) < leg.navaids.ils.constFirst().position.distanceMeterTo(fixPos))
         leg.navaids.clear(map::ILS); // VOR is closer
       else
         leg.navaids.clear(map::VOR); // ILS is closer
     }
 
+    // Copy values ============================
     if(leg.navaids.hasVor())
     {
       leg.fixPos = leg.navaids.vors.constFirst().position;
@@ -494,8 +495,8 @@ void ProcedureQuery::buildLegEntry(atools::sql::SqlQuery *query, proc::MapProced
     if(leg.recNavaids.hasVor() && leg.recNavaids.hasIls())
     {
       // Remove the one with is farther away from the airport or fix position
-      if(leg.recNavaids.vors.constFirst().position.distanceMeterTo(leg.recFixPos) <
-         leg.recNavaids.ils.constFirst().position.distanceMeterTo(leg.recFixPos))
+      if(leg.recNavaids.vors.constFirst().position.distanceMeterTo(recFixPos) <
+         leg.recNavaids.ils.constFirst().position.distanceMeterTo(recFixPos))
         leg.recNavaids.clear(map::ILS); // VOR is closer
       else
         leg.recNavaids.clear(map::VOR); // ILS is closer
