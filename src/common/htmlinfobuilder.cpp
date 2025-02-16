@@ -107,6 +107,8 @@ const int MAX_DISTANCE_FOR_BEARING_METER = ageo::nmToMeter(8000);
 
 const static ahtml::Flags LINK_FLAGS = ahtml::LINK_NO_UL | ahtml::BOLD;
 
+const static Flags WEATHER_TITLE_FLAGS = ahtml::BOLD | ahtml::BIG;
+
 HtmlInfoBuilder::HtmlInfoBuilder(Queries *queriesParam, bool infoParam, bool printParam, bool verboseParam)
   : info(infoParam), print(printParam), verbose(verboseParam), queries(queriesParam)
 {
@@ -1703,8 +1705,6 @@ void HtmlInfoBuilder::addRadionavFixType(HtmlBuilder& html, const SqlRecord& rec
   }
 }
 
-static const Flags WEATHER_TITLE_FLAGS = ahtml::BOLD | ahtml::BIG;
-
 void HtmlInfoBuilder::weatherText(const map::WeatherContext& context, const MapAirport& airport, HtmlBuilder& html) const
 {
   if(info)
@@ -1735,12 +1735,13 @@ void HtmlInfoBuilder::weatherText(const map::WeatherContext& context, const MapA
       html.br().b(tr("Sunrise and sunset: ")).text(sunriseSunsetText(airport.position, datetime));
     }
 
-    optsw::FlagsWeather flags = OptionData::instance().getFlagsWeather();
+    optsw::FlagsWeather weatherFlags = OptionData::instance().getFlagsWeather();
 
-    if(flags & optsw::WEATHER_INFO_ALL)
+    // Check for any weather display
+    if(weatherFlags & optsw::WEATHER_INFO_ALL)
     {
       // Source for map icon display
-      MapWeatherSource src = NavApp::getMapWeatherSource();
+      MapWeatherSource mapSrc = NavApp::getMapWeatherSource();
       bool weatherShown = NavApp::isMapWeatherShown();
 
       // Simconnect or X-Plane weather file metar ===========================
@@ -1756,7 +1757,7 @@ void HtmlInfoBuilder::weatherText(const map::WeatherContext& context, const MapA
         {
           html.text(tr("%1Station Weather").arg(sim), WEATHER_TITLE_FLAGS);
           decodedMetar(html, airport,
-                       map::MapAirport(), metar, src == WEATHER_SOURCE_SIMULATOR && weatherShown, atools::fs::weather::STATION);
+                       map::MapAirport(), metar, mapSrc == WEATHER_SOURCE_SIMULATOR && weatherShown, atools::fs::weather::STATION);
         }
 
         bool nearestOk = false;
@@ -1770,7 +1771,8 @@ void HtmlInfoBuilder::weatherText(const map::WeatherContext& context, const MapA
 
           map::MapAirport reportAirport;
           queries->getAirportQuerySim()->getAirportByIdent(reportAirport, metar.getNearestIdent());
-          decodedMetar(html, airport, reportAirport, metar, src == WEATHER_SOURCE_SIMULATOR && weatherShown, atools::fs::weather::NEAREST);
+          decodedMetar(html, airport, reportAirport, metar, mapSrc == WEATHER_SOURCE_SIMULATOR && weatherShown,
+                       atools::fs::weather::NEAREST);
           nearestOk = true;
         }
 
@@ -1785,14 +1787,16 @@ void HtmlInfoBuilder::weatherText(const map::WeatherContext& context, const MapA
           decodedMetar(html, airport, map::MapAirport(), metar, false, atools::fs::weather::INTERPOLATED);
         }
       } // if(context.fsMetar.isValid())
-      else if(!print && OptionData::instance().getFlagsWeather() & optsw::WEATHER_INFO_FS)
+      else if(!print && weatherFlags.testFlag(optsw::WEATHER_INFO_FS))
       {
         atools::fs::FsPaths::SimulatorType simulatorDb = NavApp::getCurrentSimulatorDb();
         if(simulatorDb == atools::fs::FsPaths::MSFS || simulatorDb == atools::fs::FsPaths::MSFS_2024)
           html.p().text(tr("MSFS simulators do not provide weather information."), ahtml::BOLD).br().
           text(tr("Go to the main menu -> \"Tools\" -> \"Options\" and then to page \"Weather\". "
                   "Select NOAA or another weather provider instead.")).pEnd();
-        else if(simulatorDb != atools::fs::FsPaths::XPLANE_11 && simulatorDb != atools::fs::FsPaths::XPLANE_12)
+        else if(simulatorDb == atools::fs::FsPaths::XPLANE_11 || simulatorDb == atools::fs::FsPaths::XPLANE_12)
+          html.p(tr("No X-Plane weather station found nearby."), ahtml::BOLD);
+        else // FSX and P3D
           html.p().text(tr("Not connected to simulator."), ahtml::BOLD).br().
           text(tr("Needed to fetch weather information.")).pEnd();
       }
@@ -1811,7 +1815,7 @@ void HtmlInfoBuilder::weatherText(const map::WeatherContext& context, const MapA
         else
           html.text(context.asType, WEATHER_TITLE_FLAGS);
 
-        decodedMetar(html, airport, map::MapAirport(), context.activeSkyMetar, src == WEATHER_SOURCE_ACTIVE_SKY && weatherShown,
+        decodedMetar(html, airport, map::MapAirport(), context.activeSkyMetar, mapSrc == WEATHER_SOURCE_ACTIVE_SKY && weatherShown,
                      atools::fs::weather::STATION);
       }
 
@@ -1819,21 +1823,29 @@ void HtmlInfoBuilder::weatherText(const map::WeatherContext& context, const MapA
       if(context.noaaMetar.hasAnyMetar())
       {
         html.hr();
-        decodedMetars(html, context.noaaMetar, airport, tr("NOAA"), src == WEATHER_SOURCE_NOAA && weatherShown);
+        decodedMetars(html, context.noaaMetar, airport, tr("NOAA"), mapSrc == WEATHER_SOURCE_NOAA && weatherShown);
       }
+      else if(!print && weatherFlags.testFlag(optsw::WEATHER_INFO_NOAA))
+        html.p(tr("No NOAA weather station found nearby."), ahtml::BOLD);
 
       // VATSIM, nearest and/or interpolated ===========================
       if(context.vatsimMetar.hasAnyMetar())
       {
         html.hr();
-        decodedMetars(html, context.vatsimMetar, airport, tr("VATSIM"), src == WEATHER_SOURCE_VATSIM && weatherShown);
+        decodedMetars(html, context.vatsimMetar, airport, tr("VATSIM"), mapSrc == WEATHER_SOURCE_VATSIM && weatherShown);
       }
+      else if(!print && weatherFlags.testFlag(optsw::WEATHER_INFO_VATSIM))
+        html.p(tr("No VATSIM weather station found nearby."), ahtml::BOLD);
+
       // IVAO, nearest and/or interpolated ===========================
       if(context.ivaoMetar.hasAnyMetar())
       {
         html.hr();
-        decodedMetars(html, context.ivaoMetar, airport, tr("IVAO"), src == WEATHER_SOURCE_IVAO && weatherShown);
+        decodedMetars(html, context.ivaoMetar, airport, tr("IVAO"), mapSrc == WEATHER_SOURCE_IVAO && weatherShown);
       }
+      else if(!print && weatherFlags.testFlag(optsw::WEATHER_INFO_IVAO))
+        html.p(tr("No IVAO weather station found nearby."), ahtml::BOLD);
+
     } // if(flags & optsw::WEATHER_INFO_ALL)
     else
       html.p().warning(tr("No weather display selected in options dialog on page \"Weather\"."));
