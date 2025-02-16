@@ -363,8 +363,8 @@ void ProcedureQuery::buildLegEntry(atools::sql::SqlQuery *query, proc::MapProced
     if(leg.navaids.hasVor() && leg.navaids.hasIls())
     {
       // Remove the one with is farther away from the airport or fix position
-      if(leg.navaids.vors.constFirst().position.distanceMeterTo(leg.recFixPos) <
-         leg.navaids.ils.constFirst().position.distanceMeterTo(leg.recFixPos))
+      if(leg.navaids.vors.constFirst().position.distanceMeterTo(leg.fixPos) <
+         leg.navaids.ils.constFirst().position.distanceMeterTo(leg.fixPos))
         leg.navaids.clear(map::ILS); // VOR is closer
       else
         leg.navaids.clear(map::VOR); // ILS is closer
