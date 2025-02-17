@@ -79,7 +79,9 @@ void MapPainterVehicle::paintAiVehicle(const SimConnectAircraft& vehicle, float 
     else
       minSize = vehicle.isAnyBoat() ? context->mapLayer->getAiAircraftSize() - 4 : context->mapLayer->getAiAircraftSize();
 
-    float size = std::max(context->szF(context->symbolSizeAircraftAi, minSize), scale->getPixelForFeet(vehicle.getModelSize()));
+    // Limit maximum size by 1000 ft
+    float size = std::max(context->szF(context->symbolSizeAircraftAi, minSize),
+                          scale->getPixelForFeet(std::min(vehicle.getModelSize(), 1000)));
     float offset = -(size / 2.f);
 
     // Draw symbol
