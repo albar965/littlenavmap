@@ -9085,7 +9085,7 @@ Guardar alterações?</translation>
         <location filename="src/gui/mainwindow.ui" line="572"/>
         <source>&amp;Airport Weather Source</source>
         <oldsource>Airport Weather &amp;Source</oldsource>
-        <translation>&amp;Fonte de Tempo do Aeroporto</translation>
+        <translation>&amp;Fonte de Meteorologia do Aeroporto</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="523"/>
@@ -9572,13 +9572,13 @@ exibição de vento na linha superior do perfil de elevação.</translation>
     <message>
         <location filename="src/gui/mainwindow.ui" line="9331"/>
         <source>Show Airport &amp;Weather</source>
-        <translation>Mostrar o &amp;Tempo no Aeroporto</translation>
+        <translation>Mostrar a &amp;Meteorologia no Aeroporto</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="9334"/>
         <location filename="src/gui/mainwindow.ui" line="9337"/>
         <source>Show airport weather icons</source>
-        <translation>Mostrar ícones do tempo do aeroporto</translation>
+        <translation>Mostrar ícones do clima do aeroporto</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="9345"/>
@@ -9589,7 +9589,7 @@ exibição de vento na linha superior do perfil de elevação.</translation>
         <location filename="src/gui/mainwindow.ui" line="9348"/>
         <location filename="src/gui/mainwindow.ui" line="9351"/>
         <source>Use ActiveSky weather to display weather icons on the map</source>
-        <translation>Use o tempo do ActiveSky para exibir ícones do tempo no mapa</translation>
+        <translation>Use a meteorologia do ActiveSky para exibir ícones do clima no mapa</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="9362"/>
@@ -9600,7 +9600,7 @@ exibição de vento na linha superior do perfil de elevação.</translation>
         <location filename="src/gui/mainwindow.ui" line="9365"/>
         <location filename="src/gui/mainwindow.ui" line="9368"/>
         <source>Use Flight Simulator weather to display weather icons on the map</source>
-        <translation>Use o tempo do Flight Simulator para exibir ícones do tempo no mapa</translation>
+        <translation>Use a meteorologia do Flight Simulator para exibir ícones do clima no mapa</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="9376"/>
@@ -9612,7 +9612,7 @@ exibição de vento na linha superior do perfil de elevação.</translation>
         <location filename="src/gui/mainwindow.ui" line="9379"/>
         <location filename="src/gui/mainwindow.ui" line="9382"/>
         <source>Use NOAA weather to display weather icons on the map</source>
-        <translation>Use o clima NOAA para exibir ícones do tempo no mapa</translation>
+        <translation>Use a meteorologia da NOAA para exibir ícones do clima no mapa</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="9390"/>
@@ -9623,7 +9623,7 @@ exibição de vento na linha superior do perfil de elevação.</translation>
         <location filename="src/gui/mainwindow.ui" line="9393"/>
         <location filename="src/gui/mainwindow.ui" line="9396"/>
         <source>Use VATSIM weather to display weather icons on the map</source>
-        <translation>Use o tempo VATSIM para exibir ícones do tempo no mapa</translation>
+        <translation>Use a meteorologia da VATSIM para exibir ícones do clima no mapa</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="9404"/>
@@ -9634,7 +9634,7 @@ exibição de vento na linha superior do perfil de elevação.</translation>
         <location filename="src/gui/mainwindow.ui" line="9407"/>
         <location filename="src/gui/mainwindow.ui" line="9410"/>
         <source>Use IVAO weather to display weather icons on the map</source>
-        <translation>Use o tempo da IVAO para exibir ícones do tempo no mapa</translation>
+        <translation>Use a meteorologia da IVAO para exibir ícones do clima no mapa</translation>
     </message>
     <message>
         <source>Show &amp;Minimum Altitude</source>
@@ -11397,7 +11397,7 @@ de decolagem tanto do estacionamento de partida quanto da aeronave do usuário d
         <location filename="src/gui/mainwindow.ui" line="11266"/>
         <location filename="src/gui/mainwindow.ui" line="11269"/>
         <source>Disable weather source to display weather icons on the map</source>
-        <translation>Desative a fonte do tempo para exibir ícones do clima no mapa</translation>
+        <translation>Desative a fonte de meteorologia para exibir ícones do clima no mapa</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="11280"/>
@@ -12558,13 +12558,13 @@ Combina com qualquer aeroporto visitado.</translation>
     <message>
         <location filename="src/gui/mainwindow.ui" line="9916"/>
         <source>Airport &amp;Weather Information</source>
-        <translation>Informações de &amp;Tempo do Aeroporto</translation>
+        <translation>Informações de &amp;Meteorologia do Aeroporto</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="9919"/>
         <location filename="src/gui/mainwindow.ui" line="9922"/>
         <source>Show Airport Weather Information</source>
-        <translation>Mostrar Informações de Tempo do Aeroporto</translation>
+        <translation>Mostrar Informações de Meteorologia do Aeroporto</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="9908"/>
@@ -12634,7 +12634,7 @@ Combina com qualquer aeroporto visitado.</translation>
     <message>
         <location filename="src/gui/mainwindow.ui" line="568"/>
         <source>W&amp;eather</source>
-        <translation>T&amp;empo</translation>
+        <translation>C&amp;lima</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="71"/>
@@ -14117,7 +14117,7 @@ Local: %2</translation>
     <message>
         <location filename="src/gui/mainwindow.ui" line="5557"/>
         <source>Decoded weather information for airport</source>
-        <translation>Decodificar informações do tempo para o aeroporto</translation>
+        <translation>Decodificar informações de meteorologia para o aeroporto</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="6642"/>
@@ -16452,7 +16452,7 @@ Salvar alterações?</translation>
     <message>
         <location filename="src/gui/mainwindow.ui" line="5554"/>
         <source>Weather</source>
-        <translation>Tempo</translation>
+        <translation>Clima</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="1670"/>
@@ -17793,12 +17793,12 @@ O botão é realçado se o nível de detalhe não for padrão.</translation>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="1968"/>
         <source>%1 Nearest Weather - %2</source>
-        <translation>%1 Tempo mais próximo - %2</translation>
+        <translation>%1 Estação de Meteorologia mais Próxima - %2</translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="1961"/>
         <source>%1 Station Weather</source>
-        <translation>Estação de Tempo %1</translation>
+        <translation>%1 Estação Meteorológica</translation>
     </message>
     <message>
         <source>%1%2 - %3 of %4 Vehicles</source>
@@ -17835,7 +17835,7 @@ O botão é realçado se o nível de detalhe não for padrão.</translation>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="1758"/>
         <source>%1Station Weather</source>
-        <translation>Estação de Tempo%1</translation>
+        <translation>%1Estação Meteorológica</translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="1078"/>
@@ -17847,12 +17847,12 @@ O botão é realçado se o nível de detalhe não for padrão.</translation>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="1781"/>
         <source>%2Interpolated Weather - %1</source>
-        <translation>%2Tempo Interpolado - %1</translation>
+        <translation>%2Meteorologia Interpolada - %1</translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="1766"/>
         <source>%2Nearest Weather - %1</source>
-        <translation>%2Tempo mais próximo - %1</translation>
+        <translation>%2Estação Meteorologia mais Próxima - %1</translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="201"/>
@@ -20374,42 +20374,42 @@ kHz/MHz</translation>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="1794"/>
         <source>MSFS simulators do not provide weather information.</source>
-        <translation type="unfinished"></translation>
+        <translation>Os simuladores MSFS não fornecem informações meteorológicas.</translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="1795"/>
         <source>Go to the main menu -&gt; &quot;Tools&quot; -&gt; &quot;Options&quot; and then to page &quot;Weather&quot;. Select NOAA or another weather provider instead.</source>
-        <translation type="unfinished"></translation>
+        <translation>Vá para o menu principal -&gt; &quot;Configurações&quot; -&gt; &quot;Opções&quot; e, em seguida, para a página &quot;Clima&quot;. Selecione NOAA ou outro provedor de clima.</translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="1798"/>
         <source>No X-Plane weather station found nearby.</source>
-        <translation type="unfinished"></translation>
+        <translation>Nenhuma estação meteorológica do X-Plane encontrada nas proximidades.</translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="1801"/>
         <source>Needed to fetch weather information.</source>
-        <translation type="unfinished"></translation>
+        <translation>Necessário obter informações meteorológicas.</translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="1829"/>
         <source>No NOAA weather station found nearby.</source>
-        <translation type="unfinished"></translation>
+        <translation>Nenhuma estação meteorológica da NOAA encontrada nas proximidades.</translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="1838"/>
         <source>No VATSIM weather station found nearby.</source>
-        <translation type="unfinished"></translation>
+        <translation>Nenhuma estação meteorológica da VATSIM encontrada nas proximidades.</translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="1847"/>
         <source>No IVAO weather station found nearby.</source>
-        <translation type="unfinished"></translation>
+        <translation>Nenhuma estação meteorológica da IVAO encontrada nas proximidades.</translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="1851"/>
         <source>No weather display selected in options dialog on page &quot;Weather&quot;.</source>
-        <translation>Nenhuma exibição de clima selecionada na caixa de diálogo de opções na página &quot;Clima&quot;.</translation>
+        <translation>Nenhuma exibição meteorológica selecionada na caixa de diálogo de opções na página &quot;Clima&quot;.</translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="1882"/>
@@ -20464,7 +20464,7 @@ kHz/MHz</translation>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="1985"/>
         <source>%1 Interpolated Weather</source>
-        <translation>Clima Interpolado %1</translation>
+        <translation>Meteorologia Interpolada %1</translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="2024"/>
@@ -21460,7 +21460,7 @@ kHz/MHz</translation>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="444"/>
         <source>Weather</source>
-        <translation>Tempo</translation>
+        <translation>Clima</translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="3883"/>
@@ -21822,28 +21822,28 @@ kHz/MHz</translation>
         <location filename="src/mappainter/mappainterroute.cpp" line="1372"/>
         <location filename="src/mappainter/mappainterroute.cpp" line="1386"/>
         <location filename="src/mappainter/mappainterroute.cpp" line="1406"/>
-        <location filename="src/mappainter/mappaintervehicle.cpp" line="447"/>
         <location filename="src/mappainter/mappaintervehicle.cpp" line="449"/>
+        <location filename="src/mappainter/mappaintervehicle.cpp" line="451"/>
         <source> %1</source>
         <oldsource> ►</oldsource>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/mappainter/mappaintervehicle.cpp" line="539"/>
+        <location filename="src/mappainter/mappaintervehicle.cpp" line="541"/>
         <source>%1 °M</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/mappainter/mappaintervehicle.cpp" line="542"/>
+        <location filename="src/mappainter/mappaintervehicle.cpp" line="544"/>
         <source>%2</source>
         <translation></translation>
     </message>
     <message>
         <location filename="src/mappainter/mappainternav.cpp" line="348"/>
         <location filename="src/mappainter/mappainternav.cpp" line="371"/>
-        <location filename="src/mappainter/mappaintervehicle.cpp" line="315"/>
-        <location filename="src/mappainter/mappaintervehicle.cpp" line="408"/>
-        <location filename="src/mappainter/mappaintervehicle.cpp" line="511"/>
+        <location filename="src/mappainter/mappaintervehicle.cpp" line="317"/>
+        <location filename="src/mappainter/mappaintervehicle.cpp" line="410"/>
+        <location filename="src/mappainter/mappaintervehicle.cpp" line="513"/>
         <source>, </source>
         <translation></translation>
     </message>
@@ -21870,7 +21870,7 @@ kHz/MHz</translation>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/mappainter/mappaintervehicle.cpp" line="307"/>
+        <location filename="src/mappainter/mappaintervehicle.cpp" line="309"/>
         <source>ALT %1%2</source>
         <translation></translation>
     </message>
@@ -21879,18 +21879,18 @@ kHz/MHz</translation>
         <translation type="vanished">Combustível</translation>
     </message>
     <message>
-        <location filename="src/mappainter/mappaintervehicle.cpp" line="505"/>
+        <location filename="src/mappainter/mappaintervehicle.cpp" line="507"/>
         <source>GS %2</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/mappainter/mappaintervehicle.cpp" line="280"/>
-        <location filename="src/mappainter/mappaintervehicle.cpp" line="388"/>
+        <location filename="src/mappainter/mappaintervehicle.cpp" line="282"/>
+        <location filename="src/mappainter/mappaintervehicle.cpp" line="390"/>
         <source>HDG %3°M</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/mappainter/mappaintervehicle.cpp" line="267"/>
+        <location filename="src/mappainter/mappaintervehicle.cpp" line="269"/>
         <source>%1 to %2</source>
         <translation>%1 para %2</translation>
     </message>
@@ -21924,18 +21924,18 @@ kHz/MHz</translation>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/mappainter/mappaintervehicle.cpp" line="302"/>
-        <location filename="src/mappainter/mappaintervehicle.cpp" line="399"/>
+        <location filename="src/mappainter/mappaintervehicle.cpp" line="304"/>
+        <location filename="src/mappainter/mappaintervehicle.cpp" line="401"/>
         <source>IND %1</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/mappainter/mappaintervehicle.cpp" line="402"/>
+        <location filename="src/mappainter/mappaintervehicle.cpp" line="404"/>
         <source>ALT %1</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/mappainter/mappaintervehicle.cpp" line="405"/>
+        <location filename="src/mappainter/mappaintervehicle.cpp" line="407"/>
         <source>AGL %1</source>
         <translation></translation>
     </message>
@@ -21944,49 +21944,49 @@ kHz/MHz</translation>
         <translation type="vanished">GELO %</translation>
     </message>
     <message>
-        <location filename="src/mappainter/mappaintervehicle.cpp" line="268"/>
-        <location filename="src/mappainter/mappaintervehicle.cpp" line="269"/>
+        <location filename="src/mappainter/mappaintervehicle.cpp" line="270"/>
+        <location filename="src/mappainter/mappaintervehicle.cpp" line="271"/>
         <source>Unknown</source>
         <translation>Desconhecido</translation>
     </message>
     <message>
-        <location filename="src/mappainter/mappaintervehicle.cpp" line="287"/>
+        <location filename="src/mappainter/mappaintervehicle.cpp" line="289"/>
         <source>From User %1 %2°M</source>
         <translation>Do usuário %1 %2°M</translation>
     </message>
     <message>
-        <location filename="src/mappainter/mappaintervehicle.cpp" line="334"/>
+        <location filename="src/mappainter/mappaintervehicle.cpp" line="336"/>
         <source>ID %1</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/mappainter/mappaintervehicle.cpp" line="350"/>
+        <location filename="src/mappainter/mappaintervehicle.cpp" line="352"/>
         <source>…</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/mappainter/mappaintervehicle.cpp" line="431"/>
+        <location filename="src/mappainter/mappaintervehicle.cpp" line="433"/>
         <source>Ice %</source>
         <translation>Gelo %</translation>
     </message>
     <message>
-        <location filename="src/mappainter/mappaintervehicle.cpp" line="488"/>
+        <location filename="src/mappainter/mappaintervehicle.cpp" line="490"/>
         <source>XPDR %1</source>
         <oldsource>TCAS %1</oldsource>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/mappainter/mappaintervehicle.cpp" line="502"/>
+        <location filename="src/mappainter/mappaintervehicle.cpp" line="504"/>
         <source>IAS %1</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/mappainter/mappaintervehicle.cpp" line="508"/>
+        <location filename="src/mappainter/mappaintervehicle.cpp" line="510"/>
         <source>TAS %1</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/mappainter/mappaintervehicle.cpp" line="550"/>
+        <location filename="src/mappainter/mappaintervehicle.cpp" line="552"/>
         <source>No wind</source>
         <translation>Nenhum vento</translation>
     </message>
@@ -22628,7 +22628,7 @@ Vá ao menu &quot;Configurações&quot; -&gt; &quot;Opções&quot; e depois à p
     <message>
         <location filename="src/mapgui/mapvisible.cpp" line="383"/>
         <source>No airport weather shown</source>
-        <translation>Nenhum tempo do aeroporto mostrado</translation>
+        <translation>Nenhuma meteorologia do aeroporto mostrado</translation>
     </message>
     <message>
         <source>Wind shown: </source>
@@ -24239,7 +24239,7 @@ Afeta o mapa e o perfil de elevação.</translation>
     <message>
         <location filename="src/options/options.ui" line="3469"/>
         <source>Size of airport weather symbols</source>
-        <translation>Tamanho dos símbolos de tempo do Aeroporto</translation>
+        <translation>Tamanho dos símbolos de clima do Aeroporto</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="3035"/>
@@ -25524,7 +25524,7 @@ CRUISEALT: Altitude de cruzeiro</translation>
     <message>
         <location filename="src/options/options.ui" line="7222"/>
         <source>&amp;IVAO Weather Download URL:</source>
-        <translation>&amp;Download do Tempo IVAO URL:</translation>
+        <translation>URL de Download do Clima da &amp;IVAO:</translation>
     </message>
     <message>
         <source>&amp;Jump back to aircraft and resume aircraft following after this time:</source>
@@ -26089,12 +26089,12 @@ Note que esta função está desabilitada para o X-Plane 12, já que a flag 3D n
     <message>
         <location filename="src/options/options.ui" line="6773"/>
         <source>&amp;Weather file:</source>
-        <translation>&amp;Arquivo de Tempo:</translation>
+        <translation>&amp;Arquivo de clima:</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="6831"/>
         <source>X-Plane 12 Weather and Wind Path</source>
-        <translation>X-Plane 12 Caminho para os Arquivos de Tempo e Vento</translation>
+        <translation>X-Plane 12 Caminho para os Arquivos de Clima e Vento</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="6852"/>
@@ -26116,12 +26116,12 @@ O diretório climático padrão do X-Plane 12 no caminho base do X-Plane será u
     <message>
         <location filename="src/options/options.ui" line="6876"/>
         <source>&amp;Weather Directory:</source>
-        <translation>&amp;Diretório do tempo:</translation>
+        <translation>&amp;Diretório do Clima:</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="6930"/>
         <source>Active Sky Weather File</source>
-        <translation>Arquivo de Tempo do Active Sky</translation>
+        <translation>Arquivo de Meteorologia do Active Sky</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="6980"/>
@@ -26131,7 +26131,7 @@ O diretório climático padrão do X-Plane 12 no caminho base do X-Plane será u
     <message>
         <location filename="src/options/options.ui" line="7003"/>
         <source>Online Weather and Wind Forecast Web Addresses</source>
-        <translation>Endereços da Web de Previsão de Tempo e Vento Online</translation>
+        <translation>Endereços da Web de Previsão de Clima e Vento Online</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="7027"/>
@@ -26143,7 +26143,7 @@ O diretório climático padrão do X-Plane 12 no caminho base do X-Plane será u
         <source>Complete URL of the VATSIM network weather download service.
 There is usually no need to change this URL.
 Entering a wrong value will cause errors when downloading weather reports.</source>
-        <translation>URL completo do serviço de download de tempo da rede VATSIM.
+        <translation>URL completo do serviço de download de clima da rede VATSIM.
 Geralmente não há necessidade de alterar esse URL.
 Inserir um valor errado causará erros ao baixar boletins meteorológicos.</translation>
     </message>
@@ -26159,7 +26159,7 @@ Inserir um valor errado causará erros ao baixar relatórios de vento.</translat
     <message>
         <location filename="src/options/options.ui" line="7079"/>
         <source>&amp;NOAA Weather Service URL:</source>
-        <translation>Serviço de Tempo &amp;NOAA URL:</translation>
+        <translation>URL do Serviço de Clima da &amp;NOAA:</translation>
     </message>
     <message>
         <source>&amp;Navaids and airways</source>
@@ -26570,7 +26570,7 @@ Você precisa recarregar a biblioteca de cenários para que as alterações entr
     <message>
         <location filename="src/options/options.ui" line="7089"/>
         <source>&amp;VATSIM Weather Service URL:</source>
-        <translation>Serviço de Tempo &amp;VATSIM URL:</translation>
+        <translation>URL do Serviço de Clima da &amp;VATSIM:</translation>
     </message>
     <message>
         <source>&amp;VOR, NDB, waypoints and
@@ -27187,7 +27187,7 @@ Garmin GTN e GNS para evitar waypoints bloqueados</translation>
     <message>
         <location filename="src/options/options.ui" line="6568"/>
         <source>Define which weather service METARs are to be shown in the map tooltip of an airport.</source>
-        <translation>Defina quais METAR dos serviços meteorológicos devem ser mostrados na dicas de ferramentas do mapa de um aeroporto.</translation>
+        <translation>Defina quais METAR dos serviços climáticos devem ser mostrados na dicas de ferramentas do mapa de um aeroporto.</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="1518"/>
@@ -27215,7 +27215,7 @@ Garmin GTN e GNS para evitar waypoints bloqueados</translation>
         <location filename="src/options/options.ui" line="6488"/>
         <location filename="src/options/options.ui" line="6584"/>
         <source>Display current weather from the flight simulator when connected. </source>
-        <translation>Exibir o tempo atual do simulador de voo quando conectado. </translation>
+        <translation>Exibir o clima atual do simulador de voo quando conectado. </translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="7308"/>
@@ -27538,7 +27538,7 @@ Isso também é usado para &quot;Centralize o mapa na aeronave e no próximo way
     <message>
         <location filename="src/options/options.ui" line="6640"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/littlenavmap/resources/icons/bulb.svg&quot;/&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;See in the main menu &amp;quot;Weather&amp;quot; for more options to display winds aloft and weather at airports.&lt;br/&gt;The page &lt;/span&gt;&lt;a href=&quot;lnm://18&quot;&gt;&lt;span style=&quot; font-style:italic; text-decoration: underline; color:#0057ae;&quot;&gt;Weather Files&lt;/span&gt;&lt;/a&gt;&lt;span style=&quot; font-style:italic;&quot;&gt; allows to select paths if non-standard simulator installations are used.&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Disable unneeded options to improve performance.&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;The source for selection &amp;quot;Flight Simulator&amp;quot; depends on the simulator connection and the selected scenery library.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/littlenavmap/resources/icons/bulb.svg&quot;/&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Veja no menu principal &amp;quot;Tempo&amp;quot; para mais opções de exibição de ventos em altitude e clima nos aeroportos.&lt;br/&gt;A página &lt;/span&gt;&lt;a href=&quot;lnm://18&quot;&gt;&lt;span style=&quot; font-style:italic; text-decoration: underline; color:#0057ae;&quot;&gt;Arquivos de Tempo&lt;/span&gt;&lt;/a&gt;&lt;span style=&quot; font-style:italic;&quot;&gt; permite selecionar caminhos se instalações de simulador não padrão forem usadas.&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Desative opções desnecessárias para melhorar o desempenho.&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;A fonte para a seleção &amp;quot;Simulador de Voo&amp;quot; depende da conexão do simulador e da biblioteca de cenários selecionada.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/littlenavmap/resources/icons/bulb.svg&quot;/&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Veja no menu principal &amp;quot;Clima&amp;quot; para mais opções de exibição de ventos em altitude e clima nos aeroportos.&lt;br/&gt;A página &lt;/span&gt;&lt;a href=&quot;lnm://18&quot;&gt;&lt;span style=&quot; font-style:italic; text-decoration: underline; color:#0057ae;&quot;&gt;Arquivos Meteorológicos&lt;/span&gt;&lt;/a&gt;&lt;span style=&quot; font-style:italic;&quot;&gt; permite selecionar caminhos se instalações de simulador não padrão forem usadas.&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Desative opções desnecessárias para melhorar o desempenho.&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;A fonte para a seleção &amp;quot;Simulador de Voo&amp;quot; depende da conexão do simulador e da biblioteca de cenários selecionada.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="6914"/>
@@ -27867,7 +27867,7 @@ logbook e outras guias de pesquisa</translation>
     <message>
         <location filename="src/options/options.ui" line="7191"/>
         <source>Send a test request to the NOAA weather service.</source>
-        <translation>Envie um pedido de teste para o servidor de tempo da NOAA.</translation>
+        <translation>Envie um pedido de teste para o servidor de meteorologia da NOAA.</translation>
     </message>
     <message>
         <source>Send a test request to the VATSIM weather service.</source>
@@ -28018,7 +28018,7 @@ Isso dimensionará os gráficos e ícones do mapa Little Navmap para melhor visi
     <message>
         <location filename="src/options/options.ui" line="3249"/>
         <source>Airport &amp;Weather:</source>
-        <translation>&amp;Tempo do Aeroporto:</translation>
+        <translation>&amp;Clima do Aeroporto:</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="1346"/>
@@ -28280,12 +28280,12 @@ Valores menores aproximarão o zoom de um aeroporto ou navaid.
     <message>
         <location filename="src/options/options.ui" line="6451"/>
         <source>Weather Display in Information Panels</source>
-        <translation>Visualização do tempo em painéis de informação</translation>
+        <translation>Visualização do Clima em Painéis de Informação</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="6547"/>
         <source>Weather Display in Tooltip</source>
-        <translation>Exibição do tempo em Ferramentas</translation>
+        <translation>Exibição do Clima em Ferramentas</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="7394"/>
@@ -28361,7 +28361,7 @@ Valores menores aproximarão o zoom de um aeroporto ou navaid.
     <message>
         <location filename="src/options/optionsdialog.cpp" line="2746"/>
         <source>Active Sky Weather Snapshot Files %1;;All Files (*)</source>
-        <translation>Arquivos de Snapshot Tempo do Active Sky%1;;Todos os Arquivos (*)</translation>
+        <translation>Arquivos de Snapshot Climático do Active Sky%1;;Todos os Arquivos (*)</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="320"/>
@@ -28470,7 +28470,7 @@ Valores menores aproximarão o zoom de um aeroporto ou navaid.
     <message>
         <location filename="src/options/optionsdialog.cpp" line="234"/>
         <source>Weather</source>
-        <translation>Tempo</translation>
+        <translation>Clima</translation>
     </message>
     <message>
         <source>Define paths as well weather sources for information and tooltips.</source>
@@ -29685,22 +29685,22 @@ A identificação pode ser interno, ICAO, FAA, IATA ou local dependendo da dispo
     <message>
         <location filename="src/options/optionsdialog.cpp" line="2648"/>
         <source>No Active Sky weather snapshot file selected. Using default for AS16 for %1.</source>
-        <translation>Nenhum arquivo de tempo snapshot do Active Sky foi selecionado. Usando  o padrão AS16 para %1.</translation>
+        <translation>Nenhum arquivo climático snapshot do Active Sky foi selecionado. Usando  o padrão AS16 para %1.</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="2653"/>
         <source>No Active Sky weather snapshot file selected. Using default for ASP4 for %1.</source>
-        <translation>Nenhum arquivo de tempo snapshot do Active Sky foi selecionado. Usando  o padrão ASP4 para %1.</translation>
+        <translation>Nenhum arquivo climático snapshot do Active Sky foi selecionado. Usando o padrão ASP4 para %1.</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="2644"/>
         <source>No Active Sky weather snapshot file selected. Using default for Active Sky Next for %1.</source>
-        <translation>Nenhum arquivo de tempo snapshot do Active Sky foi selecionado. Usando  o padrão Active Sky Next para %1.</translation>
+        <translation>Nenhum arquivo climático snapshot do Active Sky foi selecionado. Usando o padrão Active Sky Next para %1.</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="2636"/>
         <source>No Active Sky weather snapshot found. Active Sky METARs are not available.</source>
-        <translation>Nenhum tempo snapshot do Active Sky encontrado. Metar do Active Sky não está disponível.</translation>
+        <translation>Nenhum clima snapshot do Active Sky encontrado. Metar do Active Sky não está disponível.</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="2580"/>
@@ -30136,7 +30136,7 @@ VORTAC, TACAN ou NDB.</translation>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="2640"/>
         <source>Will use default weather snapshot after confirming change.</source>
-        <translation>Usará tempo snapshot padrão após confirmar a alteração.</translation>
+        <translation>Usará clima  snapshot padrão após confirmar a alteração.</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="251"/>
@@ -30654,7 +30654,7 @@ Observe que a ordem das colunas é a selecionada na tabela do plano de voo.</tra
     <message>
         <location filename="src/print/printdialog.ui" line="493"/>
         <source>Print decoded weather information for the destination airport as shown in the dock window &quot;Information&quot; on tab &quot;Weather&quot;. This will include the same weather stations as the tab &quot;Weather&quot;.</source>
-        <translation>Imprima informações meteorológicas decodificadas para o aeroporto de destino, conforme mostrado na janela de encaixe &quot;Informações&quot; na guia &quot;Tempo&quot;. Isso incluirá as mesmas estações meteorológicas que a guia &quot;Clima&quot;.</translation>
+        <translation>Imprima informações meteorológicas decodificadas para o aeroporto de destino, conforme mostrado na janela de encaixe &quot;Informações&quot; na guia &quot;Clima&quot;. Isso incluirá as mesmas estações meteorológicas que a guia &quot;Clima&quot;.</translation>
     </message>
     <message>
         <location filename="src/print/printdialog.ui" line="324"/>
@@ -30691,13 +30691,13 @@ Observe que a ordem das colunas é a selecionada na tabela do plano de voo.</tra
     <message>
         <location filename="src/print/printdialog.ui" line="373"/>
         <source>Print decoded weather information for the departure airport as shown in the dock window &quot;Information&quot; on tab &quot;Weather&quot;. This will include the same weather stations as the tab &quot;Weather&quot;.</source>
-        <translation>Imprima informações meteorológicas decodificadas para o aeroporto de partida, conforme mostrado na janela de encaixe &quot;Informações&quot; na guia &quot;Tempo&quot;. Isso incluirá as mesmas estações meteorológicas que a guia &quot;Clima&quot;.</translation>
+        <translation>Imprima informações meteorológicas decodificadas para o aeroporto de partida, conforme mostrado na janela de encaixe &quot;Informações&quot; na guia &quot;Clima&quot;. Isso incluirá as mesmas estações meteorológicas que a guia &quot;Clima&quot;.</translation>
     </message>
     <message>
         <location filename="src/print/printdialog.ui" line="376"/>
         <location filename="src/print/printdialog.ui" line="496"/>
         <source>&amp;Weather</source>
-        <translation>&amp;Tempo</translation>
+        <translation>&amp;Clima</translation>
     </message>
     <message>
         <location filename="src/print/printdialog.ui" line="269"/>
@@ -30775,7 +30775,7 @@ Observe que a ordem das colunas é a selecionada na tabela do plano de voo.</tra
     <message>
         <location filename="src/print/printsupport.cpp" line="295"/>
         <source>%1 Airport Weather</source>
-        <translation>%1 Tempo do Aeroporto</translation>
+        <translation>%1 Clima do Aeroporto</translation>
     </message>
     <message>
         <location filename="src/print/printsupport.cpp" line="307"/>
@@ -30796,107 +30796,107 @@ Observe que a ordem das colunas é a selecionada na tabela do plano de voo.</tra
 <context>
     <name>ProcedureQuery</name>
     <message>
-        <location filename="src/query/procedurequery.cpp" line="1929"/>
-        <location filename="src/query/procedurequery.cpp" line="2077"/>
+        <location filename="src/query/procedurequery.cpp" line="1930"/>
+        <location filename="src/query/procedurequery.cpp" line="2078"/>
         <source>Altitude</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/query/procedurequery.cpp" line="1862"/>
+        <location filename="src/query/procedurequery.cpp" line="1863"/>
         <source>Course to Fix</source>
         <translation>Curso do fixo</translation>
     </message>
     <message>
-        <location filename="src/query/procedurequery.cpp" line="1741"/>
+        <location filename="src/query/procedurequery.cpp" line="1742"/>
         <source>DME %1</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/query/procedurequery.cpp" line="1862"/>
-        <location filename="src/query/procedurequery.cpp" line="2161"/>
-        <location filename="src/query/procedurequery.cpp" line="2173"/>
-        <location filename="src/query/procedurequery.cpp" line="2182"/>
-        <location filename="src/query/procedurequery.cpp" line="2198"/>
+        <location filename="src/query/procedurequery.cpp" line="1863"/>
+        <location filename="src/query/procedurequery.cpp" line="2162"/>
+        <location filename="src/query/procedurequery.cpp" line="2174"/>
+        <location filename="src/query/procedurequery.cpp" line="2183"/>
+        <location filename="src/query/procedurequery.cpp" line="2199"/>
         <source>Intercept</source>
         <translation>Interceptação</translation>
     </message>
     <message>
-        <location filename="src/query/procedurequery.cpp" line="2166"/>
-        <location filename="src/query/procedurequery.cpp" line="2198"/>
+        <location filename="src/query/procedurequery.cpp" line="2167"/>
+        <location filename="src/query/procedurequery.cpp" line="2199"/>
         <source>Leg</source>
         <translation>Fixo</translation>
     </message>
     <message>
-        <location filename="src/query/procedurequery.cpp" line="2875"/>
+        <location filename="src/query/procedurequery.cpp" line="2876"/>
         <source>no runway</source>
         <translation>nenhuma pista</translation>
     </message>
     <message>
-        <location filename="src/query/procedurequery.cpp" line="2875"/>
+        <location filename="src/query/procedurequery.cpp" line="2876"/>
         <source>runway %1</source>
         <translation>pista %1</translation>
     </message>
     <message>
-        <location filename="src/query/procedurequery.cpp" line="2913"/>
+        <location filename="src/query/procedurequery.cpp" line="2914"/>
         <source>SID %1 from %2</source>
         <translation>SID %1 de %2</translation>
     </message>
     <message>
-        <location filename="src/query/procedurequery.cpp" line="2960"/>
-        <location filename="src/query/procedurequery.cpp" line="3005"/>
+        <location filename="src/query/procedurequery.cpp" line="2961"/>
+        <location filename="src/query/procedurequery.cpp" line="3006"/>
         <source>Approach %1 to %2</source>
         <translation>Approach %1 para %2</translation>
     </message>
     <message>
-        <location filename="src/query/procedurequery.cpp" line="3032"/>
+        <location filename="src/query/procedurequery.cpp" line="3033"/>
         <source>STAR %1 to %2</source>
         <translation>STAR %1 para %2</translation>
     </message>
     <message>
-        <location filename="src/query/procedurequery.cpp" line="3095"/>
-        <location filename="src/query/procedurequery.cpp" line="3112"/>
+        <location filename="src/query/procedurequery.cpp" line="3096"/>
+        <location filename="src/query/procedurequery.cpp" line="3113"/>
         <source>SID %1 is using an invalid runway %2</source>
         <translation>SID %1 está usando uma pista inválida %2</translation>
     </message>
     <message>
-        <location filename="src/query/procedurequery.cpp" line="3149"/>
-        <location filename="src/query/procedurequery.cpp" line="3166"/>
+        <location filename="src/query/procedurequery.cpp" line="3150"/>
+        <location filename="src/query/procedurequery.cpp" line="3167"/>
         <source>STAR %1 is using an invalid runway %2</source>
         <translation>STAR %1 está usando uma pista inválida %2</translation>
     </message>
     <message>
-        <location filename="src/query/procedurequery.cpp" line="3189"/>
+        <location filename="src/query/procedurequery.cpp" line="3190"/>
         <source>Procedure %1 %2 in scenery library has errors</source>
         <translatorcomment>O procedimento %1 %2 na biblioteca de cenários contém erros</translatorcomment>
         <translation>Procedure %1 %2 in scenery library has errors</translation>
     </message>
     <message>
-        <location filename="src/query/procedurequery.cpp" line="3198"/>
+        <location filename="src/query/procedurequery.cpp" line="3199"/>
         <source>Procedure not found in scenery library</source>
         <translation>Procedimento não encontrado na biblioteca de cenários</translation>
     </message>
     <message>
-        <location filename="src/query/procedurequery.cpp" line="2071"/>
-        <location filename="src/query/procedurequery.cpp" line="2089"/>
+        <location filename="src/query/procedurequery.cpp" line="2072"/>
+        <location filename="src/query/procedurequery.cpp" line="2090"/>
         <source>Manual</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/query/procedurequery.cpp" line="1738"/>
-        <location filename="src/query/procedurequery.cpp" line="1980"/>
-        <location filename="src/query/procedurequery.cpp" line="1998"/>
-        <location filename="src/query/procedurequery.cpp" line="2044"/>
-        <location filename="src/query/procedurequery.cpp" line="2164"/>
+        <location filename="src/query/procedurequery.cpp" line="1739"/>
+        <location filename="src/query/procedurequery.cpp" line="1981"/>
+        <location filename="src/query/procedurequery.cpp" line="1999"/>
+        <location filename="src/query/procedurequery.cpp" line="2045"/>
+        <location filename="src/query/procedurequery.cpp" line="2165"/>
         <source>/</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/query/procedurequery.cpp" line="2083"/>
+        <location filename="src/query/procedurequery.cpp" line="2084"/>
         <source>Single</source>
         <translation>Sozinho</translation>
     </message>
     <message>
-        <location filename="src/query/procedurequery.cpp" line="2926"/>
+        <location filename="src/query/procedurequery.cpp" line="2927"/>
         <source>SID transition %1</source>
         <translation>Transição da SID %1</translation>
     </message>
@@ -30905,29 +30905,29 @@ Observe que a ordem das colunas é a selecionada na tabela do plano de voo.</tra
         <translation type="vanished">Aproximação %1</translation>
     </message>
     <message>
-        <location filename="src/query/procedurequery.cpp" line="3016"/>
+        <location filename="src/query/procedurequery.cpp" line="3017"/>
         <source>Transition %1</source>
         <translation>Transição %1</translation>
     </message>
     <message>
-        <location filename="src/query/procedurequery.cpp" line="3045"/>
+        <location filename="src/query/procedurequery.cpp" line="3046"/>
         <source>STAR transition %1</source>
         <translation>Transição da STAR %1</translation>
     </message>
     <message>
-        <location filename="src/query/procedurequery.cpp" line="1100"/>
+        <location filename="src/query/procedurequery.cpp" line="1101"/>
         <source>Start</source>
         <translation>Começar</translation>
     </message>
     <message>
-        <location filename="src/query/procedurequery.cpp" line="1999"/>
-        <location filename="src/query/procedurequery.cpp" line="2045"/>
+        <location filename="src/query/procedurequery.cpp" line="2000"/>
+        <location filename="src/query/procedurequery.cpp" line="2046"/>
         <source>°M</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/query/procedurequery.cpp" line="1999"/>
-        <location filename="src/query/procedurequery.cpp" line="2045"/>
+        <location filename="src/query/procedurequery.cpp" line="2000"/>
+        <location filename="src/query/procedurequery.cpp" line="2046"/>
         <source>°T</source>
         <translation></translation>
     </message>
@@ -31217,7 +31217,7 @@ Waypoint</translation>
 Weather source is selected in menu &quot;Weather&quot; -&gt; &quot;Airport Weather Source&quot;.
 Tailwinds are omitted.</source>
         <translation>Componentes- de proa e vento de través em %1 para a pista de decolagem e pouso
-A fonte de tempo é selecionada no menu &quot;Tempo&quot; -&gt; &quot;Fonte de Tempo do Aeroporto&quot;.
+A fonte de meteorologia é selecionada no menu &quot;Clima&quot; -&gt; &quot;Fonte de Meteorologia do Aeroporto&quot;.
 Os ventos de cauda são omitidos.</translation>
     </message>
     <message>
@@ -32165,8 +32165,8 @@ Os espaços são substituídos por sublinhados.</translation>
         <location filename="src/common/maptypes.cpp" line="971"/>
         <location filename="src/common/maptypes.cpp" line="1916"/>
         <location filename="src/common/maptypes.cpp" line="2036"/>
-        <location filename="src/common/maptypes.cpp" line="2305"/>
-        <location filename="src/common/maptypes.cpp" line="2582"/>
+        <location filename="src/common/maptypes.cpp" line="2312"/>
+        <location filename="src/common/maptypes.cpp" line="2589"/>
         <location filename="src/search/proceduresearch.cpp" line="1911"/>
         <source>, </source>
         <translation></translation>
@@ -34664,52 +34664,77 @@ Procedimento</translation>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="2549"/>
+        <location filename="src/common/maptypes.cpp" line="2280"/>
+        <source> Unknown</source>
+        <translation type="unfinished"> Desconhecido</translation>
+    </message>
+    <message>
+        <location filename="src/common/maptypes.cpp" line="2283"/>
+        <source> Ground Vehicle</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/common/maptypes.cpp" line="2286"/>
+        <source> Control Tower</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/common/maptypes.cpp" line="2289"/>
+        <source> Simple Object</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/common/maptypes.cpp" line="2292"/>
+        <source> Viewer</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/common/maptypes.cpp" line="2556"/>
         <source>Pitot&amp;nbsp;%L1</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="2552"/>
+        <location filename="src/common/maptypes.cpp" line="2559"/>
         <source>Struct %L1</source>
         <translation>Estrutura %L1</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="2552"/>
+        <location filename="src/common/maptypes.cpp" line="2559"/>
         <source>Structure&amp;nbsp;%L1</source>
         <translation>Estrutura&amp;nbsp;%L1</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="2559"/>
+        <location filename="src/common/maptypes.cpp" line="2566"/>
         <source>Inlet&amp;nbsp;%L1</source>
         <translation>Entrada&amp;nbsp;%L1</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="2562"/>
+        <location filename="src/common/maptypes.cpp" line="2569"/>
         <source>Prop&amp;nbsp;%L1</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="2565"/>
+        <location filename="src/common/maptypes.cpp" line="2572"/>
         <source>Static&amp;nbsp;%L1</source>
         <translation>Estático&amp;nbsp;%L1</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="2568"/>
+        <location filename="src/common/maptypes.cpp" line="2575"/>
         <source>Wind %L1</source>
         <translation>Vento %L1</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="2568"/>
+        <location filename="src/common/maptypes.cpp" line="2575"/>
         <source>Window&amp;nbsp;%L1</source>
         <translation>Janela&amp;nbsp;%L1</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="2571"/>
+        <location filename="src/common/maptypes.cpp" line="2578"/>
         <source>Carb %L1</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="2571"/>
+        <location filename="src/common/maptypes.cpp" line="2578"/>
         <source>Carb.&amp;nbsp;%L1</source>
         <translation></translation>
     </message>
@@ -34777,32 +34802,32 @@ Procedimento</translation>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="2549"/>
+        <location filename="src/common/maptypes.cpp" line="2556"/>
         <source>Pitot %L1</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="2556"/>
+        <location filename="src/common/maptypes.cpp" line="2563"/>
         <source>AOA %L1</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="2556"/>
+        <location filename="src/common/maptypes.cpp" line="2563"/>
         <source>AOA&amp;nbsp;%L1</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="2559"/>
+        <location filename="src/common/maptypes.cpp" line="2566"/>
         <source>Inlt %L1</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="2562"/>
+        <location filename="src/common/maptypes.cpp" line="2569"/>
         <source>Prop %L1</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="2565"/>
+        <location filename="src/common/maptypes.cpp" line="2572"/>
         <source>Static %L1</source>
         <translation>Estático %L1</translation>
     </message>
@@ -34816,52 +34841,52 @@ Procedimento</translation>
         <translation>Espaço Aéreo %1 (%2)</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="2262"/>
+        <location filename="src/common/maptypes.cpp" line="2294"/>
         <source> Vehicle</source>
         <translation> Veículo</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="2266"/>
+        <location filename="src/common/maptypes.cpp" line="2265"/>
         <source> Ship</source>
         <translation> Navio</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="2269"/>
+        <location filename="src/common/maptypes.cpp" line="2268"/>
         <source> Carrier</source>
         <translation> Transportadora</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="2272"/>
+        <location filename="src/common/maptypes.cpp" line="2271"/>
         <source> Frigate</source>
         <translation> Fragata</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="2275"/>
+        <location filename="src/common/maptypes.cpp" line="2274"/>
         <source> Aircraft</source>
         <translation> Aeronave</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="2278"/>
+        <location filename="src/common/maptypes.cpp" line="2277"/>
         <source> Helicopter</source>
         <translation> Helicóptero</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="2296"/>
+        <location filename="src/common/maptypes.cpp" line="2303"/>
         <source>User %1</source>
         <translation>Usuário %1</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="2298"/>
+        <location filename="src/common/maptypes.cpp" line="2305"/>
         <source>Online Client</source>
         <translation>Cliente Online</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="2300"/>
+        <location filename="src/common/maptypes.cpp" line="2307"/>
         <source>AI / Multiplayer %1</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="2310"/>
+        <location filename="src/common/maptypes.cpp" line="2317"/>
         <source>Helipad %1</source>
         <translation>Heliporto %1</translation>
     </message>
@@ -35713,7 +35738,7 @@ Calculado com base no perfil de performance da aeronave.</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="2224"/>
-        <location filename="src/common/maptypes.cpp" line="2737"/>
+        <location filename="src/common/maptypes.cpp" line="2744"/>
         <location filename="src/common/proctypes.cpp" line="999"/>
         <source>-</source>
         <translation></translation>
@@ -36214,8 +36239,8 @@ Calculado com base no perfil de performance da aeronave.</translation>
         <translation>Erro ao ler a configuração multiexport: Versão inválida. Configuração multiexport incompatível.</translation>
     </message>
     <message>
-        <location filename="src/query/procedurequery.cpp" line="2711"/>
-        <location filename="src/query/procedurequery.cpp" line="2807"/>
+        <location filename="src/query/procedurequery.cpp" line="2712"/>
+        <location filename="src/query/procedurequery.cpp" line="2808"/>
         <source>RW%1+%2</source>
         <translation></translation>
     </message>
@@ -37577,7 +37602,7 @@ Wind is taken from nearest airport if not available.</source>
         <translation>Vento de proa na pista de decolagem indicado por %1 e vento de cauda por %2
 assim como vento cruzado (%3 ou %4).
 As informações de vento são retiradas da fonte METAR selecionada no
-menu &quot;Tempo&quot; -&gt; &quot;Fonte de Tempo do Aeroporto&quot;.
+menu &quot;Clima&quot; -&gt; &quot;Fonte de Meteorologia do Aeroporto&quot;.
 O vento é obtido do aeroporto mais próximo se não estiver disponível.</translation>
     </message>
     <message>
@@ -37600,7 +37625,7 @@ Wind is taken from nearest airport if not available.</source>
         <translation>Vento de proa na pista de pouso indicado por %1 e vento de cauda por %2
 assim como vento cruzado (%3 ou %4).
 As informações de vento são retiradas da fonte METAR selecionada no
-menu &quot;Tempo&quot; -&gt; &quot;Fonte de Tempo do Aeroporto&quot;.
+menu &quot;Clima&quot; -&gt; &quot;Fonte de Meteorologia do Aeroporto&quot;.
 O vento é obtido do aeroporto mais próximo se não estiver disponível.</translation>
     </message>
     <message>
@@ -41843,7 +41868,7 @@ ETD e ETA podem ser ignorados.
 Weather source is selected in menu &quot;Weather&quot; -&gt; &quot;Airport Weather Source&quot;.
 Tailwinds are omitted.</source>
         <translation>Componentes- de proa e vento de través para a pista em %1.
-A fonte de tempo é selecionada no menu &quot;Tempo&quot; -&gt; &quot;Fonte de Tempo do Aeroporto&quot;.
+A fonte de meteorologia é selecionada no menu &quot;Clima -&gt; &quot;Fonte de Meteorologia do Aeroporto&quot;.
 Os ventos de cauda são omitidos.</translation>
     </message>
     <message>
@@ -44401,17 +44426,17 @@ do Arquivo</translation>
     <message>
         <location filename="src/weather/weatherreporter.cpp" line="171"/>
         <source>NOAA weather downloaded.</source>
-        <translation>Tempo NOAA baixado.</translation>
+        <translation>Clima NOAA baixado.</translation>
     </message>
     <message>
         <location filename="src/weather/weatherreporter.cpp" line="180"/>
         <source>IVAO weather downloaded.</source>
-        <translation>Tempo IVAO baixado.</translation>
+        <translation>Clima IVAO baixado.</translation>
     </message>
     <message>
         <location filename="src/weather/weatherreporter.cpp" line="189"/>
         <source>VATSIM weather downloaded.</source>
-        <translation>Tempo VATSIM baixado.</translation>
+        <translation>Clima VATSIM baixado.</translation>
     </message>
     <message>
         <location filename="src/weather/weatherreporter.cpp" line="68"/>
@@ -44439,16 +44464,18 @@ Also check the paths in the Little Navmap options on page &quot;Weather Files&qu
 These path should be empty to use the default.
 
 Restart Little Navmap after correcting the weather paths.</oldsource>
-        <translation type="unfinished">
+        <translation>
 
-Certifique-se de que o caminho base do X-Plane está correto e que os arquivos de clima e diretórios existem.
+Certifique-se de que o caminho base do X-Plane está correto e
+que os arquivos de clima, assim como os diretórios, existem.
 
-Clique em &quot;Redefinir caminhos&quot; na janela &quot;Carregar biblioteca de cenários&quot; do Little Navmap para corrigir o caminho base depois de mover uma instalação do X-Plane.
+Clique em &quot;Redefinir caminhos&quot; na caixa de diálogo &quot;Carregar biblioteca de cenários&quot;
+do Little Navmap para corrigir o caminho base após mover uma instalação do X-Plane.
 
-Também verifique os caminhos nas opções do Little Navmap na página &quot;Arquivos Meteorológicos&quot;.
+Verifique também os caminhos nas opções do Little Navmap na página &quot;Arquivos Meteorológicos&quot;.
 Esses caminhos devem estar vazios para usar o padrão.
 
-Reinicie o Little Navmap após corrigir os caminhos de clima.</translation>
+Reinicie o Little Navmap após corrigir os caminhos dos arquivos de clima.</translation>
     </message>
     <message>
         <location filename="src/weather/weatherreporter.cpp" line="76"/>
@@ -44503,7 +44530,7 @@ ajuste o caminho do clima do X-Plane nas opções, na página &quot;Arquivos de 
     <message>
         <location filename="src/weather/weatherreporter.cpp" line="790"/>
         <source>Weather download failed.</source>
-        <translation>Download do tempo falhou.</translation>
+        <translation>Download do clima falhou.</translation>
     </message>
     <message>
         <location filename="src/weather/weatherreporter.cpp" line="797"/>
@@ -44598,17 +44625,17 @@ ajuste o caminho do clima do X-Plane nas opções, na página &quot;Arquivos de 
     <message>
         <location filename="src/weather/weatherreporter.cpp" line="940"/>
         <source>Airport weather source is disabled in menu &quot;Weather&quot; -&gt; &quot;Airport Weather Source&quot;.</source>
-        <translation>A fonte de clima do aeroporto está desativada no menu &quot;Tempo&quot; -&gt; &quot;Fonte de Tempo do Aeroporto&quot;.</translation>
+        <translation>A fonte de meteorologia do aeroporto está desativada no menu &quot;Clima&quot; -&gt; &quot;Fonte de Meteorologia do Aeroporto&quot;.</translation>
     </message>
     <message>
         <location filename="src/weather/weatherreporter.cpp" line="1031"/>
         <source>Active Sky weather information updated.</source>
-        <translation>Active Sky informação de tempo atualizado.</translation>
+        <translation>Informações meteorológicas do Active Sky atualizadas.</translation>
     </message>
     <message>
         <location filename="src/weather/weatherreporter.cpp" line="1041"/>
         <source>X-Plane weather information updated.</source>
-        <translation>X-plane  informação de tempo atualizado.</translation>
+        <translation>X-plane informações meteorológicas atualizadas.</translation>
     </message>
 </context>
 <context>

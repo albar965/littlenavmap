@@ -22239,9 +22239,9 @@ kHz/MHz</translation>
     <message>
         <location filename="src/mappainter/mappainternav.cpp" line="348"/>
         <location filename="src/mappainter/mappainternav.cpp" line="371"/>
-        <location filename="src/mappainter/mappaintervehicle.cpp" line="315"/>
-        <location filename="src/mappainter/mappaintervehicle.cpp" line="408"/>
-        <location filename="src/mappainter/mappaintervehicle.cpp" line="511"/>
+        <location filename="src/mappainter/mappaintervehicle.cpp" line="317"/>
+        <location filename="src/mappainter/mappaintervehicle.cpp" line="410"/>
+        <location filename="src/mappainter/mappaintervehicle.cpp" line="513"/>
         <source>, </source>
         <translation>, </translation>
     </message>
@@ -22294,8 +22294,8 @@ kHz/MHz</translation>
         <location filename="src/mappainter/mappainterroute.cpp" line="1372"/>
         <location filename="src/mappainter/mappainterroute.cpp" line="1386"/>
         <location filename="src/mappainter/mappainterroute.cpp" line="1406"/>
-        <location filename="src/mappainter/mappaintervehicle.cpp" line="447"/>
         <location filename="src/mappainter/mappaintervehicle.cpp" line="449"/>
+        <location filename="src/mappainter/mappaintervehicle.cpp" line="451"/>
         <source> %1</source>
         <oldsource> ►</oldsource>
         <translation> %1</translation>
@@ -22323,7 +22323,7 @@ kHz/MHz</translation>
         <translation>...</translation>
     </message>
     <message>
-        <location filename="src/mappainter/mappaintervehicle.cpp" line="267"/>
+        <location filename="src/mappainter/mappaintervehicle.cpp" line="269"/>
         <source>%1 to %2</source>
         <translation>%1 a %2</translation>
     </message>
@@ -22332,8 +22332,8 @@ kHz/MHz</translation>
         <translation type="vanished">Nessuno</translation>
     </message>
     <message>
-        <location filename="src/mappainter/mappaintervehicle.cpp" line="280"/>
-        <location filename="src/mappainter/mappaintervehicle.cpp" line="388"/>
+        <location filename="src/mappainter/mappaintervehicle.cpp" line="282"/>
+        <location filename="src/mappainter/mappaintervehicle.cpp" line="390"/>
         <source>HDG %3°M</source>
         <translation>HDG %3°M</translation>
     </message>
@@ -22342,7 +22342,7 @@ kHz/MHz</translation>
         <translation type="vanished">HDG %3°T</translation>
     </message>
     <message>
-        <location filename="src/mappainter/mappaintervehicle.cpp" line="307"/>
+        <location filename="src/mappainter/mappaintervehicle.cpp" line="309"/>
         <source>ALT %1%2</source>
         <translation>ALT %1%2</translation>
     </message>
@@ -22356,44 +22356,44 @@ kHz/MHz</translation>
         <translation>%1%2</translation>
     </message>
     <message>
-        <location filename="src/mappainter/mappaintervehicle.cpp" line="302"/>
-        <location filename="src/mappainter/mappaintervehicle.cpp" line="399"/>
+        <location filename="src/mappainter/mappaintervehicle.cpp" line="304"/>
+        <location filename="src/mappainter/mappaintervehicle.cpp" line="401"/>
         <source>IND %1</source>
         <translation>IND %1</translation>
     </message>
     <message>
-        <location filename="src/mappainter/mappaintervehicle.cpp" line="402"/>
+        <location filename="src/mappainter/mappaintervehicle.cpp" line="404"/>
         <source>ALT %1</source>
         <translation>ALT %1</translation>
     </message>
     <message>
-        <location filename="src/mappainter/mappaintervehicle.cpp" line="405"/>
+        <location filename="src/mappainter/mappaintervehicle.cpp" line="407"/>
         <source>AGL %1</source>
         <translation>AGL %1</translation>
     </message>
     <message>
-        <location filename="src/mappainter/mappaintervehicle.cpp" line="268"/>
-        <location filename="src/mappainter/mappaintervehicle.cpp" line="269"/>
+        <location filename="src/mappainter/mappaintervehicle.cpp" line="270"/>
+        <location filename="src/mappainter/mappaintervehicle.cpp" line="271"/>
         <source>Unknown</source>
         <translation>Sconosciuto</translation>
     </message>
     <message>
-        <location filename="src/mappainter/mappaintervehicle.cpp" line="287"/>
+        <location filename="src/mappainter/mappaintervehicle.cpp" line="289"/>
         <source>From User %1 %2°M</source>
         <translation>Dall&apos;Utente %1 %2°M</translation>
     </message>
     <message>
-        <location filename="src/mappainter/mappaintervehicle.cpp" line="334"/>
+        <location filename="src/mappainter/mappaintervehicle.cpp" line="336"/>
         <source>ID %1</source>
         <translation>ID %1</translation>
     </message>
     <message>
-        <location filename="src/mappainter/mappaintervehicle.cpp" line="350"/>
+        <location filename="src/mappainter/mappaintervehicle.cpp" line="352"/>
         <source>…</source>
         <translation>…</translation>
     </message>
     <message>
-        <location filename="src/mappainter/mappaintervehicle.cpp" line="431"/>
+        <location filename="src/mappainter/mappaintervehicle.cpp" line="433"/>
         <source>Ice %</source>
         <translation>Ghiaccio %</translation>
     </message>
@@ -22406,38 +22406,38 @@ kHz/MHz</translation>
         <translation type="vanished"> ▼</translation>
     </message>
     <message>
-        <location filename="src/mappainter/mappaintervehicle.cpp" line="488"/>
+        <location filename="src/mappainter/mappaintervehicle.cpp" line="490"/>
         <source>XPDR %1</source>
         <oldsource>TCAS %1</oldsource>
         <translation>XPDR %1</translation>
     </message>
     <message>
-        <location filename="src/mappainter/mappaintervehicle.cpp" line="502"/>
+        <location filename="src/mappainter/mappaintervehicle.cpp" line="504"/>
         <source>IAS %1</source>
         <translation>IAS %1</translation>
     </message>
     <message>
-        <location filename="src/mappainter/mappaintervehicle.cpp" line="505"/>
+        <location filename="src/mappainter/mappaintervehicle.cpp" line="507"/>
         <source>GS %2</source>
         <translation>GS %2</translation>
     </message>
     <message>
-        <location filename="src/mappainter/mappaintervehicle.cpp" line="508"/>
+        <location filename="src/mappainter/mappaintervehicle.cpp" line="510"/>
         <source>TAS %1</source>
         <translation>TAS %1</translation>
     </message>
     <message>
-        <location filename="src/mappainter/mappaintervehicle.cpp" line="539"/>
+        <location filename="src/mappainter/mappaintervehicle.cpp" line="541"/>
         <source>%1 °M</source>
         <translation>%1 °M</translation>
     </message>
     <message>
-        <location filename="src/mappainter/mappaintervehicle.cpp" line="542"/>
+        <location filename="src/mappainter/mappaintervehicle.cpp" line="544"/>
         <source>%2</source>
         <translation>%2</translation>
     </message>
     <message>
-        <location filename="src/mappainter/mappaintervehicle.cpp" line="550"/>
+        <location filename="src/mappainter/mappaintervehicle.cpp" line="552"/>
         <source>No wind</source>
         <translation>Senza vento</translation>
     </message>
@@ -31373,113 +31373,113 @@ Notare che l&apos;ordine delle colonne è quello selezionato nella tabella del p
 <context>
     <name>ProcedureQuery</name>
     <message>
-        <location filename="src/query/procedurequery.cpp" line="1738"/>
-        <location filename="src/query/procedurequery.cpp" line="1980"/>
-        <location filename="src/query/procedurequery.cpp" line="1998"/>
-        <location filename="src/query/procedurequery.cpp" line="2044"/>
-        <location filename="src/query/procedurequery.cpp" line="2164"/>
+        <location filename="src/query/procedurequery.cpp" line="1739"/>
+        <location filename="src/query/procedurequery.cpp" line="1981"/>
+        <location filename="src/query/procedurequery.cpp" line="1999"/>
+        <location filename="src/query/procedurequery.cpp" line="2045"/>
+        <location filename="src/query/procedurequery.cpp" line="2165"/>
         <source>/</source>
         <translation>/</translation>
     </message>
     <message>
-        <location filename="src/query/procedurequery.cpp" line="1999"/>
-        <location filename="src/query/procedurequery.cpp" line="2045"/>
+        <location filename="src/query/procedurequery.cpp" line="2000"/>
+        <location filename="src/query/procedurequery.cpp" line="2046"/>
         <source>°M</source>
         <translation>°M</translation>
     </message>
     <message>
-        <location filename="src/query/procedurequery.cpp" line="1741"/>
+        <location filename="src/query/procedurequery.cpp" line="1742"/>
         <source>DME %1</source>
         <translation>DME %1</translation>
     </message>
     <message>
-        <location filename="src/query/procedurequery.cpp" line="1862"/>
-        <location filename="src/query/procedurequery.cpp" line="2161"/>
-        <location filename="src/query/procedurequery.cpp" line="2173"/>
-        <location filename="src/query/procedurequery.cpp" line="2182"/>
-        <location filename="src/query/procedurequery.cpp" line="2198"/>
+        <location filename="src/query/procedurequery.cpp" line="1863"/>
+        <location filename="src/query/procedurequery.cpp" line="2162"/>
+        <location filename="src/query/procedurequery.cpp" line="2174"/>
+        <location filename="src/query/procedurequery.cpp" line="2183"/>
+        <location filename="src/query/procedurequery.cpp" line="2199"/>
         <source>Intercept</source>
         <translation>Intercettare</translation>
     </message>
     <message>
-        <location filename="src/query/procedurequery.cpp" line="1862"/>
+        <location filename="src/query/procedurequery.cpp" line="1863"/>
         <source>Course to Fix</source>
         <translation>Rotta per il Fix</translation>
     </message>
     <message>
-        <location filename="src/query/procedurequery.cpp" line="1929"/>
-        <location filename="src/query/procedurequery.cpp" line="2077"/>
+        <location filename="src/query/procedurequery.cpp" line="1930"/>
+        <location filename="src/query/procedurequery.cpp" line="2078"/>
         <source>Altitude</source>
         <translation>Altitudine</translation>
     </message>
     <message>
-        <location filename="src/query/procedurequery.cpp" line="1999"/>
-        <location filename="src/query/procedurequery.cpp" line="2045"/>
+        <location filename="src/query/procedurequery.cpp" line="2000"/>
+        <location filename="src/query/procedurequery.cpp" line="2046"/>
         <source>°T</source>
         <translation>°T</translation>
     </message>
     <message>
-        <location filename="src/query/procedurequery.cpp" line="2071"/>
-        <location filename="src/query/procedurequery.cpp" line="2089"/>
+        <location filename="src/query/procedurequery.cpp" line="2072"/>
+        <location filename="src/query/procedurequery.cpp" line="2090"/>
         <source>Manual</source>
         <translation>Manuale</translation>
     </message>
     <message>
-        <location filename="src/query/procedurequery.cpp" line="2083"/>
+        <location filename="src/query/procedurequery.cpp" line="2084"/>
         <source>Single</source>
         <translation>Singolo</translation>
     </message>
     <message>
-        <location filename="src/query/procedurequery.cpp" line="2166"/>
-        <location filename="src/query/procedurequery.cpp" line="2198"/>
+        <location filename="src/query/procedurequery.cpp" line="2167"/>
+        <location filename="src/query/procedurequery.cpp" line="2199"/>
         <source>Leg</source>
         <translation>Segmento</translation>
     </message>
     <message>
-        <location filename="src/query/procedurequery.cpp" line="2875"/>
+        <location filename="src/query/procedurequery.cpp" line="2876"/>
         <source>no runway</source>
         <translation>nessuna pista</translation>
     </message>
     <message>
-        <location filename="src/query/procedurequery.cpp" line="2875"/>
+        <location filename="src/query/procedurequery.cpp" line="2876"/>
         <source>runway %1</source>
         <translation>pista %1</translation>
     </message>
     <message>
-        <location filename="src/query/procedurequery.cpp" line="2913"/>
+        <location filename="src/query/procedurequery.cpp" line="2914"/>
         <source>SID %1 from %2</source>
         <translation>SID %1 da %2</translation>
     </message>
     <message>
-        <location filename="src/query/procedurequery.cpp" line="2960"/>
-        <location filename="src/query/procedurequery.cpp" line="3005"/>
+        <location filename="src/query/procedurequery.cpp" line="2961"/>
+        <location filename="src/query/procedurequery.cpp" line="3006"/>
         <source>Approach %1 to %2</source>
         <translation>Avvicinamento %1 a %2</translation>
     </message>
     <message>
-        <location filename="src/query/procedurequery.cpp" line="3032"/>
+        <location filename="src/query/procedurequery.cpp" line="3033"/>
         <source>STAR %1 to %2</source>
         <translation>STAR %1 a %2</translation>
     </message>
     <message>
-        <location filename="src/query/procedurequery.cpp" line="3095"/>
-        <location filename="src/query/procedurequery.cpp" line="3112"/>
+        <location filename="src/query/procedurequery.cpp" line="3096"/>
+        <location filename="src/query/procedurequery.cpp" line="3113"/>
         <source>SID %1 is using an invalid runway %2</source>
         <translation>La SID %1 utilizza una pista non valida %2</translation>
     </message>
     <message>
-        <location filename="src/query/procedurequery.cpp" line="3149"/>
-        <location filename="src/query/procedurequery.cpp" line="3166"/>
+        <location filename="src/query/procedurequery.cpp" line="3150"/>
+        <location filename="src/query/procedurequery.cpp" line="3167"/>
         <source>STAR %1 is using an invalid runway %2</source>
         <translation>La STAR %1 utilizza una pista non valida %2</translation>
     </message>
     <message>
-        <location filename="src/query/procedurequery.cpp" line="3189"/>
+        <location filename="src/query/procedurequery.cpp" line="3190"/>
         <source>Procedure %1 %2 in scenery library has errors</source>
         <translation>La procedura %1 %2 nella libreria degli scenari contiene errori</translation>
     </message>
     <message>
-        <location filename="src/query/procedurequery.cpp" line="3198"/>
+        <location filename="src/query/procedurequery.cpp" line="3199"/>
         <source>Procedure not found in scenery library</source>
         <translation>Procedura non trovata nella libreria degli scenari</translation>
     </message>
@@ -31488,7 +31488,7 @@ Notare che l&apos;ordine delle colonne è quello selezionato nella tabella del p
         <translation type="vanished">SID %1</translation>
     </message>
     <message>
-        <location filename="src/query/procedurequery.cpp" line="2926"/>
+        <location filename="src/query/procedurequery.cpp" line="2927"/>
         <source>SID transition %1</source>
         <translation>Transizione SID %1</translation>
     </message>
@@ -31497,7 +31497,7 @@ Notare che l&apos;ordine delle colonne è quello selezionato nella tabella del p
         <translation type="vanished">Avvicinamento %1</translation>
     </message>
     <message>
-        <location filename="src/query/procedurequery.cpp" line="3016"/>
+        <location filename="src/query/procedurequery.cpp" line="3017"/>
         <source>Transition %1</source>
         <translation>Transizione %1</translation>
     </message>
@@ -31506,12 +31506,12 @@ Notare che l&apos;ordine delle colonne è quello selezionato nella tabella del p
         <translation type="vanished">STAR %1</translation>
     </message>
     <message>
-        <location filename="src/query/procedurequery.cpp" line="3045"/>
+        <location filename="src/query/procedurequery.cpp" line="3046"/>
         <source>STAR transition %1</source>
         <translation>Transizione STAR %1</translation>
     </message>
     <message>
-        <location filename="src/query/procedurequery.cpp" line="1100"/>
+        <location filename="src/query/procedurequery.cpp" line="1101"/>
         <source>Start</source>
         <translation>Partenza</translation>
     </message>
@@ -32806,8 +32806,8 @@ Mostrato in discesa solo in corrispondenza del simbolo dell&apos;aeromobile uten
         <location filename="src/common/maptypes.cpp" line="971"/>
         <location filename="src/common/maptypes.cpp" line="1916"/>
         <location filename="src/common/maptypes.cpp" line="2036"/>
-        <location filename="src/common/maptypes.cpp" line="2305"/>
-        <location filename="src/common/maptypes.cpp" line="2582"/>
+        <location filename="src/common/maptypes.cpp" line="2312"/>
+        <location filename="src/common/maptypes.cpp" line="2589"/>
         <location filename="src/search/proceduresearch.cpp" line="1911"/>
         <source>, </source>
         <translation>, </translation>
@@ -34185,52 +34185,52 @@ Mostrato in discesa solo in corrispondenza del simbolo dell&apos;aeromobile uten
         <translation>%1, %2</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="2549"/>
+        <location filename="src/common/maptypes.cpp" line="2556"/>
         <source>Pitot&amp;nbsp;%L1</source>
         <translation>Pitot&amp;nbsp;%L1</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="2552"/>
+        <location filename="src/common/maptypes.cpp" line="2559"/>
         <source>Struct %L1</source>
         <translation>Struct %L1</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="2552"/>
+        <location filename="src/common/maptypes.cpp" line="2559"/>
         <source>Structure&amp;nbsp;%L1</source>
         <translation>Structure&amp;nbsp;%L1</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="2559"/>
+        <location filename="src/common/maptypes.cpp" line="2566"/>
         <source>Inlet&amp;nbsp;%L1</source>
         <translation>Inlet&amp;nbsp;%L1</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="2562"/>
+        <location filename="src/common/maptypes.cpp" line="2569"/>
         <source>Prop&amp;nbsp;%L1</source>
         <translation>Prop&amp;nbsp;%L1</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="2565"/>
+        <location filename="src/common/maptypes.cpp" line="2572"/>
         <source>Static&amp;nbsp;%L1</source>
         <translation>Static&amp;nbsp;%L1</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="2568"/>
+        <location filename="src/common/maptypes.cpp" line="2575"/>
         <source>Wind %L1</source>
         <translation>Vento %L1</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="2568"/>
+        <location filename="src/common/maptypes.cpp" line="2575"/>
         <source>Window&amp;nbsp;%L1</source>
         <translation>Window&amp;nbsp;%L1</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="2571"/>
+        <location filename="src/common/maptypes.cpp" line="2578"/>
         <source>Carb %L1</source>
         <translation>Carb %L1</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="2571"/>
+        <location filename="src/common/maptypes.cpp" line="2578"/>
         <source>Carb.&amp;nbsp;%L1</source>
         <translation>Carb.&amp;nbsp;%L1</translation>
     </message>
@@ -34833,82 +34833,107 @@ Mostrato in discesa solo in corrispondenza del simbolo dell&apos;aeromobile uten
         <translation>Spazio aereo %1 (%2)</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="2262"/>
+        <location filename="src/common/maptypes.cpp" line="2280"/>
+        <source> Unknown</source>
+        <translation type="unfinished"> Sconosciuto</translation>
+    </message>
+    <message>
+        <location filename="src/common/maptypes.cpp" line="2283"/>
+        <source> Ground Vehicle</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/common/maptypes.cpp" line="2286"/>
+        <source> Control Tower</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/common/maptypes.cpp" line="2289"/>
+        <source> Simple Object</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/common/maptypes.cpp" line="2292"/>
+        <source> Viewer</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/common/maptypes.cpp" line="2294"/>
         <source> Vehicle</source>
         <translation> Veicolo</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="2266"/>
+        <location filename="src/common/maptypes.cpp" line="2265"/>
         <source> Ship</source>
         <translation> Nave</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="2269"/>
+        <location filename="src/common/maptypes.cpp" line="2268"/>
         <source> Carrier</source>
         <translation> Trasportatore</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="2272"/>
+        <location filename="src/common/maptypes.cpp" line="2271"/>
         <source> Frigate</source>
         <translation> Fregata</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="2275"/>
+        <location filename="src/common/maptypes.cpp" line="2274"/>
         <source> Aircraft</source>
         <translation> Aereo</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="2278"/>
+        <location filename="src/common/maptypes.cpp" line="2277"/>
         <source> Helicopter</source>
         <translation> Elicottero</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="2296"/>
+        <location filename="src/common/maptypes.cpp" line="2303"/>
         <source>User %1</source>
         <translation>Utente %1</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="2298"/>
+        <location filename="src/common/maptypes.cpp" line="2305"/>
         <source>Online Client</source>
         <translation>Client Online</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="2300"/>
+        <location filename="src/common/maptypes.cpp" line="2307"/>
         <source>AI / Multiplayer %1</source>
         <translation>AI / Multigiocatore %1</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="2310"/>
+        <location filename="src/common/maptypes.cpp" line="2317"/>
         <source>Helipad %1</source>
         <translation>Eliporto %1</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="2549"/>
+        <location filename="src/common/maptypes.cpp" line="2556"/>
         <source>Pitot %L1</source>
         <translation>Pitot %L1</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="2556"/>
+        <location filename="src/common/maptypes.cpp" line="2563"/>
         <source>AOA %L1</source>
         <translation>AOA %L1</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="2556"/>
+        <location filename="src/common/maptypes.cpp" line="2563"/>
         <source>AOA&amp;nbsp;%L1</source>
         <translation>AOA&amp;nbsp;%L1</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="2559"/>
+        <location filename="src/common/maptypes.cpp" line="2566"/>
         <source>Inlt %L1</source>
         <translation>Inlt %L1</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="2562"/>
+        <location filename="src/common/maptypes.cpp" line="2569"/>
         <source>Prop %L1</source>
         <translation>Prop %L1</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="2565"/>
+        <location filename="src/common/maptypes.cpp" line="2572"/>
         <source>Static %L1</source>
         <translation>Static %L1</translation>
     </message>
@@ -37309,7 +37334,7 @@ Calcolato in base al profilo delle prestazioni dell&apos;aeromobile.</translatio
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="2224"/>
-        <location filename="src/common/maptypes.cpp" line="2737"/>
+        <location filename="src/common/maptypes.cpp" line="2744"/>
         <location filename="src/common/proctypes.cpp" line="999"/>
         <source>-</source>
         <translation>-</translation>
@@ -37439,8 +37464,8 @@ Calcolato in base al profilo delle prestazioni dell&apos;aeromobile.</translatio
         <translation>Errore nella lettura della configurazione multiesportazione: Versione non valida. Configurazione multiesportazione incompatibile.</translation>
     </message>
     <message>
-        <location filename="src/query/procedurequery.cpp" line="2711"/>
-        <location filename="src/query/procedurequery.cpp" line="2807"/>
+        <location filename="src/query/procedurequery.cpp" line="2712"/>
+        <location filename="src/query/procedurequery.cpp" line="2808"/>
         <source>RW%1+%2</source>
         <translation>RW%1+%2</translation>
     </message>

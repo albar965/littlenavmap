@@ -20633,9 +20633,9 @@ kHz/MHz</translation>
     <message>
         <location filename="src/mappainter/mappainternav.cpp" line="348"/>
         <location filename="src/mappainter/mappainternav.cpp" line="371"/>
-        <location filename="src/mappainter/mappaintervehicle.cpp" line="315"/>
-        <location filename="src/mappainter/mappaintervehicle.cpp" line="408"/>
-        <location filename="src/mappainter/mappaintervehicle.cpp" line="511"/>
+        <location filename="src/mappainter/mappaintervehicle.cpp" line="317"/>
+        <location filename="src/mappainter/mappaintervehicle.cpp" line="410"/>
+        <location filename="src/mappainter/mappaintervehicle.cpp" line="513"/>
         <source>, </source>
         <translation>, </translation>
     </message>
@@ -20697,8 +20697,8 @@ kHz/MHz</translation>
         <location filename="src/mappainter/mappainterroute.cpp" line="1372"/>
         <location filename="src/mappainter/mappainterroute.cpp" line="1386"/>
         <location filename="src/mappainter/mappainterroute.cpp" line="1406"/>
-        <location filename="src/mappainter/mappaintervehicle.cpp" line="447"/>
         <location filename="src/mappainter/mappaintervehicle.cpp" line="449"/>
+        <location filename="src/mappainter/mappaintervehicle.cpp" line="451"/>
         <source> %1</source>
         <oldsource> ►</oldsource>
         <translation> %1</translation>
@@ -20726,7 +20726,7 @@ kHz/MHz</translation>
         <translation>…</translation>
     </message>
     <message>
-        <location filename="src/mappainter/mappaintervehicle.cpp" line="267"/>
+        <location filename="src/mappainter/mappaintervehicle.cpp" line="269"/>
         <source>%1 to %2</source>
         <translation>%1 到 %2</translation>
     </message>
@@ -20735,13 +20735,13 @@ kHz/MHz</translation>
         <translation type="vanished">无</translation>
     </message>
     <message>
-        <location filename="src/mappainter/mappaintervehicle.cpp" line="280"/>
-        <location filename="src/mappainter/mappaintervehicle.cpp" line="388"/>
+        <location filename="src/mappainter/mappaintervehicle.cpp" line="282"/>
+        <location filename="src/mappainter/mappaintervehicle.cpp" line="390"/>
         <source>HDG %3°M</source>
         <translation>磁航向 %3°M</translation>
     </message>
     <message>
-        <location filename="src/mappainter/mappaintervehicle.cpp" line="307"/>
+        <location filename="src/mappainter/mappaintervehicle.cpp" line="309"/>
         <source>ALT %1%2</source>
         <translation>ALT %1%2</translation>
     </message>
@@ -20755,44 +20755,44 @@ kHz/MHz</translation>
         <translation>%1%2</translation>
     </message>
     <message>
-        <location filename="src/mappainter/mappaintervehicle.cpp" line="302"/>
-        <location filename="src/mappainter/mappaintervehicle.cpp" line="399"/>
+        <location filename="src/mappainter/mappaintervehicle.cpp" line="304"/>
+        <location filename="src/mappainter/mappaintervehicle.cpp" line="401"/>
         <source>IND %1</source>
         <translation>指示 %1</translation>
     </message>
     <message>
-        <location filename="src/mappainter/mappaintervehicle.cpp" line="402"/>
+        <location filename="src/mappainter/mappaintervehicle.cpp" line="404"/>
         <source>ALT %1</source>
         <translation>高度 %1</translation>
     </message>
     <message>
-        <location filename="src/mappainter/mappaintervehicle.cpp" line="405"/>
+        <location filename="src/mappainter/mappaintervehicle.cpp" line="407"/>
         <source>AGL %1</source>
         <translation>离地高度 %1</translation>
     </message>
     <message>
-        <location filename="src/mappainter/mappaintervehicle.cpp" line="268"/>
-        <location filename="src/mappainter/mappaintervehicle.cpp" line="269"/>
+        <location filename="src/mappainter/mappaintervehicle.cpp" line="270"/>
+        <location filename="src/mappainter/mappaintervehicle.cpp" line="271"/>
         <source>Unknown</source>
         <translation>未知</translation>
     </message>
     <message>
-        <location filename="src/mappainter/mappaintervehicle.cpp" line="287"/>
+        <location filename="src/mappainter/mappaintervehicle.cpp" line="289"/>
         <source>From User %1 %2°M</source>
         <translation>自用户 %1 %2°M</translation>
     </message>
     <message>
-        <location filename="src/mappainter/mappaintervehicle.cpp" line="334"/>
+        <location filename="src/mappainter/mappaintervehicle.cpp" line="336"/>
         <source>ID %1</source>
         <translation>ID %1</translation>
     </message>
     <message>
-        <location filename="src/mappainter/mappaintervehicle.cpp" line="350"/>
+        <location filename="src/mappainter/mappaintervehicle.cpp" line="352"/>
         <source>…</source>
         <translation>…</translation>
     </message>
     <message>
-        <location filename="src/mappainter/mappaintervehicle.cpp" line="431"/>
+        <location filename="src/mappainter/mappaintervehicle.cpp" line="433"/>
         <source>Ice %</source>
         <translation>冰 %</translation>
     </message>
@@ -20805,38 +20805,38 @@ kHz/MHz</translation>
         <translation type="vanished"> ▼</translation>
     </message>
     <message>
-        <location filename="src/mappainter/mappaintervehicle.cpp" line="488"/>
+        <location filename="src/mappainter/mappaintervehicle.cpp" line="490"/>
         <source>XPDR %1</source>
         <oldsource>TCAS %1</oldsource>
         <translation>应答机 %1</translation>
     </message>
     <message>
-        <location filename="src/mappainter/mappaintervehicle.cpp" line="502"/>
+        <location filename="src/mappainter/mappaintervehicle.cpp" line="504"/>
         <source>IAS %1</source>
         <translation>IAS %1</translation>
     </message>
     <message>
-        <location filename="src/mappainter/mappaintervehicle.cpp" line="505"/>
+        <location filename="src/mappainter/mappaintervehicle.cpp" line="507"/>
         <source>GS %2</source>
         <translation>GS %2</translation>
     </message>
     <message>
-        <location filename="src/mappainter/mappaintervehicle.cpp" line="508"/>
+        <location filename="src/mappainter/mappaintervehicle.cpp" line="510"/>
         <source>TAS %1</source>
         <translation>TAS %1</translation>
     </message>
     <message>
-        <location filename="src/mappainter/mappaintervehicle.cpp" line="539"/>
+        <location filename="src/mappainter/mappaintervehicle.cpp" line="541"/>
         <source>%1 °M</source>
         <translation>%1 °M</translation>
     </message>
     <message>
-        <location filename="src/mappainter/mappaintervehicle.cpp" line="542"/>
+        <location filename="src/mappainter/mappaintervehicle.cpp" line="544"/>
         <source>%2</source>
         <translation>%2</translation>
     </message>
     <message>
-        <location filename="src/mappainter/mappaintervehicle.cpp" line="550"/>
+        <location filename="src/mappainter/mappaintervehicle.cpp" line="552"/>
         <source>No wind</source>
         <translation>无风</translation>
     </message>
@@ -28972,118 +28972,118 @@ Note that the order of columns is as selected in the flight plan table.</source>
 <context>
     <name>ProcedureQuery</name>
     <message>
-        <location filename="src/query/procedurequery.cpp" line="1100"/>
+        <location filename="src/query/procedurequery.cpp" line="1101"/>
         <source>Start</source>
         <translation>起始</translation>
     </message>
     <message>
-        <location filename="src/query/procedurequery.cpp" line="1738"/>
-        <location filename="src/query/procedurequery.cpp" line="1980"/>
-        <location filename="src/query/procedurequery.cpp" line="1998"/>
-        <location filename="src/query/procedurequery.cpp" line="2044"/>
-        <location filename="src/query/procedurequery.cpp" line="2164"/>
+        <location filename="src/query/procedurequery.cpp" line="1739"/>
+        <location filename="src/query/procedurequery.cpp" line="1981"/>
+        <location filename="src/query/procedurequery.cpp" line="1999"/>
+        <location filename="src/query/procedurequery.cpp" line="2045"/>
+        <location filename="src/query/procedurequery.cpp" line="2165"/>
         <source>/</source>
         <translation>/</translation>
     </message>
     <message>
-        <location filename="src/query/procedurequery.cpp" line="1999"/>
-        <location filename="src/query/procedurequery.cpp" line="2045"/>
+        <location filename="src/query/procedurequery.cpp" line="2000"/>
+        <location filename="src/query/procedurequery.cpp" line="2046"/>
         <source>°M</source>
         <translation>°M</translation>
     </message>
     <message>
-        <location filename="src/query/procedurequery.cpp" line="1741"/>
+        <location filename="src/query/procedurequery.cpp" line="1742"/>
         <source>DME %1</source>
         <translation>DME %1</translation>
     </message>
     <message>
-        <location filename="src/query/procedurequery.cpp" line="1862"/>
-        <location filename="src/query/procedurequery.cpp" line="2161"/>
-        <location filename="src/query/procedurequery.cpp" line="2173"/>
-        <location filename="src/query/procedurequery.cpp" line="2182"/>
-        <location filename="src/query/procedurequery.cpp" line="2198"/>
+        <location filename="src/query/procedurequery.cpp" line="1863"/>
+        <location filename="src/query/procedurequery.cpp" line="2162"/>
+        <location filename="src/query/procedurequery.cpp" line="2174"/>
+        <location filename="src/query/procedurequery.cpp" line="2183"/>
+        <location filename="src/query/procedurequery.cpp" line="2199"/>
         <source>Intercept</source>
         <translation>拦截点</translation>
     </message>
     <message>
-        <location filename="src/query/procedurequery.cpp" line="1862"/>
+        <location filename="src/query/procedurequery.cpp" line="1863"/>
         <source>Course to Fix</source>
         <translation>到航路点的航道</translation>
     </message>
     <message>
-        <location filename="src/query/procedurequery.cpp" line="1929"/>
-        <location filename="src/query/procedurequery.cpp" line="2077"/>
+        <location filename="src/query/procedurequery.cpp" line="1930"/>
+        <location filename="src/query/procedurequery.cpp" line="2078"/>
         <source>Altitude</source>
         <translation>高度</translation>
     </message>
     <message>
-        <location filename="src/query/procedurequery.cpp" line="1999"/>
-        <location filename="src/query/procedurequery.cpp" line="2045"/>
+        <location filename="src/query/procedurequery.cpp" line="2000"/>
+        <location filename="src/query/procedurequery.cpp" line="2046"/>
         <source>°T</source>
         <translation>°T</translation>
     </message>
     <message>
-        <location filename="src/query/procedurequery.cpp" line="2071"/>
-        <location filename="src/query/procedurequery.cpp" line="2089"/>
+        <location filename="src/query/procedurequery.cpp" line="2072"/>
+        <location filename="src/query/procedurequery.cpp" line="2090"/>
         <source>Manual</source>
         <translation>手动</translation>
     </message>
     <message>
-        <location filename="src/query/procedurequery.cpp" line="2083"/>
+        <location filename="src/query/procedurequery.cpp" line="2084"/>
         <source>Single</source>
         <translation>单条</translation>
     </message>
     <message>
-        <location filename="src/query/procedurequery.cpp" line="2166"/>
-        <location filename="src/query/procedurequery.cpp" line="2198"/>
+        <location filename="src/query/procedurequery.cpp" line="2167"/>
+        <location filename="src/query/procedurequery.cpp" line="2199"/>
         <source>Leg</source>
         <translation>航段</translation>
     </message>
     <message>
-        <location filename="src/query/procedurequery.cpp" line="2875"/>
+        <location filename="src/query/procedurequery.cpp" line="2876"/>
         <source>no runway</source>
         <translation>没有跑道</translation>
     </message>
     <message>
-        <location filename="src/query/procedurequery.cpp" line="2875"/>
+        <location filename="src/query/procedurequery.cpp" line="2876"/>
         <source>runway %1</source>
         <translation>跑道 %1</translation>
     </message>
     <message>
-        <location filename="src/query/procedurequery.cpp" line="2913"/>
+        <location filename="src/query/procedurequery.cpp" line="2914"/>
         <source>SID %1 from %2</source>
         <translation>从 %2 的标准离场程序（SID） %1</translation>
     </message>
     <message>
-        <location filename="src/query/procedurequery.cpp" line="2960"/>
-        <location filename="src/query/procedurequery.cpp" line="3005"/>
+        <location filename="src/query/procedurequery.cpp" line="2961"/>
+        <location filename="src/query/procedurequery.cpp" line="3006"/>
         <source>Approach %1 to %2</source>
         <translation>从 %1 到 %2 进近</translation>
     </message>
     <message>
-        <location filename="src/query/procedurequery.cpp" line="3032"/>
+        <location filename="src/query/procedurequery.cpp" line="3033"/>
         <source>STAR %1 to %2</source>
         <translation>到 %2 的标准进场程序（STAR）%1</translation>
     </message>
     <message>
-        <location filename="src/query/procedurequery.cpp" line="3095"/>
-        <location filename="src/query/procedurequery.cpp" line="3112"/>
+        <location filename="src/query/procedurequery.cpp" line="3096"/>
+        <location filename="src/query/procedurequery.cpp" line="3113"/>
         <source>SID %1 is using an invalid runway %2</source>
         <translation>SID %1 使用了一条不可用的跑道 %2</translation>
     </message>
     <message>
-        <location filename="src/query/procedurequery.cpp" line="3149"/>
-        <location filename="src/query/procedurequery.cpp" line="3166"/>
+        <location filename="src/query/procedurequery.cpp" line="3150"/>
+        <location filename="src/query/procedurequery.cpp" line="3167"/>
         <source>STAR %1 is using an invalid runway %2</source>
         <translation>STAR %1 使用了一条不可用的跑道 %2</translation>
     </message>
     <message>
-        <location filename="src/query/procedurequery.cpp" line="3189"/>
+        <location filename="src/query/procedurequery.cpp" line="3190"/>
         <source>Procedure %1 %2 in scenery library has errors</source>
         <translation>地景目录中的程序 %1 %2 有错误</translation>
     </message>
     <message>
-        <location filename="src/query/procedurequery.cpp" line="3198"/>
+        <location filename="src/query/procedurequery.cpp" line="3199"/>
         <source>Procedure not found in scenery library</source>
         <translation>地景目录中没有找到程序</translation>
     </message>
@@ -29092,7 +29092,7 @@ Note that the order of columns is as selected in the flight plan table.</source>
         <translation type="vanished">SID %1</translation>
     </message>
     <message>
-        <location filename="src/query/procedurequery.cpp" line="2926"/>
+        <location filename="src/query/procedurequery.cpp" line="2927"/>
         <source>SID transition %1</source>
         <translation>SID 过渡程序 %1</translation>
     </message>
@@ -29101,7 +29101,7 @@ Note that the order of columns is as selected in the flight plan table.</source>
         <translation type="vanished">进近 %1</translation>
     </message>
     <message>
-        <location filename="src/query/procedurequery.cpp" line="3016"/>
+        <location filename="src/query/procedurequery.cpp" line="3017"/>
         <source>Transition %1</source>
         <translation>过渡 %1</translation>
     </message>
@@ -29110,7 +29110,7 @@ Note that the order of columns is as selected in the flight plan table.</source>
         <translation type="vanished">STAR %1</translation>
     </message>
     <message>
-        <location filename="src/query/procedurequery.cpp" line="3045"/>
+        <location filename="src/query/procedurequery.cpp" line="3046"/>
         <source>STAR transition %1</source>
         <translation>STAR 过渡程序 %1</translation>
     </message>
@@ -30332,8 +30332,8 @@ Changes to &quot;Required angle&quot; if mandatory in approach procedures.</sour
         <location filename="src/common/maptypes.cpp" line="971"/>
         <location filename="src/common/maptypes.cpp" line="1916"/>
         <location filename="src/common/maptypes.cpp" line="2036"/>
-        <location filename="src/common/maptypes.cpp" line="2305"/>
-        <location filename="src/common/maptypes.cpp" line="2582"/>
+        <location filename="src/common/maptypes.cpp" line="2312"/>
+        <location filename="src/common/maptypes.cpp" line="2589"/>
         <location filename="src/search/proceduresearch.cpp" line="1911"/>
         <source>, </source>
         <translation>, </translation>
@@ -31775,52 +31775,52 @@ Changes to &quot;Required angle&quot; if mandatory in approach procedures.</sour
         <translation>%1: %2</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="2549"/>
+        <location filename="src/common/maptypes.cpp" line="2556"/>
         <source>Pitot&amp;nbsp;%L1</source>
         <translation>皮托管&amp;nbsp;%L1</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="2552"/>
+        <location filename="src/common/maptypes.cpp" line="2559"/>
         <source>Struct %L1</source>
         <translation>结构 %L1</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="2552"/>
+        <location filename="src/common/maptypes.cpp" line="2559"/>
         <source>Structure&amp;nbsp;%L1</source>
         <translation>结构&amp;nbsp;%L1</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="2559"/>
+        <location filename="src/common/maptypes.cpp" line="2566"/>
         <source>Inlet&amp;nbsp;%L1</source>
         <translation>海湾入口&amp;nbsp;%L1</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="2562"/>
+        <location filename="src/common/maptypes.cpp" line="2569"/>
         <source>Prop&amp;nbsp;%L1</source>
         <translation>螺旋桨&amp;nbsp;%L1</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="2565"/>
+        <location filename="src/common/maptypes.cpp" line="2572"/>
         <source>Static&amp;nbsp;%L1</source>
         <translation>静态&amp;nbsp;%L1</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="2568"/>
+        <location filename="src/common/maptypes.cpp" line="2575"/>
         <source>Wind %L1</source>
         <translation>风 %L1</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="2568"/>
+        <location filename="src/common/maptypes.cpp" line="2575"/>
         <source>Window&amp;nbsp;%L1</source>
         <translation>窗口&amp;nbsp;%L1</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="2571"/>
+        <location filename="src/common/maptypes.cpp" line="2578"/>
         <source>Carb %L1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="2571"/>
+        <location filename="src/common/maptypes.cpp" line="2578"/>
         <source>Carb.&amp;nbsp;%L1</source>
         <translation type="unfinished"></translation>
     </message>
@@ -32420,72 +32420,97 @@ Changes to &quot;Required angle&quot; if mandatory in approach procedures.</sour
         <translation>空域 %1 (%2)</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="2262"/>
+        <location filename="src/common/maptypes.cpp" line="2280"/>
+        <source> Unknown</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/common/maptypes.cpp" line="2283"/>
+        <source> Ground Vehicle</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/common/maptypes.cpp" line="2286"/>
+        <source> Control Tower</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/common/maptypes.cpp" line="2289"/>
+        <source> Simple Object</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/common/maptypes.cpp" line="2292"/>
+        <source> Viewer</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/common/maptypes.cpp" line="2294"/>
         <source> Vehicle</source>
         <translation> 载具</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="2266"/>
+        <location filename="src/common/maptypes.cpp" line="2265"/>
         <source> Ship</source>
         <translation> 航船</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="2269"/>
+        <location filename="src/common/maptypes.cpp" line="2268"/>
         <source> Carrier</source>
         <translation> 航空母舰</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="2272"/>
+        <location filename="src/common/maptypes.cpp" line="2271"/>
         <source> Frigate</source>
         <translation> 护卫舰</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="2275"/>
+        <location filename="src/common/maptypes.cpp" line="2274"/>
         <source> Aircraft</source>
         <translation> 飞行器</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="2278"/>
+        <location filename="src/common/maptypes.cpp" line="2277"/>
         <source> Helicopter</source>
         <translation> 直升机</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="2296"/>
+        <location filename="src/common/maptypes.cpp" line="2303"/>
         <source>User %1</source>
         <translation>用户 %1</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="2298"/>
+        <location filename="src/common/maptypes.cpp" line="2305"/>
         <source>Online Client</source>
         <translation>在线客户端</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="2300"/>
+        <location filename="src/common/maptypes.cpp" line="2307"/>
         <source>AI / Multiplayer %1</source>
         <translation>AI / 多人游戏 %1</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="2310"/>
+        <location filename="src/common/maptypes.cpp" line="2317"/>
         <source>Helipad %1</source>
         <translation>直升机坪 %1</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="2549"/>
+        <location filename="src/common/maptypes.cpp" line="2556"/>
         <source>Pitot %L1</source>
         <translation>皮托管 %L1</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="2556"/>
+        <location filename="src/common/maptypes.cpp" line="2563"/>
         <source>AOA %L1</source>
         <translation>迎角 %L1</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="2556"/>
+        <location filename="src/common/maptypes.cpp" line="2563"/>
         <source>AOA&amp;nbsp;%L1</source>
         <translation>迎角&amp;nbsp;%L1</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="2559"/>
+        <location filename="src/common/maptypes.cpp" line="2566"/>
         <source>Inlt %L1</source>
         <translatorcomment> 1. an opening which
  allows an intake of something  turbine
@@ -32496,12 +32521,12 @@ Changes to &quot;Required angle&quot; if mandatory in approach procedures.</sour
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="2562"/>
+        <location filename="src/common/maptypes.cpp" line="2569"/>
         <source>Prop %L1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="2565"/>
+        <location filename="src/common/maptypes.cpp" line="2572"/>
         <source>Static %L1</source>
         <translation>静压 %L1</translation>
     </message>
@@ -34634,7 +34659,7 @@ Spaces are replaced with underscores.</oldsource>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="2224"/>
-        <location filename="src/common/maptypes.cpp" line="2737"/>
+        <location filename="src/common/maptypes.cpp" line="2744"/>
         <location filename="src/common/proctypes.cpp" line="999"/>
         <source>-</source>
         <translation>-</translation>
@@ -34911,8 +34936,8 @@ Calculated based on the aircraft performance profile.</source>
         <translation>读取多重导出配置时出错：无效的版本。不兼容的多重导出配置。</translation>
     </message>
     <message>
-        <location filename="src/query/procedurequery.cpp" line="2711"/>
-        <location filename="src/query/procedurequery.cpp" line="2807"/>
+        <location filename="src/query/procedurequery.cpp" line="2712"/>
+        <location filename="src/query/procedurequery.cpp" line="2808"/>
         <source>RW%1+%2</source>
         <translation>RW%1+%2</translation>
     </message>
