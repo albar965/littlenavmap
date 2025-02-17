@@ -2259,32 +2259,39 @@ const QString& aircraftType(const atools::fs::sc::SimConnectAircraft& aircraft)
 
 QString aircraftTypeString(const atools::fs::sc::SimConnectAircraft& aircraft)
 {
-  QString type(QObject::tr(" Vehicle"));
   switch(aircraft.getCategory())
   {
     case atools::fs::sc::BOAT:
-      type = QObject::tr(" Ship");
-      break;
+      return QObject::tr(" Ship");
+
     case atools::fs::sc::CARRIER:
-      type = QObject::tr(" Carrier");
-      break;
+      return QObject::tr(" Carrier");
+
     case atools::fs::sc::FRIGATE:
-      type = QObject::tr(" Frigate");
-      break;
+      return QObject::tr(" Frigate");
+
     case atools::fs::sc::AIRPLANE:
-      type = QObject::tr(" Aircraft");
-      break;
+      return QObject::tr(" Aircraft");
+
     case atools::fs::sc::HELICOPTER:
-      type = QObject::tr(" Helicopter");
-      break;
+      return QObject::tr(" Helicopter");
+
     case atools::fs::sc::UNKNOWN:
+      return QObject::tr(" Unknown");
+
     case atools::fs::sc::GROUNDVEHICLE:
+      return QObject::tr(" Ground Vehicle");
+
     case atools::fs::sc::CONTROLTOWER:
+      return QObject::tr(" Control Tower");
+
     case atools::fs::sc::SIMPLEOBJECT:
+      return QObject::tr(" Simple Object");
+
     case atools::fs::sc::VIEWER:
-      break;
+      return QObject::tr(" Viewer");
   }
-  return type;
+  return QObject::tr(" Vehicle");
 }
 
 QString aircraftTextShort(const atools::fs::sc::SimConnectAircraft& aircraft)
