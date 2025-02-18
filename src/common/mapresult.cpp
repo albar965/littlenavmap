@@ -942,21 +942,57 @@ QDebug operator<<(QDebug out, const map::MapResult& record)
 
   if(record.userAircraft.isValid())
   {
-    out << "Useraircraft[";
-    out << record.userAircraft.id << record.userAircraft.getAircraft().getAirplaneRegistration()
-        << record.userAircraft.getAircraft().getAirplaneModel()
-        << "shadow" << record.userAircraft.getAircraft().isOnlineShadow() << ",";
+    out << "User aircraft[";
+    const atools::fs::sc::SimConnectAircraft& aircraft = record.userAircraft.getAircraft();
+    out << "id" << record.userAircraft.id
+        << "objectid" << aircraft.getObjectId()
+        << aircraft.getPosition()
+        << "alt" << aircraft.getActualAltitudeFt()
+        << "groundspeed" << aircraft.getGroundSpeedKts()
+        << "on ground" << aircraft.isOnGround()
+        << "category" << aircraftTypeString(aircraft)
+        << "model" << aircraft.getAirplaneModel()
+        << "type" << aircraft.getAirplaneType()
+        << "airline" << aircraft.getAirplaneAirline()
+        << "number" << aircraft.getAirplaneFlightnumber()
+        << "registration" << aircraft.getAirplaneRegistration()
+        << "title" << aircraft.getAirplaneTitle()
+        << "shadow" << aircraft.isOnlineShadow()
+        << "modelradius" << aircraft.getModelRadius()
+        << "wingspan" << aircraft.getWingSpan()
+        << "flags" << aircraft.getFlags()
+        << "enginetype" << aircraft.getEngineType()
+        << ",";
     out << "]";
   }
 
   if(!record.aiAircraft.isEmpty())
   {
-    out << "AI aircraft[";
     for(const map::MapAiAircraft& obj :  record.aiAircraft)
-      out << obj.id << obj.getAircraft().getAirplaneRegistration()
-          << obj.getAircraft().getAirplaneModel()
-          << "shadow" << obj.getAircraft().isOnlineShadow() << ",";
-    out << "]";
+    {
+      out << "AI aircraft[";
+      const atools::fs::sc::SimConnectAircraft& aircraft = obj.getAircraft();
+      out << "id" << obj.id
+          << "objectid" << aircraft.getObjectId()
+          << aircraft.getPosition()
+          << "alt" << aircraft.getActualAltitudeFt()
+          << "groundspeed" << aircraft.getGroundSpeedKts()
+          << "on ground" << aircraft.isOnGround()
+          << "category" << aircraftTypeString(aircraft)
+          << "model" << aircraft.getAirplaneModel()
+          << "type" << aircraft.getAirplaneType()
+          << "airline" << aircraft.getAirplaneAirline()
+          << "number" << aircraft.getAirplaneFlightnumber()
+          << "registration" << aircraft.getAirplaneRegistration()
+          << "title" << aircraft.getAirplaneTitle()
+          << "shadow" << aircraft.isOnlineShadow()
+          << "modelradius" << aircraft.getModelRadius()
+          << "wingspan" << aircraft.getWingSpan()
+          << "flags" << aircraft.getFlags()
+          << "enginetype" << aircraft.getEngineType()
+          << ",";
+      out << "]";
+    }
   }
 
   if(!record.onlineAircraft.isEmpty())

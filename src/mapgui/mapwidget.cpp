@@ -430,6 +430,10 @@ void MapWidget::handleInfoClick(const QPoint& point)
     mapResultInfoClick->airportIds.clear();
   }
 
+  qDebug() << Q_FUNC_INFO << "CLICK ========================================";
+  qDebug() << Q_FUNC_INFO << *mapResultInfoClick;
+  qDebug() << Q_FUNC_INFO << "==============================================";
+
   emit showInformation(*mapResultInfoClick);
 }
 
