@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -62,6 +62,9 @@ namespace util {
 class Properties;
 }
 namespace fs {
+namespace sc {
+class SimConnectUserAircraft;
+}
 namespace pln {
 class Flightplan;
 }
@@ -354,6 +357,9 @@ private:
 
   /* Enable or disable actions */
   void updateActionStates();
+
+  /* Show warning if scenery library does not match connection type after fetching first valid user aircraft */
+  void checkSceneryLibrary(const atools::fs::sc::SimConnectUserAircraft& userAircraft);
 
   /* Enable or disable actions related to online networks */
   void updateOnlineActionStates();
@@ -667,6 +673,7 @@ private:
           *debugActionPerfEdit = nullptr, *debugActionDumpLayers = nullptr, *debugActionResetUpdate = nullptr,
           *debugActionThrowException = nullptr, *debugActionSegfault = nullptr,
           *debugActionAssert = nullptr, *debugActionMoveAircraft = nullptr, *debugActionExportPlans = nullptr;
+
 };
 
 #endif // LITTLENAVMAP_MAINWINDOW_H

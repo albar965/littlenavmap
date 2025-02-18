@@ -90,8 +90,9 @@ public:
   /* true if connected to Xpconnect, SimConnect or socket is really connected */
   bool isConnectedActive() const;
 
-  /* true if connection is using SimConnect for FSX/P3D */
+  /* true if connection is using SimConnect for FSX/P3D/MSFS */
   bool isSimConnect() const;
+  int getSimConnectMajorVersion() const;
 
   /* true if connection is using Xpconnect to X-Plane */
   bool isXpConnect() const;

@@ -54,7 +54,7 @@
 // weather/weatherreporter.cpp:showWarnMsgBox(lnm::ACTIONS_SHOW_WEATHER_DOWNLOAD_FAIL
 // weather/windreporter.cpp:showQuestionMsgBox(lnm::ACTIONS_SHOW_SSL_WARNING_WIND
 // gui/mainwindow.cpp:showQuestionMsgBox(lnm::ACTIONS_SHOW_DELETE_TRAIL
-// gui/mainwindow.cpp:showInfoMsgBox(lnm::ROUTE_STRING_DIALOG_BACKGROUND_HINT
+// gui/mainwindow.cpp:showInfoMsgBox(lnm::ACTIONS_SHOW_ROUTESTRING_BACKGROUND_HINT
 // gui/mainwindow.cpp:showQuestionMsgBox(lnm::ACTIONS_SHOW_REPLACE_TRAIL
 // gui/mainwindow.cpp:showWarnMsgBox(lnm::ACTIONS_SHOW_TRAIL_POINTS
 // gui/mainwindow.cpp:showInfoMsgBox(lnm::ACTIONS_SHOW_CRUISE_ZERO_WARNING
@@ -123,10 +123,10 @@ void messages::resetAllMessages()
   settings.setValue(lnm::ACTIONS_SHOW_FLIGHTPLAN_WARN_CONVERT, true);
 
   settings.setValue(lnm::ACTIONS_SHOW_DATABASE_BACKGROUND_HINT, true);
-  settings.setValue(lnm::ROUTE_STRING_DIALOG_BACKGROUND_HINT, true);
+  settings.setValue(lnm::ACTIONS_SHOW_ROUTESTRING_BACKGROUND_HINT, true);
 
-  settings.setValue(lnm::ACTIONS_INSTALL_XPCONNECT_WARN_XPL, true);
-  settings.setValue(lnm::ACTIONS_INSTALL_XPCONNECT_INFO, true);
+  settings.setValue(lnm::ACTIONS_SHOW_INSTALL_XPCONNECT_WARN_XPL, true);
+  settings.setValue(lnm::ACTIONS_SHOW_INSTALL_XPCONNECT_INFO, true);
 }
 
 void messages::resetEssentialMessages()
@@ -158,4 +158,7 @@ void messages::resetEssentialMessages()
   settings.setValue(lnm::ACTIONS_SHOW_DATABASE_HINTS, true);
   settings.setValue(lnm::ACTIONS_SHOW_TRAIL_POINTS, true);
   settings.setValue(lnm::ACTIONS_SHOW_DATABASE_SIMCONNECT, true);
+  settings.setValue(lnm::ACTIONS_SHOW_CONNECTION_SCENERYLIBRARY, true);
+  settings.setValue(lnm::ACTIONS_SHOW_CONNECTION_SCENERYLIBRARY_HINT, true);
+  settings.setValue(lnm::ACTIONS_SHOW_CONNECTION_SCENERYLIBRARY_HINT_NO_DB, true);
 }

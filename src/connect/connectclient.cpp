@@ -837,6 +837,11 @@ bool ConnectClient::isSimConnect() const
   return dataReader != nullptr && dataReader->isSimConnectHandler() && !isNetworkConnect();
 }
 
+int ConnectClient::getSimConnectMajorVersion() const
+{
+  return simConnectHandler != nullptr ? simConnectHandler->getApplicationVersionMajor() : 0;
+}
+
 bool ConnectClient::isXpConnect() const
 {
   // Other handlers are always present - even if connected by network

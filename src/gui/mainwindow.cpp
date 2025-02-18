@@ -1733,6 +1733,7 @@ void MainWindow::connectAllSlots()
   connect(connectClient, &ConnectClient::dataPacketReceived, perfController, &AircraftPerfController::simDataChanged);
 
   connect(connectClient, &ConnectClient::validAircraftReceived, routeController, &RouteController::validAircraftReceived);
+  connect(connectClient, &ConnectClient::validAircraftReceived, this, &MainWindow::checkSceneryLibrary);
 
   connect(connectClient, &ConnectClient::connectedToSimulator, perfController, &AircraftPerfController::connectedToSimulator);
   connect(connectClient, &ConnectClient::disconnectedFromSimulator, perfController, &AircraftPerfController::disconnectedFromSimulator);
@@ -2335,7 +2336,7 @@ void MainWindow::routeFromStringCurrent()
   {
     if(!backgroundHintRouteStringShown)
     {
-      dialog->showInfoMsgBox(lnm::ROUTE_STRING_DIALOG_BACKGROUND_HINT,
+      dialog->showInfoMsgBox(lnm::ACTIONS_SHOW_ROUTESTRING_BACKGROUND_HINT,
                              tr("Note that you can put the flight plan route description window in the background and "
                                 "modify the flight plan on the map or flight plan table in parallel."),
                              tr("Do not &show this dialog again."));
@@ -4018,6 +4019,76 @@ void MainWindow::updateActionStates()
 
   ui->actionShowApproachCustom->setEnabled(route.hasValidDestinationAndRunways());
   ui->actionShowDepartureCustom->setEnabled(route.hasValidDepartureAndRunways());
+}
+
+void MainWindow::checkSceneryLibrary(const atools::fs::sc::SimConnectUserAircraft& userAircraft)
+{
+  // Do not check this with P3D and FSX since the version numbers are not reliable
+#if !defined(SIMCONNECT_BUILD_WIN32)
+
+  if(userAircraft.isFullyValid())
+  {
+    DatabaseManager *databaseManager = NavApp::getDatabaseManager();
+    atools::fs::sc::AircraftFlags flags = userAircraft.getFlags();
+    atools::fs::FsPaths::SimulatorType currentSimulatorDb = databaseManager->getCurrentSimulator();
+    atools::fs::FsPaths::SimulatorType simulatorDbCorrected = atools::fs::FsPaths::NONE;
+    QString simulatorConnectedName, currentSimulatorDbName(NavApp::getCurrentSimulatorShortDisplayName());
+
+    if(currentSimulatorDb != atools::fs::FsPaths::NAVIGRAPH) // Should never appear
+    {
+      // Check if connection flags from aircraft match database
+      if(flags.testFlag(atools::fs::sc::SIM_XPLANE11))
+      {
+        if(currentSimulatorDb != atools::fs::FsPaths::XPLANE_11)
+          simulatorDbCorrected = atools::fs::FsPaths::XPLANE_11;
+        simulatorConnectedName = tr("X-Plane 11");
+      }
+      else if(flags.testFlag(atools::fs::sc::SIM_XPLANE12))
+      {
+        if(currentSimulatorDb != atools::fs::FsPaths::XPLANE_12)
+          simulatorDbCorrected = atools::fs::FsPaths::XPLANE_12;
+        simulatorConnectedName = tr("X-Plane 12");
+      }
+      else if(flags.testFlag(atools::fs::sc::SIM_MSFS_2020))
+      {
+        if(currentSimulatorDb != atools::fs::FsPaths::MSFS)
+          simulatorDbCorrected = atools::fs::FsPaths::MSFS;
+        simulatorConnectedName = tr("MSFS 2020");
+      }
+      else if(flags.testFlag(atools::fs::sc::SIM_MSFS_2024))
+      {
+        if(currentSimulatorDb != atools::fs::FsPaths::MSFS_2024)
+          simulatorDbCorrected = atools::fs::FsPaths::MSFS_2024;
+        simulatorConnectedName = tr("MSFS 2024");
+      }
+
+      // Test for database not found ===============================================
+      if(simulatorDbCorrected != atools::fs::FsPaths::NONE && !databaseManager->hasSimulatorDatabase(simulatorDbCorrected))
+        dialog->showWarnMsgBox(lnm::ACTIONS_SHOW_CONNECTION_SCENERYLIBRARY_HINT_NO_DB,
+                               tr("You are connected to %1 but no scenery library database was found for this simulator.\n"
+                                  "Either install the related simulator and load the scenery library database "
+                                  "from menu \"Scenery Library\" or copy a scenery library database file from another computer.").
+                               arg(simulatorConnectedName).arg(currentSimulatorDbName), tr("Do not &show this dialog again."));
+      else if(simulatorDbCorrected != atools::fs::FsPaths::NONE)
+      {
+        // Change needed ===============================================
+        int result = dialog->showQuestionMsgBox(lnm::ACTIONS_SHOW_CONNECTION_SCENERYLIBRARY,
+                                                tr("You are connected to %1 but use the scenery library database of %2.\n"
+                                                   "Switch to the correct scenery library database for %1 now?").
+                                                arg(simulatorConnectedName).arg(currentSimulatorDbName),
+                                                tr("Do not &show this dialog again and correct the mode automatically."),
+                                                QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes, QMessageBox::Yes);
+
+        if(result == QMessageBox::Yes)
+          databaseManager->setCurrentDatabase(simulatorDbCorrected);
+      }
+    }
+    else
+      qWarning() << Q_FUNC_INFO << "Unexpected database" << currentSimulatorDb;
+  }
+#else
+  Q_UNUSED(userAircraft)
+#endif
 }
 
 void MainWindow::updateXpconnectInstallOptions()

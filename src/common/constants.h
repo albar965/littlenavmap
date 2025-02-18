@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -110,6 +110,9 @@ const QLatin1String ACTIONS_SHOW_XP11_WEATHER_FILE_NO_SIM("Actions/Xplane11Weath
 const QLatin1String ACTIONS_SHOW_XP12_WEATHER_FILE_NO_SIM("Actions/Xplane12WeatherFileNoSim");
 const QLatin1String ACTIONS_SHOW_REPLACE_TRAIL("Actions/ReplaceTrail");
 const QLatin1String ACTIONS_SHOW_TRAIL_POINTS("Actions/TrailPoints");
+const QLatin1String ACTIONS_SHOW_CONNECTION_SCENERYLIBRARY("Actions/SimSceneryLibraryWarn");
+const QLatin1String ACTIONS_SHOW_CONNECTION_SCENERYLIBRARY_HINT("Actions/SimSceneryLibraryWarnHint");
+const QLatin1String ACTIONS_SHOW_CONNECTION_SCENERYLIBRARY_HINT_NO_DB("Actions/SimSceneryLibraryWarnHintNoDb");
 
 const QLatin1String ACTIONS_SHOW_DATABASE_HINTS("Actions/DatabaseLoadShowHints");
 const QLatin1String ACTIONS_SHOW_DATABASE_OLD("Actions/DatabaseOld");
@@ -137,8 +140,8 @@ const QLatin1String ACTIONS_SHOW_SAVE_LNMPLN_WARNING("Actions/ShowSaveLnmplnWarn
 const QLatin1String ACTIONS_SHOW_SAVE_WARNING("Actions/ShowSaveWarning");
 const QLatin1String ACTIONS_SHOW_ZOOM_WARNING("Actions/ShowZoomsWarning");
 
-const QLatin1String ACTIONS_INSTALL_XPCONNECT_WARN_XPL("Actions/ShowInstallXpconnectXplWarning");
-const QLatin1String ACTIONS_INSTALL_XPCONNECT_INFO("Actions/ShowInstallXpconnectInfo");
+const QLatin1String ACTIONS_SHOW_INSTALL_XPCONNECT_WARN_XPL("Actions/ShowInstallXpconnectXplWarning");
+const QLatin1String ACTIONS_SHOW_INSTALL_XPCONNECT_INFO("Actions/ShowInstallXpconnectInfo");
 
 /* Other setting key names */
 const QLatin1String DATABASE_BASEPATH("Database/BasePath");
@@ -227,7 +230,7 @@ const QLatin1String ROUTE_PRINT_DIALOG("Route/PrintWidget");
 const QLatin1String ROUTE_STRING_DIALOG("Route/RouteStringDialogSplitter2");
 const QLatin1String ROUTE_STRING_DIALOG_OPTIONS("Route/StringDialogOptions");
 const QLatin1String ROUTE_STRING_DIALOG_DESCR("Route/StringDialogDescr");
-const QLatin1String ROUTE_STRING_DIALOG_BACKGROUND_HINT("Route/StringDialogBackgroundHint");
+const QLatin1String ACTIONS_SHOW_ROUTESTRING_BACKGROUND_HINT("Route/StringDialogBackgroundHint");
 
 const QLatin1String ROUTEWINDOW_WIDGET_TABS("Route/WidgetTabs");
 const QLatin1String TRAFFIC_PATTERN_DIALOG("Route/TrafficPatternDialog");

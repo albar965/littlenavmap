@@ -976,8 +976,8 @@ void DatabaseManager::switchSimInternal(atools::fs::FsPaths::SimulatorType type)
   {
     // Check and uncheck manually since the QActionGroup is unreliable
     atools::gui::SignalBlocker blocker(simDbActions);
-    for(QAction *act : qAsConst(simDbActions))
-      act->setChecked(act->data().value<atools::fs::FsPaths::SimulatorType>() == currentFsType);
+    for(QAction *action : qAsConst(simDbActions))
+      action->setChecked(action->data().value<atools::fs::FsPaths::SimulatorType>() == currentFsType);
   }
 }
 
@@ -1814,6 +1814,11 @@ void DatabaseManager::simulatorChangedFromComboBox(FsPaths::SimulatorType value)
 bool DatabaseManager::hasDataInSimDatabase()
 {
   return databaseMetadataFromType(currentFsType).hasData();
+}
+
+void DatabaseManager::setCurrentDatabase(atools::fs::FsPaths::SimulatorType type)
+{
+  switchSimInternal(type);
 }
 
 /* Checks if the current database contains data. Exits program if this fails */

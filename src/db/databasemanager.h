@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -105,6 +105,12 @@ public:
   bool hasInstalledSimulator(atools::fs::FsPaths::SimulatorType type) const
   {
     return simulators.value(type).isInstalled;
+  }
+
+  /* Returns true if there is a database for the given sim found */
+  bool hasSimulatorDatabase(atools::fs::FsPaths::SimulatorType type) const
+  {
+    return simulators.value(type).hasDatabase;
   }
 
   /* Returns true if there are any flight simulator databases found (probably copied by the user) */
@@ -277,6 +283,9 @@ public:
 
   /* Checks the simulator database independent of scenery library settings. Expensive since it opens the file */
   bool hasDataInSimDatabase();
+
+  /* Switch to simulator database */
+  void setCurrentDatabase(atools::fs::FsPaths::SimulatorType type);
 
 signals:
   /* Emitted before opening the scenery database dialog, loading a database or switching to a new simulator database.
