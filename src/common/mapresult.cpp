@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -28,6 +28,9 @@ MapResult& MapResult::clear(const MapTypes& types)
     airports.clear();
     airportIds.clear();
   }
+
+  if(types.testFlag(map::PARKING))
+    parkings.clear();
 
   if(types.testFlag(map::AIRPORT_MSA))
   {
@@ -176,6 +179,9 @@ MapResult& MapResult::clearAllButFirst(const MapTypes& types)
     clearAllButFirst(airports);
     airportIds.clear();
   }
+
+  if(types.testFlag(map::PARKING))
+    clearAllButFirst(parkings);
 
   if(types.testFlag(map::AIRPORT_MSA))
   {
@@ -484,6 +490,8 @@ const atools::geo::Pos& MapResult::getPosition(const std::initializer_list<MapTy
     {
       if(type == map::AIRPORT)
         return airports.constFirst().getPosition();
+      else if(type == map::PARKING)
+        return parkings.constFirst().getPosition();
       else if(type == map::AIRPORT_MSA)
         return airportMsa.constFirst().getPosition();
       else if(type == map::WAYPOINT)
@@ -651,6 +659,8 @@ int MapResult::getId(const map::MapTypes& type) const
   {
     if(type == map::AIRPORT)
       return airports.constFirst().getId();
+    else if(type == map::PARKING)
+      return parkings.constFirst().getId();
     else if(type == map::AIRPORT_MSA)
       return airportMsa.constFirst().getId();
     else if(type == map::WAYPOINT)
@@ -725,6 +735,8 @@ MapResult& MapResult::addFromMapBase(const MapBase *base)
   {
     if(base->getType().testFlag(map::AIRPORT))
       airports.append(base->asObj<map::MapAirport>());
+    else if(base->getType().testFlag(map::PARKING))
+      parkings.append(base->asObj<map::MapParking>());
     else if(base->getType().testFlag(map::AIRPORT_MSA))
       airportMsa.append(base->asObj<map::MapAirportMsa>());
     else if(base->getType().testFlag(map::WAYPOINT))
@@ -782,6 +794,7 @@ int MapResult::size(const MapTypes& types) const
 {
   int totalSize = 0;
   totalSize += types.testFlag(map::AIRPORT) ? airports.size() : 0;
+  totalSize += types.testFlag(map::PARKING) ? parkings.size() : 0;
   totalSize += types.testFlag(map::AIRPORT_MSA) ? airportMsa.size() : 0;
   totalSize += types.testFlag(map::WAYPOINT) ? waypoints.size() : 0;
   totalSize += types.testFlag(map::VOR) ? vors.size() : 0;
