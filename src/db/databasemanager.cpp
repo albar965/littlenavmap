@@ -1613,7 +1613,8 @@ bool DatabaseManager::checkValidBasePaths() const
         QMessageBox::StandardButton retval = dialog->information(
           tr("Cannot connect to Microsoft Flight Simulator 2024, which is required for Little Navmap to load data.\n\n"
              "Start Microsoft Flight Simulator 2024, "
-             "wait until the user interface of the simulator is visible and then press \"Ok\" to continue.\n\n"
+             "wait until the user interface of the simulator is visible showing the start button. "
+             "Then press \"Ok\" to continue.\n\n"
              "Note that the loading process can take a while. Expect %1 to %2 minutes."
              "In the meantime, you can continue to use %3 as normal.").
           arg(SIMCONNECT_LOADING_MINUTES_MIN).arg(SIMCONNECT_LOADING_MINUTES_MAX).arg(QCoreApplication::applicationName()),
