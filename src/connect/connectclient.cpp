@@ -387,7 +387,7 @@ void ConnectClient::postSimConnectData(atools::fs::sc::SimConnectData dataPacket
       }
 
       // Check if user aircraft is valid, on ground and signal not sent yet
-      if(!foundValidAircraft && userAircraft.isFullyValid() && userAircraft.isOnGround())
+      if(!foundValidAircraft && userAircraft.isFullyValid())
       {
         qDebug() << Q_FUNC_INFO << "Found valid user aircraft once";
         foundValidAircraft = true;
