@@ -51,10 +51,12 @@ If you see the wrong vehicles at the wrong place or an aircraft with a question 
 * Reworked SimConnect code. This can help to fix problems with disappearing AI traffic, multiplayer
   aircraft or similar issues.
 * Added better messages in the information window when no weather station can be found near an
-  airport.
-  This prevents display of interpolated and nearest weather.
+  airport. This prevents display of interpolated and nearest weather.
 * Fix for wrong navaid selection in procedures. Example: LOWW SID SNU2A used the wrong navaid SNU
   in Sweden.
+* Fixed display for web interface Dynamic Touch and Drag map also when using a scaled user interface.
+  This might affect plugin authors. Contact me if you see issues.
+* Corrected saving of map image and copying to clipboard using the wrong image size.
 * Updated Chinese translation by Eyderoe.
 * Updated German translation.
 * Updated Brazilian Portuguese translation by Ricardo.

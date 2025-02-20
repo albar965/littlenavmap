@@ -630,16 +630,16 @@ void MapPaintWidget::prepareDraw(const QSize& size)
   noNavPaint = false;
 }
 
-QPixmap MapPaintWidget::getPixmap(int pixmapWidth, int pixmapHeight)
+QPixmap MapPaintWidget::getPixmap(int pixmapWidth, int pixmapHeight, bool ignoreUiScale)
 {
   if(verbose)
-    qDebug() << Q_FUNC_INFO << "pixmapWidth" << pixmapWidth << "pixmapHeight" << pixmapHeight;
+    qDebug() << Q_FUNC_INFO << "pixmapWidth" << pixmapWidth << "pixmapHeight" << pixmapHeight << "ignoreUiScale" << ignoreUiScale;
 
   if(pixmapWidth > 0 && pixmapHeight > 0)
   {
     // QWidget::grab() increases the pixel size by devicePixelRatio
     // Shrink it here to get the requested size as result
-    if(devicePixelRatioF() > 1.f)
+    if(devicePixelRatioF() > 1.f && ignoreUiScale)
     {
       pixmapWidth = atools::roundToInt(pixmapWidth / devicePixelRatioF());
       pixmapHeight = atools::roundToInt(pixmapHeight / devicePixelRatioF());
@@ -647,12 +647,17 @@ QPixmap MapPaintWidget::getPixmap(int pixmapWidth, int pixmapHeight)
 
     // Resize if needed - resizeEvent will be called in QWidget::grab()
     if(pixmapWidth != width() || pixmapHeight != height())
+    {
+      // Need to adjust min and max too - otherwise the widget will not resize
+      setMinimumSize(pixmapWidth, pixmapHeight);
+      setMaximumSize(pixmapWidth, pixmapHeight);
       resize(pixmapWidth, pixmapHeight);
+    }
   }
 
   QPixmap pixmap = grab();
   if(verbose)
-    qDebug() << Q_FUNC_INFO << "pixmap.size()" << pixmap.size()
+    qDebug() << Q_FUNC_INFO << "pixmap.size()" << pixmap.size() << "size()" << size()
              << "pixmap.devicePixelRatioF()" << pixmap.devicePixelRatioF()
              << "MapPaintWidget::devicePixelRatioF()" << devicePixelRatioF();
 
@@ -661,7 +666,7 @@ QPixmap MapPaintWidget::getPixmap(int pixmapWidth, int pixmapHeight)
 
 QPixmap MapPaintWidget::getPixmap(const QSize& size)
 {
-  return getPixmap(size.width(), size.height());
+  return getPixmap(size.width(), size.height(), true /* ignoreUiScale */);
 }
 
 atools::geo::Rect MapPaintWidget::getViewRect() const

@@ -305,8 +305,10 @@ public:
   void centerRectOnMapPrecise(const Marble::GeoDataLatLonBox& rect);
   void centerRectOnMapPrecise(const atools::geo::Rect& rect);
 
-  /* Resizes the widget if pixmapWidth and pixmapHeight are bigger than 0 and returns map content as pixmap. */
-  QPixmap getPixmap(int pixmapWidth = -1, int pixmapHeight = -1);
+  /* Resizes the widget if pixmapWidth and pixmapHeight are bigger than 0 and returns map content as pixmap.
+   * ignoreUiScale = false means that user interface scaling is not corrected and the resulting image size can be bigger.
+   * ignoreUiScale = returns the requested image size */
+  QPixmap getPixmap(int pixmapWidth = -1, int pixmapHeight = -1, bool ignoreUiScale = true);
   QPixmap getPixmap(const QSize& size);
 
   /* Prepare Marble widget drawing with a dummy paint event without drawing navaids */

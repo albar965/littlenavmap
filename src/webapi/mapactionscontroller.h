@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -78,7 +78,8 @@ protected:
     MapPixmap getPixmapPosDistance(int width, int height, atools::geo::Pos pos, float distanceKm, const QString& mapCommand, const QString& errorCase = QLatin1String(""));
 
     /* Zoom to rectangel on map. Neither draws wind pointer at top nor copyright. */
-    MapPixmap getPixmapRect(int width, int height, atools::geo::Rect rect, int detailFactor = MapLayerSettings::MAP_DEFAULT_DETAIL_LEVEL, const QString& errorCase = tr("Invalid rectangle"));
+    MapPixmap getPixmapRect(int width, int height, atools::geo::Rect rect, int detailFactor = MapLayerSettings::MAP_DEFAULT_DETAIL_LEVEL,
+                            const QString& errorCase = tr("Invalid rectangle"), bool ignoreUiScale = true);
 
     MapPaintWidget *mapPaintWidget = nullptr;
 };
