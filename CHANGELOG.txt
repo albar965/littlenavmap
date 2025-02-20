@@ -8,20 +8,22 @@ This text is partially Markdown, so the formatting is sometimes strange.
 
 ## Notes
 
-**Please read the release notes below before reporting an issue.**
-
-**This is a unofficial test version of Little Navmap which attempts to fix issues with AI in MSFS
+**This is a test version of Little Navmap which attempts to fix issues with AI in MSFS
 2020 and MSFS 2024 or at least helps to diagnose issues.**
 
-This version was tested by me and show the results below:
+**Please read the release notes below before reporting an issue.**
 
-* Stock AI aircraft and ships on MSFS 2020 (GAIST 6.1 add-on) are visible. Other traffic add-ons
+This version was tested by me and shows the following results here:
+
+* Stock AI aircraft and ship traffic on MSFS 2020 (GAIST 6.1 add-on) are visible. Other traffic add-ons
   not tested.
-* Stock AI aircraft and ships on MSFS 2024 stable and beta are visible. Traffic add-ons not tested.
-* No MSFS simulator shows stock ground traffic vehicles. No add-ons tested.
+* Stock AI aircraft and ship traffic on both MSFS 2024 stable and beta versions are visible. Traffic
+  add-ons not tested.
+* No MSFS simulator shows stock ground traffic vehicles. No add-ons like pushback or GSX tested.
 
-**How to report an issue if you see the wrong vehicles at the wrong place or an aircraft with a
-question mark inside the symbol:**
+## How to report an issue
+
+If you see the wrong vehicles at the wrong place or an aircraft with a question mark inside the symbol:
 
 1. Run the simulator and connect Little Navmap as usual.
 2. Click on the wrong vehicle, ship or aircraft on the map. This pops up the window `Simulator Aircraft`
@@ -29,11 +31,13 @@ question mark inside the symbol:**
 3. Right click into the tab `AI / Multiplayer`, click `Select all` and then `Copy` from the
    context menu.
 4. Paste the formatted content into the
-   [Avsim forum](https://www.avsim.com/forums/forum/780-little-navmap-little-navconnect-little-logbook-support-forum/).
-5. Optional and even better: Send me your log file (menu `Tools` -> `Files and Directories`).
+   [Avsim forum](https://www.avsim.com/forums/forum/780-little-navmap-little-navconnect-little-logbook-support-forum/)
+   into one of the related threads.
+5. Please always mention the used simulator (2020 or 2024) and version (beta or stable) as well as
+   any traffic, pushback or other add-on you use. A link to the add-on can help.
+6. Optional but better: Send me your log file (menu `Tools` -> `Files and Directories`). Also mention
+   the simulator used and related add-ons as explained above.
    [Contact](https://albar965.github.io/contact.html).
-6. Please always mention simulator (2020 or 2024) and version (beta or not) as well as any add-on you use. A link
-   to the add-on can help too.
 
 ## Changes from 3.0.14 to 3.0.15.rc1
 
@@ -41,13 +45,18 @@ question mark inside the symbol:**
   window if you start to fly MSFS 2024 while having the MSFS 2020 scenery library enabled.
 * More detailed information in log when clicking on AI or user aircraft helping to diagnose AI
   issues.
-* Now always showing the vehicle category and falling back to a aircraft icon with a question mark
-  for unsupported vehicle categories.
+* Now always showing the vehicle category in the aircraft progress window and falling back to an
+  aircraft icon with a question mark for unsupported vehicle categories.
 * Now limiting vehicle size to avoid oversized ship icons.
-* Added better messages in information window if no weather station can be found near an airport.
+* Reworked SimConnect code. This can help to fix problems with disappearing AI traffic, multiplayer
+  aircraft or similar issues.
+* Added better messages in the information window when no weather station can be found near an
+  airport.
+  This prevents display of interpolated and nearest weather.
 * Fix for wrong navaid selection in procedures. Example: LOWW SID SNU2A used the wrong navaid SNU
-  far away in Sweden.
+  in Sweden.
 * Updated Chinese translation by Eyderoe.
+* Updated German translation.
 * Updated Brazilian Portuguese translation by Ricardo.
 
 ==<<=============================================================================
