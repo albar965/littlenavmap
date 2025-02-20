@@ -111,6 +111,7 @@ const QLatin1String ACTIONS_SHOW_XP12_WEATHER_FILE_NO_SIM("Actions/Xplane12Weath
 const QLatin1String ACTIONS_SHOW_REPLACE_TRAIL("Actions/ReplaceTrail");
 const QLatin1String ACTIONS_SHOW_TRAIL_POINTS("Actions/TrailPoints");
 const QLatin1String ACTIONS_SHOW_CONNECTION_SCENERYLIBRARY("Actions/SimSceneryLibraryWarn");
+const QLatin1String ACTIONS_SHOW_CONNECTION_SCENERYLIBRARY_FSXP3D("Actions/SimSceneryLibraryFsxP3DWarn");
 const QLatin1String ACTIONS_SHOW_CONNECTION_SCENERYLIBRARY_HINT("Actions/SimSceneryLibraryWarnHint");
 const QLatin1String ACTIONS_SHOW_CONNECTION_SCENERYLIBRARY_HINT_NO_DB("Actions/SimSceneryLibraryWarnHintNoDb");
 

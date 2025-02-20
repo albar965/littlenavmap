@@ -4061,26 +4061,48 @@ void MainWindow::checkSceneryLibrary(const atools::fs::sc::SimConnectUserAircraf
           simulatorDbCorrected = atools::fs::FsPaths::MSFS_2024;
         simulatorConnectedName = tr("MSFS 2024");
       }
+      else if(flags.testFlag(atools::fs::sc::SIM_FSX_P3D))
+      {
+        if(!atools::fs::FsPaths::isAnyFsx(currentSimulatorDb) && !atools::fs::FsPaths::isAnyP3d(currentSimulatorDb))
+          simulatorDbCorrected = atools::fs::FsPaths::FSX; // Indicator for FSX or P3D
+        simulatorConnectedName = tr("FSX or Prepar3D");
+      }
 
-      // Test for database not found ===============================================
-      if(simulatorDbCorrected != atools::fs::FsPaths::NONE && !databaseManager->hasSimulatorDatabase(simulatorDbCorrected))
-        dialog->showWarnMsgBox(lnm::ACTIONS_SHOW_CONNECTION_SCENERYLIBRARY_HINT_NO_DB,
-                               tr("You are connected to %1 but no scenery library database was found for this simulator.\n"
-                                  "Either install the related simulator and load the scenery library database "
-                                  "from menu \"Scenery Library\" or copy a scenery library database file from another computer.").
-                               arg(simulatorConnectedName).arg(currentSimulatorDbName), tr("Do not &show this dialog again."));
+      if(simulatorDbCorrected == atools::fs::FsPaths::FSX)
+      {
+        // Either FSX or P3D - exact sim is unknown
+        // Change needed but can show only hint ===============================================
+        dialog->showWarnMsgBox(lnm::ACTIONS_SHOW_CONNECTION_SCENERYLIBRARY_FSXP3D,
+                               tr("You are connected to %1 but use the scenery library database of %2.\n"
+                                  "Switch to the correct scenery library database in menu \"Scenery Library\" now or before flying.").
+                               arg(simulatorConnectedName).arg(currentSimulatorDbName),
+                               tr("Do not &show this dialog again."));
+      }
       else if(simulatorDbCorrected != atools::fs::FsPaths::NONE)
       {
-        // Change needed ===============================================
-        int result = dialog->showQuestionMsgBox(lnm::ACTIONS_SHOW_CONNECTION_SCENERYLIBRARY,
-                                                tr("You are connected to %1 but use the scenery library database of %2.\n"
-                                                   "Switch to the correct scenery library database for %1 now?").
-                                                arg(simulatorConnectedName).arg(currentSimulatorDbName),
-                                                tr("Do not &show this dialog again and correct the mode automatically."),
-                                                QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes, QMessageBox::Yes);
+        // Can switch to exact database
+        // Test for database not found ===============================================
+        if(!databaseManager->hasSimulatorDatabase(simulatorDbCorrected))
+        {
+          dialog->showWarnMsgBox(lnm::ACTIONS_SHOW_CONNECTION_SCENERYLIBRARY_HINT_NO_DB,
+                                 tr("You are connected to %1 but no scenery library database was found for this simulator.\n"
+                                    "Either install the related simulator and load the scenery library database "
+                                    "from menu \"Scenery Library\" or copy a scenery library database file from another computer.").
+                                 arg(simulatorConnectedName).arg(currentSimulatorDbName), tr("Do not &show this dialog again."));
+        }
+        else
+        {
+          // Change needed ===============================================
+          int result = dialog->showQuestionMsgBox(lnm::ACTIONS_SHOW_CONNECTION_SCENERYLIBRARY,
+                                                  tr("You are connected to %1 but use the scenery library database of %2.\n"
+                                                     "Switch to the correct scenery library database for %1 now?").
+                                                  arg(simulatorConnectedName).arg(currentSimulatorDbName),
+                                                  tr("Do not &show this dialog again and correct the mode automatically."),
+                                                  QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes, QMessageBox::Yes);
 
-        if(result == QMessageBox::Yes)
-          databaseManager->setCurrentDatabase(simulatorDbCorrected);
+          if(result == QMessageBox::Yes)
+            databaseManager->setCurrentDatabase(simulatorDbCorrected);
+        }
       }
     }
     else

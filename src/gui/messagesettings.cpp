@@ -159,6 +159,7 @@ void messages::resetEssentialMessages()
   settings.setValue(lnm::ACTIONS_SHOW_TRAIL_POINTS, true);
   settings.setValue(lnm::ACTIONS_SHOW_DATABASE_SIMCONNECT, true);
   settings.setValue(lnm::ACTIONS_SHOW_CONNECTION_SCENERYLIBRARY, true);
+  settings.setValue(lnm::ACTIONS_SHOW_CONNECTION_SCENERYLIBRARY_FSXP3D, true);
   settings.setValue(lnm::ACTIONS_SHOW_CONNECTION_SCENERYLIBRARY_HINT, true);
   settings.setValue(lnm::ACTIONS_SHOW_CONNECTION_SCENERYLIBRARY_HINT_NO_DB, true);
 }

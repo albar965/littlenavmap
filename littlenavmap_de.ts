@@ -16438,7 +16438,8 @@ Kartendetails im Menü &quot;Ansicht&quot; reduzieren.</translation>
         <location filename="src/gui/mainwindow.cpp" line="2696"/>
         <location filename="src/gui/mainwindow.cpp" line="3600"/>
         <location filename="src/gui/mainwindow.cpp" line="3627"/>
-        <location filename="src/gui/mainwindow.cpp" line="4071"/>
+        <location filename="src/gui/mainwindow.cpp" line="4079"/>
+        <location filename="src/gui/mainwindow.cpp" line="4091"/>
         <source>Do not &amp;show this dialog again.</source>
         <translation>Diesen Dialog &amp;nicht mehr anzeigen.</translation>
     </message>
@@ -16600,11 +16601,25 @@ Alle Nachrichten wieder aktivieren?</translation>
         <translation>MSFS 2024</translation>
     </message>
     <message>
+        <location filename="src/gui/mainwindow.cpp" line="4068"/>
+        <source>FSX or Prepar3D</source>
+        <translation>FSX oder Prepar3D</translation>
+    </message>
+    <message>
+        <location filename="src/gui/mainwindow.cpp" line="4076"/>
+        <source>You are connected to %1 but use the scenery library database of %2.
+Switch to the correct scenery library database in menu &quot;Scenery Library&quot; now or before flying.</source>
+        <oldsource>You are connected to %1 but use the scenery library database of %2.
+Switch to the correct scenery library database in menu &quot;Scenery Library&quot; before flying.</oldsource>
+        <translation>Sie sind mit %1 verbunden, verwenden aber die Szeneriedatenbank von %2.
+Wechseln Sie vor dem Flug oder jetzt im Menü &quot;Szeneriebibliothek&quot; zur passenden Datenbank.</translation>
+    </message>
+    <message>
         <source>FSX, P3D or another simulator</source>
         <translation type="vanished">FSX, P3D or another simulator</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="4068"/>
+        <location filename="src/gui/mainwindow.cpp" line="4088"/>
         <source>You are connected to %1 but no scenery library database was found for this simulator.
 Either install the related simulator and load the scenery library database from menu &quot;Scenery Library&quot; or copy a scenery library database file from another computer.</source>
         <translation>Sie sind mit %1 verbunden, aber es wurde keine Szenerie-Datenbank für diesen Simulator gefunden.
@@ -16617,19 +16632,19 @@ Switch to the correct scenery library database for %1 in menu &quot;Scenery Libr
 Wechseln Sie im Menü &quot;Szeneriebibliothek&quot; zur richtigen Datenbank für %1.</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="4076"/>
+        <location filename="src/gui/mainwindow.cpp" line="4097"/>
         <source>You are connected to %1 but use the scenery library database of %2.
 Switch to the correct scenery library database for %1 now?</source>
         <translation>Sie sind mit %1 verbunden, verwenden aber die Szeneriebibliothek von %2.
 Jetzt zur passenden Szeneriedatenbank für %1 wechseln?</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="4079"/>
+        <location filename="src/gui/mainwindow.cpp" line="4100"/>
         <source>Do not &amp;show this dialog again and correct the mode automatically.</source>
         <translation>&amp;Diesen Dialog nicht mehr angezeigen und den Modus automatisch korrigieren.</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="4137"/>
+        <location filename="src/gui/mainwindow.cpp" line="4159"/>
         <source>&lt;p&gt;&lt;b&gt;This will reset all options, window layout, dialog layout, aircraft trail, map position history and file histories back to default and restart %1.&lt;/b&gt;&lt;/p&gt;&lt;p&gt;User features like range rings or traffic patterns as well as scenery, logbook and userpoint databases are not affected.&lt;/p&gt;&lt;p&gt;A copy of the settings file&lt;/p&gt;%2&amp;nbsp;(click to open)&lt;p&gt;will be created in the folder&lt;/p&gt;%3&amp;nbsp;(click to open).&lt;p&gt;This allows you to undo this change.&lt;/p&gt;&lt;p&gt;Reset and restart now?&lt;/p&gt;</source>
         <translation>&lt;p&gt;&lt;b&gt;Dies setzt alle Einstellungen, die Fensteranordnung, Flugzeugspur, Kartenpositionshistorie und Dateihistorie auf den Standard zurück und startet %1 neu.&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Benutzerfunktionen wie Distanzkreise oder Platzrunden sowie Szenerie-, Logbuch- und Nutzerpunktdatenbanken sind nicht betroffen.&lt;/p&gt;&lt;p&gt;Eine Kopie der Einstellungsdatei&lt;/p&gt;%2 (zum Anzeigen klicken)&lt;p&gt;wird im Verzeichnis unten erstellt&lt;/p&gt;%3 (zum Öffnen klicken).&lt;p&gt;Dies ermöglicht es, diese Änderung zu rückgängig zu machen.&lt;/p&gt;&lt;p&gt;Jetzt zurücksetzen und neu starten?&lt;/p&gt;</translation>
     </message>
@@ -16738,25 +16753,25 @@ Jetzt zur passenden Szeneriedatenbank für %1 wechseln?</translation>
         <translation type="vanished">&lt;p&gt;&lt;b&gt;Dadurch werden alle Einstellungen, das Fensterlayout, Dialoglayout, Flugzeugspur, Historie der Kartenpositionen und die Dateiverläufe zurückgesetzt und %1 neu gestartet.&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Nutzerobjekte wie Distanzkreise oder Platzrunden sowie Szenerie-, Logbuch- und Nutzerpunkt-Datenbanken sind davon nicht betroffen.&lt;/p&gt;&lt;p&gt;Eine Kopie der Einstellungsdatei&lt;br/&gt;&quot;%2&quot;&lt;br/&gt;wird im Verzeichnis&lt;br/&gt;&quot;%3&quot;&lt;br/&gt;erstellt, wodurch Sie diese Änderung rückgängig machen können.&lt;/p&gt;&lt;p&gt;Jetzt zürcksetzen und neu starten?&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="4810"/>
+        <location filename="src/gui/mainwindow.cpp" line="4832"/>
         <source>%1 is loading the scenery library database in the background.
 Really quit and cancel the loading process?</source>
         <translation>%1 lädt die Datenbank der Szeneriebibliothek im Hintergrund.
 Wirklich beenden und den Ladevorgang abbrechen?</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="4812"/>
+        <location filename="src/gui/mainwindow.cpp" line="4834"/>
         <source>Do not &amp;show this dialog again and cancel loading.</source>
         <oldsource>Do &amp;not show this dialog again and cancel loading in the future.</oldsource>
         <translation>Diesen Dialog &amp;nicht mehr anzeigen und das Laden abbrechen.</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="4827"/>
+        <location filename="src/gui/mainwindow.cpp" line="4849"/>
         <source>Really quit?</source>
         <translation>Wirklich beenden?</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="4828"/>
+        <location filename="src/gui/mainwindow.cpp" line="4850"/>
         <source>Do not &amp;show this dialog again and quit.</source>
         <oldsource>Do &amp;not show this dialog again and quit in the future.</oldsource>
         <translation>Diese Dialog &amp;nicht mehr anzeigen und beenden.</translation>
