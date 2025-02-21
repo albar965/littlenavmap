@@ -1991,17 +1991,20 @@ void MainWindow::setOnlineConnectionStatusMessageText(const QString& text, const
 
 void MainWindow::updateConnectionStatusMessageText()
 {
-  if(onlineConnectionStatus.isEmpty())
-    connectStatusLabel->setText(connectionStatus);
-  else
-    connectStatusLabel->setText(tr("%1/%2").arg(connectionStatus).arg(onlineConnectionStatus));
+  if(!NavApp::isShuttingDown())
+  {
+    if(onlineConnectionStatus.isEmpty())
+      connectStatusLabel->setText(connectionStatus);
+    else
+      connectStatusLabel->setText(tr("%1/%2").arg(connectionStatus).arg(onlineConnectionStatus));
 
-  if(onlineConnectionStatusTooltip.isEmpty())
-    connectStatusLabel->setToolTip(connectionStatusTooltip);
-  else
-    connectStatusLabel->setToolTip(tr("Simulator:\n%1\n\nOnline Network:\n%2").
-                                   arg(connectionStatusTooltip).arg(onlineConnectionStatusTooltip));
-  connectStatusLabel->setMinimumWidth(connectStatusLabel->width());
+    if(onlineConnectionStatusTooltip.isEmpty())
+      connectStatusLabel->setToolTip(connectionStatusTooltip);
+    else
+      connectStatusLabel->setToolTip(tr("Simulator:\n%1\n\nOnline Network:\n%2").
+                                     arg(connectionStatusTooltip).arg(onlineConnectionStatusTooltip));
+    connectStatusLabel->setMinimumWidth(connectStatusLabel->width());
+  }
 }
 
 void MainWindow::setMapObjectsShownMessageText(const QString& text, const QString& tooltipText)
@@ -3400,7 +3403,7 @@ void MainWindow::resetMessages()
 
 void MainWindow::setStatusMessage(const QString& message, bool addToLog, bool popup)
 {
-  if(addToLog && !message.isEmpty())
+  if(addToLog && !message.isEmpty() && !NavApp::isShuttingDown())
   {
     qInfo() << Q_FUNC_INFO << "Message" << message;
 
@@ -3435,7 +3438,7 @@ void MainWindow::setStatusMessage(const QString& message, bool addToLog, bool po
 
 void MainWindow::statusMessageChanged(const QString& text)
 {
-  if(text.isEmpty())
+  if(text.isEmpty() && !NavApp::isShuttingDown())
   {
     // Field is cleared. Show number of messages in otherwise empty field.
     if(statusMessages.isEmpty())
