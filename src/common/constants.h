@@ -384,6 +384,7 @@ const QLatin1String OPTIONS_MAP_JUMP_BACK_DEBUG("Options/MapJumpBackDebug");
 const QLatin1String OPTIONS_PROFILE_JUMP_BACK_DEBUG("Options/ProfileJumpBackDebug");
 const QLatin1String OPTIONS_MAP_LAYER_DEBUG("Options/MapLayerDebug");
 const QLatin1String OPTIONS_MAP_LAYER_DEBUG_DRAW("Options/MapLayerDebugDraw");
+const QLatin1String OPTIONS_MAP_LAYER_DEBUG_TILE_SIZE("Options/MapLayerDebugTileSize");
 
 const QLatin1String OPTIONS_DEBUG_MENU("Options/DebugMenu");
 

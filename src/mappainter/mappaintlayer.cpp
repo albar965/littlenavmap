@@ -58,6 +58,7 @@ MapPaintLayer::MapPaintLayer(MapPaintWidget *widget)
 {
   verbose = atools::settings::Settings::instance().getAndStoreValue(lnm::OPTIONS_MAP_LAYER_DEBUG, false).toBool();
   verboseDraw = atools::settings::Settings::instance().getAndStoreValue(lnm::OPTIONS_MAP_LAYER_DEBUG_DRAW, false).toBool();
+  debugTileSize = atools::settings::Settings::instance().getAndStoreValue(lnm::OPTIONS_MAP_LAYER_DEBUG_TILE_SIZE, false).toBool();
 
   // Create the layer configuration
   initMapLayerSettings();
@@ -613,6 +614,18 @@ bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport, const 
       context.endTimer("All");
 
       mapPainterTop->render();
+
+      if(debugTileSize)
+      {
+        context.painter->setPen(QPen(Qt::red, 4));
+        context.painter->drawRect(QRect(QPoint(0, 0), mapPaintWidget->size()));
+        context.painter->setPen(QPen(Qt::red, 1));
+        context.painter->drawLine(mapPaintWidget->geometry().topLeft(), mapPaintWidget->geometry().bottomRight());
+        context.painter->drawLine(mapPaintWidget->geometry().topRight(), mapPaintWidget->geometry().bottomLeft());
+        context.painter->setFont(context.defaultFont);
+        context.painter->drawText(mapPaintWidget->geometry().center(), QString("%1x%2").
+                                  arg(mapPaintWidget->width()).arg(mapPaintWidget->height()));
+      }
     } // if(!noRender())
 
     if(!mapPaintWidget->isPrinting() && mapPaintWidget->isVisibleWidget())

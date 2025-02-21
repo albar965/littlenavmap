@@ -633,7 +633,7 @@ void MapPaintWidget::prepareDraw(const QSize& size)
 QPixmap MapPaintWidget::getPixmap(int pixmapWidth, int pixmapHeight, bool ignoreUiScale)
 {
   if(verbose)
-    qDebug() << Q_FUNC_INFO << "pixmapWidth" << pixmapWidth << "pixmapHeight" << pixmapHeight << "ignoreUiScale" << ignoreUiScale;
+    qDebug() << Q_FUNC_INFO << "Requested pixmapWidth" << pixmapWidth << "pixmapHeight" << pixmapHeight << "ignoreUiScale" << ignoreUiScale;
 
   if(pixmapWidth > 0 && pixmapHeight > 0)
   {
@@ -656,10 +656,13 @@ QPixmap MapPaintWidget::getPixmap(int pixmapWidth, int pixmapHeight, bool ignore
   }
 
   QPixmap pixmap = grab();
+
   if(verbose)
-    qDebug() << Q_FUNC_INFO << "pixmap.size()" << pixmap.size() << "size()" << size()
-             << "pixmap.devicePixelRatioF()" << pixmap.devicePixelRatioF()
-             << "MapPaintWidget::devicePixelRatioF()" << devicePixelRatioF();
+    qDebug() << Q_FUNC_INFO
+             << "MapPaintWidget size" << size()
+             << "MapPaintWidget devicePixelRatio" << devicePixelRatioF()
+             << "Returned Pixmap size" << pixmap.size()
+             << "Returned Pixmap devicePixelRatio" << pixmap.devicePixelRatioF();
 
   return pixmap;
 }

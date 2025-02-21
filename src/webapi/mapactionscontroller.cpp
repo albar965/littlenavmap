@@ -57,9 +57,11 @@ WebApiResponse MapActionsController::imageAction(WebApiRequest request)
 
   int detailFactor = request.parameters.value("detailfactor").toInt();
   MapPixmap map = getPixmapRect(request.parameters.value("width").toInt(),
-                                // The dynamic map does not work when returning exact 256 height as requested
-                                // Workaround needed since getPixmapRect() now returns the exact size as requested
-                                300 /*request.parameters.value("height").toInt()*/,
+                                // The dynamic map did not work when returning exact 256 height as requested
+                                // Pixmap had a minimum height of 300 before due to widget limits
+                                // getPixmapRect() now returns the exact size as requested
+                                // Now using exact width and height of 256x256
+                                request.parameters.value("height").toInt(),
                                 rect, detailFactor,
                                 QString(), false /* ignoreUiScale */);
 

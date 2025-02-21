@@ -255,7 +255,7 @@ private:
   MapPaintWidget *mapPaintWidget = nullptr;
   const MapLayer *mapLayer = nullptr, *mapLayerText = nullptr, *mapLayerRoute = nullptr, *mapLayerRouteText = nullptr,
                  *mapLayerEffective = nullptr;
-  bool verbose = false, verboseDraw = false;
+  bool verbose = false, verboseDraw = false, debugTileSize = false;
   QFont::StyleStrategy savedFontStrategy, savedDefaultFontStrategy;
 
 };

@@ -48,18 +48,29 @@ If you see the wrong vehicles at the wrong place or an aircraft with a question 
 * Now always showing the vehicle category in the aircraft progress window and falling back to an
   aircraft icon with a question mark for unsupported vehicle categories.
 * Now limiting vehicle size to avoid oversized ship icons.
-* Reworked SimConnect code. This can help to fix problems with disappearing AI traffic, multiplayer
+* Reworked SimConnect code. This helps to fix problems with disappearing AI traffic, multiplayer
   aircraft or similar issues.
 * Added better messages in the information window when no weather station can be found near an
   airport. This prevents display of interpolated and nearest weather.
 * Fix for wrong navaid selection in procedures. Example: LOWW SID SNU2A used the wrong navaid SNU
   in Sweden.
 * Fixed display for web interface Dynamic Touch and Drag map also when using a scaled user interface.
-  This might affect plugin authors. Contact me if you see issues.
 * Corrected saving of map image and copying to clipboard using the wrong image size.
 * Updated Chinese translation by Eyderoe.
 * Updated German translation.
 * Updated Brazilian Portuguese translation by Ricardo.
+
+## Web API
+
+* The OpenLayers API now returns images scaled by the system user interface scale factor
+  (125%, 150% or 200%). This means that the returned image might be larger than the requested size
+  depending on scale factor. This change was  needed to fix the Dynamic Touch and Drag map.
+* OpenLayers API returned requested images with a minimum height of 300 due to an internal bug.
+  This is fixed now and images are returned in the requested size. Dynamic Touch and Drag uses
+  256x256 pixels.
+* The WebAPI returns images using the requested size irregardless of the user interface scale
+  factor.
+* Above changes might affect plugin authors relying on the web API. Contact me if you see issues.
 
 ==<<=============================================================================
 
