@@ -127,6 +127,7 @@ const QLatin1String ACTIONS_SHOW_CORRECT_FSX_P3D_OUTDATED("Actions/DatabaseFsxP3
 const QLatin1String ACTIONS_SHOW_DATABASE_BACKGROUND_HINT("Actions/DatabaseBackgroundHint");
 const QLatin1String ACTIONS_SHOW_DATABASE_MSFS2024_HINT("Actions/DatabaseMsfs2024Hint");
 const QLatin1String ACTIONS_SHOW_DATABASE_MSFS_NAVIGRAPH_ALL("Actions/DatabaseMsfsNavigraphAll");
+const QLatin1String ACTIONS_SHOW_EXPORT_WRONG_DATABASE("Actions/ExportWrongDatabase");
 
 const QLatin1String ACTIONS_SHOW_SSL_WARNING_ONLINE("Actions/SslWarningOnline");
 const QLatin1String ACTIONS_SHOW_SSL_WARNING_WIND("Actions/SslWarningWind");

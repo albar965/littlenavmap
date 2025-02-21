@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -258,19 +258,48 @@ void RouteExport::rotateFile(const QString& filename)
   }
 }
 
-bool RouteExport::routeExportPlnMan()
+bool RouteExport::routeExportCheckDatabase(const QString& exportSimulatorName,
+                                           const QVector<atools::fs::FsPaths::SimulatorType> requiredDbTypes)
 {
-  return routeExportPln(exportFormatMap->getForManualSave(rexp::PLN));
+  if(!requiredDbTypes.contains(NavApp::getCurrentSimulatorDb()))
+  {
+    QString currentSimulatorDbName(NavApp::getCurrentSimulatorShortDisplayName());
+
+    int result = dialog->showQuestionMsgBox(lnm::ACTIONS_SHOW_EXPORT_WRONG_DATABASE,
+                                            tr("You are using the scenery library database of %1 and "
+                                               "trying to export a flight plan for %2.\n\n"
+                                               "Really continue?").
+                                            arg(currentSimulatorDbName).arg(exportSimulatorName),
+                                            tr("Do not &show this dialog again and continue saving."),
+                                            QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes, QMessageBox::Yes);
+
+    return result == QMessageBox::Yes;
+  }
+
+  return true;
 }
 
-bool RouteExport::routeExportPlnMsfsMan()
+void RouteExport::routeExportPlnMan()
 {
-  return routeExportPln(exportFormatMap->getForManualSave(rexp::PLNMSFS));
+  routeExportPln(exportFormatMap->getForManualSave(rexp::PLN));
 }
 
-bool RouteExport::routeExportPlnMsfs24Man()
+void RouteExport::routeExportPlnMsfsMan()
 {
-  return routeExportPln(exportFormatMap->getForManualSave(rexp::PLNMSFS24));
+  if(routeExportCheckDatabase(tr("MSFS 2020"), {atools::fs::FsPaths::MSFS}))
+    routeExportPln(exportFormatMap->getForManualSave(rexp::PLNMSFS));
+}
+
+void RouteExport::routeExportPlnMsfs24Man()
+{
+  if(routeExportCheckDatabase(tr("MSFS 2024"), {atools::fs::FsPaths::MSFS_2024}))
+    routeExportPln(exportFormatMap->getForManualSave(rexp::PLNMSFS24));
+}
+
+void RouteExport::routeExportFms11Man()
+{
+  if(routeExportCheckDatabase(tr("X-Plane"), {atools::fs::FsPaths::XPLANE_11, atools::fs::FsPaths::XPLANE_12}))
+    routeExportFms11(exportFormatMap->getForManualSave(rexp::FMS11));
 }
 
 bool RouteExport::routeExportLnm(const RouteExportFormat& format)
@@ -438,11 +467,6 @@ bool RouteExport::routeExportCivaFmsMulti(const RouteExportFormat& format)
   return false;
 }
 
-bool RouteExport::routeExportFms11Man()
-{
-  return routeExportFms11(exportFormatMap->getForManualSave(rexp::FMS11));
-}
-
 bool RouteExport::routeExportFms11(const RouteExportFormat& format)
 {
   qDebug() << Q_FUNC_INFO;
@@ -538,9 +562,9 @@ bool RouteExport::routeExportInternalFlp(const RouteExportFormat& format, bool c
   return false;
 }
 
-bool RouteExport::routeExportFlightgearMan()
+void RouteExport::routeExportFlightgearMan()
 {
-  return routeExportFlightgear(exportFormatMap->getForManualSave(rexp::FLIGHTGEAR));
+  routeExportFlightgear(exportFormatMap->getForManualSave(rexp::FLIGHTGEAR));
 }
 
 bool RouteExport::routeExportFlightgear(const RouteExportFormat& format)
@@ -1123,9 +1147,9 @@ bool RouteExport::routeExportIsgMulti(const RouteExportFormat& format)
   return false;
 }
 
-bool RouteExport::routeExportVfpMan()
+void RouteExport::routeExportVfpMan()
 {
-  return routeExportVfpInternal(exportFormatMap->getForManualSave(rexp::VFP), "Route/Vfp");
+  routeExportVfpInternal(exportFormatMap->getForManualSave(rexp::VFP), "Route/Vfp");
 }
 
 bool RouteExport::routeExportVfp(const RouteExportFormat& format)
@@ -1161,9 +1185,9 @@ bool RouteExport::routeExportVfpInternal(const RouteExportFormat& format, const 
   return false;
 }
 
-bool RouteExport::routeExportXIvapMan()
+void RouteExport::routeExportXIvapMan()
 {
-  return routeExportIvapInternal(re::XIVAP, exportFormatMap->getForManualSave(rexp::XIVAP), "Route/Xivap");
+  routeExportIvapInternal(re::XIVAP, exportFormatMap->getForManualSave(rexp::XIVAP), "Route/Xivap");
 }
 
 bool RouteExport::routeExportXIvap(const RouteExportFormat& format)
@@ -1171,9 +1195,9 @@ bool RouteExport::routeExportXIvap(const RouteExportFormat& format)
   return routeExportIvapInternal(re::XIVAP, format, QString());
 }
 
-bool RouteExport::routeExportIvapMan()
+void RouteExport::routeExportIvapMan()
 {
-  return routeExportIvapInternal(re::IVAP, exportFormatMap->getForManualSave(rexp::IVAP), "Route/Ivap");
+  routeExportIvapInternal(re::IVAP, exportFormatMap->getForManualSave(rexp::IVAP), "Route/Ivap");
 }
 
 bool RouteExport::routeExportIvap(const RouteExportFormat& format)
@@ -1272,9 +1296,9 @@ bool RouteExport::routeExportDialog(RouteExportData& exportData, re::RouteExport
   return false;
 }
 
-bool RouteExport::routeExportGpxMan()
+void RouteExport::routeExportGpxMan()
 {
-  return routeExportGpx(exportFormatMap->getForManualSave(rexp::GPX));
+  routeExportGpx(exportFormatMap->getForManualSave(rexp::GPX));
 }
 
 bool RouteExport::routeExportGpx(const RouteExportFormat& format)
@@ -1298,9 +1322,9 @@ bool RouteExport::routeExportGpx(const RouteExportFormat& format)
   return false;
 }
 
-bool RouteExport::routeExportHtmlMan()
+void RouteExport::routeExportHtmlMan()
 {
-  return routeExportHtml(exportFormatMap->getForManualSave(rexp::HTML));
+  routeExportHtml(exportFormatMap->getForManualSave(rexp::HTML));
 }
 
 bool RouteExport::routeExportHtml(const RouteExportFormat& format)

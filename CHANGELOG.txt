@@ -43,6 +43,9 @@ If you see the wrong vehicles at the wrong place or an aircraft with a question 
 
 * Added check for mismatch between simulator and scenery library database. This will show a dialog
   window if you start to fly MSFS 2024 while having the MSFS 2020 scenery library enabled.
+* Now showing a notification dialog when a user tries to export a MSFS 2020 plan while using the
+  MSFS 2024 scenery library, for example. Click `Do not show again` to continue saving without
+  message.
 * More detailed information in log when clicking on AI or user aircraft helping to diagnose AI
   issues.
 * Now always showing the vehicle category in the aircraft progress window and falling back to an
