@@ -8,8 +8,9 @@ This text is partially Markdown, so the formatting is sometimes strange.
 
 ## Notes
 
-**This is a test version of Little Navmap which attempts to fix issues with AI in MSFS
-2020 and MSFS 2024 or at least helps to diagnose issues.**
+**This is a test version of Little Navmap which attempts to fix issues with AI in MSFS 2020 and
+MSFS 2024 and has additional facilities to diagnose issues. In addition, issues with in-game panels
+in MSFS that use the Little Navmap web server have been fixed.**
 
 **Please read the release notes below before reporting an issue.**
 
@@ -19,7 +20,8 @@ This version was tested by me and shows the following results here:
   not tested.
 * Stock AI aircraft and ship traffic on both MSFS 2024 stable and beta versions are visible. Traffic
   add-ons not tested.
-* No MSFS simulator shows stock ground traffic vehicles. No add-ons like pushback or GSX tested.
+* No MSFS simulator shows stock ground traffic vehicles anymore. No add-ons like pushback or GSX tested.
+  Let me know if you see issues with an add-on.
 
 ## How to report an issue
 
@@ -59,21 +61,31 @@ If you see the wrong vehicles at the wrong place or an aircraft with a question 
   in Sweden.
 * Fixed display for web interface Dynamic Touch and Drag map also when using a scaled user interface.
 * Corrected saving of map image and copying to clipboard using the wrong image size.
+* Fixed crashes due to invalid aircraft data sent through SimConnect by MSFS.
 * Updated Chinese translation by Eyderoe.
 * Updated German translation.
 * Updated Brazilian Portuguese translation by Ricardo.
 
 ## Web API
 
+* Fixed issues with the MSFS add-ons
+  [Little Navmap VR](https://flightsim.to/file/43086/little-navmap-vr-panel) (MSFS 2020),
+  [Ingamepanel NAVMAP for Flight Simulator](https://flightsimulator.me/simulators/flight-simulator/panels/105-ingamepanel-navmap-for-flight-simulator)
+  and
+  [Little NavMap EFB Client](https://flightsim.to/file/85446/little-navmap-efb-client) (MSFS 2024)
+  all now work correctly when using a scaled or a non-scaled user interface.
+* Added setting `Scale delivered images accoring to system user interface scale level` in options
+  on page `Web Server`. Note that this applies only to add-ons using the Little Navmap WebAPI. This
+  will deliver map images scaled according to the user interface scale level if checked and if you use
+  the web server with high resolution monitors. This is the default behavior but can cause issues
+  when using certain web interfaces. Uncheck if you use such an add-on or see issues like a corruped
+  map display. Does not apply to the OpenLayers API.
 * The OpenLayers API now returns images scaled by the system user interface scale factor
   (125%, 150% or 200%). This means that the returned image might be larger than the requested size
   depending on scale factor. This change was  needed to fix the Dynamic Touch and Drag map.
 * OpenLayers API returned requested images with a minimum height of 300 due to an internal bug.
   This is fixed now and images are returned in the requested size. Dynamic Touch and Drag uses
-  256x256 pixels.
-* The WebAPI returns images using the requested size irregardless of the user interface scale
-  factor.
-* Above changes might affect plugin authors relying on the web API. Contact me if you see issues.
+  256x256 pixels, while other add-ons use larger images.
 
 ==<<=============================================================================
 
